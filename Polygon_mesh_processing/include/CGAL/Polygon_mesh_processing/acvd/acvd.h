@@ -11,10 +11,10 @@
 // Author(s)     : Hossam Saeed
 //
 
-/// TODO:
-// #ifndef CGAL_<>
-// #define CGAL_<>
-// #include <CGAL/license/<>>
+#ifndef CGAL_PMP_ACVD_REMESHING_H
+#define CGAL_PMP_ACVD_REMESHING_H
+
+#include <CGAL/license/Polygon_mesh_processing/acvd.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/IO/Color.h>
@@ -140,8 +140,8 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
     if ((AbsolutesEigenValues[IndexMax] * invmaxW > 1e-4)
       && (MaxNumberOfUsedSingularValues > 0))
     {
-      // If this is true,	then w[i] != 0,	so this	division is	ok.
-      typename GT::FT Inv = 1.0 / w[IndexMax];
+      // If this is true, then w[i] != 0, so this division is ok.
+      double Inv = 1.0 / w[IndexMax];
       tempMatrix(IndexMax, 0) = U(0, IndexMax) * Inv;
       tempMatrix(IndexMax, 1) = U(1, IndexMax) * Inv;
       tempMatrix(IndexMax, 2) = U(2, IndexMax) * Inv;
@@ -214,11 +214,11 @@ struct IsotropicClusterData {
   }
 };
 
-template <class PolygonMesh, class NamedParameters = parameters::Default_named_parameters>
-void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_descriptor;
+template <class TriangleMesh, class NamedParameters = parameters::Default_named_parameters>
+void upsample_subdivision_property(TriangleMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor Vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor Halfedge_descriptor;
   typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
     NamedParameters,
@@ -228,7 +228,7 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type VPM;
+  typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                          get_property_map(CGAL::vertex_point, pmesh));
 
@@ -243,7 +243,7 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
   bool curvatures_available = !is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value;
 
   unsigned int step = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 1);
-  Upsample_mask_3<PolygonMesh,VPM> mask(&pmesh, vpm);
+  Upsample_mask_3<TriangleMesh,VPM> mask(&pmesh, vpm);
 
   for (unsigned int i = 0; i < step; i++){
     for (Vertex_descriptor vd : vertices(pmesh))
@@ -285,26 +285,26 @@ void upsample_subdivision_property(PolygonMesh& pmesh, const NamedParameters& np
   }
 }
 
-template <typename PolygonMesh,
+template <typename TriangleMesh,
           typename NamedParameters = parameters::Default_named_parameters>
 std::pair<
-  std::vector<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3>,
+  std::vector<typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Point_3>,
   std::vector<std::vector<int>>
 > acvd_isotropic(
-    PolygonMesh& pmesh,
+    TriangleMesh& pmesh,
     const int nb_clusters,
     const NamedParameters& np = parameters::default_values()
   )
 {
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vertex_position_map;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor Halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor Vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor Face_descriptor;
-  typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
-  typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
-  typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<bool> >::type VertexVisitedMap;
-  typedef typename boost::property_map<PolygonMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vertex_position_map;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor Halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor Vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor Face_descriptor;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type VertexVisitedMap;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
   typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
   typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
     NamedParameters,
@@ -331,7 +331,7 @@ std::pair<
   CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
 
   // TODO: copy the mesh in order to not modify the original mesh
-  //PolygonMesh pmesh = pmesh_org;
+  //TriangleMesh pmesh = pmesh_org;
   int nb_vertices = num_vertices(pmesh);
 
   // For remeshing, we might need to subdivide the mesh before clustering
@@ -657,7 +657,7 @@ std::pair<
   std::vector<typename GT::Point_3> points;
 
   std::vector<std::vector<int>> polygons;
-  PolygonMesh simplified_mesh;
+  TriangleMesh simplified_mesh;
 
   // create a point for each cluster
   std::vector<Eigen::Matrix<typename GT::FT, 4, 4>> cluster_quadrics(clusters.size());
@@ -800,104 +800,51 @@ std::pair<
 
 } // namespace internal
 
-/**
-* \ingroup PMP_acvd_grp
-*
-* Performs uniform (isotropic) centroidal voronoi diagram simplification on a polygon mesh.
-* This can also be used for remeshing by setting the number of clusters to the desired number of vertices.
-* The number of clusters is the number of vertices in the output mesh.
-*
-* @tparam PolygonMesh a model of `FaceListGraph`
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
-*
-* @param pmesh input polygon mesh
-* @param nb_vertices number of target vertices in the output mesh
-* @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-*        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
-*
-* \cgalNamedParamsBegin
-*
-*   \cgalParamNBegin{vertex_principal_curvatures_and_directions_map}
-*     \cgalParamDescription{a property map associating principal curvatures and directions to the vertices of `pmesh`, used for adaptive clustering.}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                    as key type and `Principal_curvatures_and_directions<GT>` as value type.}
-*     \cgalParamExtra{If this parameter is omitted, but `gradation_factor` is not (and is > 0), an internal property map
-*                     will be created and curvature values will be computed.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{gradation_factor}
-*     \cgalParamDescription{a factor used to gradate the weights of the vertices based on their curvature values.}
-*     \cgalParamType{`GT::FT`}
-*     \cgalParamDefault{0}
-*     \cgalParamExtra{If this parameter is omitted, no adaptive clustering will be performed.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{vertex_point_map}
-*       \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
-*       \cgalParamType{a class model of `ReadablePropertyMap` with
-*                      `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-*                      as key type and `GT::Point_3` as value type.}
-*       \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
-*       \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                       `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
-*   \cgalParamNEnd
-*
-*   \cgalParamNBegin{geom_traits}
-*      \cgalParamDescription{an instance of a geometric traits class.}
-*      \cgalParamType{a class model of `Kernel`}
-*      \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`.}
-*      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
-* \cgalNamedParamsEnd
-*
-* @pre only triangle meshes are supported for now
-* @return a pair of vectors of points and polygons representing the simplified mesh as a polygon soup
-*/
-
-template <typename PolygonMesh,
+#ifndef DOXYGEN_RUNNING
+template <typename TriangleMesh,
   typename NamedParameters = parameters::Default_named_parameters>
 std::pair<
-  std::vector<typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Point_3>,
+  std::vector<typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Point_3>,
   std::vector<std::vector<int>>
 >  acvd_isotropic_simplification_polygon_soup(
-    PolygonMesh& pmesh,
+    TriangleMesh& tmesh,
     const int& nb_vertices,
     const NamedParameters& np = parameters::default_values()
   )
 {
-  return internal::acvd_isotropic<PolygonMesh, NamedParameters>(
-    pmesh,
+  return internal::acvd_isotropic<TriangleMesh, NamedParameters>(
+    tmesh,
     nb_vertices,
     np
   );
 }
+#endif
 
 /**
 * \ingroup PMP_acvd_grp
 *
-* Performs uniform (isotropic) centroidal voronoi diagram simplification on a polygon mesh.
-* This can also be used for remeshing by setting the number of clusters to the desired number of vertices.
-* The number of clusters is the number of vertices in the output mesh.
+* performs isotropic centroidal voronoi diagram remeshing on a triangle mesh. The remeshing is either uniform or adaptative.
 *
-* @tparam PolygonMesh a model of `FaceListGraph`
+* @tparam TriangleMesh a model of `FaceListGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
-* @param pmesh input polygon mesh
-* @param nb_vertices number of target vertices in the output mesh
+* @param tmesh input triangle mesh
+* @param nb_vertices lower bound on the number of target vertices in the output mesh.
+*                    In the case the mesh is not closed or if the number of points is too low
+*                    and no manifold mesh could be produced with that budget of points, extra points
+*                    are added to get a manifold output.
 * @param np optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
 *
 * \cgalNamedParamsBegin
 *
 *   \cgalParamNBegin{vertex_principal_curvatures_and_directions_map}
-*     \cgalParamDescription{a property map associating principal curvatures and directions to the vertices of `pmesh`, used for adaptive clustering.}
+*     \cgalParamDescription{a property map associating principal curvatures and directions to the vertices of `tmesh`, used for adaptive clustering.}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with
-*                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                    `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                    as key type and `Principal_curvatures_and_directions<GT>` as value type.}
-*     \cgalParamExtra{If this parameter is omitted, but `gradation_factor` is not (and is > 0), an internal property map
-*                     will be created and curvature values will be computed.}
+*     \cgalParamExtra{If this parameter is omitted, but `gradation_factor` is provided, an internal property map
+*                     will be created and curvature values will be computed using the function `interpolated_corrected_curvatures()` will be called to initialize it.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{gradation_factor}
@@ -908,13 +855,13 @@ std::pair<
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_point_map}
-*       \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
+*       \cgalParamDescription{a property map associating points to the vertices of `tmesh`.}
 *       \cgalParamType{a class model of `ReadablePropertyMap` with
-*                      `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+*                      `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                      as key type and `GT::Point_3` as value type.}
-*       \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
+*       \cgalParamDefault{`boost::get(CGAL::vertex_point, tmesh)`.}
 *       \cgalParamExtra{If this parameter is omitted, an internal property map for
-*                       `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
+*                       `CGAL::vertex_point_t` must be available in `TriangleMesh`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{geom_traits}
@@ -927,24 +874,30 @@ std::pair<
 * \cgalNamedParamsEnd
 *
 * @pre only triangle meshes are supported for now
-* @return the simplified mesh as a PolygonMesh
+* @return the simplified mesh as a TriangleMesh
+*
+* @todo how is uniform affected by input mesh ? (check area based sampling?)
+* @todo implement manifold version
+* @todo how to handle output vertex point map
 */
 
-template <typename PolygonMesh,
-  typename NamedParameters = parameters::Default_named_parameters>
-PolygonMesh acvd_isotropic_simplification(
-    PolygonMesh& pmesh,
+template <typename TriangleMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
+TriangleMesh acvd_isotropic_remeshing(
+    TriangleMesh& tmesh,
     const int& nb_vertices,
     const NamedParameters& np = parameters::default_values()
   )
 {
   auto ps = acvd_isotropic_simplification_polygon_soup(
-    pmesh,
+    tmesh,
     nb_vertices,
     np
   );
 
-  PolygonMesh simplified_mesh;
+  CGAL_assertion(is_polygon_soup_a_polygon_mesh(ps.second));
+
+  TriangleMesh simplified_mesh;
   polygon_soup_to_polygon_mesh(ps.first, ps.second, simplified_mesh);
   return simplified_mesh;
 }
@@ -953,3 +906,8 @@ PolygonMesh acvd_isotropic_simplification(
 } // namespace Polygon_mesh_processing
 
 } // namespace CGAL
+
+#undef CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+#undef CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD
+
+#endif // CGAL_PMP_ACVD_REMESHING_H

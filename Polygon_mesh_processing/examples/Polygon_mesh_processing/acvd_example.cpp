@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 
   std::cout << "Uniform Isotropic ACVD ...." << std::endl;
 
-  auto acvd_mesh = PMP::acvd_isotropic_simplification(smesh, nb_clusters);
+  auto acvd_mesh = PMP::acvd_isotropic_remeshing(smesh, nb_clusters);
   CGAL::IO::write_OFF("fandisk_qem-pp3000.off", acvd_mesh);
 
   std::cout << "Completed" << std::endl;
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
   //PMP::interpolated_corrected_curvatures(smesh, CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map));
 
   //auto adaptive_acvd_mesh =
-  //  PMP::acvd_isotropic_simplification(
+  //  PMP::acvd_isotropic_remeshing(
   //    smesh,
   //    nb_clusters,
   //    CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)

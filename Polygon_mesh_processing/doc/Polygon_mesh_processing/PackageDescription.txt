@@ -139,8 +139,7 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::random_perturbation()`
 
 \cgalCRPSection{ACVD Simplification Functions}
-- \link PMP_acvd_grp `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification()` \endlink
-- \link PMP_acvd_grp `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification_polygon_soup()` \endlink
+- \link PMP_acvd_grp `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()` \endlink
 
 \cgalCRPSection{Sizing Fields}
 - `CGAL::Polygon_mesh_processing::Uniform_sizing_field`

@@ -53,7 +53,7 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
-- \ref PMPACVD : methods to simplify or remesh a polygon mesh using approximated centroidal Voronoi diagrams
+- \ref PMPACVD : methods to remesh a polygon mesh using approximated centroidal Voronoi diagrams
   as described in \cgalCite{cgal:vcp-grtmmdvd-08} and preceeding work.
 
 \subsection PMPIO Reading and Writing Polygon Meshes
@@ -1313,10 +1313,10 @@ which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
 
-\section PMPACVD ACVD Simplification and Remeshing
+\section PMPACVD ACVD Remeshing
 
-The Approximated Centroidal Voronoi Diagram (ACVD) package is a set of vertex-clustering-based tools to simplify
-and remesh a polygon mesh. It is based on the method introduced in \cgalCite{cgal:vc-acvdupmc-04} and extended
+The Approximated Centroidal Voronoi Diagram (ACVD) package is a set of vertex-clustering-based tools to
+remesh a triangle mesh. It is based on the method introduced in \cgalCite{cgal:vc-acvdupmc-04} and extended
 in \cgalCite{cgal:vkc-apmsdcvd-05} and \cgalCite{cgal:vcp-grtmmdvd-08}.
 
 \subsection ACVDBackground Brief Background
@@ -1328,16 +1328,14 @@ WIP
 The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`, `Polyhedron_3` and
 other triangle mesh structures based on the concept `FaceGraph`.
 
-The main function is `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification()`. It takes as input a triangle mesh and
-a target number of vertices and returns a remeshed version of the input mesh with the target number of vertices.
-
-The returned mesh can be triangle mesh in the same data structure as the input mesh representing a `FaceGraph`.
-Or a polygon (triangle) soup (as a `pair<std::vector<GT::Point_3>, std::vector<std::vector<int>>>)`. For the latter,
-use the function `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification_polygon_soup()` instead. The reason for
-having a polygon soup version is that there are no guarantees that the output mesh is manifold.
+The main function is `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()`. It takes as input a triangle mesh and
+a lower bound on the target number of vertices and returns a remeshed version. The number of vertices in the output mesh
+might be larger than the input parameters if the input is not closed or if the budget of points provided is too low
+to generate a manifold output mesh. Note that providing a initial low number of vertices will affect the uniformity
+of the output triangles in case some extra points are added to make the output manifold.
 
 To enable Adaptive Remeshing, the named parameter `gradation_factor` can be used. It controls the sensitivity of the
-clustering algorithm to curvature. If a value of 0 is used, the algorithm is not adaptive. Moreover, the named parameter
+clustering algorithm to curvature.  Moreover, the named parameter
 `vertex_principal_curvatures_and_directions_map` can be used to provide a user-defined principal curvature map.
 
 For Clustering based on QEM, the function `CGAL::Polygon_mesh_processing::acvd_qem_simplification()` and
@@ -1350,7 +1348,7 @@ WIP
 
 \subsection ACVDExample Usage Example
 
-The example below shows the usage of the `CGAL::Polygon_mesh_processing::acvd_isotropic_simplification()` function
+The example below shows the usage of the `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()` function
 and how the extra named parameters can be passed.
 
 \cgalExample{Polygon_mesh_processing/acvd_example.cpp}
