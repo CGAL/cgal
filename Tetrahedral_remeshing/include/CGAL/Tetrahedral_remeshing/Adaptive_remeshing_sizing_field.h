@@ -184,12 +184,12 @@ public:
   *           among the ones listed below :
   *
   *\cgalNamedParamsBegin
-  *  \cgalParamNBegin{ ecmap }
+  *  \cgalParamNBegin{ edge_is_constrained_map }
   *    \cgalParamDescription{ }
   *    \cgalParamDefault{ }
   *    \cgalParamType{ }
   *  \cgalParamNEnd
-  *  \cgalParamNBegin{ fcmap }
+  *  \cgalParamNBegin{ facet_is_constrained_map }
   *    \cgalParamDescription{ }
   *    \cgalParamDefault{ }
   *    \cgalParamType{ }
