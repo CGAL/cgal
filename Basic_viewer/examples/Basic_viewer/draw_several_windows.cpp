@@ -14,16 +14,16 @@
 #include <vector>
 #include <iostream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::Vector_3 Vector;
-typedef std::pair<Point, Vector> Pwn;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+using Kernel=CGAL::Exact_predicates_inexact_constructions_kernel;
+using Point=Kernel::Point_3;
+using Vector=Kernel::Vector_3;
+using Pwn=std::pair<Point, Vector>;
+using Polyhedron=CGAL::Polyhedron_3<Kernel>;
 using PS3=CGAL::Point_set_3<Point>;
 
 int main(void)
 {
-  /// (1) Some CGAL code that create data structure and fill Graphics_scene.
+  /// (1) Some CGAL code that create data structures and fill two Graphics_scene.
   std::vector<Pwn> points;
 
   if(!CGAL::IO::read_points(CGAL::data_file_path("points_3/kitten.xyz"), std::back_inserter(points),
