@@ -11,10 +11,10 @@
 // Author(s)     : Hossam Saeed
 //
 
-/// TODO:
-// #ifndef CGAL_<>
-// #define CGAL_<>
-// #include <CGAL/license/<>>
+#ifndef CGAL_PMP_ACVD_REMESHING_H
+#define CGAL_PMP_ACVD_REMESHING_H
+
+#include <CGAL/license/Polygon_mesh_processing/acvd.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/IO/Color.h>
@@ -915,3 +915,5 @@ TriangleMesh acvd_isotropic_remeshing(
 
 #undef CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
 #undef CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD
+
+#endif // CGAL_PMP_ACVD_REMESHING_H
