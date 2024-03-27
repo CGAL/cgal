@@ -114,6 +114,7 @@ target_link_libraries(earth PRIVATE
   Qt6::Widgets
   Qt6::Xml
   CGAL::CGAL
+  CGAL::Data
   nlohmann_json::nlohmann_json)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders
