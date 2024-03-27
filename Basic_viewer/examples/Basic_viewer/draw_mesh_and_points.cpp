@@ -10,11 +10,11 @@
 #include <vector>
 #include <iostream>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
-typedef Kernel::Vector_3 Vector;
-typedef std::pair<Point, Vector> Pwn;
-typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
+using Kernel=CGAL::Exact_predicates_inexact_constructions_kernel;
+using Point=Kernel::Point_3;
+using Vector=Kernel::Vector_3;
+using Pwn=std::pair<Point, Vector>;
+using Polyhedron=CGAL::Polyhedron_3<Kernel>;
 using PS3=CGAL::Point_set_3<Point>;
 
 struct Graphics_scene_options_green_points:
