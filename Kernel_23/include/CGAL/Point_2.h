@@ -79,15 +79,11 @@ public:
     : Rep(wp.point())
   {}
 
-  template < typename T1, typename T2 >
-  Point_2(const T1 &x, const T2 &y)
-    : Rep(typename R::Construct_point_2()(Return_base_tag(), x, y))
-  {}
-
   template < typename T1, typename T2>
   Point_2(T1&& x, T2&& y)
-    : Rep(typename R::Construct_point_2()(Return_base_tag(), std::forward<T1>(x),
-                                                             std::forward<T2>(y)))
+    : Rep(typename R::Construct_point_2()(Return_base_tag(),
+                                          std::forward<T1>(x),
+                                          std::forward<T2>(y)))
   {}
 
   Point_2(const RT& hx, const RT& hy, const RT& hw)

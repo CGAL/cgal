@@ -88,10 +88,6 @@ public:
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), v)) {}
 
   template < typename T1, typename T2, typename T3 >
-  Vector_3(const T1 &x, const T2 &y, const T3 &z)
-    : Rep(typename R::Construct_vector_3()(Return_base_tag(), x, y, z)) {}
-
-  template < typename T1, typename T2, typename T3 >
   Vector_3(T1&& x, T2&& y, T3&& z)
     : Rep(typename R::Construct_vector_3()(Return_base_tag(), std::forward<T1>(x),
                                                               std::forward<T2>(y),
