@@ -134,7 +134,6 @@ void angle_and_area_smoothing(const FaceRange& faces,
                               TriangleMesh& tmesh,
                               const NamedParameters& np = parameters::default_values())
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor                 edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor                 face_descriptor;
