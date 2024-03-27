@@ -137,7 +137,7 @@ public Q_SLOTS:
       {
         CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
-          ASizing(c3t3_item->c3t3().triangulation()),
+          ASizing::create_adaptive_sizing_field(c3t3_item->c3t3().triangulation()),
           CGAL::parameters::remesh_boundaries(!protect)
           .number_of_iterations(nb_iter)
         .smooth_constrained_edges(smooth_edges)
