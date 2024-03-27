@@ -151,7 +151,7 @@ class QApplication_and_basic_viewer
 {
 public:
   /// Constructor given a `Graphics_scene` and possibly a title.
-  QApplication_and_basic_viewer(const CGAL::Graphics_scene& buffer,
+  QApplication_and_basic_viewer(const CGAL::Graphics_scene& gs,
                                 const char* title="CGAL Basic Viewer");
 
   /// runs the `QApplication`, i.e., open the Qt window. A call to this method is blocking, that is the program continues as soon as the user closes the window.
