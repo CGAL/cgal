@@ -26,4 +26,6 @@ int main()
 #endif
     ( Default_exact_nt_backend!=MP_FLOAT_BACKEND || (std::is_same_v<CGAL::Exact_integer,CGAL::MP_Float> && std::is_same_v<CGAL::Exact_rational,CGAL::Quotient<CGAL::MP_Float>>) )
   );
+
+  std::cout << "Exact backend is " << exact_nt_backend_string() << "\n";
 }
