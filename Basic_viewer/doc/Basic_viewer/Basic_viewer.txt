@@ -8,7 +8,8 @@ namespace CGAL {
 \author Guillaume Damiand, Mostafa Ashraf
 \cgalAutoToc
 
-\section Introduction
+<!-- /////////////////////////////////////////////////////////////////////////////// -->
+\section BV_Intro Introduction
 
 The basic viewer package appears to serve as a foundation to provide a small interactive visualization tools of all CGAL data structures, such as Arrangement_on_surface_2, Boolean_set_operations_2, Linear_cell_complex, Nef_3, Periodic_2_triangulation_2, Point_set_3, Polygon, Polyhedron, Straight_skeleton_2, Surface_mesh, Triangulation_2, Triangulation_3, Voronoi_diagram_2, and more. The functionality of the package is to renders various geometric elements such as points, segments, rays, lines, faces, etc.
 
@@ -18,19 +19,21 @@ The drawing can be tuned using a `CGAL::Graphics_scene_option` allowing to chang
 
 More complex usage can be achieved by using the `CGAL::Graphics_scene` class. Several representation of different CGAL data structures can be added in a same `CGAL::Graphics_scene` allowing to visualize different models in a same window. Like for the draw function, the drawing parameters can be tune thanks to the `CGAL::Graphics_scene_option`.
 
-Two classes are based on Qt. (1) `CGAL::Qt::Basic_viewer` is a Qt widget that inherits from `QGLViewer` (libQGLViewer is an open source C++ library based on Qt that eases the creation of OpenGL 3D viewers). (2) `CGAL::Qt::QApplication_and_basic_viewer` which regroups a `Qt::QApplication` and a `CGAL::Basic_viewer`.
+Two classes are based on Qt. (1) `CGAL::Qt::Basic_viewer` is a Qt widget that inherits from `QGLViewer` (libQGLViewer is an open source C++ library based on Qt that eases the creation of OpenGL 3D viewers). (2) `CGAL::Qt::QApplication_and_basic_viewer` which regroups a `Qt::QApplication` and a `CGAL::Qt::Basic_viewer`.
 
-\section SoftwareDesignClassDiagam Software Design
+<!-- /////////////////////////////////////////////////////////////////////////////// -->
+\section BV_SoftwareDesign Software Design
 
-The diagram in \cgalFigureRef{fig_basic_viewer_diagramme_class} shows the different classes of the package.
+The diagram in \cgalFigureRef{fig_basic_viewer_diagramme_class} shows the different classes and functions of the package.
 
 \cgalFigureBegin{fig_basic_viewer_diagramme_class,basic_viewer_diagramme_class.svg}
-UML diagram of the main classes of the package.
+UML diagram of the classes and functions of the package.
 \cgalFigureEnd
 
 TODO links the classes with the different sections where they will be explained
 
-\section Basic Usage: global `CGAL::draw` functions
+<!-- /////////////////////////////////////////////////////////////////////////////// -->
+\section BV_BasicUsage Basic Usage: global CGAL::draw functions
 
 A first simple solution provide to draw the different data structures of CGAL is the use of global `CGAL::draw` functions. This function is templated by the type of the data structure to draw. The following example shows a basic use of this function.
 
@@ -66,7 +69,7 @@ The viewer includes support for a clipping plane, allowing users to selectively 
 The clipping plane can be toggled on and off, and its rendering style can be modified (solid, wireframe, etc.).</li>
 </ul>
 
-\subsection GraphicSceneContinue Tune the drawing thanks to `CGAL::Graphics_scene_options`
+\subsection BV_GraphicSceneOptions Tune the drawing thanks to CGAL::Graphics_scene_options
 
 There is one specialization of each draw function that takes a graphics scene options as parameter, allowing to tune the drawing.
 
@@ -82,7 +85,6 @@ The result of this example can be shown in \cgalFigureRef{basic_viewer_ex2}.
 Example of tuned drawing of a 3D surface mesh where some vertex colors are changed.
 \cgalFigureEnd
 
-
 The drawing options can depend on the cells. We illustrate this possibility of the following example which compute a color for each face depending on its height.
 
 \cgalExample{Basic_viewer/draw_surface_mesh_height.cpp}
@@ -93,7 +95,8 @@ The result of this example can be shown in \cgalFigureRef{basic_viewer_ex3} wher
 Example of mesh drawing with a color for each face computed thanks to its height.
 \cgalFigureEnd
 
-\section  Graphic_Scene
+<!-- /////////////////////////////////////////////////////////////////////////////// -->
+\section BV_GraphicsScene CGAL::Graphics_Scene
 
 It is possible to do more advanced visualisations by using the class `CGAL::Graphics_scene`. Its goal is to be a container class for various geometric elements, such as points, segments, rays, lines, faces and texts. It provides several methods to add elements (points, segments, rays, lines, text), possibly with colors. Things are a little bit different for faces. You should call `face_begin` to start a new face (possibly with a color), add all the points in the face by using `add_point_in_face` as many times as necessary, then call `face_end` to finish the face. Note that the given polygonal face is internally triangulated.
 
@@ -113,97 +116,43 @@ The result of this example can be shown in \cgalFigureRef{basic_viewer_ex4} wher
 Example of drawing of a point cloud and a polyhedron in a same viewer.
 \cgalFigureEnd
 
+<!-- /////////////////////////////////////////////////////////////////////////////// -->
+\section BV_BasicViewer Use the Qt widget CGAL::Qt::Basic_viewer
 
+The class `CGAL::Qt::Basic_viewer` is a Qt widget that inherits from `QGLViewer` and mainly stores a Graphics_scene and allows to visualize it and interact with the scene. Since this class is a Qt widget, it can be used into more complex Qt code to create more advanced demos.
 
-
-ICICICI
-
-
-
-
-
-
-
-
-
-\subsection GraphicSceneClass key components and functionality of this class:
-<OL>
-
-<LI> Buffer Management:
-
-<OL>
-<LI> The class manages buffers for different geometric elements, including mono and colored versions of points, segments, rays, lines, and faces.
-<LI> Buffers are stored in the arrays array, which holds vectors of BufferType (defaulted to float), and each buffer is initialized in the constructor.
-</OL>
-
-<LI> Bounding Box:
-<OL>
-<LI> The class maintains a bounding box (m_bounding_box) that encompasses all the geometric elements in the scene.
-<LI> The bounding box can be initiated and updated based on the elements added to the scene.
-</OL>
-
-<LI> Adding Geometric Elements:
-<OL>
-<LI> The class provides template member functions (add_point, add_segment, add_ray, etc.) for adding various geometric elements to the corresponding buffers.
-<LI> It supports both mono and colored versions of these elements, allowing for the addition of color information.
-</OL>
-
-<LI> Face Handling:
-<OL>
-<LI> The class supports the creation of faces by providing methods such as face_begin, add_point_in_face, and face_end.
-<LI> Faces can be either mono or colored, and they are constructed by adding points to the corresponding face buffers.
-</OL>
-
-<LI> Normal Handling:
-<OL>
-<LI> Normals for faces are handled separately for smooth and flat shading, and they are part of the normal buffers.
-</OL>
-
-<LI> Text Handling:
-<OL>
-<LI> The class maintains a vector of text elements (m_texts), where each text element is associated with a 3D point in the scene.
-<LI> Text elements can be added using the add_text member function.
-</OL>
-
-<LI> Utility Functions:
-<OL>
-<LI> The class provides utility functions such as checking if a face has started (a_face_started), clearing all buffers (clear), and determining if the scene is empty.
-</OL>
-
-<LI> Coordinate System Information:
-<OL>
-<LI> The class contains functions to check if the data structure lies on a particular plane (XY, XZ, or YZ), providing information about the coordinate system.
-</OL>
-
-<LI> Local Coordinate Transformations:
-<OL>
-<LI> There are template functions (get_local_point and get_local_vector) for transforming CGAL points and vectors into a local coordinate system (Local_kernel).
-</OL>
-
-<LI> Size and Dimensionality:
-<OL>
-<LI> Functions like get_size_of_index and number_of_elements provide information about the size and dimensionality of buffers.
-</OL>
-
-<LI> Miscellaneous:
-<OL>
-<LI> The class allows for reversing all normals in the scene using the reverse_all_normals function.
-<LI> The empty function checks whether the scene is empty.
-<LI> Functions like has_zero_x, has_zero_y, and has_zero_z check if any element in the scene has a zero value in a specific coordinate.
-</OL>
-
-</OL>
-
-This class provides a comprehensive interface for managing and manipulating geometric data in a 3D scene, facilitating the rendering and interaction of complex scenes in a graphics application.
-
-
-\section Use the Qt widget CGAL::Qt::Basic_viewer
+In the following example, we illustrate this possibility by creating two graphics scenes, one filled by a point cloud, a second one filled by the polyhedral surface reconstructed the poisson surface reconstruction method. Then, we create two basic viewers associated with these two scenes. These basic viewer can be added into a same Qt layout allowing to visualize the two scenes side by side.
 
 \cgalExample{Basic_viewer/draw_several_windows.cpp}
 
-\section Add some small interactions with the viewer
+The result of this example is shown in \cgalFigureRef{basic_viewer_ex5}, showing the two Basic_viewer side by side.
+
+\cgalFigureBegin{basic_viewer_ex5,draw_several_windows.png}
+Example of drawing of two Basic_viewer side by side.
+\cgalFigureEnd
+
+
+<!-- /////////////////////////////////////////////////////////////////////////////// -->
+\section BV_Interactions Add some interactions with the viewer
+
+In all the previous examples, the models are only drawn once and there is no interaction with the visualization and the users that allow to update the drawing.
+
+It is possible to define such interactions thanks to the class `CGAL::Qt::QApplication_and_basic_viewer`. In this class, you can define your own function that is called automatically by the viewer when an user press a key. This can allow to change some parameters and update the drawing accordingly.
+
+We illustrate this possibility in the following example that show a surface mesh, while coloring the small faces in red. To do so, we use our own graphics scene options than change the color of a face depending on its size. A face is considered small if its size is smaller than a certain threshold. This threashold can be updated by users, pressing key I to increase it and D to decrease it. This is done in the key pressed function defined in the `QApplication_and_basic_viewer`. When the threashold changes, the graphics scene are recomputed to take into account the modification of the size threashold.
 
 \cgalExample{Basic_viewer/draw_surface_mesh_small_faces.cpp}
+
+The result of this example is shown in \cgalFigureRef{basic_viewer_ex6}, showing to the left the initial drawing of the 3D model, and to the right the same model after having changed the size threashold.
+
+\cgalFigureBegin{basic_viewer_ex6,draw_surface_mesh_small_faces.png}
+Two examples of drawing of a mesh with small faces in red. <B>Left</B>: With the initial threashold. <B>Right</B>: After having increased the threashold.
+\cgalFigureEnd
+
+<!-- /////////////////////////////////////////////////////////////////////////////// -->
+\section BV_Design Design and Implementation History
+
+This package was started by Mostafa Ashraf during his 2022 GSOC project. Guillaume Damiand redeveloped almost entirely the package, examples and wrote the manual.
 
 */
 
