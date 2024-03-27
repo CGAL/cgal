@@ -53,7 +53,7 @@ public:
     : base(CGAL::make_array(x, y)) {}
 
   VectorC2(FT&& x, FT&& y)
-    : base(CGAL::fwd_make_array<FT>(x, y)) {}
+    : base(CGAL::fwd_make_array<FT>(std::move(x), std::move(y))) {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
     : base( hw != FT(1) ? CGAL::make_array<FT>(hx/hw, hy/hw)
