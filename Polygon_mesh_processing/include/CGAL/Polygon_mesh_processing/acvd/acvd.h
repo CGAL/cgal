@@ -146,7 +146,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<double, 4, 4>& qu
     if ((AbsolutesEigenValues[IndexMax] * invmaxW > 1e-4)
       && (MaxNumberOfUsedSingularValues > 0))
     {
-      // If this is true,	then w[i] != 0,	so this	division is	ok.
+      // If this is true, then w[i] != 0, so this division is ok.
       double Inv = 1.0 / w[IndexMax];
       tempMatrix(IndexMax, 0) = U(0, IndexMax) * Inv;
       tempMatrix(IndexMax, 1) = U(1, IndexMax) * Inv;
