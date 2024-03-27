@@ -184,6 +184,10 @@ struct Linear_interpolation_edge_intersection
  *
  * This class is suitable when the values stem from a signed distance function.
  */
+//
+// @todo this is for the case where we know domain.value is an SDF
+// then we can do better than a dichotomy
+// Take code from the AW3 sharp branch
 struct Ray_marching_edge_intersection
 {
   template <typename Domain> // == Isosurfacing_domain_3 or similar
@@ -193,14 +197,7 @@ struct Ray_marching_edge_intersection
                   const typename Domain::Geom_traits::FT val_1,
                   const Domain& domain,
                   const typename Domain::Geom_traits::FT isovalue,
-                  typename Domain::Geom_traits::Point_3& p) const
-  {
-    // @todo this is for the case where we know domain.value is an SDF
-    // then we can do better than a dichotomy
-    // Take code from the AW3 sharp branch
-    CGAL_assertion(false);
-    return false;
-  }
+                  typename Domain::Geom_traits::Point_3& p) const;
 };
 
 } // namespace Isosurfacing
