@@ -44,7 +44,7 @@ public:
   typedef typename Kernel::Vector_2 Vector_2;
 
   typedef KSP_2::internal::Data_structure<Kernel> Data;
-  typedef typename Data::Support_line Support_line;
+  typedef typename Data::Support_line_DS Support_line_DS;
   typedef typename Data::Segment Segment;
   typedef typename Data::Vertex Vertex;
 
@@ -107,7 +107,7 @@ public:
     // Prepare output by sorting segments along support lines;
     for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
     {
-      Support_line& support_line = m_data.support_line(i);
+      Support_line_DS& support_line = m_data.support_line(i);
       std::sort (support_line.segments_idx().begin(), support_line.segments_idx().end(),
                  [&](const std::size_t& a, const std::size_t& b) -> bool
                  {
@@ -121,7 +121,7 @@ public:
   {
     for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
     {
-      const Support_line& support_line = m_data.support_line(i);
+      const Support_line_DS& support_line = m_data.support_line(i);
       for (std::size_t s : support_line.segments_idx())
       {
         if (s == std::size_t(-1))
@@ -555,7 +555,7 @@ private:
 
   void initialize_vertices_directions (Segment& segment, unsigned int k)
   {
-    const Support_line& support_line = m_data.support_line_of_segment (segment);
+    const Support_line_DS& support_line = m_data.support_line_of_segment (segment);
 
     Vertex& source = m_data.source_of_segment (segment);
     Vertex& target = m_data.target_of_segment (segment);
@@ -701,7 +701,7 @@ private:
         if (m_data.segment_of_vertex(vertex).support_line_idx() == j)
           continue;
 
-        const Support_line& support_line = m_data.support_line(j);
+        const Support_line_DS& support_line = m_data.support_line(j);
 
         if (!CGAL::do_overlap(si_bbox, support_line_bboxes[j]))
          continue;
@@ -715,7 +715,7 @@ private:
           if (!KSP::internal::intersection(si, segments_2[segment_idx], point))
             continue;
 
-          Support_line& sli = m_data.support_line_of_vertex(vertex);
+          Support_line_DS& sli = m_data.support_line_of_vertex(vertex);
           FT dist = CGAL::approximate_sqrt (CGAL::squared_distance (sli.to_2d(vertex.point(0)), point));
           FT time = dist / vertex.speed();
 
@@ -755,7 +755,7 @@ private:
     // intersection between two colinear segments
     for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
     {
-      Support_line& support_line = m_data.support_line(i);
+      Support_line_DS& support_line = m_data.support_line(i);
       if (support_line.connected_components() < 2)
         continue;
 
@@ -814,7 +814,7 @@ private:
 
     for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
     {
-      Support_line& support_line = m_data.support_line(i);
+      Support_line_DS& support_line = m_data.support_line(i);
 
       for (std::size_t segment_idx : support_line.segments_idx())
       {
@@ -930,7 +930,7 @@ private:
   {
     for (std::size_t i = 0; i < m_data.number_of_support_lines(); ++ i)
     {
-      const Support_line& support_line = m_data.support_line(i);
+      const Support_line_DS& support_line = m_data.support_line(i);
 
       CGAL_assertion (support_line.meta_vertices_idx().size() > 1);
 
