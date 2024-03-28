@@ -11,15 +11,15 @@ namespace CGAL {
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
 \section BV_Intro Introduction
 
-The basic viewer package provides interactive visualization for most \cgal data structures, such as `Arrangement_on_surface_2`, `Boolean_set_operations_2`, `Linear_cell_complex`, `Nef_3`, `Periodic_2_triangulation_2`, `Point_set_3`, `Polygon`, `Polyhedron`, `Straight_skeleton_2`, `Surface_mesh`, `Triangulation_2`, `Triangulation_3`, `Voronoi_diagram_2`, and more. The functionality of the package is to render various geometric elements such as points, segments, rays, lines, faces, etc.
+The basic viewer package provides interactive visualization for most \cgal packages, such as \ref PkgArrangementOnSurface2Ref "2D Arrangements", `Boolean_set_operations_2`, `Linear_cell_complex`, `Nef_3`, `Periodic_2_triangulation_2`, `Point_set_3`, `Polygon`, `Polyhedron`, `Straight_skeleton_2`, `Surface_mesh`, `Triangulation_2`, `Triangulation_3`, `Voronoi_diagram_2`, and more.
 
-The most basic usage of the basic viewer is the use of the global `CGAL::draw()` function. There is one draw function for each \cgal package. Such a call opens a new interactive window showing the given model and allowing to navigate in the scene, show or hide some specific cells, show the interior of the model if any...
+The most simple use case of the basic viewer is the call of the global `draw()` function. There is one draw function for each \cgal package. Such a call opens a new interactive window showing the given model and allowing to navigate in the scene, show or hide some specific cells, show the interior of the model if any, etc.
 
-The drawing can be tuned using `CGAL::Graphics_scene_options`, for example to change the color of some cells or hide some cells.
+The drawing can be tuned using `Graphics_scene_options`, for example to change the color of some cells or hide some cells.
 
-More complex usage can be achieved by using the `CGAL::Graphics_scene` class. Several representations of different \cgal data structures can be added in a same `CGAL::Graphics_scene` allowing to visualize different models in a same window. Like for the draw function, the drawing parameters can be tuned thanks to the `CGAL::Graphics_scene_options`.
+More complex usage can be achieved by using the `Graphics_scene` class. Different \cgal data structures can be added in a same `Graphics_scene` allowing to visualize them simultaneously in a same window. Like for the draw function, the drawing parameters can be tuned thanks to the `Graphics_scene_options`.
 
-Two classes are based on Qt. (1) `CGAL::Qt::Basic_viewer` is a Qt widget that inherits from `QGLViewer` (libQGLViewer is an open source C++ library based on Qt that eases the creation of OpenGL 3D viewers). (2) `CGAL::Qt::QApplication_and_basic_viewer` which regroups a `Qt::QApplication` and a `CGAL::Qt::Basic_viewer`.
+Two classes are based on \qt. (1) `CGAL::Qt::Basic_viewer` is a \qt widget that inherits from `QGLViewer` (libQGLViewer is an open source C++ library based on \qt that eases the creation of OpenGL 3D viewers). (2) `CGAL::Qt::QApplication_and_basic_viewer` which regroups a `Qt::QApplication` and a `CGAL::Qt::Basic_viewer`.
 
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
 \section BV_SoftwareDesign Software Design
@@ -31,9 +31,9 @@ UML diagram of the classes and functions of the package (only partial representa
 \cgalFigureEnd
 
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
-\section BV_BasicUsage Basic Usage: Global CGAL::draw Functions
+\section BV_BasicUsage Basic Usage: The Global Draw Functions
 
-A first simple solution provided to draw the different data structures of \cgal is the global function `CGAL::draw()` function. This function is templated by the type of the data structure to draw. The following example shows how it can be used.
+A first simple solution provided to draw the different data structures of \cgal is the global `draw()` function. This function is templated by the type of the data structure to draw. The following example shows how it can be used.
 
 \cgalExample{Basic_viewer/draw_lcc.cpp}
 
@@ -63,17 +63,17 @@ Key presses are mapped to specific actions, such as toggling the clipping plane,
 
 <li> Clipping Plane:
 
-The viewer includes support for a clipping plane, enableing users to selectively render parts of the scene.
+The viewer includes support for a clipping plane, enabling users to selectively render parts of the scene.
 The clipping plane can be toggled on and off, and its rendering style can be modified (solid, wireframe, etc.).</li>
 </ul>
 
-\subsection BV_GraphicSceneOptions Tune the drawing thanks to Graphics Scene Options
+\subsection BV_GraphicSceneOptions Tuning with Graphics Scene Options
 
-There is one specialization of each draw function that takes  graphics scene options as parameter, allowing to tune the drawing.
+There is one specialization of each draw function that takes  graphics scene options as additional parameter, allowing to tune the drawing.
 
-The `Graphics_scene_options` class is responsible for providing a set of options and customization parameters for rendering geometric structures in a graphics scene. Its main purpose is to allow users to control the visual appearance of various cells such as vertices, edges, faces, and volumes in a graphical representation of a given data structure.
+The `Graphics_scene_options` class provides a set of options and customization parameters for rendering geometric structures in a graphics scene. Its main purpose is to allow users to control the visual appearance of various cells such as vertices, edges, faces, and volumes in a graphical representation of a given data structure.
 
-The following example shows how to use graphics scene options to tune the drawing of a surface mesh. We define our own class `My_graphics_scene_options` that inherits from `CGAL::Graphics_scene_options` to get all the default parameters. In this class, we only override the two methods `colored_vertex` and `vertex_color` to draw all vertices in color, and chose randomly green or blue colors for one out of two vertices.
+The following example shows how to use graphics scene options to tune the drawing of a surface mesh. We define our own class `My_graphics_scene_options` that inherits from `Graphics_scene_options` to get all the default parameters. In this class, we only override the two methods `colored_vertex` and `vertex_color` to draw all vertices in color, and chose randomly green or blue colors for one out of two vertices.
 
 \cgalExample{Basic_viewer/draw_surface_mesh_vcolor.cpp}
 
@@ -83,7 +83,7 @@ The result of this example can be shown in \cgalFigureRef{basic_viewer_ex2}.
 Example of tuned drawing of a 3D surface mesh where some vertex colors are changed.
 \cgalFigureEnd
 
-The drawing options can depend on the cells. Inthe following example the color of each face depends on its height.
+The drawing options can depend on the cells. In the following example the color of each face depends on its height.
 
 \cgalExample{Basic_viewer/draw_surface_mesh_height.cpp}
 
@@ -96,15 +96,15 @@ Example of mesh drawing with a color for each face computed depending on its hei
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
 \section BV_GraphicsScene The Graphics Scene
 
-It is possible to do more advanced visualizations by using the class `CGAL::Graphics_scene`. It is a container class for various geometric elements, such as points, segments, rays, lines, faces and texts. It provides several methods to add elements, possibly with individual colors. Things are a little bit different for faces. You must call `face_begin()` to start a new face (possibly with a color), add all the points in the face by using `add_point_in_face()`, and call `face_end()` to finish the face. Note that the given polygonal face is internally triangulated.
+It is possible to do more advanced visualizations by using the class `Graphics_scene`. It is a container class for various geometric elements, such as points, segments, rays, lines, faces and texts. It provides several methods to add elements, possibly with individual colors. Things are a little bit different for faces. You must call `face_begin()` to start a new face (possibly with a color), add all the points in the face by using `add_point_in_face()`, and call `face_end()` to finish the face. Note that the given polygonal face is internally triangulated.
 
-This class also stores the normal of the faces (computed automatically), and possibly the normal of the vertices that should be given by the users.
+This class also stores the normal of the faces (computed automatically), and possibly the normal of the vertices that can be provided by the users.
 
-Users can either fill directly a `Graphics_scene` using these methods, or by using a global function `CGAL::add_to_graphics_scene()` that fills the scene using all the geometric elements of the given \cgal data structure. Like for the draw functions, there is an overload of `add_to_graphics_scene()` for each \cgal data structure (`Arrangement_on_surface_2`, `Boolean_set_operations_2`, `Linear_cell_complex`, `Nef_3`, `Periodic_2_triangulation_2`, `Point_set_3`, `Polygon`, `Polyhedron`, `Straight_skeleton_2`, `Surface_mesh`, `Triangulation_2`, `Triangulation_3`, `Voronoi_diagram_2`).
+Users can either fill directly a `Graphics_scene` using these methods, or by using a global function `add_to_graphics_scene()` that fills the scene using all the geometric elements of a given \cgal data structure. Like for the draw functions, there is an overload of `add_to_graphics_scene()` for each \cgal package.
 
-A `Graphics_scene` can be drawn using the basic viewer thanks to the `CGAL::draw_graphics_scene()` function.
+A `Graphics_scene` can be drawn using the basic viewer thanks to the `draw_graphics_scene()` function.
 
-The following example shows in a same viewer both a `CGAL::Point_set_3` and a `CGAL::Polyhedron_3`. Note that, like the draw functions, each `add_to_graphics_scene()` can use an optional `Graphics_scene_options` as parameter allowing to tune the drawing of the given data structure. In the example, we change the color of all vertices of the point set.
+The following example shows in a same viewer both a `Point_set_3` and a `Polyhedron_3`. Note that, like the draw functions, each `add_to_graphics_scene()` can use an optional `Graphics_scene_options` as parameter allowing to tune the drawing of the given data structure. In the example, we change the color of all vertices of the point set.
 
 \cgalExample{Basic_viewer/draw_mesh_and_points.cpp}
 
@@ -117,9 +117,9 @@ Example of drawing of a point cloud and a polyhedron in a same viewer.
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
 \section BV_BasicViewer The Basic Viewer Class
 
-The class `CGAL::Qt::Basic_viewer` is a Qt widget that inherits from `QGLViewer` and mainly stores a `Graphics_scene` and allows to visualize it and interact with the scene. Since this class is a Qt widget, it can be used into more complex Qt code to create more advanced demos.
+The class `CGAL::Qt::Basic_viewer` is a \qt widget that inherits from `QGLViewer` and mainly stores a `Graphics_scene` and allows to visualize it and interact with the scene. Since this class is a \qt widget, it can be used into more complex \qt code to create more advanced demos.
 
-In the following example, we create two graphics scenes, one filled by a point cloud, a second one filled by the polyhedral surface reconstructed by the Poisson surface reconstruction method. Then, we create two basic viewers associated with these two scenes. The two basic viewers are added into a same Qt layout allowing to visualize the two scenes side by side.
+In the following example, we create two graphics scenes, one filled with a point cloud, a second one filled with the polyhedral surface reconstructed by the Poisson surface reconstruction method. Then, we create two basic viewers associated with these two scenes. The two basic viewers are added into a \qt layout allowing to visualize the two scenes side by side.
 
 \cgalExample{Basic_viewer/draw_several_windows.cpp}
 
@@ -137,7 +137,7 @@ In the previous examples, the models are only drawn once and there is no interac
 
 It is possible to define such interactions thanks to the class `CGAL::Qt::QApplication_and_basic_viewer`. In this class, you can define your own function that is called automatically by the viewer when a user presses a key. This can be used to change some parameters and update the drawing accordingly.
 
-We illustrate this possibility in the following example that shows a surface mesh, while coloring the small faces in red. To do so, we use our own graphics scene options than change the color of a face depending on its size. A face is considered small if its size is smaller than a certain threshold. This threshold can be updated by the user, pressing key 'I' to increase it and 'D' to decrease it. This is done in the key pressed function defined in the `QApplication_and_basic_viewer`. When the threshold changes, the graphics scene are recomputed to take into account the modification of the size threshold.
+We illustrate this possibility in the following example that shows a surface mesh, while coloring the small faces in red. To do so, we use our own graphics scene options than change the color of a face depending on its size. A face is considered small if its size is below a certain threshold. This threshold can be updated by the user, pressing key 'I' to increase it and 'D' to decrease it. This is done in the key pressed function defined in the `QApplication_and_basic_viewer`. When the threshold changes, the graphics scene is recomputed to take the modification of the size threshold into account.
 
 \cgalExample{Basic_viewer/draw_surface_mesh_small_faces.cpp}
 
@@ -150,7 +150,7 @@ Two examples of drawing of a mesh with small faces in red. <B>Left</B>: With the
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
 \section BV_Design Design and Implementation History
 
-This package was started by Mostafa Ashraf during his 2022 GSoC project. Guillaume Damiand redeveloped almost entirely the package, examples and wrote the manual.
+This package was started by Mostafa Ashraf during his 2022 GSoC project. Guillaume Damiand, who mentored the project, reworked large parts of the package, wrote examples and the manual.
 
 */
 
