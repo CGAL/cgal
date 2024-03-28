@@ -123,7 +123,7 @@ In the following example, we create two graphics scenes, one filled by a point c
 
 \cgalExample{Basic_viewer/draw_several_windows.cpp}
 
-The result of this example is shown in \cgalFigureRef{basic_viewer_ex5).
+The result of this example is shown in \cgalFigureRef{basic_viewer_ex5}.
 
 \cgalFigureBegin{basic_viewer_ex5,draw_several_windows.png}
 Example of drawing of two `Basic_viewer` side by side.
