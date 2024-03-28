@@ -409,7 +409,6 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *   \cgalParamSectionEnd
  *   \cgalParamSectionBegin{Mesh initialization with a functor}
  *     \cgalParamDescription{an `InitialPointsGenerator` can optionally be provided to start the meshing process.
- *                           It must follow the `InitialPointsGenerator` concept.
  *                           The following named parameter controls this option:
  *                           <UL>
  *                             <LI> `parameters::initial_points_generator()`

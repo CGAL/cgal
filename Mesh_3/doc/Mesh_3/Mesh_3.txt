@@ -751,7 +751,7 @@ It expects a functor that returns a set of points for the mesh
 initialization (following the `InitialPointsGenerator`). The functor
 `CGAL/Mesh_3/Construct_initial_points_labeled_image.h` is used in this example.
 It constructs points using the API of the mesh domain, as follows.
-First the functor `construct_intersect` is created
+First the functor `construct_intersection` is created
 
 \snippet CGAL/Mesh_3/Construct_initial_points_labeled_image.h construct intersection
 then the `%Mesh_domain::Intersection` object (a `%tuple` with three
@@ -795,7 +795,7 @@ Mesh_3/random_labeled_image.h.
 
 
 The example \ref Mesh_3/mesh_3D_image_with_custom_initialization.cpp features
-a custom functor that initialize the triangulation.
+a custom functor that initializes the triangulation.
 
 A struct `Custom_Initial_points_generator` that places 1D-feature points
 alongside a line is created.

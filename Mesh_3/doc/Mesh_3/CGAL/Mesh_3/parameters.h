@@ -458,7 +458,7 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * specify a functor following the `InitialPointsGenerator` concept
  * to the mesh generation function `make_mesh_3()`.
  * The functor will be called for initialization of the meshing process.
- * If this parameter is specified without argument, the default behaviour is executed,
+ * If this parameter is specified without arguments, the default behavior is executed,
  * i.e. the domain's `construct_initial_points_object()`
  * is called for the initialization of the meshing process.
  *
@@ -469,7 +469,7 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * \cgalHeading{Example}
  *
  * \code{.cpp}
- * // Mesh generation from labelled image with connexity checks.
+ * // Mesh generation from labeled image with connexity checks.
  * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
  *                               criteria,
  *                               parameters::initial_points_generator(CGAL::Construct_initial_points_labeled_image(image)));
@@ -489,7 +489,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * specify a `std::vector` of initial points
  * to the mesh generation function `make_mesh_3()`.
  * The initial points vector is of type `std::vector<std::tuple<Weighted_point_3, int, Index>>` where
- * `Weighted_point_3` is the point's position and weight,
+ * `Weighted_point_3` contains the point's position and weight,
  * `int` is the dimension of the minimal dimension subcomplex on which the point lies, and
  * `Index` is the underlying subcomplex index.
  *
@@ -504,7 +504,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \code{.cpp}
  * // Creation of the initial_points vector
  * std::vector<std::tuple<K::Weighted_point_3, int, Mesh_domain::Index>> initial_points;
- * // Mesh generation from labelled image with connexity checks.
+ * // Mesh generation from labeled image with connexity checks.
  * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
  *                               criteria,
  *                               parameters::initial_points(std::cref(initial_points));//use std::cref to avoid a copy

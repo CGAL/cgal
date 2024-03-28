@@ -19,7 +19,7 @@ public:
 /// @{
 
 /*!
-Output a set of (`n`) surface points to the
+Outputs a set of `n` surface points to the
 output iterator `pts`, as objects of type
 `std::tuple<Weighted_point_3, int, Index>`.
 `Weighted_point_3` is the point's position and weight,
@@ -46,7 +46,7 @@ output iterator `pts`, as objects of type
 `Weighted_point_3` is the point's position and weight,
 `int` is the dimension of the minimal dimension subcomplex on which the point lies, and
 `Index` is the underlying subcomplex index.
-As `n` is not given, the functor must provide enough
+Since there is no `n` given like above, the functor must provide enough
 points to initialize the mesh generation process.
 
 @tparam OutputIterator model of `OutputIterator`, containing points of type
