@@ -11,7 +11,7 @@
 \cgalPkgDescriptionBegin{Basic Viewer,PkgBasicViewer}
 \cgalPkgPicture{basic_viewer_logo.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Guillaume Damiand}
+\cgalPkgAuthor{Guillaume Damiand, Mostafa Ashraf}
 \cgalPkgDesc{This package provides interactive visualization for most \cgal packages.
 First, the function `draw()` is provided for each data structure.
 Several data structures can be added to a same graphics scene and visualized simultaneously.
@@ -21,7 +21,7 @@ Finally a \qt widget is provided that can be integrated in the GUI of a user app
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.0}
-\cgalPkgBib{cgal:XXX}
+\cgalPkgBib{cgal:d-bv-24}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
