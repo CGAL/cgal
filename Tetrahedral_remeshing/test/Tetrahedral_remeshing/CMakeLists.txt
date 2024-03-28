@@ -27,21 +27,21 @@ add_test(NAME test_tetrahedral_remeshing_mls COMMAND test_tetrahedral_remeshing_
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
-  create_single_source_cgal_program("test_mesh_and_remesh_polyhedral_domain_with_features.cpp")
-  target_link_libraries(test_mesh_and_remesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("test_mesh_and_remesh_polyhedron_with_features.cpp")
+  target_link_libraries(test_mesh_and_remesh_polyhedron_with_features PUBLIC CGAL::Eigen3_support)
 
   create_single_source_cgal_program("test_mesh_and_remesh_with_sizing_field.cpp")
   target_link_libraries(test_mesh_and_remesh_with_sizing_field PUBLIC CGAL::Eigen3_support)
 
   # with MLS projection
-  add_executable(test_mesh_and_remesh_polyhedral_domain_with_features_mls
-                "test_mesh_and_remesh_polyhedral_domain_with_features.cpp")
-  target_link_libraries(test_mesh_and_remesh_polyhedral_domain_with_features_mls
+  add_executable(test_mesh_and_remesh_polyhedron_with_features_mls
+                "test_mesh_and_remesh_polyhedron_with_features.cpp")
+  target_link_libraries(test_mesh_and_remesh_polyhedron_with_features_mls
                         PUBLIC CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
-  target_compile_definitions(test_mesh_and_remesh_polyhedral_domain_with_features_mls
+  target_compile_definitions(test_mesh_and_remesh_polyhedron_with_features_mls
                              PUBLIC -DCGAL_TET_REMESHING_SMOOTHING_WITH_MLS)
-  add_test(NAME test_mesh_and_remesh_polyhedral_domain_with_features_mls
-           COMMAND test_mesh_and_remesh_polyhedral_domain_with_features_mls)
+  add_test(NAME test_mesh_and_remesh_polyhedron_with_features_mls
+           COMMAND test_mesh_and_remesh_polyhedron_with_features_mls)
 
 
   if(CGAL_ImageIO_USE_ZLIB)
