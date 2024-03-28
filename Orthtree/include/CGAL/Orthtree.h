@@ -926,7 +926,7 @@ public:
     \return the index of the specified descendant node
    */
   template <typename... Indices>
-  Node_index descendant(Node_index node, Indices... indices) {
+  Node_index descendant(Node_index node, Indices... indices) const {
     return recursive_descendant(node, indices...);
   }
 
@@ -940,7 +940,7 @@ public:
     \return the index of the specified node
    */
   template <typename... Indices>
-  Node_index node(Indices... indices) {
+  Node_index node(Indices... indices) const {
     return descendant(root(), indices...);
   }
 
@@ -1261,10 +1261,10 @@ public:
 
 private: // functions :
 
-  Node_index recursive_descendant(Node_index node, std::size_t i) { return child(node, i); }
+  Node_index recursive_descendant(Node_index node, std::size_t i) const { return child(node, i); }
 
   template <typename... Indices>
-  Node_index recursive_descendant(Node_index node, std::size_t i, Indices... remaining_indices) {
+  Node_index recursive_descendant(Node_index node, std::size_t i, Indices... remaining_indices) const {
     return recursive_descendant(child(node, i), remaining_indices...);
   }
 
