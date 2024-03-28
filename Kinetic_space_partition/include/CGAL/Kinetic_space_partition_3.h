@@ -809,8 +809,8 @@ public:
       ib.add_vertex(vtx[i]);
 
     std::size_t num_faces = 0;
-    std::size_t num_vols = 0;
-    std::size_t num_vtx = 0;
+    //std::size_t num_vols = 0;
+    //std::size_t num_vtx = 0;
 
     typename LCC::Dart_descriptor d;
 
@@ -834,7 +834,7 @@ public:
 
       ib.begin_surface();
       //std::cout << v << " inserting:";
-      num_vols++;
+      //num_vols++;
       faces(v, std::back_inserter(faces_of_volume));
 
       typename Intersection_kernel::Point_3 centroid = to_exact(m_partition_nodes[m_volumes[v].first].m_data->volumes()[m_volumes[v].second].centroid);
@@ -927,7 +927,7 @@ public:
           //std::cout << " " << mapped_vertices[v];
           if (!used_vertices[mapped_vertices[v]]) {
             used_vertices[mapped_vertices[v]] = true;
-            num_vtx++;
+            //num_vtx++;
           }
         }
 
@@ -1461,12 +1461,12 @@ private:
     }
 
     // Generate 3D points corresponding to the intersections
-    std::size_t newpts = 0;
+    //std::size_t newpts = 0;
     for (typename CDTplus::Finite_vertices_iterator vit = cdt.finite_vertices_begin(); vit != cdt.finite_vertices_end(); ++vit) {
       if (!vit->info().input) {
         vit->info().point_3 = plane.to_3d(vit->point());
         vit->info().idA2 = vit->info().idB2 = Index(-1, -1);
-        newpts++;
+        //newpts++;
       }
     }
 
@@ -1554,13 +1554,13 @@ private:
           vertices.clear();
         }
 
-    std::size_t newpts = 0;
+    //std::size_t newpts = 0;
     // Generate 3D points corresponding to the intersections
     for (typename CDTplus::Finite_vertices_iterator vit = cdtC.finite_vertices_begin(); vit != cdtC.finite_vertices_end(); ++vit) {
       if (!vit->info().input) {
         vit->info().point_3 = plane.to_3d(vit->point());
         vit->info().idA2 = vit->info().idB2 = Index(-1, -1);
-        newpts++;
+        //newpts++;
       }
     }
 
@@ -1861,7 +1861,7 @@ private:
                                         -axis1.y(), axis1.x(), 0,
                                                  0,         0, 1.0);
 
-    CGAL::Aff_transformation_3<Kernel> T(CGAL::TRANSLATION, -Kernel::Vector_3((bbox[0].x() + bbox[2].x()) * 0.5, (bbox[0].y() + bbox[2].y()) * 0.5, (maxz + minz) * 0.5));
+    CGAL::Aff_transformation_3<Kernel> T(CGAL::TRANSLATION, -Vector_3((bbox[0].x() + bbox[2].x()) * 0.5, (bbox[0].y() + bbox[2].y()) * 0.5, (maxz + minz) * 0.5));
 
     return R * T;
   }
@@ -2059,7 +2059,7 @@ private:
   void adapt_internal_edges(const CDTplus& cdtC, const std::vector<Index> &faces_node, std::vector<std::vector<Constraint_info> >& c) {
     assert(faces_node.size() == c.size());
 
-    std::size_t not_skipped = 0;
+    //std::size_t not_skipped = 0;
 
     for (std::size_t f = 0; f < c.size(); f++) {
       std::vector<Index> faces_of_volume;
@@ -2090,7 +2090,7 @@ private:
         if (vertices_of_edge.size() == 2)
           continue;
 
-        not_skipped++;
+        //not_skipped++;
 
         // Check length of constraint
         // size 2 means it has not been split, thus there are no t-junctions.

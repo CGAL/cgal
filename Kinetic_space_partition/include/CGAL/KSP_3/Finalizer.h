@@ -547,15 +547,11 @@ private:
       edge_constraint_maps[sp] = mesh.template add_property_map<typename Support_plane::Edge_index, bool>("e:keep", true).first;
       F_component_map fcm = mesh.template add_property_map<typename Support_plane::Face_index, typename boost::graph_traits<typename Support_plane::Mesh>::faces_size_type>("f:component", 0).first;
 
-      std::size_t num = 0;
-
       for (auto e : mesh.edges()) {
         IEdge iedge = m_data.iedge(PEdge(sp, e));
 
-        if (is_occupied(iedge, sp)) {
+        if (is_occupied(iedge, sp))
           edge_constraint_maps[sp][e] = true;
-          num++;
-        }
         else
           edge_constraint_maps[sp][e] = false;
       }
@@ -639,7 +635,7 @@ private:
           //Point_3 tn2 = m_data.support_plane(sp).to_3d(mesh.point(mesh.target(h)));
           visited_halfedges[n] = true;
 
-          Face_index fn = mesh.face(n);
+          //Face_index fn = mesh.face(n);
 
           f_other = mesh.face(mesh.opposite(n));
           if (f_other == mesh.null_face())

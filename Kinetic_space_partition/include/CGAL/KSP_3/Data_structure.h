@@ -376,10 +376,11 @@ public:
 
     typename Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
 
+/*
     if (kinetic_interval.size() != 0) {
       int a;
       a = 3;
-    }
+    }*/
 
     Point_2 s = sp.to_2d(from_exact(point_3(m_intersection_graph.source(edge))));
     Point_2 t = sp.to_2d(from_exact(point_3(m_intersection_graph.target(edge))));
@@ -532,12 +533,13 @@ public:
       event.intersection_bary = 1;
     }
 
+/*
     if (kinetic_interval.size() > 4) {
       if (kinetic_interval[2].first > kinetic_interval[1].first) {
         int a;
         a = 2;
       }
-    }
+    }*/
 
     CGAL_assertion(0 <= event.intersection_bary && event.intersection_bary <= 1);
 
@@ -784,8 +786,8 @@ public:
 
           if (common_bbox_plane_idx != std::size_t(-1))
             dump = true;
-            common_bbox_plane_idx = idx;
-          }
+          common_bbox_plane_idx = idx;
+        }
         };
 
       std::set_intersection(
