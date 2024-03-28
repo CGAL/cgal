@@ -44,7 +44,8 @@ namespace Tetrahedral_remeshing
 /**
  * @class Adaptive_remeshing_sizing_field
  * @tparam Tr underlying triangulation type
- * A sizing field, model of `RemeshingSizingField_3`
+ * A sizing field for tetrahedral remeshing, model of `RemeshingSizingField_3`
+ * that keeps the same mesh density throughout the remeshing process.
  */
 template <typename Tr>
 class Adaptive_remeshing_sizing_field
@@ -123,10 +124,16 @@ private:
 
 public:
   /**
-  * Returns size at point `p`
+  * Returns size at point `p`, assumed to be included in the input
+  * subcomplex with dimension `dim` and index `index`.
   */
+#ifdef DOXYGEN_RUNNING
   template <typename Index>
-  FT operator()(const Bare_point& p, const int& dim, const Index& /* i */) const
+  FT operator()(const Bare_point& p, const int& dim, const Index& index) const
+#else
+  template <typename Index>
+  FT operator()(const Bare_point& p, const int& dim, const Index& ) const
+#endif
   {
     const int nb_neighbors = (dim == 3) ? 20 : 6;
 
@@ -174,30 +181,33 @@ public:
   * @brief Adaptive sizing field
   *
   * This static method is a <em>named constructor</em>. It constructs a
-  * sizing field...
+  * sizing field of type `Adaptive_remeshing_sizing_field<Tr>`,
+  * designed to keep the density unchanged throughout the remeshing
+  * process.
   *
   * @returns an `Adaptive_remeshing_sizing_field<Tr>`
   *
   * tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   * \param tr the input triangulation
   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
-  *           among the ones listed below :
+  *           among the ones listed below. All of them must be the same as the ones
+  *           given to `CGAL::tetrahedral_isotropic_remeshing()`.
   *
   *\cgalNamedParamsBegin
   *  \cgalParamNBegin{ edge_is_constrained_map }
-  *    \cgalParamDescription{ }
-  *    \cgalParamDefault{ }
-  *    \cgalParamType{ }
+  *    \cgalParamDescription{a property map containing the constrained-or-not
+  *        status of each edge of `tr`.}
+  *    \cgalParamDefault{a default property map where no edge is constrained}
   *  \cgalParamNEnd
   *  \cgalParamNBegin{ facet_is_constrained_map }
-  *    \cgalParamDescription{ }
-  *    \cgalParamDefault{ }
-  *    \cgalParamType{ }
+  *    \cgalParamDescription{a property map containing the constrained-or-not
+  *        status of each facet of `tr`.}
+  *   \cgalParamDefault{a default property map where no facet is constrained}
   *  \cgalParamNEnd
   *  \cgalParamNBegin{ cell_is_selected_map }
-  *    \cgalParamDescription{ }
-  *    \cgalParamDefault{ }
-  *    \cgalParamType{ }
+  *    \cgalParamDescription{a property map containing the selected
+  *         - or - not status for each cell of `tr` for remeshing.}
+  *    \cgalParamDefault{a default property map where all cells of the domain are selected}
   *  \cgalParamNEnd
   *\cgalNamedParamsEnd
   */
