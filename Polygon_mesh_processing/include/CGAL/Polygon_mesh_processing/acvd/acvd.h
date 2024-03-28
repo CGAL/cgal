@@ -42,6 +42,7 @@
 #include <iostream>
 
 #define CGAL_CLUSTERS_TO_VERTICES_THRESHOLD 0.1
+#define CGAL_TO_QEM_MODIFICATION_THRESHOLD 1e-3
 #define CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD 10000
 
 namespace CGAL {
@@ -84,7 +85,7 @@ void compute_qem_vertex(std::vector<std::vector<typename GT::Vector_3>> cluster_
 }
 
 template <typename GT>
-typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 4, 4> quadric, const typename GT::Point_3& p, int& RankDeficiency)
+typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 4, 4> quadric, const typename GT::Point_3& p, int& rank_deficiency)
 {
   typedef Eigen::Matrix<typename GT::FT, 4, 4> Matrix4d;
   typedef Eigen::Matrix<typename GT::FT, 3, 3> Matrix3d;
@@ -136,7 +137,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
       }
     }
 
-    if ((AbsolutesEigenValues[IndexMax] * invmaxW > 1e-4)
+    if ((AbsolutesEigenValues[IndexMax] * invmaxW > 1e-3)
       && (MaxNumberOfUsedSingularValues > 0))
     {
       // If this is true, then w[i] != 0, so this division is ok.
@@ -150,7 +151,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
       tempMatrix(IndexMax, 0) = 0;
       tempMatrix(IndexMax, 1) = 0;
       tempMatrix(IndexMax, 2) = 0;
-      RankDeficiency++;
+      rank_deficiency++;
     }
 
     // set the eigenvalu to -2 to remove it from subsequent tests
@@ -168,12 +169,79 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
 }
 
 template <typename GT>
-void compute_representative_point(const Eigen::Matrix<typename GT::FT, 4, 4>& quadric, typename GT::Point_3& p, int& RankDeficiency)
+void compute_representative_point(const Eigen::Matrix<typename GT::FT, 4, 4>& quadric, typename GT::Point_3& p, int& rank_deficiency)
 {
   // average point
-  typename GT::Vector_3 displacement = compute_displacement<GT>(quadric, p, RankDeficiency);
+  typename GT::Vector_3 displacement = compute_displacement<GT>(quadric, p, rank_deficiency);
   p = p + displacement;
 }
+
+
+template <typename GT>
+struct QEMClusterData {
+  typename GT::Vector_3 site_sum;
+  typename GT::FT weight_sum;
+  Eigen::Matrix<typename GT::FT, 4, 4> quadric_sum;
+  typename GT::Vector_3 representative_point;
+  typename GT::FT energy;
+
+  size_t nb_vertices;
+
+  QEMClusterData() :
+    site_sum(0, 0, 0),
+    weight_sum(0),
+    representative_point(0, 0, 0),
+    energy(0),
+    nb_vertices(0)
+  {
+    quadric_sum.setZero();
+  }
+
+  void add_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight, const Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
+  {
+    this->site_sum += vertex_position * weight;
+    this->weight_sum += weight;
+    this->quadric_sum += quadric;
+    this->nb_vertices++;
+  }
+
+  void remove_vertex(const typename GT::Vector_3 vertex_position, const typename GT::FT weight, const Eigen::Matrix<typename GT::FT, 4, 4>& quadric)
+  {
+    this->site_sum -= vertex_position * weight;
+    this->weight_sum -= weight;
+    this->quadric_sum -= quadric;
+    this->nb_vertices--;
+  }
+
+  typename GT::FT compute_energy()
+  {
+    auto dot_product = GT().compute_scalar_product_3_object();
+
+    this->energy = (this->representative_point).squared_length() * this->weight_sum
+                   - 2 * dot_product(this->representative_point, this->site_sum);
+    return this->energy;
+  }
+
+  typename GT::Vector_3 compute_representative(bool qem)
+  {
+    if (this->weight_sum > 0)
+    {
+      if (qem)
+      {
+        int rank_deficiency = 0;
+        typename GT::Point_3 point = { this->representative_point.x(), this->representative_point.y(), this->representative_point.z() };
+        compute_representative_point<GT>(this->quadric_sum, point, rank_deficiency);
+        this->representative_point = { point.x(), point.y(), point.z() };
+      }
+      else
+        this->representative_point = (this->site_sum) / this->weight_sum;
+
+      return this->representative_point;
+    }
+    else
+      return typename GT::Vector_3(0, 0, 0);
+  }
+};
 
 template <typename GT>
 struct IsotropicClusterData {
@@ -300,7 +368,6 @@ std::pair<
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor Halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor Vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor Face_descriptor;
-  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<CGAL::IO::Color> >::type VertexColorMap;
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type VertexVisitedMap;
   typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
@@ -460,7 +527,7 @@ std::pair<
 
           // add all halfedges around v1 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
-            //if (hd != hi && hd != opposite(hi, pmesh))
+            //TODO: if (hd != hi && hd != opposite(hi, pmesh))
             clusters_edges_new.push(hd);
           nb_modifications++;
         }
@@ -474,7 +541,7 @@ std::pair<
 
           // add all halfedges around v2 except hi to the queue
           for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
-            //if (hd != hi && hd != opposite(hi, pmesh))
+            //TODO: if (hd != hi && hd != opposite(hi, pmesh))
             clusters_edges_new.push(hd);
           nb_modifications++;
         }
@@ -518,7 +585,7 @@ std::pair<
 
             // add all halfedges around v2 except hi to the queue
             for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
-              //if (hd != hi && hd != opposite(hi, pmesh))
+              //TODO: if (hd != hi && hd != opposite(hi, pmesh))
               clusters_edges_new.push(hd);
             nb_modifications++;
           }
@@ -536,7 +603,7 @@ std::pair<
 
             // add all halfedges around v1 except hi to the queue
             for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
-              //if (hd != hi && hd != opposite(hi, pmesh))
+              //TODO: if (hd != hi && hd != opposite(hi, pmesh))
               clusters_edges_new.push(hd);
             nb_modifications++;
           }
@@ -634,25 +701,9 @@ std::pair<
         }
       }
     }
+    std::cout << "# nb_disconnected: " << nb_disconnected << "\n";
 
   } while (nb_disconnected > 0);
-
-
-  VertexColorMap vcm = get(CGAL::dynamic_vertex_property_t<CGAL::IO::Color>(), pmesh);
-
-  // // frequency of each cluster
-  // cluster_frequency = std::vector<int>(nb_clusters, 0);
-
-  // for (Vertex_descriptor vd : vertices(pmesh))
-  // {
-  //   int c = get(vertex_cluster_pmap, vd);
-  //   cluster_frequency[c]++;
-  //   CGAL::IO::Color color(255 - (c * 255 / nb_clusters), (c * c % 7) * 255 / 7, (c * c * c % 31) * 255 / 31);
-  //   put(vcm, vd, color);
-  // }
-
-  // std::string name = std::to_string(nb_clusters) + ".off";
-  // CGAL::IO::write_OFF(name, pmesh, CGAL::parameters::vertex_color_map(vcm));
 
   /// Construct new Mesh
   std::vector<int> valid_cluster_map(nb_clusters, -1);
@@ -726,10 +777,535 @@ std::pair<
     {
       if (clusters[i].weight_sum > 0)
       {
-        int RankDeficiency = 0;
-        compute_representative_point<GT>(cluster_quadrics[i], points[valid_index], RankDeficiency);
+        int rank_deficiency = 0;
+        compute_representative_point<GT>(cluster_quadrics[i], points[valid_index], rank_deficiency);
         valid_index++;
       }
+    }
+  }
+
+  // extract boundary cycles
+  std::vector<Halfedge_descriptor> border_hedges;
+  extract_boundary_cycles(pmesh, std::back_inserter(border_hedges));
+
+  // loop over boundary loops
+  for (Halfedge_descriptor hd : border_hedges)
+  {
+    Halfedge_descriptor hd1 = hd;
+
+    int cb_first = -1;
+
+    do
+    {
+      // 1- get the target and source vertices vt, vs
+      // 2- if the target and source vertices are in different clusters, create a new vertex vb between them vb = (vt + vs) / 2
+      // 3- make a new face with the new vertex vb and the centers of the clusters of vt and vs
+      // 4- also make a new face with vb, the next vb, and the center of the cluster of vt
+
+      Vertex_descriptor vt = target(hd1, pmesh);
+      Vertex_descriptor vs = source(hd1, pmesh);
+
+      int ct = get(vertex_cluster_pmap, vt);
+      int cs = get(vertex_cluster_pmap, vs);
+
+      if (ct != cs)
+      {
+        typename GT::Point_3 vt_p = get(vpm, vt);
+        typename GT::Point_3 vs_p = get(vpm, vs);
+        typename GT::Vector_3 vt_v(vt_p.x(), vt_p.y(), vt_p.z());
+        typename GT::Vector_3 vs_v(vs_p.x(), vs_p.y(), vs_p.z());
+
+        typename GT::Vector_3 vb_v = (vt_v + vs_v) / 2;
+        typename GT::Point_3 vb_p(vb_v.x(), vb_v.y(), vb_v.z());
+
+        points.push_back(vb_p);
+
+        int cb = points.size() - 1;
+
+        if (cb_first == -1)
+          cb_first = cb;
+
+        int ct_mapped = valid_cluster_map[ct], cs_mapped = valid_cluster_map[cs];
+
+        if (ct_mapped != -1 && cs_mapped != -1)
+        {
+          std::vector<int>
+          polygon = {ct_mapped, cb, cs_mapped};
+          polygons.push_back(polygon);
+
+          // after the loop, the last cb+1 should be modified to the first cb
+          polygon = {cb, ct_mapped, cb + 1};
+          polygons.push_back(polygon);
+        }
+      }
+      hd1 = next(hd1, pmesh);
+    } while (hd1 != hd);
+    polygons[polygons.size() - 1][2] = cb_first;
+  }
+
+  // create a triangle for each face with all vertices in 3 different clusters
+  for (Face_descriptor fd : faces(pmesh))
+  {
+    Halfedge_descriptor hd1 = halfedge(fd, pmesh);
+    Vertex_descriptor v1 = source(hd1, pmesh);
+    Halfedge_descriptor hd2 = next(hd1, pmesh);
+    Vertex_descriptor v2 = source(hd2, pmesh);
+    Halfedge_descriptor hd3 = next(hd2, pmesh);
+    Vertex_descriptor v3 = source(hd3, pmesh);
+
+    int c1 = get(vertex_cluster_pmap, v1);
+    int c2 = get(vertex_cluster_pmap, v2);
+    int c3 = get(vertex_cluster_pmap, v3);
+
+    if (c1 != c2 && c1 != c3 && c2 != c3)
+    {
+      int c1_mapped = valid_cluster_map[c1], c2_mapped = valid_cluster_map[c2], c3_mapped = valid_cluster_map[c3];
+      if (c1_mapped != -1 && c2_mapped != -1 && c3_mapped != -1)
+      {
+        std::vector<int> polygon = {c1_mapped, c2_mapped, c3_mapped};
+        polygons.push_back(polygon);
+      }
+    }
+  }
+
+  orient_polygon_soup(points, polygons);
+
+  return std::make_pair(points, polygons);
+}
+
+
+template <typename TriangleMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
+std::pair<
+  std::vector<typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Point_3>,
+  std::vector<std::vector<int>>
+> acvd_qem(
+    TriangleMesh& pmesh,
+    const int nb_clusters,
+    const NamedParameters& np = parameters::default_values()
+  )
+{
+  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GT;
+  typedef typename Eigen::Matrix<typename GT::FT, 4, 4> Matrix4x4;
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Vertex_position_map;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor Halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor Vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor Face_descriptor;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<int> >::type VertexClusterMap;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<bool> >::type VertexVisitedMap;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<typename GT::FT> >::type VertexWeightMap;
+  typedef typename boost::property_map<TriangleMesh, CGAL::dynamic_vertex_property_t<Matrix4x4> >::type VertexQuadricMap;
+  typedef Constant_property_map<Vertex_descriptor, Principal_curvatures_and_directions<GT>> Default_principal_map;
+  typedef typename internal_np::Lookup_named_param_def<internal_np::vertex_principal_curvatures_and_directions_map_t,
+    NamedParameters,
+    Default_principal_map>::type Vertex_principal_curvatures_and_directions_map;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+  using parameters::is_default_parameter;
+
+  Vertex_position_map vpm = choose_parameter(get_parameter(np, CGAL::vertex_point),
+    get_property_map(CGAL::vertex_point, pmesh));
+
+  // get curvature related parameters
+  const typename GT::FT gradation_factor = choose_parameter(get_parameter(np, internal_np::gradation_factor), 0);
+  const Vertex_principal_curvatures_and_directions_map vpcd_map =
+    choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map),
+      Default_principal_map());
+
+  // if adaptive clustering
+  if (gradation_factor > 0 &&
+    is_default_parameter<NamedParameters, internal_np::vertex_principal_curvatures_and_directions_map_t>::value)
+    interpolated_corrected_curvatures(pmesh, parameters::vertex_principal_curvatures_and_directions_map(vpcd_map));
+
+  CGAL_precondition(CGAL::is_triangle_mesh(pmesh));
+
+  // TODO: copy the mesh in order to not modify the original mesh
+  //TriangleMesh pmesh = pmesh_org;
+  int nb_vertices = num_vertices(pmesh);
+
+
+  // For remeshing, we might need to subdivide the mesh before clustering
+  // This shoould always hold: nb_clusters <= nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD
+  // So do the following till the condition is met
+  while (nb_clusters > nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD)
+  {
+    typename GT::FT curr_factor = nb_clusters / (nb_vertices * CGAL_CLUSTERS_TO_VERTICES_THRESHOLD);
+    int subdivide_steps = (std::max)((int)ceil(log(curr_factor) / log(4)), 0);
+
+    if (subdivide_steps > 0)
+    {
+      if (gradation_factor == 0) // no adaptive clustering
+        Subdivision_method_3::Upsample_subdivision(
+          pmesh,
+          CGAL::parameters::number_of_iterations(subdivide_steps)
+        );
+      else // adaptive clustering
+        upsample_subdivision_property(
+          pmesh,
+          CGAL::parameters::number_of_iterations(subdivide_steps).vertex_principal_curvatures_and_directions_map(vpcd_map)
+        );
+      vpm = get_property_map(CGAL::vertex_point, pmesh);
+      nb_vertices = num_vertices(pmesh);
+    }
+  }
+
+  // creating needed property maps
+  VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
+  VertexVisitedMap vertex_visited_pmap = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh);
+  VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
+  VertexQuadricMap vertex_quadric_pmap = get(CGAL::dynamic_vertex_property_t<Matrix4x4>(), pmesh);
+
+  std::vector<QEMClusterData<GT>> clusters(nb_clusters);
+  std::queue<Halfedge_descriptor> clusters_edges_active;
+  std::queue<Halfedge_descriptor> clusters_edges_new;
+
+  // initialize vertex weights and clusters
+  for (Vertex_descriptor vd : vertices(pmesh))
+  {
+    put(vertex_weight_pmap, vd, 0);
+    put(vertex_visited_pmap, vd, false);
+    put(vertex_cluster_pmap, vd, -1);
+
+    Matrix4x4 q;  q.setZero();
+    put(vertex_quadric_pmap, vd, q);
+  }
+
+  // compute vertex weights (dual area), and quadrics
+  typename GT::FT weight_avg = 0;
+  for (Face_descriptor fd : faces(pmesh))
+  {
+    typename GT::FT weight = abs(CGAL::Polygon_mesh_processing::face_area(fd, pmesh)) / 3;
+
+    // get points of the face
+    Halfedge_descriptor hd = halfedge(fd, pmesh);
+    typename GT::Point_3 pi = get(vpm, source(hd, pmesh));
+    typename GT::Vector_3 vp1(pi.x(), pi.y(), pi.z());
+    hd = next(hd, pmesh);
+    typename GT::Point_3 pj = get(vpm, source(hd, pmesh));
+    typename GT::Vector_3 vp2(pj.x(), pj.y(), pj.z());
+    hd = next(hd, pmesh);
+    typename GT::Point_3 pk = get(vpm, source(hd, pmesh));
+    typename GT::Vector_3 vp3(pk.x(), pk.y(), pk.z());
+
+    // compute quadric for the face
+    Matrix4x4 face_quadric;
+    compute_qem_face<GT>(vp1, vp2, vp3, face_quadric);
+
+    for (Vertex_descriptor vd : vertices_around_face(halfedge(fd, pmesh), pmesh))
+    {
+      typename GT::FT vertex_weight = get(vertex_weight_pmap, vd);
+      Matrix4x4 vertex_quadric = get(vertex_quadric_pmap, vd);
+
+      if (gradation_factor == 0) // no adaptive clustering
+        vertex_weight += weight;
+      else // adaptive clustering
+      {
+        typename GT::FT k1 = get(vpcd_map, vd).min_curvature;
+        typename GT::FT k2 = get(vpcd_map, vd).max_curvature;
+        typename GT::FT k_sq = (k1 * k1 + k2 * k2);
+        vertex_weight += weight * pow(k_sq, gradation_factor / 2.0);  // /2.0 because k_sq is squared
+      }
+
+      weight_avg += vertex_weight;
+      put(vertex_weight_pmap, vd, vertex_weight);
+
+      vertex_quadric += face_quadric;
+      put(vertex_quadric_pmap, vd, vertex_quadric);
+    }
+  }
+  weight_avg /= nb_vertices;
+
+  // clamp the weights up and below by a ratio (like 10,000) * avg_weights
+  for (Vertex_descriptor vd : vertices(pmesh))
+  {
+    typename GT::FT vertex_weight = get(vertex_weight_pmap, vd);
+    if (vertex_weight > CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg)
+      put(vertex_weight_pmap, vd, CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg);
+    else if (vertex_weight < 1.0 / CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg)
+      put(vertex_weight_pmap, vd, 1.0 / CGAL_WEIGHT_CLAMP_RATIO_THRESHOLD * weight_avg);
+  }
+
+  // randomly initialize clusters
+  for (int ci = 0; ci < nb_clusters; ci++)
+  {
+    int vi;
+    Vertex_descriptor vd;
+    do {
+      vi = CGAL::get_default_random().get_int(0, num_vertices(pmesh));
+      vd = *(vertices(pmesh).begin() + vi);
+    } while (get(vertex_cluster_pmap, vd) != -1);
+
+    put(vertex_cluster_pmap, vd, ci);
+    typename GT::Point_3 vp = get(vpm, vd);
+    typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
+    clusters[ci].add_vertex(vpv, get(vertex_weight_pmap, vd), get(vertex_quadric_pmap, vd));
+
+    for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
+      clusters_edges_active.push(hd);
+  }
+
+  // the energy minimization loop (clustering loop)
+  int nb_modifications = 0;
+  int nb_disconnected = 0;
+  int nb_qem_iters = 0;
+  // Turned on once nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD
+  bool qem_energy_minimization = false;
+  bool just_switched_to_qem = false;
+  do
+  {
+    nb_disconnected = 0;
+    do
+    {
+      nb_modifications = 0;
+
+      while (!clusters_edges_active.empty()) {
+        Halfedge_descriptor hi = clusters_edges_active.front();
+        clusters_edges_active.pop();
+
+        Vertex_descriptor v1 = source(hi, pmesh);
+        Vertex_descriptor v2 = target(hi, pmesh);
+
+        int c1 = get(vertex_cluster_pmap, v1);
+        int c2 = get(vertex_cluster_pmap, v2);
+
+        if (c1 == -1)
+        {
+          // expand cluster c2 (add v1 to c2)
+          put(vertex_cluster_pmap, v1, c2);
+          typename GT::Point_3 vp1 = get(vpm, v1);
+          typename GT::Vector_3 vpv(vp1.x(), vp1.y(), vp1.z());
+          clusters[c2].add_vertex(vpv, get(vertex_weight_pmap, v1), get(vertex_quadric_pmap, v1));
+
+          // add all halfedges around v1 except hi to the queue
+          for (Halfedge_descriptor hd : halfedges_around_source(v1, pmesh))
+            //TODO: if (hd != hi && hd != opposite(hi, pmesh))
+            clusters_edges_new.push(hd);
+          nb_modifications++;
+        }
+        else if (c2 == -1)
+        {
+          // expand cluster c1 (add v2 to c1)
+          put(vertex_cluster_pmap, v2, c1);
+          typename GT::Point_3 vp2 = get(vpm, v2);
+          typename GT::Vector_3 vpv(vp2.x(), vp2.y(), vp2.z());
+          clusters[c1].add_vertex(vpv, get(vertex_weight_pmap, v2), get(vertex_quadric_pmap, v2));
+
+          // add all halfedges around v2 except hi to the queue
+          for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
+            //TODO: if (hd != hi && hd != opposite(hi, pmesh))
+            clusters_edges_new.push(hd);
+          nb_modifications++;
+        }
+        else if (c1 == c2)
+        {
+          clusters_edges_new.push(hi);
+        }
+        else
+        {
+          // compare the energy of the 3 cases
+          typename GT::Point_3 vp1 = get(vpm, v1);
+          typename GT::Vector_3 vpv1(vp1.x(), vp1.y(), vp1.z());
+          typename GT::Point_3 vp2 = get(vpm, v2);
+          typename GT::Vector_3 vpv2(vp2.x(), vp2.y(), vp2.z());
+          typename GT::FT v1_weight = get(vertex_weight_pmap, v1);
+          typename GT::FT v2_weight = get(vertex_weight_pmap, v2);
+          Matrix4x4 v1_qem = get (vertex_quadric_pmap, v1);
+          Matrix4x4 v2_qem = get (vertex_quadric_pmap, v2);
+
+          clusters[c1].compute_representative(qem_energy_minimization);
+          clusters[c2].compute_representative(qem_energy_minimization);
+          typename GT::FT e_no_change = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+
+          clusters[c1].remove_vertex(vpv1, v1_weight, v1_qem);
+          clusters[c2].add_vertex(vpv1, v1_weight, v1_qem);
+
+          clusters[c1].compute_representative(qem_energy_minimization);
+          clusters[c2].compute_representative(qem_energy_minimization);
+          typename GT::FT e_v1_to_c2 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+
+          // reset to no change
+          clusters[c1].add_vertex(vpv1, v1_weight, v1_qem);
+          clusters[c2].remove_vertex(vpv1, v1_weight, v1_qem);
+
+          // The effect of the following should always be reversed after the comparison
+          clusters[c2].remove_vertex(vpv2, v2_weight, v2_qem);
+          clusters[c1].add_vertex(vpv2, v2_weight, v2_qem);
+
+          clusters[c1].compute_representative(qem_energy_minimization);
+          clusters[c2].compute_representative(qem_energy_minimization);
+          typename GT::FT e_v2_to_c1 = clusters[c1].compute_energy() + clusters[c2].compute_energy();
+
+          if (e_v2_to_c1 < e_no_change && e_v2_to_c1 < e_v1_to_c2 && clusters[c2].nb_vertices > 0) // > 0 as 1 vertex was removed from c2
+          {
+            // move v2 to c1
+            put(vertex_cluster_pmap, v2, c1);
+
+            // cluster data is already updated
+
+            // add all halfedges around v2 except hi to the queue
+            for (Halfedge_descriptor hd : halfedges_around_source(v2, pmesh))
+              //TODO: if (hd != hi && hd != opposite(hi, pmesh))
+              clusters_edges_new.push(hd);
+            nb_modifications++;
+
+            clusters[c1].compute_representative(qem_energy_minimization);
+            clusters[c2].compute_representative(qem_energy_minimization);
+          }
+          else if (e_v1_to_c2 < e_no_change && clusters[c1].nb_vertices > 2) // > 2 as 1 vertex was added to c1
+          {
+
+            // move v1 to c2
+            put(vertex_cluster_pmap, v1, c2);
+
+            // need to reset cluster data and then update
+            clusters[c2].add_vertex(vpv2, v2_weight, v2_qem);
+            clusters[c1].remove_vertex(vpv2, v2_weight, v2_qem);
+
+            clusters[c1].remove_vertex(vpv1, v1_weight, v1_qem);
+            clusters[c2].add_vertex(vpv1, v1_weight, v1_qem);
+
+            // add all halfedges around v1 except hi to the queue
+            for (Halfedge_descriptor hd : halfedges_around_source(halfedge(v1, pmesh), pmesh))
+              //TODO: if (hd != hi && hd != opposite(hi, pmesh))
+              clusters_edges_new.push(hd);
+            nb_modifications++;
+
+            clusters[c1].compute_representative(qem_energy_minimization);
+            clusters[c2].compute_representative(qem_energy_minimization);
+          }
+          else
+          {
+            // no change but need to reset cluster data
+            clusters[c2].add_vertex(vpv2, v2_weight, v2_qem);
+            clusters[c1].remove_vertex(vpv2, v2_weight, v2_qem);
+
+            clusters_edges_new.push(hi);
+
+            clusters[c1].compute_representative(qem_energy_minimization);
+            clusters[c2].compute_representative(qem_energy_minimization);
+          }
+        }
+      }
+      std::cout << "# Modifications: " << nb_modifications << "\n";
+
+      //if(qem_energy_minimization)
+      //  just_switched_to_qem = false;
+      if (nb_qem_iters == 10)
+        break;
+
+      if (nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD)
+      {
+        qem_energy_minimization = true;
+        //just_switched_to_qem = true;
+      }
+
+      if (qem_energy_minimization)
+        nb_qem_iters++;
+      clusters_edges_active.swap(clusters_edges_new);
+    } while (nb_modifications > 0 /*&& !just_switched_to_qem*/);
+
+    // Disconnected clusters handling
+    // the goal is to delete clusters with multiple connected components and only keep the largest connected component of each cluster
+    // For each cluster, do a BFS from a vertex in the cluster
+
+    std::vector<std::vector<std::vector<Vertex_descriptor>>> cluster_components(nb_clusters, std::vector<std::vector<Vertex_descriptor>>());
+    std::queue<Vertex_descriptor> vertex_queue;
+
+    // loop over vertices to compute cluster components
+    for (Vertex_descriptor vd : vertices(pmesh))
+    {
+      if (get(vertex_visited_pmap, vd)) continue;
+      int c = get(vertex_cluster_pmap, vd);
+      if (c != -1)
+      {
+        cluster_components[c].push_back(std::vector<Vertex_descriptor>());
+        int component_i = cluster_components[c].size() - 1;
+
+        vertex_queue.push(vd);
+        put(vertex_visited_pmap, vd, true);
+        while (!vertex_queue.empty())
+        {
+          Vertex_descriptor v = vertex_queue.front();
+          vertex_queue.pop();
+          cluster_components[c][component_i].push_back(v);
+
+          for (Halfedge_descriptor hd : halfedges_around_source(v, pmesh))
+          {
+            Vertex_descriptor v2 = target(hd, pmesh);
+            int c2 = get(vertex_cluster_pmap, v2);
+            if (c2 == c && !get(vertex_visited_pmap, v2))
+            {
+              vertex_queue.push(v2);
+              put(vertex_visited_pmap, v2, true);
+            }
+          }
+        }
+      }
+    }
+
+    // loop over clusters to delete disconnected components except the largest one
+    for (int c = 0; c < nb_clusters; c++)
+    {
+      if (cluster_components[c].size() <= 1) continue; // only one component, no need to do anything
+      nb_disconnected++;
+      std::size_t max_component_size = 0;
+      std::size_t max_component_index = -1;
+      for (std::size_t component_i = 0; component_i < cluster_components[c].size(); component_i++)
+      {
+        if (cluster_components[c][component_i].size() > max_component_size)
+        {
+          max_component_size = cluster_components[c][component_i].size();
+          max_component_index = component_i;
+        }
+      }
+      // set cluster to -1 for all components except the largest one
+      for (std::size_t component_i = 0; component_i < cluster_components[c].size(); component_i++)
+      {
+        if (component_i != max_component_index)
+        {
+          for (Vertex_descriptor vd : cluster_components[c][component_i])
+          {
+            put(vertex_cluster_pmap, vd, -1);
+            // remove vd from cluster c
+            typename GT::Point_3 vp = get(vpm, vd);
+            typename GT::Vector_3 vpv(vp.x(), vp.y(), vp.z());
+            clusters[c].remove_vertex(vpv, get(vertex_weight_pmap, vd), get(vertex_quadric_pmap, vd));
+            // add all halfedges around v except hi to the queue
+            for (Halfedge_descriptor hd : halfedges_around_source(vd, pmesh))
+            {
+              // add hd to the queue if its target is not in the same cluster
+              Vertex_descriptor v2 = target(hd, pmesh);
+              int c2 = get(vertex_cluster_pmap, v2);
+              if (c2 != c)
+                clusters_edges_new.push(hd);
+            }
+          }
+        }
+      }
+    }
+
+    std::cout << "# nb_disconnected: " << nb_disconnected << "\n";
+  } while (nb_disconnected > 0);
+
+  /// Construct new Mesh
+  std::vector<int> valid_cluster_map(nb_clusters, -1);
+  std::vector<typename GT::Point_3> points;
+
+  std::vector<std::vector<int>> polygons;
+  TriangleMesh simplified_mesh;
+
+
+  for (int i = 0; i < nb_clusters; i++)
+  {
+    if (clusters[i].weight_sum > 0)
+    {
+      valid_cluster_map[i] = points.size();
+      typename GT::Vector_3 cluster_representative = clusters[i].representative_point;
+
+      typename GT::Point_3 cluster_representative_p(cluster_representative.x(), cluster_representative.y(), cluster_representative.z());
+      points.push_back(cluster_representative_p);
+
     }
   }
 
@@ -843,6 +1419,24 @@ std::pair<
     np
   );
 }
+
+template <typename TriangleMesh,
+  typename NamedParameters = parameters::Default_named_parameters>
+std::pair<
+  std::vector<typename GetGeomTraits<TriangleMesh, NamedParameters>::type::Point_3>,
+  std::vector<std::vector<int>>
+>  acvd_qem_simplification_polygon_soup(
+    TriangleMesh& tmesh,
+    const int& nb_vertices,
+    const NamedParameters& np = parameters::default_values()
+  )
+{
+  return internal::acvd_qem<TriangleMesh, NamedParameters>(
+    tmesh,
+    nb_vertices,
+    np
+  );
+}
 #endif
 
 /**
@@ -915,6 +1509,28 @@ TriangleMesh acvd_isotropic_remeshing(
   )
 {
   auto ps = acvd_isotropic_simplification_polygon_soup(
+    tmesh,
+    nb_vertices,
+    np
+  );
+
+  CGAL_assertion(is_polygon_soup_a_polygon_mesh(ps.second));
+
+  TriangleMesh simplified_mesh;
+  polygon_soup_to_polygon_mesh(ps.first, ps.second, simplified_mesh);
+  return simplified_mesh;
+}
+
+
+template <typename TriangleMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
+TriangleMesh acvd_qem_remeshing(
+    TriangleMesh& tmesh,
+    const int& nb_vertices,
+    const NamedParameters& np = parameters::default_values()
+  )
+{
+  auto ps = acvd_qem_simplification_polygon_soup(
     tmesh,
     nb_vertices,
     np

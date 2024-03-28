@@ -32,54 +32,62 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  /// Uniform Isotropic ACVD
+  ///// Uniform Isotropic ACVD
 
-  std::cout << "Uniform Isotropic ACVD ...." << std::endl;
+  //std::cout << "Uniform Isotropic ACVD ...." << std::endl;
+  //auto acvd_mesh = PMP::acvd_isotropic_remeshing(smesh, nb_clusters);
+  //CGAL::IO::write_OFF("fandisk_acvd_3000.off", acvd_mesh);
 
-  auto acvd_mesh = PMP::acvd_isotropic_remeshing(smesh, nb_clusters);
-  CGAL::IO::write_OFF("fandisk_acvd.off", acvd_mesh);
+  //std::cout << "Completed" << std::endl;
 
-  std::cout << "Completed" << std::endl;
+  //// With Post-Processing QEM Optimization
 
-  // With Post-Processing QEM Optimization
+  //std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
 
-  std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
+  //auto acvd_mesh_qem_pp = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::post_processing_qem(true));
+  //CGAL::IO::write_OFF("fandisk_acvd_qem-pp_3000.off", acvd_mesh_qem_pp);
 
-  auto acvd_mesh_qem = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::post_processing_qem(true));
-  CGAL::IO::write_OFF("fandisk_acvd_qem-pp.off", acvd_mesh_qem);
+  //std::cout << "Completed" << std::endl;
+
+  // With QEM Energy Minimization
+
+  std::cout << "Uniform QEM ACVD ...." << std::endl;
+
+  auto acvd_mesh_qem = PMP::acvd_qem_remeshing(smesh, nb_clusters);
+  CGAL::IO::write_OFF("fandisk_acvd_qem_3000.off", acvd_mesh_qem);
 
   std::cout << "Completed" << std::endl;
 
   /// Adaptive Isotropic ACVD
 
-  //std::cout << "Adaptive Isotropic ACVD ...." << std::endl;
+  /*std::cout << "Adaptive Isotropic ACVD ...." << std::endl;
 
-  //const double gradation_factor = (argc > 3) ? atof(argv[3]) : 1;
+  const double gradation_factor = (argc > 3) ? atof(argv[3]) : 2;
 
-  //bool created = false;
-  //Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
-  //  principal_curvatures_and_directions_map;
+  bool created = false;
+  Surface_Mesh::Property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
+   principal_curvatures_and_directions_map;
 
-  //boost::tie(principal_curvatures_and_directions_map, created) =
-  //  smesh.add_property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
-  //  ("v:principal_curvatures_and_directions_map", { 0, 0,
-  //      Epic_kernel::Vector_3(0,0,0),
-  //      Epic_kernel::Vector_3(0,0,0) });
-  //assert(created);
+  boost::tie(principal_curvatures_and_directions_map, created) =
+   smesh.add_property_map<vertex_descriptor, PMP::Principal_curvatures_and_directions<Epic_kernel>>
+   ("v:principal_curvatures_and_directions_map", { 0, 0,
+       Epic_kernel::Vector_3(0,0,0),
+       Epic_kernel::Vector_3(0,0,0) });
+  assert(created);
 
-  //PMP::interpolated_corrected_curvatures(smesh, CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map));
+  PMP::interpolated_corrected_curvatures(smesh, CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map));
 
-  //auto adaptive_acvd_mesh =
-  //  PMP::acvd_isotropic_remeshing(
-  //    smesh,
-  //    nb_clusters,
-  //    CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
-  //      .gradation_factor(gradation_factor)
-  //  );
+  auto adaptive_acvd_mesh =
+   PMP::acvd_isotropic_remeshing(
+     smesh,
+     nb_clusters,
+     CGAL::parameters::vertex_principal_curvatures_and_directions_map(principal_curvatures_and_directions_map)
+       .gradation_factor(gradation_factor)
+   );
 
-  //CGAL::IO::write_OFF("acvd_mesh_adaptive.off", adaptive_acvd_mesh);
+  CGAL::IO::write_OFF("fandisk_acvd_adaptive_3000.off", adaptive_acvd_mesh);
 
-  std::cout << "Completed" << std::endl;
+  std::cout << "Completed" << std::endl;*/
 
   return 0;
 }
