@@ -112,8 +112,7 @@ public:
     gs.clear();
 
     for (auto const& p: m_mpwh.polygons_with_holes()) {
-      CGAL::IO::Color c(rand()%255,rand()%255,rand()%255);
-      gs.face_begin(c);
+      gs.face_begin(get_random_color(get_default_random()));
 
       const Pnt* point_in_face;
       const auto& outer_boundary = p.outer_boundary();
