@@ -24,11 +24,22 @@
 
 #include <CGAL/AABB_traits_3.h>
 
+/// \file AABB_traits.h
+
+
 namespace CGAL
 {
 
+
+
+/// \addtogroup PkgAABBTreeRef
+/// @{
+
+/// template alias for backward compatibility
 template<typename GeomTraits, typename AABBPrimitive, typename BboxMap = Default>
 using AABB_traits = AABB_traits_3<GeomTraits, AABBPrimitive, BboxMap>;
+
+///@}
 
 } // namespace CGAL
 
