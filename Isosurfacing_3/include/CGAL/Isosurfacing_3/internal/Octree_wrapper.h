@@ -153,7 +153,7 @@ public:
     std::set<Vertex_handle> leaf_vertices_set;
     for(Node_index node_index : octree_.traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(octree_)))
     {
-      const auto& coords_uniform = uniform_coordinates(node_index);
+      const Uniform_coords& coords_uniform = uniform_coordinates(node_index);
       // write all leaf nodes in a set
       leaf_voxels_set.insert(lex_index(coords_uniform[0], coords_uniform[1], coords_uniform[2], max_depth_));
 
@@ -161,14 +161,14 @@ public:
       for(int i=0; i<Tables::N_VERTICES; ++i)
       {
         Uniform_coords vuc = vertex_uniform_coordinates(node_index, i);
-        const auto lex = lex_index(vuc[0], vuc[1], vuc[2], max_depth_);
+        const std::size_t lex = lex_index(vuc[0], vuc[1], vuc[2], max_depth_);
         leaf_vertices_set.insert(lex);
       }
 
       // write all leaf edges in a set
-      const auto& coords_global = octree_.global_coordinates(node_index);
-      const auto depth = octree_.depth(node_index);
-      const auto df = depth_factor(depth);
+      const Uniform_coords& coords_global = octree_.global_coordinates(node_index);
+      const std::size_t depth = octree_.depth(node_index);
+      const std::size_t df = depth_factor(depth);
       for(const auto& edge_voxels : Tables::edge_to_voxel_neighbor)
       {
         bool are_all_voxels_leafs = true;
@@ -270,7 +270,7 @@ public:
 
   Uniform_coords uniform_coordinates(Node_index node_index) const
   {
-    auto coords = octree_.global_coordinates(node_index);
+    Uniform_coords coords = octree_.global_coordinates(node_index);
     const std::size_t df = depth_factor(octree_.depth(node_index));
     for(int i=0; i<3; ++i)
       coords[i] *= df;
@@ -280,7 +280,7 @@ public:
 
   std::array<Point_3, 8> node_points(Node_index node_index) const
   {
-    auto coords = octree_.global_coordinates(node_index);
+    const Uniform_coords& coords = octree_.global_coordinates(node_index);
     const std::size_t df = depth_factor(octree_.depth(node_index));
 
     const FT x0 = offset_x_ + coords[0] * df * hx_;
@@ -328,12 +328,12 @@ public:
   Uniform_coords vertex_uniform_coordinates(Node_index node_index,
                                             const typename Octree::Local_coordinates local_coords) const
   {
-    const auto node_coords = octree_.global_coordinates(node_index);
-    auto v_coords = node_coords;
+    const Uniform_coords& node_coords = octree_.global_coordinates(node_index);
+    Uniform_coords v_coords = node_coords;
     for(int i=0; i<3; ++i)
       v_coords[i] += std::size_t(local_coords[i]);
 
-    const auto df = depth_factor(octree_.depth(node_index));
+    const std::size_t df = depth_factor(octree_.depth(node_index));
     for(int i=0; i<3; ++i)
       v_coords[i] *= df;
 
@@ -462,8 +462,8 @@ public:
     std::tie(i, j, k) = ijk_index(vox, max_depth_);
     Node_index node_index = get_node(i, j, k);
 
-    const auto& coords_global = octree_.global_coordinates(node_index);
-    const auto& depth = octree_.depth(node_index);
+    const Uniform_coords& coords_global = octree_.global_coordinates(node_index);
+    const std::size_t depth = octree_.depth(node_index);
 
     std::array<Edge_handle, internal::Cube_table::N_EDGES> edges;
     for(std::size_t e_id=0; e_id<edges.size(); ++e_id)
@@ -482,13 +482,13 @@ public:
     std::size_t i, j, k;
     std::tie(i, j, k) = ijk_index(vox, max_depth_);
     Node_index node_index = get_node(i, j, k);
-    const auto& df = depth_factor(octree_.depth(node_index));
+    const std::size_t df = depth_factor(octree_.depth(node_index));
 
     std::array<Vertex_handle, 8> v;
     for(int v_id=0; v_id<Tables::N_VERTICES; ++v_id)
     {
-      const auto& l = Tables::local_vertex_position[v_id];
-      const auto lex = lex_index(i + df * l[0], j + df * l[1], k + df * l[2], max_depth_);
+      const int* l = Tables::local_vertex_position[v_id];
+      const std::size_t lex = lex_index(i + df * l[0], j + df * l[1], k + df * l[2], max_depth_);
       v[v_id] = lex;
     }
 
@@ -532,7 +532,7 @@ public:
 
     std::size_t e_global_id, depth;
     std::tie(e_global_id, depth) = e_id;
-    const auto df = depth_factor(depth);
+    const std::size_t df = depth_factor(depth);
 
     const size_t v0_lex_index = e_global_id / 3;
     std::size_t i0, j0, k0;
@@ -540,7 +540,7 @@ public:
 
     // v1
     const std::size_t e_local_index = Tables::edge_store_index[e_global_id % 3];
-    const auto& v1_local = Tables::local_vertex_position[Tables::edge_to_vertex[e_local_index][1]];
+    const int* v1_local = Tables::local_vertex_position[Tables::edge_to_vertex[e_local_index][1]];
 
     const std::size_t i1 = i0 + v1_local[0];
     const std::size_t j1 = j0 + v1_local[1];
@@ -558,7 +558,7 @@ public:
 
     std::size_t e_global_id, depth;
     std::tie(e_global_id, depth) = e_id;
-    const auto df = depth_factor(depth);
+    const std::size_t df = depth_factor(depth);
 
     const size_t v0_lex_index = e_global_id / 3;
     std::size_t i0, j0, k0;
@@ -566,14 +566,14 @@ public:
 
     // v1
     const std::size_t e_local_index = Tables::edge_store_index[e_global_id % 3];
-    const auto& v1_local = Tables::local_vertex_position[Tables::edge_to_vertex[e_local_index][1]];
+    const int* v1_local = Tables::local_vertex_position[Tables::edge_to_vertex[e_local_index][1]];
 
     const std::size_t i1 = i0 + v1_local[0];
     const std::size_t j1 = j0 + v1_local[1];
     const std::size_t k1 = k0 + v1_local[2];
 
-    const auto v0 = lex_index(df * i0, df * j0, df * k0, max_depth_);
-    const auto v1 = lex_index(df * i1, df * j1, df * k1, max_depth_);
+    const std::size_t v0 = lex_index(df * i0, df * j0, df * k0, max_depth_);
+    const std::size_t v1 = lex_index(df * i1, df * j1, df * k1, max_depth_);
 
     return { v0, v1 };
   }
@@ -589,7 +589,7 @@ public:
     std::tie(e_global_id, depth) = e_id;
     const std::size_t e_local_index = Tables::edge_store_index[e_global_id % 3];
 
-    const auto df = depth_factor(depth);
+    const std::size_t df = depth_factor(depth);
 
     const size_t v0_lex_index = e_global_id / 3;
     std::size_t i, j, k;
