@@ -19,7 +19,6 @@
 
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
-#include <CGAL/apply_to_range.h>
 #include <CGAL/Qt/PainterOstream.h>
 #include <CGAL/Qt/GraphicsItem.h>
 #include <CGAL/Qt/Converter.h>
