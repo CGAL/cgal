@@ -31,7 +31,7 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(test_mesh_and_remesh_polyhedral_domain_with_features PUBLIC CGAL::Eigen3_support)
 
   create_single_source_cgal_program("test_mesh_and_remesh_with_sizing_field.cpp")
-  target_link_directories(test_mesh_and_remesh_with_sizing_field PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(test_mesh_and_remesh_with_sizing_field PUBLIC CGAL::Eigen3_support)
 
   # with MLS projection
   add_executable(test_mesh_and_remesh_polyhedral_domain_with_features_mls
