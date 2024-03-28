@@ -31,6 +31,8 @@ using Domain = CGAL::Isosurfacing::Dual_contouring_domain_3<Octree_wrapper, Valu
 // Refine one of the octant
 struct Refine_one_eighth
 {
+  using Octree = Octree_wrapper::Octree;
+
   std::size_t min_depth_;
   std::size_t max_depth_;
 
@@ -44,25 +46,25 @@ struct Refine_one_eighth
     octree_dim_ = std::size_t(1) << max_depth_;
   }
 
-  Octree_wrapper::Uniform_coords uniform_coordinates(const Octree_wrapper::Octree::Node& node) const
+  Octree_wrapper::Uniform_coords uniform_coordinates(const Octree::Node_index& node_index, const Octree& octree) const
   {
-    auto coords = node.global_coordinates();
-    const std::size_t depth_factor = std::size_t(1) << (max_depth_ - node.depth());
-    for(int i=0; i < Octree_wrapper::Octree::Node::Dimension::value; ++i)
+    auto coords = octree.global_coordinates(node_index);
+    const std::size_t depth_factor = std::size_t(1) << (max_depth_ - octree.depth(node_index));
+    for(int i=0; i < 3; ++i)
       coords[i] *= uint32_t(depth_factor);
 
     return coords;
   }
 
-  bool operator()(const Octree_wrapper::Octree::Node& n) const
+  bool operator()(const Octree::Node_index& ni, const Octree& octree) const
   {
-    if(n.depth() < min_depth_)
+    if(octree.depth(ni) < min_depth_)
       return true;
 
-    if(n.depth() == max_depth_)
+    if(octree.depth(ni) == max_depth_)
       return false;
 
-    auto leaf_coords = uniform_coordinates(n);
+    auto leaf_coords = uniform_coordinates(ni, octree);
 
     if(leaf_coords[0] >= octree_dim_ / 2)
       return false;

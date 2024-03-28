@@ -98,8 +98,8 @@ public:
   using Edge_handle = OW_Edge_handle;
   using Voxel_handle = std::size_t;
 
-  using Node = typename Octree::Node;
-  using Uniform_coords = typename Node::Global_coordinates;  // coordinates on max depth level
+  using Node_index = typename Octree::Node_index;
+  using Uniform_coords = typename Octree::Global_coordinates;  // coordinates on max depth level
 
 private:
   std::size_t max_depth_ = 0;
@@ -151,24 +151,24 @@ public:
     std::set<Voxel_handle> leaf_voxels_set;
     std::set<Edge_handle> leaf_edges_set;
     std::set<Vertex_handle> leaf_vertices_set;
-    for(Node node : octree_.traverse(CGAL::Orthtrees::Leaves_traversal()))
+    for(Node_index node_index : octree_.traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(octree_)))
     {
-      const auto& coords_uniform = uniform_coordinates(node);
+      const auto& coords_uniform = uniform_coordinates(node_index);
       // write all leaf nodes in a set
       leaf_voxels_set.insert(lex_index(coords_uniform[0], coords_uniform[1], coords_uniform[2], max_depth_));
 
       // init vertex values
       for(int i=0; i<Tables::N_VERTICES; ++i)
       {
-        Uniform_coords vuc = vertex_uniform_coordinates(node, i);
+        Uniform_coords vuc = vertex_uniform_coordinates(node_index, i);
         const auto lex = lex_index(vuc[0], vuc[1], vuc[2], max_depth_);
         leaf_vertices_set.insert(lex);
       }
 
       // write all leaf edges in a set
-      const auto& coords_global = node.global_coordinates();
-      const auto& depth = node.depth();
-      const auto& df = depth_factor(node.depth());
+      const auto& coords_global = octree_.global_coordinates(node_index);
+      const auto depth = octree_.depth(node_index);
+      const auto df = depth_factor(depth);
       for(const auto& edge_voxels : Tables::edge_to_voxel_neighbor)
       {
         bool are_all_voxels_leafs = true;
@@ -184,8 +184,8 @@ public:
             break;
           }
 
-          const Node n = get_node(x, y, z);
-          if(n.depth() > depth)
+          const Node_index n = get_node(x, y, z);
+          if(octree_.depth(n) > depth)
           {
             are_all_voxels_leafs = false;
             break;
@@ -263,25 +263,25 @@ public:
     return leaf_voxels_;
   }
 
-  std::size_t depth_factor(const std::size_t& depth) const
+  std::size_t depth_factor(const std::size_t depth) const
   {
     return std::size_t(1) << (max_depth_ - depth);
   }
 
-  Uniform_coords uniform_coordinates(const Node& node) const
+  Uniform_coords uniform_coordinates(Node_index node_index) const
   {
-    auto coords = node.global_coordinates();
-    const std::size_t df = depth_factor(node.depth());
-    for(int i=0; i<Node::Dimension::value; ++i)
+    auto coords = octree_.global_coordinates(node_index);
+    const std::size_t df = depth_factor(octree_.depth(node_index));
+    for(int i=0; i<3; ++i)
       coords[i] *= df;
 
     return coords;
   }
 
-  std::array<Point_3, 8> node_points(const Node& node) const
+  std::array<Point_3, 8> node_points(Node_index node_index) const
   {
-    auto coords = node.global_coordinates();
-    const std::size_t df = depth_factor(node.depth());
+    auto coords = octree_.global_coordinates(node_index);
+    const std::size_t df = depth_factor(octree_.depth(node_index));
 
     const FT x0 = offset_x_ + coords[0] * df * hx_;
     const FT y0 = offset_y_ + coords[1] * df * hx_;
@@ -325,34 +325,34 @@ public:
     return { x0, y0, z0 };
   }
 
-  Uniform_coords vertex_uniform_coordinates(const Node& node,
-                                            const typename Node::Local_coordinates local_coords) const
+  Uniform_coords vertex_uniform_coordinates(Node_index node_index,
+                                            const typename Octree::Local_coordinates local_coords) const
   {
-    const auto node_coords = node.global_coordinates();
+    const auto node_coords = octree_.global_coordinates(node_index);
     auto v_coords = node_coords;
-    for(int i=0; i<Node::Dimension::value; ++i)
+    for(int i=0; i<3; ++i)
       v_coords[i] += std::size_t(local_coords[i]);
 
-    const auto df = depth_factor(node.depth());
-    for(int i=0; i<Node::Dimension::value; ++i)
+    const auto df = depth_factor(octree_.depth(node_index));
+    for(int i=0; i<3; ++i)
       v_coords[i] *= df;
 
     return v_coords;
   }
 
-  Node get_node(const std::size_t& i,
-                const std::size_t& j,
-                const std::size_t& k) const
+  Node_index get_node(const std::size_t i,
+                      const std::size_t j,
+                      const std::size_t k) const
   {
-    Node node = octree_.root();
-    const std::size_t& x = i;
-    const std::size_t& y = j;
-    const std::size_t& z = k;
+    Node_index node_index = octree_.root();
+    const std::size_t x = i;
+    const std::size_t y = j;
+    const std::size_t z = k;
 
-    while(!node.is_leaf())
+    while(!octree_.is_leaf(node_index))
     {
-      std::size_t dist_to_max = max_depth_ - node.depth() - 1;
-      typename Node::Local_coordinates loc;
+      std::size_t dist_to_max = max_depth_ - octree_.depth(node_index) - 1;
+      typename Octree::Local_coordinates loc;
       if(x & (std::size_t(1) << dist_to_max))
           loc[0] = true;
 
@@ -362,51 +362,51 @@ public:
       if(z & (std::size_t(1) << dist_to_max))
           loc[2] = true;
 
-      node = node[loc.to_ulong()];
+      node_index = octree_.child(node_index, loc.to_ulong());
     }
 
-    return node;
+    return node_index;
   }
 
-  Node get_node(const std::size_t lex_index) const
+  Node_index get_node(const std::size_t lex_index) const
   {
     std::size_t i, j, k;
     std::tie(i, j, k) = ijk_index(lex_index, max_depth_);
     return get_node(i, j, k);
   }
 
-  std::size_t lex_index(const std::size_t& i,
-                        const std::size_t& j,
-                        const std::size_t& k,
-                        const std::size_t& depth) const
+  std::size_t lex_index(const std::size_t i,
+                        const std::size_t j,
+                        const std::size_t k,
+                        const std::size_t depth) const
   {
     std::size_t dim = (std::size_t(1) << depth) + 1;
     return k * dim * dim + j * dim + i;
   }
 
-  std::size_t i_index(const std::size_t& lex_index,
-                      const std::size_t& depth) const
+  std::size_t i_index(const std::size_t lex_index,
+                      const std::size_t depth) const
   {
     std::size_t dim = (std::size_t(1) << depth) + 1;
     return lex_index % dim;
   }
 
-  std::size_t j_index(const std::size_t& lex_index,
-                      const std::size_t& depth) const
+  std::size_t j_index(const std::size_t lex_index,
+                      const std::size_t depth) const
   {
     std::size_t dim = (std::size_t(1) << depth) + 1;
     return ((lex_index / dim) % dim);
   }
 
-  std::size_t k_index(const std::size_t& lex_index,
-                      const std::size_t& depth) const
+  std::size_t k_index(const std::size_t lex_index,
+                      const std::size_t depth) const
   {
     std::size_t dim = (std::size_t(1) << depth) + 1;
     return (lex_index / (dim * dim));
   }
 
-  std::tuple<std::size_t, std::size_t, std::size_t> ijk_index(const std::size_t& lex_index,
-                                                              const std::size_t& depth) const
+  std::tuple<std::size_t, std::size_t, std::size_t> ijk_index(const std::size_t lex_index,
+                                                              const std::size_t depth) const
   {
     const std::size_t dim = (std::size_t(1) << depth) + 1;
     return std::make_tuple(lex_index % dim, (lex_index / dim) % dim, lex_index / (dim * dim));
@@ -418,11 +418,11 @@ public:
   // \param j_idx j-index of cell
   // \param k_idx k-index of cell
   // \param depth of cell
-  std::size_t e_glIndex(const std::size_t& e,
-                        const std::size_t& i_idx,
-                        const std::size_t& j_idx,
-                        const std::size_t& k_idx,
-                        const std::size_t& depth) const
+  std::size_t e_glIndex(const std::size_t e,
+                        const std::size_t i_idx,
+                        const std::size_t j_idx,
+                        const std::size_t k_idx,
+                        const std::size_t depth) const
   {
     const unsigned long long gei_pattern_ = 670526590282893600ull;
     const size_t i = i_idx + (size_t)((gei_pattern_ >> 5 * e) & 1);        // global_edge_id[eg][0];
@@ -460,10 +460,10 @@ public:
   {
     std::size_t i, j, k;
     std::tie(i, j, k) = ijk_index(vox, max_depth_);
-    Node node = get_node(i, j, k);
+    Node_index node_index = get_node(i, j, k);
 
-    const auto& coords_global = node.global_coordinates();
-    const auto& depth = node.depth();
+    const auto& coords_global = octree_.global_coordinates(node_index);
+    const auto& depth = octree_.depth(node_index);
 
     std::array<Edge_handle, internal::Cube_table::N_EDGES> edges;
     for(std::size_t e_id=0; e_id<edges.size(); ++e_id)
@@ -481,8 +481,8 @@ public:
 
     std::size_t i, j, k;
     std::tie(i, j, k) = ijk_index(vox, max_depth_);
-    Node node = get_node(i, j, k);
-    const auto& df = depth_factor(node.depth());
+    Node_index node_index = get_node(i, j, k);
+    const auto& df = depth_factor(octree_.depth(node_index));
 
     std::array<Vertex_handle, 8> v;
     for(int v_id=0; v_id<Tables::N_VERTICES; ++v_id)
@@ -520,8 +520,8 @@ public:
 
   std::array<Point_3, 8> voxel_vertex_positions(const Voxel_handle& vox) const
   {
-    Node node = get_node(vox);
-    return node_points(node);
+    Node_index node_index = get_node(vox);
+    return node_points(node_index);
   }
 
   // returns the values at the incident two vertices.
@@ -599,10 +599,10 @@ public:
     k *= df;
 
     const auto& voxel_neighbors = Tables::edge_to_voxel_neighbor[e_local_index];
-    Node n0 = get_node(i + voxel_neighbors[0][0], j + voxel_neighbors[0][1], k + voxel_neighbors[0][2]);
-    Node n1 = get_node(i + voxel_neighbors[1][0], j + voxel_neighbors[1][1], k + voxel_neighbors[1][2]);
-    Node n2 = get_node(i + voxel_neighbors[2][0], j + voxel_neighbors[2][1], k + voxel_neighbors[2][2]);
-    Node n3 = get_node(i + voxel_neighbors[3][0], j + voxel_neighbors[3][1], k + voxel_neighbors[3][2]);
+    Node_index n0 = get_node(i + voxel_neighbors[0][0], j + voxel_neighbors[0][1], k + voxel_neighbors[0][2]);
+    Node_index n1 = get_node(i + voxel_neighbors[1][0], j + voxel_neighbors[1][1], k + voxel_neighbors[1][2]);
+    Node_index n2 = get_node(i + voxel_neighbors[2][0], j + voxel_neighbors[2][1], k + voxel_neighbors[2][2]);
+    Node_index n3 = get_node(i + voxel_neighbors[3][0], j + voxel_neighbors[3][1], k + voxel_neighbors[3][2]);
 
     const Uniform_coords n0_uniform_coords = uniform_coordinates(n0);
     const Uniform_coords n1_uniform_coords = uniform_coordinates(n1);
