@@ -143,7 +143,7 @@ public:
     FT sum = 0;
     for (const auto& neighbor : search)
     {
-      const auto& [pi, size, dimension] = neighbor.first;
+      [[maybe_unused]] const auto& [pi, size, dimension] = neighbor.first;
       // todo : should we discard points when dim != dimension?
 
       sum += size;
