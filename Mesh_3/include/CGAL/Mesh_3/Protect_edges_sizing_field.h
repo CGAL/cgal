@@ -491,7 +491,7 @@ private:
     FT ed = query_field(p, dim, index, edge_distance_);
     return ed;
   }
-  
+
   bool use_minimal_size() const
   {
     return minimal_size_ != FT(-1);
