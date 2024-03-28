@@ -6,8 +6,8 @@
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
-#include <CGAL/AABB_segment_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_segment_primitive_3.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
@@ -32,8 +32,8 @@ class TestCase<0>
   typedef K::Segment_3 Segment;
   typedef K::Triangle_3 Triangle;
   typedef std::vector<Segment>::iterator Iterator;
-  typedef CGAL::AABB_segment_primitive<K, Iterator> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Traits;
+  typedef CGAL::AABB_segment_primitive_3<K, Iterator> Primitive;
+  typedef CGAL::AABB_traits_3<K, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
 public:
@@ -106,8 +106,8 @@ class TestCase<1>
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh, CGAL::Default,
                                                    CGAL::Tag_false>
       T_Primitive;
-  typedef CGAL::AABB_traits<K, T_Primitive> T_Traits;
-  typedef CGAL::AABB_traits<K, S_Primitive> S_Traits;
+  typedef CGAL::AABB_traits_3<K, T_Primitive> T_Traits;
+  typedef CGAL::AABB_traits_3<K, S_Primitive> S_Traits;
   typedef CGAL::AABB_tree<T_Traits> T_Tree;
   typedef CGAL::AABB_tree<S_Traits> S_Tree;
   typedef T_Tree::Primitive_id T_Primitive_id;

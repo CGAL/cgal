@@ -17,7 +17,7 @@
 
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/tuple.h>
 
@@ -48,7 +48,7 @@ namespace CGAL {
 ///         The default is `typename boost::property_map< TriangleMesh, vertex_point_t>::%type`.
 /// \tparam AABBTree must be an instantiation of `CGAL::AABB_tree` able to handle
 ///         the edges of `TriangleMesh`, having its `edge_descriptor` as primitive id.
-///         The default is `CGAL::AABB_tree<CGAL::AABB_traits<
+///         The default is `CGAL::AABB_tree<CGAL::AABB_traits_3<
 ///                  Traits, CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh> > >`
 /// \tparam UseParallelPlaneOptimization if `true`, the code will use specific
 ///         predicates and constructions in case the functor is called with a plane
@@ -76,7 +76,7 @@ template<class TriangleMesh,
   class Traits,
   class VertexPointMap = typename boost::property_map< TriangleMesh, vertex_point_t>::type,
   class AABBTree = AABB_tree<
-                       AABB_traits<Traits,
+                       AABB_traits_3<Traits,
                          AABB_halfedge_graph_segment_primitive<TriangleMesh,
                                                                 std::conditional_t<
                                                                   std::is_same_v<

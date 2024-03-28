@@ -25,8 +25,8 @@
 #include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/Dynamic_property_map.h>
@@ -290,9 +290,9 @@ namespace internal {
     typedef std::vector<Patch_id>                        Patch_id_list;
     typedef std::map<Patch_id,std::size_t>               Patch_id_to_index_map;
 
-    typedef CGAL::AABB_triangle_primitive<GeomTraits,
+    typedef CGAL::AABB_triangle_primitive_3<GeomTraits,
                      typename Triangle_list::iterator>    AABB_primitive;
-    typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
+    typedef CGAL::AABB_traits_3<GeomTraits, AABB_primitive> AABB_traits;
     typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
 
     typedef typename boost::property_map<

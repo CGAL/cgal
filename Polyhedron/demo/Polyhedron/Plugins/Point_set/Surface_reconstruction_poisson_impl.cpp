@@ -5,7 +5,7 @@
 
 // CGAL
 #include <CGAL/AABB_tree.h> // must be included before kernel
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
@@ -186,7 +186,7 @@ SMesh* poisson_reconstruct(Point_set& points,
 
   // AABB tree
   typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
+  typedef CGAL::AABB_traits_3<Kernel, Primitive> AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
   CGAL::Timer task_timer; task_timer.start();
 
@@ -393,4 +393,3 @@ SMesh* poisson_reconstruct(Point_set& points,
   }
   return mesh;
 }
-

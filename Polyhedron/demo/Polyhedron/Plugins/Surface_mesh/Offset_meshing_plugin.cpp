@@ -21,7 +21,7 @@
 #include "C3t3_type.h"
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -45,7 +45,7 @@ template <class TriangleMesh, class GeomTraits>
 class Offset_function
 {
   typedef AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
-  typedef AABB_traits<GeomTraits, Primitive> Traits;
+  typedef AABB_traits_3<GeomTraits, Primitive> Traits;
   typedef AABB_tree<Traits> Tree;
   typedef Side_of_triangle_mesh<TriangleMesh, GeomTraits> Side_of;
 
@@ -169,7 +169,7 @@ class Polygon_soup_offset_function {
   }; // end struct template AABB_primitive
 
 
-  typedef CGAL::AABB_traits<EPICK, AABB_primitive> AABB_traits;
+  typedef CGAL::AABB_traits_3<EPICK, AABB_primitive> AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
   std::shared_ptr<AABB_tree> m_tree_ptr;

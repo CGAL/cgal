@@ -38,7 +38,7 @@
 #include <boost/dynamic_bitset.hpp>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_triangulation_3_cell_primitive.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 #include <CGAL/IO/Color.h>
@@ -48,7 +48,7 @@
 
 typedef CGAL::AABB_triangulation_3_cell_primitive<EPICK,
                                                   Tr> Primitive;
-typedef CGAL::AABB_traits<EPICK, Primitive> Traits;
+typedef CGAL::AABB_traits_3<EPICK, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef Tree::Point_and_primitive_id Point_and_primitive_id;
 using namespace CGAL::Three;

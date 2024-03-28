@@ -8,7 +8,8 @@ The concept `AABBRayIntersectionTraits` is a refinement of the concept
 distance of an intersection along a ray.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>}
+\cgalHasModels{CGAL::AABB_traits_2<AABBGeomTraits,AABBPrimitive>}
+\cgalHasModels{CGAL::AABB_traits_3<AABBGeomTraits,AABBPrimitive>}
 \cgalHasModelsEnd
 
 \sa `CGAL::AABB_tree<AABBTraits>`
@@ -17,11 +18,49 @@ distance of an intersection along a ray.
 */
 class AABBRayIntersectionTraits {
 public:
+  /*!
+    Type of a ray.
+  */
+  typedef unspecified_type Ray;
 
   /*!
-    Type of a 3D ray.
+    Type of a vector.
   */
-  typedef unspecified_type Ray_3;
+  typedef unspecified_type Vector;
+
+  /*!
+    A functor object to construct the source point of a ray. Provides the operator:
+    `Point operator()(const Ray&);`
+   */
+  typedef unspecified_type Construct_source;
+
+  /*!
+   */
+  Construct_source construct_source_object();
+
+  /*!
+    A model of `CartesianConstIterator2` or `CartesianConstIterator3`, must compatible with `Vector`.
+   */
+  typedef unspecified_type Cartesian_const_iterator;
+
+  /*!
+    A model of `ConstructCartesianConstIterator2` or `ConstructCartesianConstIterator3`, must compatible with `Vector`.
+   */
+  typedef unspecified_type  Construct_cartesian_const_iterator;
+
+  /*!
+   */
+  Construct_source construct_cartesian_const_iterator_object();
+
+  /*!
+    A functor object to construct a vector giving the direction of a ray. Provides the operator:
+    `Vector operator()(const Ray&);`
+   */
+  typedef unspecified_type Construct_vector;
+
+  /*!
+   */
+  Construct_source construct_vector_object();
 
 
   /*!
@@ -34,9 +73,9 @@ public:
     respectively.
 
     Provides the operators:
-    `std::optional<FT> operator()(const Ray_3& r, const Bounding_box& bbox)`.
-    `std::optional<std::pair<FT, Intersection_and_primitive_id<Ray_3>::%Type > >
-     operator()(const Ray_3& r, const Primitive& primitive)`.
+    `std::optional<FT> operator()(const Ray& r, const Bounding_box& bbox)`.
+    `std::optional<std::pair<FT, Intersection_and_primitive_id<Ray>::%Type > >
+     operator()(const Ray& r, const Primitive& primitive)`.
 
     A common algorithm to compute the intersection between a bounding box and a ray is <A
     HREF="https://education.siggraph.org/static/HyperGraph/raytrace/rtinter3.htm">the

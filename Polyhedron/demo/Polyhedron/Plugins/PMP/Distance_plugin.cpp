@@ -130,13 +130,13 @@ private:
                            std::vector<double>& out)const
   {
     typedef CGAL::AABB_face_graph_triangle_primitive<Face_graph> Primitive;
-    typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree< Traits > Tree;
 
     Tree tree( faces(m).first, faces(m).second, m);
     tree.build();
     boost::graph_traits<Face_graph>::vertex_descriptor vd = *(vertices(m).first);
-    Traits::Point_3 hint = get(CGAL::vertex_point,m, vd);
+    Traits::Point hint = get(CGAL::vertex_point,m, vd);
 
 #if !defined(CGAL_LINKED_WITH_TBB)
     double hdist = 0;

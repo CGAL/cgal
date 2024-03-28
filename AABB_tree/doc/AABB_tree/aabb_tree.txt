@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_3D_Fast_Intersection_and_Distance_Computation
+\anchor Chapter_Fast_Intersection_and_Distance_Computation
 \cgalAutoToc
 
 \authors Pierre Alliez, Stephane Tayeb, and Camille Wormser
@@ -12,7 +12,7 @@ namespace CGAL {
 
 The AABB tree component offers a static data structure and algorithms
 to perform efficient intersection and distance queries against sets of
-finite 3D geometric objects. The set of geometric objects stored in
+finite 2D or 3D geometric objects. The set of geometric objects stored in
 the data structure can be queried for intersection detection,
 intersection computation and distance. The intersection queries can be
 of any type, provided that the corresponding intersection predicates
@@ -163,11 +163,16 @@ handle.
 
 \subsection aabb_tree_examples_4 Tree of Segments for Intersection and Distance Queries
 
- In the following example the segments are stored into a list, and the
+In the following example the segments are stored into a list, and the
 AABB primitive wraps a segment as `datum` and an iterator in the
 list as `id`. We compute the number of intersections with plane
 and triangles queries, and the closest point from a point query.
 \cgalExample{AABB_tree/AABB_segment_3_example.cpp}
+
+\subsection aabb_tree_examples_8 Tree of Polyline and Polygon Segments for Intersection and Distance Queries
+
+The following example uses segments given by a polyline and a polygon. The difference is that the polygon is closed. The `id` in this case is the iterator pointing to a `Point_2` in the polyline or the polygon. The datum, a `Segment_2`, is created on the fly from the points using the `id` as the source and the following `Point_2` as the target. We count the intersections with a `Segment_2` and the closest point and id from a point query.
+\cgalExample{AABB_tree/AABB_polyline_segment_2_example.cpp}
 
 \subsection aabb_tree_examples_5 Tree of Polyhedron Edge Segments for Intersection and Distance Queries
 
@@ -426,7 +431,7 @@ initial ball radius to a small value still guaranteed to intersect the
 input primitives. This is achieved by constructing an internal secondary data
 structure which provides a good hint to the algorithm at the beginning
 of the traversal (done by default).
-Calling `do_not_accelerate_distance_queries()` will disable
+Calling `AABB_tree::do_not_accelerate_distance_queries()` will disable
 the construction and the usage of this internal secondary data structure.
 
 \section aabb_tree_history Design and Implementation History

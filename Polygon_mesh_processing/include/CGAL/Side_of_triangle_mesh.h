@@ -23,7 +23,7 @@
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL {
@@ -81,7 +81,7 @@ class Side_of_triangle_mesh
   struct AABB_tree_default {
     typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh_,
                                                      VertexPointMap__> Primitive;
-    typedef CGAL::AABB_traits<GeomTraits_, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<GeomTraits_, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> type;
   };
   typedef typename Default::Lazy_get<AABBTree,

@@ -37,7 +37,7 @@ template <typename AABBTraits,
 class Filtered_projection_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point_3 Point_3;
+  typedef typename AABBTraits::Point Point_3;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;

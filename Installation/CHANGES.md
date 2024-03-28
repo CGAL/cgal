@@ -25,6 +25,18 @@ Release date: October 2023
 
 -   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
     using the odd-even heuristic.
+ 
+### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.0/Manual/packages.html#PkgAABBTree)
+
+- **Breaking change**: The concept `AABBTraits` now should refine the `SearchTraits` concept.
+- The AABB tree is now working with 2D and 3D primitives:
+  - Replacement of `AABBGeomTraits` concept by `AABBGeomTraits_3` and `AABBRayIntersectionGeomTraits` by `AABBRayIntersectionGeomTraits_3`.
+  - Addition of `AABBGeomTraits_2` and `AABBRayIntersectionGeomTraits_2` concepts
+  - `AABB_traits` is deprecated and replaced by `AABB_traits_3`
+  - Addition of `AABB_traits_2`
+  - `AABB_segment_primitive` is deprecated and replaced by `AABB_segment_primitive_3`
+  - `AABB_triangle_primitive` is deprecated and replaced by `AABB_triangle_primitive_3`
+  - Addition of 2D primitive classes: `AABB_segment_primitive_2`, `AABB_polyline_segment_primitive_2`, `AABB_triangle_primitive_2`, `AABB_indexed_triangle_primitive_2`
 
 #### 2D Arrangements
 

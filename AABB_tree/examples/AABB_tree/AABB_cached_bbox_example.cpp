@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -23,7 +23,7 @@ template <typename TriangleMesh>
 void triangle_mesh(std::string fname)
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<K, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   TriangleMesh tmesh;
@@ -56,7 +56,7 @@ void surface_mesh_cache_bbox(std::string fname)
   typedef boost::graph_traits<Surface_mesh>::face_descriptor face_descriptor;
   typedef Surface_mesh::Property_map<face_descriptor,Bbox_3> Bbox_pmap;
   typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive,Bbox_pmap> Traits;
+  typedef CGAL::AABB_traits_3<K, Primitive,Bbox_pmap> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   Surface_mesh tmesh;

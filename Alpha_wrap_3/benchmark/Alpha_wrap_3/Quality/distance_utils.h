@@ -15,7 +15,7 @@
 #define CGAL_ALPHA_WRAP_3_BENCHMARK_ALPHA_WRAP_3_QUALITY_DISTANCE_H_
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -87,7 +87,7 @@ inline double approximate_distance(const TriangleMesh& tm1,
   using Point_3 = typename GT::Point_3;
 
   using Primitive = CGAL::AABB_face_graph_triangle_primitive<TriangleMesh>;
-  using AABB_traits = CGAL::AABB_traits<GT, Primitive>;
+  using AABB_traits = CGAL::AABB_traits_3<GT, Primitive>;
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 
   using CGAL::parameters::choose_parameter;

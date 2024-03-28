@@ -7,7 +7,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 
 
 
@@ -104,7 +104,7 @@ public:
 
 
 // types
-typedef CGAL::AABB_traits<K, My_triangle_primitive> My_AABB_traits;
+typedef CGAL::AABB_traits_3<K, My_triangle_primitive> My_AABB_traits;
 typedef CGAL::AABB_tree<My_AABB_traits> Tree;
 const std::vector<My_point>* My_triangle_primitive::point_container = nullptr;
 

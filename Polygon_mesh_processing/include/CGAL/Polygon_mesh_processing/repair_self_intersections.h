@@ -29,8 +29,8 @@
 #endif
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -1070,8 +1070,8 @@ struct Mesh_projection_functor
   typedef typename GeomTraits::Triangle_3 Triangle_3;
 
   typedef std::vector<Triangle_3> Triangle_container;
-  typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_container::const_iterator> Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, Primitive> Traits;
+  typedef CGAL::AABB_triangle_primitive_3<GeomTraits, typename Triangle_container::const_iterator> Primitive;
+  typedef CGAL::AABB_traits_3<GeomTraits, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   template <typename TriangleMesh, typename VPM>

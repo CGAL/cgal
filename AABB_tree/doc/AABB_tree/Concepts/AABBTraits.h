@@ -6,12 +6,14 @@
 The concept `AABBTraits` provides the geometric primitive types and methods for the class `CGAL::AABB_tree<AABBTraits>`.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>}
+\cgalHasModels{CGAL::AABB_traits_2<AABBGeomTraits,AABBPrimitive>}
+\cgalHasModels{CGAL::AABB_traits_3<AABBGeomTraits,AABBPrimitive>}
 \cgalHasModelsEnd
 
-\cgalRefines{SearchGeomTraits_3}
+\cgalRefines{SearchTraits}
 
-\sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
+\sa `CGAL::AABB_traits_2<AABBGeomTraits,AABBPrimitive>`
+\sa `CGAL::AABB_traits_3<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 
@@ -28,9 +30,9 @@ Value type of the `Squared_distance` functor.
 typedef unspecified_type FT;
 
 /*!
-Type of a 3D point.
+Type of a point.
 */
-typedef unspecified_type Point_3;
+typedef unspecified_type Point;
 
 /*!
 Type of primitive.
@@ -43,19 +45,10 @@ Bounding box type.
 */
 typedef unspecified_type Bounding_box;
 
-  /*!
-  enum required for axis selection
-  */
-  enum Axis {
-    CGAL_X_AXIS,
-    CGAL_Y_AXIS,
-    CGAL_Z_AXIS
-  };
-
 /*!
-3D Point and Primitive Id type
+Point and Primitive Id type
 */
-typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;
+typedef std::pair<Point, Primitive::Id> Point_and_primitive_id;
 
 /*!
 \deprecated
@@ -145,21 +138,21 @@ typedef unspecified_type Compare_distance;
 
 /*!
 A functor object to compute closest point from the query on a primitive. Provides the operator:
-`Point_3 operator()(const Query& query, const Primitive& primitive, const Point_3 & closest);` which returns the closest point to `query`, among `closest` and all points of the primitive.
+`Point operator()(const Query& query, const Primitive& primitive, const Point & closest);` which returns the closest point to `query`, among `closest` and all points of the primitive.
 */
 typedef unspecified_type Closest_point;
 
 /*!
 A functor object to compute the squared distance between two points. Provides the operator:
-`FT operator()(const Point& query, const Point_3 & p);` which returns the squared distance between `p` and `q`.
+`FT operator()(const Point& query, const Point & p);` which returns the squared distance between `p` and `q`.
 */
 typedef unspecified_type Squared_distance;
 
 /*!
 A functor object to compare two points. Provides the operator:
-`bool operator()(const Point_3& p, const Point_3& q);}` which returns `true` if `p` is equal to `q`.
+`bool operator()(const Point& p, const Point& q);}` which returns `true` if `p` is equal to `q`.
 */
-typedef unspecified_type Equal_3;
+typedef unspecified_type Equal;
 /// @}
 
 /// \name Operations
@@ -203,7 +196,7 @@ Squared_distance squared_distance_object();
 /*!
 returns the equal functor.
 */
-Equal_3 equal_3_object();
+Equal equal_object();
 
 /// @}
 

@@ -169,9 +169,9 @@ void angle_and_area_smoothing(const FaceRange& faces,
   typedef typename GeomTraits::Triangle_3                                             Triangle;
   typedef std::vector<Triangle>                                                       Triangle_container;
 
-  typedef CGAL::AABB_triangle_primitive<GeomTraits,
+  typedef CGAL::AABB_triangle_primitive_3<GeomTraits,
                                         typename Triangle_container::iterator>        AABB_Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, AABB_Primitive>                               AABB_Traits;
+  typedef CGAL::AABB_traits_3<GeomTraits, AABB_Primitive>                             AABB_Traits;
   typedef CGAL::AABB_tree<AABB_Traits>                                                Tree;
 
   if(std::begin(faces) == std::end(faces))

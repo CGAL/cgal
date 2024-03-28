@@ -23,7 +23,7 @@
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/intersections.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -91,7 +91,7 @@ public:
 };
 
 
-typedef CGAL::AABB_traits<EPICK, Primitive> AABB_traits;
+typedef CGAL::AABB_traits_3<EPICK, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 
 
