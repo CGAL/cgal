@@ -651,7 +651,11 @@ private:
   template<typename SurfaceIndices,
            typename IncidentCells, typename NormalsMap>
   std::size_t smooth_edges_in_complex(C3t3& c3t3,
+#ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
                                       const SurfaceIndices& vertices_surface_indices,
+#else
+                                      const SurfaceIndices&,
+#endif
                                       const IncidentCells& inc_cells,
                                       const NormalsMap& vertices_normals,
                                       FT& total_move
