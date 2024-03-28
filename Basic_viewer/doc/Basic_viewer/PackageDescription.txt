@@ -12,7 +12,11 @@
 \cgalPkgPicture{basic_viewer_logo.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Guillaume Damiand}
-\cgalPkgDesc{This package provides a basic viewer class TODO.}
+\cgalPkgDesc{This package provides interactive visualization for most \cgal packages.
+First, the function `draw()` is provided for each data structure.
+Several data structures can be added to a same graphics scene and visualized simultaneously.
+Rendering can be controlled (color, point size, etc.).
+Finally a \qt widget is provided that can be integrated in the GUI of a user application.}
 \cgalPkgManuals{Chapter_Basic_viewer,PkgBasicViewerRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
