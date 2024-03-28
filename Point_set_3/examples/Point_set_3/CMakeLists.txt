@@ -11,9 +11,7 @@ create_single_source_cgal_program("point_set.cpp")
 create_single_source_cgal_program("point_set_property.cpp")
 create_single_source_cgal_program("point_set_read_xyz.cpp")
 create_single_source_cgal_program("point_set_advanced.cpp")
-
-set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
-create_single_source_cgal_program("point_set_read_ply.cpp" CXX_FEATURES ${needed_cxx_features})
+create_single_source_cgal_program("point_set_read_ply.cpp")
 
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
