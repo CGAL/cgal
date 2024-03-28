@@ -99,17 +99,17 @@ int main(int argc, char* argv[])
   { faces_size[fd]=CGAL::Polygon_mesh_processing::face_area(fd, sm); }
 
   Graphics_scene_options_small_faces gsosm(sm);
-  CGAL::Graphics_scene buffer;
+  CGAL::Graphics_scene gs;
 
-  add_to_graphics_scene(sm, buffer, gsosm);
+  add_to_graphics_scene(sm, gs, gsosm);
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-  CGAL::Qt::QApplication_and_basic_viewer app(buffer, "Small faces");
+  CGAL::Qt::QApplication_and_basic_viewer app(gs, "Small faces");
   if(app)
   {
     app.basic_viewer().on_key_pressed=
-      [&sm, &gsosm, &buffer] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
+      [&sm, &gsosm, &gs] (QKeyEvent* e, CGAL::Qt::Basic_viewer* basic_viewer) -> bool
       {
         const ::Qt::KeyboardModifiers modifiers = e->modifiers();
         if ((e->key() == ::Qt::Key_I) && (modifiers == ::Qt::NoButton))
@@ -119,8 +119,8 @@ int main(int argc, char* argv[])
           basic_viewer->displayMessage
             (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
-          buffer.clear();
-          add_to_graphics_scene(sm, buffer, gsosm);
+          gs.clear();
+          add_to_graphics_scene(sm, gs, gsosm);
           basic_viewer->redraw();
         }
         else if ((e->key() == ::Qt::Key_D) && (modifiers == ::Qt::NoButton))
@@ -130,8 +130,8 @@ int main(int argc, char* argv[])
           basic_viewer->displayMessage
             (QString("Small faces threshold=%1.").arg(gsosm.m_threshold));
 
-          buffer.clear();
-          add_to_graphics_scene(sm, buffer, gsosm);
+          gs.clear();
+          add_to_graphics_scene(sm, gs, gsosm);
           basic_viewer->redraw();
         }
         else
