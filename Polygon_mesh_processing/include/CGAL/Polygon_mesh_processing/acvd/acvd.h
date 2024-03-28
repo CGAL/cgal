@@ -99,12 +99,11 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
   A(1, 2) = A(2, 1) = quadric(1, 2);
   A(2, 2) = quadric(2, 2);
 
-  Matrix3d U, VT;
+  Matrix3d U, V;
   typename GT::Vector_3 w;
-  //CGAL::linear_algebra_qr(A, U, w, VT);
   Eigen::JacobiSVD<Matrix3d> svd(A, Eigen::ComputeFullU | Eigen::ComputeFullV);
   U = svd.matrixU();
-  VT = svd.matrixV();
+  V = svd.matrixV();
   auto w_temp = svd.singularValues();
   w = typename GT::Vector_3(w_temp(0), w_temp(1), w_temp(2));
 
@@ -159,7 +158,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
     MaxNumberOfUsedSingularValues--;
   }
 
-  tempMatrix2 = VT * tempMatrix;
+  tempMatrix2 = V * tempMatrix;
   Eigen::Matrix<typename GT::FT, 3, 1> p_temp, b;
   b << -quadric(0, 3), -quadric(1, 3), -quadric(2, 3);
   p_temp << p.x(), p.y(), p.z();
