@@ -524,6 +524,7 @@ public:
     return node_points(node_index);
   }
 
+/*
   // returns the values at the incident two vertices.
   // Vertices are sorted in ascending order.
   std::array<FT, 2> edge_values(const Edge_handle& e_id) const
@@ -551,6 +552,7 @@ public:
 
     return { value(v0), value(v1) };
   }
+*/
 
   std::array<Vertex_handle, 2> edge_vertices(const Edge_handle& e_id) const
   {
