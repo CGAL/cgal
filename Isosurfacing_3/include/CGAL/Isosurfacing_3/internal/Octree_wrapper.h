@@ -273,7 +273,7 @@ public:
     Uniform_coords coords = octree_.global_coordinates(node_index);
     const std::size_t df = depth_factor(octree_.depth(node_index));
     for(int i=0; i<3; ++i)
-      coords[i] *= df;
+      coords[i] *= static_cast<uint32_t>(df);
 
     return coords;
   }
@@ -335,7 +335,7 @@ public:
 
     const std::size_t df = depth_factor(octree_.depth(node_index));
     for(int i=0; i<3; ++i)
-      v_coords[i] *= df;
+      v_coords[i] *= static_cast<uint32_t>(df);
 
     return v_coords;
   }
