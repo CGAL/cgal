@@ -24,12 +24,22 @@
 
 #include <CGAL/AABB_triangle_primitive_3.h>
 
+/// \file AABB_triangle_primitive.h
+
 namespace CGAL {
+
+
+/// \addtogroup PkgAABBTreeRef
+/// @{
+
+/// template alias for backward compatibility
 
 template < class GeomTraits,
            class Iterator,
            class CacheDatum=Tag_false>
 using  AABB_triangle_primitive = AABB_triangle_primitive_3<GeomTraits, Iterator, CacheDatum>;
+
+///@}
 
 } //CGAL namespace
 

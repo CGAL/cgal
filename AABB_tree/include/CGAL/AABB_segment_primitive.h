@@ -24,12 +24,22 @@
 
 #include <CGAL/AABB_segment_primitive_3.h>
 
-namespace CGAL{
+/// \file AABB_segment_primitive.h
+
+namespace CGAL {
+
+
+/// \addtogroup PkgAABBTreeRef
+/// @{
+
+/// template alias for backward compatibility
 
 template < class GeomTraits,
            class Iterator,
            class CacheDatum=Tag_false>
 using  AABB_segment_primitive = AABB_segment_primitive_3<GeomTraits, Iterator, CacheDatum>;
+
+///@}
 
 } // CGAL namespace
 

@@ -93,7 +93,7 @@ namespace internal {
  *         constructed on the fly to reduce the memory footprint.
  *         The default is `CGAL::Tag_false` (datum is not stored).
  * \tparam PointMap is a model of `ReadablePropertyMap` with its key type being the value type of `PointRange` and the value type being a `Point_2`.
- *         The default is `Identity_property_map<typename PointRange::value_type>`.
+ *         The default is \link Identity_property_map `CGAL::Identity_property_map`\endlink<PointRange::value_type>.
  *
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
