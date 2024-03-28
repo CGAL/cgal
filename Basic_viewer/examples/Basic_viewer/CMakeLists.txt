@@ -29,6 +29,8 @@ if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_surface_mesh_height PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(draw_surface_mesh_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(draw_surface_mesh_vcolor PUBLIC CGAL::CGAL_Basic_viewer)
+else()
+  message("CGAL_Qt6 not configured: examples that require Qt will not be compiled.")
 endif()
 
 if(TARGET CGAL::Eigen3_support)
