@@ -37,10 +37,18 @@ int main(int argc, char* argv[])
   std::cout << "Uniform Isotropic ACVD ...." << std::endl;
 
   auto acvd_mesh = PMP::acvd_isotropic_remeshing(smesh, nb_clusters);
-  CGAL::IO::write_OFF("fandisk_qem-pp3000.off", acvd_mesh);
+  CGAL::IO::write_OFF("fandisk_acvd.off", acvd_mesh);
 
   std::cout << "Completed" << std::endl;
 
+  // With Post-Processing QEM Optimization
+
+  std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
+
+  auto acvd_mesh_qem = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::post_processing_qem(true));
+  CGAL::IO::write_OFF("fandisk_acvd_qem-pp.off", acvd_mesh_qem);
+
+  std::cout << "Completed" << std::endl;
 
   /// Adaptive Isotropic ACVD
 

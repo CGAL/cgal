@@ -84,7 +84,7 @@ void compute_qem_vertex(std::vector<std::vector<typename GT::Vector_3>> cluster_
 }
 
 template <typename GT>
-typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 4, 4> quadric, const typename GT::Vector_3& p, int& RankDeficiency)
+typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 4, 4> quadric, const typename GT::Point_3& p, int& RankDeficiency)
 {
   typedef Eigen::Matrix<typename GT::FT, 4, 4> Matrix4d;
   typedef Eigen::Matrix<typename GT::FT, 3, 3> Matrix3d;
@@ -169,7 +169,7 @@ typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 
 }
 
 template <typename GT>
-void compute_representative_point(const Eigen::Matrix<typename GT::FT, 4, 4>& quadric, typename GT::Vector_3& p, int& RankDeficiency)
+void compute_representative_point(const Eigen::Matrix<typename GT::FT, 4, 4>& quadric, typename GT::Point_3& p, int& RankDeficiency)
 {
   // average point
   typename GT::Vector_3 displacement = compute_displacement<GT>(quadric, p, RankDeficiency);
@@ -322,6 +322,9 @@ std::pair<
   const Vertex_principal_curvatures_and_directions_map vpcd_map =
     choose_parameter(get_parameter(np, internal_np::vertex_principal_curvatures_and_directions_map),
       Default_principal_map());
+
+  // get parameter for turning on post-processing qem point optimization
+  const bool post_processing_qem = choose_parameter(get_parameter(np, internal_np::post_processing_qem), false);
 
   // if adaptive clustering
   if (gradation_factor > 0 &&
@@ -659,37 +662,6 @@ std::pair<
   std::vector<std::vector<int>> polygons;
   TriangleMesh simplified_mesh;
 
-  // create a point for each cluster
-  std::vector<Eigen::Matrix<typename GT::FT, 4, 4>> cluster_quadrics(clusters.size());
-
-  // initialize quadrics
-  for (int i = 0; i < nb_clusters; i++)
-    cluster_quadrics[i].setZero();
-
-  for (Face_descriptor fd : faces(pmesh)) {
-    // get Vs for fd
-    // compute qem from Vs->"vector_3"s
-    // add to the 3 indices of the cluster
-    typename GT::Point_3 p_i = get(vpm, target(halfedge(fd, pmesh), pmesh));
-    typename GT::Vector_3 vec_1 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
-    p_i = get(vpm, target(next(halfedge(fd, pmesh), pmesh), pmesh));
-    typename GT::Vector_3 vec_2 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
-    p_i = get(vpm, target(next(next(halfedge(fd, pmesh), pmesh), pmesh), pmesh));
-    typename GT::Vector_3 vec_3 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
-
-    int c_1 = get(vertex_cluster_pmap, target(halfedge(fd, pmesh), pmesh));
-    int c_2 = get(vertex_cluster_pmap, target(next(halfedge(fd, pmesh), pmesh), pmesh));
-    int c_3 = get(vertex_cluster_pmap, target(next(next(halfedge(fd, pmesh), pmesh), pmesh), pmesh));
-
-    if (c_1 != -1 && c_2 != -1 && c_3 != -1)
-    {
-      Eigen::Matrix<typename GT::FT, 4, 4> q;
-      compute_qem_face<GT>(vec_1, vec_2, vec_3, q);
-      cluster_quadrics[c_1] += q;
-      cluster_quadrics[c_2] += q;
-      cluster_quadrics[c_3] += q;
-    }
-  }
 
   for (int i = 0; i < nb_clusters; i++)
   {
@@ -698,13 +670,67 @@ std::pair<
       valid_cluster_map[i] = points.size();
       typename GT::Vector_3 cluster_representative = clusters[i].compute_centroid();
 
-      int RankDeficiency = 0;
-      //compute_representative_point<GT>(cluster_quadrics[i], cluster_representative, RankDeficiency);
-
-
       typename GT::Point_3 cluster_representative_p(cluster_representative.x(), cluster_representative.y(), cluster_representative.z());
       points.push_back(cluster_representative_p);
 
+    }
+  }
+
+  if (post_processing_qem){
+    // create a point for each cluster
+    std::vector<Eigen::Matrix<typename GT::FT, 4, 4>> cluster_quadrics(clusters.size());
+
+    // initialize quadrics
+    for (int i = 0; i < nb_clusters; i++)
+      cluster_quadrics[i].setZero();
+
+    // for storing the vertex_descriptor of each face
+    std::vector<Vertex_descriptor> face_vertices;
+
+    for (Face_descriptor fd : faces(pmesh)) {
+      // get Vs for fd
+      // compute qem from Vs->"vector_3"s
+      // add to the 3 indices of the cluster
+      Halfedge_descriptor hd = halfedge(fd, pmesh);
+      do {
+        Vertex_descriptor vd = target(hd, pmesh);
+        face_vertices.push_back(vd);
+        hd = next(hd, pmesh);
+      } while (hd != halfedge(fd, pmesh));
+
+      auto p_i = get(vpm, face_vertices[0]);
+      typename GT::Vector_3 vec_1 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
+      p_i = get(vpm, face_vertices[1]);
+      typename GT::Vector_3 vec_2 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
+      p_i = get(vpm, face_vertices[2]);
+      typename GT::Vector_3 vec_3 = typename GT::Vector_3(p_i.x(), p_i.y(), p_i.z());
+
+      int c_1 = get(vertex_cluster_pmap, face_vertices[0]);
+      int c_2 = get(vertex_cluster_pmap, face_vertices[1]);
+      int c_3 = get(vertex_cluster_pmap, face_vertices[2]);
+
+      if (c_1 != -1 && c_2 != -1 && c_3 != -1)
+      {
+        Eigen::Matrix<typename GT::FT, 4, 4> q;
+        compute_qem_face<GT>(vec_1, vec_2, vec_3, q);
+        cluster_quadrics[c_1] += q;
+        cluster_quadrics[c_2] += q;
+        cluster_quadrics[c_3] += q;
+      }
+
+      face_vertices.clear();
+    }
+
+    int valid_index = 0;
+
+    for (int i = 0; i < nb_clusters; i++)
+    {
+      if (clusters[i].weight_sum > 0)
+      {
+        int RankDeficiency = 0;
+        compute_representative_point<GT>(cluster_quadrics[i], points[valid_index], RankDeficiency);
+        valid_index++;
+      }
     }
   }
 
