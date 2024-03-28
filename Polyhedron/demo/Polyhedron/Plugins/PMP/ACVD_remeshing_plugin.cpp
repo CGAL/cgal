@@ -1,4 +1,3 @@
-#undef NDEBUG
 #include <QtCore/qglobal.h>
 
 #include "Messages_interface.h"
@@ -51,7 +50,7 @@ public:
     mw = mainWindow;
     scene = scene_interface;
     actionACVD = new QAction(tr(
-                                "ACVD Simplification"
+                                "ACVD Remeshing"
                                 ), mw);
     //actionACVD->setProperty("subMenuName", "");
     if (actionACVD)
@@ -87,7 +86,7 @@ public Q_SLOTS:
     time.start();
     CGAL::Three::Three::information("ACVD Simplification...");
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    FaceGraph simplified_graph = CGAL::Polygon_mesh_processing::acvd_isotropic_simplification(*graph, ui.nb_clusters_spin_box->value());
+    FaceGraph simplified_graph = CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing(*graph, ui.nb_clusters_spin_box->value());
 
     // update the scene
     CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
@@ -100,6 +99,7 @@ public Q_SLOTS:
     scene->addItem(simplified_item);
     simplified_item->invalidateOpenGLBuffers();
     scene->itemChanged(simplified_item);
+    item->setVisible(false);
 
   }
 
