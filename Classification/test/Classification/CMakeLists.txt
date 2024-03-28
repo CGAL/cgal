@@ -39,8 +39,9 @@ include(CGAL_TBB_support)
 
 create_single_source_cgal_program("test_classification_point_set.cpp")
 create_single_source_cgal_program("test_classification_io.cpp")
+create_single_source_cgal_program("test_point_set_feature_evaluation.cpp")
 
-foreach(target test_classification_point_set test_classification_io)
+foreach(target test_classification_point_set test_classification_io test_point_set_feature_evaluation)
   target_link_libraries(${target} PUBLIC CGAL::Eigen3_support
                                          CGAL::Boost_iostreams_support
                                          CGAL::Boost_serialization_support)

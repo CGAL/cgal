@@ -40,6 +40,9 @@ include(CGAL_TBB_support)
 create_single_source_cgal_program( "example_classification.cpp" )
 create_single_source_cgal_program( "example_ethz_random_forest.cpp" )
 create_single_source_cgal_program( "example_feature.cpp" )
+create_single_source_cgal_program( "example_advanced_features.cpp" )
+create_single_source_cgal_program( "example_generate_advanced_features.cpp" )
+create_single_source_cgal_program( "example_multi_dim_feature.cpp" )
 create_single_source_cgal_program( "example_generation_and_training.cpp" )
 create_single_source_cgal_program( "example_mesh_classification.cpp" )
 create_single_source_cgal_program( "example_cluster_classification.cpp" )
@@ -61,6 +64,9 @@ foreach(target
     example_classification
     example_ethz_random_forest
     example_feature
+    example_advanced_features
+    example_generate_advanced_features
+    example_multi_dim_feature
     example_generation_and_training
     example_mesh_classification
     example_cluster_classification
@@ -76,3 +82,39 @@ foreach(target
     endif()
   endif()
 endforeach()
+
+# TODO: Add a proper CGAL::Embree_support *.cmake file
+find_package(embree QUIET)
+message("Embree found: ${embree_FOUND}")
+include(CGAL_embree_support)
+if(TARGET CGAL::Embree_support)#if (embree_FOUND)#if (EMBREE_VERSION)
+message("Adding embree support...")
+#  include_directories(${EMBREE_INCLUDE_DIRS})
+#  include_directories(${EMBREE_DIR})
+#  target_include_directories(example_advanced_features PUBLIC ${EMBREE_INCLUDE_DIRS})
+#  target_link_libraries(example_advanced_features PUBLIC ${EMBREE_LIBRARIES})
+#target_compile_definitions(example_advanced_features PUBLIC "CGAL_LINKED_WITH_EMBREE")
+#target_include_directories(example_advanced_features PUBLIC "${EMBREE_INCLUDE_DIRS}")
+#target_link_libraries(example_advanced_features PUBLIC ${EMBREE_LIBRARIES})
+  target_link_libraries(example_advanced_features PUBLIC CGAL::Embree_support)
+else()
+  message("NOTICE: Embree was not found. Embree ray intersection won't be available.")
+endif()
+
+#get_cmake_property(_variableNames VARIABLES)
+#list (SORT _variableNames)
+#foreach (_variableName ${_variableNames})
+#    message(STATUS "${_variableName}=${${_variableName}}")
+#endforeach()
+
+
+find_package(PCL CONFIG)
+if(PCL_FOUND)
+    include_directories(${PCL_INCLUDE_DIRS})
+    add_definitions(${PCL_DEFINITIONS})
+    link_directories(${PCL_LIBRARY_DIRS})
+    target_link_libraries(example_multi_dim_feature PUBLIC ${PCL_LIBRARIES})
+else()
+  message("NOTICE: PCL was not found. The PCL feature descriptor example won't be available.")
+endif()
+
