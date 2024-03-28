@@ -184,7 +184,7 @@ def automagically_number_figures():
   for el in d('a.elRef'):
     text = pq(el).attr('href')
     if text.find("index.html")!=-1:
-      re_pkg_index=re.compile("\.\./([A-Z_a-z0-9]+)/index\.html")
+      re_pkg_index=re.compile(r'\.\./([A-Z_a-z0-9]+)/index\.html')
       res=re_pkg_index.match(text)
       if res:
         all_packages.append(res.group(1))
@@ -248,7 +248,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     #workaround issue with operator<< in pyquery
     all_pages=glob.glob('*/*.html')
     for f in all_pages:
-      re_replace_in_file("operator<<\(\)", "operator&lt;&lt;()", f)
+      re_replace_in_file(r'operator<<\(\)', "operator&lt;&lt;()", f)
 
     # number figure
     automagically_number_figures()
@@ -319,7 +319,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
 
     filesjs_files=package_glob('./*/files.js')
     for fn in filesjs_files:
-      re_replace_in_file('^.*\[ "Concepts",.*$', '', fn)
+      re_replace_in_file(r'^.*\[ "Concepts",.*$', '', fn)
 
     #Rewrite the path of some images
     re_replace_in_file("'src','ftv2",
@@ -329,7 +329,7 @@ removes some unneeded files, and performs minor repair on some glitches.''')
     # external is placed by doxygen to mark a class from a tagfile, this
     # is more confusing then helpful in our case
     if path.isfile(os.path.join('Manual','annotated.html')):
-      re_replace_in_file('\[external\]', '', os.path.join('Manual','annotated.html'))
+      re_replace_in_file(r'\[external\]', '', os.path.join('Manual','annotated.html'))
     else:
       stderr.write("Error: ./Manual/annotated.html does not exists\n")
     # fix class/concept mismatch in generated pages

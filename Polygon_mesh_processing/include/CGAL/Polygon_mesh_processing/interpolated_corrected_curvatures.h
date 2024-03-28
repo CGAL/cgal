@@ -76,20 +76,6 @@ struct Principal_curvatures_and_directions {
 
 namespace internal {
 
-template<typename PolygonMesh, typename GT>
-typename GT::FT average_edge_length(const PolygonMesh& pmesh) {
-  const std::size_t n = edges(pmesh).size();
-  if (n == 0)
-    return 0;
-
-  typename GT::FT avg_edge_length = 0;
-  for (auto e : edges(pmesh))
-    avg_edge_length += edge_length(e, pmesh);
-
-  avg_edge_length /= static_cast<typename GT::FT>(n);
-  return avg_edge_length;
-}
-
 template<typename GT>
 struct Vertex_measures {
   typename GT::FT area_measure = 0;
@@ -617,12 +603,11 @@ void set_value(const T&, internal_np::Param_not_found)
 
 // computes selected curvatures for one specific vertex
 template<typename PolygonMesh,
-  typename NamedParameters = parameters::Default_named_parameters>
-  void interpolated_corrected_curvatures_one_vertex(
-    const PolygonMesh& pmesh,
-    const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-    const NamedParameters& np = parameters::default_values()
-  )
+         typename NamedParameters>
+void interpolated_corrected_curvatures_one_vertex(
+  const PolygonMesh& pmesh,
+  const typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
+  const NamedParameters& np)
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type Vertex_position_map;
@@ -651,7 +636,7 @@ template<typename PolygonMesh,
   typename GT::FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
 
   // calculate avg_edge_length as it is used in case radius is 0, and in the principal curvature computation later
-  typename GT::FT avg_edge_length = average_edge_length<PolygonMesh, GT>(pmesh);
+  typename GT::FT avg_edge_length = average_edge_length<PolygonMesh>(pmesh);
 
   // if the radius is 0, we use a small epsilon to expand the ball (scaled with the average edge length)
   if (is_zero(radius))
@@ -716,7 +701,7 @@ template<typename PolygonMesh,
 }
 
 
-template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
+template<typename PolygonMesh, class NamedParameters>
 class Interpolated_corrected_curvatures_computer
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
@@ -780,7 +765,6 @@ private:
     mu1_map = get(CGAL::dynamic_face_property_t<FT>(), pmesh);
     mu2_map = get(CGAL::dynamic_face_property_t<FT>(), pmesh);
     muXY_map = get(CGAL::dynamic_face_property_t<std::array<FT, 3 * 3>>(), pmesh);
-
   }
 
   void set_named_params(const NamedParameters& np)
@@ -801,7 +785,7 @@ private:
 
     // if no radius is given, we pass -1 which will make the expansion be only on the incident faces instead of a ball
     const FT radius = choose_parameter(get_parameter(np, internal_np::ball_radius), -1);
-    avg_edge_length = average_edge_length<PolygonMesh, GT>(pmesh);
+    avg_edge_length = average_edge_length<PolygonMesh>(pmesh);
     set_ball_radius(radius);
 
     // check which curvature maps are provided by the user (determines which curvatures are computed)
@@ -824,10 +808,8 @@ private:
 
 public:
 
-  Interpolated_corrected_curvatures_computer(const PolygonMesh& pmesh,
-    const NamedParameters& np = parameters::default_values()
-  ) :
-    pmesh(pmesh)
+  Interpolated_corrected_curvatures_computer(const PolygonMesh& pmesh,const NamedParameters& np)
+    : pmesh(pmesh)
   {
     set_named_params(np);
 

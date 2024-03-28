@@ -35,6 +35,7 @@
 #include <CGAL/Triangulation_2/internal/Triangulation_line_face_circulator_2.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
+#include <CGAL/Kernel_23/internal/Projection_traits_3.h>
 
 #include <CGAL/double.h>
 
@@ -434,6 +435,81 @@ protected:
   bool has_inexact_negative_orientation(const Point &p, const Point &q,
                                         const Point &r) const;
 
+
+
+template <class T>
+inline
+bool
+projection_traits_has_inexact_negative_orientation(const Point &p, const Point &q, const Point &r,
+                                                   const T& ) const
+{
+  // So that this code works well with Lazy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).x());
+  const double py = to_double(get_approx(p).y());
+  const double qx = to_double(get_approx(q).x());
+  const double qy = to_double(get_approx(q).y());
+  const double rx = to_double(get_approx(r).x());
+  const double ry = to_double(get_approx(r).y());
+
+  const double pqx = qx - px;
+  const double pqy = qy - py;
+  const double prx = rx - px;
+  const double pry = ry - py;
+
+  return ( determinant(pqx, pqy, prx, pry) < 0);
+}
+
+template <class T>
+inline
+bool
+projection_traits_has_inexact_negative_orientation(const Point &p, const Point &q, const Point &r,
+                                                   const ::CGAL::internal::Projection_traits_3<T,0>& ) const
+{  // So that this code works well with Lazy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).y());
+  const double py = to_double(get_approx(p).z());
+  const double qx = to_double(get_approx(q).y());
+  const double qy = to_double(get_approx(q).z());
+  const double rx = to_double(get_approx(r).y());
+  const double ry = to_double(get_approx(r).z());
+
+  const double pqx = qx - px;
+  const double pqy = qy - py;
+  const double prx = rx - px;
+  const double pry = ry - py;
+
+  return ( determinant(pqx, pqy, prx, pry) < 0);
+}
+
+
+template <class T>
+inline
+bool
+projection_traits_has_inexact_negative_orientation(const Point &p, const Point &q, const Point &r,
+                                                   const ::CGAL::internal::Projection_traits_3<T,1>& ) const
+{  // So that this code works well with Lazy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+
+  const double px = to_double(get_approx(p).x());
+  const double py = to_double(get_approx(p).z());
+  const double qx = to_double(get_approx(q).x());
+  const double qy = to_double(get_approx(q).z());
+  const double rx = to_double(get_approx(r).x());
+  const double ry = to_double(get_approx(r).z());
+
+  const double pqx = qx - px;
+  const double pqy = qy - py;
+  const double prx = rx - px;
+  const double pry = ry - py;
+
+  return ( determinant(pqx, pqy, prx, pry) < 0);
+}
+
+
+
 public:
   Face_handle
   inexact_locate(const Point& p,
@@ -710,10 +786,8 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
          std::enable_if_t<
-           boost::mpl::and_<
-             std::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-             std::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-           >::value
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+             std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
          >* = NULL)
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Tds::Vertex>::type> >(first,last);
@@ -3154,6 +3228,7 @@ inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
   return c;
 }
 
+
 template <class Gt, class Tds >
 inline
 bool
@@ -3161,22 +3236,8 @@ Triangulation_2<Gt, Tds>::
 has_inexact_negative_orientation(const Point &p, const Point &q,
                                  const Point &r) const
 {
-  // So that this code works well with Lazy_kernel
-  internal::Static_filters_predicates::Get_approx<Point> get_approx;
-
-  const double px = to_double(get_approx(p).x());
-  const double py = to_double(get_approx(p).y());
-  const double qx = to_double(get_approx(q).x());
-  const double qy = to_double(get_approx(q).y());
-  const double rx = to_double(get_approx(r).x());
-  const double ry = to_double(get_approx(r).y());
-
-  const double pqx = qx - px;
-  const double pqy = qy - py;
-  const double prx = rx - px;
-  const double pry = ry - py;
-
-  return ( determinant(pqx, pqy, prx, pry) < 0);
+  Gt gt;
+  return projection_traits_has_inexact_negative_orientation(p,q,r,gt);
 }
 #endif
 

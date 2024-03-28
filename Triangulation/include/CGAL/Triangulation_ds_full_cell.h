@@ -249,7 +249,9 @@ private:
     const Vertex_handle_array & vertices() const {return combinatorics_.vertices_; }
 
     // DATA MEMBERS
-    Combinatorics       combinatorics_;
+    // With the Itanium ABI, [[no_unique_address]] allows tda_data_ to reuse the
+    // padding bytes at the end of combinatorics_ when using the mirror policy.
+    CGAL_NO_UNIQUE_ADDRESS Combinatorics combinatorics_;
     mutable TDS_data    tds_data_;
 };
 

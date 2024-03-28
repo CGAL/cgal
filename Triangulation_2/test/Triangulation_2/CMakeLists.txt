@@ -17,7 +17,7 @@ foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
 endforeach()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  test_constrained_triangulation_2"
     "execution   of  test_delaunay_triangulation_2"

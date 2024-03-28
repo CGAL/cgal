@@ -105,12 +105,18 @@ else(CGAL_BRANCH_BUILD)
       "${CGAL_SOURCE_DIR}"
       CACHE INTERNAL "Directory containing the GraphicsView package")
 
-  # Enable testing with BUILD_TESTING
-  option(BUILD_TESTING "Build the testing tree." OFF)
-  if(BUILD_TESTING)
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
+option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
+  if(CGAL_ENABLE_TESTING)
     enable_testing()
   endif()
 endif(CGAL_BRANCH_BUILD)
+
+#allow to force disabling boost multiprecision support
+option(CGAL_DO_NOT_USE_BOOST_MP "Disable the support of boost multiprecision library" FALSE)
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
 
@@ -500,7 +506,7 @@ macro(set_special_prefix library prefix)
   set(CGAL_EXT_LIB_${library}_PREFIX ${prefix})
 endmacro()
 
-set_special_prefix(Qt5 QT)
+set_special_prefix(Qt6 QT)
 set_special_prefix(Eigen3 EIGEN3)
 set_special_prefix(Coin3D COIN3D)
 
@@ -589,10 +595,9 @@ set(CGAL_INSTALL_LIB_DIR
 )
 
 if(CGAL_WIN32_CMAKE_ON_CYGWIN)
-  exec_program(
-    cygpath ARGS
-    -w "${CMAKE_INSTALL_PREFIX}"
-    OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
+  execute_process(COMMAND cygpath -w ${CMAKE_INSTALL_PREFIX}
+                  OUTPUT_STRIP_TRAILING_WHITESPACE
+                  OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2)
   file(TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX)
 endif()
 
@@ -647,20 +652,19 @@ cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
-install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt5)
+install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt6)
 if(CGAL_BRANCH_BUILD)
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt5)
-  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt5)
+  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt6)
+  install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt6)
 endif()
 
 #
 # Variables used when WITH_{demos|examples|tests} are TRUE
 #
-set(CGAL_USE_FILE ${CGAL_MODULES_DIR}/UseCGAL.cmake)
 get_property(CGAL_FOUND GLOBAL PROPERTY CGAL_FOUND)
 get_property(CGAL_Core_FOUND GLOBAL PROPERTY CGAL_Core_FOUND)
 get_property(CGAL_ImageIO_FOUND GLOBAL PROPERTY CGAL_ImageIO_FOUND)
-get_property(CGAL_Qt5_FOUND GLOBAL PROPERTY CGAL_Qt5_FOUND)
+get_property(CGAL_Qt6_FOUND GLOBAL PROPERTY CGAL_Qt6_FOUND)
 
 #
 # Repeat some problems
@@ -754,8 +758,6 @@ list(REMOVE_ITEM scripts
 install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/
-        DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
-install(FILES ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake
         DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
 
 if(IS_DIRECTORY auxiliary/gmp/include AND IS_DIRECTORY auxiliary/gmp/lib)
@@ -928,7 +930,7 @@ if(CGAL_BRANCH_BUILD)
     find_package(GMP REQUIRED)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
-    find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
+    find_package(Qt6 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
     find_package(VTK COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
     if(VTK_FOUND)
       get_target_property(VTK_INCLUDE_DIRS VTK::IOImage INTERFACE_INCLUDE_DIRECTORIES)
@@ -942,11 +944,11 @@ if(CGAL_BRANCH_BUILD)
     set(compile_options
         "\
 ${CMAKE_CXX_FLAGS} -DCGAL_EIGEN3_ENABLED -DCGAL_PROFILE \
-${Qt5Widgets_DEFINITIONS} ${Qt5OpenGL_DEFINITIONS} ${Qt5Gui_DEFINITIONS} \
-${Qt5OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
-${Qt5Gui_EXECUTABLE_COMPILE_FLAGS} \
-${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt5_3RD_PARTY_DEFINITIONS} \
-${CGAL_DEFINITIONS} -std=c++17")
+${Qt6Widgets_DEFINITIONS} ${Qt6OpenGL_DEFINITIONS} ${Qt6Gui_DEFINITIONS} \
+${Qt6OpenGL_EXECUTABLE_COMPILE_FLAGS} -fPIC \
+${Qt6Gui_EXECUTABLE_COMPILE_FLAGS} \
+${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt6_3RD_PARTY_DEFINITIONS} \
+${CGAL_DEFINITIONS}" -std=c++17)
     message("COMPILATION OPTIONS ARE :  ${compile_options}")
 
     if(NOT RS_FOUND AND NOT RS3_FOUND)
@@ -1035,11 +1037,11 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
       ${RS_INCLUDE_DIR}
       ${EIGEN3_INCLUDE_DIR}
       ${GMP_INCLUDE_DIR}
-      ${Qt5OpenGL_INCLUDE_DIRS}
-      ${Qt5Widgets_INCLUDE_DIRS}
-      ${Qt5Gui_DEFINITIONS}
+      ${Qt6OpenGL_INCLUDE_DIRS}
+      ${Qt6Widgets_INCLUDE_DIRS}
+      ${Qt6Gui_DEFINITIONS}
       ${CGAL_3RD_PARTY_INCLUDE_DIRS}
-      ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS})
+      ${CGAL_Qt6_3RD_PARTY_INCLUDE_DIRS})
       list(APPEND include_options "-I${incdir}")
     endforeach()
     include_directories(SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS})
@@ -1238,7 +1240,7 @@ endif()
 
 #print some info about versions
 if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
-  find_package(Qt5 QUIET COMPONENTS Core)
+  find_package(Qt6 QUIET COMPONENTS Core)
   find_package(Boost)
   if(NOT CGAL_DISABLE_GMP)
     find_package(GMP)
@@ -1252,7 +1254,7 @@ if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
     STATUS
     "USING BOOST_VERSION = '${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}'"
     )
-  if(Qt5_FOUND)
-    message(STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'")
-  endif()#Qt5_FOUND
+  if(Qt6_FOUND)
+    message(STATUS "USING Qt6_VERSION = '${Qt6Core_VERSION}'")
+  endif()#Qt6_FOUND
 endif()#RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE

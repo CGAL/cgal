@@ -2,96 +2,92 @@
 \input{header}
 \pagestyle{empty}
 \begin{document}
-\psscalebox{1.8}{\arrset{0.5}%
-  \begin{tabular}{ccc}
-    \pspicture[](0.5,0)(10,7)
-    \arrMainVertex(1,4){a}
-    \arrMainVertex(5,6){b}
-    \arrMainVertex(9,4){c}
-    \arrMainVertex(7,2){d}
-    \arrMainVertex(3,1){e}
-    \arrMainVertex(3,2){f}
-    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
-    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
-    \ncline[linewidth=0.5pt,linecolor=blue]{c}{d}
-    \ncline[linewidth=0.5pt,linecolor=blue]{d}{e}
-    \ncline[linewidth=0.5pt,linecolor=blue]{e}{f}
-    \ncline[linewidth=0.5pt,linecolor=blue]{f}{a}
-    \arrMinorVertex(3,3){1}\uput[135]{0}(3,3){$v_1$}
-    \arrMinorVertex(6,4){2}\uput[-45]{0}(6,4){$v_2$}
-    \ncline[linestyle=dashed,linewidth=0.5pt,linecolor=blue]{1}{2}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{1}{2}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{2}{1}
-    \rput(5,5){$f$}
-    \psframe[linewidth=0.5pt](0.5,0)(10,7)
-    \endpspicture &
-    %
-    \pspicture[](0.5,0)(10,7)
-    \arrMainVertex(1,3){a}
-    \arrMainVertex(2,5){b}
-    \arrMainVertex(5,6){c}
-    \arrMainVertex(7,3){u}
-    \uput[180]{0}(7,3){$u$}
-    \arrMainVertex(5,1){e}
-    \arrMainVertex(3,2){f}
-    \arrMainVertex(2,1){g}
-    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
-    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
-    \ncline[linewidth=0.5pt,linecolor=blue]{c}{u}
-    \ncline[linewidth=0.5pt,linecolor=blue]{u}{e}
-    \ncline[linewidth=0.5pt,linecolor=blue]{e}{f}
-    \ncline[linewidth=0.5pt,linecolor=blue]{f}{g}
-    \ncline[linewidth=0.5pt,linecolor=blue]{g}{a}
-    \arrMinorVertex(9,4){v}
-    \uput[90]{0}(9,4){$v$}
-    \ncline[linestyle=dashed,linewidth=0.5pt,linecolor=blue]{u}{v}
-    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{c}{u}
-    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{u}{e}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{u}{v}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{v}{u}
-    \psframe[linewidth=0.5pt](0.5,0)(10,7)
-    \endpspicture &
-    %
-    \pspicture[](0.5,0)(10,7)
-    \arrMainVertex(1,3){a}
-    \arrMainVertex(2,6){b}
-    \arru[45](5,6){1}
-    \arru[-45](7,1){2}
-    \arrMainVertex(4,2){e}
-    \arrMainVertex(2,1){f}
-    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
-    \ncline[linewidth=0.5pt,linecolor=blue]{b}{1}
-    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{b}{1}
-    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{1}{b}
-    \ncline[linestyle=dashed,linewidth=0.5pt,linecolor=blue]{1}{2}
-    \ncline[linewidth=0.5pt,offset=3pt]{->}{1}{2}
-    \ncline[linewidth=0.5pt,offset=3pt,nodesepA=6pt]{->}{2}{1}
-    \ncline[linewidth=0.5pt,linecolor=blue]{2}{e}
-    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt]{->}{2}{e}
-    \ncline[linestyle=dashed,linewidth=0.5pt,offset=3pt,nodesepB=4pt]{->}{e}{2}
-    \ncline[linewidth=0.5pt,linecolor=blue]{e}{f}
-    \ncline[linewidth=0.5pt,linecolor=blue]{f}{a}
-    \arrMainVertex(2.5,4){a}
-    \arrMainVertex(3.5,5){b}
-    \arrMainVertex(4.5,4){c}
-    \arrMainVertex(3.5,3){d}
-    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
-    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
-    \ncline[linewidth=0.5pt,linecolor=blue]{c}{d}\Aput[1pt]{$h_1$}
-    \ncline[linewidth=0.5pt,linecolor=blue]{d}{a}
-    \ncline[linewidth=0.5pt,linecolor=blue]{a}{c}
-    \rput(1,5){$f$}
-    \rput(2.5,5){$f'$}
-    \arrMainVertex(7,4){a}
-    \arrMainVertex(8,4){b}
-    \arrMainVertex(8,5){c}
-    \arrMainVertex(9,3){d}
-    \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
-    \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
-    \ncline[linewidth=0.5pt,linecolor=blue]{c}{a}
-    \ncline[linewidth=0.5pt,linecolor=blue]{b}{d}\Aput[1pt]{$h_2$}
-    \psframe[linewidth=0.5pt](0.5,0)(10,7)
-    \endpspicture
-  \end{tabular}
-}
+\begin{tabular}{ccc}
+  \begin{tikzpicture}
+    \node[point] at (1,4) (a) {};
+    \node[point] at (5,6) (b) {};
+    \node[point] at (9,4) (c) {};
+    \node[point] at (7,2) (d) {};
+    \node[point] at (3,1) (e) {};
+    \node[point] at (3,2) (f) {};
+    \draw[blue,very thick](a)--(b);
+    \draw[blue,very thick](b)--(c);
+    \draw[blue,very thick](c)--(d);
+    \draw[blue,very thick](d)--(e);
+    \draw[blue,very thick](e)--(f);
+    \draw[blue,very thick](f)--(a);
+    \node[point=cyan,label={[label distance=0pt]135:{$v_1$}}] at (3,3) (1) {};
+    \node[point=cyan,label={[label distance=0pt]135:{$v_2$}}] at (6,4) (2) {};
+    \draw[dashed,blue,very thick] (1)--(2);
+    \draw[halfedge] (1) to (2);
+    \draw[halfedge] (2) to (1);
+    \node at (5,5) {$f$};
+    \draw[thin](0.5,0) rectangle (10,7);
+  \end{tikzpicture} &
+  %
+  \begin{tikzpicture}
+    \node[point] at (1,3) (a) {};
+    \node[point] at (2,5) (b) {};
+    \node[point] at (5,6) (c) {};
+    \node[point,label={[label distance=0pt]180:{$u$}}] at (7,3) (u) {};
+    \node[point] at (5,1) (e) {};
+    \node[point] at (3,2) (f) {};
+    \node[point] at (2,1) (g) {};
+    \draw[blue,very thick](a)--(b);
+    \draw[blue,very thick](b)--(c);
+    \draw[blue,very thick](c)--(u);
+    \draw[blue,very thick](u)--(e);
+    \draw[blue,very thick](e)--(f);
+    \draw[blue,very thick](f)--(g);
+    \draw[blue,very thick](g)--(a);
+    \node[point=cyan,label={[label distance=0pt]90:{$v$}}] at (9,4) (v) {};
+    \draw[dashed,blue,very thick] (u)--(v);
+    \draw[dashed,halfedge] (c) to (u);
+    \draw[dashed,halfedge] (u) to (e);
+    \draw[halfedge] (u) to (v);
+    \draw[halfedge] (v) to (u);
+    \draw[thin] (0.5,0) rectangle (10,7);
+  \end{tikzpicture} &
+  %
+  \begin{tikzpicture}
+    \node[point] at (1,3) (a) {};
+    \node[point] at (2,6) (b) {};
+    \node[point,label={[label distance=0pt]45:{$u_1$}}] at (5,6) (1) {};
+    \node[point,label={[label distance=0pt]45:{$u_2$}}] at (7,1) (2) {};
+    \node[point] at (4,2) (e) {};
+    \node[point] at (2,1) (f) {};
+    \draw[blue,very thick](a)--(b);
+    \draw[blue,very thick](b)--(1);
+    \draw[dashed,thick,halfedge] (b) to (1);
+    \draw[dashed,thick,halfedge] (1) to (b);
+    \draw[dashed,blue,very thick](1)--(2);
+    \draw[thick,halfedge] (1) to (2);
+    \draw[thick,halfedge,shorten <=4pt] (2) to (1);
+    \draw[blue,very thick] (2)--(e);
+    \draw[dashed,halfedge] (2) to (e);
+    \draw[dashed,halfedge,shorten >=4pt] (e) to (2);
+    \draw[blue,very thick] (e)--(f);
+    \draw[blue,very thick] (f)--(a);
+    \node[point] at (2.5,4) (a) {};
+    \node[point] at (3.5,5) (b) {};
+    \node[point] at (4.5,4) (c) {};
+    \node[point] at (3.5,3) (d) {};
+    \draw[blue,very thick](a)--(b);
+    \draw[blue,very thick](b)--(c);
+    \draw[blue,very thick](c)-- node[midway,below,sloped] {$h_1$} (d);
+    \draw[blue,very thick](d)--(a);
+    \draw[blue,very thick](a)--(c);
+    \node at (1,5) {$f$};
+    \node at (2.5,5) {$f'$};
+    \node[point] at (7,4) (a) {};
+    \node[point] at (8,4) (b) {};
+    \node[point] at (8,5) (c) {};
+    \node[point] at (9,3) (d) {};
+    \draw[blue,very thick] (a)--(b);
+    \draw[blue,very thick] (b)--(c);
+    \draw[blue,very thick] (c)--(a);
+    \draw[blue,very thick] (b)-- node[midway,below,sloped] {$h_2$} (d);
+    \draw[thin] (0.5,0) rectangle (10,7);
+  \end{tikzpicture}
+\end{tabular}
 \end{document}

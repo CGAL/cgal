@@ -20,7 +20,7 @@ if(TARGET CGAL::Eigen3_support)
     message(STATUS "NOTICE: OpenCV was not found. OpenCV random forest predicate for classification won't be available.")
   endif()
 
-  qt5_wrap_ui(classificationUI_FILES Classification_widget.ui
+  qt6_wrap_ui(classificationUI_FILES Classification_widget.ui
     Classification_advanced_widget.ui)
   polyhedron_demo_plugin(
     classification_plugin
@@ -41,7 +41,7 @@ if(TARGET CGAL::Eigen3_support)
     scene_color_ramp
     CGAL::Eigen3_support)
 
-    if(BUILD_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
+    if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
         "compilation of  classification_plugin"
         PROPERTIES RESOURCE_LOCK Selection_test_resources)

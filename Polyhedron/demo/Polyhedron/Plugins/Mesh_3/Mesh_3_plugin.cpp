@@ -50,9 +50,6 @@ auto make_not_null(T&& t) {
 
 using namespace CGAL::Three;
 
-// Constants
-const QColor default_mesh_color(45,169,70);
-
 #include "Mesh_3_plugin_cgal_code.h" // declare functions `cgal_code_mesh_3`
 #include "split_polylines.h"
 #include <CGAL/Mesh_facet_topology.h>
@@ -190,6 +187,10 @@ public Q_SLOTS:
 private:
   enum class Mesh_type : bool { VOLUME, SURFACE_ONLY };
   enum class Dialog_choice : bool { NO_DIALOG, DIALOG };
+  // This is a helper class for an interface row.
+  //  A row is composed of a label, a widget.
+  //  It can also have a minimum, maximum and default value.
+  //  It can also have a list of checkboxes that enable/disable the row.
   class Setup_ui_row : public QObject
   {
     QWidget* label_;
@@ -584,6 +585,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
           &QLabel::linkActivated,
           &QDesktopServices::openUrl);
 
+  ui.approx->setToolTip(tr("Approximation error: in [%1; %2]")
+                       .arg(diag * 10e-7).arg(diag));
+
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
 
@@ -969,7 +973,7 @@ meshing_done(Meshing_thread* thread)
     .arg(source_item_name_)
     .arg(thread->time());
 
-  Q_FOREACH( QString param, thread->parameters_log() )
+  for( QString param : thread->parameters_log() )
   {
     str.append(QString("( %1 )<br>").arg(param));
   }
@@ -1021,7 +1025,7 @@ treat_result(Scene_item& source_item,
     result_item->setRenderingMode(source_item.renderingMode());
     result_item->set_data_item(&source_item);
 
-    Q_FOREACH(int ind, scene->selectionIndices()) {
+    for(int ind : scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -1035,7 +1039,7 @@ treat_result(Scene_item& source_item,
     Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item;
     CGAL::facets_in_complex_3_to_triangle_mesh(result_item->c3t3(), *new_item->face_graph());
     new_item->setName(tr("%1 [Remeshed]").arg(source_item_name_));
-    Q_FOREACH(int ind, scene->selectionIndices()) {
+    for(int ind : scene->selectionIndices()) {
       scene->item(ind)->setVisible(false);
     }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();

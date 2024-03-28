@@ -79,13 +79,13 @@ public :
     setTriangleContainer(0, new Tc(Vi::PROGRAM_C3T3, false));
     setEdgeContainer(0, new Ec(Vi::PROGRAM_NO_SELECTION, false));
   }
-  bool isFinite() const Q_DECL_OVERRIDE{ return false; }
+  bool isFinite() const override{ return false; }
   ~Scene_intersection_item()
   {
     if(alphaSlider)
          delete alphaSlider;
   }
-  void compute_bbox() const Q_DECL_OVERRIDE{}
+  void compute_bbox() const override{}
 
   void gl_initialization(Vi* viewer)
   {
@@ -109,16 +109,16 @@ public :
     barycenters = p_bary;
     subdomain_ids = p_subdomain_ids;
   }
-  void setColor(QColor c) Q_DECL_OVERRIDE
+  void setColor(QColor c) override
   {
     qobject_cast<Scene_triangulation_3_item*>(this->parent())->setColor(c);
     Scene_item::setColor(c);
   }
   // Indicates if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
+  bool supportsRenderingMode(RenderingMode m) const override{
     return (m != Gouraud && m != PointsPlusNormals && m != Points && m != ShadedPoints);
   }
-  void computeElements() const Q_DECL_OVERRIDE
+  void computeElements() const override
   {
     getTriangleContainer(0)->reset_vbos(ALL);
     getEdgeContainer(0)->reset_vbos(ALL);
@@ -137,7 +137,7 @@ public :
                             static_cast<int>(edges->size()*sizeof(float)));
     setBuffersFilled(true);
   }
-  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const Q_DECL_OVERRIDE
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const override
   {
     //vao containing the data for the facets
     {
@@ -152,7 +152,7 @@ public :
   }
 
   //Displays the item
-  void draw(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
+  void draw(CGAL::Three::Viewer_interface* viewer) const override
   {
     if(is_fast)
       return;
@@ -174,7 +174,7 @@ public :
     getTriangleContainer(0)->setAlpha(alpha());
     getTriangleContainer(0)->draw(viewer, false);
   }
-  void drawEdges(CGAL::Three::Viewer_interface* viewer) const Q_DECL_OVERRIDE
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const override
   {
     if(is_fast)
       return;
@@ -251,9 +251,9 @@ public :
     }
   }
 
-  Scene_item* clone() const Q_DECL_OVERRIDE{return 0;}
-  QString toolTip() const Q_DECL_OVERRIDE{return QString();}
-  QMenu* contextMenu() Q_DECL_OVERRIDE
+  Scene_item* clone() const override{return 0;}
+  QString toolTip() const override{return QString();}
+  QMenu* contextMenu() override
   {
     QMenu* menu = Scene_item::contextMenu();
 
@@ -279,12 +279,12 @@ public :
     }
     return menu;
   }
-  float alpha() const Q_DECL_OVERRIDE
+  float alpha() const override
   {
     return m_alpha ;
   }
 
-  void setAlpha(int a) Q_DECL_OVERRIDE
+  void setAlpha(int a) override
   {
     m_alpha = a / 255.0f;
     redraw();
@@ -1968,7 +1968,7 @@ void Scene_triangulation_3_item::invalidateOpenGLBuffers()
   getEdgeContainer(T3_edges)->reset_vbos(ALL);
   getEdgeContainer(Grid_edges)->reset_vbos(ALL);
 
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
     if(viewer == NULL)
@@ -2198,9 +2198,8 @@ void Scene_triangulation_3_item::computeIntersection()
 void Scene_triangulation_3_item::set_cut_edge(bool b)
 {
   d->cut_edges = b;
-  d->intersection->setCutEdges(b);
+  if(d->intersection) d->intersection->setCutEdges(b);
   Q_EMIT redraw();
 }
 
 #include "Scene_triangulation_3_item.moc"
-

@@ -37,3 +37,4 @@ HTML_EXTRA_FILES           = ${CGAL_PACKAGE_DOC_DIR}/fig/selfintersections.jpg \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_cheese.png \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_colors.png \
                              ${CGAL_PACKAGE_DOC_DIR}/fig/decimate_rg_joint.png
+
