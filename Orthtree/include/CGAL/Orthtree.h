@@ -1401,15 +1401,8 @@ private: // functions :
 public:
 
   /// \cond SKIP_IN_MANUAL
-  void dump_to_polylines(std::ostream& os) const {
-    for (const auto n: traverse<Orthtrees::Preorder_traversal>())
-      if (is_leaf(n)) {
-        Bbox box = bbox(n);
-        dump_box_to_polylines(box, os);
-      }
-  }
-
-  void dump_box_to_polylines(const Bbox_2& box, std::ostream& os) const {
+  template <class K>
+  void dump_box_to_polylines(const Iso_rectangle_2<K>& box, std::ostream& os) const {
     // dump in 3D for visualisation
     os << "5 "
        << box.xmin() << " " << box.ymin() << " 0 "
@@ -1419,7 +1412,8 @@ public:
        << box.xmin() << " " << box.ymin() << " 0" << std::endl;
   }
 
-  void dump_box_to_polylines(const Bbox_3& box, std::ostream& os) const {
+  template <class K>
+  void dump_box_to_polylines(const Iso_cuboid_3<K>& box, std::ostream& os) const {
     // Back face
     os << "5 "
        << box.xmin() << " " << box.ymin() << " " << box.zmin() << " "
@@ -1449,6 +1443,14 @@ public:
     os << "2 "
        << box.xmax() << " " << box.ymax() << " " << box.zmin() << " "
        << box.xmax() << " " << box.ymax() << " " << box.zmax() << std::endl;
+  }
+
+  void dump_to_polylines(std::ostream& os) const {
+    for (Node_index n: traverse(Orthtrees::Preorder_traversal<Self>(*this)))
+      if (is_leaf(n)) {
+        Bbox box = bbox(n);
+        dump_box_to_polylines(box, os);
+      }
   }
 
   std::string to_string(Node_index node) {
