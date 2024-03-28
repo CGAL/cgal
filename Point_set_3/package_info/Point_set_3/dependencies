@@ -29,3 +29,4 @@ Stream_support
 Surface_mesh
 TDS_2
 Triangulation_2
+CGAL_Core
