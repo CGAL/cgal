@@ -585,7 +585,7 @@ so that they <em>virtually</em> become border edges when exploring a seam mesh w
 The input mesh is referred to as <em>underlying</em> mesh of the seam mesh.
 We denote `tm` and `sm` the underlying mesh and the seam mesh respectively.
 
-Figure \cgalFigureRef{fig_Seam_mesh_1} shows an example of mesh on which two
+\cgalFigureRef{fig_Seam_mesh_1} shows an example of mesh on which two
 edges, defined by the halfedge pairs `h2-h3` and `h6-h7`, are marked as seams.
 The introduction of virtual borders modifies the elementary \bgl graph traversal
 operations: when we circulate around the target of `h7` in the underlying mesh,
@@ -599,7 +599,7 @@ A seam mesh with two seam edges `(h2, h3)` and `(h6, h7)`.
 \cgalFigureEnd
 
 A vertex of the underlying mesh may correspond to multiple vertices in the seam mesh.
-For example in Figure \cgalFigureRef{fig_Seam_mesh_1}, the target of `h7` corresponds to two
+For example in \cgalFigureRef{fig_Seam_mesh_1}, the target of `h7` corresponds to two
 vertices in the seam mesh, on either side of the virtual border created by the seam edges.
 For this reason, a vertex `v` of the seam mesh is internally represented as a halfedge `h`
 of the seam mesh. To obtain a canonical definition, the halfedge `h` is defined as the halfedge
@@ -611,7 +611,7 @@ For vertices `v` in the underlying mesh that are not on a seam edge, we choose
 \subsubsection BGLSeamMeshTraversal Seam Mesh Traversal
 
 Using the function `next(halfedge_descriptor, FaceGraph)`, we can walk around a face but also around
-a border of a mesh. For the seam mesh `sm` from Figure \cgalFigureRef{fig_Seam_mesh_1},
+a border of a mesh. For the seam mesh `sm` from \cgalFigureRef{fig_Seam_mesh_1},
 we have `opposite(h2, sm) == h3*`, and it holds that `face(h3*, sm) == null_face()`.
 We can walk along this virtual border: starting at `h3*` and repeatedly calling `next(..,sm)`,
 we will traverse `h6*`, `h7*`, `h2*`, before reaching `h3*` again.

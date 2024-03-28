@@ -187,14 +187,14 @@ public:
         return &data_[0];
     }
 
-    /// Access the i'th element. No range check is performed!
+    /// Access the i-th element. No range check is performed!
     reference operator[](std::size_t _idx)
     {
         CGAL_assertion( _idx < data_.size() );
         return data_[_idx];
     }
 
-    /// Const access to the i'th element. No range check is performed!
+    /// Const access to the i-th element. No range check is performed!
     const_reference operator[](std::size_t _idx) const
     {
         CGAL_assertion( _idx < data_.size());

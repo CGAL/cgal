@@ -590,7 +590,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
 
   // Consruct the bivariate polynomial that corresponds to Equation I.
   // Note that we represent a bivariate polynomial as a vector of univariate
-  // polynomials, whose i'th entry corresponds to the coefficient of t^i,
+  // polynomials, whose i-th entry corresponds to the coefficient of t^i,
   // which is in turn a polynomial it s.
   const int                degX_2 = nt_traits.degree (polyX_2);
   std::vector<Polynomial>  coeffsX_st (degX_2 < 0 ? 1 : (degX_2 + 1));
@@ -657,7 +657,7 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
 
   // Consruct the bivariate polynomial that corresponds to Equation I.
   // Note that we represent a bivariate polynomial as a vector of univariate
-  // polynomials, whose i'th entry corresponds to the coefficient of t^i,
+  // polynomials, whose i-th entry corresponds to the coefficient of t^i,
   // which is in turn a polynomial it s.
   const int                degX = nt_traits.degree (polyX);
   CGAL_assertion(degX > 0);
@@ -771,7 +771,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
     if (nt_traits.degree (mat[i][i]) < 0)
     {
       // If the current diagonal value is a zero polynomial, try to replace
-      // the current i'th row with a row with a higher index k, such that
+      // the current i-th row with a row with a higher index k, such that
       // mat[k][i] is not a zero polynomial.
 
       found_row = false;
@@ -786,7 +786,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
 
       if (found_row)
       {
-        // Swap the i'th and the k'th rows (note that we start from the i'th
+        // Swap the i-th and the k-th rows (note that we start from the i-th
         // column, because the first i entries in every row with index i or
         // higher should be zero by now).
         for (j = i; j < dim; j++)
@@ -808,7 +808,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
       }
     }
 
-    // Zero the whole i'th column of the following rows.
+    // Zero the whole i-th column of the following rows.
     for (k = i + 1; k < dim; k++)
     {
       if (nt_traits.degree (mat[k][i]) >= 0)
@@ -821,7 +821,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
           mat[k][j] = mat[k][j] * mat[i][i] - mat[i][j] * value;
         }
 
-        // We multiplied the current row by the i'th diagonal entry, thus
+        // We multiplied the current row by the i-th diagonal entry, thus
         // multiplying the determinant value by it. We therefore increment
         // the exponent of mat[i][i] in the normalization factor.
         exp_fact[i] = exp_fact[i] + 1;
