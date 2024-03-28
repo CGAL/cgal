@@ -14,7 +14,7 @@ endif()
 
 find_package(Qt6 QUIET COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
 find_package(CGAL COMPONENTS Qt6)
-find_package(nlohmann_json)
+find_package(nlohmann_json 3.9)
 
 if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND OR NOT nlohmann_json_FOUND)
   if (NOT CGAL_FOUND)
@@ -30,7 +30,7 @@ if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND OR 
     set(MISSING_DEPS "the Boost library, ${MISSING_DEPS}")
   endif()
   if (NOT nlohmann_json_FOUND)
-    set(MISSING_DEPS "JSON for Modern C++ (know as nlohmann_json), ${MISSING_DEPS}")
+    set(MISSING_DEPS "JSON for Modern C++ 3.9+ (know as nlohmann_json), ${MISSING_DEPS}")
   endif()
 
   message(STATUS "This project requires ${MISSING_DEPS} and will not be compiled.")
