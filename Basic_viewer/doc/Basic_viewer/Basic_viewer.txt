@@ -11,7 +11,21 @@ namespace CGAL {
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
 \section BV_Intro Introduction
 
-The basic viewer package provides interactive visualization for most \cgal packages, such as \ref PkgArrangementOnSurface2Ref "2D Arrangements", `Boolean_set_operations_2`, `Linear_cell_complex`, `Nef_3`, `Periodic_2_triangulation_2`, `Point_set_3`, `Polygon`, `Polyhedron`, `Straight_skeleton_2`, `Surface_mesh`, `Triangulation_2`, `Triangulation_3`, `Voronoi_diagram_2`, and more.
+The basic viewer package provides interactive visualization for most \cgal packages, such as
+\ref PkgArrangementOnSurface2Ref "2D Arrangements",
+\ref PkgBooleanSetOperations2Ref "2D Boolean Set",
+\ref PkgLinearCellComplexRef "Linear cell complex",
+\ref PkgNef3Ref "3D Nef",
+\ref PkgPeriodic2Triangulation2Ref "2D Periodic Triangulations",
+\ref PkgPointSet3Ref "3D Point Set",
+\ref PkgPolygon2Ref "2D Polygon",
+\ref PkgPolyhedronRef "3D Polyhedral Surface",
+\ref PkgStraightSkeleton2Ref "2D Straight Skeleton",
+\ref PkgSurface_mesh "Surface Mesh",
+\ref PkgTriangulation2Ref "2D Triangulation",
+\ref PkgTriangulation3Ref "3D Triangulation",
+\ref PkgVoronoiDiagram2Ref "2D Voronoi Diagram",
+and more.
 
 The most simple use case of the basic viewer is the call of the global `draw()` function. There is one draw function for each \cgal package. Such a call opens a new interactive window showing the given model and allowing to navigate in the scene, show or hide some specific cells, show the interior of the model if any, etc.
 

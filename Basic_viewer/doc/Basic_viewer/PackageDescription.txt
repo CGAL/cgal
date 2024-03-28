@@ -46,9 +46,10 @@ Finally a \qt widget is provided that can be integrated in the GUI of a user app
 
 - `CGAL::Arrangement_2` \link PkgArrangementOnSurface2Draw CGAL::draw<ARR>() \endlink
 - `CGAL::Constrained_triangulation_2` \link PkgDrawTriangulation2 CGAL::draw<CT2>() \endlink
-- `CGAL::Linear_cell_complex` \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
+- `CGAL::Linear_cell_complex_for_combinatorial_map` \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
+- `CGAL::Linear_cell_complex_for_generalized_map` \link PkgDrawLinearCellComplex CGAL::draw<LCC>() \endlink
 - `CGAL::Nef_polyhedron_3` \link PkgDrawNef3 CGAL::draw<Nef3>() \endlink
-- `CGAL::Periodic_2_Triangulation_2` \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
+- `CGAL::Periodic_2_triangulation_2` \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
 - `CGAL::Point_set_3` \link PkgDrawPointSet3D CGAL::draw<PS>() \endlink
 - `CGAL::Polygon_2` \link PkgDrawPolygon2 CGAL::draw<P2>() \endlink
 - `CGAL::Polygon_set_2` \link PkgDrawPolygonSet2 CGAL::draw<PS>() \endlink
@@ -64,9 +65,10 @@ Finally a \qt widget is provided that can be integrated in the GUI of a user app
 
 - `CGAL::Arrangement_2` \link PkgArrangementOnSurface2Draw CGAL::add_to_graphics_scene<ARR>() \endlink
 - `CGAL::Constrained_triangulation_2` \link PkgDrawTriangulation2 CGAL::add_to_graphics_scene<CT2>() \endlink
-- `CGAL::Linear_cell_complex` \link PkgDrawLinearCellComplex CGAL::add_to_graphics_scene<LCC>() \endlink
+- `CGAL::Linear_cell_complex_for_combinatorial_map` \link PkgDrawLinearCellComplex CGAL::add_to_graphics_scene<LCC>() \endlink
+- `CGAL::Linear_cell_complex_for_generalized_map` \link PkgDrawLinearCellComplex CGAL::add_to_graphics_scene<LCC>() \endlink
 - `CGAL::Nef_polyhedron_3` \link PkgDrawNef3 CGAL::add_to_graphics_scene<Nef3>() \endlink
-- `CGAL::Periodic_2_Triangulation_2` \link PkgDrawPeriodic2Triangulation2 CGAL::add_to_graphics_scene<P2T2>() \endlink
+- `CGAL::Periodic_2_triangulation_2` \link PkgDrawPeriodic2Triangulation2 CGAL::add_to_graphics_scene<P2T2>() \endlink
 - `CGAL::Point_set_3` \link PkgDrawPointSet3D CGAL::add_to_graphics_scene<PS>() \endlink
 - `CGAL::Polygon_2` \link PkgDrawPolygon2 CGAL::add_to_graphics_scene<P2>() \endlink
 - `CGAL::Polygon_set_2` \link PkgDrawPolygonSet2 CGAL::add_to_graphics_scene<PS>() \endlink
