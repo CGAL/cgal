@@ -14,8 +14,9 @@ endif()
 
 find_package(Qt6 QUIET COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
 find_package(CGAL COMPONENTS Qt6)
+find_package(nlohmann_json)
 
-if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND)
+if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND OR NOT nlohmann_json_FOUND)
   if (NOT CGAL_FOUND)
     set(MISSING_DEPS "the CGAL library, ${MISSING_DEPS}")
   endif()
@@ -28,19 +29,15 @@ if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND)
   if (NOT Boost_FOUND)
     set(MISSING_DEPS "the Boost library, ${MISSING_DEPS}")
   endif()
+  if (NOT nlohmann_json_FOUND)
+    set(MISSING_DEPS "JSON for Modern C++ (know as nlohmann_json), ${MISSING_DEPS}")
+  endif()
 
   message(STATUS "This project requires ${MISSING_DEPS} and will not be compiled.")
   return()
 endif()
 
-################################################################################
-include(FetchContent)
-FetchContent_Declare(json
-  GIT_REPOSITORY https://github.com/nlohmann/json
-  GIT_TAG v3.11.3)
-FetchContent_MakeAvailable(json)
-# find_package(nlohmann_json 3.2.0 REQUIRED)
-################################################################################
+
 
 add_definitions(-DQT_NO_VERSION_TAGGING)
 
