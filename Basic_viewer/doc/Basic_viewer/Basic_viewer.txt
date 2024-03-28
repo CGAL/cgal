@@ -33,14 +33,16 @@ The drawing can be tuned using `Graphics_scene_options`, for example to change t
 
 More complex usage can be achieved by using the `Graphics_scene` class. Different \cgal data structures can be added in a same `Graphics_scene` allowing to visualize them simultaneously in a same window. Like for the draw function, the drawing parameters can be tuned thanks to the `Graphics_scene_options`.
 
-Two classes are based on \qt. (1) `CGAL::Qt::Basic_viewer` is a \qt widget that inherits from `QGLViewer` (libQGLViewer is an open source C++ library based on \qt that eases the creation of OpenGL 3D viewers). (2) `CGAL::Qt::QApplication_and_basic_viewer` which regroups a `Qt::QApplication` and a `CGAL::Qt::Basic_viewer`.
+Two classes are based on \qt.
+  - `CGAL::Qt::Basic_viewer` is a \qt widget that inherits from `QGLViewer` (libQGLViewer is an open source C++ library based on \qt that eases the creation of OpenGL 3D viewers).
+  - `CGAL::Qt::QApplication_and_basic_viewer` which regroups a `Qt::QApplication` and a `CGAL::Qt::Basic_viewer`.
 
 <!-- /////////////////////////////////////////////////////////////////////////////// -->
 \section BV_SoftwareDesign Software Design
 
-The diagram in \cgalFigureRef{fig_basic_viewer_diagramme_class} shows the main classes and functions of this package.
+The diagram in \cgalFigureRef{fig_basic_viewer_diagram_class} shows the main classes and functions of this package.
 
-\cgalFigureBegin{fig_basic_viewer_diagramme_class,basic_viewer_diagramme_class.svg}
+\cgalFigureBegin{fig_basic_viewer_diagram_class,basic_viewer_diagramme_class.svg}
 UML diagram of the classes and functions of the package (only partial representation).
 \cgalFigureEnd
 
