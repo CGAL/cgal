@@ -27,12 +27,13 @@ polyhedron_demo_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
 target_link_libraries(extrude_plugin PUBLIC scene_surface_mesh_item
                                             scene_selection_item)
 
-qt6_wrap_ui( acvd_remeshingUI_FILES ACVD_remeshing_dialog.ui)
-polyhedron_demo_plugin(acvd_remeshing_plugin ACVD_remeshing_plugin ${acvd_remeshingUI_FILES} KEYWORDS PMP)
-target_link_libraries(acvd_remeshing_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item CGAL::Eigen3_support)
-
 if(TARGET CGAL::Eigen3_support)
   if("${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
+
+    qt6_wrap_ui( acvd_remeshingUI_FILES ACVD_remeshing_dialog.ui)
+    polyhedron_demo_plugin(acvd_remeshing_plugin ACVD_remeshing_plugin ${acvd_remeshingUI_FILES} KEYWORDS PMP)
+    target_link_libraries(acvd_remeshing_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item scene_polygon_soup_item CGAL::Eigen3_support)
+
     qt6_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
     polyhedron_demo_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES} KEYWORDS PMP)
     target_link_libraries(hole_filling_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_selection_item CGAL::Eigen3_support)

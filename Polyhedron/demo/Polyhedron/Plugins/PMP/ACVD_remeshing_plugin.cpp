@@ -4,7 +4,7 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Three.h>
 #include "Scene_polyhedron_selection_item.h"
-#include "ui_ACVD_simplification_dialog.h"
+#include "ui_ACVD_remeshing_dialog.h"
 
 #include "SMesh_type.h"
 typedef Scene_surface_mesh_item Scene_facegraph_item;
@@ -31,13 +31,15 @@ typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 
 using namespace CGAL::Three;
-class Polyhedron_demo_acvd_simplification_plugin :
+namespace PMP = CGAL::Polygon_mesh_processing;
+
+class Polyhedron_demo_acvd_remeshing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "acvd_simplification_plugin.json")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0" FILE "acvd_remeshing_plugin.json")
 public:
   bool applicable(QAction*) const {
     return qobject_cast<Scene_facegraph_item*>(scene->item(scene->mainSelectionIndex()));
@@ -84,9 +86,21 @@ public Q_SLOTS:
     if(!graph) return;
     QElapsedTimer time;
     time.start();
-    CGAL::Three::Three::information("ACVD Simplification...");
+    CGAL::Three::Three::information("ACVD Remeshing...");
+
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    FaceGraph simplified_graph = CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing(*graph, ui.nb_clusters_spin_box->value());
+    FaceGraph remeshed;
+
+    // TODO add post-processing
+
+    if (ui.IsotropicClustering->isChecked())
+      remeshed = PMP::acvd_isotropic_remeshing(*graph, ui.nb_clusters_spin_box->value());
+    else if (ui.QEMClustering->isChecked())
+      remeshed = PMP::acvd_isotropic_remeshing(*graph, ui.nb_clusters_spin_box->value(), CGAL::parameters::post_processing_qem(true)); // make it its own option once acvd_qem_remeshing works
+      // remeshed = PMP::acvd_qem_remeshing(*graph, ui.nb_clusters_spin_box->value());
+    else
+      remeshed = PMP::acvd_isotropic_remeshing(*graph, ui.nb_clusters_spin_box->value(), CGAL::parameters::gradation_factor(0.8));
 
     // update the scene
     CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
@@ -94,20 +108,18 @@ public Q_SLOTS:
     item->invalidateOpenGLBuffers();
 
     // add the simplified mesh to the scene
-    Scene_facegraph_item* simplified_item = new Scene_facegraph_item(simplified_graph);
-    simplified_item->setName(QString(item->name() + "_simplified"));
-    scene->addItem(simplified_item);
-    simplified_item->invalidateOpenGLBuffers();
-    scene->itemChanged(simplified_item);
+    Scene_facegraph_item* remeshed_item = new Scene_facegraph_item(remeshed);
+    remeshed_item->setName(QString(item->name() + "_simplified"));
+    scene->addItem(remeshed_item);
+    remeshed_item->invalidateOpenGLBuffers();
+    scene->itemChanged(remeshed_item);
     item->setVisible(false);
-
   }
 
 private:
   QAction* actionACVD;
   Ui::ACVDDialog ui;
-}; // end Polyhedron_demo_acvd_simplification_plugin
+}; // end Polyhedron_demo_acvd_remeshing_plugin
 
-// Q_EXPORT_PLUGIN2(Polyhedron_demo_acvd_simplification_plugin, Polyhedron_demo_acvd_simplification_plugin)
 
-#include "ACVD_simplification_plugin.moc"
+#include "ACVD_remeshing_plugin.moc"
