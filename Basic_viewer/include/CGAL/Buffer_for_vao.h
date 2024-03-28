@@ -125,6 +125,35 @@ namespace internal
     static const typename Local_kernel::Ray_2& get_local_ray(const typename Local_kernel::Ray_2& r)
     { return r; }
   };
+
+  template<typename CDT>
+  void mark_domains(CDT& tri,
+                    typename CDT::Face_handle start, int index,
+                    std::queue<typename CDT::Edge>& border)
+  {
+    if (start->info().m_nesting_level!=-1) return;
+    std::queue<typename CDT::Face_handle> queue;
+    queue.push(start);
+    while (!queue.empty())
+    {
+      auto fh=queue.front();
+      queue.pop();
+      if (fh->info().m_nesting_level==-1)
+      {
+        fh->info().m_nesting_level=index;
+        for (int i = 0; i < 3; i++)
+        {
+          typename CDT::Edge e(fh,i);
+          auto n = fh->neighbor(i);
+          if (n->info().m_nesting_level==-1)
+          {
+            if (tri.is_constrained(e)) { border.push(e); }
+            else { queue.push(n); }
+          }
+        }
+      }
+    }
+  }
 } // End namespace internal
 
 //------------------------------------------------------------------------------
@@ -738,62 +767,20 @@ protected:
         { cdt.insert_constraint(previous, first); }
       }
 
-      // (2) We mark all external triangles
-      // (2.1) We initialize is_external and is_process values
+      // (2.1) We initialize nesting_level
       for(typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
             fitend = cdt.all_faces_end(); fit!=fitend; ++fit)
-      {
-        fit->info().is_external = true;
-        fit->info().is_process = false;
-      }
-      // (2.2) We check if the facet is external or internal
-      std::queue<typename CDT::Face_handle> face_queue, faces_internal;
-      if (cdt.infinite_vertex()->face()!=nullptr)
-      {
-        typename CDT::Face_circulator
-          incident_faces(cdt.infinite_vertex()), end_incident_faces(incident_faces);
-        do
-        { face_queue.push(incident_faces); }
-        while(++incident_faces!=end_incident_faces);
-      }
-      // std::cout<<"# faces PUSHED "<<face_queue.size()<<std::endl;
-      while(!face_queue.empty())
-      {
-        typename CDT::Face_handle fh=face_queue.front();
-        face_queue.pop();
-        if(!fh->info().is_process)
-        {
-          fh->info().is_process=true;
-          for(int i=0; i<3; ++i)
-          {
-            if(!cdt.is_constrained(std::make_pair(fh, i)))
-            {
-              if (fh->neighbor(i)!=nullptr)
-              { face_queue.push(fh->neighbor(i)); }
-            }
-            else
-            { faces_internal.push(fh->neighbor(i)); }
-          }
-        }
-      }
+      { fit->info().m_nesting_level=-1; }
 
-      while(!faces_internal.empty())
+      std::queue<typename CDT::Edge> border;
+      internal::mark_domains(cdt, cdt.infinite_face(), 0, border);
+      while(!border.empty())
       {
-        typename CDT::Face_handle fh=faces_internal.front();
-        faces_internal.pop();
-        if(!fh->info().is_process)
-        {
-          fh->info().is_process = true;
-          fh->info().is_external = false;
-          for(unsigned int i=0; i<3; ++i)
-          {
-            if(!cdt.is_constrained(std::make_pair(fh, i)))
-            {
-              if (fh->neighbor(i)!=nullptr)
-              { faces_internal.push(fh->neighbor(i)); }
-            }
-          }
-        }
+        auto e=border.front();
+        border.pop();
+        auto n=e.first->neighbor(e.second);
+        if (n->info().m_nesting_level==-1)
+        { internal::mark_domains(cdt, n, e.first->info().m_nesting_level+1, border); }
       }
 
       // (3) Now we iterates on the internal faces to add the vertices
@@ -801,7 +788,7 @@ protected:
       for(typename CDT::Finite_faces_iterator ffit=cdt.finite_faces_begin(),
             ffitend = cdt.finite_faces_end(); ffit!=ffitend; ++ffit)
       {
-        if(!ffit->info().is_external)
+        if(ffit->info().in_domain())
         {
           for(unsigned int i=0; i<3; ++i)
           {
@@ -883,9 +870,8 @@ protected:
 
   struct Face_info
   {
-    bool exist_edge[3];
-    bool is_external;
-    bool is_process;
+    int m_nesting_level=-1;
+    bool in_domain() { return m_nesting_level%2==1; }
   };
 
   typedef CGAL::Projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
