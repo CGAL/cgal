@@ -8,7 +8,6 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/tetrahedral_remeshing.h>
-#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
 
 
 #ifdef CGAL_CONCURRENT_MESH_3
