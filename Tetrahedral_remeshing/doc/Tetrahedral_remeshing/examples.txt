@@ -5,5 +5,7 @@
 \example Tetrahedral_remeshing/tetrahedral_remeshing_with_features.cpp
 \example Tetrahedral_remeshing/mesh_and_remesh_polyhedral_domain_with_features.cpp
 \example Tetrahedral_remeshing/mesh_and_remesh_c3t3.cpp
+\example Tetrahedral_remeshing/mesh_and_remesh_with_adaptive_sizing.cpp
+\example Tetrahedral_remeshing/mesh_and_remesh_with_sizing.cpp
 \example Tetrahedral_remeshing/tetrahedral_remeshing_from_mesh.cpp
 */

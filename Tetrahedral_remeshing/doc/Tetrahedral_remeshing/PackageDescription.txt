@@ -46,12 +46,16 @@ while preserving the input geometric curve and surface features.
 - `RemeshingTriangulationTraits_3`
 - `RemeshingVertexBase_3`
 - `RemeshingCellBase_3`
+- `RemeshingSizingField_3`
 
 \cgalCRPSection{Classes}
 
 - `CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3`
 - `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
 - `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
+
+- `CGAL::Tetrahedral_remeshing::Uniform_sizing_field`
+- `CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field`
 
 \cgalCRPSection{Function Templates}
 

@@ -17,6 +17,8 @@
 
 namespace CGAL
 {
+namespace Tetrahedral_remeshing
+{
 /*!
 * Sizing field virtual class
 */
@@ -29,9 +31,11 @@ public:
   typedef typename Kernel::Point_3    Point_3;
 
 public:
-  virtual FT operator()(const Point_3& p) const = 0;
+  template<typename Index>
+  FT operator()(const Point_3& p, const int dim, const Index& i) const;
 };
 
+}//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
 
 #endif //CGAL_SIZING_FIELD_H

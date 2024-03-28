@@ -99,13 +99,19 @@ Constructs an empty `k-d` tree.
 Kd_tree(Splitter s=Splitter(),Traits t=Traits());
 
 /*!
-
 Constructs a `k-d` tree on the elements from the sequence
 `[first, beyond)` using the splitting rule implemented by `s`.
 The value type of the `InputIterator` must be `Point_d`.
-
 */
 template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond, Splitter s=Splitter(),Traits t=Traits());
+
+/*!
+Constructs a `k-d` tree on the elements from the range `points`
+using the splitting rule implemented by `s`.
+The value type of elements in `PointRange` must be `Point_d`.
+*/
+template <class PointRange>
+Kd_tree(const PointRange& points, Splitter s = Splitter(), const Traits t = Traits());
 
 /*!
 The constructor does not build the internal data structure, and it

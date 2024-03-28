@@ -30,6 +30,9 @@
 
 #include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/bimap.hpp>
+
+#include <optional>
 
 namespace CGAL
 {
@@ -93,35 +96,6 @@ third_vertex(const typename Tr::Facet& f,
   CGAL_assertion(false);
   return
     typename Tr::Vertex_handle();
-}
-
-// returns angle in degrees
-template<typename Tr>
-std::array<typename Tr::Vertex_handle, 2>
-vertices(const typename Tr::Edge& e , const Tr&)
-{
-  return std::array<typename Tr::Vertex_handle, 2>{
-               e.first->vertex(e.second),
-               e.first->vertex(e.third)};
-}
-template<typename Tr>
-std::array<typename Tr::Vertex_handle, 3>
-vertices(const typename Tr::Facet& f, const Tr&)
-{
-  return std::array<typename Tr::Vertex_handle, 3>{
-               f.first->vertex(Tr::vertex_triple_index(f.second, 0)),
-               f.first->vertex(Tr::vertex_triple_index(f.second, 1)),
-               f.first->vertex(Tr::vertex_triple_index(f.second, 2))};
-}
-template<typename Tr>
-std::array<typename Tr::Vertex_handle, 4>
-vertices(const typename Tr::Cell_handle c, const Tr&)
-{
-  return std::array<typename Tr::Vertex_handle, 4>{
-               c->vertex(0),
-               c->vertex(1),
-               c->vertex(2),
-               c->vertex(3)};
 }
 
 template<typename Gt, typename Point>
@@ -214,6 +188,12 @@ struct Dihedral_angle_cosine
     , m_sq_den(sq_den)
   {}
 
+  Dihedral_angle_cosine(const double val)
+    : m_sgn(CGAL::sign(val))
+    , m_sq_num(CGAL::square(val))
+    , m_sq_den(1.)
+  {}
+
   bool is_one() const
   {
     return m_sgn == CGAL::POSITIVE && m_sq_num == m_sq_den;
@@ -244,6 +224,11 @@ struct Dihedral_angle_cosine
       CGAL_assertion(m_sgn == CGAL::NEGATIVE);
       return -1. * CGAL::approximate_sqrt(m_sq_num / m_sq_den);
     };
+  }
+
+  double angle_value() const
+  {
+    return std::acos(this->value()) * 180. / CGAL_PI;
   }
 
   friend bool operator<(const Dihedral_angle_cosine& l,
@@ -285,6 +270,11 @@ struct Dihedral_angle_cosine
          &&  l.m_sq_num * r.m_sq_den == r.m_sq_num * l.m_sq_den;
   }
 };
+
+Dihedral_angle_cosine cosine_of_90_degrees()
+{
+  return Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);
+}
 
 template<typename Gt>
 Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
@@ -404,6 +394,21 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Tr& tr,
   return cos_dh;
 }
 
+template<typename Tr, typename CellRange>
+Dihedral_angle_cosine max_cos_dihedral_angle_in_range(const Tr& tr,
+                                             const CellRange& cells,
+                                             const bool use_cache = true)
+{
+  Dihedral_angle_cosine max_cos_dh = cosine_of_90_degrees();
+  for (const auto c : cells)
+  {
+    const Dihedral_angle_cosine cos_dh = max_cos_dihedral_angle(tr, c, use_cache);
+    if (max_cos_dh < cos_dh)
+      max_cos_dh = cos_dh;
+  }
+  return max_cos_dh;
+}
+
 // incident_edges must share a vertex
 template<typename EdgesVector, typename C3t3>
 bool edges_form_a_sharp_angle(const EdgesVector& incident_edges,
@@ -517,6 +522,13 @@ template<typename Edge>
 auto make_vertex_pair(const Edge& e)
 {
   return make_vertex_pair(e.first->vertex(e.second), e.first->vertex(e.third));
+}
+
+template<typename Edge>
+auto make_inv_vertex_pair(const Edge& e)
+{
+  const auto [v1, v2] = make_vertex_pair(e);
+  return std::make_pair(v2, v1);
 }
 
 template<typename Vh>
@@ -1112,13 +1124,13 @@ bool is_internal(const typename C3t3::Edge& edge,
 }
 
 // is `e` part of the selection of cells that should be remeshed?
-template<typename C3T3, typename CellSelector>
-bool is_selected(const typename C3T3::Triangulation::Edge& e,
-                 const C3T3& c3t3,
+template<typename Tr, typename CellSelector>
+bool is_selected(const typename Tr::Edge& e,
+                 const Tr& tr,
                  CellSelector cell_selector)
 {
-  typedef typename C3T3::Triangulation::Cell_circulator Cell_circulator;
-  Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typedef typename Tr::Cell_circulator Cell_circulator;
+  Cell_circulator circ = tr.incident_cells(e);
   Cell_circulator done = circ;
   do
   {
@@ -1235,6 +1247,313 @@ bool topology_test(const typename C3t3::Edge& edge,
   } while (++fcirc != fdone);
 
   return true;
+}
+
+template<typename Sizing, typename C3t3>
+auto size_at_centroid(const typename C3t3::Cell_handle c,
+                      const Sizing& sizing,
+                      const C3t3& c3t3)
+{
+  CGAL_assertion(c3t3.is_in_complex(c));
+
+  const auto cc = CGAL::centroid(c3t3.triangulation().tetrahedron(c));
+  return sizing(cc, 3, c->subdomain_index());
+}
+
+template<typename CellRange, typename Sizing, typename C3t3, typename Cell_selector>
+auto average_size_at_centroids(const CellRange& cells,
+                               const Sizing& sizing,
+                               const C3t3& c3t3,
+                               const Cell_selector& cell_selector)
+{
+  using FT = typename C3t3::Triangulation::Geom_traits::FT;
+
+  FT size = 0;
+  unsigned int count = 0;
+  for (const auto& c : cells)
+  {
+    if(get(cell_selector, c))
+    {
+      size += size_at_centroid(c, sizing, c3t3);
+      ++count;
+    }
+  }
+  CGAL_assertion(count > 0);
+  return size / static_cast<FT>(count);
+}
+
+template<typename CellRange, typename Sizing, typename C3t3, typename Cell_selector>
+auto max_size_at_centroids(const CellRange& cells,
+                           const Sizing& sizing,
+                           const C3t3& c3t3,
+                           const Cell_selector& cell_selector)
+{
+  typename C3t3::Triangulation::Geom_traits::FT size = 0.;
+  for (const auto& c : cells)
+  {
+    if (get(cell_selector, c))
+      size = (std::max)(size, size_at_centroid(c, sizing, c3t3));
+  }
+  return size;
+}
+
+template<typename Sizing, typename C3t3, typename Cell_selector>
+auto average_sizing_in_incident_cells(const typename C3t3::Edge& e,
+                                      const Sizing& sizing,
+                                      const C3t3& c3t3,
+                                      const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+
+  typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typename Tr::Cell_circulator done = circ;
+
+  FT size_at_uv = 0.;
+  unsigned int count = 0;
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv += size_at_cc;
+      ++count;
+    }
+  } while (++circ != done);
+
+  size_at_uv = size_at_uv / static_cast<FT>(count);
+
+  CGAL_assertion(size_at_uv > 0);
+  return size_at_uv;
+}
+
+template<typename Vertex_handle,
+         typename Sizing,
+         typename C3t3,
+         typename Cell_selector>
+auto sizing_at_vertex(const Vertex_handle v,
+                      const Sizing& sizing,
+                      const C3t3& c3t3,
+                      const Cell_selector& cell_selector)
+{
+  auto size = sizing(point(v->point()), v->in_dimension(), v->index());
+
+  if(v->in_dimension() < 3 && size == 0)
+  {
+    std::vector<typename C3t3::Cell_handle> cells;
+    c3t3.triangulation().incident_cells(v, std::back_inserter(cells));
+#ifdef CGAL_AVERAGE_SIZING_AFTER_COLLAPSE
+    return average_size_at_centroids(cells, sizing, c3t3, cell_selector);
+#else
+    return max_size_at_centroids(cells, sizing, c3t3, cell_selector);
+#endif
+  }
+
+  return size;
+}
+
+template<typename Sizing, typename C3t3, typename Cell_selector>
+auto sizing_at_midpoint(const typename C3t3::Edge& e,
+                        const int dim,
+                        const typename C3t3::Index& index,
+                        const Sizing& sizing,
+                        const C3t3& c3t3,
+                        const Cell_selector& cell_selector)
+{
+  using FT = typename C3t3::Triangulation::Geom_traits::FT;
+
+  auto cp = c3t3.triangulation().geom_traits().construct_point_3_object();
+  const Point_3 m = CGAL::midpoint(cp(e.first->vertex(e.second)->point()),
+                                   cp(e.first->vertex(e.third)->point()));
+  const FT size = sizing(m, dim, index);
+
+  if (dim < 3 && size == 0)
+  {
+    const auto u = e.first->vertex(e.second);
+    const auto v = e.first->vertex(e.third);
+
+    const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), u->index());
+    const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), v->index());
+
+    if (size_at_u == 0. || size_at_v == 0.)
+      return average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+    else
+      return 0.5 * (size_at_u + size_at_v);
+  }
+
+  return size;
+}
+
+template<typename Sizing, typename C3t3, typename Cell_selector>
+auto max_sizing_in_incident_cells(const typename C3t3::Edge& e,
+                                  const Sizing& sizing,
+                                  const C3t3& c3t3,
+                                  const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+
+  typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typename Tr::Cell_circulator done = circ;
+
+  FT size_at_uv = 0.;
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv = (std::max)(size_at_uv, size_at_cc);
+    }
+  } while (++circ != done);
+
+  CGAL_assertion(size_at_uv > 0);
+  return size_at_uv;
+}
+
+template<typename Sizing, typename C3t3, typename Cell_selector>
+auto min_sizing_in_incident_cells(const typename C3t3::Edge& e,
+                                  const Sizing& sizing,
+                                  const C3t3& c3t3,
+                                  const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+
+  typename Tr::Cell_circulator circ = c3t3.triangulation().incident_cells(e);
+  typename Tr::Cell_circulator done = circ;
+
+  FT size_at_uv = (std::numeric_limits<FT>::max)();
+  do
+  {
+    if (get(cell_selector, circ))
+    {
+      const FT size_at_cc = size_at_centroid(circ, sizing, c3t3);
+      size_at_uv = (std::min)(size_at_cc, size_at_uv);
+    }
+  } while (++circ != done);
+
+  CGAL_assertion(size_at_uv > 0);
+  return size_at_uv;
+}
+
+
+template<typename Tr>
+typename Tr::Geom_traits::FT
+squared_edge_length(const typename Tr::Edge& e, const Tr& tr)
+{
+  return tr.geom_traits().compute_squared_length_3_object()(tr.segment(e));
+}
+
+template<typename C3t3, typename Sizing, typename Cell_selector>
+typename C3t3::Triangulation::Geom_traits::FT
+squared_upper_size_bound(const typename C3t3::Edge& e,
+                         const bool boundary_edge, //e is on the boundary
+                         const Sizing& sizing,
+                         const C3t3& c3t3,
+                         const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  const Tr& tr = c3t3.triangulation();
+  auto cp = tr.geom_traits().construct_point_3_object();
+
+  const Vertex_handle u = e.first->vertex(e.second);
+  const Vertex_handle v = e.first->vertex(e.third);
+
+  const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), u->index());
+  const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), v->index());
+
+  // if e is on the boundary AND sizing at the boundary is set to 0,
+  // we take the maximum size of the incident cells
+  if (boundary_edge && (size_at_u == 0 || size_at_v == 0))
+  {
+#ifdef CGAL_MAX_SIZING_IN_IS_TOO_LONG
+    FT size_at_uv = max_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+#else
+    FT size_at_uv = average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+#endif
+    CGAL_assertion(size_at_uv > 0);
+    return CGAL::square(FT(4) / FT(3) * size_at_uv);
+  }
+
+  const FT sq_max_u = CGAL::square(FT(4) / FT(3) * size_at_u);
+  const FT sq_max_v = CGAL::square(FT(4) / FT(3) * size_at_v);
+
+  return (std::max)(sq_max_u, sq_max_v);
+}
+
+template<typename C3t3, typename Sizing, typename Cell_selector>
+std::optional<typename C3t3::Triangulation::Geom_traits::FT>
+is_too_long(const typename C3t3::Edge& e,
+            const bool boundary_edge, //e is on the boundary
+            const Sizing& sizing,
+            const C3t3& c3t3,
+            const Cell_selector& cell_selector)
+{
+  using FT = typename C3t3::Triangulation::Geom_traits::FT;
+
+  const FT sqlen = squared_edge_length(e, c3t3.triangulation());
+  const FT sqmax = squared_upper_size_bound(e, boundary_edge, sizing, c3t3, cell_selector);
+
+  if (sqlen > sqmax)
+    return sqlen;
+  else
+    return std::nullopt;
+}
+
+template<typename C3t3, typename Sizing, typename Cell_selector>
+typename C3t3::Triangulation::Geom_traits::FT
+squared_lower_size_bound(const typename C3t3::Edge& e,
+                         const Sizing& sizing,
+                         const C3t3& c3t3,
+                         const Cell_selector& cell_selector)
+{
+  using Tr = typename C3t3::Triangulation;
+  using FT = typename Tr::Geom_traits::FT;
+  using Vertex_handle = typename Tr::Vertex_handle;
+
+  const Vertex_handle u = e.first->vertex(e.second);
+  const Vertex_handle v = e.first->vertex(e.third);
+
+  const FT size_at_u = sizing(point(u->point()), u->in_dimension(), u->index());
+  const FT size_at_v = sizing(point(v->point()), v->in_dimension(), v->index());
+
+  // if e is on the boundary AND sizing at the boundary is set to 0,
+  // we take the minimum size of the incident cells
+  if ( (size_at_u == 0 || size_at_v == 0) && is_boundary(c3t3, e, cell_selector))
+  {
+#ifdef CGAL_MIN_SIZING_IN_IS_TOO_SHORT
+    FT size_at_uv = min_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+#else
+    FT size_at_uv = average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+#endif
+    CGAL_assertion(size_at_uv > 0);
+    return CGAL::square(FT(4) / FT(5) * size_at_uv);
+  }
+
+  const FT sq_min_u = CGAL::square(FT(4) / FT(5) * size_at_u);
+  const FT sq_min_v = CGAL::square(FT(4) / FT(5) * size_at_v);
+
+  return (std::min)(sq_min_u, sq_min_v);
+}
+
+template<typename C3t3, typename Sizing, typename Cell_selector>
+std::optional<typename C3t3::Triangulation::Geom_traits::FT>
+is_too_short(const typename C3t3::Edge& e,
+             const Sizing& sizing,
+             const C3t3& c3t3,
+             const Cell_selector& cell_selector)
+{
+  using FT = typename C3t3::Triangulation::Geom_traits::FT;
+
+  const FT sqlen = squared_edge_length(e, c3t3.triangulation());
+  const FT sqmin = squared_lower_size_bound(e, sizing, c3t3, cell_selector);
+
+  if (sqlen < sqmin)
+    return sqlen;
+  else
+    return std::nullopt;
 }
 
 template<typename C3t3>
@@ -1433,6 +1752,18 @@ cell_edges(const typename Tr::Cell_handle c, const Tr&)
                                         Edge(c, 1, 3),
                                         Edge(c, 2, 3) } };
   return edges_array;
+}
+
+template<typename Vertex_handle>
+auto
+max_dimension_index(const std::array<Vertex_handle, 2>& vs)
+{
+  const int dim0 = vs[0]->in_dimension();
+  const int dim1 = vs[1]->in_dimension();
+
+  if (dim0 > dim1)       return vs[0]->index();
+  else if (dim1 > dim0)  return vs[1]->index();
+  else                   return vs[0]->index(); //arbitrary choice, any of the two should be fine
 }
 
 namespace internal
