@@ -21,7 +21,7 @@ Finally a \qt widget is provided that can be integrated in the GUI of a user app
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.0}
-\cgalPkgBib{cgal:d-bv-24}
+\cgalPkgBib{cgal:d-bv}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
