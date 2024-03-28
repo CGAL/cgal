@@ -37,14 +37,17 @@ public:
       messages = m;
       scene = scene_interface;
       QAction *actionLoop = new QAction("Loop", mw);
+      QAction *actionUpsample = new QAction("Upsample", mw);
       QAction *actionCatmullClark = new QAction("Catmull Clark", mw);
       QAction *actionSqrt3 = new QAction("Sqrt3", mw);
       QAction *actionDooSabin = new QAction("Doo Sabin", mw);
       actionLoop->setObjectName("actionLoop");
+      actionUpsample->setObjectName("actionUpsample");
       actionCatmullClark->setObjectName("actionCatmullClark");
       actionSqrt3->setObjectName("actionSqrt3");
       actionDooSabin->setObjectName("actionDooSabin");
       _actions << actionLoop
+               << actionUpsample
                << actionCatmullClark
                << actionSqrt3
                << actionDooSabin;
@@ -60,6 +63,7 @@ public:
 
 public Q_SLOTS:
   void on_actionLoop_triggered();
+  void on_actionUpsample_triggered();
   void on_actionCatmullClark_triggered();
   void on_actionSqrt3_triggered();
   void on_actionDooSabin_triggered();
@@ -68,6 +72,8 @@ private :
   QList<QAction*> _actions;
   template<class FaceGraphItem>
   void apply_loop(FaceGraphItem* item, int nb_steps);
+  template<class FaceGraphItem>
+  void apply_upsample(FaceGraphItem* item, int nb_steps);
   template<class FaceGraphItem>
   void apply_catmullclark(FaceGraphItem* item, int nb_steps);
   template<class FaceGraphItem>
@@ -92,6 +98,22 @@ void Polyhedron_demo_subdivision_methods_plugin::apply_loop(FaceGraphItem* item,
   scene->itemChanged(item);
 }
 
+template<class FaceGraphItem>
+void Polyhedron_demo_subdivision_methods_plugin::apply_upsample(FaceGraphItem* item, int nb_steps)
+{
+  typename FaceGraphItem::Face_graph* graph = item->face_graph();
+  if(!graph) return;
+  QElapsedTimer time;
+  time.start();
+  CGAL::Three::Three::information("Upsample subdivision...");
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  CGAL::Subdivision_method_3::Upsample_subdivision(*graph, params::number_of_iterations(nb_steps));
+  CGAL::Three::Three::information(QString("ok (%1 ms)").arg(time.elapsed()));
+  QApplication::restoreOverrideCursor();
+  item->invalidateOpenGLBuffers();
+  scene->itemChanged(item);
+}
+
 void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
 {
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -109,6 +131,25 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
     return;
 
   apply_loop(sm_item, nb_steps);
+}
+
+void Polyhedron_demo_subdivision_methods_plugin::on_actionUpsample_triggered()
+{
+  CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(scene->item(index));
+  if(!sm_item)
+    return;
+
+  bool ok = true;
+  int nb_steps = QInputDialog::getInt(mw,
+                                      QString("Number of Iterations"),
+                                      QString("Choose number of iterations"),
+                                      1 /* value */, 1 /* min */, (std::numeric_limits<int>::max)() /* max */, 1 /*step*/,
+                                      &ok);
+  if(!ok)
+    return;
+
+  apply_upsample(sm_item, nb_steps);
 }
 
 template<class FaceGraphItem>
