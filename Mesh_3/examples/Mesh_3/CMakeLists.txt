@@ -103,6 +103,10 @@ create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sizing.c
 target_link_libraries(mesh_polyhedral_domain_with_features_sizing
                       PUBLIC CGAL::Eigen3_support)
 
+                    create_single_source_cgal_program("mesh_polyhedral_domain_with_edge_distance.cpp")
+target_link_libraries(mesh_polyhedral_domain_with_edge_distance
+                      PUBLIC CGAL::Eigen3_support)
+
 create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sm.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_features_sm
                       PUBLIC CGAL::Eigen3_support)
@@ -219,6 +223,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_polyhedral_domain_sm
     mesh_polyhedral_domain_with_features
     mesh_polyhedral_domain_with_features_sizing
+    mesh_polyhedral_domain_with_edge_distance
     mesh_polyhedral_domain_with_features_sm
     mesh_polyhedral_domain_with_lipschitz_sizing
     mesh_two_implicit_spheres_with_balls)
