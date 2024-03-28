@@ -37,7 +37,10 @@ void test(const FaceGraph& mesh, bool draw, const char* title)
   std::cout<<"Path p1 "<<(res2?"IS":"IS NOT")<<" homotopic with path p2."<<std::endl;
 
   if (draw)
-  { CGAL::draw(mesh, {p1, p2}, title); }
+  {
+    auto cycles={p1, p2};
+    CGAL::draw(mesh, cycles, title);
+  }
 }
 ///////////////////////////////////////////////////////////////////////////////
 int main(int argc, char** argv)

@@ -168,5 +168,6 @@
 
 \package_listing{GraphicsView}
 \package_listing{CGAL_ipelets}
+\package_listing{Basic_viewer}
 
 */

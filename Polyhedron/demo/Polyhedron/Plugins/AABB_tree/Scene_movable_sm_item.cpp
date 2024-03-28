@@ -92,7 +92,7 @@ void Scene_movable_sm_item_priv::compute_elements() const
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
-  typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
+  typedef CGAL::Buffer_for_vao CPF;
   flat_vertices.clear();
   flat_normals.clear();
   edges_vertices.clear();

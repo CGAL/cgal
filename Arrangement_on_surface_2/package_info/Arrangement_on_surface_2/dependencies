@@ -3,6 +3,7 @@ Algebraic_kernel_d
 Arithmetic_kernel
 Arrangement_on_surface_2
 BGL
+Basic_viewer
 CGAL_Core
 Cartesian_kernel
 Circular_kernel_2
@@ -10,7 +11,6 @@ Circulator
 Distance_2
 Distance_3
 Filtered_kernel
-GraphicsView
 HalfedgeDS
 Hash_map
 Homogeneous_kernel

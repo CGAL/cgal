@@ -8,176 +8,202 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_SS2_H
 #define CGAL_DRAW_SS2_H
 
 #include <CGAL/license/Straight_skeleton_2.h>
-#include <CGAL/Qt/Basic_viewer_qt.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
-
+#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Graphics_scene.h>
+#include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Straight_skeleton_2.h>
-#include <CGAL/Random.h>
-
 #include <sstream>
 
 namespace CGAL {
 
-// Default color functor; user can change it to have its own face color
-struct DefaultColorFunctorSS2
+namespace draw_function_for_ss2 {
+
+template <class SS2, class GSOptions>
+void compute_edge(const SS2& ss2, typename SS2::Halfedge_const_handle eh,
+                  CGAL::Graphics_scene& graphics_scene,
+                  const GSOptions& gs_options)
 {
-  template<typename SS2>
-  static CGAL::IO::Color run(const SS2&,
-                         const typename SS2::Finite_faces_iterator fh)
-  {
-    CGAL::Random random((unsigned int)(std::size_t)(&*fh));
-    return get_random_color(random);
-  }
-};
+  if (!gs_options.draw_edge(ss2, eh))
+  { return; }
 
-// Viewer class for SS2
-template<class SS2, class ColorFunctor>
-class SimpleStraightSkeleton2ViewerQt : public Basic_viewer_qt
+  if (gs_options.colored_edge(ss2, eh))
+  {
+    graphics_scene.add_segment(eh->opposite()->vertex()->point(),
+                               eh->vertex()->point(),
+                               gs_options.edge_color(ss2, eh));
+  }
+  else
+  {
+    graphics_scene.add_segment(eh->opposite()->vertex()->point(),
+                               eh->vertex()->point());
+  }
+}
+
+template<class SS2, class GSOptions>
+void print_halfedge_labels(const SS2& ss2,
+                           typename SS2::Halfedge_const_handle h,
+                           CGAL::Graphics_scene& graphics_scene,
+                           const GSOptions& gs_options)
 {
-  typedef Basic_viewer_qt                    Base;
-  typedef typename SS2::Vertex_const_handle   Vertex_const_handle;
-  typedef typename SS2::Halfedge_const_handle Halfedge_const_handle;
+  // TODO? an option different from draw_edge to allow to show only some labels ??
+  if(!gs_options.draw_edge(ss2, h))
+  { return; }
 
-  //  typedef typename SS2::Point                 Point;
+  std::stringstream label;
+  label << "H" << h->id() << " (V" << h->vertex()->id() << ") ";
+  label << "H" << h->opposite()->id() << " (V" << h->opposite()->vertex()->id()
+        << ") ";
 
-public:
-  /// Construct the viewer.
-  /// @param ass2 the ss2 to view
-  /// @param title the title of the window
-  SimpleStraightSkeleton2ViewerQt(QWidget* parent, const SS2& ass2,
-                               const char* title="Basic SS2 Viewer",
-                               const ColorFunctor& fcolor=ColorFunctor()) :
-    // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false),
-    ss2(ass2),
-    m_fcolor(fcolor)
+  graphics_scene.add_text(
+      CGAL::midpoint(h->opposite()->vertex()->point(), h->vertex()->point()),
+      label.str());
+}
+
+template <class SS2, class GSOptions>
+void compute_vertex(const SS2& ss2, typename SS2::Vertex_const_handle vh,
+                    CGAL::Graphics_scene& graphics_scene,
+                    const GSOptions& gs_options)
+{
+  if (!gs_options.draw_vertex(ss2, vh))
+  { return; }
+
+  if (gs_options.colored_vertex(ss2, vh))
   {
-    compute_elements();
+    graphics_scene.add_point(vh->point(), gs_options.vertex_color(ss2, vh));
   }
+  else
+  { graphics_scene.add_point(vh->point()); }
+}
 
-protected:
-  /*
-  void compute_face(Facet_const_handle fh)
-  {
-    CGAL::IO::Color c=m_fcolor.run(ss2, fh);
-    face_begin(c);
-
-    add_point_in_face(fh->vertex(0)->point());
-    add_point_in_face(fh->vertex(1)->point());
-    add_point_in_face(fh->vertex(2)->point());
-
-    face_end();
-  }
-  */
-  void compute_edge(Halfedge_const_handle eh)
-  {
-    if(eh->is_bisector())
-      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::IO::red());
-    else
-      add_segment(eh->opposite()->vertex()->point(), eh->vertex()->point(), CGAL::IO::black());
-  }
-  void print_halfedge_labels(Halfedge_const_handle h)
-  {
-    std::stringstream label;
-    label << "H" << h->id() << " (V" << h->vertex()->id() << ") ";
-    label << "H" << h->opposite()->id() << " (V" << h->opposite()->vertex()->id() << ") ";
-    add_text(CGAL::midpoint(h->opposite()->vertex()->point(), h->vertex()->point()), label.str());
-  }
-
-  void compute_vertex(Vertex_const_handle vh)
-  {
-    if(vh->is_split())
-      add_point(vh->point(), CGAL::IO::Color(10,10,180)); // blue, but not flashy
-    else if(vh->has_infinite_time())
-      add_point(vh->point(), CGAL::IO::orange());
-    else if(vh->is_contour())
-      add_point(vh->point(), CGAL::IO::black());
-    else
-      add_point(vh->point(), CGAL::IO::Color(10,180,10)); // green, but not flashy
-  }
-  void print_vertex_label(Vertex_const_handle vh)
+template <class SS2, class GSOptions>
+void print_vertex_label(const SS2& ss2,
+                        typename SS2::Vertex_const_handle vh,
+                        CGAL::Graphics_scene& graphics_scene,
+                        const GSOptions& gs_options)
+{
+  // TODO? an option different from draw_vertex to allow to show only some labels ??
+  if (gs_options.draw_vertex(ss2, vh))
   {
     std::stringstream label;
     label << "V" << vh->id() << std::ends;
-    add_text(vh->point(), label.str());
-  }
-
-  void compute_elements()
-  {
-    clear();
-
-    for (typename SS2::Halfedge_const_iterator it=ss2.halfedges_begin(); it!=ss2.halfedges_end(); ++it)
-    {
-      if(it->id() < it->opposite()->id())
-      {
-        compute_edge(it);
-        print_halfedge_labels(it);
-      }
-    }
-    for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin(); it!=ss2.vertices_end(); ++it)
-    {
-      compute_vertex(it);
-      print_vertex_label(it);
-    }
-  }
-
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-
-    // Call: * compute_elements() if the model changed, followed by
-    //       * redraw() if some viewing parameters changed that implies some
-    //                  modifications of the buffers
-    //                  (eg. type of normal, color/mono)
-    //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    Base::keyPressEvent(e);
-  }
-
-protected:
-  const SS2& ss2;
-  const ColorFunctor& m_fcolor;
-};
-
-// Specialization of draw function.
-#define CGAL_SS_TYPE CGAL::Straight_skeleton_2<K>
-
-template<class K>
-void draw(const CGAL_SS_TYPE& ass2,
-          const char* title="Straight Skeleton Basic Viewer")
-{
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite)
-  {
-    int argc=1;
-    const char* argv[2]={"ss2_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    DefaultColorFunctorSS2 fcolor;
-    SimpleStraightSkeleton2ViewerQt<CGAL_SS_TYPE, DefaultColorFunctorSS2>
-      mainwindow(app.activeWindow(), ass2, title, fcolor);
-    mainwindow.show();
-    app.exec();
+    graphics_scene.add_text(vh->point(), label.str());
   }
 }
+
+template <class SS2, class GSOptions>
+void compute_elements(const SS2& ss2,
+                      CGAL::Graphics_scene& graphics_scene,
+                      const GSOptions& gs_options)
+{
+  if (gs_options.are_edges_enabled())
+  {
+    for (typename SS2::Halfedge_const_iterator it=ss2.halfedges_begin();
+         it != ss2.halfedges_end(); ++it)
+    {
+      if (it->id()<it->opposite()->id())
+      {
+        compute_edge(ss2, it, graphics_scene, gs_options);
+        print_halfedge_labels(ss2, it, graphics_scene, gs_options);
+      }
+    }
+  }
+
+  if (gs_options.are_vertices_enabled())
+  {
+    for (typename SS2::Vertex_const_iterator it=ss2.vertices_begin();
+         it!=ss2.vertices_end(); ++it)
+    {
+      compute_vertex(ss2, it, graphics_scene, gs_options);
+      print_vertex_label(ss2, it, graphics_scene, gs_options);
+    }
+  }
+}
+
+} // namespace draw_function_for_ss2
+
+#define CGAL_SS_TYPE CGAL::Straight_skeleton_2<K>
+
+template <class K, class GSOptions>
+void add_to_graphics_scene(const CGAL_SS_TYPE &ass2,
+                           CGAL::Graphics_scene& graphics_scene,
+                           const GSOptions& gs_options)
+{
+  draw_function_for_ss2::compute_elements(ass2, graphics_scene,
+                                          gs_options);
+}
+
+template <class K>
+void add_to_graphics_scene(const CGAL_SS_TYPE& ass2,
+                           CGAL::Graphics_scene& graphics_scene)
+{
+  Graphics_scene_options<CGAL_SS_TYPE,
+                  typename CGAL_SS_TYPE::Vertex_const_handle,
+                  typename CGAL_SS_TYPE::Halfedge_const_handle,
+                  typename CGAL_SS_TYPE::Face_const_handle>
+    drawingFunctor;
+
+  drawingFunctor.colored_edge = []
+    (const CGAL_SS_TYPE&, typename CGAL_SS_TYPE::Halfedge_const_handle) -> bool
+  { return true; };
+
+  drawingFunctor.colored_vertex = []
+    (const CGAL_SS_TYPE&, typename CGAL_SS_TYPE::Vertex_const_handle) -> bool
+  { return true; };
+
+  drawingFunctor.edge_color = []
+    (const CGAL_SS_TYPE&, typename CGAL_SS_TYPE::Halfedge_const_handle eh) -> CGAL::IO::Color
+  {
+    if (eh->is_bisector())
+    { return CGAL::IO::red(); }
+
+    return CGAL::IO::black();
+  };
+
+  drawingFunctor.vertex_color = []
+    (const CGAL_SS_TYPE&, typename CGAL_SS_TYPE::Vertex_const_handle vh) -> CGAL::IO::Color
+  {
+    if (vh->is_split())
+    { return CGAL::IO::Color(10, 10, 180); } // blue, but not flashy
+    else if (vh->has_infinite_time())
+    { return CGAL::IO::orange(); }
+
+     return CGAL::IO::Color(10, 180, 10); // green, but not flashy
+  };
+
+  add_to_graphics_scene(ass2, graphics_scene, drawingFunctor);
+}
+
+// Specialization of draw function.
+#ifdef CGAL_USE_BASIC_VIEWER
+
+template <class K, class GSOptions>
+void draw(const CGAL_SS_TYPE &ass2, const GSOptions &gs_options,
+          const char *title="Straight Skeleton Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(ass2, buffer, gs_options);
+  draw_graphics_scene(buffer, title);
+}
+
+template <class K>
+void draw(const CGAL_SS_TYPE &ass2,
+          const char *title="Straight Skeleton Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(ass2, buffer);
+  draw_graphics_scene(buffer, title);
+}
+
+#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_SS_TYPE
 
 } // End namespace CGAL
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // CGAL_DRAW_SS2_H

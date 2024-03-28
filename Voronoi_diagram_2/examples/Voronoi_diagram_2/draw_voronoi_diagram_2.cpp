@@ -23,15 +23,15 @@ int main(int argc, char* argv[])
 {
   VD vd;
   std::ifstream ifs((argc>1)?argv[1]:"data/data4.dt.cin");
-  assert(ifs);
+  if(ifs)
+  {
+    Site_2 t;
+    while ( ifs >> t ) { vd.insert(t); }
+    ifs.close();
+    assert( vd.is_valid() );
 
-  Site_2 t;
-  while ( ifs >> t ) { vd.insert(t); }
-  ifs.close();
-
-  assert( vd.is_valid() );
-
-  CGAL::draw(vd);
+    CGAL::draw(vd);
+  }
 
   return EXIT_SUCCESS;
 }
