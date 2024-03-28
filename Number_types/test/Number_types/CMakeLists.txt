@@ -61,6 +61,7 @@ create_single_source_cgal_program("unsigned.cpp")
 create_single_source_cgal_program("utilities.cpp")
 create_single_source_cgal_program("Exact_rational.cpp")
 create_single_source_cgal_program("Mpzf_new.cpp")
+create_single_source_cgal_program("check_exact_backend.cpp")
 
 if( CGAL_Core_FOUND )
   create_single_source_cgal_program( "CORE_Expr_ticket_4296.cpp" )
