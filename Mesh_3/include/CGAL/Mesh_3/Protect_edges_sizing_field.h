@@ -1812,9 +1812,9 @@ check_and_fix_vertex_along_edge(const Vertex_handle& v, ErasedVeOutIt out)
   return out;
 }
 
-template <typename C3T3, typename MD, typename Sf>
-typename Protect_edges_sizing_field<C3T3, MD, Sf>::FT
-Protect_edges_sizing_field<C3T3, MD, Sf>::
+template <typename C3T3, typename MD, typename Sf, typename Df>
+typename Protect_edges_sizing_field<C3T3, MD, Sf, Df>::FT
+Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 curve_segment_length(const Vertex_handle v1,
                      const Vertex_handle v2,
                      const Curve_index& curve_index,

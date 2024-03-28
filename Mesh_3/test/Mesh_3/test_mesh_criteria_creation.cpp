@@ -84,7 +84,7 @@ int main()
   Mc ec8(edge_distance = 8.);
   assert( ec8.edge_criteria_object().distance_field(bp1, 1, index) == 8. );
 
-  Mc ec9(edge_distance_sizing_field = Esf(9.));
+  Mc ec9(edge_distance = Esf(9.));
   assert( ec9.edge_criteria_object().distance_field(bp1, 1, index) == 9.);
 
 
