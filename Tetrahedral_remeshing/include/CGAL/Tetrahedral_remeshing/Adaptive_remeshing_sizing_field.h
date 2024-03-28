@@ -316,7 +316,8 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
       std::back_inserter(edges),
       [&ecmap](const Edge& e)
       {
-        return get(ecmap, e);
+        const auto evv = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);
+        return get(ecmap, evv);
       });
     break;
 

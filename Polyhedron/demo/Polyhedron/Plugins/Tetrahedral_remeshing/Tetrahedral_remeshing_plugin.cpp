@@ -137,12 +137,13 @@ public Q_SLOTS:
       {
         CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
-          ASizing::create_adaptive_sizing_field(c3t3_item->c3t3().triangulation()),
+          ASizing::create_adaptive_sizing_field(c3t3_item->c3t3().triangulation(),
+              CGAL::parameters::edge_is_constrained_map(Constraints_pmap(constraints))),
           CGAL::parameters::remesh_boundaries(!protect)
           .number_of_iterations(nb_iter)
-        .smooth_constrained_edges(smooth_edges)
-        .edge_is_constrained_map(Constraints_pmap(constraints))
-      );
+          .smooth_constrained_edges(smooth_edges)
+          .edge_is_constrained_map(Constraints_pmap(constraints))
+        );
       }
       else
       {
