@@ -9,7 +9,6 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
-#include <CGAL/draw_arrangement_2.h>
 
 #include "arr_print.h"
 
@@ -69,8 +68,6 @@ int main(int argc, char* argv[]) {
 
   CGAL::insert(arr, arcs.begin(), arcs.end());
   print_arrangement_size(arr);
-  // print_arrangement(arr);
-  CGAL::draw(arr, "Aos", true);
 
   return 0;
 }
