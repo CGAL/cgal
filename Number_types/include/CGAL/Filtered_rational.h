@@ -40,6 +40,10 @@ struct Filtered_rational : boost::totally_ordered1<Filtered_rational
     : i(d), rat(d)
   {}
 
+  explicit Filtered_rational(const Exact_rational& rat)
+    : i(to_interval(rat)), rat(rat)
+  {}
+
 
   Filtered_rational(const Interval_nt<>& i, const Exact_rational& rat)
       : i(i), rat(rat)
