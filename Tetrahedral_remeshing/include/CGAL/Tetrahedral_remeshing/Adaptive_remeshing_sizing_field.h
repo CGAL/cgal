@@ -322,8 +322,7 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
       });
     break;
 
-  default:
-    std::cout << "dimension = " << v->in_dimension() << std::endl;
+  default: // could be -1 because of far points
     break;
   }
 
