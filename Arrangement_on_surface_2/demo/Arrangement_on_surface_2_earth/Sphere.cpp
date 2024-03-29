@@ -62,12 +62,12 @@ Sphere::Sphere(std::size_t num_slices, std::size_t num_stacks, float r) {
   std::vector<GLuint> indices;
 
   // NORTH CAP
-  const std::size_t north_vertex_index = 0;
+  const GLuint north_vertex_index = 0;
   const auto north_cap_vertex_index_start = starting_index_of_middle_vertices;
-  for (std::size_t i = 0; i < num_slices; i++) {
+  for (std::size_t i = 0; i < num_slices; ++i) {
     indices.push_back(north_vertex_index);
-    indices.push_back(north_cap_vertex_index_start + i);
-    indices.push_back(north_cap_vertex_index_start + (i + 1) % num_slices);
+    indices.push_back(static_cast<GLuint>(north_cap_vertex_index_start + i));
+    indices.push_back(static_cast<GLuint>(north_cap_vertex_index_start + (i + 1) % num_slices));
   }
 
   // 0 = NORTH VERTEX
@@ -81,13 +81,13 @@ Sphere::Sphere(std::size_t num_slices, std::size_t num_stacks, float r) {
   //                                                the last stack (# numStacks)
 
   // SOUTH CAP
-  const std::size_t south_vertex_index = 1;
+  const GLuint south_vertex_index = 1;
   const std::size_t south_cap_index_start = starting_index_of_middle_vertices +
     (num_stacks - 2) * num_slices;
   for (std::size_t i = 0; i < num_slices; ++i) {
     const auto vi0 = south_vertex_index;
-    const auto vi1 = south_cap_index_start + i;
-    const auto vi2 = south_cap_index_start + (i + 1) % num_slices;
+    const auto vi1 = static_cast<GLuint>(south_cap_index_start + i);
+    const auto vi2 = static_cast<GLuint>(south_cap_index_start + (i + 1) % num_slices);
     indices.push_back(vi2);
     indices.push_back(vi1);
     indices.push_back(vi0);
@@ -104,10 +104,10 @@ Sphere::Sphere(std::size_t num_slices, std::size_t num_stacks, float r) {
       //std::size_t vi1 = nextStackStartIndex + i;
       //std::size_t vi2 = nextStackStartIndex + (i + 1) % numSlices;
       //std::size_t vi3 = stackStartIndex + (i + 1) % numSlices;
-      std::size_t vi0 = stack_start_index + i;
-      std::size_t vi1 = stack_start_index + (i + 1) % num_slices;
-      std::size_t vi2 = next_stack_start_index + i;
-      std::size_t vi3 = next_stack_start_index + (i + 1) % num_slices;
+      auto vi0 = static_cast<GLuint>(stack_start_index + i);
+      auto vi1 = static_cast<GLuint>(stack_start_index + (i + 1) % num_slices);
+      auto vi2 = static_cast<GLuint>(next_stack_start_index + i);
+      auto vi3 = static_cast<GLuint>(next_stack_start_index + (i + 1) % num_slices);
 
       indices.push_back(vi0);
       indices.push_back(vi2);
@@ -118,7 +118,7 @@ Sphere::Sphere(std::size_t num_slices, std::size_t num_stacks, float r) {
       indices.push_back(vi1);
     }
   }
-  m_num_indices = indices.size();
+  m_num_indices = static_cast<GLuint>(indices.size());
 
   // DEFINE OPENGL BUFFERS
   glGenVertexArrays(1, &m_vao);

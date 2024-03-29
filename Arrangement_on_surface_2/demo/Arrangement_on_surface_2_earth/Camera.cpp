@@ -17,7 +17,7 @@ Camera::Camera() :
 {}
 
 //! \brief
-void Camera::perspective(float fov, float aspect, float z_near, float z_far) {
+void Camera::perspective(qreal fov, qreal aspect, qreal z_near, qreal z_far) {
   m_z_near = z_near;
   m_z_far = z_far;
 

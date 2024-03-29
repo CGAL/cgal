@@ -30,7 +30,7 @@ public:
 private:
   GLuint m_vao;
   GLuint m_vbo;
-  std::size_t m_num_vertices;
+  GLsizei m_num_vertices;
   QVector4D m_color;
 };
 

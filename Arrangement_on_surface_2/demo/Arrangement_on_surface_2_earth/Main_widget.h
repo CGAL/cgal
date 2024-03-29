@@ -84,7 +84,7 @@ private:
   std::unique_ptr<Line_strips> m_gr_all_country_borders;
 
   // used when dimming / highlighting selected countries
-  const float m_dimming_factor = 0.4;
+  const float m_dimming_factor = 0.4f;
 
   // GUI: event handler for picking with right mouse button
   std::unique_ptr<GUI_event_handler> m_pick_handler;

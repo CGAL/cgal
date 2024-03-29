@@ -35,7 +35,7 @@ Triangles::Triangles(std::vector<QVector3D>& vertices) {
   // DEFINE OPENGL BUFFERS
   glGenVertexArrays(1, &m_vao);
   glBindVertexArray(m_vao);
-  m_num_vertices = vertices.size();
+  m_num_vertices = static_cast<GLsizei>(vertices.size());
 
   // Vertex Buffer
   glGenBuffers(1, &m_vbo);

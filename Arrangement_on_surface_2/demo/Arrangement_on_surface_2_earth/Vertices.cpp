@@ -14,7 +14,7 @@ Vertices::Vertices(const std::vector<QVector3D>& vertices) {
   initializeOpenGLFunctions();
 
   auto& vertex_data = vertices;
-  m_num_indices = vertices.size();
+  m_num_indices = static_cast<GLsizei>(vertices.size());
 
   // DEFINE OPENGL BUFFERS
   glGenVertexArrays(1, &m_vao);

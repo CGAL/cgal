@@ -21,9 +21,9 @@ public:
   void set_pos(float x, float y, float z) { m_pos = QVector3D(x,y,z); }
   const QVector3D& get_pos() const { return m_pos; }
 
-  void perspective(float fov, float aspect_ratio, float z_near, float z_far);
+  void perspective(qreal fov, qreal aspect_ratio, qreal z_near, qreal z_far);
 
-  float get_z_near() const { return m_z_near; }
+  qreal get_z_near() const { return m_z_near; }
   QMatrix4x4 get_view_matrix() const;
   QMatrix4x4 get_projection_matrix() const { return m_projection; }
 
@@ -50,7 +50,7 @@ private:
   QVector3D m_saved_uy;
   QVector3D m_saved_uz;
 
-  float m_z_near, m_z_far;
+  qreal m_z_near, m_z_far;
 
   QMatrix4x4 m_projection;
 };

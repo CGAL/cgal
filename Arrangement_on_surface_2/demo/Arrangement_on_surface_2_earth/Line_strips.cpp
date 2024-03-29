@@ -20,7 +20,7 @@ Line_strips::Line_strips(std::vector<QVector3D>& line_strip_points) {
   for (const auto& p : line_strip_points)
     vertex_data.push_back(p);
 
-  const auto end_of_current_arc_points = vertex_data.size();
+  const auto end_of_current_arc_points = static_cast<GLuint>(vertex_data.size());
   m_offsets.push_back(end_of_current_arc_points);
 
   // DEFINE OPENGL BUFFERS
@@ -56,7 +56,7 @@ Line_strips::Line_strips(std::vector<std::vector<QVector3D>>& arcs) {
   for (const auto& arc : arcs) {
     for(const auto& p : arc) vertex_data.push_back(p);
 
-    const auto end_of_current_arc_points = vertex_data.size();
+    const auto end_of_current_arc_points = static_cast<GLuint>(vertex_data.size());
     m_offsets.push_back(end_of_current_arc_points);
   }
 

@@ -146,7 +146,7 @@ void Main_widget::initializeGL() {
   init_geometry();
   init_shader_programs();
 
-  m_current_approx_error = 0.001;
+  m_current_approx_error = 0.001f;
   init_country_borders(m_current_approx_error);
 
   glClearColor(0, 0, 0, 1);
