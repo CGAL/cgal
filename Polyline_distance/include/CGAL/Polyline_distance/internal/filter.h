@@ -128,7 +128,7 @@ bool Filter::isFree(Curve const& curve1, PointID start1, PointID end1,
     auto mid_dist_sqr = CGAL::squared_distance(curve1[mid1], curve2[mid2]);
 
     auto comp_dist = distance - max1 - max2;
-    return certainly(comp_dist >= 0) && certainly(mid_dist_sqr <= CGAL::square(comp_dist)); // Uncertain (A)
+    return certainly(! is_negative(comp_dist)) && certainly(mid_dist_sqr <= CGAL::square(comp_dist)); // Uncertain (A)
 }
 
 void Filter::increase(size_t& step) { step = std::ceil(1.5 * step); }
