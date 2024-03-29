@@ -97,6 +97,7 @@ private:
   Smoother m_vertex_smoother;//initialized with initial surface
 
   C3t3* m_c3t3_pbackup;
+  std::vector<Vertex_handle> m_far_points;
   Triangulation* m_tr_pbackup; //backup to re-swap triangulations when done
 
 public:
@@ -303,7 +304,12 @@ public:
   void finalize()
   {
     if (input_is_c3t3())
+    {
+      //reset far points dimension
+      for (Vertex_handle v : m_far_points)
+        v->set_dimension(-1);
       m_c3t3_pbackup->swap(m_c3t3);
+    }
     else
       m_tr_pbackup->swap(m_c3t3.triangulation());
   }
@@ -327,6 +333,9 @@ private:
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
       m_c3t3.triangulation(), "00-c3t3_vertices_before_init_");
 #endif
+
+    if (input_is_c3t3())
+      backup_far_points();
 
     const Subdomain_index default_subdomain = default_subdomain_index();
 
@@ -471,6 +480,15 @@ private:
 #endif
   }
 
+  void backup_far_points()
+  {
+    for (Vertex_handle v : tr().finite_vertex_handles())
+    {
+      if (v->in_dimension() == -1)
+        m_far_points.push_back(v);
+    }
+  }
+
 private:
   bool dimension_is_modifiable(const Vertex_handle& v, const int new_dim) const
   {
@@ -478,7 +496,7 @@ private:
     // feature edges and tip/endpoints vertices are kept
     switch (vdim)
     {
-    case -1: return false;//far points are not modified
+    case -1: return (new_dim == 3);//far points
     case 3 : return true;
     case 2 : return true;//surface vertices may not be part of a triangulation surface
                         // in this case, we want to be able to set it
