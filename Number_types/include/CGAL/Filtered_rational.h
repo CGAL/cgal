@@ -8,6 +8,7 @@
 namespace CGAL {
 
 struct Filtered_rational;
+template <class NT> class Lazy_exact_nt;
 
 template <>
 class Algebraic_structure_traits<Filtered_rational>
@@ -44,6 +45,9 @@ struct Filtered_rational : boost::totally_ordered1<Filtered_rational
     : i(to_interval(rat)), rat(rat)
   {}
 
+  explicit Filtered_rational(const Lazy_exact_nt<Exact_rational>& l)
+    : i(to_interval(l.exact())), rat(l.exact())
+  {}
 
   Filtered_rational(const Interval_nt<>& i, const Exact_rational& rat)
       : i(i), rat(rat)
