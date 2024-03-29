@@ -219,11 +219,12 @@ public:
     using parameters::choose_parameter;
     using parameters::get_parameter;
 
-    using Edge = typename Tr::Edge;
+    using V = typename Tr::Vertex_handle;
+    using Edge_vv = std::pair<V, V>;
     using Facet = typename Tr::Facet;
 
     auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                  CGAL::Constant_property_map<Edge, bool>(false));
+                                  CGAL::Constant_property_map<Edge_vv, bool>(false));
     auto fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
                                   CGAL::Constant_property_map<Facet, bool>(false));
     auto cell_selector = choose_parameter(get_parameter(np, internal_np::cell_selector),
