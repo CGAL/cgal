@@ -4,39 +4,24 @@
 cmake_minimum_required(VERSION 3.1...3.23)
 project(Snap_rounding_2_Demo)
 
-if(NOT POLICY CMP0070 AND POLICY CMP0053)
-  # Only set CMP0053 to OLD with CMake<3.10, otherwise there is a warning.
-  cmake_policy(SET CMP0053 OLD)
-endif()
+find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-if(POLICY CMP0071)
-  cmake_policy(SET CMP0071 NEW)
-endif()
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
-find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt5)
-
-find_package(Qt5 QUIET COMPONENTS Widgets)
-
-if(CGAL_Qt5_FOUND AND Qt5_FOUND)
+if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   set(CMAKE_AUTOMOC ON)
+  set(CMAKE_AUTOUIC ON)
+  set(CMAKE_AUTORCC ON)
   add_definitions(-DQT_NO_KEYWORDS)
-  set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-  # UI files (Qt Designer files)
-  qt5_wrap_ui(DT_UI_FILES Snap_rounding_2.ui)
-
-  # qrc files (resources files, that contain icons, at least)
-  qt5_add_resources(CGAL_Qt5_RESOURCE_FILES ./Snap_rounding_2.qrc)
-
-  # The executable itself.
-  add_executable(
-    Snap_rounding_2 Snap_rounding_2.cpp ${DT_UI_FILES}
-                    ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+  qt_add_executable(
+    Snap_rounding_2 Snap_rounding_2.cpp
+    Snap_rounding_2.ui Snap_rounding_2.qrc)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Snap_rounding_2)
 
-  target_link_libraries(Snap_rounding_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt5
-                                                Qt5::Widgets)
+  target_link_libraries(Snap_rounding_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
+                                                Qt6::Widgets)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Snap_rounding_2)
@@ -44,5 +29,5 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND)
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Snap_rounding_2)
 else()
-  message("NOTICE: This demo requires CGAL and Qt5, and will not be compiled.")
+  message("NOTICE: This demo requires CGAL and Qt6<, and will not be compiled.")
 endif()

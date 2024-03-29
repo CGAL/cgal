@@ -141,15 +141,15 @@ public:
 
   /*! Obtain the rational kernel.
    */
-  Shared_rat_kernel rat_kernel() { return m_rat_kernel; }
+  Shared_rat_kernel rat_kernel() const { return m_rat_kernel; }
 
   /*! Obtain the algebraic kernel.
    */
-  Shared_alg_kernel alg_kernel() { return m_alg_kernel; }
+  Shared_alg_kernel alg_kernel() const { return m_alg_kernel; }
 
   /*! Obtain the nt traits.
    */
-  Shared_nt_traits nt_traits() { return m_nt_traits; }
+  Shared_nt_traits nt_traits() const { return m_nt_traits; }
 
   /*! Obtain the next conic index. */
   static size_t get_index() {
@@ -2258,7 +2258,7 @@ public:
      */
     Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
                        const Rational& u, const Rational& v, const Rational& w,
-                       const Orientation& orient,
+                       Orientation orient,
                        const Point_2& source, const Point_2& target) const {
       // Make sure that the source and the taget are not the same.
       const auto alg_kernel = m_traits.m_alg_kernel;
@@ -2280,7 +2280,7 @@ public:
      * \pre The three points must not be collinear.
      */
     Curve_2 operator()(const Rat_point_2& p1, const Rat_point_2& p2,
-                       const Rat_point_2& p3) {
+                       const Rat_point_2& p3) const {
       Curve_2 arc;
 
       // Set the source and target.
@@ -2363,7 +2363,7 @@ public:
      */
     Curve_2 operator()(const Rat_point_2& p1, const Rat_point_2& p2,
                        const Rat_point_2& p3, const Rat_point_2& p4,
-                       const Rat_point_2& p5) {
+                       const Rat_point_2& p5) const {
       Curve_2 arc;
 
       // Make sure that no three points are collinear.
@@ -2457,7 +2457,7 @@ public:
      */
     Curve_2 operator()(const Rational& r, const Rational& s, const Rational& t,
                        const Rational& u, const Rational& v, const Rational& w,
-                       const Orientation& orient,
+                       Orientation orient,
                        const Point_2& app_source,
                        const Rational& r_1, const Rational& s_1,
                        const Rational& t_1, const Rational& u_1,
@@ -2724,9 +2724,8 @@ public:
      * \pre The source and the target must be on the conic boundary and must
      *      not be the same.
      */
-    Curve_2 operator()(const Rat_circle_2& circ, const Orientation& orient,
+    Curve_2 operator()(const Rat_circle_2& circ, Orientation orient,
                        const Point_2& source, const Point_2& target) const {
-
       // Make sure that the source and the taget are not the same.
       CGAL_precondition_code(auto cmp_xy =
                                m_traits.m_alg_kernel->compare_xy_2_object());
@@ -3317,9 +3316,9 @@ public:
     //                sqrt((r - s)^2 + t^2)
     //
     const int or_fact = (cv.orientation() == CLOCKWISE) ? -1 : 1;
-    const Algebraic r = m_nt_traits->convert(or_fact * cv.r());
-    const Algebraic s = m_nt_traits->convert(or_fact * cv.s());
-    const Algebraic t = m_nt_traits->convert(or_fact * cv.t());
+    const Algebraic r = m_nt_traits->convert(Integer(or_fact * cv.r()));
+    const Algebraic s = m_nt_traits->convert(Integer(or_fact * cv.s()));
+    const Algebraic t = m_nt_traits->convert(Integer(or_fact * cv.t()));
     const Algebraic cos_2phi = (r - s) / m_nt_traits->sqrt((r-s)*(r-s) + t*t);
     const Algebraic zero = 0;
     const Algebraic one = 1;
@@ -3364,8 +3363,8 @@ public:
     //        4*r*s - t^2                4*r*s - t^2
     //
     // The denominator (4*r*s - t^2) must be negative for hyperbolas.
-    const Algebraic u = m_nt_traits->convert(or_fact * cv.u());
-    const Algebraic v = m_nt_traits->convert(or_fact * cv.v());
+    const Algebraic u = m_nt_traits->convert(Integer(or_fact * cv.u()));
+    const Algebraic v = m_nt_traits->convert(Integer(or_fact * cv.v()));
     const Algebraic det = 4*r*s - t*t;
     Algebraic x0, y0;
 
@@ -3804,9 +3803,9 @@ public:
     auto u = cv.u();
     auto v = cv.v();
     auto w = cv.w();
-    Algebraic* xs_end = m_nt_traits->solve_quadratic_equation(t*t - four*r*s,
-                                                              two*t*v - four*s*u,
-                                                              v*v - four*s*w,
+    Algebraic* xs_end = m_nt_traits->solve_quadratic_equation(Integer(t*t - four*r*s),
+                                                              Integer(two*t*v - four*s*u),
+                                                              Integer(v*v - four*s*w),
                                                               xs);
     auto n_xs = static_cast<int>(xs_end - xs);
 
@@ -3817,15 +3816,15 @@ public:
 
     if (CGAL::sign(cv.t()) == ZERO) {
       // The two vertical tangency points have the same y coordinate:
-      ys[0] = m_nt_traits->convert(-v) / m_nt_traits->convert(two*s);
+      ys[0] = m_nt_traits->convert(Integer(- v)) / m_nt_traits->convert(Integer(two * s));
       n_ys = 1;
     }
     else {
-      ys_end = m_nt_traits->solve_quadratic_equation(four*r*s*s - s*t*t,
-                                                     four*r*s*v - two*s*t*u,
-                                                     r*v*v - t*u*v +
-                                                     t*t*w,
+      ys_end = m_nt_traits->solve_quadratic_equation(Integer(four*r*s*s - s*t*t),
+                                                     Integer(four*r*s*v - two*s*t*u),
+                                                     Integer((r*v*v - t*u*v) + (t*t*w)),
                                                      ys);
+
       n_ys = static_cast<int>(ys_end - ys);
     }
 
@@ -3838,7 +3837,7 @@ public:
       }
       else {
         for (int j = 0; j < n_ys; ++j) {
-          if (CGAL::compare(m_nt_traits->convert(two*s) * ys[j],
+          if (CGAL::compare(m_nt_traits->convert(Integer(two*s)) * ys[j],
                             -(m_nt_traits->convert(t) * xs[i] +
                               m_nt_traits->convert(v))) == EQUAL)
           {
@@ -3905,10 +3904,11 @@ public:
     auto u = cv.u();
     auto v = cv.v();
     auto w = cv.w();
-    Algebraic* ys_end = m_nt_traits->solve_quadratic_equation(t*t - four*r*s,
-                                                              two*t*u - four*r*v,
-                                                              u*u - four*r*w,
-                                                              ys);
+    Algebraic* ys_end = m_nt_traits->template
+      solve_quadratic_equation<Integer>(t*t - four*r*s,
+                                        two*t*u - four*r*v,
+                                        u*u - four*r*w,
+                                        ys);
     auto n = static_cast<int>(ys_end - ys);
 
     // Compute the x coordinates and construct the horizontal tangency points.
@@ -3916,7 +3916,7 @@ public:
       // Having computed y, x is the single solution to the quadratic equation
       // above, and since its discriminant is 0, x is simply given by:
       Algebraic x = -(m_nt_traits->convert(t)*ys[i] + m_nt_traits->convert(u)) /
-        m_nt_traits->convert(two*r);
+        m_nt_traits->convert(Integer(two*r));
       ps[i] = Point_2(x, ys[i]);
     }
 

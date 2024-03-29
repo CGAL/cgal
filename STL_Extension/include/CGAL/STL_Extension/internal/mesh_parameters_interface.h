@@ -55,7 +55,7 @@ perturb(const CGAL_NP_CLASS& np = parameters::default_values())
 }
 
 template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_1, typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT_2, typename ... NP>
-Named_function_parameters<::CGAL::parameters::internal::Exude_options, ::CGAL::internal_np::exude_options_param_t, CGAL_NP_BASE>
+Named_function_parameters<::CGAL::parameters::internal::Perturb_options, ::CGAL::internal_np::perturb_options_param_t, CGAL_NP_BASE>
 perturb(const CGAL_NP_CLASS_1&  np1, const CGAL_NP_CLASS_2&  np2, const NP& ... nps)
 {
   return perturb(::CGAL::internal_np::combine_named_parameters(np1, np2, nps...));
@@ -91,7 +91,7 @@ exude(const CGAL_NP_CLASS& np = parameters::default_values())
   using ::CGAL::parameters::choose_parameter;
   using ::CGAL::parameters::get_parameter;
   double time_limit = choose_parameter(get_parameter(np,::CGAL::internal_np::maximum_running_time),::CGAL::parameters::internal::undef_parameter);
-  double sliver_bound = choose_parameter(get_parameter(np,::CGAL::internal_np::lower_sliver_bound),::CGAL::parameters::default_values_for_mesh_3::perturb_sliver_bound);
+  double sliver_bound = choose_parameter(get_parameter(np,::CGAL::internal_np::lower_sliver_bound),::CGAL::parameters::default_values_for_mesh_3::exude_sliver_bound);
 
   ::CGAL::parameters::internal::Exude_options options(true);
 
@@ -304,7 +304,7 @@ mesh_3_options(const CGAL_NP_CLASS& np = parameters::default_values())
   options.dump_after_refine_prefix=choose_parameter(get_parameter(np, ::CGAL::internal_np::dump_after_refine_prefix_param), "");
   options.dump_after_glob_opt_prefix=choose_parameter(get_parameter(np, ::CGAL::internal_np::dump_after_glob_opt_prefix_param), "");
   options.dump_after_perturb_prefix=choose_parameter(get_parameter(np, ::CGAL::internal_np::dump_after_perturb_prefix_param), "");
-  options.dump_after_exude_prefix=choose_parameter(get_parameter(np, ::CGAL::internal_np::dump_after_refine_surface_prefix_param), "");
+  options.dump_after_exude_prefix=choose_parameter(get_parameter(np, ::CGAL::internal_np::dump_after_exude_prefix_param), "");
   options.number_of_initial_points=choose_parameter(get_parameter(np, ::CGAL::internal_np::number_of_initial_points_param), -1);
   options.nonlinear_growth_of_balls = choose_parameter(get_parameter(np, ::CGAL::internal_np::nonlinear_growth_of_balls_param), false);
   options.maximal_number_of_vertices=choose_parameter(get_parameter(np, ::CGAL::internal_np::maximal_number_of_vertices_param), 0);

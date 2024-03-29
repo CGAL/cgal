@@ -1,11 +1,9 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/merge_border_vertices.h>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
-
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;

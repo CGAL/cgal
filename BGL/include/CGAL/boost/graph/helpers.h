@@ -953,6 +953,11 @@ void swap_edges(const typename boost::graph_traits<FaceGraph>::halfedge_descript
   if (fo2 != nf && halfedge(fo2, g)==oh2) set_halfedge(fo2, oh1, g);
 }
 
+template <typename Graph>
+void collect_garbage(Graph&)
+{
+  // nothing by default
+}
 
 } //end of internal namespace
 

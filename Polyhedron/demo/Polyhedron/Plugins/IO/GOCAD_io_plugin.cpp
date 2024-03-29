@@ -85,7 +85,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo, bool& ok, bool add_to_sce
   t.stop();
   std::cerr << "Reading took " << t.time() << " sec." << std::endl;
   if(name_and_color.first.size() == 0){
-    item->setName(fileinfo.baseName());
+    item->setName(fileinfo.completeBaseName());
   } else {
     item->setName(name_and_color.first.c_str());
   }
@@ -121,7 +121,7 @@ save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
   SMesh* poly = const_cast<SMesh*>(sm_item->polyhedron());
-  CGAL::IO::write_GOCAD(out, qPrintable(fileinfo.baseName()), *poly);
+  CGAL::IO::write_GOCAD(out, qPrintable(fileinfo.completeBaseName()), *poly);
   items.pop_front();
   return true;
 

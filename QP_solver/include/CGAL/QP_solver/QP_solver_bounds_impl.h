@@ -13,6 +13,11 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
+#ifndef CGAL_QP_SOLVER_QP_SOLVER_BOUNDS_IMPL_H
+#define CGAL_QP_SOLVER_QP_SOLVER_BOUNDS_IMPL_H
+
+#include <CGAL/license/QP_solver.h>
+
 namespace CGAL {
 
 template < typename Q, typename ET, typename Tags >
@@ -89,3 +94,5 @@ QP_solver<Q, ET, Tags>::upper_bnd(int i) const
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_QP_SOLVER_QP_SOLVER_BOUNDS_IMPL_H

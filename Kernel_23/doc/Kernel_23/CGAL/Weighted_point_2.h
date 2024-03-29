@@ -42,11 +42,13 @@ public:
 
   /*!
   introduces a weighted point with %Cartesian coordinates `(0,0)` and weight `0`.
+  \cgalEpicExact
   */
   Weighted_point_2(const Origin &ORIGIN);
 
   /*!
   introduces a weighted point from point `p` and weight `0`.
+  \cgalEpicExact
 
   \warning The `explicit` keyword is used to avoid accidental implicit conversions
            between Point_2 and Weighted_point_2.
@@ -55,11 +57,13 @@ public:
 
   /*!
   introduces a weighted point from point `p` and weight `w`.
+  \cgalEpicExact
   */
   Weighted_point_2(const Point_2<Kernel>& p, Kernel::FT& w);
 
   /*!
   introduces a weighted point with coordinates `x`, `y`, and weight `0`.
+  \cgalEpicExact
   */
   Weighted_point_2(const Kernel::FT& x, const Kernel::FT& y);
 
@@ -70,11 +74,13 @@ public:
 
   /*!
   returns the point of the weighted point.
+  \cgalEpicExact
   */
   Point_2<Kernel> point() const;
 
   /*!
   returns the weight of the weighted point.
+  \cgalEpicExact
   */
   Kernel::FT weight() const;
   /// @}
@@ -128,11 +134,13 @@ public:
 
   /*!
   returns the %Cartesian \f$ x\f$ coordinate, that is `hx()`/`hw()`.
+  \cgalEpicExact
   */
   Kernel::FT x() const;
 
   /*!
   returns the %Cartesian \f$ y\f$ coordinate, that is `hy()`/`hw()`.
+  \cgalEpicExact
   */
   Kernel::FT y() const;
 
@@ -153,12 +161,16 @@ public:
   /*!
   returns the i'th %Cartesian coordinate of `p`.
   \pre  `0 <= i <= 1`
+
+  \cgalEpicExact
   */
   Kernel::FT cartesian(int i) const;
 
   /*!
   returns `cartesian(i)`.
   \pre  `0 <= i <= 1`
+
+  \cgalEpicExact
   */
   Kernel::FT operator[](int i) const;
 
@@ -181,6 +193,7 @@ public:
 
   /*!
   returns a bounding box containing `p`.
+  \cgalEpicExact
   */
   Bbox_2 bbox() const;
 

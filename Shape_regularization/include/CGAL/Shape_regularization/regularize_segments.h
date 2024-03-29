@@ -70,6 +70,9 @@ namespace Segments {
     that should be addressed. The function is based on the class `QP_regularization`.
     Please refer to that class and these concepts for more information.
 
+    This class requires a `QPSolver` model which defaults to the \ref thirdpartyOSQP "OSQP"
+    library, which must be available on the system.
+
     \tparam InputRange
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 

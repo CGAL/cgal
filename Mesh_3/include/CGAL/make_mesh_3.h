@@ -44,10 +44,13 @@ add_points_from_generator(C3T3& c3t3, const MeshDomain& domain,
                           const int nb_initial_points,
                           const parameters::internal::Initial_points_generator_options<MeshDomain, C3T3>& generator)
 {
-  typedef typename C3T3::Triangulation::Geom_traits::Weighted_point_3 Weighted_point_3;
+  typedef typename C3T3::Triangulation Tr;
+  typedef typename Tr::Geom_traits::Weighted_point_3 Weighted_point_3;
   typedef typename MeshDomain::Index Index;
-  typedef std::vector<std::tuple<Weighted_point_3, int, Index> > Initial_points_vector;
+  typedef typename std::tuple<Weighted_point_3, int, Index> Initialization_point
+  typedef std::vector< Initialization_point > Initial_points_vector;
   typedef typename C3T3::Vertex_handle Vertex_handle;
+  typedef CGAL::Mesh_3::Triangulation_helpers<Tr> Th;
 
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
@@ -57,8 +60,13 @@ add_points_from_generator(C3T3& c3t3, const MeshDomain& domain,
   else //use default number of points
     generator(std::back_inserter(initial_points), domain, c3t3);
 
+  Tr& triangulation = c3t3.triangulation();
+
   // Insert points and set their index and dimension
   for (const auto& [weighted_point_3, dimension, index] : initial_points) {
+    if(Th().inside_protecting_balls(triangulation, Vertex_handle(), weighted_point_3.point()))
+      continue;
+
     Vertex_handle v = c3t3.triangulation().insert(weighted_point_3);
 
     // v could be null if point is hidden

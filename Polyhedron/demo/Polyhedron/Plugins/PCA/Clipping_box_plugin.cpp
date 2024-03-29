@@ -64,10 +64,14 @@ public Q_SLOTS:
   void tab_change();
 private:
   bool eventFilter(QObject *, QEvent *);
+  bool process_event_clip_box(QEvent *);
+  bool process_event_clip_orthographic(QEvent *);
+  void do_clip(bool);
   QAction* actionClipbox;
   ClipWidget* dock_widget;
   Scene_edit_box_item* item;
   bool shift_pressing;
+  bool clipping;
   Selection_visualizer* visualizer;
 }; // end Clipping_box_plugin
 
@@ -96,6 +100,7 @@ void Clipping_box_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_inter
           this, SLOT(connectNewViewer(QObject*)));
   visualizer = nullptr;
   shift_pressing = false;
+  clipping = false;
 }
 
 void Clipping_box_plugin::clipbox()
@@ -130,10 +135,16 @@ void Clipping_box_plugin::clipbox()
   });
   connect(dock_widget->tabWidget, &QTabWidget::currentChanged,
           this, &Clipping_box_plugin::tab_change);
+  connect(dock_widget->resetButton, &QPushButton::clicked,
+          this, [this]()
+  {
+    item->reset();
+    do_clip(true);
+  });
   item->setName("Clipping box");
   item->setRenderingMode(FlatPlusEdges);
 
-  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     viewer->installEventFilter(item);
 
   scene->addItem(item);
@@ -149,10 +160,29 @@ void Clipping_box_plugin::enableAction() {
 
 void Clipping_box_plugin::clip(bool b)
 {
+  clipping = b;
+  if (b)
+  {
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
+    {
+      v->installEventFilter(this);
+    }
+  }
+  else {
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
+    {
+      v->removeEventFilter(this);
+    }
+  }
+  do_clip(b);
+}
+
+void Clipping_box_plugin::do_clip(bool b)
+{
   typedef CGAL::Epick Kernel;
   typedef CGAL::Polyhedron_3<Kernel> Mesh;
 
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     CGAL::Three::Viewer_interface* viewer =
         qobject_cast<CGAL::Three::Viewer_interface*>(v);
@@ -231,12 +261,20 @@ void Clipping_box_plugin::tab_change()
 
 }
 
-bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
-  static QImage background;
-  if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()) || dock_widget->tabWidget->currentIndex() != 1
-      || (dock_widget->tabWidget->currentIndex() == 1 && !dock_widget->clipButton->isChecked()))
+bool Clipping_box_plugin::process_event_clip_box(QEvent *event)
+{
+  if (event->type() == QEvent::MouseButtonRelease)
+  {
+//    item->itemChanged();
+    do_clip(clipping);
     return false;
+  }
+  return false;
+}
 
+bool Clipping_box_plugin::process_event_clip_orthographic(QEvent *event)
+{
+  static QImage background;
   if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
   {
     QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -358,5 +396,17 @@ bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
     return true;
   }
   return false;
+}
+
+bool Clipping_box_plugin::eventFilter(QObject *, QEvent *event) {
+  if (dock_widget->isHidden() || !dock_widget->isActiveWindow())
+    return false;
+  if (dock_widget->tabWidget->currentIndex() == 0 && dock_widget->pushButton->isChecked())
+    return process_event_clip_box(event);
+  else if (dock_widget->tabWidget->currentIndex() == 1 && dock_widget->clipButton->isChecked())
+    return process_event_clip_orthographic(event);
+  else
+    return false;
+
 }
 #include "Clipping_box_plugin.moc"

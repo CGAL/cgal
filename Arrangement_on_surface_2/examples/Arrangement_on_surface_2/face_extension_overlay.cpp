@@ -9,12 +9,11 @@
 
 #include "arr_exact_construction_segments.h"
 
-typedef CGAL::Arr_face_extended_dcel<Traits, bool>       Dcel;
-typedef CGAL::Arrangement_2<Traits, Dcel>                Ex_arrangement;
-typedef CGAL::Arr_face_overlay_traits<Ex_arrangement, Ex_arrangement,
-                                      Ex_arrangement,
-                                      std::logical_and<bool> >
-                                                         Overlay_traits;
+using Dcel = CGAL::Arr_face_extended_dcel<Traits, bool>;
+using Ex_arrangement = CGAL::Arrangement_2<Traits, Dcel>;
+using Overlay_traits =
+  CGAL::Arr_face_overlay_traits<Ex_arrangement, Ex_arrangement,
+                                Ex_arrangement, std::logical_and<bool>>;
 
 int main() {
   // Construct the first arrangement, containing a square-shaped face.

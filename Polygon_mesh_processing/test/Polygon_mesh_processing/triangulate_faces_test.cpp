@@ -1,6 +1,3 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 
@@ -9,6 +6,11 @@
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/centroid.h>
 #include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
+
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <boost/graph/filtered_graph.hpp>
 

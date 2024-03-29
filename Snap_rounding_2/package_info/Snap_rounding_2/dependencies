@@ -1,6 +1,7 @@
 Algebraic_foundations
 Arithmetic_kernel
 Arrangement_on_surface_2
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2

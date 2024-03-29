@@ -169,8 +169,8 @@ A 3D point set can be visualized by calling the \link PkgDrawPointSet3D CGAL::dr
 
 \cgalExample{Point_set_3/draw_point_set_3.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_point_set,draw_point_set.png}
 Result of the run of the draw_point_set_3 program. A window shows the 3D points and allows to navigate through the 3D scene.

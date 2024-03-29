@@ -298,7 +298,7 @@ private:
 
 
 /*!
-\ingroup PkgSolverInterfaceRefLS
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_sparse_symmetric_matrix` is a wrapper around `Eigen` matrix type
 <a href="https://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
