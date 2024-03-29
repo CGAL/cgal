@@ -35,6 +35,11 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 namespace params = CGAL::parameters;
 
+// Custom_Initial_points_generator will put points on the mesh for initialisation.
+// Those points are objects of type std::tuple<Weighted_point_3, int, Index>.
+//   Weighted_point_3 is the point's position and weight,
+//   int is the dimension of the minimal dimension subcomplex on which the point lies,
+//   Index is the underlying subcomplex index.
 struct Custom_Initial_points_generator
 {
   CGAL::Image_3& image_;
@@ -43,20 +48,26 @@ struct Custom_Initial_points_generator
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 1) const
   {
-    typedef typename C3t3::Triangulation::Geom_traits::Point_3 Point_3;
+    typedef typename C3t3::Triangulation::Geom_traits::Point_3   Point_3;
+    typedef typename C3t3::Triangulation::Geom_traits::Vector_3  Vector_3;
+    typedef typename C3t3::Triangulation::Geom_traits::Segment_3 Segment_3;
 
     typename C3t3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
         c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
-    // Add points along the segment from
-    // (  0.0 50.0 66.66) to
-    // (100.0 50.0 66.66)
+    // Add points along the segment
+    Segment_3 segment(Point_3(  0.0, 50.0, 66.66),
+                      Point_3(100.0, 50.0, 66.66));
+
+
+    Point_3 source = segment.source();
+    Vector_3 vector = segment.to_vector();
     double edge_size = 5;
-    std::size_t nb = static_cast<int>(100.0 / edge_size);
+    std::size_t nb = static_cast<int>(CGAL::sqrt(segment.squared_length()) / edge_size);
     for (std::size_t i = 1; i < nb; i++)
     {
       *pts++ = std::make_tuple(
-         cwp(Point_3(i*edge_size, 50.0, 66.66), edge_size*edge_size), 1, 0);
+         cwp(source + (i/(double)nb)*vector, edge_size*edge_size), 1, 0);
     }
     return pts;
   }

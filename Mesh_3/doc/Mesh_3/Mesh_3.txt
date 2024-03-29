@@ -737,14 +737,14 @@ without the weights (left, 25563 vertices) and with the weights (right, 19936 ve
 
 \subsubsection Mesh_3DomainsFrom3DImagesWithCustomInitialization Domains From 3D Images, with a Custom Initialization
 
-The example \ref Mesh_3/mesh_3D_image_with_initial_points.cpp is a modification
+The example \ref Mesh_3/mesh_3D_image_with_image_initialization.cpp is a modification
 of \ref Mesh_3/mesh_3D_image.cpp. The goal of that example is to show how
 the default initialization of the triangulation, using random rays, can be
 replaced by a new implementation. In this case, the initialization detects
 all connected components in the 3D segmented image, and inserts points in
 the triangulation for each connected component.
 
-\snippet Mesh_3/mesh_3D_image_with_initial_points.cpp Meshing
+\snippet Mesh_3/mesh_3D_image_with_image_initialization.cpp Meshing
 
 The parameter `CGAL::parameters::initial_points_generator` is used.
 It expects a functor that returns a set of points for the mesh
@@ -785,10 +785,10 @@ Right: the mesh generated after the initialization of all connected components
 \cgalFigureCaptionEnd
 
 Note that the example \ref
-Mesh_3/mesh_3D_image_with_initial_points.cpp also shows how to
+Mesh_3/mesh_3D_image_with_image_initialization.cpp also shows how to
 create a 3D image using the undocumented API of CGAL_ImageIO.
 
-\snippet Mesh_3/mesh_3D_image_with_initial_points.cpp Create the image
+\snippet Mesh_3/mesh_3D_image_with_image_initialization.cpp Create the image
 
 The code of the function `%random_labeled_image()` is in the header file \ref
 Mesh_3/random_labeled_image.h.
@@ -799,6 +799,10 @@ a custom functor that initializes the triangulation.
 
 A struct `Custom_Initial_points_generator` that places 1D-feature points
 alongside a line is created.
+
+Finally, the exemple \ref Mesh_3/mesh_3D_image_with_initial_points.cpp features
+a point container that initializes the triangulation using the meshing parameter
+`parameters::initial_points()`.
 
 \subsection Mesh_3UsingVariableSizingField Using Variable Sizing Field
 

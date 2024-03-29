@@ -486,9 +486,10 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \ingroup PkgMesh3Parameters
  *
  * The function `parameters::initial_points()` enables the user to
- * specify a `std::vector` of initial points
+ * specify a container model of `Range` of initial points
  * to the mesh generation function `make_mesh_3()`.
- * The initial points vector is of type `std::vector<std::tuple<Weighted_point_3, int, Index>>` where
+ * The initial points `Range` has elements of type
+ * `std::tuple<Weighted_point_3, int, Index>` where
  * `Weighted_point_3` contains the point's position and weight,
  * `int` is the dimension of the minimal dimension subcomplex on which the point lies, and
  * `Index` is the underlying subcomplex index.
@@ -496,7 +497,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \tparam MeshDomain model of `MeshDomain_3`
  * \tparam C3t3 model of `MeshComplex_3InTriangulation_3`
  *
- *  @param initial_points a vector containing points of type
+ *  @param initial_points a `Range` containing points of type
  * `std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>`
  *
  * \cgalHeading{Example}
@@ -504,7 +505,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \code{.cpp}
  * // Creation of the initial_points vector
  * std::vector<std::tuple<K::Weighted_point_3, int, Mesh_domain::Index>> initial_points;
- * // Mesh generation from labeled image with connexity checks.
+ * // Mesh generation from labeled image with initial points.
  * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
  *                               criteria,
  *                               parameters::initial_points(std::cref(initial_points));//use std::cref to avoid a copy
