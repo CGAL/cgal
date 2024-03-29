@@ -1028,11 +1028,13 @@ CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i,
         auto maxdist = (CGAL::max)(first_part, second_part);
         auto mid_dist_sqr = CGAL::squared_distance(point, curve2[mid]);
 
-        auto comp_dist1 = distance - maxdist;
-        if (certainly(comp_dist1 > 0) && certainly(mid_dist_sqr <= CGAL::square(comp_dist1))) { // Uncertain (A)
+
+        if(certainly(distance >  maxdist) && (certainly(mid_dist_sqr <= CGAL::square( distance - maxdist )))) { // Uncertain (A)
             cur += stepsize;
             stepsize *= 2;
         }
+
+
         // if heuristic steps don't work, then reduce stepsize:
         else if (stepsize > 1) {
             stepsize /= 2;
