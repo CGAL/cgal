@@ -84,25 +84,53 @@ struct Filtered_rational : boost::totally_ordered1<Filtered_rational
 template <> class Real_embeddable_traits< Filtered_rational >
   : public INTERN_RET::Real_embeddable_traits_base< Filtered_rational, CGAL::Tag_true > {
   public:
-
-    class Sgn
-      : public CGAL::cpp98::unary_function< Type, ::CGAL::Sign > {
-      public:
-        ::CGAL::Sign operator()( const Type& x ) const {
-          return sign(x);
+    class Sgn : public CGAL::cpp98::unary_function<Type, ::CGAL::Sign>
+    {
+    public:
+      ::CGAL::Sign operator()(const Type& x) const
+      {
+        Uncertain<Sign> u = sign(x.i);
+        if(is_indeterminate(u)) {
+          return CGAL::sign(x.rat);
         }
+        return make_certain(u);
+      }
     };
 
-    class To_double
-      : public CGAL::cpp98::unary_function< Type, double > {
-      public:
-        double operator()( const Type& x ) const {
-          return to_double(x.i);
+    class To_double : public CGAL::cpp98::unary_function<Type, double>
+    {
+    public:
+      double operator()(const Type& x) const { return to_double(x.i); }
+    };
+
+    class To_interval : public CGAL::cpp98::unary_function<Type, std::pair<double, double>>
+    {
+    public:
+      std::pair<double, double> operator()(const Type& x) const { return { x.i.inf(), x.i.sup() }; }
+    };
+
+    class Compare : public CGAL::cpp98::binary_function<Type, Type, ::CGAL::Comparison_result>
+    {
+    public:
+      ::CGAL::Comparison_result operator()(const Type& x, const Type& y) const
+      {
+        Uncertain<Comparison_result> u = compare(x.i, y.i);
+        if(is_indeterminate(u)) {
+          return CGAL::compare(x.rat, y.rat);
         }
+        return make_certain(u);
+      }
+    };
+
+    class Square : public CGAL::cpp98::unary_function<Type, Type>
+    {
+    public:
+      Type operator()(const Type& x) const
+      {
+        return Filtered_rational(square(x.i), square(x.rat));
+      }
     };
 };
-
-
 
 bool operator==(const Filtered_rational& a,
                 const Filtered_rational& b)
@@ -125,39 +153,6 @@ bool operator<(const Filtered_rational& a,
     }
     return make_certain(u);
   }
-
-  Sign sign(const Filtered_rational& a)
-  {
-    Uncertain<Sign> u = sign(a.i);
-     if(is_indeterminate(u)){
-       return CGAL::sign(a.rat);
-    }
-    return make_certain(u);
-  }
-
-  Sign compare(const Filtered_rational& a, const Filtered_rational& b){
-    Uncertain<Sign> u = compare(a.i, b.i);
-     if(is_indeterminate(u)){
-       return compare(a.rat, b.rat);
-    }
-    return make_certain(u);
-  }
-
-  Filtered_rational square(const Filtered_rational& a)
-  {
-    return Filtered_rational(square(a.i), square(a.rat));
-  }
-
-  std::pair<double,double> to_interval(const Filtered_rational& b)
-{
-  return std::make_pair(b.i.inf(), b.i.sup());
-}
-
-  double to_double(const Filtered_rational& b)
-  {
-    return to_double(b.i);
-  }
-
 
   std::ostream& operator<<(std::ostream& os, const Filtered_rational& )
   {
