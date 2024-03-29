@@ -45,10 +45,12 @@ add_points_from_generator(C3T3& c3t3, const MeshDomain& domain,
                           const parameters::internal::Initial_points_generator_options<MeshDomain, C3T3>& generator)
 {
   typedef typename C3T3::Triangulation Tr;
+
   typedef typename Tr::Geom_traits::Weighted_point_3 Weighted_point_3;
   typedef typename MeshDomain::Index Index;
-  typedef typename std::tuple<Weighted_point_3, int, Index> Initialization_point
+  typedef typename std::tuple<Weighted_point_3, int, Index> Initialization_point;
   typedef std::vector< Initialization_point > Initial_points_vector;
+
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef CGAL::Mesh_3::Triangulation_helpers<Tr> Th;
 
