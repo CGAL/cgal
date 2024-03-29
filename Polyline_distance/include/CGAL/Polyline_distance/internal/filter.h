@@ -195,7 +195,7 @@ bool Filter::greedy()
     cert.reset();
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
-    auto d_sqr = CGAL::squared_distance(curve1.back(), curve2.back());
+
     PointID pos1 = 0;
     PointID pos2 = 0;
 
@@ -204,6 +204,7 @@ bool Filter::greedy()
         return false;
     }
 
+    auto d_sqr = CGAL::squared_distance(curve1.back(), curve2.back());
     // Note that we only exit this loop if we reached the endpoints, which were
     // already checked to be close.
     while (pos1 + pos2 < curve1.size() + curve2.size() - 2) {
