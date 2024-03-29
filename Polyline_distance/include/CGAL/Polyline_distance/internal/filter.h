@@ -106,14 +106,14 @@ bool Filter::isFree(Point const& fixed, Curve const& var_curve, PointID start,
     auto mid = (start + end + 1) / 2;
     auto max = (CGAL::max)(var_curve.curve_length(start + 1, mid),
                           var_curve.curve_length(mid, end));
-    auto mid_dist_sqr = CGAL::squared_distance(fixed, var_curve[mid]);
 
-    auto comp_dist = distance - max;
-    if (certainly(comp_dist > 0) && certainly(mid_dist_sqr <= CGAL::square(comp_dist))) { // Uncertain (A)
+    if (certainly(distance > max)){
+      auto mid_dist_sqr = CGAL::squared_distance(fixed, var_curve[mid]);
+      if(certainly(mid_dist_sqr <= CGAL::square(distance - max))) { // Uncertain (A)
         return true;
-    } else {
-        return false;
+      }
     }
+    return false;
 }
 
 bool Filter::isFree(Curve const& curve1, PointID start1, PointID end1,
