@@ -4,6 +4,7 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Algebraic_structure_traits.h>
+#include <CGAL/Lazy_exact_nt.h>
 
 namespace CGAL {
 
@@ -34,6 +35,10 @@ struct Filtered_rational : boost::totally_ordered1<Filtered_rational
   {}
 
   Filtered_rational(int d)
+    : i(d), rat(d)
+  {}
+
+  Filtered_rational(unsigned int d)
     : i(d), rat(d)
   {}
 
@@ -185,6 +190,7 @@ bool operator<(const Filtered_rational& a,
       }
   }
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Filtered_rational)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO(unsigned ,Filtered_rational)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,Filtered_rational)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double   ,Filtered_rational)
 
