@@ -33,7 +33,9 @@ output iterator `pts`, as objects of type
 @param pts the output points
 @param domain the input domain
 @param c3t3 the input complex
-@param n an estimation of the number of points to output
+@param n an estimation of the number of points to output.
+A generator can choose to ignore this parameter.
+If a generator does not output enough points, then more points will be added automatically.
 
 */
 template <typename OutputIterator, typename MeshDomain, typename C3t3>
