@@ -28,4 +28,13 @@ int main()
   );
 
   std::cout << "Exact backend is " << exact_nt_backend_string() << "\n";
+#ifdef CGAL_USE_CORE
+#ifdef CGAL_CORE_USE_GMP_BACKEND
+  std::cout << "CGAL_CORE_USE_GMP_BACKEND is defined, using gmp backend in BigInt and BigRat\n";
+#else
+  std::cout << "CGAL_CORE_USE_GMP_BACKEND is NOT defined, using boost-mp backend in BigInt and BigRat\n";
+#endif
+#else
+  std::cout << "CGAL_USE_CORE is not defined\n";
+#endif
 }
