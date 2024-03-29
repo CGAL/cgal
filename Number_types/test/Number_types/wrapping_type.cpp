@@ -1,6 +1,8 @@
 #include <iostream>
 #include <map>
 
+#include <CGAL/config.h>
+#if __has_include(<source_location>)
 #include <CGAL/NT_wrapper.h>
 
 struct Map {
@@ -42,3 +44,10 @@ int main() {
   }
   return 0;
 }
+
+#else
+int main() {
+  std::cerr << "C++20 <source_location> not available\n";
+  return 0;
+}
+#endif
