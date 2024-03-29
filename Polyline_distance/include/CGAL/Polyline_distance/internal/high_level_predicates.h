@@ -54,8 +54,6 @@ Interval intersection_interval(Point const & circle_center, distance_t radius,
             I = Interval(II.first, II.second);
         }
     } catch (const CGAL::Uncertain_conversion_exception& e) {
-        std::cout << "call exact_reals() inside intersection_interval()" << std::endl;
-
         std::pair<RealType, RealType> II;
         // if not empty
         if (exact_reals(circle_center, radius, line_start, line_end, II)) {

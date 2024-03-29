@@ -49,7 +49,7 @@ namespace internal {
 
 using Rational = CGAL::Exact_rational;
 
-using IntervalNT = CGAL::Interval_nt<>;
+using IntervalNT = CGAL::Interval_nt<false>;
 
 namespace unit_tests
 {
@@ -74,7 +74,7 @@ using Point = Kernel::Point_2;
  * A class representing a value in the interval `[0,1]`....
 */
 struct Lambda {
-    typedef CGAL::Interval_nt<> Approx;
+    typedef CGAL::Interval_nt<false> Approx;
     typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true,
                                  CGAL::Tag_false>
         Exact;
@@ -240,7 +240,7 @@ bool is_zero(const Polyline_distance::internal::Lambda& lambda)
     return is_zero(*lambda.exact);
 }
 
-inline CGAL::Interval_nt<> to_interval(const Polyline_distance::internal::Lambda& lambda)
+inline CGAL::Interval_nt<false> to_interval(const Polyline_distance::internal::Lambda& lambda)
 {
   return lambda.approx;
 }
@@ -266,7 +266,7 @@ bool approximate_reals(const Point& circle_center, distance_t radius,
     // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
     // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
 
-    typedef CGAL::Interval_nt<> Approx;
+    typedef CGAL::Interval_nt<false> Approx;
     Approx a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {
         Approx start_end_diff = line_end[i] - line_start[i];

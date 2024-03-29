@@ -50,6 +50,7 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
                                            const PointRange& curve2,
                                            const typename Traits::FT distance)
 {
+    Protect_FPU_rounding<true> p;
     auto icurve1 = Polyline_distance::internal::toCurve(curve1);
     auto icurve2 = Polyline_distance::internal::toCurve(curve2);
     auto idistance = Polyline_distance::internal::toDistance(distance);
@@ -70,6 +71,7 @@ typename Traits::FT continuous_Frechet_distance(const PointRange& curve1,
                                                 const PointRange& curve2,
                                                 const double precision)
 {
+    Protect_FPU_rounding<true> p;
     auto icurve1 = Polyline_distance::internal::toCurve(curve1);
     auto icurve2 = Polyline_distance::internal::toCurve(curve2);
 
