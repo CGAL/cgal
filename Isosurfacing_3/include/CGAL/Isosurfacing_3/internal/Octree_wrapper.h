@@ -559,7 +559,7 @@ public:
     namespace Tables = internal::Cube_table;
 
     std::size_t e_global_id, depth;
-    std::tie(e_global_id, depth) = e_id;
+    std::tie(e_global_id, depth) = static_cast<const std::tuple<std::size_t,std::size_t>&>(e_id);
     const std::size_t df = depth_factor(depth);
 
     const size_t v0_lex_index = e_global_id / 3;
@@ -588,7 +588,7 @@ public:
     namespace Tables = internal::Cube_table;
 
     std::size_t e_global_id, depth;
-    std::tie(e_global_id, depth) = e_id;
+    std::tie(e_global_id, depth) = static_cast<const std::tuple<std::size_t,std::size_t>&>(e_id);
     const std::size_t e_local_index = Tables::edge_store_index[e_global_id % 3];
 
     const std::size_t df = depth_factor(depth);
