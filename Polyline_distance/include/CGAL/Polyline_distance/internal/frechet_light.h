@@ -354,18 +354,21 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple,
         auto mid_dist_sqr = CGAL::squared_distance(fixed_point, curve[mid]);
 
         // heuristic tests avoiding sqrts
-        auto comp_dist1 = distance - maxdist;
-        auto comp_dist2 = distance + maxdist;
-        if ((certainly(comp_dist1 > 0) && certainly(mid_dist_sqr <= CGAL::square(comp_dist1)))) { // Uncertain (A)
+        if (certainly(distance > maxdist)){
+          auto comp_dist1 = distance - maxdist;
+          if (certainly(mid_dist_sqr <= CGAL::square(comp_dist1))) { // Uncertain (A)
             qsimple.setFreeInterval(min, max);  // full
             qsimple.validate();
 
             return true;
-        } else if (certainly(mid_dist_sqr > CGAL::square(comp_dist2))) { // Uncertain (A)
-            qsimple.setFreeInterval(max, min);  // empty
-            qsimple.validate();
+          }
+        }
+        auto comp_dist2 = distance + maxdist;
+        if (certainly(mid_dist_sqr > CGAL::square(comp_dist2))) { // Uncertain (A)
+          qsimple.setFreeInterval(max, min);  // empty
+          qsimple.validate();
 
-            return true;
+          return true;
         }
     }
 
