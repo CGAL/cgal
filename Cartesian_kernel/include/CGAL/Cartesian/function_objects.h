@@ -3080,20 +3080,6 @@ namespace CartesianKernelFunctors {
     operator()(Return_base_tag, Args&& ...args) const
     { return Rep(std::forward<Args>(args)...); }
 
-    Rep // Point_2
-    operator()(Return_base_tag, const RT& x, const RT& y) const
-    { return Rep(x, y); }
-
-    template <class T1, class T2>
-    std::enable_if_t<!std::is_same_v<T1, Return_base_tag> &&
-                     !std::is_same_v<T1, Line_2>, Rep>
-    operator()(T1&& x, T2&& y) const
-    { return Rep(std::forward<T1>(x), std::forward<T2>(y)); }
-
-    Rep // Point_2
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& w) const
-    { return Rep(x, y, w); }
-
     Point_2
     operator()(const Line_2& l) const
     {
@@ -3104,7 +3090,7 @@ namespace CartesianKernelFunctors {
     }
 
     Point_2
-    operator()(const Line_2& l, const FT i) const
+    operator()(const Line_2& l, const FT& i) const
     {
       typename K::Construct_point_2 construct_point_2;
       typename K::FT x, y;
@@ -3127,6 +3113,10 @@ namespace CartesianKernelFunctors {
     Point_2
     operator()(const RT& x, const RT& y) const
     { return Point_2(x, y); }
+
+    Point_2
+    operator()(RT&& x, RT&& y) const
+    { return Point_2(std::move(x), std::move(y)); }
 
     Point_2
     operator()(const RT& x, const RT& y, const RT& w) const
@@ -3179,10 +3169,9 @@ namespace CartesianKernelFunctors {
     operator()(const RT& x, const RT& y, const RT& z) const
     { return Point_3(x, y, z); }
 
-    template <class T1, class T2, class T3>
     Point_3
-    operator()(T1&& x, T2&& y, T3&& z) const
-    { return Point_3(std::forward<T1>(x), std::forward<T2>(y), std::forward<T3>(z)); }
+    operator()(RT&& x, RT&& y, RT&& z) const
+    { return Point_3(std::move(x), std::move(y), std::move(z)); }
 
     Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
