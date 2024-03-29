@@ -1,14 +1,27 @@
 #ifndef CGAL_FILTERED_RATIONAL_H
+#define CGAL_FILTERED_RATIONAL_H
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Algebraic_structure_traits.h>
 
 namespace CGAL {
 
+struct Filtered_rational;
+
+template <>
+class Algebraic_structure_traits<Filtered_rational>
+    : public Algebraic_structure_traits_base<Filtered_rational, Field_tag>
+{
+  public:
+    using Is_exact = Tag_true;
+    using Is_numerical_sensitive = Tag_false;
+};
+
 struct Filtered_rational : boost::totally_ordered1<Filtered_rational
                                                      //#ifdef _MSC_VER
-                 , boost::ordered_ring_operators2<Filtered_rational, int
-                 , boost::ordered_ring_operators2<Filtered_rational, double
+                 , boost::ordered_field_operators2<Filtered_rational, int
+                 , boost::ordered_field_operators2<Filtered_rational, double
                  > >
                                                      //#endif
                  >
@@ -77,6 +90,14 @@ template <> class Real_embeddable_traits< Filtered_rational >
       public:
         ::CGAL::Sign operator()( const Type& x ) const {
           return sign(x);
+        }
+    };
+
+    class To_double
+      : public CGAL::cpp98::unary_function< Type, double > {
+      public:
+        double operator()( const Type& x ) const {
+          return to_double(x.i);
         }
     };
 };
@@ -156,11 +177,9 @@ bool operator<(const Filtered_rational& a,
       }
   }
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(Filtered_rational)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(short    ,Filtered_rational)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(int      ,Filtered_rational)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(long     ,Filtered_rational)
-CGAL_DEFINE_COERCION_TRAITS_FROM_TO(float    ,Filtered_rational)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(double   ,Filtered_rational)
+
 
 } // namespace CGAL
 
