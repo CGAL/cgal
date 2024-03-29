@@ -35,22 +35,22 @@ class NT_wrapper {
 public:
   inline static std::function<void(const std::source_location&)> f;
 
-  NT_wrapper() : value(0) { call_f(); }
-  NT_wrapper(const NT& val) : value(val) { call_f();}
-  NT_wrapper(NT&& val) : value(std::move(val)) { call_f(); }
-  NT_wrapper(int val) : value(val) { call_f(); }
+  NT_wrapper() : value(0) { call_f(std::source_location::current()); }
+  NT_wrapper(const NT& val) : value(val) { call_f(std::source_location::current());}
+  NT_wrapper(NT&& val) : value(std::move(val)) { call_f(std::source_location::current()); }
+  NT_wrapper(int val) : value(val) { call_f(std::source_location::current()); }
 
   template <typename T, typename = std::enable_if_t<!std::is_same_v<T, NT>>>
-  NT_wrapper(const NT_wrapper<T>& other) : value(other.get_value()) { call_f(); }
+  NT_wrapper(const NT_wrapper<T>& other) : value(other.get_value()) { call_f(std::source_location::current()); }
 
-  NT_wrapper(const NT_wrapper& other) : value(other.value) { call_f(); }
-  NT_wrapper(NT_wrapper&& other) : value(std::move(other.value)) { call_f(); }
-  ~NT_wrapper() { call_f(); }
+  NT_wrapper(const NT_wrapper& other) : value(other.value) { call_f(std::source_location::current()); }
+  NT_wrapper(NT_wrapper&& other) : value(std::move(other.value)) { call_f(std::source_location::current()); }
+  ~NT_wrapper() { call_f(std::source_location::current()); }
 
   NT_wrapper& operator=(const NT_wrapper& other) {
     if (this != &other) {
       value = other.value;
-      call_f();
+      call_f(std::source_location::current());
     }
     return *this;
   }
@@ -58,7 +58,7 @@ public:
   NT_wrapper& operator=(NT_wrapper&& other) {
     if (this != &other) {
       value = std::move(other.value);
-      call_f();
+      call_f(std::source_location::current());
     }
     return *this;
   }
