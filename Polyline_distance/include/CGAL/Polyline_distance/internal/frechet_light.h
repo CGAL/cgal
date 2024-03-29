@@ -437,16 +437,14 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
                                   curve.curve_length(mid, cur + stepsize));
         auto mid_dist_sqr = CGAL::squared_distance(fixed_point, curve[mid]);
 
-        auto comp_dist1 = distance - maxdist;
-        if (current_free && certainly(comp_dist1 > 0) &&               // Uncertain (A)
-            certainly(mid_dist_sqr <= CGAL::square(comp_dist1))) {
+        if (current_free && certainly(distance > maxdist) &&               // Uncertain (A)
+            certainly(mid_dist_sqr <= CGAL::square(distance - maxdist))) {
             cur += stepsize;
 
             stepsize *= 2;
             continue;
         }
-        auto comp_dist2 = distance + maxdist;
-        if (!current_free && certainly(mid_dist_sqr > CGAL::square(comp_dist2))) { // Uncertain (A)
+        if (!current_free && certainly(mid_dist_sqr > CGAL::square(distance + maxdist))) { // Uncertain (A)
             cur += stepsize;
 
             stepsize *= 2;
