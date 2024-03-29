@@ -45,6 +45,11 @@ struct Filtered_rational : boost::totally_ordered1<Filtered_rational
       : i(i), rat(rat)
   {}
 
+  operator Exact_rational() const
+  {
+    return rat;
+  }
+
  Filtered_rational operator-() const
  {
    return Filtered_rational(-i, -rat);
