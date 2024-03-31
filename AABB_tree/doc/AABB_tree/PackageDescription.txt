@@ -40,9 +40,9 @@
 
 \cgalCRPSection{Primitives}
 - `CGAL::AABB_triangle_primitive_2<GeomTraits, Iterator, CacheDatum>`
-- `CGAL::AABB_indexed_triangle_primitive_2<GeomTraits, IndexIterator, PointRange, CacheDatum>`
+- `CGAL::AABB_indexed_triangle_primitive_2<GeomTraits, IndexIterator, PointRange, CacheDatum, PointMap>`
 - `CGAL::AABB_segment_primitive_2<GeomTraits, Iterator, CacheDatum>`
-- `CGAL::AABB_polyline_segment_primitive_2<GeomTraits, Iterator, PointRange, CacheDatum>`
+- `CGAL::AABB_polyline_segment_primitive_2<GeomTraits, Iterator, PointRange, CacheDatum, PointMap>`
 - `CGAL::AABB_triangle_primitive<GeomTraits, Iterator, CacheDatum>` (deprecated, use `CGAL::AABB_triangle_primitive_3<GeomTraits, Iterator, CacheDatum>`)
 - `CGAL::AABB_triangle_primitive_3<GeomTraits, Iterator, CacheDatum>`
 - `CGAL::AABB_segment_primitive<GeomTraits, Iterator, CacheDatum>` (deprecated, use `CGAL::AABB_segment_primitive_3<GeomTraits, Iterator, CacheDatum>`)
