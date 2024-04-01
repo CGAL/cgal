@@ -398,8 +398,7 @@ compute_density_weight_for_sample_point(
        \cgalParamDescription{If `true`, an optional preprocessing is applied, which will give
                              better results if the distribution of the input points is highly non-uniform.}
        \cgalParamType{Boolean}
-       \cgalParamDefault{`35`}
-       \cgalParamExtra{More iterations give a more regular result but increase the runtime}
+       \cgalParamDefault{`false`}
      \cgalParamNEnd
 
      \cgalParamNBegin{callback}
