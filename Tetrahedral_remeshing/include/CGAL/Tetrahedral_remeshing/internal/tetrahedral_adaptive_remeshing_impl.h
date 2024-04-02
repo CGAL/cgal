@@ -362,8 +362,7 @@ private:
         set_dimension(vi, 3);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      //else
-        if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
+      if (input_is_c3t3() && m_c3t3.is_in_complex(cit))
         ++nbc;
 #endif
     }
