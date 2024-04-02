@@ -890,7 +890,6 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
         const Projection proj_opp = m_triangles_aabb_tree.first_intersection(
           tr.geom_traits().construct_opposite_ray_3_object()(ray));
 
-        CGAL_assertion(proj != std::nullopt || proj_opp != std::nullopt);
         if(proj != std::nullopt && proj_opp == std::nullopt)
         {
           const auto p = get_intersection_point(proj);
