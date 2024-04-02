@@ -39,10 +39,10 @@ public:
   typedef typename Kernel::Segment_2 Segment_2;
 
   typedef Support_line<Kernel> Support_line_DS;
-  typedef Segment Segment;
-  typedef Vertex<FT> Vertex;
 
-  typedef Meta_vertex<Point_2> Meta_vertex;
+  typedef CGAL::KSP_2::internal::Vertex<FT> Vertex;
+  typedef CGAL::KSP_2::internal::Segment Segment;
+  typedef CGAL::KSP_2::internal::Meta_vertex<Point_2> Meta_vertex;
 
   typedef std::vector<Support_line_DS> Support_lines;
   typedef std::vector<Segment> Segments;
@@ -572,9 +572,6 @@ public:
         return (position_of_meta_vertex_on_support_line(a, support_line_idx)
           < position_of_meta_vertex_on_support_line(b, support_line_idx));
       });
-
-    std::size_t nb_segments_before = m_segments.size();
-    std::size_t nb_vertices_before = m_vertices.size();
 
     // Attach to existing endpoint
     std::size_t new_target_idx = m_vertices.size();

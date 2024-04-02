@@ -34,7 +34,7 @@ public:
   typedef GeomTraits Kernel;
   typedef typename Kernel::FT FT;
 
-  typedef Event<GeomTraits> Event;
+  typedef CGAL::KSP_2::internal::Event<GeomTraits> Event;
 
 private:
 

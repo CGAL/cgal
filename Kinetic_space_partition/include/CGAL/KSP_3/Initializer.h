@@ -192,8 +192,8 @@ private:
     // Loop complete, connecting face with all edges.
     for (IEdge edge : face.edges) {
       m_data.support_plane(sp_idx).add_neighbor(edge, face_idx);
-      IFace f1 = m_data.support_plane(sp_idx).iface(edge);
-      IFace f2 = m_data.support_plane(sp_idx).other(edge, f1);
+      CGAL_assertion_code(IFace f1 = m_data.support_plane(sp_idx).iface(edge);)
+      CGAL_assertion_code(IFace f2 = m_data.support_plane(sp_idx).other(edge, f1);)
       CGAL_assertion(f1 == face_idx || f2 == face_idx);
     }
 
@@ -590,14 +590,14 @@ private:
             }
           }
           if (!outside) {
-            if (face == -1)
+            if (face == IFace(-1))
               face = f;
             else {
               std::cout << "Two faces found for " << sp_idx << " sp, f1 " << face << " f2 " << f << std::endl;
             }
           }
         }
-        if (face != -1) {
+        if (face != IFace(-1)) {
           if (!m_data.igraph().face(face).part_of_partition) {
             auto pface = m_data.add_iface_to_mesh(sp_idx, face);
             sp.data().initial_ifaces.push_back(face);

@@ -117,7 +117,7 @@ template<typename ResultType, typename Type1, typename Type2>
 inline const ResultType intersection(const Type1& t1, const Type2& t2) {
 
   ResultType out;
-  const bool is_intersection_found = intersection(t1, t2, out);
+  CGAL_assertion_code(const bool is_intersection_found =) intersection(t1, t2, out);
   CGAL_assertion(is_intersection_found);
   return out;
 }

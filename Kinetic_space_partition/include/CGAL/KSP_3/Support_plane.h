@@ -150,8 +150,7 @@ public:
         static_cast<FT>(point.y()),
         static_cast<FT>(point.z())));
     }
-    const std::size_t n = points.size();
-    CGAL_assertion(n == polygon.size());
+    CGAL_assertion(points.size() == polygon.size());
 
     From_exact from_exact;
 
@@ -232,7 +231,7 @@ public:
         from_exact(point.y()),
         from_exact(point.z())));
     }
-    const std::size_t n = points.size();
+    CGAL_assertion_code(const std::size_t n = points.size();)
     CGAL_assertion(n == polygon.size());
     CGAL_assertion(n != 0);
 

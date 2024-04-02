@@ -816,7 +816,7 @@ public:
       const bool is_inserted = pair.second;
       if (is_inserted) {
         typename Intersection_kernel::Line_3 line;
-        bool intersect = intersection(plane, m_support_planes[common_bbox_plane_idx].exact_plane(), line);
+        CGAL_assertion_code(bool intersect =)  intersection(plane, m_support_planes[common_bbox_plane_idx].exact_plane(), line);
         CGAL_assertion(intersect);
         pair.first->second = m_intersection_graph.add_line(line);
       }
@@ -1251,7 +1251,7 @@ public:
 
     typename Intersection_kernel::Line_3 line;
     auto it = support_planes_idx.begin();
-    bool intersect = intersection(m_support_planes[*it++].exact_plane(), m_support_planes[*it++].exact_plane(), line);
+    CGAL_assertion_code(bool intersect =) intersection(m_support_planes[*it++].exact_plane(), m_support_planes[*it++].exact_plane(), line);
     CGAL_assertion(intersect);
 
     std::size_t line_idx = m_intersection_graph.add_line(line);

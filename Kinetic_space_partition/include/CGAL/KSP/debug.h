@@ -320,7 +320,7 @@ public:
   using Segment_2 = typename Traits::Segment_2;
   using Segment_3 = typename Traits::Segment_3;
 
-  using Color        = CGAL::Color;
+  using Color        = CGAL::IO::Color;
   using Surface_mesh = CGAL::Surface_mesh<Point_3>;
   using Random       = CGAL::Random;
 
