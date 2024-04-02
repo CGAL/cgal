@@ -331,7 +331,7 @@ constexpr const char* exact_nt_backend_string()
       return "BOOST_BACKEND";
     case LEDA_BACKEND:
       return "LEDA_BACKEND";
-    case MP_FLOAT_BACKEND:
+    default:
       return "MP_FLOAT_BACKEND";
   }
 }
