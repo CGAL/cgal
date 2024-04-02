@@ -76,6 +76,8 @@ Release date: October 2023
     when inserting an arc that lies on the identification curve.
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
+-   Added a sizing field as new parameter of `CGAL::tetrahedral_isotropic_remeshing()`, for non-uniform
+    and adaptive remeshing.
 -   **Breaking change**: The template parameters of
     `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
     have been modified, reverting changes introduced in CGAL 5.6.
