@@ -11,8 +11,8 @@ equivalent to `MeshDomainField_3`, used in \cgal \ref PkgMesh3 package,
 so they can be used interchangeably.
 
 \cgalHasModelsBegin
-\cgalHasModels{Tetrahedral_remeshing::Uniform_sizing_field}
-\cgalHasModels{Tetrahedral_remeshing::Adaptive_remeshing_sizing_field}
+\cgalHasModels{CGAL::Tetrahedral_remeshing::Uniform_sizing_field}
+\cgalHasModels{CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field}
 \cgalHasModelsEnd
 
 */
@@ -54,4 +54,3 @@ public:
 
   /// @}
 }; /*end RemeshingSizingField_3*/
-
