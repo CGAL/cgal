@@ -29,7 +29,7 @@ namespace Isosurfacing {
  * \brief A domain that can be used with the Marching Cubes algorithm.
  *
  * \details This class is essentially wrapper around the different bricks provided by its
- * template parameters: `Partition` provides the spacial partitioning, `ValueField`
+ * template parameters: `Partition` provides the spatial partitioning, `ValueField`
  * the values that define the isosurface. The optional template parameter
  * `EdgeIntersectionOracle` gives control over the method used to compute edge-isosurface intersection points.
  *
@@ -37,7 +37,7 @@ namespace Isosurfacing {
  * \tparam ValueField must be a model of `IsosurfacingValueField_3`
  * \tparam EdgeIntersectionOracle must be a model of `IsosurfacingEdgeIntersectionOracle_3`
  *
- * \sa `CGAL::Isosurfacing::marching_cubes_3()`
+ * \sa `CGAL::Isosurfacing::marching_cubes()`
  * \sa `CGAL::Isosurfacing::Dual_contouring_domain_3`
  */
 template <typename Partition,

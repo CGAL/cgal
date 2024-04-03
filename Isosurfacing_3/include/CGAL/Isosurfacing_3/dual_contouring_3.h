@@ -41,7 +41,7 @@ namespace Isosurfacing {
  *                      and `BackInsertionSequence` whose value type is `std::size_t`.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
- * \param domain the domain providing the spacial partition and the values and gradient data
+ * \param domain the domain providing the spatial partition and the values and gradient data
  * \param isovalue the value defining the isosurface
  * \param points the points of the polygons in the created polygon soup
  * \param polygons each element in the vector describes a polygon using the indices of the points in `points`

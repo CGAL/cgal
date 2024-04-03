@@ -73,8 +73,10 @@ The implementation within \cgal is generic in the sense that it can process any 
 that consists of hexahedral cells.
 In case of a conforming grid, the Marching Cubes algorithm generates
 as output a surface triangle mesh that is 2-manifold in most scenarios.
-[@todo PA: reformulate, as it is either strict or not - precise in which cases it is not, and say
-whether you talk about just combinatorially 2-manifold, or truly 2-manifold with 3D embedding taken into account]
+
+@todo PA: reformulate, as it is either strict or not - precise in which cases it is not, and say
+whether you talk about just combinatorially 2-manifold, or truly 2-manifold with 3D embedding taken into account
+
 If the mesh is 2-manifold and the isosurface does not intersect the domain boundary, then the output mesh is watertight.
 As the Marching Cubes algorithm uses linear interpolation of the sampled scalar field along the grid edges,
 it can miss details or components that are not captured by the sampling of the scalar field.
@@ -84,7 +86,7 @@ MC often generates more triangles, and more skinny triangles with small or large
 @todo PA: The statement is too strong - I would largely reformulate it as this depends too much on the parameters. I recommend to add instead a figure with different parameters and methods,
 depicting the mesh edges in black in addition to the shaded facets.
 
-MC does not preserve the sharp features present in the isovalue of the input scalar field
+Furthermore, MC does not preserve the sharp features present in the isovalue of the input scalar field
 (see \cgalFigureRef{IsosurfacingMCDC}).
 
 \subsection SubSecTMC Topologically Correct Marching Cubes (TMC)
@@ -220,7 +222,7 @@ Both these domain models are equipped with template parameters enabling the user
                       A few classes are provided by default, such as `CGAL::Isosurfacing::Value_function_3` and
                       `CGAL::Isosurfacing::Interpolated_discrete_values_3`. Users can provide their own value class,
                       provided it meets the requirements described by the concept `IsosurfacingValueField_3`.
-- <b>GradientField (`Dual_contouring_domain_3` only):</b> this must be a class that provides the gradient
+- <b>GradientField:</b> (`CGAL::Isosurfacing::Dual_contouring_domain_3` only) this must be a class that provides the gradient
                                                           of the scalar field at the vertices of the partition.
                                                           A few classes are provided by default, such as
                                                           `CGAL::Isosurfacing::Finite_difference_gradient_3` and
