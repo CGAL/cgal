@@ -198,7 +198,7 @@ protected:
 
     template <class InputIterator>
     void process_cells_in_conflict(InputIterator cell_it, InputIterator end) {
-      auto d = self.tr.dimension()
+      auto d = self.tr.dimension();
       for( ; cell_it != end; ++cell_it )
         for( int i = 0; i < d; ++i )
           for( int j = i+1; j <= d; ++j ) {

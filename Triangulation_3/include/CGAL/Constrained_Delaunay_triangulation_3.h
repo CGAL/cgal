@@ -2332,7 +2332,6 @@ private:
         triangulate_cavity(original_intersecting_cells, original_facets_of_upper_cavity, original_vertices_of_upper_cavity);
     std::for_each(interior_constrained_faces_upper.begin(), interior_constrained_faces_upper.end(),
                   register_internal_constrained_facet);
-    insert_in_conflict_visitor.process_cells_in_conflict(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
     if(this->debug_copy_triangulation_into_hole()) {
       std::cerr << "# lower cavity\n";
     }
@@ -2342,7 +2341,6 @@ private:
         triangulate_cavity(original_intersecting_cells, original_facets_of_lower_cavity, original_vertices_of_lower_cavity);
     std::for_each(interior_constrained_faces_lower.begin(), interior_constrained_faces_lower.end(),
                   register_internal_constrained_facet);
-    insert_in_conflict_visitor.process_cells_in_conflict(cells_of_lower_cavity.begin(), cells_of_lower_cavity.end());
 
     // the following transform_reduce is like `std::any_of` but without the fast-exit
     if(std::transform_reduce(fh_region.begin(), fh_region.end(), false, std::logical_or<bool>{}, [&](auto fh) {
@@ -2409,6 +2407,9 @@ private:
       }
       throw Next_region{"missing facet in polygon", fh_region[0]};
     }
+
+    insert_in_conflict_visitor.process_cells_in_conflict(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
+    insert_in_conflict_visitor.process_cells_in_conflict(cells_of_lower_cavity.begin(), cells_of_lower_cavity.end());
 
     if(this->debug_copy_triangulation_into_hole()) {
       std::cerr << "# glu the upper triangulation of the cavity\n";
