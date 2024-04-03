@@ -242,15 +242,15 @@ interpolate_on_four_vertices(
   const std::array<Point_with_info, 4>& vertices) const
 {
   // Interpolate value using values at vertices
-  const FT& va = boost::get<1>(vertices[0]);
-  const FT& vb = boost::get<1>(vertices[1]);
-  const FT& vc = boost::get<1>(vertices[2]);
-  const FT& vd = boost::get<1>(vertices[3]);
+  const FT& va = vertices[0].size;
+  const FT& vb = vertices[1].size;
+  const FT& vc = vertices[2].size;
+  const FT& vd = vertices[3].size;
 
-  const Bare_point& a = boost::get<0>(vertices[0]);
-  const Bare_point& b = boost::get<0>(vertices[1]);
-  const Bare_point& c = boost::get<0>(vertices[2]);
-  const Bare_point& d = boost::get<0>(vertices[3]);
+  const Bare_point& a = vertices[0].p;
+  const Bare_point& b = vertices[1].p;
+  const Bare_point& c = vertices[2].p;
+  const Bare_point& d = vertices[3].p;
 
   const auto sqd = FT().compute_squared_distance_3_object();
 
