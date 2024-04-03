@@ -28,7 +28,7 @@ Release date: October 2023
  
 ### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.0/Manual/packages.html#PkgAABBTree)
 
-- **Breaking change**: The concept `AABBTraits` now should refine the `SearchTraits` concept.
+- **Breaking change**: The concept `AABBTraits` now refines the `SearchTraits` concept.
 - The AABB tree is now working with 2D and 3D primitives:
   - Replacement of `AABBGeomTraits` concept by `AABBGeomTraits_3` and `AABBRayIntersectionGeomTraits` by `AABBRayIntersectionGeomTraits_3`.
   - Addition of `AABBGeomTraits_2` and `AABBRayIntersectionGeomTraits_2` concepts
