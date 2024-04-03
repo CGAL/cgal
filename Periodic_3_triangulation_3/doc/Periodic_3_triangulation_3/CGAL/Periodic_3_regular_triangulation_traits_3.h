@@ -15,7 +15,7 @@ and is `true`), this class automatically provides filtered predicates.
 By default, this holds for `CGAL::Exact_predicates_inexact_constructions_kernel` and
 `CGAL::Exact_predicates_exact_constructions_kernel`.
 
-\cgalModels `Periodic_3RegularTriangulationTraits_3`
+\cgalModels{Periodic_3RegularTriangulationTraits_3}
 */
 template< typename Traits, typename Offset >
 class Periodic_3_regular_triangulation_traits_3 :

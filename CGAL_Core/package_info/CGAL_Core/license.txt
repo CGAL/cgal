@@ -1,2 +1,1 @@
-LGPL (v3)
 LGPL (v3 or later)

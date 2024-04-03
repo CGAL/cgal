@@ -4,10 +4,10 @@ namespace CGAL {
  *
  * The traits class `Arr_segment_traits_2` is a model of the
  * `ArrangementTraits_2` concept, which allows the construction and maintenance
- * of arrangements of line segments. It should be parameterized with a
+ * of arrangements of line segments. It is parameterized with a
  * \cgal-kernel model that is templated in turn with a number type. To avoid
  * numerical errors and robustness problems, the number type should support
- * exact rational arithmetic - that is, the number type should support the
+ * exact rational arithmetic; that is, the number type should support the
  * arithmetic operations \f$ +\f$, \f$ -\f$, \f$ \times\f$ and \f$ \div\f$
  * carried out without loss of precision.
  *
@@ -52,9 +52,7 @@ namespace CGAL {
  * same direction as a precondition. Moreover, `Arr_segment_traits_2` supports
  * the merging of curves of opposite directions.
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementLandmarkTraits_2`
- * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
+ * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementDirectionalXMonotoneTraits_2}
  */
 template <typename Kernel>
 class Arr_segment_traits_2 : public Kernel {

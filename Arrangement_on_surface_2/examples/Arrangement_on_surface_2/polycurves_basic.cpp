@@ -10,14 +10,14 @@
 
 #include "arr_print.h"
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef CGAL::Arr_directional_non_caching_segment_basic_traits_2<Kernel>
-                                                            Subcurve_traits;
-typedef CGAL::Arr_polycurve_basic_traits_2<Subcurve_traits> Geom_traits;
-typedef Geom_traits::Point_2                                Point;
-typedef Subcurve_traits::X_monotone_curve_2                 X_monotone_subcurve;
-typedef Geom_traits::X_monotone_curve_2                     X_monotone_curve;
-typedef CGAL::Arrangement_2<Geom_traits>                    Arrangement;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Subcurve_traits =
+  CGAL::Arr_directional_non_caching_segment_basic_traits_2<Kernel>;
+using Geom_traits = CGAL::Arr_polycurve_basic_traits_2<Subcurve_traits>;
+using Point = Geom_traits::Point_2;
+using X_monotone_subcurve = Subcurve_traits::X_monotone_curve_2;
+using X_monotone_curve = Geom_traits::X_monotone_curve_2;
+using Arrangement = CGAL::Arrangement_2<Geom_traits>;
 
 int main() {
   Geom_traits traits;

@@ -1137,7 +1137,7 @@ void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
     }
     getEdgeContainer(2)->reset_vbos(ALL);
     setBuffersFilled(false);
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     {
       CGAL::Three::Viewer_interface* viewer = static_cast<CGAL::Three::Viewer_interface*>(v);
       if(viewer == nullptr)

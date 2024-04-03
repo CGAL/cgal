@@ -747,7 +747,7 @@ struct Triangle_structure_sampler_for_triangle_soup
  * @tparam TriangleMesh a model of the concepts `EdgeListGraph` and `FaceListGraph`
  * @tparam PointOutputIterator a model of `OutputIterator`
  *  holding objects of the same point type as
- *  the value type of the point type associated to the mesh `tm`, i.e. the value type of the vertex
+ *  the value type of the point type associated to the mesh `tm`, i.e., the value type of the vertex
  *  point map property map, if provided, or the value type of the internal point property map otherwise
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -1449,6 +1449,8 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
   using Point_3 = typename Kernel::Point_3;
   using Triangle_3 = typename Kernel::Triangle_3;
 
+  auto midpoint = Kernel().construct_midpoint_3_object();
+
 #ifdef CGAL_HAUSDORFF_DEBUG
   std::cout << " -- Bounded Hausdorff --" << std::endl;
   std::cout << "error bound: " << error_bound << std::endl;
@@ -1570,7 +1572,7 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     candidate_triangles.pop();
 
     // Only process the triangle if it can contribute to the Hausdorff distance,
-    // i.e. if its upper bound is higher than the currently known best lower bound
+    // i.e., if its upper bound is higher than the currently known best lower bound
     // and the difference between the bounds to be obtained is larger than the
     // user-given error.
     const auto& triangle_bounds = triangle_and_bounds.bounds;
@@ -1645,9 +1647,9 @@ bounded_error_squared_Hausdorff_distance_impl(const TriangleMesh1& tm1,
     }
 
     // Subdivide the triangle into four smaller triangles.
-    const Point_3 v01 = CGAL::midpoint(v0, v1);
-    const Point_3 v02 = CGAL::midpoint(v0, v2);
-    const Point_3 v12 = CGAL::midpoint(v1, v2);
+    const Point_3 v01 = midpoint(v0, v1);
+    const Point_3 v02 = midpoint(v0, v2);
+    const Point_3 v12 = midpoint(v1, v2);
     const std::array<Triangle_3, 4> sub_triangles = { Triangle_3(v0, v01, v02), Triangle_3(v1 , v01, v12),
                                                       Triangle_3(v2, v02, v12), Triangle_3(v01, v02, v12) };
 
@@ -2372,17 +2374,19 @@ typename Kernel::FT recursive_hausdorff_subdivision(const typename Kernel::Point
   using FT = typename Kernel::FT;
   using Point_3 = typename Kernel::Point_3;
 
+  auto midpoint = Kernel().construct_midpoint_3_object();
+  auto squared_distance = Kernel().compute_squared_distance_3_object();
   // If all edge lengths of the triangle are below the error bound,
   // return the maximum of the distances of the three points to TM2 (via TM2_tree).
-  const FT max_squared_edge_length = (CGAL::max)((CGAL::max)(CGAL::squared_distance(p0, p1),
-                                                             CGAL::squared_distance(p0, p2)),
-                                                             CGAL::squared_distance(p1, p2));
+  const FT max_squared_edge_length = (CGAL::max)((CGAL::max)(squared_distance(p0, p1),
+                                                             squared_distance(p0, p2)),
+                                                             squared_distance(p1, p2));
 
   if(max_squared_edge_length < sq_error_bound)
   {
-    return (CGAL::max)((CGAL::max)(CGAL::squared_distance(p0, tm2_tree.closest_point(p0)),
-                                   CGAL::squared_distance(p1, tm2_tree.closest_point(p1))),
-                                   CGAL::squared_distance(p2, tm2_tree.closest_point(p2)));
+    return (CGAL::max)((CGAL::max)(squared_distance(p0, tm2_tree.closest_point(p0)),
+                                   squared_distance(p1, tm2_tree.closest_point(p1))),
+                                   squared_distance(p2, tm2_tree.closest_point(p2)));
   }
 
   // Else subdivide the triangle and proceed recursively.

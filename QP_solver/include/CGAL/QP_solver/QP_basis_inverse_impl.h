@@ -13,6 +13,11 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
+#ifndef CGAL_QP_SOLVER_QP_BASIS_INVERSE_IMPL_H
+#define CGAL_QP_SOLVER_QP_BASIS_INVERSE_IMPL_H
+
+#include <CGAL/license/QP_solver.h>
+
 namespace CGAL {
 
 // =============================
@@ -700,3 +705,5 @@ print( )
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_QP_SOLVER_QP_BASIS_INVERSE_IMPL_H

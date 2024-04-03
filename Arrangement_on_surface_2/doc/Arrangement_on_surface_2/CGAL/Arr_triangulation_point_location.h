@@ -1,7 +1,6 @@
 namespace CGAL {
 
-/*!
- * \ingroup PkgArrangementOnSurface2PointLocation
+/*! \ingroup PkgArrangementOnSurface2PointLocation
  *
  * \anchor arr_reftri_pl
  *
@@ -15,8 +14,7 @@ namespace CGAL {
  * (especially when the number of modifications applied to the arrangement is
  * high) and provided only for educational purposes.
  *
- * \cgalModels `ArrangementPointLocation_2`
- * \cgalModels `ArrangementVerticalRayShoot_2`
+ * \cgalModels{ArrangementPointLocation_2,ArrangementVerticalRayShoot_2}
  *
  * \sa `ArrangementPointLocation_2`
  * \sa `ArrangementVerticalRayShoot_2`
@@ -24,7 +22,6 @@ namespace CGAL {
  */
 
 template <typename Arrangement_>
-class Arr_triangulation_point_location : public Arr_observer<Arrangement_>
-{}
+class Arr_triangulation_point_location : public Arrangement_::Observer {}
 
 }

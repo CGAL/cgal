@@ -5,7 +5,9 @@
 
 The concept `CellAttribute` represents a non void attribute associated with a cell of a generic map. It can keep a descriptor to one dart of its associated cell, and can contain any information.
 
-\cgalHasModel \link CGAL::Cell_attribute `CGAL::Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`\endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{\link CGAL::Cell_attribute `CGAL::Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`\endlink}
+\cgalHasModelsEnd
 
 \sa `GenericMap`
 \sa `GenericMapItems`

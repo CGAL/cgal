@@ -22,40 +22,9 @@ namespace CGAL
 namespace Tetrahedral_remeshing
 {
   template<typename Tr>
-  void generate_input_two_subdomains(const std::size_t& nbv, Tr& tr)
+  void insert_random_points_in_cube(const std::size_t& nbv, Tr& tr)
   {
     CGAL::Random rng;
-
-    typedef typename Tr::Point Point;
-    typedef typename Tr::Cell_handle Cell_handle;
-
-    while (tr.number_of_vertices() < nbv)
-      tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
-
-    using P = typename Tr::Geom_traits::Point_3;
-    const typename Tr::Geom_traits::Plane_3
-      plane(P(0, 0, 0), P(0, 1, 0), P(0, 0, 1));
-
-    for (Cell_handle c : tr.finite_cell_handles())
-    {
-      if (plane.has_on_positive_side(
-        CGAL::centroid(P(c->vertex(0)->point()),
-                       P(c->vertex(1)->point()),
-                       P(c->vertex(2)->point()),
-                       P(c->vertex(3)->point()))))
-        c->set_subdomain_index(1);
-      else
-        c->set_subdomain_index(2);
-    }
-    assert(tr.is_valid(true));
-  }
-
-
-  template<typename Tr>
-  void generate_input_one_subdomain(const std::size_t nbv, Tr& tr)
-  {
-    CGAL::Random rng;
-
     typedef typename Tr::Point Point;
     std::vector<Point> pts;
     while (pts.size() < nbv)
@@ -67,11 +36,23 @@ namespace Tetrahedral_remeshing
       pts.push_back(Point(x, y, z));
     }
     tr.insert(pts.begin(), pts.end());
+  }
 
-    for (typename Tr::Cell_handle c : tr.finite_cell_handles())
-      c->set_subdomain_index(1);
+  template<typename Plane, typename Tr>
+  void insert_points_on_plane(const Plane& plane, const std::size_t& nbv, Tr& tr)
+  {
+    CGAL::Random rng;
+    typedef typename Tr::Point Point;
+    std::vector<Point> pts;
+    while (pts.size() < nbv)
+    {
+      const double x = rng.get_double(-1., 1.);
+      const double y = rng.get_double(-1., 1.);
+      const double z = rng.get_double(-1., 1.);
 
-    assert(tr.is_valid(true));
+      pts.push_back(plane.projection(Point(x, y, z)));
+    }
+    tr.insert(pts.begin(), pts.end());
   }
 
   template<typename Tr>

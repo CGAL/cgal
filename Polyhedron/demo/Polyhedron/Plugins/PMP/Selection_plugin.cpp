@@ -111,7 +111,7 @@ public:
         ok = false;
         return QList<Scene_item*>();
       }
-      item->setName(fileinfo.baseName());
+      item->setName(fileinfo.completeBaseName());
       ok = true;
       if(add_to_scene)
         CGAL::Three::Three::scene()->addItem(item);
@@ -1201,7 +1201,7 @@ void Polyhedron_demo_selection_plugin::on_actionSelfIntersection_triggered()
   CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
   bool found = false;
   std::vector<Scene_face_graph_item*> selected_polys;
-  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  for(Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_face_graph_item* poly_item =
         qobject_cast<Scene_face_graph_item*>(scene->item(index));
@@ -1210,7 +1210,7 @@ void Polyhedron_demo_selection_plugin::on_actionSelfIntersection_triggered()
       selected_polys.push_back(poly_item);
     }
   }
-  Q_FOREACH(Scene_face_graph_item* poly_item, selected_polys)
+  for(Scene_face_graph_item* poly_item : selected_polys)
   {
     Face_graph* mesh = poly_item->face_graph();
     std::vector<std::pair<Face_descriptor, Face_descriptor> > faces;

@@ -4,7 +4,7 @@
 #include <CGAL/Shape_detection/Region_growing/Segment_set.h>
 #include <CGAL/Shape_detection/Region_growing/Polygon_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 #include "include/utils.h"
 
 // Typedefs.

@@ -10,7 +10,7 @@ This univariate algebraic kernel uses the Rs library to perform
 integer univariate polynomial root isolation. It is a model of the
 `AlgebraicKernel_d_1` concept.
 
-\cgalModels `AlgebraicKernel_d_1`
+\cgalModels{AlgebraicKernel_d_1}
 
 \sa `Algebraic_kernel_rs_gmpz_d_1`
 

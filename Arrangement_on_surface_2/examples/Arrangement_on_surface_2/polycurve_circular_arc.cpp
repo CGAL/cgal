@@ -22,11 +22,11 @@ int main() {
 #include "arr_circular.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_polycurve_traits_2<Traits>    Polycurve_traits;
-typedef Polycurve_traits::X_monotone_curve_2    X_monotone_polycurve;
-typedef Polycurve_traits::Curve_2               Polycurve;
-typedef Kernel::Circle_2                        Circle_2;
-typedef CGAL::Arrangement_2<Polycurve_traits>   Polycurve_circ_arc_arrangment;
+using Polycurve_traits = CGAL::Arr_polycurve_traits_2<Traits>;
+using X_monotone_polycurve = Polycurve_traits::X_monotone_curve_2;
+using Polycurve = Polycurve_traits::Curve_2;
+using Circle_2 = Kernel::Circle_2;
+using Polycurve_circ_arc_arrangment = CGAL::Arrangement_2<Polycurve_traits>;
 
 int main() {
   Polycurve_traits traits;

@@ -19,7 +19,6 @@
 #include <CGAL/tags.h>
 #include <CGAL/STL_Extension/internal/mesh_option_classes.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
 #include <type_traits>
@@ -143,14 +142,14 @@ struct Lookup_named_param_def
   typedef typename internal_np::Get_param<typename NP::base, Query_tag>::type NP_type;
   typedef typename internal_np::Get_param<typename NP::base, Query_tag>::reference NP_reference;
 
-  typedef typename boost::mpl::if_<
-    std::is_same<NP_type, internal_np::Param_not_found>,
-    D, NP_type>::type
+  typedef std::conditional_t<
+    std::is_same_v<NP_type, internal_np::Param_not_found>,
+    D, NP_type>
   type;
 
-  typedef typename boost::mpl::if_<
-    std::is_same<NP_reference, internal_np::Param_not_found>,
-    D&, NP_reference>::type
+  typedef std::conditional_t<
+    std::is_same_v<NP_reference, internal_np::Param_not_found>,
+    D&, NP_reference>
   reference;
 };
 

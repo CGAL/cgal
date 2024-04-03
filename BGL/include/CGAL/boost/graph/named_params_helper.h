@@ -20,7 +20,6 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/has_xxx.hpp>
 
 #include <fstream>
@@ -43,14 +42,13 @@ class property_map_selector
 {
 public:
   typedef typename graph_has_property<PolygonMesh, PropertyTag>::type Has_internal_pmap;
-  typedef typename boost::mpl::if_c<Has_internal_pmap::value,
-                                    typename boost::property_map<PolygonMesh, PropertyTag>::type,
-                                    typename boost::cgal_no_property::type
-                                    >::type type;
-  typedef typename boost::mpl::if_c<Has_internal_pmap::value,
-                                    typename boost::property_map<PolygonMesh, PropertyTag>::const_type,
-                                    typename boost::cgal_no_property::const_type
-                                    >::type const_type;
+  typedef std::conditional_t<Has_internal_pmap::value,
+                             typename boost::property_map<PolygonMesh, PropertyTag>::type,
+                             typename boost::cgal_no_property::type> type;
+  typedef std::conditional_t<Has_internal_pmap::value,
+                             typename boost::property_map<PolygonMesh, PropertyTag>::const_type,
+                             typename boost::cgal_no_property::const_type
+                             > const_type;
 
   type get_pmap(const PropertyTag& p, PolygonMesh& pmesh)
   {
@@ -209,10 +207,10 @@ struct GetGeomTraits_impl<PolygonMesh, internal_np::Param_not_found, NamedParame
 
   struct Fake_GT {}; // to be used if there is no internal vertex_point_map in PolygonMesh
 
-  typedef typename boost::mpl::if_c<Has_internal_pmap::value ||
-                                    !std::is_same<internal_np::Param_not_found, NP_vpm>::value,
-                                    typename GetK<PolygonMesh, NamedParametersVPM>::Kernel,
-                                    Fake_GT>::type type;
+  typedef std::conditional_t<Has_internal_pmap::value ||
+                             !std::is_same<internal_np::Param_not_found, NP_vpm>::value,
+                             typename GetK<PolygonMesh, NamedParametersVPM>::Kernel,
+                             Fake_GT> type;
 };
 
 template <typename PolygonMesh,

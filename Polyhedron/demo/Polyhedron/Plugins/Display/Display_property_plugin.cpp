@@ -22,6 +22,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/interpolated_corrected_curvatures.h>
 
 #include <QAbstractItemView>
 #include <QAction>
@@ -31,6 +32,7 @@
 #include <QInputDialog>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QSlider>
 #include <QObject>
 #include <QPalette>
 #include <QStyleFactory>
@@ -44,6 +46,8 @@
 
 #define ARBITRARY_DBL_MIN 1.0E-17
 #define ARBITRARY_DBL_MAX 1.0E+17
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 using namespace CGAL::Three;
 
@@ -85,6 +89,10 @@ private:
   double gI = 1.;
   double bI = 0.;
 
+  double expand_radius = 0.;
+  double expand_radius_updated = false;
+  double maxEdgeLength = -1.;
+
   Color_ramp color_ramp;
   std::vector<QColor> color_map;
   QPixmap legend;
@@ -98,9 +106,14 @@ private:
     MIN_VALUE,
     MAX_VALUE
   };
+  enum CurvatureType
+  {
+    MEAN_CURVATURE,
+    GAUSSIAN_CURVATURE,
+  };
 
 public:
-  bool applicable(QAction*) const Q_DECL_OVERRIDE
+  bool applicable(QAction*) const override
   {
     Scene_item* item = scene->item(scene->mainSelectionIndex());
     if(!item)
@@ -110,14 +123,14 @@ public:
            qobject_cast<Scene_points_with_normal_item*>(item);
   }
 
-  QList<QAction*> actions() const Q_DECL_OVERRIDE
+  QList<QAction*> actions() const override
   {
     return QList<QAction*>() << actionDisplayProperties;
   }
 
   void init(QMainWindow* mw,
             Scene_interface* sc,
-            Messages_interface*) Q_DECL_OVERRIDE
+            Messages_interface*) override
   {
     this->scene = sc;
     this->mw = mw;
@@ -196,6 +209,9 @@ public:
             this, &Display_property_plugin::on_zoomToMinButton_pressed);
     connect(dock_widget->zoomToMaxButton, &QPushButton::pressed,
             this, &Display_property_plugin::on_zoomToMaxButton_pressed);
+
+    connect(dock_widget->expandingRadiusSlider, &QSlider::valueChanged,
+            this, &Display_property_plugin::setExpandingRadius);
   }
 
 private Q_SLOTS:
@@ -206,7 +222,7 @@ private Q_SLOTS:
     dock_widget->raise();
   }
 
-  void closure() Q_DECL_OVERRIDE
+  void closure() override
   {
     dock_widget->hide();
   }
@@ -250,6 +266,20 @@ private:
       dock_widget->minBox->setRange(-1000, 1000);
       dock_widget->minBox->setValue(0);
       dock_widget->maxBox->setRange(-1000, 1000);
+      dock_widget->maxBox->setValue(0);
+    }
+    else if (property_name == "Interpolated Corrected Mean Curvature")
+    {
+      dock_widget->minBox->setRange(-99999999, 99999999);
+      dock_widget->minBox->setValue(0);
+      dock_widget->maxBox->setRange(-99999999, 99999999);
+      dock_widget->maxBox->setValue(0);
+    }
+    else if (property_name == "Interpolated Corrected Gaussian Curvature")
+    {
+      dock_widget->minBox->setRange(-99999999, 99999999);
+      dock_widget->minBox->setValue(0);
+      dock_widget->maxBox->setRange(-99999999, 99999999);
       dock_widget->maxBox->setValue(0);
     }
     else
@@ -432,11 +462,15 @@ private:
       dock_widget->propertyBox->addItems({"Smallest Angle Per Face",
                                           "Largest Angle Per Face",
                                           "Scaled Jacobian",
-                                          "Face Area"});
+                                          "Face Area",
+                                          "Interpolated Corrected Mean Curvature",
+                                          "Interpolated Corrected Gaussian Curvature"});
       property_simplex_types = { Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
                                  Property_simplex_type::FACE,
-                                 Property_simplex_type::FACE };
+                                 Property_simplex_type::FACE,
+                                 Property_simplex_type::VERTEX,
+                                 Property_simplex_type::VERTEX };
       detectSMScalarProperties(*(sm_item->face_graph()));
     }
     else if(ps_item)
@@ -479,6 +513,15 @@ private Q_SLOTS:
     {
       dock_widget->setEnabled(true);
       disableExtremeValues(); // only available after coloring
+
+      // Curvature property-specific slider
+      const std::string& property_name = dock_widget->propertyBox->currentText().toStdString();
+      const bool is_curvature_property = (property_name == "Interpolated Corrected Mean Curvature" ||
+                                          property_name == "Interpolated Corrected Gaussian Curvature");
+      dock_widget->expandingRadiusLabel->setVisible(is_curvature_property);
+      dock_widget->expandingRadiusSlider->setVisible(is_curvature_property);
+      dock_widget->expandingRadiusLabel->setEnabled(is_curvature_property);
+      dock_widget->expandingRadiusSlider->setEnabled(is_curvature_property);
     }
     else // no or broken property
     {
@@ -526,6 +569,16 @@ private:
     else if(property_name == "Face Area")
     {
       displayArea(sm_item);
+    }
+    else if(property_name == "Interpolated Corrected Mean Curvature")
+    {
+      displayInterpolatedCurvatureMeasure(sm_item, MEAN_CURVATURE);
+      sm_item->setRenderingMode(Gouraud);
+    }
+    else if(property_name == "Interpolated Corrected Gaussian Curvature")
+    {
+      displayInterpolatedCurvatureMeasure(sm_item, GAUSSIAN_CURVATURE);
+      sm_item->setRenderingMode(Gouraud);
     }
     else
     {
@@ -629,6 +682,8 @@ private:
     removeDisplayPluginProperty(item, "f:display_plugin_largest_angle");
     removeDisplayPluginProperty(item, "f:display_plugin_scaled_jacobian");
     removeDisplayPluginProperty(item, "f:display_plugin_area");
+    removeDisplayPluginProperty(item, "v:display_plugin_interpolated_corrected_mean_curvature");
+    removeDisplayPluginProperty(item, "v:display_plugin_interpolated_corrected_Gaussian_curvature");
   }
 
   void displayExtremumAnglePerFace(Scene_surface_mesh_item* sm_item,
@@ -717,7 +772,7 @@ private:
           halfedge_descriptor local_border_h = opposite(halfedge(local_f, local_smesh), local_smesh);
           CGAL_assertion(is_border(local_border_h, local_smesh));
 
-          CGAL::Polygon_mesh_processing::triangulate_faces(local_smesh);
+          PMP::triangulate_faces(local_smesh);
 
           double extremum_angle_in_face = ARBITRARY_DBL_MAX;
           halfedge_descriptor local_border_end_h = local_border_h;
@@ -770,7 +825,7 @@ private:
               const SMesh& mesh) const
   {
     if(CGAL::is_triangle(halfedge(f, mesh), mesh))
-      return CGAL::Polygon_mesh_processing::face_area(f, mesh);
+      return PMP::face_area(f, mesh);
 
     auto vpm = get(boost::vertex_point, mesh);
 
@@ -786,8 +841,8 @@ private:
     }
 
     CGAL::Euler::add_face(local_vertices, local_smesh);
-    CGAL::Polygon_mesh_processing::triangulate_faces(local_smesh);
-    return CGAL::Polygon_mesh_processing::area(local_smesh);
+    PMP::triangulate_faces(local_smesh);
+    return PMP::area(local_smesh);
   }
 
   void displayArea(Scene_surface_mesh_item* sm_item)
@@ -807,6 +862,119 @@ private:
     }
 
     displaySMProperty<face_descriptor>("f:display_plugin_area", *sm);
+  }
+
+private Q_SLOTS:
+  void setExpandingRadius()
+  {
+    double sliderMin = dock_widget->expandingRadiusSlider->minimum();
+    double sliderMax = dock_widget->expandingRadiusSlider->maximum() - sliderMin;
+    double val = dock_widget->expandingRadiusSlider->value() - sliderMin;
+    sliderMin = 0;
+
+    Scene_item* item = scene->item(scene->mainSelectionIndex());
+    Scene_surface_mesh_item* sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+    if(sm_item == nullptr)
+      return;
+
+    SMesh& smesh = *(sm_item->face_graph());
+
+    auto vpm = get(CGAL::vertex_point, smesh);
+
+    // @todo use the upcoming PMP::longest_edge
+    if(maxEdgeLength < 0)
+    {
+      auto edge_range = CGAL::edges(smesh);
+
+      if(num_edges(smesh) == 0)
+      {
+        expand_radius = 0;
+        dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius: %1").arg(expand_radius));
+        return;
+      }
+
+      auto eit = std::max_element(edge_range.begin(), edge_range.end(),
+                                  [&, vpm, smesh](auto l, auto r)
+                                  {
+                                    auto res = EPICK().compare_squared_distance_3_object()(
+                                        get(vpm, source((l), smesh)),
+                                        get(vpm, target((l), smesh)),
+                                        get(vpm, source((r), smesh)),
+                                        get(vpm, target((r), smesh)));
+                                    return (res == CGAL::SMALLER);
+                                });
+
+      CGAL_assertion(eit != edge_range.end());
+
+      maxEdgeLength = PMP::edge_length(*eit, smesh);
+    }
+
+    double outMax = 5 * maxEdgeLength, base = 1.2;
+
+    expand_radius = (pow(base, val) - 1) * outMax / (pow(base, sliderMax) - 1);
+    dock_widget->expandingRadiusLabel->setText(tr("Expanding Radius: %1").arg(expand_radius));
+    CGAL_assertion(expand_radius >= 0);
+    expand_radius_updated = true;
+  }
+
+private:
+  void displayInterpolatedCurvatureMeasure(Scene_surface_mesh_item* item,
+                                           CurvatureType mu_index)
+  {
+    if(mu_index != MEAN_CURVATURE && mu_index != GAUSSIAN_CURVATURE)
+      return;
+
+    std::string tied_string = (mu_index == MEAN_CURVATURE) ? "v:display_plugin_interpolated_corrected_mean_curvature"
+                                                           : "v:display_plugin_interpolated_corrected_Gaussian_curvature";
+
+    SMesh& smesh = *item->face_graph();
+
+    const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").first;
+    const bool vnm_exists = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").second;
+
+    // compute once and store the value per vertex
+    bool non_init;
+    SMesh::Property_map<vertex_descriptor, double> mu_i_map;
+    std::tie(mu_i_map, non_init) = smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
+    if(non_init || expand_radius_updated)
+    {
+      if(vnm_exists)
+      {
+        if(mu_index == MEAN_CURVATURE)
+        {
+          PMP::interpolated_corrected_curvatures(smesh,
+                                                 CGAL::parameters::vertex_mean_curvature_map(mu_i_map)
+                                                                  .ball_radius(expand_radius)
+                                                                  .vertex_normal_map(vnm));
+        }
+        else
+        {
+          PMP::interpolated_corrected_curvatures(smesh,
+                                                 CGAL::parameters::vertex_Gaussian_curvature_map(mu_i_map)
+                                                                  .ball_radius(expand_radius)
+                                                                  .vertex_normal_map(vnm));
+        }
+      }
+      else
+      {
+        if(mu_index == MEAN_CURVATURE)
+        {
+          PMP::interpolated_corrected_curvatures(smesh,
+                                                  CGAL::parameters::vertex_mean_curvature_map(mu_i_map)
+                                                                   .ball_radius(expand_radius));
+        }
+        else
+        {
+          PMP::interpolated_corrected_curvatures(smesh,
+                                                 CGAL::parameters::vertex_Gaussian_curvature_map(mu_i_map)
+                                                                  .ball_radius(expand_radius));
+        }
+      }
+
+      expand_radius_updated = false;
+    }
+
+    displaySMProperty<vertex_descriptor>(tied_string, smesh);
   }
 
 private:
@@ -964,6 +1132,10 @@ private:
         zoomToSimplexWithPropertyExtremum(faces(mesh), mesh, "f:display_plugin_scaled_jacobian", extremum);
       else if(property_name == "Face Area")
         zoomToSimplexWithPropertyExtremum(faces(mesh), mesh, "f:display_plugin_area", extremum);
+      else if(property_name == "Interpolated Corrected Mean Curvature")
+        zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_interpolated_corrected_mean_curvature", extremum);
+      else if(property_name == "Interpolated Corrected Gaussian Curvature")
+        zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, "v:display_plugin_interpolated_corrected_Gaussian_curvature", extremum);
       else if(property_simplex_types.at(property_index) == Property_simplex_type::VERTEX)
         zoomToSimplexWithPropertyExtremum(vertices(mesh), mesh, property_name, extremum);
       else if(property_simplex_types.at(property_index) == Property_simplex_type::FACE)
@@ -1246,7 +1418,7 @@ scaled_jacobian(const face_descriptor f,
   for(std::size_t i=0; i<edges.size(); ++i)
     corner_normals.push_back(CGAL::cross_product(edges[i], edges[(i+1)%(edges.size())]));
 
-  EPICK::Vector_3 unit_center_normal = CGAL::Polygon_mesh_processing::compute_face_normal(f, mesh);
+  EPICK::Vector_3 unit_center_normal = PMP::compute_face_normal(f, mesh);
 
   for(std::size_t i=0; i<corner_areas.size(); ++i)
     corner_areas[i] =  unit_center_normal*corner_normals[i];
@@ -1298,7 +1470,9 @@ isSMPropertyScalar(const std::string& name,
   if(name == "f:display_plugin_smallest_angle" ||
      name == "f:display_plugin_largest_angle" ||
      name == "f:display_plugin_scaled_jacobian" ||
-     name == "f:display_plugin_area")
+     name == "f:display_plugin_area" ||
+     name == "v:display_plugin_interpolated_corrected_mean_curvature" ||
+     name == "v:display_plugin_interpolated_corrected_Gaussian_curvature")
     return false;
 
   // the dispatch function does the filtering we want: if it founds a property

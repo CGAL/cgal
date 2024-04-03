@@ -632,11 +632,11 @@ public:
   }
 
   template <class Segment_2>
-  static const Point_2& get_source(const Segment_2& segment){
+  static Point_2 get_source(const Segment_2& segment){
     return segment.source();
   }
   template <class Segment_2>
-  static const Point_2& get_target(const Segment_2& segment){
+  static Point_2 get_target(const Segment_2& segment){
     return segment.target();
   }
 

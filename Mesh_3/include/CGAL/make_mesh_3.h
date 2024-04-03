@@ -45,9 +45,10 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
-  typedef std::vector<std::pair<Point_3, Index> > Initial_points_vector;
-  typedef typename Initial_points_vector::iterator Ipv_iterator;
+  typedef typename std::pair<Point_3, Index> PI;
+  typedef std::vector<PI> Initial_points_vector;
   typedef typename C3T3::Vertex_handle Vertex_handle;
+  typedef CGAL::Mesh_3::Triangulation_helpers<typename C3T3::Triangulation> Th;
 
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
@@ -61,17 +62,18 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
   // Insert points and set their index and dimension
-  for ( Ipv_iterator it = initial_points.begin() ;
-       it != initial_points.end() ;
-       ++it )
+  for (const PI& pi : initial_points)
   {
-    Vertex_handle v = c3t3.triangulation().insert(cwp(it->first));
+    if(Th().inside_protecting_balls(c3t3.triangulation(), Vertex_handle(), pi.first))
+      continue;
+
+    Vertex_handle v = c3t3.triangulation().insert(cwp(pi.first));
 
     // v could be null if point is hidden
     if ( v != Vertex_handle() )
     {
       c3t3.set_dimension(v,2); // by construction, points are on surface
-      c3t3.set_index(v,it->second);
+      c3t3.set_index(v, pi.second);
     }
   }
 }

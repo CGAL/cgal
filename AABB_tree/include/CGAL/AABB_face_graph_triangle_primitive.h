@@ -21,7 +21,6 @@
 #include <CGAL/AABB_primitive.h>
 #include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Default.h>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
@@ -33,7 +32,7 @@ namespace CGAL {
  * while the AABB tree holding the primitive is in use.
  * The triangle type of the primitive (`Datum`) is `CGAL::Kernel_traits< boost::property_traits< VertexPointPMap >::%value_type >::%Kernel::Triangle_3`.
  *
- * \cgalModels `AABBPrimitiveWithSharedData`
+ * \cgalModels{AABBPrimitiveWithSharedData}
  *
  *\tparam FaceGraph is a model of the face graph concept.
  *\tparam VertexPointPMap  is a property map with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
@@ -57,9 +56,9 @@ template < class FaceGraph,
            class CacheDatum=Tag_false >
 class AABB_face_graph_triangle_primitive
 #ifndef DOXYGEN_RUNNING
-  : public AABB_primitive<typename boost::mpl::if_<OneFaceGraphPerTree,
-                                                   typename boost::graph_traits<FaceGraph>::face_descriptor,
-                                                   std::pair<typename boost::graph_traits<FaceGraph>::face_descriptor, const FaceGraph*> >::type,
+  : public AABB_primitive<std::conditional_t<OneFaceGraphPerTree::value,
+                                             typename boost::graph_traits<FaceGraph>::face_descriptor,
+                                             std::pair<typename boost::graph_traits<FaceGraph>::face_descriptor, const FaceGraph*> >,
                         Triangle_from_face_descriptor_map<
                           FaceGraph,
                           typename Default::Get<VertexPointPMap,
@@ -76,7 +75,7 @@ class AABB_face_graph_triangle_primitive
 {
   typedef typename Default::Get<VertexPointPMap, typename boost::property_map< FaceGraph, vertex_point_t>::const_type >::type VertexPointPMap_;
   typedef typename boost::graph_traits<FaceGraph>::face_descriptor FD;
-  typedef typename boost::mpl::if_<OneFaceGraphPerTree, FD, std::pair<FD, const FaceGraph*> >::type Id_;
+  typedef std::conditional_t<OneFaceGraphPerTree::value, FD, std::pair<FD, const FaceGraph*> > Id_;
 
   typedef Triangle_from_face_descriptor_map<FaceGraph,VertexPointPMap_>  Triangle_property_map;
   typedef One_point_from_face_descriptor_map<FaceGraph,VertexPointPMap_> Point_property_map;

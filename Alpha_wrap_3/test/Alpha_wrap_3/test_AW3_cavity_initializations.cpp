@@ -1,12 +1,13 @@
 #define CGAL_AW3_TIMER
 #define CGAL_AW3_DEBUG
+#define CGAL_AW3_DEBUG_MANIFOLDNESS
 // #define CGAL_AW3_DEBUG_INITIALIZATION
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/alpha_wrap_3.h>
-#include "alpha_wrap_validation.h"
+#include <CGAL/Alpha_wrap_3/internal/validation.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
@@ -27,7 +28,7 @@ void generate_random_seeds(const Oracle& oracle,
                            Seeds& seeds,
                            CGAL::Random& r)
 {
-  const auto bbox = CGAL::Alpha_wraps_3::internal::Alpha_wrap_3<Oracle>(oracle).construct_bbox(offset);
+  const auto bbox = CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle>(oracle).construct_bbox(offset);
   const double sq_offset = CGAL::square(offset);
 
   while(seeds.size() < 3)
@@ -69,7 +70,7 @@ void alpha_wrap_triangle_mesh(Mesh& input_mesh,
 
   Oracle oracle;
   oracle.add_triangle_mesh(input_mesh);
-  AW3::internal::Alpha_wrap_3<Oracle> aw3(oracle);
+  AW3::internal::Alpha_wrapper_3<Oracle> aw3(oracle);
 
   if(seeds.empty())
     generate_random_seeds(oracle, offset, seeds, r);
