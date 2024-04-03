@@ -35,6 +35,10 @@ Release date: October 2023
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.0/Manual/packages.html#PkgBGL)
+
+- Added the function `remove_all_elements()`, which removes vertices, halfedges, and faces
+  without collecting garbage and without removing properties.
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------
