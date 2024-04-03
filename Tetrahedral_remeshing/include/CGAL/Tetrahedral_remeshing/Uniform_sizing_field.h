@@ -21,12 +21,18 @@ namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
-template <class Kernel>
+/**
+ * @class Uniform_sizing_field
+ * @tparam GT the geometric traits class
+ * The uniform (i.e. constant) sizing field for tetrahedral remeshing,
+ * model of `RemeshingSizingField_3`
+ */
+template <class GT>
 class Uniform_sizing_field
-  : public Sizing_field<Kernel>
+  : public Sizing_field<GT>
 {
 private:
-  typedef Sizing_field<Kernel>        Base;
+  typedef Sizing_field<GT>          Base;
 public:
   typedef typename Base::FT         FT;
   typedef typename Base::Point_3    Point_3;

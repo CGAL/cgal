@@ -21,14 +21,15 @@ namespace Tetrahedral_remeshing
 {
 /*!
 * Sizing field virtual class
+* @tparam GT the geometric traits
 */
-template <class Kernel>
+template <class GT>
 class Sizing_field
 {
 public:
-  typedef Kernel                      K;
-  typedef typename Kernel::FT         FT;
-  typedef typename Kernel::Point_3    Point_3;
+  typedef GT                      K;
+  typedef typename GT::FT         FT;
+  typedef typename GT::Point_3    Point_3;
 
 public:
   template<typename Index>
