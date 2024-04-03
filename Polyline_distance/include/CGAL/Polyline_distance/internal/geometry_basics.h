@@ -35,7 +35,6 @@
 
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Polyline_distance/internal/defs.h>
 #include <CGAL/Polyline_distance/internal/id.h>
 
 #include <CGAL/Exact_rational.h>
@@ -116,8 +115,8 @@ struct Lambda {
           is_zero(CGAL::is_zero(exact)),
           is_one(CGAL::is_one(exact)),
           is_exact(true)
-    {
-    }
+    {}
+
 
     bool update_exact() const
     {
@@ -153,7 +152,7 @@ struct Lambda {
             } else {
                 Exact end(minus_b_div_a, 1, d);
                 if (end > Exact(1)) end = Exact(1);
-                if (end >= Exact(0)) {
+                if (! is_negative(end)) {
                     exact = std::make_optional(end);
                     approx = CGAL::to_interval(*exact);
                     is_exact = true;
@@ -244,6 +243,7 @@ inline CGAL::Interval_nt<false> to_interval(const Polyline_distance::internal::L
 {
   return lambda.approx;
 }
+
 
 
 namespace Polyline_distance

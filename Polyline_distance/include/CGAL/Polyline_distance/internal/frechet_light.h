@@ -26,7 +26,6 @@
 #include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Polyline_distance/internal/certificate.h>
 #include <CGAL/Polyline_distance/internal/curve.h>
-#include <CGAL/Polyline_distance/internal/defs.h>
 #include <CGAL/Polyline_distance/internal/filter.h>
 #include <CGAL/Polyline_distance/internal/frechet_light_types.h>
 #include <CGAL/Polyline_distance/internal/geometry_basics.h>

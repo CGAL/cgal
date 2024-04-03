@@ -188,8 +188,8 @@ void testFrechetDistance()
                     curves[query.id1], curves[query.id2], query.distance);
             timer.stop();
             if (decision != query.decision) {
-                assert(false);
-                ERROR("Wrong decision on query.");
+                std::cout << "Wrong decision on query." << std::endl;
+                exit(- 1);
             }
         }
     }
@@ -216,12 +216,13 @@ void testFrechetDistanceNearNeighborsDS()
                         query.distance); std::sort(result.begin(), result.end());
 
                         if (!std::equal(result.begin(), result.end(), query.expected_result.begin(), query.expected_result.end())) {
-                                assert(false);
-                ERROR("Wrong result on query.");
+                                std::cout << "Wrong result on query." << std::endl;
+                                exit(- 1);
                         }
                 }
         }
 }
+
 
 }  // end anonymous namespace
 
