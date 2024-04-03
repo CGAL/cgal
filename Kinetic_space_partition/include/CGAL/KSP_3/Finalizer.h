@@ -88,8 +88,8 @@ private:
     std::size_t index;
     std::size_t input;
     Face_info() :
-      index(-1),
-      input(-1)
+      index(static_cast<std::size_t>(-1)),
+      input(static_cast<std::size_t>(-1))
     { }
   };
 
@@ -254,7 +254,8 @@ private:
     auto& pair = map_volumes.at(pface);
     if (pair.first != -1 && pair.second != -1) return;
 
-    std::size_t volume_indices[] = { static_cast<std::size_t>(-1), static_cast<std::size_t>(-1) };
+    const std::size_t uninitialized = static_cast<std::size_t>(-1);
+    std::size_t volume_indices[] = { uninitialized, uninitialized };
     //std::size_t other[] = { static_cast<std::size_t>(-1), static_cast<std::size_t>(-1) };
 
     // Start new volume cell
@@ -300,11 +301,11 @@ private:
         Oriented_side inverse_side = oriented_side(neighbor, pface);
         CGAL_assertion(side != COPLANAR && inverse_side != COPLANAR);
 
-        if (side == ON_POSITIVE_SIDE && volume_indices[0] != static_cast<std::size_t>(-1)) {
+        if (side == ON_POSITIVE_SIDE && volume_indices[0] != uninitialized) {
           if (associate(neighbor, volume_indices[0], inverse_side, volumes, map_volumes))
             queue[0].push(std::make_pair(neighbor, inverse_side));
         }
-        else if (side == ON_NEGATIVE_SIDE && volume_indices[1] != static_cast<std::size_t>(-1))
+        else if (side == ON_NEGATIVE_SIDE && volume_indices[1] != uninitialized)
           if (associate(neighbor, volume_indices[1], inverse_side, volumes, map_volumes))
             queue[1].push(std::make_pair(neighbor, inverse_side));
 
@@ -316,13 +317,13 @@ private:
       find_adjacent_faces(pface, pedge, neighbor_faces, positive_side, negative_side);
       CGAL_assertion(positive_side != negative_side);
 
-      if (volume_indices[0] != -1) {
+      if (volume_indices[0] != uninitialized) {
         Oriented_side inverse_side = (positive_side.first == pface.first) ? ON_POSITIVE_SIDE : oriented_side(positive_side, pface);
         if (associate(positive_side, volume_indices[0], inverse_side, volumes, map_volumes))
           queue[0].push(std::make_pair(positive_side, inverse_side));
       }
 
-      if (volume_indices[1] != -1) {
+      if (volume_indices[1] != uninitialized) {
         Oriented_side inverse_side = (negative_side.first == pface.first) ? ON_NEGATIVE_SIDE : oriented_side(negative_side, pface);
         if (associate(negative_side, volume_indices[1], inverse_side, volumes, map_volumes))
           queue[1].push(std::make_pair(negative_side, inverse_side));
@@ -331,7 +332,7 @@ private:
 
     // Propagate both queues if volumes on either side of the pface are not segmented.
     for (std::size_t i = 0; i < 2; i++) {
-      if (volume_indices[i] != -1) {
+      if (volume_indices[i] != uninitialized) {
         while (!queue[i].empty()) {
           propagate_volume(queue[i], volume_indices[i], volumes, map_volumes);
         }

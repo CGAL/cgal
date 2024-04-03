@@ -109,7 +109,7 @@ public:
   using IEdge_set = std::set<Edge_descriptor, lex>;
 
   struct Face_property {
-    Face_property() : support_plane(-1), part_of_partition(false) {}
+    Face_property() : support_plane(static_cast<std::size_t>(-1)), part_of_partition(false) {}
     Face_property(std::size_t support_plane_idx) : support_plane(support_plane_idx), part_of_partition(false) {}
     std::size_t support_plane;
     bool part_of_partition;

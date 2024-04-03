@@ -205,7 +205,7 @@ private:
 
 private:
   struct Sub_partition {
-    Sub_partition() : parent(-1) {}
+    Sub_partition() : parent(static_cast<std::size_t>(- 1)) {}
     std::shared_ptr<Data_structure> m_data;
     std::array<typename Intersection_kernel::Point_3, 8> bbox;
     std::vector<typename Intersection_kernel::Plane_3> m_bbox_planes;

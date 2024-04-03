@@ -162,7 +162,7 @@ private:
     std::size_t iterations = 0;
 
     int dir = (cw) ? -1 : 1;
-
+    const std::size_t uninitialized = static_cast<std::size_t>(-1);
     std::size_t inext;
     while (s != m_data.target(next) && iterations < 10000) {
       face.vertices.push_back(m_data.target(next));
@@ -173,14 +173,14 @@ private:
 
       std::vector<std::pair<IEdge, Direction_2> > connected;
       m_data.get_and_sort_all_connected_iedges(sp_idx, m_data.target(next), connected);
-      inext = -1;
+      inext = uninitialized;
       for (std::size_t idx = 0; idx < connected.size(); idx++) {
         if (connected[idx].first == next) {
           inext = (idx + dir + connected.size()) % connected.size();
           break;
         }
       }
-      CGAL_assertion(inext != static_cast<std::size_t>(-1));
+      CGAL_assertion(inext != uninitialized);
 
       next = connected[inext].first;
       face.edges.push_back(next);

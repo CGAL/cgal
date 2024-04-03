@@ -160,7 +160,7 @@ public:
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
     m_data->angle_tolerance = 0;
-    m_data->actual_input_polygon = -1;
+    m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -241,7 +241,7 @@ public:
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
     m_data->angle_tolerance = 0;
-    m_data->actual_input_polygon = -1;
+    m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
