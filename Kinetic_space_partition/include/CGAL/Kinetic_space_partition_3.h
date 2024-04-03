@@ -1846,17 +1846,6 @@ private:
 
     axis2 = Vector_2(-axis1.y(), axis1.x());
 
-    FT rot[9];
-    rot[0] = axis1.x();
-    rot[1] = axis1.y();
-    rot[2] = 0.0;
-    rot[3] = -axis1.y();
-    rot[4] = axis1.x();
-    rot[5] = 0;
-    rot[6] = 1.0;
-    rot[7] = 0;
-    rot[8] = 0;
-
     CGAL::Aff_transformation_3<Kernel> R(axis1.x(), axis1.y(), 0,
                                         -axis1.y(), axis1.x(), 0,
                                                  0,         0, 1.0);

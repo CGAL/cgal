@@ -255,7 +255,7 @@ private:
     if (pair.first != -1 && pair.second != -1) return;
 
     std::size_t volume_indices[] = { static_cast<std::size_t>(-1), static_cast<std::size_t>(-1) };
-    std::size_t other[] = { static_cast<std::size_t>(-1), static_cast<std::size_t>(-1) };
+    //std::size_t other[] = { static_cast<std::size_t>(-1), static_cast<std::size_t>(-1) };
 
     // Start new volume cell
     // First of pair is positive side, second is negative
@@ -266,7 +266,7 @@ private:
       volumes.back().add_pface(pface, pair.second);
     }
     else {
-      other[0] = pair.first;
+      //other[0] = pair.first;
       if (pface.first < 6)
         // Thus for a bbox pair.second is always -1. Thus if pair.first is already set, there is nothing to do.
         return;
@@ -278,7 +278,7 @@ private:
       volumes.push_back(Volume_cell());
       volumes.back().add_pface(pface, pair.first);
     }
-    else other[1] = pair.second;
+    //else other[1] = pair.second;
 
     // 0 is queue on positive side, 1 is queue on negative side
     std::queue<std::pair<PFace, Oriented_side> > queue[2];
@@ -520,8 +520,8 @@ private:
   Oriented_side oriented_side(const PFace& a, const PFace& b) const {
     FT max_dist = 0;
     if (a.first == b.first)
-      return COPLANAR;
-    Oriented_side side;
+      return CGAL::ON_ORIENTED_BOUNDARY;
+    Oriented_side side = CGAL::ON_ORIENTED_BOUNDARY;
     const Plane_3& p = m_data.support_plane(a.first).plane();
     for (auto v : m_data.pvertices_of_pface(b)) {
       Point_3 pt = m_data.point_3(v);

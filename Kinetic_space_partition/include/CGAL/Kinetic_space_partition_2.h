@@ -593,7 +593,6 @@ private:
   void make_segments_intersection_free()
   {
     std::vector<std::tuple<Point_2, std::size_t, std::size_t> > todo;
-    std::size_t nb_inter = 0;
 
     std::vector<Segment_2> segments_2;
     segments_2.reserve (m_data.number_of_segments());
@@ -624,8 +623,6 @@ private:
          todo.push_back (std::make_tuple (point,
                                           m_data.segment(segment_idx_a).support_line_idx(),
                                           m_data.segment(segment_idx_b).support_line_idx()));
-
-         ++ nb_inter;
        });
 
     std::vector<std::size_t> new_meta_vertices;
@@ -855,8 +852,6 @@ private:
 
   void run()
   {
-    std::size_t iterations = 0;
-
     // static int iter = 0;
 
     while (!m_queue.empty())
@@ -868,8 +863,6 @@ private:
       m_data.update_positions (current_time);
 
       apply(ev);
-
-      ++ iterations;
     }
   }
 

@@ -532,7 +532,7 @@ public:
     m_data->ifaces.insert(face);
     if (!pair.second) {
       CGAL_assertion(pair.first->second.first != Intersection_graph::null_iface());
-      CGAL_assertion(pair.first->second.second = Intersection_graph::null_iface());
+      CGAL_assertion(pair.first->second.second == Intersection_graph::null_iface());
       pair.first->second.second = face;
     }
   }

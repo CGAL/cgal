@@ -406,10 +406,8 @@ private:
 
         std::vector<typename Intersection_kernel::Segment_2> crossing_polygon_segments;
         std::vector<IEdge> crossing_iedges;
-        typename Intersection_kernel::FT emin = (std::numeric_limits<double>::max)();;
-        typename Intersection_kernel::FT emax = -(std::numeric_limits<double>::max)();;
-        FT min = (std::numeric_limits<double>::max)();
-        FT max = -(std::numeric_limits<double>::max)();
+        typename Intersection_kernel::FT emin = (std::numeric_limits<double>::max)();
+        typename Intersection_kernel::FT emax = -(std::numeric_limits<double>::max)();
         FT min_speed = (std::numeric_limits<double>::max)(), max_speed = -(std::numeric_limits<double>::max)();
 
         CGAL::Oriented_side last_side = l.oriented_side(sp.data().original_vertices.back());
@@ -431,12 +429,12 @@ private:
 
             if (result && CGAL::assign(intersection, result)) {
               typename Intersection_kernel::FT eproj = (intersection - exact_line.point()) * ldir;
-              FT proj = to_inexact(eproj);
+              //FT proj = to_inexact(eproj);
               if (eproj < emin) {
                 eminp = intersection;
                 emin = eproj;
                 minp = to_inexact(intersection);
-                min = proj;
+                //min = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
                 assert(p != 0);
                 min_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
@@ -445,7 +443,7 @@ private:
                 emaxp = intersection;
                 emax = eproj;
                 maxp = to_inexact(intersection);
-                max = proj;
+                //max = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
                 assert(p != 0);
                 max_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
