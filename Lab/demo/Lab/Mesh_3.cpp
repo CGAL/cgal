@@ -1,4 +1,4 @@
-#include "CGAL_Lab.h"
+#include "cgallab.h"
 #include <clocale>
 #include <CGAL/Qt/resources.h>
 #include <QSurfaceFormat>
