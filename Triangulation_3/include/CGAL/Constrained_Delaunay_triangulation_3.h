@@ -92,6 +92,7 @@ does_first_triangle_intersect_second_triangle_interior(const typename K::Triangl
   const Point_3& b = vertex_on(t2,1);
   const Point_3& c = vertex_on(t2,2);
 
+  // TODO: use boost::containers::static_vector
   std::array<const Point_3*,3> t1_vertices_in_the_line;
   int nb_of_t1_vertices_in_the_line = 0;
   auto push_to_t1_vertices_in_the_line = [&t1_vertices_in_the_line, &nb_of_t1_vertices_in_the_line](const Point_3* p) {
@@ -723,18 +724,20 @@ protected:
       }
       conforming_dt_visitor.process_cells_in_conflict(cell_it_begin, end);
     }
-    void after_insertion(Vertex_handle) {
-
+    void after_insertion(Vertex_handle v) {
+      conforming_dt_visitor.after_insertion(v);
     }
 
     void reinsert_vertices(Vertex_handle v) {
       after_insertion(v);
     }
+
     Vertex_handle replace_vertex(Cell_handle c, int index,
                                   const Point_3 &) const {
       return c->vertex(index);
     }
-      void hide_point(Cell_handle, const Point_3 &) const {}
+
+    void hide_point(Cell_handle, const Point_3 &) const {}
 
     void insert_Steiner_point_on_constraint(Constraint_id constraint,
                                             Vertex_handle va,
@@ -904,7 +907,7 @@ public:
     this->copy_triangulation_into_hole(map_cavity_vertices_to_ambient_vertices,
                                        std::move(outer_map),
                                        inner_map,
-                                       Emptyset_iterator{});
+                                       this->new_cells_output_iterator());
 
     for(auto outside_facet : facets_of_cavity) {
       const auto [outside_cell, outside_face_index] = outside_facet;
@@ -1527,6 +1530,7 @@ private:
     auto new_vertex = make__new_element_functor(visited_vertices);
     auto new_cell = make__new_element_functor(visited_cells);
     auto new_edge = [&](Vertex_handle v0, Vertex_handle v1, bool does_intersect) {
+      CGAL_assertion(v0 != Vertex_handle{});
       return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_intersect);
     };
 
@@ -2328,6 +2332,7 @@ private:
         triangulate_cavity(original_intersecting_cells, original_facets_of_upper_cavity, original_vertices_of_upper_cavity);
     std::for_each(interior_constrained_faces_upper.begin(), interior_constrained_faces_upper.end(),
                   register_internal_constrained_facet);
+    insert_in_conflict_visitor.process_cells_in_conflict(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
     if(this->debug_copy_triangulation_into_hole()) {
       std::cerr << "# lower cavity\n";
     }
@@ -2337,6 +2342,7 @@ private:
         triangulate_cavity(original_intersecting_cells, original_facets_of_lower_cavity, original_vertices_of_lower_cavity);
     std::for_each(interior_constrained_faces_lower.begin(), interior_constrained_faces_lower.end(),
                   register_internal_constrained_facet);
+    insert_in_conflict_visitor.process_cells_in_conflict(cells_of_lower_cavity.begin(), cells_of_lower_cavity.end());
 
     // the following transform_reduce is like `std::any_of` but without the fast-exit
     if(std::transform_reduce(fh_region.begin(), fh_region.end(), false, std::logical_or<bool>{}, [&](auto fh) {
@@ -2514,7 +2520,7 @@ private:
       this->copy_triangulation_into_hole(map_upper_cavity_vertices_to_ambient_vertices,
                                          std::move(outer_map),
                                          upper_inner_map,
-                                         Emptyset_iterator{});
+                                         this->new_cells_output_iterator());
     }
 #if CGAL_DEBUG_CDT_3 & 64
     std::cerr << "# glu the lower triangulation of the cavity\n";
@@ -2552,7 +2558,7 @@ private:
       }
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       this->copy_triangulation_into_hole(map_lower_cavity_vertices_to_ambient_vertices, std::move(outer_map), lower_inner_map,
-                                         Emptyset_iterator{});
+                                         this->new_cells_output_iterator());
     }
     std::set<Cell_handle> cells_to_remove{cells_of_lower_cavity.begin(), cells_of_lower_cavity.end()};
     cells_to_remove.insert(cells_of_upper_cavity.begin(), cells_of_upper_cavity.end());
@@ -3135,6 +3141,32 @@ public:
       break;
     }
     }
+
+    bool test = this->all_finite_edges.size() == this->number_of_finite_edges();
+    result = result && test;
+    if(!test && verbose) {
+      std::cerr << "all_finite_edges.size() = " << this->all_finite_edges.size()
+                << " != number_of_finite_edges() = " << this->number_of_finite_edges() << std::endl;
+    }
+    for(auto e: this->all_finite_edges) {
+      test = this->tds().is_edge(e.first, e.second);
+      result = result && test;
+      if(!test && verbose) {
+        std::cerr << "edge (" << IO::oformat(e.first, with_point_and_info) << ", "
+                  << IO::oformat(e.second, with_point_and_info) << ") is not an edge" << std::endl;
+      }
+    }
+    for(auto e : this->finite_edges()) {
+      auto [v1, v2] = this->vertices(e);
+      test = this->all_finite_edges.find(make_sorted_pair(v1, v2)) != this->all_finite_edges.end();
+      result = result && test;
+      if(!test && verbose) {
+        std::cerr << "finite edge (" << IO::oformat(v1, with_point_and_info) << ", "
+                  << IO::oformat(v2, with_point_and_info) << ") is not in the set all_finite_edges"
+                  << std::endl;
+      }
+    }
+
     if(result && verbose)
       std::cerr << "valid constrained Delaunay triangulation" << std::endl;
 
@@ -3149,7 +3181,7 @@ public:
 
   void restore_constrained_Delaunay()
   {
-    is_Delaunay = false;
+    this->is_Delaunay = false;
     faces_region_numbers.resize(face_constraint_misses_subfaces.size());
     for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
       CDT_2& cdt_2 = face_cdt_2[i];
@@ -3362,7 +3394,6 @@ protected:
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
   std::vector<CDT_2> face_cdt_2;
   bool cdt_2_are_initialized = false;
-  bool is_Delaunay = true;
   struct Face_edge {
     Constraint_id constraint_id;
     bool is_reverse = false;

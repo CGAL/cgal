@@ -33,10 +33,12 @@
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 #include <boost/container/flat_set.hpp>
-#include <boost/container/small_vector.hpp> /// @TODO Requires Boost 1.66
+#include <boost/container/small_vector.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 #include <fstream>
 #include <bitset>
+#include <unordered_set>
 
 namespace CGAL {
 
@@ -196,12 +198,15 @@ protected:
 
     template <class InputIterator>
     void process_cells_in_conflict(InputIterator cell_it, InputIterator end) {
+      auto d = self.tr.dimension()
       for( ; cell_it != end; ++cell_it )
-        for( int i = 0; i < self.tr.dimension(); ++i )
-          for( int j = i+1; j < self.tr.dimension()+1; ++j ) {
+        for( int i = 0; i < d; ++i )
+          for( int j = i+1; j <= d; ++j ) {
             auto v1 = (*cell_it)->vertex(i);
             auto v2 = (*cell_it)->vertex(j);
             if(self.tr.is_infinite(v1) || self.tr.is_infinite(v2)) continue;
+            [[maybe_unused]] auto nb_erased = self.all_finite_edges.erase(make_sorted_pair(v1, v2));
+            if(nb_erased > 0) std::cerr << std::format("erasing edge {} {}\n", self.display_vert(v1), self.display_vert(v2));
             auto [contexts_begin, contexts_end] =
               self.constraint_hierarchy.contexts_range(v1, v2);
             if(contexts_begin != contexts_end) {
@@ -210,7 +215,27 @@ protected:
             }
           }
     }
-    void reinsert_vertices(Vertex_handle) const {}
+
+    void after_insertion(Vertex_handle v) const {
+      CGAL_assertion(self.dimension() > 1);
+      self.incident_edges(v, boost::make_function_output_iterator([this](Edge e) { self.new_edge(e); }));
+      self.incident_cells(v, boost::make_function_output_iterator([this, v](Cell_handle c) {
+        auto v_index = c->index(v);
+        if(self.dimension() == 2) {
+          auto j = self.cw(v_index);
+          auto k = self.ccw(v_index);
+          self.new_edge(Edge(c, j, k));
+        } else {
+          for(int i = 0; i < 3; ++i) {
+            auto j = self.vertex_triple_index(v_index, i);
+            auto k = self.vertex_triple_index(v_index, self.cw(i));
+            self.new_edge(Edge(c, j, k));
+          }
+        }
+      }));
+    }
+
+    void reinsert_vertices(Vertex_handle v) const { after_insertion(v); }
     Vertex_handle replace_vertex(Cell_handle c, int index, const Point& ) const
     {
       return c->vertex(index);
@@ -277,6 +302,31 @@ protected:
     return {};
   }
 
+  void new_edge(Edge e)
+  {
+    auto [v1, v2] = tr.vertices(e);
+    if(tr.is_infinite(v1) || tr.is_infinite(v2))
+      return;
+    std::cerr << std::format("new_edge({}, {})\n", display_vert(v1), display_vert(v2));
+    all_finite_edges.insert(make_sorted_pair(v1, v2));
+  }
+
+  void new_cell(Cell_handle c) {
+    auto d = tr.dimension();
+    for(int i = 0; i < d; ++i) {
+      for(int j = i+1; j <= d; ++j) {
+        auto v1 = c->vertex(i);
+        auto v2 = c->vertex(j);
+        if(tr.is_infinite(v1) || tr.is_infinite(v2)) continue;
+        all_finite_edges.insert(make_sorted_pair(v1, v2));
+      }
+    }
+  }
+
+  auto new_cells_output_iterator() {
+    return boost::function_output_iterator([this](Cell_handle c) { this->new_cell(c); });
+  }
+
   template <typename Visitor>
   Vertex_handle insert_impl_do_not_split(const Point &p, Locate_type lt, Cell_handle c,
                                          int li, int lj, Visitor& visitor)
@@ -289,13 +339,21 @@ protected:
     } // dim 3
     case 2: {
       typename T_3::Conflict_tester_2 tester(p, this);
-      return tr.insert_in_conflict(p, lt, c, li, lj, tester,
-                                   visitor);
+      auto v = tr.insert_in_conflict(p, lt, c, li, lj, tester,
+                                     visitor);
+      tr.incident_edges(v, boost::make_function_output_iterator([&](Edge e) { this->new_edge(e); }));
+      return v;
     } // dim 2
     default:
       // dimension <= 1
       // Do not use the generic insert.
-      return tr.insert(p, c);
+      all_finite_edges.clear();
+      std::cerr << "all_finite_edges.clear()\n";
+      auto v = tr.insert(p, c);
+      for(auto e: tr.all_edges()) {
+        new_edge(e);
+      }
+      return v;
     }
   }
 
@@ -599,7 +657,18 @@ protected:
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
-    if (!tr.tds().is_edge(va, vb)) {
+    bool is_edge_v1 = tr.tds().is_edge(va, vb);
+    bool is_edge_v2 = all_finite_edges.find(make_sorted_pair(va, vb)) != all_finite_edges.end();
+    if(is_edge_v1 != is_edge_v2) {
+      std::cerr << "!! Inconsistent edge status\n";
+      std::cerr << "  -> constraint " << display_vert(va) << "     " << display_vert(vb) << '\n';
+      std::cerr << "  ->     edge " << (is_edge_v1 ? "is" : "is not") << " in the triangulation\n";
+      std::cerr << "  ->     edge " << (is_edge_v2 ? "is" : "is not") << " in all_finite_edges\n";
+      debug_dump("bug-inconsistent-edge-status");
+      CGAL_error();
+    }
+    // if (!tr.tds().is_edge(va, vb)) {
+    if(!is_edge_v1) {
       const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
@@ -907,11 +976,15 @@ protected:
   Bbox_3 bbox{};
   double segment_vertex_epsilon = 1e-8;
   std::optional<double> max_bbox_edge_length;
-  std::map<std::pair<Vertex_handle, Vertex_handle>, Constraint_id> pair_of_vertices_to_cid;
+  using Pair_of_vertex_handles = std::pair<Vertex_handle, Vertex_handle>;
+  std::map<Pair_of_vertex_handles, Constraint_id> pair_of_vertices_to_cid;
   Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
 
   std::stack<std::pair<Subconstraint, Constraint_id> >
     subconstraints_to_conform;
+
+  using Hash = boost::hash<Pair_of_vertex_handles>;
+  std::unordered_set<Pair_of_vertex_handles, Hash> all_finite_edges;
 
   enum class Debug_flags {
     Steiner_points = 0,
@@ -924,6 +997,7 @@ protected:
     nb_of_flags
   };
   std::bitset<static_cast<int>(Debug_flags::nb_of_flags)> debug_flags{};
+  bool is_Delaunay = true;
 };
 
 } // end CGAL
