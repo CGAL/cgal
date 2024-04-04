@@ -223,12 +223,9 @@ int main(int argc, char* argv[])
           options.output_filename = arg;
           ++positional;
           break;
-        case 2:
-          options.ratio = std::stod(arg);
-          ++positional;
-          break;
         default:
           std::cerr << "Too many arguments\n";
+          help(std::cerr);
           return 1;
       }
     }
