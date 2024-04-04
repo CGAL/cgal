@@ -167,6 +167,14 @@ public:
 
     for (unsigned int i=0; i<NB_VAO_BUFFERS; ++i)
       vao[i].destroy();
+
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_p_l.shaders())
+      delete shader;
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_face.shaders())
+      delete shader;
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_clipping_plane.shaders())
+      delete shader;
+    delete m_frame_plane;
   }
 
   void draw_vertices(bool b)
