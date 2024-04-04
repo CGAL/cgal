@@ -1,5 +1,3 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -68,10 +66,6 @@ int main()
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude().no_perturb());
 
   std::cout << "Meshing done." << std::endl;
-
-  std::ofstream os("out_meshing.mesh");
-  CGAL::IO::write_MEDIT(os, c3t3);
-  os.close();
 
   //Remeshing : extract triangulation
   T3_remeshing t3 = CGAL::convert_to_triangulation_3(c3t3);

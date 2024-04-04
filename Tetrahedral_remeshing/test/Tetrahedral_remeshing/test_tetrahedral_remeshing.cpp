@@ -1,5 +1,4 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-//#define CGAL_DUMP_REMESHING_STEPS
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 //#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
 //#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
 
@@ -58,7 +57,15 @@ int main(int argc, char* argv[])
 
   const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.1;
 
+  std::ofstream ofs0("in.mesh");
+  CGAL::IO::write_MEDIT(ofs0, tr);
+  ofs0.close();
+
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length);
+
+  std::ofstream ofs("out.mesh");
+  CGAL::IO::write_MEDIT(ofs, tr);
+  ofs.close();
 
   return EXIT_SUCCESS;
 }

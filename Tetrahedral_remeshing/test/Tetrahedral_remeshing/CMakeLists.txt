@@ -33,6 +33,9 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("test_mesh_and_remesh_with_sizing_field.cpp")
   target_link_libraries(test_mesh_and_remesh_with_sizing_field PUBLIC CGAL::Eigen3_support)
 
+  create_single_source_cgal_program("features_and_adaptive_sizing.cpp")
+  target_link_libraries(features_and_adaptive_sizing PUBLIC CGAL::Eigen3_support)
+
   # with MLS projection
   add_executable(test_mesh_and_remesh_polyhedron_with_features_mls
                 "test_mesh_and_remesh_polyhedron_with_features.cpp")
@@ -42,7 +45,6 @@ if(TARGET CGAL::Eigen3_support)
                              PUBLIC -DCGAL_TET_REMESHING_SMOOTHING_WITH_MLS)
   add_test(NAME test_mesh_and_remesh_polyhedron_with_features_mls
            COMMAND test_mesh_and_remesh_polyhedron_with_features_mls)
-
 
   if(CGAL_ImageIO_USE_ZLIB)
     create_single_source_cgal_program("test_mesh_and_remesh_image.cpp")

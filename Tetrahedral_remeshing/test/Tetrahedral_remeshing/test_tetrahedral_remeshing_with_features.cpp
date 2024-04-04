@@ -1,4 +1,4 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+//#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -142,7 +142,10 @@ void set_subdomain(Remeshing_triangulation& tr, const int index)
 
 int main(int argc, char* argv[])
 {
-  CGAL::Random rng;
+  CGAL::get_default_random() = CGAL::Random(1711705288);
+
+  CGAL::Random rng(12);
+
   std::cout << "CGAL Random seed = " << CGAL::get_default_random().get_seed() << std::endl;
 
   Remeshing_triangulation tr;
@@ -150,11 +153,15 @@ int main(int argc, char* argv[])
                      boost::hash<std::pair<Vertex_handle, Vertex_handle>>> constraints;
   generate_input_cube(1000, tr, constraints);
 
-  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.05;
-  const int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
-
   set_subdomain(tr, 1);
   assert(tr.is_valid());
+
+  std::ofstream out0("in.mesh");
+  CGAL::IO::write_MEDIT(out0, tr);
+  out0.close();
+
+  const double target_edge_length = (argc > 1) ? atof(argv[1]) : 0.05;
+  const int nb_iter = (argc > 2) ? atoi(argv[2]) : 1;
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
     CGAL::parameters::edge_is_constrained_map(
