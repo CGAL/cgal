@@ -48,7 +48,7 @@ namespace Tetrahedral_remeshing
  * A sizing field for tetrahedral remeshing,
  * that keeps the same mesh density throughout the remeshing process.
  *
- * \cgalModels{`RemeshingSizingField_3`}
+ * \cgalModels{RemeshingSizingField_3}
  */
 template <typename Tr>
 class Adaptive_remeshing_sizing_field
