@@ -1,13 +1,3 @@
-#define CGAL_DUMP_REMESHING_STEPS
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-#define CGAL_TETRAHEDRAL_REMESHING_DEBUG
-
-// experiments on sizing
-//#define CGAL_AVERAGE_SIZING_AFTER_COLLAPSE
-#define CGAL_MAX_SIZING_IN_IS_TOO_LONG
-#define CGAL_MIN_SIZING_IN_IS_TOO_SHORT
-
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -16,10 +6,13 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/property_map.h>
 
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <CGAL/IO/File_medit.h>
+#include <string>
+#include <unordered_set>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -54,7 +47,7 @@ struct Distance_from_corner_sizing_field
   typedef K::FT FT;
   typedef K::Point_3 Point_3;
 
-  const Point_3 corner = Point_3{ -1., -1., -1 }; //lower corner of the cube
+  const Point_3 corner{ -1., -1., -1 }; //lower corner of the cube
 
   template<typename Index>
   FT operator()(const Point_3& p, const int dim, const Index&) const
@@ -67,7 +60,7 @@ struct Distance_from_corner_sizing_field
 };
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace p = CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
@@ -87,18 +80,18 @@ int main(int argc, char* argv[])
   domain.detect_features();
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.1,
-                         facet_size = 0.1,
-                         facet_distance = 0.005);
+  Mesh_criteria criteria(p::edge_size = 0.1,
+                         p::facet_size = 0.1,
+                         p::facet_distance = 0.005);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, p::no_perturb().no_exude());
 
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
 
   Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
-    CGAL::parameters::edge_is_constrained_map(constraints_pmap));
+      p::edge_is_constrained_map(constraints_pmap));
 
   //note we use the move semantic, with std::move(c3t3),
   //  to avoid a copy of the triangulation by the function
@@ -109,7 +102,7 @@ int main(int argc, char* argv[])
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
     Distance_from_corner_sizing_field(),
-    CGAL::parameters::number_of_iterations(3)
+    p::number_of_iterations(3)
     .edge_is_constrained_map(constraints_pmap)
     .smooth_constrained_edges(true));
 

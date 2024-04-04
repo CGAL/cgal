@@ -1,5 +1,3 @@
-#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
@@ -14,6 +12,8 @@
 #include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
 
 #include <CGAL/IO/File_medit.h>
+
+#include <string>
 
 // Domain
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
