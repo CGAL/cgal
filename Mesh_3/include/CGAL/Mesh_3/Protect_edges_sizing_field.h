@@ -271,12 +271,14 @@ private:
   /// Returns `true` if the balls of `va` and `vb` intersect, and `(va,vb)` is not
   /// an edge of the complex.
   bool non_adjacent_but_intersect(const Vertex_handle& va,
-                                  const Vertex_handle& vb) const;
+                                  const Vertex_handle& vb,
+                                  const bool is_edge_in_complex) const;
 
   /// Returns `true` if the edge `(va,vb)` is a not good enough approximation
   /// of its feature.
   bool approx_is_too_large(const Vertex_handle& va,
-                           const Vertex_handle& vb) const;
+                           const Vertex_handle& vb,
+                           const bool is_edge_in_complex) const;
 
   /// Returns `true` if the balls of `va` and `vb` intersect.
   bool do_balls_intersect(const Vertex_handle& va,
@@ -1419,10 +1421,11 @@ refine_balls()
       if(forced_stop()) break;
       const Vertex_handle& va = eit->first->vertex(eit->second);
       const Vertex_handle& vb = eit->first->vertex(eit->third);
+      const bool is_edge_in_complex = c3t3_.is_in_complex(va,vb);
 
       // If those vertices are not adjacent
-      if( non_adjacent_but_intersect(va, vb)
-          || (check_edge_distance && approx_is_too_large(va, vb)))
+      if( non_adjacent_but_intersect(va, vb, is_edge_in_complex)
+          || (check_edge_distance && approx_is_too_large(va, vb, is_edge_in_complex)))
       {
         using CGAL::Mesh_3::internal::distance_divisor;
 
@@ -1519,9 +1522,9 @@ refine_balls()
 template <typename C3T3, typename MD, typename Sf, typename Df>
 bool
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
-non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
+non_adjacent_but_intersect(const Vertex_handle& va, const Vertex_handle& vb, const bool is_edge_in_complex) const
 {
-  if ( ! c3t3_.is_in_complex(va,vb) )
+  if ( ! is_edge_in_complex )
   {
     return do_balls_intersect(va, vb);
   }
@@ -1551,9 +1554,9 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 template <typename C3T3, typename MD, typename Sf, typename Df>
 bool
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
-approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb) const
+approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb, const bool is_edge_in_complex) const
 {
-  if ( ! c3t3_.is_in_complex(va, vb) )
+  if ( ! is_edge_in_complex )
   {
     return false;
   }
