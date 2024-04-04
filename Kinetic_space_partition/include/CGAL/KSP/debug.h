@@ -988,7 +988,7 @@ void dump_indexed_polygons(const std::vector<CGAL::Epick::Point_3>& pts, const s
   saver.export_indexed_polygons_3(pts, polys, filename);
 }
 
-void dump_polygons(const std::vector<std::vector<CGAL::Epick::Point_3> >& pts, const std::vector<Color>& colors, const std::string& filename) {
+  void dump_polygons(const std::vector<std::vector<CGAL::Epick::Point_3> >& pts, const std::vector<CGAL::IO::Color>& colors, const std::string& filename) {
   Saver<CGAL::Epick> saver;
 
   saver.export_polygon_soup_3(pts, colors, filename);
