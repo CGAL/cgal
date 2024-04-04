@@ -3142,29 +3142,30 @@ public:
       break;
     }
     }
-
-    bool test = this->all_finite_edges.size() == this->number_of_finite_edges();
-    result = result && test;
-    if(!test && verbose) {
-      std::cerr << "all_finite_edges.size() = " << this->all_finite_edges.size()
-                << " != number_of_finite_edges() = " << this->number_of_finite_edges() << std::endl;
-    }
-    for(auto e: this->all_finite_edges) {
-      test = this->tds().is_edge(e.first, e.second);
+    if(this->use_finite_edges_map()) {
+      bool test = this->all_finite_edges.size() == this->number_of_finite_edges();
       result = result && test;
       if(!test && verbose) {
-        std::cerr << "edge (" << IO::oformat(e.first, with_point_and_info) << ", "
-                  << IO::oformat(e.second, with_point_and_info) << ") is not an edge" << std::endl;
+        std::cerr << "all_finite_edges.size() = " << this->all_finite_edges.size()
+                  << " != number_of_finite_edges() = " << this->number_of_finite_edges() << std::endl;
       }
-    }
-    for(auto e : this->finite_edges()) {
-      auto [v1, v2] = this->vertices(e);
-      test = this->all_finite_edges.find(make_sorted_pair(v1, v2)) != this->all_finite_edges.end();
-      result = result && test;
-      if(!test && verbose) {
-        std::cerr << "finite edge (" << IO::oformat(v1, with_point_and_info) << ", "
-                  << IO::oformat(v2, with_point_and_info) << ") is not in the set all_finite_edges"
-                  << std::endl;
+      for(auto e: this->all_finite_edges) {
+        test = this->tds().is_edge(e.first, e.second);
+        result = result && test;
+        if(!test && verbose) {
+          std::cerr << "edge (" << IO::oformat(e.first, with_point_and_info) << ", "
+                    << IO::oformat(e.second, with_point_and_info) << ") is not an edge" << std::endl;
+        }
+      }
+      for(auto e : this->finite_edges()) {
+        auto [v1, v2] = this->vertices(e);
+        test = this->all_finite_edges.find(make_sorted_pair(v1, v2)) != this->all_finite_edges.end();
+        result = result && test;
+        if(!test && verbose) {
+          std::cerr << "finite edge (" << IO::oformat(v1, with_point_and_info) << ", "
+                    << IO::oformat(v2, with_point_and_info) << ") is not in the set all_finite_edges"
+                    << std::endl;
+        }
       }
     }
 

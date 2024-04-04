@@ -205,10 +205,12 @@ protected:
             auto v1 = (*cell_it)->vertex(i);
             auto v2 = (*cell_it)->vertex(j);
             if(self.tr.is_infinite(v1) || self.tr.is_infinite(v2)) continue;
-            [[maybe_unused]] auto nb_erased = self.all_finite_edges.erase(make_sorted_pair(v1, v2));
-            if constexpr (cdt_3_can_use_cxx20_format()) if(self.debug_all_finite_edges() && nb_erased > 0) {
-              std::cerr << std::format("erasing edge {} {}\n", self.display_vert((std::min)(v1, v2)),
-                                       self.display_vert((std::max)(v1, v2))); 
+            if(self.use_finite_edges_map()) {
+              [[maybe_unused]] auto nb_erased = self.all_finite_edges.erase(make_sorted_pair(v1, v2));
+              if constexpr (cdt_3_can_use_cxx20_format()) if(self.debug_finite_edges_map() && nb_erased > 0) {
+                std::cerr << std::format("erasing edge {} {}\n", self.display_vert((std::min)(v1, v2)),
+                                        self.display_vert((std::max)(v1, v2))); 
+              }
             }
             auto [contexts_begin, contexts_end] =
               self.constraint_hierarchy.contexts_range(v1, v2);
@@ -220,6 +222,7 @@ protected:
     }
 
     void after_insertion(Vertex_handle v) const {
+      if(!self.use_finite_edges_map()) return;
       CGAL_assertion(self.dimension() > 1);
       self.incident_edges(v, boost::make_function_output_iterator([this](Edge e) { self.new_edge(e); }));
       self.incident_cells(v, boost::make_function_output_iterator([this, v](Cell_handle c) {
@@ -311,7 +314,7 @@ protected:
     if(tr.is_infinite(v1) || tr.is_infinite(v2))
       return;
     [[maybe_unused]] auto [_, inserted] = all_finite_edges.insert(make_sorted_pair(v1, v2));
-    if constexpr (cdt_3_can_use_cxx20_format()) if (debug_all_finite_edges() && inserted) {
+    if constexpr (cdt_3_can_use_cxx20_format()) if (debug_finite_edges_map() && inserted) {
       if(v2 < v1) std::swap(v1, v2);
       std::cerr << std::format("new_edge({}, {})\n", display_vert(v1), display_vert(v2));
     }
@@ -326,8 +329,12 @@ protected:
     }
   }
 
-  auto new_cells_output_iterator() {
-    return boost::function_output_iterator([this](Cell_handle c) { this->new_cell(c); });
+  auto new_cells_output_iterator()
+  {
+    return boost::function_output_iterator([this](Cell_handle c) {
+      if(use_finite_edges_map())
+        this->new_cell(c);
+    });
   }
 
   template <typename Visitor>
@@ -350,11 +357,13 @@ protected:
     default:
       // dimension <= 1
       // Do not use the generic insert.
-      all_finite_edges.clear();
-      if (debug_all_finite_edges()) std::cerr << "all_finite_edges.clear()\n";
       auto v = tr.insert(p, c);
-      for(auto e: tr.all_edges()) {
-        new_edge(e);
+      if(use_finite_edges_map()) {
+        all_finite_edges.clear();
+        if (debug_finite_edges_map()) std::cerr << "all_finite_edges.clear()\n";
+        for(auto e: tr.all_edges()) {
+          new_edge(e);
+        }
       }
       return v;
     }
@@ -448,12 +457,20 @@ public:
     debug_flags.set(static_cast<int>(Debug_flags::use_older_cavity_algorithm), b);
   }
 
-  bool debug_all_finite_edges() const {
-    return debug_flags[static_cast<int>(Debug_flags::debug_all_finite_edges)];
+  bool debug_finite_edges_map() const {
+    return debug_flags[static_cast<int>(Debug_flags::debug_finite_edges_map)];
   }
 
-  void debug_all_finite_edges(bool b) {
-    debug_flags.set(static_cast<int>(Debug_flags::debug_all_finite_edges), b);
+  void debug_finite_edges_map(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::debug_finite_edges_map), b);
+  }
+
+  bool use_finite_edges_map() const {
+    return debug_flags[static_cast<int>(Debug_flags::use_finite_edges_map)];
+  }
+
+  void use_finite_edges_map(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::use_finite_edges_map), b);
   }
 
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
@@ -668,9 +685,11 @@ protected:
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
-    bool is_edge_v1 = tr.tds().is_edge(va, vb);
-    bool is_edge_v2 = all_finite_edges.find(make_sorted_pair(va, vb)) != all_finite_edges.end();
-    if(is_edge_v1 != is_edge_v2) {
+    const bool is_edge_v1 =
+        ((debug_finite_edges_map() && use_finite_edges_map()) || !use_finite_edges_map()) && tr.tds().is_edge(va, vb);
+    const bool is_edge_v2 =
+        use_finite_edges_map() && all_finite_edges.find(make_sorted_pair(va, vb)) != all_finite_edges.end();
+    if(debug_finite_edges_map() && use_finite_edges_map() && is_edge_v1 != is_edge_v2) {
       std::cerr << "!! Inconsistent edge status\n";
       std::cerr << "  -> constraint " << display_vert(va) << "     " << display_vert(vb) << '\n';
       std::cerr << "  ->     edge " << (is_edge_v1 ? "is" : "is not") << " in the triangulation\n";
@@ -678,8 +697,8 @@ protected:
       debug_dump("bug-inconsistent-edge-status");
       CGAL_error();
     }
-    // if (!tr.tds().is_edge(va, vb)) {
-    if(!is_edge_v1) {
+    const bool is_edge = use_finite_edges_map() ? is_edge_v2 : is_edge_v1;
+    if(!is_edge) {
       const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
@@ -1005,8 +1024,8 @@ protected:
     copy_triangulation_into_hole,
     validity,
     use_older_cavity_algorithm,
-    debug_all_finite_edges,
-    use_all_finite_edges,
+    debug_finite_edges_map,
+    use_finite_edges_map,
     nb_of_flags
   };
   std::bitset<static_cast<int>(Debug_flags::nb_of_flags)> debug_flags{};
