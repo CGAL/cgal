@@ -187,7 +187,7 @@ public:
   *
   * @returns an `Adaptive_remeshing_sizing_field<Tr>`
   *
-  * tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
   * \param tr the input triangulation
   * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
   *           among the ones listed below. All of them must be the same as the ones
