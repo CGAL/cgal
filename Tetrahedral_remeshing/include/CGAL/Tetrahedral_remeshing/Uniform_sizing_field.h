@@ -24,8 +24,10 @@ namespace Tetrahedral_remeshing
 /**
  * @class Uniform_sizing_field
  * @tparam GT the geometric traits class
- * The uniform (i.e. constant) sizing field for tetrahedral remeshing,
- * model of `RemeshingSizingField_3`
+ *
+ * The uniform (i.e. constant) sizing field for tetrahedral remeshing
+ *
+ * \cgalModels{`RemeshingSizingField_3`}
  */
 template <class GT>
 class Uniform_sizing_field
@@ -34,9 +36,12 @@ class Uniform_sizing_field
 private:
   typedef Sizing_field<GT>          Base;
 public:
-  typedef typename Base::FT         FT;
-  typedef typename Base::Point_3    Point_3;
+  typedef typename GT::FT         FT;
+  typedef typename GT::Point_3    Point_3;
 
+  /** Constructor
+  * @param size the target edge length for remeshing
+  */
   Uniform_sizing_field(const FT& size)
     : m_size(size)
   {}

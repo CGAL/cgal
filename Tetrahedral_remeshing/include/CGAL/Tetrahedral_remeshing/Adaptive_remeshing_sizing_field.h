@@ -44,25 +44,31 @@ namespace Tetrahedral_remeshing
 /**
  * @class Adaptive_remeshing_sizing_field
  * @tparam Tr underlying triangulation type
- * A sizing field for tetrahedral remeshing, model of `RemeshingSizingField_3`
+ *
+ * A sizing field for tetrahedral remeshing,
  * that keeps the same mesh density throughout the remeshing process.
+ *
+ * \cgalModels{`RemeshingSizingField_3`}
  */
 template <typename Tr>
 class Adaptive_remeshing_sizing_field
   : public Sizing_field<typename Tr::Geom_traits>
 {
   // Types
+public:
   typedef typename Tr::Geom_traits              GT;
-  typedef typename Tr::Geom_traits::Point_3     Bare_point;
-  typedef typename Tr::Point                    Tr_point;
   typedef typename GT::FT                       FT;
+  typedef typename Tr::Geom_traits::Point_3     Point_3; //Bare_point
+  typedef typename Tr::Vertex::Index            Index;
 
+private:
+  typedef typename Tr::Point                    Tr_point;
   typedef typename Tr::Vertex_handle            Vertex_handle;
   typedef typename Tr::Cell_handle              Cell_handle;
 
   struct Point_with_info
   {
-    Bare_point p;
+    Point_3 p;
     FT size;
     int dimension;
   };
@@ -71,7 +77,7 @@ private:
   struct Point_property_map
   {
     using Self = Point_property_map;
-    using value_type = Bare_point;
+    using value_type = Point_3;
     using reference = value_type; //TODO : why can't that be value_type& ?
     using key_type = Point_with_info;
     using category = boost::readable_property_map_tag;
@@ -128,11 +134,9 @@ public:
   * subcomplex with dimension `dim` and index `index`.
   */
 #ifdef DOXYGEN_RUNNING
-  template <typename Index>
-  FT operator()(const Bare_point& p, const int& dim, const Index& index) const
+  FT operator()(const Point_3& p, const int& dim, const Index& index) const
 #else
-  template <typename Index>
-  FT operator()(const Bare_point& p, const int& dim, const Index& ) const
+  FT operator()(const Point_3& p, const int& dim, const Index& ) const
 #endif
   {
     const int nb_neighbors = (dim == 3) ? 20 : 6;
@@ -166,7 +170,7 @@ private:
    * TODO : interpolate
    */
   FT interpolate_on_four_vertices(
-    const Bare_point& p,
+    const Point_3& p,
     const std::array<Point_with_info, 4>& vertices) const;
 
   template<typename ECMap, typename FCMap, typename CellSelector>
@@ -238,7 +242,7 @@ template <typename Tr>
 typename Adaptive_remeshing_sizing_field<Tr>::FT
 Adaptive_remeshing_sizing_field<Tr>::
 interpolate_on_four_vertices(
-  const Bare_point& p,
+  const Point_3& p,
   const std::array<Point_with_info, 4>& vertices) const
 {
   // Interpolate value using values at vertices
@@ -247,10 +251,10 @@ interpolate_on_four_vertices(
   const FT& vc = vertices[2].size;
   const FT& vd = vertices[3].size;
 
-  const Bare_point& a = vertices[0].p;
-  const Bare_point& b = vertices[1].p;
-  const Bare_point& c = vertices[2].p;
-  const Bare_point& d = vertices[3].p;
+  const Point_3& a = vertices[0].p;
+  const Point_3& b = vertices[1].p;
+  const Point_3& c = vertices[2].p;
+  const Point_3& d = vertices[3].p;
 
   const auto sqd = FT().compute_squared_distance_3_object();
 
