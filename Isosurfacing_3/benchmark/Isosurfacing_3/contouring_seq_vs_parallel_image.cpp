@@ -45,7 +45,7 @@ int main(int argc, char** argv)
   // convert image to a Cartesian grid
   Grid grid;
   Values values { grid };
-  if(!IS::IO::read_Image_3(image, grid, values))
+  if(!IS::IO::convert_image_to_grid(image, grid, values))
   {
     std::cerr << "Error: Cannot convert image to Cartesian grid" << std::endl;
     return EXIT_FAILURE;

@@ -42,9 +42,9 @@ namespace IO {
 // We need to have the API pass us an existing grid / values pair because the values
 // usually keep a reference to the grid.
 template <typename Grid, typename Values>
-bool read_Image_3(const CGAL::Image_3& image,
-                  Grid& grid,
-                  Values& values)
+bool convert_image_to_grid(const CGAL::Image_3& image,
+                           Grid& grid,
+                           Values& values)
 {
   using Geom_traits = typename Grid::Geom_traits;
   using FT = typename Geom_traits::FT;
@@ -86,8 +86,8 @@ bool read_Image_3(const CGAL::Image_3& image,
  * \param values the field of values
  */
 template <typename Grid, typename Values>
-CGAL::Image_3 write_Image_3(const Grid& grid,
-                            const Values& values)
+CGAL::Image_3 convert_grid_to_image(const Grid& grid,
+                                    const Values& values)
 {
   using Geom_traits = typename Grid::Geom_traits;
 

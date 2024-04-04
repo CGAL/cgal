@@ -89,6 +89,6 @@ The output is a polygon soup (i.e., a container of point coordinates and indexed
 - `CGAL::Isosurfacing::dual_contouring()`
 
 \cgalCRPSection{I/O}
-- `CGAL::Isosurfacing::IO::read_Image_3()`
-- `CGAL::Isosurfacing::IO::write_Image_3()`
+- `CGAL::Isosurfacing::IO::convert_image_to_grid()`
+- `CGAL::Isosurfacing::IO::convert_grid_to_image()`
 */
