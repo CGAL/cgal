@@ -69,6 +69,13 @@ Returns the value of the distance field (i.e., the maximum edge distance) at poi
 */
 FT distance_field(const Point_3& p, const int dim, const Index& index);
 
+/*!
+
+Returns wether or not the distance field should be checked during the protection phase.
+If false, the distance field is ignored.
+*/
+bool check_distance_field();
+
 /// @}
 
 }; /* end MeshEdgeCriteria_3 */

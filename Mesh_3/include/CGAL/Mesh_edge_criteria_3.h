@@ -152,6 +152,7 @@ public:
   {
     init_p_size(length_bound,
                   Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>());
+    is_distance_field_default_ = false;
     init_distance_bound(distance_bound,
                   Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>());
   }
@@ -178,6 +179,9 @@ public:
 
   FT distance_field(const Point_3& p, const int dim, const Index& index) const
   { return (*distance_bound_)(p,dim,index); }
+
+  bool check_distance_field() const
+  { return !is_distance_field_default_; }
 
 public:
   const FT& min_length_bound() const
@@ -212,6 +216,8 @@ private:
 
   void init_distance_bound(const FT& distance_bound, Tag_false)
   {
+    if (distance_bound == FT(DBL_MAX))
+      is_distance_field_default_ = true;
     distance_bound_ = new Mesh_3::internal::Sizing_field_container<
         Mesh_constant_domain_field_3<GT,Index> ,
         FT,
@@ -234,6 +240,7 @@ private:
   Sizing_field_interface* p_size_;
   const FT min_length_bound_;
   Sizing_field_interface* distance_bound_;
+  bool is_distance_field_default_;
 };
 
 

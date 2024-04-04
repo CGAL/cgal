@@ -124,25 +124,51 @@ void init_c3t3_with_features(C3T3& c3t3,
 {
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
-  typedef Edge_criteria_distance_field_wrapper<Edge_criteria> Distance_field;
+
+  const bool check_edge_distance_field = criteria.edge_criteria_object().check_distance_field();
+
 //  typedef Sizing_field_container<Sizing_field,FT,Point_3,Index>
 //      Sizing_field_container;
 
-  CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field,Distance_field>
-    protect_edges(c3t3,
-                  domain,
-                  Sizing_field(criteria.edge_criteria_object()),
-                  criteria.edge_criteria_object().min_length_bound(),
-                  Distance_field(criteria.edge_criteria_object()),
-                  maximal_number_of_vertices,
-                  pointer_to_error_code
+  if (check_edge_distance_field)
+  {
+    typedef Edge_criteria_distance_field_wrapper<Edge_criteria> Distance_field;
+    CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field,Distance_field>
+      protect_edges(c3t3,
+                    domain,
+                    Sizing_field(criteria.edge_criteria_object()),
+                    criteria.edge_criteria_object().min_length_bound(),
+                    Distance_field(criteria.edge_criteria_object()),
+                    maximal_number_of_vertices,
+                    pointer_to_error_code
 #ifndef CGAL_NO_ATOMIC
-                  , pointer_to_stop
+                    , pointer_to_stop
 #endif
-                  );
-  protect_edges.set_nonlinear_growth_of_balls(nonlinear);
+                    );
+    protect_edges.set_nonlinear_growth_of_balls(nonlinear);
 
-  protect_edges(true);
+    protect_edges(true);
+  }
+  else
+  {
+    typedef CGAL::Default Distance_field;
+    typedef CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field,Distance_field> Protect_edges_sizing_field;
+    Protect_edges_sizing_field
+      protect_edges(c3t3,
+                    domain,
+                    Sizing_field(criteria.edge_criteria_object()),
+                    criteria.edge_criteria_object().min_length_bound(),
+                    typename Protect_edges_sizing_field::Distance_Function(),
+                    maximal_number_of_vertices,
+                    pointer_to_error_code
+#ifndef CGAL_NO_ATOMIC
+                    , pointer_to_stop
+#endif
+                    );
+    protect_edges.set_nonlinear_growth_of_balls(nonlinear);
+
+    protect_edges(true);
+  }
 }
 
 // This class is only used as base for specializations of C3t3_initializer
