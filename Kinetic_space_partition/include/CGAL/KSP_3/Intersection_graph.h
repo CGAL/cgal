@@ -64,7 +64,18 @@ public:
     std::map<std::size_t, Kinetic_interval> intervals; // Maps support plane index to the kinetic interval. std::pair<FT, FT> is the barycentric coordinate and intersection time.
     Edge_property() : line(std::size_t(-1)), order(edge_counter++) { }
 
+    Edge_property(const Edge_property& e) = default;
 
+    const Edge_property& operator=(const Edge_property& other) {
+      line = other.line;
+      // order = other.order;
+      faces = other.faces;
+      planes = other.planes;
+      crossed = other.crossed;
+      intervals = other.intervals;
+
+      return *this;
+    }
   private:
     static std::size_t edge_counter;
   };
