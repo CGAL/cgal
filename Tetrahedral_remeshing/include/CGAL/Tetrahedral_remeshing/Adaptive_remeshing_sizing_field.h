@@ -95,7 +95,8 @@ private:
   using Distance = typename Neighbor_search::Distance;
   using Splitter = typename Neighbor_search::Splitter;
 
-protected:
+#ifndef DOXYGEN_RUNNING
+public:
   template<typename ECMap, typename FCMap, typename CellSelector>
   Adaptive_remeshing_sizing_field(const Tr& tr,
                                   const ECMap& ecmap,
@@ -107,6 +108,7 @@ protected:
   {
     m_kd_tree.build();
   }
+#endif
 
 private:
 
@@ -180,63 +182,66 @@ private:
 private:
   Kd_tree m_kd_tree;
 
-public:
- /*!
-  * @brief Adaptive sizing field
-  *
-  * This static method is a <em>named constructor</em>. It constructs a
-  * sizing field of type `Adaptive_remeshing_sizing_field<Tr>`,
-  * designed to keep the density unchanged throughout the remeshing
-  * process.
-  *
-  * @returns an `Adaptive_remeshing_sizing_field<Tr>`
-  *
-  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-  * \param tr the input triangulation
-  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
-  *           among the ones listed below. All of them must be the same as the ones
-  *           given to `CGAL::tetrahedral_isotropic_remeshing()`.
-  *
-  *\cgalNamedParamsBegin
-  *  \cgalParamNBegin{ edge_is_constrained_map }
-  *    \cgalParamDescription{a property map containing the constrained-or-not
-  *        status of each edge of `tr`.}
-  *    \cgalParamDefault{a default property map where no edge is constrained}
-  *  \cgalParamNEnd
-  *  \cgalParamNBegin{ facet_is_constrained_map }
-  *    \cgalParamDescription{a property map containing the constrained-or-not
-  *        status of each facet of `tr`.}
-  *   \cgalParamDefault{a default property map where no facet is constrained}
-  *  \cgalParamNEnd
-  *  \cgalParamNBegin{ cell_is_selected_map }
-  *    \cgalParamDescription{a property map containing the selected
-  *         - or - not status for each cell of `tr` for remeshing.}
-  *    \cgalParamDefault{a default property map where all cells of the domain are selected}
-  *  \cgalParamNEnd
-  *\cgalNamedParamsEnd
-  */
-  template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  static Adaptive_remeshing_sizing_field
-  create_adaptive_sizing_field(const Tr& tr,
-                               const CGAL_NP_CLASS& np = parameters::default_values())
-  {
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
-
-    using V = typename Tr::Vertex_handle;
-    using Edge_vv = std::pair<V, V>;
-    using Facet = typename Tr::Facet;
-
-    auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                                  CGAL::Constant_property_map<Edge_vv, bool>(false));
-    auto fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
-                                  CGAL::Constant_property_map<Facet, bool>(false));
-    auto cell_selector = choose_parameter(get_parameter(np, internal_np::cell_selector),
-      CGAL::Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
-
-    return Adaptive_remeshing_sizing_field(tr, ecmap, fcmap, cell_selector);
-  }
 };//end of class Adaptive_remeshing_sizing_field
+
+/*!
+ * @brief Create an adaptive sizing field for tetrahedral remeshing
+ *
+ * \relates Adaptive_remeshing_sizing_field
+ *
+ * This method is a <em>named constructor</em>. It constructs a
+ * sizing field of type `Adaptive_remeshing_sizing_field<Tr>`,
+ * designed to keep the density unchanged throughout the remeshing
+ * process.
+ *
+ * @returns an `Adaptive_remeshing_sizing_field<Tr>`
+ *
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ * \param tr the input triangulation
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
+ *           among the ones listed below. All of them must be the same as the ones
+ *           given to `CGAL::tetrahedral_isotropic_remeshing()`.
+ *
+ *\cgalNamedParamsBegin
+ *  \cgalParamNBegin{ edge_is_constrained_map }
+ *    \cgalParamDescription{a property map containing the constrained-or-not
+ *        status of each edge of `tr`.}
+ *    \cgalParamDefault{a default property map where no edge is constrained}
+ *  \cgalParamNEnd
+ *  \cgalParamNBegin{ facet_is_constrained_map }
+ *    \cgalParamDescription{a property map containing the constrained-or-not
+ *        status of each facet of `tr`.}
+ *   \cgalParamDefault{a default property map where no facet is constrained}
+ *  \cgalParamNEnd
+ *  \cgalParamNBegin{ cell_is_selected_map }
+ *    \cgalParamDescription{a property map containing the selected
+ *         - or - not status for each cell of `tr` for remeshing.}
+ *    \cgalParamDefault{a default property map where all cells of the domain are selected}
+ *  \cgalParamNEnd
+ *\cgalNamedParamsEnd
+ */
+template<typename Tr, typename CGAL_NP_TEMPLATE_PARAMETERS>
+Adaptive_remeshing_sizing_field<Tr>
+create_adaptive_remeshing_sizing_field(const Tr& tr,
+  const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  using V = typename Tr::Vertex_handle;
+  using Edge_vv = std::pair<V, V>;
+  using Facet = typename Tr::Facet;
+
+  auto ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+    CGAL::Constant_property_map<Edge_vv, bool>(false));
+  auto fcmap = choose_parameter(get_parameter(np, internal_np::facet_is_constrained),
+    CGAL::Constant_property_map<Facet, bool>(false));
+  auto cell_selector = choose_parameter(get_parameter(np, internal_np::cell_selector),
+    CGAL::Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+
+  return Adaptive_remeshing_sizing_field<Tr>(tr, ecmap, fcmap, cell_selector);
+}
+
 
 template <typename Tr>
 typename Adaptive_remeshing_sizing_field<Tr>::FT

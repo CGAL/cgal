@@ -4,7 +4,6 @@
 //#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
 //#define CGAL_TETRAHEDRAL_REMESHING_PROFILE
 //#define CGAL_FLIP_ON_SURFACE_DISABLE_44_FLIP
-#define CGAL_TET_REMESHING_SMOOTHING_USE_AABB_TREE
 
 #include <QtCore/qglobal.h>
 
@@ -130,14 +129,13 @@ public Q_SLOTS:
         }
       }
 
-      using ASizing = CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<Tr>;
-      using USizing = CGAL::Tetrahedral_remeshing::Uniform_sizing_field<Geom_traits>;
+      namespace TR = CGAL::Tetrahedral_remeshing;
 
       if (adaptive_sizing)
       {
         CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
-          ASizing::create_adaptive_sizing_field(c3t3_item->c3t3().triangulation(),
+          TR::create_adaptive_remeshing_sizing_field(c3t3_item->c3t3().triangulation(),
               CGAL::parameters::edge_is_constrained_map(Constraints_pmap(constraints))),
           CGAL::parameters::remesh_boundaries(!protect)
           .number_of_iterations(nb_iter)
@@ -149,7 +147,7 @@ public Q_SLOTS:
       {
         CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
-          USizing(target_length),
+          target_length,
           CGAL::parameters::remesh_boundaries(!protect)
           .number_of_iterations(nb_iter)
           .smooth_constrained_edges(smooth_edges));

@@ -84,10 +84,8 @@ int main(int argc, char* argv[])
   std::cout << "Remeshing...";
   std::cout.flush();
 
-  using Adaptive_SF = CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field<T3>;
-
   CGAL::tetrahedral_isotropic_remeshing(tr,
-    Adaptive_SF::create_adaptive_sizing_field(tr),
+    CGAL::Tetrahedral_remeshing::create_adaptive_remeshing_sizing_field(tr),
     CGAL::parameters::number_of_iterations(5)
     .nb_flip_smooth_iterations(10));
 
