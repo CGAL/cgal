@@ -2272,7 +2272,6 @@ operator>> (std::istream& is,
   {
     is.clear();
     c3t3.edges_.clear();
-    return is;
   }
 
   c3t3.rescan_after_load_of_triangulation();
