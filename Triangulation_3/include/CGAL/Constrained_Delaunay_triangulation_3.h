@@ -2056,8 +2056,8 @@ private:
     return outputs;
   }
 
-  template <typename Function>
-  static void visit_convex_hull_of_triangulation(const Constrained_Delaunay_triangulation_3& tr, Function f)
+  template <typename Tr, typename Function>
+  static void visit_convex_hull_of_triangulation(const Tr& tr, Function f)
   {
     const auto inf_vh = tr.infinite_vertex();
     tr.incident_cells(inf_vh, boost::make_function_output_iterator([&](Cell_handle c) {
@@ -2689,7 +2689,7 @@ private:
   {
     using Vertex_map = typename T_3::Vertex_handle_unique_hash_map;
     struct {
-      Constrained_Delaunay_triangulation_3 cavity_triangulation;
+      T_3 cavity_triangulation;
       std::set<Vertex_handle> vertices;
       Vertex_map vertices_to_ambient_vertices;
       std::set<Facet> facets_of_cavity_border_;
