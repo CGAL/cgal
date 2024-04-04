@@ -3,7 +3,7 @@
 
 \cgalConcept
 
-\cgalRefines{DefaultConstructible, CopyConstructible, Assignable}
+\cgalRefines{DefaultConstructible, Assignable}
 
 The concept `IsosurfacingInterpolationScheme_3` describes the set of requirements to be fulfilled
 by the interpolation scheme template parameter of the domain classes `CGAL::Isosurfacing::Interpolated_discrete_values_3` and `CGAL::Isosurfacing::Interpolated_discrete_gradients_3`.

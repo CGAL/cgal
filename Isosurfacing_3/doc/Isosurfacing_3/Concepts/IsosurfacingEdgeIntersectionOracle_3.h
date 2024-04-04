@@ -3,6 +3,8 @@
 
 \cgalConcept
 
+\cgalRefines{DefaultConstructible, Assignable}
+
 The concept `IsosurfacingEdgeIntersectionOracle_3` describes the requirements for the edge-isosurface
 intersection oracle template parameter of the domain classes
 `CGAL::Isosurfacing::Marching_cubes_domain_3` and

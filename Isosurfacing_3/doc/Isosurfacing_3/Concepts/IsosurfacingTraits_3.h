@@ -3,6 +3,8 @@
 
 \cgalConcept
 
+\cgalRefines{DefaultConstructible, Assignable}
+
 The concept `IsosurfacingTraits_3` describes the set of requirements to be
 fulfilled by the traits class of a model of `IsosurfacingDomain_3`.
 

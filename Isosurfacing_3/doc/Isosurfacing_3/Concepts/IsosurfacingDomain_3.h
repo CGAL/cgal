@@ -42,19 +42,19 @@ public:
 
   /*!
   A descriptor that uniquely identifies a vertex.
-  Must be a model of the concepts `DefaultConstructible`, `CopyConstructible`, and `Assignable`.
+  Must be a model of the concepts `Descriptor` and `Hashable`.
   */
   typedef unspecified_type vertex_descriptor;
 
   /*!
   A descriptor that uniquely identifies an edge.
-  Must be a model of the concepts `DefaultConstructible`, `CopyConstructible`, and `Assignable`.
+  Must be a model of the concept `Descriptor` and `Hashable`.
   */
   typedef unspecified_type edge_descriptor;
 
   /*!
   A descriptor that uniquely identifies a cell.
-  Must be a model of the concepts `DefaultConstructible`, `CopyConstructible`, and `Assignable`.
+  Must be a model of the concepts `Descriptor` and `Hashable`.
   */
   typedef unspecified_type cell_descriptor;
 
