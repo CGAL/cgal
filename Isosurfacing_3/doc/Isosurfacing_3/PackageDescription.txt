@@ -4,18 +4,28 @@
 
 /// \defgroup IS_Partitions_grp Space Partitioning Data Structures
 /// \ingroup PkgIsosurfacing3Ref
+///
+/// This group encapsulates classes that represent a spatial discretization of space,
+/// which will be the scaffolding for the construction of the isosurface.
 
 /// \defgroup IS_Partitions_helpers_grp Space Partitioning Data Structures Helpers
 /// \ingroup IS_Partitions_grp
 
 /// \defgroup IS_Fields_helpers_grp Value and Gradient Fields Helpers
 /// \ingroup PkgIsosurfacing3Ref
+///
+/// The following classes and functions are parameters or template parameters of value and gradient fields.
 
 /// \defgroup IS_Fields_grp Value and Gradient Fields
 /// \ingroup PkgIsosurfacing3Ref
+///
+/// The following classes represent the data that defines the isosurface.
 
 /// \defgroup IS_Domains_grp Isosurfacing Domains
 /// \ingroup PkgIsosurfacing3Ref
+///
+/// This group encapsulates the classes that can be used to represent a complete domain (partition
+/// and fields), to be used by the isosurfacing methods of this package.
 
 /// \defgroup IS_Domain_helpers_grp Isosurfacing Domain Helpers
 /// \ingroup IS_Domains_grp
@@ -32,23 +42,20 @@
 \cgalPkgPicture{isosurfacing3_ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Mael Rouxel-Labbé, Julian Stahl, Daniel Zint, and Pierre Alliez}
-\cgalPkgDesc{This package implements several isosurfacing algorithms (Marching Cubes,
+\cgalPkgDesc{This package implements several grid-based isosurfacing algorithms (Marching Cubes,
 its topologically correct variant, and Dual Contouring) that enable generating meshes
-from value and gradient fields.}
+from value and gradient fields. The methods are generic with respect to the definition
+of the grid and the fields, and all methods offer parallel implementations.
+The output is a polygon soup (i.e., a container of point coordinates and indexed faces).}
 \cgalPkgManuals{Chapter_Isosurfacing3,PkgIsosurfacing3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.6}
+\cgalPkgSince{6.1}
 \cgalPkgBib{cgal:sz-mc}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
-
-This package provides algorithms to extract isosurfaces: Marching Cubes, topologically correct Marching Cubes,
-and Dual Contouring.
-The input is represented as a space partitioning data structure coupled with a 3D scalar field.
-The output is a polygon soup (i.e., a container of point coordinates and indexed faces).
 
 \cgalClassifedRefPages
 

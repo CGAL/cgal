@@ -26,7 +26,7 @@ namespace CGAL {
 namespace Isosurfacing {
 
 /**
- * \ingroup IS_Domain_helpers_grp
+ * \ingroup IS_Fields_grp
  *
  * \cgalModels{IsosurfacingValueField_3}
  *

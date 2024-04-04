@@ -174,6 +174,7 @@ struct Linear_interpolation_edge_intersection
   }
 };
 
+#ifndef DOXYGEN_RUNNING
 /*
  * \ingroup IS_Domain_helpers_grp
  *
@@ -199,6 +200,7 @@ struct Ray_marching_edge_intersection
                   const typename Domain::Geom_traits::FT isovalue,
                   typename Domain::Geom_traits::Point_3& p) const;
 };
+#endif // DOXYGEN_RUNNING
 
 } // namespace Isosurfacing
 } // namespace CGAL

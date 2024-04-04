@@ -53,7 +53,7 @@ public:
   /**
    * \brief creates a new instance of this gradient class.
    *
-   * \tparam ValueFunction must be a model of `ValueFunction_3`.
+   * \tparam ValueFunction must be a model of `IsosurfacingValueField_3`.
    *
    * \param function the function giving the scalar value at each point
    * \param delta the distance between samples for calculating the finite differences

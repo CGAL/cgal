@@ -195,6 +195,11 @@ public:
   }
 };
 
+#ifndef DOXYGEN_RUNNING
+// [undocumented]
+//
+// \ingroup IS_Fields_helpers_grp
+//
 // This can be used for example when we have implicit functions for data (values & gradients),
 // but use an interpolated values field as to store data.
 template <typename Grid>
@@ -227,6 +232,7 @@ public:
     return m_gradient_fn(p);
   }
 };
+#endif
 
 } // namespace Isosurfacing
 } // namespace CGAL

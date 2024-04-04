@@ -60,7 +60,7 @@ public:
    * \param intersection_oracle the oracle for edge-isosurface intersection computation
    *
    * \warning the domain class keeps a reference to the `partition`, `values` and `gradients` objects.
-   * As such, users must ensure that the lifetime of these objects exceeds that of the domain object.
+   * As such, users must ensure that the lifetimes of these objects exceed that of the domain object.
    */
   Marching_cubes_domain_3(const Partition& partition,
                           const ValueField& values,
@@ -83,7 +83,7 @@ public:
  * \param intersection_oracle the oracle for edge-isosurface intersection computation
  *
  * \warning the domain class keeps a reference to the `partition`, `values` and `gradients` objects.
- * As such, users must ensure that the lifetime of these objects exceeds that of the domain object.
+ * As such, users must ensure that the lifetimes of these objects exceed that of the domain object.
  */
 template <typename Partition,
           typename ValueField,
