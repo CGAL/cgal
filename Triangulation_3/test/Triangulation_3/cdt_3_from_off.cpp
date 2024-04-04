@@ -79,6 +79,7 @@ struct CDT_options
   bool debug_copy_triangulation_into_hole = false;
   bool use_new_cavity_algorithm = true;
   bool debug_validity = false;
+  bool debug_all_finite_edges = false;
   double ratio = 0.1;
   double vertex_vertex_epsilon = 1e-14;
   double segment_vertex_epsilon = 1e-14;
@@ -119,6 +120,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-regions: debug regions
   --debug_copy_triangulation_into_hole: debug copy_triangulation_into_hole
   --debug-validity: add is_valid checks after modifications to the TDS
+  --debug-all-finite-edges: debug the use of a hash map for finite edges
 
   --quiet: do not print anything
   --help: print this help
@@ -200,6 +202,8 @@ int main(int argc, char* argv[])
       options.debug_copy_triangulation_into_hole = true;
     } else if(arg == "--debug-validity") {
       options.debug_validity = true;
+    } else if(arg == "--debug-all-finite-edges") {
+      options.debug_all_finite_edges = true;
     } else if(arg == "-V") {
       ++options.verbose;
     } else if(arg == "--help") {
@@ -368,6 +372,7 @@ int go(Mesh mesh, CDT_options options) {
   cdt.debug_missing_region(options.verbose > 1 || options.debug_missing_regions);
   cdt.debug_regions(options.debug_regions);
   cdt.debug_validity(options.debug_validity);
+  cdt.debug_all_finite_edges(options.debug_all_finite_edges);
   cdt.debug_copy_triangulation_into_hole(options.debug_copy_triangulation_into_hole);
   cdt.use_older_cavity_algorithm(!options.use_new_cavity_algorithm);
   cdt.set_segment_vertex_epsilon(options.segment_vertex_epsilon);

@@ -206,7 +206,10 @@ protected:
             auto v2 = (*cell_it)->vertex(j);
             if(self.tr.is_infinite(v1) || self.tr.is_infinite(v2)) continue;
             [[maybe_unused]] auto nb_erased = self.all_finite_edges.erase(make_sorted_pair(v1, v2));
-            if(nb_erased > 0) std::cerr << std::format("erasing edge {} {}\n", self.display_vert(v1), self.display_vert(v2));
+            if constexpr (cdt_3_can_use_cxx20_format()) if(self.debug_all_finite_edges() && nb_erased > 0) {
+              std::cerr << std::format("erasing edge {} {}\n", self.display_vert((std::min)(v1, v2)),
+                                       self.display_vert((std::max)(v1, v2))); 
+            }
             auto [contexts_begin, contexts_end] =
               self.constraint_hierarchy.contexts_range(v1, v2);
             if(contexts_begin != contexts_end) {
@@ -307,18 +310,18 @@ protected:
     auto [v1, v2] = tr.vertices(e);
     if(tr.is_infinite(v1) || tr.is_infinite(v2))
       return;
-    std::cerr << std::format("new_edge({}, {})\n", display_vert(v1), display_vert(v2));
-    all_finite_edges.insert(make_sorted_pair(v1, v2));
+    [[maybe_unused]] auto [_, inserted] = all_finite_edges.insert(make_sorted_pair(v1, v2));
+    if constexpr (cdt_3_can_use_cxx20_format()) if (debug_all_finite_edges() && inserted) {
+      if(v2 < v1) std::swap(v1, v2);
+      std::cerr << std::format("new_edge({}, {})\n", display_vert(v1), display_vert(v2));
+    }
   }
 
   void new_cell(Cell_handle c) {
     auto d = tr.dimension();
     for(int i = 0; i < d; ++i) {
       for(int j = i+1; j <= d; ++j) {
-        auto v1 = c->vertex(i);
-        auto v2 = c->vertex(j);
-        if(tr.is_infinite(v1) || tr.is_infinite(v2)) continue;
-        all_finite_edges.insert(make_sorted_pair(v1, v2));
+        new_edge(Edge(c, i, j));
       }
     }
   }
@@ -348,7 +351,7 @@ protected:
       // dimension <= 1
       // Do not use the generic insert.
       all_finite_edges.clear();
-      std::cerr << "all_finite_edges.clear()\n";
+      if (debug_all_finite_edges()) std::cerr << "all_finite_edges.clear()\n";
       auto v = tr.insert(p, c);
       for(auto e: tr.all_edges()) {
         new_edge(e);
@@ -443,6 +446,14 @@ public:
 
   void use_older_cavity_algorithm(bool b) {
     debug_flags.set(static_cast<int>(Debug_flags::use_older_cavity_algorithm), b);
+  }
+
+  bool debug_all_finite_edges() const {
+    return debug_flags[static_cast<int>(Debug_flags::debug_all_finite_edges)];
+  }
+
+  void debug_all_finite_edges(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::debug_all_finite_edges), b);
   }
 
   Vertex_handle insert(const Point &p, Locate_type lt, Cell_handle c,
@@ -994,6 +1005,8 @@ protected:
     copy_triangulation_into_hole,
     validity,
     use_older_cavity_algorithm,
+    debug_all_finite_edges,
+    use_all_finite_edges,
     nb_of_flags
   };
   std::bitset<static_cast<int>(Debug_flags::nb_of_flags)> debug_flags{};

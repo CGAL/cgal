@@ -32,4 +32,14 @@
 #  endif
 #endif
 
+namespace CGAL {
+constexpr bool cdt_3_can_use_cxx20_format() {
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+  return true;
+#else
+  return false;
+#endif
+}
+} // namespace CGAL
+
 #endif // CGAL_CDT_3_CONFIG_H
