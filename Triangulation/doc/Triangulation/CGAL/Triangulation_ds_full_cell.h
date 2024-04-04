@@ -37,7 +37,7 @@ indices are not stored).
 <LI>`CGAL::TDS_full_cell_default_storage_policy`. In that case, the mirror
 indices are not stored.
 <LI>`CGAL::TDS_full_cell_mirror_storage_policy`. In that case, the mirror
-indices are stored.
+indices are stored. This last policy is not supported when the dimension is larger than 127.
 </UL>
 See the user manual for how to choose the second option.
 

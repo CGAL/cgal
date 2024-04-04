@@ -57,17 +57,17 @@ namespace CGAL {
  * algebraic number of degree \f$d\f$ if there exist a polynomial \f$ p\f$ with
  * <I>integer</I> coefficient of degree \f$d\f$ such that \f$p(\alpha) = 0\f$).
  * We therefore require separate representations of the curve
- * coefficients and the point coordinates. The `NtTraits` should be instantiated
- * with a class that defines nested `Integer`, `Rational`, and `Algebraic` number
+ * coefficients and the point coordinates. The `NtTraits` should be substituted
+ * by a class that defines nested `Integer`, `Rational`, and `Algebraic` number
  * types and supports various operations on them, yielding certified computation
  * results (for example, it can convert rational numbers to algebraic numbers
  * and can compute roots of polynomials with integer coefficients).  The other
  * template parameters, `RatKernel` and `AlgKernel` should be geometric kernels
  * instantiated with the `NtTraits::Rational` and `NtTraits::Algebraic` number
- * types, respectively.  It is recommended instantiating the
- * `CORE_algebraic_number_traits` class as the `NtTraits` parameter, with
- * `Cartesian<NtTraits::Rational>` and `Cartesian<NtTraits::Algebraic>`
- * instantiating the two kernel types, respectively.  The number types in this
+ * types, respectively.  It is recommended substituting the
+ * `CORE_algebraic_number_traits` class for the `NtTraits` parameter, and
+ * the `Cartesian<NtTraits::Rational>` and `Cartesian<NtTraits::Algebraic>`
+ * instances for two kernel types, respectively.  The number types in this
  * case are provided by the \core library, with its ability to exactly represent
  * simple algebraic numbers.
  *
@@ -467,20 +467,23 @@ public:
      */
     Approximate_point_2 operator()(const Point_2& p) const;
 
-    /*! Obtain a polyline that approximates an \f$x\f$-monotone curve. The
-     * polyline is defined by a range of approximate points beginning at
-     * `oi`. The type `OutputIterator` must dereference the type
-     * `Approximate_point_2`. The first and last points in the range are always
-     * the endpoints of the given arc `xcv`. The operator returns a
-     * past-the-end iterator of the destination range.
-     * \param oi An output iterator for the resulting polyline.
-     * \param error The error bound of the polyline approximation. This is
-     *              the Hausdorff distance between the arc and the polyline
-     *              that approximates the arc.
+    /*! approximates a given \f$x\f$-monotone curve. It computes a sequence of
+     * approximate points that represent an approximate polyline, and inserts
+     * them into an output container given through an output iterator.  The
+     * first and last points in the sequence are always approximations of the
+     * endpoints of the given arc.
+     *
+     * \param oi An output iterator for the output container.
+     * \param error The error bound of the polyline approximation. This is the
+     *        Hausdorff distance between the arc and the polyline that
+     *        approximates the arc.
      * \param xcv The exact \f$x\f$-monotone arc.
      * \param l2r A Boolean flag that indicates whether the arc direction is
-     *            left to right.
-     * \return The past-the-end iterator of the output iterator.
+     *        left to right.
+     * \return The past-the-end iterator of the output container.
+     *
+     * \pre Dereferencing `oi` must yield an object of type
+     *      `Arr_conic_traits_2::Approximate_point_2`.
      */
     template <typename OutputIterator>
     OutputIterator operator()(OutputIterator oi, double error,
@@ -521,7 +524,7 @@ public:
   Trim_2 trim_2_object() const;
 
   /*! Obtain an `Approximate_2` functor. */
-  Trim_2 approximate_2_object() const;
+  Approximate_2 approximate_2_object() const;
 
   /// @}
 

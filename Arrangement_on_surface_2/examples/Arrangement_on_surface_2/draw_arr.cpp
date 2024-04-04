@@ -1,9 +1,9 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/draw_arrangement_2.h>
 
-using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Traits = CGAL::Arr_segment_traits_2<Kernel>;
 using Point = Traits::Point_2;
 using Arrangement_2 = CGAL::Arrangement_2<Traits>;
@@ -18,12 +18,12 @@ using Arrangement_2 = CGAL::Arrangement_2<Traits>;
  * \param value Value component range: [0, 1]
  * \return tuple<red, green, blue>, where each component is in the range [0, 255]
 */
-std::tuple<float, float, float>
+std::tuple<unsigned char, unsigned char, unsigned char>
 hsv_to_rgb(float hue, float sat, float value) {
   float red, green, blue;
   float fc = value * sat; // Chroma
-  float hue_prime = fmod(hue / 60.0, 6);
-  float fx = fc * (1.0 - fabs(fmod(hue_prime, 2) - 1.0));
+  float hue_prime = fmod(hue / 60.0f, 6.f);
+  float fx = fc * (1.0f - fabs(fmod(hue_prime, 2.f) - 1.f));
   float fm = value - fc;
 
   if(0 <= hue_prime && hue_prime < 1) {
@@ -69,7 +69,10 @@ hsv_to_rgb(float hue, float sat, float value) {
   red *= 255;
   green *= 255;
   blue *= 255;
-  return std::make_tuple(red, green, blue);
+  unsigned char redc = (unsigned char)red;
+  unsigned char greenc = (unsigned char)green;
+  unsigned char bluec = (unsigned char)blue;
+  return std::make_tuple(redc, greenc, bluec);
 }
 
 int main() {
@@ -98,12 +101,11 @@ int main() {
 
   std::size_t id(0);
   CGAL::draw(arr, [&] (Arrangement_2::Face_const_handle) -> CGAL::IO::Color {
-                    float h = 360.0 * id++ / arr.number_of_faces();
+                    float h = 360.0f * id++ / arr.number_of_faces();
                     float s = 0.5;
                     float v = 0.5;
-                    float r, g, b;
-                    std::tie(r, g, b) = hsv_to_rgb(h, s, v);
-                    return CGAL::IO::Color(r, g, b);
+                    auto [r, g, b] = hsv_to_rgb(h, s, v);
+                    return CGAL::IO::Color(r,g,b);
                   }, "hsv colors", true);
 
   return EXIT_SUCCESS;

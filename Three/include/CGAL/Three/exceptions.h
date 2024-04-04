@@ -19,9 +19,6 @@
 #include <exception>
 #include <QString>
 #include <QApplication>
-#include <QScriptable>
-#include <QScriptContext>
-#include <QScriptEngine>
 #include <optional>
 #include <QStringList>
 
@@ -58,8 +55,6 @@ struct Optional_or_bool<void> {
   static type invoke(Callable f) { f(); return true; }
 };
 
-enum Context { CURRENT_CONTEXT, PARENT_CONTEXT };
-
 /// This function template wraps a `Callable` that can be called without
 /// any argument (such as a lambda expression without arguments), and in
 /// case the function call is in a Qt Script context, wraps the call in a
@@ -69,39 +64,34 @@ enum Context { CURRENT_CONTEXT, PARENT_CONTEXT };
 template <typename Callable>
 typename Optional_or_bool<typename cpp11::result_of<Callable()>::type>::type
 wrap_a_call_to_cpp(Callable f,
-                   QScriptable* qs = 0,
+                   QObject* object = 0,
                    const char* file = 0,
-                   int line = -1,
-                   Context c = CURRENT_CONTEXT) {
-  typedef typename cpp11::result_of<Callable()>::type Callable_RT;
+                   int line = -1) {
+  typedef decltype(f()) Callable_RT;
   typedef Optional_or_bool<Callable_RT> O_r_b;
-  typedef typename O_r_b::type Return_type;
-
+  QJSEngine* script_engine = qjsEngine(object);
   const bool no_try_catch = qApp->property("no-try-catch").toBool();
-  if(no_try_catch || qs == 0 || !qs->context()) return O_r_b::invoke(f);
+  if(no_try_catch || script_engine == 0) return O_r_b::invoke(f);
   else
     try {
       return O_r_b::invoke(f);
     }
     catch(const std::exception& e) {
       const Script_exception* se = dynamic_cast<const Script_exception*>(&e);
-      QScriptContext* context = qs->context();
-      QStringList qt_bt = context->backtrace();
-      if(se) qt_bt = se->backtrace();
-      std::cerr << "Backtrace:\n";
-      Q_FOREACH(QString s, qt_bt)
-      {
-        std::cerr << "  " << qPrintable(s) << std::endl;
+      QStringList qt_bt;
+      if(se) {
+        qt_bt = se->backtrace();
+        if(qt_bt.size() != 0) std::cerr << "Backtrace:\n";
       }
-      context = context->parentContext();
-      if(c == PARENT_CONTEXT) {
-        std::cerr << "> parent";
-        context = context->parentContext();
-      } else {
-        std::cerr << "> current";
+      QJSValue js_bt = script_engine->newArray(qt_bt.size());
+      if(qt_bt.size() != 0) {
+        quint32 i = 0;
+        for(auto s: qt_bt)
+        {
+          std::cerr << "  " << qPrintable(s) << std::endl;
+          js_bt.setProperty(i++, s);
+        }
       }
-      std::cerr << " context: "
-                << qPrintable(context->toString()) << std::endl;
       QString error;
       if(se) {
         error = se->what();
@@ -110,18 +100,12 @@ wrap_a_call_to_cpp(Callable f,
         QString context;
         if(file != 0) context += QObject::tr(" at file %1").arg(file);
         if(line != -1) context += QString(":%1").arg(line);
-        if(!context.isNull()) {
-          error += context;
-          qt_bt.push_front(QObject::tr("<cpp>") + context);
-        }
         error += QString(": %1").arg(e.what());
       }
-      QScriptValue v = context->throwError(error);
-      v.setProperty("backtrace",
-                    qScriptValueFromSequence(context->engine(), qt_bt));
-      std::cerr << "result after throwError: "
-                << qPrintable(v.toString()) << std::endl;
-      return Return_type();
+      QJSValue error_value = script_engine->newErrorObject(QJSValue::GenericError, error);
+      error_value.setProperty("backtrace", js_bt);
+      script_engine->throwError(error_value);
+      return {};
     }
 }
 

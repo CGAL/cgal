@@ -54,7 +54,7 @@ using namespace CGAL::Three;
 
 Viewer_interface* getActiveViewer()
 {
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
   {
     if(v->hasFocus())
     {
@@ -606,7 +606,7 @@ public:
     shift_pressing = false;
     ctrl_pressing = false;
 
-    Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+    for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     {
       viewer->installEventFilter(this);
     }
@@ -952,7 +952,7 @@ public Q_SLOTS:
       connect(edit_box, &Scene_edit_box_item::aboutToBeDestroyed,
               this, &Polyhedron_demo_point_set_selection_plugin::reset_editbox);
       scene->addItem(edit_box);
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
         v->installEventFilter(edit_box);
       }
       connect(mw, SIGNAL(newViewerCreated(QObject*)),

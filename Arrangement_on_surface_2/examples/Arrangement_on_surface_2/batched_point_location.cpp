@@ -10,8 +10,8 @@
 #include "arr_inexact_construction_segments.h"
 #include "point_location_utils.h"
 
-typedef CGAL::Arr_point_location_result<Arrangement>    Point_location_result;
-typedef std::pair<Point, Point_location_result::Type>   Query_result;
+using Point_location_result = CGAL::Arr_point_location_result<Arrangement>;
+using Query_result = std::pair<Point, Point_location_result::Type>;
 
 int main() {
   // Construct the arrangement.
@@ -23,7 +23,7 @@ int main() {
     Point(1, 4), Point(4, 3), Point(6, 3), Point(3, 2), Point(5, 2), Point(1, 0)
   };
   std::list<Query_result> results;
-  locate(arr, points.begin(), points.end(), std::back_inserter(results));
+  CGAL::locate(arr, points.begin(), points.end(), std::back_inserter(results));
 
   // Print the results.
   for (auto it = results.begin(); it != results.end(); ++it)

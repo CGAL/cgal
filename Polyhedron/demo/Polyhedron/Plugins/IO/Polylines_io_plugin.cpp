@@ -73,7 +73,7 @@ public:
       return qobject_cast<Scene_polylines_item*>(scene->item(
                                                    scene->mainSelectionIndex()));
     bool all_polylines_selected = true;
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if (!qobject_cast<Scene_polylines_item*>(scene->item(index)))
       {
@@ -201,7 +201,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
   }
   Scene_polylines_item* item = new Scene_polylines_item;
   item->polylines = polylines;
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   item->setColor(Qt::black);
   item->setProperty("polylines metadata", polylines_metadata);
   std::cerr << "Number of polylines in item: " << item->polylines.size() << std::endl;
@@ -266,7 +266,7 @@ void Polyhedron_demo_polylines_io_plugin::split()
   scene->addItem(group);
   group->setColor(item->color());
   int i=0;
-  Q_FOREACH(Scene_polylines_item::Polyline polyline, item->polylines)
+  for(Scene_polylines_item::Polyline polyline: item->polylines)
   {
     Scene_polylines_item::Polylines_container container;
     container.push_back(polyline);
@@ -372,7 +372,7 @@ void Polyhedron_demo_polylines_io_plugin::join()
 
   Scene_polylines_item* new_polyline= new Scene_polylines_item();
   Scene_polylines_item::Polylines_container container;
-  Q_FOREACH(Scene_polylines_item* item, items)
+  for(Scene_polylines_item* item: items)
   {
     for(Scene_polylines_item::Polylines_container::iterator
         it = item->polylines.begin();

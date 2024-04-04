@@ -20,6 +20,7 @@
 
 #include <CGAL/Kernel/global_functions_2.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
+#include <CGAL/Triangulation_structural_filtering_traits.h>
 
 namespace CGAL {
 
@@ -1210,6 +1211,14 @@ public:
 };
 
 
-} } //namespace CGAL::internal
+
+} // namespace internal
+
+template <class R, int dim>
+struct Triangulation_structural_filtering_traits<::CGAL::internal::Projection_traits_3<R,dim> > {
+  typedef typename Triangulation_structural_filtering_traits<R>::Use_structural_filtering_tag  Use_structural_filtering_tag;
+};
+
+ } //namespace CGAL
 
 #endif // CGAL_INTERNAL_PROJECTION_TRAITS_3_H

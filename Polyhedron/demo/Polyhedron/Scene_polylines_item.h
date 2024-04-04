@@ -33,41 +33,41 @@ public:
       MAX_LENGTH,
       MEAN_LENGTH
     };
-    bool has_stats()const Q_DECL_OVERRIDE {return true;}
-    QString computeStats(int type)Q_DECL_OVERRIDE ;
-    CGAL::Three::Scene_item::Header_data header() const Q_DECL_OVERRIDE ;
+    bool has_stats()const override {return true;}
+    QString computeStats(int type)override ;
+    CGAL::Three::Scene_item::Header_data header() const override ;
 
-    bool isFinite() const Q_DECL_OVERRIDE { return true; }
-    bool isEmpty() const Q_DECL_OVERRIDE ;
-    void compute_bbox() const Q_DECL_OVERRIDE ;
-    Bbox bbox() const Q_DECL_OVERRIDE ;
+    bool isFinite() const override { return true; }
+    bool isEmpty() const override ;
+    void compute_bbox() const override ;
+    Bbox bbox() const override ;
 
-    Scene_polylines_item* clone() const Q_DECL_OVERRIDE ;
+    Scene_polylines_item* clone() const override ;
 
-    QString toolTip() const Q_DECL_OVERRIDE ;
+    QString toolTip() const override ;
 
     // Indicate if rendering mode is supported
-    bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE ;
+    bool supportsRenderingMode(RenderingMode m) const override ;
 
-    QMenu* contextMenu() Q_DECL_OVERRIDE ;
+    QMenu* contextMenu() override ;
 
-    void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE ;
-    void drawEdges(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE ;
-    void drawPoints(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE ;
+    void draw(CGAL::Three::Viewer_interface*) const override ;
+    void drawEdges(CGAL::Three::Viewer_interface*) const override ;
+    void drawPoints(CGAL::Three::Viewer_interface*) const override ;
 
 
     void smooth(std::vector<Point_3>& polyline);
     //When selecting a polylineitem, we don't want to select its children, so
     //we can still apply Operations to it
-    QList<Scene_interface::Item_id> getChildrenForSelection() const Q_DECL_OVERRIDE {
+    QList<Scene_interface::Item_id> getChildrenForSelection() const override {
       return QList<Scene_interface::Item_id>();
     }
     void setWidth(int i);
-    void computeElements() const Q_DECL_OVERRIDE;
-    void initializeBuffers(Viewer_interface *) const Q_DECL_OVERRIDE;
+    void computeElements() const override;
+    void initializeBuffers(Viewer_interface *) const override;
 
 public Q_SLOTS:
-    void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+    void invalidateOpenGLBuffers() override;
     void change_corner_radii(double);
     void change_corner_radii();
     void split_at_sharp_angles();

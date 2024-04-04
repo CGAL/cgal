@@ -9,6 +9,8 @@
 //
 // Author(s)     : Nico Kruithof <Nico@nghk.nl>
 
+#include <CGAL/license/Periodic_2_triangulation_2.h>
+
 #ifdef CGAL_INCLUDE_FROM_PERIODIC_2_TRIANGULATION_2_H
 
 #include <vector>

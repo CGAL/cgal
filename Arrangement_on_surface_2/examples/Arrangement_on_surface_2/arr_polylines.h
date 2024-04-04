@@ -6,14 +6,14 @@
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel Kernel;
-typedef Kernel::FT                                        Number_type;
+using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Number_type = Kernel::FT;
 
-typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits;
-typedef CGAL::Arr_polyline_traits_2<Segment_traits>       Traits;
-typedef Traits::Point_2                                   Point;
-typedef Traits::Segment_2                                 Segment;
-typedef Traits::Curve_2                                   My_polyline;
-typedef CGAL::Arrangement_2<Traits>                       Arrangement;
+using Segment_traits = CGAL::Arr_segment_traits_2<Kernel>;
+using Traits = CGAL::Arr_polyline_traits_2<Segment_traits>;
+using Point = Traits::Point_2;
+using Segment = Traits::Segment_2;
+using My_polyline = Traits::Curve_2;
+using Arrangement = CGAL::Arrangement_2<Traits>;
 
 #endif
