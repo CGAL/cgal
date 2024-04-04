@@ -94,19 +94,31 @@ auto implicit_function = [](const Point& q) -> FT
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #polygons: " << polygons.size() << std::endl;
 
+  std::cout << "Checking emptiness..." << std::endl;
   assert(points.size() && polygons.size());
+  std::cout << "Checking for duplicate points..." << std::endl;
   assert(!has_duplicate_points(points, polygons));
+  std::cout << "Checking for duplicate polygons..." << std::endl;
   assert(!has_duplicate_polygons(points, polygons));
+  std::cout << "Checking for isolated vertices..." << std::endl;
   assert(!has_isolated_vertices(points, polygons));
+  std::cout << "Checking if the soup is a mesh..." << std::endl;
   assert(CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons));
 
+  std::cout << "Create the mesh..." << std::endl;
   Mesh mesh;
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
+
+  std::cout << "Triangulate the mesh..." << std::endl;
   CGAL::Polygon_mesh_processing::triangulate_faces(mesh);
 
+  std::cout << "Write the polygon mesh..." << std::endl;
   CGAL::IO::write_polygon_mesh("DC_implicit_function.off", mesh, CGAL::parameters::stream_precision(17));
 
+  std::cout << "Check manifoldness..." << std::endl;
   assert(is_manifold(mesh));
+
+  std::cout << "Check for degenerate faces..." << std::endl;
   assert(!has_degenerate_faces(mesh));
 
   std::cout << "Volume: " << CGAL::Polygon_mesh_processing::volume(mesh) << std::endl;
