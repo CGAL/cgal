@@ -111,8 +111,8 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
       CGAL_assertion(v != typename Tr::Vertex_handle());
       CGAL_assertion(!c3t3.triangulation().is_infinite(v));
 
-      const typename Tr::Point& tr_wp = c3t3.triangulation().point(v);
-      const typename Tr_kernel::Point_3&
+      const typename Tr::Point tr_wp = c3t3.triangulation().point(v);
+      const typename Tr_kernel::Point_3
         tr_bp = c3t3.triangulation().geom_traits().construct_point_3_object()(tr_wp);
       const Range_point bp = tr_to_range(tr_bp);
 
