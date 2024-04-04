@@ -13,7 +13,7 @@
 #include "arr_geodesic.h"
 #include "arr_print.h"
 
-int main(int argc, char* argv[]) {
+int main() {
   Geom_traits traits;
   auto ctr_p = traits.construct_point_2_object();
   auto ctr_cv = traits.construct_curve_2_object();
