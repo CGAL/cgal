@@ -211,11 +211,11 @@ Kml::Nodes Kml::get_duplicates(const Placemarks& placemarks) {
 //! \brief
 Kml::Nodes Kml::generate_ids(Placemarks& placemarks) {
   // collect all nodes into a single vector
-  std::size_t polygon_count = 0;
+  // std::size_t polygon_count = 0;
   std::vector<Node> nodes;
   for (auto& pm : placemarks) {
     for (auto& polygon : pm.polygons) {
-      polygon_count++;
+      // polygon_count++;
 
       std::vector<LinearRing*> linear_rings;
       linear_rings.push_back(&polygon.outer_boundary);
