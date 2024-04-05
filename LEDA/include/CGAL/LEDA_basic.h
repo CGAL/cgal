@@ -25,6 +25,7 @@
 // The following is needed for LEDA 4.4 due to min/max problems...
 #  define LEDA_NO_MIN_MAX_TEMPL
 
+#include <fstream> // as a workaround for a missing include in <LEDA/internal/PREAMBLE.h>
 #include <LEDA/system/basic.h>
 
 #ifdef LEDA_NAMESPACE
