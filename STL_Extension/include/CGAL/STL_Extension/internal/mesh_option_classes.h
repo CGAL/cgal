@@ -14,7 +14,7 @@
 #include <functional>
 
 #include <CGAL/STL_Extension/internal/Has_features.h>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
