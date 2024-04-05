@@ -17,6 +17,7 @@
 #include <CGAL/Weights/utils.h>
 
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>

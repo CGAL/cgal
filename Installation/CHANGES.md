@@ -70,6 +70,8 @@ Release date: October 2023
     `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` that refines a soup of triangles so that no pair of triangles intersects
      in their interiors. Also added, the function `autorefine()` operating directly on a triangle mesh and updating it
      using the aforementioned function on a triangle soup.
+-   Added the function `CGAL::Polygon_mesh_processing::add_bbox()` that enables to add a tight or extended, triangulated or not,
+    bounding box to a face graph.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
