@@ -359,9 +359,9 @@ struct Initial_points_generator_generator
 
   struct Initial_points_generator_empty
   {
-    OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)
+    OutputIterator operator()(OutputIterator pts, const MeshDomain& , const C3t3& )
     { return pts; }
-    OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)
+    OutputIterator operator()(OutputIterator pts, const MeshDomain& , const C3t3& , int )
     { return pts; }
   };
 
