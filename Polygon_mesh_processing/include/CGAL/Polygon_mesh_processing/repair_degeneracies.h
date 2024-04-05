@@ -639,7 +639,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   // Vertex property map that combines the VCM and the fact that extremities of a constrained edge should be constrained
   typedef CGAL::dynamic_vertex_property_t<bool>                                 Vertex_property_tag;
   typedef typename boost::property_map<TriangleMesh, Vertex_property_tag>::type DVCM;
-  DVCM vcm = get(Vertex_property_tag(), tmesh);
+  DVCM vcm = get(Vertex_property_tag(), tmesh, false);
 
   // parameters
   const double cap_threshold =
