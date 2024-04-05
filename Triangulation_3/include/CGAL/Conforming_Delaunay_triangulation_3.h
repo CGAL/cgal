@@ -466,7 +466,7 @@ public:
   }
 
   bool use_finite_edges_map() const {
-    return debug_flags[static_cast<int>(Debug_flags::use_finite_edges_map)];
+    return update_all_finite_edges_ && debug_flags[static_cast<int>(Debug_flags::use_finite_edges_map)];
   }
 
   void use_finite_edges_map(bool b) {
@@ -497,13 +497,32 @@ public:
     return id;
   }
 
+  bool is_edge(Vertex_handle va, Vertex_handle vb) const {
+    const bool is_edge_v1 =
+        ((debug_finite_edges_map() && use_finite_edges_map()) || !use_finite_edges_map()) && tr.tds().is_edge(va, vb);
+    const bool is_edge_v2 =
+        use_finite_edges_map() && all_finite_edges.find(make_sorted_pair(va, vb)) != all_finite_edges.end();
+    if(debug_finite_edges_map() && use_finite_edges_map() && is_edge_v1 != is_edge_v2) {
+      std::cerr << "!! Inconsistent edge status\n";
+      std::cerr << "  -> constraint " << display_vert(va) << "     " << display_vert(vb) << '\n';
+      std::cerr << "  ->     edge " << (is_edge_v1 ? "is" : "is not") << " in the triangulation\n";
+      std::cerr << "  ->     edge " << (is_edge_v2 ? "is" : "is not") << " in all_finite_edges\n";
+      debug_dump("bug-inconsistent-edge-status");
+      CGAL_error();
+    }
+    const bool is_edge = use_finite_edges_map() ? is_edge_v2 : is_edge_v1;
+    return is_edge;
+  }
+
+  using T_3::is_edge;
+
   bool is_conforming() const {
     return std::all_of(constraint_hierarchy.sc_begin(),
                        constraint_hierarchy.sc_end(),
                        [this](const auto &sc) {
                          const auto va = sc.first.first;
                          const auto vb = sc.first.second;
-                         const auto is_edge = this->tr.tds().is_edge(va, vb);
+                         const auto is_edge = this->is_edge(va, vb);
 #if CGAL_DEBUG_CDT_3 & 128 && __has_include(<format>)
                          std::cerr << std::format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
                                                   is_edge,
@@ -592,7 +611,7 @@ public:
     std::for_each(
         constraint_hierarchy.sc_begin(), constraint_hierarchy.sc_end(),
         [this, &out, &any_missing_segment](const auto &sc) {
-          if (!tr.tds().is_edge(sc.first.first, sc.first.second)) {
+          if (!this->is_edge(sc.first.first, sc.first.second)) {
             const auto v0 = sc.first.first;
             const auto v1 = sc.first.second;
             out << "2 " << this->tr.point(v0) << " " << this->tr.point(v1)
@@ -639,6 +658,7 @@ protected:
 
   template <typename Visitor>
   void restore_Delaunay(Visitor& visitor) {
+    update_all_finite_edges();
     while(!subconstraints_to_conform.empty()) {
       const auto [subconstraint, constraint_id] = subconstraints_to_conform.top();
       subconstraints_to_conform.pop();
@@ -685,20 +705,7 @@ protected:
     const Vertex_handle va = subconstraint.first;
     const Vertex_handle vb = subconstraint.second;
     CGAL_assertion(va != vb);
-    const bool is_edge_v1 =
-        ((debug_finite_edges_map() && use_finite_edges_map()) || !use_finite_edges_map()) && tr.tds().is_edge(va, vb);
-    const bool is_edge_v2 =
-        use_finite_edges_map() && all_finite_edges.find(make_sorted_pair(va, vb)) != all_finite_edges.end();
-    if(debug_finite_edges_map() && use_finite_edges_map() && is_edge_v1 != is_edge_v2) {
-      std::cerr << "!! Inconsistent edge status\n";
-      std::cerr << "  -> constraint " << display_vert(va) << "     " << display_vert(vb) << '\n';
-      std::cerr << "  ->     edge " << (is_edge_v1 ? "is" : "is not") << " in the triangulation\n";
-      std::cerr << "  ->     edge " << (is_edge_v2 ? "is" : "is not") << " in all_finite_edges\n";
-      debug_dump("bug-inconsistent-edge-status");
-      CGAL_error();
-    }
-    const bool is_edge = use_finite_edges_map() ? is_edge_v2 : is_edge_v1;
-    if(!is_edge) {
+    if(!this->is_edge(va, vb)) {
       const auto& [steiner_pt, hint, ref_vertex] = construct_Steiner_point(constraint, subconstraint);
       [[maybe_unused]] const auto v =
           insert_Steiner_point_on_subconstraint(steiner_pt, hint, subconstraint, constraint, visitor);
@@ -1015,6 +1022,20 @@ protected:
 
   using Hash = boost::hash<Pair_of_vertex_handles>;
   std::unordered_set<Pair_of_vertex_handles, Hash> all_finite_edges;
+  bool update_all_finite_edges_ = false;
+
+  void update_all_finite_edges() {
+    if(!update_all_finite_edges_) {
+      update_all_finite_edges_ = true;
+      if(use_finite_edges_map()) {
+        all_finite_edges.clear();
+        all_finite_edges.reserve(tr.number_of_finite_edges());
+        for(auto e: tr.all_edges()) {
+          new_edge(e);
+        }
+      }
+    }
+  }
 
   enum class Debug_flags {
     Steiner_points = 0,

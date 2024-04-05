@@ -1296,7 +1296,7 @@ private:
           CGAL_assertion(!cdt_2.is_edge(vb, vd));
           const auto vb_3d = vb->info().vertex_handle_3d;
           const auto vd_3d = vd->info().vertex_handle_3d;
-          if(tr.tds().is_edge(vb_3d, vd_3d)) {
+          if(this->is_edge(vb_3d, vd_3d)) {
             // let's insert the diagonal [bd] in the CDT_2
             cdt_2.insert_constraint(vb, vd);
 #if CGAL_DEBUG_CDT_3 & 64
@@ -2178,12 +2178,12 @@ private:
             ("NOTE: diagonal: {:.6} {:.6}  {} in tr\n",
             IO::oformat(*diagonal.begin(), with_point),
             IO::oformat(*std::next(diagonal.begin()), with_point),
-            tr.tds().is_edge(*diagonal.begin(), *std::next(diagonal.begin())) ? "IS" : "is NOT");
+            this->is_edge(*diagonal.begin(), *std::next(diagonal.begin())) ? "IS" : "is NOT");
         std::cerr << std::format(
             "NOTE: the other diagonal: {:.6} {:.6}  {} in tr\n",
             IO::oformat(*other_diagonal.begin(), with_point),
             IO::oformat(*std::next(other_diagonal.begin()), with_point),
-            tr.tds().is_edge(*other_diagonal.begin(), *std::next(other_diagonal.begin())) ? "IS" : "is NOT");
+            this->is_edge(*other_diagonal.begin(), *std::next(other_diagonal.begin())) ? "IS" : "is NOT");
         if(cdt_2.geom_traits().side_of_oriented_circle_2_object()(
                (*region_border_vertices.begin())->point(), (*std::next(region_border_vertices.begin()))->point(),
                (*std::next(region_border_vertices.begin(), 2))->point(),
@@ -2979,7 +2979,7 @@ private:
       const auto i = edge.second;
       const auto va_3d = fh->vertex(cdt_2.cw(i))->info().vertex_handle_3d;
       const auto vb_3d = fh->vertex(cdt_2.ccw(i))->info().vertex_handle_3d;
-      const bool is_3d = this->tds().is_edge(va_3d, vb_3d);
+      const bool is_3d = this->is_edge(va_3d, vb_3d);
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       if(this->debug_copy_triangulation_into_hole()) {
         std::cerr << std::format("Edge is 3D: {:6}  ({} , {})\n",
@@ -3150,7 +3150,7 @@ public:
                   << " != number_of_finite_edges() = " << this->number_of_finite_edges() << std::endl;
       }
       for(auto e: this->all_finite_edges) {
-        test = this->tds().is_edge(e.first, e.second);
+        test = this->is_edge(e.first, e.second);
         result = result && test;
         if(!test && verbose) {
           std::cerr << "edge (" << IO::oformat(e.first, with_point_and_info) << ", "

@@ -54,8 +54,8 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 #endif // use Epick
 
-using Vb = CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>;
-using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
+struct Vb : public CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K> {};
+struct Cb : public CGAL::Constrained_Delaunay_triangulation_cell_base_3<K> {};
 using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
 using Delaunay = CGAL::Delaunay_triangulation_3<K, Tds>;
 using CDT = CGAL::Constrained_Delaunay_triangulation_3<Delaunay>;
@@ -81,6 +81,7 @@ struct CDT_options
   bool debug_validity = false;
   bool debug_finite_edges_map = false;
   bool use_finite_edges_map = false;
+  bool call_is_valid = true;
   double ratio = 0.1;
   double vertex_vertex_epsilon = 1e-14;
   double segment_vertex_epsilon = 1e-14;
@@ -196,6 +197,8 @@ int main(int argc, char* argv[])
       options.coplanar_polygon_max_distance = std::stod(argv[++i]);
     } else if(arg == "--quiet") {
       options.quiet = true;
+    } else if(arg == "--no-is-valid") {
+      options.call_is_valid = false;
     } else if(arg == "--debug-missing-regions") {
       options.debug_missing_regions = true;
     } else if(arg == "--debug-regions") {
@@ -545,9 +548,11 @@ int go(Mesh mesh, CDT_options options) {
 
   CGAL_CDT_3_TASK_BEGIN(insert_vertices_task_handle);
   auto start_time = std::chrono::high_resolution_clock::now();
+  CDT::Cell_handle hint{};
   for(auto v: vertices(mesh)) {
     if(options.merge_facets && false == get(v_selected_map, v)) continue;
-    auto vh = cdt.insert(get(pmap, v));
+    auto vh = cdt.insert(get(pmap, v), hint, false);
+    hint = vh->cell();
     put(tr_vertex_pmap, v, vh);
   }
   if(!options.quiet) {
@@ -776,9 +781,9 @@ int go(Mesh mesh, CDT_options options) {
       std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
     }
     CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
-    CGAL_assertion(cdt.Delaunay::is_valid(true));
-    CGAL_assertion(cdt.is_valid(true));
-    CGAL_assertion(cdt.is_conforming());
+    CGAL_assertion(!options.call_is_valid || cdt.Delaunay::is_valid(true));
+    CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
+    CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
     CGAL_CDT_3_TASK_END(validation_task_handle);
     if(exit_code == EXIT_SUCCESS) {
       try {
@@ -802,8 +807,8 @@ int go(Mesh mesh, CDT_options options) {
   finally();
 
   CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
-  CGAL_assertion(cdt.is_conforming());
-  CGAL_assertion(cdt.is_valid(true));
+  CGAL_assertion(!options.call_is_valid || cdt.is_conforming());
+  CGAL_assertion(!options.call_is_valid || cdt.is_valid(true));
   CGAL_CDT_3_TASK_END(validation_task_handle);
 
   return exit_code;
