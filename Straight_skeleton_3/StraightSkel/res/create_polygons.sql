@@ -1,5 +1,5 @@
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (1, "First Test", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (1, 'First Test', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (101, -4.0, -4.0);
 INSERT INTO Points (PointID, x, y) VALUES (102, 10.0, -2.0);
 INSERT INTO Points (PointID, x, y) VALUES (103, 8.0, 4.0);
@@ -15,7 +15,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (1, 4, 4, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (2, "SplitEvent Test", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (2, 'SplitEvent Test', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (201, -5.0, -2.0);
 INSERT INTO Points (PointID, x, y) VALUES (202, -1.0, -2.0);
 INSERT INTO Points (PointID, x, y) VALUES (203, 0.0, 1.0);
@@ -40,7 +40,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (2, 7, 7, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (3, "Paper", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (3, 'Paper', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (301, -8.0, -6.0);
 INSERT INTO Points (PointID, x, y) VALUES (302, 8.0, -3.0);
 INSERT INTO Points (PointID, x, y) VALUES (303, 4.0, -1.0);
@@ -71,7 +71,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (3, 9, 9, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (4, "Hole Test", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (4, 'Hole Test', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (401, -8.0, -2.0);
 INSERT INTO Points (PointID, x, y) VALUES (402, -6.0, -6.0);
 INSERT INTO Points (PointID, x, y) VALUES (403, 6.0, -6.0);
@@ -102,7 +102,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (4, 9, 9, 6);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (5, "StickingEvent Test", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (5, 'StickingEvent Test', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (501, 0.0, -2.0);
 INSERT INTO Points (PointID, x, y) VALUES (502, 3.0, -5.0);
 INSERT INTO Points (PointID, x, y) VALUES (503, 1.0, 9.0);
@@ -121,7 +121,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (5, 5, 5, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (6, "2 Split Events", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (6, '2 Split Events', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (601, -5.0, -9.0);
 INSERT INTO Points (PointID, x, y) VALUES (602, 5.0, -9.0);
 INSERT INTO Points (PointID, x, y) VALUES (603, 2.0, -4.0);
@@ -149,7 +149,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (6, 8, 8, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (7, "Degeneration", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (7, 'Degeneration', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (701, -5.0, -5.0);
 INSERT INTO Points (PointID, x, y) VALUES (702, 5.0, -5.0);
 INSERT INTO Points (PointID, x, y) VALUES (703, 5.0, 5.0);
@@ -177,7 +177,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (7, 8, 8, 5);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (8, "ambiguous bisector graphs", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (8, 'ambiguous bisector graphs', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (801, 0.0, 0.0);
 INSERT INTO Points (PointID, x, y) VALUES (802, 4.5, 0.0);
 INSERT INTO Points (PointID, x, y) VALUES (803, 3.0, 1.9);
@@ -202,7 +202,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (8, 7, 7, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (9, "sorting", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (9, 'sorting', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (901, -10.0, 5.0);
 INSERT INTO Points (PointID, x, y) VALUES (902, -10.0, -2.5);
 INSERT INTO Points (PointID, x, y) VALUES (903, 10.0, -2.5);
@@ -245,7 +245,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (9, 13, 13, 11);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (10, "weighted, not monotone", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (10, 'weighted, not monotone', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (1001, -10.0, -3.0);
 INSERT INTO Points (PointID, x, y) VALUES (1002, 6.0, -3.0);
 INSERT INTO Points (PointID, x, y) VALUES (1003, 6.0, 8.0);
@@ -268,7 +268,7 @@ INSERT INTO SkelEdgeData (PolyID, EID, speed) VALUES (10, 1, 3.0);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (11, "weighted ambiguous 1", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (11, 'weighted ambiguous 1', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (1101, -9.0, -0.5);
 INSERT INTO Points (PointID, x, y) VALUES (1102, -1.0, 0.0);
 INSERT INTO Points (PointID, x, y) VALUES (1103, 0.0, -2.0);
@@ -291,7 +291,7 @@ INSERT INTO SkelEdgeData (PolyID, EID, speed) VALUES (11, 3, 2.0);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (12, "weighted ambiguous 2", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (12, 'weighted ambiguous 2', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (1201, -9.0, 0.5);
 INSERT INTO Points (PointID, x, y) VALUES (1202, -1.0, 0.0);
 INSERT INTO Points (PointID, x, y) VALUES (1203, 0.0, -2.0);
@@ -314,7 +314,7 @@ INSERT INTO SkelEdgeData (PolyID, EID, speed) VALUES (12, 3, 2.0);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (13, "lower envelope does not work with weighted edges", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (13, 'lower envelope does not work with weighted edges', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (1301, -5.0, -5.0);
 INSERT INTO Points (PointID, x, y) VALUES (1302, -3.0, -5.0);
 INSERT INTO Points (PointID, x, y) VALUES (1303, -2.0, 2.0);
@@ -340,7 +340,7 @@ INSERT INTO SkelEdgeData (PolyID, EID, speed) VALUES (13, 7, 3.0);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (14, "motorcycles", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (14, 'motorcycles', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (1401, -4.0, -1.0);
 INSERT INTO Points (PointID, x, y) VALUES (1402, -1.0, -1.0);
 INSERT INTO Points (PointID, x, y) VALUES (1403, 0.0, -3.0);
@@ -368,7 +368,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (14, 8, 8, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (15, "divide and conquer", 1432289227);
+INSERT INTO Polygons (PolyID, description, created) VALUES (15, 'divide and conquer', 1432289227);
 INSERT INTO Points (PointID, x, y) VALUES (1501, -1.0, -4.0);
 INSERT INTO Points (PointID, x, y) VALUES (1502, 0.5, -2.5);
 INSERT INTO Points (PointID, x, y) VALUES (1503, 2.0, -4.0);
@@ -399,7 +399,7 @@ INSERT INTO Edges (PolyID, EID, VID_SRC, VID_DST) VALUES (15, 9, 9, 1);
 COMMIT;
 
 BEGIN TRANSACTION;
-INSERT INTO Polygons (PolyID, description, created) VALUES (16, "example", 1327674050);
+INSERT INTO Polygons (PolyID, description, created) VALUES (16, 'example', 1327674050);
 INSERT INTO Points (PointID, x, y) VALUES (1601, 0.0, 0.0);
 INSERT INTO Points (PointID, x, y) VALUES (1602, 0.0, -2.0);
 INSERT INTO Points (PointID, x, y) VALUES (1603, 2.0, -2.0);
