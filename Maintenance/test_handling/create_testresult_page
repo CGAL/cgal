@@ -731,8 +731,7 @@ sub get_warnings_and_errors {
         my $result = `zcat $result_file`;
         my @lines = split("\n", $result);
         foreach my $line (@lines) {
-            if ($line =~ /(warning|error):/i && !$seen{$line}++) {
-            #if ($line !~ /\b(ERROR|WARNING)\b/ && $line =~ /(warning|error):/i) {
+            if ($line =~ /(warning|error):/i && !$seen{$line}++ || $line =~ /(warning|error) [CJ]\d+:/i && !$seen{$line}++) {
 
                 $warnings_and_errors .= $line . "\n";
             }
