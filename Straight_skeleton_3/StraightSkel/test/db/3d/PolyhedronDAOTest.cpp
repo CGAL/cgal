@@ -1,11 +1,19 @@
 #include <boost/test/unit_test.hpp>
 
 #include "db/3d/PolyhedronDAO.h"
-#include "data/3d/ptrs.h"
 #include "db/3d/ptrs.h"
 #include "db/3d/DAOFactory.h"
 
+#include "data/3d/ptrs.h"
+#include "data/3d/KernelFactory.h"
+#include "data/3d/Vertex.h"
+#include "data/3d/Edge.h"
+#include "data/3d/Facet.h"
+
+#include <list>
+
 using namespace db::_3d;
+using namespace data::_3d;
 
 BOOST_AUTO_TEST_SUITE(PolyhedronDAOTest)
 
@@ -46,8 +54,8 @@ BOOST_AUTO_TEST_CASE(testAll) {
     BOOST_CHECK_EQUAL(polyhedron->edges().size(), result->edges().size());
     BOOST_CHECK_EQUAL(polyhedron->facets().size(), result->facets().size());
     const double e = 0.001;
-    list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-    list<VertexSPtr>::iterator it_vr = result->vertices().begin();
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    std::list<VertexSPtr>::iterator it_vr = result->vertices().begin();
     while (it_v != polyhedron->vertices().end() && it_vr != result->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         VertexSPtr vertex_r = *it_vr++;

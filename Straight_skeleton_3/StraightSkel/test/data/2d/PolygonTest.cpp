@@ -35,13 +35,13 @@ BOOST_AUTO_TEST_CASE(testConstructor) {
     }
     BOOST_CHECK(polygon->isConsistent());
     i = 0;
-    for (list<VertexSPtr>::iterator it = polygon->vertices().begin();
+    for (std::list<VertexSPtr>::iterator it = polygon->vertices().begin();
             it != polygon->vertices().end(); it++) {
         BOOST_CHECK_EQUAL(*it, v[i++]);
     }
     BOOST_CHECK_EQUAL(num_points, i);
     i = 0;
-    for (list<EdgeSPtr>::iterator it = polygon->edges().begin();
+    for (std::list<EdgeSPtr>::iterator it = polygon->edges().begin();
             it != polygon->edges().end(); it++) {
         BOOST_CHECK_EQUAL(*it, e[i++]);
     }
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(testSortEdges) {
     polygon->addEdge(e[1]);
     BOOST_CHECK(polygon->isConsistent());
     polygon->sortEdges();
-    list<EdgeSPtr>::iterator it_e = polygon->edges().begin();
+    std::list<EdgeSPtr>::iterator it_e = polygon->edges().begin();
     for (unsigned int i = 0; i < 4; i++) {
         EdgeSPtr edge = *it_e;
         BOOST_CHECK_EQUAL(e[i], edge);

@@ -2,9 +2,15 @@
 
 #include "data/3d/Facet.h"
 #include "data/3d/ptrs.h"
+
 #include "data/3d/KernelFactory.h"
 #include "data/3d/Vertex.h"
 #include "data/3d/Edge.h"
+
+#include "data/2d/KernelFactory.h"
+#include "data/2d/Vertex.h"
+#include "data/2d/Edge.h"
+#include "data/2d/Polygon.h"
 
 using namespace data::_3d;
 
@@ -40,7 +46,7 @@ BOOST_AUTO_TEST_CASE(testConstructor) {
         BOOST_CHECK(!edges[i]->getFacetR());
     }
     unsigned int i = 0;
-    list<EdgeSPtr>::iterator it_e = result->edges().begin();
+    std::list<EdgeSPtr>::iterator it_e = result->edges().begin();
     while(it_e != result->edges().end()) {
         EdgeSPtr edge = *it_e++;
         BOOST_CHECK_EQUAL(edges[i], edge);
@@ -68,8 +74,8 @@ BOOST_AUTO_TEST_CASE(testToPolygon) {
     BOOST_CHECK_EQUAL(facet->vertices().size(), result->vertices().size());
     BOOST_CHECK_EQUAL(facet->edges().size(), result->edges().size());
     const double e = 0.001;
-    list<VertexSPtr>::iterator it_v = facet->vertices().begin();
-    list<data::_2d::VertexSPtr>::iterator it_v2 = result->vertices().begin();
+    std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+    std::list<data::_2d::VertexSPtr>::iterator it_v2 = result->vertices().begin();
     while(it_v != facet->vertices().end() && it_v2 != result->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         data::_2d::VertexSPtr vertex2 = *it_v2++;
@@ -85,8 +91,8 @@ BOOST_AUTO_TEST_CASE(testToPolygon) {
     }
     facet->initPlane();
     result = facet->toPolygon();
-    list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-    list<data::_2d::EdgeSPtr>::iterator it_e2 = result->edges().begin();
+    std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+    std::list<data::_2d::EdgeSPtr>::iterator it_e2 = result->edges().begin();
     while(it_e != facet->edges().end() && it_e2 != result->edges().end()) {
         EdgeSPtr edge = *it_e++;
         data::_2d::EdgeSPtr edge2 = *it_e2++;

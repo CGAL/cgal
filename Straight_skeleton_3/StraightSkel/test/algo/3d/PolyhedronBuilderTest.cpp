@@ -4,6 +4,8 @@
 #include "data/3d/ptrs.h"
 #include "data/3d/KernelFactory.h"
 
+#include "data/3d/Polyhedron.h"
+
 BOOST_AUTO_TEST_SUITE(PolyhedronBuilderTest)
 
 using algo::_3d::PolyhedronBuilder;

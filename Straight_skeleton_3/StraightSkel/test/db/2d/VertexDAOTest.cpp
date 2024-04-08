@@ -1,11 +1,15 @@
 #include <boost/test/unit_test.hpp>
 
 #include "db/2d/VertexDAO.h"
-#include "data/2d/ptrs.h"
 #include "db/2d/ptrs.h"
 #include "db/2d/DAOFactory.h"
 
+#include "data/2d/ptrs.h"
+#include "data/2d/KernelFactory.h"
+#include "data/2d/Polygon.h"
+
 using namespace db::_2d;
+using namespace data::_2d;
 
 BOOST_AUTO_TEST_SUITE(VertexDAOTest)
 
