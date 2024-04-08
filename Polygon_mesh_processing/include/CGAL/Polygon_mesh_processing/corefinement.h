@@ -138,7 +138,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm1` and `tm2` will be
   *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
@@ -477,7 +477,7 @@ corefine_and_compute_boolean_operations(
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true` the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *     \cgalParamDescription{If `true` the set of triangles close to the intersection of `tm1` and `tm2` will be
   *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
@@ -644,7 +644,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{throw_on_self_intersection}
- *     \cgalParamDescription{If `true` the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *     \cgalParamDescription{If `true` the set of triangles close to the intersection of `tm1` and `tm2` will be
  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
  *                           will be thrown if at least one self-intersection is found.}
  *     \cgalParamType{Boolean}
