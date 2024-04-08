@@ -29,6 +29,9 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/config.h)
 
+if(USE_CGAL)
+    find_package(CGAL REQUIRED Core)
+endif()
 
 # to get help about a cmake module run:
 # $ cmake --help-module FindBoost
@@ -152,17 +155,16 @@ set(data_3d_SOURCES
         src/data/3d/skel/SphericalOffset.cpp)
 add_library(skeldata2d SHARED ${data_2d_SOURCES})
 add_library(skeldata3d SHARED ${data_3d_SOURCES})
-if(USE_CGAL)
-    find_package(CGAL REQUIRED Core)
-    if(CGAL_FOUND)
-        target_link_libraries(skeldata2d skelutil CGAL::CGAL)
-        target_link_libraries(skeldata3d skeldata2d skelutil  CGAL::CGAL)
-    endif()
+if(CGAL_FOUND)
+    target_link_libraries(skeldata2d skelutil CGAL::CGAL)
+    target_link_libraries(skeldata3d skeldata2d skelutil  CGAL::CGAL)
+elseif(BUILD_OWN_KERNEL)
+    target_link_libraries(skeldata2d skelutil skelkernel)
+    target_link_libraries(skeldata3d skeldata2d skelutil skelkernel)
 else()
-    target_link_libraries(skeldata2d skelutil skelkernel  CGAL::CGAL)
-    target_link_libraries(skeldata3d skeldata2d skelutil skelkernel CGAL::CGAL})
+    target_link_libraries(skeldata2d skelutil)
+    target_link_libraries(skeldata3d skeldata2d skelutil)
 endif()
-
 
 # build database connector
 set(db_SOURCES
@@ -235,7 +237,7 @@ set(algo_3d_SOURCES
 add_library(skelalgo2d SHARED ${algo_SOURCES} ${algo_2d_SOURCES})
 add_library(skelalgo3d SHARED ${algo_3d_SOURCES})
 target_link_libraries(skelalgo2d skeldata2d)
-target_link_libraries(skelalgo3d skelalgo2d skeldata3d)
+target_link_libraries(skelalgo3d skelalgo2d skeldata3d skeldb)
 
 
 # build user interface
@@ -253,7 +255,15 @@ set(ui_ps_SOURCES
         src/ui/ps/PlanePSPrinter.cpp
         src/ui/ps/CutPatternPrinter.cpp)
 add_library(skelui SHARED ${ui_SOURCES} ${ui_gl_SOURCES} ${ui_ps_SOURCES})
-target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES})
+
+if(CGAL_FOUND)
+    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES} CGAL::CGAL)
+elseif(BUILD_OWN_KERNEL)
+    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES} skelkernel)
+else()
+    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES})
+endif()
+
 
 
 # build executable
