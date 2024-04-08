@@ -16,6 +16,7 @@
 use Cwd;
 use strict;
 use Date::Format;
+use JSON;
 
 my $server_url="https://cgal.geometryfactory.com/";
 my $cgal_members="${server_url}CGAL/Members/";
@@ -748,6 +749,40 @@ sub create_summary_page {
     my $test_directory;
     my @letters = ('r', 'n', 'w', 'o');
     my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);
+
+    my @search_index;
+    my ($platform_num, $platform) = (0, "");
+    foreach $platform (@platforms_to_do) {
+        foreach my $letter (@letters) {
+            foreach my $test_directory (sort keys %test_directories) {
+                my $resulttext = $testresults[$platform_num]->{$test_directory};
+                if (defined($resulttext) && $resulttext eq $letter) {
+                    my $warnings_and_errors = get_warnings_and_errors("$testresult_dir/$release_name/$test_directory/TestReport_$platform.gz");
+                    push @search_index, {
+                        platform => $platform,
+                        test_directory => $test_directory,
+                        content => $warnings_and_errors,
+                        release => $release_name,
+                        letters => $letter,
+                    };
+                }
+            }
+        }
+        $platform_num++;
+    }
+
+    my $json = JSON->new->allow_nonref;
+    my $json_text = $json->pretty->encode(\@search_index);
+    open my $fh, '>', "$testresult_dir/$release_name/search_index.json" or die "Could not open file: $!";
+    print $fh $json_text;
+    close $fh;
+
+    my @all_releases = grep {-d $_ } glob("../*");
+    my %urls_for_js = (
+        current => ["$release_name/search_index.json"],
+        all     => [map { "TESTRESULTS/$_/search_index.json" } @all_releases],
+    );
+    my $json_urls = encode_json(\%urls_for_js);
     my $Summary_output = <<"EOF";
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
         "https://www.w3.org/TR/html4/strict.dtd">
@@ -758,11 +793,61 @@ sub create_summary_page {
   <link rel="shortcut icon" href="cgal.ico">
   <link rel="stylesheet" type="text/css" href="testresult.css">
   <script>
+    var searchURLs = $json_urls;
+    var url = searchURLs["current"]
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('platformSelector').value = 'all';
         filterByPlatform();
         document.getElementById('letterSelector').value = 'all';
         filterByLetter();
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        const groupedByPlatform = data.reduce((acc, item) => {
+            if (!acc[item.platform]) {
+                acc[item.platform] = [];
+            }
+            acc[item.platform].push(item);
+            return acc;
+        }, {});
+
+        const container = document.getElementById('container');
+
+        Object.entries(groupedByPlatform).forEach(([platform, items]) => {
+            const platformDiv = document.createElement('div');
+            platformDiv.className = "platform " + platform;
+            container.appendChild(platformDiv);
+            const platformHeader = document.createElement('h2');
+            platformHeader.innerText = "Results of " + platform;
+            platformDiv.appendChild(platformHeader);
+            const resultGrid = document.createElement('div');
+            resultGrid.className = "result-grid";
+            platformDiv.appendChild(resultGrid);
+
+            const letters = ['r', 'n', 'w', 'o'];
+            letters.forEach(letter => {
+                const letterDiv = document.createElement('div');
+                letterDiv.className = "letter " + letter + " result-container";
+                resultGrid.appendChild(letterDiv);
+                const letterHeader = document.createElement('h3');
+                letterHeader.innerText = letter;
+                letterDiv.appendChild(letterHeader);
+
+                const filteredItems = items.filter(item => item.letters === letter);
+                filteredItems.forEach(item => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.innerHTML = `<a href="\${item.release}/\${item.test_directory}/TestReport_\${item.platform}.gz">\${item.test_directory}</a>`;
+                    letterDiv.appendChild(resultDiv);
+                    if (item.content) {
+                        const pre = document.createElement('pre');
+                        pre.innerText = item.content;
+                        letterDiv.appendChild(pre);
+                    }
+                });
+            });
+        });
+    })
+    .catch(error => console.error('Error loading search data:', error));
     });
     function filterByPlatform() {
         var selectedPlatform = document.getElementById('platformSelector').value;
@@ -802,11 +887,46 @@ sub create_summary_page {
         });
     }
 
-
+    function search() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const selectValue = document.getElementById('releaseSelector').value;
+    if (searchTerm === '') {
+        return;
+    }
+    const urls = searchURLs[selectValue];
+    if (!urls) {
+        console.error('No URLs found for select value:', selectValue);
+        return;
+    }
+    urls.forEach(url => {
+        console.log('Fetching search data from:', url);
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                const searchIndex = JSON.parse(data);
+                const searchResults = searchIndex.filter(item => item.content.toLowerCase().includes(searchTerm));
+                const searchResultsDiv = document.getElementById('searchResults');
+                if (url === urls[0]) searchResultsDiv.innerHTML = '';
+                searchResults.forEach(item => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.innerHTML = `<a href="\${item.release}/\${item.test_directory}/TestReport_\${item.platform}.gz">\${item.platform} - \${item.test_directory} - <strong>\${item.release}</strong></a>`;
+                    searchResultsDiv.appendChild(resultDiv);
+                });
+            })
+            .catch(error => console.error('Error loading search data:', error));
+    });
+}
   </script>
 <!-- This file is generated by a program. Do not edit manually!! -->
 </head>
 <body>
+<input type="text" id="searchInput" placeholder="Search ..." autocomplete="off" onkeypress="if(event.keyCode==13) search()">
+<select id="releaseSelector">
+<option value="current" selected>This release</option>
+<option value="all">All releases</option>
+</select>
+<button onclick="search()">Search</button>
+<div id="searchResults"></div>
 <h1>Summary Results of ${release_name}</h1>
 <select id="platformSelector" onchange="filterByPlatform()">
 <option value="all" selected>All Platforms</option>
@@ -816,35 +936,14 @@ $platform_options
 <option value="all" selected>All</option>
 $letters_options
 </select>
+<div id="container"></div>
 EOF
 
     my $summary_page_path = "$testresult_dir/summary".substr($release_name,4).".html";
     open(my $out, '>', $summary_page_path) or die "Could not open file '$summary_page_path' $!";
     print $out $Summary_output;
 
-    my ($platform_num, $platform) = (0, "");
-    foreach $platform (@platforms_to_do) {
-        print $out "<div class='platform $platform'><h2>Results of $platform</h2><div class='result-grid'>";
-        foreach my $letter (@letters) {
-            print $out "<div class='letter $letter result-container'><h3>$letter</h3>";
-            foreach my $test_directory (sort keys %test_directories) {
-                my $resulttext = $testresults[$platform_num]->{$test_directory};
-                if (defined($resulttext) && $resulttext eq $letter) {
-                    print $out '<div><a href=',"$release_name/$test_directory/TestReport_$platform.gz>", "$test_directory",'</a></div>';
-                    my $warnings_and_errors = get_warnings_and_errors("$testresult_dir/$release_name/$test_directory/TestReport_$platform.gz");
-                    if ($warnings_and_errors) {
-                        print $out "<pre>$warnings_and_errors</pre>";
-                    }
-                }
-            }
-            print $out "</div>";
-        }
-        print $out "</div></div>";
-        $platform_num++;
-    }
-
     print $out "</body>\n</html>\n";
     close $out;
 }
-
 main();
