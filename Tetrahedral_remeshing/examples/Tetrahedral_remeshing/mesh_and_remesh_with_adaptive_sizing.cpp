@@ -1,3 +1,5 @@
+#define CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
@@ -86,8 +88,7 @@ int main(int argc, char* argv[])
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
     CGAL::create_adaptive_remeshing_sizing_field(tr),
-    CGAL::parameters::number_of_iterations(5)
-    .nb_flip_smooth_iterations(10));
+    CGAL::parameters::number_of_iterations(5));
 
   std::cout << "\rRemeshing done." << std::endl;
 
