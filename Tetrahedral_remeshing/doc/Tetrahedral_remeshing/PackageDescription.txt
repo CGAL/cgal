@@ -64,6 +64,6 @@ while preserving the input geometric curve and surface features.
 
 - `CGAL::tetrahedral_isotropic_remeshing()`
 - `CGAL::convert_to_triangulation_3()`
-- `CGAL::create_adaptive_remeshing_sizing_field()`
+- \link CGAL::Adaptive_remeshing_sizing_field `CGAL::create_adaptive_remeshing_sizing_field()` \endlink
 
 */
