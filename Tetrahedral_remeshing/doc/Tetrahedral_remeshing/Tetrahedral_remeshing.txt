@@ -184,7 +184,7 @@ a meshing criterion for tetrahedral mesh generation using the \cgal \ref PkgMesh
 \cgalExample{Tetrahedral_remeshing/mesh_and_remesh_with_sizing.cpp}
 
 In the second example, we show how to use the provided adaptive sizing field,
-`CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field`,
+`CGAL::Adaptive_remeshing_sizing_field`,
 that automatically sets the target edge length to keep a mesh density consistent with
 the density of the input mesh.
 \cgalExample{Tetrahedral_remeshing/mesh_and_remesh_with_adaptive_sizing.cpp}

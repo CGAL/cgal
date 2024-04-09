@@ -34,7 +34,6 @@ using namespace CGAL::parameters;
 
 int main()
 {
-  CGAL::get_default_random() = CGAL::Random(1711792448);
   const std::string filename = CGAL::data_file_path("images/liver.inr.gz");
 
   CGAL::Image_3 image;

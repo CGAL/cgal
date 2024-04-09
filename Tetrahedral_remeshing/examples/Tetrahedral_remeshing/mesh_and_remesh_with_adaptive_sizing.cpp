@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
   std::cout.flush();
 
   CGAL::tetrahedral_isotropic_remeshing(tr,
-    CGAL::Tetrahedral_remeshing::create_adaptive_remeshing_sizing_field(tr),
+    CGAL::create_adaptive_remeshing_sizing_field(tr),
     CGAL::parameters::number_of_iterations(5)
     .nb_flip_smooth_iterations(10));
 

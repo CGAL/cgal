@@ -142,10 +142,6 @@ void set_subdomain(Remeshing_triangulation& tr, const int index)
 
 int main(int argc, char* argv[])
 {
-  CGAL::get_default_random() = CGAL::Random(1711705288);
-
-  CGAL::Random rng(12);
-
   std::cout << "CGAL Random seed = " << CGAL::get_default_random().get_seed() << std::endl;
 
   Remeshing_triangulation tr;
