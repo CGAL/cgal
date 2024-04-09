@@ -28,6 +28,10 @@
 #include <limits>
 #include <queue>
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#include <CGAL/Real_timer.h>
+#endif
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -1914,6 +1918,8 @@ void flip_edges(C3T3& c3t3,
   std::cout.flush();
   std::size_t nb_flips_in_volume = 0;
   std::size_t nb_flips_on_surface = 0;
+  CGAL::Real_timer timer;
+  timer.start();
 #endif
 
   for (auto c : c3t3.cells_in_complex())
@@ -1977,9 +1983,11 @@ void flip_edges(C3T3& c3t3,
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+  timer.stop();
   std::cout << "\rFlip edges... done ("
     << nb_flips_on_surface << "/"
-    << nb_flips_in_volume << " surface/volume flips done)." << std::endl;
+    << nb_flips_in_volume << " surface/volume flips done, in "
+    << timer.time() << " seconds)." << std::endl;
 #endif
 }
 

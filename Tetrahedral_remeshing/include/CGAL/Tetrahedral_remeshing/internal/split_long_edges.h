@@ -28,6 +28,10 @@
 #include <utility>
 #include <optional>
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#include <CGAL/Real_timer.h>
+#endif
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -286,6 +290,8 @@ void split_long_edges(C3T3& c3t3,
   std::cout << "Split long edges...";
   std::cout.flush();
   std::size_t nb_splits = 0;
+  CGAL::Real_timer timer;
+  timer.start();
 #endif
 
   //collect long edges
@@ -363,7 +369,9 @@ void split_long_edges(C3T3& c3t3,
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << " done (" << nb_splits << " splits)." << std::endl;
+  timer.stop();
+  std::cout << " done (" << nb_splits << " splits, in "
+            << timer.time() << " sec)." << std::endl;
 #endif
 }
 

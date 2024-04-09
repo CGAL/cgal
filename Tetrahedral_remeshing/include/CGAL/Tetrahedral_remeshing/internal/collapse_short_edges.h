@@ -32,6 +32,9 @@
 #include <CGAL/utility.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#include <CGAL/Real_timer.h>
+#endif
 
 namespace CGAL
 {
@@ -1257,6 +1260,8 @@ void collapse_short_edges(C3T3& c3t3,
   std::cout << "Collapse short edges...";
   std::cout.flush();
   std::size_t nb_collapses = 0;
+  CGAL::Real_timer timer;
+  timer.start();
 #endif
 
   //collect long edges
@@ -1355,7 +1360,9 @@ void collapse_short_edges(C3T3& c3t3,
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
+  timer.stop();
+  std::cout << " done (" << nb_collapses << " collapses, in "
+            << timer.time() << " seconds)." << std::endl;
 #endif
 }
 }

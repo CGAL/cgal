@@ -1051,7 +1051,10 @@ public:
     std::size_t nb_done_3d = 0;
     std::size_t nb_done_2d = 0;
     std::size_t nb_done_1d = 0;
+    CGAL::Real_timer timer;
+    timer.start();
 #endif
+
     FT total_move = 0.;
 
     Tr& tr = c3t3.triangulation();
@@ -1123,11 +1126,12 @@ public:
     CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+    timer.stop();
     std::size_t nb_done = nb_done_3d + nb_done_2d + nb_done_1d;
     std::cout << " done ("
       << nb_done_1d << "/" << nb_done_2d << "/" << nb_done_3d << " vertices smoothed,"
       << " average move = " << (total_move / nb_done)
-      << ")." << std::endl;
+      << ", in "<< timer.time() << " seconds)." << std::endl;
 #endif
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     CGAL::Tetrahedral_remeshing::debug::dump_vertices_by_dimension(
