@@ -86,11 +86,10 @@ public:
   void init_smoothing(const FaceRange& face_range)
   {
     set_face_range(face_range);
-
     std::size_t id = 0;
     for(vertex_descriptor v : vertices(mesh_))
       put(vimap_, v, id++);
-
+    
     // vertices that are not in the range or are constrained still need value '1' in D because the RHS is D * X^n
     diagonal_.assign(vertices(mesh_).size(), 1.);
     constrained_flags_.assign(vertices(mesh_).size(), false);
@@ -293,7 +292,7 @@ private:
                                   const double& time)
   {
     fill_mass_matrix();
-
+    std::vector<bool> diag(vertices(mesh_).size(), false);
     // fill A = Mass - time * Laplacian
     for(const Triplet& t : stiffness_elements)
     {
@@ -301,17 +300,26 @@ private:
 
       if(i != j)
         A.set_coef(i, j, - time * t.get<2>(), true);
-      else if(!constrained_flags_[i]) // && i==j
+      else if(!constrained_flags_[i]) {// && i==j
         A.set_coef(i, i, diagonal_[t.get<0>()] - time * t.get<2>(), true);
+        diag[i] = true;
+      }
     }
 
     for(vertex_descriptor v : vrange_)
     {
       std::size_t index = get(vimap_, v);
-      if(constrained_flags_[index])
+      if(constrained_flags_[index]) {
         A.set_coef(index, index, 1., true);
+        diag[index] = true;
+      }
     }
-
+    for (int i = 0; i != diag.size(); ++i) {
+        if (!diag[i]) {
+            A.set_coef(i, i, 1., true);
+      }
+    }
+    std::cout << A.eigen_object() << std::endl;
     // we do not call A.assemble_matrix here
     // Eigen's compute during factorization does the building correctly,
     // and without assemble_matrix the reference A can be used in the next iterations.
