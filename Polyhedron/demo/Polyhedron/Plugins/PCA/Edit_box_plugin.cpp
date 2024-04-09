@@ -7,6 +7,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
