@@ -31,6 +31,7 @@
 #include <limits>
 
 #include <boost/unordered_set.hpp>
+#include <boost/container/small_vector.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
@@ -802,7 +803,7 @@ private:
   {
         CGAL_precondition(dimension() == 3);
 
-        std::stack<Cell_handle> cell_stack;
+        std::stack<Cell_handle, boost::container::small_vector<Cell_handle, 128>> cell_stack;
         cell_stack.push(d);
         d->tds_data().mark_in_conflict();
         *it.first++ = d;
@@ -1381,20 +1382,16 @@ public:
 
     Visitor visit(v, output, this, f);
 
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
+    boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
     incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(tmp_cells), visit.facet_it()));
     else
     incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-    typename std::vector<Cell_handle>::iterator cit;
-    for(cit = tmp_cells.begin();
-        cit != tmp_cells.end();
-        ++cit)
+    for(auto c : tmp_cells)
     {
-      (*cit)->tds_data().clear();
-      visit(*cit);
+      c->tds_data().clear();
+      visit(c);
     }
 
     return visit.result();
