@@ -212,5 +212,8 @@ Jane Tournois worked on the finalization of the code, the API, and documentation
 
 It was initially published in CGAL-5.1.
 
+The ability to use a sizing field as variable target edge length was introduced by
+Jane Tournois in CGAL-6.0.
+
 */
 } /* namespace CGAL */
