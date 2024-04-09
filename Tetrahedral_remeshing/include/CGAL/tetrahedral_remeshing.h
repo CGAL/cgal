@@ -521,13 +521,13 @@ void tetrahedral_isotropic_remeshing(
 
   remesher.remesh(max_it, nb_extra_iterations);
 
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   const double angle_bound = 5.0;
   Tetrahedral_remeshing::debug::dump_cells_with_small_dihedral_angle(
     c3t3.triangulation(),
     angle_bound, cell_select, "bad_cells.mesh");
 #endif
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
   Tetrahedral_remeshing::internal::compute_statistics(
     c3t3.triangulation(),
     cell_select, "statistics_end.txt");
