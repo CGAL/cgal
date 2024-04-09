@@ -14,8 +14,7 @@
 
 #include <CGAL/tetrahedral_remeshing.h>
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
-#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
-#include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
+#include <CGAL/Adaptive_remeshing_sizing_field.h>
 
 #include <unordered_map>
 #include <memory>
@@ -129,13 +128,11 @@ public Q_SLOTS:
         }
       }
 
-      namespace TR = CGAL::Tetrahedral_remeshing;
-
       if (adaptive_sizing)
       {
         CGAL::tetrahedral_isotropic_remeshing(
           c3t3_item->c3t3(),
-          TR::create_adaptive_remeshing_sizing_field(c3t3_item->c3t3().triangulation(),
+          CGAL::create_adaptive_remeshing_sizing_field(c3t3_item->c3t3().triangulation(),
               CGAL::parameters::edge_is_constrained_map(Constraints_pmap(constraints))),
           CGAL::parameters::remesh_boundaries(!protect)
           .number_of_iterations(nb_iter)

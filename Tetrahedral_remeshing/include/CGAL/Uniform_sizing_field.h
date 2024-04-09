@@ -15,11 +15,9 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing_sizing_field.h>
 
 namespace CGAL
-{
-namespace Tetrahedral_remeshing
 {
 /**
  * @class Uniform_sizing_field
@@ -27,14 +25,12 @@ namespace Tetrahedral_remeshing
  *
  * The uniform (i.e. constant) sizing field for tetrahedral remeshing
  *
- * \cgalModels{`RemeshingSizingField_3`}
+ * \cgalModels{RemeshingSizingField_3}
  */
 template <class GT>
 class Uniform_sizing_field
-  : public Sizing_field<GT>
+  : public Tetrahedral_remeshing_sizing_field<GT>
 {
-private:
-  typedef Sizing_field<GT>          Base;
 public:
   typedef typename GT::FT         FT;
   typedef typename GT::Point_3    Point_3;
@@ -56,7 +52,6 @@ private:
   const FT m_size;
 };
 
-}//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
 
 #endif //CGAL_UNIFORM_SIZING_FIELD_H

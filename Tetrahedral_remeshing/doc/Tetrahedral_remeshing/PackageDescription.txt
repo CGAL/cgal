@@ -54,12 +54,13 @@ while preserving the input geometric curve and surface features.
 - `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
 - `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
 
-- `CGAL::Tetrahedral_remeshing::Uniform_sizing_field`
-- `CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field`
+- `CGAL::Uniform_sizing_field`
+- `CGAL::Adaptive_remeshing_sizing_field`
 
 \cgalCRPSection{Function Templates}
 
 - `CGAL::tetrahedral_isotropic_remeshing()`
 - `CGAL::convert_to_triangulation_3()`
+- `CGAL::create_adaptive_remeshing_sizing_field()`
 
 */

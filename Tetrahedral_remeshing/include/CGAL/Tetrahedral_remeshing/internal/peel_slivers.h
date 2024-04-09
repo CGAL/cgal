@@ -16,7 +16,7 @@
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
-#include <CGAL/Tetrahedral_remeshing/Complex_cells_selector.h>
+#include <CGAL/Tetrahedral_remeshing/internal/property_maps.h>
 
 namespace CGAL
 {
@@ -123,7 +123,7 @@ std::size_t peel_slivers(C3T3 & c3t3,
 {
   using Tr = typename C3T3::Triangulation;
   return peel_slivers(c3t3, sliver_angle,
-    CGAL::Tetrahedral_remeshing::Complex_cells_selector<Tr>());
+    CGAL::Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 }
 
 

@@ -19,7 +19,7 @@
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
-#include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing_sizing_field.h>
 
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -38,8 +38,6 @@
 
 namespace CGAL
 {
-namespace Tetrahedral_remeshing
-{
 
 /**
  * @class Adaptive_remeshing_sizing_field
@@ -52,7 +50,7 @@ namespace Tetrahedral_remeshing
  */
 template <typename Tr>
 class Adaptive_remeshing_sizing_field
-  : public Sizing_field<typename Tr::Geom_traits>
+  : public Tetrahedral_remeshing_sizing_field<typename Tr::Geom_traits>
 {
   // Types
 public:
@@ -285,6 +283,7 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
 {
   using Edge = typename Tr::Edge;
   using Facet = typename Tr::Facet;
+  using namespace CGAL::Tetrahedral_remeshing;
 
   std::vector<Edge> tmp_edges;
   tr.incident_edges(v, std::back_inserter(tmp_edges));
@@ -326,7 +325,7 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
       std::back_inserter(edges),
       [&ecmap](const Edge& e)
       {
-        const auto evv = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);
+        const auto evv = make_vertex_pair(e);
         return get(ecmap, evv);
       });
     break;
@@ -350,8 +349,6 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
 
   return sum / static_cast<FT>(edges.size());
 }
-
-} // end namespace Tetrahedral_remeshing
 
 } //namespace CGAL
 

@@ -59,10 +59,10 @@ that can be either uniform, adaptive, or custom.
 
 The sizing field establishes the local target edge length for the remeshed
 tetrahedra. Two sizing fields are provided: a uniform and a mesh-adaptive sizing field.
-With `CGAL::Tetrahedral_remeshing::Uniform_sizing_field`,
+With `CGAL::Uniform_sizing_field`,
 all tetrahedra edges are targeted to have equal lengths,
 as depicted in Section \ref secTetRemeshing .
-With `CGAL::Tetrahedral_remeshing::Adaptive_remeshing_sizing_field`,
+With `CGAL::Adaptive_remeshing_sizing_field`,
 tetrahedra edge lengths remain locally close to the local size of simplices in the input mesh.
 
 The difference between remeshing with uniform and adaptive

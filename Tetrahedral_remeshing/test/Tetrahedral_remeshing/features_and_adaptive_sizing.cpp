@@ -9,7 +9,7 @@
 #include <CGAL/property_map.h>
 
 #include <CGAL/tetrahedral_remeshing.h>
-#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
+#include <CGAL/Adaptive_remeshing_sizing_field.h>
 
 #include <CGAL/IO/File_medit.h>
 #include <string>
@@ -85,10 +85,8 @@ int main(int argc, char* argv[])
   //It is possible to use :  CGAL::convert_to_triangulation_3(c3t3),
   //  Then the triangulation is copied and duplicated, and c3t3 remains as is.
 
-  namespace TR = CGAL::Tetrahedral_remeshing;
-
   CGAL::tetrahedral_isotropic_remeshing(tr,
-    TR::create_adaptive_remeshing_sizing_field(tr, p::edge_is_constrained_map(constraints_pmap)),
+    CGAL::create_adaptive_remeshing_sizing_field(tr, p::edge_is_constrained_map(constraints_pmap)),
     p::number_of_iterations(3)
     .edge_is_constrained_map(constraints_pmap)
     .smooth_constrained_edges(true));

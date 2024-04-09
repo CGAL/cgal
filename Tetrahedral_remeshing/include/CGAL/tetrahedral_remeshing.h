@@ -18,8 +18,8 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
-#include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
-#include <CGAL/Tetrahedral_remeshing/Complex_cells_selector.h>
+#include <CGAL/Uniform_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/internal/property_maps.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
@@ -359,7 +359,7 @@ convert_to_triangulation_3(
 
   using GT   = typename Tr::Geom_traits;
   using TDS  = typename Tr::Triangulation_data_structure;
-  using Dummy_sizing = CGAL::Tetrahedral_remeshing::Uniform_sizing_field<GT>;
+  using Dummy_sizing = CGAL::Uniform_sizing_field<GT>;
 
   using Remesher_types
     = typename Tetrahedral_remeshing::internal::Adaptive_remesher_type_generator

@@ -9,7 +9,7 @@
 #include <CGAL/make_mesh_3.h>
 
 #include <CGAL/tetrahedral_remeshing.h>
-#include <CGAL/Tetrahedral_remeshing/Adaptive_remeshing_sizing_field.h>
+#include <CGAL/Adaptive_remeshing_sizing_field.h>
 
 #include <CGAL/IO/File_medit.h>
 

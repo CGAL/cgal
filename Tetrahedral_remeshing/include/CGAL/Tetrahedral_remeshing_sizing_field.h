@@ -1,4 +1,4 @@
-// Copyright (c) 2020 GeometryFactory (France) and Telecom Paris (France).
+// Copyright (c) 2024 GeometryFactory (France) and Telecom Paris (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org)
@@ -10,21 +10,20 @@
 //
 // Author(s)     : Jane Tournois, Noura Faraj, Jean-Marc Thiery, Tamy Boubekeur
 
-#ifndef CGAL_SIZING_FIELD_H
-#define CGAL_SIZING_FIELD_H
+#ifndef CGAL_TETRAHEDRAL_REMESHING_SIZING_FIELD_H
+#define CGAL_TETRAHEDRAL_REMESHING_SIZING_FIELD_H
 
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
 namespace CGAL
 {
-namespace Tetrahedral_remeshing
-{
+
 /*!
-* Sizing field virtual class
-* @tparam GT the geometric traits
+* Sizing field virtual class, designed for tetrahedral remeshing
+* @tparam GT the geometric traits class
 */
 template <class GT>
-class Sizing_field
+class Tetrahedral_remeshing_sizing_field
 {
 public:
   typedef GT                      K;
@@ -36,7 +35,6 @@ public:
   FT operator()(const Point_3& p, const int dim, const Index& i) const;
 };
 
-}//end namespace Tetrahedral_remeshing
 }//end namespace CGAL
 
-#endif //CGAL_SIZING_FIELD_H
+#endif //CGAL_TETRAHEDRAL_REMESHING_SIZING_FIELD_H
