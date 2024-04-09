@@ -31,6 +31,7 @@
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Random.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/boost/graph/generators.h>
 
 // Internal includes.
 #include <CGAL/KSP/utils.h>
