@@ -46,7 +46,7 @@ struct Custom_Initial_points_generator
   Custom_Initial_points_generator(CGAL::Image_3& image) : image_(image) { }
 
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
-  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 1) const
+  OutputIterator operator()(OutputIterator pts, const MeshDomain& /* domain */, const C3t3& c3t3, int /* n */ = 1) const
   {
     typedef typename C3t3::Triangulation::Geom_traits::Point_3   Point_3;
     typedef typename C3t3::Triangulation::Geom_traits::Vector_3  Vector_3;
