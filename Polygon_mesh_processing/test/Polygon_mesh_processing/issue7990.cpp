@@ -25,14 +25,27 @@ int main(int argc, char* argv[])
         }
         //draw(mesh);
         const unsigned int nb_iterations = (argc > 2) ? std::atoi(argv[2]) : 3;
-        const double time = (argc > 3) ? std::atof(argv[3]) : 0.0001;
+        const double time = (argc > 3) ? std::atof(argv[3]) : 0.001;
         std::set<Mesh::Vertex_index> constrained_vertices;
         for(Mesh::Vertex_index v : vertices(mesh))
         {
-                if(is_border(v, mesh))
-                        constrained_vertices.insert(v);
+              //  if(is_border(v, mesh))
+              //          constrained_vertices.insert(v);
         }
         std::cout << "Constraining: " << constrained_vertices.size() << " border vertices" << std::endl;
+
+        constrained_vertices.insert(Mesh::Vertex_index(7));
+        constrained_vertices.insert(Mesh::Vertex_index(8));
+        constrained_vertices.insert(Mesh::Vertex_index(9));
+        constrained_vertices.insert(Mesh::Vertex_index(10));
+        constrained_vertices.insert(Mesh::Vertex_index(25));
+        constrained_vertices.insert(Mesh::Vertex_index(26));
+        constrained_vertices.insert(Mesh::Vertex_index(27));
+        constrained_vertices.insert(Mesh::Vertex_index(28));
+        constrained_vertices.insert(Mesh::Vertex_index(13));
+        constrained_vertices.insert(Mesh::Vertex_index(16));
+        constrained_vertices.insert(Mesh::Vertex_index(19));
+        constrained_vertices.insert(Mesh::Vertex_index(22));
         CGAL::Boolean_property_map<std::set<Mesh::Vertex_index> > vcmap(constrained_vertices);
 
 

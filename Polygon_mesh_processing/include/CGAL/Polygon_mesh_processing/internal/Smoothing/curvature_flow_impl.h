@@ -319,7 +319,7 @@ private:
             A.set_coef(i, i, 1., true);
       }
     }
-    std::cout << A.eigen_object() << std::endl;
+    // std::cout << A.eigen_object() << std::endl;
     // we do not call A.assemble_matrix here
     // Eigen's compute during factorization does the building correctly,
     // and without assemble_matrix the reference A can be used in the next iterations.
