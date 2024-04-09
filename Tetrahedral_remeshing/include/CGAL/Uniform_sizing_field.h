@@ -20,6 +20,8 @@
 namespace CGAL
 {
 /**
+ * @ingroup PkgTetrahedralRemeshingSizing
+ *
  * @class Uniform_sizing_field
  * @tparam GT the geometric traits class
  *

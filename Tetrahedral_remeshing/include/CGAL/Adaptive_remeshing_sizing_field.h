@@ -40,6 +40,8 @@ namespace CGAL
 {
 
 /**
+ * @ingroup PkgTetrahedralRemeshingSizing
+ *
  * @class Adaptive_remeshing_sizing_field
  * @tparam Tr underlying triangulation type
  *
@@ -183,6 +185,8 @@ private:
 };//end of class Adaptive_remeshing_sizing_field
 
 /*!
+ * @ingroup PkgTetrahedralRemeshingSizing
+ *
  * @brief Create an adaptive sizing field for tetrahedral remeshing
  *
  * \relates Adaptive_remeshing_sizing_field

@@ -7,6 +7,9 @@
 /// \defgroup PkgTetrahedralRemeshingClasses Classes
 /// \ingroup PkgTetrahedralRemeshingRef
 
+/// \defgroup PkgTetrahedralRemeshingSizing Sizing Fields
+/// \ingroup PkgTetrahedralRemeshingRef
+
 /*!
 \addtogroup PkgTetrahedralRemeshingRef
 

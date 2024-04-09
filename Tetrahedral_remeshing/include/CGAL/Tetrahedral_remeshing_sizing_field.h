@@ -19,6 +19,8 @@ namespace CGAL
 {
 
 /*!
+* @ingroup PkgTetrahedralRemeshingSizing
+*
 * Sizing field virtual class, designed for tetrahedral remeshing
 * @tparam GT the geometric traits class
 */
