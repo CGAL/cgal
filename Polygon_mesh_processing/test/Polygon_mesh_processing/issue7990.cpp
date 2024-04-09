@@ -49,6 +49,7 @@ int main(int argc, char* argv[])
         CGAL::Boolean_property_map<std::set<Mesh::Vertex_index> > vcmap(constrained_vertices);
 
 
+
         std::cerr.rdbuf(std::cout.rdbuf());
         std::set<Mesh::Face_index> faces_to_smooth;
 #if 0

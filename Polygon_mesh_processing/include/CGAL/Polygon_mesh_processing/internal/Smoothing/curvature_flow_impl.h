@@ -89,7 +89,7 @@ public:
     std::size_t id = 0;
     for(vertex_descriptor v : vertices(mesh_))
       put(vimap_, v, id++);
-    
+
     // vertices that are not in the range or are constrained still need value '1' in D because the RHS is D * X^n
     diagonal_.assign(vertices(mesh_).size(), 1.);
     constrained_flags_.assign(vertices(mesh_).size(), false);
