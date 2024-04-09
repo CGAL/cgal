@@ -29,6 +29,8 @@
 
 #include <CGAL/property_map.h>
 
+#include <type_traits>
+
 #ifdef CGAL_DUMP_REMESHING_STEPS
 #include <sstream>
 #endif
@@ -174,7 +176,11 @@ namespace CGAL
 */
 template<typename Traits, typename TDS, typename SLDS,
          typename SizingFunction,
-         typename NamedParameters = parameters::Default_named_parameters>
+         typename NamedParameters = parameters::Default_named_parameters,
+         typename = std::enable_if_t<
+           std::is_invocable_v<SizingFunction,
+                               typename Traits::Point_3, int, typename TDS::Vertex::Index> >
+        >
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
   const SizingFunction& sizing,
@@ -262,36 +268,29 @@ void tetrahedral_isotropic_remeshing(
 #endif
 }
 
-template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters = parameters::Default_named_parameters>
+template<typename Traits, typename TDS, typename SLDS, typename FT,
+         typename NamedParameters = parameters::Default_named_parameters,
+         typename = std::enable_if_t<
+           !std::is_invocable_v<FT,
+                                typename Traits::Point_3, int, typename TDS::Vertex::Index> >
+        >
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
-  const double target_edge_length,
+  const FT target_edge_length,
   const NamedParameters& np = parameters::default_values())
 {
-  typedef typename TDS::Vertex::Index Index;
+  using P = typename Traits::Point_3;
+  using Index = typename TDS::Vertex::Index;
+  using Sizing_FT = typename Traits::FT;
+
+  const Sizing_FT target_ft = static_cast<Sizing_FT>(target_edge_length);
+
   tetrahedral_isotropic_remeshing(
     tr,
-    [target_edge_length]
-      (const typename Traits::Point_3& /* p */, const int&, const Index&)
-        {return target_edge_length; },
+    [target_ft]
+      (const P&, const int&, const Index&)
+        { return target_ft; },
     np);
-}
-
-template<typename Traits, typename TDS, typename SLDS,
-         typename NamedParameters = parameters::Default_named_parameters>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
-  const float target_edge_length,
-  const NamedParameters& np = parameters::default_values())
-{
-   typedef typename TDS::Vertex::Index Index;
-   tetrahedral_isotropic_remeshing(
-     tr,
-     [target_edge_length]
-       (const typename Traits::Point_3& /* p */, const int&, const Index&)
-         {return target_edge_length;},
-     np);
 }
 
 
@@ -405,45 +404,39 @@ convert_to_triangulation_3(
 ////// the empty-sphere property is not respected
 ///////
 template<typename Tr,
-         typename CornerIndex, typename CurveIndex,
-         typename NamedParameters = parameters::Default_named_parameters>
+         typename CornerIndex, typename CurveIndex, typename FT,
+         typename NamedParameters = parameters::Default_named_parameters,
+         typename = std::enable_if_t<
+           !std::is_invocable_v<FT,
+             typename Tr::Geom_traits::Point_3, int, typename Tr::Vertex::Index> >
+        >
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-  const double target_edge_length,
+  const FT target_edge_length,
   const NamedParameters& np = parameters::default_values())
 {
   using P = typename Tr::Geom_traits::Point_3;
-  using Index = typename Tr::Triangulation_data_structure::Vertex::Index;
-  tetrahedral_isotropic_remeshing(
-    c3t3,
-    [target_edge_length]
-      (const P& /* p */, const int&, const Index&)
-        { return target_edge_length; },
-    np);
-}
+  using Index = typename Tr::Vertex::Index;
+  using Sizing_FT = typename Tr::Geom_traits::FT;
 
-template<typename Tr,
-         typename CornerIndex, typename CurveIndex,
-         typename NamedParameters = parameters::Default_named_parameters>
-void tetrahedral_isotropic_remeshing(
-  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
-  const float target_edge_length,
-  const NamedParameters& np = parameters::default_values())
-{
-  using P = typename Tr::Geom_traits::Point_3;
-  using Index = typename Tr::Triangulation_data_structure::Vertex::Index;
+  const Sizing_FT target_ft = static_cast<Sizing_FT>(target_edge_length);
+
   tetrahedral_isotropic_remeshing(
     c3t3,
-    [target_edge_length]
-      (const P& /* p */, const int&, const Index&)
-        { return target_edge_length; },
+    [target_ft]
+      (const P&, const int&, const Index&)
+        { return target_ft; },
     np);
 }
 
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename SizingFunction,
-         typename NamedParameters = parameters::Default_named_parameters>
+         typename NamedParameters = parameters::Default_named_parameters,
+         typename = std::enable_if_t<
+           std::is_invocable_v<SizingFunction,
+             typename Tr::Geom_traits::Point_3, int, typename Tr::Vertex::Index> >
+        >
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
   const SizingFunction& sizing,
