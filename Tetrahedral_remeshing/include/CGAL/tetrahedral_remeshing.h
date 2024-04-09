@@ -176,10 +176,12 @@ namespace CGAL
 */
 template<typename Traits, typename TDS, typename SLDS,
          typename SizingFunction,
-         typename NamedParameters = parameters::Default_named_parameters,
-         typename = std::enable_if_t<
+         typename NamedParameters = parameters::Default_named_parameters
+#ifndef DOXYGEN_RUNNING
+       , typename = std::enable_if_t<
            std::is_invocable_v<SizingFunction,
                                typename Traits::Point_3, int, typename TDS::Vertex::Index> >
+#endif
         >
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
@@ -269,10 +271,12 @@ void tetrahedral_isotropic_remeshing(
 }
 
 template<typename Traits, typename TDS, typename SLDS, typename FT,
-         typename NamedParameters = parameters::Default_named_parameters,
-         typename = std::enable_if_t<
+         typename NamedParameters = parameters::Default_named_parameters
+#ifndef DOXYGEN_RUNNING
+       , typename = std::enable_if_t<
            !std::is_invocable_v<FT,
                                 typename Traits::Point_3, int, typename TDS::Vertex::Index> >
+#endif
         >
 void tetrahedral_isotropic_remeshing(
   CGAL::Triangulation_3<Traits, TDS, SLDS>& tr,
@@ -405,10 +409,12 @@ convert_to_triangulation_3(
 ///////
 template<typename Tr,
          typename CornerIndex, typename CurveIndex, typename FT,
-         typename NamedParameters = parameters::Default_named_parameters,
-         typename = std::enable_if_t<
+         typename NamedParameters = parameters::Default_named_parameters
+#ifndef DOXYGEN_RUNNING
+       , typename = std::enable_if_t<
            !std::is_invocable_v<FT,
              typename Tr::Geom_traits::Point_3, int, typename Tr::Vertex::Index> >
+#endif
         >
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
@@ -432,10 +438,12 @@ void tetrahedral_isotropic_remeshing(
 template<typename Tr,
          typename CornerIndex, typename CurveIndex,
          typename SizingFunction,
-         typename NamedParameters = parameters::Default_named_parameters,
-         typename = std::enable_if_t<
+         typename NamedParameters = parameters::Default_named_parameters
+#ifndef DOXYGEN_RUNNING
+       , typename = std::enable_if_t<
            std::is_invocable_v<SizingFunction,
              typename Tr::Geom_traits::Point_3, int, typename Tr::Vertex::Index> >
+#endif
         >
 void tetrahedral_isotropic_remeshing(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex>& c3t3,
