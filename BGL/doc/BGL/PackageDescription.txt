@@ -677,10 +677,8 @@ user might encounter.
 - `CGAL::is_valid_face_graph()`
 - `CGAL::is_valid_polygon_mesh()`
 
-- `CGAL::is_tetrahedron()
-
-`
 \cgalCRPSection{Generator Functions}
+- `CGAL::is_tetrahedron()`
 - `CGAL::is_hexahedron()`
 - `CGAL::make_triangle()`
 - `CGAL::make_tetrahedron()`
