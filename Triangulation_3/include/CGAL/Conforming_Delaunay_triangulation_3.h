@@ -206,10 +206,12 @@ protected:
             auto v2 = (*cell_it)->vertex(j);
             if(self.tr.is_infinite(v1) || self.tr.is_infinite(v2)) continue;
             if(self.use_finite_edges_map()) {
-              [[maybe_unused]] auto nb_erased = self.all_finite_edges.erase(make_sorted_pair(v1, v2));
+              if(v1 > v2) std::swap(v1, v2);
+              auto v1_index = v1->time_stamp();
+              [[maybe_unused]] auto nb_erased = self.all_finite_edges[v1_index].erase(v2);
               if constexpr (cdt_3_can_use_cxx20_format()) if(self.debug_finite_edges_map() && nb_erased > 0) {
                 std::cerr << std::format("erasing edge {} {}\n", self.display_vert((std::min)(v1, v2)),
-                                        self.display_vert((std::max)(v1, v2))); 
+                                        self.display_vert((std::max)(v1, v2)));
               }
             }
             auto [contexts_begin, contexts_end] =
@@ -310,10 +312,11 @@ protected:
 
   void new_edge(Edge e)
   {
-    auto [v1, v2] = tr.vertices(e);
+    if(!update_all_finite_edges_) return;
+    auto [v1, v2] = make_sorted_pair(tr.vertices(e));
     if(tr.is_infinite(v1) || tr.is_infinite(v2))
       return;
-    [[maybe_unused]] auto [_, inserted] = all_finite_edges.insert(make_sorted_pair(v1, v2));
+    [[maybe_unused]] auto [_, inserted] = all_finite_edges[v1->time_stamp()].insert(v2);
     if constexpr (cdt_3_can_use_cxx20_format()) if (debug_finite_edges_map() && inserted) {
       if(v2 < v1) std::swap(v1, v2);
       std::cerr << std::format("new_edge({}, {})\n", display_vert(v1), display_vert(v2));
@@ -344,14 +347,18 @@ protected:
     switch (tr.dimension()) {
     case 3: {
       typename T_3::Conflict_tester_3 tester(p, this);
-      return tr.insert_in_conflict(p, lt, c, li, lj, tester,
-                                   visitor);
+      auto v = tr.insert_in_conflict(p, lt, c, li, lj, tester,
+                                     visitor);
+      new_vertex(v);
+      return v;
     } // dim 3
     case 2: {
       typename T_3::Conflict_tester_2 tester(p, this);
-      auto v = tr.insert_in_conflict(p, lt, c, li, lj, tester,
-                                     visitor);
-      tr.incident_edges(v, boost::make_function_output_iterator([&](Edge e) { this->new_edge(e); }));
+      auto v = tr.insert_in_conflict(p, lt, c, li, lj, tester, visitor);
+      if(use_finite_edges_map()) {
+        new_vertex(v);
+        tr.incident_edges(v, boost::make_function_output_iterator([&](Edge e) { this->new_edge(e); }));
+      }
       return v;
     } // dim 2
     default:
@@ -359,6 +366,7 @@ protected:
       // Do not use the generic insert.
       auto v = tr.insert(p, c);
       if(use_finite_edges_map()) {
+        new_vertex(v);
         all_finite_edges.clear();
         if (debug_finite_edges_map()) std::cerr << "all_finite_edges.clear()\n";
         for(auto e: tr.all_edges()) {
@@ -500,8 +508,12 @@ public:
   bool is_edge(Vertex_handle va, Vertex_handle vb) const {
     const bool is_edge_v1 =
         ((debug_finite_edges_map() && use_finite_edges_map()) || !use_finite_edges_map()) && tr.tds().is_edge(va, vb);
+
+    if(use_finite_edges_map() && va > vb) std::swap(va, vb);
+    const auto va_index = va->time_stamp();
     const bool is_edge_v2 =
-        use_finite_edges_map() && all_finite_edges.find(make_sorted_pair(va, vb)) != all_finite_edges.end();
+        use_finite_edges_map() && all_finite_edges[va_index].find(vb) != all_finite_edges[va_index].end();
+
     if(debug_finite_edges_map() && use_finite_edges_map() && is_edge_v1 != is_edge_v2) {
       std::cerr << "!! Inconsistent edge status\n";
       std::cerr << "  -> constraint " << display_vert(va) << "     " << display_vert(vb) << '\n';
@@ -693,6 +705,9 @@ protected:
     visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v);
     add_to_subconstraints_to_conform(va, v, constraint);
     add_to_subconstraints_to_conform(v, vb, constraint);
+
+    new_vertex(v);
+
     return v;
   }
 
@@ -1020,8 +1035,7 @@ protected:
   std::stack<std::pair<Subconstraint, Constraint_id> >
     subconstraints_to_conform;
 
-  using Hash = boost::hash<Pair_of_vertex_handles>;
-  std::unordered_set<Pair_of_vertex_handles, Hash> all_finite_edges;
+  std::vector<std::unordered_set<Vertex_handle>> all_finite_edges;
   bool update_all_finite_edges_ = false;
 
   void update_all_finite_edges() {
@@ -1029,11 +1043,18 @@ protected:
       update_all_finite_edges_ = true;
       if(use_finite_edges_map()) {
         all_finite_edges.clear();
-        all_finite_edges.reserve(tr.number_of_finite_edges());
+        all_finite_edges.resize(tr.number_of_vertices()+1);
         for(auto e: tr.all_edges()) {
           new_edge(e);
         }
       }
+    }
+  }
+
+  void new_vertex(Vertex_handle v) {
+    if(use_finite_edges_map() && v->time_stamp() >= all_finite_edges.size()) {
+      all_finite_edges.emplace_back();
+      CGAL_assertion(v->time_stamp() == all_finite_edges.size() - 1);
     }
   }
 

@@ -576,15 +576,18 @@ template <typename T_3>
 class Constrained_Delaunay_triangulation_3 : public Conforming_Delaunay_triangulation_3<T_3> {
 public:
   using Conforming_Dt = Conforming_Delaunay_triangulation_3<T_3>;
+
   using Vertex_handle = typename T_3::Vertex_handle;
-  using Cell_handle = typename T_3::Cell_handle;
   using Edge = typename T_3::Edge;
   using Facet = typename T_3::Facet;
-  using Point_3 = typename T_3::Point;
-  using Segment_3 = typename T_3::Geom_traits::Segment_3;
-  using Vector_3 = typename T_3::Geom_traits::Vector_3;
-  using Locate_type = typename T_3::Locate_type;
+  using Cell_handle = typename T_3::Cell_handle;
+
   using Geom_traits = typename T_3::Geom_traits;
+  using Point_3 = typename T_3::Point;
+  using Segment_3 = typename Geom_traits::Segment_3;
+  using Vector_3 = typename Geom_traits::Vector_3;
+  using Locate_type = typename T_3::Locate_type;
+  using size_type = typename T_3::size_type;
 
   using Vertex_marker = CDT_3_vertex_marker;
   using Cell_marker = CDT_3_cell_marker;
@@ -923,6 +926,9 @@ public:
     for(auto c: cells_of_cavity) {
       this->tds().delete_cell(c);
     }
+
+    this->new_vertex(p_vh);
+
     CGAL_assume(!this->debug_validity() || this->is_valid(true));
 
     return p_vh;
@@ -3143,23 +3149,29 @@ public:
     }
     }
     if(this->use_finite_edges_map()) {
-      bool test = this->all_finite_edges.size() == this->number_of_finite_edges();
+      const auto number_of_elements_in_finite_edges_map =
+          std::accumulate(this->all_finite_edges.begin(), this->all_finite_edges.end(), size_type(0),
+                          [&](size_type res, const auto& hash_map) { return res + hash_map.size(); });
+      bool test = number_of_elements_in_finite_edges_map == this->number_of_finite_edges();
       result = result && test;
       if(!test && verbose) {
-        std::cerr << "all_finite_edges.size() = " << this->all_finite_edges.size()
+        std::cerr << "all_finite_edges.size() = " << number_of_elements_in_finite_edges_map
                   << " != number_of_finite_edges() = " << this->number_of_finite_edges() << std::endl;
       }
-      for(auto e: this->all_finite_edges) {
-        test = this->is_edge(e.first, e.second);
-        result = result && test;
-        if(!test && verbose) {
-          std::cerr << "edge (" << IO::oformat(e.first, with_point_and_info) << ", "
-                    << IO::oformat(e.second, with_point_and_info) << ") is not an edge" << std::endl;
+      for(auto v1: this->finite_vertex_handles()) {
+        for(auto v2: this->all_finite_edges[v1->time_stamp()]) {
+          test = this->is_edge(v1, v2);
+          result = result && test;
+          if(!test && verbose) {
+            std::cerr << "edge (" << IO::oformat(v1, with_point_and_info) << ", "
+                << IO::oformat(v2, with_point_and_info) << ") is not an edge" << std::endl;
+          }
         }
       }
       for(auto e : this->finite_edges()) {
-        auto [v1, v2] = this->vertices(e);
-        test = this->all_finite_edges.find(make_sorted_pair(v1, v2)) != this->all_finite_edges.end();
+        auto [v1, v2] = make_sorted_pair(this->vertices(e));
+        auto v1_index = v1->time_stamp();
+        test = this->all_finite_edges[v1_index].find(v2)!= this->all_finite_edges[v1_index].end();
         result = result && test;
         if(!test && verbose) {
           std::cerr << "finite edge (" << IO::oformat(v1, with_point_and_info) << ", "
