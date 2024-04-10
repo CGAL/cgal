@@ -42,12 +42,12 @@ public:
   Construct_source construct_source_object();
 
   /*!
-    A model of `CartesianConstIterator2` or `CartesianConstIterator3`, must compatible with `Vector`.
+    A model of `CartesianConstIterator_2` or `CartesianConstIterator_3`, depending on the dimension of `Vector`.
    */
   typedef unspecified_type Cartesian_const_iterator;
 
   /*!
-    A model of `ConstructCartesianConstIterator2` or `ConstructCartesianConstIterator3`, must compatible with `Vector`.
+    A model of `ConstructCartesianConstIterator_2` or `ConstructCartesianConstIterator_3`, depending on the dimension of  `Vector`.
    */
   typedef unspecified_type  Construct_cartesian_const_iterator;
 
