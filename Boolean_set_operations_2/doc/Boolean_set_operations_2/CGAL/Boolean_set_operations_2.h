@@ -1484,7 +1484,7 @@ OutputIterator intersection(const General_polygon_with_holes_2<Polygon>& pgn1,
  *        (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator>
@@ -1514,7 +1514,7 @@ OutputIterator intersection(InputIterator begin, InputIterator end,
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator,
@@ -1538,7 +1538,7 @@ OutputIterator intersection(InputIterator begin, InputIterator end,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator1, typename InputIterator2,
@@ -1572,7 +1572,7 @@ OutputIterator intersection(InputIterator1 begin1, InputIterator1 end1,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator1, typename InputIterator2,
@@ -1757,7 +1757,7 @@ intersection(const General_polygon_with_holes_2<Polygon>& pgn1,
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
@@ -1782,7 +1782,7 @@ OutputIterator intersection(InputIterator begin, InputIterator end,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
@@ -2085,7 +2085,7 @@ bool join(const General_polygon_with_holes_2<Polygon>& pgn1,
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator>
@@ -2115,7 +2115,7 @@ OutputIterator join(InputIterator begin, InputIterator end,
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator,
@@ -2139,7 +2139,7 @@ OutputIterator join(InputIterator begin, InputIterator end,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator1, typename InputIterator2,
@@ -2289,7 +2289,7 @@ bool join(const General_polygon_with_holes_2<Polygon>& pgn1,
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
@@ -2314,7 +2314,7 @@ OutputIterator join(InputIterator begin, InputIterator end,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
@@ -2351,7 +2351,7 @@ OutputIterator join(InputIterator1 begin1, InputIterator1 end1,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
@@ -3138,7 +3138,7 @@ symmetric_difference(const General_polygon_with_holes_2<Polygon>& pgn1,
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator>
@@ -3169,7 +3169,7 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator, typename OutputIterator,
@@ -3195,7 +3195,7 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator1, typename InputIterator2,
@@ -3231,7 +3231,7 @@ OutputIterator symmetric_difference(InputIterator1 begin1, InputIterator1 end1,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \return the past-the-end iterator of the output container.
  */
 template <typename InputIterator1, typename InputIterator2,
@@ -3418,7 +3418,7 @@ symmetric_difference(const General_polygon_with_holes_2<Polygon>& pgn1,
  *        `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
@@ -3445,7 +3445,7 @@ OutputIterator symmetric_difference(InputIterator begin, InputIterator end,
  *        type is `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param oi the output iterator for the result.
  *           Its dereference type must be convertible to
- *             `Polygon_with_holes_2` (resp. `General_polygons_with_holes_2`).
+ *             `Polygon_with_holes_2` (resp. `General_polygon_with_holes_2`).
  * \param traits a traits object.
  * \return the past-the-end iterator of the output container.
  * \pre GpsTraits must be a model of `GeneralPolygonSetTraits_2`.
