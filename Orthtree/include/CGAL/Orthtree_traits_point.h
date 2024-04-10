@@ -15,8 +15,6 @@
 #include <CGAL/license/Orthtree.h>
 
 #include <CGAL/Dimension.h>
-#include <CGAL/Bbox_2.h>
-#include <CGAL/Point_set_2.h>
 #include <CGAL/Orthtree/Cartesian_ranges.h>
 
 #include <CGAL/Orthtree_traits_base.h>
