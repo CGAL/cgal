@@ -7,6 +7,8 @@ The concept `AABBRayIntersectionTraits` is a refinement of the concept
 `AABBTraits` it also requires function objects to calculate the
 distance of an intersection along a ray.
 
+\cgalRefines{AABBTraits}
+
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::AABB_traits_2<AABBGeomTraits_2,AABBPrimitive>}
 \cgalHasModels{CGAL::AABB_traits_3<AABBGeomTraits_3,AABBPrimitive>}
@@ -50,7 +52,7 @@ public:
 
   /*!
    */
-  Construct_source construct_cartesian_const_iterator_object();
+  Construct_cartesian_const_iterator construct_cartesian_const_iterator_object();
 
   /*!
     A functor object to construct a vector having the same direction as a ray. Provides the operator:
@@ -60,7 +62,7 @@ public:
 
   /*!
    */
-  Construct_source construct_vector_object();
+  Construct_vector construct_vector_object();
 
 
   /*!

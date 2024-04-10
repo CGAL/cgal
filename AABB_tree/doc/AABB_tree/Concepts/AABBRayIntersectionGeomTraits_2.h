@@ -56,7 +56,7 @@ public:
   Construct_cartesian_const_iterator_2 construct_cartesian_const_iterator_2_object();
 
   /*!
-    A functor object to construct a vector giving the direction of a ray. Provides the operator:
+    A functor object to construct a vector having the direction as a ray. Provides the operator:
     `Vector_2 operator()(const Ray_2&);`
    */
   typedef unspecified_type Construct_vector_2;
