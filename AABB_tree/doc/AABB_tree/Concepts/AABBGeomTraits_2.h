@@ -31,13 +31,13 @@ public:
 A functor object to detect intersections between two geometric objects.
 Provides the following operators:
 
-`bool operator()(Query, Bbox_2)`,
+`bool operator()(const Query& q, const Bbox_2& b)`,
 
-`bool operator()(Query, Primitive::Datum)`,
+`bool operator()(const Query& q, const Primitive::Datum& d)`,
 
-`bool operator()(Circle_2, Bbox_2)`.
+`bool operator()(const Circle_2& c, const Bbox_2& b)`.
 
-The operator returns `true` iff there exists a non-empty intersection.
+The operator returns `true` iff there is an intersection.
 */
 typedef unspecified_type Do_intersect_2;
 
