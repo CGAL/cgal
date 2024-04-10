@@ -23,6 +23,9 @@
  * Member-function definitions of the Surface_sweep_2 class-template.
  */
 
+#include <algorithm>
+#include <set>
+
 namespace CGAL {
 namespace Surface_sweep_2 {
 
