@@ -42,18 +42,18 @@ public:
   Construct_source_2 construct_source_2_object();
 
   /*!
-    A model of `CartesianConstIterator2`.
+    A model of `CartesianConstIterator_2`.
    */
   typedef unspecified_type Cartesian_const_iterator_2;
 
   /*!
-    A model of `ConstructCartesianConstIterator2`.
+    A model of `ConstructCartesianConstIterator_2`.
    */
   typedef unspecified_type  Construct_cartesian_const_iterator_2;
 
   /*!
    */
-  Construct_source_2 construct_cartesian_const_iterator_2_object();
+  Construct_cartesian_const_iterator_2 construct_cartesian_const_iterator_2_object();
 
   /*!
     A functor object to construct a vector giving the direction of a ray. Provides the operator:
@@ -63,5 +63,5 @@ public:
 
   /*!
    */
-  Construct_source_2 construct_vector_2_object();
+  Construct_vector_2 construct_vector_2_object();
 };
