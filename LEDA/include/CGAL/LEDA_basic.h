@@ -25,8 +25,13 @@
 // The following is needed for LEDA 4.4 due to min/max problems...
 #  define LEDA_NO_MIN_MAX_TEMPL
 
-#include <fstream> // as a workaround for a missing include in <LEDA/internal/PREAMBLE.h>
+#ifdef CGAL_CXX20
+#  define STREAM_DUMMY // disable stream_dummy() function that is not used and using features removed from c++20
+// We cannot undef STREAM_DUMMY as LEAD/internal/PREAMBULE.h is not protected
+#endif
 #include <LEDA/system/basic.h>
+
+
 
 #ifdef LEDA_NAMESPACE
 #  define CGAL_LEDA_SCOPE  leda
