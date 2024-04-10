@@ -3,6 +3,8 @@
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 
+#include <CGAL/boost/graph/generators.h>
+
 #include <QAction>
 #include <QMainWindow>
 #include <QMessageBox>
@@ -164,7 +166,7 @@ bbox(bool extended)
   Scene_item* item;
   EPICK::Iso_cuboid_3 ic(bbox);
   SMesh* p = new SMesh;
-  CGAL::make_hexahedron(ic[0], ic[1], ic[2], ic[3], ic[4], ic[5], ic[6], ic[7], *p);
+  CGAL::make_hexahedron(ic, *p);
 
   item = new Scene_surface_mesh_item(p);
   item->setName(name + (extended ? " (Extended Bbox)" : " (Bbox)"));

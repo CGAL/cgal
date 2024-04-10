@@ -88,7 +88,7 @@ struct lcc_priv{
         faces.push_back(pt->z() + offset.z);
       }
     }
-    else if (CGAL::Buffer_for_vao<float, std::size_t>::is_facet_convex(f.points,f.normal))
+    else if (CGAL::Buffer_for_vao::is_facet_convex(f.points,f.normal))
     {
       if (f.size()==4)
       {

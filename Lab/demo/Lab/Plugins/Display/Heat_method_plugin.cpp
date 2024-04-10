@@ -131,7 +131,7 @@ public:
 
   void computeElements() const override
   {
-    typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
+    typedef CGAL::Buffer_for_vao CPF;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 

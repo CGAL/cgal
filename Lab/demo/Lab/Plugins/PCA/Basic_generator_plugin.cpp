@@ -8,6 +8,7 @@
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/subdivision_method_3.h>
 #include <CGAL/Kernel_traits.h>
