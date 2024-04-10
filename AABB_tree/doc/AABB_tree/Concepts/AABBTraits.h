@@ -12,8 +12,6 @@ The concept `AABBTraits` provides the geometric primitive types and methods for 
 
 \cgalRefines{SearchTraits}
 
-\sa `CGAL::AABB_traits_2<AABBGeomTraits,AABBPrimitive>`
-\sa `CGAL::AABB_traits_3<AABBGeomTraits,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 
@@ -224,4 +222,3 @@ const Primitive::Shared_data& shared_data() const;
 
 
 }; /* end AABBTraits */
-
