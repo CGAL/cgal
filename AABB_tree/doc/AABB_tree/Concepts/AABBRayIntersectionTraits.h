@@ -8,8 +8,8 @@ The concept `AABBRayIntersectionTraits` is a refinement of the concept
 distance of an intersection along a ray.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::AABB_traits_2<AABBGeomTraits,AABBPrimitive>}
-\cgalHasModels{CGAL::AABB_traits_3<AABBGeomTraits,AABBPrimitive>}
+\cgalHasModels{CGAL::AABB_traits_2<AABBGeomTraits_2,AABBPrimitive>}
+\cgalHasModels{CGAL::AABB_traits_3<AABBGeomTraits_3,AABBPrimitive>}
 \cgalHasModelsEnd
 
 \sa `CGAL::AABB_tree<AABBTraits>`
@@ -53,7 +53,7 @@ public:
   Construct_source construct_cartesian_const_iterator_object();
 
   /*!
-    A functor object to construct a vector giving the direction of a ray. Provides the operator:
+    A functor object to construct a vector having the same direction as a ray. Provides the operator:
     `Vector operator()(const Ray&);`
    */
   typedef unspecified_type Construct_vector;

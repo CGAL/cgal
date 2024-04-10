@@ -73,14 +73,14 @@ namespace internal {
 
 /*!
  * \ingroup PkgAABBTreeRef
- * Primitive type that uses as identifier an iterator with a range of 3 indices as `value_type`.
+ * Primitive type that uses as identifier an iterator with a range of three indices as `value_type`.
  * The iterator from which the primitive is built should not be invalided
  * while the AABB tree holding the primitive is in use.
  *
  * \cgalModels{AABBPrimitive}
  *
  * \tparam GeomTraits is a traits class providing the nested type `Point_2` and `Triangle_2`.
- *         It also provides the functor `Construct_triangle_2` that has an operator taking 3 `Point_2` as
+ *         It also provides the functor `Construct_triangle_2` that has an operator taking three `Point_2` as
  *         parameters and returns a `Triangle_2`
  * \tparam IndexIterator is a model of `ForwardIterator` with its value type being a `RandomAccessRange` of size 3 with an index type as `value_type`, e.g., `uint8_t`, `uint16_t` or int.
  * \tparam PointRange is a model of `RandomAccessRange`. Its value type needs to be compatible to PointMap or `Point_2` in the default case.
