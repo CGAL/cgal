@@ -79,30 +79,18 @@ endif()
 polyhedron_demo_plugin(xyz_plugin XYZ_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
 target_link_libraries(xyz_plugin PUBLIC scene_points_with_normal_item)
 
-list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_rvalue_references has_cxx_rvalues)
-list(FIND CMAKE_CXX_COMPILE_FEATURES cxx_variadic_templates has_cxx_variadic)
-
-if(has_cxx_rvalues LESS 0 OR has_cxx_variadic LESS 0)
-  message(STATUS "NOTICE: LAS/PLY IO examples require a C++11 compiler and will not be compiled.")
-else()
-  set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
-
-  polyhedron_demo_plugin(ply_plugin PLY_io_plugin KEYWORDS Viewer PointSetProcessing Classification PMP)
-  target_link_libraries(ply_plugin PUBLIC scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_textured_item)
-  target_compile_features(ply_plugin PRIVATE ${needed_cxx_features})
-
-  if (TARGET CGAL::LASLIB_support)
-    polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
-    target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item CGAL::LASLIB_support)
-    target_compile_features(las_plugin PRIVATE ${needed_cxx_features})
-    if(MSVC)
-      target_compile_definitions(
-        las_plugin
-        PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
-    endif()
-  else()
-    message(STATUS "NOTICE: the LAS IO plugin needs LAS libraries and will not be compiled.")
+polyhedron_demo_plugin(ply_plugin PLY_io_plugin KEYWORDS Viewer PointSetProcessing Classification PMP)
+target_link_libraries(ply_plugin PUBLIC scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_textured_item)
+if (TARGET CGAL::LASLIB_support)
+  polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
+  target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item CGAL::LASLIB_support)
+  if(MSVC)
+    target_compile_definitions(
+      las_plugin
+      PUBLIC "-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS")
   endif()
+else()
+  message(STATUS "NOTICE: the LAS IO plugin needs LAS libraries and will not be compiled.")
 endif()
 
 find_path(
