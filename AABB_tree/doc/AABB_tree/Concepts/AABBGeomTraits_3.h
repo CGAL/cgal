@@ -78,7 +78,7 @@ A functor object to compare the distance of two points wrt a third one. Provides
 
 `CGAL::Comparison_result operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3)`,
 
-which compares the distance between `p1` and `p2`, to the distance between `p2` and `p3`.
+which compares the distance between `p1` and `p2`, to the distance between `p1` and `p3`.
 */
 typedef unspecified_type Compare_distance_3;
 
