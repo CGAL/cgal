@@ -66,7 +66,7 @@ private:
     typedef CGAL::AABB_tree<Facet_Traits>                               Facet_tree;
 
     typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron>     Edge_Primitive;
-    typedef CGAL::AABB_traits_3<Kernel, Edge_Primitive>                   Edge_Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Edge_Primitive>                 Edge_Traits;
     typedef CGAL::AABB_tree<Edge_Traits>                                Edge_tree;
 
     typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;
