@@ -295,22 +295,8 @@ struct Default_using_type
   };
 };
 
-template <class T_ = Default_using_type>
-struct less_cpp14
-{
-  template <class T1, class T2>
-  bool operator() (T1&& t1, T2&& t2) const
-  {
-    typedef typename Default_using_type::Get<
-      T_,
-      typename std::common_type<typename std::decay<T1>::type,
-                                typename std::decay<T2>::type> >::type T;
-    return std::less<T>()(t1,t2);
-  }
-};
-
 template <class T = Default_using_type,
-          class Compare = less_cpp14<T>,
+          class Compare = std::less<>,
           class T1, class T2,
           class A = typename Default_using_type::Get<T,
             typename std::common_type<
@@ -321,6 +307,12 @@ inline P make_sorted_pair(T1&& t1, T2&& t2, Compare comp = Compare())
 {
   return comp(t1, t2) ? P(std::forward<T1>(t1), std::forward<T2>(t2))
                       : P(std::forward<T2>(t2), std::forward<T1>(t1));
+}
+
+template <class Pair>
+auto make_sorted_pair(Pair&& pair) {
+  auto&& [a, b] = std::forward<Pair>(pair);
+  return make_sorted_pair(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
 }
 
 } //namespace CGAL
