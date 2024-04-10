@@ -83,7 +83,7 @@ namespace internal {
  *         It also provides the functor `Construct_triangle_2` that has an operator taking three `Point_2` as
  *         parameters and returns a `Triangle_2`
  * \tparam IndexIterator is a model of `ForwardIterator` with its value type being a `RandomAccessRange` of size 3 with an index type as `value_type`, e.g., `uint8_t`, `uint16_t` or int.
- * \tparam PointRange is a model of `RandomAccessRange`. Its value type needs to be compatible to PointMap or `Point_2` in the default case.
+ * \tparam PointRange is a model of `RandomAccessRange`. Its value type needs to be compatible to `PointMap` or `Point_2` in the default case.
  * \tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
  *         the datum is stored in the primitive, while in the latter it is
  *         constructed on the fly to reduce the memory footprint.

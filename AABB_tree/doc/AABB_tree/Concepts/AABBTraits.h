@@ -137,7 +137,7 @@ A functor object to compute distance comparisons between the query and the nodes
 typedef unspecified_type Compare_distance;
 
 /*!
-A functor object to compute closest point from the query on a primitive. Provides the operator:
+A functor object to compute the closest point from the query on a primitive. Provides the operator:
 `Point operator()(const Query& query, const Primitive& primitive, const Point & closest);` which returns the closest point to `query`, among `closest` and all points of the primitive.
 */
 typedef unspecified_type Closest_point;

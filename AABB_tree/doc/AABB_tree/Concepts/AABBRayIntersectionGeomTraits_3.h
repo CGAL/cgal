@@ -3,7 +3,7 @@
 \cgalConcept
 
 The concept `AABBRayIntersectionGeomTraits_3` is a refinement of the
-concept `AABBGeomTraits`. In addition to the types required by
+concept `AABBGeomTraits_3`. In addition to the types required by
 `AABBGeomTraits` it also requires types and functors necessary to
 define the Intersection_distance functor.
 
