@@ -37,6 +37,7 @@ public:
   typedef unspecified_type Construct_source;
 
   /*!
+    returns the `Construct_source` functor.
    */
   Construct_source construct_source_object();
 
@@ -51,6 +52,7 @@ public:
   typedef unspecified_type  Construct_cartesian_const_iterator;
 
   /*!
+    returns the `Construct_cartesian_const_iterator` functor.
    */
   Construct_cartesian_const_iterator construct_cartesian_const_iterator_object();
 
@@ -61,6 +63,7 @@ public:
   typedef unspecified_type Construct_vector;
 
   /*!
+    returns the `Construct_vector` functor.
    */
   Construct_vector construct_vector_object();
 
