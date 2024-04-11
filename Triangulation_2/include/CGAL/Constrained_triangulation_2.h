@@ -345,13 +345,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     // if the segment (or a subpart of the segment) that we are trying to constraint is already
     // present in the triangulation and is already marked as constrained,
     // then this is an intersection
-    if(std::is_same<Itag, No_constraint_intersection_tag>::value) {
-      if(dimension() == 1) {
-        if(fr->is_constrained(2))
-          throw Intersection_of_constraints_exception();
-      } else {
-        if(fr->is_constrained(i))
-          throw Intersection_of_constraints_exception();
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+      if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+        throw Intersection_of_constraints_exception();
       }
     }
 
@@ -727,7 +723,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   }
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(std::is_same<Itag, No_constraint_intersection_tag>::value)
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>)
       throw Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
@@ -840,13 +836,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       // if the segment (or a subpart of the segment) that we are trying to constraint is already
       // present in the triangulation and is already marked as constrained,
       // then this is an intersection
-      if(std::is_same<Itag, No_constraint_intersection_tag>::value) {
-        if(dimension() == 1) {
-          if(fr->is_constrained(2))
-            throw Intersection_of_constraints_exception();
-        } else {
-          if(fr->is_constrained(i))
-            throw Intersection_of_constraints_exception();
+      if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+        if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+          throw Intersection_of_constraints_exception();
         }
       }
 
