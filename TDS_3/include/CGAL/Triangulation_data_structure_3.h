@@ -2057,28 +2057,67 @@ is_edge(Vertex_handle u, Vertex_handle v,
         Cell_handle &c, int &i, int &j) const
   // returns false when dimension <1 or when indices wrong
 {
-    CGAL_expensive_precondition( is_vertex(u) && is_vertex(v) );
+  CGAL_expensive_precondition(is_vertex(u) && is_vertex(v));
 
-    if (u==v)
-        return false;
+  if(u == v)
+    return false;
 
-    bool result = false;
+  if(dimension() == 3) {
+    auto d = u->cell();
+    boost::container::small_vector<Cell_handle, 128> cells;
+    cells.emplace_back(d);
+    d->tds_data().mark_in_conflict();
 
-    incident_cells(u, boost::make_function_output_iterator([&](Cell_handle ch) {
-                     if(ch->has_vertex(v, j)) {
-                       c = ch;
-                       i = c->index(u);
-                       result = true;
-                     }
-                   }));
+    auto cleanup_tds_data = make_scope_exit([&] {
+      for(auto c : cells) {
+        c->tds_data().clear();
+      }
+    });
 
-    return result;
+    int head = 0;
+    int tail = 1;
+    do {
+      Cell_handle ch = cells[head];
+
+      for(j = 0; j < 4; ++j) { // use parameter j on purpose
+        if(ch->vertex(j) == v) {
+          c = ch;
+          i = ch->index(u);
+          return true;
+        }
+        if(ch->vertex(j) == u)
+          continue;
+        Cell_handle next = ch->neighbor(j);
+        if(!next->tds_data().is_clear())
+          continue;
+        cells.emplace_back(next);
+        ++tail;
+        next->tds_data().mark_in_conflict();
+      }
+      ++head;
+    } while(head != tail);
+    return false;
+  }
+
+  bool edge_found = false;
+  // try {
+  incident_cells_threadsafe(u, boost::make_function_output_iterator([&](Cell_handle ch) {
+                              if(ch->has_vertex(v, j)) {
+                                c = ch;
+                                i = c->index(u);
+                                // throw true;
+                                edge_found = true;
+                              }
+                            }));
+  // } catch(bool b) {
+  //     result = b;
+  // }
+
+  return edge_found;
 }
 
 template <class Vb, class Cb, class Ct>
-bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
-is_edge(Vertex_handle u, Vertex_handle v) const
+bool Triangulation_data_structure_3<Vb, Cb, Ct>::is_edge(Vertex_handle u, Vertex_handle v) const
 {
     Cell_handle c;
     int i, j;
