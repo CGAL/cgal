@@ -82,15 +82,6 @@ which compares the distance between `p1` and `p2`, to the distance between `p1` 
 */
 typedef unspecified_type Compare_distance_2;
 
-/*!
-A functor object to compute the squared radius of a circle.
-Provides the operator:
-
-`FT operator()(const Circle_2& s),`
-
-which returns the squared radius of `s`.
-*/
-typedef unspecified_type Compute_squared_radius_2;
 
 /*!
 A functor object to compute the squared distance between two points. Provides the operator:
@@ -159,10 +150,6 @@ returns the compare distance predicate.
 */
 Compare_distance_2 compare_distance_2_object();
 
-/*!
-returns the squared radius functor.
-*/
-Compute_squared_radius_2 compute_squared_radius_2_object();
 
 /*!
 returns the squared distance functor.
