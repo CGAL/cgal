@@ -8,10 +8,10 @@ include_directories(test)
 # set default options
 # to configure it, use:
 # $ ccmake .
-option(BUILD_OWN_KERNEL "Build our own Kernel (double precision)" ON)
-option(USE_CGAL "Use the CGAL Kernel" OFF)
-option(BUILD_TESTS "Use Boost's Unit Test Framework to test the implementation" OFF)
-option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
+option(BUILD_OWN_KERNEL "Build our own Kernel (double precision)" OFF)
+option(USE_CGAL "Use the CGAL Kernel" ON)
+option(BUILD_TESTS "Use Boost's Unit Test Framework to test the implementation" ON)
+option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" ON)
 
 # it may be useful to set CGAL_DONT_OVERRIDE_CMAKE_FLAGS
 # /usr/lib/CGAL/CGAL_SetupFlags.cmake
@@ -29,9 +29,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/config.h)
 
-if(USE_CGAL)
-    find_package(CGAL REQUIRED Core)
-endif()
+find_package(CGAL REQUIRED Core)
 
 # to get help about a cmake module run:
 # $ cmake --help-module FindBoost
@@ -155,15 +153,12 @@ set(data_3d_SOURCES
         src/data/3d/skel/SphericalOffset.cpp)
 add_library(skeldata2d SHARED ${data_2d_SOURCES})
 add_library(skeldata3d SHARED ${data_3d_SOURCES})
-if(CGAL_FOUND)
-    target_link_libraries(skeldata2d skelutil CGAL::CGAL)
-    target_link_libraries(skeldata3d skeldata2d skelutil  CGAL::CGAL)
-elseif(BUILD_OWN_KERNEL)
-    target_link_libraries(skeldata2d skelutil skelkernel)
-    target_link_libraries(skeldata3d skeldata2d skelutil skelkernel)
+if(BUILD_OWN_KERNEL)
+    target_link_libraries(skeldata2d skelutil skelkernel CGAL::CGAL)
+    target_link_libraries(skeldata3d skeldata2d skelutil skelkernel CGAL::CGAL)
 else()
-    target_link_libraries(skeldata2d skelutil)
-    target_link_libraries(skeldata3d skeldata2d skelutil)
+    target_link_libraries(skeldata2d skelutil CGAL::CGAL)
+    target_link_libraries(skeldata3d skeldata2d skelutil CGAL::CGAL)
 endif()
 
 # build database connector
@@ -200,7 +195,7 @@ set(db_3d_SOURCES
         src/db/3d/OBJFile.cpp
         src/db/3d/FLMAFile.cpp)
 add_library(skeldb SHARED ${db_SOURCES} ${db_2d_SOURCES} ${db_3d_SOURCES})
-target_link_libraries(skeldb skeldata2d skeldata3d skelutil sqlite3 dl)
+target_link_libraries(skeldb skeldata2d skeldata3d skelutil sqlite3 dl CGAL::CGAL)
 
 
 # build algorithm
@@ -236,8 +231,8 @@ set(algo_3d_SOURCES
         src/algo/3d/GraphChecker.cpp)
 add_library(skelalgo2d SHARED ${algo_SOURCES} ${algo_2d_SOURCES})
 add_library(skelalgo3d SHARED ${algo_3d_SOURCES})
-target_link_libraries(skelalgo2d skeldata2d)
-target_link_libraries(skelalgo3d skelalgo2d skeldata3d skeldb)
+target_link_libraries(skelalgo2d skeldata2d CGAL::CGAL)
+target_link_libraries(skelalgo3d skelalgo2d skeldata3d skeldb CGAL::CGAL)
 
 
 # build user interface
@@ -256,12 +251,10 @@ set(ui_ps_SOURCES
         src/ui/ps/CutPatternPrinter.cpp)
 add_library(skelui SHARED ${ui_SOURCES} ${ui_gl_SOURCES} ${ui_ps_SOURCES})
 
-if(CGAL_FOUND)
-    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES} CGAL::CGAL)
-elseif(BUILD_OWN_KERNEL)
-    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES} skelkernel)
+if(BUILD_OWN_KERNEL)
+    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES} skelkernel CGAL::CGAL)
 else()
-    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES})
+    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES} CGAL::CGAL)
 endif()
 
 
@@ -270,7 +263,7 @@ endif()
 set(StraightSkel_SOURCES
         src/main.cpp)
 add_executable(StraightSkel ${StraightSkel_SOURCES})
-target_link_libraries(StraightSkel skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui)
+target_link_libraries(StraightSkel skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/res/StraightSkel.ini
     ${CMAKE_CURRENT_BINARY_DIR}/StraightSkel.ini COPYONLY)
 

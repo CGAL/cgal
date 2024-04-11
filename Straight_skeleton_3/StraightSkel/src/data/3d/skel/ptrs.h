@@ -9,6 +9,8 @@
 
 #include "smarter_ptr.h"
 
+#include "cgal_kernel.h"
+
 /*
  * forward declare classes
  * to break circular includes

@@ -8,8 +8,9 @@
 #define ALGO_2D_KERNELWRAPPER_H
 
 #include "config.h"
+#include "cgal_kernel.h"
+
 #ifdef USE_CGAL
-    #include "cgal_kernel.h"
     // http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Kernel_23_ref/Function_bisector.html
     // http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Kernel_23_ref/Function_intersection.html
     #include <CGAL/intersections.h>

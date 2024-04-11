@@ -8,9 +8,9 @@
 #define DATA_2D_KERNELFACTORY_H
 
 #include "config.h"
-#ifdef USE_CGAL
-    #include "cgal_kernel.h"
-#else
+#include "cgal_kernel.h"
+
+#ifndef USE_CGAL
     #include "kernel/Point2.h"
     #include "kernel/Line2.h"
     #include "kernel/Segment2.h"

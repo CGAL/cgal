@@ -10,9 +10,9 @@
 #include "smarter_ptr.h"
 
 #include "config.h"
-#ifdef USE_CGAL
-    #include "cgal_kernel.h"
-#else
+#include "cgal_kernel.h"
+
+#ifndef USE_CGAL
     #include "kernel/Point3.h"
     #include "kernel/Vector3.h"
     #include "kernel/Line3.h"
