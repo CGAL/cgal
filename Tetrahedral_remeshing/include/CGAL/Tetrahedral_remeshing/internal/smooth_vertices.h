@@ -555,7 +555,7 @@ private:
                                                 point(ci->vertex(2)->point()),
                                                 point(ci->vertex(3)->point())))
         {
-          frac = 0.9 * frac;
+          frac = 0.5 * frac;
           valid_try = false;
           valid_orientation = false;
           break;
@@ -569,7 +569,7 @@ private:
             {
               // keep move only if new cosine is smaller than previous one
               // i.e. if angle is larger
-              frac = 0.9 * frac;
+              frac = 0.5 * frac;
               valid_try = false;
               angles_improved = false;
               break;
