@@ -31,7 +31,15 @@ typedef K::Segment_3      Segment3;
 typedef K::Plane_3        Plane3;
 typedef K::Sphere_3       Sphere3;
 
-}
+} // namespace CGAL
+
+#else /* USE_CGAL */
+
+namespace CGAL {
+
+typedef double            FT;
+
+} // namespace CGAL
 
 #endif  /* USE_CGAL */
 

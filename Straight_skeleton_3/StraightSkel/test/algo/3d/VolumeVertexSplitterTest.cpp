@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(testCalcSurfaceArea) {
             PolyhedronBuilder::makeTetrahedron(p1, p2, p3, p4);
     double a = sqrt(20*20 + 20*20);
     double expected = sqrt(3) * a * a;
-    double result = VolumeVertexSplitter::calcSurfaceArea(polyhedron);
+    CGAL::FT result = VolumeVertexSplitter::calcSurfaceArea(polyhedron);
     const double e = 0.001;
     BOOST_CHECK_CLOSE(expected, result, e);
 }

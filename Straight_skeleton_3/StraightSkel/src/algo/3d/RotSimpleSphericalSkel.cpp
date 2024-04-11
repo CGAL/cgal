@@ -65,8 +65,8 @@ void RotSimpleSphericalSkel::run() {
         if (controller_) {
             controller_->wait();
         }
-        double offset = 0.0;
-        double offset_prev = 0.0;
+        CGAL::FT offset = 0.0;
+        CGAL::FT offset_prev = 0.0;
         SphericalAbstractEventSPtr event = nextEvent(polygon, offset);
         while (event) {
             DEBUG_VAL("-- Next Event: " << event->toString() << " --");
@@ -191,8 +191,8 @@ void RotSimpleSphericalSkel::updateSpeeds(SphericalPolygonSPtr polygon_prev) {
 }
 
 
-double RotSimpleSphericalSkel::approxOffsetTo(CircularVertexSPtr vertex, Point3SPtr point) {
-    double result = 0.0;
+CGAL::FT RotSimpleSphericalSkel::approxOffsetTo(CircularVertexSPtr vertex, Point3SPtr point) {
+    CGAL::FT result = 0.0;
     Sphere3SPtr sphere = vertex->getPolygon()->getSphere();
     Point3SPtr p_center = KernelFactory::createPoint3(sphere);
     Vector3SPtr dir_point = KernelFactory::createVector3(
@@ -207,10 +207,10 @@ double RotSimpleSphericalSkel::approxOffsetTo(CircularVertexSPtr vertex, Point3S
 }
 
 
-SphericalEdgeEventSPtr RotSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalEdgeEventSPtr RotSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalEdgeEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
@@ -224,9 +224,9 @@ SphericalEdgeEventSPtr RotSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSPt
         }
         CircularVertexSPtr vertex_src = edge->getVertexSrc();
         CircularVertexSPtr vertex_dst = edge->getVertexDst();
-        double offset_src = approxOffsetTo(vertex_src, point);
-        double offset_dst = approxOffsetTo(vertex_dst, point);
-        double offset_current = (offset_src + offset_dst)/2.0;
+        CGAL::FT offset_src = approxOffsetTo(vertex_src, point);
+        CGAL::FT offset_dst = approxOffsetTo(vertex_dst, point);
+        CGAL::FT offset_current = (offset_src + offset_dst)/2.0;
         if (offset_max < offset_current && offset_current <= 0.0) {
             CircularNodeSPtr node;
             if (!result) {
@@ -253,10 +253,10 @@ SphericalEdgeEventSPtr RotSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSPt
     return result;
 }
 
-SphericalSplitEventSPtr RotSimpleSphericalSkel::nextSplitEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalSplitEventSPtr RotSimpleSphericalSkel::nextSplitEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalSplitEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularVertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
         CircularVertexSPtr vertex = *it_v++;
@@ -280,7 +280,7 @@ SphericalSplitEventSPtr RotSimpleSphericalSkel::nextSplitEvent(SphericalPolygonS
             if (!point) {
                 continue;
             }
-            double offset_current = approxOffsetTo(vertex, point);
+            CGAL::FT offset_current = approxOffsetTo(vertex, point);
             if (offset_max < offset_current && offset_current <= 0.0) {
                 CircularNodeSPtr node;
                 if (!result) {
@@ -305,10 +305,10 @@ SphericalSplitEventSPtr RotSimpleSphericalSkel::nextSplitEvent(SphericalPolygonS
     return result;
 }
 
-SphericalTriangleEventSPtr RotSimpleSphericalSkel::nextTriangleEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalTriangleEventSPtr RotSimpleSphericalSkel::nextTriangleEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalTriangleEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
@@ -322,9 +322,9 @@ SphericalTriangleEventSPtr RotSimpleSphericalSkel::nextTriangleEvent(SphericalPo
         }
         CircularVertexSPtr vertex_src = edge->getVertexSrc();
         CircularVertexSPtr vertex_dst = edge->getVertexDst();
-        double offset_src = approxOffsetTo(vertex_src, point);
-        double offset_dst = approxOffsetTo(vertex_dst, point);
-        double offset_current = (offset_src + offset_dst)/2.0;
+        CGAL::FT offset_src = approxOffsetTo(vertex_src, point);
+        CGAL::FT offset_dst = approxOffsetTo(vertex_dst, point);
+        CGAL::FT offset_current = (offset_src + offset_dst)/2.0;
         if (offset_max < offset_current && offset_current <= 0.0) {
             CircularNodeSPtr node;
             if (!result) {
@@ -351,7 +351,7 @@ SphericalTriangleEventSPtr RotSimpleSphericalSkel::nextTriangleEvent(SphericalPo
 }
 
 
-SphericalAbstractEventSPtr RotSimpleSphericalSkel::nextEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalAbstractEventSPtr RotSimpleSphericalSkel::nextEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     SphericalAbstractEventSPtr result = SphericalAbstractEventSPtr();
     if (!polygon) {
         return result;
@@ -407,11 +407,11 @@ CircularEdgeSPtr RotSimpleSphericalSkel::findLongestEdge(std::list<CircularEdgeS
 }
 
 
-double RotSimpleSphericalSkel::distanceOffset(CircularEdgeSPtr edge_begin, double offset, double speed_dst) {
-    double result = 0.0;
+CGAL::FT RotSimpleSphericalSkel::distanceOffset(CircularEdgeSPtr edge_begin, CGAL::FT offset, CGAL::FT speed_dst) {
+    CGAL::FT result = 0.0;
     SphericalPolygonSPtr polygon = edge_begin->getPolygon();
     Sphere3SPtr sphere = polygon->getSphere();
-    double radius = polygon->getRadius();
+    CGAL::FT radius = polygon->getRadius();
     Point3SPtr p_center = KernelFactory::createPoint3(sphere);
     Point3SPtr p_begin_rot;
     Point3SPtr p_src_rot;
@@ -479,15 +479,15 @@ double RotSimpleSphericalSkel::distanceOffset(CircularEdgeSPtr edge_begin, doubl
 }
 
 
-double RotSimpleSphericalSkel::findMinDistance(CircularEdgeSPtr edge_begin, double offset) {
-    double result = 0.0;
+CGAL::FT RotSimpleSphericalSkel::findMinDistance(CircularEdgeSPtr edge_begin, CGAL::FT offset) {
+    CGAL::FT result = 0.0;
     CircularVertexSPtr vertex_dst = edge_begin->getVertexDst();
     SphericalSkelVertexDataSPtr data_dst =
             std::dynamic_pointer_cast<SphericalSkelVertexData>(vertex_dst->getData());
-    double speed = data_dst->getSpeed();
-    double dist = 0.0;
-    double dist_min = std::numeric_limits<double>::max();
-    for (double speed_factor = 0.25; speed_factor <= 4.0; speed_factor += 0.001) {
+    CGAL::FT speed = data_dst->getSpeed();
+    CGAL::FT dist = 0.0;
+    CGAL::FT dist_min = std::numeric_limits<double>::max(); // do not put FT
+    for (CGAL::FT speed_factor = 0.25; speed_factor <= 4.0; speed_factor += 0.001) {
         dist = distanceOffset(edge_begin, offset, speed * speed_factor);
         if (dist < dist_min) {
             result = speed * speed_factor;
@@ -498,11 +498,11 @@ double RotSimpleSphericalSkel::findMinDistance(CircularEdgeSPtr edge_begin, doub
 }
 
 
-SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr polygon, double offset) {
+SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     Sphere3SPtr sphere = polygon->getSphere();
     SphericalPolygonSPtr result = SphericalPolygon::create(sphere);
     Point3SPtr p_center = KernelFactory::createPoint3(sphere);
-    double radius = polygon->getRadius();
+    CGAL::FT radius = polygon->getRadius();
 
     std::list<CircularEdgeSPtr> edges_torotate;
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
@@ -516,7 +516,7 @@ SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr pol
         CircularVertexSPtr vertex_src_rot;
         CircularVertexSPtr vertex_dst_rot;
         CircularEdgeSPtr edge_begin = findLongestEdge(edges_torotate);
-        double speed_dst = findMinDistance(edge_begin, offset);
+        CGAL::FT speed_dst = findMinDistance(edge_begin, offset);
         CircularVertexSPtr vertex_dst = edge_begin->getVertexDst();
         SphericalSkelVertexDataSPtr data_dst =
                 std::dynamic_pointer_cast<SphericalSkelVertexData>(vertex_dst->getData());
@@ -641,11 +641,11 @@ void RotSimpleSphericalSkel::checkAngles(SphericalPolygonSPtr polygon) {
 }
 
 
-SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges2(SphericalPolygonSPtr polygon, double offset) {
+SphericalPolygonSPtr RotSimpleSphericalSkel::shiftEdges2(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     Sphere3SPtr sphere = polygon->getSphere();
     SphericalPolygonSPtr result = SphericalPolygon::create(sphere);
     Point3SPtr p_center = KernelFactory::createPoint3(sphere);
-    double radius = polygon->getRadius();
+    CGAL::FT radius = polygon->getRadius();
 
     std::list<CircularVertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {

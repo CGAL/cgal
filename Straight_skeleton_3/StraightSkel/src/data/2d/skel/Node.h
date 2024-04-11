@@ -21,8 +21,8 @@ public:
 
     Point2SPtr getPoint() const;
     void setPoint(Point2SPtr point);
-    double getHeight() const;
-    void setHeight(double height);
+    CGAL::FT getHeight() const;
+    void setHeight(CGAL::FT height);
     StraightSkeletonSPtr getSkel() const;
     void setSkel(StraightSkeletonSPtr skel);
     std::list<NodeSPtr>::iterator getListIt() const;
@@ -38,15 +38,20 @@ public:
 
     unsigned int degree() const;
 
+#ifdef USE_CGAL
+    CGAL::FT getX() const;
+    CGAL::FT getY() const;
+#else
     double getX() const;
     double getY() const;
+#endif
 
     std::string toString() const;
 
 protected:
     Node(Point2SPtr point);
     Point2SPtr point_;
-    double height_;
+    CGAL::FT height_;
     StraightSkeletonWPtr skel_;
     std::list<NodeSPtr>::iterator list_it_;
     std::list<ArcWPtr> arcs_;

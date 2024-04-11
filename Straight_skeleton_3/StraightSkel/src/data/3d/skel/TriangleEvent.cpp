@@ -38,8 +38,8 @@ void TriangleEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double TriangleEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT TriangleEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

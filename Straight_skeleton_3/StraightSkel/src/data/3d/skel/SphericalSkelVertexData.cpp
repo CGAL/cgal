@@ -64,11 +64,11 @@ void SphericalSkelVertexData::setOffsetVertex(CircularVertexSPtr offset_vertex) 
     this->offset_vertex_ = offset_vertex;
 }
 
-double SphericalSkelVertexData::getSpeed() const {
+CGAL::FT SphericalSkelVertexData::getSpeed() const {
     return this->speed_;
 }
 
-void SphericalSkelVertexData::setSpeed(double speed) {
+void SphericalSkelVertexData::setSpeed(CGAL::FT speed) {
     this->speed_ = speed;
 }
 

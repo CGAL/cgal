@@ -28,7 +28,7 @@ BOOST_AUTO_TEST_CASE(testDistance) {
     Point2SPtr q = KernelFactory::createPoint2(3.0, 1.0);
     Line2SPtr l = KernelFactory::createLine2(p, q);
     q = KernelFactory::createPoint2(2.0, 2.0);
-    double result = KernelWrapper::distance(l, q);
+    CGAL::FT result = KernelWrapper::distance(l, q);
     BOOST_CHECK_EQUAL(1.0, result);
 }
 

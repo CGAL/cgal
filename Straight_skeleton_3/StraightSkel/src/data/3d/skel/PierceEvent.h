@@ -19,7 +19,7 @@ public:
     static PierceEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     FacetSPtr getFacet() const;
     void setFacet(FacetSPtr facet);
     VertexSPtr getVertex() const;

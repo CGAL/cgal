@@ -20,7 +20,7 @@ public:
     static DblTriangleEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     EdgeSPtr getEdge() const;
     void setEdge(EdgeSPtr edge);
     void getVertices(VertexSPtr out[4]) const;

@@ -39,7 +39,7 @@ PolyhedronSPtr AbstractVertexSplitter::splitConvexVertex(VertexSPtr vertex) {
     assert(vertex->isConvex());
     PolyhedronSPtr result = vertex->getPolyhedron();
     while (vertex->degree() > 3) {
-        double speed_max = 0.0;
+        CGAL::FT speed_max = 0.0;
         FacetSPtr facet_1;
         FacetSPtr facet_2;
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
@@ -59,7 +59,7 @@ PolyhedronSPtr AbstractVertexSplitter::splitConvexVertex(VertexSPtr vertex) {
                     KernelWrapper::offsetPlane(facet_next->plane(), -1.0);
             Point3SPtr offset_point = KernelWrapper::intersection(
                     offset_plane_prev, offset_plane, offset_plane_next);
-            double speed = KernelWrapper::distance(
+            CGAL::FT speed = KernelWrapper::distance(
                     vertex->getPoint(), offset_point);
             if (speed > speed_max) {
                 facet_1 = facet_next;
@@ -83,7 +83,7 @@ PolyhedronSPtr AbstractVertexSplitter::splitReflexVertex(VertexSPtr vertex) {
     assert(vertex->isReflex());
     PolyhedronSPtr result = vertex->getPolyhedron();
     while (vertex->degree() > 3) {
-        double speed_min = std::numeric_limits<double>::max();
+        CGAL::FT speed_min = std::numeric_limits<double>::max(); // do not put FT
         FacetSPtr facet_1;
         FacetSPtr facet_2;
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
@@ -103,7 +103,7 @@ PolyhedronSPtr AbstractVertexSplitter::splitReflexVertex(VertexSPtr vertex) {
                     KernelWrapper::offsetPlane(facet_next->plane(), -1.0);
             Point3SPtr offset_point = KernelWrapper::intersection(
                     offset_plane_prev, offset_plane, offset_plane_next);
-            double speed = KernelWrapper::distance(
+            CGAL::FT speed = KernelWrapper::distance(
                     vertex->getPoint(), offset_point);
             if (speed < speed_min) {
                 facet_1 = facet_next;
@@ -124,7 +124,7 @@ PolyhedronSPtr AbstractVertexSplitter::splitReflexVertex(VertexSPtr vertex) {
 }
 
 
-PolyhedronSPtr AbstractVertexSplitter::shiftFacets(PolyhedronSPtr polyhedron, double offset) {
+PolyhedronSPtr AbstractVertexSplitter::shiftFacets(PolyhedronSPtr polyhedron, CGAL::FT offset) {
     PolyhedronSPtr result = Polyhedron::create();
 
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
@@ -137,7 +137,7 @@ PolyhedronSPtr AbstractVertexSplitter::shiftFacets(PolyhedronSPtr polyhedron, do
             FacetWPtr facet_wptr = *it_f++;
             if (!facet_wptr.expired()) {
                 FacetSPtr facet = FacetSPtr(facet_wptr);
-                double speed = 1.0;
+                CGAL::FT speed = 1.0;
                 if (facet->hasData()) {
                     speed = std::dynamic_pointer_cast<SkelFacetData>(
                             facet->getData())->getSpeed();
@@ -237,7 +237,7 @@ PolyhedronSPtr AbstractVertexSplitter::shiftFacets(PolyhedronSPtr polyhedron, do
         FacetSPtr facet = *it_f++;
         FacetSPtr offset_facet = Facet::create();
         SkelFacetDataSPtr data;
-        double speed = 1.0;
+        CGAL::FT speed = 1.0;
         if (facet->hasData()) {
             data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
             speed = data->getSpeed();

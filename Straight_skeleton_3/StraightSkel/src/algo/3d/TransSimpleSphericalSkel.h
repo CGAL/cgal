@@ -33,29 +33,29 @@ public:
 
     virtual bool init(SphericalPolygonSPtr polygon);
 
-    Point3SPtr offsetPoint(CircularVertexSPtr vertex, double offset);
+    Point3SPtr offsetPoint(CircularVertexSPtr vertex, CGAL::FT offset);
 
-    double offsetTo(CircularEdgeSPtr edge, Point3SPtr point);
+    CGAL::FT offsetTo(CircularEdgeSPtr edge, Point3SPtr point);
 
     double angleOf(CircularVertexSPtr vertex);
 
-    bool isEdgeEvent(CircularEdgeSPtr edge, double offset);
+    bool isEdgeEvent(CircularEdgeSPtr edge, CGAL::FT offset);
 
-    SphericalEdgeEventSPtr nextEdgeEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalSplitEventSPtr nextSplitEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalTriangleEventSPtr nextTriangleEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalDblEdgeEventSPtr nextDblEdgeEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalLeaveEventSPtr nextLeaveEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalReturnEventSPtr nextReturnEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalDblLeaveEventSPtr nextDblLeaveEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalDblReturnEventSPtr nextDblReturnEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalVertexEventSPtr nextVertexEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalEdgeMergeEventSPtr nextEdgeMergeEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalInversionEventSPtr nextInversionEvent(SphericalPolygonSPtr polygon, double offset);
+    SphericalEdgeEventSPtr nextEdgeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalSplitEventSPtr nextSplitEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalTriangleEventSPtr nextTriangleEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalDblEdgeEventSPtr nextDblEdgeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalLeaveEventSPtr nextLeaveEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalReturnEventSPtr nextReturnEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalDblLeaveEventSPtr nextDblLeaveEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalDblReturnEventSPtr nextDblReturnEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalVertexEventSPtr nextVertexEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalEdgeMergeEventSPtr nextEdgeMergeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalInversionEventSPtr nextInversionEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
-    SphericalAbstractEventSPtr nextEvent(SphericalPolygonSPtr polygon, double offset);
+    SphericalAbstractEventSPtr nextEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
-    SphericalPolygonSPtr shiftEdges(SphericalPolygonSPtr polygon, double offset);
+    SphericalPolygonSPtr shiftEdges(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
     void handleEdgeEvent(SphericalEdgeEventSPtr event, SphericalPolygonSPtr polygon);
     void handleSplitEvent(SphericalSplitEventSPtr event, SphericalPolygonSPtr polygon);

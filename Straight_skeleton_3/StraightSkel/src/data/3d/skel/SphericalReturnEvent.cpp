@@ -27,11 +27,11 @@ SphericalReturnEventSPtr SphericalReturnEvent::create() {
     return result;
 }
 
-double SphericalReturnEvent::getOffset() const {
+CGAL::FT SphericalReturnEvent::getOffset() const {
     return this->offset_;
 }
 
-void SphericalReturnEvent::setOffset(double offset) {
+void SphericalReturnEvent::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 

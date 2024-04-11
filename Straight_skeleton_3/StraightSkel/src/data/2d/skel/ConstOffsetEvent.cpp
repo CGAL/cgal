@@ -13,7 +13,7 @@ ConstOffsetEvent::ConstOffsetEvent() {
     this->offset_ = 1.0;
 }
 
-ConstOffsetEvent::ConstOffsetEvent(double offset) {
+ConstOffsetEvent::ConstOffsetEvent(CGAL::FT offset) {
     this->type_ = AbstractEvent::CONST_OFFSET_EVENT;
     this->offset_ = offset;
 }
@@ -27,17 +27,17 @@ ConstOffsetEventSPtr ConstOffsetEvent::create() {
     return result;
 }
 
-ConstOffsetEventSPtr ConstOffsetEvent::create(double offset) {
+ConstOffsetEventSPtr ConstOffsetEvent::create(CGAL::FT offset) {
     ConstOffsetEventSPtr result = ConstOffsetEventSPtr(
             new ConstOffsetEvent(offset));
     return result;
 }
 
-double ConstOffsetEvent::getOffset() const {
+CGAL::FT ConstOffsetEvent::getOffset() const {
     return this->offset_;
 }
 
-void ConstOffsetEvent::setOffset(double offset) {
+void ConstOffsetEvent::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 

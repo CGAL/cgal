@@ -19,7 +19,7 @@ public:
     static SphericalSplitEventSPtr create();
     CircularNodeSPtr getNode() const;
     void setNode(CircularNodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     CircularVertexSPtr getVertex() const;
     void setVertex(CircularVertexSPtr vertex);
     CircularEdgeSPtr getEdge() const;

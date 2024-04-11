@@ -17,13 +17,13 @@ class SphericalInversionEvent : public SphericalAbstractEvent {
 public:
     virtual ~SphericalInversionEvent();
     static SphericalInversionEventSPtr create();
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
     SphericalPolygonSPtr getPolygon() const;
     void setPolygon(SphericalPolygonSPtr polygon);
 protected:
     SphericalInversionEvent();
-    double offset_;
+    CGAL::FT offset_;
     SphericalPolygonSPtr polygon_;
 };
 

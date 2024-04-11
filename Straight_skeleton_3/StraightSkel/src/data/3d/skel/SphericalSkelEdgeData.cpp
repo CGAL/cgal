@@ -38,11 +38,11 @@ void SphericalSkelEdgeData::setOffsetEdge(CircularEdgeSPtr offset_edge) {
     this->offset_edge_ = offset_edge;
 }
 
-double SphericalSkelEdgeData::getSpeed() const {
+CGAL::FT SphericalSkelEdgeData::getSpeed() const {
     return speed_;
 }
 
-void SphericalSkelEdgeData::setSpeed(double speed) {
+void SphericalSkelEdgeData::setSpeed(CGAL::FT speed) {
     speed_ = speed;
 }
 

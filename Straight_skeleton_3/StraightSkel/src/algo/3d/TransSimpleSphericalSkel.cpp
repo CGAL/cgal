@@ -75,8 +75,8 @@ void TransSimpleSphericalSkel::run() {
         if (controller_) {
             controller_->wait();
         }
-        double offset = 0.0;
-        double offset_prev = 0.0;
+        CGAL::FT offset = 0.0;
+        CGAL::FT offset_prev = 0.0;
         SphericalAbstractEventSPtr event = nextEvent(polygon, offset);
         while (event) {
             DEBUG_VAL("-- Next Event: " << event->toString() << " --");
@@ -210,7 +210,7 @@ bool TransSimpleSphericalSkel::init(SphericalPolygonSPtr polygon) {
 }
 
 
-Point3SPtr TransSimpleSphericalSkel::offsetPoint(CircularVertexSPtr vertex, double offset) {
+Point3SPtr TransSimpleSphericalSkel::offsetPoint(CircularVertexSPtr vertex, CGAL::FT offset) {
     Point3SPtr result = Point3SPtr();
     Sphere3SPtr sphere = vertex->getPolygon()->getSphere();
     Plane3SPtr plane_in = vertex->getEdgeIn()->getSupportingPlane();
@@ -228,8 +228,8 @@ Point3SPtr TransSimpleSphericalSkel::offsetPoint(CircularVertexSPtr vertex, doub
 }
 
 
-double TransSimpleSphericalSkel::offsetTo(CircularEdgeSPtr edge, Point3SPtr point) {
-    double result = 0.0;
+CGAL::FT TransSimpleSphericalSkel::offsetTo(CircularEdgeSPtr edge, Point3SPtr point) {
+    CGAL::FT result = 0.0;
     Plane3SPtr plane_edge = edge->getSupportingPlane();
     result = KernelWrapper::distance(plane_edge, point);
     if (KernelWrapper::side(plane_edge, point) < 0) {
@@ -255,13 +255,13 @@ double TransSimpleSphericalSkel::angleOf(CircularVertexSPtr vertex) {
 }
 
 
-bool TransSimpleSphericalSkel::isEdgeEvent(CircularEdgeSPtr edge, double offset) {
+bool TransSimpleSphericalSkel::isEdgeEvent(CircularEdgeSPtr edge, CGAL::FT offset) {
     bool result = false;
     Point3SPtr p_src_offset = offsetPoint(edge->getVertexSrc(), offset);
     Point3SPtr p_dst_offset = offsetPoint(edge->getVertexDst(), offset);
     if (p_src_offset && p_dst_offset) {
         // TODO: epsilon environment is not good
-        double dist_edge_event = KernelWrapper::distance(p_src_offset, p_dst_offset);
+        CGAL::FT dist_edge_event = KernelWrapper::distance(p_src_offset, p_dst_offset);
         DEBUG_VAR(dist_edge_event);
         if (dist_edge_event < epsilon_) {
             result = true;
@@ -271,10 +271,10 @@ bool TransSimpleSphericalSkel::isEdgeEvent(CircularEdgeSPtr edge, double offset)
 }
 
 
-SphericalEdgeEventSPtr TransSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalEdgeEventSPtr TransSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalEdgeEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
@@ -306,7 +306,7 @@ SphericalEdgeEventSPtr TransSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonS
         if (!point) {
             continue;
         }
-        double offset_current = offsetTo(edge, point);
+        CGAL::FT offset_current = offsetTo(edge, point);
         if (!isEdgeEvent(edge, offset_current)) {
             continue;
         }
@@ -336,10 +336,10 @@ SphericalEdgeEventSPtr TransSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonS
     return result;
 }
 
-SphericalSplitEventSPtr TransSimpleSphericalSkel::nextSplitEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalSplitEventSPtr TransSimpleSphericalSkel::nextSplitEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalSplitEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularVertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
         CircularVertexSPtr vertex = *it_v++;
@@ -369,12 +369,12 @@ SphericalSplitEventSPtr TransSimpleSphericalSkel::nextSplitEvent(SphericalPolygo
             if (!point) {
                 continue;
             }
-            double offset_current = offsetTo(edge, point);
+            CGAL::FT offset_current = offsetTo(edge, point);
             Point3SPtr p_offset = offsetPoint(vertex, offset_current);
             if (!p_offset) {
                 continue;
             }
-            double dist_split_event = KernelWrapper::distance(point, p_offset);
+            CGAL::FT dist_split_event = KernelWrapper::distance(point, p_offset);
             DEBUG_VAR(dist_split_event);
             if (dist_split_event > epsilon_) {
                 // TODO: epsilon environment is not good
@@ -416,10 +416,10 @@ SphericalSplitEventSPtr TransSimpleSphericalSkel::nextSplitEvent(SphericalPolygo
     return result;
 }
 
-SphericalTriangleEventSPtr TransSimpleSphericalSkel::nextTriangleEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalTriangleEventSPtr TransSimpleSphericalSkel::nextTriangleEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalTriangleEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
@@ -435,7 +435,7 @@ SphericalTriangleEventSPtr TransSimpleSphericalSkel::nextTriangleEvent(Spherical
         if (!point) {
             continue;
         }
-        double offset_current = offsetTo(edge, point);
+        CGAL::FT offset_current = offsetTo(edge, point);
         if (!isEdgeEvent(edge, offset_current)) {
             continue;
         }
@@ -464,12 +464,12 @@ SphericalTriangleEventSPtr TransSimpleSphericalSkel::nextTriangleEvent(Spherical
     return result;
 }
 
-SphericalDblEdgeEventSPtr TransSimpleSphericalSkel::nextDblEdgeEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalDblEdgeEventSPtr TransSimpleSphericalSkel::nextDblEdgeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalDblEdgeEventSPtr result;
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT radius = polygon->getRadius();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge_1 = *it_e++;
@@ -483,13 +483,13 @@ SphericalDblEdgeEventSPtr TransSimpleSphericalSkel::nextDblEdgeEvent(SphericalPo
         }
 
         CircularVertexSPtr vertex = edge_1->getVertexDst();
-        double speed = 1.0/sin(angleOf(vertex)/2.0);
+        CGAL::FT speed = 1.0/sin(angleOf(vertex)/2.0);
         Plane3SPtr plane_1 = edge_1->getSupportingPlane();
         Plane3SPtr plane_2 = edge_2->getSupportingPlane();
         Line3SPtr line = KernelWrapper::intersection(plane_1, plane_2);
-        double dist = KernelWrapper::distance(line, p_center);
+        CGAL::FT dist = KernelWrapper::distance(line, p_center);
 
-        double offset_current = (dist - radius) / speed;
+        CGAL::FT offset_current = (dist - radius) / speed;
         if (offset_max < offset_current && offset_current <= 0.0) {
             if (!result) {
                 result = SphericalDblEdgeEvent::create();
@@ -503,12 +503,12 @@ SphericalDblEdgeEventSPtr TransSimpleSphericalSkel::nextDblEdgeEvent(SphericalPo
     return result;
 }
 
-SphericalLeaveEventSPtr TransSimpleSphericalSkel::nextLeaveEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalLeaveEventSPtr TransSimpleSphericalSkel::nextLeaveEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalLeaveEventSPtr result;
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT radius = polygon->getRadius();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularVertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
         CircularVertexSPtr vertex = *it_v++;
@@ -549,11 +549,11 @@ SphericalLeaveEventSPtr TransSimpleSphericalSkel::nextLeaveEvent(SphericalPolygo
             continue;
         }
 
-        double speed = 1.0/sin(angleOf(vertex)/2.0);
+        CGAL::FT speed = 1.0/sin(angleOf(vertex)/2.0);
         Plane3SPtr plane_in = vertex->getEdgeIn()->getSupportingPlane();
         Plane3SPtr plane_out = vertex->getEdgeOut()->getSupportingPlane();
         Line3SPtr line = KernelWrapper::intersection(plane_in, plane_out);
-        double dist = KernelWrapper::distance(line, p_center);
+        CGAL::FT dist = KernelWrapper::distance(line, p_center);
 
         if (offset != 0.0) {
             Point3SPtr p_dist = KernelWrapper::projection(line, p_center);
@@ -570,7 +570,7 @@ SphericalLeaveEventSPtr TransSimpleSphericalSkel::nextLeaveEvent(SphericalPolygo
             }
         }
 
-        double offset_current = (dist - radius) / speed;
+        CGAL::FT offset_current = (dist - radius) / speed;
         if (offset_max < offset_current && offset_current <= 0.0) {
             if (!result) {
                 result = SphericalLeaveEvent::create();
@@ -583,12 +583,12 @@ SphericalLeaveEventSPtr TransSimpleSphericalSkel::nextLeaveEvent(SphericalPolygo
     return result;
 }
 
-SphericalReturnEventSPtr TransSimpleSphericalSkel::nextReturnEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalReturnEventSPtr TransSimpleSphericalSkel::nextReturnEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalReturnEventSPtr result;
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT radius = polygon->getRadius();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularVertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
         CircularVertexSPtr vertex = *it_v++;
@@ -633,7 +633,7 @@ SphericalReturnEventSPtr TransSimpleSphericalSkel::nextReturnEvent(SphericalPoly
         Plane3SPtr plane_in = vertex->getEdgeIn()->getSupportingPlane();
         Plane3SPtr plane_out = vertex->getEdgeOut()->getSupportingPlane();
         Line3SPtr line = KernelWrapper::intersection(plane_in, plane_out);
-        double dist = KernelWrapper::distance(line, p_center);
+        CGAL::FT dist = KernelWrapper::distance(line, p_center);
 
         Point3SPtr p_dist = KernelWrapper::projection(line, p_center);
         Plane3SPtr plane_in_offset = KernelWrapper::offsetPlane(plane_in, -1.0);
@@ -648,7 +648,7 @@ SphericalReturnEventSPtr TransSimpleSphericalSkel::nextReturnEvent(SphericalPoly
             continue;
         }
 
-        double offset_current = (radius - dist) / speed;
+        CGAL::FT offset_current = (radius - dist) / speed;
         if (offset_max < offset_current && offset_current <= 0.0) {
             if (!result) {
                 result = SphericalReturnEvent::create();
@@ -661,12 +661,12 @@ SphericalReturnEventSPtr TransSimpleSphericalSkel::nextReturnEvent(SphericalPoly
     return result;
 }
 
-SphericalDblLeaveEventSPtr TransSimpleSphericalSkel::nextDblLeaveEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalDblLeaveEventSPtr TransSimpleSphericalSkel::nextDblLeaveEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalDblLeaveEventSPtr result;
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT radius = polygon->getRadius();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularVertexSPtr>::iterator it_v1 = polygon->vertices().begin();
     while (it_v1 != polygon->vertices().end()) {
         CircularVertexSPtr vertex_1 = *it_v1++;
@@ -701,7 +701,7 @@ SphericalDblLeaveEventSPtr TransSimpleSphericalSkel::nextDblLeaveEvent(Spherical
                 Plane3SPtr plane_in = vertex_1->getEdgeIn()->getSupportingPlane();
                 Plane3SPtr plane_out = vertex_1->getEdgeOut()->getSupportingPlane();
                 Line3SPtr line = KernelWrapper::intersection(plane_in, plane_out);
-                double dist = KernelWrapper::distance(line, p_center);
+                CGAL::FT dist = KernelWrapper::distance(line, p_center);
 
                 if (offset != 0.0) {
                     Point3SPtr p_dist = KernelWrapper::projection(line, p_center);
@@ -718,7 +718,7 @@ SphericalDblLeaveEventSPtr TransSimpleSphericalSkel::nextDblLeaveEvent(Spherical
                     }
                 }
 
-                double offset_current = (dist - radius) / speed;
+                CGAL::FT offset_current = (dist - radius) / speed;
                 if (offset_max < offset_current && offset_current <= 0.0) {
                     if (!result) {
                         result = SphericalDblLeaveEvent::create();
@@ -734,12 +734,12 @@ SphericalDblLeaveEventSPtr TransSimpleSphericalSkel::nextDblLeaveEvent(Spherical
     return result;
 }
 
-SphericalDblReturnEventSPtr TransSimpleSphericalSkel::nextDblReturnEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalDblReturnEventSPtr TransSimpleSphericalSkel::nextDblReturnEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalDblReturnEventSPtr result;
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT radius = polygon->getRadius();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularVertexSPtr>::iterator it_v1 = polygon->vertices().begin();
     while (it_v1 != polygon->vertices().end()) {
         CircularVertexSPtr vertex_1 = *it_v1++;
@@ -770,7 +770,7 @@ SphericalDblReturnEventSPtr TransSimpleSphericalSkel::nextDblReturnEvent(Spheric
                 Plane3SPtr plane_in = vertex_1->getEdgeIn()->getSupportingPlane();
                 Plane3SPtr plane_out = vertex_1->getEdgeOut()->getSupportingPlane();
                 Line3SPtr line = KernelWrapper::intersection(plane_in, plane_out);
-                double dist = KernelWrapper::distance(line, p_center);
+                CGAL::FT dist = KernelWrapper::distance(line, p_center);
 
                 Point3SPtr p_dist = KernelWrapper::projection(line, p_center);
                 Plane3SPtr plane_in_offset = KernelWrapper::offsetPlane(plane_in, -1.0);
@@ -785,7 +785,7 @@ SphericalDblReturnEventSPtr TransSimpleSphericalSkel::nextDblReturnEvent(Spheric
                     continue;
                 }
 
-                double offset_current = (radius - dist) / speed;
+                CGAL::FT offset_current = (radius - dist) / speed;
                 if (offset_max < offset_current && offset_current <= 0.0) {
                     if (!result) {
                         result = SphericalDblReturnEvent::create();
@@ -801,11 +801,11 @@ SphericalDblReturnEventSPtr TransSimpleSphericalSkel::nextDblReturnEvent(Spheric
     return result;
 }
 
-SphericalVertexEventSPtr TransSimpleSphericalSkel::nextVertexEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalVertexEventSPtr TransSimpleSphericalSkel::nextVertexEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalVertexEventSPtr result;
     Sphere3SPtr sphere = polygon->getSphere();
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularVertexSPtr>::iterator it_v1 = polygon->vertices().begin();
     while (it_v1 != polygon->vertices().end()) {
         CircularVertexSPtr vertex_1 = *it_v1++;
@@ -864,7 +864,7 @@ SphericalVertexEventSPtr TransSimpleSphericalSkel::nextVertexEvent(SphericalPoly
             if (!point) {
                 continue;
             }
-            double offset_current = offsetTo(edge_1_in, point);
+            CGAL::FT offset_current = offsetTo(edge_1_in, point);
             if (offset_max < offset_current && offset_current <= 0.0) {
                 CircularNodeSPtr node;
                 if (!result) {
@@ -887,10 +887,10 @@ SphericalVertexEventSPtr TransSimpleSphericalSkel::nextVertexEvent(SphericalPoly
     return result;
 }
 
-SphericalEdgeMergeEventSPtr TransSimpleSphericalSkel::nextEdgeMergeEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalEdgeMergeEventSPtr TransSimpleSphericalSkel::nextEdgeMergeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalEdgeMergeEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
@@ -915,7 +915,7 @@ SphericalEdgeMergeEventSPtr TransSimpleSphericalSkel::nextEdgeMergeEvent(Spheric
         if (!point) {
             continue;
         }
-        double offset_current = offsetTo(edge, point);
+        CGAL::FT offset_current = offsetTo(edge, point);
         if (!isEdgeEvent(edge, offset_current)) {
             continue;
         }
@@ -946,7 +946,7 @@ SphericalEdgeMergeEventSPtr TransSimpleSphericalSkel::nextEdgeMergeEvent(Spheric
     return result;
 }
 
-SphericalInversionEventSPtr TransSimpleSphericalSkel::nextInversionEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalInversionEventSPtr TransSimpleSphericalSkel::nextInversionEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalInversionEventSPtr result = SphericalInversionEvent::create();
     double radius = polygon->getRadius();
@@ -960,7 +960,7 @@ SphericalInversionEventSPtr TransSimpleSphericalSkel::nextInversionEvent(Spheric
 }
 
 
-SphericalAbstractEventSPtr TransSimpleSphericalSkel::nextEvent(SphericalPolygonSPtr polygon, double offset) {
+SphericalAbstractEventSPtr TransSimpleSphericalSkel::nextEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     SphericalAbstractEventSPtr result = SphericalAbstractEventSPtr();
     if (!polygon) {
         return result;
@@ -1008,7 +1008,7 @@ SphericalAbstractEventSPtr TransSimpleSphericalSkel::nextEvent(SphericalPolygonS
 }
 
 
-SphericalPolygonSPtr TransSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr polygon, double offset) {
+SphericalPolygonSPtr TransSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     Sphere3SPtr sphere = polygon->getSphere();
     SphericalPolygonSPtr result = SphericalPolygon::create(sphere);
 

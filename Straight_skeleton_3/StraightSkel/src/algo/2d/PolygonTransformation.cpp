@@ -72,9 +72,9 @@ void PolygonTransformation::randMovePoints(PolygonSPtr polygon, double range) {
 
 
 Point2SPtr PolygonTransformation::boundingBoxMin(PolygonSPtr polygon) {
-    double p_min[2];
+    CGAL::FT p_min[2];
     for (unsigned int i = 0; i < 2; i++) {
-        p_min[i] = std::numeric_limits<double>::max();
+        p_min[i] = std::numeric_limits<double>::max(); // do not put FT
     }
     std::list<VertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
@@ -91,9 +91,9 @@ Point2SPtr PolygonTransformation::boundingBoxMin(PolygonSPtr polygon) {
 }
 
 Point2SPtr PolygonTransformation::boundingBoxMax(PolygonSPtr polygon) {
-    double p_max[2];
+    CGAL::FT p_max[2];
     for (unsigned int i = 0; i < 2; i++) {
-        p_max[i] = -std::numeric_limits<double>::max();
+        p_max[i] = -std::numeric_limits<double>::max(); // do not put FT
     }
     std::list<VertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {

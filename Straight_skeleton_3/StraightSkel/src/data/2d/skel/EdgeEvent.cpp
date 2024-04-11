@@ -36,8 +36,8 @@ void EdgeEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double EdgeEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT EdgeEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getHeight();
     }

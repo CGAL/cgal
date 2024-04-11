@@ -147,21 +147,13 @@ unsigned int MeshVertex::countCells() const {
     return result;
 }
 
-double MeshVertex::getX() const {
 #ifdef USE_CGAL
-    return this->point_->x();
+CGAL::FT MeshVertex::getX() const { return this->point_->x(); }
+CGAL::FT MeshVertex::getY() const { return this->point_->y(); }
 #else
-    return this->point_->getX();
+double MeshVertex::getX() const { return this->point_->getX(); }
+double MeshVertex::getY() const { return this->point_->getY(); }
 #endif
-}
-
-double MeshVertex::getY() const {
-#ifdef USE_CGAL
-    return this->point_->y();
-#else
-    return this->point_->getY();
-#endif
-}
 
 std::string MeshVertex::toString() const {
     std::string result("MeshVertex(");

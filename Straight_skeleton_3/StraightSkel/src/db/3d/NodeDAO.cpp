@@ -125,7 +125,7 @@ NodeSPtr NodeDAO::find(int skelid, int nid) {
         stmt->bindInteger(2, nid);
         if (stmt->execute() > 0) {
             int point_id = stmt->getInteger(0);
-            double offset = stmt->getDouble(1);
+            CGAL::FT offset = stmt->getDouble(1);
             PointDAOSPtr dao_point = DAOFactory::getPointDAO();
             Point3SPtr point = dao_point->find(point_id);
             result = Node::create(point);

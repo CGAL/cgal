@@ -748,12 +748,12 @@ void MainOpenGLWindow::drawPolyhedron(PolyhedronSPtr polyhedron, bool bold, bool
                     data::_3d::KernelFactory::createVector3(triangle->plane());
             vec3f pos_norm;
             vec3f dir_norm;
-            double length_norm = 0.0f;
+            CGAL::FT length_norm = 0.0f;
             for (unsigned int i = 0; i < 3; i++) {
                 pos_norm[i] = (a[i] + b[i] + c[i]) / 3;
                 length_norm += (*normal)[i] * (*normal)[i];
             }
-            length_norm = sqrt(length_norm);
+            length_norm = CGAL::approximate_sqrt(length_norm);
             for (unsigned int i = 0; i < 3; i++) {
                 dir_norm[i] = ((*normal)[i] / length_norm) * 0.5 * thickness_/scale_;
             }

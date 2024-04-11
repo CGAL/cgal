@@ -25,14 +25,14 @@ public:
     FacetSPtr getFacetOrigin() const;
     void setFacetOrigin(FacetSPtr facet_origin);
 
-    double getSpeed() const;
-    void setSpeed(double speed);
+    CGAL::FT getSpeed() const;
+    void setSpeed(CGAL::FT speed);
 
 protected:
     SkelFacetData();
     FacetWPtr offset_facet_;
     FacetWPtr facet_origin_;
-    double speed_;
+    CGAL::FT speed_;
 };
 
 } } }

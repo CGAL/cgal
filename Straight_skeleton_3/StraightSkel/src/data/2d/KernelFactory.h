@@ -26,7 +26,7 @@ class KernelFactory {
 public:
     virtual ~KernelFactory();
 
-    static Point2SPtr createPoint2(double x, double y);
+    static Point2SPtr createPoint2(CGAL::FT x, CGAL::FT y);
     static Point2SPtr createPoint2(const Point2& point);
 
     static Segment2SPtr createSegment2(Point2SPtr src, Point2SPtr dst);
@@ -37,7 +37,7 @@ public:
     static Line2SPtr createLine2(Segment2SPtr seg);
     static Line2SPtr createLine2(Point2SPtr p, Vector2SPtr direction);
 
-    static Vector2SPtr createVector2(double x, double y);
+    static Vector2SPtr createVector2(CGAL::FT x, CGAL::FT y);
     static Vector2SPtr createVector2(const Vector2& vector);
     static Vector2SPtr createVector2(Point2SPtr point);
     static Vector2SPtr createVector2(Line2SPtr line);

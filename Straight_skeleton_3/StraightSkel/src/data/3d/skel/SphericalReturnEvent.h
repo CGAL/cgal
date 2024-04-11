@@ -19,8 +19,8 @@ public:
 
     static SphericalReturnEventSPtr create();
 
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
     CircularVertexSPtr getVertex() const;
     void setVertex(CircularVertexSPtr vertex);
 
@@ -28,7 +28,7 @@ public:
 
 protected:
     SphericalReturnEvent();
-    double offset_;
+    CGAL::FT offset_;
     CircularVertexSPtr vertex_;
 };
 

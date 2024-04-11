@@ -56,10 +56,10 @@ int PlaneDAO::insert(Plane3SPtr plane) {
                 "VALUES (?, ?, ?, ?, ?);");
         SQLiteStmtSPtr stmt = db->prepare(sql);
         if (stmt) {
-            double a = 0.0;
-            double b = 0.0;
-            double c = 0.0;
-            double d = 0.0;
+            CGAL::FT a = 0.0;
+            CGAL::FT b = 0.0;
+            CGAL::FT c = 0.0;
+            CGAL::FT d = 0.0;
 #ifdef USE_CGAL
             a = plane->a();
             b = plane->b();

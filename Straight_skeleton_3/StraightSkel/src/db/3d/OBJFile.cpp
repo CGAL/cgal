@@ -113,10 +113,10 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                                 poly_vertices[2]->getPoint());
                         Vector3SPtr normal_plane = KernelFactory::createVector3(plane);
                         double angle = 0.0;
-                        double arg = 0.0;
+                        CGAL::FT arg = 0.0;
 #ifdef USE_CGAL
                         arg = ((*normal_plane)*(*normal_sum)) /
-                                CGAL::sqrt(normal_plane->squared_length() * normal_sum->squared_length());
+                                CGAL::approximate_sqrt(normal_plane->squared_length() * normal_sum->squared_length());
 #else
                         arg = ((*normal_plane)*(*normal_sum)) /
                                 sqrt(normal_plane->squared_length() * normal_sum->squared_length());

@@ -38,11 +38,11 @@ void Node::setPoint(Point3SPtr point) {
     this->point_ = point;
 }
 
-double Node::getOffset() const {
+CGAL::FT Node::getOffset() const {
     return offset_;
 }
 
-void Node::setOffset(double offset) {
+void Node::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 
@@ -177,29 +177,15 @@ unsigned int Node::degree() const {
     return result;
 }
 
-double Node::getX() const {
 #ifdef USE_CGAL
-    return this->point_->x();
+CGAL::FT Node::getX() const { return this->point_->x(); }
+CGAL::FT Node::getY() const { return this->point_->y(); }
+CGAL::FT Node::getZ() const { return this->point_->z(); }
 #else
-    return this->point_->getX();
+double Node::getX() const { return this->point_->getX(); }
+double Node::getY() const { return this->point_->getY(); }
+double Node::getZ() const { return this->point_->getZ(); }
 #endif
-}
-
-double Node::getY() const {
-#ifdef USE_CGAL
-    return this->point_->y();
-#else
-    return this->point_->getY();
-#endif
-}
-
-double Node::getZ() const {
-#ifdef USE_CGAL
-    return this->point_->z();
-#else
-    return this->point_->getZ();
-#endif
-}
 
 std::string Node::toString() const {
     std::string result("Node(");

@@ -36,11 +36,11 @@ void Node::setPoint(Point2SPtr point) {
     this->point_ = point;
 }
 
-double Node::getHeight() const {
+CGAL::FT Node::getHeight() const {
     return height_;
 }
 
-void Node::setHeight(double height) {
+void Node::setHeight(CGAL::FT height) {
     this->height_ = height;
 }
 
@@ -115,21 +115,13 @@ unsigned int Node::degree() const {
     return result;
 }
 
-double Node::getX() const {
 #ifdef USE_CGAL
-    return this->point_->x();
+CGAL::FT Node::getX() const { return this->point_->x(); }
+CGAL::FT Node::getY() const { return this->point_->y(); }
 #else
-    return this->point_->getX();
+double Node::getX() const { return this->point_->getX(); }
+double Node::getY() const { return this->point_->getY(); }
 #endif
-}
-
-double Node::getY() const {
-#ifdef USE_CGAL
-    return this->point_->y();
-#else
-    return this->point_->getY();
-#endif
-}
 
 std::string Node::toString() const {
     std::string result("Node(");

@@ -650,17 +650,17 @@ bool Facet::makeFirstConvex() {
 data::_2d::PolygonSPtr Facet::toPolygon() {
     data::_2d::PolygonSPtr result = data::_2d::Polygon::create();
     Vector3SPtr normal = KernelFactory::createVector3(plane());
-    double n[3];   // n = normal.cross([0 0 1])
+    CGAL::FT n[3];   // n = normal.cross([0 0 1])
     n[0] = (*normal)[1];
     n[1] = -(*normal)[0];
     n[2] = 0.0;
-    double length = 0.0;
+    CGAL::FT length = 0.0;
     if ((*normal)[0] != 0.0 || (*normal)[1] != 0.0) {
         // normalize n
         for (unsigned int i = 0; i < 3; i++) {
             length += n[i]*n[i];
         }
-        length = sqrt(length);
+        length = CGAL::approximate_sqrt(length);
         for (unsigned int i = 0; i < 3; i++) {
             n[i] /= length;
         }
@@ -684,8 +684,8 @@ data::_2d::PolygonSPtr Facet::toPolygon() {
     while (it_v != vertices_.end()) {
         VertexSPtr vertex = *it_v++;
         Vector3SPtr v_p = KernelFactory::createVector3(vertex->getPoint());
-        double x2 = (*r_x) * (*v_p);
-        double y2 = (*r_y) * (*v_p);
+        CGAL::FT x2 = (*r_x) * (*v_p);
+        CGAL::FT y2 = (*r_y) * (*v_p);
         data::_2d::Point2SPtr p2 = data::_2d::KernelFactory::createPoint2(x2, y2);
         data::_2d::VertexSPtr vertex2 = data::_2d::Vertex::create(p2);
         result->addVertex(vertex2);

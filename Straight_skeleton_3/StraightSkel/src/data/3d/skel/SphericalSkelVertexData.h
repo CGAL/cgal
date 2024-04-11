@@ -26,8 +26,8 @@ public:
     CircularVertexSPtr getOffsetVertex() const;
     void setOffsetVertex(CircularVertexSPtr offset_vertex);
 
-    double getSpeed() const;
-    void setSpeed(double speed);
+    CGAL::FT getSpeed() const;
+    void setSpeed(CGAL::FT speed);
 
     EdgeSPtr getEdgeOrigin() const;
     void setEdgeOrigin(EdgeSPtr edge_origin);
@@ -43,7 +43,7 @@ protected:
     CircularArcWPtr arc_;
     CircularNodeWPtr node_;
     CircularVertexWPtr offset_vertex_;
-    double speed_;
+    CGAL::FT speed_;
     EdgeWPtr edge_origin_;
     bool reflex_;
     bool invert_;

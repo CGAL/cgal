@@ -225,11 +225,11 @@ int SphericalSkeleton::countEvents(int type) const {
     return result;
 }
 
-double SphericalSkeleton::getRadius() const {
-    double result = 0.0;
+CGAL::FT SphericalSkeleton::getRadius() const {
+    CGAL::FT result = 0.0;
     if (sphere_) {
 #ifdef USE_CGAL
-        result = CGAL::sqrt(sphere_->squared_radius());
+        result = CGAL::approximate_sqrt(sphere_->squared_radius());
 #else
         result = sphere_->getRadius();
 #endif

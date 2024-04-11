@@ -35,21 +35,21 @@ public:
     void initSpeeds(SphericalPolygonSPtr polygon);
     void updateSpeeds(SphericalPolygonSPtr polygon_prev);
 
-    static double approxOffsetTo(CircularVertexSPtr vertex, Point3SPtr point);
+    static CGAL::FT approxOffsetTo(CircularVertexSPtr vertex, Point3SPtr point);
 
-    SphericalEdgeEventSPtr nextEdgeEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalSplitEventSPtr nextSplitEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalTriangleEventSPtr nextTriangleEvent(SphericalPolygonSPtr polygon, double offset);
+    SphericalEdgeEventSPtr nextEdgeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalSplitEventSPtr nextSplitEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalTriangleEventSPtr nextTriangleEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
-    SphericalAbstractEventSPtr nextEvent(SphericalPolygonSPtr polygon, double offset);
+    SphericalAbstractEventSPtr nextEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
     CircularEdgeSPtr findLongestEdge(std::list<CircularEdgeSPtr> edges);
 
-    double distanceOffset(CircularEdgeSPtr edge_begin, double offset, double speed_dst);
-    double findMinDistance(CircularEdgeSPtr edge_begin, double offset);
+    CGAL::FT distanceOffset(CircularEdgeSPtr edge_begin, CGAL::FT offset, CGAL::FT speed_dst);
+    CGAL::FT findMinDistance(CircularEdgeSPtr edge_begin, CGAL::FT offset);
 
-    SphericalPolygonSPtr shiftEdges(SphericalPolygonSPtr polygon, double offset);
-    SphericalPolygonSPtr shiftEdges2(SphericalPolygonSPtr polygon, double offset);
+    SphericalPolygonSPtr shiftEdges(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalPolygonSPtr shiftEdges2(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
     void checkAngles(SphericalPolygonSPtr polygon);
 

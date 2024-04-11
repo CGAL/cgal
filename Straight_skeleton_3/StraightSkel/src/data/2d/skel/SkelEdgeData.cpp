@@ -51,11 +51,11 @@ void SkelEdgeData::setEdgeOrigin(EdgeSPtr edge_origin) {
     this->edge_origin_ = edge_origin;
 }
 
-double SkelEdgeData::getSpeed() const {
+CGAL::FT SkelEdgeData::getSpeed() const {
     return speed_;
 }
 
-void SkelEdgeData::setSpeed(double speed) {
+void SkelEdgeData::setSpeed(CGAL::FT speed) {
     speed_ = speed;
 }
 

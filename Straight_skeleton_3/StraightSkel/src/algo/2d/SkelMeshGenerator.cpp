@@ -268,7 +268,7 @@ void SkelMeshGenerator::findRayDsts() {
         } else {
             MeshEdgeDataSPtr data = std::dynamic_pointer_cast<MeshEdgeData>(
                     edge->getData());
-            double dist_max = 0.0;
+            CGAL::FT dist_max = 0.0;
             ArcSPtr arc_max;
             std::list<ArcWPtr>::iterator it_a = data->arcs().begin();
             while (it_a != data->arcs().end()) {
@@ -281,7 +281,7 @@ void SkelMeshGenerator::findRayDsts() {
                     p_dst = arc->getNodeDst()->getPoint();
                     if (p_ray_src != p_src && p_ray_src != p_dst &&
                             KernelWrapper::isInside(p_arc_inter, p_src, p_dst)) {
-                        double dist = KernelWrapper::distance(p_ray_src, p_arc_inter);
+                        CGAL::FT dist = KernelWrapper::distance(p_ray_src, p_arc_inter);
                         if (dist >= dist_max) {
                             dist_max = dist;
                             arc_max = arc;
@@ -375,7 +375,7 @@ MeshVertexSPtr SkelMeshGenerator::findNearestIntersection(MeshCellSPtr cell,
     MeshVertexSPtr result;
     Point2SPtr point = vertex->getPoint();
     Line2SPtr line = KernelFactory::createLine2(point, direction);
-    double dist_min = std::numeric_limits<double>::max();
+    CGAL::FT dist_min = std::numeric_limits<double>::max(); // do not put FT
     MeshVertexSPtr vertex_current;
     MeshVertexSPtr vertex_prev = cell->vertices().back();
     std::list<MeshVertexSPtr>::iterator it_v = cell->vertices().begin();
@@ -391,7 +391,7 @@ MeshVertexSPtr SkelMeshGenerator::findNearestIntersection(MeshCellSPtr cell,
         if ((side_src + side_dst) == 0) {
             Line2SPtr l_current = KernelFactory::createLine2(p_src, p_dst);
             Point2SPtr p_intersect = KernelWrapper::intersection(line, l_current);
-            double dist = KernelWrapper::distance(point, p_intersect);
+            CGAL::FT dist = KernelWrapper::distance(point, p_intersect);
             if (dist < dist_min) {
                 dist_min = dist;
                 result = vertex_current;

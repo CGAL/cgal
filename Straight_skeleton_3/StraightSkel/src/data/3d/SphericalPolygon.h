@@ -39,7 +39,7 @@ public:
 
     bool isConsistent() const;
 
-    double getRadius() const;
+    CGAL::FT getRadius() const;
 
     std::string toString() const;
 

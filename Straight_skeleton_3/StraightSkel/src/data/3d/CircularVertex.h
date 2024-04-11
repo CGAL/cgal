@@ -40,9 +40,15 @@ public:
     CircularVertexSPtr next() const;
     CircularVertexSPtr prev() const;
 
+#ifdef USE_CGAL
+    CGAL::FT getX() const;
+    CGAL::FT getY() const;
+    CGAL::FT getZ() const;
+#else
     double getX() const;
     double getY() const;
     double getZ() const;
+#endif
 
     std::string toString() const;
 

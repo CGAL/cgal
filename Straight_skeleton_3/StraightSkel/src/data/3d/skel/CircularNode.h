@@ -23,8 +23,8 @@ public:
     Point3SPtr getPoint() const;
     void setPoint(Point3SPtr point);
 
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
 
     SphericalSkeletonSPtr getSkel() const;
     void setSkel(SphericalSkeletonSPtr skel);
@@ -41,16 +41,22 @@ public:
 
     unsigned int degree();
 
+#ifdef USE_CGAL
+    CGAL::FT getX() const;
+    CGAL::FT getY() const;
+    CGAL::FT getZ() const;
+#else
     double getX() const;
     double getY() const;
     double getZ() const;
+#endif
 
     std::string toString() const;
 
 protected:
     CircularNode(Point3SPtr point);
     Point3SPtr point_;
-    double offset_;
+    CGAL::FT offset_;
     std::list<CircularArcWPtr> arcs_;  // every CircularNode has 3 CircularArcs
     SphericalSkeletonWPtr skel_;
     std::list<CircularNodeSPtr>::iterator list_it_;

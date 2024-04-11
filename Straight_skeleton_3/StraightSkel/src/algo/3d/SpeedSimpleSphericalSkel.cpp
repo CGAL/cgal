@@ -173,8 +173,8 @@ void SpeedSimpleSphericalSkel::initSpeeds(SphericalPolygonSPtr polygon) {
 }
 
 
-double SpeedSimpleSphericalSkel::speed(CircularVertexSPtr vertex) {
-    double result = 0.0;
+CGAL::FT SpeedSimpleSphericalSkel::speed(CircularVertexSPtr vertex) {
+    CGAL::FT result = 0.0;
     CircularEdgeSPtr edge_in = getEdgeOrigin(vertex->getEdgeIn());
     CircularEdgeSPtr edge_out = getEdgeOrigin(vertex->getEdgeOut());
     double angle = M_PI - KernelWrapper::angle(
@@ -188,7 +188,7 @@ Point3SPtr SpeedSimpleSphericalSkel::vanishesAt(CircularEdgeSPtr edge) {
     Point3SPtr result;
     SphericalPolygonSPtr polygon = edge->getPolygon();
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
+    CGAL::FT radius = polygon->getRadius();
     CircularEdgeSPtr edge_origin = getEdgeOrigin(edge);
     SphericalSkelEdgeDataSPtr data_origin =
             std::dynamic_pointer_cast<SphericalSkelEdgeData>(
@@ -228,7 +228,7 @@ Point3SPtr SpeedSimpleSphericalSkel::crashAt(CircularVertexSPtr vertex, Circular
     }
     SphericalPolygonSPtr polygon = vertex->getPolygon();
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
+    CGAL::FT radius = polygon->getRadius();
     CircularEdgeSPtr edge_origin = getEdgeOrigin(edge);
     CircularEdgeSPtr edge_in_origin = getEdgeOrigin(edge_in);
     CircularEdgeSPtr edge_out_origin = getEdgeOrigin(edge_out);
@@ -287,15 +287,15 @@ Point3SPtr SpeedSimpleSphericalSkel::crashAt(CircularVertexSPtr vertex, Circular
 }
 
 
-double SpeedSimpleSphericalSkel::offsetTo(CircularVertexSPtr vertex, Point3SPtr point) {
-    double result = 0.0;
+CGAL::FT SpeedSimpleSphericalSkel::offsetTo(CircularVertexSPtr vertex, Point3SPtr point) {
+    CGAL::FT result = 0.0;
     Point3SPtr p_center = KernelFactory::createPoint3(vertex->getPolygon()->getSphere());
     Vector3SPtr dir_vertex = KernelFactory::createVector3(*(vertex->getPoint()) - *p_center);
     Vector3SPtr dir_point = KernelFactory::createVector3(*point - *p_center);
     double angle = KernelWrapper::angle(dir_vertex, dir_point);
     SphericalSkelVertexDataSPtr data =
             std::dynamic_pointer_cast<SphericalSkelVertexData>(vertex->getData());
-    double speed = data->getSpeed();
+    CGAL::FT speed = data->getSpeed();
     result = - angle / speed;
     return result;
 }
@@ -304,7 +304,7 @@ double SpeedSimpleSphericalSkel::offsetTo(CircularVertexSPtr vertex, Point3SPtr 
 SphericalEdgeEventSPtr SpeedSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSPtr polygon) {
     ReadLock l(polygon->mutex());
     SphericalEdgeEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
@@ -318,9 +318,9 @@ SphericalEdgeEventSPtr SpeedSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonS
         }
         CircularVertexSPtr vertex_src = edge->getVertexSrc();
         CircularVertexSPtr vertex_dst = edge->getVertexDst();
-        double offset_src = offsetTo(vertex_src, point);
-        double offset_dst = offsetTo(vertex_dst, point);
-        double accuracy_edge_event = offset_dst - offset_src;
+        CGAL::FT offset_src = offsetTo(vertex_src, point);
+        CGAL::FT offset_dst = offsetTo(vertex_dst, point);
+        CGAL::FT accuracy_edge_event = offset_dst - offset_src;
         DEBUG_VAR(accuracy_edge_event);
         SphericalSkelVertexDataSPtr data_src =
                 std::dynamic_pointer_cast<SphericalSkelVertexData>(
@@ -329,7 +329,7 @@ SphericalEdgeEventSPtr SpeedSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonS
                 std::dynamic_pointer_cast<SphericalSkelVertexData>(
                 vertex_dst->getData());
         CircularNodeSPtr node_src = data_src->getNode();
-        double offset_current = node_src->getOffset() + offset_src;
+        CGAL::FT offset_current = node_src->getOffset() + offset_src;
         if (offset_max < offset_current) {
             CircularNodeSPtr node;
             if (!result) {
@@ -353,7 +353,7 @@ SphericalEdgeEventSPtr SpeedSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonS
 SphericalSplitEventSPtr SpeedSimpleSphericalSkel::nextSplitEvent(SphericalPolygonSPtr polygon) {
     ReadLock l(polygon->mutex());
     SphericalSplitEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularVertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
         CircularVertexSPtr vertex = *it_v++;
@@ -372,12 +372,12 @@ SphericalSplitEventSPtr SpeedSimpleSphericalSkel::nextSplitEvent(SphericalPolygo
             if (!point) {
                 continue;
             }
-            double offset_vertex = offsetTo(vertex, point);
+            CGAL::FT offset_vertex = offsetTo(vertex, point);
             SphericalSkelVertexDataSPtr vertex_data =
                     std::dynamic_pointer_cast<SphericalSkelVertexData>(
                     vertex->getData());
             CircularNodeSPtr node_src = vertex_data->getNode();
-            double offset_current = node_src->getOffset() + offset_vertex;
+            CGAL::FT offset_current = node_src->getOffset() + offset_vertex;
             if (offset_max < offset_current) {
                 CircularNodeSPtr node;
                 if (!result) {
@@ -402,7 +402,7 @@ SphericalSplitEventSPtr SpeedSimpleSphericalSkel::nextSplitEvent(SphericalPolygo
 SphericalTriangleEventSPtr SpeedSimpleSphericalSkel::nextTriangleEvent(SphericalPolygonSPtr polygon) {
     ReadLock l(polygon->mutex());
     SphericalTriangleEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::max();
+    CGAL::FT offset_max = -std::numeric_limits<double>::max(); // do not put FT
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
@@ -415,12 +415,12 @@ SphericalTriangleEventSPtr SpeedSimpleSphericalSkel::nextTriangleEvent(Spherical
             continue;
         }
         CircularVertexSPtr vertex_src = edge->getVertexSrc();
-        double offset_src = offsetTo(vertex_src, point);
+        CGAL::FT offset_src = offsetTo(vertex_src, point);
         SphericalSkelVertexDataSPtr data_src =
                 std::dynamic_pointer_cast<SphericalSkelVertexData>(
                 vertex_src->getData());
         CircularNodeSPtr node = data_src->getNode();
-        double offset_current = node->getOffset() + offset_src;
+        CGAL::FT offset_current = node->getOffset() + offset_src;
         if (offset_max < offset_current) {
             CircularNodeSPtr node;
             if (!result) {

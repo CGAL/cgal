@@ -39,8 +39,8 @@ void SphericalSplitEvent::setNode(CircularNodeSPtr node) {
     this->node_ = node;
 }
 
-double SphericalSplitEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT SphericalSplitEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

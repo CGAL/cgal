@@ -48,17 +48,17 @@ public:
 
     static Plane3SPtr bisector(Plane3SPtr plane1, Plane3SPtr plane2);
 
-    static double distance(Point3SPtr p1, Point3SPtr p2);
-    static double distance(Plane3SPtr plane, Point3SPtr point);
-    static double distance(Line3SPtr line, Point3SPtr point);
+    static CGAL::FT distance(Point3SPtr p1, Point3SPtr p2);
+    static CGAL::FT distance(Plane3SPtr plane, Point3SPtr point);
+    static CGAL::FT distance(Line3SPtr line, Point3SPtr point);
 
     static Plane3SPtr opposite(Plane3SPtr plane);
     static Line3SPtr opposite(Line3SPtr line);
 
     static Vector3SPtr normalize(Vector3SPtr v);
 
-    static Plane3SPtr offsetPlane(Plane3SPtr plane, double offset);
-    static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, double offset);
+    static Plane3SPtr offsetPlane(Plane3SPtr plane, CGAL::FT offset);
+    static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::FT offset);
 
     /**
      * http://de.wikipedia.org/wiki/Drehmatrix
@@ -67,8 +67,8 @@ public:
      * R_n(alpha) = [ n_y n_x (1 - cos(alpha)) + n_z sin(alpha)   n_y^2 (1 - cos(alpha)) + cos(alpha)         n_y n_z (1 - cos(alpha)) - n_x sin(alpha) ]
      *              [ n_z n_x (1 - cos(alpha)) - n_y sin(alpha)   n_z n_y (1 - cos(alpha)) + n_x sin(alpha)   n_z^2 (1 - cos(alpha)) + cos(alpha)       ]
      */
-    static Vector3SPtr rotateVector(Vector3SPtr vector, Vector3SPtr axis, double angle);
-    static Plane3SPtr rotatePlane(Plane3SPtr plane, Line3SPtr line, double angle);
+    static Vector3SPtr rotateVector(Vector3SPtr vector, Vector3SPtr axis, CGAL::FT angle);
+    static Plane3SPtr rotatePlane(Plane3SPtr plane, Line3SPtr line, CGAL::FT angle);
 
     static int side(Plane3SPtr plane, Point3SPtr point);
     static int orientation(Line3SPtr line1, Line3SPtr line2);

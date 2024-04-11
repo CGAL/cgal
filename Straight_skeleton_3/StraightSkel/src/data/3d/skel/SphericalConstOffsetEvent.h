@@ -15,14 +15,14 @@ namespace data { namespace _3d { namespace skel {
 class SphericalConstOffsetEvent : public SphericalAbstractEvent {
 public:
     virtual ~SphericalConstOffsetEvent();
-    static SphericalConstOffsetEventSPtr create(double offset);
+    static SphericalConstOffsetEventSPtr create(CGAL::FT offset);
 
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
 
 protected:
-    SphericalConstOffsetEvent(double offset);
-    double offset_;
+    SphericalConstOffsetEvent(CGAL::FT offset);
+    CGAL::FT offset_;
 };
 
 } } }

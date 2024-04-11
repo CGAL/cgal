@@ -25,14 +25,14 @@ public:
     EdgeSPtr getEdgeOrigin() const;
     void setEdgeOrigin(EdgeSPtr edge_origin);
 
-    double getSpeed() const;
-    void setSpeed(double speed);
+    CGAL::FT getSpeed() const;
+    void setSpeed(CGAL::FT speed);
 
 protected:
     SkelEdgeData();
     EdgeWPtr offset_edge_;
     EdgeWPtr edge_origin_;
-    double speed_;
+    CGAL::FT speed_;
 };
 
 } } }

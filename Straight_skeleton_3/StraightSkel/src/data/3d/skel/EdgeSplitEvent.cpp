@@ -37,8 +37,8 @@ void EdgeSplitEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double EdgeSplitEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT EdgeSplitEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

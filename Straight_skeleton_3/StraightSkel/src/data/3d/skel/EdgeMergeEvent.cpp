@@ -38,8 +38,8 @@ void EdgeMergeEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double EdgeMergeEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT EdgeMergeEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

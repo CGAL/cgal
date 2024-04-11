@@ -54,7 +54,7 @@ Point3SPtr SelfIntersection::intersectEdges(FacetSPtr facet,
             // 0 * inf = nan
             // const double infinity = std::numeric_limits<double>::infinity();
             // 0 * max = 0
-            const double max = std::numeric_limits<double>::max();
+            const CGAL::FT max = std::numeric_limits<double>::max(); // do not put FT
             if (edge1->getVertexSrc()->degree() == 1) {
                 p_11 = KernelFactory::createPoint3(*p_11 +
                         (*p_11-*p_12) * max);
@@ -160,7 +160,7 @@ Plane3SPtr SelfIntersection::bisector(FacetSPtr facet, VertexSPtr vertex) {
 
 EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
     EdgeSPtr result;
-    double dist_min = std::numeric_limits<double>::max();
+    CGAL::FT dist_min = std::numeric_limits<double>::max(); // do not put FT
     std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
     while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
@@ -186,7 +186,7 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
             }
         }
         if (point_inside_bounds) {
-            double dist = KernelWrapper::distance(edge->line(), point);
+            CGAL::FT dist = KernelWrapper::distance(edge->line(), point);
             if (dist < dist_min) {
                 result = edge;
                 dist_min = dist;
@@ -213,7 +213,7 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool ha
         if (handle_deg1_as_ray) {
             // 0 * inf = nan
             // 0 * max = 0
-            const double max = std::numeric_limits<double>::max();
+            const CGAL::FT max = std::numeric_limits<double>::max();
             if (edge->getVertexSrc()->degree() == 1) {
                 p_src = KernelFactory::createPoint3(*p_src +
                         (*p_src-*p_dst) * max);

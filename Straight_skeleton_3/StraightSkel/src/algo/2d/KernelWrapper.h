@@ -36,13 +36,13 @@ public:
 
     static Point2SPtr intersection(Line2SPtr line1, Line2SPtr line2);
     static Line2SPtr bisector(Line2SPtr line1, Line2SPtr line2);
-    static double distance(Point2SPtr p, Point2SPtr q);
-    static double distance(Line2SPtr line, Point2SPtr point);
+    static CGAL::FT distance(Point2SPtr p, Point2SPtr q);
+    static CGAL::FT distance(Line2SPtr line, Point2SPtr point);
     static Line2SPtr opposite(Line2SPtr line);
     static Vector2SPtr perpendicular(Vector2SPtr vector);
     static Vector2SPtr normalize(Vector2SPtr vector);
-    static Line2SPtr offsetLine(Line2SPtr line, double offset);
-    static Point2SPtr offsetPoint(Point2SPtr point, Vector2SPtr dir, double offset);
+    static Line2SPtr offsetLine(Line2SPtr line, CGAL::FT offset);
+    static Point2SPtr offsetPoint(Point2SPtr point, Vector2SPtr dir, CGAL::FT offset);
     static double angle(Vector2SPtr v1, Vector2SPtr v2);
     static int side(Line2SPtr line, Point2SPtr point);
 

@@ -35,9 +35,9 @@ public:
     static ArcSPtr createArc(VertexSPtr vertex);
     bool init(PolygonSPtr polygon);
 
-    static EdgeEventSPtr nextEvent(PolygonSPtr polygon, double offset, int direction);
+    static EdgeEventSPtr nextEvent(PolygonSPtr polygon, CGAL::FT offset, int direction);
 
-    static PolygonSPtr shiftEdges(PolygonSPtr polygon, double offset);
+    static PolygonSPtr shiftEdges(PolygonSPtr polygon, CGAL::FT offset);
 
     void appendEventNode(NodeSPtr node);
     void handleEvent(EdgeEventSPtr event, PolygonSPtr polygon);

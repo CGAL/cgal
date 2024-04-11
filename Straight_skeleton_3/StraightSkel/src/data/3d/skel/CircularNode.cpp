@@ -37,11 +37,11 @@ void CircularNode::setPoint(Point3SPtr point) {
     this->point_ = point;
 }
 
-double CircularNode::getOffset() const {
+CGAL::FT CircularNode::getOffset() const {
     return offset_;
 }
 
-void CircularNode::setOffset(double offset) {
+void CircularNode::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 
@@ -127,29 +127,15 @@ unsigned int CircularNode::degree() {
     return result;
 }
 
-double CircularNode::getX() const {
 #ifdef USE_CGAL
-    return this->point_->x();
+CGAL::FT CircularNode::getX() const { return this->point_->x(); }
+CGAL::FT CircularNode::getY() const { return this->point_->y(); }
+CGAL::FT CircularNode::getZ() const { return this->point_->z(); }
 #else
-    return this->point_->getX();
+double CircularNode::getX() const {return this->point_->getX(); }
+double CircularNode::getY() const {return this->point_->getY(); }
+double CircularNode::getZ() const {return this->point_->getZ(); }
 #endif
-}
-
-double CircularNode::getY() const {
-#ifdef USE_CGAL
-    return this->point_->y();
-#else
-    return this->point_->getY();
-#endif
-}
-
-double CircularNode::getZ() const {
-#ifdef USE_CGAL
-    return this->point_->z();
-#else
-    return this->point_->getZ();
-#endif
-}
 
 std::string CircularNode::toString() const {
     std::string result("CircularNode(");

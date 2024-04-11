@@ -18,7 +18,7 @@ KernelFactory::~KernelFactory() {
     // intentionally does nothing
 }
 
-Point3SPtr KernelFactory::createPoint3(double x, double y, double z) {
+Point3SPtr KernelFactory::createPoint3(CGAL::FT x, CGAL::FT y, CGAL::FT z) {
     return Point3SPtr(new Point3(x, y, z));
 }
 
@@ -72,7 +72,7 @@ Line3SPtr KernelFactory::createLine3(Point3SPtr p, Vector3SPtr direction) {
     return Line3SPtr(new Line3(*p, *direction));
 }
 
-Plane3SPtr KernelFactory::createPlane3(double a, double b, double c, double d) {
+Plane3SPtr KernelFactory::createPlane3(CGAL::FT a, CGAL::FT b, CGAL::FT c, CGAL::FT d) {
     return Plane3SPtr(new Plane3(a, b, c, d));
 }
 
@@ -93,7 +93,7 @@ Plane3SPtr KernelFactory::createPlane3(const Plane3& plane) {
     return Plane3SPtr(new Plane3(plane));
 }
 
-Sphere3SPtr KernelFactory::createSphere3(Point3SPtr center, double radius) {
+Sphere3SPtr KernelFactory::createSphere3(Point3SPtr center, CGAL::FT radius) {
     return Sphere3SPtr(new Sphere3(*center, radius));
 }
 
@@ -101,7 +101,7 @@ Sphere3SPtr KernelFactory::createSphere3(const Sphere3& sphere) {
     return Sphere3SPtr(new Sphere3(sphere));
 }
 
-Vector3SPtr KernelFactory::createVector3(double x, double y, double z) {
+Vector3SPtr KernelFactory::createVector3(CGAL::FT x, CGAL::FT y, CGAL::FT z) {
     return Vector3SPtr(new Vector3(x, y, z));
 }
 

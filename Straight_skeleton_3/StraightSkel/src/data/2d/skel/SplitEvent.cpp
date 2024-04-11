@@ -39,8 +39,8 @@ void SplitEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double SplitEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT SplitEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getHeight();
     }

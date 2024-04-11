@@ -60,18 +60,18 @@ public:
     /**
      * Determines the offset until the given CircularEdge reaches the point.
      */
-    double offsetTo(CircularEdgeSPtr edge, Point3SPtr point);
+    CGAL::FT offsetTo(CircularEdgeSPtr edge, Point3SPtr point);
 
-    SphericalEdgeEventSPtr nextEdgeEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalSplitEventSPtr nextSplitEvent(SphericalPolygonSPtr polygon, double offset);
-    SphericalTriangleEventSPtr nextTriangleEvent(SphericalPolygonSPtr polygon, double offset);
+    SphericalEdgeEventSPtr nextEdgeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalSplitEventSPtr nextSplitEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
+    SphericalTriangleEventSPtr nextTriangleEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
-    SphericalAbstractEventSPtr nextEvent(SphericalPolygonSPtr polygon, double offset);
+    SphericalAbstractEventSPtr nextEvent(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
     /**
      * Negative offset shrinks the given polygon.
      */
-    SphericalPolygonSPtr shiftEdges(SphericalPolygonSPtr polygon, double offset);
+    SphericalPolygonSPtr shiftEdges(SphericalPolygonSPtr polygon, CGAL::FT offset);
 
     void handleEdgeEvent(SphericalEdgeEventSPtr event, SphericalPolygonSPtr polygon);
     void handleSplitEvent(SphericalSplitEventSPtr event, SphericalPolygonSPtr polygon);

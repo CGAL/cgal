@@ -19,7 +19,7 @@ public:
     static SphericalEdgeMergeEventSPtr create();
     CircularNodeSPtr getNode() const;
     void setNode(CircularNodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     CircularEdgeSPtr getEdge1() const;
     void setEdge1(CircularEdgeSPtr edge_1);
     CircularEdgeSPtr getEdge2() const;

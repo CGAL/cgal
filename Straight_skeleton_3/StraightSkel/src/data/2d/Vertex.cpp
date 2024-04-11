@@ -133,21 +133,13 @@ VertexSPtr Vertex::prev() const {
     return result;
 }
 
-double Vertex::getX() const {
 #ifdef USE_CGAL
-    return this->point_->x();
+CGAL::FT Vertex::getX() const { return this->point_->x(); }
+CGAL::FT Vertex::getY() const { return this->point_->y(); }
 #else
-    return this->point_->getX();
+double Vertex::getX() const { return this->point_->getX(); }
+double Vertex::getY() const { return this->point_->getY(); }
 #endif
-}
-
-double Vertex::getY() const {
-#ifdef USE_CGAL
-    return this->point_->y();
-#else
-    return this->point_->getY();
-#endif
-}
 
 double Vertex::angle() const {
     double result = 0.0;

@@ -34,12 +34,12 @@ public:
 
     void initSpeeds(SphericalPolygonSPtr polygon);
 
-    double speed(CircularVertexSPtr vertex);
+    CGAL::FT speed(CircularVertexSPtr vertex);
 
     static Point3SPtr vanishesAt(CircularEdgeSPtr edge);
     static Point3SPtr crashAt(CircularVertexSPtr vertex, CircularEdgeSPtr edge);
 
-    double offsetTo(CircularVertexSPtr vertex, Point3SPtr point);
+    CGAL::FT offsetTo(CircularVertexSPtr vertex, Point3SPtr point);
 
     SphericalEdgeEventSPtr nextEdgeEvent(SphericalPolygonSPtr polygon);
     SphericalSplitEventSPtr nextSplitEvent(SphericalPolygonSPtr polygon);

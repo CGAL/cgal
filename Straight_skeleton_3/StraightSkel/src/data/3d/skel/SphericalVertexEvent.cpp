@@ -37,8 +37,8 @@ void SphericalVertexEvent::setNode(CircularNodeSPtr node) {
     this->node_ = node;
 }
 
-double SphericalVertexEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT SphericalVertexEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

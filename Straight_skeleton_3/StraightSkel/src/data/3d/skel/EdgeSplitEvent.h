@@ -19,7 +19,7 @@ public:
     static EdgeSplitEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     EdgeSPtr getEdge1() const;
     void setEdge1(EdgeSPtr edge1);
     EdgeSPtr getEdge2() const;

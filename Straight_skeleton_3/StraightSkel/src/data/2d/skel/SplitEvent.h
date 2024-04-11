@@ -19,7 +19,7 @@ public:
     static SplitEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     VertexSPtr getVertex() const;
     void setVertex(VertexSPtr vertex);
     EdgeSPtr getEdge() const;

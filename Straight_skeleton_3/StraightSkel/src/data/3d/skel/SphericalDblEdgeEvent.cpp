@@ -28,11 +28,11 @@ SphericalDblEdgeEventSPtr SphericalDblEdgeEvent::create() {
     return result;
 }
 
-double SphericalDblEdgeEvent::getOffset() const {
+CGAL::FT SphericalDblEdgeEvent::getOffset() const {
     return this->offset_;
 }
 
-void SphericalDblEdgeEvent::setOffset(double offset) {
+void SphericalDblEdgeEvent::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 

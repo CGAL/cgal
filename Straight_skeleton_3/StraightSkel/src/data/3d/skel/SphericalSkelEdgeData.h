@@ -22,8 +22,8 @@ public:
     CircularEdgeSPtr getOffsetEdge() const;
     void setOffsetEdge(CircularEdgeSPtr offset_edge);
 
-    double getSpeed() const;
-    void setSpeed(double speed);
+    CGAL::FT getSpeed() const;
+    void setSpeed(CGAL::FT speed);
 
     FacetSPtr getFacetOrigin() const;
     void setFacetOrigin(FacetSPtr facet_origin);
@@ -34,7 +34,7 @@ public:
 protected:
     SphericalSkelEdgeData();
     CircularEdgeWPtr offset_edge_;
-    double speed_;
+    CGAL::FT speed_;
     FacetWPtr facet_origin_;
     Line3SPtr rotation_axis_;
 };

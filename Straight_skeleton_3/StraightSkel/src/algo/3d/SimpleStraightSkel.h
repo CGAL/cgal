@@ -25,7 +25,7 @@ public:
 
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron);
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller);
-    static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller, const std::list<double>& save_offsets);
+    static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller, const std::list<CGAL::FT>& save_offsets);
 
     void initVertexSplitter();
     void initEdgeEvent();
@@ -98,71 +98,71 @@ public:
     /**
      * Returns the offset (time) when the facet will reach the given point.
      */
-    static double offsetDist(FacetSPtr facet, Point3SPtr point);
+    static CGAL::FT offsetDist(FacetSPtr facet, Point3SPtr point);
 
     /**
      * Edge flip event.
      */
-    static EdgeEventSPtr nextEdgeEvent(PolyhedronSPtr polyhedron, double offset);
+    static EdgeEventSPtr nextEdgeEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
-    static EdgeMergeEventSPtr nextEdgeMergeEvent(PolyhedronSPtr polyhedron, double offset);
+    static EdgeMergeEventSPtr nextEdgeMergeEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * The triangle on the surface vanishes.
      */
-    static TriangleEventSPtr nextTriangleEvent(PolyhedronSPtr polyhedron, double offset);
+    static TriangleEventSPtr nextTriangleEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
-    static DblEdgeMergeEventSPtr nextDblEdgeMergeEvent(PolyhedronSPtr polyhedron, double offset);
+    static DblEdgeMergeEventSPtr nextDblEdgeMergeEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
-    static DblTriangleEventSPtr nextDblTriangleEvent(PolyhedronSPtr polyhedron, double offset);
+    static DblTriangleEventSPtr nextDblTriangleEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * A tetrahedron causes one final event only.
      */
-    static TetrahedronEventSPtr nextTetrahedronEvent(PolyhedronSPtr polyhedron, double offset);
+    static TetrahedronEventSPtr nextTetrahedronEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * Two vertices crash into each other.
      */
-    static VertexEventSPtr nextVertexEvent(PolyhedronSPtr polyhedron, double offset);
+    static VertexEventSPtr nextVertexEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
-    static FlipVertexEventSPtr nextFlipVertexEvent(PolyhedronSPtr polyhedron, double offset);
+    static FlipVertexEventSPtr nextFlipVertexEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * Split event on the surface.
      * Edges do not need to be reflex.
      */
-    static SurfaceEventSPtr nextSurfaceEvent(PolyhedronSPtr polyhedron, double offset);
+    static SurfaceEventSPtr nextSurfaceEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
-    static PolyhedronSplitEventSPtr nextPolyhedronSplitEvent(PolyhedronSPtr polyhedron, double offset);
+    static PolyhedronSplitEventSPtr nextPolyhedronSplitEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
-    static SplitMergeEventSPtr nextSplitMergeEvent(PolyhedronSPtr polyhedron, double offset);
+    static SplitMergeEventSPtr nextSplitMergeEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
-    static EdgeSplitEventSPtr nextEdgeSplitEvent(PolyhedronSPtr polyhedron, double offset);
+    static EdgeSplitEventSPtr nextEdgeSplitEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * A reflex vertex reaches a facet.
      */
-    static PierceEventSPtr nextPierceEvent(PolyhedronSPtr polyhedron, double offset);
+    static PierceEventSPtr nextPierceEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * Determines the next event.
      */
-    AbstractEventSPtr nextEvent(PolyhedronSPtr polyhedron, double offset);
+    AbstractEventSPtr nextEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * Creates an offset polyhedron.
      * Negative offset points to the interior of the polyhedron.
      */
-    static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron, double offset);
+    static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
      * Appends a node of an event to the skeleton.
@@ -189,14 +189,14 @@ public:
 protected:
     SimpleStraightSkel(PolyhedronSPtr polyhedron);
     SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller);
-    SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller, const std::list<double>& save_offsets);
+    SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller, const std::list<CGAL::FT>& save_offsets);
 
     static FacetSPtr getFacetSrc(EdgeSPtr edge);
     static FacetSPtr getFacetDst(EdgeSPtr edge);
 
     PolyhedronSPtr polyhedron_;
     ControllerSPtr controller_;
-    std::list<double> save_offsets_;
+    std::list<CGAL::FT> save_offsets_;
     bool use_fast_vertex_splitter_;
     AbstractVertexSplitterSPtr vertex_splitter_;
     int edge_event_;

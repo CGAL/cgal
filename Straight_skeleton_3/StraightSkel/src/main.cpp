@@ -110,13 +110,13 @@ const char* getOption(const char* option, int argc, const char* argv[]) {
     return result;
 }
 
-std::list<double> parseCSV(const char* csv) {
-    std::list<double> values;
+std::list<CGAL::FT> parseCSV(const char* csv) {
+    std::list<CGAL::FT> values;
     std::vector<std::string> str_vals = util::StringFuncs::split(csv, ",", false);
     for (unsigned int cnt = 0; cnt < str_vals.size(); cnt++) {
         values.push_back(std::stod(str_vals[cnt]));
     }
-    values.sort(std::greater<double>());
+    values.sort(std::greater<CGAL::FT>());
     return values;
 }
 
@@ -391,7 +391,7 @@ int main(int argc, const char* argv[]) {
         window = ui::gl::MainOpenGLWindow::create(argc, argv, width, height, controller);
     }
 
-    std::list<double> save_offsets;
+    std::list<CGAL::FT> save_offsets;
     const char* chr_save_offsets = getOption("--save-offsets", argc, argv);
     if (chr_save_offsets) {
         save_offsets = parseCSV(chr_save_offsets);

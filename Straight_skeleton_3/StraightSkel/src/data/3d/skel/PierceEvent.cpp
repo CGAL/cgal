@@ -41,8 +41,8 @@ void PierceEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double PierceEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT PierceEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

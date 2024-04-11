@@ -21,8 +21,8 @@ public:
 
     Point3SPtr getPoint() const;
     void setPoint(Point3SPtr point);
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
 
     StraightSkeletonSPtr getSkel() const;
     void setSkel(StraightSkeletonSPtr skel);
@@ -48,16 +48,22 @@ public:
 
     unsigned int degree() const;
 
+#ifdef USE_CGAL
+    CGAL::FT getX() const;
+    CGAL::FT getY() const;
+    CGAL::FT getZ() const;
+#else
     double getX() const;
     double getY() const;
     double getZ() const;
+#endif
 
     std::string toString() const;
 
 protected:
     Node(Point3SPtr point);
     Point3SPtr point_;
-    double offset_;
+    CGAL::FT offset_;
     std::list<ArcWPtr> arcs_;
     std::list<SheetWPtr> sheets_;
     StraightSkeletonWPtr skel_;

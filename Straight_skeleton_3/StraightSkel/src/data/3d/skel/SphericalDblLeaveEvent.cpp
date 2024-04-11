@@ -28,11 +28,11 @@ SphericalDblLeaveEventSPtr SphericalDblLeaveEvent::create() {
     return result;
 }
 
-double SphericalDblLeaveEvent::getOffset() const {
+CGAL::FT SphericalDblLeaveEvent::getOffset() const {
     return this->offset_;
 }
 
-void SphericalDblLeaveEvent::setOffset(double offset) {
+void SphericalDblLeaveEvent::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 

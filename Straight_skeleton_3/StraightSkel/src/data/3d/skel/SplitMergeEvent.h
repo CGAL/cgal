@@ -19,7 +19,7 @@ public:
     static SplitMergeEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     VertexSPtr getVertex1() const;
     void setVertex1(VertexSPtr vertex_1);
     VertexSPtr getVertex2() const;

@@ -39,8 +39,8 @@ void FlipVertexEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double FlipVertexEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT FlipVertexEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

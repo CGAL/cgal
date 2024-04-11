@@ -19,7 +19,7 @@ public:
     static SphericalTriangleEventSPtr create();
     CircularNodeSPtr getNode() const;
     void setNode(CircularNodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     CircularEdgeSPtr getEdgeBegin() const;
     void setEdgeBegin(CircularEdgeSPtr edge_begin);
     void getVertices(CircularVertexSPtr out[3]) const;

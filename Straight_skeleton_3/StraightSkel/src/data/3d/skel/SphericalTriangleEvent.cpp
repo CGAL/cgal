@@ -37,8 +37,8 @@ void SphericalTriangleEvent::setNode(CircularNodeSPtr node) {
     this->node_ = node;
 }
 
-double SphericalTriangleEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT SphericalTriangleEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

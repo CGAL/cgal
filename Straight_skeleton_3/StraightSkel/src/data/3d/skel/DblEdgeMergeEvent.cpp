@@ -41,8 +41,8 @@ void DblEdgeMergeEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double DblEdgeMergeEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT DblEdgeMergeEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

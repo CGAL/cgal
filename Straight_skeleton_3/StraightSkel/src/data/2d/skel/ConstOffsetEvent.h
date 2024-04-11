@@ -18,14 +18,14 @@ public:
     virtual ~ConstOffsetEvent();
 
     static ConstOffsetEventSPtr create();
-    static ConstOffsetEventSPtr create(double offset);
+    static ConstOffsetEventSPtr create(CGAL::FT offset);
 
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
 protected:
     ConstOffsetEvent();
-    ConstOffsetEvent(double offset);
-    double offset_;
+    ConstOffsetEvent(CGAL::FT offset);
+    CGAL::FT offset_;
 };
 
 } } }

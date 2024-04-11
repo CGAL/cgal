@@ -32,21 +32,21 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
     if (facet_l && facet_r) {
         Vector3SPtr normal_l = KernelFactory::createVector3(facet_l->plane());
         Vector3SPtr normal_r = KernelFactory::createVector3(facet_r->plane());
-        double length_l = 0.0;
-        double length_r = 0.0;
+        CGAL::FT length_l = 0.0;
+        CGAL::FT length_r = 0.0;
         for (unsigned int i = 0; i < 3; i++) {
             length_l += (*normal_l)[i] * (*normal_l)[i];
             length_r += (*normal_r)[i] * (*normal_r)[i];
         }
-        length_l = sqrt(length_l);
-        length_r = sqrt(length_r);
-        double diff = 0.0;
-        double length_diff = 0.0;
+        length_l = CGAL::approximate_sqrt(length_l);
+        length_r = CGAL::approximate_sqrt(length_r);
+        CGAL::FT diff = 0.0;
+        CGAL::FT length_diff = 0.0;
         for (unsigned int i = 0; i < 3; i++) {
             diff = ((*normal_l)[i]/length_l) - ((*normal_r)[i]/length_r);
             length_diff += diff*diff;
         }
-        length_diff = sqrt(length_diff);
+        length_diff = CGAL::approximate_sqrt(length_diff);
         result = (length_diff < epsilon);
     }
     return result;

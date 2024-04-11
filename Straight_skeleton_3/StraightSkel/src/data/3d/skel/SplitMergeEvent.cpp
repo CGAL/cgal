@@ -39,8 +39,8 @@ void SplitMergeEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double SplitMergeEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT SplitMergeEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

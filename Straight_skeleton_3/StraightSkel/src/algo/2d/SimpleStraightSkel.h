@@ -32,12 +32,12 @@ public:
     static NodeSPtr createNode(VertexSPtr vertex);
     static ArcSPtr createArc(VertexSPtr vertex);
     bool init(PolygonSPtr polygon);
-    static std::list<EdgeEventSPtr> nextEdgeEvent(PolygonSPtr polygon, double offset);
+    static std::list<EdgeEventSPtr> nextEdgeEvent(PolygonSPtr polygon, CGAL::FT offset);
     static Point2SPtr crashAt(VertexSPtr vertex, EdgeSPtr edge);
-    static std::list<SplitEventSPtr> nextSplitEvent(PolygonSPtr polygon, double offset);
-    static std::list<AbstractEventSPtr> nextEvent(PolygonSPtr polygon, double offset);
+    static std::list<SplitEventSPtr> nextSplitEvent(PolygonSPtr polygon, CGAL::FT offset);
+    static std::list<AbstractEventSPtr> nextEvent(PolygonSPtr polygon, CGAL::FT offset);
 
-    static PolygonSPtr shiftEdges(PolygonSPtr polygon, double offset);
+    static PolygonSPtr shiftEdges(PolygonSPtr polygon, CGAL::FT offset);
 
     void appendEventNode(NodeSPtr node);
 

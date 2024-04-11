@@ -505,29 +505,16 @@ VertexSPtr Vertex::split(FacetSPtr facet_left, FacetSPtr facet_right) {
     return result;
 }
 
-double Vertex::getX() const {
 #ifdef USE_CGAL
-    return this->point_->x();
+CGAL::FT Vertex::getX() const { return this->point_->x(); }
+CGAL::FT Vertex::getY() const { return this->point_->y(); }
+CGAL::FT Vertex::getZ() const { return this->point_->z(); }
 #else
-    return this->point_->getX();
+double Vertex::getX() const { return this->point_->getX(); }
+double Vertex::getY() const { return this->point_->getY(); }
+double Vertex::getZ() const { return this->point_->getZ(); }
 #endif
-}
 
-double Vertex::getY() const {
-#ifdef USE_CGAL
-    return this->point_->y();
-#else
-    return this->point_->getY();
-#endif
-}
-
-double Vertex::getZ() const {
-#ifdef USE_CGAL
-    return this->point_->z();
-#else
-    return this->point_->getZ();
-#endif
-}
 
 int Vertex::getID() const {
     return this->id_;

@@ -113,7 +113,7 @@ Point3SPtr AbstractSimpleSphericalSkel::vanishesAt(CircularEdgeSPtr edge) {
     Point3SPtr result;
     SphericalPolygonSPtr polygon = edge->getPolygon();
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
+    CGAL::FT radius = polygon->getRadius();
     SphericalSkelVertexDataSPtr data_src =
             std::dynamic_pointer_cast<SphericalSkelVertexData>(
             edge->getVertexSrc()->getData());
@@ -142,7 +142,7 @@ Point3SPtr AbstractSimpleSphericalSkel::crashAt(CircularVertexSPtr vertex, Circu
     }
     SphericalPolygonSPtr polygon = vertex->getPolygon();
     Point3SPtr p_center = KernelFactory::createPoint3(polygon->getSphere());
-    double radius = polygon->getRadius();
+    CGAL::FT radius = polygon->getRadius();
     CircularEdgeSPtr edge_origin = getEdgeOrigin(edge);
     CircularEdgeSPtr edge_in_origin = getEdgeOrigin(edge_in);
     CircularEdgeSPtr edge_out_origin = getEdgeOrigin(edge_out);

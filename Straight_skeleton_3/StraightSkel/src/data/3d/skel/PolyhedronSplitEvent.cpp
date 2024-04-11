@@ -37,8 +37,8 @@ void PolyhedronSplitEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double PolyhedronSplitEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT PolyhedronSplitEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

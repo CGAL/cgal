@@ -139,7 +139,7 @@ bool GraphChecker::check(StraightSkeletonSPtr skel) {
     int visit_event_types = 1;    // 1 for vanish events; 2 for contact events
     unsigned int num_layers_vanish = 1;
     unsigned int num_layers_contact = 0;
-    double min_offset = 0.0;
+    CGAL::FT min_offset = 0.0;
     unsigned int num_nodes_layer = 0;
     unsigned int size_hidden_begin = 0;
     while (hidden.size() > 0) {

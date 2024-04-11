@@ -47,8 +47,8 @@ VolumeVertexSplitterSPtr VolumeVertexSplitter::create() {
     return result;
 }
 
-double VolumeVertexSplitter::calcArea(FacetSPtr facet) {
-    double result = 0.0;
+CGAL::FT VolumeVertexSplitter::calcArea(FacetSPtr facet) {
+    CGAL::FT result = 0.0;
     data::_2d::PolygonSPtr polygon_2d = facet->toPolygon();
     data::_2d::VertexSPtr vertex = polygon_2d->vertices().front();
     data::_2d::VertexSPtr vertex_begin;
@@ -72,8 +72,8 @@ double VolumeVertexSplitter::calcArea(FacetSPtr facet) {
     return result;
 }
 
-double VolumeVertexSplitter::calcSurfaceArea(PolyhedronSPtr polyhedron) {
-    double result = 0.0;
+CGAL::FT VolumeVertexSplitter::calcSurfaceArea(PolyhedronSPtr polyhedron) {
+    CGAL::FT result = 0.0;
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
@@ -151,8 +151,8 @@ int VolumeVertexSplitter::compareSurfaceAreas(PolyhedronSPtr polyhedron_1, Polyh
 
     closeFacets(polyhedron_1_c);
     closeFacets(polyhedron_2_c);
-    double area_1 = calcSurfaceArea(polyhedron_1_c);
-    double area_2 = calcSurfaceArea(polyhedron_2_c);
+    CGAL::FT area_1 = calcSurfaceArea(polyhedron_1_c);
+    CGAL::FT area_2 = calcSurfaceArea(polyhedron_2_c);
     if (area_1 < area_2) {
         result = -1;
     } else if (area_1 > area_2) {

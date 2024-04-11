@@ -37,8 +37,8 @@ void DblTriangleEvent::setNode(NodeSPtr node) {
     this->node_ = node;
 }
 
-double DblTriangleEvent::getOffset() const {
-    double result = 0.0;
+CGAL::FT DblTriangleEvent::getOffset() const {
+    CGAL::FT result = 0.0;
     if (node_) {
         result = node_->getOffset();
     }

@@ -43,20 +43,20 @@ Line2SPtr KernelWrapper::bisector(Line2SPtr line1, Line2SPtr line2) {
     return result;
 }
 
-double KernelWrapper::distance(Point2SPtr p, Point2SPtr q) {
-    double result = 0.0;
+CGAL::FT KernelWrapper::distance(Point2SPtr p, Point2SPtr q) {
+    CGAL::FT result = 0.0;
 #ifdef USE_CGAL
-    result = CGAL::to_double(CGAL::sqrt(CGAL::squared_distance(*p, *q)));
+    result = CGAL::approximate_sqrt(CGAL::squared_distance(*p, *q));
 #else
     result = kernel::distance(&(*p), &(*q));
 #endif
     return result;
 }
 
-double KernelWrapper::distance(Line2SPtr line, Point2SPtr point) {
-    double result = 0.0;
+CGAL::FT KernelWrapper::distance(Line2SPtr line, Point2SPtr point) {
+    CGAL::FT result = 0.0;
 #ifdef USE_CGAL
-    result = CGAL::to_double(CGAL::sqrt(CGAL::squared_distance(*line, *point)));
+    result = CGAL::approximate_sqrt(CGAL::squared_distance(*line, *point));
 #else
     result = kernel::distance(&(*line), &(*point));
 #endif
@@ -80,20 +80,20 @@ Vector2SPtr KernelWrapper::normalize(Vector2SPtr vector) {
     Vector2SPtr result;
 #ifdef USE_CGAL
     result = KernelFactory::createVector2(
-            *vector / CGAL::sqrt(vector->squared_length()));
+            *vector / CGAL::approximate_sqrt(vector->squared_length()));
 #else
     result = KernelFactory::createVector2(vector->normalize());
 #endif
     return result;
 }
 
-Line2SPtr KernelWrapper::offsetLine(Line2SPtr line, double offset) {
+Line2SPtr KernelWrapper::offsetLine(Line2SPtr line, CGAL::FT offset) {
     Line2SPtr result;
     Point2 p = line->point();
 #ifdef USE_CGAL
     Vector2 v_dir = line->to_vector();
     Vector2 v_norm(-v_dir[1], v_dir[0]);
-    Vector2 v_normal = v_norm / CGAL::sqrt(v_norm.squared_length());
+    Vector2 v_normal = v_norm / CGAL::approximate_sqrt(v_norm.squared_length());
 #else
     Vector2 v_dir = line->direction();
     Vector2 v_normal = line->normal().normalize();
@@ -105,10 +105,10 @@ Line2SPtr KernelWrapper::offsetLine(Line2SPtr line, double offset) {
     return result;
 }
 
-Point2SPtr KernelWrapper::offsetPoint(Point2SPtr point, Vector2SPtr dir, double offset) {
+Point2SPtr KernelWrapper::offsetPoint(Point2SPtr point, Vector2SPtr dir, CGAL::FT offset) {
     Point2SPtr result;
 #ifdef USE_CGAL
-    Vector2 dir_normalized = *dir / CGAL::sqrt(dir->squared_length());
+    Vector2 dir_normalized = *dir / CGAL::approximate_sqrt(dir->squared_length());
     Point2 p_moved = *point + (dir_normalized * offset);
 #else
     Point2 p_moved = *point + (dir->normalize() * offset);
@@ -163,7 +163,7 @@ Point2SPtr KernelWrapper::projection(Line2SPtr line, Point2SPtr point) {
 
 int KernelWrapper::compatePoints(Vector2SPtr v_dir, Point2SPtr p_1, Point2SPtr p_2) {
     int result = 0;
-    double value = *v_dir * (*p_2 - *p_1);
+    CGAL::FT value = *v_dir * (*p_2 - *p_1);
     if (value > 0.0) {         // angle < M_PI/2.0
         result = -1;
     } else if (value < 0.0) {  // angle > M_PI/2.0

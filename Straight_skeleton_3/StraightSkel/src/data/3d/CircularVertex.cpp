@@ -132,29 +132,15 @@ CircularVertexSPtr CircularVertex::prev() const {
     return result;
 }
 
-double CircularVertex::getX() const {
 #ifdef USE_CGAL
-    return this->point_->x();
+CGAL::FT CircularVertex::getX() const { return this->point_->x(); }
+CGAL::FT CircularVertex::getY() const { return this->point_->y(); }
+CGAL::FT CircularVertex::getZ() const { return this->point_->z(); }
 #else
-    return this->point_->getX();
+double CircularVertex::getX() const { return this->point_->getX(); }
+double CircularVertex::getY() const { return this->point_->getY(); }
+double CircularVertex::getZ() const { return this->point_->getZ(); }
 #endif
-}
-
-double CircularVertex::getY() const {
-#ifdef USE_CGAL
-    return this->point_->y();
-#else
-    return this->point_->getY();
-#endif
-}
-
-double CircularVertex::getZ() const {
-#ifdef USE_CGAL
-    return this->point_->z();
-#else
-    return this->point_->getZ();
-#endif
-}
 
 std::string CircularVertex::toString() const {
     std::string result("CircularVertex(");

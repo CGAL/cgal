@@ -16,7 +16,7 @@ KernelFactory::~KernelFactory() {
     // intentionally does nothing
 }
 
-Point2SPtr KernelFactory::createPoint2(double x, double y) {
+Point2SPtr KernelFactory::createPoint2(CGAL::FT x, CGAL::FT y) {
     return Point2SPtr(new Point2(x, y));
 }
 
@@ -64,7 +64,7 @@ Line2SPtr KernelFactory::createLine2(Point2SPtr p, Vector2SPtr direction) {
     return Line2SPtr(new Line2(*p, *direction));
 }
 
-Vector2SPtr KernelFactory::createVector2(double x, double y) {
+Vector2SPtr KernelFactory::createVector2(CGAL::FT x, CGAL::FT y) {
     return Vector2SPtr(new Vector2(x, y));
 }
 

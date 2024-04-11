@@ -37,8 +37,13 @@ public:
 
     unsigned int countCells() const;
 
+#ifdef USE_CGAL
+    CGAL::FT getX() const;
+    CGAL::FT getY() const;
+#else
     double getX() const;
     double getY() const;
+#endif
 
     std::string toString() const;
 

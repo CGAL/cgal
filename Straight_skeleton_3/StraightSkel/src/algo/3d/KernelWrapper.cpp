@@ -64,20 +64,20 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane, Line3SPtr line) {
 Point3SPtr KernelWrapper::intersection(Sphere3SPtr sphere, Line3SPtr line) {
     Point3SPtr result = Point3SPtr();
     Point3SPtr p_center = KernelFactory::createPoint3(sphere);
-    double radius;
+    CGAL::FT radius;
 #ifdef USE_CGAL
-    radius = CGAL::sqrt(sphere->squared_radius());
+    radius = CGAL::approximate_sqrt(sphere->squared_radius());
 #else
     radius = sphere->getRadius();
 #endif
     Vector3SPtr dir = normalize(KernelFactory::createVector3(line));
     Plane3SPtr plane = KernelFactory::createPlane3(p_center, dir);
     Point3SPtr p_intersect = intersection(plane, line);
-    double dist = distance(p_center, p_intersect);
+    CGAL::FT dist = distance(p_center, p_intersect);
     if (dist == radius) {
         result = p_intersect;
     } else if (dist < radius) {
-        double amount = -sqrt(radius*radius - dist*dist);
+        CGAL::FT amount = - CGAL::approximate_sqrt(radius*radius - dist*dist);
         result = KernelFactory::createPoint3((*p_intersect) + ((*dir)*amount));
     }
     //DEBUG_SPTR(result);
@@ -95,30 +95,30 @@ Plane3SPtr KernelWrapper::bisector(Plane3SPtr plane1, Plane3SPtr plane2) {
     return result;
 }
 
-double KernelWrapper::distance(Point3SPtr p1, Point3SPtr p2) {
-    double result = 0.0;
+CGAL::FT KernelWrapper::distance(Point3SPtr p1, Point3SPtr p2) {
+    CGAL::FT result = 0.0;
 #ifdef USE_CGAL
-    result = CGAL::to_double(CGAL::sqrt(CGAL::squared_distance(*p1, *p2)));
+    result = CGAL::approximate_sqrt(CGAL::squared_distance(*p1, *p2));
 #else
     result = kernel::distance(&(*p1), &(*p2));
 #endif
     return result;
 }
 
-double KernelWrapper::distance(Plane3SPtr plane, Point3SPtr point) {
-    double result = 0.0;
+CGAL::FT KernelWrapper::distance(Plane3SPtr plane, Point3SPtr point) {
+    CGAL::FT result = 0.0;
 #ifdef USE_CGAL
-    result = CGAL::to_double(CGAL::sqrt(CGAL::squared_distance(*plane, *point)));
+    result = CGAL::approximate_sqrt(CGAL::squared_distance(*plane, *point));
 #else
     result = kernel::distance(&(*plane), &(*point));
 #endif
     return result;
 }
 
-double KernelWrapper::distance(Line3SPtr line, Point3SPtr point) {
-    double result = 0.0;
+CGAL::FT KernelWrapper::distance(Line3SPtr line, Point3SPtr point) {
+    CGAL::FT result = 0.0;
 #ifdef USE_CGAL
-    result = CGAL::to_double(CGAL::sqrt(CGAL::squared_distance(*line, *point)));
+    result = CGAL::approximate_sqrt(CGAL::squared_distance(*line, *point));
 #else
     result = kernel::distance(&(*line), &(*point));
 #endif
@@ -140,19 +140,19 @@ Line3SPtr KernelWrapper::opposite(Line3SPtr line) {
 Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
     Vector3SPtr result;
 #ifdef USE_CGAL
-    result = KernelFactory::createVector3(*v / CGAL::sqrt(v->squared_length()));
+    result = KernelFactory::createVector3(*v / CGAL::approximate_sqrt(v->squared_length()));
 #else
     result = KernelFactory::createVector3(v->normalize());
 #endif
     return result;
 }
 
-Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, double offset) {
+Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
     Plane3SPtr result = Plane3SPtr();
     Point3 p = plane->point();
 #ifdef USE_CGAL
     Vector3 v_norm = plane->orthogonal_vector();
-    Vector3 v_normal = v_norm / CGAL::sqrt(v_norm.squared_length());
+    Vector3 v_normal = v_norm / CGAL::approximate_sqrt(v_norm.squared_length());
 #else
     Vector3 v_normal = plane->normal().normalize();
 #endif
@@ -163,10 +163,10 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, double offset) {
     return result;
 }
 
-Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, double offset) {
+Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::FT offset) {
     Point3SPtr result;
 #ifdef USE_CGAL
-    Vector3 dir_normalized = *dir / CGAL::sqrt(dir->squared_length());
+    Vector3 dir_normalized = *dir / CGAL::approximate_sqrt(dir->squared_length());
     Point3 p_moved = *point + (dir_normalized * offset);
 #else
     Point3 p_moved = *point + (dir->normalize() * offset);
@@ -205,7 +205,7 @@ Vector3SPtr KernelWrapper::rotateVector(Vector3SPtr vector, Vector3SPtr axis, do
     return result;
 }
 
-Plane3SPtr KernelWrapper::rotatePlane(Plane3SPtr plane, Line3SPtr line, double angle) {
+Plane3SPtr KernelWrapper::rotatePlane(Plane3SPtr plane, Line3SPtr line, CGAL::FT angle) {
     Plane3SPtr result;
     Point3SPtr point;
 #ifdef USE_CGAL
@@ -259,9 +259,9 @@ int KernelWrapper::orientation(Line3SPtr line1, Line3SPtr line2) {
 
 double KernelWrapper::angle(Vector3SPtr v1, Vector3SPtr v2) {
     double result = 0.0;
-    double arg = 0.0;
+    CGAL::FT arg = 0.0;
 #ifdef USE_CGAL
-    arg = ((*v1)*(*v2)) / CGAL::sqrt(v1->squared_length() * v2->squared_length());
+    arg = ((*v1)*(*v2)) / CGAL::approximate_sqrt(v1->squared_length() * v2->squared_length());
 #else
     arg = ((*v1)*(*v2)) / sqrt(v1->squared_length() * v2->squared_length());
 #endif
@@ -356,7 +356,7 @@ Point3SPtr KernelWrapper::projection(Plane3SPtr plane, Point3SPtr point) {
 
 int KernelWrapper::comparePoints(Vector3SPtr v_dir, Point3SPtr p_1, Point3SPtr p_2) {
     int result = 0;
-    double value = *v_dir * (*p_2 - *p_1);
+    CGAL::FT value = *v_dir * (*p_2 - *p_1);
     if (value > 0.0) {         // angle < M_PI/2.0
         result = -1;
     } else if (value < 0.0) {  // angle > M_PI/2.0

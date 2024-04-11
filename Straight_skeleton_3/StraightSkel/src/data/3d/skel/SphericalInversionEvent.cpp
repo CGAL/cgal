@@ -23,11 +23,11 @@ SphericalInversionEventSPtr SphericalInversionEvent::create() {
     return result;
 }
 
-double SphericalInversionEvent::getOffset() const {
+CGAL::FT SphericalInversionEvent::getOffset() const {
     return this->offset_;
 }
 
-void SphericalInversionEvent::setOffset(double offset) {
+void SphericalInversionEvent::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 

@@ -19,7 +19,7 @@ public:
     static TetrahedronEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     EdgeSPtr getEdgeBegin() const;
     void setEdgeBegin(EdgeSPtr edge_begin);
     void getVertices(VertexSPtr out[4]) const;

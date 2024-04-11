@@ -13,7 +13,7 @@ SaveOffsetEvent::SaveOffsetEvent() {
     this->offset_ = -1.0;
 }
 
-SaveOffsetEvent::SaveOffsetEvent(double offset) {
+SaveOffsetEvent::SaveOffsetEvent(CGAL::FT offset) {
     this->type_ = AbstractEvent::SAVE_OFFSET_EVENT;
     this->offset_ = offset;
 }
@@ -27,17 +27,17 @@ SaveOffsetEventSPtr SaveOffsetEvent::create() {
     return result;
 }
 
-SaveOffsetEventSPtr SaveOffsetEvent::create(double offset) {
+SaveOffsetEventSPtr SaveOffsetEvent::create(CGAL::FT offset) {
     SaveOffsetEventSPtr result = SaveOffsetEventSPtr(
             new SaveOffsetEvent(offset));
     return result;
 }
 
-double SaveOffsetEvent::getOffset() const {
+CGAL::FT SaveOffsetEvent::getOffset() const {
     return this->offset_;
 }
 
-void SaveOffsetEvent::setOffset(double offset) {
+void SaveOffsetEvent::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 

@@ -27,8 +27,8 @@ public:
      * A = \frac{1}{2}\sum_{i=0}^{N-1} (x_i\ y_{i+1} - x_{i+1}\ y_i)
      * http://de.wikipedia.org/wiki/Geometrischer_Schwerpunkt
      */
-    static double calcArea(FacetSPtr facet);
-    static double calcSurfaceArea(PolyhedronSPtr polyhedron);
+    static CGAL::FT calcArea(FacetSPtr facet);
+    static CGAL::FT calcSurfaceArea(PolyhedronSPtr polyhedron);
 
     static void closeFacets(PolyhedronSPtr polyhedron);
     static int compareSurfaceAreas(PolyhedronSPtr polyhedron_1, PolyhedronSPtr polyhedron_2);

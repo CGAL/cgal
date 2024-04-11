@@ -19,8 +19,8 @@ public:
 
     static SphericalDblLeaveEventSPtr create();
 
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
     CircularVertexSPtr getVertex1() const;
     void setVertex1(CircularVertexSPtr vertex_1);
     CircularVertexSPtr getVertex2() const;
@@ -30,7 +30,7 @@ public:
 
 protected:
     SphericalDblLeaveEvent();
-    double offset_;
+    CGAL::FT offset_;
     CircularVertexSPtr vertex_1_;
     CircularVertexSPtr vertex_2_;
 };

@@ -28,7 +28,7 @@ public:
     void setID(int id);
 
     virtual void setHighlight(bool highlight);
-    virtual double getOffset() const = 0;  // abstract
+    virtual CGAL::FT getOffset() const = 0;  // abstract
 
     static const int CONST_OFFSET_EVENT = 1;
     static const int EDGE_EVENT = 2;

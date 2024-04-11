@@ -136,7 +136,7 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron, double 
 }
 
 Point3SPtr PolyhedronTransformation::boundingBoxMin(PolyhedronSPtr polyhedron) {
-    double p_min[3];
+    CGAL::FT p_min[3];
     for (unsigned int i = 0; i < 3; i++) {
         p_min[i] = std::numeric_limits<double>::max();
     }
@@ -155,7 +155,7 @@ Point3SPtr PolyhedronTransformation::boundingBoxMin(PolyhedronSPtr polyhedron) {
 }
 
 Point3SPtr PolyhedronTransformation::boundingBoxMax(PolyhedronSPtr polyhedron) {
-    double p_max[3];
+    CGAL::FT p_max[3];
     for (unsigned int i = 0; i < 3; i++) {
         p_max[i] = -std::numeric_limits<double>::max();
     }
@@ -190,9 +190,9 @@ void PolyhedronTransformation::translateNscale(PolyhedronSPtr polyhedron,
     Vector3SPtr v_center_curr = KernelFactory::createVector3(
             (*v_box_min_curr + *v_box_max_curr) / 2.0);
 
-    double scale_factor = std::numeric_limits<double>::max();
+    CGAL::FT scale_factor = std::numeric_limits<double>::max(); // do not put FT
     for (unsigned int i = 0; i < 3; i++) {
-        double s = (*v_size)[i]/(*v_size_curr)[i];
+        CGAL::FT s = (*v_size)[i]/(*v_size_curr)[i];
         if (scale_factor > s) {
             scale_factor = s;
         }

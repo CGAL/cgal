@@ -41,8 +41,13 @@ public:
     VertexSPtr next() const;
     VertexSPtr prev() const;
 
+#ifdef USE_CGAL
+    CGAL::FT getX() const;
+    CGAL::FT getY() const;
+#else
     double getX() const;
     double getY() const;
+#endif
 
     double angle() const;
     bool isReflex() const;

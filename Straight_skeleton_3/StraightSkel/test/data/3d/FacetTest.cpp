@@ -98,13 +98,13 @@ BOOST_AUTO_TEST_CASE(testToPolygon) {
         data::_2d::EdgeSPtr edge2 = *it_e2++;
         Vector3SPtr v3 = KernelFactory::createVector3(
                 *(edge->getVertexDst()->getPoint()) - *(edge->getVertexSrc()->getPoint()));
-        double length3 = 0.0;
+        CGAL::FT length3 = 0.0;
         for (unsigned int i = 0; i < 3; i++) {
             length3 += (*v3)[i] * (*v3)[i];
         }
         data::_2d::Vector2SPtr v2 = data::_2d::KernelFactory::createVector2(
                 *(edge2->getVertexDst()->getPoint()) - *(edge2->getVertexSrc()->getPoint()));
-        double length2 = 0.0;
+        CGAL::FT length2 = 0.0;
         for (unsigned int i = 0; i < 2; i++) {
             length2 += (*v2)[i] * (*v2)[i];
         }

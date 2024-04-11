@@ -16,14 +16,14 @@ class SaveOffsetEvent : public AbstractEvent {
 public:
     virtual ~SaveOffsetEvent();
     static SaveOffsetEventSPtr create();
-    static SaveOffsetEventSPtr create(double offset);
+    static SaveOffsetEventSPtr create(CGAL::FT offset);
 
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
 protected:
     SaveOffsetEvent();
-    SaveOffsetEvent(double offset);
-    double offset_;
+    SaveOffsetEvent(CGAL::FT offset);
+    CGAL::FT offset_;
 };
 
 } } }

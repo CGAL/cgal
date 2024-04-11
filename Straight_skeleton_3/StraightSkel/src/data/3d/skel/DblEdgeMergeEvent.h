@@ -19,7 +19,7 @@ public:
     static DblEdgeMergeEventSPtr create();
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
-    double getOffset() const;
+    CGAL::FT getOffset() const;
     FacetSPtr getFacet1() const;
     void setFacet1(FacetSPtr facet_1);
     EdgeSPtr getEdge11() const;

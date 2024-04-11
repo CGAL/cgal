@@ -8,7 +8,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-SphericalOffset::SphericalOffset(double offset) {
+SphericalOffset::SphericalOffset(CGAL::FT offset) {
     this->offset_ = offset;
     this->inf_jump_ = false;
 }
@@ -17,16 +17,16 @@ SphericalOffset::~SphericalOffset() {
     // intentionally does nothing
 }
 
-SphericalOffsetSPtr SphericalOffset::create(double offset) {
+SphericalOffsetSPtr SphericalOffset::create(CGAL::FT offset) {
     SphericalOffsetSPtr result = SphericalOffsetSPtr(new SphericalOffset(offset));
     return result;
 }
 
-double SphericalOffset::getOffset() const {
+CGAL::FT SphericalOffset::getOffset() const {
     return offset_;
 }
 
-void SphericalOffset::setOffset(double offset) {
+void SphericalOffset::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 

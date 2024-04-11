@@ -17,8 +17,8 @@ class SphericalDblEdgeEvent : public SphericalAbstractEvent {
 public:
     virtual ~SphericalDblEdgeEvent();
     static SphericalDblEdgeEventSPtr create();
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
     CircularEdgeSPtr getEdge1() const;
     void setEdge1(CircularEdgeSPtr edge_1);
     CircularEdgeSPtr getEdge2() const;
@@ -26,7 +26,7 @@ public:
     void setHighlight(bool highlight);
 protected:
     SphericalDblEdgeEvent();
-    double offset_;
+    CGAL::FT offset_;
     CircularEdgeSPtr edge_1_;
     CircularEdgeSPtr edge_2_;
 };

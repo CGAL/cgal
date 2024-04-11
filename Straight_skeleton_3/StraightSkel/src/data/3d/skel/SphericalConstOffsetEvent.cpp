@@ -8,7 +8,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-SphericalConstOffsetEvent::SphericalConstOffsetEvent(double offset) {
+SphericalConstOffsetEvent::SphericalConstOffsetEvent(CGAL::FT offset) {
     this->type_ = SphericalAbstractEvent::CONST_OFFSET_EVENT;
     this->offset_ = offset;
 }
@@ -17,17 +17,17 @@ SphericalConstOffsetEvent::~SphericalConstOffsetEvent() {
     // intentionally does nothing
 }
 
-SphericalConstOffsetEventSPtr SphericalConstOffsetEvent::create(double offset) {
+SphericalConstOffsetEventSPtr SphericalConstOffsetEvent::create(CGAL::FT offset) {
     SphericalConstOffsetEventSPtr result = SphericalConstOffsetEventSPtr(
             new SphericalConstOffsetEvent(offset));
     return result;
 }
 
-double SphericalConstOffsetEvent::getOffset() const {
+CGAL::FT SphericalConstOffsetEvent::getOffset() const {
     return this->offset_;
 }
 
-void SphericalConstOffsetEvent::setOffset(double offset) {
+void SphericalConstOffsetEvent::setOffset(CGAL::FT offset) {
     this->offset_ = offset;
 }
 

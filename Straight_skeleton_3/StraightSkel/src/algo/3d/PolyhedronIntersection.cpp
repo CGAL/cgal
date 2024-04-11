@@ -56,7 +56,7 @@ EdgeSPtr PolyhedronIntersection::findDst(FacetSPtr facet, EdgeSPtr edge_src,
     Vector3SPtr normal_poly = KernelFactory::createVector3(facet->plane());
     Vector3SPtr dir_req = KernelWrapper::cross(normal_plane, normal_poly);
 
-    double dist_min = std::numeric_limits<double>::max();
+    CGAL::FT dist_min = std::numeric_limits<double>::max(); // do not put FT
     std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
     while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
@@ -68,7 +68,7 @@ EdgeSPtr PolyhedronIntersection::findDst(FacetSPtr facet, EdgeSPtr edge_src,
             Vector3SPtr dir = KernelFactory::createVector3((*p_dst)-(*p_src));
             //if (KernelWrapper::angle(dir_req, dir) < M_PI/2.0) {
             if ((*dir_req * *dir) > 0.0) {
-                double dist = KernelWrapper::distance(p_src, p_dst);
+                CGAL::FT dist = KernelWrapper::distance(p_src, p_dst);
                 if (dist < dist_min) {
                     result = edge;
                     dist_min = dist;
@@ -148,7 +148,7 @@ data::_2d::PolygonSPtr PolyhedronIntersection::toWeighted2d(FacetSPtr facet) {
                 edge->getData());
         double angle = KernelWrapper::angle(
                 facet->plane(), data->getFacetOrigin()->plane());
-        double speed = 1.0/sin(angle);
+        CGAL::FT speed = 1.0/sin(angle);
         data::_2d::skel::SkelEdgeDataSPtr data2 =
                 data::_2d::skel::SkelEdgeData::create(edge2);
         data2->setSpeed(speed);

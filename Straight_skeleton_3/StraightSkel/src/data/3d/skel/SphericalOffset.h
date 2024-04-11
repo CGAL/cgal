@@ -15,18 +15,18 @@ class SphericalOffset {
 public:
     virtual ~SphericalOffset();
 
-    static SphericalOffsetSPtr create(double offset);
+    static SphericalOffsetSPtr create(CGAL::FT offset);
 
-    double getOffset() const;
-    void setOffset(double offset);
+    CGAL::FT getOffset() const;
+    void setOffset(CGAL::FT offset);
     bool isInfJump() const;
     void setInfJump(bool inf_jump);
 
     int compareTo(SphericalOffsetSPtr other);
 
 protected:
-    SphericalOffset(double offset);
-    double offset_;
+    SphericalOffset(CGAL::FT offset);
+    CGAL::FT offset_;
     bool inf_jump_;
 };
 
