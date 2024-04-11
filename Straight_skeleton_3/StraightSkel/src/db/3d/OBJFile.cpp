@@ -127,7 +127,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                         } else if (arg >= 1.0) {
                             angle = 0.0;
                         } else {
-                            angle = acos(arg);
+                            angle = acos(CGAL::to_double(arg));
                         }
                         if (angle > M_PI/2.0) {
                             plane = KernelFactory::createPlane3(

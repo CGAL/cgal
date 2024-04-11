@@ -158,8 +158,8 @@ double MeshVertex::getY() const { return this->point_->getY(); }
 std::string MeshVertex::toString() const {
     std::string result("MeshVertex(");
     result += util::StringFactory::fromPointer(this) + ", ";
-    result += "<" + util::StringFactory::fromDouble(getX()) + ", ";
-    result += util::StringFactory::fromDouble(getY()) + ">)";
+    result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + ", ";
+    result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + ">)";
     return result;
 }
 

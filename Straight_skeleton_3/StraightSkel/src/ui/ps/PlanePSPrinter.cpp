@@ -45,12 +45,12 @@ void PlanePSPrinter::boundingBoxMin(PolygonSPtr polygon, vec2f& out) {
     std::list<data::_2d::VertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
         data::_2d::VertexSPtr vertex = *it_v++;
-        if ((float)vertex->getX() < out[0]) {
-            out[0] = (float)vertex->getX();
-        }
-        if ((float)vertex->getY() < out[1]) {
-            out[1] = (float)vertex->getY();
-        }
+        float lx = float(CGAL::to_interval(vertex->getX()).first);
+        if (lx < out[0])
+            out[0] = lx;
+        float ly = float(CGAL::to_interval(vertex->getY()).first);
+        if (ly < out[1])
+            out[1] = ly;
     }
 }
 
@@ -61,12 +61,12 @@ void PlanePSPrinter::boundingBoxMax(PolygonSPtr polygon, vec2f& out) {
     std::list<data::_2d::VertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
         data::_2d::VertexSPtr vertex = *it_v++;
-        if ((float)vertex->getX() > out[0]) {
-            out[0] = (float)vertex->getX();
-        }
-        if ((float)vertex->getY() > out[1]) {
-            out[1] = (float)vertex->getY();
-        }
+        float mx = float(CGAL::to_interval(vertex->getX()).second);
+        if (mx > out[0])
+            out[0] = mx;
+        float my = float(CGAL::to_interval(vertex->getY()).second);
+        if (my > out[1])
+            out[1] = my;
     }
 }
 
@@ -112,10 +112,10 @@ void PlanePSPrinter::printPolygon(PolygonSPtr polygon, std::ostream& out) {
         data::_2d::EdgeSPtr edge = *it_e++;
         data::_2d::VertexSPtr vertex_src = edge->getVertexSrc();
         data::_2d::VertexSPtr vertex_dst = edge->getVertexDst();
-        vec2f src = {(float)vertex_src->getX(),
-                     (float)vertex_src->getY()};
-        vec2f dst = {(float)vertex_dst->getX(),
-                     (float)vertex_dst->getY()};
+        vec2f src = {float(CGAL::to_double(vertex_src->getX())),
+                     float(CGAL::to_double(vertex_src->getY()))};
+        vec2f dst = {float(CGAL::to_double(vertex_dst->getX())),
+                     float(CGAL::to_double(vertex_dst->getY()))};
         vec2f paper_src;
         vec2f paper_dst;
         toPaper(src, paper_src);
@@ -134,10 +134,10 @@ void PlanePSPrinter::printSkel(data::_2d::skel::StraightSkeletonSPtr skel, std::
         }
         data::_2d::skel::NodeSPtr node_src = arc->getNodeSrc();
         data::_2d::skel::NodeSPtr node_dst = arc->getNodeDst();
-        vec2f src = {(float)node_src->getX(),
-                     (float)node_src->getY()};
-        vec2f dst = {(float)node_dst->getX(),
-                     (float)node_dst->getY()};
+        vec2f src = {float(CGAL::to_double(node_src->getX())),
+                     float(CGAL::to_double(node_src->getY()))};
+        vec2f dst = {float(CGAL::to_double(node_dst->getX())),
+                     float(CGAL::to_double(node_dst->getY()))};
         vec2f paper_src;
         vec2f paper_dst;
         toPaper(src, paper_src);
@@ -157,8 +157,8 @@ void PlanePSPrinter::printMesh(data::_2d::mesh::MeshSPtr mesh, std::ostream& out
         std::list<data::_2d::mesh::MeshVertexSPtr>::iterator it_v = cell->vertices().begin();
         while (it_v != cell->vertices().end()) {
             data::_2d::mesh::MeshVertexSPtr vertex = *it_v++;
-            vec2f point = {(float)vertex->getX(),
-                           (float)vertex->getY()};
+            vec2f point = {float(CGAL::to_double(vertex->getX())),
+                           float(CGAL::to_double(vertex->getY()))};
             toPaper(point, points[i]);
             i++;
         }

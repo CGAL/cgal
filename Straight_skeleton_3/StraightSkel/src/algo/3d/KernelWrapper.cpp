@@ -176,24 +176,29 @@ Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::F
     return result;
 }
 
-Vector3SPtr KernelWrapper::rotateVector(Vector3SPtr vector, Vector3SPtr axis, double angle) {
+Vector3SPtr KernelWrapper::rotateVector(Vector3SPtr vector, Vector3SPtr axis, CGAL::FT angle) {
     Vector3SPtr result;
     Vector3SPtr v_n = KernelWrapper::normalize(axis);
-    double n[3];
+    CGAL::FT n[3];
     for (unsigned int i = 0; i < 3; i++) {
         n[i] = (*v_n)[i];
     }
-    double rotation[3][3];   // http://de.wikipedia.org/wiki/Drehmatrix
-    rotation[0][0] = n[0]*n[0] * (1.0-cos(angle)) + cos(angle);
-    rotation[0][1] = n[0]*n[1] * (1.0-cos(angle)) - n[2] * sin(angle);
-    rotation[0][2] = n[0]*n[2] * (1.0-cos(angle)) + n[1] * sin(angle);
-    rotation[1][0] = n[1]*n[0] * (1.0-cos(angle)) + n[2] * sin(angle);
-    rotation[1][1] = n[1]*n[1] * (1.0-cos(angle)) + cos(angle);
-    rotation[1][2] = n[1]*n[2] * (1.0-cos(angle)) - n[0] * sin(angle);
-    rotation[2][0] = n[2]*n[0] * (1.0-cos(angle)) - n[1] * sin(angle);
-    rotation[2][1] = n[2]*n[1] * (1.0-cos(angle)) + n[0] * sin(angle);
-    rotation[2][2] = n[2]*n[2] * (1.0-cos(angle)) + cos(angle);
-    double rotated[3];
+
+    CGAL::FT cos_angle = std::cos(CGAL::to_double(angle));
+    CGAL::FT sin_angle = std::sin(CGAL::to_double(angle));
+
+    CGAL::FT rotation[3][3];   // http://de.wikipedia.org/wiki/Drehmatrix
+    rotation[0][0] = n[0]*n[0] * (1.0-cos_angle) + cos_angle;
+    rotation[0][1] = n[0]*n[1] * (1.0-cos_angle) - n[2] * sin_angle;
+    rotation[0][2] = n[0]*n[2] * (1.0-cos_angle) + n[1] * sin_angle;
+    rotation[1][0] = n[1]*n[0] * (1.0-cos_angle) + n[2] * sin_angle;
+    rotation[1][1] = n[1]*n[1] * (1.0-cos_angle) + cos_angle;
+    rotation[1][2] = n[1]*n[2] * (1.0-cos_angle) - n[0] * sin_angle;
+    rotation[2][0] = n[2]*n[0] * (1.0-cos_angle) - n[1] * sin_angle;
+    rotation[2][1] = n[2]*n[1] * (1.0-cos_angle) + n[0] * sin_angle;
+    rotation[2][2] = n[2]*n[2] * (1.0-cos_angle) + cos_angle;
+
+    CGAL::FT rotated[3];
     for (unsigned int r = 0; r < 3; r++) {
         rotated[r] = 0.0;
         for (unsigned int c = 0; c < 3; c++) {
@@ -271,7 +276,7 @@ double KernelWrapper::angle(Vector3SPtr v1, Vector3SPtr v2) {
     } else if (arg >= 1.0) {
         result = 0.0;
     } else {
-        result = acos(arg);
+        result = acos(CGAL::to_double(arg));
     }
     return result;
 }

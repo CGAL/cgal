@@ -72,10 +72,10 @@ int PlaneDAO::insert(Plane3SPtr plane) {
             d = plane->getD();
 #endif
             stmt->bindInteger(1, plane_id);
-            stmt->bindDouble(2, a);
-            stmt->bindDouble(3, b);
-            stmt->bindDouble(4, c);
-            stmt->bindDouble(5, d);
+            stmt->bindDouble(2, CGAL::to_double(a));
+            stmt->bindDouble(3, CGAL::to_double(b));
+            stmt->bindDouble(4, CGAL::to_double(c));
+            stmt->bindDouble(5, CGAL::to_double(d));
             if (stmt->execute() > 0) {
                 result = plane_id;
             }
@@ -110,10 +110,10 @@ Plane3SPtr PlaneDAO::find(int plane_id) {
     if (stmt) {
         stmt->bindInteger(1, plane_id);
         if (stmt->execute() > 0) {
-            double a = stmt->getDouble(0);
-            double b = stmt->getDouble(1);
-            double c = stmt->getDouble(2);
-            double d = stmt->getDouble(3);
+            CGAL::FT a = stmt->getDouble(0);
+            CGAL::FT b = stmt->getDouble(1);
+            CGAL::FT c = stmt->getDouble(2);
+            CGAL::FT d = stmt->getDouble(3);
             result = KernelFactory::createPlane3(a,b,c,d);
         }
     }

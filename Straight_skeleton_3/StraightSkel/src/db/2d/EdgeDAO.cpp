@@ -101,7 +101,7 @@ int EdgeDAO::insert(EdgeSPtr edge) {
                     if (stmt) {
                         stmt->bindInteger(1, polyid);
                         stmt->bindInteger(2, eid);
-                        stmt->bindDouble(3, data->getSpeed());
+                        stmt->bindDouble(3, CGAL::to_double(data->getSpeed()));
                         stmt->execute();
                     }
                 }

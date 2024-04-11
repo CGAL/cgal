@@ -64,8 +64,8 @@ int PointDAO::insert(Point2SPtr point) {
         if (stmt) {
             Vector2SPtr vec = KernelFactory::createVector2(point);
             stmt->bindInteger(1, point_id);
-            stmt->bindDouble(2, (*vec)[0]);
-            stmt->bindDouble(3, (*vec)[1]);
+            stmt->bindDouble(2, CGAL::to_double((*vec)[0]));
+            stmt->bindDouble(3, CGAL::to_double((*vec)[1]));
             if (stmt->execute() > 0) {
                 point_ids_[point] = point_id;
                 result = point_id;
@@ -111,8 +111,8 @@ Point2SPtr PointDAO::find(int point_id) {
     if (stmt) {
         stmt->bindInteger(1, point_id);
         if (stmt->execute() > 0) {
-            double x = stmt->getDouble(0);
-            double y = stmt->getDouble(1);
+            CGAL::FT x = stmt->getDouble(0);
+            CGAL::FT y = stmt->getDouble(1);
             result = KernelFactory::createPoint2(x,y);
             points_[point_id] = result;
         }

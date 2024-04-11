@@ -592,8 +592,8 @@ bool Facet::makeFirstConvex() {
             double angle = 0.0;
             double arg = 0.0;
 #ifdef USE_CGAL
-            arg = ((*normal)*(*normal_current)) /
-                    CGAL::sqrt(normal->squared_length() * normal_current->squared_length());
+            arg = CGAL::to_double(((*normal)*(*normal_current)) /
+                    CGAL::approximate_sqrt(normal->squared_length() * normal_current->squared_length()));
 #else
             arg = ((*normal)*(*normal_current)) /
                     sqrt(normal->squared_length() * normal_current->squared_length());
@@ -669,17 +669,19 @@ data::_2d::PolygonSPtr Facet::toPolygon() {
     for (unsigned int i = 0; i < 3; i++) {
         length += (*normal)[i] * (*normal)[i];
     }
-    length = sqrt(length);
+    length = CGAL::approximate_sqrt(length);
     // alpha = acos((normal * [0 0 1]) / normal.length())
-    double alpha = acos((*normal)[2] / length);
+    double alpha = acos(CGAL::to_double((*normal)[2] / length));
+    const CGAL::FT cos_alpha = std::cos(alpha);
+    const CGAL::FT sin_alpha = std::sin(alpha);
     Vector3SPtr r_x = KernelFactory::createVector3(
-            n[0] * n[0] * (1 - cos(alpha)) + cos(alpha),
-            n[0] * n[1] * (1 - cos(alpha)) - n[2] * sin(alpha),
-            n[0] * n[2] * (1 - cos(alpha)) + n[1] * sin(alpha));
+            n[0] * n[0] * (1 - cos_alpha) + cos_alpha,
+            n[0] * n[1] * (1 - cos_alpha) - n[2] * sin_alpha,
+            n[0] * n[2] * (1 - cos_alpha) + n[1] * sin_alpha);
     Vector3SPtr r_y = KernelFactory::createVector3(
-            n[1] * n[0] * (1 - cos(alpha)) + n[2] * sin(alpha),
-            n[1] * n[1] * (1 - cos(alpha)) + cos(alpha),
-            n[1] * n[2] * (1 - cos(alpha)) - n[0] * sin(alpha));
+            n[1] * n[0] * (1 - cos_alpha) + n[2] * sin_alpha,
+            n[1] * n[1] * (1 - cos_alpha) + cos_alpha,
+            n[1] * n[2] * (1 - cos_alpha) - n[0] * sin_alpha);
     std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
     while (it_v != vertices_.end()) {
         VertexSPtr vertex = *it_v++;
@@ -725,10 +727,10 @@ std::string Facet::toString() const {
     }
     if (plane_) {
 #ifdef USE_CGAL
-        sstr << "<" << util::StringFactory::fromDouble(plane_->a()) << ", "
-             << util::StringFactory::fromDouble(plane_->b()) << ", "
-             << util::StringFactory::fromDouble(plane_->c()) << ", "
-             << util::StringFactory::fromDouble(plane_->d()) << ">, ";
+        sstr << "<" << util::StringFactory::fromDouble(CGAL::to_double(plane_->a())) << ", "
+             << util::StringFactory::fromDouble(CGAL::to_double(plane_->b())) << ", "
+             << util::StringFactory::fromDouble(CGAL::to_double(plane_->c())) << ", "
+             << util::StringFactory::fromDouble(CGAL::to_double(plane_->d())) << ">, ";
 #else
         sstr << "<" << util::StringFactory::fromDouble(plane_->getA()) << ", "
              << util::StringFactory::fromDouble(plane_->getB()) << ", "

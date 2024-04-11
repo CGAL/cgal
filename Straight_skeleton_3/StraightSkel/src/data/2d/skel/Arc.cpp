@@ -166,8 +166,8 @@ std::string Arc::toString() const {
     if (node_dst_) {
         result += "dst=" + node_dst_->toString();
     } else {
-        result += "dir=<" + util::StringFactory::fromDouble((*direction_)[0]) + ", " +
-                util::StringFactory::fromDouble((*direction_)[1]) + ">";
+        result += "dir=<" + util::StringFactory::fromDouble(CGAL::to_double((*direction_)[0])) + ", " +
+                util::StringFactory::fromDouble(CGAL::to_double((*direction_)[1])) + ">";
     }
     result += ")";
     return result;

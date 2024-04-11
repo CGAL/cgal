@@ -227,9 +227,9 @@ std::string SphericalPolygon::toString() const {
     sstr << util::StringFactory::fromPointer(this) << ", ";
     Point3SPtr p_center = KernelFactory::createPoint3(sphere_);
     Vector3SPtr v_center = KernelFactory::createVector3(p_center);
-    sstr << "<" << util::StringFactory::fromDouble((*v_center)[0]) << ", "
-         << util::StringFactory::fromDouble((*v_center)[1]) << ", "
-         << util::StringFactory::fromDouble((*v_center)[2]) << ">, ";
+    sstr << "<" << util::StringFactory::fromDouble(CGAL::to_double((*v_center)[0])) << ", "
+         << util::StringFactory::fromDouble(CGAL::to_double((*v_center)[1])) << ", "
+         << util::StringFactory::fromDouble(CGAL::to_double((*v_center)[2])) << ">, ";
     sstr << "CircularVertices:" + util::StringFactory::fromInteger(vertices_.size()) + ", ";
     sstr << "CircularEdges:" + util::StringFactory::fromInteger(edges_.size()) + ",\n";
     std::list<CircularVertexSPtr>::const_iterator it_v = vertices_.begin();

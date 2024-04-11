@@ -159,7 +159,7 @@ void ProjSimpleSphericalSkel::initConstSpeeds(SphericalPolygonSPtr polygon) {
         CircularEdgeSPtr edge_origin = getEdgeOrigin(edge);
         Plane3SPtr plane_edge = edge_origin->supportingPlane();
         double angle = KernelWrapper::angle(plane_rot_axes, plane_edge);
-        double speed = 1.0 / sin(angle);
+        CGAL::FT speed = 1.0 / sin(angle);
         SphericalSkelEdgeDataSPtr data;
         if (edge->hasData()) {
             data = std::dynamic_pointer_cast<SphericalSkelEdgeData>(edge->getData());
@@ -245,7 +245,7 @@ double ProjSimpleSphericalSkel::offsetTo(CircularEdgeSPtr edge, Point3SPtr point
         delta_angle *= -1.0;
     }
     if ((angle - delta_angle) > 0.0) {
-        double offset = sin(delta_angle) / (sin(angle) * sin(angle - delta_angle));
+        CGAL::FT offset = sin(delta_angle) / (sin(angle) * sin(angle - delta_angle));
         if (offset <= 0.0) {
             result = offset / data->getSpeed();
         }
@@ -401,7 +401,7 @@ SphericalAbstractEventSPtr ProjSimpleSphericalSkel::nextEvent(SphericalPolygonSP
     for (unsigned int i = 0; i < 4; i++) {
         events[i] = SphericalAbstractEventSPtr();
     }
-    double const_offset = util::Configuration::getInstance()->getDouble(
+    CGAL::FT const_offset = util::Configuration::getInstance()->getDouble(
             "algo_3d_ProjSimpleSphericalSkel", "const_offset");
     if (const_offset != 0.0) {
         events[0] = SphericalConstOffsetEvent::create(offset + const_offset);
@@ -455,7 +455,7 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
             if (angle > M_PI/2.0) {
                 angle = M_PI - angle;
             }
-            double diff = (1.0/tan(angle)) + (offset * data_edge->getSpeed());
+            double diff = (1.0/tan(angle)) + CGAL::to_double(offset * data_edge->getSpeed());
             double delta_angle = 0.0;
             if (diff == 0.0) {
                 delta_angle = -(M_PI/2.0)+angle;
@@ -483,7 +483,7 @@ SphericalPolygonSPtr ProjSimpleSphericalSkel::shiftEdges(SphericalPolygonSPtr po
             if (angle > M_PI/2.0) {
                 angle = M_PI - angle;
             }
-            double diff = (1.0/tan(angle)) + (offset * data_edge->getSpeed());
+            double diff = (1.0/tan(angle)) + CGAL::to_double(offset * data_edge->getSpeed());
             double delta_angle = 0.0;
             if (diff == 0.0) {
                 delta_angle = -(M_PI/2.0)+angle;

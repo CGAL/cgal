@@ -38,9 +38,9 @@ void PolyhedronTransformation::translate(PolyhedronSPtr polyhedron, Vector3SPtr 
     polyhedron->initPlanes();
 
     polyhedron->appendDescription("translate=<" +
-            util::StringFactory::fromDouble((*v_t)[0]) + ", " +
-            util::StringFactory::fromDouble((*v_t)[1]) + ", " +
-            util::StringFactory::fromDouble((*v_t)[2]) + ">; ");
+            util::StringFactory::fromDouble(CGAL::to_double((*v_t)[0])) + ", " +
+            util::StringFactory::fromDouble(CGAL::to_double((*v_t)[1])) + ", " +
+            util::StringFactory::fromDouble(CGAL::to_double((*v_t)[2])) + ">; ");
 }
 
 void PolyhedronTransformation::scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s) {
@@ -55,9 +55,9 @@ void PolyhedronTransformation::scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s)
     polyhedron->initPlanes();
 
     polyhedron->appendDescription("scale=<" +
-            util::StringFactory::fromDouble((*v_s)[0]) + ", " +
-            util::StringFactory::fromDouble((*v_s)[1]) + ", " +
-            util::StringFactory::fromDouble((*v_s)[2]) + ">; ");
+            util::StringFactory::fromDouble(CGAL::to_double((*v_s)[0])) + ", " +
+            util::StringFactory::fromDouble(CGAL::to_double((*v_s)[1])) + ", " +
+            util::StringFactory::fromDouble(CGAL::to_double((*v_s)[2])) + ">; ");
 }
 
 bool PolyhedronTransformation::hasParallelPlanes(PolyhedronSPtr polyhedron) {
@@ -197,7 +197,7 @@ void PolyhedronTransformation::translateNscale(PolyhedronSPtr polyhedron,
             scale_factor = s;
         }
     }
-    scale_factor = floor(scale_factor*1000.0)/1000.0;
+    scale_factor = floor(CGAL::to_double(scale_factor)*1000.0)/1000.0; // @fixme interval
     DEBUG_VAR(scale_factor);
     Vector3SPtr v_s = KernelFactory::createVector3(
             scale_factor, scale_factor, scale_factor);

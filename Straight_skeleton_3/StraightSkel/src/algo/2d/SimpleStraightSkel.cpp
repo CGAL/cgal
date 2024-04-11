@@ -424,7 +424,7 @@ std::list<AbstractEventSPtr> SimpleStraightSkel::nextEvent(PolygonSPtr polygon, 
     CGAL::FT const_offset = util::Configuration::getInstance()->getDouble(
             "algo_2d_SimpleStraightSkel", "const_offset");
     if (const_offset != 0.0) {
-        double next_offset = floor(offset/const_offset + 1.0) * const_offset;
+        CGAL::FT next_offset = std::floor(CGAL::to_double(offset / const_offset) + 1.0) * const_offset; // @fixme interval.inf?
         if (next_offset <= offset) {
             next_offset += const_offset;
         }

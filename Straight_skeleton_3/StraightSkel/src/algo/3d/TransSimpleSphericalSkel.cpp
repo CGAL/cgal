@@ -629,7 +629,7 @@ SphericalReturnEventSPtr TransSimpleSphericalSkel::nextReturnEvent(SphericalPoly
             continue;
         }
 
-        double speed = 1.0/sin(angleOf(vertex)/2.0);
+        CGAL::FT speed = 1.0/sin(angleOf(vertex)/2.0);
         Plane3SPtr plane_in = vertex->getEdgeIn()->getSupportingPlane();
         Plane3SPtr plane_out = vertex->getEdgeOut()->getSupportingPlane();
         Line3SPtr line = KernelWrapper::intersection(plane_in, plane_out);
@@ -697,7 +697,7 @@ SphericalDblLeaveEventSPtr TransSimpleSphericalSkel::nextDblLeaveEvent(Spherical
             CircularArcSPtr arc_2 = data_2->getArc();
             if (arc_1->getEdgeLeft()->getSupportingPlane() == arc_2->getEdgeRight()->getSupportingPlane() &&
                     arc_1->getEdgeRight()->getSupportingPlane() == arc_2->getEdgeLeft()->getSupportingPlane()) {
-                double speed = 1.0/sin(angleOf(vertex_1)/2.0);
+                CGAL::FT speed = 1.0/sin(angleOf(vertex_1)/2.0);
                 Plane3SPtr plane_in = vertex_1->getEdgeIn()->getSupportingPlane();
                 Plane3SPtr plane_out = vertex_1->getEdgeOut()->getSupportingPlane();
                 Line3SPtr line = KernelWrapper::intersection(plane_in, plane_out);
@@ -766,7 +766,7 @@ SphericalDblReturnEventSPtr TransSimpleSphericalSkel::nextDblReturnEvent(Spheric
             CircularArcSPtr arc_2 = data_2->getArc();
             if (arc_1->getEdgeLeft()->getSupportingPlane() == arc_2->getEdgeRight()->getSupportingPlane() &&
                     arc_1->getEdgeRight()->getSupportingPlane() == arc_2->getEdgeLeft()->getSupportingPlane()) {
-                double speed = 1.0/sin(angleOf(vertex_1)/2.0);
+                CGAL::FT speed = 1.0/sin(angleOf(vertex_1)/2.0);
                 Plane3SPtr plane_in = vertex_1->getEdgeIn()->getSupportingPlane();
                 Plane3SPtr plane_out = vertex_1->getEdgeOut()->getSupportingPlane();
                 Line3SPtr line = KernelWrapper::intersection(plane_in, plane_out);
@@ -949,8 +949,8 @@ SphericalEdgeMergeEventSPtr TransSimpleSphericalSkel::nextEdgeMergeEvent(Spheric
 SphericalInversionEventSPtr TransSimpleSphericalSkel::nextInversionEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalInversionEventSPtr result = SphericalInversionEvent::create();
-    double radius = polygon->getRadius();
-    int times = (int)ceil(offset / radius) - 1;
+    CGAL::FT radius = polygon->getRadius();
+    int times = (int)ceil(CGAL::to_double(offset / radius)) - 1; // @fixme interval
     if ((times % 2) == 0) {
         times -= 1;
     }
@@ -972,7 +972,7 @@ SphericalAbstractEventSPtr TransSimpleSphericalSkel::nextEvent(SphericalPolygonS
     for (unsigned int i = 0; i < 12; i++) {
         events[i] = SphericalAbstractEventSPtr();
     }
-    double const_offset = util::Configuration::getInstance()->getDouble(
+    CGAL::FT const_offset = util::Configuration::getInstance()->getDouble(
             "algo_3d_TransSimpleSphericalSkel", "const_offset");
     if (const_offset != 0.0) {
         events[0] = SphericalConstOffsetEvent::create(offset + const_offset);

@@ -70,7 +70,7 @@ int NodeDAO::insert(NodeSPtr node) {
                 stmt->bindInteger(1, skelid);
                 stmt->bindInteger(2, nid);
                 stmt->bindInteger(3, pointid);
-                stmt->bindDouble(4, node->getOffset());
+                stmt->bindDouble(4, CGAL::to_double(node->getOffset()));
                 if (stmt->execute() > 0) {
                     node->setID(nid);
                     result = nid;

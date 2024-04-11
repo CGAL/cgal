@@ -473,11 +473,11 @@ double Edge::angle() const {
         Vector3SPtr v1 = KernelFactory::createVector3(facet_l->plane());
         Vector3SPtr v2 = KernelFactory::createVector3(facet_r->plane());
 #ifdef USE_CGAL
-        result = acos(((*v1) * (*v2)) /
-                CGAL::sqrt(v1->squared_length() * v2->squared_length()));
+        result = acos(CGAL::to_double(((*v1) * (*v2)) /
+                   CGAL::approximate_sqrt(v1->squared_length() * v2->squared_length())));
 #else
         result = acos(((*v1) * (*v2)) /
-                sqrt(v1->squared_length() * v2->squared_length()));
+                   sqrt(v1->squared_length() * v2->squared_length()));
 #endif
         result = M_PI - result;
         if (isReflex()) {
@@ -560,8 +560,8 @@ double Edge::angleTo(EdgeSPtr edge) const {
         }
         double angle = 0.0;
 #ifdef USE_CGAL
-        angle = acos(((*dir_self) * (*dir_other)) /
-                CGAL::sqrt(dir_self->squared_length() * dir_other->squared_length()));
+        angle = acos(CGAL::to_double(((*dir_self) * (*dir_other)) /
+                CGAL::approximate_sqrt(dir_self->squared_length() * dir_other->squared_length())));
 #else
         angle = acos(((*dir_self) * (*dir_other)) /
                 sqrt(dir_self->squared_length() * dir_other->squared_length()));
@@ -578,8 +578,8 @@ double Edge::angleTo(EdgeSPtr edge) const {
             double angle_normal = 0.0;
 #ifdef USE_CGAL
             Vector3 crossprod = CGAL::cross_product(*dir_self, *dir_other);
-            angle_normal = acos(((*normal) * crossprod) /
-                    CGAL::sqrt(normal->squared_length() * crossprod.squared_length()));
+            angle_normal = acos(CGAL::to_double(((*normal) * crossprod) /
+                    CGAL::approximate_sqrt(normal->squared_length() * crossprod.squared_length())));
 #else
             Vector3 crossprod = dir_self->cross(*dir_other);
             angle_normal = acos(((*normal) * crossprod) /

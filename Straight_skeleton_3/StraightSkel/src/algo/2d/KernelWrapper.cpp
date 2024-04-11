@@ -122,7 +122,7 @@ double KernelWrapper::angle(Vector2SPtr v1, Vector2SPtr v2) {
     double result = 0.0;
     double arg = 0.0;
 #ifdef USE_CGAL
-    arg = ((*v1)*(*v2)) / CGAL::sqrt(v1->squared_length() * v2->squared_length());
+    arg = CGAL::to_double(((*v1)*(*v2)) / CGAL::approximate_sqrt(v1->squared_length() * v2->squared_length()));
 #else
     arg = ((*v1)*(*v2)) / sqrt(v1->squared_length() * v2->squared_length());
 #endif

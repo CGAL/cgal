@@ -145,9 +145,9 @@ double CircularVertex::getZ() const { return this->point_->getZ(); }
 std::string CircularVertex::toString() const {
     std::string result("CircularVertex(");
     result += util::StringFactory::fromPointer(this) + ", ";
-    result += "<" + util::StringFactory::fromDouble(getX()) + ", ";
-    result += util::StringFactory::fromDouble(getY()) + ", ";
-    result += util::StringFactory::fromDouble(getZ()) + ">)";
+    result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + ", ";
+    result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + ", ";
+    result += util::StringFactory::fromDouble(CGAL::to_double(getZ())) + ">)";
     return result;
 }
 

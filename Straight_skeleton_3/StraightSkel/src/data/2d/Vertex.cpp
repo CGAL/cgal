@@ -149,8 +149,13 @@ double Vertex::angle() const {
         VertexSPtr src = edge_in->getVertexSrc();
         VertexSPtr dst = edge_out->getVertexDst();
         if (src && dst) {
+#ifdef USE_CGAL
+            double arc_in = atan2(CGAL::to_double(src->getY() - getY()), CGAL::to_double(src->getX() - getX()));
+            double arc_out = atan2(CGAL::to_double(dst->getY() - getY()), CGAL::to_double(dst->getX() - getX()));
+#else
             double arc_in = atan2(src->getY() - getY(), src->getX() - getX());
             double arc_out = atan2(dst->getY() - getY(), dst->getX() - getX());
+#endif
             result = arc_in - arc_out;
             if (result < 0.0) {
                 result += 2*M_PI;
@@ -172,8 +177,8 @@ std::string Vertex::toString() const {
     } else {
         result += util::StringFactory::fromPointer(this) + ", ";
     }
-    result += "<" + util::StringFactory::fromDouble(getX()) + ", ";
-    result += util::StringFactory::fromDouble(getY()) + ">)";
+    result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + ", ";
+    result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + ">)";
     return result;
 }
 

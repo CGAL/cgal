@@ -241,8 +241,8 @@ int main(int argc, const char* argv[]) {
                     algo::_2d::PolygonTransformation::boundingBoxMax(polygon);
             float scale_min = std::numeric_limits<float>::max();
             for (unsigned int i = 0; i < 2; i++) {
-                translate[i] = -((*p_box_max)[i] + (*p_box_min)[i])/2.0;
-                float scale_cur = 20.0/((*p_box_max)[i] - (*p_box_min)[i]);
+                translate[i] = CGAL::to_double(-((*p_box_max)[i] + (*p_box_min)[i])/2.0);
+                float scale_cur = CGAL::to_double(20.0/((*p_box_max)[i] - (*p_box_min)[i]));
                 if (scale_cur < scale_min) {
                     scale_min = scale_cur;
                 }
@@ -358,8 +358,8 @@ int main(int argc, const char* argv[]) {
                     algo::_3d::PolyhedronTransformation::boundingBoxMax(polyhedron);
             float scale_min = std::numeric_limits<float>::max();
             for (unsigned int i = 0; i < 3; i++) {
-                translate[i] = -((*p_box_max)[i] + (*p_box_min)[i])/2.0;
-                float scale_cur = 20.0/((*p_box_max)[i] - (*p_box_min)[i]);
+                translate[i] = CGAL::to_double(-((*p_box_max)[i] + (*p_box_min)[i])/2.0);
+                float scale_cur = CGAL::to_double(20.0/((*p_box_max)[i] - (*p_box_min)[i]));
                 if (scale_cur < scale_min) {
                     scale_min = scale_cur;
                 }

@@ -129,27 +129,27 @@ MainOpenGLWindowSPtr MainOpenGLWindow::create(int argc, const char* argv[],
 
 void MainOpenGLWindow::convert(data::_2d::Vector2SPtr in, vec3f& out) {
     for (unsigned int i = 0; i < 2; i++) {
-        out[i] = (float)(*in)[i];
+        out[i] = float(CGAL::to_double((*in)[i]));
     }
     out[2] = 0.0f;
 }
 
 void MainOpenGLWindow::convert(data::_2d::Point2SPtr in, vec3f& out) {
     for (unsigned int i = 0; i < 2; i++) {
-        out[i] = (float)(*in)[i];
+        out[i] = float(CGAL::to_double((*in)[i]));
     }
     out[2] = 0.0f;
 }
 
 void MainOpenGLWindow::convert(data::_3d::Vector3SPtr in, vec3f& out) {
     for (unsigned int i = 0; i < 3; i++) {
-        out[i] = (float)(*in)[i];
+        out[i] = float(CGAL::to_double((*in)[i]));
     }
 }
 
 void MainOpenGLWindow::convert(data::_3d::Point3SPtr in, vec3f& out) {
     for (unsigned int i = 0; i < 3; i++) {
-        out[i] = (float)(*in)[i];
+        out[i] = float(CGAL::to_double((*in)[i]));
     }
 }
 
@@ -380,7 +380,7 @@ void MainOpenGLWindow::printScreen() {
                             data::_3d::KernelFactory::createPoint3(sphericalpolygon_->getSphere());
                     vec3f center;
                     convert(p_center, center);
-                    double radius = sphericalpolygon_->getRadius();
+                    double radius = CGAL::to_double(sphericalpolygon_->getRadius());
                     printer3->setLineWidth(0.25, of);
                     printer3->printSphere(center, radius, of);
                     printer3->setLineWidth(1.0, of);
@@ -568,7 +568,7 @@ void MainOpenGLWindow::drawSkel2d(data::_2d::skel::StraightSkeletonSPtr skel_2d)
             vec3f p;
             convert(node->getPoint(), p);
             if (toggle_roof_) {
-                p[2] = (float)node->getHeight();
+                p[2] = float(CGAL::to_double(node->getHeight()));
             }
             drawSphere(p, 0.1f * thickness_/scale_);
         }
@@ -579,14 +579,14 @@ void MainOpenGLWindow::drawSkel2d(data::_2d::skel::StraightSkeletonSPtr skel_2d)
             vec3f p;
             convert(node->getPoint(), p);
             if (toggle_roof_) {
-                p[2] = (float)node->getHeight();
+                p[2] = float(CGAL::to_double(node->getHeight()));
             }
             if (arc->hasNodeDst()) {
                 node = arc->getNodeDst();
                 vec3f q;
                 convert(node->getPoint(), q);
                 if (toggle_roof_) {
-                    q[2] = (float)node->getHeight();
+                    q[2] = float(CGAL::to_double(node->getHeight()));
                 }
                 drawCylinder(p, q, 0.05f * thickness_/scale_);
             } else {
@@ -609,7 +609,7 @@ void MainOpenGLWindow::drawSkel2d(data::_2d::skel::StraightSkeletonSPtr skel_2d)
             data::_2d::skel::AbstractEventSPtr event = *it_e++;
             float height = 0.0f;
             if (toggle_roof_) {
-                height = event->getOffset();
+                height = CGAL::to_double(event->getOffset());
             }
             drawPolygon(event->getPolygonResult(), height, false, vertices_only);
             if (toggle_poly_ == 4) {
@@ -755,7 +755,7 @@ void MainOpenGLWindow::drawPolyhedron(PolyhedronSPtr polyhedron, bool bold, bool
             }
             length_norm = CGAL::approximate_sqrt(length_norm);
             for (unsigned int i = 0; i < 3; i++) {
-                dir_norm[i] = ((*normal)[i] / length_norm) * 0.5 * thickness_/scale_;
+                dir_norm[i] = CGAL::to_double((*normal)[i] / length_norm) * 0.5 * thickness_/scale_;
             }
             drawArrow(pos_norm, dir_norm);
         }
@@ -887,7 +887,7 @@ void MainOpenGLWindow::drawSphericalPolygon(SphericalPolygonSPtr sphericalpolygo
     ReadLock l(sphericalpolygon->mutex());
     vec4f color_begin;
     getColor(color_begin);
-    double radius = sphericalpolygon->getRadius();
+    double radius = CGAL::to_double(sphericalpolygon->getRadius());
     data::_3d::Sphere3SPtr sphere = sphericalpolygon->getSphere();
     data::_3d::Point3SPtr p_center =
             data::_3d::KernelFactory::createPoint3(sphere);
@@ -1163,7 +1163,7 @@ void MainOpenGLWindow::drawContent() {
                     data::_3d::KernelFactory::createPoint3(sphericalpolygon_->getSphere());
             vec3f center;
             convert(p_center, center);
-            double radius = sphericalpolygon_->getRadius();
+            double radius = CGAL::to_double(sphericalpolygon_->getRadius());
             setColor(c_trans_grey);
             drawSphere(center, radius);
         }

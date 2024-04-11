@@ -153,12 +153,12 @@ void SpacePSPrinter::printPolyhedron(PolyhedronSPtr polyhedron, std::ostream& ou
         data::_3d::EdgeSPtr edge = *it_e++;
         data::_3d::VertexSPtr vertex_src = edge->getVertexSrc();
         data::_3d::VertexSPtr vertex_dst = edge->getVertexDst();
-        vec3f src = {(float)vertex_src->getX(),
-                     (float)vertex_src->getY(),
-                     (float)vertex_src->getZ()};
-        vec3f dst = {(float)vertex_dst->getX(),
-                     (float)vertex_dst->getY(),
-                     (float)vertex_dst->getZ()};
+        vec3f src = { float(CGAL::to_double(vertex_src->getX())),
+                      float(CGAL::to_double(vertex_src->getY())),
+                      float(CGAL::to_double(vertex_src->getZ())) };
+        vec3f dst = { float(CGAL::to_double(vertex_dst->getX())),
+                      float(CGAL::to_double(vertex_dst->getY())),
+                      float(CGAL::to_double(vertex_dst->getZ())) };
         printLine3(src, dst, out);
     }
     out << std::endl;
@@ -173,12 +173,12 @@ std::list<data::_3d::FacetSPtr> SpacePSPrinter::getFacetsToShade(PolyhedronSPtr 
         data::_3d::FacetSPtr facet = *it_f++;
         data::_3d::Plane3SPtr plane = facet->plane();
         data::_3d::Vector3SPtr normal = data::_3d::KernelFactory::createVector3(plane);
-        vec3f norm = {(float)(*normal)[0],
-                (float)(*normal)[1],
-                (float)(*normal)[2]};
+        vec3f norm = { float(CGAL::to_double((*normal)[0])),
+                       float(CGAL::to_double((*normal)[1])),
+                       float(CGAL::to_double((*normal)[2])) };
         float d = 0.0f;
 #ifdef USE_CGAL
-        d = (float)plane->d();
+        d = float(CGAL::to_double(plane->d()));
 #else
         d = (float)plane->getD();
 #endif
@@ -199,9 +199,9 @@ std::list<data::_3d::FacetSPtr> SpacePSPrinter::getFacetsToShade(PolyhedronSPtr 
             std::list<data::_3d::VertexSPtr>::iterator it_v = facet->vertices().begin();
             while (it_v != facet->vertices().end()) {
                 data::_3d::VertexSPtr vertex = *it_v++;
-                center[0] += (float)vertex->getX();
-                center[1] += (float)vertex->getY();
-                center[2] += (float)vertex->getZ();
+                center[0] += float(CGAL::to_double(vertex->getX()));
+                center[1] += float(CGAL::to_double(vertex->getY()));
+                center[2] += float(CGAL::to_double(vertex->getZ()));
             }
             scale(center, 1.0f/(float)facet->vertices().size());
             vec3f diff;
@@ -239,9 +239,9 @@ void SpacePSPrinter::printPolyhedronShade(PolyhedronSPtr polyhedron,
         data::_3d::FacetSPtr facet = *it_f++;
         data::_3d::Plane3SPtr plane = facet->plane();
         data::_3d::Vector3SPtr normal = data::_3d::KernelFactory::createVector3(plane);
-        vec3f norm = {(float)(*normal)[0],
-                (float)(*normal)[1],
-                (float)(*normal)[2]};
+        vec3f norm = { float(CGAL::to_double((*normal)[0])),
+                       float(CGAL::to_double((*normal)[1])),
+                       float(CGAL::to_double((*normal)[2])) };
         float angle_cam_norm = angle(dir_cam, norm);
         float gray = (cosf(angle_cam_norm) * (max_gray-min_gray)) + min_gray;
         setGray(gray, out);
@@ -260,9 +260,9 @@ void SpacePSPrinter::printPolyhedronShade(PolyhedronSPtr polyhedron,
         std::list<data::_3d::VertexSPtr>::iterator it_v = vertices.begin();
         while (it_v != vertices.end()) {
             data::_3d::VertexSPtr vertex = *it_v++;
-            vec3f point3 = {(float)vertex->getX(),
-                     (float)vertex->getY(),
-                     (float)vertex->getZ()};
+            vec3f point3 = { float(CGAL::to_double(vertex->getX())),
+                             float(CGAL::to_double(vertex->getY())),
+                             float(CGAL::to_double(vertex->getZ())) };
             to2d(point3, points[i]);
             i++;
         }
@@ -275,12 +275,12 @@ void SpacePSPrinter::printPolyhedronShade(PolyhedronSPtr polyhedron,
                 data::_3d::EdgeSPtr edge = *it_e++;
                 data::_3d::VertexSPtr vertex_src = edge->getVertexSrc();
                 data::_3d::VertexSPtr vertex_dst = edge->getVertexDst();
-                vec3f src = {(float)vertex_src->getX(),
-                             (float)vertex_src->getY(),
-                             (float)vertex_src->getZ()};
-                vec3f dst = {(float)vertex_dst->getX(),
-                             (float)vertex_dst->getY(),
-                             (float)vertex_dst->getZ()};
+                vec3f src = { float(CGAL::to_double(vertex_src->getX())),
+                              float(CGAL::to_double(vertex_src->getY())),
+                              float(CGAL::to_double(vertex_src->getZ())) };
+                vec3f dst = { float(CGAL::to_double(vertex_dst->getX())),
+                              float(CGAL::to_double(vertex_dst->getY())),
+                              float(CGAL::to_double(vertex_dst->getZ())) };
                 printLine3(src, dst, out);
             }
         }
@@ -298,12 +298,12 @@ void SpacePSPrinter::printSkel(data::_3d::skel::StraightSkeletonSPtr skel, std::
         }
         data::_3d::skel::NodeSPtr node_src = arc->getNodeSrc();
         data::_3d::skel::NodeSPtr node_dst = arc->getNodeDst();
-        vec3f src = {(float)node_src->getX(),
-                     (float)node_src->getY(),
-                     (float)node_src->getZ()};
-        vec3f dst = {(float)node_dst->getX(),
-                     (float)node_dst->getY(),
-                     (float)node_dst->getZ()};
+        vec3f src = { float(CGAL::to_double(node_src->getX())),
+                      float(CGAL::to_double(node_src->getY())),
+                      float(CGAL::to_double(node_src->getZ())) };
+        vec3f dst = { float(CGAL::to_double(node_dst->getX())),
+                      float(CGAL::to_double(node_dst->getY())),
+                      float(CGAL::to_double(node_dst->getZ())) };
         printLine3(src, dst, out);
     }
     out << std::endl;
@@ -411,9 +411,9 @@ void SpacePSPrinter::printSphericalPolygon(
     data::_3d::Sphere3SPtr sphere = sphericalpolygon->getSphere();
     data::_3d::Point3SPtr p_center =
             data::_3d::KernelFactory::createPoint3(sphere);
-    vec3f center = {(float)(*p_center)[0],
-                    (float)(*p_center)[1],
-                    (float)(*p_center)[2]};
+    vec3f center = { float(CGAL::to_double((*p_center)[0])),
+                     float(CGAL::to_double((*p_center)[1])),
+                     float(CGAL::to_double((*p_center)[2])) };
     std::list<data::_3d::CircularEdgeSPtr>::iterator it_e = sphericalpolygon->edges().begin();
     while (it_e != sphericalpolygon->edges().end()) {
         data::_3d::CircularEdgeSPtr edge = *it_e++;
@@ -425,17 +425,17 @@ void SpacePSPrinter::printSphericalPolygon(
         if (!vertex_src->isPointValid() || !vertex_dst->isPointValid()) {
             continue;
         }
-        vec3f src = {(float)vertex_src->getX(),
-                     (float)vertex_src->getY(),
-                     (float)vertex_src->getZ()};
-        vec3f dst = {(float)vertex_dst->getX(),
-                     (float)vertex_dst->getY(),
-                     (float)vertex_dst->getZ()};
+        vec3f src = { float(CGAL::to_double(vertex_src->getX())),
+                      float(CGAL::to_double(vertex_src->getY())),
+                      float(CGAL::to_double(vertex_src->getZ())) };
+        vec3f dst = { float(CGAL::to_double(vertex_dst->getX())),
+                      float(CGAL::to_double(vertex_dst->getY())),
+                      float(CGAL::to_double(vertex_dst->getZ())) };
         data::_3d::Vector3SPtr normal = data::_3d::KernelFactory::createVector3(
                 edge->getSupportingPlane());
-        vec3f axis = {(float)(*normal)[0],
-                      (float)(*normal)[1],
-                      (float)(*normal)[2]};
+        vec3f axis = { float(CGAL::to_double((*normal)[0])),
+                       float(CGAL::to_double((*normal)[1])),
+                       float(CGAL::to_double((*normal)[2])) };
         printCircularEdge(center, axis, src, dst, out);
     }
     out << std::endl;
@@ -446,17 +446,17 @@ void SpacePSPrinter::printSphericalIntersections(
     data::_3d::Sphere3SPtr sphere = sphericalpolygon->getSphere();
     data::_3d::Point3SPtr p_center =
             data::_3d::KernelFactory::createPoint3(sphere);
-    vec3f center = {(float)(*p_center)[0],
-                    (float)(*p_center)[1],
-                    (float)(*p_center)[2]};
+    vec3f center = { float(CGAL::to_double((*p_center)[0])),
+                     float(CGAL::to_double((*p_center)[1])),
+                     float(CGAL::to_double((*p_center)[2])) };
     vec2f center2;
     to2d(center, center2);
     std::list<data::_3d::CircularVertexSPtr>::iterator it_v = sphericalpolygon->vertices().begin();
     while (it_v != sphericalpolygon->vertices().end()) {
         data::_3d::CircularVertexSPtr vertex = *it_v++;
-        vec3f point = {(float)vertex->getX(),
-                       (float)vertex->getY(),
-                       (float)vertex->getZ()};
+        vec3f point = { float(CGAL::to_double(vertex->getX())),
+                        float(CGAL::to_double(vertex->getY())),
+                        float(CGAL::to_double(vertex->getZ())) };
         vec2f point2;
         to2d(point, point2);
         vec2f dir2;
@@ -484,9 +484,9 @@ void SpacePSPrinter::printSphericalSkel(
     data::_3d::Sphere3SPtr sphere = sphericalskel->getSphere();
     data::_3d::Point3SPtr p_center =
             data::_3d::KernelFactory::createPoint3(sphere);
-    vec3f center = {(float)(*p_center)[0],
-                    (float)(*p_center)[1],
-                    (float)(*p_center)[2]};
+    vec3f center = { float(CGAL::to_double((*p_center)[0])),
+                     float(CGAL::to_double((*p_center)[1])),
+                     float(CGAL::to_double((*p_center)[2])) };
     std::list<data::_3d::skel::CircularArcSPtr>::iterator it_a = sphericalskel->arcs().begin();
     while (it_a != sphericalskel->arcs().end()) {
         data::_3d::skel::CircularArcSPtr arc = *it_a++;
@@ -495,17 +495,17 @@ void SpacePSPrinter::printSphericalSkel(
         }
         data::_3d::skel::CircularNodeSPtr node_src = arc->getNodeSrc();
         data::_3d::skel::CircularNodeSPtr node_dst = arc->getNodeDst();
-        vec3f src = {(float)node_src->getX(),
-                     (float)node_src->getY(),
-                     (float)node_src->getZ()};
-        vec3f dst = {(float)node_dst->getX(),
-                     (float)node_dst->getY(),
-                     (float)node_dst->getZ()};
+        vec3f src = { float(CGAL::to_double(node_src->getX())),
+                      float(CGAL::to_double(node_src->getY())),
+                      float(CGAL::to_double(node_src->getZ())) };
+        vec3f dst = { float(CGAL::to_double(node_dst->getX())),
+                      float(CGAL::to_double(node_dst->getY())),
+                      float(CGAL::to_double(node_dst->getZ())) };
         data::_3d::Vector3SPtr normal = data::_3d::KernelFactory::createVector3(
                 arc->getSupportingPlane());
-        vec3f axis = {(float)(*normal)[0],
-                      (float)(*normal)[1],
-                      (float)(*normal)[2]};
+        vec3f axis = { float(CGAL::to_double((*normal)[0])),
+                       float(CGAL::to_double((*normal)[1])),
+                       float(CGAL::to_double((*normal)[2])) };
         printCircularEdge(center, axis, src, dst, out);
     }
     out << std::endl;

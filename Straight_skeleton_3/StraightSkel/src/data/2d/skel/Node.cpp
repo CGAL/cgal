@@ -130,8 +130,8 @@ std::string Node::toString() const {
     } else {
         result += util::StringFactory::fromPointer(this) + ", ";
     }
-    result += "<" + util::StringFactory::fromDouble(getX()) + ", ";
-    result += util::StringFactory::fromDouble(getY()) + ">)";
+    result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + ", ";
+    result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + ">)";
     return result;
 }
 

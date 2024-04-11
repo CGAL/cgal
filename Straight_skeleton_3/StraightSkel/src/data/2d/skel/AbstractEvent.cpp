@@ -85,7 +85,7 @@ std::string AbstractEvent::toString() const {
         default:
             sstr << "AbstractEvent";
     }
-    sstr << "(offset=" << util::StringFactory::fromDouble(getOffset()) << ")";
+    sstr << "(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")";
     return sstr.str();
 }
 

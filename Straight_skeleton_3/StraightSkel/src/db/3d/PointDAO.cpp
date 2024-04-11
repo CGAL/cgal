@@ -65,9 +65,9 @@ int PointDAO::insert(Point3SPtr point) {
         if (stmt) {
             Vector3SPtr vec = KernelFactory::createVector3(point);
             stmt->bindInteger(1, point_id);
-            stmt->bindDouble(2, (*vec)[0]);
-            stmt->bindDouble(3, (*vec)[1]);
-            stmt->bindDouble(4, (*vec)[2]);
+            stmt->bindDouble(2, CGAL::to_double((*vec)[0]));
+            stmt->bindDouble(3, CGAL::to_double((*vec)[1]));
+            stmt->bindDouble(4, CGAL::to_double((*vec)[2]));
             if (stmt->execute() > 0) {
                 point_ids_[point] = point_id;
                 result = point_id;

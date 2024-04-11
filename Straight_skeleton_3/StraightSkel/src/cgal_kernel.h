@@ -9,6 +9,10 @@
 
 #include "config.h"
 
+#include <CGAL/double.h>
+#include <CGAL/float.h>
+#include <CGAL/number_utils.h> // to_double, to_interval, approximate_sqrt
+
 #ifdef USE_CGAL
 
 // #include <CGAL/Cartesian.h>
