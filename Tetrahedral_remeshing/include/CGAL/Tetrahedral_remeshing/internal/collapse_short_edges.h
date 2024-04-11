@@ -80,9 +80,9 @@ public:
         vertices_to_insert.insert(ch->vertex(i));
     }
 
-    CGAL_assertion(vertices_to_insert.end()
+    CGAL_expensive_assertion(vertices_to_insert.end()
       != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v1_init));
-    CGAL_assertion(vertices_to_insert.end()
+    CGAL_expensive_assertion(vertices_to_insert.end()
       != std::find(vertices_to_insert.begin(), vertices_to_insert.end(), v0_init));
 
     std::unordered_map<Vertex_handle, int> v2i;/*vertex of main tr - vertex of collapse tr*/
@@ -119,7 +119,7 @@ public:
             /*replace_domain_0*/ false,
             /*allow_non_manifold*/false))
     {
-      CGAL_assertion(triangulation.tds().is_valid());
+      CGAL_expensive_assertion(triangulation.tds().is_valid());
       CGAL_assertion(triangulation.infinite_vertex() == new_vertices[0]);
 
       // update()
@@ -1178,7 +1178,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
   if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos, sizing, cell_selector/*, adaptive = false*/)
     && collapse_preserves_surface_star(edge, c3t3, new_pos, cell_selector))
   {
-    CGAL_assertion(c3t3.triangulation().tds().is_edge(
+    CGAL_expensive_assertion(c3t3.triangulation().tds().is_edge(
                        edge.first->vertex(edge.second),
                        edge.first->vertex(edge.third)));
 

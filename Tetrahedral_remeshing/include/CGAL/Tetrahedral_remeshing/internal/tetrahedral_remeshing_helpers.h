@@ -349,8 +349,8 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Point& p,
   a = cos_dihedral_angle(r, s, p, q, gt);
   if (max_cos_dh < a) max_cos_dh = a;
 
-  CGAL_assertion(max_cos_dh.value() <= 1.);
-  CGAL_assertion(max_cos_dh.value() >= -1.);
+  CGAL_assertion_code(const double cosdh = max_cos_dh.value());
+  CGAL_assertion(cosdh <= 1. && cosdh >= -1.);
 
   return max_cos_dh;
 }
@@ -747,7 +747,7 @@ void set_index(typename C3t3::Vertex_handle v, const C3t3& c3t3)
     v->set_index(v->cell()->subdomain_index());
     break;
   case 2:
-    CGAL_assertion(surface_patch_index(v, c3t3)
+    CGAL_expensive_assertion(surface_patch_index(v, c3t3)
                   != typename C3t3::Surface_patch_index());
     v->set_index(surface_patch_index(v, c3t3));
     break;
@@ -1624,11 +1624,11 @@ void get_edge_info(const typename C3t3::Edge& edge,
 
   if (dim0 == 3)
   {
-    CGAL_assertion(!is_on_convex_hull(v0, c3t3));
+    CGAL_expensive_assertion(!is_on_convex_hull(v0, c3t3));
     update_v0 = true;
     if (dim1 == 3)
     {
-      CGAL_assertion(!is_on_convex_hull(v1, c3t3));
+      CGAL_expensive_assertion(!is_on_convex_hull(v1, c3t3));
       update_v1 = true;
       return;
     }
@@ -1913,7 +1913,7 @@ void check_surface_patch_indices(const C3t3& c3t3)
   {
     if (v->in_dimension() != 2)
       continue;
-    CGAL_assertion(surface_patch_index(v, c3t3) != typename C3t3::Surface_patch_index());
+    CGAL_expensive_assertion(surface_patch_index(v, c3t3) != typename C3t3::Surface_patch_index());
   }
 }
 

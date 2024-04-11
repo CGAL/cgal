@@ -147,7 +147,7 @@ private:
 
    std::size_t vertex_id(const Vertex_handle v) const
   {
-    CGAL_assertion(m_vertex_id.find(v) != m_vertex_id.end());
+    CGAL_expensive_assertion(m_vertex_id.find(v) != m_vertex_id.end());
     return m_vertex_id.at(v);
   }
 
@@ -263,7 +263,7 @@ private:
                                  const Edge& edge,
                                  const C3t3& c3t3)
   {
-    CGAL_assertion(is_boundary(c3t3, f, m_cell_selector));
+    CGAL_expensive_assertion(is_boundary(c3t3, f, m_cell_selector));
 
     typedef typename Tr::Facet_circulator Facet_circulator;
 
@@ -350,7 +350,7 @@ private:
 
       const Facet& f = fn.first;
       const Facet& mf = tr.mirror_facet(f);
-      CGAL_assertion(is_boundary(c3t3, f, m_cell_selector));
+      CGAL_expensive_assertion(is_boundary(c3t3, f, m_cell_selector));
 
       Vector_3 start_ref = CGAL::Tetrahedral_remeshing::normal(f, tr.geom_traits());
       if (c3t3.triangulation().is_infinite(mf.first)
@@ -468,7 +468,7 @@ private:
   std::optional<Point_3> project(const Surface_patch_index& si,
                                  const Point_3& gi)
   {
-    CGAL_assertion(subdomain_FMLS_indices.find(si) != subdomain_FMLS_indices.end());
+    CGAL_expensive_assertion(subdomain_FMLS_indices.find(si) != subdomain_FMLS_indices.end());
     CGAL_assertion(!std::isnan(gi.x()) && !std::isnan(gi.y()) && !std::isnan(gi.z()));
 
     Vector_3 point(gi.x(), gi.y(), gi.z());
@@ -678,8 +678,8 @@ private:
       const Vertex_handle vh0 = e.first->vertex(e.second);
       const Vertex_handle vh1 = e.first->vertex(e.third);
 
-      CGAL_assertion(is_on_feature(vh0));
-      CGAL_assertion(is_on_feature(vh1));
+      CGAL_expensive_assertion(is_on_feature(vh0));
+      CGAL_expensive_assertion(is_on_feature(vh1));
 
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
@@ -828,8 +828,8 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
     const Surface_patch_index si = incident_surface_patches[0];
 
     CGAL_assertion(si != Surface_patch_index());
-    CGAL_assertion_code(auto siv = surface_patch_index(v, c3t3));
-    CGAL_assertion(si == siv);
+    CGAL_expensive_assertion_code(auto siv = surface_patch_index(v, c3t3));
+    CGAL_expensive_assertion(si == siv);
 
     if (nb_neighbors > 1)
     {
@@ -1109,7 +1109,7 @@ public:
 #endif
       );
     }
-    CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
+    CGAL_expensive_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
     ////   end if(!protect_boundaries)
 
     ////////////// INTERNAL VERTICES ///////////////////////
@@ -1123,7 +1123,7 @@ public:
 #endif
     );
 
-    CGAL_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
+    CGAL_expensive_assertion(CGAL::Tetrahedral_remeshing::debug::are_cell_orientations_valid(tr));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
     timer.stop();

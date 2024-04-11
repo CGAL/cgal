@@ -1813,7 +1813,7 @@ std::size_t flipBoundaryEdges(
     const Vertex_handle vh2 = third_vertex(f0, vh0, vh1, tr);
     const Vertex_handle vh3 = third_vertex(f1, vh0, vh1, tr);
 
-    CGAL_assertion_code(debug::check_facets(vh0, vh1, vh2, vh3, c3t3));
+    CGAL_expensive_assertion(debug::check_facets(vh0, vh1, vh2, vh3, c3t3));
 
     if (!tr.tds().is_edge(vh2, vh3)) // most-likely to happen early exit
     {
@@ -1860,7 +1860,7 @@ std::size_t flipBoundaryEdges(
                                                    visitor);
         if (db == VALID_FLIP)
         {
-          CGAL_assertion(tr.tds().is_edge(vh2, vh3));
+          CGAL_expensive_assertion(tr.tds().is_edge(vh2, vh3));
           Cell_handle c;
           int li, lj, lk;
           CGAL_assertion_code(bool b =)
@@ -1894,7 +1894,7 @@ std::size_t flipBoundaryEdges(
       }
     }
   }
-  CGAL_assertion(tr.tds().is_valid());
+  CGAL_expensive_assertion(tr.tds().is_valid());
 
   return nb_success;
 }

@@ -10,6 +10,7 @@
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Real_timer.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -54,6 +55,9 @@ using namespace CGAL::parameters;
 
 int main()
 {
+  CGAL::Real_timer timer;
+  timer.start();
+
   Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain
                         (sphere_function, K::Sphere_3(CGAL::ORIGIN, K::FT(2)));
 
@@ -65,21 +69,28 @@ int main()
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_exude().no_perturb());
 
-  std::cout << "Meshing done." << std::endl;
+  timer.stop();
+  std::cout << "Meshing done (" << timer.time()
+            << " seconds)" << std::endl;
 
   //Remeshing : extract triangulation
+  timer.reset();
+  timer.start();
   T3_remeshing t3 = CGAL::convert_to_triangulation_3(c3t3);
 
   //Remeshing : coarsen
   //double target_edge_length = 0.15;//for uniform
   CGAL::tetrahedral_isotropic_remeshing(t3, size,
-      number_of_iterations(2).smooth_constrained_edges(true));
+      number_of_iterations(3)
+     .smooth_constrained_edges(true));
 
-  std::cout << "Remeshing done." << std::endl;
+  timer.stop();
+  std::cout << "Remeshing done (" << timer.time()
+            << " seconds)" << std::endl;
 
-  std::ofstream os_remeshing("out_remeshing.mesh");
-  CGAL::IO::write_MEDIT(os_remeshing, t3);
-  os_remeshing.close();
+//  std::ofstream os_remeshing("out_remeshing.mesh");
+//  CGAL::IO::write_MEDIT(os_remeshing, t3);
+//  os_remeshing.close();
 
   return 0;
 }
