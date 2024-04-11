@@ -31,6 +31,11 @@ public:
   typedef unspecified_type Vector;
 
   /*!
+    Type of bounding box.
+  */
+  typedef AABBTraits::Bounding_box Bounding_box;
+
+  /*!
     A functor object to construct the source point of a ray. Provides the operator:
     `Point operator()(const Ray&);`
    */

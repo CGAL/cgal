@@ -23,51 +23,52 @@
 namespace CGAL {
 
 namespace internal {
-  template <class GeomTraits, class Iterator, class PointIterator, class PointMap>
-  struct Triangle_2_from_index_range_iterator_property_map {
-    //classical typedefs
-    typedef Iterator key_type;
-    typedef typename GeomTraits::Triangle_2 value_type;
-    typedef typename GeomTraits::Triangle_2 reference;
 
-    typedef boost::readable_property_map_tag category;
-    typedef Triangle_2_from_index_range_iterator_property_map<GeomTraits, Iterator, PointIterator, PointMap> Self;
+template <class GeomTraits, class Iterator, class PointIterator, class PointMap>
+struct Triangle_2_from_index_range_iterator_property_map {
+  //classical typedefs
+  typedef Iterator key_type;
+  typedef typename GeomTraits::Triangle_2 value_type;
+  typedef typename GeomTraits::Triangle_2 reference;
 
-    Triangle_2_from_index_range_iterator_property_map() {}
-    Triangle_2_from_index_range_iterator_property_map(PointIterator b, PointMap& pmap) : begin(b), pmap(pmap) {}
+  typedef boost::readable_property_map_tag category;
+  typedef Triangle_2_from_index_range_iterator_property_map<GeomTraits, Iterator, PointIterator, PointMap> Self;
 
-    inline friend value_type
-    get(Self s, key_type it)
-    {
-      return typename GeomTraits::Construct_triangle_2()(get(s.pmap, s.begin[(*it)[0]]), get(s.pmap, s.begin[(*it)[1]]), get(s.pmap, s.begin[(*it)[2]]));
-    }
+  Triangle_2_from_index_range_iterator_property_map() {}
+  Triangle_2_from_index_range_iterator_property_map(PointIterator b, PointMap& pmap) : begin(b), pmap(pmap) {}
 
-    PointIterator begin;
-    PointMap pmap;
-  };
+  inline friend value_type
+  get(Self s, key_type it)
+  {
+    return typename GeomTraits::Construct_triangle_2()(get(s.pmap, s.begin[(*it)[0]]), get(s.pmap, s.begin[(*it)[1]]), get(s.pmap, s.begin[(*it)[2]]));
+  }
 
-  template <class GeomTraits, class Iterator, class PointIterator, class PointMap>
-  struct Point_from_indexed_triangle_2_iterator_property_map {
-    //classical typedefs
-    typedef Iterator key_type;
-    typedef typename PointMap::value_type value_type;
-    typedef const value_type reference;
+  PointIterator begin;
+  PointMap pmap;
+};
 
-    typedef boost::readable_property_map_tag category;
-    typedef Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, Iterator, PointIterator, PointMap> Self;
+template <class GeomTraits, class Iterator, class PointIterator, class PointMap>
+struct Point_from_indexed_triangle_2_iterator_property_map {
+  //classical typedefs
+  typedef Iterator key_type;
+  typedef typename PointMap::value_type value_type;
+  typedef const value_type reference;
 
-    Point_from_indexed_triangle_2_iterator_property_map() {}
-    Point_from_indexed_triangle_2_iterator_property_map(PointIterator b, PointMap &pmap) : begin(b), pmap(pmap) {}
+  typedef boost::readable_property_map_tag category;
+  typedef Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, Iterator, PointIterator, PointMap> Self;
 
-    inline friend reference
-    get(Self s, key_type it)
-    {
-      return get(s.pmap, s.begin[((*it)[0])]);
-    }
+  Point_from_indexed_triangle_2_iterator_property_map() {}
+  Point_from_indexed_triangle_2_iterator_property_map(PointIterator b, PointMap &pmap) : begin(b), pmap(pmap) {}
 
-    PointIterator begin;
-    PointMap pmap;
-  };
+  inline friend reference
+  get(Self s, key_type it)
+  {
+    return get(s.pmap, s.begin[((*it)[0])]);
+  }
+
+  PointIterator begin;
+  PointMap pmap;
+};
 }//namespace internal
 
 

@@ -2872,8 +2872,10 @@ namespace CommonKernelFunctors {
     {
       return v.rep().cartesian_end();
     }
-  }; template <typename K>
-    class Construct_projected_point_2
+  };
+
+  template <typename K>
+  class Construct_projected_point_2
   {
     bool
       is_inside_triangle_2_aux(
@@ -2918,7 +2920,7 @@ namespace CommonKernelFunctors {
     }
 
     /**
-     * Returns the nearest point of p1,p2,p3 from origin
+     * Returns the nearest point of `p1`, `p2`, `p3` from origin
      * @param origin the origin point
      * @param p1 the first point
      * @param p2 the second point

@@ -64,7 +64,7 @@ which returns the sphere centered at `p` with `sr` as squared radius.
 typedef unspecified_type Construct_sphere_3;
 
 /*!
-A functor object to compute the point on a geometric primitive which is closest from a query.
+A functor object to compute the point on a geometric primitive which is closest from a query point.
 Provides the operator:
 
 `Point_3 operator()(const Primitive::Datum& d, const Point_3& p)`,

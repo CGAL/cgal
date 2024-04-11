@@ -79,7 +79,7 @@ namespace internal {
  * Primitive type that uses as identifier an iterator with a 2D point as `value_type`.
  * The iterator from which the primitive is built should not be invalided
  * while the AABB tree holding the primitive is in use. The `Segment_2` is constructed on the fly using the `Point_2`
- * the identifier is pointing to as source and the next `Point_2` as target.
+ * the identifier is pointing to as source and the `Point_2` the next identifier is pointing to as target.
  *
  * \cgalModels{AABBPrimitive}
  *

@@ -64,7 +64,7 @@ which returns the circle centered at `p` with `sr` as squared radius.
 typedef unspecified_type Construct_circle_2;
 
 /*!
-A functor object to compute the point on a geometric primitive which is closest from a query.
+A functor object to compute the point on a geometric primitive which is closest from a query point.
 Provides the operator:
 
 `Point_2 operator()(const Primitive::Datum& d, const Point_2& p)`,
@@ -119,14 +119,6 @@ which returns `true` iff the y-coordinate of `p` is smaller than the y-coordinat
 */
 typedef unspecified_type Less_y_2;
 
-/*!
-A functor object to compare the z-coordinates of two points. Provides the operator:
-
-`bool operator()(const Point_2& p, const Point_2& q)`,
-
-which returns `true` iff the z-coordinate of `p` is smaller than the z-coordinate of `q`.
-*/
-typedef unspecified_type Less_z_2;
 
 /*!
 A functor object to compare two points. Provides the operator:
@@ -187,10 +179,6 @@ returns the `Less_y_2` predicate.
 */
 Less_y_2 less_y_2_object();
 
-/*!
-returns the `Less_z_2` predicate.
-*/
-Less_z_2 less_z_2_object();
 
 /*!
 returns the equal predicate.
