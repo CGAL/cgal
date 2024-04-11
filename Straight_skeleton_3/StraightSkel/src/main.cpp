@@ -122,6 +122,9 @@ std::list<CGAL::FT> parseCSV(const char* csv) {
 
 
 int main(int argc, const char* argv[]) {
+    std::cout.precision(17);
+    std::cerr.precision(17);
+
     printCommand(argc, argv);
 
     if (argc < 3) {

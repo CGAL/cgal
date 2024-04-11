@@ -35,7 +35,7 @@ std::string StringFactory::fromInteger(int value) {
 
 std::string StringFactory::fromFloat(float value) {
     std::stringstream sstr;
-    sstr.precision(4);
+    sstr.precision(7);
     sstr << value;
     return sstr.str();
 }
@@ -55,7 +55,7 @@ std::string StringFactory::fromFloatArr(int length, float value[]) {
 
 std::string StringFactory::fromDouble(double value) {
     std::stringstream sstr;
-    sstr.precision(4);
+    sstr.precision(17);
     sstr << value;
     return sstr.str();
 }
