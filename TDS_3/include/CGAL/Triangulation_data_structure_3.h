@@ -32,6 +32,7 @@
 
 #include <boost/unordered_set.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
@@ -2061,18 +2062,17 @@ is_edge(Vertex_handle u, Vertex_handle v,
     if (u==v)
         return false;
 
-    std::vector<Cell_handle> cells;
-    cells.reserve(64);
-    incident_cells(u, std::back_inserter(cells));
+    bool result = false;
 
-    for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
-              cit != cells.end(); ++cit)
-        if ((*cit)->has_vertex(v, j)) {
-            c = *cit;
-            i = c->index(u);
-            return true;
-        }
-    return false;
+    incident_cells(u, boost::make_function_output_iterator([&](Cell_handle ch) {
+                     if(ch->has_vertex(v, j)) {
+                       c = ch;
+                       i = c->index(u);
+                       result = true;
+                     }
+                   }));
+
+    return result;
 }
 
 template <class Vb, class Cb, class Ct>
