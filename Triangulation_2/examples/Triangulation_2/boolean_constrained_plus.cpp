@@ -1,11 +1,14 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/draw_constrained_triangulation_2.h>
+
 
 #include <CGAL/IO/WKT.h>
 
@@ -14,11 +17,10 @@
 #include <iostream>
 #include <sstream>
 
+#include <boost/property_map/property_map.hpp>
 
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel K;
-
-typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes_2;
+struct Boolean_cdt_2 {
 
 
 struct FaceInfo {
@@ -43,6 +45,9 @@ struct FaceInfo {
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 typedef K::Point_2                                         Point_2;
+using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
+using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<K>;
+
 
 typedef CGAL::Exact_intersections_tag                     Itag;
 typedef CGAL::Triangulation_vertex_base_2<K>              Vb;
@@ -57,11 +62,37 @@ typedef CDTplus::Edge                                     Edge;
 typedef CDTplus::Context                                  Context;
 
 
+  CDTplus cdt;
+  std::set<Constraint_id> idA, idB;
 
+  Boolean_cdt_2() = default;
+
+  void operator()(const Multipolygon_with_holes_2& pA, const Multipolygon_with_holes_2& pB)
+  {
+    for(const auto& pwh : pA.polygons_with_holes()){
+      Constraint_id cidA = cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
+      idA.insert(cidA);
+      for(auto const& hole : pwh.holes()){
+        cidA = cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
+        idA.insert(cidA);
+      }
+    }
+
+    for(const auto& pwh : pB.polygons_with_holes()){
+      Constraint_id cidB = cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
+      idB.insert(cidB);
+      for(auto const& hole : pwh.holes()){
+        cidB = cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
+        idB.insert(cidB);
+      }
+    }
+
+    mark_domains(idA, 0);
+    mark_domains(idB, 1);
+  }
 
 void
-mark_domains(CDTplus& ct,
-             Face_handle start,
+mark_domains(Face_handle start,
              int index,
              std::list<Edge>& border,
              const std::set<Constraint_id>& cids,
@@ -82,9 +113,9 @@ mark_domains(CDTplus& ct,
         Edge e(fh,i);
         Face_handle n = fh->neighbor(i);
         if(n->info().nesting_level[aorb] == -1){
-          if(ct.is_constrained(e)){
-            for(Context c : ct.contexts(e.first->vertex(ct.cw(e.second)),
-                                        e.first->vertex(ct.ccw(e.second)))){
+          if(cdt.is_constrained(e)){
+            for(Context c : cdt.contexts(e.first->vertex(cdt.cw(e.second)),
+                                        e.first->vertex(cdt.ccw(e.second)))){
               if(cids.find(c.id()) != cids.end()){
                 border.push_back(e);
               }
@@ -102,26 +133,26 @@ mark_domains(CDTplus& ct,
 
 
 void
-mark_domains(CDTplus& cdt, const std::set<Constraint_id>& cids, int aorb)
+mark_domains(const std::set<Constraint_id>& cids, int aorb)
 {
   for(Face_handle f : cdt.all_face_handles()){
     f->info().nesting_level[aorb] = -1;
   }
 
   std::list<Edge> border;
-  mark_domains(cdt, cdt.infinite_face(), 0, border, cids, aorb);
+  mark_domains(cdt.infinite_face(), 0, border, cids, aorb);
   while(! border.empty()){
     Edge e = border.front();
     border.pop_front();
     Face_handle n = e.first->neighbor(e.second);
     if(n->info().nesting_level[aorb] == -1){
-      mark_domains(cdt, n, e.first->info().nesting_level[aorb]+1, border, cids, aorb);
+      mark_domains(n, e.first->info().nesting_level[aorb]+1, border, cids, aorb);
     }
   }
 }
 
 template <typename Fct>
-void to_stl(const CDTplus& cdt, const Fct& fct)
+void to_stl(const Fct& fct)
 {
   std::ofstream out("cdt.stl");
   out.precision(17);
@@ -141,47 +172,45 @@ void to_stl(const CDTplus& cdt, const Fct& fct)
   out.close();
 }
 
+};
+
+using K = CGAL::Exact_predicates_exact_constructions_kernel;
+using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
+using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<K>;
+
 
 
 int
 main( )
 {
-  CDTplus cdt;
 
-  Polygon_with_holes_2 pA, pB;
+  Boolean_cdt_2 bcdt;
 
-  std::set<Constraint_id> idA, idB;
 
-  {
-    std::istringstream is("POLYGON ((0 0,  20 0, 20 30, 0 30, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1 ) )");
-    CGAL::IO::read_polygon_WKT(is, pA);
-  }
+  Multipolygon_with_holes_2 pA, pB;
 
 
   {
-    std::istringstream is("POLYGON ((10 1,  30 1, 30 2, 20 2, 20 4, 10 4))");
-    CGAL::IO::read_polygon_WKT(is, pB);
+    std::istringstream is("MULTIPOLYGON( ((0 0,  20 0, 20 30, 0 30, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1 ) ) ,   (( 50 0, 60 0, 60 60, 50 60)) )");
+    CGAL::IO::read_multi_polygon_WKT(is, pA);
   }
 
-  Constraint_id cidA = cdt.insert_constraint(pA.outer_boundary().vertices_begin(), pA.outer_boundary().vertices_end(), true);
-  idA.insert(cidA);
-  for(auto const& hole : pA.holes()){
-    cidA = cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
-    idA.insert(cidA);
-  }
-
-
-  Constraint_id cidB = cdt.insert_constraint(pB.outer_boundary().vertices_begin(), pB.outer_boundary().vertices_end(), true);
-  idB.insert(cidB);
-  for(auto const& hole : pB.holes()){
-    cidB = cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
-    idB.insert(cidB);
+  {
+    std::istringstream is("MULTIPOLYGON( ((10 1,  30 1, 30 2, 20 2, 20 4, 10 4)) )");
+    CGAL::IO::read_multi_polygon_WKT(is, pB);
   }
 
 
-  mark_domains(cdt, idA, 0);
-  mark_domains(cdt, idB, 1);
+  bcdt(pA,pB);
 
-  to_stl(cdt, [](bool a, bool b){ return a || b;} );
+  std::map<Boolean_cdt_2::Face_handle,bool> map;
+  for(auto fh : bcdt.cdt.finite_face_handles()){
+    map[fh] = fh->info().in_domain(0) || fh->info().in_domain(1);
+  }
+
+  bcdt.to_stl([](bool a, bool b){ return a || b;} );
+
+  CGAL::draw(bcdt.cdt, boost::make_assoc_property_map(map));
+
   return 0;
 }
