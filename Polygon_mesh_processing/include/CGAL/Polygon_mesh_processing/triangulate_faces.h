@@ -217,13 +217,18 @@ public:
        */
       visitor.before_subface_creations(f);
 
-      const FT p1p3 = cross_product(p2-p1, p3-p2) * cross_product(p0-p3, p1-p0);
-      const FT p0p2 = cross_product(p1-p0, p1-p2) * cross_product(p3-p2, p3-p0);
+      typename Traits::Vector_3 p0p1=p1-p0;
+      typename Traits::Vector_3 p1p2=p2-p1;
+      typename Traits::Vector_3 p2p3=p3-p2;
+      typename Traits::Vector_3 p0p3=p3-p0;
+
+      const FT delta1 = cross_product(p1p2, p2p3) * cross_product(-p0p3, p0p1);
+      const FT delta2 = cross_product(p0p1, -p1p2) * cross_product(p2p3, p0p3);
 
       halfedge_descriptor res = boost::graph_traits<PolygonMesh>::null_halfedge();
 
-      if (p1p3!=p0p2)
-        res = (p0p2>p1p3)
+      if (delta1!=delta2)
+        res = (delta2>delta1)
             ?  CGAL::Euler::split_face(verts[0], verts[2], pmesh)
             :  CGAL::Euler::split_face(verts[1], verts[3], pmesh);
       else
