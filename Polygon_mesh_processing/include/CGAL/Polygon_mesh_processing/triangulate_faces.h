@@ -549,6 +549,7 @@ public:
                               NamedParameters,
                               Def_Kernel>::type;
     using FT = typename Traits::FT;
+    using PID = typename std::iterator_traits<typename Polygon::const_iterator>::value_type;
 
     // Visitor
     using Visitor = typename internal_np::Lookup_named_param_def<
@@ -587,17 +588,46 @@ public:
        */
       visitor.before_subface_creations(polygon);
 
-      const FT p1p3 = cross_product(p2-p1, p3-p2) * cross_product(p0-p3, p1-p0);
-      const FT p0p2 = cross_product(p1-p0, p1-p2) * cross_product(p3-p2, p3-p0);
-      if(p0p2 > p1p3)
+
+      typename Traits::Vector_3 p0p1=p1-p0;
+      typename Traits::Vector_3 p1p2=p2-p1;
+      typename Traits::Vector_3 p2p3=p3-p2;
+      typename Traits::Vector_3 p0p3=p3-p0;
+
+      const FT delta1 = cross_product(p1p2, p2p3) * cross_product(-p0p3, p0p1);
+      const FT delta2 = cross_product(p0p1, -p1p2) * cross_product(p2p3, p0p3);
+      if (delta1!=delta2)
       {
-        triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
-        triangulated_polygons.push_back({polygon[0], polygon[2], polygon[3]});
+        if(delta2 > delta1)
+        {
+          triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
+          triangulated_polygons.push_back({polygon[0], polygon[2], polygon[3]});
+        }
+        else
+        {
+          triangulated_polygons.push_back({polygon[0], polygon[1], polygon[3]});
+          triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
+        }
       }
       else
       {
-        triangulated_polygons.push_back({polygon[0], polygon[1], polygon[3]});
-        triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
+        PID mid =
+          *(std::min_element)(polygon.begin(), polygon.end(),
+                              [&points,pm](PID id1 , PID id2)
+                              {
+                                return lexicographically_xyz_smaller(get(pm, points[id1]),
+                                                                     get(pm, points[id2]));
+                              });
+        if (mid==0|| mid==2)
+        {
+          triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
+          triangulated_polygons.push_back({polygon[0], polygon[2], polygon[3]});
+        }
+        else
+        {
+          triangulated_polygons.push_back({polygon[0], polygon[1], polygon[3]});
+          triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
+        }
       }
 
       visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-2]);
