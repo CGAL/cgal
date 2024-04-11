@@ -315,6 +315,34 @@ auto make_sorted_pair(Pair&& pair) {
   return make_sorted_pair(std::forward<decltype(a)>(a), std::forward<decltype(b)>(b));
 }
 
+template <class F>
+class [[nodiscard]] Scope_exit {
+  [[no_unique_address]] F exit_function;
+
+public:
+  template <typename G>
+  explicit Scope_exit(G&& g, std::enable_if_t<!std::is_same_v<std::decay_t<G>, Scope_exit>>* = nullptr)
+      : exit_function(std::forward<G>(g))
+  {
+  }
+
+  Scope_exit(const Scope_exit&) = delete;
+  Scope_exit& operator=(const Scope_exit&) = delete;
+  Scope_exit(Scope_exit&&) = delete;
+  Scope_exit& operator=(Scope_exit&&) = delete;
+
+  ~Scope_exit() {
+    exit_function();
+  }
+};
+
+template<typename F> Scope_exit(F) -> Scope_exit<F>;
+
+template <typename F>
+Scope_exit<F> make_scope_exit(F&& f) {
+  return Scope_exit<F>(std::forward<F>(f));
+}
+
 } //namespace CGAL
 
 namespace std {
