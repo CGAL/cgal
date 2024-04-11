@@ -51,9 +51,6 @@ int main() {
 
   std::cout << "printing a complex for test purposes : " << std::endl << z2_gmpq << std::endl;
 
-  Complex_gmpq cr_gmpq = cross_ratio(z1_gmpq, -z2_gmpq, z1_gmpq.conjugate(), z2_gmpq);
-  assert( fourth_point_from_cross_ratio(z1_gmpq,-z2_gmpq,z1_gmpq.conjugate(),cr_gmpq) == z2_gmpq);
-
   Complex_gmpq z3_gmpq;
   std::stringstream buffer;
   buffer << z2_gmpq;
@@ -85,11 +82,6 @@ int main() {
   assert( z2_integer == Complex_integer(Exact_integer(-25),Exact_integer(-30)) );
 
   std::cout << "printing a complex for test purposes : " << std::endl << z2_integer << std::endl;
-
-  Complex_integer cr_integer = cross_ratio(z1_integer, -z2_integer, z1_integer.conjugate(), z2_integer);
-  Complex_integer not_z2_integer = fourth_point_from_cross_ratio(z1_integer,-z2_integer,z1_integer.conjugate(),cr_integer);
-  assert( not_z2_integer != z2_integer);
-  assert( not_z2_integer == Complex_integer(Exact_integer(0),Exact_integer(26)) );
 
   Complex_integer z3_integer;
   buffer << z2_integer;

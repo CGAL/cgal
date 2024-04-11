@@ -20,6 +20,8 @@
 
 namespace CGAL {
 
+/*
+
 template<class ComplexType>
 class Hyperbolic_point_2 {
 private:
@@ -48,15 +50,29 @@ void operator>>(std::istream& s, Hyperbolic_point_2<ComplexType>& point) {
   point.set_z(z);
 }
 
+*/
+
+
 /*
 Traits class offered by CGAL.
 */
+
+/*
 template<class FieldType>
 class Hyperbolic_surfaces_traits_2 {
 public:
   typedef FieldType                          FT;
   typedef Complex_without_sqrt<FieldType>    Complex;
   typedef Hyperbolic_point_2<Complex>        Point_2;
+};
+*/
+
+template<class HyperbolicTraitsClass>
+class Hyperbolic_surfaces_traits_2 : public HyperbolicTraitsClass {
+public:
+  typedef typename HyperbolicTraitsClass::FT                          FT;
+  typedef typename HyperbolicTraitsClass::Hyperbolic_point_2          Hyperbolic_point_2;
+  typedef Complex_without_sqrt<FT>                                    Complex;
 };
 
 } // namespace CGAL

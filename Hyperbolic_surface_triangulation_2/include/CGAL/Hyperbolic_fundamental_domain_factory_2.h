@@ -28,20 +28,18 @@ namespace CGAL {
 /*
 Factory class, whose only purpose is to construct random domains of genus 2 closed orientable hyperbolic surfaces, via its method generate_domain_g2.
 */
-template<class GeometricTraits_2>
+template<class Traits_2>
 class Hyperbolic_fundamental_domain_factory_2{
 private:
-  typedef typename GeometricTraits_2::FT                    _FT;
-  typedef Complex_without_sqrt<_FT>                         _Cmplx;
-  typedef typename GeometricTraits_2::Point_2               _Point;
+  typedef typename Traits_2::FT                    _FT;
+  typedef typename Traits_2::Complex               _Cmplx;
+  typedef typename Traits_2::Hyperbolic_point_2    _Point;
 
   Random _random;
 
 public:
-  typedef GeometricTraits_2                                 Geometric_traits_2;
-
   Hyperbolic_fundamental_domain_factory_2(unsigned int seed);
-  Hyperbolic_fundamental_domain_2<GeometricTraits_2> generate_domain_g2();
+  Hyperbolic_fundamental_domain_2<Traits_2> generate_domain_g2();
 
 private:
   float random_positive_float(); // returns number in [0,1]
@@ -63,16 +61,16 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class GeometricTraits_2>
-Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::Hyperbolic_fundamental_domain_factory_2(unsigned int seed){
+template<class Traits_2>
+Hyperbolic_fundamental_domain_factory_2<Traits_2>::Hyperbolic_fundamental_domain_factory_2(unsigned int seed){
   _random = Random(seed);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class GeometricTraits_2>
-Hyperbolic_fundamental_domain_2<GeometricTraits_2> Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::generate_domain_g2(){
-  Hyperbolic_fundamental_domain_2<GeometricTraits_2> domain;
+template<class Traits_2>
+Hyperbolic_fundamental_domain_2<Traits_2> Hyperbolic_fundamental_domain_factory_2<Traits_2>::generate_domain_g2(){
+  Hyperbolic_fundamental_domain_2<Traits_2> domain;
 
   bool is_domain_generated = false;
   _Cmplx exact_z0, exact_z1, exact_z2, exact_z3;
@@ -105,14 +103,14 @@ Hyperbolic_fundamental_domain_2<GeometricTraits_2> Hyperbolic_fundamental_domain
 
   _Cmplx exact_zero(_FT(0), _FT(0));
   std::vector<_Point> vertices;
-  vertices.push_back(exact_z0);
-  vertices.push_back(exact_z1);
-  vertices.push_back(exact_z2);
-  vertices.push_back(exact_z3);
-  vertices.push_back(exact_zero-exact_z0);
-  vertices.push_back(exact_zero-exact_z1);
-  vertices.push_back(exact_zero-exact_z2);
-  vertices.push_back(exact_zero-exact_z3);
+  vertices.push_back(_Point(exact_z0.real(), exact_z0.imag()));
+  vertices.push_back(_Point(exact_z1.real(), exact_z1.imag()));
+  vertices.push_back(_Point(exact_z2.real(), exact_z2.imag()));
+  vertices.push_back(_Point(exact_z3.real(), exact_z3.imag()));
+  vertices.push_back(_Point(-exact_z0.real(), -exact_z0.imag()));
+  vertices.push_back(_Point(-exact_z1.real(), -exact_z1.imag()));
+  vertices.push_back(_Point(-exact_z2.real(), -exact_z2.imag()));
+  vertices.push_back(_Point(-exact_z3.real(), -exact_z3.imag()));
 
   std::vector<int> pairings;
   for (int k=0; k<8; k++){
@@ -125,18 +123,18 @@ Hyperbolic_fundamental_domain_2<GeometricTraits_2> Hyperbolic_fundamental_domain
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class GeometricTraits_2>
-float Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::random_positive_float(){
+template<class Traits_2>
+float Hyperbolic_fundamental_domain_factory_2<Traits_2>::random_positive_float(){
   return _random.uniform_01<float>();
 }
 
-template<class GeometricTraits_2>
-float Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::random_float(){
+template<class Traits_2>
+float Hyperbolic_fundamental_domain_factory_2<Traits_2>::random_float(){
   return _random.uniform_01<float>() * 2  - 1;
 }
 
-template<class GeometricTraits_2>
-Complex_without_sqrt<float> Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::random_complex_float(){
+template<class Traits_2>
+Complex_without_sqrt<float> Hyperbolic_fundamental_domain_factory_2<Traits_2>::random_complex_float(){
   Complex_without_sqrt<float> result (random_float(), random_positive_float());
   while (result.squared_modulus() >= 1){
     result.set_real(random_float());
@@ -148,23 +146,23 @@ Complex_without_sqrt<float> Hyperbolic_fundamental_domain_factory_2<GeometricTra
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class GeometricTraits_2>
-typename GeometricTraits_2::FT Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::exact_number_from_float(float x){
+template<class Traits_2>
+typename Traits_2::FT Hyperbolic_fundamental_domain_factory_2<Traits_2>::exact_number_from_float(float x){
   if (x< 0){
     return _FT(0)-exact_number_from_float(-x);
   }
   return _FT(int(x*_DENOMINATOR_FOR_GENERATION)%_DENOMINATOR_FOR_GENERATION, _DENOMINATOR_FOR_GENERATION);
 }
 
-template<class GeometricTraits_2>
-Complex_without_sqrt<typename GeometricTraits_2::FT> Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::exact_complex_from_float_complex(const Complex_without_sqrt<float>& z){
+template<class Traits_2>
+typename Traits_2::Complex Hyperbolic_fundamental_domain_factory_2<Traits_2>::exact_complex_from_float_complex(const Complex_without_sqrt<float>& z){
   return _Cmplx(exact_number_from_float(z.real()), exact_number_from_float(z.imag()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class GeometricTraits_2>
-bool Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::try_to_compute_inexact_z0_from_z1_z2_z3(Complex_without_sqrt<float>& z0, Complex_without_sqrt<float>& z1, Complex_without_sqrt<float>& z2, Complex_without_sqrt<float>& z3){
+template<class Traits_2>
+bool Hyperbolic_fundamental_domain_factory_2<Traits_2>::try_to_compute_inexact_z0_from_z1_z2_z3(Complex_without_sqrt<float>& z0, Complex_without_sqrt<float>& z1, Complex_without_sqrt<float>& z2, Complex_without_sqrt<float>& z3){
   if (   ((z2/z1).imag()<=0) || ((z3/z2).imag()<=0)   ){
     return false;
   }
@@ -185,8 +183,8 @@ bool Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::try_to_compute_
   return true;
 }
 
-template<class GeometricTraits_2>
-bool Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::try_to_compute_exact_z3_from_z0_z1_z2(_Cmplx& z0, _Cmplx& z1, _Cmplx& z2, _Cmplx& z3){
+template<class Traits_2>
+bool Hyperbolic_fundamental_domain_factory_2<Traits_2>::try_to_compute_exact_z3_from_z0_z1_z2(_Cmplx& z0, _Cmplx& z1, _Cmplx& z2, _Cmplx& z3){
   _FT zero_number (0);
   _FT one_number (1);
   if ( (z0.real()<=zero_number) || (z1.imag()<=zero_number) || (z2.imag()<=zero_number) || (z3.imag()<=zero_number) ){
@@ -231,8 +229,8 @@ bool Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::try_to_compute_
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class GeometricTraits_2>
-bool Hyperbolic_fundamental_domain_factory_2<GeometricTraits_2>::sanity_check(_Cmplx& z0, _Cmplx& z1, _Cmplx& z2, _Cmplx& z3){
+template<class Traits_2>
+bool Hyperbolic_fundamental_domain_factory_2<Traits_2>::sanity_check(_Cmplx& z0, _Cmplx& z1, _Cmplx& z2, _Cmplx& z3){
   _FT zero_number(0);
   _FT one_number(1);
 

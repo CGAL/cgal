@@ -40,15 +40,15 @@ void DemoWindowItem::modelChanged(){} // Only used by Qt : we don't need to fill
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void DemoWindowItem::draw_triangulation(Triangulation& triangulation){
-  typedef std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle, typename Traits::Point_2,typename Traits::Point_2,typename Traits::Point_2>> RealizationVector;
+  typedef std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,Point,Point,Point>> RealizationVector;
   RealizationVector realized_triangles;
   realized_triangles = triangulation.lift();
 
-  Complex point_1, point_2, point_3;
+  Point point_1, point_2, point_3;
   for (typename RealizationVector::iterator it = realized_triangles.begin(); it != realized_triangles.end(); ++it){
-    point_1 = std::get<1>(*it).get_z();
-    point_2 = std::get<2>(*it).get_z();
-    point_3 = std::get<3>(*it).get_z();
+    point_1 = std::get<1>(*it);
+    point_2 = std::get<2>(*it);
+    point_3 = std::get<3>(*it);
 
     _edges.push_back(std::make_pair(point_1, point_2));
     _edges.push_back(std::make_pair(point_2, point_3));
@@ -58,10 +58,10 @@ void DemoWindowItem::draw_triangulation(Triangulation& triangulation){
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void DemoWindowItem::draw_point(QPainter* painter, Complex position){
-  // First convert the complex number of coordinates in doubles, well-scaled
-  double point_x = _poincare_disk_radius_in_pixels * CGAL::to_double(position.real());
-  double point_y = _poincare_disk_radius_in_pixels * CGAL::to_double(position.imag());
+void DemoWindowItem::draw_point(QPainter* painter, Point position){
+  // First convert the point in doubles, well-scaled
+  double point_x = _poincare_disk_radius_in_pixels * CGAL::to_double(position.x());
+  double point_y = _poincare_disk_radius_in_pixels * CGAL::to_double(position.y());
 
   // Then draw a small circle
   QRectF circle_rect = QRectF(point_x-1, point_y-1, 3, 3);
@@ -69,14 +69,14 @@ void DemoWindowItem::draw_point(QPainter* painter, Complex position){
 
 }
 
-void DemoWindowItem::draw_edge(QPainter* painter, Complex source, Complex target){
+void DemoWindowItem::draw_edge(QPainter* painter, Point source, Point target){
   // First convert the points coordinates to doubles
 
-  double src_x = CGAL::to_double(source.real());
-  double src_y = CGAL::to_double(source.imag());
+  double src_x = CGAL::to_double(source.x());
+  double src_y = CGAL::to_double(source.y());
 
-  double tar_x = CGAL::to_double(target.real());
-  double tar_y = CGAL::to_double(target.imag());
+  double tar_x = CGAL::to_double(target.x());
+  double tar_y = CGAL::to_double(target.y());
 
   // 0. If src and tar are too colinear or too close from each other then draw a line
   double determinant = src_x*tar_y - src_y*tar_x; // determinant of the matrix whose columns are the vectors src and tar : indicates colinearity

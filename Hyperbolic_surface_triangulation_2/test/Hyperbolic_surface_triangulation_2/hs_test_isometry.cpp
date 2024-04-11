@@ -12,20 +12,26 @@
 
 #include <CGAL/Complex_without_sqrt.h>
 #include <CGAL/Hyperbolic_isometry_2.h>
-#include <CGAL/Hyperbolic_surfaces_traits_2.h>
+
 #include <iostream>
 
 #include <CGAL/Gmpq.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
+#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+#include <CGAL/Hyperbolic_surfaces_traits_2.h>
 
 using namespace CGAL;
 
-typedef Gmpq FT;
+typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Circular_kernel_2<Cartesian<Gmpq>,Algebraic_kernel_for_circles_2_2<Gmpq>>> ParentTraits;
+typedef Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
+typedef Hyperbolic_isometry_2<Traits>                                   Isometry;
 
-typedef Hyperbolic_surfaces_traits_2<FT>                            Traits;
-typedef Hyperbolic_isometry_2<Traits>                               Isometry;
-
-typedef typename Traits::Point_2                                    Point;
-typedef Complex_without_sqrt<FT>                                    Complex;
+typedef typename Traits::FT                                             FT;
+typedef typename Traits::Hyperbolic_point_2                             Point;
+typedef typename Traits::Complex                                        Complex;
 
 
 int main() {
@@ -65,31 +71,31 @@ int main() {
   assert( h.get_coefficient(2) == Complex(FT(-192,17),FT(504,85)) );
   assert( h.get_coefficient(3) == Complex(FT(5333816,65025),FT(8,17)) );
 
-  Point point (Complex(FT(3,11),FT(-1,73)));
+  Point point (FT(3,11),FT(-1,73));
   Point image_point = h.evaluate(point);
-  assert( image_point.get_z()==Complex(FT(9146011623056232,66567955527962869), FT(-12617302915955411,133135911055925738)) );
+  assert( image_point==Point(FT(9146011623056232,66567955527962869), FT(-12617302915955411,133135911055925738)) );
 
   std::cout << "printing an isometry for test purposes : " << std::endl << h;
 
   Isometry tau_1 = hyperbolic_translation<Traits>(point);
-  Isometry tau_1_prime = hyperbolic_translation<Traits>(Point(-point.get_z()), true);
+  Isometry tau_1_prime = hyperbolic_translation<Traits>(Point (FT(-3,11),FT(1,73)), true);
   Isometry tau_1_inv = hyperbolic_translation<Traits>(point, true);
-  assert( tau_1.evaluate(image_point).get_z() == tau_1_prime.evaluate(image_point).get_z() );
-  assert( tau_1.compose(tau_1_inv).evaluate(image_point).get_z() == image_point.get_z() );
+  assert( tau_1.evaluate(image_point) == tau_1_prime.evaluate(image_point) );
+  assert( tau_1.compose(tau_1_inv).evaluate(image_point) == image_point );
 
-  Point p (Complex(FT(2,15),FT(0)));
-  Point q (Complex(FT(0),FT(17,93)));
+  Point p (FT(2,15),FT(0));
+  Point q (FT(0),FT(17,93));
   Isometry rotation = hyperbolic_rotation<Traits>(p, q);
   Isometry rotation_prime = hyperbolic_rotation<Traits>(q, p, true);
   Isometry rotation_inv = hyperbolic_rotation<Traits>(p, q, true);
-  assert( rotation.evaluate(image_point).get_z() == rotation_prime.evaluate(image_point).get_z() );
-  assert( rotation.compose(rotation_inv).evaluate(image_point).get_z() == image_point.get_z() );
+  assert( rotation.evaluate(image_point) == rotation_prime.evaluate(image_point) );
+  assert( rotation.compose(rotation_inv).evaluate(image_point) == image_point );
 
   Point p_imag = rotation.evaluate(p);
   Point q_imag = rotation.evaluate(q);
-  Isometry pairing = segments_pairing<Traits>(p, q, p_imag, q_imag);
-  assert( pairing.evaluate(p).get_z() == p_imag.get_z() );
-  assert( pairing.evaluate(q).get_z() == q_imag.get_z() );
+  Isometry pairing = isometry_pairing_the_sides<Traits>(p, q, p_imag, q_imag);
+  assert( pairing.evaluate(p) == p_imag );
+  assert( pairing.evaluate(q) == q_imag );
 
   return 0;
 }

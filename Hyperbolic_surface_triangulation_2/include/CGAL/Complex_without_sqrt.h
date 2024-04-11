@@ -57,12 +57,6 @@ template<class FT> bool operator!=(const Complex_without_sqrt<FT>& z1, const Com
 template<class FT>std::ostream& operator<<(std::ostream& s, const Complex_without_sqrt<FT>& z);
 template<class FT>void operator>>(std::istream& s, Complex_without_sqrt<FT>& z);
 
-// Returns the cross ratio (d-b)*(c-a) / ((d-a)*(c-b))
-template<class FT> Complex_without_sqrt<FT> cross_ratio(Complex_without_sqrt<FT> a, Complex_without_sqrt<FT> b, Complex_without_sqrt<FT> c, Complex_without_sqrt<FT> d);
-// Returns d such that (d-b)*(c-a) / ((d-a)*(c-b)) = cratio
-template<class FT> Complex_without_sqrt<FT> fourth_point_from_cross_ratio(Complex_without_sqrt<FT> a, Complex_without_sqrt<FT> b, Complex_without_sqrt<FT> c, Complex_without_sqrt<FT> cratio);
-
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -174,18 +168,6 @@ void operator>>(std::istream& s, Complex_without_sqrt<FT>& z){
   z.set_real(FT(line));
   std::getline(s, line);
   z.set_imag(FT(line));
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-template<class FT>
-Complex_without_sqrt<FT> cross_ratio(Complex_without_sqrt<FT> a, Complex_without_sqrt<FT> b, Complex_without_sqrt<FT> c, Complex_without_sqrt<FT> d){
-  return (d-b)*(c-a) / ((d-a)*(c-b));
-}
-
-template<class FT>
-Complex_without_sqrt<FT> fourth_point_from_cross_ratio(Complex_without_sqrt<FT> a, Complex_without_sqrt<FT> b, Complex_without_sqrt<FT> c, Complex_without_sqrt<FT> cratio){
-  return ( cratio*a*(c-b) + b*(a-c) ) / ( cratio*(c-b) + (a-c) );
 }
 
 } // namespace CGAL

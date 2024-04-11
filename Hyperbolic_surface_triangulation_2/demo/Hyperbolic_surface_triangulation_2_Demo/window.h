@@ -10,13 +10,19 @@
 #include "ui_drawing_window_description.h"
 
 // CGAL headers
-#include <CGAL/Gmpq.h>
-#include <CGAL/Complex_without_sqrt.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
+
+#include <CGAL/Gmpq.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
+#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Hyperbolic_surfaces_traits_2.h>
 
-typedef CGAL::Complex_without_sqrt<CGAL::Gmpq>                                Complex;
-typedef CGAL::Hyperbolic_surfaces_traits_2<CGAL::Gmpq>                        Traits;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<CGAL::Circular_kernel_2<CGAL::Cartesian<CGAL::Gmpq>,CGAL::Algebraic_kernel_for_circles_2_2<CGAL::Gmpq>>> ParentTraits;
+typedef CGAL::Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
+typedef Traits::Hyperbolic_point_2                                            Point;
 typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
 
 class DemoWindowItem :
@@ -28,7 +34,7 @@ private:
   typedef CGAL::Bbox_2                                Bbox_2; // "Bounding box" : just a box type used for drawing
 
   // Edges to draw
-  std::vector<std::pair<Complex,Complex>>             _edges;
+  std::vector<std::pair<Point,Point>>                 _edges;
 
   // Pens for drawing
   QPen                                                _poincare_disk_pen;
@@ -54,9 +60,9 @@ public:
 
 private:
   // Sub-methods for drawing edges and vertices
-  void draw_point(QPainter* painter, Complex position);
+  void draw_point(QPainter* painter, Point position);
 
-  void draw_edge(QPainter* painter, Complex source, Complex target);
+  void draw_edge(QPainter* painter, Point source, Point target);
   void draw_line(QPainter* painter, double point_1_x, double point_1_y, double point_2_x, double point_2_y);
   void draw_arc(QPainter* painter, double point_1_x, double point_1_y, double point_2_x, double point_2_y, double center_x, double center_y);
 
