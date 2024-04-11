@@ -13,7 +13,7 @@
 //             Sebastien Loriot <sebastien.loriot@cgal.org>
 //             Efi Fogel        <efifogel@gmail.com>
 
-// This file contains the follwoing three parts:
+// This file contains the following three parts:
 // 1. The common base class template of the specialized
 //      Dual<specialized-arrangement> class template.
 //
@@ -24,8 +24,8 @@
 //    the various Boost Graph concepts. There is one macro per required function
 //    template. Each macro accepts the name of a template class, an instance of
 //    which represents an arrangement data structure, e.g., Arrangement_2. The
-//    definitios of the free functions templates for a given arrangement data
-//    strcture must be present when a dual of this data structure is defined.
+//    definitions of the free functions templates for a given arrangement data
+//    structure must be present when a dual of this data structure is defined.
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -176,7 +176,7 @@ protected:
                 _ccb_curr == it._ccb_curr)));
     }
 
-    /*! Derefernce the current circulator. */
+    /*! Dereference the current circulator. */
     Edge_handle _dereference() const
     {
       if (_out) return (_ccb_curr);
@@ -314,9 +314,9 @@ namespace CGAL {
 /*! \class
  * The common base class template of the specialized
  *   boost::graph_traits<Dual<specialized-arrangement> > class template.
- * The latter serves as a dual adapter for the specialied arrangment, where the
+ * The latter serves as a dual adapter for the specialied arrangement, where the
  * valid arrangement faces correspond to graph verices, and two graph vertices
- * are connected if the two corrsponding faces are adjacent.
+ * are connected if the two corresponding faces are adjacent.
  * We consider the graph as directed. We also allow parallel edges, as two
  * faces may have more than one common edges.
  */

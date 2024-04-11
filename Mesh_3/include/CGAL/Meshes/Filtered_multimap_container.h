@@ -187,7 +187,7 @@ namespace CGAL {
     typedef typename Base::size_type size_type;
 
   protected:
-    // --- protected datas ---
+    // --- protected data ---
     Map container;
     Predicate test;
 

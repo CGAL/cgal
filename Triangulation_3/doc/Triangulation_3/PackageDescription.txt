@@ -13,9 +13,7 @@
 /// \ingroup PkgTriangulation3Ref
 
 /*!
-  \code
-   #include <CGAL/draw_triangulation_3.h>
-  \endcode
+\cgalInclude{CGAL/draw_triangulation_3.h}
 */
 /// \defgroup PkgDrawTriangulation3 Draw a Triangulation 3
 /// \ingroup PkgTriangulation3Ref
@@ -28,7 +26,7 @@
 \cgalPkgDescriptionBegin{3D Triangulations,PkgTriangulation3}
 \cgalPkgPicture{twotets.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Clément Jamin, Sylvain Pion and Monique Teillaud}
+\cgalPkgAuthors{Clément Jamin, Sylvain Pion, and Monique Teillaud}
 \cgalPkgDesc{This package allows to build and handle triangulations for point sets in three dimensions. Any \cgal triangulation covers the convex hull of its vertices. Triangulations are build incrementally  and can be modified by insertion, displacements or removal of vertices.  They offer point location facilities.  The package provides plain triangulation (whose faces depends on the  insertion order of the vertices) and Delaunay triangulations. Regular triangulations are also provided for sets of weighted points. Delaunay and regular triangulations offer nearest neighbor queries and primitives to build the dual Voronoi and power diagrams. Optionally, the main Delaunay and regular triangulation algorithms (insert, remove) support multi-core shared-memory architectures to take advantage of available parallelism.}
 \cgalPkgManuals{Chapter_3D_Triangulations,PkgTriangulation3Ref}
 \cgalPkgSummaryEnd

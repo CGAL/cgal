@@ -3,9 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines Functor
+ * \cgalRefines{Functor}
  *
- * \cgalHasModel ArrangementConstructXMonotoneCurveTraits_2::Construct_x_monotone_curve_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementConstructXMonotoneCurveTraits_2::Construct_x_monotone_curve_2}
+ * \cgalHasModelsEnd
  */
 class ConstructXMonotoneCurve_2 {
 public:

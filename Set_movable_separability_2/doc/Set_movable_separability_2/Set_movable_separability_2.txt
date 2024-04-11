@@ -73,17 +73,17 @@ right.
 The input polygon must satisfy two conditions as follows. First, it
 has to be simple. Essentially, a simple polygon is topologically
 equivalent to a disk; see Chapter \ref
-Chapter_2D_Regularized_Boolean_Set-Operations "2D Regularized Boolean
-Set-Operations" for the precise definition of simple
-polygons. Secondly, any consecutive three vertices cannot be
+Chapter_2D_Regularized_Boolean_Set-Operations
+"2D Regularized Boolean Set-Operations" for the precise definition
+of simple polygons. Secondly, any consecutive three vertices cannot be
 collinear. If you suspect that the input polygon may not satisfy the
 latter condition, pre-process the polygon to eliminate this
 ill-condition.
 
 The implementation is based on an algorithm developed by Shamai and
 Halperin; see \cgalCite{cgal:ss-spfis-16} for the generalization of
-the algorithm to 3D. The time and space complexities are in \f$O(n)\f$
-and \f$O(1)\f$, respectively. In order to ensure robustness and
+the algorithm to 3D. The time and space complexities are in \cgalBigO{n}
+and \cgalBigO{1}, respectively. In order to ensure robustness and
 correctness you must use a kernel that guarantees exact
 constructions as well as exact predicates, e,g,.
 `Exact_predicates_exact_constructions_kernel`.

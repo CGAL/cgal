@@ -79,7 +79,7 @@ CGAL::Three::Scene_item* Surf_io_plugin::actual_load(QFileInfo fileinfo)
     return item;
   }
   std::vector<FaceGraph> patches;
-  std::vector<MaterialData> material_data;
+  std::vector<CGAL::IO::internal::MaterialData> material_data;
   CGAL::Bbox_3 grid_box;
   std::array<unsigned int, 3> grid_size = {{1, 1, 1}};
   boost::container::flat_set<Point_3> duplicated_points;

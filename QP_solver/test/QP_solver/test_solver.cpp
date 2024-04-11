@@ -282,6 +282,7 @@ bool process(const std::string& filename,
 {
   using std::cout;
   using std::endl;
+  using CGAL::check_tag;
 
   // extract verbosity:
   const int verbosity = options.find("Verbosity")->second;
@@ -310,7 +311,7 @@ bool process(const std::string& filename,
     number_type = "double";
   }
   // now, some combinations of IT and the file's number-type are
-  // incomaptible:
+  // incompatible:
   //    file's input type  | input type IT to be used in parsing the file
   //    -----------------------------------------------------------------
   //    double             | int  (can't convert double to it)

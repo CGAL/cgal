@@ -131,7 +131,7 @@ public:
   Periodic_2_Delaunay_triangulation_2(const Periodic_2_Delaunay_triangulation_2<Gt, Tds> &tr)
     : Base(tr)
   {
-    CGAL_triangulation_postcondition( is_valid(true) );
+    CGAL_postcondition( is_valid(true) );
   }
 
   /// Constructor with insertion of points
@@ -207,11 +207,11 @@ public:
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last,
          bool is_large_point_set = true,
-         typename boost::enable_if <
-         boost::is_convertible <
+         std::enable_if_t <
+         std::is_convertible <
          typename std::iterator_traits<InputIterator>::value_type,
          Point
-         > >::type* = nullptr)
+         >::value >* = nullptr)
 #else
   template < class InputIterator >
   std::ptrdiff_t
@@ -419,11 +419,11 @@ public:
   insert( InputIterator first,
           InputIterator last,
           bool is_large_point_set = true,
-          typename boost::enable_if <
-          boost::is_convertible <
+          std::enable_if_t <
+          std::is_convertible <
           typename std::iterator_traits<InputIterator>::value_type,
           std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type>
-          > >::type* = nullptr
+          >::value >* = nullptr
         )
   {
     return insert_with_info< std::pair<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
@@ -434,11 +434,10 @@ public:
   insert( boost::zip_iterator< boost::tuple<InputIterator_1, InputIterator_2> > first,
           boost::zip_iterator< boost::tuple<InputIterator_1, InputIterator_2> > last,
           bool is_large_point_set = true,
-          typename boost::enable_if <
-          boost::mpl::and_ <
-          boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Point >,
-          boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
-          > >::type* = nullptr)
+          std::enable_if_t <
+            std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Point > &&
+            std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Tds::Vertex>::type >
+          >* = nullptr)
   {
     return insert_with_info< boost::tuple<Point, typename internal::Info_check<typename Tds::Vertex>::type> >(first, last, is_large_point_set);
   }
@@ -467,7 +466,7 @@ public:
                              OutputItBoundaryEdges eit,
                              Face_handle start = Face_handle()) const
   {
-    CGAL_triangulation_precondition( dimension() == 2);
+    CGAL_precondition( dimension() == 2);
     int li;
     Locate_type lt;
     Face_handle fh = locate(p, lt, li, start);
@@ -487,7 +486,7 @@ public:
         pit = propagate_conflicts(p, fh, 2, pit);
         return pit;
     }
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return std::make_pair(fit, eit);
   }
 
@@ -572,7 +571,7 @@ private:
   void propagating_flip(const Face_handle& f, int i);
 #endif
 
-  // auxilliary functions for remove
+  // auxiliary functions for remove
   // returns false if we first need to convert to a 9-cover before the vertex can be removed
   bool remove_single_vertex(Vertex_handle v, const Offset &v_o);
   void remove_degree_triangulate(Vertex_handle v, std::vector<Face_handle> &f,
@@ -763,7 +762,7 @@ private:
                                    true) ==  ON_POSITIVE_SIDE;
   }
 
-// end of auxilliary functions for remove
+// end of auxiliary functions for remove
 
 
 
@@ -836,7 +835,7 @@ is_valid(bool verbose, int level) const
                         side_of_oriented_circle(*p[0], *p[1], *p[2], *p[3],
                                                 off[0], off[1], off[2], off[3],
                                                 false);
-              CGAL_triangulation_assertion(result);
+              CGAL_assertion(result);
             }
         }
     }
@@ -866,7 +865,7 @@ typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 nearest_vertex_2D(const Point& p, Face_handle f) const
 {
-  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_precondition(dimension() == 2);
   f = locate(p, f);
 
   typename Geom_traits::Compare_distance_2 compare_distance =
@@ -914,7 +913,7 @@ typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Point
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 dual (Face_handle f) const
 {
-  CGAL_triangulation_precondition (dimension() == 2);
+  CGAL_precondition (dimension() == 2);
   return circumcenter(f);
 }
 
@@ -958,9 +957,9 @@ typename Periodic_2_Delaunay_triangulation_2<Gt, Tds>::Vertex_handle
 Periodic_2_Delaunay_triangulation_2<Gt, Tds>::
 insert(const Point  &p,  Face_handle start)
 {
-  CGAL_triangulation_assertion((domain().xmin() <= p.x()) &&
+  CGAL_assertion((domain().xmin() <= p.x()) &&
                                (p.x() < domain().xmax()));
-  CGAL_triangulation_assertion((domain().ymin() <= p.y()) &&
+  CGAL_assertion((domain().ymin() <= p.y()) &&
                                (p.y() < domain().ymax()));
 
   if (empty())
@@ -1006,7 +1005,7 @@ insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
         {
           typename Base::Virtual_vertex_reverse_map_it vertices_it =
             this->virtual_vertices_reverse().find(vh);
-          CGAL_triangulation_assertion(vertices_it != this->virtual_vertices_reverse().end());
+          CGAL_assertion(vertices_it != this->virtual_vertices_reverse().end());
           const std::vector<Vertex_handle> &virtual_vertices = vertices_it->second;
           for (size_t i = 0; i < virtual_vertices.size(); ++i)
             {
@@ -1016,7 +1015,7 @@ insert(const Point  &p, Locate_type lt, Face_handle loc, int li)
           this->try_to_convert_to_one_cover();
           if (is_1_cover())
             {
-              CGAL_triangulation_assertion(is_valid());
+              CGAL_assertion(is_valid());
             }
         }
     }
@@ -1167,8 +1166,8 @@ remove(Vertex_handle v)
   // Make sure we have the original vertex
   CGAL_assertion(v == this->get_original_vertex(v));
 
-  CGAL_triangulation_precondition(v != Vertex_handle());
-  CGAL_triangulation_precondition(dimension() == 2);
+  CGAL_precondition(v != Vertex_handle());
+  CGAL_precondition(dimension() == 2);
 
   if ( this->number_of_vertices() == 1)
     {
@@ -5070,7 +5069,7 @@ side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
       if (points[i] == &p0 && (o = orientation(p, p1, p2)) != COLLINEAR)
         return Oriented_side(o);
     }
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return ON_NEGATIVE_SIDE;
 }
 
@@ -5114,7 +5113,7 @@ side_of_oriented_circle(const Point &p0, const Point &p1, const Point &p2,
                                      != COLLINEAR))
         return Oriented_side(orient);
     }
-  CGAL_triangulation_assertion(false);
+  CGAL_assertion(false);
   return ON_NEGATIVE_SIDE;
 }
 

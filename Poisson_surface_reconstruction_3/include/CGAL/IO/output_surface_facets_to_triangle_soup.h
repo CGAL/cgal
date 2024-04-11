@@ -26,7 +26,6 @@ namespace CGAL {
 ///
 /// This variant exports the surface as a triangle soup.
 ///
-/// @commentheading Template Parameters:
 /// @tparam OutputIteratorValueType value_type of OutputIterator.
 ///        It is default to value_type_traits<OutputIterator>::type, and can be omitted when the default is fine.
 /// @tparam SurfaceMeshComplex_2InTriangulation_3 model of the SurfaceMeshComplex_2InTriangulation_3 concept.

@@ -3,11 +3,13 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableBinaryFunction
+ * \cgalRefines{AdaptableBinaryFunction}
  *
- * \cgalHasModel ArrangementVerticalSideTraits_2::Parameter_space_in_x_2
- * \cgalHasModel ArrangementOpenBoundaryTraits_2::Parameter_space_in_x_2
- * \cgalHasModel ArrangementSphericalBoundaryTraits_2::Parameter_space_in_x_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementVerticalSideTraits_2::Parameter_space_in_x_2}
+ * \cgalHasModels{ArrangementOpenBoundaryTraits_2::Parameter_space_in_x_2}
+ * \cgalHasModels{ArrangementSphericalBoundaryTraits_2::Parameter_space_in_x_2}
+ * \cgalHasModelsEnd
  */
 class ParameterSpaceInX_2 {
 public:

@@ -14,7 +14,7 @@
 #ifndef CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
 #define CGAL_ARR_BOUNDED_PLANAR_TOPOLOGY_TRAITS_2_H
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
 
@@ -26,6 +26,7 @@
  */
 
 #include <CGAL/Arr_tags.h>
+#include <CGAL/Arr_default_dcel.h>
 #include <CGAL/Arr_topology_traits/Arr_planar_topology_traits_base_2.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_construction_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_bounded_planar_insertion_helper.h>
@@ -90,14 +91,10 @@ public:
   typedef typename Gt_adaptor_2::Top_side_category    Top_side_category;
   typedef typename Gt_adaptor_2::Right_side_category  Right_side_category;
 
-  BOOST_MPL_ASSERT
-  ((boost::is_same< Left_side_category, Arr_oblivious_side_tag >));
-  BOOST_MPL_ASSERT
-  ((boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >));
-  BOOST_MPL_ASSERT
-  ((boost::is_same< Top_side_category, Arr_oblivious_side_tag >));
-  BOOST_MPL_ASSERT
-  ((boost::is_same< Right_side_category, Arr_oblivious_side_tag >));
+  static_assert(std::is_same< Left_side_category, Arr_oblivious_side_tag >::value);
+  static_assert(std::is_same< Bottom_side_category, Arr_oblivious_side_tag >::value);
+  static_assert(std::is_same< Top_side_category, Arr_oblivious_side_tag >::value);
+  static_assert(std::is_same< Right_side_category, Arr_oblivious_side_tag >::value);
   //@}
 
   /*! \struct
@@ -309,7 +306,7 @@ public:
    * \pre The curve has a boundary condition in either x or y.
    * \return An object that wraps the curve end.
    */
-  boost::optional<boost::variant<Vertex*, Halfedge*> >
+  std::optional<std::variant<Vertex*, Halfedge*> >
   place_boundary_vertex(Face*,
                         const X_monotone_curve_2&,
                         Arr_curve_end,
@@ -318,7 +315,7 @@ public:
   {
     // This function should never be called:
     CGAL_error();
-    return boost::none;
+    return std::nullopt;
   }
 
   /*! Locate the predecessor halfedge for the given curve around a given
@@ -351,13 +348,13 @@ public:
    * \pre The curve end is incident to the boundary.
    * \return An object that contains the curve end.
    */
-  boost::variant<Vertex*, Halfedge*, Face*>
+  std::variant<Vertex*, Halfedge*, Face*>
   locate_curve_end(const X_monotone_curve_2&,
                    Arr_curve_end,
                    Arr_parameter_space /* ps_x */,
                    Arr_parameter_space /* ps_y */)
   {
-    typedef boost::variant<Vertex*, Halfedge*, Face*>   Result;
+    typedef std::variant<Vertex*, Halfedge*, Face*>   Result;
     // This function should never be called:
     CGAL_error();
     Vertex* v(nullptr);

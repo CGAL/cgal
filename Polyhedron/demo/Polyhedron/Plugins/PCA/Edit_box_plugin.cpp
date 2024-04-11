@@ -7,6 +7,7 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -98,7 +99,7 @@ void Edit_box_plugin::bbox()
           this, SLOT(enableAction()));
   item->setName("Edit box");
   item->setRenderingMode(FlatPlusEdges);
-  Q_FOREACH(CGAL::QGLViewer* viewer, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* viewer : CGAL::QGLViewer::QGLViewerPool())
     viewer->installEventFilter(item);
 
   scene->addItem(item);

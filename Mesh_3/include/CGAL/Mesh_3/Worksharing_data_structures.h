@@ -739,7 +739,8 @@ public:
   {
     int num_flushed_items = 0;
 
-    std::vector<WorkBatchTask*> tasks;
+    std::vector<WorkBatchTask> tasks;
+    tasks.reserve(m_tls_work_buffers.size());
 
     for (TLS_WorkBuffer::iterator it_buffer = m_tls_work_buffers.begin() ;
           it_buffer != m_tls_work_buffers.end() ;
@@ -753,7 +754,7 @@ public:
       }
     }
 
-    for (std::vector<WorkBatchTask*>::const_iterator it = tasks.begin() ;
+    for (auto it = tasks.begin() ;
       it != tasks.end() ; ++it)
     {
       enqueue_task(*it, task_group);
@@ -772,16 +773,15 @@ protected:
   typedef WorkBatch                                        WorkBuffer;
   typedef tbb::enumerable_thread_specific<WorkBuffer>      TLS_WorkBuffer;
 
-  WorkBatchTask *create_task(const WorkBuffer &wb) const
+  WorkBatchTask create_task(const WorkBuffer &wb) const
   {
-    auto ptr = tbb::scalable_allocator<WorkBatchTask>().allocate(1);
-    return new(ptr) WorkBatchTask(wb);
+    return { wb };
   }
 
-  void enqueue_task(WorkBatchTask *task,
+  void enqueue_task(const WorkBatchTask& task,
                     tbb::task_group &task_group) const
   {
-    task_group.run(*task);
+    task_group.run(task);
   }
 
   void add_batch_and_enqueue_task(const WorkBuffer &wb,

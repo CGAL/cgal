@@ -20,7 +20,7 @@ umbilic is a point at which both principal curvatures are
 equal. Ridges define a singular curve, i.e., a self-intersecting
 curve, and umbilics are special points on this curve. Ridges are
 curves of <I>extremal</I> curvature and therefore encode important
-informations used in segmentation, registration, matching and surface
+information used in segmentation, registration, matching and surface
 analysis. Based on the results of the article
 \cgalCite{cgal:cp-tdare-05}, we propose algorithms to identify and extract
 different parts of this singular ridge curve as well as umbilics on a

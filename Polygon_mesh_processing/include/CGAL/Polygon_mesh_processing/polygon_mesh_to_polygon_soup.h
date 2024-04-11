@@ -13,7 +13,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_MESH_TO_POLYGON_SOUP_H
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_MESH_TO_POLYGON_SOUP_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/combinatorial_repair.h>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/assertions.h>
@@ -39,7 +39,7 @@ struct PM_to_PS_point_converter
 {
   PS_Point operator()(const PM_Point& p) const
   {
-    CGAL_static_assertion((std::is_convertible<PM_Point, PS_Point>::value));
+    static_assert(std::is_convertible<PM_Point, PS_Point>::value);
     return PS_Point(p);
   }
 };
@@ -55,7 +55,7 @@ struct PM_to_PS_point_converter<PM_Point, std::array<PS_FT, 3> >
 
 } // namespace internal
 
-/// \ingroup PMP_repairing_grp
+/// \ingroup PMP_combinatorial_repair_grp
 ///
 /// adds the vertices and faces of a mesh into a (possibly non-empty) polygon soup.
 ///
@@ -84,7 +84,7 @@ struct PM_to_PS_point_converter<PM_Point, std::array<PS_FT, 3> >
 ///
 /// \cgalAdvancedBegin
 /// `PolygonRange` can also be a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
-/// whose value type is an array, but it is the user's responsability to ensure that
+/// whose value type is an array, but it is the user's responsibility to ensure that
 /// all faces have the same number of vertices, and that this number is equal to the size of the array.
 /// \cgalAdvancedEnd
 ///

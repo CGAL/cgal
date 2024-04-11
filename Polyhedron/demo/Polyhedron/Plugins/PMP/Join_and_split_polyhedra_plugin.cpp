@@ -18,7 +18,6 @@
 
 #include <CGAL/boost/graph/copy_face_graph.h>
 
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
@@ -47,7 +46,7 @@ public:
     msg_interface = m;
 
     actionJoinPolyhedra= new QAction(tr("Join Selected Polyhedra"), mainWindow);
-    actionJoinPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
+    actionJoinPolyhedra->setProperty("subMenuName", "Polygon Mesh Processing");
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
 
     actionSplitPolyhedra= new QAction(tr("Split Selected Polyhedra"), mainWindow);
@@ -63,7 +62,7 @@ public:
 
   bool applicable(QAction* a) const
   {
-    Q_FOREACH(int index, scene->selectionIndices())
+    for(int index : scene->selectionIndices())
     {
       if (qobject_cast<Scene_facegraph_item*>(scene->item(index)))
         return true;
@@ -95,7 +94,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
     return;
   }
   std::vector<int> indices_to_remove;
-  Q_FOREACH(int index, scene->selectionIndices()) {
+  for(int index : scene->selectionIndices()) {
     if (index == mainSelectionIndex)
       continue;
 
@@ -114,7 +113,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
 
   //remove the other items
   std::sort(indices_to_remove.begin(), indices_to_remove.end(), std::greater<int>());
-  Q_FOREACH(int index, indices_to_remove)
+  for(int index : indices_to_remove)
   {
     scene->erase(index);
   }
@@ -138,17 +137,17 @@ bool operator()(const FaceGraph& mesh1, const FaceGraph& mesh2)
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_triggered()
 {
-  Q_FOREACH(int index, scene->selectionIndices()) {
+  for(int index : scene->selectionIndices()) {
     Scene_facegraph_item* item =
       qobject_cast<Scene_facegraph_item*>(scene->item(index));
     if(item)
     {
       QApplication::setOverrideCursor(Qt::WaitCursor);
-      std::vector<FaceGraph> new_polyhedra;
+      std::list<FaceGraph> new_polyhedra;
       CGAL::Polygon_mesh_processing::split_connected_components(*item->face_graph(),
                                                                 new_polyhedra);
       //sort polyhedra by number of faces
-      std::sort(new_polyhedra.begin(), new_polyhedra.end(), Compare());
+      new_polyhedra.sort(Compare());
 
 
       if (new_polyhedra.size()==1)
@@ -168,7 +167,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
        scene->addItem(group);
       for(FaceGraph& poly : new_polyhedra)
       {
-        Scene_facegraph_item* new_item=new Scene_facegraph_item(poly);
+        Scene_facegraph_item* new_item=new Scene_facegraph_item(std::move(poly));
         new_item->setName(tr("%1 - CC %2").arg(item->name()).arg(cc));
         new_item->setColor(color_map[cc]);
         ++cc;
@@ -204,7 +203,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
 
   std::set<Scene_facegraph_item*> to_skip;
 
-  Q_FOREACH(int index, scene->selectionIndices())
+  for(int index : scene->selectionIndices())
   {
     Scene_facegraph_item* item =
       qobject_cast<Scene_facegraph_item*>(scene->item(index));
@@ -218,7 +217,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       item->computeItemColorVectorAutomatically(true);
       item->invalidateOpenGLBuffers();
       item->setProperty("NbPatchIds", nb_patch_ids);
-      scene->itemChanged(item);
+      scene->itemChanged(item); // @todo emits
     }
     else
     {

@@ -11,17 +11,19 @@ functor is optional and a tag determines whether it is provided or
 not. Note that while the first two functors do not modify the Delaunay
 graph they take as an argument, the last ones does.
 
-\cgalRefines `DefaultConstructible,` \cgalRefines `CopyConstructible,` \cgalRefines `Assignable`
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Identity_policy_2<DG,AT>`
-\cgalHasModel `CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>`
-\cgalHasModel `CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>`
-\cgalHasModel `CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>`
-\cgalHasModel `CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>`
-\cgalHasModel `CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>`
-\cgalHasModel `CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Identity_policy_2<DG,AT>}
+\cgalHasModels{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}
+\cgalHasModels{CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}
+\cgalHasModels{CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>}
+\cgalHasModels{CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>}
+\cgalHasModels{CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>}
+\cgalHasModels{CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>}
+\cgalHasModelsEnd
 
 \sa `DelaunayGraph_2`
 \sa `AdaptationTraits_2`
@@ -82,8 +84,8 @@ A type for the predicate functor that is
 responsible for rejecting an edge of the Delaunay graph (or
 equivalently rejecting its dual edge in the Voronoi diagram). It must be
 model of the concepts `DefaultConstructible`,
-`CopyConstructible`, `Assignable`, and `AdaptableFunctor`
-(with two arguments). It must provide the following operators:
+`CopyConstructible`, `Assignable`, and `AdaptableBinaryFunction`.
+It must provide the following operators:
 
 `bool operator()(Delaunay_graph dg, Delaunay_edge e)`
 
@@ -104,8 +106,8 @@ A type for the predicate functor that is
 responsible for rejecting a vertex of the Delaunay graph (or
 equivalently its dual face in the Voronoi diagram - hence the name
 of the functor). It must be model of the concepts `DefaultConstructible`,
-`CopyConstructible`, `Assignable`, `AdaptableFunctor`
-(with two arguments). It must provide the following operator:
+`CopyConstructible`, `Assignable`, `AdaptableBinaryFunction`.
+It must provide the following operator:
 
 <CENTER>`bool operator()(Delaunay graph dg, Delaunay_vertex_handle v)`</CENTER>
 
@@ -126,7 +128,7 @@ typedef unspecified_type Has_inserter;
 A type for a functor that inserts sites
 in the Delaunay graph. It must be model of the concepts
 `DefaultConstructible`, `CopyConstructible`, `Assignable`,
-`AdaptableFunctor` (with two arguments). It must provide the
+`AdaptableBinaryFunction`
 following operator
 
 <CENTER>`Delaunay_vertex_handle operator()(Delaunay_graph& dg, Site_2 t)`</CENTER>

@@ -75,27 +75,11 @@ int main()
   Mc ec1(edge_size = 1);
   assert( ec1.edge_criteria_object().sizing_field(bp1,1,index) == 1 );
 
-  Mc ec2(edge_sizing_field = Esf(2));
+  Mc ec2(edge_size = Esf(2));
   assert( ec2.edge_criteria_object().sizing_field(bp1,1,index) == 2 );
 
-  Mc ec3(edge_sizing_field = 3.);
+  Mc ec3(edge_size = 3.);
   assert( ec3.edge_criteria_object().sizing_field(bp1,1,index) == 3 );
-
-  Mc ec4(edge_size = 4.1,
-         edge_sizing_field = Esf(4.2));
-  assert( ec4.edge_criteria_object().sizing_field(bp1,1,index) == 4.1 );
-
-  Mc ec5(sizing_field = 5.);
-  assert( ec5.edge_criteria_object().sizing_field(bp1,1,index) == 5 );
-
-  Mc ec6(sizing_field = 6.1,
-         edge_sizing_field = 6.2);
-  assert( ec6.edge_criteria_object().sizing_field(bp1,1,index) == 6.2 );
-
-  Mc ec7(sizing_field = 7.1,
-         edge_size = 7.2);
-  assert( ec7.edge_criteria_object().sizing_field(bp1,1,index) == 7.2 );
-
 
   // -----------------------------------
   // Test facet criteria
@@ -109,45 +93,29 @@ int main()
                                               cp(tr.point(ch, k+3))));
 
   FT facet_size_ok = radius_facet*FT(10);
-  FT facet_size_nok = radius_facet/FT(10);
 
   Mc fc1(facet_size = facet_size_ok);
   assert( ! fc1.facet_criteria_object()(tr, f) );
 
-  Mc fc2(facet_sizing_field = facet_size_ok);
-  assert( ! fc2.facet_criteria_object()(tr, f) );
-
-  Mc fc3(facet_sizing_field = Fsf(facet_size_ok));
+  Mc fc3(facet_size = Fsf(facet_size_ok));
   assert( ! fc3.facet_criteria_object()(tr, f) );
-
-  Mc fc4(facet_sizing_field = facet_size_nok,
-         facet_size = facet_size_ok);
-  assert( ! fc4.facet_criteria_object()(tr, f) );
-
-  Mc fc5(sizing_field = facet_size_ok);
-  assert( ! fc5.facet_criteria_object()(tr, f) );
-
-  Mc fc6(facet_size = facet_size_ok,
-         facet_sizing_field = facet_size_nok,
-         sizing_field = facet_size_nok);
-  assert( ! fc6.facet_criteria_object()(tr, f) );
-
-  Mc fc7(facet_sizing_field = Fsf(facet_size_ok),
-         sizing_field = facet_size_nok);
-  assert( ! fc7.facet_criteria_object()(tr, f) );
 
   Mc fc8(facet_distance = 8.);
   Mc fc9(facet_angle = 9.);
   Mc fc10(facet_angle = 10.1,
           facet_distance = 10.2,
           facet_size = 10.3,
-          facet_sizing_field = Fsf(10.4),
-          sizing_field = 10.5);
+          facet_min_size = 0.2);
+  Mc fc1Ob(facet_angle = 10.11,
+          facet_distance = 10.12,
+          facet_min_size = 0.3,
+          facet_size = Fsf(10.14));
 
   // Test construction from int
   Mc fc11(facet_size = 11);
-  Mc fc12(facet_sizing_field = 12);
-  Mc fc13(sizing_field = 13);
+  Mc fc11b(facet_size = 11, facet_min_size = 1);
+  Mc fc12(facet_size = Fsf(12));
+  Mc fc12b(facet_size = Fsf(12), facet_min_size = 1);
 
   // Test topological criterion creation
   Mc fc14(facet_topology = CGAL::FACET_VERTICES_ON_SURFACE);
@@ -165,43 +133,27 @@ int main()
                                              cp(tr.point(ch, 3))));
 
   FT cell_size_ok = radius_cell*FT(10);
-  FT cell_size_nok = radius_cell/FT(10);
 
   Mc cc1(cell_size = cell_size_ok);
   assert( ! cc1.cell_criteria_object()(tr, ch) );
 
-  Mc cc2(cell_sizing_field = cell_size_ok);
-  assert( ! cc2.cell_criteria_object()(tr, ch) );
-
-  Mc cc3(cell_sizing_field = Fsf(cell_size_ok));
+  Mc cc3(cell_size = Fsf(cell_size_ok));
   assert( ! cc3.cell_criteria_object()(tr, ch) );
 
-  Mc cc4(cell_sizing_field = cell_size_nok,
-         cell_size = cell_size_ok);
-  assert( ! cc4.cell_criteria_object()(tr, ch) );
-
-  Mc cc5(sizing_field = cell_size_ok);
-  assert( ! cc5.cell_criteria_object()(tr, ch) );
-
-  Mc cc6(cell_size = cell_size_ok,
-         cell_sizing_field = cell_size_nok,
-         sizing_field = cell_size_nok);
-  assert( ! cc6.cell_criteria_object()(tr, ch) );
-
-  Mc cc7(cell_sizing_field = Csf(cell_size_ok),
-         sizing_field = cell_size_nok);
+  Mc cc7(cell_size = Csf(cell_size_ok));
   assert( ! cc7.cell_criteria_object()(tr, ch) );
 
   Mc cc8(cell_radius_edge_ratio = 8.);
   Mc cc9(cell_radius_edge_ratio = 9.1,
-         sizing_field = Csf(9.2) );
+         cell_size = Csf(9.2) );
   Mc cc10(cell_radius_edge_ratio = 10.1,
           cell_size = 10.2,
-          cell_sizing_field = Csf(10.3),
-          sizing_field = 10.4);
+          cell_min_size = 0.1);
+  Mc cc10b(cell_radius_edge_ratio = 10.1,
+          cell_min_size = 0.1,
+          cell_size = Csf(10.3));
 
   // Test construction from int
   Mc cc11(cell_size = 11);
-  Mc cc12(cell_sizing_field = 12);
-  Mc cc13(sizing_field = 13);
+  Mc cc11b(cell_size = 11, cell_min_size = 1);
 }

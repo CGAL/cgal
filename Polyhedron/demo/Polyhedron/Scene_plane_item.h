@@ -61,27 +61,27 @@ public:
                             zdelta*zdelta);
     return diag * 0.7;
   }
-  bool isFinite() const Q_DECL_OVERRIDE { return false; }
-  bool isEmpty() const Q_DECL_OVERRIDE { return false; }
-  void compute_bbox() const Q_DECL_OVERRIDE { _bbox = Bbox(); }
-  bool manipulatable() const Q_DECL_OVERRIDE;
-  ManipulatedFrame* manipulatedFrame() Q_DECL_OVERRIDE;
-  QMenu* contextMenu() Q_DECL_OVERRIDE;
+  bool isFinite() const override { return false; }
+  bool isEmpty() const override { return false; }
+  void compute_bbox() const override { _bbox = Bbox(); }
+  bool manipulatable() const override;
+  ManipulatedFrame* manipulatedFrame() override;
+  QMenu* contextMenu() override;
 
-  Scene_plane_item* clone() const Q_DECL_OVERRIDE ;
+  Scene_plane_item* clone() const override ;
 
-  QString toolTip() const Q_DECL_OVERRIDE ;
+  QString toolTip() const override ;
 
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const Q_DECL_OVERRIDE{
+  bool supportsRenderingMode(RenderingMode m) const override{
     return (m == Wireframe || m == Flat || m == FlatPlusEdges);
   }
-  virtual void draw(CGAL::Three::Viewer_interface*) const Q_DECL_OVERRIDE;
-  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const Q_DECL_OVERRIDE;
+  virtual void draw(CGAL::Three::Viewer_interface*) const override;
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const override;
   Plane_3 plane(CGAL::qglviewer::Vec offset = CGAL::qglviewer::Vec(0,0,0)) const;
 
 public Q_SLOTS:
-  virtual void invalidateOpenGLBuffers() Q_DECL_OVERRIDE;
+  virtual void invalidateOpenGLBuffers() override;
 
   void setPosition(float x, float y, float z);
 
@@ -121,8 +121,8 @@ protected:
   mutable bool smooth_shading;
   mutable QOpenGLShaderProgram *program;
 
-  void initializeBuffers(CGAL::Three::Viewer_interface *) const Q_DECL_OVERRIDE;
-  void computeElements() const Q_DECL_OVERRIDE;
+  void initializeBuffers(CGAL::Three::Viewer_interface *) const override;
+  void computeElements() const override;
 };
 
 #endif // SCENE_PLANE_ITEM_H

@@ -242,16 +242,19 @@ bool write_STL(std::ostream& os,
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor                  halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                      face_descriptor;
 
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::const_type    VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::const_type        VPM;
   typedef typename boost::property_traits<VPM>::reference                           Point_ref;
-  typedef typename boost::property_traits<VPM>::value_type                          Point;
-  typedef typename Kernel_traits<Point>::Kernel::Vector_3                           Vector;
+
+  typedef typename GetGeomTraits<Graph, CGAL_NP_CLASS>::type                        Kernel;
+  typedef typename Kernel::Vector_3                                                 Vector;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, g));
+
+  Kernel k = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
 
   if(!os.good())
     return false;
@@ -261,7 +264,7 @@ bool write_STL(std::ostream& os,
   if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
-    const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(g).size());
+    const std::uint32_t N32 = static_cast<std::uint32_t>(faces(g).size());
     os.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
     for(const face_descriptor f : faces(g))
@@ -271,7 +274,7 @@ bool write_STL(std::ostream& os,
       Point_ref q = get(vpm, target(next(h, g), g));
       Point_ref r = get(vpm, source(h, g));
 
-      Vector n = collinear(p, q, r) ? Vector(1, 0, 0) : unit_normal(p, q, r);
+      const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       const float coords[12] =
       {
@@ -291,11 +294,11 @@ bool write_STL(std::ostream& os,
     os << "solid" << std::endl;
     for(const face_descriptor f : faces(g))
     {
-      halfedge_descriptor h = halfedge(f, g);
+      const halfedge_descriptor h = halfedge(f, g);
       Point_ref p = get(vpm, target(h, g));
       Point_ref q = get(vpm, target(next(h, g), g));
       Point_ref r = get(vpm, source(h, g));
-      Vector n = collinear(p, q, r) ? Vector(1, 0, 0) : unit_normal(p, q, r);
+      const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       os << "facet normal " << n << "\nouter loop"<< "\n";
       os << "vertex " << p << "\n";

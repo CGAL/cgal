@@ -34,7 +34,7 @@ using namespace CGAL::Three;
 
     Scene_c3t3_item(bool is_surface = false);
     Scene_c3t3_item(const C3t3& c3t3, bool is_surface = false);
-    ~Scene_c3t3_item();
+    virtual ~Scene_c3t3_item();
 
     Scene_c3t3_item* clone() const  override;
 
@@ -59,6 +59,8 @@ using namespace CGAL::Three;
     }
     bool load_binary(std::istream& is) override;
 
+    void compute_bbox() const override;
+
     bool is_valid() const;//true if the c3t3 is correct, false if it was made from a .mesh, for example
     void set_valid(bool);
     QMenu* contextMenu() override;
@@ -68,7 +70,7 @@ using namespace CGAL::Three;
     //stats
     QString computeStats(int type)  override;
 
-    void copyProperties(Scene_item *) override;
+    virtual void copyProperties(Scene_item *) override;
 
     CGAL::Three::Scene_item::Header_data header() const override;
     bool has_cnc() const;
@@ -95,6 +97,7 @@ using namespace CGAL::Three;
     bool do_take_vertex(const T3::Vertex_handle &)const override;
     bool is_facet_oriented(const T3::Facet&)const override;
     bool is_surface()const override;
+    QString toolTip() const override;
     void common_constructor(bool is_surface);
   };
 

@@ -7,11 +7,10 @@
 #include "Scene_polyhedron_selection_item.h"
 
 #include <CGAL/iterator.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/utility.h>
 
 #include <CGAL/Polygon_mesh_processing/random_perturbation.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/property_map.h>
@@ -104,6 +103,12 @@ public Q_SLOTS:
     if (poly_item)
     {
       SMesh& pmesh = *poly_item->face_graph();
+      if(ui.keep_normal_checkbox->isChecked())
+      {
+        SMesh::Property_map<vertex_descriptor, EPICK::Vector_3 > vnormals =
+          pmesh.add_property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal_before_perturbation").first;
+        CGAL::Polygon_mesh_processing::compute_vertex_normals(pmesh,vnormals);
+      }
       if(ui.deterministic_checkbox->isChecked())
       {
         unsigned int seed = static_cast<unsigned int>(ui.seed_spinbox->value());

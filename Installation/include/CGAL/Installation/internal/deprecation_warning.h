@@ -71,7 +71,7 @@
 #endif
 
 #if defined(CGAL_NO_DEPRECATED_CODE) // No deprecated code.
-CGAL_static_assertion_msg(false, CGAL_INTERNAL_DEPRECATED_MESSAGE);
+static_assert(false, CGAL_INTERNAL_DEPRECATED_MESSAGE);
 #elif !defined(CGAL_NO_DEPRECATION_WARNINGS) // don't trigger on NO_DEPRECATION_WARNINGS
 #  if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__)
 #    pragma message (CGAL_INTERNAL_DEPRECATED_MESSAGE)

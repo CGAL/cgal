@@ -11,6 +11,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include "Kernel_type.h"
 #include <CGAL/Three/Three.h>
@@ -71,7 +72,7 @@ public:
               this, SLOT(on_actionFitLine_triggered()));
       _actions << actionFitPlane
                << actionFitLine;
-      Q_FOREACH(QAction* action, _actions)
+      for(QAction* action : _actions)
         action->setProperty("subMenuName", "Principal Component Analysis");
 
 

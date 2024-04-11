@@ -38,7 +38,7 @@ namespace Polygon_mesh_processing {
 namespace Corefinement
 {
 /** \ingroup PMP_corefinement_grp
- *  Default new-face visitor model of `PMPCorefinementVisitor`.
+ *  %Default new-face visitor model of `PMPCorefinementVisitor`.
  *  All of its functions have an empty body. This class can be used as a
  *  base class if only some of the functions of the concept require to be
  *  overridden.
@@ -67,8 +67,9 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
 
 /**
   * \ingroup PMP_corefinement_grp
+  *
   * \link coref_def_subsec corefines \endlink `tm1` and `tm2` and for each triangle mesh `tm_out` passed
-  * as an optional in `output` different from `boost::none`, the triangulated surface mesh
+  * as an optional in `output` different from `std::nullopt`, the triangulated surface mesh
   * \link coref_def_subsec bounding \endlink  the result of a particular Boolean operation
   * between the volumes bounded by `tm1` and `tm2` will be put in the corresponding triangle mesh.
   * The positions of the meshes in the array `output` are specific to the Boolean operation to compute
@@ -88,7 +89,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParametersOut0 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
@@ -137,7 +138,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm1` and `tm2` will be
   *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
@@ -185,7 +186,7 @@ std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
-  const std::array< boost::optional<TriangleMesh*>,4>& output,
+  const std::array< std::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values(),
   const std::tuple<NamedParametersOut0,
@@ -205,8 +206,8 @@ corefine_and_compute_boolean_operations(
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type  VPM1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type  VPM2;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
-                                      typename boost::property_traits<VPM2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VPM1>::value_type,
+                             typename boost::property_traits<VPM2>::value_type>::value);
 
   VPM1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                get_property_map(boost::vertex_point, tm1));
@@ -228,10 +229,10 @@ corefine_and_compute_boolean_operations(
   > VPM_out_tuple_helper;
 
   typedef std::tuple<
-    boost::optional< typename std::tuple_element<0, VPM_out_tuple_helper>::type::type >,
-    boost::optional< typename std::tuple_element<1, VPM_out_tuple_helper>::type::type >,
-    boost::optional< typename std::tuple_element<2, VPM_out_tuple_helper>::type::type >,
-    boost::optional< typename std::tuple_element<3, VPM_out_tuple_helper>::type::type >
+    std::optional< typename std::tuple_element<0, VPM_out_tuple_helper>::type::type >,
+    std::optional< typename std::tuple_element<1, VPM_out_tuple_helper>::type::type >,
+    std::optional< typename std::tuple_element<2, VPM_out_tuple_helper>::type::type >,
+    std::optional< typename std::tuple_element<3, VPM_out_tuple_helper>::type::type >
   > VPM_out_tuple;
 
   VPM_out_tuple vpm_out_tuple(
@@ -250,24 +251,24 @@ corefine_and_compute_boolean_operations(
     // for now edges in a coplanar patch are not constrained so there is nothing to constrained here
     // \todo marked edges from input to output are not ported
 
-    if (output[Corefinement::UNION] != boost::none)
+    if (output[Corefinement::UNION] != std::nullopt)
       if (&tm1 != *output[Corefinement::UNION])
         copy_face_graph(tm1,
             *(*output[Corefinement::UNION]),
                         parameters::vertex_point_map(vpm1),
                         parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
-    if (output[Corefinement::INTERSECTION] != boost::none)
+    if (output[Corefinement::INTERSECTION] != std::nullopt)
       if (&tm1 != *output[Corefinement::INTERSECTION])
         copy_face_graph(tm1,
                         *(*output[Corefinement::INTERSECTION]),
                         parameters::vertex_point_map(vpm1),
                         parameters::vertex_point_map(*std::get<Corefinement::INTERSECTION>(vpm_out_tuple)));
 
-    if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
+    if (output[Corefinement::TM1_MINUS_TM2] != std::nullopt)
       if (&tm1 == *output[Corefinement::TM1_MINUS_TM2])
         clear(tm1);
 
-    if (output[Corefinement::TM2_MINUS_TM1] != boost::none)
+    if (output[Corefinement::TM2_MINUS_TM1] != std::nullopt)
       if (&tm1 == *output[Corefinement::TM2_MINUS_TM1])
         clear(tm1);
 
@@ -280,22 +281,22 @@ corefine_and_compute_boolean_operations(
     if(faces(tm2).empty())
     {
       for (int i=0; i<4; ++i)
-        if (output[i] != boost::none)
+        if (output[i] != std::nullopt)
           clear(*(*output[i]));
       return CGAL::make_array(true, true, true, true);
     }
     // tm2 is not empty
-    if (output[Corefinement::UNION] != boost::none)
+    if (output[Corefinement::UNION] != std::nullopt)
       if (&tm2 != *output[Corefinement::UNION])
         copy_face_graph(tm2,
                         *(*output[Corefinement::UNION]),
                         parameters::vertex_point_map(vpm2),
                         parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
-    if (output[Corefinement::INTERSECTION] != boost::none)
+    if (output[Corefinement::INTERSECTION] != std::nullopt)
       clear(*(*output[Corefinement::INTERSECTION]));
-    if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
+    if (output[Corefinement::TM1_MINUS_TM2] != std::nullopt)
       clear(*(*output[Corefinement::TM1_MINUS_TM2]));
-    if (output[Corefinement::TM2_MINUS_TM1] != boost::none)
+    if (output[Corefinement::TM2_MINUS_TM1] != std::nullopt)
       if (&tm2 != *output[Corefinement::TM2_MINUS_TM1])
         copy_face_graph(tm2,
                         *(*output[Corefinement::TM2_MINUS_TM1]),
@@ -307,17 +308,17 @@ corefine_and_compute_boolean_operations(
     if (faces(tm2).empty())
     {
       // tm1 is not empty
-      if (output[Corefinement::UNION] != boost::none)
+      if (output[Corefinement::UNION] != std::nullopt)
         if (&tm1 != *output[Corefinement::UNION])
           copy_face_graph(tm1,
                           *(*output[Corefinement::UNION]),
                           parameters::vertex_point_map(vpm1),
                           parameters::vertex_point_map(*std::get<Corefinement::UNION>(vpm_out_tuple)));
-      if (output[Corefinement::INTERSECTION] != boost::none)
+      if (output[Corefinement::INTERSECTION] != std::nullopt)
         clear(*(*output[Corefinement::INTERSECTION]));
-      if (output[Corefinement::TM2_MINUS_TM1] != boost::none)
+      if (output[Corefinement::TM2_MINUS_TM1] != std::nullopt)
         clear(*(*output[Corefinement::TM2_MINUS_TM1]));
-      if (output[Corefinement::TM1_MINUS_TM2] != boost::none)
+      if (output[Corefinement::TM1_MINUS_TM2] != std::nullopt)
         if (&tm1 != *output[Corefinement::TM1_MINUS_TM2])
           copy_face_graph(tm1,
                           *(*output[Corefinement::TM1_MINUS_TM2]),
@@ -393,10 +394,10 @@ corefine_and_compute_boolean_operations(
   // special case used for clipping open meshes
   if (choose_parameter(get_parameter(np1, internal_np::use_bool_op_to_clip_surface), false))
   {
-    CGAL_assertion(output[Corefinement::INTERSECTION] != boost::none);
-    CGAL_assertion(output[Corefinement::UNION] == boost::none);
-    CGAL_assertion(output[Corefinement::TM1_MINUS_TM2] == boost::none);
-    CGAL_assertion(output[Corefinement::TM2_MINUS_TM1] == boost::none);
+    CGAL_assertion(output[Corefinement::INTERSECTION] != std::nullopt);
+    CGAL_assertion(output[Corefinement::UNION] == std::nullopt);
+    CGAL_assertion(output[Corefinement::TM1_MINUS_TM2] == std::nullopt);
+    CGAL_assertion(output[Corefinement::TM2_MINUS_TM1] == std::nullopt);
     const bool use_compact_clipper =
       choose_parameter(get_parameter(np1, internal_np::use_compact_clipper), true);
     ob.setup_for_clipping_a_surface(use_compact_clipper);
@@ -430,7 +431,7 @@ corefine_and_compute_boolean_operations(
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm1)` \endlink
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
-  * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+  * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParametersOut a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -476,7 +477,7 @@ corefine_and_compute_boolean_operations(
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true` the set of triangles closed to the intersection of `tm1` and `tm2` will be
+  *     \cgalParamDescription{If `true` the set of triangles close to the intersection of `tm1` and `tm2` will be
   *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
@@ -522,7 +523,7 @@ corefine_and_compute_union(      TriangleMesh& tm1,
                            const NamedParametersOut& np_out = parameters::default_values())
 {
   using namespace CGAL::parameters;
-  std::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< std::optional<TriangleMesh*>,4> output;
   output[Corefinement::UNION]=&tm_out;
 
   return
@@ -554,7 +555,7 @@ corefine_and_compute_intersection(      TriangleMesh& tm1,
                                   const NamedParametersOut& np_out = parameters::default_values())
 {
   using namespace CGAL::parameters;
-  std::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< std::optional<TriangleMesh*>,4> output;
   output[Corefinement::INTERSECTION]=&tm_out;
 
   return
@@ -587,7 +588,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
 {
   using namespace CGAL::parameters;
   using namespace CGAL::Polygon_mesh_processing::Corefinement;
-  std::array< boost::optional<TriangleMesh*>,4> output;
+  std::array< std::optional<TriangleMesh*>,4> output;
   output[TM1_MINUS_TM2]=&tm_out;
 
   return
@@ -609,7 +610,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm1)` \endlink
  * \pre \link CGAL::Polygon_mesh_processing::does_self_intersect() `!CGAL::Polygon_mesh_processing::does_self_intersect(tm2)` \endlink
  *
- * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
  *
@@ -643,7 +644,7 @@ corefine_and_compute_difference(      TriangleMesh& tm1,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{throw_on_self_intersection}
- *     \cgalParamDescription{If `true` the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *     \cgalParamDescription{If `true` the set of triangles close to the intersection of `tm1` and `tm2` will be
  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
  *                           will be thrown if at least one self-intersection is found.}
  *     \cgalParamType{Boolean}
@@ -693,8 +694,8 @@ corefine(      TriangleMesh& tm1,
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type VPM1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type VPM2;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
-                                      typename boost::property_traits<VPM2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VPM1>::value_type,
+                             typename boost::property_traits<VPM2>::value_type>::value);
 
   VPM1 vpm1 = choose_parameter(get_parameter(np1, internal_np::vertex_point),
                                get_property_map(boost::vertex_point, tm1));
@@ -736,8 +737,8 @@ corefine(      TriangleMesh& tm1,
   User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
 
   static const bool handle_non_manifold_features =
-    !parameters::Is_default<internal_np::non_manifold_feature_map_t, NamedParameters1>::value ||
-    !parameters::Is_default<internal_np::non_manifold_feature_map_t, NamedParameters2>::value;
+    !parameters::is_default_parameter<NamedParameters1, internal_np::non_manifold_feature_map_t>::value ||
+    !parameters::is_default_parameter<NamedParameters2, internal_np::non_manifold_feature_map_t>::value;
 
 // surface intersection algorithm call
   typedef Corefinement::No_extra_output_from_corefinement<TriangleMesh> Ob;
@@ -747,7 +748,7 @@ corefine(      TriangleMesh& tm1,
   Ob ob;
   Ecm ecm(tm1,tm2,ecm1,ecm2);
   Corefinement::Intersection_of_triangle_meshes<TriangleMesh, VPM1, VPM2, Algo_visitor>
-    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr));
+    functor(tm1, tm2, vpm1, vpm2, Algo_visitor(uv,ob,ecm,const_mesh_ptr), const_mesh_ptr);
 
   // Fill non-manifold feature maps if provided
   functor.set_non_manifold_feature_map_1(parameters::get_parameter(np1, internal_np::non_manifold_feature_map));
@@ -764,7 +765,7 @@ namespace experimental {
  * Self-intersection edges will be marked as constrained. If an edge that was marked as
  * constrained is split, its sub-edges will be marked as constrained as well.
  *
- * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm input triangulated surface mesh
@@ -856,7 +857,7 @@ autorefine(      TriangleMesh& tm,
  * constrained is split, its sub-edges will be marked as constrained as well.
  * \return `true` if all self-intersections were fixed and `false` otherwise.
  *
- * @tparam TriangleMesh a model of `MutableFaceGraph`, `HalfedgeListGraph` and `FaceListGraph`
+ * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tm input triangulated surface mesh

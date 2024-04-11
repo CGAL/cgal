@@ -102,12 +102,14 @@ collinearC3(const FT &px, const FT &py, const FT &pz,
   FT dqx = qx-rx;
   FT dpy = py-ry;
   FT dqy = qy-ry;
-  if (sign_of_determinant(dpx, dqx, dpy, dqy) != ZERO)
+
+  auto is_zero = sign_of_determinant(dpx, dqx, dpy, dqy) == ZERO;
+  if (certainly_not(is_zero))
       return false;
   FT dpz = pz-rz;
   FT dqz = qz-rz;
-  return CGAL_AND( sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO ,
-                   sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO );
+      return is_zero & CGAL_AND( sign_of_determinant(dpx, dqx, dpz, dqz) == ZERO ,
+                                 sign_of_determinant(dpy, dqy, dpz, dqz) == ZERO );
 }
 
 template < class FT >
@@ -407,7 +409,7 @@ cmp_dist_to_pointC3(const FT &px, const FT &py, const FT &pz,
 }
 
 // Because of the way the filtered predicates generator script works,
-// cmp_dist_to_pointC3() must be defined _before_ ths following one.
+// cmp_dist_to_pointC3() must be defined _before_ the following one.
 template <class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Same_uncertainty_nt<Bounded_side, FT>::type
@@ -754,7 +756,7 @@ power_side_of_bounded_power_sphereC3(
 }
 
 // return the sign of the power test of weighted point (rx,ry,rz,rw)
- // with respect to the smallest sphere orthogoanal to
+ // with respect to the smallest sphere orthogonal to
 // p,q
 template< class FT >
 typename Same_uncertainty_nt<Bounded_side, FT>::type
@@ -764,20 +766,19 @@ power_side_of_bounded_power_sphereC3(
  const FT &rx, const FT &ry, const FT &rz, const FT &rw)
 {
   FT FT2(2);
-  FT FT4(4);
   FT dpx = px - qx;
   FT dpy = py - qy;
   FT dpz = pz - qz;
   FT dpw = pw - qw;
   FT dp2 = CGAL_NTS square(dpx) + CGAL_NTS square(dpy) + CGAL_NTS square(dpz);
-  FT drx = rx - (px + qx)/FT2;
-  FT dry = ry - (py + qy)/FT2;
-  FT drz = rz - (pz + qz)/FT2;
-  FT drw = rw - (pw + qw)/FT2;
+  FT drx = FT2 * rx - (px + qx);
+  FT dry = FT2 * ry - (py + qy);
+  FT drz = FT2 * rz - (pz + qz);
+  FT drw = FT2 * rw - (pw + qw);
   FT dr2 = CGAL_NTS square(drx) + CGAL_NTS square(dry) + CGAL_NTS square(drz);
   FT dpr = dpx*drx + dpy*dry +dpz*drz;
   return enum_cast<Bounded_side>(
-    - CGAL_NTS sign (dr2 - dp2/FT4 + dpr*dpw/dp2 - drw ));
+    - CGAL_NTS sign (dr2*dp2 - dp2*dp2 + FT2*dpr*dpw - FT2*drw*dp2 ));
 }
 
 } // namespace CGAL

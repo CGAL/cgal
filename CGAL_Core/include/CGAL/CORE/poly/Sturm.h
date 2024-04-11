@@ -19,7 +19,7 @@
  *   It is very important that the BigFloats used in these intervals
  *   have no error at the beginning, and this is maintained
  *   by refinement.  Note that if x, y are error-free BigFloats,
- *   then (x+y)/2 may not be error-free (in current implementaion.
+ *   then (x+y)/2 may not be error-free (in current implementation.
  *   We have to call a special "exact divide by 2" method,
  *   (x+y).div2() for this purpose.
  *
@@ -37,7 +37,7 @@
  *  Author:  Chee Yap and Sylvain Pion, Vikram Sharma
  *  Date:    July 20, 2002
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -607,8 +607,7 @@ public:
       if (ff == 0) {
         NEWTON_DIV_BY_ZERO = true;
         del = 0;
-        core_error("Zero divisor in Newton Iteration",
-                __FILE__, __LINE__, false);
+        CGAL_CORE_warning_msg(false, "Zero divisor in Newton Iteration");
         return 0;
       }
 
@@ -680,8 +679,7 @@ public:
       stepsize++; // heuristic
     } while ((del != 0) && ((del.uMSB() >= -prec) && (count >0))) ;
 
-    if (count == 0) core_error("newtonIterE: reached count=0",
-                            __FILE__, __LINE__, true);
+    CGAL_assertion_msg(count != 0, "newtonIterE: reached count=0");
     del = BigFloat(core_abs(del.m()), err, del.exp() );
     del.makeCeilExact();
     return val;

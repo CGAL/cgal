@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Mesh_3_benchmark)
 
 # Creates a new CMake option, turned ON by default
@@ -66,31 +66,20 @@ else()
   endif(LINK_WITH_TBB)
 endif()
 
+# Compilable benchmark
+set(BENCHMARK_SOURCE_FILES "concurrency.cpp")
+add_msvc_precompiled_header("StdAfx.h" "StdAfx.cpp" BENCHMARK_SOURCE_FILES)
+create_single_source_cgal_program(${BENCHMARK_SOURCE_FILES})
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(concurrency PUBLIC CGAL::TBB_support)
+endif()
+
 # Link with Boost.ProgramOptions (optional)
 find_package(Boost QUIET COMPONENTS program_options)
 if(Boost_PROGRAM_OPTIONS_FOUND)
-  if(CGAL_AUTO_LINK_ENABLED)
-    message(STATUS "Boost.ProgramOptions library: found")
+  if(TARGET Boost::program_options)
+    target_link_libraries(concurrency PRIVATE Boost::program_options)
   else()
-    message(
-      STATUS "Boost.ProgramOptions library: ${Boost_PROGRAM_OPTIONS_LIBRARY}")
+    target_link_libraries(concurrency PRIVATE ${Boost_PROGRAM_OPTIONS_LIBRARY})
   endif()
-  add_definitions("-DCGAL_USE_BOOST_PROGRAM_OPTIONS")
-  list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_LIBRARIES})
-endif()
-
-if(Boost_FOUND )
-  # Compilable benchmark
-  set(BENCHMARK_SOURCE_FILES "concurrency.cpp")
-  add_msvc_precompiled_header("StdAfx.h" "StdAfx.cpp" BENCHMARK_SOURCE_FILES)
-  create_single_source_cgal_program(${BENCHMARK_SOURCE_FILES})
-  if(TARGET CGAL::TBB_support)
-    target_link_libraries(concurrency PUBLIC CGAL::TBB_support)
-  endif()
-
-else()
-  message(
-    STATUS
-      "NOTICE: This program requires Boost >= 1.34.1, and will not be compiled."
-  )
 endif()

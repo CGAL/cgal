@@ -153,7 +153,7 @@ int main()
   }
 
   // force teleportation test
-  if ( approx.find_best_merge(true) != boost::none )
+  if ( approx.find_best_merge(true) != std::nullopt )
   {
     std::cout << "Failed: should be no possible merge with test." << std::endl;
     return EXIT_FAILURE;

@@ -19,26 +19,13 @@
 #define CGAL_TAGS_H
 
 #include <CGAL/IO/io_tags.h>
-#include <boost/mpl/integral_c.hpp>
 
 namespace CGAL {
 
 struct Void {};
 
-// Boolean_tag<bool> is a model of the Boost Integral Constant concept.
-// https://www.boost.org/libs/mpl/doc/refmanual/integral-constant.html
 template <bool b>
-struct Boolean_tag {
-  typedef boost::mpl::integral_c_tag tag;
-  typedef bool value_type;
-  static const bool value = b;
-  typedef Boolean_tag<b> type;
-  operator bool() const { return this->value; }
-};
-/* In C++11, try:
-template <bool b>
-using Boolean_tag = std::integral_constant<bool, b>;
-*/
+using Boolean_tag = std::bool_constant<b>;
 
 typedef Boolean_tag<true>   Tag_true;
 typedef Boolean_tag<false>  Tag_false;
@@ -81,6 +68,27 @@ Assert_compile_time_tag( const Tag&, const Derived& b)
   x.match_compile_time_tag(b);
 }
 
-} //namespace CGAL
+// To distinguish between kernel predicates for which a division-less FT is sufficient
+template <typename T>
+struct Needs_FT
+{
+  T value;
+  Needs_FT(T v) : value(v) {}
+  operator T() const { return value; }
+};
+
+template <typename T>
+struct Remove_needs_FT
+{
+  using Type = T;
+};
+
+template <typename T>
+struct Remove_needs_FT<Needs_FT<T> >
+{
+  using Type = T;
+};
+
+} // namespace CGAL
 
 #endif // CGAL_TAGS_H

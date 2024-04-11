@@ -66,17 +66,17 @@ bool read_OFF(std::istream& in,
 
   const bool verbose = choose_parameter(get_parameter(np, internal_np::verbose), true);
 
-  if(!(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>()) ||
-     !(is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>()) ||
-     !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>()) ||
-     !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_texture_map_t>()))
+  if(!(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value) ||
+     !(is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value) ||
+     !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value) ||
+     !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_texture_map_t>::value))
   {
     return CGAL::IO::internal::read_OFF_BGL(in, P, np);
   }
 
   CGAL::scan_OFF(in, P, verbose);
 
-  if(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_point_t>())
+  if(!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_point_t>::value)
   {
     Def_VPM def_vpm = get_property_map(CGAL::vertex_point, P);
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -132,10 +132,10 @@ bool write_OFF(std::ostream& out,
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
-  if(!(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>()) ||
-     !(is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>()) ||
-     !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>()) ||
-     !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_texture_map_t>()))
+  if(!(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value) ||
+     !(is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value) ||
+     !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value) ||
+     !(is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_texture_map_t>::value))
   {
     return CGAL::IO::internal::write_OFF_BGL(out, P, np);
   }

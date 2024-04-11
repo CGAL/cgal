@@ -81,7 +81,7 @@ public:
     PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
     PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
     PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
-    PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
+    PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Heat_method_plugin
     NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
   };
   typedef CGAL::Bbox_3 Bbox;
@@ -187,11 +187,11 @@ public:
   //! If the diagonal's length has never been computed, computes it and
   //! saves the result for further calls.
   //! @returns the item's bounding box's diagonal length.
-  virtual double diagonalBbox() const {
-   if(!is_diag_bbox_computed)
-       compute_diag_bbox();
-   is_diag_bbox_computed = true;
-   return _diag_bbox;
+  virtual double bboxDiagonal() const {
+    if(!is_bbox_diag_computed)
+      compute_diag_bbox();
+    is_bbox_diag_computed = true;
+    return _diag_bbox;
   }
 
   // Function about manipulation
@@ -301,13 +301,13 @@ public:
   //!
   //! \brief newViewer adds Vaos for `viewer`.
   //!
-  //! Must be overriden;
+  //! Must be overridden;
   //!
   virtual void newViewer(CGAL::Three::Viewer_interface* viewer) = 0;
   //!
-  //! \brief removeViewer removes the Vaos fo `viewer`.
+  //! \brief removeViewer removes the Vaos of `viewer`.
   //!
-  //! Must be overriden;
+  //! Must be overridden;
   //!
   virtual void removeViewer(CGAL::Three::Viewer_interface* viewer) = 0;
 
@@ -375,16 +375,16 @@ public Q_SLOTS:
 
   //!Emits an aboutToBeDestroyed() signal.
   //!Override this function to delete what needs to be deleted on destruction.
-  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause a simily
+  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause simply a
   //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
   //!Returns the alpha value for the item.
     //! Must be called within a valid openGl context.
     virtual float alpha() const;
 
-    //! Sets the value of the aplha Slider for this item.
+    //! Sets the value of the alpha Slider for this item.
     //!
-    //! Must be overriden;
+    //! Must be overridden;
     //! \param alpha must be between 0 and 255
     virtual void setAlpha(int alpha);
   //!Selects a point through raycasting.
@@ -413,7 +413,7 @@ protected:
   mutable Bbox _bbox;
   mutable double _diag_bbox;
   mutable bool is_bbox_computed;
-  mutable bool is_diag_bbox_computed;
+  mutable bool is_bbox_diag_computed;
   virtual void compute_bbox()const{}
   virtual void compute_diag_bbox()const;
   // The four basic properties

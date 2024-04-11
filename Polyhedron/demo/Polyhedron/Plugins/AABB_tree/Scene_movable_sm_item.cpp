@@ -92,7 +92,7 @@ void Scene_movable_sm_item_priv::compute_elements() const
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
-  typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
+  typedef CGAL::Buffer_for_vao CPF;
   flat_vertices.clear();
   flat_normals.clear();
   edges_vertices.clear();
@@ -203,7 +203,7 @@ void Scene_movable_sm_item::invalidateOpenGLBuffers()
 CGAL::Three::Scene_item::ManipulatedFrame* Scene_movable_sm_item::manipulatedFrame() { return d->frame; }
 const CGAL::qglviewer::Vec& Scene_movable_sm_item::center() const { return d->center_; }
 Scene_movable_sm_item::~Scene_movable_sm_item() { delete d; Q_EMIT killed(); }
-void Scene_movable_sm_item::setFMatrix(const GLdouble matrix[])
+void Scene_movable_sm_item::setFMatrix(const GLdouble matrix[16])
 {
   for (int i=0; i<16; ++i)
     d->f_matrix.data()[i] = (float)matrix[i];

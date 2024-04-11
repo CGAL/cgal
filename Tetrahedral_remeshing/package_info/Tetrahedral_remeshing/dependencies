@@ -1,6 +1,7 @@
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -14,13 +15,12 @@ Intersections_3
 Interval_support
 Kernel_23
 Kernel_d
-Mesh_3
 Modular_arithmetic
 Number_types
 Polygon_mesh_processing
 Profiling_tools
 Property_map
-Random_numbers
+SMDS_3
 STL_Extension
 Spatial_sorting
 Stream_support

@@ -1,10 +1,12 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Timer.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -43,7 +45,7 @@ bool test_orientation(const TriangleMesh& tm, bool is_positive, const NamedParam
 
   // set the connected component id of each face
   std::size_t nb_cc = PMP::connected_components(tm,
-                                           CGAL::bind_property_maps(fid_map,CGAL::make_property_map(face_cc)),
+                                           CGAL::make_compose_property_map(fid_map,CGAL::make_property_map(face_cc)),
                                            CGAL::parameters::face_index_map(fid_map));
 
   // extract a vertex with max z coordinate for each connected component

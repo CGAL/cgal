@@ -5,7 +5,7 @@
 
 Computes whether a given pair of bivariate polynomials is coprime.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicKernel_d_2::MakeCoprime_2`
 

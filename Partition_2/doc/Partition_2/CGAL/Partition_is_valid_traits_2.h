@@ -7,7 +7,7 @@ Class that derives a traits class for `partition_is_valid_2()` from
 a given traits class by defining the validity testing function object
 in terms of a supplied template parameter.
 
-\cgalModels `PartitionIsValidTraits_2`
+\cgalModels{PartitionIsValidTraits_2}
 
 \sa `CGAL::Is_convex_2<Traits>`
 \sa `CGAL::Is_vacuously_valid<Traits>`

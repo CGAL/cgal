@@ -15,7 +15,7 @@ edges, facets and an incidence relationship on them. The organization
 beneath is a halfedge data structure, which restricts the class of
 representable surfaces to orientable 2-manifolds - with and without
 boundary. If the surface is closed we call it a <I>polyhedron</I>, for
-example, see the  following model of a hammerhead:
+example, see the following model of a hammerhead:
 
 \image html shark.png
 \image latex shark.png
@@ -26,8 +26,8 @@ the combinatorial integrity of them. It is based on the highly
 flexible design of the halfedge data structure, see the introduction
 in Chapter \ref chapterHalfedgeDS "Halfedge Data Structures" and \cgalCite{k-ugpdd-99}. However, the
 polyhedral surface can be used and understood without knowing the
-underlying design. Some of the examples in this chapter introduce also
-gradually into first applications of this flexibility.
+underlying design. Some of the examples in this chapter gradually
+introduce applications of this flexibility.
 
 \section PolyhedronDefinition Definition
 
@@ -41,13 +41,15 @@ halfedge are illustrated in the following figure:
 \image latex halfedge_small.png
 
 Vertices represent points in space. Edges are straight line segments
-between two endpoints. Facets are planar polygons without
+between two endpoints. Facets are planar, possibly non-convex, polygons without
 holes. Facets are defined by the circular sequence of halfedges along
 their boundary. The polyhedral surface itself can have holes (with at
 least two facets surrounding it since a single facet cannot have a
-hole). The halfedges along the boundary of a hole are called <I>border halfedges</I> and have no incident facet. An edge is a <I>border edge</I> if one of its halfedges is a border halfedge. A
+hole). The halfedges along the boundary of a hole are called
+<I>border halfedges</I> and have no incident facet. An edge is a
+<I>border edge</I> if one of its halfedges is a border halfedge. A
 surface is <I>closed</I> if it contains no border halfedges. A closed
-surface is a boundary representation for polyhedra in three
+surface is a boundary representation for a polyhedron in three
 dimensions. The convention is that the halfedges are oriented
 counterclockwise around facets as seen from the outside of the
 polyhedron. An implication is that the halfedges are oriented
@@ -62,7 +64,7 @@ implication of this definition is that the polyhedral surface is
 always an orientable and oriented 2-manifold with border edges, i.e.,
 the neighborhood of each point on the polyhedral surface is either
 homeomorphic to a disc or to a half disc, except for vertices where
-many holes and surfaces with boundary can join. Another implication is
+multiple holes join. Another implication is
 that the smallest representable surface avoiding self intersections is
 a triangle (for polyhedral surfaces with border edges) or a
 tetrahedron (for polyhedra). Boundary representations of orientable
@@ -109,7 +111,7 @@ are provided too.
 The example continues with a test if the halfedge
 actually refers to a tetrahedron. This test checks the connected
 component referred to by the halfedge `h` and not the polyhedral
-surface as a whole. This examples works only on the combinatorial
+surface as a whole. This example works only on the combinatorial
 level of a polyhedral surface. The next example adds the geometry.
 
 \cgalExample{Polyhedron/polyhedron_prog_simple.cpp}
@@ -282,8 +284,8 @@ A polyhedron can be visualized by calling the \link PkgDrawPolyhedron CGAL::draw
 
 \cgalExample{Polyhedron/draw_polyhedron.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_polyhedron,draw_polyhedron.png}
 Result of the run of the draw_polyhedron program. A window shows the polyhedron and allows to navigate through the 3D scene.
@@ -450,7 +452,7 @@ When we use our new items class with the polyhedral surface, our new
 face class is used in the halfedge data structure and the color
 attribute is available in the type `Polyhedron_3::Facet`. However,
 `Polyhedron_3::Facet` is not the same type as our local face
-typedef for `My_face`, but it is derived therefrom. Thus,
+typedef for `My_face`, but it is derived there from. Thus,
 everything that we put in the local face type except constructors is
 then available in the `Polyhedron_::Facet` type. For more
 details, see the Chapter \ref chapterHalfedgeDS "Halfedge Data Structures"

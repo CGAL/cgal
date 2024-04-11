@@ -12,7 +12,7 @@ time elapsed since its creation or last reset. It counts only the time
 where it is in the running state. The time information is given in seconds.
 The timer counts also the number of intervals it was running, i.e.\ it
 counts the number of calls of the `Real_timer::start()` member function since the
-last reset. If the reset occures while the timer is running it counts as the
+last reset. If the reset occurs while the timer is running it counts as the
 first interval.
 
 \cgalHeading{Implementation}

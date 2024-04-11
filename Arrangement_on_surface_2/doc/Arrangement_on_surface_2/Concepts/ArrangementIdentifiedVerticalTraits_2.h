@@ -6,7 +6,7 @@
  * identified on the left and right sides and curves inserted into the
  * arrangement are expected to reach these boundary sides.
  *
- * \cgalRefines `ArrangementBasicTraits_2`
+ * \cgalRefines{ArrangementBasicTraits_2}
  *
  * \sa `ArrangementIdentifiedHorizontalTraits_2`,
  *     `ArrangementOpenLeftTraits_2`,
@@ -34,6 +34,9 @@ public:
   /// \name Functor Types
   /// @{
 
+  /// models the concept `ArrTraits::CompareYOnBoundary_2`.
+  typedef unspecified_type Compare_y_on_boundary_2;
+
   /// models the concept `ArrTraits::IsOnYIdentification_2`.
   typedef unspecified_type Is_on_y_identification_2;
 
@@ -41,6 +44,7 @@ public:
 
   /// \name Accessing Functor Objects
   /// @{
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const;
   Is_on_y_identification_2 is_on_y_identification_2_object() const;
   /// @}
 }

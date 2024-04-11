@@ -321,7 +321,7 @@ void MainWindow::on_actionSimplify_triggered()
   }
   catch(...)
   {
-    statusBar()->showMessage(QString("Exception ocurred"));
+    statusBar()->showMessage(QString("Exception occurred"));
   }
 
    // default cursor
@@ -397,7 +397,7 @@ void MainWindow::loadWKT(QString fileName)
       m_pct.insert_constraint(poly.begin(), poly.end());
     }
   }
- for(Polygon_with_holes_2 poly : polygons){
+ for(const Polygon_with_holes_2& poly : polygons){
    m_pct.insert_constraint(poly.outer_boundary().vertices_begin(), poly.outer_boundary().vertices_end());
    for(Polygon_with_holes_2::Hole_const_iterator it = poly.holes_begin(); it != poly.holes_end(); ++it){
      const Polygon_2& hole = *it;
@@ -478,7 +478,7 @@ void MainWindow::loadOSM(QString fileName)
   }
   catch(...)
   {
-    statusBar()->showMessage(QString("Exception ocurred"));
+    statusBar()->showMessage(QString("Exception occurred"));
   }
 
   Q_EMIT( changed());
@@ -503,7 +503,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Polyline_simplification_2 demo");
 
-  // Import resources from libCGALQt5.
+  // Import resources from libCGALQt6.
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

@@ -37,9 +37,6 @@ class SNC_decorator_traits : public CGAL::SM_decorator_traits<Refs_> {
   typedef typename Refs::SHalfloop_handle SHalfloop_handle;
   typedef typename Refs::SFace_handle SFace_handle;
 
-  typedef typename Refs::Halffacet_triangle_handle
-    Halffacet_triangle_handle;
-
   typedef typename Refs::Vertex_iterator Vertex_iterator;
   typedef typename Refs::Halfedge_iterator Halfedge_iterator;
   typedef typename Refs::Halffacet_iterator Halffacet_iterator;
@@ -75,9 +72,6 @@ class SNC_decorator_const_traits {
   typedef typename Refs::SHalfedge_const_handle SHalfedge_handle;
   typedef typename Refs::SHalfloop_const_handle SHalfloop_handle;
   typedef typename Refs::SFace_const_handle SFace_handle;
-
-  typedef typename Refs::Halffacet_triangle_const_handle
-    Halffacet_triangle_handle;
 
   typedef typename Refs::Vertex_const_iterator Vertex_iterator;
   typedef typename Refs::Halfedge_const_iterator Halfedge_iterator;

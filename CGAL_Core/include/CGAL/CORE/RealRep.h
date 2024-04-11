@@ -16,7 +16,7 @@
  *       Zilin Du <zilin@cs.nyu.edu>
  *       Sylvain Pion <pion@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -92,10 +92,10 @@ public:
   int ID() const;
 
   long longValue() const {
-    return ker.longValue();
+    return CORE::longValue(ker);
   }
   double doubleValue() const {
-    return ker.doubleValue();
+    return CORE::doubleValue(ker);
   }
   BigInt BigIntValue() const {
     return BigInt(ker);
@@ -231,7 +231,7 @@ inline BigInt   RealBigInt::BigIntValue() const {
 }
 template<>
 inline BigInt   RealBigRat::BigIntValue() const {
-  return ker.BigIntValue();
+  return CORE::BigIntValue(ker);
 }
 template<>
 inline BigInt RealBigFloat::BigIntValue() const {
@@ -459,7 +459,7 @@ inline unsigned long RealBigFloat::length() const {
   // The BigRat(BigFloat) actually is a
   // conversion operator (defined in BigFloat.h), _NOT_
   // an ordinary class constructor! The C++ language
-  // specify that an intialization is not an assignment
+  // specify that an initialization is not an assignment
   // but a constructor operation!
   // Considering that BigRat(BigFloat) is a conversion
   // operator not really a constructor. The programmer's
@@ -500,11 +500,11 @@ inline unsigned long RealBigRat::height() const {
 // toString()
 template<>
 inline std::string RealBigInt::toString(long, bool) const {
-  return ker.get_str();
+  return ker.convert_to<std::string>();
 }
 template<>
 inline std::string RealBigRat::toString(long, bool) const {
-  return ker.get_str();
+  return ker.convert_to<std::string>();
 }
 template<>
 inline std::string RealBigFloat::toString(long prec, bool sci) const {

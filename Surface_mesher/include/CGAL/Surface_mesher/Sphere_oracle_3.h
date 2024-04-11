@@ -298,7 +298,7 @@ namespace CGAL {
           const Point original_a = a;
           const Vector ab = vector(a, b);
           a = translated_point(original_a, scaled_vector(ab, root_1));
-          if( root_2 <= FT(1) ) /// move b iif root_2 <=1
+          if( root_2 <= FT(1) ) /// move b if root_2 <=1
           {
             b = translated_point(original_a, scaled_vector(ab, root_2));
           }

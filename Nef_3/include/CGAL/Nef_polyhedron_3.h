@@ -50,7 +50,6 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/Nef_3/SNC_point_locator.h>
 #include <CGAL/assertions.h>
 
@@ -61,9 +60,7 @@
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <list>
-
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 // RO: includes for "vertex cycle to Nef" constructor
 #include <CGAL/Nef_3/vertex_cycle_to_nef_3.h>
@@ -131,7 +128,7 @@ class Nef_polyhedron_3_rep
 /*{\Mdefinition
 An instance of data type |\Mname| is a subset of 3-space which is the
 result of forming complements and intersections starting from a set |H| of
-halfspaces. |\Mtype| is closed under all binary set opertions |intersection|,
+halfspaces. |\Mtype| is closed under all binary set operations |intersection|,
 |union|, |difference|, |complement| and under the topological operations
 |boundary|, |closure|, and |interior|.}*/
 
@@ -353,6 +350,10 @@ protected:
   void mark_bounded_volumes() {
     CGAL::Mark_bounded_volumes<Nef_polyhedron_3> mbv(true);
     delegate(mbv, /*compute_external*/ false, /*simplify*/ false);
+  }
+
+  void reserve_for_vertices(Size_type n) {
+    snc().reserve_sm_boundary_items(n);
   }
 
   struct Private_tag {};
@@ -608,28 +609,14 @@ protected:
    simplify();
  }
 
- template <class T1, class T2,
-           template <class T31, class T32, class T33>
-           class T3, class T4 >
- Nef_polyhedron_3( CGAL::Polyhedron_3<T1,T2,T3,T4>& P)
-   : Nef_polyhedron_3(Private_tag{})
- {
-    CGAL_NEF_TRACEN("construction from Polyhedron_3");
-    initialize_infibox_vertices(EMPTY);
-    polyhedron_3_to_nef_3
-      <CGAL::Polyhedron_3<T1,T2,T3,T4>, SNC_structure>( P, snc());
-    build_external_structure();
-    mark_bounded_volumes();
-    simplify();
-  }
-
  template <class PolygonMesh>
  explicit Nef_polyhedron_3(const PolygonMesh& pm)
    : Nef_polyhedron_3(Private_tag{})
  {
     CGAL_NEF_TRACEN("construction from PolygonMesh with internal index maps");
+    reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
-    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc());
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(pm, snc());
     build_external_structure();
     mark_bounded_volumes();
     simplify();
@@ -639,14 +626,15 @@ protected:
  explicit Nef_polyhedron_3(const PolygonMesh& pm,
                            const HalfedgeIndexMap& him,
                            const FaceIndexMap& fim,
-                           typename boost::disable_if <
-                              boost::is_same<FaceIndexMap, bool>
-                           >::type* = nullptr // disambiguate with another constructor
+                           typename std::enable_if <
+                              !std::is_same<FaceIndexMap, bool>::value
+                           >* = nullptr // disambiguate with another constructor
   ) : Nef_polyhedron_3(Private_tag{})
   {
     CGAL_NEF_TRACEN("construction from PolygonMesh");
+    reserve_for_vertices(num_vertices(pm));
     initialize_infibox_vertices(EMPTY);
-    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(const_cast<PolygonMesh&>(pm), snc(), fim, him);
+    polygon_mesh_to_nef_3<PolygonMesh, SNC_structure>(pm, snc(), fim, him);
     build_external_structure();
     mark_bounded_volumes();
     simplify();
@@ -1473,7 +1461,7 @@ protected:
   symmetric_difference(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   /*{\Mop returns the symmectric difference |\Mvar - T| $\cup$
           |T - \Mvar|. }*/ {
-    CGAL_NEF_TRACEN(" symmetic difference between nef3 "<<&*this<<" and "<<&N1);
+    CGAL_NEF_TRACEN(" symmetric difference between nef3 "<<&*this<<" and "<<&N1);
     if (is_empty()) return N1;
     if (N1.is_empty()) return *this;
     if (is_space()) return Nef_polyhedron_3(EMPTY);
@@ -1539,11 +1527,11 @@ protected:
   or equal, equality, inequality.}*/
 
   bool operator==(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { CGAL_NEF_TRACEN(" equality comparision between nef3 "<<&*this<<" and "<<&N1);
+  { CGAL_NEF_TRACEN(" equality comparison between nef3 "<<&*this<<" and "<<&N1);
     return symmetric_difference(N1).is_empty(); }
 
   bool operator!=(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
-  { CGAL_NEF_TRACEN(" inequality comparision between nef3 "<<&*this<<" and "<<&N1);
+  { CGAL_NEF_TRACEN(" inequality comparison between nef3 "<<&*this<<" and "<<&N1);
     return !operator==(N1); }
 
   bool operator<(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const

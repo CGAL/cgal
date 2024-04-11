@@ -28,13 +28,15 @@ TD.os64bits {font-style:italic}
 TD.ok {background-color: rgb(44%,88%,44%)}
 TD.warning {background-color: rgb(100%,100%,50%)}
 TD.third_party_warning {background-color: rgb(75%,100%,50%)}
+TD.timeout {background-color: rgb(100%,75%,25%)}
 TD.error {background-color: rgb(100%,50%,50%)}
 TD.na {background-color: white;}
 TD.requirements { background-color: rgb(65%,65%,100%) }
 
-TD.ok {background-color: rgb(44%,88%,44%)}
+TH.ok {background-color: rgb(44%,88%,44%)}
 TH.warning {background-color: rgb(100%,100%,50%)}
 TH.third_party_warning {background-color: rgb(75%,100%,50%)}
+TH.timeout {background-color: rgb(100%,75%,25%)}
 TH.error {background-color: rgb(100%,50%,50%)}
 TH.requirements { background-color: rgb(65%,65%,100%) }
 
@@ -50,6 +52,10 @@ TD.third_party_warning A {font-size:large; text-decoration: none}
 TD.third_party_warning A:link {color: rgb(0%,0%,100%)}
 TD.third_party_warning A:visited {color: rgb(80%,80%,100%)}
 
+TD.timeout A {font-size:large; text-decoration: none}
+TD.timeout A:link {color: rgb(0%,0%,100%)}
+TD.timeout A:visited {color: rgb(80%,80%,100%)}
+
 TD.error A {font-size: large; text-decoration: none}
 TD.error A:link {color: rgb(0%,0%,100%)}
 TD.error A:visited {color: rgb(80%,0%,100%)}
@@ -60,14 +66,14 @@ TD.requirements A:visited {color: rgb(100%,100%,65%)}
 
 SELECT { font-family: monospace; }
 
-#permalink,#jump_to_results {
+#permalink,#jump_to_results,#compare {
     font-size: 0.5em;
     font-weight: normal;
 }
-#permalink::before,#jump_to_results::before{
+#permalink::before,#jump_to_results::before,#compare::before{
     content: "("
 }
-#permalink::after,#jump_to_results::after{
+#permalink::after,#jump_to_results::after,#compare::after{
     content: ")"
 }
 

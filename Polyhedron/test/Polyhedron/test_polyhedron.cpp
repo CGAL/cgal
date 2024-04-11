@@ -90,7 +90,7 @@ Build_tetrahedron<HDS>:: operator()( HDS& target) {
 
 // A polyhedron modifier that creates a tetrahedron using the
 // incremental builder, but in two steps with a second incr. builder
-// continueing what the first one started.
+// continuing what the first one started.
 template < class HDS >
 class Build_tetrahedron_2 : public CGAL::Modifier_base<HDS> {
 public:

@@ -115,7 +115,7 @@ To answer this need, a combinatorial map allows to create <I>attributes</I> whic
 <LI>an <I>i</I>-cell may have no associated <I>i</I>-attribute.
 </UL>
 
-Since <I>i</I>-cells are not explicitely represented in combinatorial maps, the association between <I>i</I>-cells and <I>i</I>-attributes is transferred to darts: if attribute <I>a</I> is associated to <I>i</I>-cell <I>c</I>, all the darts belonging to <I>c</I> are associated to <I>a</I>.
+Since <I>i</I>-cells are not explicitly represented in combinatorial maps, the association between <I>i</I>-cells and <I>i</I>-attributes is transferred to darts: if attribute <I>a</I> is associated to <I>i</I>-cell <I>c</I>, all the darts belonging to <I>c</I> are associated to <I>a</I>.
 
 We can see two examples of combinatorial maps having some attributes in \cgalFigureRef{fig_cmap_with_attribs}. In the first example (Left), a 2D combinatorial map has 1-attributes containing a float, for example corresponding to the length of the associated 1-cell, and 2-attributes containing a color in RGB format. In the second example (Right), a 3D combinatorial map has 2-attributes containing a color in RGB format.
 
@@ -168,7 +168,7 @@ Considering these different advantages and drawbacks, you can choose to use gene
 
 The diagram in \cgalFigureRef{fig_cmap_diagramme_class} shows the different classes of the package. `Combinatorial_map` is the main class (see Section \ref sseccombinatorialmap "Combinatorial Maps"). It allows to manage darts and attributes (see Section \ref ssecattributes "Cell Attributes"). Users can customize a combinatorial map thanks to an items class (see Section \ref ssecitem "Combinatorial Map Items"), which defines the information associated with darts and the attribute types. These types may be different for different dimensions, and they may also be void (note that the main concepts of `GenericMap`, `GenericMapItems` and `CellAttribute` are shared between combinatorial maps and generalized maps).
 
-The darts and attributes are accessed through <I>handles</I>. A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `boost::unordered_map`.
+The darts and attributes are accessed through <I>descriptors</I> (either Indices or Handles). A handle is a model of the `Handle` concept, thus supporting the two dereference operators `operator*` and `operator->`. All handles are model of `LessThanComparable` and `Hashable`, that is they can be used as keys in containers such as `std::map` and `std::unordered_map`. An index is a model of the `Index` concept, which is mainly an integer which is convertible from and to std::size_t. Indices can be used as index into vectors which store properties (cf. one example in Section \ref ssecexample3DCMWI "3D Combinatorial Map Using Indices").
 
 \cgalFigureBegin{fig_cmap_diagramme_class,cmap_diagramme_class.svg}
 UML diagram of the main classes of the package. k is the number of non void attributes.
@@ -178,9 +178,9 @@ UML diagram of the main classes of the package. k is the number of non void attr
 
 The class `Combinatorial_map<d,Items,Alloc>` is a model of the `CombinatorialMap` concept which refines the generic concept of `GenericMap`. It has three template parameters standing for the dimension of the combinatorial map (an  `unsigned int`), an items class (a model of the  `GenericMapItems` concept), and an allocator which must be a model of the allocator concept of the \stl. %Default classes are provided for the items and the allocator classes.
 
-The main role of the class `Combinatorial_map` is the storage and the management of darts. It allows to create or remove an isolated dart from the combinatorial map. The \link GenericMap::Dart_handle `Dart_handle`\endlink type defines a handle to the type of used darts (given in the items class). `Combinatorial_map` provides several <I>ranges</I> which allow to iterate over specific subsets of darts of the combinatorial map (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). It also defines several methods to link and to unlink darts by \f$ \beta_i\f$s (see Section \ref sseclinkdarts "Sewing Orbits and Linking Darts"). We said that a dart <I>d0</I> is <I>i</I>-free  if \f$ \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. The \f$ \varnothing\f$ constant is represented in the class `Combinatorial_map` through a `Dart_handle` called \link CombinatorialMap::null_dart_handle `null_dart_handle`\endlink. Finally, some high level operations are defined as global functions taking a `Combinatorial_map` as argument (see Section \ref ssecoperations "Removal and Insertion Operations")
+The main role of the class `Combinatorial_map` is the storage and the management of darts. It allows to create or remove an isolated dart from the combinatorial map. The \link GenericMap::Dart_descriptor `Dart_descriptor`\endlink type defines a descriptor to the type of used darts (given in the items class). `Combinatorial_map` provides several <I>ranges</I> which allow to iterate over specific subsets of darts of the combinatorial map (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). It also defines several methods to link and to unlink darts by \f$ \beta_i\f$s (see Section \ref sseclinkdarts "Sewing Orbits and Linking Darts"). We said that a dart <I>d0</I> is <I>i</I>-free  if \f$ \beta_i\f$(<I>d0</I>)=\f$ \varnothing\f$. The \f$ \varnothing\f$ constant is represented in the class `Combinatorial_map` through a `Dart_descriptor` called \link CombinatorialMap::null_dart_descriptor `null_dart_descriptor`\endlink. Finally, some high level operations are defined as global functions taking a `Combinatorial_map` as argument (see Section \ref ssecoperations "Removal and Insertion Operations")
 
-The second role of the class `Combinatorial_map` is the storage and the management of attributes. It allows to create or remove an attribute, and provides methods to associate attributes and cells. A range is defined for each <I>i</I>-attribute allowing to iterate over all the <I>i</I>-attributes of the combinatorial map. Finally, `Combinatorial_map` defines several types allowing to manage the attributes. We can use \link GenericMap::Attribute_handle `Combinatorial_map::Attribute_handle<i>::type`\endlink for a handle to the <I>i</I>-attributes (and the const version \link GenericMap::Attribute_const_handle `Combinatorial_map::Attribute_const_handle<i>::type` \endlink) and \link GenericMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the <I>i</I>-attributes.
+The second role of the class `Combinatorial_map` is the storage and the management of attributes. It allows to create or remove an attribute, and provides methods to associate attributes and cells. A range is defined for each <I>i</I>-attribute allowing to iterate over all the <I>i</I>-attributes of the combinatorial map. Finally, `Combinatorial_map` defines several types allowing to manage the attributes. We can use \link GenericMap::Attribute_descriptor `Combinatorial_map::Attribute_descriptor<i>::type`\endlink for a descriptor to the <I>i</I>-attributes (and the const version \link GenericMap::Attribute_const_descriptor `Combinatorial_map::Attribute_const_descriptor<i>::type` \endlink) and \link GenericMap::Attribute_type  `Combinatorial_map::Attribute_type<i>::type` \endlink for the type of the <I>i</I>-attributes.
 
 All information associated to darts (information, \f$ \beta\f$ links and attributes) are accessed through member functions in `CombinatorialMap`.
 
@@ -196,7 +196,7 @@ The class `Generic_map_min_items` is a model of the `GenericMapItems` concept wh
 
 \subsection ssecattributes Cell Attributes
 
-The class `Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`, a model of the `CellAttribute` concept, represents an attribute associated with a cell of a combinatorial map. The  template parameter `Map` must be a model of the `GenericMap` concept. The attribute stores a handle to one dart of its associated cell when the template parameter `Tag` is \link CGAL::Tag_true `Tag_true`\endlink. `Info_` is the type of information stored in the attribute. It may be `void`. `OnMerge` and `OnSplit` must be either `Null_functor`, or models of the `Binary Function` concept having two references to a model of `CellAttribute` as type of both parameters and `void` as return type. There are two default parameters for `OnMerge` and `OnSplit`, which are `Null_functor`, a default parameter for `Tag` which is `Tag_true`, and a default parameter for `Info_` which is `void`.
+The class `Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`, a model of the `CellAttribute` concept, represents an attribute associated with a cell of a combinatorial map. The  template parameter `Map` must be a model of the `GenericMap` concept. The attribute stores a descriptor to one dart of its associated cell when the template parameter `Tag` is \link CGAL::Tag_true `Tag_true`\endlink. `Info_` is the type of information stored in the attribute. It may be `void`. `OnMerge` and `OnSplit` must be either `Null_functor`, or models of the `Binary Function` concept having two references to a model of `CellAttribute` as type of both parameters and `void` as return type. There are two default parameters for `OnMerge` and `OnSplit`, which are `Null_functor`, a default parameter for `Tag` which is `Tag_true`, and a default parameter for `Info_` which is `void`.
 
 If `Info_` is different from `void`, the class `Cell_attribute` contains two methods `info()` returning the information contained in the attribute (const and non const version). The information is returned by reference, thus the non const version allows the modification of the information.
 
@@ -228,9 +228,32 @@ typedef CGAL::Combinatorial_map<3, Example_items_3> Example_custom_cmap3;
 
 \endcode
 
+\subsection ssecCMapIndicesHandles Indices or Handles
+
+By default, descriptors used to access darts and attributes are handles, and the darts and attributes are stored in a `Compact_container`. To use the index version, you should define the type `Use_index` to `CGAL::Tag_true` in the item class like in the code below. You can also define the type `Index_type` used to store indices (`std::uint32_t` by default when this type is not defined).
+
+\code{.cpp}
+
+struct Items_with_indices
+{
+  typedef CGAL::Tag_true Use_index; // CGAL::Tag_false by default
+  typedef std::uint16_t Index_type; // std::uint32_t by default
+  template <class CMap>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Cell_attribute<CMap, int> Edge_attrib;
+    typedef std::tuple<void,Edge_attrib> Attributes;
+  };
+};
+typedef CGAL::Combinatorial_map<3, Items_with_indices> Cmap3_with_index;
+
+\endcode
+
+The two main interests of the index version comparing to the handle ones are: (1) it has a lower memory footprint than a 64-bit pointer based version; (2) indices are contiguous, they can be used as index into vectors which store properties. The main interest of the handle version is the fact that handles can be dereferenced, which can simplify some code.
+
 \section Combinatorial_mapIteration Iteration and Creation Operations
 
-An important operation in combinatorial maps consists in iterating over specific subsets of darts or over attributes. For that, several <I>ranges</I> are offered (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). A range is a model of the `Range` concept, thus supporting the two methods `begin()` and `end()` allowing to iterate over all the elements in the range. Several functions allow to create specific configurations of darts into a combinatorial map (see Section \ref ssecconstruction "Construction Operations"). Darts can be marked during operations, for example when performing a breadth-first search traversal, thanks to Boolean marks (see Sections \ref ssecadvmarks "Boolean Marks"). In the following, we denote by `dh0`, `dh1`, `dh2` the dart handles for the darts `d0`, `d1`, `d2`, respectively. That is `d0 == *dh0`.
+An important operation in combinatorial maps consists in iterating over specific subsets of darts or over attributes. For that, several <I>ranges</I> are offered (see Section \ref ssecrange "Iterating over Orbits, Cells, and Attributes"). A range is a model of the `Range` concept, thus supporting the two methods `begin()` and `end()` allowing to iterate over all the elements in the range. Several functions allow to create specific configurations of darts into a combinatorial map (see Section \ref ssecconstruction "Construction Operations"). Darts can be marked during operations, for example when performing a breadth-first search traversal, thanks to Boolean marks (see Sections \ref ssecadvmarks "Boolean Marks"). In the following, we denote by `d0`, `d1`, `d2` for dart descriptors, and identify in explanations the descriptor and the object it describes.
 
 \subsection ssecrange Iterating over Orbits, Cells, and Attributes
 
@@ -255,15 +278,15 @@ There are also two different classes of ranges containing one dart per <I>i</I>-
 <LI>\link GenericMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<i,j,dim>`\endlink: range containing one dart of each <I>i</I>-cell incident to the <I>j</I>-cell containing a given dart, with 0 \f$ \leq \f$ <I>i</I> \f$ \leq \f$ <I>dim+1</I> and  0 \f$ \leq \f$ <I>j</I> \f$ \leq \f$ <I>dim+1</I> (for example \link GenericMap::One_dart_per_incident_cell_range `One_dart_per_incident_cell_range<0,3>`\endlink for the range of one dart per vertex of the volume incident to the starting dart). If <I>i</I>=<I>j</I>, the range contains only the given dart.
 </UL>
 
-The iterators of the \link GenericMap::Dart_range `Dart_range`\endlink are bidirectional iterators,  while the iterators of the other four ranges are forward iterators.  The value type of all these iterators is `Dart` thus all these iterators can be directly used as \link GenericMap::Dart_handle `Dart_handle`\endlink.
+The iterators of the \link GenericMap::Dart_range `Dart_range`\endlink are bidirectional iterators,  while the iterators of the other four ranges are forward iterators.  The value type of all these iterators is `Dart` thus all these iterators can be directly used as \link GenericMap::Dart_descriptor `Dart_descriptor`\endlink.
 
-Additionally, there is a range over non void <I>i</I>-attributes: \link GenericMap::Attribute_range `Attribute_range<i>::type`\endlink, having a bidirectional iterator with value type \link GenericMap::Attribute_type Attribute_type<i>::type`\endlink.
+Additionally, there is a range over non void <I>i</I>-attributes: \link GenericMap::Attribute_range `Attribute_range<i>::type`\endlink, having a bidirectional iterator with value type \link GenericMap::Attribute_type `Attribute_type<i>::type`\endlink.
 
 For each range, there is an associated const range, a model of the `ConstRange` concept. You can find some examples of ranges in Section \ref ssecexample3DCM "A 3D Combinatorial Map".
 
 \subsection ssecconstruction Construction Operations
 
-Several functions allow to create specific configurations of darts into a combinatorial map. Existing darts in the combinatorial map are not modified. Note that the dimension of the combinatorial map must be large enough: darts must contain all the \f$ \beta\f$ pointers used by the operation. All these functions return a \link GenericMap::Dart_handle `Dart_handle`\endlink to a new dart created during the operation.
+Several functions allow to create specific configurations of darts into a combinatorial map. Existing darts in the combinatorial map are not modified. Note that the dimension of the combinatorial map must be large enough: darts must contain all the \f$ \beta\f$ pointers used by the operation. All these functions return a \link GenericMap::Dart_descriptor `Dart_descriptor`\endlink to a new dart created during the operation.
 
 <UL>
 <LI>`cm.`\link GenericMap::make_edge `make_edge()`\endlink: creates an isolated edge (two darts linked by \f$ \beta_2\f$); dimension must be greater or equal than two;
@@ -274,12 +297,12 @@ Several functions allow to create specific configurations of darts into a combin
 
 \subsection ssecadvmarks Boolean Marks
 
-It is often necessary to mark darts, for example to retrieve in <I>O(1)</I> if a given dart was already processed during a specific algorithm, for example,  iteration over a given range. Users can also mark specific parts of a combinatorial map (for example mark all the darts belonging to objects having specific semantics). To answer these needs, a `GenericMap` has a certain number of Boolean marks (fixed by the constant \link GenericMap::NB_MARKS `NB_MARKS`\endlink). When one wants to use a Boolean mark, the following methods are available (with `cm` an instance of a combinatorial map):
+It is often necessary to mark darts, for example to retrieve in \cgalBigO{1} if a given dart was already processed during a specific algorithm, for example,  iteration over a given range. Users can also mark specific parts of a combinatorial map (for example mark all the darts belonging to objects having specific semantics). To answer these needs, a `GenericMap` has a certain number of Boolean marks (fixed by the constant \link GenericMap::NB_MARKS `NB_MARKS`\endlink). When one wants to use a Boolean mark, the following methods are available (with `cm` an instance of a combinatorial map):
 <ul>
 <li> get a new free mark: `size_type m = cm.`\link GenericMap::get_new_mark `get_new_mark()`\endlink (throws the exception Exception_no_more_available_mark if no mark is available);
-<li> set mark `m` for a given dart `d0`: `cm.`\link GenericMap::mark `mark(dh0,m)`\endlink;
-<li> unset mark `m` for a given dart `d0`: `cm.`\link GenericMap::unmark `unmark(dh0,m)`\endlink;
-<li> test if a given dart `d0` is marked for `m`: `cm.`\link GenericMap::is_marked `is_marked(dh0,m)`\endlink;
+<li> set mark `m` for a given dart `d0`: `cm.`\link GenericMap::mark `mark(d0,m)`\endlink;
+<li> unset mark `m` for a given dart `d0`: `cm.`\link GenericMap::unmark `unmark(d0,m)`\endlink;
+<li> test if a given dart `d0` is marked for `m`: `cm.`\link GenericMap::is_marked `is_marked(d0,m)`\endlink;
 <li> unmark all the darts of `cm` for `m`: `cm.`\link GenericMap::unmark_all `unmark_all(m)`\endlink;
 <li> negate mark `m` of all the darts of `cm`: `cm.`\link GenericMap::negate_mark `negate_mark(m)`\endlink. All the marked darts become unmarked and all the unmarked darts become marked;
 <li> free mark `m`: `cm.`\link GenericMap::free_mark `free_mark(m)`\endlink. This method unmarks all the darts of `cm` for `m` before freeing it.
@@ -318,7 +341,7 @@ Reciprocally, unlinking a given dart <I>d0</I> by \f$ \beta_i\f$, with 2 \f$ \le
 Example of 3-sew operation. Left: A 3D combinatorial map containing two volumes that are not connected, with 2-attributes. Each attribute contains a color in RGB format, and there are four 2-cells associated with attributes. Associations between darts and attributes are drawn with red segments. Right: The 3D combinatorial map obtained as result of \link CombinatorialMap::sew `sew<3>(1,5)`\endlink (or \link CombinatorialMap::sew `sew<3>(2,8)`\endlink, or \link CombinatorialMap::sew `sew<3>(3,7)`\endlink, or \link CombinatorialMap::sew `sew<3>(4,6)`\endlink). Darts (1,5), (2,8), (3,7) and (4,6) are linked together by \f$ \beta_3\f$. The two 2-cells <I>c1</I>={1,2,3,4} and <I>c2</I>={5,6,7,8} are merged after the sew into the 2-cell {1,2,3,4,5,6,7,8}. We are in the case where the two attributes are non `nullptr`, thus the first one is kept, and all the darts of <I>c2</I> are associated with the first attribute.
 \cgalFigureEnd
 
-The \link CombinatorialMap::sew `sew<i>(dh1,dh2)`\endlink method consists mainly to link two by two several darts by \f$ \beta_i\f$. This operation is possible only if there is a bijection <I>f</I> between all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,...,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>d1</I>) and <I>D2</I>=\f$ \langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,..., \f$ \beta_d\f$\f$ \rangle{}\f$(<I>d2</I>) satisfying: <I>f</I>(<I>d1</I>)=<I>d2</I>, and for all <I>e</I>\f$ \in \f$ <I>D1</I>,  for all <I>j</I>\f$ \in \f${1,..., i-2,i+2,...,<I>d</I>}, <I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)). Intuitively, this condition ensures the validity of the combinatorial map by verifying that condition discussed in Section \ref sseccombimapvalidity "Combinatorial Map Properties" will be satisfied after the operation. This condition can be tested by using the method \link CombinatorialMap::is_sewable `is_sewable<i>(dh1,dh2)`\endlink. For example, the function \link CombinatorialMap::is_sewable `is_sewable<3>`\endlink would return `false` if we tried to 3-sew a triangular facet with a quad facet. Note that given two darts <I>d1</I> and <I>d2</I>, if there is such a bijection, it is uniquely defined. So giving the two darts as arguments of the \link CombinatorialMap::sew `sew<i>`\endlink is enough to retrieve all the pairs of darts to link.  If such a bijection exists, the \link CombinatorialMap::sew `sew<i>(dh1,dh2)`\endlink operation consists only in linking by \f$ \beta_i\f$ each couple of darts <I>d3</I> and <I>d4</I> such that <I>d3</I>=<I>f</I>(<I>d4</I>).
+The \link CombinatorialMap::sew `sew<i>(d1,d2)`\endlink method consists mainly to link two by two several darts by \f$ \beta_i\f$. This operation is possible only if there is a bijection <I>f</I> between all the darts of the orbit <I>D1</I>=\f$ \langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,...,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>d1</I>) and <I>D2</I>=\f$ \langle{}\f$\f$ \beta_1\f$,...,\f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,..., \f$ \beta_d\f$\f$ \rangle{}\f$(<I>d2</I>) satisfying: <I>f</I>(<I>d1</I>)=<I>d2</I>, and for all <I>e</I>\f$ \in \f$ <I>D1</I>,  for all <I>j</I>\f$ \in \f${1,..., i-2,i+2,...,<I>d</I>}, <I>f</I>(\f$ \beta_j\f$(<I>e</I>))=\f$ \beta_j^{-1}\f$(<I>f</I>(<I>e</I>)). Intuitively, this condition ensures the validity of the combinatorial map by verifying that condition discussed in Section \ref sseccombimapvalidity "Combinatorial Map Properties" will be satisfied after the operation. This condition can be tested by using the method \link CombinatorialMap::is_sewable `is_sewable<i>(d1,d2)`\endlink. For example, the function \link CombinatorialMap::is_sewable `is_sewable<3>`\endlink would return `false` if we tried to 3-sew a triangular facet with a quad facet. Note that given two darts <I>d1</I> and <I>d2</I>, if there is such a bijection, it is uniquely defined. So giving the two darts as arguments of the \link CombinatorialMap::sew `sew<i>`\endlink is enough to retrieve all the pairs of darts to link.  If such a bijection exists, the \link CombinatorialMap::sew `sew<i>(d1,d2)`\endlink operation consists only in linking by \f$ \beta_i\f$ each couple of darts <I>d3</I> and <I>d4</I> such that <I>d3</I>=<I>f</I>(<I>d4</I>).
 
 In addition, the sew operation updates the associations between darts and non void attributes in order to guarantee that all the darts belonging to a given cell are associated with the same attribute (which is a condition of combinatorial map validity). For each couple of <I>j</I>-cells <I>c1</I> and <I>c2</I> that are merged into one <I>j</I>-cell during the sew, we have to update the two associated attributes <I>attr1</I> and <I>attr2</I>. If both are `nullptr`, there is nothing to do. If one is `nullptr` and the other not, we only associate the non `nullptr` attribute to all the darts of the resulting cell. When the two attributes are non `nullptr`, we first apply functor \link CellAttribute::On_merge `On_merge`\endlink on the two attributes <I>attr1</I> and <I>attr2</I> (see Section \ref ssecattributes "Cell Attributes"). Then, we associate the attribute <I>attr1</I> to all darts of the resulting <I>j</I>-cell. Finally, attribute <I>attr2</I> is removed from the combinatorial map.
 
@@ -326,18 +349,18 @@ Note that when the two attributes are non `nullptr`, the first one is kept. But 
 
 For example, in \cgalFigureRef{fig_cmap_example_3d_sew}, we want to 3-sew the two initial volumes. \link CombinatorialMap::sew `sew<3>(1,5)`\endlink links by \f$ \beta_3\f$ the pairs of darts (1,5), (2,8), (3,7) and (4,6), thus the combinatorial map obtained is valid. 2-attributes are updated so that all the darts belonging to the 2-cell containing dart 1 become associated to the same 2-attribute after the operation.
 
-Similarly, \link CombinatorialMap::unsew `unsew<i>(dh0)`\endlink operation unlinks \f$ \beta_i\f$ for all the darts in the orbit  \f$ \langle{}\f$\f$ \beta_1\f$,..., \f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,...,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>d0</I>),  and thus guarantees to obtain a valid combinatorial map. This operation is possible for any non <I>i</I>-free dart.
+Similarly, \link CombinatorialMap::unsew `unsew<i>(d0)`\endlink operation unlinks \f$ \beta_i\f$ for all the darts in the orbit  \f$ \langle{}\f$\f$ \beta_1\f$,..., \f$ \beta_{i-2}\f$,\f$ \beta_{i+2}\f$,...,\f$ \beta_d\f$\f$ \rangle{}\f$(<I>d0</I>),  and thus guarantees to obtain a valid combinatorial map. This operation is possible for any non <I>i</I>-free dart.
 
 As for the sew operations, attributes are updated to guarantee that two darts belonging to two different <I>j</I>-cells are associated to two different <I>j</I>-attributes. If the unsew operation splits a <I>j</I>-cell <I>c</I> in two <I>j</I>-cells <I>c1</I> and <I>c2</I>, and if <I>c</I> is associated to a <I>j</I>-attribute <I>attr1</I>, then this attribute is duplicated into <I>attr2</I>, and all the darts belonging to <I>c2</I> are associated with this new attribute. Finally, we call the functor \link CellAttribute::On_split `On_split`\endlink on the two attributes <I>attr1</I> and <I>attr2</I> (see Section \ref ssecattributes "Cell Attributes").
 
 Let us consider the combinatorial map given in \cgalFigureRef{fig_cmap_example_3d_sew} (Right). If we call \link CombinatorialMap::unsew `unsew<3>(2)`\endlink, we obtain the combinatorial map in \cgalFigureRef{fig_cmap_example_3d_sew} (Left) (except for the color of the attribute associated to the 2-cell {5,6,7,8} which would be <TT>#00ff00</TT>). The \link CombinatorialMap::unsew `unsew<3>`\endlink operation has duplicated the 2-attribute associated to the 2-cell {1,2,3,4,5,6,7,8} since this 2-cell is split in two after the unsew operation.
 
 \cgalAdvancedBegin
-If one wants to modify a combinatorial map <I>manually</I>, it is  possible to switch off the updating between darts and attributes by calling \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to call \link CombinatorialMap::sew `sew<i>(dh1,dh2)`\endlink and \link CombinatorialMap::unsew `unsew<i>(dh0)`\endlink. In these cases, the combinatorial map obtained may be no longer valid due to incorrect associations between darts and attributes.  A call later to \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink will correct the invalid non void attributes.
+If one wants to modify a combinatorial map <I>manually</I>, it is  possible to switch off the updating between darts and attributes by calling \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to call \link CombinatorialMap::sew `sew<i>(d1,d2)`\endlink and \link CombinatorialMap::unsew `unsew<i>(d0)`\endlink. In these cases, the combinatorial map obtained may be no longer valid due to incorrect associations between darts and attributes.  A call later to \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(true)`\endlink will correct the invalid non void attributes.
 
 In \cgalFigureRef{fig_cmap_example_3d_sew} (Left), if we call \link CombinatorialMap::sew `sew<3>(1,5)`\endlink, the resulting combinatorial map is similar to the combinatorial map of \cgalFigureRef{fig_cmap_example_3d_sew} (Right) (we have linked by \f$ \beta_3\f$ the pairs of darts (1,5), (2,8), (3,7) and (4,6)), but associations between darts and attributes are not valid. Indeed, we have kept the four initial attributes and all the associations between darts and attributes, thus two darts belonging to the same 2-cell (for example darts 1 and 5) are associated with two different attributes.
 
-We can also use the \link CombinatorialMap::link_beta `link_beta<i>(dh1,dh2)`\endlink which links `d1` and `d2` by \f$ \beta_i\f$ without modifying the other links.  Association between darts and attributes are only modified for darts `d1` and `d2`, and similarly as for \link CombinatorialMap::sew `sew<i>`\endlink, this updating can be avoided by calling \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to call \link CombinatorialMap::link_beta `link_beta<i>(dh1,dh2)`\endlink. Lastly, we can use \link CombinatorialMap::unlink_beta `unlink_beta<i>(dh0)`\endlink to unlink `d0` for \f$ \beta_i\f$. In this last case, there is no modification of association between darts and attributes.
+We can also use the \link CombinatorialMap::link_beta `link_beta<i>(d1,d2)`\endlink which links `d1` and `d2` by \f$ \beta_i\f$ without modifying the other links.  Association between darts and attributes are only modified for darts `d1` and `d2`, and similarly as for \link CombinatorialMap::sew `sew<i>`\endlink, this updating can be avoided by calling \link GenericMap::set_automatic_attributes_management `set_automatic_attributes_management(false)`\endlink before to call \link CombinatorialMap::link_beta `link_beta<i>(d1,d2)`\endlink. Lastly, we can use \link CombinatorialMap::unlink_beta `unlink_beta<i>(d0)`\endlink to unlink `d0` for \f$ \beta_i\f$. In this last case, there is no modification of association between darts and attributes.
 
 In \cgalFigureRef{fig_cmap_example_3d_sew} (Left), if we call \link CombinatorialMap::link_beta `link_beta<3>(1,5)`\endlink, in the resulting combinatorial map we have now \f$ \beta_3\f$(1)=5 and \f$ \beta_3\f$(5)=1. This combinatorial map is no longer valid (for example dart 2 is 3-free and we should have \f$ \beta_3\f$(2)=8).
 \cgalAdvancedEnd
@@ -346,7 +369,7 @@ In \cgalFigureRef{fig_cmap_example_3d_sew} (Left), if we call \link Combinatoria
 
 The following high level operations are defined. All these methods ensure that given a valid combinatorial map and a possible operation, the modified combinatorial map is also valid.
 
-The first one is `cm.`\link GenericMap::remove_cell `remove_cell<i>(dh0)`\endlink which modifies the combinatorial map to remove the <I>i</I>-cell containing dart `d0`, with 0 \f$ \leq \f$ <I>i</I>\f$ \leq \f$ <I>d</I>. This operation is possible  if <I>i</I>=<I>d</I> or if the given <I>i</I>-cell is incident to at most two <I>(i+1)</I>-cells which can be tested thanks to `cm.`\link GenericMap::is_removable `is_removable<i>(dh0)`\endlink. If the removed <I>i</I>-cell was incident to two different <I>(i+1)</I>-cells, these two cells are merged into one <I>(i+1)</I>-cell. In this case, the \link CellAttribute::On_merge `On_merge`\endlink functor is called if two <I>(i+1)</I>-attributes are associated to the two <I>(i+1)</I>-cells. If the <I>i</I>-cell is associated with a non void attribute, it is removed from the combinatorial map (see three examples on \cgalFigureRef{fig_cmap_insert_vertex}, \cgalFigureRef{fig_cmap_insert_edge} and \cgalFigureRef{fig_cmap_insert_facet}).
+The first one is `cm.`\link GenericMap::remove_cell `remove_cell<i>(d0)`\endlink which modifies the combinatorial map to remove the <I>i</I>-cell containing dart `d0`, with 0 \f$ \leq \f$ <I>i</I>\f$ \leq \f$ <I>d</I>. This operation is possible  if <I>i</I>=<I>d</I> or if the given <I>i</I>-cell is incident to at most two <I>(i+1)</I>-cells which can be tested thanks to `cm.`\link GenericMap::is_removable `is_removable<i>(d0)`\endlink. If the removed <I>i</I>-cell was incident to two different <I>(i+1)</I>-cells, these two cells are merged into one <I>(i+1)</I>-cell. In this case, the \link CellAttribute::On_merge `On_merge`\endlink functor is called if two <I>(i+1)</I>-attributes are associated to the two <I>(i+1)</I>-cells. If the <I>i</I>-cell is associated with a non void attribute, it is removed from the combinatorial map (see three examples on \cgalFigureRef{fig_cmap_insert_vertex}, \cgalFigureRef{fig_cmap_insert_edge} and \cgalFigureRef{fig_cmap_insert_facet}).
 
 \cgalFigureBegin{fig_cmap_insert_vertex,cmap_insert_vertex.svg}
 Example of \link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1`\endlink and \link GenericMap::remove_cell `remove_cell<0>`\endlink operations. Left: Initial combinatorial map. Right: After the insertion of a 0-cell in the 1-cell containing dart `d1`. Now if we remove the 0-cell containing dart `d2`, we obtain the initial combinatorial map.
@@ -354,21 +377,23 @@ Example of \link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1`\e
 
 The inverse operation of the removal is the insertion operation. Several versions exist, sharing a common principle. They consist in adding a new <I>i</I>-cell <em>inside</em> an existing <I>j</I>-cell, <I>i</I>\f$ <\f$<I>j</I>, by splitting the <I>j</I>-cell into several <I>j</I>-cells. Contrary to `remove_cell<i>`, is it not possible to define a unique `insert_cell_i_in_cell_j<i,j>` function because parameters are different depending on `i` and `j`.
 
-`cm.`\link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1(dh0)`\endlink adds a 0-cell in the 1-cell containing dart `d0`. The 1-cell is split in two. This operation is possible if `d0`\f$ \in \f$ \link GenericMap::darts `cm.darts()`\endlink (see example on \cgalFigureRef{fig_cmap_insert_vertex}).
+`cm.`\link GenericMap::insert_cell_0_in_cell_1 `insert_cell_0_in_cell_1(d0)`\endlink adds a 0-cell in the 1-cell containing dart `d0`. The 1-cell is split in two. This operation is possible if `d0`\f$ \in \f$ \link GenericMap::darts `cm.darts()`\endlink (see example on \cgalFigureRef{fig_cmap_insert_vertex}).
 
-`cm.`\link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2(dh0)`\endlink adds a 0-cell in the 2-cell containing dart `d0`. The 2-cell is split in triangles, one for each initial edge of the facet. This operation is possible if `d0`\f$ \in \f$ \link GenericMap::darts `cm.darts()`\endlink (see example on \cgalFigureRef{fig_cmap_triangulation}).
+`cm.`\link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2(d0)`\endlink adds a 0-cell in the 2-cell containing dart `d0`. The 2-cell is split in triangles, one for each initial edge of the facet. This operation is possible if `d0`\f$ \in \f$ \link GenericMap::darts `cm.darts()`\endlink (see example on \cgalFigureRef{fig_cmap_triangulation}).
 
 \cgalFigureBegin{fig_cmap_triangulation,cmap_triangulation.svg}
 Example of \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink operation.
 \cgalFigureEnd
 
-`cm.`\link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2(dh1,dh2)`\endlink adds a 1-cell in the 2-cell containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cell is split in two. This operation is possible if <I>d1</I>\f$ \in \f$ \f$ \langle{}\f$\f$ \beta_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to `cm.`\link GenericMap::is_insertable_cell_1_in_cell_2 `is_insertable_cell_1_in_cell_2(dh1,dh2)`\endlink. In the example on \cgalFigureRef{fig_cmap_insert_edge}, it is possible to insert an edge between darts <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge between <I>d1</I> and <I>d3</I>.
+`cm.`\link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2(d1,d2)`\endlink adds a 1-cell in the 2-cell containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cell is split in two. This operation is possible if <I>d1</I>\f$ \in \f$ \f$ \langle{}\f$\f$ \beta_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to `cm.`\link GenericMap::is_insertable_cell_1_in_cell_2 `is_insertable_cell_1_in_cell_2(d1,d2)`\endlink. In the example on \cgalFigureRef{fig_cmap_insert_edge}, it is possible to insert an edge between darts <I>d2</I> and <I>d3</I>, but it is not possible to insert an edge between <I>d1</I> and <I>d3</I>.
 
 \cgalFigureBegin{fig_cmap_insert_edge,cmap_insert_edge.svg}
 Example of \link GenericMap::insert_cell_1_in_cell_2 `insert_cell_1_in_cell_2`\endlink and \link GenericMap::remove_cell `remove_cell<1>`\endlink operations. Left: Initial combinatorial map. Right: After the insertion of two 1-cells: a first one between the two 0-cells containing darts `d2` and `d3`, and a second one incident to the 0-cell containing dart `d1`. Now if we remove the two 1-cells containing darts `d4` and `d5`, we obtain the initial combinatorial map.
 \cgalFigureEnd
 
-`cm.`\link GenericMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2(dh0)`\endlink adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`.  This operation is possible if `d0`\f$ \in \f$ \link GenericMap::darts `cm.darts()`\endlink.
+`cm.`\link GenericMap::insert_dangling_cell_1_in_cell_2 `insert_dangling_cell_1_in_cell_2(d0)`\endlink adds a 1-cell in the 2-cell containing dart `d0`, the 1-cell being attached by only one of its vertex to the 0-cell containing dart `d0`.  This operation is possible if `d0`\f$ \in \f$ \link GenericMap::darts `cm.darts()`\endlink.
+
+`cm.`\link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2(d1,d2)`\endlink adds a 1-cell between the two faces containing containing darts `d1` and `d2`, between the two 0-cells containing darts `d1` and `d2`. The 2-cells are merged in one. This operation is possible if <I>d1</I>\f$ \not \in \f$ \f$ \langle{}\f$\f$ \beta_1\f$\f$ \rangle{}\f$(<I>d2</I>) which can be tested thanks to `cm.`\link GenericMap::is_insertable_cell_1_between_two_cells_2 `is_insertable_cell_1_between_two_cells_2(d1,d2)`\endlink.
 
 `cm.`\link GenericMap::insert_cell_2_in_cell_3 `insert_cell_2_in_cell_3(itbegin,itend)`\endlink adds a 2-cell in the 3-cell containing all the darts between `itbegin` and `itend`, along the path of 1-cells containing darts in [`itbegin`,`itend`). The 3-cell is split in two. This operation is possible if all the  darts in [`itbegin`,`itend`) form a closed path inside a same 3-cell  which can be tested thanks to `cm.`\link GenericMap::is_insertable_cell_2_in_cell_3 `is_insertable_cell_2_in_cell_3(itbegin,itend)`\endlink (see example on \cgalFigureRef{fig_cmap_insert_facet}).
 
@@ -385,7 +410,7 @@ If \link GenericMap::set_automatic_attributes_management `set_automatic_attribut
 
 \subsection ssecexample3DCM A 3D Combinatorial Map
 
-In this example, a 3-dimensional combinatorial map is constructed. Two combinatorial tetrahedra are created, then the numbers of cells of the combinatorial map are displayed, and the validity of the combinatorial map is checked. Then, we illustrate the use of ranges to iterate over specific darts. The first loop enumerates all the darts of the first tetrahedron by using the range \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range<1,2>`\endlink, and the second loop enumerates all the darts of the facet containing dart `dh2` by using the range \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range<1>`\endlink.
+In this example, a 3-dimensional combinatorial map is constructed. Two combinatorial tetrahedra are created, then the numbers of cells of the combinatorial map are displayed, and the validity of the combinatorial map is checked. Then, we illustrate the use of ranges to iterate over specific darts. The first loop enumerates all the darts of the first tetrahedron by using the range \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range<1,2>`\endlink, and the second loop enumerates all the darts of the facet containing dart `d2` by using the range \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range<1>`\endlink.
 
 \cgalExample{Combinatorial_map/map_3_simple_example.cpp}
 
@@ -393,18 +418,18 @@ The output is:
 \verbatim
 #Darts=24, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2, valid=1
 Number of darts of the first tetrahedron: 12
-Number of darts of the facet containing dh2: 3
+Number of darts of the facet containing d2: 3
 \endverbatim
 
 which gives the number of darts of the combinatorial map, the numbers of different cells, the number of connected components, and finally a Boolean showing the validity of the combinatorial map (a tetrahedron is made up of 12 darts because there are 3 darts per facet and there are 4 facets).
 
-Note the creation in the for loops of the two instances of \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range`\endlink::`const_iterator`: `it` is the current iterator, and `itend` an iterator to the end of the range. Having `itend` avoids calling \link GenericMap::darts_of_orbit `cm.darts_of_orbit<1,2>(dh1)`\endlink`.end()` again and again as in the following example (which is a bad solution):
+Note the creation in the for loops of the two instances of \link GenericMap::Dart_of_orbit_range `Dart_of_orbit_range`\endlink::`const_iterator`: `it` is the current iterator, and `itend` an iterator to the end of the range. Having `itend` avoids calling \link GenericMap::darts_of_orbit `cm.darts_of_orbit<1,2>(d1)`\endlink`.end()` again and again as in the following example (which is a bad solution):
 
 \code{.cpp}
 
 for (CMap_3::Dart_of_orbit_range<1,2>::const_iterator
-     it(cm.darts_of_orbit<1,2>(dh1).begin());
-     it!=cm.darts_of_orbit<1,2>(dh1).end()); ++it)
+     it(cm.darts_of_orbit<1,2>(d1).begin());
+     it!=cm.darts_of_orbit<1,2>(d1).end()); ++it)
 {...}
 
 \endcode
@@ -432,6 +457,24 @@ The second line is the result after the removal operations. We retrieve the orig
 \cgalFigureBegin{fig_cmap_example_insertions,cmap_example_insertions.svg}
 Example of high level operations. Left: Initial 3D combinatorial map after the creation of the combinatorial hexahedron. Middle: Combinatorial map obtained after the two 1-cell insertions. The two 2-cells were split in two. Right: Combinatorial map obtained after the 2-cell insertion. The 3-cell was split in two.
 \cgalFigureEnd
+
+\subsection Combinatorial_mapInsertion Insert an Edge Between Two Different Faces
+
+\anchor ssecexempleinsertion
+
+This example shows the use of \link GenericMap::insert_cell_1_between_two_cells_2 `insert_cell_1_between_two_cells_2`\endlink operation. First we create a combinatorial hexahedron and a face with 4 edges. This face is inserted in the face of the hexahedron containing dart d1. We display the characteristics of the combinatorial map and check its validity. Then we count and display the number of 2-free darts.
+
+\cgalExample{Combinatorial_map/map_3_insert.cpp}
+
+The output is:
+\verbatim
+#Darts=30, #0-cells=12, #1-cells=17, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+Number of 2-free darts: 4
+\endverbatim
+
+We can verify that there are 6 2-cells after the insertion since the squared face was inserted as a hole in one face of the hexahedron. We can also see that there are 4 2-free darts, which are the darts of the squared face. Since they bound an hole, there is no face filling the hole and thus 4 darts are 2-free.
+
+See also a similar example for Linear cell complex \ref Linear_cell_complexInsert "Insert an Edge Between Two Different Faces".
 
 \subsection Combinatorial_mapA4DGenericMap A 4D Combinatorial Map
 
@@ -475,10 +518,15 @@ Step 2 defines the onsplit and onmerge dynamic functors. We can see here that wi
 
 The next operations will call these functors when 2-cells are split or merged. The \link CombinatorialMap::sew `sew<3>`\endlink operation calls 1 onmerge as two faces are identified; the \link GenericMap::insert_cell_0_in_cell_2 `insert_cell_0_in_cell_2`\endlink operation calls 3 onsplit as one face is split in 4.
 
-Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the fonctor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
+Lastly we remove the dynamic onmerge functor (step 7). This is done by initializing the functor to a default boost::function. After this initialization, no dynamic merge functor is called when two faces are merged.
 
 \cgalExample{Combinatorial_map/map_3_dynamic_onmerge.cpp}
 
+\subsection ssecexample3DCMWI 3D Combinatorial Map Using Indices
+
+In this example, a 3-dimensional combinatorial map is used, but using indices instead of handles. Two vectors are created to store some external information associated with darts and 3-attributes. Since descriptors are indices, they can directly be used to access elements of the vector.
+
+\cgalExample{Combinatorial_map/map_3_index.cpp}
 
 \section sec_definition Mathematical Definitions
 
@@ -514,7 +562,7 @@ Let <I>d0</I>\f$ \in \f$ <I>D</I> be a dart. Given <I>i</I>, 1 \f$ \leq \f$ <I>i
 
 \section Combinatorial_mapDesign Design and Implementation History
 
-The code of this package is inspired by Moka, a 3D topological modeler mainly developed by Fr&eacute;d&eacute;ric Vidil and Guillaume Damiand (<A HREF="http://moka-modeller.sourceforge.net/">http://moka-modeller.sourceforge.net/</A>). However, Moka was based on Generalized maps (and not Combinatorial maps), and the design was not \cgal "compatible". Thus, Guillaume Damiand started to develop a totally new package by mixing ideas taken from Moka with the design of the Halfedge data structure package of \cgal. Andreas Fabri and S&eacute;bastien Loriot contributed to the design, the coding, and to the documentation of the package, and Laurent Rineau helped for the design. Emma Michel contributed to the manual. Monique Teillaud and Bernd G&auml;rtner contributed to the manual by giving useful remarks, really numerous and detailed for Monique. Ken Arroyo Ohori contributed to the two reverse orientation functions.
+The code of this package is inspired by Moka, a 3D topological modeler mainly developed by Fr&eacute;d&eacute;ric Vidil and Guillaume Damiand (see https://projet.liris.cnrs.fr/moka/index.php and https://github.com/gdamiand/moka). However, Moka was based on Generalized maps (and not Combinatorial maps), and the design was not \cgal "compatible". Thus, Guillaume Damiand started to develop a totally new package by mixing ideas taken from Moka with the design of the Halfedge data structure package of \cgal. Andreas Fabri and S&eacute;bastien Loriot contributed to the design, the coding, and to the documentation of the package, and Laurent Rineau helped for the design. Emma Michel contributed to the manual. Monique Teillaud and Bernd G&auml;rtner contributed to the manual by giving useful remarks, really numerous and detailed for Monique. Ken Arroyo Ohori contributed to the two reverse orientation functions.
 
 */
 } /* namespace CGAL */

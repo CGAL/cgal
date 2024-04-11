@@ -19,7 +19,7 @@ if (NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif ()
 
-# create our output directroy
+# create our output directory
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/Build)
   file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build)
 endif ()

@@ -26,7 +26,7 @@ configure()
 {
   echo "Configuring... "
   
-  if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+  if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} -DRUNNING_CGAL_AUTO_TEST=TRUE  \
                                      -DCGAL_DIR="$CGAL_DIR" \
                                      .' ; then
                                      
@@ -149,6 +149,7 @@ hole_filling_plugin \
 hole_filling_sm_plugin \
 hole_filling_polyline_plugin \
 inside_out_plugin \
+interpolated_corrected_principal_curvatures_plugin\
 surface_intersection_plugin \
 surface_intersection_sm_plugin \
 io_image_plugin \
@@ -161,7 +162,6 @@ mean_curvature_flow_skeleton_plugin \
 mean_curvature_flow_skeleton_sm_plugin \
 merge_point_sets_plugin \
 mesh_2_plugin \
-mesh_2_plugin \
 mesh_3_optimization_plugin \
 mesh_3_plugin \
 mesh_segmentation_plugin \
@@ -172,6 +172,7 @@ nef_plugin \
 off_plugin \
 off_to_nef_plugin \
 offset_meshing_plugin \
+alpha_wrap_3_plugin \
 orient_soup_plugin \
 parameterization_plugin \
 pca_plugin \

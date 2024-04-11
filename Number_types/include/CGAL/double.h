@@ -125,7 +125,7 @@ inline double sse2fabs(double a)
   static CGAL_ALIGN_16 const union{
     __int64 i[2];
     __m128d m;
-  } absMask = {0x7fffffffffffffff, 0x7fffffffffffffff};
+  } absMask = { {0x7fffffffffffffff, 0x7fffffffffffffff} };
 
   __m128d temp = _mm_set1_pd(a);
 

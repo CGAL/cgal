@@ -4,7 +4,7 @@ option(CGAL_DEV_MODE
   "Activate the CGAL developers mode. See https://github.com/CGAL/cgal/wiki/CGAL_DEV_MODE"
   $ENV{CGAL_DEV_MODE})
 
-if(RUNNING_CGAL_AUTO_TEST)
+if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
 # Just to avoid a warning from CMake if that variable is set on the command line...
 endif()
 
@@ -17,17 +17,12 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     message( FATAL_ERROR "CMAKE_ROOT environment variable not set. It should point to the directory where CMake is installed.")
   endif()
 
-  # CMAKE_VERSION was introduced in 2.6.3 so we use it to detect the fact
-  if ( CMAKE_VERSION )
-    set( CMAKE_2_6_3_OR_ABOVE TRUE )
-  else()
-    set( CMAKE_2_6_3_OR_ABOVE FALSE )
-  endif()
-
   if ( WIN32 )
     find_program(CMAKE_UNAME uname /bin /usr/bin /usr/local/bin )
     if(CMAKE_UNAME)
-      exec_program(uname ARGS -s OUTPUT_VARIABLE CMAKE_SYSTEM_NAME2)
+      execute_process(COMMAND uname -s
+                      OUTPUT_STRIP_TRAILING_WHITESPACE
+                      OUTPUT_VARIABLE CMAKE_SYSTEM_NAME2)
       if ( CMAKE_SYSTEM_NAME2 MATCHES "CYGWIN" )
         message( STATUS "This is the Windows CMake running within the cygwin platform." )
         set( CGAL_WIN32_CMAKE_ON_CYGWIN TRUE CACHE INTERNAL "This is the cygwin platform." )

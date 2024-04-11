@@ -18,18 +18,22 @@ of denominator, are not `Modularizable`.
 This is due to the fact that the denominator may be zero modulo the prime,
 which can not be represented.
 
-\cgalHasModel `int`
-\cgalHasModel `long`
-\cgalHasModel `CORE::BigInt`
-\cgalHasModel `CGAL::Gmpz`
-\cgalHasModel `leda_integer`
-\cgalHasModel `mpz_class`
+\cgalHasModelsBegin
+\cgalHasModels{int}
+\cgalHasModels{long}
+\cgalHasModels{CORE::BigInt}
+\cgalHasModels{CGAL::Gmpz}
+\cgalHasModels{leda_integer}
+\cgalHasModels{mpz_class}
+\cgalHasModelsEnd
 
 The following types are `Modularizable` iff their template arguments are.
 
-\cgalHasModel `CGAL::Lazy_exact_nt<NT>`
-\cgalHasModel `CGAL::Sqrt_extension<NT,ROOT>`
-\cgalHasModel `CGAL::Polynomial<Coeff>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Lazy_exact_nt<NT>}
+\cgalHasModels{CGAL::Sqrt_extension<NT,ROOT>}
+\cgalHasModels{CGAL::Polynomial<Coeff>}
+\cgalHasModelsEnd
 
 \sa `CGAL::Residue`
 \sa `CGAL::Modular_traits<T>`

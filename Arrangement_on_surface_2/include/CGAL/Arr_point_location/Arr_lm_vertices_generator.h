@@ -98,14 +98,13 @@ public:
   virtual void build_landmark_set()
   {
     // Go over the arrangement, and insert all its vertices as landmarks.
-    NN_Point_list         nnp_list;
-    const Arrangement_2*  arr = this->arrangement();
-    Vertex_const_iterator vit;
+    NN_Point_list nnp_list;
+    const auto* arr = this->arrangement();
     num_landmarks = 0;
-    for (vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
+    for (auto vit = arr->vertices_begin(); vit != arr->vertices_end(); ++vit) {
       Vertex_const_handle vh = vit;
       nnp_list.push_back(NN_Point_2(vh->point(), this->pl_make_result(vh)));
-      num_landmarks++;
+      ++num_landmarks;
     }
 
     // Update the search structure.

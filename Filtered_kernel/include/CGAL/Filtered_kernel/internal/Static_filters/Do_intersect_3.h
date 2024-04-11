@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-// inspired from http://cag.csail.mit.edu/~amy/papers/box-jgt.pdf
+// inspired from https://people.csail.mit.edu/amy/papers/box-jgt.pdf
 
 namespace CGAL {
 
@@ -509,6 +509,8 @@ public:
             (pts[i][1] >= b.ymin() && pts[i][1] <= b.ymax()) &&
             (pts[i][2] >= b.zmin() && pts[i][2] <= b.zmax()) )
         {
+          // If any of the three points of the triangle is inside the bbox,
+          // then the box and triangle intersect.
           return true;
         }
 
@@ -518,6 +520,21 @@ public:
       {
         return Base::operator()(t,b);
       }
+    }
+
+    // If the bbox of the triangle does not intersect `b`, then the bbox and
+    // the triangle do not intersect.
+    for(int i=0; i< 3; ++i) {
+      double triangle_bbox_min = pts[0][i];
+      double triangle_bbox_max = triangle_bbox_min;
+      for(int j=1; j<3; ++j) {
+        if(pts[j][i] < triangle_bbox_min)
+          triangle_bbox_min = pts[j][i];
+        if(pts[j][i] > triangle_bbox_max)
+          triangle_bbox_max = pts[j][i];
+      }
+      if(triangle_bbox_min > b.max_coord(i) || triangle_bbox_max < b.min_coord(i))
+        return false;
     }
 
     // copy of the regular code with do_axis_intersect_aux_impl statically filtered

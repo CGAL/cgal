@@ -3,29 +3,29 @@ namespace CGAL {
 /*!
 \ingroup nt_ralgebraic
 
-An instance of this class represents an extension of the type `NT` by *one* square root of the type `ROOT`.
+An instance of this class represents an extension of the type `NT` by *one* square root of the type `Root`.
 
-`NT` is required to be constructible from `ROOT`.
+`NT` is required to be constructible from `Root`.
 
 `NT` is required to be an `IntegralDomainWithoutDivision`.
 
 `Sqrt_extension` is `RealEmbeddable` if NT is `RealEmbeddable`.
 
-For example, let `Integer` be some type representing \f$ \Z\f$, then
-`Sqrt_extension<Integer,Integer>` is able to represent \f$ \Z[\sqrt{\mathrm{root}}]\f$
-for some arbitrary Integer \f$\mathrm{root}\f$. \cgalFootnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="http://mathworld.wolfram.com/ExtensionRing.html"><TT>http://mathworld.wolfram.com/ExtensionRing.html</TT></A>}
+For example, let `Integer` be some type representing \f$ \mathbb{Z}\f$, then
+`Sqrt_extension<Integer,Integer>` is able to represent \f$ \mathbb{Z}[\sqrt{\mathrm{root}}]\f$
+for some arbitrary Integer \f$\mathrm{root}\f$. \cgalFootnote{\f$ R[a]\f$ denotes the extension of a ring \f$ R\f$ by an element \f$ a\f$. See also: <A HREF="https://mathworld.wolfram.com/ExtensionRing.html">\cgalFootnoteCode{https://mathworld.wolfram.com/ExtensionRing.html}</A>}
 The value of \f$\mathrm{root}\f$ is set at
 construction time, or set to zero if it is not specified.
 
-Arithmetic operations among different extensions, say \f$ \Z[\sqrt{a}]\f$
-and \f$ \Z[\sqrt{b}]\f$, are not supported.
-The result would be in \f$ \Z[\sqrt{a},\sqrt{b}]\f$, which is not
+Arithmetic operations among different extensions, say \f$ \mathbb{Z}[\sqrt{a}]\f$
+and \f$ \mathbb{Z}[\sqrt{b}]\f$, are not supported.
+The result would be in \f$ \mathbb{Z}[\sqrt{a},\sqrt{b}]\f$, which is not
 representable by `Sqrt_extension<Integer,Integer>`.
 
 \attention The user is responsible to check that arithmetic operations are carried out for elements from the same extensions only.
-
 This is not tested by `Sqrt_extension` for efficiency reasons.
 A violation of the precondition leads to undefined behavior.
+
 Be aware that for efficiency reasons the given \f$\mathrm{root}\f$ is stored as it is given to
 the constructor. In particular, an extension by a square root of a square is
 considered as an extension.
@@ -78,7 +78,7 @@ NT
 </TABLE>
 
 The extension of a `UniqueFactorizationDomain` or
-`EuclideanRing` is just an `IntegralDomain`, since the extension in general destroys the unique factorization property. For instance consider \f$ \Z[\sqrt{10}]\f$, the extension of \f$ \Z\f$ by \f$ \sqrt{10}\f$: in \f$ \Z[\sqrt{10}]\f$ the element 10 has two different factorizations \f$ \sqrt{10} \cdot \sqrt{10}\f$ and \f$ 2 \cdot 5\f$. In particular, the factorization is not unique.
+`EuclideanRing` is just an `IntegralDomain`, since the extension in general destroys the unique factorization property. For instance consider \f$ \mathbb{Z}[\sqrt{10}]\f$, the extension of \f$ \mathbb{Z}\f$ by \f$ \sqrt{10}\f$: in \f$ \mathbb{Z}[\sqrt{10}]\f$ the element 10 has two different factorizations \f$ \sqrt{10} \cdot \sqrt{10}\f$ and \f$ 2 \cdot 5\f$. In particular, the factorization is not unique.
 
 If `NT` is a model of `RealEmbeddable` the type `Sqrt_extension` is also considered as `RealEmbeddable`. However, by default it is not allowed to compare values from different extensions for efficiency reasons. In case such a comparison becomes necessary, use the member function compare with the according Boolean flag.
 If such a comparison is a very frequent case, override the default of `DifferentExtensionComparable` by giving \cgalTagTrue as third template parameter. This effects the behavior of compare functions as well as the compare operators.
@@ -87,14 +87,16 @@ The fourth template argument, `FilterPredicates`, triggers an internal filter th
 
 In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as `FilterPredicates` have no effect.
 
-\cgalModels `Assignable`
-\cgalModels `CopyConstructible`
-\cgalModels `DefaultConstructible`
-\cgalModels `EqualityComparable`
-\cgalModels `ImplicitInteroperable` with int
-\cgalModels `ImplicitInteroperable` with NT
-\cgalModels `Fraction` if NT is a `Fraction`
-\cgalModels `RootOf_2`
+\cgalModelsBareBegin
+\cgalModelsBare{`Assignable`}
+\cgalModelsBare{`CopyConstructible`}
+\cgalModelsBare{`DefaultConstructible`}
+\cgalModelsBare{`EqualityComparable`}
+\cgalModelsBare{`ImplicitInteroperable` with `int`}
+\cgalModelsBare{`ImplicitInteroperable` with `NT`}
+\cgalModelsBare{`Fraction` if NT is a `Fraction`}
+\cgalModelsBare{`RootOf_2`}
+\cgalModelsBareEnd
 
 \sa `IntegralDomainWithoutDivision`
 \sa `IntegralDomain`
@@ -104,7 +106,7 @@ In case `NT` is not `RealEmbeddable`, `DifferentExtensionComparable` as well as 
 \sa \cgalTagFalse
 
 */
-template< typename NT, typename ROOT,
+template< typename NT, typename Root,
           typename DifferentExtensionComparable = Tag_false,
           typename FilterPredicates = Tag_false>
 class Sqrt_extension {
@@ -148,7 +150,7 @@ Sqrt_extension (int a0, int a1, int r);
 /*!
 General constructor: `ext`\f$ = a0 + a1 \cdot sqrt(r)\f$. \pre \f$ r \neq0\f$
 */
-Sqrt_extension (NT a0, NT a1, ROOT r);
+Sqrt_extension (NT a0, NT a1, Root r);
 
 /// @}
 
@@ -172,10 +174,10 @@ const NT & a1 () const ;
 /*!
 Const access operator for root
 */
-const ROOT &         root () const;
+const Root &         root () const;
 
 /*!
-Returns true in case root of `ext` is not zero.
+Returns `true` in case root of `ext` is not zero.
 
 Note that \f$ a1 == 0 \f$ does not imply \f$ \mathrm{root} == 0\f$.
 */
@@ -192,7 +194,7 @@ of `ext`. see also: `AlgebraicStructureTraits::Simplify`.
 void         simplify ();
 
 /*!
-returns true if `ext` represents the value zero.
+returns `true` if `ext` represents the value zero.
 */
 bool         is_zero () const;
 
@@ -326,19 +328,19 @@ In case the mode is `CGAL::IO::ASCII` the format is `EXT[a0,a1,root]`.
 
 In case the mode is `CGAL::IO::PRETTY` the format is human readable.
 
-\attention `operator>>` must be defined for `ROOT` and `NT`.
+\attention `operator>>` must be defined for `Root` and `NT`.
 
 \relates Sqrt_extension
 */
-std::ostream& operator<<(std::ostream& os, const Sqrt_extension<NT,ROOT> &ext);
+std::ostream& operator<<(std::ostream& os, const Sqrt_extension<NT,Root> &ext);
 
 /*!
 reads `ext` from istream `is` in format `EXT[a0,a1,root]`, the output format in mode `CGAL::IO::ASCII`
 
-\attention `operator<<` must be defined exist for `ROOT` and `NT`.
+\attention `operator<<` must be defined exist for `Root` and `NT`.
 
 \relates Sqrt_extension
 */
-std::istream& operator>>(std::istream& is, const Sqrt_extension<NT,ROOT> &ext);
+std::istream& operator>>(std::istream& is, const Sqrt_extension<NT,Root> &ext);
 
 } /* end namespace CGAL */

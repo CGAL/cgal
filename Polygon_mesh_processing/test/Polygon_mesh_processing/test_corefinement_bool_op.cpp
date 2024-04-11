@@ -1,9 +1,10 @@
 // #define CGAL_COREFINEMENT_POLYHEDRA_DEBUG
 // #define CGAL_COREFINEMENT_DEBUG
+#define  CGAL_USE_DERIVED_SURFACE_MESH
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <vector>
@@ -13,9 +14,17 @@
 #include <CGAL/iterator.h>
 #include <CGAL/array.h>
 
+#include <CGAL/Testsuite/DerivedSurfaceMesh.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel              Kernel;
-typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
+typedef Kernel::Point_3 Point_3;
+
+
+#ifdef CGAL_USE_DERIVED_SURFACE_MESH
+typedef CGAL::Testsuite::DerivedSurfaceMesh<Point_3> Surface_mesh;
+#else
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
+#endif
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 namespace CFR = PMP::Corefinement;
@@ -88,7 +97,7 @@ void run_boolean_operations(
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 
-  typedef boost::optional<Surface_mesh*> OSM;
+  typedef std::optional<Surface_mesh*> OSM;
 
   std::array<OSM,4> output;
 
@@ -272,22 +281,43 @@ int main(int argc,char** argv)
     return 1;
   }
 
-  Result_checking rc;
-
-  if (argc==8)
+  if (argc>8 && (argc-1)%7==0)
   {
-    rc.check=true;
-    rc.union_res = atoi(argv[4])!=0;
-    rc.inter_res = atoi(argv[5])!=0;
-    rc.P_minus_Q_res = atoi(argv[6])!=0;
-    rc.Q_minus_P_res = atoi(argv[7])!=0;
+    // cmd mode
+    for (int i=0;i<argc-1;i+=7)
+    {
+      std::cout << "Running test #" << (i/7)+1 << "\n";
+      Result_checking rc;
+      rc.check=true;
+      rc.union_res = atoi(argv[i+4])!=0;
+      rc.inter_res = atoi(argv[i+5])!=0;
+      rc.P_minus_Q_res = atoi(argv[i+6])!=0;
+      rc.Q_minus_P_res = atoi(argv[i+7])!=0;
+          int scenario = -1;
+      if (std::string(argv[i+3])!=std::string("ALL"))
+        scenario = atoi(argv[i+3]);
+      run<Surface_mesh>(argv[i+1], argv[i+2], scenario, rc);
+    }
   }
+  else
+  {
+    Result_checking rc;
 
-  int scenario = -1;
-  if (argc>=5 && std::string(argv[3])!=std::string("ALL"))
-    scenario = atoi(argv[4]);
+    if (argc==8)
+    {
+      rc.check=true;
+      rc.union_res = atoi(argv[4])!=0;
+      rc.inter_res = atoi(argv[5])!=0;
+      rc.P_minus_Q_res = atoi(argv[6])!=0;
+      rc.Q_minus_P_res = atoi(argv[7])!=0;
+    }
 
-  run<Surface_mesh>(argv[1], argv[2], scenario, rc);
+    int scenario = -1;
+    if (argc>=5 && std::string(argv[3])!=std::string("ALL"))
+      scenario = atoi(argv[3]);
+
+    run<Surface_mesh>(argv[1], argv[2], scenario, rc);
+  }
 
   return 0;
 }

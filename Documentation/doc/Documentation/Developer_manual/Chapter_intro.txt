@@ -169,7 +169,7 @@ complexity are known. Also, the theoretic interest in efficiency for
 realistic inputs, as opposed to worst-case situations, is
 growing \cgalCite{v-ffrim-97}.
 For practical purposes, insight into the constant factors hidden in the
-\f$ O\f$-notation is necessary, especially if there are several competing
+\cgalBigO{&nbsp;}-notation is necessary, especially if there are several competing
 algorithms.
 
 Therefore, different implementations should be supplied if there is

@@ -17,7 +17,7 @@
 \cgalPkgDescriptionBegin{Optimal Bounding Box,PkgOptimalBoundingBox}
 \cgalPkgPicture{optimal_bounding_box.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Konstantinos Katrioplas, Mael Rouxel-Labbé}
+\cgalPkgAuthors{Konstantinos Katrioplas and Mael Rouxel-Labbé}
 \cgalPkgDesc{This package provides functions to compute tight oriented bounding boxes around a point set or a polygon mesh.}
 \cgalPkgManuals{Chapter_Building_Optimal_Bounding_Box,PkgOptimalBoundingBoxRef}
 \cgalPkgSummaryEnd

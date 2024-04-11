@@ -7,9 +7,7 @@
 namespace ArrDirectionalTraits {}
 
 /*!
-  \code
-  #include <CGAL/draw_polygon_set_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_polygon_set_2.h}
 */
 /// \defgroup PkgDrawPolygonSet2 Draw a 2D Polygon Set
 /// \ingroup PkgBooleanSetOperations2Ref
@@ -71,6 +69,8 @@ containment predicates.
 - \link boolean_connect_holes `CGAL::connect_holes()` \endlink
 
 \cgalCRPSection{Draw a Polygon_set_2}
-- \link  PkgDrawPolygonSet2 CGAL::draw<PS>() \endlink
+- \link PkgDrawPolygonSet2 CGAL::draw<PS>() \endlink
+- `GraphicsSceneOptionsPolygonSet2`
+- `CGAL::Graphics_scene_options_polygon_set_2`
 
 */

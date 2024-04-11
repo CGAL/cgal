@@ -18,6 +18,7 @@
 #define CGAL_HANDLE_H
 
 #include <cstddef>
+#include <cstdint>
 #include <atomic>
 #include <CGAL/Handle_for.h>
 #include <CGAL/assertions.h>
@@ -122,7 +123,7 @@ class Handle
     int
     refs()  const noexcept { return PTR->count.load(std::memory_order_relaxed); }
 
-    Id_type id() const noexcept { return PTR - static_cast<Rep*>(0); }
+    Id_type id() const noexcept { return static_cast<Id_type>(reinterpret_cast<std::intptr_t>(static_cast<void*>(PTR)) / sizeof(Rep)); }
 
     bool identical(const Handle& h) const noexcept { return PTR == h.PTR; }
 

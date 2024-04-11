@@ -6,9 +6,7 @@
 This `AdaptableUnaryFunction` computes the derivative of a
 `PolynomialTraits_d::Polynomial_d` with respect to one variable.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

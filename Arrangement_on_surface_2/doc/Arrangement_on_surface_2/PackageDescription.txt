@@ -46,6 +46,12 @@ namespace ArrTraits {}
 /// \defgroup PkgArrangementOnSurface2Funcs Free Functions
 /// \ingroup PkgArrangementOnSurface2Ref
 
+/*!
+\cgalInclude{CGAL/draw_arrangement_2.h}
+*/
+/// \defgroup PkgArrangementOnSurface2Draw Drawing
+/// \ingroup PkgArrangementOnSurface2Ref
+
 /// \defgroup PkgArrangementOnSurface2Insert CGAL::insert()
 /// \ingroup PkgArrangementOnSurface2Funcs
 
@@ -123,7 +129,6 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrangementTraits_2`
 - `ArrangementHorizontalSideTraits_2`
 - `ArrangementVerticalSideTraits_2`
-- `ArrangementClosedIdentifiedVerticalTraits_2`
 - `ArrangementIdentifiedVerticalTraits_2`
 - `ArrangementIdentifiedHorizontalTraits_2`
 - `ArrangementOpenBoundaryTraits_2`
@@ -177,6 +182,7 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::CompareYOnBoundary_2`
 - `ArrTraits::CompareXNearBoundary_2`
 - `ArrTraits::CompareYNearBoundary_2`
+- `ArrTraits::CompareXOnBoundaryOfCurveEnd_2`
 - `ArrTraits::Intersect_2`
 - `ArrTraits::Split_2`
 - `ArrTraits::AreMergeable_2`
@@ -193,11 +199,13 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arrangement_2<Traits,Dcel>`
 - `CGAL::Arrangement_with_history_2<Traits,Dcel>`
 - `CGAL::Arr_accessor<Arrangement>`
-- `CGAL::Arr_observer<Arrangement>`
+- `CGAL::Aos_observer<ArrangementOnSurface_2>`
+- `CGAL::Arr_observer<Arrangement_2>`
 - `CGAL::Arrangement_2::Vertex`
 - `CGAL::Arrangement_2::Halfedge`
 - `CGAL::Arrangement_2::Face`
 - `CGAL::Arr_dcel_base<V,H,F>`
+- `CGAL::Arr_dcel<Traits,V,H,F>`
 - `CGAL::Arr_default_dcel<Traits>`
 - `CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>`
 - `CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>`
@@ -230,9 +238,7 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
 - `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
-
-\cgalCRPSection{Macros}
-- \link CGAL_ARR_POINT_LOCATION_VERSION `CGAL_ARR_POINT_LOCATION_VERSION` \endlink
+- `CGAL::CORE_algebraic_number_traits`
 
 \cgalCRPSection{Functions}
 
@@ -251,5 +257,8 @@ implemented as peripheral classes or as free (global) functions.
 - `CGAL::remove_curve()`
 - \link PkgArrangementOnSurface2op_left_shift `CGAL::operator<<` \endlink
 - \link PkgArrangementOnSurface2op_right_shift `CGAL::operator<<` \endlink
+
+\cgalCRPSection{Draw an `Arrangemen_2` object}
+- \link  PkgArrangementOnSurface2Draw CGAL::draw<>() \endlink
 
 */

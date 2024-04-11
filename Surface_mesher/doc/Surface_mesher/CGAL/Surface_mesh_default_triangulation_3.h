@@ -10,7 +10,7 @@ are models of the concepts
 `SurfaceMeshVertexBase_3` and
 `SurfaceMeshCellBase_3` respectively.
 
-\cgalModels `SurfaceMeshTriangulation_3`
+\cgalModels{SurfaceMeshTriangulation_3}
 
 \sa `Surface_mesh_complex_2_in_triangulation_3<Tr>`
 \sa `make_surface_mesh`

@@ -2,7 +2,7 @@ cgal (4.2-1) unstable; urgency=low
 
   The Qt4 support library libCGAL_Qt4.so.10.0.0 has been moved from the package
   libcgal10 to the new package libcgal-qt4-10. Similarly, the corresponding
-  headers and the static library have been moved from the pacakge libcgal-dev
+  headers and the static library have been moved from the package libcgal-dev
   to the new package libcgal-qt4-dev. That is the packages libcgal10 and
   libcgal-dev do not any longer depend on the Qt packages.
 

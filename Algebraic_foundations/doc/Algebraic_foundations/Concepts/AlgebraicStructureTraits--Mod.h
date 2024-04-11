@@ -7,7 +7,7 @@ namespace AlgebraicStructureTraits_ {
 
 `AdaptableBinaryFunction` computes the remainder of division with remainder.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `AlgebraicStructureTraits`
 \sa `AlgebraicStructureTraits_::Div`

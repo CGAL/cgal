@@ -63,7 +63,10 @@ int main(int argc, char* argv[])
            <<" base point homotopic with path p3 (orange)."<<std::endl;
 
   if (draw)
-  { CGAL::draw(sm, {p1, p2, p3}); }
+  {
+    auto cycles={p1, p2, p3};
+    CGAL::draw(sm, cycles);
+  }
 
   return EXIT_SUCCESS;
 }

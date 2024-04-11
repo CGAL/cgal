@@ -37,7 +37,7 @@
 namespace CGAL {
 
 /*!
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PkgPolygonMeshProcessingRef
  * This class provides methods to perform some intersection tests between triangle meshes
  * that undergo affine transformations (rotation, translation, and scaling).
  * Meshes are added to an internal set and are referenced using an id assigned when added to the set.
@@ -176,6 +176,8 @@ public:
     : m_free_id(0)
   {}
 
+  Rigid_triangle_mesh_collision_detection(const Rigid_triangle_mesh_collision_detection&) = default;
+
   //! move constructor
   Rigid_triangle_mesh_collision_detection(Rigid_triangle_mesh_collision_detection&& other)
   {
@@ -190,6 +192,8 @@ public:
       if (m_own_aabb_trees[id]) delete m_aabb_trees[id];
     }
   }
+
+  Rigid_triangle_mesh_collision_detection& operator=(Rigid_triangle_mesh_collision_detection& other) = default;
 
   //! move assignment operator
   Rigid_triangle_mesh_collision_detection& operator=(Rigid_triangle_mesh_collision_detection&& other)
@@ -246,7 +250,7 @@ public:
   {
     // handle vpm
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion( (boost::is_same<Local_vpm,Vpm>::value) );
+    static_assert(std::is_same<Local_vpm,Vpm>::value);
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -256,7 +260,7 @@ public:
     CGAL_assertion( m_aabb_trees[id] == nullptr );
     m_is_closed[id] = is_closed(tm);
     m_own_aabb_trees[id] = true;
-    Tree* t = new Tree(boost::begin(faces(tm)), boost::end(faces(tm)), tm, vpm);
+    Tree* t = new Tree(std::begin(faces(tm)), std::end(faces(tm)), tm, vpm);
     t->build();
     m_aabb_trees[id] = t;
     m_traversal_traits[id] = Traversal_traits(m_aabb_trees[id]->traits());
@@ -558,7 +562,7 @@ public:
         parameters::get_parameter(np, internal_np::apply_per_connected_component), true);
 
     typedef typename CGAL::GetVertexPointMap<TriangleMesh, NamedParameters>::const_type Local_vpm;
-    CGAL_static_assertion((boost::is_same<Local_vpm,Vpm>::value));
+    static_assert(std::is_same<Local_vpm,Vpm>::value);
 
     Vpm vpm =
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -575,7 +579,7 @@ public:
 
       std::size_t nb_cc =
         Polygon_mesh_processing::connected_components(
-          tm, bind_property_maps(fid_map, make_property_map(cc_ids)),
+          tm, make_compose_property_map(fid_map, make_property_map(cc_ids)),
           parameters::face_index_map(fid_map));
       if (nb_cc != 1)
       {
@@ -596,7 +600,7 @@ public:
       }
     }
     // only one CC
-    points.push_back( get(vpm, *boost::begin(vertices(tm))) );
+    points.push_back( get(vpm, *std::begin(vertices(tm))) );
   }
 
  /*!

@@ -1,0 +1,31 @@
+name: Send Email using SSH
+
+on:
+  workflow_call:
+    inputs:
+      message:
+        description: 'Message to send'
+        required: true
+        type: string
+    secrets:
+      email:
+        required: true
+      private_key:
+        required: true
+      user:
+        required: true
+      host:
+        required: true
+
+jobs:
+  send_email:
+    runs-on: ubuntu-latest
+    steps:
+    - name: install ssh keys
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.private_key }}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.host }} > ~/.ssh/known_hosts
+    - name: send email via ssh
+      run: |
+        echo -e '${{ inputs.message }}' | ssh  ${{ secrets.user }}@${{ secrets.host }} "/sbin/sendmail -t ${{ secrets.email }}"

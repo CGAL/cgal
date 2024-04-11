@@ -13,72 +13,64 @@
 
 #include <CGAL/license/Straight_skeleton_2.h>
 
-#include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
+#include <type_traits>
 
 namespace CGAL {
 namespace CGAL_SS_i {
 
-// to distinguish between SequenceContainers of points, and GeneralPolygonWithHoles_2
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Hole_const_iterator)
+// Polygon_2-type container
+template <typename Poly>
+inline typename Poly::const_iterator
+vertices_begin(const Poly& aPoly,
+               std::enable_if_t<!has_Hole_const_iterator<Poly>::value>* = nullptr)
+{ return aPoly.begin(); }
 
-// Generic container
-template<class Poly>
-inline typename Poly::const_iterator vertices_begin ( Poly const& aPoly )
-{ return aPoly.begin() ; }
+template <typename Poly>
+inline typename Poly::const_iterator
+vertices_end(const Poly& aPoly,
+             std::enable_if_t<!has_Hole_const_iterator<Poly>::value>* = nullptr)
+{ return aPoly.end(); }
 
-template<class Poly>
-inline typename Poly::const_iterator vertices_end ( Poly const& aPoly )
-{ return aPoly.end() ; }
+template <typename Poly>
+inline typename Poly::const_iterator
+vertices_begin(const std::shared_ptr<Poly>& aPoly,
+               std::enable_if_t<!has_Hole_const_iterator<Poly>::value>* = nullptr)
+{ return aPoly->begin(); }
 
-template<class Poly>
-inline typename Poly::const_iterator vertices_begin ( boost::shared_ptr<Poly> const& aPoly )
-{ return aPoly->begin() ; }
+template <typename Poly>
+inline typename Poly::const_iterator
+vertices_end(const std::shared_ptr<Poly> & aPoly,
+             std::enable_if_t<!has_Hole_const_iterator<Poly>::value>* = nullptr)
+{ return aPoly->end(); }
 
-template<class Poly>
-inline typename Poly::const_iterator vertices_end ( boost::shared_ptr<Poly> const& aPoly )
-{ return aPoly->end() ; }
+// Polygon_with_holes_2-type container
+template <typename PolyWithHoles>
+inline typename PolyWithHoles::Polygon_2::const_iterator
+vertices_begin(const PolyWithHoles& aPoly,
+               std::enable_if_t<has_Hole_const_iterator<PolyWithHoles>::value>* = nullptr)
+{ return aPoly.outer_boundary().begin(); }
 
-// Polygon_2
-template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator
-vertices_begin ( Polygon_2<K,C> const& aPoly )
-{ return aPoly.vertices_begin() ; }
+template <typename PolyWithHoles>
+inline typename PolyWithHoles::Polygon_2::const_iterator
+vertices_end(const PolyWithHoles& aPoly,
+             std::enable_if_t<has_Hole_const_iterator<PolyWithHoles>::value>* = nullptr)
+{ return aPoly.outer_boundary().end(); }
 
-template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator
-vertices_end( Polygon_2<K,C> const& aPoly )
-{ return aPoly.vertices_end() ; }
+template <typename PolyWithHoles>
+inline typename PolyWithHoles::Polygon_2::const_iterator
+vertices_begin(const std::shared_ptr<PolyWithHoles>& aPoly,
+               std::enable_if_t<has_Hole_const_iterator<PolyWithHoles>::value>* = nullptr)
+{ return aPoly->outer_boundary().begin(); }
 
-template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_begin ( boost::shared_ptr<Polygon_2<K,C> > const& aPoly )
-{ return aPoly->vertices_begin() ; }
-
-template<class K, class C>
-inline typename Polygon_2<K,C>::Vertex_const_iterator vertices_end( boost::shared_ptr<Polygon_2<K,C> > const& aPoly )
-{ return aPoly->vertices_end() ; }
-
-// Polygon_with_holes_2
-template<class K, class C>
-inline typename Polygon_with_holes_2<K,C>::Polygon_2::Vertex_const_iterator
-vertices_begin ( Polygon_with_holes_2<K,C> const& aPoly )
-{ return aPoly.outer_boundary().vertices_begin() ; }
-
-template<class K, class C>
-inline typename Polygon_with_holes_2<K,C>::Polygon_2::Vertex_const_iterator
-vertices_end( Polygon_with_holes_2<K,C> const& aPoly )
-{ return aPoly.outer_boundary().vertices_end() ; }
-
-template<class K, class C>
-inline typename Polygon_with_holes_2<K,C>::Polygon_2::Vertex_const_iterator
-vertices_begin ( boost::shared_ptr<Polygon_with_holes_2<K,C> > const& aPoly )
-{ return aPoly->outer_boundary().vertices_begin() ; }
-
-template<class K, class C>
-inline typename Polygon_with_holes_2<K,C>::Polygon_2::Vertex_const_iterator
-vertices_end( boost::shared_ptr<Polygon_with_holes_2<K,C> > const& aPoly )
-{ return aPoly->outer_boundary().vertices_end() ; }
+template <typename PolyWithHoles>
+inline typename PolyWithHoles::Polygon_2::const_iterator
+vertices_end(const std::shared_ptr<PolyWithHoles>& aPoly,
+             std::enable_if_t<has_Hole_const_iterator<PolyWithHoles>::value>* = nullptr)
+{ return aPoly->outer_boundary().end(); }
 
 } // namespace CGAL_SS_i
 } // namespace CGAL

@@ -114,13 +114,13 @@ public:
     auto obj = p_arr->topology_traits()->locate_curve_end(cv, ind, ps_x, ps_y);
 
     // Return a handle to the DCEL feature.
-    DFace** f_p = boost::get<DFace*>(&obj);
+    DFace** f_p = std::get_if<DFace*>(&obj);
     if (f_p) return (Pl_result::make_result(p_arr->_const_handle_for(*f_p)));
 
-    DHalfedge** he_p = boost::get<DHalfedge*>(&obj);
+    DHalfedge** he_p = std::get_if<DHalfedge*>(&obj);
     if (he_p) return (Pl_result::make_result(p_arr->_const_handle_for(*he_p)));
 
-    DVertex** v_p = boost::get<DVertex*>(&obj);
+    DVertex** v_p = std::get_if<DVertex*>(&obj);
     if (v_p) return (Pl_result::make_result(p_arr->_const_handle_for(*v_p)));
 
     // We should never reach here:
@@ -430,7 +430,7 @@ public:
    * Insert an x-monotone curve into the arrangement, such that one of its
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex. The other
-   * endpoint corrsponds to a free vertex (a newly created vertex or an
+   * endpoint corresponds to a free vertex (a newly created vertex or an
    * isolated vertex).
    * \param he_to The reference halfedge. We should represent cv as a pair
    *              of edges, one of them should become he_to's successor.
@@ -619,7 +619,7 @@ public:
   /*!
    * Split a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param p The split point.
    * \param cv1 The curve that should be associated with the first split edge,
    *            whose source equals e's source and its target is p.
@@ -641,7 +641,7 @@ public:
   /*!
    * Split a given edge into two at the given vertex, and associate the given
    * x-monotone curves with the split edges.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
    * \param cv1 The curve that should be associated with the first split edge,
    *            whose source equals e's source and its target is v's point.
@@ -663,7 +663,7 @@ public:
 
   /*!
    * Split a fictitious edge at the given vertex.
-   * \param e The edge to split (one of the pair of twin halfegdes).
+   * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
    * \return A handle for the first split halfedge, whose source equals the
    *         source of e, and whose target is the split vertex v.
@@ -792,7 +792,7 @@ public:
   const Dcel& dcel() const { return (p_arr->_dcel()); }
 
   /*!
-   * Clear the entire arrangment.
+   * Clear the entire arrangement.
    */
   void clear_all()
   {

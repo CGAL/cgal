@@ -83,13 +83,16 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
                                                   tester=tester_name,
                                                   platform=platform_name), 'a+') as results:
     for label, tests in tests_per_label.items():
-        counts={"n": 0, "w": 0, "t": 0}
+        counts={"n": 0, "w": 0, "t": 0, "o": 0}
         result_for_label='y'
         with open_file_create_dir("{}/error.txt".format(label), 'w') as error:
             for t in tests:
                 print("   {result} {name} in {time} s : {value} ".format(result = "successful " if (t['Status'] == 'passed') else "ERROR:     ", name = t['Name'], value = t['ExitValue'] if(t['ExitValue'] != "") else "SUCCESS" , time = t['ExecutionTime']), file=error)
                 if t['Status'] != 'passed':
-                    counts["n"]+=1
+                    if t['ExitValue'] == "Timeout":
+                        counts["o"]+=1
+                    else:
+                        counts["n"]+=1
                 elif t['Output'] != None and w_det.search(t['Output']):
                     entries = re.split("\n+", t['Output'])
                     for entry in entries:
@@ -108,6 +111,8 @@ with open_file_create_dir(result_file_name.format(dir=os.getcwd(),
 
             if counts["n"] > 0:
                 result_for_label='n'
+            elif counts["o"] > 0:
+                result_for_label='o'
             elif counts["w"] > 0:
                 result_for_label='w'
             elif counts["t"] > 0:

@@ -56,7 +56,7 @@ class Nef_nary_union_3 {
       return empty;
     while(queue.size() > 1)
       unite();
-    inserted = 0;
+    inserted = 1;
     return queue.front();
   }
 };

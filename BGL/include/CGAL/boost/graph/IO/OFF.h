@@ -22,8 +22,6 @@
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
-#include <boost/utility/enable_if.hpp>
-
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -155,7 +153,7 @@ bool read_OFF(std::istream& is,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
               )
 {
@@ -239,7 +237,7 @@ bool read_OFF(const std::string& fname,
               Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
               )
 {
@@ -365,7 +363,7 @@ bool write_OFF(std::ostream& os,
                const Graph& g,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
                )
 {
@@ -439,7 +437,7 @@ bool write_OFF(const std::string& fname,
                const Graph& g,
                const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::disable_if<internal::is_Point_set_or_Range_or_Iterator<Graph> >::type* = nullptr
+               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
                )
 {

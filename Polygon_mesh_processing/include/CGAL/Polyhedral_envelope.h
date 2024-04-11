@@ -194,7 +194,7 @@ private:
 
     template <class Point>
     Plane(const Point& p, const Point& q, const Point& r,
-          typename std::enable_if<!std::is_same<Point,ePoint_3>::value>::type* = 0)
+          std::enable_if_t<!std::is_same<Point,ePoint_3>::value>* = 0)
       : ep(p.x(),p.y(),p.z()), eq(q.x(),q.y(),q.z()), er(r.x(),r.y(),r.z()), eplane(ep,eq,er)
     {}
     ePoint_3 ep, eq, er;
@@ -355,9 +355,10 @@ public:
    *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor`
    *                    as key type and `double` as value type}
    *     \cgalParamDefault{Use `epsilon` for all faces}
+   *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
-   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   * \note The triangle mesh gets copied internally, that is it can be modified after having passed as argument,
    *       while the queries are performed
    */
   template <typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -403,7 +404,7 @@ public:
       else
         deg_faces.insert(f);
     }
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
       init(epsilon);
     else
     {
@@ -457,7 +458,7 @@ public:
    *   \cgalParamNEnd
    * \cgalNamedParamsEnd
    *
-   * \note The triangle mesh gets copied internally, that is it can be modifed after having passed as argument,
+   * \note The triangle mesh gets copied internally, that is it can be modified after having passed as argument,
    *       while the queries are performed
    */
   template <typename FaceRange, typename TriangleMesh, typename NamedParameters = parameters::Default_named_parameters>
@@ -466,7 +467,7 @@ public:
                       double epsilon,
                       const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                      , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+                      , std::enable_if_t<!boost::has_range_const_iterator<TriangleMesh>::value>* = 0
 #endif
   )
   {
@@ -512,7 +513,7 @@ public:
         deg_faces.insert(f);
     }
 
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
       init(epsilon);
     else
     {
@@ -556,6 +557,7 @@ public:
     *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is `Point_3` and whose key
     *                    is the value type of `PointRange::const_iterator`}
     *     \cgalParamDefault{`CGAL::Identity_property_map`}
+    *   \cgalParamNEnd
     *   \cgalParamNBegin{face_epsilon_map}
     *     \cgalParamDescription{a property map associating to each triangle an epsilon value}
     *     \cgalParamType{a class model of `ReadablePropertyMap` with `std::size_t` as key type and `double` as value type}
@@ -570,7 +572,7 @@ public:
                       double epsilon,
                       const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                      , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
+                      , std::enable_if_t<boost::has_range_const_iterator<TriangleRange>::value>* = 0
 #endif
                       )
   {
@@ -595,8 +597,10 @@ public:
       env_faces.emplace_back(face);
     }
 
-    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>())
+    if (is_default_parameter<NamedParameters, internal_np::face_epsilon_map_t>::value)
+    {
       init(epsilon);
+    }
     else
     {
       std::vector<double> epsilon_values;
@@ -821,7 +825,7 @@ private:
     for (unsigned int i = 0; i < cutp.size(); i++){
       const Plane& plane_i = prism[cutp[i]];
 
-      boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line, plane_i.eplane);
+      std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line, plane_i.eplane);
       if(! op){
         std::cout <<  "there must be an intersection 2" << std::endl;
       }
@@ -860,7 +864,11 @@ private:
   Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(const ePoint_3 &ip,
                                                           const std::vector<unsigned int> &prismindex, const unsigned int &jump, int &id) const
   {
-    Oriented_side ori;
+    Oriented_side ori = ON_POSITIVE_SIDE; // The compiler sees the
+                                          // possibility that the
+                                          // nested for loop body is
+                                          // not executed and warns that
+                                          // ori may not be initialized
 
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -942,7 +950,7 @@ private:
       }
 
       for (unsigned int j = 0; j < cidl.size(); j++) {
-        boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line,
+        std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line,
                                                                                   halfspace[prismindex[queue[i]]][cidl[j]].eplane);
         const ePoint_3& ip = *op;
         inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id
@@ -1024,7 +1032,7 @@ private:
 
 
   bool
-  is_two_facets_neighbouring(const unsigned int & pid, const unsigned int &i, const unsigned int &j)const
+  is_two_facets_neighboring(const unsigned int & pid, const unsigned int &i, const unsigned int &j)const
   {
     std::size_t facesize = halfspace[pid].size();
     if (i == j) return false;
@@ -1038,6 +1046,9 @@ private:
     if (j == 2 && i == facesize - 1) return true;
     return false;
   }
+  CGAL_DEPRECATED bool
+  is_two_facets_neighbouring(const unsigned int & pid, const unsigned int &i, const unsigned int &j)const
+  { return is_two_facets_neighboring(pid, i, j); }
 
 
   int
@@ -1131,7 +1142,7 @@ private:
           const Plane& plane_i = prism[cutp[i]];
           const eLine_3& eline = *(seg[k]);
 
-          boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline, plane_i.eplane);
+          std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline, plane_i.eplane);
           if(! op){
 #ifdef CGAL_ENVELOPE_DEBUG
             std::cout <<  "there must be an intersection 6" << std::endl;
@@ -1179,7 +1190,7 @@ private:
               continue;
 
             if (true /* USE_ADJACENT_INFORMATION*/ ) {
-              bool neib = is_two_facets_neighbouring(cindex, cutp[i], cutp[j]);
+              bool neib = is_two_facets_neighboring(cindex, cutp[i], cutp[j]);
               if (neib == false) continue;
             }
 
@@ -1216,7 +1227,7 @@ private:
 
             }
 
-            boost::optional<ePoint_3>  ipp = intersection_point_for_polyhedral_envelope(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            std::optional<ePoint_3>  ipp = intersection_point_for_polyhedral_envelope(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(ipp){
                 inter = is_3_triangle_cut_float_fast(etri0, etri1, etri2,
                                                      n,
@@ -1287,7 +1298,7 @@ private:
                       const int &prismid, const unsigned int &faceid)const
   {
     for (unsigned int i = 0; i < halfspace[prismid].size(); i++) {
-      /*bool neib = is_two_facets_neighbouring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbour facets are coplanar
+      /*bool neib = is_two_facets_neighboring(prismid, i, faceid);// this works only when the polyhedron is convex and no two neighbor facets are coplanar
         if (neib == false) continue;*/
       if (i == faceid) continue;
       if(oriented_side(halfspace[prismid][i].eplane, ip) == ON_POSITIVE_SIDE){
@@ -1656,7 +1667,7 @@ private:
           if (!cut) continue;
 
           for (unsigned int j = 0; j < cidl.size(); j++) {
-            boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
+            std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
                                                                                       halfspace[prismindex[queue[i]]][cidl[j]].eplane);
             const ePoint_3& ip = *op;
             inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(ip, idlist, jump1, check_id);
@@ -1714,11 +1725,11 @@ private:
     idlist.emplace_back(filtered_intersection[queue[0]]);// idlist contains the id in prismid//it is fine maybe it is not really intersected
     coverlist[queue[0]] = 1 ;//when filtered_intersection[i] is already in the cover list, coverlist[i]=true
 
-    std::vector<unsigned int> neighbours;//local id
+    std::vector<unsigned int> neighbors;//local id
     std::vector<unsigned int > list;
-    std::vector<std::vector<unsigned int>*> neighbour_facets;
+    std::vector<std::vector<unsigned int>*> neighbor_facets;
     std::vector<std::vector<unsigned int>>  idlistorder;
-    std::vector<int> neighbour_cover;
+    std::vector<int> neighbor_cover;
     idlistorder.emplace_back(intersect_face[queue[0]]);
 
     for (unsigned int i = 0; i < queue.size(); i++) {
@@ -1740,7 +1751,7 @@ private:
           }
           // now we know that there exists an intesection point
 
-          boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
+          std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
                                                                                     halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);
           const ePoint_3& ip = *op;
 
@@ -1802,14 +1813,14 @@ private:
 
       localtree.all_intersected_primitives(bounding_boxes[jump1], std::back_inserter(list));
 
-      neighbours.resize(list.size());
-      neighbour_facets.resize(list.size());
-      neighbour_cover.resize(list.size());
+      neighbors.resize(list.size());
+      neighbor_facets.resize(list.size());
+      neighbor_cover.resize(list.size());
       for (unsigned int j = 0; j < list.size(); j++) {
-        neighbours[j] = filtered_intersection[list[j]];
-        neighbour_facets[j] = &(intersect_face[list[j]]);
-        if (coverlist[list[j]] == 1) neighbour_cover[j] = 1;
-        else neighbour_cover[j] = 0;
+        neighbors[j] = filtered_intersection[list[j]];
+        neighbor_facets[j] = &(intersect_face[list[j]]);
+        if (coverlist[list[j]] == 1) neighbor_cover[j] = 1;
+        else neighbor_cover[j] = 0;
       }
 
       for (unsigned int j = 0; j < i; j++) {
@@ -1823,7 +1834,7 @@ private:
 
             // We moved the intersection here
             // In case there is no intersection point we continue
-            boost::optional<ePoint_3>
+            std::optional<ePoint_3>
               op = intersection_point_for_polyhedral_envelope(etriangle_eplane,
                                                               halfspace[jump1][intersect_face[queue[i]][k]].eplane,
                                                               halfspace[jump2][intersect_face[queue[j]][h]].eplane);
@@ -1856,7 +1867,7 @@ private:
             if (inter == 1) {
 
 
-              inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip, neighbours, neighbour_facets, neighbour_cover, jump1, jump2, check_id);
+              inter = Implicit_Tri_Facet_Facet_interpoint_Out_Prism_return_local_id_with_face_order_jump_over(ip, neighbors, neighbor_facets, neighbor_cover, jump1, jump2, check_id);
 
 
               if (inter == 1) {
@@ -2102,7 +2113,7 @@ private:
     }
     ePoint_3 origin(env_vertices[env_faces[i][0]].x(), env_vertices[env_faces[i][0]].y(),env_vertices[env_faces[i][0]].z());
     Surface_mesh<ePoint_3> esm;
-    halfspace_intersection_3(eplanes.begin(),eplanes.end(),esm , boost::make_optional(origin));
+    halfspace_intersection_3(eplanes.begin(),eplanes.end(),esm , std::make_optional(origin));
 
     copy_face_graph(esm,sm);
   }
@@ -2226,7 +2237,7 @@ public:
   operator()(const TriangleMesh& tmesh,
              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<!boost::has_range_const_iterator<TriangleMesh>::value>::type* = 0
+             , std::enable_if_t<!boost::has_range_const_iterator<TriangleMesh>::value>* = 0
 #endif
     ) const
   {
@@ -2318,7 +2329,7 @@ public:
   bool
   operator()(const TriangleRange& triangle_range
 #ifndef DOXYGEN_RUNNING
-             , typename std::enable_if<boost::has_range_const_iterator<TriangleRange>::value>::type* = 0
+             , std::enable_if_t<boost::has_range_const_iterator<TriangleRange>::value>* = 0
 #endif
     ) const
   {

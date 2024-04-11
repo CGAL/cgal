@@ -22,9 +22,9 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Dimension.h>
-#include <boost/utility/enable_if.hpp>
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/integral_c.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -321,6 +321,17 @@ collinear_are_strictly_ordered_along_line(
   return k.collinear_are_strictly_ordered_along_line_3_object()(p, q, r);
 }
 
+template < class K >
+inline
+typename K::Comparison_result
+compare_angle(const typename K::Point_3& a,
+              const typename K::Point_3& b,
+              const typename K::Point_3& c,
+              const typename K::FT& cosine,
+              const K& k)
+{
+  return k.compare_angle_3_object()(a, b, c, cosine);
+}
 
 template < class K >
 inline
@@ -379,12 +390,11 @@ compare_dihedral_angle(const typename K::Vector_3& ab1,
 
 template <class K, class T1, class T2, class T3>
 inline
-typename boost::enable_if<
+std::enable_if_t<
   boost::mpl::equal_to<boost::mpl::integral_c<int,
                                               Ambient_dimension<T1>::type::value>,
-                       boost::mpl::integral_c<int, 3> >,
+                       boost::mpl::integral_c<int, 3> >::value,
   typename K::Comparison_result>
-::type
   // boost::mpl::equal_to<typename Ambient_dimension<T1>::type,
   //                      boost::mpl::int_<3> >,
   // typename K::Comparison_result>::type
@@ -397,12 +407,11 @@ compare_distance(const T1 &o1,
 
 template <class K, class T1, class T2, class T3, class T4>
 inline
-typename boost::enable_if<
+std::enable_if_t<
   boost::mpl::equal_to<boost::mpl::integral_c<int,
                                               Ambient_dimension<T1>::type::value>,
-                       boost::mpl::integral_c<int, 3> >,
+                       boost::mpl::integral_c<int, 3> >::value,
   typename K::Comparison_result>
-::type
   // boost::mpl::equal_to<typename Ambient_dimension<T1>::type,
   //                      boost::mpl::int_<3> >,
   // typename K::Comparison_result>::type
@@ -1101,6 +1110,22 @@ squared_area(const typename K::Point_3 &p,
              const typename K::Point_3 &r, const K &k)
 {
   return k.compute_squared_area_3_object()(p, q, r);
+}
+
+template <typename K>
+inline
+typename K::FT
+squared_length(const typename K::Vector_3 &v, const K &k)
+{
+  return k.compute_squared_length_3_object()(v);
+}
+
+template <typename K>
+inline
+typename K::FT
+squared_length(const typename K::Segment_3 &s, const K &k)
+{
+  return k.compute_squared_length_3_object()(s);
 }
 
 template < class K >

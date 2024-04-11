@@ -1,4 +1,7 @@
 Algebraic_foundations
+Arithmetic_kernel
+CGAL_Core
+Cartesian_kernel
 Circulator
 Convex_hull_2
 Distance_2

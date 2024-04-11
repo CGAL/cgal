@@ -26,8 +26,7 @@
 #define CGAL_REPLACEMENT_HEADER "<CGAL/AABB_halfedge_graph_segment_primitive.h>"
 #include <CGAL/Installation/internal/deprecation_warning.h>
 
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_same.hpp>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -43,7 +42,7 @@ namespace CGAL {
     /// AABB tree is built should not be deleted while the AABB tree
     /// is in use.
     ///
-    /// \cgalModels `AABBPrimitive`
+    /// \cgalModels{AABBPrimitive}
     /// \tparam GeomTraits must provide a \c %Point_3
     /// type, used as \c Point, and a \c %Segment_3 type, used as \c
     /// Datum and constructible from two arguments of type \c
@@ -80,9 +79,9 @@ namespace CGAL {
             : m_halfedge_handle(*ptr)  { };
         template <class Iterator>
         AABB_polyhedron_segment_primitive( Iterator it,
-                                           typename boost::enable_if<
-                                                      boost::is_same<Id,typename Iterator::value_type>
-                                            >::type* =0
+                                           std::enable_if_t<
+                                                      std::is_same<Id,typename Iterator::value_type>::value
+                                            >* =0
         ) : m_halfedge_handle(*it)  { }
 
         AABB_polyhedron_segment_primitive(const Self& primitive)

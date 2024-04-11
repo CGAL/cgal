@@ -18,7 +18,7 @@
 #include <CGAL/license/TDS_2.h>
 
 
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 template < class T = void >
@@ -39,13 +39,13 @@ class Triangulation_cw_ccw_2
 public:
   static int ccw(const int i)
     {
-      CGAL_triangulation_precondition( i >= 0 && i < 3);
+      CGAL_precondition( i >= 0 && i < 3);
       return ccw_map[i];
     }
 
   static int cw(const int i)
     {
-      CGAL_triangulation_precondition( i >= 0 && i < 3);
+      CGAL_precondition( i >= 0 && i < 3);
       return cw_map[i];
     }
 };

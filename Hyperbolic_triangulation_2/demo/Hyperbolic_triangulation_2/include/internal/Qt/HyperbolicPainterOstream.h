@@ -60,8 +60,8 @@ private:
 
   PainterOstream& operator<<(const Euclidean_segment_2& seg)
   {
-    const typename K::Point_2 & source = seg.source();
-    const typename K::Point_2 & target = seg.target();
+    const Point_2 & source = seg.source();
+    const Point_2 & target = seg.target();
 
     QPointF src(to_double(source.x()), to_double(source.y()));
     QPointF tgt(to_double(target.x()), to_double(target.y()));
@@ -78,22 +78,22 @@ public:
 
   using Base::operator <<;
 
-  PainterOstream& operator << (Hyperbolic_segment_2 s)
+  PainterOstream& operator<<(const Hyperbolic_segment_2& s)
   {
-    if(const Euclidean_segment_2* seg = boost::get<Euclidean_segment_2>(&s)) {
-                CGAL::Qt::PainterOstream<K>::operator << (*seg);
+    if(const Euclidean_segment_2* seg = std::get_if<Euclidean_segment_2>(&s)) {
+      CGAL::Qt::PainterOstream<K>::operator << (*seg);
       return *this;
     }
 
-    Circular_arc_2* arc = boost::get<Circular_arc_2>(&s);
+    const Circular_arc_2& arc = std::get<Circular_arc_2>(s);
 
-    if(arc->squared_radius() > 100) {
-      Euclidean_segment_2 seg(arc->source(), arc->target());
-          CGAL::Qt::PainterOstream<K>::operator << (seg);
+    if(arc.squared_radius() > 100) {
+      Euclidean_segment_2 seg(arc.source(), arc.target());
+      CGAL::Qt::PainterOstream<K>::operator << (seg);
       return *this;
     }
 
-    operator << (*arc);
+    operator<<(arc);
     return *this;
   }
 

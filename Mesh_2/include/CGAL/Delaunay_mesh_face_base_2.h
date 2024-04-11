@@ -19,7 +19,10 @@
 #include <CGAL/Constrained_Delaunay_triangulation_face_base_2.h>
 #include <CGAL/Has_timestamp.h>
 
+
+
 namespace CGAL {
+
 
 template <class Gt,
           class Fb = Constrained_Delaunay_triangulation_face_base_2<Gt> >

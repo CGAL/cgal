@@ -12,7 +12,7 @@ function are available.
 
 /*!
 \addtogroup do_intersect_linear_grp
-\ingroup do_intersect
+\ingroup do_intersect_grp
 
 \sa `do_intersect_circular_grp`
 \sa `do_intersect_spherical_grp`
@@ -79,7 +79,7 @@ function are available.
 
 /*!
 \addtogroup intersection_linear_grp
-\ingroup intersection
+\ingroup intersection_grp
 
 */
 /// @{
@@ -103,7 +103,7 @@ The following tables give the possible values for `Type1` and `Type2`.
 
 The return type of intersecting two objects of the types `Type1` and `Type2` can be
 specified through the placeholder type specifier `auto`. It is equivalent to
-`boost::optional< boost::variant< T... > >`, the last column in the table providing
+`std::optional< std::variant< T... > >`, the last column in the table providing
 the template parameter pack.
 
 <DIV ALIGN="CENTER">
@@ -193,7 +193,7 @@ the template parameter pack.
 </DIV>
 
 Additional overloads are provided for the type `Point_2` combined with any other type with the result type being
-`boost::optional< boost::variant< Point_2 > >`.
+`std::optional< std::variant< Point_2 > >`.
 Overloads are also provided for the type `Bbox_2`, for all
 intersections existing with the type `Iso_rectangle_2`. Note that the return type for `Bbox_2` - `Bbox_2`
  is `Bbox_2` and not `Iso_rectangle_2`.
@@ -202,7 +202,7 @@ intersections existing with the type `Iso_rectangle_2`. Note that the return typ
 
 The return type of intersecting two objects of the types `Type1` and `Type2` can be
 specified through the placeholder type specifier `auto`. It is equivalent to
-`boost::optional< boost::variant< T... > >`, the last column in the table providing
+`std::optional< std::variant< T... > >`, the last column in the table providing
 the template parameter pack.
 
 <DIV ALIGN="CENTER">
@@ -351,7 +351,7 @@ the template parameter pack.
 </DIV>
 
 Additional overloads are provided for the type `Point_3` combined with any other type with the result type being
-`boost::optional< boost::variant< Point_3 > >`. Overloads are also provided for the type `Bbox_3`, for all
+`std::optional< std::variant< Point_3 > >`. Overloads are also provided for the type `Bbox_3`, for all
 intersections existing with the type `Iso_cuboid_3`. Note that the return type for `Bbox_3` - `Bbox_3`
  is `Bbox_3` and not `Iso_cuboid_3`.
 
@@ -363,18 +363,18 @@ The following examples demonstrate the most common use of
 
 In the first two examples we intersect a segment and a line.
 The result type can be specified through the placeholder type specifier `auto`,
-but you must anyway know that the result type is a `boost::optional<boost::variant<..> >`,
+but you must anyway know that the result type is a `std::optional<std::variant<..> >`,
 in order to unpack the point or segment.
 
-<A HREF="https://www.boost.org/libs/optional/">`boost::optional`</A> comes in
-as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A> comes in
+<A HREF="https://www.boost.org/libs/optional/">`std::optional`</A> comes in
+as there might be no intersection. <A HREF="https://www.boost.org/libs/variant/">`std::variant`</A> comes in
 as, if there is an intersection, it is either a point or a segment.
 
-As explained in the boost manual pages for <A HREF="https://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
+As explained in the boost manual pages for <A HREF="https://www.boost.org/libs/variant/">`std::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
 
 \cgalExample{Kernel_23/intersection_get.cpp}
 
-The second example uses `boost::apply_visitor`.
+The second example uses `std::visit`.
 
 \cgalExample{Kernel_23/intersection_visitor.cpp}
 

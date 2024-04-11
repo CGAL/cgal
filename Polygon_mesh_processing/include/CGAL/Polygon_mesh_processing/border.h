@@ -19,13 +19,13 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <unordered_set>
 #include <set>
+#include <type_traits>
 
 namespace CGAL{
 namespace Polygon_mesh_processing {
@@ -144,8 +144,10 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   }//end namespace internal
 
   /*!
-  \ingroup PkgPolygonMeshProcessingRef
-  * collects the border halfedges of a surface patch defined as a face range.
+  * \ingroup PkgPolygonMeshProcessingRef
+  *
+  * \brief collects the border halfedges of a surface patch defined as a face range.
+  *
   * For each returned halfedge `h`, `opposite(h, pmesh)` belongs to a face of the patch,
   * but `face(h, pmesh)` does not belong to the patch.
   *
@@ -173,6 +175,8 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   * \cgalNamedParamsEnd
   *
   * @returns `out`
+  *
+  * @see `extract_boundary_cycles()`
   */
   template<typename PolygonMesh
          , typename FaceRange
@@ -233,6 +237,7 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   }
 
   /// @ingroup PkgPolygonMeshProcessingRef
+  ///
   /// extracts boundary cycles as a list of halfedges, with one halfedge per border.
   ///
   /// @tparam PolygonMesh a model of `HalfedgeListGraph`
@@ -242,10 +247,12 @@ std::size_t border_size(typename boost::graph_traits<PolygonMesh>::halfedge_desc
   /// @param pm a polygon mesh
   /// @param out an output iterator where the border halfedges will be put
   ///
+  /// @see `border_halfedges()`
+  ///
   /// @todo It could make sense to also return the length of each cycle.
   /// @todo It should probably go into BGL package (like the rest of this file).
   template <typename PolygonMesh, typename OutputIterator>
-  OutputIterator extract_boundary_cycles(PolygonMesh& pm,
+  OutputIterator extract_boundary_cycles(const PolygonMesh& pm,
                                          OutputIterator out)
   {
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;

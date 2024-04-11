@@ -23,7 +23,7 @@ namespace CGAL
 
 /**
  * @class Special case for ray/segment-triangle
- * the only difference with the offical one (Listing_intersection_traits) is that
+ * the only difference with the official one (Listing_intersection_traits) is that
  * is the do_intersect which is made prior to the intersection call.
  */
 template<typename AABBTraits, typename Query, typename Output_iterator>
@@ -54,7 +54,7 @@ public:
 
     if ( GeomTraits().do_intersect_3_object()(query,
          primitive.datum(m_traits.shared_data())) ) {
-      boost::optional<Intersection_and_primitive_id> intersection
+      std::optional<Intersection_and_primitive_id> intersection
         = m_traits.intersection_object()(query, primitive);
       if(intersection) {
         *m_out_it++ = *intersection;

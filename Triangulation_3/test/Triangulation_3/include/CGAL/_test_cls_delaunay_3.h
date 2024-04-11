@@ -14,24 +14,24 @@
 #ifndef CGAL_TEST_CLS_DELAUNAY_C
 #define CGAL_TEST_CLS_DELAUNAY_C
 
-#include <cassert>
-#include <iostream>
-#include <fstream>
-#include <list>
-#include <vector>
-#include <type_traits>
-
-#include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
-
 #include "_test_cls_iterator.h"
 #include "_test_cls_circulator.h"
 #include "_test_remove_cluster.h"
 
-#include <CGAL/Random.h>
 #include <CGAL/Testsuite/use.h>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Testsuite/Triangulation_23/test_move_semantic.h>
+
+#include <CGAL/Random.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
+
+#include <boost/mpl/identity.hpp>
+
+#include <cassert>
+#include <iostream>
+#include <sstream>
+#include <list>
+#include <vector>
+#include <type_traits>
 
 // Accessory set of functions to differentiate between
 // Delaunay::nearest_vertex[_in_cell] and
@@ -92,22 +92,6 @@ nearest_vertex_in_cell(const T&t, const P&p, const typename T::Cell_handle c)
 {
   return nearest_vertex_in_cell(t, p, c, typename T::Weighted_tag());
 }
-
-// Template meta programming if.
-template < typename Cond, typename Then, typename Else >
-struct If;
-
-template < typename Then, typename Else >
-struct If <CGAL::Tag_true, Then, Else>
-{
-  typedef Then type;
-};
-
-template < typename Then, typename Else >
-struct If <CGAL::Tag_false, Then, Else>
-{
-  typedef Else type;
-};
 
 template < typename T, typename P >
 void test_conflicts(T& T3_13, const P *q)
@@ -221,6 +205,10 @@ _test_cls_delaunay_3(const Triangulation &)
   CGAL_USE_TYPE(Cell);
   CGAL_USE_TYPE(Vertex_iterator);
   CGAL_USE_TYPE(Cell_iterator);
+
+  CGAL_USE_TYPE(typename Cls::Periodic_tag);
+  CGAL_USE_TYPE(typename Cls::Weighted_tag);
+
   // +++ We define now some points for building triangulations +++++//
 
 // list of Points for T1_0 , T1_1, T1_2 :
@@ -305,12 +293,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT1("Test1_triangulation_IO_3",std::ios::out);
-        oFileT1 << T0 << std::endl;
-      }
-      std::ifstream iFileT1("Test1_triangulation_IO_3",std::ios::in);
-      iFileT1 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == -1);
       assert(Tfromfile.number_of_vertices() == 0);
@@ -326,12 +311,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT2("Test2_triangulation_IO_3",std::ios::out);
-        oFileT2 << T0 << std::endl;
-      }
-      std::ifstream iFileT2("Test2_triangulation_IO_3",std::ios::in);
-      iFileT2 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 0);
       assert(Tfromfile.number_of_vertices() == 1);
@@ -348,12 +330,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT3("Test3_triangulation_IO_3",std::ios::out);
-        oFileT3 << T0 << std::endl;
-      }
-      std::ifstream iFileT3("Test3_triangulation_IO_3",std::ios::in);
-      iFileT3 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 1);
       assert(Tfromfile.number_of_vertices() == 2);
@@ -370,12 +349,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT4("Test4_triangulation_IO_3",std::ios::out);
-        oFileT4 << T0;
-      }
-      std::ifstream iFileT4("Test4_triangulation_IO_3",std::ios::in);
-      iFileT4 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 2);
       assert(Tfromfile.number_of_vertices() == 3);
@@ -392,12 +368,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT5("Test5_triangulation_IO_3",std::ios::out);
-        oFileT5 << T0;
-      }
-      std::ifstream iFileT5("Test5_triangulation_IO_3",std::ios::in);
-      iFileT5 >> Tfromfile;
+      std::stringstream ss;
+      ss << T0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 4);
@@ -475,12 +448,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT6("Test6_triangulation_IO_3",std::ios::out);
-        oFileT6 << T1_2;
-      }
-      std::ifstream iFileT6("Test6_triangulation_IO_3",std::ios::in);
-      iFileT6 >> Tfromfile;
+      std::stringstream ss;
+      ss << T1_2;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 1);
       assert(Tfromfile.number_of_vertices() == n);
@@ -522,12 +492,10 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT7("Test7_triangulation_IO_3",std::ios::out);
-        oFileT7 << T2_0;
-      }
-      std::ifstream iFileT7("Test7_triangulation_IO_3",std::ios::in);
-      iFileT7 >> Tfromfile;
+
+      std::stringstream ss;
+      ss << T2_0;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 2);
       assert(Tfromfile.number_of_vertices() == 8);
@@ -583,7 +551,7 @@ _test_cls_delaunay_3(const Triangulation &)
     size_type m = Tdel.remove(vertices.begin(), vertices.end());
     assert(m == n - Tdel.number_of_vertices());
     assert(Tdel.is_valid(false));
-    std::cout << "    successfull" << std::endl;
+    std::cout << "    successful" << std::endl;
   }
 
 
@@ -598,12 +566,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT8("Test8_triangulation_IO_3",std::ios::out);
-        oFileT8 << T3_1;
-      }
-      std::ifstream iFileT8("Test8_triangulation_IO_3",std::ios::in);
-      iFileT8 >> Tfromfile;
+      std::stringstream ss;
+      ss << T3_1;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 22);
@@ -651,7 +616,7 @@ _test_cls_delaunay_3(const Triangulation &)
     std::cout << "    Testing nearest_vertex()" << std::endl;
     // We do a nearest_vertex() and two nearest_vertex_in_cell()
     // queries on all points with integer coordinate
-    // in the cube [-1;6]^3. In each case we check explicitely that the
+    // in the cube [-1;6]^3. In each case we check explicitly that the
     // output is correct by comparing distance to other vertices.
     Cell_handle c1 = T3_13.finite_cells_begin();
     Cell_handle c2 = T3_13.infinite_vertex()->cell();
@@ -689,12 +654,9 @@ _test_cls_delaunay_3(const Triangulation &)
   {
       Cls Tfromfile;
       std::cout << "    I/O" << std::endl;
-      {
-        std::ofstream oFileT8("Test13_triangulation_IO_3",std::ios::out);
-        oFileT8 << T3_13;
-      }
-      std::ifstream iFileT8("Test13_triangulation_IO_3",std::ios::in);
-      iFileT8 >> Tfromfile;
+      std::stringstream ss;
+      ss << T3_13;
+      ss >> Tfromfile;
       assert(Tfromfile.is_valid());
       assert(Tfromfile.dimension() == 3);
       assert(Tfromfile.number_of_vertices() == 22);
@@ -947,7 +909,7 @@ _test_cls_delaunay_3(const Triangulation &)
   Vertex_handle tmv1 = TM_0.insert(Point(0,0,0));
   Vertex_handle tmv2 = TM_0.insert(Point(0,1,0));
 
-        TM_0.move_if_no_collision(tmv1, Point(0, 2, 1));
+  TM_0.move_if_no_collision(tmv1, Point(0, 2, 1));
   assert(TM_0.tds().is_valid());
   assert(TM_0.is_valid());
   assert(TM_0.dimension() == 1);

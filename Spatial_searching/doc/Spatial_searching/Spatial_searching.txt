@@ -62,7 +62,7 @@ computation has to be re-invoked for a larger number of neighbors,
 thereby performing redundant computations. Therefore, Hjaltason and
 Samet \cgalCite{hs-rsd-95} introduced <I>incremental nearest neighbor
 searching</I> in the sense that having obtained the  `k` nearest
-neighbors, the `k + 1`st neighbor can be obtained without having
+neighbors, the `k + 1`th neighbor can be obtained without having
 to calculate the `k + 1` nearest neighbor from scratch.
 
 Spatial searching typically consists of a preprocessing phase and a
@@ -109,7 +109,7 @@ Orthogonal distance computation technique
 \cgalFigureEnd
 
 Assume we are searching the nearest neighbor, descending the kd-tree, with \f$ R_{p} \f$
-as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its childs in the current step.
+as the parent rectangle and \f$ R_{lo} \f$ and \f$ R_{hi}\f$ as its children in the current step.
 Further assume \f$ R_{lo} \f$ is closer to query point \f$q\f$. Let \f$cd\f$ denote the cutting dimension and let
 \f$cv\f$ denote the cutting value. At this point we already know the distance \f$rd_{p}\f$
 to the parent rectangle and need to check if \f$R_{hi}\f$ could contain
@@ -159,7 +159,7 @@ When using fuzzy items, queries are reported as follows:
 - Points that are within the inner approximation are always reported.
 - Points that are within the outer approximation but not within the inner approximation
 might or might not be reported.
-- Points thare not within the outer approximation are never reported.
+- Points that are not within the outer approximation are never reported.
 
 For exact range searching the fuzziness parameter \f$ \epsilon\f$ is set to zero.
 
@@ -282,7 +282,7 @@ scenarios for different splitter types.
 
 \subsection Spatial_searchingExampleforKNeighborSearching Example for K Neighbor Searching
 
-The first example illustrates k neighbor searching with an Euclidean
+The first example illustrates k neighbor searching with a Euclidean
 distance and 2-dimensional points. The generated random
 data points are inserted in a search tree. We then initialize
 the k neighbor search object with the origin as query. Finally, we
@@ -400,7 +400,7 @@ splitting rule, needed to set the maximal allowed bucket size.
 
 This example program has two 2-dimensional data sets: The first one containing
 collinear points with exponential increasing distances and the second
-one with collinear points in the firstdimension and one point with a distance
+one with collinear points in the first dimension and one point with a distance
 exceeding the spread of the other points in the second dimension. These are
 the worst cases for the midpoint/median rules and can also occur in
 higher dimensions.
@@ -426,13 +426,13 @@ how to perform parallel queries:
 
 \section Performance Performance
 
-\subsection OrthogonalPerfomance Performance of the Orthogonal Search
+\subsection OrthogonalPerformance Performance of the Orthogonal Search
 
 We took the gargoyle data set (Surface) from aim\@shape, and generated the same number of random points in the bbox of the gargoyle (Random).
 We then consider three scenarios as data/queries.
 The data set contains 800K points. For each query point we compute the K=10,20,30 closest points, with the default splitter and for the bucket size 10 (default) and 20.
 
-The results were produced with the release 5.1 of \cgal, on an Intel i7 2.3 Ghz
+The results were produced with the release 5.1 of \cgal, on an Intel i7 2.3 GHz
 laptop with 16 GB RAM, compiled with CLang++ 6 with the O3 option.
 
 The values are the average of ten tests each. We show timings in seconds for both the building of the tree and the queries.

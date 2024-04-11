@@ -8,8 +8,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Ron Wein <wein@post.tau.ac.il>
-//                 (based on old version by: Iddo Hanniel and Oren Nechushtan)
+// Author(s): Ron Wein          <wein@post.tau.ac.il>
+//            Efi Fogel         <efif@post.tau.ac.il>
+//            (based on old version by: Iddo Hanniel and Oren Nechushtan)
 
 #ifndef CGAL_ARR_DCEL_BASE_H
 #define CGAL_ARR_DCEL_BASE_H
@@ -23,24 +24,23 @@
  * peripheral records.
  */
 
-#include <CGAL/basic.h>
-#include <CGAL/Arr_enums.h>
 #include <list>
 #include <map>
-#include <CGAL/N_step_adaptor_derived.h>
+
+#include <CGAL/basic.h>
+#include <CGAL/Arr_enums.h>
+#include <CGAL/iterator.h>
 #include <CGAL/In_place_list.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/assertions.h>
 
-#include <boost/pool/pool_alloc.hpp>
-
 namespace CGAL {
 
 inline void* _clean_pointer(const void* p)
 {
-  CGAL_static_assertion(sizeof(void*) == sizeof(size_t));
+  static_assert(sizeof(void*) == sizeof(size_t));
   const size_t  mask = ~1;
   const size_t  val = (reinterpret_cast<size_t>(p) & mask);
 
@@ -964,7 +964,7 @@ public:
  * The arrangement DCEL class.
  */
 template <class V, class H, class F,
-          class Allocator = boost::fast_pool_allocator<int> >
+          class Allocator = CGAL_ALLOCATOR(int) >
 class Arr_dcel_base {
 public:
   // Define the vertex, halfedge and face types.

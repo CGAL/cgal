@@ -187,8 +187,6 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
     setBuffersFilled(true);
     setBuffersInit(viewer, true);
   }
-  int deviceWidth = viewer->camera()->screenWidth();
-  int deviceHeight = viewer->camera()->screenHeight();
     if(d->has_plane)
     {
       QVector4D cp = cgal_plane_to_vector4d(d->plane);
@@ -207,12 +205,8 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
     }
     if(d->pickable && (d->spheres.size() > 1 && viewer->inDrawWithNames()))
     {
-      int rowLength = deviceWidth * 4; // data asked in RGBA,so 4 bytes.
-      const static int dataLength = rowLength * deviceHeight;
-      GLubyte* buffer = new GLubyte[dataLength];
-      // Qt uses upper corner for its origin while GL uses the lower corner.
       QPoint picking_target = viewer->mapFromGlobal(QCursor::pos());
-      viewer->glReadPixels(picking_target.x(), deviceHeight-1-picking_target.y(), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+      const auto buffer = read_pixel_as_ubyte_rgba(picking_target, viewer, viewer->camera());
       int ID = (buffer[0] + buffer[1] * 256 +buffer[2] * 256*256) ;
       if(buffer[0]*buffer[1]*buffer[2] < 255*255*255)
       {

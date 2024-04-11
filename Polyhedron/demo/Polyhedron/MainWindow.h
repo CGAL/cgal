@@ -1,15 +1,17 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+
+#define QT_SCRIPT_LIB
+
 #include "config.h"
 #include "MainWindow_config.h"
 
-#include <QtOpenGL/qgl.h>
+#include <QOpenGLWidget>
 #include <CGAL/Qt/DemosMainWindow.h>
 #include <CGAL/Three/Three.h>
+#include <CGAL/Three/Scene_item.h>
 
-#include <QScriptEngine>
-#include <QScriptable>
-
+#include <QJSEngine>
 
 #include <QVector>
 #include <QList>
@@ -60,8 +62,7 @@ namespace Ui {
 class MAINWINDOW_EXPORT MainWindow :
   public CGAL::Qt::DemosMainWindow,
   public Messages_interface,
-  public CGAL::Three::Three,
-  protected QScriptable
+  public CGAL::Three::Three
 {
   Q_OBJECT
   Q_INTERFACES(Messages_interface)
@@ -121,7 +122,7 @@ public Q_SLOTS:
   //! If `b` is true, recenters the scene.
   void updateViewersBboxes(bool recenter);
   //! Opens a script or a file with the default loader if there is.
-  void open(QString) Q_DECL_OVERRIDE;
+  void open(QString) override;
   //! Is called when the up button is pressed.
   void on_upButton_pressed();
   //! Is called when the down button is pressed.
@@ -241,27 +242,25 @@ public Q_SLOTS:
   /*!
    * Displays a text preceded by the mention "INFO :".
    */
-  void message_information(QString) Q_DECL_OVERRIDE;
+  void message_information(QString) override;
   /*!
    * Displays a blue text preceded by the mention "WARNING :".
    */
-  void message_warning(QString) Q_DECL_OVERRIDE;
+  void message_warning(QString) override;
   /*!
    * Displays a red text preceded by the mention "ERROR :".
    */
-  void message_error(QString) Q_DECL_OVERRIDE;
+  void message_error(QString) override;
 
     //!Displays a text in the chosen html color with the chosen html font.
 
   void message(QString, QString, QString = QString("normal"));
 
+  //! Function `print` used by Javascript scripts.
+  void print(QString message);
+
     //!Returns true if the target plugin is present. If not, returns false.
   bool hasPlugin(const QString&) const;
-  /*!
-   * If able, finds a script debugger and interrupts current action. Default
-   * value for parameter is true.
-   */
-  void enableScriptDebugger(bool = true);
 
   /// This slot is used to test exception handling in Qt Scripts.
   void throw_exception();
@@ -329,7 +328,7 @@ protected Q_SLOTS:
   bool on_actionErase_triggered();
   //!Duplicates the selected item and selects the new item.
   void on_actionDuplicate_triggered();
-  //!If QT_SCRIPT_LIB is defined, opens a dialog to choose a script.
+  //!Opens a dialog to choose a script.
   void on_actionLoadScript_triggered();
   //!Loads a plugin from a specified directory
   void on_actionLoadPlugin_triggered();
@@ -393,7 +392,7 @@ protected:
    * Calls writeSettings() and set the flag accepted for the event.
    * @see writeSettings()
    */
-  void closeEvent(QCloseEvent *event)Q_DECL_OVERRIDE;
+  void closeEvent(QCloseEvent *event)override;
   /*! Returns the currently selected item in the Geometric Objects view. Returns -1
    * if none is selected.
    */
@@ -437,8 +436,8 @@ private:
   bool verbose;
   void insertActionBeforeLoadPlugin(QMenu*, QAction *actionToInsert);
 
-#ifdef QT_SCRIPT_LIB
-  QScriptEngine* script_engine;
+
+  QJSEngine* script_engine;
 public:
   /*! Evaluates a script and search for uncaught exceptions. If quiet is false, prints the
    *backtrace of the uncaught exceptions.
@@ -449,9 +448,11 @@ public:
   //! Calls evaluate_script(script, filename, true).
   void evaluate_script_quiet(QString script,
                              const QString & fileName = QString());
+
+
   QMutex mutex;
   QWaitCondition wait_condition;
-#endif
+
 public Q_SLOTS:
   void on_actionSa_ve_Scene_as_Script_triggered();
   void on_actionLoad_a_Scene_from_a_Script_File_triggered();
@@ -499,8 +500,8 @@ public Q_SLOTS:
   void lookat();
   void color();
 protected:
-  void closeEvent(QCloseEvent *closeEvent)Q_DECL_OVERRIDE;
-  void changeEvent(QEvent *event) Q_DECL_OVERRIDE;
+  void closeEvent(QCloseEvent *closeEvent)override;
+  void changeEvent(QEvent *event) override;
 private:
   bool is_main;
 };

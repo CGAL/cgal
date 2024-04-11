@@ -590,7 +590,7 @@ void run_bench(Bench_inst & bench_inst, Benchable & benchable,
   if (samples > 0) bench_inst.set_samples(samples);
   else if (iterations > 0) bench_inst.set_iterations(iterations);
 
-  //opertor () in the Bench - does all the work !
+  //operator () in the Bench - does all the work !
   bench_inst();
 }
 
@@ -648,7 +648,7 @@ int main(int argc, char * argv[])
     std::cout << "strategy_mask = " << strategy_mask  << std::endl;
   }
 
-  // Construct Incrementaly  (only if type_code == incremental)
+  // Construct Incrementally  (only if type_code == incremental)
   type_code = Option_parser::TYPE_INCREMENT;
   if (type_mask & (0x1 << type_code)) {
     if (verbose_level > 0) std::cout << "TYPE_INCREMENT " << std::endl;

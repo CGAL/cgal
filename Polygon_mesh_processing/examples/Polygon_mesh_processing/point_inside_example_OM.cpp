@@ -7,9 +7,10 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
-#include <vector>
-#include <fstream>
+#include <iostream>
 #include <limits>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 

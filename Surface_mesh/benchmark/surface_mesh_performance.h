@@ -9,7 +9,7 @@
 #include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_ratio_stop_predicate.h>
 #include <CGAL/Memory_sizer.h>
 
 typedef CGAL::Simple_cartesian<double> K;
@@ -284,7 +284,7 @@ private:
 
     mesh.clear();
     bool b = CGAL::IO::read_OFF(_filename, mesh);
-    SMS::Count_ratio_stop_predicate<Surface_mesh> stop(0.1);
+    SMS::Edge_count_ratio_stop_predicate<Surface_mesh> stop(0.1);
     int r = SMS::edge_collapse(mesh, stop);
   }
 

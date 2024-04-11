@@ -14,107 +14,73 @@
 #ifndef CGAL_TRIANGULAR_REGION_WEIGHTS_H
 #define CGAL_TRIANGULAR_REGION_WEIGHTS_H
 
-// Internal includes.
 #include <CGAL/Weights/internal/utils.h>
+
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
 
 namespace CGAL {
 namespace Weights {
 
-  #if defined(DOXYGEN_RUNNING)
+// 2D ==============================================================================================
 
-  /*!
-    \ingroup PkgWeightsRefTriangularRegionWeights
+/*!
+  \ingroup PkgWeightsRefTriangularRegionWeights
+  \brief computes the area of the triangular cell in 2D using the points `p`, `q`, and `r`
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
+template<typename GeomTraits>
+typename GeomTraits::FT triangular_area(const typename GeomTraits::Point_2& p,
+                                        const typename GeomTraits::Point_2& q,
+                                        const typename GeomTraits::Point_2& r,
+                                        const GeomTraits& traits)
+{
+  return internal::positive_area_2(p, q, r, traits);
+}
 
-    \brief computes the area of the triangular cell in 2D using the points `p`, `q`
-    and `r`, given a traits class `traits` with geometric objects, predicates, and constructions.
-  */
-  template<typename GeomTraits>
-  typename GeomTraits::FT triangular_area(
-    const typename GeomTraits::Point_2& p,
-    const typename GeomTraits::Point_2& q,
-    const typename GeomTraits::Point_2& r,
-    const GeomTraits& traits) { }
+/*!
+  \ingroup PkgWeightsRefTriangularRegionWeights
+  \brief computes the area of the triangular cell in 2D using the points `p`, `q`, and `r`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT triangular_area(const CGAL::Point_2<Kernel>& p,
+                                    const CGAL::Point_2<Kernel>& q,
+                                    const CGAL::Point_2<Kernel>& r)
+{
+  const Kernel traits;
+  return triangular_area(p, q, r, traits);
+}
 
-  /*!
-    \ingroup PkgWeightsRefTriangularRegionWeights
+// 3D ==============================================================================================
 
-    \brief computes the area of the triangular cell in 3D using the points `p`, `q`
-    and `r`, given a traits class `traits` with geometric objects, predicates, and constructions.
-  */
-  template<typename GeomTraits>
-  typename GeomTraits::FT triangular_area(
-    const typename GeomTraits::Point_3& p,
-    const typename GeomTraits::Point_3& q,
-    const typename GeomTraits::Point_3& r,
-    const GeomTraits& traits) { }
+/*!
+  \ingroup PkgWeightsRefTriangularRegionWeights
+  \brief computes the area of the triangular cell in 3D using the points `p`, `q`, and `r`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_3`
+*/
+template<typename GeomTraits>
+typename GeomTraits::FT triangular_area(const typename GeomTraits::Point_3& p,
+                                        const typename GeomTraits::Point_3& q,
+                                        const typename GeomTraits::Point_3& r,
+                                        const GeomTraits& traits)
+{
+  return internal::positive_area_3(p, q, r, traits);
+}
 
-  /*!
-    \ingroup PkgWeightsRefTriangularRegionWeights
-
-    \brief computes the area of the triangular cell in 2D using the points `p`, `q`
-    and `r` which are parameterized by a `Kernel` K.
-  */
-  template<typename K>
-  typename K::FT triangular_area(
-    const CGAL::Point_2<K>& p,
-    const CGAL::Point_2<K>& q,
-    const CGAL::Point_2<K>& r) { }
-
-  /*!
-    \ingroup PkgWeightsRefTriangularRegionWeights
-
-    \brief computes the area of the triangular cell in 3D using the points `p`, `q`
-    and `r` which are parameterized by a `Kernel` K.
-  */
-  template<typename K>
-  typename K::FT triangular_area(
-    const CGAL::Point_3<K>& p,
-    const CGAL::Point_3<K>& q,
-    const CGAL::Point_3<K>& r) { }
-
-  #endif // DOXYGEN_RUNNING
-
-  /// \cond SKIP_IN_MANUAL
-  template<typename GeomTraits>
-  typename GeomTraits::FT triangular_area(
-    const typename GeomTraits::Point_2& p,
-    const typename GeomTraits::Point_2& q,
-    const typename GeomTraits::Point_2& r,
-    const GeomTraits& traits) {
-
-    return internal::positive_area_2(traits, p, q, r);
-  }
-
-  template<typename GeomTraits>
-  typename GeomTraits::FT triangular_area(
-    const CGAL::Point_2<GeomTraits>& p,
-    const CGAL::Point_2<GeomTraits>& q,
-    const CGAL::Point_2<GeomTraits>& r) {
-
-    const GeomTraits traits;
-    return triangular_area(p, q, r, traits);
-  }
-
-  template<typename GeomTraits>
-  typename GeomTraits::FT triangular_area(
-    const typename GeomTraits::Point_3& p,
-    const typename GeomTraits::Point_3& q,
-    const typename GeomTraits::Point_3& r,
-    const GeomTraits& traits) {
-
-    return internal::positive_area_3(traits, p, q, r);
-  }
-
-  template<typename GeomTraits>
-  typename GeomTraits::FT triangular_area(
-    const CGAL::Point_3<GeomTraits>& p,
-    const CGAL::Point_3<GeomTraits>& q,
-    const CGAL::Point_3<GeomTraits>& r) {
-
-    const GeomTraits traits;
-    return triangular_area(p, q, r, traits);
-  }
-  /// \endcond
+/*!
+  \ingroup PkgWeightsRefTriangularRegionWeights
+  \brief computes the area of the triangular cell in 3D using the points `p`, `q`, and `r`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT triangular_area(const CGAL::Point_3<Kernel>& p,
+                                    const CGAL::Point_3<Kernel>& q,
+                                    const CGAL::Point_3<Kernel>& r)
+{
+  const Kernel traits;
+  return triangular_area(p, q, r, traits);
+}
 
 } // namespace Weights
 } // namespace CGAL

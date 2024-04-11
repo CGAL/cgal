@@ -41,7 +41,7 @@ public:
 
   //! \brief indicates if an action is usable or not.
   //! This function usually tests the type of the selected item to determine if `action` can be applied to it,
-  //! but not necessarly.
+  //! but not necessarily.
   //! @returns \c true if `action` can be called in the current state, \c false
   //! otherwise
   virtual bool applicable(QAction* action) const = 0;

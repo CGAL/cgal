@@ -45,7 +45,7 @@ inside of the convex hull of \f$ S\f$. Hence, the alpha shape becomes
 the convex hull of \f$ S\f$ as \f$ \alpha \rightarrow \infty\f$.
 
 \cgal offers 2D and 3D alpha shapes. The GUDHI library offers a
-<a href="http://gudhi.gforge.inria.fr/doc/latest/group__alpha__complex.html"> dD Alpha complex</a>.
+<a href="https://gudhi.inria.fr/doc/latest/group__alpha__complex.html"> dD Alpha complex</a>.
 
 \section Alpha_shapes_2Definitions Definitions
 

@@ -31,7 +31,7 @@
  * class-template.
  */
 
-#include <boost/variant.hpp>
+#include <variant>
 
 #include <CGAL/function_objects.h>
 #include <CGAL/use.h>
@@ -248,7 +248,7 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::~Arrangement_on_surface_2()
 template <typename GeomTraits, typename TopTraits>
 void Arrangement_on_surface_2<GeomTraits, TopTraits>::clear()
 {
-  // Notify the observers that we are about to clear the arragement.
+  // Notify the observers that we are about to clear the arrangement.
   _notify_before_clear();
 
   // Free all stored points.
@@ -265,7 +265,7 @@ void Arrangement_on_surface_2<GeomTraits, TopTraits>::clear()
   _dcel().delete_all();
   m_topol_traits.init_dcel();
 
-  // Notify the observers that we have just cleared the arragement.
+  // Notify the observers that we have just cleared the arrangement.
   _notify_after_clear();
 }
 
@@ -399,7 +399,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     new_he = _insert_at_vertices(fict_prev1, cv, ARR_LEFT_TO_RIGHT,
                                  fict_prev2->next(), new_face_created,
                                  check_swapped_predecessors);
-    // Comment EBEB 2012-10-21: Swapping does not take place as there is no local minumum so far
+    // Comment EBEB 2012-10-21: Swapping does not take place as there is no local minimum so far
     CGAL_assertion(!check_swapped_predecessors);
     // usually one would expect to have an new_he (and its twin) lying on the
     // same _inner_ CCB ...
@@ -1487,7 +1487,7 @@ remove_isolated_vertex(Vertex_handle v)
   DFace* p_f = iv->face();
   Face_handle f = Face_handle(p_f);
 
-  // Notify the observers that we are abount to remove a vertex.
+  // Notify the observers that we are about to remove a vertex.
   _notify_before_remove_vertex(v);
 
   // Remove the isolated vertex from the face that contains it.
@@ -2207,7 +2207,7 @@ _place_and_set_point(DFace* f, const Point_2& p,
                                         Halfedge_handle((*p_pred)->next()));
   }
   else if (obj.is_empty()) {
-    // Create a new vertex that reprsents the given point.
+    // Create a new vertex that represents the given point.
     v = _create_boundary_vertex(p, ps_x, ps_y);
 
     // Notify the topology traits on the creation of the boundary vertex.
@@ -2240,7 +2240,7 @@ _place_and_set_curve_end(DFace* f,
   // Act according to the result type.
 
   if (! obj) {
-    // We have to create a new vertex that reprsents the given curve end.
+    // We have to create a new vertex that represents the given curve end.
     DVertex* v = _create_boundary_vertex(cv, ind, ps_x, ps_y);
 
     // Notify the topology traits on the creation of the boundary vertex.
@@ -2253,7 +2253,7 @@ _place_and_set_curve_end(DFace* f,
     return v;
   }
 
-  DHalfedge** fict_he_p = boost::get<DHalfedge*>(&*obj);
+  DHalfedge** fict_he_p = std::get_if<DHalfedge*>(&*obj);
   if (fict_he_p != nullptr) {
     DHalfedge* fict_he = *fict_he_p;
     CGAL_assertion(fict_he != nullptr);
@@ -2273,7 +2273,7 @@ _place_and_set_curve_end(DFace* f,
                                         Halfedge_handle((*p_pred)->next()));
     return v;
   }
-  DVertex** v_p = boost::get<DVertex*>(&*obj);
+  DVertex** v_p = std::get_if<DVertex*>(&*obj);
   CGAL_assertion(v_p != nullptr);
   DVertex* v = *v_p;
   CGAL_assertion(v != nullptr);
@@ -2359,7 +2359,7 @@ _insert_in_face_interior(DFace* f,
 // Insert an x-monotone curve into the arrangement, such that one of its
 // endpoints corresponds to a given arrangement vertex, given the exact
 // place for the curve in the circular list around this vertex. The other
-// endpoint corrsponds to a free vertex (a newly created vertex or an
+// endpoint corresponds to a free vertex (a newly created vertex or an
 // isolated vertex).
 //
 template <typename GeomTraits, typename TopTraits>
@@ -2915,7 +2915,7 @@ _insert_at_vertices(DHalfedge* he_to,
   }
   else if ((ic1 == ic2) && (oc1 == oc2)) {
     // In this case we created a pair of halfedge that connect halfedges that
-    // already belong to the same component. This means we have to cretae a
+    // already belong to the same component. This means we have to create a
     // new face by splitting the existing face f.
     // Notify the observers that we are about to split a face.
     Face_handle fh(f);
@@ -3092,7 +3092,7 @@ _insert_at_vertices(DHalfedge* he_to,
       // In this case, he1 lies on an outer CCB of f.
       he1->set_outer_ccb(oc1);
 
-      // As the outer component of the exisitng face f may associated with
+      // As the outer component of the existing face f may associated with
       // one of the halfedges along the boundary of the new face, we set it
       // to be he1.
       oc1->set_halfedge(he1);
@@ -3111,7 +3111,7 @@ _insert_at_vertices(DHalfedge* he_to,
     else {
       // Use the topology traits to determine whether each of the split
       // faces is unbounded. Note that if the new face is bounded, then f
-      // obviously reamins unbounded and there is no need for further checks.
+      // obviously remains unbounded and there is no need for further checks.
       new_f->set_unbounded(m_topol_traits.is_unbounded(new_f));
 
       if (new_f->is_unbounded())
@@ -3531,7 +3531,7 @@ _compute_indices(Arr_parameter_space ps_x_curr, Arr_parameter_space ps_y_curr,
 // newly inserted curve.
 //
 // Precondition The OutputIterator must be a back inserter.
-// Precondition The traveresed ccb is an inner ccb; thus, it cannot be
+// Precondition The traversed ccb is an inner ccb; thus, it cannot be
 //              on an open boundary.
 // Postcondition If nullptr is a local minimum, it is inserted first.
 //                No other local minima can be nullptr.
@@ -4709,7 +4709,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
       // RWRW: NEW!
       CGAL_assertion((oc1 != nullptr) && (oc2 != nullptr));
 
-      // In case both halfegdes he1 and he2 are incident to the same face
+      // In case both halfedges he1 and he2 are incident to the same face
       // but lie on different outer CCBs of this face, removing this pair of
       // halfedge causes the two components two merge and to become an
       // inner CCB in the face.
@@ -5114,7 +5114,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   _move_all_isolated_vertices(f2, f1);  // move all iso vertices from f2 to f1
 
   // Notice that f2 will be merged with f1, but its boundary will still be
-  // a hole inside this face. In case he1 is a represantative of this hole,
+  // a hole inside this face. In case he1 is a representative of this hole,
   // replace it by its predecessor.
   if (ic1->halfedge() == he1)
     ic1->set_halfedge(prev1);

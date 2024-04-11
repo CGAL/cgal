@@ -6,11 +6,11 @@ namespace Kernel {
 
   A type representing circles in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Circle_2<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Circle_2<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::BoundedSide_2`
   \sa `Kernel::ComputeSquaredRadius_2`
@@ -38,11 +38,11 @@ public:
 
   A type representing circles in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Circle_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Circle_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ComputeApproximateArea_3`
   \sa `Kernel::ComputeApproximateSquaredLength_3`
@@ -69,11 +69,11 @@ public:
 
   A type representing directions in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Direction_2<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Direction_2<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::CompareAngleWithXAxis_2`
   \sa `Kernel::ComputeDx_2`
@@ -95,11 +95,11 @@ public:
 
   A type representing directions in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Direction_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Direction_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ConstructDirection_3`
   \sa `Kernel::ConstructOppositeDirection_3`
@@ -117,11 +117,11 @@ public:
 
 A type representing isocuboids in three dimensions.
 
-\cgalRefines CopyConstructible
-\cgalRefines Assignable
-\cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Iso_cuboid_3<Kernel>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Iso_cuboid_3<Kernel>}
+\cgalHasModelsEnd
 
 \sa `Kernel::BoundedSide_3`
 \sa `Kernel::ComputeVolume_3`
@@ -144,11 +144,11 @@ public:
 
   A type representing iso-rectangles in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Iso_rectangle_2<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Iso_rectangle_2<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ConstructIsoRectangle_2`
   \sa `Kernel::ComputeXmin_2`
@@ -178,11 +178,11 @@ public:
 
   A type representing straight lines (and halfspaces) in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Line_2<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Line_2<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::CompareXAtY_2`
   \sa `Kernel::ComputeSquaredDistance_2`
@@ -216,11 +216,11 @@ public:
 
   A type representing straight lines in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Line_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Line_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructDirection_3`
@@ -249,11 +249,11 @@ public:
 
   \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Object`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Object}
+  \cgalHasModelsEnd
 
   \sa `Kernel::Assign_2`
   \sa `Kernel::ConstructObject_2`
@@ -272,11 +272,11 @@ public:
 
   \deprecated This class is deprecated since \cgal 4.3 and type safe ways should be preferred.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Object`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Object}
+  \cgalHasModelsEnd
 
   \sa `Kernel::Assign_3`
   \sa `Kernel::ConstructObject_3`
@@ -293,11 +293,11 @@ public:
 
   A type representing planes (and half-spaces) in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Plane_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Plane_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructBaseVector_3`
@@ -332,11 +332,11 @@ public:
 
   A type representing points in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Point_2<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Point_2<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::Angle_2`
   \sa `Kernel::AreOrderedAlongLine_2`
@@ -393,11 +393,11 @@ public:
 
   A type representing points in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Point_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Point_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::Angle_3`
   \sa `Kernel::AreOrderedAlongLine_3`
@@ -456,11 +456,11 @@ public:
 
 A type representing rays in two dimensions.
 
-\cgalRefines CopyConstructible
-\cgalRefines Assignable
-\cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Ray_2<Kernel>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Ray_2<Kernel>}
+\cgalHasModelsEnd
 
 \sa `Kernel::CollinearHasOn_2`
 \sa `Kernel::ComputeSquaredDistance_2`
@@ -490,11 +490,11 @@ public:
 
   A type representing rays in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Ray_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Ray_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructDirection_3`
@@ -520,11 +520,11 @@ public:
 
   A type representing segments in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Segment_2<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Segment_2<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::CollinearHasOn_2`
   \sa `Kernel::ComputeSquaredDistance_2`
@@ -556,11 +556,11 @@ public:
 
   A type representing segments in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Segment_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Segment_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ComputeSquaredLength_3`
@@ -588,11 +588,11 @@ public:
 
   A type representing spheres in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Sphere_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Sphere_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::BoundedSide_3`
   \sa `Kernel::ComputeSquaredRadius_3`
@@ -620,11 +620,11 @@ public:
 
   A type representing tetrahedra in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Tetrahedron_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Tetrahedron_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::BoundedSide_3`
   \sa `Kernel::ComputeVolume_3`
@@ -653,11 +653,11 @@ public:
 
   A type representing triangles in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Triangle_2<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Triangle_2<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::BoundedSide_2`
   \sa `Kernel::ComputeArea_2`
@@ -688,11 +688,11 @@ public:
 
   A type representing triangles in three dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Triangle_3<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Triangle_3<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ComputeSquaredArea_3`
   \sa `Kernel::ConstructCentroid_3`
@@ -715,11 +715,11 @@ public:
 
   A type representing vectors in two dimensions.
 
-  \cgalRefines CopyConstructible
-  \cgalRefines Assignable
-  \cgalRefines DefaultConstructible
+  \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-  \cgalHasModel `CGAL::Vector_2<Kernel>`
+  \cgalHasModelsBegin
+  \cgalHasModels{CGAL::Vector_2<Kernel>}
+  \cgalHasModelsEnd
 
   \sa `Kernel::ComputeDeterminant_2`
   \sa `Kernel::ComputeScalarProduct_2`
@@ -750,11 +750,11 @@ public:
 
 A type representing vectors in three dimensions.
 
-\cgalRefines CopyConstructible
-\cgalRefines Assignable
-\cgalRefines DefaultConstructible
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Vector_3<Kernel>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Vector_3<Kernel>}
+\cgalHasModelsEnd
 
 \sa `Kernel::CompareDihedralAngle_3`
 \sa `Kernel::ComputeDeterminant_3`
@@ -788,11 +788,11 @@ public:
 
 A type representing weighted points in two dimensions.
 
-\cgalRefines CopyConstructible
-\cgalRefines Assignable
-\cgalRefines DefaultConstructible
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Weighted_point_2<Kernel>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Weighted_point_2<Kernel>}
+\cgalHasModelsEnd
 
 \sa `Kernel::ConstructWeightedPoint_2`
 \sa `Kernel::ComputeWeight_2`
@@ -817,11 +817,11 @@ public:
 
 A type representing weighted points in three dimensions.
 
-\cgalRefines CopyConstructible
-\cgalRefines Assignable
-\cgalRefines DefaultConstructible
+\cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Weighted_point_3<Kernel>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Weighted_point_3<Kernel>}
+\cgalHasModelsEnd
 
 \sa `Kernel::ConstructWeightedPoint_3`
 \sa `Kernel::ComputeWeight_3`

@@ -41,7 +41,7 @@ namespace CGAL {
 
 namespace internal {
 
-// Don't define default, results in more convinient compiler messages
+// Don't define default, results in more convenient compiler messages
 template< class Type > class Float_traits;
 // {
 // public:

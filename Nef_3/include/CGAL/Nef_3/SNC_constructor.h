@@ -24,12 +24,13 @@
 #include <CGAL/Nef_S2/Normalizing.h>
 #include <CGAL/Nef_3/bounded_side_3.h>
 #include <CGAL/Nef_3/Pluecker_line_3.h>
-#include <CGAL/Nef_3/SNC_decorator.h>
+#include <CGAL/Nef_3/SNC_const_decorator.h>
 #include <CGAL/Nef_3/SNC_SM_overlayer.h>
 #include <CGAL/Nef_S2/SM_point_locator.h>
+#include <CGAL/Nef_3/SNC_halfedge_key.h>
 #include <CGAL/Nef_3/SNC_sphere_map.h>
+#include <CGAL/Nef_3/SNC_structure.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
-#include <CGAL/Nef_3/SNC_external_structure.h>
 #ifdef SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
 #endif // SM_VISUALIZOR
@@ -901,9 +902,8 @@ public:
     ++t2;
     if(t2 == segs2.end()) t2=segs2.begin();
 
-    SNC_intersection is;
     Point_3 ip;
-    bool flag=is.does_intersect_internally(Segment_3(*s1,*t1),Segment_3(*s2,*t2),ip);
+    bool flag = SNC_intersection::does_intersect_internally(Segment_3(*s1,*t1),Segment_3(*s2,*t2),ip);
     if(!flag) {
       if(*s1 == *s2) return normalized(*s1);
       else if(*s1 == *t2) return normalized(*s1);
@@ -2037,7 +2037,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
         D.link_as_isolated_vertex(v2, f2);
         D.link_as_loop(l,f1);
         D.link_as_loop(l->twin(),f2);
-        l->circle() = Sphere_circle(faces_p->plane());
+        l->circle() = Sphere_circle(CGAL::ORIGIN,faces_p->plane());
         l->twin()->circle() = l->circle().opposite();
         f2->mark() = mf2;
         l->mark() = l->twin()->mark() = ml;
@@ -2053,7 +2053,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
       SHalfedge_handle se1;
       SHalfedge_handle se2;
       SFace_handle sf;
-      Sphere_circle c(f->plane());
+      Sphere_circle c(CGAL::ORIGIN,f->plane());
 
       SHalfedge_handle next_edge;
       SHalfedge_around_svertex_const_circulator ec(E.out_edges(e)), ee(ec);
@@ -2104,7 +2104,7 @@ class SNC_constructor<SNC_indexed_items, SNC_structure_>
         se1 = D.new_shalfedge_pair(ec2->twin(), en->twin(), -1, 1);
         CGAL_NEF_TRACEN("new edge pair " << ec2->twin()->source()->vector() <<
                         " -> " << en->twin()->source()->vector());
-        se1->circle() = Sphere_circle(faces_p->plane());
+        se1->circle() = Sphere_circle(CGAL::ORIGIN,faces_p->plane());
         se1->twin()->circle() = se1->circle().opposite();
         se1->mark() = se1->twin()->mark() = BOP(mark_of_right_sface[ec2], faces_p->mark(), inv);
 

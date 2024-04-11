@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.11...3.23)
 if(Boost_IOSTREAMS_FOUND AND NOT TARGET CGAL::Boost_iostreams_support)
 
   if( WIN32 )
@@ -32,13 +33,7 @@ if(Boost_IOSTREAMS_FOUND AND NOT TARGET CGAL::Boost_iostreams_support)
 
   add_library(CGAL::Boost_iostreams_support INTERFACE IMPORTED)
 
-  if(CMAKE_VERSION VERSION_LESS 3.11)
-    set_target_properties(CGAL::Boost_iostreams_support PROPERTIES
-      INTERFACE_COMPILE_DEFINITIONS "CGAL_LINKED_WITH_BOOST_IOSTREAMS"
-      INTERFACE_LINK_LIBRARIES "${Boost_LIB};${ZLIB_LIBS}")
-  else()
-    set_target_properties(CGAL::Boost_iostreams_support PROPERTIES
-      INTERFACE_COMPILE_DEFINITIONS "CGAL_LINKED_WITH_BOOST_IOSTREAMS")
-    target_link_libraries(CGAL::Boost_iostreams_support INTERFACE ${Boost_LIB} ${ZLIB_LIBS})
-  endif()
+  set_target_properties(CGAL::Boost_iostreams_support PROPERTIES
+    INTERFACE_COMPILE_DEFINITIONS "CGAL_LINKED_WITH_BOOST_IOSTREAMS")
+  target_link_libraries(CGAL::Boost_iostreams_support INTERFACE ${Boost_LIB} ${ZLIB_LIBS})
 endif()

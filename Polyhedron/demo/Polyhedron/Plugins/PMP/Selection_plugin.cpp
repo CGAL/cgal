@@ -111,7 +111,7 @@ public:
         ok = false;
         return QList<Scene_item*>();
       }
-      item->setName(fileinfo.baseName());
+      item->setName(fileinfo.completeBaseName());
       ok = true;
       if(add_to_scene)
         CGAL::Three::Three::scene()->addItem(item);
@@ -278,7 +278,7 @@ public Q_SLOTS:
     filter_operations();
   }
   // If the selection_item or the polyhedron_item associated to the k-ring_selector is currently selected,
-  // set the k-ring_selector as currently selected. (A k-ring_selector tha tis not "currently selected" will
+  // set the k-ring_selector as currently selected. (A k-ring_selector that is not "currently selected" will
   // not process selection events)
   void isCurrentlySelected(Scene_facegraph_item_k_ring_selection* item)
   {
@@ -497,7 +497,7 @@ public Q_SLOTS:
       return;
     }
 
-    boost::optional<std::size_t> minimum =
+    std::optional<std::size_t> minimum =
       selection_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
     if(minimum) {
       ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
@@ -512,7 +512,7 @@ public Q_SLOTS:
       print_message("Error: there is no selected polyhedron selection item!");
       return;
     }
-    boost::optional<std::size_t> minimum = selection_item->get_minimum_isolated_component();
+    std::optional<std::size_t> minimum = selection_item->get_minimum_isolated_component();
     if(minimum) {
       ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
     }
@@ -753,7 +753,6 @@ public Q_SLOTS:
         return;
       }
       std::unordered_map<fg_face_descriptor, bool> is_selected_map;
-      int index = 0;
       for(fg_face_descriptor fh : faces(*selection_item->polyhedron()))
       {
         if(selection_item->selected_facets.find(fh)
@@ -763,7 +762,6 @@ public Q_SLOTS:
         {
           is_selected_map[fh]=true;
         }
-        ++index;
       }
       CGAL::expand_face_selection_for_removal(selection_item->selected_facets,
                                               *selection_item->polyhedron(),
@@ -1069,7 +1067,7 @@ public Q_SLOTS:
     selection_item->set_is_insert(is_insert);
     selection_item->set_k_ring(k_ring);
     selection_item->setRenderingMode(Flat);
-    if(selection_item->name() == "unamed") {
+    if(selection_item->name() == "unnamed") {
       selection_item->setName(tr("%1 (selection)").arg(poly_item->name()));
     }
 
@@ -1203,7 +1201,7 @@ void Polyhedron_demo_selection_plugin::on_actionSelfIntersection_triggered()
   CGAL::Three::Three::CursorScopeGuard guard(tmp_cursor);
   bool found = false;
   std::vector<Scene_face_graph_item*> selected_polys;
-  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  for(Scene_interface::Item_id index : scene->selectionIndices())
   {
     Scene_face_graph_item* poly_item =
         qobject_cast<Scene_face_graph_item*>(scene->item(index));
@@ -1212,7 +1210,7 @@ void Polyhedron_demo_selection_plugin::on_actionSelfIntersection_triggered()
       selected_polys.push_back(poly_item);
     }
   }
-  Q_FOREACH(Scene_face_graph_item* poly_item, selected_polys)
+  for(Scene_face_graph_item* poly_item : selected_polys)
   {
     Face_graph* mesh = poly_item->face_graph();
     std::vector<std::pair<Face_descriptor, Face_descriptor> > faces;

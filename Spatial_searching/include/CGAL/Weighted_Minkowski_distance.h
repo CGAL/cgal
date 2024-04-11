@@ -18,14 +18,15 @@
 
 #include <CGAL/license/Spatial_searching.h>
 
+#include <CGAL/array.h>
+#include <CGAL/assertions.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/double.h>
+#include <CGAL/Kd_tree_rectangle.h>
+#include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 
 #include <cmath>
 #include <vector>
-
-#include <CGAL/array.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/Kd_tree_rectangle.h>
-#include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 
 namespace CGAL {
   namespace internal {
@@ -56,9 +57,21 @@ namespace CGAL {
     private:
 
     typedef typename SearchTraits::Cartesian_const_iterator_d Coord_iterator;
-    FT power;
+    double power;
+
 
     Weight_vector the_weights;
+
+
+    FT pow(FT ft) const
+    {
+      return FT(std::pow(to_double(ft), power));
+    }
+
+    FT pow(FT ft, FT p) const
+    {
+      return FT(std::pow(to_double(ft), to_double(p)));
+    }
 
     public:
 
@@ -82,9 +95,9 @@ namespace CGAL {
                                  InputIterator begin,
                                  InputIterator CGAL_assertion_code(end),
                                  const SearchTraits& traits_=SearchTraits())
-      : traits(traits_),power(pow)
+      : traits(traits_),power(to_double(pow))
     {
-      CGAL_assertion(power >= FT(0));
+      CGAL_assertion(is_positive(power));
       Weight_vector_traits::resize(the_weights, dim);
       for (int i = 0; i < dim; ++i){
         the_weights[i] = *begin;
@@ -110,7 +123,7 @@ namespace CGAL {
       Coord_iterator qit = construct_it(q),
                      qe = construct_it(q,1),
                      pit = construct_it(p);
-      if (power == FT(0)) {
+      if (is_zero(power)) {
         for (unsigned int i = 0; qit != qe; ++qit, ++i)
           if (the_weights[i] * CGAL::abs((*qit) - (*pit)) > distance)
             distance = the_weights[i] * CGAL::abs((*qit)-(*pit));
@@ -118,7 +131,7 @@ namespace CGAL {
       else
         for (unsigned int i = 0; qit != qe; ++qit, ++i)
           distance +=
-            the_weights[i] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+            the_weights[i] * pow(CGAL::abs((*qit)-(*pit)));
       return distance;
     }
 
@@ -133,7 +146,7 @@ namespace CGAL {
       Coord_iterator qit = construct_it(q),
                      qe = construct_it(q,1),
                      pit = construct_it(p);
-      if (power == FT(0)) {
+      if (is_zero(power)) {
         for (unsigned int i = 0; qit != qe; ++qit, ++i)
           if (the_weights[i] * CGAL::abs((*qit) - (*pit)) > distance)
             distance = the_weights[i] * CGAL::abs((*qit)-(*pit));
@@ -141,7 +154,7 @@ namespace CGAL {
       else
         for (unsigned int i = 0; qit != qe; ++qit, ++i)
           distance +=
-            the_weights[i] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+            the_weights[i] * pow(CGAL::abs((*qit)-(*pit)));
       return distance;
     }
 
@@ -154,7 +167,7 @@ namespace CGAL {
         traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q),
                      pit = construct_it(p);
-      if (power == FT(0)) {
+      if (is_zero(power)) {
           if (the_weights[0] * CGAL::abs((*qit) - (*pit)) > distance)
             distance = the_weights[0] * CGAL::abs((*qit)-(*pit));
           qit++;pit++;
@@ -163,10 +176,10 @@ namespace CGAL {
       }
       else{
           distance +=
-            the_weights[0] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+            the_weights[0] * pow(CGAL::abs((*qit)-(*pit)));
           qit++;pit++;
           distance +=
-            the_weights[1] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+            the_weights[1] * pow(CGAL::abs((*qit)-(*pit)));
       }
       return distance;
     }
@@ -180,7 +193,7 @@ namespace CGAL {
         traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q),
                      pit = construct_it(p);
-      if (power == FT(0)) {
+      if (is_zero(power)) {
           if (the_weights[0] * CGAL::abs((*qit) - (*pit)) > distance)
             distance = the_weights[0] * CGAL::abs((*qit)-(*pit));
           qit++;pit++;
@@ -192,13 +205,13 @@ namespace CGAL {
       }
       else{
           distance +=
-            the_weights[0] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+            the_weights[0] * pow(CGAL::abs((*qit)-(*pit)));
           qit++;pit++;
           distance +=
-            the_weights[1] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+            the_weights[1] * pow(CGAL::abs((*qit)-(*pit)));
           qit++;pit++;
           distance +=
-            the_weights[2] * std::pow(CGAL::abs((*qit)-(*pit)),power);
+            the_weights[2] * pow(CGAL::abs((*qit)-(*pit)));
       }
       return distance;
     }
@@ -212,7 +225,7 @@ namespace CGAL {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
-      if (power == FT(0))
+      if (is_zero(power))
         {
           for (unsigned int i = 0; qit != qe; ++qit, ++i) {
             if (the_weights[i]*(r.min_coord(i) -
@@ -230,10 +243,10 @@ namespace CGAL {
           for (unsigned int i = 0; qit != qe; ++qit, ++i) {
             if ((*qit) < r.min_coord(i))
               distance += the_weights[i] *
-                std::pow(r.min_coord(i)-(*qit),power);
+                pow(r.min_coord(i)-(*qit));
             if ((*qit) > r.max_coord(i))
               distance += the_weights[i] *
-                std::pow((*qit)-r.max_coord(i),power);
+                pow((*qit)-r.max_coord(i));
           }
         };
       return distance;
@@ -247,7 +260,7 @@ namespace CGAL {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
-      if (power == FT(0))
+      if (is_zero(power))
         {
           for (unsigned int i = 0; qit != qe; ++qit, ++i) {
             if (the_weights[i]*(r.min_coord(i) -
@@ -270,12 +283,12 @@ namespace CGAL {
             if ((*qit) < r.min_coord(i)){
               dists[i] = r.min_coord(i)-(*qit);
               distance += the_weights[i] *
-                std::pow(dists[i],power);
+                pow(dists[i]);
             }
             if ((*qit) > r.max_coord(i)){
               dists[i] = (*qit)-r.max_coord(i);
               distance += the_weights[i] *
-                std::pow(dists[i],power);
+                pow(dists[i]);
             }
           }
         };
@@ -290,7 +303,7 @@ namespace CGAL {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
-      if (power == FT(0))
+      if (is_zero(power))
         {
           for (unsigned int i = 0; qit != qe; ++qit, ++i) {
             if ((*qit) >= (r.min_coord(i) +
@@ -311,9 +324,9 @@ namespace CGAL {
         {
           for (unsigned int i = 0; qit != qe; ++qit, ++i) {
             if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0))
-              distance += the_weights[i] * std::pow(r.max_coord(i)-(*qit),power);
+              distance += the_weights[i] * pow(r.max_coord(i)-(*qit));
             else
-              distance += the_weights[i] * std::pow((*qit)-r.min_coord(i),power);
+              distance += the_weights[i] * pow((*qit)-r.min_coord(i));
           }
         };
       return distance;
@@ -327,7 +340,7 @@ namespace CGAL {
       typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
         traits.construct_cartesian_const_iterator_d_object();
       Coord_iterator qit = construct_it(q), qe = construct_it(q,1);
-      if (power == FT(0))
+      if (is_zero(power))
         {
           for (unsigned int i = 0; qit != qe; ++qit, ++i) {
             if ((*qit) >= (r.min_coord(i) +
@@ -353,11 +366,11 @@ namespace CGAL {
           for (unsigned int i = 0; qit != qe; ++qit, ++i) {
             if ((*qit) <= (r.min_coord(i)+r.max_coord(i))/FT(2.0)){
               dists[i] = r.max_coord(i)-(*qit);
-              distance += the_weights[i] * std::pow(dists[i],power);
+              distance += the_weights[i] * pow(dists[i]);
             }
             else{
               dists[i] = (*qit)-r.min_coord(i);
-              distance += the_weights[i] * std::pow(dists[i],power);
+              distance += the_weights[i] * pow(dists[i]);
             }
           }
         };
@@ -370,7 +383,7 @@ namespace CGAL {
                  int cutting_dimension)  const
     {
       FT new_dist;
-      if (power == FT(0))
+      if (is_zero(power))
         {
           if (the_weights[cutting_dimension]*CGAL::abs(new_off)
               > dist)
@@ -381,7 +394,7 @@ namespace CGAL {
       else
         {
           new_dist = dist + the_weights[cutting_dimension] *
-            (std::pow(CGAL::abs(new_off),power)-std::pow(CGAL::abs(old_off),power));
+            (pow(CGAL::abs(new_off))-pow(CGAL::abs(old_off)));
         }
       return new_dist;
     }
@@ -390,8 +403,8 @@ namespace CGAL {
     FT
     transformed_distance(FT d) const
     {
-      if (power <= FT(0)) return d;
-      else return std::pow(d,power);
+      if (! is_positive(power)) return d;
+      else return pow(d);
 
     }
 
@@ -399,8 +412,8 @@ namespace CGAL {
     FT
     inverse_of_transformed_distance(FT d) const
     {
-      if (power <= FT(0)) return d;
-      else return std::pow(d,1/power);
+      if (! is_positive(power)) return d;
+      else return pow(d,1/power);
 
     }
 

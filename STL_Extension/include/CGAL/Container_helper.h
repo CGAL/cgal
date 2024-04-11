@@ -17,9 +17,9 @@
 
 #include <CGAL/assertions.h>
 #include <boost/mpl/logical.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <cstddef>
+#include<type_traits>
 
 namespace CGAL {
 namespace internal {
@@ -30,7 +30,7 @@ CGAL_GENERATE_MEMBER_DETECTOR(resize);
 // Typical container
 template <class Container>
 void resize(Container& c, std::size_t size,
-            typename boost::enable_if_c<has_resize<Container>::value>::type* = nullptr)
+            std::enable_if_t<has_resize<Container>::value>* = nullptr)
 {
   c.resize(size);
 }
@@ -38,10 +38,8 @@ void resize(Container& c, std::size_t size,
 // Container without a resize() function, but with a size() function (e.g. an array)
 template <class Container>
 void resize(Container& CGAL_assertion_code(array), std::size_t CGAL_assertion_code(size),
-            typename boost::enable_if<
-              boost::mpl::and_<
-                boost::mpl::not_<has_resize<Container> >,
-                                 has_size<Container> > >::type* = nullptr)
+            std::enable_if_t<!has_resize<Container>::value &&
+                              has_size<Container>::value >* = nullptr)
 {
   CGAL_assertion(array.size() == size);
 }
@@ -49,9 +47,9 @@ void resize(Container& CGAL_assertion_code(array), std::size_t CGAL_assertion_co
 // A class with neither resize() nor size(), can't enforce size (it better be correct!)
 template <class Container>
 void resize(Container&, std::size_t,
-            typename boost::disable_if<
-              boost::mpl::or_<has_resize<Container>,
-                              has_size<Container> > >::type* = nullptr)
+            std::enable_if_t<
+              !(has_resize<Container>::value ||
+                has_size<Container>::value)>* = nullptr)
 {
 }
 
@@ -62,7 +60,7 @@ CGAL_GENERATE_MEMBER_DETECTOR(reserve);
 // Container with 'reserve'
 template <class Container>
 void reserve(Container& c, std::size_t size,
-             typename boost::enable_if_c<has_reserve<Container>::value>::type* = nullptr)
+             std::enable_if_t<has_reserve<Container>::value>* = nullptr)
 {
   c.reserve(size);
 }
@@ -70,7 +68,7 @@ void reserve(Container& c, std::size_t size,
 // Container with no 'reserve'
 template <class Container>
 void reserve(Container&, std::size_t,
-             typename boost::disable_if_c<has_reserve<Container>::value>::type* = nullptr)
+             std::enable_if_t<!has_reserve<Container>::value>* = nullptr)
 {
 }
 

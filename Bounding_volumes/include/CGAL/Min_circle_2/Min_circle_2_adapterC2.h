@@ -293,7 +293,7 @@ operator << ( std::ostream& os,
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::get_mode( os) invalid!");
         break; }
 
@@ -323,7 +323,7 @@ operator >> ( std::istream& is,
         break;
 
       default:
-        CGAL_optimisation_assertion_msg( false,
+        CGAL_assertion_msg( false,
                                          "CGAL::IO::mode invalid!");
         break; }
 

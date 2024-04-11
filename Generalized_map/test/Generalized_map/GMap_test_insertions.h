@@ -22,7 +22,7 @@ bool check_number_of_cells_3(GMAP& gmap, unsigned int nbv, unsigned int nbe,
 template<typename GMAP>
 bool test_vertex_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
+  typename GMAP::Dart_descriptor d1, d2, d3;
 
   trace_test_begin();
   d1 = gmap.create_dart();
@@ -145,11 +145,11 @@ bool test_vertex_insertion(GMAP& gmap)
 template<typename GMAP>
 bool test_edge_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
+  typename GMAP::Dart_descriptor d1, d2, d3;
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);
-  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1,0));
+  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1));
   if ( !check_number_of_cells_3(gmap, 4, 5, 2, 1, 1) )
     return false;
   gmap.clear();
@@ -158,7 +158,7 @@ bool test_edge_insertion(GMAP& gmap)
   d1 = gmap.make_combinatorial_polygon(4);
   d2 = gmap.make_combinatorial_polygon(4);
   gmap.template sew<3>(d1, d2);
-  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1,0));
+  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1));
   if ( !check_number_of_cells_3(gmap, 4, 5, 2, 2, 1) )
     return false;
   gmap.clear();
@@ -167,15 +167,8 @@ bool test_edge_insertion(GMAP& gmap)
   d1 = gmap.make_combinatorial_polygon(4);
   d2 = gmap.make_combinatorial_polygon(4);
   gmap.template sew<2>(d1, d2);
-  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1,0));
+  gmap.insert_cell_1_in_cell_2(d1, gmap.alpha(d1,0,1));
   if ( !check_number_of_cells_3(gmap, 6, 8, 3, 1, 1) )
-    return false;
-  gmap.clear();
-
-  trace_test_begin();
-  d1 = gmap.create_dart();
-  gmap.insert_dangling_cell_1_in_cell_2(d1);
-  if ( !check_number_of_cells_3(gmap, 2, 2, 1, 1, 1) )
     return false;
   gmap.clear();
 
@@ -228,8 +221,8 @@ bool test_edge_insertion(GMAP& gmap)
 template<typename GMAP>
 bool test_face_insertion(GMAP& gmap)
 {
-  typename GMAP::Dart_handle d1, d2, d3;
-  std::vector<typename GMAP::Dart_handle> v;
+  typename GMAP::Dart_descriptor d1, d2, d3;
+  std::vector<typename GMAP::Dart_descriptor> v;
 
   trace_test_begin();
   d1 = gmap.make_combinatorial_polygon(4);

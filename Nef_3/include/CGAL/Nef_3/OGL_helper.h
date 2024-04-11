@@ -123,7 +123,7 @@ namespace OGL {
 
   // DFacet stores the facet cycle vertices in a continuus C array
   // of three double components, this is necessary due to the OpenGL
-  // tesselator input format !
+  // tessellator input format !
   class DFacet {
     typedef std::vector<Double_triple>   Coord_vector;
     typedef std::vector<unsigned>        Cycle_vector;

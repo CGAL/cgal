@@ -14,7 +14,7 @@
  *       Chee Yap <yap@cs.nyu.edu>
  *       Sylvain Pion <pion@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -57,7 +57,7 @@ public:
         t = t->next;
       }
     //);
-    //CGAL_warning_msg(count ==  nObjects * blocks.size(),
+    //CGAL_CORE_warning_msg(count ==  nObjects * blocks.size(),
     //                 "Cannot delete memory as there are cyclic references");
 
     if(count ==  nObjects * blocks.size()){

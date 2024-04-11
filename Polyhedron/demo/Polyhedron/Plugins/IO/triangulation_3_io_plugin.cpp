@@ -1,3 +1,4 @@
+#include <CGAL/IO/io.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include "T3_type.h"
@@ -34,7 +35,7 @@ public:
     T3 tr;;
 
     if(fileinfo.absoluteFilePath().endsWith(".binary.cgal"))
-      CGAL::set_binary_mode(ifs);
+      CGAL::IO::set_binary_mode(ifs);
     ifs >> tr;
     if(ifs.fail() || !tr.is_valid(false)) {
       std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
@@ -71,11 +72,11 @@ public:
       std::ofstream out(fileinfo.filePath().toUtf8());
       if(path.endsWith(".binary.cgal"))
       {
-        CGAL::set_binary_mode(out);
+        CGAL::IO::set_binary_mode(out);
       }
       else
       {
-        CGAL::set_ascii_mode(out);
+        CGAL::IO::set_ascii_mode(out);
       }
       out << t3_item->triangulation();
       if( out.fail())

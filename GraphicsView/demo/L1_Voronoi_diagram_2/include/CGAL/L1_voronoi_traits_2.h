@@ -59,7 +59,7 @@ public:
 
   // Returns the midpoint (under the L1 metric) that is on the rectangle
   // defined by the two points (the rectangle can be degenerate).
-  // As there are to enpoints, the index determines which is returned
+  // As there are two endpoints, the index determines which one is returned
   static Point_2 midpoint(const Point_2& p1, const Point_2& p2, std::size_t index) {
     const Point_2 *pp1;
     const Point_2 *pp2;
@@ -270,7 +270,7 @@ public:
 
       // The sites have the same x/y coordinate.
       if (s_x == CGAL::ZERO || s_y == CGAL::ZERO) {
-        *o++ = CGAL::make_object(Intersection_curve(CGAL::bisector(s1, s2), 1));
+        *o++ = Intersection_curve(CGAL::bisector(s1, s2), 1);
         return o;
       }
 
@@ -300,7 +300,7 @@ public:
       }
 
       // We construct the diagonal line either way.
-      *o++ = CGAL::make_object(Intersection_curve(Segment_2(p1, p2), 1));
+      *o++ = Intersection_curve(Segment_2(p1, p2), 1);
 
       // Now construct vertical rays. Two or four rays. If it is only two rays,
       // then the multiplicity of all the curves is 1.
@@ -309,14 +309,14 @@ public:
 
       if (s_d != CGAL::POSITIVE) {
         // horizontal rectangle or square = vertical rays.
-        *o++ = CGAL::make_object(Intersection_curve(Ray_2(*top, Direction_2(0, 1)), mult));
-        *o++ = CGAL::make_object(Intersection_curve(Ray_2(*bottom, Direction_2(0, -1)), mult));
+        *o++ = Intersection_curve(Ray_2(*top, Direction_2(0, 1)), mult);
+        *o++ = Intersection_curve(Ray_2(*bottom, Direction_2(0, -1)), mult);
       }
 
       if (s_d != CGAL::NEGATIVE) {
         // vertical rectangle or square = horizontal rays.
-        *o++ = CGAL::make_object(Intersection_curve(Ray_2(*right, Direction_2(1, 0)), mult));
-        *o++ = CGAL::make_object(Intersection_curve(Ray_2(*left, Direction_2(-1, 0)), mult));
+        *o++ = Intersection_curve(Ray_2(*right, Direction_2(1, 0)), mult);
+        *o++ = Intersection_curve(Ray_2(*left, Direction_2(-1, 0)), mult);
       }
 
       return o;

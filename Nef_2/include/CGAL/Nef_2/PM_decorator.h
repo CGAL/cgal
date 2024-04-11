@@ -19,7 +19,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #include <CGAL/Unique_hash_map.h>
 #include <vector>
@@ -102,7 +102,7 @@ The type generalizes |Vertex_handle|.}*/
 
 /* note: originally I had the mhavs, mhafs hardwired to Halfedge
    in this class scope. egcs 290.60 reacted with an internal compiler
-   error; this recursive instatiation scheme works however!
+   error; this recursive instantiation scheme works however!
    what a shitty world */
 
 enum { BEFORE = -1, AFTER = 1 };
@@ -352,7 +352,7 @@ void link_as_isolated_vertex(Face_handle f, Vertex_handle v) const
 
 void clear_face_cycle_entries(Face_handle f) const
 /*{\Mop removes all isolated vertices and halfedges that
-are entrie points into face cycles from the lists of |f|.}*/
+are entry points into face cycles from the lists of |f|.}*/
 { f->clear_all_entries(); }
 
 
@@ -608,7 +608,7 @@ void make_first_out_edge(Halfedge_handle e) const
 
 void set_adjacency_at_source_between(Halfedge_handle e, Halfedge_handle en)
   const
-/*{\Mop makes |e| and |en| neigbors in the cyclic ordered adjacency list
+/*{\Mop makes |e| and |en| neighbors in the cyclic ordered adjacency list
   around |v=source(e)|. \precond |source(e)==source(en)|.}*/
 { CGAL_assertion(source(e)==source(en));
   link_as_prev_next_pair(en->opposite(),e);
@@ -800,10 +800,12 @@ void PM_decorator<HDS>::clone(const HDS& H) const
   CGAL::Unique_hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
   CGAL::Unique_hash_map<Face_const_iterator,Face_handle>         Fnew;
 
-  /* First clone all objects and store correspondance in three maps.*/
+  /* First clone all objects and store correspondence in three maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
-  for (vit = H.vertices_begin(); vit!=vend; ++vit)
-    Vnew[vit] = this->phds->vertices_push_back(Vertex_base());
+  for (vit = H.vertices_begin(); vit != vend; ++vit) {
+      Vnew[vit] = this->phds->vertices_push_back(Vertex_base());
+      assert(Vnew[vit] != Vertex_handle());
+  }
   Halfedge_const_iterator eit, eend = H.halfedges_end();
   for (eit = H.halfedges_begin(); eit!=eend; ++(++eit)) {
     Hnew[eit] = this->phds->edges_push_back(Halfedge_base(),Halfedge_base());
@@ -820,8 +822,12 @@ void PM_decorator<HDS>::clone(const HDS& H) const
        vit2!=vend2; ++vit, ++vit2) {
     mark(vit2) = DC.mark(vit);
     point(vit2) = DC.point(vit);
-    if ( DC.is_isolated(vit) ) vit2->set_face(Fnew[vit->face()]);
-    else vit2->set_halfedge(Hnew[vit->halfedge()]);
+    if (DC.is_isolated(vit)) {
+      vit2->set_face(Fnew[vit->face()]);
+    }
+    else {
+      vit2->set_halfedge(Hnew[vit->halfedge()]);
+    }
   }
   Halfedge_iterator eit2, eend2 = this->phds->halfedges_end();
   for (eit = H.halfedges_begin(), eit2 = halfedges_begin();
@@ -843,9 +849,10 @@ void PM_decorator<HDS>::clone(const HDS& H) const
       fit2->store_fc(Hnew[fcit]);
     } // hole face cycles
     Isolated_vertex_const_iterator ivit;
-    for (ivit = isolated_vertices_begin(fit);
-         ivit != isolated_vertices_end(fit); ++ivit)
+    for (ivit = DC.isolated_vertices_begin(fit);
+        ivit != DC.isolated_vertices_end(fit); ++ivit) {
       fit2->store_iv(Vnew[ivit]);
+    }
       // isolated vertices in the interior
     mark(fit2) = DC.mark(fit);
   }
@@ -867,7 +874,7 @@ clone_skeleton(const HDS& H, const LINKDA& L) const
   CGAL::Unique_hash_map<Vertex_const_iterator,Vertex_handle>     Vnew;
   CGAL::Unique_hash_map<Halfedge_const_iterator,Halfedge_handle> Hnew;
 
-  /* First clone all objects and store correspondance in the two maps.*/
+  /* First clone all objects and store correspondence in the two maps.*/
   Vertex_const_iterator vit, vend = H.vertices_end();
   for (vit = H.vertices_begin(); vit!=vend; ++vit) {
     Vertex_handle v = this->phds->vertices_push_back(Vertex_base());

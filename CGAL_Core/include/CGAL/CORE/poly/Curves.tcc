@@ -16,7 +16,7 @@
  *  Author:  Vikram Sharma and Chee Yap
  *  Date:    April 12, 2004
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -92,7 +92,7 @@ BiPoly<NT>::BiPoly(Polynomial<NT> p, bool flag){
 
   //BiPoly(deg, d[], C[]):
   //        Takes in a list of list of coefficients.
-  //        Each cofficient list represents a polynomial in X
+  //        Each coefficient list represents a polynomial in X
   //
   //  deg - ydeg of the bipoly
   //  d[] - array containing the degrees of each coefficient (i.e., X poly)
@@ -1101,7 +1101,7 @@ Curve<NT>::Curve(Polynomial<NT> p, bool flag)
 
   //Curve(deg, d[], C[]):
   //        Takes in a list of list of coefficients.
-  //        Each cofficient list represents a polynomial in X
+  //        Each coefficient list represents a polynomial in X
   //
   //  deg - ydeg of the bipoly
   //  d[] - array containing the degrees of each coefficient (i.e., X poly)
@@ -1336,7 +1336,7 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
     if (!xCurr.isExact()){
       std::ostringstream oss;
       oss << "xCurr has error! xCurr=" << xCurr;
-      core_error(oss.str(), __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, oss.str());
     }
    }//main while loop
 
@@ -1426,4 +1426,3 @@ void showIntervals(char* s, BFVecInterval &vI) {
 /*************************************************************************** */
 // END
 /*************************************************************************** */
-

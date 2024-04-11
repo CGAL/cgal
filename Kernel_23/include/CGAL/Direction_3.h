@@ -18,7 +18,6 @@
 #define CGAL_DIRECTION_3_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/representation_tags.h>
@@ -38,7 +37,7 @@ class Direction_3 : public R_::Kernel_base::Direction_3
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
   typedef Direction_3                        Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Direction_3>::value));
+  static_assert(std::is_same<Self, typename R_::Direction_3>::value);
 
 public:
 

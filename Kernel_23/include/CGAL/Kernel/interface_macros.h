@@ -18,18 +18,12 @@
 // It's aimed at being included from within a kernel traits class, this
 // way we share more code.
 
-// It is the responsability of the including file to correctly set the 2
+// It is the responsibility of the including file to correctly set the 2
 // macros CGAL_Kernel_pred, CGAL_Kernel_cons and CGAL_Kernel_obj.
 // And they are #undefed at the end of this file.
 
 #ifndef CGAL_Kernel_pred
 #  define CGAL_Kernel_pred(X, Y)
-#endif
-
-// Those predicates for which Simple_cartesian is guaranteed not to use
-// any division.
-#ifndef CGAL_Kernel_pred_RT
-#  define CGAL_Kernel_pred_RT(X, Y) CGAL_Kernel_pred(X, Y)
 #endif
 
 #ifndef CGAL_Kernel_cons
@@ -100,10 +94,12 @@ CGAL_Kernel_pred(Collinear_are_strictly_ordered_along_line_3,
                  collinear_are_strictly_ordered_along_line_3_object)
 CGAL_Kernel_pred(Collinear_has_on_2,
                  collinear_has_on_2_object)
-CGAL_Kernel_pred_RT(Collinear_2,
-                    collinear_2_object)
-CGAL_Kernel_pred_RT(Collinear_3,
-                    collinear_3_object)
+CGAL_Kernel_pred(Collinear_2,
+                 collinear_2_object)
+CGAL_Kernel_pred(Collinear_3,
+                 collinear_3_object)
+CGAL_Kernel_pred(Compare_angle_3,
+                 compare_angle_3_object)
 CGAL_Kernel_pred(Compare_angle_with_x_axis_2,
                  compare_angle_with_x_axis_2_object)
 CGAL_Kernel_pred(Compare_dihedral_angle_3,
@@ -112,10 +108,10 @@ CGAL_Kernel_pred(Compare_distance_2,
                  compare_distance_2_object)
 CGAL_Kernel_pred(Compare_distance_3,
                  compare_distance_3_object)
-CGAL_Kernel_pred_RT(Compare_power_distance_2,
-                    compare_power_distance_2_object)
-CGAL_Kernel_pred_RT(Compare_power_distance_3,
-                    compare_power_distance_3_object)
+CGAL_Kernel_pred(Compare_power_distance_2,
+                 compare_power_distance_2_object)
+CGAL_Kernel_pred(Compare_power_distance_3,
+                 compare_power_distance_3_object)
 CGAL_Kernel_pred(Compare_signed_distance_to_line_2,
                  compare_signed_distance_to_line_2_object)
 CGAL_Kernel_pred(Compare_slope_2,
@@ -402,6 +398,12 @@ CGAL_Kernel_cons(Construct_plane_3,
                  construct_plane_3_object)
 CGAL_Kernel_cons(Construct_plane_line_intersection_point_3,
                  construct_plane_line_intersection_point_3_object)
+CGAL_Kernel_cons(Construct_planes_intersection_point_3,
+                 construct_planes_intersection_point_3_object)
+CGAL_Kernel_cons(Construct_coplanar_segments_intersection_point_3,
+                 construct_coplanar_segments_intersection_point_3_object)
+CGAL_Kernel_cons(Compute_alpha_for_coplanar_triangle_intersection_3,
+                 compute_alpha_for_coplanar_triangle_intersection_3_object)
 CGAL_Kernel_cons(Construct_point_on_2,
                  construct_point_on_2_object)
 CGAL_Kernel_cons(Construct_point_on_3,
@@ -486,18 +488,18 @@ CGAL_Kernel_cons(Construct_cartesian_const_iterator_2,
                  construct_cartesian_const_iterator_2_object)
 CGAL_Kernel_cons(Construct_cartesian_const_iterator_3,
                  construct_cartesian_const_iterator_3_object)
-CGAL_Kernel_pred_RT(Coplanar_orientation_3,
-                    coplanar_orientation_3_object)
-CGAL_Kernel_pred_RT(Coplanar_side_of_bounded_circle_3,
-                    coplanar_side_of_bounded_circle_3_object)
-CGAL_Kernel_pred_RT(Coplanar_3,
+CGAL_Kernel_pred(Coplanar_orientation_3,
+                 coplanar_orientation_3_object)
+CGAL_Kernel_pred(Coplanar_side_of_bounded_circle_3,
+                 coplanar_side_of_bounded_circle_3_object)
+CGAL_Kernel_pred(Coplanar_3,
                  coplanar_3_object)
 CGAL_Kernel_pred(Counterclockwise_in_between_2,
                  counterclockwise_in_between_2_object)
 CGAL_Kernel_pred(Do_intersect_2,
                  do_intersect_2_object)
-CGAL_Kernel_pred_RT(Do_intersect_3,
-                    do_intersect_3_object)
+CGAL_Kernel_pred(Do_intersect_3,
+                 do_intersect_3_object)
 CGAL_Kernel_pred(Equal_xy_3,
                  equal_xy_3_object)
 CGAL_Kernel_pred(Equal_x_2,
@@ -546,8 +548,8 @@ CGAL_Kernel_cons(Intersect_point_3_for_polyhedral_envelope,
                  intersect_point_3_for_polyhedral_envelope_object)
 CGAL_Kernel_pred(Is_degenerate_2,
                  is_degenerate_2_object)
-CGAL_Kernel_pred_RT(Is_degenerate_3,
-                    is_degenerate_3_object)
+CGAL_Kernel_pred(Is_degenerate_3,
+                 is_degenerate_3_object)
 CGAL_Kernel_pred(Is_horizontal_2,
                  is_horizontal_2_object)
 CGAL_Kernel_pred(Is_vertical_2,
@@ -584,10 +586,10 @@ CGAL_Kernel_pred(Less_z_3,
                  less_z_3_object)
 CGAL_Kernel_pred(Non_zero_coordinate_index_3,
                  non_zero_coordinate_index_3_object)
-CGAL_Kernel_pred_RT(Orientation_2,
-                    orientation_2_object)
-CGAL_Kernel_pred_RT(Orientation_3,
-                    orientation_3_object)
+CGAL_Kernel_pred(Orientation_2,
+                 orientation_2_object)
+CGAL_Kernel_pred(Orientation_3,
+                 orientation_3_object)
 CGAL_Kernel_pred(Oriented_side_2,
                  oriented_side_2_object)
 CGAL_Kernel_pred(Oriented_side_3,
@@ -596,20 +598,19 @@ CGAL_Kernel_pred(Power_side_of_bounded_power_circle_2,
                  power_side_of_bounded_power_circle_2_object)
 CGAL_Kernel_pred(Power_side_of_bounded_power_sphere_3,
                  power_side_of_bounded_power_sphere_3_object)
-CGAL_Kernel_pred_RT(Power_side_of_oriented_power_circle_2,
-                    power_side_of_oriented_power_circle_2_object)
-CGAL_Kernel_pred_RT(Power_side_of_oriented_power_sphere_3,
-                    power_side_of_oriented_power_sphere_3_object)
-CGAL_Kernel_pred_RT(Side_of_bounded_circle_2,
-                    side_of_bounded_circle_2_object)
-CGAL_Kernel_pred_RT(Side_of_bounded_sphere_3,
-                    side_of_bounded_sphere_3_object)
-CGAL_Kernel_pred_RT(Side_of_oriented_circle_2,
-                    side_of_oriented_circle_2_object)
-CGAL_Kernel_pred_RT(Side_of_oriented_sphere_3,
-                    side_of_oriented_sphere_3_object)
+CGAL_Kernel_pred(Power_side_of_oriented_power_circle_2,
+                 power_side_of_oriented_power_circle_2_object)
+CGAL_Kernel_pred(Power_side_of_oriented_power_sphere_3,
+                 power_side_of_oriented_power_sphere_3_object)
+CGAL_Kernel_pred(Side_of_bounded_circle_2,
+                 side_of_bounded_circle_2_object)
+CGAL_Kernel_pred(Side_of_bounded_sphere_3,
+                 side_of_bounded_sphere_3_object)
+CGAL_Kernel_pred(Side_of_oriented_circle_2,
+                 side_of_oriented_circle_2_object)
+CGAL_Kernel_pred(Side_of_oriented_sphere_3,
+                 side_of_oriented_sphere_3_object)
 
-#undef CGAL_Kernel_pred_RT
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_cons
 #undef CGAL_Kernel_obj

@@ -9,7 +9,7 @@
 #include <CGAL/boost/graph/graph_traits_Constrained_triangulation_plus_2.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_hierarchy_2.h>
 
-#include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include <CGAL/boost/graph/kruskal_min_spanning_tree.h>
 
 #include <fstream>
 #include <iostream>
@@ -66,7 +66,7 @@ int main(int argc,char* argv[])
                                        vertex_index_map(vertex_index_pmap));
 
 
-  std::cout << "The edges of the Euclidean mimimum spanning tree:" << std::endl;
+  std::cout << "The edges of the Euclidean minimum spanning tree:" << std::endl;
   for(edge_descriptor ed : mst)
   {
     vertex_descriptor svd = source(ed, tr);

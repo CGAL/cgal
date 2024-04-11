@@ -24,7 +24,7 @@ namespace internal {
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Ray_3& r1,
              const typename K::Ray_3& r2,
              const K& k)

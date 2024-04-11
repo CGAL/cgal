@@ -22,10 +22,10 @@
 
 
 #include <iostream>
+#include <type_traits>
 #include <CGAL/Handle.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Interval_nt.h>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 namespace internal {

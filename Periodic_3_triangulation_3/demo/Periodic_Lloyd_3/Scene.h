@@ -62,8 +62,8 @@ struct Scene {
     y = (y < d.ymin() ? y+d.ymax()-d.ymin()
         : (y >= d.ymax() ? y-d.ymax()+d.ymin() : y));
 
-    CGAL_triangulation_postcondition((d.xmin()<=x)&&(x<d.xmax()));
-    CGAL_triangulation_postcondition((d.ymin()<=y)&&(y<d.ymax()));
+    CGAL_postcondition((d.xmin()<=x)&&(x<d.xmax()));
+    CGAL_postcondition((d.ymin()<=y)&&(y<d.ymax()));
 
     return Point_3(x,y,0);
   }

@@ -10,6 +10,10 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
+#ifndef CGAL_APPROXIMATE_MIN_ELLIPSOID_D_APPROXIMATE_MIN_ELLIPSOID_D_IMPL_H
+#define CGAL_APPROXIMATE_MIN_ELLIPSOID_D_APPROXIMATE_MIN_ELLIPSOID_D_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
 
 #include <CGAL/Default_diagonalize_traits.h>
 
@@ -91,7 +95,7 @@ namespace CGAL {
     //       [ M'  m  ]
     //   M = [ m^T nu ]
     //
-    // where M is the matrix defined via E->matrix(i,j).  After caling
+    // where M is the matrix defined via E->matrix(i,j).  After calling
     // compute_center() (see above), we have in center_ a point c such
     // that
     //
@@ -101,7 +105,7 @@ namespace CGAL {
     //
     // Now if we can write M' = U D U^T holds for some diagonal matrix
     // D and an orthogonal matrix U then the length l_i of the ith axes
-    // (corresponding to the ith "direcion" stored in the ith row of
+    // (corresponding to the ith "direction" stored in the ith row of
     // U) can be obtained by plugging (0,...,0,l_i,0,...,0)U^T=y-c into
     // the above equation for E*:
     //
@@ -272,3 +276,5 @@ namespace CGAL {
   }
 
 }
+
+#endif //CGAL_APPROXIMATE_MIN_ELLIPSOID_D_APPROXIMATE_MIN_ELLIPSOID_D_IMPL_H

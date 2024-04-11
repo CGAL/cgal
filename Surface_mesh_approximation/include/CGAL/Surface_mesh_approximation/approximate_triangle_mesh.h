@@ -24,10 +24,10 @@
 #include <CGAL/property_map.h>
 
 #include <boost/graph/graph_traits.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <iostream>
 #include <limits>
+#include <type_traits>
 
 namespace CGAL {
 namespace Surface_mesh_approximation {
@@ -247,21 +247,21 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   // get proxy map
   approx.proxy_map( get_parameter(np, internal_np::face_proxy_map) );
 
-  if (!parameters::is_default_parameter<NamedParameters, internal_np::face_proxy_map_t>()
-    && (vl == MAIN_STEPS || vl == VERBOSE))
+  if (!parameters::is_default_parameter<NamedParameters, internal_np::face_proxy_map_t>::value &&
+      (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Filling face proxy map done." << std::endl;
 
   // get proxies
   approx.proxies( get_parameter(np, internal_np::proxies) );
 
-  if (!is_default_parameter<NamedParameters,internal_np::proxies_t>()
-    && (vl == MAIN_STEPS || vl == VERBOSE))
+  if (!is_default_parameter<NamedParameters, internal_np::proxies_t>::value &&
+      (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get proxies done." << std::endl;
 
   // meshing
   bool is_manifold = false;
-  if (!is_default_parameter<NamedParameters, internal_np::anchors_t>()
-    || !is_default_parameter<NamedParameters,internal_np::triangles_t>())
+  if (!is_default_parameter<NamedParameters, internal_np::anchors_t>::value ||
+      !is_default_parameter<NamedParameters, internal_np::triangles_t>::value)
   {
     if (vl == VERBOSE) {
       const FT subdivision_ratio = choose_parameter(get_parameter(np, internal_np::subdivision_ratio), FT(5.0));
@@ -287,15 +287,15 @@ bool approximate_triangle_mesh(const TriangleMesh &tm, const NamedParameters &np
   // get anchor points
   approx.anchor_points( get_parameter(np, internal_np::anchors) );
 
-  if (!is_default_parameter<NamedParameters,internal_np::anchors_t>()
-    && (vl == MAIN_STEPS || vl == VERBOSE))
+  if (!is_default_parameter<NamedParameters,internal_np::anchors_t>::value &&
+      (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get anchors done." << std::endl;
 
   // get indexed triangles
   approx.indexed_triangles( get_parameter(np, internal_np::triangles) );
 
-  if (!is_default_parameter<NamedParameters,internal_np::triangles_t>()
-    && (vl == MAIN_STEPS || vl == VERBOSE))
+  if (!is_default_parameter<NamedParameters,internal_np::triangles_t>::value &&
+      (vl == MAIN_STEPS || vl == VERBOSE))
     std::cout << "Get indexed triangles done." << std::endl;
 
   return is_manifold;

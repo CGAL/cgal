@@ -31,7 +31,7 @@
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -84,7 +84,7 @@ typedef typename Sphere_kernel::Aff_transformation_3 Aff_transformation_3;
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 typedef void*  GenPtr;
 #else
-typedef boost::any GenPtr;
+typedef std::any GenPtr;
 #endif
 typedef typename Map::SVertex                   SVertex;
 typedef typename Map::SVertex_handle            SVertex_handle;
@@ -231,7 +231,7 @@ Size_type number_of_sfaces() const
 
 SFace_cycle_iterator sface_cycles_begin(SFace_handle f) const
 /*{\Mop returns an iterator for all bounding face cycles of |f|.
-The iterator is is convertable to |SVertex_handle|,
+The iterator is is convertible to |SVertex_handle|,
 |SHalfloop_handle|, or |SHalfedge_handle|.}*/
 { return f->boundary_entry_objects().begin(); }
 
@@ -659,7 +659,7 @@ void link_as_target_of(SHalfedge_handle e, SVertex_handle v) const
 { link_as_source_of(e->twin(),v); }
 
 void set_adjacency_at_source_between(SHalfedge_handle e, SHalfedge_handle en)
-/*{\Mop makes |e| and |en| neigbors in the cyclic ordered adjacency list
+/*{\Mop makes |e| and |en| neighbors in the cyclic ordered adjacency list
     around |v=e->source()|. \precond |e->source()==en->source()|.}*/
 { CGAL_assertion(e->source()==en->source());
   link_as_prev_next_pair(en->twin(),e);

@@ -8,7 +8,10 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 
-#include <fstream>
+#include <iostream>
+#include <list>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;

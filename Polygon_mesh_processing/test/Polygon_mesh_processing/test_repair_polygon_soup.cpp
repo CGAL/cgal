@@ -1,10 +1,10 @@
 #define CGAL_PMP_REPAIR_POLYGON_SOUP_VERBOSE_PP
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
 #include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <algorithm>
 #include <deque>
@@ -564,6 +564,21 @@ void test_slit_pinched_polygons(const bool /*verbose*/ = false)
 
 int main()
 {
+  // test compilation with different polygon soup types
+  std::vector<Point_3> vpoints;
+  std::vector<std::vector<std::size_t> > vpolygons;
+  PMP::repair_polygon_soup(vpoints, vpolygons);
+
+  std::vector<std::deque<std::size_t> > dpolygons;
+  PMP::repair_polygon_soup(vpoints, dpolygons);
+
+  std::deque<std::vector<std::size_t> > dvpolygons;
+  PMP::repair_polygon_soup(vpoints, dvpolygons);
+
+  std::deque<std::array<std::size_t, 3> > apolygons;
+  PMP::repair_polygon_soup(vpoints, apolygons);
+
+  // test functions
   test_polygon_canonicalization(true);
   test_merge_duplicate_points(false);
   test_merge_duplicate_polygons(false);

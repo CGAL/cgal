@@ -23,20 +23,18 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/box_intersection_d.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_impl.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Side_of_triangle_mesh.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <exception>
 #include <iterator>
 #include <utility>
 #include <vector>
+#include <type_traits>
 
 namespace CGAL {
 namespace Polygon_mesh_processing{
@@ -333,7 +331,8 @@ struct Throw_at_first_output {
 };
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * reports all the pairs of faces intersecting between two triangulated surface meshes.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -415,8 +414,8 @@ compute_face_face_intersection(const FaceRange& face_range1,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(boost::begin(face_range1), boost::end(face_range1)));
-  boxes2.reserve(std::distance(boost::begin(face_range2), boost::end(face_range2)));
+  boxes1.reserve(std::distance(std::begin(face_range1), std::end(face_range1)));
+  boxes2.reserve(std::distance(std::begin(face_range2), std::end(face_range2)));
 
   typedef typename GetVertexPointMap<TM, NamedParameters1>::const_type VertexPointMap1;
   typedef typename GetVertexPointMap<TM, NamedParameters2>::const_type VertexPointMap2;
@@ -425,8 +424,8 @@ compute_face_face_intersection(const FaceRange& face_range1,
                                         get_const_property_map(boost::vertex_point, tm1));
   VertexPointMap2 vpmap2 = choose_parameter(get_parameter(np2, internal_np::vertex_point),
                                         get_const_property_map(boost::vertex_point, tm2));
-  CGAL_static_assertion(
-      (boost::is_same<
+  static_assert(
+      (std::is_same<
        typename boost::property_traits<VertexPointMap1>::value_type,
        typename boost::property_traits<VertexPointMap2>::value_type
        >::value) );
@@ -466,12 +465,14 @@ compute_face_face_intersection(const FaceRange& face_range1,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * reports all the pairs of segments and faces intersecting between
  * a triangulated surface mesh and a polyline.
- * \attention If a polyline vertex intersects a face, the intersection will
- * be reported twice (even more if it is on a vertex, edge, or point).
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * \attention If a polyline vertex intersects a face, the intersection will
+ * be reported twice (or more if it is on a vertex, edge, or point).
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -518,11 +519,11 @@ template <class TriangleMesh,
           class OutputIterator,
           class NamedParameters>
 OutputIterator
-compute_face_polyline_intersection( const FaceRange& face_range,
-               const Polyline& polyline,
-               const TriangleMesh& tm,
-               OutputIterator out,
-               const NamedParameters& np)
+compute_face_polyline_intersection(const FaceRange& face_range,
+                                   const Polyline& polyline,
+                                   const TriangleMesh& tm,
+                                   OutputIterator out,
+                                   const NamedParameters& np)
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -541,12 +542,12 @@ compute_face_polyline_intersection( const FaceRange& face_range,
   VertexPointMap vpmap = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                           get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
-  CGAL_static_assertion(
-        (boost::is_same<Point,
+  static_assert(
+        (std::is_same<Point,
         typename boost::range_value<Polyline>::type>::value));
 
   std::vector<face_descriptor> faces;
-  faces.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
+  faces.reserve(std::distance(std::begin(face_range), std::end(face_range)));
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
@@ -554,8 +555,8 @@ compute_face_polyline_intersection( const FaceRange& face_range,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
-  boxes2.reserve(std::distance(boost::begin(polyline), boost::end(polyline)) - 1);
+  boxes1.reserve(std::distance(std::begin(face_range), std::end(face_range)));
+  boxes2.reserve(std::distance(std::begin(polyline), std::end(polyline)) - 1);
 
   for(face_descriptor f : face_range)
   {
@@ -596,12 +597,14 @@ compute_face_polyline_intersection( const FaceRange& face_range,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * reports all the pairs of segments and faces intersecting between
  * a triangulated surface mesh and a range of polylines.
+ * This function depends on the package \ref PkgBoxIntersectionD.
+ *
  * \attention If a polyline vertex intersects a face, the intersection will
  * be reported twice (even more if it is on a vertex, edge, or point).
- * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -677,10 +680,10 @@ compute_face_polylines_intersection(const FaceRange& face_range,
                                           get_const_property_map(boost::vertex_point, tm));
   typedef typename boost::property_traits<VertexPointMap>::value_type Point;
   typedef typename boost::range_value<PolylineRange>::type Polyline;
-  CGAL_static_assertion((boost::is_same<Point, typename boost::range_value<Polyline>::type>::value));
+  static_assert(std::is_same<Point, typename boost::range_value<Polyline>::type>::value);
 
   std::vector<face_descriptor> faces;
-  faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
+  faces.reserve(std::distance( std::begin(face_range), std::end(face_range) ));
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t>, Box_policy> Box;
@@ -688,12 +691,12 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
+  boxes1.reserve(std::distance(std::begin(face_range), std::end(face_range)));
 
   std::size_t polylines_size = 0;
   for(Polyline poly : polyline_range)
   {
-    polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
   }
   boxes2.reserve(polylines_size);
 
@@ -703,11 +706,11 @@ compute_face_polylines_intersection(const FaceRange& face_range,
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), std::make_pair(0, faces.size()-1)));
   }
 
-  std::size_t range_size = std::distance( boost::begin(polyline_range), boost::end(polyline_range) );
+  std::size_t range_size = std::distance( std::begin(polyline_range), std::end(polyline_range) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polyline_range[j];
-    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
     for(std::size_t i =0; i< size - 1; ++i)
     {
       Point p1 = poly[i];
@@ -743,11 +746,14 @@ compute_face_polylines_intersection(const FaceRange& face_range,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * detects and records intersections between two polylines.
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
  * \attention If a polyline vertex intersects another polyline, the intersection will
  * be reported twice (even more if it is on a vertex).
+ *
  * \tparam Polyline a `RandomAccessRange` of points.
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<std::size_t, std::size_t>`. This OutputIterator will hold the position of the
@@ -778,8 +784,8 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(boost::begin(polyline1), boost::end(polyline1)) - 1);
-  boxes2.reserve(std::distance(boost::begin(polyline2), boost::end(polyline2)) - 1);
+  boxes1.reserve(std::distance(std::begin(polyline1), std::end(polyline1)) - 1);
+  boxes2.reserve(std::distance(std::begin(polyline2), std::end(polyline2)) - 1);
 
   for(std::size_t i =0; i< polyline1.size()-1; ++i)
   {
@@ -818,11 +824,13 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * detects and records intersections between two ranges of polylines.
- *  \attention If a polyline vertex intersects another polyline, the intersection will
- * be reported twice (even more if it is on a vertex).
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * \attention If a polyline vertex intersects another polyline, the intersection will
+ * be reported twice (even more if it is on a vertex).
  *
  * \tparam PolylineRange a `RandomAccessRange` of `RandomAccessRange` of points.
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
@@ -861,7 +869,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   CGAL::Bbox_3 b1, b2;
   for(Polyline poly : polylines1)
   {
-    polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
     b1 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes1.reserve( polylines_size );
@@ -869,7 +877,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   polylines_size = 0;
   for(Polyline poly : polylines2)
   {
-    polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
     b2 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes2.reserve(polylines_size);
@@ -877,11 +885,11 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   if(!CGAL::do_overlap(b1,b2))
     return out;
 
-  std::size_t range_size = std::distance( boost::begin(polylines1), boost::end(polylines1) );
+  std::size_t range_size = std::distance( std::begin(polylines1), std::end(polylines1) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polylines1[j];
-    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
     for(std::size_t i =0; i< size - 1; ++i)
     {
       const Point& p1 = poly[i];
@@ -890,11 +898,11 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
     }
   }
 
-  range_size = std::distance( boost::begin(polylines2), boost::end(polylines2) );
+  range_size = std::distance( std::begin(polylines2), std::end(polylines2) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polylines2[j];
-    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
     for(std::size_t i =0; i< size - 1; ++i)
     {
       const Point& p1 = poly[i];
@@ -925,7 +933,8 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
 }
 
 // Note this is not officially documented
-/*
+/* \ingroup PMP_intersection_grp
+ *
  * reports all the pairs of faces intersecting between two triangulated surface meshes.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -980,12 +989,13 @@ compute_face_face_intersection(const TriangleMesh& tm1,
 }
 
 // Note this is not officially documented
-/*
- * detects and records intersections between a triangulated surface mesh
- * and a polyline.
- *  \attention If a polyline vertex intersects a face or another polyline, the intersection will
- * be reported twice (even more if it is on a vertex, edge, or point).
+/* \ingroup PMP_intersection_grp
+ *
+ * detects and records intersections between a triangulated surface mesh and a polyline.
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
+ * \attention If a polyline vertex intersects a face or another polyline, the intersection will
+ * be reported twice (even more if it is on a vertex, edge, or point).
  *
  * \pre `CGAL::is_triangle_mesh(tm)`
  *
@@ -995,7 +1005,7 @@ compute_face_face_intersection(const TriangleMesh& tm1,
  * \cgalDescribePolylineType
  * \tparam OutputIterator a model of `OutputIterator` holding objects of type
  *   `std::pair<std::size_t, std::size_t>`. This OutputIterator will hold the position of the
- *  elements in their respective range. In the case of the polyline, this position is the index
+ * elements in their respective range. In the case of the polyline, this position is the index
  * of the segment that holds the intersection, so it is the index of the first point of the
  * segment following the range order.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -1030,13 +1040,12 @@ template <class TriangleMesh,
           class NamedParameters>
 OutputIterator
 compute_face_polyline_intersection(const TriangleMesh& tm,
-              const Polyline& polyline,
-              OutputIterator out,
-              const NamedParameters& np)
+                                   const Polyline& polyline,
+                                   OutputIterator out,
+                                   const NamedParameters& np)
 {
   return compute_face_polyline_intersection(faces(tm), polyline, tm, out, np);
 }
-
 
 // functions to check for overlap of meshes
 template <class GT, class TriangleMesh, class VPM>
@@ -1114,7 +1123,8 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
 }// namespace internal
 
 /**
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * returns `true` if there exists a segment of a polyline of `polylines1`
  * and a segment of a polyline of `polylines2` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
@@ -1131,14 +1141,14 @@ template <class PolylineRange>
 bool do_intersect(const PolylineRange& polylines1,
                   const PolylineRange& polylines2
 #ifndef DOXYGEN_RUNNING
-                  , const typename boost::enable_if<
-                    typename boost::has_range_iterator<
+                  , const std::enable_if_t<
+                      boost::has_range_iterator<
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<PolylineRange>,
                         boost::range_value<PolylineRange>,
-                        boost::false_type >::type
-                    >::type
-                   >::type* = 0//end enable_if
+                        std::false_type >::type
+                    >::value
+                   >* = 0//end enable_if
 #endif
     )
 {
@@ -1157,7 +1167,8 @@ bool do_intersect(const PolylineRange& polylines1,
 }
 
 /**
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * returns `true` if there exists a segment of `polyline1` and a segment of `polyline2` which intersect,
  * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
@@ -1174,18 +1185,18 @@ template <class Polyline>
 bool do_intersect(const Polyline& polyline1,
                   const Polyline& polyline2
 #ifndef DOXYGEN_RUNNING
-                , const typename boost::enable_if<
-                    typename boost::has_range_const_iterator<Polyline>::type
-                  >::type* = 0,
-                  const typename boost::disable_if<
-                    typename boost::has_range_iterator<
+                , const std::enable_if_t<
+                    boost::has_range_const_iterator<Polyline>::value
+                  >* = 0,
+                  const std::enable_if_t<
+                    !boost::has_range_iterator<
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<Polyline>,
                         boost::range_value<Polyline>,
-                        boost::false_type
+                        std::false_type
                       >::type
-                    >::type
-                  >::type* = 0//end enable_if
+                    >::value
+                  >* = 0//end enable_if
 #endif
                  )
 {
@@ -1203,9 +1214,12 @@ bool do_intersect(const Polyline& polyline1,
 }
 
 /**
- * \ingroup PMP_predicates_grp
- * returns `true` if there exists a face of `tm1` and a face of `tm2` which intersect, and `false` otherwise.
- * If `do_overlap_test_of_bounded_sides` is set to `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
+ * \ingroup PMP_intersection_grp
+ *
+ * \brief returns `true` if there exists a face of `tm1` and a face of `tm2` which intersect, and `false` otherwise.
+ *
+ * If `do_overlap_test_of_bounded_sides` is set to `true`, the overlap of bounded sides are tested as well.
+ * In that case, the meshes must be closed.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
  * @pre `CGAL::is_triangle_mesh(tm1)`
@@ -1249,6 +1263,7 @@ bool do_intersect(const Polyline& polyline1,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \see `intersecting_meshes()`
  */
 template <class TriangleMesh,
           class CGAL_NP_TEMPLATE_PARAMETERS_1,
@@ -1258,9 +1273,9 @@ bool do_intersect(const TriangleMesh& tm1,
                   const CGAL_NP_CLASS_1& np1 = parameters::default_values(),
                   const CGAL_NP_CLASS_2& np2 = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                  , const typename boost::disable_if<
-                                    typename boost::has_range_const_iterator<TriangleMesh>::type
-                  >::type* = 0
+                  , const std::enable_if_t<
+                            !boost::has_range_const_iterator<TriangleMesh>::value
+                  >* = 0
 #endif
                   )
 {
@@ -1301,10 +1316,12 @@ bool do_intersect(const TriangleMesh& tm1,
 }
 
 /**
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * returns `true` if there exists a face of `tm` and a segment of a polyline of `polylines` which intersect,
  * and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
@@ -1342,15 +1359,15 @@ bool do_intersect(const TriangleMesh& tm,
                   const PolylineRange& polylines,
                   const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , const typename boost::enable_if<
-                    typename boost::has_range_iterator<
+                , const std::enable_if_t<
+                    boost::has_range_iterator<
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<PolylineRange>,
                         boost::range_value<PolylineRange>,
-                        boost::false_type
+                        std::false_type
                       >::type
-                    >::type
-                  >::type* = 0//end enable_if
+                    >::value
+                  >* = 0//end enable_if
 #endif
                  )
 {
@@ -1367,9 +1384,11 @@ bool do_intersect(const TriangleMesh& tm,
 }
 
 /**
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * returns `true` if there exists a face of `tm` and a segment of `polyline` which intersect, and `false` otherwise.
  * This function depends on the package \ref PkgBoxIntersectionD.
+ *
  * @pre `CGAL::is_triangle_mesh(tm)`
  *
  * \tparam TriangleMesh a model of `FaceListGraph`
@@ -1407,19 +1426,17 @@ bool do_intersect(const TriangleMesh& tm,
                   const Polyline& polyline,
                   const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , const typename boost::disable_if<
-                    typename boost::mpl::or_<
-                      typename boost::is_same<TriangleMesh, Polyline>::type, // Added to please MSVC 2015
-                      typename boost::mpl::not_<typename boost::has_range_iterator<Polyline>::type>::type, // not a range
-                      typename boost::has_range_iterator<
+                , const std::enable_if_t<!(
+                      std::is_same_v<TriangleMesh, Polyline> || // Added to please MSVC 2015
+                      !boost::has_range_iterator<Polyline>::value || // not a range
+                      boost::has_range_iterator<
                         typename boost::mpl::eval_if<
                           boost::has_range_iterator<Polyline>,
                           boost::range_value<Polyline>,
-                          boost::false_type
-                        >::type
-                      >::type // not a range of a range
-                    >::type
-                  >::type* = 0
+                          std::false_type>::type
+                        >::value
+                    )
+                  >* = 0
 #endif
                  )
 {
@@ -1551,10 +1568,11 @@ struct Mesh_callback
 }//end internal
 
 /*!
- * \ingroup PMP_predicates_grp
+ * \ingroup PMP_intersection_grp
+ *
  * detects and reports all the pairs of meshes intersecting in a range of triangulated surface meshes.
  * A pair of meshes intersecting is put in the output iterator `out` as a `std::pair<std::size_t, std::size_t>`,
- * each index refering to the index of the triangle mesh in the input range.
+ * each index referring to the index of the triangle mesh in the input range.
  * If `do_overlap_test_of_bounded_sides` is `true`, the overlap of bounded sides are tested as well. In that case, the meshes must be closed.
  * This function depends on the package \ref PkgBoxIntersectionD.
  *
@@ -1596,8 +1614,9 @@ struct Mesh_callback
  *     \cgalParamExtra{All vertex point maps must have the same value type}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
+ *
+ * \see `do_intersect()`
  */
-
 template <class TriangleMeshRange,
           class OutputIterator,
           class NamedParameters,
@@ -1659,6 +1678,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
 
 /**
  * \ingroup PMP_corefinement_grp
+ *
  * computes the intersection of triangles of `tm1` and `tm2`. The output is a
  * set of polylines with all vertices but endpoints being of degree 2.
  *
@@ -1691,7 +1711,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{throw_on_self_intersection}
- *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm1` and `tm2` will be
  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
  *                           will be thrown if at least one self-intersection is found.}
  *     \cgalParamType{Boolean}
@@ -1700,6 +1720,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \see `do_intersect()`
  */
 template <class OutputIterator,
           class TriangleMesh,
@@ -1718,8 +1739,8 @@ surface_intersection(const TriangleMesh& tm1,
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::const_type VPM1;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::const_type VPM2;
 
-  CGAL_static_assertion((std::is_same<typename boost::property_traits<VPM1>::value_type,
-                                      typename boost::property_traits<VPM2>::value_type>::value));
+  static_assert(std::is_same<typename boost::property_traits<VPM1>::value_type,
+                                      typename boost::property_traits<VPM2>::value_type>::value);
 
   VPM1 vpm1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point),
                                            get_const_property_map(CGAL::vertex_point, tm1));

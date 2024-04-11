@@ -4,21 +4,23 @@
 // Use this def in order to get all DEBUG info related to the bounded-error Hausdorff code!
 #define CGAL_HAUSDORFF_DEBUG
 
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
-
-#include <CGAL/Aff_transformation_3.h>
-#include <CGAL/Bbox_3.h>
-#include <CGAL/IO/PLY.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/random_perturbation.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
+#include <CGAL/Aff_transformation_3.h>
+#include <CGAL/Bbox_3.h>
+#include <CGAL/IO/PLY.h>
+
 #include <CGAL/Real_timer.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 using SCK   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -241,7 +243,7 @@ void interior_triangle_example(const double error_bound,
 }
 
 // Read a real mesh given by the user, perturb it slightly, and compute the
-// Hausdorff distance between the original mesh and its pertubation.
+// Hausdorff distance between the original mesh and its perturbation.
 void perturbing_surface_mesh_example(const std::string& filepath,
                                      const double error_bound,
                                      const bool save = true)

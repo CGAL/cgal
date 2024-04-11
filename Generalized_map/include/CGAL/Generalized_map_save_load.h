@@ -70,7 +70,7 @@ namespace CGAL {
   template < class GMap >
   boost::property_tree::ptree gmap_save_darts
   (const GMap& amap,
-   std::unordered_map<typename GMap::Dart_const_handle,
+   std::unordered_map<typename GMap::Dart_const_descriptor,
               typename GMap::size_type>& myDarts)
   {
     CGAL_assertion( myDarts.empty() );
@@ -119,7 +119,7 @@ namespace CGAL {
     ptree tree;
 
     // map dart => number
-    std::unordered_map<typename GMap::Dart_const_handle, typename GMap::size_type> myDarts;
+    std::unordered_map<typename GMap::Dart_const_descriptor, typename GMap::size_type> myDarts;
 
     // Save darts
     ptree pt_darts=gmap_save_darts(amap, myDarts);
@@ -145,7 +145,7 @@ namespace CGAL {
 
   template < class GMap >
   bool gmap_load_darts(boost::property_tree::ptree &pt, GMap& amap,
-                       std::vector<typename GMap::Dart_handle>& myDarts)
+                       std::vector<typename GMap::Dart_descriptor>& myDarts)
   {
     // use a boost::property_tree
     using boost::property_tree::ptree;
@@ -196,7 +196,7 @@ namespace CGAL {
     using boost::property_tree::ptree;
     ptree pt;
     read_xml(input, pt);
-    std::vector<typename GMap::Dart_handle> myDarts;
+    std::vector<typename GMap::Dart_descriptor> myDarts;
     gmap_load_darts(pt,amap,myDarts);
     cmap_load_attributes(pt,amap,myDarts);
     return true;

@@ -121,7 +121,9 @@ public:
   Vertex& get_best_vertex()
   {
     std::size_t simplex_id = static_cast<std::size_t>(-1), vertex_id = static_cast<std::size_t>(-1);
-    FT best_fitness = FT{(std::numeric_limits<double>::max)()};
+    //cast from double to float looses data, so cast with {} is not allowed
+    //cast from double to exact types also works
+    FT best_fitness = FT((std::numeric_limits<double>::max)());
     for(std::size_t i=0, ps=m_simplices.size(); i<ps; ++i)
     {
       for(std::size_t j=0; j<4; ++j)

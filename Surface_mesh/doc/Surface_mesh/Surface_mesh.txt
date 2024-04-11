@@ -77,11 +77,20 @@ they were created must be used to obtain this information.
 
 \subsection usage_example Example
 
-The following example shows how to create a very simple `Surface_mesh`
+The first example shows how to create a very simple `Surface_mesh`
 by adding 2 faces, and how to check that a face is correctly added
 to the mesh.
 
 \cgalExample{Surface_mesh/check_orientation.cpp}
+
+The second example shows how to access the points associated
+to the vertices, either for an individual vertex, or as
+the range of points of the entire mesh.  Such a range can
+be accessed in a for-loop or passed to functions that expect
+a range of points as input.
+
+\cgalExample{Surface_mesh/sm_points.cpp}
+
 \section sectionSurfaceMeshConnectivity Connectivity
 
 A surface mesh is an edge-centered data structure capable of
@@ -367,7 +376,7 @@ associated with the surface mesh.
 
 Note however that by garbage collecting elements get new indices.
 In case you keep vertex descriptors they are most probably no longer
-refering to the right vertices.
+referring to the right vertices.
 
 \subsection SubsectionSurfaceMeshMemoryManagementExample Example
 \cgalExample{Surface_mesh/sm_memory.cpp}
@@ -379,8 +388,8 @@ A surface mesh can be visualized by calling the \link PkgDrawSurfaceMesh CGAL::d
 
 \cgalExample{Surface_mesh/draw_surface_mesh.cpp}
 
-This function requires `CGAL_Qt5`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt5` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
 \cgalFigureBegin{fig_draw_surface_mesh,draw_surface_mesh.png}
 Result of the run of the draw_surface_mesh program. A window shows the surface mesh and allows to navigate through the 3D scene.
@@ -389,7 +398,7 @@ Result of the run of the draw_surface_mesh program. A window shows the surface m
 
 \section sectionSurfaceMeshImplementation Implementation Details
 
-As integer type for the indices we have chosen `boost::uint32_t`. On 64 bit operating systems they
+As integer type for the indices we have chosen `std::uint32_t`. On 64 bit operating systems they
 take only half the size of a pointer. They still allow to have meshes with 2 billion elements.
 
 We use `std::vector` for storing properties. So by accessing the address

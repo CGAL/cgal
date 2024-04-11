@@ -160,12 +160,12 @@ public:
 
 namespace CGAL {
 
-/*! \ingroup PkgArrangementOnSurface2Insert insert The function `%insert`
- * inserts one or more curves or \f$ x\f$-monotone curves into a given
- * arrangement, where no restrictions are imposed on the inserted curves. If an
- * inserted curve is not \f$ x\f$-monotone curve, it is subdivided into \f$
- * x\f$-monotone subcurves (and perhaps isolated points), which are inserted
- * into the arrangement.
+/*! \ingroup PkgArrangementOnSurface2Insert
+ * The function `%insert` inserts one or more curves or \f$ x\f$-monotone curves
+ * into a given arrangement, where no restrictions are imposed on the inserted
+ * curves. If an inserted curve is not \f$ x\f$-monotone curve, it is subdivided
+ * into \f$ x\f$-monotone subcurves (and perhaps isolated points), which are
+ * inserted into the arrangement.
  *
  * \cgalHeading{Requirements}
  *
@@ -282,7 +282,7 @@ void insert_non_intersecting_curves(Arrangement_2<Traits,Dcel>& arr,
  *
  * Inserts a given point into a given arrangement.  It uses a given
  * point-location object to locate the given point in the given arrangement. If
- * the point conincides with an existing vertex, there is nothing left to do; if
+ * the point coincides with an existing vertex, there is nothing left to do; if
  * it lies on an edge, the edge is split at the point. Otherwise, the point is
  * contained inside a face, and is inserted as an isolated vertex inside this
  * face.  By default, the function uses the "walk along line" point-location
@@ -378,38 +378,5 @@ remove_edge(Arrangement_2<Traits,Dcel>& arr,
 template <typename Traits, typename Dcel>
 bool remove_vertex(Arrangement_2<Traits,Dcel>& arr,
                    typename Arrangement_2<Traits,Dcel>::Vertex_handle v);
-
-/*! \ingroup PkgArrangementOnSurface2Funcs
- *
- * Compute the zone of the given \f$ x\f$-monotone curve in the existing
- * arrangement. Meaning, it output the arrangement's vertices, edges and faces
- * that the \f$ x\f$-monotone curve intersects. The order of the objects is the
- * order that they are discovered when traversing the \f$ x\f$-monotone curve
- * from left to right.
- *
- * A given point-location object is used for answering point-location queries
- * during the insertion process. By default, the function uses the "walk along
- * line" point-location strategy - namely an instance of the class
- * `Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >`.
- *
- * Compute the zone of the given \f$ x\f$-monotone curve `c` in the arrangement
- * `arr`.
- *
- * \pre If provided, `pl` must be attached to the given arrangement `arr`.
- *
- * \cgalHeading{Requirements}
- *
- * <UL>
- * <LI>The instantiated `GeomTraits` class must model the
- * `ArrangementXMonotoneTraits_2` concept.
- * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
- * </UL>
- */
-template <typename Traits, typename Dcel,
-          typename OutputIterator, typename PointLocation>
-OutputIterator zone(Arrangement_2<Traits, Dcel>& arr,
-                    const typename Traits::X_monotone_curve_2& c,
-                    OutputIterator oi, const PointLocation& pl);
 
 } /* namespace CGAL */

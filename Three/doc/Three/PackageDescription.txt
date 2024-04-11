@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{Three,PkgThree}
 \cgalPkgPicture{pkg-small.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno}
+\cgalPkgAuthors{Laurent Rineau, Sebastien Loriot, Andreas Fabri, and Maxime Gimeno}
 \cgalPkgDesc{This package provides base classes for building a plugin. }
 \cgalPkgManuals{Chapter_Three,PkgThreeRef}
 \cgalPkgSummaryEnd

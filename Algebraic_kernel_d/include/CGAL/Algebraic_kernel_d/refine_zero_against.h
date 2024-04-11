@@ -66,7 +66,7 @@ int descartes(Polynomial& p, const Field& low,const Field& high){
 }
 
 /*! \ingroup \NiX_univariate_polynomial_utils
- *  \brief refine isolating interval for \c p w.r.t \c q
+ *  \brief refine isolating interval for \c p w.r.t. \c q
  *
  *  This function refines the interval ]<TT>low</TT>, <TT>high</TT>[
  *  such that it does not contain any zero of \c q different from the
@@ -100,7 +100,7 @@ bool refine_zero_against(Field& low, Field& high, Polynomial p, Polynomial q) {
     if (CGAL::degree(q) == 0) return false;
 
     CGAL::Sign sign_p_low  = p.sign_at(low);
-    CGAL::Sign sign_p_high = p.sign_at(high);
+    CGAL_assertion_code(CGAL::Sign sign_p_high = p.sign_at(high));
     CGAL_precondition(sign_p_low  != CGAL::ZERO);
     CGAL_precondition(sign_p_high != CGAL::ZERO);
     CGAL_precondition(sign_p_high != sign_p_low);
@@ -148,9 +148,9 @@ bool refine_zero_against(Field& low, Field& high, Polynomial p, Polynomial q) {
             low = mid;
             sign_p_low = s;
         } else {
-            CGAL_postcondition(s == sign_p_high);
+            CGAL_assertion(s == sign_p_high);
             high = mid;
-            sign_p_high = s;
+            CGAL_assertion_code(sign_p_high = s);
         }
     }
 }
@@ -168,7 +168,7 @@ static bool strong_refine_zero_against(Field& low, Field& high,
     std::cout << "done, " << has_common_root << std::endl;
 
     CGAL::Sign sign_p_low = p.sign_at(low);
-    CGAL::Sign sign_p_high = p.sign_at(high);
+    CGAL_assertion_code(CGAL::Sign sign_p_high = p.sign_at(high));
 
     Field mid;
     CGAL::Sign s;
@@ -191,7 +191,7 @@ static bool strong_refine_zero_against(Field& low, Field& high,
         else {
             CGAL_assertion(s == sign_p_high);
             high = mid;
-            sign_p_high = s; //bogus?
+            CGAL_assertion_code(sign_p_high = s); //bogus?
         }
     }
 

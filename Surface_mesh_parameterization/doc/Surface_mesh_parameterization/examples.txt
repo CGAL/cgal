@@ -1,4 +1,5 @@
 /*!
+ \example Surface_mesh_parameterization/ARAP_parameterization.cpp
  \example Surface_mesh_parameterization/discrete_authalic.cpp
  \example Surface_mesh_parameterization/lscm.cpp
  \example Surface_mesh_parameterization/orbifold.cpp

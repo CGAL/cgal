@@ -122,10 +122,10 @@ public:
     VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                                get_const_property_map(CGAL::vertex_point, g));
 
-    const bool has_vertex_normals = !(is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>());
-    const bool has_vertex_colors = !(is_default_parameter<NamedParameters, internal_np::vertex_color_map_t>());
-    const bool has_vertex_textures = !(is_default_parameter<NamedParameters, internal_np::vertex_texture_map_t>());
-    const bool has_face_colors = !(is_default_parameter<NamedParameters, internal_np::face_color_map_t>());
+    const bool has_vertex_normals = !(is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value);
+    const bool has_vertex_colors = !(is_default_parameter<NamedParameters, internal_np::vertex_color_map_t>::value);
+    const bool has_vertex_textures = !(is_default_parameter<NamedParameters, internal_np::vertex_texture_map_t>::value);
+    const bool has_face_colors = !(is_default_parameter<NamedParameters, internal_np::face_color_map_t>::value);
 
     VNM vnm = get_parameter(np, internal_np::vertex_normal_map);
     VTM vtm = get_parameter(np, internal_np::vertex_texture_map);

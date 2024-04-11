@@ -35,7 +35,7 @@ namespace IO {
 /*!
   \ingroup PkgPointSet3IOXYZ
 
-  \brief reads the content of an intput stream in the \ref IOStreamXYZ into a point set.
+  \brief reads the content of an input stream in the \ref IOStreamXYZ into a point set.
 
   If normals are present in the input stream, a normal map will be created and filled.
 
@@ -93,12 +93,6 @@ bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::read_XYZ()` \endlink  should be used instead.
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 {
@@ -187,12 +181,6 @@ bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>&
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::write_XYZ()` \endlink  should be used instead.
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_xyz_point_set(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
 {

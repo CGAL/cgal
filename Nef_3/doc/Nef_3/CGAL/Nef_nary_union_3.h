@@ -38,7 +38,9 @@ Nef_nary_union_3<NefPolyhedron_3>();
 /// @{
 
 /*!
-returns the union of the polyhedra previously added to the class.
+returns the union of the polyhedra previously added to the class. The
+union does not get removed so that further Nef polyhedra can be added
+later.
 */
 NefPolyhedron_3 get_union() const;
 

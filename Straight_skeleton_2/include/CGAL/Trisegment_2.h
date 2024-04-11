@@ -16,10 +16,9 @@
 #include <CGAL/license/Straight_skeleton_2.h>
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
+#include <CGAL/Straight_skeleton_2/debug.h>
 
 #include <CGAL/assertions.h>
-
-#include <boost/intrusive_ptr.hpp>
 
 #include <limits>
 #include <iostream>
@@ -60,20 +59,26 @@ struct Minmax_traits< Trisegment_collinearity >
   static const Trisegment_collinearity max = TRISEGMENT_COLLINEARITY_ALL;
 };
 
-}
+} // namespace internal
+
+template <class Trisegment>
+using Trisegment_2_ptr = std::shared_ptr<Trisegment>;
 
 template<class K, typename Segment>
 class Trisegment_2
-  : public Ref_counted_base
 {
   typedef Trisegment_2<K, Segment> Self;
 
 public:
-  typedef boost::intrusive_ptr<Trisegment_2> Self_ptr ;
+  typedef Trisegment_2_ptr<Self>             Self_ptr ;
+  typedef typename K::FT                     FT ;
 
   Trisegment_2 ( Segment const&        aE0
+               , FT const&             aW0
                , Segment const&        aE1
+               , FT const&             aW1
                , Segment const&        aE2
+               , FT const&             aW2
                , Trisegment_collinearity aCollinearity
                , std::size_t aID
                )
@@ -84,6 +89,10 @@ public:
     mE[0] = aE0 ;
     mE[1] = aE1 ;
     mE[2] = aE2 ;
+
+    mW[0] = aW0 ;
+    mW[1] = aW1 ;
+    mW[2] = aW2 ;
 
     switch ( mCollinearity )
     {
@@ -117,6 +126,12 @@ public:
   Segment const& e1() const { return e(1) ; }
   Segment const& e2() const { return e(2) ; }
 
+  FT const& w( unsigned idx ) const { CGAL_precondition(idx<3) ; return mW[idx] ; }
+
+  FT const& w0() const { return w(0) ; }
+  FT const& w1() const { return w(1) ; }
+  FT const& w2() const { return w(2) ; }
+
   // If 2 out of the 3 edges are collinear they can be reclassified as 1 collinear edge (any of the 2) and 1 non-collinear.
   // These methods returns the edges according to that classification.
   // PRECONDITION: Exactly 2 out of 3 edges are collinear
@@ -132,12 +147,33 @@ public:
         return e(2);
       case TRISEGMENT_COLLINEARITY_02:
         return e(2);
+      default:
+        CGAL_assertion(false);
+        return e(0); // arbitrary, meaningless value because a const& is expected
     }
   }
 
-  Self_ptr child_l() const { return mChildL ; }
-  Self_ptr child_r() const { return mChildR ; }
-  Self_ptr child_t() const { return mChildT ; }
+  FT const& collinear_edge_weight() const { return w(mCSIdx) ; }
+  FT const& non_collinear_edge_weight() const { return w(mNCSIdx) ; }
+  FT const& other_collinear_edge_weight() const
+  {
+    switch ( mCollinearity )
+    {
+      case TRISEGMENT_COLLINEARITY_01:
+        return w(1);
+      case TRISEGMENT_COLLINEARITY_12:
+        return w(2);
+      case TRISEGMENT_COLLINEARITY_02:
+        return w(2);
+      default:
+        CGAL_assertion(false);
+        return w(0); // arbitrary, meaningless value because a const& is expected
+    }
+  }
+
+  Self_ptr const& child_l() const { return mChildL ; }
+  Self_ptr const& child_r() const { return mChildR ; }
+  Self_ptr const& child_t() const { return mChildT ; }
 
   void set_child_l( Self_ptr const& aChild ) { mChildL = aChild ; }
   void set_child_r( Self_ptr const& aChild ) { mChildR = aChild ; }
@@ -154,37 +190,46 @@ public:
     return c == TRISEGMENT_COLLINEARITY_01 ? LEFT : c == TRISEGMENT_COLLINEARITY_12 ? RIGHT : THIRD  ;
   }
 
-  friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
+  static void print ( std::ostream& os, Self const& aTri, int aDepth )
   {
-    return os << "[" << s2str(aTrisegment.e0())
-              << " " << s2str(aTrisegment.e1())
-              << " " << s2str(aTrisegment.e2())
-              << " " << trisegment_collinearity_to_string(aTrisegment.collinearity())
-              << "]";
-  }
+    const std::string lPadding = std::string(2 * aDepth, ' ');
 
-  friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aPtr )
-  {
-    recursive_print(os,aPtr,0);
-    return os ;
+    os << lPadding << "[&: " << &aTri << " ID: " << aTri.id() << "\n"
+       << lPadding << "\tE" << aTri.e0().mID << " E" << aTri.e1().mID << " E" << aTri.e2().mID << "\n"
+       << lPadding << "\t" << s2str(aTri.e0()) << " w = " << n2str(aTri.w0()) << ";" << "\n"
+       << lPadding << "\t" << s2str(aTri.e1()) << " w = " << n2str(aTri.w1()) << ";" << "\n"
+       << lPadding << "\t" << s2str(aTri.e2()) << " w = " << n2str(aTri.w2()) << ";" << "\n"
+       << lPadding << "\tCollinearity: " << trisegment_collinearity_to_string(aTri.collinearity()) << "\n"
+       << lPadding << "]\n" << std::flush;
   }
 
   static void recursive_print ( std::ostream& os, Self_ptr const& aTriPtr, int aDepth )
   {
-    os << "\n" ;
+    const std::string lPadding = std::string(2 * aDepth, ' ');
 
-    for ( int i = 0 ; i < aDepth ; ++ i )
-      os << "  " ;
+    os << "\n" ;
 
     if ( aTriPtr )
     {
-      os << *aTriPtr ;
+      print(os, *aTriPtr, aDepth);
 
       if ( aTriPtr->child_l() )
+      {
+        os << lPadding << "left child:" ;
         recursive_print(os,aTriPtr->child_l(),aDepth+1);
+      }
 
       if ( aTriPtr->child_r() )
+      {
+        os << lPadding << "right child:" ;
         recursive_print(os,aTriPtr->child_r(),aDepth+1);
+      }
+
+      if ( aTriPtr->child_t() )
+      {
+        os << lPadding << "third child:" ;
+        recursive_print(os,aTriPtr->child_t(),aDepth+1);
+      }
     }
     else
     {
@@ -192,9 +237,25 @@ public:
     }
   }
 
+  friend std::ostream& operator << ( std::ostream& os, Self const& aTrisegment )
+  {
+    print(os, aTrisegment, 0);
+    return  os ;
+  }
+
+  friend std::ostream& operator << ( std::ostream& os, Self_ptr const& aTriPtr )
+  {
+    if(aTriPtr)
+      print(os, *aTriPtr, 0);
+    else
+      os << "{null}" ;
+    return  os ;
+  }
+
 private :
   std::size_t             mID;
   Segment                 mE[3];
+  FT                      mW[3];
   Trisegment_collinearity mCollinearity ;
   unsigned                mCSIdx, mNCSIdx ;
 

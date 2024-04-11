@@ -112,7 +112,7 @@ public:
   void setEditMode(bool b)
   {
     is_edit_mode = b;
-    Q_FOREACH(CGAL::QGLViewer* viewer,CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* viewer :CGAL::QGLViewer::QGLViewerPool()){
       //for highlighting
       viewer->setMouseTracking(true);
     }
@@ -132,7 +132,7 @@ public:
     is_ready_to_paint_select = true;
     is_lasso_active = false;
 
-    Q_FOREACH(CGAL::QGLViewer* viewer,CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* viewer :CGAL::QGLViewer::QGLViewerPool()){
       viewer->installEventFilter(this);
       viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
     }
@@ -275,7 +275,7 @@ public Q_SLOTS:
       boost::property_map<FaceGraph, boost::face_index_t>::type>
       fccmap(static_cast<unsigned>(num_faces(poly)));
 
-    //get connected componant from the picked face
+    //get connected component from the picked face
     std::set<fg_face_descriptor> final_sel;
     //std::vector<Polyhedron::Face_handle> cc;
     std::size_t nb_cc = CGAL::Polygon_mesh_processing::connected_components(poly
@@ -623,7 +623,7 @@ protected:
       CGAL::QGLViewer* viewer = getViewerUnderCursor();
 
       is_ready_to_highlight = !cut_highlighting;
-      hl_pos = viewer->mapFromGlobal(mouse_event->globalPos());
+      hl_pos = viewer->mapFromGlobal(mouse_event->globalPosition()).toPoint();
       QTimer::singleShot(0, this, SLOT(highlight()));
     }//end MouseMove
     return false;

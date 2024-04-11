@@ -2,7 +2,7 @@
 
 # export DH_VERBOSE=1
 
-# See http://wiki.debian.org/Hardening#Notes_for_packages_using_CMake
+# See https://wiki.debian.org/Hardening#Notes_for_packages_using_CMake
 CFLAGS   := $(CFLAGS) $(CPPFLAGS)
 CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS)
 
@@ -26,11 +26,11 @@ override_dh_auto_configure:
 	cd shared && QTDIR= cmake .. \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF \
-	  -DCGAL_ENABLE_PRECONFIG=OFF -DBUILD_SHARED_LIBS=TRUE -DCMAKE_SKIP_RPATH=TRUE 
+	  -DCGAL_ENABLE_PRECONFIG=OFF -DBUILD_SHARED_LIBS=TRUE -DCMAKE_SKIP_RPATH=TRUE
 	mkdir -p shared/demo/CGAL_ipelets
 	cd shared/demo/CGAL_ipelets && QTDIR= cmake ../../../demo/CGAL_ipelets \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
-	  -DCGAL_DIR=$(CURDIR)/shared   
+	  -DCGAL_DIR=$(CURDIR)/shared
 
 override_dh_auto_build:
 	$(MAKE) -C static

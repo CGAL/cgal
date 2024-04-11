@@ -76,9 +76,9 @@ public :
   Edge_profile(const halfedge_descriptor h_v0v1,
                TM& tmesh,
                const Geom_traits& traits,
-               const VertexIndexMap& vim,
-               const VertexPointMap& vpm,
-               const HalfedgeIndexMap& him,
+               const VertexIndexMap vim,
+               const VertexPointMap vpm,
+               const HalfedgeIndexMap him,
                bool has_border);
 
 public :
@@ -120,7 +120,7 @@ public :
   const halfedge_descriptor_vector& border_edges() const { return m_border_edges; }
   const TM& surface() const { return m_tm; }
   const TM& surface_mesh() const { return m_tm; }
-  const VertexPointMap& vertex_point_map() const { return m_vpm; }
+  VertexPointMap vertex_point_map() const { return m_vpm; }
   const Geom_traits& geom_traits() const { return m_traits; }
 
 public :
@@ -163,7 +163,7 @@ private:
   Triangle_vector m_triangles;
 
   const TM& m_tm;
-  const VertexPointMap& m_vpm;
+  const VertexPointMap m_vpm;
   const Geom_traits& m_traits;
 };
 
@@ -173,9 +173,9 @@ Edge_profile<TM, VertexPointMap, GeomTraits>::
 Edge_profile(const halfedge_descriptor h_v0v1,
              TM& tmesh,
              const Geom_traits& traits,
-             const VertexIndexMap& /*vim*/,
-             const VertexPointMap& vpm,
-             const HalfedgeIndexMap& /*him*/,
+             const VertexIndexMap /*vim*/,
+             const VertexPointMap vpm,
+             const HalfedgeIndexMap /*him*/,
              bool has_border)
   :
     m_h_v0v1(h_v0v1),

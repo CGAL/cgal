@@ -67,7 +67,7 @@ public:
     /// Return a deep copy of self.
     virtual Base_property_array* clone () const = 0;
 
-    /// Return a empty copy of self.
+    /// Return an empty copy of self.
     virtual Base_property_array* empty_clone () const = 0;
 
     /// Return the type_info of the property
@@ -234,13 +234,18 @@ class Property_container
 public:
 
     // default constructor
-    Property_container() : size_(0), capacity_(0) {}
+    Property_container() = default;
 
     // destructor (deletes all property arrays)
     virtual ~Property_container() { clear(); }
 
     // copy constructor: performs deep copy of property arrays
     Property_container(const Property_container& _rhs) { operator=(_rhs); }
+
+    Property_container(Property_container&& c) noexcept
+    {
+      c.swap(*this);
+    }
 
     // assignment: performs deep copy of property arrays
     Property_container& operator=(const Property_container& _rhs)
@@ -256,6 +261,14 @@ public:
         }
         return *this;
     }
+
+    Property_container& operator=(Property_container&& c) noexcept
+    {
+      Property_container tmp(std::move(c));
+      tmp.swap(*this);
+      return *this;
+    }
+
 
     void transfer(const Property_container& _rhs)
     {
@@ -495,12 +508,13 @@ public:
     {
       this->parrays_.swap (other.parrays_);
       std::swap(this->size_, other.size_);
+      std::swap(this->capacity_, other.capacity_);
     }
 
 private:
     std::vector<Base_property_array*>  parrays_;
-    size_t  size_;
-    size_t  capacity_;
+    size_t  size_ = 0;
+    size_t  capacity_ = 0;
 };
 
   /// @endcond
@@ -514,7 +528,7 @@ private:
 /// @tparam Key The key type of the property map. It must be a model of `Index`.
 /// @tparam Value The value type of the property.
 ///
-/// \cgalModels `LvaluePropertyMap`
+/// \cgalModels{LvaluePropertyMap}
 ///
 template <class I, class T, class CRTP_derived_class>
 class Property_map_base
@@ -524,8 +538,6 @@ class Property_map_base
            CRTP_derived_class>
 /// @endcond
 {
-    typedef void (Property_map_base::*bool_type)() const;
-    void this_type_does_not_support_comparisons() const {}
 public:
     typedef I key_type;
     typedef T value_type;
@@ -554,6 +566,20 @@ public:
 /// @cond CGAL_DOCUMENT_INTERNALS
     Property_map_base(Property_array<T>* p=nullptr) : parray_(p) {}
 
+    Property_map_base(Property_map_base&& pm) noexcept
+      : parray_(std::exchange(pm.parray_, nullptr))
+    {}
+
+    Property_map_base(const Property_map_base& pm)
+      : parray_(pm.parray_)
+    {}
+
+    Property_map_base& operator=(const Property_map_base& pm)
+    {
+      parray_ = pm.parray_;
+      return *this;
+    }
+
     void reset()
     {
         parray_ = nullptr;
@@ -568,11 +594,19 @@ public:
     /// can be used, and \c false otherwise.
   operator bool () const;
 #else
-    operator bool_type() const {
-        return parray_ != nullptr ?
-            &Property_map_base::this_type_does_not_support_comparisons : 0;
+    explicit operator bool() const {
+        return parray_ != nullptr;
     }
 #endif
+
+    bool operator==(const Property_map_base& pm) const {
+      return parray_ == pm.parray_;
+    }
+
+    bool operator!=(const Property_map_base& pm) const {
+      return parray_ != pm.parray_;
+    }
+
     /// Access the property associated with the key \c i.
     reference operator[](const I& i)
     {

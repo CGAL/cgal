@@ -1,3 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Triangulated Surface Mesh Simplification"
+
+HTML_EXTRA_FILES           =  ${CGAL_PACKAGE_DOC_DIR}/fig/sappho.jpg

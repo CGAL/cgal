@@ -23,14 +23,15 @@
 
 #include <list>
 
-#include <boost/variant.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <variant>
 #include <boost/mpl/has_xxx.hpp>
 
 #include <CGAL/tags.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_geometry_traits/Curve_data_aux.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -78,10 +79,10 @@ public:
   typedef typename internal::Arr_complete_right_side_category<Base_traits_2>::
   Category                                           Right_side_category;
 
-  // Representation of a curve with an addtional data field:
+  // Representation of a curve with an additonal data field:
   typedef _Curve_data_ex<Base_curve_2, Curve_data>   Curve_2;
 
-  // Representation of an x-monotone curve with an addtional data field:
+  // Representation of an x-monotone curve with an additonal data field:
   typedef _Curve_data_ex<Base_x_monotone_curve_2, X_monotone_curve_data>
                                                      X_monotone_curve_2;
 
@@ -98,7 +99,7 @@ public:
   Arr_curve_data_traits_2(const Base_traits_2& traits) : Base_traits_2(traits) {}
   //@}
 
-  /// \name Overriden functors.
+  /// \name Overridden functors.
   //@{
 
   //! \name Intersections & subdivisions
@@ -125,9 +126,9 @@ public:
     template <typename OutputIterator>
     OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const
     {
-      typedef boost::variant<Point_2, Base_x_monotone_curve_2>
+      typedef std::variant<Point_2, Base_x_monotone_curve_2>
         Base_make_x_monotone_result;
-      typedef boost::variant<Point_2, X_monotone_curve_2>
+      typedef std::variant<Point_2, X_monotone_curve_2>
         Make_x_monotone_result;
 
       // Make the original curve x-monotone.
@@ -137,12 +138,12 @@ public:
       // Attach the data to each of the resulting x-monotone curves.
       X_monotone_curve_data xdata = Convert()(cv.data());
       for (const auto& base_obj : base_objects) {
-        if (const auto* bxcv = boost::get<Base_x_monotone_curve_2>(&base_obj)) {
+        if (const auto* bxcv = std::get_if<Base_x_monotone_curve_2>(&base_obj)) {
           *oi++ = Make_x_monotone_result(X_monotone_curve_2(*bxcv, xdata));
           continue;
         }
         // Current object is an isolated point: Leave it as is.
-        const auto* bp = boost::get<Point_2>(&base_obj);
+        const auto* bp = std::get_if<Point_2>(&base_obj);
         CGAL_assertion(bp);
         *oi++ = Make_x_monotone_result(*bp);
       }
@@ -207,9 +208,7 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
-      typedef boost::variant<Intersection_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_point, Base_x_monotone_curve_2>
         Intersection_base_result;
 
       // Use the base functor to obtain all intersection objects.
@@ -222,19 +221,19 @@ public:
       // Go over all intersection objects and prepare the output.
       for (const auto& item : base_objects) {
         const Base_x_monotone_curve_2* base_cv =
-          boost::get<Base_x_monotone_curve_2>(&item);
+          std::get_if<Base_x_monotone_curve_2>(&item);
         if (base_cv != nullptr) {
           // The current intersection object is an overlapping x-monotone
           // curve: Merge the data fields of both intersecting curves and
           // associate the result with the overlapping curve.
           X_monotone_curve_2 cv(*base_cv, Merge()(cv1.data(), cv2.data()));
-          *oi++ = Intersection_result(cv);
+          *oi++ = cv;
           continue;
         }
         // The current intersection object is an intersection point:
         // Copy it as is.
-        const Intersection_point* ip = boost::get<Intersection_point>(&item);
-        *oi++ = Intersection_result(*ip);
+        const Intersection_point* ip = std::get_if<Intersection_point>(&item);
+        *oi++ = *ip;
       }
 
       return oi;
@@ -248,28 +247,32 @@ public:
   private:
     const Base_traits_2& m_base;
 
-    /*! Generate a helper class template to find out whether the base geometry
-     * traits has a nested type named Are_mergeable_2.
-     */
-    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(has_are_mergeable_2,
-                                      Are_mergeable_2, false)
+    template <typename T>
+    bool are_mergeable_data(const T& /* cv1 */, const T& /* cv2 */, long) const {
+      CGAL_error_msg("Equality operator is not supported.");
+      return false;
+    }
+
+    template <typename T>
+    auto are_mergeable_data(const T& cv1, const T& cv2, int) const ->
+      decltype(cv1.data() == cv2.data())
+    { return cv1.data() == cv2.data(); }
 
     /*! Implementation of the predicate in case the base geometry traits class
      * has a nested type named Are_mergeable_2.
      */
     template <typename GeomeTraits_2>
-    typename boost::enable_if_c<has_are_mergeable_2<GeomeTraits_2>::value,
-                                bool>::type
-    are_mergeable(const X_monotone_curve_2& cv1,
-                  const X_monotone_curve_2& cv2) const
-    {
+    auto are_mergeable(const X_monotone_curve_2& cv1,
+                       const X_monotone_curve_2& cv2,
+                       const GeomeTraits_2& traits, int) const ->
+    decltype(traits.are_mergeable_2_object(), bool()) {
       // In case the two base curves are not mergeable, the extended curves
       // are not mergeable as well.
-      if (! (m_base.are_mergeable_2_object()(cv1, cv2))) return false;
+      if (! (traits.are_mergeable_2_object()(cv1, cv2))) return false;
 
       // In case the two base curves are mergeable, check that they have the
       // same data fields.
-      return (cv1.data() == cv2.data());
+      return are_mergeable_data(cv1, cv2, 0);
     }
 
     /*! Implementation of the predicate in case the base geometry traits class
@@ -277,11 +280,9 @@ public:
      * This function should never be called!
      */
     template <typename GeomeTraits_2>
-    typename boost::enable_if_c<!has_are_mergeable_2<GeomeTraits_2>::value,
-                                bool>::type
-    are_mergeable(const X_monotone_curve_2& /* cv1 */,
-                  const X_monotone_curve_2& /* cv2 */) const
-    {
+    bool are_mergeable(const X_monotone_curve_2& /* cv1 */,
+                       const X_monotone_curve_2& /* cv2 */,
+                       const GeomeTraits_2& /* traits */, long) const {
       CGAL_error_msg("Are mergeable is not supported.");
       return false;
     }
@@ -297,7 +298,7 @@ public:
      */
     bool operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2) const
-    { return are_mergeable<Base_traits_2>(cv1, cv2); }
+    { return are_mergeable<Base_traits_2>(cv1, cv2, m_base, 0); }
   };
 
   /*! Obtain an Are_mergeable_2 functor object. */
@@ -320,7 +321,7 @@ public:
      * has a nested type named Merge_2.
      */
     template <typename GeomeTraits_2>
-    typename boost::enable_if_c<has_merge_2<GeomeTraits_2>::value, void>::type
+    std::enable_if_t<has_merge_2<GeomeTraits_2>::value, void>
     merge(const X_monotone_curve_2& cv1, const X_monotone_curve_2& cv2,
           X_monotone_curve_2& c) const
     {
@@ -340,7 +341,7 @@ public:
      * This function should never be called!
      */
     template <typename GeomeTraits_2>
-    typename boost::enable_if_c<!has_merge_2<GeomeTraits_2>::value, void>::type
+    std::enable_if_t<!has_merge_2<GeomeTraits_2>::value, void>
     merge(const X_monotone_curve_2& /* cv1 */,
           const X_monotone_curve_2& /* cv2 */,
           X_monotone_curve_2& /* c */) const
@@ -407,8 +408,8 @@ public:
      * has a nested type named Construct_opposite_2.
      */
     template <typename GeomeTraits_2>
-    typename boost::enable_if_c<has_construct_opposite_2<GeomeTraits_2>::value,
-                                X_monotone_curve_2>::type
+    std::enable_if_t<has_construct_opposite_2<GeomeTraits_2>::value,
+                     X_monotone_curve_2>
     construct_opposite(const X_monotone_curve_2& cv) const
     {
       X_monotone_curve_2 new_cv(m_base.construct_opposite_2_object()(cv),
@@ -421,8 +422,8 @@ public:
      * This function should never be called!
      */
     template <typename GeomeTraits_2>
-    typename boost::enable_if_c<!has_construct_opposite_2<GeomeTraits_2>::value,
-                                X_monotone_curve_2>::type
+    std::enable_if_t<!has_construct_opposite_2<GeomeTraits_2>::value,
+                      X_monotone_curve_2>
     construct_opposite(const X_monotone_curve_2&) const
     {
       CGAL_error_msg("Construct opposite curve is not supported!");

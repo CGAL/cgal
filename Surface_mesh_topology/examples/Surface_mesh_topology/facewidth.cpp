@@ -8,14 +8,12 @@
 
 using LCC_3            =CGAL::Linear_cell_complex_for_combinatorial_map<2, 3>;
 using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
-using Dart_const_handle=LCC_3::Dart_const_handle;
+using Dart_const_descriptor=LCC_3::Dart_const_descriptor;
 
 int main(int argc, char* argv[])
 {
   std::cout<<"Program facewidth_on_unweighted_map started."<<std::endl;
   std::string filename(argc==1?CGAL::data_file_path("meshes/double-torus-example.off"):argv[1]);
-  bool draw=(argc<3?false:std::string(argv[2])=="-draw");
-
   std::ifstream inp(filename);
   if (inp.fail())
   {
@@ -27,7 +25,7 @@ int main(int argc, char* argv[])
   std::cout<<"File '"<<filename<<"' loaded. Finding the facewidth..."<<std::endl;
 
   CST cst(lcc, true);
-  std::vector<Dart_const_handle> cycle=cst.compute_face_width(true);
+  std::vector<Dart_const_descriptor> cycle=cst.compute_face_width(true);
 
   if (cycle.size()==0)
   { std::cout<<"  Cannot find such cycle."<<std::endl; }
@@ -35,7 +33,10 @@ int main(int argc, char* argv[])
   {
     std::cout<<"  Number of faces: "<<cycle.size()<<std::endl;
 
-    if (draw) { draw_facewidth(lcc, cycle); }
+#ifdef CGAL_USE_BASIC_VIEWER
+    if(argc>=3 && std::string(argv[2])=="-draw")
+    { draw_facewidth(lcc, cycle); }
+#endif
   }
 
   return EXIT_SUCCESS;

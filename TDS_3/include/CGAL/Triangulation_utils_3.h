@@ -16,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -63,13 +63,13 @@ struct Triangulation_utils_3
 {
   static int ccw(const int i)
     {
-      CGAL_triangulation_precondition( i >= 0 && i < 3);
+      CGAL_precondition( i >= 0 && i < 3);
       return ccw_map[i];
     }
 
   static int cw(const int i)
     {
-      CGAL_triangulation_precondition( i >= 0 && i < 3);
+      CGAL_precondition( i >= 0 && i < 3);
       return cw_map[i];
     }
 
@@ -77,9 +77,10 @@ struct Triangulation_utils_3
   {
     // index of the next cell when turning around the
     // oriented edge vertex(i) vertex(j) in 3d
-    CGAL_triangulation_precondition( ( i >= 0 && i < 4 ) &&
-                                     ( j >= 0 && j < 4 ) &&
-                                     ( i != j ) );
+    CGAL_precondition( ( i >= 0 && i < 4 ) &&
+                       ( j >= 0 && j < 4 ) &&
+                       ( i != j ) );
+    CGAL_assume(i!=j);
     return tab_next_around_edge[i][j];
   }
 
@@ -87,9 +88,9 @@ struct Triangulation_utils_3
   static int vertex_triple_index(const int i, const int j)
   {
     // indexes of the  jth vertex  of the facet of a cell
-    // opposite to vertx i
-      CGAL_triangulation_precondition( ( i >= 0 && i < 4 ) &&
-                                     ( j >= 0 && j < 3 ) );
+    // opposite to vertex i
+      CGAL_precondition( ( i >= 0 && i < 4 ) &&
+                         ( j >= 0 && j < 3 ) );
     return tab_vertex_triple_index[i][j];
   }
 

@@ -1,94 +1,177 @@
-Subject: CGAL 5.4 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.6 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body:
 
-The CGAL Open Source Project is pleased to announce the release 5.4
-of CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the release 5.6 of
+CGAL, the Computational Geometry Algorithms Library.
 
 
-Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 5.3:
+Besides fixes and general enhancement to existing packages, the
+following has changed since CGAL 5.5:
+
+General Changes
+
+-   Breaking change: Package-specific assertions, preconditions, and
+    postconditions (such as CGAL_triangulation_assertion) have been
+    removed. Corresponding CGAL-wide versions (such as CGAL_assertion)
+    should be used instead.
+
+Shape Detection (major changes)
+
+-   Breaking change: The region growing part of the package have been
+    reworked to fix design issues introduced with the handling of
+    FaceGraph models. In particular, the notion of Item has been
+    introduced to reference an element in the input range of elements.
+    Region maps now operates on Item and no longer on the value type of
+    the input range.
+-   Breaking change: The method update() in the concept RegionType now
+    returns a Boolean instead of void, that is used inside the class
+    Region_growing for detecting if the input conditions for the new
+    region are satisfied. This change affects only user-defined types of
+    regions.
+-   Breaking change: The constructors of all models used together with
+    the region growing algorithm now enable users to provide parameters
+    through the named parameters mechanism.
+-   All fitting classes in the region growing framework are now using
+    better versions of the region conditions, more precise and faster,
+    including the correct normal orientations.
+-   Added new models of the concept RegionType for getting linear
+    regions in a set of 2D and 3D segments and on 2D and 3D polylines.
+-   Added the class Polyline_graph for extracting a set of polylines
+    from a face graph, which splits this graph into a set of
+    user-defined regions.
+-   Added new shapes to the Region Growing algorithm on a point set:
+    circles in 2D, spheres in 3D, and cylinders in 3D.
+
+2D Straight Skeleton and Polygon Offsetting (major changes)
+
+-   Added weighted straight skeletons: weighted straight skeletons are a
+    generalization of straight skeletons. Contour edges are assigned a
+    positive weight, which can be understood as assigning a speed to the
+    wavefront spawned from the contour edge.
+-   Added straight skeleton extrusion: this CGAL package now implements
+    the extrusion of weighted straight skeletons of polygons with holes.
+    The output is a closed, combinatorially 2-manifold surface triangle
+    mesh. See also the news entry.
+
+Combinatorial Maps, Generalized Maps, and Linear Cell Complex
+
+-   Added a version that uses indices instead of handles as dart and
+    attribute descriptors. As the indices are integers convertible from
+    and to std::size_t, they can be used as index into vectors which
+    store properties. To use the index version, Use_index must be
+    defined and be equal to CGAL::Tag_true in the item class.
+
+2D Arrangements
+
+-   Introduced an overload function template, namely draw(arr), that
+    renders arrangements based on the Basic_viewer_qt class template. As
+    of now, only 2D arrangements on the plane induced by (i)
+    segments, (ii) conics, and (iii) circular arcs or (linear) segments
+    are supported.
+-   Improved the traits class template that handles conics, namely
+    Arr_conic_traits_2. This includes the following: 1. Fixed a couple
+    of bugs and slightly optimized some functions. 2. Introduced
+    functionality that approximates conics with polylines. (This is used
+    to draw conic curves.) 3. Breaking change: Changed the interface to
+    generate conic curves. In the past, curves where generated directly
+    using the constructors of the conic and x-monotone conic constructs.
+    Now, they are constructed via function objects provided by the
+    traits. This eliminates the constructions of temporary kernels. The
+    old functionality is obsolete, but still supported for a limited
+    number of versions. It depends on a static member function of the
+    traits. In a future version this function will no longer be static,
+    implying that the old functionality will no longer be supported.
+-   Introduced functionality that approximates circular segments with
+    polylines. (This is used to draw conic curves.)
+
+Polygon Mesh Processing
+
+-   Added functions
+    CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()
+    and CGAL::Polygon_mesh_processing::detect_corners_of_regions(),
+    which enable partitioning a mesh into planar regions using the
+    region growing algorithm from the Shape Detection package.
+
+-   Added the functions
+    CGAL::Polygon_mesh_processing::remesh_planar_patches() and
+    CGAL::Polygon_mesh_processing::remesh_almost_planar_patches(), which
+    can be used to remesh patches of coplanar faces in a mesh.
+
+-   Added the function
+    CGAL::Polygon_mesh_processing::surface_Delaunay_remeshing(), which
+    can be used to remesh a surface triangle mesh using the Delaunay
+    refinement algorithm from the 3D Mesh Generation package.
+
+-   Added the function
+    CGAL::Polygon_mesh_processing::remove_almost_degenerate_faces(),
+    which can be used to remove badly shaped triangles faces in a mesh.
+
+-   Added the functions
+    CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect()
+    and
+    CGAL::Polygon_mesh_processing::triangle_soup_self_intersections() to
+    identify and report self-intersections in a triangle soup, similarly
+    to existing functions on triangle meshes.
+
+-   Added the function
+    CGAL::Polygon_mesh_processing::triangulate_polygons(), which allows
+    users to triangulate polygon soups.
+
+-   Added a named parameter to
+    CGAL::Polygon_mesh_processing::smooth_shape() to disable the
+    scaling, which otherwise aims to compensate volume loss during
+    smoothing.
+
+-   Deprecated the overloads of functions
+    CGAL::Polygon_mesh_processing::triangulate_hole(),
+    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(), and
+    CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole()
+    which have output iterators for vertices and faces as parameter.
+    They are replaced by overloads with two additional named parameters.
 
 
-General changes
+Tetrahedral Remeshing
 
--   Added the cmake target CGAL::CGAL_Basic_viewer to ease the
-    compilation of programs using the basic viewer-based function
-    CGAL::draw(). This target will define the macro and link with
-    CGAL_Qt5 target when linked with it.
-
--   The kernel providing exact constructions and exact predicates
-    (CGAL::Exact_predicates_exact_constructions_kernel) is now
-    thread-safe.
-    more details.
-
--   The class Geomview_stream and all the dependent features have
-    been removed from CGAL. Those features were actually no longer
-    supported since CGAL-5.3 but it was not properly announced.
+-   Breaking change: The template parameters of
+    CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3 and
+    CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3 have been
+    modified.
 
 
-Shape Regularization (new package)
+3D Mesh Generation
 
--   This package enables to regularize a set of segments and open or
-    closed contours in 2D and a set of planes in 3D such that all input
-    objects are rotated and aligned with respect to the user-specified
-    conditions. In addition, it provides a global regularization
-    framework that can be adjusted for the user needs and any type of
-    geometric objects.
-
-      https://www.cgal.org/2021/11/16/shape-regularization/
-
-      https://doc.cgal.org/5.4/Manual/packages.html#PkgShapeRegularization
-
-
-Weights (new package)
-
--   This package provides a simple and unified interface to different
-    types of weights. In particular, it groups all weights into three
-    category: analytic weights including all basic weights which can be
-    computed analytically for a query point with respect to its local
-    neighbors in 2D and 3D; barycentric weights, including all weights
-    which can be computed for a query point with respect to the vertices
-    of a planar polygon; and weighting regions, including all weights
-    which are used to balance other weights.
-
-      https://doc.cgal.org/5.4/Manual/packages.html#PkgWeights
+-   Added two new named parameters to the named constructor
+    CGAL::create_labeled_image_mesh_domain() for automatic detection and
+    protection of 1D-curves that lie at the intersection of three or
+    more subdomains extracted from labeled images.
+-   Added CGAL::Sizing_field_with_aabb_tree, a geometry-aware sizing
+    field for feature edges in polyhedral domains.
+-   Added new meshing criterion edge_min_size to avoid subdividing sharp
+    edges that are shorter than a prescribed size bound.
+-   Added new meshing criteria facet_min_size and cell_min_size to
+    prevent Delaunay refinement from creating simplices smaller than a
+    prescribed bound.
+-   Deprecated usage of boost parameters in favor of function named
+    parameters.
 
 
-2D Generalized Barycentric Coordinates (major changes)
+Known Bug
 
--   Breaking change: The headers Segment_coordinates_2.h and
-    Triangle_coordinates_2.h are renamed to segment_coordinates_2.h and
-    triangle_coordinates_2.h.
--   The classes Segment_coordinates_2 and Triangle_coordinates_2 are
-    deprecated. The free functions compute_segment_coordinates_2() and
-    compute_triangle_coordinates_2() are deprecated as well. Instead,
-    the free functions segment_coordinates_2() and
-    triangle_coordinates_2() should be used.
--   The enums Query_point_location and Type_of_algorithm are deprecated.
-    Instead, the enum Computation_policy_2 should be used.
--   The classes Wachspress_2, Discrete_harmonic_2, Mean_value_2, and
-    Generalized_barycentric_coordinates_2 are deprecated. As
-    consequence, the concept BarycentricCoordinates_2 is deprecated as
-    well. Instead, the classes Wachspress_coordinates_2,
-    Discrete_harmonic_coordinates_2, and Mean_value_coordinates_2 should
-    be used.
--   Added the class Harmonic_coordinates_2 to compute approximate
-    harmonic coordinates in 2D. These coordinates satisfy all properties
-    of barycentric coordinates inside any simple polygon.
--   Added a new concept DiscretizedDomain_2 and a model of this concept
-    called Delaunay_domain_2, which is based on the Mesh 2 package. A
-    model of this concept is required to use Harmonic_coordinates_2.
--   Added free functions to compute Wachspress, discrete harmonic, and
-    mean value coordinates.
--   All free functions and classes are now using ranges and property
-    maps.
-
-      https://doc.cgal.org/5.4/Manual/packages.html#PkgBarycentricCoordinates2
+-   MSVC 2015 is still supported by this version of CGAL, but the
+    feature Segment Cell Iterator of the class CGAL::Triangulation_3
+    does not compile with MSVC 2015.
 
 
-See https://www.cgal.org/2022/01/31/cgal54/ for a
-complete list of changes.
+See https://www.cgal.org/2023/07/28/cgal56/ for a complete list of changes.
+
+
+The development of CGAL will then now on the future CGAL-6.0 (planned
+for December 2023), with bug-fixes regularly backported to the branches
+for CGAL-5.5.x and CGAL-5.6.x.
+
+CGAL-6.0 will be the first release of CGAL requiring C++17 or later. It
+will also support Qt6.
 
 
 The CGAL project is a collaborative effort to develop a robust,
@@ -123,7 +206,7 @@ Most modules are distributed under the terms of the GPL Open Source
 license (GNU General Public License v3 or later versions).
 If your intended usage does not meet the criteria of the
 aforementioned licenses, a commercial license can be purchased from
-GeometryFactory (http://www.geometryfactory.com/).
+GeometryFactory (https://www.geometryfactory.com/).
 
 
 For further information and for downloading the library and its

@@ -465,7 +465,7 @@ public:
     CGAL_assertion(bool(intersectResult1));
     if (!intersectResult1) return CGAL::SMALLER;
 
-    const Point_2* p1_ptr = boost::get<Point_2>(&*intersectResult1);
+    const Point_2* p1_ptr = std::get_if<Point_2>(&*intersectResult1);
 
     CGAL_assertion(p1_ptr && "Intersection should have been a point");
     if (!p1_ptr) return CGAL::SMALLER;
@@ -477,7 +477,7 @@ public:
     CGAL_assertion(bool(intersectResult2));
     if (!intersectResult2) return CGAL::SMALLER;
 
-    const Point_2* p2_ptr = boost::get<Point_2>(&*intersectResult2);
+    const Point_2* p2_ptr = std::get_if<Point_2>(&*intersectResult2);
 
     CGAL_assertion(p2_ptr && "Intersection should have been a point");
     if (!p2_ptr) return CGAL::SMALLER;
@@ -493,7 +493,7 @@ public:
     // In the case of multiple rays reaching the same target, we want to know their respective position
     // so that pruning of branches can be done according to the "one angle one split" idiom.
     // However, the orientation predicate is evaluated in the unfolded 2D plane, which is obtained
-    // via square roots; inconsisnties will exist. We don't want to prune in case it might be wrong,
+    // via square roots; inconsistencies will exist. We don't want to prune in case it might be wrong,
     // so we add a little bit of tolerance on the evaluation of the predicate. If it's almost collinear,
     // return 'collinear' (EQUAL).
     const FT eps = (FT(100) * std::numeric_limits<FT>::epsilon());

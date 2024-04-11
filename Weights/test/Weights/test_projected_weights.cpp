@@ -1,18 +1,19 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
 #include <CGAL/Weights.h>
 
-// Typedefs.
 using SCKER = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
 
 template<typename Kernel>
-void test_kernel() {
+void test_kernel()
+{
   using FT      = typename Kernel::FT;
   using Point_2 = typename Kernel::Point_2;
   using Point_3 = typename Kernel::Point_3;
@@ -110,7 +111,8 @@ void test_kernel() {
   assert(CGAL::Weights::three_point_family_weight(t3, r3, p3, q3, 1, yz_traits) == ref_value);
 }
 
-int main() {
+int main(int, char**)
+{
   test_kernel<SCKER>();
   test_kernel<EPICK>();
   test_kernel<EPECK>();

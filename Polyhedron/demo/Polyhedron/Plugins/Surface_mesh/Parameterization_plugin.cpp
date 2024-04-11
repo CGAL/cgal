@@ -363,7 +363,7 @@ public:
              << actionMVC
              << actionOTE;
     autoConnectActions();
-    Q_FOREACH(QAction *action, _actions)
+    for(QAction *action : _actions)
       action->setProperty("subMenuName",
                           "Triangulated Surface Mesh Parameterization"
                           );
@@ -396,7 +396,7 @@ public:
         || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
     }
 
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices())
+    for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices())
     {
       //if one facegraph is found in the selection, it's fine
       if (qobject_cast<Scene_facegraph_item*>(scene->item(id)))
@@ -432,7 +432,7 @@ public Q_SLOTS:
 
     int id = scene->mainSelectionIndex();
 
-    Q_FOREACH(UVItem* pl, projections)
+    for(UVItem* pl : projections)
     {
       if(pl==nullptr || pl != projections[scene->item(id)])
         continue;
@@ -467,7 +467,7 @@ public Q_SLOTS:
 
   void destroyPolyline(CGAL::Three::Scene_item* item)
   {
-    Q_FOREACH(UVItem* pli, projections)
+    for(UVItem* pli : projections)
     {
       if(projections.key(pli) != item)
         continue;
@@ -493,20 +493,20 @@ protected:
   void parameterize(Parameterization_method method);
 
 private:
-  Messages_interface *messages;
+  Messages_interface *messages = nullptr;
   QList<QAction*> _actions;
-  QDockWidget* dock_widget;
+  QDockWidget* dock_widget = nullptr;
   Ui::Parameterization ui_widget;
   QGraphicsScene *graphics_scene;
-  Navigation* navigation;
+  Navigation* navigation = nullptr;
   QMap<Scene_item*, UVItem*> projections;
-  UVItem* current_uv_item;
+  UVItem* current_uv_item = nullptr;
 }; // end Polyhedron_demo_parameterization_plugin
 
 void Polyhedron_demo_parameterization_plugin::on_prevButton_pressed()
 {
   int id = scene->mainSelectionIndex();
-  Q_FOREACH(UVItem* pl, projections)
+  for(UVItem* pl : projections)
   {
     if(pl==nullptr
        || pl != projections[scene->item(id)])
@@ -524,7 +524,7 @@ void Polyhedron_demo_parameterization_plugin::on_prevButton_pressed()
 void Polyhedron_demo_parameterization_plugin::on_nextButton_pressed()
 {
   int id = scene->mainSelectionIndex();
-  Q_FOREACH(UVItem* pl, projections)
+  for(UVItem* pl : projections)
   {
     if(pl==nullptr
        || pl != projections[scene->item(id)])
@@ -545,7 +545,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   // get active polyhedron
   Scene_facegraph_item* poly_item = nullptr;
   CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices())
   {
     poly_item = qobject_cast<Scene_facegraph_item*>(scene->item(id));
     if(!poly_item)
@@ -573,7 +573,7 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   }
   Scene_polyhedron_selection_item* sel_item = nullptr;
   bool is_seamed = false;
-  Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices())
+  for(CGAL::Three::Scene_interface::Item_id id : scene->selectionIndices())
   {
     sel_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(id));
     if(!sel_item)

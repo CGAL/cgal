@@ -37,8 +37,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Function
 FT sphere_function1 (const Point& p)
@@ -65,9 +64,11 @@ int main()
                                              K::Sphere_3(Point(1, 0, 0), 6.));
 
   // Mesh criteria
-  Mesh_criteria criteria(edge_size = 0.15,
-                         facet_angle = 25, facet_size = 0.15,
-                         cell_radius_edge_ratio = 2, cell_size = 0.15);
+  Mesh_criteria criteria(params::edge_size(0.15).
+                                 facet_angle(25).
+                                 facet_size(0.15).
+                                 cell_radius_edge_ratio(2).
+                                 cell_size(0.15));
 
   // Create edge that we want to preserve
   Polylines polylines (1);
@@ -85,10 +86,10 @@ int main()
 
   // Mesh generation without feature preservation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                      CGAL::parameters::no_features());
+                                      params::no_features());
 
   std::ofstream medit_file("out-no-protection.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
   c3t3.clear();
 
@@ -97,7 +98,7 @@ int main()
 
   // Output
   medit_file.open("out-with-protection.mesh");
-  c3t3.output_to_medit(medit_file);
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
   medit_file.close();
 
   return 0;

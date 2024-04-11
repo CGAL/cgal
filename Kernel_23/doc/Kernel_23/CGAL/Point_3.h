@@ -16,8 +16,7 @@ to `NT`, and `Kernel::FT` is equal to `Quotient<NT>`.
 
 The following operations can be applied on points:
 
-\cgalModels `Kernel::Point_3`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Point_3,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 */
 template< typename Kernel >
@@ -40,6 +39,7 @@ typedef unspecified_type Cartesian_const_iterator;
 
 /*!
 introduces a point with %Cartesian coordinates\f$ (0,0,0)\f$.
+\cgalEpicExact
 */
 Point_3(const Origin &ORIGIN);
 
@@ -51,17 +51,19 @@ Point_3(int x, int y, int z);
 /*!
 introduces a point `p` initialized to `(x,y,z)`
 provided `RT` supports it.
+\cgalEpicExact
 */
 Point_3(double x, double y, double z);
 
 /*!
 introduces a point `p` initialized to `(hx/hw,hy/hw, hz/hw)`.
-\pre `hw` \f$ \neq\f$ 0.
+\pre `hw != 0`.
 */
 Point_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));
 
 /*!
 introduces a point `p` initialized to `(x,y,z)`.
+\cgalEpicExact
 */
 Point_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);
 
@@ -70,6 +72,8 @@ introduces a point from a weighted point.
 
 \warning The `explicit` keyword is used to avoid accidental implicit conversions
          between Point_3 and Weighted_point_3.
+
+\cgalEpicExact
 */
 explicit Point_3(const Kernel::Weighted_point_3 &wp);
 
@@ -131,16 +135,19 @@ Kernel::RT hw() const;
 
 /*!
 returns the %Cartesian \f$ x\f$ coordinate, that is `hx()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT x() const;
 
 /*!
 returns the %Cartesian \f$ y\f$ coordinate, that is `hy()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT y() const;
 
 /*!
 returns the %Cartesian \f$ z\f$ coordinate, that is `hz()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT z() const;
 
@@ -154,19 +161,23 @@ Kernel::FT z() const;
 
 /*!
 returns the i'th homogeneous coordinate of `p`.
-\pre \f$ 0\leq i \leq3\f$.
+\pre `0 <= i <= 3`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th %Cartesian coordinate of `p`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre `0 <= i <= 2`.
+
+\cgalEpicExact
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre `0 <= i <= 2`.
+
+\cgalEpicExact
 */
 Kernel::FT operator[](int i) const;
 
@@ -189,6 +200,7 @@ int dimension() const;
 
 /*!
 returns a bounding box containing `p`.
+\cgalEpicExact
 */
 Bbox_3 bbox() const;
 

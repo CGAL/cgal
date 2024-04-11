@@ -8,10 +8,11 @@ namespace Barycentric_coordinates {
 A concept that describes the set of methods that should be defined for all coordinate
 models used to parameterize the class `Generalized_barycentric_coordinates_2`.
 
-\cgalHasModel
-- `Wachspress_2`
-- `Mean_value_2`
-- `Discrete_harmonic_2`
+\cgalHasModelsBegin
+\cgalHasModels{Wachspress_2}
+\cgalHasModels{Mean_value_2}
+\cgalHasModels{Discrete_harmonic_2}
+\cgalHasModelsEnd
 
 \deprecated This part of the package is deprecated since the version 5.4 of \cgal.
 */
@@ -44,7 +45,7 @@ public:
     Weights are computed with respect to a query point of the type `Traits::Point_2` and
     stored in the output iterator `output`. The function returns a pointer to the last stored element.
   */
-  boost::optional<OutputIterator>
+  std::optional<OutputIterator>
   weights(
     const Traits::Point_2& query_point, OutputIterator& output) {
 
@@ -57,7 +58,7 @@ public:
     are computed with respect to a query point of the type `Traits::Point_2` and stored
     in the output iterator `output`. The function returns a pointer to the last stored element.
   */
-  boost::optional<OutputIterator>
+  std::optional<OutputIterator>
   coordinates_on_bounded_side(
     const Traits::Point_2& query_point,
     OutputIterator& output,
@@ -72,7 +73,7 @@ public:
     are computed with respect to a query point of the type `Traits::Point_2` and stored
     in the output iterator `output`. The function returns a pointer to the last stored element.
   */
-  boost::optional<OutputIterator>
+  std::optional<OutputIterator>
   coordinates_on_unbounded_side(
     const Traits::Point_2& query_point,
     OutputIterator& output,

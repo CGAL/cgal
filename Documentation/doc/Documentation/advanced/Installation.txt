@@ -61,7 +61,7 @@ See the page
 | :-------- | :------------- | :------------ | :----------- |
 |   \cgal   | none           | Main library  | \gmp, \mpfr, \boost (headers) |
 | `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \zlib, \vtk (optional) |
-| `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \qt5-based demos | \qt5 |
+| `CGAL_Qt6`  | `WITH_CGAL_Qt6` | `QGraphicsView` support for \qt6-based demos | \qt6 |
 
 \subsection installation_examples CGAL Examples and Demos
 
@@ -78,7 +78,7 @@ might need these \cgal-libraries and thus their dependencies. See the page
 \subsection installation_debugrelease Debug vs. Release
 
 The CMake variable `CMAKE_BUILD_TYPE` indicates how to build the executables.
-It accepts the values `Debug` or `Release`. Note that the default value is `Debug`, since it is
+It accepts the values `Debug` or `Release`. Note that the default value is an empty string, since it is
 default value in `CMake`. If you do not plan on debugging, it is important to set the variable
 to `Release` for performance reasons.
 
@@ -137,7 +137,9 @@ Providing information and pressing *Configure* goes on until
 all entries are grayed. You are now ready to press *Generate*. Once this is
 done, you can quit `cmake-gui`.
 
-If you do not need to debug, you should set the variable `CMAKE_BUILD_TYPE` to `Release`.
+Without an explicit `CMAKE_BUILD_TYPE`, `CMake` does not add any additional build flags.
+This will result in a default build without any debug symbols, and without any optimizations.
+You should set the variable `CMAKE_BUILD_TYPE` to `Debug` to compile with debug symbols, or `Release` to enable optimizations.
 
 \subsection installation_configuring_cmd Configuring CGAL with the cmake Command-Line Tool
 

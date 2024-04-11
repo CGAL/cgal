@@ -1,16 +1,3 @@
-// TODO: Add licence
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL:$
-// $Id: $
-//
-//
-// Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
-//
-// ============================================================================
-
 // code coverage test for Algebraic_curve_kernel_2
 
 #define CGAL_ACK_DEBUG_FLAG 0

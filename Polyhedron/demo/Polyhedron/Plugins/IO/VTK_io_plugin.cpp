@@ -10,7 +10,7 @@
 //                 Jane Tournois
 //
 
-#include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/SMDS_3/io_signature.h>
 #include <QtCore/qglobal.h>
 
 #include "Scene_surface_mesh_item.h"
@@ -37,9 +37,10 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/Complex_3_in_triangulation_3_to_vtk.h>
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/IO/output_to_vtu.h>
-#include <CGAL/boost/graph/io.h>
+#include <CGAL/boost/graph/IO/VTK.h>
+#include <CGAL/IO/VTK.h>
 
 #include <vtkSmartPointer.h>
 #include <vtkDataSetReader.h>
@@ -60,15 +61,13 @@
 #include <vtkAppendFilter.h>
 #include <vtkSphereSource.h>
 #include <vtkVersion.h>
-#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
 #include <vtkCommand.h>
-#include <vtkXMLUnstructuredGridWriter.h>
 
 #include <CGAL/Named_function_parameters.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 typedef Scene_surface_mesh_item Scene_facegraph_item;
 typedef Scene_facegraph_item::Face_graph FaceGraph;
 typedef boost::property_traits<boost::property_map<FaceGraph,
@@ -349,23 +348,36 @@ public:
        || (is_polygon_mesh && is_polyline)
        || (is_c3t3 && is_polyline) )
     {
-      group = new Scene_group_item(fileinfo.baseName());
+      group = new Scene_group_item(fileinfo.completeBaseName());
     }
 
     if(is_polygon_mesh)
     {
-      FaceGraph* poly = new FaceGraph();
+      auto poly = std::make_unique<FaceGraph>();
+      Scene_item* poly_item = nullptr;
       if (CGAL::IO::internal::vtkPointSet_to_polygon_mesh(data, *poly, CGAL::parameters::default_values()))
       {
-        Scene_facegraph_item* poly_item = new Scene_facegraph_item(poly);
+        poly_item = new Scene_facegraph_item(poly.release());
+      } else {
+        poly.reset(nullptr);
+        std::vector<Point_3> points;
+        std::vector<std::vector<std::size_t> > polygons;
+        if (CGAL::IO::internal::vtkPointSet_to_polygon_soup(data, points, polygons, CGAL::parameters::default_values()))
+        {
+          auto soup_item = new Scene_polygon_soup_item();
+          soup_item->load(points, polygons);
+          poly_item = soup_item;
+        }
+      }
+      if(poly_item) {
         if(group)
         {
-          poly_item->setName(QString("%1_faces").arg(fileinfo.baseName()));
+          poly_item->setName(QString("%1_faces").arg(fileinfo.completeBaseName()));
           CGAL::Three::Three::scene()->addItem(poly_item);
           CGAL::Three::Three::scene()->changeGroup(poly_item, group);
         }
         else{
-          poly_item->setName(fileinfo.baseName());
+          poly_item->setName(fileinfo.completeBaseName());
           ok = true;
           if(add_to_scene)
             CGAL::Three::Three::scene()->addItem(poly_item);
@@ -377,7 +389,7 @@ public:
     if (is_c3t3)
     {
       typedef std::array<int, 3> Facet; // 3 = id
-      typedef std::array<int, 5> Tet_with_ref; // first 4 = id, fifth = reference
+      typedef std::array<int, 4> Tet; // first 4 = id, fifth = reference
       Scene_c3t3_item* c3t3_item = new Scene_c3t3_item();
       c3t3_item->set_valid(false);
       //build a triangulation from data:
@@ -388,7 +400,8 @@ public:
         double *p = dataP->GetPoint(i);
         points.push_back(Tr::Point(p[0],p[1],p[2]));
       }
-      std::vector<Tet_with_ref> finite_cells;
+      std::vector<Tet> finite_cells;
+      std::vector<C3t3::Subdomain_index> subdomains;
       bool has_mesh_domain = data->GetCellData()->HasArray("MeshDomain");
       vtkDataArray* domains = data->GetCellData()->GetArray("MeshDomain");
       for(int i = 0; i< data->GetNumberOfCells(); ++i)
@@ -396,12 +409,15 @@ public:
         if(data->GetCellType(i) != 10 )
           continue;
         vtkIdList* pids = data->GetCell(i)->GetPointIds();
-        Tet_with_ref cell;
+        Tet cell;
         for(int j = 0; j<4; ++j)
           cell[j] = pids->GetId(j);
-        cell[4] = has_mesh_domain ? static_cast<int>(domains->GetComponent(i,0))
-                                  :1;
         finite_cells.push_back(cell);
+
+        const auto si = has_mesh_domain
+          ? static_cast<int>(domains->GetComponent(i, 0))
+          : 1;
+        subdomains.push_back(si);
       }
       std::map<Facet, int> border_facets;
       //Preprocessing for build_triangulation
@@ -420,9 +436,11 @@ public:
           std::swap(finite_cells[i][1], finite_cells[i][3]);
         }
       }
-      std::vector<typename Tr::Vertex_handle> new_vertices;
-      CGAL::build_triangulation<Tr, true>(c3t3_item->c3t3().triangulation(),
-        points, finite_cells, border_facets, new_vertices);
+
+      CGAL::SMDS_3::build_triangulation_with_subdomains_range(
+        c3t3_item->c3t3().triangulation(),
+        points, finite_cells, subdomains, border_facets,
+        false, false, true);
 
       for( C3t3::Triangulation::Finite_cells_iterator
            cit = c3t3_item->c3t3().triangulation().finite_cells_begin();
@@ -466,12 +484,12 @@ public:
       c3t3_item->resetCutPlane();
       if(group)
       {
-        c3t3_item->setName(QString("%1_tetrahedra").arg(fileinfo.baseName()));
+        c3t3_item->setName(QString("%1_tetrahedra").arg(fileinfo.completeBaseName()));
         CGAL::Three::Three::scene()->addItem(c3t3_item);
         CGAL::Three::Three::scene()->changeGroup(c3t3_item, group);
       }
       else{
-        c3t3_item->setName(fileinfo.baseName());
+        c3t3_item->setName(fileinfo.completeBaseName());
         ok = true;
         if(add_to_scene)
           CGAL::Three::Three::scene()->addItem(c3t3_item);
@@ -488,12 +506,12 @@ public:
           polyline_item->polylines.push_back(segment);
       if(group)
       {
-        polyline_item->setName(QString("%1_lines").arg(fileinfo.baseName()));
+        polyline_item->setName(QString("%1_lines").arg(fileinfo.completeBaseName()));
         CGAL::Three::Three::scene()->addItem(polyline_item);
         CGAL::Three::Three::scene()->changeGroup(polyline_item, group);
       }
       else{
-        polyline_item->setName(fileinfo.baseName());
+        polyline_item->setName(fileinfo.completeBaseName());
         ok = true;
         if(add_to_scene)
           CGAL::Three::Three::scene()->addItem(polyline_item);
@@ -519,7 +537,7 @@ public:
       double* p = data->GetPoint(i);
       point_item->point_set()->insert(Point_3(p[0], p[1], p[2]));
     }
-    point_item->setName(fileinfo.baseName());
+    point_item->setName(fileinfo.completeBaseName());
     ok = true;
     if(add_to_scene)
       CGAL::Three::Three::scene()->addItem(point_item);

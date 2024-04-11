@@ -76,7 +76,7 @@ public:
   introduces an empty triangulation whose center and radius are set according to values within the traits
   and inserts the point range `[first;beyond[`.
 
-  \warning It is the user's responsability to ensure that the center and radius are set as intended in `gt`.
+  \warning It is the user's responsibility to ensure that the center and radius are set as intended in `gt`.
 
   \tparam PointOnSphereIterator must be a model of `InputIterator` with value type `Point_on_sphere_2` or `Point_3`.
   */
@@ -164,7 +164,7 @@ public:
   \tparam OutItBoundaryEdges is an output iterator with `Edge` as value type.
 
   \warning This function makes uses of the member `tds_data` (see the concept `TriangulationDSFaceBase_2`)
-           of the face to mark faces in conflict. It is the responsability of the user to make sure the flags are cleared.
+           of the face to mark faces in conflict. It is the responsibility of the user to make sure the flags are cleared.
 
   \pre `dimension() == 2`.
   */

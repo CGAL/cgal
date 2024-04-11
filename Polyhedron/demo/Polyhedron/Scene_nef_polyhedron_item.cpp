@@ -189,7 +189,6 @@ Scene_nef_polyhedron_item_priv::mark_domains(CDT& ct,
 void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    int count = 0;
     positions_facets.resize(0);
     positions_points.resize(0);
     normals.resize(0);
@@ -205,7 +204,6 @@ void Scene_nef_polyhedron_item_priv::compute_normals_and_vertices(void) const
         {
             if(f->is_twin()) continue;
             bool incident_volume_marked = f->incident_volume()->mark();
-            count++;
             Nef_polyhedron::Vector_3 v = (incident_volume_marked? -1:1) * f->plane().orthogonal_vector();
             P_traits cdt_traits(v);
             CDT cdt(cdt_traits);

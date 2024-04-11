@@ -32,9 +32,9 @@
 #endif
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/type_traits/is_same.hpp>
 
 #include <unordered_set>
+#include <type_traits>
 
 /// \file Fixed_border_parameterizer_3.h
 
@@ -64,11 +64,11 @@ namespace Surface_mesh_parameterization {
 // from the linear systems in order to have a symmetric positive definite
 // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
-/// \tparam BorderParameterizer_ is a Strategy to parameterize the surface border
+/// \tparam BorderParameterizer_ is a strategy to parameterize the surface border
 ///         and must be a model of `Parameterizer_3`.<br>
 ///         <b>%Default:</b>
 /// \code
@@ -104,7 +104,7 @@ public:
     Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
 
   #if !defined(CGAL_EIGEN3_ENABLED)
-  CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
+  static_assert(!(std::is_same<SolverTraits_, Default>::value),
                             "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
   #endif
 
@@ -190,9 +190,9 @@ public:
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The mesh border must be mapped onto a convex polygon.
@@ -255,7 +255,6 @@ public:
       main_border.insert(v);
     }
 
-    int count = 0;
     for(vertex_descriptor v : vertices){
       // inner vertices only
       if(main_border.find(v) == main_border.end()){
@@ -263,14 +262,12 @@ public:
         status = setup_inner_vertex_relations(A, Bu, Bv, mesh, v, vimap);
         if(status != OK)
           return status;
-      } else {
-        count++;
       }
     }
 
     // Solve "A*Xu = Bu". On success, solution is (1/Du) * Xu.
     // Solve "A*Xv = Bv". On success, solution is (1/Dv) * Xv.
-    NT Du = 0, Dv = 0;
+    double Du = 0, Dv = 0;
     if(!get_linear_algebra_traits().linear_solver(A, Bu, Xu, Du) ||
        !get_linear_algebra_traits().linear_solver(A, Bv, Xv, Dv))
     {
@@ -323,8 +320,8 @@ protected:
   /// \param Bv the right hand side vector in the linear system of y coordinates
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
   ///
   /// \pre Vertices must be indexed (`vimap` must be initialized).
   /// \pre `A`, `Bu`, and `Bv` must be allocated.
@@ -364,7 +361,7 @@ protected:
   /// - compute w_ii = - sum of w_ijs.
   ///
   /// \pre Vertices must be indexed.
-  /// \pre Vertex i musn't be already parameterized.
+  /// \pre Vertex i mustn't be already parameterized.
   /// \pre Line i of A must contain only zeros.
   // TODO: check if this must be virtual
   // virtual

@@ -293,10 +293,10 @@ namespace Planes {
     using parameters::get_parameter;
     using parameters::choose_parameter;
     using parameters::is_default_parameter;
-    using PlaneIndexMap = typename CGAL::Point_set_processing_3::
-      GetPlaneIndexMap<NamedParameters>::type;
 
-    CGAL_static_assertion_msg((!is_default_parameter<NamedParameters, internal_np::plane_index_t>()),
+    using PlaneIndexMap = typename CGAL::Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::type;
+
+    static_assert(!is_default_parameter<NamedParameters, internal_np::plane_index_t>::value,
                               "Error: no plane index map");
 
     const PlaneIndexMap index_map =
