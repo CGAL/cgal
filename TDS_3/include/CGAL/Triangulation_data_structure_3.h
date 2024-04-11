@@ -31,6 +31,7 @@
 #include <limits>
 
 #include <boost/unordered_set.hpp>
+#include <boost/container/flat_set.hpp>
 #include <boost/container/small_vector.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
 #include <CGAL/utility.h>
@@ -830,13 +831,16 @@ private:
         return it;
   }
 
-  template <class IncidentFacetIterator>
+  template <class IncidentFacetIterator, typename CellsContainers>
   void
   incident_cells_3_threadsafe(Vertex_handle v, Cell_handle d,
-                              std::vector<Cell_handle> &cells,
+                              CellsContainers &cells,
                               IncidentFacetIterator facet_it) const
   {
-    boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
+    boost::container::flat_set<Cell_handle,
+                               std::less<>,
+                               boost::container::small_vector<Cell_handle, 128>> found_cells;
+    // boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
 
     cells.push_back(d);
     found_cells.insert(d);
@@ -1411,20 +1415,16 @@ public:
 
     Visitor visit(v, output, this, f);
 
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
+    boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
       incident_cells_3_threadsafe(
         v, v->cell(), tmp_cells, visit.facet_it());
     else
       incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-    typename std::vector<Cell_handle>::iterator cit;
-    for(cit = tmp_cells.begin();
-        cit != tmp_cells.end();
-        ++cit)
+    for(auto c : tmp_cells)
     {
-      visit(*cit);
+      visit(c);
     }
 
     return visit.result();
