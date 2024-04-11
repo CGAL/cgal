@@ -2263,12 +2263,8 @@ private:
         continue;
       v->set_mark(Vertex_marker::REGION_INSIDE);
     }
-    struct Region_vertices_marker_scope_guard
-    {
-      std::function<void()> unmark;
-      void clear() { if(unmark) unmark(); unmark = nullptr; }
-      ~Region_vertices_marker_scope_guard() { clear(); }
-    } guard{[&] {
+
+    Scope_exit guard{[&] {
       for(auto v : region_vertices) {
         v->clear_mark(Vertex_marker::REGION_BORDER);
         v->clear_mark(Vertex_marker::REGION_INSIDE);
