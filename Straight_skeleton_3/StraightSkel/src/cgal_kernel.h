@@ -17,11 +17,19 @@
 
 // #include <CGAL/Cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 namespace CGAL {
 
 // typedef Cartesian<double> K;
-typedef Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel EPICK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel EPECK;
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt EPECK_w_sqrt;
+
+typedef EPICK K;
+
+typedef K::FT             FT;
 
 typedef K::Point_2        Point2;
 typedef K::Vector_2       Vector2;
