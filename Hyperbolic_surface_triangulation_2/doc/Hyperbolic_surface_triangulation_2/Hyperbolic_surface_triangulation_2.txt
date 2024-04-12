@@ -1,0 +1,97 @@
+
+\page Chapter_Hyperbolic_Surface_Triangulations Triangulations of hyperbolic surfaces
+
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Hyperbolic_Surface_Triangulations
+
+\cgalAutoToc
+\authors Vincent Despré, Loïc Dubois, and Monique Teillaud
+
+<center>
+<img src="header.svg" style="max-width:80%; width:80%;"/>
+</center>
+
+This package enables handling and building triangulations of closed orientable hyperbolic surfaces.
+Facilities are offered such as the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the Poincaré disk model of the hyperbolic plane.
+A triangulation of a surface can be generated from a convex fundamental domain of the surface. A method is offered that randomly generates such domains in genus two.
+
+
+\section Section_Hyperbolic_Surface_Triangulations_Background Background
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_Hyperbolic Hyperbolic surfaces
+
+We assume some familiarity with basic notions from covering space theory, and 2-dimensional hyperbolic geometry. In this document, every hyperbolic surface is connected and complete. The <b>Poincaré disk</b> \f$ \mathbb{D} \f$ is a simply connected hyperbolic surface whose point set is the open unit disk of the complex plane \f$ \mathbb{C} \f$.
+In particular, every point of \f$ \mathbb{D} \f$ is a complex number. This package deals with the hyperbolic surfaces \f$ S \f$ that are closed (compact, and without boundary) and orientable.
+Every such surface is homemorphic to the connect sum of \f$ g \geq 2 \f$ tori, where  \f$ g  \f$  is unique, and is called the <b>genus</b> of \f$ S \f$.
+The Poincaré disk \f$ \mathbb{D} \f$ is a universal covering space of \f$ S \f$, where the projection map \f$ \mathbb{D} \to S \f$ is a (local) isometry.
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_Decomposition Fundamental domains and triangulations
+
+Let \f$ S \f$ be a closed orientable hyperbolic surface. For representing \f$ S \f$ on a computer, we cut \f$ S \f$ into "manageable" pieces.
+A graph \f$ G \f$ embedded in \f$ S \f$ is a <b>cellular decomposition</b> of \f$ S \f$ if every face (every connected component of \f$ S \setminus G \f$ ) has genus zero; It is in that sense that the faces of \f$ G \f$ are "manageable".
+In this document, it is implicit that if a graph \f$ G \f$ is embedded in a hyperbolic surface \f$ S \f$, then every edge of \f$ G \f$ is geodesic in \f$ S \f$.
+We consider two types of cellular decompositions of \f$ S \f$:
+
+<ul>
+  <li>We consider cellular decompositions \f$ G \f$ of \f$ S \f$ that have only one face.
+Cutting \f$ S \f$ open at the edges of \f$ G \f$ results in a hyperbolic polygon \f$ P \f$, that we call <b>fundamental domain</b> for \f$ S \f$.
+The edges of \f$ P \f$ are paired, so that every edge of \f$ G \f$ is cut into two edges that are paired in \f$ P \f$.
+Every closed orientable hyperbolic surface admits a fundamental domain \f$ P \f$ that is <b>convex</b>, in that the interior angles of \f$ P \f$ do not exceed \f$ \pi \f$.
+
+  <li>Also, we consider <b>triangulations</b> of \f$ S \f$.
+A cellular decomposition \f$ T \f$ of \f$ S \f$ is a triangulation if every face of \f$ T \f$ is a "triangle", in the sense that it admits three incidences with edges of \f$ T \f$.
+Observe that this definition allows for triangulations with only one vertex.
+</ul>
+
+A triangulation of \f$ S \f$ can be obtained from a convex fundamental domain \f$ P \f$ of \f$ S \f$ by triangulating the interior \f$ P \f$, and by gluing back the boundary edges that are paired in \f$ P \f$.
+The assumption that \f$ P \f$ is convex ensures that the interior of \f$ P \f$ can be triangulated naively by insertion of arbitrary arcs of \f$ P \f$.
+
+\subsection Subsection_Hyperbolic_Surface_Triangulations_Cratios_Delaunay Cross ratios and the Delaunay flip algorithm
+
+Let \f$ S \f$ be a closed orientable hyperbolic surface, and let \f$ T \f$ be a triangulation of \f$ S \f$. The geometry of \f$ T \f$ is unambiguously determined by the <b>cross ratios</b> of the edges of \f$ T \f$. The cross ratio of an edge \f$ e \f$ of \f$ T \f$ is a complex number \f$ R_T(e) \in \mathbb{C} \f$ defined as follows.
+Consider the lift \f$ \widetilde T \f$ of \f$ T \f$ in the Poincaré disk \f$ \mathbb{D} \f$.
+In \f$ \widetilde T \f$, let \f$ \widetilde e \f$ be a lift of \f$ e \f$.
+Orient \f$ \widetilde e \f$ arbitrarily, and let \f$ z_0 \in \mathbb{D} \f$ and \f$ z_2 \in \mathbb{D} \f$ be respectively the first and second vertices of \f$ \widetilde e \f$.
+In  \f$ \widetilde T \f$, consider the triangle on the right of \f$ \widetilde e \f$, and let \f$ z_1 \in \mathbb{D} \f$ be the third vertex of this triangle (the vertex distinct from \f$ z_0 \f$ and \f$ z_2 \f$).
+Similarly, consider the triangle on the left of \f$ \widetilde e \f$, and let \f$ z_3 \in \mathbb{D} \f$ be the third vertex of this triangle.
+Then \f$ R_T(e) = (z_3-z_1)*(z_2-z_0) / ((z_3-z_0)*(z_2-z_1)) \f$.
+This definition does not depend on the choice of the lift \f$ \widetilde e \f$, nor on the orientation of \f$ \widetilde e \f$.
+
+An edge \f$ e \f$ of \f$ T \f$ satisfies the <b>Delaunay criterion</b> if the imaginary part of its cross ratio \f$R_T(e)\f$ is negative or null.
+This definition has an equivalent "empty disk" formulation, see .
+Then \f$ T \f$ is a <b>Delaunay triangulation</b> if every edge of  \f$ T \f$ satisfies the Delaunay criterion.
+If an edge \f$e \f$ of \f$ T \f$ does not satisfy the Delaunay criterion, then the two triangles incident to \f$ e \f$ form a strictly convex quadrilateron, so \f$ e \f$ can be deleted from \f$ T \f$ and replaced by the other diagonal of the quadrilateron.
+This operation is called a <b>flip</b>.
+When a flip occurs, the cross ratios of the edges involved are modified via simple formulas.
+The <b>Delaunay flip algorithm</b> flips edges that do not satisfy the Delaunay criterion as long as possible, with no preference on the order of the flips.
+This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$.
+
+
+
+
+
+
+
+
+\section Section_Hyperbolic_Surface_Triangulations_Content Content
+
+
+
+
+
+
+
+\section Section_Hyperbolic_Surface_Triangulations_Example Example
+
+The example below randomly generates a convex fundamental domain of a surface, triangulates the domain, applies the Delaunay flip algorithm to the resulting triangulation, and saves and prints the Delaunay triangulation.
+\cgalExample{Hyperbolic_surface_triangulation_2_Example/example.cpp}
+
+
+
+*/
+} /* namespace CGAL */
+
+\\\\\\\\\\\\
