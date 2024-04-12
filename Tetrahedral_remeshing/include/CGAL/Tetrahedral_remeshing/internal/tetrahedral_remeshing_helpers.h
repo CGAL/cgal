@@ -1719,6 +1719,26 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
+template<typename Vertex_handle, typename EdgesBimap>
+void remove_from_bimap(const Vertex_handle u,
+                       const Vertex_handle v,
+                       EdgesBimap& edges)
+{
+  const std::pair<Vertex_handle, Vertex_handle> edge = make_vertex_pair(u, v);
+  typename EdgesBimap::left_map::iterator eit = edges.left.find(edge);
+  if (eit != edges.left.end())
+    edges.left.erase(eit);
+}
+
+template<typename Edge, typename EdgesBimap>
+void remove_from_bimap(const Edge& e, EdgesBimap& edges)
+{
+  const auto edge = make_vertex_pair(e);
+  typename EdgesBimap::left_map::iterator eit = edges.left.find(edge);
+  if (eit != edges.left.end())
+    edges.left.erase(eit);
+}
+
 template<typename Tr>
 std::array<typename Tr::Edge, 6>
 cell_edges(const typename Tr::Cell_handle c, const Tr&)

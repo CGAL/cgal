@@ -811,12 +811,13 @@ void merge_surface_patch_indices(const typename C3t3::Facet& f1,
   }
 }
 
-template<typename C3t3, typename CellSelector>
+template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
 typename C3t3::Vertex_handle
 collapse(const typename C3t3::Cell_handle ch,
          const int to, const int from,
          CellSelector& cell_selector,
-         C3t3& c3t3)
+         C3t3& c3t3,
+         ShortEdgesBimap& short_edges)
 {
   typedef typename C3t3::Triangulation Tr;
   typedef typename C3t3::Vertex_handle Vertex_handle;
@@ -826,18 +827,17 @@ collapse(const typename C3t3::Cell_handle ch,
 
   Tr& tr = c3t3.triangulation();
 
-  Vertex_handle vh0 = ch->vertex(to);
-  Vertex_handle vh1 = ch->vertex(from);
-
+  Vertex_handle vkept = ch->vertex(to);
+  const Vertex_handle vdeleted = ch->vertex(from);
 
   //Update the vertex before removing it
-  std::vector<Cell_handle> find_incident;
-  tr.incident_cells(vh0, std::back_inserter(find_incident));
+  std::vector<Cell_handle> incident_to_vkept;
+  tr.incident_cells(vkept, std::back_inserter(incident_to_vkept));
 
-  std::vector<Cell_handle> cells_to_update;
-  tr.incident_cells(vh1, std::back_inserter(cells_to_update));
+  std::vector<Cell_handle> incident_to_vdeleted;
+  tr.incident_cells(vdeleted, std::back_inserter(incident_to_vdeleted));
 
-  boost::container::small_vector<Cell_handle, 30> inc_cells;
+  boost::container::small_vector<Cell_handle, 30> incident_to_edge;
   Cell_circulator circ = tr.incident_cells(ch, to, from);
   Cell_circulator done = circ;
   do
@@ -845,28 +845,27 @@ collapse(const typename C3t3::Cell_handle ch,
     for (int i = 0; i < 4; ++i)
     {
       const Vertex_handle vi = circ->vertex(i);
-      if (vi != vh0 && vi != vh1)
+      if (vi != vkept && vi != vdeleted)
       {
         const Facet fi(circ, i);
         if (c3t3.is_in_complex(fi))
           c3t3.remove_from_complex(fi);
       }
     }
-    inc_cells.push_back(circ);
+    incident_to_edge.push_back(circ);
   }
   while (++circ != done);
 
   if(c3t3.is_in_complex(ch->vertex(from), ch->vertex(to)))
     c3t3.remove_from_complex(ch->vertex(from), ch->vertex(to));
 
-  bool valid = true;
   std::vector<Cell_handle> cells_to_remove;
   std::unordered_set<Cell_handle> invalid_cells;
 
-  for(const Cell_handle& c : inc_cells)
+  for(const Cell_handle& c : incident_to_edge)
   {
-    const int v0_id = c->index(vh0);
-    const int v1_id = c->index(vh1);
+    const int v0_id = c->index(vkept);
+    const int v1_id = c->index(vdeleted);
 
     Cell_handle n0_ch = c->neighbor(v0_id);
     Cell_handle n1_ch = c->neighbor(v1_id);
@@ -902,37 +901,34 @@ collapse(const typename C3t3::Cell_handle ch,
       return Vertex_handle();
     }
     cells_to_remove.push_back(c);
-
     invalid_cells.insert(c);
   }
 
   const Vertex_handle infinite_vertex = tr.infinite_vertex();
 
   bool v0_updated = false;
-  for (const Cell_handle& c : find_incident)
+  for (const Cell_handle& c : incident_to_vkept)
   {
     if (invalid_cells.find(c) == invalid_cells.end())//valid cell
     {
       if (tr.is_infinite(c))
         infinite_vertex->set_cell(c);
       //else {
-      vh0->set_cell(c);
+      vkept->set_cell(c);
       v0_updated = true;
       //}
     }
   }
 
   // update complex edges
-  const std::array<std::array<int, 2>, 6> edges
-    = { { {{0,1}}, {{0,2}}, {{0,3}}, {{1,2}}, {{1,3}}, {{2,3}} } }; //vertex indices in cells
-  const Vertex_handle vkept = vh0;
-  const Vertex_handle vdeleted = vh1;
-  for (const Cell_handle& c : cells_to_update)
+  for (const Cell_handle& c : incident_to_vdeleted)
   {
-    for (const std::array<int, 2>& ei : edges)
+    for (const auto& ei : cell_edges(c, tr))
     {
-      Vertex_handle eiv0 = c->vertex(ei[0]);
-      Vertex_handle eiv1 = c->vertex(ei[1]);
+      remove_from_bimap(ei, short_edges);
+
+      const Vertex_handle eiv0 = c->vertex(ei.second);
+      const Vertex_handle eiv1 = c->vertex(ei.third);
       if (eiv1 == vdeleted && eiv0 != vkept) //replace eiv1 by vkept
       {
         if (c3t3.is_in_complex(eiv0, eiv1))
@@ -954,20 +950,18 @@ collapse(const typename C3t3::Cell_handle ch,
     }
   }
 
-  // update complex facets
-
   //Update the vertex before removing it
-  for (const Cell_handle& c : cells_to_update)
+  for (const Cell_handle& c : incident_to_vdeleted)
   {
     if (invalid_cells.find(c) == invalid_cells.end()) //valid cell
     {
-      c->set_vertex(c->index(vh1), vh0);
+      c->set_vertex(c->index(vdeleted), vkept);
 
       if (tr.is_infinite(c))
         infinite_vertex->set_cell(c);
       //else {
       if (!v0_updated) {
-        vh0->set_cell(c);
+        vkept->set_cell(c);
         v0_updated = true;
       }
       //}
@@ -978,7 +972,7 @@ collapse(const typename C3t3::Cell_handle ch,
     std::cout << "PB i cell not valid!!!" << std::endl;
 
   // Delete vertex
-  c3t3.triangulation().tds().delete_vertex(vh1);
+  c3t3.triangulation().tds().delete_vertex(vdeleted);
 
   // Delete cells
   for (Cell_handle cell_to_remove : cells_to_remove)
@@ -988,20 +982,16 @@ collapse(const typename C3t3::Cell_handle ch,
     c3t3.triangulation().tds().delete_cell(cell_to_remove);
   }
 
-  if (!valid){
-    std::cout << "Global triangulation collapse bug!!" << std::endl;
-    return Vertex_handle();
-  }
-
-  return vh0;
+  return vkept;
 }
 
 
-template<typename C3t3, typename CellSelector>
+template<typename C3t3, typename CellSelector, typename ShortEdgesBimap>
 typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
                                       const Collapse_type& collapse_type,
                                       CellSelector& cell_selector,
-                                      C3t3& c3t3)
+                                      C3t3& c3t3,
+                                      ShortEdgesBimap& short_edges)
 {
   typedef typename C3t3::Vertex_handle Vertex_handle;
   typedef typename C3t3::Triangulation::Point Point_3;
@@ -1024,7 +1014,7 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     vh0->set_point(new_position);
     vh1->set_point(new_position);
 
-    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3);
+    vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
     c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
   }
   else //Collapse at vertex
@@ -1032,7 +1022,7 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
     if (collapse_type == TO_V1)
     {
       vh0->set_point(p1);
-      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3);
+      vh = collapse(edge.first, edge.third, edge.second, cell_selector, c3t3, short_edges);
       c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
     }
     else //Collapse at v0
@@ -1040,7 +1030,7 @@ typename C3t3::Vertex_handle collapse(typename C3t3::Edge& edge,
       if (collapse_type == TO_V0)
       {
         vh1->set_point(p0);
-        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3);
+        vh = collapse(edge.first, edge.second, edge.third, cell_selector, c3t3, short_edges);
         c3t3.set_dimension(vh, (std::min)(dim_vh0, dim_vh1));
       }
       else
@@ -1102,12 +1092,14 @@ bool is_cells_set_manifold(const C3t3&,
 template<typename C3t3,
          typename Sizing,
          typename CellSelector,
+         typename ShortEdgesBimap,
          typename Visitor>
 typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     C3t3& c3t3,
     const Sizing& sizing,
     const bool /* protect_boundaries */,
     CellSelector cell_selector,
+    ShortEdgesBimap& short_edges,
     Visitor& )
 {
   typedef typename C3t3::Triangulation   Tr;
@@ -1203,7 +1195,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
       if (in_cx)
         nb_valid_collapse++;
 #endif
-      return collapse(edge, collapse_type, cell_selector, c3t3);
+      return collapse(edge, collapse_type, cell_selector, c3t3, short_edges);
     }
   }
 #ifdef CGAL_DEBUG_TET_REMESHING_IN_PLUGIN
@@ -1290,6 +1282,9 @@ void collapse_short_edges(C3T3& c3t3,
     typename Boost_bimap::right_map::iterator eit = short_edges.right.begin();
     const Edge_vv e = eit->second;
 
+    CGAL_expensive_assertion(tr.tds().is_vertex(e.first));
+    CGAL_expensive_assertion(tr.tds().is_vertex(e.second));
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
     FT sqlen = eit->first;
     std::cout << "\rCollapse... (" << short_edges.left.size() << " short edges, ";
@@ -1302,15 +1297,14 @@ void collapse_short_edges(C3T3& c3t3,
 
     Cell_handle cell;
     int i1, i2;
-    if ( tr.tds().is_vertex(e.first)
-         && tr.tds().is_vertex(e.second)
-         && tr.tds().is_edge(e.first, e.second, cell, i1, i2)
-         && is_too_short(Edge(cell, i1, i2), sizing, c3t3, cell_selector))
+    if(tr.tds().is_edge(e.first, e.second, cell, i1, i2))
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       const typename T3::Point p1 = e.first->point();
       const typename T3::Point p2 = e.second->point();
 #endif
+      CGAL_expensive_assertion(
+        !!is_too_short(Edge(cell, i1, i2), sizing, c3t3, cell_selector));
 
       Edge edge(cell, i1, i2);
 
@@ -1324,6 +1318,7 @@ void collapse_short_edges(C3T3& c3t3,
 
       Vertex_handle vh = collapse_edge(edge, c3t3, sizing,
                                        protect_boundaries, cell_selector,
+                                       short_edges,
                                        visitor);
       if (vh != Vertex_handle())
       {
@@ -1333,11 +1328,15 @@ void collapse_short_edges(C3T3& c3t3,
         for (const Edge& eshort : incident_short)
         {
           if (!can_be_collapsed(eshort, c3t3, protect_boundaries, cell_selector))
+          {
+            remove_from_bimap(eshort, short_edges);
             continue;
-
+          }
           const auto sqlen = is_too_short(eshort, sizing, c3t3, cell_selector);
           if (sqlen != std::nullopt)
             short_edges.insert(short_edge(make_vertex_pair(eshort), sqlen.value()));
+          else
+            remove_from_bimap(eshort, short_edges);
         }
 
         //debug::dump_c3t3(c3t3, "dump_after_collapse");
