@@ -52,10 +52,10 @@ namespace fs = std::filesystem;
 int main(int argc, char* argv[])
 {
   // Loads image
-  if(argc == 1){
-    std::cerr << "Usage:  " << argv[0] << " <nii file or dicom directory> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1\n";
-    return 0;
-  }
+
+  // Usage: mesh_3D_gray_vtk_image <nii file or dicom directory> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1
+
+  const std::string fname = (argc>1)?argv[1]:CGAL::data_file_path("images/squircle.nii");
 
   vtkImageData* vtk_image = nullptr;
   Image_word_type iso = (argc>2)? boost::lexical_cast<Image_word_type>(argv[2]): 1;
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   double fd = (argc>4)? boost::lexical_cast<double>(argv[4]): 0.1;
   double cs = (argc>5)? boost::lexical_cast<double>(argv[5]): 1;
 
-  fs::path path(argv[1]);
+  fs::path path(fname);
 
   if(fs::is_regular_file(path)){
     std::cout << "regular file" << std::endl;
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
       fs::path stem = path.stem();
       if ((path.extension() == ".nii") || (stem.has_extension() && (stem.extension() == ".nii") && (path.extension() == ".gz"))) {
         vtkNIFTIImageReader* reader = vtkNIFTIImageReader::New();
-        reader->SetFileName(argv[1]);
+        reader->SetFileName(fname.c_str());
         reader->Update();
         vtk_image = reader->GetOutput();
         vtk_image->Print(std::cerr);
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
   Mesh_domain domain = Mesh_domain::create_gray_image_mesh_domain
     (image,
      params::image_values_to_subdomain_indices(Less(iso)).
-             value_outside(0));
+             value_outside(iso+1));
   /// [Domain creation]
 
   // Mesh criteria
