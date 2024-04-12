@@ -295,12 +295,12 @@ Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
   typedef typename Gt::Vector_3 Vector_3;
   const Vector_3 ij = vector(i, j);
   const Vector_3 ik = vector(i, k);
-  const Vector_3 il = vector(i, l);
 
   const Vector_3 ijik = cross_product(ij, ik);
   if(CGAL::NULL_VECTOR == ijik)
     return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
 
+  const Vector_3 il = vector(i, l);
   const Vector_3 ilij = cross_product(il, ij);
   if (CGAL::NULL_VECTOR == ilij)
     return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
@@ -778,27 +778,6 @@ bool is_edge_in_complex(const typename C3t3::Vertex_handle& v0,
     return c3t3.is_in_complex(Edge(cell, i0, i1));
   else
     return false;
-}
-
-template<typename C3t3>
-bool protecting_balls_intersect(const typename C3t3::Edge& e,
-                                const C3t3& c3t3)
-{
-  const auto vv = c3t3.triangulation().vertices(e);
-  if(  c3t3.in_dimension(vv[0]) > 1
-    || c3t3.in_dimension(vv[1]) > 1)
-    return false;
-
-  const auto& p0 = vv[0]->point();
-  const auto& p1 = vv[1]->point();
-  if(p0.weight() == 0 || p1.weight() == 0)
-    return false;
-
-  const auto r0 = CGAL::approximate_sqrt(p0.weight());
-  const auto r1 = CGAL::approximate_sqrt(p1.weight());
-  const auto d = CGAL::approximate_sqrt(CGAL::squared_distance(p0, p1));
-
-  return d < r0 + r1;
 }
 
 template<typename C3t3, typename OutputIterator>
