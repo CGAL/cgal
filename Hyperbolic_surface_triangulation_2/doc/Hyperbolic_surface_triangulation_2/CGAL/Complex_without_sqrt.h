@@ -6,35 +6,27 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-Templated by a field type FT. Represents a complex number over FT.
+Templated by a field type FT, represents a complex number over FT.
 
-\tparam FT is the field type and must be a model of `Field`.
+\tparam FT is the field type and must be a model of `FieldNumberType`.
 */
 template <class FT>
 class Complex_without_sqrt {
-private:
-  typedef Complex_without_sqrt<FT>            _Self;
-
 public:
-  /// \name Types
-  /// @{
-  typedef FT Ft;
-  /// @}
-
   /// \name Creation
   /// @{
   /*!
-    Default constructor. Sets the complex number to 0 + 0 * i.
+    Default constructor, sets the complex number to 0 + 0 * i.
   */
   Complex_without_sqrt();
 
   /*!
-    Constructor from the real part. Sets the complex number to 'real' + 0 * i.
+    Constructor from the real part, sets the complex number to 'real' + 0 * i.
   */
   Complex_without_sqrt(const FT& real);
 
   /*!
-    Constructor from the real and imaginary parts. Sets the complex number to 'real' + 'imaginary' * i.
+    Constructor from the real and imaginary parts, sets the complex number to 'real' + 'imaginary' * i.
   */
   Complex_without_sqrt(const FT& real, const FT& imag);
   /// @}
@@ -72,32 +64,32 @@ public:
   /*!
     Returns the conjugate
   */
-  _Self conjugate() const;
+  Complex_without_sqrt<FT> conjugate() const;
 
   /*!
     Returns the sum of itself and other
   */
-  _Self operator+(const _Self& other) const;
+  Complex_without_sqrt<FT> operator+(const Complex_without_sqrt<FT>& other) const;
 
   /*!
     Returns the difference of itself and other
   */
-  _Self operator-(const _Self& other) const;
+  Complex_without_sqrt<FT> operator-(const Complex_without_sqrt<FT>& other) const;
 
   /*!
     Returns the opposite of itself
   */
-  _Self operator-() const;
+  Complex_without_sqrt<FT> operator-() const;
 
   /*!
     Returns the multiplication of itself and other
   */
-  _Self operator*(const _Self& other) const;
+  Complex_without_sqrt<FT> operator*(const Complex_without_sqrt<FT>& other) const;
 
   /*!
     Returns the division of itself by other
   */
-  _Self operator/(const _Self& other) const;
+  Complex_without_sqrt<FT> operator/(const Complex_without_sqrt<FT>& other) const;
   /// @}
 };
 

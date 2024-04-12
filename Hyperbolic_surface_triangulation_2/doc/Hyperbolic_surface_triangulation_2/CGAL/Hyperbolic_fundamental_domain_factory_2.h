@@ -6,22 +6,17 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-Factory class, whose only purpose is to randomly generate some convex domains of closed orientable hyperbolic surfaces of genus two.
+Factory class, whose only purpose is to randomly generate some domains of surfaces of genus two.
 
-\tparam GeometricTraits_2 is the geometric traits class and must be a model of `HyperbolicSurfacesTraits_2`.
+\tparam Traits_2 is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
 */
-template<class GeometricTraits_2>
+template<class Traits_2>
 class Hyperbolic_fundamental_domain_factory_2{
 public:
-  /// \name Types
-  /// @{
-  typedef GeometricTraits_2                                 Geometric_traits_2;
-  /// @}
-
   /// \name Creation
   /// @{
   /*!
-    Default constructor. The seed is used for random generation
+    Default constructor, the seed is used for random generation.
   */
   Hyperbolic_fundamental_domain_factory_2(unsigned int seed);
   /// @}
@@ -31,7 +26,7 @@ public:
   /*!
     Randomly generates a convex domain of a closed orientable hyperbolic surface of genus two.
   */
-  Hyperbolic_fundamental_domain_2<GeometricTraits_2> generate_domain_g2();
+  Hyperbolic_fundamental_domain_2<Traits_2> generate_domain_g2();
   /// @}
 
 };

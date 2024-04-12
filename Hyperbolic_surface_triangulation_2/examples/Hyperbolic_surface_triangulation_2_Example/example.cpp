@@ -10,8 +10,8 @@
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
 
-#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
+#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
 
 #include <CGAL/Gmpq.h>
@@ -28,47 +28,28 @@ using namespace CGAL;
 
 typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Circular_kernel_2<Cartesian<Gmpq>,Algebraic_kernel_for_circles_2_2<Gmpq>>> ParentTraits;
 typedef Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
 typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
+typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
 typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
 
 int main(){
+  // Generates the domain:
   Factory factory = Factory(time(NULL));
-  Domain domain;
-  Triangulation triangulation;
-  std::string filename = "./data/domain";
+  Domain domain = factory.generate_domain_g2();
 
-    // Generate the domain
-    std::cout << "generating the domain " << std::endl;
-    domain = factory.generate_domain_g2();
+  // Triangulates the domain:
+  Triangulation triangulation = Triangulation(domain);
 
-    // Save the domain
-    std::cout << "saving the domain " << std::endl;
-    std::ofstream output_file (filename.c_str());
-    output_file << domain;
-    output_file.close();
+  // Applies the Delaunay flip algorithm to the triangulation:
+  triangulation.make_delaunay();
 
-    // Triangulate the domain
-    std::cout << "triangulating the domain " << std::endl;
-    triangulation = Triangulation(domain);
+  // Saves the triangulation:
+  output_file = std::ofstream ("OutputTriangulation.txt");
+  output_file << triangulation;
+  output_file.close();
 
-    // Save the resulting triangulation
-    std::cout << "saving the input triangulation " << std::endl;
-    output_file = std::ofstream ("./data/input triangulation");
-    output_file << triangulation;
-    output_file.close();
-
-    // Delaunay flip the triangulation
-    std::cout << "Delaunay flipping the triangulation " << std::endl;
-    triangulation.make_delaunay();
-
-    // Save the resulting triangulation
-    std::cout << "saving the output triangulation " << std::endl;
-    output_file = std::ofstream ("./data/output triangulation");
-    output_file << triangulation;
-    output_file.close();
-
-    std::cout << triangulation << std::endl;
+  // Prints the triangulation:
+  std::cout << triangulation << std::endl;
 
   return 0;
 }

@@ -6,78 +6,74 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-The class `Hyperbolic_surface_triangulation_2` is the main class of the Hyperbolic Surface Triangulation package.
-It represents a triangulation of a closed orientable hyperbolic surface.
-It offers factilities such as the generation of the triangulation from a convex fundamental domain,
-the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the Poincaré disk model.
+Represents a triangulation of a closed orientable hyperbolic surface, whose edges are geodesic segments.
 
-\tparam GeometricTraits_2 is the geometric traits class and must be a model of `HyperbolicSurfacesTraits_2`.
+Offers facilities such as the generation of the triangulation from a convex fundamental domain,
+the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
+
+The triangulation T is represented internally by an instance of CGAL::Combinatorial_map whose edges are attributed complex numbers. The complex number attributed to an edge e of T is the cross ratio of e in T, it can be defined as follows. Consider a lift f of e in the Poincaré disk model of the hyperbolic plane.
+Orient f, and let z0 and z2 be the two complex numbers representing the first and second vertices of f.
+Consider the lifted triangle of T that lies on the right of f, and let z1 be the complex number representing the third vertex of this triangle (the vertex distinct from z0 and z2).
+Similarly, consider the lifted triangle of T that lies on the left of f, and let z3 be the complex number representing the third vertex of this triangle.
+The cross ratio of e in T is then the complex number  (z3-z1)*(z2-z0) / ((z3-z0)*(z2-z1)). This definition does not depend on the choice of the lift f, nor on the orientation of f.
+
+The triangulation T can optionnally contain some additional data: the anchor.
+The anchor contains a lift t of a triangle of T in the hyperbolic plane: t is represented by its three vertices in the Poincaré disk model, and by a dart of the corresponding triangle in the combinatorial map of T.
+While the combinatorial map and its cross ratios uniquely determine T, the anchor is used when building a portion of the lift of T in the hyperbolic plane.
+
+
+\tparam Traits_2 is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
 */
-template<class GeometricTraits_2>
+template<class Traits_2>
 class Hyperbolic_surface_triangulation_2{
 public:
   /// \name Types
   /// @{
-  typedef GeometricTraits_2                                                                             Geometric_traits_2;
-
   struct Combinatorial_map_with_cross_ratios_item{
     template <class CMap>
     struct Dart_wrapper{
-        typedef Cell_attribute<CMap, Complex_without_sqrt<typename GeometricTraits_2::FT>> Edge_attrib;
+        typedef Cell_attribute<CMap, Complex_without_sqrt<typename Traits_2::FT>> Edge_attrib;
         typedef std::tuple<void,Edge_attrib,void>   Attributes;
     };
   };
+  /*!
+      Type of combinatorial map whose edges are attributed complex numbers.
+  */
   typedef Combinatorial_map<2,Combinatorial_map_with_cross_ratios_item>                                 Combinatorial_map_with_cross_ratios;
 
+  /*!
+      Stores a dart d of the combinatorial map, belonging to a triangle t, and stores the three vertices of a lift of t in the hyperbolic plane.
+  */
   struct Anchor{
     typename Combinatorial_map_with_cross_ratios::Dart_handle dart;
-    typename GeometricTraits_2::Point_2 vertices[3];
+    typename Traits_2::Hyperbolic_point_2 vertices[3];
   };
   /// @}
 
-private:
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_handle                                     _Dart_handle;
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_range                                      _Dart_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<0>             _Vertex_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<1>             _Edge_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_range<2>             _Face_range;
-
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_handle                               _Dart_const_handle;
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_range                                _Dart_const_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<1>       _Edge_const_range;
-  typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<2>       _Face_const_range;
-
-  typedef typename GeometricTraits_2::FT                                                                _Number;
-  typedef Complex_without_sqrt<_Number>                                                                 _Complex_number;
-  typedef typename GeometricTraits_2::Point_2                                                           _Point;
-  typedef Hyperbolic_isometry_2<GeometricTraits_2>                                                      _Isometry;
-  typedef Hyperbolic_fundamental_domain_2<GeometricTraits_2>                                            _Domain;
-
-public:
   /// \name Creation
   /// @{
   /*!
-      Default constructor
+      Default constructor.
   */
   Hyperbolic_surface_triangulation_2() {};
 
   /*!
-      Constructor from a convex fundamental domain
+      Constructor from a convex fundamental domain: triangulates the polygon of the domain, and identifies the paired sides of the domain.
   */
-  Hyperbolic_surface_triangulation_2(const Hyperbolic_fundamental_domain_2<GeometricTraits_2>& domain);
+  Hyperbolic_surface_triangulation_2(const Hyperbolic_fundamental_domain_2<Traits_2>& domain);
 
   /*!
-      Constructor from a decorated combinatorial map
+      Constructor from a decorated combinatorial map.
   */
   Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap);
 
   /*!
-      Constructor from a decorated combinatorial map and an anchor
+      Constructor from a decorated combinatorial map and an anchor.
   */
   Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
 
   /*!
-      Copy constructor
+      Copy constructor.
   */
   Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2 other);
   /// @}
@@ -85,48 +81,35 @@ public:
   /// \name Get and set
   /// @{
   /*!
-      Returns the decorated combinatorial map
+      Returns the decorated combinatorial map.
   */
   Combinatorial_map_with_cross_ratios& get_combinatorial_map_ref();
 
   /*!
-      Tells whether the triangulation is anchored
+      Tells if the triangulation has an anchor.
   */
   bool has_anchor() const;
 
   /*!
-      Returns the anchor
+      Returns the anchor (if there is one).
   */
   Anchor& get_anchor_ref();
   /// @}
 
-  /// \name Stream input output
+  /// \name Delaunay flip algorithm
   /// @{
   /*!
-      Writes the triangulation in a stream
+      Tells if if the edge supported by the dart is Delaunay flippable.
   */
-  void to_stream(std::ostream& s) const;
+  bool is_delaunay_flippable(Combinatorial_map_with_cross_ratios::Dart_handle dart) const;
 
   /*!
-      Reads the triangulation from a stream
+      Flips the edge supported by the dart.
   */
-  void from_stream(std::istream& s);
-  /// @}
-
-  /// \name Delaunay flips algorithm
-  /// @{
-  /*!
-      Tells whether an edge is Delaunay flippable
-  */
-  bool is_delaunay_flippable(_Dart_handle dart) const;
+  void flip(Combinatorial_map_with_cross_ratios::Dart_handle dart);
 
   /*!
-      Flips a Delaunay flippable edge
-  */
-  void flip(_Dart_handle dart);
-
-  /*!
-      Applies the Delaunay flips algorithm
+      Applies the Delaunay flip algorithm: flips Delaunay flippable edges until there is no such edge anymore.
   */
   int make_delaunay();
   /// @}
@@ -134,19 +117,32 @@ public:
   /// \name Lifting
   /// @{
   /*!
-       Returns, for every triangle T of the triangulation, one of the darts of T together with a triple A,B,C of points in the hyperbolic plane.
-       The points A,B,C are the vertices of a a lift of T in the hyperbolic plane.
-       This method is to be used only if the triangulation has an anchor.
+      Lifts the triangulation in the hyperbolic plane. Returns, for every triangle T of the triangulation, one of the darts of T in the combinatorial map of the triangulation, together with a triple A,B,C of points in the hyperbolic plane.
+      The points A,B,C are the vertices of a lift of T in the hyperbolic plane.
+      This method is to be used only if the triangulation has an anchor.
   */
-  std::vector<std::tuple<typename Combinatorial_map_with_cross_ratios::Dart_const_handle,typename GeometricTraits_2::Point_2,typename GeometricTraits_2::Point_2,typename GeometricTraits_2::Point_2>> lift(bool center=true) const;
+  std::vector<std::tuple<Combinatorial_map_with_cross_ratios::Dart_const_handle, Traits_2::Hyperbolic_point_2, Traits_2::Hyperbolic_point_2, Traits_2::Hyperbolic_point_2>> lift(bool center=true) const;
   /// @}
 
   /// \name Validity
   /// @{
   /*!
-      Partial validity test
+      Partial validity test.
   */
   bool is_valid() const;
+  /// @}
+
+  /// \name Stream input output
+  /// @{
+  /*!
+      Writes the triangulation in a stream.
+  */
+  void to_stream(std::ostream& s) const;
+
+  /*!
+      Reads the triangulation from a stream.
+  */
+  void from_stream(std::istream& s);
   /// @}
 };
 

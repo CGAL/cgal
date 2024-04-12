@@ -1,7 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-EXTRACT_PRIVATE = NO
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Hyperbolic Surface Triangulations"
 
-PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Hyperbolic Surface Triangulations"
-
-HTML_EXTRA_FILES = 	${CGAL_PACKAGE_DOC_DIR}/fig/cover.svg
+IMAGE_PATH  +=  ${CGAL_PACKAGE_DOC_DIR}/fig/cover.svg

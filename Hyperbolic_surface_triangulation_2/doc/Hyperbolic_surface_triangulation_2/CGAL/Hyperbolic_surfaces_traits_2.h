@@ -3,72 +3,28 @@
 
 namespace CGAL {
 
-template<class ComplexType>
-class Hyperbolic_point_2 {
-  public:
-    /// \name Types
-    /// @{
-    typedef ComplexType                           Complex;
-    /// @}
-
-    /// \name Creation
-    /// @{
-      /*!
-        %Default constructor
-      */
-    Hyperbolic_point_2();
-
-      /*!
-        %Constructor from the complex number representing the point
-      */
-    Hyperbolic_point_2(const Complex& z);
-    /// @}
-
-    /// \name Get and set
-    /// @{
-      /*!
-        %Get the complex number representing the point
-      */
-    Complex get_z() const;
-
-      /*!
-        %Set the complex number representing the point
-      */
-    void set_z(const Complex& z);
-    /// @}
-};
-
-template<class ComplexType>
-std::ostream& operator<<(std::ostream& s, const Hyperbolic_point_2<ComplexType>& point);
-
-template<class ComplexType>
-void operator>>(std::istream& s, Hyperbolic_point_2<ComplexType>& point);
-
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2TraitsClasses
 
-The class `Hyperbolic_surfaces_traits_2` is designed as one of the
-default models for the traits concept `HyperbolicSurfacesTraits_2`
-offered by \cgal.
+Traits class offered by \cgal as a default model for the traits concept `HyperbolicSurfacesTraits_2`.
 
-\tparam FieldType must be a model of `Field`.
+\tparam HyperbolicTraitsClass must be a model of `HyperbolicDelaunayTriangulationTraits_2`.
 
-This class provides exact constructions and predicates. The default value for `FieldType` is `CGAL::Gmpq`,
-which guarantees exact constructions when the input points have rational coordinates.
-
-\sa `Hyperbolic_surfaces_traits_2`
+The default value for `HyperbolicTraitsClass` is `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<CGAL::Circular_kernel_2<CGAL::Cartesian<CGAL::Gmpq>,CGAL::Algebraic_kernel_for_circles_2_2<CGAL::Gmpq>>>`,
+ which provides exact constructions and predicates over rational numbers.
 
 \cgalModels{HyperbolicSurfacesTraits_2}
 */
-template<class FieldType>
-class Hyperbolic_surfaces_traits_2 {
+template<class HyperbolicTraitsClass>
+class Hyperbolic_surfaces_traits_2 : public HyperbolicTraitsClass {
 public:
   /// \name Types
   /// @{
-  typedef FieldType                          FT;
-  typedef Complex_without_sqrt<FieldType>    Complex;
-  typedef Hyperbolic_point_2<Complex>        Point_2;
-    /// @}
+  typedef typename HyperbolicTraitsClass::FT                          FT;
+  typedef typename HyperbolicTraitsClass::Hyperbolic_point_2          Hyperbolic_point_2;
+  typedef Complex_without_sqrt<FT>                                    Complex;
+  /// @}
 };
+
 
 } //namespace CGAL

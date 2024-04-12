@@ -30,8 +30,6 @@ private:
   FT _real, _imag;
 
 public:
-  typedef FT Ft;
-
   Complex_without_sqrt();
   Complex_without_sqrt(const FT& real);
   Complex_without_sqrt(const FT& real, const FT& imag);

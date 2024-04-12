@@ -90,7 +90,7 @@ public:
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
 
-  bool is_delaunay_flippable(_Dart_handle dart) const; // Should be const
+  bool is_delaunay_flippable(_Dart_handle dart) const;
   void flip(_Dart_handle dart);
   // Flips Delaunay flippable edges as long as possible
   int make_delaunay();
