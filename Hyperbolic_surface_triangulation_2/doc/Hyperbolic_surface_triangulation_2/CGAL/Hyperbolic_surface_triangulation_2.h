@@ -6,7 +6,7 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-Represents a triangulation of a closed orientable hyperbolic surface, whose edges are geodesic segments.
+Represents a triangulation of a closed orientable hyperbolic surface.
 
 Offers facilities such as the generation of the triangulation from a convex fundamental domain,
 the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
@@ -136,11 +136,21 @@ public:
   /// @{
   /*!
       Writes the triangulation in a stream.
+
+      The format of the output is the following.
+      Each dart of the triangulation is given an index between 0 and n-1, where n is the number of darts of the triangulation.
+      The first line contains the number n of darts.
+      For every triangle t, the indices of the three darts of t are printed on three distinct lines.
+      For every edge e, the indices of the two darts of e are printed on two distinct lines, followed by a third line on which the cross ratio of e is printed.
+      The next line contains either 'yes' or 'no' and tells whether the triangulation has an anchor.
+      If the triangulation has anchor A, then the two next lines print respectively the index of the dart of A, and the three complex numbers of A.
   */
   void to_stream(std::ostream& s) const;
 
   /*!
       Reads the triangulation from a stream.
+
+      The format of the input should be the same as the format of the output of the 'from_stream' method.
   */
   void from_stream(std::istream& s);
   /// @}

@@ -6,7 +6,7 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-Factory class, whose only purpose is to randomly generate some domains of surfaces of genus two.
+Factory class, whose only purpose is to randomly generate some convex domains of surfaces of genus two.
 
 \tparam Traits_2 is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
 */

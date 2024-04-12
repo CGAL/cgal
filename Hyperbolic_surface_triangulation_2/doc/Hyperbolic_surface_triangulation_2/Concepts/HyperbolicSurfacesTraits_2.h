@@ -8,7 +8,7 @@
 \cgalRefines{HyperbolicDelaunayTriangulationTraits_2}
 
 The concept `HyperbolicSurfacesTraits_2` describes the set of requirements
-to be fulfilled by any class instantiating the first template parameter of the main classes of the package.
+to be fulfilled by any class instantiating the template parameter of the main classes of the package.
 Notably, it defines the field type, the complex number type, and the point type used by thoses classes.
 
 \cgalHasModelsBegin

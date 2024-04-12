@@ -35,15 +35,15 @@
 
 \cgalCRPSection{Concepts}
 
-- `HyperbolicSurfacesTraits_2` describes the set of requirements to be fulfilled by any class instantiating the first template parameter of the main classes of the package.
+- `HyperbolicSurfacesTraits_2` describes the set of requirements to be fulfilled by any class instantiating the template parameter of most classes of the package.
 
 \cgalCRPSection{Classes}
 
-- `CGAL::Hyperbolic_surface_triangulation_2` represents a triangulation of a closed orientable hyperbolic surface, whose edges are geodesic segments. Offers facilities such as the generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
+- `CGAL::Hyperbolic_surface_triangulation_2` represents a triangulation of a closed orientable hyperbolic surface. Offers facilities such as the generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
 
-- `CGAL::Hyperbolic_fundamental_domain_2` represents a fundamental domain of a closed orientable hyperbolic surface, the domain is convex and its edges are geodesic segments.
+- `CGAL::Hyperbolic_fundamental_domain_2` represents a fundamental domain of a closed orientable hyperbolic surface.
 
-- `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose only purpose is to randomly generate some domains of surfaces of genus two.
+- `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose only purpose is to randomly generate some convex domains of surfaces of genus two.
 
 - `CGAL::Hyperbolic_isometry_2` represents an isometry in the Poincaré disk model. Facilities are offered to compose isometries, and apply an isometry to a point.
 

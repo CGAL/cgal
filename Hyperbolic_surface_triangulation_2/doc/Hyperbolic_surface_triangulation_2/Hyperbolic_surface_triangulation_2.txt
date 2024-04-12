@@ -23,10 +23,10 @@ A triangulation of a surface can be generated from a convex fundamental domain o
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_Hyperbolic Hyperbolic surfaces
 
-We assume some familiarity with basic notions from covering space theory, and 2-dimensional hyperbolic geometry. In this document, every hyperbolic surface is connected and complete. The <b>Poincaré disk</b> \f$ \mathbb{D} \f$ is a simply connected hyperbolic surface whose point set is the open unit disk of the complex plane \f$ \mathbb{C} \f$.
-In particular, every point of \f$ \mathbb{D} \f$ is a complex number. This package deals with the hyperbolic surfaces \f$ S \f$ that are closed (compact, and without boundary) and orientable.
-Every such surface is homemorphic to the connect sum of \f$ g \geq 2 \f$ tori, where  \f$ g  \f$  is unique, and is called the <b>genus</b> of \f$ S \f$.
-The Poincaré disk \f$ \mathbb{D} \f$ is a universal covering space of \f$ S \f$, where the projection map \f$ \mathbb{D} \to S \f$ is a (local) isometry.
+We assume some familiarity with basic notions from covering space theory, and from the theory of hyperbolic surfaces. The <b>Poincaré disk</b> \f$ \mathbb{D} \f$ is a simply connected hyperbolic surface whose point set is the open unit disk of the complex plane \f$ \mathbb{C} \f$.
+In particular, every point of \f$ \mathbb{D} \f$ is a complex number. Appart from the Poincaré disk, this package is mainly concerned by the hyperbolic surfaces \f$ S \f$ that are closed (compact, and without boundary) and orientable.
+Every such surface is homeomorphic to the connect sum of \f$ g \geq 2 \f$ tori, where  \f$ g  \f$  is unique, and is called the <b>genus</b> of \f$ S \f$.
+The Poincaré disk \f$ \mathbb{D} \f$ is a universal covering space for \f$ S \f$, whose projection map \f$ \mathbb{D} \to S \f$ is a (local) isometry.
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_Decomposition Fundamental domains and triangulations
 
@@ -79,6 +79,18 @@ This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$.
 \section Section_Hyperbolic_Surface_Triangulations_Content Content
 
 
+The package contains three main classes:
+
+- `CGAL::Hyperbolic_fundamental_domain_2` represents a fundamental domain of a closed orientable hyperbolic surface.
+
+- `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose only purpose is to randomly generate some convex fundamental domains of surfaces of genus two.
+
+- `CGAL::Hyperbolic_surface_triangulation_2` represents a triangulation of a closed orientable hyperbolic surface.  Offers facilities such as the generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the Poincaré disk.
+
+The package also contains the secondary classes `CGAL::Complex_without_sqrt` and `CGAL::Hyperbolic_isometry_2` to deal with complex numbers, and with isometries in the Poincaré disk.
+
+The concept `HyperbolicSurfacesTraits_2` is a refinement of `HyperbolicDelaunayTriangulationTraits_2`, and describes the set of requirements to be fulfilled by any class instantiating the template parameter of most classes of the package.
+This concept is modeled by the class `CGAL::Hyperbolic_surfaces_traits_2`.
 
 
 

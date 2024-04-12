@@ -6,7 +6,7 @@ namespace CGAL {
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-Represents a fundamental domain of a closed orientable hyperbolic surface, the domain is convex and its edges are geodesic segments.
+Represents a fundamental domain of a closed orientable hyperbolic surface.
 The domain is given as a polygon P represented by the list of its vertices in the Poincaré disk model,
 together with a pairing of the sides of P.
 The n-th side of P is the side between the n-th and the (n+1)-th vertex, where indices are modulo the number of vertices of P.
@@ -61,12 +61,19 @@ public:
   /// \name Stream input output
   /// @{
   /*!
-      Reads the domain from a stream
+      Reads the domain from a stream.
+
+      The format of the input should be the same as the format of the output of the 'from_stream' method.
   */
   void from_stream(std::istream& s);
 
   /*!
-      Writes the domain in a stream
+      Writes the domain in a stream.
+
+      The format of the output is the following.
+      The first line prints the number n of vertices of the domain.
+      For i=0 to n-1 the index of the side paired to side i is printed on a separate line.
+      For i=0 to n-1 the i-th vertex is printed on a separate line.
   */
   void to_stream(std::ostream& s) const;
   /// @}
