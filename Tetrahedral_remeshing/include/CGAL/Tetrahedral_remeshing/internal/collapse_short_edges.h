@@ -1238,11 +1238,10 @@ void collapse_short_edges(C3T3& c3t3,
   typedef typename T3::Cell_handle           Cell_handle;
   typedef typename T3::Edge                  Edge;
   typedef typename T3::Vertex_handle         Vertex_handle;
-  typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
   typedef typename T3::Geom_traits::FT FT;
   typedef boost::bimap<
-  boost::bimaps::set_of<Edge_vv>,
+        boost::bimaps::set_of<Edge, Compare_edges<Edge> >,
         boost::bimaps::multiset_of<FT, std::less<FT> > >  Boost_bimap;
   typedef typename Boost_bimap::value_type            short_edge;
 
@@ -1265,7 +1264,7 @@ void collapse_short_edges(C3T3& c3t3,
 
     const auto sqlen = is_too_short(e, sizing, c3t3, cell_selector);
     if(sqlen != std::nullopt)
-      short_edges.insert(short_edge(make_vertex_pair(e), sqlen.value()));
+      short_edges.insert(short_edge(e, sqlen.value()));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -1280,10 +1279,7 @@ void collapse_short_edges(C3T3& c3t3,
   {
     //the edge with shortest length
     typename Boost_bimap::right_map::iterator eit = short_edges.right.begin();
-    const Edge_vv e = eit->second;
-
-    CGAL_expensive_assertion(tr.tds().is_vertex(e.first));
-    CGAL_expensive_assertion(tr.tds().is_vertex(e.second));
+    Edge e = eit->second;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
     FT sqlen = eit->first;
@@ -1295,56 +1291,43 @@ void collapse_short_edges(C3T3& c3t3,
 
     short_edges.right.erase(eit);
 
-    Cell_handle cell;
-    int i1, i2;
-    if(tr.tds().is_edge(e.first, e.second, cell, i1, i2))
+    CGAL_expensive_assertion(!!is_too_short(e, sizing, c3t3, cell_selector));
+
+    if (!can_be_collapsed(e, c3t3, protect_boundaries, cell_selector))
     {
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-      const typename T3::Point p1 = e.first->point();
-      const typename T3::Point p2 = e.second->point();
+      short_cancel << "2 " << point(p1) << " " << point(p2) << std::endl;
 #endif
-      CGAL_expensive_assertion(
-        !!is_too_short(Edge(cell, i1, i2), sizing, c3t3, cell_selector));
+      continue;
+    }
 
-      Edge edge(cell, i1, i2);
-
-      if (!can_be_collapsed(edge, c3t3, protect_boundaries, cell_selector))
+    Vertex_handle vh = collapse_edge(e, c3t3, sizing,
+                                     protect_boundaries, cell_selector,
+                                     short_edges,
+                                     visitor);
+    if (vh != Vertex_handle())
+    {
+      std::vector<Edge> incident_short;
+      c3t3.triangulation().finite_incident_edges(vh,
+          std::back_inserter(incident_short));
+      for (const Edge& eshort : incident_short)
       {
-#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
-        short_cancel << "2 " << point(p1) << " " << point(p2) << std::endl;
-#endif
-        continue;
-      }
-
-      Vertex_handle vh = collapse_edge(edge, c3t3, sizing,
-                                       protect_boundaries, cell_selector,
-                                       short_edges,
-                                       visitor);
-      if (vh != Vertex_handle())
-      {
-        std::vector<Edge> incident_short;
-        c3t3.triangulation().finite_incident_edges(vh,
-            std::back_inserter(incident_short));
-        for (const Edge& eshort : incident_short)
+        if (!can_be_collapsed(eshort, c3t3, protect_boundaries, cell_selector))
         {
-          if (!can_be_collapsed(eshort, c3t3, protect_boundaries, cell_selector))
-          {
-            remove_from_bimap(eshort, short_edges);
-            continue;
-          }
-          const auto sqlen = is_too_short(eshort, sizing, c3t3, cell_selector);
-          if (sqlen != std::nullopt)
-            short_edges.insert(short_edge(make_vertex_pair(eshort), sqlen.value()));
-          else
-            remove_from_bimap(eshort, short_edges);
+          remove_from_bimap(eshort, short_edges);
+          continue;
         }
-
-        //debug::dump_c3t3(c3t3, "dump_after_collapse");
-        //CGAL_assertion(c3t3.triangulation().tds().is_valid());
-#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-        ++nb_collapses;
-#endif
+        const auto sqlen = is_too_short(eshort, sizing, c3t3, cell_selector);
+        if (sqlen != std::nullopt)
+          short_edges.insert(short_edge(eshort, sqlen.value()));
+        else
+          remove_from_bimap(eshort, short_edges);
       }
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+      ++nb_collapses;
+#endif
+
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       if (vh != Vertex_handle())
         short_success << "2 " << point(p1) << " " << point(p2) << std::endl;

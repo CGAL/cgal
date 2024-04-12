@@ -98,6 +98,7 @@ third_vertex(const typename Tr::Facet& f,
     typename Tr::Vertex_handle();
 }
 
+
 template<typename Gt, typename Point>
 typename Gt::FT dihedral_angle(const Point& p,
                                const Point& q,
@@ -530,6 +531,17 @@ auto make_inv_vertex_pair(const Edge& e)
   const auto [v1, v2] = make_vertex_pair(e);
   return std::make_pair(v2, v1);
 }
+
+
+template<typename Edge>
+struct Compare_edges
+{
+  bool operator()(const Edge& e1, const Edge& e2) const
+  {
+    return make_vertex_pair(e1) < make_vertex_pair(e2);
+  }
+};
+
 
 template<typename Vh>
 CGAL::Triple<Vh, Vh, Vh> make_vertex_triple(const Vh vh0, const Vh vh1, const Vh vh2)
@@ -1719,22 +1731,11 @@ void get_edge_info(const typename C3t3::Edge& edge,
   }
 }
 
-template<typename Vertex_handle, typename EdgesBimap>
-void remove_from_bimap(const Vertex_handle u,
-                       const Vertex_handle v,
-                       EdgesBimap& edges)
-{
-  const std::pair<Vertex_handle, Vertex_handle> edge = make_vertex_pair(u, v);
-  typename EdgesBimap::left_map::iterator eit = edges.left.find(edge);
-  if (eit != edges.left.end())
-    edges.left.erase(eit);
-}
 
 template<typename Edge, typename EdgesBimap>
 void remove_from_bimap(const Edge& e, EdgesBimap& edges)
 {
-  const auto edge = make_vertex_pair(e);
-  typename EdgesBimap::left_map::iterator eit = edges.left.find(edge);
+  typename EdgesBimap::left_map::iterator eit = edges.left.find(e);
   if (eit != edges.left.end())
     edges.left.erase(eit);
 }
