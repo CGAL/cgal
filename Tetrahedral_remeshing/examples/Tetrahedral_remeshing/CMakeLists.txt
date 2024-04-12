@@ -8,8 +8,6 @@ project(Tetrahedral_remeshing_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-add_definitions(-DCGAL_NDEBUG)
-
 create_single_source_cgal_program("tetrahedral_remeshing_example.cpp" )
 create_single_source_cgal_program("tetrahedral_remeshing_with_features.cpp")
 create_single_source_cgal_program("tetrahedral_remeshing_of_one_subdomain.cpp")
