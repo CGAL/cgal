@@ -43,7 +43,7 @@ public:
 
   /// polygon with holes type
   using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, Container>;
-
+  using value_type = Polygon_with_holes_2;
   /// @}
 
   using Polygon_with_holes_container = std::deque<Polygon_with_holes_2>;
@@ -72,9 +72,18 @@ public:
 
   Polygon_with_holes_iterator polygons_with_holes_end() { return m_polygons.end(); }
 
+  Polygon_with_holes_iterator begin() { return m_polygons.begin(); }
+
+  Polygon_with_holes_iterator end() { return m_polygons.end(); }
+
   Polygon_with_holes_const_iterator polygons_with_holes_begin() const { return m_polygons.begin(); }
 
   Polygon_with_holes_const_iterator polygons_with_holes_end() const { return m_polygons.end(); }
+
+  Polygon_with_holes_const_iterator begin() const { return m_polygons.begin(); }
+
+  Polygon_with_holes_const_iterator end() const { return m_polygons.end(); }
+
 
   void add_polygon(const Polygon_2& pgn) { m_polygons.push_back(Polygon_with_holes_2(pgn)); }
 
@@ -83,6 +92,8 @@ public:
   void add_polygon_with_holes(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 
   void add_polygon_with_holes(Polygon_with_holes_2&& pgn) { m_polygons.emplace_back(std::move(pgn)); }
+
+  void push_back(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 
   void erase_polygon_with_holes(Polygon_with_holes_iterator pit) { m_polygons.erase(pit); }
 
