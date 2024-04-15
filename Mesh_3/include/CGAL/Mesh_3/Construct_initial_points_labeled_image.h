@@ -187,10 +187,10 @@ struct Construct_initial_points_labeled_image
 
       const double radius = double(seed.radius + 1)* max_v;
       CGAL::Random_points_on_sphere_3<Point_3> points_on_sphere_3(radius);
-      /// \noop [construct intersection]
+      // [construct intersection]
       typename MeshDomain::Construct_intersection construct_intersection =
           domain.construct_intersection_object();
-      /// \noop [construct intersection]
+      // [construct intersection]
 
       std::vector<Vector_3> directions;
       if(seed.radius < 2) {
@@ -214,16 +214,16 @@ struct Construct_initial_points_labeled_image
         const Point_3 test = seed_point + v;
         const Segment_3 test_segment = Segment_3(seed_point, test);
 
-        /// \noop [use construct intersection]
+        // [use construct intersection]
         const typename MeshDomain::Intersection intersect =
             construct_intersection(test_segment);
-        /// \noop [use construct intersection]
+        // [use construct intersection]
         if (std::get<2>(intersect) != 0)
         {
-          /// \noop [get construct intersection]
+          // [get construct intersection]
           const Point_3& intersect_point = std::get<0>(intersect);
           const Index& intersect_index = std::get<1>(intersect);
-          /// \noop [get construct intersection]
+          // [get construct intersection]
           Weighted_point pi = Weighted_point(intersect_point);
 
           // This would cause trouble to optimizers
