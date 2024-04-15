@@ -11,6 +11,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include "Kernel_type.h"
 #include <CGAL/Three/Three.h>

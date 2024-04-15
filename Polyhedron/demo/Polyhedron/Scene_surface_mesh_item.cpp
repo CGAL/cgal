@@ -447,7 +447,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
 
   idx_data_.reserve(num_faces(*smesh_) * 3);
 
-  typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
+  typedef CGAL::Buffer_for_vao CPF;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
@@ -2524,7 +2524,7 @@ void Scene_surface_mesh_item::fill_flat_vertex_map()
   typedef EPICK::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  typedef CGAL::Buffer_for_vao<float, unsigned int> CPF;
+  typedef CGAL::Buffer_for_vao CPF;
 
   if(d->flat_vertex_map_ready)
     return;

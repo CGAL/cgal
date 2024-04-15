@@ -1422,28 +1422,32 @@ public:
     }
   }
 
-  void clear_cells_and_facets_from_c3t3() {
-    for (typename Tr::Finite_cells_iterator
-      cit = this->triangulation().finite_cells_begin(),
-      end = this->triangulation().finite_cells_end();
-      cit != end; ++cit)
+  void clear_cells_and_facets_from_c3t3()
+  {
+    //clear cells
+    for (typename Tr::All_cells_iterator cit = this->triangulation().all_cells_begin();
+         cit != this->triangulation().all_cells_end();
+         ++cit)
     {
       set_subdomain_index(cit, Subdomain_index());
     }
     this->number_of_cells_ = 0;
-    for (typename Tr::Finite_facets_iterator
-      fit = this->triangulation().finite_facets_begin(),
-      end = this->triangulation().finite_facets_end();
-      fit != end; ++fit)
+
+    //clear facets
+    for (typename Tr::All_facets_iterator fit = this->triangulation().all_facets_begin();
+         fit != this->triangulation().all_facets_end();
+         ++fit)
     {
-      Facet facet = *fit;
+      const auto& facet = *fit;
       set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
       if (this->triangulation().dimension() > 2) {
-        Facet mirror = tr_.mirror_facet(facet);
+        const Facet& mirror = tr_.mirror_facet(facet);
         set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
       }
     }
     this->number_of_facets_ = 0;
+
+    //clear manifold info
     clear_manifold_info();
   }
 

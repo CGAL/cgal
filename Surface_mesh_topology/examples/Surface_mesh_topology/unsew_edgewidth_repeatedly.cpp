@@ -34,42 +34,30 @@ private:
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
+struct Draw_functor: public CGAL::Graphics_scene_options<LCC_3,
+                                      typename LCC_3::Dart_const_handle,
+                                      typename LCC_3::Dart_const_handle,
+                                      typename LCC_3::Dart_const_handle,
+                                      typename LCC_3::Dart_const_handle>
 {
   Draw_functor(LCC_3::size_type am1, LCC_3::size_type am2) : is_root(am1),
                                                              belong_to_cycle(am2)
-  {}
+  {
+    this->colored_vertex=[this](const LCC_3& alcc, typename LCC_3::Dart_const_handle dh)->bool
+    { return alcc.is_marked(dh, is_root); };
+    this->vertex_color=[](const LCC_3&, typename LCC_3::Dart_const_handle)->CGAL::IO::Color
+    { return CGAL::IO::Color(0, 255, 0); };
 
-  template<typename LCC>
-  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_descriptor d) const
-  { return alcc.is_marked(d, is_root); }
+    this->colored_edge=[this](const LCC_3& alcc, typename LCC_3::Dart_const_handle dh)->bool
+    { return alcc.is_marked(dh, belong_to_cycle); };
+    this->edge_color=[](const LCC_3&, typename LCC_3::Dart_const_handle)->CGAL::IO::Color
+    { return CGAL::IO::Color(0, 0, 255); };
 
-  template<typename LCC>
-  CGAL::IO::Color vertex_color(const LCC& /* alcc */,
-                           typename LCC::Dart_const_descriptor /* d */) const
-  { return CGAL::IO::Color(0,255,0); }
-
-  template<typename LCC>
-  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_descriptor d) const
-  { return alcc.is_marked(d, belong_to_cycle); }
-
-  template<typename LCC>
-  CGAL::IO::Color edge_color(const LCC& /* alcc*/,
-                         typename LCC::Dart_const_descriptor /* d */) const
-  { return CGAL::IO::Color(0, 0, 255); }
-
-  template<typename LCC>
-  bool colored_face(const LCC& /* alcc */,
-                    typename LCC::Dart_const_descriptor /* d */) const {return true;}
-
-  template<typename LCC>
-  CGAL::IO::Color face_color(const LCC& /* alcc */,
-                         typename LCC::Dart_const_descriptor /* d */) const
-  {return CGAL::IO::Color(211, 211, 211);}
-
-  template<typename LCC>
-  bool colored_volume(const LCC& /* alcc */,
-                      typename LCC::Dart_const_descriptor /* d */) const { return false; }
+    this->colored_face=[](const LCC_3&, typename LCC_3::Dart_const_handle)->bool
+    { return true; };
+    this->face_color=[](const LCC_3&, typename LCC_3::Dart_const_handle)->CGAL::IO::Color
+    { return CGAL::IO::Color(211, 211, 211); };
+  }
 
   LCC_3::size_type is_root;
   LCC_3::size_type belong_to_cycle;
@@ -159,7 +147,7 @@ int main(int argc, char* argv[])
   if (draw)
   {
     Draw_functor df(is_root, belong_to_cycle);
-    CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df);
+    CGAL::draw(lccoriginal, df, "Unsew edge width repeatdly");
   }
 #endif // CGAL_USE_BASIC_VIEWER
 

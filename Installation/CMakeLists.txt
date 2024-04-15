@@ -73,6 +73,8 @@ if(CGAL_BRANCH_BUILD)
   set(CGAL_GRAPHICSVIEW_PACKAGE_DIR
       "${CGAL_SOURCE_DIR}/GraphicsView"
       CACHE INTERNAL "Directory containing the GraphicsView package")
+  file(GLOB INCLUDE_CGAL_QT_DIRECTORIES "${CGAL_SOURCE_DIR}/*/include/CGAL/Qt")
+  message(STATUS "Include CGAL/Qt directories: ${INCLUDE_CGAL_QT_DIRECTORIES}")
 
   message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
   message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
@@ -104,6 +106,7 @@ else(CGAL_BRANCH_BUILD)
   set(CGAL_GRAPHICSVIEW_PACKAGE_DIR
       "${CGAL_SOURCE_DIR}"
       CACHE INTERNAL "Directory containing the GraphicsView package")
+  set(INCLUDE_CGAL_QT_DIRECTORIES "${CGAL_SOURCE_DIR}/include/CGAL/Qt")
 
 # Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
 # the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
@@ -114,6 +117,9 @@ option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
     enable_testing()
   endif()
 endif(CGAL_BRANCH_BUILD)
+
+#allow to force disabling boost multiprecision support
+option(CGAL_DO_NOT_USE_BOOST_MP "Disable the support of boost multiprecision library" FALSE)
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
 
@@ -649,7 +655,7 @@ cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
-install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/include/CGAL/Qt/" DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/Qt" COMPONENT CGAL_Qt6)
+install(DIRECTORY ${INCLUDE_CGAL_QT_DIRECTORIES} DESTINATION "${CGAL_INSTALL_INC_DIR}/CGAL/" COMPONENT CGAL_Qt6)
 if(CGAL_BRANCH_BUILD)
   install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/resources/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/resources" COMPONENT CGAL_Qt6)
   install(DIRECTORY "${CGAL_GRAPHICSVIEW_PACKAGE_DIR}/demo/icons/" DESTINATION "${CGAL_INSTALL_CMAKE_DIR}/demo/icons" COMPONENT CGAL_Qt6)
@@ -1049,7 +1055,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     execute_process(
       COMMAND
         "${CMAKE_COMMAND}" -DCGAL_BUILD_THREE_DOC=TRUE
-        -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE}
+        -DDOXYGEN_EXECUTABLE=${DOXYGEN_EXECUTABLE} -DBE_QUIET=TRUE
         "${CGAL_SOURCE_DIR}/Documentation/doc"
       WORKING_DIRECTORY "${DOC_DIR}")
     execute_process(
