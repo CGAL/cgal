@@ -1334,10 +1334,10 @@ std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point) {
   using Naive_pl = CGAL::Arr_naive_point_location<Countries_arr>;
 
   auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
-  Point_2 query_point(Dir3(point.x(), point.y(), point.z()),
-                      Point_2::Location_type::NO_BOUNDARY_LOC);
+  auto ctr_point = arr.geometry_traits()->construct_point_2_object();
+  auto query_point = ctr_point(point.x(), point.y(), point.z());
 
-  Naive_pl  npl(arr);
+  Naive_pl npl(arr);
   auto obj = npl.locate(query_point);
 
   using Arrangement_2 = Countries_arr;
