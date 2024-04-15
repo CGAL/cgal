@@ -62,16 +62,16 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh) {
 
   std::vector<std::vector<QVector3D>> all_faces;
   // loop on all faces of the arrangement
-  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
+  for (auto fh : arr.face_handles()) {
     // skip any face with no OUTER-CCB
-    if (0 == fit->number_of_outer_ccbs())
+    if (0 == fh->number_of_outer_ccbs())
       continue;
 
     // COMPUTE THE CENTROID OF ALL FACE-POINTS
     std::vector<QVector3D> face_points;
 
     // loop on the egdes of the current outer-ccb
-    auto first = fit->outer_ccb();
+    auto first = fh->outer_ccb();
     auto curr = first;
     do {
       auto ap = approx(curr->source()->point());
@@ -157,7 +157,9 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh) {
 }
 
 //! \brief
-Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
+Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh,
+                                                       float error) {
+
   using K = CGAL::Exact_predicates_inexact_constructions_kernel;
   using Vb = CGAL::Triangulation_vertex_base_2<K>;
   using Fb = CGAL::Constrained_triangulation_face_base_2<K>;
@@ -167,6 +169,7 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
   using Face_handle = CDT::Face_handle;
   // using Point = CDT::Point;
   using Polygon_2 = CGAL::Polygon_2<K>;
+  using Approximate_point_2 = Geom_traits::Approximate_point_2;
 
   auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
   auto approx = s_traits.approximate_2_object();
@@ -174,12 +177,11 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
   // group the faces by their country name
   using Face_ = Countries_arr::Face_handle::value_type;
   std::map<std::string, std::vector<Face_*>>  country_faces_map;
-  for (auto fit = arr.faces_begin(); fit != arr.faces_end(); ++fit) {
-    auto& face = *fit;
-    const auto& country_name = fit->data();
+  for (auto fh : arr.face_handles()) {
+    auto& face = *fh;
+    const auto& country_name = fh->data();
     // skipping spherical-face
-    if (country_name.empty())
-      continue;
+    if (country_name.empty()) continue;
     country_faces_map[country_name].push_back(&face);
   }
 
@@ -189,7 +191,7 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
     // CONVERT the face-points to QVector3D
     using Face_points = std::vector<QVector3D>;
     using Faces_ = std::vector<Face_points>;
-    Faces_  all_faces_of_current_country;
+    Faces_ all_faces_of_current_country;
     for (auto* face : faces) {
       // skip any face with no OUTER-CCB
       if (0 == face->number_of_outer_ccbs()) continue;
@@ -199,10 +201,15 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
       auto first = face->outer_ccb();
       auto curr = first;
       do {
-        auto ap = approx(curr->source()->point());
-        QVector3D p(ap.dx(), ap.dy(), ap.dz());
-        p.normalize();
-        face_points.push_back(p);
+        std::vector<Approximate_point_2> apx_points;
+        const auto& xcv = curr->curve();
+        approx(xcv, error, std::back_insert_iterator(apx_points),
+               curr->direction() == CGAL::ARR_LEFT_TO_RIGHT);
+        for (auto it = apx_points.begin(); it != apx_points.end()-1; ++it) {
+          const auto& apx_p = *it;
+          const QVector3D p(apx_p.dx(), apx_p.dy(), apx_p.dz());
+          face_points.push_back(p);
+        }
       } while (++curr != first);
 
       all_faces_of_current_country.push_back(std::move(face_points));
@@ -212,7 +219,6 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
     auto& triangles = result[country_name];
     // loop on all approximated faces
     for (auto& face_points : all_faces_of_current_country) {
-      //std::cout << "num face points = " << face_points.size() << std::endl;
       // no need to triangulate if the number of points is 3
       if (face_points.size() == 3) {
         triangles.insert(triangles.end(), face_points.begin(),
@@ -222,13 +228,12 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
 
       // find the centroid of all face-points
       QVector3D centroid(0, 0, 0);
-      for (const auto& fp : face_points)
-        centroid += fp;
+      for (const auto& fp : face_points) centroid += fp;
       centroid /= face_points.size();
       centroid.normalize();
       auto normal = centroid;
 
-      K::Point_3  plane_origin(centroid.x(), centroid.y(), centroid.z());
+      K::Point_3 plane_origin(centroid.x(), centroid.y(), centroid.z());
       K::Vector_3 plane_normal(normal.x(), normal.y(), normal.z());
       K::Plane_3 plane(plane_origin, plane_normal);
 
@@ -242,7 +247,7 @@ Country_triangles_map Aos_triangulator::get_by_country(Aos::Arr_handle arrh) {
         K::Ray_3 ray(origin, current_point);
 
         auto intersection = CGAL::intersection(plane, ray);
-        if (!intersection.has_value())
+        if (! intersection.has_value())
           std::cout << "INTERSECTION ASSERTION ERROR!!!\n";
         auto ip = std::get<K::Point_3>(intersection.value());
         auto ip2 = plane.to_2d(ip);

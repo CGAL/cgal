@@ -56,7 +56,7 @@ protected:
   void mousePressEvent(QMouseEvent* e) override;
   void mouseMoveEvent(QMouseEvent* e) override;
   void mouseReleaseEvent(QMouseEvent* e) override;
-  void timerEvent(QTimerEvent* e) override;
+  // void timerEvent(QTimerEvent* e) override;
   void keyPressEvent(QKeyEvent* event) override;
 
   void initializeGL() override;
@@ -129,7 +129,7 @@ private:
   float m_current_approx_error;
 
   // Timer for continuous screen-updates
-  QBasicTimer m_timer;
+  // QBasicTimer m_timer;
 
   // <-- COMMON SETUP FOR ALL SCENES
   // -------------------------------

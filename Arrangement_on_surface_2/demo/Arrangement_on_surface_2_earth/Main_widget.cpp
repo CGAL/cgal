@@ -73,6 +73,7 @@ void Main_widget::mousePressEvent(QMouseEvent* e) {
   m_camera_manip_rot->mousePressEvent(e);
   m_camera_manip_zoom->mousePressEvent(e);
   m_pick_handler->mousePressEvent(e);
+  update();
 }
 
 //! \brief
@@ -81,6 +82,7 @@ void Main_widget::mouseMoveEvent(QMouseEvent* e) {
   m_camera_manip_rot->mouseMoveEvent(e);
   m_camera_manip_zoom->mouseMoveEvent(e);
   m_pick_handler->mouseMoveEvent(e);
+  update();
 }
 
 //! \brief
@@ -89,10 +91,11 @@ void Main_widget::mouseReleaseEvent(QMouseEvent* e) {
   m_camera_manip_rot->mouseReleaseEvent(e);
   m_camera_manip_zoom->mouseReleaseEvent(e);
   m_pick_handler->mouseReleaseEvent(e);
+  update();
 }
 
 //! \brief
-void Main_widget::timerEvent(QTimerEvent*) { update(); }
+// void Main_widget::timerEvent(QTimerEvent* event) { update(); }
 
 //! \brief
 void Main_widget::keyPressEvent(QKeyEvent* /* event */) {}
@@ -104,57 +107,56 @@ void Main_widget::initializeGL() {
   QVector3D initial_mouse_pos(0, -1, 0);
   m_gr_mouse_vertex = std::make_unique<Single_vertex>(initial_mouse_pos);
 
-  // triangulation
-  {
-    qDebug() << "loading arrangement..";
-    m_arrh = Aos::load_arr(m_file_name.toStdString());
-    if (m_arrh == nullptr) {
-      std::string msg("Error: failed to load file ");
-      msg += m_file_name.toStdString();
-      throw std::runtime_error(msg);
-      return;
-    }
-
-    qDebug() << "generating triangles..";
-    //auto triangle_points = Aos::get_triangles(arrh);
-    //auto triangle_points = Aos_triangulator::get_all(arrh);
-    //auto country_triangles_map = Aos::get_triangles_by_country(m_arrh);
-    auto country_triangles_map = Aos_triangulator::get_by_country(m_arrh);
-    //auto color_map = Aos::get_color_mapping(m_arrh);
-    //qDebug() << "color map size = " << color_map.size();
-    qDebug() << "num countries = " << country_triangles_map.size();
-    auto rndm = [] {return rand() / double(RAND_MAX); };
-    for (auto& [country_name, triangle_points] : country_triangles_map) {
-      auto country_triangles = std::make_unique<Triangles>(triangle_points);
-      auto color = QVector4D(rndm(), rndm(), rndm(), 1);
-      auto m = std::max(color.x(), std::max(color.y(), color.z()));
-      color /= m;
-      color *= m_dimming_factor;
-      color.setW(1);
-      country_triangles->set_color(color);
-      //country_triangles->set_color(colors[color_map[country_name]]);
-      m_gr_country_triangles.emplace(country_name, std::move(country_triangles));
-    }
-
-    //qDebug() << "num triangles = " << triangle_points.size() / 3;
-    //m_gr_all_triangles = std::make_unique<Triangles>(triangle_points);
-  }
-
   initializeOpenGLFunctions();
-
   init_camera();
   init_geometry();
   init_shader_programs();
 
   m_current_approx_error = 0.001f;
+
+  qDebug() << "loading arrangement..";
+  m_arrh = Aos::load_arr(m_file_name.toStdString());
+  if (m_arrh == nullptr) {
+    std::string msg("Error: failed to load file ");
+    msg += m_file_name.toStdString();
+    throw std::runtime_error(msg);
+    return;
+  }
+
   init_country_borders(m_current_approx_error);
+
+  qDebug() << "generating triangles..";
+  //auto triangle_points = Aos::get_triangles(arrh);
+  //auto triangle_points = Aos_triangulator::get_all(arrh);
+  //auto country_triangles_map = Aos::get_triangles_by_country(m_arrh);
+  auto country_triangles_map =
+    Aos_triangulator::get_by_country(m_arrh, m_current_approx_error);
+  //auto color_map = Aos::get_color_mapping(m_arrh);
+  //qDebug() << "color map size = " << color_map.size();
+  qDebug() << "num countries = " << country_triangles_map.size();
+  auto rndm = [] {return rand() / double(RAND_MAX); };
+  for (auto& [country_name, triangle_points] : country_triangles_map) {
+    auto country_triangles = std::make_unique<Triangles>(triangle_points);
+    auto color = QVector4D(rndm(), rndm(), rndm(), 1);
+    auto m = std::max(color.x(), std::max(color.y(), color.z()));
+    color /= m;
+    color *= m_dimming_factor;
+    color.setW(1);
+    country_triangles->set_color(color);
+    //country_triangles->set_color(colors[color_map[country_name]]);
+    m_gr_country_triangles.emplace(country_name, std::move(country_triangles));
+  }
+  country_triangles_map.clear();
+
+  //qDebug() << "num triangles = " << triangle_points.size() / 3;
+  //m_gr_all_triangles = std::make_unique<Triangles>(triangle_points);
 
   glClearColor(0, 0, 0, 1);
   glEnable(GL_DEPTH_TEST);  // Enable depth buffer
-  //glEnable(GL_CULL_FACE); // Enable back face culling
+  glEnable(GL_CULL_FACE); // Enable back face culling
 
   // Use QBasicTimer because its faster than QTimer
-  m_timer.start(12, this);
+  // m_timer.start(12, this);
 }
 
 //! \brief
