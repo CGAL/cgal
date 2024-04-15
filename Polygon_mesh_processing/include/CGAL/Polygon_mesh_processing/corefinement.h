@@ -25,6 +25,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Output_builder_for_autorefinement.h>
 #include <CGAL/iterator.h>
 
+
 namespace CGAL {
 
 #if !defined(CGAL_NO_DEPRECATED_CODE) && !defined(DOXYGEN_RUNNING)
@@ -38,13 +39,93 @@ namespace Polygon_mesh_processing {
 namespace Corefinement
 {
 /** \ingroup PMP_corefinement_grp
- *  %Default new-face visitor model of `PMPCorefinementVisitor`.
+ *  %Default visitor model of `PMPCorefinementVisitor`.
  *  All of its functions have an empty body. This class can be used as a
  *  base class if only some of the functions of the concept require to be
  *  overridden.
  */
 template <class TriangleMesh>
 struct Default_visitor;
+
+#ifdef DOXYGEN_RUNNING
+/** \ingroup PMP_corefinement_grp
+ * A model of `PMPCorefinementVisitor` that allows to extract non-manifold
+ * outputs from a corefinement based Boolean Operations.
+ *
+ * \tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
+ * \tparam VPM1 a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *              as key type and an unspecified type `%Point_3` as value type
+ * \tparam VPM2 a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+ *              as key type and an unspecified type `%Point_3` as value type
+ */
+template <class TriangleMesh,
+          class VPM1 = typename boost::property_map<TriangleMesh, vertex_point_t>::type,
+          class VPM2 = typename boost::property_map<TriangleMesh, vertex_point_t>::type>
+struct Visitor_for_non_manifold_output
+{
+/**
+ * \param tm1 first triangle mesh in the same order as in the function in \ref PMP_corefinement_grp
+ * \param tm2 second triangle mesh in the same order as in the function in \ref PMP_corefinement_grp
+ * \param vpm1 vertex point map for `tm1`
+ * \param vpm2 vertex point map for `tm2`
+ */
+  Visitor_for_non_manifold_output(TriangleMesh& tm1,
+                                  TriangleMesh& tm2,
+                                  VPM1 vpm1 = get(CGAL::vertex_point, tm1),
+                                  VPM1 vpm2 = get(CGAL::vertex_point, tm2));
+
+/**
+ * fills a polygon soup with the intersection between input meshes provided in the constructor,
+ * after a call to either `corefine_and_compute_boolean_operations()` or `corefine_and_compute_intersection()`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the value type of `VPM1` and `VPM2`.
+ * \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                      whose `value_type` is itself a model of the concepts `RandomAccessContainer`
+ *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
+ *                      convertible to `std::size_t`
+ */
+  template <typename PointRange, typename PolygonRange>
+  void extract_intersection(PointRange& points,
+                            PolygonRange& triangles);
+/**
+ * fills a polygon soup with the union between input meshes provided in the constructor,
+ * after a call to either `corefine_and_compute_boolean_operations()` or `corefine_and_compute_union()`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the value type of `VPM1` and `VPM2`.
+ * \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                      whose `value_type` is itself a model of the concepts `RandomAccessContainer`
+ *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
+ *                      convertible to `std::size_t`
+ */
+
+  template <typename PointRange, typename PolygonRange>
+  void extract_union(PointRange& points,
+                     PolygonRange& triangles);
+/**
+ * fills a polygon soup with the difference between input meshes provided in the constructor,
+ * after a call to either `corefine_and_compute_boolean_operations()` or `corefine_and_compute_difference()`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the value type of `VPM1` and `VPM2`.
+ * \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                      whose `value_type` is itself a model of the concepts `RandomAccessContainer`
+ *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
+ *                      convertible to `std::size_t`
+ */
+
+  template <typename PointRange, typename PolygonRange>
+  void extract_tm1_minus_tm2(PointRange& points,
+                             PolygonRange& triangles);
+/**
+ * fills a polygon soup with the opposite difference between input meshes provided in the constructor,
+ * after a call to `corefine_and_compute_boolean_operations()`.
+ * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the value type of `VPM1` and `VPM2`.
+ * \tparam PolygonRange a model of the concepts `RandomAccessContainer` and `BackInsertionSequence`
+ *                      whose `value_type` is itself a model of the concepts `RandomAccessContainer`
+ *                      and `BackInsertionSequence` whose `value_type` is an unsigned integer type
+ *                      convertible to `std::size_t`
+ */
+  template <typename PointRange, typename PolygonRange>
+  void extract_tm2_minus_tm1(PointRange& points,
+                             PolygonRange& triangles);
+};
+#endif
 
 #ifdef DOXYGEN_RUNNING
 /** \ingroup PMP_corefinement_grp

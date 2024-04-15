@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -9,11 +10,13 @@
 #include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
-typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
+typedef CGAL::Surface_mesh<K::Point_3>                        SM;
+typedef CGAL::Polyhedron_3<K>                                   Poly;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-void test(std::string filename1, std::string filename2)
+template<class Mesh>
+void test_one(std::string filename1, std::string filename2)
 {
   std::cout << "Running test with " << filename1 << " " << filename2 << "\n";
   Mesh mesh1, mesh2;
@@ -24,7 +27,7 @@ void test(std::string filename1, std::string filename2)
   }
 
 
-  PMP::Corefinement::Visitor_for_non_manifold_output<K, Mesh> visitor(mesh1, mesh2);
+  PMP::Corefinement::Visitor_for_non_manifold_output<Mesh> visitor(mesh1, mesh2);
 
   std::array<Mesh,4> out_meshes;
   std::array<std::optional<Mesh*>, 4> output = {&out_meshes[0], &out_meshes[1], &out_meshes[2], &out_meshes[3]};
@@ -60,6 +63,12 @@ void test(std::string filename1, std::string filename2)
   }
 }
 
+void test(std::string filename1, std::string filename2)
+{
+  test_one<SM>(filename1, filename2);
+  test_one<Poly>(filename1, filename2);
+}
+
 int main(int argc, char* argv[])
 {
   if (argc<3)
@@ -79,8 +88,6 @@ int main(int argc, char* argv[])
 
     test(filename1, filename2);
   }
-
-
 
   return 0;
 }
