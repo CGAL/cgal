@@ -33,6 +33,12 @@
 namespace CGAL {
 namespace Triangulations {
 
+/*!
+\ingroup PkgTriangulation2Miscellaneous
+
+\tparam Kernel must
+*/
+
 template <typename Kernel>
 class Boolean {
 
@@ -130,9 +136,15 @@ private:
 
 public:
 
+/*!
+default constructor.
+*/
   Boolean() = default;
 
 
+/*!
+sets the polygons as input of the %Boolean operation.
+*/
   void
   insert(const Multipolygon_with_holes_2& pA, const Multipolygon_with_holes_2& pB)
   {
@@ -315,6 +327,12 @@ private:
 public:
 
   // @todo taken from Polygon_repair and adapted; might be factorized
+
+/*!
+performs the Boolean operation applying `fct` and returns the result as a multipolygon with holes.
+
+\tparam Fct must have the operator `bool operator()(bool, bool)`.
+*/
   template <typename Fct>
   Multipolygon_with_holes_2
   operator()(const Fct& fct)
@@ -363,6 +381,9 @@ public:
   }
 
 
+/*!
+access to the underlying constrained triangulation.
+*/
   const CDTplus&
   triangulation() const
   {
