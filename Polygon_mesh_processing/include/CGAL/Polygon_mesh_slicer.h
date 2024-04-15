@@ -41,7 +41,7 @@ namespace CGAL {
 /// a triangulated surface mesh.
 ///
 /// \tparam TriangleMesh a triangulated surface mesh, model of `FaceGraph` and `HalfedgeListGraph`
-/// \tparam Traits a model of `AABBGeomTraits`
+/// \tparam Traits a model of `AABBGeomTraits_3`
 /// \tparam VertexPointMap a model of `ReadablePropertyMap` with
 ///         `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key and
 ///         `Traits::Point_3` as value type.
