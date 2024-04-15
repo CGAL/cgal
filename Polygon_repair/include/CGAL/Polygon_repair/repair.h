@@ -660,7 +660,7 @@ public:
     // Create polygons with holes and put in multipolygon
     std::set<Polygon_with_holes_2<Kernel, Container>, Polygon_with_holes_less> ordered_polygons;
     for (std::size_t i = 0; i < polygons.size(); ++i) {
-      ordered_polygons.insert(Polygon_with_holes_2<Kernel, Container>(std::move(polygons[i]), holes[i].begin(), holes[i].end()));
+      ordered_polygons.insert(Polygon_with_holes_2<Kernel, Container>(std::move(polygons[i]), std::make_move_iterator(holes[i].begin()), std::make_move_iterator(holes[i].end())));
     }
     for (auto const& polygon: ordered_polygons) {
       // std::cout << "Adding polygon " << polygon << std::endl;
