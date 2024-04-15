@@ -73,8 +73,7 @@ private:
   using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
   using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<K>;
 
-
-  using Itag = CGAL::Exact_intersections_tag;
+  using Itag = std::conditional_t<std::is_floating_point_v<typename K::FT>, Exact_predicates_tag, Exact_intersections_tag>;
   using Vb = CGAL::Triangulation_vertex_base_2<K>;
   using Fbb = CGAL::Triangulation_face_base_with_info_2<FaceInfo,K>;
   using Fb = CGAL::Constrained_triangulation_face_base_2<K,Fbb>;
