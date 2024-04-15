@@ -78,7 +78,7 @@ public:
 
   void add_polygon(const Polygon_2& pgn) { m_polygons.push_back(Polygon_with_holes_2(pgn)); }
 
-  void add_polygon(const Polygon_2&& pgn) { m_polygons.push_back(Polygon_with_holes_2(std::forward(pgn))); }
+  void add_polygon(Polygon_2&& pgn) { m_polygons.push_back(Polygon_with_holes_2(std::forward<Polygon_with_holes_2>(pgn))); }
 
   void add_polygon_with_holes(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 
