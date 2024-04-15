@@ -113,6 +113,7 @@ void Main_widget::initializeGL() {
   init_shader_programs();
 
   m_current_approx_error = 0.001f;
+  m_num_uniform_points = 4096;
 
   qDebug() << "loading arrangement..";
   m_arrh = Aos::load_arr(m_file_name.toStdString());
@@ -130,7 +131,8 @@ void Main_widget::initializeGL() {
   //auto triangle_points = Aos_triangulator::get_all(arrh);
   //auto country_triangles_map = Aos::get_triangles_by_country(m_arrh);
   auto country_triangles_map =
-    Aos_triangulator::get_by_country(m_arrh, m_current_approx_error);
+    Aos_triangulator::get_by_country(m_arrh, m_current_approx_error,
+                                     m_num_uniform_points);
   //auto color_map = Aos::get_color_mapping(m_arrh);
   //qDebug() << "color map size = " << color_map.size();
   qDebug() << "num countries = " << country_triangles_map.size();
@@ -267,11 +269,15 @@ void draw_safe(T& ptr) { if (ptr) ptr->draw(); }
 void Main_widget::paintGL() {
   if (m_update_approx_error) {
     const auto error = compute_backprojected_error(0.5);
-    qDebug() << "new approx error = " << error;
     qDebug() << "current error = " << m_current_approx_error;
+    qDebug() << "new approx error = " << error;
     if (error < m_current_approx_error) {
       init_country_borders(error);
       m_current_approx_error = error;
+      auto ratio = static_cast<double>(m_current_approx_error) / error;
+      m_num_uniform_points *= ratio*ratio;
+      std::cout << "num uniform points = " << m_num_uniform_points
+                << std::endl;
     }
     m_update_approx_error = false;
   }

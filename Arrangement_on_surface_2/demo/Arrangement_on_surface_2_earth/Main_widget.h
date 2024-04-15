@@ -127,6 +127,7 @@ private:
   // INSIDE the paintGL (or whereever the OpenGL context is active)!
   bool m_update_approx_error = false;
   float m_current_approx_error;
+  std::size_t m_num_uniform_points;
 
   // Timer for continuous screen-updates
   // QBasicTimer m_timer;

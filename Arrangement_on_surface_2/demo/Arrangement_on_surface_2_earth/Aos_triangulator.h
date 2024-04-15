@@ -23,8 +23,9 @@ class Aos_triangulator {
 public:
   static std::vector<QVector3D> get_all(Aos::Arr_handle arrh);
 
-  static Country_triangles_map get_by_country(Aos::Arr_handle arrh, float error);
+  static Country_triangles_map get_by_country(Aos::Arr_handle arrh,
+                                              float error,
+                                              std::size_t num_uniform_points);
 };
-
 
 #endif
