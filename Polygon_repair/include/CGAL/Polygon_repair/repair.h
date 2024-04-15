@@ -645,12 +645,14 @@ public:
         reconstruct_ring(ring, face, opposite_vertex);
 
         // Put ring in polygons
-        Polygon_2<Kernel, Container> polygon(ring.begin(), ring.end());
+        Polygon_2<Kernel, Container> polygon;
+        polygon.reserve(ring.size());
+        polygon.insert(polygon.vertices_end(),ring.begin(), ring.end());
         // std::cout << "Reconstructed ring for polygon " << face->label() << " with ccw? " << (polygon.orientation() == CGAL::COUNTERCLOCKWISE) << std::endl;
         if (polygon.orientation() == CGAL::COUNTERCLOCKWISE) {
-          polygons[face->label()-1] = polygon;
+          polygons[face->label()-1] = std::move(polygon);
         } else {
-          holes[face->label()-1].insert(polygon);
+          holes[face->label()-1].insert(std::move(polygon));
         } break;
       }
     }
@@ -658,11 +660,11 @@ public:
     // Create polygons with holes and put in multipolygon
     std::set<Polygon_with_holes_2<Kernel, Container>, Polygon_with_holes_less> ordered_polygons;
     for (std::size_t i = 0; i < polygons.size(); ++i) {
-      ordered_polygons.insert(Polygon_with_holes_2<Kernel, Container>(polygons[i], holes[i].begin(), holes[i].end()));
+      ordered_polygons.insert(Polygon_with_holes_2<Kernel, Container>(std::move(polygons[i]), holes[i].begin(), holes[i].end()));
     }
     for (auto const& polygon: ordered_polygons) {
       // std::cout << "Adding polygon " << polygon << std::endl;
-      mp.add_polygon_with_holes(polygon);
+      mp.add_polygon_with_holes(std::move(polygon));
     }
   }
 
@@ -685,7 +687,7 @@ public:
     return t;
   }
 
-  Multipolygon_with_holes_2<Kernel, Container> multipolygon() {
+  const Multipolygon_with_holes_2<Kernel, Container>& multipolygon() {
     return mp;
   }
 

@@ -34,6 +34,7 @@
 #include <CGAL/enum.h>
 
 #include <CGAL/Aff_transformation_2.h>
+#include <CGAL/Container_helper.h>
 
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Polygon_2/Polygon_2_vertex_circulator.h>
@@ -541,6 +542,12 @@ class Polygon_2 {
     void resize(std::size_t s)
     {
      container().resize(s);
+    }
+
+    /// Calls `container().reserve(s)` if this is available for `Container`.
+    void reserve(std::size_t s)
+    {
+      internal::reserve(container(),s);
     }
 
     /// @}
