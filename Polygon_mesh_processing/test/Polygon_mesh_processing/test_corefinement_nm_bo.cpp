@@ -27,7 +27,7 @@ void test_one(std::string filename1, std::string filename2)
   }
 
 
-  PMP::Corefinement::Visitor_for_non_manifold_output<Mesh> visitor(mesh1, mesh2);
+  PMP::Corefinement::Non_manifold_output_visitor<Mesh> visitor(mesh1, mesh2);
 
   std::array<Mesh,4> out_meshes;
   std::array<std::optional<Mesh*>, 4> output = {&out_meshes[0], &out_meshes[1], &out_meshes[2], &out_meshes[3]};

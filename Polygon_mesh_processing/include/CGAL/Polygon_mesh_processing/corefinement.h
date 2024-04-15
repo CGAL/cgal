@@ -39,6 +39,7 @@ namespace Polygon_mesh_processing {
 namespace Corefinement
 {
 /** \ingroup PMP_corefinement_grp
+ * \cgalModels{PMPCorefinementVisitor}
  *  %Default visitor model of `PMPCorefinementVisitor`.
  *  All of its functions have an empty body. This class can be used as a
  *  base class if only some of the functions of the concept require to be
@@ -49,30 +50,35 @@ struct Default_visitor;
 
 #ifdef DOXYGEN_RUNNING
 /** \ingroup PMP_corefinement_grp
- * A model of `PMPCorefinementVisitor` that allows to extract non-manifold
- * outputs from a corefinement based Boolean Operations.
+ * \cgalModels{PMPCorefinementVisitor}
+ * A model of `PMPCorefinementVisitor` that enables extracting non-manifold
+ * outputs from a corefinement-based Boolean Operations (\ref PMP_corefinement_grp).
  *
  * \tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
  * \tparam VPM1 a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
  *              as key type and an unspecified type `%Point_3` as value type
  * \tparam VPM2 a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
- *              as key type and an unspecified type `%Point_3` as value type
+ *              as key type and the same value type as `VPM1`
  */
 template <class TriangleMesh,
           class VPM1 = typename boost::property_map<TriangleMesh, vertex_point_t>::type,
           class VPM2 = typename boost::property_map<TriangleMesh, vertex_point_t>::type>
-struct Visitor_for_non_manifold_output
+struct Non_manifold_output_visitor
+  : public Default_visitor<TriangleMesh>
 {
 /**
+ * constructor where meshes are exactly the same as the one passed a function in \ref PMP_corefinement_grp.
+ * The visitor cannot be reused for several calls to the aforementioned function.
+ *
  * \param tm1 first triangle mesh in the same order as in the function in \ref PMP_corefinement_grp
  * \param tm2 second triangle mesh in the same order as in the function in \ref PMP_corefinement_grp
  * \param vpm1 vertex point map for `tm1`
  * \param vpm2 vertex point map for `tm2`
  */
-  Visitor_for_non_manifold_output(TriangleMesh& tm1,
-                                  TriangleMesh& tm2,
-                                  VPM1 vpm1 = get(CGAL::vertex_point, tm1),
-                                  VPM1 vpm2 = get(CGAL::vertex_point, tm2));
+  Non_manifold_output_visitor(TriangleMesh& tm1,
+                              TriangleMesh& tm2,
+                              VPM1 vpm1 = get(CGAL::vertex_point, tm1),
+                              VPM1 vpm2 = get(CGAL::vertex_point, tm2));
 
 /**
  * fills a polygon soup with the intersection between input meshes provided in the constructor,

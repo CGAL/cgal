@@ -56,7 +56,7 @@ namespace Corefinement {
 template <class TriangleMesh,
           class VPM1 = typename boost::property_map<TriangleMesh, vertex_point_t>::type,
           class VPM2 = typename boost::property_map<TriangleMesh, vertex_point_t>::type>
-struct Visitor_for_non_manifold_output
+struct Non_manifold_output_visitor
   : public Default_visitor<TriangleMesh>
 {
   struct Handle_non_manifold_output{}; // flag for extra function in Face_graph_output_builder
@@ -76,10 +76,10 @@ struct Visitor_for_non_manifold_output
   std::shared_ptr< std::array< Classification_map, 4> > m_face_classifications_tm1_ptr;
   std::shared_ptr< std::array< Classification_map, 4> > m_face_classifications_tm2_ptr;
 
-  Visitor_for_non_manifold_output(TriangleMesh& tm1,
-                                  TriangleMesh& tm2,
-                                  VPM1 vpm1,
-                                  VPM2 vpm2)
+  Non_manifold_output_visitor(TriangleMesh& tm1,
+                              TriangleMesh& tm2,
+                              VPM1 vpm1,
+                              VPM2 vpm2)
     : vertex_id_maps( new Vertex_id_maps() )
     , m_tm1(tm1)
     , m_tm2(tm2)
@@ -94,15 +94,15 @@ struct Visitor_for_non_manifold_output
     vertex_id_maps->emplace(&tm2, Vertex_id_map());
   }
 
-  Visitor_for_non_manifold_output(TriangleMesh& tm1,
+  Non_manifold_output_visitor(TriangleMesh& tm1,
                                   TriangleMesh& tm2,
                                   VPM1 vpm1)
-    : Visitor_for_non_manifold_output(tm1, tm2, vpm1, get(CGAL::vertex_point, tm2))
+    : Non_manifold_output_visitor(tm1, tm2, vpm1, get(CGAL::vertex_point, tm2))
   {}
 
-  Visitor_for_non_manifold_output(TriangleMesh& tm1,
+  Non_manifold_output_visitor(TriangleMesh& tm1,
                                   TriangleMesh& tm2)
-    : Visitor_for_non_manifold_output(tm1, tm2,
+    : Non_manifold_output_visitor(tm1, tm2,
                                       get(CGAL::vertex_point, tm1),
                                       get(CGAL::vertex_point, tm2))
   {}
