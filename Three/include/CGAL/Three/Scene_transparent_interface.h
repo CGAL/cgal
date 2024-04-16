@@ -31,5 +31,5 @@ public:
 };
 }
 }
-Q_DECLARE_INTERFACE(CGAL::Three::Scene_transparent_interface, "com.geometryfactory.PolyhedronDemo.TransparentInterface/1.0")
+Q_DECLARE_INTERFACE(CGAL::Three::Scene_transparent_interface, "com.geometryfactory.CGALLab.TransparentInterface/1.0")
 #endif // SCENE_TRANSPARENT_INTERFACE_H
