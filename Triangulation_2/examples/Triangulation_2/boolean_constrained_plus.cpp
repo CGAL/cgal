@@ -17,32 +17,53 @@
 #include <boost/property_map/property_map.hpp>
 
 using K = CGAL::Exact_predicates_exact_constructions_kernel;
+using Vector_2 = K::Vector_2;
+using Transformation = K::Aff_transformation_2;
 using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
 using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<K>;
 
 int
-main( )
+main(int argc, char* argv[])
 {
   CGAL::Triangulations::Boolean<K> bops;
 
   Multipolygon_with_holes_2 pA, pB;
+  if(argc == 2) {
+      std::ifstream in(argv[1]);
+      CGAL::IO::read_multi_polygon_WKT(in, pA);
 
-  {
-    std::istringstream is("MULTIPOLYGON( ((0 0,  20 0, 20 30, 0 30, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1 ) ) ,   (( 50 0, 60 0, 60 60, 50 60)) )");
-    //std::istringstream is("MULTIPOLYGON( ((0 0, 2 0, 2 3, 0 3) ) )");    // (0.1 0.1, 0.1 0.4, 0.4 0.1)
-    CGAL::IO::read_multi_polygon_WKT(is, pA);
+      CGAL::Bbox_2 bb = pA.bbox();
+      double w = bb.xmax() - bb.xmin();
+      Vector_2 vec(w / 10.0, w / 10.0);
+      pB = CGAL::transform(Transformation(CGAL::TRANSLATION, vec), pA);
   }
-
-  {
-    std::istringstream is("MULTIPOLYGON( ((10 1,  30 1, 30 2, 20 2, 20 4, 10 4)) )");
-    //std::istringstream is("MULTIPOLYGON( ((2 1, 3 1, 3 2, 2 2)) ");
-    CGAL::IO::read_multi_polygon_WKT(is, pB);
+  else if (argc == 3) {
+      {
+          std::ifstream in(argv[1]);
+          CGAL::IO::read_multi_polygon_WKT(in, pA);
+      }
+      {
+          std::ifstream in(argv[2]);
+          CGAL::IO::read_multi_polygon_WKT(in, pB);
+      }
   }
-
+  else {
+      {
+          std::istringstream is("MULTIPOLYGON( ((0 0,  20 0, 20 30, 0 30, 0 0), (1 1, 1 2, 2 2, 2 1, 1 1 ) ) ,   (( 50 0, 60 0, 60 60, 50 60)) )");
+          //std::istringstream is("MULTIPOLYGON( ((0 0, 2 0, 2 3, 0 3) ) )");    // (0.1 0.1, 0.1 0.4, 0.4 0.1)
+          CGAL::IO::read_multi_polygon_WKT(is, pA);
+      }
+      {
+          std::istringstream is("MULTIPOLYGON( ((10 1,  30 1, 30 2, 20 2, 20 4, 10 4)) )");
+          //std::istringstream is("MULTIPOLYGON( ((2 1, 3 1, 3 2, 2 2)) ");
+          CGAL::IO::read_multi_polygon_WKT(is, pB);
+      }
+  }
 
   bops.insert(pA,pB);
   Multipolygon_with_holes_2 mpwh = bops([](bool a, bool b){ return a || b;});
-  CGAL::IO::write_multi_polygon_WKT(std::cout, mpwh);
+  std::ofstream out("result.wkt");
+  CGAL::IO::write_multi_polygon_WKT(out, mpwh);
   CGAL::draw(mpwh);
 
   /*
