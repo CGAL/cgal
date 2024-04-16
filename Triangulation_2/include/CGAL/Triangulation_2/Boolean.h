@@ -164,7 +164,7 @@ sets the polygons as input of the %Boolean operation.
         idB.insert(cidB);
       }
     }
-
+    
     mark_domains(idA, 0);
     mark_domains(idB, 1);
   }
@@ -296,6 +296,7 @@ private:
     // Create ring
     Face_handle current_face = face_adjacent_to_boundary;
     int current_opposite_vertex = opposite_vertex;
+    CGAL_assertion(face_adjacent_to_boundary->info().in_domain(fct));
     do {
       CGAL_assertion(current_face->info().in_domain(fct) == face_adjacent_to_boundary->info().in_domain(fct));
       current_face->info().processed = true;
@@ -305,7 +306,7 @@ private:
       Face_circulator fc = cdt.incident_faces(pivot_vertex, current_face);
       do {
         ++fc;
-      } while (fc->info().in_domain(fct) != current_face->info().in_domain(fct));
+      } while (fc->info().label != current_face->info().label);
       current_face = fc;
       current_opposite_vertex = fc->cw(fc->index(pivot_vertex));
     } while (current_face != face_adjacent_to_boundary ||
@@ -347,6 +348,14 @@ performs the Boolean operation applying `fct` and returns the result as a multip
     for (auto const face: cdt.all_face_handles()) {
       face->info().processed = false;
     }
+
+    /*
+    for (auto const face: cdt.all_face_handles()) {
+      std::cout << face->vertex(0)->point() << "  " << face->vertex(1)->point() << "  " << face->vertex(2)->point() << std::endl;
+      std::cout << "label = " << face->info().label << std::endl;
+      if(face->info().in_domain(fct)) std::cout << "in domain" << std::endl; else std::cout << "not in domain" << std::endl;
+    }
+    */
     for (auto const &face: cdt.finite_face_handles()) {
       if (! face->info().in_domain(fct)) continue; // exterior triangle
       if (face->info().processed) continue; // already reconstructed
@@ -354,7 +363,6 @@ performs the Boolean operation applying `fct` and returns the result as a multip
         if (face->info().in_domain(fct) == face->neighbor(opposite_vertex)->info().in_domain(fct)) continue; // not adjacent to boundary
 
         // Reconstruct ring
-        // @todo less copying
         std::list<Point_2> ring;
         reconstruct_ring(ring, face, opposite_vertex, fct);
 
