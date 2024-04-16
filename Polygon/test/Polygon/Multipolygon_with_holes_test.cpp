@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #include <vector>
 #include <iostream>
@@ -15,6 +16,7 @@ typedef K::Aff_transformation_2 Transformation;
 
 typedef CGAL::Polygon_2<K> Polygon_2;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes_2;
+typedef CGAL::Multipolygon_with_holes_2<K> Multipolygon_with_holes_2;
 
 int main()
 {
@@ -31,21 +33,17 @@ int main()
 
   Polygon_with_holes_2 pwh(std::move(pouter), std::move_iterator<std::vector<Polygon_2>::iterator>(holes.begin()), std::move_iterator<std::vector<Polygon_2>::iterator>(holes.end()));
 
-  assert(pouter.is_empty());
-  assert(holes[0].is_empty());
-  assert(holes[1].is_empty());
 
-  Polygon_with_holes_2 pwh_copy(pwh);
-  assert(pwh_copy == pwh);
-  Polygon_with_holes_2 pwh_move_cstructed(std::move(pwh));
-  assert(pwh.holes().empty());
-  assert(pwh.outer_boundary().is_empty());
-  Polygon_with_holes_2 pwh_move_assigned;
-  pwh_move_assigned = std::move(pwh_copy);
+  Transformation translate(CGAL::TRANSLATION, Vector_2(20, 20));
+  Polygon_with_holes_2 pwhc = CGAL::transform(translate, pwh);
 
-  std::cout << pwh_move_assigned << std::endl << "translated by Vector_2(2.0, 2.0)" << std::endl;
-  Transformation translate(CGAL::TRANSLATION, Vector_2(2, 2));
-  pwh_move_assigned = CGAL::transform(translate, pwh_move_assigned);
-  std::cout << pwh_move_assigned << std::endl;
+  Multipolygon_with_holes_2 mp;
+  mp.add_polygon_with_holes(pwh);
+  mp.add_polygon_with_holes(pwhc);
+
+  mp = CGAL::transform(Transformation(CGAL::SCALING, 2.0), mp);
+
+  std::cout << mp << std::endl;
+
   return 0;
 }

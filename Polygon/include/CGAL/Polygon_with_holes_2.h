@@ -89,7 +89,20 @@ public:
 
   /*! Obtain the bounding box of the polygon with holes */
   Bbox_2 bbox() const { return this->outer_boundary().bbox(); }
+
 };
+
+  template <class Transformation, class Kernel, class Container>
+  Polygon_with_holes_2<Kernel,Container> transform(const Transformation& t,
+                                                   const Polygon_with_holes_2<Kernel,Container>& pwh)
+  {
+    Polygon_with_holes_2<Kernel,Container> result(transform(t, pwh.outer_boundary()));
+    for(const auto& hole : pwh.holes()){
+      result.add_hole(std::move(transform(t, hole)));
+    }
+    return result;
+  }
+
 
 //-----------------------------------------------------------------------//
 //                          operator<<
