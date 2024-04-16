@@ -101,6 +101,16 @@ public:
 
   Size number_of_polygons_with_holes() const { return static_cast<Size>(m_polygons.size()); }
 
+  Bbox_2 bbox() const
+  {
+    Bbox_2 bb;
+    for(const auto& pwh : polygons_with_holes()){
+      bb += pwh.bbox();
+    }
+    return bb;
+  }
+
+
 protected:
   Polygon_with_holes_container m_polygons;
 };

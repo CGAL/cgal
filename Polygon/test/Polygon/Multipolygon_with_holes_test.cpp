@@ -45,5 +45,7 @@ int main()
 
   std::cout << mp << std::endl;
 
+  CGAL::Bbox_2 bb = mp.bbox();
+
   return 0;
 }
