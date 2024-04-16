@@ -34,13 +34,6 @@ public:
 
 /*!
 Functor that describes the criteria for
-mesh feature edges. This type must be a model
-of the concept `MeshEdgeCriteria_3`.
-*/
-typedef unspecified_type Edge_criteria;
-
-/*!
-Functor that describes the criteria for
 surface facets. This type must be a model
 of the concept `MeshFacetCriteria_3`.
 */
@@ -57,11 +50,6 @@ typedef unspecified_type Cell_criteria;
 
 /// \name Access Functions
 /// @{
-
-/*!
-Returns the edge criteria.
-*/
-Edge_criteria edge_criteria_object();
 
 /*!
 Returns the facet criteria.
