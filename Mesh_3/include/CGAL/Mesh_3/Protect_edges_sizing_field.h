@@ -1425,8 +1425,9 @@ refine_balls()
       const Vertex_handle& vb = eit->first->vertex(eit->third);
       const bool is_edge_in_complex = c3t3_.is_in_complex(va,vb);
 
-      // If those vertices are not adjacent
-      if( non_adjacent_but_intersect(va, vb, is_edge_in_complex)
+      if( // topology condition
+          non_adjacent_but_intersect(va, vb, is_edge_in_complex)
+          // approximation condition
        || (use_distance_field() && approx_is_too_large(va, vb, is_edge_in_complex)))
       {
         using CGAL::Mesh_3::internal::distance_divisor;
