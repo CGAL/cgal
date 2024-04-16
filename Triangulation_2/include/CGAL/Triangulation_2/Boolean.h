@@ -359,11 +359,13 @@ performs the Boolean operation applying `fct` and returns the result as a multip
         reconstruct_ring(ring, face, opposite_vertex, fct);
 
         // Put ring in polygons
-        Polygon_2 polygon(ring.begin(), ring.end());
+        Polygon_2 polygon;
+        polygon.reserve(ring.size());
+        polygon.insert(polygon.vertices_end(), ring.begin(), ring.end());
         if (polygon.orientation() == CGAL::COUNTERCLOCKWISE) {
-          polygons[face->info().label-1] = polygon;
+          polygons[face->info().label-1] = std::move(polygon);
         } else {
-          holes[face->info().label-1].insert(polygon);
+          holes[face->info().label-1].insert(std::move(polygon));
         } break;
       }
     }
@@ -371,10 +373,12 @@ performs the Boolean operation applying `fct` and returns the result as a multip
     // Create polygons with holes and put in multipolygon
     std::set<Polygon_with_holes_2, Polygon_with_holes_less> ordered_polygons;
     for (std::size_t i = 0; i < polygons.size(); ++i) {
-      ordered_polygons.insert(Polygon_with_holes_2(polygons[i], holes[i].begin(), holes[i].end()));
+      ordered_polygons.insert(Polygon_with_holes_2(std::move(polygons[i]),
+                                                   std::make_move_iterator(holes[i].begin()),
+                                                   std::make_move_iterator(holes[i].end())));
     }
     for (auto const& polygon: ordered_polygons) {
-      mp.add_polygon_with_holes(polygon);
+      mp.add_polygon_with_holes(std::move(polygon));
     }
     return mp;
   }
