@@ -106,12 +106,10 @@ void debug_dump_c3t3(const std::string filename, const C3t3& c3t3)
   out << c3t3;
 }
 
-template <typename FT>
 struct NoDistanceFunction {
   template <typename Bare_point, typename Index>
-  FT operator()(const Bare_point& p, int dim, const Index& index) const {
-      return FT(DBL_MAX);
-  }
+  double operator()(const Bare_point&, int, const Index&) const
+  { return 0.; }
 };
 
 template<typename C3T3,
@@ -142,9 +140,8 @@ public:
   typedef typename MeshDomain::Corner_index         Corner_index;
   typedef typename MeshDomain::Index                Index;
 
-  using Distance_Function = typename CGAL::Default::Get<
-    DistanceFunction,
-    NoDistanceFunction<FT> >::type;
+  using Distance_Function =
+    typename CGAL::Default::Get<DistanceFunction, NoDistanceFunction>::type;
 
 private:
   typedef typename CGAL::Kernel_traits<MeshDomain>::Kernel   Kernel;
@@ -505,6 +502,10 @@ private:
     else
       return Weight(0);
   }
+  bool use_distance_field() const
+  {
+    return use_edge_distance_;
+  }
 
 private:
   C3T3& c3t3_;
@@ -513,6 +514,7 @@ private:
   const FT minimal_size_;
   const Weight minimal_weight_;
   const Distance_Function edge_distance_;
+  const bool use_edge_distance_;
   std::set<Curve_index> treated_edges_;
   Vertex_set unchecked_vertices_;
   int refine_balls_iteration_nb;
@@ -543,6 +545,7 @@ Protect_edges_sizing_field(C3T3& c3t3, const MD& domain,
   , minimal_size_(minimal_size)
   , minimal_weight_(CGAL::square(minimal_size))
   , edge_distance_(edge_distance)
+  , use_edge_distance_(!std::is_same_v<Distance_Function, NoDistanceFunction>)
   , refine_balls_iteration_nb(0)
   , nonlinear_growth_of_balls(false)
   , maximal_number_of_vertices_(maximal_number_of_vertices)
@@ -1391,7 +1394,6 @@ refine_balls()
   Triangulation& tr = c3t3_.triangulation();
 
   // Loop
-  bool check_edge_distance = !std::is_same_v<Distance_Function, NoDistanceFunction<FT>>;
   bool restart = true;
   using CGAL::Mesh_3::internal::refine_balls_max_nb_of_loops;
   this->refine_balls_iteration_nb = 0;
@@ -1425,7 +1427,7 @@ refine_balls()
 
       // If those vertices are not adjacent
       if( non_adjacent_but_intersect(va, vb, is_edge_in_complex)
-          || (check_edge_distance && approx_is_too_large(va, vb, is_edge_in_complex)))
+       || (use_distance_field() && approx_is_too_large(va, vb, is_edge_in_complex)))
       {
         using CGAL::Mesh_3::internal::distance_divisor;
 

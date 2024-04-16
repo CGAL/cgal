@@ -95,7 +95,7 @@ provides a bound for the size criterion.
 
 \cgalModels{MeshEdgeCriteria_3}
 
-\sa `MeshCriteria_3`
+\sa `MeshCriteriaWithFeatures_3`
 \sa `CGAL::Mesh_criteria_3<Tr>`
 \sa `MeshDomainField_3`
 */
@@ -136,7 +136,7 @@ public:
   * break all the surface topology guarantees of the meshing algorithm.
   * It is not guaranteed to be exactly respected in the output mesh.
   * \param distance_bound is an upper bound for the distance from the
-  * edge to the 1D feature.
+  * edge to the corresponding 1D feature.
   * It can be a functional or a constant.
   *
   * \note If one parameter is set to 0, then its corresponding criterion is ignored.
@@ -147,12 +147,11 @@ public:
   template < typename SizingField, typename DistanceField = FT >
   Mesh_edge_criteria_3(const SizingField& length_bound,
                        const FT& min_length_bound = 0,
-                       const DistanceField& distance_bound = FT(DBL_MAX))
+                       const DistanceField& distance_bound = FT(0))
       : min_length_bound_(min_length_bound)
   {
     init_p_size(length_bound,
                   Mesh_3::Is_mesh_domain_field_3<Tr, SizingField>());
-    is_distance_field_default_ = false;
     init_distance_bound(distance_bound,
                   Mesh_3::Is_mesh_domain_field_3<Tr, DistanceField>());
   }
@@ -163,14 +162,17 @@ public:
   Mesh_edge_criteria_3(const Self& rhs)
     : p_size_(rhs.p_size_->clone())
     , min_length_bound_(rhs.min_length_bound_)
-    , distance_bound_(rhs.distance_bound_->clone())
+    , distance_bound_(rhs.distance_bound_ == nullptr
+                      ? nullptr
+                      : rhs.distance_bound_->clone())
   {}
 
   /// Destructor
   ~Mesh_edge_criteria_3()
   {
     delete p_size_;
-    delete distance_bound_;
+    if(distance_bound_ != nullptr)
+      delete distance_bound_;
   }
 
   /// Returns size of tuple (p,dim,index)
@@ -178,15 +180,20 @@ public:
   { return (*p_size_)(p,dim,index); }
 
   FT distance_field(const Point_3& p, const int dim, const Index& index) const
-  { return (*distance_bound_)(p,dim,index); }
-
-  bool check_distance_field() const
-  { return !is_distance_field_default_; }
+  {
+    if (distance_bound_ == nullptr)
+      return FT(0);
+    return (*distance_bound_)(p,dim,index);
+  }
 
 public:
   const FT& min_length_bound() const
   {
     return min_length_bound_;
+  }
+  bool has_distance_field() const
+  {
+    return distance_bound_ != nullptr;
   }
 
 #endif
@@ -216,20 +223,21 @@ private:
 
   void init_distance_bound(const FT& distance_bound, Tag_false)
   {
-    if (distance_bound == FT(DBL_MAX))
-      is_distance_field_default_ = true;
-    distance_bound_ = new Mesh_3::internal::Sizing_field_container<
+    if (distance_bound == 0.)
+      distance_bound_ = nullptr;
+    else
+      distance_bound_ = new Mesh_3::internal::Sizing_field_container<
         Mesh_constant_domain_field_3<GT,Index> ,
         FT,
         Point_3,
         Index>(distance_bound);
   }
 
-  template <typename SizingField>
-  void init_distance_bound(const SizingField& distance_bound, Tag_true)
+  template <typename DistanceField>
+  void init_distance_bound(const DistanceField& distance_bound, Tag_true)
   {
     distance_bound_ = new Mesh_3::internal::Sizing_field_container<
-        SizingField,
+        DistanceField,
         FT,
         Point_3,
         Index>(distance_bound);
@@ -240,7 +248,6 @@ private:
   Sizing_field_interface* p_size_;
   const FT min_length_bound_;
   Sizing_field_interface* distance_bound_;
-  bool is_distance_field_default_;
 };
 
 
