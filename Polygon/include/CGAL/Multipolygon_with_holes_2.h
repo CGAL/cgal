@@ -193,6 +193,18 @@ std::ostream& operator<<(std::ostream& os,
   }
 }
 
+template <class Transformation, class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> transform(const Transformation& t,
+                                                       const Multipolygon_with_holes_2<Kernel, Container>& mp)
+  {
+    Multipolygon_with_holes_2<Kernel, Container> result;
+    for(const auto& pwh : mp.polygons_with_holes()){
+      result.add_polygon_with_holes(std::move(transform(t, pwh)));
+    }
+    return result;
+
+  }
+
 
 } //namespace CGAL
 
