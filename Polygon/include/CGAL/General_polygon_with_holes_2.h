@@ -65,7 +65,7 @@ public:
   {}
 
   explicit General_polygon_with_holes_2(Polygon_2&& pgn_boundary) :
-    m_pgn(std::forward<Polygon_2>(pgn_boundary))
+    m_pgn(std::move(pgn_boundary))
   {}
 
   template <typename HolesInputIterator>
@@ -80,7 +80,7 @@ public:
   General_polygon_with_holes_2(Polygon_2&& pgn_boundary,
                                HolesInputIterator h_begin,
                                HolesInputIterator h_end) :
-    m_pgn(std::forward<Polygon_2>(pgn_boundary)),
+    m_pgn(std::move(pgn_boundary)),
     m_holes(h_begin, h_end)
   {}
 
@@ -104,7 +104,7 @@ public:
 
   void add_hole(const Polygon_2& pgn_hole) { m_holes.push_back(pgn_hole); }
 
-  void add_hole(Polygon_2&& pgn_hole) { m_holes.emplace_back(std::forward<Polygon_2>(pgn_hole)); }
+  void add_hole(Polygon_2&& pgn_hole) { m_holes.emplace_back(std::move(pgn_hole)); }
 
   void erase_hole(Hole_iterator hit) { m_holes.erase(hit); }
 
