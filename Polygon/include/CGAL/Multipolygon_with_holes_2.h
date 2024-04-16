@@ -87,11 +87,11 @@ public:
 
   void add_polygon(const Polygon_2& pgn) { m_polygons.push_back(Polygon_with_holes_2(pgn)); }
 
-  void add_polygon(Polygon_2&& pgn) { m_polygons.push_back(Polygon_with_holes_2(std::forward<Polygon_with_holes_2>(pgn))); }
+  void add_polygon(Polygon_2&& pgn) { m_polygons.emplace_back(std::move(pgn)); }
 
   void add_polygon_with_holes(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 
-  void add_polygon_with_holes(Polygon_with_holes_2&& pgn) { m_polygons.emplace_back(std::forward<Polygon_with_holes_2>(pgn)); }
+  void add_polygon_with_holes(Polygon_with_holes_2&& pgn) { m_polygons.emplace_back(std::move(pgn)); }
 
   void push_back(const Polygon_with_holes_2& pgn) { m_polygons.push_back(pgn); }
 
@@ -199,7 +199,7 @@ Multipolygon_with_holes_2<Kernel, Container> transform(const Transformation& t,
   {
     Multipolygon_with_holes_2<Kernel, Container> result;
     for(const auto& pwh : mp.polygons_with_holes()){
-      result.add_polygon_with_holes(std::move(transform(t, pwh)));
+      result.add_polygon_with_holes(transform(t, pwh));
     }
     return result;
 
