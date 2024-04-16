@@ -65,7 +65,7 @@ public:
 
   /*! Move constructor */
   explicit Polygon_with_holes_2 (Polygon_2&& pgn_boundary) :
-    Base (std::move(pgn_boundary))
+    Base (std::forward<Polygon_2>(pgn_boundary))
   {}
 
   /*! Constructor from a polygon (outer boundary) and hole polygons. */
@@ -84,7 +84,7 @@ public:
   Polygon_with_holes_2 (Polygon_2&& pgn_boundary,
                         HolesInputIterator h_begin,
                         HolesInputIterator h_end) :
-    Base (std::move(pgn_boundary), h_begin, h_end)
+    Base (std::forward<Polygon_2>(pgn_boundary), h_begin, h_end)
   {}
 
   /*! Obtain the bounding box of the polygon with holes */
