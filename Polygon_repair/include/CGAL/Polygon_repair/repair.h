@@ -304,7 +304,7 @@ public:
   using Face_base = CGAL::Constrained_triangulation_face_base_2<Kernel>;
   using Face_base_with_repair_info = internal::Triangulation_face_base_with_repair_info_2<Kernel, Face_base>;
   using Triangulation_data_structure = CGAL::Triangulation_data_structure_2<Vertex_base, Face_base_with_repair_info>;
-  using Tag = typename std::conditional<std::is_floating_point<typename FT>::value,
+  using Tag = typename std::conditional<std::is_floating_point<FT>::value,
                                         CGAL::Exact_predicates_tag,
                                         CGAL::Exact_intersections_tag>::type;
   using Constrained_Delaunay_triangulation = CGAL::Constrained_Delaunay_triangulation_2<Kernel, Triangulation_data_structure, Tag>;
