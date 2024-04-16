@@ -14,7 +14,7 @@ using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 
 int main(int argc, char* argv[])
 {
-  std::ifstream in((argc > 1) ? argv[1] : CGAL::data_file_path("wkt/norway-polygons.wkt"));
+  std::ifstream in((argc > 1) ? argv[1] : "data/flat.wkt");
 
   typedef std::vector<Point_2> MultiPoint;
   typedef std::vector<Point_2> LineString;
