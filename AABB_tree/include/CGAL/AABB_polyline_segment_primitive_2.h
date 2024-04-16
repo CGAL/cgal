@@ -87,7 +87,7 @@ namespace internal {
  *         It also provides the functor `Construct_segment_2` that has an operator taking two `Point_2`
  *         and returning a `Segment_2`.
  * \tparam Iterator is a model of `ForwardIterator` whose value type is convertible to `GeomTraits::Point_2`
- * \tparam PointRange is a model of `ConstRange` whose iterator is a model of `ForwardIterator`. Its value type needs to be compatible to PointMap or `Point_2` in the default case.
+ * \tparam PointRange is a model of `ConstRange` whose iterator is a model of `ForwardIterator`. Its value type needs to be the key type of `PointMap`.
  * \tparam CacheDatum is either `CGAL::Tag_true` or `CGAL::Tag_false`. In the former case,
  *         the datum is stored in the primitive, while in the latter it is
  *         constructed on the fly to reduce the memory footprint.
@@ -118,13 +118,18 @@ class AABB_polyline_segment_primitive_2
                             CacheDatum >
 #endif
 {
+  typedef internal::Segment_2_from_point_iterator_property_map<GeomTraits, Iterator, PointMap> Segment_map;
+  typedef internal::Point_from_iterator_property_map<GeomTraits, Iterator, PointMap> Point_primitive_map;
   typedef AABB_primitive< Iterator,
-                          internal::Segment_2_from_point_iterator_property_map<GeomTraits, Iterator, PointMap>,
-                          internal::Point_from_iterator_property_map<GeomTraits, Iterator, PointMap>,
+                          Segment_map,
+                          Point_primitive_map,
                           Tag_true,
                           CacheDatum > Base;
+
 public:
-  AABB_polyline_segment_primitive_2(Iterator it, PointRange& poly) : Base(it) {}
+  AABB_polyline_segment_primitive_2(Iterator it, PointRange& poly, PointMap pmap = PointMap())
+    : Base(it,Segment_map(poly.begin(), poly.end(), pmap), Point_primitive_map(pmap))
+  {}
 
   /// \internal
   static typename Base::Shared_data construct_shared_data(PointRange& range, PointMap pmap = PointMap()) {

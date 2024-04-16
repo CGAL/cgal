@@ -24,7 +24,7 @@ struct Projection_xy_point_map {
 
   Projection_xy_point_map() {}
 
-  inline friend value_type get(Self s, key_type p)
+  inline friend value_type get(Self, key_type p)
   {
     return value_type(p.x(), p.y());
   }

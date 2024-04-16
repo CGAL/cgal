@@ -125,7 +125,7 @@ public:
   AABB_indexed_triangle_primitive_2(IndexIterator it, PointRange&) : Base(it) {}
 
   /// \internal
-  static typename Base::Shared_data construct_shared_data(PointRange &range, PointMap &pmap = PointMap()) {
+  static typename Base::Shared_data construct_shared_data(PointRange &range, PointMap pmap = PointMap()) {
     return std::make_pair(
       internal::Triangle_2_from_index_range_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>(range.begin(), pmap),
       internal::Point_from_indexed_triangle_2_iterator_property_map<GeomTraits, IndexIterator, typename PointRange::iterator, PointMap>(range.begin(), pmap));

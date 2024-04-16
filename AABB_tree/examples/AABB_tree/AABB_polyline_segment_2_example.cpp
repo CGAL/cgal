@@ -28,7 +28,7 @@ typedef CGAL::AABB_tree<Traits_poly> Tree_poly;
 typedef Tree_poly::Point_and_primitive_id Point_and_primitive_id_poly;
 
 template<class AABBTree, class PPId>
-void test(AABBTree& tree) {
+void test(AABBTree tree) {
   tree.build();
 
   tree.accelerate_distance_queries();
@@ -45,6 +45,7 @@ void test(AABBTree& tree) {
   std::cerr << "closest point is: " << closest << std::endl;
 
   PPId id = tree.closest_point_and_primitive(point_query);
+  std::cout << id.first << "\n";
 }
 
 
