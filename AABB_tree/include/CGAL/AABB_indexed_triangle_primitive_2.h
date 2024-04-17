@@ -94,12 +94,9 @@ struct Point_from_indexed_triangle_2_iterator_property_map {
  *
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
- * \sa `AABB_segment_primitive_2<Iterator,CacheDatum>`
- * \sa `AABB_segment_primitive_3<Iterator,CacheDatum>`
- * \sa `AABB_triangle_primitive_2<Iterator,CacheDatum>`
- * \sa `AABB_triangle_primitive_3<Iterator,CacheDatum>`
- * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
- * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
+ * \sa `AABB_segment_primitive_2<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive_2<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive_3<GeomTraits,Iterator,CacheDatum>`
  */
 template < class GeomTraits,
            class IndexIterator,
