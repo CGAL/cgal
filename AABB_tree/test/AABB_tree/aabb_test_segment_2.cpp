@@ -44,16 +44,15 @@ int main()
 
   // counts #intersections with a segment query
   Segment segment_query(Point(1.0, 0.0), Point(0.0, 7.0));
-  std::cout << tree.number_of_intersected_primitives(segment_query)
-    << " intersections(s) with segment" << std::endl;
+  assert(tree.number_of_intersected_primitives(segment_query) == 2);
 
   // computes the closest point from a point query
-  Point point_query(1.5, 3.0);
+  Point point_query(5.0, 5.0);
   Point closest = tree.closest_point(point_query);
-  std::cerr << "closest point is: " << closest << std::endl;
+  assert(closest == c);
 
-  Point_and_primitive_id id = tree.closest_point_and_primitive(point_query);
-  std::cout << id.second->source() << " " << id.second->target() << std::endl;
+  Point_and_primitive_id id = tree.closest_point_and_primitive(Point(1.5, 3.0));
+  assert(id.second->source() == b && id.second->target() == c);
 
   return EXIT_SUCCESS;
 }

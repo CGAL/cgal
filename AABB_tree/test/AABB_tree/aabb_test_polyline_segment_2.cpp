@@ -8,7 +8,6 @@
 #include <CGAL/AABB_segment_primitive_2.h>
 #include <CGAL/Polygon_2.h>
 
-
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Segment_2 Segment;
 typedef K::Point_2 Point;
@@ -36,18 +35,16 @@ void test(AABBTree tree) {
   // counts #intersections with a segment query
   Segment segment_query(Point(1.0, 0.0), Point(0.0, 7.0));
 
-  std::cout << tree.number_of_intersected_primitives(segment_query)
-    << " intersections(s) with segment" << std::endl;
+  assert(tree.number_of_intersected_primitives(segment_query) == 2);
 
   // computes the closest point from a point query
-  Point point_query(1.5, 3.0);
+  Point point_query(4.0, 5.0);
   Point closest = tree.closest_point(point_query);
-  std::cerr << "closest point is: " << closest << std::endl;
+  assert(closest == Point(3.0, 4.0));
 
   PPId id = tree.closest_point_and_primitive(point_query);
-  std::cout << id.first << "\n";
+  assert(id.first == closest);
 }
-
 
 int main()
 {
@@ -63,8 +60,6 @@ int main()
 
   test<Tree_poly, Point_and_primitive_id_poly>(Tree_poly(poly.begin(), poly.end(), poly));
 
-  // For a point range, the second iterator must be of the second-last point in the range.
-  // If it points to the end of the range, to polyline is considered to be closed.
   test<Tree_pr, Point_and_primitive_id_pr>(Tree_pr(polyline.begin(), std::prev(polyline.end()), polyline));
 
   return EXIT_SUCCESS;

@@ -15,7 +15,7 @@ typedef K::Ray_3 Ray;
 typedef K::Point_3 Point;
 typedef K::Triangle_3 Triangle;
 
-typedef std::list<Triangle>::iterator Iterator;
+typedef std::list<Triangle>::const_iterator Iterator;
 typedef CGAL::AABB_triangle_primitive_3<K, Iterator> Primitive;
 typedef CGAL::AABB_traits_3<K, Primitive> AABB_triangle_traits;
 typedef CGAL::AABB_tree<AABB_triangle_traits> Tree;

@@ -61,31 +61,28 @@ int main()
   // point sampling
   Point_and_primitive_id id;
   id = tree.closest_point_and_primitive(Point_2(0.5, 0.4));
-  std::cout << std::distance(triangles.cbegin(), id.second) << ". triangle" << std::endl;
+  assert(std::distance(triangles.cbegin(), id.second) == 0);
   id = tree.closest_point_and_primitive(Point_2(0.5, 0.6));
-  std::cout << std::distance(triangles.cbegin(), id.second) << ". triangle" << std::endl;
+  assert(std::distance(triangles.cbegin(), id.second) == 1);
   id = tree.closest_point_and_primitive(Point_2(1.5, 0.5));
-  std::cout << std::distance(triangles.cbegin(), id.second) << ". triangle" << std::endl;
+  assert(std::distance(triangles.cbegin(), id.second) == 2);
   id = tree.closest_point_and_primitive(Point_2(1.5, 0.6));
-  std::cout << std::distance(triangles.cbegin(), id.second) << ". triangle" << std::endl;
+  assert(std::distance(triangles.cbegin(), id.second) == 3);
   id = tree.closest_point_and_primitive(Point_2(1.0, 0.0));
-  std::cout << std::distance(triangles.cbegin(), id.second) << ". triangle" << std::endl;
+  assert(std::distance(triangles.cbegin(), id.second) == 0);
   id = tree.closest_point_and_primitive(Point_2(3.0, 0.5));
-  std::cout << std::distance(triangles.cbegin(), id.second) << ". triangle" << std::endl;
+  assert(std::distance(triangles.cbegin(), id.second) == 3);
 
   Ray ray(Point_2(5.5, 0.5), Point_2(1.5, 0.5));
   Ray_intersection intersection = tree.first_intersection(ray);
 
-  if (!intersection) {
-    std::cout << "Ray does not intersect with triangles although it should!" << std::endl;
-    return EXIT_FAILURE;
-  }
-  else {
-    std::cout << std::distance(triangles.cbegin(), intersection->second) << ". triangle" << std::endl;
-  }
+  assert(intersection.has_value());
+
+  assert(std::distance(triangles.cbegin(), intersection->second) == 3);
 
   std::list<Ray_intersection> intersections;
   tree.all_intersections(ray, std::back_inserter(intersections));
+  assert(intersections.size() == 4);
 
   return EXIT_SUCCESS;
 }
