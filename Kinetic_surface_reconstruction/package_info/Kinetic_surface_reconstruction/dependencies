@@ -6,6 +6,7 @@ BGL
 Boolean_set_operations_2
 Bounding_volumes
 Cartesian_kernel
+CGAL_Core
 Circulator
 Combinatorial_map
 Convex_hull_2
@@ -30,7 +31,6 @@ Modular_arithmetic
 Number_types
 Optimal_bounding_box
 Orthtree
-Point_set_2
 Point_set_3
 Point_set_processing_3
 Polygon
