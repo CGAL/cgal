@@ -20,9 +20,9 @@ typedef CGAL::AABB_traits_2<K, Primitive_pr> Traits_pr;
 typedef CGAL::AABB_tree<Traits_pr> Tree_pr;
 typedef Tree_pr::Point_and_primitive_id Point_and_primitive_id_pr;
 
-typedef CGAL::Polygon_2<K> Polygon;
-typedef Polygon::iterator Iterator_poly;
-typedef CGAL::AABB_polyline_segment_primitive_2<K, Iterator_poly, Polygon> Primitive_poly;
+typedef CGAL::Polygon_2<K> Polygon_2;
+typedef Polygon_2::iterator Iterator_poly;
+typedef CGAL::AABB_polyline_segment_primitive_2<K, Iterator_poly, Polygon_2> Primitive_poly;
 typedef CGAL::AABB_traits_2<K, Primitive_poly> Traits_poly;
 typedef CGAL::AABB_tree<Traits_poly> Tree_poly;
 typedef Tree_poly::Point_and_primitive_id Point_and_primitive_id_poly;
@@ -59,7 +59,7 @@ int main()
 
   std::vector<Point> polyline = { a, b, c, d, e };
 
-  Polygon poly(polyline.begin(), polyline.end());
+  Polygon_2 poly(polyline.begin(), polyline.end());
 
   test<Tree_poly, Point_and_primitive_id_poly>(Tree_poly(poly.begin(), poly.end(), poly));
 
