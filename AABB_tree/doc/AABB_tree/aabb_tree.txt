@@ -123,7 +123,7 @@ the squared distance from a point query.
 
 \subsection aabb_tree_examples_2 Tree of Polyhedron Triangle Facets for Intersection Queries
 
- In the following example the AABB primitive wraps a facet handle of a
+In the following example the AABB primitive wraps a facet handle of a
 triangle polyhedral surface as `id` and the corresponding 3D
 triangle as geometric object. From a segment query we test the
 intersections, then compute the number of intersections, compute the
@@ -238,7 +238,7 @@ subdivision scheme which multiplies the number of triangles by four.
 \subsection aabb_tree_perf_mem Memory
 
 When using the polyhedron triangle facet primitive (defined in
-`AABB_polyhedron_triangle_primitive.h`) the AABB tree occupies
+`AABB_face_graph_triangle_primitive.h`) the AABB tree occupies
 approximately 61 bytes per primitive (without constructing the
 internal KD-tree). It increases to approximately 150 bytes per
 primitive when constructing the internal KD-tree with one reference
