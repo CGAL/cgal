@@ -305,7 +305,7 @@ public:
 // This class is using a special clamped version of the cotangent weights.
 // This version is currently used in:
 // Polygon_mesh_processing -> fair.h
-// Polyhedron demo -> Hole_filling_plugin.cpp
+// CGAL Lab -> Hole_filling_plugin.cpp
 template<typename PolygonMesh,
          typename VertexPointMap,
          typename GeomTraits>
