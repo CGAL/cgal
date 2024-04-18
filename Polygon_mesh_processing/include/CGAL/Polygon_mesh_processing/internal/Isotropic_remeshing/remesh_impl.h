@@ -1014,10 +1014,11 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
-    template <class SizingFunction>
+    template <class SizingFunction, typename AllowMoveFunctor>
     void tangential_relaxation_impl(const bool relax_constraints/*1d smoothing*/
                                   , const unsigned int nb_iterations
-                                  , const SizingFunction& sizing)
+                                  , const SizingFunction& sizing
+                                  , const AllowMoveFunctor& shall_move)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Tangential relaxation (" << nb_iterations << " iter.)...";
@@ -1063,6 +1064,7 @@ namespace internal {
             .edge_is_constrained_map(constrained_edges_pmap)
             .vertex_is_constrained_map(constrained_vertices_pmap)
             .relax_constraints(relax_constraints)
+            .allow_move_functor(shall_move)
         );
       }
       else
@@ -1081,6 +1083,7 @@ namespace internal {
             .vertex_is_constrained_map(constrained_vertices_pmap)
             .relax_constraints(relax_constraints)
             .sizing_function(sizing)
+            .allow_move_functor(shall_move)
         );
       }
 

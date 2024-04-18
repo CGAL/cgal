@@ -19,6 +19,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 #include <CGAL/Polygon_mesh_processing/Uniform_sizing_field.h>
+#include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -267,6 +268,9 @@ void isotropic_remeshing(const FaceRange& faces
 #endif
     ) ) );
 
+  auto shall_move = choose_parameter(get_parameter(np, internal_np::allow_move_functor),
+                                     internal::Allow_all_moves());
+
 #if !defined(CGAL_NO_PRECONDITIONS)
   if(protect)
   {
@@ -322,7 +326,7 @@ void isotropic_remeshing(const FaceRange& faces
      remesher.collapse_short_edges(sizing, collapse_constraints);
     if(do_flip)
       remesher.flip_edges_for_valence_and_shape();
-    remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing);
+    remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));
 #ifdef CGAL_PMP_REMESHING_VERBOSE
