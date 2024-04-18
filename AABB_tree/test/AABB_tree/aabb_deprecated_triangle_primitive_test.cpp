@@ -42,7 +42,10 @@ int main()
     // compute closest point and squared distance
     Point point_query(2.0, 2.0, 2.0);
     Point closest_point = tree.closest_point(point_query);
+    std::cout << closest_point << std::endl;
+
     FT sqd = tree.squared_distance(point_query);
+    std::cout << sqd << std::endl;
 
     return EXIT_SUCCESS;
 }
