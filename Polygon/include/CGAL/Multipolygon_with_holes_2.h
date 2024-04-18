@@ -46,6 +46,8 @@ public:
   using value_type = Polygon_with_holes_2;
   /// @}
 
+  using Traits = Kernel;
+
   using Polygon_with_holes_container = std::deque<Polygon_with_holes_2>;
 
   using Polygon_with_holes_iterator = typename Polygon_with_holes_container::iterator;
