@@ -67,7 +67,7 @@ struct Named_params_impl : Base
 {
   typename std::conditional<std::is_copy_constructible<T>::value,
                             T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
-  Named_params_impl(const T& v, const Base& b)
+  constexpr Named_params_impl(const T& v, const Base& b)
     : Base(b)
     , v(v)
   {}
@@ -79,7 +79,7 @@ struct Named_params_impl<T, Tag, No_property>
 {
   typename std::conditional<std::is_copy_constructible<T>::value,
                             T, std::reference_wrapper<const T> >::type v; // copy of the parameter if copyable
-  Named_params_impl(const T& v)
+  constexpr Named_params_impl(const T& v)
     : v(v)
   {}
 };
@@ -256,7 +256,7 @@ namespace parameters{
 typedef Named_function_parameters<bool, internal_np::all_default_t>  Default_named_parameters;
 
 Default_named_parameters
-inline default_values();
+inline constexpr default_values();
 
 // function to extract a parameter
 template <typename T, typename Tag, typename Base, typename Query_tag>
@@ -339,14 +339,15 @@ struct Named_function_parameters
   typedef internal_np::Named_params_impl<T, Tag, Base> base;
   typedef Named_function_parameters<T, Tag, Base> self;
 
-  Named_function_parameters() : base(T()) {}
-  Named_function_parameters(const T& v) : base(v) {}
-  Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
+  constexpr Named_function_parameters() : base(T()) {}
+  constexpr Named_function_parameters(const T& v) : base(v) {}
+  constexpr Named_function_parameters(const T& v, const Base& b) : base(v, b) {}
 
 // create the functions for new named parameters and the one imported boost
 // used to concatenate several parameters
 #define CGAL_add_named_parameter(X, Y, Z)                             \
   template<typename K>                                                \
+  constexpr                                                           \
   Named_function_parameters<K, internal_np::X, self>                  \
   Z(const K& k) const                                                 \
   {                                                                   \
@@ -355,7 +356,7 @@ struct Named_function_parameters
   }
 #define CGAL_add_named_parameter_with_compatibility(X, Y, Z)          \
   template<typename K>                                                \
-  Named_function_parameters<K, internal_np::X, self>                  \
+  constexpr Named_function_parameters<K, internal_np::X, self>                  \
   Z(const K& k) const                                                 \
   {                                                                   \
     typedef Named_function_parameters<K, internal_np::X, self> Params;\
@@ -363,6 +364,7 @@ struct Named_function_parameters
   }
 #define CGAL_add_named_parameter_with_compatibility_cref_only(X, Y, Z) \
   template<typename K>                                                \
+  constexpr                                                           \
   Named_function_parameters<std::reference_wrapper<const K>,          \
                             internal_np::X, self>                     \
   Z(const K& k) const                                                 \
@@ -373,6 +375,7 @@ struct Named_function_parameters
   }
 #define CGAL_add_named_parameter_with_compatibility_ref_only(X, Y, Z) \
   template<typename K>                                                \
+  constexpr                                                           \
   Named_function_parameters<std::reference_wrapper<K>,                \
                             internal_np::X, self>                     \
   Z(K& k) const                                                       \
@@ -383,6 +386,7 @@ struct Named_function_parameters
   }
 #define CGAL_add_extra_named_parameter_with_compatibility(X, Y, Z)    \
   template<typename K>                                                \
+  constexpr                                                           \
   Named_function_parameters<K, internal_np::X, self>                  \
   Z(const K& k) const                                                 \
   {                                                                   \
@@ -406,6 +410,7 @@ struct Named_function_parameters
 #undef CGAL_NP_BUILD
 
   template <typename OT, typename OTag>
+  constexpr
   Named_function_parameters<OT, OTag, self>
   combine(const Named_function_parameters<OT,OTag>& np) const
   {
@@ -413,6 +418,7 @@ struct Named_function_parameters
   }
 
   template <typename OT, typename OTag, typename ... NPS>
+  constexpr
   auto
   combine(const Named_function_parameters<OT,OTag>& np, const NPS& ... nps) const
   {
@@ -426,14 +432,14 @@ struct Named_function_parameters
 namespace parameters {
 
 Default_named_parameters
-inline default_values()
+inline constexpr default_values()
 {
   return Default_named_parameters();
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 Default_named_parameters
-inline all_default()
+inline constexpr all_default()
 {
   return Default_named_parameters();
 }
@@ -443,6 +449,7 @@ template <class Tag, bool ref_only = false, bool ref_is_const = false>
 struct Boost_parameter_compatibility_wrapper
 {
   template <typename K>
+  constexpr
   Named_function_parameters<K, Tag>
   operator()(const K& p) const
   {
@@ -452,6 +459,7 @@ struct Boost_parameter_compatibility_wrapper
 
   template <typename K>
   Named_function_parameters<K, Tag>
+  constexpr
   operator=(const K& p) const
   {
     typedef Named_function_parameters<K, Tag> Params;
@@ -502,7 +510,7 @@ struct Boost_parameter_compatibility_wrapper<Tag, true, false>
 // define free functions and Boost_parameter_compatibility_wrapper for named parameters
 #define CGAL_add_named_parameter(X, Y, Z)        \
   template <typename K>                        \
-  Named_function_parameters<K, internal_np::X>                  \
+  constexpr Named_function_parameters<K, internal_np::X>                  \
   Z(const K& p)                                \
   {                                            \
     typedef Named_function_parameters<K, internal_np::X> Params;\
@@ -585,6 +593,8 @@ template <class ... TagsAllowed, class T, class Tag>
 constexpr
 bool authorized_options_rec(const Named_function_parameters<T, Tag>&)
 {
+  if constexpr (std::is_same_v<Tag, internal_np::do_not_check_allowed_np_t>)
+    return true;
   return is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag());
 }
 
@@ -592,6 +602,8 @@ template <class ... TagsAllowed, class T, class Tag, class Base>
 constexpr
 bool authorized_options_rec(const Named_function_parameters<T, Tag, Base>& np)
 {
+  if constexpr (std::is_same_v<Tag, internal_np::do_not_check_allowed_np_t>)
+    return true;
   if (is_tag_present(Tag_wrapper<TagsAllowed...>(), Tag()))
     return authorized_options_rec<TagsAllowed...>(static_cast<const Base&>(np));
   return false;

@@ -198,6 +198,7 @@ CGAL_add_named_parameter(force_filtering_t, force_filtering, force_filtering)
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)
 CGAL_add_named_parameter(use_bool_op_to_clip_surface_t, use_bool_op_to_clip_surface, use_bool_op_to_clip_surface)
+CGAL_add_named_parameter(do_not_check_allowed_np_t, do_not_check_allowed_np, do_not_check_allowed_np)
 
 // List of named parameters used in the Point Set Processing package
 CGAL_add_named_parameter(query_point_t, query_point_map, query_point_map)
