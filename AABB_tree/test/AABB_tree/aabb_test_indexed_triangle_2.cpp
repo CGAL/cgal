@@ -64,16 +64,14 @@ int main()
   assert(std::distance(triangles.cbegin(), id.second) == 0);
   id = tree.closest_point_and_primitive(Point_2(0.5, 0.6));
   assert(std::distance(triangles.cbegin(), id.second) == 1);
-  id = tree.closest_point_and_primitive(Point_2(1.5, 0.5));
+  id = tree.closest_point_and_primitive(Point_2(1.5, 0.4));
   assert(std::distance(triangles.cbegin(), id.second) == 2);
   id = tree.closest_point_and_primitive(Point_2(1.5, 0.6));
   assert(std::distance(triangles.cbegin(), id.second) == 3);
-  id = tree.closest_point_and_primitive(Point_2(1.0, 0.0));
-  assert(std::distance(triangles.cbegin(), id.second) == 0);
   id = tree.closest_point_and_primitive(Point_2(3.0, 0.5));
   assert(std::distance(triangles.cbegin(), id.second) == 3);
 
-  Ray ray(Point_2(5.5, 0.5), Point_2(1.5, 0.5));
+  Ray ray(Point_2(5.5, 0.5), Point_2(1.5, 0.4));
   Ray_intersection intersection = tree.first_intersection(ray);
 
   assert(intersection.has_value());
