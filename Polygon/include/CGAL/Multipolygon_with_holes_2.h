@@ -43,11 +43,11 @@ public:
 
   /// polygon with holes type
   using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<Kernel, Container>;
-  using value_type = Polygon_with_holes_2;
+
   /// @}
 
   using Traits = Kernel;
-
+  using value_type = Polygon_with_holes_2;
   using Polygon_with_holes_container = std::deque<Polygon_with_holes_2>;
 
   using Polygon_with_holes_iterator = typename Polygon_with_holes_container::iterator;
@@ -112,6 +112,15 @@ public:
     return bb;
   }
 
+  bool is_empty() const
+  {
+    for(const auto& pwh : polygons_with_holes()){
+      if(! pwh.is_empty()){
+        return false;
+      }
+    }
+    return true;
+  }
 
 protected:
   Polygon_with_holes_container m_polygons;

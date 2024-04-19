@@ -314,7 +314,6 @@ public:
   using Face_circulator = typename Triangulation::Face_circulator;
   using Edge = typename Triangulation::Edge;
 
-  // TODO: Edge_map and Vertex_map use std::set and std::map with exact kernels since Point_2 can't be hashed otherwise
   using Edge_map = typename std::conditional<std::is_floating_point<FT>::value,
                                              std::unordered_set<std::pair<Point_2, Point_2>,
                                                                 boost::hash<std::pair<Point_2, Point_2>>>,
