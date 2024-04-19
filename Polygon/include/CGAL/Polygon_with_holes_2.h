@@ -49,9 +49,7 @@ public:
   typedef typename Base::Size                        Size;
 
   /*! %Default constructor. */
-  Polygon_with_holes_2 () :
-    Base()
-  {}
+  Polygon_with_holes_2 () = default;
 
   /*! Constructor from the base class. */
   Polygon_with_holes_2 (const Base& base) :
@@ -63,7 +61,7 @@ public:
     Base (pgn_boundary)
   {}
 
-  /*! Move constructor */
+  /*! Cconstructor moving a polygon */
   explicit Polygon_with_holes_2 (Polygon_2&& pgn_boundary) :
     Base (std::move(pgn_boundary))
   {}
@@ -76,7 +74,7 @@ public:
     Base (pgn_boundary, h_begin, h_end)
   {}
 
-  /*! Move constructor.
+  /*! Cconstructor moving a polygon.
    * \note In order to move the hole polygons a
    * `std::move_iterator` may be used.
    */
@@ -87,7 +85,7 @@ public:
     Base (std::move(pgn_boundary), h_begin, h_end)
   {}
 
-  /*! Obtain the bounding box of the polygon with holes */
+  /*! returns the bounding box of the polygon with holes */
   Bbox_2 bbox() const { return this->outer_boundary().bbox(); }
 
 };

@@ -57,7 +57,7 @@ public:
   using Size = unsigned int;
 
   /*! %Default constructor. */
-  Multipolygon_with_holes_2() {}
+  Multipolygon_with_holes_2() = default;
 
   /*! Constructor from polygons. */
   template <typename PolygonsInputIterator>
