@@ -45,34 +45,36 @@ namespace CGAL {
 
 // It's also untrue that this is not documented...  It is !
 
-template< typename T, typename... Args >
-BOOST_CXX14_CONSTEXPR
-std::array< T, 1 + sizeof...(Args) >
-make_array(const T & t, const Args & ... args)
-{
-  std::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
-  return a;
-}
+template <typename T, typename ...Args>
+struct Make_array_element_type {
+  using type = T;
+};
 
-template< typename T, typename... Args >
-BOOST_CXX14_CONSTEXPR
-std::array< T, sizeof...(Args) >
-fwd_make_array(Args && ... args)
-{
-  std::array< T, sizeof...(Args) > a = { static_cast<T>(std::forward<Args>(args))... };
-  return a;
-}
+template <typename ...Args>
+struct Make_array_element_type<void, Args...> {
+  using type = typename std::common_type_t<Args...>;
+};
 
+template <typename T, typename ...Args>
+using Make_array_element_type_t = typename Make_array_element_type<T, Args...>::type;
+
+template<typename T = void, typename... Args>
+constexpr
+std::array<Make_array_element_type_t<T, Args...>, sizeof...(Args) >
+make_array(Args&& ... args)
+{
+  return {{ std::forward<Args>(args)... }};
+}
 
 // Functor version
 struct Construct_array
 {
-  template <typename T, typename... Args>
+  template <typename... Args>
   constexpr
-  std::array<T, 1 + sizeof...(Args)>
-  operator()(const T& t, const Args& ... args) const
+  decltype(auto)
+  operator()(Args&& ... args) const
   {
-    return make_array (t, args...);
+    return make_array( std::forward<Args>(args)... );
   }
 };
 
