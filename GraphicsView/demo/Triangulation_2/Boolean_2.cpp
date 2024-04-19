@@ -3,6 +3,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Triangulation_2/Boolean.h>
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 #include <CGAL/IO/WKT.h>
@@ -35,6 +36,7 @@ typedef CGAL::Polygon_2<K> Polygon2;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes_2;
 typedef CGAL::Multipolygon_with_holes_2<K> Multipolygon_with_holes_2;
 
+typedef CGAL::Triangulations::Boolean<K> Boolean;
 typedef std::shared_ptr<Polygon2> PolygonPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtr_vector ;
@@ -51,11 +53,11 @@ private:
   CGAL::Qt::Converter<K> convert;
   Polygon2 poly;
   Polygon_with_holes_2 pwhA, pwhB;
-  Multipolygon_with_holes_2 mpwhA, mpwhB;
+  Multipolygon_with_holes_2 mpwhA, mpwhB, mpwhC;
   QGraphicsScene scene;
 
   CGAL::Qt::PolygonWithHolesGraphicsItem<Polygon_with_holes_2> * pwhAgi;
-  CGAL::Qt::MultipolygonWithHolesGraphicsItem<Multipolygon_with_holes_2> *mpwhAgi, *mpwhBgi;
+  CGAL::Qt::MultipolygonWithHolesGraphicsItem<Multipolygon_with_holes_2> *mpwhAgi, *mpwhBgi, *mpwhCgi;
 
   CGAL::Qt::GraphicsViewPolygonWithHolesInput<K> * pi;
 
@@ -96,22 +98,33 @@ MainWindow::MainWindow()
 
   mpwhAgi = new CGAL::Qt::MultipolygonWithHolesGraphicsItem<Multipolygon_with_holes_2>(&mpwhA);
   mpwhAgi->setBrush(QBrush(::Qt::green));
+  mpwhAgi->setZValue(3);
   QObject::connect(this, SIGNAL(changed()),
                    mpwhAgi, SLOT(modelChanged()));
 
   scene.addItem(mpwhAgi);
 
   mpwhBgi = new CGAL::Qt::MultipolygonWithHolesGraphicsItem<Multipolygon_with_holes_2>(&mpwhB);
-  mpwhBgi->setBrush(QBrush(::Qt::red));
+  mpwhBgi->setZValue(4);
+  mpwhBgi->setBrush(QBrush(QColor(255, 0, 0, 100)));
   QObject::connect(this, SIGNAL(changed()),
                    mpwhBgi, SLOT(modelChanged()));
 
   scene.addItem(mpwhBgi);
 
+  mpwhCgi = new CGAL::Qt::MultipolygonWithHolesGraphicsItem<Multipolygon_with_holes_2>(&mpwhC);
+  mpwhCgi->setZValue(5);
+  mpwhCgi->setBrush(QBrush(QColor(211, 211, 211, 150)));
+  QObject::connect(this, SIGNAL(changed()),
+                   mpwhCgi, SLOT(modelChanged()));
+
+  scene.addItem(mpwhCgi);
+
 
   // Setup input handlers. They get events before the scene gets them
   // pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true);
   pi = new CGAL::Qt::GraphicsViewPolygonWithHolesInput<K>(this, &scene);
+  pi->setZValue(10);
 
   this->actionCreateInputPolygon->setChecked(true);
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
@@ -157,14 +170,18 @@ MainWindow::processInput(CGAL::Object o)
   if(add_2_A){
     if(assign(pwhA, o)){
       mpwhA.add_polygon_with_holes(pwhA);
-      Q_EMIT( changed());
     }
   }else{
     if(assign(pwhB, o)){
       mpwhB.add_polygon_with_holes(pwhB);
-      Q_EMIT( changed());
     }
   }
+  if((! mpwhA.is_empty()) && (! mpwhB.is_empty())){
+    Boolean boolean;
+    boolean.insert(mpwhA, mpwhB);
+    mpwhC = boolean([](bool a, bool b){ return a && b;});
+  }
+  Q_EMIT( changed());
 }
 
 /*

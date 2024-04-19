@@ -248,7 +248,7 @@
   </action>
  </widget>
  <resources>
-  <include location="Polygon_2.qrc"/>
+  <include location="Boolean_2.qrc"/>
   <include location="../icons/File.qrc"/>
   <include location="../resources/CGAL.qrc"/>
   <include location="../icons/Input.qrc"/>
