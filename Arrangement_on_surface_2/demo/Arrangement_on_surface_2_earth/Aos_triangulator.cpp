@@ -220,8 +220,6 @@ Aos_triangulator::get_by_country(Aos::Arr_handle arrh, float error,
     // std::cout << "processing country " << country_name << std::endl;
     auto& triangles = result[country_name];
     // CONVERT the face-points to QVector3D
-    using Face_points = std::vector<QVector3D>;
-    using Faces_ = std::vector<Face_points>;
     for (auto fh : fhs) {
       // skip any face with no OUTER-CCB
       if (0 == fh->number_of_outer_ccbs()) continue;

@@ -1330,7 +1330,6 @@ Aos::Country_color_map  Aos::get_color_mapping(Arr_handle arrh) {
 }
 
 std::string Aos::locate_country(Arr_handle arrh, const QVector3D& point) {
-  using Point_2 = Countries_arr::Point_2;
   using Naive_pl = CGAL::Arr_naive_point_location<Countries_arr>;
 
   auto& arr = *reinterpret_cast<Countries_arr*>(arrh.get());
