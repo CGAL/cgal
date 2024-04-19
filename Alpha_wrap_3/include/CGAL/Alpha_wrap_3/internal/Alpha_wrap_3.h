@@ -1153,15 +1153,17 @@ private:
     if(!is_positive(alpha) || !is_positive(offset))
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cerr << "Error: invalid input parameters: " << alpha << " and" << offset << std::endl;
+      std::cerr << "Error: invalid input parameters: " << alpha << " and " << offset << std::endl;
 #endif
       return false;
     }
 
+#ifdef CGAL_AW3_DEBUG
     if(refining && alpha > m_alpha)
       std::cerr << "Warning: refining with an alpha greater than the last iteration's!" << std::endl;
     if(refining && offset != m_offset)
       std::cerr << "Warning: refining with a different offset value!" << std::endl;
+#endif
 
     m_alpha = FT(alpha);
     m_sq_alpha = square(m_alpha);

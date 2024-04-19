@@ -354,6 +354,10 @@ configure_file(${CGAL_DOC_RESOURCE_DIR}/BaseDoxyfile.in
 
 set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
 
+if (BE_QUIET)
+  file(APPEND ${CGAL_DOC_DOXY_DEFAULT} "WARN_LOGFILE=doxygen.log\n")
+endif()
+
 # pkglist_filter gets the path to the pkglist_filter of this source
 # directory.
 if(WIN32)
