@@ -36,7 +36,7 @@ namespace Triangulations {
 /*!
 \ingroup PkgTriangulation2Miscellaneous
 
-\tparam Kernel must
+\tparam Kernel must be
 */
 
 template <typename Kernel>
@@ -164,7 +164,7 @@ sets the polygons as input of the %Boolean operation.
         idB.insert(cidB);
       }
     }
-    
+
     mark_domains(idA, 0);
     mark_domains(idB, 1);
   }
