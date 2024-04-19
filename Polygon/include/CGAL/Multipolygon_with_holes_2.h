@@ -86,7 +86,7 @@ public:
   Polygon_with_holes_const_iterator end() const { return m_polygons.end(); }
 
 
-  void add_polygon(const Polygon_2& pgn) { m_polygons.push_back(Polygon_with_holes_2(pgn)); }
+  void add_polygon(const Polygon_2& pgn) { m_polygons.emplace_back(pgn); }
 
   void add_polygon(Polygon_2&& pgn) { m_polygons.emplace_back(std::move(pgn)); }
 
