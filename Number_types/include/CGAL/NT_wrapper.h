@@ -23,6 +23,16 @@
 
 namespace CGAL {
 
+/*
+ * This class template `NT_wapper<NT>` is currently undocumented, on purpose.
+ *
+ * This class template provides a wrapper for number types. It calls a function
+ * `f` when a constructor, destructor, or assignment operator is called. This
+ * is useful to detect when a copy constructor is called, for example. An
+ * example of use case is in the test file
+ * `Number_types/test/Number_types/wrapping_type.cpp`.
+ */
+
 template <typename NT>
 class NT_wrapper {
   NT value;
