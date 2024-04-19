@@ -57,7 +57,7 @@ public:
 
   typedef unsigned int                                Size;
 
-  General_polygon_with_holes_2() : m_pgn() {}
+  General_polygon_with_holes_2() = default;
 
 
   explicit General_polygon_with_holes_2(const Polygon_2& pgn_boundary) :
