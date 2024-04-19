@@ -111,6 +111,15 @@ public:
     return bb;
   }
 
+  bool is_empty() const
+  {
+    for(const auto& pwh : polygons_with_holes()){
+      if(! pwh.is_empty()){
+        return false;
+      }
+    }
+    return true;
+  }
 
 protected:
   Polygon_with_holes_container m_polygons;
