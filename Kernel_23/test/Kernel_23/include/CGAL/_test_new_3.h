@@ -713,6 +713,7 @@ test_new_3(const R& rep)
         = rep.orientation_3_object();
   Orientation tmp31 = orientation(p2,p3,p4,p5);
   tmp31 = orientation(v3,v4,v5);
+  tmp31 = orientation(p2,p3,p2,v3);
   (void) tmp31;
 
 

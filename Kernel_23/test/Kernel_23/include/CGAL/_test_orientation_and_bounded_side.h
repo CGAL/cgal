@@ -43,7 +43,7 @@ _test_orientation_and_bounded_side(const R&)
   Point_3 s(-RT1, RT0, RT0);
   Point_3 org3( RT0, RT0, RT0);
   assert( CGAL::orientation( org3, s0, s1, s2) == CGAL::POSITIVE );
-  assert( CGAL::orientation( s, s0, s1, s2) == CGAL::POSITIVE );
+  assert( CGAL::orientation( s, s0, s1, s2-s) == CGAL::POSITIVE );
   assert( CGAL::side_of_oriented_sphere( s, s0, s1, s2, org3) == \
             CGAL::ON_POSITIVE_SIDE );
 

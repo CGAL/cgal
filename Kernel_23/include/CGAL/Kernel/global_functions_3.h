@@ -1076,6 +1076,17 @@ orientation(const Point_3<K> &p,
 template <class K >
 inline
 typename K::Orientation
+orientation(const Point_3<K> &p,
+            const Point_3<K> &q,
+            const Point_3<K> &r,
+            const Vector_3<K> &v)
+{
+  return internal::orientation(p, q, r, v, K());
+}
+
+template <class K >
+inline
+typename K::Orientation
 orientation(const Vector_3<K> &u, const Vector_3<K> &v, const Vector_3<K> &w)
 {
   return internal::orientation(u, v, w, K());

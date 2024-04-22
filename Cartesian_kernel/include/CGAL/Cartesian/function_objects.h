@@ -4260,6 +4260,14 @@ namespace CartesianKernelFunctors {
     }
 
     result_type
+    operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Vector_3& v) const
+    {
+      return orientation_with_vectorC3(p.x(), p.y(), p.z(),
+                                       q.x(), q.y(), q.z(),
+                                       r.x(), r.y(), r.z(),
+                                       v.x(), v.y(), v.z());
+    }
+    result_type
     operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
     {
       return orientationC3(u.x(), u.y(), u.z(),

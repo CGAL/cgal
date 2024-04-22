@@ -128,6 +128,19 @@ orientationC3(const FT &px, const FT &py, const FT &pz,
 template < class FT >
 CGAL_KERNEL_MEDIUM_INLINE
 typename Same_uncertainty_nt<Orientation, FT>::type
+orientation_with_vectorC3(const FT &px, const FT &py, const FT &pz,
+                          const FT &qx, const FT &qy, const FT &qz,
+                          const FT &rx, const FT &ry, const FT &rz,
+                          const FT &vx, const FT &vy, const FT &vz)
+{
+  return sign_of_determinant<FT>(qx-px,rx-px,vx,
+                                 qy-py,ry-py,vy,
+                                 qz-pz,rz-pz,vz);
+}
+
+template < class FT >
+CGAL_KERNEL_MEDIUM_INLINE
+typename Same_uncertainty_nt<Orientation, FT>::type
 orientationC3(const FT &ux, const FT &uy, const FT &uz,
               const FT &vx, const FT &vy, const FT &vz,
               const FT &wx, const FT &wy, const FT &wz)
