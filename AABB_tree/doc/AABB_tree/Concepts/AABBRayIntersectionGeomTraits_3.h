@@ -47,7 +47,7 @@ public:
   typedef unspecified_type Cartesian_const_iterator_3;
 
   /*!
-    A model of `ConstructCartesianConstIterator_33`.
+    A model of `ConstructCartesianConstIterator_3`.
    */
   typedef unspecified_type  Construct_cartesian_const_iterator_3;
 

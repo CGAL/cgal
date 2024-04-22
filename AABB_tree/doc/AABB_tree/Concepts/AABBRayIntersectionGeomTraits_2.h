@@ -1,12 +1,11 @@
-3
 /*!
 \ingroup PkgAABBTreeConcepts
 \cgalConcept
 
 The concept `AABBRayIntersectionGeomTraits_2` is a refinement of the
-concept `AABBGeomTraits_2`. In addition to the types required by
+concept `AABBGeomTraits_2`. In addition to the types and functors required by
 `AABBGeomTraits_2` it also requires types and functors necessary to
-define the Intersection_distance functor.
+define the Intersection_distance functor (see `AABBRayIntersectionTraits`).
 
 \cgalRefines{AABBGeomTraits_2}
 
