@@ -513,7 +513,7 @@ void test_invalid_selections()
   assert(pinched_fg.is_selection_valid());
 
   // this creates a non-manifold vertex (multiple umbrellas)
-  clear(mesh);
+  CGAL::clear(mesh);
   read_a_mesh(mesh, "data/genus3.off");
   assert(is_valid_polygon_mesh(mesh));
 
