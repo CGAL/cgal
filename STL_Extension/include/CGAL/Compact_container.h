@@ -271,7 +271,7 @@ public:
   {
     init();
     block_size = c.block_size;
-    time_stamp = c.time_stamp.load();
+    time_stamp = 0;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
