@@ -442,9 +442,14 @@ implementing both intersection and distance queries, and for generic
 queries and primitives was developed by Camille Wormser. In 2009,
 Pierre Alliez, Stéphane Tayeb and Camille Wormser made the
 implementation CGAL-compliant, with the help of Laurent Rineau for
-optimizing the tree construction. The authors wish to thank Andreas
-Fabri, Jane Tournois, Mariette Yvinec and Sylvain Lefèbvre for
-helpful comments and discussions.
+optimizing the tree construction. Additionally, Andreas
+Fabri, Jane Tournois, Mariette Yvinec and Sylvain Lefèbvre are
+given thanks for helpful comments and discussions during that period.
+Later, Sébastien Loriot contributed several improvements:
+thread-safe queries, introduction of shared data stored in the traits
+for lighter primitive types, ...
+In 2024, the package was made compatible with 2D and 3D primitives by
+Andreas Fabri, Sébastien Loriot, and Sven Oesau.
 
 */
 
