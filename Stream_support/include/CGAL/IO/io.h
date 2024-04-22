@@ -248,7 +248,12 @@ Convenience function to construct an output representation (`Output_rep`) for ty
 Generic IO for type `T` with formatting tag.
 */
 template <class T, class F>
-Output_rep<T,F> oformat( const T& t, F format) { return Output_rep<T,F>(t, format); }
+Output_rep<T,F> oformat( const T& t, F format) {
+  if constexpr (std::is_constructible_v<Output_rep<T,F>, const T&, F>)
+    return Output_rep<T,F>(t, format);
+  else
+    return Output_rep<T,F>(t);
+}
 
 } // namespace IO
 
