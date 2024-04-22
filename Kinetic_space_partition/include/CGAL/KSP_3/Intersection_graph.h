@@ -39,13 +39,12 @@ public:
   using Kernel = GeomTraits;
   using Intersection_kernel = IntersectionKernel;
 
+  using IkFT = typename Intersection_kernel::FT;
   using Point_2 = typename Intersection_kernel::Point_2;
   using Point_3 = typename Intersection_kernel::Point_3;
   using Segment_3 = typename Intersection_kernel::Segment_3;
   using Line_3 = typename Intersection_kernel::Line_3;
   using Polygon_2 = typename CGAL::Polygon_2<Intersection_kernel>;
-
-  using Inexact_FT = typename Kernel::FT;
 
   struct Vertex_property {
     Point_3 point;
@@ -53,7 +52,7 @@ public:
     Vertex_property(const Point_3& point) : point(point) {}
   };
 
-  using Kinetic_interval = std::vector<std::pair<Inexact_FT, Inexact_FT> >;
+  using Kinetic_interval = std::vector<std::pair<IkFT, IkFT> >;
 
   struct Edge_property {
     std::size_t line;

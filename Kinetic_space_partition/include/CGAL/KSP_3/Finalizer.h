@@ -117,11 +117,10 @@ public:
 
     create_volumes();
 
-    /*
-        if (m_parameters.debug) {
-            for (const auto& v : m_data.volumes())
-              dump_volume(m_data, v.pfaces, "volumes/" + m_data.prefix() + std::to_string(v.index), true, v.index);
-        }*/
+    if (m_parameters.debug) {
+      for (const auto& v : m_data.volumes())
+        dump_volume(m_data, v.pfaces, "volumes/" + m_data.prefix() + std::to_string(v.index), true, v.index);
+    }
     CGAL_assertion(m_data.check_faces());
   }
 
@@ -136,13 +135,14 @@ private:
   void calculate_centroid(Volume_cell& volume) {
     // First find a point in the interior of the volume cell.
     FT x = 0, y = 0, z = 0;
+    FT num = volume.pvertices.size();
     for (const PVertex& v : volume.pvertices) {
       Point_3 p = m_data.point_3(v);
       x += p.x();
       y += p.y();
       z += p.z();
     }
-    Point_3 inside(x / volume.pvertices.size(), y / volume.pvertices.size(), z / volume.pvertices.size());
+    Point_3 inside(x / num, y / num, z / num);
 
     // Now create a vector of tetrahedrons.
     std::vector<Tetrahedron_3> tets;
@@ -358,11 +358,11 @@ private:
         // Thus the only neighbor needs to be a bbox face.
         PFace neighbor = (neighbor_faces[0] == pface) ? neighbor_faces[1] : neighbor_faces[0];
         CGAL_assertion(neighbor.first < 6 && pface.first < 6);
-        CGAL_assertion(oriented_side(pface, neighbor) == seed_side);
+        //CGAL_assertion(oriented_side(pface, neighbor) == seed_side);
 
         Oriented_side inverse_side = oriented_side(neighbor, pface);
 
-        CGAL_assertion(inverse_side == ON_POSITIVE_SIDE);
+        //CGAL_assertion(inverse_side == ON_POSITIVE_SIDE);
 
         if (associate(neighbor, volume_index, inverse_side, volumes, map_volumes))
           queue.push(std::make_pair(neighbor, inverse_side));

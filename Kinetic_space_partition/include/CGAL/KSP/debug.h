@@ -950,6 +950,14 @@ void dump_volumes_ksp(const KSP& ksp, const std::string tag = std::string()) {
   }
 }
 */
+template<typename K>
+void dump_polygon(const std::vector<typename K::Point_3>& pts, const std::string& filename) {
+  Saver<K> saver;
+  std::vector<std::vector<typename K::Point_3> > pts2;
+  pts2.push_back(pts);
+
+  saver.export_polygon_soup_3(pts2, filename);
+}
 
 void dump_polygon(const std::vector<CGAL::Epick::Point_3>& pts, const std::string& filename) {
   Saver<CGAL::Epick> saver;

@@ -68,7 +68,7 @@ decltype(auto) distance(const Point_d& p, const Point_d& q) {
   using Traits = typename Kernel_traits<Point_d>::Kernel;
   using FT = typename Traits::FT;
   const FT sq_dist = CGAL::squared_distance(p, q);
-  return static_cast<FT>(CGAL::sqrt(CGAL::to_double(sq_dist)));
+  return static_cast<FT>(CGAL::approximate_sqrt(sq_dist));
 }
 
 // Project 3D point onto 2D plane.
@@ -94,7 +94,7 @@ inline const Vector_d normalize(const Vector_d& v) {
   using FT = typename Traits::FT;
   const FT dot_product = CGAL::abs(v * v);
   //CGAL_assertion(dot_product != FT(0));
-  return v / static_cast<FT>(CGAL::sqrt(CGAL::to_double(dot_product)));
+  return v / static_cast<FT>(CGAL::approximate_sqrt(dot_product));
 }
 
 
