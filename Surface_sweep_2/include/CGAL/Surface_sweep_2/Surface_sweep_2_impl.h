@@ -15,11 +15,16 @@
 #define CGAL_SURFACE_SWEEP_2_IMPL_H
 
 #include <CGAL/license/Surface_sweep_2.h>
+#include <set>
+#include <vector>
 
 /*! \file
  *
  * Member-function definitions of the Surface_sweep_2 class-template.
  */
+
+#include <algorithm>
+#include <set>
 
 namespace CGAL {
 namespace Surface_sweep_2 {

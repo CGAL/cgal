@@ -10,7 +10,8 @@ Release date: October 2023
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
-- The demos as well as the `draw()` functions using the `Basic_viewer` are based on Qt6
+- The demos as well as the `Basic_viewer` are based on Qt6.
+- The `Basic_viewer` is improved and documented.
 - **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
 - **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
@@ -70,6 +71,8 @@ Release date: October 2023
     `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` that refines a soup of triangles so that no pair of triangles intersects
      in their interiors. Also added, the function `autorefine()` operating directly on a triangle mesh and updating it
      using the aforementioned function on a triangle soup.
+-   Added the function `CGAL::Polygon_mesh_processing::add_bbox()` that enables to add a tight or extended, triangulated or not,
+    bounding box to a face graph.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
@@ -101,6 +104,12 @@ Release date: October 2023
     position now keeps the first one, instead of switching to the latest. This
     only affects custom point types where not all points in the same position
     are equivalent.
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.0/Manual/packages.html#PkgBGL)
+
+- Added the function `remove_all_elements()`, which removes vertices, halfedges, and faces
+  without collecting garbage and without removing properties.
+
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------

@@ -18,7 +18,7 @@
 #ifndef CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H
 #define CGAL_DRAW_MULTIPOLYGON_WITH_HOLES_2_H
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -53,8 +53,8 @@ namespace CGAL {
 
 // Viewer class for Multipolygon_with_holes_2
 template <typename Multipolygon>
-class Mpwh_2_basic_viewer_qt : public Basic_viewer_qt {
-  using Base = Basic_viewer_qt;
+class Mpwh_2_basic_viewer_qt : public Qt::Basic_viewer {
+  using Base = Qt::Basic_viewer;
   using Mpwh = Multipolygon;
   using Pwh = typename Mpwh::Polygon_with_holes_2;
   using Pgn = typename Mpwh::Polygon_2;
@@ -67,7 +67,7 @@ public:
   /// @param title the title of the window
   Mpwh_2_basic_viewer_qt(QWidget* parent, const Mpwh& mpwh,
                          const char* title = "Basic Multipolygon_with_holes_2 Viewer") :
-    Base(parent, title, true, true, true, false, false),
+    Base(parent, gs, title, true, true, true, false, false),
     m_mpwh(mpwh) {
     if (mpwh.number_of_polygons_with_holes() == 0) return;
 
@@ -109,11 +109,10 @@ public:
   /*! Compute the elements of a multipolygon with holes.
    */
   void add_elements() {
-    clear();
+    gs.clear();
 
     for (auto const& p: m_mpwh.polygons_with_holes()) {
-      CGAL::IO::Color c(rand()%255,rand()%255,rand()%255);
-      face_begin(c);
+      gs.face_begin(get_random_color(get_default_random()));
 
       const Pnt* point_in_face;
       const auto& outer_boundary = p.outer_boundary();
@@ -122,10 +121,10 @@ public:
 
       for (auto it = p.holes_begin(); it != p.holes_end(); ++it) {
         compute_loop(*it, true);
-        add_point_in_face(*point_in_face);
+        gs.add_point_in_face(*point_in_face);
       }
 
-      face_end();
+      gs.face_end();
     }
   }
 
@@ -133,21 +132,21 @@ protected:
   /*! Compute the face
    */
   void compute_loop(const Pgn& p, bool hole) {
-    if (hole) add_point_in_face(p.vertex(p.size()-1));
+    if (hole) gs.add_point_in_face(p.vertex(p.size()-1));
 
     auto prev = p.vertices_begin();
     auto it = prev;
-    add_point(*it);
-    add_point_in_face(*it);
+    gs.add_point(*it);
+    gs.add_point_in_face(*it);
     for (++it; it != p.vertices_end(); ++it) {
-      add_segment(*prev, *it);  // add segment with previous point
-      add_point(*it);
-      add_point_in_face(*it);   // add point in face
+      gs.add_segment(*prev, *it);  // add segment with previous point
+      gs.add_point(*it);
+      gs.add_point_in_face(*it);   // add point in face
       prev = it;
     }
 
     // Add the last segment between the last point and the first one
-    add_segment(*prev, *(p.vertices_begin()));
+    gs.add_segment(*prev, *(p.vertices_begin()));
   }
 
   virtual void keyPressEvent(QKeyEvent* e) {
@@ -166,6 +165,8 @@ protected:
   }
 
 private:
+  Graphics_scene gs;
+
   //! The window width in pixels.
   int m_width = CGAL_BASIC_VIEWER_INIT_SIZE_X;
 
