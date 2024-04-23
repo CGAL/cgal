@@ -132,7 +132,7 @@ public:
   };
 
 private:
-  static constexpr bool identical_kernel = !std::is_same<Kernel, Intersection_kernel>();
+  static constexpr bool identical_kernel = !std::is_same_v<Kernel, Intersection_kernel>;
 
   std::shared_ptr<Data> m_data;
 

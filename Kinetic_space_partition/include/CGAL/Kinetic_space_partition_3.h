@@ -777,13 +777,12 @@ public:
     std::vector<typename Intersection_kernel::Point_3> vtx;
     std::vector<Index> vtx_index;
 
-    using LCC_kernel = CGAL::Kernel_traits<typename LCC::Point>::Kernel;
+    using LCC_kernel = typename CGAL::Kernel_traits<typename LCC::Point>::Kernel;
 
     using To_lcc = CGAL::Cartesian_converter<Intersection_kernel, LCC_kernel>;
 
     To_lcc to_lcc;
 
-    From_exact from_exact;
     To_exact to_exact;
 
     std::vector<Index> faces_of_volume, vtx_of_face;

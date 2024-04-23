@@ -26,6 +26,8 @@
 #include <CGAL/KSP_3/Support_plane.h>
 #include <CGAL/KSP_3/Intersection_graph.h>
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 namespace CGAL {
 namespace KSP_3 {
 namespace internal {
@@ -245,7 +247,7 @@ private:
 
 public:
   Data_structure(const Parameters& parameters, const std::string &prefix) : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix) {
-    bool k = std::is_same<EPECK, Intersection_kernel>();
+    bool k = std::is_same_v<Exact_predicates_exact_constructions_kernel, Intersection_kernel>;
     std::string kern = k ? "EPECK" : "GMPQ";
 #if _DEBUG
     eventlog = std::ofstream("propagation_dbg" + kern + ".txt");
@@ -465,7 +467,7 @@ public:
 
     std::size_t num;
 
-    Vector_2 tt = to_target.vector(), ts = to_source.vector();
+    // Vector_2 tt = to_target.vector(), ts = to_source.vector();
     IkVector_2 tt2 = to_target2.vector(), ts2 = to_source2.vector();
     bool ccw = (tt2.x() * ts2.y() - tt2.y() * ts2.x()) < 0;
 

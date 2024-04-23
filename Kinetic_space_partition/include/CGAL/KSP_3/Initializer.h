@@ -138,7 +138,7 @@ public:
     /*
 
     // What data exists here and needs to be compared? The vertex positions of the igraph are identical and the number of faces too
-    bool k = std::is_same<EPECK, Intersection_kernel>();
+    bool k = std::is_same_v<EPECK, Intersection_kernel>;
     std::string kern = k ? "EPECK" : "GMPQ";
 #if _DEBUG
     std::ofstream fs("after_init_dbg" + kern + ".txt");
