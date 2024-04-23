@@ -11,6 +11,7 @@
 #ifndef CGAL_ACCELERATE_VECTOR_H
 #define CGAL_ACCELERATE_VECTOR_H
 
+#include <vector>
 
 namespace CGAL {
 /*!
