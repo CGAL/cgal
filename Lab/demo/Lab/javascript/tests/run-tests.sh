@@ -2,7 +2,7 @@
 
 DIR=$(dirname "$0")
 echo "Run tests from directory $DIR"
-DEMO=./Polyhedron_3
+DEMO=./CGALlab
 
 for f in $DIR/good/*.js; do
     if ! $DEMO --no-debug-scripts $f 'qtscript:quit()'; then

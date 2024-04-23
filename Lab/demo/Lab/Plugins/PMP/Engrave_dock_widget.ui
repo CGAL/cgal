@@ -85,7 +85,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/up.png</normaloff>:/cgal/icons/resources/up.png</iconset>
         </property>
        </widget>
@@ -109,7 +109,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/right_arrow.png</normaloff>:/cgal/icons/resources/right_arrow.png</iconset>
         </property>
        </widget>
@@ -133,7 +133,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/down.png</normaloff>:/cgal/icons/resources/down.png</iconset>
         </property>
        </widget>
@@ -151,7 +151,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/left_arrow.png</normaloff>:/cgal/icons/resources/left_arrow.png</iconset>
         </property>
        </widget>
@@ -307,10 +307,10 @@
   </widget>
  </widget>
  <resources>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
  </resources>
  <connections/>
 </ui>

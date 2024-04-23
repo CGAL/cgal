@@ -1,4 +1,4 @@
-#include "cgallab.h"
+#include "CGALlab.h"
 
 /*!
  * \brief defines the entry point of the demo.

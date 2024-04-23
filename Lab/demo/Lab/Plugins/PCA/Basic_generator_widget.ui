@@ -31,7 +31,7 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../cgallab.qrc">:/cgal/Lab/resources/prism.png</pixmap>
+           <pixmap resource="../../CGALlab.qrc">:/cgal/Lab/resources/prism.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>false</bool>
@@ -223,7 +223,7 @@ QGroupBox::title {
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../cgallab.qrc">:/cgal/Lab/resources/icosphere.png</pixmap>
+           <pixmap resource="../../CGALlab.qrc">:/cgal/Lab/resources/icosphere.png</pixmap>
           </property>
          </widget>
         </item>
@@ -540,7 +540,7 @@ QGroupBox::title {
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../../cgallab.qrc">:/cgal/Lab/resources/hexahedron.png</pixmap>
+             <pixmap resource="../../CGALlab.qrc">:/cgal/Lab/resources/hexahedron.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>false</bool>
@@ -750,7 +750,7 @@ QGroupBox::title {
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../cgallab.qrc">:/cgal/Lab/resources/tetrahedron.png</pixmap>
+           <pixmap resource="../../CGALlab.qrc">:/cgal/Lab/resources/tetrahedron.png</pixmap>
           </property>
          </widget>
         </item>
@@ -910,7 +910,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../../cgallab.qrc">:/cgal/Lab/resources/grid.png</pixmap>
+             <pixmap resource="../../CGALlab.qrc">:/cgal/Lab/resources/grid.png</pixmap>
             </property>
            </widget>
           </item>
@@ -1219,8 +1219,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
  </resources>
  <connections/>
 </ui>

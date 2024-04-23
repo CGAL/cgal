@@ -75,7 +75,7 @@ pushd Periodic_4_hyperbolic_triangulation_2_Demo_with_dlls; zip -r ../Periodic_4
 pushd Triangulation_on_sphere_2_Demo_with_dlls; zip -r ../triangulation_on_sphere_2.zip *;         popd
 
 # CGAL-6.0
-pushd Lab_Demo_with_dlls; zip -r ../cgallab.zip *; popd
+pushd Lab_Demo_with_dlls; zip -r ../CGALlab.zip *; popd
 
 # check
 echo CHECK now. The following lines should be empty.
