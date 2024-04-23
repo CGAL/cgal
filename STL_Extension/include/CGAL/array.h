@@ -13,6 +13,7 @@
 #define CGAL_ARRAY_H
 
 #include <CGAL/config.h>
+#include <CGAL/type_traits.h>
 #include <array>
 #include <utility>
 
@@ -63,7 +64,13 @@ constexpr
 std::array<Make_array_element_type_t<T, Args...>, sizeof...(Args) >
 make_array(Args&& ... args)
 {
-  return {{ std::forward<Args>(args)... }};
+  using Target_type = Make_array_element_type_t<T, Args...>;
+  if constexpr ( (CGAL::is_convertible_without_narrowing_v<cpp20::remove_cvref_t<Args>, Target_type>&&...) )
+    return {{ std::forward<Args>(args)... }};
+  else {
+    std::array< Target_type, sizeof...(Args) > a = { { static_cast<Target_type>(args)... } };
+    return a;
+  }
 }
 
 // Functor version
