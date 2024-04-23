@@ -27,7 +27,7 @@
 
 #ifdef CGAL_CXX20
 #  define STREAM_DUMMY // disable stream_dummy() function that is not used and using features removed from c++20
-// We cannot undef STREAM_DUMMY as LEAD/internal/PREAMBULE.h is not protected
+// We cannot undef STREAM_DUMMY as LEDA/internal/PREAMBULE.h is not protected
 #endif
 #include <LEDA/system/basic.h>
 
