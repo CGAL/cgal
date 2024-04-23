@@ -37,6 +37,9 @@ namespace KSR {
     FT maximum_angle;
     std::size_t min_region_size;
 
+    std::size_t max_octree_depth;
+    std::size_t max_octree_node_size;
+
     bool regparallel, regcoplanar, regorthogonal, regsymmetric;
     FT angle_tolerance;
     FT maximum_offset;
@@ -47,12 +50,9 @@ namespace KSR {
     FT enlarge_bbox_ratio;
     bool reorient;
 
-    std::size_t max_octree_depth;
-    std::size_t max_octree_node_size;
-
     // Reconstruction.
-    FT graphcut_beta; // magic parameter between 0 and 1
     bool use_ground;
+    FT graphcut_beta; // magic parameter between 0 and 1
     //std::map<typename KSP::Face_support, bool> external_nodes;
 
     // Constructor.
@@ -64,11 +64,11 @@ namespace KSR {
       debug(false),
       // shape detection / shape regularization
       k_neighbors(12),
-      min_region_size(0),
-      max_octree_node_size(40),
-      max_octree_depth(3),
       maximum_distance(0),
       maximum_angle(10),
+      min_region_size(0),
+      max_octree_depth(3),
+      max_octree_node_size(40),
       regparallel(false),
       regcoplanar(true),
       regorthogonal(false),

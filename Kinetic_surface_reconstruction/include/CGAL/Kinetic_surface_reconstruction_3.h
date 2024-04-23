@@ -35,7 +35,7 @@
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL
@@ -653,13 +653,13 @@ private:
       assert(n.size() == 1 || n.size() == 2);
       auto it = n.begin();
 
-      auto& finf = m_lcc.template info<2>(m_faces_lcc[i]);
+//      auto& finf = m_lcc.template info<2>(m_faces_lcc[i]);
 
-      bool skipped = false;
+//      bool skipped = false;
 
       Volume_attribute va = m_lcc.template attribute<3>(m_lcc.dart_descriptor(*it));
       if (va == m_lcc.null_descriptor) {
-        skipped = true;
+//        skipped = true;
         it++;
       }
 
@@ -680,9 +680,9 @@ private:
       if (n.size() == 2 && it != n.end())
         inf2 = m_lcc.template info<3>(m_lcc.dart_descriptor(*it));
 
-      int second;
-      if (n.size() == 2 && it != n.end())
-        second = static_cast<int>(m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id);
+//     int second;
+//      if (n.size() == 2 && it != n.end())
+//        second = static_cast<int>(m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id);
 
       if (n.size() == 2 && it != n.end())
         m_face_neighbors_lcc[i] = std::make_pair(first + 6, m_lcc.template info<3>(m_lcc.dart_descriptor(*it)).volume_id + 6);
@@ -1003,7 +1003,7 @@ private:
       if (m_labels[n.first] != m_labels[n.second]) {
         std::vector<Point_3> face;
 
-        for (const auto& vd : m_lcc.one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
+        for (const auto& vd : m_lcc.template one_dart_per_incident_cell<0, 2>(m_faces_lcc[i]))
           face.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
 
         std::vector<std::size_t> indices(face.size());
@@ -1106,7 +1106,7 @@ private:
 
     From_exact from_exact;
 
-    auto& finfo = m_lcc.template info<2>(face);
+//    auto& finfo = m_lcc.template info<2>(face);
     int ip = m_lcc.template info<2>(face).input_polygon_index;
     typename Intersection_kernel::Plane_3 pl = m_lcc.template info<2>(face).plane;
 
@@ -1118,7 +1118,7 @@ private:
       Face_attribute cur_fa = m_lcc.template attribute<2>(cur_fdh);
       face_queue.pop();
 
-      if (region_index[cur_fa] == region)
+      if (region_index[cur_fa] == static_cast<int>(region))
         continue;
 
       //write_face(cur_fdh, std::to_string(region) + "-inside-" + std::to_string(cur_fa) + ".ply");
@@ -1155,8 +1155,8 @@ private:
             fdh = m_lcc.template beta<2, 3>(fdh);
             continue;
           }
-          auto& inf = m_lcc.template info<2>(fdh);
-          bool added = false;
+//          auto& inf = m_lcc.template info<2>(fdh);
+//          bool added = false;
 
           //write_face(fdh, std::to_string(region) + "-" + std::to_string(fa) + ".ply");
 
@@ -1198,7 +1198,7 @@ private:
               if (internal)
                 break;
 
-              added = true;
+//              added = true;
               face_queue.push(fdh);
 
 //               if (debug)
@@ -1216,8 +1216,8 @@ private:
               if (internal)
                 break;
 
-              added = true;
-              Plane_3 pla = from_exact(pl);
+//              added = true;
+//              Plane_3 pla = from_exact(pl);
 
 //               if (debug)
 //                 std::cout << ip << " " << pl.a() << " " << pl.b() << " " << pl.c() << " " << pl.d() << std::endl;
@@ -1245,7 +1245,7 @@ private:
     const Face_attribute& fa = m_lcc.template attribute<2>(dh);
     auto& finfo = m_lcc.template info_of_attribute<2>(fa);
 
-    if (!m_labels[m_lcc.template info<3>(dh).volume_id + 6] == 1) {
+    if (m_labels[m_lcc.template info<3>(dh).volume_id + 6] != 1) {
       write_face(dh, "flipface.ply");
       std::cout << "is_border_edge called on dart of outside volume, dh " << dh << " volume_id " << m_lcc.template info<3>(dh).volume_id << std::endl;
     }
@@ -1271,6 +1271,7 @@ private:
       auto& finfo2 = m_lcc.template info_of_attribute<2>(fa2);
       // Is neighbor face on same support plane?
       if (finfo2.input_polygon_index != finfo.input_polygon_index)
+      {
         if (!internal)
           return true;
         else {
@@ -1282,9 +1283,12 @@ private:
 
           continue;
         }
+      }
 
       if (finfo2.input_polygon_index == -7)
+      {
         if (finfo2.plane != finfo.plane && finfo2.plane != finfo.plane.opposite())
+        {
           if (!internal)
             return true;
           else {
@@ -1295,6 +1299,8 @@ private:
 
             continue;
           };
+        }
+      }
       return internal;
     } while (edh != dh);
 
@@ -1311,9 +1317,9 @@ private:
 
     std::size_t num_vertices = 0;
 
-    for (int i = 0; i < polygons.size(); i++) {
+    for (std::size_t i = 0; i < polygons.size(); i++) {
       num_vertices += polygons[i].size();
-      for (int j = 0; j < polygons[i].size(); j++) {
+      for (std::size_t j = 0; j < polygons[i].size(); j++) {
         vertices.push_back(cdt.insert(pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])))));
         auto it = va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1));
         CGAL_assertion(it.second);
@@ -1368,11 +1374,11 @@ private:
 
     std::vector<bool> merged(polygons.size(), false);
     for (std::size_t i = 0; i < polygons.size(); i++) {
-      if (i == outer)
+      if (i == std::size_t(outer))
         continue;
 
       std::size_t idx;
-      if (i < outer)
+      if (i < std::size_t(outer))
         idx = i * polygons.size() + outer;
       else
         idx = outer * polygons.size() + i;
@@ -1446,14 +1452,14 @@ private:
   void collect_border(typename LCC::Dart_descriptor dh, std::vector<bool>& processed, std::vector<std::vector<std::size_t> >& borders) {
     processed[dh] = true;
 
-    if (!m_labels[m_lcc.template info<3>(dh).volume_id + 6] == 1)
+    if (m_labels[m_lcc.template info<3>(dh).volume_id + 6] != 1)
       std::cout << "collect_border called on dart of outside volume, dh " << dh << " volume_id " << m_lcc.template info<3>(dh).volume_id << std::endl;
 
     std::vector<std::size_t> border;
     border.push_back(m_lcc.template attribute<0>(dh));
 
-    const Face_attribute& fa = m_lcc.template attribute<2>(dh);
-    auto& finfo = m_lcc.template info_of_attribute<2>(fa);
+//    const Face_attribute& fa = m_lcc.template attribute<2>(dh);
+//    auto& finfo = m_lcc.template info_of_attribute<2>(fa);
 
     typename LCC::Dart_descriptor cur = dh;
     cur = m_lcc.template beta<1>(cur);
@@ -1466,7 +1472,7 @@ private:
         processed[cur] = true;
         border.push_back(m_lcc.template attribute<0>(cur));
 
-        if (!m_labels[m_lcc.template info<3>(cur).volume_id + 6] == 1)
+        if (m_labels[m_lcc.template info<3>(cur).volume_id + 6] != 1)
           std::cout << "border collected from dart of outside volume, dh " << cur << " volume_id " << m_lcc.template info<3>(cur).volume_id << std::endl;
       }
       else
@@ -1494,7 +1500,7 @@ private:
   void write_edge(typename LCC::Dart_descriptor dh, const std::string& fn) {
     From_exact from_exact;
     std::ofstream vout(fn);
-    vout << "2 " << from_exact(m_lcc.point(dh)) << " " << from_exact(m_lcc.point(m_lcc.beta<1>(dh))) << std::endl;
+    vout << "2 " << from_exact(m_lcc.point(dh)) << " " << from_exact(m_lcc.point(m_lcc.template beta<1>(dh))) << std::endl;
     vout.close();
   }
 
@@ -1503,9 +1509,9 @@ private:
     std::ofstream vout(fn);
     vout << (border.size() + 1);
     for (std::size_t k = 0; k < border.size(); k++) {
-      vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(border[k])));
+      vout << " " << from_exact(m_lcc.point(m_lcc.template dart_of_attribute<0>(border[k])));
     }
-    vout << " " << from_exact(m_lcc.point(m_lcc.dart_of_attribute<0>(border[0]))) << std::endl;
+    vout << " " << from_exact(m_lcc.point(m_lcc.template dart_of_attribute<0>(border[0]))) << std::endl;
     vout.close();
   }
 
@@ -1534,7 +1540,7 @@ private:
         continue;
       }
 
-      std::size_t num_edges = m_lcc.template one_dart_per_incident_cell<1, 2>(dh).size();
+//      std::size_t num_edges = m_lcc.template one_dart_per_incident_cell<1, 2>(dh).size();
 
       typename LCC::Dart_descriptor dh2 = dh;
 
@@ -1661,7 +1667,7 @@ private:
   }
 
   void count_volume_votes_lcc() {
-    const int debug_volume = -1;
+//    const int debug_volume = -1;
     FT total_volume = 0;
     std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
     m_volume_votes.clear();
@@ -1674,12 +1680,12 @@ private:
       m_volumes[i] = 0;
     }
 
-    std::size_t count_faces = 0;
-    std::size_t count_points = 0;
+//    std::size_t count_faces = 0;
+//    std::size_t count_points = 0;
 
     From_exact from_exact;
 
-    std::size_t idx = 0;
+//    std::size_t idx = 0;
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       std::size_t v[] = { std::size_t(-1), std::size_t(-1) };
@@ -1698,7 +1704,7 @@ private:
         const auto& point = get(m_point_map, p);
         const auto& normal = get(m_normal_map, p);
 
-        count_points++;
+//        count_points++;
 
         for (std::size_t j = 0; j < idx; j++) {
           const Vector_3 vec(point, c[j]);
@@ -1890,17 +1896,17 @@ private:
     m_ground_polygon_index = -1;
     std::vector<std::size_t> other_ground;
     for (std::size_t i = 0; i < candidates.size(); i++) {
-      Vector_3 d = m_regions[candidates[i]].first.orthogonal_vector();
+      // Vector_3 d = m_regions[candidates[i]].first.orthogonal_vector();
       FT z = m_regions[candidates[i]].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
       if (z - low_z_peak < max_distance_to_plane) {
-        if (m_ground_polygon_index == -1)
+        if (m_ground_polygon_index == std::size_t(-1))
           m_ground_polygon_index = candidates[i];
         else
           other_ground.push_back(candidates[i]);
       }
     }
 
-    if (m_ground_polygon_index != -1) {
+    if (m_ground_polygon_index != std::size_t(-1)) {
 
       for (std::size_t i = 0; i < other_ground.size(); i++)
         std::move(m_regions[other_ground[i]].second.begin(), m_regions[other_ground[i]].second.end(), std::back_inserter(m_regions[m_ground_polygon_index].second));
@@ -1994,14 +2000,14 @@ private:
     // Iterate over all faces of the lcc
     for (Dart& d : m_lcc.template one_dart_per_cell<2>()) {
       Dart_descriptor dd = m_lcc.dart_descriptor(d);
-      if (m_lcc.template info<2>(m_lcc.dart_descriptor(d)).input_polygon_index != polygon_index || !m_lcc.template info<2>(m_lcc.dart_descriptor(d)).part_of_initial_polygon)
+      if (m_lcc.template info<2>(m_lcc.dart_descriptor(d)).input_polygon_index != static_cast<int>(polygon_index) || !m_lcc.template info<2>(m_lcc.dart_descriptor(d)).part_of_initial_polygon)
         continue;
 
       // No filtering of points per partition
 
       face_to_points.push_back(std::make_pair(m_lcc.dart_descriptor(d), std::vector<std::size_t>()));
 
-      auto& info = m_lcc.template info<2>(m_lcc.dart_descriptor(d));
+//      auto& info = m_lcc.template info<2>(m_lcc.dart_descriptor(d));
 
       std::vector<Point_2> vts2d;
       vts2d.reserve(m_lcc.template one_dart_per_incident_cell<0, 2>(m_lcc.dart_descriptor(d)).size());
@@ -2021,7 +2027,7 @@ private:
         bool outside = false;
 
         // poly, vertices and edges in IFace are oriented ccw
-        std::size_t idx = 0;
+//        std::size_t idx = 0;
         for (std::size_t i = 0; i < vts2d.size(); i++) {
           Vector_2 ts = (vts2d[(i + vts2d.size() - 1) % vts2d.size()]) - pt;
           Vector_2 tt = (vts2d[i]) - pt;

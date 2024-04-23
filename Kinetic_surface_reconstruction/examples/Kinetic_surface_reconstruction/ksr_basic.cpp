@@ -16,7 +16,7 @@ using Normal_map   = typename Point_set::Vector_map;
 
 using KSR = CGAL::Kinetic_surface_reconstruction_3<Kernel, Point_set, Point_map, Normal_map>;
 
-int main(const int argc, const char** argv) {
+int main() {
   // Input.
 
   Point_set point_set;
