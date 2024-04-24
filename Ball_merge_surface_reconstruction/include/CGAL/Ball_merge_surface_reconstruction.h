@@ -53,6 +53,7 @@
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
+#include <CGAL/Container_helper.h>
 #include <boost/iterator/zip_iterator.hpp>
 
 #include <queue>
@@ -64,13 +65,12 @@ namespace internal{
 template <typename Traits, typename ConcurrencyTag>
 class Ball_merge_surface_reconstruction {
 
-  typedef CGAL::Triangulation_vertex_base_with_info_3<int, Traits> Vb;
+  typedef CGAL::Triangulation_vertex_base_with_info_3<std::size_t, Traits> Vb;
   typedef CGAL::Triangulation_cell_base_with_info_3<unsigned int, Traits, CGAL::Delaunay_triangulation_cell_base_3<Traits>> Cb;
   typedef CGAL::Triangulation_data_structure_3<Vb, Cb, ConcurrencyTag> Tds;
   typedef CGAL::Delaunay_triangulation_3<Traits, Tds> Delaunay;
   typedef typename Delaunay::Point Point;
   typedef typename Delaunay::Cell_handle Cell_handle;
-  static constexpr int NOT_VISITED=-1;
   int group = 1, gcount = 0, maxg = 0, maingroup, max1 = 0;
   double par, bbdiaglen;
   Bbox_3 bbox;
@@ -130,7 +130,8 @@ private:
 
 public:
 
-  void operator()(const std::vector<Point>& points, double par_, double eta_)
+  template <class PointRange>
+  void operator()(const PointRange& points, double par_, double eta_)
   {
     dt3.clear();
     par = par_;
@@ -139,7 +140,7 @@ public:
 
     bbdiaglen = distance(Point(bbox.xmin(), bbox.ymin(), bbox.zmin()), Point(bbox.xmax(), bbox.ymax(), bbox.zmax()));
 
-    std::vector<int> vids(points.size());
+    std::vector<std::size_t> vids(points.size());
     std::iota(vids.begin(), vids.end(), 0);
 
     if constexpr (std::is_same<ConcurrencyTag, Parallel_tag>::value) {
@@ -202,84 +203,102 @@ public:
 //     }
 // }
 
-void set_triangle_indices_hull1(std::vector<std::array<int,3>>& meshFaceIndices) const
-{
-  std::vector<bool> visited(dt3.number_of_cells(),false);
-  for (Cell_handle cell : dt3.finite_cell_handles()){
-    for (int i = 0; i < 4; ++i){
-      if (option == 1){
-        //If global, write the cell details of the largest group to the PLY file
-        if (cell_groups[cell->info()] == maingroup && (cell_groups[cell->neighbor(i)->info()] != maingroup || dt3.is_infinite(cell->neighbor(i)))){
-          //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the largest group
-          std::array<int, 3> indices;
-          for (int j = 0; j < 3; ++j){
-            indices[j] = cell->vertex((i + 1 + j) % 4)->info();
-          }
-          if (i%2==1)
-              std::swap(indices[0], indices[1]);
-          meshFaceIndices.push_back(indices);
-        }
-      }
-      else if (!visited[cell->neighbor(i)->info()])
-      {
-        if (bblen(cell->vertex((i + 1) % 4)->point(), cell->vertex((i + 2) % 4)->point(), cell->vertex((i + 3) % 4)->point())){
-          //If the triangle crosses our bbdiagonal based criteria
-          if (dt3.is_infinite(cell->neighbor(i)) || !_function(cell, cell->neighbor(i))){
-            //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
-            visited[cell->info()]=true;
-            std::array<int,3> indices;
+  template <class TripleIndexRange>
+  void set_triangle_indices_hull1(TripleIndexRange& meshFaceIndices) const
+  {
+    using TripleIndex = typename std::iterator_traits<typename TripleIndexRange::iterator>::value_type;
+    std::vector<bool> visited(dt3.number_of_cells(),false);
+    for (Cell_handle cell : dt3.finite_cell_handles()){
+      for (int i = 0; i < 4; ++i){
+        if (option == 1){
+          //If global, write the cell details of the largest group to the PLY file
+          if (cell_groups[cell->info()] == maingroup && (cell_groups[cell->neighbor(i)->info()] != maingroup || dt3.is_infinite(cell->neighbor(i)))){
+            //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the largest group
+            TripleIndex indices;
+            CGAL::internal::resize(indices, 3);
             for (int j = 0; j < 3; ++j){
               indices[j] = cell->vertex((i + 1 + j) % 4)->info();
             }
+            if (i%2==1)
+                std::swap(indices[0], indices[1]);
             meshFaceIndices.push_back(indices);
+          }
+        }
+        else if (!visited[cell->neighbor(i)->info()])
+        {
+          if (bblen(cell->vertex((i + 1) % 4)->point(), cell->vertex((i + 2) % 4)->point(), cell->vertex((i + 3) % 4)->point())){
+            //If the triangle crosses our bbdiagonal based criteria
+            if (dt3.is_infinite(cell->neighbor(i)) || !_function(cell, cell->neighbor(i))){
+              //If the cells cannot be merged, then write the triangle between these two cells to the PLY file
+              visited[cell->info()]=true;
+              TripleIndex indices;
+              CGAL::internal::resize(indices, 3);
+              for (int j = 0; j < 3; ++j){
+                indices[j] = cell->vertex((i + 1 + j) % 4)->info();
+              }
+              meshFaceIndices.push_back(indices);
+            }
           }
         }
       }
     }
   }
-}
 
-  void set_triangle_indices_hull2(std::vector<std::array<int,3>>& meshFaceIndices) const
+
+  template <class TripleIndexRange>
+  void set_triangle_indices_hull2(TripleIndexRange& meshFaceIndices) const
   {
-  for (Cell_handle cell : dt3.finite_cell_handles())
+    using TripleIndex = typename std::iterator_traits<typename TripleIndexRange::iterator>::value_type;
+    for (Cell_handle cell : dt3.finite_cell_handles())
     {
       for (int i = 0; i < 4; ++i)
         if (cell_groups[cell->info()] == secondgroup && (dt3.is_infinite(cell->neighbor(i)) || cell_groups[cell->neighbor(i)->info()] != secondgroup))
         {
           //Write the triangles between cells if they have have different labels and one of them is labeled as the same as the second largest group
-          std::array<int,3> indices;
+          TripleIndex indices;
+          CGAL::internal::resize(indices, 3);
           for (int j = 0; j < 3; j++)
             indices[j] = cell->vertex((i + 1 + j) % 4)->info();
           if (i%2==1)
             std::swap(indices[0], indices[1]);
-          meshFaceIndices.push_back(indices);
+          meshFaceIndices.emplace_back(indices);
         }
     }
   }
+
 };
 
-}
+} // end of internal namespace
 
-/// \ingroup PkgBallMergeRef
 
-/// Creates a triangle soup approximating the surface.
-/// After creation, resulting triangular faces will be stored in "out_triangles", allowing us to use it independently for further processing.
-
-/// Parameters
-
-/// points is the input points (without additional information like normal or texture)
-/// out_triangles is the output parameter storing triangles approximating the surface
-/// parameter is the value of \f$ \delta \f$
-/// eta is the optional parameter \f$ \eta \f$
-
-/// Examples:
-/// Ball_merge_surface_reconstruction/ball_merge_reconstruction_local.cpp
-
-template <class Concurrency_tag, class Point_3>
-void ball_merge_surface_reconstruction_local(const std::vector<Point_3>& points,
-                                             std::vector<std::array<int, 3> >& out_triangles,
+/*!
+ *
+ * \ingroup PkgBallMergeRef
+ *
+ * creates a triangle soup approximating the surface.
+ * After creation, resulting triangular faces will be stored in `out_triangles`, allowing us to use it independently for further processing.
+ *
+ * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * \tparam PointRange a model of `RandomAccessContainer`
+ * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
+ *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
+ *                          being constructible from `std::size_t`.
+ *
+ * \param points is the input points (without additional information like normal or texture)
+ * \param out_triangles is the output parameter storing triangles approximating the surface
+ * \param parameter is the value of \f$ \delta \f$
+ * \param eta is the optional parameter \f$ \eta \f$
+ *
+ * \todo: add traits as template param model of DT traits concept
+ * \todo more info on the parameters
+ */
+template <class Concurrency_tag = Sequential_tag, class PointRange, class TripleIndexRange>
+void ball_merge_surface_reconstruction_local(const PointRange& points,
+                                             TripleIndexRange& out_triangles,
                                              double parameter, double eta=200.)
 {
+  using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits = typename Kernel_traits<Point_3>::type;
   CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
   bmsr.option=0;
@@ -287,27 +306,30 @@ void ball_merge_surface_reconstruction_local(const std::vector<Point_3>& points,
   bmsr.set_triangle_indices_hull1(out_triangles);
 }
 
-/// \ingroup PkgBallMergeRef
-
-/// Creates a watertight mesh approximating the surface.
-/// After creation, resulting meshes will be stored in "out_triangles1" and "out_triangles2", allowing us to use it independently for further processing.
-
-/// Parameters
-
-/// points is the input points (without additional information like normal or texture)
-/// out_triangles1 is the output parameter storing the first resulting mesh
-/// out_triangles2 is the output parameter storing the second resulting mesh
-/// parameter is the value of \f$ \delta \f$
-
-/// Examples:
-/// Ball_merge_surface_reconstruction/ball_merge_reconstruction_global.cpp
-
-template <class Concurrency_tag, class Point_3>
-void ball_merge_surface_reconstruction_global(const std::vector<Point_3>& points,
-                                              std::vector<std::array<int, 3> >& out_triangles1,
-                                              std::vector<std::array<int, 3> >& out_triangles2,
+/*! \ingroup PkgBallMergeRef
+ *
+ * creates a watertight mesh approximating the surface.
+ * After creation, resulting meshes will be stored in `out_triangles1` and `out_triangles2`, allowing us to use it independently for further processing.
+ *
+ * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
+ *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * @tparam PointRange a model of the concepts `RandomAccessContainer`
+ * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
+ *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
+ *                          being constructible from `std::size_t`.
+ *
+ * \param points is the input points (without additional information like normal or texture)
+ * \param out_triangles1 is the output parameter storing the first resulting mesh
+ * \param out_triangles2 is the output parameter storing the second resulting mesh
+ * \param parameter is the value of \f$ \delta \f$
+ */
+template <class Concurrency_tag= Sequential_tag, class PointRange, class TripleIndexRange>
+void ball_merge_surface_reconstruction_global(const PointRange& points,
+                                              TripleIndexRange& out_triangles1,
+                                              TripleIndexRange& out_triangles2,
                                               double parameter)
 {
+  using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits = typename Kernel_traits<Point_3>::type;
   CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
   bmsr.option=1;

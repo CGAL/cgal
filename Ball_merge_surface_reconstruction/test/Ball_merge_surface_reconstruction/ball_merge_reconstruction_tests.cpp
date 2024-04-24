@@ -2,6 +2,10 @@
 #include <CGAL/Ball_merge_surface_reconstruction.h>
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/IO/read_points.h>
+#include <boost/container/small_vector.hpp>
+#if defined(CGAL_LINKED_WITH_TBB)
+#include <tbb/concurrent_vector.h>
+#endif
 
 #include <string>
 
@@ -22,7 +26,7 @@ void test1()
 
 void test2()
 {
- const std::string inFilename = CGAL::data_file_path("points_3/kitten.xyz");//Filename
+  const std::string inFilename = CGAL::data_file_path("points_3/kitten.xyz");//Filename
   std::ifstream inStream(inFilename);//Read the file
   // std::vector<std::array<unsigned char, 3>> meshVertexColors;//Variable to hold if the input has textures
   // double par = atof(argv[2]);//Parameter to check IR
@@ -51,10 +55,41 @@ void test2()
   // }
 }
 
+void test_containers()
+{
+  const std::string inFilename = CGAL::data_file_path("points_3/kitten.xyz");//Filename
+  std::ifstream inStream(inFilename);//Read the file
+
+  std::vector<Point> points;
+  CGAL::IO::read_points(inFilename, std::back_inserter(points));
+
+  {
+  std::vector<std::vector<std::size_t>> meshFaceIndices, meshFaceIndices1, meshFaceIndices2;
+  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, 1.7);
+  CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, 1.7);
+  }
+  {
+  std::list<boost::container::small_vector<std::size_t,3>> meshFaceIndices, meshFaceIndices1, meshFaceIndices2;
+  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, 1.7);
+  CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, 1.7);
+  }
+
+#if defined(CGAL_LINKED_WITH_TBB)
+  {
+  tbb::concurrent_vector<Point> points;
+  CGAL::IO::read_points(inFilename, std::back_inserter(points));
+  tbb::concurrent_vector<tbb::concurrent_vector<std::size_t>> meshFaceIndices, meshFaceIndices1, meshFaceIndices2;
+  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, 1.7);
+  CGAL::ball_merge_surface_reconstruction_global<CGAL::Parallel_if_available_tag>(points, meshFaceIndices1, meshFaceIndices2, 1.7);
+  }
+#endif
+}
+
 int main()
 {
   test1();
   test2();
+  test_containers();
 
   return 0;
 }
