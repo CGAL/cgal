@@ -505,9 +505,15 @@ Triangulation_segment_cell_iterator_3<Tr,Inc>::walk_to_next_3(const Simplex& pre
         continue;
     }
     const Point* const backup_vert_li = std::exchange(vert[li], &_target);
-
+    bool op_li_is_null = false;
+    if(_t_vertex != Vertex_handle()) {
+      for(int i = 0; i < 4; ++i) {
+        if(li == i) continue;
+        if(cur_cell->vertex(i) == _t_vertex) op_li_is_null = true;
+      }
+    }
     // Check if the target is on the opposite side of the supporting plane.
-    op[li] = _tr->orientation(*vert[0], *vert[1], *vert[2], *vert[3]);
+    op[li] = op_li_is_null ? ZERO : _tr->orientation(*vert[0], *vert[1], *vert[2], *vert[3]);
     if(op[li] == POSITIVE)
         pos += li;
     if(op[li] != NEGATIVE) {
