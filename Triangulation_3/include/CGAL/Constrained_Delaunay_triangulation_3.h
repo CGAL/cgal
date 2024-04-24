@@ -401,9 +401,9 @@ bool does_tetrahedron_intersect_triangle_interior(typename Kernel::Tetrahedron_3
       return true;
   }
 
-  decltype(auto) p = k.construct_vertex_3_object()(tr, 0);
-  if(k.has_on_bounded_side_3_object()(tet, p))
-    return true;
+  // decltype(auto) p = k.construct_vertex_3_object()(tr, 0);
+  // if(k.has_on_bounded_side_3_object()(tet, p))
+  //   return true;
 
   return false;
 }
