@@ -39,7 +39,7 @@ bool run_test(
   std::cout << input_filename << std::endl;
 
   for (std::size_t i = 0; i < ks.size(); i++) {
-    KSP ksp(CGAL::parameters::verbose(true).debug(true));
+    KSP ksp(CGAL::parameters::verbose(false).debug(false));
 
     ksp.insert(input_vertices, input_faces);
 
