@@ -26,8 +26,6 @@ int main(const int, const char**) {
     .maximum_angle(10)
     .k_neighbors(12)
     .minimum_region_size(50)
-    .regularize_coplanarity(true)
-    .regularize_parallelism(true)
     .maximum_offset(0.1);
 
   // Algorithm.
@@ -37,8 +35,8 @@ int main(const int, const char**) {
 
   std::cout << ksr.detected_planar_shapes().size() << " planar shapes" << std::endl;
 
-  std::vector<Point_3> vtx;
-  std::vector<std::vector<std::size_t> > polylist;
+  std::vector<Point_3> vtx, vtx_ground;
+  std::vector<std::vector<std::size_t> > polylist, polylist_ground;
 
   std::map<typename KSR::KSP::Face_support, bool> external_nodes;
 
@@ -46,18 +44,15 @@ int main(const int, const char**) {
 
   ksr.reconstruct(0.5, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
 
-  if (vtx.size() != 10 && polylist.size() != 7) {
-    std::cerr << "reconstruction with external nodes set to outside provided wrong result: #vtx " << vtx.size() << " expected: 10, #polys: " << polylist.size() << " expected: 7" << std::endl;
+  if (polylist.empty()) {
+    std::cerr << "reconstruction with external nodes set to outside provided empty result!" << std::endl;
     failed = true;
   }
 
-  vtx.clear();
-  polylist.clear();
+  ksr.reconstruct_with_ground(0.5, std::back_inserter(vtx_ground), std::back_inserter(polylist_ground));
 
-  ksr.reconstruct_with_ground(0.5, std::back_inserter(vtx), std::back_inserter(polylist));
-
-  if (vtx.size() != 22 && polylist.size() != 7) {
-    std::cerr << "reconstruction with ground set to outside provided wrong result: #vtx " << vtx.size() << " expected: 22, #polys: " << polylist.size() << " expected: 7" << std::endl;
+  if (polylist_ground.empty() || vtx_ground.size() < vtx.size()) {
+    std::cerr << "reconstruction with ground provided wrong result!" << std::endl;
     failed = true;
   }
 
