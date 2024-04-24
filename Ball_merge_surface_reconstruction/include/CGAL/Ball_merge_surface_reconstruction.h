@@ -288,21 +288,21 @@ public:
  *
  * \param points is the input points (without additional information like normal or texture)
  * \param out_triangles is the output parameter storing triangles approximating the surface
- * \param parameter is the value of \f$ \delta \f$
+ * \param delta is the value of \f$ \delta \f$
  * \param eta is the optional parameter \f$ \eta \f$
  *
  */
 template <class Concurrency_tag = Sequential_tag, class Traits = Default, class PointRange, class TripleIndexRange>
 void ball_merge_surface_reconstruction_local(const PointRange& points,
                                              TripleIndexRange& out_triangles,
-                                             double parameter, double eta=200.)
+                                             double delta, double eta=200.)
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
 
   CGAL::internal::Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
   bmsr.option=0;
-  bmsr(points, parameter, eta);
+  bmsr(points, delta, eta);
   bmsr.set_triangle_indices_hull1(out_triangles);
 }
 
@@ -322,19 +322,19 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  * \param points is the input points (without additional information like normal or texture)
  * \param out_triangles1 is the output parameter storing the first resulting mesh
  * \param out_triangles2 is the output parameter storing the second resulting mesh
- * \param parameter is the value of \f$ \delta \f$
+ * \param delta is the value of \f$ \delta \f$
  */
 template <class Concurrency_tag= Sequential_tag, class Traits = Default, class PointRange, class TripleIndexRange>
 void ball_merge_surface_reconstruction_global(const PointRange& points,
                                               TripleIndexRange& out_triangles1,
                                               TripleIndexRange& out_triangles2,
-                                              double parameter)
+                                              double delta)
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
   CGAL::internal::Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
   bmsr.option=1;
-  bmsr(points, parameter, 0);
+  bmsr(points, delta, 0);
   bmsr.set_triangle_indices_hull1(out_triangles1);
   bmsr.set_triangle_indices_hull2(out_triangles2);
 }
