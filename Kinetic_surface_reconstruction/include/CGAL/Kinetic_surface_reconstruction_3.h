@@ -359,7 +359,9 @@ public:
   void partition(std::size_t k) {
     FT partition_time, finalization_time, conformal_time;
     m_kinetic_partition.partition(k, partition_time, finalization_time, conformal_time);
-    std::cout << "Bounding box partitioned into " << m_kinetic_partition.number_of_volumes() << " volumes" << std::endl;
+
+    if (m_verbose)
+      std::cout << "Bounding box partitioned into " << m_kinetic_partition.number_of_volumes() << " volumes" << std::endl;
 
     m_kinetic_partition.get_linear_cell_complex(m_lcc);
 
@@ -630,7 +632,7 @@ private:
 
       m_faces_lcc.push_back(dh);
 
-      auto p = m_attrib2index_lcc.emplace(std::make_pair(m_lcc.template attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
+      CGAL_assertion_code(auto p = m_attrib2index_lcc.emplace(std::make_pair(m_lcc.template attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1)););
       CGAL_assertion(p.second);
     }
 
@@ -690,8 +692,8 @@ private:
         m_face_neighbors_lcc[i] = std::make_pair(m_face_neighbors_lcc[i].second, m_face_neighbors_lcc[i].first);
 
       if (m_face_neighbors_lcc[i].first < m_face_neighbors_lcc[i].second) {
-        auto it = m_neighbors2index_lcc.emplace(std::make_pair(m_face_neighbors_lcc[i], i));
-        assert(it.second);
+        CGAL_assertion_code(auto it = m_neighbors2index_lcc.emplace(std::make_pair(m_face_neighbors_lcc[i], i)););
+        CGAL_assertion(it.second);
       }
     }
 
@@ -1312,13 +1314,10 @@ private:
     std::unordered_map<std::size_t, std::size_t> va2vh;
     std::vector<Vertex_handle> vertices;
 
-    std::size_t num_vertices = 0;
-
     for (std::size_t i = 0; i < polygons.size(); i++) {
-      num_vertices += polygons[i].size();
       for (std::size_t j = 0; j < polygons[i].size(); j++) {
         vertices.push_back(cdt.insert(pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])))));
-        auto it = va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1));
+        CGAL_assertion_code(auto it = va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1)););
         CGAL_assertion(it.second);
 
         vertices.back()->info().i = i;
@@ -1333,7 +1332,7 @@ private:
     }
     // check infinitive edges for outer polygon
     int outer = -1;
-    auto& e = *(cdt.incident_edges(cdt.infinite_vertex()));
+    auto e = *(cdt.incident_edges(cdt.infinite_vertex()));
     auto a = e.first->vertex((e.second + 1) % 3);
     auto b = e.first->vertex((e.second + 2) % 3);
 
@@ -1422,8 +1421,6 @@ private:
 
     typename LCC::Dart_descriptor dh2 = m_lcc.template beta<2>(dh);
 
-    std::size_t idx = 1;
-
     do {
       Face_attribute fa2 = m_lcc.template attribute<2>(dh2);
       auto& finfo2 = m_lcc.template info_of_attribute<2>(fa2);
@@ -1436,7 +1433,6 @@ private:
         else return dh2;
       }
       dh2 = m_lcc.template beta<3, 2>(dh2);
-      idx++;
 
     } while (dh2 != dh);
 
@@ -1461,8 +1457,6 @@ private:
     typename LCC::Dart_descriptor cur = dh;
     cur = m_lcc.template beta<1>(cur);
 
-    std::size_t idx = 0;
-
     do {
       if (is_border_edge(cur)) {
         CGAL_assertion(!processed[cur]);
@@ -1475,7 +1469,6 @@ private:
       else
         cur = circulate_vertex_2d(cur);
       cur = m_lcc.template beta<1>(cur);
-      idx++;
     } while(cur != dh);
 
     borders.push_back(std::move(border));
@@ -1532,12 +1525,8 @@ private:
       const auto& n = m_face_neighbors_lcc[m_attrib2index_lcc[fa]];
 
       // Belongs to reconstruction?
-      if (m_labels[n.first] == m_labels[n.second]) {
-        std::cout << "face skipped" << std::endl;
+      if (m_labels[n.first] == m_labels[n.second])
         continue;
-      }
-
-//      std::size_t num_edges = m_lcc.template one_dart_per_incident_cell<1, 2>(dh).size();
 
       typename LCC::Dart_descriptor dh2 = dh;
 
@@ -1587,10 +1576,6 @@ private:
 
       // Remap from mapping to m_face_inliers
       for (auto p : mapping) {
-        const Face_attribute& f = m_lcc.template attribute<2>(p.first);
-        std::size_t id = m_attrib2index_lcc[f];
-        assert(m_face_inliers[id].size() == 0);
-
         m_face_inliers[m_attrib2index_lcc[m_lcc.template attribute<2>(p.first)]].resize(p.second.size());
         for (std::size_t k = 0; k < p.second.size(); k++)
           m_face_inliers[m_attrib2index_lcc[m_lcc.template attribute<2>(p.first)]][k] = m_regions[i].second[p.second[k]];
@@ -1804,10 +1789,10 @@ private:
         region.push_back(j);
 
       store_convex_hull_shape(region, m_regions[i].first, polys_debug);
-      //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSP_3::internal::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    if (m_debug)
+      KSP_3::internal::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     // Convert indices.
     m_planar_regions.clear();
@@ -1850,10 +1835,10 @@ private:
         region.push_back(j);
 
       store_convex_hull_shape(region, m_regions[i].first, polys_debug);
-      //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSP_3::internal::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    if (m_debug)
+      KSP_3::internal::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     // Merge coplanar regions
     for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
@@ -1893,7 +1878,6 @@ private:
     m_ground_polygon_index = -1;
     std::vector<std::size_t> other_ground;
     for (std::size_t i = 0; i < candidates.size(); i++) {
-      // Vector_3 d = m_regions[candidates[i]].first.orthogonal_vector();
       FT z = m_regions[candidates[i]].first.projection(Point_3(bbox_center[0], bbox_center[1], bbox_center[2])).z();
       if (z - low_z_peak < max_distance_to_plane) {
         if (m_ground_polygon_index == std::size_t(-1))
@@ -1913,10 +1897,8 @@ private:
 
       while (other_ground.size() != 0) {
         m_regions.erase(m_regions.begin() + other_ground.back());
-        std::cout << " " << other_ground.back();
         other_ground.pop_back();
       }
-      std::cout << std::endl;
 
       std::vector<Point_3> ground_plane;
       ground_plane.reserve(m_regions[m_ground_polygon_index].second.size());
@@ -1939,15 +1921,12 @@ private:
         region.push_back(j);
 
       store_convex_hull_shape(region, m_regions[i].first, polys_debug);
-      //KSP_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
     if (m_debug)
       KSP_3::internal::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     std::vector<Plane_3> pl;
-
-    std::size_t idx = 0;
     for (const auto& p : m_regions) {
       bool exists = false;
       for (std::size_t i = 0; i < pl.size(); i++)
@@ -1956,8 +1935,6 @@ private:
 
       if (!exists)
         pl.push_back(p.first);
-
-      idx++;
     }
 
     for (const auto& pair : m_regions) {
