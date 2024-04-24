@@ -9284,14 +9284,6 @@ public:
                          const Kernel::Point_3&s);
 
   /*!
-    equivalent to `operator()(p, q, r, p+v)`
-  */
-  Orientation operator()(const Kernel::Point_3&p,
-                         const Kernel::Point_3&q,
-                         const Kernel::Point_3&r,
-                         const Kernel::Vector_3&v);
-
-  /*!
     returns \ref CGAL::POSITIVE if `u`, `v` and `w` are positively oriented,
     returns \ref CGAL::NEGATIVE if `u`, `v` and `w` are negatively oriented,
     and returns \ref CGAL::COPLANAR if `u`, `v` and `w` are coplanar.

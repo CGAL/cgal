@@ -4526,12 +4526,6 @@ namespace HomogeneousKernelFunctors {
     }
 
     result_type
-    operator()(const Point_3& p, const Point_3& q, const Point_3& r, const Vector_3& v) const
-    {
-      return operator()(p, q, r, p + v);
-    }
-
-    result_type
     operator()( const Vector_3& u, const Vector_3& v, const Vector_3& w) const
     {
       return sign_of_determinant( u.hx(), u.hy(), u.hz(),
