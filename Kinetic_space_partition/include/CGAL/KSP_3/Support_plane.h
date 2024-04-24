@@ -769,38 +769,9 @@ bool operator==(const Support_plane<GeomTraits, IntersectionKernel>& a, const Su
     return false;
   }
 
-  using FT = typename GeomTraits::FT;
-  const auto& planea = a.plane();
-  const auto& planeb = b.plane();
-
-  const auto va = planea.orthogonal_vector();
-  const auto vb = planeb.orthogonal_vector();
-
-  // Are the planes parallel?
-
-  FT aval = approximate_angle(va, vb);
-  CGAL_assertion(aval >= FT(0) && aval <= FT(180));
-  if (aval >= FT(90))
-    aval = FT(180) - aval;
-
-  if (aval >= a.angle_tolerance()) {
-    return false;
-  }
-
-  const auto pa1 = a.to_3d(a.centroid());
-  const auto pb1 = planeb.projection(pa1);
-  const auto pb2 = b.to_3d(b.centroid());
-  const auto pa2 = planea.projection(pb2);
-
-  const FT bval1 = KSP::internal::distance(pa1, pb1);
-  const FT bval2 = KSP::internal::distance(pa2, pb2);
-  const FT bval = (CGAL::max)(bval1, bval2);
-  CGAL_assertion(bval >= FT(0));
-
-  if (bval >= a.distance_tolerance())
-    return false;
-
-  return true;
+  if (a.exact_plane() == b.exact_plane())
+    return true;
+  else return false;
 }
 
 #endif //DOXYGEN_RUNNING
