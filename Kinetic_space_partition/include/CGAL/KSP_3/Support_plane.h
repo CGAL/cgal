@@ -368,15 +368,17 @@ public:
 
     std::vector<std::pair<std::size_t, Direction_2> > dir_vec;
 
+    FT num = 0;
     for (const auto& pair : points) {
       const auto& point = pair.first;
       directions.push_back(Vector_2(m_data->centroid, point));
       const FT length = static_cast<FT>(
         CGAL::approximate_sqrt(CGAL::abs(directions.back() * directions.back())));
       sum_length += length;
+      num += 1;
     }
     CGAL_assertion(directions.size() == n);
-    sum_length /= static_cast<FT>(n);
+    sum_length /= num;
 
     dir_vec.reserve(n);
     for (std::size_t i = 0; i < n; i++)

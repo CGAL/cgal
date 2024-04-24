@@ -135,12 +135,13 @@ private:
   void calculate_centroid(Volume_cell& volume) {
     // First find a point in the interior of the volume cell.
     FT x = 0, y = 0, z = 0;
-    FT num = volume.pvertices.size();
+    FT num = 0;
     for (const PVertex& v : volume.pvertices) {
       Point_3 p = m_data.point_3(v);
       x += p.x();
       y += p.y();
       z += p.z();
+      num += 1;
     }
     Point_3 inside(x / num, y / num, z / num);
 
@@ -293,7 +294,7 @@ private:
       m_data.incident_faces(m_data.iedge(pedge), neighbor_faces);
 
       if (neighbor_faces.size() == 2) {
-        // If there is only one neighbor, the edge is on the corner of the bbox.
+        // If there is only one neighbor, the edge is on the edge of the bbox.
         // Thus the only neighbor needs to be a bbox face.
         PFace neighbor = (neighbor_faces[0] == pface) ? neighbor_faces[1] : neighbor_faces[0];
         CGAL_assertion(neighbor.first < 6 && pface.first < 6);
@@ -358,11 +359,11 @@ private:
         // Thus the only neighbor needs to be a bbox face.
         PFace neighbor = (neighbor_faces[0] == pface) ? neighbor_faces[1] : neighbor_faces[0];
         CGAL_assertion(neighbor.first < 6 && pface.first < 6);
-        //CGAL_assertion(oriented_side(pface, neighbor) == seed_side);
+        CGAL_assertion(oriented_side(pface, neighbor) == seed_side);
 
         Oriented_side inverse_side = oriented_side(neighbor, pface);
 
-        //CGAL_assertion(inverse_side == ON_POSITIVE_SIDE);
+        CGAL_assertion(inverse_side == ON_POSITIVE_SIDE);
 
         if (associate(neighbor, volume_index, inverse_side, volumes, map_volumes))
           queue.push(std::make_pair(neighbor, inverse_side));
@@ -523,17 +524,14 @@ private:
     if (a.first == b.first)
       return CGAL::ON_ORIENTED_BOUNDARY;
     Oriented_side side = CGAL::ON_ORIENTED_BOUNDARY;
-    const Plane_3& p = m_data.support_plane(a.first).plane();
+    const typename Intersection_kernel::Plane_3& p = m_data.support_plane(a.first).exact_plane();
     for (auto v : m_data.pvertices_of_pface(b)) {
-      Point_3 pt = m_data.point_3(v);
-      FT dist = (p.point() - pt) * p.orthogonal_vector();
-      if (CGAL::abs(dist) > max_dist) {
-        side = p.oriented_side(m_data.point_3(v));
-        max_dist = CGAL::abs(dist);
-      }
+      side = p.oriented_side(m_data.point_3(m_data.ivertex(v)));
+      if (side != CGAL::ON_ORIENTED_BOUNDARY)
+        return side;
     }
 
-    return side;
+    return CGAL::ON_ORIENTED_BOUNDARY;
   }
 
   void merge_facets_connected_components() {

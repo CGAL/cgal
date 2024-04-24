@@ -26,8 +26,6 @@
 #include <CGAL/KSP_3/Support_plane.h>
 #include <CGAL/KSP_3/Intersection_graph.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
 namespace CGAL {
 namespace KSP_3 {
 namespace internal {
@@ -247,13 +245,6 @@ private:
 
 public:
   Data_structure(const Parameters& parameters, const std::string &prefix) : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix) {
-    bool k = std::is_same_v<Exact_predicates_exact_constructions_kernel, Intersection_kernel>;
-    std::string kern = k ? "EPECK" : "GMPQ";
-#if _DEBUG
-    eventlog = std::ofstream("propagation_dbg" + kern + ".txt");
-#else
-    eventlog = std::ofstream("propagation_rel" + kern + ".txt");
-#endif
     eventlog << std::setprecision(17);
   }
 
@@ -1088,14 +1079,15 @@ public:
 
   template<typename Pair>
   void sort_points_by_direction(std::vector<Pair>& points) const {
-    FT x = FT(0), y = FT(0);
+    FT x = FT(0), y = FT(0); FT num = 0;
     for (const auto& pair : points) {
       const auto& point = pair.first;
       x += point.x();
       y += point.y();
+      num += 1;
     }
-    x /= static_cast<FT>(points.size());
-    y /= static_cast<FT>(points.size());
+    x /= num;
+    y /= num;
     const Point_2 mid(x, y);
 
     std::sort(points.begin(), points.end(),
