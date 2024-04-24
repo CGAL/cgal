@@ -1112,6 +1112,22 @@ squared_area(const typename K::Point_3 &p,
   return k.compute_squared_area_3_object()(p, q, r);
 }
 
+template <typename K>
+inline
+typename K::FT
+squared_length(const typename K::Vector_3 &v, const K &k)
+{
+  return k.compute_squared_length_3_object()(v);
+}
+
+template <typename K>
+inline
+typename K::FT
+squared_length(const typename K::Segment_3 &s, const K &k)
+{
+  return k.compute_squared_length_3_object()(s);
+}
+
 template < class K >
 inline
 typename K::FT

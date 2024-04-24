@@ -1047,6 +1047,9 @@ static QString mouseButtonsString(::Qt::MouseButtons b) {
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::performClickAction(qglviewer::ClickAction ca, const QMouseEvent *const e) {
+  // the following call is needed to update the pixel ratio
+  camera()->setScreenWidthAndHeight(this->width(), this->height(), this->devicePixelRatio());
+
   // Note: action that need it should call update().
   switch (ca) {
   // # CONNECTION setMouseBinding prevents adding NO_CLICK_ACTION in

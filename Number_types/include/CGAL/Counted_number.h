@@ -121,8 +121,12 @@ class Counted_number {
     Counted_number() {}
     //explicit Counted_number(int n) :m_rep(n){}
     explicit Counted_number(NT n) :m_rep(n){}
+
     Counted_number operator-() const
-            {inc_neg_count();return Counted_number(-m_rep);}
+    {
+        inc_neg_count(); NT neg = -m_rep;  return Counted_number(neg);
+    }
+
     Counted_number const & operator+=(Counted_number const &n)
             {
                 inc_add_count();
@@ -352,7 +356,7 @@ Counted_number<NT>
 operator+(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
 {
     Counted_number<NT>::inc_add_count();
-    return Counted_number<NT>(n1.rep() + n2.rep());
+    return Counted_number<NT>(NT(n1.rep() + n2.rep()));
 }
 
 template <class NT>
@@ -360,7 +364,7 @@ Counted_number<NT>
 operator-(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
 {
     Counted_number<NT>::inc_sub_count();
-    return Counted_number<NT>(n1.rep() - n2.rep());
+    return Counted_number<NT>(NT(n1.rep() - n2.rep()));
 }
 
 template <class NT>
@@ -368,7 +372,7 @@ Counted_number<NT>
 operator*(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
 {
     Counted_number<NT>::inc_mul_count();
-    return Counted_number<NT>(n1.rep() * n2.rep());
+    return Counted_number<NT>(NT(n1.rep() * n2.rep()));
 }
 
 template <class NT>
@@ -376,7 +380,7 @@ Counted_number<NT>
 operator/(Counted_number<NT> const &n1, Counted_number<NT> const &n2)
 {
     Counted_number<NT>::inc_div_count();
-    return Counted_number<NT>(n1.rep() / n2.rep());
+    return Counted_number<NT>(NT(n1.rep() / n2.rep()));
 }
 
 template< class NT >

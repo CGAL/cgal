@@ -10,12 +10,22 @@ Release date: October 2023
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
-- The demos as well as the `draw()` functions using the `Basic_viewer` are based on Qt6
+- The demos as well as the `Basic_viewer` are based on Qt6.
+- The `Basic_viewer` is improved and documented.
 - **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
 - **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
 - **Breaking change**: The file CMake file `UseCGAL.cmake` has been removed from CGAL. Usages of the CMake variables `${CGAL_USE_FILE}` and `${CGAL_LIBRARIES}` must be replaced by a link to the imported target `CGAL::CGAL`, for example: `target_link_library(the_target PRIVATE CGAL::CGAL)`.
+- The minimal supported version of Boost is now 1.72.0
 
+### Installation
+
+-   The CGAL\_Core library is no longer based on GMP but boost multiprecision now, and can be used with either gmp backend or boost backend.
+
+### [Polygon Repair](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonRepair) (new package)
+
+-   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
+    using the odd-even heuristic.
 
 #### 2D Arrangements
 
@@ -44,6 +54,12 @@ Release date: October 2023
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
+- **Breaking change**:
+  - Node splitting behavior and per-node data are now customizable via the Traits class.
+  - Nodes are now stored as a property map, with properties of each node accessed by index.
+  - Nearest neighbors functions only work for Orthtrees which provide the necessary functionality.
+
 ### [Polygon Mesh Processing](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonMeshProcessing)
 
 -   Added the function `CGAL::Polygon_mesh_processing::interpolated_corrected_curvatures()` which can be used to compute
@@ -55,6 +71,8 @@ Release date: October 2023
     `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` that refines a soup of triangles so that no pair of triangles intersects
      in their interiors. Also added, the function `autorefine()` operating directly on a triangle mesh and updating it
      using the aforementioned function on a triangle soup.
+-   Added the function `CGAL::Polygon_mesh_processing::add_bbox()` that enables to add a tight or extended, triangulated or not,
+    bounding box to a face graph.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 -   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
@@ -86,6 +104,12 @@ Release date: October 2023
     position now keeps the first one, instead of switching to the latest. This
     only affects custom point types where not all points in the same position
     are equivalent.
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.0/Manual/packages.html#PkgBGL)
+
+- Added the function `remove_all_elements()`, which removes vertices, halfedges, and faces
+  without collecting garbage and without removing properties.
+
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------

@@ -1,13 +1,14 @@
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+Basic_viewer
 Box_intersection_d
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
 Distance_3
 Filtered_kernel
-GraphicsView
 HalfedgeDS
 Hash_map
 Homogeneous_kernel

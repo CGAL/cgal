@@ -1,6 +1,4 @@
-﻿#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
+﻿#include <CGAL/Polygon_mesh_processing/locate.h>
 
 // Graphs
 #include <CGAL/Polyhedron_3.h>
@@ -9,7 +7,9 @@
 #include <CGAL/boost/graph/graph_traits_Regular_triangulation_2.h>
 #include <CGAL/boost/graph/properties_Regular_triangulation_2.h>
 
-#include <CGAL/Polygon_mesh_processing/locate.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -23,12 +23,11 @@
 #include <CGAL/Origin.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Random.h>
-#include <CGAL/Unique_hash_map.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <optional>
 
+#include <optional>
 #include <fstream>
 #include <iostream>
 #include <limits>

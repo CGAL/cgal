@@ -482,7 +482,7 @@ public:
         // find the intersection points and overlapping segments with the
         // original curve and insert them to the list of split points
         // intersect the x-monotone curve with the edge's curve
-        typedef std::pair<Point_2, unsigned int> Intersect_point_2;
+        typedef std::pair<Point_2, std::size_t> Intersect_point_2;
         std::list<std::variant<X_monotone_curve_2, Intersect_point_2>>
           intersections_list;
 
@@ -932,19 +932,19 @@ protected:
   void copy_data_to_face_boundary(Face_handle face) {
     Ccb_halfedge_circulator ccb;
 
-    for (auto outer_iter = face->outer_ccbs_begin();
+    for (Outer_ccb_iterator outer_iter = face->outer_ccbs_begin();
          outer_iter != face->outer_ccbs_end(); ++outer_iter) {
       ccb = *outer_iter;
       copy_data_to_face_boundary(face, ccb);
     }
 
-    for (auto inner_iter = face->inner_ccbs_begin();
+    for (Inner_ccb_iterator inner_iter = face->inner_ccbs_begin();
          inner_iter != face->inner_ccbs_end(); ++inner_iter) {
       ccb = (*inner_iter);
       copy_data_to_face_boundary(face, ccb);
     }
 
-    for (auto iso_iter = face->isolated_vertices_begin();
+    for (Isolated_vertex_iterator iso_iter = face->isolated_vertices_begin();
          iso_iter != face->isolated_vertices_end(); ++iso_iter) {
       Vertex_handle vh = iso_iter;
       if (! vh->is_decision_set() && has_equal_aux_data_with_face(vh))
@@ -1157,7 +1157,7 @@ protected:
     }
 
     // check inner boundaries
-    for (auto hole_iter = face->inner_ccbs_begin();
+    for (Inner_ccb_iterator hole_iter = face->inner_ccbs_begin();
          hole_iter != face->inner_ccbs_end(); ++hole_iter) {
       hec = (*hole_iter);
       hec_begin = hec;
@@ -1671,7 +1671,7 @@ protected:
     }
 
     // Copy the isolated vertices inside the given face.
-    for (auto iv_it = face->isolated_vertices_begin();
+    for (Isolated_vertex_iterator iv_it = face->isolated_vertices_begin();
          iv_it != face->isolated_vertices_end(); ++iv_it) {
       Vertex_handle iso_v = iv_it;
       Vertex_handle copied_iso =
