@@ -280,6 +280,7 @@ public:
  *
  * \tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * \tparam PointRange a model of `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
  *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
@@ -290,17 +291,16 @@ public:
  * \param parameter is the value of \f$ \delta \f$
  * \param eta is the optional parameter \f$ \eta \f$
  *
- * \todo: add traits as template param model of DT traits concept
- * \todo more info on the parameters
  */
-template <class Concurrency_tag = Sequential_tag, class PointRange, class TripleIndexRange>
+template <class Concurrency_tag = Sequential_tag, class Traits = Default, class PointRange, class TripleIndexRange>
 void ball_merge_surface_reconstruction_local(const PointRange& points,
                                              TripleIndexRange& out_triangles,
                                              double parameter, double eta=200.)
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
-  using Traits = typename Kernel_traits<Point_3>::type;
-  CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
+  using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
+
+  CGAL::internal::Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
   bmsr.option=0;
   bmsr(points, parameter, eta);
   bmsr.set_triangle_indices_hull1(out_triangles);
@@ -313,6 +313,7 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  *
  * @tparam ConcurrencyTag enables sequential versus parallel algorithm.
  *                        Possible values are `Sequential_tag`, `Parallel_tag`, and `Parallel_if_available_tag`.
+ * \tparam Traits a model of `DelaunayTriangulationTraits_3`, with default using the value type of `PointRange` plugged in `Kernel_traits`
  * @tparam PointRange a model of the concepts `RandomAccessContainer`
  * \tparam TripleIndexRange a model of `BackInsertionSequence` with `value_type`
  *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
@@ -323,15 +324,15 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  * \param out_triangles2 is the output parameter storing the second resulting mesh
  * \param parameter is the value of \f$ \delta \f$
  */
-template <class Concurrency_tag= Sequential_tag, class PointRange, class TripleIndexRange>
+template <class Concurrency_tag= Sequential_tag, class Traits = Default, class PointRange, class TripleIndexRange>
 void ball_merge_surface_reconstruction_global(const PointRange& points,
                                               TripleIndexRange& out_triangles1,
                                               TripleIndexRange& out_triangles2,
                                               double parameter)
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
-  using Traits = typename Kernel_traits<Point_3>::type;
-  CGAL::internal::Ball_merge_surface_reconstruction<Traits, Concurrency_tag> bmsr;
+  using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
+  CGAL::internal::Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
   bmsr.option=1;
   bmsr(points, parameter, 0);
   bmsr.set_triangle_indices_hull1(out_triangles1);
