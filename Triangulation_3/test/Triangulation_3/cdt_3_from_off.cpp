@@ -683,13 +683,13 @@ int go(Mesh mesh, CDT_options options) {
           assert(polyline.front() == polyline.back());
           polyline.pop_back();
           if(face_index) {
-            cdt.insert_constrained_polygon(
-              polyline | std::views::transform([&](vertex_descriptor v) { return get(pmap, v); }),
+            cdt.insert_constrained_face(
+              polyline | std::views::transform([&](vertex_descriptor v) { return get(tr_vertex_pmap, v); }),
               false,
               *face_index);
           } else {
-            face_index = cdt.insert_constrained_polygon(
-              polyline | std::views::transform([&](vertex_descriptor v) { return get(pmap, v); }),
+            face_index = cdt.insert_constrained_face(
+              polyline | std::views::transform([&](vertex_descriptor v) { return get(tr_vertex_pmap, v); }),
               false);
           }
         }
