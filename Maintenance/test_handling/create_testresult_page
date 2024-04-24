@@ -751,7 +751,7 @@ sub create_summary_page {
     my $test_directory;
     my @letters = ('r', 'n', 'w', 'o');
     my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);
-    my $package_options = join("\n", map { "<option value=\"$_\">$_</option>" } sort keys %test_directories);
+    my $package_options = join("\n", map { "<option style=\"display: none;\" value=\"$_\">$_</option>" } sort keys %test_directories);
 
     my @search_index;
     my ($platform_num, $platform) = (0, "");
@@ -879,6 +879,12 @@ sub create_summary_page {
                 });
             });
         });
+        const testDirectories = [...new Set(data.map(item => item.test_directory))];
+        for (let option of packagesSelector.options) {
+            if (testDirectories.includes(option.value)) {
+                option.style.display = '';
+            }
+        }
         const groupedByPackage = data.reduce((acc, item) => {
             if (!acc[item.test_directory]) {
                 acc[item.test_directory] = [];
