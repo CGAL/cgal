@@ -4,7 +4,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Mael Rouxel-Labbé
 
@@ -17,8 +17,11 @@
 
 #include <utility>
 
-#ifndef CGAL_GRAPH_TRAITS_2D_TRIANGULATION_HELPERS
-#define CGAL_GRAPH_TRAITS_2D_TRIANGULATION_HELPERS
+#ifndef CGAL_GRAPH_TRAITS_2D_TRIANGULATION_HELPERS_H
+#define CGAL_GRAPH_TRAITS_2D_TRIANGULATION_HELPERS_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 namespace CGAL {
 namespace internal {
@@ -181,4 +184,4 @@ private:
 } // namespace internal
 } // namespace CGAL
 
-#endif // CGAL_GRAPH_TRAITS_2D_TRIANGULATION_HELPERS
+#endif // CGAL_GRAPH_TRAITS_2D_TRIANGULATION_HELPERS_H

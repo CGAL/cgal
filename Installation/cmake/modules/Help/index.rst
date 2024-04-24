@@ -16,7 +16,7 @@ Contents:
    CGAL_SetupBoost
    CGAL_SetupCGALDependencies
    CGAL_SetupCGAL_CoreDependencies
-   CGAL_SetupCGAL_Qt5Dependencies
+   CGAL_SetupCGAL_Qt6Dependencies
    CGAL_SetupCGAL_ImageIODependencies
 
 TODO

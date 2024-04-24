@@ -38,7 +38,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>&amp;File</string>
+     <string>File</string>
     </property>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
@@ -55,7 +55,7 @@
    </widget>
    <widget class="QMenu" name="menuOperations">
     <property name="title">
-     <string>&amp;Operations</string>
+     <string>Operations</string>
     </property>
     <addaction name="actionInsert_center_vertices"/>
     <addaction name="actionTriangulate_all_facets"/>
@@ -75,7 +75,7 @@
    </widget>
    <widget class="QMenu" name="menuCreations">
     <property name="title">
-     <string>&amp;Creations</string>
+     <string>Creations</string>
     </property>
     <addaction name="actionCreate_cube"/>
     <addaction name="actionCreate3Cubes"/>
@@ -88,7 +88,7 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>&amp;View</string>
+     <string>View</string>
     </property>
     <addaction name="separator"/>
     <addaction name="actionExtend_filled_volumes"/>
@@ -103,67 +103,67 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionImportOFF">
    <property name="text">
-    <string>&amp;Import OFF</string>
+    <string>Import OFF</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>&amp;Quit</string>
+    <string>Quit</string>
    </property>
   </action>
   <action name="actionSubdivide">
    <property name="text">
-    <string>&amp;Subdivide all volumes</string>
+    <string>Subdivide all volumes</string>
    </property>
   </action>
   <action name="actionSubdivide_pqq">
    <property name="text">
-    <string>&amp;Subdivide all volumes - by Pqq</string>
+    <string>Subdivide all volumes - by Pqq</string>
    </property>
   </action>
   <action name="actionCreate3Cubes">
    <property name="text">
-    <string>Create &amp;3 cubes</string>
+    <string>Create 3 cubes</string>
    </property>
   </action>
   <action name="actionImport3DTDS">
    <property name="text">
-    <string>Import 3D&amp;TS</string>
+    <string>Import 3DTS</string>
    </property>
   </action>
   <action name="actionClear">
    <property name="text">
-    <string>&amp;Clear</string>
+    <string>Clear</string>
    </property>
   </action>
   <action name="actionCreate2Volumes">
    <property name="text">
-    <string>Create &amp;2 volumes</string>
+    <string>Create 2 volumes</string>
    </property>
   </action>
   <action name="actionDual_3">
    <property name="text">
-    <string>&amp;Dual</string>
+    <string>Dual</string>
    </property>
   </action>
   <action name="actionClose_volume">
    <property name="text">
-    <string>&amp;Close all volumes</string>
+    <string>Close all volumes</string>
    </property>
   </action>
   <action name="actionCreate_cube">
    <property name="text">
-    <string>Create &amp;cube</string>
+    <string>Create cube</string>
    </property>
   </action>
   <action name="actionSew3_same_facets">
    <property name="text">
-    <string>S&amp;ew3 all same facets</string>
+    <string>Sew3 all same facets</string>
    </property>
   </action>
   <action name="actionCreate_mesh">
    <property name="text">
-    <string>Create &amp;mesh</string>
+    <string>Create mesh</string>
    </property>
   </action>
   <action name="actionCreate_Menger_Sponge">
@@ -173,22 +173,22 @@
   </action>
   <action name="actionRemove_filled_volumes">
    <property name="text">
-    <string>&amp;Remove volumes</string>
+    <string>Remove volumes</string>
    </property>
   </action>
   <action name="actionTriangulate_all_facets">
    <property name="text">
-    <string>&amp;Triangulate facets</string>
+    <string>Triangulate facets</string>
    </property>
   </action>
   <action name="actionUnsew3_all">
    <property name="text">
-    <string>&amp;Unsew3 volumes</string>
+    <string>Unsew3 volumes</string>
    </property>
   </action>
   <action name="actionInsideOut">
    <property name="text">
-    <string>Reverse &amp;orientation</string>
+    <string>Reverse orientation</string>
    </property>
   </action>
   <action name="actionVolume_list">
@@ -201,12 +201,12 @@
   </action>
   <action name="actionExtend_filled_volumes">
    <property name="text">
-    <string>Extend &amp;filled volumes</string>
+    <string>Extend filled volumes</string>
    </property>
   </action>
   <action name="actionExtend_hidden_volumes">
    <property name="text">
-    <string>Extend &amp;hidden volumes</string>
+    <string>Extend hidden volumes</string>
    </property>
   </action>
   <action name="actionCompute_Voronoi_3D">
@@ -216,7 +216,7 @@
   </action>
   <action name="actionMerge_all_volumes">
    <property name="text">
-    <string>&amp;Merge volumes</string>
+    <string>Merge volumes</string>
    </property>
   </action>
   <action name="actionCreate_Sierpinski_Carpet">
@@ -231,12 +231,12 @@
   </action>
   <action name="actionLoad">
    <property name="text">
-    <string>&amp;Load</string>
+    <string>Load</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>&amp;Save</string>
+    <string>Save</string>
    </property>
   </action>
   <action name="actionImportMoka">

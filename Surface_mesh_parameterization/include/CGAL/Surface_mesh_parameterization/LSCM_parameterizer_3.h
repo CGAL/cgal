@@ -29,7 +29,6 @@
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
 #endif
-#include <CGAL/OpenNL/linear_solver.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
 
@@ -77,10 +76,7 @@ namespace Surface_mesh_parameterization {
 /// \code
 ///   CGAL::Eigen_solver_traits<Eigen::SimplicialLDLT< Eigen::SparseMatrix<double> > >
 /// \endcode
-///         Otherwise, it uses CGAL's wrapping function to the OpenNL library:
-/// \code
-///   OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
-/// \endcode
+///
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Two_vertices_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
@@ -95,16 +91,18 @@ public:
     BorderParameterizer_,
     Two_vertices_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
 
+#if !defined(CGAL_EIGEN3_ENABLED)
+  static_assert(!(std::is_same<SolverTraits_, Default>::value),
+                            "Error: You must either provide 'SolverTraits_' or link CGAL with the Eigen library");
+  #endif
+
   typedef typename Default::Get<
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
-    // WARNING: at the moment, the choice of SolverTraits_ is completely
-    // ignored (see LeastSquaresSolver typedef) and `OpenNL::LinearSolver<SolverTraits_>`
-    // is always used...
     CGAL::Eigen_solver_traits<
             Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
   #else
-    OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
+    SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
   >::type                                                     Solver_traits;
 #else
@@ -141,7 +139,13 @@ private:
   typedef typename Solver_traits::Vector                            Vector;
   typedef typename Solver_traits::Matrix                            Matrix;
 
-  typedef typename OpenNL::LinearSolver<Solver_traits>              LeastSquaresSolver;
+// Fields
+private:
+  // %Object that maps (at least two) border vertices onto a 2D space
+  Border_parameterizer m_borderParameterizer;
+
+  // Traits object to solve a sparse linear system
+  Solver_traits m_linearAlgebra;
 
 // Public operations
 public:
@@ -155,6 +159,15 @@ public:
 
   // Default copy constructor and operator =() are fine
 
+// Private accessors
+private:
+  // Get the object that maps the surface's border onto a 2D space.
+  Border_parameterizer& get_border_parameterizer() { return m_borderParameterizer; }
+
+  // Get the sparse linear algebra (traits object to access the linear system).
+  Solver_traits& get_linear_algebra_traits() { return m_linearAlgebra; }
+
+public:
   /// returns whether the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap>
   bool is_one_to_one_mapping(const Triangle_mesh& mesh,
@@ -218,88 +231,59 @@ public:
 
     // Compute (u,v) for (at least two) border vertices
     // and mark them as "parameterized"
-    Error_code status =
-        get_border_parameterizer().parameterize(mesh, bhd, uvmap, vimap, vpmap);
+    Error_code status = get_border_parameterizer().parameterize(mesh, bhd, uvmap, vimap, vpmap);
 
     if(status != OK)
       return status;
 
-    // Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices
-    // (in fact, we need only 2 lines per triangle x 1 column per vertex)
-    LeastSquaresSolver solver(2 * nbVertices);
-    solver.set_least_squares(true) ;
+    // Vertices that are already parameterized are not part of the system
+    std::vector<int> fvi(nbVertices); // vimap to free vertex index
+    int index = 0;
+    for(vertex_descriptor vd : ccvertices) {
+      if(get(vpmap,vd)) {
+        fvi[get(vimap, vd)] = -1;
+      } else {
+        fvi[get(vimap, vd)] = index++;
+      }
+    }
 
-    // Initialize the "A*X = B" linear system after
-    // (at least two) border vertices parameterization
-    initialize_system_from_mesh_border(solver, ccvertices, uvmap, vimap, vpmap);
-
-    // Fill the matrix for the other vertices
-    solver.begin_system();
+    // Create sparse linear system "A*X = B"
+    int nbFreeVertices = index;
+    int nbVariables = 2 * nbFreeVertices;
+    Matrix A(nbVariables, nbVariables); // the constant matrix used in the linear system A*X = B
+    Vector X(nbVariables), B(nbVariables);
 
     for(face_descriptor fd : ccfaces) {
       // Create two lines in the linear system per triangle (one for u, one for v)
-      status = setup_triangle_relations(solver, mesh, fd, vimap);
+      status = setup_triangle_relations(mesh, fd, uvmap, vimap, vpmap, fvi, A, B);
       if (status != OK)
         return status;
     }
 
-    solver.end_system();
-
     // Solve the "A*X = B" linear system in the least squares sense
-    if(!solver.solve())
+    double D;
+    if(!get_linear_algebra_traits().linear_solver(A, B, X, D)) {
+      std::cerr << "Could not solve linear system" << std::endl;
       status = ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
-
-    if(status != OK)
       return status;
+    }
 
     // Copy X coordinates into the (u,v) pair of each vertex
-    //set_mesh_uv_from_system(mesh, solver, uvmap);
-
     for(vertex_descriptor vd : ccvertices) {
+      if(get(vpmap,vd))
+        continue;
+
       int index = get(vimap,vd);
-      NT u = solver.variable(2 * index).value();
-      NT v = solver.variable(2 * index + 1).value();
+      NT u = X[2 * fvi[index]];
+      NT v = X[2 * fvi[index] + 1];
       put(uvmap, vd, Point_2(u,v));
     }
+
     return status;
   }
 
 // Private operations
 private:
-  // Initialize "A*X = B" linear system after
-  // (at least two) border vertices are parameterized.
-  //
-  // \pre Vertices must be indexed.
-  // \pre X and B must be allocated and empty.
-  // \pre At least 2 border vertices must be parameterized.
-  template <typename UVmap, typename VertexIndexMap, typename VertexParameterizedMap>
-  void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
-                                          const std::unordered_set<vertex_descriptor>& ccvertices,
-                                          UVmap uvmap,
-                                          VertexIndexMap vimap,
-                                          VertexParameterizedMap vpmap) const
-  {
-    for(vertex_descriptor v : ccvertices) {
-      // Get vertex index in sparse linear system
-      int index = get(vimap, v);
-
-      // Get vertex (u,v) (meaningless if vertex is not parameterized)
-      const Point_2& uv = get(uvmap, v);
-      // TODO: it is meaningless but must it be called for non-border vertices??
-      // Write (u,v) in X (meaningless if vertex is not parameterized)
-      // Note  : 2*index     --> u
-      //         2*index + 1 --> v
-      solver.variable(2 * index    ).set_value(uv.x());
-      solver.variable(2 * index + 1).set_value(uv.y());
-
-      // Copy (u,v) in B if vertex is parameterized
-      if (get(vpmap,v)) {
-        solver.variable(2 * index    ).lock();
-        solver.variable(2 * index + 1).lock();
-      }
-    }
-  }
-
   // Utility for setup_triangle_relations():
   // Computes the coordinates of the vertices of a triangle
   // in a local 2D orthonormal basis of the triangle's plane.
@@ -342,11 +326,18 @@ private:
   //       Zk = xk + i.yk is the complex number corresponding to local (x,y) coords
   // cool: no divide with this expression; makes it more numerically stable
   // in presence of degenerate triangles
-  template <typename VertexIndexMap >
-  Error_code setup_triangle_relations(LeastSquaresSolver& solver,
-                                      const Triangle_mesh& mesh,
+  template <typename UVmap,
+            typename VertexIndexMap,
+            typename VertexParameterizedMap,
+            typename FreeVertexIndices>
+  Error_code setup_triangle_relations(const Triangle_mesh& mesh,
                                       face_descriptor facet,
-                                      VertexIndexMap vimap) const
+                                      UVmap uvmap,
+                                      VertexIndexMap vimap,
+                                      VertexParameterizedMap vpmap,
+                                      const FreeVertexIndices& fvi,
+                                      Matrix& A,
+                                      Vector& B) const
   {
     const PPM ppmap = get(vertex_point, mesh);
 
@@ -358,11 +349,6 @@ private:
     v1 = target(h1, mesh);
     halfedge_descriptor h2 = next(h1, mesh);
     v2 = target(h2, mesh);
-
-    // Get the vertices index
-    int id0 = get(vimap, v0);
-    int id1 = get(vimap, v1);
-    int id2 = get(vimap, v2);
 
     // Get the vertices position
     const Point_3& p0 = get(ppmap, v0);
@@ -390,51 +376,75 @@ private:
     //
     // Note  : 2*index     --> u
     //         2*index + 1 --> v
-    int u0_id = 2*id0    ;
-    int v0_id = 2*id0 + 1;
-    int u1_id = 2*id1    ;
-    int v1_id = 2*id1 + 1;
-    int u2_id = 2*id2    ;
-    int v2_id = 2*id2 + 1;
+
+    std::vector<double> vals;
+    std::vector<unsigned int> ids;
+    std::vector<double> fvals;
+    std::vector<double> pvals;
+
+    auto add_coefficient = [&](const vertex_descriptor v, const double a, const bool is_u)
+    {
+      if(get(vpmap, v)) {
+        const Point_2& uv = get(uvmap, v);
+        fvals.push_back(a);
+        pvals.push_back(is_u ? uv.x() : uv.y());
+      } else {
+        const int index = 2 * fvi[get(vimap, v)] + !is_u;
+        CGAL_assertion(index >= 0);
+        vals.push_back(a);
+        ids.push_back(index);
+      }
+    };
+
+    auto add_u_coefficient = [&](const vertex_descriptor v, const double a) {
+      return add_coefficient(v, a, true /*is u*/);
+    };
+    auto add_v_coefficient = [&](const vertex_descriptor v, const double a) {
+      return add_coefficient(v, a, false /*is not u*/);
+    };
+
+    auto accumulate = [&]()
+    {
+      const std::size_t nf = vals.size();
+      const std::size_t nl = fvals.size();
+
+      for(std::size_t i=0; i<nf; ++i)
+        for(std::size_t j=0; j<nf; ++j)
+          A.add_coef(ids[i], ids[j], vals[i] * vals[j]);
+
+      double s = 0.;
+      for(std::size_t i=0; i<nl; ++i)
+        s += fvals[i] * pvals[i];
+
+      for(std::size_t i=0; i<nf; ++i)
+        B[ids[i]] -= vals[i] * s;
+
+      vals.clear();
+      ids.clear();
+      fvals.clear();
+      pvals.clear();
+    };
 
     // Real part
     // Note: b = 0
-    solver.begin_row();
-    solver.add_coefficient(u0_id, -a+c);
-    solver.add_coefficient(v0_id,  b-d);
-    solver.add_coefficient(u1_id,   -c);
-    solver.add_coefficient(v1_id,    d);
-    solver.add_coefficient(u2_id,    a);
-    solver.end_row();
-    //
+    add_u_coefficient(v0, -a+c);
+    add_v_coefficient(v0,  b-d);
+    add_u_coefficient(v1, -c);
+    add_v_coefficient(v1,  d);
+    add_u_coefficient(v2,  a);
+    accumulate();
+
     // Imaginary part
     // Note: b = 0
-    solver.begin_row();
-    solver.add_coefficient(u0_id, -b+d);
-    solver.add_coefficient(v0_id, -a+c);
-    solver.add_coefficient(u1_id,   -d);
-    solver.add_coefficient(v1_id,   -c);
-    solver.add_coefficient(v2_id,    a);
-    solver.end_row();
+    add_u_coefficient(v0, -b+d);
+    add_v_coefficient(v0, -a+c);
+    add_u_coefficient(v1, -d);
+    add_v_coefficient(v1, -c);
+    add_v_coefficient(v2,  a);
+    accumulate();
 
     return OK;
   }
-
-// Private accessors
-private:
-  // Get the object that maps the surface's border onto a 2D space.
-  Border_parameterizer& get_border_parameterizer() { return m_borderParameterizer; }
-
-  // Get the sparse linear algebra (traits object to access the linear system).
-  Solver_traits& get_linear_algebra_traits() { return m_linearAlgebra; }
-
-// Fields
-private:
-  // %Object that maps (at least two) border vertices onto a 2D space
-  Border_parameterizer m_borderParameterizer;
-
-  // Traits object to solve a sparse linear system
-  Solver_traits m_linearAlgebra;
 };
 
 } // namespace Surface_mesh_parameterization

@@ -4,7 +4,7 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <iostream>
 #include <string>
@@ -43,7 +43,7 @@ void create_mesh_with_cc_to_orient(Mesh& mesh)
   }
 
   // load the soup into the mesh;
-  mesh.clear();
+  CGAL::clear(mesh);
   PMP::polygon_soup_to_polygon_mesh(points, triangles, mesh);
 }
 

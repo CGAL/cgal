@@ -22,17 +22,8 @@ create_single_source_cgal_program("test_RT_cell_base_with_weighted_circumcenter_
 create_single_source_cgal_program("test_robust_weighted_circumcenter.cpp")
 create_single_source_cgal_program("test_simplex_3.cpp")
 create_single_source_cgal_program("test_segment_simplex_traverser_3.cpp" )
-if(cxx_std_17 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-  create_single_source_cgal_program("test_simplex_iterator_3.cpp" )
-  create_single_source_cgal_program("test_segment_cell_traverser_3.cpp" )
-  target_compile_features(test_simplex_iterator_3 PRIVATE cxx_std_17)
-  target_compile_features(test_segment_simplex_traverser_3 PRIVATE cxx_std_17)
-else()
-  message(
-  STATUS
-    "NOTICE: test_simplex_iterator_3.cpp and test_segment_simplex_traverser_3.cpp require C++17 and will not be compiled."
-  )
-endif()
+create_single_source_cgal_program("test_simplex_iterator_3.cpp" )
+create_single_source_cgal_program("test_segment_cell_traverser_3.cpp" )
 create_single_source_cgal_program("test_static_filters.cpp")
 create_single_source_cgal_program("test_triangulation_3.cpp")
 create_single_source_cgal_program("test_io_triangulation_3.cpp")
@@ -173,7 +164,7 @@ if(TARGET CGAL::TBB_support)
     target_link_libraries(${target} PUBLIC CGAL::TBB_support)
   endforeach()
 
-  if(BUILD_TESTING)
+  if(CGAL_ENABLE_TESTING)
     set_property(TEST
       "execution   of  test_delaunay_3"
       "execution   of  test_regular_3"
@@ -184,7 +175,7 @@ else()
   message(STATUS "NOTICE: The TBB library was not found. Some tests will not be available.")
 endif()
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   set_tests_properties(
     "execution   of  test_delaunay_hierarchy_3"
     "execution   of  test_delaunay_hierarchy_3_old"

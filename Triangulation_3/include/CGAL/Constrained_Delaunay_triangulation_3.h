@@ -39,8 +39,10 @@
 #include <CGAL/iterator.h>
 
 #include <CGAL/boost/graph/Dual.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_data_structure_2.h>
 #include <CGAL/boost/graph/graph_traits_Constrained_Delaunay_triangulation_2.h>
+
 #include <CGAL/Compact_container.h>
 
 #include <CGAL/cdt_debug_io.h>

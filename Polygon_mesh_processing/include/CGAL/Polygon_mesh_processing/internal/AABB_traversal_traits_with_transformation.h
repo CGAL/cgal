@@ -27,7 +27,6 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Aff_transformation_3.h>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 

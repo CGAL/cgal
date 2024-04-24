@@ -2,10 +2,9 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/use.h>
 #include "test_Prefix.h"
-
-#include <boost/numeric/conversion/cast.hpp>
 
 #include <unordered_map>
 #include <unordered_set>
@@ -80,7 +79,7 @@ void test_edge_iterators(const Graph& g)
   // do we iterate as many as that?
   edge_iterator eb, ee;
   boost::tie(eb, ee) = edges(fg);
-  assert(boost::numeric_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
+  assert(static_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
   id_map ids;
   unsigned int count = 0;
   for(boost::tie(eb, ee) = edges(fg); eb != ee; ++eb) {
@@ -514,7 +513,7 @@ void test_invalid_selections()
   assert(pinched_fg.is_selection_valid());
 
   // this creates a non-manifold vertex (multiple umbrellas)
-  clear(mesh);
+  CGAL::clear(mesh);
   read_a_mesh(mesh, "data/genus3.off");
   assert(is_valid_polygon_mesh(mesh));
 

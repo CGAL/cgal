@@ -20,6 +20,8 @@
 
 #include <CGAL/Tetrahedral_remeshing/Sizing_field.h>
 #include <CGAL/Tetrahedral_remeshing/Uniform_sizing_field.h>
+#include <CGAL/Tetrahedral_remeshing/Complex_cells_selector.h>
+
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_adaptive_remeshing_impl.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
 
@@ -107,6 +109,15 @@ namespace CGAL
 *                     by `Remeshing_edge_is_constrained_map` and `Remeshing_facet_is_constrained_map`.}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{facet_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each facet of `tr`.}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `Triangulation_3::Facet`
+*                    as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no facet is constrained}
+*     \cgalParamExtra{A constrained facet can be split or collapsed, but not flipped.}
+*     \cgalParamExtra{This map, contrary to the others, is not updated throughout the remeshing process.}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{edge_is_constrained_map}
 *     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of `tr`.}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `std::pair<Triangulation_3::Vertex_handle, Triangulation_3::Vertex_handle>`
@@ -118,13 +129,12 @@ namespace CGAL
 *                     with edge splits and collapses, so the property map must be writable.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{facet_is_constrained_map}
-*     \cgalParamDescription{a property map containing the constrained-or-not status of each facet of `tr`.}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with `Triangulation_3::Facet`
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of `tr`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `Triangulation_3::Vertex_handle`
 *                    as key type and `bool` as value type. It must be default constructible.}
-*     \cgalParamDefault{a default property map where no facet is constrained}
-*     \cgalParamExtra{A constrained facet can be split or collapsed, but not flipped.}
-*     \cgalParamExtra{This map, contrary to the others, is not updated throughout the remeshing process.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*     \cgalParamExtra{A constrained vertex cannot be removed by collapse, nor moved by smoothing.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{cell_is_selected_map}
@@ -147,7 +157,8 @@ namespace CGAL
 *     \cgalParamExtra{The endvertices of constraints listed
 *                     by `edge_is_constrained_map`, and edges incident to at least three subdomains
 *                     are made eligible to one dimensional smoothing, along the constrained polylines they belong to.
-*                     Corners (i.e. vertices incident to more than 2 constrained edges) are not allowed
+*                     Corners (i.e. vertices listed by `vertex_is_constrained_map` or
+*                     incident to more than 2 constrained edges) are not allowed
 *                     to move at all.\n
 *                     Note that activating the smoothing step on polyline constraints tends to reduce
 *                     the quality of the minimal dihedral angle in the mesh.\n
@@ -219,11 +230,20 @@ void tetrahedral_isotropic_remeshing(
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::cell_selector_t,
     NamedParameters,
-    Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
+    Tetrahedral_remeshing::Complex_cells_selector<Tr>//default
   > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+                       Tetrahedral_remeshing::Complex_cells_selector<Tr>());
+
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename internal_np::Lookup_named_param_def <
+    internal_np::vertex_is_constrained_t,
+    NamedParameters,
+    Constant_property_map<Vertex_handle, bool>//default
+  > ::type VCMap;
+  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
+                                 Constant_property_map<Vertex_handle, bool>(false));
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
   typedef typename internal_np::Lookup_named_param_def <
@@ -263,9 +283,9 @@ void tetrahedral_isotropic_remeshing(
 #endif
 
   typedef Tetrahedral_remeshing::internal::Adaptive_remesher<
-    Tr, SizingFunction, ECMap, FCMap, SelectionFunctor, Visitor> Remesher;
+    Tr, SizingFunction, VCMap, ECMap, FCMap, SelectionFunctor, Visitor> Remesher;
   Remesher remesher(tr, sizing, protect
-                  , ecmap, fcmap
+                  , vcmap, ecmap, fcmap
                   , smooth_constrained_edges
                   , cell_select
                   , visitor);
@@ -280,6 +300,10 @@ void tetrahedral_isotropic_remeshing(
 
   // perform remeshing
   std::size_t nb_extra_iterations = 3;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_NO_EXTRA_ITERATIONS
+  nb_extra_iterations = 0;
+#endif
+
   remesher.remesh(max_it, nb_extra_iterations);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -310,20 +334,88 @@ void tetrahedral_isotropic_remeshing(
 * @tparam CurveIndex is the type of the indices for feature curves.
 *            If `c3t3` has been generated using `CGAL::make_mesh_3()`, it must match
 *            `MeshDomainWithFeatures_3::Curve_index`.
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param c3t3 the complex containing the triangulation to be remeshed.
+* @param np optional sequence of \ref bgl_namedparameters "Named Parameters"
+*          among the ones listed below
+*
+* \cgalNamedParamsBegin
+*   \cgalParamNBegin{edge_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each edge of
+*                     `c3t3.triangulation()`.
+*                     For each edge `e` for which `c3t3.is_in_complex(e)` returns `true`,
+*                     the constrained status of `e` is set to `true`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap`
+*         with `std::pair<Triangulation_3::Vertex_handle, Triangulation_3::Vertex_handle>`
+*         as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no edge is constrained}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{vertex_is_constrained_map}
+*     \cgalParamDescription{a property map containing the constrained-or-not status of each vertex of
+*                     `c3t3.triangulation()`.
+*                     For each vertex `v` for which `c3t3.is_in_complex(v)` returns `true`,
+*                     the constrained status of `v` is set to `true`.}
+*     \cgalParamType{a class model of `ReadWritePropertyMap`
+*         with `Triangulation_3::Vertex_handle`
+*         as key type and `bool` as value type. It must be default constructible.}
+*     \cgalParamDefault{a default property map where no vertex is constrained}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
 */
 
 template<typename Tr,
          typename CornerIndex,
-         typename CurveIndex>
+         typename CurveIndex,
+         typename NamedParameters = parameters::Default_named_parameters>
 CGAL::Triangulation_3<typename Tr::Geom_traits,
                       typename Tr::Triangulation_data_structure>
 convert_to_triangulation_3(
-  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3)
+  CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3,
+  const NamedParameters& np = parameters::default_values())
 {
+  using parameters::get_parameter;
+  using parameters::choose_parameter;
+
   using GT   = typename Tr::Geom_traits;
   using TDS  = typename Tr::Triangulation_data_structure;
+
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Edge_vv = std::pair<Vertex_handle, Vertex_handle>;
+  using Default_edge_pmap = Constant_property_map<Edge_vv, bool>;
+  using ECMap = typename internal_np::Lookup_named_param_def <
+                internal_np::edge_is_constrained_t,
+                NamedParameters,
+                Default_edge_pmap
+                >::type;
+  using Default_vertex_pmap = Constant_property_map<Vertex_handle, bool>;
+  using VCMap = typename internal_np::Lookup_named_param_def <
+                internal_np::vertex_is_constrained_t,
+                NamedParameters,
+                Default_vertex_pmap
+                >::type;
+
+  ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
+                                 Default_edge_pmap(false));
+  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
+                                 Default_vertex_pmap(false));
+
+  if (!std::is_same_v<ECMap, Default_edge_pmap>)
+  {
+    for (auto e : c3t3.edges_in_complex())
+    {
+      const Edge_vv evv
+        = CGAL::Tetrahedral_remeshing::make_vertex_pair(e);//ordered pair
+      put(ecmap, evv, true);
+    }
+  }
+  if (!std::is_same_v<VCMap, Default_vertex_pmap>)
+  {
+    for (auto v : c3t3.vertices_in_complex())
+    {
+      put(vcmap, v, true);
+    }
+  }
 
   CGAL::Triangulation_3<GT, TDS> tr;
   tr.swap(c3t3.triangulation());
@@ -395,11 +487,20 @@ void tetrahedral_isotropic_remeshing(
   typedef typename internal_np::Lookup_named_param_def <
               internal_np::cell_selector_t,
               NamedParameters,
-              Tetrahedral_remeshing::internal::All_cells_selected<Tr>//default
+              Tetrahedral_remeshing::Complex_cells_selector<Tr>//default
               > ::type SelectionFunctor;
   SelectionFunctor cell_select
     = choose_parameter(get_parameter(np, internal_np::cell_selector),
-                       Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
+                       Tetrahedral_remeshing::Complex_cells_selector<Tr>());
+
+  typedef typename Tr::Vertex_handle Vertex_handle;
+  typedef typename internal_np::Lookup_named_param_def <
+              internal_np::vertex_is_constrained_t,
+              NamedParameters,
+              Constant_property_map<Vertex_handle, bool>//default
+              > ::type VCMap;
+  VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
+                                 Constant_property_map<Vertex_handle, bool>(false));
 
   typedef std::pair<typename Tr::Vertex_handle, typename Tr::Vertex_handle> Edge_vv;
   typedef typename internal_np::Lookup_named_param_def <
@@ -439,12 +540,9 @@ void tetrahedral_isotropic_remeshing(
 #endif
 
   typedef Tetrahedral_remeshing::internal::Adaptive_remesher<
-  Tr, SizingFunction, ECMap, FCMap, SelectionFunctor,
-  Visitor,
-  CornerIndex, CurveIndex
-  > Remesher;
+    Tr, SizingFunction, VCMap, ECMap, FCMap, SelectionFunctor, Visitor> Remesher;
   Remesher remesher(c3t3, sizing, protect
-                    , ecmap, fcmap
+                    , vcmap, ecmap, fcmap
                     , smooth_constrained_edges
                     , cell_select
                     , visitor);
@@ -458,6 +556,10 @@ void tetrahedral_isotropic_remeshing(
 
   // perform remeshing
   std::size_t nb_extra_iterations = 3;
+#ifdef CGAL_TETRAHEDRAL_REMESHING_NO_EXTRA_ITERATIONS
+  nb_extra_iterations = 0;
+#endif
+
   remesher.remesh(max_it, nb_extra_iterations);
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE

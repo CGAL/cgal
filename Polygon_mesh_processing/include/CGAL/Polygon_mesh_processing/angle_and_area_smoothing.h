@@ -134,7 +134,6 @@ void angle_and_area_smoothing(const FaceRange& faces,
                               TriangleMesh& tmesh,
                               const NamedParameters& np = parameters::default_values())
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor               vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor             halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor                 edge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor                 face_descriptor;
@@ -209,14 +208,7 @@ void angle_and_area_smoothing(const FaceRange& faces,
   const bool use_Delaunay_flips = choose_parameter(get_parameter(np, internal_np::use_Delaunay_flips), true);
 
   VCMap vcmap = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                                 get(Vertex_property_tag(), tmesh));
-
-  // If it's the default vcmap, manually set everything to false because the dynamic pmap has no default initialization
-  if((std::is_same<VCMap, Default_VCMap>::value))
-  {
-    for(vertex_descriptor v : vertices(tmesh))
-      put(vcmap, v, false);
-  }
+                                 get(Vertex_property_tag(), tmesh, false));
 
   ECMap ecmap = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                  Static_boolean_property_map<edge_descriptor, false>());

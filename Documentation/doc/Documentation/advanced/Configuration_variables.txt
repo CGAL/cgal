@@ -27,7 +27,7 @@ configure and/or build. Their values can be ON or OFF.
 | `WITH_examples`     | OFF   |
 | `WITH_demos`        | OFF   |
 | `WITH_CGAL_Core`    | ON    |
-| `WITH_CGAL_Qt5`     | ON    |
+| `WITH_CGAL_Qt6`     | ON    |
 | `WITH_CGAL_ImageIO` | ON    |
 
 \subsection installation_flags Compiler and Linker Flags
@@ -85,7 +85,7 @@ and will serverly limit performances.
 | Variable              | Description                                                           | Type        | %Default Value |
 | :-                    | :-                    | :-   |  :-            |
 | `CGAL_DIR`            | Full-path to the binary directory where \cgal was configured          |Either CMake or Environment | none |
-| `Qt5_DIR`             | Full-path to the Qt cmake directory  |CMake| platform-dependent|
+| `Qt6_DIR`             | Full-path to the Qt cmake directory  |CMake| platform-dependent|
 
 
 \subsection installation_variables_third_party Variables Providing Information About 3rd-Party Libraries
@@ -103,8 +103,8 @@ other but never both.
 
 \subsection installation_boost Boost Libraries
 
-\subsubsection inst_boost_1_70_plus Version 1.70 and Later
-Starting from \boost 1.70, the cmake config mode can be used for configuring the \boost version
+\subsubsection inst_boost_1_72_plus Version 1.72 and Later
+Starting from \boost 1.72, the cmake config mode can be used for configuring the \boost version
 to use by setting the environment variable `Boost_DIR` to the path containing the file
 `BoostConfig.cmake`. For example if you manually installed \boost 1.77 with `--prefix=<path>`,
 then you should set `Boost_DIR=<path>/lib/cmake/Boost-1.77.0`.
@@ -178,11 +178,11 @@ Under Linux, the \gmpxx is also searched for, and you may specify the following 
 
 
 
-\subsection installation_qt5 Qt5 Library
+\subsection installation_qt6 Qt6 Library
 
-You must set the cmake or environment variable `Qt5_DIR` to point to the path
-to the directory containing the file `Qt5Config.cmake` created by your \qt5 installation. If you are
-using the open source edition it should be `<path>/qt-everywhere-opensource-src-<version>/qtbase/lib/cmake/Qt5`.
+You must set the cmake or environment variable `Qt6_DIR` to point to the path
+to the directory containing the file `Qt6Config.cmake` created by your \qt6 installation. If you are
+using the open source edition it should be `<path>/qt-everywhere-opensource-src-<version>/qtbase/lib/cmake/Qt6`.
 
 \subsection installation_leda LEDA Library
 
