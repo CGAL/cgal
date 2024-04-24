@@ -56,7 +56,7 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 struct Vb : public CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K> {};
 struct Cb : public CGAL::Constrained_Delaunay_triangulation_cell_base_3<K> {};
-using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
+struct Tds: public CGAL::Triangulation_data_structure_3<Vb, Cb> {};
 using Delaunay = CGAL::Delaunay_triangulation_3<K, Tds>;
 using CDT = CGAL::Constrained_Delaunay_triangulation_3<Delaunay>;
 using Point = Delaunay::Point;
