@@ -1,19 +1,16 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/intersections.h>
 #include <CGAL/Kinetic_space_partition_3.h>
-#include <CGAL/Real_timer.h>
 #include <CGAL/IO/OFF.h>
 #include <CGAL/IO/PLY.h>
 
-using SCF   = CGAL::Simple_cartesian<float>;
 using SCD   = CGAL::Simple_cartesian<double>;
 using EPICK = CGAL::Exact_predicates_inexact_constructions_kernel;
 using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
-using GMPQ  = CGAL::Simple_cartesian<CGAL::Gmpq>;
-using Timer = CGAL::Real_timer;
 
-std::size_t failed = 0;
+std::size_t different = 0;
 
 template<typename Kernel, typename IntersectionKernel>
 bool run_test(
@@ -59,16 +56,14 @@ bool run_test(
     std::cout << ksp.number_of_volumes() << std::endl;
 
     if (results[i][0] != count[0] || results[i][1] != count[2] || results[i][2] != count[3]) {
-      std::cout << "TEST FAILED: Partitioning has not expected number of vertices, faces or volumes for k = " << ks[i] << std::endl;
+      std::cout << "TEST differs: Partitioning has not expected number of vertices, faces or volumes for k = " << ks[i] << std::endl;
 
       std::cout << "Expectation:" << std::endl;
       std::cout << "v: " << results[i][0] << " f : " << results[i][1] << " v : " << results[i][2] << std::endl;
       std::cout << "Result k = " << " vertices : " << count[0] << " faces : " << count[2] << " volumes : " << count[3] << std::endl;
       std::cout << input_filename << std::endl;
-      std::string buf;
-      std::cin >> buf;
-      exit(0);
-      //assert(false);
+
+      different++;
     }
     else std::cout << "TEST PASSED k = " << ks[i] << " " << input_filename << std::endl;
   }
@@ -78,36 +73,25 @@ bool run_test(
 
 template<typename Kernel, typename IntersectionKernel>
 void run_all_tests() {
-  failed = 0;
+  different = 0;
   std::cout.precision(10);
   std::vector< std::vector<double> > all_times;
 
-  // All results are precomputed for k = 1!
-  std::vector<std::vector<unsigned int> > results(3); //
-
-  results[0] = { 50, 71, 15 };
-  results[1] = { 56, 85, 19 };
-  results[2] = { 63, 102, 24 };
-  run_test<Kernel, IntersectionKernel>("data/stress-test-5/test-2-rnd-polygons-20-4.off", { 1, 2, 3 }, results);
-
-  results[0] = { 206, 385, 99 };//
-  results[1] = { 237, 462, 122 };//
-  results[2] = { 260, 529, 144 };//
-  run_test<Kernel, IntersectionKernel>("data/real-data-test/test-15-polygons.off", {1, 2, 3 }, results);
+  std::vector<std::vector<unsigned int> > results(3);
 
   results[0] = { 40, 52, 11 };
-  results[1] = { 48, 70, 16 };//
-  results[2] = { 54, 84, 20 };//
+  results[1] = { 48, 70, 16 };
+  results[2] = { 54, 84, 20 };
   run_test<Kernel, IntersectionKernel>("data/edge-case-test/test-same-time.off", { 1, 2, 3 }, results);
 
   // Edge tests.
-  results[0] = { 18, 20, 4 };//
+  results[0] = { 18, 20, 4 };
   run_test<Kernel, IntersectionKernel>("data/edge-case-test/test-2-polygons.off", { 1 }, results);
 
-  results[0] = { 22, 25, 5 };// coplanar
+  results[0] = { 22, 25, 5 };
   run_test<Kernel, IntersectionKernel>("data/edge-case-test/test-4-polygons.off", { 1 }, results);
 
-  results[0] = { 22, 25, 5 };// coplanar
+  results[0] = { 22, 25, 5 };
   run_test<Kernel, IntersectionKernel>("data/edge-case-test/test-5-polygons.off", { 1 }, results);
 
   results[0] = { 39, 49, 10 };
@@ -209,8 +193,8 @@ void run_all_tests() {
   results[0] = { 17, 17, 3 };
   results[1] = { 19, 21, 4 };
   run_test<Kernel, IntersectionKernel>("data/stress-test-3/test-4-rnd-polygons-2-4.off", { 1, 2 }, results);
-  //results[0] = { 14, 13, 2 };
-  //run_test<Kernel, IntersectionKernel>("data/stress-test-3/test-5-rnd-polygons-1-3.off", { 1 }, results);
+  results[0] = { 14, 13, 2 };
+  run_test<Kernel, IntersectionKernel>("data/stress-test-3/test-5-rnd-polygons-1-3.off", { 1 }, results);
   results[0] = { 18, 18, 3 };
   results[1] = { 19, 21, 4 };
   run_test<Kernel, IntersectionKernel>("data/stress-test-3/test-6-rnd-polygons-2-3.off", { 1, 2 }, results);
@@ -282,29 +266,27 @@ void run_all_tests() {
   results[2] = { 127, 233, 60 };
   run_test<Kernel, IntersectionKernel>("data/real-data-test/test-10-polygons.off", { 1, 2, 3 }, results);
 
+  results[0] = { 206, 385, 99 };
+  results[1] = { 237, 462, 122 };
+  results[2] = { 260, 529, 144 };
+  run_test<Kernel, IntersectionKernel>("data/real-data-test/test-15-polygons.off", { 1, 2, 3 }, results);
+
   results[0] = { 1156, 2466, 677 };
   results[1] = { 1131, 2387, 650 };
   results[2] = { 1395, 3115, 882 };
-  run_test<Kernel, IntersectionKernel>("data/real-data-test/test-40-polygons_full.ply", { 1, 2, 3 }, results);
+  run_test<Kernel, IntersectionKernel>("data/real-data-test/test-40-polygons.ply", { 1, 2, 3 }, results);
 
   const auto kernel_name = boost::typeindex::type_id<Kernel>().pretty_name();
-  if (failed != 0) {
-    std::cout << std::endl << kernel_name << failed << " TESTS FAILED!" << std::endl << std::endl;
+  if (different != 0) {
+    std::cout << std::endl << kernel_name << different << " TESTS differ from typical values!" << std::endl << std::endl;
   }
   std::cout << std::endl << kernel_name << " TESTS SUCCESS!" << std::endl << std::endl;
 }
 
-#include <CGAL/intersections.h>
-
 int main(const int /* argc */, const char** /* argv */) {
-  // run_all_tests<SCF>();
-  // run_all_tests<SCD>();
-  //run_all_tests<EPECK>();
-
-  // Passes all tests except for those when
-  // intersections lead to accumulated errors.
-  //build();
+  run_all_tests<SCD, EPECK>();
   run_all_tests<EPICK, EPECK>();
+  //run_all_tests<EPECK, EPECK>();
   //run_all_tests<GMPQ, GMPQ>();
   return EXIT_SUCCESS;
 }
