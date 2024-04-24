@@ -11,6 +11,7 @@
 #include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Polygon_mesh_processing/region_growing.h>
+#include <CGAL/Polygon_mesh_processing/remesh_planar_patches.h>
 
 #include <boost/graph/graph_traits.hpp>
 
@@ -91,6 +92,7 @@ struct CDT_options
   std::string input_filename = CGAL::data_file_path("meshes/mpi.off");
   std::string output_filename{"dump.off"};
   std::string dump_patches_after_merge_filename{};
+  std::string dump_surface_mesh_after_merge_filename{};
   std::string dump_patches_borders_prefix{};
   std::string dump_after_conforming_filename{};
 };
@@ -114,6 +116,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --coplanar-polygon-max-distance <double>: max distance for coplanar polygons (default: 1e-6)
 
   --dump-patches-after-merge <filename.ply>: dump patches after merging facets in PLY
+  --dump-surface-mesh-after-merge <filename.off>: dump surface mesh after merging facets in OFF
   --dump-patches-borders-prefix <filenames_prefix>: dump patches borders
   --dump-after-conforming <filename.off>: dump mesh after conforming in OFF
 
@@ -180,6 +183,9 @@ int main(int argc, char* argv[])
     } else if(arg == "--dump-patches-borders-prefix") {
       assert(i + 1 < argc);
       options.dump_patches_borders_prefix = argv[++i];
+    } else if(arg == "--dump-surface-mesh-after-merge") {
+      assert(i + 1 < argc);
+      options.dump_surface_mesh_after_merge_filename = argv[++i];
     } else if(arg == "--dump-after-conforming") {
       assert(i + 1 < argc);
       options.dump_after_conforming_filename = argv[++i];
@@ -403,6 +409,12 @@ int go(Mesh mesh, CDT_options options) {
   assert(patch_id_map_ok); CGAL_USE(patch_id_map_ok);
   auto [v_selected_map, v_selected_map_ok] = mesh.add_property_map<vertex_descriptor, bool>("v:selected", false);
   assert(v_selected_map_ok); CGAL_USE(v_selected_map_ok);
+  auto [corner_id_map, corner_id_map_ok] = mesh.add_property_map<vertex_descriptor, std::size_t>("v:corner_id", -1);
+  assert(corner_id_map_ok); CGAL_USE(corner_id_map_ok);
+  auto [edge_is_border_of_patch_map, edge_is_border_of_patch_map_ok] =
+      mesh.add_property_map<edge_descriptor, bool>("e:is_border_of_patch", false);
+  assert(edge_is_border_of_patch_map_ok);
+  CGAL_USE(edge_is_border_of_patch_map_ok);
   int nb_patches = 0;
   std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
   if(options.merge_facets) {
@@ -445,14 +457,28 @@ int go(Mesh mesh, CDT_options options) {
           mesh, patch_id_map,
           np::maximum_distance(options.coplanar_polygon_max_distance * bbox_max_width)
              .maximum_angle(options.coplanar_polygon_max_angle));
-    }
-    for(auto f: faces(mesh)) {
-      if(get(patch_id_map, f) < 0) {
-        std::cerr << "warning: face " << f << " has no patch id! Reassign it to " << nb_patches << '\n';
-        for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
-          std::cerr << "  " << target(h, mesh) << ", point " << mesh.point(target(h, mesh)) << '\n';
+      for(auto f: faces(mesh)) {
+        if(get(patch_id_map, f) < 0) {
+          std::cerr << "warning: face " << f << " has no patch id! Reassign it to " << nb_patches << '\n';
+          for(auto h: CGAL::halfedges_around_face(halfedge(f, mesh), mesh)) {
+            std::cerr << "  " << target(h, mesh) << ", point " << mesh.point(target(h, mesh)) << '\n';
+          }
+          put(patch_id_map, f, nb_patches++);
         }
-        put(patch_id_map, f, nb_patches++);
+      }
+      if(!options.dump_surface_mesh_after_merge_filename.empty()) {
+        const auto nb_corners = CGAL::Polygon_mesh_processing::detect_corners_of_regions(
+            mesh, patch_id_map, nb_patches, corner_id_map,
+            np::maximum_distance(options.coplanar_polygon_max_distance * bbox_max_width)
+                .maximum_angle(options.coplanar_polygon_max_angle).edge_is_constrained_map(edge_is_border_of_patch_map));
+        Mesh merged_mesh;
+        CGAL::Polygon_mesh_processing::remesh_almost_planar_patches(
+            mesh, merged_mesh, nb_patches, nb_corners, patch_id_map, corner_id_map, edge_is_border_of_patch_map,
+            CGAL::parameters::default_values(),
+            CGAL::parameters::do_not_triangulate_faces(true));
+        std::ofstream out(options.dump_surface_mesh_after_merge_filename);
+        out.precision(17);
+        out << merged_mesh;
       }
     }
     if (!options.quiet) {
