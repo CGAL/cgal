@@ -535,7 +535,7 @@ public:
                          const auto va = sc.first.first;
                          const auto vb = sc.first.second;
                          const auto is_edge = this->is_edge(va, vb);
-#if CGAL_DEBUG_CDT_3 & 128 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 & 128 && CGAL_CAN_USE_CXX20_FORMAT
                          std::cerr << std::format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
                                                   is_edge,
                                                   CGAL::IO::oformat(va, with_point_and_info),

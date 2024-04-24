@@ -2180,8 +2180,7 @@ private:
           }
         }
 
-#if __has_include(<format>) && \
-  (__cpp_lib_format >= 201907L || __cplusplus >= 202000L || _MSVC_LANG >= 202000L)
+#if CGAL_CAN_USE_CXX20_FORMAT
         std::cerr << std::format
             ("NOTE: diagonal: {:.6} {:.6}  {} in tr\n",
             IO::oformat(*diagonal.begin(), with_point),
@@ -2220,7 +2219,7 @@ private:
                 face_index, region_index);
           }
         }
-#endif // __has_include(<format>) && (__cpp_lib_format >= 201907L || __cplusplus >= 202000L || _MSVC_LANG >= 202000L)
+#endif // CGAL_CAN_USE_CXX20_FORMAT
       }
       return false;
     };
@@ -2820,7 +2819,7 @@ private:
   {
     const auto& cdt_2 = non_const_cdt_2;
     auto steiner_pt = CGAL::centroid(cdt_2.triangle(fh_2d));
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
     std::cerr << std::format("Trying to insert Steiner (centroid) point {} in non-coplanar face {}.\n", IO::oformat(steiner_pt),
                              IO::oformat(cdt_2.triangle(fh_2d)));
 #endif // CGAL_DEBUG_CDT_3
@@ -2828,12 +2827,10 @@ private:
     if(encroached_edge_opt) {
       return encroached_edge_opt;
     }
-#if __has_include(<format>)
-    if(this->debug_Steiner_points()) {
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_Steiner_points()) {
       std::cerr << std::format("Inserting Steiner (centroid) point {} in non-coplanar face {}: {}.\n",
                                IO::oformat(steiner_pt), face_index, IO::oformat(cdt_2.triangle(fh_2d)));
     }
-#endif
 
     Locate_type lt;
     int li, lj;
@@ -2900,11 +2897,9 @@ private:
     const auto v = this->insert_in_cdt_3(steiner_pt, lt, ch, li, lj, insert_in_conflict_visitor);// TODO: use "insert in hole"
     // this->study_bug = false;
     // assert(is_valid(true));
-#if __has_include(<format>)
-    if(this->debug_Steiner_points()) {
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_Steiner_points()) {
       std::cerr << "  -> " << IO::oformat(v, with_offset) << '\n';
     }
-#endif
     v->set_Steiner_vertex_in_face(face_index);
     [[maybe_unused]] typename CDT_2::Locate_type lt_2;
     int i;
@@ -2925,15 +2920,13 @@ private:
     const auto a = this->point(va_3d);
     const auto b = this->point(vb_3d);
     const auto mid = CGAL::midpoint(a, b);
-#if __has_include(<format>)
-    if(this->debug_Steiner_points()) {
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_Steiner_points()) {
       std::cerr << std::format("Inserting Steiner (midpoint) point {} of constrained edge ({:.6} , {:.6})\n",
                               IO::oformat(mid), IO::oformat(va_3d, with_point_and_info),
                               IO::oformat(vb_3d, with_point_and_info));
     }
-#endif
     auto&& contexts = this->constraint_hierarchy.contexts_range(va_3d, vb_3d);
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
     if(std::next(contexts.begin()) != contexts.end()) {
       std::cerr << "ERROR: Edge is constrained by more than one constraint\n";
       for(const auto& c : contexts) {
@@ -2961,11 +2954,9 @@ private:
     [[maybe_unused]] auto v =
       this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d},
                                                   constraint_id, insert_in_conflict_visitor);
-#if __has_include(<format>)
-    if(this->debug_Steiner_points()) {
+    if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_Steiner_points()) {
       std::cerr << "  -> " << IO::oformat(v, with_offset) << '\n';
     }
-#endif
     // this->study_bug = false;
     // assert(is_valid(true));
   }
@@ -3024,7 +3015,7 @@ private:
 
               std::cerr << "NOTE: " << what << " in sub-region " << (region_index - 1)
                   << " of face #F" << face_index << '\n';
-#if CGAL_DEBUG_CDT_3 & 64 && __has_include(<format>)
+#if CGAL_DEBUG_CDT_3 & 64 && CGAL_CAN_USE_CXX20_FORMAT
         std::cerr << "  constrained edges are:\n";
         for(auto [c, index]: cdt_2.constrained_edges()) {
           const auto va = c->vertex(cdt_2.cw(index));

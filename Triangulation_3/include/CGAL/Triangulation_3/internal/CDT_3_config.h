@@ -23,13 +23,11 @@
 
 #include <CGAL/license/Triangulation_3.h>
 
-#define CGAL_CDT_3_CAN_USE_CXX20_FORMAT 0
-#if __has_include(<format>)
+#include <CGAL/config.h>
+
+#if CGAL_CAN_USE_CXX20_FORMAT
+#  define CGAL_CDT_3_CAN_USE_CXX20_FORMAT 1
 #  include <format>
-#  if __cpp_lib_format >= 201907L || __cplusplus >= 202000L || _MSVC_LANG >= 202000L
-#    undef CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-#    define CGAL_CDT_3_CAN_USE_CXX20_FORMAT 1
-#  endif
 #endif
 
 namespace CGAL {
