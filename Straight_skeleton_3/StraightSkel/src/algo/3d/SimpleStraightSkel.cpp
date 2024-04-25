@@ -2617,12 +2617,22 @@ PolyhedronSPtr SimpleStraightSkel::shiftFacets(PolyhedronSPtr polyhedron, CGAL::
                     speed = std::dynamic_pointer_cast<SkelFacetData>(
                             facet->getData())->getSpeed();
                 }
-                planes[i] = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
+
+                if(offset == 0.)
+                  planes[i] = facet->plane();
+                else
+                  planes[i] = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
+
                 i++;
             }
         }
         if (i >= 3) {
-            Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+            Point3SPtr point;
+            if(offset == 0.)
+              point = vertex->getPoint();
+            else
+              point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+
             if (!point) {
                 result = PolyhedronSPtr();
                 DEBUG_SPTR(result);
