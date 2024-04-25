@@ -589,8 +589,8 @@ std::string Vertex::toString() const {
     } else {
         result += util::StringFactory::fromPointer(this) + ", ";
     }
-    result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + ", ";
-    result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + ", ";
+    result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + " ";
+    result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + " ";
     result += util::StringFactory::fromDouble(CGAL::to_double(getZ())) + ">";
 //    if (edges_.size() > 0) {
 //        result += ", Edges:" + util::StringFactory::fromInteger(edges_.size());
