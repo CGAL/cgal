@@ -119,6 +119,9 @@ public:
   /// The point has already been put in the vertex point map.
   void after_vertex_copy(vertex_descriptor v_src, const Triangle_mesh& tm_src,
                          vertex_descriptor v_tgt, const Triangle_mesh& tm_tgt);
+  /// called for each face `f` in the output mesh `tm` that belongs to the intersection of two coplanar faces of the input meshes.
+  void input_coplanar_face(face_descriptor f, TriangleMesh& tm);
+
 /// @}
 
 /// @name Functions used by corefine() for progress tracking
