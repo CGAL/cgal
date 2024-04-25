@@ -140,7 +140,6 @@ private:
   ********************************/
 
   void apply(const Face_event& event) {
-    m_data.eventlog << ".";
     if (m_data.igraph().face(event.face).part_of_partition) {
       return;
     }

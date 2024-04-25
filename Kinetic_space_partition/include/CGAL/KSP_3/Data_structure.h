@@ -211,7 +211,6 @@ public:
       pfaces.clear();
     }
   };
-  std::ofstream eventlog;
 
 private:
   std::vector<Support_plane> m_support_planes;
@@ -219,7 +218,6 @@ private:
   Intersection_graph m_intersection_graph;
 
   std::vector<std::vector<Point_3> > m_input_polygons;
-
 
   To_exact to_exact;
   From_exact from_exact;
@@ -245,7 +243,6 @@ private:
 
 public:
   Data_structure(const Parameters& parameters, const std::string &prefix) : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix) {
-    eventlog << std::setprecision(17);
   }
 
   template<typename Type1, typename Type2, typename ResultType>
@@ -376,14 +373,10 @@ public:
     if (m_intersection_graph.iedge_is_on_bbox(edge))
       return 0;
 
-    bool verbose = false;
-
     // Count faces
     std::size_t numfaces = 0;
     for (std::size_t i = 0; i < m_support_planes.size(); i++)
       numfaces += m_support_planes[i].data().mesh.number_of_faces();
-
-    eventlog << "#faces: " << numfaces << std::endl;
 
     Support_plane& sp = m_support_planes[sp_idx];
 
@@ -393,12 +386,6 @@ public:
     IkPoint_2 centroid2 = to_exact(sp.data().centroid);
 
     typename Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
-
-/*
-    if (kinetic_interval.size() != 0) {
-      int a;
-      a = 3;
-    }*/
 
     Point_2 s = sp.to_2d(from_exact(point_3(m_intersection_graph.source(edge))));
     IkPoint_2 s2 = sp.to_2d(point_3(m_intersection_graph.source(edge)));
@@ -431,20 +418,6 @@ public:
     else
       event.face = faces.first;
 
-    if (event.face == 403 && m_intersection_graph.source(edge) == 393 && m_intersection_graph.target(edge) == 382) {
-      verbose = true;
-      eventlog << "triggered" << std::flush;
-    }
-
-    if (verbose) {
-      eventlog << "s: " << s.x() << " " << s.y() << std::endl;
-      eventlog << "t: " << t.x() << " " << t.y() << std::endl;
-      eventlog << "segment: " << segment << std::endl;
-      eventlog << "segment_length: " << segment_length << std::endl;
-      eventlog << "to_source: " << to_source << std::endl;
-      eventlog << "to_target: " << to_target << std::endl;
-    }
-
     for (std::size_t i = 0; i < sp.data().original_directions.size(); i++) {
       if (source_idx == uninitialized && sp.data().original_directions[i] > to_source)
         source_idx = i;
@@ -462,13 +435,6 @@ public:
     IkVector_2 tt2 = to_target2.vector(), ts2 = to_source2.vector();
     bool ccw = (tt2.x() * ts2.y() - tt2.y() * ts2.x()) < 0;
 
-    if (verbose) {
-      eventlog << "source_idx: " << source_idx << std::endl;
-      eventlog << "target_idx: " << target_idx << std::endl;
-      eventlog << "tt2: " << from_exact(tt2) << std::endl;
-      eventlog << "ccw: " << ccw << std::endl;
-    }
-
     // Check whether the segment is cw or ccw oriented.
     if (!ccw) {
       std::size_t tmp = source_idx;
@@ -484,11 +450,6 @@ public:
       t2 = tmp_p2;
     }
 
-    if (verbose) {
-      eventlog << "s2: " << from_exact(s2) << std::endl;
-      eventlog << "t2: " << from_exact(t2) << std::endl;
-    }
-
     if (source_idx <= target_idx)
       num = target_idx - source_idx;
     else
@@ -497,10 +458,6 @@ public:
     std::vector<IkFT> time(num);
     std::vector<IkPoint_2> intersections(num);
     std::vector<IkFT> intersections_bary(num);
-
-    if (verbose) {
-      eventlog << "num: " << num << std::endl;
-    }
 
     // Shooting rays to find intersection with line of IEdge
     typename Intersection_kernel::Line_3 l3 = m_intersection_graph.line_3(edge);
@@ -514,8 +471,6 @@ public:
       }
       IkPoint_2 p;
       FT diff = sp.data().original_vectors[idx].squared_length() - from_exact(sp.data().original_rays[idx].to_vector().squared_length());
-      if (CGAL::abs(diff) > 0.001)
-        eventlog << "diff: " << diff << std::endl;
 
       if (CGAL::assign(p, result)) {
         IkFT l = CGAL::approximate_sqrt(sp.data().original_vectors[idx].squared_length());
@@ -531,18 +486,6 @@ public:
           intersections_bary[i] = 1.0 - intersections_bary[i];
       }
       // If the intersection is a segment, it can be safely ignored as there are also two intersections with the adjacent edges.
-    }
-
-    if (verbose) {
-      eventlog << "intersections_bary:";
-      for (IkFT bary : intersections_bary)
-        eventlog << " " << from_exact(bary);
-      eventlog << std::endl;
-
-      eventlog << "intersections:";
-      for (IkPoint_2 p : intersections)
-        eventlog << " " << from_exact(p);
-      eventlog << std::endl;
     }
 
     // Calculate pedge vs ivertex collision
@@ -613,17 +556,16 @@ public:
       event.intersection_bary = 1;
     }
 
-/*
+
     if (kinetic_interval.size() > 4) {
       if (kinetic_interval[2].first > kinetic_interval[1].first) {
         int a;
         a = 2;
       }
-    }*/
+    }
 
     CGAL_assertion(0 <= event.intersection_bary && event.intersection_bary <= 1);
 
-    eventlog.flush();
     return event.time;
   }
 
@@ -633,8 +575,6 @@ public:
     std::size_t faces = 0;
     for (std::size_t i = 0; i < m_support_planes.size(); i++)
       faces += m_support_planes[i].data().mesh.number_of_faces();
-
-    eventlog << "#faces: " << faces << std::endl;
 
     for (std::size_t sp_idx = 6; sp_idx < m_support_planes.size(); sp_idx++) {
       std::vector<IEdge> border;
@@ -647,8 +587,6 @@ public:
         Face_event fe;
         IkFT t = calculate_edge_intersection_time(sp_idx, edge, fe);
         if (t > 0) {
-          eventlog << CGAL::to_double(fe.time) << ": " << fe.support_plane << " " << fe.face << " " << fe.crossed_edge << " " << CGAL::to_double(fe.intersection_bary) << std::endl;
-          eventlog.flush();
           queue.push(fe);
         }
       }
