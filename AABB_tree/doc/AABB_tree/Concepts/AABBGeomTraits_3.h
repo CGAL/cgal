@@ -54,7 +54,7 @@ must be a `std::optional` of a `std::variant` of the possible intersection types
 typedef unspecified_type Intersect_3;
 
 /*!
-A functor object to construct the sphere centered at one point and passing through another one.
+A functor object to construct the sphere specified by its center and squared radius.
 Provides the operator:
 
 `Sphere_3 operator()(const Point_3& p, const FT & sr)`,

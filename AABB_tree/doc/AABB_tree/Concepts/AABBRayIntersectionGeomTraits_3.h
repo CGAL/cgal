@@ -42,7 +42,7 @@ public:
   Construct_source_3 construct_source_3_object();
 
   /*!
-    A model of `CartesianConstIterator3`.
+    A model of `CartesianConstIterator_3`.
    */
   typedef unspecified_type Cartesian_const_iterator_3;
 

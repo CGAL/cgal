@@ -54,7 +54,7 @@ must be a `std::optional` of a `std::variant` of the possible intersection types
 typedef unspecified_type Intersect_2;
 
 /*!
-A functor object to construct the circle centered at one point and passing through another one.
+A functor object to construct the circle specified by its center and squared radius.
 Provides the operator:
 
 `Circle_2 operator()(const Point_2& p, const FT & sr)`,
