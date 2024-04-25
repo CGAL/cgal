@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 qt6_wrap_ui(display_propertyUI_FILES Display_property.ui)
 cgal_lab_plugin(display_property_plugin Display_property_plugin ${display_propertyUI_FILES} KEYWORDS Viewer)

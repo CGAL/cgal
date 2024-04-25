@@ -4,7 +4,7 @@ Release History
 [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 -----------
 
-Release date: October 2023
+Release date: June 2024
 
 ### General Changes
 
@@ -17,6 +17,7 @@ Release date: October 2023
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
 - **Breaking change**: The file CMake file `UseCGAL.cmake` has been removed from CGAL. Usages of the CMake variables `${CGAL_USE_FILE}` and `${CGAL_LIBRARIES}` must be replaced by a link to the imported target `CGAL::CGAL`, for example: `target_link_library(the_target PRIVATE CGAL::CGAL)`.
 - The minimal supported version of Boost is now 1.72.0
+- The CGAL demo formerly known as "Polyhedron demo" has been renamed "CGAL Lab".
 
 ### Installation
 

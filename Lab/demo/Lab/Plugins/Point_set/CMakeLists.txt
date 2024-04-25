@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 if(TARGET CGAL::Eigen3_support)
   find_package(SCIP QUIET)

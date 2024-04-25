@@ -1,5 +1,5 @@
 
-include( cgallab_macros )
+include( CGALlab_macros )
 qt6_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
 cgal_lab_plugin(camera_positions_plugin
     Camera_positions_plugin

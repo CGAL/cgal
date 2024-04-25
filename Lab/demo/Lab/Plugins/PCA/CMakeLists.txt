@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 cgal_lab_plugin(pca_plugin Pca_plugin KEYWORDS PointSetProcessing)
 target_link_libraries(
   pca_plugin PUBLIC scene_surface_mesh_item scene_points_with_normal_item

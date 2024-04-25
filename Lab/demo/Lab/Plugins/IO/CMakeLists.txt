@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 find_package(LASLIB QUIET)
 set_package_properties(

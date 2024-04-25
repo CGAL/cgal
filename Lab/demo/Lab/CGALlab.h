@@ -3,7 +3,7 @@
 
 #include <QtCore/qglobal.h>
 
-#include "cgallab_config.h"
+#include "CGALlab_config.h"
 
 #include <QApplication>
 #include <QScopedPointer>
