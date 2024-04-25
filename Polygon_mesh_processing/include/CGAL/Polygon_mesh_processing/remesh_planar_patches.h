@@ -1345,7 +1345,9 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{edge_is_constrained_map}
- *      \cgalParamDescription{a property map filled by this function and that will contain `true` if an edge is on the border of a patch and `false` otherwise.}
+ *      \cgalParamDescription{a property map where the user should put `true` for edges that must be considered as on the boundary of a patch.
+ *                            Additionally, the map is updated by this function and will contain `true` if, based on the angle criteria, an edge is
+ *                            on the boundary of a patch and `false` otherwise.}
  *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%edge_descriptor`
  *                     as key type and `bool` as value type}
  *      \cgalParamDefault{None}
