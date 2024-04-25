@@ -668,7 +668,7 @@ private:
     auto& tr = c3t3.triangulation();
 
     const std::size_t nbv = tr.number_of_vertices();
-    std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
+    std::vector<Vector_3> moves(nbv, CGAL::NULL_VECTOR);
     std::vector<int> neighbors(nbv, 0);
     std::vector<FT> masses(nbv, 0.);
 
@@ -691,13 +691,13 @@ private:
 
       if (is_free(i0))
       {
-        smoothed_positions[i0] += mass * Vector_3(p0, p1);
+        moves[i0] += mass * Vector_3(p0, p1);
         neighbors[i0]++;
         masses[i0] += mass;
       }
       if (is_free(i1))
       {
-        smoothed_positions[i1] += mass * Vector_3(p1, p0);
+        moves[i1] += mass * Vector_3(p1, p0);
         neighbors[i1]++;
         masses[i1] += mass;
       }
@@ -717,7 +717,7 @@ private:
 
       CGAL_assertion(masses[vid] > 0);
       const Vector_3 move = (nb_neighbors > 0)
-                          ? smoothed_positions[vid] / masses[vid]
+                          ? moves[vid] / masses[vid]
                           : CGAL::NULL_VECTOR;
 
       const Point_3 smoothed_position = current_pos + move;
@@ -779,7 +779,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
   auto& tr = c3t3.triangulation();
 
   const std::size_t nbv = tr.number_of_vertices();
-  std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
+  std::vector<Vector_3> moves(nbv, CGAL::NULL_VECTOR);
   std::vector<int> neighbors(nbv, 0);
   std::vector<FT> masses(nbv, 0.);
 
@@ -800,13 +800,13 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
       if (!is_on_feature(vh0) && is_free(i0))
       {
-        smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(p0, p1);
+        moves[i0] = moves[i0] + mass * Vector_3(p0, p1);
         neighbors[i0]++;
         masses[i0] += mass;
       }
       if (!is_on_feature(vh1) && is_free(i1))
       {
-        smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(p1, p0);
+        moves[i1] = moves[i1] + mass * Vector_3(p1, p0);
         neighbors[i1]++;
         masses[i1] += mass;
       }
@@ -833,7 +833,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
     if (nb_neighbors > 1)
     {
-      const Vector_3 move = smoothed_positions[vid] / masses[vid];
+      const Vector_3 move = moves[vid] / masses[vid];
       const Point_3 smoothed_position = point(v->point()) + move;
 
 #ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
@@ -972,7 +972,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
   auto& tr = c3t3.triangulation();
 
   const std::size_t nbv = tr.number_of_vertices();
-  std::vector<Vector_3> smoothed_positions(nbv, CGAL::NULL_VECTOR);
+  std::vector<Vector_3> moves(nbv, CGAL::NULL_VECTOR);
   std::vector<int> neighbors(nbv, 0);/*for dim 3 vertices, start counting directly from 0*/
   std::vector<FT> masses(nbv, 0.);
 
@@ -995,13 +995,13 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 
       if (c3t3.in_dimension(vh0) == 3 && is_free(i0))
       {
-        smoothed_positions[i0] = smoothed_positions[i0] + mass * Vector_3(p0, p1);
+        moves[i0] = moves[i0] + mass * Vector_3(p0, p1);
         neighbors[i0]++;
         masses[i0] += mass;
       }
       if (c3t3.in_dimension(vh1) == 3 && is_free(i1))
       {
-        smoothed_positions[i1] = smoothed_positions[i1] + mass * Vector_3(p1, p0);
+        moves[i1] = moves[i1] + mass * Vector_3(p1, p0);
         neighbors[i1]++;
         masses[i1] += mass;
       }
@@ -1019,7 +1019,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
       os_vol << "2 " << point(v->point());
 #endif
-      const Vector_3 move = smoothed_positions[vid] / masses[vid];// static_cast<FT>(neighbors[vid]);
+      const Vector_3 move = moves[vid] / masses[vid];// static_cast<FT>(neighbors[vid]);
       Point_3 new_pos = point(v->point()) + move;
       if (check_inversion_and_move(v, new_pos, inc_cells[vid], tr, total_move)){
         nb_done_3d++;
