@@ -76,8 +76,17 @@ Release date: June 2024
     bounding box to a face graph.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
--   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
-    when inserting an arc that lies on the identification curve.
+- **Breaking change**: The type of the result of point location queries changed to
+    `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
+    has been removed.
+
+- Eliminated the error-prone c-type casting that was used to define observers. In general, backward compatibility was maintained; however, the former class template `Arr_observer` was replaced by an alias template. (The former class Arr_observer was renamed to Aos_observer).
+
+- Introduced `Arr_dcel`, which essentially replaces the former `Arr_default_dcel`. Backward compatibility was maintained by the introduction of the alias template `Arr_default_dcel`. `Arr_dcel`, as opposed to the former `Arr_default_dcel` is templated (in addition to the geometry traits) by Vertex, Halfedge, and Face template parameters, and they have default type values. All this enables the layered extension of DCEL records.
+
+- Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere, when inserting an arc that lies on the identification curve.
+
+- Introduced a new interactive program that demonstrates 2D arrangements embedded on the sphere called `earth`. The program (i) reads a database of all administrative boundaries of the countries in the world, (ii) displays the globe with all countries and land covered by water (which is land not covered by countries) on a window, and (ii) enables interaction with the user.
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
 -   **Breaking change**: The template parameters of
