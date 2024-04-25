@@ -183,7 +183,11 @@ public:
 
     m_planes.clear();
     m_polygons.clear();
+    m_polygon_indices.clear();
+    m_polygon_pts.clear();
     m_region_map.clear();
+    m_regions.clear();
+    m_planar_regions.clear();
 
     m_point_map = Point_set_processing_3_np_helper<Point_range, CGAL_NP_CLASS, Point_map>::get_point_map(m_points, np);
     m_normal_map = Point_set_processing_3_np_helper<Point_range, CGAL_NP_CLASS, Normal_map>::get_normal_map(m_points, np);
@@ -1780,20 +1784,6 @@ private:
     std::size_t unassigned = 0;
     region_growing.unassigned_items(m_points, boost::make_function_output_iterator([&](const auto&) { ++unassigned; }));
 
-    std::vector<std::vector<Point_3> > polys_debug;
-
-    for (std::size_t i = 0; i < m_regions.size(); i++) {
-
-      Indices region;
-      for (auto& j : m_regions[i].second)
-        region.push_back(j);
-
-      store_convex_hull_shape(region, m_regions[i].first, polys_debug);
-    }
-
-    if (m_debug)
-      KSP_3::internal::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
-
     // Convert indices.
     m_planar_regions.clear();
     m_planar_regions.reserve(m_regions.size());
@@ -1816,29 +1806,16 @@ private:
 
     // Regularize detected planes.
 
-    CGAL::Shape_regularization::Planes::regularize_planes(range, m_points,
-      CGAL::parameters::plane_index_map(region_growing.region_map())
-      .point_map(m_point_map)
-      .regularize_axis_symmetry(regularize_axis_symmetry)
-      .regularize_orthogonality(regularize_orthogonality)
-      .regularize_parallelism(regularize_parallelism)
-      .regularize_coplanarity(regularize_coplanarity)
-      .maximum_angle(angle_tolerance)
-      .maximum_offset(maximum_offset));
-
-    polys_debug.clear();
-
-    for (std::size_t i = 0; i < m_regions.size(); i++) {
-
-      Indices region;
-      for (auto& j : m_regions[i].second)
-        region.push_back(j);
-
-      store_convex_hull_shape(region, m_regions[i].first, polys_debug);
-    }
-
-    if (m_debug)
-      KSP_3::internal::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    if (regularize_axis_symmetry || regularize_coplanarity || regularize_orthogonality || regularize_parallelism)
+      CGAL::Shape_regularization::Planes::regularize_planes(range, m_points,
+        CGAL::parameters::plane_index_map(region_growing.region_map())
+        .point_map(m_point_map)
+        .regularize_axis_symmetry(regularize_axis_symmetry)
+        .regularize_orthogonality(regularize_orthogonality)
+        .regularize_parallelism(regularize_parallelism)
+        .regularize_coplanarity(regularize_coplanarity)
+        .maximum_angle(angle_tolerance)
+        .maximum_offset(maximum_offset));
 
     // Merge coplanar regions
     for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
@@ -1911,20 +1888,6 @@ private:
       if (m_regions[m_ground_polygon_index].first.orthogonal_vector().z() < 0)
         m_regions[m_ground_polygon_index].first = m_regions[m_ground_polygon_index].first.opposite();
     }
-
-    polys_debug.clear();
-
-    for (std::size_t i = 0; i < m_regions.size(); i++) {
-
-      Indices region;
-      for (auto& j : m_regions[i].second)
-        region.push_back(j);
-
-      store_convex_hull_shape(region, m_regions[i].first, polys_debug);
-    }
-
-    if (m_debug)
-      KSP_3::internal::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     std::vector<Plane_3> pl;
     for (const auto& p : m_regions) {
