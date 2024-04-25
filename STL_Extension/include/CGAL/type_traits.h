@@ -27,10 +27,6 @@ struct is_same_or_derived :
   >
 {};
 
-namespace cpp17 {
-  template< class... > using void_t = void;
-} // end namespace cpp17
-
 namespace cpp20 {
 
   template< class T >

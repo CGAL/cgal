@@ -37,6 +37,7 @@
 #include <variant>
 #include <boost/tuple/tuple.hpp>
 #include <utility>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -45,7 +46,7 @@ template <typename T, class = void>
 struct has_io_signature : public std::false_type {};
 
 template <typename T>
-struct has_io_signature<T, CGAL::cpp17::void_t<decltype(T::io_signature())>>
+struct has_io_signature<T, std::void_t<decltype(T::io_signature())>>
 : public std::true_type {};
 
 template <class T, bool has_io_signature>
