@@ -29,13 +29,9 @@ KernelWrapper::~KernelWrapper() {
 Point3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2, Plane3SPtr plane3) {
     Point3SPtr result = Point3SPtr();
 #ifdef USE_CGAL
-    CGAL::Object obj = CGAL::intersection(*plane1, *plane2);
-    if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj)) {
-        CGAL::Object obj = CGAL::intersection(*iline, *plane3);
-        if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
-            result = KernelFactory::createPoint3(*ipoint);
-        }
-    }
+    CGAL::Object obj = CGAL::intersection(*plane1, *plane2, *plane3);
+    if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj))
+      result = KernelFactory::createPoint3(*ipoint);
 #else
     result = Point3SPtr(kernel::intersection(&(*plane1), &(*plane2), &(*plane3)));
 #endif
