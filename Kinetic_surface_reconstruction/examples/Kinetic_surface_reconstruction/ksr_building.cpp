@@ -41,15 +41,19 @@ int main(const int, const char**) {
 
   std::vector<FT> lambdas{0.3, 0.5, 0.7, 0.8, 0.9, 0.95, 0.99};
 
+  bool non_empty = false;
+
   for (FT l : lambdas) {
     vtx.clear();
     polylist.clear();
 
     ksr.reconstruct_with_ground(l, std::back_inserter(vtx), std::back_inserter(polylist));
 
-    if (polylist.size() > 0)
+    if (polylist.size() > 0) {
+      non_empty = true;
       CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + ".ply", vtx, polylist);
+    }
   }
 
-  return EXIT_SUCCESS;
+  return (non_empty) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -31,16 +31,21 @@ int main() {
   KSR ksr(point_set, param);
 
   ksr.detection_and_partition(1, param);
+  
+  std::cout << ksr.detect_planar_shapes() << " planar shapes detected" << std::endl;
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
 
   ksr.reconstruct_with_ground(0.5, std::back_inserter(vtx), std::back_inserter(polylist));
 
-  if (polylist.size() > 0)
+  if (polylist.size() > 0) {
+    std::cout << polylist.size() << " faces in reconstruction" << std::endl;
     CGAL::IO::write_polygon_soup("building_0.5.ply", vtx, polylist);
-  else
+    return EXIT_SUCCESS;
+  }
+  else {
+    std::cout << "Reconstruction empty!" << std::endl;
     return EXIT_FAILURE;
-
-  return EXIT_SUCCESS;
+  }
 }

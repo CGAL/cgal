@@ -207,6 +207,8 @@ int main(const int argc, const char** argv) {
 
   std::vector<FT> lambdas{0.3, 0.5, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99};
 
+  bool non_empty = false;
+
   for (FT l : lambdas) {
     if (l == parameters.graphcut_beta)
       continue;
@@ -221,8 +223,10 @@ int main(const int argc, const char** argv) {
       ksr.reconstruct(l, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
 
 
-    if (polylist.size() > 0)
+    if (polylist.size() > 0) {
+      non_empty = true;
       CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+    }
   }
 
   std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;
@@ -232,5 +236,5 @@ int main(const int argc, const char** argv) {
   std::cout << "Kinetic reconstruction: " << (after_reconstruction - after_partition) << " seconds!" << std::endl;
   std::cout << "Total time:             " << time << " seconds!" << std::endl << std::endl;
 
-  return EXIT_SUCCESS;
+  return (non_empty) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
