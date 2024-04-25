@@ -31,7 +31,7 @@ int main() {
   KSR ksr(point_set, param);
 
   ksr.detection_and_partition(1, param);
-  
+
   std::cout << ksr.detect_planar_shapes() << " planar shapes detected" << std::endl;
 
   std::vector<Point_3> vtx;
