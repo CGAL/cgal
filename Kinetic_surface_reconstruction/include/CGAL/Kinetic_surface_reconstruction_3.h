@@ -636,7 +636,7 @@ private:
 
       m_faces_lcc.push_back(dh);
 
-      CGAL_assertion_code(auto p = m_attrib2index_lcc.emplace(std::make_pair(m_lcc.template attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1)););
+      CGAL_assertion_code(auto p = )m_attrib2index_lcc.emplace(std::make_pair(m_lcc.template attribute<2>(m_faces_lcc.back()), m_faces_lcc.size() - 1));
       CGAL_assertion(p.second);
     }
 
@@ -696,7 +696,7 @@ private:
         m_face_neighbors_lcc[i] = std::make_pair(m_face_neighbors_lcc[i].second, m_face_neighbors_lcc[i].first);
 
       if (m_face_neighbors_lcc[i].first < m_face_neighbors_lcc[i].second) {
-        CGAL_assertion_code(auto it = m_neighbors2index_lcc.emplace(std::make_pair(m_face_neighbors_lcc[i], i)););
+        CGAL_assertion_code(auto it = ) m_neighbors2index_lcc.emplace(std::make_pair(m_face_neighbors_lcc[i], i));
         CGAL_assertion(it.second);
       }
     }
@@ -1321,7 +1321,7 @@ private:
     for (std::size_t i = 0; i < polygons.size(); i++) {
       for (std::size_t j = 0; j < polygons[i].size(); j++) {
         vertices.push_back(cdt.insert(pl.to_2d(m_lcc.point(m_lcc.template dart_of_attribute<0>(polygons[i][j])))));
-        CGAL_assertion_code(auto it = va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1)););
+        CGAL_assertion_code(auto it =) va2vh.insert(std::make_pair(polygons[i][j], vertices.size() - 1));
         CGAL_assertion(it.second);
 
         vertices.back()->info().i = i;
@@ -1408,7 +1408,6 @@ private:
       }
       else {
         std::cout << "ghost edge could not be placed" << std::endl;
-        // Do I need a minimum spanning tree? https://www.boost.org/doc/libs/1_75_0/libs/graph/example/kruskal-example.cpp
       }
       polygons[i].clear();
     }
