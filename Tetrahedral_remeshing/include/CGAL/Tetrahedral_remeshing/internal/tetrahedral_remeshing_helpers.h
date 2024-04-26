@@ -1773,6 +1773,7 @@ void remove_from_bimap(const typename EdgesBimap::left_map::key_type& e,
 
 // if e is in 'edges'
 template<typename EdgesBimap, typename FT>
+void
 update_bimap(typename EdgesBimap::left_map::key_type& e, //Edge
              EdgesBimap& edges,
              const std::optional<FT> sqlen)
