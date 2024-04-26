@@ -1518,6 +1518,7 @@ is_too_long(const typename C3t3::Edge& e,
 template<typename C3t3, typename Sizing, typename Cell_selector>
 typename C3t3::Triangulation::Geom_traits::FT
 squared_lower_size_bound(const typename C3t3::Edge& e,
+                         const bool boundary_edge,
                          const Sizing& sizing,
                          const C3t3& c3t3,
                          const Cell_selector& cell_selector)
@@ -1554,6 +1555,7 @@ squared_lower_size_bound(const typename C3t3::Edge& e,
 template<typename C3t3, typename Sizing, typename Cell_selector>
 std::optional<typename C3t3::Triangulation::Geom_traits::FT>
 is_too_short(const typename C3t3::Edge& e,
+             const bool boundary_edge,
              const Sizing& sizing,
              const C3t3& c3t3,
              const Cell_selector& cell_selector)
@@ -1561,7 +1563,7 @@ is_too_short(const typename C3t3::Edge& e,
   using FT = typename C3t3::Triangulation::Geom_traits::FT;
 
   const FT sqlen = squared_edge_length(e, c3t3.triangulation());
-  const FT sqmin = squared_lower_size_bound(e, sizing, c3t3, cell_selector);
+  const FT sqmin = squared_lower_size_bound(e, boundary_edge, sizing, c3t3, cell_selector);
 
   if (sqlen < sqmin)
     return sqlen;

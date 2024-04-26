@@ -1206,21 +1206,32 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
 }
 
 template<typename C3T3, typename CellSelector>
-bool can_be_collapsed(const typename C3T3::Edge& e,
+auto can_be_collapsed(const typename C3T3::Edge& e,
                       const C3T3& c3t3,
                       const bool protect_boundaries,
                       CellSelector cell_selector)
 {
+  struct Collapsible
+  {
+    bool can_be_collapsed;
+    bool on_boundary;
+  };
+
+  const bool boundary = c3t3.is_in_complex(e)
+                     || is_boundary(c3t3, e, cell_selector);
+
   if (protect_boundaries)
   {
-    if (c3t3.is_in_complex(e))
-      return false;
-    else
-      return is_internal(e, c3t3, cell_selector);
+    if (boundary)
+      return Collapsible{false, boundary};
+
+    CGAL_assertion(is_internal(e, c3t3, cell_selector));
+    return Collapsible{true, boundary};
   }
   else
   {
-    return is_selected(e, c3t3.triangulation(), cell_selector);
+    return Collapsible{ is_selected(e, c3t3.triangulation(), cell_selector),
+                        boundary };
   }
 }
 
@@ -1259,10 +1270,11 @@ void collapse_short_edges(C3T3& c3t3,
   Boost_bimap short_edges;
   for (const Edge& e : tr.finite_edges())
   {
-    if (!can_be_collapsed(e, c3t3, protect_boundaries, cell_selector))
+    auto [collapsible, boundary] = can_be_collapsed(e, c3t3, protect_boundaries, cell_selector);
+    if (!collapsible)
       continue;
 
-    const auto sqlen = is_too_short(e, sizing, c3t3, cell_selector);
+    const auto sqlen = is_too_short(e, boundary, sizing, c3t3, cell_selector);
     if(sqlen != std::nullopt)
       short_edges.insert(short_edge(e, sqlen.value()));
   }
@@ -1291,7 +1303,8 @@ void collapse_short_edges(C3T3& c3t3,
 
     short_edges.right.erase(eit);
 
-    CGAL_expensive_assertion(!!is_too_short(e, sizing, c3t3, cell_selector));
+    CGAL_expensive_assertion_code(const bool bd = is_boundary_edge(e));
+    CGAL_expensive_assertion(!!is_too_short(e, bd, sizing, c3t3, cell_selector));
     CGAL_expensive_assertion(can_be_collapsed(e, c3t3, protect_boundaries, cell_selector));
 
     Vertex_handle vh = collapse_edge(e, c3t3, sizing,
@@ -1305,10 +1318,12 @@ void collapse_short_edges(C3T3& c3t3,
           std::back_inserter(incident_short));
       for (const Edge& eshort : incident_short)
       {
-        if (!can_be_collapsed(eshort, c3t3, protect_boundaries, cell_selector))
+        const auto [collapsible, boundary]
+          = can_be_collapsed(eshort, c3t3, protect_boundaries, cell_selector);
+        if (!collapsible)
           continue;
 
-        const auto sqlen = is_too_short(eshort, sizing, c3t3, cell_selector);
+        const auto sqlen = is_too_short(eshort, boundary, sizing, c3t3, cell_selector);
         update_bimap(eshort, short_edges, sqlen);
       }
 

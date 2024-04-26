@@ -266,7 +266,7 @@ public:
         continue;
 
       if(  is_too_long(e, boundary, m_sizing, m_c3t3, m_cell_selector)
-        || is_too_short(e, m_sizing, m_c3t3, m_cell_selector))
+        || is_too_short(e, boundary, m_sizing, m_c3t3, m_cell_selector))
         return false;
     }
 
