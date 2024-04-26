@@ -73,6 +73,10 @@ int main()
   std::cout << "Meshing done (" << timer.time()
             << " seconds)" << std::endl;
 
+  //std::ofstream os_meshing("out_meshing.mesh");
+  //CGAL::IO::write_MEDIT(os_meshing, c3t3.triangulation());
+  //os_meshing.close();
+
   //Remeshing : extract triangulation
   timer.reset();
   timer.start();
@@ -81,16 +85,15 @@ int main()
   //Remeshing : coarsen
   //double target_edge_length = 0.15;//for uniform
   CGAL::tetrahedral_isotropic_remeshing(t3, size,
-      number_of_iterations(3)
-     .smooth_constrained_edges(true));
+      number_of_iterations(3));
 
   timer.stop();
   std::cout << "Remeshing done (" << timer.time()
             << " seconds)" << std::endl;
 
-//  std::ofstream os_remeshing("out_remeshing.mesh");
-//  CGAL::IO::write_MEDIT(os_remeshing, t3);
-//  os_remeshing.close();
+  //std::ofstream os_remeshing("out_remeshing.mesh");
+  //CGAL::IO::write_MEDIT(os_remeshing, t3);
+  //os_remeshing.close();
 
   return 0;
 }
