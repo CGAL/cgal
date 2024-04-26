@@ -24,9 +24,6 @@
 
 #pragma once
 #include <CGAL/license/Polyline_distance.h>
-#include <CGAL/Exact_rational.h>
-#include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
-#include <CGAL/number_utils.h>
 
 #include <iterator>
 
@@ -49,8 +46,7 @@ Interval intersection_interval(Point const & circle_center, distance_t radius,
     try {
         std::pair<RealType, RealType> II;
         // if not empty
-        if (approximate_reals(circle_center, radius, line_start, line_end,
-                              II)) {
+        if (approximate_reals(circle_center, radius, line_start, line_end, II)) {
             I = Interval(II.first, II.second);
         }
     } catch (const CGAL::Uncertain_conversion_exception& e) {

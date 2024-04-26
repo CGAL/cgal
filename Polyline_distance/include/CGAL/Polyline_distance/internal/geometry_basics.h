@@ -24,7 +24,6 @@
 
 #pragma once
 #include <CGAL/license/Polyline_distance.h>
-#include <CGAL/number_utils.h>
 
 #include <cmath>
 #include <iomanip>
@@ -33,13 +32,13 @@
 #include <vector>
 #include <optional>
 
+#include <CGAL/number_utils.h>
 #include <CGAL/Simple_cartesian.h>
-
-#include <CGAL/Polyline_distance/internal/id.h>
-
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Interval_nt.h>
+
+#include <CGAL/Polyline_distance/internal/id.h>
 
 namespace CGAL {
 namespace Polyline_distance {
