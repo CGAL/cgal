@@ -995,8 +995,7 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 
 } // namespace CGAL
 
-#if __has_include(<format>) && \
-  (__cpp_lib_format >= 201907L || __cplusplus >= 202000L || _MSVC_LANG >= 202000L)
+#if CGAL_CAN_USE_CXX20_FORMAT
 #  include <format>
 #  include <sstream>
 
@@ -1041,7 +1040,7 @@ struct formatter<CGAL::Output_rep<T, F>, CharT> : public std::formatter<std::bas
 };
 
 } // namespace std
-#endif // __cpp_lib_format >= 201907L
+#endif // CGAL_CAN_USE_CXX20_FORMAT
 
 #include <CGAL/enable_warnings.h>
 
