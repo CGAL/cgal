@@ -26,21 +26,13 @@
 #include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Polyline_distance/internal/geometry_basics.h>
 #include <CGAL/Polyline_distance/internal/id.h>
+#include <vector>
 
 namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
 // TODO: Clean up Curve
-
-// TODO: Make sure that values in Curve are computed in a way that is suitable
-// for exact decisions
-
-// TODO: This can lead to faulty decisions in the filters! Fix!
-distance_t distance(Point const& p, Point const& q)
-{
-    return CGAL::sqrt(CGAL::squared_distance(p, q));
-}
 
 
 /*!
@@ -51,8 +43,11 @@ distance_t distance(Point const& p, Point const& q)
 class Curve
 {
 public:
-    Curve() = default;
-    Curve(const Points& points);
+
+  using Points = std::vector<Point>;
+  Curve() = default;
+
+  Curve(const Points& points);
 
   void reserve(std::size_t n)
   {
@@ -60,31 +55,31 @@ public:
   }
 
     std::size_t size() const { return points.size(); }
-    bool empty() const { return points.empty(); }
-    Point const& operator[](PointID i) const { return points[i]; }
-    bool operator==(Curve const& other) const
+
+  bool empty() const { return points.empty(); }
+
+  Point const& operator[](PointID i) const { return points[i]; }
+
+  bool operator==(Curve const& other) const
     {
         return std::equal(points.cbegin(), points.cend(), other.points.cbegin(),
                           other.points.cend());
     }
-    bool operator!=(Curve const& other) const { return !(*this == other); }
-    Point interpolate_at(CPoint const& pt) const
+
+  bool operator!=(Curve const& other) const { return !(*this == other); }
+
+  distance_t distance(Point const& p, Point const& q) const
+  {
+    return CGAL::sqrt(CGAL::squared_distance(p, q));
+  }
+
+  Point interpolate_at(CPoint const& pt) const
     {
         assert(pt.getFraction() >= 0. && pt.getFraction() <= 1.);
         assert(
             (pt.getPoint() < points.size() - 1 ||
              (pt.getPoint() == points.size() - 1 && pt.getFraction() == 0.)));
-        /*
-        // TODO: this interpolates at a point slightly below pt; check whether
-        // this is really fine in all contexts
-        OldPoint old_p = pt.getFraction() == 0.
-                             ? toOldPoint(points[pt.getPoint()])
-                             : toOldPoint(points[pt.getPoint()]) *
-                                       (1. - pt.getFractionLB()) +
-                                   toOldPoint(points[pt.getPoint() + 1]) *
-                                       pt.getFractionLB();
-        return Point(old_p.x(), old_p.y());
-        */
+
         if(pt.getFraction() == 0){
           return points[pt.getPoint()];
         }
@@ -95,25 +90,32 @@ public:
     }
 
     Point interpolate_at(PointID const& pt) const { return points[pt]; }
+
     distance_t curve_length(PointID i, PointID j) const
     {
         return prefix_length[j] - prefix_length[i];
     }
 
     Point const& front() const { return points.front(); }
+
     Point const& back() const { return points.back(); }
 
     void push_back(Point const& point);
 
     Points::const_iterator begin() { return points.begin(); }
+
     Points::const_iterator end() { return points.end(); }
+
     Points::const_iterator begin() const { return points.cbegin(); }
+
     Points::const_iterator end() const { return points.cend(); }
 
     struct ExtremePoints {
         distance_t min_x, min_y, max_x, max_y;
     };
+
     ExtremePoints const& getExtremePoints() const;
+
     distance_t getUpperBoundDistance(Curve const& other) const;
 
 private:
@@ -122,6 +124,7 @@ private:
     ExtremePoints extreme_points;
 
 };
+
 using Curves = std::vector<Curve>;
 
 std::ostream& operator<<(std::ostream& out, const Curve& curve);

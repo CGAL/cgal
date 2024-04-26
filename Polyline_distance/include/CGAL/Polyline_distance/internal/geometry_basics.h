@@ -45,34 +45,22 @@ namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
-
-using Rational = CGAL::Exact_rational;
-
-using IntervalNT = CGAL::Interval_nt<false>;
-
-namespace unit_tests
-{
-void testGeometricBasics();
-}
-
 //
 // distance_t
 //
-
-using distance_t = IntervalNT;
+  using distance_t = CGAL::Interval_nt<false>;
 
 //
 // Point
 //
-
-using Kernel = CGAL::Simple_cartesian<IntervalNT>;
-using Point = Kernel::Point_2;
+using Point = CGAL::Simple_cartesian<distance_t>::Point_2;
 
 /*!
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a value in the interval `[0,1]`....
 */
 struct Lambda {
+    typedef CGAL::Exact_rational Rational;
     typedef CGAL::Interval_nt<false> Approx;
     typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true,
                                  CGAL::Tag_false>
@@ -304,9 +292,8 @@ bool exact_reals(const Point& circle_center, distance_t radius,
                  const Point& line_start, const Point& line_end,
                  std::pair<Lambda, Lambda>& I)
 {
-    typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true,
-                                 CGAL::Tag_false>
-        Exact;
+    typedef typename Lambda::Exact Exact;
+    typedef typename Lambda::Rational Rational;
 
     Rational a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {
@@ -340,8 +327,6 @@ bool exact_reals(const Point& circle_center, distance_t radius,
 
 
 
-
-using Points = std::vector<Point>;
 using PointID = ID<Point>;
 
 
