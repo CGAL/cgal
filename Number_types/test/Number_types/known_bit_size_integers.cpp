@@ -1,5 +1,5 @@
 #include <iostream>
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <CGAL/assertions.h>
 
 int main()
