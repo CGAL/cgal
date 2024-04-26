@@ -1481,6 +1481,13 @@ squared_edge_length(const typename Tr::Edge& e, const Tr& tr)
   return tr.geom_traits().compute_squared_length_3_object()(tr.segment(e));
 }
 
+template<typename Tr>
+typename Tr::Geom_traits::FT
+approximate_edge_length(const typename Tr::Edge& e, const Tr& tr)
+{
+  return CGAL::approximate_sqrt(squared_edge_length(e, tr));
+}
+
 template<typename Pt, typename Tr>
 typename Tr::Cell::Subdomain_index
 subdomain_index_at_point_3(const Pt& p,

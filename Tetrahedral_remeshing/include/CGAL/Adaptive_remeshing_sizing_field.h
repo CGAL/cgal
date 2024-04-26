@@ -186,7 +186,7 @@ private:
           {
             points.push_back(Point_with_info{
               midpt(tr.segment(e)),
-              CGAL::approximate_sqrt(Tet_remeshing::squared_edge_length(e, tr)),
+              Tet_remeshing::approximate_edge_length(e, tr),
               1 });
           }
         }
@@ -396,11 +396,11 @@ typename Adaptive_remeshing_sizing_field<Tr>::FT
 Adaptive_remeshing_sizing_field<Tr>::
 average_edge_length_3(const typename Tr::Cell_handle c, const Tr& tr) const
 {
-  namespace Tet_Remeshing = CGAL::Tetrahedral_remeshing;
+  using namespace CGAL::Tetrahedral_remeshing;
 
   FT sum = 0.;
   short nb_inside_edges = 0;
-  for (const typename Tr::Edge& e : Tet_Remeshing::cell_edges(c, tr))
+  for (const typename Tr::Edge& e : cell_edges(c, tr))
   {
     const auto [v0, v1] = tr.vertices(e);
     //skip surface edges
@@ -409,7 +409,7 @@ average_edge_length_3(const typename Tr::Cell_handle c, const Tr& tr) const
       && v0->index() == v1->index())
       continue;
 
-    sum += CGAL::approximate_sqrt(Tet_Remeshing::squared_edge_length(e, tr));
+    sum += approximate_edge_length(e, tr);
     ++nb_inside_edges;
   }
   return sum / FT(nb_inside_edges);
@@ -433,7 +433,7 @@ average_edge_length_2(const typename Tr::Cell_handle c,
     CGAL_assertion(vs[0]->in_dimension() < 3);
     CGAL_assertion(vs[1]->in_dimension() < 3);
 
-    sum += CGAL::approximate_sqrt(Tet_Remeshing::squared_edge_length(e, tr));
+    sum += Tet_Remeshing::approximate_edge_length(e, tr);
     ++nb_surface_edges;
   }
 
@@ -508,7 +508,7 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
   FT sum = 0.;
   for (const Edge& e : edges)
   {
-    sum += CGAL::approximate_sqrt(squared_edge_length(e, tr));
+    sum += approximate_edge_length(e, tr);
   }
 
   return sum / static_cast<FT>(edges.size());
