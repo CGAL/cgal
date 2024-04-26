@@ -1481,6 +1481,17 @@ squared_edge_length(const typename Tr::Edge& e, const Tr& tr)
   return tr.geom_traits().compute_squared_length_3_object()(tr.segment(e));
 }
 
+template<typename Pt, typename Tr>
+typename Tr::Cell::Subdomain_index
+subdomain_index_at_point_3(const Pt& p,
+                           const typename Tr::Cell_handle hint,
+                           const Tr& tr)
+{
+  const typename Tr::Point tr_p(p);
+  const typename Tr::Cell_handle c = tr.locate(tr_p, hint);
+  return c->subdomain_index();
+}
+
 template<typename C3t3, typename Sizing, typename Cell_selector>
 typename C3t3::Triangulation::Geom_traits::FT
 squared_upper_size_bound(const typename C3t3::Edge& e,
@@ -1494,6 +1505,7 @@ squared_upper_size_bound(const typename C3t3::Edge& e,
   using Vertex_handle = typename Tr::Vertex_handle;
   const Tr& tr = c3t3.triangulation();
   auto cp = tr.geom_traits().construct_point_3_object();
+  auto midpt = tr.geom_traits().construct_midpoint_3_object();
 
   const Vertex_handle u = e.first->vertex(e.second);
   const Vertex_handle v = e.first->vertex(e.third);
@@ -1514,10 +1526,19 @@ squared_upper_size_bound(const typename C3t3::Edge& e,
     return CGAL::square(FT(4) / FT(3) * size_at_uv);
   }
 
-  const FT sq_max_u = CGAL::square(FT(4) / FT(3) * size_at_u);
-  const FT sq_max_v = CGAL::square(FT(4) / FT(3) * size_at_v);
 
-  return (std::max)(sq_max_u, sq_max_v);
+  const auto midpoint_pt = midpt(cp(u->point()), cp(v->point()));
+  const int midpoint_dim = boundary_edge
+    ? (std::max)(u->in_dimension(), v->in_dimension())
+    : 3;
+  const auto midpoint_index = boundary_edge
+    ? max_dimension_index(c3t3.triangulation().vertices(e))
+    : subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation());
+
+  const FT size_at_midpoint = sizing(midpoint_pt,
+                                     midpoint_dim,
+                                     midpoint_index);
+  return CGAL::square(FT(4) / FT(3) * size_at_midpoint);
 }
 
 template<typename C3t3, typename Sizing, typename Cell_selector>
@@ -1570,10 +1591,23 @@ squared_lower_size_bound(const typename C3t3::Edge& e,
     return CGAL::square(FT(4) / FT(5) * size_at_uv);
   }
 
-  const FT sq_min_u = CGAL::square(FT(4) / FT(5) * size_at_u);
-  const FT sq_min_v = CGAL::square(FT(4) / FT(5) * size_at_v);
 
-  return (std::min)(sq_min_u, sq_min_v);
+  const auto& gt = c3t3.triangulation().geom_traits();
+  auto cp = gt.construct_point_3_object();
+  auto midpt = gt.construct_midpoint_3_object();
+
+  const auto midpoint_pt = midpt(cp(u->point()), cp(v->point()));
+  const int midpoint_dim = boundary_edge
+    ? (std::max)(u->in_dimension(), v->in_dimension())
+    : 3;
+  const auto midpoint_index = boundary_edge
+    ? max_dimension_index(c3t3.triangulation().vertices(e))
+    : subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation());
+
+  const FT size_at_midpoint = sizing(midpoint_pt,
+                                     midpoint_dim,
+                                     midpoint_index);
+  return CGAL::square(FT(4) / FT(5) * size_at_midpoint);
 }
 
 template<typename C3t3, typename Sizing, typename Cell_selector>
