@@ -630,7 +630,7 @@ private:
   }
 
 
-  FT mass_along_segment(const Edge& e, const C3t3& c3t3) const
+  FT density_along_segment(const Edge& e, const C3t3& c3t3) const
   {
     const std::array<Vertex_handle, 2>
       vs = c3t3.triangulation().vertices(e);
@@ -641,11 +641,10 @@ private:
     const typename C3t3::Index index = max_dimension_index(vs);
 
     const FT s = sizing_at_midpoint(e, dim, index, m_sizing, c3t3, m_cell_selector);
-    const FT density = 1. / (s * s * s); //density = 1 / size^(dimension + 2)
-                                         //edge dimension is 1, so density = 1 / size^3
-    //const FT mass = len * density;
-
-    return density;// mass;
+    const FT density = 1. / s; //density = 1 / size^(dimension)
+                 //edge dimension is 1, so density = 1 / size
+                 //to have mass = length * density with no dimension
+    return density;
   }
 
   template<typename SurfaceIndices,
@@ -687,7 +686,7 @@ private:
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
-      const auto mass = mass_along_segment(e, c3t3);
+      const auto mass = density_along_segment(e, c3t3);
 
       if (is_free(i0))
       {
@@ -796,7 +795,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
 
-      const auto mass = mass_along_segment(e, c3t3);
+      const auto mass = density_along_segment(e, c3t3);
 
       if (!is_on_feature(vh0) && is_free(i0))
       {
@@ -991,7 +990,7 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
-      const auto mass = mass_along_segment(e, c3t3);
+      const auto mass = density_along_segment(e, c3t3);
 
       if (c3t3.in_dimension(vh0) == 3 && is_free(i0))
       {
