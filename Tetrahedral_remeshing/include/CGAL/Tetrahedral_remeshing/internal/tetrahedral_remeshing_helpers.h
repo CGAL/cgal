@@ -1492,6 +1492,43 @@ subdomain_index_at_point_3(const Pt& p,
   return c->subdomain_index();
 }
 
+template<typename C3t3>
+auto midpoint_with_info(const typename C3t3::Edge& e,
+                        const bool boundary_edge,
+                        const C3t3& c3t3)
+{
+  using Tr = typename C3t3::Triangulation;
+  using Vertex_handle = typename Tr::Vertex_handle;
+  using Gt = typename Tr::Geom_traits;
+  using Point_3 = typename Gt::Point_3;
+  using Index = typename C3t3::Index;
+
+  struct Midpoint_with_info
+  {
+    Point_3 point;
+    int dim;
+    Index index;
+  };
+
+  const auto vs = c3t3.triangulation().vertices(e);
+  const Vertex_handle u = vs[0];
+  const Vertex_handle v = vs[1];
+
+  const auto& gt = c3t3.triangulation().geom_traits();
+  auto cp = gt.construct_point_3_object();
+  auto midpt = gt.construct_midpoint_3_object();
+
+  const Point_3 midpoint_pt = midpt(cp(u->point()), cp(v->point()));
+  const int midpoint_dim = boundary_edge
+    ? (std::max)(u->in_dimension(), v->in_dimension())
+    : 3;
+  const Index midpoint_index = boundary_edge
+    ? max_dimension_index(c3t3.triangulation().vertices(e))
+    : subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation());
+
+  return Midpoint_with_info{midpoint_pt, midpoint_dim, midpoint_index};
+}
+
 template<typename C3t3, typename Sizing, typename Cell_selector>
 typename C3t3::Triangulation::Geom_traits::FT
 squared_upper_size_bound(const typename C3t3::Edge& e,
@@ -1526,18 +1563,9 @@ squared_upper_size_bound(const typename C3t3::Edge& e,
     return CGAL::square(FT(4) / FT(3) * size_at_uv);
   }
 
+  const auto mwi = midpoint_with_info(e, boundary_edge, c3t3);
+  const FT size_at_midpoint = sizing(mwi.point, mwi.dim, mwi.index);
 
-  const auto midpoint_pt = midpt(cp(u->point()), cp(v->point()));
-  const int midpoint_dim = boundary_edge
-    ? (std::max)(u->in_dimension(), v->in_dimension())
-    : 3;
-  const auto midpoint_index = boundary_edge
-    ? max_dimension_index(c3t3.triangulation().vertices(e))
-    : subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation());
-
-  const FT size_at_midpoint = sizing(midpoint_pt,
-                                     midpoint_dim,
-                                     midpoint_index);
   return CGAL::square(FT(4) / FT(3) * size_at_midpoint);
 }
 
@@ -1591,22 +1619,9 @@ squared_lower_size_bound(const typename C3t3::Edge& e,
     return CGAL::square(FT(4) / FT(5) * size_at_uv);
   }
 
+  const auto mwi = midpoint_with_info(e, boundary_edge, c3t3);
+  const FT size_at_midpoint = sizing(mwi.point, mwi.dim, mwi.index);
 
-  const auto& gt = c3t3.triangulation().geom_traits();
-  auto cp = gt.construct_point_3_object();
-  auto midpt = gt.construct_midpoint_3_object();
-
-  const auto midpoint_pt = midpt(cp(u->point()), cp(v->point()));
-  const int midpoint_dim = boundary_edge
-    ? (std::max)(u->in_dimension(), v->in_dimension())
-    : 3;
-  const auto midpoint_index = boundary_edge
-    ? max_dimension_index(c3t3.triangulation().vertices(e))
-    : subdomain_index_at_point_3(midpoint_pt, e.first, c3t3.triangulation());
-
-  const FT size_at_midpoint = sizing(midpoint_pt,
-                                     midpoint_dim,
-                                     midpoint_index);
   return CGAL::square(FT(4) / FT(5) * size_at_midpoint);
 }
 
