@@ -1455,6 +1455,24 @@ auto min_sizing_in_incident_cells(const typename C3t3::Edge& e,
   return size_at_uv;
 }
 
+template<typename Vertex_handle>
+auto
+max_dimension_index(const Vertex_handle v0, const Vertex_handle v1)
+{
+  const int dim0 = v0->in_dimension();
+  const int dim1 = v1->in_dimension();
+
+  if (dim0 > dim1)       return v0->index();
+  else if (dim1 > dim0)  return v1->index();
+  else                   return v0->index(); //arbitrary choice, any of the two should be fine
+}
+
+template<typename Vertex_handle>
+auto
+max_dimension_index(const std::array<Vertex_handle, 2>& vs)
+{
+  return max_dimension_index(vs[0], vs[1]);
+}
 
 template<typename Tr>
 typename Tr::Geom_traits::FT
@@ -1804,16 +1822,15 @@ cell_edges(const typename Tr::Cell_handle c, const Tr&)
   return edges_array;
 }
 
-template<typename Vertex_handle>
-auto
-max_dimension_index(const std::array<Vertex_handle, 2>& vs)
+template<typename Tr>
+std::array<typename Tr::Edge, 3>
+facet_edges(const typename Tr::Cell_handle c, const int i, const Tr&)
 {
-  const int dim0 = vs[0]->in_dimension();
-  const int dim1 = vs[1]->in_dimension();
-
-  if (dim0 > dim1)       return vs[0]->index();
-  else if (dim1 > dim0)  return vs[1]->index();
-  else                   return vs[0]->index(); //arbitrary choice, any of the two should be fine
+  using Edge = typename Tr::Edge;
+  std::array<Edge, 3> facet = { { Edge(c, (i + 1) % 4, (i + 2) % 4),
+                                  Edge(c, (i + 2) % 4, (i + 3) % 4),
+                                  Edge(c, (i + 3) % 4, (i + 1) % 4) } };
+  return facet;
 }
 
 namespace internal

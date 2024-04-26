@@ -724,8 +724,7 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
   }
   else if (collapse_type == TO_MIDPOINT)
   {
-    const std::array<Vertex_handle, 2> vs = {{ v0, v1 }};
-    new_index = max_dimension_index(vs);
+    new_index = max_dimension_index(v0, v1);
     new_dim = (std::max)(v0->in_dimension(), v1->in_dimension());
 #ifdef CGAL_AVERAGE_SIZING_AFTER_COLLAPSE
     sizing_at_new_pos = sizing_at_midpoint(edge, new_dim, new_index, sizing, c3t3, cell_selector);
