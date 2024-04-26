@@ -463,10 +463,6 @@ namespace CGAL {
 #endif // CGAL_NO_DEPRECATED_CODE
 namespace CGAL {
 
-#if __has_include(<version>)
-#  include <version>
-#endif
-
 // Typedef for the type of nullptr.
 typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 namespace cpp11{
