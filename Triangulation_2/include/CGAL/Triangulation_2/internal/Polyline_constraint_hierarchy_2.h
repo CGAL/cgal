@@ -483,9 +483,9 @@ contexts_end(T va, T vb) const
    return last;
 }
 
-template <class T, class Compare, class Data>
+template <class T, class Compare, class Point>
 auto
-Polyline_constraint_hierarchy_2<T,Compare,Data>::
+Polyline_constraint_hierarchy_2<T,Compare,Point>::
 contexts_range(T va, T vb) const -> Iterator_range<Context_iterator> {
   Context_iterator first, last;
   if( !get_contexts(va,vb,first,last)) return { first, first };
