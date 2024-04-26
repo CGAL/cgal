@@ -519,6 +519,12 @@ std::pair<Vh, Vh> make_vertex_pair(const Vh v1, const Vh v2)
   else         return std::make_pair(v1, v2);
 }
 
+template<typename Vh>
+std::pair<Vh, Vh> make_vertex_pair(const std::pair<Vh, Vh>& vp)
+{
+  return make_vertex_pair(vp.first, vp.second);
+}
+
 template<typename Edge>
 auto make_vertex_pair(const Edge& e)
 {
@@ -1877,8 +1883,9 @@ void dump_edges(const Bimap& edges, const char* filename)
 
   for(typename Bimap::left_const_reference it : edges.left)
   {
-    ofs << "2 " << point(it.first.first->point())
-        << " " << point(it.first.second->point()) << std::endl;
+    const auto vp = make_vertex_pair(it.first);
+    ofs << "2 " << point(vp.first->point())
+        << " " << point(vp.second->point()) << std::endl;
   }
   ofs.close();
 }

@@ -1307,6 +1307,11 @@ void collapse_short_edges(C3T3& c3t3,
     CGAL_expensive_assertion(!!is_too_short(e, bd, sizing, c3t3, cell_selector));
     CGAL_expensive_assertion(can_be_collapsed(e, c3t3, protect_boundaries, cell_selector));
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    const auto p1 = e.first->vertex(e.second)->point();
+    const auto p2 = e.first->vertex(e.third)->point();
+#endif
+
     Vertex_handle vh = collapse_edge(e, c3t3, sizing,
                                      protect_boundaries, cell_selector,
                                      short_edges,
