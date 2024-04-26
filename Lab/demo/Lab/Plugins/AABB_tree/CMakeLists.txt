@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 cgal_lab_plugin(do_trees_intersect_plugin Do_trees_intersect_plugin)
 target_link_libraries(do_trees_intersect_plugin PUBLIC scene_surface_mesh_item

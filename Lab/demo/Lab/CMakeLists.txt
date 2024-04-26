@@ -127,9 +127,9 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   qt6_generate_moc("File_loader_dialog.h"
                    "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp")
 
-  include(${CMAKE_CURRENT_SOURCE_DIR}/cgallab_macros.cmake)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/CGALlab_macros.cmake)
 
-  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES cgallab.qrc)
+  qt6_add_resources(CGAL_Qt6_RESOURCE_FILES CGALlab.qrc)
   find_path(
     CGAL_THREE_HEADERS_PATH
     NAMES CGAL/Three/Scene_item.h
@@ -184,7 +184,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     Scene_item_rendering_helper.cpp
     Scene_item_rendering_helper_moc.cpp
     Primitive_container.cpp
-    cgallab_plugin_helper.cpp
+    CGALlab_plugin_helper.cpp
     CGAL_double_edit.cpp)
   target_link_libraries(demo_framework PUBLIC Qt6::OpenGLWidgets Qt6::Widgets Qt6::Gui Qt6::Qml
                                               CGAL::CGAL_Qt6)
@@ -373,17 +373,17 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     target_link_libraries(cgal_lab PRIVATE Qt6::WebSockets)
   endif()
   cgal_add_compilation_test(cgal_lab)
-  add_executable(cgallab cgallab.cpp)
-  target_link_libraries(cgallab PRIVATE cgal_lab)
-  add_to_cached_list(CGAL_EXECUTABLE_TARGETS cgallab)
-  cgal_add_compilation_test(cgallab)
+  add_executable(CGALlab CGALlab.cpp)
+  target_link_libraries(CGALlab PRIVATE cgal_lab)
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGALlab)
+  cgal_add_compilation_test(CGALlab)
 
-  target_link_libraries(cgallab PRIVATE demo_framework)
+  target_link_libraries(CGALlab PRIVATE demo_framework)
 
   # Link with CGAL
-  target_link_libraries(cgallab PUBLIC CGAL::CGAL_Qt6)
+  target_link_libraries(CGALlab PUBLIC CGAL::CGAL_Qt6)
 
-  add_to_cached_list(CGAL_EXECUTABLE_TARGETS cgallab)
+  add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGALlab)
 
   ###########
   # PLUGINS #
@@ -452,8 +452,8 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     NAMESPACE Lab_ APPEND
     FILE cgal_lab_targets.cmake)
 
-  configure_file(cgallabConfig.cmake.in
-                 cgallabConfig.cmake)
+  configure_file(CGALlabConfig.cmake.in
+                 CGALlabConfig.cmake)
   #TO DO script the activation of all the plugins.
 
 else(CGAL_Qt6_FOUND AND Qt6_FOUND)

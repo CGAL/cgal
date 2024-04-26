@@ -2,7 +2,7 @@
 #define _TEXTURED_MESH_
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/cgallab.h>
+#include <CGAL/CGALlab.h>
 #include <CGAL/HalfedgeDS_default.h>
 
 

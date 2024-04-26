@@ -1070,7 +1070,7 @@ public:
   /*!
   returns a const range (model of `ConstRange`) over handles of the arrangement vertices .
   */
-  Iterator_range<Prevent_deref<Vertex_iterator> >
+  Iterator_range<Prevent_deref<Vertex_const_iterator> >
   vertex_handles() const
   {
     return make_prevent_deref_range(vertices_begin(), vertices_end());
@@ -1124,7 +1124,7 @@ public:
   /*!
   returns a const range (model of `ConstRange`) over handles of the arrangement halfedges .
   */
-  Iterator_range<Prevent_deref<Halfedge_iterator> >
+  Iterator_range<Prevent_deref<Halfedge_const_iterator> >
   halfedge_handles() const
   {
     return make_prevent_deref_range(halfedges_begin(), halfedges_end());
@@ -1174,7 +1174,7 @@ public:
   /*!
   returns a const range (model of `ConstRange`) over handles of the arrangement edges .
   */
-  Iterator_range<Prevent_deref<Edge_iterator> >
+  Iterator_range<Prevent_deref<Edge_const_iterator> >
   edge_handles() const
   {
     return make_prevent_deref_range(edges_begin(), edges_end());
@@ -1223,11 +1223,12 @@ public:
   /*!
   returns a const range (model of `ConstRange`) over handles of the arrangement faces .
   */
-  Iterator_range<Prevent_deref<Face_iterator> >
+  Iterator_range<Prevent_deref<Face_const_iterator> >
   face_handles() const
   {
     return make_prevent_deref_range(faces_begin(), faces_end());
   }
+
   //! reference_face (const version).
   /*! The function returns a reference face of the arrangement.
    * All reference faces of arrangements of the same type have a common

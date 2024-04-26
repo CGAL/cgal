@@ -1,4 +1,4 @@
-#include "cgallab.h"
+#include "CGALlab.h"
 #include "MainWindow.h"
 #include <QMessageBox>
 #include <CGAL/Qt/resources.h>

@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 #if the plugin has a UI file
 qt6_wrap_ui(mesh_2UI_FILES mesh_2_dialog.ui)
 cgal_lab_plugin(mesh_2_plugin Mesh_2_plugin ${mesh_2UI_FILES})

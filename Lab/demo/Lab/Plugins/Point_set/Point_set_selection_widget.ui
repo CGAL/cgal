@@ -47,7 +47,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../cgallab.qrc">
+            <iconset resource="../../CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/pss_rectangle.png</normaloff>:/cgal/icons/resources/pss_rectangle.png</iconset>
            </property>
            <property name="checkable">
@@ -76,7 +76,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../cgallab.qrc">
+            <iconset resource="../../CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/pss_freeform.png</normaloff>:/cgal/icons/resources/pss_freeform.png</iconset>
            </property>
            <property name="checkable">
@@ -99,7 +99,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../cgallab.qrc">
+            <iconset resource="../../CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/pss_region.png</normaloff>:/cgal/icons/resources/pss_region.png</iconset>
            </property>
            <property name="checkable">
@@ -125,7 +125,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../cgallab.qrc">
+            <iconset resource="../../CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/pss_box.png</normaloff>:/cgal/icons/resources/pss_box.png</iconset>
            </property>
            <property name="checkable">
@@ -169,7 +169,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../cgallab.qrc">
+            <iconset resource="../../CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/pss_new.png</normaloff>:/cgal/icons/resources/pss_new.png</iconset>
            </property>
            <property name="checkable">
@@ -198,7 +198,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../cgallab.qrc">
+            <iconset resource="../../CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/pss_union.png</normaloff>:/cgal/icons/resources/pss_union.png</iconset>
            </property>
            <property name="checkable">
@@ -224,7 +224,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../cgallab.qrc">
+            <iconset resource="../../CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/pss_inter.png</normaloff>:/cgal/icons/resources/pss_inter.png</iconset>
            </property>
            <property name="checkable">
@@ -250,7 +250,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../../cgallab.qrc">
+            <iconset resource="../../CGALlab.qrc">
              <normaloff>:/cgal/icons/resources/pss_diff.png</normaloff>:/cgal/icons/resources/pss_diff.png</iconset>
            </property>
            <property name="checkable">
@@ -283,7 +283,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/help_button.png</normaloff>:/cgal/icons/resources/help_button.png</iconset>
         </property>
         <property name="iconSize">
@@ -329,10 +329,10 @@
   </widget>
  </widget>
  <resources>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
  </resources>
  <connections/>
 </ui>

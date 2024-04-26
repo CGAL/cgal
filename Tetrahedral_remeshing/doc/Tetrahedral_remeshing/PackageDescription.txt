@@ -34,7 +34,7 @@ while preserving the input geometric curve and surface features.
 \cgalPkgDependsOn{\ref PkgTriangulation3}
 \cgalPkgBib{cgal:tftb-tr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

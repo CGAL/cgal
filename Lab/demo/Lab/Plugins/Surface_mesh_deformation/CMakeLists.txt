@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 if(TARGET CGAL::Eigen3_support AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
 
