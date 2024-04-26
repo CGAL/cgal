@@ -630,15 +630,15 @@ private:
   }
 
 
-  FT density_along_segment(const Edge& e, const C3t3& c3t3) const
+  // boundary_edge is set to false by default because
+  // we may not care about this information, for example while collecting
+  // weights in the smoothing inside volume step
+  FT density_along_segment(const Edge& e,
+                           const C3t3& c3t3,
+                           const bool boundary_edge = false) const
   {
-    const std::array<Vertex_handle, 2>
-      vs = c3t3.triangulation().vertices(e);
-
-    const int dim = (std::max)(vs[0]->in_dimension(), vs[1]->in_dimension());
-    const typename C3t3::Index index = max_dimension_index(vs);
-
-    const FT s = sizing_at_midpoint(e, dim, index, m_sizing, c3t3, m_cell_selector);
+    const auto mwi = midpoint_with_info(e, boundary_edge, c3t3);
+    const FT s = sizing_at_midpoint(e, mwi.dim, mwi.index, m_sizing, c3t3, m_cell_selector);
     const FT density = 1. / s; //density = 1 / size^(dimension)
                  //edge dimension is 1, so density = 1 / size
                  //to have mass = length * density with no dimension
@@ -684,7 +684,7 @@ private:
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
-      const auto mass = density_along_segment(e, c3t3);
+      const auto mass = density_along_segment(e, c3t3, true);
 
       if (is_free(i0))
       {
@@ -793,7 +793,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
 
-      const auto mass = density_along_segment(e, c3t3);
+      const auto mass = density_along_segment(e, c3t3, true);
 
       if (!is_on_feature(vh0) && is_free(i0))
       {
