@@ -58,7 +58,7 @@ public:
 
   bool empty() const { return points.empty(); }
 
-  Point const& operator[](PointID i) const { return points[i]; }
+  Point const& operator[](PointID const& i) const { return points[i]; }
 
   bool operator==(Curve const& other) const
     {
@@ -91,7 +91,7 @@ public:
 
     Point interpolate_at(PointID const& pt) const { return points[pt]; }
 
-    distance_t curve_length(PointID i, PointID j) const
+    distance_t curve_length(PointID const& i, PointID const& j) const
     {
         return prefix_length[j] - prefix_length[i];
     }

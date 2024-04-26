@@ -283,9 +283,7 @@ CInterval FrechetLight::getInterval<PointID>(Curve const& curve1,
                                              Curve const& curve2,
                                              PointID seg_start) const
 {
-    Point const& point = curve1[center_id];
-    auto interval = HLPred::intersection_interval(
-        point, distance, curve2[seg_start], curve2[seg_start + 1]);
+  auto interval = HLPred::intersection_interval(curve1, center_id, curve2, seg_start, distance);
     return CInterval{seg_start, interval.begin, seg_start, interval.end};
 }
 
