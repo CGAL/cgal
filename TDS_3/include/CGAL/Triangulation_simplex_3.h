@@ -19,6 +19,7 @@
 
 #include <CGAL/assertions.h>
 #include <algorithm>
+#include <CGAL/IO/io.h>
 
 namespace CGAL {
 
