@@ -12,6 +12,8 @@
 #include <CGAL/Adaptive_remeshing_sizing_field.h>
 
 #include <CGAL/IO/File_medit.h>
+#include <CGAL/Real_timer.h>
+
 #include <string>
 #include <unordered_set>
 
@@ -58,6 +60,9 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
+  CGAL::Real_timer timer;
+  timer.start();
+
   // Create domain
   Mesh_domain domain(polyhedron);
 
@@ -71,6 +76,16 @@ int main(int argc, char* argv[])
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, p::no_perturb().no_exude());
+
+  timer.stop();
+  std::cout << "Meshing done (" << timer.time()
+            << " seconds)" << std::endl;
+
+  //CGAL::dump_c3t3(c3t3, "out_meshing");
+
+  //Remeshing : extract triangulation
+  timer.reset();
+  timer.start();
 
   Constraints_set constraints;
   Constraints_pmap constraints_pmap(constraints);
@@ -91,9 +106,13 @@ int main(int argc, char* argv[])
     .edge_is_constrained_map(constraints_pmap)
     .smooth_constrained_edges(true));
 
-  std::ofstream out("out_remeshing.mesh");
-  CGAL::IO::write_MEDIT(out, tr);
-  out.close();
+  timer.stop();
+  std::cout << "Remeshing done (" << timer.time()
+            << " seconds)" << std::endl;
+
+  //std::ofstream out("out_remeshing.mesh");
+  //CGAL::IO::write_MEDIT(out, tr);
+  //out.close();
 
   return EXIT_SUCCESS;
 }
