@@ -206,6 +206,40 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     result_type
+    operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
+               const Point_3& a2, const Point_3& b2, const Point_3& c2) const
+    {
+      using FT = typename K::FT;
+      const Vector_3 ba1 = a1 - b1;
+      const Vector_3 bc1 = c1 - b1;
+      const Vector_3 ba2 = a2 - b2;
+      const Vector_3 bc2 = c2 - b2;
+      const FT sc_prod_1 = ba1 * bc1;
+      const FT sc_prod_2 = ba2 * bc2;
+      if(sc_prod_1 >= 0) {
+        if(sc_prod_2 >= 0) {
+          // the two cosine are >= 0, cosine is decreasing on [0,1]
+          return CGAL::compare(CGAL::square(sc_prod_2)*
+                               ba1.squared_length()*bc1.squared_length(),
+                               CGAL::square(sc_prod_1)*
+                               ba2.squared_length()*bc2.squared_length());
+        } else {
+          return SMALLER;
+        }
+      } else {
+        if(sc_prod_2 < 0) {
+          // the two cosine are < 0, cosine is increasing on [-1,0]
+          return CGAL::compare(CGAL::square(sc_prod_1)*
+                               ba2.squared_length()*bc2.squared_length(),
+                               CGAL::square(sc_prod_2)*
+                               ba1.squared_length()*bc2.squared_length());
+        } else {
+          return LARGER;
+        }
+      }
+    }
+
+    result_type
     operator()(const Point_3& a, const Point_3& b, const Point_3& c,
                const FT& cosine) const
     {
