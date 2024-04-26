@@ -35,6 +35,11 @@
 #include <vector>
 #include <array>
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+#include <CGAL/property_map.h>
+#include <CGAL/IO/write_ply_points.h>
+#include <boost/property_map/property_map.hpp>
+#endif
 
 namespace CGAL
 {
@@ -102,11 +107,19 @@ public:
                                   const ECMap& ecmap,
                                   const FCMap& fcmap,
                                   const CellSelector& cell_selector)
-    : m_kd_tree(points_with_info(tr, ecmap, fcmap, cell_selector),
+    : m_kd_tree_3(points_with_info(tr, 3, ecmap, fcmap, cell_selector),
+                  Splitter(),
+                  Kd_traits(Point_property_map()))
+    , m_kd_tree_2(points_with_info(tr, 2, ecmap, fcmap, cell_selector),
                 Splitter(),
                 Kd_traits(Point_property_map()))
   {
-    m_kd_tree.build();
+    m_kd_tree_3.build();
+    m_kd_tree_2.build();
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+    dump_kd_trees();
+#endif
   }
 #endif
 
@@ -114,20 +127,86 @@ private:
 
   template<typename ECMap, typename FCMap, typename CellSelector>
   std::vector<Point_with_info> points_with_info(const Tr& tr,
+                                                const int dim,
                                                 const ECMap& ecmap,
                                                 const FCMap& fcmap,
                                                 const CellSelector& cell_selector) const
   {
+    namespace Tet_remeshing = CGAL::Tetrahedral_remeshing;
+    using Facet = typename Tr::Facet;
+    using Edge = typename Tr::Edge;
+
     auto cp = tr.geom_traits().construct_point_3_object();
+    auto centroid = tr.geom_traits().construct_centroid_3_object();
+    auto midpt = tr.geom_traits().construct_midpoint_3_object();
+
     std::vector<Point_with_info> points;
     for (const Vertex_handle v : tr.finite_vertex_handles())
+    {
+      if(  (dim == 3 && dim == v->in_dimension())//inside volume
+        || (dim < 3  && v->in_dimension() < 3))  //on surface
     {
       points.push_back(
         Point_with_info{ cp(tr.point(v)),
                          average_edge_length_around(v, tr, ecmap, fcmap, cell_selector),
                          v->in_dimension() });
+      }
+    }
+
+    // add internal points
+    for (const Cell_handle c : tr.finite_cell_handles())
+    {
+      if (!get(cell_selector, c))
+        continue;
+
+      // inside cells
+      if(dim == 3)
+        points.push_back(Point_with_info{ centroid(tr.tetrahedron(c)),
+                                          average_edge_length_3(c, tr),
+                                          3 });
+      else
+      {
+        // on surface facets
+        for (int i = 0; i < 4; ++i)
+        {
+          const Cell_handle cn = c->neighbor(i);
+          if(  get(cell_selector, c) != get(cell_selector, cn)
+            || get(fcmap, Facet(c, i))
+            || c->is_facet_on_surface(i) )
+          {
+            points.push_back(Point_with_info{ centroid(tr.triangle(c, i)),
+                                              average_edge_length_2(c, i, tr),
+                                              2 });
+          }
+        }
+        // on complex edges
+        for (const Edge& e : Tet_remeshing::cell_edges(c, tr))
+        {
+          if(get(ecmap, Tet_remeshing::make_vertex_pair(e)))
+          {
+            points.push_back(Point_with_info{
+              midpt(tr.segment(e)),
+              CGAL::approximate_sqrt(Tet_remeshing::squared_edge_length(e, tr)),
+              1 });
+          }
+        }
+      }
     }
     return points;
+  }
+
+  const Kd_tree& kd_tree(const int dim) const
+  {
+    if (dim == 3)
+      return m_kd_tree_3;
+    else
+      return m_kd_tree_2;
+  }
+
+  int nb_neighbors(const int dim) const
+  {
+    if (dim == 3)      return 30;
+    else               return 6;
   }
 
 public:
@@ -141,46 +220,82 @@ public:
   FT operator()(const Point_3& p, const int& dim, const Index& ) const
 #endif
   {
-    const int nb_neighbors = (dim == 3) ? 20 : 6;
-
-    // Find nearest vertex and local size before remeshing
     Point_property_map pp_map;
     Distance dist(pp_map);
-    Neighbor_search search(m_kd_tree,
+
+    // Find nearest vertex and local size before remeshing
+    Neighbor_search search(kd_tree(dim),
                            p, //query point
-                           nb_neighbors, //nb nearest neighbors
+                           nb_neighbors(dim), //nb nearest neighbors
                            0, //epsilon
                            true, //search nearest
                            dist);
 
-    FT sum = 0;
+    FT max_size = 0.;
+    std::vector<Point_with_info> neighbors;
+
     for (const auto& neighbor : search)
     {
       [[maybe_unused]] const auto& [pi, size, dimension] = neighbor.first;
-      // todo : should we discard points when dim != dimension?
 
-      sum += size;
+      max_size = (std::max)(max_size, size);
+
+      if(  (dim == 3 && dimension == dim) //volume point
+        || (dim < 3  && dimension < 3) )  //surface point
+      {
+        neighbors.push_back(neighbor.first);
+      }
     }
 
-    CGAL_assertion(sum > 0);
-    return sum / static_cast<FT>(nb_neighbors);
+    if (neighbors.empty())
+      return max_size;
+
+    return interpolate_on_n_vertices(p, neighbors);
   }
 
 private:
   /**
-   * Returns size at point `p`, by interpolation into tetrahedron.
-   * TODO : interpolate
+   * Returns size at point `p`, by interpolation among neighbors
    */
-  FT interpolate_on_four_vertices(
+  FT interpolate_on_n_vertices(
     const Point_3& p,
-    const std::array<Point_with_info, 4>& vertices) const;
+    const std::vector<Point_with_info>& vertices) const;
 
   template<typename ECMap, typename FCMap, typename CellSelector>
   FT average_edge_length_around(const Vertex_handle v, const Tr& tr,
     const ECMap& ecmap, const FCMap& fcmap, const CellSelector& cell_selector) const;
 
+  FT average_edge_length_3(const Cell_handle c, const Tr& tr) const;
+  FT average_edge_length_2(const Cell_handle c, const int i, const Tr& tr) const;
+
 private:
-  Kd_tree m_kd_tree;
+  Kd_tree m_kd_tree_3; //volumes
+  Kd_tree m_kd_tree_2; //surfaces
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
+private:
+  void dump_kd_trees() const
+  {
+    std::ofstream ofs("kd_trees.ply");
+
+    using Point_Size = std::pair<Point_3, float>;
+    std::vector<Point_Size> points;
+
+    for (auto it = m_kd_tree_3.begin(); it != m_kd_tree_3.end(); ++it)
+      points.push_back(std::make_pair(it->p, it->size));
+
+    for (auto it = m_kd_tree_2.begin(); it != m_kd_tree_2.end(); ++it)
+      points.push_back(std::make_pair(it->p, it->size));
+
+    using Point_map = CGAL::First_of_pair_property_map<Point_Size>;
+    using Size_map = CGAL::Second_of_pair_property_map<Point_Size>;
+
+    CGAL::IO::write_PLY_with_properties(ofs,
+      points,
+      CGAL::make_ply_point_writer(Point_map()),
+      std::make_pair(Size_map(), CGAL::IO::PLY_property<double>("intensity")));
+  }
+#endif
 
 };//end of class Adaptive_remeshing_sizing_field
 
@@ -248,33 +363,81 @@ create_adaptive_remeshing_sizing_field(const Tr& tr,
 template <typename Tr>
 typename Adaptive_remeshing_sizing_field<Tr>::FT
 Adaptive_remeshing_sizing_field<Tr>::
-interpolate_on_four_vertices(
+interpolate_on_n_vertices(
   const Point_3& p,
-  const std::array<Point_with_info, 4>& vertices) const
+  const std::vector<Point_with_info>& points_with_info) const
 {
   // Interpolate value using values at vertices
-  const FT& va = vertices[0].size;
-  const FT& vb = vertices[1].size;
-  const FT& vc = vertices[2].size;
-  const FT& vd = vertices[3].size;
+  const auto sqd = GT().compute_squared_distance_3_object();
 
-  const Point_3& a = vertices[0].p;
-  const Point_3& b = vertices[1].p;
-  const Point_3& c = vertices[2].p;
-  const Point_3& d = vertices[3].p;
+  FT sum_weights = 0.;
+  FT sum_sizes = 0.;
 
-  const auto sqd = FT().compute_squared_distance_3_object();
+  for (const auto pwi : points_with_info)
+  {
+    const FT size = pwi.size;
+    const FT sqdist = sqd(pwi.p, p);
 
-  const FT wa = 1. / sqd(a, p);
-  const FT wb = 1. / sqd(b, p);
-  const FT wc = 1. / sqd(c, p);
-  const FT wd = 1. / sqd(d, p);
+    if (is_zero(sqdist))
+      return size;
 
-  // If den is 0, then compute the average value
-  if (is_zero(wa + wb + wc + wd))
-    return (va + vb + vc + vd) / 4.;
-  else
-    return (wa * va + wb * vb + wc * vc + wd * vd) / (wa + wb + wc + wd);
+    const FT weight = 1. / CGAL::approximate_sqrt(sqdist);
+    sum_weights += weight;
+    sum_sizes += weight * size;
+  }
+
+  CGAL_assertion(sum_weights > 0);
+  return sum_sizes / sum_weights;
+}
+
+
+template<typename Tr>
+typename Adaptive_remeshing_sizing_field<Tr>::FT
+Adaptive_remeshing_sizing_field<Tr>::
+average_edge_length_3(const typename Tr::Cell_handle c, const Tr& tr) const
+{
+  namespace Tet_Remeshing = CGAL::Tetrahedral_remeshing;
+
+  FT sum = 0.;
+  short nb_inside_edges = 0;
+  for (const typename Tr::Edge& e : Tet_Remeshing::cell_edges(c, tr))
+  {
+    const auto [v0, v1] = tr.vertices(e);
+    //skip surface edges
+    if  (v0->in_dimension() < 3
+      && v1->in_dimension() < 3
+      && v0->index() == v1->index())
+      continue;
+
+    sum += CGAL::approximate_sqrt(Tet_Remeshing::squared_edge_length(e, tr));
+    ++nb_inside_edges;
+  }
+  return sum / FT(nb_inside_edges);
+}
+
+template<typename Tr>
+typename Adaptive_remeshing_sizing_field<Tr>::FT
+Adaptive_remeshing_sizing_field<Tr>::
+average_edge_length_2(const typename Tr::Cell_handle c,
+                      const int i,
+                      const Tr& tr) const
+{
+  // facet(c,i)
+  namespace Tet_Remeshing = CGAL::Tetrahedral_remeshing;
+
+  FT sum = 0.;
+  short nb_surface_edges = 0;
+  for (const typename Tr::Edge& e : Tet_Remeshing::facet_edges(c, i, tr))
+  {
+    CGAL_assertion_code(const auto vs = tr.vertices(e));
+    CGAL_assertion(vs[0]->in_dimension() < 3);
+    CGAL_assertion(vs[1]->in_dimension() < 3);
+
+    sum += CGAL::approximate_sqrt(Tet_Remeshing::squared_edge_length(e, tr));
+    ++nb_surface_edges;
+  }
+
+  return sum / FT(nb_surface_edges);
 }
 
 template <typename Tr>
@@ -342,13 +505,10 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
   if (edges.empty())
     return 0;
 
-  auto cp = tr.geom_traits().construct_point_3_object();
   FT sum = 0.;
   for (const Edge& e : edges)
   {
-    sum += CGAL::approximate_sqrt(
-      CGAL::squared_distance(cp(e.first->vertex(e.second)->point()),
-                             cp(e.first->vertex(e.third)->point())));;
+    sum += CGAL::approximate_sqrt(squared_edge_length(e, tr));
   }
 
   return sum / static_cast<FT>(edges.size());
