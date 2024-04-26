@@ -635,8 +635,6 @@ private:
     const std::array<Vertex_handle, 2>
       vs = c3t3.triangulation().vertices(e);
 
-    //const FT len = CGAL::approximate_sqrt(squared_edge_length(e, tr));
-
     const int dim = (std::max)(vs[0]->in_dimension(), vs[1]->in_dimension());
     const typename C3t3::Index index = max_dimension_index(vs);
 
