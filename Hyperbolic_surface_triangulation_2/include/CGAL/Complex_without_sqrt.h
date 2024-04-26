@@ -31,14 +31,14 @@ private:
 
 public:
   Complex_without_sqrt();
-  Complex_without_sqrt(const FT& real);
-  Complex_without_sqrt(const FT& real, const FT& imag);
+  Complex_without_sqrt(const FT& real_part);
+  Complex_without_sqrt(const FT& real_part, const FT& imaginary_part);
 
-  void set_real(const FT& real);
-  void set_imag(const FT& imag);
+  void set_real_part(const FT& real_part);
+  void set_imaginary_part(const FT& imaginary_part);
 
-  FT real() const;
-  FT imag() const;
+  FT real_part() const;
+  FT imaginary_part() const;
 
   FT squared_modulus() const;
   _Self conjugate() const;
@@ -66,38 +66,38 @@ Complex_without_sqrt<FT>::Complex_without_sqrt(){
 }
 
 template<class FT>
-Complex_without_sqrt<FT>::Complex_without_sqrt(const FT& real){
-  _real = real;
+Complex_without_sqrt<FT>::Complex_without_sqrt(const FT& real_part){
+  _real = real_part;
   _imag = FT(0);
 }
 
 template<class FT>
-Complex_without_sqrt<FT>::Complex_without_sqrt(const FT& real, const FT& imag){
-  _real = real;
-  _imag = imag;
+Complex_without_sqrt<FT>::Complex_without_sqrt(const FT& real_part, const FT& imaginary_part){
+  _real = real_part;
+  _imag = imaginary_part;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class FT>
-void Complex_without_sqrt<FT>::set_real(const FT& real){
-  _real = real;
+void Complex_without_sqrt<FT>::set_real_part(const FT& real_part){
+  _real = real_part;
 }
 
 template<class FT>
-void Complex_without_sqrt<FT>::set_imag(const FT& imag){
-  _imag = imag;
+void Complex_without_sqrt<FT>::set_imaginary_part(const FT& imaginary_part){
+  _imag = imaginary_part;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class FT>
-FT Complex_without_sqrt<FT>::real() const{
+FT Complex_without_sqrt<FT>::real_part() const{
   return _real;
 }
 
 template<class FT>
-FT Complex_without_sqrt<FT>::imag() const{
+FT Complex_without_sqrt<FT>::imaginary_part() const{
   return _imag;
 }
 
@@ -115,12 +115,12 @@ Complex_without_sqrt<FT> Complex_without_sqrt<FT>::conjugate() const{
 
 template<class FT>
 Complex_without_sqrt<FT> Complex_without_sqrt<FT>::operator+(const Complex_without_sqrt<FT>& other) const{
-  return Complex_without_sqrt<FT>(_real+other.real(), _imag+other.imag());
+  return Complex_without_sqrt<FT>(_real+other.real_part(), _imag+other.imaginary_part());
 }
 
 template<class FT>
 Complex_without_sqrt<FT> Complex_without_sqrt<FT>::operator-(const Complex_without_sqrt<FT>& other) const{
-  return Complex_without_sqrt<FT>(_real-other.real(), _imag-other.imag());
+  return Complex_without_sqrt<FT>(_real-other.real_part(), _imag-other.imaginary_part());
 }
 
 template<class FT>
@@ -130,7 +130,7 @@ Complex_without_sqrt<FT> Complex_without_sqrt<FT>::operator-() const{
 
 template<class FT>
 Complex_without_sqrt<FT> Complex_without_sqrt<FT>::operator*(const Complex_without_sqrt<FT>& other) const{
-  return Complex_without_sqrt<FT>(_real*other.real()-_imag*other.imag(), _real*other.imag()+_imag*other.real());
+  return Complex_without_sqrt<FT>(_real*other.real_part()-_imag*other.imaginary_part(), _real*other.imaginary_part()+_imag*other.real_part());
 }
 
 template<class FT>
@@ -143,7 +143,7 @@ Complex_without_sqrt<FT> Complex_without_sqrt<FT>::operator/(const Complex_witho
 
 template<class FT>
 bool operator==(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<FT>& z2){
-  return (z1.real()==z2.real() && z1.imag()==z2.imag());
+  return (z1.real_part()==z2.real_part() && z1.imaginary_part()==z2.imaginary_part());
 }
 
 template<class FT>
@@ -155,7 +155,7 @@ bool operator!=(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<F
 
 template<class FT>
 std::ostream& operator<<(std::ostream& s, const Complex_without_sqrt<FT>& z){
-  s << z.real() << std::endl << z.imag() << std::endl;
+  s << z.real_part() << std::endl << z.imaginary_part() << std::endl;
   return s;
 }
 
@@ -163,9 +163,9 @@ template<class FT>
 void operator>>(std::istream& s, Complex_without_sqrt<FT>& z){
   std::string line;
   std::getline(s, line);
-  z.set_real(FT(line));
+  z.set_real_part(FT(line));
   std::getline(s, line);
-  z.set_imag(FT(line));
+  z.set_imaginary_part(FT(line));
 }
 
 } // namespace CGAL
