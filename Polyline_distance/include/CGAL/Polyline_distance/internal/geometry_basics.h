@@ -39,11 +39,13 @@
 #include <CGAL/Interval_nt.h>
 
 #include <CGAL/Polyline_distance/internal/id.h>
+#include <CGAL/Polyline_distance/internal/curve.h>
 
 namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
+    class Curve;
 //
 // distance_t
 //
@@ -68,8 +70,10 @@ struct Lambda {
 
     mutable Approx approx;
     mutable std::optional<Exact> exact;
-    Point circle_center;
-    Point line_start, line_end;
+    const Curve * curve1;
+    PointID circle_center;
+    const Curve * curve2;
+    PointID line_start;
     distance_t radius;
     mutable bool is_zero, is_one, is_exact, is_start;
 
@@ -83,12 +87,13 @@ struct Lambda {
     {
     }
 
-    Lambda(Approx approx, const Point& circle_center, distance_t radius,
-           const Point& line_start, const Point& line_end, bool is_start)
+  Lambda(const Approx& approx, const Curve& curve1, const PointID& circle_center,
+         const Curve& curve2, const PointID& line_start, const distance_t& radius, bool is_start)
         : approx(approx),
+          curve1(&curve1),
           circle_center(circle_center),
+          curve2(&curve2),
           line_start(line_start),
-          line_end(line_end),
           radius(radius),
           is_zero(false),
           is_one(false),
@@ -114,16 +119,16 @@ struct Lambda {
 
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
-            assert(line_start[i].is_point());
-            assert(line_end[i].is_point());
-            assert(circle_center[i].is_point());
-            Rational start_end_diff = Rational(line_end[i].inf()) - Rational(line_start[i].inf());
+          assert((*curve2)[line_start}[i].is_point());
+          assert((*curve2)[line_start+1][i].is_point());
+            assert((*curve1)[circle_center][i].is_point());
+                   Rational start_end_diff = Rational((*curve2)[line_start+1][i].inf()) - Rational((*curve2)[line_start][i].inf());
             a += CGAL::square(start_end_diff);
-            Rational start_center_diff = Rational(line_start[i].inf()) - Rational(circle_center[i].inf());
+                   Rational start_center_diff = Rational((*curve2)[line_start][i].inf()) - Rational((*curve1)[circle_center][i].inf());
             b -= start_center_diff * start_end_diff;
             c += CGAL::square(start_center_diff);
         }
-        c -= CGAL::square(Rational(to_double(radius)));
+              c -= CGAL::square(Rational(to_double(radius)));  // AF: radius must also be inf == sup
 
         Rational minus_b_div_a = b / a;
         Rational d = CGAL::square(minus_b_div_a) - c / a;

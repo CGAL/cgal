@@ -74,11 +74,11 @@ bool approximate_reals(Curve const& curve1,
         if (start <= Approx(1) && end >= Approx(0)) {
             I = std::make_pair(
                 (start == Approx(0)) ? Lambda(0)
-                                     : Lambda(start, circle_center, radius,
-                                              line_start, line_end, true),
+                                     : Lambda(start, curve1, center_id,
+                                              curve2, seg_start_id, radius, true),
                 (end == Approx(1)) ? Lambda(1)
-                                   : Lambda(end, circle_center, radius,
-                                            line_start, line_end, false));
+                                   : Lambda(end, curve1, center_id,
+                                           curve2, seg_start_id, radius, false));
             return true;
         }
     }

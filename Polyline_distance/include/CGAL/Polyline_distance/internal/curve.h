@@ -24,8 +24,10 @@
 
 #pragma once
 #include <CGAL/license/Polyline_distance.h>
-#include <CGAL/Polyline_distance/internal/geometry_basics.h>
 #include <CGAL/Polyline_distance/internal/id.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Interval_nt.h>
+
 #include <vector>
 
 namespace CGAL {
@@ -43,8 +45,11 @@ namespace internal {
 class Curve
 {
 public:
-
+  using distance_t = CGAL::Interval_nt<false>;
+  using Point = CGAL::Simple_cartesian<distance_t>::Point_2;
+  using PointID = ID<Point>;
   using Points = std::vector<Point>;
+
   Curve() = default;
 
   Curve(const Points& points);
@@ -73,7 +78,8 @@ public:
     return CGAL::sqrt(CGAL::squared_distance(p, q));
   }
 
-  Point interpolate_at(CPoint const& pt) const
+  template <class P>
+  Point interpolate_at(P const& pt) const
     {
         assert(pt.getFraction() >= 0. && pt.getFraction() <= 1.);
         assert(
@@ -125,8 +131,6 @@ private:
 
 };
 
-using Curves = std::vector<Curve>;
-
 std::ostream& operator<<(std::ostream& out, const Curve& curve);
 
 Curve::Curve(const Points& points)
@@ -176,7 +180,7 @@ auto Curve::getExtremePoints() const -> ExtremePoints const&
     return extreme_points;
 }
 
-distance_t Curve::getUpperBoundDistance(Curve const& other) const
+Curve::distance_t Curve::getUpperBoundDistance(Curve const& other) const
 {
     auto const& extreme1 = this->getExtremePoints();
     auto const& extreme2 = other.getExtremePoints();
