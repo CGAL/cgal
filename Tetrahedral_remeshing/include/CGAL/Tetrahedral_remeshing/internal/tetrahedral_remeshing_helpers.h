@@ -1540,27 +1540,30 @@ squared_upper_size_bound(const typename C3t3::Edge& e,
   using Tr = typename C3t3::Triangulation;
   using FT = typename Tr::Geom_traits::FT;
   using Vertex_handle = typename Tr::Vertex_handle;
-  const Tr& tr = c3t3.triangulation();
-  auto cp = tr.geom_traits().construct_point_3_object();
-  auto midpt = tr.geom_traits().construct_midpoint_3_object();
 
-  const Vertex_handle u = e.first->vertex(e.second);
-  const Vertex_handle v = e.first->vertex(e.third);
-
-  const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), u->index());
-  const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), v->index());
-
-  // if e is on the boundary AND sizing at the boundary is set to 0,
-  // we take the maximum size of the incident cells
-  if (boundary_edge && (size_at_u == 0 || size_at_v == 0))
+  if(boundary_edge)
   {
+    const Tr& tr = c3t3.triangulation();
+    auto cp = tr.geom_traits().construct_point_3_object();
+
+    const Vertex_handle u = e.first->vertex(e.second);
+    const Vertex_handle v = e.first->vertex(e.third);
+
+    const FT size_at_u = sizing(cp(u->point()), u->in_dimension(), u->index());
+    const FT size_at_v = sizing(cp(v->point()), v->in_dimension(), v->index());
+
+    // if e is on the boundary AND sizing at the boundary is set to 0,
+    // we take the maximum size of the incident cells
+    if (size_at_u == 0 || size_at_v == 0)
+    {
 #ifdef CGAL_MAX_SIZING_IN_IS_TOO_LONG
-    FT size_at_uv = max_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+      FT size_at_uv = max_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
 #else
-    FT size_at_uv = average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
+      FT size_at_uv = average_sizing_in_incident_cells(e, sizing, c3t3, cell_selector);
 #endif
-    CGAL_assertion(size_at_uv > 0);
-    return CGAL::square(FT(4) / FT(3) * size_at_uv);
+      CGAL_assertion(size_at_uv > 0);
+      return CGAL::square(FT(4) / FT(3) * size_at_uv);
+    }
   }
 
   const auto mwi = midpoint_with_info(e, boundary_edge, c3t3);

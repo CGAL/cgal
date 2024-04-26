@@ -687,8 +687,7 @@ bool are_edge_lengths_valid(const typename C3t3::Edge& edge,
                             const Collapse_type& collapse_type,
                             const typename C3t3::Triangulation::Point& new_pos,
                             const Sizing& sizing,
-                            const CellSelector& cell_selector,
-                            const bool /* adaptive */ = false)
+                            const CellSelector& cell_selector)
 {
   //SqLengthMap::key_type is Vertex_handle
   //SqLengthMap::value_type is double
@@ -1166,7 +1165,7 @@ typename C3t3::Vertex_handle collapse_edge(typename C3t3::Edge& edge,
     }
   }
 
-  if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos, sizing, cell_selector/*, adaptive = false*/)
+  if (are_edge_lengths_valid(edge, c3t3, collapse_type, new_pos, sizing, cell_selector)
     && collapse_preserves_surface_star(edge, c3t3, new_pos, cell_selector))
   {
     CGAL_expensive_assertion(c3t3.triangulation().tds().is_edge(
