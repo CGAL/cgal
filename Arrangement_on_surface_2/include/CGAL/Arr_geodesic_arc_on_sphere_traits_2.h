@@ -154,7 +154,6 @@ public:
   /*! Default constructor */
   Arr_geodesic_arc_on_sphere_traits_2() {}
 
-protected:
   using FT = typename Kernel::FT;
 
   using Direction_3 = typename Kernel::Direction_3;
@@ -162,6 +161,7 @@ protected:
   using Direction_2 = typename Kernel::Direction_2;
   using Vector_2 = typename Kernel::Vector_2;
 
+protected:
   /*! Obtain the intersection of the identification arc and the xy plane.
    * By default, it is the vector directed along the negative x axis
    * (x = -infinity).
