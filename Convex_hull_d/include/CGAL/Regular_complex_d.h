@@ -530,7 +530,7 @@ void associate_point_with_vertex(Vertex_handle v, const Point_d& p)
 { v -> set_point(p); }
 
 void set_neighbor(Simplex_handle s, int i, Simplex_handle s1, int j)
-/*{\Mop sets the neihbor opposite to vertex $i$ of |s| to |s1| and
+/*{\Mop sets the neighbor opposite to vertex $i$ of |s| to |s1| and
         records vertex $j$ of |s1| as the vertex opposite to $i$.}*/
 { s  -> set_neighbor(i,s1);
   s1 -> set_neighbor(j,s);
