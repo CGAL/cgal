@@ -458,16 +458,12 @@ public:
 struct CInterval;
 using CIntervals = std::vector<CInterval>;
 using CIntervalsID = ID<CIntervals>;
-using CIntervalID = std::size_t;
 
-
-using CPoints = std::vector<CPoint>;
 
 using CPosition = std::array<CPoint, 2>;
 using CPositions = std::vector<CPosition>;
 
 using CurveID = std::size_t;
-using CurveIDs = std::vector<CurveID>;
 
 /*!
  * \ingroup PkgPolylineDistanceFunctions
