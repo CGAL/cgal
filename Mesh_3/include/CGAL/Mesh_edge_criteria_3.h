@@ -141,8 +141,8 @@ public:
   *
   * \note If one parameter is set to 0, then its corresponding criterion is ignored.
   *
-  * @tparam SizingField and @tparam DistanceField are either scalars
-  * or models of `MeshDomainField_3`
+  * @tparam SizingField scalar or model of `MeshDomainField_3`
+  * @tparam DistanceField scalar or model of `MeshDomainField_3`
   */
   template < typename SizingField, typename DistanceField = FT >
   Mesh_edge_criteria_3(const SizingField& length_bound,
