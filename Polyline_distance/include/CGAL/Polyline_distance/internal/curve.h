@@ -89,7 +89,7 @@ public:
         if(pt.getFraction() == 0){
           return points[pt.getPoint()];
         }
-        auto fraction = to_interval(pt.getFraction());
+        auto fraction = pt.getFraction().approx;
         return points[pt.getPoint()] +
                (fraction * (points[pt.getPoint() + 1] - points[pt.getPoint()]));
 

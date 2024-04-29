@@ -119,7 +119,7 @@ struct Lambda {
 
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
-          assert((*curve2)[line_start}[i].is_point());
+          assert((*curve2)[line_start][i].is_point());
           assert((*curve2)[line_start+1][i].is_point());
             assert((*curve1)[circle_center][i].is_point());
                    Rational start_end_diff = Rational((*curve2)[line_start+1][i].inf()) - Rational((*curve2)[line_start][i].inf());
@@ -588,8 +588,8 @@ std::ostream& operator<<(std::ostream& out, const CPoint& p)
 
 std::ostream& operator<<(std::ostream& out, const Interval& interval)
 {
-    // out << std::setprecision (15)
-    //      << "(" << interval.begin << ", " << interval.end << ")";
+    out << std::setprecision (15)
+        << "(" << interval.begin << ", " << interval.end << ")";
 
     return out;
 }

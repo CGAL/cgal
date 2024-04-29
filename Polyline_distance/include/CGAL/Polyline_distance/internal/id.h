@@ -52,7 +52,7 @@ public:
     IDType operator/(int div) const { return id / div; }
     IDType operator+=(ID<T> other) { return id += other.id; }
     IDType operator-=(ID<T> other) { return id -= other.id; }
-    IDType operator=(ID<T> other) { return id = other.id; }
+//    IDType operator=(ID<T> other) { return id = other.id; }
     IDType operator++() { return ++id; }
     IDType operator--() { return --id; }
     // FIXME:

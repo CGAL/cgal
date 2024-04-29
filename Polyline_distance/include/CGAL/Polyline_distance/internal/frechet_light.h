@@ -210,6 +210,8 @@ void FrechetLight::visAddReachable(CInterval const& cinterval)
         return;
     }
     reachable_intervals.push_back(cinterval);
+#else
+  CGAL_USE(cinterval);
 #endif
 }
 
@@ -231,6 +233,11 @@ void FrechetLight::visAddUnknown(CPoint begin, CPoint end, CPoint fixed_point,
     assert(unknown_intervals.back().begin >= 0);
     assert(unknown_intervals.back().end <=
            curve_pair[1 - unknown_intervals.back().fixed_curve]->size() - 1);
+#else
+  CGAL_USE(begin);
+  CGAL_USE(end);
+  CGAL_USE(fixed_point);
+  CGAL_USE(fixed_curve);
 #endif
 }
 
@@ -252,6 +259,11 @@ void FrechetLight::visAddConnection(CPoint begin, CPoint end,
     assert(connections.back().begin >= 0);
     assert(connections.back().end <=
            curve_pair[1 - connections.back().fixed_curve]->size() - 1);
+#else
+  CGAL_USE(begin);
+  CGAL_USE(end);
+  CGAL_USE(fixed_point);
+  CGAL_USE(fixed_curve);
 #endif
 }
 
@@ -274,6 +286,11 @@ void FrechetLight::visAddFreeNonReachable(CPoint begin, CPoint end,
     assert(free_non_reachable.back().begin >= 0);
     assert(free_non_reachable.back().end <=
            curve_pair[1 - free_non_reachable.back().fixed_curve]->size() - 1);
+#else
+  CGAL_USE(begin);
+  CGAL_USE(end);
+  CGAL_USE(fixed_point);
+  CGAL_USE(fixed_curve);
 #endif
 }
 
@@ -1170,6 +1187,8 @@ inline void FrechetLight::visAddCell(Box const& box)
 {
 #ifdef VIS
     cells.emplace_back(box.min1, box.min2);
+#else
+  CGAL_USE(box);
 #endif
 }
 

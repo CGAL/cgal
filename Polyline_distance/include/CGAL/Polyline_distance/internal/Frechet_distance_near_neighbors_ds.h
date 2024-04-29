@@ -84,7 +84,6 @@ private:
         using D = FrechetKdTree::D;
         using Point_d = FrechetKdTree::Point_d;
         using Point_and_id = FrechetKdTree::Point_and_id;
-        using FT = FT;
 
         // const Polyline& curve;
         const Point_d p;
