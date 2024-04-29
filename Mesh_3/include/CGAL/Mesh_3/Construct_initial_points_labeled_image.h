@@ -71,17 +71,17 @@ struct Get_point
 } // end namespace Mesh_3
 
 /*!
-* \ingroup PkgMesh3Initializers
-*
-* Functor for initial points generation in labeled images.
-* This functor is a model of concept `InitialPointsGenerator`,
-* and thus can be passed to `CGAL::make_mesh_3` with the parameter
-* `CGAL::parameters::initial_points_generator()`
-*
-* \sa `CGAL::parameters::initial_points_generator()`
-* \sa `CGAL::make_mesh_3()`
-* \sa `CGAL::Construct_initial_points_gray_image`
-*/
+ * \ingroup PkgMesh3Initializers
+ *
+ * Functor for generating initial points in labeled images.
+ * This functor is a model of the `InitialPointsGenerator` concept,
+ * and can be passed as a parameter to `CGAL::make_mesh_3` using the
+ * `CGAL::parameters::initial_points_generator()` function.
+ *
+ * \sa `CGAL::parameters::initial_points_generator()`
+ * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::Construct_initial_points_gray_image`
+ */
 struct Construct_initial_points_labeled_image
 {
   const CGAL::Image_3 & image;
@@ -90,15 +90,15 @@ struct Construct_initial_points_labeled_image
       : image(image_)
   { }
 
-   /*!
-   * \brief Constructs points by collecting them in all connected components.
-   * This guarantees to initialize them all.
-   *
-   * @tparam OutputIterator model of `OutputIterator`, containing points of type
-   * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
-   * @tparam MeshDomain model of `MeshDomain_3`
-   * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
-   */
+  /*!
+  * \brief Constructs points by collecting them from all connected components.
+  * This ensures that all points are initialized.
+  *
+  * @tparam OutputIterator a model of `OutputIterator` that contains points of type
+  * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
+  * @tparam MeshDomain a model of `MeshDomain_3`
+  * @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
+  */
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
   {
@@ -107,18 +107,18 @@ struct Construct_initial_points_labeled_image
   }
 
   /*!
-   * \brief Same as above, but a `TransformOperator` is used
+   * \brief Same as above, but a `TransformOperator` is used.
    *
-   * @tparam OutputIterator model of `OutputIterator`, containing points of type
-   * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
-   * @tparam MeshDomain model of `MeshDomain_3`
-   * @tparam TransformOperator functor that transforms values of the image.
+   * @tparam OutputIterator A model of `OutputIterator` that contains points of type
+   * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`.
+   * @tparam MeshDomain A model of `MeshDomain_3`.
+   * @tparam TransformOperator A functor that transforms values of the image.
    * It must provide the following type:<br>
    * `result_type`<br>
    * and the following operator:<br>
    * `template<typename FT>`<br>
-   * `result_type operator()(FT v)`
-   * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+   * `result_type operator()(FT v)`.
+   * @tparam C3t3 A model of `MeshComplex_3InTriangulation_3`.
    */
   template <typename OutputIterator, typename MeshDomain, typename C3t3, typename TransformOperator>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, TransformOperator transform, const C3t3& c3t3, int n = 20) const
