@@ -1039,9 +1039,9 @@ Polyline features are covered by a set of so-called "protecting balls" which
 sizes are highly related to the `edge_size` and `edge_distance` criteria.
 This edge distance is driven by the distance component of `Mesh_edge_criteria_3`
 (see Section \ref Mesh_3Protectionof0and1dimensionalExposed).
-The parameter `edge_distance` enables the subdivision of edges that are too far away from the corresponding input sharp features.
-It may result in an output mesh with shorter edges along the input polyline features.
-
+The parameter `edge_distance` enables the subdivision of edges that are too far away from the
+corresponding input sharp features. It may result in an output mesh with shorter edges along the
+input polyline features.
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_edge_distance.cpp}
 
 \cgalFigureAnchor{mesh3edge_distance}
