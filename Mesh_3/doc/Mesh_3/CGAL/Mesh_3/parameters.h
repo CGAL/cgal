@@ -454,22 +454,16 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::initial_points_generator()` enables the user to
- * specify a functor following the `InitialPointsGenerator` concept
- * to the mesh generation function `make_mesh_3()`.
- * The functor will be called for initialization of the meshing process.
- * If this parameter is specified without arguments, the default behavior is executed,
- * i.e. the domain's `construct_initial_points_object()`
- * is called for the initialization of the meshing process.
+ * The function `parameters::initial_points_generator()` allows the user to specify a functor that follows the `InitialPointsGenerator` concept to the mesh generation function `make_mesh_3()`. This functor will be called for the initialization of the meshing process. If this parameter is specified without arguments, the default behavior is executed, which calls the domain's `construct_initial_points_object()` for the initialization of the meshing process.
  *
- * \tparam InitialPointsGenerator a functor following the `InitialPointsGenerator` concept
+ * \tparam InitialPointsGenerator a functor that follows the `InitialPointsGenerator` concept
  *
  *  @param generator an instance of the InitialPointsGenerator functor
  *
  * \cgalHeading{Example}
  *
  * \code{.cpp}
- * // Mesh generation from labeled image with connexity checks.
+ * // Mesh generation from a labeled image with connexity checks.
  * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
  *                               criteria,
  *                               parameters::initial_points_generator(CGAL::Construct_initial_points_labeled_image(image)));
@@ -485,30 +479,22 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::initial_points()` enables the user to
- * specify a container model of `Range` of initial points
- * to the mesh generation function `make_mesh_3()`.
- * The initial points `Range` has elements of type
- * `std::tuple<Weighted_point_3, int, Index>` where
- * `Weighted_point_3` contains the point's position and weight,
- * `int` is the dimension of the minimal dimension subcomplex on which the point lies, and
- * `Index` is the underlying subcomplex index.
+ * The function `parameters::initial_points()` allows the user to specify a container model of `Range` that contains initial points to be used in the `make_mesh_3()` function for mesh generation. The `Range` should have elements of type `std::tuple<Weighted_point_3, int, Index>`, where `Weighted_point_3` represents the position and weight of the point, `int` represents the dimension of the minimal subcomplex on which the point lies, and `Index` represents the underlying subcomplex index.
  *
- * \tparam MeshDomain model of `MeshDomain_3`
- * \tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+ * \tparam MeshDomain a model of `MeshDomain_3`
+ * \tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
  *
- *  @param initial_points a `Range` containing points of type
- * `std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>`
+ *  @param initial_points a `Range` that contains points of type `std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>`
  *
  * \cgalHeading{Example}
  *
  * \code{.cpp}
- * // Creation of the initial_points vector
+ * // Create the initial_points vector
  * std::vector<std::tuple<K::Weighted_point_3, int, Mesh_domain::Index>> initial_points;
- * // Mesh generation from labeled image with initial points.
+ * // Perform mesh generation from a labeled image with initial points
  * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
  *                               criteria,
- *                               parameters::initial_points(std::cref(initial_points));//use std::cref to avoid a copy
+ *                               parameters::initial_points(std::cref(initial_points))); // Use std::cref to avoid a copy
  * \endcode
  *
  * \sa `CGAL::parameters::initial_points_generator()`

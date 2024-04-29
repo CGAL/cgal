@@ -24,17 +24,17 @@ namespace CGAL
 {
 
 /*!
-* \ingroup PkgMesh3Initializers
-*
-* Functor for initial points generation in gray images.
-* This functor is a model of concept `InitialPointsGenerator`,
-* and thus can be passed to `CGAL::make_mesh_3` with the parameter
-* `CGAL::parameters::initial_points_generator()`
-*
-* \sa `CGAL::parameters::initial_points_generator()`
-* \sa `CGAL::make_mesh_3()`
-* \sa `CGAL::Construct_initial_points_labeled_image`
-*/
+ * \ingroup PkgMesh3Initializers
+ *
+ * Functor for generating initial points in gray images.
+ * This functor is a model of the `InitialPointsGenerator` concept,
+ * and can be passed as a parameter to `CGAL::make_mesh_3` using the
+ * `CGAL::parameters::initial_points_generator()` parameter function.
+ *
+ * \sa `CGAL::parameters::initial_points_generator()`
+ * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::Construct_initial_points_labeled_image`
+ */
 template <typename Functor = CGAL::Null_functor>
 struct Construct_initial_points_gray_image
 {
@@ -50,15 +50,14 @@ struct Construct_initial_points_gray_image
       , iso_value_(iso_value)
       , image_values_to_subdomain_indices_(image_values_to_subdomain_indices)
   { }
-
-   /*!
-   * \brief Constructs the initial points using the gray image.
-   *
-   * @tparam OutputIterator an `OutputIterator` of points of type
-   * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
-   * @tparam MeshDomain a model of `MeshDomain_3`
-   * @tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
-   */
+  /*!
+  * \brief Constructs the initial points using the gray image.
+  *
+  * \tparam OutputIterator An `OutputIterator` of points of type
+  * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`.
+  * \tparam MeshDomain A model of `MeshDomain_3`.
+  * \tparam C3t3 A model of `MeshComplex_3InTriangulation_3`.
+  */
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
   {
