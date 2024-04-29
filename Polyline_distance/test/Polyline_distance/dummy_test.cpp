@@ -168,7 +168,7 @@ void testFrechetDistance()
 {
     std::string curve_directory = "../data/curves/";
     // std::vector<std::string> datasets = {"sigspatial", "OV"};
-        std::vector<std::string> datasets = { "sigspatial" };
+    std::vector<std::string> datasets = { "sigspatial" };
     std::string query_directory = "../data/queries/";
     CGAL::Timer timer;
     for (auto const& dataset : datasets) {

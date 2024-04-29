@@ -422,7 +422,6 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
     // with interval arithmetic, so we return with an invalid interval.
     if (is_indeterminate(current_free)) {
         qsimple.invalidate();
-        // TODO: do we have to in any way set the last valid point here?
         return;
     }
 
@@ -479,8 +478,6 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
         auto const& end_point = curve[mid];
         auto end_dist_sqr = mid_dist_sqr;
         // if last and next point are both free:
-        // TODO: if this is done with an uncertain decision, then we still have
-        // to catch this case (i.e., segment free) with the interval below.
         if (current_free && certainly(end_dist_sqr <= dist_sqr)) {  // Uncertain (A)
             ++cur;
             stepsize *= 2;
@@ -488,9 +485,11 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
             continue;
         }
 
+        // Now the intervall is either not free or the last comparison was inderterminate.
+        // In both cases we say that the interval is not full in TestFullMode as we cannot
+        // call getInterval with IndexType that is not PointID.
         if (std::is_same<MODE, TestFullMode>::value) {
-            return;  // Simple interval is not full -- can return in
-                     // TestFullMode
+            return;  // Simple interval is not full -- can return in TestFullMode
         }
         // from here on, regular mode -> IndexType = PointID
 
@@ -507,10 +506,16 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
                                          ? temp_interval.end.getFraction()
                                          : 1.);
 
-        // TODO: implicit assumption! FIXME!!!
-        // TODO
-        // TODO
-        // TODO: have to look at this more closely!!
+        // do previous check for fullness again, but now it is an exact decision
+        if (interval.begin == 0 && interval.end == 1) {  // Uncertain (A)
+            assert(current_free);
+            ++cur;
+            stepsize *= 2;
+
+            continue;
+        }
+        // from now on we know that the interval is not full
+
         if (interval.is_empty()) {
             ++cur;
             stepsize *= 2;
@@ -1054,12 +1059,17 @@ CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i,
         else if (stepsize > 1) {
             stepsize /= 2;
         } else {
-            // TODO: implicit assumption! FIXME!!!
+            auto interval = getInterval(curve1, i, curve2, cur);
 
-            // stepsize = 1 and heuristic step didn't work
-            // then it follows that the last reachable point is on the current
-            // interval
-            return getInterval(curve1, i, curve2, cur).end;
+            // interval is full, so continue
+            if (interval.end == 1) {
+                assert(interval.begin == 0);
+                ++cur;
+                stepsize *= 2;
+            }
+
+            // the last reachable point is on the current interval
+            return interval.end;
         }
     }
     return CPoint{max, 0};
