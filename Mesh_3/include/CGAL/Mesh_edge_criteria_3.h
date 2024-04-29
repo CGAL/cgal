@@ -91,7 +91,7 @@ namespace internal {
 \ingroup PkgMesh3MeshClasses
 
 The function object class `Mesh_edge_criteria_3` is a model of `MeshEdgeCriteria_3`. It
-provides a bound for the size criterion.
+provides bounds for the size and approximation criteria.
 
 \cgalModels{MeshEdgeCriteria_3}
 
