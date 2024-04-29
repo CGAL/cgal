@@ -52,11 +52,21 @@ The assumption that \f$ P \f$ is convex ensures that the interior of \f$ P \f$ c
 
 \subsection Section_Hyperbolic_Surface_Triangulations_generation Generation of convex fundamental domains
 
+We aim at generating convex fundamental domains in a randomized way.
+We represent every domain as a polygon in the Poincaré disk, given by the list of its vertices, and endowed with side pairings.
+In order to perform fast and exact computations with the domains generated, every vertex must be a complex number whose type supports fast and exact computations.
+Under this constraint, we do not know how to generate domains of surfaces of genus greater than two.
+In genus two, this package can generate a convex fundamental domain \f$ P \f$, whose side pairings are \f$ A B C D A B C D \f$, and whose eight vertices \f$ z_0, \dots, z_7 \f$ belong to \f$ \mathbb{Q} + i \mathbb{Q} \f$ (their real and imaginary parts are rational numbers).
+Here the side pairings and the vertices are in counter-clockwise order, the side between \f$ z_0 \f$ and \f$ z_1 \f$ is labeled \f$ A \f$, and the side between \f$ z_4 \f$ and \f$ z_5 \f$ is also labeled \f$ A \f$.
+Those octagons are symmetric in the sense that \f$ z_i = z_{i+4} \f$ for every  \f$ i \f$, where indices are modulo eight.
+Such octagons are described in \cgalCite{aigon2005hyperbolic} (without the constraint that the vertices belong to \f$ \mathbb{Q} + i \mathbb{Q} \f$).
+The exact generation process can be found in \cgalCite{despre2022experimental}, together with a proof that the surfaces that can be generated in this way are dense in the space of surfaces genus two.
+
 \section Subsection_Hyperbolic_Surface_Triangulations_Representation Representation
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_Data_Structure Data structure
 
-We represent convex fundamental domains by the list of their vertices in the Poincaré disk, and by the list of their sides pairings.
+We represent domains by the list of their vertices in the Poincaré disk, and by the list of their sides pairings.
 
 Let \f$ T \f$ be a triangulation of a closed orientable hyperbolic surface.
 We represent \f$ T \f$ by an instance of CGAL::Combinatorial_map whose edges are attributed complex numbers.
@@ -115,6 +125,11 @@ The example below randomly generates a convex fundamental domain of a surface of
 
 
 \section Section_Hyperbolic_Surface_Implementation_History Design and implementation history
+
+This package implements the Delaunay flip algorithm described in the hyperbolic setting by Vincent Despré, Jean-Marc Schlenker, and Monique Teillaud in \cgalCite{despre2020flipping} (with a different data structure for representing triangulations).
+It also implements the generation of domains described by Vincent Despré, Loïc Dubois, Benedikt Kolbe, and Monique Teillaud in \cgalCite{despre2022experimental}, based on results of Aline Aigon-Dupuy, Peter Buser, Michel Cibils, Alfred F Künzle, and Frank Steiner \cgalCite{aigon2005hyperbolic}.
+The code and the documentation of the package were entirely written by Loïc Dubois, under regular discussions with Vincent Despré and Monique Teillaud.
+The authors aknowledge support from the ANR SoS.
 
 */
 } /* namespace CGAL */

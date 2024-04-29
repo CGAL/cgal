@@ -85,6 +85,7 @@ public:
   template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
   /// @}
 
+  /// @{
   /// \name Validity
   /*!
       Validity test.
