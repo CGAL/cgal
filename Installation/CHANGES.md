@@ -4,18 +4,20 @@ Release History
 [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 -----------
 
-Release date: October 2023
+Release date: June 2024
 
 ### General Changes
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
-- The demos as well as the `draw()` functions using the `Basic_viewer` are based on Qt6
+- The demos as well as the `Basic_viewer` are based on Qt6.
+- The `Basic_viewer` is improved and documented.
 - **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
 - **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
 - **Breaking change**: The file CMake file `UseCGAL.cmake` has been removed from CGAL. Usages of the CMake variables `${CGAL_USE_FILE}` and `${CGAL_LIBRARIES}` must be replaced by a link to the imported target `CGAL::CGAL`, for example: `target_link_library(the_target PRIVATE CGAL::CGAL)`.
 - The minimal supported version of Boost is now 1.72.0
+- The CGAL demo formerly known as "Polyhedron demo" has been renamed "CGAL Lab".
 
 ### Installation
 
@@ -74,8 +76,17 @@ Release date: October 2023
     bounding box to a face graph.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
--   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
-    when inserting an arc that lies on the identification curve.
+- **Breaking change**: The type of the result of point location queries changed to
+    `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
+    has been removed.
+
+- Eliminated the error-prone c-type casting that was used to define observers. In general, backward compatibility was maintained; however, the former class template `Arr_observer` was replaced by an alias template. (The former class Arr_observer was renamed to Aos_observer).
+
+- Introduced `Arr_dcel`, which essentially replaces the former `Arr_default_dcel`. Backward compatibility was maintained by the introduction of the alias template `Arr_default_dcel`. `Arr_dcel`, as opposed to the former `Arr_default_dcel` is templated (in addition to the geometry traits) by Vertex, Halfedge, and Face template parameters, and they have default type values. All this enables the layered extension of DCEL records.
+
+- Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere, when inserting an arc that lies on the identification curve.
+
+- Introduced a new interactive program that demonstrates 2D arrangements embedded on the sphere called `earth`. The program (i) reads a database of all administrative boundaries of the countries in the world, (ii) displays the globe with all countries and land covered by water (which is land not covered by countries) on a window, and (ii) enables interaction with the user.
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
 -   Added a sizing field as new parameter of `CGAL::tetrahedral_isotropic_remeshing()`, for non-uniform
@@ -105,6 +116,12 @@ Release date: October 2023
     position now keeps the first one, instead of switching to the latest. This
     only affects custom point types where not all points in the same position
     are equivalent.
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.0/Manual/packages.html#PkgBGL)
+
+- Added the function `remove_all_elements()`, which removes vertices, halfedges, and faces
+  without collecting garbage and without removing properties.
+
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------

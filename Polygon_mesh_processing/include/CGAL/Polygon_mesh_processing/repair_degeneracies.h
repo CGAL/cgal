@@ -1934,7 +1934,7 @@ bool remove_degenerate_faces(const FaceRange& face_range,
 
   if(degenerate_face_set.size() == faces_size)
   {
-    clear(tmesh);
+    remove_all_elements(tmesh);
     return true;
   }
 

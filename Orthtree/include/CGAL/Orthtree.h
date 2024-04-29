@@ -594,7 +594,7 @@ public:
     \return an optional containing the property map if it exists
    */
   template <typename T>
-  std::optional<Property_map<T>> property(const std::string& name) {
+  std::optional<Property_map<T>> property(const std::string& name) const {
     auto p = m_node_properties.template get_property_if_exists<T>(name);
     if (p)
       return std::optional<Property_map<T> >(Property_map<T>(*p));
