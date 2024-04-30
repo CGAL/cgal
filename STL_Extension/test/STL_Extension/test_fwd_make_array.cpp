@@ -24,10 +24,10 @@ int main()
   // forwarding of arguments in the `make_array` function.
   // For that reason we disable this test for MSVC-2017)
   std::array<A, 1> a = CGAL::make_array<A>(B());
+  CGAL_USE(a);
 #endif
   auto b = CGAL::make_array<double>(1u);
   static_assert(std::is_same_v<decltype(b), std::array<double, 1>>);
-  CGAL_USE(a);
   CGAL_USE(b);
   return 0;
 }
