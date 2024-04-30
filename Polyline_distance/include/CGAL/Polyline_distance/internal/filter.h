@@ -156,34 +156,34 @@ bool Filter<K>::bichromaticFarthestDistance()
 
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
-    auto const& extreme1 = curve1.getExtremePoints();
-    auto const& extreme2 = curve2.getExtremePoints();
+    auto const& extreme1 = curve1.bbox();
+    auto const& extreme2 = curve2.bbox();
 
     distance_t d;
 
-    d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.min_y},
-                               Point{extreme2.max_x, extreme2.max_y});
+    d = CGAL::squared_distance(Point{extreme1.xmin(), extreme1.ymin()},
+                               Point{extreme2.xmax(), extreme2.ymax()});
     if (possibly(d > distance_sqr)) { // Uncertain (A)
         return false;
     }
     assert(certainly(d <= distance_sqr));
 
-    d = CGAL::squared_distance(Point{extreme1.min_x, extreme1.max_y},
-                               Point{extreme2.max_x, extreme2.min_y});
+    d = CGAL::squared_distance(Point{extreme1.xmin(), extreme1.ymax()},
+                               Point{extreme2.xmax(), extreme2.ymin()});
     if (possibly(d > distance_sqr)) {
         return false;
     }
     assert(certainly(d <= distance_sqr));
 
-    d = CGAL::squared_distance(Point{extreme1.max_x, extreme1.min_y},
-                               Point{extreme2.min_x, extreme2.max_y});
+    d = CGAL::squared_distance(Point{extreme1.xmax(), extreme1.ymin()},
+                               Point{extreme2.xmin(), extreme2.ymax()});
     if (possibly(d > distance_sqr)) {
         return false;
     }
     assert(certainly(d <= distance_sqr));
 
-    d = CGAL::squared_distance(Point{extreme1.max_x, extreme1.max_y},
-                               Point{extreme2.min_x, extreme2.min_y});
+    d = CGAL::squared_distance(Point{extreme1.xmax(), extreme1.ymax()},
+                               Point{extreme2.xmin(), extreme2.ymin()});
     if (possibly(d > distance_sqr)) {
         return false;
     }
