@@ -26,6 +26,7 @@
 #include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Polyline_distance/internal/id.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
 
 #include <vector>
@@ -45,11 +46,26 @@ namespace internal {
 template <typename K>
 class Curve
 {
+  static auto get_type() {
+    if constexpr (K::Has_filtered_predicates_tag::value) {
+      return typename K::Exact_kernel{};
+    }
+    else {
+      return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
+    }
+  }
+
+  using Rational_kernel = decltype(get_type());
+
 public:
   using distance_t = CGAL::Interval_nt<false>;
   using Point = CGAL::Simple_cartesian<distance_t>::Point_2;
   using PointID = ID<Point>;
   using Points = std::vector<Point>;
+  using InputPoints = std::vector<typename K::Point_2>;
+
+  using Rational = typename Rational_kernel::FT;
+  using Rational_point = typename Rational_kernel::Point_2;
 
   Curve() = default;
 
@@ -57,27 +73,45 @@ public:
   Curve(const PointRange& point_range)
     : prefix_length(point_range.size())
   {
-    points.reserve(point_range.size());
-    for(auto const& p : point_range){
-      points.push_back(Point(p.x(),p.y()));
+    if constexpr (K::Has_filtered_predicates_tag::value){
+      input.reserve(point_range.size());
+      for(auto const& p : point_range){
+        input.push_back(p);
+      }
     }
 
-       if (points.empty()) {
-        return;
+    points.reserve(point_range.size());
+    for (auto const& p : point_range) {
+      if constexpr (K::Has_filtered_predicates_tag::value) {
+        points.push_back(typename K::C2F()(p));
+      }
+      else if constexpr (std::is_floating_point<typename K::FT>::type::value) {
+        points.push_back(Point(p.x(), p.y()));
+      }
+      else {
+        points.push_back(Point_2(CGAL::to_interval(p.x()), CGAL::to_interval(p.y())));
+      }
+    }
+    if (points.empty()) {
+      return;
     }
 
     auto const& front = points.front();
-    extreme_points = {front.x(), front.y(), front.x(), front.y()};
     prefix_length[0] = 0;
 
+    Bbox_2 bb;
     for (PointID i = 1; i < points.size(); ++i) {
-        auto segment_distance = distance(points[i - 1], points[i]);
-        prefix_length[i] = prefix_length[i - 1] + segment_distance;
+      auto segment_distance = distance(points[i - 1], points[i]);
+      prefix_length[i] = prefix_length[i - 1] + segment_distance;
+      /*
+      extreme_points.min_x = (std::min)(extreme_points.min_x, points[i].x());
+      extreme_points.min_y = (std::min)(extreme_points.min_y, points[i].y());
+      extreme_points.max_x = (std::max)(extreme_points.max_x, points[i].x());
+      extreme_points.max_y = (std::max)(extreme_points.max_y, points[i].y());
+      */
+      bb += points[i].bbox();
 
-        extreme_points.min_x = (std::min)(extreme_points.min_x, points[i].x());
-        extreme_points.min_y = (std::min)(extreme_points.min_y, points[i].y());
-        extreme_points.max_x = (std::max)(extreme_points.max_x, points[i].x());
-        extreme_points.max_y = (std::max)(extreme_points.max_y, points[i].y());
+      extreme_points = { bb.xmin(), bb.ymin(), bb.xmax(), bb.ymax() };
     }
   }
 
@@ -93,6 +127,20 @@ public:
   bool empty() const { return points.empty(); }
 
   Point const& operator[](PointID const& i) const { return points[i]; }
+
+  Point const& point(PointID const& i) const { return points[i]; }
+
+  Rational_point rpoint(PointID const& i) const
+  {
+    if constexpr (K::Has_filtered_predicates_tag::value){
+      return K::C2E()(input[i]);
+    }
+   if constexpr (std::is_floating_point<typename K::FT>::type::value) {
+      return Rational_point(points[i].x().inf(), points[i].y().inf());
+   }
+    assert(false);
+    return Rational_point();
+  }
 
   bool operator==(Curve const& other) const
     {
@@ -155,6 +203,7 @@ public:
 
 private:
     Points points;
+    InputPoints input;
     std::vector<distance_t> prefix_length;
     ExtremePoints extreme_points;
 

@@ -48,8 +48,9 @@ auto toCurve(const PointRange& point_range)
 template <class NT>
 distance_t toDistance(NT distance)
 {
-    return distance;
+    return to_interval(distance);
 }
+
 
 template <typename K>
 bool lessThan(Curve<K> const& curve1, Curve<K> const& curve2, distance_t distance)

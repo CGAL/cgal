@@ -93,21 +93,19 @@ bool exact_reals(Curve<K> const& curve1,
                  distance_t const& radius,
                  std::pair<Lambda<K>, Lambda<K>>& I)
 {
-    const Point& circle_center = curve1[center_id];
-    const Point& line_start = curve2[seg_start_id];
-    const Point& line_end  = curve2[seg_start_id + 1];
+  typedef typename Curve<K>::Rational_point Rational_point;
+  const Rational_point& circle_center = curve1.rpoint(center_id);
+  const Rational_point& line_start = curve2.rpoint(seg_start_id);
+  const Rational_point& line_end  = curve2.rpoint(seg_start_id + 1);
 
     typedef typename Lambda<K>::Exact Exact;
     typedef typename Lambda<K>::Rational Rational;
 
     Rational a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {
-        assert(line_start[i].is_point());
-        assert(line_end[i].is_point());
-        assert(circle_center[i].is_point());
-        Rational start_end_diff = Rational(line_end[i].inf()) - Rational(line_start[i].inf());
+      Rational start_end_diff = line_end[i] - line_start[i];
         a += CGAL::square(start_end_diff);
-        Rational start_center_diff = Rational(line_start[i].inf()) - Rational(circle_center[i].inf());
+        Rational start_center_diff = line_start[i] - circle_center[i];
         b -= start_center_diff * start_end_diff;
         c += CGAL::square(start_center_diff);
     }

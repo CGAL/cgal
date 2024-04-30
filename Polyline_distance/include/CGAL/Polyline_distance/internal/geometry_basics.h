@@ -62,13 +62,13 @@ using PointID = ID<Point>;
 */
 template<typename K>
 struct Lambda {
-    typedef CGAL::Exact_rational Rational;
     typedef CGAL::Interval_nt<false> Approx;
+    typedef CGAL::Polyline_distance::internal::Curve<K> Curve;
+    typedef typename Curve::Rational Rational;
     typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true,
                                  CGAL::Tag_false>
         Exact;
 
-    typedef CGAL::Polyline_distance::internal::Curve<K> Curve;
     mutable Approx approx;
     mutable std::optional<Exact> exact;
     const Curve * curve1;
@@ -118,18 +118,18 @@ struct Lambda {
             return true;
         }
 
+        const Curve::Rational_point&  ls = curve2->rpoint(line_start);
+        const Curve::Rational_point& le = curve2->rpoint(line_start+1);
+        const Curve::Rational_point& cc = curve1->rpoint(circle_center);
         Rational a, b, c;
         for (auto i = 0; i < 2; ++i) {
-          assert((*curve2)[line_start][i].is_point());
-          assert((*curve2)[line_start+1][i].is_point());
-            assert((*curve1)[circle_center][i].is_point());
-                   Rational start_end_diff = Rational((*curve2)[line_start+1][i].inf()) - Rational((*curve2)[line_start][i].inf());
+            Rational start_end_diff = le[i] - ls[i];
             a += CGAL::square(start_end_diff);
-                   Rational start_center_diff = Rational((*curve2)[line_start][i].inf()) - Rational((*curve1)[circle_center][i].inf());
+            Rational start_center_diff = ls[i] - cc[i];
             b -= start_center_diff * start_end_diff;
             c += CGAL::square(start_center_diff);
         }
-              c -= CGAL::square(Rational(to_double(radius)));  // AF: radius must also be inf == sup
+        c -= CGAL::square(Rational(to_double(radius)));  // AF: radius must also be inf == sup
 
         Rational minus_b_div_a = b / a;
         Rational d = CGAL::square(minus_b_div_a) - c / a;
