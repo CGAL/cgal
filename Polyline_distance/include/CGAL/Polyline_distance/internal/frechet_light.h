@@ -533,7 +533,7 @@ inline void FrechetLight<K>::continueQSimpleSearch(QSimpleInterval& qsimple,
                                          : 1.);
 
         // do previous check for fullness again, but now it is an exact decision
-        if (interval.begin == 0 && interval.end == 1) {  // Uncertain (A)
+        if (is_zero(interval.begin) && is_one(interval.end)) {  // Uncertain (A)
             assert(current_free);
             ++cur;
             stepsize *= 2;
