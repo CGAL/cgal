@@ -81,7 +81,7 @@ public:
     }
   }
 
-  Curve(const Points& points);
+  //  Curve(const Points& points);
 
   void reserve(std::size_t n)
   {
@@ -163,6 +163,7 @@ private:
 template<typename K>
 std::ostream& operator<<(std::ostream& out, const Curve<K>& curve);
 
+/*
 template<typename K>
 Curve<K>::Curve(const Points& points)
     : points(points), prefix_length(points.size())
@@ -170,7 +171,6 @@ Curve<K>::Curve(const Points& points)
     if (points.empty()) {
         return;
     }
-
     auto const& front = points.front();
     extreme_points = {front.x(), front.y(), front.x(), front.y()};
     prefix_length[0] = 0;
@@ -185,6 +185,7 @@ Curve<K>::Curve(const Points& points)
         extreme_points.max_y = (std::max)(extreme_points.max_y, points[i].y());
     }
 }
+*/
 
 template<typename K>
 void Curve<K>::push_back(Point const& point)
