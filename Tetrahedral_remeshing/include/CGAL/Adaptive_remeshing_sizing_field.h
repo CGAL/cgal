@@ -145,11 +145,11 @@ private:
     {
       if(  (dim == 3 && dim == v->in_dimension())//inside volume
         || (dim < 3  && v->in_dimension() < 3))  //on surface
-    {
-      points.push_back(
-        Point_with_info{ cp(tr.point(v)),
-                         average_edge_length_around(v, tr, ecmap, fcmap, cell_selector),
-                         v->in_dimension() });
+      {
+        const FT size = average_edge_length_around(v, tr, ecmap, fcmap, cell_selector);
+        if (CGAL::is_zero(size))
+          continue;
+        points.push_back(Point_with_info{ cp(tr.point(v)), size, v->in_dimension() });
       }
     }
 
@@ -161,9 +161,12 @@ private:
 
       // inside cells
       if(dim == 3)
-        points.push_back(Point_with_info{ centroid(tr.tetrahedron(c)),
-                                          average_edge_length_3(c, tr),
-                                          3 });
+      {
+        const FT size = average_edge_length_3(c, tr);
+        if (CGAL::is_zero(size))
+          continue;
+        points.push_back(Point_with_info{ centroid(tr.tetrahedron(c)), size, 3 });
+      }
       else
       {
         // on surface facets
@@ -174,9 +177,10 @@ private:
             || get(fcmap, Facet(c, i))
             || c->is_facet_on_surface(i) )
           {
-            points.push_back(Point_with_info{ centroid(tr.triangle(c, i)),
-                                              average_edge_length_2(c, i, tr),
-                                              2 });
+            const FT size = average_edge_length_2(c, i, tr);
+            if (CGAL::is_zero(size))
+              continue;
+            points.push_back(Point_with_info{ centroid(tr.triangle(c, i)), size, 2 });
           }
         }
         // on complex edges
@@ -184,10 +188,10 @@ private:
         {
           if(get(ecmap, Tet_remeshing::make_vertex_pair(e)))
           {
-            points.push_back(Point_with_info{
-              midpt(tr.segment(e)),
-              Tet_remeshing::approximate_edge_length(e, tr),
-              1 });
+            const FT size = Tet_remeshing::approximate_edge_length(e, tr);
+            if (CGAL::is_zero(size))
+              continue;
+            points.push_back(Point_with_info{midpt(tr.segment(e)), size, 1 });
           }
         }
       }
@@ -387,6 +391,7 @@ interpolate_on_n_vertices(
   }
 
   CGAL_assertion(sum_weights > 0);
+  CGAL_assertion(sum_sizes > 0);
   return sum_sizes / sum_weights;
 }
 
@@ -399,20 +404,11 @@ average_edge_length_3(const typename Tr::Cell_handle c, const Tr& tr) const
   using namespace CGAL::Tetrahedral_remeshing;
 
   FT sum = 0.;
-  short nb_inside_edges = 0;
   for (const typename Tr::Edge& e : cell_edges(c, tr))
   {
-    const auto [v0, v1] = tr.vertices(e);
-    //skip surface edges
-    if  (v0->in_dimension() < 3
-      && v1->in_dimension() < 3
-      && v0->index() == v1->index())
-      continue;
-
     sum += approximate_edge_length(e, tr);
-    ++nb_inside_edges;
   }
-  return sum / FT(nb_inside_edges);
+  return sum / FT(6);
 }
 
 template<typename Tr>
