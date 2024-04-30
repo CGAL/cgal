@@ -1863,24 +1863,24 @@ std::size_t flipBoundaryEdges(
           CGAL_expensive_assertion(tr.tds().is_edge(vh2, vh3));
           Cell_handle c;
           int li, lj, lk;
-          CGAL_assertion_code(bool b =)
+          CGAL_expensive_assertion_code(bool b =)
           tr.tds().is_facet(vh2, vh3, vh0, c, li, lj, lk);
-          CGAL_assertion(b);
+          CGAL_expensive_assertion(b);
           c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
 
-          CGAL_assertion_code(b = )
+          CGAL_expensive_assertion_code(b = )
           tr.tds().is_facet(vh2, vh3, vh1, c, li, lj, lk);
-          CGAL_assertion(b);
+          CGAL_expensive_assertion(b);
           c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
 
-          CGAL_assertion_code(std::size_t nbf_post =
+          CGAL_expensive_assertion_code(std::size_t nbf_post =
             std::distance(c3t3.facets_in_complex_begin(),
                           c3t3.facets_in_complex_end()));
-          CGAL_assertion(nbf == nbf_post);
-          CGAL_assertion_code(std::size_t nbe_post =
+          CGAL_expensive_assertion(nbf == nbf_post);
+          CGAL_expensive_assertion_code(std::size_t nbe_post =
             std::distance(c3t3.edges_in_complex_begin(),
                           c3t3.edges_in_complex_end()));
-          CGAL_assertion(nbe == nbe_post);
+          CGAL_expensive_assertion(nbe == nbe_post);
 
           boundary_vertices_valences[vh0][surfi]--;
           boundary_vertices_valences[vh1][surfi]--;
