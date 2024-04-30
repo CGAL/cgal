@@ -681,22 +681,30 @@ private:
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
 
+      const bool vh0_moving = is_free(i0);
+      const bool vh1_moving = is_free(i1);
+
+      if (!vh0_moving && !vh1_moving)
+        continue;
+
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
-      const auto mass = density_along_segment(e, c3t3, true);
+      const FT length = approximate_edge_length(e, tr);
+      const FT density = density_along_segment(e, c3t3, true);
+      //density = 1./sizing_field(midpoint(e))
 
-      if (is_free(i0))
+      if (vh0_moving)
       {
-        moves[i0] += mass * Vector_3(p0, p1);
+        moves[i0] += density * Vector_3(p0, p1);
         neighbors[i0]++;
-        masses[i0] += mass;
+        masses[i0] += density * length;
       }
-      if (is_free(i1))
+      if (vh1_moving)
       {
-        moves[i1] += mass * Vector_3(p1, p0);
+        moves[i1] += density * Vector_3(p1, p0);
         neighbors[i1]++;
-        masses[i1] += mass;
+        masses[i1] += density * length;
       }
     }
 
@@ -787,25 +795,33 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
       const Vertex_handle vh0 = e.first->vertex(e.second);
       const Vertex_handle vh1 = e.first->vertex(e.third);
 
-      const Point_3& p0 = point(vh0->point());
-      const Point_3& p1 = point(vh1->point());
-
       const std::size_t& i0 = vertex_id(vh0);
       const std::size_t& i1 = vertex_id(vh1);
 
-      const auto mass = density_along_segment(e, c3t3, true);
+      const bool vh0_moving = !is_on_feature(vh0) && is_free(i0);
+      const bool vh1_moving = !is_on_feature(vh1) && is_free(i1);
 
-      if (!is_on_feature(vh0) && is_free(i0))
+      if (!vh0_moving && !vh1_moving)
+        continue;
+
+      const Point_3& p0 = point(vh0->point());
+      const Point_3& p1 = point(vh1->point());
+
+      const FT length = approximate_edge_length(e, tr);
+      const FT density = density_along_segment(e, c3t3, true);
+      //density = 1./sizing_field(midpoint(e))
+
+      if (vh0_moving)
       {
-        moves[i0] = moves[i0] + mass * Vector_3(p0, p1);
+        moves[i0] += density * Vector_3(p0, p1);
         neighbors[i0]++;
-        masses[i0] += mass;
+        masses[i0] += density * length;
       }
-      if (!is_on_feature(vh1) && is_free(i1))
+      if (vh1_moving)
       {
-        moves[i1] = moves[i1] + mass * Vector_3(p1, p0);
+        moves[i1] += density * Vector_3(p1, p0);
         neighbors[i1]++;
-        masses[i1] += mass;
+        masses[i1] += density * length;
       }
     }
   }
@@ -988,19 +1004,26 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
 
-      const auto mass = density_along_segment(e, c3t3);
+      const bool vh0_moving = (c3t3.in_dimension(vh0) == 3 && is_free(i0));
+      const bool vh1_moving = (c3t3.in_dimension(vh1) == 3 && is_free(i1));
 
-      if (c3t3.in_dimension(vh0) == 3 && is_free(i0))
+      if (!vh0_moving && !vh1_moving)
+        continue;
+
+      const FT length = approximate_edge_length(e, tr);
+      const FT density = density_along_segment(e, c3t3);
+
+      if (vh0_moving)
       {
-        moves[i0] = moves[i0] + mass * Vector_3(p0, p1);
+        moves[i0] += density * Vector_3(p0, p1);
         neighbors[i0]++;
-        masses[i0] += mass;
+        masses[i0] += density * length;
       }
-      if (c3t3.in_dimension(vh1) == 3 && is_free(i1))
+      if (vh1_moving)
       {
-        moves[i1] = moves[i1] + mass * Vector_3(p1, p0);
+        moves[i1] += density * Vector_3(p1, p0);
         neighbors[i1]++;
-        masses[i1] += mass;
+        masses[i1] += density * length;
       }
     }
   }
