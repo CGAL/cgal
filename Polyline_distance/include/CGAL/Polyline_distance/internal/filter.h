@@ -39,9 +39,14 @@ namespace internal {
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
+template <typename K>
 class Filter
 {
 private:
+    typedef CGAL::Polyline_distance::internal::Certificate<K> Certificate;
+    typedef CGAL::Polyline_distance::internal::Curve<K> Curve;
+    typedef CGAL::Polyline_distance::internal::CPoint<K> CPoint;
+
     Certificate cert;
     const Curve *curve1_pt, *curve2_pt;
     distance_t distance;
@@ -73,7 +78,8 @@ private:
     void decrease(size_t& step);
 };
 
-bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
+template <typename K>
+bool Filter<K>::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
 {
     if (possibly(CGAL::squared_distance(fixed, curve.front()) <= distance_sqr) || // Uncertain (A)
         possibly(CGAL::squared_distance(fixed, curve.back()) <= distance_sqr)) {
@@ -100,7 +106,8 @@ bool Filter::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
     return true;
 }
 
-bool Filter::isFree(Point const& fixed, Curve const& var_curve, PointID start,
+template <typename K>
+bool Filter<K>::isFree(Point const& fixed, Curve const& var_curve, PointID start,
                     PointID end)
 {
     auto mid = (start + end + 1) / 2;
@@ -116,7 +123,8 @@ bool Filter::isFree(Point const& fixed, Curve const& var_curve, PointID start,
     return false;
 }
 
-bool Filter::isFree(Curve const& curve1, PointID start1, PointID end1,
+template <typename K>
+bool Filter<K>::isFree(Curve const& curve1, PointID start1, PointID end1,
                     Curve const& curve2, PointID start2, PointID end2)
 {
     auto mid1 = (start1 + end1 + 1) / 2;
@@ -131,15 +139,18 @@ bool Filter::isFree(Curve const& curve1, PointID start1, PointID end1,
     return certainly(! is_negative(comp_dist)) && certainly(mid_dist_sqr <= CGAL::square(comp_dist)); // Uncertain (A)
 }
 
-void Filter::increase(size_t& step) { step = std::ceil(1.5 * step); }
+template <typename K>
+void Filter<K>::increase(size_t& step) { step = std::ceil(1.5 * step); }
 
-void Filter::decrease(size_t& step) { step /= 2; }
+template <typename K>
+void Filter<K>::decrease(size_t& step) { step /= 2; }
 
 // NOTE: all calls to cert.XXX() do nothing if CERTIFY is not defined
 // TODO: is it better to use #ifdef CERTIFY blocks here to avoid constructing
 // CPosition objects?
 
-bool Filter::bichromaticFarthestDistance()
+template <typename K>
+bool Filter<K>::bichromaticFarthestDistance()
 {
     cert.reset();
 
@@ -190,7 +201,8 @@ bool Filter::bichromaticFarthestDistance()
     return true;
 }
 
-bool Filter::greedy()
+template <typename K>
+bool Filter<K>::greedy()
 {
     cert.reset();
     auto& curve1 = *curve1_pt;
@@ -241,7 +253,8 @@ bool Filter::greedy()
     return true;
 }
 
-bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
+template <typename K>
+bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
 {
     cert.reset();
     auto& curve1 = *curve1_pt;
@@ -356,7 +369,8 @@ bool Filter::adaptiveGreedy(PointID& pos1, PointID& pos2)
     return true;
 }
 
-bool Filter::adaptiveSimultaneousGreedy()
+template <typename K>
+bool Filter<K>::adaptiveSimultaneousGreedy()
 {
     cert.reset();
     auto& curve1 = *curve1_pt;
@@ -458,7 +472,8 @@ bool Filter::adaptiveSimultaneousGreedy()
     return true;
 }
 
-bool Filter::negative(PointID position1, PointID position2)
+template <typename K>
+bool Filter<K>::negative(PointID position1, PointID position2)
 {
     cert.reset();
     auto& curve1 = *curve1_pt;

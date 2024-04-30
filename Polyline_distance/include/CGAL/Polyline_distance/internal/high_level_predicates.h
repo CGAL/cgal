@@ -33,13 +33,13 @@ namespace internal {
 
 
 
-inline
-bool approximate_reals(Curve const& curve1,
+template <typename K>
+bool approximate_reals(Curve<K> const& curve1,
                        PointID const& center_id,
-                       Curve const& curve2,
+                       Curve<K> const& curve2,
                        PointID const& seg_start_id,
                        distance_t const& radius,
-                       std::pair<Lambda, Lambda>& I)
+                       std::pair<Lambda<K>, Lambda<K>>& I)
 {
     const Point& circle_center = curve1[center_id];
     const Point& line_start = curve2[seg_start_id];
@@ -73,11 +73,11 @@ bool approximate_reals(Curve const& curve1,
         if (end > Approx(1)) end = Approx(1);
         if (start <= Approx(1) && end >= Approx(0)) {
             I = std::make_pair(
-                (start == Approx(0)) ? Lambda(0)
-                                     : Lambda(start, curve1, center_id,
+                (start == Approx(0)) ? Lambda<K>(0)
+                                     : Lambda<K>(start, curve1, center_id,
                                               curve2, seg_start_id, radius, true),
-                (end == Approx(1)) ? Lambda(1)
-                                   : Lambda(end, curve1, center_id,
+                (end == Approx(1)) ? Lambda<K>(1)
+                                   : Lambda<K>(end, curve1, center_id,
                                            curve2, seg_start_id, radius, false));
             return true;
         }
@@ -85,20 +85,20 @@ bool approximate_reals(Curve const& curve1,
     return false;
 }
 
-inline
-bool exact_reals(Curve const& curve1,
+template <typename K>
+bool exact_reals(Curve<K> const& curve1,
                  PointID const& center_id,
-                 Curve const& curve2,
+                 Curve<K> const& curve2,
                  PointID const& seg_start_id,
                  distance_t const& radius,
-                 std::pair<Lambda, Lambda>& I)
+                 std::pair<Lambda<K>, Lambda<K>>& I)
 {
     const Point& circle_center = curve1[center_id];
     const Point& line_start = curve2[seg_start_id];
     const Point& line_end  = curve2[seg_start_id + 1];
 
-    typedef typename Lambda::Exact Exact;
-    typedef typename Lambda::Rational Rational;
+    typedef typename Lambda<K>::Exact Exact;
+    typedef typename Lambda<K>::Rational Rational;
 
     Rational a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {
@@ -122,8 +122,8 @@ bool exact_reals(Curve const& curve1,
         if (is_negative(start)) start = Exact(0);
         if (end > Exact(1)) end = Exact(1);
         if (start <= Exact(1) && end >= Exact(0)) {
-            I = std::make_pair((start == Exact(0)) ? Lambda(0) : Lambda(start),
-                               (end == Exact(1) ? Lambda(1) : Lambda(end)));
+            I = std::make_pair((start == Exact(0)) ? Lambda<K>(0) : Lambda<K>(start),
+                               (end == Exact(1) ? Lambda<K>(1) : Lambda<K>(end)));
             return true;
         }
     }
@@ -139,26 +139,26 @@ namespace HLPred
  * \ingroup PkgPolylineDistanceFunctions
  * computes
 */
-inline
-Interval intersection_interval(Curve const& curve1,
+template <typename K>
+Interval<K> intersection_interval(Curve<K> const& curve1,
                                PointID const& center_id,
-                               Curve const& curve2,
+                               Curve<K> const& curve2,
                                PointID seg_start_id,
                                distance_t const& radius)
 {
-    Interval I;
+    Interval<K> I;
 
     try {
-        std::pair<RealType, RealType> II;
+      std::pair<RealType<K>, RealType<K>> II;
         // if not empty
         if (approximate_reals(curve1, center_id, curve2,  seg_start_id, radius, II)) {
-            I = Interval(II.first, II.second);
+            I = Interval<K>(II.first, II.second);
         }
     } catch (const CGAL::Uncertain_conversion_exception& e) {
-        std::pair<RealType, RealType> II;
+      std::pair<RealType<K>, RealType<K>> II;
         // if not empty
         if (exact_reals(curve1, center_id, curve2,  seg_start_id, radius, II)) {
-            I = Interval(II.first, II.second);
+            I = Interval<K>(II.first, II.second);
         }
     }
 

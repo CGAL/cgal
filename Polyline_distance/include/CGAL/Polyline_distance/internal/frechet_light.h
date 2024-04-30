@@ -46,8 +46,23 @@ namespace internal {
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
+  template <typename K>
 class FrechetLight
 {
+    using Curve = CGAL::Polyline_distance::internal::Curve<K>;
+    using CPoint = CGAL::Polyline_distance::internal::CPoint<K>;
+    using CInterval = CGAL::Polyline_distance::internal::CInterval<K>;
+    using CIntervals = CGAL::Polyline_distance::internal::CIntervals<K>;
+    using CIntervalsID = CGAL::Polyline_distance::internal::CIntervalsID<K>;
+    using CPosition = CGAL::Polyline_distance::internal::CPosition<K>;
+    using QSimpleInterval = CGAL::Polyline_distance::internal::QSimpleInterval<K>;
+    using QSimpleIntervals = CGAL::Polyline_distance::internal::QSimpleIntervals<K>;
+    using QSimpleOutputs = CGAL::Polyline_distance::internal::QSimpleOutputs<K>;
+    using Certificate = CGAL::Polyline_distance::internal::Certificate<K>;
+    using Inputs = CGAL::Polyline_distance::internal::Inputs<K>;
+    using Outputs = CGAL::Polyline_distance::internal::Outputs<K>;
+    using BoxData = CGAL::Polyline_distance::internal::BoxData<K>;
+    using RealType = CGAL::Polyline_distance::internal::RealType<K>;
     using CurvePair = std::array<Curve const*, 2>;
 
 public:
@@ -116,6 +131,16 @@ private:
     assert(false);
     return CInterval();
   }
+
+template <>
+CInterval getInterval<PointID>(Curve const& curve1,
+                                             PointID const& center_id,
+                                             Curve const& curve2,
+                                             PointID seg_start) const
+{
+  auto interval = HLPred::intersection_interval(curve1, center_id, curve2, seg_start, distance);
+    return CInterval{seg_start, interval.begin, seg_start, interval.end};
+}
 
     void merge(CIntervals& v, CInterval const& i) const;
 
@@ -195,7 +220,8 @@ private:
     friend class FreespaceLightVis;
 };
 
-void FrechetLight::certSetValues(CInterval& interval, CInterval const& parent,
+template <typename K>
+void FrechetLight<K>::certSetValues(CInterval& interval, CInterval const& parent,
                                  PointID point_id, CurveID curve_id)
 {
     interval.reach_parent = &parent;
@@ -203,7 +229,8 @@ void FrechetLight::certSetValues(CInterval& interval, CInterval const& parent,
     interval.fixed_curve = curve_id;
 }
 
-void FrechetLight::visAddReachable(CInterval const& cinterval)
+template <typename K>
+void FrechetLight<K>::visAddReachable(CInterval const& cinterval)
 {
 #ifdef VIS
     if (cinterval.is_empty()) {
@@ -215,7 +242,8 @@ void FrechetLight::visAddReachable(CInterval const& cinterval)
 #endif
 }
 
-void FrechetLight::visAddUnknown(CPoint begin, CPoint end, CPoint fixed_point,
+template <typename K>
+void FrechetLight<K>::visAddUnknown(CPoint begin, CPoint end, CPoint fixed_point,
                                  CurveID fixed_curve)
 {
 #ifdef VIS
@@ -241,8 +269,9 @@ void FrechetLight::visAddUnknown(CPoint begin, CPoint end, CPoint fixed_point,
 #endif
 }
 
-void FrechetLight::visAddConnection(CPoint begin, CPoint end,
-                                    CPoint fixed_point, CurveID fixed_curve)
+template <typename K>
+void FrechetLight<K>::visAddConnection(CPoint begin, CPoint end,
+                                       CPoint fixed_point, CurveID fixed_curve)
 {
 #ifdef VIS
     if (begin >= end) {
@@ -267,7 +296,8 @@ void FrechetLight::visAddConnection(CPoint begin, CPoint end,
 #endif
 }
 
-void FrechetLight::visAddFreeNonReachable(CPoint begin, CPoint end,
+template <typename K>
+void FrechetLight<K>::visAddFreeNonReachable(CPoint begin, CPoint end,
                                           CPoint fixed_point,
                                           CurveID fixed_curve)
 {
@@ -294,17 +324,9 @@ void FrechetLight::visAddFreeNonReachable(CPoint begin, CPoint end,
 #endif
 }
 
-template <>
-CInterval FrechetLight::getInterval<PointID>(Curve const& curve1,
-                                             PointID const& center_id,
-                                             Curve const& curve2,
-                                             PointID seg_start) const
-{
-  auto interval = HLPred::intersection_interval(curve1, center_id, curve2, seg_start, distance);
-    return CInterval{seg_start, interval.begin, seg_start, interval.end};
-}
 
-inline void FrechetLight::merge(CIntervals& intervals,
+template <typename K>
+void FrechetLight<K>::merge(CIntervals& intervals,
                                 CInterval const& new_interval) const
 {
     if (new_interval.is_empty()) {
@@ -320,7 +342,9 @@ inline void FrechetLight::merge(CIntervals& intervals,
 
 // TODO: better distinction -- returned SimpleIntervals are only useful to
 // determine full/not full
-inline QSimpleInterval FrechetLight::getTestFullQSimpleInterval(
+
+template <typename K>
+QSimpleInterval<K> FrechetLight<K>::getTestFullQSimpleInterval(
     CPoint const& fixed, const Curve& fixed_curve, PointID min, PointID max,
     const Curve& curve) const
 {
@@ -330,8 +354,9 @@ inline QSimpleInterval FrechetLight::getTestFullQSimpleInterval(
     return qsimple;
 }
 
+template <typename K>
 template <class MODE, class IndexType>
-inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple,
+inline bool FrechetLight<K>::updateQSimpleInterval(QSimpleInterval& qsimple,
                                                 const IndexType& fixed,
                                                 const Curve& fixed_curve,
                                                 PointID min, PointID max,
@@ -392,8 +417,9 @@ inline bool FrechetLight::updateQSimpleInterval(QSimpleInterval& qsimple,
     return true;
 }
 
+template <typename K>
 template <class MODE, class IndexType>
-inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
+inline void FrechetLight<K>::continueQSimpleSearch(QSimpleInterval& qsimple,
                                                 const IndexType& fixed,
                                                 const Curve& fixed_curve,
                                                 PointID min, PointID max,
@@ -534,7 +560,7 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
             }
 
             // if two changes in current interval:
-            if (interval.begin != 0 && interval.end != 1) {
+            if ((! is_zero(interval.begin)) && (! is_one(interval.end))) {
                 qsimple.setFreeInterval(CPoint{cur, interval.begin},
                                         CPoint{cur, interval.end});
                 qsimple.validate();
@@ -545,9 +571,8 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
 
             ++cur;
         } else {
-            assert(interval.begin == 0);  // current_free holds
-            assert(interval.end !=
-                   1);  // end_dist_sqr <= dist_sqr does not hold, otherwise we
+            assert(is_zero(interval.begin));  // current_free holds
+            assert(! is_one(interval.end));  // end_dist_sqr <= dist_sqr does not hold, otherwise we
                         // would have stopped before
 
             qsimple.setFreeInterval(first_free, CPoint{cur, interval.end});
@@ -568,13 +593,14 @@ inline void FrechetLight::continueQSimpleSearch(QSimpleInterval& qsimple,
     return;
 }
 
-CIntervals::iterator getIntervalContainingNumber(
-    const CIntervals::iterator& begin, const CIntervals::iterator& end,
-    CPoint const& x)
+template <typename K>
+typename CIntervals<K>::iterator getIntervalContainingNumber(
+    const typename CIntervals<K>::iterator& begin, const typename CIntervals<K>::iterator& end,
+    CPoint<K> const& x)
 {
     auto it = std::upper_bound(
         begin, end,
-        CInterval{x, CPoint{(std::numeric_limits<PointID::IDType>::max)(), 0}});
+        CInterval<K>{x, CPoint<K>{(std::numeric_limits<PointID::IDType>::max)(), 0}});
     if (it != begin) {
         --it;
         if (it->begin <= x && it->end >= x) {
@@ -584,13 +610,14 @@ CIntervals::iterator getIntervalContainingNumber(
     return end;
 }
 
-CIntervals::iterator getIntervalContainingNumber(
-    const CIntervals::iterator& begin, const CIntervals::iterator& end,
+template <typename K>
+typename CIntervals<K>::iterator getIntervalContainingNumber(
+    const typename CIntervals<K>::iterator& begin, const typename CIntervals<K>::iterator& end,
     PointID x)
 {
     auto it = std::upper_bound(
         begin, end,
-        CInterval{x, 0, (std::numeric_limits<PointID::IDType>::max)(), 0});
+        CInterval<K>{x, 0, (std::numeric_limits<PointID::IDType>::max)(), 0});
     if (it != begin) {
         --it;
         if (it->begin <= x && it->end >= x) {
@@ -600,7 +627,9 @@ CIntervals::iterator getIntervalContainingNumber(
     return end;
 }
 
-void FrechetLight::getReachableIntervals(BoxData& data)
+
+template <typename K>
+void FrechetLight<K>::getReachableIntervals(BoxData& data)
 {
     ++num_boxes;
 
@@ -644,7 +673,8 @@ void FrechetLight::getReachableIntervals(BoxData& data)
     }
 }
 
-inline bool FrechetLight::emptyInputsRule(BoxData& data)
+template <typename K>
+bool FrechetLight<K>::emptyInputsRule(BoxData& data)
 {
     auto const& box = data.box;
 
@@ -670,7 +700,8 @@ inline bool FrechetLight::emptyInputsRule(BoxData& data)
     return false;
 }
 
-inline void FrechetLight::boxShrinkingRule(BoxData& data)
+template <typename K>
+void FrechetLight<K>::boxShrinkingRule(BoxData& data)
 {
     auto& box = data.box;
 
@@ -719,7 +750,9 @@ inline void FrechetLight::boxShrinkingRule(BoxData& data)
     }
 }
 
-inline void FrechetLight::handleCellCase(BoxData& data)
+
+template <typename K>
+void FrechetLight<K>::handleCellCase(BoxData& data)
 {
     auto const& curve1 = *curve_pair[0];
     auto const& curve2 = *curve_pair[1];
@@ -760,7 +793,9 @@ inline void FrechetLight::handleCellCase(BoxData& data)
     }
 }
 
-inline void FrechetLight::getQSimpleIntervals(BoxData& data)
+
+template <typename K>
+void FrechetLight<K>::getQSimpleIntervals(BoxData& data)
 {
     auto const& curve1 = *curve_pair[0];
     auto const& curve2 = *curve_pair[1];
@@ -799,7 +834,8 @@ inline void FrechetLight::getQSimpleIntervals(BoxData& data)
     }
 }
 
-inline void FrechetLight::calculateQSimple1(BoxData& data)
+template <typename K>
+void FrechetLight<K>::calculateQSimple1(BoxData& data)
 {
     auto const& curve1 = *curve_pair[0];
     auto const& curve2 = *curve_pair[1];
@@ -823,7 +859,8 @@ inline void FrechetLight::calculateQSimple1(BoxData& data)
                     : CPoint{box.min1, min1_frac};
             // check if beginning is reachable
             if (x == box.min1 && pruning_level > 3 && enable_propagation1) {
-                auto it = getIntervalContainingNumber(
+                CIntervals::iterator it =   
+                getIntervalContainingNumber<K>(
                     data.inputs.begin2, data.inputs.end2, box.max2);
                 if (it != data.inputs.end2) {  //(box.min1, box.max2) is
                                                // reachable from interval *it
@@ -873,7 +910,8 @@ inline void FrechetLight::calculateQSimple1(BoxData& data)
     out1_valid = !data.outputs.id1.valid();
 }
 
-inline void FrechetLight::calculateQSimple2(BoxData& data)
+template <typename K>
+void FrechetLight<K>::calculateQSimple2(BoxData& data)
 {
     auto const& curve1 = *curve_pair[0];
     auto const& curve2 = *curve_pair[1];
@@ -897,8 +935,9 @@ inline void FrechetLight::calculateQSimple2(BoxData& data)
                     : CPoint{box.min2, min2_frac};
             // check if beginning is reachable
             if (x == box.min2 && pruning_level > 3 && enable_propagation1) {
-                auto it = getIntervalContainingNumber(
-                    data.inputs.begin1, data.inputs.end1, box.max1);
+                typename CIntervals::iterator it
+                 = getIntervalContainingNumber<K>(
+                     data.inputs.begin1, data.inputs.end1, box.max1);
                 if (it != data.inputs.end1) {
                     CInterval& parent = *it;
                     out2 = qsimple2.getFreeInterval();
@@ -944,7 +983,9 @@ inline void FrechetLight::calculateQSimple2(BoxData& data)
     out2_valid = !data.outputs.id2.valid();
 }
 
-inline bool FrechetLight::boundaryPruningRule(BoxData& data)
+
+template <typename K>
+bool FrechetLight<K>::boundaryPruningRule(BoxData& data)
 {
     auto const& curve1 = *curve_pair[0];
     auto const& curve2 = *curve_pair[1];
@@ -966,7 +1007,8 @@ inline bool FrechetLight::boundaryPruningRule(BoxData& data)
     return false;
 }
 
-inline void FrechetLight::splitAndRecurse(BoxData& data)
+template <typename K>
+void FrechetLight<K>::splitAndRecurse(BoxData& data)
 {
     auto const& box = data.box;
 
@@ -985,7 +1027,7 @@ inline void FrechetLight::splitAndRecurse(BoxData& data)
             {box.min1, box.max1, box.min2, split_position},
             {data.inputs.begin1, data.inputs.end1, data.inputs.begin2, it},
             {inputs1_middleID, data.outputs.id2},
-            {QSimpleID(), data.qsimple_outputs.id2}};
+            {QSimpleID<K>(), data.qsimple_outputs.id2}};
         getReachableIntervals(data_bottom);
 
         if (it != data.inputs.begin2 && (it - 1)->end >= split_position) {
@@ -1014,7 +1056,7 @@ inline void FrechetLight::splitAndRecurse(BoxData& data)
             {box.min1, split_position, box.min2, box.max2},
             {data.inputs.begin1, it, data.inputs.begin2, data.inputs.end2},
             {data.outputs.id1, inputs2_middleID},
-            {data.qsimple_outputs.id1, QSimpleID()}};
+            {data.qsimple_outputs.id1, QSimpleID<K>()}};
         getReachableIntervals(data_left);
 
         if (it != data.inputs.begin1 && (it - 1)->end >= split_position) {
@@ -1032,7 +1074,8 @@ inline void FrechetLight::splitAndRecurse(BoxData& data)
     }
 }
 
-CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i,
+template <typename K>
+CPoint<K> FrechetLight<K>::getLastReachablePoint(Curve const& curve1, PointID i,
                                            Curve const& curve2) const
 {
     Point const& point = curve1[i];
@@ -1075,7 +1118,8 @@ CPoint FrechetLight::getLastReachablePoint(Curve const& curve1, PointID i,
     return CPoint{max, 0};
 }
 
-void FrechetLight::buildFreespaceDiagram(distance_t const& distance,
+template <typename K>
+void FrechetLight<K>::buildFreespaceDiagram(distance_t const& distance,
                                          Curve const& curve1,
                                          Curve const& curve2)
 {
@@ -1096,7 +1140,8 @@ void FrechetLight::buildFreespaceDiagram(distance_t const& distance,
     computeOutputs(initial_box, initial_inputs, final_outputs);
 }
 
-bool FrechetLight::lessThan(distance_t const& distance, Curve const& curve1,
+template <typename K>
+bool FrechetLight<K>::lessThan(distance_t const& distance, Curve const& curve1,
                             Curve const& curve2)
 {
     this->curve_pair[0] = &curve1;
@@ -1140,7 +1185,8 @@ bool FrechetLight::lessThan(distance_t const& distance, Curve const& curve1,
     return isTopRightReachable(final_outputs);
 }
 
-bool FrechetLight::lessThanWithFilters(distance_t const& distance, Curve const& curve1,
+template <typename K>
+bool FrechetLight<K>::lessThanWithFilters(distance_t const& distance, Curve const& curve1,
                                        Curve const& curve2)
 {
     this->curve_pair[0] = &curve1;
@@ -1182,7 +1228,8 @@ bool FrechetLight::lessThanWithFilters(distance_t const& distance, Curve const& 
     return lessThan(distance, curve1, curve2);
 }
 
-inline void FrechetLight::computeOutputs(Box const& initial_box,
+template <typename K>
+void FrechetLight<K>::computeOutputs(Box const& initial_box,
                                          Inputs const& initial_inputs,
                                          Outputs& final_outputs)
 {
@@ -1193,7 +1240,8 @@ inline void FrechetLight::computeOutputs(Box const& initial_box,
     getReachableIntervals(box_data);
 }
 
-inline void FrechetLight::visAddCell(Box const& box)
+template <typename K>
+void FrechetLight<K>::visAddCell(Box const& box)
 {
 #ifdef VIS
     cells.emplace_back(box.min1, box.min2);
@@ -1202,14 +1250,16 @@ inline void FrechetLight::visAddCell(Box const& box)
 #endif
 }
 
-inline bool FrechetLight::isClose(Curve const& curve1, PointID i,
+template <typename K>
+bool FrechetLight<K>::isClose(Curve const& curve1, PointID i,
                                   Curve const& curve2) const
 {
     return getLastReachablePoint(curve1, i, curve2) ==
            CPoint{PointID(curve2.size() - 1), 0};
 }
 
-inline bool FrechetLight::isTopRightReachable(Outputs const& outputs) const
+template <typename K>
+bool FrechetLight<K>::isTopRightReachable(Outputs const& outputs) const
 {
     auto const& curve1 = *curve_pair[0];
     auto const& curve2 = *curve_pair[1];
@@ -1222,7 +1272,8 @@ inline bool FrechetLight::isTopRightReachable(Outputs const& outputs) const
             (outputs2.back().end.getPoint() == curve2.size() - 1));
 }
 
-inline void FrechetLight::initCertificate(Inputs const& initial_inputs)
+template <typename K>
+void FrechetLight<K>::initCertificate(Inputs const& initial_inputs)
 {
     auto const& curve1 = *curve_pair[0];
     auto const& curve2 = *curve_pair[1];
@@ -1240,7 +1291,8 @@ inline void FrechetLight::initCertificate(Inputs const& initial_inputs)
     visAddReachable(*initial_inputs.begin2);
 }
 
-inline auto FrechetLight::createFinalOutputs() -> Outputs
+template <typename K>
+auto FrechetLight<K>::createFinalOutputs() -> Outputs
 {
     Outputs outputs;
 
@@ -1253,7 +1305,8 @@ inline auto FrechetLight::createFinalOutputs() -> Outputs
 }
 
 // this function assumes that the start points of the two curves are close
-inline auto FrechetLight::computeInitialInputs() -> Inputs
+template <typename K>
+auto FrechetLight<K>::computeInitialInputs() -> Inputs
 {
     Inputs inputs;
 
@@ -1277,7 +1330,8 @@ inline auto FrechetLight::computeInitialInputs() -> Inputs
     return inputs;
 }
 
-double FrechetLight::calcDistance(Curve const& curve1, Curve const& curve2)
+template <typename K>
+double FrechetLight<K>::calcDistance(Curve const& curve1, Curve const& curve2)
 {
   static double epsilon = 1e-10;
 
@@ -1299,7 +1353,9 @@ double FrechetLight::calcDistance(Curve const& curve1, Curve const& curve2)
 // This doesn't have to be called but is handy to make time measurements more
 // consistent such that the clears in the lessThan call doen't have to do
 // anything.
-void FrechetLight::clear()
+
+template <typename K>
+void FrechetLight<K>::clear()
 {
     reachable_intervals_vec.clear();
     qsimple_intervals.clear();
@@ -1313,17 +1369,22 @@ void FrechetLight::clear()
 #endif
 }
 
-bool FrechetLight::isOnLowerRight(const CPosition& pt) const
+template <typename K>
+bool FrechetLight<K>::isOnLowerRight(const CPosition& pt) const
 {
     return pt[0] == curve_pair[0]->size() - 1 || pt[1] == 0;
 }
-bool FrechetLight::isOnUpperLeft(const CPosition& pt) const
+
+template <typename K>
+bool FrechetLight<K>::isOnUpperLeft(const CPosition& pt) const
 {
     return pt[0] == 0 || pt[1] == curve_pair[1]->size() - 1;
 }
 
 // TODO, André: I am not sure whether this is currently fine using interval arithmetic
-Certificate& FrechetLight::computeCertificate()
+
+template <typename K>
+Certificate<K>& FrechetLight<K>::computeCertificate()
 {
     cert = Certificate();
 
@@ -1459,14 +1520,18 @@ Certificate& FrechetLight::computeCertificate()
     return cert;
 }
 
-auto FrechetLight::getCurvePair() const -> CurvePair { return curve_pair; }
+template <typename K>
+auto FrechetLight<K>::getCurvePair() const -> CurvePair { return curve_pair; }
 
-void FrechetLight::setPruningLevel(int pruning_level)
+template <typename K>
+void FrechetLight<K>::setPruningLevel(int pruning_level)
 {
     this->pruning_level = pruning_level;
 }
 
-void FrechetLight::setRules(std::array<bool, 5> const& enable)
+
+template <typename K>
+void FrechetLight<K>::setRules(std::array<bool, 5> const& enable)
 {
     enable_box_shrinking = enable[0];
     enable_empty_outputs = enable[1];
@@ -1475,7 +1540,8 @@ void FrechetLight::setRules(std::array<bool, 5> const& enable)
     enable_boundary_rule = enable[4];
 }
 
-std::size_t FrechetLight::getNumberOfBoxes() const { return num_boxes; }
+template <typename K>
+std::size_t FrechetLight<K>::getNumberOfBoxes() const { return num_boxes; }
 
 } // namespace internal
 } // namespace Polyline_distance

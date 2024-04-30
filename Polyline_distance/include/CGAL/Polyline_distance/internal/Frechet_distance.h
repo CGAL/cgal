@@ -34,15 +34,13 @@ namespace Polyline_distance {
 namespace internal {
 
 template <class PointRange>
-Curve toCurve(const PointRange& point_range)
+auto toCurve(const PointRange& point_range)
 {
-    Curve curve;
+    typedef typename PointRange::const_iterator iterator;
+    typedef typename std::iterator_traits<iterator>::value_type Point;
+    typedef typename CGAL::Kernel_traits<Point>::Kernel K;
 
-    curve.reserve(point_range.size());
-    for (auto const& point : point_range) {
-        auto ipoint = Point(point.x(), point.y());
-        curve.push_back(ipoint);
-    }
+    Curve<K> curve(point_range);
 
     return curve;
 }
@@ -53,15 +51,17 @@ distance_t toDistance(NT distance)
     return distance;
 }
 
-bool lessThan(Curve const& curve1, Curve const& curve2, distance_t distance)
+template <typename K>
+bool lessThan(Curve<K> const& curve1, Curve<K> const& curve2, distance_t distance)
 {
-    FrechetLight frechet;
+    FrechetLight<K> frechet;
     return frechet.lessThanWithFilters(distance, curve1, curve2);
 }
 
-distance_t calcDistance(Curve const& curve1, Curve const& curve2)
+template <typename K>
+distance_t calcDistance(Curve<K> const& curve1, Curve<K> const& curve2)
 {
-    FrechetLight frechet;
+    FrechetLight<K> frechet;
     return frechet.calcDistance(curve1, curve2);
 }
 

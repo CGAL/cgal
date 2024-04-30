@@ -42,6 +42,7 @@ namespace internal {
  * A class representing a trajectory. Additionally to the points given in the input file,
  * we also store the length of any prefix of the trajectory.
  */
+template <typename K>
 class Curve
 {
 public:
@@ -51,6 +52,34 @@ public:
   using Points = std::vector<Point>;
 
   Curve() = default;
+
+  template<class PointRange>
+  Curve(const PointRange& point_range)
+    : prefix_length(point_range.size())
+  {
+    points.reserve(point_range.size());
+    for(auto const& p : point_range){
+      points.push_back(Point(p.x(),p.y()));
+    }
+
+       if (points.empty()) {
+        return;
+    }
+
+    auto const& front = points.front();
+    extreme_points = {front.x(), front.y(), front.x(), front.y()};
+    prefix_length[0] = 0;
+
+    for (PointID i = 1; i < points.size(); ++i) {
+        auto segment_distance = distance(points[i - 1], points[i]);
+        prefix_length[i] = prefix_length[i - 1] + segment_distance;
+
+        extreme_points.min_x = (std::min)(extreme_points.min_x, points[i].x());
+        extreme_points.min_y = (std::min)(extreme_points.min_y, points[i].y());
+        extreme_points.max_x = (std::max)(extreme_points.max_x, points[i].x());
+        extreme_points.max_y = (std::max)(extreme_points.max_y, points[i].y());
+    }
+  }
 
   Curve(const Points& points);
 
@@ -81,12 +110,12 @@ public:
   template <class P>
   Point interpolate_at(P const& pt) const
     {
-        assert(pt.getFraction() >= 0. && pt.getFraction() <= 1.);
+        assert(pt.getFraction() >= Lambda<K>(0) && pt.getFraction() <= Lambda<K>(1));
         assert(
             (pt.getPoint() < points.size() - 1 ||
-             (pt.getPoint() == points.size() - 1 && pt.getFraction() == 0.)));
+             (pt.getPoint() == points.size() - 1 && is_zero(pt.getFraction()))));
 
-        if(pt.getFraction() == 0){
+        if(is_zero(pt.getFraction())){
           return points[pt.getPoint()];
         }
         auto fraction = pt.getFraction().approx;
@@ -131,9 +160,11 @@ private:
 
 };
 
-std::ostream& operator<<(std::ostream& out, const Curve& curve);
+template<typename K>
+std::ostream& operator<<(std::ostream& out, const Curve<K>& curve);
 
-Curve::Curve(const Points& points)
+template<typename K>
+Curve<K>::Curve(const Points& points)
     : points(points), prefix_length(points.size())
 {
     if (points.empty()) {
@@ -155,7 +186,8 @@ Curve::Curve(const Points& points)
     }
 }
 
-void Curve::push_back(Point const& point)
+template<typename K>
+void Curve<K>::push_back(Point const& point)
 {
     if (prefix_length.size()) {
         auto segment_distance = distance(points.back(), point);
@@ -173,14 +205,15 @@ void Curve::push_back(Point const& point)
     }
     points.push_back(point);
 }
-
-auto Curve::getExtremePoints() const -> ExtremePoints const&
+template<typename K>
+auto Curve<K>::getExtremePoints() const -> ExtremePoints const&
 {
     assert(!points.empty());
     return extreme_points;
 }
 
-Curve::distance_t Curve::getUpperBoundDistance(Curve const& other) const
+template<typename K>
+typename Curve<K>::distance_t Curve<K>::getUpperBoundDistance(Curve const& other) const
 {
     auto const& extreme1 = this->getExtremePoints();
     auto const& extreme2 = other.getExtremePoints();
@@ -192,7 +225,8 @@ Curve::distance_t Curve::getUpperBoundDistance(Curve const& other) const
     return distance(min_point, max_point);
 }
 
-std::ostream& operator<<(std::ostream& out, const Curve& curve)
+template<typename K>
+std::ostream& operator<<(std::ostream& out, const Curve<K>& curve)
 {
     out << "[";
     for (auto const& point : curve) {

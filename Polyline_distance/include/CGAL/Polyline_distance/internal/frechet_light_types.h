@@ -65,11 +65,12 @@ using Boxes = std::vector<Box>;
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
+template <typename K>
 struct Inputs {
-    CIntervals::iterator begin1;
-    CIntervals::iterator end1;
-    CIntervals::iterator begin2;
-    CIntervals::iterator end2;
+    typename CIntervals<K>::iterator begin1;
+    typename CIntervals<K>::iterator end1;
+    typename CIntervals<K>::iterator begin2;
+    typename CIntervals<K>::iterator end2;
 
     bool haveDownInput() const { return begin1 != end1; }
     bool haveLeftInput() const { return begin2 != end2; }
@@ -102,9 +103,11 @@ struct Inputs {
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
+
+template <typename K>
 struct Outputs {
-    CIntervalsID id1;
-    CIntervalsID id2;
+    CIntervalsID<K> id1;
+    CIntervalsID<K> id2;
 };
 
 //
@@ -115,7 +118,11 @@ struct Outputs {
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
+template <typename K>
 struct QSimpleInterval {
+    using CPoint = CGAL::Polyline_distance::internal::CPoint<K>;
+    using CInterval = CGAL::Polyline_distance::internal::CInterval<K>;
+
     QSimpleInterval() : valid(false) {}
     QSimpleInterval(CPoint const& begin, CPoint const& end)
         : valid(true), free(begin, end)
@@ -161,8 +168,11 @@ private:
     PointID last_valid_point;
 };
 
-using QSimpleIntervals = std::vector<QSimpleInterval>;
-using QSimpleID = ID<QSimpleInterval>;
+template <typename K>
+using QSimpleIntervals = std::vector<QSimpleInterval<K>>;
+
+template <typename K>
+using QSimpleID = ID<QSimpleInterval<K>>;
 
 //
 // QSimpleOutputs
@@ -172,9 +182,11 @@ using QSimpleID = ID<QSimpleInterval>;
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
+
+template <typename K>
 struct QSimpleOutputs {
-    QSimpleID id1;
-    QSimpleID id2;
+    QSimpleID<K> id1;
+    QSimpleID<K> id2;
 };
 
 //
@@ -185,11 +197,12 @@ struct QSimpleOutputs {
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
+template <typename K>
 struct BoxData {
     Box box;
-    Inputs inputs;
-    Outputs outputs;
-    QSimpleOutputs qsimple_outputs;
+    Inputs<K> inputs;
+    Outputs<K> outputs;
+    QSimpleOutputs<K> qsimple_outputs;
 };
 
 } // namespace internal
