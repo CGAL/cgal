@@ -1223,8 +1223,7 @@ auto can_be_collapsed(const typename C3T3::Edge& e,
     if (boundary)
       return Collapsible{false, boundary};
 
-    CGAL_assertion(is_internal(e, c3t3, cell_selector));
-    return Collapsible{true, boundary};
+    return Collapsible{ is_internal(e, c3t3, cell_selector), boundary};
   }
   else
   {
