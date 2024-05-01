@@ -2,9 +2,8 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.1...3.14)
-project( Polyline_distance )
+project( Polyline_distance_Test )
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 
-create_single_source_cgal_program( "dummy_test.cpp" )
-
+create_single_source_cgal_program( "Frechet_distance_test.cpp" )

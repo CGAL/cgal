@@ -36,9 +36,9 @@ namespace internal {
   template <class PointRange, class Traits>
   auto toCurve(const PointRange& point_range, const Traits& traits)
 {
-    typedef typename PointRange::const_iterator iterator;
-    typedef typename std::iterator_traits<iterator>::value_type Point;
-    typedef typename CGAL::Kernel_traits<Point>::Kernel K;
+    using iterator = typename PointRange::const_iterator;
+    using Point = typename std::iterator_traits<iterator>::value_type;
+    using K = typename CGAL::Kernel_traits<Point>::Kernel;
 
     Curve<Traits> curve(point_range);
 
@@ -46,7 +46,7 @@ namespace internal {
 }
 
 template <class NT>
-//distance_t 
+//distance_t
 auto toDistance(NT distance)
 {
     return to_interval(distance);

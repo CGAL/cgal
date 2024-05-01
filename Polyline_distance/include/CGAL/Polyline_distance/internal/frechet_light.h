@@ -49,9 +49,9 @@ namespace internal {
   template <typename K>
 class FrechetLight
 {
-    typedef typename K::iPoint Point;
-    typedef typename K::PointID PointID;
-    typedef typename K::distance_t distance_t;
+    using Point = typename K::iPoint;
+    using PointID = typename K::PointID;
+    using distance_t = typename K::distance_t;
     using Curve = CGAL::Polyline_distance::internal::Curve<K>;
     using CPoint = CGAL::Polyline_distance::internal::CPoint<K>;
     using CInterval = CGAL::Polyline_distance::internal::CInterval<K>;

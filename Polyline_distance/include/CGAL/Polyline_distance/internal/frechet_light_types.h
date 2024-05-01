@@ -44,7 +44,7 @@ namespace internal {
 */
 template <typename K>
 struct Box {
-    typedef typename K::PointID PointID;
+    using PointID = typename K::PointID;
     PointID min1;
     PointID max1;
     PointID min2;
@@ -71,7 +71,7 @@ using Boxes = std::vector<Box<K>>;
 */
 template <typename K>
 struct Inputs {
-    typedef typename K::PointID PointID;
+    using PointID =  typename K::PointID;
     typename CIntervals<K>::iterator begin1;
     typename CIntervals<K>::iterator end1;
     typename CIntervals<K>::iterator begin2;
@@ -125,7 +125,7 @@ struct Outputs {
 */
 template <typename K>
 struct QSimpleInterval {
-    typedef typename K::PointID PointID;
+    using PointID = typename K::PointID;
     using CPoint = CGAL::Polyline_distance::internal::CPoint<K>;
     using CInterval = CGAL::Polyline_distance::internal::CInterval<K>;
 

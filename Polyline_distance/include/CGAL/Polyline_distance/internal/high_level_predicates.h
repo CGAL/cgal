@@ -41,7 +41,7 @@ bool approximate_reals(Curve<K> const& curve1,
                        typename K::distance_t const& radius,
                        std::pair<Lambda<K>, Lambda<K>>& I)
 {
-    typedef typename K::iPoint Point;
+    using Point = typename K::iPoint;
     const Point& circle_center = curve1[center_id];
     const Point& line_start = curve2[seg_start_id];
     const Point& line_end  = curve2[seg_start_id + 1];
@@ -53,7 +53,7 @@ bool approximate_reals(Curve<K> const& curve1,
     // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
     // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
 
-    typedef CGAL::Interval_nt<false> Approx;
+    using Approx = CGAL::Interval_nt<false>;
     Approx a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {
         Approx start_end_diff = line_end[i] - line_start[i];
@@ -94,13 +94,14 @@ bool exact_reals(Curve<K> const& curve1,
                  typename K::distance_t const& radius,
                  std::pair<Lambda<K>, Lambda<K>>& I)
 {
-  typedef typename Curve<K>::Rational_point Rational_point;
+  using Rational_point = typename Curve<K>::Rational_point;
+
   const Rational_point& circle_center = curve1.rpoint(center_id);
   const Rational_point& line_start = curve2.rpoint(seg_start_id);
   const Rational_point& line_end  = curve2.rpoint(seg_start_id + 1);
 
-    typedef typename Lambda<K>::Exact Exact;
-    typedef typename Lambda<K>::Rational Rational;
+    using Exact = typename Lambda<K>::Exact;
+    using Rational = typename Lambda<K>::Rational;
 
     Rational a(0), b(0), c(0);
     for (auto i = 0; i < 2; ++i) {

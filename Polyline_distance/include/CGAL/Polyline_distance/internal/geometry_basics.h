@@ -53,14 +53,12 @@ namespace internal {
 */
 template<typename K>
 struct Lambda {
-    typedef typename K::distance_t distance_t;
-    typedef typename K::PointID PointID;
-    typedef CGAL::Interval_nt<false> Approx;
-    typedef CGAL::Polyline_distance::internal::Curve<K> Curve;
-    typedef typename Curve::Rational Rational;
-    typedef CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true,
-                                 CGAL::Tag_false>
-        Exact;
+    using distance_t = typename K::distance_t;
+    using PointID = typename K::PointID;
+    using Approx = CGAL::Interval_nt<false>;
+    using Curve = CGAL::Polyline_distance::internal::Curve<K>;
+    using Rational = typename Curve::Rational;
+    using Exact = CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_false>;
 
     mutable Approx approx;
     mutable std::optional<Exact> exact;
@@ -242,8 +240,8 @@ using RealType = Lambda<K>;
 
 template <typename K>
 struct ContinuousPoint {
-  typedef typename K::distance_t distance_t;
-  typedef typename K::PointID PointID;
+    using distance_t = typename K::distance_t;
+    using PointID = typename K::PointID;
     PointID point;
     distance_t fraction;
 
@@ -337,7 +335,7 @@ template <typename K>
 class CPoint
 {
   private:
-  typedef typename K::PointID PointID;
+  using PointID = typename K::PointID;
     PointID point;
     RealType<K> fraction;
 
@@ -469,7 +467,8 @@ using CurveID = std::size_t;
 */
 template <typename K>
 struct CInterval {
-    typedef typename K::PointID PointID;
+    using PointID =  typename K::PointID;
+
     CPoint<K> begin;
     CPoint<K> end;
 
