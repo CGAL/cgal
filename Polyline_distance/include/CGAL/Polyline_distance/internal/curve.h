@@ -58,6 +58,7 @@ class Curve
     using Rational_kernel = decltype(get_type());
 
 public:
+    using Bbox = typename T::Bbox;
     using distance_t = typename T::distance_t;
     using Point = typename T::iPoint;
     using PointID = ID<Point>;
@@ -98,7 +99,7 @@ public:
         auto const& front = points.front();
         prefix_length[0] = 0;
 
-        Bbox_2 bb;
+        Bbox bb;
         for (PointID i = 1; i < points.size(); ++i) {
             auto segment_distance = distance(points[i - 1], points[i]);
             prefix_length[i] = prefix_length[i - 1] + segment_distance;
@@ -182,7 +183,7 @@ public:
 
     typename Points::const_iterator end() const { return points.cend(); }
 
-    Bbox_2 const& bbox() const { return extreme_points; }
+    Bbox const& bbox() const { return extreme_points; }
 
     distance_t getUpperBoundDistance(Curve const& other) const;
 
@@ -190,7 +191,7 @@ private:
     Points points;
     InputPoints input;
     std::vector<distance_t> prefix_length;
-    Bbox_2 extreme_points;
+    Bbox extreme_points;
 };
 
 template <typename K>
@@ -217,7 +218,7 @@ void Curve<K>::push_back(Point const& point)
 template<typename K>
 typename Curve<K>::distance_t Curve<K>::getUpperBoundDistance(Curve const& other) const
 {
-    Bbox_2 bb = this->bbox() + other.bbox();
+    Bbox bb = this->bbox() + other.bbox();
     Point min_point = {bb.xmin(), bb.ymin()};
     Point max_point = {bb.xmax(), bb.ymax()};
 
