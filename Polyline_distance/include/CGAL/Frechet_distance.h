@@ -48,14 +48,15 @@ namespace CGAL
 template <class PointRange, class Traits>
 bool continuous_Frechet_distance_less_than(const PointRange& curve1,
                                            const PointRange& curve2,
-                                           const typename Traits::FT distance)
+                                           const typename Traits::FT distance,
+                                           const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
-    auto icurve1 = Polyline_distance::internal::toCurve(curve1);
-    auto icurve2 = Polyline_distance::internal::toCurve(curve2);
+    auto icurve1 = Polyline_distance::internal::toCurve(curve1, traits);
+    auto icurve2 = Polyline_distance::internal::toCurve(curve2, traits);
     auto idistance = Polyline_distance::internal::toDistance(distance);
 
-    return Polyline_distance::internal::lessThan(icurve1, icurve2, idistance);
+    return Polyline_distance::internal::lessThan(icurve1, icurve2, idistance, traits);
 }
 
 /**
@@ -69,13 +70,14 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
 template <class PointRange, class Traits>
 typename Traits::FT continuous_Frechet_distance(const PointRange& curve1,
                                                 const PointRange& curve2,
-                                                const double precision)
+                                                const double precision,
+                                           const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
-    auto icurve1 = Polyline_distance::internal::toCurve(curve1);
-    auto icurve2 = Polyline_distance::internal::toCurve(curve2);
+    auto icurve1 = Polyline_distance::internal::toCurve(curve1, traits);
+    auto icurve2 = Polyline_distance::internal::toCurve(curve2, traits);
 
-    return to_double(Polyline_distance::internal::calcDistance(icurve1, icurve2));
+    return to_double(Polyline_distance::internal::calcDistance(icurve1, icurve2, traits));
 }
 
 }  // end of namespace CGAL

@@ -33,36 +33,38 @@ namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
-template <class PointRange>
-auto toCurve(const PointRange& point_range)
+  template <class PointRange, class Traits>
+  auto toCurve(const PointRange& point_range, const Traits& traits)
 {
     typedef typename PointRange::const_iterator iterator;
     typedef typename std::iterator_traits<iterator>::value_type Point;
     typedef typename CGAL::Kernel_traits<Point>::Kernel K;
 
-    Curve<K> curve(point_range);
+    Curve<Traits> curve(point_range);
 
     return curve;
 }
 
 template <class NT>
-distance_t toDistance(NT distance)
+//distance_t 
+auto toDistance(NT distance)
 {
     return to_interval(distance);
 }
 
 
-template <typename K>
-bool lessThan(Curve<K> const& curve1, Curve<K> const& curve2, distance_t distance)
+template <class Traits>
+bool lessThan(Curve<Traits> const& curve1, Curve<Traits> const& curve2,
+              const typename Traits::distance_t& distance, const Traits& traits)
 {
-    FrechetLight<K> frechet;
-    return frechet.lessThanWithFilters(distance, curve1, curve2);
+  FrechetLight<Traits> frechet;
+  return frechet.lessThanWithFilters(distance, curve1, curve2);
 }
 
-template <typename K>
-distance_t calcDistance(Curve<K> const& curve1, Curve<K> const& curve2)
+template <typename Traits>
+typename Traits::distance_t calcDistance(Curve<Traits> const& curve1, Curve<Traits> const& curve2)
 {
-    FrechetLight<K> frechet;
+    FrechetLight<Traits> frechet;
     return frechet.calcDistance(curve1, curve2);
 }
 

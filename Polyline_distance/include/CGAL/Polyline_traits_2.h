@@ -26,6 +26,10 @@
 #define CGAL_POLYLINE_TRAITS_2_H
 
 #include <CGAL/license/Polyline_distance.h>
+#include <CGAL/Polyline_distance/internal/id.h>
+#include <CGAL/Interval_nt.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Bbox_2.h>
 
 // TODO: add doxygen code
 
@@ -39,23 +43,31 @@ namespace CGAL
 
 // TODO: This is just a starter to enable using the same types all over the
 // package.
-template <class T, class CNT>
+  template <class Kernel, class NT>
 class Polyline_traits_2
 {
 public:
-    using BaseTraits = T;
-    // TODO: remove FT?
+    using distance_t = CGAL::Interval_nt<false>;
+    using iKernel = CGAL::Simple_cartesian<distance_t>;
+    using iPoint = typename iKernel::Point_2;
+    using PointID = CGAL::Polyline_distance::internal::ID<iPoint>;
+
+    using BaseTraits = Kernel;
     using FT = typename BaseTraits::FT;
     using Point = typename BaseTraits::Point_2;
+    using Bbox = Bbox_2;
+  /*
     using Compare_squared_distance =
         typename BaseTraits::Compare_squared_distance_2;
     using Construct_midpoint = typename BaseTraits::Construct_midpoint_2;
     using Construction_number_type = CNT;
+  */
     // TODO: remove?
     using Polyline = std::vector<Point>;
     using Polylines = std::vector<Polyline>;
     using PolylineID = std::size_t;
     using PolylineIDs = std::vector<PolylineID>;
+
 };
 
 }  // end of namespace CGAL

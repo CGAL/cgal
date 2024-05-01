@@ -48,13 +48,13 @@ namespace internal {
 //
 // distance_t
 //
-  using distance_t = CGAL::Interval_nt<false>;
+//  using distance_t = CGAL::Interval_nt<false>;
 
 //
 // Point
 //
-using Point = CGAL::Simple_cartesian<distance_t>::Point_2;
-using PointID = ID<Point>;
+//using Point = CGAL::Simple_cartesian<distance_t>::Point_2;
+//using PointID = ID<Point>;
 
 /*!
  * \ingroup PkgPolylineDistanceFunctions
@@ -62,6 +62,8 @@ using PointID = ID<Point>;
 */
 template<typename K>
 struct Lambda {
+    typedef typename K::distance_t distance_t;
+    typedef typename K::PointID PointID;
     typedef CGAL::Interval_nt<false> Approx;
     typedef CGAL::Polyline_distance::internal::Curve<K> Curve;
     typedef typename Curve::Rational Rational;
@@ -253,8 +255,10 @@ namespace internal {
 template <typename K>
 using RealType = Lambda<K>;
 
-
+template <typename K>
 struct ContinuousPoint {
+  typedef typename K::distance_t distance_t;
+  typedef typename K::PointID PointID;
     PointID point;
     distance_t fraction;
 
@@ -347,7 +351,8 @@ std::ostream& operator<<(std::ostream& out, const Interval<K>& interval);
 template <typename K>
 class CPoint
 {
-private:
+  private:
+  typedef typename K::PointID PointID;
     PointID point;
     RealType<K> fraction;
 
@@ -479,6 +484,7 @@ using CurveID = std::size_t;
 */
 template <typename K>
 struct CInterval {
+    typedef typename K::PointID PointID;
     CPoint<K> begin;
     CPoint<K> end;
 
@@ -581,14 +587,14 @@ struct Ellipse {
 };
 #endif
 
-
+/*
 std::ostream& operator<<(std::ostream& out, const Point& p)
 {
     out << std::setprecision(15) << "(" << p.x() << ", " << p.y() << ")";
 
     return out;
 }
-
+*/
 template <typename K>
 std::ostream& operator<<(std::ostream& out, const CPoint<K>& p)
 {

@@ -46,7 +46,7 @@ using PointRangeKernel = typename CGAL::Kernel_traits<
 template <class PointRange, class Traits = PointRangeKernel<PointRange>>
 class FrechetDistanceNearNeighborsDS
 {
-    using PT = Polyline_traits_2<Traits, double>;
+    using PT = Traits; //  Polyline_traits_2<Traits, double>;
     using FT = typename PT::FT;
     using Point = typename PT::Point;
     using Polyline = typename PT::Polyline;

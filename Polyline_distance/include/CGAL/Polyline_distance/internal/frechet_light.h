@@ -49,6 +49,9 @@ namespace internal {
   template <typename K>
 class FrechetLight
 {
+    typedef typename K::iPoint Point;
+    typedef typename K::PointID PointID;
+    typedef typename K::distance_t distance_t;
     using Curve = CGAL::Polyline_distance::internal::Curve<K>;
     using CPoint = CGAL::Polyline_distance::internal::CPoint<K>;
     using CInterval = CGAL::Polyline_distance::internal::CInterval<K>;
@@ -152,7 +155,7 @@ CInterval getInterval<PointID>(Curve const& curve1,
     CPoint getLastReachablePoint(Curve const& curve1, PointID i,
                                  Curve const& curve2) const;
     bool isTopRightReachable(Outputs const& outputs) const;
-    void computeOutputs(Box const& initial_box, Inputs const& initial_inputs,
+    void computeOutputs(Box<K> const& initial_box, Inputs const& initial_inputs,
                         Outputs& final_outputs);
 
     void getReachableIntervals(BoxData& data);
@@ -213,7 +216,7 @@ CInterval getInterval<PointID>(Curve const& curve1,
                           CurveID fixed_curve);
     void visAddFreeNonReachable(CPoint begin, CPoint end, CPoint fixed_point,
                                 CurveID fixed_curve);
-    void visAddCell(Box const& box);
+    void visAddCell(Box<K> const& box);
 
     // Could also be done via getter member functions, but vis is a special
     // case in needing access to the internal structures.
@@ -600,7 +603,7 @@ typename CIntervals<K>::iterator getIntervalContainingNumber(
 {
     auto it = std::upper_bound(
         begin, end,
-        CInterval<K>{x, CPoint<K>{(std::numeric_limits<PointID::IDType>::max)(), 0}});
+        CInterval<K>{x, CPoint<K>{(std::numeric_limits<typename K::PointID::IDType>::max)(), 0}});
     if (it != begin) {
         --it;
         if (it->begin <= x && it->end >= x) {
@@ -613,11 +616,11 @@ typename CIntervals<K>::iterator getIntervalContainingNumber(
 template <typename K>
 typename CIntervals<K>::iterator getIntervalContainingNumber(
     const typename CIntervals<K>::iterator& begin, const typename CIntervals<K>::iterator& end,
-    PointID x)
+    typename K::PointID x)
 {
     auto it = std::upper_bound(
         begin, end,
-        CInterval<K>{x, 0, (std::numeric_limits<PointID::IDType>::max)(), 0});
+        CInterval<K>{x, 0, (std::numeric_limits<typename K::PointID::IDType>::max)(), 0});
     if (it != begin) {
         --it;
         if (it->begin <= x && it->end >= x) {
@@ -859,7 +862,7 @@ void FrechetLight<K>::calculateQSimple1(BoxData& data)
                     : CPoint{box.min1, min1_frac};
             // check if beginning is reachable
             if (x == box.min1 && pruning_level > 3 && enable_propagation1) {
-                CIntervals::iterator it =   
+                CIntervals::iterator it =
                 getIntervalContainingNumber<K>(
                     data.inputs.begin2, data.inputs.end2, box.max2);
                 if (it != data.inputs.end2) {  //(box.min1, box.max2) is
@@ -1173,7 +1176,7 @@ bool FrechetLight<K>::lessThan(distance_t const& distance, Curve const& curve1,
 
     clear();
 
-    Box initial_box(0, curve1.size() - 1, 0, curve2.size() - 1);
+    Box<K> initial_box(0, curve1.size() - 1, 0, curve2.size() - 1);
     Inputs initial_inputs = computeInitialInputs();
     Outputs final_outputs = createFinalOutputs();
 
@@ -1229,7 +1232,7 @@ bool FrechetLight<K>::lessThanWithFilters(distance_t const& distance, Curve cons
 }
 
 template <typename K>
-void FrechetLight<K>::computeOutputs(Box const& initial_box,
+void FrechetLight<K>::computeOutputs(Box<K> const& initial_box,
                                          Inputs const& initial_inputs,
                                          Outputs& final_outputs)
 {
@@ -1241,7 +1244,7 @@ void FrechetLight<K>::computeOutputs(Box const& initial_box,
 }
 
 template <typename K>
-void FrechetLight<K>::visAddCell(Box const& box)
+void FrechetLight<K>::visAddCell(Box<K> const& box)
 {
 #ifdef VIS
     cells.emplace_back(box.min1, box.min2);

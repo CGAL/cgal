@@ -47,7 +47,7 @@ namespace internal {
 template <class Traits>
 class FrechetKdTree
 {
-    using PT = Polyline_traits_2<Traits, double>;
+    using PT = Traits; // Polyline_traits_2<Traits, double>;
     using FT = typename PT::FT;
     using Point = typename PT::Point;
     using Polyline = typename PT::Polyline;

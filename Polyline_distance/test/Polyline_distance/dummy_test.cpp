@@ -24,6 +24,7 @@
 
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Frechet_distance_near_neighbors_ds.h>
+
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -45,12 +46,13 @@ namespace
 //
 using Test_distance_t = double;
   //using TestKernel = CGAL::Simple_cartesian<double>;
-  using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel;
-using TestTraits = CGAL::Polyline_traits_2<TestKernel, double>;
+  using TestKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+  using TestTraits = CGAL::Polyline_traits_2<TestKernel, double>;
 // using NT = TestKernel::FT;
 using TestPoint = TestKernel::Point_2;
 using TestCurve = std::vector<TestPoint>;
 using TestCurves = std::vector<TestCurve>;
+
 
 struct FrechetDistanceQuery {
     std::size_t id1, id2;
@@ -66,6 +68,7 @@ struct FrechetDistanceNearNeighborsDSQuery {
 };
 using FrechetDistanceNearNeighborsDSQueries =
     std::vector<FrechetDistanceNearNeighborsDSQuery>;
+ 
 
 void readCurve(std::ifstream& curve_file, TestCurve& curve)
 {
@@ -117,6 +120,7 @@ TestCurves readCurves(std::string const& curve_directory)
     return curves;
 }
 
+
 FrechetDistanceQueries readFrechetDistanceQueries(std::string const& query_file)
 {
     FrechetDistanceQueries queries;
@@ -162,6 +166,7 @@ FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQueries(
 
         return queries;
 }
+
 
 //
 // tests
@@ -213,7 +218,7 @@ void testFrechetDistanceNearNeighborsDS()
                 readFrechetDistanceNearNeighborsDSQueries(query_directory + dataset +
                 ".txt");
 
-                CGAL::FrechetDistanceNearNeighborsDS<TestCurve> ds;
+                CGAL::FrechetDistanceNearNeighborsDS<TestCurve, TestTraits> ds;
                 ds.insert(curves);
 
                 for (auto const& query: queries) {
@@ -226,18 +231,20 @@ void testFrechetDistanceNearNeighborsDS()
                         }
                 }
         }
-}
-
+        
+} 
 
 }  // end anonymous namespace
+
 
 int main()
 {
     // TODO: add actualy query data for DS
       //  std::cout << "testFrechetDistanceNearNeighborsDS start" << std::endl;
-      //  testFrechetDistanceNearNeighborsDS();
+      // testFrechetDistanceNearNeighborsDS();
       //  std::cout << "testFrechetDistanceNearNeighborsDS done" << std::endl;
     std::cout << "testFrechetDistance start" << std::endl;
     testFrechetDistance();
     std::cout << "testFrechetDistance done" << std::endl;
+    return 0;
 }

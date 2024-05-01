@@ -34,6 +34,7 @@ namespace internal {
 template <typename K>
 class Certificate
 {
+    typedef typename K::distance_t distance_t;
     using CPositions = CGAL::Polyline_distance::internal::CPositions<K>;
     using CPosition = CGAL::Polyline_distance::internal::CPosition<K>;
     using Curve = CGAL::Polyline_distance::internal::Curve<K>;

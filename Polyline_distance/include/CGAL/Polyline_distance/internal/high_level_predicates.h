@@ -35,12 +35,13 @@ namespace internal {
 
 template <typename K>
 bool approximate_reals(Curve<K> const& curve1,
-                       PointID const& center_id,
+                       typename K::PointID const& center_id,
                        Curve<K> const& curve2,
-                       PointID const& seg_start_id,
-                       distance_t const& radius,
+                       typename K::PointID const& seg_start_id,
+                       typename K::distance_t const& radius,
                        std::pair<Lambda<K>, Lambda<K>>& I)
 {
+    typedef typename K::iPoint Point;
     const Point& circle_center = curve1[center_id];
     const Point& line_start = curve2[seg_start_id];
     const Point& line_end  = curve2[seg_start_id + 1];
@@ -87,10 +88,10 @@ bool approximate_reals(Curve<K> const& curve1,
 
 template <typename K>
 bool exact_reals(Curve<K> const& curve1,
-                 PointID const& center_id,
+                 typename K::PointID const& center_id,
                  Curve<K> const& curve2,
-                 PointID const& seg_start_id,
-                 distance_t const& radius,
+                 typename K::PointID const& seg_start_id,
+                 typename K::distance_t const& radius,
                  std::pair<Lambda<K>, Lambda<K>>& I)
 {
   typedef typename Curve<K>::Rational_point Rational_point;
@@ -139,10 +140,10 @@ namespace HLPred
 */
 template <typename K>
 Interval<K> intersection_interval(Curve<K> const& curve1,
-                               PointID const& center_id,
+                               typename K::PointID const& center_id,
                                Curve<K> const& curve2,
-                               PointID seg_start_id,
-                               distance_t const& radius)
+                               typename K::PointID seg_start_id,
+                               typename K::distance_t const& radius)
 {
     Interval<K> I;
 

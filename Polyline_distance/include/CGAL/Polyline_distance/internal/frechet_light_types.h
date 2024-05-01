@@ -42,7 +42,9 @@ namespace internal {
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
+template <typename K>
 struct Box {
+    typedef typename K::PointID PointID;
     PointID min1;
     PointID max1;
     PointID min2;
@@ -55,7 +57,9 @@ struct Box {
 
     bool isCell() const { return max1 - min1 == 1 && max2 - min2 == 1; }
 };
-using Boxes = std::vector<Box>;
+
+template <typename K>
+using Boxes = std::vector<Box<K>>;
 
 //
 // Inputs
@@ -67,6 +71,7 @@ using Boxes = std::vector<Box>;
 */
 template <typename K>
 struct Inputs {
+    typedef typename K::PointID PointID;
     typename CIntervals<K>::iterator begin1;
     typename CIntervals<K>::iterator end1;
     typename CIntervals<K>::iterator begin2;
@@ -120,6 +125,7 @@ struct Outputs {
 */
 template <typename K>
 struct QSimpleInterval {
+    typedef typename K::PointID PointID;
     using CPoint = CGAL::Polyline_distance::internal::CPoint<K>;
     using CInterval = CGAL::Polyline_distance::internal::CInterval<K>;
 
@@ -199,7 +205,7 @@ struct QSimpleOutputs {
 */
 template <typename K>
 struct BoxData {
-    Box box;
+    Box<K> box;
     Inputs<K> inputs;
     Outputs<K> outputs;
     QSimpleOutputs<K> qsimple_outputs;

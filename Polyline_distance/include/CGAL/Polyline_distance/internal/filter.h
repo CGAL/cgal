@@ -43,6 +43,9 @@ template <typename K>
 class Filter
 {
 private:
+    typedef typename K::distance_t distance_t;
+    typedef typename K::PointID PointID;
+    typedef typename K::iPoint Point;
     typedef CGAL::Polyline_distance::internal::Certificate<K> Certificate;
     typedef CGAL::Polyline_distance::internal::Curve<K> Curve;
     typedef CGAL::Polyline_distance::internal::CPoint<K> CPoint;

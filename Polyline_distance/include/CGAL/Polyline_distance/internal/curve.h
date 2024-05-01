@@ -42,9 +42,10 @@ namespace internal {
  * A class representing a trajectory. Additionally to the points given in the
  * input file, we also store the length of any prefix of the trajectory.
  */
-template <typename K>
+template <typename T>
 class Curve
 {
+    using K = typename T::BaseTraits;
     static auto get_type()
     {
         if constexpr (K::Has_filtered_predicates_tag::value) {
@@ -57,11 +58,11 @@ class Curve
     using Rational_kernel = decltype(get_type());
 
 public:
-    using distance_t = CGAL::Interval_nt<false>;
-    using Point = CGAL::Simple_cartesian<distance_t>::Point_2;
+    using distance_t = typename T::distance_t;
+    using Point = typename T::iPoint;
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
-    using InputPoints = std::vector<typename K::Point_2>;
+    using InputPoints = std::vector<typename T::Point>;
 
     using Rational = typename Rational_kernel::FT;
     using Rational_point = typename Rational_kernel::Point_2;
@@ -121,7 +122,7 @@ public:
     Rational_point rpoint(PointID const& i) const
     {
         if constexpr (K::Has_filtered_predicates_tag::value) {
-            return K::C2E()(input[i]);
+            return typename K::C2E()(input[i]);
         }
         if constexpr (std::is_floating_point<typename K::FT>::type::value) {
             return Rational_point(points[i].x().inf(), points[i].y().inf());
@@ -146,8 +147,8 @@ public:
     template <class P>
     Point interpolate_at(P const& pt) const
     {
-        assert(pt.getFraction() >= Lambda<K>(0) &&
-               pt.getFraction() <= Lambda<K>(1));
+        assert(pt.getFraction() >= Lambda<T>(0) &&
+               pt.getFraction() <= Lambda<T>(1));
         assert((
             pt.getPoint() < points.size() - 1 ||
             (pt.getPoint() == points.size() - 1 && is_zero(pt.getFraction()))));
@@ -173,13 +174,13 @@ public:
 
     void push_back(Point const& point);
 
-    Points::const_iterator begin() { return points.begin(); }
+    typename Points::const_iterator begin() { return points.begin(); }
 
-    Points::const_iterator end() { return points.end(); }
+    typename Points::const_iterator end() { return points.end(); }
 
-    Points::const_iterator begin() const { return points.cbegin(); }
+    typename Points::const_iterator begin() const { return points.cbegin(); }
 
-    Points::const_iterator end() const { return points.cend(); }
+    typename Points::const_iterator end() const { return points.cend(); }
 
     Bbox_2 const& bbox() const { return extreme_points; }
 
