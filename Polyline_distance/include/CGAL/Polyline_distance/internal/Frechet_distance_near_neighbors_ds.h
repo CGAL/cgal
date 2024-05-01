@@ -103,6 +103,7 @@ private:
             auto const& q = std::get<0>(point);
 
             for (size_t i = 0; i < 4; i += 2) {
+                // AF deal with dimension
                 auto a = Point(p[i], p[i + 1]);
                 auto b = Point(q[i], q[i + 1]);
                 if (compare_squared_distance(a, b, distance_sqr) == LARGER) {
@@ -134,6 +135,7 @@ private:
             for (size_t i = 0; i < 4; i += 2) {
                 // TODO: this is a manual test if a rectangle is contained in a
                 // circle. Does CGAL offer anything handy for that?
+                // AF deal with dimension
                 auto point = Point(p[i], p[i + 1]);
                 for (auto x : {rect.min_coord(i), rect.max_coord(i)}) {
                     for (auto y :

@@ -163,7 +163,7 @@ bool Filter<K>::bichromaticFarthestDistance()
     auto const& extreme2 = curve2.bbox();
 
     distance_t d;
-
+    // AF: deal with dimension
     d = CGAL::squared_distance(Point{extreme1.xmin(), extreme1.ymin()},
                                Point{extreme2.xmax(), extreme2.ymax()});
     if (possibly(d > distance_sqr)) { // Uncertain (A)

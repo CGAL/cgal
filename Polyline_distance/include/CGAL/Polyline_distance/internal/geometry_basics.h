@@ -115,7 +115,7 @@ struct Lambda {
         const Curve::Rational_point& le = curve2->rpoint(line_start+1);
         const Curve::Rational_point& cc = curve1->rpoint(circle_center);
         Rational a, b, c;
-        for (auto i = 0; i < 2; ++i) {
+        for (auto i = 0; i < K::dimension; ++i) {
             Rational start_end_diff = le[i] - ls[i];
             a += CGAL::square(start_end_diff);
             Rational start_center_diff = ls[i] - cc[i];

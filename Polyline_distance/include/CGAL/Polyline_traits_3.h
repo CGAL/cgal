@@ -22,14 +22,14 @@
 //
 // =============================================================================
 
-#ifndef CGAL_POLYLINE_TRAITS_2_H
-#define CGAL_POLYLINE_TRAITS_2_H
+#ifndef CGAL_POLYLINE_TRAITS_3_H
+#define CGAL_POLYLINE_TRAITS_3_H
 
 #include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Polyline_distance/internal/id.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 
 // TODO: add doxygen code
 
@@ -44,24 +44,24 @@ namespace CGAL
 // TODO: This is just a starter to enable using the same types all over the
 // package.
   template <class Kernel, class NT>
-class Polyline_traits_2
+class Polyline_traits_3
 {
 public:
     using distance_t = CGAL::Interval_nt<false>;
     using iKernel = CGAL::Simple_cartesian<distance_t>;
-    using iPoint = typename iKernel::Point_2;
+    using iPoint = typename iKernel::Point_3;
     using PointID = CGAL::Polyline_distance::internal::ID<iPoint>;
 
     using BaseTraits = Kernel;
     using FT = typename BaseTraits::FT;
-    using Point = typename BaseTraits::Point_2;
-    using Bbox = Bbox_2;
+    using Point = typename BaseTraits::Point_3;
+    using Bbox = Bbox_3;
 
-    static const int dimension = 2;
+    static const int dimension = 3;
   /*
     using Compare_squared_distance =
-        typename BaseTraits::Compare_squared_distance_2;
-    using Construct_midpoint = typename BaseTraits::Construct_midpoint_2;
+        typename BaseTraits::Compare_squared_distance_3;
+    using Construct_midpoint = typename BaseTraits::Construct_midpoint_3;
     using Construction_number_type = CNT;
   */
     // TODO: remove?
@@ -74,4 +74,4 @@ public:
 
 }  // end of namespace CGAL
 
-#endif  // CGAL_POLYLINE_TRAITS_2_H
+#endif  // CGAL_POLYLINE_TRAITS_3_H

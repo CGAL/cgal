@@ -28,6 +28,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Kernel/Type_mapper.h>
 
 #include <vector>
 
@@ -66,7 +67,8 @@ public:
     using InputPoints = std::vector<typename T::Point>;
 
     using Rational = typename Rational_kernel::FT;
-    using Rational_point = typename Rational_kernel::Point_2;
+    // AF do we want to define the types in the traits class? 
+    using Rational_point = typename Type_mapper<typename T::Point, typename T::BaseTraits, Rational_kernel>::type;
 
     Curve() = default;
 
@@ -126,7 +128,7 @@ public:
             return typename K::C2E()(input[i]);
         }
         if constexpr (std::is_floating_point<typename K::FT>::type::value) {
-            return Rational_point(points[i].x().inf(), points[i].y().inf());
+            return Rational_point(points[i].x().inf(), points[i].y().inf());  // AF: deal with dimension
         }
         assert(false);
         return Rational_point();

@@ -47,9 +47,9 @@ namespace
 using Test_distance_t = double;
   //using TestKernel = CGAL::Simple_cartesian<double>;
   using TestKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
-  using TestTraits = CGAL::Polyline_traits_2<TestKernel, double>;
+  using TestTraits = CGAL::Polyline_traits_3<TestKernel, double>;
 // using NT = TestKernel::FT;
-using TestPoint = TestKernel::Point_2;
+using TestPoint = TestKernel::Point_3;
 using TestCurve = std::vector<TestPoint>;
 using TestCurves = std::vector<TestCurve>;
 
@@ -68,7 +68,7 @@ struct FrechetDistanceNearNeighborsDSQuery {
 };
 using FrechetDistanceNearNeighborsDSQueries =
     std::vector<FrechetDistanceNearNeighborsDSQuery>;
- 
+
 
 void readCurve(std::ifstream& curve_file, TestCurve& curve)
 {
@@ -231,8 +231,8 @@ void testFrechetDistanceNearNeighborsDS()
                         }
                 }
         }
-        
-} 
+
+}
 
 }  // end anonymous namespace
 
