@@ -45,16 +45,7 @@ namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
-//
-// distance_t
-//
-//  using distance_t = CGAL::Interval_nt<false>;
 
-//
-// Point
-//
-//using Point = CGAL::Simple_cartesian<distance_t>::Point_2;
-//using PointID = ID<Point>;
 
 /*!
  * \ingroup PkgPolylineDistanceFunctions
