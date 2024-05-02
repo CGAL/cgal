@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 cgal_lab_plugin(isosurface_3_plugin Isosurface_3_plugin KEYWORDS
                        Isosurface_3)

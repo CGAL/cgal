@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 #if the plugin has a UI file
 qt6_wrap_ui(alpha_wrap_3UI_FILES alpha_wrap_3_dialog.ui)

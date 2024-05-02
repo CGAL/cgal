@@ -24,7 +24,7 @@
 \cgalPkgDependsOn{\ref PkgNef2\, \ref PkgNefS2}
 \cgalPkgBib{cgal:hk-bonp3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

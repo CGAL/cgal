@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 remove_definitions(-DQT_STATICPLUGIN)
 

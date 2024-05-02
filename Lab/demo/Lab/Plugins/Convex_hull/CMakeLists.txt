@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 
 cgal_lab_plugin(convex_hull_plugin Convex_hull_plugin KEYWORDS
                        PointSetProcessing)

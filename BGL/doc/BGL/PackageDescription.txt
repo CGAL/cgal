@@ -690,6 +690,7 @@ user might encounter.
 - `CGAL::make_grid()`
 
 - `CGAL::clear()`
+- `CGAL::remove_all_elements()`
 - `CGAL::copy_face_graph()`
 
 - `CGAL::set_triangulation_ids()`

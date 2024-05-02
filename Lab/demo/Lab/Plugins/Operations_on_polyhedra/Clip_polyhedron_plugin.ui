@@ -48,7 +48,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../cgallab.qrc">
+         <iconset resource="../../CGALlab.qrc">
           <normaloff>:/cgal/icons/resources/help_button.png</normaloff>:/cgal/icons/resources/help_button.png</iconset>
         </property>
        </widget>
@@ -187,8 +187,8 @@ Only available in Split mode.</string>
   </widget>
  </widget>
  <resources>
-  <include location="../../cgallab.qrc"/>
-  <include location="../../cgallab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
+  <include location="../../CGALlab.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -101,7 +101,7 @@ else
 demo_framework \
 gl_splat \
 point_dialog \
-Polyhedron_3 \
+CGALlab \
 cgal_lab \
 scene_basic_objects \
 scene_color_ramp \

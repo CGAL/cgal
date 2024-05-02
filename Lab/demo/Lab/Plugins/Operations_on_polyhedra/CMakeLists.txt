@@ -1,4 +1,4 @@
-include(cgallab_macros)
+include(CGALlab_macros)
 qt6_wrap_ui(clip_polyhedronUI_FILES Clip_polyhedron_plugin.ui)
 cgal_lab_plugin(clip_polyhedron_plugin Clip_polyhedron_plugin
                        ${clip_polyhedronUI_FILES})
