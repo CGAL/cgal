@@ -14,7 +14,7 @@
 #include <functional>
 
 #include <CGAL/STL_Extension/internal/Has_features.h>
-#include <boost/function_output_iterator.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 
 namespace CGAL {
 
@@ -187,20 +187,20 @@ struct Input_const_iterator_container
 public:
   Input_const_iterator_container(const Iterator& it) : it_(it) {}
 
-  virtual ~Input_const_iterator_container() {}
+  ~Input_const_iterator_container() override {}
 
-  virtual const Value& operator*()
+  const Value& operator*() override
   {
     return *it_;
   }
 
-  virtual Input_const_iterator_interface<Value>* operator++()
+  Input_const_iterator_interface<Value>* operator++() override
   {
     ++it_;
     return this;
   }
 
-  virtual bool operator!=(const Input_const_iterator_interface<Value>* other) const
+  bool operator!=(const Input_const_iterator_interface<Value>* other) const override
   {
     const Self* other_casted = dynamic_cast<const Self*>(other);
     if (other_casted == nullptr)
@@ -208,7 +208,7 @@ public:
     return it_ != other_casted->it_;
   }
 
-  virtual Input_const_iterator_interface<Value>* clone()
+  Input_const_iterator_interface<Value>* clone() override
   {
     return new Input_const_iterator_container<Value, Iterator>(it_);
   }

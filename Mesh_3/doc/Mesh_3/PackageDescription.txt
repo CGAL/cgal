@@ -129,7 +129,7 @@ The following functors are available for mesh initialization:
 - `CGAL::odt_optimize_mesh_3()`
 - `CGAL::Mesh_3::generate_label_weights()`
 
-\cgalCRPSection{CGAL::parameters Functions}
+\cgalCRPSection{%CGAL::parameters Functions}
 
 - `CGAL::parameters::features()`
 - `CGAL::parameters::no_features()`
