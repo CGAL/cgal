@@ -284,9 +284,8 @@ Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
                                          const typename Gt::Point_3& l,
                                          const Gt& gt)
 {
-  CGAL_assertion(CGAL::orientation(i, j, k, l) != CGAL::NEGATIVE);
+  CGAL_expensive_assertion(CGAL::orientation(i, j, k, l) != CGAL::NEGATIVE);
 
-  typename Gt::Construct_vector_3 vector = gt.construct_vector_3_object();
   typename Gt::Construct_cross_product_vector_3 cross_product =
     gt.construct_cross_product_vector_3_object();
   typename Gt::Compute_scalar_product_3 scalar_product =
@@ -294,14 +293,14 @@ Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
 
   typedef typename Gt::FT FT;
   typedef typename Gt::Vector_3 Vector_3;
-  const Vector_3 ij = vector(i, j);
-  const Vector_3 ik = vector(i, k);
+  const Vector_3 ij(i, j);
+  const Vector_3 ik(i, k);
 
   const Vector_3 ijik = cross_product(ij, ik);
   if(CGAL::NULL_VECTOR == ijik)
     return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
 
-  const Vector_3 il = vector(i, l);
+  const Vector_3 il(i, l);
   const Vector_3 ilij = cross_product(il, ij);
   if (CGAL::NULL_VECTOR == ilij)
     return Dihedral_angle_cosine(CGAL::POSITIVE, 1.,1.);
