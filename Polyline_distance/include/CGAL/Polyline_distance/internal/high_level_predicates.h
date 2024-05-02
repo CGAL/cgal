@@ -55,7 +55,7 @@ bool approximate_reals(Curve<K> const& curve1,
 
     using Approx = CGAL::Interval_nt<false>;
     Approx a(0), b(0), c(0);
-    for (auto i = 0; i < 2; ++i) {
+    for (auto i = 0; i < K::dimension; ++i) {
         Approx start_end_diff = line_end[i] - line_start[i];
         a += CGAL::square(start_end_diff);
         Approx start_center_diff = line_start[i] - circle_center[i];
@@ -104,7 +104,7 @@ bool exact_reals(Curve<K> const& curve1,
     using Rational = typename Lambda<K>::Rational;
 
     Rational a(0), b(0), c(0);
-    for (auto i = 0; i < 2; ++i) {
+    for (auto i = 0; i < K::dimension; ++i) {
       Rational start_end_diff = line_end[i] - line_start[i];
         a += CGAL::square(start_end_diff);
         Rational start_center_diff = line_start[i] - circle_center[i];
