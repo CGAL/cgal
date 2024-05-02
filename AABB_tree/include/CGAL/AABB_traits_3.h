@@ -57,7 +57,7 @@ private:
   typedef typename GeomTraits::FT    FT;
 
   // Defining Bounding_box and other types from the full AABB_traits_3
-  // here is might seem strange, but otherwise we would need to use
+  // here might seem strange, but otherwise we would need to use
   // CRTP to get access to the derived class, which would bloat the
   // code more.
   typedef typename CGAL::Bbox_3      Bounding_box;

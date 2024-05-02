@@ -37,7 +37,7 @@ namespace CGAL {
 namespace internal{  namespace AABB_tree {
 
 
-// AABB_traits_intersection_base brings in the Intersection_distance predicate,
+// AABB_traits_intersection_base_2 brings in the Intersection_distance predicate,
 // if GeomTraits is a model RayIntersectionGeomTraits.
 template <typename GeomTraits, bool ray_intersection_geom_traits=Is_ray_intersection_geomtraits_2<GeomTraits>::value>
 struct AABB_traits_intersection_base_2;
@@ -74,7 +74,7 @@ public:
   }
 
   // Defining Bounding_box and other types from the full AABB_traits_2
-  // here is might seem strange, but otherwise we would need to use
+  // here might seem strange, but otherwise we would need to use
   // CRTP to get access to the derived class, which would bloat the
   // code more.
   typedef typename CGAL::Bbox_2      Bounding_box;
