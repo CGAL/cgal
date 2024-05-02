@@ -159,49 +159,32 @@ bool Filter<K>::bichromaticFarthestDistance()
 
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
-    auto const& extreme1 = curve1.bbox();
-    auto const& extreme2 = curve2.bbox();
+    auto const& bbox1 = curve1.bbox();
+    auto const& bbox2 = curve2.bbox();
 
-    distance_t d;
-    // AF: deal with dimension
-    d = CGAL::squared_distance(Point{extreme1.xmin(), extreme1.ymin()},
-                               Point{extreme2.xmax(), extreme2.ymax()});
-    if (possibly(d > distance_sqr)) { // Uncertain (A)
-        return false;
+    // Computes the furthest pair of points in pair of bounding boxes:
+    // This can be computed coordinate wise due to the symmetry of the boxes.
+    distance_t squared_max_dist = 0;
+    for (int i = 0; i < K::dimension; ++i) {
+        auto d1 = CGAL::square(bbox1.max(i) - bbox2.min(i));
+        auto d2 = CGAL::square(bbox2.max(i) - bbox1.min(i));
+        squared_max_dist += CGAL::max(d1, d2);
     }
-    assert(certainly(d <= distance_sqr));
 
-    d = CGAL::squared_distance(Point{extreme1.xmin(), extreme1.ymax()},
-                               Point{extreme2.xmax(), extreme2.ymin()});
-    if (possibly(d > distance_sqr)) {
-        return false;
+    if (certainly(squared_max_dist <= distance_sqr)) {
+        cert.setAnswer(true);
+        cert.addPoint({CPoint(0, 0.), CPoint(0, 0.)});
+        if (curve2.size() > 1) {
+            cert.addPoint({CPoint(curve1.size() - 1, 0.), CPoint(0, 0.)});
+        }
+        cert.addPoint(
+            {CPoint(curve1.size() - 1, 0.), CPoint(curve2.size() - 1, 0.)});
+        cert.validate();
+
+        return true;
     }
-    assert(certainly(d <= distance_sqr));
 
-    d = CGAL::squared_distance(Point{extreme1.xmax(), extreme1.ymin()},
-                               Point{extreme2.xmin(), extreme2.ymax()});
-    if (possibly(d > distance_sqr)) {
-        return false;
-    }
-    assert(certainly(d <= distance_sqr));
-
-    d = CGAL::squared_distance(Point{extreme1.xmax(), extreme1.ymax()},
-                               Point{extreme2.xmin(), extreme2.ymin()});
-    if (possibly(d > distance_sqr)) {
-        return false;
-    }
-    assert(certainly(d <= distance_sqr));
-
-    cert.setAnswer(true);
-    cert.addPoint({CPoint(0, 0.), CPoint(0, 0.)});
-    if (curve2.size() > 1) {
-        cert.addPoint({CPoint(curve1.size() - 1, 0.), CPoint(0, 0.)});
-    }
-    cert.addPoint(
-        {CPoint(curve1.size() - 1, 0.), CPoint(curve2.size() - 1, 0.)});
-    cert.validate();
-
-    return true;
+    return false;
 }
 
 template <typename K>
