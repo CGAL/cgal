@@ -138,8 +138,6 @@ bool read_PLY_with_properties(std::istream& is,
                               PointOutputIterator output,
                               PropertyHandler&& ... properties)
 {
-  typedef typename value_type_traits<PointOutputIterator>::type OutputValueType;
-
   if(!is)
     return false;
 
@@ -168,7 +166,7 @@ bool read_PLY_with_properties(std::istream& is,
 
       if(element.name() == "vertex" || element.name() == "vertices")
       {
-        OutputValueType new_element;
+        OutputIteratorValueType new_element;
         internal::process_properties(element, new_element, std::forward<PropertyHandler>(properties)...);
         *(output ++) = new_element;
       }

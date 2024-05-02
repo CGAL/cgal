@@ -24,6 +24,7 @@ if(CGAL_Qt6_FOUND)
   target_link_libraries(polylines PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(circles PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(circular_arcs PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(spherical_insert PUBLIC CGAL::CGAL_Basic_viewer)
 else()
   message(
     STATUS

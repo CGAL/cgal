@@ -31,7 +31,7 @@ int main(int, char**)
 
   std::set<face_descriptor> fs;
   auto selected_faces = make_boolean_property_map(fs);
-  fs.insert(*(faces(sm).begin()));
+  fs.insert(Polygon_mesh::Face_index(190));
   CGAL::expand_face_selection(fs, sm, 1, selected_faces, CGAL::Emptyset_iterator());
   std::cout << fs.size() << " faces in the range" << std::endl;
   assert(fs.size() == 4);

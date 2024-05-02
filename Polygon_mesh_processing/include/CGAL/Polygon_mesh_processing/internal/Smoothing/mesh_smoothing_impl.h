@@ -154,11 +154,8 @@ public:
     typedef typename boost::property_map<TriangleMesh,
                                          Edge_property_tag>::type       Marked_edges_map;
 
-    Marked_edges_map marks = get(Edge_property_tag(), mesh_);
+    Marked_edges_map marks = get(Edge_property_tag(), mesh_, false);
 
-    // dynamic pmaps do not have default values...
-    for(edge_descriptor e : edges(mesh_))
-      put(marks, e, false);
     for(edge_descriptor e : edge_range)
       put(marks, e, true);
 #ifdef CGAL_PMP_SMOOTHING_DEBUG
