@@ -1243,7 +1243,6 @@ void collapse_short_edges(C3T3& c3t3,
                           Visitor& visitor)
 {
   typedef typename C3T3::Triangulation       T3;
-  typedef typename T3::Cell_handle           Cell_handle;
   typedef typename T3::Edge                  Edge;
   typedef typename T3::Vertex_handle         Vertex_handle;
 
