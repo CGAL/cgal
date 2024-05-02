@@ -35,9 +35,9 @@ namespace params = CGAL::parameters;
 
 int main()
 {
-  /// [Create the image]
+  /// [Create_the_image]
   CGAL::Image_3 image = random_labeled_image();
-  /// [Create the image]
+  /// [Create_the_image]
 
   // Domain
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
@@ -48,6 +48,7 @@ int main()
   );
 
   /// [Meshing]
+  // Mesh generation with a custom initialization that places points in each of the image components.
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria
     , params::initial_points_generator(CGAL::Construct_initial_points_labeled_image(image))
   );

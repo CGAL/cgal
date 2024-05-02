@@ -788,7 +788,7 @@ Note that the example \ref
 Mesh_3/mesh_3D_image_with_image_initialization.cpp also shows how to
 create a 3D image using the undocumented API of CGAL_ImageIO.
 
-\snippet Mesh_3/mesh_3D_image_with_image_initialization.cpp Create the image
+\snippet Mesh_3/mesh_3D_image_with_image_initialization.cpp Create_the_image
 
 The code of the function `%random_labeled_image()` is in the header file \ref
 Mesh_3/random_labeled_image.h.

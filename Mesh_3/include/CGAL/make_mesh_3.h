@@ -458,6 +458,10 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
  *                           </UL>}
  *     \cgalParamDefault{`CGAL::Null_Functor()`, the domain's `construct_initial_points_object()`
  *                       will be called for the points initialization.}
+ *     \cgalParamExtra{If the generator does not generate enough points,
+ *                    the domain's `construct_initial_points_object()` will be called.}
+ *     \cgalParamExtra{If the parameter `parameters::initial_points()` is set,
+ *                    the functor will be called after insertion of the points.}
  *   \cgalParamSectionBegin{Mesh initialization with points}
  *    \cgalParamDescription{a `std::vector` of initial points, represented as
  *                          `std::vector<std::tuple<Weighted_point_3, int, Index>>` can optionally
@@ -520,8 +524,8 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
           = choose_parameter(get_parameter_reference(np, internal_np::initial_points_param), empty_vec);
     parameters::internal::Initial_points_generator_options initial_points_generator_options_param =
         Initial_points_generator_generator()
-        (choose_parameter(get_parameter(np, internal_np::initial_points_generator_options_param),
-                                        parameters::initial_points_generator().v),
+        (choose_parameter(get_parameter(np, internal_np::initial_points_generator_param),
+                                        CGAL::Null_functor()),
          initial_points);
 
     make_mesh_3_impl(c3t3, domain, criteria,

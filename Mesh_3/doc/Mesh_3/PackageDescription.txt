@@ -31,7 +31,7 @@
 
 /// \defgroup PkgMesh3Initializers Mesh Initialization Functions
 /// \ingroup PkgMesh3Ref
-
+/// The functors in this group perform mesh initialization by providing initial points.
 /// \defgroup PkgMesh3Parameters Parameter Functions
 /// \ingroup PkgMesh3Ref
 

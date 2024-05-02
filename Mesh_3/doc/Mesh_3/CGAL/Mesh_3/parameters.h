@@ -456,18 +456,16 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  *
  * The function `parameters::initial_points_generator()` allows the user to specify a functor that follows the `InitialPointsGenerator` concept to the mesh generation function `make_mesh_3()`. This functor will be called for the initialization of the meshing process. If this parameter is specified without arguments, the default behavior is executed, which calls the domain's `construct_initial_points_object()` for the initialization of the meshing process.
  *
+ * If the generator does not generate enough points, the domain's `construct_initial_points_object()` will be called.
+ * If the parameter `parameters::initial_points()` is set, the functor will be called after insertion of the points.
+ *
  * \tparam InitialPointsGenerator a functor that follows the `InitialPointsGenerator` concept
  *
  *  @param generator an instance of the InitialPointsGenerator functor
  *
  * \cgalHeading{Example}
  *
- * \code{.cpp}
- * // Mesh generation from a labeled image with connexity checks.
- * C3t3 c3t3 = make_mesh_3<c3t3>(domain,
- *                               criteria,
- *                               parameters::initial_points_generator(CGAL::Construct_initial_points_labeled_image(image)));
- * \endcode
+ * \snippet mesh_3D_image_with_image_initialization.cpp Meshing
  *
  * \sa `CGAL::parameters::initial_points()`
  * \sa `CGAL::make_mesh_3()`
@@ -480,6 +478,9 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \ingroup PkgMesh3Parameters
  *
  * The function `parameters::initial_points()` allows the user to specify a container model of `Range` that contains initial points to be used in the `make_mesh_3()` function for mesh generation. The `Range` should have elements of type `std::tuple<Weighted_point_3, int, Index>`, where `Weighted_point_3` represents the position and weight of the point, `int` represents the dimension of the minimal subcomplex on which the point lies, and `Index` represents the underlying subcomplex index.
+ *
+ * If this parameter is set, the domain's `construct_initial_points_object()` will not be called.
+ * If the parameter `parameters::initial_points_generator()` is set, the points will be inserted before calling the functor.
  *
  * \tparam MeshDomain a model of `MeshDomain_3`
  * \tparam C3t3 a model of `MeshComplex_3InTriangulation_3`

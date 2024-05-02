@@ -31,6 +31,9 @@ namespace CGAL
  * and can be passed as a parameter to `CGAL::make_mesh_3` using the
  * `CGAL::parameters::initial_points_generator()` parameter function.
  *
+ * On images that contains multiple non-connected objects,
+ * this functor will output points on every object.
+ *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
  * \sa `CGAL::Construct_initial_points_labeled_image`
@@ -51,7 +54,9 @@ struct Construct_initial_points_gray_image
       , image_values_to_subdomain_indices_(image_values_to_subdomain_indices)
   { }
   /*!
-  * \brief Constructs the initial points using the gray image.
+  * \brief Constructs points by collecting them in all objects of the image,
+  * even if they are not connected.
+  * This guarantees to initialize all objects
   *
   * \tparam OutputIterator An `OutputIterator` of points of type
   * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`.

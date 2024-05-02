@@ -78,6 +78,9 @@ struct Get_point
  * and can be passed as a parameter to `CGAL::make_mesh_3` using the
  * `CGAL::parameters::initial_points_generator()` function.
  *
+ * On images that contains multiple non-connected objects,
+ * this functor will output points on every object.
+ *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
  * \sa `CGAL::Construct_initial_points_gray_image`
@@ -91,7 +94,8 @@ struct Construct_initial_points_labeled_image
   { }
 
   /*!
-  * \brief Constructs points by collecting them from all connected components.
+  * \brief Constructs points by collecting them in all objects of the image,
+  * even if they are not connected.
   * This ensures that all points are initialized.
   *
   * @tparam OutputIterator a model of `OutputIterator` that contains points of type
@@ -107,18 +111,18 @@ struct Construct_initial_points_labeled_image
   }
 
   /*!
-   * \brief Same as above, but a `TransformOperator` is used.
+   * \brief Same as above, but a `TransformOperator` that transforms values of the image is used.
    *
    * @tparam OutputIterator A model of `OutputIterator` that contains points of type
    * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`.
    * @tparam MeshDomain A model of `MeshDomain_3`.
    * @tparam TransformOperator A functor that transforms values of the image.
    * It must provide the following type:<br>
-   * `result_type`<br>
+   * `result_type` : a type that support the '==' operator<br>
    * and the following operator:<br>
-   * `template<typename FT>`<br>
-   * `result_type operator()(FT v)`.
-   * @tparam C3t3 A model of `MeshComplex_3InTriangulation_3`.
+   * `result_type operator()(Word v)`
+   * with `Word` the type of the image value.
+   * @tparam C3t3 A model of `MeshComplex_3InTriangulation_3`
    */
   template <typename OutputIterator, typename MeshDomain, typename C3t3, typename TransformOperator>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, TransformOperator transform, const C3t3& c3t3, int n = 20) const

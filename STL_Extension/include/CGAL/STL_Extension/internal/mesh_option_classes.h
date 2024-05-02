@@ -168,6 +168,14 @@ private:
   bool b_;
 };
 
+// Mesh initialization
+//   This process has two parameters : `initial_points_generator` and `initial_points`.
+//   These two parameters are packed into a `Initial_points_generator_options`
+//   that do not know the parameters types.
+//   To remove the type of the `initial_points_generator` functor, two `std::function` are used.
+//   To remove the type of the `initial_points` container, two `Input_const_iterator_interface` are used.
+
+// A common interface for an iterator to a const value.
 template <typename Value>
 class Input_const_iterator_interface
 {
@@ -179,6 +187,7 @@ public:
   virtual Input_const_iterator_interface<Value>* clone() = 0;
 };
 
+// An iterator container that implements the `Input_const_iterator_interface` interface.
 template <typename Value, typename Iterator>
 struct Input_const_iterator_container
   : Input_const_iterator_interface<Value>
@@ -217,7 +226,8 @@ private:
   Iterator it_;
 };
 
-// options is holding the generator (default or the user's one)
+// Holds the two parameters `initial_points_generator` and `initial_points`,
+// without knowing their types, into a single generator.
 template <typename MeshDomain, typename C3t3>
 struct Initial_points_generator_options
 {
@@ -245,6 +255,15 @@ struct Initial_points_generator_options
     }
   }
 
+  ~Initial_points_generator_options()
+  {
+    if (begin_it != nullptr)
+      delete begin_it;
+    if (end_it != nullptr)
+      delete end_it;
+  }
+
+  // Firstly, the `initial_points` are inserted, then, the `initial_points_generator` is called.
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3) const
   {
     add_initial_points(pts);
@@ -261,9 +280,11 @@ struct Initial_points_generator_options
   {
     if (begin_it != nullptr && end_it != nullptr)
     {
-      Input_const_iterator_interface<Value_type>& it = *(begin_it->clone());
+      Input_const_iterator_interface<Value_type>* it_ptr = begin_it->clone();
+      Input_const_iterator_interface<Value_type>& it = *(it_ptr);
       for (; it != end_it; ++it)
         *pts++ = *it;
+      delete it_ptr;
     }
     return pts;
   }
@@ -271,10 +292,13 @@ struct Initial_points_generator_options
   bool is_default() const { return is_default_; }
 
 private:
+  // The two functions holds the `initial_points_generator` functor
   const std::function<OutputIterator(OutputIterator&,const MeshDomain&,const C3t3&)> initial_points_generator_no_number_of_points_;
   const std::function<OutputIterator(OutputIterator&,const MeshDomain&,const C3t3&,int)> initial_points_generator_;
+  // The two iterators holds the `initial_points` container
   Input_const_iterator_interface<Value_type>* begin_it;
   Input_const_iterator_interface<Value_type>* end_it;
+  // Is the option a default-constructed one ?
   const bool is_default_;
 };
 
@@ -320,8 +344,9 @@ struct Domain_features_generator< MeshDomain, true >
   }
 };
 
-// struct Initial_points_generator_generator evaluate the options_holder
-// and returns the appropriate options.
+// Evaluate the two parameters `initial_points_generator` and `initial_points`
+// and returns the appropriate `Initial_points_generator_options`.
+// If no generator and no initial points, then use the domain's construct_initial_points_object.
 template <typename MeshDomain, typename C3t3>
 struct Initial_points_generator_generator
 {
