@@ -59,7 +59,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
 #define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
   typedef typename internal_np::Lookup_named_param_def < \
     internal_np::edge_is_constrained_t, \
-    NamedParametersOut##I, \
+    NPOut##I, \
     Corefinement::No_mark<TriangleMesh> \
   > ::type Ecm_out_##I; \
     Ecm_out_##I ecm_out_##I = \
@@ -92,10 +92,10 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
   * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
   * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
-  * @tparam NamedParametersOut0 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut1 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut2 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut3 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
+  * @tparam NPOut0 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
+  * @tparam NPOut1 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
+  * @tparam NPOut2 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
+  * @tparam NPOut3 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
   *
   * @param tm1 first input triangulated surface mesh
   * @param tm2 second input triangulated surface mesh
@@ -178,10 +178,10 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
 template <class TriangleMesh,
           class NamedParameters1 = parameters::Default_named_parameters,
           class NamedParameters2 = parameters::Default_named_parameters,
-          class NamedParametersOut0 = parameters::Default_named_parameters,
-          class NamedParametersOut1 = parameters::Default_named_parameters,
-          class NamedParametersOut2 = parameters::Default_named_parameters,
-          class NamedParametersOut3 = parameters::Default_named_parameters>
+          class NPOut0 = parameters::Default_named_parameters,
+          class NPOut1 = parameters::Default_named_parameters,
+          class NPOut2 = parameters::Default_named_parameters,
+          class NPOut3 = parameters::Default_named_parameters>
 std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
@@ -189,11 +189,11 @@ corefine_and_compute_boolean_operations(
   const std::array< boost::optional<TriangleMesh*>,4>& output,
   const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values(),
-  const std::tuple<NamedParametersOut0,
-                   NamedParametersOut1,
-                   NamedParametersOut2,
-                   NamedParametersOut3>& nps_out
-                    = std::tuple<NamedParametersOut0,NamedParametersOut1,NamedParametersOut2,NamedParametersOut3>())
+  const std::tuple<NPOut0,
+                   NPOut1,
+                   NPOut2,
+                   NPOut3>& nps_out
+                    = std::tuple<NPOut0,NPOut1,NPOut2,NPOut3>())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -222,10 +222,10 @@ corefine_and_compute_boolean_operations(
   // input map, a dummy default vpm is used so that calls to get/put can be compiled
   // (even if not used).
   typedef std::tuple<
-    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut0, TriangleMesh>,
-    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut1, TriangleMesh>,
-    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut2, TriangleMesh>,
-    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut3, TriangleMesh>
+    Corefinement::TweakedGetVertexPointMap<Point_3, NPOut0, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NPOut1, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NPOut2, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NPOut3, TriangleMesh>
   > VPM_out_tuple_helper;
 
   typedef std::tuple<
