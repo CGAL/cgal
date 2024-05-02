@@ -1847,10 +1847,10 @@ std::size_t flipBoundaryEdges(
                      + (v3 - m3)*(v3 - m3);
       if (initial_cost > final_cost)
       {
-        CGAL_assertion_code(std::size_t nbf =
+        CGAL_expensive_assertion_code(std::size_t nbf =
           std::distance(c3t3.facets_in_complex_begin(),
                         c3t3.facets_in_complex_end()));
-        CGAL_assertion_code(std::size_t nbe =
+        CGAL_expensive_assertion_code(std::size_t nbe =
           std::distance(c3t3.edges_in_complex_begin(),
                         c3t3.edges_in_complex_end()));
 
