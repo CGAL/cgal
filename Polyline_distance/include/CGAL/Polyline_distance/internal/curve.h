@@ -209,9 +209,9 @@ void Curve<K>::push_back(Point const& point)
         prefix_length.push_back(0);
     }
     if (points.empty()){
-      extreme_points = p.bbox();
+      extreme_points = point.bbox();
     } else {
-      extreme_points += p.bbox();
+      extreme_points += point.bbox();
     }
     points.push_back(point);
 }

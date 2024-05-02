@@ -279,7 +279,7 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
         // if we have to do the step on curve 2
         if (curve1.size() - 1 == pos1) {
             auto new_pos2 =
-                std::min<PointID::IDType>(pos2 + step, curve2.size() - 1);
+                std::min<typename PointID::IDType>(pos2 + step, curve2.size() - 1);
             if (isFree(curve1[pos1], curve2, pos2, new_pos2)) {
                 pos2 = new_pos2;
                 cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
@@ -294,7 +294,7 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
         // if we have to do the step on curve 1
         else if (curve2.size() - 1 == pos2) {
             auto new_pos1 =
-                std::min<PointID::IDType>(pos1 + step, curve1.size() - 1);
+                std::min<typename PointID::IDType>(pos1 + step, curve1.size() - 1);
             if (isFree(curve2[pos2], curve1, pos1, new_pos1)) {
                 pos1 = new_pos1;
                 cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
@@ -329,9 +329,9 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
             step = 2;
         } else {
             auto new_pos1 =
-                std::min<PointID::IDType>(pos1 + step, curve1.size() - 1);
+                std::min<typename PointID::IDType>(pos1 + step, curve1.size() - 1);
             auto new_pos2 =
-                std::min<PointID::IDType>(pos2 + step, curve2.size() - 1);
+                std::min<typename PointID::IDType>(pos2 + step, curve2.size() - 1);
             bool step1_possible =
                 isFree(curve2[pos2], curve1, pos1, new_pos1);
             bool step2_possible =
@@ -393,7 +393,7 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
         // if we have to do the step on curve 2
         if (curve1.size() - 1 == pos1) {
             auto new_pos2 =
-              (std::min<PointID::IDType>)(pos2 + step, curve2.size() - 1);
+              (std::min<typename PointID::IDType>)(pos2 + step, curve2.size() - 1);
             if (isFree(curve1[pos1], curve2, pos2, new_pos2)) {
                 pos2 = new_pos2;
                 cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
@@ -408,7 +408,7 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
         // if we have to do the step on curve 1
         else if (curve2.size() - 1 == pos2) {
             auto new_pos1 =
-                (std::min<PointID::IDType>)(pos1 + step, curve1.size() - 1);
+                (std::min<typename PointID::IDType>)(pos1 + step, curve1.size() - 1);
             if (isFree(curve2[pos2], curve1, pos1, new_pos1)) {
                 pos1 = new_pos1;
                 cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
@@ -442,14 +442,14 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
             step = 2;
         } else {
             PointID new_pos1 =
-                std::min<PointID::IDType>(pos1 + step, curve1.size() - 1);
+                std::min<typename PointID::IDType>(pos1 + step, curve1.size() - 1);
             size_t step2 =
                 (step * (curve2.size() - pos2)) / (curve1.size() - pos1);
             if (step2 < 1) {
                 step2 = 1;
             }
             PointID new_pos2 =
-                std::min<PointID::IDType>(pos2 + step2, curve2.size() - 1);
+                std::min<typename PointID::IDType>(pos2 + step2, curve2.size() - 1);
             if (isFree(curve1, pos1, new_pos1, curve2, pos2, new_pos2)) {
                 if (pos1 != new_pos1 && pos2 != new_pos2) {
                     cert.addPoint({CPoint(pos1 + 1, 0.), CPoint(pos2 + 1, 0.)});

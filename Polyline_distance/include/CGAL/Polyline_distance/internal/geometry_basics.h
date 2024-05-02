@@ -111,9 +111,9 @@ struct Lambda {
             return true;
         }
 
-        const Curve::Rational_point&  ls = curve2->rpoint(line_start);
-        const Curve::Rational_point& le = curve2->rpoint(line_start+1);
-        const Curve::Rational_point& cc = curve1->rpoint(circle_center);
+        const typename Curve::Rational_point&  ls = curve2->rpoint(line_start);
+        const typename Curve::Rational_point& le = curve2->rpoint(line_start+1);
+        const typename Curve::Rational_point& cc = curve1->rpoint(circle_center);
         Rational a, b, c;
         for (auto i = 0; i < K::dimension; ++i) {
             Rational start_end_diff = le[i] - ls[i];
@@ -149,43 +149,37 @@ struct Lambda {
         }
         return false;
     }
-    template <typename K>
+
     friend std::ostream& operator<<(std::ostream& os, const Lambda<K>&)
     {
         return os;
     }
 
-    template <typename K>
     bool operator<=(const Lambda<K>& other) const
     {
         return (*this < other) || (*this == other);
     }
 
-    template <typename K>
     bool operator>=(const Lambda<K>& other) const
     {
         return (other < *this) || (*this == other);
     }
 
-    template <typename K>
     bool operator>(const Lambda<K>& other) const
     {
       return (other < *this);
     }
 
-    template <typename K>
     bool operator==(const Lambda<K>& other) const
     {
         return (!(*this < other)) && (!(other < *this));
     }
 
-    template <typename K>
     bool operator!=(const Lambda<K>& other) const
     {
       return !(*this == other);
     }
 
-    template <typename K>
     bool operator<(const Lambda<K>& other) const
     {
         if ((is_zero && other.is_zero) || (is_one && other.is_one))
@@ -363,7 +357,7 @@ public:
         normalize();
     }
 
-  CPoint() : point((std::numeric_limits<PointID::IDType>::max)()), fraction(0.)
+  CPoint() : point((std::numeric_limits<typename PointID::IDType>::max)()), fraction(0.)
     {
     }
 
@@ -480,7 +474,7 @@ struct CInterval {
     CPoint<K> end;
 
     const CInterval* reach_parent = nullptr;
-  CPoint<K> fixed = CPoint<K>((std::numeric_limits<PointID::IDType>::max)(), 0.);
+  CPoint<K> fixed = CPoint<K>((std::numeric_limits<typename PointID::IDType>::max)(), 0.);
     CurveID fixed_curve = -1;
 
     CPosition<K> getLowerRightPos() const
@@ -511,8 +505,8 @@ struct CInterval {
     }
 
     CInterval()
-      : begin((std::numeric_limits<PointID::IDType>::max)(), 0.),
-          end(std::numeric_limits<PointID::IDType>::lowest(), 0.)
+      : begin((std::numeric_limits<typename PointID::IDType>::max)(), 0.),
+          end(std::numeric_limits<typename PointID::IDType>::lowest(), 0.)
     {
     }
 
@@ -539,8 +533,8 @@ struct CInterval {
 
     void make_empty()
     {
-      begin = {(std::numeric_limits<PointID::IDType>::max)(), 0};
-        end = {std::numeric_limits<PointID::IDType>::lowest(), 0};
+      begin = {(std::numeric_limits<typename PointID::IDType>::max)(), 0};
+        end = {std::numeric_limits<typename PointID::IDType>::lowest(), 0};
     }
 
     void clamp(CPoint<K> const& min, CPoint<K> const& max)

@@ -862,7 +862,7 @@ void FrechetLight<K>::calculateQSimple1(BoxData& data)
                     : CPoint{box.min1, min1_frac};
             // check if beginning is reachable
             if (x == box.min1 && pruning_level > 3 && enable_propagation1) {
-                CIntervals::iterator it =
+                typename CIntervals::iterator it =
                 getIntervalContainingNumber<K>(
                     data.inputs.begin2, data.inputs.end2, box.max2);
                 if (it != data.inputs.end2) {  //(box.min1, box.max2) is
@@ -1023,7 +1023,7 @@ void FrechetLight<K>::splitAndRecurse(BoxData& data)
         assert(split_position > box.min2 && split_position < box.max2);
 
         auto bound = CInterval{split_position, 0,
-          (std::numeric_limits<PointID::IDType>::max)(), 0};
+          (std::numeric_limits<typename PointID::IDType>::max)(), 0};
         auto it = std::upper_bound(data.inputs.begin2, data.inputs.end2, bound);
 
         BoxData data_bottom{
@@ -1052,7 +1052,7 @@ void FrechetLight<K>::splitAndRecurse(BoxData& data)
         assert(split_position > box.min1 && split_position < box.max1);
 
         auto bound = CInterval{split_position, 0,
-                               (std::numeric_limits<PointID::IDType>::max)(), 0};
+                               (std::numeric_limits<typename PointID::IDType>::max)(), 0};
         auto it = std::upper_bound(data.inputs.begin1, data.inputs.end1, bound);
 
         BoxData data_left{
