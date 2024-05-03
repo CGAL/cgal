@@ -611,7 +611,7 @@ std::string Edge::toString() const {
     if (id_ != -1) {
         result += "id=" + util::StringFactory::fromInteger(id_) + ", ";
     } else {
-        result += util::StringFactory::fromPointer(this) + ", ";
+        // result += util::StringFactory::fromPointer(this) + ", ";
     }
     result += "src=" + vertex_src_->toString() + ", ";
     result += "dst=" + vertex_dst_->toString();
@@ -620,7 +620,7 @@ std::string Edge::toString() const {
         if (getFacetL()->getID() != -1) {
             result += util::StringFactory::fromInteger(getFacetL()->getID());
         } else {
-            result += util::StringFactory::fromPointer(getFacetL().get());
+            // result += util::StringFactory::fromPointer(getFacetL().get());
         }
     }
     if (!facet_r_.expired()) {
@@ -628,7 +628,7 @@ std::string Edge::toString() const {
         if (getFacetR()->getID() != -1) {
             result += util::StringFactory::fromInteger(getFacetR()->getID());
         } else {
-            result += util::StringFactory::fromPointer(getFacetR().get());
+            // result += util::StringFactory::fromPointer(getFacetR().get());
         }
     }
     result += ")";

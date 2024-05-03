@@ -733,7 +733,7 @@ std::string Facet::toString() const {
     if (id_ != -1) {
         sstr << "id=" << util::StringFactory::fromInteger(id_) << ", ";
     } else {
-        sstr << util::StringFactory::fromPointer(this) << ", ";
+        // sstr << util::StringFactory::fromPointer(this) << ", ";
     }
     if (plane_) {
 #ifdef USE_CGAL

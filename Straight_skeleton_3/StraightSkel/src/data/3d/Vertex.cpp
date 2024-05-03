@@ -587,7 +587,7 @@ std::string Vertex::toString() const {
     if (id_ != -1) {
         result += "id=" + util::StringFactory::fromInteger(id_) + ", ";
     } else {
-        result += util::StringFactory::fromPointer(this) + ", ";
+        // result += util::StringFactory::fromPointer(this) + ", ";
     }
     result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + " ";
     result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + " ";
