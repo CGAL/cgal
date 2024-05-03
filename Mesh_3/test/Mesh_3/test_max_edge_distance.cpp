@@ -153,7 +153,7 @@ public:
         cell_radius_edge_ratio = 3,
         cell_size = 0.074);
 
-    assert(criteria.edge_criteria_object().check_distance_field());
+    assert(criteria.edge_criteria_object().has_distance_field());
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
@@ -167,7 +167,7 @@ public:
         cell_radius_edge_ratio = 3,
         cell_size = 0.074);
 
-    assert(!criteria_without.edge_criteria_object().check_distance_field());
+    assert(!criteria_without.edge_criteria_object().has_distance_field());
 
     // Mesh generation
     C3t3 c3t3_without = CGAL::make_mesh_3<C3t3>(domain, criteria_without, no_perturb(), no_exude());
@@ -221,7 +221,7 @@ public:
         cell_radius_edge_ratio = 3,
         cell_size = 5.);
 
-    assert(criteria.edge_criteria_object().check_distance_field());
+    assert(criteria.edge_criteria_object().has_distance_field());
 
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
@@ -236,7 +236,7 @@ public:
         cell_radius_edge_ratio = 3,
         cell_size = 5.);
 
-    assert(!criteria_without.edge_criteria_object().check_distance_field());
+    assert(!criteria_without.edge_criteria_object().has_distance_field());
 
     // Mesh generation
     C3t3 c3t3_without = CGAL::make_mesh_3<C3t3>(domain, criteria_without, no_perturb(), no_exude());
