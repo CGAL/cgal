@@ -123,14 +123,14 @@ def gen_bib_entry(title, authors, bib, anchor):
   return res
 
 def gen_txt_entry(title, authors, bib, anchor,k):
-  title_r=title.replace("Kernel","%Kernel").replace("Interval","%Interval").replace("Matrix","%Matrix").replace("Kinetic","%Kinetic").replace("CGAL","\cgal").replace("Range","%Range")
-  authors=authors.replace("CGAL","\cgal")
+  title_r=title.replace("Kernel","%Kernel").replace("Interval","%Interval").replace("Matrix","%Matrix").replace("Kinetic","%Kinetic").replace("CGAL","\\cgal").replace("Range","%Range")
+  authors=authors.replace("CGAL","\\cgal")
   res="<tr valign=\"top\">\n\
 <td align=\"right\" class=\"bibtexnumber\">\n\
 [<a name=\""+bib+"-${CGAL_RELEASE_YEAR_ID}\">"+str(k)+"</a>]\n\
 </td>\n\
 <td class=\"bibtexitem\">\n "+authors+".\n "+title_r+".\n\
- In <em>\cgal User and Reference Manual</em>. \cgal Editorial Board,\n\
+ In <em>\\cgal User and Reference Manual</em>. \\cgal Editorial Board,\n\
   ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.\n\
 [&nbsp;<a href=\"how_to_cite.html#"+bib+"-${CGAL_RELEASE_YEAR_ID}\">bib</a>&nbsp;| \n\
 <a href=\"packages.html#"+anchor+"\">http</a>&nbsp;]\n\
@@ -199,7 +199,7 @@ for line in f:
       for pkg_line in pkgdesc:
         match = pattern_title_and_anchor.match(pkg_line)
         if match:
-          title=match.group(1).replace("\,",",")
+          title=match.group(1).replace("\\,",",")
           anchor=match.group(2)
           continue
         match = pattern_author.match(pkg_line)
@@ -210,9 +210,9 @@ for line in f:
         if match:
           bib=match.group(1)
           continue
-      assert len(bib)>0, "Did you forget a \cgalPkgBib{} in %r?" % filename
-      assert len(authors)>0, "Did you forget a \cgalPkgAuthors{} in %r?" % filename
-      assert len(anchor)>0, "Did you forget the anchor in \cgalPkgDescriptionBegin{} in %r?" % filename
+      assert len(bib)>0, "Did you forget a \\cgalPkgBib{} in %r?" % filename
+      assert len(authors)>0, "Did you forget a \\cgalPkgAuthors{} in %r?" % filename
+      assert len(anchor)>0, "Did you forget the anchor in \\cgalPkgDescriptionBegin{} in %r?" % filename
       result_txt+=gen_txt_entry(title, authors, bib, anchor,k)
       # convert title and author to bibtex format
       title=protect_upper_case(title)

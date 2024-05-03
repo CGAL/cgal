@@ -40,6 +40,8 @@
 #include <bitset>
 #include <unordered_set>
 
+#ifndef DOXYGEN_RUNNING
+
 namespace CGAL {
 
 enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
@@ -1075,5 +1077,9 @@ protected:
 };
 
 } // end CGAL
+
+#endif // not DOXYGEN_RUNNING
+
+#
 
 #endif // CGAL_CONFORMING_DELAUNAY_TRIANGULATION_3_H

@@ -1,0 +1,44 @@
+/// \defgroup PkgCT_3Ref 3D Constrained Triangulations Reference
+
+/*!
+\addtogroup PkgCT_3Ref
+\cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgCT_3}
+\cgalPkgPicture{pkg-small.png}
+\todo Choose an image
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Laurent Rineau}
+\cgalPkgDesc{This package allows to build and handle 3D constrained Delaunay triangulations.}
+\todo Add more description.
+\cgalPkgManuals{Chapter_CT_3,PkgCT_3Ref}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.1}
+\cgalPkgDependsOn{\ref PkgTriangulation3 "3D Triangulations"}
+\cgalPkgBib{cgal:x-x}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\noop \cgalPkgDemo{DEMO 2,demo2.zip}
+\todo Add a demo
+
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `ConstrainedDelaunayTriangulationTraits_3`
+- `ConstrainedDelaunayTriangulationVertexBase_3`
+- `ConstrainedDelaunayTriangulationCellBase_3`
+
+\cgalCRPSection{Classes}
+
+\cgalCRPSubsection{Main Classes}
+- `CGAL::Constrained_Delaunay_triangulation_3<Traits, Triangulation_3>`
+
+\cgalCRPSubsection{Secondary Classes}
+- `CGAL::Constrained_Delaunay_triangulation_vertex_base_3`
+- `CGAL::Constrained_Delaunay_triangulation_cell_base_3`
+*/

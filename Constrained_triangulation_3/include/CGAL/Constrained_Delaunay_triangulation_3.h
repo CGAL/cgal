@@ -70,6 +70,57 @@
 #  error "Compiler needs <format>"
 #endif
 
+#if DOXYGEN_RUNNING
+
+namespace CGAL {
+
+  /*!
+   * \brief The class Constrained_Delaunay_triangulation_3 represents a 3D constrained Delaunay triangulation.
+   *
+   * This class is derived from the Triangulation_3 class and provides additional functionality for handling
+   * polygonal constraints during the triangulation process.
+   * 
+   * \todo Explain what is a CDT. Why a given input, like a polyhedron, might not admit a constrained Delaunay triangulation.
+   * Explain "conforming to the faces of a polygon mesh".
+   *
+   * \tparam Traits is the geometric traits class and must be a model of `ConstrainedDelaunayTriangulationTraits_3`.
+   * \tparam Triangulation_3 is the base triangulation class.
+   *         It must be a an instance of the `Triangulation_3` class template with the same `Traits` template parameter.
+   *         Its triangulation data structure must be a model of `TriangulationDataStructure_3`,
+   *         its `Vertex` type must be a model of `ConstrainedDelaunayTriangulationVertexBase_3`,
+   *         and its `Cell` type must be a model of `ConstrainedDelaunayTriangulationCellBase_3`.
+   *         <br>
+   *         The default value is `Triangulation_3<Traits, TDS>` where `TDS` is
+   *         `Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>`.
+   */
+  template <typename Traits, typename Triangulation_3>
+  class Constrained_Delaunay_triangulation_3 : public Triangulation_3 {
+  public:
+    /*!
+     * \brief Create a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
+     *
+     * This constructor initializes a Constrained_Delaunay_triangulation_3 object using a polygon mesh.
+     * The polygon mesh represents the polygonal constraints that will be enforced during the triangulation process.
+     *
+     * \tparam PolygonMesh a model of `FaceListGraph`
+     * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+     *
+     * \param mesh The polygon mesh representing the constraints.
+     * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+     */
+    template <typename PolygonMesh, typename NamedParams = parameters::Default_named_parameters>
+    Constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const NamedParams& np = parameters::default_values())
+    {
+
+      // Implementation of the constructor with variadic named parameters
+      // ...
+    }
+
+  };
+
+} // end namespace CGAL
+
+#else // not DOXYGEN_RUNNING
 
 namespace CGAL {
 
@@ -3408,5 +3459,7 @@ protected:
 };
 
 } // end CGAL
+
+#endif // not DOXYGEN_RUNNING
 
 #endif // CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H

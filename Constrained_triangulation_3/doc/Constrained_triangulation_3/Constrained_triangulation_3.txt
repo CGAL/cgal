@@ -1,0 +1,25 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_CT_3
+\cgalAutoToc
+\author Laurent Rineau
+
+This chapter describes the ...
+
+\section CT_3_definitions Definitions
+
+Section on definitions here ...
+
+\section CT_3examples Examples
+
+\subsection myFirstExample First Example
+
+The following example shows ...
+
+\noop\cgalExample{ }
+
+
+*/
+} /* namespace CGAL */
