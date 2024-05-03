@@ -169,6 +169,12 @@ public:
     AbstractEventSPtr nextEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
 
     /**
+     * Normalize facet planes
+     * @todo also do the SLS2 harmonization
+    */
+    static void harmonizeFacetPlanes(PolyhedronSPtr polyhedron);
+
+    /**
      * Creates an offset polyhedron.
      * Negative offset points to the interior of the polyhedron.
      */

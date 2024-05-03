@@ -2599,7 +2599,41 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PolyhedronSPtr polyhedron, CGAL:
     return result;
 }
 
-PolyhedronSPtr SimpleStraightSkel::shiftFacets(PolyhedronSPtr polyhedron, CGAL::FT offset) {
+void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
+{
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+
+        Plane3SPtr plane = facet->plane(); // calls initPlane() if needed
+
+#ifdef USE_CGAL
+        const CGAL::FT a = plane->a();
+        const CGAL::FT b = plane->b();
+        const CGAL::FT c = plane->c();
+        const CGAL::FT d = plane->d();
+        const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
+#else
+        const double a = plane->getA();
+        const double b = plane->getB();
+        const double c = plane->getC();
+        const double d = plane->getD();
+        const double n = sqrt(a*a + b*b + c*c);
+#endif
+
+        if(!is_zero(n))
+        {
+          Plane3SPtr normalized_plane = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
+          facet->setPlane(normalized_plane);
+        }
+    }
+
+}
+
+PolyhedronSPtr SimpleStraightSkel::shiftFacets(PolyhedronSPtr polyhedron, CGAL::FT offset)
+{
+    std::cout << "~~~~ Shift by " << offset << std::endl;
+
     PolyhedronSPtr result = Polyhedron::create();
 
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
