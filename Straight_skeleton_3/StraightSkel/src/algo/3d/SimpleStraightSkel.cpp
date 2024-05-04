@@ -808,6 +808,82 @@ bool SimpleStraightSkel::isTetrahedron(EdgeSPtr edge_begin) {
 
 Point3SPtr SimpleStraightSkel::vanishesAt(EdgeSPtr edge) {
     Point3SPtr result = Point3SPtr();
+
+    // @fixme this seemingly assumes that extremities of 'edge' have degree 3?
+    // what happens if it's not the case, shouldn't we consider both fL fR fLP fLN,
+    // but also fL fR fRP fRN? OR even fL fR & (2 out of all faces incident to any
+    // extremity of 'edge')?
+#if 1
+    {
+        FacetSPtr facetL = edge->getFacetL();
+        FacetSPtr facetR = edge->getFacetR();
+        CGAL_assertion(facetL && facetR && facetL != facetR);
+        FacetSPtr facetP = edge->prev(facetL)->getFacetR();
+        if(!facetP || facetP == facetL) // urgh...
+            facetP = edge->prev(facetL)->getFacetL();
+        CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
+        FacetSPtr facetN = edge->next(facetL)->getFacetR();
+        if(!facetN || facetN == facetL) // urgh...
+            facetN = edge->next(facetL)->getFacetL();
+        CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
+
+        Plane3SPtr plane_0 = facetL->plane();
+        Plane3SPtr plane_1 = facetR->plane();
+        Plane3SPtr plane_2 = facetP->plane();
+        Plane3SPtr plane_3 = facetN->plane();
+
+        Point3SPtr p_intersect = KernelWrapper::intersectionOffsetPlanes(plane_0, plane_1, plane_2, plane_3);
+        if(p_intersect)
+        {
+            // @fixme? negative offsets only?
+            // @fixme should it check with the other incident facet as well?
+            if (KernelWrapper::side(facetL->plane(), p_intersect) <= 0) {
+                // inside polyhedron
+                result = p_intersect;
+            }
+        }
+
+# if 0
+        // @tmp, just to check
+        SheetSPtr sheets[3];
+        for (unsigned int i = 0; i < 3; i++) {
+            sheets[i] = SheetSPtr();
+        }
+        FacetSPtr facet = edge->getFacetL();
+        if (!facet) {
+            facet = edge->getFacetR();
+        }
+        SkelEdgeDataSPtr data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+        if (data) {
+            sheets[0] = data->getSheet();
+        }
+        EdgeSPtr edge_prev = edge->prev(facet);
+        data = std::dynamic_pointer_cast<SkelEdgeData>(edge_prev->getData());
+        if (data) {
+            sheets[1] = data->getSheet();
+        }
+        EdgeSPtr edge_next = edge->next(facet);
+        data = std::dynamic_pointer_cast<SkelEdgeData>(edge_next->getData());
+        if (data) {
+            sheets[2] = data->getSheet();
+        }
+        if (sheets[0] && sheets[1] && sheets[2]) {
+            Point3SPtr p_intersect_2 = KernelWrapper::intersection(
+                    sheets[0]->getPlane(),
+                    sheets[1]->getPlane(),
+                    sheets[2]->getPlane());
+            if (p_intersect)
+            {
+              std::cout << "COMPARE INTER POINTS:\n"
+                        << "  OLD " << *p_intersect_2 << "\n"
+                        << "  NEW " << *p_intersect << std::endl;
+              CGAL_assertion_code(auto sqd = CGAL::squared_distance(*p_intersect, *p_intersect_2);)
+              CGAL_assertion(sqd < 1e-5 * CGAL::squared_distance(*p_intersect, Point3(CGAL::ORIGIN)));
+            }
+        }
+# endif // check
+    }
+#else // old code, needlessly uses constructed "sheets"
     SheetSPtr sheets[3];
     for (unsigned int i = 0; i < 3; i++) {
         sheets[i] = SheetSPtr();
@@ -836,12 +912,16 @@ Point3SPtr SimpleStraightSkel::vanishesAt(EdgeSPtr edge) {
                 sheets[1]->getPlane(),
                 sheets[2]->getPlane());
         if (p_intersect) {
+            // @fixme? negative offsets only?
+            // @fixme should it check with the other incident facet as well?
             if (KernelWrapper::side(facet->plane(), p_intersect) <= 0) {
                 // inside polyhedron
                 result = p_intersect;
             }
         }
     }
+#endif
+
     return result;
 }
 
