@@ -359,11 +359,19 @@ int main(int argc, const char* argv[]) {
             std::cout << "Points will be moved randomly. "
                  << "(rand_move_points_range=" << rand_move_points_range << ")" << std::endl;
             algo::_3d::PolyhedronTransformation::randMovePoints(polyhedron, rand_move_points_range);
-            std::string description = polyhedron->getDescription();
-            polyhedron = algo::_3d::SimpleStraightSkel::shiftFacets(polyhedron, 0.0);
-            polyhedron->clearData();
-            polyhedron->setDescription(description);
         }
+
+        // always sanitize, even if we have not moved points
+        std::cout << "Normalize plane coefficients..." << std::endl;
+        algo::_3d::SimpleStraightSkel::harmonizeFacetPlanes(polyhedron);
+
+        std::cout << "Sanitize..." << std::endl;
+        std::string description = polyhedron->getDescription();
+        polyhedron = algo::_3d::SimpleStraightSkel::shiftFacets(polyhedron, 0.0);
+        polyhedron->clearData();
+        polyhedron->setDescription(description);
+        db::_3d::OBJFile::save("results/randomized_input_post.obj", polyhedron);
+
         if (translate_and_scale_view) {
             data::_3d::Point3SPtr p_box_min =
                     algo::_3d::PolyhedronTransformation::boundingBoxMin(polyhedron);
