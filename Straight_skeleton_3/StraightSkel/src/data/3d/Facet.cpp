@@ -633,35 +633,50 @@ bool Facet::makeFirstConvex() {
         points[2] = edge_next->dst(self)->getPoint();
         if (points[0] != points[1] &&
                 points[1] != points[2] &&
-                points[2] != points[0]) {
-            Plane3SPtr plane_current = KernelFactory::createPlane3(
-                    points[0], points[1], points[2]);
-            Vector3SPtr normal_current = KernelFactory::createVector3(plane_current);
-            double angle = 0.0;
-            double arg = 0.0;
+                points[2] != points[0])
+        {
+#if 1 // @tmp, is this correct? the M_PI/4.0 below is confusing... Was it supposed to be M_PI/2.0?
+          if(!CGAL::collinear(*(points[0]), *(points[1]), *(points[2])))
+          {
+            if(CGAL::angle(*(points[0]), *(points[1]), *(points[2]), *normal) == CGAL::ACUTE)
+            {
+              edge_begin = edge;
+              result = true;
+              break;
+            }
+          }
+
+#else // old code; has issues with collinear points
+          Plane3SPtr plane_current = KernelFactory::createPlane3(
+                  points[0], points[1], points[2]);
+          Vector3SPtr normal_current = KernelFactory::createVector3(plane_current);
+          double angle = 0.0;
+          double arg = 0.0;
 #ifdef USE_CGAL
-            arg = CGAL::to_double(((*normal)*(*normal_current)) /
-                    CGAL::approximate_sqrt(normal->squared_length() * normal_current->squared_length()));
+          arg = CGAL::to_double(((*normal)*(*normal_current)) /
+                  CGAL::approximate_sqrt(normal->squared_length() * normal_current->squared_length()));
 #else
-            arg = ((*normal)*(*normal_current)) /
-                    sqrt(normal->squared_length() * normal_current->squared_length());
+          arg = ((*normal)*(*normal_current)) /
+                  sqrt(normal->squared_length() * normal_current->squared_length());
 #endif
-            // fixes issues with floating point precision
-            if (arg <= -1.0) {
-                angle = M_PI;
-            } else if (arg >= 1.0) {
-                angle = 0.0;
-            } else {
-                angle = acos(arg);
-            }
-            if (angle < M_PI/4.0) {
-                edge_begin = edge;
-                result = true;
-                break;
-            }
+          // fixes issues with floating point precision
+          if (arg <= -1.0) {
+              angle = M_PI;
+          } else if (arg >= 1.0) {
+              angle = 0.0;
+          } else {
+              angle = acos(arg);
+          }
+          if (angle < M_PI/4.0) {
+              edge_begin = edge;
+              result = true;
+              break;
+          }
+#endif
         }
         edge = edge_next;
     }
+
     if (edge_begin) {
         std::list<EdgeSPtr>::iterator it_e = edges_.insert(edges_.begin(), edge_begin);
         if (edge_begin->getFacetL() == shared_from_this()) {
@@ -680,7 +695,7 @@ bool Facet::makeFirstConvex() {
         sortVertices();
     }
     if (!result) {
-        DEBUG_VAL("Unable to make first 3 vertices convex.");
+        DEBUG_VAL("Warning: Unable to make first 3 vertices convex.");
         DEBUG_VAR(toString());
     }
     return result;
