@@ -155,16 +155,34 @@ Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
 
 Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
     Plane3SPtr result = Plane3SPtr();
-    Point3 p = plane->point();
-#ifdef USE_CGAL
+#if 1 // this assumes a plane with normalized coefficients (i.e., its normal is normalized)
+# ifdef USE_CGAL
+    const CGAL::FT a = plane->a();
+    const CGAL::FT b = plane->b();
+    const CGAL::FT c = plane->c();
+    const CGAL::FT d = plane->d();
+# else
+    const double a = plane->getA();
+    const double b = plane->getB();
+    const double c = plane->getC();
+    const double d = plane->getD();
+# endif
+//    std::cout << "normalization check: " << a*a + b*b + c*c << std::endl;
+    CGAL_assertion_code(auto sq_n = a*a + b*b + c*c;)
+    CGAL_assertion((sq_n - 1) < 1e-10); // inexact sqrt errors
+    result = KernelFactory::createPlane3(a, b, c, d - offset);
+#else // old code, unnecessary sqrt and constructions
+    const Point3& p = plane->point();
+# ifdef USE_CGAL
     Vector3 v_norm = plane->orthogonal_vector();
     Vector3 v_normal = v_norm / CGAL::approximate_sqrt(v_norm.squared_length());
-#else
+# else
     Vector3 v_normal = plane->normal().normalize();
-#endif
+# endif
     Point3 p_trans = p + (v_normal * offset);
     Plane3 plane_trans(p_trans, v_normal);
     result = KernelFactory::createPlane3(plane_trans);
+#endif
     DEBUG_SPTR(result);
     return result;
 }
