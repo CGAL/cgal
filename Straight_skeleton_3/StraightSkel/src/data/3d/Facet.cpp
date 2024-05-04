@@ -541,9 +541,44 @@ bool Facet::initPlane() {
         }
     }
     if (!result) {
+        Point3SPtr point_prev;
+#if 1
+        std::vector<Point3SPtr> points;
+        std::list<VertexSPtr>::iterator it_v = vertices_.begin();
+        while (it_v != vertices_.end()) {
+            VertexSPtr vertex = *it_v++;
+            Point3SPtr point = vertex->getPoint();
+            if (point_prev != point) {
+                points.push_back(point);
+            }
+            point_prev = point;
+        }
+
+        std::cout << " -- face points" << std::endl;
+        for(const auto& p : points)
+          std::cout << "   " << *p << std::endl;
+
+        if (points.size() >= 3)
+        {
+          Point3SPtr p0 = points[0];
+          Vector3SPtr normal = KernelFactory::createVector3(0,0,0);
+          std::size_t last_i = points.size() - 1;
+          for(std::size_t i=1; i<last_i; ++i) {
+            Point3SPtr p1 = points[i];
+            Point3SPtr p2 = points[i+1];
+            CGAL_assertion(p1 && p2);
+            *normal += 0.5 * CGAL::cross_product(*p2 - *p1, *p0 - *p1);
+          }
+
+          if(*normal != CGAL::NULL_VECTOR) {
+            plane_ = KernelFactory::createPlane3(p0, normal);
+            result = true;
+          }
+        }
+
+#else // old code; issues with collinear points
         Point3SPtr points[3];
         unsigned int i = 0;
-        Point3SPtr point_prev;
         std::list<VertexSPtr>::iterator it_v = vertices_.begin();
         while (i < 3 && it_v != vertices_.end()) {
             VertexSPtr vertex = *it_v++;
@@ -562,7 +597,10 @@ bool Facet::initPlane() {
                 result = true;
             }
         }
+#endif
     }
+
+    CGAL_assertion(result);
     return result;
 }
 
