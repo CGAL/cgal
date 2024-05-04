@@ -138,6 +138,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                                 sqrt(normal_plane->squared_length() * normal_sum->squared_length());
 #endif
                         // fixes issues with floating point precision
+                        // @fixme rewrite this without trigonometry
                         if (arg <= -1.0) {
                             angle = M_PI;
                         } else if (arg >= 1.0) {
@@ -154,7 +155,10 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                         facet->setPlane(plane);
                         facet->makeFirstConvex();
                     }
-                    facet->initPlane();
+                    else {
+                        facet->initPlane(); // num_vertices > 3 but no normals provided
+                        facet->makeFirstConvex();
+                    }
                     result->addFacet(facet);
                 }
             }
