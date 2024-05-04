@@ -25,19 +25,21 @@
 
 #ifdef USE_CGAL
 
-// #include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 namespace CGAL {
 
-// typedef Cartesian<double> K;
+// typedef Cartesian<double> CK;
+typedef CGAL::Simple_cartesian<CGAL::Exact_rational> SC_ER;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel EPECK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt EPECK_w_sqrt;
 
-typedef EPICK K;
+typedef EPECK K;
 
 typedef K::FT             FT;
 
@@ -58,6 +60,8 @@ typedef K::Sphere_3       Sphere3;
 #else /* USE_CGAL */
 
 namespace CGAL {
+
+typedef void              K;
 
 typedef double            FT;
 
