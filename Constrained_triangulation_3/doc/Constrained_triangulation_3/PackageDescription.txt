@@ -1,5 +1,7 @@
 /// \defgroup PkgCT_3Ref 3D Constrained Triangulations Reference
 
+/// \defgroup PkgCT_3_enums Enumerations
+
 /*!
 \addtogroup PkgCT_3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgCT_3}
