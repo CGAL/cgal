@@ -22,7 +22,8 @@
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_VERTEX_DATA_3_H
 
 #include <CGAL/license/Constrained_triangulation_3.h>
-#include <CGAL/Triangulation_3/internal/CDT_3_config.h>
+
+#include <CGAL/Constrained_triangulation_3/internal/config.h>
 
 namespace CGAL {
 

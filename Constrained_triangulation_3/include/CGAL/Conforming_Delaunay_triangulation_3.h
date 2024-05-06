@@ -21,9 +21,9 @@
 #ifndef CGAL_CONFORMING_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_CONFORMING_DELAUNAY_TRIANGULATION_3_H
 
-#include <CGAL/Triangulation_3/internal/CDT_3_config.h>
-
 #include <CGAL/license/Constrained_triangulation_3.h>
+
+#include <CGAL/Constrained_triangulation_3/internal/config.h>
 
 #include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Constrained_Delaunay_triangulation_vertex_data_3.h>

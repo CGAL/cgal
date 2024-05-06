@@ -1,4 +1,4 @@
-// Copyright (c) 2023  GeometryFactory Sarl (France).
+// Copyright (c) 2023-2024  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -29,7 +29,6 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 namespace CGAL {
-
 
   template <typename Tr, typename Facets>
   auto export_facets_to_surface_mesh(const Tr& tr, Facets&& facets_range) {

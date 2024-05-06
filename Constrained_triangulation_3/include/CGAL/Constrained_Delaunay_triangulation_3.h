@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2023  GeometryFactory Sarl (France).
+// Copyright (c) 2019-2024  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -21,9 +21,9 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
 
-#include <CGAL/Triangulation_3/internal/CDT_3_config.h>
-
 #include <CGAL/license/Constrained_triangulation_3.h>
+
+#include <CGAL/Constrained_triangulation_3/internal/config.h>
 
 #include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Constrained_Delaunay_triangulation_cell_data_3.h>
@@ -46,7 +46,7 @@
 
 #include <CGAL/Compact_container.h>
 
-#include <CGAL/cdt_debug_io.h>
+#include <CGAL/Constrained_triangulation_3/internal/cdt_debug_io.h>
 #include <CGAL/Mesh_3/io_signature.h>
 
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
