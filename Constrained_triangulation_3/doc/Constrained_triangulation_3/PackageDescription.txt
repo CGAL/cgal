@@ -1,6 +1,12 @@
 /*!
 \defgroup PkgCT_3Ref 3D Constrained Triangulations Reference
 
+\defgroup PkgCT_3Concepts Concepts
+\ingroup PkgCT_3Ref
+
+\defgroup PkgCT_3MainClasses Main Classes
+\ingroup PkgCT_3Ref
+
 \addtogroup PkgCT_3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgCT_3}
 \cgalPkgPicture{cdt3-small.png}

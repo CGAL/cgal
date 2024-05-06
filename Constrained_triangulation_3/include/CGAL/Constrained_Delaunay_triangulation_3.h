@@ -76,6 +76,7 @@
 namespace CGAL {
 
   /*!
+   * \ingroup PkgCT_3MainClasses
    * \brief The class Constrained_Delaunay_triangulation_3 represents a 3D constrained Delaunay triangulation.
    *
    * This class is derived from the Triangulation_3 class and provides additional functionality for handling
