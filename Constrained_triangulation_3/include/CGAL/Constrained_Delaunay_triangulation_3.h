@@ -23,7 +23,7 @@
 
 #include <CGAL/Triangulation_3/internal/CDT_3_config.h>
 
-#include <CGAL/license/Triangulation_3.h>
+#include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
