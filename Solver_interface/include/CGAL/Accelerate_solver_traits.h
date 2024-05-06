@@ -41,6 +41,9 @@ public:
   /// \pre A.column_dimension() == X.dimension().
    bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
   {
+    A.assemble_matrix();
+    A.solve(B, X);
+    X.copy_back();
     D = 1; // Accelerate does not support homogeneous coordinates
     return true;
   }

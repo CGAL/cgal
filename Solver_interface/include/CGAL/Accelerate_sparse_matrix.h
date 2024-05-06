@@ -12,6 +12,8 @@
 #define CGAL_SOLVER_INTERFACE_ACCELERATE_SPARSE_MATRIX_H
 
 #include <CGAL/basic.h> // include basic.h before testing #defines
+#include <CGAL/Accelerate_vector.h>
+#include "accelerate/accelerate-swift.h"
 
 #include <map>
 
@@ -41,7 +43,7 @@ public:
   /// @{
 
   /// The internal matrix type from \ref thirdpartyAccelerate "Accelerate".
-  typedef int AccelerateType;
+  typedef SwiftAccelerate::Matrix Matrix;
 
   typedef T                           NT;
   /// @}
@@ -55,13 +57,13 @@ public:
   // Public operations
 public:
   Accelerate_sparse_matrix()
-    : m_is_already_built(false), m_has_been_changed(false)
+    : m_matrix(Matrix::init()), m_is_already_built(false), m_has_been_changed(false)
   { }
 
   /// Create a square matrix initialized with zeros.
   Accelerate_sparse_matrix(int dim,            ///< Matrix dimension.
                            bool is_symmetric = false)  ///< Symmetric/hermitian?
-    : m_rows(dim), m_columns(dim), m_is_already_built(false), m_has_been_changed(false),  m_is_symmetric(is_symmetric)
+    :  m_matrix(Matrix::init()), m_rows(dim), m_columns(dim), m_is_already_built(false), m_has_been_changed(false),  m_is_symmetric(is_symmetric)
   {
     CGAL_precondition(dim > 0);
   }
@@ -73,7 +75,7 @@ public:
   Accelerate_sparse_matrix(int rows,          ///< Number of rows.
                            int columns,       ///< Number of columns.
                            bool is_symmetric = false) ///< Symmetric/hermitian?
-    : m_rows(rows), m_columns(columns), m_is_already_built(false), m_has_been_changed(false), m_is_symmetric(is_symmetric)
+    :  m_matrix(Matrix::init()), m_rows(rows), m_columns(columns), m_is_already_built(false), m_has_been_changed(false), m_is_symmetric(is_symmetric)
   {
     CGAL_precondition(rows > 0);
     CGAL_precondition(columns > 0);
@@ -97,8 +99,7 @@ public:
   }
 
   /// Delete this object and the wrapped matrix.
-  ~Accelerate_sparse_matrix() { }
-
+  ~Accelerate_sparse_matrix() = default;
 
   /// Return the matrix number of rows
   int row_dimension() const { return m_rows; }
@@ -176,11 +177,10 @@ public:
   /// \cond SKIP_IN_MANUAL
   void assemble_matrix() const
   {
-    std::vector<int> rows, columns;
-    std::vector<NT> values;
-    rows.reserve(m_triplets.size());
-    columns.reserve(m_triplets.size());
-    values.reserve(m_triplets.size());
+    SwiftAccelerate::Indices rows = SwiftAccelerate::Indices::init();
+    SwiftAccelerate::Indices columns = SwiftAccelerate::Indices::init();
+    SwiftAccelerate::Values values = SwiftAccelerate::Values::init();
+
     for(const auto& triplet : m_triplets){
       int i = triplet.first.first;
       int j = triplet.first.second;
@@ -194,17 +194,19 @@ public:
         values.push_back(val);
       }
     }
-
-    for(int i = 0; i < rows.size(); ++i){
-      std::cout << rows[i] << "\t" << columns[i] << "\t" << values[i] << std::endl;
-    }
-    // todo create the swift sparse matrix from the vectors
+    m_matrix = SwiftAccelerate::Matrix::init(m_rows, rows, columns, values);
     m_is_already_built = true;
     m_has_been_changed = false;
   }
   /// \endcond
 
 public:
+
+  void solve(const Accelerate_vector<T>& B, Accelerate_vector<T>& X) const
+  {
+    m_matrix.solve(B.data(), X.data());
+  }
+  
   /// \cond SKIP_IN_MANUAL
   friend Accelerate_sparse_matrix
   operator*(const T& c, const Accelerate_sparse_matrix& M)
@@ -231,7 +233,7 @@ private:
   int m_rows, m_columns;
   mutable std::map<std::pair<int,int>,NT> m_triplets;
 
-  // mutable AccelerateType m_matrix;
+  mutable Matrix m_matrix;
 
 }; // Accelerate_sparse_matrix
 

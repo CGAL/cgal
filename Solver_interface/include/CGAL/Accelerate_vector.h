@@ -12,6 +12,7 @@
 #define CGAL_ACCELERATE_VECTOR_H
 
 #include <vector>
+#include "accelerate/accelerate-swift.h"
 
 namespace CGAL {
 /*!
@@ -36,40 +37,72 @@ public:
   /// \name Types
   /// @{
   typedef T                                      NT;
-
+  typedef SwiftAccelerate::Values Vec;
   /// @}
 
 // Public operations
 public:
 
   /// Constructs a null vector.
-  Accelerate_vector() = default;
+  Accelerate_vector()
+    : m_vec(dimension), m_svec(Vec::init())
+  {}
 
   /// Create a vector initialized with zeros.
   Accelerate_vector(std::size_t dimension)
-    : m_vec(dimension, NT(0))
+    : m_vec(dimension), m_svec(Vec::init(dimension, dimension))
   {}
 
-
+  void set(int i, NT v)
+  {
+    m_vec[i] = v;
+  }
+  
   /// Return the vector's number of coefficients.
   int dimension() const { return static_cast<int>(m_vec.size()); }
-
-  NT operator[](int row) const
-  {
-    return m_vec[row];
-  }
-
 
   NT& operator[](int row)
   {
     return m_vec[row];
   }
 
+  void copy_back()
+  {
+    for(int i = 0; i < m_vec.size(); i++){
+      m_vec[i] = m_svec.get(i);
+    }
+  }
+  
+  const NT& operator[](int row) const
+  {
+    return m_vec[row];
+  }
+
+
+  /*
+  NT& operator[](int row)
+  {
+    return m_vec[row];
+  }
+  */
   /// Return a pointer to the data array of this vector.
-  const NT* data() { return &m_vec[0]; }
+  const Vec& data() const {
+    for(int i = 0; i < m_vec.size(); i++){
+      m_svec.set(i,m_vec[i]);
+    }
+    return m_svec;
+  }
+  
+  Vec& data() {
+    for(int i = 0; i < m_vec.size(); i++){
+      m_svec.set(i,m_vec[i]);
+    }
+    return m_svec;
+  }
 
 private:
-  std::vector<NT> m_vec;
+  std::vector<T> m_vec;
+  mutable Vec  m_svec;
 };
 
 } // namespace CGAL
