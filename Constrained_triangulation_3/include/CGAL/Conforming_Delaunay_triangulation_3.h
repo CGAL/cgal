@@ -1,4 +1,4 @@
-// Copyright (c) 2019  GeometryFactory Sarl (France).
+// Copyright (c) 2019-2024  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -26,6 +26,7 @@
 #include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Constrained_Delaunay_triangulation_vertex_data_3.h>
 #include <CGAL/Triangulation_2/internal/Polyline_constraint_hierarchy_2.h>
 #include <CGAL/Triangulation_segment_traverser_3.h>
 
@@ -44,33 +45,10 @@
 
 namespace CGAL {
 
-enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
-
-enum class CDT_3_vertex_marker {
-  CLEAR = 0,
-  REGION_BORDER,
-  REGION_INSIDE,
-  CAVITY,
-  CAVITY_ABOVE,
-  CAVITY_BELOW,
-  nb_of_markers
-};
-
-using CDT_3_face_index = int; // must be signed
-
-template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
-class Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb> {
-  CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
-  std::bitset<static_cast<int>(CDT_3_vertex_marker::nb_of_markers)> mark;
-  union U {
-    struct On_edge {
-      int nb_of_incident_constraints = 0;
-      void* c_id = nullptr;
-    } on_edge;
-    struct On_face{
-      CDT_3_face_index face_index = 0;
-    } on_face;
-  } u;
+template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt>>
+class Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb>,
+                                                        public Constrained_Delaunay_triangulation_vertex_data_3
+{
 public:
   // To get correct vertex type in TDS
   template < class TDS3 >
@@ -82,63 +60,9 @@ public:
   using Base = Base_with_time_stamp<Vb>;
   using Base::Base;
 
-  Conforming_Delaunay_triangulation_vertex_base_3()
-    : Base{}
-    , u{typename U::On_edge()}
-  {}
-
-  void set_on_constraint(auto constraint_id) {
-    ++u.on_edge.nb_of_incident_constraints;
-    u.on_edge.c_id = constraint_id.vl_ptr();
+  Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() {
+    return *this;
   }
-
-  int number_of_incident_constraints() const {
-    CGAL_assertion(u.on_edge.nb_of_incident_constraints >= 0);
-    return u.on_edge.nb_of_incident_constraints;
-  }
-
-  void set_mark(CDT_3_vertex_marker marker) {
-    mark.set(static_cast<unsigned int>(marker));
-  }
-
-  void clear_marks() {
-    mark.reset();
-  }
-
-  void clear_mark(CDT_3_vertex_marker marker) {
-    mark.reset(static_cast<unsigned int>(marker));
-  }
-
-  bool is_marked(CDT_3_vertex_marker marker) const {
-    return mark.test(static_cast<unsigned int>(marker));
-  }
-
-  bool is_marked() const {
-    return mark.any();
-  }
-
-  template<typename Triangulation>
-  auto constraint_id(const Triangulation&) const {
-    CGAL_assertion(m_vertex_type != CDT_3_vertex_type::STEINER_IN_FACE);
-    using C_id = typename Triangulation::Constraint_id;
-    using Vertex_list_ptr = decltype(std::declval<C_id>().vl_ptr());
-    return C_id(static_cast<Vertex_list_ptr>(u.on_edge.c_id));
-  }
-
-  void set_Steiner_vertex_in_face(CDT_3_face_index face_index) {
-    m_vertex_type = CDT_3_vertex_type::STEINER_IN_FACE;
-    u.on_face = typename U::On_face{face_index};
-  }
-
-  CDT_3_face_index face_index() const {
-    CGAL_assertion(m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE);
-    return u.on_face.face_index;
-  }
-
-  CDT_3_vertex_type vertex_type() const { return m_vertex_type; }
-  void set_vertex_type(CDT_3_vertex_type type) { m_vertex_type = type; }
-  bool is_Steiner_vertex_on_edge() const { return m_vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE; }
-  bool is_Steiner_vertex_in_face() const { return m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE; }
 
   static std::string io_signature() {
     return Get_io_signature<Vb>()();
@@ -782,7 +706,7 @@ protected:
         return true;
       return false;
     }; // end lambda constraint_id_goes_to_vb
-    if (va->number_of_incident_constraints() == 1)
+    if (va->cdt_3_data().number_of_incident_constraints() == 1)
     {
       const Constraint_id c_id = va->constraint_id(*this);
       CGAL_assertion(c_id != Constraint_id{});

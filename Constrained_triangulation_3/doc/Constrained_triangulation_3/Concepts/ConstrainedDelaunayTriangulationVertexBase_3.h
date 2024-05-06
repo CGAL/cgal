@@ -1,8 +1,3 @@
-/*! @brief a signed integral type
- * \relates ConstrainedDelaunayTriangulationVertexBase_3
- */
-using CDT_3_face_index = int;
-
 /*!
 \cgalConcept
 
@@ -16,54 +11,22 @@ the `CGAL::Constrained_Delaunay_triangulation_3` class template.
 \cgalHasModels{CGAL::Constrained_Delaunay_triangulation_vertex_base_3}
 \cgalHasModelsEnd
 
-\todo add the requirements in the concept `ConstrainedDelaunayTriangulationVertexBase_3`
 
 \sa `ConstrainedDelaunayTriangulationCellBase_3`
+
+\todo Verify that the See also section is correctly formatted by Doxygen.
 */
 class ConstrainedDelaunayTriangulationVertexBase_3 {
 public:
-  void set_on_constraint(auto constraint_id);
 
-  int number_of_incident_constraints() const;
-
-  void set_mark(CGAL::CDT_3_vertex_marker marker);
-
-  void clear_marks();
-
-  void clear_mark(CGAL::CDT_3_vertex_marker marker);
-
-  bool is_marked(CGAL::CDT_3_vertex_marker marker) const;
-
-  bool is_marked() const;
-
-  template<typename Triangulation>
-  auto constraint_id(const Triangulation&) const;
-
-  void set_Steiner_vertex_in_face(CDT_3_face_index face_index);
-
-  CDT_3_face_index face_index() const;
-
-  CGAL::CDT_3_vertex_type vertex_type() const;
-  void set_vertex_type(CGAL::CDT_3_vertex_type type);
-  bool is_Steiner_vertex_on_edge() const;
-  bool is_Steiner_vertex_in_face() const;
-};
-
-namespace CGAL {
-/// \enum CDT_3_vertex_marker
-/// @brief Enum type for vertex markers
-/// \ingroup PkgCT_3_enums
-enum class CDT_3_vertex_marker {
-  CLEAR = 0,     ///< No marker
-  REGION_BORDER, ///< On the border of the region
-  REGION_INSIDE, ///< Inside the region
-  CAVITY,        ///< In the cavity
-  CAVITY_ABOVE,  ///< In the cavity above
-  CAVITY_BELOW,  ///< In the cavity below
-  nb_of_markers  ///< Number of markers
-};
-
-/// \enum CDT_3_vertex_type
-/// \ingroup PkgCT_3_enums
-enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
+  /// @name Access Functions
+  ///
+  /// The following functions provide a reference to an object of type
+  /// `CGAL::Constrained_Delaunay_triangulation_vertex_data_3`, that contains
+  /// the per-vertex data required by the implementation of the
+  /// `CGAL::Constrained_Delaunay_triangulation_3` class template.
+  /// @{
+  CGAL::Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data();
+  const CGAL::Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() const;
+  /// @}
 }

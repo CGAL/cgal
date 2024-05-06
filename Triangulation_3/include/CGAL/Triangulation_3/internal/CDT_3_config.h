@@ -31,6 +31,9 @@
 #endif
 
 namespace CGAL {
+
+using CDT_3_face_index = int; // must be signed
+
 constexpr bool cdt_3_can_use_cxx20_format() {
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
   return true;

@@ -1,0 +1,147 @@
+// Copyright (c) 2019-2024  GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Laurent Rineau
+
+#ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_VERTEX_DATA_3_H
+#define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_VERTEX_DATA_3_H
+
+#include <CGAL/license/Constrained_triangulation_3.h>
+#include <CGAL/Triangulation_3/internal/CDT_3_config.h>
+
+namespace CGAL {
+
+#ifdef DOXYGEN_RUNNING
+/*!
+ * @brief Internal per-vertex data for \cgal 3D constrained Delaunay triangulations
+ *
+ * This class is an internal detail of the implementation of \cgal 3D constrained Delaunay triangulations.
+ * It is not designed for direct use by developers.
+ *
+ * Any model of the `ConstrainedDelaunayTriangulationVertexBase_3` concept must include one object of this type
+ * as a non-static data member.
+ */
+struct Constrained_Delaunay_triangulation_vertex_data_3 {};
+#else // DOXYGEN_RUNNING
+
+enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
+
+enum class CDT_3_vertex_marker {
+  CLEAR = 0,
+  REGION_BORDER,
+  REGION_INSIDE,
+  CAVITY,
+  CAVITY_ABOVE,
+  CAVITY_BELOW,
+  nb_of_markers
+};
+
+struct Constrained_Delaunay_triangulation_vertex_data_3 {
+protected:
+  CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
+  std::bitset<static_cast<int>(CDT_3_vertex_marker::nb_of_markers)> mark{};
+  union U {
+    struct On_edge {
+      int nb_of_incident_constraints = 0;
+      void* c_id = nullptr;
+    } on_edge;
+    struct On_face{
+      CDT_3_face_index face_index = 0;
+    } on_face;
+  } u {U::On_edge{}};
+
+public:
+  friend bool operator==(const Constrained_Delaunay_triangulation_vertex_data_3& lhs,
+                         const Constrained_Delaunay_triangulation_vertex_data_3& rhs) {
+    return lhs.m_vertex_type == rhs.m_vertex_type && lhs.mark == rhs.mark && std::invoke([&]() {
+             if(lhs.m_vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE) {
+               return lhs.u.on_edge.nb_of_incident_constraints == rhs.u.on_edge.nb_of_incident_constraints &&
+                      lhs.u.on_edge.c_id == rhs.u.on_edge.c_id;
+             } else if(lhs.m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE) {
+               return lhs.u.on_face.face_index == rhs.u.on_face.face_index;
+             }
+             return true;
+           });
+  }
+
+  void set_on_constraint(auto constraint_id) {
+    ++u.on_edge.nb_of_incident_constraints;
+    u.on_edge.c_id = constraint_id.vl_ptr();
+  }
+
+  int number_of_incident_constraints() const {
+    CGAL_assertion(u.on_edge.nb_of_incident_constraints >= 0);
+    return u.on_edge.nb_of_incident_constraints;
+  }
+
+  void set_mark(CDT_3_vertex_marker marker) {
+    mark.set(static_cast<unsigned int>(marker));
+  }
+
+  void clear_marks() {
+    mark.reset();
+  }
+
+  void clear_mark(CDT_3_vertex_marker marker) {
+    mark.reset(static_cast<unsigned int>(marker));
+  }
+
+  bool is_marked(CDT_3_vertex_marker marker) const {
+    return mark.test(static_cast<unsigned int>(marker));
+  }
+
+  bool is_marked() const {
+    return mark.any();
+  }
+
+  template<typename Triangulation>
+  auto constraint_id(const Triangulation&) const {
+    CGAL_assertion(m_vertex_type != CDT_3_vertex_type::STEINER_IN_FACE);
+    using C_id = typename Triangulation::Constraint_id;
+    using Vertex_list_ptr = decltype(std::declval<C_id>().vl_ptr());
+    return C_id(static_cast<Vertex_list_ptr>(u.on_edge.c_id));
+  }
+
+  void set_Steiner_vertex_in_face(CDT_3_face_index face_index) {
+    m_vertex_type = CDT_3_vertex_type::STEINER_IN_FACE;
+    u.on_face = typename U::On_face{face_index};
+  }
+
+  CDT_3_face_index face_index() const {
+    CGAL_assertion(m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE);
+    return u.on_face.face_index;
+  }
+
+  CDT_3_vertex_type vertex_type() const { return m_vertex_type; }
+  void set_vertex_type(CDT_3_vertex_type type) { m_vertex_type = type; }
+  bool is_Steiner_vertex_on_edge() const { return m_vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE; }
+  bool is_Steiner_vertex_in_face() const { return m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE; }
+};
+
+#endif // DOXYGEN_RUNNING
+
+} // namespace CGAL
+
+#if CGAL_CXX20
+#  include <concepts>
+
+  static_assert(std::regular<CGAL::Constrained_Delaunay_triangulation_vertex_data_3>);
+
+#endif
+
+#endif // CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_VERTEX_DATA_3_H
