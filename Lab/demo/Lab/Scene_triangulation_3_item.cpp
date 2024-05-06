@@ -941,29 +941,47 @@ Scene_triangulation_3_item::update_histogram()
 }
 
 void
-Scene_triangulation_3_item_priv::compute_color_map(const QColor& c)
+Scene_triangulation_3_item_priv::compute_color_map(const QColor& default_color)
 {
   typedef Indices::size_type size_type;
 
-  const size_type nb_patch_indices = surface_patch_indices_.size();
-  double i = -1;
-  double patch_hsv_value = use_subdomain_colors ? fmod(c.valueF() + .5, 1.) : c.valueF();
-  for (Indices::iterator it = surface_patch_indices_.begin(),
-       end = surface_patch_indices_.end(); it != end; ++it, i += 1.)
+  float default_hue = default_color.hueF();
+  float default_saturation = default_color.saturationF();
+  float default_value = default_color.valueF();
+  if (default_hue < 0)
   {
-    double hue = c.hueF() + 1. / double(nb_patch_indices) * i;
-    if (hue > 1) { hue -= 1.; }
-    colors[*it] = QColor::fromHsvF(hue, c.saturationF(), patch_hsv_value);
+    default_hue = 0;
+  }
+
+  const size_type nb_patch_indices = surface_patch_indices_.size();
+  float i = 0;
+  float patch_hsv_value = use_subdomain_colors ? fmod(default_value + .5, 1.) : default_value;
+  Indices::iterator it = surface_patch_indices_.begin();
+  if (it != surface_patch_indices_.end())
+  {
+    // the first color is probably the background
+    colors[*it] = QColor::fromHsvF(default_hue, default_saturation, patch_hsv_value);
+    for (++it; it != surface_patch_indices_.end(); ++it, i += 1.)
+    {
+      float hue = default_hue + 1. / static_cast<float>(nb_patch_indices) * i;
+      if (hue > 1) { hue -= 1.; }
+      colors[*it] = QColor::fromHsvF(hue, default_saturation, patch_hsv_value);
+    }
   }
 
   const size_type nb_domains = subdomain_indices_.size();
-  i = -1;
-  for (Indices::iterator it = subdomain_indices_.begin(),
-         end = subdomain_indices_.end(); it != end; ++it, i += 1.)
+  i = 0;
+  it = subdomain_indices_.begin();
+  if (it != subdomain_indices_.end())
   {
-    double hue = c.hueF() + 1. / double(nb_domains) * i;
-    if (hue > 1) { hue -= 1.; }
-    colors_subdomains[*it] = QColor::fromHsvF(hue, c.saturationF(), c.valueF());
+    // the first color is probably the background
+    colors_subdomains[*it] = QColor::fromHsvF(default_hue, default_saturation, default_value);
+    for (++it; it != subdomain_indices_.end(); ++it, i += 1.)
+    {
+      float hue = default_hue + 1. / static_cast<float>(nb_domains) * i;
+      if (hue > 1) { hue -= 1.; }
+      colors_subdomains[*it] = QColor::fromHsvF(hue, default_saturation, default_value);
+    }
   }
 
   if (use_subdomain_colors)
