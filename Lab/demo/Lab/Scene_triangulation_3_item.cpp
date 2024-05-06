@@ -44,6 +44,7 @@
 #include <CGAL/IO/Color.h>
 
 #include "Scene_polygon_soup_item.h"
+#include "Color_map.h"
 
 
 typedef CGAL::AABB_triangulation_3_cell_primitive<EPICK,
@@ -941,49 +942,40 @@ Scene_triangulation_3_item::update_histogram()
 }
 
 void
-Scene_triangulation_3_item_priv::compute_color_map(const QColor& default_color)
+Scene_triangulation_3_item_priv::compute_color_map(const QColor& base_color)
 {
   typedef Indices::size_type size_type;
 
-  float default_hue = default_color.hueF();
-  float default_saturation = default_color.saturationF();
-  float default_value = default_color.valueF();
-  if (default_hue < 0)
+  // Set colors of surface patches
+  std::vector<QColor> surface_colors;
+  // the first color is the background and is unused
+  surface_colors.push_back(base_color);
+  float patch_hsv_value = use_subdomain_colors ? fmod(base_color.valueF() + .5, 1.) : base_color.valueF();
+  if (surface_patch_indices_.size() > 1)
+    compute_deterministic_color_map(
+            QColor::fromHsvF(base_color.hueF(), base_color.saturationF(), patch_hsv_value),
+            surface_patch_indices_.size()-1, std::back_inserter(surface_colors));
+
+  int i = 0;
+  for (Indices::iterator it = surface_patch_indices_.begin(); it != surface_patch_indices_.end(); ++it)
   {
-    default_hue = 0;
+    colors[*it] = surface_colors[i++];
   }
 
-  const size_type nb_patch_indices = surface_patch_indices_.size();
-  float i = 0;
-  float patch_hsv_value = use_subdomain_colors ? fmod(default_value + .5, 1.) : default_value;
-  Indices::iterator it = surface_patch_indices_.begin();
-  if (it != surface_patch_indices_.end())
-  {
-    // the first color is probably the background
-    colors[*it] = QColor::fromHsvF(default_hue, default_saturation, patch_hsv_value);
-    for (++it; it != surface_patch_indices_.end(); ++it, i += 1.)
-    {
-      float hue = default_hue + 1. / static_cast<float>(nb_patch_indices) * i;
-      if (hue > 1) { hue -= 1.; }
-      colors[*it] = QColor::fromHsvF(hue, default_saturation, patch_hsv_value);
-    }
-  }
+  // Set colors of subdomains
+  std::vector<QColor> subdomain_colors;
+  // the first color is either the background or the unique domain
+  subdomain_colors.push_back(base_color);
+  if (subdomain_indices_.size() > 1)
+    compute_deterministic_color_map(base_color, subdomain_indices_.size()-1, std::back_inserter(subdomain_colors));
 
-  const size_type nb_domains = subdomain_indices_.size();
   i = 0;
-  it = subdomain_indices_.begin();
-  if (it != subdomain_indices_.end())
+  for (Indices::iterator it = subdomain_indices_.begin(); it != subdomain_indices_.end(); ++it)
   {
-    // the first color is probably the background
-    colors_subdomains[*it] = QColor::fromHsvF(default_hue, default_saturation, default_value);
-    for (++it; it != subdomain_indices_.end(); ++it, i += 1.)
-    {
-      float hue = default_hue + 1. / static_cast<float>(nb_domains) * i;
-      if (hue > 1) { hue -= 1.; }
-      colors_subdomains[*it] = QColor::fromHsvF(hue, default_saturation, default_value);
-    }
+    colors_subdomains[*it] = subdomain_colors[i++];
   }
 
+  // Update surface patches colors to the domain
   if (use_subdomain_colors)
   {
     for (std::unordered_map<int, int>::iterator it = visible_surface_patch_to_subdomain.begin(),
