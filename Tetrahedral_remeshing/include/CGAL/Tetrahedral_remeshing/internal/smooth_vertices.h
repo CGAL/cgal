@@ -365,19 +365,11 @@ private:
         const Facet ff = facets.front();
         facets.pop_front();
 
-        const typename C3t3::Cell_handle ch = f.first;
-        const std::array<std::array<int, 2>, 3> edges
-          = {{ {{(ff.second + 1) % 4, (ff.second + 2) % 4}}, //edge 1-2
-               {{(ff.second + 2) % 4, (ff.second + 3) % 4}}, //edge 2-3
-               {{(ff.second + 3) % 4, (ff.second + 1) % 4}}  //edge 3-1
-            }}; //vertex indices in cells
-
-        const Vector_3& ref = fnormals[f];
-        for (const std::array<int, 2>& ei : edges)
+        const Vector_3& ref = fnormals[ff];
+        for (const Edge& ei : facet_edges(ff.first, ff.second, tr))
         {
-          Edge edge(ch, ei[0], ei[1]);
           if (std::optional<Facet> neighbor
-              = find_adjacent_facet_on_surface(f, edge, c3t3))
+              = find_adjacent_facet_on_surface(ff, ei, c3t3))
           {
             const Facet neigh = *neighbor; //already a canonical_facet
             if (fnormals[neigh] == CGAL::NULL_VECTOR) //check it's not already computed
