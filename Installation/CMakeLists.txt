@@ -361,13 +361,17 @@ include(${CGAL_MODULES_DIR}/CGAL_enable_end_of_configuration_hook.cmake)
 cgal_setup_module_path()
 
 if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)
-  message(STATUS "Operating system:")
-  execute_process(
-    COMMAND uname -a
-    TIMEOUT 5
-    OUTPUT_VARIABLE uname_a
-    ERROR_VARIABLE uname_a)
-  message(STATUS "${uname_a}")
+  find_program(LSB_RELEASE_EXEC lsb_release)
+  if(LSB_RELEASE_EXEC)
+    execute_process(
+      COMMAND ${LSB_RELEASE_EXEC} -ds
+      OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Operating system: ${LSB_RELEASE_ID_SHORT} ${CMAKE_SYSTEM_PROCESSOR}")
+  else()
+    message(STATUS "Operating system: ${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_VERSION}")
+  endif()
   cgal_display_compiler_version()
 endif()
 
