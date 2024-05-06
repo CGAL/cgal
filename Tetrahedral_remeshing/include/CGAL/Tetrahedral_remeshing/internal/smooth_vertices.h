@@ -689,19 +689,19 @@ private:
 
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
-      const auto mass = density_along_segment(e, c3t3, true);
+      const FT density = density_along_segment(e, c3t3, true);
 
       if (vh0_moving)
       {
-        moves[i0] += mass * Vector_3(p0, p1);
+        moves[i0] += density * Vector_3(p0, p1);
         neighbors[i0]++;
-        masses[i0] += mass;
+        masses[i0] += density;
       }
       if (vh1_moving)
       {
-        moves[i1] += mass * Vector_3(p1, p0);
+        moves[i1] += density * Vector_3(p1, p0);
         neighbors[i1]++;
-        masses[i1] += mass;
+        masses[i1] += density;
       }
     }
 
@@ -803,19 +803,19 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
 
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
-      const auto mass = density_along_segment(e, c3t3, true);
+      const FT density = density_along_segment(e, c3t3, true);
 
       if (vh0_moving)
       {
-        moves[i0] += mass * Vector_3(p0, p1);
+        moves[i0] += density * Vector_3(p0, p1);
         neighbors[i0]++;
-        masses[i0] += mass;
+        masses[i0] += density;
       }
       if (vh1_moving)
       {
-        moves[i1] += mass * Vector_3(p1, p0);
+        moves[i1] += density * Vector_3(p1, p0);
         neighbors[i1]++;
-        masses[i1] += mass;
+        masses[i1] += density;
       }
     }
   }
@@ -1003,19 +1003,19 @@ std::size_t smooth_internal_vertices(C3t3& c3t3,
 
       const Point_3& p0 = point(vh0->point());
       const Point_3& p1 = point(vh1->point());
-      const auto mass = density_along_segment(e, c3t3);
+      const FT density = density_along_segment(e, c3t3);
 
       if (vh0_moving)
       {
-        moves[i0] += mass * Vector_3(p0, p1);
+        moves[i0] += density * Vector_3(p0, p1);
         neighbors[i0]++;
-        masses[i0] += mass;
+        masses[i0] += density;
       }
       if (vh1_moving)
       {
-        moves[i1] += mass * Vector_3(p1, p0);
+        moves[i1] += density * Vector_3(p1, p0);
         neighbors[i1]++;
-        masses[i1] += mass;
+        masses[i1] += density;
       }
     }
   }
