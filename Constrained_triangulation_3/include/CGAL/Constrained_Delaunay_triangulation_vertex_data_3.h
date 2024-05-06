@@ -31,7 +31,6 @@ namespace CGAL {
  * @brief Internal per-vertex data for \cgal 3D constrained Delaunay triangulations
  *
  * This class is an internal detail of the implementation of \cgal 3D constrained Delaunay triangulations.
- * It is not designed for direct use by developers.
  *
  * Any model of the `ConstrainedDelaunayTriangulationVertexBase_3` concept must include one object of this type
  * as a non-static data member.

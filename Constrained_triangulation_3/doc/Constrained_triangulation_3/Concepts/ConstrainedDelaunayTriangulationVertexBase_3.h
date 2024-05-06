@@ -21,7 +21,7 @@ public:
 
   /// @name Access Functions
   ///
-  /// The following functions provide a reference to an object of type
+  /// The following functions return a reference to an object of type
   /// `CGAL::Constrained_Delaunay_triangulation_vertex_data_3`, that contains
   /// the per-vertex data required by the implementation of the
   /// `CGAL::Constrained_Delaunay_triangulation_3` class template.
