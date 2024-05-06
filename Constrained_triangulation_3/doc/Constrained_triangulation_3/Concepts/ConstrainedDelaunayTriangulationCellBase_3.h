@@ -18,24 +18,26 @@ the `CGAL::Constrained_Delaunay_triangulation_3` class template.
 class ConstrainedDelaunayTriangulationCellBase_3 {
 public:
   bool is_marked() const;
-  bool is_marked(CDT_3_cell_marker m);
-  void set_mark(CDT_3_cell_marker m);
-  void clear_mark(CDT_3_cell_marker m);
+  bool is_marked(CGAL::CDT_3_cell_marker m);
+  void set_mark(CGAL::CDT_3_cell_marker m);
+  void clear_mark(CGAL::CDT_3_cell_marker m);
   void clear_marks();
 
   bool is_facet_constrained(int i);
 
   template <typename Facet_handle>
-  void set_facet_constraint(int i, CDT_3_face_index face_id,
+  void set_facet_constraint(int i, CGAL::CDT_3_face_index face_id,
                             Facet_handle facet_2d);
 
-  CDT_3_face_index face_constraint_index(int i);
+  CGAL::CDT_3_face_index face_constraint_index(int i);
 
   template <typename CDT_2>
   auto face_2 (const CDT_2& cdt, int i);
 };
 
+namespace CGAL {
 /// @brief Enum type for cell markers.
+/// \ingroup PkgCT_3_enums
 enum class CDT_3_cell_marker {
   CLEAR = 0,
   IN_REGION = 1,
@@ -43,3 +45,5 @@ enum class CDT_3_cell_marker {
   ON_REGION_BOUNDARY = 2,
   nb_of_markers
 };
+
+}

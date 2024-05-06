@@ -26,13 +26,13 @@ public:
 
   int number_of_incident_constraints() const;
 
-  void set_mark(CDT_3_vertex_marker marker);
+  void set_mark(CGAL::CDT_3_vertex_marker marker);
 
   void clear_marks();
 
-  void clear_mark(CDT_3_vertex_marker marker);
+  void clear_mark(CGAL::CDT_3_vertex_marker marker);
 
-  bool is_marked(CDT_3_vertex_marker marker) const;
+  bool is_marked(CGAL::CDT_3_vertex_marker marker) const;
 
   bool is_marked() const;
 
@@ -43,8 +43,8 @@ public:
 
   CDT_3_face_index face_index() const;
 
-  CDT_3_vertex_type vertex_type() const;
-  void set_vertex_type(CDT_3_vertex_type type);
+  CGAL::CDT_3_vertex_type vertex_type() const;
+  void set_vertex_type(CGAL::CDT_3_vertex_type type);
   bool is_Steiner_vertex_on_edge() const;
   bool is_Steiner_vertex_in_face() const;
 };
