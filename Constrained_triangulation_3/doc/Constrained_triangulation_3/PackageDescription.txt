@@ -5,7 +5,7 @@
 /*!
 \addtogroup PkgCT_3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgCT_3}
-\cgalPkgPicture{pkg-small.png}
+\cgalPkgPicture{cdt3-small.png}
 \todo Choose an image
 
 \cgalPkgSummaryBegin
