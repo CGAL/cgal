@@ -320,6 +320,22 @@ bool Polyhedron::isConsistent() const {
                     result = false;
                     break;
                 }
+
+                if (edge->getVertexSrc() == edge->getVertexDst())
+                {
+                    DEBUG_VAR(edge->getVertexSrc());
+                    result = false;
+                    break;
+                }
+
+                if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint())
+                {
+                    std::cout << "Warning: degenerate edge!" << std::endl;
+                    DEBUG_VAR(edge->getVertexSrc());
+                    std::cout << "Position of source: " << *(edge->getVertexSrc()->getPoint())<< std::endl;
+                    DEBUG_VAR(edge->getVertexDst());
+                    std::cout << "Position of destination: " << *(edge->getVertexDst()->getPoint()) << std::endl;
+                }
             }
         }
         std::list<FacetWPtr>::const_iterator it_f = vertex->facets().begin();
