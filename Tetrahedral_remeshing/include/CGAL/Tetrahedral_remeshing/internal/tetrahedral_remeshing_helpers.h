@@ -319,6 +319,30 @@ Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Point_3& i,
     return Dihedral_angle_cosine(CGAL::sign(num), CGAL::square(num), sqden);
 }
 
+// cosine of dihedral angle, computed from pre-computed and non-zero normals
+template<typename Gt>
+Dihedral_angle_cosine cos_dihedral_angle(const typename Gt::Vector_3& n1,
+                                         const typename Gt::Vector_3& n2,
+                                         const typename Gt::FT& n1_sql,
+                                         const typename Gt::FT& n2_sql,
+                                         const Gt& gt)
+{
+  using FT = typename Gt::FT;
+  auto scalar_product = gt.compute_scalar_product_3_object();
+
+  const FT num = scalar_product(n1, n2);
+  if (num == 0.)
+    return Dihedral_angle_cosine(CGAL::ZERO, 0., 1.);
+
+  const double sqden = CGAL::to_double(n1_sql * n2_sql);
+  const double sqnum = CGAL::square(CGAL::to_double(num));
+
+  if (sqnum > sqden)
+    return Dihedral_angle_cosine(CGAL::sign(num), 1., 1.);//snap to 1 or -1
+  else
+    return Dihedral_angle_cosine(CGAL::sign(num), sqnum, sqden);
+}
+
 template<typename Point, typename Geom_traits>
 Dihedral_angle_cosine max_cos_dihedral_angle(const Point& p,
                                              const Point& q,
@@ -326,27 +350,70 @@ Dihedral_angle_cosine max_cos_dihedral_angle(const Point& p,
                                              const Point& s,
                                              const Geom_traits& gt)
 {
-  Dihedral_angle_cosine a = cos_dihedral_angle(p, q, r, s, gt);
-  Dihedral_angle_cosine max_cos_dh = a;
-  if(max_cos_dh.is_one()) return max_cos_dh;
+  using FT = typename Geom_traits::FT;
+  using Vector_3 = typename Geom_traits::Vector_3;
 
-  a = cos_dihedral_angle(p, r, s, q, gt);
-  if(max_cos_dh < a) max_cos_dh = a;
+  auto vector = gt.construct_vector_3_object();
+  auto cross = gt.construct_cross_product_vector_3_object();
+
+  const Vector_3 qp = vector(q, p);
+  const Vector_3 qr = vector(q, r);
+  const Vector_3 qs = vector(q, s);
+  const Vector_3 ps = vector(p, s);
+  const Vector_3 pr = vector(p, r);
+
+  //compute normals pointing outside tetrahedron
+  const Vector_3 n_pqr = cross(qp, qr);
+  if (CGAL::NULL_VECTOR == n_pqr)
+    return Dihedral_angle_cosine(CGAL::POSITIVE, 1., 1.);
+
+  const Vector_3 n_pqs = cross(qs, qp);
+  if (CGAL::NULL_VECTOR == n_pqs)
+    return Dihedral_angle_cosine(CGAL::POSITIVE, 1., 1.);
+
+  const Vector_3 n_qrs = cross(qr, qs);
+  if (CGAL::NULL_VECTOR == n_qrs)
+    return Dihedral_angle_cosine(CGAL::POSITIVE, 1., 1.);
+
+  const Vector_3 n_prs = cross(ps, pr);
+  if (CGAL::NULL_VECTOR == n_prs)
+    return Dihedral_angle_cosine(CGAL::POSITIVE, 1., 1.);
+
+  //pre-compute normals lengths to avoid multiple computations
+  const FT sql_pqr = n_pqr.squared_length();
+  const FT sql_pqs = n_pqs.squared_length();
+
+  // find max in all 6 edges
+  // edge pq (pqr, pqs)
+  Dihedral_angle_cosine max_cos_dh
+    = cos_dihedral_angle(n_pqr, n_pqs, sql_pqr, sql_pqs, gt);
   if (max_cos_dh.is_one()) return max_cos_dh;
 
-  a = cos_dihedral_angle(p, s, q, r, gt);
+  // edge qr (pqr, qrs)
+  const FT sql_qrs = n_qrs.squared_length();
+  Dihedral_angle_cosine a
+    = cos_dihedral_angle(n_pqr, n_qrs, sql_pqr, sql_qrs, gt);
+  if (a.is_one())     return a;
   if (max_cos_dh < a) max_cos_dh = a;
-  if (max_cos_dh.is_one()) return max_cos_dh;
 
-  a = cos_dihedral_angle(q, r, p, s, gt);
+  // edge pr (pqr, prs)
+  const FT sql_prs = n_prs.squared_length();
+  a = cos_dihedral_angle(n_pqr, n_prs, sql_pqr, sql_prs, gt);
+  if (a.is_one())     return a;
   if (max_cos_dh < a) max_cos_dh = a;
-  if (max_cos_dh.is_one()) return max_cos_dh;
 
-  a = cos_dihedral_angle(q, s, r, p, gt);
+  // edge ps (pqs, prs)
+  a = cos_dihedral_angle(n_pqs, n_prs, sql_pqs, sql_prs, gt);
+  if (a.is_one())     return a;
   if (max_cos_dh < a) max_cos_dh = a;
-  if (max_cos_dh.is_one()) return max_cos_dh;
 
-  a = cos_dihedral_angle(r, s, p, q, gt);
+  // edge qs (pqs, qrs)
+  a = cos_dihedral_angle(n_pqs, n_qrs, sql_pqs, sql_qrs, gt);
+  if (a.is_one())     return a;
+  if (max_cos_dh < a) max_cos_dh = a;
+
+  // edge rs (prs, qrs)
+  a = cos_dihedral_angle(n_prs, n_qrs, sql_prs, sql_qrs, gt);
   if (max_cos_dh < a) max_cos_dh = a;
 
   CGAL_assertion_code(const double cosdh = max_cos_dh.value());
