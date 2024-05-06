@@ -52,7 +52,7 @@ public:
 namespace CGAL {
 /// \enum CDT_3_vertex_marker
 /// @brief Enum type for vertex markers
-/// \addtogroup PkgCT_3_enums
+/// \ingroup PkgCT_3_enums
 enum class CDT_3_vertex_marker {
   CLEAR = 0,     ///< No marker
   REGION_BORDER, ///< On the border of the region
@@ -64,6 +64,6 @@ enum class CDT_3_vertex_marker {
 };
 
 /// \enum CDT_3_vertex_type
-/// \addtogroup PkgCT_3_enums
+/// \ingroup PkgCT_3_enums
 enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
 }
