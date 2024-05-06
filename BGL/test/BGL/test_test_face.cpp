@@ -1,6 +1,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <vector>
 #include <iostream>
