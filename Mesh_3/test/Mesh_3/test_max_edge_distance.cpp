@@ -246,7 +246,7 @@ public:
 };
 
 
-int main(int argc, char* argv[])
+int main()
 {
   Distance_polyhedral_tester<> test_epic_poly;
   std::cerr << "Mesh generation with edge_distance from polyhedral domain:\n";
