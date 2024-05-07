@@ -8,9 +8,9 @@ namespace CGAL {
 
 Factory class, whose only purpose is to randomly generate some convex domains of surfaces of genus two.
 
-\tparam Traits_2 is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits`.
 */
-template<class Traits_2>
+template<class Traits>
 class Hyperbolic_fundamental_domain_factory_2{
 public:
   /// \name Creation
@@ -26,7 +26,7 @@ public:
   /*!
     Randomly generates a convex domain of a closed orientable hyperbolic surface of genus two.
   */
-  Hyperbolic_fundamental_domain_2<Traits_2> generate_domain_g2();
+  Hyperbolic_fundamental_domain_2<Traits> generate_domain_g2();
   /// @}
 
 };

@@ -36,14 +36,14 @@ int main() {
   z1_gmpq = -z1_gmpq;
 
   Complex_gmpq z2_gmpq;
-  z2_gmpq.set_real(Gmpq(-5,7));
-  z2_gmpq.set_imag(Gmpq(11,13));
+  z2_gmpq.set_real_part(Gmpq(-5,7));
+  z2_gmpq.set_imaginary_part(Gmpq(11,13));
   z2_gmpq = z2_gmpq.conjugate() + z1_gmpq - one_gmpq;
 
   assert( - z1_gmpq * z1_gmpq / z2_gmpq == -Complex_gmpq(Gmpq(855491,632146), Gmpq(844298,316073)) );
 
-  assert( z1_gmpq.real() == Gmpq(-1,2) );
-  assert( z1_gmpq.imag() == Gmpq(3) );
+  assert( z1_gmpq.real_part() == Gmpq(-1,2) );
+  assert( z1_gmpq.imaginary_part() == Gmpq(3) );
   assert( z1_gmpq.squared_modulus() == Gmpq(37,4) );
   assert( z1_gmpq != z2_gmpq);
   assert( z2_gmpq == z2_gmpq );
@@ -68,14 +68,14 @@ int main() {
   z1_integer = -z1_integer;
 
   Complex_integer z2_integer;
-  z2_integer.set_real(Exact_integer(-7));
-  z2_integer.set_imag(Exact_integer(43));
+  z2_integer.set_real_part(Exact_integer(-7));
+  z2_integer.set_imaginary_part(Exact_integer(43));
   z2_integer = z2_integer.conjugate() + z1_integer - one_integer;
 
   assert( z1_integer * z1_integer / z2_integer == Complex_integer(Exact_integer(0),Exact_integer(0)) );
 
-  assert( z1_integer.real() ==  Exact_integer(-17) );
-  assert( z1_integer.imag() ==  Exact_integer(13) );
+  assert( z1_integer.real_part() ==  Exact_integer(-17) );
+  assert( z1_integer.imaginary_part() ==  Exact_integer(13) );
   assert( z1_integer.squared_modulus() == 458 );
   assert( z1_integer != z2_integer);
   assert( z2_integer == z2_integer );

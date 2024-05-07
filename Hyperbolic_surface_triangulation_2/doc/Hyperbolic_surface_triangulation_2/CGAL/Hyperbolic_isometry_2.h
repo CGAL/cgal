@@ -12,11 +12,22 @@ so that f(z) = (c0 z + c1) / (c2 z + c3) holds on every complex z in the open un
 
 Facilities are offered to compose isometries, and apply an isometry to a point.
 
-\tparam Traits_2 is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits`.
 */
-template<class Traits_2>
+template<class Traits>
 class Hyperbolic_isometry_2{
   public:
+    /// \name Types
+    /// @{
+    /*!
+    Complex number type.
+    */
+    typedef typename Traits::Complex                         ComplexNumber;
+    /*!
+    Point type.
+    */
+    typedef typename Traits::Hyperbolic_point_2              Point;
+    /// @}
     /// \name Creation
     /// @{
     /*!
@@ -25,7 +36,7 @@ class Hyperbolic_isometry_2{
     Hyperbolic_isometry_2();
     /// @}
 
-    /// \name Get and set
+    /// \name Access functions
     /// @{
     /*!
       Set the isometry to the identity.
@@ -35,17 +46,17 @@ class Hyperbolic_isometry_2{
     /*!
       Can be used to set the coefficients of the isometry manually, be careful when doing so : the implementation does not check that the resulting moebius transform fixes the unit circle.
     */
-    void set_coefficients(const Traits_2::Complex& c0, const Traits_2::Complex& c1, const Traits_2::Complex& c2, const Traits_2::Complex& c3);
+    void set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3);
 
     /*!
       Can be used to set one coefficient of the isometry manually, be careful when doing so : the implementation does not check that the resulting moebius transform fixes the unit circle.
     */
-    void set_coefficient(int index, const Traits_2::Complex& coefficient);
+    void set_coefficient(int index, const ComplexNumber& coefficient);
 
     /*!
       Returns the index-th coefficient.
     */
-    Traits_2::Complex get_coefficient(int index) const;
+    ComplexNumber get_coefficient(int index) const;
     /// @}
 
     /// \name Operations
@@ -53,13 +64,22 @@ class Hyperbolic_isometry_2{
     /*!
       Evaluates the isometry at the point.
     */
-    Traits_2::Hyperbolic_point_2 evaluate(const Traits_2::Hyperbolic_point_2& point) const;
+    Point evaluate(const Point& point) const;
 
     /*!
       Returns the composition of itself and other.
     */
-    Hyperbolic_isometry_2<Traits_2> compose(const Hyperbolic_isometry_2<Traits_2>& other) const;
+    Hyperbolic_isometry_2<Traits> compose(const Hyperbolic_isometry_2<Traits>& other) const;
     /// @}
+
+    /// \name Input/output
+    /// @{
+    /*!
+    Writes the isometry in a stream.
+    */
+    template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
+    /// @}
+
 
 };
 

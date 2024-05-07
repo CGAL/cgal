@@ -44,7 +44,7 @@ int main(){
   triangulation.make_delaunay();
 
   // Saves the triangulation:
-std::ofstream  output_file = std::ofstream ("OutputTriangulation.txt");
+  std::ofstream  output_file = std::ofstream ("OutputTriangulation.txt");
   output_file << triangulation;
   output_file.close();
 
