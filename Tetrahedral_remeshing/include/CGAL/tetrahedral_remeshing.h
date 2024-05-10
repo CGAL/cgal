@@ -89,7 +89,7 @@ namespace CGAL
 * @param sizing the target edge length. This parameter provides a
 *          mesh density target for the remeshing algorithm.
 *          It can be a number convertible to `double`,
-*          or an instance of a model of `SizingField_3`.
+*          or an instance of a model of `RemeshingSizingField_3`.
 * @param np optional sequence of \ref bgl_namedparameters "Named Parameters"
 *          among the ones listed below
 *
