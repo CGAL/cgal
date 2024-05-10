@@ -68,13 +68,6 @@ tetrahedra edge lengths remain locally close to the local size of simplices in t
 The difference between remeshing with uniform and adaptive
 sizing fields is depicted in \cgalFigureRef{uniform_and_adaptive_tet}.
 
-#params for Mesh_3 armadillo
-#(facet min angle: 25 )
-#( facet max size: 11 )
-#( facet approx error: 0.1 )
-#( tet shape (radius-edge): 3 )
-#( tet max size: 11 )
-
 \cgalFigureBegin{uniform_and_adaptive_tet, uniform_and_adaptive_remeshing.png}
 Tetrahedral mesh, modified by our tetrahedral remeshing method.
 (Left) Before remeshing;
