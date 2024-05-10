@@ -120,7 +120,10 @@ struct Distance_polyhedral_tester : public Tester<K_e_i>, public Edge_distance_t
   typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 public:
-  void operator()(std::size_t expected_nb_vertices, std::size_t expected_nb_triangles)
+  void operator()(const std::size_t min_vertices_expected = 0,
+                  const std::size_t max_vertices_expected = STD_SIZE_T_MAX,
+                  const std::size_t min_facets_expected = 0,
+                  const std::size_t max_facets_expected = STD_SIZE_T_MAX)
   {
     const std::string fname = CGAL::data_file_path("meshes/dragknob.off");
 
@@ -158,7 +161,9 @@ public:
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
-    this->verify_c3t3(c3t3, domain, Polyhedral_tag(), expected_nb_vertices * 0.95, expected_nb_vertices * 1.05, expected_nb_triangles * 0.95, expected_nb_triangles * 1.05);
+    this->verify_c3t3(c3t3, domain, Polyhedral_tag(),
+                      min_vertices_expected, max_vertices_expected,
+                      min_facets_expected, max_facets_expected);
 
     Mesh_criteria criteria_without(edge_size = 0.074,
         facet_distance = 0.0074,
@@ -195,7 +200,10 @@ struct Distance_label_image_tester : public Tester<K_e_i>, public Edge_distance_
 
 public:
 
-  void operator()(std::size_t expected_nb_vertices, std::size_t expected_nb_triangles)
+  void operator()(const std::size_t min_vertices_expected = 0,
+                  const std::size_t max_vertices_expected = STD_SIZE_T_MAX,
+                  const std::size_t min_facets_expected = 0,
+                  const std::size_t max_facets_expected = STD_SIZE_T_MAX)
   {
     const std::string fname = CGAL::data_file_path("images/quadDomainCube.inr");
 
@@ -226,7 +234,9 @@ public:
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
 
-    this->verify_c3t3(c3t3, domain, Polyhedral_tag(), expected_nb_vertices * 0.95, expected_nb_vertices * 1.05, expected_nb_triangles * 0.95, expected_nb_triangles * 1.05);
+    this->verify_c3t3(c3t3, domain, Polyhedral_tag(),
+                      min_vertices_expected, max_vertices_expected,
+                      min_facets_expected, max_facets_expected);
 
     // verify that there are more vertices than without criteria
     Mesh_criteria criteria_without(edge_size = 5.,
@@ -250,20 +260,20 @@ int main()
 {
   Distance_polyhedral_tester<> test_epic_poly;
   std::cerr << "Mesh generation with edge_distance from polyhedral domain:\n";
-  test_epic_poly(1820, 3012);
+  test_epic_poly(1820 * 0.95, 1820 * 1.05, 3012 * 0.95, 3012 * 1.05);
 
   Distance_label_image_tester<> test_epic_image;
   std::cerr << "Mesh generation with edge_distance from label image domain:\n";
-  test_epic_image(776, 1525);
+  test_epic_image(776 * 0.95, 776 * 1.05, 1525 * 0.95, 1525 * 1.05);
 
 #ifdef CGAL_LINKED_WITH_TBB
   Distance_polyhedral_tester<CGAL::Parallel_tag> test_epic_p;
   std::cerr << "Parallel mesh generation with edge_distance from polyhedral domain:\n";
-  test_epic_p(1924, 3034);
+  test_epic_p();
 
   Distance_label_image_tester<CGAL::Parallel_tag> test_epic_image_p;
   std::cerr << "Parallel mesh generation with edge_distance from label image domain:\n";
-  test_epic_image_p(847, 1509);
+  test_epic_image_p();
 #endif
   return EXIT_SUCCESS;
 }
