@@ -112,11 +112,11 @@ struct Graphics_scene_options_surface_mesh
 
   Graphics_scene_options_surface_mesh(const SM& amesh)
   {
-    bool found=false;
-    std::tie(vcolors, found)=
+    auto _vcolors =
         amesh.template property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
-    if(found)
+    if(_vcolors.has_value())
     {
+      vcolors = *_vcolors;
       this->colored_vertex=[](const SM &, vertex_descriptor)->bool { return true; };
       this->vertex_color=[this](const SM &, vertex_descriptor v)->CGAL::IO::Color
       { return get(vcolors, v); };
@@ -124,10 +124,11 @@ struct Graphics_scene_options_surface_mesh
     else
     { this->colored_vertex=[](const SM &, vertex_descriptor)->bool { return false; }; }
 
-    std::tie(ecolors, found)=
+    auto _ecolors =
         amesh.template property_map<edge_descriptor, CGAL::IO::Color>("e:color");
-    if(found)
+    if(_ecolors.has_value())
     {
+      ecolors = *_ecolors;
       this->colored_edge=[](const SM &, edge_descriptor)->bool { return true; };
       this->edge_color=[this](const SM &, edge_descriptor e)->CGAL::IO::Color
       { return get(ecolors, e); };
@@ -135,10 +136,11 @@ struct Graphics_scene_options_surface_mesh
     else
     { this->colored_edge=[](const SM &, edge_descriptor)->bool { return false; }; }
 
-    std::tie(fcolors, found)=
+    auto _fcolors =
         amesh.template property_map<face_descriptor, CGAL::IO::Color>("f:color");
-    if(found)
+    if(_fcolors.has_value())
     {
+      fcolors = *_fcolors;
       this->colored_face=[](const SM &, face_descriptor)->bool { return true; };
       this->face_color=[this](const SM &, face_descriptor f)->CGAL::IO::Color
       { return get(fcolors, f); };

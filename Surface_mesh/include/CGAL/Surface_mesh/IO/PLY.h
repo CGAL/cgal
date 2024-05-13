@@ -463,9 +463,8 @@ bool fill_simplex_specific_header(std::ostream& os,
   bool okay = false;
   if(prop == "v:normal")
   {
-    Vector_map pmap;
-    std::tie(pmap, okay) = sm.template property_map<VIndex, Vector>(prop);
-    if(okay)
+    auto pmap = sm.template property_map<VIndex, Vector>(prop);
+    if(pmap.has_value())
     {
       if(std::is_same<FT, float>::value)
       {
@@ -479,23 +478,22 @@ bool fill_simplex_specific_header(std::ostream& os,
            << "property double ny" << std::endl
            << "property double nz" << std::endl;
       }
-      printers.push_back(new Property_printer<VIndex, Vector_map>(pmap));
+      printers.push_back(new Property_printer<VIndex, Vector_map>(*pmap));
       return true;
     }
   }
 
   if(prop == "v:color")
   {
-    Vcolor_map pmap;
-    std::tie(pmap, okay) = sm.template property_map<VIndex, Color>(prop);
-    if(okay)
+    auto pmap = sm.template property_map<VIndex, Color>(prop);
+    if(pmap.has_value())
     {
       os << "property uchar red" << std::endl
          << "property uchar green" << std::endl
          << "property uchar blue" << std::endl
          << "property uchar alpha" << std::endl;
 
-      printers.push_back(new Property_printer<VIndex, Vcolor_map>(pmap));
+      printers.push_back(new Property_printer<VIndex, Vcolor_map>(*pmap));
       return true;
     }
   }
@@ -520,16 +518,15 @@ bool fill_simplex_specific_header(std::ostream& os,
   bool okay = false;
   if(prop == "f:color")
   {
-    Fcolor_map pmap;
-    std::tie(pmap, okay) = sm.template property_map<FIndex, Color>(prop);
-    if(okay)
+    auto pmap = sm.template property_map<FIndex, Color>(prop);
+    if(pmap.has_value())
     {
       os << "property uchar red" << std::endl
          << "property uchar green" << std::endl
          << "property uchar blue" << std::endl
          << "property uchar alpha" << std::endl;
 
-      printers.push_back(new Property_printer<FIndex, Fcolor_map>(pmap));
+      printers.push_back(new Property_printer<FIndex, Fcolor_map>(*pmap));
       return true;
     }
   }
@@ -644,25 +641,23 @@ void fill_header_impl(std::tuple<T,TN...>,
   bool okay = false;
   {
     typedef typename Surface_mesh<Point>::template Property_map<Simplex, T>   Pmap;
-    Pmap pmap;
-    std::tie(pmap, okay) = sm.template property_map<Simplex,T>(pname);
-    if(okay)
+    auto pmap  = sm.template property_map<Simplex,T>(pname);
+    if(pmap.has_value())
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_printer<Simplex,Pmap>(pmap));
+      printers.push_back(new internal::Simple_property_printer<Simplex,Pmap>(*pmap));
       return;
     }
   }
   {
     typedef typename Surface_mesh<Point>::template Property_map<Simplex, std::vector<T>>   Pmap;
-    Pmap pmap;
-    std::tie(pmap, okay) = sm.template property_map<Simplex,std::vector<T>>(pname);
-    if(okay)
+    auto pmap  = sm.template property_map<Simplex,std::vector<T>>(pname);
+    if(pmap.has_value())
     {
       std::string name = get_property_raw_name<Point>(pname, Simplex());
       os << "property list uchar " << type_strings[cid] << " " << name << std::endl;
-      printers.push_back(new internal::Simple_property_vector_printer<Simplex,Pmap>(pmap));
+      printers.push_back(new internal::Simple_property_vector_printer<Simplex,Pmap>(*pmap));
       return;
     }
   }
