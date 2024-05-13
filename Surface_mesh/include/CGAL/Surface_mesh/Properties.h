@@ -20,6 +20,7 @@
 #include <CGAL/property_map.h>
 
 #include <algorithm>
+#include <optional>
 #include <string>
 #include <typeinfo>
 #include <vector>

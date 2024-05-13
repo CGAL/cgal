@@ -100,7 +100,7 @@ typename boost::lazy_disable_if<
 inline get(CGAL::face_patch_id_t<I>, const Surface_mesh<P> & smesh)
 {
  typedef typename boost::graph_traits<Surface_mesh<P> >::face_descriptor face_descriptor;
-  return smesh. template property_map<face_descriptor,I>("f:patch_id").first;
+  return *smesh. template property_map<face_descriptor,I>("f:patch_id");
 }
 
 
@@ -134,7 +134,7 @@ CGAL_PROPERTY_SURFACE_MESH_RETURN_TYPE(CGAL::edge_is_feature_t)
 inline get(CGAL::edge_is_feature_t, const Surface_mesh<P>& smesh)
 {
   typedef typename boost::graph_traits<Surface_mesh<P> >::edge_descriptor edge_descriptor;
-  return smesh. template property_map<edge_descriptor,bool>("e:is_feature").first;
+  return *smesh. template property_map<edge_descriptor,bool>("e:is_feature");
 }
 
 
