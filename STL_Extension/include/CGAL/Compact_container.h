@@ -27,6 +27,7 @@
 #include <functional>
 #include <atomic>
 
+#include <CGAL/use.h>
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
@@ -383,6 +384,7 @@ public:
     pointer ret = free_list;
     free_list = clean_pointee(ret);
     std::size_t ts;
+    CGAL_USE(ts);
     if constexpr (Time_stamper::has_timestamp) {
       ts = ret->time_stamp();
     }
