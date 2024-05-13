@@ -317,7 +317,7 @@ auto make_sorted_pair(Pair&& pair) {
 
 template <class F>
 class [[nodiscard]] Scope_exit {
-  [[no_unique_address]] F exit_function;
+  CGAL_NO_UNIQUE_ADDRESS F exit_function;
 
 public:
   template <typename G>
