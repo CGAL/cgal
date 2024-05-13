@@ -13,7 +13,7 @@ if(Eigen3_FOUND)
   message(STATUS "Found Eigen")
   include(CGAL_Eigen_support)
 
-  set(targets kinetic_2d_stress_test issue8198 kinetic_3d_test_all)
+  set(targets kinetic_3d_test_all)
 
   foreach(target ${targets})
     create_single_source_cgal_program("${target}.cpp")
