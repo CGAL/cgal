@@ -359,8 +359,8 @@ public:
     other.resize(m_base.size());
     other.transfer(m_base);
     m_base.swap(other);
-    m_indices = this->property_map<Index>("index").first;
-    m_points = this->property_map<Point>("point").first;
+    m_indices = *this->property_map<Index>("index");
+    m_points = *this->property_map<Point>("point");
   }
 
   /*!
@@ -784,9 +784,9 @@ public:
   template <typename T>
   bool has_property_map (const std::string& name) const
   {
-    std::pair<Property_map<T>, bool>
+    std::optional<Property_map<T>>
       pm = m_base.template get<T> (name);
-    return pm.second;
+    return pm.has_value();
   }
 
   /*!
@@ -806,10 +806,7 @@ public:
   std::pair<Property_map<T>, bool>
   add_property_map (const std::string& name, const T t=T())
   {
-    Property_map<T> pm;
-    bool added = false;
-    std::tie (pm, added) = m_base.template add<T> (name, t);
-    return std::make_pair (pm, added);
+    return m_base.template add<T>(name, t);
   }
 
   /*!
@@ -824,13 +821,10 @@ public:
     to `false` (if the property was not found).
   */
   template <class T>
-  std::pair<Property_map<T>,bool>
+  std::optional<Property_map<T>>
   property_map (const std::string& name) const
   {
-    Property_map<T> pm;
-    bool okay = false;
-    std::tie (pm, okay) = m_base.template get<T>(name);
-    return std::make_pair (pm, okay);
+    return m_base.template get<T>(name);
   }
 
   /*!
@@ -857,8 +851,8 @@ public:
   */
   bool has_normal_map() const
   {
-    std::pair<Vector_map, bool> pm = this->property_map<Vector> ("normal");
-    return pm.second;
+    std::optional<Vector_map> pm = this->property_map<Vector> ("normal");
+    return pm.has_value();
   }
   /*!
     \brief Convenience method that adds a normal property.
@@ -936,7 +930,9 @@ public:
   {
     m_base.copy_properties (other.base());
 
-    m_normals = this->property_map<Vector> ("normal").first; // In case normal was added
+    auto normals = this->property_map<Vector>("normal");
+    if (normals.has_value())
+      m_normals = *normals; // In case normal was added
   }
 
 
