@@ -1281,9 +1281,9 @@ is_valid(bool verbose,
     std::advance(it3, 2);
     while(it3 != vertices_end())
     {
-      const Orientation s = orientation(point(it1), point(it2), point(it3));
-      result = result && (s == COLLINEAR);
-      CGAL_triangulation_assertion(result);
+      const Orientation s = orientation_on_sphere(point(it1), point(it2), point(it3));
+      result = result && (s == COPLANAR);
+      CGAL_assertion(result);
       ++it1; ++it2; ++it3;
     }
   }
