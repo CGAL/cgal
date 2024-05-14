@@ -4,6 +4,7 @@ project( Triangulation_on_sphere_2_Tests )
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 
+
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 
@@ -15,6 +16,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "test_dtos_illegal_points.cpp" )
   create_single_source_cgal_program( "test_dtos_projection_traits.cpp" )
   create_single_source_cgal_program( "test_dtos_traits.cpp" )
+  create_single_source_cgal_program( "issue_8200.cpp" )
 
   if(TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program( "test_dtos_dual.cpp" )
