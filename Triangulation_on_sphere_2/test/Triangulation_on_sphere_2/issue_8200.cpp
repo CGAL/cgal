@@ -51,6 +51,12 @@ int main(int, char**)
   in >> dtos2;
   in.close();
 
+    std::cout << "After write/read triangulation has dimension: " << dtos2.dimension() << " and\n";
+    std::cout << dtos2.number_of_vertices() << " vertices" << std::endl;
+    std::cout << dtos2.number_of_edges() << " edges" << std::endl;
+    std::cout << dtos2.number_of_solid_faces() << " solid faces" << std::endl;
+    std::cout << dtos2.number_of_ghost_faces() << " ghost faces" << std::endl;
+
   CGAL::IO::write_OFF("dtos2.off", dtos2, CGAL::parameters::stream_precision(17));
 
 
