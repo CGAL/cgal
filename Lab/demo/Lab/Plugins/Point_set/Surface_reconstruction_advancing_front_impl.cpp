@@ -193,7 +193,7 @@ SMesh* advancing_front (const Point_set& points,
   if (structuring) // todo
   {
     Point_set::Property_map<int> shape_map
-      = points.property_map<int>("shape").first;
+      = points.property_map<int>("shape").value();
 
     typedef CGAL::Point_set_with_structure<Kernel> Structuring;
     std::vector<Plane_3> planes;

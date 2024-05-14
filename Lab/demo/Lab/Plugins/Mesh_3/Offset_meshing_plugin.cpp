@@ -743,7 +743,7 @@ inflate_mesh()
     return;
 
   auto vpm = get(CGAL::vertex_point, *sMesh);
-  auto vnm = sMesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
+  auto vnm = sMesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").value();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 

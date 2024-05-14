@@ -525,7 +525,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property char " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int8_map>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int8_map>(pmap.value()));
         continue;
       }
     }
@@ -534,7 +534,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property uchar " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint8_map>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint8_map>(pmap.value()));
         continue;
       }
     }
@@ -543,7 +543,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property short " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int16_map>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int16_map>(pmap.value()));
         continue;
       }
     }
@@ -552,7 +552,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property ushort " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint16_map>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint16_map>(pmap.value()));
         continue;
       }
     }
@@ -561,7 +561,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property int " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int32_map>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int32_map>(pmap.value()));
         continue;
       }
     }
@@ -570,7 +570,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property uint " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint32_map>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint32_map>(pmap.value()));
         continue;
       }
     }
@@ -579,7 +579,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property int " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,std::int32_t>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Int64_map,std::int32_t>(pmap.value()));
         continue;
       }
     }
@@ -588,7 +588,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property uint " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,std::uint32_t>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Uint64_map,std::uint32_t>(pmap.value()));
         continue;
       }
     }
@@ -597,7 +597,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property float " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Float_map>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Float_map>(pmap.value()));
         continue;
       }
     }
@@ -606,7 +606,7 @@ bool write_PLY(std::ostream& os,
       if(pmap.has_value())
       {
         os << "property double " << prop[i] << std::endl;
-        printers.push_back(new internal::Simple_property_printer<Index,Double_map>(*pmap));
+        printers.push_back(new internal::Simple_property_printer<Index,Double_map>(pmap.value()));
         continue;
       }
     }

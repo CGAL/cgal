@@ -437,10 +437,10 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       smesh_->points();
 
   SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
-      smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
+      smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").value();
 
   SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
-      smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
+      smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").value();
 
   boost::property_map< SMesh, boost::vertex_index_t >::type
       im = get(boost::vertex_index, *smesh_);
@@ -500,9 +500,9 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   if(name.testFlag(Scene_item_rendering_helper::COLORS))
   {
 
-    has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").second;
-    has_fcolors = smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").second;
-    has_vcolors = smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").second;
+    has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").has_value();
+    has_fcolors = smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").has_value();
+    has_vcolors = smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").has_value();
   }
   if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
   {
@@ -1461,24 +1461,25 @@ void Scene_surface_mesh_item::setItemIsMulticolor(bool b)
   }
   else
   {
-    if(d->smesh_->property_map<face_descriptor,int>("f:patch_id").second)
+    std::optional<SMesh::Property_map<face_descriptor, int>> fpatch_map = d->smesh_->property_map<face_descriptor, int>("f:patch_id");
+    if(fpatch_map.has_value())
     {
-      d->fpatch_id_map = d->smesh_->property_map<face_descriptor,int>("f:patch_id").first;
+      d->fpatch_id_map = fpatch_map.value();
       d->smesh_->remove_property_map(d->fpatch_id_map);
       d->has_fcolors = false;
     }
-    if(d->smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").second)
+
+    std::optional<SMesh::Property_map<face_descriptor, CGAL::IO::Color>> fpmap = d->smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color");
+    if(fpmap.has_value())
     {
-     SMesh::Property_map<face_descriptor, CGAL::IO::Color> pmap =
-         d->smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
-         d->smesh_->remove_property_map(pmap);
+      d->smesh_->remove_property_map(fpmap.value());
       d->has_fcolors = false;
     }
-    if(d->smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").second)
+
+    std::optional<SMesh::Property_map<vertex_descriptor, CGAL::IO::Color>> vpmap = d->smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color");
+    if(vpmap.has_value())
     {
-      SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> pmap =
-          d->smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
-          d->smesh_->remove_property_map(pmap);
+      d->smesh_->remove_property_map(vpmap.value());
       d->has_vcolors = false;
     }
     this->setProperty("NbPatchIds", 0); //for the joinandsplit_plugin
@@ -1588,12 +1589,11 @@ Scene_surface_mesh_item::load_obj(std::istream& in)
 bool
 Scene_surface_mesh_item::save_obj(std::ostream& out) const
 {
-  SMesh::template Property_map<SMesh::Vertex_index, EPICK::Vector_3> vnormals;
-  bool has_normals = false;
-  boost::tie(vnormals, has_normals) = d->smesh_->template property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
+  std::optional<SMesh::template Property_map<SMesh::Vertex_index, EPICK::Vector_3>> vnormals
+    = d->smesh_->template property_map<SMesh::Vertex_index, EPICK::Vector_3>("v:normal");
 
-  if(has_normals)
-    return CGAL::IO::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(vnormals));
+  if(vnormals.has_value())
+    return CGAL::IO::write_OBJ(out, *(d->smesh_), CGAL::parameters::vertex_normal_map(vnormals.value()));
   else
     return CGAL::IO::write_OBJ(out, *(d->smesh_));
 }
@@ -2530,7 +2530,7 @@ void Scene_surface_mesh_item::fill_flat_vertex_map()
     return;
 
   SMesh::Property_map<face_descriptor, EPICK::Vector_3 > fnormals =
-      face_graph()->property_map<face_descriptor, EPICK::Vector_3 >("f:normal").first;
+      face_graph()->property_map<face_descriptor, EPICK::Vector_3 >("f:normal").value();
 
   d->flat_vertices_map.clear();
   d->flat_vertices_map.resize(face_graph()->number_of_vertices());

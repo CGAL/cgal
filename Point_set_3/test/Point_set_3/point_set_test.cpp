@@ -96,7 +96,7 @@ int main (int, char**)
     }
 
   std::optional<Point_set::Property_map<Color>> color_prop_2 = point_set.property_map<Color>("color");
-  test ((*color_prop_2 == color_prop), "color property not recovered correctly.");
+  test ((color_prop_2.value() == color_prop), "color property not recovered correctly.");
 
   point_set.remove_normal_map ();
   test (!(point_set.has_normal_map()), "point set shouldn't have normals.");

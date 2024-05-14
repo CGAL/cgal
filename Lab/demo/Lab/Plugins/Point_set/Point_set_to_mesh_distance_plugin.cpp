@@ -187,17 +187,16 @@ private Q_SLOTS:
       CGAL::Three::Three::warning("You must select the resulting point set.");
       return;
     }
-    PMap distance_map;
-     boost::tie (distance_map, boost::tuples::ignore) = item->point_set()->property_map<double>("distance");
-   double distance = dock_widget->distance_spinbox->value();
-   for (Point_set::iterator it = item->point_set()->begin();
-        it != item->point_set()->end(); ++ it)
-   {
-     if(distance <= distance_map[*it])
-       item->point_set()->select(*it);
-   }
-   item->invalidateOpenGLBuffers();
-   item->itemChanged();
+    PMap distance_map = item->point_set()->property_map<double>("distance").value();
+    double distance = dock_widget->distance_spinbox->value();
+    for (Point_set::iterator it = item->point_set()->begin();
+         it != item->point_set()->end(); ++ it)
+    {
+      if(distance <= distance_map[*it])
+        item->point_set()->select(*it);
+    }
+    item->invalidateOpenGLBuffers();
+    item->itemChanged();
   }
   void perform()
   {

@@ -40,7 +40,7 @@ void print_point_set (const Point_set& ps, const char* msg)
     if (ps.has_normal_map())
       std::cerr << ", normal " << ps.normal(*it);
     if (intensity.has_value())
-      std::cerr << ", intensity " << (*intensity)[*it];
+      std::cerr << ", intensity " << intensity.value()[*it];
     std::cerr << std::endl;
   }
 }

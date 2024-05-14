@@ -243,9 +243,9 @@ public:
   Point_set_3& operator= (const Point_set_3& ps)
   {
     m_base = ps.m_base;
-    m_indices = this->property_map<Index> ("index").first;
-    m_points = this->property_map<Point> ("point").first;
-    m_normals = this->property_map<Vector> ("normal").first;
+    m_indices = this->property_map<Index> ("index").value();
+    m_points = this->property_map<Point> ("point").value();
+    m_normals = this->property_map<Vector> ("normal").value();
     m_nb_removed = ps.m_nb_removed;
     return *this;
   }
@@ -255,9 +255,9 @@ public:
   Point_set_3 (const Point_set_3& ps)
   {
     m_base = ps.m_base;
-    m_indices = this->property_map<Index> ("index").first;
-    m_points = this->property_map<Point> ("point").first;
-    m_normals = this->property_map<Vector> ("normal").first;
+    m_indices = this->property_map<Index> ("index").value();
+    m_points = this->property_map<Point> ("point").value();
+    m_normals = this->property_map<Vector> ("normal").value();
     m_nb_removed = ps.m_nb_removed;
   }
   /// \endcond
@@ -816,9 +816,7 @@ public:
 
     \param name Name of the property.
 
-    \return Returns a pair containing: the specified property map and a
-    Boolean set to `true` or an empty property map and a Boolean set
-    to `false` (if the property was not found).
+    \return Returns an optional property map (empty if the property was not found).
   */
   template <class T>
   std::optional<Property_map<T>>

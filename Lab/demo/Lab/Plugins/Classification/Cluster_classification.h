@@ -124,14 +124,13 @@ class Cluster_classification : public Item_classification_base
   bool try_adding_simple_feature (Feature_set& feature_set, const std::string& name)
   {
     typedef typename Point_set::template Property_map<Type> Pmap;
-    bool okay = false;
-    Pmap pmap;
-    boost::tie (pmap, okay) = m_points->point_set()->template property_map<Type>(name.c_str());
-    if (okay)
-      feature_set.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
-        (*(m_points->point_set()), pmap, name.c_str());
 
-    return okay;
+    std::optional<Pmap> pmap = m_points->point_set()->template property_map<Type>(name.c_str());
+    if (pmap.has_value())
+      feature_set.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
+        (*(m_points->point_set()), pmap.value(), name.c_str());
+
+    return pmap.has_value();
   }
 
   void add_selection_to_training_set (std::size_t label)
