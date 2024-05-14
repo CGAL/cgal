@@ -45,14 +45,14 @@ int main(int, char**)
   out.close();
 
   CGAL::IO::write_OFF("dtos.off", dtos, CGAL::parameters::stream_precision(17));
-  
+
   DToS2 dtos2(traits);
   std::ifstream in("dtos.txt");
   in >> dtos2;
   in.close();
 
   CGAL::IO::write_OFF("dtos2.off", dtos2, CGAL::parameters::stream_precision(17));
-  
+
 
   return EXIT_SUCCESS;
 }
