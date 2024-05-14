@@ -41,7 +41,7 @@ int main()
   }
 
   //  You can't get a property that does not exist
-  Mesh::Property_map<face_descriptor,std::string> gnus = *m.property_map<face_descriptor,std::string>("v:gnus");
+  Mesh::Property_map<face_descriptor,std::string> gnus = m.property_map<face_descriptor,std::string>("v:gnus").value();
 
   // retrieve the point property for which exists a convenience function
   Mesh::Property_map<vertex_descriptor, K::Point_3> location = m.points();

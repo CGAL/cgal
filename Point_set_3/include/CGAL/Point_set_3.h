@@ -359,8 +359,8 @@ public:
     other.resize(m_base.size());
     other.transfer(m_base);
     m_base.swap(other);
-    m_indices = *this->property_map<Index>("index");
-    m_points = *this->property_map<Point>("point");
+    m_indices = this->property_map<Index>("index").value();
+    m_points = this->property_map<Point>("point").value();
   }
 
   /*!

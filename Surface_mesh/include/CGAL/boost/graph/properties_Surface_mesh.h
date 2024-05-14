@@ -41,9 +41,9 @@ public:
   typedef typename SM::Edge_index                         key_type;
 
   SM_edge_weight_pmap(const CGAL::Surface_mesh<Point>& sm)
-    : pm_(*sm. template property_map<
+    : pm_(sm. template property_map<
             typename SM::Vertex_index,
-            typename SM::Point >("v:point")),
+            typename SM::Point >("v:point").value()),
       sm_(sm)
     {}
 

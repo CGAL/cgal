@@ -397,7 +397,7 @@ public:
     {
       std::optional<Get_pmap_type<T>::type> out = get<T>(name);
       if (out.has_value())
-        return *out;
+        return out.value();
       else
         return add<T>(name, t).first;
     }

@@ -2314,13 +2314,13 @@ operator=(const Surface_mesh<P>& rhs)
         fprops_ = rhs.fprops_;
 
         // property handles contain pointers, have to be reassigned
-        vconn_    = *property_map<Vertex_index, Vertex_connectivity>("v:connectivity");
-        hconn_    = *property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity");
-        fconn_    = *property_map<Face_index, Face_connectivity>("f:connectivity");
-        vremoved_ = *property_map<Vertex_index, bool>("v:removed");
-        eremoved_ = *property_map<Edge_index, bool>("e:removed");
-        fremoved_ = *property_map<Face_index, bool>("f:removed");
-        vpoint_   = *property_map<Vertex_index, P>("v:point");
+        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity").value();
+        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").value();
+        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity").value();
+        vremoved_ = property_map<Vertex_index, bool>("v:removed").value();
+        eremoved_ = property_map<Edge_index, bool>("e:removed").value();
+        fremoved_ = property_map<Face_index, bool>("f:removed").value();
+        vpoint_   = property_map<Vertex_index, P>("v:point").value();
 
         // how many elements are removed?
         removed_vertices_  = rhs.removed_vertices_;

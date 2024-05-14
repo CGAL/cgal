@@ -392,8 +392,8 @@ bool write_OFF_with_or_without_fcolors(std::ostream& os,
 
   auto fcolors  = sm.template property_map<Face_index, CGAL::IO::Color>("f:color");
 
-  if(!has_fcolors && fcolors.has_value() && std::distance(fcolors->begin(), fcolors->end()) > 0)
-    return write_OFF_BGL(os, sm, np.face_color_map(*fcolors));
+  if(!has_fcolors && fcolors.has_value() && std::distance(fcolors.value().begin(), fcolors.value().end()) > 0)
+    return write_OFF_BGL(os, sm, np.face_color_map(fcolors.value()));
   else
     return write_OFF_BGL(os, sm, np);
 }
@@ -415,8 +415,8 @@ bool write_OFF_with_or_without_vtextures(std::ostream& os,
 
   auto vtextures = sm.template property_map<Vertex_index, Texture>("v:texcoord");
 
-  if(!has_vtextures && vtextures.has_value() && std::distance(vtextures->begin(), vtextures->end()) > 0)
-    return write_OFF_with_or_without_fcolors(os, sm, np.vertex_texture_map(*vtextures));
+  if(!has_vtextures && vtextures.has_value() && std::distance(vtextures.value().begin(), vtextures.value().end()) > 0)
+    return write_OFF_with_or_without_fcolors(os, sm, np.vertex_texture_map(vtextures.value()));
   else
     return write_OFF_with_or_without_fcolors(os, sm, np);
 }
@@ -437,8 +437,8 @@ bool write_OFF_with_or_without_vcolors(std::ostream& os,
 
   auto vcolors = sm.template property_map<Vertex_index, CGAL::IO::Color>("v:color");
 
-  if(!has_vcolors && vcolors.has_value() && std::distance(vcolors->begin(), vcolors->end()) > 0)
-    return write_OFF_with_or_without_vtextures(os, sm, np.vertex_color_map(*vcolors));
+  if(!has_vcolors && vcolors.has_value() && std::distance(vcolors.value().begin(), vcolors.value().end()) > 0)
+    return write_OFF_with_or_without_vtextures(os, sm, np.vertex_color_map(vcolors.value()));
   else
     return write_OFF_with_or_without_vtextures(os, sm, np);
 }
@@ -460,8 +460,8 @@ bool write_OFF_with_or_without_vnormals(std::ostream& os,
 
   auto vnormals = sm.template property_map<Vertex_index, Normal>("v:normal");
 
-  if(!has_vnormals && vnormals.has_value() && std::distance(vnormals->begin(), vnormals->end()) > 0)
-    return write_OFF_with_or_without_vcolors(os, sm, np.vertex_normal_map(*vnormals));
+  if(!has_vnormals && vnormals.has_value() && std::distance(vnormals.value().begin(), vnormals.value().end()) > 0)
+    return write_OFF_with_or_without_vcolors(os, sm, np.vertex_normal_map(vnormals.value()));
   else
     return write_OFF_with_or_without_vcolors(os, sm, np);
 }
