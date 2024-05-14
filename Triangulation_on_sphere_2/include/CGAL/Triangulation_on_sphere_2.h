@@ -1323,7 +1323,7 @@ Triangulation_on_sphere_2<Gt, Tds>::
 file_input(std::istream& is)
 {
   clear();
-  Vertex_handle v = _tds.file_input(is, true);
+  Vertex_handle v = _tds.file_input(is, false);
   return v;
 }
 
