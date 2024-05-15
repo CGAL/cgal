@@ -74,6 +74,7 @@ Release date: June 2024
      using the aforementioned function on a triangle soup.
 -   Added the function `CGAL::Polygon_mesh_processing::add_bbox()` that enables to add a tight or extended, triangulated or not,
     bounding box to a face graph.
+-   Added the class `CGAL::Corefinement::Non_manifold_output_visitor` that can be used in corefinement based functions to deal with non-manifold outputs.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 - **Breaking change**: The type of the result of point location queries changed to
