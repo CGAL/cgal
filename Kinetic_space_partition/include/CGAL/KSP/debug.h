@@ -915,41 +915,14 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
   }
 }
 
-/*
-template<typename KSP>
-void dump_volumes_ksp(const KSP& ksp, const std::string tag = std::string()) {
-  using Point_3 = typename KSP::Point_3;
-  using Index = typename KSP::Index;
-  std::vector< std::vector<Point_3> > polygons;
-  std::vector<Color> colors;
+template<typename K>
+void dump_polygon(const std::vector<typename K::Point_3>& pts, const std::string& filename) {
+  Saver<K> saver;
+  std::vector<std::vector<typename K::Point_3> > pts2;
+  pts2.push_back(pts);
 
-  std::vector<Index> faces_of_volume;
-  std::vector<Point_3> pts_of_face;
-
-  Saver<typename KSP::Kernel> saver;
-  for (std::size_t i = 0; i < ksp.number_of_volumes(); ++i) {
-    faces_of_volume.clear();
-    polygons.clear();
-    colors.clear();
-
-    const auto color = saver.get_idx_color(i);
-    ksp.faces(i, std::back_inserter(faces_of_volume));
-
-    colors.clear();
-    polygons.clear();
-    for (const Index& f : faces_of_volume) {
-      pts_of_face.clear();
-      ksp.vertices(f, std::back_inserter(pts_of_face));
-
-      polygons.push_back(pts_of_face);
-      colors.push_back(color);
-    }
-
-    const std::string file_name = tag + std::to_string(i);
-    saver.export_polygon_soup_3(polygons, colors, file_name);
-  }
+  saver.export_polygon_soup_3(pts2, filename);
 }
-*/
 
 void dump_polygon(const std::vector<CGAL::Epick::Point_3>& pts, const std::string& filename) {
   Saver<CGAL::Epick> saver;

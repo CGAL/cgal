@@ -30,7 +30,7 @@ namespace internal {
 #else
 
 template<typename GeomTraits, typename IntersectionKernel>
-class FacePropagation {
+class Propagation {
 
 public:
   using Kernel = GeomTraits;
@@ -38,6 +38,7 @@ public:
 
 private:
   using FT = typename Kernel::FT;
+  using IkFT = typename Intersection_kernel::FT;
   using Point_2 = typename Kernel::Point_2;
   using Vector_2 = typename Kernel::Vector_2;
   using Segment_2 = typename Kernel::Segment_2;
@@ -70,7 +71,7 @@ private:
   };
 
 public:
-  FacePropagation(Data_structure& data, const Parameters& parameters) :
+  Propagation(Data_structure& data, const Parameters& parameters) :
     m_data(data), m_parameters(parameters),
     m_min_time(-FT(1)), m_max_time(-FT(1))
   { }
@@ -182,8 +183,8 @@ private:
 
           // Within an interval
           if (ki->second[i].first > event.intersection_bary && ki->second[i - 1].first < event.intersection_bary) {
-            FT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
-            FT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
+            IkFT interval_pos = (event.intersection_bary - ki->second[i - 1].first) / (ki->second[i].first - ki->second[i - 1].first);
+            IkFT interval_time = interval_pos * (ki->second[i].second - ki->second[i - 1].second) + ki->second[i - 1].second;
 
             if (event.time > interval_time) {
               crossing++;
@@ -215,7 +216,7 @@ private:
 
     for (IEdge edge : border) {
       Face_event fe;
-      FT t = m_data.calculate_edge_intersection_time(event.support_plane, edge, fe);
+      IkFT t = m_data.calculate_edge_intersection_time(event.support_plane, edge, fe);
       if (t > 0)
         m_face_queue.push(fe);
     }

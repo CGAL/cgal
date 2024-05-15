@@ -18,7 +18,6 @@
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>
-//#include <boost/filesystem.hpp>
 
 #include <algorithm>
 #include <numeric>
@@ -44,7 +43,7 @@
 
 #include <CGAL/KSP_3/Data_structure.h>
 #include <CGAL/KSP_3/Initializer.h>
-#include <CGAL/KSP_3/FacePropagation.h>
+#include <CGAL/KSP_3/Propagation.h>
 #include <CGAL/KSP_3/Finalizer.h>
 
 #include <CGAL/Octree.h>
@@ -136,7 +135,7 @@ private:
   using To_exact = typename CGAL::Cartesian_converter<Kernel, Intersection_kernel>;
 
   using Initializer = KSP_3::internal::Initializer<Kernel, Intersection_kernel>;
-  using Propagation = KSP_3::internal::FacePropagation<Kernel, Intersection_kernel>;
+  using Propagation = KSP_3::internal::Propagation<Kernel, Intersection_kernel>;
   using Finalizer   = KSP_3::internal::Finalizer<Kernel, Intersection_kernel>;
 
   using Polygon_mesh = CGAL::Surface_mesh<Point_3>;
@@ -482,7 +481,6 @@ public:
     typename NamedParameters = parameters::Default_named_parameters>
   void initialize(
     const NamedParameters& np = CGAL::parameters::default_values()) {
-
     Timer timer;
     m_parameters.bbox_dilation_ratio = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::bbox_dilation_ratio), FT(11) / FT(10));
@@ -529,7 +527,7 @@ public:
 
     if (m_parameters.debug) {
       for (std::size_t i = 0; i < m_input_polygons.size(); i++)
-        KSP_3::internal::dump_polygon(m_input_polygons[i], std::to_string(i) + "-input_polygon");
+        KSP_3::internal::dump_polygon<GeomTraits>(m_input_polygons[i], std::to_string(i) + "-input_polygon");
     }
 
     split_octree();
@@ -708,38 +706,13 @@ public:
 
     timer.stop();
 
- /*   if (m_parameters.debug) {
-
-      if (boost::filesystem::is_directory("volumes/"))
-        for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
-          boost::filesystem::remove_all(it->path());
-
-      KSP_3::dump_volumes_ksp(*this, "volumes/");
-      for (std::size_t i = 1; i < m_volumes.size(); i++)
-        if (m_volumes[i].first != m_volumes[i - 1].first)
-          std::cout << i << " " << m_volumes[i - 1].first << std::endl;
-      std::cout << m_volumes.size() << " " << m_volumes.back().first << std::endl;
-    }*/
-
     timer.reset();
     timer.start();
     make_conformal(0);
     conformal_time = timer.time();
 
-/*    if (m_parameters.debug) {
-
-      if (boost::filesystem::is_directory("volumes_after/"))
-        for (boost::filesystem::directory_iterator end_dir_it, it("volumes_after/"); it != end_dir_it; ++it)
-          boost::filesystem::remove_all(it->path());
-      KSP_3::dump_volumes_ksp(*this, "volumes_after/");
-      for (std::size_t i = 1; i < m_volumes.size(); i++)
-        if (m_volumes[i].first != m_volumes[i - 1].first)
-          std::cout << i << " " << m_volumes[i - 1].first << std::endl;
-      std::cout << m_volumes.size() << " " << m_volumes.back().first << std::endl;
-    }*/
-
-    if (m_parameters.verbose)
-      check_tjunctions();
+//     if (m_parameters.verbose)
+//       check_tjunctions();
 
     // Clear unused data structures
     for (std::size_t i = 0; i < m_partitions.size(); i++) {
@@ -748,6 +721,8 @@ public:
       m_partition_nodes[i].m_data->face_to_index().clear();
       m_partition_nodes[i].m_data->face_to_volumes().clear();
     }
+
+    std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
 
     return;
   }
@@ -802,7 +777,12 @@ public:
     std::vector<typename Intersection_kernel::Point_3> vtx;
     std::vector<Index> vtx_index;
 
-    From_exact to_inexact;
+    using LCC_kernel = typename CGAL::Kernel_traits<typename LCC::Point>::Kernel;
+
+    using To_lcc = CGAL::Cartesian_converter<Intersection_kernel, LCC_kernel>;
+
+    To_lcc to_lcc;
+
     To_exact to_exact;
 
     std::vector<Index> faces_of_volume, vtx_of_face;
@@ -832,7 +812,7 @@ public:
 
     CGAL::Linear_cell_complex_incremental_builder_3<LCC> ib(lcc);
     for (std::size_t i = 0; i < vtx.size(); i++)
-      ib.add_vertex(vtx[i]);
+      ib.add_vertex(to_lcc(vtx[i]));
 
     std::size_t num_faces = 0;
     //std::size_t num_vols = 0;
@@ -905,12 +885,12 @@ public:
           std::size_t nn = (n + 1) % vtx_of_face.size();
           norm = CGAL::cross_product(vtx[mapped_vertices[vtx_of_face[n]]] - vtx[mapped_vertices[vtx_of_face[i]]], vtx[mapped_vertices[vtx_of_face[nn]]] - vtx[mapped_vertices[vtx_of_face[n]]]);
           i++;
-        } while (to_inexact(norm.squared_length()) == 0 && i < vtx_of_face.size());
+        } while (norm.squared_length() == 0 && i < vtx_of_face.size());
 
-        FT len = sqrt(to_inexact(norm.squared_length()));
+        typename Intersection_kernel::FT len = CGAL::approximate_sqrt(norm.squared_length());
         if (len != 0)
           len = 1.0 / len;
-        norm = norm * to_exact(len);
+        norm = norm * len;
 
         bool outwards_oriented = (vtx[mapped_vertices[vtx_of_face[0]]] - centroid) * norm < 0;
         //outward[std::make_pair(v, j)] = outwards_oriented;
@@ -1856,9 +1836,9 @@ private:
 
     Vector_2 axis1 = bbox[0] - bbox[1];
     Vector_2 axis2 = bbox[1] - bbox[2];
-    FT la = CGAL::sqrt(axis1.squared_length());
+    FT la = CGAL::approximate_sqrt(axis1.squared_length());
     axis1 = axis1 * (1.0 / la);
-    FT lb = CGAL::sqrt(axis2.squared_length());
+    FT lb = CGAL::approximate_sqrt(axis2.squared_length());
     axis2 = axis2 * (1.0 / lb);
 
     if (CGAL::abs(axis1.x()) < CGAL::abs(axis2.x())) {
@@ -2294,7 +2274,6 @@ private:
     From_exact from_exact;
 
     if (m_parameters.reorient_bbox) {
-
       m_transform = to_exact(get_obb2abb(m_input_polygons));
 
       for (const auto& p : m_input_polygons) {
@@ -2407,7 +2386,7 @@ private:
           vout << std::endl;
           vout.close();
 
-          KSP_3::internal::dump_polygons(m_partition_nodes[idx].clipped_polygons, std::to_string(idx) + "-polys.ply");
+          //KSP_3::internal::dump_polygons(m_partition_nodes[idx].clipped_polygons, std::to_string(idx) + "-polys.ply");
         }
         idx++;
       }

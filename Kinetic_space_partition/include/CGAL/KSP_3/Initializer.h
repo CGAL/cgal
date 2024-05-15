@@ -131,6 +131,10 @@ public:
       for (std::size_t sp = 0; sp < m_data.number_of_support_planes(); sp++)
         dump_2d_surface_mesh(m_data, sp, m_data.prefix() + "before-partition-sp" + std::to_string(sp));
     }
+
+    if (m_parameters.verbose) {
+      std::cout << "v: " << m_data.igraph().number_of_vertices() << " f: " << m_data.igraph().number_of_faces() << std::endl;
+    }
   }
 
   void clear() {
@@ -369,7 +373,7 @@ private:
 
   void initial_polygon_iedge_intersections() {
     To_exact to_exact;
-    From_exact to_inexact;
+    From_exact from_exact;
 
     for (std::size_t sp_idx = 0; sp_idx < m_data.number_of_support_planes(); sp_idx++) {
       bool polygons_assigned = false;
@@ -398,11 +402,11 @@ private:
         typename Intersection_kernel::Point_2 a(sp.to_2d(m_data.point_3(m_data.source(pair.second[0]))));
         typename Intersection_kernel::Point_2 b(sp.to_2d(m_data.point_3(m_data.target(pair.second[0]))));
         typename Intersection_kernel::Line_2 exact_line(a, b);
-        Line_2 l = to_inexact(exact_line);
+        Line_2 l = from_exact(exact_line);
 
         typename Intersection_kernel::Vector_2 ldir = exact_line.to_vector();
         ldir = (typename Intersection_kernel::FT(1.0) / CGAL::approximate_sqrt(ldir * ldir)) * ldir;
-        Vector_2 dir = to_inexact(ldir);
+        Vector_2 dir = from_exact(ldir);
 
         std::vector<typename Intersection_kernel::Segment_2> crossing_polygon_segments;
         std::vector<IEdge> crossing_iedges;
@@ -433,20 +437,20 @@ private:
               if (eproj < emin) {
                 eminp = intersection;
                 emin = eproj;
-                minp = to_inexact(intersection);
+                minp = from_exact(intersection);
                 //min = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
                 assert(p != 0);
-                min_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
+                min_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
               }
               if (emax < eproj) {
                 emaxp = intersection;
                 emax = eproj;
-                maxp = to_inexact(intersection);
+                maxp = from_exact(intersection);
                 //max = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
                 assert(p != 0);
-                max_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
+                max_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
               }
             }
             else std::cout << "crossing segment does not intersect line" << std::endl;
@@ -497,9 +501,9 @@ private:
                 crossing_iedges.push_back(e);
                 if (emin > s) {
                   typename Intersection_kernel::FT bary_edge_exact = (emin - s) / (t - s);
-                  FT bary_edge = to_inexact((emin - s) / (t - s));
+                  FT bary_edge = from_exact((emin - s) / (t - s));
                   CGAL_assertion(bary_edge_exact >= 0);
-                  FT time = CGAL::abs(to_inexact(s - emin) / min_speed);
+                  FT time = CGAL::abs(from_exact(s - emin) / min_speed);
                   kinetic_interval.push_back(std::pair<FT, FT>(0, time)); // border barycentric coordinate
                   kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
                 }
@@ -509,9 +513,9 @@ private:
 
                 if (t > emax) {
                   typename Intersection_kernel::FT bary_edge_exact = (emax - s) / (t - s);
-                  FT bary_edge = to_inexact((emax - s) / (t - s));
+                  FT bary_edge = from_exact((emax - s) / (t - s));
                   CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
-                  FT time = CGAL::abs(to_inexact(emax - t) / max_speed);
+                  FT time = CGAL::abs(from_exact(emax - t) / max_speed);
                   kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
                   kinetic_interval.push_back(std::pair<FT, FT>(1, time)); // border barycentric coordinate
                 }
@@ -541,9 +545,9 @@ private:
               crossing_iedges.push_back(e);
               if (s > emax) {
                 typename Intersection_kernel::FT bary_edge_exact = (s - emax) / (s - t);
-                FT bary_edge = to_inexact((s - emax) / (s - t));
+                FT bary_edge = from_exact((s - emax) / (s - t));
                 CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
-                FT time = CGAL::abs(to_inexact(emax - s) / max_speed);
+                FT time = CGAL::abs(from_exact(emax - s) / max_speed);
                 kinetic_interval.push_back(std::pair<FT, FT>(0, time)); // border barycentric coordinate
                 kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
               }
@@ -552,9 +556,9 @@ private:
 
               if (emin > t) {
                 typename Intersection_kernel::FT bary_edge_exact = (s - emin) / (s - t);
-                FT bary_edge = to_inexact(bary_edge_exact);
+                FT bary_edge = from_exact(bary_edge_exact);
                 CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
-                FT time = CGAL::abs(to_inexact(t - emin) / min_speed);
+                FT time = CGAL::abs(from_exact(t - emin) / min_speed);
                 kinetic_interval.push_back(std::pair<FT, FT>(bary_edge, 0));
                 kinetic_interval.push_back(std::pair<FT, FT>(1, time)); // border barycentric coordinate
               }
@@ -832,11 +836,11 @@ private:
           typename Intersection_kernel::Point_2 point;
           typename Intersection_kernel::Segment_3 seg_a(m_data.point_3(it_a->second.first), m_data.point_3(it_a->second.second));
           typename Intersection_kernel::Segment_3 seg_b(m_data.point_3(it_b->second.first), m_data.point_3(it_b->second.second));
-          if (!intersection(m_data.to_2d(common_plane_idx, seg_a), m_data.to_2d(common_plane_idx, seg_b), point))
+          if (!intersection(m_data.support_plane(common_plane_idx).to_2d(seg_a), m_data.support_plane(common_plane_idx).to_2d(seg_b), point))
             continue;
 
           crossed_vertices.push_back(
-            m_data.add_ivertex(m_data.to_3d(common_plane_idx, point), union_set));
+            m_data.add_ivertex(m_data.support_plane(common_plane_idx).to_3d(point), union_set));
         }
       }
       crossed_vertices.push_back(it_a->second.second);

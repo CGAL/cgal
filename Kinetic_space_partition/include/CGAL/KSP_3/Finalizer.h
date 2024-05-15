@@ -117,6 +117,11 @@ public:
 
     create_volumes();
 
+    if (m_parameters.debug) {
+      for (const auto& v : m_data.volumes())
+        dump_volume(m_data, v.pfaces, "volumes/" + m_data.prefix() + std::to_string(v.index), true, v.index);
+    }
+
     CGAL_assertion(m_data.check_faces());
   }
 
@@ -131,13 +136,15 @@ private:
   void calculate_centroid(Volume_cell& volume) {
     // First find a point in the interior of the volume cell.
     FT x = 0, y = 0, z = 0;
+    FT num = 0;
     for (const PVertex& v : volume.pvertices) {
       Point_3 p = m_data.point_3(v);
       x += p.x();
       y += p.y();
       z += p.z();
+      num += 1;
     }
-    Point_3 inside(x / volume.pvertices.size(), y / volume.pvertices.size(), z / volume.pvertices.size());
+    Point_3 inside(x / num, y / num, z / num);
 
     // Now create a vector of tetrahedrons.
     std::vector<Tetrahedron_3> tets;
@@ -288,7 +295,7 @@ private:
       m_data.incident_faces(m_data.iedge(pedge), neighbor_faces);
 
       if (neighbor_faces.size() == 2) {
-        // If there is only one neighbor, the edge is on the corner of the bbox.
+        // If there is only one neighbor, the edge is on the edge of the bbox.
         // Thus the only neighbor needs to be a bbox face.
         PFace neighbor = (neighbor_faces[0] == pface) ? neighbor_faces[1] : neighbor_faces[0];
         CGAL_assertion(neighbor.first < 6 && pface.first < 6);
@@ -514,21 +521,17 @@ private:
   }
 
   Oriented_side oriented_side(const PFace& a, const PFace& b) const {
-    FT max_dist = 0;
     if (a.first == b.first)
       return CGAL::ON_ORIENTED_BOUNDARY;
     Oriented_side side = CGAL::ON_ORIENTED_BOUNDARY;
-    const Plane_3& p = m_data.support_plane(a.first).plane();
+    const typename Intersection_kernel::Plane_3& p = m_data.support_plane(a.first).exact_plane();
     for (auto v : m_data.pvertices_of_pface(b)) {
-      Point_3 pt = m_data.point_3(v);
-      FT dist = (p.point() - pt) * p.orthogonal_vector();
-      if (CGAL::abs(dist) > max_dist) {
-        side = p.oriented_side(m_data.point_3(v));
-        max_dist = CGAL::abs(dist);
-      }
+      side = p.oriented_side(m_data.point_3(m_data.ivertex(v)));
+      if (side != CGAL::ON_ORIENTED_BOUNDARY)
+        return side;
     }
 
-    return side;
+    return CGAL::ON_ORIENTED_BOUNDARY;
   }
 
   void merge_facets_connected_components() {

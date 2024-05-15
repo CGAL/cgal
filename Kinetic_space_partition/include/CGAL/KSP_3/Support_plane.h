@@ -82,8 +82,8 @@ public:
     Face_event() {}
     Face_event(std::size_t sp_idx, FT time, IEdge edge, IFace face) : support_plane(sp_idx), time(time), crossed_edge(edge), face(face) {}
     std::size_t support_plane;
-    FT time;
-    FT intersection_bary;
+    typename Intersection_kernel::FT time;
+    typename Intersection_kernel::FT intersection_bary;
     IEdge crossed_edge;
     IFace face; // The face that does not yet belong to the region.
   };
@@ -132,6 +132,7 @@ public:
   };
 
 private:
+  static constexpr bool identical_kernel = !std::is_same_v<Kernel, Intersection_kernel>;
 
   std::shared_ptr<Data> m_data;
 
@@ -172,55 +173,9 @@ public:
     add_property_maps();
   }
 
-  template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox) :
-    m_data(std::make_shared<Data>()) {
-    To_exact to_exact;
-
-    std::vector<Point_3> points;
-    points.reserve(polygon.size());
-    for (const auto& point : polygon) {
-      points.push_back(Point_3(
-        static_cast<FT>(point.x()),
-        static_cast<FT>(point.y()),
-        static_cast<FT>(point.z())));
-    }
-    const std::size_t n = points.size();
-    CGAL_assertion(n == polygon.size());
-
-    Vector_3 normal = CGAL::NULL_VECTOR;
-    for (std::size_t i = 0; i < n; ++i) {
-      const std::size_t ip = (i + 1) % n;
-      const auto& pa = points[i];
-      const auto& pb = points[ip];
-      const FT x = normal.x() + (pa.y() - pb.y()) * (pa.z() + pb.z());
-      const FT y = normal.y() + (pa.z() - pb.z()) * (pa.x() + pb.x());
-      const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
-      normal = Vector_3(x, y, z);
-    }
-    CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: BBOX IS FLAT!");
-    CGAL_assertion(n != 0);
-
-    m_data->k = 0;
-    m_data->plane = Plane_3(points[0], KSP::internal::normalize(normal));
-    m_data->exact_plane = to_exact(m_data->plane);
-    m_data->is_bbox = is_bbox;
-    m_data->distance_tolerance = 0;
-    m_data->angle_tolerance = 0;
-    m_data->actual_input_polygon = -1;
-
-    std::vector<Triangle_2> tris(points.size() - 2);
-    for (std::size_t i = 2; i < points.size(); i++) {
-      tris[i - 2] = Triangle_2(to_2d(points[0]), to_2d(points[i - 1]), to_2d(points[i]));
-    }
-
-    m_data->centroid = CGAL::centroid(tris.begin(), tris.end(), CGAL::Dimension_tag<2>());
-
-    add_property_maps();
-  }
-
   Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox) :
     m_data(std::make_shared<Data>()) {
+
     From_exact from_exact;
 
     std::vector<Point_3> points;
@@ -413,15 +368,17 @@ public:
 
     std::vector<std::pair<std::size_t, Direction_2> > dir_vec;
 
+    FT num = 0;
     for (const auto& pair : points) {
       const auto& point = pair.first;
       directions.push_back(Vector_2(m_data->centroid, point));
       const FT length = static_cast<FT>(
-        CGAL::sqrt(CGAL::to_double(CGAL::abs(directions.back() * directions.back()))));
+        CGAL::approximate_sqrt(CGAL::abs(directions.back() * directions.back())));
       sum_length += length;
+      num += 1;
     }
     CGAL_assertion(directions.size() == n);
-    sum_length /= static_cast<FT>(n);
+    sum_length /= num;
 
     dir_vec.reserve(n);
     for (std::size_t i = 0; i < n; i++)
@@ -439,7 +396,7 @@ public:
       m_data->original_vertices[i] = point;
       m_data->original_vectors[i] = directions[dir_vec[i].first] / sum_length;
       m_data->original_directions[i] = Direction_2(directions[dir_vec[i].first]);
-      m_data->original_rays[i] = typename Intersection_kernel::Ray_2(to_exact(point), to_exact(m_data->original_directions[i]));
+      m_data->original_rays[i] = typename Intersection_kernel::Ray_2(to_exact(point), to_exact(m_data->original_vectors[i]));
       m_data->v_original_map[vi] = true;
       vertices.push_back(vi);
     }
@@ -667,7 +624,7 @@ public:
   const Vector_2 original_edge_direction(std::size_t v1, std::size_t v2) const {
     const Vector_2 edge = m_data->original_vertices[v1] - m_data->original_vertices[v2];
     Vector_2 orth = Vector_2(-edge.y(), edge.x());
-    orth = (1.0 / (CGAL::sqrt(orth * orth))) * orth;
+    orth = (1.0 / (CGAL::approximate_sqrt(orth * orth))) * orth;
     FT s1 = orth * m_data->original_vectors[v1];
     FT s2 = orth * m_data->original_vectors[v2];
 
@@ -678,8 +635,7 @@ public:
   }
 
   const FT speed(const Vertex_index& vi) const {
-    return static_cast<FT>(CGAL::sqrt(
-      CGAL::to_double(CGAL::abs(m_data->direction[vi].squared_length()))));
+    return static_cast<FT>(CGAL::approximate_sqrt((CGAL::abs(m_data->direction[vi].squared_length()))));
   }
 
   const std::vector<std::size_t>& input(const Face_index& fi) const { return m_data->input_map[fi]; }
@@ -712,6 +668,7 @@ public:
       m_data->plane.to_2d(Point_3(0, 0, 0) + vec));
   }
 
+  template<typename = typename std::enable_if<identical_kernel>::type >
   const typename Intersection_kernel::Point_2 to_2d(const typename Intersection_kernel::Point_3& point) const {
     return m_data->exact_plane.to_2d(point);
   }
@@ -722,6 +679,7 @@ public:
       m_data->plane.to_2d(line.point() + line.to_vector()));
   }
 
+  template<typename = typename std::enable_if<identical_kernel>::type >
   const typename Intersection_kernel::Line_2 to_2d(const typename Intersection_kernel::Line_3& line) const {
     return typename Intersection_kernel::Line_2(
       m_data->exact_plane.to_2d(line.point()),
@@ -734,6 +692,7 @@ public:
       m_data->plane.to_2d(segment.target()));
   }
 
+  template<typename = typename std::enable_if<identical_kernel>::type >
   const typename Intersection_kernel::Segment_2 to_2d(const typename Intersection_kernel::Segment_3& segment) const {
     return typename Intersection_kernel::Segment_2(
       m_data->exact_plane.to_2d(segment.source()),
@@ -750,6 +709,7 @@ public:
     return m_data->plane.to_3d(point);
   }
 
+  template<typename = typename std::enable_if<identical_kernel>::type >
   const typename Intersection_kernel::Point_3 to_3d(const typename Intersection_kernel::Point_2& point) const {
     return m_data->exact_plane.to_3d(point);
   }
@@ -769,18 +729,6 @@ public:
   const Vertex_index add_vertex(const Point_2& point) {
     return m_data->mesh.add_vertex(point);
   }
-/*
-
-  const Vertex_index duplicate_vertex(const Vertex_index& v) {
-    // TODO: We cannot take it by reference because it fails for EPECK
-    // when called from  front_and_back_34() in Data_structure.
-    const auto pp = m_data->mesh.point(v);
-    const auto vi = m_data->mesh.add_vertex(pp);
-    m_data->direction[vi] = m_data->direction[v];
-    m_data->v_ivertex_map[vi] = m_data->v_ivertex_map[v];
-    m_data->v_iedge_map[vi] = m_data->v_iedge_map[v];
-    return vi;
-  }*/
 
   void remove_vertex(const Vertex_index& vi) {
     m_data->mesh.remove_vertex(vi);
@@ -809,38 +757,9 @@ bool operator==(const Support_plane<GeomTraits, IntersectionKernel>& a, const Su
     return false;
   }
 
-  using FT = typename GeomTraits::FT;
-  const auto& planea = a.plane();
-  const auto& planeb = b.plane();
-
-  const auto va = planea.orthogonal_vector();
-  const auto vb = planeb.orthogonal_vector();
-
-  // Are the planes parallel?
-
-  FT aval = approximate_angle(va, vb);
-  CGAL_assertion(aval >= FT(0) && aval <= FT(180));
-  if (aval >= FT(90))
-    aval = FT(180) - aval;
-
-  if (aval >= a.angle_tolerance()) {
-    return false;
-  }
-
-  const auto pa1 = a.to_3d(a.centroid());
-  const auto pb1 = planeb.projection(pa1);
-  const auto pb2 = b.to_3d(b.centroid());
-  const auto pa2 = planea.projection(pb2);
-
-  const FT bval1 = KSP::internal::distance(pa1, pb1);
-  const FT bval2 = KSP::internal::distance(pa2, pb2);
-  const FT bval = (CGAL::max)(bval1, bval2);
-  CGAL_assertion(bval >= FT(0));
-
-  if (bval >= a.distance_tolerance())
-    return false;
-
-  return true;
+  if (a.exact_plane() == b.exact_plane())
+    return true;
+  else return false;
 }
 
 #endif //DOXYGEN_RUNNING

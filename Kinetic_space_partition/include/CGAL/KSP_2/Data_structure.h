@@ -38,7 +38,7 @@ public:
   typedef typename Kernel::Line_2 Line_2;
   typedef typename Kernel::Segment_2 Segment_2;
 
-  typedef Support_line<Kernel> Support_line_DS;
+  typedef Support_line_2<Kernel> Support_line_DS;
 
   typedef CGAL::KSP_2::internal::Vertex<FT> Vertex;
   typedef CGAL::KSP_2::internal::Segment Segment;
