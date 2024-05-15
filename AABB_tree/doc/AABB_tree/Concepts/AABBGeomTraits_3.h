@@ -3,8 +3,8 @@
 \ingroup PkgAABBTreeConcepts
 \cgalConcept
 
-The concept `AABBGeomTraits` defines the requirements for the first template parameter of the class
-`CGAL::AABB_traits<AABBGeomTraits, AABBPrimitive>`. It provides predicates and constructors to detect
+The concept `AABBGeomTraits_3` defines the requirements for the first template parameter of the class
+`CGAL::AABB_traits_3<AABBGeomTraits_3, AABBPrimitive>`. It provides predicates and constructors to detect
 and compute intersections between query objects and the primitives stored in the AABB tree.
 In addition, it contains predicates and constructors to compute distances between a point query
 and the primitives stored in the AABB tree.
@@ -15,13 +15,13 @@ and the primitives stored in the AABB tree.
 \cgalHasModelsBare{All models of the concept `Kernel`}
 \cgalHasModelsEnd
 
-\sa `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
+\sa `CGAL::AABB_traits_3<AABBGeomTraits_3,AABBPrimitive>`
 \sa `CGAL::AABB_tree<AABBTraits>`
 \sa `AABBPrimitive`
 
 */
 
-class AABBGeomTraits {
+class AABBGeomTraits_3 {
 public:
 
 /// \name Types
@@ -31,13 +31,13 @@ public:
 A functor object to detect intersections between two geometric objects.
 Provides the following operators:
 
-`bool operator()(Query, Bbox_3)`,
+`bool operator()(const Query& q, const Bbox_3& b)`,
 
-`bool operator()(Query, Primitive::Datum)`,
+`bool operator()(const Query& q, const Primitive::Datum& d)`,
 
-`bool operator()(Sphere_3, Bbox_3)`.
+`bool operator()(const Sphere_3& s, const Bbox_3& b)`.
 
-The operator returns `true` iff there exists a non-empty intersection.
+The operator returns `true` iff there is an intersection.
 */
 typedef unspecified_type Do_intersect_3;
 
@@ -54,7 +54,7 @@ must be a `std::optional` of a `std::variant` of the possible intersection types
 typedef unspecified_type Intersect_3;
 
 /*!
-A functor object to construct the sphere centered at one point and passing through another one.
+A functor object to construct the sphere specified by its center and squared radius.
 Provides the operator:
 
 `Sphere_3 operator()(const Point_3& p, const FT & sr)`,
@@ -64,7 +64,7 @@ which returns the sphere centered at `p` with `sr` as squared radius.
 typedef unspecified_type Construct_sphere_3;
 
 /*!
-A functor object to compute the point on a geometric primitive which is closest from a query.
+A functor object to compute the point on a geometric primitive which is closest from a query point.
 Provides the operator:
 
 `Point_3 operator()(const Primitive::Datum& d, const Point_3& p)`,
@@ -78,19 +78,10 @@ A functor object to compare the distance of two points wrt a third one. Provides
 
 `CGAL::Comparison_result operator()(const Point_3& p1, const Point_3& p2, const Point_3& p3)`,
 
-which compares the distance between `p1` and `p2`, and between `p2` and `p3`.
+which compares the distance between `p1` and `p2`, to the distance between `p1` and `p3`.
 */
 typedef unspecified_type Compare_distance_3;
 
-/*!
-A functor object to compute the squared radius of a sphere.
-Provides the operator:
-
-`FT operator()(const Sphere_3& s),`
-
-which returns the squared radius of `s`.
-*/
-typedef unspecified_type Compute_squared_radius_3;
 
 /*!
 A functor object to compute the squared distance between two points. Provides the operator:
@@ -167,10 +158,6 @@ returns the compare distance predicate.
 */
 Compare_distance_3 compare_distance_3_object();
 
-/*!
-returns the squared radius functor.
-*/
-Compute_squared_radius_3 compute_squared_radius_3_object();
 
 /*!
 returns the squared distance functor.
@@ -199,5 +186,4 @@ Equal_3 equal_3_object();
 
 /// @}
 
-}; /* end AABBGeomTraits */
-
+}; /* end AABBGeomTraits_3 */
