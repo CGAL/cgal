@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Kinetic_surface_reconstruction.h>
 
-#include <CGAL/Kinetic_shape_partition_3.h>
+#include <CGAL/Kinetic_space_partition_3.h>
 #include <CGAL/KSR_3/Graphcut.h>
 
 #include <CGAL/IO/PLY.h>
@@ -70,7 +70,7 @@ public:
   using Plane_3 = typename Kernel::Plane_3;
   using Point_range = PointRange;
 
-  using KSP = Kinetic_shape_partition_3<Kernel, Intersection_kernel>;
+  using KSP = Kinetic_space_partition_3<Kernel, Intersection_kernel>;
 
   using Point_map = PointMap;
   using Normal_map = NormalMap;
@@ -280,7 +280,7 @@ public:
 
   \pre partition created
   */
-  const Kinetic_shape_partition_3<Kernel, Intersection_kernel>& kinetic_partition() const {
+  const KSP& kinetic_partition() const {
     return m_kinetic_partition;
   }
 
@@ -814,7 +814,7 @@ private:
     static bool saved = false;
 
     if (!saved) {
-      KSP_3::dump_polygons(polygon_regions, "faces_by_region" + std::to_string(beta) + ".ply");
+      KSP_3::internal::dump_polygons(polygon_regions, "faces_by_region" + std::to_string(beta) + ".ply");
       saved = true;
     }
 
@@ -1452,7 +1452,7 @@ private:
       n = m_lcc.beta(n, 1);
     } while (n != dh);
 
-    KSP_3::dump_polygon(face, fn);
+    KSP_3::internal::dump_polygon(face, fn);
   }
 
   void write_edge(typename LCC::Dart_descriptor dh, const std::string& fn) {
@@ -1785,7 +1785,7 @@ private:
       //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSP_3::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    KSP_3::internal::dump_polygons(polys_debug, "detected-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     // Convert indices.
     m_planar_regions.clear();
@@ -1831,7 +1831,7 @@ private:
       //KSR_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSP_3::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    KSP_3::internal::dump_polygons(polys_debug, "regularized-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     // Merge coplanar regions
     for (std::size_t i = 0; i < m_regions.size() - 1; i++) {
@@ -1917,7 +1917,7 @@ private:
       //KSP_3::dump_polygon(polys_debug[i], std::to_string(i) + "-detected-region.ply");
     }
 
-    KSP_3::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
+    KSP_3::internal::dump_polygons(polys_debug, "merged-" + std::to_string(m_regions.size()) + "-polygons.ply");
 
     std::vector<Plane_3> pl;
 
