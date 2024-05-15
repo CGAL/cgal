@@ -59,7 +59,7 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
 #define CGAL_COREF_SET_OUTPUT_EDGE_MARK_MAP(I) \
   typedef typename internal_np::Lookup_named_param_def < \
     internal_np::edge_is_constrained_t, \
-    NamedParametersOut##I, \
+    NPOut##I, \
     Corefinement::No_mark<TriangleMesh> \
   > ::type Ecm_out_##I; \
     Ecm_out_##I ecm_out_##I = \
@@ -90,12 +90,12 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   * \pre \link CGAL::Polygon_mesh_processing::does_bound_a_volume() `CGAL::Polygon_mesh_processing::does_bound_a_volume(tm2)` \endlink
   *
   * @tparam TriangleMesh a model of `HalfedgeListGraph`, `FaceListGraph`, and `MutableFaceGraph`
-  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
-  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
-  * @tparam NamedParametersOut0 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut1 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut2 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
-  * @tparam NamedParametersOut3 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
+  * @tparam NPIn1 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NPIn2 a sequence of \ref bgl_namedparameters "Named Parameters"
+  * @tparam NPOut0 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the union of the volumes bounded by `tm1` and `tm2`
+  * @tparam NPOut1 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the intersection of the volumes bounded by `tm1` and `tm2`
+  * @tparam NPOut2 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm1` and `tm2`
+  * @tparam NPOut3 a sequence of \ref bgl_namedparameters "Named Parameters" for computing the difference of the volumes bounded by `tm2` and `tm1`
   *
   * @param tm1 first input triangulated surface mesh
   * @param tm2 second input triangulated surface mesh
@@ -176,24 +176,24 @@ enum Boolean_operation_type {UNION = 0, INTERSECTION=1,
   *         will only be corefined.
   */
 template <class TriangleMesh,
-          class NamedParameters1 = parameters::Default_named_parameters,
-          class NamedParameters2 = parameters::Default_named_parameters,
-          class NamedParametersOut0 = parameters::Default_named_parameters,
-          class NamedParametersOut1 = parameters::Default_named_parameters,
-          class NamedParametersOut2 = parameters::Default_named_parameters,
-          class NamedParametersOut3 = parameters::Default_named_parameters>
+          class NPIn1 = parameters::Default_named_parameters,
+          class NPIn2 = parameters::Default_named_parameters,
+          class NPOut0 = parameters::Default_named_parameters,
+          class NPOut1 = parameters::Default_named_parameters,
+          class NPOut2 = parameters::Default_named_parameters,
+          class NPOut3 = parameters::Default_named_parameters>
 std::array<bool,4>
 corefine_and_compute_boolean_operations(
         TriangleMesh& tm1,
         TriangleMesh& tm2,
   const std::array< std::optional<TriangleMesh*>,4>& output,
-  const NamedParameters1& np1 = parameters::default_values(),
-  const NamedParameters2& np2 = parameters::default_values(),
-  const std::tuple<NamedParametersOut0,
-                   NamedParametersOut1,
-                   NamedParametersOut2,
-                   NamedParametersOut3>& nps_out
-                    = std::tuple<NamedParametersOut0,NamedParametersOut1,NamedParametersOut2,NamedParametersOut3>())
+  const NPIn1& np1 = parameters::default_values(),
+  const NPIn2& np2 = parameters::default_values(),
+  const std::tuple<NPOut0,
+                   NPOut1,
+                   NPOut2,
+                   NPOut3>& nps_out
+                    = std::tuple<NPOut0,NPOut1,NPOut2,NPOut3>())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -203,8 +203,8 @@ corefine_and_compute_boolean_operations(
 
 // Vertex point maps
   //for input meshes
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type  VPM1;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters2>::type  VPM2;
+  typedef typename GetVertexPointMap<TriangleMesh, NPIn1>::type  VPM1;
+  typedef typename GetVertexPointMap<TriangleMesh, NPIn2>::type  VPM2;
 
   static_assert(std::is_same<typename boost::property_traits<VPM1>::value_type,
                              typename boost::property_traits<VPM2>::value_type>::value);
@@ -222,10 +222,10 @@ corefine_and_compute_boolean_operations(
   // input map, a dummy default vpm is used so that calls to get/put can be compiled
   // (even if not used).
   typedef std::tuple<
-    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut0, TriangleMesh>,
-    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut1, TriangleMesh>,
-    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut2, TriangleMesh>,
-    Corefinement::TweakedGetVertexPointMap<Point_3, NamedParametersOut3, TriangleMesh>
+    Corefinement::TweakedGetVertexPointMap<Point_3, NPOut0, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NPOut1, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NPOut2, TriangleMesh>,
+    Corefinement::TweakedGetVertexPointMap<Point_3, NPOut3, TriangleMesh>
   > VPM_out_tuple_helper;
 
   typedef std::tuple<
@@ -331,13 +331,13 @@ corefine_and_compute_boolean_operations(
   //for input meshes
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
-    NamedParameters1,
+    NPIn1,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm1;
 
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::edge_is_constrained_t,
-    NamedParameters2,
+    NPIn2,
     Corefinement::No_mark<TriangleMesh>//default
   > ::type Ecm2;
 
@@ -357,8 +357,8 @@ corefine_and_compute_boolean_operations(
                                                             Edge_mark_map_tuple;
 
   // Face index point maps
-  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters1>::type FaceIndexMap1;
-  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NamedParameters2>::type FaceIndexMap2;
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NPIn1>::type FaceIndexMap1;
+  typedef typename CGAL::GetInitializedFaceIndexMap<TriangleMesh, NPIn2>::type FaceIndexMap2;
 
   FaceIndexMap1 fid_map1 = get_initialized_face_index_map(tm1, np1);
   FaceIndexMap2 fid_map2 = get_initialized_face_index_map(tm2, np2);
@@ -367,7 +367,7 @@ corefine_and_compute_boolean_operations(
   // User visitor
   typedef typename internal_np::Lookup_named_param_def <
     internal_np::visitor_t,
-    NamedParameters1,
+    NPIn1,
     Corefinement::Default_visitor<TriangleMesh>//default
   > ::type User_visitor;
   User_visitor uv(choose_parameter<User_visitor>(get_parameter(np1, internal_np::visitor)));
