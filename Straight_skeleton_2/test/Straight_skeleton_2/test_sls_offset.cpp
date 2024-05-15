@@ -1164,14 +1164,14 @@ void test_kernel()
 
 int main(int, char**)
 {
-#if 1
   test_kernel<EPICK>();
   test_kernel<EPECK>();
   test_kernel<EPECK_w_sqrt>();
-#else
-  test_offset<EPECK_w_sqrt>("data/near_degenerate_0.poly");
-  test_offset<EPECK_w_sqrt>("data/degenerate20.poly");
-#endif
+
+  // those two are really slow
+  // test_offset<EPECK_w_sqrt>("data/near_degenerate_0.poly");
+  // test_offset<EPECK_w_sqrt>("data/degenerate20.poly");
+
   std::cout << "Done!" << std::endl;
 
   return EXIT_SUCCESS;
