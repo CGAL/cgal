@@ -20,7 +20,7 @@ int main(const int, const char**) {
   // Input.
 
   Point_set point_set;
-  CGAL::IO::read_point_set("Cottage_cut.ply", point_set);
+  CGAL::IO::read_point_set(CGAL::data_file_path("points_3/building.ply"), point_set);
 
   auto param = CGAL::parameters::maximum_distance(0.33)
     .maximum_angle(32)
@@ -47,6 +47,8 @@ int main(const int, const char**) {
 
   if (!failed)
     std::cout << "done!";
+
+  // CGAL::IO::write_polygon_soup("out.off", vtx, polylist);
 
   return failed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
