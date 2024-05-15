@@ -300,7 +300,7 @@ public:
     {}
 
     Comparison_result operator()(const Point_2& p, const Point_2& q) const
-    {  
+    {
        Comparison_result res = cx_2(p, q);
        if (res == EQUAL) {
          return cy_2(p, q);
