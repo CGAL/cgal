@@ -148,6 +148,15 @@ struct Get_io_signature<double>
   }
 };
 
+template <typename T>
+struct Get_io_signature<std::variant<T> >
+{
+  std::string operator()() {
+    return std::string("std::variant<") +
+      Get_io_signature<T>()() + ">";
+  }
+};
+
 template <typename T, typename U>
 struct Get_io_signature<std::variant<T,U> >
 {

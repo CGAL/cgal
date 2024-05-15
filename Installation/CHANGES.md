@@ -102,6 +102,8 @@ Release date: June 2024
 - Introduced a new interactive program that demonstrates 2D arrangements embedded on the sphere called `earth`. The program (i) reads a database of all administrative boundaries of the countries in the world, (ii) displays the globe with all countries and land covered by water (which is land not covered by countries) on a window, and (ii) enables interaction with the user.
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
+-   Added a sizing field as new parameter of `CGAL::tetrahedral_isotropic_remeshing()`, for non-uniform
+    and adaptive remeshing.
 -   **Breaking change**: The template parameters of
     `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
     have been modified, reverting changes introduced in CGAL 5.6.

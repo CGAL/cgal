@@ -5,11 +5,6 @@
 
 #include <CGAL/property_map.h>
 
-#include <unordered_set>
-#include <iostream>
-#include <utility>
-#include <cassert>
-
 #include "tetrahedral_remeshing_generate_input.h"
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
