@@ -219,12 +219,12 @@ public:
   }
 
   void link_property_maps() {
-    m_data->v_ivertex_map = m_data->mesh.template property_map<Vertex_index, IVertex>("v:ivertex").first;
-    m_data->v_iedge_map = m_data->mesh.template property_map<Vertex_index, IEdge>("v:iedge").first;
-    m_data->e_iedge_map = m_data->mesh.template property_map<Edge_index, IEdge>("e:iedge").first;
-    m_data->input_map = m_data->mesh.template property_map<Face_index, std::vector<std::size_t> >("f:input").first;
-    m_data->v_original_map = m_data->mesh.template property_map<Vertex_index, bool>("v:original").first;
-    m_data->f_initial_map = m_data->mesh.template property_map<Face_index, bool >("f:initial").first;
+    m_data->v_ivertex_map = m_data->mesh.template property_map<Vertex_index, IVertex>("v:ivertex").value();
+    m_data->v_iedge_map = m_data->mesh.template property_map<Vertex_index, IEdge>("v:iedge").value();
+    m_data->e_iedge_map = m_data->mesh.template property_map<Edge_index, IEdge>("e:iedge").value();
+    m_data->input_map = m_data->mesh.template property_map<Face_index, std::vector<std::size_t> >("f:input").value();
+    m_data->v_original_map = m_data->mesh.template property_map<Vertex_index, bool>("v:original").value();
+    m_data->f_initial_map = m_data->mesh.template property_map<Face_index, bool >("f:initial").value();
   }
 
   void centroid(Point_2& c) {
