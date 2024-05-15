@@ -20,10 +20,10 @@
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/FMLS.h>
 
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_triangle_primitive.h>
-#include <CGAL/AABB_segment_primitive.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
+#include <CGAL/AABB_segment_primitive_3.h>
 #include <CGAL/use.h>
 
 #include <optional>
@@ -58,14 +58,14 @@ class Tetrahedral_remeshing_smoother
 
   using Triangle_vec = std::vector<typename Tr::Triangle>;
   using Triangle_iter = typename Triangle_vec::iterator;
-  using Triangle_primitive = CGAL::AABB_triangle_primitive<Gt, Triangle_iter>;
-  using AABB_triangle_traits = CGAL::AABB_traits<Gt, Triangle_primitive>;
+  using Triangle_primitive = CGAL::AABB_triangle_primitive_3<Gt, Triangle_iter>;
+  using AABB_triangle_traits = CGAL::AABB_traits_3<Gt, Triangle_primitive>;
   using AABB_triangle_tree = CGAL::AABB_tree<AABB_triangle_traits>;
 
   using Segment_vec = std::vector<typename Gt::Segment_3>;
   using Segment_iter = typename Segment_vec::iterator;
-  using Segment_primitive = CGAL::AABB_segment_primitive<Gt, Segment_iter>;
-  using AABB_segment_traits = CGAL::AABB_traits<Gt, Segment_primitive>;
+  using Segment_primitive = CGAL::AABB_segment_primitive_3<Gt, Segment_iter>;
+  using AABB_segment_traits = CGAL::AABB_traits_3<Gt, Segment_primitive>;
   using AABB_segment_tree = CGAL::AABB_tree<AABB_segment_traits>;
 
 private:
