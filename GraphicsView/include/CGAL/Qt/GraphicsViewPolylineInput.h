@@ -50,7 +50,7 @@ public:
 
   bool eventFilter(QObject *obj, QEvent *event);
 
-  setZValue(int v)
+  void setZValue(int v)
     {
       z = v;
     }

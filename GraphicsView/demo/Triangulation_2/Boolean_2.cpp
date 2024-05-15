@@ -56,7 +56,6 @@ private:
   Multipolygon_with_holes_2 mpwhA, mpwhB, mpwhC;
   QGraphicsScene scene;
 
-  CGAL::Qt::PolygonWithHolesGraphicsItem<Polygon_with_holes_2> * pwhAgi;
   CGAL::Qt::MultipolygonWithHolesGraphicsItem<Multipolygon_with_holes_2> *mpwhAgi, *mpwhBgi, *mpwhCgi;
 
   CGAL::Qt::GraphicsViewPolygonWithHolesInput<K> * pi;
