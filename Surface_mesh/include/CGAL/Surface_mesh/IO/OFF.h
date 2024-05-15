@@ -384,7 +384,6 @@ bool write_OFF_with_or_without_fcolors(std::ostream& os,
 {
   typedef Surface_mesh<Point>                                            Mesh;
   typedef typename Mesh::Face_index                                      Face_index;
-  typedef CGAL::IO::Color                                                Color;
 
   using parameters::is_default_parameter;
 
@@ -428,7 +427,6 @@ bool write_OFF_with_or_without_vcolors(std::ostream& os,
 {
   typedef Surface_mesh<Point>                                            Mesh;
   typedef typename Mesh::Vertex_index                                    Vertex_index;
-  typedef CGAL::IO::Color                                                Color;
 
   using parameters::is_default_parameter;
 

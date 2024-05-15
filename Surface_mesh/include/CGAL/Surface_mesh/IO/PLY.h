@@ -460,7 +460,6 @@ bool fill_simplex_specific_header(std::ostream& os,
     return true;
   }
 
-  bool okay = false;
   if(prop == "v:normal")
   {
     auto pmap = sm.template property_map<VIndex, Vector>(prop);
@@ -515,7 +514,6 @@ bool fill_simplex_specific_header(std::ostream& os,
   if(prop == "f:connectivity" || prop == "f:removed")
     return true;
 
-  bool okay = false;
   if(prop == "f:color")
   {
     auto pmap = sm.template property_map<FIndex, Color>(prop);
@@ -638,7 +636,6 @@ void fill_header_impl(std::tuple<T,TN...>,
                       std::vector<Abstract_property_printer<Simplex>*>& printers)
 {
   constexpr std::size_t cid = s-std::tuple_size<std::tuple<T,TN...>>::value;
-  bool okay = false;
   {
     typedef typename Surface_mesh<Point>::template Property_map<Simplex, T>   Pmap;
     auto pmap  = sm.template property_map<Simplex,T>(pname);
