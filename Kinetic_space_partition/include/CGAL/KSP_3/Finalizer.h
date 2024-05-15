@@ -214,12 +214,11 @@ private:
       if (face2volumes.size() < num_faces)
         face2volumes.resize(num_faces, std::pair<int, int>(-1, -1));
 
-
       for (std::size_t j = 0; j < volumes[i].neighbors.size(); j++) {
         auto& pair = map_volumes.at(volumes[i].pfaces[j]);
         if (pair.second == -1)
-          pair.second = -(volumes[i].pfaces[j].first + 1);
-        volumes[i].neighbors[j] = (pair.first == i) ? pair.second : pair.first;
+          pair.second = -static_cast<int>(volumes[i].pfaces[j].first + 1);
+        volumes[i].neighbors[j] = (pair.first == static_cast<int>(i)) ? pair.second : pair.first;
         face2volumes[v.faces[j]] = pair;
       }
     }
@@ -296,11 +295,11 @@ private:
         Oriented_side inverse_side = oriented_side(neighbor, pface);
         CGAL_assertion(side != COPLANAR && inverse_side != COPLANAR);
 
-        if (side == ON_POSITIVE_SIDE && volume_indices[0] != -1) {
+        if (side == ON_POSITIVE_SIDE && volume_indices[0] != static_cast<std::size_t>(-1)) {
           if (associate(neighbor, volume_indices[0], inverse_side, volumes, map_volumes))
             queue[0].push(std::make_pair(neighbor, inverse_side));
         }
-        else if (side == ON_NEGATIVE_SIDE && volume_indices[1] != -1)
+        else if (side == ON_NEGATIVE_SIDE && volume_indices[1] != static_cast<std::size_t>(-1))
           if (associate(neighbor, volume_indices[1], inverse_side, volumes, map_volumes))
             queue[1].push(std::make_pair(neighbor, inverse_side));
 
@@ -636,7 +635,6 @@ private:
           visited_halfedges[n] = true;
 
           Face_index fn = mesh.face(n);
-          typename boost::graph_traits<typename Support_plane::Mesh>::faces_size_type cn = fcm[fn];
 
           f_other = mesh.face(mesh.opposite(n));
           if (f_other == mesh.null_face())
@@ -726,7 +724,7 @@ private:
 
         IVertex ivertex = m_data.ivertex(pvertex);
         if (ivertex2vertex[ivertex] == -1) {
-          ivertex2vertex[ivertex] = vertices.size();
+          ivertex2vertex[ivertex] = static_cast<int>(vertices.size());
           if (!face_filled)
             face2vertices[cell.faces[f]].push_back(vertices.size());
           else

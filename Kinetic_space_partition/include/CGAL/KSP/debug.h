@@ -308,12 +308,6 @@ void dump(const DS& data, const std::string tag = std::string()) {
   dump_intersection_edges(data, tag);
 }
 
-template<typename LCC>
-void dump_lcc(const LCC& lcc, const std::string tag = std::string()) {
-  std::map<CGAL::Epeck::Point_3, std::size_t> pt2idx;
-  std::vector<CGAL::Epeck::Point_3> pts;
-}
-
 template<typename GeomTraits>
 class Saver {
 

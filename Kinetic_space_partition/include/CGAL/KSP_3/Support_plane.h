@@ -139,9 +139,8 @@ public:
   Support_plane() : m_data(std::make_shared<Data>()) {}
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox, typename Intersection_kernel::Plane_3 plane, std::size_t idx) :
+  Support_plane(const PointRange& polygon, const bool is_bbox, typename Intersection_kernel::Plane_3 plane) :
     m_data(std::make_shared<Data>()) {
-    To_exact to_EK;
 
     std::vector<Point_3> points;
     points.reserve(polygon.size());
@@ -153,20 +152,6 @@ public:
     }
     const std::size_t n = points.size();
     CGAL_assertion(n == polygon.size());
-
-    /*
-        Vector_3 normal = CGAL::NULL_VECTOR;
-        for (std::size_t i = 0; i < n; ++i) {
-          const std::size_t ip = (i + 1) % n;
-          const auto& pa = points[i];
-          const auto& pb = points[ip];
-          const FT x = normal.x() + (pa.y() - pb.y()) * (pa.z() + pb.z());
-          const FT y = normal.y() + (pa.z() - pb.z()) * (pa.x() + pb.x());
-          const FT z = normal.z() + (pa.x() - pb.x()) * (pa.y() + pb.y());
-          normal = Vector_3(x, y, z);
-        }
-        CGAL_assertion_msg(normal != CGAL::NULL_VECTOR, "ERROR: BBOX IS FLAT!");
-        CGAL_assertion(n != 0);*/
 
     From_exact from_exact;
 
@@ -189,7 +174,7 @@ public:
   }
 
   template<typename PointRange>
-  Support_plane(const PointRange& polygon, const bool is_bbox, std::size_t idx) :
+  Support_plane(const PointRange& polygon, const bool is_bbox) :
     m_data(std::make_shared<Data>()) {
     To_exact to_exact;
 
@@ -235,7 +220,7 @@ public:
     add_property_maps();
   }
 
-  Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox, std::size_t idx) :
+  Support_plane(const std::vector<typename Intersection_kernel::Point_3>& polygon, const bool is_bbox) :
     m_data(std::make_shared<Data>()) {
     From_exact from_exact;
 
@@ -399,7 +384,7 @@ public:
   template<typename Pair>
   std::size_t add_input_polygon(
     const std::vector<Pair>& points,
-    const std::vector<std::size_t>& input_indices, std::size_t idx) {
+    const std::vector<std::size_t>& input_indices) {
 
     CGAL_assertion(is_simple_polygon(points));
     CGAL_assertion(is_convex_polygon(points));

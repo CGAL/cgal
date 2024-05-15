@@ -483,7 +483,6 @@ public:
 
     // Distance from edge to endpoint of iedge
     FT dist = (s - sp.data().original_vertices[source_idx]) * dir;
-    Point_3 viss = sp.to_3d(s - (dist * dir));
 
     edge_time[0] = dist / speed;
 
@@ -503,7 +502,6 @@ public:
 
     // Distance from edge to endpoint of iedge
     dist = (t - sp.data().original_vertices[target_idx]) * dir;
-    Point_3 vist = sp.to_3d(t - (dist * dir));
 
     edge_time[1] = dist / speed;
 
@@ -607,7 +605,7 @@ public:
 
   template<typename PointRange>
   std::pair<std::size_t, bool> add_support_plane(const PointRange& polygon, const bool is_bbox, const typename Intersection_kernel::Plane_3& plane) {
-    const Support_plane new_support_plane(polygon, is_bbox, plane, number_of_support_planes());
+    const Support_plane new_support_plane(polygon, is_bbox, plane);
     std::size_t support_plane_idx = std::size_t(-1);
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
@@ -632,7 +630,7 @@ public:
 
   template<typename PointRange>
   std::pair<std::size_t, bool> add_support_plane(const PointRange& polygon, const bool is_bbox) {
-    const Support_plane new_support_plane(polygon, is_bbox, number_of_support_planes());
+    const Support_plane new_support_plane(polygon, is_bbox);
     std::size_t support_plane_idx = std::size_t(-1);
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
@@ -667,14 +665,12 @@ public:
     }
 
     IkPoint_3 bbox_center(bbox_center_x * 0.125, bbox_center_y * 0.125, bbox_center_z * 0.125);
-    Point_3 bc = from_exact(bbox_center);
 
     // Intersect current plane with all bbox iedges.
     IkPoint_3 point;
     Point_3 p1;
     const auto& sp = support_plane(sp_idx);
     const auto& plane = sp.exact_plane();
-    const auto plane_inexact = from_exact(plane);
 
     using IEdge_vec = std::vector<IEdge>;
     using IPair = std::pair<IVertex, IEdge_vec>;
@@ -916,7 +912,7 @@ public:
     preprocess(points);
     sort_points_by_direction(points);
     support_plane(support_plane_idx).
-      add_input_polygon(points, input_indices, support_plane_idx);
+      add_input_polygon(points, input_indices);
     for (const std::size_t input_index : input_indices) {
       m_input_polygon_map[input_index] = support_plane_idx;
       m_sp2input_polygon[support_plane_idx].insert(input_index);
