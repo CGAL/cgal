@@ -40,7 +40,7 @@ public:
   {}
 
   RayC2(const Point_2 &sp, const Point_2 &secondp)
-    : base(CGAL::make_array(sp, secondp))
+    : base{sp, secondp}
   {}
 
 

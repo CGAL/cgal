@@ -13,6 +13,7 @@
 #define CGAL_ARRAY_H
 
 #include <CGAL/config.h>
+#include <CGAL/type_traits.h>
 #include <array>
 #include <utility>
 
@@ -45,25 +46,48 @@ namespace CGAL {
 
 // It's also untrue that this is not documented...  It is !
 
-template< typename T, typename... Args >
-BOOST_CXX14_CONSTEXPR
-std::array< T, 1 + sizeof...(Args) >
-make_array(const T & t, const Args & ... args)
-{
-  std::array< T, 1 + sizeof...(Args) > a = { { t, static_cast<T>(args)... } };
-  return a;
-}
+template <typename T, typename ...Args>
+struct Make_array_element_type {
+  using type = T;
+};
 
+template <typename ...Args>
+struct Make_array_element_type<void, Args...> {
+  using type = typename std::common_type_t<Args...>;
+};
+
+template <typename T, typename ...Args>
+using Make_array_element_type_t = typename Make_array_element_type<T, Args...>::type;
+
+template<typename T = void, typename... Args>
+constexpr
+std::array<Make_array_element_type_t<T, Args...>, sizeof...(Args) >
+make_array(Args&& ... args)
+{
+  using Target_type = Make_array_element_type_t<T, Args...>;
+
+// MSVC 2017 chokes on the following code, so we simplify it for this compiler
+// See https://godbolt.org/z/7Y34Y1c53
+#if ! defined(_MSC_VER) || (_MSC_VER > 1916)
+  if constexpr ( (CGAL::is_convertible_without_narrowing_v<cpp20::remove_cvref_t<Args>, Target_type>&&...) )
+    return {{ std::forward<Args>(args)... }};
+  else
+#endif // not MSVC or MSVC 2019 or later
+  {
+    std::array< Target_type, sizeof...(Args) > a = { { static_cast<Target_type>(args)... } };
+    return a;
+  }
+}
 
 // Functor version
 struct Construct_array
 {
-  template <typename T, typename... Args>
+  template <typename... Args>
   constexpr
-  std::array<T, 1 + sizeof...(Args)>
-  operator()(const T& t, const Args& ... args) const
+  decltype(auto)
+  operator()(Args&& ... args) const
   {
-    return make_array (t, args...);
+    return make_array( std::forward<Args>(args)... );
   }
 };
 

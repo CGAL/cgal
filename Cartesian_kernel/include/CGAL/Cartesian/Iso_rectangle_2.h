@@ -43,7 +43,7 @@ public:
   //  : base(p, q) {}
 
   Iso_rectangleC2(const Point_2 &p, const Point_2 &q, int)
-    : base(CGAL::make_array(p, q))
+    : base{p, q}
   {
     // I have to remove the assertions, because of Cartesian_converter.
     // CGAL_kernel_assertion(p<=q);
