@@ -15,7 +15,8 @@ using Surface_mesh = CGAL::Surface_mesh<Point_3>;
 using KSP          = CGAL::Kinetic_space_partition_3<EPICK>;
 using Timer        = CGAL::Real_timer;
 
-int main(const int argc, const char** argv) {
+int main(int argc, char** argv)
+{
   // Reading polygons from file
   std::string input_filename = (argc > 1 ? argv[1] : "data/test-4-rnd-polygons-4-6.off");
   std::ifstream input_file(input_filename);

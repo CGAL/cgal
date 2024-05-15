@@ -984,10 +984,12 @@ public:
       if (!added_volumes[i])
         std::cout << "volume " << i << " has not been added" << std::endl;
 
-    std::cout << "lcc #volumes: " << lcc.template one_dart_per_cell<3>().size() << " ksp #volumes: " << number_of_volumes() << std::endl;
-    std::cout << "lcc #faces: " << lcc.template one_dart_per_cell<2>().size() << " ksp #faces: " << num_faces << std::endl;
-    std::cout << "lcc #n-edges: " << lcc.template one_dart_per_cell<1>().size() << std::endl;
-    std::cout << "lcc #vtx: " << lcc.template one_dart_per_cell<0>().size() << " ksp #vtx: " << vtx.size() << std::endl;
+    if (m_parameters.verbose) {
+      std::cout << "lcc #volumes: " << lcc.template one_dart_per_cell<3>().size() << " ksp #volumes: " << number_of_volumes() << std::endl;
+      std::cout << "lcc #faces: " << lcc.template one_dart_per_cell<2>().size() << " ksp #faces: " << num_faces << std::endl;
+      std::cout << "lcc #n-edges: " << lcc.template one_dart_per_cell<1>().size() << std::endl;
+      std::cout << "lcc #vtx: " << lcc.template one_dart_per_cell<0>().size() << " ksp #vtx: " << vtx.size() << std::endl;
+    }
 
     // Verification
     // Check attributes in each dart
@@ -1012,7 +1014,8 @@ public:
       }
     }
 
-    lcc.display_characteristics(std::cout) << std::endl;
+    if (m_parameters.verbose)
+      lcc.display_characteristics(std::cout) << std::endl;
 
     if (!lcc.is_valid())
       std::cout << "LCC is not valid" << std::endl;
@@ -2391,7 +2394,8 @@ private:
         idx++;
       }
 
-    std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
+    if (m_parameters.verbose)
+      std::cout << "input split into " << m_partition_nodes.size() << " partitions" << std::endl;
   }
 };
 

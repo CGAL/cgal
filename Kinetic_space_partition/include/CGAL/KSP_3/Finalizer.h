@@ -50,6 +50,7 @@ private:
   using Tetrahedron_3 = typename Kernel::Tetrahedron_3;
 
   using From_exact = CGAL::Cartesian_converter<IntersectionKernel, Kernel>;
+  using To_exact = CGAL::Cartesian_converter<Kernel, IntersectionKernel>;
 
   using Data_structure = CGAL::KSP_3::internal::Data_structure<Kernel, IntersectionKernel>;
 
@@ -422,16 +423,23 @@ private:
     // take 2d directions orthogonal to edge
     // sort and take neighbors to current face
 
-    const Segment_3 segment = m_data.segment_3(pedge);
-    Vector_3 norm(segment.source(), segment.target());
-    norm = KSP::internal::normalize(norm);
-    const Plane_3 plane(segment.source(), norm);
-    Point_2 source2d = plane.to_2d(segment.source());
+    To_exact to_exact;
 
-    std::vector< std::pair<Direction_2, PFace> > dir_edges;
+    // const Segment_3 segment = m_data.segment_3(pedge);
+    IEdge ie = m_data.iedge(pedge);
+    typename Intersection_kernel::Point_3 source = m_data.point_3(m_data.igraph().source(ie));
+    typename Intersection_kernel::Vector_3 norm(source, m_data.point_3(m_data.igraph().target(ie)));
+
+    norm = KSP::internal::normalize(norm);
+
+    const typename Intersection_kernel::Plane_3 plane(source, norm);
+    typename Intersection_kernel::Point_2 source2d = plane.to_2d(source);
+
+    std::vector< std::pair<typename Intersection_kernel::Direction_2, PFace> > dir_edges;
+
     // Get orientation towards edge of current face
-    Point_2 v2d = plane.to_2d(m_data.centroid_of_pface(pface));
-    dir_edges.push_back(std::make_pair(Direction_2(source2d - v2d), pface));
+    typename Intersection_kernel::Point_2 v2d = plane.to_2d(to_exact(m_data.centroid_of_pface(pface)));
+    dir_edges.push_back(std::make_pair(typename Intersection_kernel::Direction_2(source2d - v2d), pface));
 
     // Get orientation towards edge of other faces
     for (const PFace& face : neighbor_faces) {
@@ -444,13 +452,14 @@ private:
       auto h = mesh.halfedge(face.second);
       auto first = h;
 
-      Point_3 point;
-      FT dist = 0;
+      typename Intersection_kernel::Point_3 point;
+      typename Intersection_kernel::FT dist = 0;
       do {
-        Point_3 p = sp.to_3d(mesh.point(mesh.target(h)));
-        Vector_3 dist_in_plane = (p - segment.source());
+        typename Intersection_kernel::Point_3 p = m_data.point_3(m_data.ivertex(PVertex(face.first, mesh.target(h))));
+        typename Intersection_kernel::Vector_3 dist_in_plane = (p - source);
         dist_in_plane -= norm * (dist_in_plane * norm);
-        FT d = dist_in_plane.squared_length();
+        typename Intersection_kernel::FT d = dist_in_plane.squared_length();
+
         if (d > dist) {
           dist = d;
           point = p;
@@ -458,17 +467,15 @@ private:
         h = mesh.next(h);
       } while (first != h);
 
-      Point_2 p = plane.to_2d(point);
-
-      dir_edges.push_back(std::make_pair(Direction_2(source2d - p), face));
+      dir_edges.push_back(std::make_pair(typename Intersection_kernel::Direction_2(source2d - plane.to_2d(point)), face));
     }
 
     CGAL_assertion(dir_edges.size() == neighbor_faces.size());
 
     // Sort directions
     std::sort(dir_edges.begin(), dir_edges.end(), [&](
-      const std::pair<Direction_2, PFace>& p,
-      const std::pair<Direction_2, PFace>& q) -> bool {
+      const std::pair<typename Intersection_kernel::Direction_2, PFace>& p,
+      const std::pair<typename Intersection_kernel::Direction_2, PFace>& q) -> bool {
         return p.first < q.first;
       }
     );
