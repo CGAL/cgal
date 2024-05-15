@@ -1,14 +1,14 @@
 
 #define CGAL_TRACE_STREAM std::cerr
 
-#include <iostream>
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Point_set_3.h>
 
-#include <cassert>
+#include <CGAL/Point_set_3.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Simple_cartesian.h>
+#include <iostream>
+#include <cassert>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_3;
@@ -48,7 +48,7 @@ void test(std::size_t dataset_size) {
     points.insert(*(generator++));
 
   // Build an octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
 
   // Refine the octree
   octree.refine();

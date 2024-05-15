@@ -1,11 +1,11 @@
 
 #define CGAL_TRACE_STREAM std::cerr
 
-#include <iostream>
 #include <CGAL/Octree.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 
+#include <CGAL/Simple_cartesian.h>
+#include <iostream>
 #include <cassert>
 
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -37,7 +37,7 @@ void test_1_point() {
   points.insert({-1, -1, -1});
 
   // Create the octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // Check that the root node was never split
@@ -53,11 +53,11 @@ void test_2_points() {
   points.insert({1, -1, -1});
 
   // Create the octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   // The octree should have been split once
-  Octree other({points, points.point_map()});
+  Octree other(points, points.point_map());
   other.split(other.root());
   assert(Octree::is_topology_equal(other, octree));
   assert(1 == octree.depth());
@@ -72,10 +72,10 @@ void test_4_points() {
   points.insert({1, 1, 4});
 
   // Create the octree
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
-  Octree other({points, points.point_map()});
+  Octree other(points, points.point_map());
   other.split(other.root());
   other.split(other.node(3));
   other.split(other.node(7));

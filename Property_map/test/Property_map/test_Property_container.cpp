@@ -1,7 +1,8 @@
 
 #include <CGAL/Property_container.h>
+#include <CGAL/use.h>
 
-using namespace CGAL::Properties;
+using namespace CGAL::Properties::Experimental;
 
 void test_property_creation() {
 
@@ -22,15 +23,16 @@ void test_property_creation() {
   assert(floats.get() == properties.get_property<float>("float"));
 
   // remove() should delete a property array & return if it existed
-  assert(!properties.remove_property("not-a-real-property"));
-  auto removed = properties.remove_property("integer");
+  assert(!properties.remove_properties("not-a-real-property"));
+  auto removed = properties.remove_property<int>(integers);
   assert(removed);
   assert(properties.num_properties() == 1);
 
   // Add a new property
-  auto [bools, bools_created] = properties.get_or_add_property("bools", false);
+  auto [bools, bools_created] = properties.get_or_add_property<bool>("bools", false);
   static_assert(std::is_same_v<decltype(bools), std::reference_wrapper<Property_array<std::size_t, bool>>>);
   Property_array<std::size_t, bool>& b = bools.get();
+  CGAL_USE(b);
 }
 
 void test_element_access() {
@@ -110,7 +112,7 @@ void test_emplace_group() {
   Property_container properties;
 
   auto& a = properties.add_property("a", 5);
-
+  CGAL_USE(a);
   // Insert a group of 100 elements
   properties.emplace_group(100);
   assert(properties.size() == 100);
@@ -177,7 +179,6 @@ void test_append() {
   // Additional properties in the first group should have expanded too, and been filled with defaults
   // note: the property array must be const, because non const operator[] doesn't work for vector<bool>!
   assert(std::as_const(properties_a).get_property<bool>("bools")[12] == true);
-
 }
 
 void test_constructors() {

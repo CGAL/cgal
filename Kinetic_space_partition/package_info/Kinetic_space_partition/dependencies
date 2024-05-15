@@ -4,6 +4,7 @@ Arrangement_on_surface_2
 BGL
 Boolean_set_operations_2
 Bounding_volumes
+CGAL_Core
 Cartesian_kernel
 Circulator
 Combinatorial_map

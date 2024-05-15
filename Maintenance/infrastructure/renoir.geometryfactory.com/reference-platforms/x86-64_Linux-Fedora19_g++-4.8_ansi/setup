@@ -1,6 +1,0 @@
-export QTDIR=/usr/lib64/qt-3.3
-source /home/lrineau/infrastructure/reference-platforms/setup-common
-
-# Workaround to pass options to cmake
-CMAKE_GENERATOR="-C/home/lrineau/CGAL/branches/local-master.git/Maintenance/infrastructure/renoir.geometryfactory.com/reference-platforms/x86-64_Linux-Fedora19_g++-4.8_ansi/initial.cmake"
-export CMAKE_GENERATOR

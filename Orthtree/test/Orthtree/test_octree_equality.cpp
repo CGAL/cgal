@@ -1,10 +1,10 @@
 
 #define CGAL_TRACE_STREAM std::cerr
 
-#include <iostream>
 #include <CGAL/Octree.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Simple_cartesian.h>
+#include <iostream>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_3;
@@ -25,8 +25,8 @@ void test_identical_trees() {
   points.insert({1, 1, 1});
 
   // Create a pair of trees from the same point set
-  Octree a({points, points.point_map()});
-  Octree b({points, points.point_map()});
+  Octree a(points, points.point_map());
+  Octree b(points, points.point_map());
 
   // Refine both trees using the same criteria
   a.refine(10, 1);
@@ -51,8 +51,8 @@ void test_identical_contents_different_criteria() {
   points.insert({1, 1, 1});
 
   // Create a pair of trees from the same point set
-  Octree a({points, points.point_map()});
-  Octree b({points, points.point_map()});
+  Octree a(points, points.point_map());
+  Octree b(points, points.point_map());
 
   // Refine both trees using different criteria
   a.refine(10, 1);
@@ -86,8 +86,8 @@ void test_different_contents_identical_criteria() {
   points_b.insert({1, 1, 2});
 
   // Create a pair of trees from the different point sets
-  Octree a({points_a, points_a.point_map()});
-  Octree b({points_b, points_b.point_map()});
+  Octree a(points_a, points_a.point_map());
+  Octree b(points_b, points_b.point_map());
 
   // Refine both trees using the same criteria
   a.refine(10, 1);

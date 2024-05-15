@@ -1,16 +1,15 @@
 
 #define CGAL_TRACE_STREAM std::cerr
 
-#include <iostream>
 #include <CGAL/Octree.h>
-#include <CGAL/Orthtree/Nearest_neighbors.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 
+#include <CGAL/Simple_cartesian.h>
+#include <iostream>
 #include <chrono>
 #include <cassert>
 
@@ -67,12 +66,12 @@ void naive_vs_octree(std::size_t dataset_size) {
 
   // Do the same using the octree
   Point octree_nearest = *generator;
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
   {
     std::vector<Point_set::Index> k_neighbors;
-    CGAL::Orthtrees::nearest_neighbors(octree, random_point, 1, std::back_inserter(k_neighbors));
+    octree.nearest_k_neighbors(random_point, 1, std::back_inserter(k_neighbors));
     octree_nearest = get(points.point_map(), *k_neighbors.begin());
   }
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
@@ -119,10 +118,10 @@ void kdtree_vs_octree(std::size_t dataset_size, std::size_t K) {
 
   // Do the same using the octree
   std::vector<Point_set::Index> octree_nearest_neighbors;
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 20);
   auto octree_start_time = high_resolution_clock::now();
-  CGAL::Orthtrees::nearest_neighbors(octree, random_point, K, std::back_inserter(octree_nearest_neighbors));
+  octree.nearest_k_neighbors(random_point, K, std::back_inserter(octree_nearest_neighbors));
   duration<float> octree_elapsed_time = high_resolution_clock::now() - octree_start_time;
 
   std::cout << "Octree --> "

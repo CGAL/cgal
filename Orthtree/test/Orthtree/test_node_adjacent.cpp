@@ -3,8 +3,8 @@
 #include <CGAL/Octree.h>
 #include <CGAL/Orthtree/Traversals.h>
 
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Point_set_3.h>
+#include <CGAL/Simple_cartesian.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Point = Kernel::Point_3;
@@ -34,7 +34,7 @@ int main(void) {
   points.insert({-1, -1, -1.8});
   points.insert({-1, -1, -1.9});
 
-  Octree octree({points, points.point_map()});
+  Octree octree(points, points.point_map());
   octree.refine(10, 1);
 
   std::cout << octree << std::endl;

@@ -376,10 +376,11 @@ public:
 
     typename Intersection_graph::Kinetic_interval& kinetic_interval = m_intersection_graph.kinetic_interval(edge, sp_idx);
 
+/*
     if (kinetic_interval.size() != 0) {
       int a;
       a = 3;
-    }
+    }*/
 
     Point_2 s = sp.to_2d(from_exact(point_3(m_intersection_graph.source(edge))));
     Point_2 t = sp.to_2d(from_exact(point_3(m_intersection_graph.target(edge))));
@@ -390,8 +391,9 @@ public:
     Direction_2 to_source(s - centroid);
     Direction_2 to_target(t - centroid);
 
-    std::size_t source_idx = -1;
-    std::size_t target_idx = -1;
+    const std::size_t uninitialized = static_cast<std::size_t>(-1);
+    std::size_t source_idx = uninitialized;
+    std::size_t target_idx = uninitialized;
 
     event.crossed_edge = edge;
     event.support_plane = sp_idx;
@@ -405,15 +407,15 @@ public:
       event.face = faces.first;
 
     for (std::size_t i = 0; i < sp.data().original_directions.size(); i++) {
-      if (source_idx == -1 && sp.data().original_directions[i] > to_source)
+      if (source_idx == uninitialized && sp.data().original_directions[i] > to_source)
         source_idx = i;
 
-      if (target_idx == -1 && sp.data().original_directions[i] > to_target)
+      if (target_idx == uninitialized && sp.data().original_directions[i] > to_target)
         target_idx = i;
     }
 
-    source_idx = (source_idx == -1) ? 0 : source_idx;
-    target_idx = (target_idx == -1) ? 0 : target_idx;
+    source_idx = (source_idx == uninitialized) ? 0 : source_idx;
+    target_idx = (target_idx == uninitialized) ? 0 : target_idx;
 
     std::size_t num;
 
@@ -532,12 +534,13 @@ public:
       event.intersection_bary = 1;
     }
 
+/*
     if (kinetic_interval.size() > 4) {
       if (kinetic_interval[2].first > kinetic_interval[1].first) {
         int a;
         a = 2;
       }
-    }
+    }*/
 
     CGAL_assertion(0 <= event.intersection_bary && event.intersection_bary <= 1);
 
@@ -606,7 +609,8 @@ public:
   template<typename PointRange>
   std::pair<std::size_t, bool> add_support_plane(const PointRange& polygon, const bool is_bbox, const typename Intersection_kernel::Plane_3& plane) {
     const Support_plane new_support_plane(polygon, is_bbox, plane);
-    std::size_t support_plane_idx = std::size_t(-1);
+    const std::size_t uninitialized = static_cast<std::size_t>(-1);
+    std::size_t support_plane_idx = uninitialized;
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (new_support_plane == support_plane(i)) {
@@ -615,7 +619,7 @@ public:
       }
     }
 
-    if (support_plane_idx == std::size_t(-1)) {
+    if (support_plane_idx == uninitialized) {
       support_plane_idx = number_of_support_planes();
       m_support_planes.push_back(new_support_plane);
     }
@@ -631,7 +635,8 @@ public:
   template<typename PointRange>
   std::pair<std::size_t, bool> add_support_plane(const PointRange& polygon, const bool is_bbox) {
     const Support_plane new_support_plane(polygon, is_bbox);
-    std::size_t support_plane_idx = std::size_t(-1);
+    const std::size_t uninitialized = static_cast<std::size_t>(- 1);
+    std::size_t support_plane_idx = uninitialized;
 
     for (std::size_t i = 0; i < number_of_support_planes(); ++i) {
       if (new_support_plane == support_plane(i)) {
@@ -640,7 +645,7 @@ public:
       }
     }
 
-    if (support_plane_idx == std::size_t(-1)) {
+    if (support_plane_idx == uninitialized) {
       support_plane_idx = number_of_support_planes();
       m_support_planes.push_back(new_support_plane);
     }
@@ -776,16 +781,17 @@ public:
       const auto& iplanes0 = all_iplanes[i];
       const auto& iplanes1 = all_iplanes[ip];
 
-      std::size_t common_bbox_plane_idx = std::size_t(-1);
+      const std::size_t uninitialized = static_cast<std::size_t>(-1);
+      std::size_t common_bbox_plane_idx = uninitialized;
       bool dump = false;
       const std::function<void(const std::size_t& idx)> lambda =
         [&](const std::size_t& idx) {
         if (idx < 6) {
 
-          if (common_bbox_plane_idx != std::size_t(-1))
+          if (common_bbox_plane_idx != uninitialized)
             dump = true;
-            common_bbox_plane_idx = idx;
-          }
+          common_bbox_plane_idx = idx;
+        }
         };
 
       std::set_intersection(
@@ -806,15 +812,15 @@ public:
         vout.close();
       }
 
-      CGAL_assertion(common_bbox_plane_idx != std::size_t(-1));
+      CGAL_assertion(common_bbox_plane_idx != uninitialized);
       common_bbox_planes_idx.push_back(common_bbox_plane_idx);
 
       const auto pair = map_lines_idx.insert(
-        std::make_pair(common_bbox_plane_idx, std::size_t(-1)));
+        std::make_pair(common_bbox_plane_idx, uninitialized));
       const bool is_inserted = pair.second;
       if (is_inserted) {
         typename Intersection_kernel::Line_3 line;
-        bool intersect = intersection(plane, m_support_planes[common_bbox_plane_idx].exact_plane(), line);
+        CGAL_assertion_code(bool intersect =)  intersection(plane, m_support_planes[common_bbox_plane_idx].exact_plane(), line);
         CGAL_assertion(intersect);
         pair.first->second = m_intersection_graph.add_line(line);
       }
@@ -872,10 +878,11 @@ public:
   template<typename PointRange>
   void add_bbox_polygon(const PointRange& polygon) {
     bool is_added = true;
-    std::size_t support_plane_idx = std::size_t(-1);
+    const std::size_t uninitialized = static_cast<std::size_t>(-1);
+    std::size_t support_plane_idx = uninitialized;
     std::tie(support_plane_idx, is_added) = add_support_plane(polygon, true);
     CGAL_assertion(is_added);
-    CGAL_assertion(support_plane_idx != std::size_t(-1));
+    CGAL_assertion(support_plane_idx != uninitialized);
 
     std::array<IVertex, 4> ivertices;
     std::array<Point_2, 4> points;
@@ -1249,7 +1256,7 @@ public:
 
     typename Intersection_kernel::Line_3 line;
     auto it = support_planes_idx.begin();
-    bool intersect = intersection(m_support_planes[*it++].exact_plane(), m_support_planes[*it++].exact_plane(), line);
+    CGAL_assertion_code(bool intersect =) intersection(m_support_planes[*it++].exact_plane(), m_support_planes[*it++].exact_plane(), line);
     CGAL_assertion(intersect);
 
     std::size_t line_idx = m_intersection_graph.add_line(line);

@@ -282,26 +282,29 @@ Scene_polyhedron_selection_item_priv::triangulate_facet(fg_face_descriptor fit,c
   const CGAL::qglviewer::Vec off = Three::mainViewer()->offset();
   EPICK::Vector_3 offset(off.x,off.y,off.z);
 
-  typedef FacetTriangulator<Face_graph, EPICK, fg_vertex_descriptor> FT;
-  FT triangulation(fit,normal,poly, offset);
-    //iterates on the internal faces to add the vertices to the positions
-    //and the normals to the appropriate vectors
-    for(FT::CDT::Finite_faces_iterator
-        ffit = triangulation.cdt->finite_faces_begin(),
-        end = triangulation.cdt->finite_faces_end();
-        ffit != end; ++ffit)
-    {
-        if(ffit->info().is_external)
-            continue;
+  //iterates on the internal faces to add the vertices to the positions
+  //and the normals to the appropriate vectors
+  auto f = [&](auto& ffit, auto& /* v2v */) {
+    if (ffit.info().is_external)
+      return;
 
-        push_back_xyz(ffit->vertex(0)->point(), p_facets);
-        push_back_xyz(ffit->vertex(1)->point(), p_facets);
-        push_back_xyz(ffit->vertex(2)->point(), p_facets);
+    push_back_xyz(ffit.vertex(0)->point(), p_facets);
+    push_back_xyz(ffit.vertex(1)->point(), p_facets);
+    push_back_xyz(ffit.vertex(2)->point(), p_facets);
 
-        push_back_xyz(normal, p_normals);
-        push_back_xyz(normal, p_normals);
-        push_back_xyz(normal, p_normals);
-    }
+    push_back_xyz(normal, p_normals);
+    push_back_xyz(normal, p_normals);
+    push_back_xyz(normal, p_normals);
+    };
+
+  try {
+    FacetTriangulator<Face_graph, EPICK, fg_vertex_descriptor> triangulation(fit, normal, poly, offset);
+    triangulation.per_face(f);
+  }
+  catch (...) {
+    FacetTriangulator<Face_graph, EPICK, fg_vertex_descriptor, CGAL::Exact_intersections_tag> triangulation(fit, normal, poly, offset);
+    triangulation.per_face(f);
+  }
 }
 
 
@@ -345,7 +348,7 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
 
         for(fg_halfedge_descriptor he : halfedges_around_face(halfedge(f,*polyhedron()), *polyhedron()))
         {
-          const Point& p = get(vpm,target(he,*poly));
+          const Point p = get(vpm,target(he,*poly));
           p_facets.push_back(p.x()+offset.x);
           p_facets.push_back(p.y()+offset.y);
           p_facets.push_back(p.z()+offset.z);
@@ -357,9 +360,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         Vector nf = get(nf_pmap, f);
         {
           //1st half-quad
-          const Point& p0 = get(vpm,target(halfedge(f,*poly),*poly));
-          const Point& p1 = get(vpm,target(next(halfedge(f,*poly),*poly),*poly));
-          const Point& p2 = get(vpm,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
+          const Point p0 = get(vpm,target(halfedge(f,*poly),*poly));
+          const Point p1 = get(vpm,target(next(halfedge(f,*poly),*poly),*poly));
+          const Point p2 = get(vpm,target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
 
           push_back_xyz(p0+v_offset, p_facets);
           push_back_xyz(p1+v_offset, p_facets);
@@ -371,9 +374,9 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
         }
         {
           //2nd half-quad
-          const Point& p0 = get(vpm, target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
-          const Point& p1 = get(vpm, target(prev(halfedge(f,*poly),*poly),*poly));
-          const Point& p2 = get(vpm, target(halfedge(f,*poly),*poly));
+          const Point p0 = get(vpm, target(next(next(halfedge(f,*poly),*poly),*poly),*poly));
+          const Point p1 = get(vpm, target(prev(halfedge(f,*poly),*poly),*poly));
+          const Point p2 = get(vpm, target(halfedge(f,*poly),*poly));
 
           push_back_xyz(p0+v_offset, p_facets);
           push_back_xyz(p1+v_offset, p_facets);
@@ -394,8 +397,8 @@ void Scene_polyhedron_selection_item_priv::compute_any_elements(std::vector<floa
     {
 
         for(Selection_set_edge::const_iterator it = p_sel_edges.begin(); it != p_sel_edges.end(); ++it) {
-          const Point& a = get(vpm, target(halfedge(*it,*poly),*poly));
-          const Point& b = get(vpm, target(opposite((halfedge(*it,*poly)),*poly),*poly));
+          const Point a = get(vpm, target(halfedge(*it,*poly),*poly));
+          const Point b = get(vpm, target(opposite((halfedge(*it,*poly)),*poly),*poly));
             p_lines.push_back(a.x()+offset.x);
             p_lines.push_back(a.y()+offset.y);
             p_lines.push_back(a.z()+offset.z);
@@ -668,7 +671,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_vertex temp_select = selected_vertices;
     select_all();
-    Q_FOREACH(fg_vertex_descriptor vh, temp_select)
+    for(fg_vertex_descriptor vh: temp_select)
     {
       selected_vertices.erase(vh);
     }
@@ -678,7 +681,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_edge temp_select = selected_edges;
     select_all();
-    Q_FOREACH(fg_edge_descriptor ed , temp_select)
+    for(fg_edge_descriptor ed: temp_select)
       selected_edges.erase(ed);
     break;
   }
@@ -686,7 +689,7 @@ void Scene_polyhedron_selection_item::inverse_selection()
   {
     Selection_set_facet temp_select = selected_facets;
     select_all();
-    Q_FOREACH(fg_face_descriptor fh, temp_select)
+    for(fg_face_descriptor fh: temp_select)
       selected_facets.erase(fh);
     break;
   }
@@ -1636,7 +1639,7 @@ void Scene_polyhedron_selection_item::selectPath(fg_vertex_descriptor vh)
           return;
         }
       bool found = false;
-      Q_FOREACH(Scene_polyhedron_selection_item_priv::vertex_on_path vop, d->path)
+      for(Scene_polyhedron_selection_item_priv::vertex_on_path vop : d->path)
       {
         if(vop.vertex == vh)
         {
@@ -1830,7 +1833,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 {
   common_constructor();
   QString sf = poly_item->property("source filename").toString();
-  QRegExp rx("\\.(ts$|off$|obj$|ply$|stl$|surf$|vtk$|vtp$|vtu)");
+  QRegularExpression rx("\\.(ts$|off$|obj$|ply$|stl$|surf$|vtk$|vtp$|vtu)");
   sf.remove(rx);
   if(!sf.isEmpty())
     setProperty("defaultSaveDir", sf);
@@ -1843,7 +1846,7 @@ Scene_polyhedron_selection_item::Scene_polyhedron_selection_item(Scene_face_grap
 Scene_polyhedron_selection_item::~Scene_polyhedron_selection_item()
 {
   delete d;
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
     CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
     viewer->setBindingSelect();
   }
@@ -1887,7 +1890,7 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
       getPointContainer(Priv::Temp_points)->reset_vbos(ALL);
       getPointContainer(Priv::Fixed_points)->reset_vbos(ALL);
 
-      Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
       {
         CGAL::Three::Viewer_interface* viewer =
             static_cast<CGAL::Three::Viewer_interface*>(v);
@@ -1907,14 +1910,14 @@ void Scene_polyhedron_selection_item::invalidateOpenGLBuffers() {
 
 void Scene_polyhedron_selection_item::add_to_selection()
 {
-  Q_FOREACH(fg_edge_descriptor ed, temp_selected_edges)
+  for(fg_edge_descriptor ed : temp_selected_edges)
   {
     selected_edges.insert(ed);
     temp_selected_edges.erase(ed);
   }
   on_Ctrlz_pressed();
   invalidateOpenGLBuffers();
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     v->update();
   d->tempInstructions("Path added to selection.",
                    "Select two vertices to create the path between them. (1/2)");
@@ -2217,7 +2220,7 @@ void Scene_polyhedron_selection_item::init(Scene_face_graph_item* poly_item, QMa
     redraw();
   });
   d->manipulated_frame = new ManipulatedFrame();
-  Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool())
+  for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool())
     v->installEventFilter(this);
   mw->installEventFilter(this);
   connect(mw, SIGNAL(newViewerCreated(QObject*)),
@@ -2241,12 +2244,12 @@ void Scene_polyhedron_selection_item::selection_changed(bool)
        Three::scene()->item(Three::scene()->mainSelectionIndex())))
     do_bind_select = false;
   if(do_bind_select)
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+    for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       viewer->setBindingSelect();
     }
     else
-    Q_FOREACH(CGAL::QGLViewer* v, CGAL::QGLViewer::QGLViewerPool()){
+      for(CGAL::QGLViewer* v : CGAL::QGLViewer::QGLViewerPool()){
       CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       viewer->setNoBinding();
     }

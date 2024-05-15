@@ -50,7 +50,7 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
     return QList<Scene_item*>()<<item;
   }
 
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   ok = true;
   if(add_to_scene)
     CGAL::Three::Three::scene()->addItem(item);

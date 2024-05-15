@@ -5,13 +5,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_TEST_SIMPLE_MODELS_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_TEST_SIMPLE_MODELS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/test/simple_models.h
  * \brief defines dummy implementations satisfying Curve_kernel_2

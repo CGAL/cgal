@@ -56,7 +56,7 @@ or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`h
 The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
-<b>Version 1.66 or later</b>
+<b>Version 1.72 or later</b>
 
 The \boost libraries are a set of portable C++ source libraries.
 Most of \boost libraries are header-only, but a few of them need to be compiled or
@@ -72,12 +72,12 @@ from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`htt
 
 As there is no canonical directory for where to find \boost on Windows,
 we recommend that you define the environment variable
-`BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_69_0`.
+`BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_70_0`.
 
 \subsection thirdpartyMPFR GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
 <b>GMP Version 4.2 or later, MPFR Version 2.2.1 or later</b>
 
-The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt5` require
+The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt6` require
 \gmp and \mpfr which are libraries for multi precision integers and rational numbers,
 and for multi precision floating point numbers.
 
@@ -102,19 +102,19 @@ version shipped with \cgal.
 The page \ref configurationvariables lists CMake and environment variables which can be used to specify
 the location of third-party software during configuration.
 
-\subsection thirdpartyQt Qt5
-<b>Version 5.9.0 or later</b>
+\subsection thirdpartyQt Qt6
+<b>Version 6.4 or later</b>
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGAL_Qt5 is essential to run the \cgal demos and basic viewers.
-It requires \qt5 installed on your system.
+The component libCGAL_Qt6 is essential to run the \cgal demos and basic viewers.
+It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
 it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
 
-The exhaustive list of \qt5 components used in demos is:
-`Core`, `Gui`, `Help`, `OpenGL`, `Script`, `ScriptTools`, `Svg`, `Widgets`,
-`qcollectiongenerator` (with `sqlite` driver plugin), and `Xml`.
+The exhaustive list of \qt6 components used in demos is:
+`Core`, `Gui`, `Help`, `OpenGL`, `OpenGLWidgets`, `Qml`, `Svg`, `Widgets`,
+`WebSockets`,  `Network`, and `qcollectiongenerator` (with `sqlite` driver plugin).
 
 \subsection thirdpartyEigen Eigen
 <b>Version 3.3.4 or later</b>

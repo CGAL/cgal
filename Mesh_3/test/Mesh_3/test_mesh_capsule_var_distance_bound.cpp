@@ -58,7 +58,9 @@ int main()
                          facet_distance=field);
 
   // Mesh generation
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      perturb(time_limit = 0, sliver_bound = 0),
+                                      exude(time_limit = 0, sliver_bound = 0));
 
 //  // Output
 //  std::ofstream medit_file("out.mesh");

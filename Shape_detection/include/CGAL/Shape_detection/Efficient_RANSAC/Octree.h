@@ -56,7 +56,7 @@ class RANSAC_octree {
   typedef std::vector<std::size_t> Input_range;
   typedef Random_index_access_property_map<Input_iterator, Point_map> Indexed_point_map;
 
-  typedef Orthtree_traits_point<typename Traits_base<Traits>::type, Input_range, Indexed_point_map, Dimension_tag<3>> OTraits;
+  typedef Orthtree_traits_point<typename Traits_base<Traits>::type, Input_range, Indexed_point_map, false, 3> OTraits;
 
   typedef CGAL::Orthtree<OTraits> Octree;
 

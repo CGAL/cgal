@@ -150,8 +150,7 @@ public:
         static_cast<FT>(point.y()),
         static_cast<FT>(point.z())));
     }
-    const std::size_t n = points.size();
-    CGAL_assertion(n == polygon.size());
+    CGAL_assertion(points.size() == polygon.size());
 
     From_exact from_exact;
 
@@ -161,7 +160,7 @@ public:
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
     m_data->angle_tolerance = 0;
-    m_data->actual_input_polygon = -1;
+    m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -232,7 +231,7 @@ public:
         from_exact(point.y()),
         from_exact(point.z())));
     }
-    const std::size_t n = points.size();
+    CGAL_assertion_code(const std::size_t n = points.size();)
     CGAL_assertion(n == polygon.size());
     CGAL_assertion(n != 0);
 
@@ -242,7 +241,7 @@ public:
     m_data->is_bbox = is_bbox;
     m_data->distance_tolerance = 0;
     m_data->angle_tolerance = 0;
-    m_data->actual_input_polygon = -1;
+    m_data->actual_input_polygon = static_cast<std::size_t>(- 1);
 
     std::vector<Triangle_2> tris(points.size() - 2);
     for (std::size_t i = 2; i < points.size(); i++) {
@@ -533,7 +532,7 @@ public:
     m_data->ifaces.insert(face);
     if (!pair.second) {
       CGAL_assertion(pair.first->second.first != Intersection_graph::null_iface());
-      CGAL_assertion(pair.first->second.second = Intersection_graph::null_iface());
+      CGAL_assertion(pair.first->second.second == Intersection_graph::null_iface());
       pair.first->second.second = face;
     }
   }

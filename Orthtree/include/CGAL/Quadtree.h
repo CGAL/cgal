@@ -20,29 +20,23 @@
 namespace CGAL {
 
 /*!
-  \ingroup PkgOrthtreeClasses
+  \ingroup PkgOrthtreeRef
 
-  \brief Alias that specializes the `Orthtree` class to a 2D quadtree.
-
-  These two types are exactly equivalent:
-  - `Quadtree<GeomTraits, PointRange, PointMap>`
-  - `Orthtree<Orthtree_traits_2<GeomTraits>, PointRange, PointMap>`.
-
-  \warning This is a not a real class but an alias, please refer to
-  the documentation of `Orthtree`.
+  \brief Alias that specializes the `Orthtree` class to a 2D quadtree storing 2D points.
 
   \tparam GeomTraits must be a model of `Kernel`
-  \tparam PointRange_ must be a model of range whose value type is the key type of `PointMap`
+  \tparam PointRange must be a model of `Range` whose value type is the key type of `PointMap`
   \tparam PointMap must be a model of `ReadablePropertyMap` whose value type is `GeomTraits::Point_2`
+  \tparam square_nodes Boolean to enforce square nodes
 */
 template <typename GeomTraits, typename PointRange,
           typename PointMap = Identity_property_map
-         <typename std::iterator_traits<typename PointRange::iterator>::value_type> >
-#ifdef DOXYGEN_RUNNING
-class Quadtree;
-#else
-using Quadtree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, Dimension_tag<2>>>;
-#endif
+         <typename std::iterator_traits<typename PointRange::iterator>::value_type>,
+          bool squared_nodes = false
+>
+
+using Quadtree = Orthtree<Orthtree_traits_point<GeomTraits, PointRange, PointMap, squared_nodes, 2>>;
+
 
 } // namespace CGAL
 

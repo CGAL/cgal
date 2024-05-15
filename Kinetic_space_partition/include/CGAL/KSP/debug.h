@@ -31,6 +31,7 @@
 #include <CGAL/Surface_mesh/IO.h>
 #include <CGAL/Random.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/boost/graph/generators.h>
 
 // Internal includes.
 #include <CGAL/KSP/utils.h>
@@ -320,7 +321,7 @@ public:
   using Segment_2 = typename Traits::Segment_2;
   using Segment_3 = typename Traits::Segment_3;
 
-  using Color        = CGAL::Color;
+  using Color        = CGAL::IO::Color;
   using Surface_mesh = CGAL::Surface_mesh<Point_3>;
   using Random       = CGAL::Random;
 
@@ -818,7 +819,7 @@ void dump_volume(
   using Point_3 = typename DS::Kernel::Point_3;
   std::vector<Point_3> polygon;
   std::vector< std::vector<Point_3> > polygons;
-  std::vector<Color> colors;
+  std::vector<CGAL::IO::Color> colors;
 
   colors.reserve(pfaces.size());
   polygons.reserve(pfaces.size());
@@ -856,13 +857,13 @@ void dump_visi(
   using Point_3 = typename DS::Kernel::Point_3;
   std::vector<Point_3> polygon;
   std::vector< std::vector<Point_3> > polygons;
-  std::vector<Color> colors;
+  std::vector<CGAL::IO::Color> colors;
 
   colors.reserve(pfaces.size());
   polygons.reserve(pfaces.size());
 
-  const Color low(255, 255, 255);
-  const Color high(0, 0, 255);
+  const CGAL::IO::Color low(255, 255, 255);
+  const CGAL::IO::Color high(0, 0, 255);
 
   Saver<typename DS::Kernel> saver;
   for (const auto& pface : pfaces) {
@@ -872,7 +873,7 @@ void dump_visi(
       polygon.push_back(data.point_3(pvertex));
     }
 
-    colors.push_back(Color(static_cast<unsigned char>((1 - color) * low[0] + color * high[0]), static_cast<unsigned char>((1 - color) * low[1] + color * high[1]), static_cast<unsigned char>((1 - color) * low[2] + color * high[2]), ((color > 0.5) ? 150 : 25)));
+    colors.push_back(CGAL::IO::Color(static_cast<unsigned char>((1 - color) * low[0] + color * high[0]), static_cast<unsigned char>((1 - color) * low[1] + color * high[1]), static_cast<unsigned char>((1 - color) * low[2] + color * high[2]), ((color > 0.5) ? 150 : 25)));
 
     CGAL_assertion(polygon.size() >= 3);
     polygons.push_back(polygon);
@@ -889,7 +890,7 @@ void dump_volumes(const DS& data, const std::string tag = std::string()) {
   using Point_3 = typename DS::Kernel::Point_3;
   std::vector<Point_3> polygon;
   std::vector< std::vector<Point_3> > polygons;
-  std::vector<Color> colors;
+  std::vector<CGAL::IO::Color> colors;
 
   Saver<typename DS::Kernel> saver;
   for (std::size_t i = 0; i < data.volumes().size(); ++i) {
@@ -989,7 +990,7 @@ void dump_indexed_polygons(const std::vector<CGAL::Epick::Point_3>& pts, const s
   saver.export_indexed_polygons_3(pts, polys, filename);
 }
 
-void dump_polygons(const std::vector<std::vector<CGAL::Epick::Point_3> >& pts, const std::vector<Color>& colors, const std::string& filename) {
+  void dump_polygons(const std::vector<std::vector<CGAL::Epick::Point_3> >& pts, const std::vector<CGAL::IO::Color>& colors, const std::string& filename) {
   Saver<CGAL::Epick> saver;
 
   saver.export_polygon_soup_3(pts, colors, filename);
@@ -1034,7 +1035,7 @@ void dump_polygons(
   saver.export_polygon_soup_3(polygons, name);
 }
 
-void dump_points(const std::vector<CGAL::Epick::Point_3>& pts, const std::vector<CGAL::Epick::Vector_3>& normals, const std::vector<Color>& colors, const std::string& filename) {
+void dump_points(const std::vector<CGAL::Epick::Point_3>& pts, const std::vector<CGAL::Epick::Vector_3>& normals, const std::vector<CGAL::IO::Color>& colors, const std::string& filename) {
   Saver<CGAL::Epick> saver;
   saver.export_points_3(pts, normals, colors, filename);
 }

@@ -162,7 +162,7 @@ private:
     std::size_t iterations = 0;
 
     int dir = (cw) ? -1 : 1;
-
+    const std::size_t uninitialized = static_cast<std::size_t>(-1);
     std::size_t inext;
     while (s != m_data.target(next) && iterations < 10000) {
       face.vertices.push_back(m_data.target(next));
@@ -173,14 +173,14 @@ private:
 
       std::vector<std::pair<IEdge, Direction_2> > connected;
       m_data.get_and_sort_all_connected_iedges(sp_idx, m_data.target(next), connected);
-      inext = -1;
+      inext = uninitialized;
       for (std::size_t idx = 0; idx < connected.size(); idx++) {
         if (connected[idx].first == next) {
           inext = (idx + dir + connected.size()) % connected.size();
           break;
         }
       }
-      CGAL_assertion(inext != static_cast<std::size_t>(-1));
+      CGAL_assertion(inext != uninitialized);
 
       next = connected[inext].first;
       face.edges.push_back(next);
@@ -192,8 +192,8 @@ private:
     // Loop complete, connecting face with all edges.
     for (IEdge edge : face.edges) {
       m_data.support_plane(sp_idx).add_neighbor(edge, face_idx);
-      IFace f1 = m_data.support_plane(sp_idx).iface(edge);
-      IFace f2 = m_data.support_plane(sp_idx).other(edge, f1);
+      CGAL_assertion_code(IFace f1 = m_data.support_plane(sp_idx).iface(edge);)
+      CGAL_assertion_code(IFace f2 = m_data.support_plane(sp_idx).other(edge, f1);)
       CGAL_assertion(f1 == face_idx || f2 == face_idx);
     }
 
@@ -406,10 +406,8 @@ private:
 
         std::vector<typename Intersection_kernel::Segment_2> crossing_polygon_segments;
         std::vector<IEdge> crossing_iedges;
-        typename Intersection_kernel::FT emin = (std::numeric_limits<double>::max)();;
-        typename Intersection_kernel::FT emax = -(std::numeric_limits<double>::max)();;
-        FT min = (std::numeric_limits<double>::max)();
-        FT max = -(std::numeric_limits<double>::max)();
+        typename Intersection_kernel::FT emin = (std::numeric_limits<double>::max)();
+        typename Intersection_kernel::FT emax = -(std::numeric_limits<double>::max)();
         FT min_speed = (std::numeric_limits<double>::max)(), max_speed = -(std::numeric_limits<double>::max)();
 
         CGAL::Oriented_side last_side = l.oriented_side(sp.data().original_vertices.back());
@@ -431,12 +429,12 @@ private:
 
             if (result && CGAL::assign(intersection, result)) {
               typename Intersection_kernel::FT eproj = (intersection - exact_line.point()) * ldir;
-              FT proj = to_inexact(eproj);
+              //FT proj = to_inexact(eproj);
               if (eproj < emin) {
                 eminp = intersection;
                 emin = eproj;
                 minp = to_inexact(intersection);
-                min = proj;
+                //min = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
                 assert(p != 0);
                 min_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);
@@ -445,7 +443,7 @@ private:
                 emaxp = intersection;
                 emax = eproj;
                 maxp = to_inexact(intersection);
-                max = proj;
+                //max = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
                 assert(p != 0);
                 max_speed = CGAL::sqrt(edge_dir * edge_dir) / to_inexact(p);

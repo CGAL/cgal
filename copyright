@@ -92,7 +92,6 @@ R = RU Groningen
  Nef_S2                                  M
  NewKernel_d                             I
  Number_types                            ETIMU
- OpenNL                                  third party lib under LGPL 3
  Optimal_bounding_box                    G
  Optimal_transportation_reconstruction_2 I
  Optimisation_basic                      E

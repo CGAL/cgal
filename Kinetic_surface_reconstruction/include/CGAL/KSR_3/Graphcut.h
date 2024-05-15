@@ -115,8 +115,8 @@ namespace KSR_3 {
         std::size_t sum_outside = 0;
 
         for (std::size_t i = 6; i < cost_matrix[0].size(); i++) {
-          sum_inside += cost_matrix[0][i];
-          sum_outside += cost_matrix[1][i];
+          sum_inside += static_cast<std::size_t>(cost_matrix[0][i]);
+          sum_outside += static_cast<std::size_t>(cost_matrix[1][i]);
           min = (std::min<double>)(cost_matrix[0][i], min);
           min = (std::min<double>)(cost_matrix[1][i], min);
           max = (std::max<double>)(cost_matrix[0][i], max);

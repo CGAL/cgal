@@ -38,13 +38,13 @@ public:
   typedef typename Kernel::Line_2 Line_2;
   typedef typename Kernel::Segment_2 Segment_2;
 
-  typedef Support_line_2<Kernel> Support_line;
-  typedef Segment Segment;
-  typedef Vertex<FT> Vertex;
+  typedef Support_line<Kernel> Support_line_DS;
 
-  typedef Meta_vertex<Point_2> Meta_vertex;
+  typedef CGAL::KSP_2::internal::Vertex<FT> Vertex;
+  typedef CGAL::KSP_2::internal::Segment Segment;
+  typedef CGAL::KSP_2::internal::Meta_vertex<Point_2> Meta_vertex;
 
-  typedef std::vector<Support_line> Support_lines;
+  typedef std::vector<Support_line_DS> Support_lines;
   typedef std::vector<Segment> Segments;
   typedef std::vector<Vertex> Vertices;
 
@@ -96,8 +96,8 @@ public:
   Segment& segment(std::size_t idx) { return m_segments[idx]; }
 
   std::size_t number_of_support_lines() const { return m_support_lines.size(); }
-  const Support_line& support_line(std::size_t idx) const { return m_support_lines[idx]; }
-  Support_line& support_line(std::size_t idx) { return m_support_lines[idx]; }
+  const Support_line_DS& support_line(std::size_t idx) const { return m_support_lines[idx]; }
+  Support_line_DS& support_line(std::size_t idx) { return m_support_lines[idx]; }
 
   std::size_t number_of_meta_vertices() const { return m_meta_vertices.size(); }
   const Meta_vertex& meta_vertex(std::size_t idx) const { return m_meta_vertices[idx]; }
@@ -216,37 +216,37 @@ public:
 
 
   // Segment/idx -> Support_line
-  inline const Support_line& support_line_of_segment(const Segment& segment) const
+  inline const Support_line_DS& support_line_of_segment(const Segment& segment) const
   {
     return m_support_lines[segment.support_line_idx()];
   }
-  inline Support_line& support_line_of_segment(const Segment& segment)
+  inline Support_line_DS& support_line_of_segment(const Segment& segment)
   {
     return m_support_lines[segment.support_line_idx()];
   }
-  inline const Support_line& support_line_of_segment(std::size_t segment_idx) const
+  inline const Support_line_DS& support_line_of_segment(std::size_t segment_idx) const
   {
     return support_line_of_segment(m_segments[segment_idx]);
   }
-  inline Support_line& support_line_of_segment(std::size_t segment_idx)
+  inline Support_line_DS& support_line_of_segment(std::size_t segment_idx)
   {
     return support_line_of_segment(m_segments[segment_idx]);
   }
 
   // Vertex/idx -> Support_line
-  inline const Support_line& support_line_of_vertex(const Vertex& vertex) const
+  inline const Support_line_DS& support_line_of_vertex(const Vertex& vertex) const
   {
     return support_line_of_segment(vertex.segment_idx());
   }
-  inline Support_line& support_line_of_vertex(const Vertex& vertex)
+  inline Support_line_DS& support_line_of_vertex(const Vertex& vertex)
   {
     return support_line_of_segment(vertex.segment_idx());
   }
-  inline const Support_line& support_line_of_vertex(std::size_t vertex_idx) const
+  inline const Support_line_DS& support_line_of_vertex(std::size_t vertex_idx) const
   {
     return support_line_of_vertex(m_vertices[vertex_idx]);
   }
-  inline Support_line& support_line_of_vertex(std::size_t vertex_idx)
+  inline Support_line_DS& support_line_of_vertex(std::size_t vertex_idx)
   {
     return support_line_of_vertex(m_vertices[vertex_idx]);
   }
@@ -294,7 +294,7 @@ public:
     const Meta_vertex& meta_vertex = m_meta_vertices[meta_vertex_idx];
     for (std::size_t support_line_idx : meta_vertex.support_lines_idx())
     {
-      const Support_line& support_line = m_support_lines[support_line_idx];
+      const Support_line_DS& support_line = m_support_lines[support_line_idx];
       for (std::size_t segment_idx : support_line.segments_idx())
       {
         const Segment& segment = m_segments[segment_idx];
@@ -309,7 +309,7 @@ public:
   {
     return point_of_vertex(vertex).bbox();
   }
-  inline CGAL::Bbox_2 bbox(const Support_line& support_line) const
+  inline CGAL::Bbox_2 bbox(const Support_line_DS& support_line) const
   {
     return std::accumulate(support_line.segments_idx().begin(), support_line.segments_idx().end(),
       CGAL::Bbox_2(),
@@ -330,7 +330,7 @@ public:
   Segment_2 segment_2(std::size_t segment_idx) const
   {
     const Segment& segment = m_segments[segment_idx];
-    const Support_line& support_line = m_support_lines[segment.support_line_idx()];
+    const Support_line_DS& support_line = m_support_lines[segment.support_line_idx()];
     const Vertex& source = m_vertices[segment.source_idx()];
     const Vertex& target = m_vertices[segment.target_idx()];
 
@@ -426,14 +426,14 @@ public:
 
   std::size_t add_support_line(const Segment_2& segment)
   {
-    m_support_lines.push_back(Support_line(segment));
+    m_support_lines.push_back(Support_line_DS(segment));
     return std::size_t(m_support_lines.size() - 1);
   }
 
   Segment& add_segment(const Segment_2 segment, std::size_t input_idx = std::size_t(-1))
   {
     // Check if support line exists first
-    Support_line new_support_line(segment);
+    Support_line_DS new_support_line(segment);
     std::size_t support_line_idx = std::size_t(-1);
     for (std::size_t i = 0; i < number_of_support_lines(); ++i)
       if (new_support_line == support_line(i))
@@ -563,7 +563,7 @@ public:
     // std::size_t source_idx = segment.source_idx();
     std::size_t target_idx = segment.target_idx();
 
-    Support_line& support_line = support_line_of_segment(segment_idx);
+    Support_line_DS& support_line = support_line_of_segment(segment_idx);
 
     std::sort(meta_vertices_idx.begin(), meta_vertices_idx.end(),
       [&](const std::size_t& a,

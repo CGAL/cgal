@@ -17,13 +17,13 @@
 
 #include <CGAL/Dimension.h>
 #include <CGAL/Bbox_3.h>
-#include <CGAL/Orthtree_traits_3_base.h>
+#include <CGAL/Orthtree_traits_base.h>
 
 namespace CGAL
 {
 
 template <class GeomTraits>
-struct Orthtree_traits_polygons : public Orthtree_traits_3_base<GeomTraits>
+struct Orthtree_traits_polygons : public Orthtree_traits_base<GeomTraits, 3>
 {
   Orthtree_traits_polygons(const std::vector<typename GeomTraits::Point_3>& points, const std::vector<std::vector<std::size_t> >& polygons, typename GeomTraits::FT bbox_dilation = 1.1)
     : m_points(points), bbox_dilation(bbox_dilation) {

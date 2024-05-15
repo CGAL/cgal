@@ -22,18 +22,13 @@
 
 namespace CGAL {
 
-/// \cond SKIP_IN_MANUAL
-// todo: is this necessary?
-// Forward declaration
-template <typename T>
-class Orthtree;
-/// \endcond
-
 namespace Orthtrees {
 
 /*!
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a preorder traversal.
+
+  \tparam Tree an instance of `Orthtree`
 
   A preorder traversal starts from the root towards the leaves.
 
@@ -77,6 +72,8 @@ public:
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a postorder traversal.
 
+  \tparam Tree an instance of `Orthtree`
+
   A postorder traversal starts from the leaves towards the root.
 
   \cgalModels{OrthtreeTraversal}
@@ -106,7 +103,9 @@ public:
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a traversal on leaves only.
 
-  All non-leave nodes are ignored.
+  \tparam Tree an instance of `Orthtree`
+
+  All non-leaf nodes are ignored.
 
   \cgalModels{OrthtreeTraversal}
  */
@@ -142,7 +141,10 @@ public:
   \ingroup PkgOrthtreeTraversal
   \brief A class used for performing a traversal of a specific depth level.
 
-  All trees at another depth are ignored. If the selected depth is
+  \tparam Tree an instance of `Orthtree`
+
+  All tree nodes at another depth are ignored. If the selected depth is
+  All tree nodes at another depth are ignored. If the selected depth is
   higher than the maximum depth of the orthtree, no node will be traversed.
 
   \cgalModels{OrthtreeTraversal}
@@ -190,7 +192,7 @@ public:
   }
 };
 
-} // Orthtree
+} // Orthtrees
 } // CGAL
 
 #endif //CGAL_ORTHTREE_TRAVERSALS_H

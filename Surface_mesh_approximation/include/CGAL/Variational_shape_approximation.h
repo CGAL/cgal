@@ -123,6 +123,7 @@ private:
   typedef typename Geom_traits::FT FT;
   typedef typename Geom_traits::Point_3 Point_3;
   typedef typename Geom_traits::Vector_3 Vector_3;
+  typedef typename Geom_traits::Segment_3 Segment_3;
   typedef typename Geom_traits::Plane_3 Plane_3;
   typedef typename Geom_traits::Construct_vector_3 Construct_vector_3;
   typedef typename Geom_traits::Construct_point_3 Construct_point_3;
@@ -795,6 +796,12 @@ public:
    *     \cgalParamDefault{`5.0`}
    *   \cgalParamNEnd
    *
+   *   \cgalParamNBegin{boundary_subdivision_ratio}
+   *     \cgalParamDescription{the chord subdivision ratio threshold to the chord length or average edge length for boundary edges}
+   *     \cgalParamType{`geom_traits::FT`}
+   *     \cgalParamDefault{`subdivision_ratio`}
+   *   \cgalParamNEnd
+   *
    *   \cgalParamNBegin{relative_to_chord}
    *     \cgalParamDescription{If `true`, the `subdivision_ratio` is the ratio of the furthest vertex distance
    *                           to the chord length, otherwise is the average edge length}
@@ -814,6 +821,12 @@ public:
    *     \cgalParamDefault{`true`}
    *   \cgalParamNEnd
    *
+   *   \cgalParamNBegin{optimize_boundary_anchor_location}
+   *     \cgalParamDescription{If `true`, optimize the anchor locations of boundary vertices}
+   *     \cgalParamType{`Boolean`}
+   *     \cgalParamDefault{`optimize_anchor_location`}
+   *   \cgalParamNEnd
+   *
    *   \cgalParamNBegin{pca_plane}
    *     \cgalParamDescription{If `true`, use PCA plane fitting, otherwise use the default area averaged plane parameters}
    *     \cgalParamType{`Boolean`}
@@ -827,9 +840,11 @@ public:
     using parameters::choose_parameter;
 
     const FT subdivision_ratio = choose_parameter(get_parameter(np, internal_np::subdivision_ratio), FT(5.0));
+    const FT boundary_subdivision_ratio = choose_parameter(get_parameter(np, internal_np::boundary_subdivision_ratio), subdivision_ratio);
     const bool relative_to_chord = choose_parameter(get_parameter(np, internal_np::relative_to_chord), false);
     const bool with_dihedral_angle = choose_parameter(get_parameter(np, internal_np::with_dihedral_angle), false);
     const bool optimize_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_anchor_location), true);
+    const bool optimize_boundary_anchor_location = choose_parameter(get_parameter(np, internal_np::optimize_boundary_anchor_location), optimize_anchor_location);
     const bool pca_plane = choose_parameter(get_parameter(np, internal_np::pca_plane), false);
 
     // compute averaged edge length, used in chord subdivision
@@ -848,14 +863,14 @@ public:
 
     // generate anchors
     find_anchors();
-    find_edges(subdivision_ratio, relative_to_chord, with_dihedral_angle);
+    find_edges(subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
     add_anchors();
 
     // discrete constrained Delaunay triangulation
     pseudo_cdt();
 
     if (optimize_anchor_location)
-      this->optimize_anchor_location();
+      this->optimize_anchor_location(optimize_boundary_anchor_location);
 
     // check manifold-oriented
     return Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(m_tris);
@@ -1346,7 +1361,7 @@ private:
     const Proxy px = m_metric->fit_proxy(fvec, *m_ptm);
     const FT err = m_metric->compute_error(f, *m_ptm, px);
 
-    // original proxy map should always be falid
+    // original proxy map should always be valid
     const std::size_t prev_px_idx = get(m_fproxy_map, f);
     CGAL_assertion(prev_px_idx != CGAL_VSA_INVALID_TAG);
     // update the proxy error and proxy map
@@ -1513,12 +1528,13 @@ private:
 
   /*!
    * @brief finds and approximates the chord connecting the anchors.
-   * @param subdivision_ratio boundary chord approximation recursive split creterion
+   * @param subdivision_ratio boundary chord approximation recursive split criterion
    * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
    * @param with_dihedral_angle if set to `true`, add dihedral angle weight to the distance.
    */
   void find_edges(const FT subdivision_ratio,
+    const FT boundary_subdivision_ratio,
     const bool relative_to_chord,
     const bool with_dihedral_angle) {
     // collect candidate halfedges in a set
@@ -1550,7 +1566,7 @@ private:
         Boundary_chord chord;
         walk_to_next_anchor(he_start, chord);
         m_bcycles.back().num_anchors += subdivide_chord(chord.begin(), chord.end(),
-          subdivision_ratio, relative_to_chord, with_dihedral_angle);
+            subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
 
 #ifdef CGAL_SURFACE_MESH_APPROXIMATION_DEBUG
         std::cerr << "#chord_anchor " << m_bcycles.back().num_anchors << std::endl;
@@ -1837,8 +1853,8 @@ private:
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
-   * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
-   * otherwise it's relative to the average edge length (absolute sense).
+   * @param relative_to_chord set `true` if the `subdivision_ratio` is relative to the chord length (relative sense),
+   * otherwise it is relative to the average edge length (absolute sense).
    * @param with_dihedral_angle if set to `true` add dihedral angle weight to the distance.
    * @return the number of anchors of the chord apart from the first one
    */
@@ -1846,6 +1862,7 @@ private:
     const Boundary_chord_iterator &chord_begin,
     const Boundary_chord_iterator &chord_end,
     const FT subdivision_ratio,
+    const FT boundary_subdivision_ratio,
     const bool relative_to_chord,
     const bool with_dihedral_angle) {
     const std::size_t chord_size = std::distance(chord_begin, chord_end);
@@ -1854,8 +1871,16 @@ private:
     const std::size_t anchor_first = get(m_vanchor_map, source(he_first, *m_ptm));
     const std::size_t anchor_last = get(m_vanchor_map, target(he_last, *m_ptm));
 
+    bool is_boundary = is_border_edge(he_first, *m_ptm);
+
+    if(is_boundary && boundary_subdivision_ratio == 0){
+      for (Boundary_chord_iterator citr = chord_begin; *citr != he_last; ++citr) {
+        attach_anchor(*citr);
+      }
+    }
+
     // do not subdivide trivial non-circular chord
-    if ((anchor_first != anchor_last) && (chord_size < 4))
+    if ((anchor_first != anchor_last) && (chord_size < 2))
       return 1;
 
     bool if_subdivide = false;
@@ -1884,11 +1909,9 @@ private:
       const FT chord_len = CGAL::approximate_sqrt(chord_vec.squared_length());
       bool degenerate_chord = false;
       if (chord_len > FT(0.0)) {
-        chord_vec = scale_functor(chord_vec, FT(1.0) / chord_len);
+        Segment_3 seg(pt_begin, pt_end);
         for (Boundary_chord_iterator citr = chord_begin; citr != chord_end; ++citr) {
-          Vector_3 vec = vector_functor(pt_begin, m_vpoint_map[target(*citr, *m_ptm)]);
-          vec = cross_product_functor(chord_vec, vec);
-          const FT dist = CGAL::approximate_sqrt(vec.squared_length());
+          const FT dist = CGAL::approximate_sqrt(CGAL::squared_distance(m_vpoint_map[target(*citr, *m_ptm)], seg));
           if (dist > dist_max) {
             chord_max = citr;
             dist_max = dist;
@@ -1927,19 +1950,23 @@ private:
         }
         criterion *= norm_sin;
       }
-
-      if (criterion > subdivision_ratio)
-        if_subdivide = true;
+      if (is_boundary) {
+        if (criterion > boundary_subdivision_ratio)
+          if_subdivide = true;
+      }
+      else {
+        if (criterion > subdivision_ratio)
+          if_subdivide = true;
+      }
     }
-
     if (if_subdivide) {
       // subdivide at the most remote vertex
       attach_anchor(*chord_max);
 
       const std::size_t num_left = subdivide_chord(chord_begin, chord_max + 1,
-        subdivision_ratio, relative_to_chord, with_dihedral_angle);
+        subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
       const std::size_t num_right = subdivide_chord(chord_max + 1, chord_end,
-        subdivision_ratio, relative_to_chord, with_dihedral_angle);
+        subdivision_ratio, boundary_subdivision_ratio, relative_to_chord, with_dihedral_angle);
 
       return num_left + num_right;
     }
@@ -1992,9 +2019,15 @@ private:
    * @brief optimizes the anchor location by averaging the projection points of
    * the anchor vertex to the incident proxy plane.
    */
-  void optimize_anchor_location() {
+  void optimize_anchor_location(bool optimize_boundary_anchor_location) {
     for(Anchor& a : m_anchors) {
       const vertex_descriptor v = a.vtx;
+
+      if(! optimize_boundary_anchor_location && is_border(v,*m_ptm)){
+        a.pos  = m_vpoint_map[v];
+        continue;
+      }
+
       // incident proxy set
       std::set<std::size_t> px_set;
       for(halfedge_descriptor h : halfedges_around_target(v, *m_ptm)) {
@@ -2003,6 +2036,7 @@ private:
       }
 
       // projection
+      // todo: replace averaging by qem/svd ?  Mael?
       FT sum_area(0.0);
       Vector_3 vec = CGAL::NULL_VECTOR;
       const Point_3 vtx_pt = m_vpoint_map[v];

@@ -13,7 +13,7 @@ if(Eigen3_FOUND)
   message(STATUS "Found Eigen")
   include(CGAL_Eigen_support)
 
-  set(targets basic building parameters)
+  set(targets ksr_basic ksr_building ksr_parameters)
 
   foreach(target ${targets})
     create_single_source_cgal_program("${target}.cpp")

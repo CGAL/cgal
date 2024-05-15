@@ -23,7 +23,6 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/QP_solver/assertions.h>
 #include <CGAL/QP_solver/debug.h>
-#define _HAS_AUTO_PTR_ETC False // temporarility necessary for boost's compatibility with Clang 15
 #include <boost/functional.hpp>
 
 #endif // CGAL_QP_SOLVER_BASIC_H
