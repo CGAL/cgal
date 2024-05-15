@@ -304,7 +304,7 @@ public:
 
   \cgalNamedParamsBegin
      \cgalParamNBegin{point_map}
-       \cgalParamDescription{a property map associating points to the elements of the `points`}
+       \cgalParamDescription{a property map associating points to the elements of the input range PointRange `points`.}
        \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Point_3`}
        \cgalParamDefault{`CGAL::Identity_property_map<GeomTraits::Point_3>`}
      \cgalParamNEnd
@@ -1105,7 +1105,7 @@ private:
   @return
    vector of face indices.
 
-  \pre successful partition
+  \pre created partition
   */
   template<class OutputIterator>
   void vertices(const Index& face_index, OutputIterator it) const {
@@ -1128,7 +1128,7 @@ private:
   @return
    vector of face indices.
 
-  \pre successful partition
+  \pre created partition
   */
   template<class OutputIterator>
   void exact_vertices(const Index& face_index, OutputIterator it) const {
@@ -1198,7 +1198,7 @@ private:
     -5 xmin
     -6 zmax
 
-    \pre successful partition
+  \pre created partition
   */
   std::pair<int, int> neighbors(const Index &face_index) const {
     const auto &p = m_partition_nodes[face_index.first].face_neighbors[face_index.second];

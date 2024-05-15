@@ -2,15 +2,15 @@
 \ingroup PkgKineticSpacePartitionConcepts
 \cgalConcept
 
-A concept that describes the set of types required by the `CGAL::Kinetic_shape_partition_3`.
+A concept that describes the set of types required by the `CGAL::Kinetic_space_partition_3`.
 
 \cgalHasModelsBegin
 \cgalHasModelsBare{All models of the concept `Kernel`}
 \cgalHasModelsEnd
 
-\sa `CGAL::Kinetic_shape_partition_3`
+\sa `CGAL::Kinetic_space_partition_3`
 */
-class KineticShapePartitionTraits_3 {
+class KineticSpacePartitionTraits_3 {
 
 public:
 
