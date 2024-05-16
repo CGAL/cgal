@@ -69,14 +69,14 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
   }
   if (n == 1)  // generation of a point
   {
-    boost::random::uniform_real_distribution<double> random_squared_radius_distribution(
+    std::uniform_real_distribution<double> random_squared_radius_distribution(
         small_radius * small_radius / (big_radius * big_radius), 1);
 
-    boost::random::uniform_real_distribution<double> random_angle_distribution(a, b);
+    std::uniform_real_distribution<double> random_angle_distribution(a, b);
     boost::random::variate_generator<
-        GEN&, boost::random::uniform_real_distribution<double> > random_angle(gen, random_angle_distribution);
+        GEN&, std::uniform_real_distribution<double> > random_angle(gen, random_angle_distribution);
     boost::random::variate_generator<
-        GEN&, boost::random::uniform_real_distribution<double> > random_squared_radius(gen, random_squared_radius_distribution);
+        GEN&, std::uniform_real_distribution<double> > random_squared_radius(gen, random_squared_radius_distribution);
 
     double alpha = random_angle();
     double r = big_radius * std::sqrt(random_squared_radius());
