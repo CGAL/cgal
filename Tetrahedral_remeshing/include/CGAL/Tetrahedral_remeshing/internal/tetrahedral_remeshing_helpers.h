@@ -1446,6 +1446,7 @@ auto sizing_at_midpoint(const typename C3t3::Edge& e,
                         const Cell_selector& cell_selector)
 {
   using FT = typename C3t3::Triangulation::Geom_traits::FT;
+  using Point_3 = typename C3t3::Triangulation::Geom_traits::Point_3;
 
   auto cp = c3t3.triangulation().geom_traits().construct_point_3_object();
   const Point_3 m = CGAL::midpoint(cp(e.first->vertex(e.second)->point()),

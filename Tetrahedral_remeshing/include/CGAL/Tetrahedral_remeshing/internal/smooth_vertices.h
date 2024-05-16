@@ -213,8 +213,7 @@ private:
     // build AABB tree of facets in complex
     for (const Facet& f : c3t3.facets_in_complex())
     {
-      const Triangle_3 t = c3t3.triangulation().triangle(f);
-      m_aabb_triangles.push_back(t);
+      m_aabb_triangles.push_back(c3t3.triangulation().triangle(f));
     }
     m_triangles_aabb_tree.rebuild(m_aabb_triangles.begin(), m_aabb_triangles.end());
     m_triangles_aabb_tree.accelerate_distance_queries();
@@ -222,8 +221,7 @@ private:
     // build AABB tree of edges in complex
     for (const Edge& e : c3t3.edges_in_complex())
     {
-      const Segment_3 s = c3t3.triangulation().segment(e);
-      m_aabb_segments.push_back(s);
+      m_aabb_segments.push_back(c3t3.triangulation().segment(e));
     }
     m_segments_aabb_tree.rebuild(m_aabb_segments.begin(), m_aabb_segments.end());
     m_segments_aabb_tree.accelerate_distance_queries();
