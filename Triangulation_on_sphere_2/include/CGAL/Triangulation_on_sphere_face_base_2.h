@@ -70,7 +70,7 @@ operator<<(std::ostream &os, const Triangulation_on_sphere_face_base_2<Gt, Fb> &
 {
   // non combinatorial information. Default = point
     os << static_cast<const Fb&>(f);
-    os << (f.is_ghost()) ? " 0" : " 1";
+    os << f.is_ghost() ? " 0" : " 1";
     return os;
 }
 
