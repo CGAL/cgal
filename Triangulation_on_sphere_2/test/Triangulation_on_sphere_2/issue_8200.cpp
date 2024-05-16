@@ -38,7 +38,7 @@ int main(int, char**)
     std::cout << dtos.number_of_solid_faces() << " solid faces" << std::endl;
     std::cout << dtos.number_of_ghost_faces() << " ghost faces" << std::endl;
   }
-
+  assert(dtos.is_valid());
   std::ofstream out("dtos.txt");
   out.precision(17);
   out << dtos << std::endl;
