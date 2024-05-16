@@ -102,7 +102,7 @@ int main (int argc, char** argv)
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-  Classification::Evaluation evaluation (labels, pts.range(label_map.value(),), label_indices);
+  Classification::Evaluation evaluation (labels, pts.range(label_map.value()), label_indices);
 
   for (Label_handle l : labels)
   {

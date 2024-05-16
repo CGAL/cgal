@@ -143,8 +143,6 @@ public:
 
   bool check_colors()
   {
-    bool found = false;
-
     std::optional<Byte_map> red_map = this->template property_map<unsigned char>("red");
     if (!red_map.has_value()) {
       red_map = this->template property_map<unsigned char>("r");
@@ -174,8 +172,6 @@ public:
 
   bool get_float_colors()
   {
-    bool found = false;
-
     std::optional<Double_map> red_map = this->template property_map<double>("red");
     if (!red_map.has_value()) {
       red_map = this->template property_map<double>("r");
@@ -205,8 +201,6 @@ public:
 
   bool get_las_colors()
   {
-    bool found = false;
-
     typedef typename Base::template Property_map<unsigned short> Ushort_map;
 
     std::optional<Ushort_map> red_map = this->template property_map<unsigned short>("R");

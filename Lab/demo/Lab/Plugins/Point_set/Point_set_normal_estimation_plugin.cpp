@@ -410,7 +410,6 @@ void CGAL_Lab_point_set_normal_estimation_plugin::on_actionNormalOrientation_tri
 
       std::optional<Point_set::Property_map<float>> scan_angle = points->property_map<float>("scan_angle");
       std::optional<Point_set::Property_map<unsigned char>> scan_direction_flag = points->property_map<unsigned char>("scan_direction_flag");
-      bool angle_found = false, flag_found = false;
 
       if (!scan_angle.has_value() && !scan_direction_flag.has_value())
       {

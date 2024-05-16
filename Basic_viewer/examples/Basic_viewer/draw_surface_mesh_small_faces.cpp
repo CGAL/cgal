@@ -43,7 +43,7 @@ struct Graphics_scene_options_small_faces:
       if (cur_size>m_max_size) m_max_size=cur_size;
     }
 
-    this->face_color=[=](const SM& sm,
+    this->face_color=[this](const SM& sm,
                          typename boost::graph_traits<SM>::face_descriptor fh) -> CGAL::IO::Color
     { return this->get_face_color(sm, fh); };
 
@@ -60,7 +60,6 @@ struct Graphics_scene_options_small_faces:
     if(!m_with_size) { return c; }
 
     // Compare the size of the face with the % m_threshold
-    bool exist;
     std::optional<typename SM::template Property_map<face_descriptor, FT>> faces_size
       = sm.template property_map<face_descriptor, FT>("f:size");
     assert(faces_size.has_value());

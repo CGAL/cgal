@@ -519,7 +519,6 @@ bool write_PLY(std::ostream& os,
       continue;
     }
 
-    bool okay = false;
     {
       std::optional<Int8_map> pmap = point_set.template property_map<std::int8_t>(prop[i]);
       if(pmap.has_value())

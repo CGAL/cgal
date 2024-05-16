@@ -30,7 +30,6 @@ Cluster_classification::Cluster_classification(Scene_points_with_normal_item* po
 
   backup_existing_colors_and_add_new();
 
-  bool cluster_found = false;
   std::optional<Point_set::Property_map<int>> cluster_id = m_points->point_set()->property_map<int>("shape");
   if (!cluster_id.has_value())
   {

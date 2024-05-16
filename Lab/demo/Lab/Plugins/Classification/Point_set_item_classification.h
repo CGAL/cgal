@@ -147,7 +147,6 @@ class Point_set_item_classification : public Item_classification_base
   bool try_adding_simple_feature (const std::string& name)
   {
     typedef typename Point_set::template Property_map<Type> Pmap;
-    bool okay = false;
     std::optional<Pmap> pmap = m_points->point_set()->template property_map<Type>(name.c_str());
     if (pmap.has_value())
     {
