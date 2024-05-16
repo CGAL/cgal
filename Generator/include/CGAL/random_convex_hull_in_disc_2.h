@@ -16,6 +16,7 @@
 
 #ifndef CGAL_RANDOM_CONVEX_HULL_DISC_H
 #define CGAL_RANDOM_CONVEX_HULL_DISC_H 1
+#include <random>
 #include <boost/random.hpp>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/function_objects.h>
@@ -57,8 +58,8 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
                              double big_radius, std::list<P>& l,
                              GEN& gen) {  // generate n points between a and b
   if (n > 1) {
-    boost::binomial_distribution<long> bin_distribution(n, .5);
-    boost::variate_generator<GEN&, boost::binomial_distribution<long> >
+    std::binomial_distribution<long> bin_distribution(n, .5);
+    boost::variate_generator<GEN&, std::binomial_distribution<long> >
         g(gen, bin_distribution);
     long nb = g();
     generate_points_annulus(nb, a, (a + b) / 2.0, small_radius, big_radius, l,
@@ -217,9 +218,9 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
     } else {
       nb = static_cast<long>((std::min)(T, n - simulated_points));
     }
-    boost::binomial_distribution<long> dbin(nb, to_double(p_disc));
+    std::binomial_distribution<long> dbin(nb, to_double(p_disc));
     boost::variate_generator<
-        GEN&, boost::binomial_distribution<long> > bin(gen, dbin);
+        GEN&, std::binomial_distribution<long> > bin(gen, dbin);
 
     // How many points are falling in the small disc and won't be generated:
     long k_disc = bin();
