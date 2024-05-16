@@ -31,6 +31,7 @@
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 #include <CGAL/Tetrahedral_remeshing/internal/compute_c3t3_statistics.h>
+#include <CGAL/Tetrahedral_remeshing/internal/AABB_trees.h>
 
 #include <optional>
 #include <boost/container/small_vector.hpp>
@@ -86,7 +87,12 @@ class Adaptive_remesher
   typedef typename C3t3::Curve_index         Curve_index;
   typedef typename C3t3::Corner_index        Corner_index;
 
-  typedef Tetrahedral_remeshing_smoother<C3t3, SizingFunction, CellSelector> Smoother;
+  typedef CGAL::Tetrahedral_remeshing::AABB_triangle_tree<Tr> AABB_triangle_tree;
+  typedef CGAL::Tetrahedral_remeshing::AABB_segment_tree<Tr> AABB_segment_tree;
+
+  typedef Tetrahedral_remeshing_smoother<C3t3,
+                                         SizingFunction, CellSelector,
+                                         AABB_triangle_tree, AABB_segment_tree> Smoother;
 
 private:
   C3t3 m_c3t3;
@@ -94,6 +100,8 @@ private:
   const bool m_protect_boundaries;
   CellSelector m_cell_selector;
   Visitor& m_visitor;
+  AABB_triangle_tree m_aabb_triangle_tree;//initialized with initial surface
+  AABB_segment_tree m_aabb_segment_tree;
   Smoother m_vertex_smoother;//initialized with initial surface
 
   C3t3* m_c3t3_pbackup;
@@ -116,14 +124,24 @@ public:
     , m_protect_boundaries(protect_boundaries)
     , m_cell_selector(cell_selector)
     , m_visitor(visitor)
-    , m_vertex_smoother(sizing, cell_selector, protect_boundaries, smooth_constrained_edges)
+    , m_aabb_triangle_tree()
+    , m_aabb_segment_tree()
+    , m_vertex_smoother(sizing, cell_selector, protect_boundaries,
+                        smooth_constrained_edges,
+                        m_aabb_triangle_tree,
+                        m_aabb_segment_tree)
     , m_c3t3_pbackup(NULL)
     , m_tr_pbackup(&tr)
   {
     m_c3t3.triangulation().swap(tr);
 
     init_c3t3(vcmap, ecmap, fcmap);
+    m_aabb_triangle_tree.build_from_c3t3(m_c3t3);
+    m_aabb_segment_tree.build_from_c3t3(m_c3t3);
+
+#ifdef CGAL_TET_REMESHING_SMOOTHING_WITH_MLS
     m_vertex_smoother.init(m_c3t3);
+#endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
     CGAL::Tetrahedral_remeshing::debug::dump_c3t3(m_c3t3, "00-init");
