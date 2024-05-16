@@ -13,6 +13,8 @@
 #ifndef CGAL_TETRAHEDRAL_REMESHING_AABB_TREES_H
 #define CGAL_TETRAHEDRAL_REMESHING_AABB_TREES_H
 
+#include <CGAL/license/Tetrahedral_remeshing.h>
+
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_triangle_primitive_3.h>
