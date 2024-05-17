@@ -35,7 +35,7 @@ that represents general matrices, be they symmetric or not.
 \sa `CGAL::Accelerate_sparse_symmetric_matrix<T>`
 */
 template<class T>
-struct Accelerate_sparse_matrix
+class Accelerate_sparse_matrix
 {
   // Public types
 public:
@@ -194,7 +194,7 @@ public:
         values.push_back(val);
       }
     }
-    m_matrix = SwiftAccelerate::Matrix::init(m_rows, rows, columns, values);
+    m_matrix.initialize(m_rows, rows, columns, values);
     m_is_already_built = true;
     m_has_been_changed = false;
   }
@@ -204,7 +204,9 @@ public:
 
   void solve(const Accelerate_vector<T>& B, Accelerate_vector<T>& X) const
   {
-    m_matrix.solve(B.data(), X.data());
+    Accelerate_vector<T>& ncB = const_cast<Accelerate_vector<T>&>(B);
+    Accelerate_vector<T>& ncX = const_cast<Accelerate_vector<T>&>(X);
+    m_matrix.solve(ncB.data(), ncX.data());
   }
 
   /// \cond SKIP_IN_MANUAL
