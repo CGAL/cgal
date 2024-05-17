@@ -16,7 +16,7 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         id: get_round
         with:
          result-encoding: string
@@ -38,7 +38,7 @@ jobs:
              }
            }
            return 'stop'
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         if: steps.get_round.outputs.result != 'stop'
         id: get_pr_number
         with:
@@ -49,7 +49,7 @@ jobs:
            return pr_number
 
       - name: Emoji-comment
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: steps.get_round.outputs.result != 'stop'
         with:
           script: |
@@ -104,8 +104,8 @@ jobs:
               echo "DoxygenError=No package affected." >> $GITHUB_OUTPUT
               exit 1
             fi
-            cd build_doc && make -j2 doc
-            make -j2 doc_with_postprocessing 2>tmp.log
+            cd build_doc && make -j$(nproc) doc
+            make -j$(nproc) doc_with_postprocessing 2>tmp.log
             if [ -s tmp.log ]; then
               content=`cat ./tmp.log`
               delimiter="$(openssl rand -hex 8)"
@@ -136,7 +136,7 @@ jobs:
           fi
 
       - name: Post address
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: ${{ success() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |
@@ -154,7 +154,7 @@ jobs:
       - name: Post error
         env:
           ERRORMSG: ${{steps.build_and_run.outputs.DoxygenError}}
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         if: ${{ failure() && steps.get_round.outputs.result != 'stop' }}
         with:
           script: |

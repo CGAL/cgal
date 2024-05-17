@@ -618,7 +618,7 @@ void Scene::draw(CGAL::QGLViewer* viewer)
         vao[0].bind();
         attrib_buffers(viewer);
         rendering_program.bind();
-        color.setRgbF(0.7,0.0,0.0);
+        color.setRgbF(0.7f,0.0f,0.0f);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
         gl->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
@@ -631,7 +631,7 @@ void Scene::draw(CGAL::QGLViewer* viewer)
         vao[1].bind();
         attrib_buffers(viewer);
         rendering_program.bind();
-        color.setRgbF(0.0,0.7,0.0);
+        color.setRgbF(0.0f,0.7f,0.0f);
         rendering_program.setUniformValue(colorLocation, color);
         rendering_program.setUniformValue(fLocation, fMatrix);
         gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
@@ -669,7 +669,7 @@ void Scene::draw(CGAL::QGLViewer* viewer)
             vao[3].bind();
             attrib_buffers(viewer);
             rendering_program.bind();
-            color.setRgbF(1.0,0.0,0.0);
+            color.setRgbF(1.0f,0.0f,0.0f);
             rendering_program.setUniformValue(colorLocation, color);
             rendering_program.setUniformValue(fLocation, fMatrix);
             gl->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_cut_segments.size()/3));
@@ -867,7 +867,7 @@ void Scene::generate_points_in(const unsigned int nb_points,
     }
 
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-    typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
     std::cout << "Construct AABB tree...";
@@ -920,7 +920,7 @@ void Scene::generate_inside_points(const unsigned int nb_points)
     }
 
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-    typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
     std::cout << "Construct AABB tree...";
@@ -962,7 +962,7 @@ void Scene::generate_boundary_segments(const unsigned int nb_slices)
     }
 
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-    typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
@@ -1012,7 +1012,7 @@ void Scene::generate_boundary_points(const unsigned int nb_points)
     }
 
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-    typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
@@ -1062,7 +1062,7 @@ void Scene::generate_edge_points(const unsigned int nb_points)
     }
 
     typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron> Primitive;
-    typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 

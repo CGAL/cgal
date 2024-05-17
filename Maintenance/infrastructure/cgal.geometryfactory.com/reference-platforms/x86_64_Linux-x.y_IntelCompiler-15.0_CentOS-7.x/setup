@@ -1,5 +1,0 @@
-source /opt/intel/composerxe/bin/compilervars.sh intel64
-CC=icc
-CXX=icpc
-export CC CXX
-

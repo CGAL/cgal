@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/Default.h>

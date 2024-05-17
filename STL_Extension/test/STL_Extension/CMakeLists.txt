@@ -54,6 +54,8 @@ create_single_source_cgal_program("test_for_each.cpp")
 create_single_source_cgal_program("test_skiplist.cpp")
 create_single_source_cgal_program("test_leak.cpp")
 create_single_source_cgal_program("test_nth_element.cpp")
+create_single_source_cgal_program("test_fwd_make_array.cpp")
+
 if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")
   target_link_libraries(test_for_each PUBLIC CGAL::TBB_support)

@@ -140,9 +140,9 @@ struct Point_accessor<Handle, ValueType, ConstReference, true>
   typedef ValueType                      value_type;
   typedef Handle                         key_type;
 
-  typedef typename boost::mpl::if_< std::is_reference<ConstReference>,
-                                    ValueType&,
-                                    ValueType >::type Reference;
+  typedef std::conditional_t< std::is_reference_v<ConstReference>,
+                              ValueType&,
+                              ValueType > Reference;
 
   Point_accessor() {}
   Point_accessor(Point_accessor<Handle, ValueType, Reference, false>) {}
@@ -172,9 +172,9 @@ struct Is_writable_property_map<PropertyMap, boost::read_write_property_map_tag>
 // property map must define.
 template <typename PropertyMap>
 struct Is_writable_property_map<PropertyMap, boost::lvalue_property_map_tag>
-  : boost::mpl::if_c<std::is_const<typename std::remove_reference<
+  : std::conditional_t<std::is_const<typename std::remove_reference<
                        typename boost::property_traits<PropertyMap>::reference>::type>::value,
-                     CGAL::Tag_false, CGAL::Tag_true>::type
+                       CGAL::Tag_false, CGAL::Tag_true>
 { };
 
 } // namespace internal

@@ -32,17 +32,14 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QGraphicsView>
-#include <QGLWidget>
 #include <QTextStream>
 #include <QSettings>
 #include <QUrl>
-#include <QDesktopWidget>
-#include <QRegExp>
+#include <QRegularExpression>
 #if QT_SVG_LIB
 #  include <QSvgGenerator>
 #endif
 #include <QtCore>
-#include <QtOpenGL>
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -62,13 +59,6 @@ DemosMainWindow::DemosMainWindow(QWidget * parent, ::Qt::WindowFlags flags)
   xycoord->setAlignment(::Qt::AlignHCenter);
   xycoord->setMinimumSize(xycoord->sizeHint());
   xycoord->clear();
-
-  actionUse_OpenGL = new QAction(this);
-  actionUse_OpenGL->setObjectName("actionUse_OpenGL");
-  actionUse_OpenGL->setCheckable(true);
-  actionUse_OpenGL->setText(tr("Use &OpenGL"));
-  actionUse_OpenGL->setStatusTip(tr("Make Qt use OpenGL to display the graphical items, instead of its native painting system."));
-  actionUse_OpenGL->setShortcut(tr("Ctrl+G"));
 
   actionUse_Antialiasing = new QAction(this);
   actionUse_Antialiasing->setObjectName("actionUse_Antialiasing");
@@ -152,12 +142,9 @@ DemosMainWindow::setupOptionsMenu(QMenu* menuOptions)
   if(!menuOptions->isEmpty()) {
     menuOptions->addSeparator();
   }
-  menuOptions->addAction(actionUse_OpenGL);
   menuOptions->addAction(actionUse_Antialiasing);
   connect(actionUse_Antialiasing, SIGNAL(toggled(bool)),
           this, SLOT(setUseAntialiasing(bool)));
-  connect(actionUse_OpenGL, SIGNAL(toggled(bool)),
-          this, SLOT(setUseOpenGL(bool)));
   actionUse_Antialiasing->setChecked(true);
 }
 
@@ -202,31 +189,6 @@ DemosMainWindow::setUseAntialiasing(bool checked)
 
   statusBar()->showMessage(tr("Antialiasing %1activated").arg(checked?"":"de-"),
                            1000);
-}
-
-CGAL_INLINE_FUNCTION
-void
-DemosMainWindow::setUseOpenGL(bool checked)
-{
-  if(checked) {
-    QGLWidget* new_viewport = new QGLWidget;
-
-    // Setup the format to allow antialiasing with OpenGL:
-    // one need to activate the SampleBuffers, if the graphic driver allows
-    // this.
-    QGLFormat glformat = new_viewport->format();
-    glformat.setOption(QGL::SampleBuffers);
-    new_viewport->setFormat(glformat);
-
-    view->setViewport(new_viewport);
-  }
-  else {
-    view->setViewport(new QWidget);
-  }
-  statusBar()->showMessage(tr("OpenGL %1activated").arg(checked?"":"de-"),
-                           1000);
-  view->viewport()->installEventFilter(navigation);
-  view->setFocus();
 }
 
 CGAL_INLINE_FUNCTION
@@ -453,13 +415,7 @@ void DemosMainWindow::readState(QString groupname, Options /*what_to_save*/)
   resize(settings.value("size", this->size()).toSize());
 
   QPoint pos = settings.value("pos", this->pos()).toPoint();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
   if(QGuiApplication::screenAt(pos)) {
-#else
-   QDesktopWidget* desktop = qApp->desktop();
-     if(desktop->availableGeometry(pos).contains(pos)) {
-#endif
-
     move(pos);
   }
   settings.endGroup();

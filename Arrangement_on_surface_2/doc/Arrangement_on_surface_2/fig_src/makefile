@@ -49,7 +49,9 @@ TARGETS = \
   overlay_color.pdf \
   bgl_primal_adapter.pdf \
   bgl_dual_adapter.pdf \
-  unb_asymptote.pdf
+  unb_asymptote.pdf \
+  min_area_tri.pdf \
+  jeep.pdf
 
 .DEFAULT_GOAL = all
 .PHONY: all clean
