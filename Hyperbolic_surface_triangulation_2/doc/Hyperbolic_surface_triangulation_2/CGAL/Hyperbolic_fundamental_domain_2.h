@@ -12,7 +12,7 @@ together with a pairing of the sides of \f$ P \f$.
 The \f$ n \f$-th side of \f$ P \f$ is the side between the \f$ n \f$-th and the \f$ (n+1) \f$-th vertex, where indices are modulo the number of vertices of \f$ P \f$.
 The sides pairing are represented by a list of integers, such that if the \f$ n \f$-th integer of the list is \f$ m \f$, then the \f$ n \f$-th side is paired to the \f$ m \f$-th side.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surfaces_traits_2`).
 */
 template<class Traits>
 class Hyperbolic_fundamental_domain_2 {
@@ -60,7 +60,7 @@ public:
   int paired_side(int index) const;
 
   /*!
-       Returns the isometry that maps side \f$ A \f$ to side \f$ B \f$, where \f$ B \f$ is the index-th side, and \f$ A \f$ is the side paired to \f$ B \f$.
+       Returns the isometry that maps side \f$ \overline A \f$ to side \f$ A \f$, where \f$ A \f$ is the index-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
   */
   Hyperbolic_isometry_2<Traits> side_pairing(int index) const;
   /// @}
@@ -72,7 +72,7 @@ public:
 
       The format of the input should be the same as the format of the output of the 'from_stream' method.
   */
-  template<class Traits> void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
+  void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
   /*!
       Writes the domain in a stream.
@@ -82,7 +82,7 @@ public:
       For \f$ i=0 \f$ to \f$ n-1 \f$ the index of the side paired to side \f$ i \f$ is printed on a separate line.
       For \f$ i=0 \f$ to \f$ n-1 \f$ the \f$ i \f$-th vertex is printed on a separate line.
   */
-  template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
+  std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
   /// @}
 
   /// @{

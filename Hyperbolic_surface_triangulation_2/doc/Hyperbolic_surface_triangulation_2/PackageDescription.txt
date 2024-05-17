@@ -38,7 +38,7 @@
 
 \cgalCRPSection{Concepts}
 
-- `HyperbolicSurfacesTraits_2` describes the set of requirements to be fulfilled by any class instantiating the template parameter of most classes of the package.
+- `HyperbolicSurfacesTraits_2` is the concept for the template parameter of most classes of the package.
 - `ComplexWithoutSqrt` describes a complex number type that does not use square root.
 
 \cgalCRPSection{Classes}
@@ -47,7 +47,7 @@
 
 - `CGAL::Hyperbolic_fundamental_domain_2` represents a fundamental domain of a closed orientable hyperbolic surface.
 
-- `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose only purpose is to generate some convex domains of surfaces of genus two.
+- `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose purpose is to generate some convex domains of surfaces of genus two.
 
 - `CGAL::Hyperbolic_isometry_2` represents an isometry in the Poincaré disk model. Facilities are offered to compose isometries, and apply an isometry to a point.
 

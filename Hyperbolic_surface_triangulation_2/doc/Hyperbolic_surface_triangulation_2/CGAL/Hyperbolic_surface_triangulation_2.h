@@ -11,7 +11,7 @@ Represents a triangulation of a closed orientable hyperbolic surface.
 Offers facilities such as the generation of the triangulation from a convex fundamental domain,
 the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surfaces_traits_2`).
 */
 template<class Traits>
 class Hyperbolic_surface_triangulation_2{

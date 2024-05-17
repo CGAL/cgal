@@ -115,14 +115,10 @@ The package contains three main classes:
 
 - `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose purpose is to generate some convex fundamental domains of surfaces of genus two.
 
-The package also contains the secondary class `CGAL::Hyperbolic_isometry_2` to deal with isometries in the Poincaré disk.
+The secondary class `CGAL::Hyperbolic_isometry_2` deals with isometries in the Poincaré disk.
 
-The concept `HyperbolicSurfacesTraits_2` is a refinement of `HyperbolicDelaunayTriangulationTraits_2`.
-It describes the template parameter of most classes of the package.
-It is modeled by the class `CGAL::Hyperbolic_surfaces_traits_2`.
-
-The concept `ComplexWithoutSqrt` describes a complex number type that does not use square root. It is modeled by the class `CGAL::Complex_without_sqrt`.
-
+Most classes of the package are templated by the concept `HyperbolicSurfacesTraits_2` : it is a refinement of `HyperbolicDelaunayTriangulationTraits_2`, and is modeled by `CGAL::Hyperbolic_surfaces_traits_2`.
+Also, the concept `ComplexWithoutSqrt` describes a complex number type that does not use square root : it is modeled by `CGAL::Complex_without_sqrt`.
 
 
 

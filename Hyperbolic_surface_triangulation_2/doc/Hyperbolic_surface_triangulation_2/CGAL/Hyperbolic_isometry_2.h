@@ -12,7 +12,7 @@ so that \f$ f(z) = (c_0 z + c_1) / (c_2 z + c_3) \f$ holds on every complex \f$ 
 
 Facilities are offered to compose isometries, and apply an isometry to a point.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surfaces_traits_2`).
 */
 template<class Traits>
 class Hyperbolic_isometry_2{
@@ -77,7 +77,7 @@ class Hyperbolic_isometry_2{
     /*!
     Writes the isometry in a stream.
     */
-    template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
+    std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
     /// @}
 };
 
