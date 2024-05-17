@@ -57,7 +57,7 @@ public:
   {
     m_vec[i] = v;
   }
-  
+
   /// Return the vector's number of coefficients.
   int dimension() const { return static_cast<int>(m_vec.size()); }
 
@@ -72,7 +72,7 @@ public:
       m_vec[i] = m_svec.get(i);
     }
   }
-  
+
   const NT& operator[](int row) const
   {
     return m_vec[row];
@@ -92,7 +92,7 @@ public:
     }
     return m_svec;
   }
-  
+
   Vec& data() {
     for(int i = 0; i < m_vec.size(); i++){
       m_svec.set(i,m_vec[i]);

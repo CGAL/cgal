@@ -206,7 +206,7 @@ public:
   {
     m_matrix.solve(B.data(), X.data());
   }
-  
+
   /// \cond SKIP_IN_MANUAL
   friend Accelerate_sparse_matrix
   operator*(const T& c, const Accelerate_sparse_matrix& M)
@@ -236,9 +236,6 @@ private:
   mutable Matrix m_matrix;
 
 }; // Accelerate_sparse_matrix
-
-
-
 
 } //namespace CGAL
 
