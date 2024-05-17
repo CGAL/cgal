@@ -60,11 +60,12 @@ The following example reads a set of polygons from a file and creates a kinetic 
 
 \cgalExample{Kinetic_space_partition/kinetic_partition.cpp}
 
-*/
 
 \section Ksp_history Design and Implementation History
 
-This package is an implementation of  Bauchet et. al \cgalCite{bauchet2020kinetic}.
+This package is an implementation of Bauchet et. al \cgalCite{bauchet2020kinetic} with an octree replacing the grid subdivision.
 A proof of concept of the kinetic partition was developed by Simon Giraudot and Dmitry Anisimov.
+
+*/
 
 } /* namespace CGAL */
