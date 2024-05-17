@@ -1,18 +1,18 @@
 // Copyright (c) 2024 INRIA Nancy - Grand Est (France). LIGM Marne-la-Vallée (France)
 // All rights reserved.
 
-namespace CGAL {
+namespace CGAL{
 
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
 Represents an isometry in the Poincaré disk model.
-The isometry f is represented by a list (c0, c1, c2, c3) of complex numbers,
-so that f(z) = (c0 z + c1) / (c2 z + c3) holds on every complex z in the open unit disk.
+The isometry \f$ f \f$ is represented by a list \f$ (c_0, c_1, c_2, c_3) \f$ of complex numbers,
+so that \f$ f(z) = (c_0 z + c_1) / (c_2 z + c_3) \f$ holds on every complex \f$ z \f$ in the open unit disk.
 
 Facilities are offered to compose isometries, and apply an isometry to a point.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits`.
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
 */
 template<class Traits>
 class Hyperbolic_isometry_2{
@@ -67,7 +67,7 @@ class Hyperbolic_isometry_2{
     Point evaluate(const Point& point) const;
 
     /*!
-      Returns the composition of itself and other.
+      Returns the composition of <code> other </code> by <code> itself </code>.
     */
     Hyperbolic_isometry_2<Traits> compose(const Hyperbolic_isometry_2<Traits>& other) const;
     /// @}
@@ -79,8 +79,6 @@ class Hyperbolic_isometry_2{
     */
     template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
     /// @}
-
-
 };
 
-} //namespace CGAL
+}; // namespace CGAL

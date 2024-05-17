@@ -5,9 +5,6 @@
 \ingroup PkgHyperbolicSurfaceTriangulation2Concepts
 \cgalConcept
 
-The concept `HyperbolicSurfacesTraits_2` describes the set of requirements
-to be fulfilled by any class instantiating the template parameter of the main classes of the package.
-
 \cgalRefines{HyperbolicDelaunayTriangulationTraits_2}
 
 \cgalHasModelsBegin
@@ -19,8 +16,16 @@ public:
   /// \name Types
   /// @{
   /*!
-          Represents a complex number over a field: must be a model of 'CGAL::ComplexWithoutSqrt'.
+          Field type.
   */
-  typedef unspecified_type               Complex;
+  typedef unspecified_type                          FT;
+  /*!
+          Represents a point in the Poincaré disk model of the hyperbolic plane.
+  */
+  typedef unspecified_type          Hyperbolic_point_2;
+  /*!
+          Represents a complex number over a field: must be a model of ComplexWithoutSqrt.
+  */
+  typedef unspecified_type                                   Complex;
   /// @}
 };

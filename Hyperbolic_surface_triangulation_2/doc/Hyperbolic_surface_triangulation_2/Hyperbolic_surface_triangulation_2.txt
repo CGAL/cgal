@@ -14,63 +14,68 @@ namespace CGAL {
 <img src="header.svg" style="max-width:80%; width:80%;"/>
 </center>
 
-This package enables handling and building triangulations of closed orientable hyperbolic surfaces.
-Facilities are offered such as the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the Poincaré disk model of the hyperbolic plane.
-A triangulation of a surface can be generated from a convex fundamental domain of the surface. A method is offered that randomly generates such domains in genus two.
+This package enables building and handling triangulations of closed orientable hyperbolic surfaces.
+Functionalities are offered such as the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the Poincaré disk model of the hyperbolic plane.
+A triangulation of a surface can be generated from a convex fundamental domain of the surface. A method is offered that generates such domains in genus two.
 
 
 \section Section_Hyperbolic_Surface_Triangulations_Background Hyperbolic surfaces
 
-\subsection Section_Hyperbolic_Surface_Triangulations_surfaces Hyperbolic surfaces
-
 We assume some familiarity with basic notions from covering space theory, and from the theory of hyperbolic surfaces.
 The <b>Poincaré disk</b> \f$ \mathbb{D} \f$ is a model of the hyperbolic plane whose point set is the open unit disk of the complex plane \f$ \mathbb{C} \f$.
-This package is concerned with the closed (compact, and without boundary) and orientable hyperbolic surfaces \f$ S \f$.
+In this package, every hyperbolic surface \f$ S \f$ is closed (compact, and without boundary) and orientable : this is without further mention.
 The Poincaré disk \f$ \mathbb{D} \f$ is a universal covering space for \f$ S \f$, whose projection map \f$ \pi : \mathbb{D} \to S \f$ is a (local) isometry.
 The pre-image \f$ \pi^{-1}(x) \f$ of a point \f$ x \in S \f$ is infinite, its points are the <b>lifts</b> of \f$ x \f$.
+We usually denote by \f$ \widetilde x \f$ a lift of \f$ x \f$.
+Paths, and triangulations of \f$ S \f$ can also be lifted in \f$ \mathbb{D} \f$.
 
 \subsection Section_Hyperbolic_Surface_Triangulations_domains Fundamental domains and triangulations
 
-Let \f$ S \f$ be a closed orientable hyperbolic surface. For representing \f$ S \f$ on a computer, we cut \f$ S \f$ into "manageable" pieces.
-A graph \f$ G \f$ embedded in \f$ S \f$ is a <b>cellular decomposition</b> of \f$ S \f$ if every face (every connected component of \f$ S \setminus G \f$ ) has genus zero; It is in that sense that the faces of \f$ G \f$ are "manageable".
-In this document, it is implicit that if a graph \f$ G \f$ is embedded in a hyperbolic surface \f$ S \f$, then every edge of \f$ G \f$ is geodesic in \f$ S \f$.
+Let \f$ S \f$ be a hyperbolic surface. For representing \f$ S \f$ on a computer, we cut \f$ S \f$ into "manageable" pieces.
+A graph \f$ G \f$ embedded on \f$ S \f$ is a <b>cellular decomposition</b> of \f$ S \f$ if every face (every connected component of \f$ S \setminus G \f$ ) is a topological disk.
+In this document, every edge of a graph \f$ G \f$ embedded on \f$ S \f$ is a geodesic on \f$ S \f$.
 We consider two types of cellular decompositions of \f$ S \f$:
 
 <ul>
   <li>We consider cellular decompositions \f$ G \f$ of \f$ S \f$ that have only one face.
-Cutting \f$ S \f$ open at the edges of \f$ G \f$ results in a hyperbolic polygon \f$ P \f$, that we call <b>fundamental domain</b> for \f$ S \f$.
+Cutting \f$ S \f$ open at the edges of \f$ G \f$ results in a hyperbolic polygon \f$ P \f$, which is a <b>fundamental domain</b> for \f$ S \f$.
 The edges of \f$ P \f$ are paired, so that every edge of \f$ G \f$ is cut into two edges that are paired in \f$ P \f$.
-Every closed orientable hyperbolic surface admits a fundamental domain \f$ P \f$ that is <b>convex</b>, in that the interior angles of \f$ P \f$ do not exceed \f$ \pi \f$.
+Every hyperbolic surface admits a fundamental domain \f$ P \f$ that is <b>convex</b>, in that the interior angles of \f$ P \f$ do not exceed \f$ \pi \f$.
 
   <li>Also, we consider <b>triangulations</b> of \f$ S \f$.
-A cellular decomposition \f$ T \f$ of \f$ S \f$ is a triangulation if every face of \f$ T \f$ is a "triangle", in the sense that it admits three incidences with edges of \f$ T \f$.
+A cellular decomposition \f$ T \f$ of \f$ S \f$ is a triangulation if every face of \f$ T \f$ is a "triangle": it admits three incidences with edges of \f$ T \f$.
 Observe that this definition allows for triangulations with only one vertex.
 </ul>
 
-A triangulation of \f$ S \f$ can be obtained from a convex fundamental domain \f$ P \f$ of \f$ S \f$ by triangulating the interior \f$ P \f$, and by gluing back the boundary edges that are paired in \f$ P \f$.
-The assumption that \f$ P \f$ is convex ensures that the interior of \f$ P \f$ can be triangulated naively by insertion of arbitrary arcs of \f$ P \f$.
+A triangulation of \f$ S \f$ can be obtained from a convex fundamental domain \f$ P \f$ of \f$ S \f$ by triangulating the interior of \f$ P \f$, and by gluing back the boundary edges that are paired in \f$ P \f$.
+The assumption that \f$ P \f$ is convex ensures that the interior of \f$ P \f$ can be triangulated naively by insertion of any maximal set of pairwise-disjoint arcs of \f$ P \f$.
 
 \subsection Section_Hyperbolic_Surface_Triangulations_generation Generation of convex fundamental domains
 
-We aim at generating convex fundamental domains in a randomized way.
-We represent every domain as a polygon in the Poincaré disk, given by the list of its vertices, and endowed with side pairings.
-In order to perform fast and exact computations with the domains generated, every vertex must be a complex number whose type supports fast and exact computations.
-Under this constraint, we do not know how to generate domains of surfaces of genus greater than two.
-In genus two, this package can generate a convex fundamental domain \f$ P \f$, whose side pairings are \f$ A B C D A B C D \f$, and whose eight vertices \f$ z_0, \dots, z_7 \f$ belong to \f$ \mathbb{Q} + i \mathbb{Q} \f$ (their real and imaginary parts are rational numbers).
-Here the side pairings and the vertices are in counter-clockwise order, the side between \f$ z_0 \f$ and \f$ z_1 \f$ is labeled \f$ A \f$, and the side between \f$ z_4 \f$ and \f$ z_5 \f$ is also labeled \f$ A \f$.
-Those octagons are symmetric in the sense that \f$ z_i = z_{i+4} \f$ for every  \f$ i \f$, where indices are modulo eight.
-Such octagons are described in \cgalCite{aigon2005hyperbolic} (without the constraint that the vertices belong to \f$ \mathbb{Q} + i \mathbb{Q} \f$).
-The exact generation process can be found in \cgalCite{despre2022experimental}, together with a proof that the surfaces that can be generated in this way are dense in the space of surfaces genus two.
+This package can generate a convex fundamental domain \f$ P \f$ of a surface of genus two, with eight vertices \f$ z_0, \dots, z_7 \in \mathbb{C} \f$, whose side pairings are \f$ A B C D \overline{A} \overline{B} \overline{C} \overline{D} \f$.
+The vertices and the side pairings are in counter-clockwise order, the side between \f$ z_0 \f$ and \f$ z_1 \f$ is \f$ A \f$, and the side between \f$ z_4 \f$ and \f$ z_5 \f$ is \f$ \overline{A} \f$.
+Those octagons are symmetric, .i.e \f$ z_i = z_{i+4} \f$ for every  \f$ i \f$, where indices are modulo eight.
+Such octagons are described in \cgalCite{aigon2005hyperbolic}.
+
+<center>
+<img src="octagon.svg" style="max-width:20%; width:20%;"/>
+</center>
 
 \section Subsection_Hyperbolic_Surface_Triangulations_Representation Representation
 
-\subsection Subsection_Hyperbolic_Surface_Triangulations_Data_Structure Data structure
+\subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Domains Data structure for domains
 
-We represent domains by the list of their vertices in the Poincaré disk, and by the list of their sides pairings.
+We represent every domain as a polygon in the Poincaré disk, given by the list of its vertices, and by the list of its side pairings.
+Concerning the generation of domains, in order to perform fast and exact computations with the domains generated, every vertex must be a complex number whose type supports fast and exact computations.
+Under this constraint, it is not known how to generate domains of surfaces of genus greater than two.
+In genus two, this package generates domains whose vertices belong to \f$ \mathbb{Q} + i \mathbb{Q} \f$ (their real and imaginary parts are rational numbers).
+The exact generation process can be found in \cgalCite{despre2022experimental}, together with a proof that the surfaces that can be generated in this way are dense in the space of surfaces genus two.
 
-Let \f$ T \f$ be a triangulation of a closed orientable hyperbolic surface.
-We represent \f$ T \f$ by an instance of CGAL::Combinatorial_map whose edges are attributed complex numbers.
-The complex number \f$ R_T(e) \in \mathbb{C} \f$ attributed to an edge \f$ e \f$ of \f$ T \f$ is the <b>cross ratio</b> of \f$ e \f$ in \f$ T \f$, defined as follows.
+\subsection Subsection_Hyperbolic_Surface_Triangulations_DS_Triangulations Data structure for triangulations
+
+Let \f$ T \f$ be a triangulation of a hyperbolic surface.
+We represent \f$ T \f$ by an instance of CGAL::Combinatorial_map whose edges are decorated with complex numbers.
+The complex number \f$ R_T(e) \in \mathbb{C} \f$ decorating an edge \f$ e \f$ of \f$ T \f$ is the <b>cross ratio</b> of \f$ e \f$ in \f$ T \f$, defined as follows.
 Consider the lift \f$ \widetilde T \f$ of \f$ T \f$ in the Poincaré disk \f$ \mathbb{D} \f$.
 In \f$ \widetilde T \f$, let \f$ \widetilde e \f$ be a lift of \f$ e \f$.
 Orient \f$ \widetilde e \f$ arbitrarily, and let \f$ z_0 \in \mathbb{D} \f$ and \f$ z_2 \in \mathbb{D} \f$ be respectively the first and second vertices of \f$ \widetilde e \f$.
@@ -78,6 +83,11 @@ In  \f$ \widetilde T \f$, consider the triangle on the right of \f$ \widetilde e
 Similarly, consider the triangle on the left of \f$ \widetilde e \f$, and let \f$ z_3 \in \mathbb{D} \f$ be the third vertex of this triangle.
 Then \f$ R_T(e) = (z_3-z_1)*(z_2-z_0) / ((z_3-z_0)*(z_2-z_1)) \f$.
 This definition does not depend on the choice of the lift \f$ \widetilde e \f$, nor on the orientation of \f$ \widetilde e \f$.
+See \cgalCite{despre2022experimental} for details.
+
+<center>
+<img src="crossratio.svg" style="max-width:15%; width:15%;"/>
+</center>
 
 While the triangulation \f$ T \f$ is unambiguously determined by the combinatorial map and its cross ratios, the internal representation of \f$ T \f$ can contain some additional data: the anchor.
 The anchor is used when building a portion of the lift of \f$ T \f$ in the Poincaré disk \f$ \mathbb{D} \f$.
@@ -86,11 +96,11 @@ It contains a lift \f$ t \f$ of a triangle of \f$ T \f$ in \f$ \mathbb{D} \f$: \
 
 \subsection Subsection_Hyperbolic_Surface_Triangulations_Delaunay Delaunay flip algorithm
 
-Let \f$ T \f$ be a triangulation of a closed orientable hyperbolic surface. An edge \f$ e \f$ of \f$ T \f$ satisfies the <b>Delaunay criterion</b> if the imaginary part of its cross ratio \f$R_T(e)\f$ is non-positive.
-(This definition has an equivalent "empty disk" formulation in the package \ref PkgHyperbolicTriangulation2).
+Let \f$ T \f$ be a triangulation of a hyperbolic surface. An edge \f$ e \f$ of \f$ T \f$ satisfies the <b>Delaunay criterion</b> if the imaginary part of its cross ratio \f$R_T(e)\f$ is non-positive.
+This definition is equivalent to the usual "empty disk" formulation.
 Then \f$ T \f$ is a <b>Delaunay triangulation</b> if every edge of  \f$ T \f$ satisfies the Delaunay criterion.
 If an edge \f$e \f$ of \f$ T \f$ does not satisfy the Delaunay criterion, then the two triangles incident to \f$ e \f$ form a strictly convex quadrilateron, so \f$ e \f$ can be deleted from \f$ T \f$ and replaced by the other diagonal of the quadrilateron.
-This operation is called a <b>flip</b>.
+This operation is called a Delaunay <b>flip</b>.
 When a flip occurs, the cross ratios of the edges involved are modified via simple formulas.
 The <b>Delaunay flip algorithm</b> flips edges that do not satisfy the Delaunay criterion as long as possible, with no preference on the order of the flips.
 This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$ \cgalCite{despre2020flipping}.
@@ -99,17 +109,16 @@ This algorithm terminates, and outputs a Delaunay triangulation of \f$ S \f$ \cg
 
 
 The package contains three main classes:
-- `CGAL::Hyperbolic_surface_triangulation_2` represents a triangulation of a closed orientable hyperbolic surface.  Offers facilities such as the generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the Poincaré disk.
+- `CGAL::Hyperbolic_surface_triangulation_2` represents a triangulation of a hyperbolic surface. It offers functionalities such as the generation of the triangulation from a convex fundamental domain, the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the Poincaré disk.
 
-- `CGAL::Hyperbolic_fundamental_domain_2` represents a convex fundamental domain of a closed orientable hyperbolic surface.
+- `CGAL::Hyperbolic_fundamental_domain_2` represents a convex fundamental domain of a hyperbolic surface.
 
-- `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose only purpose is to randomly generate some convex fundamental domains of surfaces of genus two.
-
+- `CGAL::Hyperbolic_fundamental_domain_factory_2` is a factory class, whose purpose is to generate some convex fundamental domains of surfaces of genus two.
 
 The package also contains the secondary class `CGAL::Hyperbolic_isometry_2` to deal with isometries in the Poincaré disk.
 
 The concept `HyperbolicSurfacesTraits_2` is a refinement of `HyperbolicDelaunayTriangulationTraits_2`.
-This concept describes the requirements for the template parameter of the classes of the package.
+It describes the template parameter of most classes of the package.
 It is modeled by the class `CGAL::Hyperbolic_surfaces_traits_2`.
 
 The concept `ComplexWithoutSqrt` describes a complex number type that does not use square root. It is modeled by the class `CGAL::Complex_without_sqrt`.
@@ -120,16 +129,16 @@ The concept `ComplexWithoutSqrt` describes a complex number type that does not u
 
 \section Section_Hyperbolic_Surface_Triangulations_Example Example
 
-The example below randomly generates a convex fundamental domain of a surface of genus two, triangulates the domain, applies the Delaunay flip algorithm to the resulting triangulation, and saves and prints the Delaunay triangulation.
+The example below generates a convex fundamental domain of a surface of genus two, triangulates the domain, applies the Delaunay flip algorithm to the resulting triangulation, and saves and prints the Delaunay triangulation.
 \cgalExample{Hyperbolic_surface_triangulation_2_Example/example.cpp}
 
 
 \section Section_Hyperbolic_Surface_Implementation_History Design and implementation history
 
-This package implements the Delaunay flip algorithm described in the hyperbolic setting by Vincent Despré, Jean-Marc Schlenker, and Monique Teillaud in \cgalCite{despre2020flipping} (with a different data structure for representing triangulations).
+This package implements the Delaunay flip algorithm described in the hyperbolic setting by Vincent Despré, Jean-Marc Schlenker, and Monique Teillaud in \cgalCite{despre2020flipping} (with a different data structure for representing triangulations, see \cgalCite{despre2022experimental}).
 It also implements the generation of domains described by Vincent Despré, Loïc Dubois, Benedikt Kolbe, and Monique Teillaud in \cgalCite{despre2022experimental}, based on results of Aline Aigon-Dupuy, Peter Buser, Michel Cibils, Alfred F Künzle, and Frank Steiner \cgalCite{aigon2005hyperbolic}.
-The code and the documentation of the package were entirely written by Loïc Dubois, under regular discussions with Vincent Despré and Monique Teillaud.
-The authors aknowledge support from the ANR SoS.
+The code and the documentation of the package were written by Loïc Dubois, under regular discussions with Vincent Despré and Monique Teillaud.
+The authors aknowledge support from the grants <a href="https://sos.loria.fr/">SoS</a> and <a href="https://perso.math.u-pem.fr/sabourau.stephane/min-max/min-max.html">MIN-MAX</a> of the French National Research Agency ANR.
 
 */
 } /* namespace CGAL */

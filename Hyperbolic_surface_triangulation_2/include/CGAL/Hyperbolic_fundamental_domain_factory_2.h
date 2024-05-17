@@ -151,7 +151,7 @@ typename Traits::FT Hyperbolic_fundamental_domain_factory_2<Traits>::exact_numbe
   if (x< 0){
     return _FT(0)-exact_number_from_float(-x);
   }
-  return _FT(int(x*_DENOMINATOR_FOR_GENERATION)%_DENOMINATOR_FOR_GENERATION, _DENOMINATOR_FOR_GENERATION);
+  return _FT(int(x*_DENOMINATOR_FOR_GENERATION)%_DENOMINATOR_FOR_GENERATION)/_FT( _DENOMINATOR_FOR_GENERATION);
 }
 
 template<class Traits>

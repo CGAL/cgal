@@ -1,18 +1,18 @@
 // Copyright (c) 2024 INRIA Nancy - Grand Est (France). LIGM Marne-la-Vallée (France)
 // All rights reserved.
 
-namespace CGAL {
+namespace CGAL{
 
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
 Represents a fundamental domain of a closed orientable hyperbolic surface.
-The domain is given as a polygon P represented by the list of its vertices in the Poincaré disk model,
-together with a pairing of the sides of P.
-The n-th side of P is the side between the n-th and the (n+1)-th vertex, where indices are modulo the number of vertices of P.
-The sides pairing are represented by a list of integers, such that if the n-th integer of the list is m, then the n-th side is paired to the m-th side.
+The domain is given as a polygon \f$ P  \f$ represented by the list of its vertices in the Poincaré disk model,
+together with a pairing of the sides of \f$ P \f$.
+The \f$ n \f$-th side of \f$ P \f$ is the side between the \f$ n \f$-th and the \f$ (n+1) \f$-th vertex, where indices are modulo the number of vertices of \f$ P \f$.
+The sides pairing are represented by a list of integers, such that if the \f$ n \f$-th integer of the list is \f$ m \f$, then the \f$ n \f$-th side is paired to the \f$ m \f$-th side.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits`.
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2`.
 */
 template<class Traits>
 class Hyperbolic_fundamental_domain_2 {
@@ -50,17 +50,17 @@ public:
   int size() const;
 
   /*!
-      Returns the index-th vertex
+      Returns the index-th vertex.
   */
   Point vertex(int index) const;
 
   /*!
-      Returns the index of the side paired to side A, where A is the index-th side
+      Returns the index of the side paired to the index-th side.
   */
   int paired_side(int index) const;
 
   /*!
-       Returns the isometry that maps side A to side B, where B is the index-th side, and A is the side paired to B
+       Returns the isometry that maps side \f$ A \f$ to side \f$ B \f$, where \f$ B \f$ is the index-th side, and \f$ A \f$ is the side paired to \f$ B \f$.
   */
   Hyperbolic_isometry_2<Traits> side_pairing(int index) const;
   /// @}
@@ -79,8 +79,8 @@ public:
 
       The format of the output is the following.
       The first line prints the number n of vertices of the domain.
-      For i=0 to n-1 the index of the side paired to side i is printed on a separate line.
-      For i=0 to n-1 the i-th vertex is printed on a separate line.
+      For \f$ i=0 \f$ to \f$ n-1 \f$ the index of the side paired to side \f$ i \f$ is printed on a separate line.
+      For \f$ i=0 \f$ to \f$ n-1 \f$ the \f$ i \f$-th vertex is printed on a separate line.
   */
   template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
   /// @}
@@ -96,4 +96,4 @@ public:
   /// @}
 };
 
-} //namespace CGAL
+}; // namespace CGAL
