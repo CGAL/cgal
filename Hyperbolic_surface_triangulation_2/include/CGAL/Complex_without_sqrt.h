@@ -162,9 +162,9 @@ std::ostream& operator<<(std::ostream& s, const Complex_without_sqrt<FT>& z){
 template<class FT>
 void operator>>(std::istream& s, Complex_without_sqrt<FT>& z){
   std::string line;
-  std::getline(s, line);
+  s >> line;
   z.set_real_part(FT(line));
-  std::getline(s, line);
+  s >> line;
   z.set_imaginary_part(FT(line));
 }
 

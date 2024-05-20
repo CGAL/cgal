@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1...3.15)
 
-project( example )
+project( examples )
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS  )
@@ -24,12 +24,15 @@ if ( NOT Boost_FOUND )
 endif()
 
 add_executable( example example.cpp )
+add_executable( example_bis example_bis.cpp )
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS example )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS example example_bis)
 
 target_link_libraries(example PRIVATE CGAL::CGAL )
+target_link_libraries(example_bis PRIVATE CGAL::CGAL )
 
 set(CMAKE_BUILD_TYPE "Release")
 
 #########################################################################
 target_include_directories(example PRIVATE ../../include/)
+target_include_directories(example_bis PRIVATE ../../include/)

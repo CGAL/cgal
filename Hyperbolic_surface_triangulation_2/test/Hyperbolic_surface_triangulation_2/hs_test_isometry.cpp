@@ -10,22 +10,19 @@
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
 
-#include <CGAL/Complex_without_sqrt.h>
-#include <CGAL/Hyperbolic_isometry_2.h>
-
 #include <iostream>
 
 #include <CGAL/Gmpq.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-#include <CGAL/Circular_kernel_2/Intersection_traits.h>
-#include <CGAL/Circular_kernel_2.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surfaces_traits_2.h>
+#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Hyperbolic_isometry_2.h>
 
 using namespace CGAL;
 
-typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Circular_kernel_2<Cartesian<Gmpq>,Algebraic_kernel_for_circles_2_2<Gmpq>>> ParentTraits;
+typedef Cartesian<Gmpq>                                                 Kernel;
+typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
 typedef Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
 typedef Hyperbolic_isometry_2<Traits>                                   Isometry;
 

@@ -125,7 +125,7 @@ void Hyperbolic_fundamental_domain_2<Traits>::to_stream(std::ostream& s) const{
   }
 
   for (int k=0; k<n; k++){
-    s << vertex(k);
+    s << vertex(k) << std::endl;
   }
 }
 
@@ -135,10 +135,10 @@ void Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream& s){
   _pairings.clear();
 
   std::string line;
-  std::getline(s, line);
+  s >> line;
   int size = std::stoi(line);
   for (int k=0; k<size; k++){
-    std::getline(s, line);
+    s >> line;
     _pairings.push_back(std::stoi(line));
   }
 

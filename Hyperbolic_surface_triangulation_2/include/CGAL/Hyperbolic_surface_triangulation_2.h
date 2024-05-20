@@ -492,6 +492,17 @@ void Hyperbolic_surface_triangulation_2<Traits>::to_stream(std::ostream& s) cons
     // Store the number of darts
     s << current_dart_index << std::endl;
 
+    // Store the anchor, if any
+    if (_has_anchor){
+      s << "yes" << std::endl;
+      s << darts_indices[_anchor.dart] << std::endl;
+      s << _anchor.vertices[0] << std::endl;
+      s << _anchor.vertices[1] << std::endl;
+      s << _anchor.vertices[2] << std::endl;
+    } else {
+      s << "no" << std::endl;
+    }
+
     // Store the triangles
     for (typename Face_const_range::const_iterator it = _combinatorial_map.template one_dart_per_cell<2>().begin(); it != _combinatorial_map.template one_dart_per_cell<2>().end(); ++it){
       s << darts_indices[it] << std::endl;
@@ -505,34 +516,44 @@ void Hyperbolic_surface_triangulation_2<Traits>::to_stream(std::ostream& s) cons
       s << darts_indices[const_opposite(it)] << std::endl;
       s << get_cross_ratio(it);
     }
-
-    // Store the anchor, if any
-    if (!_has_anchor){
-      s << "no" << std::endl;
-    }
-    s << "yes" << std::endl;
-    s << darts_indices[_anchor.dart] << std::endl;
-    s << _anchor.vertices[0] << _anchor.vertices[1] << _anchor.vertices[2];
 }
 
 template<class Traits>
 void Hyperbolic_surface_triangulation_2<Traits>::from_stream(std::istream& s){
   _combinatorial_map.clear();
 
+  // Load the number of darts
   std::string line;
-  getline(s, line);
+  s >> line;
   int nb_darts = std::stoi(line);
 
+  // Load the anchor
+  int anchor_dart_id;
+  s >> line;
+  if (!line.compare("yes")){
+    _has_anchor = true;
+
+    s >> line;
+    anchor_dart_id = std::stoi(line); // (*) _anchor.dart_id is set at the end of the function
+
+    s >> _anchor.vertices[0];
+    s >> _anchor.vertices[1];
+    s >> _anchor.vertices[2];
+  } else {
+    _has_anchor = false;
+  }
+
+  // Load the triangles
   std::vector<Dart_handle> darts_by_id (nb_darts);
   int index1, index2, index3;
   for (int k=0; k<nb_darts/3; k++){
     Dart_handle triangle_dart = _combinatorial_map.make_combinatorial_polygon(3);
 
-    getline(s, line);
+    s >> line;
     index1 = std::stoi(line);
-    getline(s, line);
+    s >> line;
     index2 = std::stoi(line);
-    getline(s, line);
+    s >> line;
     index3 = std::stoi(line);
 
     darts_by_id[index1] = triangle_dart;
@@ -540,15 +561,13 @@ void Hyperbolic_surface_triangulation_2<Traits>::from_stream(std::istream& s){
     darts_by_id[index3] = ccw(triangle_dart);
   }
 
-
-
   // Load the edges
   Dart_handle dart_1, dart_2;
   ComplexNumber cross_ratio;
   for (int k=0; k<nb_darts/2; k++){
-    getline(s, line);
+    s >> line;
     index1 = std::stoi(line);
-    getline(s, line);
+    s >> line;
     index2 = std::stoi(line);
     dart_1 = darts_by_id[index1];
     dart_2 = darts_by_id[index2];
@@ -557,17 +576,10 @@ void Hyperbolic_surface_triangulation_2<Traits>::from_stream(std::istream& s){
     _combinatorial_map.template set_attribute<1>(dart_1, _combinatorial_map.template create_attribute<1>(cross_ratio));
   }
 
-  getline(s, line);
-  if (line.c_str() == "no"){
-    _has_anchor = false;
-    return;
+  // (*) here
+  if (_has_anchor){
+    _anchor.dart = darts_by_id[anchor_dart_id];
   }
-  _has_anchor = true;
-  getline(s, line);
-  _anchor.dart = darts_by_id[std::stoi(line)];
-  s >> _anchor.vertices[0];
-  s >> _anchor.vertices[1];
-  s >> _anchor.vertices[2];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

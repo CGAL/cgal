@@ -12,7 +12,10 @@
 
 #include <CGAL/Gmpq.h>
 #include <CGAL/Cartesian.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
+#include <CGAL/Circular_kernel_2/Intersection_traits.h>
+#include <CGAL/Circular_kernel_2.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 #include <CGAL/Hyperbolic_surfaces_traits_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
@@ -22,12 +25,12 @@
 
 using namespace CGAL;
 
-typedef Cartesian<Gmpq>                                                 Kernel;
-typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
-typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
-typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
+typedef Circular_kernel_2<Cartesian<Gmpq>,Algebraic_kernel_for_circles_2_2<Gmpq>>               Kernel;
+typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                   ParentTraits;
+typedef Hyperbolic_surfaces_traits_2<ParentTraits>                                              Traits;
+typedef Hyperbolic_fundamental_domain_2<Traits>                                                 Domain;
+typedef Hyperbolic_fundamental_domain_factory_2<Traits>                                         Factory;
+typedef Hyperbolic_surface_triangulation_2<Traits>                                              Triangulation;
 
 int main(){
   // Generates the domain:

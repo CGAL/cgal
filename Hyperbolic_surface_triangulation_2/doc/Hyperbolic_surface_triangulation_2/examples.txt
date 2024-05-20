@@ -1,3 +1,4 @@
 /*!
 \example Hyperbolic_surface_triangulation_2_Example/example.cpp
+\example Hyperbolic_surface_triangulation_2_Example/example_bis.cpp
 */

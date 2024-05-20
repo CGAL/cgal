@@ -12,25 +12,22 @@
 
 #include "window.h"
 
-#include <time.h>
-
+#include <CGAL/Gmpq.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_surfaces_traits_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
 
-#include <CGAL/Gmpq.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Algebraic_kernel_for_circles_2_2.h>
-#include <CGAL/Circular_kernel_2/Intersection_traits.h>
-#include <CGAL/Circular_kernel_2.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
-#include <CGAL/Hyperbolic_surfaces_traits_2.h>
+using namespace CGAL;
 
-typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<CGAL::Circular_kernel_2<CGAL::Cartesian<CGAL::Gmpq>,CGAL::Algebraic_kernel_for_circles_2_2<CGAL::Gmpq>>> ParentTraits;
-typedef CGAL::Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
-typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                         Domain;
-typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
-typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
+typedef Cartesian<Gmpq>                                                 Kernel;
+typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
+typedef Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
+typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
+typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
+typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

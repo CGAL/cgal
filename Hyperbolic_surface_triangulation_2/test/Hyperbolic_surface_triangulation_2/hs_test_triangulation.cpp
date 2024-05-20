@@ -10,42 +10,40 @@
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
 
+#include <iostream>
+#include <sstream>
+
+#include <CGAL/Gmpq.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
+#include <CGAL/Hyperbolic_surfaces_traits_2.h>
 #include <CGAL/Complex_without_sqrt.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
 #include <CGAL/Hyperbolic_surfaces_traits_2.h>
 
-#include <iostream>
-#include <sstream>
-
-#include <CGAL/Gmpq.h>
-
 using namespace CGAL;
 
-typedef Gmpq FT;
+typedef Cartesian<Gmpq>                                                 Kernel;
+typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
+typedef Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                   Domain;
+typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>                Triangulation;
 
-typedef Hyperbolic_surfaces_traits_2<FT>                            Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                     Domain;
-typedef Hyperbolic_surface_triangulation_2<Traits>                  Triangulation;
-
-typedef typename Traits::Point_2                                    Point;
-typedef Complex_without_sqrt<FT>                                    Complex;
+typedef typename Traits::FT                                             FT;
+typedef typename Traits::Hyperbolic_point_2                             Point;
+typedef typename Traits::Complex                                        Complex;
 
 Domain build_domain(){
-  //
   std::vector<Point> vertices;
-  Complex z0 = Complex (FT(809,10000),FT(0));
-  Complex z1 = Complex (FT(7359,10000),FT(1877,10000));
-  Complex z2 = Complex (FT(-999,2500),FT(881,1000));
-  Complex z3 = Complex (FT("-22088524601252853411192791001942853611410938513/24711029456888649611435724068315791591836010000"),FT("9482675065452890527617859332378101016513362487/24711029456888649611435724068315791591836010000"));
-  vertices.push_back( Point(z0) );
-  vertices.push_back( Point(z1) );
-  vertices.push_back( Point(z2) );
-  vertices.push_back( Point(z3) );
-  vertices.push_back( Point(-z0) );
-  vertices.push_back( Point(-z1) );
-  vertices.push_back( Point(-z2) );
-  vertices.push_back( Point(-z3) );
+  vertices.push_back( Point(FT(809,10000),FT(0)) );
+  vertices.push_back( Point(FT(7359,10000),FT(1877,10000)) );
+  vertices.push_back( Point(FT(-999,2500),FT(881,1000)) );
+  vertices.push_back( Point(FT("-22088524601252853411192791001942853611410938513/24711029456888649611435724068315791591836010000"),FT("9482675065452890527617859332378101016513362487/24711029456888649611435724068315791591836010000")) );
+  vertices.push_back( Point(FT(-809,10000),FT(0)) );
+  vertices.push_back( Point(FT(-7359,10000),FT(-1877,10000)) );
+  vertices.push_back( Point(FT(999,2500),FT(-881,1000)) );
+  vertices.push_back( Point(FT("22088524601252853411192791001942853611410938513/24711029456888649611435724068315791591836010000"),FT("-9482675065452890527617859332378101016513362487/24711029456888649611435724068315791591836010000")) );
 
   std::vector<int> pairings;
   for (int k=0; k<8; k++){

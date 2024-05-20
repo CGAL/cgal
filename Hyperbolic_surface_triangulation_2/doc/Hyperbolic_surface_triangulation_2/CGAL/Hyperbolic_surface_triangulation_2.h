@@ -128,7 +128,6 @@ public:
   /// @{
   /*!
       Validity test.
-
       Checks that the underlying combinatorial map \f$ M \f$ has no boundary and calls the is_valid method of \f$ M \f$.
       If there is an anchor, then checks that the dart handle of the anchor does indeed point to a dart of \f$ M \f$, and checks that the three vertices of the anchor lie within the open unit disk.
   */
@@ -139,20 +138,18 @@ public:
   /// @{
   /*!
       Writes the triangulation in a stream.
-
       The format of the output is the following.
       Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$ is the number of darts of the triangulation.
       The first line contains the number \f$ n \f$ of darts.
-      For every triangle \f$ t \f$, the indices of the three darts of \f$ t \f$ are printed on three distinct lines.
-      For every edge \f$ e \f$, the indices of the two darts of \f$ e \f$ are printed on two distinct lines, followed by a third line on which the cross ratio of \f$ e \f$ is printed.
       The next line contains either 'yes' or 'no' and tells whether the triangulation has an anchor.
-      If the triangulation has anchor, then the two next lines print respectively the index of the dart of the anchor, and the three vertices of the anchor.
+      If the triangulation has an anchor, then the four next lines print the index of the dart of the anchor, and the three vertices of the anchor.
+      Then, for every triangle \f$ t \f$, the indices of the three darts of \f$ t \f$ are printed on three distinct lines.
+      Finally, for every edge \f$ e \f$, the indices of the two darts of \f$ e \f$ are printed on two distinct lines, followed by a third line on which the cross ratio of \f$ e \f$ is printed.
   */
   std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2);
 
   /*!
       Reads the triangulation from a stream.
-
       The format of the input should be the same as the format of the output of the '<<' operator.
   */
   void operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits>& triangulation);
