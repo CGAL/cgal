@@ -84,7 +84,7 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
   // Computes average spacing
   FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>
-    (points, 6 /* knn = 1 ring */, params::point_map (Point_map()));
+    (points, 6 /* knn = 1 ring */, params::point_map(Point_map()));
 
   time.stop();
   std::cout << "Average spacing : " << time.time() << " seconds." << std::endl;
@@ -113,9 +113,9 @@ void poisson_reconstruction(const PointSet& points, const char* output)
   time.start();
 
   // Defines surface mesh generation criteria
-  CGAL::Mesh_criteria_3<Tr> criteria(params::facet_angle = sm_angle,
-                                     params::facet_size = sm_radius * average_spacing,
-                                     params::facet_distance = sm_distance * average_spacing);
+  Mesh_criteria criteria(params::facet_angle = sm_angle,
+                         params::facet_size = sm_radius * average_spacing,
+                         params::facet_distance = sm_distance * average_spacing);
 
   Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(surface, sm_sphere,
     params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
@@ -158,30 +158,30 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
 int main(int argc, char* argv[])
 {
-    const std::string file = (argc < 2) ? CGAL::data_file_path("points_3/kitten.xyz")
-                                        : std::string(argv[1]);
+  const std::string file = (argc > 1) ? std::string(argv[1])
+                                      : CGAL::data_file_path("points_3/kitten.xyz");
 
-    // Reads the point set file in points[].
-    // Note: read_points() requires an iterator over points
-    // + property maps to access each point's position and normal.
-    PointList points;
-    if(!CGAL::IO::read_points(file, std::back_inserter(points),
-                              params::point_map(Point_map())
-                                     .normal_map(Normal_map())))
-    {
-      std::cerr << "Error: cannot read file input file!" << std::endl;
-      return EXIT_FAILURE;
-    }
+  // Reads the point set file in points[].
+  // Note: read_points() requires an iterator over points
+  // + property maps to access each point's position and normal.
+  PointList points;
+  if(!CGAL::IO::read_points(file, std::back_inserter(points),
+                            params::point_map(Point_map())
+                                   .normal_map(Normal_map())))
+  {
+    std::cerr << "Error: cannot read file input file!" << std::endl;
+    return EXIT_FAILURE;
+  }
 
-    std::cout << "File " << file << " has been read, " << points.size() << " points." << std::endl;
+  std::cout << "File " << file << " has been read, " << points.size() << " points." << std::endl;
 
-    std::cout << "\n\n### Sequential mode ###" << std::endl;
-    poisson_reconstruction<CGAL::Sequential_tag>(points, "out_sequential.off");
+  std::cout << "\n\n### Sequential mode ###" << std::endl;
+  poisson_reconstruction<CGAL::Sequential_tag>(points, "out_sequential.off");
 
 #ifdef CGAL_LINKED_WITH_TBB
-    std::cout << "\n\n### Parallel mode ###" << std::endl;
-    poisson_reconstruction<CGAL::Parallel_tag>(points, "out_parallel.off");
+  std::cout << "\n\n### Parallel mode ###" << std::endl;
+  poisson_reconstruction<CGAL::Parallel_tag>(points, "out_parallel.off");
 #endif
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
