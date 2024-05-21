@@ -262,7 +262,7 @@ public:
     Self& operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator const Face_handle() const { return Base::base(); }
+    operator const Face_handle&() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<Vertices_iterator> >          Vertex_handles;
