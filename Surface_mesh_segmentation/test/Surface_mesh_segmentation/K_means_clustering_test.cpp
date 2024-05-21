@@ -1,7 +1,7 @@
 //
 #include <CGAL/Surface_mesh_segmentation/internal/K_means_clustering.h>
 
-#include <boost/random.hpp>
+#include <random>
 #include <boost/random/normal_distribution.hpp>
 /**
  * Generates sample points using a few gauissians.
@@ -12,7 +12,7 @@
  */
 int main(void)
 {
-    boost::mt19937 engine;
+    std::mt19937 engine;
     engine.seed(1340818006);
 
     // generate random data using gauissians below
