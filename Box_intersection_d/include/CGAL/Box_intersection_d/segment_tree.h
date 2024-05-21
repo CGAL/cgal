@@ -21,7 +21,6 @@
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_int.hpp>
-#include <boost/random/variate_generator.hpp>
 
 #include <algorithm>
 #include <iterator>
@@ -30,6 +29,7 @@
 #include <cmath>
 #include <climits>
 #include <cstddef>
+#include <random>
 
 namespace CGAL {
 
@@ -242,9 +242,10 @@ RandomAccessIter
 iterative_radon( RandomAccessIter begin, RandomAccessIter end,
                  Predicate_traits traits, int dim, int num_levels )
 {
-  typedef typename boost::variate_generator<boost::rand48&, boost::uniform_int<std::ptrdiff_t> > Generator;
-  boost::rand48 rng;
-  Generator generator(rng, boost::uniform_int<std::ptrdiff_t>(0, (end-begin)-1));
+  std::mt19937 rng;
+  // Generator generator(rng, boost::uniform_int<std::ptrdiff_t>(0, (end-begin)-1));
+  auto generator = std::bind( std::uniform_int<std::ptrdiff_t>(0, (end-begin)-1), rng);
+  using Generator = decltype(generator);
   Iterative_radon<RandomAccessIter, Predicate_traits, Generator> IR(begin, traits, dim, generator);
   return IR(num_levels);
 }

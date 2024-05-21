@@ -20,11 +20,9 @@
 #include <CGAL/basic.h>
 #include <list>
 #include <iostream>
+#include <random>
 
 #include <boost/random/linear_congruential.hpp>
-#include <boost/random/geometric_distribution.hpp>
-#include <boost/random/variate_generator.hpp>
-
 
 //#define CGAL_ISL_USE_CCC
 #define CGAL_ISL_USE_LIST
@@ -125,7 +123,7 @@ class Interval_for_container : public Interval_
   private:
     typedef Interval_ Interval;
     typedef typename Interval::Value Value;
-    boost::rand48 random;
+    std::mt19937 random;
 
 #ifdef CGAL_ISL_USE_LIST
     std::list<Interval> container;
@@ -1194,10 +1192,8 @@ template <class Interval>
   int
   Interval_skip_list<Interval>::randomLevel()
   {
-    boost::geometric_distribution<> proba(0.5);
-    boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
-
-    return (std::min)(die(), (int)maxLevel)+1;
+    std::geometric_distribution<> proba(0.5);
+    return (std::min)(proba(random), (int)maxLevel)+1;
 }
 
 

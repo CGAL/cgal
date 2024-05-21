@@ -21,6 +21,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <random>
 #include <boost/random/linear_congruential.hpp>
 
 namespace CGAL {
@@ -271,7 +272,7 @@ namespace CGAL {
       bool adjust_bb;
       double zoom;
       std::string filename;
-      boost::rand48 rng;
+      std::mt19937 rng;
 
     public: // construction and destruction:
 

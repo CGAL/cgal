@@ -31,13 +31,13 @@
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
-#include <boost/random/variate_generator.hpp>
 
 #include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <list>
 #include <utility>
+#include <random>
 
 namespace CGAL {
 
@@ -746,9 +746,8 @@ march_locate_2D(Face_handle f,
   CGAL_precondition(dimension() == 2);
   CGAL_precondition(!is_ghost(f));
 
-  boost::rand48 rng;
+  std::mt19937 rng;
   boost::uniform_smallint<> two(0, 1);
-  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > coin(rng, two);
 
   Face_handle prev = Face_handle();
   bool first = true;
@@ -796,7 +795,7 @@ march_locate_2D(Face_handle f,
     // We do loop unrolling in order to find out if this is faster.
     // In the very beginning we do not have a prev, but for the first step
     // we do not need randomness
-    int left_first = coin()%2;
+    int left_first = two(rng)%2;
     Orientation o0, o1, o2;
 
     /************************FIRST*************************/

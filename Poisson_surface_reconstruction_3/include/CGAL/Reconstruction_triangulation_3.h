@@ -35,6 +35,7 @@
 
 #include <vector>
 #include <iterator>
+#include <random>
 
 namespace CGAL {
 
@@ -392,8 +393,8 @@ public:
 
     typedef std::iterator_traits<InputIterator> Iterator_traits;
     typedef typename Iterator_traits::difference_type Diff_t;
-    boost::rand48 random;
-    boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+    std::mt19937 random;
+    boost::random_number_generator<std::mt19937, Diff_t> rng(random);
     CGAL::cpp98::random_shuffle (points.begin(), points.end(), rng);
     fraction = 0;
 

@@ -48,7 +48,6 @@
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>
 
@@ -58,6 +57,7 @@
 #include <functional>
 #include <list>
 #include <utility>
+#include <random>
 
 namespace CGAL {
 
@@ -2297,15 +2297,14 @@ exact_periodic_locate
   // at the end to decide if p lies on a face/edge/vertex/interior.
   Orientation o[4];
 
-  boost::rand48 rng;
+  std::mt19937 rng;
   boost::uniform_smallint<> four(0, 3);
-  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
-
+  
   // Now treat the cell c.
 try_next_cell:
   // For the remembering stochastic walk,
   // we need to start trying with a random index :
-  int i = die4();
+  int i = four(rng);
   // For the remembering visibility walk (Delaunay only), we don't :
   // int i = 0;
 

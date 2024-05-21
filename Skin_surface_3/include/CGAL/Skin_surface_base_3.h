@@ -23,8 +23,8 @@
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <memory>
+#include <random>
 
 // Used for the triangulated mixed complex / Voronoi diagram
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
@@ -673,10 +673,9 @@ locate_in_tmc(const Bare_point &p0, TMC_Cell_handle start) const
 
   // For the remembering stochastic walk,
   // we need to start trying with a random index :
-  boost::rand48 rng;
+  std::mt19937 rng;
   boost::uniform_smallint<> four(0, 3);
-  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
-  int i = die4();
+  int i = four(rng);
   // For the remembering visibility walk (Delaunay only), we don't :
   // int i = 0;
 

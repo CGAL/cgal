@@ -30,10 +30,10 @@
 
 #include <vector>
 #include <list>
+#include <random>
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_real.hpp>
-#include <boost/random/variate_generator.hpp>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 53
@@ -282,17 +282,16 @@ public:
     Overlayer D(&sphere_map());
     D.create_from_circles(first, beyond); D.simplify();
 
-    boost::rand48 rng;
+    std::mt19937 rng;
     boost::uniform_real<> dist(0,1);
-    boost::variate_generator<boost::rand48&, boost::uniform_real<> > get_double(rng,dist);
-
+    
     SVertex_iterator v; SHalfedge_iterator e; SFace_iterator f;
     CGAL_forall_svertices(v,D)
-      v->mark() = ( get_double() < p ? true : false );
+      v->mark() = ( dist(rng) < p ? true : false );
     CGAL_forall_shalfedges(e,D)
-      e->mark() = ( get_double() < p ? true : false );
+      e->mark() = ( dist(rng) < p ? true : false );
     CGAL_forall_sfaces(f,D)
-      f->mark() = ( get_double() < p ? true : false );
+      f->mark() = ( dist(rng) < p ? true : false );
     D.simplify();
   }
 

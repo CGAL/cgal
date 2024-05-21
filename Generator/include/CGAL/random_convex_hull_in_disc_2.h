@@ -59,8 +59,6 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
                              GEN& gen) {  // generate n points between a and b
   if (n > 1) {
     std::binomial_distribution<long> bin_distribution(n, .5);
-    //boost::variate_generator<GEN&, std::binomial_distribution<long> >
-    //    g(gen, bin_distribution);
     long nb = bin_distribution(gen);
     generate_points_annulus(nb, a, (a + b) / 2.0, small_radius, big_radius, l,
                             gen);
@@ -73,11 +71,7 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
         small_radius * small_radius / (big_radius * big_radius), 1);
 
     std::uniform_real_distribution<double> random_angle_distribution(a, b);
-    //boost::random::variate_generator<
-     //   GEN&, std::uniform_real_distribution<double> > random_angle(gen, random_angle_distribution);
-    //boost::random::variate_generator<
-     //   GEN&, std::uniform_real_distribution<double> > random_squared_radius(gen, random_squared_radius_distribution);
-
+    
     double alpha = random_angle_distribution(gen);
     double r = big_radius * std::sqrt(random_squared_radius_distribution(gen));
     typedef  Creator_uniform_2<double, P> Creator;
@@ -219,8 +213,6 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
       nb = static_cast<long>((std::min)(T, n - simulated_points));
     }
     std::binomial_distribution<long> dbin(nb, to_double(p_disc));
-    //boost::variate_generator<
-    //    GEN&, std::binomial_distribution<long> > bin(gen, dbin);
 
     // How many points are falling in the small disc and won't be generated:
     long k_disc = dbin(gen);

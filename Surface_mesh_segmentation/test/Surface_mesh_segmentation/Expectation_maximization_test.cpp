@@ -27,9 +27,8 @@ int main(void)
     for(std::vector< boost::normal_distribution<double> >::iterator it = distributions.begin();
       it != distributions.end(); ++it)
     {
-        boost::variate_generator<boost::mt19937&, boost::normal_distribution<double> > var_nor(engine, *it);
 
-        for(std::size_t i = 0; i < 300; ++i) { data.push_back(var_nor()); }
+        for(std::size_t i = 0; i < 300; ++i) { data.push_back((*it)(engine)); }
     }
 
     // calculate closest center (using above gauissians) for each generated points

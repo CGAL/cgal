@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <utility>
 #include <iostream>
+#include <random>
 
 #include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
@@ -39,7 +40,6 @@
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
-#include <boost/random/variate_generator.hpp>
 
 #include <CGAL/utility.h>
 #include <array>
@@ -2880,10 +2880,9 @@ march_locate_2D(Face_handle f, const Point& query,
   Offset off_query = o_p;
 
   // Random generator
-  boost::rand48 rng;
+  std::mt19937 rng;
   boost::uniform_smallint<> two(0, 1);
-  boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > coin(rng, two);
-
+  
   // Give the point the best start-offset possible
   if (is_1_cover() && !f->has_zero_offsets())
     {
@@ -2907,7 +2906,7 @@ march_locate_2D(Face_handle f, const Point& query,
       // As we come from prev we do not have to check the edge leading to prev
       // Now we flip a coin in order to decide if we start checking the
       // edge before or the edge after the edge leading to prev
-      int left_first = coin() % 2;
+      int left_first = two(rng) % 2;
 
       bool simplicity_criterion =
         f->has_zero_offsets() && off_query.is_null() && is_1_cover();

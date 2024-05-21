@@ -19,6 +19,7 @@
 
 #include <string>
 #include <utility>
+#include <random>
 #include <CGAL/basic.h>
 #include <CGAL/tss.h>
 
@@ -34,7 +35,6 @@
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/uniform_01.hpp>
-#include <boost/random/variate_generator.hpp>
 
 namespace CGAL {
 
@@ -81,12 +81,10 @@ public:
   uniform_smallint(IntType lower, IntType upper)
   {
     // uniform_smallint has a closed interval, CGAL a halfopen
-    typedef boost::rand48::result_type result_type;
+    typedef std::mt19937::result_type result_type;
     boost::uniform_smallint<result_type> dist(static_cast<result_type>(lower),
                                               static_cast<result_type>(upper-1));
-    boost::variate_generator<boost::rand48&, boost::uniform_smallint<result_type> > generator(rng,dist);
-
-    return static_cast<IntType>(generator());
+    return static_cast<IntType>(dist(rng));
   }
 
 
@@ -110,9 +108,7 @@ public:
   {
     // uniform_int has a closed interval, CGAL a halfopen
     boost::uniform_int<IntType> dist(lower,upper);
-    boost::variate_generator<boost::rand48&, boost::uniform_int<IntType> > generator(rng,dist);
-
-    return generator();
+    return dist(rng);
   }
 
 
@@ -152,9 +148,7 @@ public:
   {
     // uniform_real as well as CGAL have a halfopen interval
     boost::uniform_real<RealType> dist(lower,upper);
-    boost::variate_generator<boost::rand48&, boost::uniform_real<RealType> > generator(rng,dist);
-
-    return generator();
+    return dist(rng);
   }
 
 
@@ -180,9 +174,7 @@ public:
   {
     // uniform_01 as well as CGAL have a halfopen interval
     boost::uniform_01<RealType> dist;
-    boost::variate_generator<boost::rand48&, boost::uniform_01<RealType> > generator(rng,dist);
-
-    return generator();
+    return dist(rng);
   }
 
 
@@ -227,7 +219,7 @@ public:
     unsigned int random_value; // Current 15 bits random value.
     unsigned int val; // random_value shifted by used bits.
     unsigned int seed;
-    boost::rand48 rng;
+    std::mt19937 rng;
 };
 
 inline Random& get_default_random()

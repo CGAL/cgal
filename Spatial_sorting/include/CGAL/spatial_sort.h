@@ -19,7 +19,7 @@
 
 #include <boost/random/random_number_generator.hpp>
 #include <CGAL/algorithm.h>
-#include <boost/random.hpp>
+#include <random>
 #include <boost/random/linear_congruential.hpp>
 
 #include <algorithm>
@@ -41,8 +41,8 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
   typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
   typedef typename Iterator_traits::difference_type Diff_t;
   typedef Hilbert_sort_2<Kernel, Policy, ConcurrencyTag> Sort;
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937, Diff_t> rng(random);
   CGAL::cpp98::random_shuffle(begin,end,rng);
 
   if (threshold_hilbert==0) threshold_hilbert=4;
@@ -64,8 +64,8 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
   typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
   typedef typename Iterator_traits::difference_type Diff_t;
   typedef Hilbert_sort_3<Kernel, Policy, ConcurrencyTag> Sort;
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937, Diff_t> rng(random);
   CGAL::cpp98::random_shuffle(begin,end, rng);
 
   if (threshold_hilbert==0) threshold_hilbert=8;
@@ -87,8 +87,8 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
   typedef std::iterator_traits<RandomAccessIterator> Iterator_traits;
   typedef typename Iterator_traits::difference_type Diff_t;
   typedef Hilbert_sort_d<Kernel, Policy> Sort;
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937, Diff_t> rng(random);
   CGAL::cpp98::random_shuffle(begin,end, rng);
 
   if (threshold_hilbert==0) threshold_hilbert=10;

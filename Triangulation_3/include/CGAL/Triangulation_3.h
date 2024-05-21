@@ -47,7 +47,6 @@
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
-#include <boost/random/variate_generator.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/utility/result_of.hpp>
@@ -76,6 +75,7 @@
 #include <utility>
 #include <stack>
 #include <array>
+#include <random>
 
 #define CGAL_TRIANGULATION_3_USE_THE_4_POINTS_CONSTRUCTOR
 
@@ -2846,7 +2846,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
       start = start->neighbor(ind_inf);
   }
 
-  boost::rand48 rng;
+  std::mt19937 rng;
 
   switch(dimension())
   {
@@ -2875,8 +2875,6 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
       Orientation o[4];
 
       boost::uniform_smallint<> four(0, 3);
-      boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die4(rng, four);
-
       // Now treat the cell c.
       bool try_next_cell = true;
       while(try_next_cell)
@@ -2894,7 +2892,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
 
         // For the remembering stochastic walk,
         // we need to start trying with a random index :
-        int i = die4();
+        int i = four(rng);
 
         // For the remembering visibility walk (Delaunay and Regular only), we don't :
         // int i = 0;
@@ -2995,8 +2993,6 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
       Cell_handle c = start;
 
       boost::uniform_smallint<> three(0, 2);
-      boost::variate_generator<boost::rand48&, boost::uniform_smallint<> > die3(rng, three);
-
       //first tests whether p is coplanar with the current triangulation
       if(orientation(c->vertex(0)->point(),
                      c->vertex(1)->point(),
@@ -3025,7 +3021,7 @@ exact_locate(const Point& p, Locate_type& lt, int& li, int& lj,
         // else c is finite
         // we test its edges in a random order until we find a
         // neighbor to go further
-        int i = die3();
+        int i = three(rng);
         const Point& p0 = c->vertex(i)->point();
         const Point& p1 = c->vertex(ccw(i))->point();
         const Point& p2 = c->vertex(cw(i))->point();

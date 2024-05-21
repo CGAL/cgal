@@ -26,6 +26,7 @@
 #include <boost/random/linear_congruential.hpp>
 
 #include <algorithm>
+#include <random>
 
 namespace CGAL {
 namespace internal {
@@ -39,8 +40,8 @@ void hilbert_sort (RandomAccessIterator begin,
 {
   typedef std::iterator_traits<RandomAccessIterator> ITraits;
   typedef typename ITraits::difference_type Diff_t;
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937, Diff_t> rng(random);
   CGAL::cpp98::random_shuffle(begin,end, rng);
   (Hilbert_sort_2<Kernel, Policy, ConcurrencyTag> (k))(begin, end);
 }
@@ -54,8 +55,8 @@ void hilbert_sort (RandomAccessIterator begin,
 {
   typedef std::iterator_traits<RandomAccessIterator> ITraits;
   typedef typename ITraits::difference_type Diff_t;
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937, Diff_t> rng(random);
   CGAL::cpp98::random_shuffle(begin,end, rng);
   (Hilbert_sort_3<Kernel, Policy, ConcurrencyTag> (k))(begin, end);
 }
@@ -69,8 +70,8 @@ void hilbert_sort (RandomAccessIterator begin,
 {
   typedef std::iterator_traits<RandomAccessIterator> ITraits;
   typedef typename ITraits::difference_type Diff_t;
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48, Diff_t> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937, Diff_t> rng(random);
   CGAL::cpp98::random_shuffle(begin,end, rng);
   (Hilbert_sort_d<Kernel, Policy> (k))(begin, end);
 }

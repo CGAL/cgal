@@ -37,7 +37,6 @@
 #include <optional>
 #include <boost/random/lagged_fibonacci.hpp>
 #include <boost/random/uniform_real.hpp>
-#include <boost/random/variate_generator.hpp>
 
 #include <string>
 #include <ctime>
@@ -1130,8 +1129,8 @@ public:
     , sphere_radius_(sphere_radius)
     , sphere_sq_radius_(sphere_radius*sphere_radius)
     , generator_() // initialize the random generator deterministically
-    , uni_dist_(0,1)
-    , random_(generator_, uni_dist_) {}
+    , uni_dist_(0,1) 
+    {}
 
   /**
    * @brief destructor
@@ -1167,7 +1166,7 @@ protected:
    */
   FT random_ft(const FT& min = FT(0.), const FT& max = FT(1.)) const
   {
-    FT r (random_());
+    FT r (uni_dist_(generator_));
     return r*(max-min) + min;
   }
 
@@ -1220,10 +1219,8 @@ private:
 
   // boost random generator
   typedef boost::lagged_fibonacci607 base_generator_type;
-  base_generator_type generator_;
+  mutable base_generator_type generator_;
   boost::uniform_real<FT> uni_dist_;
-  mutable boost::variate_generator<base_generator_type&,
-                                   boost::uniform_real<FT> > random_;
 };
 
 /**

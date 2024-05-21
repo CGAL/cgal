@@ -4,6 +4,7 @@
 #include <fstream>
 #include <map>
 #include <algorithm>
+#include <random>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Simple_cartesian.h>
@@ -44,8 +45,8 @@ run(const G& g)
     V2.push_back(vd);
   }
 
-  boost::rand48 random;
-  boost::random_number_generator<boost::rand48> rng(random);
+  std::mt19937 random;
+  boost::random_number_generator<std::mt19937> rng(random);
   std::random_shuffle(V.begin(), V.end(), rng);
 
   Timer t;

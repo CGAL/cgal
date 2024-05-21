@@ -32,10 +32,10 @@
 #include <CGAL/use.h>
 #include <vector>
 #include <list>
+#include <random>
 
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_real.hpp>
-#include <boost/random/variate_generator.hpp>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 11
@@ -572,17 +572,16 @@ public:
     Link_to_iterator I(D, --L.end(), false);
     D.create(L.begin(),L.end(),I);
 
-    boost::rand48 rng;
+    std::mt19937 rng;
     boost::uniform_real<> dist(0,1);
-    boost::variate_generator<boost::rand48&, boost::uniform_real<> > get_double(rng,dist);
-
+    
     Vertex_iterator v; Halfedge_iterator e; Face_iterator f;
     for (v = D.vertices_begin(); v != D.vertices_end(); ++v)
-      D.mark(v) = ( get_double() < p ? true : false );
+      D.mark(v) = ( dist(rng) < p ? true : false );
     for (e = D.halfedges_begin(); e != D.halfedges_end(); ++(++e))
-      D.mark(e) = ( get_double() < p ? true : false );
+      D.mark(e) = ( dist(rng) < p ? true : false );
     for (f = D.faces_begin(); f != D.faces_end(); ++f)
-      D.mark(f) = ( get_double() < p ? true : false );
+      D.mark(f) = ( dist(rng) < p ? true : false );
     D.simplify(Except_frame_box_edges(pm()));
     clear_outer_face_cycle_marks();
   }

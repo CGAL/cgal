@@ -1,4 +1,6 @@
 #include <fstream>
+#include <random>
+
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 // CGAL headers
@@ -197,12 +199,11 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
   std::vector<Apollonius_site_2> points;
   points.reserve(number_of_points);
-  boost::rand48 rng;
+  std::mt19937 rng;
   boost::uniform_real<> dist(0.005*width, 0.05*width);
-  boost::variate_generator<boost::rand48&, boost::uniform_real<> > radius(rng,dist);
-
+  
   for(int i = 0; i < number_of_points; ++i){
-    points.push_back(Apollonius_site_2(*pg++,radius()));
+    points.push_back(Apollonius_site_2(*pg++,dist(rng)));
   }
       ag.insert(points.begin(), points.end());
   // default cursor
