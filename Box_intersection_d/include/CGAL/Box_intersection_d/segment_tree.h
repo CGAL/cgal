@@ -242,8 +242,7 @@ iterative_radon( RandomAccessIter begin, RandomAccessIter end,
                  Predicate_traits traits, int dim, int num_levels )
 {
   std::mt19937 rng;
-  // Generator generator(rng, boost::uniform_int<std::ptrdiff_t>(0, (end-begin)-1));
-  auto generator = std::bind( std::uniform_int<std::ptrdiff_t>(0, (end-begin)-1), rng);
+  auto generator = std::bind( boost::uniform_int<std::ptrdiff_t>(0, (end-begin)-1), rng);
   using Generator = decltype(generator);
   Iterative_radon<RandomAccessIter, Predicate_traits, Generator> IR(begin, traits, dim, generator);
   return IR(num_levels);
