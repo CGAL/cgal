@@ -16,13 +16,10 @@
 
 #include <CGAL/license/Interval_skip_list.h>
 
-
 #include <CGAL/basic.h>
 #include <list>
 #include <iostream>
 #include <random>
-
-#include <boost/random/linear_congruential.hpp>
 
 //#define CGAL_ISL_USE_CCC
 #define CGAL_ISL_USE_LIST

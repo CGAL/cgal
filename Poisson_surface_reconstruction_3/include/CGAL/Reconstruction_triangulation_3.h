@@ -31,7 +31,6 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/bounding_box.h>
 #include <boost/random/random_number_generator.hpp>
-#include <boost/random/linear_congruential.hpp>
 
 #include <vector>
 #include <iterator>

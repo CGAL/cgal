@@ -21,7 +21,6 @@
 
 #include <CGAL/Regular_triangulation_3.h>
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <memory>
 #include <random>

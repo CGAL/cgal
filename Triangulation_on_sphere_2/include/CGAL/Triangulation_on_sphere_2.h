@@ -29,7 +29,6 @@
 #include <CGAL/function_objects.h>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 
 #include <algorithm>

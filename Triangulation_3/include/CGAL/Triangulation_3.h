@@ -45,7 +45,6 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Spatial_lock_grid_3.h>
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_map.hpp>

@@ -23,7 +23,6 @@
 #include <CGAL/algorithm.h>
 
 #include <boost/random/random_number_generator.hpp>
-#include <boost/random/linear_congruential.hpp>
 
 #include <algorithm>
 #include <random>

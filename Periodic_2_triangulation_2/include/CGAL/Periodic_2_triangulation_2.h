@@ -38,7 +38,6 @@
 #include <CGAL/Periodic_2_triangulation_iterators_2.h>
 #include <CGAL/spatial_sort.h>
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 
 #include <CGAL/utility.h>

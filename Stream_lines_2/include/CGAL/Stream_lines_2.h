@@ -15,25 +15,22 @@
 
 #include <CGAL/license/Stream_lines_2.h>
 
-
 #include <CGAL/basic.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/assertions.h>
 
 #include <queue>
 #include <cmath>
 #include <fstream>
 #include <iostream>
 #include <random>
-
-#include <CGAL/squared_distance_2.h>
-
-#include <CGAL/assertions.h>
+#include <memory>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/random/uniform_real.hpp> // undocumented class
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
-#include <memory>
+
 
 namespace CGAL {
 

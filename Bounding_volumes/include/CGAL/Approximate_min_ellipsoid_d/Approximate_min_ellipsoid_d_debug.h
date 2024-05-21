@@ -22,7 +22,6 @@
 #include <fstream>
 #include <sstream>
 #include <random>
-#include <boost/random/linear_congruential.hpp>
 
 namespace CGAL {
 

@@ -31,7 +31,7 @@
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
-#include <boost/random/linear_congruential.hpp>
+
 #include <boost/random/uniform_int.hpp>
 #include <boost/random/uniform_real.hpp>
 #include <boost/random/uniform_01.hpp>

@@ -16,14 +16,12 @@
 
 #include <CGAL/license/Bounding_volumes.h>
 
-
-#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_configure.h>
-#include <boost/random/linear_congruential.hpp>
 #include <cmath>
 #include <vector>
 #include <iostream>
 #include <random>
 
+#include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_configure.h>
 #include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_pair.h>
 #include <CGAL/Min_sphere_of_spheres_d/Min_sphere_of_spheres_d_support_set.h>
 

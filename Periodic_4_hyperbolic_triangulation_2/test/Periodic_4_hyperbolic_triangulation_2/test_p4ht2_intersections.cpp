@@ -2,8 +2,6 @@
 #include <CGAL/Hyperbolic_octagon_translation.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/random/linear_congruential.hpp>
-#include <boost/random/uniform_smallint.hpp>
 
 #include <iostream>
 

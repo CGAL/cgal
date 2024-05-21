@@ -41,7 +41,6 @@
 #include <CGAL/double.h>
 
 #include <boost/utility/result_of.hpp>
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <CGAL/boost/iterator/transform_iterator.hpp>
 #include <boost/iterator/zip_iterator.hpp>

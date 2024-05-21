@@ -19,7 +19,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Box_intersection_d/box_limits.h>
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_int.hpp>
 
 #include <algorithm>

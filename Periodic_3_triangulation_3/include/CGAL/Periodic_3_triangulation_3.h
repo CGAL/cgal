@@ -46,7 +46,6 @@
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>

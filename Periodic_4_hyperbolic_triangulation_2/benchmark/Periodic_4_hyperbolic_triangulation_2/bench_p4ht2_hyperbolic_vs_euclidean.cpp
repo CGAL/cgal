@@ -11,8 +11,6 @@
 #include <CGAL/Timer.h>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/random/linear_congruential.hpp>
-#include <boost/random/uniform_smallint.hpp>
 
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<>           Traits;
 typedef Traits::FT                                                              NT;

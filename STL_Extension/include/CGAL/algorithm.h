@@ -29,8 +29,6 @@
 #include <random>
 
 #include <boost/random/random_number_generator.hpp>
-#include <boost/random.hpp>
-#include <boost/random/linear_congruential.hpp>
 
 namespace CGAL {
 

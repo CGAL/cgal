@@ -34,7 +34,6 @@
 #include <list>
 #include <random>
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_real.hpp>
 
 #undef CGAL_NEF_DEBUG

@@ -17,8 +17,8 @@
 #include <cassert>
 //#include <cstdlib>
 #include <set>
+#include <random>
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/cstdint.hpp>
 
 #include <CGAL/_test_types.h>
@@ -129,7 +129,7 @@ protected:
     }
 };
 
-static boost::minstd_rand randgen;
+static std::minstd_rand randgen;
 
 // point_iterator_x generates points randomly on a grid (thus making lots of
 // degenerate cases), staying in dimension x.

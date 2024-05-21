@@ -11,7 +11,6 @@
 #include <CGAL/point_generators_2.h>
 #include <CGAL/IO/WKT.h>
 
-#include <boost/random/linear_congruential.hpp>
 #include <boost/random/uniform_real.hpp>
 
 // Qt headers
