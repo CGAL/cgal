@@ -71,7 +71,7 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
         small_radius * small_radius / (big_radius * big_radius), 1);
 
     std::uniform_real_distribution<double> random_angle_distribution(a, b);
-    
+
     double alpha = random_angle_distribution(gen);
     double r = big_radius * std::sqrt(random_squared_radius_distribution(gen));
     typedef  Creator_uniform_2<double, P> Creator;

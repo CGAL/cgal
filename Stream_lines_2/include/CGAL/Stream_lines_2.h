@@ -257,7 +257,7 @@ void Stream_lines_2<VectorField_2, Integrator_2>::place_stream_lines(const Vecto
 
   boost::uniform_real<> ur_x(min_x, max_x);
   boost::uniform_real<> ur_y(min_y, max_y);
-  
+
   while(!vector_field_2.is_in_domain(seed_point))
     {
       // std::cout << "searching valid seed point..\n";

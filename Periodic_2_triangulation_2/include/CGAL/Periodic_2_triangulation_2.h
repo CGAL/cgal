@@ -2881,7 +2881,7 @@ march_locate_2D(Face_handle f, const Point& query,
   // Random generator
   std::mt19937 rng;
   boost::uniform_smallint<> two(0, 1);
-  
+
   // Give the point the best start-offset possible
   if (is_1_cover() && !f->has_zero_offsets())
     {

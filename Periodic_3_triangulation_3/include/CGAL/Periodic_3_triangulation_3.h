@@ -2298,7 +2298,7 @@ exact_periodic_locate
 
   std::mt19937 rng;
   boost::uniform_smallint<> four(0, 3);
-  
+
   // Now treat the cell c.
 try_next_cell:
   // For the remembering stochastic walk,

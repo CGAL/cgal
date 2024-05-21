@@ -1129,7 +1129,7 @@ public:
     , sphere_radius_(sphere_radius)
     , sphere_sq_radius_(sphere_radius*sphere_radius)
     , generator_() // initialize the random generator deterministically
-    , uni_dist_(0,1) 
+    , uni_dist_(0,1)
     {}
 
   /**

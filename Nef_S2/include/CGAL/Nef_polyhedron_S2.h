@@ -283,7 +283,7 @@ public:
 
     std::mt19937 rng;
     boost::uniform_real<> dist(0,1);
-    
+
     SVertex_iterator v; SHalfedge_iterator e; SFace_iterator f;
     CGAL_forall_svertices(v,D)
       v->mark() = ( dist(rng) < p ? true : false );

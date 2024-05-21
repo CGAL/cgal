@@ -573,7 +573,7 @@ public:
 
     std::mt19937 rng;
     boost::uniform_real<> dist(0,1);
-    
+
     Vertex_iterator v; Halfedge_iterator e; Face_iterator f;
     for (v = D.vertices_begin(); v != D.vertices_end(); ++v)
       D.mark(v) = ( dist(rng) < p ? true : false );

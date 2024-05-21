@@ -200,7 +200,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   points.reserve(number_of_points);
   std::mt19937 rng;
   boost::uniform_real<> dist(0.005*width, 0.05*width);
-  
+
   for(int i = 0; i < number_of_points; ++i){
     points.push_back(Apollonius_site_2(*pg++,dist(rng)));
   }
