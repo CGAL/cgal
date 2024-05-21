@@ -17,8 +17,8 @@
 #include <CGAL/license/Mesh_3.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/Mesh_3/experimental/Lipschitz_sizing_parameters.h>
 
@@ -51,8 +51,8 @@ public:
   typedef typename Kernel::Point_3    Point_3;
 
   typedef typename std::list<Triangle>::iterator        Tr_iterator;
-  typedef CGAL::AABB_triangle_primitive<K, Tr_iterator> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive>               AABB_tr_traits;
+  typedef CGAL::AABB_triangle_primitive_3<K, Tr_iterator> Primitive;
+  typedef CGAL::AABB_traits_3<K, Primitive>             AABB_tr_traits;
   typedef CGAL::AABB_tree<AABB_tr_traits>               AABB_tree;
 
   typedef typename CGAL::Default::Get<AABBTreeTemplate, AABB_tree>::type Tree;

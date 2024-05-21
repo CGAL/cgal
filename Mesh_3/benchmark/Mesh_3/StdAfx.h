@@ -141,7 +141,7 @@
 #include <boost/version.hpp>
 
 // CGAL
-//#include <CGAL/AABB_traits.h>
+//#include <CGAL/AABB_traits_3.h>
 //#include <CGAL/AABB_tree.h>
 #include <CGAL/assertions.h>
 #include <CGAL/basic.h>

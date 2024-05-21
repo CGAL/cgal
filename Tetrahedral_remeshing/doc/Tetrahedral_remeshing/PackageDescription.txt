@@ -7,6 +7,9 @@
 /// \defgroup PkgTetrahedralRemeshingClasses Classes
 /// \ingroup PkgTetrahedralRemeshingRef
 
+/// \defgroup PkgTetrahedralRemeshingSizing Sizing Fields
+/// \ingroup PkgTetrahedralRemeshingRef
+
 /*!
 \addtogroup PkgTetrahedralRemeshingRef
 
@@ -46,6 +49,7 @@ while preserving the input geometric curve and surface features.
 - `RemeshingTriangulationTraits_3`
 - `RemeshingVertexBase_3`
 - `RemeshingCellBase_3`
+- `RemeshingSizingField_3`
 
 \cgalCRPSection{Classes}
 
@@ -53,9 +57,13 @@ while preserving the input geometric curve and surface features.
 - `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
 - `CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3`
 
+- `CGAL::Uniform_sizing_field`
+- `CGAL::Adaptive_remeshing_sizing_field`
+
 \cgalCRPSection{Function Templates}
 
 - `CGAL::tetrahedral_isotropic_remeshing()`
 - `CGAL::convert_to_triangulation_3()`
+- \link CGAL::Adaptive_remeshing_sizing_field `CGAL::create_adaptive_remeshing_sizing_field()` \endlink
 
 */

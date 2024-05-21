@@ -13,3 +13,9 @@ cgal_lab_plugin(
   ${tetRemeshingUI_FILES} KEYWORDS Tetrahedral_remeshing)
 target_link_libraries(tetrahedral_remeshing_plugin PUBLIC scene_c3t3_item
                                                           ${OPENGL_gl_LIBRARY})
+
+find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
+include(CGAL_Eigen3_support)
+if(TARGET CGAL::Eigen3_support)
+  target_link_libraries(tetrahedral_remeshing_plugin PUBLIC CGAL::Eigen3_support)
+endif()

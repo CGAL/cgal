@@ -16,7 +16,7 @@
 #include <CGAL/license/Tetrahedral_remeshing.h>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
-#include <CGAL/Tetrahedral_remeshing/Complex_cells_selector.h>
+#include <CGAL/Tetrahedral_remeshing/internal/property_maps.h>
 
 namespace CGAL
 {
@@ -56,7 +56,7 @@ std::size_t peel_slivers(C3T3& c3t3,
       peelable_cells.push_back(std::make_pair(cit, facets_on_surface));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-      mindh = (std::min)(dh, mindh);
+    mindh = (std::min)(dh, mindh);
 #endif
   }
 
@@ -76,8 +76,9 @@ std::size_t peel_slivers(C3T3& c3t3,
       if (f_on_surface[i])
       {
         Surface_patch_index spi = c3t3.surface_patch_index(c, i);
-        if (patch != boost::none && patch != spi)
+        if (patch != boost::none && patch.get() != spi)
         {
+          //there are 2 different patches
           patch = boost::none;
           break;
         }
@@ -106,8 +107,8 @@ std::size_t peel_slivers(C3T3& c3t3,
   mindh = FT(180);
   for (Cell_handle cit : c3t3.cells_in_complex())
   {
-    const FT dh = min_dihedral_angle(tr, cit);
-    mindh = (std::min)(dh, mindh);
+    if(get(cell_selector, cit))
+      mindh = (std::min)(min_dihedral_angle(tr, cit), mindh);
   }
   std::cout << "Peeling done (removed " << nb_slivers_peel << " slivers, "
     << "min dihedral angle = " << mindh << ")." << std::endl;
@@ -122,7 +123,7 @@ std::size_t peel_slivers(C3T3 & c3t3,
 {
   using Tr = typename C3T3::Triangulation;
   return peel_slivers(c3t3, sliver_angle,
-    CGAL::Tetrahedral_remeshing::Complex_cells_selector<Tr>());
+    CGAL::Tetrahedral_remeshing::internal::All_cells_selected<Tr>());
 }
 
 

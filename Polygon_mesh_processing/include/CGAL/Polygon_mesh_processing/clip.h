@@ -26,7 +26,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
 #include <CGAL/iterator.h>
 
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>

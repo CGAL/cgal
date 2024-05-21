@@ -14,8 +14,10 @@ The `Primitive` type can be, e.g., a wrapper around a `Handle`. Assume for insta
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::AABB_primitive<Id,ObjectPropertyMap,PointPropertyMap,Tag_false,CacheDatum>}
-\cgalHasModels{CGAL::AABB_segment_primitive<Iterator,CacheDatum>}
-\cgalHasModels{CGAL::AABB_triangle_primitive<Iterator,CacheDatum>}
+\cgalHasModels{CGAL::AABB_segment_primitive_2<Iterator,CacheDatum>}
+\cgalHasModels{CGAL::AABB_segment_primitive_3<Iterator,CacheDatum>}
+\cgalHasModels{CGAL::AABB_triangle_primitive_2<Iterator,CacheDatum>}
+\cgalHasModels{CGAL::AABB_triangle_primitive_3<Iterator,CacheDatum>}
 \cgalHasModels{CGAL::AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,Tag_false,CacheDatum>}
 \cgalHasModels{CGAL::AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,Tag_false,CacheDatum>}
 \cgalHasModelsEnd
@@ -28,7 +30,7 @@ public:
 /// @{
 
 /*!
-3D point type.
+Point type.
 */
 typedef unspecified_type Point;
 
@@ -68,7 +70,7 @@ returns the corresponding identifier. This identifier is only used as a referenc
 Id id();
 
 /*!
-returns a 3D point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
+returns a point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.
 */
 Point_reference reference_point();
 

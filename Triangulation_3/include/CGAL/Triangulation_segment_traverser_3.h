@@ -328,7 +328,7 @@ public:
     //  provides a conversion operator.
     /*         \return a handle to the current cell.
          */
-    operator Cell_handle() const
+    operator const Cell_handle&() const
     {
       return _cur.cell;
     }

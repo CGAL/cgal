@@ -30,7 +30,7 @@
 #include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 #include <CGAL/Triangle_accessor_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <CGAL/disable_warnings.h>
 

@@ -28,6 +28,18 @@ Release date: June 2024
 -   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
     using the odd-even heuristic.
 
+### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.0/Manual/packages.html#PkgAABBTree)
+
+- **Breaking change**: The concept `AABBTraits` now refines the `SearchTraits` concept.
+- The AABB tree is now working with 2D and 3D primitives:
+  - Replacement of `AABBGeomTraits` concept by `AABBGeomTraits_3` and `AABBRayIntersectionGeomTraits` by `AABBRayIntersectionGeomTraits_3`.
+  - Addition of `AABBGeomTraits_2` and `AABBRayIntersectionGeomTraits_2` concepts
+  - `CGAL::AABB_traits` is deprecated and replaced by `CGAL::AABB_traits_3`
+  - Addition of `CGAL::AABB_traits_2`
+  - `CGAL::AABB_segment_primitive` is deprecated and replaced by `CGAL::AABB_segment_primitive_3`
+  - `CGAL::AABB_triangle_primitive` is deprecated and replaced by `CGAL::AABB_triangle_primitive_3`
+  - Addition of 2D primitive classes: `CGAL::AABB_segment_primitive_2`, `CGAL::AABB_polyline_segment_primitive_2`, `CGAL::AABB_triangle_primitive_2`, `CGAL::AABB_indexed_triangle_primitive_2`
+
 #### 2D Arrangements
 
 - **Breaking change**: The type of the result of point location queries changed to
@@ -74,6 +86,7 @@ Release date: June 2024
      using the aforementioned function on a triangle soup.
 -   Added the function `CGAL::Polygon_mesh_processing::add_bbox()` that enables to add a tight or extended, triangulated or not,
     bounding box to a face graph.
+-   Added the class `CGAL::Corefinement::Non_manifold_output_visitor` that can be used in corefinement based functions to deal with non-manifold outputs.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
 - **Breaking change**: The type of the result of point location queries changed to
@@ -89,6 +102,8 @@ Release date: June 2024
 - Introduced a new interactive program that demonstrates 2D arrangements embedded on the sphere called `earth`. The program (i) reads a database of all administrative boundaries of the countries in the world, (ii) displays the globe with all countries and land covered by water (which is land not covered by countries) on a window, and (ii) enables interaction with the user.
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
+-   Added a sizing field as new parameter of `CGAL::tetrahedral_isotropic_remeshing()`, for non-uniform
+    and adaptive remeshing.
 -   **Breaking change**: The template parameters of
     `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
     have been modified, reverting changes introduced in CGAL 5.6.

@@ -32,7 +32,7 @@
 
 namespace CGAL {
 
-/* This namespace contains the internal implementation of the tree for builiding Theta graph.
+/* This namespace contains the internal implementation of the tree for building Theta graph.
  * This is not meant to be imported by other code.
  */
 namespace ThetaDetail {
