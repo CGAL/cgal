@@ -42,6 +42,7 @@ public:
    bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D)
   {
     A.assemble_matrix();
+    std::cout << " A.solve()" << std::endl;
     A.solve(B, X);
     X.copy_back();
     D = 1; // Accelerate does not support homogeneous coordinates
