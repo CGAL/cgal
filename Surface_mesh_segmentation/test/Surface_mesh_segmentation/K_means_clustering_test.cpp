@@ -2,7 +2,6 @@
 #include <CGAL/Surface_mesh_segmentation/internal/K_means_clustering.h>
 
 #include <random>
-#include <boost/random/normal_distribution.hpp>
 /**
  * Generates sample points using a few gauissians.
  * Then applies k-means on these generated points.
@@ -16,16 +15,16 @@ int main(void)
     engine.seed(1340818006);
 
     // generate random data using gauissians below
-    std::vector< boost::normal_distribution<double> > distributions;
-    distributions.push_back(boost::normal_distribution<double>(0.1, 0.05));
-    distributions.push_back(boost::normal_distribution<double>(0.4, 0.1));
-    distributions.push_back(boost::normal_distribution<double>(0.55, 0.05));
-    distributions.push_back(boost::normal_distribution<double>(0.7, 0.1));
-    distributions.push_back(boost::normal_distribution<double>(0.9, 0.05));
-    distributions.push_back(boost::normal_distribution<double>(1.0, 0.05));
+    std::vector< std::normal_distribution<double> > distributions;
+    distributions.push_back(std::normal_distribution<double>(0.1, 0.05));
+    distributions.push_back(std::normal_distribution<double>(0.4, 0.1));
+    distributions.push_back(std::normal_distribution<double>(0.55, 0.05));
+    distributions.push_back(std::normal_distribution<double>(0.7, 0.1));
+    distributions.push_back(std::normal_distribution<double>(0.9, 0.05));
+    distributions.push_back(std::normal_distribution<double>(1.0, 0.05));
 
     std::vector<double> data;
-    for(std::vector< boost::normal_distribution<double> >::iterator it = distributions.begin();
+    for(std::vector< std::normal_distribution<double> >::iterator it = distributions.begin();
       it != distributions.end(); ++it)
     {
         for(std::size_t i = 0; i < 300; ++i) { data.push_back((*it)(engine)); }
@@ -38,7 +37,7 @@ int main(void)
     {
         std::size_t center_id = (std::numeric_limits<std::size_t>::max)(), center_counter = 0;;
         double min_distance = (std::numeric_limits<double>::max)();
-        for(std::vector< boost::normal_distribution<double> >::iterator dis_it = distributions.begin();
+        for(std::vector< std::normal_distribution<double> >::iterator dis_it = distributions.begin();
           dis_it != distributions.end(); ++dis_it, ++center_counter)
         {
             double distance = std::abs(*it - dis_it->mean());
