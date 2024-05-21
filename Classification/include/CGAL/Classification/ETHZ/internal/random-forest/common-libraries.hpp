@@ -61,8 +61,8 @@ inline void init_feature_class_data(FeatureClassDataFloat& /*data*/, int /*n_cla
 typedef std::unordered_set<int> FeatureSet;
 
 typedef boost::random::uniform_int_distribution<> UniformIntDist;
-typedef boost::random::normal_distribution<> NormalDist;
-typedef boost::random::mt19937 RandomGen;
+typedef std::normal_distribution<> NormalDist;
+typedef std::mt19937 RandomGen;
 typedef boost::random::uniform_01<> UnitDist;
 
 struct ForestParams {
