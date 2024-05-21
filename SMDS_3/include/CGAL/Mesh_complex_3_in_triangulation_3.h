@@ -444,8 +444,8 @@ public:
    */
   void remove_from_complex(const Vertex_handle& v)
   {
-    corners_.erase(v);
     v->set_dimension(-1);
+    corners_.erase(v);
   }
 
   /** sets the index of vertex \p vertex to \p index
@@ -983,7 +983,7 @@ private:
     pointer operator->() const { return *(this->base()); }
     reference operator*() const { return **(this->base()); }
 
-    operator Vertex_handle() const { return Vertex_handle(*(this->base())); }
+    operator const Vertex_handle&() const { return *(this->base()); }
   };
 
 public:
@@ -1048,13 +1048,13 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Cell_handle() const { return Cell_handle(this->base()); }
+    operator const Cell_handle&() const { return this->base(); }
   }; // end class Cells_in_complex_iterator
 
-  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator, Vertex_handle> > Vertices_in_complex;
-  typedef Iterator_range<Edges_in_complex_iterator>                                   Edges_in_complex;
-  typedef Iterator_range<Facets_in_complex_iterator>                                  Facets_in_complex;
-  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator, Cell_handle> >      Cells_in_complex;
+  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator, const Vertex_handle&>> Vertices_in_complex;
+  typedef Iterator_range<Edges_in_complex_iterator> Edges_in_complex;
+  typedef Iterator_range<Facets_in_complex_iterator> Facets_in_complex;
+  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator, const Cell_handle&>> Cells_in_complex;
 
 #endif
 

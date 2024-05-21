@@ -347,8 +347,13 @@ struct Tester
     //-------------------------------------------------------
     std::cout << "Test vertex iterators\n";
     const Vertex_handle& vertex_to_modify = c3t3.vertices_in_complex_begin();
+    Vertex_handle vertex_to_modify_copy = vertex_to_modify;
+
     c3t3.remove_from_complex(vertex_to_modify);
-    c3t3.add_to_complex(vertex_to_modify,corner_index_bis);
+    // now `vertex_to_modify` is a dangling ref to a `Vertex_handle`
+
+    // use a copy of it: `vertex_to_modify_copy`
+    c3t3.add_to_complex(vertex_to_modify_copy,corner_index_bis);
 
     typename C3t3::Vertices_in_complex_iterator corner_vit =
       c3t3.vertices_in_complex_begin(corner_index);
