@@ -275,7 +275,7 @@ public:
   // solid edges: both incident faces are solid
   typedef Filter_iterator<All_edges_iterator, Ghost_tester>          Solid_edges_iterator;
   typedef Iterator_range<Solid_edges_iterator>                       Solid_edges;
-  typedef Iterator_range<Prevent_deref<Solid_faces_iterator, Face_handle> > Solid_face_handles;
+  typedef Iterator_range<Prevent_deref<Solid_faces_iterator, const Face_handle&>> Solid_face_handles;
 
   typedef Project_point<Vertex>                                      Pt_proj;
   typedef boost::transform_iterator<Pt_proj, Vertices_iterator>      Point_iterator;
@@ -321,7 +321,7 @@ public:
 
   Solid_face_handles solid_faces() const
   {
-      return { solid_faces_begin(), solid_faces_end() };
+    return { solid_faces_begin(), solid_faces_end() };
   }
 
   Solid_edges_iterator solid_edges_begin() const

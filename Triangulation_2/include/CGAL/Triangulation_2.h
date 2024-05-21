@@ -172,7 +172,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   class Finite_faces_iterator
@@ -187,7 +187,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Face_handle() const { return Base::base(); }
+    operator const Face_handle&() const { return Base::base(); }
   };
 
   typedef Filter_iterator<All_edges_iterator,
@@ -215,9 +215,9 @@ public:
   typedef typename Tds::Edges                  All_edges;
 
   typedef Iterator_range<Prevent_deref<Finite_faces_iterator,
-                                       Face_handle> >   Finite_face_handles;
+                                       const Face_handle&>>   Finite_face_handles;
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
-                                       Vertex_handle> > Finite_vertex_handles;
+                                       const Vertex_handle&>> Finite_vertex_handles;
   typedef Iterator_range<Finite_edges_iterator>                    Finite_edges;
   typedef Iterator_range<Point_iterator>                           Points;
 

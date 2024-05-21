@@ -495,7 +495,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Cell_handle() const { return Base::base(); }
+    operator const Cell_handle&() const { return Base::base(); }
   };
 
   // We derive in order to add a conversion to handle.
@@ -514,13 +514,13 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<Finite_cells_iterator,
-                                       Cell_handle> >         Finite_cell_handles;
+                                       const Cell_handle&> >         Finite_cell_handles;
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
-                                       Vertex_handle> >       Finite_vertex_handles;
+                                       const Vertex_handle&> >       Finite_vertex_handles;
 
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
@@ -532,7 +532,7 @@ public:
   typedef Triangulation_segment_simplex_iterator_3<Self> Segment_simplex_iterator;
 
   typedef Iterator_range<Prevent_deref<Segment_cell_iterator,
-                                       Cell_handle> >    Segment_traverser_cell_handles;
+                                       const Cell_handle&> >    Segment_traverser_cell_handles;
   typedef Iterator_range<Segment_simplex_iterator> Segment_traverser_simplices;
 
 private:
@@ -2269,7 +2269,7 @@ public:
   Segment_traverser_cell_handles segment_traverser_cell_handles(Vertex_handle vs,
                                                                 Vertex_handle vt) const
   {
-    return {segment_traverser_cells_begin(vs, vt),segment_traverser_cells_end()};
+    return {segment_traverser_cells_begin(vs, vt), segment_traverser_cells_end()};
   }
   Segment_traverser_cell_handles segment_traverser_cell_handles(const Point& ps,
                                                                 const Point& pt,
