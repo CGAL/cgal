@@ -20,8 +20,6 @@
 #include <CGAL/array.h>
 #include <CGAL/Handle_for.h>
 
-#include <utility>
-
 namespace CGAL {
 
 template < class R_ >
@@ -59,11 +57,6 @@ public:
   const Point_3 &   target() const
   {
       return get_pointee_or_identity(base)[1];
-  }
-
-  template <std::size_t i>
-  const Point_3& get() const {
-      return get_pointee_or_identity(base)[i];
   }
 
   const Point_3 &   start() const;
@@ -216,13 +209,5 @@ collinear_has_on(const typename SegmentC3<R>::Point_3 &p) const
 }
 
 } //namespace CGAL
-
-template < class R_ >
-struct std::tuple_size<CGAL::SegmentC3<R_> > : std::integral_constant<std::size_t, 2> {};
-
-template < class R_, size_t i >
-struct std::tuple_element<i, CGAL::SegmentC3<R_> > {
-  using type = typename R_::Point_3;
-};
 
 #endif // CGAL_CARTESIAN_SEGMENT_3_H
