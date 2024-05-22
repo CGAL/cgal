@@ -55,6 +55,10 @@ Release date: June 2024
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+- Added two new meshing parameters that enable mesh initialization customization :
+  - `initial_points_generator` : enables the user to specify a functor that generate initial points.
+  - `initial_points` : enable the user to specify a `Range` of initial points.
+
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
 - **Breaking change**:
   - Node splitting behavior and per-node data are now customizable via the Traits class.
