@@ -3,12 +3,12 @@ import io
 import re
 import os
 
-report_file=sys.argv[1]
-report_name=sys.argv[2]
-global_report_name=sys.argv[3]
-rx=re.compile('(.*Configuring (examples|demo|test)*( in )*(test\/|examples\/|demo\/)*)((?!done)\w+)')
-rx_demo=re.compile('.*in demo\/')
-rx_examples=re.compile('.*in examples\/')
+input_report_file=sys.argv[1]
+report_file_name=sys.argv[2]
+global_report_file_name=sys.argv[3]
+config_regex=re.compile('(.*Configuring (examples|demo|test)*( in )*(test\/|examples\/|demo\/)*)((?!done)\w+)')
+demo_regex=re.compile('.*in demo\/')
+examples_regex=re.compile('.*in examples\/')
 
 
 #open the Installation report
@@ -20,13 +20,13 @@ rx_examples=re.compile('.*in examples\/')
 name=""
 is_writing=False
 is_ignored=False
-global_report=open(global_report_name, "a+")
-with open(report_file, "rt") as test_report:
+global_report=open(global_report_file_name, "a+")
+with open(input_report_file, "rt") as test_report:
   for myline in test_report:
-    m=rx.match(myline)
+    match=config_regex.match(myline)
 
     if is_writing:
-      if m:
+      if match:
         is_writing=False
         test_report.close()
         if is_ignored:
@@ -35,11 +35,11 @@ with open(report_file, "rt") as test_report:
       else:
         test_report.write(myline)
     if not is_writing:
-      if m:
-        name=m.group(0).replace(m.group(1), "")
-        if rx_demo.match(myline):
+      if match:
+        name=match.group(0).replace(match.group(1), "")
+        if demo_regex.match(myline):
           name="{str}_Demo".format(str=name)
-        elif rx_examples.match(myline):
+        elif examples_regex.match(myline):
           name="{str}_Examples".format(str=name)
         elif name == "libCGAL":
           name="libCGAL_shared"
@@ -57,13 +57,13 @@ with open(report_file, "rt") as test_report:
           if not os.path.isdir(name):
             is_ignored=True
             os.mkdir(name)
-            test_report=open("{dir}/{file}".format(dir=name, file=report_name), "w+")
+            test_report=open("{dir}/{file}".format(dir=name, file=report_file_name), "w+")
             print("""
 {scm_branch}
 """       .format(scm_branch=open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r').read()),file=test_report)
           else:
             is_ignored=False
-            test_report=open("{dir}/{file}".format(dir=name, file=report_name), "a+")
+            test_report=open("{dir}/{file}".format(dir=name, file=report_file_name), "a+")
             test_report.write(" --- CMake Results: --- \n\n")
           is_writing=True
 if is_writing:
