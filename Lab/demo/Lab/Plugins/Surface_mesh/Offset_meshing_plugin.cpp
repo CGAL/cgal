@@ -492,7 +492,7 @@ void CGAL_Lab_offset_meshing_plugin::inflate_mesh()
 
   auto vpm = get(CGAL::vertex_point,*sMesh);
   auto vnm =
-      sMesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
+      sMesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").value();
 
   for(const auto& v : vertices(*sMesh))
   {

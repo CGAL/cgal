@@ -691,11 +691,9 @@ int main (int argc, char** argv)
   //! [Classification]
 
   // Get training from input
-  Point_set::Property_map<int> training_map;
-  bool training_found;
-  std::tie (training_map, training_found) = points.property_map<int>("training");
+  std::optional<Point_set::Property_map<int>> training_map = points.property_map<int>("training");
 
-  if (training_found)
+  if (training_map.has_value())
   {
     std::cerr << "Classifying ground/vegetation/building" << std::endl;
 
@@ -718,7 +716,7 @@ int main (int argc, char** argv)
 
     // Train a random forest classifier
     Classification::ETHZ::Random_forest_classifier classifier (labels, features);
-    classifier.train (points.range(training_map));
+    classifier.train (points.range(training_map.value()));
 
     // Classify with graphcut regularization
     Point_set::Property_map<int> label_map = points.add_property_map<int>("labels").first;
@@ -732,7 +730,7 @@ int main (int argc, char** argv)
     // Evaluate
     std::cerr << "Mean IoU on training data = "
               << Classification::Evaluation(labels,
-                                            points.range(training_map),
+                                            points.range(training_map.value()),
                                             points.range(label_map)).mean_intersection_over_union() << std::endl;
 
     // Save the classified point set

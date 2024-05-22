@@ -116,6 +116,12 @@ Release date: June 2024
     `CGAL::Simplicial_mesh_cell_base_3`
     have been modified to enable passing a geometric traits and a custom cell base class.
 
+### [Surface Mesh](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMesh)
+-   **Breaking change**: The return type of `CGAL::Surface_mesh::property_map()` has been changed to `std::optional`.
+
+### [3D Point Set](https://doc.cgal.org/6.0/Manual/packages.html#PkgPointSet3)
+-   **Breaking change**: The return type of `CGAL::Point_set_3::property_map()` has been changed to `std::optional`.
+
 ### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
 - **Breaking change**: LSCM_parameterizer_3 needs Eigen
 

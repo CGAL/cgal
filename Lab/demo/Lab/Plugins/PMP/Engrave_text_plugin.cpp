@@ -638,7 +638,7 @@ public Q_SLOTS:
         ("h:v", 0.0f).first;
       SMesh::Halfedge_iterator it;
       SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
-          sm->property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
+          sm->property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").value();
       for(it = sm->halfedges_begin();
           it != sm->halfedges_end();
           ++it)

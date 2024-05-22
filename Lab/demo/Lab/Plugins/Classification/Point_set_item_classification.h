@@ -52,7 +52,7 @@ class Point_set_item_classification : public Item_classification_base
       : point_set (point_set)
       , clusters (&clusters)
     {
-      cluster_id = point_set->property_map<int>("shape").first;
+      cluster_id = point_set->property_map<int>("shape").value();
     }
 
     template <typename OutputIterator>
@@ -147,18 +147,16 @@ class Point_set_item_classification : public Item_classification_base
   bool try_adding_simple_feature (const std::string& name)
   {
     typedef typename Point_set::template Property_map<Type> Pmap;
-    bool okay = false;
-    Pmap pmap;
-    boost::tie (pmap, okay) = m_points->point_set()->template property_map<Type>(name.c_str());
-    if (okay)
+    std::optional<Pmap> pmap = m_points->point_set()->template property_map<Type>(name.c_str());
+    if (pmap.has_value())
     {
       std::cerr << "Adding property<" << CGAL::demangle(typeid(Type).name()) << ">("
                 << name << ") as feature" << std::endl;
       m_features.template add<CGAL::Classification::Feature::Simple_feature <Point_set, Pmap> >
-        (*(m_points->point_set()), pmap, name.c_str());
+        (*(m_points->point_set()), pmap.value(), name.c_str());
     }
 
-    return okay;
+    return pmap.has_value();
   }
 
   void add_selection_to_training_set (std::size_t label)

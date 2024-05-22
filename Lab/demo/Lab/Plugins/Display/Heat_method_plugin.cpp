@@ -136,12 +136,10 @@ public:
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     auto vpm = CGAL::get(CGAL::vertex_point, *sm);
-    auto vnormals = sm->property_map<vertex_descriptor, EPICK::Vector_3>("v:normal").first;
+    auto vnormals = sm->property_map<vertex_descriptor, EPICK::Vector_3>("v:normal").value();
 
-    auto [vcolors, vcolors_found] = sm->property_map<vertex_descriptor, CGAL::IO::Color>("v:color");
-    CGAL_assertion(vcolors_found);
-    auto [vdist, vdist_found] = sm->property_map<vertex_descriptor, double>("v:HM_Plugin_heat_intensity");
-    CGAL_assertion(vdist_found);
+    auto vcolors = sm->property_map<vertex_descriptor, CGAL::IO::Color>("v:color").value();
+    auto vdist = sm->property_map<vertex_descriptor, double>("v:HM_Plugin_heat_intensity").value();
 
     verts.clear();
     normals.clear();
@@ -730,11 +728,9 @@ private:
       return;
 
     // Here we only target the property maps added by this plugin, so 'double' is fine
-    SMesh::Property_map<face_descriptor, double> property;
-    bool found;
-    std::tie(property, found) = sm->property_map<face_descriptor, double>(property_name);
-    if(found)
-      sm->remove_property_map(property);
+    std::optional<SMesh::Property_map<face_descriptor, double>> property = sm->property_map<face_descriptor, double>(property_name);
+    if(property.has_value())
+      sm->remove_property_map(property.value());
   }
 
   void removePluginProperties(Scene_item* item)
@@ -801,8 +797,7 @@ private Q_SLOTS:
 
     const SMesh& mesh = *(sm_item->face_graph());
 
-    auto [heat_intensity, found] = mesh.property_map<vertex_descriptor, double>("v:HM_Plugin_heat_intensity");
-    CGAL_assertion(found);
+    auto heat_intensity = mesh.property_map<vertex_descriptor, double>("v:HM_Plugin_heat_intensity").value();
 
     double max = 0;
     vertex_descriptor max_v = boost::graph_traits<SMesh>::null_vertex();
