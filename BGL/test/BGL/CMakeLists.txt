@@ -68,6 +68,10 @@ endif()
 
 find_package(VTK QUIET COMPONENTS vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
 if (VTK_FOUND)
+  if(VTK_USE_FILE)
+    include(${VTK_USE_FILE})
+  endif()
+
   if ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
     if(TARGET VTK::CommonCore)
       set(VTK_LIBRARIES VTK::CommonCore VTK::IOCore VTK::IOLegacy VTK::IOXML VTK::FiltersCore VTK::FiltersSources)
