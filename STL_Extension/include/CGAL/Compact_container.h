@@ -406,6 +406,7 @@ public:
     pointer ret = free_list;
     free_list = clean_pointee(ret);
     std::size_t ts;
+    CGAL_USE(ts);
     if constexpr (Time_stamper::has_timestamp) {
       ts = ret->time_stamp();
     }
@@ -441,6 +442,7 @@ public:
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
     std::size_t ts;
+    CGAL_USE(ts);
     if constexpr (Time_stamper::has_timestamp) {
       ts = x->time_stamp();
     }
