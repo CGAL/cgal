@@ -44,12 +44,12 @@ class Hyperbolic_isometry_2{
     void set_to_identity();
 
     /*!
-      Can be used to set the coefficients of the isometry manually, be careful when doing so : the implementation does not check that the resulting moebius transform fixes the unit circle.
+      Can be used to set the coefficients of the isometry manually, be careful when doing so : the implementation does not check that the resulting Möbius transform fixes the unit circle.
     */
     void set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3);
 
     /*!
-      Can be used to set one coefficient of the isometry manually, be careful when doing so : the implementation does not check that the resulting moebius transform fixes the unit circle.
+      Can be used to set one coefficient of the isometry manually, be careful when doing so : the implementation does not check that the resulting Möbius transform fixes the unit circle.
     */
     void set_coefficient(int index, const ComplexNumber& coefficient);
 

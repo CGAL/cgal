@@ -29,6 +29,7 @@ typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
 typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
 typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
 
+
 int main(){
   // Generates the domain:
   Factory factory = Factory(time(NULL));

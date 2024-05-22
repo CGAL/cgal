@@ -71,6 +71,8 @@ public:
   /// @{
   /*!
       Copy constructor.
+
+      \pre <code> other.is_valid() </code>
   */
   Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2 other);
   /// @}
@@ -79,16 +81,22 @@ public:
   /// @{
   /*!
       Returns the decorated combinatorial map.
+
+      \pre <code> is_valid() </code>
   */
   Combinatorial_map_with_cross_ratios& get_combinatorial_map_ref();
 
   /*!
       Tells if the triangulation has an anchor.
+
+      \pre <code> is_valid() </code>
   */
   bool has_anchor() const;
 
   /*!
-      Returns the anchor (if there is one).
+      Returns the anchor.
+
+      \pre <code> is_valid() && has_anchor() </code>
   */
   Anchor& get_anchor_ref();
   /// @}
@@ -97,16 +105,27 @@ public:
   /// @{
   /*!
       Tells if if the edge supported by the dart is Delaunay flippable.
+
+      \pre <code> is_valid() </code>
   */
   bool is_delaunay_flippable(Dart_handle dart) const;
 
   /*!
       Flips the edge supported by the dart.
+
+      \pre <code> is_valid() </code>
   */
   void flip(Dart_handle dart);
 
   /*!
+      Determines if the triangulation is a valid Delaunay triangulation.
+  */
+  bool is_delaunay() const;
+
+  /*!
       Applies the Delaunay flip algorithm: flips Delaunay flippable edges until there is no such edge anymore.
+
+      \pre <code> is_valid() </code>
   */
   int make_delaunay();
   /// @}
@@ -119,7 +138,7 @@ public:
       The points \f$ p,q,r \f$ are the vertices of a lift of \f$ t \f$ in the hyperbolic plane.
       If the center parameter is set to true, then one of the lifted triangles admits the origin \f$ 0 \f$ as a vertex.
 
-      \pre This method is to be used only if the triangulation has an anchor.
+      \pre <code> is_valid() && has_anchor() </code>
   */
   std::vector<std::tuple<Dart_const_handle, Point, Point, Point>> lift(bool center=true) const;
   /// @}
@@ -145,12 +164,16 @@ public:
       If the triangulation has an anchor, then the four next lines print the index of the dart of the anchor, and the three vertices of the anchor.
       Then, for every triangle \f$ t \f$, the indices of the three darts of \f$ t \f$ are printed on three distinct lines.
       Finally, for every edge \f$ e \f$, the indices of the two darts of \f$ e \f$ are printed on two distinct lines, followed by a third line on which the cross ratio of \f$ e \f$ is printed.
+
+      \pre <code> is_valid() </code>
   */
   std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2);
 
   /*!
       Reads the triangulation from a stream.
       The format of the input should be the same as the format of the output of the '<<' operator.
+
+      \pre <code> is_valid() </code>
   */
   void operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits>& triangulation);
   /// @}

@@ -86,9 +86,8 @@ public:
 
   bool is_delaunay_flippable(Dart_handle dart) const;
   void flip(Dart_handle dart);
-  // Flips Delaunay flippable edges as long as possible
+  bool is_delaunay() const;
   int make_delaunay();
-  // Returns, for every triangle T of the triangulation, one of the darts of T together with a triple A,B,C of points in the hyperbolic plane. The points A,B,C are the vertices of a a lift of T in the hyperbolic plane. This method is to be used only if the triangulation has an anchor.
   std::vector<std::tuple<Dart_const_handle,Point,Point,Point>> lift(bool center=true) const;
 
   bool is_valid() const;
@@ -329,6 +328,14 @@ void Hyperbolic_surface_triangulation_2<Traits>::flip(Dart_handle dart){
    if (opposite(f) == c){
      _combinatorial_map.template info<1>(f) = one - (one - cross_ratio_BC_2) / (cross_ratio_BD) ;
    }
+}
+
+template<class Traits>
+bool Hyperbolic_surface_triangulation_2<Traits>::is_delaunay() const{
+  if (! is_valid()){
+    return false;
+  }
+  return (pick_edge_to_flip() == nullptr);
 }
 
 template<class Traits>

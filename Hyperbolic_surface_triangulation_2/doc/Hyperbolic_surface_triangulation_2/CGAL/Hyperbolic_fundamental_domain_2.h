@@ -46,21 +46,29 @@ public:
 
   /*!
       Returns the number of vertices (equivalently, the number of sides) of the domain.
+
+      \pre <code> is_valid() </code>
   */
   int size() const;
 
   /*!
       Returns the index-th vertex.
+
+      \pre <code> is_valid() </code>
   */
   Point vertex(int index) const;
 
   /*!
       Returns the index of the side paired to the index-th side.
+
+      \pre <code> is_valid() </code>
   */
   int paired_side(int index) const;
 
   /*!
        Returns the isometry that maps side \f$ \overline A \f$ to side \f$ A \f$, where \f$ A \f$ is the index-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
+
+       \pre <code> is_valid() </code>
   */
   Hyperbolic_isometry_2<Traits> side_pairing(int index) const;
   /// @}
@@ -71,6 +79,8 @@ public:
       Reads the domain from a stream.
 
       The format of the input should be the same as the format of the output of the 'from_stream' method.
+
+      \pre <code> is_valid() </code>
   */
   void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
@@ -81,6 +91,8 @@ public:
       The first line prints the number n of vertices of the domain.
       For \f$ i=0 \f$ to \f$ n-1 \f$ the index of the side paired to side \f$ i \f$ is printed on a separate line.
       For \f$ i=0 \f$ to \f$ n-1 \f$ the \f$ i \f$-th vertex is printed on a separate line.
+
+      \pre <code> is_valid() </code>
   */
   std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
   /// @}
