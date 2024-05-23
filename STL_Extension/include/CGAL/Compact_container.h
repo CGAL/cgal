@@ -303,6 +303,20 @@ public:
     clear();
   }
 
+  bool check_timestamps_are_valid() const {
+    if constexpr (Time_stamper::has_timestamp) {
+      for(size_type i = 0, end = capacity(); i < end; ++i) {
+        if(!is_used(i)) {
+          continue;
+        }
+        if(Time_stamper::time_stamp(&operator[](i)) != i) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   bool is_used(const_iterator ptr) const
   {
     return (type(&*ptr)==USED);
