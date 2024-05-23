@@ -1,8 +1,6 @@
-Release History
-===============
+# Release History
 
-[Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
------------
+## [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 
 Release date: June 2024
 
@@ -118,6 +116,9 @@ Release date: June 2024
 
 ### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
 - **Breaking change**: LSCM_parameterizer_3 needs Eigen
+
+### [2D Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulation2)
+-   **Breaking change**: the concept [`TriangulationTraits_2`](https://doc.cgal.org/6.0/Triangulation_2/classTriangulationTraits__2.html) now requires an additional functor `Compare_xy_2`.
 
 ### [3D Triangulations](https://doc.cgal.org/6.0/Manual/packages.html#PkgTriangulation3)
 -   Added three functions `vertices()` to the class `Triangulation_3`.
