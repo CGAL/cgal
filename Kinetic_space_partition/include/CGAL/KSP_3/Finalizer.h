@@ -15,6 +15,7 @@
 
 #include <CGAL/license/Kinetic_space_partition.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/internal/Corefinement/predicates.h>
 
 // Internal includes.
 #include <CGAL/KSP/utils.h>
@@ -128,6 +129,7 @@ public:
 private:
   Data_structure& m_data;
   const Parameters& m_parameters;
+  std::map<IEdge, std::vector<std::pair<typename Intersection_kernel::Point_3, PFace>>> m_edge_to_sorted_faces;
 
   /*******************************
   **     EXTRACTING VOLUMES     **
@@ -415,69 +417,69 @@ private:
     return false;
   }
 
-  void find_adjacent_faces(const PFace& pface, const PEdge& pedge, const std::vector<PFace>& neighbor_faces, PFace& positive_side, PFace& negative_side) const {
+  IVertex non_collinear_vertex(const PFace& pface, const IEdge& iedge) const {
+    std::size_t edge_line = m_data.igraph().line(iedge);
+
+    auto& sp = m_data.support_plane(pface.first);
+    auto& mesh = sp.mesh();
+    auto first = mesh.halfedge(pface.second);
+    auto h = first;
+    std::size_t last_line = m_data.igraph().line(m_data.iedge(PEdge(pface.first, mesh.edge(first))));
+
+    do {
+      h = mesh.next(h);
+      std::size_t line = m_data.igraph().line(m_data.iedge(PEdge(pface.first, mesh.edge(h))));
+      if (line != edge_line && last_line != edge_line)
+        return m_data.ivertex(PVertex(pface.first, mesh.source(h)));
+
+      last_line = line;
+    } while (first != h);
+
+    CGAL_assertion_msg(false, "ERROR: non collinear vertex not found in pface!");
+
+    return IVertex();
+  }
+
+  void find_adjacent_faces(const PFace& pface, const PEdge& pedge, const std::vector<PFace>& neighbor_faces, PFace& positive_side, PFace& negative_side) {
     CGAL_assertion(neighbor_faces.size() > 2);
 
     // for each face, find vertex that is not collinear with the edge
-    // take 2d directions orthogonal to edge
-    // sort and take neighbors to current face
-
-    To_exact to_exact;
+    // sort around a reference face
 
     const Segment_3 segment = m_data.segment_3(pedge);
     IEdge ie = m_data.iedge(pedge);
-    typename Intersection_kernel::Point_3 source = m_data.point_3(m_data.igraph().source(ie));
-    typename Intersection_kernel::Vector_3 norm(source, m_data.point_3(m_data.igraph().target(ie)));
+    non_collinear_vertex(pface, ie);
 
-    norm = KSP::internal::normalize(norm);
+    std::vector<std::pair<typename Intersection_kernel::Point_3, PFace> >& dir_edges = m_edge_to_sorted_faces[ie];
+    if (dir_edges.empty()) {
+      typename Intersection_kernel::Point_3 source = m_data.point_3(m_data.igraph().source(ie));
+      typename Intersection_kernel::Point_3 target = m_data.point_3(m_data.igraph().target(ie));
+      typename Intersection_kernel::Point_3 reference = m_data.point_3(non_collinear_vertex(pface, ie));
 
-    const typename Intersection_kernel::Plane_3 plane(source, norm);
-    typename Intersection_kernel::Point_2 source2d = plane.to_2d(source);
+      dir_edges.push_back(std::make_pair(reference, pface));
 
-    std::vector< std::pair<typename Intersection_kernel::Direction_2, PFace> > dir_edges;
+      // Get orientation towards edge of other faces
+      for (const PFace& face : neighbor_faces) {
+        if (face == pface)
+          continue;
 
-    // Get orientation towards edge of current face
-    typename Intersection_kernel::Point_2 v2d = plane.to_2d(to_exact(m_data.centroid_of_pface(pface)));
-    dir_edges.push_back(std::make_pair(typename Intersection_kernel::Direction_2(source2d - v2d), pface));
-
-    // Get orientation towards edge of other faces
-    for (const PFace& face : neighbor_faces) {
-      if (face == pface)
-        continue;
-
-      // Taking just the direction of the line instead of the point? (Still need to take care of the sign)
-      auto& sp = m_data.support_plane(face.first);
-      auto& mesh = sp.mesh();
-      auto h = mesh.halfedge(face.second);
-      auto first = h;
-
-      typename Intersection_kernel::Point_3 point;
-      typename Intersection_kernel::FT dist = 0;
-      do {
-        typename Intersection_kernel::Point_3 p = m_data.point_3(m_data.ivertex(PVertex(face.first, mesh.target(h))));
-        typename Intersection_kernel::Vector_3 dist_in_plane = (p - source);
-        dist_in_plane -= norm * (dist_in_plane * norm);
-        typename Intersection_kernel::FT d = dist_in_plane.squared_length();
-
-        if (d > dist) {
-          dist = d;
-          point = p;
-        }
-        h = mesh.next(h);
-      } while (first != h);
-
-      dir_edges.push_back(std::make_pair(typename Intersection_kernel::Direction_2(source2d - plane.to_2d(point)), face));
-    }
-
-    CGAL_assertion(dir_edges.size() == neighbor_faces.size());
-
-    // Sort directions
-    std::sort(dir_edges.begin(), dir_edges.end(), [&](
-      const std::pair<typename Intersection_kernel::Direction_2, PFace>& p,
-      const std::pair<typename Intersection_kernel::Direction_2, PFace>& q) -> bool {
-        return p.first < q.first;
+        dir_edges.push_back(std::make_pair(m_data.point_3(non_collinear_vertex(face, ie)), face));
       }
-    );
+
+      CGAL_assertion(dir_edges.size() == neighbor_faces.size());
+
+      // Sort directions
+      std::sort(dir_edges.begin(), dir_edges.end(), [&](
+        const std::pair<typename Intersection_kernel::Point_3, PFace>& p,
+        const std::pair<typename Intersection_kernel::Point_3, PFace>& q) -> bool {
+          if (p.second == pface)
+            return true;
+          if (q.second == pface)
+            return false;
+          return Polygon_mesh_processing::Corefinement::sorted_around_edge<Intersection_kernel>(source, target, reference, p.first, q.first);
+        }
+      );
+    }
 
     std::size_t n = dir_edges.size();
     for (std::size_t i = 0; i < n; ++i) {
