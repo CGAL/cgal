@@ -46,7 +46,7 @@ save_binary_file(std::ostream& os,
                , bool binary = true)
 #endif
 {
-  typedef typename C3T3::Geom_traits::FT FT;
+  typedef typename C3T3::Triangulation::Geom_traits::FT FT;
   if(binary) os << "binary ";
   os << "CGAL c3t3 " << CGAL::Get_io_signature<C3T3>()() << "\n";
   if(binary) {

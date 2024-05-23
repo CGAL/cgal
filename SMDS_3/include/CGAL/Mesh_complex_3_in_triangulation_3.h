@@ -206,7 +206,6 @@ public:
 /// \name Types
 /// @{
   typedef Tr                                            Triangulation;
-  typedef typename Tr::Geom_traits                      Geom_traits;
   typedef typename Tr::size_type                        size_type;
   typedef typename Tr::Point                            Point;
   typedef typename Tr::Edge                             Edge;
