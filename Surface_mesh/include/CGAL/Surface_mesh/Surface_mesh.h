@@ -2812,6 +2812,27 @@ exact_num_faces(const CGAL::Surface_mesh<P>& sm)
  return sm.number_of_faces();
 }
 
+template <typename P>
+std::size_t
+exact_num_edges(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_edges();
+}
+
+template <typename P>
+std::size_t
+exact_num_halfedges(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_halfedges();
+}
+
+template <typename P>
+std::size_t
+exact_num_vertices(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_vertices();
+}
+
 } // namespace internal
 } // namespace CGAL
 
