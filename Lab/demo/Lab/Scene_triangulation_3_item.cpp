@@ -944,8 +944,6 @@ Scene_triangulation_3_item::update_histogram()
 void
 Scene_triangulation_3_item_priv::compute_color_map(const QColor& base_color)
 {
-  typedef Indices::size_type size_type;
-
   // Set colors of surface patches
   std::vector<QColor> surface_colors;
   // the first color is the background and is unused
