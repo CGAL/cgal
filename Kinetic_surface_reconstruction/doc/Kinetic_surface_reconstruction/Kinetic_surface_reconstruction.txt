@@ -100,7 +100,7 @@ This example provides a command line version of the kinetic surface reconstructi
 
 \section ksrPerformance Performance
 
-Kinetic surface reconstruction is aimed at reconstructing piece-wise planar objects, e.g., man-made objects and architecture. Reconstruction results on point clouds acquired from architecture in different qualities are shown in figure \cgalFigureRef{ksr_result_small} in the first and last row. Synthetic point clouds from a CAD model and a fractal object are shown in rows 2 and three.
+Kinetic surface reconstruction is aimed at reconstructing piece-wise planar objects, e.g., man-made objects and architecture. Reconstruction results on point clouds acquired from architecture in different qualities are shown in figure \cgalFigureRef{ksr_result_small} in the first and last row. Synthetic point clouds from a CAD model and a fractal object are shown in rows 2 and three. The datasets used here are available at https://files.inria.fr/titane/KSR42_dataset.zip.
 
 However, also smooth surfaces can be reconstructed to a certain level of detail as is shown on the fourth row. While the scales of the dragon are not replicated with their smooth boundary, each scale can still be recognized in the final model.
 
@@ -146,21 +146,21 @@ Foam_box
 <TD class="math" ALIGN=RIGHT NOWRAP>
 382.059
 <TD class="math" ALIGN=RIGHT NOWRAP>
-98
+103
 <TD class="math" ALIGN=RIGHT NOWRAP>
-64
+60
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.537
+998
 <TD class="math" ALIGN=RIGHT NOWRAP>
-148
+97
 <TD class="math" ALIGN=RIGHT NOWRAP>
-605
+444
 <TD class="math" ALIGN=RIGHT NOWRAP>
-6,6
+6,5
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2,6
+3,3
 <TD class="math" ALIGN=RIGHT NOWRAP>
-9.2
+9,8
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -170,19 +170,19 @@ Lans
 <TD class="math" ALIGN=RIGHT NOWRAP>
 324
 <TD class="math" ALIGN=RIGHT NOWRAP>
-166
+169
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2.629
+3.334
 <TD class="math" ALIGN=RIGHT NOWRAP>
-288
+330
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.136
+1.175
 <TD class="math" ALIGN=RIGHT NOWRAP>
-26,2
+26,3
 <TD class="math" ALIGN=RIGHT NOWRAP>
-5,9
+9,4
 <TD class="math" ALIGN=RIGHT NOWRAP>
-32,1
+35,7
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -194,17 +194,17 @@ Meeting Room
 <TD class="math" ALIGN=RIGHT NOWRAP>
 777
 <TD class="math" ALIGN=RIGHT NOWRAP>
-31.757
+29.605
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2.970
+2.867
 <TD class="math" ALIGN=RIGHT NOWRAP>
-12.161
+11.819
 <TD class="math" ALIGN=RIGHT NOWRAP>
-39,8
+37,1
 <TD class="math" ALIGN=RIGHT NOWRAP>
-79,3
+93,4
 <TD class="math" ALIGN=RIGHT NOWRAP>
-120,1
+131,1
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -214,19 +214,19 @@ Full Thing
 <TD class="math" ALIGN=RIGHT NOWRAP>
 1.947
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.793
+1.790
 <TD class="math" ALIGN=RIGHT NOWRAP>
-20.628
+21.804
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.989
+2.655
 <TD class="math" ALIGN=RIGHT NOWRAP>
-9.764
+12.984
 <TD class="math" ALIGN=RIGHT NOWRAP>
-9,3
+8,6
 <TD class="math" ALIGN=RIGHT NOWRAP>
-200,7
+238,8
 <TD class="math" ALIGN=RIGHT NOWRAP>
-210,9
+248,2
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -234,21 +234,21 @@ Hilbert cube
 <TD class="math" ALIGN=RIGHT NOWRAP>
 144.092
 <TD class="math" ALIGN=RIGHT NOWRAP>
-674
+968
 <TD class="math" ALIGN=RIGHT NOWRAP>
 48
 <TD class="math" ALIGN=RIGHT NOWRAP>
-4163
+5.778
 <TD class="math" ALIGN=RIGHT NOWRAP>
 986
 <TD class="math" ALIGN=RIGHT NOWRAP>
 4.124
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,7
+0,6
 <TD class="math" ALIGN=RIGHT NOWRAP>
-8,0
+10,5
 <TD class="math" ALIGN=RIGHT NOWRAP>
-8,8
+11,1
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -260,17 +260,17 @@ Asian Dragon
 <TD class="math" ALIGN=RIGHT NOWRAP>
 2.842
 <TD class="math" ALIGN=RIGHT NOWRAP>
-82.417
+101.651
 <TD class="math" ALIGN=RIGHT NOWRAP>
-10.257
+10.209
 <TD class="math" ALIGN=RIGHT NOWRAP>
-33.260
+34.237
 <TD class="math" ALIGN=RIGHT NOWRAP>
-34,2
+31,2
 <TD class="math" ALIGN=RIGHT NOWRAP>
-605,0
+757,5
 <TD class="math" ALIGN=RIGHT NOWRAP>
-642
+790,7
 <TR>
 
 <TD class="math" ALIGN=CENTER NOWRAP>
@@ -280,23 +280,192 @@ Building_C
 <TD class="math" ALIGN=RIGHT NOWRAP>
 221
 <TD class="math" ALIGN=RIGHT NOWRAP>
-175
+172
 <TD class="math" ALIGN=RIGHT NOWRAP>
-3.922
+3.432
 <TD class="math" ALIGN=RIGHT NOWRAP>
-631
+370
 <TD class="math" ALIGN=RIGHT NOWRAP>
-2.337
+1.466
 <TD class="math" ALIGN=RIGHT NOWRAP>
-40,7
+40,1
 <TD class="math" ALIGN=RIGHT NOWRAP>
-15,6
+12,3
 <TD class="math" ALIGN=RIGHT NOWRAP>
-56,4
+52,4
 <TR>
 <TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
 </TABLE>
 
+The parameters to reconstruct these models are available in the following table:
+
+<TABLE CELLSPACING=5 >
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
+<TR>
+<TD class="math" ALIGN=CENTER NOWRAP>
+Data set
+<TD class="math" ALIGN=CENTER NOWRAP>
+Maximum distance
+<TD class="math" ALIGN=CENTER NOWRAP>
+Maximum angle
+<TD class="math" ALIGN=CENTER NOWRAP>
+Minimum region size
+<TD class="math" ALIGN=CENTER NOWRAP>
+K nearest neighbors
+<TD class="math" ALIGN=CENTER NOWRAP>
+Regularize parallelism<br>
+Angle tolerance
+<TD class="math" ALIGN=CENTER NOWRAP>
+Regularize coplanarity<br>
+Maximum offset
+<TD class="math" ALIGN=CENTER NOWRAP>
+K
+<TD class="math" ALIGN=CENTER NOWRAP>
+Lambda
+<TR><TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Foam_box
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,05
+<TD class="math" ALIGN=RIGHT NOWRAP>
+15
+<TD class="math" ALIGN=RIGHT NOWRAP>
+250
+<TD class="math" ALIGN=RIGHT NOWRAP>
+12
+<TD class="math" ALIGN=RIGHT NOWRAP>
+10
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,01
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,7
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Lans
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,15
+<TD class="math" ALIGN=RIGHT NOWRAP>
+20
+<TD class="math" ALIGN=RIGHT NOWRAP>
+300
+<TD class="math" ALIGN=RIGHT NOWRAP>
+12
+<TD class="math" ALIGN=RIGHT NOWRAP>
+8
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,08
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,7
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Meeting Room
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,03
+<TD class="math" ALIGN=RIGHT NOWRAP>
+19
+<TD class="math" ALIGN=RIGHT NOWRAP>
+100
+<TD class="math" ALIGN=RIGHT NOWRAP>
+15
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,03
+<TD class="math" ALIGN=RIGHT NOWRAP>
+10
+<TD class="math" ALIGN=RIGHT NOWRAP>
+3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,5
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Full Thing
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+36
+<TD class="math" ALIGN=RIGHT NOWRAP>
+30
+<TD class="math" ALIGN=RIGHT NOWRAP>
+12
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,05
+<TD class="math" ALIGN=RIGHT NOWRAP>
+3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,5
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Hilbert cube
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+10
+<TD class="math" ALIGN=RIGHT NOWRAP>
+10
+<TD class="math" ALIGN=RIGHT NOWRAP>
+12
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,03
+<TD class="math" ALIGN=RIGHT NOWRAP>
+5
+<TD class="math" ALIGN=RIGHT NOWRAP>
+4
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,5
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Asian Dragon
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,7
+<TD class="math" ALIGN=RIGHT NOWRAP>
+26
+<TD class="math" ALIGN=RIGHT NOWRAP>
+150
+<TD class="math" ALIGN=RIGHT NOWRAP>
+10
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,75
+<TR>
+
+<TD class="math" ALIGN=CENTER NOWRAP>
+Building_C
+<TD class="math" ALIGN=RIGHT NOWRAP>
+1,1
+<TD class="math" ALIGN=RIGHT NOWRAP>
+26
+<TD class="math" ALIGN=RIGHT NOWRAP>
+500
+<TD class="math" ALIGN=RIGHT NOWRAP>
+15
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,5
+<TD class="math" ALIGN=RIGHT NOWRAP>
+3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+2
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,77
+<TR>
+<TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
+</TABLE>
 \section Ksurfp_history Design and Implementation History
 
 This package is an implementation of Bauchet et. al \cgalCite{bauchet2020kinetic}.
