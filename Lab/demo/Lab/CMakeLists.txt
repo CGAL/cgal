@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.11...3.23)
 project(Lab_Demo)
 include(FeatureSummary)
 
