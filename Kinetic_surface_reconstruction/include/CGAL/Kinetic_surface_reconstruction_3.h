@@ -1200,15 +1200,7 @@ private:
             if (m_lcc.template info<2>(fdh).input_polygon_index == ip) {
               if (internal)
                 break;
-
-//              added = true;
               face_queue.push(fdh);
-
-//               if (debug)
-//                 std::cout << ip << std::endl;
-//
-//               if (debug)
-//                 write_face(fdh, std::to_string(region) + "-inside-" + std::to_string(fa) + ".ply");
             }
             else
               if (!internal)
@@ -1218,15 +1210,6 @@ private:
             if (m_lcc.template info<2>(fdh).plane == pl || m_lcc.template info<2>(fdh).plane == pl.opposite()) {
               if (internal)
                 break;
-
-//              added = true;
-//              Plane_3 pla = from_exact(pl);
-
-//               if (debug)
-//                 std::cout << ip << " " << pl.a() << " " << pl.b() << " " << pl.c() << " " << pl.d() << std::endl;
-//
-//               if (debug)
-//                 write_face(fdh, std::to_string(region) + "-inside-" + std::to_string(fa) + ".ply");
 
               face_queue.push(fdh);
             }
@@ -1311,6 +1294,30 @@ private:
     return true;
   }
 
+  void insert_ghost_edge(std::vector<std::vector<std::size_t> >& polygons, std::size_t source, std::size_t target, std::size_t first, std::size_t second) const {
+    std::size_t in_target, in_source;
+
+    for (in_target = 0; in_target < polygons[target].size(); in_target++)
+      if (polygons[target][in_target] == first || polygons[target][in_target] == second)
+        break;
+
+    for (in_source = 0; in_source < polygons[source].size(); in_source++)
+      if (polygons[source][in_source] == first || polygons[source][in_source] == second)
+        break;
+
+    std::size_t former_end = polygons[target].size() - 1;
+
+    polygons[target].resize(polygons[target].size() + polygons[source].size() + 2);
+
+    for (std::size_t j = 0; j != former_end - in_target + 1; j++)
+      polygons[target][polygons[target].size() - j - 1] = polygons[target][former_end - j];
+
+    for (std::size_t j = 0; j < polygons[source].size() + 1; j++) {
+      std::size_t idx = (in_source + j) % polygons[source].size();
+      polygons[target][in_target + j + 1] = polygons[source][idx];
+    }
+  }
+
   void insert_ghost_edges_cdt(std::vector<std::vector<std::size_t> >& polygons, const typename Intersection_kernel::Plane_3 pl) const {
     CDT cdt;
     From_exact from_exact;
@@ -1348,7 +1355,7 @@ private:
     CGAL_assertion(outer != -1);
 
     // Distance matrix
-    std::vector<FT> dist(polygons.size()* polygons.size(), (std::numeric_limits<FT>::max)());
+    std::vector<FT> dist(polygons.size() * polygons.size(), (std::numeric_limits<FT>::max)());
     std::vector<std::pair<std::size_t, std::size_t> > closest_pts(polygons.size() * polygons.size(), std::make_pair(-1, -1));
 
     for (auto& edge : cdt.finite_edges()) {
@@ -1373,6 +1380,7 @@ private:
     }
 
     std::vector<bool> merged(polygons.size(), false);
+    bool done = true;
     for (std::size_t i = 0; i < polygons.size(); i++) {
       if (i == std::size_t(outer))
         continue;
@@ -1385,31 +1393,52 @@ private:
 
       // For now merge all polygons into outer if possible
       if (dist[idx] < (std::numeric_limits<FT>::max)()) {
-        std::size_t in_target, in_source;
-        for (in_target = 0; in_target < polygons[outer].size(); in_target++)
-          if (polygons[outer][in_target] == closest_pts[idx].first || polygons[outer][in_target] == closest_pts[idx].second)
-            break;
+        insert_ghost_edge(polygons, i, outer, closest_pts[idx].first, closest_pts[idx].second);
+        merged[i] = true;
+        polygons[i].clear();
+      }
+      else done = false;
+    }
 
-        for (in_source = 0; in_source < polygons[i].size(); in_source++)
-            if (polygons[i][in_source] == closest_pts[idx].first || polygons[i][in_source] == closest_pts[idx].second)
-              break;
+    // all direct possibilities have been merged, now deal with the boundaries that can only be merged indirectly.
+    while (!done) {
+      done = true;
+      for (std::size_t i = 0; i < polygons.size(); i++) {
+        if (i == std::size_t(outer) || merged[i])
+          continue;
 
-        std::size_t former_end = polygons[outer].size() - 1;
+        FT d = (std::numeric_limits<FT>::max)();
+        std::size_t best = 0;
+        for (std::size_t j = 0; j < polygons.size(); j++) {
+          if (!merged[j])
+            continue;
 
-        polygons[outer].resize(polygons[outer].size() + polygons[i].size() + 2);
+          std::size_t idx;
+          if (i < j)
+            idx = i * polygons.size() + j;
+          else
+            idx = j * polygons.size() + i;
 
-        for (std::size_t j = 0; j != former_end - in_target + 1; j++)
-          polygons[outer][polygons[outer].size() - j - 1] = polygons[outer][former_end - j];
+          if (dist[idx] < d) {
+            best = idx;
+            d = dist[idx];
+          }
+        }
 
-        for (std::size_t j = 0; j < polygons[i].size() + 1; j++) {
-          std::size_t idx = (in_source + j) % polygons[i].size();
-          polygons[outer][in_target + j + 1] = polygons[i][idx];
+        // For now merge all polygons into outer if possible
+        if (d < (std::numeric_limits<FT>::max)()) {
+          insert_ghost_edge(polygons, i, outer, closest_pts[best].first, closest_pts[best].second);
+
+          merged[i] = true;
+          polygons[i].clear();
+          done = false;
         }
       }
-      else {
-        std::cout << "ghost edge could not be placed" << std::endl;
-      }
-      polygons[i].clear();
+    }
+    if (m_verbose) {
+      for (std::size_t i = 0; i < polygons.size(); i++)
+        if (!merged[i])
+          std::cout << "ghost edge could not be placed" << std::endl;
     }
     if (outer != 0)
       polygons[0] = std::move(polygons[outer]);
@@ -1869,7 +1898,7 @@ private:
         std::move(m_regions[other_ground[i]].second.begin(), m_regions[other_ground[i]].second.end(), std::back_inserter(m_regions[m_ground_polygon_index].second));
 
       if (m_verbose)
-        std::cout << "ground polygon " << m_ground_polygon_index << ", merging other polygons";
+        std::cout << "ground polygon " << m_ground_polygon_index << ", merging other polygons" << std::endl;
 
       while (other_ground.size() != 0) {
         m_regions.erase(m_regions.begin() + other_ground.back());
@@ -1915,6 +1944,8 @@ private:
       std::cout << "found " << num_shapes << " planar shapes regularized into " << m_planar_regions.size() << std::endl;
       std::cout << "from " << m_points.size() << " input points " << unassigned << " remain unassigned" << std::endl;
     }
+
+    num_shapes = m_planar_regions.size();
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
