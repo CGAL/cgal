@@ -436,11 +436,12 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
       smesh_->points();
 
-  SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
-      smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").value();
+  auto vcolors = smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color");
 
-  SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
-      smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").value();
+  auto fcolors = smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color");
+
+  has_fcolors = fcolors.has_value();
+  has_vcolors = vcolors.has_value();
 
   boost::property_map< SMesh, boost::vertex_index_t >::type
       im = get(boost::vertex_index, *smesh_);
@@ -499,10 +500,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
 
   if(name.testFlag(Scene_item_rendering_helper::COLORS))
   {
-
     has_fpatch_id = smesh_->property_map<face_descriptor, int >("f:patch_id").has_value();
-    has_fcolors = smesh_->property_map<face_descriptor, CGAL::IO::Color >("f:color").has_value();
-    has_vcolors = smesh_->property_map<vertex_descriptor, CGAL::IO::Color >("v:color").has_value();
   }
   if(name.testFlag(Scene_item_rendering_helper::GEOMETRY))
   {
@@ -562,7 +560,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
           }
           else if(has_fcolors)
           {
-            CGAL::IO::Color c = fcolors[fd];
+            CGAL::IO::Color c = fcolors.value()[fd];
             CPF::add_color_in_buffer(c, f_colors);
           }
         }
@@ -589,7 +587,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
           c = new CGAL::IO::Color(color.red(),color.green(),color.blue());
         }
         else if(has_fcolors)
-          c= &fcolors[fd];
+          c= &(fcolors.value()[fd]);
         else
           c = nullptr;
         addFlatData(p,n,c, name);
@@ -628,11 +626,11 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       }
       else if(is_convex)
       {
-        triangulate_convex_facet(fd, &fnormals, &fcolors, nullptr, name, false);
+        triangulate_convex_facet(fd, &fnormals, &fcolors.value(), nullptr, name, false);
       }
       else
       {
-        triangulate_facet(fd, &fnormals, &fcolors, nullptr, name, false);
+        triangulate_facet(fd, &fnormals, &fcolors.value(), nullptr, name, false);
       }
     }
   }
@@ -641,7 +639,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
   {
     for(vertex_descriptor vd : vertices(*smesh_))
     {
-      CGAL::IO::Color c = vcolors[vd];
+      CGAL::IO::Color c = vcolors.value()[vd];
       v_colors.push_back(static_cast<float>(c.red())/255);
       v_colors.push_back(static_cast<float>(c.green())/255);
       v_colors.push_back(static_cast<float>(c.blue())/255);
@@ -2530,7 +2528,7 @@ void Scene_surface_mesh_item::fill_flat_vertex_map()
     return;
 
   SMesh::Property_map<face_descriptor, EPICK::Vector_3 > fnormals =
-      face_graph()->property_map<face_descriptor, EPICK::Vector_3 >("f:normal").value();
+      face_graph()->add_property_map<face_descriptor, EPICK::Vector_3 >("f:normal").first;
 
   d->flat_vertices_map.clear();
   d->flat_vertices_map.resize(face_graph()->number_of_vertices());
