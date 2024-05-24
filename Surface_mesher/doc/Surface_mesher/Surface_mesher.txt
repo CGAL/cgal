@@ -304,7 +304,7 @@ This \cgal component also provides functions to write the reconstructed surface 
 
 \section Surface_mesherUndocumented Undocumented Features Available in Demos
 
-The Polyhedron demo has a feature that allows to remesh a polyhedral
+The CGAL Lab application has a feature that allows to remesh a polyhedral
 surface, using the 3D Surface Mesh Generator. That has been implemented as
 a special model of `SurfaceMeshTraits_3`, for polyhedra. That traits
 class is not yet documented because its interface and code have not yet

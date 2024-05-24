@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 
 \mainpage User Manual
-\anchor Chapter_3D_Fast_Intersection_and_Distance_Computation
+\anchor Chapter_Fast_Intersection_and_Distance_Computation
 \cgalAutoToc
 
 \authors Pierre Alliez, Stephane Tayeb, and Camille Wormser
@@ -12,7 +12,7 @@ namespace CGAL {
 
 The AABB tree component offers a static data structure and algorithms
 to perform efficient intersection and distance queries against sets of
-finite 3D geometric objects. The set of geometric objects stored in
+finite 2D or 3D geometric objects. The set of geometric objects stored in
 the data structure can be queried for intersection detection,
 intersection computation and distance. The intersection queries can be
 of any type, provided that the corresponding intersection predicates
@@ -123,7 +123,7 @@ the squared distance from a point query.
 
 \subsection aabb_tree_examples_2 Tree of Polyhedron Triangle Facets for Intersection Queries
 
- In the following example the AABB primitive wraps a facet handle of a
+In the following example the AABB primitive wraps a facet handle of a
 triangle polyhedral surface as `id` and the corresponding 3D
 triangle as geometric object. From a segment query we test the
 intersections, then compute the number of intersections, compute the
@@ -163,11 +163,16 @@ handle.
 
 \subsection aabb_tree_examples_4 Tree of Segments for Intersection and Distance Queries
 
- In the following example the segments are stored into a list, and the
+In the following example the segments are stored into a list, and the
 AABB primitive wraps a segment as `datum` and an iterator in the
 list as `id`. We compute the number of intersections with plane
 and triangles queries, and the closest point from a point query.
 \cgalExample{AABB_tree/AABB_segment_3_example.cpp}
+
+\subsection aabb_tree_examples_8 Tree of Polyline and Polygon Segments for Intersection and Distance Queries
+
+The following example uses segments given by a polyline and a polygon. The difference is that the polygon is closed. The `id` in this case is the iterator pointing to a `Point_2` in the polyline or the polygon. The datum, a `Segment_2`, is created on the fly from the points using the `id` as the source and the following `Point_2` as the target. We count the intersections with a `Segment_2` and the closest point and id from a point query.
+\cgalExample{AABB_tree/AABB_polyline_segment_2_example.cpp}
 
 \subsection aabb_tree_examples_5 Tree of Polyhedron Edge Segments for Intersection and Distance Queries
 
@@ -233,7 +238,7 @@ subdivision scheme which multiplies the number of triangles by four.
 \subsection aabb_tree_perf_mem Memory
 
 When using the polyhedron triangle facet primitive (defined in
-`AABB_polyhedron_triangle_primitive.h`) the AABB tree occupies
+`AABB_face_graph_triangle_primitive.h`) the AABB tree occupies
 approximately 61 bytes per primitive (without constructing the
 internal KD-tree). It increases to approximately 150 bytes per
 primitive when constructing the internal KD-tree with one reference
@@ -426,7 +431,7 @@ initial ball radius to a small value still guaranteed to intersect the
 input primitives. This is achieved by constructing an internal secondary data
 structure which provides a good hint to the algorithm at the beginning
 of the traversal (done by default).
-Calling `do_not_accelerate_distance_queries()` will disable
+Calling `AABB_tree::do_not_accelerate_distance_queries()` will disable
 the construction and the usage of this internal secondary data structure.
 
 \section aabb_tree_history Design and Implementation History
@@ -437,9 +442,14 @@ implementing both intersection and distance queries, and for generic
 queries and primitives was developed by Camille Wormser. In 2009,
 Pierre Alliez, Stéphane Tayeb and Camille Wormser made the
 implementation CGAL-compliant, with the help of Laurent Rineau for
-optimizing the tree construction. The authors wish to thank Andreas
-Fabri, Jane Tournois, Mariette Yvinec and Sylvain Lefèbvre for
-helpful comments and discussions.
+optimizing the tree construction. Additionally, Andreas
+Fabri, Jane Tournois, Mariette Yvinec and Sylvain Lefèbvre are
+given thanks for helpful comments and discussions during that period.
+Later, Sébastien Loriot contributed several improvements:
+thread-safe queries, introduction of shared data stored in the traits
+for lighter primitive types, ...
+In 2024, the package was made compatible with 2D and 3D primitives by
+Andreas Fabri, Sébastien Loriot, and Sven Oesau.
 
 */
 

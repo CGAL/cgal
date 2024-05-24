@@ -4,18 +4,20 @@ Release History
 [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 -----------
 
-Release date: October 2023
+Release date: June 2024
 
 ### General Changes
 
 - **Breaking change**: C++17 is now required
 - Support for Visual `C++` 14.0 (Visual studio 2015) is dropped.
-- The demos as well as the `draw()` functions using the `Basic_viewer` are based on Qt6
+- The demos as well as the `Basic_viewer` are based on Qt6.
+- The `Basic_viewer` is improved and documented.
 - **Breaking change**: The usage of `boost::shared_ptr` has been replaced by `std::shared_ptr`. Packages affected are 2D Straight Line Skeleton and Shape Detection.
 - **Breaking change**: The usage of `boost::optional` has been replaced by `std::optional`. Packages affected are 2D Straight Line Skeleton, 3D Fast Intersection and Distance Computation (AABB Tree), and the Kernel intersection.
 - **Breaking change**: The usage of `boost::variant` has been replaced by `std::variant`. Packages affected are 2D Arrangements, and the Kernel intersection.
 - **Breaking change**: The file CMake file `UseCGAL.cmake` has been removed from CGAL. Usages of the CMake variables `${CGAL_USE_FILE}` and `${CGAL_LIBRARIES}` must be replaced by a link to the imported target `CGAL::CGAL`, for example: `target_link_library(the_target PRIVATE CGAL::CGAL)`.
 - The minimal supported version of Boost is now 1.72.0
+- The CGAL demo formerly known as "Polyhedron demo" has been renamed "CGAL Lab".
 
 ### Installation
 
@@ -25,6 +27,18 @@ Release date: October 2023
 
 -   This package provides functions to repair polygons, polygons with holes, and multipolygons with holes
     using the odd-even heuristic.
+
+### [2D and 3D Fast Intersection and Distance Computation (AABB Tree)](https://doc.cgal.org/6.0/Manual/packages.html#PkgAABBTree)
+
+- **Breaking change**: The concept `AABBTraits` now refines the `SearchTraits` concept.
+- The AABB tree is now working with 2D and 3D primitives:
+  - Replacement of `AABBGeomTraits` concept by `AABBGeomTraits_3` and `AABBRayIntersectionGeomTraits` by `AABBRayIntersectionGeomTraits_3`.
+  - Addition of `AABBGeomTraits_2` and `AABBRayIntersectionGeomTraits_2` concepts
+  - `CGAL::AABB_traits` is deprecated and replaced by `CGAL::AABB_traits_3`
+  - Addition of `CGAL::AABB_traits_2`
+  - `CGAL::AABB_segment_primitive` is deprecated and replaced by `CGAL::AABB_segment_primitive_3`
+  - `CGAL::AABB_triangle_primitive` is deprecated and replaced by `CGAL::AABB_triangle_primitive_3`
+  - Addition of 2D primitive classes: `CGAL::AABB_segment_primitive_2`, `CGAL::AABB_polyline_segment_primitive_2`, `CGAL::AABB_triangle_primitive_2`, `CGAL::AABB_indexed_triangle_primitive_2`
 
 #### 2D Arrangements
 
@@ -70,12 +84,26 @@ Release date: October 2023
     `CGAL::Polygon_mesh_processing::autorefine_triangle_soup()` that refines a soup of triangles so that no pair of triangles intersects
      in their interiors. Also added, the function `autorefine()` operating directly on a triangle mesh and updating it
      using the aforementioned function on a triangle soup.
+-   Added the function `CGAL::Polygon_mesh_processing::add_bbox()` that enables to add a tight or extended, triangulated or not,
+    bounding box to a face graph.
+-   Added the class `CGAL::Corefinement::Non_manifold_output_visitor` that can be used in corefinement based functions to deal with non-manifold outputs.
 
 ### [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2)
--   Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere,
-    when inserting an arc that lies on the identification curve.
+- **Breaking change**: The type of the result of point location queries changed to
+    `std::variant`. The support for the old macro `CGAL_ARR_POINT_LOCATION_VERSION`
+    has been removed.
+
+- Eliminated the error-prone c-type casting that was used to define observers. In general, backward compatibility was maintained; however, the former class template `Arr_observer` was replaced by an alias template. (The former class Arr_observer was renamed to Aos_observer).
+
+- Introduced `Arr_dcel`, which essentially replaces the former `Arr_default_dcel`. Backward compatibility was maintained by the introduction of the alias template `Arr_default_dcel`. `Arr_dcel`, as opposed to the former `Arr_default_dcel` is templated (in addition to the geometry traits) by Vertex, Halfedge, and Face template parameters, and they have default type values. All this enables the layered extension of DCEL records.
+
+- Fixed a bug in the zone construction code applied to arrangements of geodesic arcs on a sphere, when inserting an arc that lies on the identification curve.
+
+- Introduced a new interactive program that demonstrates 2D arrangements embedded on the sphere called `earth`. The program (i) reads a database of all administrative boundaries of the countries in the world, (ii) displays the globe with all countries and land covered by water (which is land not covered by countries) on a window, and (ii) enables interaction with the user.
 
 ### [Tetrahedral Remeshing](https://doc.cgal.org/6.0/Manual/packages.html#PkgTetrahedralRemeshing)
+-   Added a sizing field as new parameter of `CGAL::tetrahedral_isotropic_remeshing()`, for non-uniform
+    and adaptive remeshing.
 -   **Breaking change**: The template parameters of
     `CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3`
     have been modified, reverting changes introduced in CGAL 5.6.
@@ -87,6 +115,12 @@ Release date: October 2023
 -   **Breaking change**: The template parameters of
     `CGAL::Simplicial_mesh_cell_base_3`
     have been modified to enable passing a geometric traits and a custom cell base class.
+
+### [Surface Mesh](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMesh)
+-   **Breaking change**: The return type of `CGAL::Surface_mesh::property_map()` has been changed to `std::optional`.
+
+### [3D Point Set](https://doc.cgal.org/6.0/Manual/packages.html#PkgPointSet3)
+-   **Breaking change**: The return type of `CGAL::Point_set_3::property_map()` has been changed to `std::optional`.
 
 ### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
 - **Breaking change**: LSCM_parameterizer_3 needs Eigen
@@ -101,6 +135,12 @@ Release date: October 2023
     position now keeps the first one, instead of switching to the latest. This
     only affects custom point types where not all points in the same position
     are equivalent.
+
+### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.0/Manual/packages.html#PkgBGL)
+
+- Added the function `remove_all_elements()`, which removes vertices, halfedges, and faces
+  without collecting garbage and without removing properties.
+
 
 [Release 5.6](https://github.com/CGAL/cgal/releases/tag/v5.6)
 -----------

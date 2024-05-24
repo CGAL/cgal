@@ -25,7 +25,7 @@ set(CGAL_SetupCGAL_Qt6Dependencies_included TRUE)
 # ^^^^^^^^^^^^
 #   - :module:`Qt6Config`
 
-find_package(Qt6 QUIET COMPONENTS Widgets OpenGL OpenGLWidgets OPTIONAL_COMPONENTS Svg)
+find_package(Qt6 QUIET COMPONENTS OpenGL OpenGLWidgets Widgets OPTIONAL_COMPONENTS Svg)
 
 set(CGAL_Qt6_MISSING_DEPS "")
 if(NOT Qt6OpenGLWidgets_FOUND)

@@ -10,7 +10,7 @@
 
 //AABB_tree
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 //bbox
@@ -30,7 +30,7 @@ typedef SMS::LindstromTurk_cost<Surface>                      Cost;
 typedef SMS::LindstromTurk_placement<Surface>                 Placement;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Surface>     Primitive;
-typedef CGAL::AABB_traits<Kernel, Primitive>                  Traits;
+typedef CGAL::AABB_traits_3<Kernel, Primitive>                  Traits;
 typedef CGAL::AABB_tree<Traits>                               Tree;
 
 typedef SMS::Bounded_distance_placement<Placement, Kernel>    Filtered_placement;

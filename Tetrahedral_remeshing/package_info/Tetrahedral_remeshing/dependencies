@@ -1,3 +1,4 @@
+AABB_tree
 Algebraic_foundations
 Arithmetic_kernel
 BGL
@@ -20,9 +21,9 @@ Number_types
 Polygon_mesh_processing
 Profiling_tools
 Property_map
-Random_numbers
 SMDS_3
 STL_Extension
+Spatial_searching
 Spatial_sorting
 Stream_support
 TDS_3
