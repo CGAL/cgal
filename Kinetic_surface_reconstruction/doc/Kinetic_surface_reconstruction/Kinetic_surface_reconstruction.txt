@@ -297,7 +297,7 @@ Building_C
 <TD ALIGN=LEFT NOWRAP COLSPAN=10><HR>
 </TABLE>
 
-\section Ksp_history Design and Implementation History
+\section Ksurfp_history Design and Implementation History
 
 This package is an implementation of Bauchet et. al \cgalCite{bauchet2020kinetic}.
 A proof of concept of the kinetic surface reconstruction was developed by Dmitry Anisimov.
