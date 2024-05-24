@@ -52,7 +52,7 @@ namespace KSR {
 
     // Reconstruction.
     bool use_ground;
-    FT graphcut_beta; // magic parameter between 0 and 1
+    FT graphcut_lambda; // magic parameter between 0 and 1
     //std::map<typename KSP::Face_support, bool> external_nodes;
 
     // Constructor.
@@ -81,7 +81,7 @@ namespace KSR {
       reorient(false),
       use_ground(false),
       // reconstruction
-      graphcut_beta(FT(1) / FT(2))
+      graphcut_lambda(FT(1) / FT(2))
     { }
 
   };

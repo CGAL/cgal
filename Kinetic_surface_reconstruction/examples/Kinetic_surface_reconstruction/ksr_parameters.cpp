@@ -74,7 +74,7 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   parser.add_val_parameter("-osize", parameters.max_octree_node_size);
 
   // Reconstruction.
-  parser.add_val_parameter("-lambda", parameters.graphcut_beta);
+  parser.add_val_parameter("-lambda", parameters.graphcut_lambda);
   parser.add_val_parameter("-ground", parameters.use_ground);
 
   // Debug.
@@ -146,9 +146,7 @@ int main(const int argc, const char** argv) {
   std::cout << "maximum_angle " << parameters.maximum_angle << std::endl;
   std::cout << "min_region_size " << parameters.min_region_size << std::endl;
   std::cout << "k " << parameters.k_intersections << std::endl;
-  std::cout << "graphcut_beta " << parameters.graphcut_beta << std::endl;
-
-  std::cout << parameters.regorthogonal << " " << parameters.regsymmetric << std::endl;
+  std::cout << "graphcut_lambda " << parameters.graphcut_lambda << std::endl;
 
   auto param = CGAL::parameters::maximum_distance(parameters.maximum_distance)
     .maximum_angle(parameters.maximum_angle)
@@ -190,27 +188,27 @@ int main(const int argc, const char** argv) {
 
   std::map<typename KSR::KSP::Face_support, bool> external_nodes;
 
-  external_nodes[KSR::KSP::Face_support::ZMIN] = true;
-
-  if (parameters.use_ground)
-    ksr.reconstruct_with_ground(parameters.graphcut_beta, std::back_inserter(vtx), std::back_inserter(polylist));
+  if (parameters.use_ground) {
+    external_nodes[KSR::KSP::Face_support::ZMIN] = false;
+    ksr.reconstruct_with_ground(parameters.graphcut_lambda, std::back_inserter(vtx), std::back_inserter(polylist));
+  }
   else
-    ksr.reconstruct(parameters.graphcut_beta, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
+    ksr.reconstruct(parameters.graphcut_lambda, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
 
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_beta) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
 
-  std::vector<FT> lambdas{0.3, 0.5, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99};
+  std::vector<FT> lambdas{0.3, 0.5, 0.6, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99};
 
   bool non_empty = false;
 
   for (FT l : lambdas) {
-    if (l == parameters.graphcut_beta)
+    if (l == parameters.graphcut_lambda)
       continue;
 
     vtx.clear();

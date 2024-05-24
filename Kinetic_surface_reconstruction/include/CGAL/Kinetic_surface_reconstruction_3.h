@@ -905,9 +905,6 @@ private:
         std::cout << "outside face" << std::endl;
     }
 
-    if (m_verbose)
-      std::cout << "polygon regions " << polygon_regions.size() << std::endl;
-
     if (m_debug)
       KSP_3::internal::dump_polygons(polygon_regions, "faces_by_region-" + std::to_string(lambda) + ".ply");
 
@@ -1435,11 +1432,7 @@ private:
         }
       }
     }
-    if (m_verbose) {
-      for (std::size_t i = 0; i < polygons.size(); i++)
-        if (!merged[i])
-          std::cout << "ghost edge could not be placed" << std::endl;
-    }
+
     if (outer != 0)
       polygons[0] = std::move(polygons[outer]);
     polygons.resize(1);
@@ -1896,9 +1889,6 @@ private:
 
       for (std::size_t i = 0; i < other_ground.size(); i++)
         std::move(m_regions[other_ground[i]].second.begin(), m_regions[other_ground[i]].second.end(), std::back_inserter(m_regions[m_ground_polygon_index].second));
-
-      if (m_verbose)
-        std::cout << "ground polygon " << m_ground_polygon_index << ", merging other polygons" << std::endl;
 
       while (other_ground.size() != 0) {
         m_regions.erase(m_regions.begin() + other_ground.back());
