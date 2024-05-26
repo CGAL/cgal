@@ -121,7 +121,7 @@ target_link_libraries(mesh_polyhedral_complex_sm PUBLIC CGAL::Eigen3_support)
 if(TARGET CGAL::CGAL_ImageIO)
   if(VTK_FOUND AND ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION
                                                           VERSION_GREATER 5))
-    add_executable(mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp)
+    create_single_source_cgal_program("mesh_3D_gray_vtk_image.cpp")
     target_link_libraries(
       mesh_3D_gray_vtk_image
       PUBLIC CGAL::Eigen3_support CGAL::CGAL CGAL::CGAL_ImageIO ${VTK_LIBRARIES})

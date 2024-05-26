@@ -693,7 +693,7 @@ View of a remeshed surface. (Left) input mesh (Right) output mesh. Code from sub
 
 The following example produces a 3D mesh for a domain whose boundary surface
 is the isosurface associated to an isovalue inside the input gray-level
-3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with DICOM files as input.
+3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with `*.nii` as well as `DICOM` files as input.
 
 \cgalExample{Mesh_3/mesh_3D_gray_image.cpp}
 
