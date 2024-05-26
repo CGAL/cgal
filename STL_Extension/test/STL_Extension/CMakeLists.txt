@@ -12,6 +12,7 @@ if(NOT TARGET CGAL::TBB_support)
   message(STATUS "NOTICE: Tests are not using TBB.")
 endif()
 
+create_single_source_cgal_program("issue_7400.cpp")
 create_single_source_cgal_program("test_Boolean_tag.cpp")
 create_single_source_cgal_program("test_Cache.cpp")
 create_single_source_cgal_program("test_Compact_container.cpp")

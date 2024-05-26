@@ -49,6 +49,9 @@ struct Tester
   typedef typename C3t3::Facets_in_complex_iterator Facet_iterator;
   typedef typename C3t3::Vertex_handle Vertex_handle;
 
+  typedef typename C3t3::Vertices_in_complex Vertices_in_complex;
+  typedef typename C3t3::Cells_in_complex Cells_in_complex;
+
   typedef typename C3t3::Subdomain_index Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
   typedef typename C3t3::Index Index;
@@ -119,6 +122,15 @@ struct Tester
                                                                          c3t3.cells_in_complex_end()));
     assert(c3t3.is_in_complex(ch));
     assert(c3t3.subdomain_index(ch) == subdomain_index);
+
+    // Test iterator range
+    {
+      Cell_handle ch = *c3t3.cells_in_complex().begin();
+      for (auto c : c3t3.cells_in_complex()) {
+        assert(c == ch);
+        break;
+      }
+    }
 
     //-------------------------------------------------------
     // Test move construction
