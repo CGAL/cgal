@@ -187,7 +187,7 @@ namespace KSR {
 
     void set_parameters(
       Input_parameters& input_parameters,
-      const std::vector<std::string>& required) {
+      const std::vector<std::string>& /* required */) {
       if (parameters_should_be_loaded(input_parameters))
         load_parameters_from_file(input_parameters);
       m_parameters = input_parameters;

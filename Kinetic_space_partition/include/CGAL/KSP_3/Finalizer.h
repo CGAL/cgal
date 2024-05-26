@@ -123,6 +123,7 @@ public:
       for (const auto& v : m_data.volumes())
         dump_volume(m_data, v.pfaces, "volumes/" + m_data.prefix() + std::to_string(v.index), true, v.index);
     }
+
     CGAL_assertion(m_data.check_faces());
   }
 
@@ -446,7 +447,7 @@ private:
     // for each face, find vertex that is not collinear with the edge
     // sort around a reference face
 
-    const Segment_3 segment = m_data.segment_3(pedge);
+    // const Segment_3 segment = m_data.segment_3(pedge);
     IEdge ie = m_data.iedge(pedge);
     non_collinear_vertex(pface, ie);
 
@@ -529,7 +530,6 @@ private:
   }
 
   Oriented_side oriented_side(const PFace& a, const PFace& b) const {
-    FT max_dist = 0;
     if (a.first == b.first)
       return CGAL::ON_ORIENTED_BOUNDARY;
     Oriented_side side = CGAL::ON_ORIENTED_BOUNDARY;

@@ -470,7 +470,6 @@ public:
         continue;
       }
       IkPoint_2 p;
-      FT diff = sp.data().original_vectors[idx].squared_length() - from_exact(sp.data().original_rays[idx].to_vector().squared_length());
 
       if (CGAL::assign(p, result)) {
         IkFT l = CGAL::approximate_sqrt(sp.data().original_vectors[idx].squared_length());
@@ -554,14 +553,6 @@ public:
     if (event.time > kinetic_interval.back().second) {
       event.time = kinetic_interval.back().second;
       event.intersection_bary = 1;
-    }
-
-
-    if (kinetic_interval.size() > 4) {
-      if (kinetic_interval[2].first > kinetic_interval[1].first) {
-        int a;
-        a = 2;
-      }
     }
 
     CGAL_assertion(0 <= event.intersection_bary && event.intersection_bary <= 1);

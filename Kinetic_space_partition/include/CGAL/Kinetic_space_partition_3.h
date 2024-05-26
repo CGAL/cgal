@@ -929,7 +929,7 @@ public:
                 }*/
 
         for (const Index& v : vtx_of_face) {
-          ib.add_vertex_to_facet(static_cast<std::size_t>(mapped_vertices[v]));
+          ib.add_vertex_to_facet(static_cast<typename LCC::size_type>(mapped_vertices[v]));
           //std::cout << " " << mapped_vertices[v];
           if (!used_vertices[mapped_vertices[v]]) {
             used_vertices[mapped_vertices[v]] = true;
@@ -1037,42 +1037,6 @@ private:
   }
 
 
-  template<class OutputIterator>
-  void faces_of_input_polygon(const std::size_t polygon_index, OutputIterator it) const {
-    if (polygon_index >= m_input_planes.size()) {
-      assert(false);
-    }
-
-    for (std::size_t idx : m_partitions) {
-      const Sub_partition& p = m_partition_nodes[idx];
-      // Check if it contains this input polygon and get support plane index
-      int sp_idx = -1;
-      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
-        if (p.input_polygons[i] == polygon_index) {
-          sp_idx = p.m_data->support_plane_index(i);
-          break;
-        }
-      }
-
-      // Continue if the partition does not contain this input polygon.
-      if (sp_idx == -1)
-        continue;
-
-      auto pfaces = p.m_data->pfaces(sp_idx);
-      auto f2i = p.m_data->face_to_index();
-      const auto& f2sp = p.m_data->face_to_support_plane();
-
-      for (std::size_t i = 0; i < f2sp.size(); i++) {
-        if (f2sp[i] == sp_idx)
-          *it++ = std::make_pair(idx, i);
-      }
-    }
-  }
-
-  const std::vector<std::vector<std::size_t> >& input_mapping() const {
-    return m_regularized2input;
-  }
-
   /*!
   \brief Face indices of the volume.
 
@@ -1167,6 +1131,42 @@ private:
     }
   }
 
+
+  template<class OutputIterator>
+  void faces_of_input_polygon(const std::size_t polygon_index, OutputIterator it) const {
+    if (polygon_index >= m_input_planes.size()) {
+      assert(false);
+    }
+
+    for (std::size_t idx : m_partitions) {
+      const Sub_partition& p = m_partition_nodes[idx];
+      // Check if it contains this input polygon and get support plane index
+      int sp_idx = -1;
+      for (std::size_t i = 0; i < p.input_polygons.size(); i++) {
+        if (p.input_polygons[i] == polygon_index) {
+          sp_idx = p.m_data->support_plane_index(i);
+          break;
+        }
+      }
+
+      // Continue if the partition does not contain this input polygon.
+      if (sp_idx == -1)
+        continue;
+
+      auto pfaces = p.m_data->pfaces(sp_idx);
+      auto f2i = p.m_data->face_to_index();
+      const auto& f2sp = p.m_data->face_to_support_plane();
+
+      for (std::size_t i = 0; i < f2sp.size(); i++) {
+        if (f2sp[i] == sp_idx)
+          *it++ = std::make_pair(idx, i);
+      }
+    }
+  }
+
+  const std::vector<std::vector<std::size_t> >& input_mapping() const {
+    return m_regularized2input;
+  }
 
   /*!
   \brief Indices of adjacent volumes. Negative indices correspond to the empty spaces behind the sides of the bounding box.
