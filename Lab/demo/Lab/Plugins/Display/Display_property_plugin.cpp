@@ -929,8 +929,7 @@ private:
 
     SMesh& smesh = *item->face_graph();
 
-    const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").value();
-    const bool vnm_exists = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").has_value();
+    auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation");
 
     // compute once and store the value per vertex
     bool non_init;
@@ -938,21 +937,21 @@ private:
     std::tie(mu_i_map, non_init) = smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
     if(non_init || expand_radius_updated)
     {
-      if(vnm_exists)
+      if(vnm.has_value())
       {
         if(mu_index == MEAN_CURVATURE)
         {
           PMP::interpolated_corrected_curvatures(smesh,
                                                  CGAL::parameters::vertex_mean_curvature_map(mu_i_map)
                                                                   .ball_radius(expand_radius)
-                                                                  .vertex_normal_map(vnm));
+                                                                  .vertex_normal_map(vnm.value()));
         }
         else
         {
           PMP::interpolated_corrected_curvatures(smesh,
                                                  CGAL::parameters::vertex_Gaussian_curvature_map(mu_i_map)
                                                                   .ball_radius(expand_radius)
-                                                                  .vertex_normal_map(vnm));
+                                                                  .vertex_normal_map(vnm.value()));
         }
       }
       else
