@@ -120,7 +120,6 @@ CGAL_installation_test_find_package_version(fail-exact)
 
 set_tests_properties(
   test_find_package_version_greater
-  test_find_package_version_less_major
   test_find_package_version_fail-exact
   PROPERTIES WILL_FAIL TRUE)
 
