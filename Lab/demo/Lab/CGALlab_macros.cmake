@@ -1,5 +1,11 @@
+include_guard()
+
 include(AddFileDependencies)
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
+
+add_custom_target(CGALlab_all_plugins)
+add_executable(CGALlab_compile_all_plugins CGALlab_compile_all_plugins.cpp)
+add_dependencies(CGALlab_compile_all_plugins CGALlab_all_plugins)
 
   macro(cgal_lab_plugin plugin_name plugin_implementation_base_name)
     cmake_parse_arguments(ARG "" "" "KEYWORDS" ${ARGN})
@@ -48,6 +54,7 @@ include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
       add_dependencies( ${plugin_name} CGALlab )
     endif()
     if(NOT TARGET CGALlab_all_plugins)
+      message(AUTHOR_WARNING "CGALlab_all_plugins target not found, creating it")
       add_custom_target(CGALlab_all_plugins)
     endif()
     add_dependencies(CGALlab_all_plugins ${plugin_name})
