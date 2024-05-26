@@ -3673,13 +3673,8 @@ Comparison_result
 Triangulation_2<Gt, Tds>::
 compare_xy(const Point& p, const Point& q) const
 {
-  Comparison_result res = geom_traits().compare_x_2_object()(construct_point(p),
-                                                             construct_point(q));
-  if(res == EQUAL){
-    return geom_traits().compare_y_2_object()(construct_point(p),
-                                              construct_point(q));
-  }
-  return res;
+  return geom_traits().compare_xy_2_object()(construct_point(p),
+                                             construct_point(q));
 }
 
 template <class Gt, class Tds >

@@ -426,6 +426,7 @@ public:
   typedef typename K::Line_3      Line_2;
 
   typedef typename K::Angle_3                                Angle_2;
+  typedef typename K::Compare_xyz_3                          Compare_xy_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Compare_along_axis<Self>                                 Compare_x_2;
@@ -523,6 +524,9 @@ public:
 
   Angle_2  angle_2_object() const
     {return Angle_2();}
+
+  Compare_xy_2  compare_xy_2_object() const
+    {return Compare_xy_2();}
 
   Construct_point_2  construct_point_2_object() const
     {return Construct_point_2();}

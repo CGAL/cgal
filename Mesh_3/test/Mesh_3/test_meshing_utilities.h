@@ -71,6 +71,8 @@ void verify_time_stamps(const C3t3& c3t3, CGAL::Sequential_tag) {
       assert(prev->time_stamp() < cit->time_stamp());
     }
   }
+  assert(tds.vertices().check_timestamps_are_valid());
+  assert(tds.cells().check_timestamps_are_valid());
 }
 
 // Do not verify time stamps in parallel mode
