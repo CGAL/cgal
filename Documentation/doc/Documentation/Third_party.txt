@@ -23,7 +23,7 @@ supporting C++17 or later.
 Older versions of the above listed compilers might work, but no guarantee is provided.
 
 \section seccmake CMake
-<b>Version 3.14 or later</b>
+<b>Version 3.22 or later</b>
 
 In order to configure and build the \cgal examples, demos, or libraries,
 you need <a href="https://cmake.org/">CMake</a>, a cross-platform "makefile generator".
@@ -33,9 +33,7 @@ Please refer to the <a href="https://cmake.org/documentation/">CMake documentati
 for further details.
 
 \attention Recent versions of CMake are needed for the most recent versions of MS Visual C++.
-Please refer to CMake's documentation for further information, for example
-<a href="https://cmake.org/cmake/help/latest/generator/Visual%20Studio%2016%202019.html">here</a>
-for Visual Studio 16 2019.
+Please refer to CMake's documentation for further information.
 
 \section secessential3rdpartysoftware Essential Third Party Libraries
 
@@ -75,9 +73,9 @@ we recommend that you define the environment variable
 `BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_70_0`.
 
 \subsection thirdpartyMPFR GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
-<b>GMP Version 4.2 or later, MPFR Version 2.2.1 or later</b>
+<b>GMP Version 5.0.1 or later, MPFR Version 3.0.0 or later</b>
 
-The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt6` require
+The components `CGAL`, `CGAL_Core`, and `CGAL_Qt6` require
 \gmp and \mpfr which are libraries for multi precision integers and rational numbers,
 and for multi precision floating point numbers.
 
@@ -107,7 +105,7 @@ the location of third-party software during configuration.
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGAL_Qt6 is essential to run the \cgal demos and basic viewers.
+The component `CGAL_Qt6` is essential to run the \cgal demos and basic viewers.
 It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
 it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
@@ -117,7 +115,7 @@ The exhaustive list of \qt6 components used in demos is:
 `WebSockets`,  `Network`, and `qcollectiongenerator` (with `sqlite` driver plugin).
 
 \subsection thirdpartyEigen Eigen
-<b>Version 3.3.4 or later</b>
+<b>Version 3.3.7 or later</b>
 
 \eigen is a `C++` template library for linear algebra. \eigen supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
