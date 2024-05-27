@@ -45,9 +45,10 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
-  typedef std::vector<std::pair<Point_3, Index> > Initial_points_vector;
-  typedef typename Initial_points_vector::iterator Ipv_iterator;
+  typedef typename std::pair<Point_3, Index> PI;
+  typedef std::vector<PI> Initial_points_vector;
   typedef typename C3T3::Vertex_handle Vertex_handle;
+  typedef CGAL::Mesh_3::Triangulation_helpers<typename C3T3::Triangulation> Th;
 
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
@@ -61,17 +62,18 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
       c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
   // Insert points and set their index and dimension
-  for ( Ipv_iterator it = initial_points.begin() ;
-       it != initial_points.end() ;
-       ++it )
+  for (const PI& pi : initial_points)
   {
-    Vertex_handle v = c3t3.triangulation().insert(cwp(it->first));
+    if(Th().inside_protecting_balls(c3t3.triangulation(), Vertex_handle(), pi.first))
+      continue;
+
+    Vertex_handle v = c3t3.triangulation().insert(cwp(pi.first));
 
     // v could be null if point is hidden
     if ( v != Vertex_handle() )
     {
       c3t3.set_dimension(v,2); // by construction, points are on surface
-      c3t3.set_index(v,it->second);
+      c3t3.set_index(v, pi.second);
     }
   }
 }
@@ -92,6 +94,22 @@ private:
   const EdgeCriteria& ec_;
 };
 
+template < typename EdgeCriteria >
+struct Edge_criteria_distance_field_wrapper
+{
+  typedef typename EdgeCriteria::Index    Index;
+  typedef typename EdgeCriteria::FT       FT;
+  typedef typename EdgeCriteria::Point_3  Point_3;
+
+  Edge_criteria_distance_field_wrapper(const EdgeCriteria& ec) : ec_(ec) {}
+  FT operator()(const Point_3& p, const int dim, const Index& index) const
+  { return ec_.distance_field(p,dim,index); }
+
+  private:
+  // No need to copy EdgeCriteria here
+  const EdgeCriteria& ec_;
+};
+
 template < typename C3T3, typename MeshDomain, typename MeshCriteria>
 void init_c3t3_with_features(C3T3& c3t3,
                              const MeshDomain& domain,
@@ -107,20 +125,43 @@ void init_c3t3_with_features(C3T3& c3t3,
   typedef typename MeshCriteria::Edge_criteria Edge_criteria;
   typedef Edge_criteria_sizing_field_wrapper<Edge_criteria> Sizing_field;
 
-  CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>
-    protect_edges(c3t3,
-                  domain,
-                  Sizing_field(criteria.edge_criteria_object()),
-                  criteria.edge_criteria_object().min_length_bound(),
-                  maximal_number_of_vertices,
-                  pointer_to_error_code
+  if (criteria.edge_criteria_object().has_distance_field())
+  {
+    typedef Edge_criteria_distance_field_wrapper<Edge_criteria> Distance_field;
+    CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field,Distance_field>
+      protect_edges(c3t3,
+                    domain,
+                    Sizing_field(criteria.edge_criteria_object()),
+                    criteria.edge_criteria_object().min_length_bound(),
+                    Distance_field(criteria.edge_criteria_object()),
+                    maximal_number_of_vertices,
+                    pointer_to_error_code
 #ifndef CGAL_NO_ATOMIC
-                  , pointer_to_stop
+                    , pointer_to_stop
 #endif
-                  );
-  protect_edges.set_nonlinear_growth_of_balls(nonlinear);
+                    );
+    protect_edges.set_nonlinear_growth_of_balls(nonlinear);
 
-  protect_edges(true);
+    protect_edges(true);
+  }
+  else
+  {
+    CGAL::Mesh_3::Protect_edges_sizing_field<C3T3,MeshDomain,Sizing_field>
+      protect_edges(c3t3,
+                    domain,
+                    Sizing_field(criteria.edge_criteria_object()),
+                    criteria.edge_criteria_object().min_length_bound(),
+                    CGAL::Mesh_3::NoDistanceFunction(),
+                    maximal_number_of_vertices,
+                    pointer_to_error_code
+#ifndef CGAL_NO_ATOMIC
+                    , pointer_to_stop
+#endif
+                    );
+    protect_edges.set_nonlinear_growth_of_balls(nonlinear);
+
+    protect_edges(true);
+  }
 }
 
 // This class is only used as base for specializations of C3t3_initializer

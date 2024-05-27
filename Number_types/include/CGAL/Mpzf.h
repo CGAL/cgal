@@ -23,6 +23,7 @@
 #include <vector>
 #include <math.h>
 #include <cmath>
+#include <cstdint>
 #include <iostream>
 #include <stdexcept>
 #ifdef CGAL_USE_GMPXX

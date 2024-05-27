@@ -16,14 +16,14 @@ namespace CGAL {
 
  * The `Arrangement_on_surface_2` template has two parameters:
  * <UL>
- * <LI>The `GeometryTraits` template-parameter should be instantiated with
+ * <LI>The `GeometryTraits` template-parameter should be substituted by
  * a model of a geometry traits. The minimal requirements are defined by the
  * `ArrangementBasicTraits_2` concept. A model of this concept defines
  * the types of \f$ x\f$-monotone curves and two-dimensional points, namely
  * `ArrangementBasicTraits_2::X_monotone_curve_2` and
  * `ArrangementBasicTraits_2::Point_2`, respectively, and supports basic
  * geometric predicates on them.
- * <LI>The `TopologyTraits` template-parameter should be instantiated with a
+ * <LI>The `TopologyTraits` template-parameter should be substituted by a
  * class that is a model of the `ArrangementTopologyTraits` concept.
  * </UL>
  *
@@ -1129,13 +1129,16 @@ bool do_intersect(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
  * Inserts a given \f$ x\f$-monotone curve into a given arrangement, where the
- * interior of the given curve is disjoint from all existing arrangement
- * vertices and edges. Under this assumption, it is possible to locate the
- * endpoints of the given curve in the arrangement, and use one of the
- * specialized insertion member-functions of the arrangement according to the
- * results. The insertion operations creates a single new edge, that is, two
- * twin halfedges, and the function returns a handle for the one directed
- * lexicographically in increasing order (from left to right).
+ * given curve and the existing arrangement edges (more precisely, the curves
+ * geometric mappings of the edges) must be pairwise disjoint in their
+ * interiors, and the interior of the input curve must not contain existing
+ * arrangement vertices (more precisely, the points geometric mappings of the
+ * vertices). Under this condition, it is possible to locate the endpoints of
+ * the given curve in the arrangement, and use one of the specialized insertion
+ * member-functions of the arrangement according to the results. The insertion
+ * operations creates a single new edge, that is, two twin halfedges. The
+ * function returns a handle to the one directed lexicographically in
+ * increasing order (from left to right).
  *
  * A given point-location object is used for answering the two point-location
  * queries on the given curve endpoints. By default, the function uses the "walk
@@ -1165,10 +1168,13 @@ insert_non_intersecting_curve
 /*! \ingroup PkgArrangementOnSurface2Funcs
  *
  * Inserts a set of \f$ x\f$-monotone curves in a given range into a given
- * arrangement. The insertion is performed in an aggregated manner, using the
- * sweep-line algorithm. The input curves should be pairwise disjoint in their
- * interior and pairwise interior-disjoint from all existing arrangement
- * vertices and edges.
+ * arrangement. The insertion is performed in an aggregated manner using the
+ * sweep-line algorithm. The input curves and the existing arrangement edges
+ * (more precisely, the curves geometric mappings of the edges) must be pairwise
+ * disjoint in their interiors, and the interiors of the input curves must not
+ * contain existing arrangement vertices (more precisely, the points geometric
+ * mappings of the vertices). The insertion operations creates exactly one new
+ * edge, that is, two twin halfedges, for every input curve.
  *
  * \cgalHeading{Requirements}
  *

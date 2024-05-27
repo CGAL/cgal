@@ -538,6 +538,7 @@ struct Triangulation_structural_filtering_traits<Robust_circumcenter_filtered_tr
     typedef typename Triangulation_structural_filtering_traits<BaseGt>::Use_structural_filtering_tag  Use_structural_filtering_tag;
 };
 
+
 template<class K_>
 class Robust_weighted_circumcenter_filtered_traits_3
   : public Robust_circumcenter_filtered_traits_3<K_>

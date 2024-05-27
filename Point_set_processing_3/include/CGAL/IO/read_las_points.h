@@ -123,7 +123,7 @@ typedef Base<unsigned short, Id::I> I;
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Generates a %LAS property handler to read 3D points. Points are
+   generates a %LAS property handler to read 3D points. Points are
    constructed from the input the using 3 %LAS properties
    `LAS_property::X`, `LAS_property::Y` and `LAS_property::Z`.
 
@@ -574,11 +574,7 @@ bool read_las_points(std::istream& is, ///< input stream.
 
 /// \endcond
 
-/**
- \ingroup PkgPointSetProcessing3IODeprecated
 
- \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_LAS_with_properties()` should be used instead.
-*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename ... PropertyHandler>
@@ -602,11 +598,6 @@ CGAL_DEPRECATED bool read_las_points_with_properties(std::istream& is,
 
 /// \endcond
 
-/**
- \ingroup PkgPointSetProcessing3IODeprecated
-
- \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::read_LAS()` should be used instead.
-*/
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename CGAL_NP_TEMPLATE_PARAMETERS>

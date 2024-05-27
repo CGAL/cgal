@@ -1,10 +1,11 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/generators.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/generators.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <fstream>
 #include <iostream>
@@ -30,7 +31,7 @@ int main(int, char**)
 
   std::set<face_descriptor> fs;
   auto selected_faces = make_boolean_property_map(fs);
-  fs.insert(*(faces(sm).begin()));
+  fs.insert(Polygon_mesh::Face_index(190));
   CGAL::expand_face_selection(fs, sm, 1, selected_faces, CGAL::Emptyset_iterator());
   std::cout << fs.size() << " faces in the range" << std::endl;
   assert(fs.size() == 4);

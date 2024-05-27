@@ -29,6 +29,18 @@ endif()
 find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
+if (NOT Python3_EXECUTABLE)
+  message(FATAL_ERROR "Cannot build the documentation without Python3!")
+  return()
+endif()
+
+message(STATUS  ${Python3_EXECUTABLE})
+
+if(NOT DOXYGEN_FOUND)
+  message(WARNING "Cannot build the documentation without Doxygen!")
+  return()
+endif()
+
 #starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
 if(TARGET Doxygen::doxygen)
   get_property(
@@ -353,6 +365,10 @@ configure_file(${CGAL_DOC_RESOURCE_DIR}/BaseDoxyfile.in
                ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
 
 set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
+
+if (BE_QUIET)
+  file(APPEND ${CGAL_DOC_DOXY_DEFAULT} "WARN_LOGFILE=doxygen.log\n")
+endif()
 
 # pkglist_filter gets the path to the pkglist_filter of this source
 # directory.

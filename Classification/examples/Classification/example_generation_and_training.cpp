@@ -44,10 +44,8 @@ int main (int argc, char** argv)
   std::cerr << "Reading input" << std::endl;
   in >> pts;
 
-  Imap label_map;
-  bool lm_found = false;
-  std::tie (label_map, lm_found) = pts.property_map<int> ("label");
-  if (!lm_found)
+  std::optional<Imap> label_map = pts.property_map<int> ("label");
+  if (!label_map.has_value())
   {
     std::cerr << "Error: \"label\" property not found in input file." << std::endl;
     return EXIT_FAILURE;
@@ -82,7 +80,7 @@ int main (int argc, char** argv)
   std::cerr << "Training" << std::endl;
   t.reset();
   t.start();
-  classifier.train<CGAL::Parallel_if_available_tag> (pts.range(label_map), 800);
+  classifier.train<CGAL::Parallel_if_available_tag> (pts.range(label_map.value()), 800);
   t.stop();
   std::cerr << "Done in " << t.time() << " second(s)" << std::endl;
 
@@ -97,7 +95,7 @@ int main (int argc, char** argv)
   std::cerr << "Classification with graphcut done in " << t.time() << " second(s)" << std::endl;
 
   std::cerr << "Precision, recall, F1 scores and IoU:" << std::endl;
-  Classification::Evaluation evaluation (labels, pts.range(label_map), label_indices);
+  Classification::Evaluation evaluation (labels, pts.range(label_map.value()), label_indices);
 
   for (Label_handle l : labels)
   {

@@ -202,7 +202,7 @@ protected:
     {
 #ifdef CGAL_MESH_3_DEBUG_FACET_CRITERIA
       std::cerr << "Cell too small (uniform size): sq_radius[" << size
-        << "] bound[" << B_ << "]\n";
+        << "] bound[" << sq_radius_bound_ << "]\n";
 #endif
       return Is_bad(Quality(sq_radius_bound_/size));
     }

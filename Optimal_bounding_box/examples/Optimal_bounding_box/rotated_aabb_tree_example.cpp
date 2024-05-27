@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/optimal_bounding_box.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
   // rotated AABB tree
   typedef CGAL::AABB_face_graph_triangle_primitive<Surface_mesh, decltype(aff_tr_vpm)> AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                              AABB_face_graph_traits;
+  typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                            AABB_face_graph_traits;
 
   CGAL::AABB_tree<AABB_face_graph_traits> tree(faces(sm).begin(), faces(sm).end(), sm, aff_tr_vpm);
 

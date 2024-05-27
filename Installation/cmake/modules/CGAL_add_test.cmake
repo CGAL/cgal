@@ -3,9 +3,13 @@ if(CGAL_add_test_included)
 endif(CGAL_add_test_included)
 set(CGAL_add_test_included TRUE)
 
-option(BUILD_TESTING "Build the testing tree." OFF)
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
+option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
 
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   enable_testing()
 endif()
 
@@ -113,27 +117,26 @@ function(cgal_add_compilation_test exe_name)
     add_test(NAME "check build system"
       COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "cgal_check_build_system" --config "$<CONFIG>")
     set_property(TEST "check build system"
-      APPEND PROPERTY LABELS "CGAL_build_system")
+      APPEND PROPERTY LABELS "CGAL_build_system" "Installation")
     set_property(TEST "check build system"
        PROPERTY FIXTURES_SETUP "check_build_system_SetupFixture")
   endif()
-  if(TARGET CGAL_Qt5_moc_and_resources) # if CGAL_Qt5 was searched, and is header-only
+  if(TARGET CGAL_Qt6_moc_and_resources) # if CGAL_Qt6 was searched, and is header-only
     get_property(linked_libraries TARGET "${exe_name}" PROPERTY LINK_LIBRARIES)
     #  message(STATUS "${exe_name} depends on ${linked_libraries}")
-    string(FIND "${linked_libraries}" "CGAL::CGAL_Qt5" link_with_CGAL_Qt5)
-    if(link_with_CGAL_Qt5 STRGREATER "-1" AND
-        NOT TARGET "compilation_of__CGAL_Qt5_moc_and_resources")
+    if( ("CGAL_Qt6" IN_LIST linked_libraries OR "CGAL::CGAL_Qt6" IN_LIST linked_libraries OR "CGAL::CGAL_Basic_viewer" IN_LIST linked_libraries)
+        AND NOT TARGET "compilation_of__CGAL_Qt6_moc_and_resources")
       # This custom target is useless. It is used only as a flag to
       # detect that the test has already been created.
-      add_custom_target("compilation_of__CGAL_Qt5_moc_and_resources")
-      add_dependencies( "compilation_of__CGAL_Qt5_moc_and_resources" CGAL_Qt5_moc_and_resources )
-      add_test(NAME "compilation of  CGAL_Qt5_moc_and_resources"
-        COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "CGAL_Qt5_moc_and_resources" --config "$<CONFIG>")
-      set_property(TEST "compilation of  CGAL_Qt5_moc_and_resources"
-        APPEND PROPERTY LABELS "CGAL_build_system")
-      set_property(TEST "compilation of  CGAL_Qt5_moc_and_resources"
-        PROPERTY FIXTURES_SETUP "CGAL_Qt5_moc_and_resources_Fixture")
-      set_property(TEST "compilation of  CGAL_Qt5_moc_and_resources"
+      add_custom_target("compilation_of__CGAL_Qt6_moc_and_resources")
+      add_dependencies( "compilation_of__CGAL_Qt6_moc_and_resources" CGAL_Qt6_moc_and_resources )
+      add_test(NAME "compilation of  CGAL_Qt6_moc_and_resources"
+        COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target "CGAL_Qt6_moc_and_resources" --config "$<CONFIG>")
+      set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
+        APPEND PROPERTY LABELS "CGAL_build_system" "Installation")
+      set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
+        PROPERTY FIXTURES_SETUP "CGAL_Qt6_moc_and_resources_Fixture")
+      set_property(TEST "compilation of  CGAL_Qt6_moc_and_resources"
         APPEND PROPERTY DEPENDS "check build system")
     endif()
   endif()
@@ -313,7 +316,7 @@ function(cgal_add_test exe_name)
         -P "${CGAL_MODULES_DIR}/run_test_with_cin.cmake")
       set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${cin_file})
-      #	message(STATUS "add test: ${exe_name} < ${cin_file}")
+      # message(STATUS "add test: ${exe_name} < ${cin_file}")
     endif()
   else()
     if(NOT ARGS AND NOT cgal_add_test_TEST_NAME)
@@ -328,12 +331,12 @@ function(cgal_add_test exe_name)
         file(STRINGS "${cmd_file}" CMD_LINES)
         string(CONFIGURE "${CMD_LINES}" CMD_LINES)
         set(ARGS)
-        #	  message(STATUS "DEBUG test ${exe_name}")
+        #         message(STATUS "DEBUG test ${exe_name}")
         foreach(CMD_LINE ${CMD_LINES})
-    #	    message(STATUS "  command line: ${CMD_LINE}")
+    #       message(STATUS "  command line: ${CMD_LINE}")
           string(REGEX REPLACE "\#.*" "" CMD_LINE "${CMD_LINE}")
           separate_arguments(CMD_LINE_ARGS UNIX_COMMAND ${CMD_LINE})
-    #	    message(STATUS "  args: ${CMD_LINE_ARGS}")
+    #       message(STATUS "  args: ${CMD_LINE_ARGS}")
           list(APPEND ARGS ${CMD_LINE_ARGS})
         endforeach()
         expand_list_with_globbing(ARGS)
@@ -341,7 +344,7 @@ function(cgal_add_test exe_name)
           APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${cmd_file})
       endif()
     endif()
-    #	message(STATUS "add test: ${exe_name} ${ARGS}")
+    #   message(STATUS "add test: ${exe_name} ${ARGS}")
     if(ANDROID)
       add_test(NAME ${test_name} COMMAND ${TIME_COMMAND} ${adb_executable} shell cd ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME} && LD_LIBRARY_PATH=${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME} ${CGAL_REMOTE_TEST_DIR_PREFIX}${PROJECT_NAME}/${exe_name} ${ARGS})
     elseif(CGAL_RUN_TESTS_THROUGH_SSH)

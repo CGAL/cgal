@@ -1,19 +1,22 @@
 // #define USE_SURFACE_MESH
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_slicer.h>
+
 #ifdef USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
 #else
 #include <CGAL/Polyhedron_3.h>
 #endif
+
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 
-#include <CGAL/Polygon_mesh_slicer.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polygon_2.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <fstream>
 #include <cassert>
@@ -47,7 +50,7 @@ int test_slicer()
 #endif
 
   typedef CGAL::AABB_halfedge_graph_segment_primitive<Mesh> HGSP;
-  typedef CGAL::AABB_traits<K, HGSP>    AABB_traits;
+  typedef CGAL::AABB_traits_3<K, HGSP>    AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
   typedef std::vector<typename K::Point_3> Polyline_type;
   typedef std::vector< Polyline_type > Polylines;

@@ -1,0 +1,4 @@
+include(CGALlab_macros)
+
+cgal_lab_plugin(subdivision_methods_plugin Subdivision_methods_plugin)
+target_link_libraries(subdivision_methods_plugin PUBLIC scene_surface_mesh_item)

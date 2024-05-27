@@ -23,7 +23,6 @@
 #include <functional>
 
 #include <any>
-#include <boost/mpl/if.hpp>
 #include <boost/utility/result_of.hpp>
 
 #include <iterator>

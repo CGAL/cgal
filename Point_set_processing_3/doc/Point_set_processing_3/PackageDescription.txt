@@ -10,9 +10,6 @@ simplification, etc.).
 \defgroup PkgPointSetProcessing3IO I/O Functions
 \ingroup PkgPointSetProcessing3Ref
 
-\defgroup PkgPointSetProcessing3IODeprecated I/O Functions (Deprecated)
-\ingroup PkgPointSetProcessing3IO
-
 \defgroup PkgPointSetProcessing3IOOff I/O (OFF Formats)
 \ingroup PkgPointSetProcessing3Ref
 
@@ -44,7 +41,7 @@ format.
 \cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:ass-psp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

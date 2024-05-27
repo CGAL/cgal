@@ -230,7 +230,7 @@ int main()
     Periodic_mesh_criteria criteria(facet_angle = 30,
                                     facet_size = 0.05,
                                     facet_distance = 0.025,
-                                    cell_radius_edge = 2,
+                                    cell_radius_edge_ratio = 2,
                                     cell_size = 0.05);
 
     // Mesh generation

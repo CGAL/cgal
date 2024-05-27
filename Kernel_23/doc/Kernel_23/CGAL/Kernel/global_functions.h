@@ -367,7 +367,7 @@ const CGAL::Line_2<Kernel> &l2);
 /*!
 constructs the bisector plane of the two points `p` and `q`.
 The bisector is oriented in such a way that `p` lies on its
-positive side. \pre `p != q'.
+positive side. \pre `p != q`.
 */
 template <typename Kernel>
 CGAL::Plane_3<Kernel> bisector(const CGAL::Point_3<Kernel> &p,
@@ -2242,12 +2242,14 @@ const CGAL::Point_3<Kernel>& q);
 
 /*!
 computes the vertex with the lexicographically largest coordinates of the iso rectangle `ir`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_2<Kernel> max_vertex( const CGAL::Iso_rectangle_2<Kernel>& ir );
 
 /*!
 computes the vertex with the lexicographically largest coordinates of the iso cuboid `ic`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> max_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
@@ -2292,12 +2294,14 @@ CGAL::Point_3<Kernel> midpoint( const CGAL::Segment_3<Kernel>& s );
 
 /*!
 computes the vertex with the lexicographically smallest coordinates of the iso rectangle `ir`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_2<Kernel> min_vertex( const CGAL::Iso_rectangle_2<Kernel>& ir );
 
 /*!
 computes the vertex with the lexicographically smallest coordinates of the iso cuboid `ic`.
+\cgalEpicExact
 */
 template <typename Kernel>
 CGAL::Point_3<Kernel> min_vertex( const CGAL::Iso_cuboid_3<Kernel>& ic );
@@ -2686,6 +2690,42 @@ const CGAL::Point_3<Kernel>& r);
 
 /// \defgroup squared_distance_grp CGAL::squared_distance()
 /// \ingroup kernel_global_function
+
+/// \defgroup squared_length_grp CGAL::squared_length()
+/// \ingroup kernel_global_function
+
+/// @{
+
+/*!
+compute the squared length of vector `v`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Vector_2<Kernel>& v);
+
+/*!
+compute the squared length of segment `s`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Segment_2<Kernel>& s);
+
+/*!
+compute the squared length of vector `v`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Vector_3<Kernel>& v);
+
+/*!
+compute the squared length of segment `s`.
+*/
+template <typename Kernel>
+FT
+squared_length(const CGAL::Segment_3<Kernel>& s);
+
+/// @}
+
 
 /// \defgroup squared_radius_grp CGAL::squared_radius()
 /// \ingroup kernel_global_function

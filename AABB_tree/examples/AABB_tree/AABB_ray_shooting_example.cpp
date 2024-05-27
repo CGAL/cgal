@@ -2,7 +2,7 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
@@ -21,7 +21,7 @@ typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 typedef std::optional<Tree::Intersection_and_primitive_id<Ray>::Type> Ray_intersection;
 
