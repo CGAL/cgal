@@ -24,6 +24,20 @@ Release date: June 2024
   by a link to the imported target `CGAL::CGAL`, for example:
   `target_link_library(your_target PRIVATE CGAL::CGAL)`.
 
+### [Kinetic Space Partition](https://doc.cgal.org/6.0/Manual/packages.html#PkgKineticSpacePartition) (new package)
+
+-   This package implements kinetic space partition: based on a set of planar input shapes,
+    the bounding box of the input data is split into convex volumes. The complexity of the partition
+    can be adjusted with a single parameter.
+
+### [Kinetic Surface Reconstruction](https://doc.cgal.org/6.0/Manual/packages.html#PkgKineticSurfaceReconstruction) (new package)
+
+-   The package implements a piece-wise planar surface reconstruction pipeline from point clouds
+    combining methods from the [Shape Detection](https://doc.cgal.org/6.0/Manual/packages.html#PkgShapeDetection),
+    [Shape Regularization](https://doc.cgal.org/6.0/Manual/packages.html#PkgShapeRegularization)
+    and [Kinetic Shape Partition](https://doc.cgal.org/6.0/Manual/packages.html#PkgKineticSpacePartition) packages
+    and graph-cut to reconstruct surfaces from point clouds.
+
 ### [Basic Viewer](https://doc.cgal.org/6.0/Basic_viewer/index.html#Chapter_Basic_viewer)
 
 -   The basic viewer package provides interactive visualization for most CGAL packages,
@@ -46,18 +60,6 @@ Release date: June 2024
     an interactive window showing the given model and allowing to navigate in the scene,
     show or hide some specific cells, show the interior of the model if any, etc.
     The `Basic_viewer` is based on Qt6.
-
-### [Kinetic Space Partition](https://doc.cgal.org/6.0/Manual/packages.html#PkgKineticSpacePartition) (new package)
-
--   This package implements kinetic space partition. Based on a set of planar input shapes
-    the bounding box of the input data is split into convex volumes. The complexity of the partition
-    can be adjusted with a single parameter.
-
-### [Kinetic Surface Reconstruction](https://doc.cgal.org/6.0/Manual/packages.html#PkgKineticSurfaceReconstruction (new package)
-) (new package)
-
--   The package implements a piece-wise planar surface reconstruction pipeline from point clouds
-    combining methods from the Shape Detection, Shape Regularization and Kinetic Shape Partition packages and graph-cut.
 
 ### [Polygon Repair](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonRepair) (new package)
 
