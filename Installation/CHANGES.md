@@ -38,7 +38,7 @@ Release date: June 2024
     and [Kinetic Shape Partition](https://doc.cgal.org/6.0/Manual/packages.html#PkgKineticSpacePartition) packages
     and graph-cut to reconstruct surfaces from point clouds.
 
-### [Basic Viewer](https://doc.cgal.org/6.0/Basic_viewer/index.html#Chapter_Basic_viewer)
+### [Basic Viewer](https://doc.cgal.org/6.0/Basic_viewer/index.html#Chapter_Basic_viewer) (new package)
 
 -   The basic viewer package provides interactive visualization for most CGAL packages,
     such as [2D Arrangements](https://doc.cgal.org/6.0/Manual/packages.html#PkgArrangementOnSurface2),
