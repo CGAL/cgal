@@ -65,6 +65,10 @@ Release date: June 2024
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
 
+-   Added new meshing criterion `edge_distance`, an upper bound for the distance from the edge to the 1D feature.
+- **Breaking change**: the concept `MeshEdgeCriteria_3` was modified to include the new meshing criterion `edge_distance`.
+
+
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
 - **Breaking change**:
   - Node splitting behavior and per-node data are now customizable via the Traits class.
