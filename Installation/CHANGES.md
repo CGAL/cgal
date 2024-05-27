@@ -47,6 +47,18 @@ Release date: June 2024
     show or hide some specific cells, show the interior of the model if any, etc.
     The `Basic_viewer` is based on Qt6.
 
+### [Kinetic Space Partition](https://doc.cgal.org/6.0/Manual/packages.html#PkgKineticSpacePartition) (new package)
+
+-   This package implements kinetic space partition. Based on a set of planar input shapes
+    the bounding box of the input data is split into convex volumes. The complexity of the partition
+    can be adjusted with a single parameter.
+
+### [Kinetic Surface Reconstruction](https://doc.cgal.org/6.0/Manual/packages.html#PkgKineticSurfaceReconstruction (new package)
+) (new package)
+
+-   The package implements a piece-wise planar surface reconstruction pipeline from point clouds
+    combining methods from the Shape Detection, Shape Regularization and Kinetic Shape Partition packages and graph-cut.
+
 ### [Polygon Repair](https://doc.cgal.org/6.0/Manual/packages.html#PkgPolygonRepair) (new package)
 
 -   This package provides algorithms to repair 2D polygons, polygons with holes,
