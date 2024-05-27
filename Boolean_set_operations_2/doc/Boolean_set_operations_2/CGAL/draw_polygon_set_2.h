@@ -30,7 +30,7 @@ opens a new window and draws a 2D polygon set. Parameters of the drawing are tak
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam PS2 which must be an instanciation of a `CGAL::Polygon_set_2<...>`.
+\tparam PS2 which must be an instantiation of a `CGAL::Polygon_set_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptionsPolygonSet2` concept.
 
 \param ps2 the polygon set to draw.
@@ -62,7 +62,7 @@ void draw(const PS2& ps2);
 
 adds the vertices, edges and faces of `ps2` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
-\tparam PS2 which must be an instanciation of a `CGAL::Polygon_set_2<...>`.
+\tparam PS2 which must be an instantiation of a `CGAL::Polygon_set_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptionsPolygonSet2` concept.
 
 \param ps2 the polygon set to draw.
