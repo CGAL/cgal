@@ -141,6 +141,9 @@ Release date: June 2024
     only affects custom point types where not all points in the same position
     are equivalent.
 
+### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
+-   Made the  implicit function thread-safe so that the parallel version of `make_mesh_3()` can be used.
+
 ### [CGAL and the Boost Graph Library (BGL)](https://doc.cgal.org/6.0/Manual/packages.html#PkgBGL)
 
 - Added the function `remove_all_elements()`, which removes vertices, halfedges, and faces
