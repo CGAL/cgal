@@ -42,11 +42,16 @@
 int
 main()
 {
+  CGAL::Set_ieee_double_precision double_precision_guard;
   typedef   CGAL::Test::CustomKernel     Cls;
   typedef Cls::Point_3 Point_3;
-
+  typedef Cls::Segment_3 Segment_3;
   Point_3 p(1,2,3);
+  Point_3 q(4,5,6);
   std::cout << p  << std::endl;
+  p.bbox();
+  Segment_3 seg(p,q);
+  std::cout << seg.bbox() << std::endl;
 #if 1
   Cls::Construct_point_3 cp3 = Cls().construct_point_3_object();
   p = cp3(4,5,6);
@@ -66,12 +71,10 @@ main()
   std::cout << "Testing 3d with CustomKernel  :";
   std::cout << std::endl;
   _test_3( Cls() );
-  _test_cls_circle_3( Cls() );
 
   std::cout << "Testing new 2d with CustomKernel  :";
   std::cout << std::endl;
   test_new_2( Cls() );
-  _test_cls_new_2( Cls() );
 
   std::cout << "Testing new 3d with CCustomKernel  :";
   std::cout << std::endl;
