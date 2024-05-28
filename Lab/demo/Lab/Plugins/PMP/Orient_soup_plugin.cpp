@@ -109,7 +109,7 @@ QList<QAction*> CGAL_Lab_orient_soup_plugin::actions() const {
       << actionClean;
 }
 
-void set_vcolors(SMesh* smesh, std::vector<CGAL::IO::Color> colors)
+void set_vcolors(SMesh* smesh, const std::vector<CGAL::IO::Color>& colors)
 {
   typedef SMesh SMesh;
   typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
@@ -123,7 +123,7 @@ void set_vcolors(SMesh* smesh, std::vector<CGAL::IO::Color> colors)
       vcolors[vd] = colors[color_id++];
 }
 
-void set_fcolors(SMesh* smesh, std::vector<CGAL::IO::Color> colors)
+void set_fcolors(SMesh* smesh, const std::vector<CGAL::IO::Color>& colors)
 {
   typedef SMesh SMesh;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
