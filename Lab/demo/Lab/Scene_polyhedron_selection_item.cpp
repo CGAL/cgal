@@ -1080,13 +1080,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<fg_vertex_d
   return false;
 }
 
-//returns true if halfedge's facet's degree >= degree
-/*
-std::size_t facet_degree(fg_halfedge_descriptor h, const Face_graph& polyhedron)
-{
-  return degree(h,polyhedron);
-}
-*/
 bool Scene_polyhedron_selection_item:: treat_selection(const std::set<fg_edge_descriptor>& selection)
 {
   VPmap vpm = get(CGAL::vertex_point, *polyhedron());
