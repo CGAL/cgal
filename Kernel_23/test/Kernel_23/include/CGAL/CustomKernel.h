@@ -7,9 +7,11 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
 
-namespace CGAL { namespace Test {
+namespace CGAL { 
+namespace Test {
 
-struct  Vec3 {
+struct Vec3 
+{
   Vec3()
   {}
 
@@ -50,13 +52,13 @@ class ConstructBbox : public BaseConstructBbox
 };
 
 /// Functor that implements various interfaces for constructing a 3D point.
-template<typename Kernel, typename CgalKernelBase>
+template<typename CustomKernel, typename CgalKernelBase>
 class ConstructPoint
 {
   private:
-    typedef typename Kernel::RT RT;
-    typedef typename Kernel::Point_3 Point_3;
-    typedef typename Kernel::Weighted_point_3 Weighted_point_3;
+    typedef typename CustomKernel::RT RT;
+    typedef typename CustomKernel::Point_3 Point_3;
+    typedef typename CustomKernel::Weighted_point_3 Weighted_point_3;
     typedef typename Point_3::Rep Rep;
 
   public:
@@ -76,7 +78,6 @@ class ConstructPoint
       typedef const Point_3& type;
     };
 
-
     // Note : the CGAL::Return_base_tag is really internal CGAL stuff.
     // Unfortunately it is needed for optimizing away copy-constructions,
     // due to current lack of delegating constructors in the C++ standard.
@@ -93,7 +94,7 @@ class ConstructPoint
 
     const Point_3& operator()(const Point_3& p) const { return p;}
 
-    const Point_3& operator()(const Weighted_point_3& wp) const {   std::cout << CgalKernelBase().construct_point_3_object()(wp) << std::endl; return CgalKernelBase().construct_point_3_object()(wp); }
+    const Point_3& operator()(const Weighted_point_3& wp) const {  return CgalKernelBase().construct_point_3_object()(wp); }
     /// Returns a 3D point representing the cartesian (\a x, \a y, \a z)
     /// coordinate.
     ///
@@ -138,69 +139,78 @@ class ConstructCoordIterator
       return pyptr + n;
     }
 
-     const  double* operator()(const typename K::Vector_3& v)
+     const double* operator()(const typename K::Vector_3& v)
      {
       return typename K::Construct_cartesian_const_iterator_3()(v);
      }
-     const  double* operator()(const typename K::Vector_3& v, int n)
+     const double* operator()(const typename K::Vector_3& v, int n)
      {
       return typename K::Construct_cartesian_const_iterator_3()(v, n);
      }
 };
 
 /// Functor that returns the x-coordinate of some 3D point.
-template <class  K>
+template <typename CustomKernel, typename CgalKernelBase>
 struct ComputeX
+  : public CgalKernelBase::Compute_x_3
 {
-  using K::Compute_x_3::operator();
+  using CgalKernelBase::Compute_x_3::operator();
+
   typedef const double& result_type;
+
   /// Returns the x-coordinate of the given point \a v.
   ///
   /// \param v point to return the x-coordinate for
   /// \return the x-coordinate of the given point \a v
-  result_type  operator()(const Vec3 &v) const { return v.x; }
+  result_type operator()(const typename CustomKernel::Point_3&v) const { return v.rep().x; }
+  
   // result_type operator()(const typename K::Vector_3 &v) const { return v.x(); } // I  hoped to just inherit
 };
 
 /// Functor that returns the y-coordinate of some 3D point.
-template <class  K>
+template <typename CustomKernel, typename CgalKernelBase>
 struct ComputeY
+  : public CgalKernelBase::Compute_y_3
 {
+  using CgalKernelBase::Compute_y_3::operator();
+
   typedef const double& result_type;
 
   /// Returns the y-coordinate of the given point \a v.
   ///
   /// \param v point to return the y-coordinate for
   /// \return the y-coordinate of the given point \a v
-  result_type operator()(const Vec3 &v) const { return v.y; }
-  result_type operator()(const typename K::Vector_3 &v) const { return v.y(); }
+  result_type operator()(const typename CustomKernel::Point_3&v) const { return v.rep().y; }
 };
 
 /// Functor that returns the z-coordinate of some 3D point.
-template <class  K>
+template <typename CustomKernel, typename CgalKernelBase>
 struct ComputeZ
+  : public CgalKernelBase::Compute_z_3
 {
+  using CgalKernelBase::Compute_z_3::operator();
+
   typedef const double& result_type;
 
   /// Returns the z-coordinate of the given point \a v.
   ///
   /// \param v point to return the z-coordinate for
   /// \return the z-coordinate of the given point \a v
-  result_type operator()(const Vec3 &v) const { return v.z; }
-  result_type operator()(const typename K::Vector_3 &v) const { return v.z(); }
+  result_type operator()(const typename CustomKernel::Point_3&v) const { return v.rep().z; }
 };
 
-template <class  K>
-struct ComputeW
+template <typename CustomKernel, typename CgalKernelBase>
+struct ComputeW : public CgalKernelBase::Compute_hw_3
 {
+  using CgalKernelBase::Compute_hw_3::operator();
+
   typedef const double& result_type;
 
   /// Returns the z-coordinate of the given point \a v.
   ///
   /// \param v point to return the z-coordinate for
   /// \return the z-coordinate of the given point \a v
-  result_type operator()(const Vec3 &v) const { return v.hw(); }
-  result_type operator()(const typename K::Vector_3 &v) const { return v.hw(); }
+  result_type operator()(const typename CustomKernel::Point_3&v) const { return v.rep().hw(); }
 };
 
 /// CGAL CRTP kernel type that enables derivation of some custom kernel type
@@ -209,27 +219,28 @@ struct ComputeW
 /// It defines a bunch of type aliases that point to the right types for
 /// constructing 3D points, calculating coordinates for a point, etc.
 template<typename CustomKernel, typename CgalKernel>
-class CartesianCrtp : public CgalKernel::template Base<CustomKernel>::Type
+class CartesianCrtp
+  : public CgalKernel::template Base<CustomKernel>::Type
 {
   private:
-    typedef typename CgalKernel::template Base<CustomKernel>::Type CgalKernelBase;
+    typedef typename CgalKernel::template Base<CustomKernel>::Type   CgalKernelBase;
 
 public:
-    typedef CustomKernel Kernel;
-    typedef Vec3 Point_3;
-    typedef ConstructPoint<Kernel,CgalKernelBase> Construct_point_3;
+    typedef CustomKernel                                             Kernel;
+    typedef Vec3                                                     Point_3;
+    typedef ConstructPoint<Kernel, CgalKernelBase>                   Construct_point_3;
 
-    typedef const double* Cartesian_const_iterator_3;
-    typedef ConstructCoordIterator<CgalKernelBase> Construct_cartesian_const_iterator_3;
+    typedef const double*                                            Cartesian_const_iterator_3;
+    typedef ConstructCoordIterator<CgalKernelBase>                   Construct_cartesian_const_iterator_3;
 
-    typedef ComputeX<CgalKernelBase> Compute_x_3;
-    typedef ComputeY<CgalKernelBase> Compute_y_3;
-    typedef ComputeZ<CgalKernelBase> Compute_z_3;
+    typedef ComputeX<CustomKernel, CgalKernelBase>                   Compute_x_3;
+    typedef ComputeY<CustomKernel, CgalKernelBase>                   Compute_y_3;
+    typedef ComputeZ<CustomKernel, CgalKernelBase>                   Compute_z_3;
 
-    typedef ComputeX<CgalKernelBase> Compute_hx_3;
-    typedef ComputeY<CgalKernelBase> Compute_hy_3;
-    typedef ComputeZ<CgalKernelBase> Compute_hz_3;
-    typedef ComputeW<CgalKernelBase> Compute_hw_3;
+    typedef Compute_x_3                                              Compute_hx_3;
+    typedef Compute_y_3                                              Compute_hy_3;
+    typedef Compute_z_3                                              Compute_hz_3;
+    typedef ComputeW<CustomKernel, CgalKernelBase>                   Compute_hw_3;
 
     typedef ConstructBbox<typename CgalKernelBase::Construct_bbox_3> Construct_bbox_3;
 
@@ -252,8 +263,9 @@ public:
     };
 };
 
-
-struct CartesianKernel : public CGAL::Type_equality_wrapper<CartesianCrtp<CartesianKernel, CGAL::Simple_cartesian<double>>, CartesianKernel>
+struct CartesianKernel
+  : public CGAL::Type_equality_wrapper<CartesianCrtp<CartesianKernel,
+                                                     CGAL::Simple_cartesian<double>>, CartesianKernel>
 {
 };
 
@@ -261,4 +273,5 @@ struct CartesianKernel : public CGAL::Type_equality_wrapper<CartesianCrtp<Cartes
 /// in some cases when performing mesh intersections for example.
 using CustomKernel = CGAL::Filtered_kernel<CartesianKernel>;
 
-}}
+} // namespace Test
+} // namespace CGAL
