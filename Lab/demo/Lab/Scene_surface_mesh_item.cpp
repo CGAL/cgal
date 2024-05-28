@@ -553,7 +553,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
           if(has_fpatch_id)
           {
             //The sharp features detection produces patch ids >=1, this
-            //is meant to insure the wanted id is in the range [min,max]
+            //is meant to ensure the wanted id is in the range [min,max]
             QColor c = item->color_vector()[fpatch_id_map[fd] - min_patch_id];
             CGAL::IO::Color color(c.red(),c.green(),c.blue());
             CPF::add_color_in_buffer(color, f_colors);
