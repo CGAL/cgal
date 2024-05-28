@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
+    <width>630</width>
     <height>409</height>
    </rect>
   </property>
@@ -21,7 +21,6 @@
        <widget class="QPushButton" name="Create_selection_item_button">
         <property name="font">
          <font>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -72,7 +71,7 @@
     <item>
      <widget class="QTabWidget" name="selectionOrEuler">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -620,6 +619,11 @@
                </item>
                <item>
                 <property name="text">
+                 <string>Remove degree 2 vertex</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
                  <string>Add vertex and face to border (Advanced)</string>
                 </property>
                </item>
@@ -638,7 +642,7 @@
              <item>
               <widget class="QLabel" name="instructionsLabel">
                <property name="text">
-                <string>Instructions 
+                <string>Instructions
 
 </string>
                </property>
