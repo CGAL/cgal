@@ -545,7 +545,7 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
         }
         if(name.testFlag(Scene_item_rendering_helper::NORMALS))
         {
-          EPICK::Vector_3 n = fnormals[fd];
+          const EPICK::Vector_3& n = fnormals[fd];
           CPF::add_normal_in_buffer(n, flat_normals);
         }
         if(name.testFlag(Scene_item_rendering_helper::COLORS))
