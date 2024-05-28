@@ -24,25 +24,25 @@ namespace CGAL {
 
 template <class K>
 CGAL_KERNEL_LARGE_INLINE
-PointC3<K>
+typename K::Point_3
 point_on_plane(const PlaneC3<K> &p)
 {
   typename K::FT x, y, z;
   point_on_planeC3(p.a(), p.b(), p.c(), p.d(), x, y, z);
-  return PointC3<K>(x, y, z);
+  return K().construct_point_3_object()(x, y, z);
 }
 
 template <class K>
 CGAL_KERNEL_LARGE_INLINE
-PointC3<K>
-projection_plane(const PointC3<K> &p,
+typename K::Point_3
+projection_plane(const typename K::Point_3 &p,
                  const PlaneC3<K> &h)
 {
   typename K::FT x, y, z;
   projection_planeC3(h.a(), h.b(), h.c(), h.d(),
                      p.x(), p.y(), p.z(),
                      x, y, z);
-  return PointC3<K>(x, y, z);
+  return K().construct_point_3_object()(x, y, z);
 }
 
 } //namespace CGAL
