@@ -50,6 +50,7 @@ main()
   Point_3 q(4,5,6);
   std::cout << p  << std::endl;
   p.bbox();
+  p.rep().x;
   Segment_3 seg(p,q);
   std::cout << seg.bbox() << std::endl;
 #if 1

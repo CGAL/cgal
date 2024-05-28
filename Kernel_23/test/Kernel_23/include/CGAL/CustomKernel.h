@@ -7,10 +7,10 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
 
-namespace CGAL { 
+namespace CGAL {
 namespace Test {
 
-struct Vec3 
+struct Vec3
 {
   Vec3()
   {}
@@ -163,7 +163,7 @@ struct ComputeX
   /// \param v point to return the x-coordinate for
   /// \return the x-coordinate of the given point \a v
   result_type operator()(const typename CustomKernel::Point_3&v) const { return v.rep().x; }
-  
+
   // result_type operator()(const typename K::Vector_3 &v) const { return v.x(); } // I  hoped to just inherit
 };
 
