@@ -70,22 +70,16 @@ public:
   // is not a problem
   template <typename CGAL_NP_TEMPLATE_PARAMETERS>
   Mesh_criteria_3_impl(const CGAL_NP_CLASS& np)
-    :edge_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_size_param),
-                                                 parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::edge_sizing_field_param),
-                                                                              parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(DBL_MAX)))),
-                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_min_size_param), FT(0))),
+    :edge_criteria_(parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::edge_size_param), FT(DBL_MAX)),
+                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::edge_min_size_param), FT(0)),
+                    parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::edge_distance_param), FT(0))),
     facet_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_angle_param), FT(0)),
-                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_size_param),
-                                                 parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_sizing_field_param),
-                                                                              parameters::choose_parameter(parameters::get_parameter(np, internal_np::sizing_field_param), FT(0)))),
+                    parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_size_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::facet_distance_param), FT(0)),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_topology_param), CGAL::FACET_VERTICES_ON_SURFACE),
                     parameters::choose_parameter(parameters::get_parameter(np, internal_np::facet_min_size_param), FT(0))),
-    cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param),
-                                                parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_param), FT(0))),
-                   parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_size_param),
-                                                parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::cell_sizing_field_param),
-                                                                             parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::sizing_field_param), FT(0)))),
+    cell_criteria_(parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_radius_edge_ratio_param), FT(0)),
+                   parameters::choose_parameter(parameters::get_parameter_reference(np, internal_np::cell_size_param), FT(0)),
                    parameters::choose_parameter(parameters::get_parameter(np, internal_np::cell_min_size_param), FT(0)))
   { }
 
@@ -267,6 +261,11 @@ typedef Mesh_cell_criteria_3<Tr> Cell_criteria;
  *                     or have missing polyline features.}
  *     \cgalParamExtra{Note this lower-bound may not be respected everywhere in the output mesh,
  *                     to keep the feature graph valid.}
+ *   \cgalParamNEnd
+ *   \cgalParamNBegin{edge_distance}
+ *     \cgalParamDescription{a scalar field (resp. a constant) describing a space varying
+ *                           (resp. a uniform) upper bound for the distance between the
+ *                           edge and its corresponding 1D feature.}
  *   \cgalParamNEnd
  *   \cgalParamNBegin{facet_angle}
  *     \cgalParamDescription{a lower bound for the angles (in degrees) of the

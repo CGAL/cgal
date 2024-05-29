@@ -14,11 +14,11 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                              Kernel;
 typedef Kernel::Point_3                                                                  Point;
 typedef CGAL::Linear_cell_complex_traits<3, Kernel>                                      MyTraits;
-typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper<2, 3, MyTraits>::type LCC;
+typedef CGAL::Linear_cell_complex_for_bgl_combinatorial_map_helper<2, 3, MyTraits>::type Mesh;
 
-typedef boost::graph_traits<LCC>::vertex_descriptor                                      vertex_descriptor;
-typedef boost::graph_traits<LCC>::halfedge_descriptor                                    halfedge_descriptor;
-typedef boost::graph_traits<LCC>::face_descriptor                                        face_descriptor;
+typedef boost::graph_traits<Mesh>::vertex_descriptor                                     vertex_descriptor;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor                                   halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor                                       face_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mech-holes-shark.off");
 
-  LCC mesh;
+  Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Invalid input." << std::endl;

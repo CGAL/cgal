@@ -1,0 +1,4 @@
+include(CGALlab_macros)
+
+cgal_lab_plugin(nef_plugin Nef_plugin)
+target_link_libraries(nef_plugin PUBLIC scene_nef_polyhedron_item)

@@ -39,11 +39,11 @@
 #include <CGAL/HalfedgeDS_iterator.h>
 #include <CGAL/Arrangement_2/Arrangement_2_iterators.h>
 #include <CGAL/In_place_list.h>
-#include <CGAL/Arr_default_dcel.h>
-#include <CGAL/Arr_observer.h>
+#include <CGAL/Aos_observer.h>
 #include <CGAL/Arr_accessor.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/iterator.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Iterator_transform.h>
 #include <CGAL/Arr_point_location_result.h>
@@ -109,8 +109,11 @@ public:
   typedef typename Topology_traits::Dcel            Dcel;
   typedef typename Dcel::Size                       Size;
 
+  using Observer = Aos_observer<Self>;
+  using Base_aos = Self;
+
 protected:
-  friend class Arr_observer<Self>;
+  friend class Aos_observer<Self>;
   friend class Arr_accessor<Self>;
 
   // Internal DCEL types:
@@ -892,7 +895,6 @@ protected:
   typedef CGAL_ALLOCATOR(Point_2)                 Points_alloc;
   typedef CGAL_ALLOCATOR(X_monotone_curve_2)      Curves_alloc;
 
-  typedef Arr_observer<Self>                      Observer;
   typedef std::list<Observer*>                    Observers_container;
   typedef typename Observers_container::iterator  Observers_iterator;
 
@@ -1041,7 +1043,7 @@ public:
   }
 
   /*!
-  returns a range over handles of the arrangement vertices .
+  returns a range over handles of the arrangement vertices.
   */
   Iterator_range<Prevent_deref<Vertex_iterator> >
   vertex_handles()
@@ -1066,9 +1068,9 @@ public:
   }
 
   /*!
-  returns a const range (model of `ConstRange`) over handles of the arrangement vertices .
+  returns a const range (model of `ConstRange`) over handles of the arrangement vertices.
   */
-  Iterator_range<Prevent_deref<Vertex_iterator> >
+  Iterator_range<Prevent_deref<Vertex_const_iterator> >
   vertex_handles() const
   {
     return make_prevent_deref_range(vertices_begin(), vertices_end());
@@ -1096,7 +1098,7 @@ public:
   }
 
   /*!
-  returns a range over handles of the arrangement halfedges .
+  returns a range over handles of the arrangement halfedges.
   */
   Iterator_range<Prevent_deref<Halfedge_iterator> >
   halfedge_handles()
@@ -1120,9 +1122,9 @@ public:
                                     _Is_valid_halfedge(&m_topol_traits)));
   }
   /*!
-  returns a const range (model of `ConstRange`) over handles of the arrangement halfedges .
+  returns a const range (model of `ConstRange`) over handles of the arrangement halfedges.
   */
-  Iterator_range<Prevent_deref<Halfedge_iterator> >
+  Iterator_range<Prevent_deref<Halfedge_const_iterator> >
   halfedge_handles() const
   {
     return make_prevent_deref_range(halfedges_begin(), halfedges_end());
@@ -1147,7 +1149,7 @@ public:
   }
 
   /*!
-  returns a range over handles of the arrangement edges .
+  returns a range over handles of the arrangement edges.
   */
   Iterator_range<Prevent_deref<Edge_iterator> >
   edge_handles()
@@ -1170,9 +1172,9 @@ public:
   }
 
   /*!
-  returns a const range (model of `ConstRange`) over handles of the arrangement edges .
+  returns a const range (model of `ConstRange`) over handles of the arrangement edges.
   */
-  Iterator_range<Prevent_deref<Edge_iterator> >
+  Iterator_range<Prevent_deref<Edge_const_iterator> >
   edge_handles() const
   {
     return make_prevent_deref_range(edges_begin(), edges_end());
@@ -1197,7 +1199,7 @@ public:
   }
 
   /*!
-  returns a range over handles of the arrangement faces .
+  returns a range over handles of the arrangement faces.
   */
   Iterator_range<Prevent_deref<Face_iterator> >
   face_handles()
@@ -1219,13 +1221,14 @@ public:
   }
 
   /*!
-  returns a const range (model of `ConstRange`) over handles of the arrangement faces .
+  returns a const range (model of `ConstRange`) over handles of the arrangement faces.
   */
-  Iterator_range<Prevent_deref<Face_iterator> >
+  Iterator_range<Prevent_deref<Face_const_iterator> >
   face_handles() const
   {
     return make_prevent_deref_range(faces_begin(), faces_end());
   }
+
   //! reference_face (const version).
   /*! The function returns a reference face of the arrangement.
    * All reference faces of arrangements of the same type have a common

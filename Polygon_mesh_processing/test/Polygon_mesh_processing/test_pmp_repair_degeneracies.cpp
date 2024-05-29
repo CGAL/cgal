@@ -1,14 +1,14 @@
 #define CGAL_PMP_DEBUG_SMALL_CC_REMOVAL
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 
-#include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
@@ -286,6 +286,11 @@ void test()
                                0, 2, // expected number of degenerate edges/faces in the complete mesh
                                0, 1, // expected number of degenerate edges/faces in the selection
                                0, 0); // expected number of degenerate edges/faces in the mesh after partial removal
+
+  remove_degeneracies<K, Mesh>("data_degeneracies/all_degen.off",
+                               std::initializer_list<std::size_t>({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}), // edge selection
+                               std::initializer_list<std::size_t>({0, 1, 2, 3, 4, 5, 6}), // face selection
+                               4, 7, 4, 7, 0, 0);
 
   remove_degeneracies<K, Mesh>("data_degeneracies/degtri_four.off",
                                std::initializer_list<std::size_t>({1}),

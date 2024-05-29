@@ -305,10 +305,10 @@ int main()
   typedef Node_1<CGAL::Tag_false> T2;
   typedef CGAL::Compact_container<T2> C2; // without timestamps
 
-  typedef CGAL::Compact_container<T2,
+  typedef CGAL::Compact_container<T1,
                                   CGAL::Default,
                                   CGAL::Default,
-                                  CGAL::Time_stamper<T2> > C4;
+                                  CGAL::Time_stamper<T1> > C4;
                                           //    with timestamps
 
   typedef Node_2 T3;
@@ -337,7 +337,7 @@ int main()
   {
     std::cerr << "Error timestamper of C3\n"; return 1;
   }
-  if(! std::is_base_of<CGAL::Time_stamper<T2>,
+  if(! std::is_base_of<CGAL::Time_stamper<T1>,
      C4::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C4\n"; return 1;

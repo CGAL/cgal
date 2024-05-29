@@ -212,7 +212,7 @@ public:
 
 public:
   typedef typename Primitive_type<Polyhedron>::type       Ins_fctor_primitive;
-  typedef CGAL::AABB_traits<IGT, Ins_fctor_primitive>     Ins_fctor_traits;
+  typedef CGAL::AABB_traits_3<IGT, Ins_fctor_primitive>   Ins_fctor_traits;
   typedef CGAL::AABB_tree<Ins_fctor_traits>               Ins_fctor_AABB_tree;
 
   typedef Side_of_triangle_mesh<Polyhedron,
@@ -347,7 +347,7 @@ public:
       }
       tree_.build();
     }
-    bounding_tree_ = 0;
+    set_surface_only();
   }
 
   /// @}

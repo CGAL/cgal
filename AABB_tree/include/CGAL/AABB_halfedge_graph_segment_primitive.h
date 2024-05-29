@@ -24,7 +24,6 @@
 #include <iterator>
 #include <boost/mpl/and.hpp>
 #include <CGAL/type_traits/is_iterator.h>
-#include <boost/mpl/if.hpp>
 
 #include <CGAL/Default.h>
 
@@ -61,7 +60,8 @@ namespace CGAL {
  *
  * \sa `AABBPrimitive`
  * \sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
- * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
+ * \sa `AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,OneFaceGraphPerTree,CacheDatum>`
+ * \sa `AABB_segment_primitive_3<Iterator,CacheDatum>`
  * \sa \link BGLPolyGT `boost::graph_traits<Polyhedron>` \endlink
  */
 template < class HalfedgeGraph,
@@ -70,9 +70,9 @@ template < class HalfedgeGraph,
            class CacheDatum = Tag_false >
 class AABB_halfedge_graph_segment_primitive
 #ifndef DOXYGEN_RUNNING
-  : public AABB_primitive<  typename boost::mpl::if_<OneHalfedgeGraphPerTree,
-                                                     typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
-                                                     std::pair<typename boost::graph_traits<HalfedgeGraph>::edge_descriptor, const HalfedgeGraph*> >::type,
+  : public AABB_primitive< std::conditional_t<OneHalfedgeGraphPerTree::value,
+                                              typename boost::graph_traits<HalfedgeGraph>::edge_descriptor,
+                                              std::pair<typename boost::graph_traits<HalfedgeGraph>::edge_descriptor, const HalfedgeGraph*> >,
                             Segment_from_edge_descriptor_map<
                               HalfedgeGraph,
                               typename Default::Get<VertexPointPMap,
@@ -89,7 +89,7 @@ class AABB_halfedge_graph_segment_primitive
 {
   typedef typename Default::Get<VertexPointPMap,typename boost::property_map< HalfedgeGraph,vertex_point_t>::const_type >::type  VertexPointPMap_;
   typedef typename boost::graph_traits<HalfedgeGraph>::edge_descriptor ED;
-  typedef typename boost::mpl::if_<OneHalfedgeGraphPerTree, ED, std::pair<ED, const HalfedgeGraph*> >::type Id_;
+  typedef std::conditional_t<OneHalfedgeGraphPerTree::value, ED, std::pair<ED, const HalfedgeGraph*> > Id_;
 
   typedef Segment_from_edge_descriptor_map<HalfedgeGraph,VertexPointPMap_>  Segment_property_map;
   typedef Source_point_from_edge_descriptor_map<HalfedgeGraph,VertexPointPMap_> Point_property_map;

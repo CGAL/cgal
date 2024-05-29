@@ -59,7 +59,7 @@ template<typename AABBTraits, typename Query>
 class First_intersection_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Point Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -73,7 +73,7 @@ public:
   Result;
 public:
   First_intersection_traits(const AABBTraits& traits)
-    : m_result(), m_traits(traits)
+    : m_result(std::nullopt), m_traits(traits)
   {}
 
   bool go_further() const {
@@ -108,7 +108,7 @@ template<typename AABBTraits, typename Query, typename Output_iterator>
 class Listing_intersection_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Point Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -151,7 +151,7 @@ template<typename AABBTraits, typename Query, typename Output_iterator>
 class Listing_primitive_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Point Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -191,7 +191,7 @@ template<typename AABBTraits, typename Query>
 class First_primitive_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Point Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -202,7 +202,7 @@ class First_primitive_traits
 public:
   First_primitive_traits(const AABBTraits& traits)
     : m_is_found(false)
-    , m_result()
+    , m_result(std::nullopt)
     , m_traits(traits) {}
 
   bool go_further() const { return !m_is_found; }
@@ -237,7 +237,7 @@ template<typename AABBTraits, typename Query>
 class Do_intersect_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Point Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -278,7 +278,7 @@ template <typename AABBTraits>
 class Projection_traits
 {
   typedef typename AABBTraits::FT FT;
-  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Point Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef typename AABBTraits::Bounding_box Bounding_box;
   typedef typename AABBTraits::Primitive::Id Primitive_id;
@@ -301,7 +301,7 @@ public:
   {
     Point new_closest_point = m_traits.closest_point_object()
       (query, primitive, m_closest_point);
-    if( !m_traits.equal_3_object()(new_closest_point, m_closest_point) )
+    if( !m_traits.equal_object()(new_closest_point, m_closest_point) )
     {
       m_closest_primitive = primitive.id();
       m_closest_point = new_closest_point; // this effectively shrinks the sphere

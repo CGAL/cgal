@@ -1,6 +1,4 @@
-﻿#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Simple_cartesian.h>
+﻿#include <CGAL/Polygon_mesh_processing/locate.h>
 
 // Graphs
 #include <CGAL/Polyhedron_3.h>
@@ -9,7 +7,9 @@
 #include <CGAL/boost/graph/graph_traits_Regular_triangulation_2.h>
 #include <CGAL/boost/graph/properties_Regular_triangulation_2.h>
 
-#include <CGAL/Polygon_mesh_processing/locate.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -23,12 +23,11 @@
 #include <CGAL/Origin.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Random.h>
-#include <CGAL/Unique_hash_map.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
-#include <optional>
 
+#include <optional>
 #include <fstream>
 #include <iostream>
 #include <limits>
@@ -520,7 +519,7 @@ struct Locate_with_AABB_tree_Tester // 2D case
     typedef PMP::internal::Point_to_Point_3<G, Intrinsic_point>                Intrinsic_point_to_Point_3;
     typedef PMP::internal::Point_to_Point_3_VPM<G, VPM>                        WrappedVPM;
     typedef CGAL::AABB_face_graph_triangle_primitive<G, WrappedVPM>            AABB_face_graph_primitive;
-    typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
+    typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                  AABB_face_graph_traits;
 
     static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
@@ -630,7 +629,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
 
     // ---------------------------------------------------------------------------
     typedef CGAL::AABB_face_graph_triangle_primitive<G, VPM>                   AABB_face_graph_primitive;
-    typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
+    typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                  AABB_face_graph_traits;
 
     typedef typename K::Point_3                            Point_3;
     static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
@@ -644,7 +643,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     typedef boost::associative_property_map<Custom_map>                        Custom_VPM;
     typedef PMP::internal::Point_to_Point_3_VPM<G, Custom_VPM>                 WrappedVPM;
     typedef CGAL::AABB_face_graph_triangle_primitive<G, WrappedVPM>            AABB_face_graph_primitive_with_WVPM;
-    typedef CGAL::AABB_traits<K, AABB_face_graph_primitive_with_WVPM>          AABB_face_graph_traits_with_WVPM;
+    typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive_with_WVPM>        AABB_face_graph_traits_with_WVPM;
 
     CGAL::AABB_tree<AABB_face_graph_traits_with_WVPM> tree_b;
     Custom_map custom_map;
@@ -785,7 +784,7 @@ void test_2D_surface_mesh(const std::string fname, CGAL::Random& rnd)
   if(!input || !(input >> tm))
   {
     std::cerr << "Error: cannot read file.";
-    return;
+    exit(1);
   }
 
   test_locate<K>(tm, rnd);
@@ -805,7 +804,7 @@ void test_surface_mesh_3D(const std::string fname, CGAL::Random& rnd)
   if(!input || !(input >> tm))
   {
     std::cerr << "Error: cannot read file.";
-    return;
+    exit(1);
   }
 
   typedef typename boost::property_map<Mesh, CGAL::vertex_point_t>::const_type  VertexPointMap;
@@ -831,7 +830,7 @@ void test_surface_mesh_projection(const std::string fname, CGAL::Random& rnd)
   if(!input || !(input >> tm))
   {
     std::cerr << "Error: cannot read file.";
-    return;
+    exit(1);
   }
 
   const auto& proj_vpm = tm.template add_property_map<typename Mesh::Vertex_index,
@@ -859,7 +858,7 @@ void test_polyhedron(const std::string fname, CGAL::Random& rnd)
   if(!input || !(input >> poly))
   {
     std::cerr << "Error: cannot read file.";
-    return;
+    exit(1);
   }
 
   test_locate<K>(poly, rnd);
@@ -870,7 +869,7 @@ void test(CGAL::Random& rnd)
 {
   test_2D_triangulation<K>("data/stair.xy", rnd);
 //  test_2D_surface_mesh<K>("data/blobby_2D.off", rnd); // temporarily disabled, until Surface_mesh's IO is "fixed"
-  test_surface_mesh_3D<K>("meshes/mech-holes-shark.off", rnd);
+  test_surface_mesh_3D<K>(CGAL::data_file_path("meshes/mech-holes-shark.off"), rnd);
   test_surface_mesh_projection<K>("data/unit-grid.off", rnd);
   test_polyhedron<K>("data-coref/elephant_split_2.off", rnd);
 }

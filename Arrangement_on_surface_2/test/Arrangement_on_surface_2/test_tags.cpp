@@ -6,7 +6,6 @@
 
 #include <boost/mpl/assert.hpp>
 #include <boost/mpl/bool.hpp>
-#include <boost/mpl/if.hpp>
 
 struct Traits1 {
   typedef CGAL::Arr_open_side_tag Left_side_category;

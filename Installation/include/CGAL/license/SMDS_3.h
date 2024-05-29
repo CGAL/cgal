@@ -24,12 +24,12 @@
 #    if defined(CGAL_LICENSE_WARNING)
 
        CGAL_pragma_warning("Your commercial license for CGAL does not cover "
-                           "this release of the 3D Mesh Data Structure package.")
+                           "this release of the 3D Simplicial Mesh Data Structure package.")
 #    endif
 
 #    ifdef CGAL_LICENSE_ERROR
 #      error "Your commercial license for CGAL does not cover this release \
-              of the 3D Mesh Data Structure package. \
+              of the 3D Simplicial Mesh Data Structure package. \
               You get this error, as you defined CGAL_LICENSE_ERROR."
 #    endif // CGAL_LICENSE_ERROR
 
