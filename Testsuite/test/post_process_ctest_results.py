@@ -22,8 +22,13 @@ is_writing=False
 is_ignored=False
 position = 0
 lines_to_write = []
+installation_cmake_logs = []
 
-global_report = open(global_report_file_name, "a+")
+with open ("{dir}/{file}".format(dir="Installation",file=report_file_name), "r") as file:
+  contents = file.readlines()
+pattern = re.compile(re.escape("- Installation/ProgramOutput.test_config_file_non_standard_CleanupFixture") + '(.*?)' + re.escape("== Generating build files for tests =="), re.DOTALL)
+installation_cmake_logs = pattern.findall("".join(contents))
+contents = []
 
 def find_third_separator(contents):
     separator_count = 0
@@ -34,6 +39,7 @@ def find_third_separator(contents):
                 return i
     return len(contents) + 2
 
+global_report = open(global_report_file_name, "a+")
 with open(input_report_file, "rt") as test_report:
     for myline in test_report:
         match = config_regex.match(myline)
@@ -52,6 +58,10 @@ with open(input_report_file, "rt") as test_report:
 
                     if "--- CMake Results: ---" not in contents:
                         contents.insert(position - 1, " --- CMake Results: ---\n")
+                    for log in installation_cmake_logs:
+                        contents.insert(position, log)
+                        position += 1
+                    lines_to_write.insert(0, "\n")
                     contents[position:position] = lines_to_write
 
                     with open(file_path, "w") as file:
