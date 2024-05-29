@@ -31,8 +31,8 @@ def find_third_separator(contents):
         if line.strip() == '------------------------------------------------------------------':
             separator_count += 1
             if separator_count == 3:
-                return i - 2
-    return len(contents)
+                return i
+    return len(contents) + 2
 
 with open(input_report_file, "rt") as test_report:
     for myline in test_report:
@@ -48,7 +48,7 @@ with open(input_report_file, "rt") as test_report:
                     else:
                         contents = []
 
-                    position = find_third_separator(contents) - 2
+                    position = find_third_separator(contents)
 
                     if "--- CMake Results: ---" not in contents:
                         contents.insert(position - 1, " --- CMake Results: ---\n")
