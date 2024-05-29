@@ -20,52 +20,79 @@ examples_regex=re.compile('.*in examples\/')
 name=""
 is_writing=False
 is_ignored=False
-global_report=open(global_report_file_name, "a+")
-with open(input_report_file, "rt") as test_report:
-  for myline in test_report:
-    match=config_regex.match(myline)
+position = 0
+lines_to_write = []
 
-    if is_writing:
-      if match:
-        is_writing=False
-        test_report.close()
-        if is_ignored:
-          print("{label} {result}".format(label=name, result='r'), file=global_report)
-          is_ignored=False
-      else:
-        test_report.write(myline)
-    if not is_writing:
-      if match:
-        name=match.group(0).replace(match.group(1), "")
-        if demo_regex.match(myline):
-          name="{str}_Demo".format(str=name)
-        elif examples_regex.match(myline):
-          name="{str}_Examples".format(str=name)
-        elif name == "libCGAL":
-          name="libCGAL_shared"
-        elif name == "libCGAL_Core":
-          name="libCGALCore_shared"
-        elif name == "libCGAL_ImageIO":
-          name="libCGALimageIO_shared"
-        elif name == "libCGAL_Qt6":
-          name="libCGALQt6_shared"
-        if name=="incomplete":
-          is_writing=False
-          is_ignored=False
-          continue
-        else:
-          if not os.path.isdir(name):
-            is_ignored=True
-            os.mkdir(name)
-            test_report=open("{dir}/{file}".format(dir=name, file=report_file_name), "w+")
-            print("""
-{scm_branch}
-"""       .format(scm_branch=open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r').read()),file=test_report)
-          else:
-            is_ignored=False
-            test_report=open("{dir}/{file}".format(dir=name, file=report_file_name), "a+")
-            test_report.write(" --- CMake Results: --- \n\n")
-          is_writing=True
+global_report = open(global_report_file_name, "a+")
+
+def find_third_separator(contents):
+    separator_count = 0
+    for i, line in enumerate(contents):
+        if line.strip() == '------------------------------------------------------------------':
+            separator_count += 1
+            if separator_count == 3:
+                return i - 2
+    return len(contents)
+
+with open(input_report_file, "rt") as test_report:
+    for myline in test_report:
+        match = config_regex.match(myline)
+        if is_writing:
+            if match:
+                is_writing = False
+                if lines_to_write:
+                    file_path = "{dir}/{file}".format(dir=name, file=report_file_name)
+                    if os.path.exists(file_path):
+                        with open(file_path, "r") as file:
+                            contents = file.readlines()
+                    else:
+                        contents = []
+
+                    position = find_third_separator(contents) - 2
+
+                    if "--- CMake Results: ---" not in contents:
+                        contents.insert(position - 1, " --- CMake Results: ---\n")
+                    contents[position:position] = lines_to_write
+
+                    with open(file_path, "w") as file:
+                        file.write("".join(contents))
+
+                    lines_to_write = []
+
+                if is_ignored:
+                    is_ignored = False
+            else:
+                if myline.strip() != "":
+                    lines_to_write.append(myline)
+        if not is_writing:
+          if match:
+            name=match.group(0).replace(match.group(1), "")
+            if demo_regex.match(myline):
+              name="{str}_Demo".format(str=name)
+            elif examples_regex.match(myline):
+              name="{str}_Examples".format(str=name)
+            elif name == "libCGAL":
+              name="libCGAL_shared"
+            elif name == "libCGAL_Core":
+              name="libCGALCore_shared"
+            elif name == "libCGAL_ImageIO":
+              name="libCGALimageIO_shared"
+            elif name == "libCGAL_Qt6":
+              name="libCGALQt6_shared"
+            if name=="incomplete":
+              is_writing=False
+              is_ignored=False
+              continue
+            else:
+                if not os.path.isdir(name):
+                    is_ignored = True
+                    os.mkdir(name)
+                    with open("{dir}/{file}".format(dir=name, file=report_file_name), "w") as test_report:
+                        test_report.write(open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r').read())
+                else:
+                    is_ignored = False
+                is_writing = True
+
 if is_writing:
     is_writing=False
     test_report.close()
