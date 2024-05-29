@@ -65,7 +65,7 @@ class FrechetLight
     using Inputs = CGAL::Polyline_distance::internal::Inputs<K>;
     using Outputs = CGAL::Polyline_distance::internal::Outputs<K>;
     using BoxData = CGAL::Polyline_distance::internal::BoxData<K>;
-    using RealType = CGAL::Polyline_distance::internal::RealType<K>;
+    using Lambda = CGAL::Polyline_distance::internal::Lambda<K>;
     using CurvePair = std::array<Curve const*, 2>;
 
 public:
@@ -174,7 +174,7 @@ CInterval getInterval<PointID>(Curve const& curve1,
     CInterval const empty;
     CInterval const* firstinterval1;
     CInterval const* firstinterval2;
-    RealType min1_frac, min2_frac;
+    Lambda min1_frac, min2_frac;
     QSimpleInterval qsimple1, qsimple2;
     CInterval out1, out2;
     // TODO: can those be made members of out1, out2?

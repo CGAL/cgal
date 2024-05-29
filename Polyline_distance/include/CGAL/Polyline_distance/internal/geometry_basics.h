@@ -236,9 +236,6 @@ namespace Polyline_distance
 namespace internal {
 
 template <typename K>
-using RealType = Lambda<K>;
-
-template <typename K>
 struct ContinuousPoint {
     using distance_t = typename K::distance_t;
     using PointID = typename K::PointID;
@@ -294,14 +291,14 @@ BFDirection toBFDirection(Direction direction);
 
 template <typename K>
 struct Interval {
-    RealType<K> begin;
-    RealType<K> end;
+    Lambda<K> begin;
+    Lambda<K> end;
 
   Interval()
     : begin(1.), end(0.)
   {}
 
-  Interval(RealType<K> const& begin, RealType<K> const& end)
+  Interval(Lambda<K> const& begin, Lambda<K> const& end)
     : begin(begin), end(end)
   {}
 
@@ -337,7 +334,7 @@ class CPoint
   private:
   using PointID = typename K::PointID;
     PointID point;
-    RealType<K> fraction;
+    Lambda<K> fraction;
 
     void normalize()
     {
@@ -349,7 +346,7 @@ class CPoint
     }
 
 public:
-    CPoint(PointID point, RealType<K> const& fraction)
+    CPoint(PointID point, Lambda<K> const& fraction)
         : point(point), fraction(fraction)
     {
         normalize();
@@ -361,7 +358,7 @@ public:
 
     PointID getPoint() const { return point; }
 
-    RealType<K> const& getFraction() const { return fraction; }
+    Lambda<K> const& getFraction() const { return fraction; }
 
     double getFractionLB() const
     {
@@ -371,7 +368,7 @@ public:
 
     void setPoint(PointID point) { this->point = point; }
 
-    void setFraction(RealType<K> const& frac)
+    void setFraction(Lambda<K> const& frac)
     {
         fraction = frac;
         normalize();
@@ -515,8 +512,8 @@ struct CInterval {
     {
     }
 
-    CInterval(PointID point1, RealType<K> fraction1, PointID point2,
-              RealType<K> const& fraction2)
+    CInterval(PointID point1, Lambda<K> fraction1, PointID point2,
+              Lambda<K> const& fraction2)
         : begin(point1, fraction1), end(point2, fraction2)
     {
     }

@@ -149,13 +149,13 @@ Interval<K> intersection_interval(Curve<K> const& curve1,
     Interval<K> I;
 
     try {
-      std::pair<RealType<K>, RealType<K>> II;
+      std::pair<Lambda<K>, Lambda<K>> II;
         // if not empty
         if (approximate_reals(curve1, center_id, curve2,  seg_start_id, radius, II)) {
             I = Interval<K>(II.first, II.second);
         }
     } catch (const CGAL::Uncertain_conversion_exception& e) {
-      std::pair<RealType<K>, RealType<K>> II;
+      std::pair<Lambda<K>, Lambda<K>> II;
         // if not empty
         if (exact_reals(curve1, center_id, curve2,  seg_start_id, radius, II)) {
             I = Interval<K>(II.first, II.second);
