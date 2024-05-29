@@ -501,7 +501,7 @@ public:
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     Travel_isolated_components<Face_graph>::Minimum_visitor visitor;
     Travel_isolated_components<Face_graph>(*polyhedron()).travel<HandleType>
-      (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
+      (tr.iterator_begin(), tr.iterator_end(), tr.size(), visitor);
     return visitor.minimum;
   }
 
@@ -516,7 +516,8 @@ public:
     }
   }
   template<class HandleType> // use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor
-  std::optional<std::size_t> select_isolated_components(std::size_t threshold) {
+  std::optional<std::size_t> select_isolated_components(std::size_t threshold)
+  {
     typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
     typedef std::insert_iterator<typename Tr::Container> Output_iterator;
@@ -524,7 +525,7 @@ public:
 
     Travel_isolated_components<Face_graph>::Selection_visitor<Output_iterator> visitor(threshold , out);
     Travel_isolated_components<Face_graph>(*polyhedron()).travel<HandleType>
-      (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
+      (tr.iterator_begin(), tr.iterator_end(), tr.size(), visitor);
 
     if(visitor.any_inserted) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
     return visitor.minimum_visitor.minimum;
