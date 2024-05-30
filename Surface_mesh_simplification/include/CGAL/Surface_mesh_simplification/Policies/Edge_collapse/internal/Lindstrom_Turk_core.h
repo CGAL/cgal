@@ -190,7 +190,7 @@ private :
     const FT ax=a.x(), ay=a.y(), az=a.z();
     const FT bx=b.x(), by=b.y(), bz=b.z();
 
-    auto minor = [](double ai, double bi, double aj, double bj)
+    auto minor = [](auto ai, auto bi, auto aj, auto bj)
     {
       // The main idea is that we expect ai and bi (and aj and bj) to have roughly the same magnitude
       // since this function is used to compute the cross product of two vectors that are defined
