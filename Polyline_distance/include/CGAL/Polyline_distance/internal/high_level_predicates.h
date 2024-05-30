@@ -53,7 +53,7 @@ bool approximate_reals(Curve<K> const& curve1,
     // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
     // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
 
-    using Approx = CGAL::Interval_nt<false>;
+    using Approx = typename K::distance_t;
     Approx a(0), b(0), c(0);
     for (auto i = 0; i < K::dimension; ++i) {
         Approx start_end_diff = line_end[i] - line_start[i];

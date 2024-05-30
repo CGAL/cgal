@@ -67,7 +67,7 @@ public:
     using InputPoints = std::vector<typename T::Point>;
 
     using Rational = typename Rational_kernel::FT;
-    // AF do we want to define the types in the traits class? 
+    // AF do we want to define the types in the traits class?
     using Rational_point = typename Type_mapper<typename T::Point, typename T::BaseTraits, Rational_kernel>::type;
 
     Curve() = default;
@@ -216,7 +216,7 @@ void Curve<K>::push_back(Point const& point)
     points.push_back(point);
 }
 
-
+// @todo make dimension independent
 template<typename K>
 typename Curve<K>::distance_t Curve<K>::getUpperBoundDistance(Curve const& other) const
 {

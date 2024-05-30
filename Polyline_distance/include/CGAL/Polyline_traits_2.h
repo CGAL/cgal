@@ -40,9 +40,6 @@
 
 namespace CGAL
 {
-
-// TODO: This is just a starter to enable using the same types all over the
-// package.
   template <class Kernel, class NT>
 class Polyline_traits_2
 {
@@ -58,12 +55,8 @@ public:
     using Bbox = Bbox_2;
 
     static const int dimension = 2;
-  /*
-    using Compare_squared_distance =
-        typename BaseTraits::Compare_squared_distance_2;
-    using Construct_midpoint = typename BaseTraits::Construct_midpoint_2;
-    using Construction_number_type = CNT;
-  */
+
+
     // TODO: remove?
     using Polyline = std::vector<Point>;
     using Polylines = std::vector<Polyline>;
