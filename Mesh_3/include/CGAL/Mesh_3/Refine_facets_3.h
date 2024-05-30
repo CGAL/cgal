@@ -412,9 +412,13 @@ protected:
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
 
-  typedef typename std::optional<
-    std::tuple<Surface_patch_index, Index, Bare_point> >
-                                                      Facet_properties;
+  struct Facet_prop
+  {
+    Surface_patch_index surface_patch_index;
+    Index index;
+    Bare_point point;
+  };
+  typedef typename std::optional<Facet_prop> Facet_properties;
 
 
   /// Returns canonical facet of facet
@@ -1359,9 +1363,10 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const Surface_patch_index& surface_index = std::get<0>(*properties);
-        const Index& surface_center_index = std::get<1>(*properties);
-        const Bare_point& surface_center = std::get<2>(*properties);
+        const Facet_prop& prop = *properties;
+        const Surface_patch_index& surface_index = prop.surface_patch_index;
+        const Index& surface_center_index = prop.index;
+        const Bare_point& surface_center = prop.point;
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1421,9 +1426,10 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const Surface_patch_index& surface_index = std::get<0>(*properties);
-        const Index& surface_center_index = std::get<1>(*properties);
-        const Bare_point& surface_center = std::get<2>(*properties);
+        const Facet_prop& prop = *properties;
+        const Surface_patch_index& surface_index = prop.surface_patch_index;
+        const Index& surface_center_index = prop.index;
+        const Bare_point& surface_center = prop.point;
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1589,9 +1595,10 @@ treat_new_facet(Facet& facet)
   compute_facet_properties(facet, properties);
   if ( properties )
   {
-    const Surface_patch_index& surface_index = std::get<0>(*properties);
-    const Index& surface_center_index = std::get<1>(*properties);
-    const Bare_point& surface_center = std::get<2>(*properties);
+    const Facet_prop& prop = *properties;
+    const Surface_patch_index& surface_index = prop.surface_patch_index;
+    const Index& surface_center_index = prop.index;
+    const Bare_point& surface_center = prop.point;
 
     // Facet is on surface: set facet properties
     set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1694,9 +1701,7 @@ compute_facet_properties(const Facet& facet,
           r_oracle_.surface_patch_index(index(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      fp =  Facet_properties(std::make_tuple(*surface,
-                                    index(intersect),
-                                    point(intersect)));
+      fp =  Facet_prop{*surface, index(intersect), point(intersect)};
     }
   }
   // If the dual is a ray
@@ -1733,9 +1738,7 @@ compute_facet_properties(const Facet& facet,
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       {
-        fp = Facet_properties(std::make_tuple(*surface,
-                                      index(intersect),
-                                      point(intersect)));
+        fp = Facet_prop{*surface, index(intersect), point(intersect)};
       }
     }
   }
