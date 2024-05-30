@@ -247,6 +247,10 @@ class Refine_facets_3_base
   typedef typename GT::Ray_3 Ray_3;
   typedef typename GT::Line_3 Line_3;
 
+  typedef typename MeshDomain::Intersection Intersection;
+  typedef typename MeshDomain::Index Index;
+  typedef typename MeshDomain::Point_3 Point_3;
+
 public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
                        const MeshDomain& oracle,
@@ -354,6 +358,19 @@ public:
     << "}" << std::endl;
 
     return sstr.str();
+  }
+
+  int dimension(const Intersection& intersection) const
+  {
+    return std::get<2>(intersection);
+  }
+  Index index(const Intersection& intersection) const
+  {
+    return std::get<1>(intersection);
+  }
+  Point_3 point(const Intersection& intersection) const
+  {
+    return std::get<0>(intersection);
   }
 
 protected:
@@ -1672,14 +1689,14 @@ compute_facet_properties(const Facet& facet,
       // test "intersect == Intersection()" (aka empty intersection), but
       // the later does not work.
       Surface_patch surface =
-        (std::get<2>(intersect) == 0) ? Surface_patch() :
+        (dimension(intersect) == 0) ? Surface_patch() :
         Surface_patch(
-          r_oracle_.surface_patch_index(std::get<1>(intersect)));
+          r_oracle_.surface_patch_index(index(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       fp =  Facet_properties(std::make_tuple(*surface,
-                                    std::get<1>(intersect),
-                                    std::get<0>(intersect)));
+                                    index(intersect),
+                                    point(intersect)));
     }
   }
   // If the dual is a ray
@@ -1710,15 +1727,15 @@ compute_facet_properties(const Facet& facet,
       Intersection intersect = construct_intersection(ray);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       Surface_patch surface =
-        (std::get<2>(intersect) == 0) ? Surface_patch() :
+        (dimension(intersect) == 0) ? Surface_patch() :
         Surface_patch(
-          r_oracle_.surface_patch_index(std::get<1>(intersect)));
+          r_oracle_.surface_patch_index(index(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       {
         fp = Facet_properties(std::make_tuple(*surface,
-                                      std::get<1>(intersect),
-                                      std::get<0>(intersect)));
+                                      index(intersect),
+                                      point(intersect)));
       }
     }
   }
