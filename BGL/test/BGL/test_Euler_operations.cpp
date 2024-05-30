@@ -531,7 +531,7 @@ add_faces()
   typedef typename boost::graph_traits<T>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<T>::halfedge_descriptor halfedge_descriptor;
 
-  // read a mesh with bord + test append
+  // read a mesh with border + test append
   {
   T m;
 
