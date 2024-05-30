@@ -394,11 +394,12 @@ compute_placement()
   //  A1 * v = b1
   //  A2 * v = b2
   //
-  // Which in matrix form is :  A * v = b
+  // Which in matrix form is:  A * v = b
   //
   // (with 'A' a 3x3 matrix and 'b' a vector)
   //
-  // The member variable mConstrinas contains A and b. Indidivual constraints (Ai,bi) can be added to it.
+  // The member variables mConstraints_A and mConstraints_b contain A and b.
+  // Indidivual constraints (Ai,bi) can be added to it.
   // Once 3 such constraints have been added 'v' is directly solved a:
   //
   //  v = b*inverse(A)
@@ -421,7 +422,7 @@ compute_placement()
   // In that case there is simply no good vertex placement
   if(mConstraints_n == 3)
   {
-    // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
+    // If the matrix is singular its inverse cannot be computed so an 'absent' value is returned.
     std::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
     if(lOptional_Ai)
     {
