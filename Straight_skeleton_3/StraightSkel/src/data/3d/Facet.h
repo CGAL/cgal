@@ -82,6 +82,10 @@ public:
     std::list<EdgeSPtr>& edges();
     std::list<TriangleSPtr>& triangles();
 
+    VertexSPtr ith_vertex(const std::size_t i);
+    EdgeSPtr ith_edge(const std::size_t i);
+    TriangleSPtr ith_triangle(const std::size_t i);
+
     /**
      * counter clockwise from outside
      */

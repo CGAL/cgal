@@ -50,8 +50,10 @@ typedef K::Segment_2      Segment2;
 
 typedef K::Point_3        Point3;
 typedef K::Vector_3       Vector3;
+typedef K::Ray_3          Ray3;
 typedef K::Line_3         Line3;
 typedef K::Segment_3      Segment3;
+typedef K::Triangle_3     Triangle3;
 typedef K::Plane_3        Plane3;
 typedef K::Sphere_3       Sphere3;
 

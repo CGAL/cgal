@@ -19,6 +19,8 @@
 
 #include "kernel/Vector3.h"
 
+#include <iostream>
+
 namespace kernel {
 
 class Point3 {
@@ -35,6 +37,7 @@ public:
     Point3 operator+(const Vector3& v) const;
     Point3 operator-(const Vector3& v) const;
     bool operator==(const Point3& q) const;
+    friend std::ostream& operator<<(std::ostream& os, const Point3& p);
 protected:
     double x_;
     double y_;

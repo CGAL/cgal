@@ -365,6 +365,22 @@ std::list<TriangleSPtr>& Facet::triangles() {
     return this->triangles_;
 }
 
+VertexSPtr Facet::ith_vertex(const std::size_t i)
+{
+    CGAL_assertion(i < this->vertices_.size());
+    return *(std::next(std::cbegin(this->vertices_), i));
+}
+EdgeSPtr Facet::ith_edge(const std::size_t i)
+{
+    CGAL_assertion(i < this->edges_.size());
+    return *(std::next(std::cbegin(this->edges_), i));
+}
+TriangleSPtr Facet::ith_triangle(const std::size_t i)
+{
+    CGAL_assertion(i < this->triangles_.size());
+    return *(std::next(std::cbegin(this->triangles_), i));
+}
+
 FacetSPtr Facet::next(VertexSPtr vertex) const {
     FacetSPtr result = FacetSPtr();
     std::list<FacetWPtr>::const_iterator it_f = vertex->facets().begin();

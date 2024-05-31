@@ -295,6 +295,22 @@ std::list<FacetSPtr>& Polyhedron::facets() {
     return this->facets_;
 }
 
+VertexSPtr Polyhedron::ith_vertex(const std::size_t i)
+{
+    CGAL_assertion(i < this->vertices_.size());
+    return *(std::next(std::cbegin(this->vertices_), i));
+}
+EdgeSPtr Polyhedron::ith_edge(const std::size_t i)
+{
+    CGAL_assertion(i < this->edges_.size());
+    return *(std::next(std::cbegin(this->edges_), i));
+}
+FacetSPtr Polyhedron::ith_facet(const std::size_t i)
+{
+    CGAL_assertion(i < this->facets_.size());
+    return *(std::next(std::cbegin(this->facets_), i));
+}
+
 bool Polyhedron::isConsistent() const {
     bool result = true;
 

@@ -132,6 +132,9 @@ std::list<CGAL::FT> parseCSV(const char* csv) {
 
 
 int main(int argc, const char* argv[]) {
+    std::cout << "USING K = " << typeid(CGAL::K).name() << std::endl;
+    std::cout << "USING FT = " << typeid(CGAL::FT).name() << std::endl;
+
     std::cout.precision(17);
     std::cerr.precision(17);
 
@@ -338,6 +341,8 @@ int main(int argc, const char* argv[]) {
                 return EXIT_FAILURE;
             }
         }
+
+        // @todo this should be a plane perturbation and not a vertex perturbation...
         if (rand_move_points_when_degenerated && !rand_move_points) {
             std::cout << "Checking if all combinations of 3 facet supporting planes intersect in a point." << std::endl;
             std::cout << "In case this takes too long, "
@@ -502,6 +507,8 @@ int main(int argc, const char* argv[]) {
     if (window) {
         thread_window->join();
     }
+
+    std::cout << "Done." << std::endl;
 
     return EXIT_SUCCESS;
 }

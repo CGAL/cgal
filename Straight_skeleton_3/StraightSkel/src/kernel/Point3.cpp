@@ -93,4 +93,8 @@ bool Point3::operator==(const Point3& q) const {
             this->z_ == q.getZ());
 }
 
+std::ostream& operator<<(std::ostream& os, const Point3& p) {
+  return os << p.x_ << " " << p.y_ << " " << p.z_ << std::endl;
+}
+
 }

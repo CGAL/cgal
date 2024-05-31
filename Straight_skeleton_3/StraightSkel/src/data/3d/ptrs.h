@@ -42,8 +42,10 @@ namespace data { namespace _3d {
 #ifdef USE_CGAL
 using CGAL::Point3;
 using CGAL::Vector3;
+using CGAL::Ray3;
 using CGAL::Line3;
 using CGAL::Segment3;
+using CGAL::Triangle3;
 using CGAL::Plane3;
 using CGAL::Sphere3;
 #else

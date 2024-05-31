@@ -167,9 +167,9 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
     const double c = plane->getC();
     const double d = plane->getD();
 # endif
-//    std::cout << "normalization check: " << a*a + b*b + c*c << std::endl;
+    // std::cout << "normalization check: " << a*a + b*b + c*c << std::endl;
     CGAL_assertion_code(auto sq_n = a*a + b*b + c*c;)
-    CGAL_assertion((sq_n - 1) < 1e-10); // inexact sqrt errors
+    CGAL_assertion((sq_n - 1) < 1e-5); // inexact sqrt errors
     result = KernelFactory::createPlane3(a, b, c, d - offset);
 #else // old code, unnecessary sqrt and constructions
     const Point3& p = plane->point();

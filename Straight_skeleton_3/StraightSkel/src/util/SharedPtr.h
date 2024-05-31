@@ -31,7 +31,7 @@ public:
     SharedPtr(const std::shared_ptr<T>& r) : std::shared_ptr<T>(r) {}
     SharedPtr(const std::weak_ptr<T>& r) : std::shared_ptr<T>(r) {}
 
-    T& operator*() const {  
+    T& operator*() const {
         if (this->use_count() == 0) {
             std::cerr << "Error: Shared Pointer is invalid." << std::endl;
             StackTrace::print(std::cerr);

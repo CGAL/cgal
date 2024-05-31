@@ -28,8 +28,11 @@
 namespace algo { namespace _3d {
 
 Point3SPtr SelfIntersection::intersectEdges(FacetSPtr facet,
-        EdgeSPtr edge1, EdgeSPtr edge2, bool handle_deg1_as_ray) {
+        EdgeSPtr edge1, EdgeSPtr edge2, bool handle_deg1_as_ray)
+{
     Point3SPtr result = Point3SPtr();
+
+    // @fixme? full overlaps?
     if (edge1->getVertexSrc() == edge2->getVertexSrc() ||
             edge1->getVertexSrc() == edge2->getVertexDst()) {
         result = edge1->getVertexSrc()->getPoint();
@@ -206,7 +209,8 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
     return result;
 }
 
-bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool handle_deg1_as_ray) {
+bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool handle_deg1_as_ray)
+{
     bool result = false;
     if (edge->getFacetL() == facet || edge->getFacetR() == facet) {
         return false;
@@ -215,7 +219,10 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool ha
             facet->containsVertex(edge->getVertexDst())) {
         return false;
     }
+
     Line3SPtr line = edge->line();
+
+    // @fixme? what if the intersection isn't a point?
     Point3SPtr point = KernelWrapper::intersection(facet->plane(), line);
     if (point) {
         Point3SPtr p_src = edge->getVertexSrc()->getPoint();
