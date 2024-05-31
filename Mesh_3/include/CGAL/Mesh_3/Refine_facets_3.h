@@ -1363,10 +1363,7 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const Facet_prop& prop = *properties;
-        const Surface_patch_index& surface_index = prop.surface_patch_index;
-        const Index& surface_center_index = prop.index;
-        const Bare_point& surface_center = prop.point;
+        const auto& [surface_index, surface_center_index, surface_center] = *properties;
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1426,10 +1423,7 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const Facet_prop& prop = *properties;
-        const Surface_patch_index& surface_index = prop.surface_patch_index;
-        const Index& surface_center_index = prop.index;
-        const Bare_point& surface_center = prop.point;
+        const auto& [surface_index, surface_center_index, surface_center] = *properties;
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1595,10 +1589,7 @@ treat_new_facet(Facet& facet)
   compute_facet_properties(facet, properties);
   if ( properties )
   {
-    const Facet_prop& prop = *properties;
-    const Surface_patch_index& surface_index = prop.surface_patch_index;
-    const Index& surface_center_index = prop.index;
-    const Bare_point& surface_center = prop.point;
+    const auto& [surface_index, surface_center_index, surface_center] = *properties;
 
     // Facet is on surface: set facet properties
     set_facet_surface_center(facet, surface_center, surface_center_index);
