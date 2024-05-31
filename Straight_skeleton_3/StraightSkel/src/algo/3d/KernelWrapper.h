@@ -70,6 +70,10 @@ public:
 
     static Plane3SPtr offsetPlane(Plane3SPtr plane, CGAL::FT offset);
     static Point3SPtr intersectionOffsetPlanes(Plane3SPtr plane_0, Plane3SPtr plane_1, Plane3SPtr plane_2, Plane3SPtr plane_3);
+    static std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0,
+                                                                           Plane3SPtr plane_1,
+                                                                           Plane3SPtr plane_2,
+                                                                           Plane3SPtr plane_3);
     static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::FT offset);
 
     /**

@@ -244,6 +244,66 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
     return result;
 }
 
+// @todo avoid the duplication (need to avoid recomputing the denominator)
+std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0,
+                                                                               Plane3SPtr plane_1,
+                                                                               Plane3SPtr plane_2,
+                                                                               Plane3SPtr plane_3)
+{
+    Point3SPtr result;
+
+    CGAL::FT a0 = plane_0->a(); CGAL::FT b0 = plane_0->b(); CGAL::FT c0 = plane_0->c(); CGAL::FT d0 = plane_0->d();
+    CGAL::FT a1 = plane_1->a(); CGAL::FT b1 = plane_1->b(); CGAL::FT c1 = plane_1->c(); CGAL::FT d1 = plane_1->d();
+    CGAL::FT a2 = plane_2->a(); CGAL::FT b2 = plane_2->b(); CGAL::FT c2 = plane_2->c(); CGAL::FT d2 = plane_2->d();
+    CGAL::FT a3 = plane_3->a(); CGAL::FT b3 = plane_3->b(); CGAL::FT c3 = plane_3->c(); CGAL::FT d3 = plane_3->d();
+
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
+    std::cout << "Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
+                                  << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
+                                  << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
+                                  << a3 << " " << b3 << " " << c3 << " " << d3 << std::endl;
+    std::cout << "CHECK det " << CGAL::determinant(a0, b0, c0, d0,
+                                                   a1, b1, c1, d1,
+                                                   a2, b2, c2, d2,
+                                                   a3, b3, c3, d3) << std::endl;
+#endif
+
+    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-10);
+    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-10);
+    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-10);
+    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-10);
+
+    CGAL::FT den = (-a0*b1*c2 + a0*b1*c3 + a0*b2*c1 - a0*b2*c3 - a0*b3*c1 + a0*b3*c2 + a1*b0*c2 - a1*b0*c3 - a1*b2*c0 + a1*b2*c3 + a1*b3*c0 - a1*b3*c2 - a2*b0*c1 + a2*b0*c3 + a2*b1*c0 - a2*b1*c3 - a2*b3*c0 + a2*b3*c1 + a3*b0*c1 - a3*b0*c2 - a3*b1*c0 + a3*b1*c2 + a3*b2*c0 - a3*b2*c1);
+
+    // @tmp, perturbation ensures that this is correct, but in theory we need
+    // to handle the degenerate configuration
+    // Disabled because it's a runtime speed up
+    //
+    // if(CGAL::is_zero(den))
+    // {
+    //   std::cerr << "Warning: degenerate case (coplanar planes)" << std::endl;
+    //   return Point3SPtr();
+    // }
+
+    // warning: only valid for normalized coefficients!!
+    CGAL::FT x = (b0*c1*d2 - b0*c1*d3 - b0*c2*d1 + b0*c2*d3 + b0*c3*d1 - b0*c3*d2 - b1*c0*d2 + b1*c0*d3 + b1*c2*d0 - b1*c2*d3 - b1*c3*d0 + b1*c3*d2 + b2*c0*d1 - b2*c0*d3 - b2*c1*d0 + b2*c1*d3 + b2*c3*d0 - b2*c3*d1 - b3*c0*d1 + b3*c0*d2 + b3*c1*d0 - b3*c1*d2 - b3*c2*d0 + b3*c2*d1) / den;
+
+    CGAL::FT y = (-a0*c1*d2 + a0*c1*d3 + a0*c2*d1 - a0*c2*d3 - a0*c3*d1 + a0*c3*d2 + a1*c0*d2 - a1*c0*d3 - a1*c2*d0 + a1*c2*d3 + a1*c3*d0 - a1*c3*d2 - a2*c0*d1 + a2*c0*d3 + a2*c1*d0 - a2*c1*d3 - a2*c3*d0 + a2*c3*d1 + a3*c0*d1 - a3*c0*d2 - a3*c1*d0 + a3*c1*d2 + a3*c2*d0 - a3*c2*d1) / den;
+
+    CGAL::FT z = (a0*b1*d2 - a0*b1*d3 - a0*b2*d1 + a0*b2*d3 + a0*b3*d1 - a0*b3*d2 - a1*b0*d2 + a1*b0*d3 + a1*b2*d0 - a1*b2*d3 - a1*b3*d0 + a1*b3*d2 + a2*b0*d1 - a2*b0*d3 - a2*b1*d0 + a2*b1*d3 + a2*b3*d0 - a2*b3*d1 - a3*b0*d1 + a3*b0*d2 + a3*b1*d0 - a3*b1*d2 - a3*b2*d0 + a3*b2*d1) / den;
+
+// #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
+    std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
+#endif
+
+    result = KernelFactory::createPoint3(x, y, z);
+
+    CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
+
+    return { result, t };
+}
+
 Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::FT offset) {
     Point3SPtr result;
 #ifdef USE_CGAL

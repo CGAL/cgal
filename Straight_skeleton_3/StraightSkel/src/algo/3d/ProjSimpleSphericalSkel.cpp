@@ -234,8 +234,8 @@ double ProjSimpleSphericalSkel::angleTo(CircularEdgeSPtr edge) {
 }
 
 
-double ProjSimpleSphericalSkel::offsetTo(CircularEdgeSPtr edge, Point3SPtr point) {
-    double result = -std::numeric_limits<double>::infinity();
+CGAL::FT ProjSimpleSphericalSkel::offsetTo(CircularEdgeSPtr edge, Point3SPtr point) {
+    CGAL::FT result = -std::numeric_limits<double>::infinity();
     if (!hasValidRotationAxis(edge)) {
         return result;
     }
@@ -267,7 +267,7 @@ double ProjSimpleSphericalSkel::offsetTo(CircularEdgeSPtr edge, Point3SPtr point
 SphericalEdgeEventSPtr ProjSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalEdgeEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::infinity();
+    CGAL::FT offset_max = -std::numeric_limits<double>::infinity();
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
@@ -309,7 +309,7 @@ SphericalEdgeEventSPtr ProjSimpleSphericalSkel::nextEdgeEvent(SphericalPolygonSP
 SphericalSplitEventSPtr ProjSimpleSphericalSkel::nextSplitEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalSplitEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::infinity();
+    CGAL::FT offset_max = -std::numeric_limits<double>::infinity();
     std::list<CircularVertexSPtr>::iterator it_v = polygon->vertices().begin();
     while (it_v != polygon->vertices().end()) {
         CircularVertexSPtr vertex = *it_v++;
@@ -361,7 +361,7 @@ SphericalSplitEventSPtr ProjSimpleSphericalSkel::nextSplitEvent(SphericalPolygon
 SphericalTriangleEventSPtr ProjSimpleSphericalSkel::nextTriangleEvent(SphericalPolygonSPtr polygon, CGAL::FT offset) {
     ReadLock l(polygon->mutex());
     SphericalTriangleEventSPtr result;
-    double offset_max = -std::numeric_limits<double>::infinity();
+    CGAL::FT offset_max = -std::numeric_limits<double>::infinity();
     std::list<CircularEdgeSPtr>::iterator it_e = polygon->edges().begin();
     while (it_e != polygon->edges().end()) {
         CircularEdgeSPtr edge = *it_e++;
