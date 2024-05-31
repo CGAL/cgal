@@ -248,8 +248,6 @@ class Refine_facets_3_base
   typedef typename GT::Line_3 Line_3;
 
   typedef typename MeshDomain::Intersection Intersection;
-  typedef typename MeshDomain::Index Index;
-  typedef typename MeshDomain::Point_3 Point_3;
 
 public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
@@ -360,15 +358,15 @@ public:
     return sstr.str();
   }
 
-  int dimension(const Intersection& intersection) const
+  const int dimension(const Intersection& intersection) const
   {
     return std::get<2>(intersection);
   }
-  Index index(const Intersection& intersection) const
+  const typename MeshDomain::Index& index(const Intersection& intersection) const
   {
     return std::get<1>(intersection);
   }
-  Point_3 point(const Intersection& intersection) const
+  const typename MeshDomain::Point_3& point(const Intersection& intersection) const
   {
     return std::get<0>(intersection);
   }
@@ -414,8 +412,8 @@ protected:
 
   struct Facet_prop
   {
-    Surface_patch_index surface_patch_index;
-    Index index;
+    typename MeshDomain::Surface_patch_index surface_patch_index;
+    typename MeshDomain::Index index;
     Bare_point point;
   };
   typedef typename std::optional<Facet_prop> Facet_properties;
