@@ -1027,8 +1027,17 @@ scan_triangulation_impl()
   }
 
 #ifdef CGAL_MESH_3_PROFILING
-  std::cerr << "==== Facet scan: " << t.elapsed() << " seconds ===="
+  double facet_scan_time = t.elapsed();
+  std::cerr << "==== Facet scan: " << facet_scan_time << " seconds ===="
             << std::endl << std::endl;
+
+ # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+    // If it's parallel but the refinement is forced to sequential, we don't
+    // output the value
+ #   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_scan_time", facet_scan_time);
+ #   endif
+ # endif
 #endif
 
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
