@@ -73,7 +73,10 @@ int main(int argc, char*argv[])
     CGAL::constraint_based_smooth_point_set <Concurrency_tag>(
       points,
       CGAL::parameters::point_map(CGAL::Nth_of_tuple_property_map<0, PNC>())
-                       .normal_map(CGAL::Nth_of_tuple_property_map<1, PNC>()));
+      .normal_map(CGAL::Nth_of_tuple_property_map<1, PNC>())
+      //.diagonalize_traits(CGAL::Eigen_diagonalize_traits<typename Kernel::FT, 3>())
+      //.diagonalize_traits(CGAL::Default_diagonalize_traits<typename Kernel::FT, 3>())
+    );
 
     std::cout << i << std::endl;
 
@@ -81,8 +84,8 @@ int main(int argc, char*argv[])
     std::cout << "Iteration time (ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(curr_stop - curr_start).count() << std::endl;
 
     std::cout << "iterations/iteration_" + std::to_string(i) + ".ply" << std::endl;
-    std::ofstream f("data/iterations/iteration_" + std::to_string(i) + ".ply", std::ios::binary);
-    CGAL::IO::set_binary_mode(f); // The PLY file will be written in the binary format
+    std::ofstream f("iteration_" + std::to_string(i) + ".ply", std::ios::binary);
+    //CGAL::IO::set_binary_mode(f); // The PLY file will be written in the binary format
     if(!CGAL::IO::write_PLY_with_properties(f, points,
                                         CGAL::make_ply_point_writer (Point_map()),
                                         CGAL::make_ply_normal_writer(Normal_map()),
@@ -98,19 +101,7 @@ int main(int argc, char*argv[])
 
   auto stop = std::chrono::high_resolution_clock::now();
 
-  for(size_t i=0;i<points.size();++i){
-    Color c = get<2>(points[i]);
-    // std::cout << int(c[0]) << " " << int(c[1]) << " " << int(c[2]) << std::endl;
-  }
-
   std::cout << "Average iteration time (ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count() / iter_number << std::endl;
-
-  //// Save point set.
-  // if(!CGAL::IO::write_XYZ(output_filename, points,
-  //                         CGAL::parameters::point_map(CGAL::First_of_pair_property_map<PointVectorPair>())
-  //                                          .normal_map(CGAL::Second_of_pair_property_map<PointVectorPair>())
-  //                                          .stream_precision(17)))
-  //   return EXIT_FAILURE;
 
   std::ofstream f(output_filename, std::ios::binary);
   CGAL::IO::set_binary_mode(f); // The PLY file will be written in the binary format
