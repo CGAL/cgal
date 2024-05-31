@@ -13,7 +13,7 @@ namespace CGAL {
 * `maximum_height()` named parameter.
 *
 * The result is a closed, 2-manifold surface triangle mesh. Note that this mesh can have non-local
-* self-intersections if a maximal height is provided due to possible (geometric) non-manifold occurences.
+* self-intersections if a maximal height is provided due to possible (geometric) non-manifold occurrences.
 *
 * @tparam PolygonWithHoles must be a model of `SequenceContainer` with value type `InK::Point_2` (e.g. `Polygon_2<InK>`)
                            or a model of `GeneralPolygonWithHoles_2` (e.g. `Polygon_with_holes_2<InK>`).

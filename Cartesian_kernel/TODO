@@ -3,7 +3,7 @@ Stuff to look at, as time permits:
 
 - Why Ray_3 and Line_3 don't have the same internal representation ???
 
-- Triangle-Triangle instersection (and predicate) :
+- Triangle-Triangle intersection (and predicate) :
     Tomas Möller. A fast triangle-triangle intersection test. Journal of
     Graphics Tools, 2(2):25-30, 1997
               A Fast Triangle-Triangle Intersection Test,  tompa@clarus.se

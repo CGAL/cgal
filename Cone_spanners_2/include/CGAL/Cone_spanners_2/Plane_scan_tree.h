@@ -100,7 +100,7 @@ public:
         : less (comp), vless (vcomp), root (nullptr), m_min (nullptr),
           m_max (nullptr), _size (0)
     {
-        // buids the tree
+        // builds the tree
         /* Note: a more efficient algorithm building the tree bottom up may be
           worth implementing later */
         for (; first != last; ++first)

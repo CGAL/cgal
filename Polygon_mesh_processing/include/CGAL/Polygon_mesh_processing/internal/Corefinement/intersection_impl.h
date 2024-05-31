@@ -1278,7 +1278,7 @@ class Intersection_of_triangle_meshes
             it_seg13->second.get_segments(f1f3_segments);
 
             /// TODO AUTOREF_TAG shall we ignore tangency points?
-            /// with the current code, Node_id_set::size()==1 is ignored as we only drop semgents
+            /// with the current code, Node_id_set::size()==1 is ignored as we only drop segments
             /// Actually it might be that it is not a tangency point if the third segment was considered!
             /// so not handling it is a bug
 

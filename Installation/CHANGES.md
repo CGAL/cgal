@@ -4933,7 +4933,7 @@ CGAL now works around the preprocessor macros 'min' and 'max' defined in
         allows users to extend the DCEL of the underlying arrangement.
     -   Added a function template called connect\_holes() that connects
         the holes in a given polygon with holes, turning it into a
-        sequence of points, where the holes are connceted to the outer
+        sequence of points, where the holes are connected to the outer
         boundary using zero-width passages.
     -   Added a non-const function member to General\_polygon\_set\_2
         that obtains the underlying arrangement.
