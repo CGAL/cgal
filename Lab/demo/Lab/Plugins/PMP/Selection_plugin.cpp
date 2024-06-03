@@ -211,8 +211,13 @@ public:
     connect(ui_widget.selectionOrEuler, SIGNAL(currentChanged(int)), this, SLOT(on_SelectionOrEuler_changed(int)));
     connect(ui_widget.editionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_editionBox_changed(int)));
 
+    ui_widget.Sharp_edges_label->hide();
+    ui_widget.Sharp_angle_spinbox->hide();
+    ui_widget.Select_sharp_edges_button->hide();
+    ui_widget.Select_boundaryButton->hide();
     ui_widget.Add_to_selection_button->hide();
     ui_widget.Select_all_NTButton->hide();
+
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) {
       connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
@@ -544,55 +549,84 @@ public Q_SLOTS:
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it)
     {
       it->second->set_lasso_mode(b);
+      ui_widget.Brush_label->setEnabled(!b);
+      ui_widget.Brush_size_spin_box->setEnabled(!b);
+      ui_widget.Brush_size_spin_box->setValue(0);
     }
   }
   void on_Selection_type_combo_box_changed(int index) {
+    std::cout << "on_Selection_type_combo_box_changed(" << index << ")" << std::endl;
+
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_active_handle_type(static_cast<Active_handle::Type>(index));
       Q_EMIT save_handleType();
+
+      it->second->setPathSelection(false);
+
+      ui_widget.Sharp_edges_label->hide();
+      ui_widget.Sharp_angle_spinbox->hide();
+      ui_widget.Select_sharp_edges_button->hide();
+      ui_widget.Select_boundaryButton->hide();
+      ui_widget.Add_to_selection_button->hide();
+      ui_widget.Select_all_NTButton->hide();
+
+      ui_widget.Get_minimum_button->setEnabled(false);
+      ui_widget.Select_isolated_components_button->setEnabled(false);
+
       switch(index)
       {
-      case 0:
-      case 1:
-      case 2:
+      case 0: // vertex
+      case 1: // face
+      case 2: // edge
         ui_widget.lassoCheckBox->show();
+        ui_widget.Brush_label->show();
+        ui_widget.Brush_size_spin_box->show();
+
+        ui_widget.Get_minimum_button->setEnabled(true);
+        ui_widget.Select_isolated_components_button->setEnabled(true);
         break;
+      case 3: // CC of faces
+      case 4: // Path of edges
       default:
         ui_widget.lassoCheckBox->hide();
         ui_widget.lassoCheckBox->setChecked(false);
         it->second->set_lasso_mode(false);
+        ui_widget.Brush_label->hide();
+        ui_widget.Brush_size_spin_box->hide();
+        ui_widget.Brush_size_spin_box->setValue(0);
         break;
       }
-      if(index == 1)
+
+      if(index == 0) // vertex
+      {
+        Q_EMIT set_operation_mode(-1);
+      }
+      else if(index == 1) // face
       {
         ui_widget.Select_all_NTButton->show();
-        ui_widget.Add_to_selection_button->hide();
-        ui_widget.Select_boundaryButton->hide();
         Q_EMIT set_operation_mode(-1);
       }
-      else if(index == 2)
+      else if(index == 2) // edge
       {
-        ui_widget.Select_all_NTButton->hide();
-        ui_widget.Add_to_selection_button->hide();
         ui_widget.Select_boundaryButton->show();
+        ui_widget.Sharp_angle_spinbox->show();
+        ui_widget.Select_sharp_edges_button->show();
         Q_EMIT set_operation_mode(-1);
       }
-      else if(index == 4)
+      else if(index == 3) // CC of faces
+      {
+        Q_EMIT set_operation_mode(-1);
+      }
+      else if(index == 4) // Path of edges
       {
         it->second->setPathSelection(true);
-        ui_widget.Select_all_NTButton->hide();
         ui_widget.Add_to_selection_button->show();
-        ui_widget.Select_boundaryButton->show();
         Q_EMIT set_operation_mode(-2);
       }
       else
       {
-        ui_widget.Add_to_selection_button->hide();
-        ui_widget.Select_all_NTButton->hide();
-        ui_widget.Select_boundaryButton->hide();
-        it->second->setPathSelection(false);
-        Q_EMIT set_operation_mode(-1);
+        std::cerr << "Error: unknown selection type" << std::endl;
       }
     }
     filter_operations();
