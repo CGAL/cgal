@@ -9,6 +9,7 @@ global_report_file_name=sys.argv[3]
 config_regex=re.compile('(.*Configuring (examples|demo|test)*( in )*(test\/|examples\/|demo\/)*)((?!done)\w+)')
 demo_regex=re.compile('.*in demo\/')
 examples_regex=re.compile('.*in examples\/')
+Separator = "------------------------------------------------------------------"
 
 
 #open the Installation report
@@ -24,20 +25,32 @@ position = 0
 lines_to_write = []
 installation_cmake_logs = []
 
-with open ("{dir}/{file}".format(dir="Installation",file=report_file_name), "r") as file:
-  contents = file.readlines()
-pattern = re.compile(re.escape("- Installation/ProgramOutput.test_config_file_non_standard_CleanupFixture") + '(.*?)' + re.escape("== Generating build files for tests =="), re.DOTALL)
-installation_cmake_logs = pattern.findall("".join(contents))
-contents = []
+
 
 def find_third_separator(contents):
     separator_count = 0
     for i, line in enumerate(contents):
-        if line.strip() == '------------------------------------------------------------------':
+        if line.strip() == Separator:
             separator_count += 1
             if separator_count == 3:
                 return i
     return len(contents) + 2
+
+def find_last_separator(contents):
+    for i, line in enumerate(contents):
+        if line.strip() == Separator:
+            position = i
+    return position
+
+with open ("{dir}/{file}".format(dir="Installation",file=report_file_name), "r") as file:
+  contents = file.readlines()
+position = find_last_separator(contents)
+for i, line in enumerate(contents):
+    if i > position:
+        installation_cmake_logs.append(line)
+    if line.strip() == "== Generating build files for tests ==":
+        break
+contents = []
 
 global_report = open(global_report_file_name, "a+")
 with open(input_report_file, "rt") as test_report:
@@ -56,8 +69,10 @@ with open(input_report_file, "rt") as test_report:
 
                     position = find_third_separator(contents)
 
-                    if "--- CMake Results: ---" not in contents:
-                        contents.insert(position - 1, " --- CMake Results: ---\n")
+                    if Separator + "\n- CMake Results \n" + Separator not in lines_to_write:
+                        lines_to_write.insert(0,Separator + "\n- CMake Results \n" + Separator + "\n")
+                    if Separator + "\n- CMake Logs \n" + Separator not in contents:
+                        contents.insert(position - 1, Separator + "\n- CMake Logs \n" + Separator + "\n\n")
                     for log in installation_cmake_logs:
                         contents.insert(position, log)
                         position += 1
