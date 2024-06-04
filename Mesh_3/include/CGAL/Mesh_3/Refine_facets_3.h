@@ -412,8 +412,8 @@ protected:
 
   struct Facet_prop
   {
-    typename MeshDomain::Surface_patch_index surface_patch_index;
-    typename MeshDomain::Index index;
+    Surface_patch_index surface_patch_index;
+    Index index;
     Bare_point point;
   };
   typedef typename std::optional<Facet_prop> Facet_properties;
