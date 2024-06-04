@@ -1341,6 +1341,7 @@ void
 Triangulation_on_sphere_2<Gt, Tds>::
 file_output(std::ostream& os) const
 {
+  os << _gt.center() << " " << _gt.radius() << "\n";
   _tds.file_output(os, Vertex_handle(), true);
 }
 
@@ -1350,6 +1351,13 @@ Triangulation_on_sphere_2<Gt, Tds>::
 file_input(std::istream& is)
 {
   clear();
+
+  Point_3 center;
+  FT radius;
+  is >> center >> radius;
+  _gt.set_center(center);
+  _gt.set_radius(radius);
+
   Vertex_handle v = _tds.file_input(is, false);
   CGAL_triangulation_assertion(is_valid());
   return v;
