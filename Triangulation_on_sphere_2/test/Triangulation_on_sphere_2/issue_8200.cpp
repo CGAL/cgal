@@ -20,7 +20,7 @@ int main(int, char**)
   points.emplace_back( 1, -2,  1);
   points.emplace_back( 1,  1, 10);
 
-  Traits traits(Point_3(1,1,1)); // radius is 1 by default
+  Traits traits(Point_3(4,1,1)); // radius is 1 by default
   DToS2 dtos(traits);
 
   Traits::Construct_point_on_sphere_2 cst = traits.construct_point_on_sphere_2_object();
