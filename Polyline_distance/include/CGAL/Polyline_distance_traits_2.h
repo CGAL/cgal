@@ -22,18 +22,14 @@
 //
 // =============================================================================
 
-#ifndef CGAL_POLYLINE_TRAITS_3_H
-#define CGAL_POLYLINE_TRAITS_3_H
+#ifndef CGAL_POLYLINE_DISTANCE_TRAITS_2_H
+#define CGAL_POLYLINE_DISTANCE_TRAITS_2_H
 
 #include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Polyline_distance/internal/id.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Bbox_3.h>
-
-// TODO: add doxygen code
-
-/// \cgalModels{PolylineDistanceTraits}
+#include <CGAL/Bbox_2.h>
 
 // TODO: is it too restrictive to use vectors by default?
 #include <vector>
@@ -47,15 +43,15 @@ namespace CGAL
 * \tparam GT  geometric traits class
 */
 template <class GT>
-class Polyline_traits_3
+class Polyline_distance_traits_2
 {
 public:
     using Kernel = GT;
     using FT = typename Kernel::FT;
-    using Point = typename Kernel::Point_3;
-    using Bbox = Bbox_3;
+    using Point = typename Kernel::Point_2;
+    using Bbox = Bbox_2;
 
-    static const int dimension = 3;
+    static const int dimension = 2;
 
 
     // TODO: remove?
@@ -63,8 +59,9 @@ public:
     using Polylines = std::vector<Polyline>;
     using PolylineID = std::size_t;
     using PolylineIDs = std::vector<PolylineID>;
+
 };
 
 }  // end of namespace CGAL
 
-#endif  // CGAL_POLYLINE_TRAITS_3_H
+#endif  // CGAL_POLYLINE_DISTANCE_TRAITS_2_H

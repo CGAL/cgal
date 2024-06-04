@@ -6,4 +6,4 @@ project( Polyline_distance_Examples )
 
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 
-create_single_source_cgal_program( "Frechet_distance.cpp" )
+create_single_source_cgal_program( "Frechet_distance_2.cpp" )

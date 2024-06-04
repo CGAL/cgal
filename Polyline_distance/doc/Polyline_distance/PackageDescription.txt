@@ -35,8 +35,8 @@ This package ....
 - `PolylineDistanceTraits`
 
 \cgalCRPSection{Classes}
-- `CGAL::Polyline_traits_2`
-- `CGAL::Polyline_traits_3`
+- `CGAL::Polyline_distance_traits_2`
+- `CGAL::Polyline_distance_traits_3`
 
 \cgalCRPSection{Functions}
 - `CGAL::continuous_Frechet_distance()`

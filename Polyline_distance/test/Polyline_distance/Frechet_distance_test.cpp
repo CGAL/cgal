@@ -28,8 +28,7 @@ using TestKernel = CGAL::Simple_cartesian<double>;
 //using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel;
 //using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
 
-using TestTraits = CGAL::Polyline_traits_2<TestKernel>;
-// using NT = TestKernel::FT;
+using TestTraits = CGAL::Polyline_distance_traits_2<TestKernel>;
 using TestPoint = TestKernel::Point_2;
 using TestCurve = std::vector<TestPoint>;
 using TestCurves = std::vector<TestCurve>;

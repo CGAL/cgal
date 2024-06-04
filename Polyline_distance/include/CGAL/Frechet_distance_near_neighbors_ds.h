@@ -27,7 +27,6 @@
 
 #include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Frechet_distance.h>
-#include <CGAL/Polyline_traits_2.h>
 #include <CGAL/basic.h>
 #include <CGAL/Polyline_distance/internal/Frechet_distance_near_neighbors_ds.h>
 
