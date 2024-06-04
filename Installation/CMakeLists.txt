@@ -480,6 +480,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
 endif()
 
+find_package(TBB QUIET)
+if(TBB_FOUND)
+  message(STATUS "Using TBB version ${TBB_VERSION}")
+endif()
+find_package(Eigen3 QUIET)
+if(Eigen3_FOUND)
+  message(STATUS "Using Eigen3 version ${EIGEN3_VERSION}")
+endif()
 message("== Generate version files (DONE) ==\n")
 
 #--------------------------------------------------------------------------------------------------
