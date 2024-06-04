@@ -38,6 +38,7 @@ int main(int, char**)
     std::cout << dtos.number_of_solid_faces() << " solid faces" << std::endl;
     std::cout << dtos.number_of_ghost_faces() << " ghost faces" << std::endl;
   }
+
   assert(dtos.is_valid());
   std::ofstream out("dtos.txt");
   out.precision(17);
@@ -46,19 +47,27 @@ int main(int, char**)
 
   CGAL::IO::write_OFF("dtos.off", dtos, CGAL::parameters::stream_precision(17));
 
-  DToS2 dtos2(traits);
+  DToS2 dtos2;
   std::ifstream in("dtos.txt");
   in >> dtos2;
   in.close();
+  assert(dtos2.is_valid());
 
-    std::cout << "After write/read triangulation has dimension: " << dtos2.dimension() << " and\n";
-    std::cout << dtos2.number_of_vertices() << " vertices" << std::endl;
-    std::cout << dtos2.number_of_edges() << " edges" << std::endl;
-    std::cout << dtos2.number_of_solid_faces() << " solid faces" << std::endl;
-    std::cout << dtos2.number_of_ghost_faces() << " ghost faces" << std::endl;
+  std::cout << "DTOS2 center: " << dtos2.geom_traits().center() << " radius: " << dtos2.geom_traits().radius() << std::endl;
+  std::cout << "DTOS2 has dimension: " << dtos2.dimension() << " and\n";
+  std::cout << dtos2.number_of_vertices() << " vertices" << std::endl;
+  std::cout << dtos2.number_of_edges() << " edges" << std::endl;
+  std::cout << dtos2.number_of_solid_faces() << " solid faces" << std::endl;
+  std::cout << dtos2.number_of_ghost_faces() << " ghost faces" << std::endl;
 
   CGAL::IO::write_OFF("dtos2.off", dtos2, CGAL::parameters::stream_precision(17));
 
+  assert(dtos.number_of_vertices() == dtos2.number_of_vertices());
+  assert(dtos.number_of_edges() == dtos2.number_of_edges());
+  assert(dtos.number_of_solid_faces() == dtos2.number_of_solid_faces());
+  assert(dtos.number_of_ghost_faces() == dtos2.number_of_ghost_faces());
+
+  std::cout << "Done." << std::endl;
 
   return EXIT_SUCCESS;
 }
