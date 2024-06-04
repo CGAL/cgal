@@ -40,15 +40,10 @@
 
 namespace CGAL
 {
-  template <class Kernel, class NT>
+  template <class Kernel>
 class Polyline_traits_2
 {
 public:
-    using distance_t = CGAL::Interval_nt<false>;
-    using iKernel = CGAL::Simple_cartesian<distance_t>;
-    using iPoint = typename iKernel::Point_2;
-    using PointID = CGAL::Polyline_distance::internal::ID<iPoint>;
-
     using BaseTraits = Kernel;
     using FT = typename BaseTraits::FT;
     using Point = typename BaseTraits::Point_2;

@@ -33,15 +33,15 @@ namespace internal {
 
 
 
-template <typename K>
-bool approximate_reals(Curve<K> const& curve1,
-                       typename K::PointID const& center_id,
-                       Curve<K> const& curve2,
-                       typename K::PointID const& seg_start_id,
-                       typename K::distance_t const& radius,
-                       std::pair<Lambda<K>, Lambda<K>>& I)
+template <typename C>
+bool approximate_reals(C const& curve1,
+                       typename C::PointID const& center_id,
+                       C const& curve2,
+                       typename C::PointID const& seg_start_id,
+                       typename C::distance_t const& radius,
+                       std::pair<Lambda<C>, Lambda<C>>& I)
 {
-    using Point = typename K::iPoint;
+    using Point = typename C::Point;
     const Point& circle_center = curve1[center_id];
     const Point& line_start = curve2[seg_start_id];
     const Point& line_end  = curve2[seg_start_id + 1];
@@ -53,9 +53,9 @@ bool approximate_reals(Curve<K> const& curve1,
     // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
     // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
 
-    using Approx = typename K::distance_t;
+    using Approx = typename C::distance_t;
     Approx a(0), b(0), c(0);
-    for (auto i = 0; i < K::dimension; ++i) {
+    for (auto i = 0; i < C::dimension; ++i) {
         Approx start_end_diff = line_end[i] - line_start[i];
         a += CGAL::square(start_end_diff);
         Approx start_center_diff = line_start[i] - circle_center[i];
@@ -74,11 +74,11 @@ bool approximate_reals(Curve<K> const& curve1,
         if (end > Approx(1)) end = Approx(1);
         if (start <= Approx(1) && end >= Approx(0)) {
             I = std::make_pair(
-                (start == Approx(0)) ? Lambda<K>(0)
-                                     : Lambda<K>(start, curve1, center_id,
+                (start == Approx(0)) ? Lambda<C>(0)
+                                     : Lambda<C>(start, curve1, center_id,
                                               curve2, seg_start_id, radius, true),
-                (end == Approx(1)) ? Lambda<K>(1)
-                                   : Lambda<K>(end, curve1, center_id,
+                (end == Approx(1)) ? Lambda<C>(1)
+                                   : Lambda<C>(end, curve1, center_id,
                                            curve2, seg_start_id, radius, false));
             return true;
         }
@@ -86,25 +86,25 @@ bool approximate_reals(Curve<K> const& curve1,
     return false;
 }
 
-template <typename K>
-bool exact_reals(Curve<K> const& curve1,
-                 typename K::PointID const& center_id,
-                 Curve<K> const& curve2,
-                 typename K::PointID const& seg_start_id,
-                 typename K::distance_t const& radius,
-                 std::pair<Lambda<K>, Lambda<K>>& I)
+template <typename C>
+bool exact_reals(C const& curve1,
+                 typename C::PointID const& center_id,
+                 C const& curve2,
+                 typename C::PointID const& seg_start_id,
+                 typename C::distance_t const& radius,
+                 std::pair<Lambda<C>, Lambda<C>>& I)
 {
-  using Rational_point = typename Curve<K>::Rational_point;
+  using Rational_point = typename C::Rational_point;
 
   const Rational_point& circle_center = curve1.rpoint(center_id);
   const Rational_point& line_start = curve2.rpoint(seg_start_id);
   const Rational_point& line_end  = curve2.rpoint(seg_start_id + 1);
 
-    using Exact = typename Lambda<K>::Exact;
-    using Rational = typename Lambda<K>::Rational;
+    using Exact = typename Lambda<C>::Exact;
+    using Rational = typename Lambda<C>::Rational;
 
     Rational a(0), b(0), c(0);
-    for (auto i = 0; i < K::dimension; ++i) {
+    for (auto i = 0; i < C::dimension; ++i) {
       Rational start_end_diff = line_end[i] - line_start[i];
         a += CGAL::square(start_end_diff);
         Rational start_center_diff = line_start[i] - circle_center[i];
@@ -122,8 +122,8 @@ bool exact_reals(Curve<K> const& curve1,
         if (is_negative(start)) start = Exact(0);
         if (end > Exact(1)) end = Exact(1);
         if (start <= Exact(1) && end >= Exact(0)) {
-            I = std::make_pair((start == Exact(0)) ? Lambda<K>(0) : Lambda<K>(start),
-                               (end == Exact(1) ? Lambda<K>(1) : Lambda<K>(end)));
+            I = std::make_pair((start == Exact(0)) ? Lambda<C>(0) : Lambda<C>(start),
+                               (end == Exact(1) ? Lambda<C>(1) : Lambda<C>(end)));
             return true;
         }
     }
@@ -139,26 +139,26 @@ namespace HLPred
  * \ingroup PkgPolylineDistanceFunctions
  * computes
 */
-template <typename K>
-Interval<K> intersection_interval(Curve<K> const& curve1,
-                               typename K::PointID const& center_id,
-                               Curve<K> const& curve2,
-                               typename K::PointID seg_start_id,
-                               typename K::distance_t const& radius)
+template <typename C>
+Interval<C> intersection_interval(C const& curve1,
+                               typename C::PointID const& center_id,
+                               C const& curve2,
+                               typename C::PointID seg_start_id,
+                               typename C::distance_t const& radius)
 {
-    Interval<K> I;
+    Interval<C> I;
 
     try {
-      std::pair<Lambda<K>, Lambda<K>> II;
+      std::pair<Lambda<C>, Lambda<C>> II;
         // if not empty
         if (approximate_reals(curve1, center_id, curve2,  seg_start_id, radius, II)) {
-            I = Interval<K>(II.first, II.second);
+            I = Interval<C>(II.first, II.second);
         }
     } catch (const CGAL::Uncertain_conversion_exception& e) {
-      std::pair<Lambda<K>, Lambda<K>> II;
+      std::pair<Lambda<C>, Lambda<C>> II;
         // if not empty
         if (exact_reals(curve1, center_id, curve2,  seg_start_id, radius, II)) {
-            I = Interval<K>(II.first, II.second);
+            I = Interval<C>(II.first, II.second);
         }
     }
 

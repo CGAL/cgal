@@ -29,13 +29,29 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
-
+#include <CGAL/Cartesian_converter.h>
 #include <vector>
 
 namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
+double length_of_diagonal(const Bbox_2& bb)
+{
+    using I = Interval_nt<false>;
+    I d = square(I(bb.xmax()) - I(bb.xmin()));
+    d +=  square(I(bb.ymax()) - I(bb.ymin()));
+    return sqrt(d).sup();
+}
+
+double length_of_diagonal(const Bbox_3& bb)
+{
+    using I = Interval_nt<false>;
+    I d = square(I(bb.xmax()) - I(bb.xmin()));
+    d +=  square(I(bb.ymax()) - I(bb.ymin()));
+    d +=  square(I(bb.zmax()) - I(bb.zmin()));
+    return sqrt(d).sup();
+}
 // TODO: Clean up Curve
 
 /*!
@@ -46,36 +62,66 @@ namespace internal {
 template <typename T>
 class Curve
 {
+public:
     using K = typename T::BaseTraits;
+    using Self  = Curve<T>;
+
     static auto get_type()
     {
         if constexpr (K::Has_filtered_predicates_tag::value) {
             return typename K::Exact_kernel{};
         } else {
-            return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
+            if constexpr (std::is_floating_point_v<typename K::FT>)
+                return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
+            else
+                return K{};
         }
     }
 
     using Rational_kernel = decltype(get_type());
 
 public:
+    static constexpr int dimension =  T::dimension;
+
+    using distance_t = CGAL::Interval_nt<false>;
+    using iKernel = CGAL::Simple_cartesian<distance_t>;
+
+    using Point = std::conditional_t<(dimension == 2),
+                                     typename iKernel::Point_2 ,
+                                     typename iKernel::Point_3>;
+
     using Bbox = typename T::Bbox;
-    using distance_t = typename T::distance_t;
-    using Point = typename T::iPoint;
+
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
     using InputPoints = std::vector<typename T::Point>;
 
     using Rational = typename Rational_kernel::FT;
-    // AF do we want to define the types in the traits class?
-    using Rational_point = typename Type_mapper<typename T::Point, typename T::BaseTraits, Rational_kernel>::type;
+    using Rational_point = std::conditional_t<(dimension == 2),
+                                     typename Rational_kernel::Point_2 ,
+                                     typename Rational_kernel::Point_3>;
+    using D2D = NT_converter<distance_t,double>;
+    using I2R = Cartesian_converter<iKernel, Rational_kernel, D2D>;
+
+    using K2I = Cartesian_converter<K, iKernel>;
+
 
     Curve() = default;
 
+/*
+      K           Has_filtered_predicates     is_floating_point(K::FT)      store input
+    Epick                 Y                             Y                   N as we can  do to_double of interval
+    Epeck                 Y                             N                   Y as we later need exact
+    SC<double>            N                             Y                   N as we can  do to_double of interval
+    SC<Rational>          N                             N                   Y as we later need exact
+    SC<Interval_nt>       N                             N                   Y  to simplify life
+    SC<Expr>              N                             N                   Y as we later need exact
+    == Epeck_with_sqrt
+*/
     template <class PointRange>
     Curve(const PointRange& point_range) : prefix_length(point_range.size())
     {
-        if constexpr (K::Has_filtered_predicates_tag::value) {
+        if constexpr ( ! std::is_floating_point<typename K::FT>::type::value) {
             input.reserve(point_range.size());
             for (auto const& p : point_range) {
                 input.push_back(p);
@@ -83,17 +129,17 @@ public:
         }
 
         points.reserve(point_range.size());
-        for (auto const& p : point_range) {
-            if constexpr (K::Has_filtered_predicates_tag::value) {
-                points.push_back(typename K::C2F()(p));
-            } else if constexpr (std::is_floating_point<
-                                     typename K::FT>::type::value) {
-                points.push_back(Point(p.x(), p.y()));
-            } else {
-                points.push_back(Point_2(CGAL::to_interval(p.x()),
-                                         CGAL::to_interval(p.y())));
+        if constexpr (K::Has_filtered_predicates_tag::value){
+             for (auto const& p : point_range) {
+                 points.push_back(typename K::C2F()(p));
+            }
+        }else{
+            K2I convert;
+             for (auto const& p : point_range) {
+                 points.push_back(typename convert(p));
             }
         }
+
         if (points.empty()) {
             return;
         }
@@ -124,13 +170,18 @@ public:
 
     Rational_point rpoint(PointID const& i) const
     {
+        if constexpr (std::is_floating_point<typename K::FT>::type::value) {
+            I2R convert;
+            return convert(points[i]);
+        }
         if constexpr (K::Has_filtered_predicates_tag::value) {
             return typename K::C2E()(input[i]);
         }
-        if constexpr (std::is_floating_point<typename K::FT>::type::value) {
-            return Rational_point(points[i].x().inf(), points[i].y().inf());  // AF: deal with dimension
+        if constexpr (! std::is_floating_point<typename K::FT>::type::value &&
+                      ! K::Has_filtered_predicates_tag::value) {
+            return input[i];
         }
-        assert(false);
+        CGAL_assertion(false);
         return Rational_point();
     }
 
@@ -147,11 +198,12 @@ public:
         return CGAL::sqrt(CGAL::squared_distance(p, q));
     }
 
+
     template <class P>
     Point interpolate_at(P const& pt) const
     {
-        assert(pt.getFraction() >= Lambda<T>(0) &&
-               pt.getFraction() <= Lambda<T>(1));
+        assert(pt.getFraction() >= Lambda<Self>(0) &&
+               pt.getFraction() <= Lambda<Self>(1));
         assert((
             pt.getPoint() < points.size() - 1 ||
             (pt.getPoint() == points.size() - 1 && is_zero(pt.getFraction()))));
@@ -187,6 +239,15 @@ public:
 
     Bbox const& bbox() const { return extreme_points; }
 
+    template <int>
+    distance_t getUpperBoundDistanceImpl(Curve const& other) const;
+
+    template <>
+    distance_t getUpperBoundDistanceImpl<2>(Curve const& other) const;
+
+    template <>
+    distance_t getUpperBoundDistanceImpl<3>(Curve const& other) const;
+
     distance_t getUpperBoundDistance(Curve const& other) const;
 
 private:
@@ -216,15 +277,11 @@ void Curve<K>::push_back(Point const& point)
     points.push_back(point);
 }
 
-// @todo make dimension independent
 template<typename K>
 typename Curve<K>::distance_t Curve<K>::getUpperBoundDistance(Curve const& other) const
 {
     Bbox bb = this->bbox() + other.bbox();
-    Point min_point = {bb.xmin(), bb.ymin()};
-    Point max_point = {bb.xmax(), bb.ymax()};
-
-    return distance(min_point, max_point);
+    return length_of_diagonal(bb);
 }
 
 template<typename K>

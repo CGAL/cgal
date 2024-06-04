@@ -1,9 +1,10 @@
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Frechet_distance_near_neighbors_ds.h>
-
+#include <CGAL/Root_of_traits.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Timer.h>
 
 #include <algorithm>
@@ -21,9 +22,13 @@ namespace
 // helpers
 //
 using Test_distance_t = double;
-  //using TestKernel = CGAL::Simple_cartesian<double>;
-  using TestKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
-  using TestTraits = CGAL::Polyline_traits_2<TestKernel, double>;
+using TestKernel = CGAL::Simple_cartesian<double>;
+//using TestKernel = CGAL::Simple_cartesian<CGAL::Exact_rational>;
+//using TestKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+//using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel;
+//using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
+
+using TestTraits = CGAL::Polyline_traits_2<TestKernel>;
 // using NT = TestKernel::FT;
 using TestPoint = TestKernel::Point_2;
 using TestCurve = std::vector<TestPoint>;
@@ -170,7 +175,7 @@ void testFrechetDistance()
           */
             timer.start();
             auto decision =
-                CGAL::continuous_Frechet_distance_less_than<TestCurve, TestTraits>(  // SL: only TestTraits
+                CGAL::continuous_Frechet_distance_less_than<TestTraits>(
                     curves[query.id1], curves[query.id2], query.distance);
             timer.stop();
             if (decision != query.decision) {

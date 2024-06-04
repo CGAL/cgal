@@ -55,17 +55,19 @@ auto toDistance(NT distance)
 
 template <class Traits>
 bool lessThan(Curve<Traits> const& curve1, Curve<Traits> const& curve2,
-              const typename Traits::distance_t& distance, const Traits& traits)
+              const typename Curve<Traits>::distance_t& distance, const Traits& traits)
 {
-  FrechetLight<Traits> frechet;
+  FrechetLight<Curve<Traits>> frechet;
   return frechet.lessThanWithFilters(distance, curve1, curve2);
 }
 
 template <typename Traits>
-typename Traits::distance_t calcDistance(Curve<Traits> const& curve1, Curve<Traits> const& curve2)
+typename Traits::distance_t calcDistance(Curve<Traits> const& curve1, 
+                                         Curve<Traits> const& curve2, 
+                                        double precision)
 {
-    FrechetLight<Traits> frechet;
-    return frechet.calcDistance(curve1, curve2);
+    FrechetLight<Curve<Traits>> frechet;
+    return frechet.calcDistance(curve1, curve2, precision);
 }
 
 } // namespace internal

@@ -31,14 +31,15 @@ namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
-template <typename K>
+template <typename C>
 class Certificate
 {
-    using distance_t = typename K::distance_t;
-    using CPositions = CGAL::Polyline_distance::internal::CPositions<K>;
-    using CPosition = CGAL::Polyline_distance::internal::CPosition<K>;
-    using Curve = CGAL::Polyline_distance::internal::Curve<K>;
-    using CPoint = CGAL::Polyline_distance::internal::CPoint<K>;
+    using Curve = C;
+    using distance_t = typename Curve::distance_t;
+    using K = typename Curve::K;
+    using CPositions = CGAL::Polyline_distance::internal::CPositions<C>;
+    using CPosition = CGAL::Polyline_distance::internal::CPosition<C>;
+    using CPoint = CGAL::Polyline_distance::internal::CPoint<C>;
 public:
     Certificate() = default;
 

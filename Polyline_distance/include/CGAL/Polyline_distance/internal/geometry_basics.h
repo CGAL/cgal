@@ -51,12 +51,12 @@ namespace internal {
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a value in the interval `[0,1]`....
 */
-template<typename K>
+template<typename C>
 struct Lambda {
-    using distance_t = typename K::distance_t;
-    using PointID = typename K::PointID;
-    using Approx = CGAL::Interval_nt<false>;
-    using Curve = CGAL::Polyline_distance::internal::Curve<K>;
+    using Curve = C;
+    using distance_t = typename C::distance_t;
+    using Approx = distance_t;
+    using PointID = typename C::PointID;
     using Rational = typename Curve::Rational;
     using Exact = CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_false>;
 
@@ -113,14 +113,15 @@ struct Lambda {
         const typename Curve::Rational_point& le = curve2->rpoint(line_start+1);
         const typename Curve::Rational_point& cc = curve1->rpoint(circle_center);
         Rational a, b, c;
-        for (auto i = 0; i < K::dimension; ++i) {
+        for (auto i = 0; i < Curve::dimension; ++i) {
             Rational start_end_diff = le[i] - ls[i];
             a += CGAL::square(start_end_diff);
             Rational start_center_diff = ls[i] - cc[i];
             b -= start_center_diff * start_end_diff;
             c += CGAL::square(start_center_diff);
         }
-        c -= CGAL::square(Rational(to_double(radius)));  // AF: radius must also be inf == sup
+        CGAL_assertion(radius.is_point());
+        c -= CGAL::square(Rational(to_double(radius)));
 
         Rational minus_b_div_a = b / a;
         Rational d = CGAL::square(minus_b_div_a) - c / a;
@@ -148,37 +149,37 @@ struct Lambda {
         return false;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Lambda<K>&)
+    friend std::ostream& operator<<(std::ostream& os, const Lambda<C>&)
     {
         return os;
     }
 
-    bool operator<=(const Lambda<K>& other) const
+    bool operator<=(const Lambda<C>& other) const
     {
         return (*this < other) || (*this == other);
     }
 
-    bool operator>=(const Lambda<K>& other) const
+    bool operator>=(const Lambda<C>& other) const
     {
         return (other < *this) || (*this == other);
     }
 
-    bool operator>(const Lambda<K>& other) const
+    bool operator>(const Lambda<C>& other) const
     {
       return (other < *this);
     }
 
-    bool operator==(const Lambda<K>& other) const
+    bool operator==(const Lambda<C>& other) const
     {
         return (!(*this < other)) && (!(other < *this));
     }
 
-    bool operator!=(const Lambda<K>& other) const
+    bool operator!=(const Lambda<C>& other) const
     {
       return !(*this == other);
     }
 
-    bool operator<(const Lambda<K>& other) const
+    bool operator<(const Lambda<C>& other) const
     {
         if ((is_zero && other.is_zero) || (is_one && other.is_one))
             return false;
@@ -197,8 +198,8 @@ struct Lambda {
 } // namespace Polyline_distance
 } // namespace internal
 
-template <typename K>
-bool is_one(const Polyline_distance::internal::Lambda<K>& lambda)
+template <typename C>
+bool is_one(const Polyline_distance::internal::Lambda<C>& lambda)
 {
     if (lambda.is_one) return true;
     if (lambda.is_zero) return false;
@@ -210,8 +211,8 @@ bool is_one(const Polyline_distance::internal::Lambda<K>& lambda)
     return is_one(*lambda.exact);
 }
 
-template <typename K>
-bool is_zero(const Polyline_distance::internal::Lambda<K>& lambda)
+template <typename C>
+bool is_zero(const Polyline_distance::internal::Lambda<C>& lambda)
 {
     if (lambda.is_zero) return true;
     if (lambda.is_one) return false;
@@ -223,22 +224,23 @@ bool is_zero(const Polyline_distance::internal::Lambda<K>& lambda)
     return is_zero(*lambda.exact);
 }
 
+/*
 template <typename K>
 CGAL::Interval_nt<false> to_interval(const Polyline_distance::internal::Lambda<K>& lambda)
 {
   return lambda.approx;
 }
-
+*/
 
 
 namespace Polyline_distance
 {
 namespace internal {
 
-template <typename K>
+template <typename C>
 struct ContinuousPoint {
-    using distance_t = typename K::distance_t;
-    using PointID = typename K::PointID;
+    using distance_t = typename C::distance_t;
+    using PointID = typename C::PointID;
     PointID point;
     distance_t fraction;
 
@@ -289,16 +291,16 @@ BFDirection toBFDirection(Direction direction);
  * A class representing a
 */
 
-template <typename K>
+template <typename C>
 struct Interval {
-    Lambda<K> begin;
-    Lambda<K> end;
+    Lambda<C> begin;
+    Lambda<C> end;
 
   Interval()
     : begin(1.), end(0.)
   {}
 
-  Interval(Lambda<K> const& begin, Lambda<K> const& end)
+  Interval(Lambda<C> const& begin, Lambda<C> const& end)
     : begin(begin), end(end)
   {}
 
@@ -319,8 +321,8 @@ struct Interval {
   }
 };
 
-template <typename K>
-std::ostream& operator<<(std::ostream& out, const Interval<K>& interval);
+template <typename C>
+std::ostream& operator<<(std::ostream& out, const Interval<C>& interval);
 
 /*!
  * \ingroup PkgPolylineDistanceFunctions
@@ -328,17 +330,17 @@ std::ostream& operator<<(std::ostream& out, const Interval<K>& interval);
  *
  * CPoint is integral part + rational [0,1] number given as sqrt_extension
  */
-template <typename K>
+template <typename C>
 class CPoint
 {
   private:
-  using PointID = typename K::PointID;
+  using PointID = typename C::PointID;
     PointID point;
-    Lambda<K> fraction;
+    Lambda<C> fraction;
 
     void normalize()
     {
-        assert(fraction >= Lambda<K>(0) && fraction <= Lambda<K>(1));
+        assert(fraction >= Lambda<C>(0) && fraction <= Lambda<C>(1));
         if (CGAL::is_one(fraction)) {
             fraction = 0.;
             ++point;
@@ -346,7 +348,7 @@ class CPoint
     }
 
 public:
-    CPoint(PointID point, Lambda<K> const& fraction)
+    CPoint(PointID point, Lambda<C> const& fraction)
         : point(point), fraction(fraction)
     {
         normalize();
@@ -358,7 +360,7 @@ public:
 
     PointID getPoint() const { return point; }
 
-    Lambda<K> const& getFraction() const { return fraction; }
+    Lambda<C> const& getFraction() const { return fraction; }
 
     double getFractionLB() const
     {
@@ -368,7 +370,7 @@ public:
 
     void setPoint(PointID point) { this->point = point; }
 
-    void setFraction(Lambda<K> const& frac)
+    void setFraction(Lambda<C> const& frac)
     {
         fraction = frac;
         normalize();
@@ -412,7 +414,7 @@ public:
 
     bool operator>(PointID other) const
     {
-        return point > other || (point == other && fraction > Lambda<K>(0));
+        return point > other || (point == other && fraction > Lambda<C>(0));
     }
 
     bool operator<=(PointID other) const
@@ -450,11 +452,11 @@ public:
 
 
 
-template <typename K>
-using CPosition = std::array<CPoint<K>, 2>;
+template <typename C>
+using CPosition = std::array<CPoint<C>, 2>;
 
-template <typename K>
-using CPositions = std::vector<CPosition<K>>;
+template <typename C>
+using CPositions = std::vector<CPosition<C>>;
 
 using CurveID = std::size_t;
 
@@ -462,39 +464,39 @@ using CurveID = std::size_t;
  * \ingroup PkgPolylineDistanceFunctions
  * A class representing a
 */
-template <typename K>
+template <typename C>
 struct CInterval {
-    using PointID =  typename K::PointID;
+    using PointID =  typename C::PointID;
 
-    CPoint<K> begin;
-    CPoint<K> end;
+    CPoint<C> begin;
+    CPoint<C> end;
 
     const CInterval* reach_parent = nullptr;
-  CPoint<K> fixed = CPoint<K>((std::numeric_limits<typename PointID::IDType>::max)(), 0.);
+  CPoint<C> fixed = CPoint<C>((std::numeric_limits<typename PointID::IDType>::max)(), 0.);
     CurveID fixed_curve = -1;
 
-    CPosition<K> getLowerRightPos() const
+    CPosition<C> getLowerRightPos() const
     {
         if (fixed_curve == 0) {
-            CPosition<K> ret = {{fixed, begin}};
+            CPosition<C> ret = {{fixed, begin}};
             return ret;
         } else {
-            CPosition<K> ret = {{end, fixed}};
+            CPosition<C> ret = {{end, fixed}};
             return ret;
         }
     }
-    CPosition<K> getUpperLeftPos() const
+    CPosition<C> getUpperLeftPos() const
     {
         if (fixed_curve == 0) {
-            CPosition<K> ret = {{fixed, end}};
+            CPosition<C> ret = {{fixed, end}};
             return ret;
         } else {
-            CPosition<K> ret = {{begin, fixed}};
+            CPosition<C> ret = {{begin, fixed}};
             return ret;
         }
     }
 
-    CInterval(CPoint<K> const& begin, CPoint<K> const& end, CPoint<K> const& fixed,
+    CInterval(CPoint<C> const& begin, CPoint<C> const& end, CPoint<C> const& fixed,
               CurveID fixed_curve)
         : begin(begin), end(end), fixed(fixed), fixed_curve(fixed_curve)
     {
@@ -508,12 +510,12 @@ struct CInterval {
 
     CInterval(CInterval const& other) = default;
 
-    CInterval(CPoint<K> const& begin, CPoint<K> const& end) : begin(begin), end(end)
+    CInterval(CPoint<C> const& begin, CPoint<C> const& end) : begin(begin), end(end)
     {
     }
 
-    CInterval(PointID point1, Lambda<K> fraction1, PointID point2,
-              Lambda<K> const& fraction2)
+    CInterval(PointID point1, Lambda<C> fraction1, PointID point2,
+              Lambda<C> const& fraction2)
         : begin(point1, fraction1), end(point2, fraction2)
     {
     }
@@ -533,22 +535,22 @@ struct CInterval {
         end = {std::numeric_limits<typename PointID::IDType>::lowest(), 0};
     }
 
-    void clamp(CPoint<K> const& min, CPoint<K> const& max)
+    void clamp(CPoint<C> const& min, CPoint<C> const& max)
     {
       begin = (std::max)(min, begin);
       end = (std::min)(max, end);
     }
 };
 
-template <typename K>
-std::ostream& operator<<(std::ostream& out, const CInterval<K>& interval);
+template <typename C>
+std::ostream& operator<<(std::ostream& out, const CInterval<C>& interval);
 
 
-template <typename K>
-using CIntervals = std::vector<CInterval<K>>;
+template <typename C>
+using CIntervals = std::vector<CInterval<C>>;
 
-template <typename K>
-using CIntervalsID = ID<CIntervals<K>>;
+template <typename C>
+using CIntervalsID = ID<CIntervals<C>>;
 
 #if 0
 // TODO: CGAL certainly has a replacement for this; do we want this though as
@@ -576,8 +578,8 @@ std::ostream& operator<<(std::ostream& out, const Point& p)
     return out;
 }
 */
-template <typename K>
-std::ostream& operator<<(std::ostream& out, const CPoint<K>& p)
+template <typename C>
+std::ostream& operator<<(std::ostream& out, const CPoint<C>& p)
 {
     out << std::setprecision(15) << "(" << (size_t)p.point << " + "
         << p.fraction << ")";
@@ -589,16 +591,16 @@ std::ostream& operator<<(std::ostream& out, const CPoint<K>& p)
 //
 // Interval
 //
-template <typename K>
-std::ostream& operator<<(std::ostream& out, const Interval<K>& interval)
+template <typename C>
+std::ostream& operator<<(std::ostream& out, const Interval<C>& interval)
 {
     out << std::setprecision (15)
         << "(" << interval.begin << ", " << interval.end << ")";
 
     return out;
 }
-template <typename K>
-std::ostream& operator<<(std::ostream& out, const CInterval<K>& interval)
+template <typename C>
+std::ostream& operator<<(std::ostream& out, const CInterval<C>& interval)
 {
     out << std::setprecision(15) << "(" << interval.begin << ", "
         << interval.end << ")";

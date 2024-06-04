@@ -45,9 +45,9 @@ class Filter
 private:
     using distance_t = typename K::distance_t;
     using PointID = typename K::PointID;
-    using Point = typename K::iPoint;
+    using Point = typename K::Point;
     using Certificate = CGAL::Polyline_distance::internal::Certificate<K>;
-    using Curve = CGAL::Polyline_distance::internal::Curve<K>;
+    using Curve = K;
     using CPoint = CGAL::Polyline_distance::internal::CPoint<K>;
 
     Certificate cert;
