@@ -358,7 +358,7 @@ public:
     return sstr.str();
   }
 
-  const int dimension(const Intersection& intersection) const
+  int dimension(const Intersection& intersection) const
   {
     return std::get<2>(intersection);
   }
