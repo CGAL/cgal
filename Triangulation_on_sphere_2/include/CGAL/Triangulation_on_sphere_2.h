@@ -1258,7 +1258,7 @@ is_plane() const
   while(it4 != vertices_end())
   {
     Orientation s = orientation(point(it1), point(it2), point(it3), point(it4));
-    is_plane = is_plane && s == COLLINEAR;
+    is_plane = is_plane && s == COPLANAR;
 
     if(!is_plane)
       return false;
