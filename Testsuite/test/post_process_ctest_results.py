@@ -5,9 +5,9 @@ import os
 input_report_file_name=sys.argv[1]
 report_file_name=sys.argv[2]
 global_report_file_name=sys.argv[3]
-config_regex=re.compile('(.*Configuring (examples|demo|test)*( in )*(test\/|examples\/|demo\/)*)((?!done)\w+)')
-demo_regex=re.compile('.*in demo\/')
-examples_regex=re.compile('.*in examples\/')
+config_regex=re.compile(r'(.*Configuring (examples|demo|test)*( in )*(test/|examples/|demo/)*)((?!done)\w+)')
+demo_regex=re.compile(r'.*in demo/')
+examples_regex=re.compile(r'.*in examples/')
 Separator = "------------------------------------------------------------------"
 
 
