@@ -27,8 +27,6 @@
 
 #include <CGAL/license/Polyline_distance.h>
 #include <CGAL/Polyline_distance/internal/id.h>
-#include <CGAL/Interval_nt.h>
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Bbox_2.h>
 
 // TODO: is it too restrictive to use vectors by default?
