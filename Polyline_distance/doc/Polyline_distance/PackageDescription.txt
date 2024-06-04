@@ -27,14 +27,18 @@
 
 \cgalPkgDescriptionEnd
 
-This chapter presents ....
+This package ....
 
 \cgalClassifedRefPages
 
 \cgalCRPSection{Concepts}
-- `PolylineDistanceTraits_2`
+- `PolylineDistanceTraits`
+
+\cgalCRPSection{Classes}
+- `CGAL::Polyline_traits_2`
+- `CGAL::Polyline_traits_3`
 
 \cgalCRPSection{Functions}
-- `CGAL::Frechet_distance()`
-
+- `CGAL::continuous_Frechet_distance()`
+- `CGAL::continuous_Frechet_distance_less_than()`
 */

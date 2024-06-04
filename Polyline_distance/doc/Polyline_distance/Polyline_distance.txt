@@ -19,7 +19,7 @@ Section on definitions here ...
 
 The following example shows ...
 
-\cgalExample{Polyline_distance/dummy_example.cpp}
+\cgalExample{Polyline_distance/Frechet_distance_2.cpp}
 
 \cgalFigureBegin{figRefId,pkg-small.png}
 Here you can put the caption

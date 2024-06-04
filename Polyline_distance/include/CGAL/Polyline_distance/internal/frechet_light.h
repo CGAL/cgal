@@ -78,7 +78,7 @@ public:
                   Curve const& curve2);
     bool lessThanWithFilters(distance_t const& distance, Curve const& curve1,
                              Curve const& curve2);
-    double calcDistance(Curve const& curve1, Curve const& curve2, double epsilon);
+    std::pair<double,double> calcDistance(Curve const& curve1, Curve const& curve2, double epsilon);
     void clear();
 
     CurvePair getCurvePair() const;
@@ -1336,7 +1336,7 @@ auto FrechetLight<C>::computeInitialInputs() -> Inputs
 }
 
 template <typename C>
-double FrechetLight<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
+std::pair<double,double> FrechetLight<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
 {
     double min = 0;
     double max = curve1.getUpperBoundDistance(curve2).sup();
@@ -1350,7 +1350,7 @@ double FrechetLight<C>::calcDistance(Curve const& curve1, Curve const& curve2, d
         }
     }
 
-    return max;
+    return std::make_pair(min,max);
 }
 
 // This doesn't have to be called but is handy to make time measurements more

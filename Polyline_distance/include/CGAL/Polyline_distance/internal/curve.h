@@ -63,7 +63,7 @@ template <typename T>
 class Curve
 {
 public:
-    using K = typename T::BaseTraits;
+    using K = typename T::Kernel;
     using Self  = Curve<T>;
 
     static auto get_type()

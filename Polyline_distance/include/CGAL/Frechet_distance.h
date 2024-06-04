@@ -39,17 +39,20 @@ namespace CGAL
 /**
  * \ingroup PkgPolylineDistanceFunctions
  * decides if the Frechet distance between two polylines given as a range of
- * points is less than a given distance. \param curve1 the first curve defined
- * by the sequence of consecutive points along the polyline \param curve2 the
+ * points is less than a given distance.
+ * \param curve1 the first curve defined
+ * by the sequence of consecutive points along the polyline
+ * \param curve2 the
  * second curve defined by the sequence of consecutive points along the polyline
  * \param distance the decision distance
+ * \param traits
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  */
 template < class Traits, class PointRange>
 bool continuous_Frechet_distance_less_than(const PointRange& curve1,
                                            const PointRange& curve2,
-                                           const typename Traits::FT distance,
+                                           const double distance,
                                            const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
@@ -62,23 +65,27 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
 
 /**
  * \ingroup PkgPolylineDistanceFunctions
- * computes the Frechet distance between two polylines given as a range of
- * points. \param curve1 the first curve defined by the sequence of consecutive
- * points along the polyline \param curve2 the second curve defined by the
- * sequence of consecutive points along the polyline \tparam PointRange  a model
- * of the concept `RandomAccessContainer` with `Traits::Point` as value type.
+ * computes the Frechet distance between two polylines given as a range of points.
+ * \param curve1 the first curve defined by the sequence of consecutive
+ * points along the polyline
+ * \param curve2 the second curve defined by the
+ * sequence of consecutive points along the polyline
+ * \param precision
+ *  \param traits
+ * \tparam PointRange  a model of the concept `RandomAccessContainer`
+ * with `Traits::Point` as value type.
  */
 template <class Traits,class PointRange>
-typename Traits::FT continuous_Frechet_distance(const PointRange& curve1,
-                                                const PointRange& curve2,
-                                                const double precision = 1e-10,
-                                                const Traits& traits = Traits())
+std::pair<double,double> continuous_Frechet_distance(const PointRange& curve1,
+                                                     const PointRange& curve2,
+                                                     const double precision = 1e-10,
+                                                    const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
     auto icurve1 = Polyline_distance::internal::toCurve(curve1, traits);
     auto icurve2 = Polyline_distance::internal::toCurve(curve2, traits);
 
-    return to_double(Polyline_distance::internal::calcDistance(icurve1, icurve2, traits, precision));
+    return Polyline_distance::internal::calcDistance(icurve1, icurve2, traits, precision);
 }
 
 }  // end of namespace CGAL

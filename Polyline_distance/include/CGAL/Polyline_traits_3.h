@@ -40,36 +40,29 @@
 
 namespace CGAL
 {
-
-// TODO: This is just a starter to enable using the same types all over the
-// package.
-  template <class Kernel, class NT>
+/*!
+ * \ingroup PkgPolylineDistanceRef
+ * This class ...
+* \cgalModels{PolylineDistanceTraits}
+* \tparam GT  geometric traits class
+*/
+template <class GT>
 class Polyline_traits_3
 {
 public:
-    using distance_t = CGAL::Interval_nt<false>;
-    using iKernel = CGAL::Simple_cartesian<distance_t>;
-    using iPoint = typename iKernel::Point_3;
-    using PointID = CGAL::Polyline_distance::internal::ID<iPoint>;
-
-    using BaseTraits = Kernel;
-    using FT = typename BaseTraits::FT;
-    using Point = typename BaseTraits::Point_3;
+    using Kernel = GT;
+    using FT = typename Kernel::FT;
+    using Point = typename Kernel::Point_3;
     using Bbox = Bbox_3;
 
     static const int dimension = 3;
-  /*
-    using Compare_squared_distance =
-        typename BaseTraits::Compare_squared_distance_3;
-    using Construct_midpoint = typename BaseTraits::Construct_midpoint_3;
-    using Construction_number_type = CNT;
-  */
+
+
     // TODO: remove?
     using Polyline = std::vector<Point>;
     using Polylines = std::vector<Polyline>;
     using PolylineID = std::size_t;
     using PolylineIDs = std::vector<PolylineID>;
-
 };
 
 }  // end of namespace CGAL

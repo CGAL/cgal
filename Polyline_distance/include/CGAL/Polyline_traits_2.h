@@ -31,22 +31,24 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Bbox_2.h>
 
-// TODO: add doxygen code
-
-/// \cgalModels{PolylineDistanceTraits}
-
 // TODO: is it too restrictive to use vectors by default?
 #include <vector>
 
 namespace CGAL
 {
-  template <class Kernel>
+/*!
+ * \ingroup PkgPolylineDistanceRef
+ * This class ...
+* \cgalModels{PolylineDistanceTraits}
+* \tparam GT  geometric traits class
+*/
+template <class GT>
 class Polyline_traits_2
 {
 public:
-    using BaseTraits = Kernel;
-    using FT = typename BaseTraits::FT;
-    using Point = typename BaseTraits::Point_2;
+    using Kernel = GT;
+    using FT = typename Kernel::FT;
+    using Point = typename Kernel::Point_2;
     using Bbox = Bbox_2;
 
     static const int dimension = 2;
