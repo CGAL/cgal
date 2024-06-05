@@ -1,6 +1,3 @@
-// Copyright (c) 2024 INRIA Nancy - Grand Est (France). LIGM Marne-la-Vallée (France)
-// All rights reserved.
-
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2Concepts
 \cgalConcept
