@@ -1,35 +1,16 @@
-cmake_minimum_required(VERSION 3.1...3.15)
+cmake_minimum_required(VERSION 3.1...3.23)
 
-project( examples )
+project( Hyperbolic_surface_triangulation_2_Examples )
 
 # CGAL and its components
-find_package( CGAL QUIET COMPONENTS  )
+find_package( CGAL REQUIRED  )
 
-if ( NOT CGAL_FOUND )
 
-  message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()
-
-endif()
-
-# Boost and its components
-find_package( Boost REQUIRED )
-
-if ( NOT Boost_FOUND )
-
-  message(STATUS "This project requires the Boost library, and will not be compiled.")
-
-  return()
-
-endif()
-
-add_executable( example example.cpp )
-
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS example)
-
-target_link_libraries(example PRIVATE CGAL::CGAL )
-
-set(CMAKE_BUILD_TYPE "Release")
-
-#########################################################################
-target_include_directories(example PRIVATE ../../include/)
+# create a target per cppfile
+file(
+  GLOB cppfiles
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+foreach(cppfile ${cppfiles})
+  create_single_source_cgal_program("${cppfile}")
+endforeach()
