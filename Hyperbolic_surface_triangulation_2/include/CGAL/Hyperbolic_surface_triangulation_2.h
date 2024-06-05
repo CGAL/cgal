@@ -106,7 +106,7 @@ private:
 
   ComplexNumber get_cross_ratio(Dart_const_handle dart) const;
 
-  Dart_handle pick_edge_to_flip();
+  Dart_handle pick_edge_to_flip() const;
 
   void copy_from(const Combinatorial_map_with_cross_ratios& cmap);
   void copy_from(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
@@ -131,7 +131,7 @@ Hyperbolic_surface_triangulation_2<Traits>::Hyperbolic_surface_triangulation_2(c
   int size = domain.size();
 
   // Make the triangles
-  Dart_handle dart_of_triangle[size-2];
+  std::vector<Dart_handle> dart_of_triangle(size-2);
   for (int k=0; k<size-2; k++){
     dart_of_triangle[k] = _combinatorial_map.make_combinatorial_polygon(3);
   }
@@ -644,7 +644,7 @@ typename Hyperbolic_surface_triangulation_2<Traits>::ComplexNumber Hyperbolic_su
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-typename Hyperbolic_surface_triangulation_2<Traits>::Dart_handle Hyperbolic_surface_triangulation_2<Traits>::pick_edge_to_flip(){
+typename Hyperbolic_surface_triangulation_2<Traits>::Dart_handle Hyperbolic_surface_triangulation_2<Traits>::pick_edge_to_flip() const{
   for (typename Dart_range::iterator it = _combinatorial_map.darts().begin(); it != _combinatorial_map.darts().end(); ++it){
     if ( is_delaunay_flippable(it) ){
       return it;

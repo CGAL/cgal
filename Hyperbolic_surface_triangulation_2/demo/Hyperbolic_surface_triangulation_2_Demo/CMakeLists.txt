@@ -11,9 +11,9 @@ set(CMAKE_AUTOMOC ON)
 
 
 # CGAL and its components
-find_package(CGAL REQUIRED COMPONENTS Core Qt5)
-include(${CGAL_USE_FILE})
-find_package(Qt5 QUIET COMPONENTS Widgets)
+find_package(CGAL REQUIRED COMPONENTS Core Qt6)
+
+find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if ( NOT CGAL_FOUND )
 
@@ -22,9 +22,9 @@ if ( NOT CGAL_FOUND )
 
 endif()
 
-if ( NOT CGAL_Qt5_FOUND )
+if ( NOT CGAL_Qt6_FOUND  OR NOT Qt6_FOUND)
 
-  message(STATUS "This project requires the Qt5 library, and will not be compiled.")
+  message(STATUS "This project requires the Qt6 library, and will not be compiled.")
   return()
 
 endif()
@@ -41,13 +41,13 @@ if ( NOT Boost_FOUND )
 endif()
 
 # ui files, created with Qt Designer
-qt5_wrap_ui(UIS drawing_window_description.ui)
+qt6_wrap_ui(UIS drawing_window_description.ui)
 
 add_executable( demo demo.cpp window.cpp ${UIS})
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS demo )
 
-target_link_libraries(demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt5 Qt5::Widgets )
+target_link_libraries(demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets )
 
 set(CMAKE_BUILD_TYPE "Release")
 

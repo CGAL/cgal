@@ -180,7 +180,7 @@ bool Hyperbolic_fundamental_domain_2<Traits>::is_valid()const{
   }
 
   // Check that the _pairings vector encodes a perfect matching of the set {0,1,\dots,n-1}
-  bool already_paired[n];
+  std::vector<bool> already_paired(n);
   for (int k=0; k<n; k++){
     already_paired[k] = false;
   }
