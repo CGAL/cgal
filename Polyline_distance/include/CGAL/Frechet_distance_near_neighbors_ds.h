@@ -59,7 +59,7 @@ public:
     void insert(const Polyline& curve);
     void insert(const Polylines& curve);
 
-    PolylineIDs get_close_curves(const Polyline& curve, FT distance);
+    PolylineIDs get_close_curves(const Polyline& curve, double distance);
 
 private:
     Polylines curves;
@@ -79,7 +79,7 @@ void FrechetDistanceNearNeighborsDS<PointRange, Traits>::insert(
 
 template <class PointRange, class Traits>
 auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
-    const Polyline& curve, FT distance) -> PolylineIDs
+    const Polyline& curve, double distance) -> PolylineIDs
 {
     auto result = kd_tree.search(curve, distance);
 

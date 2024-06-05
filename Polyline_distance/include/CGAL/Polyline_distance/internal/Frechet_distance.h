@@ -33,13 +33,9 @@ namespace CGAL {
 namespace Polyline_distance {
 namespace internal {
 
-  template <class PointRange, class Traits>
-  auto toCurve(const PointRange& point_range, const Traits& traits)
+template <class PointRange, class Traits>
+auto toCurve(const PointRange& point_range, const Traits& traits)
 {
-    using iterator = typename PointRange::const_iterator;
-    using Point = typename std::iterator_traits<iterator>::value_type;
-    using K = typename CGAL::Kernel_traits<Point>::Kernel;
-
     Curve<Traits> curve(point_range);
 
     return curve;

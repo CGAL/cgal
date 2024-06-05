@@ -136,7 +136,7 @@ public:
         }else{
             K2I convert;
              for (auto const& p : point_range) {
-                 points.push_back(typename convert(p));
+                 points.push_back(convert(p));
             }
         }
 
@@ -144,7 +144,6 @@ public:
             return;
         }
 
-        auto const& front = points.front();
         prefix_length[0] = 0;
 
         Bbox bb;

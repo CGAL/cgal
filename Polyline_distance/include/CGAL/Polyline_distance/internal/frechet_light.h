@@ -506,7 +506,6 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
 
         // from here on stepsize == 1:
         // mid == end holds in this case
-        auto const& end_point = curve[mid];
         auto end_dist_sqr = mid_dist_sqr;
         // if last and next point are both free:
         if (current_free && certainly(end_dist_sqr <= dist_sqr)) {  // Uncertain (A)
@@ -516,7 +515,7 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
             continue;
         }
 
-        // Now the intervall is either not free or the last comparison was inderterminate.
+        // Now the interval is either not free or the last comparison was inderterminate.
         // In both cases we say that the interval is not full in TestFullMode as we cannot
         // call getInterval with IndexType that is not PointID.
         if (std::is_same<MODE, TestFullMode>::value) {

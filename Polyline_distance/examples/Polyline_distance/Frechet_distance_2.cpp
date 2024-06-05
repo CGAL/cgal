@@ -12,5 +12,6 @@ int main(int argc, char* argv[])
 {
     std::vector<Point> A, B;
     bool res = CGAL::continuous_Frechet_distance_less_than<Traits>(A, B, 0.001);
+    std::cout << std::boolalpha << res << std::endl;
     return 0;
 }

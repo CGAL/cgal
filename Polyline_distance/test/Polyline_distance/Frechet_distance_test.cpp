@@ -1,4 +1,5 @@
 #include <CGAL/Frechet_distance.h>
+#include <CGAL/Polyline_distance_traits_2.h>
 #include <CGAL/Frechet_distance_near_neighbors_ds.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Simple_cartesian.h>
