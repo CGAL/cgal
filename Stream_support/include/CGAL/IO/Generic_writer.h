@@ -55,7 +55,7 @@ public:
     for(std::size_t i=0, end=points.size(); i<end; ++i)
     {
       const typename boost::property_traits<PointMap>::value_type& p = get(point_map, points[i]);
-      m_writer.write_vertex(p.x(), p.y(), p.z());
+      m_writer.write_vertex(to_double(p.x()), to_double(p.y()), to_double(p.z()));
     }
 
     m_writer.write_facet_header();

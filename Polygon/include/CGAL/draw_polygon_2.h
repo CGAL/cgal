@@ -13,11 +13,15 @@
 //
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
 #ifndef CGAL_DRAW_POLYGON_2_H
 #define CGAL_DRAW_POLYGON_2_H
 
-#include <CGAL/Qt/Basic_viewer_qt.h>
+#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Graphics_scene.h>
+#include <CGAL/Graphics_scene_options.h>
+#include <CGAL/Polygon_2.h>
 
 #ifdef DOXYGEN_RUNNING
 namespace CGAL {
@@ -25,117 +29,177 @@ namespace CGAL {
 /*!
 \ingroup PkgDrawPolygon2
 
-opens a new window and draws `ap`, an instance of the `CGAL::Polygon_2` class. A call to this function is blocking, that is the program continues as soon as the user closes the window. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
-\tparam P an instance of the `CGAL::Polygon_2` class.
-\param ap the polygon to draw.
+opens a new window and draws a 2D polygon. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
+Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+
+\tparam P which must be an instantiation of a `CGAL::Polygon_2<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param p the polygon to draw.
+\param gso the graphics scene options parameter.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class T, class C, class GSOptions>
+
+ void CGAL::draw(const CGAL::Polygon_2<T, C>& p, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+*/
+template<class P, class GSOptions>
+void draw(const P& p, const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawPolygon2
+
+A shortcut to `CGAL::draw(p, Graphics_scene_options{})`.
+*/
+  template<class P>
+  void draw(const P& p);
+
+/*!
+\ingroup PkgDrawPolygon2
+
+adds the vertices, edges and faces of `p` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
+
+\tparam P which must be an instantiation of a `CGAL::Polygon_2<...>`.
+\tparam GSOptions a model of `GraphicsSceneOptions` concept.
+
+\param p the 2D polygon to draw.
+\param gs the graphic scene to fill.
+\param gso the graphics scene options parameter.
+
+\cgalAdvancedBegin
+The real declaration of this function template is:
+
+<code>
+ template<class T, class C, class GSOptions>
+
+ void CGAL::add_to_graphics_scene(const CGAL::Polygon_2<T, C>& p, CGAL::Graphics_scene& gs, const GSOptions& gso);
+</code>
+\cgalAdvancedEnd
+*/
+template<class P, class GSOptions>
+void add_to_graphics_scene(const P& p,
+                           CGAL::Graphics_scene& gs,
+                           const GSOptions& gso);
+
+/*!
+\ingroup PkgDrawPolygon2
+
+A shortcut to `CGAL::add_to_graphics_scene(p, gs, Graphics_scene_options{})`.
 */
 template<class P>
-void draw(const P& ap);
-
+void add_to_graphics_scene(const P& p,
+                           CGAL::Graphics_scene& gs);
 } /* namespace CGAL */
 
 #endif
 
-#ifdef CGAL_USE_BASIC_VIEWER
-#include <CGAL/Qt/init_ogl_context.h>
-#include <CGAL/Polygon_2.h>
-#include <CGAL/Random.h>
+namespace CGAL {
 
-namespace CGAL
+namespace draw_function_for_p2 {
+
+template <class P2, class GSOptions>
+void compute_elements(const P2& p2,
+                      CGAL::Graphics_scene &graphics_scene,
+                      const GSOptions& gso)
 {
+  if (p2.is_empty())
+    return;
 
-// Viewer class for Polygon_2
-template<class P2>
-class SimplePolygon2ViewerQt : public Basic_viewer_qt
-{
-  typedef Basic_viewer_qt      Base;
-  typedef typename P2::Point_2 Point;
-
-public:
-  /// Construct the viewer.
-  /// @param ap2 the polygon to view
-  /// @param title the title of the window
-  SimplePolygon2ViewerQt(QWidget* parent, const P2& ap2,
-                         const char* title="Basic Polygon_2 Viewer") :
-    // First draw: vertices; edges, faces; multi-color; no inverse normal
-    Base(parent, title, true, true, true, false, false),
-    p2(ap2)
+  if (gso.are_faces_enabled())
   {
-    compute_elements();
+    if(gso.colored_face(p2, nullptr))
+    { graphics_scene.face_begin(gso.face_color(p2, nullptr)); }
+    else
+    { graphics_scene.face_begin(); }
   }
 
-protected:
-  void compute_elements()
+  typename P2::Vertex_const_iterator prev=p2.vertices_end(); --prev;
+  for (typename P2::Vertex_const_iterator i=p2.vertices_begin();
+       i!=p2.vertices_end(); ++i)
   {
-    clear();
-
-    if (p2.is_empty()) return;
-
-    Point prev=p2.vertex(p2.size()-1);
-
-    CGAL::IO::Color c(75,160,255);
-    face_begin(c);
-
-    for (typename P2::Vertex_const_iterator i=p2.vertices_begin();
-         i!=p2.vertices_end(); ++i)
-    {
-      add_point(*i);         // Add vertex
-      add_segment(prev, *i); // Add segment with previous point
-      add_point_in_face(*i); // Add point in face
-      prev=*i;
+    if(gso.are_vertices_enabled() &&
+       gso.draw_vertex(p2, i))
+    { // Add vertex
+      if(gso.colored_vertex(p2, i))
+      { graphics_scene.add_point(*i, gso.vertex_color(p2, i)); }
+      else
+      { graphics_scene.add_point(*i); }
     }
 
-    face_end();
+    if(gso.are_edges_enabled() &&
+       gso.draw_edge(p2, prev))
+    { // Add edge with previous point
+      if(gso.colored_edge(p2, prev))
+      { graphics_scene.add_segment(*prev, *i, gso.edge_color(p2, prev)); }
+      else
+      { graphics_scene.add_segment(*prev, *i); }
+    }
+
+    if(gso.are_faces_enabled())
+    { graphics_scene.add_point_in_face(*i); } // Add point in face
+
+    prev=i;
   }
 
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    // Test key pressed:
-    //    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-    //    if ((e->key()==Qt::Key_PageUp) && (modifiers==Qt::NoButton)) { ... }
-
-    // Call: * compute_elements() if the model changed, followed by
-    //       * redraw() if some viewing parameters changed that implies some
-    //                  modifications of the buffers
-    //                  (eg. type of normal, color/mono)
-    //       * update() just to update the drawing
-
-    // Call the base method to process others/classicals key
-    Base::keyPressEvent(e);
-  }
-
-protected:
-  const P2& p2;
-};
-
-// Specialization of draw function.
-template<class T, class C>
-void draw(const CGAL::Polygon_2<T, C>& ap2,
-          const char* title="Polygon_2 Basic Viewer")
-{
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite)
-  {
-    CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[2]={"t2_viewer", nullptr};
-    QApplication app(argc,const_cast<char**>(argv));
-    SimplePolygon2ViewerQt<CGAL::Polygon_2<T, C> >
-      mainwindow(app.activeWindow(), ap2, title);
-    mainwindow.show();
-    app.exec();
-  }
+  if (gso.are_faces_enabled())
+  { graphics_scene.face_end(); }
 }
 
-} // End namespace CGAL
+} // namespace draw_function_for_p2
+
+#define CGAL_P2_TYPE CGAL::Polygon_2<T, C>
+
+// Specializations of add_to_graphics_scene function
+template<class T, class C, class GSOptions>
+void add_to_graphics_scene(const CGAL_P2_TYPE& ap2,
+                           CGAL::Graphics_scene& graphics_scene,
+                           const GSOptions& gso)
+{ draw_function_for_p2::compute_elements(ap2, graphics_scene, gso); }
+
+template<class T, class C>
+void add_to_graphics_scene(const CGAL_P2_TYPE& ap2,
+                           CGAL::Graphics_scene &graphics_scene)
+{
+  CGAL::Graphics_scene_options<CGAL_P2_TYPE,
+                        typename CGAL_P2_TYPE::Vertex_const_iterator,
+                        typename CGAL_P2_TYPE::Vertex_const_iterator,
+                        void*> gso;
+  draw_function_for_p2::compute_elements(ap2, graphics_scene, gso);
+}
+
+#ifdef CGAL_USE_BASIC_VIEWER
+
+// Specialization of draw function.
+template <class T, class C>
+void draw(const CGAL_P2_TYPE &ap2,
+          const char *title="Polygon_2 Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(ap2, buffer);
+  draw_graphics_scene(buffer, title);
+}
+
+template <class T, class C, class GSOptions>
+void draw(const CGAL_P2_TYPE &ap2,
+          const GSOptions& gso,
+          const char *title="Polygon_2 Basic Viewer")
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(ap2, buffer, gso);
+  draw_graphics_scene(buffer, title);
+}
 
 #endif // CGAL_USE_BASIC_VIEWER
+
+#undef CGAL_P2_TYPE
+
+} // End namespace CGAL
 
 #endif // CGAL_DRAW_POLYGON_2_H

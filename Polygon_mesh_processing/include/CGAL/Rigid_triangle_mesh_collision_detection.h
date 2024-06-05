@@ -17,7 +17,7 @@
 #include <CGAL/license/Polygon_mesh_processing/collision_detection.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polygon_mesh_processing/internal/AABB_traversal_traits_with_transformation.h>
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -76,7 +76,7 @@ class Rigid_triangle_mesh_collision_detection
 // AABB-tree type
   typedef AABB_face_graph_triangle_primitive<TriangleMesh,
                                              Vpm>             Default_primitive;
-  typedef AABB_traits<K, Default_primitive>                 Default_tree_traits;
+  typedef AABB_traits_3<K, Default_primitive>               Default_tree_traits;
   typedef CGAL::AABB_tree<Default_tree_traits>                     Default_tree;
   typedef typename Default::Get<AABBTree, Default_tree>::type              Tree;
   typedef typename Tree::AABB_traits                                Tree_traits;

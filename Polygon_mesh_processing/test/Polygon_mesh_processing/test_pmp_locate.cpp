@@ -519,7 +519,7 @@ struct Locate_with_AABB_tree_Tester // 2D case
     typedef PMP::internal::Point_to_Point_3<G, Intrinsic_point>                Intrinsic_point_to_Point_3;
     typedef PMP::internal::Point_to_Point_3_VPM<G, VPM>                        WrappedVPM;
     typedef CGAL::AABB_face_graph_triangle_primitive<G, WrappedVPM>            AABB_face_graph_primitive;
-    typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
+    typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                  AABB_face_graph_traits;
 
     static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
 
@@ -629,7 +629,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
 
     // ---------------------------------------------------------------------------
     typedef CGAL::AABB_face_graph_triangle_primitive<G, VPM>                   AABB_face_graph_primitive;
-    typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>                    AABB_face_graph_traits;
+    typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>                  AABB_face_graph_traits;
 
     typedef typename K::Point_3                            Point_3;
     static_assert(std::is_same<typename AABB_face_graph_traits::Point_3, Point_3>::value);
@@ -643,7 +643,7 @@ struct Locate_with_AABB_tree_Tester<K, VPM, 3> // 3D
     typedef boost::associative_property_map<Custom_map>                        Custom_VPM;
     typedef PMP::internal::Point_to_Point_3_VPM<G, Custom_VPM>                 WrappedVPM;
     typedef CGAL::AABB_face_graph_triangle_primitive<G, WrappedVPM>            AABB_face_graph_primitive_with_WVPM;
-    typedef CGAL::AABB_traits<K, AABB_face_graph_primitive_with_WVPM>          AABB_face_graph_traits_with_WVPM;
+    typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive_with_WVPM>        AABB_face_graph_traits_with_WVPM;
 
     CGAL::AABB_tree<AABB_face_graph_traits_with_WVPM> tree_b;
     Custom_map custom_map;

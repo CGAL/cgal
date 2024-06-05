@@ -64,7 +64,7 @@ public:
   { *this = plane_from_point_direction<R>(o, v.direction()); }
 
   PlaneC3(const FT &a, const FT &b, const FT &c, const FT &d)
-    : base(CGAL::make_array(a, b, c, d)) {}
+    : base{a, b, c, d} {}
 
   PlaneC3(const Line_3 &l, const Point_3 &p)
   { *this = plane_from_points<R>(l.point(),

@@ -63,7 +63,7 @@ public:
   { *this = R().construct_vector_3_object()(l); }
 
   VectorH3(const Null_vector&)
-    : base(CGAL::make_array(RT(0), RT(0), RT(0), RT(1))) {}
+    : base{RT(0), RT(0), RT(0), RT(1)} {}
 
   template < typename Tx, typename Ty, typename Tz >
   VectorH3(const Tx & x, const Ty & y, const Tz & z,

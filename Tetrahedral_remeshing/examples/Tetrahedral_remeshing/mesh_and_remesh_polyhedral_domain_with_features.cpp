@@ -10,14 +10,19 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
+#include <CGAL/property_map.h>
+#include <CGAL/IO/File_medit.h>
+
+#include <string>
+#include <unordered_set>
 
 // Domain
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Polyhedron = CGAL::Surface_mesh<K::Point_3>;
-using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<K, Polyhedron>;
+using Surface_mesh = CGAL::Surface_mesh<K::Point_3>;
+using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<K, Surface_mesh>;
 
 #ifdef CGAL_CONCURRENT_MESH_3
-using Concurrency_tag = CGAL::Parallel_tag;
+using Concurrency_tag = CGAL::Parallel_if_available_tag;
 #else
 using Concurrency_tag = CGAL::Sequential_tag;
 #endif
@@ -43,26 +48,26 @@ using namespace CGAL::parameters;
 
 int main(int argc, char* argv[])
 {
-  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/anchor.off");
+  const std::string fname = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/fandisk.off");
   const int nb_iter = (argc > 2) ? atoi(argv[2]) : 5;
 
   std::ifstream input(fname);
-  Polyhedron polyhedron;
+  Surface_mesh mesh;
 
   std::string filename(fname);
-  input >> polyhedron;
+  input >> mesh;
   if (input.fail()) {
     std::cerr << "Error: Cannot read file " << fname << std::endl;
     return EXIT_FAILURE;
   }
 
-  if (!CGAL::is_triangle_mesh(polyhedron)) {
+  if (!CGAL::is_triangle_mesh(mesh)) {
     std::cerr << "Input geometry is not triangulated." << std::endl;
     return EXIT_FAILURE;
   }
 
   // Create domain
-  Mesh_domain domain(polyhedron);
+  Mesh_domain domain(mesh);
 
   // Get sharp features
   domain.detect_features();
@@ -70,10 +75,11 @@ int main(int argc, char* argv[])
   // Mesh criteria
   const double size = 0.072;
   Mesh_criteria criteria(edge_size = size,
-    facet_angle = 25,
-    facet_size = size,
-    cell_radius_edge_ratio = 2,
-    cell_size = size);
+                         facet_angle = 25,
+                         facet_size = size,
+                         facet_distance = 0.1 * size,
+                         cell_radius_edge_ratio = 2,
+                         cell_size = size);
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, no_perturb(), no_exude());
@@ -82,11 +88,12 @@ int main(int argc, char* argv[])
   Constraints_pmap constraints_pmap(constraints);
 
   Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
-    CGAL::parameters::edge_is_constrained_map(constraints_pmap));
+    edge_is_constrained_map(constraints_pmap));
 
   // Remeshing
   CGAL::tetrahedral_isotropic_remeshing(tr, size,
-    CGAL::parameters::number_of_iterations(nb_iter));
+    number_of_iterations(nb_iter)
+    .edge_is_constrained_map(constraints_pmap));
 
   std::ofstream out("out_remeshed.mesh");
   CGAL::IO::write_MEDIT(out, tr);

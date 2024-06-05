@@ -212,7 +212,7 @@ In this example, a survey \cgalCite{Botsch2008OnLinearVariational} model is load
 
 \section SMD_Demo How to Use the Demo
 
-A plugin for the polyhedron demo is available to test the algorithm. The following video tutorials explain how to use it.
+A plugin for CGAL Lab is available to test the algorithm. The following video tutorials explain how to use it.
 When the deformation dock window is open, the picking of control vertices and of the ROI is done by pressing <i>Shift</i>
 and clicking with the left button of the mouse.
 The displacement of the vertices is triggered when the <i>Ctrl</i> button is pressed.

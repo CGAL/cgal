@@ -163,7 +163,7 @@ public:
     Vertex_it    vertices_begin()const { return enclosing->skip_begin();}
     Vertex_it    current()const {return pos;}
     Vertex_it    vertices_end()const {return enclosing->skip_end();}
-    Constraint_id  id() { return enclosing; }
+    Constraint_id  id()const { return enclosing; }
     std::size_t    number_of_vertices() const {return enclosing->skip_size(); }
   };
 
@@ -221,6 +221,7 @@ public:
   std::size_t number_of_enclosing_constraints(T va, T vb) const;
   Context_iterator contexts_begin(T va, T vb) const;
   Context_iterator contexts_end(T va, T vb) const;
+  Iterator_range<Context_iterator> contexts_range(T va, T vb) const;
   std::size_t number_of_constraints() const  { return constraint_set.size();}
   std::size_t number_of_subconstraints()const {return sc_to_c_map.size();}
 
@@ -486,6 +487,15 @@ contexts_end(T va, T vb) const
    Context_iterator first, last;
    if( !get_contexts(va,vb,first,last))  CGAL_assertion(false);
    return last;
+}
+
+template <class T, class Compare, class Point>
+auto
+Polyline_constraint_hierarchy_2<T,Compare,Point>::
+contexts_range(T va, T vb) const -> Iterator_range<Context_iterator> {
+  Context_iterator first, last;
+  if( !get_contexts(va,vb,first,last)) return { first, first };
+  else return { first, last };
 }
 
 template <class T, class Compare, class Point>
