@@ -1,3 +1,6 @@
+/// @TODO: change the usage from Surface_mesher to Mesh_3
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
