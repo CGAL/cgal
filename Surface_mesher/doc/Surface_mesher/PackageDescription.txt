@@ -7,10 +7,6 @@
 /// \defgroup PkgSurfaceMesher3Classes Mesh and Domain Classes
 /// \ingroup PkgSurfaceMesher3Ref
 
-/// \defgroup PkgSurfaceMesher3TagClasses Tag Classes
-/// \ingroup PkgSurfaceMesher3Ref
-
-
 /// \defgroup PkgSurfaceMesher3Functions Functions
 /// \ingroup PkgSurfaceMesher3Ref
 

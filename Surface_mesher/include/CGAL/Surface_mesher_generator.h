@@ -35,10 +35,6 @@
 
 namespace CGAL {
 
-  struct Non_manifold_tag {};
-  struct Manifold_tag {};
-  struct Manifold_with_boundary_tag {};
-
 //   struct Dynamic_manifold_tag {
 //     enum Tag { Manifold = 0, Non_manifold = 1, Manifold_with_boundary = 2 };
 //   };
