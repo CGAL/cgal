@@ -1,4 +1,5 @@
 #include <CGAL/Frechet_distance.h>
+#include <CGAL/Polyline_distance_traits_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <ostream>
