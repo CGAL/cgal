@@ -58,6 +58,10 @@ with open(input_report_file_name, "rt", encoding="utf-8") as input_report_file:
         if is_writing:
             if match:
                 is_writing = False
+                input_report_file.close()
+                if is_ignored:
+                    print("{label} {result}".format(label=name, result='r'), file=global_report)
+                    is_ignored = False
                 if lines_to_write:
                     file_path = "{dir}/{file}".format(dir=name, file=report_file_name)
                     if os.path.exists(file_path):
