@@ -6,6 +6,7 @@
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
 namespace Test {
@@ -25,6 +26,10 @@ struct Vec3
   const double& hw() const
   {
       return CGAL::constant<double, 1>();
+  }
+  void foo() const
+  {
+    std::cout << "foo" << std::endl;
   }
     double x, y, z;
 };
@@ -206,11 +211,11 @@ struct ComputeW : public CgalKernelBase::Compute_hw_3
 
   typedef const double& result_type;
 
-  /// Returns the z-coordinate of the given point \a v.
+  /// Returns the z-coordinate of the given point v.
   ///
-  /// \param v point to return the z-coordinate for
-  /// \return the z-coordinate of the given point \a v
-  result_type operator()(const typename CustomKernel::Point_3&v) const { return v.rep().hw(); }
+  /// \param v point to return the homogeneous coordinate for
+  /// \return the homogeneous coordinate of the given point v
+    result_type operator()(const typename CustomKernel::Point_3&v) const { return v.rep().hw(); }
 };
 
 /// CGAL CRTP kernel type that enables derivation of some custom kernel type
@@ -274,4 +279,10 @@ struct CartesianKernel
 using CustomKernel = CGAL::Filtered_kernel<CartesianKernel>;
 
 } // namespace Test
+
+template <>
+struct Ambient_dimension<::CGAL::Test::Vec3, ::CGAL::Test::CustomKernel>{
+  static const int value = 3;
+  typedef Dimension_tag<3> type;
+};
 } // namespace CGAL

@@ -39,6 +39,10 @@
 
 #include "CGAL/_test_mf_plane_3_to_2d.h"
 
+#include <vector>
+#include <CGAL/centroid.h>
+#include <CGAL/bounding_box.h>
+
 int
 main()
 {
@@ -53,6 +57,22 @@ main()
   p.rep().x;
   Segment_3 seg(p,q);
   std::cout << seg.bbox() << std::endl;
+
+  CGAL::Test::Vec3 vp = p;
+  CGAL::Test::Vec3 vq = p;
+
+  vp = p;
+  p = vp;
+
+  p.foo();
+  std::cout << CGAL::midpoint(p,q) << std::endl;
+  std::cout << CGAL::midpoint<Cls>(vp,vq) << std::endl;
+  std::cout << Cls::Construct_midpoint_3()(vp,vq) << std::endl;
+  std::vector<CGAL::Test::Vec3> vvec3;
+
+  CGAL::bounding_box(vvec3.begin(), vvec3.end(), Cls());
+
+  // CGAL::centroid(vvec3.begin(), vvec3.end(), Cls(), CGAL::Dimension_tag<0>());
 #if 1
   Cls::Construct_point_3 cp3 = Cls().construct_point_3_object();
   p = cp3(4,5,6);
