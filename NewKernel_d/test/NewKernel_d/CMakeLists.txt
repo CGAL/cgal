@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 # Then modified by hand to add Eigen3.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(NewKernel_d_Tests)
 
 if(CMAKE_COMPILER_IS_GNUCCX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.4)
