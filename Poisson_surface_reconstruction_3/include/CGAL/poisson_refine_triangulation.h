@@ -21,7 +21,7 @@
 #include <CGAL/Mesh_3/Poisson_refine_cells_3.h>
 #include <CGAL/Poisson_mesh_cell_criteria_3.h>
 #include <CGAL/assertions.h>
-#include <CGAL/Mesh_3/Poisson_mesh_traits_generator_3.h>
+#include <CGAL/Poisson_surface_reconstruction_3/internal/Poisson_mesh_traits_generator_3.h>
 
 namespace CGAL {
 

@@ -1,4 +1,5 @@
 // Copyright (c) 2006-2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2024       GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -10,10 +11,13 @@
 //
 // Author(s)     : Laurent RINEAU
 
+// This file is a copy-paste-adaptation of Surface_mesher/include/CGAL/Poisson_implicit_surface_oracle_3.h
+// Surface_mesher that has been deprecated and will be removed in the future.
+
 #ifndef CGAL_POISSON_SURFACE_MESHER_POISSON_SPHERE_ORACLE_3_H
 #define CGAL_POISSON_SURFACE_MESHER_POISSON_SPHERE_ORACLE_3_H
 
-#include <CGAL/license/Surface_mesher.h>
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
 #include <CGAL/disable_warnings.h>
 #include <CGAL/point_generators_3.h>

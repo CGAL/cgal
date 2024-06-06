@@ -1,4 +1,5 @@
-// Copyright (c) 2006-2007, 2024  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2006-2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2024       GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -9,13 +10,16 @@
 //
 // Author(s)     : Laurent Rineau, Jane Tournois
 
-#ifndef CGAL_MESH_3_POISSON_MESH_TRAITS_GENERATOR_3_H
-#define CGAL_MESH_3_POISSON_MESH_TRAITS_GENERATOR_3_H
+// This file is a copy-paste-adaptation of Surface_mesher/include/CGAL/Surface_mesh_traits_generator_3.h
+// Surface_mesher that has been deprecated and will be removed in the future.
+
+#ifndef CGAL_POISSON_MESH_TRAITS_GENERATOR_3_H
+#define CGAL_POISSON_MESH_TRAITS_GENERATOR_3_H
 
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
 
-#include <CGAL/Surface_mesher/Poisson_sphere_oracle_3.h>
+#include <CGAL/Poisson_surface_reconstruction_3/internal/Poisson_sphere_oracle_3.h>
 
 namespace CGAL {
 
@@ -42,4 +46,4 @@ struct Poisson_mesh_traits_generator_3<CGAL::Sphere_3<Kernel> >
 
 } // end namespace CGAL
 
-#endif // CGAL_MESH_3_POISSON_MESH_TRAITS_GENERATOR_3_H
+#endif // CGAL_POISSON_MESH_TRAITS_GENERATOR_3_H
