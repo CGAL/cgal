@@ -11,7 +11,7 @@
 //
 // Author(s)     : Laurent RINEAU
 
-// This file is a copy-paste-adaptation of Surface_mesher/include/CGAL/Poisson_implicit_surface_oracle_3.h
+// This file is a copy-paste-adaptation of Surface_mesher/include/CGAL/Surface_mesher/Sphere_oracle_3.h
 // Surface_mesher that has been deprecated and will be removed in the future.
 
 #ifndef CGAL_POISSON_SURFACE_MESHER_POISSON_SPHERE_ORACLE_3_H
