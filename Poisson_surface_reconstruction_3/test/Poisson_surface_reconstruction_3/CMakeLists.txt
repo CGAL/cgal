@@ -22,8 +22,8 @@ find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3.1
-  create_single_source_cgal_program("poisson_reconstruction_test.cpp")
-  target_link_libraries(poisson_reconstruction_test PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("poisson_reconstruction_test_surface_mesher.cpp")
+  target_link_libraries(poisson_reconstruction_test_surface_mesher PUBLIC CGAL::Eigen3_support)
 
   find_package(TBB QUIET)
   include(CGAL_TBB_support)
