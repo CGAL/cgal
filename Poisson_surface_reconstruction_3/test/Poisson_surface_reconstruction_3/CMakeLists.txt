@@ -25,6 +25,9 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("poisson_reconstruction_test_surface_mesher.cpp")
   target_link_libraries(poisson_reconstruction_test_surface_mesher PUBLIC CGAL::Eigen3_support)
 
+    create_single_source_cgal_program("poisson_reconstruction_test_mesh_3.cpp")
+  target_link_libraries(poisson_reconstruction_test_mesh_3 PUBLIC CGAL::Eigen3_support)
+
   find_package(TBB QUIET)
   include(CGAL_TBB_support)
   if (TBB_FOUND)
