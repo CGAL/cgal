@@ -23,21 +23,25 @@ int main()
   CGAL::IO::write_polygon_mesh("write_polygon_mesh_sm.ply", sm,
                                CGAL::parameters::stream_precision(17).use_binary_mode(true));
 
+  // ERROR this produces an invalid plyfile
   CGAL::IO::write_polygon_mesh("write_polygon_mesh_po.ply", po,
                                CGAL::parameters::stream_precision(17).use_binary_mode(true));
 
+  //  OK
   // from #include <CGAL/boost/graph/IO/PLY.h>
   // https://doc.cgal.org/latest/BGL/group__PkgBGLIoFuncsPLY.html#ga959dcd88ca979d3b6b0806d883a0247f
-  CGAL::IO::write_PLY("generic_write_PLY.ply", sm, "generic write_PLY(Surface_mesh)",
+  CGAL::IO::write_PLY("generic_write_PLY_sm.ply", sm, "generic write_PLY(Surface_mesh)",
                       CGAL::parameters::stream_precision(17).use_binary_mode(true));
 
-  CGAL::IO::write_PLY("generic_write_PLY_po.ply", sm, "generic write_PLY(Polyhedron)",
+ // ERROR this produces an invalid plyfile
+  CGAL::IO::write_PLY("generic_write_PLY_po.ply", po, "generic write_PLY(Polyhedron)",
                       CGAL::parameters::stream_precision(17).use_binary_mode(true));
 
+  // OK
   // from #include <CGAL/Surface_mesh/IO/PLY.h>
   // https://doc.cgal.org/latest/Surface_mesh/group__PkgSurfaceMeshIOFuncPLY.html#ga50f0e9f2b293855d2c7f1a62939cbe8d
-  std::ofstream out("sm_write_PLY.ply", std::ios::binary);
-  CGAL::IO::write_PLY(out, sm, "sm_write_PLY");
+  std::ofstream out("overloaded_write_PLY_sm.ply", std::ios::binary);
+  CGAL::IO::write_PLY(out, sm, "overloaded_write_PLY)Surface_mesh)");
 
   return 0;
 }
