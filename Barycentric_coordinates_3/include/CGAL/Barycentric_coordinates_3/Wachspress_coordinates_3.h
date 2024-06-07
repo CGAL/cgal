@@ -250,15 +250,12 @@ namespace Barycentric_coordinates {
     }
 
     FT compute_weights(const Point_3& query) {
-
       // Sum of weights to normalize them later.
       FT sum = FT(0);
 
       // Vertex index.
       std::size_t vi = 0;
-      const auto vd = vertices(m_polygon_mesh);
-
-      for (const auto& vertex : vd) {
+      for (auto vertex : vertices(m_polygon_mesh)) {
 
         // Call function to calculate wp coordinates
         const FT weight = compute_wp_vertex_query(vertex, query);

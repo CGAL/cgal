@@ -70,7 +70,6 @@ void test_containers() {
   CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, polyhedron, CGAL::parameters::do_not_triangulate_faces(false));
   CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, surface_mesh, CGAL::parameters::do_not_triangulate_faces(false));
 
-
   LCoords lcoords;
   VCoords vcoords;
 
