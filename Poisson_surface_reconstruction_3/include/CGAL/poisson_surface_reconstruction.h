@@ -1,4 +1,4 @@
-// Copyright (c) 2017  GeometryFactory (France)
+// Copyright (c) 2017, 2024  GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,7 +7,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Simon Giraudot
+// Author(s)     : Simon Giraudot, Jane Tournois
 
 #ifndef CGAL_POISSON_SURFACE_RECONSTRUCTION_H
 #define CGAL_POISSON_SURFACE_RECONSTRUCTION_H
