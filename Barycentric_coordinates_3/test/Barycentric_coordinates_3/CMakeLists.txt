@@ -1,27 +1,18 @@
 # Created by the script cgal_create_cmake_script.
 # This is the CMake script for compiling a CGAL application.
 
+cmake_minimum_required(VERSION 3.1...3.23)
 project(Barycentric_coordinates_3_Tests)
-set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall -Wextra -Werror")
 
-cmake_minimum_required(VERSION 3.1...3.15)
-set(CMAKE_CXX_STANDARD 14)
+find_package(CGAL REQUIRED)
 
-find_package(CGAL QUIET COMPONENTS Core)
-if(CGAL_FOUND)
+include(CGAL_CreateSingleSourceCGALProgram)
 
-  include(${CGAL_USE_FILE})
-  include(CGAL_CreateSingleSourceCGALProgram)
-
-  create_single_source_cgal_program("test_tetrahedron_coordinates.cpp")
-  create_single_source_cgal_program("test_wp_dh_mv_tetrahedron.cpp")
-  create_single_source_cgal_program("test_wp_weights.cpp")
-  create_single_source_cgal_program("test_dh_weights.cpp")
-  create_single_source_cgal_program("test_mv_weights.cpp")
-  create_single_source_cgal_program("test_edge_cases.cpp")
-  create_single_source_cgal_program("test_containers.cpp")
-  create_single_source_cgal_program("test_boundary_coordinates.cpp")
-
-else()
-  message(WARNING "This program requires the CGAL library, and will not be compiled.")
-endif()
+create_single_source_cgal_program("test_tetrahedron_coordinates.cpp")
+create_single_source_cgal_program("test_wp_dh_mv_tetrahedron.cpp")
+create_single_source_cgal_program("test_wp_weights.cpp")
+create_single_source_cgal_program("test_dh_weights.cpp")
+create_single_source_cgal_program("test_mv_weights.cpp")
+create_single_source_cgal_program("test_edge_cases.cpp")
+create_single_source_cgal_program("test_containers.cpp")
+create_single_source_cgal_program("test_boundary_coordinates.cpp")
