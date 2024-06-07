@@ -18,6 +18,7 @@
 #include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <fstream>
 #include <string>
