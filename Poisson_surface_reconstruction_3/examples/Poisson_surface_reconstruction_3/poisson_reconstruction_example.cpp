@@ -1,6 +1,3 @@
-/// @TODO: change the usage from Surface_mesher to Mesh_3
-#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
-
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Poisson_reconstruction_function.h>
@@ -75,14 +72,10 @@ int main(void)
       (points, 6 /* knn = 1 ring */,
        CGAL::parameters::point_map (Point_map()));
 
-    // Gets one point inside the implicit surface
-    // and computes implicit function bounding sphere radius.
-    Point inner_point = function.get_inner_point();
+    //Computes implicit function bounding sphere radius.
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
-    // Defines the implicit surface: requires defining a
-    // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
 

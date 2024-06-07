@@ -1,4 +1,3 @@
-#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 // poisson_reconstruction.cpp
 
 //----------------------------------------------------------
@@ -23,7 +22,6 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
-#include <CGAL/Poisson_implicit_surface_3.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/compute_average_spacing.h>
@@ -312,8 +310,6 @@ int main(int argc, char * argv[])
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
-    // Defines the implicit surface: requires defining a
-          // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
 
