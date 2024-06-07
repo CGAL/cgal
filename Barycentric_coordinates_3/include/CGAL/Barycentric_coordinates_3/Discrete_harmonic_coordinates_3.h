@@ -70,7 +70,7 @@ namespace Barycentric_coordinates {
     /// \endcond
 
     /// Number type.
-	  typedef typename GeomTraits::FT FT;
+    typedef typename GeomTraits::FT FT;
 
     /// Point type.
     typedef typename GeomTraits::Point_3 Point_3;
@@ -177,18 +177,18 @@ namespace Barycentric_coordinates {
 
   private:
     const TriangleMesh& m_triangle_mesh;
-  	const Computation_policy_3 m_computation_policy;
-  	const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
-  	const GeomTraits m_traits;
+    const Computation_policy_3 m_computation_policy;
+    const VertexToPointMap m_vertex_to_point_map; // use it to map vertex to Point_3
+    const GeomTraits m_traits;
 
     const Construct_vec_3 m_construct_vector_3;
     const Cross_3 m_cross_3;
     const Dot_3 m_dot_3;
     const Sqrt sqrt;
 
-  	std::vector<FT> m_weights;
+    std::vector<FT> m_weights;
 
-  	template<typename OutputIterator>
+    template<typename OutputIterator>
     OutputIterator compute(
       const Point_3& query, OutputIterator coordinates) {
 
@@ -254,7 +254,7 @@ namespace Barycentric_coordinates {
       // Sum of weights to normalize them later.
       FT sum = FT(0);
 
-	    // Vertex index.
+      // Vertex index.
       std::size_t vi = 0;
       const auto vd = vertices(m_triangle_mesh);
 
@@ -263,10 +263,10 @@ namespace Barycentric_coordinates {
         // Call function to calculate wp coordinates
         const FT weight = compute_dh_vertex_query(vertex, query);
 
-    	  CGAL_assertion(vi < m_weights.size());
-    	  m_weights[vi] = weight;
-    	  sum += weight;
-    	  ++vi; // update vi
+        CGAL_assertion(vi < m_weights.size());
+        m_weights[vi] = weight;
+        sum += weight;
+        ++vi; // update vi
       }
 
       CGAL_assertion(sum != FT(0));
