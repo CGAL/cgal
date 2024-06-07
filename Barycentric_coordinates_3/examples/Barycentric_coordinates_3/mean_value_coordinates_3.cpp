@@ -1,6 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/Barycentric_coordinates_3/Mean_value_coordinates_3.h>
 
@@ -24,8 +24,8 @@ int main(){
   const Point_3 p6(1, 1, 3);
   const Point_3 p7(3, 0, 3);
 
-  CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, concave);
-  PMP::triangulate_faces(faces(concave), concave);
+  CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, concave,
+                        CGAL::parameters::do_not_triangulate_faces(false));
 
   std::vector<FT> coords;
   std::vector<Point_3> queries{

@@ -23,7 +23,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/convexity_check_3.h>
 #include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/Barycentric_coordinates_2/Triangle_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/triangle_coordinates_2.h>
 #include <CGAL/Barycentric_coordinates_2/Wachspress_2.h>
 #include <CGAL/Barycentric_coordinates_2/Generalized_barycentric_coordinates_2.h>
 
@@ -38,55 +38,6 @@ enum class Edge_case {
   BOUNDARY = 2, // boundary part of the polyhedron
   EXTERIOR_BOUNDARY = 3, // extension of the boundary
 };
-
-//Default sqrt
-template<class Traits>
-class Default_sqrt{
-    typedef typename Traits::FT FT;
-
-public:
-    FT operator()(const FT &value) const{
-        return FT(CGAL::sqrt(CGAL::to_double(value)));
-    }
-};
-
-BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Sqrt, Sqrt, false)
-
-// Case: do_not_use_default = false.
-template<class Traits, bool do_not_use_default = Has_nested_type_Sqrt<Traits>::value>
-    class Get_sqrt
-{
-public:
-    typedef Default_sqrt<Traits> Sqrt;
-
-    static Sqrt sqrt_object(const Traits&)
-    {
-        return Sqrt();
-    }
-};
-
-// Case: do_not_use_default = true.
-template<class Traits>
-    class Get_sqrt<Traits, true>
-{
-public:
-    typedef typename Traits::Sqrt Sqrt;
-
-    static Sqrt sqrt_object(const Traits &traits)
-    {
-        return traits.sqrt_object();
-    }
-};
-
-// Get default values.
-  template<typename OutputIterator>
-  void get_default(
-    const std::size_t n, OutputIterator output) {
-
-    for (std::size_t i = 0; i < n; ++i) {
-      *(output++) = 0;
-    }
-  }
 
   template<typename FT>
   FT get_tolerance() {
@@ -280,7 +231,7 @@ public:
 
     // Fill coordinates
     CGAL_assertion(bar_coords_2.size() == num_sides_face);
-    for(auto& vertex_polyhedron : vertices(triangle_mesh)){
+    for(auto vertex_polyhedron : vertices(triangle_mesh)){
 
       bool found_vertex = false;
       auto bar_coords_itr = bar_coords_2.begin();
@@ -331,7 +282,7 @@ public:
     const FT tol = get_tolerance<FT>();
     auto face_range = faces(polygon_mesh);
 
-    for(auto& face : face_range){
+    for(auto face : face_range){
 
       const auto hedge = halfedge(face, polygon_mesh);
       const auto vertices_face = vertices_around_face(hedge, polygon_mesh);

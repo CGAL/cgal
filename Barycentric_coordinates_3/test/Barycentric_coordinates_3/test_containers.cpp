@@ -5,7 +5,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Barycentric_coordinates_3.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/boost/graph/generators.h>
 
 // Typedefs.
 using SCKER = CGAL::Simple_cartesian<double>;
@@ -67,11 +67,9 @@ void test_containers() {
   const Point_3 p6(1, 0, 1);
   const Point_3 p7(1, 1, 1);
 
-  CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, polyhedron);
-  CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, surface_mesh);
+  CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, polyhedron, CGAL::parameters::do_not_triangulate_faces(false));
+  CGAL::make_hexahedron(p0, p1, p2, p3, p4, p5, p6, p7, surface_mesh, CGAL::parameters::do_not_triangulate_faces(false));
 
-  PMP::triangulate_faces(faces(polyhedron), polyhedron);
-  PMP::triangulate_faces(faces(surface_mesh), surface_mesh);
 
   LCoords lcoords;
   VCoords vcoords;
