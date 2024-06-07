@@ -8,8 +8,6 @@
 // poisson_reconstruction_test mesh1.off point_set2.xyz...
 
 // CGAL
-
-/// @TODO: change the usage from Surface_mesher to Mesh_3
 #include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
