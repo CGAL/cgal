@@ -163,7 +163,7 @@ int main(int argc, char * argv[])
 
     const std::size_t last_dot = output_filename.find_last_of(".");
     const std::string output_extension = output_filename.substr(last_dot);
-    const std::string output_basename = output_filename.substr(0, last_dot - 1);
+    const std::string output_basename = output_filename.substr(0, last_dot);
 
     CGAL::Timer task_timer; task_timer.start();
 
