@@ -31,11 +31,11 @@ that can be computed analytically.
 All of the three analytic coordinates can be computed either by instantiating a class or through a
 free function. Tetrahedron coordinates can be computed only through the free function.
 
-Similarly to `Barycentric_coordinates::Computation_policy_2` in the 2D package, we can specify a computation 
+Similarly to `Barycentric_coordinates::Computation_policy_2` in the 2D package, we can specify a computation
 policy Barycentric_coordinates::Computation_policy_3 that can be FAST or
-FAST_WITH_EDGE_CASES for each of the three analytical coordinates. The difference between them is that FAST_WITH_EDGE_CASES 
+FAST_WITH_EDGE_CASES for each of the three analytical coordinates. The difference between them is that FAST_WITH_EDGE_CASES
 treats points near the boundaries by projecting them into the face of the polyhedron and then calculating triangle coordinates.
-Note that, different from the 2D package, there is not yet an implementation for a PRECISE algorithm. 
+Note that, different from the 2D package, there is not yet an implementation for a PRECISE algorithm.
 
 The output of a query point is the coordinate value with respect to each vertex, the number of coordinates
  values being the same as the number of vertices, and the ordering is also the same.
@@ -58,7 +58,7 @@ In this example, we use the global function `tetrahedron_coordinates_in_array()`
 We compute coordinates for the tetrahedron whose vertices are the points in the
 set {(0,0,0), (1,0,0), (0,1,0), (0,0,1)}. We use points inside, outside and
 at the boundary of the tetrahedron.
-\anchor tetra_coord_example
+
 \cgalExample{Barycentric_coordinates_3/tetrahedron_coordinates.cpp}
 
 \subsection wp_3_example Wachspress Coordinates
@@ -67,7 +67,7 @@ In this example, we generate 250 random points inside a unit sphere,
 centered at the origin, then we take the convex hull of this set of points
 and use this as our polyhedron. Finally, we calculate Wachspress coordinates
 for all of these 250 points.
-\anchor wp_3_coord_example
+
 \cgalExample{Barycentric_coordinates_3/wachspress_coordinates.cpp}
 
 \subsection dh_3_example Discrete Harmonic Coordinates
@@ -77,7 +77,7 @@ We start with a regular icosahedron and for points inside, outside and
 at the boundary, we calculate discrete harmonic coordinates. In this example,
 we use the fast with edge cases algorithm because it treats points very close
 to the boundaries.
-\anchor dh_3_coord_example
+
 \cgalExample{Barycentric_coordinates_3/discrete_harmonic_coordinates.cpp}
 
 \subsection mv_3_example Mean Value Coordinates
@@ -87,7 +87,6 @@ star-shaped polyhedron. We note that this type of coordinate is well-defined for
 concave polyhedron but it may yield negative coordinate values for points outside
 the polyhedron's kernel (shown in blue).
 
-\anchor mv_3_coord_example
 \cgalFigureBegin{mv_3_example, mv_coords_example_3.png}
 Example's point pattern.
 \cgalFigureEnd
@@ -103,7 +102,6 @@ coordinate of each vertex with respect to the cube cage. After deforming
 the cage, we calculate the linear combination of the points to get the
 deformed sphere vertices.
 
-\anchor shape_deform_example
 \cgalFigureBegin{shape_deform_example_3, shape_deform_example_3.png}
 The shape on the left is deformed into the shape on the right.
 \cgalFigureEnd
@@ -118,8 +116,8 @@ algorithm should be used.
 Implementation details are described in \cgalCite{cgal:bc:f-wmvc-14} for Wachspress and mean value
 coordinates, and in \cgalCite{cgal:bc:jlw-ggcccsp-07} for discrete harmonic coordinates.
 
-For each coordinate, it is necessary to make divisions by the signed distance between the query 
-point and each face. So, if one of these distances is zero or close to zero (query point at the boundary), 
+For each coordinate, it is necessary to make divisions by the signed distance between the query
+point and each face. So, if one of these distances is zero or close to zero (query point at the boundary),
 it will cause a division by zero error or numerical instability, respectively.
 To avoid this, the main purpose of the FAST_WITH_EDGE_CASES algorithm is to extend the region where the analytical
 coordinates are well-defined. It adds the guarantee to calculate points near the boundaries. The
