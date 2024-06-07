@@ -232,6 +232,21 @@ bool read_PLY(const std::string& fname,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
 
+template <typename T>
+struct To_double_property_map_no_lvalue
+{
+  typedef T key_type; ///< typedef to `T`
+  typedef Simple_cartesian<double>::Point_3 value_type; ///< typedef to `T`
+  typedef value_type reference; ///< typedef to `T`
+  typedef boost::readable_property_map_tag category; ///< `boost::readable_property_map_tag`
+
+  typedef To_double_property_map_no_lvalue<T> Self;
+
+  friend value_type get(const Self&, const key_type& k) {
+    return Simple_cartesian<double>::Point_3(to_double(k.x()), to_double(k.y()), to_double(k.z()));}
+};
+
+
 /*!
  \ingroup PkgBGLIoFuncsPLY
 
@@ -379,7 +394,7 @@ bool write_PLY(std::ostream& os,
   for(vertex_descriptor vd : vertices(g))
   {
     const Point_3& p = get(vpm, vd);
-    internal::output_properties(os, &p, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+    internal::output_properties(os, &p, make_ply_point_writer (To_double_property_map_no_lvalue<Point_3>()));
     if(has_vcolor)
     {
       const CGAL::IO::Color& c = get(vcm, vd);
