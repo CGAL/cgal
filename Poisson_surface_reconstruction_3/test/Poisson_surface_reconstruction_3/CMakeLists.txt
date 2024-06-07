@@ -25,8 +25,11 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("poisson_reconstruction_test_surface_mesher.cpp")
   target_link_libraries(poisson_reconstruction_test_surface_mesher PUBLIC CGAL::Eigen3_support)
 
-    create_single_source_cgal_program("poisson_reconstruction_test_mesh_3.cpp")
+  create_single_source_cgal_program("poisson_reconstruction_test_mesh_3.cpp")
   target_link_libraries(poisson_reconstruction_test_mesh_3 PUBLIC CGAL::Eigen3_support)
+
+  create_single_source_cgal_program("compare_mesh_3_vs_Poisson_implicit_surface_3.cpp")
+  target_link_libraries(compare_mesh_3_vs_Poisson_implicit_surface_3  PUBLIC CGAL::Eigen3_support)
 
   find_package(TBB QUIET)
   include(CGAL_TBB_support)
@@ -39,3 +42,4 @@ if(TARGET CGAL::Eigen3_support)
 else()
   message("NOTICE: Tests in this directory require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
+
