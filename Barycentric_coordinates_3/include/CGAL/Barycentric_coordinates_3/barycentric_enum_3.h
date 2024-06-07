@@ -14,7 +14,7 @@
 #ifndef CGAL_BARYCENTRIC_ENUM_3_H
 #define CGAL_BARYCENTRIC_ENUM_3_H
 
-// #include <CGAL/license/Barycentric_coordinates_3.h>
+#include <CGAL/license/Barycentric_coordinates_3.h>
 
 namespace CGAL {
 

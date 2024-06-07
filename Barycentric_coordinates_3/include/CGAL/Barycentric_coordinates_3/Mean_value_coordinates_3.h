@@ -14,7 +14,7 @@
 #ifndef CGAL_BARYCENTRIC_MEAN_VALUE_COORDINATES_3_H
 #define CGAL_BARYCENTRIC_MEAN_VALUE_COORDINATES_3_H
 
-// #include <CGAL/license/Barycentric_coordinates_3.h>
+#include <CGAL/license/Barycentric_coordinates_3.h>
 
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_3/internal/utils_3.h>
