@@ -520,7 +520,7 @@ insert_outside_affine_hull_regular(const Point& p)
   if(orient2 == POSITIVE)
     conform = true;
 
-  // find smallest vertex this step garanties a unique triangulation
+  // find smallest vertex this step guarantees a unique triangulation
   Vertex_handle w = vertices_begin();
   Vertices_iterator vi;
   for(vi=vertices_begin(); vi!=vertices_end(); ++vi)

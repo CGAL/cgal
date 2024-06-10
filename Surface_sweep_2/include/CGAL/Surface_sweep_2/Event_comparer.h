@@ -62,7 +62,7 @@ private:
   Arr_curve_end m_index;                // boundary conditions.
 
 public:
-  /*! Cosntruct. */
+  /*! Constructor. */
   Event_comparer(const Gt2* traits) : m_traits(traits) {}
 
   //!\name Function call operators
