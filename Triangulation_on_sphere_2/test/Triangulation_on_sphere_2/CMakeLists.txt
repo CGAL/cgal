@@ -10,6 +10,7 @@ create_single_source_cgal_program( "test_dtos2_remove.cpp" )
 create_single_source_cgal_program( "test_dtos_illegal_points.cpp" )
 create_single_source_cgal_program( "test_dtos_projection_traits.cpp" )
 create_single_source_cgal_program( "test_dtos_traits.cpp" )
+create_single_source_cgal_program( "issue_8200.cpp" )
 
 if (CGAL_Core_FOUND OR LEDA_FOUND)
   create_single_source_cgal_program( "test_dtos_degenerate_cases.cpp" )
