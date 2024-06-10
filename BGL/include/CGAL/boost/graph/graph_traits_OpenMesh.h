@@ -607,7 +607,7 @@ remove_face(typename boost::graph_traits<OPEN_MESH_CLASS >::face_descriptor f,
   sm.status(f).set_deleted(true);
 }
 
-#if 0 // conflits with function in Euler_operations.h
+#if 0 // conflicts with function in Euler_operations.h
 template<typename K>
 std::pair<typename boost::graph_traits<OPEN_MESH_CLASS >::edge_descriptor,
           bool>
