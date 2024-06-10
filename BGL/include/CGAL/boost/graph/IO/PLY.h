@@ -369,6 +369,7 @@ bool write_PLY(std::ostream& os,
 
   os << "element vertex " << vertices(g).size() << std::endl;
   internal::output_property_header(os, make_ply_point_writer (CGAL::Identity_property_map<Point_3>()));
+
   //if vcm is not default add v:color property
   if(has_vcolor)
   {
@@ -382,6 +383,7 @@ bool write_PLY(std::ostream& os,
   internal::output_property_header(
         os, std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
                             PLY_property<std::vector<int> >("vertex_indices")));
+
   //if fcm is not default add f:color property
   if(has_fcolor)
   {
