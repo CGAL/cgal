@@ -10,6 +10,7 @@ create_single_source_cgal_program( "test_dtos_degenerate_cases.cpp" )
 create_single_source_cgal_program( "test_dtos_illegal_points.cpp" )
 create_single_source_cgal_program( "test_dtos_projection_traits.cpp" )
 create_single_source_cgal_program( "test_dtos_traits.cpp" )
+create_single_source_cgal_program( "issue_8200.cpp" )
 
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
