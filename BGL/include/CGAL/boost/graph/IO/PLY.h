@@ -259,6 +259,15 @@ bool read_PLY(const std::string& fname,
                       must be available in `Graph`.}
     \cgalParamNEnd
 
+   \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating normals to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `%Vector_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `Graph`.}
+    \cgalParamNEnd
+
    \cgalParamNBegin{vertex_index_map}
      \cgalParamDescription{a property map associating to each vertex of `graph` a unique index}
      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
@@ -287,6 +296,10 @@ bool read_PLY(const std::string& fname,
       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
+
+\note The point and vector types of the point and normal property map must be `double`or `float`
+      in order to respect the specification of the  PLY file format.
+       A `Cartesian_converter_property_map` can be used to convert the points and vectors on the fly.
 
  \returns `true` if writing was successful, `false` otherwise.
 */
@@ -489,6 +502,15 @@ bool write_PLY(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = param
                       must be available in `Graph`.}
     \cgalParamNEnd
 
+    \cgalParamNBegin{vertex_normal_map}
+      \cgalParamDescription{a property map associating normals to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `%Vector_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `Graph`.}
+    \cgalParamNEnd
+
    \cgalParamNBegin{vertex_index_map}
      \cgalParamDescription{a property map associating to each vertex of `graph` a unique index between `0` and `num_vertices(graph) - 1`}
      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
@@ -517,6 +539,10 @@ bool write_PLY(std::ostream& os, const Graph& g, const CGAL_NP_CLASS& np = param
       \cgalParamExtra{This parameter is only meaningful while using \ascii encoding.}
     \cgalParamNEnd
  \cgalNamedParamsEnd
+
+\note The point and vector types of the point and normal property map must be `double`or `float`
+      in order to respect the specification of the  PLY file format.
+       A `Cartesian_converter_property_map` can be used to convert the points and vectors on the fly.
 
  \returns `true` if writing was successful, `false` otherwise.
 */
