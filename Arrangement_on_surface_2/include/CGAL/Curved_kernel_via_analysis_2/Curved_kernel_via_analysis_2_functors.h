@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
@@ -13,6 +13,9 @@
 
 #ifndef CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
 #define CGAL_CURVED_KERNEL_VIA_ANALYSIS_2_FUNCTORS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 /*!\file include/CGAL/Curved_kernel_via_analysis_2/Curved_kernel_via_analysis_2_functors.h
  * \brief defines Curved_kernel_via_analysis_2 function objects + class
@@ -1426,7 +1429,7 @@ public:
 
     typedef unsigned int                              Multiplicity;
     typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-    typedef boost::variant<Intersection_point, Arc_2> Intersection_result;
+    typedef std::variant<Intersection_point, Arc_2> Intersection_result;
 
     //! the result type
     typedef CGAL::cpp98::iterator<std::output_iterator_tag, Intersection_result>
@@ -1469,13 +1472,13 @@ public:
         // point-wise intersections
         std::vector<Arc_2> arcs;
         if (cv1._trim_if_overlapped(cv2, std::back_inserter(arcs))) {
-            for (const auto& item : arcs) *oi++ = Intersection_result(item);
+            for (const auto& item : arcs) *oi++ = item;
             return oi;
         }
         // process non-ov erlapping case
         std::vector<Intersection_point> vec;
         Arc_2::_intersection_points(cv1, cv2, std::back_inserter(vec));
-        for (const auto& item : vec) *oi++ = Intersection_result(item);
+        for (const auto& item : vec) *oi++ = item;
         return oi;
     }
 
@@ -1905,7 +1908,7 @@ public:
   {
     typedef typename Curved_kernel_via_analysis_2::Point_2      Point_2;
     typedef typename Curved_kernel_via_analysis_2::Arc_2        Arc_2;
-    typedef boost::variant<Point_2, Arc_2>      Make_x_monotone_result;
+    typedef std::variant<Point_2, Arc_2>      Make_x_monotone_result;
     *oi++ = Make_x_monotone_result(cv);
     return oi;
   }
@@ -1945,7 +1948,7 @@ public:
     typedef typename Curved_kernel_via_analysis_2::Arc_2        Arc_2;
     typedef typename Curved_kernel_via_analysis_2::Non_x_monotone_arc_2
       Non_x_monotone_arc_2;
-    typedef boost::variant<Point_2, Arc_2>
+    typedef std::variant<Point_2, Arc_2>
       Make_x_monotone_result;
 
     Curve_analysis_2 curve;

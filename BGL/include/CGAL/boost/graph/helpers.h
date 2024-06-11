@@ -60,7 +60,7 @@ bool is_border(typename boost::graph_traits<FaceGraph>::edge_descriptor ed, cons
     returns a halfedge which is on a border and whose target vertex is `vd`, if such a halfedge exists.
   */
 template <typename FaceGraph>
-boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>
+std::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>
 is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd,
           const FaceGraph& g)
 {
@@ -72,7 +72,7 @@ is_border(typename boost::graph_traits<FaceGraph>::vertex_descriptor vd,
     }
   }
   // empty
-  return boost::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>();
+  return std::optional<typename boost::graph_traits<FaceGraph>::halfedge_descriptor>();
 }
 
 namespace BGL {
@@ -837,25 +837,6 @@ bool is_hexahedron(typename boost::graph_traits<FaceGraph>::halfedge_descriptor 
 
 namespace internal {
 
-template<typename FaceGraph>
-inline
-std::enable_if_t<Has_member_clear<FaceGraph>::value, void>
-clear_impl(FaceGraph& g)
-{ g.clear(); }
-
-template<typename FaceGraph>
-inline
-std::enable_if_t<!Has_member_clear<FaceGraph>::value, void>
-clear_impl(FaceGraph& g)
-{
-  while(boost::begin(edges(g))!=boost::end(edges(g)))
-    remove_edge(*boost::begin(edges(g)), g);
-  while(boost::begin(faces(g))!=boost::end(faces(g)))
-    remove_face(*boost::begin(faces(g)), g);
-  while(boost::begin(vertices(g))!=boost::end(vertices(g)))
-    remove_vertex(*boost::begin(vertices(g)), g);
-}
-
 template <class FaceGraph>
 void swap_vertices(typename boost::graph_traits<FaceGraph>::vertex_descriptor& p,
                    typename boost::graph_traits<FaceGraph>::vertex_descriptor& q,
@@ -953,6 +934,11 @@ void swap_edges(const typename boost::graph_traits<FaceGraph>::halfedge_descript
   if (fo2 != nf && halfedge(fo2, g)==oh2) set_halfedge(fo2, oh1, g);
 }
 
+template <typename Graph>
+void collect_garbage(Graph&)
+{
+  // nothing by default
+}
 
 } //end of internal namespace
 
@@ -960,24 +946,86 @@ void swap_edges(const typename boost::graph_traits<FaceGraph>::halfedge_descript
  * \ingroup PkgBGLHelperFct
  *
  * removes all vertices, faces and halfedges from a graph. Calls
- * `remove_edge()`, `remove_vertex()`, and `remove_face()` for each
- * edge, vertex or face.
+ * \link MutableHalfedgeGraph `remove_vertex()`\endlink,
+ * \link MutableHalfedgeGraph `remove_edge()`\endlink, and
+ * \link MutableFaceGraph `remove_face()`\endlink, for each vertex, edge, and face.
+ *
+ * Note that some graphs have a specialized version of this function to improve
+ * complexity.
+ *
+ * @warning This function does not perform anything more than what is advertised above. It is
+ * up to the user to e.g. clean garbage or remove internal property maps (if relevant, and desired).
+ *
+ * @tparam FaceGraph model of `MutableHalfedgeGraph` and `MutableFaceGraph`
+ *
+ * @param g the graph whose elements will be removed
+ *
+ * @sa `CGAL::clear()`
+ **/
+template<typename FaceGraph>
+void remove_all_elements(FaceGraph& g)
+{
+  while(std::begin(edges(g)) != std::end(edges(g)))
+    remove_edge(*std::begin(edges(g)), g);
+  while(std::begin(faces(g)) != std::end(faces(g)))
+    remove_face(*std::begin(faces(g)), g);
+  while(std::begin(vertices(g)) != std::end(vertices(g)))
+    remove_vertex(*std::begin(vertices(g)), g);
+
+  CGAL_postcondition(std::distance(std::cbegin(vertices(g)), std::cend(vertices(g))) == 0);
+  CGAL_postcondition(std::distance(std::cbegin(edges(g)), std::cend(edges(g))) == 0);
+  CGAL_postcondition(std::distance(std::cbegin(faces(g)), std::cend(faces(g))) == 0);
+}
+
+namespace internal {
+
+template<typename FaceGraph>
+inline
+std::enable_if_t<Has_member_clear<FaceGraph>::value, void>
+clear_impl(FaceGraph& g)
+{
+  g.clear();
+}
+
+template<typename FaceGraph>
+inline
+std::enable_if_t<!Has_member_clear<FaceGraph>::value, void>
+clear_impl(FaceGraph& g)
+{
+  remove_all_elements(g);
+}
+
+} // namespace internal
+
+/**
+ * \ingroup PkgBGLHelperFct
+ *
+ * removes all vertices, faces and halfedges from a graph. Calls
+ * \link MutableHalfedgeGraph `remove_vertex()`\endlink,
+ * \link MutableHalfedgeGraph `remove_edge()`\endlink, and
+ * \link MutableFaceGraph `remove_face()`\endlink, for each vertex, edge, and face.
  *
  * If the graph has a member function `clear()`, it will be called
  * instead.
+ *
+ * @warning If it exists, the `clear()` function of a graph might do more than
+ * simply remove elements. For example, `CGAL::Surface_mesh::clear()` collects garbage
+ * and removes *all* property maps added by a call to `CGAL::Surface_mesh::add_property_map()` for all simplex types.
  *
  * @tparam FaceGraph model of `MutableHalfedgeGraph` and `MutableFaceGraph`
  *
  * @param g the graph to clear
  *
+ * @sa `CGAL::remove_all_elements()`
  **/
 template<typename FaceGraph>
 void clear(FaceGraph& g)
 {
   internal::clear_impl(g);
-  CGAL_postcondition(std::distance(boost::begin(edges(g)),boost::end(edges(g))) == 0);
-  CGAL_postcondition(std::distance(boost::begin(vertices(g)),boost::end(vertices(g))) == 0);
-  CGAL_postcondition(std::distance(boost::begin(faces(g)),boost::end(faces(g))) == 0);
+
+  CGAL_postcondition(std::distance(std::cbegin(vertices(g)), std::cend(vertices(g))) == 0);
+  CGAL_postcondition(std::distance(std::cbegin(edges(g)), std::cend(edges(g))) == 0);
+  CGAL_postcondition(std::distance(std::cbegin(faces(g)), std::cend(faces(g))) == 0);
 }
 
 /**
@@ -1076,8 +1124,5 @@ int halfedge_index_in_face(typename boost::graph_traits<Graph>::halfedge_descrip
 
 } // namespace CGAL
 
-// Here at the bottom because helpers.h must include generators (for backward compatibility reasons),
-// and Euler_operations.h needs helpers.h
-#include <CGAL/boost/graph/generators.h>
 
 #endif // CGAL_BOOST_GRAPH_HELPERS_H

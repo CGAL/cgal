@@ -63,7 +63,6 @@
 #endif
 
 #include <boost/format.hpp>
-#include <boost/type_traits/is_convertible.hpp>
 #include <string>
 #include <atomic>
 
@@ -404,6 +403,13 @@ Mesher_3<C3T3,MC,MD>::Mesher_3(C3T3& c3t3,
   cells_mesher_.set_stop_pointer(stop_ptr);
   facets_mesher_.set_stop_pointer(stop_ptr);
 #endif
+
+  // First surface mesh could modify c3t3 without notifying cells_mesher
+  // So we have to ensure that no old cell will be left in c3t3
+  // Second, the c3t3 object could have been corrupted since the last call
+  // to `refine_mesh`, for example by inserting new vertices in the
+  // triangulation.
+  r_c3t3_.clear_cells_and_facets_from_c3t3();
 }
 
 
@@ -423,13 +429,6 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
   auto scan_cells_task_handle = __itt_string_handle_create("Mesher_3 scan triangulation for bad cells");
   auto refine_volume_mesh_task_handle = __itt_string_handle_create("Mesher_3 refine volume mesh");
 #endif // CGAL_MESH_3_USE_INTEL_ITT
-
-  // First surface mesh could modify c3t3 without notifying cells_mesher
-  // So we have to ensure that no old cell will be left in c3t3
-  // Second, the c3t3 object could have been corrupted since the last call
-  // to `refine_mesh`, for example by inserting new vertices in the
-  // triangulation.
-  r_c3t3_.clear_cells_and_facets_from_c3t3();
 
   const Triangulation& r_tr = r_c3t3_.triangulation();
   CGAL_USE(r_tr);
@@ -461,7 +460,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     // If it's parallel but the refinement is forced to sequential, we don't
     // output the value
 #   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_time", facet_ref_time);
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_refine_time", facet_ref_time);
 #   endif
 # endif
 #endif
@@ -504,7 +503,7 @@ refine_mesh(std::string dump_after_refine_surface_prefix)
     // If it's parallel but the refinement is forced to sequential, we don't
     // output the value
 #   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
-  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refin_time", cell_ref_time);
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Cells_refine_time", cell_ref_time);
 #   endif
 # endif
 #endif
@@ -653,7 +652,7 @@ initialize()
     defined(CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE)
 
 #ifndef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
-  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if(std::is_convertible<Concurrency_tag, Parallel_tag>::value)
 #endif // If that macro is defined, then estimated_bbox must be initialized
   {
     Base::set_bbox(r_oracle_.bbox());
@@ -666,7 +665,7 @@ initialize()
 
 #ifdef CGAL_LINKED_WITH_TBB
   // Parallel
-  if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+  if (std::is_convertible<Concurrency_tag, Parallel_tag>::value)
   {
     // we're not multi-thread, yet
     r_c3t3_.triangulation().set_lock_data_structure(0);
@@ -861,7 +860,7 @@ Mesher_3<C3T3,MC,MD>::
 status() const
 {
 #ifdef CGAL_LINKED_WITH_TBB
-  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value) {
+  if(std::is_convertible<Concurrency_tag, Parallel_tag>::value) {
     return Mesher_status(
 #  if CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
                          approximate_number_of_vertices(Concurrency_tag()),

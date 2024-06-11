@@ -1,16 +1,17 @@
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/property_maps.h>
 #include <CGAL/Dynamic_property_map.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
-#include <CGAL/Polygon_mesh_processing/polygon_mesh_to_polygon_soup.h>
-#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+
 #include <CGAL/IO/OFF.h>
+
+#include <CGAL/Polyhedron_3.h>
+
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <array>
 #include <string>
@@ -54,7 +55,7 @@ void test_polygon_soup(std::string fname, bool expected)
   {
     Polyhedron p;
 
-    // just to test the named paramers
+    // just to test the named parameters
     typedef std::pair<Point, bool>                                            Point_with_Boolean;
     std::vector<Point_with_Boolean> points_with_pairs;
     for(const Point& pt : points)

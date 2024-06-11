@@ -19,6 +19,7 @@
 #include <utility>
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/Alpha_shapes_2/internal/Lazy_alpha_nt_2.h>
+#include <CGAL/Default.h>
 
 //-------------------------------------------------------------------
 namespace CGAL {

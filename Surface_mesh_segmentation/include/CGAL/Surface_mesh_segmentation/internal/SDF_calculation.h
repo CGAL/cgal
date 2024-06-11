@@ -26,7 +26,7 @@
 #include <algorithm>
 
 #include <boost/tuple/tuple.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #define CGAL_NUMBER_OF_MAD 1.5
 
@@ -200,7 +200,7 @@ public:
     disk_sampler(number_of_rays, std::back_inserter(disk_samples));
 
     for( ; facet_begin != facet_end; ++facet_begin) {
-      boost::optional<double> sdf_value = calculate_sdf_value_of_facet(*facet_begin,
+      std::optional<double> sdf_value = calculate_sdf_value_of_facet(*facet_begin,
                                           cone_angle, true, disk_samples);
 
       if(sdf_value) {
@@ -233,7 +233,7 @@ public:
    * \note: normal should have unit length
    */
   template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor>
-  boost::optional<double> calculate_sdf_value_of_point(
+  std::optional<double> calculate_sdf_value_of_point(
     Point center,
     Vector normal,
     SkipPrimitiveFunctor skip,
@@ -250,7 +250,7 @@ public:
    * Overload for taking DiskSampling as template parameter
    */
   template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor, class DiskSampling>
-  boost::optional<double> calculate_sdf_value_of_point(
+  std::optional<double> calculate_sdf_value_of_point(
     Point center,
     Vector normal,
     SkipPrimitiveFunctor skip,
@@ -270,7 +270,7 @@ public:
    * Overload for directly taking sampled points from disk as parameter
    */
   template<class SkipPrimitiveFunctor, class FirstIntersectionVisitor>
-  boost::optional<double> calculate_sdf_value_of_point(
+  std::optional<double> calculate_sdf_value_of_point(
     const Point& center,
     const Vector& normal,
     SkipPrimitiveFunctor skip,
@@ -346,10 +346,10 @@ public:
     }
 
     if(ray_distances.empty()) {
-      return boost::none;
+      return std::nullopt;
     }
 
-    return boost::optional<double>(remove_outliers_and_calculate_sdf_value(
+    return std::optional<double>(remove_outliers_and_calculate_sdf_value(
                                      ray_distances));
   }
 
@@ -369,7 +369,7 @@ private:
    * @param samples sampled points from a unit-disk which are corresponds to rays picked from cone
    * @return calculated SDF value
    */
-  boost::optional<double> calculate_sdf_value_of_facet(
+  std::optional<double> calculate_sdf_value_of_facet(
     face_handle facet,
     double cone_angle,
     bool accept_if_acute,
@@ -379,11 +379,11 @@ private:
     const Point p2 = get(vertex_point_map,target(next(halfedge(facet,mesh),mesh),mesh));
     const Point p3 = get(vertex_point_map,target(prev(halfedge(facet,mesh),mesh),mesh));
     const Point center  = centroid_functor(p1, p2, p3);
-    if (collinear_functor(p1, p2, p3)) return boost::none;
+    if (collinear_functor(p1, p2, p3)) return std::nullopt;
     Vector normal = normal_functor(p2, p1, p3);
     normal=scale_functor(normal,
                          FT(1.0/std::sqrt(to_double(normal.squared_length()))));
-    if (normal!=normal) return boost::none;
+    if (normal!=normal) return std::nullopt;
     CGAL::internal::SkipPrimitiveFunctor<face_handle>
     skip(facet);
     CGAL::internal::FirstIntersectionVisitor<face_handle>
@@ -434,7 +434,7 @@ private:
       }
 
       const Point* i_point;
-      if(!(i_point = boost::get<Point>(&object))) {
+      if(!(i_point = std::get_if<Point>(&object))) {
         continue;  // continue in case of segment.
       }
 
@@ -478,12 +478,12 @@ private:
   boost::tuple<bool, bool, double, Primitive_id> ray_casting(
     const Ray& query, SkipFunctor s, bool accept_if_acute) const {
 
-    const boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
+    const std::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
       min_intersection = tree.first_intersection(query, s);
     if(!min_intersection)
       return boost::make_tuple(false, false, 0.0, Primitive_id());
 
-    const Point* i_point = boost::get<Point>( &min_intersection->first );
+    const Point* i_point = std::get_if<Point>( &min_intersection->first );
     if (!i_point) //segment case ignored
       return boost::make_tuple(false, false, 0.0, Primitive_id());
 

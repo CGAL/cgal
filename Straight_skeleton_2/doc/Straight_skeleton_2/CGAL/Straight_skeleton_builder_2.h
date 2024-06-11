@@ -12,7 +12,7 @@ type required by the `Straight_skeleton_builder_2` algorithm class.
 This class is the default visitor parameter of the straight skeleton builder.
 All its methods are empty.
 
-\cgalModels `StraightSkeletonBuilder_2_Visitor`
+\cgalModels{StraightSkeletonBuilder_2_Visitor}
 
 \sa `Straight_skeleton_builder_2`
 */
@@ -154,7 +154,7 @@ typedef Traits::Point_2 Point_2;
 /*!
 constructs the builder class.
 */
-Straight_skeleton_builder_2(boost::optional<FT> max_time = boost::none,
+Straight_skeleton_builder_2(std::optional<FT> max_time = std::nullopt,
                             const Traits& traits = Traits(),
                             const Visitor& visitor = Visitor());
 
@@ -209,7 +209,7 @@ must be entered before calling `construct_skeleton()`.
 After `construct_skeleton()` completes, you cannot enter more contours and/or call `construct_skeleton()` again.
 If you need another straight skeleton for another polygon you must instantiate and use another builder.
 
-The result is a dynamically allocated instance of the `Ss` class, wrapped in a `boost::shared_ptr`.
+The result is a dynamically allocated instance of the `Ss` class, wrapped in a `std::shared_ptr`.
 
 If the construction process fails for whatever reason (such as a nearly-degenerate vertex whose internal
 or external angle is almost zero), the return value will be <I>null</I>, represented
@@ -218,7 +218,7 @@ by a default constructed `shared_ptr`.
 The algorithm automatically checks the consistency of the result, thus, if it is not <I>nullptr</I>,
 it is guaranteed to be valid.
 */
-boost::shared_ptr<Ss> construct_skeleton();
+std::shared_ptr<Ss> construct_skeleton();
 
 /// @}
 

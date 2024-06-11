@@ -13,15 +13,17 @@ graph they take as an argument, the last ones does.
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel `CGAL::Identity_policy_2<DG,AT>`
-\cgalHasModel `CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>`
-\cgalHasModel `CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>`
-\cgalHasModel `CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>`
-\cgalHasModel `CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>`
-\cgalHasModel `CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>`
-\cgalHasModel `CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>`
-\cgalHasModel `CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Identity_policy_2<DG,AT>}
+\cgalHasModels{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}
+\cgalHasModels{CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}
+\cgalHasModels{CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>}
+\cgalHasModels{CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>}
+\cgalHasModels{CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>}
+\cgalHasModels{CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>}
+\cgalHasModels{CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>}
+\cgalHasModelsEnd
 
 \sa `DelaunayGraph_2`
 \sa `AdaptationTraits_2`

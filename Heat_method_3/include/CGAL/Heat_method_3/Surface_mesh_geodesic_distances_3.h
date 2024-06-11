@@ -25,6 +25,8 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
+#include <CGAL/Default.h>
+
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
 #endif
@@ -752,8 +754,8 @@ class Surface_mesh_geodesic_distances_3
     >
 #endif
 {
-  CGAL_static_assertion((std::is_same<Mode, Direct>::value) ||
-                        (std::is_same<Mode, Intrinsic_Delaunay>::value));
+  static_assert(std::is_same<Mode, Direct>::value ||
+                std::is_same<Mode, Intrinsic_Delaunay>::value);
 
   // extract real types from Default
 #ifdef CGAL_EIGEN3_ENABLED

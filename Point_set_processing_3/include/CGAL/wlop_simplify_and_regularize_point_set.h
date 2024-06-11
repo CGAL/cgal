@@ -398,8 +398,7 @@ compute_density_weight_for_sample_point(
        \cgalParamDescription{If `true`, an optional preprocessing is applied, which will give
                              better results if the distribution of the input points is highly non-uniform.}
        \cgalParamType{Boolean}
-       \cgalParamDefault{`35`}
-       \cgalParamExtra{More iterations give a more regular result but increase the runtime}
+       \cgalParamDefault{`false`}
      \cgalParamNEnd
 
      \cgalParamNBegin{callback}
@@ -525,6 +524,7 @@ wlop_simplify_and_regularize_point_set(
 
   if (require_uniform_sampling)//default value is false
   {
+    original_density_weights.reserve(number_of_original);
     //todo: this part could also be parallelized if needed
     for (it = first_original_iter, i = 0; it != points.end() ; ++it, ++i)
     {
@@ -552,6 +552,7 @@ wlop_simplify_and_regularize_point_set(
 
     // Compute sample density weight for sample points
     std::vector<FT> sample_density_weights;
+    sample_density_weights.reserve(number_of_sample);
 
     for (sample_iter = sample_points.begin();
          sample_iter != sample_points.end(); ++sample_iter)
@@ -602,9 +603,7 @@ wlop_simplify_and_regularize_point_set(
     if (interrupted)
       return output;
 
-    sample_iter = sample_points.begin();
-    for (std::size_t i = 0; i < sample_points.size(); ++ i)
-      sample_points[i] = update_sample_points[i];
+    sample_points.swap(update_sample_points);
   }
 
   // final output

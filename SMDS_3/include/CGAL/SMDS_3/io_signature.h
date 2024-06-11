@@ -27,30 +27,27 @@
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/Regular_triangulation_cell_base_with_weighted_circumcenter_3.h>
+#include <CGAL/type_traits.h>
 
 #ifdef CGAL_PERIODIC_3_MESH_3_CONFIG_H
 #include <CGAL/Periodic_3_triangulation_3.h>
 #include <CGAL/Periodic_3_regular_triangulation_3.h>
 #endif
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/tuple/tuple.hpp>
 #include <utility>
+#include <type_traits>
 
 namespace CGAL {
 
 // SFINAE test
-template <typename T, typename U>
-class has_io_signature
-{
-private:
-  template <U> struct helper;
-  template <typename V> static char check(helper<&V::io_signature> *);
-  template <typename V> static char (&check(...))[2];
+template <typename T, class = void>
+struct has_io_signature : public std::false_type {};
 
-public:
-  enum { value = (sizeof(check<T>(0)) == sizeof(char)) };
-};
+template <typename T>
+struct has_io_signature<T, std::void_t<decltype(T::io_signature())>>
+: public std::true_type {};
 
 template <class T, bool has_io_signature>
 struct Get_io_signature_aux
@@ -76,10 +73,7 @@ template <class T>
 struct Get_io_signature
   : public Get_io_signature_aux<
   T,
-  (has_io_signature<T, std::string (T::*)() >::value ||
-   has_io_signature<T, std::string (T::*)() const >::value ||
-   has_io_signature<T, std::string (*)() >::value )  // signature for
-                                                     // static mem func
+  has_io_signature<T>::value
   >
 {
 };
@@ -148,11 +142,20 @@ struct Get_io_signature<double>
   }
 };
 
+template <typename T>
+struct Get_io_signature<std::variant<T> >
+{
+  std::string operator()() {
+    return std::string("std::variant<") +
+      Get_io_signature<T>()() + ">";
+  }
+};
+
 template <typename T, typename U>
-struct Get_io_signature<boost::variant<T,U> >
+struct Get_io_signature<std::variant<T,U> >
 {
     std::string operator()() {
-      return std::string("boost::variant<") +
+      return std::string("std::variant<") +
         Get_io_signature<T>()() + "," +
         Get_io_signature<U>()() + ">";
   }
@@ -179,10 +182,10 @@ struct Get_io_signature<boost::tuple<T,U> >
 };
 
 template <typename T, typename U, typename V>
-struct Get_io_signature<boost::variant<T,U,V> >
+struct Get_io_signature<std::variant<T,U,V> >
 {
     std::string operator()() {
-      return std::string("boost::variant<") +
+      return std::string("std::variant<") +
         Get_io_signature<T>()() + "," +
         Get_io_signature<U>()() + "," +
         Get_io_signature<V>()() + ">";
@@ -191,10 +194,10 @@ struct Get_io_signature<boost::variant<T,U,V> >
 
 template <typename T, typename U,
           typename V, typename W>
-struct Get_io_signature<boost::variant<T,U,V,W> >
+struct Get_io_signature<std::variant<T,U,V,W> >
 {
     std::string operator()() {
-      return std::string("boost::variant<") +
+      return std::string("std::variant<") +
         Get_io_signature<T>()() + "," +
         Get_io_signature<U>()() + "," +
         Get_io_signature<V>()() + "," +
@@ -356,6 +359,18 @@ Get_io_signature<Regular_triangulation_cell_base_with_weighted_circumcenter_3<Gt
   }
 };
 #endif
+
+#ifdef CGAL_BASE_WITH_TIME_STAMP_H
+template <class Base>
+struct
+Get_io_signature<Base_with_time_stamp<Base> >
+{
+  std::string operator()() {
+    return Get_io_signature<Base>()();
+  }
+};
+#endif
+
 
 } // end namespace CGAL
 

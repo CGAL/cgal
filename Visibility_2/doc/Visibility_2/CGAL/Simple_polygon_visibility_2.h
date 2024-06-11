@@ -12,7 +12,7 @@ It computes the visibility region from a viewpoint that is in the interior or on
 While scanning the boundary the algorithm uses a stack to manipulate the vertices, and ultimately
 yields the visibility region. For each scanned edge, at most 2 points are pushed onto the stack.
 Overall, at most 2\f$ n \f$ points are pushed or popped. Thus, the time and space complexities of the
-algorithm are \f$ O(n) \f$ even in case of degeneracies such as needles, where \f$ n \f$
+algorithm are \cgalBigO{n}$ even in case of degeneracies such as needles, where \f$ n \f$
 is the number of the vertices of the polygon.
 
 \tparam Arrangement_2_ is the type used to represent the input environment.
@@ -23,7 +23,7 @@ It must be an instance of `CGAL::Arrangement_2`, where its `CGAL::Arrangement_2:
 specified by one of the following: `#Tag_true` or `#Tag_false`, where `#Tag_false` is the default value.
 
 
-\cgalModels `Visibility_2`
+\cgalModels{Visibility_2}
 
 \sa `CGAL::Rotational_sweep_visibility_2`
 \sa `CGAL::Triangular_expansion_visibility_2`
@@ -67,7 +67,7 @@ public:
 /*!
 Attaches the given arrangement to the visibility object.
 
-This operation takes \f$O(1)\f$ as the class does no pre-processing.
+This operation takes \cgalBigO{1} as the class does no pre-processing.
 
 In case the object is already attached to another arrangement,
 the visibility object gets detached before being attached to `arr`.

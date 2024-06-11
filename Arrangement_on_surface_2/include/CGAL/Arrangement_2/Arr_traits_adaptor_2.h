@@ -312,8 +312,8 @@ public:
     }
 
     /*! 6. Implementation of the operator in case the left and right sides have
-     * boundary conditions (but they are nopt identified) and the bottom and top
-     * sides are identied.
+     * boundary conditions (but they are not identified) and the bottom and top
+     * sides are identified.
      */
     Comparison_result compare_y_at_x(const Point_2& p,
                                      const X_monotone_curve_2& xcv,
@@ -397,7 +397,7 @@ public:
 
    /*! 8. Implementation of the operator in case the left and right sides are
     * identified, and the bottom and top sides have boundary conditions (but
-    * they are not identied).
+    * they are not identified).
      */
     Comparison_result compare_y_at_x(const Point_2& p,
                                      const X_monotone_curve_2& xcv,
@@ -577,7 +577,7 @@ public:
           return (m_self->compare_y_at_x_right_2_object()(xcv1, xcv2, left1));
       }
 
-      // We now that the curves do not share a common endpoint, and we can
+      // We know that the curves do not share a common endpoint, and we can
       // compare their relative y-position (which does not change to the left
       // of the given point p).
       return (m_self->compare_y_position_2_object()(xcv1, xcv2));
@@ -643,7 +643,7 @@ public:
                            Tag_false) const
     {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
       std::list<Intersection_result> intersections;
       m_self->intersect_2_object()(xcv1, xcv2, back_inserter(intersections));
@@ -3370,7 +3370,7 @@ public:
    */
   class Compare_xy_2 {
       typedef std::pair<Point_2, Multiplicity>          Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
+      typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
 
   public:
@@ -3580,7 +3580,7 @@ public:
       // Verify the first intersection is an overlap, remove it, and
       // recursively call.
       const X_monotone_curve_2* xcv =
-        boost::get<X_monotone_curve_2>(&(intersections.front()));
+        std::get_if<X_monotone_curve_2>(&(intersections.front()));
       if (! xcv) {
         CGAL_error_msg("The first intersection is not an overlap!");
         return SMALLER;

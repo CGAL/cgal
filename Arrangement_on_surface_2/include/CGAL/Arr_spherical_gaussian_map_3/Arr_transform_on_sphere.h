@@ -46,14 +46,14 @@ void Arr_transform_on_sphere(Arrangement & arr,
   typedef typename Arrangement::Halfedge_around_vertex_circulator
     Halfedge_around_vertex_circulator;
 
-  typedef boost::variant<Point_2, X_monotone_curve_2>     Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_curve_2>     Make_x_monotone_result;
 
   const Geometry_traits_2 * geom_traits = arr.geometry_traits();
   Topology_traits * topol_traits = arr.topology_traits();
 
   Arr_accessor<Arrangement> m_arr_access(arr);
 
-  // Preprocessing loop - merge all the edges that were splited
+  // Preprocessing loop - merge all the edges that were split
   // (meaning have a common endpoint that lies on the boundary and their degree
   // is 2) on the identification curve.
   for (auto vi1 = arr.vertices_begin(); vi1 != arr.vertices_end(); ) {
@@ -151,15 +151,15 @@ void Arr_transform_on_sphere(Arrangement & arr,
 
     // If the curve is not x-monotone - split it into 2 x_monotone parts.
     // Since the curves were x_monotone before , can assume that it will be
-    // splited into 2 parts max.
+    // split into 2 parts max.
     if (objects.size() == 2) {
       auto it = objects.begin();
 
       // The curve that its left vertex lies on the identification curve
-      const auto* sub_cv1 = boost::get<X_monotone_curve_2>(&(*it));
+      const auto* sub_cv1 = std::get<X_monotone_curve_2>(&(*it));
       ++it;
       //The curve that its right vertex lies on the identification curve
-      const auto* sub_cv2 = boost::get<X_monotone_curve_2>(&(*it));
+      const auto* sub_cv2 = std::get<X_monotone_curve_2>(&(*it));
 
       bool eq1 = (*sub_cv1).source() == hei1->source()->point();
       bool eq2 = (*sub_cv2).target() == hei1->target()->point();

@@ -22,7 +22,6 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/enum.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Aff_transformation_2.h>
 
 #include <boost/config.hpp>

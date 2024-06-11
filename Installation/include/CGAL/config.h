@@ -36,11 +36,6 @@
 #  define WIN64
 #endif
 
-#ifdef _MSC_VER
-#define _SILENCE_CXX17_ALLOCATOR_VOID_DEPRECATION_WARNING 1
-#define _SILENCE_CXX17_OLD_ALLOCATOR_MEMBERS_DEPRECATION_WARNING 1
-#endif
-
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
@@ -117,6 +112,7 @@
 #include <boost/version.hpp>
 
 #include <CGAL/version.h>
+#include <CGAL/version_checker.h>
 
 //----------------------------------------------------------------------//
 //  platform specific workaround flags (CGAL_CFG_...)
@@ -147,8 +143,8 @@
 #endif
 
 // Same for C++17
-#if __cplusplus >= 201703L || _MSVC_LANG >= 201703L
-#  define CGAL_CXX17 1
+#if !(__cplusplus >= 201703L || _MSVC_LANG >= 201703L)
+#error "CGAL requires C++ 17"
 #endif
 // Same for C++20
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
@@ -297,7 +293,9 @@ using std::max;
 // Macros to detect features of clang. We define them for the other
 // compilers.
 // See https://clang.llvm.org/docs/LanguageExtensions.html
-// See also https://en.cppreference.com/w/cpp/experimental/feature_test
+//
+// Some of those macro have been standardized. See C++20 feature testing:
+//   https://en.cppreference.com/w/cpp/feature_test
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
@@ -318,6 +316,10 @@ using std::max;
 #endif
 #ifndef __has_warning
   #define __has_warning(x) 0  // Compatibility with non-clang compilers.
+#endif
+
+#if __has_include(<version>)
+#  include <version>
 #endif
 
 // Macro to specify a 'unused' attribute.
@@ -474,6 +476,14 @@ namespace cpp11{
 }//namespace cpp11
 } //namespace CGAL
 
+#if __cpp_lib_concepts >= 201806L
+#  define CGAL_CPP20_REQUIRE_CLAUSE(x) requires x
+#  define CGAL_TYPE_CONSTRAINT(x) x
+#else
+#  define CGAL_CPP20_REQUIRE_CLAUSE(x)
+#  define CGAL_TYPE_CONSTRAINT(x) typename
+#endif
+
 // The fallthrough attribute
 // See for clang:
 //   https://clang.llvm.org/docs/AttributeReference.html#statement-attributes
@@ -491,10 +501,8 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if CGAL_CXX17
-#  define CGAL_CPP17_INLINE inline
-#else
-#  define CGAL_CPP17_INLINE
+#if __cpp_lib_format >= 201907L || (__has_include(<format>) && (__cplusplus >= 202000L || _MSVC_LANG >= 202000L))
+#  define CGAL_CAN_USE_CXX20_FORMAT 1
 #endif
 
 #ifndef CGAL_NO_ASSERTIONS

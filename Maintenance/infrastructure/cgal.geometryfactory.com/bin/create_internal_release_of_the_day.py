@@ -8,7 +8,7 @@ import os
 import datetime
 import locale
 import argparse
-from cgal_release import release, integration, master, beta_release_from_master
+from cgal_release import release, integration, master, beta_release, master, beta_release_from_master
 
 # Define a dictionary that maps day of the week to an action
 actions = {
@@ -17,7 +17,7 @@ actions = {
     "Wednesday": integration,
     "Thursday": integration,
     "Friday": release("5.5"),
-    "Saturday": release("5.4"),
+    "Saturday": release("5.6"),
     "Sunday": beta_release_from_master(1),
 }
 

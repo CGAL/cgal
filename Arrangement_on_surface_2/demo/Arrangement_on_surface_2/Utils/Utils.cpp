@@ -202,7 +202,7 @@ operator()(const Point_2& p, const X_monotone_curve_2& curve) const {
   auto points = painterOstream.getPointsList(curve);
 
   QPoint p_viewport =
-    view->mapFromScene(QPointF{p.x().doubleValue(), p.y().doubleValue()});
+    view->mapFromScene(QPointF{CGAL::to_double(p.x()), CGAL::to_double(p.y())});
 
   double min_dist = (std::numeric_limits<double>::max)();
   for (auto& vec : points) {
@@ -391,8 +391,8 @@ Construct_x_monotone_subcurve_2<ArrTraits>::Construct_x_monotone_subcurve_2(
 //
 template <typename ArrTraits>
 auto Construct_x_monotone_subcurve_2<ArrTraits>::operator()(
-  const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
-  const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+  const X_monotone_curve_2& curve, const std::optional<Point_2>& pLeft,
+  const std::optional<Point_2>& pRight) -> X_monotone_curve_2
 {
   Point_2 pMin, pMax;
   bool unbounded_min = false;
@@ -442,8 +442,8 @@ template <typename RatKernel, typename AlgKernel, typename NtTraits>
 auto Construct_x_monotone_subcurve_2
 <CGAL::Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>>::
 operator()(const X_monotone_curve_2& curve,
-           const boost::optional<Point_2>& pLeft,
-           const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+           const std::optional<Point_2>& pLeft,
+           const std::optional<Point_2>& pRight) -> X_monotone_curve_2
 {
   // TODO: handle when pLeft or pRight is null
 
@@ -486,8 +486,8 @@ template <typename RatKernel, typename AlgKernel, typename NtTraits,
 auto Construct_x_monotone_subcurve_2<CGAL::Arr_Bezier_curve_traits_2<
   RatKernel, AlgKernel, NtTraits, BoundingTraits>>::
 operator()(
-  const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
-  const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+  const X_monotone_curve_2& curve, const std::optional<Point_2>& pLeft,
+  const std::optional<Point_2>& pRight) -> X_monotone_curve_2
 {
   auto pMin = this->construct_min_vertex_2(curve);
   auto pMax = this->construct_max_vertex_2(curve);
@@ -545,8 +545,8 @@ template <typename AlgebraicKernel_d_1>
 auto Construct_x_monotone_subcurve_2<
   CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>>::
 operator()(
-  const X_monotone_curve_2& curve, const boost::optional<Point_2>& pLeft,
-  const boost::optional<Point_2>& pRight) -> X_monotone_curve_2
+  const X_monotone_curve_2& curve, const std::optional<Point_2>& pLeft,
+  const std::optional<Point_2>& pRight) -> X_monotone_curve_2
 {
   Point_2 pMin, pMax;
   bool unbounded_min = false;
@@ -625,14 +625,14 @@ operator()(const X_monotone_curve_2& curve, const CoordinateType& x,
   Point_2 p2c1(x, CoordinateType(clipRect.ymax() + 1));
 
   const X_monotone_curve_2 verticalLine = ctr_xcv(p1c1, p2c1);
-  CGAL::Object o;
-  CGAL::Oneset_iterator<CGAL::Object> oi(o);
+  std::vector<IntersectionResult> pairs;
 
-  this->intersectCurves(curve, verticalLine, oi);
+  this->intersectCurves(curve, verticalLine,
+    CGAL::dispatch_or_drop_output<IntersectionResult>(std::back_inserter(pairs)));
 
   IntersectionResult pair;
-  if (CGAL::assign(pair, o)) {
-    Point_2 pt = pair.first;
+  if (!pairs.empty()) {
+    Point_2 pt = pairs[0].first;
     res = pt.y();
   }
   return res;
@@ -654,14 +654,13 @@ operator()(const X_monotone_curve_2& curve, const CoordinateType& x,
   Point_2 p2c1(x, CoordinateType(10000000));  // upper bounding box
 
   const X_monotone_curve_2 verticalLine = ctr_xcv(p1c1, p2c1);
-  CGAL::Object o;
-  CGAL::Oneset_iterator<CGAL::Object> oi(o);
+  std::vector<IntersectionResult> pairs;
 
-  this->intersectCurves(curve, verticalLine, oi);
+  this->intersectCurves(curve, verticalLine,
+    CGAL::dispatch_or_drop_output<IntersectionResult>(std::back_inserter(pairs)));
 
-  IntersectionResult pair;
-  if (CGAL::assign(pair, o)) {
-    Point_2 pt = pair.first;
+  if (!pairs.empty()) {
+    Point_2 pt = pairs[0].first;
     res = pt.y();
   }
   return res;
@@ -681,15 +680,15 @@ operator()(const X_monotone_curve_2& curve, const Coordinate_type& x)
   Point_2 p2c1(x, Coordinate_type(clip_rect.ymax() + 1));
 
   const X_monotone_curve_2 vertical_line = ctr_xcv(p1c1, p2c1);
-  CGAL::Object o;
-  CGAL::Oneset_iterator<CGAL::Object> oi(o);
 
-  this->intersect_curves(curve, vertical_line, oi);
+  std::vector<IntersectionResult> pairs;
+
+  this->intersect_curves(curve, vertical_line,
+    CGAL::dispatch_or_drop_output<IntersectionResult>(std::back_inserter(pairs)));
 
   Coordinate_type res(0);
-  IntersectionResult pair;
-  if (CGAL::assign(pair, o)) {
-    Point_2 pt = pair.first;
+  if (!pairs.empty()) {
+    Point_2 pt = pairs[0].first;
     res = pt.y();
   }
   return res;
@@ -708,15 +707,15 @@ auto Arr_compute_y_at_x_2<CGAL::Arr_algebraic_segment_traits_2<Coefficient_>>::
 operator()(const X_monotone_curve_2& curve, const CoordinateType& x)
   -> CoordinateType
 {
-  CGAL::Object o;
-  CGAL::Oneset_iterator<CGAL::Object> oi(o);
   Intersect_2 intersect = traits->intersect_2_object();
   X_monotone_curve_2 c2 = this->makeVerticalLine(x);
-  intersect(curve, c2, oi);
-  std::pair<Point_2, Multiplicity> res;
-  if (CGAL::assign(res, o)) {
+  typedef std::pair<Point_2, Multiplicity> PtM;
+
+  std::vector<PtM> res;
+  intersect(curve, c2, CGAL::dispatch_or_drop_output<PtM>(std::back_inserter(res)));
+  if (!res.empty()) {
     // TODO: handle failure case
-    const Point_2& p = res.first;
+    const Point_2& p = res[0].first;
     CoordinateType coord = p.y();
     return coord;
   }

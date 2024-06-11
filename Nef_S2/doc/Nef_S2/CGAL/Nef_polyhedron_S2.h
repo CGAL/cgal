@@ -58,7 +58,7 @@ Operations like `empty` take constant time. The operations
 `clear`, `complement`, `interior`, `closure`,
 `boundary`, `regularization`, input and output take linear
 time. All binary set operations and comparison operations take time
-\f$ O(n \log n)\f$ where \f$ n\f$ is the size of the output plus the size of the
+\cgalBigO{n \log n} where \f$ n\f$ is the size of the output plus the size of the
 input.
 
 The point location and ray shooting operations are implemented in the
@@ -325,14 +325,14 @@ supporting `s`.
 const Sphere_circle& sphere_circle() ;
 
 /*!
-returns the sperical
+returns the spherical
 segment oriented from `target()` to `source()` with the same
 point set as `s`.
 */
 Sphere_segment opposite() ;
 
 /*!
-returns the sperical
+returns the spherical
 segment oriented from `target()` to `source()` with the
 point set completing `s` to a full circle.
 */

@@ -26,8 +26,6 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/number_type_config.h>
 
-#include <boost/type_traits/is_pointer.hpp>
-
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Fuzzy_iso_box.h>
@@ -70,7 +68,7 @@ public:
 //////////////////////
 //Search_traits_kd_tree_2
 //
-//(Search traits modified to be used by the Spacial Searching kd_trees for Snap rounding)
+//(Search traits modified to be used by the Spatial Searching kd_trees for Snap rounding)
 //////////////////////
 
 template < class Traits_, class Point_ = typename Traits_::Point_2 >
@@ -107,7 +105,7 @@ public:
 
 template<class Traits_, class SAVED_OBJECT>
 class Multiple_kd_tree {
-  CGAL_static_assertion_msg((boost::is_pointer<SAVED_OBJECT>::value), "SAVED_OBJECT is not a pointer.");
+  static_assert(std::is_pointer<SAVED_OBJECT>::value, "SAVED_OBJECT is not a pointer.");
 private:
   typedef Traits_                                       Traits;
   typedef typename Traits::FT                           NT;

@@ -77,12 +77,9 @@ namespace CGAL {
  * the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
  * included.
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
- * \cgalModels `ArrangementConstructXMonotoneCurveTraits_2`
- * \cgalModels `ArrangementConstructCurveTraits_2`
- * \cgalModels `ArrangementApproximateTraits_2` (if the type that substitutes
- *   the template parameter `SegmentTraits_2` models the concept as well)
+ * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2,`ArrangementConstructXMonotoneCurveTraits_2`
+ *             ArrangementConstructCurveTraits_2,ArrangementApproximateTraits_2 (if the type that substitutes
+ *   the template parameter `SegmentTraits_2` models the concept as well)}
  *
  * \sa `Arr_polycurve_traits_2<SubcurveTraits_2>`
  * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
@@ -212,7 +209,7 @@ public:
    * polyline.
    *
    * This functor constructs general polylines. Its `operator()` is
-   * oveloaded to support various input types.
+   * overloaded to support various input types.
    *
    * Note that the composing segments, depending on the `SegmentTraits_2`,
    * might not be \f$x\f$-monotone.

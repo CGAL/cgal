@@ -37,16 +37,16 @@ namespace CGAL {
 * a piecewise constant field, i.e. a sizing field with a constant size on each subpart
 * of the domain.
 *
-* @tparam Gt is the geometric traits class. It must match the type `Triangulation::Geom_traits`,
+* @tparam GT is the geometric traits class. It must match the type `Triangulation::Geom_traits`,
 * where `Triangulation` is the nested type of the model of `MeshComplex_3InTriangulation_3` used
 * in the meshing process.
 *
 * @tparam Index_ is the type of index of the vertices of the triangulation.
 * It must match the type `%Index` of the model of `MeshDomain_3` used in the meshing process.
 *
-* @cgalModels `MeshDomainField_3`
+* @cgalModels{MeshDomainField_3}
 */
-template <typename Gt, typename Index_>
+template <typename GT, typename Index_>
 class Mesh_constant_domain_field_3
 {
 public:
@@ -56,18 +56,19 @@ public:
   /*!
   * Numerical type.
   */
-  typedef typename Gt::FT         FT;
+  typedef typename GT::FT         FT;
 
   /*!
+
   * Point type.
   */
 #ifdef DOXYGEN_RUNNING
-  typedef Gt::Point_3 Point_3;
+  typedef GT::Point_3 Point_3;
 #else
   typedef typename boost::mpl::eval_if_c<
-      internal::Has_nested_type_Bare_point<Gt>::value,
-      typename internal::Bare_point_type<Gt>,
-      boost::mpl::identity<typename Gt::Point_3>
+      internal::Has_nested_type_Bare_point<GT>::value,
+      typename internal::Bare_point_type<GT>,
+      boost::mpl::identity<typename GT::Point_3>
     >::type                       Point_3;
   #endif
 
@@ -106,6 +107,7 @@ public:
 
     return d_;
   }
+
 
   /*!
   * Sets the size such that `operator()` for any query point

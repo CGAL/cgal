@@ -20,7 +20,7 @@
  * Definition of the Arr_compute_zone_visitor class.
  */
 
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace CGAL {
 
@@ -55,7 +55,7 @@ private:
   const Vertex_handle        invalid_v;    // Invalid vertex.
 
   OutputIterator&            out_iter;     // for outputting the zone objects.
-                                           // Its value type is boost::variant.
+                                           // Its value type is std::variant.
   bool                       output_left;  // Determines whether we should
                                            // output the left end point of a
                                            // subcurve (to avoid outputting
@@ -97,7 +97,7 @@ public:
                         Vertex_handle left_v, Halfedge_handle left_he,
                         Vertex_handle right_v, Halfedge_handle right_he)
   {
-    typedef boost::variant<Vertex_handle, Halfedge_handle, Face_handle>
+    typedef std::variant<Vertex_handle, Halfedge_handle, Face_handle>
                                                                 Zone_result;
 
     if (output_left) {
@@ -138,7 +138,7 @@ public:
                         Halfedge_handle he,
                         Vertex_handle left_v, Vertex_handle right_v)
   {
-    typedef boost::variant<Vertex_handle, Halfedge_handle, Face_handle>
+    typedef std::variant<Vertex_handle, Halfedge_handle, Face_handle>
                                                                 Zone_result;
 
     if (output_left) {

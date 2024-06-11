@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/draw_constrained_triangulation_2.h>
 
 #include <cassert>
 #include <iostream>
@@ -27,5 +28,8 @@ main( )
       ++count;
   std::cout << "The number of resulting constrained edges is  ";
   std::cout <<  count << std::endl;
+
+  CGAL::draw(cdt);
+
   return 0;
 }

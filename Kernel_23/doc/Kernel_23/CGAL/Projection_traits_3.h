@@ -15,12 +15,7 @@ constructions or if `K` is a `CGAL::Filtered_kernel` (such as for
 `CGAL::Exact_predicates_inexact_constructions_kernel`), this class automatically
 provides exact predicates.
 
-\cgalModels `TriangulationTraits_2`
-\cgalModels `DelaunayTriangulationTraits_2`
-\cgalModels `ConstrainedTriangulationTraits_2`
-\cgalModels `PolygonTraits_2`
-\cgalModels `ConformingDelaunayTriangulationTraits_2`
-\cgalModels `Barycentric_coordinates::BarycentricTraits_2`
+\cgalModels{TriangulationTraits_2,DelaunayTriangulationTraits_2,ConstrainedTriangulationTraits_2,PolygonTraits_2,ConformingDelaunayTriangulationTraits_2,Barycentric_coordinates::BarycentricTraits_2}
 
 \sa `CGAL::Projection_traits_xy_3`
 \sa `CGAL::Projection_traits_xz_3`

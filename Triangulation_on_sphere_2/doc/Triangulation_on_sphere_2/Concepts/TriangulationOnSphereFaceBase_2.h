@@ -19,7 +19,9 @@ then the triangulation is not an orientable triangulated surface without boundar
 In this case, fictitious faces are added to the triangulation, called <i>ghost faces</i>,
 such that the triangulation is a topological sphere.
 
-\cgalHasModel `CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_on_sphere_face_base_2<Traits, Fb>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationOnSphereVertexBase_2`
@@ -32,4 +34,16 @@ public:
 
   /// provides write access to a Boolean used to indicate if the face is a ghost face.
   void set_ghost(const bool b);
+
+  /*!
+  inputs the non-combinatorial information given by the face:
+  its ghost status and other possible information.
+  */
+  std::istream& operator>>(std::istream& is, TriangulationOnSphereFaceBase_2& v);
+
+  /*!
+  outputs the non combinatorial operation given by the face:
+  its ghost status and other possible information.
+  */
+  std::ostream& operator<<(std::ostream& os, const TriangulationOnSphereFaceBase_2& v);
 };

@@ -55,7 +55,7 @@ template < class T >
 const int Triangulation_utils_base_3<T>::cw_map[3] = {2, 0, 1};
 
 // We derive from Triangulation_cw_ccw_2 because we still use cw() and ccw()
-// in the 2D part of the code.  Ideally, this should go away when we re-use
+// in the 2D part of the code.  Ideally, this should go away when we reuse
 // T2D entirely.
 
 struct Triangulation_utils_3
@@ -80,6 +80,7 @@ struct Triangulation_utils_3
     CGAL_precondition( ( i >= 0 && i < 4 ) &&
                        ( j >= 0 && j < 4 ) &&
                        ( i != j ) );
+    CGAL_assume(i!=j);
     return tab_next_around_edge[i][j];
   }
 

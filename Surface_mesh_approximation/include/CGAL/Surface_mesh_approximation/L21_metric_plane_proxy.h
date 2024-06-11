@@ -31,7 +31,7 @@ namespace Surface_mesh_approximation {
 /// \ingroup PkgTSMARef
 /// @brief Approximation L21 metric of vector proxy.
 ///
-/// \cgalModels `ErrorMetricProxy`
+/// \cgalModels{ErrorMetricProxy}
 ///
 /// @tparam TriangleMesh a triangle `FaceGraph`
 /// @tparam VertexPointMap a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`

@@ -58,7 +58,6 @@ namespace Three{
  * */
 class Scene_interface {
 public:
-
   //!A bounding box is a box with each face corresponding to an extremum of its contents.
 
   typedef CGAL::Bbox_3 Bbox;
@@ -88,7 +87,7 @@ public:
    * @returns -1 if the list is empty.*/
   virtual Item_id erase(Item_id) = 0;
   /*! Deletes the items with the target indices.
-   * @returns the index of the polyhedron just before the
+   * @returns the index of the item just before the
    * one that is erased, or just after. Returns -1 if
    * the list is empty.
    */

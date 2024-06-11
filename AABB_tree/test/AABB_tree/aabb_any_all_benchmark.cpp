@@ -10,7 +10,7 @@
 #include <CGAL/function_objects.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Polyhedron_3.h>
@@ -46,7 +46,7 @@ std::size_t intersect(ForwardIterator b, ForwardIterator e, const Tree& tree, lo
   v.reserve(elements);
   for(; b != e; ++b) {
     tree.all_intersections(*b, std::back_inserter(v));
-    boost::optional<Obj_type> o = tree.any_intersection(*b);
+    std::optional<Obj_type> o = tree.any_intersection(*b);
     if(o)
       ++counter;
   }
@@ -64,7 +64,7 @@ std::tuple<std::size_t, std::size_t, std::size_t, long> test(const char* name) {
   typedef CGAL::Polyhedron_3<K> Polyhedron;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<K, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   std::ifstream ifs(name);

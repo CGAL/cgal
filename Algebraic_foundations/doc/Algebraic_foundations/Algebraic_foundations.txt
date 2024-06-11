@@ -169,8 +169,8 @@ Every \cgal `Kernel` comes with two <I>real number types</I>
 (number types embeddable into the real numbers). One of them is a
 `FieldNumberType`, and the other a `RingNumberType`. The
 coordinates of the basic kernel objects (points, vectors, etc.) come
-from one of these types (the `FieldNumberType` in case of Cartesian
-kernels, and the `RingNumberType` for Homogeneous kernels).
+from one of these types (the `FieldNumberType` in case of %Cartesian
+kernels, and the `RingNumberType` for %Homogeneous kernels).
 
 The concept `FieldNumberType` combines the requirements of the
 concepts `Field` and `RealEmbeddable`, while
@@ -277,4 +277,3 @@ subsequent chapters.
 
 */
 } /* namespace CGAL */
-

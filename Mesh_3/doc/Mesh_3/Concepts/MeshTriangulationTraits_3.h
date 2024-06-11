@@ -9,7 +9,9 @@ a mesh generation process.
 
 \cgalRefines{RegularTriangulationTraits_3}
 
-\cgalHasModel All models of `Kernel`.
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
 In addition to the requirements described for the traits class
 RegularTriangulationTraits_3, the geometric traits class of a
@@ -334,11 +336,11 @@ public:
   /*!
   A constructor object that must provide the function operators:
 
-  `boost::optional< boost::variant< T... > > operator()(Segment_3 s, Plane_3 p)`
+  `std::optional< std::variant< T... > > operator()(Segment_3 s, Plane_3 p)`
 
-  `boost::optional< boost::variant< T... > > operator()(Ray_3 r, Iso_cuboid i)`
+  `std::optional< std::variant< T... > > operator()(Ray_3 r, Iso_cuboid i)`
 
-  `boost::optional< boost::variant< T... > > operator()(Segment_3 s, Iso_cuboid i)`
+  `std::optional< std::variant< T... > > operator()(Segment_3 s, Iso_cuboid i)`
 
   which returns the intersection region of two geometrical objects.
   */

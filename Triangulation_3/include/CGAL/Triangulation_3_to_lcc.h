@@ -5,13 +5,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 
 #ifndef CGAL_TRIANGULATION_3_TO_LCC_H
 #define CGAL_TRIANGULATION_3_TO_LCC_H
+
+#include <CGAL/license/Triangulation_3.h>
+
 
 #include <CGAL/assertions.h>
 #include <map>
@@ -49,7 +52,7 @@ namespace CGAL {
    std::map<typename Triangulation::Cell_handle,
             typename LCC::Dart_descriptor >* avol_to_dart=nullptr)
   {
-    CGAL_static_assertion( LCC::dimension>=3 && LCC::ambient_dimension==3 );
+    static_assert( LCC::dimension>=3 && LCC::ambient_dimension==3 );
 
     // Case of empty triangulations.
     if (atr.number_of_vertices() == 0) return LCC::null_descriptor;

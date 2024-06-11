@@ -50,7 +50,7 @@ class Filtered_projection_traits
 
   typedef typename boost::property_traits<IndexPropertyMap>::value_type Index_type;
 
-  typedef std::set<typename boost::remove_const<Index_type>::type> Set_of_indices;
+  typedef std::set<std::remove_const_t<Index_type>> Set_of_indices;
 
 public:
   template <typename IndexToIgnoreIterator>

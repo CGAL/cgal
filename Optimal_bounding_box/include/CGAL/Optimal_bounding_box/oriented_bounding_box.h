@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
 #include <CGAL/Default.h>
@@ -202,7 +203,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 {
   typedef typename Traits::Point_3                                   Point;
 
-  CGAL_static_assertion((std::is_same<typename boost::range_value<PointRange>::type, Point>::value));
+  static_assert(std::is_same<typename boost::range_value<PointRange>::type, Point>::value);
 
   if(use_ch) // construct the convex hull to reduce the number of points
   {
@@ -341,7 +342,7 @@ void oriented_bounding_box(const PointRange& points,
                                                        NamedParameters,
                                                        Default_traits>::type            Geom_traits;
 
-  CGAL_static_assertion_msg(!(std::is_same<Geom_traits, CGAL::Default>::value),
+  static_assert(!(std::is_same<Geom_traits, CGAL::Default>::value),
                             "You must provide a traits class or have Eigen enabled!");
 
   Geom_traits traits = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));

@@ -45,7 +45,7 @@ namespace Polygon_mesh {
     a model of `ReadablePropertyMap` whose key type is the vertex type of a polygon mesh and
     value type is `Kernel::Point_3`
 
-    \cgalModels `RegionType`
+    \cgalModels{RegionType}
   */
   template<
   typename GeomTraits,
@@ -308,7 +308,7 @@ namespace Polygon_mesh {
       // The best fit plane will be a plane fitted to all vertices of all
       // region faces with its normal being perpendicular to the plane.
       // Given that the points, and no normals, are used in estimating
-      // the plane, the estimated normal will point into an arbitray
+      // the plane, the estimated normal will point into an arbitrary
       // one of the two possible directions.
       // We flip it into the correct direction (the one that the majority
       // of faces agree with) below.

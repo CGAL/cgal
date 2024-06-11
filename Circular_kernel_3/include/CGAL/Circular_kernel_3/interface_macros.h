@@ -10,6 +10,8 @@
 // Author(s) : Monique Teillaud, Sylvain Pion, Pedro Machado,
 //             Sebastien Loriot, Julien Hazebrouck, Damien Leroy
 
+#include <CGAL/license/Circular_kernel_3.h>
+
 // Partially supported by the IST Programme of the EU as a
 // STREP (FET Open) Project under Contract No  IST-006413
 // (ACS -- Algorithms for Complex Shapes)

@@ -1,11 +1,11 @@
+#include <CGAL/Side_of_triangle_mesh.h>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <CGAL/Side_of_triangle_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include "point_inside_helpers.h"
 
@@ -39,7 +39,7 @@ int test_surface_mesh(const std::string filename)
 
   //test compilation of constructor from AABB_tree
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> FGTP;
-  typedef CGAL::AABB_traits<K, FGTP>    AABB_traits;
+  typedef CGAL::AABB_traits_3<K, FGTP>  AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits>  AABB_tree;
 
   AABB_tree tree(faces(mesh).first, faces(mesh).second, mesh);

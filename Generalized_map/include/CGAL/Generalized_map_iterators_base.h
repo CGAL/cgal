@@ -19,7 +19,6 @@
 #include <CGAL/Compact_container.h>
 #include <queue>
 #include <type_traits>
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
@@ -59,8 +58,8 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
-    CGAL_static_assertion( (Ai<=Map::dimension &&
-                            std::is_same<Ite_has_stack,Tag_false>::value) );
+    static_assert(Ai<=Map::dimension &&
+                            std::is_same<Ite_has_stack,Tag_false>::value);
 
   public:
     /// Main constructor.

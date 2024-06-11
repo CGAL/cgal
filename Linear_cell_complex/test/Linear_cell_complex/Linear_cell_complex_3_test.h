@@ -20,7 +20,6 @@
 #include "Linear_cell_complex_2_test.h"
 #include <fstream>
 #include <typeinfo>
-
 template<typename LCC>
 bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
                              unsigned int nbf, unsigned int nbvol,
@@ -63,6 +62,13 @@ bool check_number_of_cells_3(LCC& lcc, unsigned int nbv, unsigned int nbe,
   return true;
 }
 
+template<typename Map>
+void create_attributes_3(Map& map)
+{
+  create_attributes_2(map);
+  CreateAttributes<Map, 3>::run(map);
+}
+
 template<typename LCC>
 typename LCC::Dart_descriptor make_loop(LCC& lcc, const typename LCC::Point& p1)
 {
@@ -96,6 +102,7 @@ bool test_LCC_3()
   Dart_descriptor dh1=lcc.make_segment(Point(0,0,0),Point(1,0,0), true);
   Dart_descriptor dh2=lcc.make_segment(Point(2,0,0),Point(2,1,0), true);
   Dart_descriptor dh3=lcc.make_segment(Point(2,2,0),Point(3,1,0), true);
+  create_attributes_3(lcc);
   if ( !check_number_of_cells_3(lcc, 6, 3, 6, 3, 3) )
     return false;
 
@@ -320,6 +327,7 @@ bool test_LCC_3()
   dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
   dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
   lcc.template sew<3>(dh1, dh2);
+  create_attributes_3(lcc);
   dh2 = lcc.previous(dh1); dh3 = lcc.next(dh1);
 
   lcc.template contract_cell<1>(dh1);
@@ -341,6 +349,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
   dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
 
   dh2 = lcc.next(dh2);
@@ -373,6 +382,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
   dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
 
   dh2 = lcc.next(dh2);
@@ -405,6 +415,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
   dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
 
   dh3 = lcc.make_triangle(Point(5,5,4),Point(7,5,4),Point(6,6,4));
@@ -445,6 +456,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
   dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
 
   dh3 = lcc.make_triangle(Point(5,5,4),Point(7,5,4),Point(6,6,4));
@@ -483,6 +495,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = lcc.make_tetrahedron(Point(9, 9, 0),Point(9, 0, 9),
                              Point(0, 9, 9),Point(0, 0, 0));
+  create_attributes_3(lcc);
   typename LCC::Vector v=CGAL::compute_normal_of_cell_0(lcc, dh1);
   if (v!=typename LCC::Vector(-9,-9,9))
   {
@@ -496,7 +509,7 @@ bool test_LCC_3()
   dh1 = lcc.
       make_hexahedron(Point(0,0,0),Point(1,0,0),Point(1,2,0),Point(0,2,0),
                       Point(0,3,4),Point(0,0,4),Point(6,0,4),Point(6,3,4));
-
+  create_attributes_3(lcc);
   v=CGAL::compute_normal_of_cell_2(lcc, lcc.template
                                    opposite<2>(lcc.previous(dh1)));
   if (v!=typename LCC::Vector(0,0,1))
@@ -529,6 +542,7 @@ bool test_LCC_3()
       make_hexahedron(Point(0,3,0),Point(1,3,0),Point(1,4,0),Point(0,4,0),
                       Point(0,4,1),Point(0,3,1),Point(1,3,1),Point(1,4,1));
   dh2 = lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2))));
+  create_attributes_3(lcc);
   lcc.template sew<3>(dh1,dh2);
 
   lcc.template contract_cell<1>(lcc.previous(dh1));
@@ -560,12 +574,14 @@ bool test_LCC_3()
 
   trace_test_begin();
   dh1 = make_loop<LCC>(lcc, Point(0,0,0));
+  create_attributes_3(lcc);
   lcc.template contract_cell<2>(dh1);
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
     return false;
 
   trace_test_begin();
   dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0), true);
+  create_attributes_3(lcc);
   lcc.template sew<1>(lcc.template opposite<2>(dh1),
                       lcc.other_orientation(lcc.template opposite<2>(dh1)));
   lcc.template contract_cell<2>(dh1);
@@ -575,6 +591,7 @@ bool test_LCC_3()
 
   trace_test_begin();
   dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0),true);
+  create_attributes_3(lcc);
   lcc.template sew<1>(dh1, lcc.other_orientation(dh1));
   lcc.template sew<1>(lcc.template opposite<2>(dh1),
                       lcc.other_orientation(lcc.template opposite<2>(dh1)));
@@ -586,6 +603,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = make_face_two_edges(lcc, Point(0,0,0), Point(1,0,0));
   dh2 = make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
   lcc.template contract_cell<2>(dh1);
   if ( !check_number_of_cells_3(lcc, 2, 2, 1, 1, 1) )
@@ -600,6 +618,7 @@ bool test_LCC_3()
   dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
   dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
   dh3 = lcc.make_triangle(Point(5,3,3),Point(7,3,3),Point(6,0,3));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
   lcc.template sew<2>(lcc.next(dh2), dh3);
 
@@ -615,6 +634,7 @@ bool test_LCC_3()
 
   trace_test_begin();
   dh1 = lcc.create_dart(Point(0,0,0));
+  create_attributes_3(lcc);
   lcc.template sew<3>(dh1, lcc.create_dart(Point(1,0,0)));
   lcc.template contract_cell<2>(dh1);
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
@@ -623,6 +643,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = make_loop(lcc, Point(0,0,0));
   dh2 = make_loop(lcc, Point(0,0,1));
+  create_attributes_3(lcc);
   lcc.template sew<3>(dh1, dh2);
   lcc.template contract_cell<2>(dh1);
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
@@ -630,6 +651,7 @@ bool test_LCC_3()
 
   trace_test_begin();
   dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0), true);
+  create_attributes_3(lcc);
   lcc.template sew<3>(dh1, lcc.make_segment(Point(0,0,1),Point(1,0,1), true));
   lcc.template sew<3>(lcc.template opposite<2>(dh1),
                       lcc.template opposite<2>(lcc.template opposite<3>(dh1)));
@@ -640,8 +662,10 @@ bool test_LCC_3()
 
   trace_test_begin();
   dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0), true);
+  create_attributes_3(lcc);
   lcc.template sew<1>(dh1, lcc.other_orientation(dh1));
   dh2 = lcc.make_segment(Point(0,0,1),Point(1,0,1), true);
+  create_attributes_3(lcc);
   lcc.template sew<1>(dh2, lcc.other_orientation(dh2));
   lcc.template sew<3>(dh1, dh2);
   lcc.template contract_cell<2>(dh1);
@@ -651,10 +675,12 @@ bool test_LCC_3()
 
   trace_test_begin();
   dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0), true);
+  create_attributes_3(lcc);
   lcc.template sew<1>(dh1, lcc.other_orientation(dh1));
   lcc.template sew<1>(lcc.template opposite<2>(dh1),
                       lcc.other_orientation(lcc.template opposite<2>(dh1)));
   dh2 = lcc.make_segment(Point(0,0,1),Point(1,0,1), true);
+  create_attributes_3(lcc);
   lcc.template sew<1>(dh2, lcc.other_orientation(dh2));
   lcc.template sew<1>(lcc.template opposite<2>(dh2),
                       lcc.other_orientation(lcc.template opposite<2>(dh2)));
@@ -669,6 +695,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = make_face_two_edges(lcc, Point(0,0,0), Point(1,0,0));
   dh2 = make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
   lcc.template sew<3>(dh1,
                       make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1)));
@@ -686,6 +713,7 @@ bool test_LCC_3()
   trace_test_begin();
   dh1 = make_face_two_edges(lcc, Point(0,0,0), Point(1,0,0));
   dh2 = make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
   lcc.template sew<3>(dh1,
                       make_face_two_edges(lcc, Point(0,0,1), Point(1,0,1)));
@@ -706,6 +734,7 @@ bool test_LCC_3()
   dh1 = lcc.make_triangle(Point(5,5,3),Point(7,5,3),Point(6,6,3));
   dh2 = lcc.make_triangle(Point(5,4,3),Point(7,4,3),Point(6,3,3));
   dh3 = lcc.make_triangle(Point(5,3,3),Point(7,3,3),Point(6,0,3));
+  create_attributes_3(lcc);
   lcc.template sew<2>(dh1, dh2);
   lcc.template sew<2>(lcc.next(dh2), dh3);
   lcc.template sew<3>(dh1, lcc.make_triangle(Point(5,5,4),Point(7,5,4),
@@ -737,18 +766,21 @@ bool test_LCC_3()
 
   trace_test_begin();
   dh1 = make_loop<LCC>(lcc, Point(0,0,0));
+  create_attributes_3(lcc);
   lcc.template contract_cell<3>(dh1);
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
     return false;
 
   trace_test_begin();
   dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0));
+  create_attributes_3(lcc);
   lcc.template contract_cell<3>(dh1);
   if ( !check_number_of_cells_3(lcc, 0, 0, 0, 0, 0) )
     return false;
 
   trace_test_begin();
   dh1 = lcc.make_segment(Point(0,0,0),Point(1,0,0), true);
+  create_attributes_3(lcc);
   lcc.template sew<1>(dh1, lcc.other_orientation(dh1));
   lcc.template sew<1>(lcc.template opposite<2>(dh1),
                       lcc.other_orientation(lcc.template opposite<2>(dh1)));
@@ -764,6 +796,7 @@ bool test_LCC_3()
   dh2 = lcc.
     make_hexahedron(Point(0,3,0),Point(1,3,0),Point(1,4,0),Point(0,4,0),
                     Point(0,4,1),Point(0,3,1),Point(1,3,1),Point(1,4,1));
+  create_attributes_3(lcc);
   dh2 = lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2))));
   lcc.template sew<3>(dh1,dh2);
 
@@ -813,6 +846,7 @@ bool test_LCC_3()
   dh3 = lcc.
     make_hexahedron(Point(0,6,0),Point(1,6,0),Point(1,7,0),Point(0,7,0),
                     Point(0,7,1),Point(0,6,1),Point(1,6,1),Point(1,7,1));
+  create_attributes_3(lcc);
   dh3 = lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh3))));
   lcc.template sew<3>(dh2,dh3);
   dh2 = lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2))));
@@ -861,6 +895,12 @@ bool test_LCC_3()
                       Point(1,2,0),Point(0,2,0),
                       Point(0,3,4),Point(0,0,4),
                       Point(6,0,4),Point(6,3,4));
+
+  dh2=lcc.insert_cell_1_in_cell_2(lcc.next(dh1), lcc.previous(dh1));
+  if ( !check_number_of_cells_3(lcc, 8, 13, 7, 1, 1) )
+    return false;
+  lcc.template remove_cell<1>(dh2);
+
   dh2 = lcc.
       make_hexahedron(Point(0,0,4),Point(1,0,4),
                       Point(1,2,4),Point(0,2,4),
@@ -871,16 +911,24 @@ bool test_LCC_3()
                       Point(6,2,4),Point(5,2,4),
                       Point(5,3,8),Point(5,0,8),
                       Point(11,0,8),Point(11,3,8));
-  lcc.template sew<3>(dh1,lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2)))));
-  lcc.template sew<3>(lcc.template opposite<2>(lcc.next(dh1)), lcc.template opposite<2>(lcc.previous(dh3)));
+  create_attributes_3(lcc);
+  lcc.template sew<3>(dh1,lcc.template opposite<2>
+                      (lcc.next(lcc.next(lcc.template opposite<2>(dh2)))));
+  lcc.template sew<3>(lcc.template opposite<2>(lcc.next(dh1)),
+                      lcc.template opposite<2>(lcc.previous(dh3)));
 
   lcc.template close<3>();
   if ( !check_number_of_cells_3(lcc, 16, 28, 16, 4, 1) )
     return false;
 
-  lcc.insert_cell_1_in_cell_2(lcc.next(dh1), Alpha1<LCC>::run(lcc, lcc.previous(dh1)));
+  lcc.insert_cell_1_in_cell_2(lcc.next(dh1), lcc.previous(dh1));
+  if ( !check_number_of_cells_3(lcc, 16, 29, 17, 4, 1) )
+    return false;
+
   dh2=lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh1))));
-  lcc.insert_cell_1_in_cell_2(dh2, Alpha1<LCC>::run(lcc, lcc.next(lcc.next(dh2))));
+  lcc.insert_cell_1_in_cell_2(dh2, lcc.next(lcc.next(dh2)));
+  if ( !check_number_of_cells_3(lcc, 16, 30, 18, 4, 1) )
+    return false;
 
   std::vector<Dart_descriptor> path;
   path.push_back(lcc.next(dh1));
@@ -889,6 +937,51 @@ bool test_LCC_3()
   path.push_back(lcc.next(lcc.template opposite<2>(dh2)));
   lcc.insert_cell_2_in_cell_3(path.begin(),path.end());
   if ( !check_number_of_cells_3(lcc, 16, 30, 19, 5, 1) )
+    return false;
+
+  // Test insertion between two different 2-cells
+  trace_test_begin();
+  lcc.clear();
+  dh1 = lcc.
+      make_hexahedron(Point(0,0,0),Point(1,0,0),
+                      Point(1,2,0),Point(0,2,0),
+                      Point(0,3,4),Point(0,0,4),
+                      Point(6,0,4),Point(6,3,4));
+  dh2 = lcc.
+      make_hexahedron(Point(0,0,4),Point(1,0,4),
+                      Point(1,2,4),Point(0,2,4),
+                      Point(0,3,8),Point(0,0,8),
+                      Point(6,0,8),Point(6,3,8));
+  create_attributes_3(lcc);
+  lcc.template sew<3>(dh1,lcc.template opposite<2>(lcc.next(lcc.next(lcc.template opposite<2>(dh2)))));
+
+  lcc.insert_cell_1_between_two_cells_2(lcc.template opposite<2>(dh1),
+                                        lcc.template opposite<2>(lcc.next(dh1)));
+  if ( !check_number_of_cells_3(lcc, 12, 21, 10, 2, 1) )
+    return false;
+
+  trace_test_begin();
+  lcc.clear();
+  dh1=lcc.make_hexahedron(Point(0,0,0), Point(5,0,0),
+                          Point(5,5,0), Point(0,5,0),
+                          Point(0,5,4), Point(0,0,4),
+                          Point(5,0,4), Point(5,5,4));
+  dh2=lcc.make_hexahedron(Point(5,0,0), Point(10,0,0),
+                          Point(10,5,0), Point(5,5,0),
+                          Point(5,5,4), Point(5,0,4),
+                          Point(10,0,4), Point(10,5,4));
+  dh3=lcc.make_quadrangle(Point(5,2,2), Point(5,1,2),
+                          Point(5,1,1), Point(5,2,1));
+  lcc.template sew<3>(lcc.template opposite<2>(lcc.next(lcc.next(dh1))),
+                      lcc.other_orientation(lcc.template opposite<2>(dh2)));
+  lcc.template sew<3>(dh3, lcc.make_combinatorial_polygon(4));
+  create_attributes_3(lcc);
+
+  // Create an hole in the face between the two cubes
+  lcc.insert_cell_1_between_two_cells_2(lcc.template opposite<2>(lcc.next(lcc.next(dh1))),
+                                        lcc.next(lcc.next(dh3)));
+
+  if (!check_number_of_cells_3(lcc, 16, 25, 11, 2, 1) )
     return false;
 
   // Construction from Polyhedron_3

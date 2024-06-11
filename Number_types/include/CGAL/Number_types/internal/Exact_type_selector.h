@@ -22,9 +22,10 @@
 #include <CGAL/number_type_basic.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Lazy_exact_nt.h>
 
-#include <CGAL/boost_mp.h>
+#ifdef CGAL_USE_BOOST_MP
+#include <CGAL/cpp_float.h>
+#endif
 
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
@@ -310,26 +311,30 @@ struct Exact_ring_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Rational>
 
 #endif
 
-template < typename ET >
-struct Exact_field_selector<Lazy_exact_nt<ET> >
-: Exact_field_selector<ET>
-{
-  // We have a choice here :
-  // - using ET gets rid of the DAG computation as well as redoing the interval
-  // - using Lazy_exact_nt<ET> might use sharper intervals.
-  // typedef ET  Type;
-  // typedef Lazy_exact_nt<ET>  Type;
-};
-template < typename ET >
-struct Exact_ring_selector<Lazy_exact_nt<ET> >
-: Exact_ring_selector<ET>
-{};
-
 #ifndef CGAL_NO_DEPRECATED_CODE
 // Added for backward compatibility
 template < typename ET >
 struct Exact_type_selector : Exact_field_selector< ET > {};
 #endif
+
+constexpr const char* exact_nt_backend_string()
+{
+  switch(Default_exact_nt_backend)
+  {
+    case GMP_BACKEND:
+      return "GMP_BACKEND";
+    case GMPXX_BACKEND:
+      return "GMPXX_BACKEND";
+    case BOOST_GMP_BACKEND:
+      return "BOOST_GMP_BACKEND";
+    case BOOST_BACKEND:
+      return "BOOST_BACKEND";
+    case LEDA_BACKEND:
+      return "LEDA_BACKEND";
+    default:
+      return "MP_FLOAT_BACKEND";
+  }
+}
 
 } } // namespace CGAL::internal
 

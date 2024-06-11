@@ -51,7 +51,7 @@ namespace Segments {
     and value type is `GeomTraits::Segment_2`. The default is
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
-    \cgalModels `RegularizationType`
+    \cgalModels{RegularizationType}
   */
   template<
   typename GeomTraits,

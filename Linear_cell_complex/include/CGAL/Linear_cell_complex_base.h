@@ -775,7 +775,7 @@ namespace CGAL {
     Dart_descriptor insert_point_in_cell(Dart_descriptor dh, const Point& p,
                                      bool update_attributes=true)
     {
-      CGAL_static_assertion(1<=i && i<=2);
+      static_assert(1<=i && i<=2);
       if (i==1) return insert_point_in_cell_1(dh, p, update_attributes);
       return insert_point_in_cell_2(dh, p, update_attributes);
     }
@@ -806,7 +806,7 @@ namespace CGAL {
 
     /** Compute the dual of a Linear_cell_complex.
      * @param alcc the lcc in which we build the dual of this lcc.
-     * @param adart a dart of the initial lcc, nullptr by default.
+     * @param adart a dart of the initial lcc, `nullptr` by default.
      * @return adart of the dual lcc, the dual of adart if adart!=nullptr,
      *         any dart otherwise.
      * As soon as we don't modify this lcc and alcc lcc, we can iterate

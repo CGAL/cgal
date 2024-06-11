@@ -81,7 +81,7 @@ struct Incrementer {
  *
  *        \tparam Tr_ is the triangulation type to traverse.
  *
- *  \cgalModels{ForwardIterator}
+ *        \cgalModels{ForwardIterator}
  *
  *        \sa `Triangulation_3`
  *        \sa `Forward_circulator_base`
@@ -328,7 +328,7 @@ public:
     //  provides a conversion operator.
     /*         \return a handle to the current cell.
          */
-    operator Cell_handle() const
+    operator const Cell_handle&() const
     {
       return _cur.cell;
     }

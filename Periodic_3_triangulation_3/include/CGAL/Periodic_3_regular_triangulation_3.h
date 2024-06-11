@@ -31,7 +31,6 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/utility.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -909,7 +908,7 @@ public:
       std::cout << "four offsets: " << std::endl;
 #endif
 
-      boost::array<int, 4> offsets;
+      std::array<int, 4> offsets;
       for(int i=0; i<4; ++i)
       {
 #ifdef CGAL_PERIODIC_SET_POINT_VERBOSE

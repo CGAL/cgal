@@ -32,7 +32,7 @@
 #define CGAL_NEF_DEBUG 67
 #include <CGAL/Nef_2/debug.h>
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -75,7 +75,7 @@ typedef size_t Size_type;
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 typedef void*  GenPtr;
 #else
-typedef boost::any GenPtr;
+typedef std::any GenPtr;
 #endif
 
 

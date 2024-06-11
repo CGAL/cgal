@@ -24,7 +24,6 @@
 #include <list>
 #include <vector>
 
-#include <CGAL/Object.h>
 #include <CGAL/No_intersection_surface_sweep_2.h>
 #include <CGAL/Surface_sweep_2/Random_access_output_iterator.h>
 #include <CGAL/algorithm.h>
@@ -63,8 +62,8 @@ namespace Surface_sweep_2 {
  *               are calculated.
  * End
  *
- * Convensions through out the code:
- * In order to make the code as readable as possible, some convensions were
+ * Conventions through out the code:
+ * In order to make the code as readable as possible, some conventions were
  * made in regards to variable naming:
  *
  * xp - is the intersection point between two curves
@@ -102,7 +101,7 @@ public:
   typedef typename Base::Status_line_iterator           Status_line_iterator;
 
   typedef std::pair<Point_2, Multiplicity>              Intersection_point;
-  typedef boost::variant<Intersection_point, X_monotone_curve_2>
+  typedef std::variant<Intersection_point, X_monotone_curve_2>
                                                         Intersection_result;
   typedef std::vector<Intersection_result>              Intersection_vector;
   typedef Random_access_output_iterator<Intersection_vector>

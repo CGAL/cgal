@@ -22,8 +22,7 @@
 #include <CGAL/Origin.h>
 #include <functional>
 
-#include <boost/any.hpp>
-#include <boost/mpl/if.hpp>
+#include <any>
 #include <boost/utility/result_of.hpp>
 
 #include <iterator>
@@ -229,7 +228,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              // of the value functor is 'DT::Point' or 'DT::Vertex_handle'
                              std::enable_if_t<
                                std::is_constructible<
-                                 std::function<boost::any(typename Dt::Point)>,
+                                 std::function<std::any(typename Dt::Point)>,
                                  ValueFunctor
                              >::value>* = nullptr)
 {
@@ -255,7 +254,7 @@ sibson_gradient_fitting_nn_2(const Dt& dt,
                              const Traits& traits,
                              std::enable_if_t<
                                std::is_constructible<
-                                 std::function<boost::any(typename Dt::Vertex_handle)>,
+                                 std::function<std::any(typename Dt::Vertex_handle)>,
                                  ValueFunctor
                              >::value>* = nullptr)
 {
@@ -299,7 +298,7 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              // of the value functor is 'Rt::Point' (weighted point) or 'Rt::Vertex_handle'
                              std::enable_if_t<
                                std::is_constructible<
-                                 std::function<boost::any(typename Rt::Point)>,
+                                 std::function<std::any(typename Rt::Point)>,
                                  ValueFunctor
                              >::value>* = nullptr)
 {
@@ -325,7 +324,7 @@ sibson_gradient_fitting_rn_2(const Rt& rt,
                              const Traits& traits,
                              std::enable_if_t<
                                std::is_constructible<
-                                 std::function<boost::any(typename Rt::Vertex_handle)>,
+                                 std::function<std::any(typename Rt::Vertex_handle)>,
                                  ValueFunctor
                              >::value>* = nullptr)
 {

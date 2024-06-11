@@ -2,9 +2,9 @@
 // #define CGAL_COREFINEMENT_DEBUG
 #define  CGAL_USE_DERIVED_SURFACE_MESH
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <vector>
@@ -97,7 +97,7 @@ void run_boolean_operations(
 {
   std::cout << "Scenario #" << id << " - " << scenario << "\n";
 
-  typedef boost::optional<Surface_mesh*> OSM;
+  typedef std::optional<Surface_mesh*> OSM;
 
   std::array<OSM,4> output;
 
