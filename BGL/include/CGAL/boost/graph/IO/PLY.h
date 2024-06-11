@@ -342,6 +342,11 @@ bool write_PLY(std::ostream& os,
 
   bool has_vcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value;
   bool has_fcolor = !is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value;
+  bool has_vnormal = false;
+  if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
+  {
+    has_vnormal = true;
+  }
   VIMap vim = CGAL::get_initialized_vertex_index_map(g, np);
   Vpm vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(boost::vertex_point, g));
@@ -379,6 +384,25 @@ bool write_PLY(std::ostream& os,
        << "property uchar alpha" << std::endl;
   }
 
+  if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
+  {
+    auto vnm = get_parameter(np, internal_np::vertex_normal_map);
+    typedef decltype(vnm) Normal_map;
+    typedef Kernel_traits<typename Normal_map::value_type>::Kernel::FT FloatDouble;
+    if(std::is_same<FloatDouble, float>::value)
+      {
+        os << "property float nx" << std::endl
+           << "property float ny" << std::endl
+           << "property float nz" << std::endl;
+      }
+      else
+      {
+        os << "property double nx" << std::endl
+           << "property double ny" << std::endl
+           << "property double nz" << std::endl;
+      }
+  }
+
   os << "element face " << faces(g).size() << std::endl;
   internal::output_property_header(
         os, std::make_pair(CGAL::Identity_property_map<std::vector<std::size_t> >(),
@@ -398,6 +422,14 @@ bool write_PLY(std::ostream& os,
   {
     const Point_3& p = get(vpm, vd);
     internal::output_properties(os, &p, make_ply_point_writer (Identity_property_map<Point_3>()));
+    if constexpr (!parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value)
+  {
+    auto vnm = get_parameter(np, internal_np::vertex_normal_map);
+    typedef decltype(vnm) Normal_map;
+    typedef typename Normal_map::value_type Vector_3;
+    Vector_3 vec = get(vnm,vd);
+    internal::output_properties(os, &vec, make_ply_normal_writer (Identity_property_map<Vector_3>()));
+  }
     if(has_vcolor)
     {
       const CGAL::IO::Color& c = get(vcm, vd);

@@ -81,7 +81,7 @@ int main()
   // from #include <CGAL/boost/graph/IO/PLY.h>
   // https://doc.cgal.org/latest/BGL/group__PkgBGLIoFuncsPLY.html#ga959dcd88ca979d3b6b0806d883a0247f
   CGAL::IO::write_PLY("generic_write_PLY_sm.ply", sm, "generic write_PLY(Surface_mesh)",
-                      CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(scsmvpm));
+                      CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(scsmvpm).vertex_normal_map(scsmvnpm));
                       /*
   if(!CGAL::IO::read_polygon_mesh("generic_write_PLY_sm.ply", osm))
   {
