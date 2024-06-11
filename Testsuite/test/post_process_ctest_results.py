@@ -58,12 +58,11 @@ with open(input_report_file_name, "rt", encoding="utf-8") as input_report_file:
         if is_writing:
             if match:
                 is_writing = False
-                input_report_file.close()
                 if is_ignored:
                     print("{label} {result}".format(label=name, result='r'), file=global_report)
                     is_ignored = False
                 if lines_to_write:
-                    file_path = "{dir}/{file}".format(dir=name, file=report_file_name)
+                    file_path = f"{name}/{report_file_name}"
                     if os.path.exists(file_path):
                         with open(file_path, "r", encoding="utf-8") as file:
                             contents = file.readlines()
@@ -74,11 +73,6 @@ with open(input_report_file_name, "rt", encoding="utf-8") as input_report_file:
 
                     if not any(re.search("- CMake Results .*", content) for content in contents):
                         lines_to_write.insert(0, f"{Separator}\n- CMake Results for {name}\n{Separator}\n\n")
-                    if not any(re.search("- CMake Logs .*", content) for content in contents):
-                        contents.insert(position - 1, Separator + "\n- CMake Logs from Installation \n" + Separator + "\n\n")
-                    for log in installation_cmake_logs:
-                        contents.insert(position, log)
-                        position += 1
                     lines_to_write.insert(0, "\n")
                     contents[position:position] = lines_to_write
 
@@ -86,7 +80,6 @@ with open(input_report_file_name, "rt", encoding="utf-8") as input_report_file:
                         file.write("".join(contents))
 
                     lines_to_write = []
-
                 if is_ignored:
                     is_ignored = False
             else:
@@ -115,15 +108,32 @@ with open(input_report_file_name, "rt", encoding="utf-8") as input_report_file:
                     if not os.path.isdir(name):
                         is_ignored = True
                         os.mkdir(name)
-                        with open("{dir}/{file}".format(dir=name, file=report_file_name), "w", encoding="utf-8") as input_report_file:
-                            input_report_file.write(open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r', encoding="utf-8").read())
+                        report_file_handle=open("{dir}/{file}".format(dir=name, file=report_file_name), "w+", encoding="utf-8")
+                        report_file_handle.write(open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r', encoding="utf-8").read())
                     else:
                         is_ignored = False
+                        file_path = "{dir}/{file}".format(dir=name, file=report_file_name)
+                        if os.path.exists(file_path):
+                            with open(file_path, "r", encoding="utf-8") as file:
+                                contents = file.readlines()
+                        else:
+                            contents = []
+
+                        position = find_third_separator(contents)
+
+                        if not any(re.search("- CMake Logs .*", content) for content in contents):
+                            contents.insert(position - 1, Separator + "\n- CMake Logs from Installation \n" + Separator + "\n\n")
+                        for log in installation_cmake_logs:
+                            contents.insert(position, log)
+                            position += 1
+
+                        with open(file_path, "w", encoding="utf-8") as file:
+                            file.write("".join(contents))
+
                     is_writing = True
 
 if is_writing:
     is_writing=False
-    input_report_file.close()
     if is_ignored:
         print("{label} {result}".format(label=name, result='r'), file=global_report)
         is_ignored=False
