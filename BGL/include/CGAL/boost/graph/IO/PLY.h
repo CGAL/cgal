@@ -18,7 +18,6 @@
 #include <CGAL/boost/graph/IO/Generic_facegraph_builder.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/Simple_cartesian.h>
 
 #include <fstream>
 #include <string>
@@ -232,21 +231,6 @@ bool read_PLY(const std::string& fname,
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write
-
-template <typename T>
-struct To_double_property_map_no_lvalue
-{
-  typedef T key_type; ///< typedef to `T`
-  typedef Simple_cartesian<double>::Point_3 value_type; ///< typedef to `T`
-  typedef value_type reference; ///< typedef to `T`
-  typedef boost::readable_property_map_tag category; ///< `boost::readable_property_map_tag`
-
-  typedef To_double_property_map_no_lvalue<T> Self;
-
-  friend value_type get(const Self&, const key_type& k) {
-    return Simple_cartesian<double>::Point_3(to_double(k.x()), to_double(k.y()), to_double(k.z()));}
-};
-
 
 /*!
  \ingroup PkgBGLIoFuncsPLY

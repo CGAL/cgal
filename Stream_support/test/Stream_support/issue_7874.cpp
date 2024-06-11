@@ -6,6 +6,7 @@
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Surface_mesh/IO/PLY.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/boost/graph/generators.h>
 
 typedef CGAL::Surface_mesh<CGAL::Epeck::Point_3> Surface_mesh;
 typedef boost::graph_traits<Surface_mesh>::vertex_descriptor vertex_descriptor;
