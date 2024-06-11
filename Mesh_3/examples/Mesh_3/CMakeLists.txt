@@ -26,15 +26,11 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
-find_package(VTK
+find_package(VTK 9.0
              COMPONENTS ImagingGeneral IOImage
              QUIET)
 if(VTK_FOUND)
-  if("${VTK_VERSION_MAJOR}" GREATER "8" OR VTK_VERSION VERSION_GREATER 8)
-    message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
-  else()
-    message(STATUS "VTK version 9.0 or greater is required")
-  endif()
+  message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
 else()
   message(STATUS "VTK was not found")
 endif()
@@ -119,8 +115,7 @@ create_single_source_cgal_program("mesh_polyhedral_complex_sm.cpp")
 target_link_libraries(mesh_polyhedral_complex_sm PUBLIC CGAL::Eigen3_support)
 
 if(TARGET CGAL::CGAL_ImageIO)
-  if(VTK_FOUND AND ("${VTK_VERSION_MAJOR}" GREATER "8" OR VTK_VERSION
-                                                          VERSION_GREATER 8))
+  if(VTK_FOUND)
     create_single_source_cgal_program("mesh_3D_gray_vtk_image.cpp")
     target_link_libraries(mesh_3D_gray_vtk_image
                           PUBLIC CGAL::Eigen3_support
