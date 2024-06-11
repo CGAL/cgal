@@ -472,7 +472,7 @@ bool fill_simplex_specific_header(std::ostream& os,
   {
     auto vnm = get_parameter(np, internal_np::vertex_normal_map);
     typedef decltype(vnm) Normal_map;
-    typedef Kernel_traits<typename Normal_map::value_type>::Kernel::FT FloatDouble;
+    typedef typename Kernel_traits<typename Normal_map::value_type>::Kernel::FT FloatDouble;
     if(std::is_same<FloatDouble, float>::value)
       {
         os << "property float nx" << std::endl
