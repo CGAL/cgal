@@ -397,7 +397,7 @@ bool write_PLY(std::ostream& os,
   for(vertex_descriptor vd : vertices(g))
   {
     const Point_3& p = get(vpm, vd);
-    internal::output_properties(os, &p, make_ply_point_writer (To_double_property_map_no_lvalue<Point_3>()));
+    internal::output_properties(os, &p, make_ply_point_writer (Identity_property_map<Point_3>()));
     if(has_vcolor)
     {
       const CGAL::IO::Color& c = get(vcm, vd);
