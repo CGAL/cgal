@@ -752,10 +752,22 @@ sub create_summary_page {
     my @letters = ('r', 'n', 'w', 'o');
     my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);
     my $package_options = join("\n", map { "<option style=\"display: none;\" value=\"$_\">$_</option>" } sort keys %test_directories);
+    my $third_party_libraries = "";
 
     my @search_index;
     my ($platform_num, $platform) = (0, "");
     foreach $platform (@platforms_to_do) {
+        if (open (PLATFORM_INFO, "results_${platform}.info")) {
+            my $line = "";
+            while (<PLATFORM_INFO>) {
+                $line = $_;
+                if ($line =~ /^TPL:/) {
+                    $third_party_libraries = $line;
+                }
+                print "$line\n";
+            }
+            close PLATFORM_INFO;
+        }
         foreach my $letter (@letters) {
             foreach my $test_directory (sort keys %test_directories) {
                 my $resulttext = $testresults[$platform_num]->{$test_directory};
@@ -767,6 +779,7 @@ sub create_summary_page {
                         content => $warnings_and_errors,
                         release => $release_name,
                         letters => $letter,
+                        third_party_libraries => $third_party_libraries,
                     };
                 }
             }
@@ -791,11 +804,11 @@ sub create_summary_page {
         "https://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Summary</title>
-  <link rel="shortcut icon" href="cgal.ico">
-  <link rel="stylesheet" type="text/css" href="testresult.css">
-  <script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Summary</title>
+    <link rel="shortcut icon" href="cgal.ico">
+    <link rel="stylesheet" type="text/css" href="testresult.css">
+    <script>
     var searchURLs = $json_urls;
     var url = searchURLs["current"]
 
@@ -853,6 +866,9 @@ sub create_summary_page {
             const platformHeader = document.createElement('h2');
             platformHeader.innerText = "Results of " + platform;
             platformDiv.appendChild(platformHeader);
+            const tplDiv = document.createElement('div');
+            tplDiv.innerHTML = items[0].third_party_libraries;
+            platformDiv.appendChild(tplDiv);
             const resultGrid = document.createElement('div');
             resultGrid.className = "result-grid";
             platformDiv.appendChild(resultGrid);
