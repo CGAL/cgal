@@ -1,5 +1,5 @@
 // Copyright (c) 2003-2007  INRIA Sophia-Antipolis (France).
-// Copyright (c) 2008,2011  GeometryFactory Sarl (France)
+// Copyright (c) 2008,2011,2024  GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,9 +17,8 @@
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
 
-#include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Surface_mesher/Sphere_oracle_3.h>
+#include <CGAL/Poisson_surface_reconstruction_3/internal/Poisson_sphere_oracle_3.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/squared_distance_3.h>
@@ -56,7 +55,7 @@ namespace CGAL {
       Return_min<typename Transform_functor_::result_type>,
     class Point_creator = Creator_uniform_3<typename GT::FT,
                                             typename GT::Point_3>,
-    class Visitor = Null_oracle_visitor
+    class Visitor = Poisson_null_oracle_visitor
     >
   class Poisson_implicit_surface_oracle_3
   {
@@ -68,7 +67,7 @@ namespace CGAL {
                                       Point_creator,
                                       Visitor> Self;
 
-    typedef Sphere_oracle_3<GT, Point_creator> Sphere_oracle;
+    typedef Poisson_sphere_oracle_3<GT, Point_creator> Sphere_oracle;
 
     typedef typename GT::Point_3 Point;
 

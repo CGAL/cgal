@@ -1,4 +1,5 @@
 // Copyright (c) 2006-2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2024       GeometryFactory Sarl (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -10,19 +11,15 @@
 //
 // Author(s)     : Laurent RINEAU
 
-#ifndef CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H
-#define CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H
+// This file is a copy-paste-adaptation of Surface_mesher/include/CGAL/Surface_mesher/Sphere_oracle_3.h
+// Surface_mesher that has been deprecated and will be removed in the future.
 
-#include <CGAL/license/Surface_mesher.h>
+#ifndef CGAL_POISSON_SURFACE_MESHER_POISSON_SPHERE_ORACLE_3_H
+#define CGAL_POISSON_SURFACE_MESHER_POISSON_SPHERE_ORACLE_3_H
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Sphere_oracle_3.h>"
-#define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
-#include <CGAL/Installation/internal/deprecation_warning.h>
+#include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
 #include <CGAL/disable_warnings.h>
-
-#include <CGAL/Surface_mesher/Null_oracle_visitor.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Origin.h>
@@ -33,16 +30,25 @@ namespace CGAL {
 
   namespace Surface_mesher {
 
+  struct Poisson_null_oracle_visitor
+  {
+    template <class P>
+    void new_point(P&) const
+    {
+    }
+  };
+
+
   template <
     class GT,
     class Point_creator = Creator_uniform_3<typename GT::FT,
                                             typename GT::Point_3>,
-    class Visitor = Null_oracle_visitor
+    class Visitor = Poisson_null_oracle_visitor
     >
-  class Sphere_oracle_3
+  class Poisson_sphere_oracle_3
   {
     // private types
-    typedef Sphere_oracle_3<GT, Point_creator, Visitor> Self;
+    typedef Poisson_sphere_oracle_3<GT, Point_creator, Visitor> Self;
 
     typedef typename GT::Point_3 Point;
     typedef typename GT::FT FT;
@@ -67,12 +73,12 @@ namespace CGAL {
   public:
 
     // Constructors
-    Sphere_oracle_3 (Visitor visitor_ = Visitor() ) :
+    Poisson_sphere_oracle_3 (Visitor visitor_ = Visitor() ) :
       visitor(visitor_)
     {
 #ifdef CGAL_SURFACE_MESHER_DEBUG_CONSTRUCTORS
 #  ifndef CGAL_SURFACE_MESHER_IMPLICIT_SURFACE_ORACLE_3_H
-      std::cerr << "CONS: Sphere_oracle_3\n";
+      std::cerr << "CONS: Poisson_sphere_oracle_3\n";
 #  endif
 #endif
     }
@@ -451,7 +457,7 @@ namespace CGAL {
     {
       return Intersect_3(*this);
     }
-  };  // end Sphere_oracle_3
+  };  // end Poisson_sphere_oracle_3
 
   }  // namespace Surface_mesher
 
@@ -459,4 +465,4 @@ namespace CGAL {
 
 #include <CGAL/enable_warnings.h>
 
-#endif  // CGAL_SURFACE_MESHER_SPHERE_ORACLE_3_H
+#endif  // CGAL_POISSON_SURFACE_MESHER_POISSON_SPHERE_ORACLE_3_H

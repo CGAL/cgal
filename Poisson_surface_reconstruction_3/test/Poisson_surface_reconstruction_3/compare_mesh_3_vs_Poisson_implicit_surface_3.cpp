@@ -1,17 +1,12 @@
-// poisson_reconstruction.cpp
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
 
 //----------------------------------------------------------
-// Poisson Delaunay Reconstruction method.
-// Reads a point set or a mesh's set of vertices, reconstructs a surface using Poisson,
-// and saves the surface.
-// Output format is .off.
+// Compares Poisson using Mesh_3
+// VS Poisson using Surface_mesher and Poisson_implicit_surface_3
+// see issue https://github.com/CGAL/cgal/issues/8266
 //----------------------------------------------------------
-// poisson_reconstruction file_in file_out [options]
 
 // CGAL
-#include <CGAL/AABB_tree.h> // must be included before kernel
-#include <CGAL/AABB_traits_3.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
 
@@ -22,6 +17,11 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
+#include <CGAL/Surface_mesh_default_triangulation_3.h>
+#include <CGAL/make_surface_mesh.h>
+#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+
+#include <CGAL/Poisson_implicit_surface_3.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/compute_average_spacing.h>
@@ -54,6 +54,11 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 
 // Poisson implicit function
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
+typedef CGAL::Poisson_implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+
+// Surface mesher
+typedef CGAL::Surface_mesh_default_triangulation_3 STr;
+typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
 
 // Mesh_3
 typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
@@ -61,10 +66,6 @@ typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// AABB tree
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-typedef CGAL::AABB_traits_3<Kernel, Primitive> AABB_traits;
-typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
 struct Counter {
   std::size_t i, N;
@@ -103,6 +104,7 @@ struct InsertVisitor {
 
 int main(int argc, char * argv[])
 {
+  CGAL::get_default_random() = CGAL::Random(0);
     std::cerr << "Poisson Delaunay Reconstruction method" << std::endl;
 
     //***************************************
@@ -121,6 +123,7 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
+      std::cerr << "  -frac <float>          factor appplied to sm_radius (default = 1.)\n";
       std::cerr << "Running " << argv[0] << "data/kitten.xyz kitten_poisson-20-100-0.5.off -sm_distance 0.5\n";
     }
 
@@ -131,22 +134,25 @@ int main(int argc, char * argv[])
     std::string solver_name = "eigen"; // Sparse linear solver name.
     double approximation_ratio = 0.02;
     double average_spacing_ratio = 5;
+    double frac = 1.;
 
     // decode parameters
     std::string input_filename  = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/kitten.xyz");
     std::string output_filename = (argc > 2) ? argv[2] : "kitten_poisson-20-100-0.5.off";
     for (int i=3; i+1<argc ; ++i)
     {
-      if (std::string(argv[i])=="-sm_radius")
+      if (std::string(argv[i]) == "-sm_radius")
         sm_radius = atof(argv[++i]);
-      else if (std::string(argv[i])=="-sm_distance")
+      else if (std::string(argv[i]) == "-sm_distance")
         sm_distance = atof(argv[++i]);
-      else if (std::string(argv[i])=="-solver")
+      else if (std::string(argv[i]) == "-solver")
         solver_name = argv[++i];
-      else if (std::string(argv[i])=="-approx")
+      else if (std::string(argv[i]) == "-approx")
         approximation_ratio = atof(argv[++i]);
-      else if (std::string(argv[i])=="-ratio")
+      else if (std::string(argv[i]) == "-ratio")
         average_spacing_ratio = atof(argv[++i]);
+      else if (std::string(argv[i]) == "-frac")
+        frac = atof(argv[++i]);
       else {
         std::cerr << "Error: invalid option " << argv[i] << "\n";
         return EXIT_FAILURE;
@@ -154,6 +160,10 @@ int main(int argc, char * argv[])
     }
 
     if (argc == 1) sm_distance = 0.5;
+
+    const std::size_t last_dot = output_filename.find_last_of(".");
+    const std::string output_extension = output_filename.substr(last_dot);
+    const std::string output_basename = output_filename.substr(0, last_dot);
 
     CGAL::Timer task_timer; task_timer.start();
 
@@ -189,14 +199,15 @@ int main(int argc, char * argv[])
     }
     // If XYZ file format
     else if (extension == ".xyz" || extension == ".XYZ" ||
-             extension == ".pwn" || extension == ".PWN")
+             extension == ".pwn" || extension == ".PWN" ||
+             extension == ".ply" || extension == ".PLY")
     {
       // Reads the point set file in points[].
       // Note: read_points() requires an iterator over points
       // + property maps to access each point's position and normal.
       if (!CGAL::IO::read_points(input_filename.c_str(), std::back_inserter(points),
                                   CGAL::parameters::point_map(CGAL::make_first_of_pair_property_map(Point_with_normal()))
-                                                    .normal_map(CGAL::make_second_of_pair_property_map(Point_with_normal()))))
+                                                   .normal_map(CGAL::make_second_of_pair_property_map(Point_with_normal()))))
       {
         std::cerr << "Error: cannot read input file!" << input_filename << std::endl;
         return EXIT_FAILURE;
@@ -234,7 +245,6 @@ int main(int argc, char * argv[])
 
     CGAL::Timer reconstruction_timer; reconstruction_timer.start();
 
-
     Counter counter(std::distance(points.begin(), points.end()));
     InsertVisitor visitor(counter) ;
 
@@ -243,7 +253,7 @@ int main(int argc, char * argv[])
     // Computes implicit function
     //***************************************
 
-    std::cerr << "Computes Poisson implicit function...\n";
+    std::cerr << "\nComputes Poisson implicit function...\n";
 
     // Creates implicit function from the read points.
     // Note: this method requires an iterator over points
@@ -258,7 +268,6 @@ int main(int argc, char * argv[])
     {
       if (solver_name == "eigen")
       {
-        std::cerr << "Use Eigen 3\n";
         CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_symmetric_matrix<double>::EigenType> > solver;
         if ( ! function.compute_implicit_function(solver, visitor,
                                                 approximation_ratio,
@@ -289,8 +298,7 @@ int main(int argc, char * argv[])
     //***************************************
     // Surface mesh generation
     //***************************************
-
-    std::cerr << "Surface meshing...\n";
+    std::cerr << std::endl << std::endl;
 
     // Computes average spacing
     FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
@@ -310,79 +318,107 @@ int main(int argc, char * argv[])
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
+    // Defines the implicit surface: requires defining a
+    // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
 
-    // Defines generation criteria
-    Mesh_criteria criteria(CGAL::parameters::facet_angle = sm_angle,
-                           CGAL::parameters::facet_size = sm_radius*average_spacing,
-                           CGAL::parameters::facet_distance = sm_distance*average_spacing);
+    // Meshing criteria
+    const double fangle = sm_angle;
+    const double fsize = frac * sm_radius * average_spacing;
+    const double fdist = sm_distance * average_spacing;
 
-    std::cerr         << "  make_mesh_3 with sphere center=("<<inner_point << "),\n"
-                      << "                    sphere radius="<<sm_sphere_radius<<",\n"
-                      << "                    angle="<<sm_angle << " degrees,\n"
-                      << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
-                      << "                    distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
-                      << "                    dichotomy error=distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
-                      << "                    manifold_with_boundary()\n";
+    const double implicit_function_time = reconstruction_timer.time();
+    reconstruction_timer.reset();
 
-    // Defines mesh domain
-    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
-        CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
-
-    // Generates mesh with manifold option
-    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
-                                        CGAL::parameters::no_exude().no_perturb()
-                                        .manifold_with_boundary());
-
-    // Prints status
-    const Tr& tr = c3t3.triangulation();
-    std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
-                                     << tr.number_of_vertices() << " output vertices"
-                                     << std::endl;
-    task_timer.reset();
-
-    if(tr.number_of_vertices() == 0)
-      return EXIT_FAILURE;
-
-    // Converts to polyhedron
-    Polyhedron output_mesh;
-    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
-
-    // Prints total reconstruction duration
-    std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
-
-    //***************************************
-    // Computes reconstruction error
-    //***************************************
-
-    // Constructs AABB tree and computes internal KD-tree
-    // data structure to accelerate distance queries
-    AABB_tree tree(faces(output_mesh).first, faces(output_mesh).second, output_mesh);
-
-    // Computes distance from each input point to reconstructed mesh
-    double max_distance = DBL_MIN;
-    double avg_distance = 0;
-    for (PointList::const_iterator p=points.begin(); p!=points.end(); p++)
+    // MESH_3
     {
-      double distance = std::sqrt(tree.squared_distance(p->first));
+      CGAL::Real_timer meshing_timer;
+      meshing_timer.start();
 
-      max_distance = (std::max)(max_distance, distance);
-      avg_distance += distance;
+      std::cout << "* Use Mesh_3 *" << std::endl;
+      // Defines generation criteria
+      Mesh_criteria criteria(CGAL::parameters::facet_angle = fangle,
+                             CGAL::parameters::facet_size = fsize,
+                             CGAL::parameters::facet_distance = fdist);
+
+      // Defines mesh domain
+      Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
+          CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
+
+      // Generates mesh with manifold option
+      C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                          CGAL::parameters::no_exude().no_perturb()
+                                          .manifold_with_boundary());
+      meshing_timer.stop();
+
+      const Tr& tr = c3t3.triangulation();
+      // Prints status
+      std::cerr << "Mesh_3 meshing: " << meshing_timer.time() << " seconds, "
+                                      << tr.number_of_vertices() << " output vertices"
+                                      << std::endl;
+
+      if (tr.number_of_vertices() == 0)
+        return EXIT_FAILURE;
+
+      // Prints total reconstruction duration
+      reconstruction_timer.stop();
+      std::cerr << "Total reconstruction (implicit function + meshing): "
+        << (implicit_function_time + reconstruction_timer.time()) << " seconds\n";
+      reconstruction_timer.reset();
+
+      // Converts to polyhedron
+      Polyhedron output_mesh;
+      CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
+
+      std::ofstream out(output_basename + "_mesh_3.off");
+      out << output_mesh;
+      out.close();
     }
-    avg_distance /= double(points.size());
 
-    std::cerr << "Reconstruction error:\n"
-              << "  max = " << max_distance << " = " << max_distance/average_spacing << " * average spacing\n"
-              << "  avg = " << avg_distance << " = " << avg_distance/average_spacing << " * average spacing\n";
+    // SURFACE_MESHER
+    {
+      CGAL::Real_timer meshing_timer;
+      meshing_timer.start();
+      reconstruction_timer.start();
 
-    //***************************************
-    // Saves reconstructed surface mesh
-    //***************************************
+      std::cout << "\n\n* Use Surface_mesher with Poisson_implicit_surface_3 *" << std::endl;
+      Surface_3 surface(function,
+                        Sphere(inner_point, sm_sphere_radius * sm_sphere_radius),
+                        sm_dichotomy_error / sm_sphere_radius);
 
-    std::cerr << "Write file " << output_filename << std::endl << std::endl;
-    std::ofstream out(output_filename.c_str());
-    out << output_mesh;
+      // Defines surface mesh generation criteria
+      CGAL::Surface_mesh_default_criteria_3<STr> criteria(fangle, fsize, fdist);
+
+      // Generates surface mesh with manifold option
+      STr tr; // 3D Delaunay triangulation for surface mesh generation
+      C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
+      CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
+                              surface,                              // implicit surface
+                              criteria,                             // meshing criteria
+                              CGAL::Manifold_with_boundary_tag());  // require manifold mesh
+      meshing_timer.stop();
+
+      // Prints status
+      std::cerr << "Surface meshing: " << meshing_timer.time() << " seconds, "
+                                       << tr.number_of_vertices() << " output vertices"
+                                       << std::endl;
+
+      if (tr.number_of_vertices() == 0)
+        return EXIT_FAILURE;
+
+      // Prints total reconstruction duration
+      reconstruction_timer.stop();
+      std::cerr << "Total reconstruction (implicit function + meshing): "
+        << (implicit_function_time + reconstruction_timer.time()) << " seconds\n";
+
+      Polyhedron output_mesh;
+      CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
+
+      std::ofstream out(output_basename + "_surface_mesher.off");
+      out << output_mesh;
+      out.close();
+    }
 
     return EXIT_SUCCESS;
 }
