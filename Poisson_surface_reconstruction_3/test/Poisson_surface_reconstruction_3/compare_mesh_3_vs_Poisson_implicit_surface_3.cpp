@@ -123,7 +123,7 @@ int main(int argc, char * argv[])
       std::cerr << "Options:\n";
       std::cerr << "  -sm_radius <float>     Radius upper bound (default=100 * average spacing)\n";
       std::cerr << "  -sm_distance <float>   Distance upper bound (default=0.25 * average spacing)\n";
-      std::cerr << "  -frac <float>          factor appplied to sm_radius (default = 1.)\n";
+      std::cerr << "  -frac <float>          factor applied to sm_radius (default = 1.)\n";
       std::cerr << "Running " << argv[0] << "data/kitten.xyz kitten_poisson-20-100-0.5.off -sm_distance 0.5\n";
     }
 
