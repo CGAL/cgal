@@ -3369,7 +3369,7 @@ Release date: October 2013
 #### CGAL and Boost Property Maps
 
 -   The `key_type` of the property maps provided by CGAL used to be an
-    iterator. In order to be more easily re-used, the `key_type` has
+    iterator. In order to be more easily reused, the `key_type` has
     been changed to be the `value_type` of the iterator. The packages
     that have been updated to match these changes are **Point Set
     Processing** and **Surface Reconstruction from Point Sets**.
