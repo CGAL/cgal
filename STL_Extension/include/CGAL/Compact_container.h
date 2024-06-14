@@ -27,6 +27,7 @@
 #include <functional>
 #include <atomic>
 
+#include <CGAL/use.h>
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
@@ -271,7 +272,7 @@ public:
   {
     init();
     block_size = c.block_size;
-    time_stamp = c.time_stamp.load();
+    time_stamp = 0;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
@@ -300,6 +301,20 @@ public:
   ~Compact_container()
   {
     clear();
+  }
+
+  bool check_timestamps_are_valid() const {
+    if constexpr (Time_stamper::has_timestamp) {
+      for(size_type i = 0, end = capacity(); i < end; ++i) {
+        if(!is_used(i)) {
+          continue;
+        }
+        if(Time_stamper::time_stamp(&operator[](i)) != i) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   bool is_used(const_iterator ptr) const
@@ -382,10 +397,18 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    std::size_t ts;
+    CGAL_USE(ts);
+    if constexpr (Time_stamper::has_timestamp) {
+      ts = ret->time_stamp();
+    }
     new (ret) value_type(args...);
+    if constexpr (Time_stamper::has_timestamp) {
+      ret->set_time_stamp(ts);
+    }
+    Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    Time_stamper::set_time_stamp(ret, time_stamp);
     return iterator(ret, 0);
   }
 
@@ -396,10 +419,18 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    std::size_t ts;
+    CGAL_USE(ts);
+    if constexpr (Time_stamper::has_timestamp) {
+      ts = ret->time_stamp();
+    }
     std::allocator_traits<allocator_type>::construct(alloc, ret, t);
+    if constexpr (Time_stamper::has_timestamp) {
+      ret->set_time_stamp(ts);
+    }
+    Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    Time_stamper::set_time_stamp(ret, time_stamp);
     return iterator(ret, 0);
   }
 
@@ -424,7 +455,15 @@ public:
 
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+    std::size_t ts;
+    CGAL_USE(ts);
+    if constexpr (Time_stamper::has_timestamp) {
+      ts = x->time_stamp();
+    }
     std::allocator_traits<allocator_type>::destroy(alloc, &*x);
+    if constexpr (Time_stamper::has_timestamp) {
+      x->set_time_stamp(ts);
+    }
 
     put_on_free_list(&*x);
     --size_;
@@ -1166,6 +1205,61 @@ public:
   }
 };
 
+struct With_offset_tag {
+  int offset = 0;
+};
+
+struct With_point_tag : public With_offset_tag {
+};
+
+struct With_point_and_info_tag : public With_point_tag {};
+
+template <class DSC, bool Const>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>
+  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
+{
+  int offset = 0;
+
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Compact_container = typename CC_iterator::CC;
+  using Time_stamper = typename Compact_container::Time_stamper;
+  using Base = Output_rep<CC_iterator>;
+  using Base::Base;
+
+  Output_rep(const CC_iterator it, With_offset_tag tag = {})
+    : Base(it), offset(tag.offset) {}
+
+  std::ostream& operator()(std::ostream& out) const {
+    out << Time_stamper::display_id(this->it.operator->(), offset);
+    return out;
+  }
+};
+
+template <class DSC, bool Const>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
+  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>
+{
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Base = Output_rep<CC_iterator, With_offset_tag>;
+  using Time_stamper = typename Base::Time_stamper;
+
+  using Base::Base;
+
+  Output_rep(const CC_iterator it, With_point_tag tag = {})
+    : Base(it, tag) {}
+
+  std::ostream& operator()(std::ostream& out) const {
+    this->Base::operator()(out);
+    if(this->it.operator->() != nullptr) {
+      if(Time_stamper::time_stamp(this->it.operator->()) == 0)
+        return out << "= infinite_vertex()";
+      return out << "= " << this->it->point();
+    }
+    else
+      return out;
+  }
+};
+
 } //namespace CGAL
 
 namespace std {
@@ -1182,7 +1276,6 @@ namespace std {
     }
   };
 #endif // CGAL_CFG_NO_STD_HASH
-
 
 } // namespace std
 

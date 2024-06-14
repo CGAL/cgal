@@ -444,8 +444,8 @@ public:
    */
   void remove_from_complex(const Vertex_handle& v)
   {
-    corners_.erase(v);
     v->set_dimension(-1);
+    corners_.erase(v);
   }
 
   /** sets the index of vertex \p vertex to \p index
@@ -983,7 +983,7 @@ private:
     pointer operator->() const { return *(this->base()); }
     reference operator*() const { return **(this->base()); }
 
-    operator Vertex_handle() { return Vertex_handle(*(this->base())); }
+    operator const Vertex_handle&() const { return *(this->base()); }
   };
 
 public:
@@ -1048,13 +1048,13 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Cell_handle() const { return Cell_handle(this->base()); }
+    operator const Cell_handle&() const { return this->base(); }
   }; // end class Cells_in_complex_iterator
 
-  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator> > Vertices_in_complex;
-  typedef Iterator_range<Edges_in_complex_iterator>                    Edges_in_complex;
-  typedef Iterator_range<Facets_in_complex_iterator>                   Facets_in_complex;
-  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator> >    Cells_in_complex;
+  typedef Iterator_range<Prevent_deref<Vertices_in_complex_iterator, const Vertex_handle&>> Vertices_in_complex;
+  typedef Iterator_range<Edges_in_complex_iterator> Edges_in_complex;
+  typedef Iterator_range<Facets_in_complex_iterator> Facets_in_complex;
+  typedef Iterator_range<Prevent_deref<Cells_in_complex_iterator, const Cell_handle&>> Cells_in_complex;
 
 #endif
 
@@ -1162,8 +1162,7 @@ public:
   */
   Vertices_in_complex vertices_in_complex() const
   {
-    return make_prevent_deref_range(vertices_in_complex_begin(),
-                                    vertices_in_complex_end());
+      return { vertices_in_complex_begin(), vertices_in_complex_end() };
   }
   /*!
     returns a range of iterators over the edges of the 1D complex,
@@ -1193,8 +1192,7 @@ public:
   */
   Cells_in_complex cells_in_complex() const
   {
-    return make_prevent_deref_range(cells_in_complex_begin(),
-                                    cells_in_complex_end());
+    return { cells_in_complex_begin(), cells_in_complex_end() };
   }
 ///  @}
 
@@ -1422,28 +1420,32 @@ public:
     }
   }
 
-  void clear_cells_and_facets_from_c3t3() {
-    for (typename Tr::Finite_cells_iterator
-      cit = this->triangulation().finite_cells_begin(),
-      end = this->triangulation().finite_cells_end();
-      cit != end; ++cit)
+  void clear_cells_and_facets_from_c3t3()
+  {
+    //clear cells
+    for (typename Tr::All_cells_iterator cit = this->triangulation().all_cells_begin();
+         cit != this->triangulation().all_cells_end();
+         ++cit)
     {
       set_subdomain_index(cit, Subdomain_index());
     }
     this->number_of_cells_ = 0;
-    for (typename Tr::Finite_facets_iterator
-      fit = this->triangulation().finite_facets_begin(),
-      end = this->triangulation().finite_facets_end();
-      fit != end; ++fit)
+
+    //clear facets
+    for (typename Tr::All_facets_iterator fit = this->triangulation().all_facets_begin();
+         fit != this->triangulation().all_facets_end();
+         ++fit)
     {
-      Facet facet = *fit;
+      const auto& facet = *fit;
       set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
       if (this->triangulation().dimension() > 2) {
-        Facet mirror = tr_.mirror_facet(facet);
+        const Facet& mirror = tr_.mirror_facet(facet);
         set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
       }
     }
     this->number_of_facets_ = 0;
+
+    //clear manifold info
     clear_manifold_info();
   }
 

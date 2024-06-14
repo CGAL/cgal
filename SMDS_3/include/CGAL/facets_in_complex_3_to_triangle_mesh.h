@@ -59,23 +59,28 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
                                           const bool normals_point_outside_of_the_subdomain = true,
                                           const bool export_all_facets = false)
 {
-  typedef typename PointContainer::value_type                            Point_3;
+  typedef typename PointContainer::value_type                            Range_point;
   typedef typename FaceContainer::value_type                             Face;
 
   typedef typename C3T3::Triangulation                                   Tr;
   typedef typename C3T3::Surface_patch_index                             Surface_patch_index;
 
   typedef typename Tr::Cell_handle                                       Cell_handle;
-  typedef typename Tr::Weighted_point                                    Weighted_point;
   typedef typename Tr::Facet                                             Facet;
 
-  typedef std::unordered_map<Point_3, std::size_t>                       PIM;
+  typedef std::unordered_map<Range_point, std::size_t>                   PIM;
 
   typedef typename C3T3::size_type                                       size_type;
 
   // triangulation point to range point
-  CGAL::Cartesian_converter<typename CGAL::Kernel_traits<typename Tr::Geom_traits::Point_3>::type,
-                            typename CGAL::Kernel_traits<Point_3>::type> t2r;
+  using Tr_Bare_point = typename Tr::Geom_traits::Point_3;
+  using Tr_kernel = typename CGAL::Kernel_traits<Tr_Bare_point>::type;
+  using Range_kernel = typename CGAL::Kernel_traits<Range_point>::type;
+
+  using CC = CGAL::Cartesian_converter<Tr_kernel, Range_kernel>;
+  using Id = CGAL::Identity<Range_point>;
+  using T2R = typename std::conditional<std::is_same<Tr_kernel, Range_kernel>::value, Id, CC>::type;
+  T2R tr_to_range;
 
   size_type nf = c3t3.number_of_facets_in_complex();
   faces.reserve(faces.size() + nf);
@@ -87,26 +92,29 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
 
   for(Facet fit : c3t3.facets_in_complex())
   {
-    Cell_handle c = fit.first;
-    int s = fit.second;
+    const Cell_handle c = fit.first;
+    const int s = fit.second;
     const Surface_patch_index spi = c->surface_patch_index(s);
-    Face f;
-    resize(f, 3);
 
-    typename C3T3::Subdomain_index cell_sdi = c3t3.subdomain_index(c);
-    typename C3T3::Subdomain_index opp_sdi = c3t3.subdomain_index(c->neighbor(s));
+    const typename C3T3::Subdomain_index cell_sdi = c3t3.subdomain_index(c);
+    const typename C3T3::Subdomain_index opp_sdi = c3t3.subdomain_index(c->neighbor(s));
 
     if(!export_all_facets && cell_sdi != sd_index && opp_sdi != sd_index)
       continue;
 
-    for(std::size_t i=1; i<4; ++i)
-    {
-      CGAL_assertion_code(typedef typename Tr::Vertex_handle Vertex_handle;)
-      CGAL_assertion_code(Vertex_handle v = c->vertex((s+i)&3);)
-      CGAL_assertion(v != Vertex_handle() && !c3t3.triangulation().is_infinite(v));
+    Face f;
+    resize(f, 3);
 
-      const Weighted_point& wp = c3t3.triangulation().point(c, (s+i)&3);
-      const Point_3& bp = t2r(c3t3.triangulation().geom_traits().construct_point_3_object()(wp));
+    std::size_t i = 0;
+    for(typename Tr::Vertex_handle v : c3t3.triangulation().vertices(Facet(c, s)))
+    {
+      CGAL_assertion(v != typename Tr::Vertex_handle());
+      CGAL_assertion(!c3t3.triangulation().is_infinite(v));
+
+      const typename Tr::Point tr_wp = c3t3.triangulation().point(v);
+      const typename Tr_kernel::Point_3
+        tr_bp = c3t3.triangulation().geom_traits().construct_point_3_object()(tr_wp);
+      const Range_point bp = tr_to_range(tr_bp);
 
       auto insertion_res = p_to_ids.emplace(bp, inum);
       if(insertion_res.second) // new point
@@ -115,7 +123,7 @@ void facets_in_complex_3_to_triangle_soup(const C3T3& c3t3,
         ++inum;
       }
 
-      f[i-1] = insertion_res.first->second;
+      f[i++] = insertion_res.first->second;
     }
 
     if(export_all_facets)

@@ -1,0 +1,39 @@
+/*!
+\defgroup PkgKineticSpacePartitionRef Kinetic Space Partition Reference
+
+\defgroup PkgKineticSpacePartitionConcepts Concepts
+\ingroup PkgKineticSpacePartitionRef
+
+\addtogroup PkgKineticSpacePartitionRef
+\cgalPkgDescriptionBegin{Kinetic Space Partition, PkgKineticSpacePartition}
+\cgalPkgPicture{kinetic_logo.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Sven Oesau and Florent Lafarge}
+\cgalPkgDesc{This package implements kinetic space partition. Based on a set of planar input shapes the bounding box of the input data is split into convex volumes. The complexity of the partition can be adjusted with a single parameter.}
+\cgalPkgManuals{Chapter_Kinetic_Space_Partition, PkgKineticSpacePartitionRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.0}
+\cgalPkgDependsOn{\ref PkgSurfaceMesh, \ref PkgLinearCellComplex}
+\cgalPkgBib{cgal:ol-kinetic}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+
+- `KineticSpacePartitionTraits_3`
+- `KineticLCCItems`
+- `KineticLCCFaceAttribute`
+- `KineticLCCVolumeAttribute`
+
+\cgalCRPSection{Classes}
+
+- `CGAL::Kinetic_space_partition_3`
+
+*/

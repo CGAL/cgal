@@ -59,6 +59,7 @@ void test()
 
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.2,
+                         edge_distance = 0.002,
                          facet_angle = 25,
                          facet_size = 0.2,
                          facet_distance = 0.002,

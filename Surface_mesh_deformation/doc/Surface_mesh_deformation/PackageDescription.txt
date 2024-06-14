@@ -17,7 +17,7 @@ under positional constraints of some of its vertices, without requiring any addi
 \cgalPkgDependsOn{\ref PkgSolverInterface and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:lsxy-tsmd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

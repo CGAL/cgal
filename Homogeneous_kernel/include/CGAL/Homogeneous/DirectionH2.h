@@ -56,7 +56,7 @@ public:
    DirectionH2() {}
 
    DirectionH2(const RT& x, const RT& y)
-      : base(CGAL::make_array(x, y, RT(1))) {}
+      : base{x, y, RT(1)} {}
 
    // TODO Not documented : should not exist, not used.
    // we should also change array<RT, 3> -> array<RT, 2>

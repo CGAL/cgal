@@ -18,8 +18,8 @@
 #include <CGAL/Alpha_wrap_3/internal/Oracle_base.h>
 #include <CGAL/Alpha_wrap_3/internal/splitting_helper.h>
 
-#include <CGAL/AABB_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Named_function_parameters.h>

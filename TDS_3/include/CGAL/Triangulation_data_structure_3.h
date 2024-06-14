@@ -31,6 +31,9 @@
 #include <limits>
 
 #include <boost/unordered_set.hpp>
+#include <boost/container/flat_set.hpp>
+#include <boost/container/small_vector.hpp>
+#include <boost/iterator/function_output_iterator.hpp>
 #include <CGAL/utility.h>
 #include <CGAL/iterator.h>
 #include <CGAL/STL_Extension/internal/Has_member_visited.h>
@@ -661,7 +664,7 @@ public:
 
   Cell_handles cell_handles() const
   {
-    return make_prevent_deref_range(cells_begin(), cells_end());
+    return { cells_begin(), cells_end() };
   }
 
   Cell_iterator raw_cells_begin() const
@@ -720,7 +723,7 @@ public:
 
   Vertex_handles vertex_handles() const
   {
-    return make_prevent_deref_range(vertices_begin(), vertices_end());
+    return { vertices_begin(), vertices_end() };
   }
 
   // CIRCULATOR METHODS
@@ -802,7 +805,7 @@ private:
   {
         CGAL_precondition(dimension() == 3);
 
-        std::stack<Cell_handle> cell_stack;
+        std::stack<Cell_handle, boost::container::small_vector<Cell_handle, 128>> cell_stack;
         cell_stack.push(d);
         d->tds_data().mark_in_conflict();
         *it.first++ = d;
@@ -828,13 +831,16 @@ private:
         return it;
   }
 
-  template <class IncidentFacetIterator>
+  template <class IncidentFacetIterator, typename CellsContainers>
   void
   incident_cells_3_threadsafe(Vertex_handle v, Cell_handle d,
-                              std::vector<Cell_handle> &cells,
+                              CellsContainers &cells,
                               IncidentFacetIterator facet_it) const
   {
-    boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
+    boost::container::flat_set<Cell_handle,
+                               std::less<>,
+                               boost::container::small_vector<Cell_handle, 128>> found_cells;
+    // boost::unordered_set<Cell_handle, Handle_hash_function> found_cells;
 
     cells.push_back(d);
     found_cells.insert(d);
@@ -1381,20 +1387,16 @@ public:
 
     Visitor visit(v, output, this, f);
 
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
+    boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
     incident_cells_3(v, v->cell(), std::make_pair(std::back_inserter(tmp_cells), visit.facet_it()));
     else
     incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-    typename std::vector<Cell_handle>::iterator cit;
-    for(cit = tmp_cells.begin();
-        cit != tmp_cells.end();
-        ++cit)
+    for(auto c : tmp_cells)
     {
-      (*cit)->tds_data().clear();
-      visit(*cit);
+      c->tds_data().clear();
+      visit(c);
     }
 
     return visit.result();
@@ -1413,20 +1415,16 @@ public:
 
     Visitor visit(v, output, this, f);
 
-    std::vector<Cell_handle> tmp_cells;
-    tmp_cells.reserve(64);
+    boost::container::small_vector<Cell_handle, 128> tmp_cells;
     if ( dimension() == 3 )
       incident_cells_3_threadsafe(
         v, v->cell(), tmp_cells, visit.facet_it());
     else
       incident_cells_2(v, v->cell(), std::back_inserter(tmp_cells));
 
-    typename std::vector<Cell_handle>::iterator cit;
-    for(cit = tmp_cells.begin();
-        cit != tmp_cells.end();
-        ++cit)
+    for(auto c : tmp_cells)
     {
-      visit(*cit);
+      visit(c);
     }
 
     return visit.result();
@@ -2059,29 +2057,67 @@ is_edge(Vertex_handle u, Vertex_handle v,
         Cell_handle &c, int &i, int &j) const
   // returns false when dimension <1 or when indices wrong
 {
-    CGAL_expensive_precondition( is_vertex(u) && is_vertex(v) );
+  CGAL_expensive_precondition(is_vertex(u) && is_vertex(v));
 
-    if (u==v)
-        return false;
-
-    std::vector<Cell_handle> cells;
-    cells.reserve(64);
-    incident_cells(u, std::back_inserter(cells));
-
-    for (typename std::vector<Cell_handle>::iterator cit = cells.begin();
-              cit != cells.end(); ++cit)
-        if ((*cit)->has_vertex(v, j)) {
-            c = *cit;
-            i = c->index(u);
-            return true;
-        }
+  if(u == v)
     return false;
+
+  if(dimension() == 3) {
+    auto d = u->cell();
+    boost::container::small_vector<Cell_handle, 128> cells;
+    cells.emplace_back(d);
+    d->tds_data().mark_in_conflict();
+
+    auto cleanup_tds_data = make_scope_exit([&] {
+      for(auto c : cells) {
+        c->tds_data().clear();
+      }
+    });
+
+    int head = 0;
+    int tail = 1;
+    do {
+      Cell_handle ch = cells[head];
+
+      for(j = 0; j < 4; ++j) { // use parameter j on purpose
+        if(ch->vertex(j) == v) {
+          c = ch;
+          i = ch->index(u);
+          return true;
+        }
+        if(ch->vertex(j) == u)
+          continue;
+        Cell_handle next = ch->neighbor(j);
+        if(!next->tds_data().is_clear())
+          continue;
+        cells.emplace_back(next);
+        ++tail;
+        next->tds_data().mark_in_conflict();
+      }
+      ++head;
+    } while(head != tail);
+    return false;
+  }
+
+  bool edge_found = false;
+  // try {
+  incident_cells_threadsafe(u, boost::make_function_output_iterator([&](Cell_handle ch) {
+                              if(ch->has_vertex(v, j)) {
+                                c = ch;
+                                i = c->index(u);
+                                // throw true;
+                                edge_found = true;
+                              }
+                            }));
+  // } catch(bool b) {
+  //     result = b;
+  // }
+
+  return edge_found;
 }
 
 template <class Vb, class Cb, class Ct>
-bool
-Triangulation_data_structure_3<Vb,Cb,Ct>::
-is_edge(Vertex_handle u, Vertex_handle v) const
+bool Triangulation_data_structure_3<Vb, Cb, Ct>::is_edge(Vertex_handle u, Vertex_handle v) const
 {
     Cell_handle c;
     int i, j;
@@ -3573,6 +3609,12 @@ is_valid(bool verbose, int level ) const
       size_type cell_count;
       if ( ! count_cells(cell_count,verbose,level) )
         return false;
+      if( number_of_cells() != cell_count ) {
+        if (verbose)
+          std::cerr << "wrong number of cells" << std::endl;
+        CGAL_assertion(false);
+        return false;
+      }
       size_type edge_count;
       if ( ! count_edges(edge_count,verbose,level) )
           return false;

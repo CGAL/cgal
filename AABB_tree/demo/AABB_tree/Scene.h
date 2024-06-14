@@ -9,7 +9,7 @@
 #include "Color_ramp.h"
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -62,11 +62,11 @@ public:
 
 private:
     typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>         Facet_Primitive;
-    typedef CGAL::AABB_traits<Kernel, Facet_Primitive>                  Facet_Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Facet_Primitive>                  Facet_Traits;
     typedef CGAL::AABB_tree<Facet_Traits>                               Facet_tree;
 
     typedef CGAL::AABB_halfedge_graph_segment_primitive<Polyhedron>     Edge_Primitive;
-    typedef CGAL::AABB_traits<Kernel, Edge_Primitive>                   Edge_Traits;
+    typedef CGAL::AABB_traits_3<Kernel, Edge_Primitive>                 Edge_Traits;
     typedef CGAL::AABB_tree<Edge_Traits>                                Edge_tree;
 
     typedef CGAL::qglviewer::ManipulatedFrame ManipulatedFrame;

@@ -47,7 +47,7 @@
  *
  * DESCRIPTION:
  *
- * - ALPHA_DERICHE is the first recurvise filter designed
+ * - ALPHA_DERICHE is the first recursive filter designed
  *   by R. Deriche. See REFERENCES.
  *
  * - with ALPHA_DERICHE's filters, one can either compute

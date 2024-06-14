@@ -23,7 +23,7 @@
 #    If set, the `LEDA` library will be searched and used to provide
 #    the exact number types used by CGAL kernels.
 #
-cmake_minimum_required(VERSION 3.11...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 if(CGAL_SetupCGALDependencies_included)
   return()
 endif()
@@ -131,12 +131,6 @@ function(CGAL_setup_CGAL_flags target)
       $<$<COMPILE_LANGUAGE:CXX>:/fp:except->
       $<$<COMPILE_LANGUAGE:CXX>:/bigobj>  # Use /bigobj by default
       )
-  elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang")
-    if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 11.0.3)
-      message(STATUS "Apple Clang version ${CMAKE_CXX_COMPILER_VERSION} compiler detected")
-      message(STATUS "Boost MP is turned off for all Apple Clang versions below 11.0.3!")
-      target_compile_options(${target} INTERFACE "-DCGAL_DO_NOT_USE_BOOST_MP")
-    endif()
   elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
     message( STATUS "Using Intel Compiler. Adding -fp-model strict" )
     if(WIN32)
@@ -166,4 +160,9 @@ function(CGAL_setup_CGAL_flags target)
       target_compile_options(${target} INTERFACE "-mieee" "-mfp-rounding-mode=d" )
     endif()
   endif()
+
+  if (CGAL_DO_NOT_USE_BOOST_MP)
+    target_compile_options(${target} INTERFACE "-DCGAL_DO_NOT_USE_BOOST_MP")
+  endif()
+
 endfunction()

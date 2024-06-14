@@ -10,7 +10,8 @@
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_2 Point;
-
+typedef K::Vector_2 Vector_2;
+typedef K::Aff_transformation_2 Transformation;
 
 typedef CGAL::Polygon_2<K> Polygon_2;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes_2;
@@ -41,5 +42,10 @@ int main()
   assert(pwh.outer_boundary().is_empty());
   Polygon_with_holes_2 pwh_move_assigned;
   pwh_move_assigned = std::move(pwh_copy);
+
+  std::cout << pwh_move_assigned << std::endl << "translated by Vector_2(2.0, 2.0)" << std::endl;
+  Transformation translate(CGAL::TRANSLATION, Vector_2(2, 2));
+  pwh_move_assigned = CGAL::transform(translate, pwh_move_assigned);
+  std::cout << pwh_move_assigned << std::endl;
   return 0;
 }

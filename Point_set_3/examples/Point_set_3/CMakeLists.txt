@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Point_set_3_Examples)
 
 # CGAL and its components
@@ -11,9 +11,7 @@ create_single_source_cgal_program("point_set.cpp")
 create_single_source_cgal_program("point_set_property.cpp")
 create_single_source_cgal_program("point_set_read_xyz.cpp")
 create_single_source_cgal_program("point_set_advanced.cpp")
-
-set(needed_cxx_features cxx_rvalue_references cxx_variadic_templates)
-create_single_source_cgal_program("point_set_read_ply.cpp" CXX_FEATURES ${needed_cxx_features})
+create_single_source_cgal_program("point_set_read_ply.cpp")
 
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
