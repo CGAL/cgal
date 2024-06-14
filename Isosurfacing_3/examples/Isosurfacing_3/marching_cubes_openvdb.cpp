@@ -236,7 +236,9 @@ private:
   openvdb::FloatGrid::Accessor _accessor;
 };
 
-void run_marching_cubes(openvdb::FloatGrid::Ptr grid, const float isovalue)
+void run_marching_cubes(openvdb::FloatGrid::Ptr grid,
+                        const float isovalue,
+                        const bool use_tcm)
 {
   using Partition = OpenVDB_partition;
   using Values = OpenVDB_value_field;
@@ -245,7 +247,8 @@ void run_marching_cubes(openvdb::FloatGrid::Ptr grid, const float isovalue)
   using Domain = IS::Marching_cubes_domain_3<Partition, Values, OpenVDB_Edge_intersection>;
 
   std::cout << "\n ---- " << std::endl;
-  std::cout << "Running Marching Cubes with isovalue = " << isovalue << std::endl;
+  std::cout << "Running Marching Cubes with isovalue = " << isovalue
+    << ", tcm = " << std::boolalpha << use_tcm << std::endl;
 
   Partition partition(grid);
   Values values(grid);
@@ -256,11 +259,15 @@ void run_marching_cubes(openvdb::FloatGrid::Ptr grid, const float isovalue)
   Point_range points;
   Polygon_range triangles;
 
-  IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles);
+  IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+    CGAL::parameters::use_topologically_correct_marching_cubes(use_tcm));
 
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;
-  CGAL::IO::write_polygon_soup("marching_cubes_discrete.off", points, triangles);
+  const std::string outfile = use_tcm
+                        ? "marching_cubes_discrete_tcm.off"
+                        : "marching_cubes_discrete.off";
+  CGAL::IO::write_polygon_soup(outfile, points, triangles);
 }
 
 
@@ -277,7 +284,8 @@ int main(int argc, char** argv)
   openvdb::GridPtrVecPtr grids = stream.getGrids();
   openvdb::FloatGrid::Ptr grid = openvdb::gridPtrCast<openvdb::FloatGrid>(grids->front());
 
-  run_marching_cubes(grid, 0./*isovalue*/);
+  run_marching_cubes(grid, 0./*isovalue*/, true/*topologically correct MC*/);
+  run_marching_cubes(grid, 0./*isovalue*/, false/*topologically correct MC*/);
 
   std::cout << "Done" << std::endl;
 
