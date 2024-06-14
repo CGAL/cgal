@@ -90,7 +90,9 @@ public:
                                      typename iKernel::Point_2 ,
                                      typename iKernel::Point_3>;
 
-    using Bbox = typename T::Bbox;
+    using Bbox = std::conditional_t<(dimension == 2),
+                                     Bbox_2,
+                                     Bbox_3>;
 
     using PointID = ID<Point>;
     using Points = std::vector<Point>;

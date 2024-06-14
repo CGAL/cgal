@@ -44,6 +44,7 @@ namespace CGAL
  * second curve defined by the sequence of consecutive points along the polyline
  * \param distance the decision distance
  * \param traits
+ * \tparam Traits a model of `PolylineDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  */
@@ -70,6 +71,7 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
  * sequence of consecutive points along the polyline
  * \param precision
  *  \param traits
+ * \tparam Traits a model of `PolylineDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  */

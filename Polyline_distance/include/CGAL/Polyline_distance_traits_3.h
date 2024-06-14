@@ -51,7 +51,6 @@ public:
     using Kernel = GT;
     using FT = typename Kernel::FT;
     using Point = typename Kernel::Point_3;
-    using Bbox = Bbox_3;
 
     static const int dimension = 3;
 

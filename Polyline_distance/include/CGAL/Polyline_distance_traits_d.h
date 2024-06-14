@@ -51,7 +51,6 @@ public:
     using Kernel = GT;
     using FT = typename Kernel::FT;
     using Point = typename Kernel::Point_d;
-    using Bbox = Bbox<dimension,double>;
 
     // TODO: remove?
     using Polyline = std::vector<Point>;
