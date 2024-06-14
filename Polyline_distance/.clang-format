@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 BasedOnStyle: Google
 Language: Cpp
 IndentWidth: 4
