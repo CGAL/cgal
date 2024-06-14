@@ -21,7 +21,7 @@ The following example shows ...
 
 \cgalExample{Polyline_distance/Frechet_distance_2.cpp}
 
-\cgalFigureBegin{figRefId,pkg-small.png}
+\cgalFigureBegin{figRefId,pdist-pkg-small.png}
 Here you can put the caption
 \cgalFigureEnd
 

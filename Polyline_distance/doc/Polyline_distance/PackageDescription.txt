@@ -10,7 +10,7 @@
 \addtogroup PkgPolylineDistanceRef
 
 \cgalPkgDescriptionBegin{dD Polyline Distance,PkgPolylineDistance}
-\cgalPkgPicture{pkg-small.png}
+\cgalPkgPicture{pdist-pkg-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{André Nusser, Marvin Künnemann, and Karl Bringmann}
