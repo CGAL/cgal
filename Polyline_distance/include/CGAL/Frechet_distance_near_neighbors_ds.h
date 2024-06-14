@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0+
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : André Nusser <anusser@mpi-inf.mpg.de>
 //                 Marvin Künnemann <marvin@mpi-inf.mpg.de>
