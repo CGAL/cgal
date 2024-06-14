@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2024 Max-Planck-Institute Saarbruecken (Germany), GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -19,7 +19,7 @@
 // Author(s)     : André Nusser <anusser@mpi-inf.mpg.de>
 //                 Marvin Künnemann <marvin@mpi-inf.mpg.de>
 //                 Karl Bringmann <kbringma@mpi-inf.mpg.de>
-//
+//                 Andreas Fabri
 // =============================================================================
 
 #ifndef CGAL_FRECHET_DISTANCE_H

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2024 Max-Planck-Institute Saarbruecken (Germany), GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -19,7 +19,7 @@
 // Author(s)     : André Nusser <anusser@mpi-inf.mpg.de>
 //                 Marvin Künnemann <marvin@mpi-inf.mpg.de>
 //                 Karl Bringmann <kbringma@mpi-inf.mpg.de>
-//
+//                 Andreas Fabri
 // =============================================================================
 
 #ifndef CGAL_INTERNAL_POLYLINE_DISTANCE_FRECHET_DISTANCE_H
@@ -58,8 +58,8 @@ bool lessThan(Curve<Traits> const& curve1, Curve<Traits> const& curve2,
 }
 
 template <typename Traits>
-typename Traits::distance_t calcDistance(Curve<Traits> const& curve1, 
-                                         Curve<Traits> const& curve2, 
+typename Traits::distance_t calcDistance(Curve<Traits> const& curve1,
+                                         Curve<Traits> const& curve2,
                                         double precision)
 {
     FrechetLight<Curve<Traits>> frechet;
