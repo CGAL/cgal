@@ -1,9 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
 
-#include <CGAL/Isosurfacing_3/Cartesian_grid_3.h>
 #include <CGAL/Isosurfacing_3/dual_contouring_3.h>
 #include <CGAL/Isosurfacing_3/Dual_contouring_domain_3.h>
-#include <CGAL/Isosurfacing_3/Interpolated_discrete_gradients_3.h>
+#include <CGAL/Isosurfacing_3/Finite_difference_gradient_3.h>
 #include <CGAL/Isosurfacing_3/Interpolated_discrete_values_3.h>
 #include <CGAL/Isosurfacing_3/marching_cubes_3.h>
 #include <CGAL/Isosurfacing_3/Marching_cubes_domain_3.h>
@@ -41,7 +40,7 @@ public:
     _intersector(*grid, isovalue)
   {}
 
-private:
+public:
   template <typename Domain> // == Isosurfacing_domain_3 or similar
   bool operator()(const typename Domain::Geom_traits::Point_3& p_0,
                   const typename Domain::Geom_traits::Point_3& p_1,
@@ -96,6 +95,7 @@ private:
   Geom_traits _gt;
 };
 
+
 namespace CGAL {
 namespace Isosurfacing {
 
@@ -103,11 +103,19 @@ template<>
 struct partition_traits<OpenVDB_partition>
 {
 public:
-  using vertex_descriptor = openvdb::Coord;
-  // identifies an edge by its starting vertex (i, j, k) and the direction x -> 0, y -> 1, z -> 2
-  using edge_descriptor = std::pair<vertex_descriptor, std::size_t>;
+  using vertex_descriptor = openvdb::Coord; //indices (i,j,k)
   // identifies a cell by its corner vertex with the smallest (i, j, k) index
   using cell_descriptor = openvdb::Coord;
+  // identifies an edge by its starting vertex (i, j, k) and the direction x -> 0, y -> 1, z -> 2
+  struct edge_descriptor
+  {
+    vertex_descriptor source;
+    int direction;
+
+    bool operator==(const edge_descriptor& other) const {
+      return source == other.source && direction == other.direction;
+    }
+  };
 
   static constexpr Cell_type CELL_TYPE = CUBICAL_CELL;
   static constexpr std::size_t VERTICES_PER_CELL = 8;
@@ -125,16 +133,16 @@ public:
 
   static Edge_vertices incident_vertices(const edge_descriptor& e, const OpenVDB_partition&)
   {
-    vertex_descriptor src = e.first;// start vertex
-    vertex_descriptor tgt = e.first;// end vertex
-    tgt[e.second] += 1;// one position further in the direction of the edge
+    vertex_descriptor src = e.source;// start vertex
+    vertex_descriptor tgt = src;// end vertex
+    tgt[e.direction] += 1;// one position further in the direction of the edge
     return {src, tgt};
   }
 
   static Cells_incident_to_edge incident_cells(const edge_descriptor& e, const OpenVDB_partition&)
   {
     // lookup the neighbor cells relative to the edge
-    const int local = internal::Cube_table::edge_store_index[e.second];
+    const int local = internal::Cube_table::edge_store_index[e.direction];
     auto neighbors = internal::Cube_table::edge_to_voxel_neighbor[local];
 
     Cells_incident_to_edge cells;
@@ -165,12 +173,11 @@ public:
     for (std::size_t i = 0; i < ce.size(); ++i) //for each edge
     {
       // lookup the relative edge indices and offset them by the cell position
-      ce[i] = std::make_pair(
+      ce[i] = edge_descriptor{
         vertex_descriptor(c.x() + internal::Cube_table::global_edge_id[i][0],
                           c.y() + internal::Cube_table::global_edge_id[i][1],
                           c.z() + internal::Cube_table::global_edge_id[i][2]),
-        internal::Cube_table::global_edge_id[i][3]
-        );
+        internal::Cube_table::global_edge_id[i][3]};
     }
     return ce;
   }
@@ -190,7 +197,14 @@ public:
                             const OpenVDB_partition& partition,
                             ConcurrencyTag)
   {
-    //todo
+    const auto grid = partition.grid();
+    for (openvdb::FloatGrid::ValueOnCIter iter = grid->cbeginValueOn(); iter.test(); ++iter)
+    {
+      // all three edges starting at vertex (i, j, k)
+      f(edge_descriptor{iter.getCoord(), 0});
+      f(edge_descriptor{iter.getCoord(), 1});
+      f(edge_descriptor{iter.getCoord(), 2});
+    }
   }
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   static void for_each_cell(Functor& f,
@@ -206,6 +220,22 @@ public:
 }
 }
 
+namespace std{
+  template<>
+  struct hash<CGAL::Isosurfacing::partition_traits<OpenVDB_partition>::edge_descriptor>
+  {
+    using edge_descriptor
+      = CGAL::Isosurfacing::partition_traits<OpenVDB_partition>::edge_descriptor;
+    using vertex_descriptor
+      = CGAL::Isosurfacing::partition_traits<OpenVDB_partition>::vertex_descriptor;
+
+    auto operator()(const edge_descriptor& e) const -> size_t
+    {
+      return std::hash<vertex_descriptor>{}(e.source) ^ std::hash<int>{}(e.direction);
+    }
+  };
+}  // namespace std
+
 class OpenVDB_value_field
 {
 public:
@@ -220,10 +250,10 @@ public:
 
   FT operator()(const Point_3& p) const
   {
-    openvdb::Vec3d xyz = _grid->worldToIndex(openvdb::Vec3d(p.x(), p.y(), p.z()));
-    openvdb::Coord ijk(static_cast<int>(xyz.x()),
-                       static_cast<int>(xyz.y()),
-                       static_cast<int>(xyz.z()));
+    openvdb::Vec3d ijk_p = _grid->worldToIndex(openvdb::Vec3d(p.x(), p.y(), p.z()));
+    openvdb::Coord ijk(static_cast<int>(ijk_p.x()),
+                       static_cast<int>(ijk_p.y()),
+                       static_cast<int>(ijk_p.z()));
     return _accessor.getValue(ijk);
   }
   FT operator()(const vertex_descriptor& v) const
@@ -236,15 +266,15 @@ private:
   openvdb::FloatGrid::Accessor _accessor;
 };
 
+using Partition = OpenVDB_partition;
+using Values = OpenVDB_value_field;
+using Edge_intersection = OpenVDB_Edge_intersection;
+
 void run_marching_cubes(openvdb::FloatGrid::Ptr grid,
                         const float isovalue,
                         const bool use_tcm)
 {
-  using Partition = OpenVDB_partition;
-  using Values = OpenVDB_value_field;
-  using Edge_intersection = OpenVDB_Edge_intersection;
-
-  using Domain = IS::Marching_cubes_domain_3<Partition, Values, OpenVDB_Edge_intersection>;
+  using Domain = IS::Marching_cubes_domain_3<Partition, Values, Edge_intersection>;
 
   std::cout << "\n ---- " << std::endl;
   std::cout << "Running Marching Cubes with isovalue = " << isovalue
@@ -270,6 +300,35 @@ void run_marching_cubes(openvdb::FloatGrid::Ptr grid,
   CGAL::IO::write_polygon_soup(outfile, points, triangles);
 }
 
+void run_dual_contouring(openvdb::FloatGrid::Ptr grid,
+                         const FT isovalue)
+{
+  using Gradients = CGAL::Isosurfacing::Finite_difference_gradient_3<Kernel>;
+  using Domain = IS::Dual_contouring_domain_3<Partition, Values, Gradients, Edge_intersection>;
+
+  std::cout << "\n ---- " << std::endl;
+  std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
+
+  // fill up values and gradients
+  Partition partition(grid);
+  Values values(grid);
+  const FT step = grid->voxelSize().length() * 0.01; // finite difference step
+  Gradients gradients{ values, step };
+  Edge_intersection intersection_oracle(grid, isovalue);
+
+  Domain domain = IS::create_dual_contouring_domain_3(partition, values, gradients, intersection_oracle);
+
+  Point_range points;
+  Polygon_range triangles;
+
+  // run dual contouring isosurfacing
+  IS::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles);
+
+  std::cout << "Output #vertices: " << points.size() << std::endl;
+  std::cout << "Output #triangles: " << triangles.size() << std::endl;
+  CGAL::IO::write_polygon_soup("dual_contouring_discrete.off", points, triangles);
+}
+
 
 int main(int argc, char** argv)
 {
@@ -286,6 +345,7 @@ int main(int argc, char** argv)
 
   run_marching_cubes(grid, 0./*isovalue*/, true/*topologically correct MC*/);
   run_marching_cubes(grid, 0./*isovalue*/, false/*topologically correct MC*/);
+  run_dual_contouring(grid, 0./*isovalue*/);
 
   std::cout << "Done" << std::endl;
 
