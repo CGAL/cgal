@@ -5,7 +5,7 @@
 #include <CGAL/draw_polyhedron.h>
 #include <CGAL/draw_point_set_3.h>
 #include <CGAL/Graphics_scene_options.h>
-#include "GLFW/Basic_viewer_impl.h"
+#include "../../include/CGAL/GLFW/Basic_viewer_impl.h"
 
 #include <vector>
 #include <iostream>

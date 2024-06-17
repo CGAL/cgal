@@ -12,6 +12,7 @@ include_directories (
     .
     ../../include/CGAL/GLFW/vendor/glfw/deps/
     ../../include/CGAL/GLFW/vendor/glad/include/
+    ../../include/CGAL/GLFW/vendor/glfw/include/
 )
 
 

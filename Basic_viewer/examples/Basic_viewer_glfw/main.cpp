@@ -5,7 +5,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/IO/Color.h>
 
-#include "GLFW/Basic_viewer_impl.h"
+#include "../../include/CGAL/GLFW/Basic_viewer_impl.h"
 // Standard headers
 #include <cstdlib>
 
