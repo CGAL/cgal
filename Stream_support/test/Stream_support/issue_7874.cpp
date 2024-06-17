@@ -52,14 +52,19 @@ int main()
   CGAL::IO::write_polygon_mesh("write_polygon_mesh_sm.ply", sm,
                                CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(scsmvpm).vertex_normal_map(scsmvnpm) );
 
+{
   Surface_mesh osm;
-  /*
+
   if(!CGAL::IO::read_polygon_mesh("write_polygon_mesh_sm.ply", osm))
   {
     std::cerr << "Error: failed to read 'write_polygon_mesh_sm.ply'" << std::endl;
     return EXIT_FAILURE;
+  }else{
+    for(const std::string& s : osm.properties<vertex_descriptor>()){
+      std::cout << s << std::endl;
+    }
   }
-*/
+}
 
   PolyhedronVN vn;
   PolyhedronVNMap povnpm(vn);
@@ -71,35 +76,58 @@ int main()
   // ERROR this produces an invalid plyfile
   CGAL::IO::write_polygon_mesh("write_polygon_mesh_po.ply", po,
                                CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(scpovpm).vertex_normal_map(scpovnpm)) ;
-                               /*
+
+{
+  Surface_mesh osm;
+
   if(!CGAL::IO::read_polygon_mesh("write_polygon_mesh_po.ply", osm))
   {
     std::cerr << "Error: failed to read 'write_polygon_mesh_po.ply'" << std::endl;
     return EXIT_FAILURE;
+  }else{
+    for(const std::string& s : osm.properties<vertex_descriptor>()){
+      std::cout << s << std::endl;
+    }
   }
-*/
+}
   //  OK
   // from #include <CGAL/boost/graph/IO/PLY.h>
   // https://doc.cgal.org/latest/BGL/group__PkgBGLIoFuncsPLY.html#ga959dcd88ca979d3b6b0806d883a0247f
   CGAL::IO::write_PLY("generic_write_PLY_sm.ply", sm, "generic write_PLY(Surface_mesh)",
                       CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(scsmvpm).vertex_normal_map(scsmvnpm));
-                      /*
+
+{
+  Surface_mesh osm;
+
   if(!CGAL::IO::read_polygon_mesh("generic_write_PLY_sm.ply", osm))
   {
     std::cerr << "Error: failed to read 'generic_write_PLY_sm.ply'" << std::endl;
     return EXIT_FAILURE;
+  }else{
+    for(const std::string& s : osm.properties<vertex_descriptor>()){
+      std::cout << s << std::endl;
+    }
   }
-*/
+}
+
  // ERROR this produces an invalid plyfile
   CGAL::IO::write_PLY("generic_write_PLY_po.ply", po, "generic write_PLY(Polyhedron)",
                       CGAL::parameters::stream_precision(17).use_binary_mode(true).vertex_point_map(scpovpm));
-                      /*
+
+{
+  Surface_mesh osm;
+
   if(!CGAL::IO::read_polygon_mesh("generic_write_PLY_po.ply", osm))
   {
     std::cerr << "Error: failed to read 'generic_write_PLY_po.ply'" << std::endl;
     return EXIT_FAILURE;
+  }else{
+    for(const std::string& s : osm.properties<vertex_descriptor>()){
+      std::cout << s << std::endl;
+    }
   }
-*/
+}
+{
   // OK
   // from #include <CGAL/Surface_mesh/IO/PLY.h>
   // https://doc.cgal.org/latest/Surface_mesh/group__PkgSurfaceMeshIOFuncPLY.html#ga50f0e9f2b293855d2c7f1a62939cbe8d
@@ -107,12 +135,20 @@ int main()
   CGAL::set_binary_mode(out);
   CGAL::IO::write_PLY(out, sm, "overloaded_write_PLY(Surface_mesh)",CGAL::parameters::stream_precision(17).use_binary_mode(true)
     .vertex_point_map(scsmvpm).vertex_normal_map(scsmvnpm)  );
-  /*
+}
+{
+  Surface_mesh osm;
+
   if(!CGAL::IO::read_polygon_mesh("overloaded_write_PLY_sm.ply", osm))
   {
     std::cerr << "Error: failed to read 'overloaded_write_PLY_sm.ply'" << std::endl;
     return EXIT_FAILURE;
+  }else{
+    for(const std::string& s : osm.properties<vertex_descriptor>()){
+      std::cout << s << std::endl;
+    }
   }
-*/
+}
+
   return 0;
 }

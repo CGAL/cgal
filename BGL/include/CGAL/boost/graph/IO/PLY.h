@@ -44,7 +44,7 @@ class PLY_builder
   typedef typename Base::Face_container                                     Face_container;
 
 public:
-  PLY_builder(std::istream& is) : Base(is) { }
+  PLY_builder(std::istream& is, std::string& comments) : Base(is), comments(comments) { }
 
   template <typename NamedParameters>
   bool read(std::istream& is,
@@ -52,19 +52,22 @@ public:
             Face_container& faces,
             const NamedParameters& np)
   {
-    return read_PLY(is, points, faces, np);
+    return read_PLY(is, points, faces, comments, np);
   }
+
+  std::string& comments;
 };
 
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY_BGL(std::istream& is,
                   Graph& g,
+                  std::string& comments,
                   const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
 
-  internal::PLY_builder<Graph, Point> builder(is);
+  internal::PLY_builder<Graph, Point> builder(is, comments);
   return builder(g, np);
 }
 
@@ -132,14 +135,31 @@ template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is,
               Graph& g,
+              std::string& comments,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
 #endif
               )
 {
-  return internal::read_PLY_BGL(is, g, np);
+  return internal::read_PLY_BGL(is, g, comments, np);
 }
+
+template <typename Graph,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(std::istream& is,
+              Graph& g,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
+#endif
+              )
+{
+  std::string unused_comments;
+  return internal::read_PLY_BGL(is, g, unused_comments, np);
+}
+
+
 
 /*!
   \ingroup PkgBGLIoFuncsPLY
@@ -207,6 +227,7 @@ template <typename Graph,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(const std::string& fname,
               Graph& g,
+              std::string& comments,
               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
               , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
@@ -218,16 +239,29 @@ bool read_PLY(const std::string& fname,
   {
     std::ifstream is(fname, std::ios::binary);
     CGAL::IO::set_mode(is, CGAL::IO::BINARY);
-    return internal::read_PLY_BGL(is, g, np);
+    return read_PLY(is, g, comments, np);
   }
   else
   {
     std::ifstream is(fname);
     CGAL::IO::set_mode(is, CGAL::IO::ASCII);
-    return internal::read_PLY_BGL(is, g, np);
+    return read_PLY(is, g, comments, np);
   }
 }
 
+template <typename Graph,
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_PLY(const std::string& fname,
+              Graph& g,
+              const CGAL_NP_CLASS& np = parameters::default_values()
+#ifndef DOXYGEN_RUNNING
+              , std::enable_if_t<!internal::is_Point_set_or_Range_or_Iterator<Graph>::value>* = nullptr
+#endif
+              )
+{
+  std::string unused_comment;
+  return read_PLY(fname, g, unused_comment, np);
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Write

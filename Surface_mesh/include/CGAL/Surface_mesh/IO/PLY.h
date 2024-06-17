@@ -815,13 +815,21 @@ void fill_header(std::ostream& os, const Surface_mesh<Point>& sm,
 ///
 /// \returns `true` if reading was successful, `false` otherwise.
 ///
-template <typename P>
+template <typename P, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_PLY(std::istream& is,
               Surface_mesh<P>& sm,
               std::string& comments,
-              bool verbose = true)
+              const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename Surface_mesh<P>::size_type size_type;
+
+  // not yet supported: this function only uses the Surface_mesh's internal pmaps
+  // to make it work, it'd be sufficient to modify Surface_mesh_filler's maps
+  static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_normal_map_t>::value);
+  static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::vertex_color_map_t>::value);
+  static_assert(CGAL::parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_color_map_t>::value);
+
+  const bool verbose = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::verbose), true);
 
   if(!is.good())
   {
@@ -909,6 +917,17 @@ bool read_PLY(std::istream& is,
 
 /// \cond SKIP_IN_MANUAL
 
+
+// for backward compatibility
+template <typename P>
+bool read_PLY(std::istream& is,
+              Surface_mesh<P>& sm,
+              std::string& comments,
+              bool verbose = true)
+{
+  return read_PLY(is, sm, comments, CGAL::parameters::verbose(verbose));
+}
+
 template <typename P>
 bool read_PLY(std::istream& is, Surface_mesh<P>& sm)
 {
@@ -990,7 +1009,6 @@ bool write_PLY(std::ostream& os,
   typedef typename SMesh::Face_index FIndex;
   typedef typename SMesh::Edge_index EIndex;
   typedef typename SMesh::Halfedge_index HIndex;
-
   if(!os.good())
     return false;
 
