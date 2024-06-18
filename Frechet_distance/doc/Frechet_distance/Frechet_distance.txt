@@ -31,7 +31,8 @@ between two polylines is smaller than a given bound.
 
 Both functions have as template parameter a traits class defining the dimension and the point type.
 The traits classes have as template parameter a kernel. This may be a kernel such as `Simple_cartesian`
-with a floating point number type, or a filtered kernel. In both cases the result is guaranteed to be correct.
+with a floating point number type, or a filtered kernel such as `Exact_predicates_inexact_constructions_kernel`.
+In both cases the result is guaranteed to be correct.
 
 
 \section secFrechetDistanceImplementation Implementation
