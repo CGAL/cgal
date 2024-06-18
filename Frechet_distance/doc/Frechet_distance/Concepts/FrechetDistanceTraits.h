@@ -2,7 +2,7 @@
 \ingroup PkgPolylineDistanceConcepts
 \cgalConcept
 
-The concept `PolylineDistanceTraits` defines the requirements ...
+The concept `FrechetDistanceTraits` defines the requirements ...
 
 
 \cgalHasModelsBegin
@@ -12,7 +12,7 @@ The concept `PolylineDistanceTraits` defines the requirements ...
 \cgalHasModelsEnd
 */
 
-class PolylineDistanceTraits {
+class FrechetDistanceTraits {
 
     public:
 /*!  2 or 3 */

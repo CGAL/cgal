@@ -31,7 +31,7 @@
 
 // TODO: add doxygen code
 
-/// \cgalModels{PolylineDistanceTraits}
+/// \cgalModels{FrechetDistanceTraits}
 
 // TODO: is it too restrictive to use vectors by default?
 #include <vector>
@@ -41,7 +41,7 @@ namespace CGAL
 /*!
  * \ingroup PkgPolylineDistanceRef
  * This class ...
-* \cgalModels{PolylineDistanceTraits}
+* \cgalModels{FrechetDistanceTraits}
 * \tparam GT  geometric traits class
 */
 template <class GT>
