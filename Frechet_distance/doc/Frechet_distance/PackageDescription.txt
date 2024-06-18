@@ -1,0 +1,44 @@
+/// \defgroup PkgPolylineDistanceRef dD Polyline Distance Reference
+/// \defgroup PkgPolylineDistanceConcepts Concepts
+/// \ingroup PkgPolylineDistanceRef
+/// \defgroup PkgPolylineDistanceFunctions Functions
+/// You can add some text here if you want a description at the group level
+/// \ingroup PkgPolylineDistanceRef
+
+
+/*!
+\addtogroup PkgPolylineDistanceRef
+
+\cgalPkgDescriptionBegin{dD Polyline Distance,PkgPolylineDistance}
+\cgalPkgPicture{pdist-pkg-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{André Nusser, Marvin Künnemann, and Karl Bringmann}
+\cgalPkgDesc{The package provides ... }
+\cgalPkgManuals{Chapter_dD_Frechet_distance,PkgPolylineDistanceRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.1}
+\cgalPkgBib{cgal:nkb-fd}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+This package ....
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Concepts}
+- `PolylineDistanceTraits`
+
+\cgalCRPSection{Classes}
+- `CGAL::Frechet_distance_traits_2`
+- `CGAL::Frechet_distance_traits_3`
+- `CGAL::Frechet_distance_traits_d`
+
+\cgalCRPSection{Functions}
+- `CGAL::continuous_Frechet_distance()`
+- `CGAL::continuous_Frechet_distance_less_than()`
+*/

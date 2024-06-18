@@ -1,3 +1,0 @@
-/*!
-\example Polyline_distance/Frechet_distance_2.cpp
-*/
