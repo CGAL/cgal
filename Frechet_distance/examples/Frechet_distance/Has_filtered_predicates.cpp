@@ -1,5 +1,3 @@
-
-
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -21,10 +19,10 @@ struct Convert {
             return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
         }
     }
-    
+
         using Has = decltype(get_type());
 
-    
+
    using Exact = std::conditional_t < std::is_floating_point_v<typename K::FT>, Has, CGAL::Simple_cartesian<CGAL::Exact_rational>>;
 
    typename Exact::Point_2 exact(const typename K::Point_2& p)
@@ -39,7 +37,7 @@ struct Convert {
            return Exact::Point_2(p.x(), p.y());
        }
        // We could check if K::FT is an interval and then check that is tight.
-       
+
        // Otherwise we assume that K::FT converts to Rational
        return typename Exact::Point_2();
 
@@ -60,7 +58,7 @@ SCinterval::Point_2 approx(const typename K::Point_2& p)
     }
     // Neither floating point, nor filtered
     return SCinterval::Point_2(CGAL::to_interval(p.x()), CGAL::to_interval(p.y()));
-    
+
 /*
     if constexpr (typename K::Has_filtered_predicates_tag::value) {
         std::cout << "Has_filtered_predicates_tag" << std::endl;
