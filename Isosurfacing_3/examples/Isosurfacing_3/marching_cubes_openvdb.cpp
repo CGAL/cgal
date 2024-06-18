@@ -126,9 +126,12 @@ public:
   using Cell_vertices = std::array<vertex_descriptor, VERTICES_PER_CELL>;
   using Cell_edges = std::array<edge_descriptor, EDGES_PER_CELL>;
 
-  static Point point(const vertex_descriptor& v, const OpenVDB_partition&)
+  static Point point(const vertex_descriptor& v,
+                     const OpenVDB_partition& partition)
   {
-    return Point(v.x(), v.y(), v.z());
+    const auto& grid = partition.grid();
+    const openvdb::Vec3R vr = grid->indexToWorld(v);
+    return Point(vr.x(), vr.y(), vr.z());
   }
 
   static Edge_vertices incident_vertices(const edge_descriptor& e, const OpenVDB_partition&)
@@ -145,13 +148,13 @@ public:
     const int local = internal::Cube_table::edge_store_index[e.direction];
     auto neighbors = internal::Cube_table::edge_to_voxel_neighbor[local];
 
-    Cells_incident_to_edge cells;
+    Cells_incident_to_edge cite;
     for (std::size_t i = 0; i < 4; ++i) { //for each cell
-      cells[i] = cell_descriptor(cells[i].x() + neighbors[i][0],
-                                 cells[i].y() + neighbors[i][1],
-                                 cells[i].z() + neighbors[i][2]);
+      cite[i] = cell_descriptor(e.source.x() + neighbors[i][0],
+                                e.source.y() + neighbors[i][1],
+                                e.source.z() + neighbors[i][2]);
     }
-    return cells;
+    return cite;
   }
 
   static Cell_vertices cell_vertices (const cell_descriptor& c, const OpenVDB_partition&)
