@@ -4,7 +4,7 @@
 
 #include <ostream>
 
-using Kernel = CGAL::Simple_cartesian<double?;
+using Kernel = CGAL::Simple_cartesian<double>;
 using Traits = CGAL::Frechet_distance_traits_3<Kernel>;
 using Point = Traits::Point;
 
