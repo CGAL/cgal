@@ -12,7 +12,7 @@ namespace CGAL {
 <img src="FrechetTeaser.jpg" style="max-width:70%;"/>
 </center>
 
-This chapter provides functions for computing the Fréchet distance of polylines in any dimension under Euclidean metric.
+This package provides functions for computing the Fréchet distance of polylines in any dimension under Euclidean metric.
 
 \section secFrechetDistanceIntroduction Introdution
 
