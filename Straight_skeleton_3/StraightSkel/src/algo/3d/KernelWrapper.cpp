@@ -188,9 +188,13 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
 }
 
 Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
+                                                   CGAL::FT w0,
                                                    Plane3SPtr plane_1,
+                                                   CGAL::FT w1,
                                                    Plane3SPtr plane_2,
-                                                   Plane3SPtr plane_3)
+                                                   CGAL::FT w2,
+                                                   Plane3SPtr plane_3,
+                                                   CGAL::FT w3)
 {
     Point3SPtr result;
 
@@ -199,11 +203,13 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
     CGAL::FT a2 = plane_2->a(); CGAL::FT b2 = plane_2->b(); CGAL::FT c2 = plane_2->c(); CGAL::FT d2 = plane_2->d();
     CGAL::FT a3 = plane_3->a(); CGAL::FT b3 = plane_3->b(); CGAL::FT c3 = plane_3->c(); CGAL::FT d3 = plane_3->d();
 
-#ifdef CGAL_SS3_DEBUG_CRASH_AT
+// #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
     std::cout << "Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
                                   << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
                                   << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
                                   << a3 << " " << b3 << " " << c3 << " " << d3 << std::endl;
+    std::cout << "Weights\n" << w0 << " " << w1 << " " << w2 << " " << w3 << std::endl;
 
     std::cout << "CHECK det " << CGAL::determinant(a0, b0, c0, d0,
                                                    a1, b1, c1, d1,
@@ -216,7 +222,7 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
     CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-10);
     CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-10);
 
-    CGAL::FT den = (a0*b1*c2 - a0*b1*c3 - a0*b2*c1 + a0*b2*c3 + a0*b3*c1 - a0*b3*c2 - a1*b0*c2 + a1*b0*c3 + a1*b2*c0 - a1*b2*c3 - a1*b3*c0 + a1*b3*c2 + a2*b0*c1 - a2*b0*c3 - a2*b1*c0 + a2*b1*c3 + a2*b3*c0 - a2*b3*c1 - a3*b0*c1 + a3*b0*c2 + a3*b1*c0 - a3*b1*c2 - a3*b2*c0 + a3*b2*c1);
+    CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
     // @tmp, perturbation ensures that this is correct, but in theory we need
     // to handle the degenerate configuration
@@ -229,26 +235,29 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
     // }
 
     // warning: only valid for normalized coefficients!!
-    CGAL::FT x = (-b0*c1*d2 + b0*c1*d3 + b0*c2*d1 - b0*c2*d3 - b0*c3*d1 + b0*c3*d2 + b1*c0*d2 - b1*c0*d3 - b1*c2*d0 + b1*c2*d3 + b1*c3*d0 - b1*c3*d2 - b2*c0*d1 + b2*c0*d3 + b2*c1*d0 - b2*c1*d3 - b2*c3*d0 + b2*c3*d1 + b3*c0*d1 - b3*c0*d2 - b3*c1*d0 + b3*c1*d2 + b3*c2*d0 - b3*c2*d1) / den;
+    CGAL::FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
 
-    CGAL::FT y = (a0*c1*d2 - a0*c1*d3 - a0*c2*d1 + a0*c2*d3 + a0*c3*d1 - a0*c3*d2 - a1*c0*d2 + a1*c0*d3 + a1*c2*d0 - a1*c2*d3 - a1*c3*d0 + a1*c3*d2 + a2*c0*d1 - a2*c0*d3 - a2*c1*d0 + a2*c1*d3 + a2*c3*d0 - a2*c3*d1 - a3*c0*d1 + a3*c0*d2 + a3*c1*d0 - a3*c1*d2 - a3*c2*d0 + a3*c2*d1) / den;
+    CGAL::FT y = (-a0*c1*d2*w3 + a0*c1*d3*w2 + a0*c2*d1*w3 - a0*c2*d3*w1 - a0*c3*d1*w2 + a0*c3*d2*w1 + a1*c0*d2*w3 - a1*c0*d3*w2 - a1*c2*d0*w3 + a1*c2*d3*w0 + a1*c3*d0*w2 - a1*c3*d2*w0 - a2*c0*d1*w3 + a2*c0*d3*w1 + a2*c1*d0*w3 - a2*c1*d3*w0 - a2*c3*d0*w1 + a2*c3*d1*w0 + a3*c0*d1*w2 - a3*c0*d2*w1 - a3*c1*d0*w2 + a3*c1*d2*w0 + a3*c2*d0*w1 - a3*c2*d1*w0) / den;
 
-    CGAL::FT z = (-a0*b1*d2 + a0*b1*d3 + a0*b2*d1 - a0*b2*d3 - a0*b3*d1 + a0*b3*d2 + a1*b0*d2 - a1*b0*d3 - a1*b2*d0 + a1*b2*d3 + a1*b3*d0 - a1*b3*d2 - a2*b0*d1 + a2*b0*d3 + a2*b1*d0 - a2*b1*d3 - a2*b3*d0 + a2*b3*d1 + a3*b0*d1 - a3*b0*d2 - a3*b1*d0 + a3*b1*d2 + a3*b2*d0 - a3*b2*d1) / den;
+    CGAL::FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
 
-#ifdef CGAL_SS3_DEBUG_CRASH_AT
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
     std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
 #endif
 
     result = KernelFactory::createPoint3(x, y, z);
-
     return result;
 }
 
 // @todo avoid the duplication (need to avoid recomputing the denominator)
 std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0,
+                                                                               CGAL::FT w0,
                                                                                Plane3SPtr plane_1,
+                                                                               CGAL::FT w1,
                                                                                Plane3SPtr plane_2,
-                                                                               Plane3SPtr plane_3)
+                                                                               CGAL::FT w2,
+                                                                               Plane3SPtr plane_3,
+                                                                               CGAL::FT w3)
 {
     Point3SPtr result;
 
@@ -262,6 +271,7 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
                                   << a1 << " " << b1 << " " << c1 << " " << d1 << "\n"
                                   << a2 << " " << b2 << " " << c2 << " " << d2 << "\n"
                                   << a3 << " " << b3 << " " << c3 << " " << d3 << std::endl;
+    std::cout << "Weights\n" << w0 << " " << w1 << " " << w2 << " " << w3 << std::endl;
     std::cout << "CHECK det " << CGAL::determinant(a0, b0, c0, d0,
                                                    a1, b1, c1, d1,
                                                    a2, b2, c2, d2,
@@ -273,7 +283,7 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
     CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-10);
     CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-10);
 
-    CGAL::FT den = (-a0*b1*c2 + a0*b1*c3 + a0*b2*c1 - a0*b2*c3 - a0*b3*c1 + a0*b3*c2 + a1*b0*c2 - a1*b0*c3 - a1*b2*c0 + a1*b2*c3 + a1*b3*c0 - a1*b3*c2 - a2*b0*c1 + a2*b0*c3 + a2*b1*c0 - a2*b1*c3 - a2*b3*c0 + a2*b3*c1 + a3*b0*c1 - a3*b0*c2 - a3*b1*c0 + a3*b1*c2 + a3*b2*c0 - a3*b2*c1);
+    CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
     // @tmp, perturbation ensures that this is correct, but in theory we need
     // to handle the degenerate configuration
@@ -286,11 +296,11 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
     // }
 
     // warning: only valid for normalized coefficients!!
-    CGAL::FT x = (b0*c1*d2 - b0*c1*d3 - b0*c2*d1 + b0*c2*d3 + b0*c3*d1 - b0*c3*d2 - b1*c0*d2 + b1*c0*d3 + b1*c2*d0 - b1*c2*d3 - b1*c3*d0 + b1*c3*d2 + b2*c0*d1 - b2*c0*d3 - b2*c1*d0 + b2*c1*d3 + b2*c3*d0 - b2*c3*d1 - b3*c0*d1 + b3*c0*d2 + b3*c1*d0 - b3*c1*d2 - b3*c2*d0 + b3*c2*d1) / den;
+    CGAL::FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
 
-    CGAL::FT y = (-a0*c1*d2 + a0*c1*d3 + a0*c2*d1 - a0*c2*d3 - a0*c3*d1 + a0*c3*d2 + a1*c0*d2 - a1*c0*d3 - a1*c2*d0 + a1*c2*d3 + a1*c3*d0 - a1*c3*d2 - a2*c0*d1 + a2*c0*d3 + a2*c1*d0 - a2*c1*d3 - a2*c3*d0 + a2*c3*d1 + a3*c0*d1 - a3*c0*d2 - a3*c1*d0 + a3*c1*d2 + a3*c2*d0 - a3*c2*d1) / den;
+    CGAL::FT y = (-a0*c1*d2*w3 + a0*c1*d3*w2 + a0*c2*d1*w3 - a0*c2*d3*w1 - a0*c3*d1*w2 + a0*c3*d2*w1 + a1*c0*d2*w3 - a1*c0*d3*w2 - a1*c2*d0*w3 + a1*c2*d3*w0 + a1*c3*d0*w2 - a1*c3*d2*w0 - a2*c0*d1*w3 + a2*c0*d3*w1 + a2*c1*d0*w3 - a2*c1*d3*w0 - a2*c3*d0*w1 + a2*c3*d1*w0 + a3*c0*d1*w2 - a3*c0*d2*w1 - a3*c1*d0*w2 + a3*c1*d2*w0 + a3*c2*d0*w1 - a3*c2*d1*w0) / den;
 
-    CGAL::FT z = (a0*b1*d2 - a0*b1*d3 - a0*b2*d1 + a0*b2*d3 + a0*b3*d1 - a0*b3*d2 - a1*b0*d2 + a1*b0*d3 + a1*b2*d0 - a1*b2*d3 - a1*b3*d0 + a1*b3*d2 + a2*b0*d1 - a2*b0*d3 - a2*b1*d0 + a2*b1*d3 + a2*b3*d0 - a2*b3*d1 - a3*b0*d1 + a3*b0*d2 + a3*b1*d0 - a3*b1*d2 - a3*b2*d0 + a3*b2*d1) / den;
+    CGAL::FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
 
 // #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
 #ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION

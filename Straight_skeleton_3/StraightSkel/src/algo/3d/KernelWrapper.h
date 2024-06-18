@@ -69,11 +69,14 @@ public:
     static Vector3SPtr normalize(Vector3SPtr v);
 
     static Plane3SPtr offsetPlane(Plane3SPtr plane, CGAL::FT offset);
-    static Point3SPtr intersectionOffsetPlanes(Plane3SPtr plane_0, Plane3SPtr plane_1, Plane3SPtr plane_2, Plane3SPtr plane_3);
-    static std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0,
-                                                                           Plane3SPtr plane_1,
-                                                                           Plane3SPtr plane_2,
-                                                                           Plane3SPtr plane_3);
+    static Point3SPtr intersectionOffsetPlanes(Plane3SPtr plane_0, CGAL::FT w0,
+                                               Plane3SPtr plane_1, CGAL::FT w1,
+                                               Plane3SPtr plane_2, CGAL::FT w2,
+                                               Plane3SPtr plane_3, CGAL::FT w3);
+    static std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0, CGAL::FT w0,
+                                                                           Plane3SPtr plane_1, CGAL::FT w1,
+                                                                           Plane3SPtr plane_2, CGAL::FT w2,
+                                                                           Plane3SPtr plane_3, CGAL::FT w3);
     static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::FT offset);
 
     /**
