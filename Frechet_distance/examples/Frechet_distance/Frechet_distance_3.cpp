@@ -12,6 +12,6 @@ int main(int argc, char* argv[])
 {
     std::vector<Point> A, B;
     std::pair<double> res = CGAL::continuous_Frechet_distance<Traits>(A, B, 0.000001);
-    std::cout << "The Frechet distance between the curves is between " <<  res.first << " and " << res.second << std::endl;
+    std::cout << "The Frechet distance between the polylines is between " <<  res.first << " and " << res.second << std::endl;
     return 0;
 }

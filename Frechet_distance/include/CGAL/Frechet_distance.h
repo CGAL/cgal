@@ -27,27 +27,26 @@ namespace CGAL
 
 /**
  * \ingroup PkgFrechetDistanceFunctions
- * decides if the Frechet distance between two polylines given as a range of
- * points is less than a given distance.
- * \param curve1 the first curve defined
- * by the sequence of consecutive points along the polyline
- * \param curve2 the
- * second curve defined by the sequence of consecutive points along the polyline
+ * decides if the Frechet distance between two polylines is less than a given distance.
+ *
+ * \param polyline1 the first polyline defined by the sequence of consecutive points
+ * \param polyline2 the second polyline defined by the sequence of consecutive points
  * \param distance the decision distance
  * \param traits the geometric traits object
+ *
  * \tparam Traits a model of `FrechetDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  */
 template < class Traits, class PointRange>
-bool continuous_Frechet_distance_less_than(const PointRange& curve1,
-                                           const PointRange& curve2,
+bool continuous_Frechet_distance_less_than(const PointRange& polyline1,
+                                           const PointRange& polyline2,
                                            const double distance,
                                            const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
-    auto icurve1 = Frechet_distance::internal::toCurve(curve1, traits);
-    auto icurve2 = Frechet_distance::internal::toCurve(curve2, traits);
+    auto icurve1 = Frechet_distance::internal::toCurve(polyline1, traits);
+    auto icurve2 = Frechet_distance::internal::toCurve(polyline2, traits);
     auto idistance = Frechet_distance::internal::toDistance(distance);
 
     return Frechet_distance::internal::lessThan(icurve1, icurve2, idistance, traits);
@@ -55,14 +54,12 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
 
 /**
  * \ingroup PkgFrechetDistanceFunctions
- * approximates the Fréchet distance between `curve1` and `curve2` up to an additive error
- * of `precision` between two polylines given as a range of points.
+ * approximates the Fréchet distance between two polylines up to an additive error
+ * of `precision`.
  *
- * \param curve1 the first curve defined by the sequence of consecutive
- * points along the polyline
- * \param curve2 the second curve defined by the
- * sequence of consecutive points along the polyline
- * \param precision
+ * \param polyline1 the first polyline defined by the sequence of consecutive points
+ * \param polyline2 the second polyline defined by the sequence of consecutive points
+ * \param precision the precision of the approximation
  *  \param traits the geometric traits object
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
@@ -70,14 +67,14 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
  * with `Traits::Point` as value type.
  */
 template <class Traits,class PointRange>
-std::pair<double,double> continuous_Frechet_distance(const PointRange& curve1,
-                                                     const PointRange& curve2,
+std::pair<double,double> continuous_Frechet_distance(const PointRange& polyline1,
+                                                     const PointRange& polyline2,
                                                      const double precision,
                                                     const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
-    auto icurve1 = Frechet_distance::internal::toCurve(curve1, traits);
-    auto icurve2 = Frechet_distance::internal::toCurve(curve2, traits);
+    auto icurve1 = Frechet_distance::internal::toCurve(polyline1, traits);
+    auto icurve2 = Frechet_distance::internal::toCurve(polyline2, traits);
 
     return Frechet_distance::internal::calcDistance(icurve1, icurve2, traits, precision);
 }

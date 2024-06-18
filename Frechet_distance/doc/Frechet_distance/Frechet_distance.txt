@@ -47,7 +47,7 @@ The following example shows ...
 
 \cgalExample{Frechet_distance/Frechet_distance_2.cpp}
 
-subsection subsecFrechetDistanceSecondExample Distance Computation for 3D Polylines
+\subsection subsecFrechetDistanceSecondExample Distance Computation for 3D Polylines
 
 The following example shows ...
 
