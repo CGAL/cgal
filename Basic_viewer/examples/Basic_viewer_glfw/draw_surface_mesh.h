@@ -94,7 +94,7 @@ void add_to_graphics_scene(const SM& sm,
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
 
-#define CAM_MOVE_SPEED 5.0f
+// #define CAM_MOVE_SPEED 5.0f
 #include "../../include/CGAL/GLFW/Basic_viewer_impl.h"
 
 namespace CGAL {
