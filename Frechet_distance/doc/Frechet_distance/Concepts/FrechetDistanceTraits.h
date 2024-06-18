@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgPolylineDistanceConcepts
+\ingroup PkgFrechetDistanceConcepts
 \cgalConcept
 
 The concept `FrechetDistanceTraits` defines the requirements ...

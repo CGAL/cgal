@@ -36,7 +36,7 @@ namespace internal {
 // decisions
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 template <typename K>

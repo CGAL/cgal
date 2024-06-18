@@ -1,21 +1,21 @@
-/// \defgroup PkgPolylineDistanceRef dD Polyline Distance Reference
-/// \defgroup PkgPolylineDistanceConcepts Concepts
-/// \ingroup PkgPolylineDistanceRef
-/// \defgroup PkgPolylineDistanceFunctions Functions
+/// \defgroup PkgFrechetDistanceRef dD Polyline Distance Reference
+/// \defgroup PkgFrechetDistanceConcepts Concepts
+/// \ingroup PkgFrechetDistanceRef
+/// \defgroup PkgFrechetDistanceFunctions Functions
 /// You can add some text here if you want a description at the group level
-/// \ingroup PkgPolylineDistanceRef
+/// \ingroup PkgFrechetDistanceRef
 
 
 /*!
-\addtogroup PkgPolylineDistanceRef
+\addtogroup PkgFrechetDistanceRef
 
-\cgalPkgDescriptionBegin{dD Polyline Distance,PkgPolylineDistance}
+\cgalPkgDescriptionBegin{dD Polyline Distance,PkgFrechetDistance}
 \cgalPkgPicture{pdist-pkg-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{André Nusser, Marvin Künnemann, and Karl Bringmann}
 \cgalPkgDesc{The package provides ... }
-\cgalPkgManuals{Chapter_dD_Frechet_distance,PkgPolylineDistanceRef}
+\cgalPkgManuals{Chapter_dD_Frechet_distance,PkgFrechetDistanceRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin

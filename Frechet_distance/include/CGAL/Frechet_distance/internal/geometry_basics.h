@@ -48,7 +48,7 @@ namespace internal {
 
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a value in the interval `[0,1]`....
 */
 template<typename C>
@@ -287,7 +287,7 @@ BFDirection toBFDirection(Direction direction);
 // TODO: does CGAL have any replacement for this or do we want our custom type
 // here?
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 
@@ -325,7 +325,7 @@ template <typename C>
 std::ostream& operator<<(std::ostream& out, const Interval<C>& interval);
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * Data Types for FrechetLight:
  *
  * CPoint is integral part + rational [0,1] number given as sqrt_extension
@@ -461,7 +461,7 @@ using CPositions = std::vector<CPosition<C>>;
 using CurveID = std::size_t;
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 template <typename C>

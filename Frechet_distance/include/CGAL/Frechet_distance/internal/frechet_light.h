@@ -43,7 +43,7 @@ namespace internal {
 
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
   template <typename C>

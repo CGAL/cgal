@@ -5,32 +5,61 @@ namespace CGAL {
 \anchor Chapter_dD_Frechet_distance
 
 \cgalAutoToc
-\author André Nusser, Marvin Künnemann, and Karl Bringmann
+\authors André Nusser, Marvin Künnemann, and Karl Bringmann
 
-This chapter describes the ...
 
-\section secPolylineDistanceDefinitions Definitions
+<center>
+<img src="FrechetTeaser.jpg" style="max-width:70%;"/>
+</center>
 
-Section on definitions here ...
+This chapter provides functions for computing the Fréchet distance of polylines in any dimension under Euclidean metric.
 
-\section secPolylineDistanceExamples Examples
+\section secFrechetDistanceIntroduction Introdution
 
-\subsection subsecPolylineDistanceFirstExample First Example
-
-The following example shows ...
-
-\cgalExample{Frechet_distance/Frechet_distance_2.cpp}
+The Fréchet distance .....
 
 \cgalFigureBegin{figRefId,pdist-pkg-small.png}
 Here you can put the caption
 \cgalFigureEnd
 
+\section secFrechetDistanceAPI API
 
-\subsection subsecPolylineDistanceImplementation  Implementation History
+The function `continuous_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines,
+up to a given approximation error. It returns an interval.
+The function `continuous_Frechet_distance_less_than()` decides if the Fréchet distance
+between two polylines is smaller than a given bound.
 
-An intial version using floating point arithmetic was developed by the authors.
-André Nusser, together with Sebastien Loriot and Andreas Fabri introduced
-interval arithmetic and square root extensions to achieve a certified result.
+Both functions have as template parameter a traits class defining the dimension and the point type.
+The traits classes have as template parameter a kernel. This may be a kernel such as `Simple_cartesian`
+with a floating point number type, or a filtered kernel. In both cases the result is guaranteed to be correct.
+
+
+\section secFrechetDistanceImplementation Implementation
+
+Internally all computations are done using interval arithmetic. In case of filter failures
+the algorithm switches to the usage of square root extensions.
+
+\section secFrechetDistanceExamples Examples
+
+\subsection subsecFrechetDistanceFirstExample Decision for 2D Polylines
+
+The following example shows ...
+
+\cgalExample{Frechet_distance/Frechet_distance_2.cpp}
+
+subsection subsecFrechetDistanceSecondExample Distance Computation for 3D Polylines
+
+The following example shows ...
+
+\cgalExample{Frechet_distance/Frechet_distance_3.cpp}
+
+
+\subsection subsecFrechetDistanceImplementation  Implementation History
+
+An intial version using floating point arithmetic was developed by the authors
+while working at the Max-Planck Institute of Computer Science in Saarbrücken.
+André Nusser, together with Sebastien Loriot and Andreas Fabri, introduced
+the usage of interval arithmetic and square root extensions to achieve a certified result.
 
 */
 } /* namespace CGAL */

@@ -39,7 +39,7 @@ namespace internal {
 //
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 template <typename K>
@@ -66,7 +66,7 @@ using Boxes = std::vector<Box<K>>;
 //
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 template <typename K>
@@ -105,7 +105,7 @@ struct Inputs {
 //
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 
@@ -120,7 +120,7 @@ struct Outputs {
 //
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 template <typename K>
@@ -185,7 +185,7 @@ using QSimpleID = ID<QSimpleInterval<K>>;
 //
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 
@@ -200,7 +200,7 @@ struct QSimpleOutputs {
 //
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a
 */
 template <typename K>

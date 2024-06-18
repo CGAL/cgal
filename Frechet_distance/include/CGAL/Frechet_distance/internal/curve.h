@@ -55,7 +55,7 @@ double length_of_diagonal(const Bbox_3& bb)
 // TODO: Clean up Curve
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * A class representing a trajectory. Additionally to the points given in the
  * input file, we also store the length of any prefix of the trajectory.
  */

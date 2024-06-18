@@ -37,7 +37,7 @@
 namespace CGAL
 {
 /*!
- * \ingroup PkgPolylineDistanceRef
+ * \ingroup PkgFrechetDistanceRef
  * This class ...
 * \cgalModels{FrechetDistanceTraits}
 * \tparam GT  geometric traits class

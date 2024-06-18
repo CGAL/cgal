@@ -35,7 +35,7 @@ namespace CGAL
 {
 
 /**
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * decides if the Frechet distance between two polylines given as a range of
  * points is less than a given distance.
  * \param curve1 the first curve defined
@@ -63,7 +63,7 @@ bool continuous_Frechet_distance_less_than(const PointRange& curve1,
 }
 
 /**
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * approximates the Fréchet distance between `curve1` and `curve2` up to an additive error
  * of `precision` between two polylines given as a range of points.
  *

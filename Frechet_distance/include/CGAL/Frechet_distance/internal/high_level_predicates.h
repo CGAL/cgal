@@ -136,7 +136,7 @@ namespace HLPred
 {
 
 /*!
- * \ingroup PkgPolylineDistanceFunctions
+ * \ingroup PkgFrechetDistanceFunctions
  * computes
 */
 template <typename C>
