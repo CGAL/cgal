@@ -99,8 +99,17 @@ public:
     using D2D = NT_converter<distance_t,double>;
     using I2R = Cartesian_converter<iKernel, Rational_kernel, D2D>;
 
-    using K2I = Cartesian_converter<K, iKernel>;
 
+    struct K2I
+    {
+      Point operator()(const typename T::Point& p) const
+      {
+        if constexpr (dimension == 2)
+          return Point(p[0], p[1]);
+        else
+          return Point(p[0], p[1], p[2]);
+      }
+    };
 
     Curve() = default;
 
