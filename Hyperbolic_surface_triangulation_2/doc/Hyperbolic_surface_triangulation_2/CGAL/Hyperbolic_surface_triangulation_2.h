@@ -67,8 +67,6 @@ public:
   /// \name Assignment
   /// @{
   /*!
-      Copy constructor.
-
       \pre <code> other.is_valid() </code>
   */
   Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2 other);

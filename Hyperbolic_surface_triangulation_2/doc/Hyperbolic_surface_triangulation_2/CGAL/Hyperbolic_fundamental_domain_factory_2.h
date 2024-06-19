@@ -13,7 +13,7 @@ public:
   /// \name Creation
   /// @{
   /*!
-    Default constructor, the seed is used for generation.
+    Constructor, the seed is used for generation.
   */
   Hyperbolic_fundamental_domain_factory_2(unsigned int seed);
   /// @}
