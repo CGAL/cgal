@@ -232,11 +232,11 @@ public:
       "Create Facegraph from Selected Facets"            ,
       "Erase Selected Facets"             ,
       "Keep Connected Components of Selected Facets"           ,
-      "Expand Face Selection to Stay Manifold After Removal"   ,
-      "Convert from Edge Selection to Facets Selection"        ,
-      "Convert from Edge Selection to Point Selection"         ,
-      "Convert from Facet Selection to Boundary Edge Selection",
-      "Convert from Facet Selection to Point Selection"
+      "Expand Face Selection to Remain Manifold After Removal"   ,
+      "Select Edges Incident to Selected Facets"        ,
+      "Select Vertices Incident to Selected Edges"         ,
+      "Select Edges on the Boundary of Regions of Selected Facets",
+      "Select Vertices of Selected Facets"
     };
 
     operations_map[operations_strings[0]] = 0;
