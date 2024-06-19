@@ -12,10 +12,10 @@ the `CGAL::Constrained_Delaunay_triangulation_3` class template.
 \cgalHasModels{CGAL::Constrained_Delaunay_triangulation_vertex_base_3}
 \cgalHasModelsEnd
 
+\todo CDT_3 also requires `time_stamp()` but it is not documented in the concept.
 
 \sa `ConstrainedDelaunayTriangulationCellBase_3`
 
-\todo Verify that the See also section is correctly formatted by Doxygen.
 */
 class ConstrainedDelaunayTriangulationVertexBase_3 {
 public:

@@ -62,6 +62,10 @@ public:
     return cdt_3_data_;
   }
 
+  const Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() const {
+    return cdt_3_data_;
+  }
+
   static std::string io_signature() {
     return Get_io_signature<Vb>()();
   }
