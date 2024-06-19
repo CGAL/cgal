@@ -49,7 +49,7 @@ bool Frechet_distance_at_most(const PointRange& polyline1,
     auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
     auto idistance = Frechet_distance_::internal::toDistance(distance);
 
-    return Frechet_distance_::internal::at_most(icurve1, icurve2, idistance, traits);
+    return Frechet_distance_::internal::lessThan(icurve1, icurve2, idistance, traits);
 }
 
 /**
