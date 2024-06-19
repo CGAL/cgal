@@ -134,7 +134,7 @@ bool cell_position_QEM(const typename Domain::cell_descriptor& c,
 
 #ifdef CGAL_ISOSURFACING_3_DC_FUNCTORS_DEBUG
   std::cout << "cell: " << x_min << " " << y_min << " " << z_min << " " << x_max << " " << y_max << " " << z_max << std::endl;
-  std::cout << "COM " << com << std::endl;
+  std::cout << "COM: " << com << std::endl;
 #endif
 
   // SVD QEM
@@ -359,7 +359,7 @@ public:
     typename Geom_traits::Compute_y_3 y_coord = domain.geom_traits().compute_y_3_object();
     typename Geom_traits::Compute_z_3 z_coord = domain.geom_traits().compute_z_3_object();
 
-    std::ofstream out_active_edges("active_edges.polylines");
+    std::ofstream out_active_edges("active_edges.polylines.cgal");
     for(const auto& ei : edge_to_point_id)
     {
       const edge_descriptor& e = ei.first;
@@ -372,7 +372,7 @@ public:
       out_active_edges << "2 " << x_coord(p0) << " " << y_coord(p0) << " " << z_coord(p0) << " " << x_coord(p1) << " " << y_coord(p1) << " " << z_coord(p1) << std::endl;
     }
 
-    std::ofstream out_edge_intersections("edge_intersections.polylines");
+    std::ofstream out_edge_intersections("edge_intersections.polylines.cgal");
     for(const auto& ei : edge_to_point_id)
     {
       const Point_3& p = edge_points.at(ei.second);
@@ -396,6 +396,17 @@ public:
         std::lock_guard<std::mutex> lock(m_mutex); // @todo useless if sequential
         cell_to_point_id[c] = points.size();
         points.push_back(p);
+
+#ifdef CGAL_ISOSURFACING_3_DC_FUNCTORS_DEBUG
+        static std::ofstream os("dual_to_sources.polylines.cgal");
+        for(const auto& edge : domain.cell_edges(c))
+        {
+          const auto it = edge_to_point_id.find(edge);
+          if(it == edge_to_point_id.end())
+            continue;
+          os << "2 " << edge_points.at(it->second) << " " << p << "\n";
+        }
+#endif
       }
     };
     domain.template for_each_cell<ConcurrencyTag>(cell_positioner);
