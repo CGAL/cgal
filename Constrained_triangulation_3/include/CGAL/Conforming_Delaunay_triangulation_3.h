@@ -72,6 +72,7 @@ public:
 template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {
 public:
+  using Geom_traits = typename T_3::Geom_traits;
   using Vertex_handle = typename T_3::Vertex_handle;
   using Edge = typename T_3::Edge;
   using Facet = typename T_3::Facet;
@@ -83,6 +84,11 @@ public:
   inline static With_offset_tag with_offset{};
   inline static With_point_tag with_point{};
   inline static With_point_and_info_tag with_point_and_info{};
+
+  Conforming_Delaunay_triangulation_3(const Geom_traits& gt = Geom_traits())
+    : T_3(gt)
+  {
+  }
 
 protected:
   struct Compare_vertex_handle {

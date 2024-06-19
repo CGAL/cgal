@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 #ifndef CGAL_TEST_CDT_3_USE_CDT
   CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt_edge;
 #else
-  CGAL::Constrained_Delaunay_triangulation_3<Delaunay> cdt_edge;
+  CGAL::Constrained_Delaunay_triangulation_3_impl<Delaunay> cdt_edge;
 #endif
   auto point_map = get(CGAL::vertex_point, mesh);
   auto dt_vertex_handle_map =

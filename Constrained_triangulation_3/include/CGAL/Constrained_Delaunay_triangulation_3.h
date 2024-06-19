@@ -93,9 +93,12 @@ namespace CGAL {
    *         <br>
    *         The default value is `Triangulation_3<Traits, TDS>` where `TDS` is
    *         `Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>`.
+   *
+   * @cgalModels{MeshComplex_2InTriangulation_3}
+   *
    */
   template <typename Traits, typename Triangulation_3>
-  class Constrained_Delaunay_triangulation_3 : public Triangulation_3 {
+  class Constrained_Delaunay_triangulation_3 {
   public:
     /*!
      * \brief Create a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
@@ -152,6 +155,17 @@ namespace CGAL {
       // ...
     }
 
+    /*!
+     * \brief Get a const reference to the base triangulation.
+     *
+     * This function returns a const reference to the base triangulation used by the constrained Delaunay triangulation.
+     * That allows to use all non-modifying functions of the base triangulation.
+     *
+     * \return A const reference to the base triangulation.
+     */
+    const Triangulation_3& triangulation() const {
+      return base_triangulation_;
+    }
   };
 
 } // end namespace CGAL
@@ -660,9 +674,61 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
   }
 };
 
+template <typename Traits>
+class Default_triangulation_3 {
+  using Vb = Constrained_Delaunay_triangulation_vertex_base_3<Traits>;
+  using Cb = Constrained_Delaunay_triangulation_cell_base_3<Traits>;
+  using TDS = Triangulation_data_structure_3<Vb, Cb>;
+public:
+  using type = Triangulation_3<Traits, TDS>;
+};
+
+template <typename Traits>
+using Default_triangulation_3_t = typename Default_triangulation_3<Traits>::type;
 
 template <typename T_3>
-class Constrained_Delaunay_triangulation_3 : public Conforming_Delaunay_triangulation_3<T_3> {
+class Constrained_Delaunay_triangulation_3_impl;
+
+template <typename Traits, typename Triangulation_3 = Default_triangulation_3_t<Traits>>
+class Constrained_Delaunay_triangulation_3 {
+  using DT_3 = Delaunay_triangulation_3<Traits, typename Triangulation_3::Triangulation_data_structure>;
+  static_assert(std::is_base_of_v<Triangulation_3, DT_3>);
+  Constrained_Delaunay_triangulation_3_impl<DT_3> cdt_impl = {};
+public:
+  template <typename PolygonMesh, typename NamedParams = parameters::Default_named_parameters>
+  Constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const NamedParams& np = parameters::default_values())
+      : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
+  {
+    auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
+                                                    get(CGAL::vertex_point, mesh));
+    // TODO: set the traits object in the triangulation
+    auto mesh_face_patch_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_patch),
+                                                            boost::identity_property_map{});
+
+    using Vertex_handle = typename Triangulation_3::Vertex_handle;
+    using Cell_handle = typename Triangulation_3::Cell_handle;
+    auto tr_vertex_map = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
+    Cell_handle hint_ch{};
+    for(auto v : vertices(mesh)) {
+      auto p = get(mesh_vp_map, v);
+      auto vh = cdt_impl.insert(p, hint_ch, false);
+      hint_ch = vh->cell();
+      put(tr_vertex_map, v, vh);
+    }
+    for(auto f : faces(mesh)) {
+      auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
+      cdt_impl.insert_constrained_face(
+          face_vertices | std::views::transform([&](auto v) { return get(tr_vertex_map, v); }), false);
+    }
+    cdt_impl.restore_Delaunay();
+    cdt_impl.restore_constrained_Delaunay();
+    std::cerr << std::format("cdt_impl: {} vertices, {} cells\n", cdt_impl.number_of_vertices(),
+                             cdt_impl.number_of_cells());
+  }
+};
+
+template <typename T_3>
+class Constrained_Delaunay_triangulation_3_impl : public Conforming_Delaunay_triangulation_3<T_3> {
 public:
   using Conforming_Dt = Conforming_Delaunay_triangulation_3<T_3>;
 
@@ -683,9 +749,11 @@ public:
 
   using Face_index = CDT_3_face_index;
 
+  using Conforming_Dt::Conforming_Dt;
+
   static std::string io_signature() {
-  return Get_io_signature<Conforming_Dt>()();
-}
+    return Get_io_signature<Conforming_Dt>()();
+  }
 
 private:
   struct CDT_2_types {
@@ -789,11 +857,11 @@ protected:
   }
 
   class Insert_in_conflict_visitor {
-    Constrained_Delaunay_triangulation_3<T_3> &self;
+    Constrained_Delaunay_triangulation_3_impl<T_3> &self;
     typename Conforming_Dt::Insert_in_conflict_visitor conforming_dt_visitor;
 
   public:
-    Insert_in_conflict_visitor(Constrained_Delaunay_triangulation_3 &self)
+    Insert_in_conflict_visitor(Constrained_Delaunay_triangulation_3_impl &self)
         : self(self), conforming_dt_visitor(self) {}
 
     template <class InputIterator>
@@ -2315,7 +2383,7 @@ private:
         return;
       }
       // {
-      //   Constrained_Delaunay_triangulation_3 new_tr;
+      //   Constrained_Delaunay_triangulation_3_impl new_tr;
       //   for(const auto v : region_border_vertices) {
       //     new_tr.insert(v->point());
       //   }
@@ -3337,14 +3405,14 @@ public:
     }
   }
 
-  void write_3d_triangulation_to_OFF(std::ostream& out, const Constrained_Delaunay_triangulation_3& tr) {
+  void write_3d_triangulation_to_OFF(std::ostream& out, const Constrained_Delaunay_triangulation_3_impl& tr) {
     write_facets(out, tr, tr.finite_facets());
   }
 
   void dump_3d_triangulation(CDT_3_face_index face_index,
                              int region_index,
                              std::string type,
-                             const Constrained_Delaunay_triangulation_3& tr)
+                             const Constrained_Delaunay_triangulation_3_impl& tr)
   {
     std::ofstream dump(std::string("dump_") + type + "_cavity_" + std::to_string(face_index) + "_" +
                        std::to_string(region_index) + ".off");

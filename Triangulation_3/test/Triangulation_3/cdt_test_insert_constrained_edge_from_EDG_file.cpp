@@ -67,7 +67,7 @@ int main()
 #ifndef CGAL_TEST_CDT_3_USE_CDT
     CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
 #else
-    CGAL::Constrained_Delaunay_triangulation_3<Delaunay> cdt;
+    CGAL::Constrained_Delaunay_triangulation_3_impl<Delaunay> cdt;
 #endif
 
     std::ifstream input(filename);
