@@ -7,3 +7,4 @@ project( Frechet_distance_Tests )
 find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
 
 create_single_source_cgal_program( "Frechet_distance_test.cpp" )
+create_single_source_cgal_program( "Frechet_distance_minimal_traits_2.cpp" )
