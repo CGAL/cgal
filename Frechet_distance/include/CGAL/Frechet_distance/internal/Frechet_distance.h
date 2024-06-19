@@ -49,9 +49,9 @@ bool lessThan(Curve<Traits> const& curve1, Curve<Traits> const& curve2,
 }
 
 template <typename Traits>
-typename Traits::distance_t calcDistance(Curve<Traits> const& curve1,
-                                         Curve<Traits> const& curve2,
-                                        double precision)
+std::pair<double,double> calcDistance(Curve<Traits> const& curve1,
+                                      Curve<Traits> const& curve2,
+                                      double precision)
 {
     FrechetLight<Curve<Traits>> frechet;
     return frechet.calcDistance(curve1, curve2, precision);

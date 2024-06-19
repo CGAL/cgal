@@ -76,7 +76,7 @@ std::pair<double,double> compute_Frechet_distance(const PointRange& polyline1,
     auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
     auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
 
-    return Frechet_distance_::internal::calcDistance(icurve1, icurve2, traits, precision);
+    return Frechet_distance_::internal::calcDistance<Traits>(icurve1, icurve2, precision);
 }
 
 }  // end of namespace CGAL

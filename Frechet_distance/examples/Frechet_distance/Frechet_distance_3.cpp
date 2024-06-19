@@ -11,7 +11,7 @@ using Point = Traits::Point;
 int main(int argc, char* argv[])
 {
     std::vector<Point> A, B;
-    std::pair<double> res = CGAL::Frechet_distance<Traits>(A, B, 0.000001);
+    std::pair<double, double> res = CGAL::compute_Frechet_distance<Traits>(A, B, 0.000001);
     std::cout << "The Frechet distance between the polylines is between " <<  res.first << " and " << res.second << std::endl;
     return 0;
 }
