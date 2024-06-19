@@ -760,7 +760,7 @@ int go(Mesh mesh, CDT_options options) {
       for(auto v: cdt.finite_vertex_handles()) {
         [[maybe_unused]] const auto time_stamp = v->time_stamp();
         assert(++time_stamp_counter == time_stamp);
-        if(!v->is_Steiner_vertex_on_edge()) continue;
+        if(!v->cdt_3_data().is_Steiner_vertex_on_edge()) continue;
         const auto [va, vb] = cdt.ancestors_of_Steiner_vertex_on_edge(v);
         const auto index_va = Vertex_index{static_cast<unsigned>(va->time_stamp() - 1)};
         const auto index_vb = Vertex_index{static_cast<unsigned>(vb->time_stamp() - 1)};
