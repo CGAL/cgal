@@ -11,7 +11,7 @@ using Point = Traits::Point;
 int main(int argc, char* argv[])
 {
     std::vector<Point> A, B;
-    bool res = CGAL::Frechet_distance_less_than<Traits>(A, B, 0.001);
+    bool res = CGAL::Frechet_distance_at_most<Traits>(A, B, 0.001);
     std::cout << std::boolalpha << res << std::endl;
     return 0;
 }

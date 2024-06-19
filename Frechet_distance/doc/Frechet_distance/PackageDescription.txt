@@ -26,7 +26,7 @@
 
 \cgalPkgDescriptionEnd
 
-This package ....
+This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
 
 \cgalClassifedRefPages
 
@@ -39,6 +39,6 @@ This package ....
 - `CGAL::Frechet_distance_traits_d`
 
 \cgalCRPSection{Functions}
-- `CGAL::Frechet_distance()`
-- `CGAL::Frechet_distance_less_than()`
+- `CGAL::compute_Frechet_distance()`
+- `CGAL::Frechet_distance_at_most()`
 */

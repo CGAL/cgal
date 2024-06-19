@@ -33,8 +33,8 @@ The Fréchet distance is a metric. This implies that two polylines have distance
 
 The package provides one function to approximate the Fréchet distance and one function to decide whether the Fréchet distance is at most a given value.
 
-The function `Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error. It returns an interval that contains the true distance.
-The function `Frechet_distance_less_than()` decides if the Fréchet distance
+The function `compute_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error. It returns an interval that contains the true distance.
+The function `Frechet_distance_at_most()` decides if the Fréchet distance
 between two polylines is at most a given bound.
 
 Both functions have as template parameter a traits class defining the dimension and the point type.
@@ -52,16 +52,20 @@ the algorithm switches to the usage of square root extensions.
 
 \subsection subsecFrechetDistanceFirstExample Decision for 2D Polylines
 
-The following example shows how we can use `Frechet_distance_less_than()` to decide whether the Fréchet distance between two polylines in the Euclidean plane is at most a given value.
+The following example shows how we can use `Frechet_distance_at_most()` to decide whether the Fréchet distance between two polylines in the Euclidean plane is at most a given value.
 
 \cgalExample{Frechet_distance/Frechet_distance_2.cpp}
 
 \subsection subsecFrechetDistanceSecondExample Distance Computation for 3D Polylines
 
-The following example shows how we can compute the Fréchet distance up to a given precision on two polylines in 3-dimensional Euclidean space using `Frechet_distance()`.
+The following example shows how we can compute the Fréchet distance up to a given precision on two polylines in 3-dimensional Euclidean space using `compute_Frechet_distance()`.
 
 \cgalExample{Frechet_distance/Frechet_distance_3.cpp}
 
+
+\subsection subsecFrechetDistanceImageCredits  Image Credits
+
+The teaser image is a visualization of two data points from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
 
 \subsection subsecFrechetDistanceImplementation  Implementation History
 
@@ -69,10 +73,6 @@ An intial version using floating point arithmetic was developed by the authors
 while working at the Max Planck Institute for Informatics in Saarbrücken, Germany.
 André Nusser, together with Sebastien Loriot and Andreas Fabri, introduced
 the usage of interval arithmetic and square root extensions to alleviate issues stemming from rounding errors and hence ensuring correctness of the computation.
-
-\subsection subsecFrechetDistanceImageCredits  Image Credits
-
-The teaser image is a visualization of two data points from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
 
 */
 } /* namespace CGAL */

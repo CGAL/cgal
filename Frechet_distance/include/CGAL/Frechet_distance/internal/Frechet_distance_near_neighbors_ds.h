@@ -46,7 +46,7 @@ class FrechetKdTree
     using PolylineID = typename PT::PolylineID;
     using PolylineIDs = typename PT::PolylineIDs;
 
-    using D = Dimension_tag<8>;
+    using D = Dimension_tag<8>;  // must be 4 x  Traits::dimension
     // FIXME: is fixing Cartesian_d too non-general here?
     using Traits_d = Cartesian_d<typename Traits::FT>;
     using Tree_traits_base = Search_traits_d<Traits_d, D>;
@@ -97,11 +97,15 @@ private:
                 // AF deal with dimension
                 auto a = Point(p[i], p[i + 1]);
                 auto b = Point(q[i], q[i + 1]);
+                // AF: In case Point stays the input point type we have
+                // to robustify with interval arithmetic
+                // here: certainly
                 if (compare_squared_distance(a, b, distance_sqr) == LARGER) {
                     return false;
                 }
             }
             for (size_t i = 4; i < 8; ++i) {
+                // AF: certainly
                 if (CGAL::abs(p[i] - q[i]) > distance) {
                     return false;
                 }
@@ -114,6 +118,7 @@ private:
             for (int d = 0; d < D::value; ++d) {
                 if (rect.min_coord(d) > p[d] + distance &&
                     rect.max_coord(d) + distance < p[d]) {
+                        // AF: certainly
                     return false;
                 }
             }
@@ -126,13 +131,14 @@ private:
             for (size_t i = 0; i < 4; i += 2) {
                 // TODO: this is a manual test if a rectangle is contained in a
                 // circle. Does CGAL offer anything handy for that?
-                // AF deal with dimension
+                // AF: deal with dimension
                 auto point = Point(p[i], p[i + 1]);
                 for (auto x : {rect.min_coord(i), rect.max_coord(i)}) {
                     for (auto y :
                          {rect.min_coord(i + 1), rect.max_coord(i + 1)}) {
                         if (compare_squared_distance(Point(x, y), point,
                                                      distance_sqr) == LARGER) {
+                                                        // AF: certainly
                             return false;
                         }
                     }
@@ -145,6 +151,7 @@ private:
             for (std::size_t i = 4; i < 8; ++i) {
                 if (p[i] - distance > rect.min_coord(i) ||
                     p[i] + distance < rect.max_coord(i)) {
+                        // AF: certainly
                     return false;
                 }
             }
