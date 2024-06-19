@@ -17,8 +17,8 @@ This package provides functions for computing the Fréchet distance of polylines
 \section secFrechetDistanceIntroduction Introdution
 
 The Fréchet distance is a classical dissimilarity measure between polylines.
-Its advantages over other measures is that it consideres the polylines as a continuous objects and that it takes into account the order of the points.
-Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline, they are connected by a leash, and they are only allowed to walk forward. The Fréchet distance is the shortest leash length that allows both the human and dog walk from start to end on their respective trajectories.
+Its advantages over other measures is that it both consideres the polylines as continuous objects and takes into account the ordering of the points.
+Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline, they are connected by a leash, and they are only allowed to walk forward. The Fréchet distance is the shortest leash length that allows the human and the dog to jointly walk from start to end on their respective trajectories.
 
 
 <!--
@@ -27,16 +27,15 @@ Here you can put the caption
 \cgalFigureEnd
 -->
 
-The Fréchet distance is a metric and hence two polylines that are equal (disregarding consecutive collinear points) have a distance of zero.
+The Fréchet distance is a metric. This implies that two polylines have distance zero if and only if they are equal (after removing redundant vertices).
 
 \section secFrechetDistanceAPI API
 
 The package provides one function to approximate the Fréchet distance and one function to decide whether the Fréchet distance is at most a given value.
 
-The function `Frechet_distance()` computes an approximation of the Fréchet distance between two polylines,
-up to a given approximation error. It returns an interval.
+The function `Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error. It returns an interval that contains the true distance.
 The function `Frechet_distance_less_than()` decides if the Fréchet distance
-between two polylines is smaller than a given bound.
+between two polylines is at most a given bound.
 
 Both functions have as template parameter a traits class defining the dimension and the point type.
 The traits classes have as template parameter a kernel. This may be a kernel such as `Simple_cartesian`
@@ -69,11 +68,11 @@ The following example shows how we can compute the Fréchet distance up to a giv
 An intial version using floating point arithmetic was developed by the authors
 while working at the Max Planck Institute for Informatics in Saarbrücken, Germany.
 André Nusser, together with Sebastien Loriot and Andreas Fabri, introduced
-the usage of interval arithmetic and square root extensions to achieve a certified result.
+the usage of interval arithmetic and square root extensions to alleviate issues stemming from rounding errors and hence ensuring correctness of the computation.
 
 \subsection subsecFrechetDistanceImageCredits  Image Credits
 
-The teaser image comes from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
+The teaser image is a visualization of two data points from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
 
 */
 } /* namespace CGAL */
