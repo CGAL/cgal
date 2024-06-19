@@ -100,7 +100,10 @@ public:
     const FT n = CGAL::approximate_sqrt(CGAL::square(gx) + CGAL::square(gy) + CGAL::square(gz));
 
     if(is_zero(n))
+    {
+      CGAL_warning(false && "interpolated gradient is the null vector!");
       return vector(0,0,0);
+    }
 
     return vector(gx / n, gy / n, gz / n);
   }
