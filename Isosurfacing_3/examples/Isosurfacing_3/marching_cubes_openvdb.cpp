@@ -191,10 +191,11 @@ public:
                               ConcurrencyTag)
   {
     const auto& grid = partition.grid();
-    for (openvdb::FloatGrid::ValueOnIter iter = grid->beginValueOn(); iter; ++iter) {
-      f(iter.getValue());
+    for (openvdb::FloatGrid::ValueOnCIter iter = grid->cbeginValueOn(); iter.test(); ++iter) {
+      f(iter.getCoord());
     }
   }
+
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   static void for_each_edge(Functor& f,
                             const OpenVDB_partition& partition,
