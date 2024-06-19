@@ -58,18 +58,32 @@ public:
     using K = typename T::Kernel;
     using Self  = Curve<T>;
 
-    static auto get_type()
+    static auto get_is_filtered()
     {
       if constexpr (::CGAL::internal::Has_nested_type_Has_filtered_predicates_tag<K>::value)
       {
         if constexpr (K::Has_filtered_predicates_tag::value) {
-            return typename K::Exact_kernel{};
+            return std::true_type();
         }
       }
-      if constexpr (std::is_floating_point_v<typename K::FT>)
-          return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
+      return std::false_type();
+    }
+
+    static constexpr bool is_filtered = decltype(get_is_filtered())::value;
+
+    static auto get_type()
+    {
+      if constexpr (is_filtered)
+      {
+        return typename K::Exact_kernel{};
+      }
       else
-          return K{};
+      {
+        if constexpr (std::is_floating_point_v<typename K::FT>)
+            return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
+        else
+            return K{};
+      }
     }
 
     using Rational_kernel = decltype(get_type());
@@ -134,7 +148,7 @@ public:
         }
 
         points.reserve(point_range.size());
-        if constexpr (K::Has_filtered_predicates_tag::value){
+        if constexpr (is_filtered){
              for (auto const& p : point_range) {
                  points.push_back(typename K::C2F()(p));
             }
@@ -178,11 +192,11 @@ public:
             I2R convert;
             return convert(points[i]);
         }
-        if constexpr (K::Has_filtered_predicates_tag::value) {
+        if constexpr (is_filtered) {
             return typename K::C2E()(input[i]);
         }
         if constexpr (! std::is_floating_point<typename K::FT>::type::value &&
-                      ! K::Has_filtered_predicates_tag::value) {
+                      ! is_filtered) {
             return input[i];
         }
         CGAL_assertion(false);

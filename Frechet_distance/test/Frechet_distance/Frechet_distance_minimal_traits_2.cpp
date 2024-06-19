@@ -7,7 +7,6 @@ struct MinimalFrechetTraits {
   struct Kernel {
     typedef double FT;
     enum { Has_filtered_predicates = false };
-    typedef CGAL::Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
   };
 
   struct Point {
