@@ -67,10 +67,10 @@ bool Frechet_distance_at_most(const PointRange& polyline1,
  * with `Traits::Point` as value type.
  */
 template <class Traits,class PointRange>
-std::pair<double,double> Frechet_distance(const PointRange& polyline1,
-                                                     const PointRange& polyline2,
-                                                     const double precision,
-                                                    const Traits& traits = Traits())
+std::pair<double,double> compute_Frechet_distance(const PointRange& polyline1,
+                                                  const PointRange& polyline2,
+                                                  const double precision,
+                                                  const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
     auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
