@@ -236,7 +236,8 @@ public:
       "Select Edges Incident to Selected Facets"        ,
       "Select Vertices Incident to Selected Edges"         ,
       "Select Edges on the Boundary of Regions of Selected Facets",
-      "Select Vertices of Selected Facets"
+      "Select Vertices of Selected Facets",
+      "Add Triangle Face from Selected Vertices"
     };
 
     operations_map[operations_strings[0]] = 0;
@@ -249,6 +250,7 @@ public:
     operations_map[operations_strings[7]] = 7;
     operations_map[operations_strings[8]] = 8;
     operations_map[operations_strings[9]] = 9;
+    operations_map[operations_strings[10]] = 10;
   }
   virtual void closure() override
   {
@@ -904,6 +906,20 @@ public Q_SLOTS:
       selection_item->itemChanged();
       break;
     }
+    //Add Triangle Face to FaceGraph
+    case 10:
+    {
+      Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
+      if(!selection_item) {
+        print_message("Error: there is no selected polyhedron selection item!");
+        return;
+      }
+      if(selection_item->selected_vertices.size() != 3) {
+        print_message("Error: there is not exactly 3 vertices selected!");
+        return;
+      }
+      selection_item->add_facet_from_selected_vertices();
+    }
     default :
       break;
     }
@@ -1173,6 +1189,8 @@ void filter_operations()
   if(has_v)
   {
     ui_widget.operationsBox->addItem(operations_strings[0]);
+    if(selection_item->selected_vertices.size() == 3)
+      ui_widget.operationsBox->addItem(operations_strings[10]);
   }
   if(has_e)
   {
