@@ -7,15 +7,22 @@ class Camera
 public:
     enum MODE
     {
-        ORBIT,
-        FLY,
-        ORTHO,
+        PERSPECTIVE,
+        ORTHOGRAPHIC,
         NB_ELT
     };
 
 public:
-    Camera() : m_mode(ORBIT), m_center(), m_position(), m_orientation(quatf::Identity()), m_size(5.f),
-               m_cst_size(5.f), m_radius(5.f), m_width(1.f), m_height(1.f), m_fov(45.f) {}
+    Camera() 
+    : m_mode(PERSPECTIVE), 
+      m_center(), 
+      m_position(vec3f::Zero()), 
+      m_orientation(quatf::Identity()), 
+      m_tspeed(2.f), m_rspeed(5.f), 
+      m_size(5.f), m_cst_size(5.f), 
+      m_radius(5.f), m_fov(45.f),
+      m_width(1.f), m_height(1.f),
+      m_orbiter(true) {}
 
     inline void lookat(vec3f const &center, const float size);
     inline void lookat(vec3f const &pmin, vec3f const &pmax);
@@ -24,13 +31,18 @@ public:
     inline void rotation(const float x, const float y);
     inline void move(const float z);
 
+    inline void move_up(const float dt);
+    inline void move_down(const float dt);
+    inline void move_right(const float dt);
+    inline void move_left(const float dt);
+
     inline mat4f view() const;
-    inline mat4f projection(const float width, const float height, const float fov);
+
+    inline mat4f projection() const;
+    inline mat4f projection(const float width, const float height);
 
     inline float znear() const;
     inline float zfar() const;
-
-    inline mat4f projection() const;
 
     inline mat4f viewport() const;
 
@@ -41,25 +53,29 @@ public:
 
     inline void reset_all();
 
-    inline void reset_position() { m_position = {0, 0}; }
+    inline void reset_position() { m_position = {0, 0, 0}; }
     inline void reset_rotation() { m_orientation = quatf::Identity(); }
 
     inline float get_radius() const { return m_radius; }
     inline vec3f get_center() const { return m_center; }
 
     inline void mode(MODE mode) { m_mode = mode; }
+    inline void toggle_mode() { m_mode = m_mode == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC; }
 
-private:
-    inline mat4f view_orbit() const;
-    inline mat4f view_fly() const;
-    inline mat4f view_ortho() const;
-    inline mat4f projection_orbit() const;
-    inline mat4f projection_fly() const;
-    inline mat4f projection_ortho() const;
+    inline void inc_rspeed() { m_rspeed = std::min(m_rspeed+1.f, 20.f); std::cout << m_rspeed << std::endl; }
+    inline void dec_rspeed() { m_rspeed = std::max(m_rspeed-1.f, 1.f); std::cout << m_rspeed << std::endl; }
+
+    inline void inc_tspeed() { m_tspeed = std::min(m_tspeed+.1f, 20.f); }
+    inline void dec_tspeed() { m_tspeed = std::max(m_tspeed-.1f, 0.5f); }
+
+    inline void toggle_fly() { m_orbiter = !m_orbiter; }
+
+    inline void modify_fov(float d);
+
 
 private:
     vec3f m_center;   // centre de l'objet observé
-    vec2f m_position; // position de la caméra (translations appliquées)
+    vec3f m_position; // position de la caméra (translations appliquées)
 
     quatf m_orientation; // orientation de la caméra (rotations appliquées)
 
@@ -70,6 +86,11 @@ private:
     float m_width;  // largeur de l'image
     float m_height; // hauteur de l'image
     float m_fov;    // FOV pour la projection
+    
+    float m_tspeed; 
+    float m_rspeed; 
+
+    bool m_orbiter;
 
     MODE m_mode;
 };
@@ -79,7 +100,6 @@ private:
 inline void Camera::lookat(vec3f const &center, const float size)
 {
     m_center = center;   // camera focus
-    m_position = {0, 0}; // camera position
     m_size = size;
     m_cst_size = size; // allowing reset
     m_radius = size;
@@ -94,64 +114,162 @@ inline void Camera::lookat(vec3f const &pmin, vec3f const &pmax)
 
 inline void Camera::translation(const float x, const float y)
 {
-    m_position.x() = m_position.x() - m_size * x;
-    m_position.y() = m_position.y() + m_size * y;
+    if (m_orbiter) 
+    {
+        m_position.x() = m_position.x() + m_size * x * m_tspeed;
+        m_position.y() = m_position.y() + m_size * y * m_tspeed;
+    } 
+    else // free fly  
+    {
+        vec3f right = (m_orientation * vec3f::UnitX()).normalized();
+        vec3f up = (m_orientation * vec3f::UnitY()).normalized();
+        m_position += right * x * m_tspeed; 
+        m_position += up * y * m_tspeed; 
+    }
 }
 
 inline void Camera::rotation(const float x, const float y)
 {
-    float alpha = radians(x);
-    float beta = radians(y);
-    quatf rotX(Eigen::AngleAxisf(beta, vec3f::UnitX()));
-    quatf rotY(Eigen::AngleAxisf(alpha, vec3f::UnitY()));
-    m_orientation = rotY * m_orientation * rotX;
+    float pitchDelta = y * m_rspeed;
+    float yawDelta = x * m_rspeed;
+    quatf rotX(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
+    quatf rotY(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
+    if (m_orbiter) 
+    {
+        m_orientation = rotX * rotY * m_orientation;
+    }
+    else // free fly
+    {
+        m_orientation = rotX * rotY * m_orientation;
+    }
 }
 
 inline void Camera::move(const float z)
 {
-    m_size = m_size - m_size * 0.01f * z;
-    // std::cout << "m_size: " << m_size << std::endl;
-    if (m_size < 0.001f)
-        m_size = 0.001f;
+    if (m_orbiter) 
+    {
+        m_size = m_size - m_size * z;
+        // std::cout << "m_size: " << m_size << std::endl;
+        if (m_size < 0.001f)
+            m_size = 0.001f;
+    }
+    else // free fly
+    {
+        vec3f forward = m_orientation * vec3f::UnitZ();
+        m_position -= forward * z * m_tspeed;
+    }
+}
+
+inline void Camera::move_left(const float dt)
+{
+    if (m_orbiter) 
+    {
+        m_position.x() -= m_size * dt * m_tspeed;
+    }
+    else // free fly
+    {
+        vec3f left = m_orientation * vec3f::UnitX();
+        m_position -= left * dt;
+    }
+}
+
+inline void Camera::move_right(const float dt)
+{
+    move_left(-dt);
+}
+
+inline void Camera::move_up(const float dt)
+{
+    if (m_orbiter) 
+    {
+        m_position.y() += m_size * dt * m_tspeed;
+    }
+    else // free fly
+    {
+        vec3f up = m_orientation * vec3f::UnitY();
+        m_position += up * dt * m_tspeed;
+    }
+}
+
+inline void Camera::move_down(const float dt)
+{
+    move_up(-dt);
 }
 
 inline mat4f Camera::view() const
 {
-    mat4f position = transform::translation(-m_position.x(), -m_position.y(), -m_size); // translate camera to (0,0,0)
-    mat4f model = transform::translation(-m_center.x(), -m_center.y(), -m_center.z());  // translate focus to (0,0,0)
-
     mat3f rotation3x3 = m_orientation.toRotationMatrix();
     mat4f rotation = mat4f::Identity();
     rotation.block<3, 3>(0, 0) = rotation3x3;
 
-    return position * rotation * model; // on positionne 'position' et oriente 'rotation' la caméra en fonction de l'objet 'model' observé
+    if (m_orbiter) 
+    {
+        mat4f position = transform::translation(-m_position.x(), -m_position.y(), -m_size); // translate camera to (0,0,0)
+        mat4f model = transform::translation(-m_center.x(), -m_center.y(), -m_center.z());  // translate focus to (0,0,0)
+
+        return  position * rotation * model;
+    } 
+    else // free fly  
+    {
+        mat4f position = transform::translation(-m_position.x(), -m_position.y(), -m_position.z()-m_size); // translate camera to (0,0,0)
+
+        return rotation * position;
+    }
 }
 
-inline mat4f Camera::projection(const float width, const float height, const float fov)
+inline void Camera::modify_fov(float d) { 
+    m_fov += d; 
+    if (m_fov > 179.f) m_fov = 179.f;
+    if (m_fov < 1.f) m_fov = 1.f;
+    std::cout << m_fov << std::endl;
+}
+
+inline mat4f Camera::projection(const float width, const float height)
 {
-    m_fov = fov;
     m_width = width;
     m_height = height;
 
     return projection();
 }
 
+inline mat4f Camera::projection() const
+{
+    if (m_mode == ORTHOGRAPHIC) {
+        float aspect = m_width / m_height;
+        float halfWidth = m_size * aspect * 0.5f;
+        float halfHeight = m_size * 0.5f;
+        return ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, znear(), zfar());
+    }
+
+    return perspective(m_fov, m_width / m_height, znear(), zfar());
+}
+
 inline float Camera::znear() const
 {
-    float d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
+    float d;
+    if (m_orbiter) 
+    {
+        d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
+    }
+    else
+    {
+        d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
+    }
     return std::max(0.1f, d - 2 * m_radius);
 }
 
 inline float Camera::zfar() const
 {
-    float d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
-    // std::cout << "distance (zfar): " << d << std::endl;
+    float d;
+    if (m_orbiter) 
+    {
+        d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
+    }
+    else
+    {
+        d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
+    }
     return std::max(100.f, d + 2 * m_radius);
-}
-
-inline mat4f Camera::projection() const
-{
-    return perspective(m_fov, m_width / m_height, znear(), zfar());
 }
 
 inline mat4f Camera::viewport() const
@@ -171,9 +289,16 @@ inline vec3f Camera::position() const
 inline vec3f Camera::forward() const
 {
     vec3f fw;
-    fw.x() = m_center.x() - position().x();
-    fw.y() = m_center.y() - position().y();
-    fw.z() = m_center.z() - position().z();
+    if (m_orbiter) 
+    {
+        fw.x() = m_center.x() - position().x();
+        fw.y() = m_center.y() - position().y();
+        fw.z() = m_center.z() - position().z();
+    }
+    else 
+    {
+        fw = m_orientation * vec3f::UnitZ();
+    }
 
     return fw.normalized();
 }
@@ -203,34 +328,4 @@ inline void Camera::frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const
 
     dx = subVec(dO, d1);
     dy = subVec(dO, d2);
-}
-
-inline mat4f Camera::view_orbit() const
-{
-    return mat4f::Identity();
-}
-
-inline mat4f Camera::view_fly() const
-{
-    return mat4f::Identity();
-}
-
-inline mat4f Camera::view_ortho() const
-{
-    return mat4f::Identity();
-}
-
-inline mat4f Camera::projection_orbit() const
-{
-    return mat4f::Identity();
-}
-
-inline mat4f Camera::projection_fly() const
-{
-    return mat4f::Identity();
-}
-
-inline mat4f Camera::projection_ortho() const
-{
-    return mat4f::Identity();
 }

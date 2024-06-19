@@ -70,7 +70,7 @@ namespace CGAL::GLFW
   }
 
   Basic_Viewer::Basic_Viewer(
-      const Graphics_scene *graphics_scene,
+      const Graphics_scene *graphicScene,
       const char *title,
       bool draw_vertices,
       bool draw_edges,
@@ -78,15 +78,15 @@ namespace CGAL::GLFW
       bool use_mono_color,
       bool inverse_normal,
       bool draw_rays,
-      bool draw_lines) : m_scene(graphics_scene),
+      bool draw_lines) : m_scene(graphicScene),
                          m_title(title),
-                         m_draw_vertices(draw_vertices),
-                         m_draw_edges(draw_edges),
-                         m_draw_rays(draw_rays),
-                         m_draw_lines(draw_lines),
-                         m_draw_faces(draw_faces),
-                         m_use_mono_color(use_mono_color),
-                         m_inverse_normal(inverse_normal)
+                         m_drawVertices(draw_vertices),
+                         m_drawEdges(draw_edges),
+                         m_drawRays(draw_rays),
+                         m_drawLines(draw_lines),
+                         m_drawFaces(draw_faces),
+                         m_useMonoColor(use_mono_color),
+                         m_inverseNormal(inverse_normal)
   {
     init_keys_actions();
   }
@@ -107,7 +107,7 @@ namespace CGAL::GLFW
     glfwSetFramebufferSizeCallback(m_window, window_size_callback);
 
     print_help();
-    set_cam_mode(m_cam_mode);
+    set_cam_mode(m_camMode);
 
     GLint major, minor;
     glGetIntegerv(GL_MAJOR_VERSION, &major);
@@ -132,9 +132,13 @@ namespace CGAL::GLFW
 
     m_camera.lookat(pmin, pmax);
 
+    double lastFrame = glfwGetTime();
     while (!glfwWindowShouldClose(m_window))
     {
-      handle_events();
+      double currentFrame = glfwGetTime();
+      double deltaTime = currentFrame - lastFrame;
+      lastFrame = currentFrame;
+      handle_events(deltaTime);
       render_scene();
       glfwSwapBuffers(m_window);
       update_frame();
@@ -145,11 +149,11 @@ namespace CGAL::GLFW
 
   void Basic_Viewer::make_screenshot(const std::string &pngpath)
   {
-    m_are_buffers_initialized = false;
+    m_areBuffersInitialized = false;
     m_window = create_window(m_window_size.x(), m_window_size.y(), m_title, true);
     init_buffers();
 
-    set_cam_mode(m_cam_mode);
+    set_cam_mode(m_camMode);
 
     GLint major, minor;
     glGetIntegerv(GL_MAJOR_VERSION, &major);
@@ -181,8 +185,10 @@ namespace CGAL::GLFW
     std::cout << "Forward: " << m_camera.forward().x() << ", " << m_camera.forward().y() << ", " << m_camera.forward().z() << std::endl;
     std::cout << "Direction X: " << dx.x() << ", " << dx.y() << ", " << dx.z() << std::endl;
     std::cout << "Direction Y: " << dy.x() << ", " << dy.y() << ", " << dy.z() << std::endl;
-    vec3f test = multVecMat(m_camera.position(), m_camera.viewport());
-    std::cout << "Viewport : " << test.x() << ", " << test.y() << ", " << test.z() << std::endl;
+    vec3f position = m_camera.position();
+    // vec3f test = multVecMat(m_camera.position(), m_camera.viewport());
+    // std::cout << "Viewport : " << test.x() << ", " << test.y() << ", " << test.z() << std::endl;
+    std::cout << "Viewport : " << position.x() << ", " << position.y() << ", " << position.z() << std::endl;
   }
 
   void Basic_Viewer::compile_shaders()
@@ -218,11 +224,11 @@ namespace CGAL::GLFW
 
   void Basic_Viewer::init_buffers()
   {
-    if (m_are_buffers_initialized)
+    if (m_areBuffersInitialized)
     {
       glGenBuffers(NB_GL_BUFFERS, m_vbo);
       glGenVertexArrays(NB_VAO_BUFFERS, m_vao);
-      m_are_buffers_initialized = true;
+      m_areBuffersInitialized = true;
     }
   }
 
@@ -281,7 +287,7 @@ namespace CGAL::GLFW
     m_face_shader.use();
     glBindVertexArray(m_vao[VAO_MONO_FACES]);
     load_buffer(bufn++, 0, Graphics_scene::POS_MONO_FACES, 3);
-    if (m_flat_shading)
+    if (m_flatShading)
     {
       load_buffer(bufn++, 1, Graphics_scene::FLAT_NORMAL_MONO_FACES, 3);
     }
@@ -293,7 +299,7 @@ namespace CGAL::GLFW
     // 5.2) Colored faces
     glBindVertexArray(m_vao[VAO_COLORED_FACES]);
     load_buffer(bufn++, 0, Graphics_scene::POS_COLORED_FACES, 3);
-    if (m_flat_shading)
+    if (m_flatShading)
     {
       load_buffer(bufn++, 1, Graphics_scene::FLAT_NORMAL_COLORED_FACES, 3);
     }
@@ -311,7 +317,7 @@ namespace CGAL::GLFW
       load_buffer(bufn++, 0, m_array_for_clipping_plane, 3);
     }
 
-    m_are_buffers_initialized = true;
+    m_areBuffersInitialized = true;
   }
 
   CGAL::Plane_3<Basic_Viewer::Local_kernel> Basic_Viewer::clipping_plane() const
@@ -328,10 +334,10 @@ namespace CGAL::GLFW
 
   void Basic_Viewer::update_uniforms()
   {
-    // m_mv = lookAt(m_cam_position, m_cam_position + m_cam_forward, vec3f(0,1,0)) * m_scene_rotation;
+    // m_mv = lookAt(m_camPosition, m_camPosition + m_camForward, vec3f(0,1,0)) * m_scene_rotation;
 
     mat4f view = m_camera.view();
-    mat4f projection = m_camera.projection(m_window_size.x(), m_window_size.y(), 45.f);
+    mat4f projection = m_camera.projection(m_window_size.x(), m_window_size.y());
 
     m_mv = view;
 
@@ -352,7 +358,7 @@ namespace CGAL::GLFW
     m_face_shader.setMatrix4f("mvp_matrix", m_mvp.data());
     m_face_shader.setMatrix4f("mv_matrix", m_mv.data());
 
-    m_face_shader.setVec4f("light_pos", m_light_position.data());
+    m_face_shader.setVec4f("light_pos", m_lightPosition.data());
     m_face_shader.setVec4f("light_diff", m_diffuse.data());
     m_face_shader.setVec4f("light_spec", m_specular.data());
     m_face_shader.setVec4f("light_amb", m_ambient.data());
@@ -370,7 +376,7 @@ namespace CGAL::GLFW
     m_pl_shader.setVec4f("clipPlane", m_clip_plane.data());
     m_pl_shader.setVec4f("pointPlane", m_point_plane.data());
     m_pl_shader.setMatrix4f("mvp_matrix", m_mvp.data());
-    m_pl_shader.setFloat("point_size", m_size_points);
+    m_pl_shader.setFloat("point_size", m_sizePoints);
   }
 
   void Basic_Viewer::set_clipping_uniforms()
@@ -385,7 +391,7 @@ namespace CGAL::GLFW
 
   void Basic_Viewer::render_scene()
   {
-    if (!m_are_buffers_initialized)
+    if (!m_areBuffersInitialized)
     {
       load_scene();
     }
@@ -398,25 +404,25 @@ namespace CGAL::GLFW
 
     update_uniforms();
 
-    bool half = m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY;
+    bool half = m_useClippingPlane == CLIPPING_PLANE_SOLID_HALF_ONLY;
 
-    if (m_draw_vertices)
+    if (m_drawVertices)
     {
       draw_vertices(half ? DRAW_INSIDE_ONLY : DRAW_ALL);
     }
-    if (m_draw_edges)
+    if (m_drawEdges)
     {
       draw_edges(half ? DRAW_INSIDE_ONLY : DRAW_ALL);
     }
-    if (m_draw_faces)
+    if (m_drawFaces)
     {
       draw_faces();
     }
-    if (m_draw_rays)
+    if (m_drawRays)
     {
       draw_rays();
     }
-    if (m_draw_lines)
+    if (m_drawLines)
     {
       draw_lines();
     }
@@ -431,7 +437,7 @@ namespace CGAL::GLFW
   {
     m_face_shader.use();
 
-    if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
+    if (m_useClippingPlane == CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
     {
       // The z-buffer will prevent transparent objects from being displayed behind other transparent objects.
       // Before rendering all transparent objects, disable z-testing first.
@@ -459,8 +465,8 @@ namespace CGAL::GLFW
       return;
     }
 
-    if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
-        m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+    if (m_useClippingPlane == CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
+        m_useClippingPlane == CLIPPING_PLANE_SOLID_HALF_ONLY)
     {
       // 1. draw solid HALF
       draw_faces_(DRAW_INSIDE_ONLY);
@@ -479,14 +485,14 @@ namespace CGAL::GLFW
     m_face_shader.use();
     m_face_shader.setFloat("rendering_mode", mode);
 
-    vec4f color = color_to_vec4(m_faces_mono_color);
+    vec4f color = color_to_vec4(m_facesMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_FACES]);
     glVertexAttrib4fv(2, color.data());
     glDrawArrays(GL_TRIANGLES, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
 
     glBindVertexArray(m_vao[VAO_COLORED_FACES]);
-    if (m_use_mono_color)
+    if (m_useMonoColor)
     {
       glDisableVertexAttribArray(2);
     }
@@ -503,16 +509,16 @@ namespace CGAL::GLFW
     m_pl_shader.use();
     m_pl_shader.setFloat("rendering_mode", RenderMode::DRAW_ALL);
 
-    vec4f color = color_to_vec4(m_rays_mono_color);
+    vec4f color = color_to_vec4(m_raysMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_RAYS]);
     glVertexAttrib4fv(1, color.data());
 
-    glLineWidth(m_size_rays);
+    glLineWidth(m_sizeRays);
     glDrawArrays(GL_LINES, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_RAYS));
 
     glBindVertexArray(m_vao[VAO_COLORED_RAYS]);
-    if (m_use_mono_color)
+    if (m_useMonoColor)
     {
       glDisableVertexAttribArray(1);
     }
@@ -528,14 +534,14 @@ namespace CGAL::GLFW
     m_pl_shader.use();
     m_pl_shader.setFloat("rendering_mode", render);
 
-    vec4f color = color_to_vec4(m_vertices_mono_color);
+    vec4f color = color_to_vec4(m_verticeMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_POINTS]);
     glVertexAttrib4fv(1, color.data());
     glDrawArrays(GL_POINTS, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_POINTS));
 
     glBindVertexArray(m_vao[VAO_COLORED_POINTS]);
-    if (m_use_mono_color)
+    if (m_useMonoColor)
     {
       glDisableVertexAttribArray(1);
     }
@@ -551,15 +557,15 @@ namespace CGAL::GLFW
     m_pl_shader.use();
     m_pl_shader.setFloat("rendering_mode", RenderMode::DRAW_ALL);
 
-    vec4f color = color_to_vec4(m_lines_mono_color);
+    vec4f color = color_to_vec4(m_linesMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_LINES]);
     glVertexAttrib4fv(1, color.data());
-    glLineWidth(m_size_lines);
+    glLineWidth(m_sizeLines);
     glDrawArrays(GL_LINES, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_LINES));
 
     glBindVertexArray(m_vao[VAO_COLORED_LINES]);
-    if (m_use_mono_color)
+    if (m_useMonoColor)
     {
       glDisableVertexAttribArray(1);
     }
@@ -575,15 +581,15 @@ namespace CGAL::GLFW
     m_pl_shader.use();
     m_pl_shader.setFloat("rendering_mode", mode);
 
-    vec4f color = color_to_vec4(m_edges_mono_color);
+    vec4f color = color_to_vec4(m_edgesMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_SEGMENTS]);
     glVertexAttrib4fv(1, color.data());
-    glLineWidth(m_size_edges);
+    glLineWidth(m_sizeEdges);
     glDrawArrays(GL_LINES, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS));
 
     glBindVertexArray(m_vao[VAO_COLORED_SEGMENTS]);
-    if (m_use_mono_color)
+    if (m_useMonoColor)
     {
       glDisableVertexAttribArray(1);
     }
@@ -658,7 +664,7 @@ namespace CGAL::GLFW
     Basic_Viewer *viewer = static_cast<Basic_Viewer *>(glfwGetWindowUserPointer(window));
 
     viewer->m_window_size = {width, height};
-    viewer->set_cam_mode(viewer->m_cam_mode);
+    viewer->set_cam_mode(viewer->m_camMode);
 
     glViewport(0, 0, width, height);
   }
@@ -697,25 +703,30 @@ namespace CGAL::GLFW
       exit(EXIT_SUCCESS);
     }
 
+    double dt = get_delta_time();
     switch (action)
     {
     case UP:
-      m_camera.translation(0, m_cam_speed);
+      // m_camera.translation(0, dt);
+      m_camera.move_up(dt);
       break;
     case DOWN:
-      m_camera.translation(0, -m_cam_speed);
+      // m_camera.translation(0, -dt);
+      m_camera.move_down(dt);
       break;
     case LEFT:
-      m_camera.translation(m_cam_speed, 0);
+      // m_camera.translation(-dt, 0);
+      m_camera.move_left(dt);
       break;
     case RIGHT:
-      m_camera.translation(-m_cam_speed, 0);
+      // m_camera.translation(dt, 0);
+      m_camera.move_right(dt);
       break;
     case FORWARD:
-      m_camera.move(1);
+      m_camera.move(dt);
       break;
     case BACKWARDS:
-      m_camera.move(-1);
+      m_camera.move(-dt);
       break;
     case MOUSE_ROTATE:
       mouse_rotate();
@@ -724,10 +735,11 @@ namespace CGAL::GLFW
       mouse_translate();
       break;
     case SWITCH_CAM_MODE:
-      set_cam_mode(m_cam_mode == PERSPECTIVE ? ORTHOGRAPHIC : PERSPECTIVE);
+      m_camera.toggle_mode();
       break;
     case SWITCH_CAM_ROTATION:
-      switch_rotation_mode();
+      m_camera.toggle_fly();
+      // switch_rotation_mode();
       break;
     case FULLSCREEN:
       fullscreen();
@@ -737,59 +749,60 @@ namespace CGAL::GLFW
       std::cout << "Screenshot saved in local directory." << std::endl;
       break;
     case INC_MOVE_SPEED_1:
-      m_cam_speed = std::min(0.25f, m_cam_speed + 0.01f);
+      m_camera.inc_tspeed();
       break;
     case DEC_MOVE_SPEED_1:
-      m_cam_speed = std::max(0.01f, m_cam_speed - 0.01f);
+      m_camera.dec_tspeed();
       break;
     case INC_ROT_SPEED_1:
-      m_scene_rotation_speed = std::min(0.25f, m_scene_rotation_speed + 0.01f);
+      m_camera.inc_rspeed();
+      // m_scene_rotation_speed = std::min(0.25f, m_scene_rotation_speed + 0.01f);
       break;
     case DEC_ROT_SPEED_1:
-      m_scene_rotation_speed = std::max(0.25f, m_scene_rotation_speed - 0.01f);
+      m_camera.dec_rspeed();
+      // m_scene_rotation_speed = std::max(0.25f, m_scene_rotation_speed - 0.01f);
       break;
     case RESET_CAM:
-      std::cout << "yes" << std::endl;
       m_camera.reset_all();
       break;
     case CLIPPING_PLANE_DISPLAY:
       m_clipping_plane_rendering = !m_clipping_plane_rendering;
       break;
     case CLIPPING_PLANE_MODE:
-      m_use_clipping_plane = static_cast<ClippingMode>((m_use_clipping_plane + 1) % CLIPPING_PLANE_END_INDEX);
+      m_useClippingPlane = static_cast<ClippingMode>((m_useClippingPlane + 1) % CLIPPING_PLANE_END_INDEX);
       break;
     case VERTICES_DISPLAY:
-      m_draw_vertices = !m_draw_vertices;
+      m_drawVertices = !m_drawVertices;
       break;
     case FACES_DISPLAY:
-      m_draw_faces = !m_draw_faces;
+      m_drawFaces = !m_drawFaces;
       break;
     case EDGES_DISPLAY:
-      m_draw_edges = !m_draw_edges;
+      m_drawEdges = !m_drawEdges;
       break;
     case SHADING_MODE:
-      m_flat_shading = !m_flat_shading;
-      m_are_buffers_initialized = false;
+      m_flatShading = !m_flatShading;
+      m_areBuffersInitialized = false;
       break;
     case INVERSE_NORMAL:
-      m_inverse_normal = !m_inverse_normal;
+      m_inverseNormal = !m_inverseNormal;
       m_scene->reverse_all_normals();
-      m_are_buffers_initialized = false;
+      m_areBuffersInitialized = false;
       break;
     case MONO_COLOR:
-      m_use_mono_color = !m_use_mono_color;
+      m_useMonoColor = !m_useMonoColor;
       break;
     case INC_EDGES_SIZE:
-      m_size_edges = std::min(50.f, m_size_edges + 0.1f);
+      m_sizeEdges = std::min(50.f, m_sizeEdges + 0.1f);
       break;
     case DEC_EDGES_SIZE:
-      m_size_edges = std::max(2.f, m_size_edges - 0.1f);
+      m_sizeEdges = std::max(2.f, m_sizeEdges - 0.1f);
       break;
     case INC_POINTS_SIZE:
-      m_size_points = std::min(15.f, m_size_points + 0.1f);
+      m_sizePoints = std::min(15.f, m_sizePoints + 0.1f);
       break;
     case DEC_POINTS_SIZE:
-      m_size_points = std::max(5.f, m_size_points - 0.1f);
+      m_sizePoints = std::max(5.f, m_sizePoints - 0.1f);
       break;
     case INC_LIGHT_ALL:
       m_ambient.x() += 0.01;
@@ -1104,8 +1117,8 @@ namespace CGAL::GLFW
     dir << delta.x(), delta.y(), 0.0f;
 
     vec3f up{0, 1, 0};
-    vec3f right = (-up.cross(m_cam_forward)).normalized();
-    up = m_cam_forward.cross(right).normalized();
+    vec3f right = (-up.cross(m_camForward)).normalized();
+    up = m_camForward.cross(right).normalized();
 
     vec3f result =
         dir.x() * right * d +
@@ -1136,21 +1149,27 @@ namespace CGAL::GLFW
   void Basic_Viewer::translate(vec3f dir)
   {
     const float delta = 1.0f / 60;
-    vec3f right = vec3f(0, 1, 0).cross(m_cam_forward).normalized();
-    vec3f up = m_cam_forward.cross(right);
+    vec3f right = vec3f(0, 1, 0).cross(m_camForward).normalized();
+    vec3f up = m_camForward.cross(right);
 
     vec3f result =
         dir.x() * right * delta +
         dir.y() * up * delta +
-        dir.z() * m_cam_forward * delta;
+        dir.z() * m_camForward * delta;
 
-    m_cam_position += result;
+    m_camPosition += result;
   }
 
   void Basic_Viewer::mouse_rotate()
   {
     vec2f delta = get_cursor_delta();
-    m_camera.rotation(delta.x(), delta.y());
+    
+    double dt = get_delta_time();
+
+    m_camera.rotation(
+      dt * delta.x(), 
+      dt * delta.y()
+    );
     // std::cout << m_camera.position().x() << " "
     //   << m_camera.position().y() << " "
     //   << m_camera.position().z() << std::endl;
@@ -1167,7 +1186,7 @@ namespace CGAL::GLFW
   //   if (m_cam_rotation_mode == FREE){
   //     m_cam_view += cursor_delta * m_cam_rotation_speed;
 
-  //     m_cam_forward = sphericalToCartesian(m_cam_view);
+  //     m_camForward = sphericalToCartesian(m_cam_view);
 
   //     return;
   //   }
@@ -1178,11 +1197,11 @@ namespace CGAL::GLFW
 
   void Basic_Viewer::set_cam_mode(CAM_MODE mode)
   {
-    m_cam_mode = mode;
+    m_camMode = mode;
 
     float ratio = (float)m_window_size.x() / m_window_size.y();
 
-    if (m_cam_mode == PERSPECTIVE)
+    if (m_camMode == PERSPECTIVE)
     {
       m_cam_projection = perspective(radians(45.f), ratio, 0.1f, 1000.0f);
       return;
@@ -1197,7 +1216,7 @@ namespace CGAL::GLFW
 
     if (m_cam_rotation_mode == FREE)
     {
-      m_cam_view = cartesianToSpherical(m_cam_forward);
+      m_cam_view = cartesianToSpherical(m_camForward);
     }
   }
 
@@ -1230,9 +1249,11 @@ namespace CGAL::GLFW
   {
     vec2f delta = get_cursor_delta();
 
+    double dt = get_delta_time();
+
     m_camera.translation(
-        m_cam_speed * delta.x(),
-        m_cam_speed * delta.y());
+      dt * -delta.x(),
+      dt * delta.y());
   }
 
   // void Basic_Viewer::mouse_translate(){
@@ -1291,25 +1312,18 @@ namespace CGAL::GLFW
     }
   }
 
-  void Basic_Viewer::zoom()
+  void Basic_Viewer::scroll_event()
   {
     double yoffset = get_scroll_yoffset();
-    m_camera.move(8.f * yoffset);
+    
+    int state = glfwGetKey(m_window, GLFW_KEY_LEFT_CONTROL);
+
+    if (state == GLFW_PRESS) {
+      m_camera.modify_fov(yoffset);
+    } else {
+      m_camera.move(8.f * yoffset * get_delta_time());
+    }
   }
-
-  // void Basic_Viewer::zoom(float z){
-  //   if (m_cam_mode == ORTHOGRAPHIC){
-  //     m_cam_orth_zoom += z;
-  //     set_cam_mode(ORTHOGRAPHIC);
-  //     return;
-  //   }
-
-  //   // readjust position of the camera
-  //   const float zoom_inc = 0.1f; // todo -> define
-
-  //   m_cam_position += (zoom_inc * z) * m_cam_forward;
-  //   set_cam_mode(PERSPECTIVE);
-  // }
 
   void Basic_Viewer::screenshot(const std::string &filepath)
   {
@@ -1333,13 +1347,13 @@ namespace CGAL::GLFW
   }
 
   // Blocking call
-  inline void draw_graphics_scene(const Graphics_scene &graphics_scene, const char *title)
+  inline void draw_graphics_scene(const Graphics_scene &graphicScene, const char *title)
   {
-    Basic_Viewer(&graphics_scene, title).show();
+    Basic_Viewer(&graphicScene, title).show();
   }
 
-  inline void draw_graphics_scene(const Graphics_scene *graphics_scene, const char *title)
+  inline void draw_graphics_scene(const Graphics_scene *graphicScene, const char *title)
   {
-    Basic_Viewer(graphics_scene, title).show();
+    Basic_Viewer(graphicScene, title).show();
   }
 }

@@ -103,11 +103,11 @@
 #endif
 
 #ifndef CAM_MOVE_SPEED
-#define CAM_MOVE_SPEED 0.01f
+#define CAM_MOVE_SPEED 5.f
 #endif
 
 #ifndef CAM_ROT_SPEED
-#define CAM_ROT_SPEED 0.05f
+#define CAM_ROT_SPEED 5.f
 #endif
 
 #ifndef CLIPPING_PLANE_MOVE_SPEED
