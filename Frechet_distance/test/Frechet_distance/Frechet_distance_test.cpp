@@ -189,9 +189,9 @@ void testFrechetDistance()
 
 void testFrechetDistanceNearNeighborsDS()
 {
-        std::string curve_directory = "../data/curves/";
+        std::string curve_directory = "./data/curves/";
         std::vector<std::string> datasets = { "sigspatial" };
-        std::string query_directory = "../data/ds_queries/";
+        std::string query_directory = "./data/ds_queries/";
 
         for (auto const& dataset: datasets) {
                 auto curves = readCurves(curve_directory + dataset + "/");
@@ -222,7 +222,7 @@ int main()
 {
     // TODO: add actualy query data for DS
       //  std::cout << "testFrechetDistanceNearNeighborsDS start" << std::endl;
-      // testFrechetDistanceNearNeighborsDS();
+      testFrechetDistanceNearNeighborsDS();
       //  std::cout << "testFrechetDistanceNearNeighborsDS done" << std::endl;
     std::cout << "testFrechetDistance start" << std::endl;
     testFrechetDistance();
