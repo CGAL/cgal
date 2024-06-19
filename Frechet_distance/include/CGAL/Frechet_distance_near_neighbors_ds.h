@@ -27,7 +27,7 @@
 namespace CGAL
 {
 
-// TODO: hide away in Frechet_distance::internal (different naming but nvm)
+// TODO: hide away in Frechet_distance_::internal (different naming but nvm)
 template <typename PointRange>
 using PointRangeKernel = typename CGAL::Kernel_traits<
     typename std::iterator_traits<typename PointRange::iterator>::value_type>::
@@ -54,7 +54,7 @@ public:
 
 private:
     Polylines curves;
-    Frechet_distance::internal::FrechetKdTree<Traits> kd_tree;
+    Frechet_distance_::internal::FrechetKdTree<Traits> kd_tree;
 };
 
 // TODO: store preprocessed curves after CGALization

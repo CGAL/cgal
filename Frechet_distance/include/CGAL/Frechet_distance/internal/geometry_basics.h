@@ -33,7 +33,7 @@
 #include <CGAL/Frechet_distance/internal/curve.h>
 
 namespace CGAL {
-namespace Frechet_distance {
+namespace Frechet_distance_ {
 namespace internal {
 
 
@@ -186,11 +186,10 @@ struct Lambda {
     }
 };
 
-} // namespace Frechet_distance
-} // namespace internal
+} } // namespace Frechet_distance_::internal
 
 template <typename C>
-bool is_one(const Frechet_distance::internal::Lambda<C>& lambda)
+bool is_one(const Frechet_distance_::internal::Lambda<C>& lambda)
 {
     if (lambda.is_one) return true;
     if (lambda.is_zero) return false;
@@ -203,7 +202,7 @@ bool is_one(const Frechet_distance::internal::Lambda<C>& lambda)
 }
 
 template <typename C>
-bool is_zero(const Frechet_distance::internal::Lambda<C>& lambda)
+bool is_zero(const Frechet_distance_::internal::Lambda<C>& lambda)
 {
     if (lambda.is_zero) return true;
     if (lambda.is_one) return false;
@@ -217,14 +216,14 @@ bool is_zero(const Frechet_distance::internal::Lambda<C>& lambda)
 
 /*
 template <typename K>
-CGAL::Interval_nt<false> to_interval(const Frechet_distance::internal::Lambda<K>& lambda)
+CGAL::Interval_nt<false> to_interval(const Frechet_distance_::internal::Lambda<K>& lambda)
 {
   return lambda.approx;
 }
 */
 
 
-namespace Frechet_distance
+namespace Frechet_distance_
 {
 namespace internal {
 
@@ -600,5 +599,5 @@ std::ostream& operator<<(std::ostream& out, const CInterval<C>& interval)
 }
 
 } // namespace internal
-} // namespace Frechet_distance
+} // namespace Frechet_distance_
 } // namespace CGAL

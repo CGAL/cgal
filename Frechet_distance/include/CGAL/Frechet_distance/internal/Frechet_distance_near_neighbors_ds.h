@@ -31,7 +31,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Frechet_distance {
+namespace Frechet_distance_ {
 namespace internal {
 
 
@@ -229,7 +229,7 @@ auto FrechetKdTree<Traits>::search(Polyline const& curve, FT distance)
 }
 
 } // namespace internal
-} // namespace Frechet_distance
+} // namespace Frechet_distance_
 }  // end of namespace CGAL
 
 #endif  // CGAL_INTERNAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H

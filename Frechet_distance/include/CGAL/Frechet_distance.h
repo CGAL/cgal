@@ -45,11 +45,11 @@ bool Frechet_distance_less_than(const PointRange& polyline1,
                                            const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
-    auto icurve1 = Frechet_distance::internal::toCurve(polyline1, traits);
-    auto icurve2 = Frechet_distance::internal::toCurve(polyline2, traits);
-    auto idistance = Frechet_distance::internal::toDistance(distance);
+    auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
+    auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
+    auto idistance = Frechet_distance_::internal::toDistance(distance);
 
-    return Frechet_distance::internal::lessThan(icurve1, icurve2, idistance, traits);
+    return Frechet_distance_::internal::lessThan(icurve1, icurve2, idistance, traits);
 }
 
 /**
@@ -73,10 +73,10 @@ std::pair<double,double> Frechet_distance(const PointRange& polyline1,
                                                     const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
-    auto icurve1 = Frechet_distance::internal::toCurve(polyline1, traits);
-    auto icurve2 = Frechet_distance::internal::toCurve(polyline2, traits);
+    auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
+    auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
 
-    return Frechet_distance::internal::calcDistance(icurve1, icurve2, traits, precision);
+    return Frechet_distance_::internal::calcDistance(icurve1, icurve2, traits, precision);
 }
 
 }  // end of namespace CGAL

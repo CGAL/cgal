@@ -19,7 +19,7 @@
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
 
 namespace CGAL {
-namespace Frechet_distance {
+namespace Frechet_distance_ {
 namespace internal {
 
 
@@ -159,5 +159,5 @@ Interval<C> intersection_interval(C const& curve1,
 }  // namespace HLPred
 
 } // namespace internal
-} // namespace Frechet_distance
+} // namespace Frechet_distance_
 } // namespace CGAL

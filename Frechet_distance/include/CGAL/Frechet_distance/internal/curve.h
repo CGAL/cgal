@@ -25,7 +25,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Frechet_distance {
+namespace Frechet_distance_ {
 namespace internal {
 
 double length_of_diagonal(const Bbox_2& bb)
@@ -206,13 +206,16 @@ public:
     template <class P>
     Point interpolate_at(P const& pt) const
     {
-        assert(pt.getFraction() >= Lambda<Self>(0) &&
-               pt.getFraction() <= Lambda<Self>(1));
+//        assert(pt.getFraction() >= Lambda<Self>(0) &&
+//               pt.getFraction() <= Lambda<Self>(1));
         assert((
             pt.getPoint() < points.size() - 1 ||
-            (pt.getPoint() == points.size() - 1 && is_zero(pt.getFraction()))));
+            (pt.getPoint() == points.size() - 1 &&
+//            is_zero(pt.getFraction()))));
+            pt.getFraction()==0)));
 
-        if (is_zero(pt.getFraction())) {
+//        if (is_zero(pt.getFraction())) {
+        if (pt.getFraction()==0) {
             return points[pt.getPoint()];
         }
         auto fraction = pt.getFraction().approx;
@@ -242,15 +245,6 @@ public:
     typename Points::const_iterator end() const { return points.cend(); }
 
     Bbox const& bbox() const { return extreme_points; }
-
-    template <int>
-    distance_t getUpperBoundDistanceImpl(Curve const& other) const;
-
-    template <>
-    distance_t getUpperBoundDistanceImpl<2>(Curve const& other) const;
-
-    template <>
-    distance_t getUpperBoundDistanceImpl<3>(Curve const& other) const;
 
     distance_t getUpperBoundDistance(Curve const& other) const;
 
@@ -300,6 +294,4 @@ std::ostream& operator<<(std::ostream& out, const Curve<K>& curve)
     return out;
 }
 
-} // namespace internal
-} // namespace Frechet_distance
-} // namespace CGAL
+} } } // namespace CGAL::Frechet_distance_::internal

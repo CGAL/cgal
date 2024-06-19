@@ -21,7 +21,7 @@
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
 
 namespace CGAL {
-namespace Frechet_distance {
+namespace Frechet_distance_ {
 namespace internal {
 
 template <class PointRange, class Traits>
@@ -57,8 +57,6 @@ typename Traits::distance_t calcDistance(Curve<Traits> const& curve1,
     return frechet.calcDistance(curve1, curve2, precision);
 }
 
-} // namespace internal
-} // namespace Frechet_distance
-}  // end of namespace CGAL
+} } }  // end of namespace CGAL::Frechet_distance_::internal
 
 #endif  // CGAL_INTERNAL_Frechet_distance_FRECHET_DISTANCE_H

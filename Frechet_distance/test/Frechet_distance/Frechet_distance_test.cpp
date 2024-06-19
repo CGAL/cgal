@@ -137,7 +137,7 @@ FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQueries(
                 std::stringstream ss(line);
                 ss >> query.id >> query.distance;
 
-                CGAL::Frechet_distance::internal::CurveID result_id;
+                CGAL::Frechet_distance_::internal::CurveID result_id;
                 while (ss >> result_id) {
                         query.expected_result.push_back(result_id);
                 }
