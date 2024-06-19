@@ -23,6 +23,8 @@
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_VERTEX_BASE_3_H
 
 #include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Constrained_Delaunay_triangulation_vertex_data_3.h>
+#include <CGAL/SMDS_3/io_signature.h>
 
 namespace CGAL {
 
@@ -42,15 +44,27 @@ namespace CGAL {
  * \sa `CGAL::Constrained_Delaunay_triangulation_cell_base_3`
  */
 template < typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
-class Constrained_Delaunay_triangulation_vertex_base_3 : public Vb {
+class Constrained_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb>
+{
+  Constrained_Delaunay_triangulation_vertex_data_3 cdt_3_data_;
 public:
-        // Add your custom member functions and variables here
+  // To get correct vertex type in TDS
+  template <class TDS3> struct Rebind_TDS
+  {
+    using Vb3 = typename Vb::template Rebind_TDS<TDS3>::Other;
+    using Other = Constrained_Delaunay_triangulation_vertex_base_3<Gt, Vb3>;
+  };
 
-protected:
-        // Add your protected member functions and variables here
+  using Base = Base_with_time_stamp<Vb>;
+  using Base::Base;
 
-private:
-        // Add your private member functions and variables here
+  Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() {
+    return cdt_3_data_;
+  }
+
+  static std::string io_signature() {
+    return Get_io_signature<Vb>()();
+  }
 };
 
 } // namespace CGAL

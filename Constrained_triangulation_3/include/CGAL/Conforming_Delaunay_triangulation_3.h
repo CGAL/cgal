@@ -45,30 +45,6 @@
 
 namespace CGAL {
 
-template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt>>
-class Conforming_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb>
-{
-  Constrained_Delaunay_triangulation_vertex_data_3 cdt_3_data_;
-public:
-  // To get correct vertex type in TDS
-  template < class TDS3 >
-  struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Conforming_Delaunay_triangulation_vertex_base_3 <Gt, Vb3> Other;
-  };
-
-  using Base = Base_with_time_stamp<Vb>;
-  using Base::Base;
-
-  Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() {
-    return cdt_3_data_;
-  }
-
-  static std::string io_signature() {
-    return Get_io_signature<Vb>()();
-  }
-};
-
 template <typename T_3>
 class Conforming_Delaunay_triangulation_3 : public T_3 {
 public:

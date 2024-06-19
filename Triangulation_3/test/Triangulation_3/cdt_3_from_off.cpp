@@ -4,6 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>

@@ -27,6 +27,7 @@
 
 #include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Constrained_Delaunay_triangulation_cell_data_3.h>
+#include <CGAL/Constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -524,26 +525,6 @@ template <typename Polygons, typename Kernel>
 concept Range_of_polygon_3 = std::ranges::common_range<Polygons>
       && Polygon_3<std::ranges::range_value_t<Polygons>, Kernel>;
 #endif // concepts
-
-template <typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
-class Constrained_Delaunay_triangulation_vertex_base_3
-  : public Conforming_Delaunay_triangulation_vertex_base_3<Gt, Vb>
-{
-  using Base = Conforming_Delaunay_triangulation_vertex_base_3<Gt, Vb>;
-public:
-  // To get correct vertex type in TDS
-  template < class TDS3 >
-  struct Rebind_TDS {
-    typedef typename Vb::template Rebind_TDS<TDS3>::Other Vb3;
-    typedef Constrained_Delaunay_triangulation_vertex_base_3 <Gt, Vb3> Other;
-  };
-
-  using Base::Base;
-
-  static std::string io_signature() {
-    return Get_io_signature<Base>()();
-  }
-};
 
 enum class CDT_3_cell_marker {
   CLEAR = 0,
