@@ -117,13 +117,12 @@ void render(LCC &lcc, size_type mark)
 
 void mark_stage();
 void refinement_stage();
-
-void create_vertices_for_templates(LCC &lcc, size_type toprocess_mark, size_type template_1, size_type arrete_done);
+void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_cells, size_type toprocess_mark, size_type template_1, size_type arrete_done);
 
 int main()
 {
   LCC lcc;
-  Pattern_substituer<LCC> ps, ps2;
+  Pattern_substituer<LCC> ps;
   auto d1=
     lcc.make_hexahedron(Point(0,0,0), Point(5,0,0),
                         Point(5,5,0), Point(0,5,0),
@@ -138,11 +137,8 @@ int main()
 
   lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
 
-  // ps.load_vpatterns(CGAL::data_file_path("hexmeshing/vpattern"));
-  // ps2.load_fpatterns(CGAL::data_file_path("query_replace/hexa-8-subdivision/fpattern"));
-  // subdivide_edges(lcc);
-  // subdivide_faces(lcc, 32UL, ps2);
-  // ps.query_replace_one_volume(lcc, d1);
+  ps.load_spatterns(CGAL::data_file_path("hexmeshing/spattern"), mark_spattern_edges<LCC>);
+  ps.load_vpatterns(CGAL::data_file_path("hexmeshing/vpattern"));
 
   auto initial_mark = lcc.get_new_mark();
   auto toprocess_mark = lcc.get_new_mark();
@@ -157,15 +153,59 @@ int main()
   lcc.mark_cell<0>(d2, initial_mark);
   
   lcc.mark_cell<3>(d1, template_1);
-  lcc.mark_cell<3>(d2, template_3);
+  lcc.mark_cell<3>(d2, template_1);
 
-  create_vertices_for_templates(lcc, toprocess_mark, template_1, arrete_done);
+  std::vector<Dart_handle> marked_cells; 
+  
+  // We assume we already filled out marked_cells earlier
+
+  marked_cells.push_back(d1);
+  marked_cells.push_back(d2);
+
+// BUG manque des verticies
+  create_vertices_for_templates(lcc, marked_cells, toprocess_mark, template_1, arrete_done);
+  
+
+  // Replace all volumes that has a matching surfacic pattern 
+  std::vector<Dart_handle> marked_cells_3; 
+
+  for (auto dit = lcc.one_dart_per_cell<3>().begin(),
+              dend = lcc.one_dart_per_cell<3>().end();
+         dit != dend;
+         dit++) {
+    
+    Dart_handle dart = dit;
+    marked_cells_3.push_back(dart);
+  }
+
+  for (auto dart: marked_cells_3){
+    ps.query_replace_one_surface(lcc, dart);
+  }
+
+  // Refine the resulting volumes 
+
+  marked_cells_3.clear();
+
+  for (auto dit = lcc.one_dart_per_cell<3>().begin(),
+              dend = lcc.one_dart_per_cell<3>().end();
+         dit != dend;
+         dit++) {
+    
+    Dart_handle dart = dit;
+    marked_cells_3.push_back(dart);
+  }
+
+  for (auto dart: marked_cells_3){
+    ps.query_replace_one_volume(lcc, dart);
+  }
+
+
 
   render(lcc, initial_mark);
   return EXIT_SUCCESS;
 }
 
-void create_vertices_for_templates(LCC &lcc, size_type toprocess_mark, size_type template_1, size_type arrete_done)
+void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_cells, size_type toprocess_mark, size_type template_1, size_type arrete_done)
 {
 
   // 2 noeuds marqué l'un à coté de l'autre ne produit pas de sommet
@@ -173,19 +213,8 @@ void create_vertices_for_templates(LCC &lcc, size_type toprocess_mark, size_type
 
   std::vector<Dart_handle> edges_to_subdivide;
 
-  for (auto itd = lcc.one_dart_per_cell<0>().begin(),
-            itdend = lcc.one_dart_per_cell<0>().end();
-       itd != itdend; ++itd)
+  for (auto dart : marked_cells)
   {
-
-    Dart_handle dart = itd;
-
-    if (!lcc.is_marked(dart, toprocess_mark) /* || !lcc.is_marked(dart, template_1) */)
-    {
-      dart = lcc.beta<1>(dart);
-      continue;
-    }
-
     for (auto nit = lcc.one_dart_per_incident_cell<1, 0>(dart).begin(),
               nend = lcc.one_dart_per_incident_cell<1, 0>(dart).end();
          nit != nend;
