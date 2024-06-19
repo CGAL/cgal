@@ -107,12 +107,12 @@ bool cell_position_QEM(const typename Domain::cell_descriptor& c,
   x_max = y_max = z_max = std::numeric_limits<FT>::lowest();
   FT x(0), y(0), z(0);
 
-  typename Domain::Cell_vertices vertices = domain.cell_vertices(c);
-  for(const auto& v : vertices)
+  if(constrain_to_cell)
   {
-    const Point_3& cp = domain.point(v);
-    if(constrain_to_cell)
+    typename Domain::Cell_vertices vertices = domain.cell_vertices(c);
+    for(const auto& v : vertices)
     {
+      const Point_3& cp = domain.point(v);
       x_min = (std::min<FT>)(x_min, x_coord(cp));
       y_min = (std::min<FT>)(y_min, y_coord(cp));
       z_min = (std::min<FT>)(z_min, z_coord(cp));
