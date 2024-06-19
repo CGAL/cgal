@@ -49,25 +49,26 @@ public:
   int size() const;
 
   /*!
-      Returns the index-th vertex.
+      Returns the \f$ i \f$-th vertex.
 
       \pre <code> is_valid() </code>
   */
-  Point vertex(int index) const;
+  Point vertex(int i) const;
 
   /*!
-      Returns the index of the side paired to the index-th side.
+      Returns the index of the side paired to the \f$ i \f$-th side.
 
       \pre <code> is_valid() </code>
   */
-  int paired_side(int index) const;
+  int paired_side(int i) const;
 
   /*!
-       Returns the isometry that maps side \f$ \overline A \f$ to side \f$ A \f$, where \f$ A \f$ is the index-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
+       Returns the isometry that maps side \f$ \overline A \f$ to side \f$ A
+       \f$, where \f$ A \f$ is the \f$ i \f$-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
 
        \pre <code> is_valid() </code>
   */
-  Hyperbolic_isometry_2<Traits> side_pairing(int index) const;
+  Hyperbolic_isometry_2<Traits> side_pairing(int i) const;
   /// @}
 
   /// \name Input/output
