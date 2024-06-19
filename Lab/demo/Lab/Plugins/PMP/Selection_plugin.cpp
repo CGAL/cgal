@@ -555,8 +555,6 @@ public Q_SLOTS:
     }
   }
   void on_Selection_type_combo_box_changed(int index) {
-    std::cout << "on_Selection_type_combo_box_changed(" << index << ")" << std::endl;
-
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
     for(Selection_item_map::iterator it = selection_item_map.begin(); it != selection_item_map.end(); ++it) {
       it->second->set_active_handle_type(static_cast<Active_handle::Type>(index));
