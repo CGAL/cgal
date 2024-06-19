@@ -21,6 +21,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
 #include <vector>
 
 namespace CGAL {
@@ -59,14 +60,16 @@ public:
 
     static auto get_type()
     {
+      if constexpr (::CGAL::internal::Has_nested_type_Has_filtered_predicates_tag<K>::value)
+      {
         if constexpr (K::Has_filtered_predicates_tag::value) {
             return typename K::Exact_kernel{};
-        } else {
-            if constexpr (std::is_floating_point_v<typename K::FT>)
-                return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
-            else
-                return K{};
         }
+      }
+      if constexpr (std::is_floating_point_v<typename K::FT>)
+          return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
+      else
+          return K{};
     }
 
     using Rational_kernel = decltype(get_type());
