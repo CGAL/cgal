@@ -157,7 +157,7 @@ public:
     return cite;
   }
 
-  static Cell_vertices cell_vertices (const cell_descriptor& c, const OpenVDB_partition&)
+  static Cell_vertices cell_vertices(const cell_descriptor& c, const OpenVDB_partition&)
   {
     Cell_vertices cv;
     for (std::size_t i = 0; i < cv.size(); ++i)
@@ -210,6 +210,7 @@ public:
       f(edge_descriptor{iter.getCoord(), 2});
     }
   }
+
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   static void for_each_cell(Functor& f,
                             const OpenVDB_partition& partition,
@@ -221,6 +222,7 @@ public:
     }
   }
 };
+
 }
 }
 
@@ -364,8 +366,8 @@ void run_marching_cubes(openvdb::FloatGrid::Ptr grid,
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;
   const std::string outfile = use_tcm
-                        ? "marching_cubes_discrete_tcm.off"
-                        : "marching_cubes_discrete.off";
+                        ? "marching_cubes_openvdb_tcm.off"
+                        : "marching_cubes_openvdb.off";
   CGAL::IO::write_polygon_soup(outfile, points, triangles);
 }
 
@@ -391,11 +393,12 @@ void run_dual_contouring(openvdb::FloatGrid::Ptr grid,
   Polygon_range triangles;
 
   // run dual contouring isosurfacing
-  IS::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles);
+  IS::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles,
+                                                       CGAL::parameters::do_not_triangulate_faces(true));
 
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #triangles: " << triangles.size() << std::endl;
-  CGAL::IO::write_polygon_soup("dual_contouring_discrete.off", points, triangles);
+  CGAL::IO::write_polygon_soup("dual_contouring_openvdb.off", points, triangles);
 }
 
 
