@@ -9,7 +9,7 @@ namespace CGAL {
 
 
 <center>
-<img src="FrechetTeaser.jpg" style="max-width:70%;"/>
+<img src="FrechetTeaser.png" style="max-width:30%;"/>
 </center>
 
 This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
@@ -20,11 +20,14 @@ The Fréchet distance is a classical dissimilarity measure between polylines.
 Its advantages over other measures is that it consideres the polylines as a continuous objects and that it takes into account the order of the points.
 Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline, they are connected by a leash, and they are only allowed to walk forward. The Fréchet distance is the shortest leash length that allows both the human and dog walk from start to end on their respective trajectories.
 
+
+<!--
 \cgalFigureBegin{figRefId,pdist-pkg-small.png}
 Here you can put the caption
 \cgalFigureEnd
+-->
 
-The Fréchet distance is a metric and hence two polylines that are equal (disregarding consecutive colinear points) have a distance of zero.
+The Fréchet distance is a metric and hence two polylines that are equal (disregarding consecutive collinear points) have a distance of zero.
 
 \section secFrechetDistanceAPI API
 
@@ -67,6 +70,10 @@ An intial version using floating point arithmetic was developed by the authors
 while working at the Max Planck Institute for Informatics in Saarbrücken, Germany.
 André Nusser, together with Sebastien Loriot and Andreas Fabri, introduced
 the usage of interval arithmetic and square root extensions to achieve a certified result.
+
+\subsection subsecFrechetDistanceImageCredits  Image Credits
+
+The teaser image comes from the <a href="https://archive.ics.uci.edu/dataset/175/character+trajectories">Character Trajectories</a> data set.
 
 */
 } /* namespace CGAL */
