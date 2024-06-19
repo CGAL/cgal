@@ -181,7 +181,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
           f({{i, j, k}});
   }
 
-  #ifdef CGAL_LINKED_WITH_TBB
+#ifdef CGAL_LINKED_WITH_TBB
   // iterates in parallel over all vertices v calling f(v) on every one
   template <typename Functor>
   static void for_each_vertex(Functor& f,
@@ -255,7 +255,14 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
     tbb::blocked_range3d<std::size_t> range(0, g.xdim() - 1, 0, g.ydim() - 1, 0, g.zdim() - 1);
     tbb::parallel_for(range, iterator);
   }
-  #endif // CGAL_LINKED_WITH_TBB
+#endif // CGAL_LINKED_WITH_TBB
+
+  template <typename ConcurrencyTag, typename Functor>
+  static void for_each_vertex(Functor& f, const Grid& g) { return for_each_vertex(f, g, ConcurrencyTag{}); }
+  template <typename ConcurrencyTag, typename Functor>
+  static void for_each_edge(Functor& f, const Grid& g) { return for_each_edge(f, g, ConcurrencyTag{}); }
+  template <typename ConcurrencyTag, typename Functor>
+  static void for_each_cell(Functor& f, const Grid& g) { return for_each_cell(f, g, ConcurrencyTag{}); }
 };
 
 } // namespace Isosurfacing

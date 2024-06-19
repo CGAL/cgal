@@ -164,6 +164,13 @@ public:
     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, cells.size()), iterator);
   }
 #endif // CGAL_LINKED_WITH_TBB
+
+  template <typename ConcurrencyTag, typename Functor>
+  static void for_each_vertex(Functor& f, const Octree& o) { return for_each_vertex(f, o, ConcurrencyTag{}); }
+  template <typename ConcurrencyTag, typename Functor>
+  static void for_each_edge(Functor& f, const Octree& o) { return for_each_edge(f, o, ConcurrencyTag{}); }
+  template <typename ConcurrencyTag, typename Functor>
+  static void for_each_cell(Functor& f, const Octree& o) { return for_each_cell(f, o, ConcurrencyTag{}); }
 };
 
 } // namespace Isosurfacing

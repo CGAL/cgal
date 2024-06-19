@@ -141,21 +141,21 @@ public:
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_vertex(Functor& f) const
   {
-    PT::for_each_vertex(f, m_partition, ConcurrencyTag{});
+    PT::template for_each_vertex<ConcurrencyTag>(f, m_partition);
   }
 
   // iterates over all edges `e`, calling `f(e)` on each of them
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_edge(Functor& f) const
   {
-    PT::for_each_edge(f, m_partition, ConcurrencyTag{});
+    PT::template for_each_edge<ConcurrencyTag>(f, m_partition);
   }
 
   // iterates over all cells `c`, calling `f(c)` on each of them
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_cell(Functor& f) const
   {
-    PT::for_each_cell(f, m_partition, ConcurrencyTag{});
+    PT::template for_each_cell<ConcurrencyTag>(f, m_partition);
   }
 
   // finds the intersection of the isosurface with the edge `e` (if any)
