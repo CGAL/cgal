@@ -254,12 +254,77 @@ public:
 
   FT operator()(const Point_3& p) const
   {
+    // calculate coordinates of min index
     openvdb::Vec3d ijk_p = _grid->worldToIndex(openvdb::Vec3d(p.x(), p.y(), p.z()));
     openvdb::Coord ijk(static_cast<int>(ijk_p.x()),
                        static_cast<int>(ijk_p.y()),
                        static_cast<int>(ijk_p.z()));
-    return _accessor.getValue(ijk);
+
+    openvdb::Coord ijk_z  (ijk[0] + 0, ijk[1] + 0, ijk[2] + 1);
+    openvdb::Coord ijk_y  (ijk[0] + 0, ijk[1] + 1, ijk[2] + 0);
+    openvdb::Coord ijk_yz (ijk[0] + 0, ijk[1] + 1, ijk[2] + 1);
+    openvdb::Coord ijk_x  (ijk[0] + 1, ijk[1] + 0, ijk[2] + 0);
+    openvdb::Coord ijk_xz (ijk[0] + 1, ijk[1] + 0, ijk[2] + 1);
+    openvdb::Coord ijk_xy (ijk[0] + 1, ijk[1] + 1, ijk[2] + 0);
+    openvdb::Coord ijk_xyz(ijk[0] + 1, ijk[1] + 1, ijk[2] + 1);
+
+    auto min_p = _grid->indexToWorld(ijk);
+    auto ijk_z_p = _grid->indexToWorld(ijk_z);
+    auto ijk_y_p = _grid->indexToWorld(ijk_y);
+    auto ijk_yz_p = _grid->indexToWorld(ijk_yz);
+    auto ijk_x_p = _grid->indexToWorld(ijk_x);
+    auto ijk_xz_p = _grid->indexToWorld(ijk_xz);
+    auto ijk_xy_p = _grid->indexToWorld(ijk_xy);
+    auto ijk_xyz_p = _grid->indexToWorld(ijk_xyz);
+
+    std::cout << "p: " << p << std::endl;
+    std::cout << "ijk_p: " << ijk_p << std::endl;
+    std::cout << "min_p: " << min_p << std::endl;
+    std::cout <<  _grid->indexToWorld(ijk) << std::endl;
+    std::cout <<  _grid->indexToWorld(ijk_z) << std::endl;
+    std::cout <<  _grid->indexToWorld(ijk_y) << std::endl;
+    std::cout <<  _grid->indexToWorld(ijk_yz) << std::endl;
+    std::cout <<  _grid->indexToWorld(ijk_x) << std::endl;
+    std::cout <<  _grid->indexToWorld(ijk_xz) << std::endl;
+    std::cout <<  _grid->indexToWorld(ijk_xy) << std::endl;
+    std::cout <<  _grid->indexToWorld(ijk_xyz) << std::endl;
+
+    // interpolation factors between 0 and 1
+    const FT f_i = CGAL::abs((p.x() - min_p.x()) / (ijk_x_p.x() - min_p.x())); // @fixme? negative voxels
+    const FT f_j = CGAL::abs((p.y() - min_p.y()) / (ijk_y_p.y() - min_p.y()));
+    const FT f_k = CGAL::abs((p.z() - min_p.z()) / (ijk_z_p.z() - min_p.z()));
+    std::cout << "f_i = " << f_i << std::endl;
+    std::cout << "f_j = " << f_j << std::endl;
+    std::cout << "f_k = " << f_k << std::endl;
+    CGAL_assertion(f_i >= 0 && f_j >= 0 && f_k >= 0 && f_i <= 1. && f_j <= 1. && f_k <= 1.);
+
+    // read the value at all 8 corner points
+    const FT g000 = _accessor.getValue(ijk);
+    const FT g001 = _accessor.getValue(ijk_z);
+    const FT g010 = _accessor.getValue(ijk_y);
+    const FT g011 = _accessor.getValue(ijk_yz);
+    const FT g100 = _accessor.getValue(ijk_x);
+    const FT g101 = _accessor.getValue(ijk_xz);
+    const FT g110 = _accessor.getValue(ijk_xy);
+    const FT g111 = _accessor.getValue(ijk_xyz);
+
+    // interpolate along all axes by weighting the corner points
+    const FT lambda000 = (FT(1) - f_i) * (FT(1) - f_j) * (FT(1) - f_k);
+    const FT lambda001 = (FT(1) - f_i) * (FT(1) - f_j) * f_k;
+    const FT lambda010 = (FT(1) - f_i) * f_j * (FT(1) - f_k);
+    const FT lambda011 = (FT(1) - f_i) * f_j * f_k;
+    const FT lambda100 = f_i * (FT(1) - f_j) * (FT(1) - f_k);
+    const FT lambda101 = f_i * (FT(1) - f_j) * f_k;
+    const FT lambda110 = f_i * f_j * (FT(1) - f_k);
+    const FT lambda111 = f_i * f_j * f_k;
+
+    // add weighted corners
+    return g000 * lambda000 + g001 * lambda001 +
+           g010 * lambda010 + g011 * lambda011 +
+           g100 * lambda100 + g101 * lambda101 +
+           g110 * lambda110 + g111 * lambda111;
   }
+
   FT operator()(const vertex_descriptor& v) const
   {
     return _accessor.getValue(v);
