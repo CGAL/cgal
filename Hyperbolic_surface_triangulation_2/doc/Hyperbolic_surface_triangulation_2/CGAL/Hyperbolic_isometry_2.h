@@ -33,25 +33,25 @@ class Hyperbolic_isometry_2{
     Hyperbolic_isometry_2();
     /// @}
 
-    /// \name Access functions
-    /// @{
     /*!
-      Set the isometry to the identity.
+      sets the isometry to the identity.
     */
     void set_to_identity();
 
     /*!
-      Can be used to set the coefficients of the isometry manually, be careful when doing so : the implementation does not check that the resulting Möbius transform fixes the unit circle.
+      can be used to set the coefficients of the isometry manually, be careful when doing so : the implementation does not check that the resulting Möbius transform fixes the unit circle.
     */
     void set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3);
 
     /*!
-      Can be used to set one coefficient of the isometry manually, be careful when doing so : the implementation does not check that the resulting Möbius transform fixes the unit circle.
+      can be used to set one coefficient of the isometry manually, be careful when doing so : the implementation does not check that the resulting Möbius transform fixes the unit circle.
     */
     void set_coefficient(int index, const ComplexNumber& coefficient);
 
+    /// \name Access functions
+    /// @{
     /*!
-      Returns the index-th coefficient.
+      returns the index-th coefficient.
     */
     ComplexNumber get_coefficient(int index) const;
     /// @}
@@ -59,20 +59,20 @@ class Hyperbolic_isometry_2{
     /// \name Operations
     /// @{
     /*!
-      Evaluates the isometry at the point.
+      evaluates the isometry at the point.
     */
     Point evaluate(const Point& point) const;
 
     /*!
-      Returns the composition of <code> other </code> by <code> itself </code>.
+      returns the composition of <code> other </code> by <code> itself </code>.
     */
     Hyperbolic_isometry_2<Traits> compose(const Hyperbolic_isometry_2<Traits>& other) const;
     /// @}
 
-    /// \name Input/output
+    /// \name Input/Output
     /// @{
     /*!
-    Writes the isometry in a stream.
+    writes the isometry in a stream.
     */
     std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
     /// @}
