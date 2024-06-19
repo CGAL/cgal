@@ -17,7 +17,7 @@ This package provides functions for computing the Fréchet distance of polylines
 \section secFrechetDistanceIntroduction Introdution
 
 The Fréchet distance is a classical dissimilarity measure between polylines.
-Its advantages over other measures is that it both consideres the polylines as continuous objects and takes into account the ordering of the points.
+Its advantages over other measures is that it both considers the polylines as continuous objects and takes into account the ordering of the points.
 Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline, they are connected by a leash, and they are only allowed to walk forward. The Fréchet distance is the shortest leash length that allows the human and the dog to jointly walk from start to end on their respective trajectories.
 
 
@@ -69,7 +69,7 @@ The teaser image is a visualization of two data points from the <a href="https:/
 
 \subsection subsecFrechetDistanceImplementation  Implementation History
 
-An intial version using floating point arithmetic was developed by the authors
+An initial version using floating point arithmetic was developed by the authors
 while working at the Max Planck Institute for Informatics in Saarbrücken, Germany.
 André Nusser, together with Sebastien Loriot and Andreas Fabri, introduced
 the usage of interval arithmetic and square root extensions to alleviate issues stemming from rounding errors and hence ensuring correctness of the computation.
