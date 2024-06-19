@@ -65,8 +65,11 @@ public:
         if constexpr (K::Has_filtered_predicates_tag::value) {
             return std::true_type();
         }
+        else
+          return std::false_type();
       }
-      return std::false_type();
+      else
+        return std::false_type();
     }
 
     static constexpr bool is_filtered = decltype(get_is_filtered())::value;
