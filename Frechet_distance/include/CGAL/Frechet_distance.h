@@ -39,7 +39,7 @@ namespace CGAL
  * with `Traits::Point` as value type.
  */
 template < class Traits, class PointRange>
-bool continuous_Frechet_distance_less_than(const PointRange& polyline1,
+bool Frechet_distance_less_than(const PointRange& polyline1,
                                            const PointRange& polyline2,
                                            const double distance,
                                            const Traits& traits = Traits())
@@ -67,7 +67,7 @@ bool continuous_Frechet_distance_less_than(const PointRange& polyline1,
  * with `Traits::Point` as value type.
  */
 template <class Traits,class PointRange>
-std::pair<double,double> continuous_Frechet_distance(const PointRange& polyline1,
+std::pair<double,double> Frechet_distance(const PointRange& polyline1,
                                                      const PointRange& polyline2,
                                                      const double precision,
                                                     const Traits& traits = Traits())

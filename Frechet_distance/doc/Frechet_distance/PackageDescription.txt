@@ -39,6 +39,6 @@ This package ....
 - `CGAL::Frechet_distance_traits_d`
 
 \cgalCRPSection{Functions}
-- `CGAL::continuous_Frechet_distance()`
-- `CGAL::continuous_Frechet_distance_less_than()`
+- `CGAL::Frechet_distance()`
+- `CGAL::Frechet_distance_less_than()`
 */

@@ -30,9 +30,9 @@ The Fréchet distance is a metric and hence two polylines that are equal (disreg
 
 The package provides one function to approximate the Fréchet distance and one function to decide whether the Fréchet distance is at most a given value.
 
-The function `continuous_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines,
+The function `Frechet_distance()` computes an approximation of the Fréchet distance between two polylines,
 up to a given approximation error. It returns an interval.
-The function `continuous_Frechet_distance_less_than()` decides if the Fréchet distance
+The function `Frechet_distance_less_than()` decides if the Fréchet distance
 between two polylines is smaller than a given bound.
 
 Both functions have as template parameter a traits class defining the dimension and the point type.
@@ -50,13 +50,13 @@ the algorithm switches to the usage of square root extensions.
 
 \subsection subsecFrechetDistanceFirstExample Decision for 2D Polylines
 
-The following example shows how we can use `continuous_Frechet_distance_less_than()` to decide whether the Fréchet distance between two polylines in the Euclidean plane is at most a given value.
+The following example shows how we can use `Frechet_distance_less_than()` to decide whether the Fréchet distance between two polylines in the Euclidean plane is at most a given value.
 
 \cgalExample{Frechet_distance/Frechet_distance_2.cpp}
 
 \subsection subsecFrechetDistanceSecondExample Distance Computation for 3D Polylines
 
-The following example shows how we can compute the Fréchet distance up to a given precision on two polylines in 3-dimensional Euclidean space using `continuous_Frechet_distance()`.
+The following example shows how we can compute the Fréchet distance up to a given precision on two polylines in 3-dimensional Euclidean space using `Frechet_distance()`.
 
 \cgalExample{Frechet_distance/Frechet_distance_3.cpp}
 

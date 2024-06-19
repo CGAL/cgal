@@ -75,7 +75,7 @@ auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
     auto result = kd_tree.search(curve, distance);
 
     auto predicate = [&](PolylineID id) {
-        return ! continuous_Frechet_distance_less_than<Traits, PointRange>(
+        return ! Frechet_distance_less_than<Traits, PointRange>(
             curve, curves[id], distance);
     };
     auto new_end = std::remove_if(result.begin(), result.end(), predicate);

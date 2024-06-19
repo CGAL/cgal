@@ -12,6 +12,6 @@ using Point = Traits::Point;
 int main(int argc, char* argv[])
 {
     std::vector<Point> A, B;
-    bool res = CGAL::continuous_Frechet_distance_less_than<Traits>(A, B, 0.001);
+    bool res = CGAL::Frechet_distance_less_than<Traits>(A, B, 0.001);
     return 0;
 }
