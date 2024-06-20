@@ -106,11 +106,20 @@ protected:
             max_values[i] =  range;
         }
     }
+
+    template <typename I>
+    void init(int d, I b, I e) {
+        for(int i=0; i<d; ++i,++b)
+        {
+            min_values[i] = (*b).first;
+            max_values[i] = (*b).second;
+        }
+    }
 };
 
 }
 
-// A D-dimensional axis aligned box
+// A fixed D-dimensional axis aligned box
 template<unsigned int N, typename T>
 class Bbox : public Impl::Bbox<std::array<T, N>, Bbox<N,T>>
 {
@@ -118,17 +127,21 @@ class Bbox : public Impl::Bbox<std::array<T, N>, Bbox<N,T>>
 public:
     inline constexpr int dimension() const { return D; }
     Bbox(int d = 0          ) { assert(d==N || d==0); this->init(d       ); }
-    Bbox(int d, double range) { assert(d==N || d==0); this->init(d, range); }
+    Bbox(int d, const T& range) { assert(d==N || d==0); this->init(d, range); }
+    template <typename I>
+    Bbox(int d, I b, I e) { assert(d==N || d==0); this->init(d, b, e); }
 };
 
-// A D-dimensional axis aligned box
+// A dynamic D-dimensional axis aligned box
 template<typename T>
 class Bbox<0,T> : public Impl::Bbox<std::vector<T>, Bbox<0,T>>
 {
 public:
     inline int dimension() const { return this->min_values.size(); }
     Bbox(int d = 0          ) { init_values(d); this->init(d       ); }
-    Bbox(int d, double range) { init_values(d); this->init(d, range); }
+    Bbox(int d, const T& range) { init_values(d); this->init(d, range); }
+    template <typename I>
+    Bbox(int d, I b, I e) { init_values(d); this->init(d, b, ); }
 
 protected:
     void init_values(int d) {

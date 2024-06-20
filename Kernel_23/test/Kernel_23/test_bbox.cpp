@@ -88,6 +88,11 @@ int main()
   assert(bb3 != bb3a);
   bb3 = bb3a;
   assert(bb3 == bb3a);
-  std::cout <<  bb3 << std::endl;
+
+  std::array<std::pair<double,double>,3> coord = { std::make_pair(0.0, 0.0), std::make_pair(1.0, 1.1), std::make_pair(1.0, 20.0)};
+
+  BBox3 bb3b(3,coord.begin(), coord.end());
+
+  std::cout <<  bb3b << std::endl;
   }
 }
