@@ -72,7 +72,7 @@
 #  error "Compiler needs <format>"
 #endif
 
-#if DOXYGEN_RUNNING
+#if 0
 
 namespace CGAL {
 

@@ -26,10 +26,11 @@
 namespace CGAL {
 
 /**
+ * @ingroup PkgCT_3Classes
  * @brief Cell base class for the 3D Constrained Delaunay Triangulation.
  *
  * This class is derived from the `Triangulation_cell_base_3` class and provides additional functionality
- * required by `Constrained_Delaunay_triangulation_3`.
+ * required by `make_constrained_Delaunay_triangulation_3()`.
  *
  * @tparam Gt The geometric traits class, which must be a model of `ConstrainedDelaunayTriangulationTraits_3`.
  *         It should be the same as the geometric traits class of the triangulation.

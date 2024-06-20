@@ -4,13 +4,15 @@
 \defgroup PkgCT_3Concepts Concepts
 \ingroup PkgCT_3Ref
 
-\defgroup PkgCT_3MainClasses Main Classes
+\defgroup PkgCT_3Functions Function Templates
+\ingroup PkgCT_3Ref
+
+\defgroup PkgCT_3Classes Classes
 \ingroup PkgCT_3Ref
 
 \addtogroup PkgCT_3Ref
 \cgalPkgDescriptionBegin{3D Constrained Triangulations,PkgCT_3}
 \cgalPkgPicture{cdt3-small.png}
-\todo Choose an image
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Rineau}
@@ -39,12 +41,12 @@
 - `ConstrainedDelaunayTriangulationVertexBase_3`
 - `ConstrainedDelaunayTriangulationCellBase_3`
 
-\cgalCRPSection{Classes}
+\cgalCRPSection{Functions Templates}
 
-\cgalCRPSubsection{Main Classes}
-- `CGAL::Constrained_Delaunay_triangulation_3<Traits, Triangulation_3>`
+- `CGAL::make_constrained_Delaunay_triangulation_3()`
 
-\cgalCRPSubsection{Secondary Classes}
+\cgalCRPSubsection{Classes}
+
 - `CGAL::Constrained_Delaunay_triangulation_vertex_base_3`
 - `CGAL::Constrained_Delaunay_triangulation_cell_base_3`
 */

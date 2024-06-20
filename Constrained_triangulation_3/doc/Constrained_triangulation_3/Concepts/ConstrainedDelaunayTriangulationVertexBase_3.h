@@ -4,7 +4,7 @@
 
 The concept `ConstrainedDelaunayTriangulationVertexBase_3` refines the concept
 `TriangulationVertexBase_3` and is the base vertex class for
-the `CGAL::Constrained_Delaunay_triangulation_3` class template.
+the `CGAL::make_constrained_Delaunay_triangulation_3()` function template.
 
 \cgalRefines{TriangulationVertexBase_3}
 
@@ -25,7 +25,7 @@ public:
   /// The following functions return a reference to an object of type
   /// `CGAL::Constrained_Delaunay_triangulation_vertex_data_3`, that contains
   /// the per-vertex data required by the implementation of the
-  /// `CGAL::Constrained_Delaunay_triangulation_3` class template.
+  /// `CGAL::make_constrained_Delaunay_triangulation_3()` function template.
   /// @{
   CGAL::Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data();
   const CGAL::Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() const;

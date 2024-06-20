@@ -29,11 +29,12 @@
 namespace CGAL {
 
 /**
+ * @ingroup PkgCT_3Classes
  * @brief The Constrained_Delaunay_triangulation_vertex_base_3 class is a vertex base class for the
  *        Constrained Delaunay Triangulation in 3D.
  *
  * This class is derived from the `Triangulation_vertex_base_3` class and provides additional functionality
- * required by `Constrained_Delaunay_triangulation_3`.
+ * required by `make_constrained_Delaunay_triangulation_3()`.
  *
  * @tparam Gt The geometric traits class, model of `DelaunayTriangulationTraits_3`.
  *         It must be the same as the geometric traits class of the triangulation.

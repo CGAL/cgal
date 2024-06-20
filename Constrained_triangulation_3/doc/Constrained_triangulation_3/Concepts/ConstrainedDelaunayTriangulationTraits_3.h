@@ -2,10 +2,10 @@
 \ingroup PkgCT_3Concepts
 \cgalConcept
 
-The concept `ConstrainedDelaunayTriangulationTraits_3` describes the requirements
-for the first template parameter `Traits` of the class template `CGAL::Constrained_Delaunay_triangulation_3`.
-It defines the geometric objects (points, segments...) forming the triangulation together
-with a few geometric predicates and constructions on these objects.
+The concept `ConstrainedDelaunayTriangulationTraits_3` specifies the requirements
+for the geometric traits class of the triangulation used as the first template
+parameter `Triangulation_3` in the function template
+`CGAL::make_constrained_Delaunay_triangulation_3()`.
 
 \cgalRefines{DelaunayTriangulationTraits_3}
 
@@ -14,7 +14,7 @@ with a few geometric predicates and constructions on these objects.
 \cgalHasModelsBare{all %CGAL kernels}
 \cgalHasModelsEnd
 
-\todo add the requirements in the concept `ConstrainedDelaunayTriangulationTraits_3`
+\todo Add the requirements in the concept `ConstrainedDelaunayTriangulationTraits_3`.
 
 */
 class ConstrainedDelaunayTriangulationTraits_3 {
