@@ -23,6 +23,8 @@ typedef typename LCC::Dart_handle Dart_handle;
 typedef typename LCC::Vertex_attribute_handle Vertex_handle;
 typedef typename LCC::size_type   size_type;
 
+const size_t SIZE_T_MAX = std::numeric_limits<size_t>::max();
+
 
 
 void subdivide_edges(LCC& lcc)
@@ -115,9 +117,94 @@ void render(LCC &lcc, size_type mark)
   draw_graphics_scene(buffer);
 }
 
-void mark_stage();
-void refinement_stage();
-void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_cells, size_type toprocess_mark, size_type template_1, size_type arrete_done);
+
+void refine_hexes_with_1_2_4_templates(LCC &lcc, Pattern_substituer<LCC> &ps, size_type corner_mark)
+{
+    /**
+   * Il se pourrait qu'on ait pas besoins d'identifier les patterns avec leur marking lors du remplacage surfacique/volumique
+   * car on a déjà donné la structure à l'étape précedente. Il faudrait donner quel remplacement utiliser de manière directe
+   * pour éviter d'essayer tous les patterns 
+   */
+
+  // Replace all volumes that has a matching surfacic pattern
+  std::vector<Dart_handle> marked_cells;
+
+
+  for (auto dit = lcc.one_dart_per_cell<2>().begin(),
+            dend = lcc.one_dart_per_cell<2>().end();
+       dit != dend;
+       dit++)
+  {
+    Dart_handle dart = dit;
+    marked_cells.push_back(dart);
+  }
+
+
+  int nbsub = 0;
+  for (auto dart : marked_cells)
+  {
+    if (ps.query_replace_one_face(lcc, dart, corner_mark) != SIZE_T_MAX) nbsub++;
+  }
+  
+  std::cout << nbsub << " Faces substitution was made" << std::endl;
+
+  // Refine the resulting volumes
+  marked_cells.clear();
+
+  for (auto dit = lcc.one_dart_per_cell<3>().begin(),
+            dend = lcc.one_dart_per_cell<3>().end();
+       dit != dend;
+       dit++)
+  {
+    Dart_handle dart = dit;
+    marked_cells.push_back(dart);
+  }
+
+  nbsub = 0;
+  for (auto dart : marked_cells)
+  {
+    if (ps.query_replace_one_volume(lcc, dart) != SIZE_T_MAX) nbsub++;
+  }
+
+  std::cout << nbsub << " volumic substitution was made" << std::endl;
+}
+
+void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_cells, size_type toprocess_mark, size_type arrete_done)
+{
+
+  // 2 noeuds marqué l'un à coté de l'autre ne produit pas de sommet
+  // 1 noeud marqué a coté d'un noeud non marqué produit un sommet 
+
+  std::vector<Dart_handle> edges_to_subdivide;
+
+  for (auto dart : marked_cells)
+  {
+    for (auto nit = lcc.one_dart_per_incident_cell<1, 0>(dart).begin(),
+              nend = lcc.one_dart_per_incident_cell<1, 0>(dart).end();
+         nit != nend;
+         nit++)
+    {
+      if (lcc.is_marked(nit, arrete_done))
+        continue;
+
+      // If the node is next to an other marked node, we don't have to create vertices 
+      if (lcc.is_marked(lcc.beta<1>(nit), toprocess_mark)){
+        lcc.mark_cell<1>(nit, arrete_done);
+        continue;
+      }
+
+      edges_to_subdivide.push_back(nit);
+      lcc.mark_cell<1>(nit, arrete_done);
+    }
+
+    dart = lcc.beta<1>(dart);
+  }
+
+  for (Dart_handle dart : edges_to_subdivide)
+  {
+    lcc.insert_barycenter_in_cell<1>(dart);
+  }
+}
 
 int main()
 {
@@ -137,23 +224,15 @@ int main()
 
   lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
 
-  ps.load_spatterns(CGAL::data_file_path("hexmeshing/spattern"), mark_spattern_edges<LCC>);
+  ps.load_fpatterns(CGAL::data_file_path("hexmeshing/fpattern"), mark_fpattern_corners<LCC>);
   ps.load_vpatterns(CGAL::data_file_path("hexmeshing/vpattern"));
+  lcc.display_characteristics(std::cout);
 
-  auto initial_mark = lcc.get_new_mark();
   auto toprocess_mark = lcc.get_new_mark();
-  auto template_1 = lcc.get_new_mark();
-  auto template_3 = lcc.get_new_mark();
   auto arrete_done = lcc.get_new_mark();
 
   lcc.mark_cell<0>(d1, toprocess_mark);
-  lcc.mark_cell<0>(d1, initial_mark);
-
   lcc.mark_cell<0>(d2, toprocess_mark);
-  lcc.mark_cell<0>(d2, initial_mark);
-  
-  lcc.mark_cell<3>(d1, template_1);
-  lcc.mark_cell<3>(d2, template_1);
 
   std::vector<Dart_handle> marked_cells; 
   
@@ -162,82 +241,13 @@ int main()
   marked_cells.push_back(d1);
   marked_cells.push_back(d2);
 
-// BUG manque des verticies
-  create_vertices_for_templates(lcc, marked_cells, toprocess_mark, template_1, arrete_done);
-  
-
-  // Replace all volumes that has a matching surfacic pattern 
-  std::vector<Dart_handle> marked_cells_3; 
-
-  for (auto dit = lcc.one_dart_per_cell<3>().begin(),
-              dend = lcc.one_dart_per_cell<3>().end();
-         dit != dend;
-         dit++) {
-    
-    Dart_handle dart = dit;
-    marked_cells_3.push_back(dart);
-  }
-
-  for (auto dart: marked_cells_3){
-    ps.query_replace_one_surface(lcc, dart);
-  }
-
-  // Refine the resulting volumes 
-
-  marked_cells_3.clear();
-
-  for (auto dit = lcc.one_dart_per_cell<3>().begin(),
-              dend = lcc.one_dart_per_cell<3>().end();
-         dit != dend;
-         dit++) {
-    
-    Dart_handle dart = dit;
-    marked_cells_3.push_back(dart);
-  }
-
-  for (auto dart: marked_cells_3){
-    ps.query_replace_one_volume(lcc, dart);
-  }
+  auto coner_mark = lcc.get_new_mark();
+  lcc.negate_mark(coner_mark);
 
 
+  create_vertices_for_templates(lcc, marked_cells, toprocess_mark, arrete_done);
+  refine_hexes_with_1_2_4_templates(lcc, ps, coner_mark);
 
-  render(lcc, initial_mark);
+  render(lcc, toprocess_mark);
   return EXIT_SUCCESS;
-}
-
-void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_cells, size_type toprocess_mark, size_type template_1, size_type arrete_done)
-{
-
-  // 2 noeuds marqué l'un à coté de l'autre ne produit pas de sommet
-  // 1 noeud marqué a coté d'un noeud non marqué produit un sommet 
-
-  std::vector<Dart_handle> edges_to_subdivide;
-
-  for (auto dart : marked_cells)
-  {
-    for (auto nit = lcc.one_dart_per_incident_cell<1, 0>(dart).begin(),
-              nend = lcc.one_dart_per_incident_cell<1, 0>(dart).end();
-         nit != nend;
-         nit++)
-    {
-
-      auto marks = lcc.get_dart_marks(nit);
-      if (!marks[template_1] || marks[arrete_done])
-        continue;
-
-      // Si acoté d'un noeud marqué, non
-      if (lcc.is_marked(lcc.beta<1>(nit), toprocess_mark))
-        continue;
-
-      edges_to_subdivide.push_back(nit);
-      lcc.mark_cell<1>(nit, arrete_done);
-    }
-
-    dart = lcc.beta<1>(dart);
-  }
-
-  for (Dart_handle dart : edges_to_subdivide)
-  {
-    lcc.insert_barycenter_in_cell<1>(dart);
-  }
 }
