@@ -33,6 +33,9 @@ public:
     Bbox& operator+=(const Bbox& bbox)
     {
         CGAL_assertion(min_values.size() == 0 || min_values.size() == bbox.min_values.size());
+        if(min_values.size() == 0){
+            *this =  bbox;
+        }
         int dim = bbox.min_values.size();
         for(int i=0; i<dim; ++i)
         {
@@ -139,7 +142,7 @@ std::ostream& operator<<(std::ostream& out, const Impl::Bbox<Container, Derived>
 {
     int d = bbox.dimension();
     for(int i=0; i<d; ++i)
-        out  << bbox.min(i) << "  " << bbox.max(i) << " ";
+        out  << (bbox.min)(i) << "  " << (bbox.max)(i) << " ";
     return out;
 }
 
@@ -148,7 +151,7 @@ std::istream& operator>>(std::istream& in, Impl::Bbox<Container, Derived>& bbox)
 {
     int d = bbox.dimension();
     for(int i=0; i<d; ++i)
-        in  >> bbox.min(i) >> bbox.max(i);
+        in  >> (bbox.min)(i) >> (bbox.max)(i);
     return in;
 }
 
@@ -156,4 +159,3 @@ std::istream& operator>>(std::istream& in, Impl::Bbox<Container, Derived>& bbox)
 } // namespace CGAL
 
 #endif // CGAL_DDT_BBOX_H
-

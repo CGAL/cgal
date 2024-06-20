@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Bbox.h>
 
 #include <vector>
 
@@ -77,5 +78,16 @@ int main()
   assert( span.x_span() == 4);
   assert( span.y_span() == 6);
   assert( span.z_span() == 8);
+  }
+
+  {
+  //Dimension d
+  typedef CGAL::Bbox<3,double> BBox3;
+  BBox3 bb3(3), bb3a(3,1.0);
+  assert(bb3.dimension() == 3);
+  assert(bb3 != bb3a);
+  bb3 = bb3a;
+  assert(bb3 == bb3a);
+  std::cout <<  bb3 << std::endl;
   }
 }
