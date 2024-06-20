@@ -72,7 +72,7 @@
 #  error "Compiler needs <format>"
 #endif
 
-#if 0
+#ifndef DOXYGEN_RUNNING
 
 namespace CGAL {
 
@@ -170,8 +170,6 @@ namespace CGAL {
   };
 
 } // end namespace CGAL
-
-#else // not DOXYGEN_RUNNING
 
 namespace CGAL {
 
@@ -3529,6 +3527,6 @@ protected:
 
 } // end CGAL
 
-#endif // not DOXYGEN_RUNNING
+#endif // DOXYGEN_RUNNING
 
 #endif // CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H
