@@ -118,7 +118,7 @@ protected:
               auto v1_index = v1->time_stamp();
               [[maybe_unused]] auto nb_erased = self.all_finite_edges[v1_index].erase(v2);
               if constexpr (cdt_3_can_use_cxx20_format()) if(self.debug_finite_edges_map() && nb_erased > 0) {
-                std::cerr << std::format("erasing edge {} {}\n", self.display_vert((std::min)(v1, v2)),
+                std::cerr << cdt_3_format("erasing edge {} {}\n", self.display_vert((std::min)(v1, v2)),
                                         self.display_vert((std::max)(v1, v2)));
               }
             }
@@ -227,7 +227,7 @@ protected:
     [[maybe_unused]] auto [_, inserted] = all_finite_edges[v1->time_stamp()].insert(v2);
     if constexpr (cdt_3_can_use_cxx20_format()) if (debug_finite_edges_map() && inserted) {
       if(v2 < v1) std::swap(v1, v2);
-      std::cerr << std::format("new_edge({}, {})\n", display_vert(v1), display_vert(v2));
+      std::cerr << cdt_3_format("new_edge({}, {})\n", display_vert(v1), display_vert(v2));
     }
   }
 
@@ -444,7 +444,7 @@ public:
                          const auto vb = sc.first.second;
                          const auto is_edge = this->is_edge(va, vb);
 #if CGAL_DEBUG_CDT_3 & 128 && CGAL_CAN_USE_CXX20_FORMAT
-                         std::cerr << std::format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
+                         std::cerr << cdt_3_format("is_conforming>> Edge is 3D: {}  ({} , {})\n",
                                                   is_edge,
                                                   CGAL::IO::oformat(va, with_point_and_info),
                                                   CGAL::IO::oformat(vb, with_point_and_info));

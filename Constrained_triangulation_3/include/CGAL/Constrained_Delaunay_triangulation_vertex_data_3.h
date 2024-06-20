@@ -79,7 +79,8 @@ public:
            });
   }
 
-  void set_on_constraint(auto constraint_id) {
+  template <typename T>
+  void set_on_constraint(T constraint_id) {
     ++u.on_edge.nb_of_incident_constraints;
     u.on_edge.c_id = constraint_id.vl_ptr();
   }

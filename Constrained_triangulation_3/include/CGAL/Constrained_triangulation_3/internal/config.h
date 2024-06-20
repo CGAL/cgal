@@ -34,13 +34,30 @@ namespace CGAL {
 
 using CDT_3_face_index = int; // must be signed
 
-constexpr bool cdt_3_can_use_cxx20_format() {
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+
+constexpr bool cdt_3_can_use_cxx20_format() {
   return true;
-#else
-  return false;
-#endif
 }
+
+template <typename... Args>
+decltype(auto) cdt_3_format(std::format_string<Args...> fmt, Args&&... args) {
+  return std::format(fmt, std::forward<Args>(args)...);
+}
+
+#else // not CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+
+template <typename... Args>
+constexpr decltype(auto) cdt_3_format(Args&&...) {
+  return "";
+}
+
+constexpr bool cdt_3_can_use_cxx20_format() {
+  return false;
+}
+
+#endif // not CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+
 } // namespace CGAL
 
 #endif // CGAL_CDT_3_CONFIG_H
