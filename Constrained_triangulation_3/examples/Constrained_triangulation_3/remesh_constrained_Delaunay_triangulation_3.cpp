@@ -11,11 +11,10 @@
 #include <CGAL/draw_triangulation_3.h>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Vb = CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K, CGAL::Tetrahedral_remeshing::Remeshing_vertex_base_3<K>>;
-using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K, CGAL::Tetrahedral_remeshing::Remeshing_cell_base_3<K>>;
+using Vb = CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>;
+using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
 using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
 using Tr = CGAL::Triangulation_3<K, Tds>;
-using CDt = CGAL::Constrained_Delaunay_triangulation_3<K, Tr>;
 
 int main(int argc, char* argv[])
 {

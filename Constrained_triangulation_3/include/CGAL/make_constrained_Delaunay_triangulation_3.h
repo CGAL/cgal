@@ -86,7 +86,32 @@ Triangulation_3
 make_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const NamedParams& np = parameters::default_values())
 {
   Constrained_Delaunay_triangulation_3<typename Triangulation_3::Geom_traits, Triangulation_3> cdt(mesh, np);
-  return std::move(cdt).triangulation();
+  Triangulation_3 tr = std::move(cdt).triangulation();
+
+  for(auto vh : tr.all_vertex_handles()) {
+    vh->sync();
+  }
+
+  for(auto ch : tr.all_cell_handles()) {
+    ch->set_subdomain_index(1);
+  }
+
+  std::stack<typename Triangulation_3::Cell_handle> stack;
+  stack.push(tr.infinite_cell());
+  while(!stack.empty()) {
+    auto ch = stack.top();
+    stack.pop();
+    ch->set_subdomain_index(0);
+    for(int i = 0; i < 4; ++i) {
+      if(ch->is_facet_on_surface(i)) continue;
+      auto n = ch->neighbor(i);
+      if(n->subdomain_index() == 1) {
+        stack.push(n);
+      }
+    }
+  }
+
+  return tr;
 }
 
 } // end namespace CGAL

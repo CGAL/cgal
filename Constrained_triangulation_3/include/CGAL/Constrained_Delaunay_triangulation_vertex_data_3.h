@@ -25,6 +25,8 @@
 
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
 
+#include <bitset>
+
 namespace CGAL {
 
 #ifdef DOXYGEN_RUNNING
@@ -53,6 +55,7 @@ enum class CDT_3_vertex_marker {
 
 struct Constrained_Delaunay_triangulation_vertex_data_3 {
 protected:
+  // TODO: check and improve the compactness of this class
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
   std::bitset<static_cast<int>(CDT_3_vertex_marker::nb_of_markers)> mark{};
   union U {

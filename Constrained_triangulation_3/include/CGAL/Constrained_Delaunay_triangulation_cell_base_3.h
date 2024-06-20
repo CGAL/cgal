@@ -21,6 +21,7 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_CELL_BASE_3_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_CELL_BASE_3_H
 
+#include <CGAL/Constrained_Delaunay_triangulation_cell_data_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 
 namespace CGAL {
@@ -43,9 +44,93 @@ namespace CGAL {
  *
  * \sa `CGAL::Constrained_Delaunay_triangulation_vertex_base_3`
  */
-template < typename Gt, typename Cb = Triangulation_cell_base_3<Gt> >
-class Constrained_Delaunay_triangulation_cell_base_3 : public Cb {
+template <typename Gt, typename Cb = Triangulation_cell_base_3<Gt> >
+class Constrained_Delaunay_triangulation_cell_base_3
+  : public Base_with_time_stamp<Cb>
+{
+  using Base = Base_with_time_stamp<Cb>;
+  Constrained_Delaunay_triangulation_cell_data_3 cdt_3_data_;
+
+  mutable bool sliver_cache_validity_ = false;
+  CDT_3_face_index subdomain_index_ = -1;
+  double sliver_value_ = 0.;
 public:
+  // To get correct cell type in TDS
+  template < class TDS3 >
+  struct Rebind_TDS {
+    typedef typename Cb::template Rebind_TDS<TDS3>::Other Cb3;
+    typedef Constrained_Delaunay_triangulation_cell_base_3 <Gt, Cb3> Other;
+  };
+
+  // Constructors inherited from the base class
+  using Base::Base;
+
+  Constrained_Delaunay_triangulation_cell_data_3& cdt_3_data() {
+    return cdt_3_data_;
+  }
+
+  const Constrained_Delaunay_triangulation_cell_data_3& cdt_3_data() const {
+    return cdt_3_data_;
+  }
+
+  // model of SimplicialMeshCellBase_3
+  using Surface_patch_index = CDT_3_face_index;
+  using Subdomain_index = CDT_3_face_index;
+  bool is_facet_on_surface(int i) const { return cdt_3_data().is_facet_constrained(i); }
+  Surface_patch_index surface_patch_index(int i) const { return cdt_3_data().face_constraint_index(i) + 1; }
+  void set_surface_patch_index(int i, Surface_patch_index index) { cdt_3_data().face_id[unsigned(i)] = index - 1; }
+  Subdomain_index subdomain_index() const { return subdomain_index_; }
+  void set_subdomain_index(Subdomain_index i) { subdomain_index_ = i; }
+
+  // model of RemeshingCellBase_3
+  void set_sliver_value(double value) {
+    sliver_cache_validity_ = true;
+    sliver_value_ = value;
+  }
+  double sliver_value() const {
+    CGAL_assertion(is_cache_valid());
+    return sliver_value_;
+  }
+  bool is_cache_valid() const { return sliver_cache_validity_; }
+  void reset_cache_validity() const { sliver_cache_validity_ = false; }
+
+  static std::string io_signature() {
+    return Get_io_signature<Base>()() + "+(" + Get_io_signature<int>()()
+      + ")[4]";
+  }
+
+  friend std::ostream&
+  operator<<(std::ostream& os,
+             const Constrained_Delaunay_triangulation_cell_base_3& c)
+  {
+    os << static_cast<const Base&>(c);
+    for( unsigned li = 0; li < 4; ++li ) {
+      if(IO::is_ascii(os)) {
+        os << " " << c.cdt_3_data().face_id[li];
+      } else {
+        CGAL::write(os, c.cdt_3_data().face_id[li]);
+      }
+    }
+    return os;
+  }
+  friend std::istream&
+  operator>>(std::istream& is,
+             Constrained_Delaunay_triangulation_cell_base_3& c)
+  {
+    is >> static_cast<Base&>(c);
+    if(!is) return is;
+    for( int li = 0; li < 4; ++li ) {
+      int i;
+      if(IO::is_ascii(is)) {
+        is >> i;
+      } else {
+        CGAL::read(is, i);
+      }
+      if(!is) return is;
+      c.face_id[li] = i;
+    }
+    return is;
+  }
 };
 
 } // namespace CGAL

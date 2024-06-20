@@ -26,8 +26,8 @@
 #include <CGAL/Constrained_triangulation_3/internal/config.h>
 
 #include <CGAL/Base_with_time_stamp.h>
-#include <CGAL/Constrained_Delaunay_triangulation_cell_data_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_vertex_base_3.h>
+#include <CGAL/Constrained_Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
@@ -74,6 +74,7 @@
 
 #ifndef DOXYGEN_RUNNING
 
+#if 0
 namespace CGAL {
 
   /*!
@@ -170,6 +171,7 @@ namespace CGAL {
   };
 
 } // end namespace CGAL
+#endif // 0
 
 namespace CGAL {
 
@@ -523,70 +525,6 @@ template <typename Polygons, typename Kernel>
 concept Range_of_polygon_3 = std::ranges::common_range<Polygons>
       && Polygon_3<std::ranges::range_value_t<Polygons>, Kernel>;
 #endif // concepts
-
-template <typename Gt, typename Cb = Triangulation_cell_base_3<Gt> >
-class Constrained_Delaunay_triangulation_cell_base_3
-  : public Base_with_time_stamp<Cb>
-{
-  using Base = Base_with_time_stamp<Cb>;
-  Constrained_Delaunay_triangulation_cell_data_3 cdt_3_data_;
-public:
-  // To get correct cell type in TDS
-  template < class TDS3 >
-  struct Rebind_TDS {
-    typedef typename Cb::template Rebind_TDS<TDS3>::Other Cb3;
-    typedef Constrained_Delaunay_triangulation_cell_base_3 <Gt, Cb3> Other;
-  };
-
-  // Constructor
-  using Base::Base;
-
-  Constrained_Delaunay_triangulation_cell_data_3& cdt_3_data() {
-    return cdt_3_data_;
-  }
-
-  const Constrained_Delaunay_triangulation_cell_data_3& cdt_3_data() const {
-    return cdt_3_data_;
-  }
-
-  static std::string io_signature() {
-    return Get_io_signature<Base>()() + "+(" + Get_io_signature<int>()()
-      + ")[4]";
-  }
-
-  friend std::ostream&
-  operator<<(std::ostream& os,
-             const Constrained_Delaunay_triangulation_cell_base_3& c)
-  {
-    os << static_cast<const Base&>(c);
-    for( unsigned li = 0; li < 4; ++li ) {
-      if(IO::is_ascii(os)) {
-        os << " " << c.cdt_3_data().face_id[li];
-      } else {
-        CGAL::write(os, c.cdt_3_data().face_id[li]);
-      }
-    }
-    return os;
-  }
-  friend std::istream&
-  operator>>(std::istream& is,
-             Constrained_Delaunay_triangulation_cell_base_3& c)
-  {
-    is >> static_cast<Base&>(c);
-    if(!is) return is;
-    for( int li = 0; li < 4; ++li ) {
-      int i;
-      if(IO::is_ascii(is)) {
-        is >> i;
-      } else {
-        CGAL::read(is, i);
-      }
-      if(!is) return is;
-      c.face_id[li] = i;
-    }
-    return is;
-  }
-};
 
 template <class DSC, bool Const>
 struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_tag>
