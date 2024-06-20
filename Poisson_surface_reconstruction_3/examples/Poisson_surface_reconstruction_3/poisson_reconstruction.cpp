@@ -10,19 +10,24 @@
 
 // CGAL
 #include <CGAL/AABB_tree.h> // must be included before kernel
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Timer.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_default_triangulation_3.h>
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Poisson_implicit_surface_3.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/make_mesh_3.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
+
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+
+#include <CGAL/Timer.h>
 
 #include <deque>
 #include <cstdlib>
@@ -50,14 +55,15 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 // Poisson implicit function
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
-// Surface mesher
-typedef CGAL::Surface_mesh_default_triangulation_3 STr;
-typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Poisson_implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+// Mesh_3
+typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+typedef typename CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 // AABB tree
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
+typedef CGAL::AABB_traits_3<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
 struct Counter {
@@ -304,36 +310,33 @@ int main(int argc, char * argv[])
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
-    // Defines the implicit surface: requires defining a
-          // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
-    Surface_3 surface(function,
-                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
-                      sm_dichotomy_error/sm_sphere_radius);
 
-    // Defines surface mesh generation criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*average_spacing,  // Max triangle size
-                                                        sm_distance*average_spacing); // Approximation error
+    // Defines generation criteria
+    Mesh_criteria criteria(CGAL::parameters::facet_angle = sm_angle,
+                           CGAL::parameters::facet_size = sm_radius*average_spacing,
+                           CGAL::parameters::facet_distance = sm_distance*average_spacing);
 
-    std::cerr         << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
+    std::cerr         << "  make_mesh_3 with sphere center=("<<inner_point << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius<<",\n"
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
                       << "                    distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
                       << "                    dichotomy error=distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
-                      << "                    Manifold_with_boundary_tag)\n";
+                      << "                    manifold_with_boundary()\n";
 
-    // Generates surface mesh with manifold option
-    STr tr; // 3D Delaunay triangulation for surface mesh generation
-    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
-                            surface,                              // implicit surface
-                            criteria,                             // meshing criteria
-                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
+    // Defines mesh domain
+    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
+        CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
+
+    // Generates mesh with manifold option
+    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                        CGAL::parameters::no_exude().no_perturb()
+                                        .manifold_with_boundary());
 
     // Prints status
+    const Tr& tr = c3t3.triangulation();
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
                                      << tr.number_of_vertices() << " output vertices"
                                      << std::endl;
@@ -344,7 +347,7 @@ int main(int argc, char * argv[])
 
     // Converts to polyhedron
     Polyhedron output_mesh;
-    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";

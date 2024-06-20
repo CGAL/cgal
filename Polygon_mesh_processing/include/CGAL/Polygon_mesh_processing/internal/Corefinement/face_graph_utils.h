@@ -255,7 +255,7 @@ struct Side_of_helper
   typedef Node_vector_exact_vertex_point_map<Node_id_map, VertexPointMap, NodeVector> VPM;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<typename NodeVector::Exact_kernel, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<typename NodeVector::Exact_kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree_type;
 
   static
@@ -331,7 +331,7 @@ struct Side_of_helper<TriangleMesh, Node_id_map, VertexPointMap, NodeVector, typ
   }
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<typename NodeVector::Exact_kernel, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<typename NodeVector::Exact_kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree_type;
 
 

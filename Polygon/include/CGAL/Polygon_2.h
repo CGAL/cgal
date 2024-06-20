@@ -34,6 +34,7 @@
 #include <CGAL/enum.h>
 
 #include <CGAL/Aff_transformation_2.h>
+#include <CGAL/Container_helper.h>
 
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/Polygon_2/Polygon_2_vertex_circulator.h>
@@ -160,11 +161,8 @@ class Polygon_2 {
     /// Creates an empty polygon.
     Polygon_2(const Traits & p_traits) : traits(p_traits) {}
 
-    /// Copy constructor.
-    Polygon_2(const Polygon_2<Traits_P,Container_P>& polygon) = default;
-
-    /// Move constructor
-    Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon) = default;
+    // Move constructor
+    // Polygon_2(Polygon_2<Traits_P,Container_P>&& polygon) = default;
 
     /// Creates a polygon with vertices from the sequence
     /// defined by the range \c [first,last).
@@ -174,11 +172,6 @@ class Polygon_2 {
               Traits p_traits = Traits())
       : d_container(first,last), traits(p_traits)
     {}
-
-#ifndef DOXYGEN_RUNNING
-  Polygon_2& operator=(const Polygon_2&) = default;
-  Polygon_2& operator=(Polygon_2&& p) = default;
-#endif
 
     /// @}
 
@@ -541,6 +534,12 @@ class Polygon_2 {
     void resize(std::size_t s)
     {
      container().resize(s);
+    }
+
+    /// Calls `container().reserve(s)` if this is available for `Container`.
+    void reserve(std::size_t s)
+    {
+      internal::reserve(container(),s);
     }
 
     /// @}

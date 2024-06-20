@@ -82,10 +82,10 @@ public:
   /*! Default constructors. */
   Conic_point_2() : Base() {}
 
-  /*! Constrcutor from the base class. */
+  /*! Constructor from the base class. */
   Conic_point_2(const Base& p) : Base(p) {}
 
-  /*! Constructor with homegeneous coordinates. */
+  /*! Constructor with homogeneous coordinates. */
   Conic_point_2(const Algebraic& hx, const Algebraic& hy, const Algebraic& hz) :
     Base(hx, hy, hz)
   {}

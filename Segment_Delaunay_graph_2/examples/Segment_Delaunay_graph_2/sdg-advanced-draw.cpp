@@ -15,7 +15,7 @@
 #include <vector>
 
 #define SDG_DRAW_DEBUG // debug log
-#define SDG_DRAW_DUMP_FILES // print input / ouput
+#define SDG_DRAW_DUMP_FILES // print input / output
 // #define SINGLE_INPUT_FILE // if not defined, each segment of the input has its own file
 
 #ifdef SDG_DRAW_DUMP_FILES_PP // also print parabolas
@@ -494,7 +494,7 @@ int main(int argc, char** argv)
 #endif
 
 #ifdef SDG_DRAW_DUMP_FILES
-  // This file can be visualized with the CGAL 3D Polyhedron Demo
+  // This file can be visualized with CGAL Lab
   std::ofstream out("dual.cgal");
   out.precision(17);
   for(const OK::Segment_2& edge : svd_edges)

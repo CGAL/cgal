@@ -1253,7 +1253,7 @@ information or functionality in the vertices and faces.
 
 \subsection Triangulation_2ACyclicDependency A Cyclic Dependency
 
-To insure flexibility, the triangulation data structure is templated by the
+To ensure flexibility, the triangulation data structure is templated by the
 vertex and face base classes. Also since incidence and adjacency
 relations are stored in vertices and faces, the base classes have to
 know the types of handles on vertices and faces provided

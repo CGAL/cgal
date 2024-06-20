@@ -2,6 +2,7 @@
 #include "test_Prefix.h"
 #include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/IO/OFF.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
@@ -530,7 +531,7 @@ add_faces()
   typedef typename boost::graph_traits<T>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<T>::halfedge_descriptor halfedge_descriptor;
 
-  // read a mesh with bord + test append
+  // read a mesh with border + test append
   {
   T m;
 

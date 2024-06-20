@@ -9,7 +9,7 @@
 #  * or alternatively curl
 #
 # Furthermore you have to edit .autocgalrc in order to
-# cutomize it for your environment.
+# customize it for your environment.
 # In particular you have to change the BUILHOSTS
 # variable to contain the names of your hosts and
 # set the COMPILERS_<hostname> variables to the

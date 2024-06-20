@@ -212,7 +212,7 @@ private:
                          halfedge_descriptor bhd,
                          const VertexUVMap uvmap) const
   {
-    // @fixme unefficient: use sweep line algorithms instead of brute force
+    // @fixme inefficient: use sweep line algorithms instead of brute force
 
     for(halfedge_descriptor hd_1 : halfedges_around_face(bhd, mesh)) {
       for(halfedge_descriptor hd_2 : halfedges_around_face(bhd, mesh)) {
@@ -385,7 +385,7 @@ private:
     // The other parts of A(i,j) and A(i,k) will be added when this function
     // is called from the neighboring faces of F_ijk that share the vertex i
 
-    // @fixme unefficient: lengths are computed (and inversed!) twice per edge
+    // @fixme inefficient: lengths are computed (and inversed!) twice per edge
 
     // Set w_i_base: - tan(alpha / 2)
     // Match order of the input points to the new weight implementation.
@@ -436,7 +436,7 @@ private:
     // if vh_i is fixed, there is nothing to do: A(i,i)=1 and A(i,j)=0 for j!=i
     if(get(vpmap, vd_i))
     {
-      // @fixme unefficient: A(i,i) is written as many times as i has neighbors
+      // @fixme inefficient: A(i,i) is written as many times as i has neighbors
       A.set_coef(i, i, 1);
       return;
     }
@@ -496,7 +496,7 @@ private:
     // if vh_i is fixed, there is nothing to do: A(i,i)=1 and A(i,j)=0 for j!=i
     if(get(vpmap, vd_i))
     {
-      // @fixme unefficient A(i,i) is written as many times as i has neighbors
+      // @fixme inefficient A(i,i) is written as many times as i has neighbors
       A.set_coef(i, i, 1);
       return;
     }
