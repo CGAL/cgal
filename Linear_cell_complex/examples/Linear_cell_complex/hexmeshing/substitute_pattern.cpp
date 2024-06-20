@@ -25,73 +25,6 @@ typedef typename LCC::size_type   size_type;
 
 const size_t SIZE_T_MAX = std::numeric_limits<size_t>::max();
 
-
-
-void subdivide_edges(LCC& lcc)
-{
-  std::vector<Dart_handle> edges_to_subdivide;
-  edges_to_subdivide.reserve(lcc.number_of_darts()/3); // a la louche ;)
-
-  for(auto itd=lcc.one_dart_per_cell<1>().begin(),
-        itdend=lcc.one_dart_per_cell<1>().end(); itd!=itdend; ++itd)
-  { edges_to_subdivide.push_back(itd); }
-
-  for(Dart_handle itd: edges_to_subdivide)
-  { lcc.insert_barycenter_in_cell<1>(itd); }
-}
-////////////////////////////////////////////////////////////////////////////////
-void subdivide_faces(LCC& lcc,
-                     size_type corner_mark,
-                     Pattern_substituer<LCC>& ps)
-{
-  std::vector<Dart_handle> faces_to_subdivide;
-  faces_to_subdivide.reserve(lcc.number_of_darts()/9); // a la louche ;)
-  for(auto itd=lcc.one_dart_per_cell<2>().begin(),
-        itdend=lcc.one_dart_per_cell<2>().end(); itd!=itdend; ++itd)
-  {
-      faces_to_subdivide.push_back(lcc.beta<0>(itd));
-
-    // if(lcc.is_marked(itd, corner_mark))
-    // { faces_to_subdivide.push_back(itd); }
-    // else
-    // {
-    //   assert(lcc.is_marked(lcc.beta<0>(itd), corner_mark));
-    // }
-  }
-
-  for(Dart_handle itd: faces_to_subdivide)
-  {
-    ps.replace_one_face_from_dart(lcc, itd, ps.m_fpatterns[0],
-                                  ps.m_fsignatures.begin()->second.first);
-  }
-}
-////////////////////////////////////////////////////////////////////////////////
-void subdivide_volumes(LCC& lcc,
-                       size_type corner_mark,
-                       Pattern_substituer<LCC>& ps)
-{
-  std::vector<Dart_handle> vols_to_subdivide;
-  vols_to_subdivide.reserve(lcc.number_of_darts()/24);
-  for(auto itd=lcc.one_dart_per_cell<3>().begin(),
-        itdend=lcc.one_dart_per_cell<3>().end(); itd!=itdend; ++itd)
-  {
-    if(lcc.is_marked(itd, corner_mark))
-    { vols_to_subdivide.push_back(itd); }
-    else
-    {
-      assert(lcc.is_marked(lcc.beta<0>(itd), corner_mark));
-      vols_to_subdivide.push_back(lcc.beta<0>(itd));
-    }
-  }
-
-  for(Dart_handle itd: vols_to_subdivide)
-  {
-    ps.replace_one_volume_from_dart(lcc, itd, ps.m_vpatterns[0],
-                                    ps.m_vsignatures.begin()->second.first);
-  }
-}
-
-
 void render(LCC &lcc, size_type mark)
 {
   CGAL::Graphics_scene buffer;
@@ -115,7 +48,7 @@ void render(LCC &lcc, size_type mark)
     buffer.add_point(lcc.point(it));
   }
   draw_graphics_scene(buffer);
-}
+  }
 
 
 void refine_hexes_with_1_2_4_templates(LCC &lcc, Pattern_substituer<LCC> &ps, size_type corner_mark)
@@ -144,6 +77,7 @@ void refine_hexes_with_1_2_4_templates(LCC &lcc, Pattern_substituer<LCC> &ps, si
   for (auto dart : marked_cells)
   {
     if (ps.query_replace_one_face(lcc, dart, corner_mark) != SIZE_T_MAX) nbsub++;
+    
   }
   
   std::cout << nbsub << " Faces substitution was made" << std::endl;
@@ -206,6 +140,18 @@ void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_ce
   }
 }
 
+void mark_1template_face(LCC& lcc, size_type mark){
+  auto dart = lcc.one_dart_per_cell<3>().begin();
+  lcc.mark_cell<0>(lcc.beta(dart, 0, 2, 0, 0), mark); 
+}
+
+void mark_2template_face(LCC& lcc, size_type mark){
+  auto dart = lcc.one_dart_per_cell<3>().begin();
+  lcc.mark_cell<0>(dart, mark); 
+  lcc.mark_cell<0>(lcc.beta(dart, 1), mark); 
+}
+
+
 int main()
 {
   LCC lcc;
@@ -222,17 +168,28 @@ int main()
                         Point(5,5,5), Point(5,0,5),
                         Point(10,0,5), Point(10,5,5));
 
-  lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
+  auto d3=
+    lcc.make_hexahedron(Point(0,0,-5), Point(5,0,-5),
+                        Point(5,5,-5), Point(0,5,-5),
+                        Point(0,5,0), Point(0,0,0),
+                        Point(5,0,0), Point(5,5,0));
 
-  ps.load_fpatterns(CGAL::data_file_path("hexmeshing/fpattern"), mark_fpattern_corners<LCC>);
+  lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
+  lcc.sew<3>(lcc.beta(d1, 0, 2), lcc.beta(d3, 1, 2));
+
   ps.load_vpatterns(CGAL::data_file_path("hexmeshing/vpattern"));
-  lcc.display_characteristics(std::cout);
+  ps.load_additional_fpattern(CGAL::data_file_path("hexmeshing/fpattern/pattern1-face.moka"), mark_1template_face);
+  ps.load_additional_fpattern(CGAL::data_file_path("hexmeshing/fpattern/pattern2-face.moka"), mark_2template_face);
 
   auto toprocess_mark = lcc.get_new_mark();
   auto arrete_done = lcc.get_new_mark();
 
   lcc.mark_cell<0>(d1, toprocess_mark);
   lcc.mark_cell<0>(d2, toprocess_mark);
+  auto md2 = lcc.beta(d2, 1);
+  lcc.mark_cell<0>(md2, toprocess_mark);
+  
+  // lcc.mark_cell<0>(md3, toprocess_mark);
 
   std::vector<Dart_handle> marked_cells; 
   
@@ -240,13 +197,10 @@ int main()
 
   marked_cells.push_back(d1);
   marked_cells.push_back(d2);
-
-  auto coner_mark = lcc.get_new_mark();
-  lcc.negate_mark(coner_mark);
-
+  marked_cells.push_back(md2);
 
   create_vertices_for_templates(lcc, marked_cells, toprocess_mark, arrete_done);
-  refine_hexes_with_1_2_4_templates(lcc, ps, coner_mark);
+  refine_hexes_with_1_2_4_templates(lcc, ps, toprocess_mark);
 
   render(lcc, toprocess_mark);
   return EXIT_SUCCESS;
