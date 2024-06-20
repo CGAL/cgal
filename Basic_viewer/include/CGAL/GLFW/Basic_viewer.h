@@ -34,8 +34,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-namespace CGAL::GLFW
-{
+namespace CGAL {
+namespace GLFW {
   enum RenderMode
   {                   // rendering mode
     DRAW_ALL = -1,    // draw all
@@ -66,16 +66,14 @@ namespace CGAL::GLFW
   const int windowSamples = WINDOW_SAMPLES;
 
   void glfwErrorCallback(int error, const char *description);
-  inline void draw_graphics_scene(const Graphics_scene &graphicScene,
-                                  const char *title = "CGAL Basic Viewer");
 
-  class Basic_Viewer : public Input
+  class Basic_viewer : public Input
   {
   public:
     typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 
   public:
-    Basic_Viewer(const Graphics_scene *graphicScene,
+    Basic_viewer(const Graphics_scene *graphicScene,
                  const char *title = "",
                  bool drawVertices = false,
                  bool drawEdges = true,
@@ -401,4 +399,12 @@ namespace CGAL::GLFW
 
     GLuint m_vbo[NB_GL_BUFFERS]; // +1 for the vbo buffer of clipping plane
   };
-}
+} // end namespace GLFW
+  using GLFW::Basic_viewer;
+
+  inline void draw_graphics_scene(const Graphics_scene &graphics_scene, const char *title="CGAL Basic Viewer (GLFW)")
+  {
+    Basic_viewer basic_viewer(&graphics_scene, title);
+    basic_viewer.show();
+  }
+} // end namespace CGAL 

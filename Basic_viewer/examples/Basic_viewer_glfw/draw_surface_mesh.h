@@ -175,7 +175,7 @@ void draw(const Surface_mesh<K>& amesh,
 {
   CGAL::Graphics_scene buffer;
   add_to_graphics_scene(amesh, buffer);
-  CGAL::GLFW::draw_graphics_scene(buffer, title);
+  draw_graphics_scene(buffer, title);
 }
 
 template<class K, class GSOptions>
@@ -185,7 +185,7 @@ void draw(const Surface_mesh<K>& amesh,
 {
   CGAL::Graphics_scene buffer;
   add_to_graphics_scene(amesh, buffer, gs_options);
-  CGAL::GLFW::draw_graphics_scene(buffer, title);
+  draw_graphics_scene(buffer, title);
 }
 
 

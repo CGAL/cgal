@@ -1,5 +1,5 @@
 //========================================================================
-// GLFW 3.3 Linux - www.glfw.org
+// GLFW 3.5 Linux - www.glfw.org
 //------------------------------------------------------------------------
 // Copyright (c) 2002-2006 Marcus Geelnard
 // Copyright (c) 2006-2017 Camilla Löwy <elmindreda@glfw.org>
@@ -24,10 +24,10 @@
 //    distribution.
 //
 //========================================================================
-// It is fine to use C99 in this file because it will not be built with VS
-//========================================================================
 
 #include "internal.h"
+
+#if defined(GLFW_BUILD_LINUX_JOYSTICK)
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -135,7 +135,7 @@ static GLFWbool openJoystickDevice(const char* path)
     }
 
     _GLFWjoystickLinux linjs = {0};
-    linjs.fd = open(path, O_RDONLY | O_NONBLOCK);
+    linjs.fd = open(path, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
     if (linjs.fd == -1)
         return GLFW_FALSE;
 
@@ -157,7 +157,7 @@ static GLFWbool openJoystickDevice(const char* path)
     }
 
     // Ensure this device supports the events expected of a joystick
-    if (!isBitSet(EV_KEY, evBits) || !isBitSet(EV_ABS, evBits))
+    if (!isBitSet(EV_ABS, evBits))
     {
         close(linjs.fd);
         return GLFW_FALSE;
@@ -264,86 +264,6 @@ static int compareJoysticks(const void* fp, const void* sp)
 //////                       GLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-// Initialize joystick interface
-//
-GLFWbool _glfwInitJoysticksLinux(void)
-{
-    const char* dirname = "/dev/input";
-
-    _glfw.linjs.inotify = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
-    if (_glfw.linjs.inotify > 0)
-    {
-        // HACK: Register for IN_ATTRIB to get notified when udev is done
-        //       This works well in practice but the true way is libudev
-
-        _glfw.linjs.watch = inotify_add_watch(_glfw.linjs.inotify,
-                                              dirname,
-                                              IN_CREATE | IN_ATTRIB | IN_DELETE);
-    }
-
-    // Continue without device connection notifications if inotify fails
-
-    if (regcomp(&_glfw.linjs.regex, "^event[0-9]\\+$", 0) != 0)
-    {
-        _glfwInputError(GLFW_PLATFORM_ERROR, "Linux: Failed to compile regex");
-        return GLFW_FALSE;
-    }
-
-    int count = 0;
-
-    DIR* dir = opendir(dirname);
-    if (dir)
-    {
-        struct dirent* entry;
-
-        while ((entry = readdir(dir)))
-        {
-            regmatch_t match;
-
-            if (regexec(&_glfw.linjs.regex, entry->d_name, 1, &match, 0) != 0)
-                continue;
-
-            char path[PATH_MAX];
-
-            snprintf(path, sizeof(path), "%s/%s", dirname, entry->d_name);
-
-            if (openJoystickDevice(path))
-                count++;
-        }
-
-        closedir(dir);
-    }
-
-    // Continue with no joysticks if enumeration fails
-
-    qsort(_glfw.joysticks, count, sizeof(_GLFWjoystick), compareJoysticks);
-    return GLFW_TRUE;
-}
-
-// Close all opened joystick handles
-//
-void _glfwTerminateJoysticksLinux(void)
-{
-    int jid;
-
-    for (jid = 0;  jid <= GLFW_JOYSTICK_LAST;  jid++)
-    {
-        _GLFWjoystick* js = _glfw.joysticks + jid;
-        if (js->connected)
-            closeJoystick(js);
-    }
-
-    regfree(&_glfw.linjs.regex);
-
-    if (_glfw.linjs.inotify > 0)
-    {
-        if (_glfw.linjs.watch > 0)
-            inotify_rm_watch(_glfw.linjs.inotify, _glfw.linjs.watch);
-
-        close(_glfw.linjs.inotify);
-    }
-}
-
 void _glfwDetectJoystickConnectionLinux(void)
 {
     if (_glfw.linjs.inotify <= 0)
@@ -387,7 +307,83 @@ void _glfwDetectJoystickConnectionLinux(void)
 //////                       GLFW platform API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-int _glfwPlatformPollJoystick(_GLFWjoystick* js, int mode)
+GLFWbool _glfwInitJoysticksLinux(void)
+{
+    const char* dirname = "/dev/input";
+
+    _glfw.linjs.inotify = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
+    if (_glfw.linjs.inotify > 0)
+    {
+        // HACK: Register for IN_ATTRIB to get notified when udev is done
+        //       This works well in practice but the true way is libudev
+
+        _glfw.linjs.watch = inotify_add_watch(_glfw.linjs.inotify,
+                                              dirname,
+                                              IN_CREATE | IN_ATTRIB | IN_DELETE);
+    }
+
+    // Continue without device connection notifications if inotify fails
+
+    _glfw.linjs.regexCompiled = (regcomp(&_glfw.linjs.regex, "^event[0-9]\\+$", 0) == 0);
+    if (!_glfw.linjs.regexCompiled)
+    {
+        _glfwInputError(GLFW_PLATFORM_ERROR, "Linux: Failed to compile regex");
+        return GLFW_FALSE;
+    }
+
+    int count = 0;
+
+    DIR* dir = opendir(dirname);
+    if (dir)
+    {
+        struct dirent* entry;
+
+        while ((entry = readdir(dir)))
+        {
+            regmatch_t match;
+
+            if (regexec(&_glfw.linjs.regex, entry->d_name, 1, &match, 0) != 0)
+                continue;
+
+            char path[PATH_MAX];
+
+            snprintf(path, sizeof(path), "%s/%s", dirname, entry->d_name);
+
+            if (openJoystickDevice(path))
+                count++;
+        }
+
+        closedir(dir);
+    }
+
+    // Continue with no joysticks if enumeration fails
+
+    qsort(_glfw.joysticks, count, sizeof(_GLFWjoystick), compareJoysticks);
+    return GLFW_TRUE;
+}
+
+void _glfwTerminateJoysticksLinux(void)
+{
+    for (int jid = 0;  jid <= GLFW_JOYSTICK_LAST;  jid++)
+    {
+        _GLFWjoystick* js = _glfw.joysticks + jid;
+        if (js->connected)
+            closeJoystick(js);
+    }
+
+    if (_glfw.linjs.inotify > 0)
+    {
+        if (_glfw.linjs.watch > 0)
+            inotify_rm_watch(_glfw.linjs.inotify, _glfw.linjs.watch);
+
+        close(_glfw.linjs.inotify);
+    }
+
+    if (_glfw.linjs.regexCompiled)
+        regfree(&_glfw.linjs.regex);
+}
+
+GLFWbool _glfwPollJoystickLinux(_GLFWjoystick* js, int mode)
 {
     // Read all queued events (non-blocking)
     for (;;)
@@ -427,7 +423,14 @@ int _glfwPlatformPollJoystick(_GLFWjoystick* js, int mode)
     return js->connected;
 }
 
-void _glfwPlatformUpdateGamepadGUID(char* guid)
+const char* _glfwGetMappingNameLinux(void)
+{
+    return "Linux";
+}
+
+void _glfwUpdateGamepadGUIDLinux(char* guid)
 {
 }
+
+#endif // GLFW_BUILD_LINUX_JOYSTICK
 

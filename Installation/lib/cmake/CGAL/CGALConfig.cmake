@@ -134,7 +134,7 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang" AND CMAKE_CXX_COMPILER_VERSI
 endif()
 
 foreach(comp ${CGAL_FIND_COMPONENTS})
-  if(NOT comp MATCHES "Core|ImageIO|Qt6")
+  if(NOT comp MATCHES "Core|ImageIO|Qt6|GLFW")
     message(FATAL_ERROR "The requested CGAL component ${comp} does not exist!")
   endif()
   if(comp MATCHES "Core" AND CGAL_DO_NOT_USE_BOOST_MP)
@@ -201,6 +201,20 @@ if (NOT TARGET CGAL::CGAL_Basic_viewer)
     set_target_properties(CGAL::CGAL_Basic_viewer PROPERTIES
       INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER;QT_NO_KEYWORDS"
       INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
+endif()
+
+if (NOT TARGET CGAL::CGAL_Basic_viewer_Qt)
+  add_library(CGAL::CGAL_Basic_viewer_Qt INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer_Qt PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER_QT;QT_NO_KEYWORDS"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_Qt6)
+endif()
+
+if (NOT TARGET CGAL::CGAL_Basic_viewer_GLFW)
+  add_library(CGAL::CGAL_Basic_viewer_GLFW INTERFACE IMPORTED GLOBAL)
+    set_target_properties(CGAL::CGAL_Basic_viewer_GLFW PROPERTIES
+      INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_BASIC_VIEWER_GLFW;"
+      INTERFACE_LINK_LIBRARIES CGAL::CGAL_GLFW)
 endif()
 
 #warning: the order in this list has to match the enum in Exact_type_selector

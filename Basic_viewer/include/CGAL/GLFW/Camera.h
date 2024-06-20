@@ -72,6 +72,7 @@ public:
 
     inline void modify_fov(float d);
 
+    inline mat4f image_toWorld() const;
 
 private:
     vec3f m_center;   // centre de l'objet observé
@@ -121,8 +122,8 @@ inline void Camera::translation(const float x, const float y)
     } 
     else // free fly  
     {
-        vec3f right = (m_orientation * vec3f::UnitX()).normalized();
-        vec3f up = (m_orientation * vec3f::UnitY()).normalized();
+        vec3f right = (m_orientation * vec3f::UnitX());
+        vec3f up = (m_orientation * vec3f::UnitY());
         m_position += right * x * m_tspeed; 
         m_position += up * y * m_tspeed; 
     }
@@ -140,7 +141,7 @@ inline void Camera::rotation(const float x, const float y)
     }
     else // free fly
     {
-        m_orientation = rotX * rotY * m_orientation;
+        m_orientation = rotY * m_orientation * rotX;
     }
 }
 
@@ -155,27 +156,45 @@ inline void Camera::move(const float z)
     }
     else // free fly
     {
-        vec3f forward = m_orientation * vec3f::UnitZ();
-        m_position -= forward * z * m_tspeed;
+        vec3f forward = (m_orientation * -vec3f::UnitZ()).normalized();
+        vec3f right = (m_orientation * vec3f::UnitX()).normalized();
+        vec3f up = (m_orientation * vec3f::UnitY()).normalized();
+
+        std::cout << "orientation : " 
+            << m_orientation.x() << " " 
+            << m_orientation.y() << " " 
+            << m_orientation.z() << " " 
+            << m_orientation.w() << " \nfw : (" 
+            << forward.x() << ", " 
+            << forward.y() << ", " 
+            << forward.z() << ") \nrt : ("
+            << right.x() << ", " 
+            << right.y() << ", " 
+            << right.z() << ") \nup : ("
+            << up.x() << ", " 
+            << up.y() << ", " 
+            << up.z() << ")" <<      
+        std::endl; 
+        m_position += forward * m_size * z * m_tspeed;
     }
 }
 
 inline void Camera::move_left(const float dt)
 {
-    if (m_orbiter) 
-    {
-        m_position.x() -= m_size * dt * m_tspeed;
-    }
-    else // free fly
-    {
-        vec3f left = m_orientation * vec3f::UnitX();
-        m_position -= left * dt;
-    }
+    move_right(-dt);
 }
 
 inline void Camera::move_right(const float dt)
 {
-    move_left(-dt);
+    if (m_orbiter) 
+    {
+        m_position.x() += m_size * dt * m_tspeed;
+    }
+    else // free fly
+    {
+        vec3f right = (m_orientation * vec3f::UnitX()).normalized();
+        m_position += right * m_size * dt * m_tspeed;
+    }
 }
 
 inline void Camera::move_up(const float dt)
@@ -186,8 +205,8 @@ inline void Camera::move_up(const float dt)
     }
     else // free fly
     {
-        vec3f up = m_orientation * vec3f::UnitY();
-        m_position += up * dt * m_tspeed;
+        vec3f up = (m_orientation * vec3f::UnitY()).normalized();
+        m_position += up * m_size * dt * m_tspeed;
     }
 }
 
@@ -297,7 +316,7 @@ inline vec3f Camera::forward() const
     }
     else 
     {
-        fw = m_orientation * vec3f::UnitZ();
+        fw = m_orientation * -vec3f::UnitZ();
     }
 
     return fw.normalized();
@@ -311,13 +330,19 @@ inline void Camera::reset_all()
     m_radius = m_cst_size;
 }
 
-inline void Camera::frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const
+inline mat4f Camera::image_toWorld() const 
 {
     mat4f v = view();
     mat4f p = projection();
     mat4f vp = viewport();
-    mat4f w2i = vp * p * v;    // passage du monde vers l'image
-    mat4f i2w = w2i.inverse(); // passage de l'image vers le monde
+    mat4f w2i = vp * p * v;    
+    return w2i.inverse();
+}
+
+
+inline void Camera::frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const
+{
+    mat4f i2w = image_toWorld(); // passage de l'image vers le monde
 
     vec3f uo(0, 0, z);
     vec3f ux(1, 0, z);

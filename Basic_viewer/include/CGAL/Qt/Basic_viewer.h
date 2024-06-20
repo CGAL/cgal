@@ -21,8 +21,6 @@
 #include <string>
 #include <CGAL/Graphics_scene.h>
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 #ifdef __GNUC__
 #if  __GNUC__ >= 9
 #  pragma GCC diagnostic push
@@ -1617,7 +1615,7 @@ using Qt::Basic_viewer;
 
 inline
 void draw_graphics_scene(const Graphics_scene& graphics_scene,
-                         const char *title="CGAL Basic Viewer")
+                         const char *title="CGAL Basic Viewer (Qt)")
 {
 #if defined(CGAL_TEST_SUITE)
   bool cgal_test_suite = true;
@@ -1640,27 +1638,5 @@ void draw_graphics_scene(const Graphics_scene& graphics_scene,
 }
 
 } // End namespace CGAL
-
-#else // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL
-{
-
-  template<class ... T>
-  void draw(T...)
-  {
-    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
-  }
-
-  inline
-  void draw_graphics_scene(const Graphics_scene&,
-                           const char* ="CGAL Basic Viewer")
-  {
-    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
-  }
-
-} // End namespace CGAL
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #endif // CGAL_BASIC_VIEWER_H

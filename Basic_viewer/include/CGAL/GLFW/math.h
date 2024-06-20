@@ -158,8 +158,7 @@ vec3f subVec(vec3f const &u, vec3f const &v)
 
 vec3f multVecMat(vec3f const &u, mat4f const &m)
 {
-  vec4f v(u.x(), u.y(), u.z(), 1.f);
-
+  vec4f v = u.homogeneous();
   float x = m.row(0).dot(v);
   float y = m.row(1).dot(v);
   float z = m.row(2).dot(v);
