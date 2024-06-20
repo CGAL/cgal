@@ -45,7 +45,6 @@ int main()
   assert( span.y_span() == 6);
   }
 
-
   {
   //Dimension 3
   Point_3 p1(0,0,0), p2(1,-1.3,1.5);
