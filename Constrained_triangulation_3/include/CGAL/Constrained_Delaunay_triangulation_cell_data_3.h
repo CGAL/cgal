@@ -29,18 +29,6 @@
 #include <bitset>
 
 namespace CGAL {
-#ifdef DOXYGEN_RUNNING
-/*!
- * @brief Internal per-cell data for \cgal 3D constrained Delaunay triangulations
- *
- * This class is an internal detail of the implementation of \cgal 3D constrained Delaunay triangulations.
- *
- * Any model of the `ConstrainedDelaunayTriangulationCellBase_3` concept must include one object of this type
- * as a non-static data member.
- */
-struct Constrained_Delaunay_triangulation_cell_data_3 {};
-#else // DOXYGEN_RUNNING
-
 enum class CDT_3_cell_marker {
   CLEAR = 0,
   IN_REGION = 1,
@@ -49,7 +37,19 @@ enum class CDT_3_cell_marker {
   nb_of_markers
 };
 
-struct Constrained_Delaunay_triangulation_cell_data_3 {
+/*!
+ * @brief Internal per-cell data for \cgal 3D constrained Delaunay triangulations
+ *
+ * This class is an internal detail of the implementation of \cgal 3D constrained Delaunay triangulations.
+ *
+ * Any model of the `ConstrainedDelaunayTriangulationCellBase_3` concept must include one object of this type
+ * as a non-static data member.
+ */
+class Constrained_Delaunay_triangulation_cell_data_3 {
+  /// @cond SKIP_IN_MANUAL
+  template <typename Tr> friend class Constrained_Delaunay_triangulation_3_impl;
+  /// @endcond
+
   std::array<CDT_3_face_index, 4> face_id = { -1, -1, -1, -1 };
   std::array<void*, 4> facet_2d = {nullptr, nullptr, nullptr, nullptr};
   std::bitset<static_cast<unsigned>(CDT_3_cell_marker::nb_of_markers)> markers;
@@ -60,8 +60,6 @@ struct Constrained_Delaunay_triangulation_cell_data_3 {
   void clear_mark(CDT_3_cell_marker m) { markers.reset(static_cast<unsigned>(m)); }
   void clear_marks() { markers.reset(); }
 
-  bool is_facet_constrained(int i) const { return face_id[unsigned(i)] >= 0; }
-
   template <typename Facet_handle>
   void set_facet_constraint(int i, CDT_3_face_index face_id,
                             Facet_handle facet_2d)
@@ -70,19 +68,24 @@ struct Constrained_Delaunay_triangulation_cell_data_3 {
     this->facet_2d[unsigned(i)] = static_cast<void*>(facet_2d == Facet_handle{} ?  nullptr : std::addressof(*facet_2d));
   }
 
-  CDT_3_face_index face_constraint_index(int i) const {
-    return face_id[unsigned(i)];
-  }
-
   template <typename CDT_2>
   auto face_2 (const CDT_2& cdt, int i) const {
     using Face = typename CDT_2::Face;
     auto ptr = static_cast<Face*>(facet_2d[unsigned(i)]);
     return cdt.tds().faces().iterator_to(*ptr);
   }
+public:
+  /// @brief Returns if the i-th facet of the cell is constrained.
+  bool is_facet_constrained(int i) const { return face_id[unsigned(i)] >= 0; }
+
+  /// @brief Returns the index of the constraint that constrains the
+  /// i-th facet of the cell.
+  /// @pre `is_facet_constrained(i)`
+  CDT_3_face_index face_constraint_index(int i) const {
+    return face_id[unsigned(i)];
+  }
 };
 
-#endif // DOXYGEN_RUNNING
 } // namespace CGAL
 
 #endif // CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_CELL_DATA_3_H

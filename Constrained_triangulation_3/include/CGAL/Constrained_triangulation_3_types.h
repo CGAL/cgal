@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2024  GeometryFactory Sarl (France).
+// Copyright (c) 2024  GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -18,46 +18,25 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_CDT_3_CONFIG_H
-#define CGAL_CDT_3_CONFIG_H
+#ifndef CGAL_CT_3_TYPES_H
+#define CGAL_CT_3_TYPES_H
 
 #include <CGAL/license/Triangulation_3.h>
 
 #include <CGAL/config.h>
 
-#include <CGAL/Constrained_triangulation_3_types.h>
-
-#if CGAL_CAN_USE_CXX20_FORMAT
-#  define CGAL_CDT_3_CAN_USE_CXX20_FORMAT 1
-#  include <format>
-#endif
-
 namespace CGAL {
 
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-
-constexpr bool cdt_3_can_use_cxx20_format() {
-  return true;
-}
-
-template <typename... Args>
-decltype(auto) cdt_3_format(std::format_string<Args...> fmt, Args&&... args) {
-  return std::format(fmt, std::forward<Args>(args)...);
-}
-
-#else // not CGAL_CDT_3_CAN_USE_CXX20_FORMAT
-
-template <typename... Args>
-constexpr decltype(auto) cdt_3_format(Args&&...) {
-  return "";
-}
-
-constexpr bool cdt_3_can_use_cxx20_format() {
-  return false;
-}
-
-#endif // not CGAL_CDT_3_CAN_USE_CXX20_FORMAT
+/**
+ * @addtogroup PkgCT_3Classes
+ * @typedef CDT_3_face_index
+ * Integral type to store the index of constraints.
+ * @see `Constrained_Delaunay_triangulation_cell_data_3`
+ * @see `Constrained_Delaunay_triangulation_vertex_base_3`
+ *
+ */
+using CDT_3_face_index = int; // must be signed
 
 } // namespace CGAL
 
-#endif // CGAL_CDT_3_CONFIG_H
+#endif // CGAL_CT_3_TYPES_H

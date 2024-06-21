@@ -95,8 +95,11 @@ public:
   void reset_cache_validity() const { sliver_cache_validity_ = false; }
 
   static std::string io_signature() {
-    return Get_io_signature<Base>()() + "+(" + Get_io_signature<int>()()
-      + ")[4]";
+    static_assert(
+        std::is_same_v<
+            decltype(std::declval<Constrained_Delaunay_triangulation_cell_data_3>().face_constraint_index(0)), int>);
+
+    return Get_io_signature<Base>()() + "+(" + Get_io_signature<int>()() + ")[4]";
   }
 
   friend std::ostream&
@@ -106,9 +109,9 @@ public:
     os << static_cast<const Base&>(c);
     for( unsigned li = 0; li < 4; ++li ) {
       if(IO::is_ascii(os)) {
-        os << " " << c.cdt_3_data().face_id[li];
+        os << " " << c.cdt_3_data().face_constraint_index(li);
       } else {
-        CGAL::write(os, c.cdt_3_data().face_id[li]);
+        CGAL::write(os, c.cdt_3_data().face_constraint_index(li));
       }
     }
     return os;
