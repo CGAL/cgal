@@ -74,105 +74,6 @@
 
 #ifndef DOXYGEN_RUNNING
 
-#if 0
-namespace CGAL {
-
-  /*!
-   * \ingroup PkgCT_3MainClasses
-   * \brief The class Constrained_Delaunay_triangulation_3 represents a 3D constrained Delaunay triangulation.
-   *
-   * This class is derived from the Triangulation_3 class and provides additional functionality for handling
-   * polygonal constraints during the triangulation process.
-   *
-   * \todo Explain what is a CDT. Why a given input, like a polyhedron, might not admit a constrained Delaunay triangulation.
-   * Explain "conforming to the faces of a polygon mesh".
-   *
-   * \tparam Traits is the geometric traits class and must be a model of `ConstrainedDelaunayTriangulationTraits_3`.
-   * \tparam Triangulation_3 is the base triangulation class.
-   *         It must be a an instance of the `Triangulation_3` class template with the same `Traits` template parameter.
-   *         Its `Vertex` type must be a model of `ConstrainedDelaunayTriangulationVertexBase_3`,
-   *         and its `Cell` type must be a model of `ConstrainedDelaunayTriangulationCellBase_3`.
-   *         <br>
-   *         The default value is `Triangulation_3<Traits, TDS>` where `TDS` is
-   *         `Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>`.
-   *
-   * @cgalModels{MeshComplex_2InTriangulation_3}
-   *
-   */
-  template <typename Traits, typename Triangulation_3>
-  class Constrained_Delaunay_triangulation_3 {
-  public:
-    /*!
-     * \brief Create a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
-     *
-     * This constructor initializes a Constrained_Delaunay_triangulation_3 object using a polygon mesh.
-     * The polygon mesh represents the polygonal constraints that will be enforced during the triangulation process.
-     *
-     * By default, each face of the polygon mesh is considered as a polygonal constraint for the triangulation. The
-     * named parameter `face_patch_map` can be used to describe bigger polygonal constraints, possibly with holes. If
-     * used, the argument of that parameter must be a property map that maps each face of the polygon mesh to a patch
-     * identifier. Faces with the same patch identifier are considered as part of the same surface patch. Each of those
-     * surface patches (defined as the union of the mesh faces with a given patch id) is supposed to be a polygon or a
-     * polygon with holes, with coplanar vertices (or almost coplanar up to the precision of the number type used).
-     *
-     * The triangulation will be constrained to conform to the faces of the polygon mesh, or to the surface patches
-     * described by the `face_patch_map` property map if provided.
-     *
-     * \tparam PolygonMesh a model of `FaceListGraph`
-     * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
-     *
-     * \param mesh The polygon mesh representing the constraints.
-     * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-     *
-     * \cgalNamedParamsBegin
-     *   \cgalParamNBegin{vertex_point_map}
-     *     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
-     *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
-     *                    as key type and `%Traits::Point_3` as value type}
-     *     \cgalParamDefault{`boost::get(CGAL::vertex_point, mesh)`}
-     *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
-     *                     must be available in `PolygonMesh`.}
-     *   \cgalParamNEnd
-     *   \cgalParamNBegin{geom_traits}
-     *     \cgalParamDescription{an instance of a geometric traits class}
-     *     \cgalParamType{`Traits`}
-     *     \cgalParamDefault{the default constructed traits object `Traits{}`}
-     *   \cgalParamNEnd
-     *   \cgalParamNBegin{face_patch_map}
-     *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`}
-     *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
-     *                   as key type and with any value type that is a *regular* type}
-     *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered as a separate patch.}
-     *   \cgalParamExtra{Faces with the same patch identifier are considered as part of the same surface patch.}
-     *   \cgalParamNEnd
-     * \cgalNamedParamsEnd
-     *
-     * \todo Create a documentation page to describe the concept *regular*, and link it to https://en.cppreference.com/w/cpp/concepts/regular
-     */
-    template <typename PolygonMesh, typename NamedParams = parameters::Default_named_parameters>
-    Constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const NamedParams& np = parameters::default_values())
-    {
-
-      // Implementation of the constructor with variadic named parameters
-      // ...
-    }
-
-    /*!
-     * \brief Get a const reference to the base triangulation.
-     *
-     * This function returns a const reference to the base triangulation used by the constrained Delaunay triangulation.
-     * That allows to use all non-modifying functions of the base triangulation.
-     *
-     * \return A const reference to the base triangulation.
-     */
-    const Triangulation_3& triangulation() const {
-      return base_triangulation_;
-    }
-  };
-
-} // end namespace CGAL
-#endif // 0
-
 namespace CGAL {
 
 template <class K>
@@ -561,27 +462,84 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
   }
 };
 
-template <typename Traits>
-class Default_CDT_triangulation_3 {
-  using Vb = Constrained_Delaunay_triangulation_vertex_base_3<Traits>;
-  using Cb = Constrained_Delaunay_triangulation_cell_base_3<Traits>;
-  using TDS = Triangulation_data_structure_3<Vb, Cb>;
-public:
-  using type = Triangulation_3<Traits, TDS>;
-};
-
-template <typename Traits>
-using Default_CDT_triangulation_3_t = typename Default_CDT_triangulation_3<Traits>::type;
-
 template <typename T_3>
 class Constrained_Delaunay_triangulation_3_impl;
 
-template <typename Traits, typename Triangulation_3 = Default_CDT_triangulation_3_t<Traits>>
+/*!
+ * \ingroup PkgCT_3MainClasses
+ * \brief The class Constrained_Delaunay_triangulation_3 represents a 3D constrained Delaunay triangulation.
+ *
+ * This class is derived from the Triangulation_3 class and provides additional functionality for handling
+ * polygonal constraints during the triangulation process.
+ *
+ * \todo Explain what is a CDT. Why a given input, like a polyhedron, might not admit a constrained Delaunay triangulation.
+ * Explain "conforming to the faces of a polygon mesh".
+ *
+ * \tparam Traits is the geometric traits class and must be a model of `ConstrainedDelaunayTriangulationTraits_3`.
+ * \tparam Triangulation_3 is the base triangulation class.
+ *         It must be a an instance of the `Triangulation_3` class template with the same `Traits` template parameter.
+ *         Its `Vertex` type must be a model of `ConstrainedDelaunayTriangulationVertexBase_3`,
+ *         and its `Cell` type must be a model of `ConstrainedDelaunayTriangulationCellBase_3`.
+ *         <br>
+ *         The default value is `Triangulation_3<Traits, TDS>` where `TDS` is
+ *         `Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>`.
+ *
+ * @cgalModels{MeshComplex_2InTriangulation_3}
+ *
+ */
+template <typename Traits, typename Triangulation_3>
 class Constrained_Delaunay_triangulation_3 {
   using DT_3 = Delaunay_triangulation_3<Traits, typename Triangulation_3::Triangulation_data_structure>;
   static_assert(std::is_base_of_v<Triangulation_3, DT_3>);
   Constrained_Delaunay_triangulation_3_impl<DT_3> cdt_impl = {};
 public:
+  /*!
+    * \brief Create a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
+    *
+    * This constructor initializes a Constrained_Delaunay_triangulation_3 object using a polygon mesh.
+    * The polygon mesh represents the polygonal constraints that will be enforced during the triangulation process.
+    *
+    * By default, each face of the polygon mesh is considered as a polygonal constraint for the triangulation. The
+    * named parameter `face_patch_map` can be used to describe bigger polygonal constraints, possibly with holes. If
+    * used, the argument of that parameter must be a property map that maps each face of the polygon mesh to a patch
+    * identifier. Faces with the same patch identifier are considered as part of the same surface patch. Each of those
+    * surface patches (defined as the union of the mesh faces with a given patch id) is supposed to be a polygon or a
+    * polygon with holes, with coplanar vertices (or almost coplanar up to the precision of the number type used).
+    *
+    * The triangulation will be constrained to conform to the faces of the polygon mesh, or to the surface patches
+    * described by the `face_patch_map` property map if provided.
+    *
+    * \tparam PolygonMesh a model of `FaceListGraph`
+    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+    *
+    * \param mesh The polygon mesh representing the constraints.
+    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    *
+    * \cgalNamedParamsBegin
+    *   \cgalParamNBegin{vertex_point_map}
+    *     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
+    *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+    *                    as key type and `%Traits::Point_3` as value type}
+    *     \cgalParamDefault{`boost::get(CGAL::vertex_point, mesh)`}
+    *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+    *                     must be available in `PolygonMesh`.}
+    *   \cgalParamNEnd
+    *   \cgalParamNBegin{geom_traits}
+    *     \cgalParamDescription{an instance of a geometric traits class}
+    *     \cgalParamType{`Traits`}
+    *     \cgalParamDefault{the default constructed traits object `Traits{}`}
+    *   \cgalParamNEnd
+    *   \cgalParamNBegin{face_patch_map}
+    *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`}
+    *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+    *                   as key type and with any value type that is a *regular* type}
+    *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered as a separate patch.}
+    *   \cgalParamExtra{Faces with the same patch identifier are considered as part of the same surface patch.}
+    *   \cgalParamNEnd
+    * \cgalNamedParamsEnd
+    *
+    * \todo Create a documentation page to describe the concept *regular*, and link it to https://en.cppreference.com/w/cpp/concepts/regular
+    */
   template <typename PolygonMesh, typename NamedParams = parameters::Default_named_parameters>
   Constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const NamedParams& np = parameters::default_values())
       : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
@@ -615,6 +573,14 @@ public:
     //                          cdt_impl.number_of_cells());
   }
 
+  /*!
+    * \brief Get a const reference to the base triangulation.
+    *
+    * This function returns a const reference to the base triangulation used by the constrained Delaunay triangulation.
+    * That allows to use all non-modifying functions of the base triangulation.
+    *
+    * \return A const reference to the base triangulation.
+    */
   const Triangulation_3& triangulation() & {
     return cdt_impl;
   }
@@ -2206,7 +2172,9 @@ private:
           if(cdt_2.orientation(v0->point(), v1->point(), v3->point()) == CGAL::POSITIVE &&
              cdt_2.orientation(v0->point(), v3->point(), v2->point()) == CGAL::POSITIVE)
           {
-            std::cerr << "NOTE: the other diagonal is in the 3D triangulation: flip the edge\n";
+            if(this->debug_regions()) {
+              std::cerr << "NOTE: the other diagonal is in the 3D triangulation: flip the edge\n";
+            }
             non_const_cdt_2.flip(non_const_fh_region[0], diagonal_index);
             for(auto fh : fh_region) {
               for(int i = 0; i < 3; ++i) {
@@ -2224,7 +2192,7 @@ private:
               fh->info().missing_subface = false;
             }
             return true;
-          } else {
+          } else if(this->debug_regions()) {
             std::cerr << "NOTE: the other diagonal is in the 3D triangulation BUT the edge is not flippable!\n";
             std::cerr << "  The region " << region_index << " of face #F" << face_index << " has four points:\n";
             std::cerr << "    v0: " << v0->point() << '\n';
@@ -2235,42 +2203,44 @@ private:
         }
 
 #if CGAL_CAN_USE_CXX20_FORMAT
-        std::cerr << cdt_3_format
-            ("NOTE: diagonal: {:.6} {:.6}  {} in tr\n",
-            IO::oformat(*diagonal.begin(), with_point),
-            IO::oformat(*std::next(diagonal.begin()), with_point),
-            this->is_edge(*diagonal.begin(), *std::next(diagonal.begin())) ? "IS" : "is NOT");
-        std::cerr << cdt_3_format(
-            "NOTE: the other diagonal: {:.6} {:.6}  {} in tr\n",
-            IO::oformat(*other_diagonal.begin(), with_point),
-            IO::oformat(*std::next(other_diagonal.begin()), with_point),
-            this->is_edge(*other_diagonal.begin(), *std::next(other_diagonal.begin())) ? "IS" : "is NOT");
-        if(cdt_2.geom_traits().side_of_oriented_circle_2_object()(
-               (*region_border_vertices.begin())->point(), (*std::next(region_border_vertices.begin()))->point(),
-               (*std::next(region_border_vertices.begin(), 2))->point(),
-               (*std::next(region_border_vertices.begin(), 3))->point()) == CGAL::ZERO)
-        {
+        if constexpr (cdt_3_can_use_cxx20_format()) if(this->debug_regions()) {
+          std::cerr << cdt_3_format
+              ("NOTE: diagonal: {:.6} {:.6}  {} in tr\n",
+              IO::oformat(*diagonal.begin(), with_point),
+              IO::oformat(*std::next(diagonal.begin()), with_point),
+              this->is_edge(*diagonal.begin(), *std::next(diagonal.begin())) ? "IS" : "is NOT");
           std::cerr << cdt_3_format(
-              "NOTE: In polygon #{}, region {}, the 4 vertices are co-circular in the 2D triangulation\n",
-              face_index, region_index);
-        }
-        if(CGAL::coplanar(
-               (*region_border_vertices.begin())->point(),
-               (*std::next(region_border_vertices.begin()))->point(),
-               (*std::next(region_border_vertices.begin(), 2))->point(),
-               (*std::next(region_border_vertices.begin(), 3))->point()))
-        {
-          std::cerr << cdt_3_format("NOTE: In polygon #{}, region {}, the 4 vertices are coplanar\n",
-                                   face_index, region_index);
-          if(CGAL::coplanar_side_of_bounded_circle(
-               (*region_border_vertices.begin())->point(),
-               (*std::next(region_border_vertices.begin()))->point(),
-               (*std::next(region_border_vertices.begin(), 2))->point(),
-               (*std::next(region_border_vertices.begin(), 3))->point()) == CGAL::ON_BOUNDARY)
+              "NOTE: the other diagonal: {:.6} {:.6}  {} in tr\n",
+              IO::oformat(*other_diagonal.begin(), with_point),
+              IO::oformat(*std::next(other_diagonal.begin()), with_point),
+              this->is_edge(*other_diagonal.begin(), *std::next(other_diagonal.begin())) ? "IS" : "is NOT");
+          if(cdt_2.geom_traits().side_of_oriented_circle_2_object()(
+                (*region_border_vertices.begin())->point(), (*std::next(region_border_vertices.begin()))->point(),
+                (*std::next(region_border_vertices.begin(), 2))->point(),
+                (*std::next(region_border_vertices.begin(), 3))->point()) == CGAL::ZERO)
           {
             std::cerr << cdt_3_format(
-                "NOTE: In polygon #{}, region {}, the 4 vertices are co-circular in the 3D triangulation\n",
+                "NOTE: In polygon #{}, region {}, the 4 vertices are co-circular in the 2D triangulation\n",
                 face_index, region_index);
+          }
+          if(CGAL::coplanar(
+                (*region_border_vertices.begin())->point(),
+                (*std::next(region_border_vertices.begin()))->point(),
+                (*std::next(region_border_vertices.begin(), 2))->point(),
+                (*std::next(region_border_vertices.begin(), 3))->point()))
+          {
+            std::cerr << cdt_3_format("NOTE: In polygon #{}, region {}, the 4 vertices are coplanar\n",
+                                    face_index, region_index);
+            if(CGAL::coplanar_side_of_bounded_circle(
+                (*region_border_vertices.begin())->point(),
+                (*std::next(region_border_vertices.begin()))->point(),
+                (*std::next(region_border_vertices.begin(), 2))->point(),
+                (*std::next(region_border_vertices.begin(), 3))->point()) == CGAL::ON_BOUNDARY)
+            {
+              std::cerr << cdt_3_format(
+                  "NOTE: In polygon #{}, region {}, the 4 vertices are co-circular in the 3D triangulation\n",
+                  face_index, region_index);
+            }
           }
         }
 #endif // CGAL_CAN_USE_CXX20_FORMAT
