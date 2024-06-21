@@ -754,7 +754,7 @@ void Basic_generator_plugin::generateLines()
       return false;
     }
 
-    polylines.back().reserve(list.size()+is_closed?1:0);
+    polylines.back().reserve(list.size()+(is_closed?1:0));
 
     for(QString s : list)
     {
