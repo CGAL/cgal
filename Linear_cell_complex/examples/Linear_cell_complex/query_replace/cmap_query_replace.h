@@ -126,7 +126,7 @@ public:
   {
     std::size_t id = load_one_additional_pattern<1>(file_name, m_fpatterns);
     if (id < 0) {
-      std::cerr << "load_additional_fpatetern: file not found or format not readable" << std::endl;
+      std::cerr << "load_additional_fpattern: file not found or format not readable" << std::endl;
       return;   
     };
     
@@ -134,8 +134,7 @@ public:
     Dart_handle dh;
     size_type mark_to_preserve=LCC::INVALID_MARK;
     
-    if (m_fpatterns.size() == 0) return;
-    auto& pattern = m_fpatterns[m_fpatterns.size() - 1];
+    auto& pattern = m_fpatterns[id];
 
     if(init_topreserve!=nullptr) // true iff the std::function is not empty
     {
@@ -271,7 +270,7 @@ protected:
     { return -1; }
 
     std::size_t id = patterns.size();
-    patterns.resize(id + 1);
+    patterns.push_back(Pattern<LCC,type>());
 
     read_depending_extension(file.string(),
                                  patterns[id].lcc());

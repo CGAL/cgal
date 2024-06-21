@@ -51,7 +51,7 @@ void render(LCC &lcc, size_type mark)
   }
 
 
-void refine_hexes_with_1_2_4_templates(LCC &lcc, Pattern_substituer<LCC> &ps, size_type corner_mark)
+void refine_hexes_with_1_2_4_templates(LCC &lcc, Pattern_substituer<LCC> &ps, size_type toprocess_mark)
 {
     /**
    * Il se pourrait qu'on ait pas besoins d'identifier les patterns avec leur marking lors du remplacage surfacique/volumique
@@ -74,10 +74,9 @@ void refine_hexes_with_1_2_4_templates(LCC &lcc, Pattern_substituer<LCC> &ps, si
 
 
   int nbsub = 0;
-  for (auto dart : marked_cells)
+  for (auto& dart : marked_cells)
   {
-    if (ps.query_replace_one_face(lcc, dart, corner_mark) != SIZE_T_MAX) nbsub++;
-    
+    if (ps.query_replace_one_face(lcc, dart, toprocess_mark) != SIZE_T_MAX) nbsub++;
   }
   
   std::cout << nbsub << " Faces substitution was made" << std::endl;
@@ -95,7 +94,7 @@ void refine_hexes_with_1_2_4_templates(LCC &lcc, Pattern_substituer<LCC> &ps, si
   }
 
   nbsub = 0;
-  for (auto dart : marked_cells)
+  for (auto& dart : marked_cells)
   {
     if (ps.query_replace_one_volume(lcc, dart) != SIZE_T_MAX) nbsub++;
   }
@@ -107,7 +106,9 @@ void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_ce
 {
 
   // 2 noeuds marqué l'un à coté de l'autre ne produit pas de sommet
-  // 1 noeud marqué a coté d'un noeud non marqué produit un sommet 
+  // 1 noeud marqué a coté d'un noeud non marqué produit un sommet
+
+  // TODO A changer pour une itération sur les arretes ou pas selon comment l'algo va s'executer   
 
   std::vector<Dart_handle> edges_to_subdivide;
 
@@ -178,16 +179,29 @@ int main()
   lcc.sew<3>(lcc.beta(d1, 0, 2), lcc.beta(d3, 1, 2));
 
   ps.load_vpatterns(CGAL::data_file_path("hexmeshing/vpattern"));
+
+  // BUG Manque des opérateurs de déplacements pour Pattern, le reserve est un fix temporaire
+  // Pour pouvoir charger les patterns correctement sans réallocation
+  ps.m_fpatterns.reserve(10);
   ps.load_additional_fpattern(CGAL::data_file_path("hexmeshing/fpattern/pattern1-face.moka"), mark_1template_face);
   ps.load_additional_fpattern(CGAL::data_file_path("hexmeshing/fpattern/pattern2-face.moka"), mark_2template_face);
+  ps.fpattern(0).display_characteristics(std::cout);
+  // ps.fpattern(1).display_characteristics(std::cout);
 
   auto toprocess_mark = lcc.get_new_mark();
   auto arrete_done = lcc.get_new_mark();
+  // auto corner_mark = lcc.get_new_mark();
+  // lcc.negate_mark(corner_mark);
 
   lcc.mark_cell<0>(d1, toprocess_mark);
-  lcc.mark_cell<0>(d2, toprocess_mark);
+  auto md1 = lcc.beta(d1, 1);
+  lcc.mark_cell<0>(md1, toprocess_mark);
   auto md2 = lcc.beta(d2, 1);
   lcc.mark_cell<0>(md2, toprocess_mark);
+  auto md3 = lcc.beta(d2, 1, 1);
+  lcc.mark_cell<0>(md3, toprocess_mark);
+  auto md4 = d3;
+  lcc.mark_cell<0>(md4, toprocess_mark);
   
   // lcc.mark_cell<0>(md3, toprocess_mark);
 
@@ -196,8 +210,10 @@ int main()
   // We assume we already filled out marked_cells earlier
 
   marked_cells.push_back(d1);
-  marked_cells.push_back(d2);
+  marked_cells.push_back(md1);
   marked_cells.push_back(md2);
+  marked_cells.push_back(md3);
+  marked_cells.push_back(md4);
 
   create_vertices_for_templates(lcc, marked_cells, toprocess_mark, arrete_done);
   refine_hexes_with_1_2_4_templates(lcc, ps, toprocess_mark);
