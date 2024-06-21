@@ -24,10 +24,45 @@
 #include <CGAL/license/Constrained_triangulation_3.h>
 
 #include <CGAL/Constrained_Delaunay_triangulation_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_cell_data_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_vertex_base_3.h>
+#include <CGAL/Constrained_Delaunay_triangulation_cell_base_3.h>
+#include <CGAL/Triangulation_3.h>
+#include <CGAL/Triangulation_data_structure_3.h>
 
 namespace CGAL {
+
+/*!
+ * \ingroup PkgCT_3Classes
+ * \brief The default 3D constrained Delaunay triangulation type.
+ *
+ * `Default_constrained_triangulation_3` is a metafunction that returns the
+ * default 3D constrained Delaunay triangulation type for a given geometric
+ * traits class.
+ *
+ * \tparam Geom_traits a geometric traits class.
+ *
+ * \return `type` is the default 3D constrained Delaunay triangulation type.
+*/
+template <typename Geom_traits>
+struct Default_constrained_triangulation_3 {
+  using Vb = Constrained_Delaunay_triangulation_vertex_base_3<Geom_traits>;
+  using Cb = Constrained_Delaunay_triangulation_cell_base_3<Geom_traits>;
+  using Tds = Triangulation_data_structure_3<Vb, Cb>;
+  using type = Triangulation_3<Geom_traits, Tds>;
+};
+
+/*!
+ * \ingroup PkgCT_3Classes
+ * \brief The default 3D constrained Delaunay triangulation type.
+ * \relates Default_constrained_triangulation_3
+ * \tparam Geom_traits a geometric traits class.
+ *
+ * This alias template names the default 3D constrained Delaunay triangulation
+ * type for a given geometric traits class.
+ */
+template <typename Geom_traits>
+using default_constrained_triangulation_3_t =
+    typename Default_constrained_triangulation_3<Geom_traits>::type;
 
 /*!
  * \ingroup PkgCT_3Functions
