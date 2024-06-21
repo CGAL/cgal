@@ -33,17 +33,22 @@ public:
         return loc;
     }
 
-    void setMatrix4f(const std::string &name, GLfloat *data, GLboolean transpose = false)
+    void setMatrix4f(const std::string &name, const GLfloat *data, GLboolean transpose = false)
     {
         glUniformMatrix4fv(getUniform(name), 1, transpose, data);
     }
 
-    void setVec4f(const std::string &name, GLfloat *data)
+    void setVec4f(const std::string &name, const GLfloat *data)
     {
         glUniform4fv(getUniform(name), 1, data);
     }
 
-    void setFloat(const std::string &name, float data)
+    void setVec3f(const std::string &name, const GLfloat *data)
+    {
+        glUniform3fv(getUniform(name), 1, data);
+    }
+
+    void setFloat(const std::string &name, const float data)
     {
         glUniform1f(getUniform(name), data);
     }

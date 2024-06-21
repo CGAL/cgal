@@ -136,11 +136,11 @@ namespace GLFW {
     while (!glfwWindowShouldClose(m_window))
     {
       double currentFrame = glfwGetTime();
-      double deltaTime = currentFrame - lastFrame;
+      m_delta_time = currentFrame - lastFrame;
       lastFrame = currentFrame;
-      handle_events(deltaTime);
       render_scene();
       glfwSwapBuffers(m_window);
+      handle_events();
       // update_frame();
     }
 
@@ -149,7 +149,6 @@ namespace GLFW {
 
   void Basic_viewer::make_screenshot(const std::string &pngpath)
   {
-    m_areBuffersInitialized = false;
     m_window = create_window(m_window_size.x(), m_window_size.y(), m_title, true);
     init_buffers();
 
@@ -203,6 +202,13 @@ namespace GLFW {
     m_face_shader = Shader::loadShader(face_vert, face_frag, "FACE");
     m_pl_shader = Shader::loadShader(pl_vert, pl_frag, "PL");
     m_plane_shader = Shader::loadShader(plane_vert, plane_frag, "PLANE");
+
+    // For world axis and grid 
+    const char *line_vert = vertex_source_line;
+    const char *line_frag = fragment_source_line;
+    m_line_shader = Shader::loadShader(line_vert, line_frag, "LINE");
+    m_corner_world_axis.attach_shader(&m_line_shader);
+    m_world_axis.attach_shader(&m_line_shader);
   }
 
   void Basic_viewer::load_buffer(int i, int location, const std::vector<float> &vector, int dataCount)
@@ -317,6 +323,41 @@ namespace GLFW {
       load_buffer(bufn++, 0, m_array_for_clipping_plane, 3);
     }
 
+    {
+      Line x_axis(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0), 3.f); // x-axis
+      Line y_axis(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0), 3.f); // y-axis
+      Line z_axis(vec3f::Zero(), .1f*vec3f::UnitZ(), vec3f(0, 0, 1), 3.f); // z-axis
+      
+
+      m_corner_world_axis.add_line(x_axis);
+      m_corner_world_axis.add_line(y_axis);
+      m_corner_world_axis.add_line(z_axis);
+    }
+
+    {
+      float size = m_camera.size() * 0.5;
+
+      Line x_axis(vec3f::Zero(), size*vec3f::UnitX(), vec3f(1, 0, 0), 5.f); // x-axis
+      Line y_axis(vec3f::Zero(), size*vec3f::UnitY(), vec3f(0, 1, 0), 5.f); // y-axis
+      Line z_axis(vec3f::Zero(), size*vec3f::UnitZ(), vec3f(0, 0, 1), 5.f); // z-axis
+
+      m_world_axis.add_line(x_axis);
+      m_world_axis.add_line(y_axis);
+      m_world_axis.add_line(z_axis);
+
+      const unsigned int nbSubdivisions = 10;
+
+      for (unsigned int i = 0; i <= nbSubdivisions; ++i)
+      {
+        const float pos = float(size * (2.0 * i / nbSubdivisions - 1.0));
+        Line line1(vec3f(pos, -size, 0.f), vec3f(pos, size, 0.f), vec3f(.8f,.8f,.8f), 2.f);
+        Line line2(vec3f(-size, pos, 0.f), vec3f(size, pos, 0.f), vec3f(.8f,.8f,.8f), 2.f);
+        m_world_axis.add_line(line1);
+        m_world_axis.add_line(line2);
+      }
+
+    }
+
     m_areBuffersInitialized = true;
   }
 
@@ -342,7 +383,7 @@ namespace GLFW {
     m_mv = view;
 
     // m_mvp = m_cam_projection * m_mv;
-    m_mvp = projection * view;
+    m_mvp = projection * m_mv;
 
     // ================================================================
 
@@ -425,6 +466,14 @@ namespace GLFW {
     if (m_drawLines)
     {
       draw_lines();
+    }
+    if (m_draw_world_axis) 
+    {
+      draw_world_axis();
+    }
+    if (m_draw_xy_grid) 
+    {
+      draw_xy_grid();
     }
   }
 
@@ -689,37 +738,37 @@ namespace GLFW {
     }
   }
 
+  void Basic_viewer::exit_app() {
+    m_pl_shader.destroy();
+    m_face_shader.destroy();
+    m_plane_shader.destroy();
+    m_line_shader.destroy();
+    glDeleteBuffers(NB_GL_BUFFERS, m_vbo);
+    glDeleteVertexArrays(NB_VAO_BUFFERS, m_vao);
+    glfwDestroyWindow(m_window);
+    glfwTerminate();
+    std::cout << "APPLICATION EXITED" << std::endl;
+    exit(EXIT_SUCCESS);
+  }
+
   void Basic_viewer::action_event(ActionEnum action)
   {
-    if (action == EXIT)
-    {
-      m_pl_shader.destroy();
-      m_face_shader.destroy();
-      m_plane_shader.destroy();
-      glDeleteBuffers(NB_GL_BUFFERS, m_vbo);
-      glDeleteVertexArrays(NB_VAO_BUFFERS, m_vao);
-      glfwDestroyWindow(m_window);
-      glfwTerminate();
-      exit(EXIT_SUCCESS);
-    }
+    if (action == EXIT) exit_app();
 
-    double dt = get_delta_time();
+    double dt = m_delta_time;
+
     switch (action)
     {
     case UP:
-      // m_camera.translation(0, dt);
       m_camera.move_up(dt);
       break;
     case DOWN:
-      // m_camera.translation(0, -dt);
       m_camera.move_down(dt);
       break;
     case LEFT:
-      // m_camera.translation(-dt, 0);
       m_camera.move_left(dt);
       break;
     case RIGHT:
-      // m_camera.translation(dt, 0);
       m_camera.move_right(dt);
       break;
     case FORWARD:
@@ -739,7 +788,6 @@ namespace GLFW {
       break;
     case SWITCH_CAM_ROTATION:
       m_camera.toggle_fly();
-      // switch_rotation_mode();
       break;
     case FULLSCREEN:
       fullscreen();
@@ -756,11 +804,9 @@ namespace GLFW {
       break;
     case INC_ROT_SPEED_1:
       m_camera.inc_rspeed();
-      // m_scene_rotation_speed = std::min(0.25f, m_scene_rotation_speed + 0.01f);
       break;
     case DEC_ROT_SPEED_1:
       m_camera.dec_rspeed();
-      // m_scene_rotation_speed = std::max(0.25f, m_scene_rotation_speed - 0.01f);
       break;
     case RESET_CAM:
       m_camera.reset_all();
@@ -869,6 +915,12 @@ namespace GLFW {
       m_cstr_axis_enum = (m_cstr_axis_enum + 1) % NB_AXIS_ENUM;
       switch_axis(m_cstr_axis_enum);
       break;
+    case DISPLAY_WORLD_AXIS:
+      m_draw_world_axis = !m_draw_world_axis;
+      break;
+    case DISPLAY_XY_GRID:
+      m_draw_xy_grid = !m_draw_xy_grid;
+      break;
     }
   }
 
@@ -919,10 +971,12 @@ namespace GLFW {
     add_mouse_action(GLFW_MOUSE_BUTTON_2, true, MOUSE_TRANSLATE);
 
     add_action(GLFW_KEY_R, GLFW_KEY_LEFT_CONTROL, false, RESET_CAM);
-    // add_mouse_action(GLFW_KEY_R, GLFW_KEY_LEFT_CONTROL, false, CENTER_CAM);
 
     add_action(GLFW_KEY_C, false, CLIPPING_PLANE_MODE);
     add_action(GLFW_KEY_C, GLFW_KEY_LEFT_ALT, false, CLIPPING_PLANE_DISPLAY);
+
+    add_action(GLFW_KEY_Q, false, DISPLAY_WORLD_AXIS);
+    add_action(GLFW_KEY_G, false, DISPLAY_XY_GRID);
 
     add_action(GLFW_KEY_F, false, FACES_DISPLAY);
     add_action(GLFW_KEY_V, false, VERTICES_DISPLAY);
@@ -985,6 +1039,9 @@ namespace GLFW {
                             {VERTICES_DISPLAY, "Toggles vertices display"},
                             {EDGES_DISPLAY, "Toggles edges display"},
                             {FACES_DISPLAY, "Toggles faces display"},
+
+                            {DISPLAY_WORLD_AXIS, "Toggles the display of the world axis"},
+                            {DISPLAY_XY_GRID, "Toggles the display of the XY grid"},
 
                             {INC_POINTS_SIZE, "Increase size of vertices"},
                             {DEC_POINTS_SIZE, "Decrease size of vertices"},
@@ -1164,7 +1221,7 @@ namespace GLFW {
   {
     vec2f delta = get_cursor_delta();
     
-    double dt = get_delta_time();
+    double dt = m_delta_time;
 
     m_camera.rotation(
       dt * delta.x(), 
@@ -1249,7 +1306,7 @@ namespace GLFW {
   {
     vec2f delta = get_cursor_delta();
 
-    double dt = get_delta_time();
+    double dt = m_delta_time;
 
     m_camera.translation(
       dt * -delta.x(),
@@ -1321,7 +1378,7 @@ namespace GLFW {
     if (state == GLFW_PRESS) {
       m_camera.modify_fov(yoffset);
     } else {
-      m_camera.move(8.f * yoffset * get_delta_time());
+      m_camera.move(8.f * yoffset * m_delta_time);
     }
   }
 
@@ -1344,6 +1401,42 @@ namespace GLFW {
 
     stbi_flip_vertically_on_write(true);
     stbi_write_png(filepath.data(), m_window_size.x(), m_window_size.y(), nrChannels, buffer.data(), stride);
+  }
+
+  void Basic_viewer::draw_world_axis() 
+  {
+    int w = m_window_size.x();
+    int h = m_window_size.y();
+
+    mat4f view = m_camera.view();
+
+    // we only want the rotation part of the view matrix  
+    mat3f rotation = view.block<3,3>(0,0);
+
+    mat4f rotation4x4 = mat4f::Identity();
+    rotation4x4.block<3,3>(0,0) = rotation;
+
+    float aspect = static_cast<float>(w) / h;
+    float halfWidth = aspect * 0.1f;
+    float halfHeight = 0.1f;
+    mat4f proj = ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
+
+    mat4f translate = transform::translation(vec3f(halfWidth - 0.1f, halfHeight - 0.1f, 0.0f));
+
+    mat4f mvp = proj * rotation4x4 * translate;
+    m_corner_world_axis.set_mvp(mvp);
+
+    glViewport(w - w / 5, h - h / 5, w / 5, h / 5);
+    m_corner_world_axis.draw();
+
+    // Restore the main viewport
+    glViewport(0, 0, w, h);
+  }
+
+  void Basic_viewer::draw_xy_grid() 
+  {
+    m_world_axis.set_mvp(m_mvp);
+    m_world_axis.draw();
   }
 } // end namespace GLFW 
 } // end namespace CGAL

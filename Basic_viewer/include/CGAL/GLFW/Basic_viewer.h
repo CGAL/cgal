@@ -30,6 +30,7 @@
 #include "Bv_Settings.h"
 #include "math.h"
 #include "Camera.h"
+#include "Line_renderer.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -101,6 +102,8 @@ namespace GLFW {
       window_size_callback(m_window, size.x(), size.y());
     }
 
+    inline void exit_app();
+
     inline void vertices_mono_color(const CGAL::IO::Color &c) { m_verticeMonoColor = c; }
     inline void edges_mono_color(const CGAL::IO::Color &c) { m_edgesMonoColor = c; }
     inline void rays_mono_color(const CGAL::IO::Color &c) { m_raysMonoColor = c; }
@@ -158,7 +161,7 @@ namespace GLFW {
     inline bool flat_shading() const { return m_flatShading; }
 
     inline bool clipping_plane_enable() const { return m_useClippingPlane != CLIPPING_PLANE_OFF; }
-    inline bool is_orthograpic() const { return m_camMode == ORTHOGRAPHIC; }
+    inline bool is_orthograpic() const { return m_camera.is_orthographic(); }
 
     CGAL::Plane_3<Local_kernel> clipping_plane() const;
 
@@ -231,6 +234,9 @@ namespace GLFW {
 
     vec4f color_to_vec4(const CGAL::IO::Color &c) const;
 
+    void draw_world_axis();
+    void draw_xy_grid();
+
   private:
     GLFWwindow *m_window;
     const Graphics_scene *m_scene;
@@ -245,10 +251,17 @@ namespace GLFW {
     bool m_useMonoColor;
     bool m_inverseNormal;
 
+    bool m_draw_world_axis = true;
+    bool m_draw_xy_grid = false;
+    Line_renderer m_corner_world_axis; 
+    Line_renderer m_world_axis; 
+
     float m_sizePoints = SIZE_POINTS;
     float m_sizeEdges = SIZE_EDGES;
     float m_sizeRays = SIZE_RAYS;
     float m_sizeLines = SIZE_LINES;
+
+    double m_delta_time = 0; 
 
     CGAL::IO::Color m_facesMonoColor = FACES_MONO_COLOR;
     CGAL::IO::Color m_verticeMonoColor = VERTICES_MONO_COLOR;
@@ -269,7 +282,7 @@ namespace GLFW {
     mat4f m_mvp;
     bool m_is_opengl_4_3 = false;
 
-    Shader m_pl_shader, m_face_shader, m_plane_shader;
+    Shader m_pl_shader, m_face_shader, m_plane_shader, m_line_shader;
 
     /******* CAMERA ******/
 
@@ -344,7 +357,6 @@ namespace GLFW {
       INC_ROT_SPEED_1,
       DEC_ROT_SPEED_1,
       RESET_CAM,
-      CENTER_CAM,
 
       CLIPPING_PLANE_MODE,
       CLIPPING_PLANE_DISPLAY,
@@ -366,6 +378,9 @@ namespace GLFW {
       DEC_POINTS_SIZE,
       INC_EDGES_SIZE,
       DEC_EDGES_SIZE,
+
+      DISPLAY_WORLD_AXIS, 
+      DISPLAY_XY_GRID,
 
       CP_ROTATION,
       CP_TRANSLATION,
@@ -408,3 +423,5 @@ namespace GLFW {
     basic_viewer.show();
   }
 } // end namespace CGAL 
+
+#include "Basic_viewer_impl.h"

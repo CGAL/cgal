@@ -65,15 +65,12 @@ private:
 
   double m_yoffset = 0;
 
-  double m_deltaTime;
-
 public:
   Eigen::Vector2f get_cursor() const { return m_cursor; }
   Eigen::Vector2f get_cursor_old() const { return m_cursor_old; }
   Eigen::Vector2f get_cursor_delta() const { return m_cursor_delta; }
   
   double get_scroll_yoffset();
-  double get_delta_time() const { return m_deltaTime; }
 
   static std::string get_key_string(KeyData keys);
 
@@ -96,7 +93,7 @@ protected:
   void on_cursor_event(double xpos, double ypos);
   void on_mouse_btn_event(int button, int action, int mods);
   void on_scroll_event(double xoffset, double yoffset);
-  void handle_events(double dt);
+  void handle_events();
 
   virtual void start_action(ActionEnum action) = 0;
   virtual void action_event(ActionEnum action) = 0;
@@ -376,9 +373,8 @@ void Input::on_mouse_btn_event(int btn, int action, int mods)
   }
 }
 
-void Input::handle_events(double dt)
+void Input::handle_events()
 {
-  m_deltaTime = dt;
   m_pressed_keys.clear();
   m_consumed_keys.clear();
   m_activated_actions.clear();

@@ -172,6 +172,27 @@ void main(void)
 }
 )DELIM";
 
+const char vertex_source_line[]=R"DELIM(
+#version 150
+in highp vec4 vertex;
+uniform mat4 mvp_matrix;
+
+void main(void)
+{
+  gl_Position = mvp_matrix * vertex;
+}
+)DELIM";
+
+const char fragment_source_line[]=R"DELIM(
+#version 150
+out highp vec4 out_color;
+uniform vec3 color;
+void main(void)
+{
+  out_color = vec4(color, 1.0f);;
+}
+)DELIM";
+
 //------------------------------------------------------------------------------
 //  compatibility shaders
 

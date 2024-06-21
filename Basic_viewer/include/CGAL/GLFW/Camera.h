@@ -18,7 +18,7 @@ public:
       m_center(), 
       m_position(vec3f::Zero()), 
       m_orientation(quatf::Identity()), 
-      m_tspeed(2.f), m_rspeed(5.f), 
+      m_tspeed(1.f), m_rspeed(5.f), 
       m_size(5.f), m_cst_size(5.f), 
       m_radius(5.f), m_fov(45.f),
       m_width(1.f), m_height(1.f),
@@ -53,6 +53,8 @@ public:
 
     inline void reset_all();
 
+    inline float size() const { return m_size; }
+
     inline void reset_position() { m_position = {0, 0, 0}; }
     inline void reset_rotation() { m_orientation = quatf::Identity(); }
 
@@ -61,6 +63,7 @@ public:
 
     inline void mode(MODE mode) { m_mode = mode; }
     inline void toggle_mode() { m_mode = m_mode == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC; }
+    inline bool is_orthographic() const { return !m_orbiter; }
 
     inline void inc_rspeed() { m_rspeed = std::min(m_rspeed+1.f, 20.f); std::cout << m_rspeed << std::endl; }
     inline void dec_rspeed() { m_rspeed = std::max(m_rspeed-1.f, 1.f); std::cout << m_rspeed << std::endl; }
@@ -117,8 +120,8 @@ inline void Camera::translation(const float x, const float y)
 {
     if (m_orbiter) 
     {
-        m_position.x() = m_position.x() + m_size * x * m_tspeed;
-        m_position.y() = m_position.y() + m_size * y * m_tspeed;
+        m_position.x() = m_position.x() - m_size * x * m_tspeed;
+        m_position.y() = m_position.y() - m_size * y * m_tspeed;
     } 
     else // free fly  
     {
@@ -223,14 +226,15 @@ inline mat4f Camera::view() const
 
     if (m_orbiter) 
     {
-        mat4f position = transform::translation(-m_position.x(), -m_position.y(), -m_size); // translate camera to (0,0,0)
+
+        mat4f position = transform::translation(m_position.x(), m_position.y(), -m_size); // translate camera to (0,0,0)
         mat4f model = transform::translation(-m_center.x(), -m_center.y(), -m_center.z());  // translate focus to (0,0,0)
 
         return  position * rotation * model;
     } 
     else // free fly  
     {
-        mat4f position = transform::translation(-m_position.x(), -m_position.y(), -m_position.z()-m_size); // translate camera to (0,0,0)
+        mat4f position = transform::translation(m_position.x(), m_position.y(), m_position.z()-m_size); // translate camera to (0,0,0)
 
         return rotation * position;
     }
