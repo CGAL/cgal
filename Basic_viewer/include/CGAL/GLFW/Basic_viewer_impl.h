@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Basic_viewer.h"
-
 namespace CGAL {
 namespace GLFW {
+  inline
   void Basic_viewer::error_callback(int error, const char *description)
   {
     fprintf(stderr, "GLFW returned an error:\n\t%s (%i)\n", description, error);
   }
 
+  inline
   GLFWwindow *Basic_viewer::create_window(int width, int height, const char *title, bool hidden)
   {
     // Initialise GLFW
@@ -69,6 +69,7 @@ namespace GLFW {
     return window;
   }
 
+  inline
   Basic_viewer::Basic_viewer(
       const Graphics_scene *graphicScene,
       const char *title,
@@ -91,6 +92,7 @@ namespace GLFW {
     init_keys_actions();
   }
 
+  inline
   void Basic_viewer::show()
   {
     m_window = create_window(m_window_size.x(), m_window_size.y(), m_title);
@@ -147,6 +149,7 @@ namespace GLFW {
     glfwTerminate();
   }
 
+  inline
   void Basic_viewer::make_screenshot(const std::string &pngpath)
   {
     m_areBuffersInitialized = false;
@@ -171,6 +174,7 @@ namespace GLFW {
     glfwTerminate();
   }
 
+  inline
   void Basic_viewer::update_frame()
   {
     vec3f dO, dx, dy;
@@ -191,6 +195,7 @@ namespace GLFW {
     std::cout << "Viewport : " << position.x() << ", " << position.y() << ", " << position.z() << std::endl;
   }
 
+  inline
   void Basic_viewer::compile_shaders()
   {
     const char *face_vert = m_is_opengl_4_3 ? vertex_source_color : vertex_source_color_comp;
@@ -205,6 +210,7 @@ namespace GLFW {
     m_plane_shader = Shader::loadShader(plane_vert, plane_frag, "PLANE");
   }
 
+  inline
   void Basic_viewer::load_buffer(int i, int location, const std::vector<float> &vector, int dataCount)
   {
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo[i]);
@@ -216,12 +222,14 @@ namespace GLFW {
     glEnableVertexAttribArray(location);
   }
 
+  inline
   void Basic_viewer::load_buffer(int i, int location, int gsEnum, int dataCount)
   {
     const std::vector<float> &vector = m_scene->get_array_of_index(gsEnum);
     load_buffer(i, location, vector, dataCount);
   }
 
+  inline
   void Basic_viewer::init_buffers()
   {
     if (m_areBuffersInitialized)
@@ -232,6 +240,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::load_scene()
   {
     unsigned int bufn = 0;
@@ -332,6 +341,7 @@ namespace GLFW {
     return p3.transform(aff);
   }
 
+  inline
   void Basic_viewer::update_uniforms()
   {
     // m_mv = lookAt(m_camPosition, m_camPosition + m_camForward, vec3f(0,1,0)) * m_scene_rotation;
@@ -351,6 +361,7 @@ namespace GLFW {
     set_clipping_uniforms();
   }
 
+  inline
   void Basic_viewer::set_face_uniforms()
   {
     m_face_shader.use();
@@ -369,6 +380,7 @@ namespace GLFW {
     m_face_shader.setFloat("rendering_transparency", m_clipping_plane_rendering_transparency);
   }
 
+  inline
   void Basic_viewer::set_pl_uniforms()
   {
     m_pl_shader.use();
@@ -379,6 +391,7 @@ namespace GLFW {
     m_pl_shader.setFloat("point_size", m_sizePoints);
   }
 
+  inline
   void Basic_viewer::set_clipping_uniforms()
   {
     m_point_plane = m_clipping_matrix * vec4f(0, 0, 0, 1);
@@ -389,6 +402,7 @@ namespace GLFW {
     m_plane_shader.setMatrix4f("m_matrix", m_clipping_matrix.data());
   }
 
+  inline
   void Basic_viewer::render_scene()
   {
     if (!m_areBuffersInitialized)
@@ -428,11 +442,13 @@ namespace GLFW {
     }
   }
 
+  inline
   vec4f Basic_viewer::color_to_vec4(const CGAL::IO::Color &c) const
   {
     return {(float)c.red() / 255, (float)c.green() / 255, (float)c.blue() / 255, 1.0f};
   }
 
+  inline
   void Basic_viewer::draw_faces()
   {
     m_face_shader.use();
@@ -480,6 +496,7 @@ namespace GLFW {
     draw_faces_(DRAW_ALL);
   }
 
+  inline
   void Basic_viewer::draw_faces_(RenderMode mode)
   {
     m_face_shader.use();
@@ -504,6 +521,7 @@ namespace GLFW {
     glDrawArrays(GL_TRIANGLES, 0, m_scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
   }
 
+  inline
   void Basic_viewer::draw_rays()
   {
     m_pl_shader.use();
@@ -529,6 +547,7 @@ namespace GLFW {
     glDrawArrays(GL_LINES, 0, m_scene->number_of_elements(Graphics_scene::POS_COLORED_RAYS));
   }
 
+  inline
   void Basic_viewer::draw_vertices(RenderMode render)
   {
     m_pl_shader.use();
@@ -552,6 +571,7 @@ namespace GLFW {
     glDrawArrays(GL_POINTS, 0, m_scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS));
   }
 
+  inline
   void Basic_viewer::draw_lines()
   {
     m_pl_shader.use();
@@ -576,6 +596,7 @@ namespace GLFW {
     glDrawArrays(GL_LINES, 0, m_scene->number_of_elements(Graphics_scene::POS_COLORED_LINES));
   }
 
+  inline
   void Basic_viewer::draw_edges(RenderMode mode)
   {
     m_pl_shader.use();
@@ -600,6 +621,7 @@ namespace GLFW {
     glDrawArrays(GL_LINES, 0, m_scene->number_of_elements(Graphics_scene::POS_COLORED_SEGMENTS));
   }
 
+  inline
   void Basic_viewer::generate_clipping_plane()
   {
     size_t size = ((m_scene->bounding_box().xmax() - m_scene->bounding_box().xmin()) +
@@ -631,6 +653,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::render_clipping_plane()
   {
     if (!m_clipping_plane_rendering || !m_is_opengl_4_3)
@@ -641,24 +664,28 @@ namespace GLFW {
     glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_array_for_clipping_plane.size() / 3));
   }
 
+  inline
   void Basic_viewer::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
   {
     Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
     viewer->on_key_event(key, scancode, action, mods);
   }
 
+  inline
   void Basic_viewer::cursor_callback(GLFWwindow *window, double xpos, double ypo)
   {
     Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
     viewer->on_cursor_event(xpos, ypo);
   }
 
+  inline
   void Basic_viewer::mouse_btn_callback(GLFWwindow *window, int button, int action, int mods)
   {
     Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
     viewer->on_mouse_btn_event(button, action, mods);
   }
 
+  inline
   void Basic_viewer::window_size_callback(GLFWwindow *window, int width, int height)
   {
     Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
@@ -669,12 +696,14 @@ namespace GLFW {
     glViewport(0, 0, width, height);
   }
 
+  inline
   void Basic_viewer::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
   {
     Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
     viewer->on_scroll_event(xoffset, yoffset);
   }
 
+  inline
   void Basic_viewer::start_action(ActionEnum action)
   {
     switch (action)
@@ -689,6 +718,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::action_event(ActionEnum action)
   {
     if (action == EXIT)
@@ -872,6 +902,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::end_action(ActionEnum action)
   {
     switch (action)
@@ -883,6 +914,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::double_click_event(int btn)
   {
     if (btn == GLFW_MOUSE_BUTTON_2)
@@ -891,6 +923,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::init_keys_actions()
   {
     add_action(GLFW_KEY_ESCAPE, false, EXIT);
@@ -1031,6 +1064,7 @@ namespace GLFW {
   }
 
   // mouse position mapped to the hemisphere
+  inline
   vec3f Basic_viewer::mapping_cursor_toHemisphere(double x, double y)
   {
     vec3f pt{x, y, 0.};
@@ -1074,6 +1108,7 @@ namespace GLFW {
     return pt;
   }
 
+  inline
   mat4f Basic_viewer::get_rotation(vec3f const &start, vec3f const &end)
   {
     vec3f rotation_axis = start.cross(end).normalized();
@@ -1087,7 +1122,7 @@ namespace GLFW {
   }
 
   /*********************CLIP STUFF**********************/
-
+  inline
   void Basic_viewer::rotate_clipping_plane()
   {
     vec2f cursor_old = get_cursor_old();
@@ -1107,6 +1142,7 @@ namespace GLFW {
     m_clipping_matrix = rotation * m_clipping_matrix;
   }
 
+  inline
   void Basic_viewer::translate_clipping_plane()
   {
     vec2f mouse_current = get_cursor();
@@ -1129,6 +1165,7 @@ namespace GLFW {
     m_clipping_matrix = translation * m_clipping_matrix;
   }
 
+  inline
   void Basic_viewer::translate_clipping_plane_cam_dir()
   {
 
@@ -1145,7 +1182,7 @@ namespace GLFW {
   }
 
   /*********************CAM STUFF**********************/
-
+  inline
   void Basic_viewer::translate(vec3f dir)
   {
     const float delta = 1.0f / 60;
@@ -1160,6 +1197,7 @@ namespace GLFW {
     m_camPosition += result;
   }
 
+  inline
   void Basic_viewer::mouse_rotate()
   {
     vec2f delta = get_cursor_delta();
@@ -1195,6 +1233,7 @@ namespace GLFW {
   //   m_scene_rotation = eulerAngleXY(-m_scene_view.y(), m_scene_view.x());
   // }
 
+  inline
   void Basic_viewer::set_cam_mode(CAM_MODE mode)
   {
     m_camMode = mode;
@@ -1210,6 +1249,7 @@ namespace GLFW {
     m_cam_projection = ortho(0.0f, m_cam_orth_zoom * ratio, 0.0f, m_cam_orth_zoom, 0.1f, 100.0f);
   }
 
+  inline
   void Basic_viewer::switch_rotation_mode()
   {
     m_cam_rotation_mode = m_cam_rotation_mode == FREE ? OBJECT : FREE;
@@ -1220,6 +1260,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::fullscreen()
   {
     m_is_fullscreen = !m_is_fullscreen;
@@ -1245,6 +1286,7 @@ namespace GLFW {
     glViewport(0, 0, m_window_size.x(), m_window_size.y());
   }
 
+  inline
   void Basic_viewer::mouse_translate()
   {
     vec2f delta = get_cursor_delta();
@@ -1267,6 +1309,7 @@ namespace GLFW {
   //   translate(cursor_delta.normalized() * m_cam_speed);
   // }
 
+  inline
   void Basic_viewer::print_help()
   {
     std::map<Input::ActionEnum, std::vector<KeyData>> action_keys = get_action_keys();
@@ -1312,6 +1355,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::scroll_event()
   {
     double yoffset = get_scroll_yoffset();
@@ -1325,6 +1369,7 @@ namespace GLFW {
     }
   }
 
+  inline
   void Basic_viewer::screenshot(const std::string &filepath)
   {
     // https://lencerf.github.io/post/2019-09-21-save-the-opengl-rendering-to-image-file/ (thanks)

@@ -36,20 +36,17 @@ include_directories(
 file(GLOB GLAD_SOURCES ${GLAD_SOURCE_DIR}/src/glad.c)
 add_library(glad ${GLAD_SOURCES})
 
-# file(GLOB GLFW_SOURCES ${GLFW_SOURCE_DIR}/src/*.c)
-# add_library(glfw STATIC ${GLFW_SOURCES})
-
-# Include and build GLFW
-add_subdirectory(${GLFW_SOURCE_DIR} ${CMAKE_BINARY_DIR}/glfw)
+file(GLOB GLFW_SOURCES ${GLFW_SOURCE_DIR}/src/*.c)
+add_library(glfw ${GLFW_SOURCES})
 
 set(CGAL_GLFW_FOUND TRUE)
 set_property(GLOBAL PROPERTY CGAL_GLFW_FOUND TRUE)
 
 function(CGAL_setup_CGAL_GLFW_dependencies target)
   target_link_libraries(${target} INTERFACE CGAL::CGAL)
-  target_link_libraries(${target} glfw)
-  target_link_libraries(${target} glad)
-
+  target_link_libraries(${target} INTERFACE glfw)
+  target_link_libraries(${target} INTERFACE glad)
+ 
   # Remove -Wdeprecated-copy for GCC >= 9
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "9")
     target_compile_options(${target} INTERFACE "-Wno-deprecated-copy" "-Wno-cast-function-type")

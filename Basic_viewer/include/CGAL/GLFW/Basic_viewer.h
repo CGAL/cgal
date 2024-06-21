@@ -408,3 +408,6 @@ namespace GLFW {
     basic_viewer.show();
   }
 } // end namespace CGAL 
+
+#include "Basic_viewer_impl.h"
+  
