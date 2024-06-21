@@ -78,7 +78,10 @@ public:
   using Subdomain_index = CDT_3_face_index;
   bool is_facet_on_surface(int i) const { return cdt_3_data().is_facet_constrained(i); }
   Surface_patch_index surface_patch_index(int i) const { return cdt_3_data().face_constraint_index(i) + 1; }
-  void set_surface_patch_index(int i, Surface_patch_index index) { cdt_3_data().face_id[unsigned(i)] = index - 1; }
+  void set_surface_patch_index(int i, Surface_patch_index index)
+  {
+    cdt_3_data().set_face_constraint_index(i, index - 1);
+  }
   Subdomain_index subdomain_index() const { return subdomain_index_; }
   void set_subdomain_index(Subdomain_index i) { subdomain_index_ = i; }
 

@@ -84,6 +84,10 @@ public:
   CDT_3_face_index face_constraint_index(int i) const {
     return face_id[unsigned(i)];
   }
+  /// @brief Set the index of the constraint that constrains the i-th facet of the cell.
+  void set_face_constraint_index(int i, CDT_3_face_index index) {
+    face_id[unsigned(i)] = index;
+  }
 };
 
 } // namespace CGAL
