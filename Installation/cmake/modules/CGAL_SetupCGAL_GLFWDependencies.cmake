@@ -36,8 +36,13 @@ include_directories(
 file(GLOB GLAD_SOURCES ${GLAD_SOURCE_DIR}/src/glad.c)
 add_library(glad ${GLAD_SOURCES})
 
+#--------------------------------------------------------------------
 file(GLOB GLFW_SOURCES ${GLFW_SOURCE_DIR}/src/*.c)
 add_library(glfw ${GLFW_SOURCES})
+
+# TODO DIFFERENT OPTION DEPENDING ON THE OS
+# CF the page https://www.glfw.org/docs/3.3/compile.html
+target_compile_options(glfw PUBLIC "-D_GLFW_X11")
 
 set(CGAL_GLFW_FOUND TRUE)
 set_property(GLOBAL PROPERTY CGAL_GLFW_FOUND TRUE)
