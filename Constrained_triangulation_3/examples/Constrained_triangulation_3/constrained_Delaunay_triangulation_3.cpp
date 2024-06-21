@@ -1,9 +1,11 @@
-#include <CGAL/Constrained_Delaunay_triangulation_3.h>
+#include <CGAL/make_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/draw_triangulation_3.h>
 
+#include <algorithm>
+
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using CDT = CGAL::Constrained_Delaunay_triangulation_3<K>;
+using Tr = CGAL::default_constrained_triangulation_3_t<K>;
 
 int main(int argc, char* argv[])
 {
@@ -16,8 +18,18 @@ int main(int argc, char* argv[])
   }
   std::cout << "Read " << mesh.number_of_vertices() << " vertices and "
             << mesh.number_of_faces() << " faces" << std::endl;
-  CDT cdt(mesh);
+
+  Tr triangulation = CGAL::make_constrained_Delaunay_triangulation_3<Tr>(mesh);
+
   std::cout << "Number of vertices in the CDT: "
-            << cdt.triangulation().number_of_vertices() << std::endl;
+            << triangulation.number_of_vertices() << '\n'
+            << "Number of constrained facets in the CDT: "
+            << std::count_if(triangulation.finite_facets_begin(),
+                             triangulation.finite_facets_end(),
+                             [](const auto& f) {
+                               auto [cell_handle, facet_index] = f;
+                               return cell_handle->cdt_3_data().is_facet_constrained(facet_index);
+                             }) << std::endl;
+
   // CGAL::draw(cdt.triangulation());
 }
