@@ -465,11 +465,13 @@ struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_and_info_t
 template <typename T_3>
 class Constrained_Delaunay_triangulation_3_impl;
 
+#endif // not DOXYGEN_RUNNING
+
 /*!
- * \ingroup PkgCT_3MainClasses
+ * \ingroup PkgCT_3Classes
  * \brief The class Constrained_Delaunay_triangulation_3 represents a 3D constrained Delaunay triangulation.
  *
- * This class is derived from the Triangulation_3 class and provides additional functionality for handling
+ * This class contains a data member of type `Triangulation_3` and provides additional functionality for handling
  * polygonal constraints during the triangulation process.
  *
  * \todo Explain what is a CDT. Why a given input, like a polyhedron, might not admit a constrained Delaunay triangulation.
@@ -574,22 +576,32 @@ public:
   }
 
   /*!
-    * \brief Get a const reference to the base triangulation.
+    * \brief Get a const reference to the triangulation.
     *
     * This function returns a const reference to the base triangulation used by the constrained Delaunay triangulation.
     * That allows to use all non-modifying functions of the base triangulation.
     *
-    * \return A const reference to the base triangulation.
+    * \return A const reference to the triangulation.
     */
   const Triangulation_3& triangulation() & {
     return cdt_impl;
   }
 
+  /*!
+    * \brief Get an rvalue-reference to the triangulation, if `*this` is itself an rvalue.
+    *
+    * This function returns an rvalue-reference to the triangulation used by the constrained Delaunay triangulation.
+    * That allows to move the triangulation our of this object.
+    *
+    * \return An rvalue-reference to the triangulation.
+    */
   Triangulation_3&& triangulation() && {
     Triangulation_3&& t = std::move(cdt_impl);
     return std::move(t);
   }
 };
+
+#ifndef DOXYGEN_RUNNING
 
 template <typename T_3>
 class Constrained_Delaunay_triangulation_3_impl : public Conforming_Delaunay_triangulation_3<T_3> {
