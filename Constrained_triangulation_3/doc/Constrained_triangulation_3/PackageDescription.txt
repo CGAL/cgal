@@ -7,7 +7,7 @@
 \defgroup PkgCT_3Functions Function Templates
 \ingroup PkgCT_3Ref
 
-\defgroup PkgCT_3Classes Classes
+\defgroup PkgCT_3Classes Class Templates
 \ingroup PkgCT_3Ref
 
 \addtogroup PkgCT_3Ref
@@ -34,6 +34,14 @@
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
+`CGAL::make_constrained_Delaunay_triangulation_3()` is the main function to create
+a constrained Delaunay triangulation in 3D.
+The type alias `CGAL::default_constrained_triangulation_3_t<Kernel>` is the default
+constrained triangulation class.
+
+\cgalCRPSection{Functions Templates}
+
+- `CGAL::make_constrained_Delaunay_triangulation_3()`
 
 \cgalCRPSection{Concepts}
 
@@ -41,12 +49,9 @@
 - `ConstrainedDelaunayTriangulationVertexBase_3`
 - `ConstrainedDelaunayTriangulationCellBase_3`
 
-\cgalCRPSection{Functions Templates}
+\cgalCRPSubsection{Class Templates}
 
-- `CGAL::make_constrained_Delaunay_triangulation_3()`
-
-\cgalCRPSubsection{Classes}
-
+- `CGAL::Default_constrained_triangulation_3`
 - `CGAL::Constrained_Delaunay_triangulation_vertex_base_3`
 - `CGAL::Constrained_Delaunay_triangulation_cell_base_3`
 */

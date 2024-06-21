@@ -1,5 +1,6 @@
 #include <CGAL/make_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_triangulation_3.h>
 
 #include <algorithm>

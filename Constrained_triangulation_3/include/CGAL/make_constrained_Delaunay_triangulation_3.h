@@ -42,6 +42,8 @@ namespace CGAL {
  * \tparam Geom_traits a geometric traits class.
  *
  * \return `type` is the default 3D constrained Delaunay triangulation type.
+ *
+ * \sa default_constrained_triangulation_3_t
 */
 template <typename Geom_traits>
 struct Default_constrained_triangulation_3 {
@@ -54,11 +56,12 @@ struct Default_constrained_triangulation_3 {
 /*!
  * \ingroup PkgCT_3Classes
  * \brief The default 3D constrained Delaunay triangulation type.
- * \relates Default_constrained_triangulation_3
  * \tparam Geom_traits a geometric traits class.
  *
  * This alias template names the default 3D constrained Delaunay triangulation
  * type for a given geometric traits class.
+ *
+ * \sa Default_constrained_triangulation_3
  */
 template <typename Geom_traits>
 using default_constrained_triangulation_3_t =
