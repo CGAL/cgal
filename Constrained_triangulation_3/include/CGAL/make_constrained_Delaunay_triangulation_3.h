@@ -79,6 +79,11 @@ namespace CGAL {
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \pre `mesh` must not have self-intersections:
+ *      \link CGAL::Polygon_mesh_processing::does_self_intersect
+ *      `CGAL::Polygon_mesh_processing::does_self_intersect(mesh, np) == false`
+ *      \endlink
+ *
  * \todo Create a documentation page to describe the concept *regular*, and link it to https://en.cppreference.com/w/cpp/concepts/regular
  */
 template <typename Triangulation_3, typename PolygonMesh, typename NamedParams = parameters::Default_named_parameters>
