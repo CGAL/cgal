@@ -1,0 +1,4 @@
+/*!
+\example Constrained_triangulation_3/constrained_Delaunay_triangulation_3.cpp
+\brief A simple example of the use of the Constrained_triangulation_3 package.
+*/

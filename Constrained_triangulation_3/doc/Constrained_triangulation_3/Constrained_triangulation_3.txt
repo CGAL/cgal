@@ -18,7 +18,7 @@ Section on definitions here ...
 
 The following example shows ...
 
-\noop\cgalExample{ }
+\cgalExample{Constrained_triangulation_3/constrained_Delaunay_triangulation_3.cpp }
 
 
 */
