@@ -348,11 +348,15 @@ namespace GLFW {
 
       Line x_axis(vec3f::Zero(), size*vec3f::UnitX(), vec3f(1, 0, 0), 5.f); // x-axis
       Line y_axis(vec3f::Zero(), size*vec3f::UnitY(), vec3f(0, 1, 0), 5.f); // y-axis
-      // Line z_axis(vec3f::Zero(), size*vec3f::UnitZ(), vec3f(0, 0, 1), 5.f); // z-axis
+      Line x_axis1(vec3f::Zero(), -2.f*size*vec3f::UnitX(), vec3f(.8f, .8f, .8f), 2.f); // x-axis
+      Line y_axis1(vec3f::Zero(), -2.f*size*vec3f::UnitY(), vec3f(.8f, .8f, .8f), 2.f); // y-axis
+      Line z_axis(vec3f::Zero(), -2.f*size*vec3f::UnitZ(), vec3f(.8f, .8f, .8f), 2.f); // z-axis
 
       m_world_axis.add_line(x_axis);
       m_world_axis.add_line(y_axis);
-      // m_world_axis.add_line(z_axis);
+      m_world_axis.add_line(x_axis1);
+      m_world_axis.add_line(y_axis1);
+      m_world_axis.add_line(z_axis);
 
       const unsigned int nbSubdivisions = 10;
 
@@ -386,6 +390,8 @@ namespace GLFW {
   void Basic_viewer::update_uniforms()
   {
     // m_mv = lookAt(m_camPosition, m_camPosition + m_camForward, vec3f(0,1,0)) * m_scene_rotation;
+
+    m_camera.update(m_delta_time);
 
     mat4f view = m_camera.view();
     mat4f projection = m_camera.projection(m_window_size.x(), m_window_size.y());
@@ -951,6 +957,18 @@ namespace GLFW {
     case DISPLAY_XY_GRID:
       m_draw_xy_grid = !m_draw_xy_grid;
       break;
+    case INC_ROT_SMOOTHNESS:
+      m_camera.inc_rotation_smoothness();
+      break;
+    case DEC_ROT_SMOOTHNESS:
+      m_camera.dec_rotation_smoothness();
+      break;
+    case INC_TRA_SMOOTHNESS:
+      m_camera.inc_translation_smoothness();
+      break;
+    case DEC_TRA_SMOOTHNESS:
+      m_camera.dec_translation_smoothness();
+      break;
     }
   }
 
@@ -1018,6 +1036,12 @@ namespace GLFW {
     add_action(GLFW_KEY_F, false, FACES_DISPLAY);
     add_action(GLFW_KEY_V, false, VERTICES_DISPLAY);
     add_action(GLFW_KEY_E, false, EDGES_DISPLAY);
+
+    add_action(GLFW_KEY_KP_ADD, false, INC_ROT_SMOOTHNESS);
+    add_action(GLFW_KEY_KP_SUBTRACT, false, DEC_ROT_SMOOTHNESS);
+
+    add_action(GLFW_KEY_KP_ADD, GLFW_KEY_LEFT_CONTROL, false, INC_TRA_SMOOTHNESS);
+    add_action(GLFW_KEY_KP_SUBTRACT, GLFW_KEY_LEFT_CONTROL, false, DEC_TRA_SMOOTHNESS);
 
     add_action(GLFW_KEY_S, false, SHADING_MODE);
     add_action(GLFW_KEY_N, false, INVERSE_NORMAL);
@@ -1263,11 +1287,9 @@ namespace GLFW {
   {
     vec2f delta = get_cursor_delta();
     
-    double dt = m_delta_time;
-
     m_camera.rotation(
-      dt * delta.x(), 
-      dt * delta.y()
+      delta.x(), 
+      delta.y()
     );
     // std::cout << m_camera.position().x() << " "
     //   << m_camera.position().y() << " "
@@ -1338,7 +1360,8 @@ namespace GLFW {
       glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
       glViewport(0, 0, mode->width, mode->height);
 
-      std::cout << m_window_size.x() << " " << m_window_size.y();
+      m_window_size.x() = mode->width;
+      m_window_size.y() = mode->height;
       return;
     }
 
@@ -1421,10 +1444,15 @@ namespace GLFW {
   {
     double yoffset = get_scroll_yoffset();
     
-    int state = glfwGetKey(m_window, GLFW_KEY_LEFT_CONTROL);
+    int k0 = glfwGetKey(m_window, GLFW_KEY_LEFT_CONTROL);
+    int k1 = glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT);
 
-    if (state == GLFW_PRESS) {
-      m_camera.modify_fov(yoffset);
+    if (k0 == GLFW_PRESS) {
+      if (k1 == GLFW_PRESS) {
+        m_camera.set_zoom_smoothness(yoffset);
+      } else {
+        m_camera.set_fov(yoffset);
+      }
     } else {
       m_camera.move(8.f * yoffset * m_delta_time);
     }
@@ -1470,7 +1498,7 @@ namespace GLFW {
     float halfHeight = 0.1f;
     mat4f proj = ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
 
-    mat4f translate = transform::translation(vec3f(halfWidth - 0.1f, halfHeight - 0.1f, 0.0f));
+    mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*aspect, halfHeight - 0.1f, 0.0f));
 
     mat4f mvp = proj * rotation4x4 * translate;
     m_corner_world_axis.set_mvp(mvp);
@@ -1492,6 +1520,8 @@ namespace GLFW {
   {
     vec3f forward = -m_camera.forward();
 
+    m_camera.reset_all();
+
     std::vector<vec3f> axis = {
       vec3f::UnitX(), -vec3f::UnitX(),
       vec3f::UnitY(), -vec3f::UnitY(),
@@ -1511,15 +1541,21 @@ namespace GLFW {
 
     if (nearest_axis == vec3f::UnitX()) {
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(-M_PI / 2, vec3f::UnitY())));
+        std::cout << "align on x\n";
     } else if (nearest_axis == -vec3f::UnitX()) {
+        std::cout << "align on -x\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI / 2, vec3f::UnitY())));
     } else if (nearest_axis == vec3f::UnitY()) {
+        std::cout << "align on y\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI / 2, vec3f::UnitX())));
     } else if (nearest_axis == -vec3f::UnitY()) {
+        std::cout << "align on -y\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(-M_PI / 2, vec3f::UnitX())));
     } else if (nearest_axis == vec3f::UnitZ()) {
+        std::cout << "align on z\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(0, vec3f::UnitY())));
     } else if (nearest_axis == -vec3f::UnitZ()) {
+        std::cout << "align on -z\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY())));
     }
   }

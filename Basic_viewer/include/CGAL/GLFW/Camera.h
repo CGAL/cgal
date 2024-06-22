@@ -13,19 +13,12 @@ public:
     };
 
 public:
-    Camera() 
-    : m_mode(PERSPECTIVE), 
-      m_center(), 
-      m_position(vec3f::Zero()), 
-      m_orientation(quatf::Identity()), 
-      m_tspeed(1.f), m_rspeed(5.f), 
-      m_size(5.f), m_cst_size(5.f), 
-      m_radius(5.f), m_fov(45.f),
-      m_width(1.f), m_height(1.f),
-      m_orbiter(true) {}
+    Camera();
 
     void lookat(vec3f const &center, const float size);
     void lookat(vec3f const &pmin, vec3f const &pmax);
+
+    void update(const float dt);
 
     void translation(const float x, const float y);
     void rotation(const float x, const float y);
@@ -52,17 +45,16 @@ public:
     vec3f position() const;
     vec3f forward() const;
 
-    void reset_all();
-
-    void modify_fov(float d);
+    void set_fov(float d);
 
     inline void set_orientation(const quatf& orientation) { m_orientation = orientation; }
 
     inline float get_size() const { return m_size; }
 
-    inline void reset_position() { m_position = {0, 0, 0}; }
-    inline void reset_rotation() { m_orientation = quatf::Identity(); }
-
+    void reset_position();
+    void reset_rotation();
+    void reset_all();
+    
     inline float get_radius() const { return m_radius; }
     inline vec3f get_center() const { return m_center; }
 
@@ -70,15 +62,21 @@ public:
     inline void toggle_mode() { m_mode = m_mode == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC; }
     inline bool is_orthographic() const { return !m_orbiter; }
 
-    inline void inc_rspeed() { m_rspeed = std::min(m_rspeed+1.f, 20.f); std::cout << m_rspeed << std::endl; }
-    inline void dec_rspeed() { m_rspeed = std::max(m_rspeed-1.f, 1.f); std::cout << m_rspeed << std::endl; }
+    inline void inc_rspeed() { m_rspeed = std::min(m_rspeed+10.f, 500.f); }
+    inline void dec_rspeed() { m_rspeed = std::max(m_rspeed-10.f, 50.f); }
 
     inline void inc_tspeed() { m_tspeed = std::min(m_tspeed+.1f, 20.f); }
     inline void dec_tspeed() { m_tspeed = std::max(m_tspeed-.1f, 0.5f); }
 
-    inline void toggle_fly() { m_orbiter = !m_orbiter; }
+    inline void inc_rotation_smoothness() { m_rotationSmoothFactor = std::max(m_rotationSmoothFactor-.01f, 0.01f); }
+    inline void dec_rotation_smoothness() { m_rotationSmoothFactor = std::min(m_rotationSmoothFactor+.01f, 1.f); }
 
+    inline void inc_translation_smoothness() { m_translationSmoothFactor = std::max(m_translationSmoothFactor-.01f, 0.01f); }
+    inline void dec_translation_smoothness() { m_translationSmoothFactor = std::min(m_translationSmoothFactor+.01f, 1.f); }
 
+    void set_zoom_smoothness(const float s);
+
+    inline void toggle_fly() { m_orbiter = !m_orbiter; reset_all(); }
 
 private:
     vec3f m_center;   // centre de l'objet observé
@@ -98,130 +96,200 @@ private:
     float m_rspeed; 
 
     bool m_orbiter;
-
     MODE m_mode;
+
+    /* SMOOTHNESS PARAMS */
+
+    float m_targetSize;
+
+    float m_pitch; 
+    float m_yaw; 
+    
+    float m_targetPitch; 
+    float m_targetYaw; 
+
+    float m_rotationSmoothFactor;
+    float m_translationSmoothFactor;
+    float m_zoomSmoothFactor;
+
+    float m_targetFov;
+
+    vec3f m_targetPosition;
+
 };
 
 /********************DEFINITIONS********************/
 
-inline void Camera::lookat(vec3f const &center, const float size)
+Camera::Camera() : 
+    m_mode(PERSPECTIVE), 
+    m_center(), 
+    m_position(vec3f::Zero()), 
+    m_targetPosition(vec3f::Zero()), 
+    m_orientation(quatf::Identity()), 
+    m_tspeed(1.f), m_rspeed(150.f), 
+    m_size(5.f), m_cst_size(5.f), 
+    m_radius(5.f), m_fov(45.f),
+    m_width(1.f), m_height(1.f),
+    m_orbiter(true),
+    m_pitch(0.f),
+    m_yaw(0.f),
+    m_targetPitch(0.f),
+    m_targetYaw(0.f),
+    m_targetSize(5.f),
+    m_targetFov(45.f),
+    m_zoomSmoothFactor(0.1f),
+    m_rotationSmoothFactor(0.1f),
+    m_translationSmoothFactor(0.1f)
+{
+
+}
+
+inline 
+void Camera::lookat(vec3f const &center, const float size)
 {
     m_center = center;   // camera focus
     m_size = size;
+    m_targetSize = size;
     m_cst_size = size; // allowing reset
     m_radius = size;
 
     m_orientation = quatf::Identity();
 }
 
-inline void Camera::lookat(vec3f const &pmin, vec3f const &pmax)
+inline 
+void Camera::lookat(vec3f const &pmin, vec3f const &pmax)
 {
     lookat(center(pmin, pmax), distance(pmin, pmax));
 }
 
-inline void Camera::translation(const float x, const float y)
+inline 
+void Camera::update(const float dt) 
 {
-    if (m_orbiter) 
-    {
-        m_position.x() = m_position.x() - m_size * x * m_tspeed;
-        m_position.y() = m_position.y() - m_size * y * m_tspeed;
-    } 
-    else // free fly  
-    {
-        vec3f right = vec3f::UnitX();
-        vec3f up = vec3f::UnitY();
-        m_position += right * x * m_tspeed; 
-        m_position += up * y * m_tspeed; 
+    if (!m_orbiter) {
+        if (m_targetPitch > 90.f) 
+        {
+            m_targetPitch = 90.f;
+        }
+        else if (m_targetPitch < -90.f) 
+        {
+            m_targetPitch = -90.f;
+        }
     }
-}
 
-inline void Camera::rotation(const float x, const float y)
-{
-    float pitchDelta = y * m_rspeed;
-    float yawDelta = x * m_rspeed;
-    quatf rotX(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
-    quatf rotY(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
+    float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
+    float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
+
+    float pitchDelta = radians((smoothPitch - m_pitch) * m_rspeed) * dt;
+    float yawDelta = radians((smoothYaw - m_yaw) * m_rspeed) * dt;
+
     if (m_orbiter) 
     {
+
+        quatf rotX(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
+        quatf rotY(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
         m_orientation = rotX * rotY * m_orientation;
     }
     else // free fly
     {
-        m_orientation = rotY * m_orientation * rotX;
+        quatf rotX(Eigen::AngleAxisf(pitchDelta, m_orientation.inverse() * vec3f::UnitX()));
+        quatf rotY(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
+        m_orientation = m_orientation * rotX * rotY;
+    }
+    m_pitch = smoothPitch;
+    m_yaw = smoothYaw;
+
+    m_position += m_translationSmoothFactor * (m_targetPosition - m_position);
+
+    m_size += m_zoomSmoothFactor * (m_targetSize - m_size);
+
+    m_fov += .5f * (m_targetFov - m_fov);
+}
+
+inline 
+void Camera::translation(const float x, const float y)
+{
+    float xspeed = x * m_tspeed;
+    float yspeed = y * m_tspeed;
+
+    if (m_orbiter) 
+    {
+        m_targetPosition.x() += m_size * xspeed;
+        m_targetPosition.y() += m_size * yspeed;
+    } 
+    else // free fly  
+    {
+        vec3f right = (m_orientation.inverse() * vec3f::UnitX()).normalized();
+        vec3f up = (m_orientation.inverse() * vec3f::UnitY()).normalized();
+        m_targetPosition -= right * m_size * xspeed; 
+        m_targetPosition -= up * m_size * yspeed; 
     }
 }
 
-inline void Camera::move(const float z)
+inline 
+void Camera::rotation(const float x, const float y)
+{
+    m_targetPitch += y;
+    m_targetYaw += x;
+}
+
+inline 
+void Camera::move(const float z)
 {
     if (m_orbiter) 
     {
-        m_size = m_size - m_size * z;
-        // std::cout << "m_size: " << m_size << std::endl;
-        if (m_size < 0.001f)
-            m_size = 0.001f;
+        m_targetSize -= m_targetSize * z;
+        if (m_targetSize < 0.001f)
+            m_targetSize = 0.001f;
     }
     else // free fly
     {
-        vec3f forward = (m_orientation * -vec3f::UnitZ()).normalized();
-        vec3f right = (m_orientation * vec3f::UnitX()).normalized();
-        vec3f up = (m_orientation * vec3f::UnitY()).normalized();
-
-        std::cout << "orientation : " 
-            << m_orientation.x() << " " 
-            << m_orientation.y() << " " 
-            << m_orientation.z() << " " 
-            << m_orientation.w() << " \nfw : (" 
-            << forward.x() << ", " 
-            << forward.y() << ", " 
-            << forward.z() << ") \nrt : ("
-            << right.x() << ", " 
-            << right.y() << ", " 
-            << right.z() << ") \nup : ("
-            << up.x() << ", " 
-            << up.y() << ", " 
-            << up.z() << ")" <<      
-        std::endl; 
-        m_position += forward * m_size * z * m_tspeed;
+        vec3f forward = (m_orientation.inverse() * vec3f::UnitZ()).normalized();
+        m_targetPosition -= forward * m_size * z * m_tspeed;
     }
 }
 
-inline void Camera::move_left(const float dt)
+inline 
+void Camera::move_left(const float dt)
 {
     move_right(-dt);
 }
 
-inline void Camera::move_right(const float dt)
+inline 
+void Camera::move_right(const float dt)
 {
     if (m_orbiter) 
     {
-        m_position.x() += m_size * dt * m_tspeed;
+        m_targetPosition.x() += m_size * dt * m_tspeed;
     }
     else // free fly
     {
-        vec3f right = vec3f::UnitX();
-        m_position += right * m_size * dt * m_tspeed;
+        vec3f right = (m_orientation.inverse() * -vec3f::UnitX()).normalized();
+        m_targetPosition -= right * m_size * dt * m_tspeed;
     }
 }
 
-inline void Camera::move_up(const float dt)
+inline 
+void Camera::move_up(const float dt)
 {
     if (m_orbiter) 
     {
-        m_position.y() += m_size * dt * m_tspeed;
+        m_targetPosition.y() += m_size * dt * m_tspeed;
     }
     else // free fly
     {
-        vec3f up = vec3f::UnitY();
-        m_position += up * m_size * dt * m_tspeed;
+        vec3f up = (m_orientation.inverse() * -vec3f::UnitY()).normalized();
+        m_targetPosition -= up * m_size * dt * m_tspeed;
     }
 }
 
-inline void Camera::move_down(const float dt)
+inline 
+void Camera::move_down(const float dt)
 {
     move_up(-dt);
 }
 
-inline mat4f Camera::view() const
+inline 
+mat4f Camera::view() const
 {
     mat3f rotation3x3 = m_orientation.toRotationMatrix();
     mat4f rotation = mat4f::Identity();
@@ -230,27 +298,45 @@ inline mat4f Camera::view() const
     if (m_orbiter) 
     {
 
-        mat4f position = transform::translation(m_position.x(), m_position.y(), -m_size); // translate camera to (0,0,0)
-        mat4f model = transform::translation(-m_center.x(), -m_center.y(), -m_center.z());  // translate focus to (0,0,0)
+        mat4f camera = transform::translation(-m_position.x(), -m_position.y(), -m_size); 
+        mat4f model = transform::translation(-m_center.x(), -m_center.y(), -m_center.z()); 
 
-        return  position * rotation * model;
+        return  camera * rotation * model;
     } 
     else // free fly  
     {
-        mat4f position = transform::translation(m_position.x(), m_position.y(), m_position.z()-m_size); // translate camera to (0,0,0)
+        mat4f translation = transform::translation(-m_position.x(), -m_position.y(), -m_position.z()-m_size); // translate camera to (0,0,0)
 
-        return rotation * position;
+        return rotation * translation;
     }
 }
 
-inline void Camera::modify_fov(float d) { 
-    m_fov += d; 
-    if (m_fov > 179.f) m_fov = 179.f;
-    if (m_fov < 1.f) m_fov = 1.f;
-    std::cout << m_fov << std::endl;
+inline 
+void Camera::set_fov(const float d) 
+{ 
+
+    m_targetFov += d * 2.f; 
+    if (m_targetFov > 160.f) m_targetFov = 160.;
+    if (m_targetFov < 15.f) m_targetFov = 15.f;
+
+    if (m_mode == PERSPECTIVE)
+    {
+        float aspectRatio = m_width / m_height;
+        float tanHalfFov = tan(radians(m_targetFov) * .5f);
+        m_targetSize = m_radius / tanHalfFov;
+    }
 }
 
-inline mat4f Camera::projection(const float width, const float height)
+inline 
+void Camera::set_zoom_smoothness(const float s)
+{
+    m_zoomSmoothFactor += s * 0.01; 
+    if (m_zoomSmoothFactor > 1.f) m_zoomSmoothFactor = 1.;
+    if (m_zoomSmoothFactor < 0.01f) m_zoomSmoothFactor = .01;
+}
+
+inline 
+mat4f Camera::projection(const float width, const float height)
 {
     m_width = width;
     m_height = height;
@@ -258,8 +344,9 @@ inline mat4f Camera::projection(const float width, const float height)
     return projection();
 }
 
-inline mat4f Camera::projection() const
-{
+inline 
+mat4f Camera::projection() const
+{ 
     if (m_mode == ORTHOGRAPHIC) {
         float aspect = m_width / m_height;
         float halfWidth = m_size * aspect * 0.5f;
@@ -267,10 +354,11 @@ inline mat4f Camera::projection() const
         return ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, znear(), zfar());
     }
 
-    return perspective(m_fov, m_width / m_height, znear(), zfar());
+    return perspective(radians(m_fov), m_width / m_height, znear(), zfar());
 }
 
-inline float Camera::znear() const
+inline 
+float Camera::znear() const
 {
     float d;
     if (m_orbiter) 
@@ -284,7 +372,8 @@ inline float Camera::znear() const
     return std::max(0.1f, d - 2 * m_radius);
 }
 
-inline float Camera::zfar() const
+inline 
+float Camera::zfar() const
 {
     float d;
     if (m_orbiter) 
@@ -298,12 +387,14 @@ inline float Camera::zfar() const
     return std::max(100.f, d + 2 * m_radius);
 }
 
-inline mat4f Camera::viewport() const
+inline 
+mat4f Camera::viewport() const
 {
     return transform::viewport(m_width, m_height);
 }
 
-inline vec3f Camera::position() const
+inline 
+vec3f Camera::position() const
 {
     mat4f v = view();
     mat4f vi = v.inverse();
@@ -312,7 +403,8 @@ inline vec3f Camera::position() const
     return multVecMat(o, vi);
 }
 
-inline vec3f Camera::forward() const
+inline 
+vec3f Camera::forward() const
 {
     vec3f fw;
     if (m_orbiter) 
@@ -323,21 +415,46 @@ inline vec3f Camera::forward() const
     }
     else 
     {
-        fw = m_orientation * -vec3f::UnitZ();
+        fw = m_orientation.inverse() * -vec3f::UnitZ();
     }
 
     return fw.normalized();
 }
 
-inline void Camera::reset_all()
+inline 
+void Camera::reset_rotation() 
+{ 
+    m_pitch = 0.f; 
+    m_yaw = 0; 
+    m_targetPitch = 0.f; 
+    m_targetYaw = 0; 
+    m_orientation = quatf::Identity(); 
+}
+
+
+inline void Camera::reset_position()
+{
+    m_position = vec3f::Zero();
+    m_targetPosition = vec3f::Zero(); 
+}
+
+
+inline 
+void Camera::reset_all()
 {
     reset_position();
     reset_rotation();
     m_size = m_cst_size;
-    m_radius = m_cst_size;
+    m_targetSize = m_cst_size;
+    m_fov = 45.f;
+    m_targetFov = 45.f;
+    m_zoomSmoothFactor = .1f;
+    m_rotationSmoothFactor = .1f;
+    m_translationSmoothFactor = .1f;
 }
 
-inline mat4f Camera::image_toWorld() const 
+inline 
+mat4f Camera::image_toWorld() const 
 {
     mat4f v = view();
     mat4f p = projection();
@@ -347,7 +464,8 @@ inline mat4f Camera::image_toWorld() const
 }
 
 
-inline void Camera::frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const
+inline 
+void Camera::frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const
 {
     mat4f i2w = image_toWorld(); // passage de l'image vers le monde
 

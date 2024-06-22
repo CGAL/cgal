@@ -52,6 +52,11 @@ vec2f radians(const vec2f &v)
   return result;
 }
 
+float degrees(float x)
+{
+  return 180 / M_PI * x;
+}
+
 mat4f eulerAngleXY(float const &angleX, float const &angleY)
 {
   float cosX = std::cos(angleX);

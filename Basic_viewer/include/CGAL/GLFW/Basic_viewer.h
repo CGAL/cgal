@@ -390,6 +390,11 @@ namespace GLFW {
       CP_TRANS_N_DIR,
       CONSTRAINT_AXIS,
 
+      INC_ROT_SMOOTHNESS, 
+      DEC_ROT_SMOOTHNESS, 
+      INC_TRA_SMOOTHNESS, 
+      DEC_TRA_SMOOTHNESS, 
+
       EXIT
     };
 
