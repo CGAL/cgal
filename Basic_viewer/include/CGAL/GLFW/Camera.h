@@ -24,36 +24,41 @@ public:
       m_width(1.f), m_height(1.f),
       m_orbiter(true) {}
 
-    inline void lookat(vec3f const &center, const float size);
-    inline void lookat(vec3f const &pmin, vec3f const &pmax);
+    void lookat(vec3f const &center, const float size);
+    void lookat(vec3f const &pmin, vec3f const &pmax);
 
-    inline void translation(const float x, const float y);
-    inline void rotation(const float x, const float y);
-    inline void move(const float z);
+    void translation(const float x, const float y);
+    void rotation(const float x, const float y);
+    void move(const float z);
 
-    inline void move_up(const float dt);
-    inline void move_down(const float dt);
-    inline void move_right(const float dt);
-    inline void move_left(const float dt);
+    void move_up(const float dt);
+    void move_down(const float dt);
+    void move_right(const float dt);
+    void move_left(const float dt);
 
-    inline mat4f view() const;
+    mat4f view() const;
 
-    inline mat4f projection() const;
-    inline mat4f projection(const float width, const float height);
+    mat4f projection() const;
+    mat4f projection(const float width, const float height);
 
-    inline float znear() const;
-    inline float zfar() const;
+    float znear() const;
+    float zfar() const;
 
-    inline mat4f viewport() const;
+    mat4f viewport() const;
 
-    inline void frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const;
+    mat4f image_toWorld() const;
+    void frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const;
 
-    inline vec3f position() const;
-    inline vec3f forward() const;
+    vec3f position() const;
+    vec3f forward() const;
 
-    inline void reset_all();
+    void reset_all();
 
-    inline float size() const { return m_size; }
+    void modify_fov(float d);
+
+    inline void set_orientation(const quatf& orientation) { m_orientation = orientation; }
+
+    inline float get_size() const { return m_size; }
 
     inline void reset_position() { m_position = {0, 0, 0}; }
     inline void reset_rotation() { m_orientation = quatf::Identity(); }
@@ -73,9 +78,7 @@ public:
 
     inline void toggle_fly() { m_orbiter = !m_orbiter; }
 
-    inline void modify_fov(float d);
 
-    inline mat4f image_toWorld() const;
 
 private:
     vec3f m_center;   // centre de l'objet observé
@@ -125,8 +128,8 @@ inline void Camera::translation(const float x, const float y)
     } 
     else // free fly  
     {
-        vec3f right = (m_orientation * vec3f::UnitX());
-        vec3f up = (m_orientation * vec3f::UnitY());
+        vec3f right = vec3f::UnitX();
+        vec3f up = vec3f::UnitY();
         m_position += right * x * m_tspeed; 
         m_position += up * y * m_tspeed; 
     }
@@ -195,7 +198,7 @@ inline void Camera::move_right(const float dt)
     }
     else // free fly
     {
-        vec3f right = (m_orientation * vec3f::UnitX()).normalized();
+        vec3f right = vec3f::UnitX();
         m_position += right * m_size * dt * m_tspeed;
     }
 }
@@ -208,7 +211,7 @@ inline void Camera::move_up(const float dt)
     }
     else // free fly
     {
-        vec3f up = (m_orientation * vec3f::UnitY()).normalized();
+        vec3f up = vec3f::UnitY();
         m_position += up * m_size * dt * m_tspeed;
     }
 }

@@ -237,6 +237,8 @@ namespace GLFW {
     void draw_world_axis();
     void draw_xy_grid();
 
+    void align_to_nearest_axis();
+
   private:
     GLFWwindow *m_window;
     const Graphics_scene *m_scene;

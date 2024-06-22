@@ -344,15 +344,15 @@ namespace GLFW {
     }
 
     {
-      float size = m_camera.size() * 0.5;
+      float size = m_camera.get_size() * 0.5;
 
       Line x_axis(vec3f::Zero(), size*vec3f::UnitX(), vec3f(1, 0, 0), 5.f); // x-axis
       Line y_axis(vec3f::Zero(), size*vec3f::UnitY(), vec3f(0, 1, 0), 5.f); // y-axis
-      Line z_axis(vec3f::Zero(), size*vec3f::UnitZ(), vec3f(0, 0, 1), 5.f); // z-axis
+      // Line z_axis(vec3f::Zero(), size*vec3f::UnitZ(), vec3f(0, 0, 1), 5.f); // z-axis
 
       m_world_axis.add_line(x_axis);
       m_world_axis.add_line(y_axis);
-      m_world_axis.add_line(z_axis);
+      // m_world_axis.add_line(z_axis);
 
       const unsigned int nbSubdivisions = 10;
 
@@ -973,6 +973,10 @@ namespace GLFW {
     {
       m_camera.reset_position();
     }
+    if (btn == GLFW_MOUSE_BUTTON_1)
+    {
+      align_to_nearest_axis();
+    }
   }
 
   inline
@@ -1482,6 +1486,42 @@ namespace GLFW {
   {
     m_world_axis.set_mvp(m_mvp);
     m_world_axis.draw();
+  }
+
+  void Basic_viewer::align_to_nearest_axis() 
+  {
+    vec3f forward = -m_camera.forward();
+
+    std::vector<vec3f> axis = {
+      vec3f::UnitX(), -vec3f::UnitX(),
+      vec3f::UnitY(), -vec3f::UnitY(),
+      vec3f::UnitZ(), -vec3f::UnitZ()
+    };
+
+    float max_dot = -1.0f;
+    vec3f nearest_axis = vec3f::Zero();
+
+    for (const auto& a : axis) {
+      float dot = forward.dot(a);
+      if (dot > max_dot) {
+        max_dot = dot;
+        nearest_axis = a; 
+      }
+    }
+
+    if (nearest_axis == vec3f::UnitX()) {
+        m_camera.set_orientation(quatf(Eigen::AngleAxisf(-M_PI / 2, vec3f::UnitY())));
+    } else if (nearest_axis == -vec3f::UnitX()) {
+        m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI / 2, vec3f::UnitY())));
+    } else if (nearest_axis == vec3f::UnitY()) {
+        m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI / 2, vec3f::UnitX())));
+    } else if (nearest_axis == -vec3f::UnitY()) {
+        m_camera.set_orientation(quatf(Eigen::AngleAxisf(-M_PI / 2, vec3f::UnitX())));
+    } else if (nearest_axis == vec3f::UnitZ()) {
+        m_camera.set_orientation(quatf(Eigen::AngleAxisf(0, vec3f::UnitY())));
+    } else if (nearest_axis == -vec3f::UnitZ()) {
+        m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY())));
+    }
   }
 } // end namespace GLFW 
 } // end namespace CGAL
