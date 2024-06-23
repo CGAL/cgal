@@ -60,7 +60,8 @@ public:
 
     inline void mode(MODE mode) { m_mode = mode; }
     inline void toggle_mode() { m_mode = m_mode == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC; }
-    inline bool is_orthographic() const { return !m_orbiter; }
+    inline bool is_orthographic() const { return m_mode == ORTHOGRAPHIC; }
+    inline bool is_orbiter() const { return m_orbiter; }
 
     inline void inc_rspeed() { m_rspeed = std::min(m_rspeed+10.f, 500.f); }
     inline void dec_rspeed() { m_rspeed = std::max(m_rspeed-10.f, 50.f); }
@@ -208,8 +209,8 @@ void Camera::update(const float dt)
 inline 
 void Camera::translation(const float x, const float y)
 {
-    float xspeed = x * m_tspeed;
-    float yspeed = y * m_tspeed;
+    float xspeed = x * m_tspeed + x / m_translationSmoothFactor * .01;
+    float yspeed = y * m_tspeed + y / m_translationSmoothFactor * .01;
 
     if (m_orbiter) 
     {
@@ -228,8 +229,8 @@ void Camera::translation(const float x, const float y)
 inline 
 void Camera::rotation(const float x, const float y)
 {
-    m_targetPitch += y;
-    m_targetYaw += x;
+    m_targetPitch += y + y / m_rotationSmoothFactor * .1;
+    m_targetYaw += x + x / m_rotationSmoothFactor * .1;
 }
 
 inline 
@@ -333,6 +334,7 @@ void Camera::set_zoom_smoothness(const float s)
     m_zoomSmoothFactor += s * 0.01; 
     if (m_zoomSmoothFactor > 1.f) m_zoomSmoothFactor = 1.;
     if (m_zoomSmoothFactor < 0.01f) m_zoomSmoothFactor = .01;
+    std::cout << m_zoomSmoothFactor << '\n';
 }
 
 inline 

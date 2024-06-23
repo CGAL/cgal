@@ -93,14 +93,14 @@ protected:
   void on_cursor_event(double xpos, double ypos);
   void on_mouse_btn_event(int button, int action, int mods);
   void on_scroll_event(double xoffset, double yoffset);
-  void handle_events();
+  void handle_events(const double deltaTime=0.00);
 
-  virtual void start_action(ActionEnum action) = 0;
-  virtual void action_event(ActionEnum action) = 0;
-  virtual void end_action(ActionEnum action) = 0;
+  virtual void start_action(ActionEnum action, const double deltaTime=0.00) = 0;
+  virtual void action_event(ActionEnum action, const double deltaTime=0.00) = 0;
+  virtual void end_action(ActionEnum action, const double deltaTime=0.00) = 0;
 
   virtual void double_click_event(int action) = 0;
-  virtual void scroll_event() = 0;
+  virtual void scroll_event(const double deltaTime) = 0;
 
 private:
   void add_action(KeyData keys, ActionEnum action);
@@ -373,7 +373,7 @@ void Input::on_mouse_btn_event(int btn, int action, int mods)
   }
 }
 
-void Input::handle_events()
+void Input::handle_events(const double deltaTime)
 {
   m_pressed_keys.clear();
   m_consumed_keys.clear();
@@ -383,7 +383,7 @@ void Input::handle_events()
 
   if (m_yoffset != 0)
   {
-    this->scroll_event();
+    this->scroll_event(deltaTime);
   }
 
   for (Action act : m_key_actions)
@@ -403,11 +403,11 @@ void Input::handle_events()
         if (!m_started_actions[action])
         {
           m_started_actions[action] = true;
-          start_action(action);
+          start_action(action, deltaTime);
         }
       }
 
-      this->action_event(action);
+      this->action_event(action, deltaTime);
     }
   }
 
@@ -417,7 +417,7 @@ void Input::handle_events()
     if (!m_activated_actions[action])
     {
       m_started_actions[action] = false;
-      end_action(action);
+      end_action(action, deltaTime);
     }
   }
 

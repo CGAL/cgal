@@ -1,15 +1,17 @@
-#pragma once
+#ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
+#define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
 namespace CGAL {
 namespace GLFW {
-  inline
+
+  inline 
   void Basic_viewer::error_callback(int error, const char *description)
   {
     fprintf(stderr, "GLFW returned an error:\n\t%s (%i)\n", description, error);
   }
 
   inline
-  GLFWwindow *Basic_viewer::create_window(int width, int height, const char *title, bool hidden)
+  GLFWwindow* Basic_viewer::create_window(int width, int height, const char* title, bool hidden)
   {
     // Initialise GLFW
     if (!glfwInit())
@@ -20,7 +22,9 @@ namespace GLFW {
 
     // OpenGL 2.1 with compatibilty
     if (hidden)
+    {
       glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -33,16 +37,12 @@ namespace GLFW {
     glfwWindowHint(GLFW_SAMPLES, windowSamples); // MSAA
 
     // Create window using GLFW
-    GLFWwindow *window = glfwCreateWindow(width,
-                                          height,
-                                          title,
-                                          nullptr,
-                                          nullptr);
+    GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 
     // Ensure the window is set up correctly
     if (!window)
     {
-      fprintf(stderr, "Could not open GLFW window\n");
+      std::cerr << "Could not open GLFW window\n";
       glfwTerminate();
       exit(EXIT_FAILURE);
     }
@@ -53,7 +53,7 @@ namespace GLFW {
     // Initialized GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-      std::cerr << "Failed to initialized GLAD!" << std::endl;
+      std::cerr << "Failed to initialized GLAD!";
       exit(EXIT_FAILURE);
     }
     // gladLoadGL();
@@ -61,33 +61,36 @@ namespace GLFW {
     // White background
 
     // Print various OpenGL information to stdout
-    printf("%s: %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
-    printf("GLFW\t %s\n", glfwGetVersionString());
-    printf("OpenGL\t %s\n", glGetString(GL_VERSION));
-    printf("GLSL\t %s\n\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+    std::cout << glGetString(GL_VENDOR) << ": " << glGetString(GL_RENDERER) << '\n';
+    std::cout << "GLFW\t " << glfwGetVersionString() << '\n';
+    std::cout << "OpenGL\t " << glGetString(GL_VERSION) << '\n';
+    std::cout << "GLSL\t " << glGetString(GL_SHADING_LANGUAGE_VERSION) << '\n\n';
 
     return window;
   }
 
   inline
   Basic_viewer::Basic_viewer(
-      const Graphics_scene *graphicScene,
-      const char *title,
-      bool draw_vertices,
-      bool draw_edges,
-      bool draw_faces,
-      bool use_mono_color,
-      bool inverse_normal,
-      bool draw_rays,
-      bool draw_lines) : m_scene(graphicScene),
-                         m_title(title),
-                         m_drawVertices(draw_vertices),
-                         m_drawEdges(draw_edges),
-                         m_drawRays(draw_rays),
-                         m_drawLines(draw_lines),
-                         m_drawFaces(draw_faces),
-                         m_useMonoColor(use_mono_color),
-                         m_inverseNormal(inverse_normal)
+      const Graphics_scene* graphicScene,
+      const char* title,
+      bool drawVertices,
+      bool drawEdges,
+      bool drawFaces,
+      bool drawRays,
+      bool drawLines, 
+      bool useMonoColor,
+      bool inverseNormal,
+      bool flatShading
+  ) : m_scene(graphicScene),
+      m_title(title),
+      m_drawVertices(drawVertices),
+      m_drawEdges(drawEdges),
+      m_drawFaces(drawFaces),
+      m_drawRays(drawRays),
+      m_drawLines(drawLines),
+      m_useMonoColor(useMonoColor),
+      m_inverseNormal(inverseNormal),
+      m_flatShading(flatShading)
   {
     init_keys_actions();
   }
@@ -95,7 +98,7 @@ namespace GLFW {
   inline
   void Basic_viewer::show()
   {
-    m_window = create_window(m_window_size.x(), m_window_size.y(), m_title);
+    m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title);
     init_buffers();
 
     glGenBuffers(NB_GL_BUFFERS, m_vbo);
@@ -109,115 +112,93 @@ namespace GLFW {
     glfwSetFramebufferSizeCallback(m_window, window_size_callback);
 
     print_help();
-    set_cam_mode(m_camMode);
 
-    GLint major, minor;
-    glGetIntegerv(GL_MAJOR_VERSION, &major);
-    glGetIntegerv(GL_MINOR_VERSION, &minor);
+    GLint openglMajorVersion, openglMinorVersion;
+    glGetIntegerv(GL_MAJOR_VERSION, &openglMajorVersion);
+    glGetIntegerv(GL_MINOR_VERSION, &openglMinorVersion);
 
-    if (major > 4 || major == 4 && minor >= 3)
+    if (openglMajorVersion > 4 || openglMajorVersion == 4 && openglMinorVersion >= 3)
     {
-      m_is_opengl_4_3 = true;
+      m_isOpengl4_3 = true;
     }
 
     compile_shaders();
 
-    vec3f pmin(
-        m_scene->bounding_box().xmin(),
-        m_scene->bounding_box().ymin(),
-        m_scene->bounding_box().zmin());
+    { // Camera initialization 
+      vec3f pmin(
+          m_scene->bounding_box().xmin(),
+          m_scene->bounding_box().ymin(),
+          m_scene->bounding_box().zmin());
 
-    vec3f pmax(
-        m_scene->bounding_box().xmax(),
-        m_scene->bounding_box().ymax(),
-        m_scene->bounding_box().zmax());
+      vec3f pmax(
+          m_scene->bounding_box().xmax(),
+          m_scene->bounding_box().ymax(),
+          m_scene->bounding_box().zmax());
 
-    m_camera.lookat(pmin, pmax);
+      m_camera.lookat(pmin, pmax);
+    }
 
     double lastFrame = glfwGetTime();
     while (!glfwWindowShouldClose(m_window))
     {
       double currentFrame = glfwGetTime();
-      m_delta_time = currentFrame - lastFrame;
+      double deltaTime = currentFrame - lastFrame;
       lastFrame = currentFrame;
-      render_scene();
+
+      render_scene(deltaTime);
       glfwSwapBuffers(m_window);
-      handle_events();
-      // update_frame();
+      handle_events(deltaTime);
     }
 
     glfwTerminate();
   }
 
   inline
-  void Basic_viewer::make_screenshot(const std::string &pngpath)
+  void Basic_viewer::make_screenshot(const std::string& filePath)
   {
-    m_window = create_window(m_window_size.x(), m_window_size.y(), m_title, true);
+    m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title, true);
     init_buffers();
 
-    set_cam_mode(m_camMode);
+    GLint openglMajorVersion, openglMinorVersion;
+    glGetIntegerv(GL_MAJOR_VERSION, &openglMajorVersion);
+    glGetIntegerv(GL_MINOR_VERSION, &openglMinorVersion);
 
-    GLint major, minor;
-    glGetIntegerv(GL_MAJOR_VERSION, &major);
-    glGetIntegerv(GL_MINOR_VERSION, &minor);
-
-    if (major > 4 || major == 4 && minor >= 3)
+    if (openglMajorVersion > 4 || openglMajorVersion == 4 && openglMinorVersion >= 3)
     {
-      m_is_opengl_4_3 = true;
+      m_isOpengl4_3 = true;
     }
 
     compile_shaders();
     render_scene();
     glfwSwapBuffers(m_window);
-    screenshot(pngpath);
+    screenshot(filePath);
     glfwTerminate();
-  }
-
-  inline
-  void Basic_viewer::update_frame()
-  {
-    vec3f dO, dx, dy;
-    float z = 0.0f; // Définissez la profondeur souhaitée
-
-    // Obtenir le cadre de référence à la profondeur z
-    m_camera.frame(z, dO, dx, dy);
-
-    // Afficher les vecteurs de direction pour le débogage
-    std::cout << "\x1B[2J\x1B[H";
-    // std::cout << "Origin: " << dO.x() << ", " << dO.y() << ", " << dO.z() << std::endl;
-    std::cout << "Forward: " << m_camera.forward().x() << ", " << m_camera.forward().y() << ", " << m_camera.forward().z() << std::endl;
-    std::cout << "Direction X: " << dx.x() << ", " << dx.y() << ", " << dx.z() << std::endl;
-    std::cout << "Direction Y: " << dy.x() << ", " << dy.y() << ", " << dy.z() << std::endl;
-    vec3f position = m_camera.position();
-    // vec3f test = multVecMat(m_camera.position(), m_camera.viewport());
-    // std::cout << "Viewport : " << test.x() << ", " << test.y() << ", " << test.z() << std::endl;
-    std::cout << "Viewport : " << position.x() << ", " << position.y() << ", " << position.z() << std::endl;
   }
 
   inline
   void Basic_viewer::compile_shaders()
   {
-    const char *face_vert = m_is_opengl_4_3 ? vertex_source_color : vertex_source_color_comp;
-    const char *face_frag = m_is_opengl_4_3 ? fragment_source_color : fragment_source_color_comp;
-    const char *pl_vert = m_is_opengl_4_3 ? vertex_source_p_l : vertex_source_p_l_comp;
-    const char *pl_frag = m_is_opengl_4_3 ? fragment_source_p_l : fragment_source_p_l_comp;
-    const char *plane_vert = vertex_source_clipping_plane;
-    const char *plane_frag = fragment_source_clipping_plane;
+    const char* faceVertex = m_isOpengl4_3 ? vertex_source_color : vertex_source_color_comp;
+    const char* faceFragment = m_isOpengl4_3 ? fragment_source_color : fragment_source_color_comp;
+    const char* plVertex = m_isOpengl4_3 ? vertex_source_p_l : vertex_source_p_l_comp;
+    const char* plFragment = m_isOpengl4_3 ? fragment_source_p_l : fragment_source_p_l_comp;
+    const char* planeVertex = vertex_source_clipping_plane;
+    const char* planeFragment = fragment_source_clipping_plane;
 
-    m_face_shader = Shader::loadShader(face_vert, face_frag, "FACE");
-    m_pl_shader = Shader::loadShader(pl_vert, pl_frag, "PL");
-    m_plane_shader = Shader::loadShader(plane_vert, plane_frag, "PLANE");
+    m_faceShader = Shader::loadShader(faceVertex, faceFragment, "FACE");
+    m_plShader = Shader::loadShader(plVertex, plFragment, "PL");
+    m_planeShader = Shader::loadShader(planeVertex, planeFragment, "PLANE");
 
     // For world axis and grid 
-    const char *line_vert = vertex_source_line;
-    const char *line_frag = fragment_source_line;
-    m_line_shader = Shader::loadShader(line_vert, line_frag, "LINE");
-    m_corner_world_axis.attach_shader(&m_line_shader);
-    m_world_axis.attach_shader(&m_line_shader);
+    const char* lineVertex = vertex_source_line;
+    const char* lineFragment = fragment_source_line;
+    m_lineShader = Shader::loadShader(lineVertex, lineFragment, "LINE");
+    m_worldAxisRenderer.attach_shader(&m_lineShader);
+    m_XYGridRenderer.attach_shader(&m_lineShader);
   }
 
   inline
-  void Basic_viewer::load_buffer(int i, int location, const std::vector<float> &vector, int dataCount)
+  void Basic_viewer::load_buffer(int i, int location, const std::vector<float>& vector, int dataCount)
   {
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo[i]);
 
@@ -231,7 +212,7 @@ namespace GLFW {
   inline
   void Basic_viewer::load_buffer(int i, int location, int gsEnum, int dataCount)
   {
-    const std::vector<float> &vector = m_scene->get_array_of_index(gsEnum);
+    const auto& vector = m_scene->get_array_of_index(gsEnum);
     load_buffer(i, location, vector, dataCount);
   }
 
@@ -254,7 +235,7 @@ namespace GLFW {
     // 1) POINT SHADER
 
     // 1.1) Mono points
-    m_pl_shader.use();
+    m_plShader.use();
     glBindVertexArray(m_vao[VAO_MONO_POINTS]);
     load_buffer(bufn++, 0, Graphics_scene::POS_MONO_POINTS, 3);
 
@@ -299,7 +280,7 @@ namespace GLFW {
     // 5) FACE SHADER
 
     // 5.1) Mono faces
-    m_face_shader.use();
+    m_faceShader.use();
     glBindVertexArray(m_vao[VAO_MONO_FACES]);
     load_buffer(bufn++, 0, Graphics_scene::POS_MONO_FACES, 3);
     if (m_flatShading)
@@ -325,48 +306,48 @@ namespace GLFW {
     load_buffer(bufn++, 2, Graphics_scene::COLOR_FACES, 3);
 
     // 6) clipping plane shader
-    if (m_is_opengl_4_3)
+    if (m_isOpengl4_3)
     {
       generate_clipping_plane();
       glBindVertexArray(m_vao[VAO_CLIPPING_PLANE]);
-      load_buffer(bufn++, 0, m_array_for_clipping_plane, 3);
+      load_buffer(bufn++, 0, m_clippingPlaneVertices, 3);
     }
 
     {
-      Line x_axis(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0), 3.f); // x-axis
-      Line y_axis(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0), 3.f); // y-axis
-      Line z_axis(vec3f::Zero(), .1f*vec3f::UnitZ(), vec3f(0, 0, 1), 3.f); // z-axis
+      Line line0(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0), 3.f); // x-axis
+      Line line1(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0), 3.f); // y-axis
+      Line line2(vec3f::Zero(), .1f*vec3f::UnitZ(), vec3f(0, 0, 1), 3.f); // z-axis
       
 
-      m_corner_world_axis.add_line(x_axis);
-      m_corner_world_axis.add_line(y_axis);
-      m_corner_world_axis.add_line(z_axis);
+      m_worldAxisRenderer.add_line(line0);
+      m_worldAxisRenderer.add_line(line1);
+      m_worldAxisRenderer.add_line(line2);
     }
 
     {
-      float size = m_camera.get_size() * 0.5;
+      float cameraSize = m_camera.get_size() * 0.5;
 
-      Line x_axis(vec3f::Zero(), size*vec3f::UnitX(), vec3f(1, 0, 0), 5.f); // x-axis
-      Line y_axis(vec3f::Zero(), size*vec3f::UnitY(), vec3f(0, 1, 0), 5.f); // y-axis
-      Line x_axis1(vec3f::Zero(), -2.f*size*vec3f::UnitX(), vec3f(.8f, .8f, .8f), 2.f); // x-axis
-      Line y_axis1(vec3f::Zero(), -2.f*size*vec3f::UnitY(), vec3f(.8f, .8f, .8f), 2.f); // y-axis
-      Line z_axis(vec3f::Zero(), -2.f*size*vec3f::UnitZ(), vec3f(.8f, .8f, .8f), 2.f); // z-axis
+      Line line0(vec3f::Zero(), cameraSize*vec3f::UnitX(), vec3f(1, 0, 0), 5.f); // x-axis
+      Line line1(vec3f::Zero(), cameraSize*vec3f::UnitY(), vec3f(0, 1, 0), 5.f); // y-axis
+      Line line2(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitX(), vec3f(.8f, .8f, .8f), 2.f); // -x-axis
+      Line line3(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitY(), vec3f(.8f, .8f, .8f), 2.f); // -y-axis
+      Line line4(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitZ(), vec3f(.8f, .8f, .8f), 2.f); // -z-axis
 
-      m_world_axis.add_line(x_axis);
-      m_world_axis.add_line(y_axis);
-      m_world_axis.add_line(x_axis1);
-      m_world_axis.add_line(y_axis1);
-      m_world_axis.add_line(z_axis);
+      m_XYGridRenderer.add_line(line0);
+      m_XYGridRenderer.add_line(line1);
+      m_XYGridRenderer.add_line(line2);
+      m_XYGridRenderer.add_line(line3);
+      m_XYGridRenderer.add_line(line4);
 
       const unsigned int nbSubdivisions = 10;
 
       for (unsigned int i = 0; i <= nbSubdivisions; ++i)
       {
-        const float pos = float(size * (2.0 * i / nbSubdivisions - 1.0));
-        Line line1(vec3f(pos, -size, 0.f), vec3f(pos, size, 0.f), vec3f(.8f,.8f,.8f), 2.f);
-        Line line2(vec3f(-size, pos, 0.f), vec3f(size, pos, 0.f), vec3f(.8f,.8f,.8f), 2.f);
-        m_world_axis.add_line(line1);
-        m_world_axis.add_line(line2);
+        const float pos = float(cameraSize * (2.0 * i / nbSubdivisions - 1.0));
+        Line line5(vec3f(pos, -cameraSize, 0.f), vec3f(pos, cameraSize, 0.f), vec3f(.8f,.8f,.8f), 2.f);
+        Line line6(vec3f(-cameraSize, pos, 0.f), vec3f(cameraSize, pos, 0.f), vec3f(.8f,.8f,.8f), 2.f);
+        m_XYGridRenderer.add_line(line5);
+        m_XYGridRenderer.add_line(line6);
       }
 
     }
@@ -374,32 +355,30 @@ namespace GLFW {
     m_areBuffersInitialized = true;
   }
 
+  inline 
   CGAL::Plane_3<Basic_viewer::Local_kernel> Basic_viewer::clipping_plane() const
   {
-    const mat4f cpm = m_clipping_matrix;
+    const mat4f cpm = m_clippingMatrix;
     CGAL::Aff_transformation_3<Basic_viewer::Local_kernel> aff(
-        cpm(0, 0), cpm(0, 1), cpm(0, 2), cpm(0, 3),
-        cpm(1, 0), cpm(1, 1), cpm(1, 2), cpm(1, 3),
-        cpm(2, 0), cpm(2, 1), cpm(2, 2), cpm(2, 3));
+      cpm(0, 0), cpm(0, 1), cpm(0, 2), cpm(0, 3),
+      cpm(1, 0), cpm(1, 1), cpm(1, 2), cpm(1, 3),
+      cpm(2, 0), cpm(2, 1), cpm(2, 2), cpm(2, 3)
+    );
 
     CGAL::Plane_3<Local_kernel> p3(0, 0, 1, 0);
     return p3.transform(aff);
   }
 
   inline
-  void Basic_viewer::update_uniforms()
+  void Basic_viewer::update_uniforms(const double deltaTime)
   {
-    // m_mv = lookAt(m_camPosition, m_camPosition + m_camForward, vec3f(0,1,0)) * m_scene_rotation;
-
-    m_camera.update(m_delta_time);
+    m_camera.update(deltaTime);
 
     mat4f view = m_camera.view();
-    mat4f projection = m_camera.projection(m_window_size.x(), m_window_size.y());
+    mat4f projection = m_camera.projection(m_windowSize.x(), m_windowSize.y());
 
-    m_mv = view;
-
-    // m_mvp = m_cam_projection * m_mv;
-    m_mvp = projection * m_mv;
+    m_modelViewMatrix = view;
+    m_modelViewProjectionMatrix = projection * m_modelViewMatrix;
 
     // ================================================================
 
@@ -411,46 +390,46 @@ namespace GLFW {
   inline
   void Basic_viewer::set_face_uniforms()
   {
-    m_face_shader.use();
+    m_faceShader.use();
 
-    m_face_shader.setMatrix4f("mvp_matrix", m_mvp.data());
-    m_face_shader.setMatrix4f("mv_matrix", m_mv.data());
+    m_faceShader.setMatrix4f("mvp_matrix", m_modelViewProjectionMatrix.data());
+    m_faceShader.setMatrix4f("mv_matrix", m_modelViewMatrix.data());
 
-    m_face_shader.setVec4f("light_pos", m_lightPosition.data());
-    m_face_shader.setVec4f("light_diff", m_diffuse.data());
-    m_face_shader.setVec4f("light_spec", m_specular.data());
-    m_face_shader.setVec4f("light_amb", m_ambient.data());
-    m_face_shader.setFloat("spec_power", m_shininess);
+    m_faceShader.setVec4f("light_pos", m_lightPosition.data());
+    m_faceShader.setVec4f("light_diff", m_diffuseColor.data());
+    m_faceShader.setVec4f("light_spec", m_specularColor.data());
+    m_faceShader.setVec4f("light_amb", m_ambientColor.data());
+    m_faceShader.setFloat("spec_power", m_shininess);
 
-    m_face_shader.setVec4f("clipPlane", m_clip_plane.data());
-    m_face_shader.setVec4f("pointPlane", m_point_plane.data());
-    m_face_shader.setFloat("rendering_transparency", m_clipping_plane_rendering_transparency);
+    m_faceShader.setVec4f("clipPlane", m_clipPlane.data());
+    m_faceShader.setVec4f("pointPlane", m_pointPlane.data());
+    m_faceShader.setFloat("rendering_transparency", m_clippingPlaneRenderingTransparency);
   }
 
   inline
   void Basic_viewer::set_pl_uniforms()
   {
-    m_pl_shader.use();
+    m_plShader.use();
 
-    m_pl_shader.setVec4f("clipPlane", m_clip_plane.data());
-    m_pl_shader.setVec4f("pointPlane", m_point_plane.data());
-    m_pl_shader.setMatrix4f("mvp_matrix", m_mvp.data());
-    m_pl_shader.setFloat("point_size", m_sizePoints);
+    m_plShader.setVec4f("clipPlane", m_clipPlane.data());
+    m_plShader.setVec4f("pointPlane", m_pointPlane.data());
+    m_plShader.setMatrix4f("mvp_matrix", m_modelViewProjectionMatrix.data());
+    m_plShader.setFloat("point_size", m_sizePoints);
   }
 
   inline
   void Basic_viewer::set_clipping_uniforms()
   {
-    m_point_plane = m_clipping_matrix * vec4f(0, 0, 0, 1);
-    m_clip_plane = m_clipping_matrix * vec4f(0, 0, 1, 0);
-    m_plane_shader.use();
+    m_pointPlane = m_clippingMatrix * vec4f(0, 0, 0, 1);
+    m_clipPlane = m_clippingMatrix * vec4f(0, 0, 1, 0);
+    m_planeShader.use();
 
-    m_plane_shader.setMatrix4f("vp_matrix", m_mvp.data());
-    m_plane_shader.setMatrix4f("m_matrix", m_clipping_matrix.data());
+    m_planeShader.setMatrix4f("vp_matrix", m_modelViewProjectionMatrix.data());
+    m_planeShader.setMatrix4f("m_matrix", m_clippingMatrix.data());
   }
 
   inline
-  void Basic_viewer::render_scene()
+  void Basic_viewer::render_scene(const double deltaTime)
   {
     if (!m_areBuffersInitialized)
     {
@@ -463,9 +442,9 @@ namespace GLFW {
     glEnable(GL_PROGRAM_POINT_SIZE);
     glEnable(GL_LINE_SMOOTH);
 
-    update_uniforms();
+    update_uniforms(deltaTime);
 
-    bool half = m_useClippingPlane == CLIPPING_PLANE_SOLID_HALF_ONLY;
+    bool half = m_clippingPlaneDisplayMode == CLIPPING_PLANE_SOLID_HALF_ONLY;
 
     if (m_drawVertices)
     {
@@ -487,18 +466,18 @@ namespace GLFW {
     {
       draw_lines();
     }
-    if (m_draw_world_axis) 
+    if (m_drawWorldAxis) 
     {
       draw_world_axis();
     }
-    if (m_draw_xy_grid) 
+    if (m_drawXYGrid) 
     {
       draw_xy_grid();
     }
   }
 
   inline
-  vec4f Basic_viewer::color_to_vec4(const CGAL::IO::Color &c) const
+  vec4f Basic_viewer::color_to_vec4(const CGAL::IO::Color& c) const
   {
     return {(float)c.red() / 255, (float)c.green() / 255, (float)c.blue() / 255, 1.0f};
   }
@@ -506,15 +485,15 @@ namespace GLFW {
   inline
   void Basic_viewer::draw_faces()
   {
-    m_face_shader.use();
+    m_faceShader.use();
 
-    if (m_useClippingPlane == CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
+    if (m_clippingPlaneDisplayMode == CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
     {
       // The z-buffer will prevent transparent objects from being displayed behind other transparent objects.
       // Before rendering all transparent objects, disable z-testing first.
 
       // 1. draw solid first
-      draw_faces_(DRAW_INSIDE_ONLY);
+      draw_faces_bis(DRAW_INSIDE_ONLY);
 
       // 2. draw transparent layer second with back face culling to avoid messy triangles
       glDepthMask(false); // disable z-testing
@@ -523,39 +502,41 @@ namespace GLFW {
       glEnable(GL_CULL_FACE);
       glCullFace(GL_BACK);
       glFrontFace(GL_CW);
-      draw_faces_(DRAW_OUTSIDE_ONLY);
+      draw_faces_bis(DRAW_OUTSIDE_ONLY);
 
       // 3. draw solid again without culling and blend to make sure the solid mesh is visible
       glDepthMask(true); // enable z-testing
       glDisable(GL_CULL_FACE);
       glDisable(GL_BLEND);
-      draw_faces_(DRAW_INSIDE_ONLY);
+      draw_faces_bis(DRAW_INSIDE_ONLY);
 
       // 4. render clipping plane here
       render_clipping_plane();
-      return;
-    }
-
-    if (m_useClippingPlane == CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
-        m_useClippingPlane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+    } 
+    else // Not CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF
     {
-      // 1. draw solid HALF
-      draw_faces_(DRAW_INSIDE_ONLY);
+      if (m_clippingPlaneDisplayMode == CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
+          m_clippingPlaneDisplayMode == CLIPPING_PLANE_SOLID_HALF_ONLY)
+      {
+        // 1. draw solid HALF
+        draw_faces_bis(DRAW_INSIDE_ONLY);
 
-      // 2. render clipping plane here
-      render_clipping_plane();
-      return;
+        // 2. render clipping plane here
+        render_clipping_plane();
+      } 
+      else
+      {
+        // 1. draw solid FOR ALL
+        draw_faces_bis(DRAW_ALL);
+      } 
     }
-
-    // 1. draw solid FOR ALL
-    draw_faces_(DRAW_ALL);
   }
 
   inline
-  void Basic_viewer::draw_faces_(RenderMode mode)
+  void Basic_viewer::draw_faces_bis(int renderingMode)
   {
-    m_face_shader.use();
-    m_face_shader.setFloat("rendering_mode", mode);
+    m_faceShader.use();
+    m_faceShader.setFloat("rendering_mode", renderingMode);
 
     vec4f color = color_to_vec4(m_facesMonoColor);
 
@@ -579,8 +560,8 @@ namespace GLFW {
   inline
   void Basic_viewer::draw_rays()
   {
-    m_pl_shader.use();
-    m_pl_shader.setFloat("rendering_mode", RenderMode::DRAW_ALL);
+    m_plShader.use();
+    m_plShader.setFloat("rendering_mode", RenderingModeEnum::DRAW_ALL);
 
     vec4f color = color_to_vec4(m_raysMonoColor);
 
@@ -603,10 +584,11 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::draw_vertices(RenderMode render)
+  void Basic_viewer::draw_vertices(int renderingMode)
   {
-    m_pl_shader.use();
-    m_pl_shader.setFloat("rendering_mode", render);
+    m_plShader.use();
+
+    m_plShader.setFloat("rendering_mode", renderingMode);
 
     vec4f color = color_to_vec4(m_verticeMonoColor);
 
@@ -629,8 +611,8 @@ namespace GLFW {
   inline
   void Basic_viewer::draw_lines()
   {
-    m_pl_shader.use();
-    m_pl_shader.setFloat("rendering_mode", RenderMode::DRAW_ALL);
+    m_plShader.use();
+    m_plShader.setFloat("rendering_mode", RenderingModeEnum::DRAW_ALL);
 
     vec4f color = color_to_vec4(m_linesMonoColor);
 
@@ -652,10 +634,10 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::draw_edges(RenderMode mode)
+  void Basic_viewer::draw_edges(int renderingMode)
   {
-    m_pl_shader.use();
-    m_pl_shader.setFloat("rendering_mode", mode);
+    m_plShader.use();
+    m_plShader.setFloat("rendering_mode", renderingMode);
 
     vec4f color = color_to_vec4(m_edgesMonoColor);
 
@@ -685,7 +667,7 @@ namespace GLFW {
 
     const unsigned int nbSubdivisions = 30;
 
-    auto &array = m_array_for_clipping_plane;
+    auto &array = m_clippingPlaneVertices;
     array.clear();
     for (unsigned int i = 0; i <= nbSubdivisions; ++i)
     {
@@ -711,55 +693,54 @@ namespace GLFW {
   inline
   void Basic_viewer::render_clipping_plane()
   {
-    if (!m_clipping_plane_rendering || !m_is_opengl_4_3)
+    if (!m_drawClippingPlane || !m_isOpengl4_3)
       return;
-    m_plane_shader.use();
+    m_planeShader.use();
     glBindVertexArray(m_vao[VAO_CLIPPING_PLANE]);
     glLineWidth(0.1f);
-    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_array_for_clipping_plane.size() / 3));
+    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_clippingPlaneVertices.size() / 3));
   }
 
   inline
-  void Basic_viewer::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+  void Basic_viewer::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
-    Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
+    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->on_key_event(key, scancode, action, mods);
   }
 
   inline
-  void Basic_viewer::cursor_callback(GLFWwindow *window, double xpos, double ypo)
+  void Basic_viewer::cursor_callback(GLFWwindow* window, double xpos, double ypo)
   {
-    Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
+    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->on_cursor_event(xpos, ypo);
   }
 
   inline
-  void Basic_viewer::mouse_btn_callback(GLFWwindow *window, int button, int action, int mods)
+  void Basic_viewer::mouse_btn_callback(GLFWwindow* window, int button, int action, int mods)
   {
-    Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
+    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->on_mouse_btn_event(button, action, mods);
   }
 
   inline
-  void Basic_viewer::window_size_callback(GLFWwindow *window, int width, int height)
+  void Basic_viewer::window_size_callback(GLFWwindow* window, int width, int height)
   {
-    Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
+    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
 
-    viewer->m_window_size = {width, height};
-    viewer->set_cam_mode(viewer->m_camMode);
+    viewer->m_windowSize = {width, height};
 
     glViewport(0, 0, width, height);
   }
 
   inline
-  void Basic_viewer::scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+  void Basic_viewer::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
   {
-    Basic_viewer *viewer = static_cast<Basic_viewer *>(glfwGetWindowUserPointer(window));
+    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->on_scroll_event(xoffset, yoffset);
   }
 
   inline
-  void Basic_viewer::start_action(ActionEnum action)
+  void Basic_viewer::start_action(int action, const double deltaTime)
   {
     switch (action)
     {
@@ -775,10 +756,10 @@ namespace GLFW {
 
   inline 
   void Basic_viewer::exit_app() {
-    m_pl_shader.destroy();
-    m_face_shader.destroy();
-    m_plane_shader.destroy();
-    m_line_shader.destroy();
+    m_plShader.destroy();
+    m_faceShader.destroy();
+    m_planeShader.destroy();
+    m_lineShader.destroy();
     glDeleteBuffers(NB_GL_BUFFERS, m_vbo);
     glDeleteVertexArrays(NB_VAO_BUFFERS, m_vao);
     glfwDestroyWindow(m_window);
@@ -787,50 +768,48 @@ namespace GLFW {
     exit(EXIT_SUCCESS);
   }
 
-  void Basic_viewer::action_event(ActionEnum action)
+  inline 
+  void Basic_viewer::action_event(int action, const double deltaTime)
   {
     if (action == EXIT) exit_app();
-
-    double dt = m_delta_time;
 
     switch (action)
     {
     case UP:
-      m_camera.move_up(dt);
+      m_camera.move_up(deltaTime);
       break;
     case DOWN:
-      m_camera.move_down(dt);
+      m_camera.move_down(deltaTime);
       break;
     case LEFT:
-      m_camera.move_left(dt);
+      m_camera.move_left(deltaTime);
       break;
     case RIGHT:
-      m_camera.move_right(dt);
+      m_camera.move_right(deltaTime);
       break;
     case FORWARD:
-      m_camera.move(dt);
+      m_camera.move(deltaTime);
       break;
     case BACKWARDS:
-      m_camera.move(-dt);
+      m_camera.move(-deltaTime);
       break;
-    case MOUSE_ROTATE:
-      mouse_rotate();
+    case INC_ROT_SMOOTHNESS:
+      m_camera.inc_rotation_smoothness();
       break;
-    case MOUSE_TRANSLATE:
-      mouse_translate();
+    case DEC_ROT_SMOOTHNESS:
+      m_camera.dec_rotation_smoothness();
+      break;
+    case INC_TRA_SMOOTHNESS:
+      m_camera.inc_translation_smoothness();
+      break;
+    case DEC_TRA_SMOOTHNESS:
+      m_camera.dec_translation_smoothness();
       break;
     case SWITCH_CAM_MODE:
       m_camera.toggle_mode();
       break;
     case SWITCH_CAM_ROTATION:
       m_camera.toggle_fly();
-      break;
-    case FULLSCREEN:
-      fullscreen();
-      break;
-    case SCREENSHOT:
-      screenshot("./screenshot.png");
-      std::cout << "Screenshot saved in local directory." << std::endl;
       break;
     case INC_MOVE_SPEED_1:
       m_camera.inc_tspeed();
@@ -844,14 +823,27 @@ namespace GLFW {
     case DEC_ROT_SPEED_1:
       m_camera.dec_rspeed();
       break;
+    case MOUSE_ROTATE:
+      mouse_rotate();
+      break;
+    case MOUSE_TRANSLATE:
+      mouse_translate(deltaTime);
+      break;
     case RESET_CAM:
       m_camera.reset_all();
       break;
+    case FULLSCREEN:
+      fullscreen();
+      break;
+    case SCREENSHOT:
+      screenshot("./screenshot.png");
+      std::cout << "Screenshot saved in local directory." << std::endl;
+      break;
     case CLIPPING_PLANE_DISPLAY:
-      m_clipping_plane_rendering = !m_clipping_plane_rendering;
+      m_drawClippingPlane = !m_drawClippingPlane;
       break;
     case CLIPPING_PLANE_MODE:
-      m_useClippingPlane = static_cast<ClippingMode>((m_useClippingPlane + 1) % CLIPPING_PLANE_END_INDEX);
+      m_clippingPlaneDisplayMode = static_cast<ClippingDisplayModeEnum>((m_clippingPlaneDisplayMode + 1) % CLIPPING_PLANE_END_INDEX);
       break;
     case VERTICES_DISPLAY:
       m_drawVertices = !m_drawVertices;
@@ -887,56 +879,56 @@ namespace GLFW {
       m_sizePoints = std::max(5.f, m_sizePoints - 0.1f);
       break;
     case INC_LIGHT_ALL:
-      m_ambient.x() += 0.01;
-      if (m_ambient.x() > 1)
-        m_ambient.x() = 1;
-      m_ambient.y() += 0.01;
-      if (m_ambient.y() > 1)
-        m_ambient.y() = 1;
-      m_ambient.z() += 0.01;
-      if (m_ambient.z() > 1)
-        m_ambient.z() = 1;
+      m_ambientColor.x() += 0.01;
+      if (m_ambientColor.x() > 1)
+        m_ambientColor.x() = 1;
+      m_ambientColor.y() += 0.01;
+      if (m_ambientColor.y() > 1)
+        m_ambientColor.y() = 1;
+      m_ambientColor.z() += 0.01;
+      if (m_ambientColor.z() > 1)
+        m_ambientColor.z() = 1;
       break;
     case DEC_LIGHT_ALL:
-      m_ambient.x() -= 0.01;
-      if (m_ambient.x() < 0)
-        m_ambient.x() = 0;
-      m_ambient.y() -= 0.01;
-      if (m_ambient.y() < 0)
-        m_ambient.y() = 0;
-      m_ambient.z() -= 0.01;
-      if (m_ambient.z() < 0)
-        m_ambient.z() = 0;
+      m_ambientColor.x() -= 0.01;
+      if (m_ambientColor.x() < 0)
+        m_ambientColor.x() = 0;
+      m_ambientColor.y() -= 0.01;
+      if (m_ambientColor.y() < 0)
+        m_ambientColor.y() = 0;
+      m_ambientColor.z() -= 0.01;
+      if (m_ambientColor.z() < 0)
+        m_ambientColor.z() = 0;
       break;
     case INC_LIGHT_R:
-      m_ambient.x() += 0.01;
-      if (m_ambient.x() > 1)
-        m_ambient.x() = 1;
+      m_ambientColor.x() += 0.01;
+      if (m_ambientColor.x() > 1)
+        m_ambientColor.x() = 1;
       break;
     case INC_LIGHT_G:
-      m_ambient.y() += 0.01;
-      if (m_ambient.y() > 1)
-        m_ambient.y() = 1;
+      m_ambientColor.y() += 0.01;
+      if (m_ambientColor.y() > 1)
+        m_ambientColor.y() = 1;
       break;
     case INC_LIGHT_B:
-      m_ambient.z() += 0.01;
-      if (m_ambient.z() > 1)
-        m_ambient.z() = 1;
+      m_ambientColor.z() += 0.01;
+      if (m_ambientColor.z() > 1)
+        m_ambientColor.z() = 1;
       break;
     case DEC_LIGHT_R:
-      m_ambient.x() -= 0.01;
-      if (m_ambient.x() < 0)
-        m_ambient.x() = 0;
+      m_ambientColor.x() -= 0.01;
+      if (m_ambientColor.x() < 0)
+        m_ambientColor.x() = 0;
       break;
     case DEC_LIGHT_G:
-      m_ambient.y() -= 0.01;
-      if (m_ambient.y() < 0)
-        m_ambient.y() = 0;
+      m_ambientColor.y() -= 0.01;
+      if (m_ambientColor.y() < 0)
+        m_ambientColor.y() = 0;
       break;
     case DEC_LIGHT_B:
-      m_ambient.z() -= 0.01;
-      if (m_ambient.z() < 0)
-        m_ambient.z() = 0;
+      m_ambientColor.z() -= 0.01;
+      if (m_ambientColor.z() < 0)
+        m_ambientColor.z() = 0;
       break;
     case CP_ROTATION:
       rotate_clipping_plane();
@@ -948,32 +940,20 @@ namespace GLFW {
       translate_clipping_plane_cam_dir();
       break;
     case CONSTRAINT_AXIS:
-      m_cstr_axis_enum = (m_cstr_axis_enum + 1) % NB_AXIS_ENUM;
-      switch_axis(m_cstr_axis_enum);
+      m_constraintAxisEnum = static_cast<AxisEnum>((m_constraintAxisEnum + 1) % NB_AXIS_ENUM);
+      switch_axis(m_constraintAxisEnum);
       break;
     case DISPLAY_WORLD_AXIS:
-      m_draw_world_axis = !m_draw_world_axis;
+      m_drawWorldAxis = !m_drawWorldAxis;
       break;
     case DISPLAY_XY_GRID:
-      m_draw_xy_grid = !m_draw_xy_grid;
-      break;
-    case INC_ROT_SMOOTHNESS:
-      m_camera.inc_rotation_smoothness();
-      break;
-    case DEC_ROT_SMOOTHNESS:
-      m_camera.dec_rotation_smoothness();
-      break;
-    case INC_TRA_SMOOTHNESS:
-      m_camera.inc_translation_smoothness();
-      break;
-    case DEC_TRA_SMOOTHNESS:
-      m_camera.dec_translation_smoothness();
+      m_drawXYGrid = !m_drawXYGrid;
       break;
     }
   }
 
   inline
-  void Basic_viewer::end_action(ActionEnum action)
+  void Basic_viewer::end_action(int action, const double deltaTime)
   {
     switch (action)
     {
@@ -987,13 +967,16 @@ namespace GLFW {
   inline
   void Basic_viewer::double_click_event(int btn)
   {
-    if (btn == GLFW_MOUSE_BUTTON_2)
+    if (m_camera.is_orbiter()) 
     {
-      m_camera.reset_position();
-    }
-    if (btn == GLFW_MOUSE_BUTTON_1)
-    {
-      align_to_nearest_axis();
+      if (btn == GLFW_MOUSE_BUTTON_2)
+      {
+        m_camera.reset_position();
+      }
+      if (btn == GLFW_MOUSE_BUTTON_1)
+      {
+          align_to_nearest_axis();
+      }
     }
   }
 
@@ -1070,80 +1053,79 @@ namespace GLFW {
 
     /*===================== BIND DESCRIPTIONS ============================*/
 
-    set_action_description({{FORWARD, "Move forward"},
-                            {BACKWARDS, "Move backwards"},
-                            {UP, "Move right"},
-                            {RIGHT, "Move right"},
-                            {LEFT, "Move left"},
-                            {DOWN, "Move down"},
+    set_action_description({
+      {FORWARD, "Move forward"},
+      {BACKWARDS, "Move backwards"},
+      {UP, "Move right"},
+      {RIGHT, "Move right"},
+      {LEFT, "Move left"},
+      {DOWN, "Move down"},
 
-                            {SWITCH_CAM_MODE, "Switch to Perspective/Orthographic view"},
-                            {SWITCH_CAM_ROTATION, "Switch to default/first person mode"},
+      {SWITCH_CAM_MODE, "Switch to Perspective/Orthographic view"},
+      {SWITCH_CAM_ROTATION, "Switch to default/first person mode"},
 
-                            {FULLSCREEN, "Switch to windowed/fullscreen mode"},
-                            {SCREENSHOT, "Take a screenshot of the current view"},
+      {FULLSCREEN, "Switch to windowed/fullscreen mode"},
+      {SCREENSHOT, "Take a screenshot of the current view"},
 
-                            {MOUSE_ROTATE, "Rotate the view"},
-                            {MOUSE_TRANSLATE, "Move the view"},
-                            {RESET_CAM, "Reset camera focus"},
+      {MOUSE_ROTATE, "Rotate the view"},
+      {MOUSE_TRANSLATE, "Move the view"},
+      {RESET_CAM, "Reset camera focus"},
 
-                            {CLIPPING_PLANE_MODE, "Switch clipping plane display mode"},
-                            {CLIPPING_PLANE_DISPLAY, "Toggle clipping plane rendering on/off"},
-                            {CP_ROTATION, "Rotate the clipping plane when enabled"},
-                            {CONSTRAINT_AXIS, "Toggle constraint axis for clipping plane rotation"},
-                            {CP_TRANSLATION, "Translate the clipping plane when enabled"},
-                            {CP_TRANS_CAM_DIR, "Translate the clipping plane along camera direction axis when enabled"},
+      {CLIPPING_PLANE_MODE, "Switch clipping plane display mode"},
+      {CLIPPING_PLANE_DISPLAY, "Toggle clipping plane rendering on/off"},
+      {CP_ROTATION, "Rotate the clipping plane when enabled"},
+      {CONSTRAINT_AXIS, "Toggle constraint axis for clipping plane rotation"},
+      {CP_TRANSLATION, "Translate the clipping plane when enabled"},
+      {CP_TRANS_CAM_DIR, "Translate the clipping plane along camera direction axis when enabled"},
 
-                            {INC_LIGHT_ALL, "Increase light (all colors, use shift/alt/ctrl for one rgb component)"},
-                            {DEC_LIGHT_ALL, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)"},
+      {INC_LIGHT_ALL, "Increase light (all colors, use shift/alt/ctrl for one rgb component)"},
+      {DEC_LIGHT_ALL, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)"},
 
-                            {VERTICES_DISPLAY, "Toggles vertices display"},
-                            {EDGES_DISPLAY, "Toggles edges display"},
-                            {FACES_DISPLAY, "Toggles faces display"},
+      {VERTICES_DISPLAY, "Toggles vertices display"},
+      {EDGES_DISPLAY, "Toggles edges display"},
+      {FACES_DISPLAY, "Toggles faces display"},
 
-                            {DISPLAY_WORLD_AXIS, "Toggles the display of the world axis"},
-                            {DISPLAY_XY_GRID, "Toggles the display of the XY grid"},
+      {DISPLAY_WORLD_AXIS, "Toggles the display of the world axis"},
+      {DISPLAY_XY_GRID, "Toggles the display of the XY grid"},
 
-                            {INC_POINTS_SIZE, "Increase size of vertices"},
-                            {DEC_POINTS_SIZE, "Decrease size of vertices"},
-                            {INC_EDGES_SIZE, "Increase size of edges"},
-                            {DEC_EDGES_SIZE, "Decrease size of edges"},
+      {INC_POINTS_SIZE, "Increase size of vertices"},
+      {DEC_POINTS_SIZE, "Decrease size of vertices"},
+      {INC_EDGES_SIZE, "Increase size of edges"},
+      {DEC_EDGES_SIZE, "Decrease size of edges"},
 
-                            {MONO_COLOR, "Toggles mono color"},
-                            {INVERSE_NORMAL, "Inverse direction of normals"},
-                            {SHADING_MODE, "Switch between flat/Gouraud shading display"},
-                            {EXIT, "Exits program"}});
+      {MONO_COLOR, "Toggles mono color"},
+      {INVERSE_NORMAL, "Inverse direction of normals"},
+      {SHADING_MODE, "Switch between flat/Gouraud shading display"},
+      {EXIT, "Exits program"}
+    });
   }
 
   void Basic_viewer::switch_axis(int axis)
   {
-    if (axis == X_AXIS)
-    {
+    switch(axis) {
+    case X_AXIS: 
       std::cout << "Constrained on X" << std::endl;
-      m_cstr_axis << 1., 0., 0.;
-      return;
-    }
-    if (axis == Y_AXIS)
-    {
+      m_constraintAxis << 1., 0., 0.;
+      break;
+    case Y_AXIS: 
       std::cout << "Constrained on Y" << std::endl;
-      m_cstr_axis << 0., 1., 0.;
-      return;
-    }
-    if (axis == Z_AXIS)
-    {
+      m_constraintAxis << 0., 1., 0.;
+      break;
+    case Z_AXIS: 
       std::cout << "Constrained on Z" << std::endl;
-      m_cstr_axis << 0., 0., 1.;
-      return;
+      m_constraintAxis << 0., 0., 1.;
+      break;
+    default: 
+      std::cout << "Constraint Axis Disabled" << std::endl;
     }
-    std::cout << "Constraint Axis Disabled" << std::endl;
   }
 
   // Normalize Device Coordinates
   vec2f Basic_viewer::to_ndc(double x, double y)
   {
     vec2f result;
-    result << x / m_window_size.x() * 2 - 1,
-        y / m_window_size.y() * 2 - 1;
+    result << x / m_windowSize.x() * 2 - 1,
+        y / m_windowSize.y() * 2 - 1;
 
     return result;
   }
@@ -1153,24 +1135,24 @@ namespace GLFW {
   vec3f Basic_viewer::mapping_cursor_toHemisphere(double x, double y)
   {
     vec3f pt{x, y, 0.};
-    float xy_squared = pt.x() * pt.x() + pt.y() * pt.y();
-    if (xy_squared > .5)
+    float xySquarred = pt.x() * pt.x() + pt.y() * pt.y();
+    if (xySquarred > .5)
     { // inside the sphere
-      pt.z() = .5 / sqrt(xy_squared);
+      pt.z() = .5 / sqrt(xySquarred);
       pt.normalize();
     }
     else
     {
       // x²+y²+z²=r² => z²=r²-x²-y²
-      pt.z() = sqrt(1. - xy_squared);
+      pt.z() = sqrt(1. - xySquarred);
     }
 
-    if (m_cstr_axis_enum == NO_AXIS)
+    if (m_constraintAxisEnum == NO_AXIS)
       return pt;
 
     // projection on the constraint axis
-    float dot = pt.dot(m_cstr_axis);
-    vec3f proj = pt - (m_cstr_axis * dot);
+    float dotPtAxis = pt.dot(m_constraintAxis);
+    vec3f proj = pt - (m_constraintAxis * dotPtAxis);
     float norm = proj.norm();
 
     if (norm > 0.)
@@ -1180,13 +1162,13 @@ namespace GLFW {
         s = -s;
       pt = proj * s;
     }
-    else if (m_cstr_axis.z() == 1.)
+    else if (m_constraintAxis.z() == 1.)
     {
       pt << 1., 0., 0.;
     }
     else
     {
-      pt << -m_cstr_axis.y(), m_cstr_axis.x(), 0.;
+      pt << -m_constraintAxis.y(), m_constraintAxis.x(), 0.;
       pt.normalize();
     }
 
@@ -1194,92 +1176,71 @@ namespace GLFW {
   }
 
   inline
-  mat4f Basic_viewer::get_rotation(vec3f const &start, vec3f const &end)
+  mat4f Basic_viewer::get_rotation(vec3f const& start, vec3f const& end)
   {
     vec3f rotation_axis = start.cross(end).normalized();
     const float dot = start.dot(end);
     const float angle = acos(std::min(1.f, dot));
 
-    const float d = m_clipping_plane_rot_speed;
+    const float d = m_clippingPlaneRotationSpeed;
     // std::cout << "theta angle : " << angle << std::endl;
-    Eigen::Affine3f transform{Eigen::AngleAxisf(angle * d, rotation_axis).toRotationMatrix()};
-    return transform.matrix();
+    return transform::rotation(angle * d, rotation_axis);
   }
 
   /*********************CLIP STUFF**********************/
   inline
   void Basic_viewer::rotate_clipping_plane()
   {
-    vec2f cursor_old = get_cursor_old();
-    vec2f cursor_current = get_cursor();
+    vec2f oldCursor = get_cursor_old();
+    vec2f currentCursor = get_cursor();
 
-    if (cursor_current.x() == cursor_old.x() &&
-        cursor_current.y() == cursor_old.y())
-      return;
+    if (currentCursor.x() != oldCursor.x() || currentCursor.y() != oldCursor.y()) 
+    {
+      vec2f oldPosition = to_ndc(oldCursor.x(), oldCursor.y());
+      vec3f start = mapping_cursor_toHemisphere(oldPosition.x(), oldPosition.y());
 
-    vec2f old_pos = to_ndc(cursor_old.x(), cursor_old.y());
-    vec3f start = mapping_cursor_toHemisphere(old_pos.x(), old_pos.y());
+      vec2f currentPosition = to_ndc(currentCursor.x(), currentCursor.y());
+      vec3f end = mapping_cursor_toHemisphere(currentPosition.x(), currentPosition.y());
 
-    vec2f crr_pos = to_ndc(cursor_current.x(), cursor_current.y());
-    vec3f end = mapping_cursor_toHemisphere(crr_pos.x(), crr_pos.y());
-
-    mat4f rotation = get_rotation(start, end);
-    m_clipping_matrix = rotation * m_clipping_matrix;
+      mat4f rotation = get_rotation(start, end);
+      m_clippingMatrix = rotation * m_clippingMatrix;
+    } 
   }
 
   inline
   void Basic_viewer::translate_clipping_plane()
   {
-    vec2f mouse_current = get_cursor();
-    const float d = m_clipping_plane_move_speed;
+    // const float d = m_clippingPlaneMoveSpeed;
 
-    vec2f delta = get_cursor_delta();
-    vec3f dir;
-    dir << delta.x(), delta.y(), 0.0f;
+    // vec2f delta = get_cursor_delta();
+    // vec3f dir;
+    // dir << delta.x(), delta.y(), 0.0f;
 
-    vec3f up{0, 1, 0};
-    vec3f right = (-up.cross(m_camForward)).normalized();
-    up = m_camForward.cross(right).normalized();
+    // vec3f up{0, 1, 0};
+    // vec3f right = (-up.cross(m_camForward)).normalized();
+    // up = m_camForward.cross(right).normalized();
 
-    vec3f result =
-        dir.x() * right * d +
-        dir.y() * up * d;
+    // vec3f result =
+    //     dir.x() * right * d +
+    //     dir.y() * up * d;
 
-    Eigen::Affine3f transform{Eigen::Translation3f(result)};
-    mat4f translation = transform.matrix();
-    m_clipping_matrix = translation * m_clipping_matrix;
+    // mat4f translation = transform::translation(result);
+    // m_clippingMatrix = translation * m_clippingMatrix;
   }
 
   inline
   void Basic_viewer::translate_clipping_plane_cam_dir()
   {
 
-    vec2f cursor_delta = get_cursor_delta();
+    vec2f mouseDelta = get_cursor_delta();
 
-    float s = cursor_delta.x();
-    if (abs(cursor_delta.y()) > abs(cursor_delta.x()))
-      s = -cursor_delta.y();
+    float s = mouseDelta.x();
+    if (abs(mouseDelta.y()) > abs(mouseDelta.x()))
+      s = -mouseDelta.y();
 
-    s *= m_clipping_plane_move_speed;
-    Eigen::Affine3f transform{Eigen::Translation3f(s * m_camera.forward())};
-    mat4f translation = transform.matrix();
-    m_clipping_matrix = translation * m_clipping_matrix;
-  }
-
-  /*********************CAM STUFF**********************/
-  inline
-  void Basic_viewer::translate(vec3f dir)
-  {
-    const float delta = 1.0f / 60;
-    vec3f right = vec3f(0, 1, 0).cross(m_camForward).normalized();
-    vec3f up = m_camForward.cross(right);
-
-    vec3f result =
-        dir.x() * right * delta +
-        dir.y() * up * delta +
-        dir.z() * m_camForward * delta;
-
-    m_camPosition += result;
+    s *= m_clippingPlaneMoveSpeed;
+    mat4f translation = transform::translation(s * m_camera.forward());
+    m_clippingMatrix = translation * m_clippingMatrix;
   }
 
   inline
@@ -1301,120 +1262,59 @@ namespace GLFW {
     // std::endl;
   }
 
-  // void Basic_viewer::mouse_rotate(){
-  //   vec2f cursor_delta = radians(get_cursor_delta());
-
-  //   if (m_cam_rotation_mode == FREE){
-  //     m_cam_view += cursor_delta * m_cam_rotation_speed;
-
-  //     m_camForward = sphericalToCartesian(m_cam_view);
-
-  //     return;
-  //   }
-
-  //   m_scene_view += cursor_delta * m_scene_rotation_speed;
-  //   m_scene_rotation = eulerAngleXY(-m_scene_view.y(), m_scene_view.x());
-  // }
-
-  inline
-  void Basic_viewer::set_cam_mode(CAM_MODE mode)
-  {
-    m_camMode = mode;
-
-    float ratio = (float)m_window_size.x() / m_window_size.y();
-
-    if (m_camMode == PERSPECTIVE)
-    {
-      m_cam_projection = perspective(radians(45.f), ratio, 0.1f, 1000.0f);
-      return;
-    }
-
-    m_cam_projection = ortho(0.0f, m_cam_orth_zoom * ratio, 0.0f, m_cam_orth_zoom, 0.1f, 100.0f);
-  }
-
-  inline
-  void Basic_viewer::switch_rotation_mode()
-  {
-    m_cam_rotation_mode = m_cam_rotation_mode == FREE ? OBJECT : FREE;
-
-    if (m_cam_rotation_mode == FREE)
-    {
-      m_cam_view = cartesianToSpherical(m_camForward);
-    }
-  }
-
   inline
   void Basic_viewer::fullscreen()
   {
-    m_is_fullscreen = !m_is_fullscreen;
+    m_isFullscreen = !m_isFullscreen;
 
-    if (m_is_fullscreen)
+    if (m_isFullscreen)
     {
       int count;
-      m_old_window_size = m_window_size;
+      m_oldWindowSize = m_windowSize;
 
       GLFWmonitor *monitor = glfwGetMonitors(&count)[0];
       const GLFWvidmode *mode = glfwGetVideoMode(monitor);
 
-      glfwGetWindowPos(m_window, &m_old_window_pos.x(), &m_old_window_pos.y());
+      glfwGetWindowPos(m_window, &m_oldWindowPosition.x(), &m_oldWindowPosition.y());
       glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
       glViewport(0, 0, mode->width, mode->height);
 
-      m_window_size.x() = mode->width;
-      m_window_size.y() = mode->height;
+      m_windowSize.x() = mode->width;
+      m_windowSize.y() = mode->height;
       return;
     }
 
-    m_window_size = m_old_window_size;
-    glfwSetWindowMonitor(m_window, nullptr, m_old_window_pos.x(), m_old_window_pos.y(), m_window_size.x(), m_window_size.y(), 60);
-    glViewport(0, 0, m_window_size.x(), m_window_size.y());
+    m_windowSize = m_oldWindowSize;
+    glfwSetWindowMonitor(m_window, nullptr, m_oldWindowPosition.x(), m_oldWindowPosition.y(), m_windowSize.x(), m_windowSize.y(), 60);
+    glViewport(0, 0, m_windowSize.x(), m_windowSize.y());
   }
 
   inline
-  void Basic_viewer::mouse_translate()
+  void Basic_viewer::mouse_translate(const double deltaTime)
   {
-    vec2f delta = get_cursor_delta();
-
-    double dt = m_delta_time;
+    vec2f mouseDelta = get_cursor_delta();
 
     m_camera.translation(
-      dt * -delta.x(),
-      dt * delta.y());
+      deltaTime * -mouseDelta.x(),
+      deltaTime * mouseDelta.y());
   }
-
-  // void Basic_viewer::mouse_translate(){
-  //   vec2f delta2 = get_cursor_delta();
-  //   vec3f cursor_delta;
-  //   cursor_delta << delta2.x(), delta2.y(), 0;
-
-  //   if (cursor_delta.x() == 0 && cursor_delta.y() == 0)
-  //     return;
-
-  //   translate(cursor_delta.normalized() * m_cam_speed);
-  // }
 
   inline
   void Basic_viewer::print_help()
   {
-    std::map<Input::ActionEnum, std::vector<KeyData>> action_keys = get_action_keys();
+    std::map<Input::ActionEnum, std::vector<KeyData>> keyActions = get_action_keys();
 
-    std::cout << std::endl
-              << "Help for Basic Viewer OpenGl :" << std::endl;
+    std::cout << "\nHelp for Basic Viewer OpenGl :" << std::endl;
 
-    for (auto pair : action_keys)
+    for (const auto& [action, shortcuts]: keyActions)
     {
-      std::vector<KeyData> shortcuts = pair.second;
-      ActionEnum action = pair.first;
-
       std::string line;
-
-      std::string action_str = get_action_description(action);
+      std::string actionDescription = get_action_description(action);
 
       // Skip this entry if it has no useful description
-      if (action_str.empty())
-        continue;
+      if (actionDescription.empty()) continue;
 
-      line += "   " + action_str;
+      line += "   " + actionDescription;
 
       if (shortcuts.size() > 1)
       {
@@ -1435,26 +1335,32 @@ namespace GLFW {
           << (shortcuts.size() > 0 ? get_key_string(shortcuts[0]) : "(unbound)")
           << line
           << std::setw(0)
-          << std::endl;
+          << '\n';
     }
   }
 
   inline
-  void Basic_viewer::scroll_event()
+  void Basic_viewer::scroll_event(const double deltaTime)
   {
     double yoffset = get_scroll_yoffset();
     
     int k0 = glfwGetKey(m_window, GLFW_KEY_LEFT_CONTROL);
     int k1 = glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT);
 
-    if (k0 == GLFW_PRESS) {
-      if (k1 == GLFW_PRESS) {
+    if (k0 == GLFW_PRESS) 
+    {
+      if (k1 == GLFW_PRESS) 
+      {
         m_camera.set_zoom_smoothness(yoffset);
-      } else {
+      } 
+      else 
+      {
         m_camera.set_fov(yoffset);
       }
-    } else {
-      m_camera.move(8.f * yoffset * m_delta_time);
+    } 
+    else 
+    {
+      m_camera.move(8.f * yoffset * deltaTime);
     }
   }
 
@@ -1466,24 +1372,24 @@ namespace GLFW {
     // The stb lib used here is from glfw/deps
 
     const GLsizei nrChannels = 3;
-    GLsizei stride = nrChannels * m_window_size.x();
+    GLsizei stride = nrChannels * m_windowSize.x();
     stride += (stride % 4) ? (4 - stride % 4) : 0; // stride must be a multiple of 4
-    GLsizei bufferSize = stride * 3 * m_window_size.y();
+    GLsizei bufferSize = stride * 3 * m_windowSize.y();
 
     std::vector<char> buffer(bufferSize);
 
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
     glReadBuffer(GL_FRONT);
-    glReadPixels(0, 0, m_window_size.x(), m_window_size.y(), GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
+    glReadPixels(0, 0, m_windowSize.x(), m_windowSize.y(), GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
 
     stbi_flip_vertically_on_write(true);
-    stbi_write_png(filepath.data(), m_window_size.x(), m_window_size.y(), nrChannels, buffer.data(), stride);
+    stbi_write_png(filepath.data(), m_windowSize.x(), m_windowSize.y(), nrChannels, buffer.data(), stride);
   }
 
   void Basic_viewer::draw_world_axis() 
   {
-    int w = m_window_size.x();
-    int h = m_window_size.y();
+    int w = m_windowSize.x();
+    int h = m_windowSize.y();
 
     mat4f view = m_camera.view();
 
@@ -1501,10 +1407,10 @@ namespace GLFW {
     mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*aspect, halfHeight - 0.1f, 0.0f));
 
     mat4f mvp = proj * rotation4x4 * translate;
-    m_corner_world_axis.set_mvp(mvp);
+    m_worldAxisRenderer.set_mvp(mvp);
 
     glViewport(w - w / 5, h - h / 5, w / 5, h / 5);
-    m_corner_world_axis.draw();
+    m_worldAxisRenderer.draw();
 
     // Restore the main viewport
     glViewport(0, 0, w, h);
@@ -1512,8 +1418,8 @@ namespace GLFW {
 
   void Basic_viewer::draw_xy_grid() 
   {
-    m_world_axis.set_mvp(m_mvp);
-    m_world_axis.draw();
+    m_XYGridRenderer.set_mvp(m_modelViewProjectionMatrix);
+    m_XYGridRenderer.draw();
   }
 
   void Basic_viewer::align_to_nearest_axis() 
@@ -1528,36 +1434,38 @@ namespace GLFW {
       vec3f::UnitZ(), -vec3f::UnitZ()
     };
 
-    float max_dot = -1.0f;
-    vec3f nearest_axis = vec3f::Zero();
+    float maxDot = -1.0f;
+    vec3f nearestAxis = vec3f::Zero();
 
     for (const auto& a : axis) {
       float dot = forward.dot(a);
-      if (dot > max_dot) {
-        max_dot = dot;
-        nearest_axis = a; 
+      if (dot > maxDot) {
+        maxDot = dot;
+        nearestAxis = a; 
       }
     }
 
-    if (nearest_axis == vec3f::UnitX()) {
+    if (nearestAxis == vec3f::UnitX()) {
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(-M_PI / 2, vec3f::UnitY())));
         std::cout << "align on x\n";
-    } else if (nearest_axis == -vec3f::UnitX()) {
+    } else if (nearestAxis == -vec3f::UnitX()) {
         std::cout << "align on -x\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI / 2, vec3f::UnitY())));
-    } else if (nearest_axis == vec3f::UnitY()) {
+    } else if (nearestAxis == vec3f::UnitY()) {
         std::cout << "align on y\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI / 2, vec3f::UnitX())));
-    } else if (nearest_axis == -vec3f::UnitY()) {
+    } else if (nearestAxis == -vec3f::UnitY()) {
         std::cout << "align on -y\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(-M_PI / 2, vec3f::UnitX())));
-    } else if (nearest_axis == vec3f::UnitZ()) {
+    } else if (nearestAxis == vec3f::UnitZ()) {
         std::cout << "align on z\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(0, vec3f::UnitY())));
-    } else if (nearest_axis == -vec3f::UnitZ()) {
+    } else if (nearestAxis == -vec3f::UnitZ()) {
         std::cout << "align on -z\n";
         m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY())));
     }
   }
 } // end namespace GLFW 
 } // end namespace CGAL
+
+#endif // CGAL_BASIC_VIEWER_GLFW_IMPL_H

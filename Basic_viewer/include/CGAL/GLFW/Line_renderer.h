@@ -11,7 +11,7 @@
 
 class Line_renderer {
 public:
-    Line_renderer() : m_shader(nullptr), m_mvp(mat4f::Identity()), m_index_count(0) {}
+    Line_renderer() : m_shader(nullptr), m_modelViewProjectionMatrix(mat4f::Identity()), m_index_count(0) {}
 
     ~Line_renderer() 
     {
@@ -20,7 +20,7 @@ public:
         if (m_ebo != 0) glDeleteBuffers(1, &m_ebo);
     }
 
-    inline void set_mvp(const mat4f& mvp) { m_mvp = mvp; }
+    inline void set_mvp(const mat4f& mvp) { m_modelViewProjectionMatrix = mvp; }
 
     inline void attach_shader(Shader* shader) 
     { 
@@ -65,7 +65,7 @@ public:
         m_shader->use();
         for (int i = 0; i < m_lines.size(); ++i) {
             const auto& line = m_lines[i];
-            m_shader->setMatrix4f("mvp_matrix", m_mvp.data()); 
+            m_shader->setMatrix4f("mvp_matrix", m_modelViewProjectionMatrix.data()); 
             m_shader->setVec3f("color", line.get_color().data());
 
             glLineWidth(line.get_width());
@@ -85,7 +85,7 @@ private:
     std::vector<float> m_vertices;
     std::vector<unsigned int> m_indices;
 
-    mat4f m_mvp;
+    mat4f m_modelViewProjectionMatrix;
 
     unsigned int m_vao, m_vbo, m_ebo;
     unsigned int m_index_count;

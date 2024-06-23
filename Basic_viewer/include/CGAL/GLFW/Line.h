@@ -1,5 +1,5 @@
-#ifndef CGAL_BASIC_VIEWER_GLFW_H
-#define CGAL_BASIC_VIEWER_GLFW_H
+#ifndef LINE_H
+#define LINE_H
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -36,4 +36,4 @@ private:
     float m_width;
 };
 
-#endif // CGAL_BASIC_VIEWER_GLFW_H
+#endif // LINE_H
