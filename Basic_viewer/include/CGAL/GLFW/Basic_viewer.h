@@ -153,7 +153,9 @@ namespace GLFW
     void compile_shaders();
     void load_buffer(int i, int location, int gsEnum, int dataCount);
     void load_buffer(int i, int location, const std::vector<float>& vector, int dataCount);
-    void init_buffers();
+    void initialize_buffers();
+    void initialize_camera();
+    void init_and_load_renderers();
     void load_scene();
 
     void update_uniforms(const double deltaTime=0.00);
@@ -161,6 +163,8 @@ namespace GLFW
     void set_face_uniforms();
     void set_pl_uniforms();
     void set_clipping_uniforms();
+    void set_world_axis_uniforms();
+    void set_XY_grid_uniforms();
 
     void render_scene(const double deltaTime=0.00);
     void draw_faces();
@@ -171,7 +175,7 @@ namespace GLFW
     void draw_vertices(int mode);
     void draw_edges(int mode);
 
-    void generate_clipping_plane();
+    void init_and_load_clipping_plane();
     void render_clipping_plane();
 
     void init_keys_actions();
@@ -206,8 +210,6 @@ namespace GLFW
 
     void draw_world_axis();
     void draw_xy_grid();
-
-    void align_to_nearest_axis();
 
   private:
     enum RenderingModeEnum
@@ -320,6 +322,8 @@ namespace GLFW
     
     Line_renderer m_worldAxisRenderer; 
     Line_renderer m_XYGridRenderer; 
+    Line_renderer m_XYAxisRenderer; 
+    Line_renderer m_clippingPlaneRenderer;
 
     float m_sizePoints = SIZE_POINTS;
     float m_sizeEdges = SIZE_EDGES;
@@ -386,7 +390,6 @@ namespace GLFW
       VAO_COLORED_LINES,
       VAO_MONO_FACES,
       VAO_COLORED_FACES,
-      VAO_CLIPPING_PLANE,
       NB_VAO_BUFFERS
     };
 

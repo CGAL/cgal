@@ -99,7 +99,7 @@ namespace GLFW {
   void Basic_viewer::show()
   {
     m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title);
-    init_buffers();
+    initialize_buffers();
 
     glGenBuffers(NB_GL_BUFFERS, m_vbo);
     glGenVertexArrays(NB_VAO_BUFFERS, m_vao);
@@ -123,20 +123,9 @@ namespace GLFW {
     }
 
     compile_shaders();
-
-    { // Camera initialization 
-      vec3f pmin(
-          m_scene->bounding_box().xmin(),
-          m_scene->bounding_box().ymin(),
-          m_scene->bounding_box().zmin());
-
-      vec3f pmax(
-          m_scene->bounding_box().xmax(),
-          m_scene->bounding_box().ymax(),
-          m_scene->bounding_box().zmax());
-
-      m_camera.lookat(pmin, pmax);
-    }
+    initialize_camera();
+    init_and_load_renderers();
+    init_and_load_clipping_plane();
 
     double lastFrame = glfwGetTime();
     while (!glfwWindowShouldClose(m_window))
@@ -157,7 +146,7 @@ namespace GLFW {
   void Basic_viewer::make_screenshot(const std::string& filePath)
   {
     m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title, true);
-    init_buffers();
+    initialize_buffers();
 
     GLint openglMajorVersion, openglMinorVersion;
     glGetIntegerv(GL_MAJOR_VERSION, &openglMajorVersion);
@@ -173,6 +162,16 @@ namespace GLFW {
     glfwSwapBuffers(m_window);
     screenshot(filePath);
     glfwTerminate();
+  }
+
+  void generate_grid(Line_renderer& renderer, const vec3f& color, float size, int nbSubdivisions=10)
+  {
+    for (unsigned int i = 0; i <= nbSubdivisions; ++i)
+    {
+      const float pos = float(size * (2.0 * i / nbSubdivisions - 1.0));
+      renderer.add_line(vec3f(pos, -size, 0.f), vec3f(pos, size, 0.f), color);
+      renderer.add_line(vec3f(-size, pos, 0.f), vec3f(size, pos, 0.f), color);
+    }
   }
 
   inline
@@ -193,8 +192,58 @@ namespace GLFW {
     const char* lineVertex = vertex_source_line;
     const char* lineFragment = fragment_source_line;
     m_lineShader = Shader::loadShader(lineVertex, lineFragment, "LINE");
-    m_worldAxisRenderer.attach_shader(&m_lineShader);
-    m_XYGridRenderer.attach_shader(&m_lineShader);
+  }
+
+  inline 
+  void Basic_viewer::initialize_camera()
+  {
+    vec3f pmin(
+      m_scene->bounding_box().xmin(),
+      m_scene->bounding_box().ymin(),
+      m_scene->bounding_box().zmin());
+
+    vec3f pmax(
+      m_scene->bounding_box().xmax(),
+      m_scene->bounding_box().ymax(),
+      m_scene->bounding_box().zmax());
+
+    m_camera.lookat(pmin, pmax);
+  }
+
+  inline 
+  void Basic_viewer::init_and_load_renderers()
+  {
+    {
+      m_worldAxisRenderer.initialize_buffers();
+      m_worldAxisRenderer.set_width(3.f);
+      m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
+      m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
+      m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitZ(), vec3f(0, 0, 1)); // z-axis
+      m_worldAxisRenderer.load_buffers();
+    }
+
+    float cameraSize = m_camera.get_size() * 0.5;
+    {
+      m_XYAxisRenderer.initialize_buffers();
+      m_XYAxisRenderer.set_width(5.f);
+      m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
+      m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
+      m_XYAxisRenderer.load_buffers();
+    }
+
+    {
+      m_XYGridRenderer.initialize_buffers();
+      m_XYGridRenderer.set_width(2.f);
+      m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitX(), vec3f(.8f, .8f, .8f)); // -x-axis
+      m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitY(), vec3f(.8f, .8f, .8f)); // -y-axis
+      m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitZ(), vec3f(.8f, .8f, .8f)); // -z-axis
+
+      vec3f color(.8f, .8f, .8f);
+
+      generate_grid(m_XYGridRenderer, color, cameraSize);
+      
+      m_XYGridRenderer.load_buffers();
+    }
   }
 
   inline
@@ -217,7 +266,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::init_buffers()
+  void Basic_viewer::initialize_buffers()
   {
     if (m_areBuffersInitialized)
     {
@@ -235,7 +284,6 @@ namespace GLFW {
     // 1) POINT SHADER
 
     // 1.1) Mono points
-    m_plShader.use();
     glBindVertexArray(m_vao[VAO_MONO_POINTS]);
     load_buffer(bufn++, 0, Graphics_scene::POS_MONO_POINTS, 3);
 
@@ -280,7 +328,6 @@ namespace GLFW {
     // 5) FACE SHADER
 
     // 5.1) Mono faces
-    m_faceShader.use();
     glBindVertexArray(m_vao[VAO_MONO_FACES]);
     load_buffer(bufn++, 0, Graphics_scene::POS_MONO_FACES, 3);
     if (m_flatShading)
@@ -304,53 +351,6 @@ namespace GLFW {
       load_buffer(bufn++, 1, Graphics_scene::SMOOTH_NORMAL_COLORED_FACES, 3);
     }
     load_buffer(bufn++, 2, Graphics_scene::COLOR_FACES, 3);
-
-    // 6) clipping plane shader
-    if (m_isOpengl4_3)
-    {
-      generate_clipping_plane();
-      glBindVertexArray(m_vao[VAO_CLIPPING_PLANE]);
-      load_buffer(bufn++, 0, m_clippingPlaneVertices, 3);
-    }
-
-    {
-      Line line0(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0), 3.f); // x-axis
-      Line line1(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0), 3.f); // y-axis
-      Line line2(vec3f::Zero(), .1f*vec3f::UnitZ(), vec3f(0, 0, 1), 3.f); // z-axis
-      
-
-      m_worldAxisRenderer.add_line(line0);
-      m_worldAxisRenderer.add_line(line1);
-      m_worldAxisRenderer.add_line(line2);
-    }
-
-    {
-      float cameraSize = m_camera.get_size() * 0.5;
-
-      Line line0(vec3f::Zero(), cameraSize*vec3f::UnitX(), vec3f(1, 0, 0), 5.f); // x-axis
-      Line line1(vec3f::Zero(), cameraSize*vec3f::UnitY(), vec3f(0, 1, 0), 5.f); // y-axis
-      Line line2(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitX(), vec3f(.8f, .8f, .8f), 2.f); // -x-axis
-      Line line3(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitY(), vec3f(.8f, .8f, .8f), 2.f); // -y-axis
-      Line line4(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitZ(), vec3f(.8f, .8f, .8f), 2.f); // -z-axis
-
-      m_XYGridRenderer.add_line(line0);
-      m_XYGridRenderer.add_line(line1);
-      m_XYGridRenderer.add_line(line2);
-      m_XYGridRenderer.add_line(line3);
-      m_XYGridRenderer.add_line(line4);
-
-      const unsigned int nbSubdivisions = 10;
-
-      for (unsigned int i = 0; i <= nbSubdivisions; ++i)
-      {
-        const float pos = float(cameraSize * (2.0 * i / nbSubdivisions - 1.0));
-        Line line5(vec3f(pos, -cameraSize, 0.f), vec3f(pos, cameraSize, 0.f), vec3f(.8f,.8f,.8f), 2.f);
-        Line line6(vec3f(-cameraSize, pos, 0.f), vec3f(cameraSize, pos, 0.f), vec3f(.8f,.8f,.8f), 2.f);
-        m_XYGridRenderer.add_line(line5);
-        m_XYGridRenderer.add_line(line6);
-      }
-
-    }
 
     m_areBuffersInitialized = true;
   }
@@ -422,10 +422,43 @@ namespace GLFW {
   {
     m_pointPlane = m_clippingMatrix * vec4f(0, 0, 0, 1);
     m_clipPlane = m_clippingMatrix * vec4f(0, 0, 1, 0);
-    m_planeShader.use();
 
+    m_planeShader.use();
     m_planeShader.setMatrix4f("vp_matrix", m_modelViewProjectionMatrix.data());
     m_planeShader.setMatrix4f("m_matrix", m_clippingMatrix.data());
+  }
+
+  inline
+  void Basic_viewer::set_world_axis_uniforms()
+  {
+    int w = m_windowSize.x();
+    int h = m_windowSize.y();
+
+    mat4f view = m_camera.view();
+
+    // we only want the rotation part of the view matrix  
+    mat3f rotation = view.block<3,3>(0,0);
+
+    mat4f rotation4x4 = mat4f::Identity();
+    rotation4x4.block<3,3>(0,0) = rotation;
+
+    float aspect = static_cast<float>(w) / h;
+    float halfWidth = aspect * 0.1f;
+    float halfHeight = 0.1f;
+    mat4f proj = ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
+
+    mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*aspect, halfHeight - 0.1f, 0.0f));
+
+    mat4f mvp = proj * rotation4x4 * translate;
+    m_lineShader.use();
+    m_lineShader.setMatrix4f("mvp_matrix", mvp.data()); 
+  }
+
+  inline
+  void Basic_viewer::set_XY_grid_uniforms()
+  {
+    m_lineShader.use();
+    m_lineShader.setMatrix4f("mvp_matrix", m_modelViewProjectionMatrix.data());
   }
 
   inline
@@ -542,7 +575,7 @@ namespace GLFW {
 
     glBindVertexArray(m_vao[VAO_MONO_FACES]);
     glVertexAttrib4fv(2, color.data());
-    glDrawArrays(GL_TRIANGLES, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
+    // glDrawArrays(GL_TRIANGLES, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
 
     glBindVertexArray(m_vao[VAO_COLORED_FACES]);
     if (m_useMonoColor)
@@ -553,8 +586,8 @@ namespace GLFW {
     {
       glEnableVertexAttribArray(2);
     }
-
     glDrawArrays(GL_TRIANGLES, 0, m_scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+
   }
 
   inline
@@ -587,7 +620,6 @@ namespace GLFW {
   void Basic_viewer::draw_vertices(int renderingMode)
   {
     m_plShader.use();
-
     m_plShader.setFloat("rendering_mode", renderingMode);
 
     vec4f color = color_to_vec4(m_verticeMonoColor);
@@ -659,35 +691,19 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::generate_clipping_plane()
+  void Basic_viewer::init_and_load_clipping_plane()
   {
-    size_t size = ((m_scene->bounding_box().xmax() - m_scene->bounding_box().xmin()) +
+    float size = ((m_scene->bounding_box().xmax() - m_scene->bounding_box().xmin()) +
                    (m_scene->bounding_box().ymax() - m_scene->bounding_box().ymin()) +
                    (m_scene->bounding_box().zmax() - m_scene->bounding_box().zmin()));
 
     const unsigned int nbSubdivisions = 30;
 
-    auto &array = m_clippingPlaneVertices;
-    array.clear();
-    for (unsigned int i = 0; i <= nbSubdivisions; ++i)
-    {
-      const float pos = float(size * (2.0 * i / nbSubdivisions - 1.0));
-      array.push_back(pos);
-      array.push_back(-float(size));
-      array.push_back(0.f);
-
-      array.push_back(pos);
-      array.push_back(float(size));
-      array.push_back(0.f);
-
-      array.push_back(-float(size));
-      array.push_back(pos);
-      array.push_back(0.f);
-
-      array.push_back(float(size));
-      array.push_back(pos);
-      array.push_back(0.f);
-    }
+    vec3f color(0,0,0);
+    m_clippingPlaneRenderer.initialize_buffers();
+    m_clippingPlaneRenderer.set_width(0.1f);
+    generate_grid(m_clippingPlaneRenderer, color, size, nbSubdivisions);
+    m_clippingPlaneRenderer.load_buffers();
   }
 
   inline
@@ -695,10 +711,9 @@ namespace GLFW {
   {
     if (!m_drawClippingPlane || !m_isOpengl4_3)
       return;
+
     m_planeShader.use();
-    glBindVertexArray(m_vao[VAO_CLIPPING_PLANE]);
-    glLineWidth(0.1f);
-    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_clippingPlaneVertices.size() / 3));
+    m_clippingPlaneRenderer.draw();
   }
 
   inline
@@ -975,7 +990,7 @@ namespace GLFW {
       }
       if (btn == GLFW_MOUSE_BUTTON_1)
       {
-          align_to_nearest_axis();
+        m_camera.align_to_nearest_axis();
       }
     }
   }
@@ -1102,7 +1117,8 @@ namespace GLFW {
 
   void Basic_viewer::switch_axis(int axis)
   {
-    switch(axis) {
+    switch(axis) 
+    {
     case X_AXIS: 
       std::cout << "Constrained on X" << std::endl;
       m_constraintAxis << 1., 0., 0.;
@@ -1374,7 +1390,7 @@ namespace GLFW {
     const GLsizei nrChannels = 3;
     GLsizei stride = nrChannels * m_windowSize.x();
     stride += (stride % 4) ? (4 - stride % 4) : 0; // stride must be a multiple of 4
-    GLsizei bufferSize = stride * 3 * m_windowSize.y();
+    GLsizei bufferSize = stride * m_windowSize.y();
 
     std::vector<char> buffer(bufferSize);
 
@@ -1391,25 +1407,10 @@ namespace GLFW {
     int w = m_windowSize.x();
     int h = m_windowSize.y();
 
-    mat4f view = m_camera.view();
-
-    // we only want the rotation part of the view matrix  
-    mat3f rotation = view.block<3,3>(0,0);
-
-    mat4f rotation4x4 = mat4f::Identity();
-    rotation4x4.block<3,3>(0,0) = rotation;
-
-    float aspect = static_cast<float>(w) / h;
-    float halfWidth = aspect * 0.1f;
-    float halfHeight = 0.1f;
-    mat4f proj = ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
-
-    mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*aspect, halfHeight - 0.1f, 0.0f));
-
-    mat4f mvp = proj * rotation4x4 * translate;
-    m_worldAxisRenderer.set_mvp(mvp);
+    set_world_axis_uniforms();
 
     glViewport(w - w / 5, h - h / 5, w / 5, h / 5);
+    m_lineShader.use();
     m_worldAxisRenderer.draw();
 
     // Restore the main viewport
@@ -1417,53 +1418,11 @@ namespace GLFW {
   }
 
   void Basic_viewer::draw_xy_grid() 
-  {
-    m_XYGridRenderer.set_mvp(m_modelViewProjectionMatrix);
+  { 
+    set_XY_grid_uniforms();
+    m_lineShader.use();
+    m_XYAxisRenderer.draw();
     m_XYGridRenderer.draw();
-  }
-
-  void Basic_viewer::align_to_nearest_axis() 
-  {
-    vec3f forward = -m_camera.forward();
-
-    m_camera.reset_all();
-
-    std::vector<vec3f> axis = {
-      vec3f::UnitX(), -vec3f::UnitX(),
-      vec3f::UnitY(), -vec3f::UnitY(),
-      vec3f::UnitZ(), -vec3f::UnitZ()
-    };
-
-    float maxDot = -1.0f;
-    vec3f nearestAxis = vec3f::Zero();
-
-    for (const auto& a : axis) {
-      float dot = forward.dot(a);
-      if (dot > maxDot) {
-        maxDot = dot;
-        nearestAxis = a; 
-      }
-    }
-
-    if (nearestAxis == vec3f::UnitX()) {
-        m_camera.set_orientation(quatf(Eigen::AngleAxisf(-M_PI / 2, vec3f::UnitY())));
-        std::cout << "align on x\n";
-    } else if (nearestAxis == -vec3f::UnitX()) {
-        std::cout << "align on -x\n";
-        m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI / 2, vec3f::UnitY())));
-    } else if (nearestAxis == vec3f::UnitY()) {
-        std::cout << "align on y\n";
-        m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI / 2, vec3f::UnitX())));
-    } else if (nearestAxis == -vec3f::UnitY()) {
-        std::cout << "align on -y\n";
-        m_camera.set_orientation(quatf(Eigen::AngleAxisf(-M_PI / 2, vec3f::UnitX())));
-    } else if (nearestAxis == vec3f::UnitZ()) {
-        std::cout << "align on z\n";
-        m_camera.set_orientation(quatf(Eigen::AngleAxisf(0, vec3f::UnitY())));
-    } else if (nearestAxis == -vec3f::UnitZ()) {
-        std::cout << "align on -z\n";
-        m_camera.set_orientation(quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY())));
-    }
   }
 } // end namespace GLFW 
 } // end namespace CGAL

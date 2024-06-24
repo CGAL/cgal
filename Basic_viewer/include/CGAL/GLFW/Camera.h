@@ -47,16 +47,20 @@ public:
 
     void set_fov(float d);
 
-    inline void set_orientation(const quatf& orientation) { m_orientation = orientation; }
-
     inline float get_size() const { return m_size; }
 
     void reset_position();
     void reset_rotation();
     void reset_all();
-    
+
+    void align_to_nearest_axis();
+
     inline float get_radius() const { return m_radius; }
     inline vec3f get_center() const { return m_center; }
+
+    inline quatf get_orientation() const { return m_orientation; }
+
+    void set_zoom_smoothness(const float s);
 
     inline void mode(MODE mode) { m_mode = mode; }
     inline void toggle_mode() { m_mode = m_mode == ORTHOGRAPHIC ? PERSPECTIVE : ORTHOGRAPHIC; }
@@ -74,8 +78,6 @@ public:
 
     inline void inc_translation_smoothness() { m_translationSmoothFactor = std::max(m_translationSmoothFactor-.01f, 0.01f); }
     inline void dec_translation_smoothness() { m_translationSmoothFactor = std::min(m_translationSmoothFactor+.01f, 1.f); }
-
-    void set_zoom_smoothness(const float s);
 
     inline void toggle_fly() { m_orbiter = !m_orbiter; reset_all(); }
 
@@ -128,15 +130,17 @@ Camera::Camera() :
     m_targetPosition(vec3f::Zero()), 
     m_orientation(quatf::Identity()), 
     m_tspeed(1.f), m_rspeed(150.f), 
-    m_size(5.f), m_cst_size(5.f), 
-    m_radius(5.f), m_fov(45.f),
+    m_cst_size(5.f), 
+    m_radius(5.f),
     m_width(1.f), m_height(1.f),
     m_orbiter(true),
     m_pitch(0.f),
-    m_yaw(0.f),
     m_targetPitch(0.f),
+    m_yaw(0.f),
     m_targetYaw(0.f),
+    m_size(5.f),
     m_targetSize(5.f),
+    m_fov(45.f),
     m_targetFov(45.f),
     m_zoomSmoothFactor(0.1f),
     m_rotationSmoothFactor(0.1f),
@@ -317,7 +321,7 @@ void Camera::set_fov(const float d)
 { 
 
     m_targetFov += d * 2.f; 
-    if (m_targetFov > 160.f) m_targetFov = 160.;
+    if (m_targetFov > 120.f) m_targetFov = 120.;
     if (m_targetFov < 15.f) m_targetFov = 15.f;
 
     if (m_mode == PERSPECTIVE)
@@ -326,6 +330,8 @@ void Camera::set_fov(const float d)
         float tanHalfFov = tan(radians(m_targetFov) * .5f);
         m_targetSize = m_radius / tanHalfFov;
     }
+
+    std::cout << m_targetFov << '\n';
 }
 
 inline 
@@ -480,4 +486,162 @@ void Camera::frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const
 
     dx = subVec(dO, d1);
     dy = subVec(dO, d2);
+}
+
+
+struct NearestAxisResult
+{
+  vec3f nearestForwardAxis;
+  vec3f nearestUpAxis;
+};
+
+NearestAxisResult nearest_axis(const vec3f& forward, const vec3f& up) 
+{
+  std::vector<vec3f> axis = {
+    vec3f::UnitX(), -vec3f::UnitX(),
+    vec3f::UnitY(), -vec3f::UnitY(),
+    vec3f::UnitZ(), -vec3f::UnitZ()
+  };
+
+  float maxForwardDot = -1.0f;
+  float maxUpDot = -1.0f;
+  vec3f nearestForwardAxis = vec3f::Zero();
+  vec3f nearestUpAxis = vec3f::Zero();
+
+  for (const auto& a : axis) 
+  {
+    float dotFw = -forward.dot(a);
+    float dotUp = up.dot(a);
+    if (dotFw > maxForwardDot) 
+    {
+      maxForwardDot = dotFw;
+      nearestForwardAxis = a; 
+    }
+
+    if (dotUp > maxUpDot) 
+    {
+      maxUpDot = dotUp;
+      nearestUpAxis = a; 
+    }
+  }
+
+  return {nearestForwardAxis, nearestUpAxis};
+}
+
+quatf compute_rotation(const vec3f& nearestForwardAxis, const vec3f& nearestUpAxis) 
+{
+  quatf rotation{};
+  if (nearestForwardAxis == vec3f::UnitX()) 
+  {
+    rotation = quatf(Eigen::AngleAxisf(-M_PI_2, vec3f::UnitY()));
+    if (nearestUpAxis == -vec3f::UnitY()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == vec3f::UnitZ()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(-M_PI_2, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == -vec3f::UnitZ()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI_2, nearestForwardAxis));
+    }
+  } 
+  else if (nearestForwardAxis == -vec3f::UnitX()) 
+  {
+    rotation = quatf(Eigen::AngleAxisf(M_PI_2, vec3f::UnitY()));
+    if (nearestUpAxis == -vec3f::UnitY()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == vec3f::UnitZ()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI_2, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == -vec3f::UnitZ()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(-M_PI_2, nearestForwardAxis));
+    }
+  } 
+  else if (nearestForwardAxis == vec3f::UnitY()) 
+  {
+    rotation = quatf(Eigen::AngleAxisf(M_PI_2, vec3f::UnitX()));
+    if (nearestUpAxis == vec3f::UnitX()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI_2, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == -vec3f::UnitX()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(-M_PI_2, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == vec3f::UnitZ()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI, nearestForwardAxis));
+    }
+  } 
+  else if (nearestForwardAxis == -vec3f::UnitY()) 
+  {
+    rotation = quatf(Eigen::AngleAxisf(-M_PI_2, vec3f::UnitX()));
+    if (nearestUpAxis == vec3f::UnitX()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI_2, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == -vec3f::UnitX()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(-M_PI_2, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == -vec3f::UnitZ()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI, nearestForwardAxis));
+    }
+  } 
+  else if (nearestForwardAxis == vec3f::UnitZ()) 
+  {
+    rotation = quatf(Eigen::AngleAxisf(0.f, vec3f::UnitY()));
+    if (nearestUpAxis == -vec3f::UnitY()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == vec3f::UnitX()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI_2, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == -vec3f::UnitX()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(-M_PI_2, nearestForwardAxis));
+    }
+  } 
+  else if (nearestForwardAxis == -vec3f::UnitZ()) 
+  {
+    rotation = quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY()));
+    if (nearestUpAxis == -vec3f::UnitY()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(-M_PI, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == vec3f::UnitX()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(-M_PI_2, nearestForwardAxis));
+    }
+    else if (nearestUpAxis == -vec3f::UnitX()) 
+    {
+      rotation *= quatf(Eigen::AngleAxisf(M_PI_2, nearestForwardAxis));
+    }
+  }
+
+  return rotation;
+}
+
+inline 
+void Camera::align_to_nearest_axis() 
+{
+  vec3f forwardDirection = forward();
+  vec3f upDirection = m_orientation.inverse() * vec3f::UnitY();
+
+  auto [nearestForwardAxis, nearestUpAxis] = nearest_axis(forwardDirection, upDirection);
+
+  m_pitch = m_targetPitch;
+  m_yaw = m_targetYaw;
+  m_position = m_targetPosition;
+
+  m_orientation = compute_rotation(nearestForwardAxis, nearestUpAxis);
 }

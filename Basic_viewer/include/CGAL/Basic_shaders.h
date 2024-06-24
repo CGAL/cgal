@@ -174,22 +174,27 @@ void main(void)
 
 const char vertex_source_line[]=R"DELIM(
 #version 150
-in highp vec4 vertex;
+in highp vec3 vertex;
+in highp vec3 color;
 uniform mat4 mvp_matrix;
+out highp vec4 fcolor;
 
 void main(void)
 {
-  gl_Position = mvp_matrix * vertex;
+  fcolor = vec4(color, 1.0);
+  gl_Position = mvp_matrix * vec4(vertex, 1.0);
 }
 )DELIM";
 
 const char fragment_source_line[]=R"DELIM(
 #version 150
+
+in highp vec4 fcolor;
 out highp vec4 out_color;
-uniform vec3 color;
+
 void main(void)
 {
-  out_color = vec4(color, 1.0f);;
+  out_color = fcolor;
 }
 )DELIM";
 
