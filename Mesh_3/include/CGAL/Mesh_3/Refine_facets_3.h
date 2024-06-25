@@ -57,9 +57,9 @@ namespace Mesh_3 {
   template<typename Facet>
   struct Facets_erase_counters
   {
-    const Facet& f1_;
+    const Facet f1_;
     const unsigned int f1_erase_counter_;
-    const Facet& f2_;
+    const Facet f2_;
     const unsigned int f2_erase_counter_;
   };
 
