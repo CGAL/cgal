@@ -209,7 +209,8 @@ namespace GLFW {
       m_scene->bounding_box().ymax(),
       m_scene->bounding_box().zmax());
 
-    m_camera.lookat(pmin, pmax);
+    m_camera.lookat(pmin, pmax);  
+    m_clippingPlane.set_size(m_camera.get_size());  
   }
 
   inline 
@@ -360,7 +361,7 @@ namespace GLFW {
   inline 
   CGAL::Plane_3<Basic_viewer::Local_kernel> Basic_viewer::clipping_plane() const
   {
-    const mat4f CPM = m_clippingMatrix;
+    const mat4f CPM = m_clippingPlane.matrix();
     CGAL::Aff_transformation_3<Basic_viewer::Local_kernel> aff(
       CPM(0, 0), CPM(0, 1), CPM(0, 2), CPM(0, 3),
       CPM(1, 0), CPM(1, 1), CPM(1, 2), CPM(1, 3),
@@ -375,6 +376,7 @@ namespace GLFW {
   void Basic_viewer::update_uniforms(const double deltaTime)
   {
     m_camera.update(deltaTime);
+    m_clippingPlane.update(deltaTime);
 
     mat4f view = m_camera.view();
     mat4f projection = m_camera.projection(m_windowSize.x(), m_windowSize.y());
@@ -422,12 +424,14 @@ namespace GLFW {
   inline
   void Basic_viewer::set_clipping_uniforms()
   {
-    m_pointPlane = m_clippingMatrix * vec4f(0, 0, 0, 1);
-    m_clipPlane = m_clippingMatrix * vec4f(0, 0, 1, 0);
+    mat4f clippingMatrix = m_clippingPlane.matrix();
+
+    m_pointPlane = clippingMatrix * vec4f(0, 0, 0, 1);
+    m_clipPlane = clippingMatrix * vec4f(0, 0, 1, 0);
 
     m_planeShader.use();
     m_planeShader.set_mat4f("vp_matrix", m_modelViewProjectionMatrix.data());
-    m_planeShader.set_mat4f("m_matrix", m_clippingMatrix.data());
+    m_planeShader.set_mat4f("m_matrix", clippingMatrix.data());
   }
 
   inline
@@ -843,13 +847,13 @@ namespace GLFW {
       m_camera.dec_rspeed();
       break;
     case MOUSE_ROTATE:
-      mouse_rotate();
+      rotate_camera();
       break;
     case MOUSE_TRANSLATE:
-      mouse_translate(deltaTime);
+      translate_camera(deltaTime);
       break;
     case RESET_CAM:
-      m_camera.reset_all();
+      reset_camera_and_clipping_plane();
       break;
     case FULLSCREEN:
       fullscreen();
@@ -953,10 +957,10 @@ namespace GLFW {
       rotate_clipping_plane();
       break;
     case CP_TRANSLATION:
-      translate_clipping_plane();
+      translate_clipping_plane(deltaTime);
       break;
     case CP_TRANS_CAM_DIR:
-      translate_clipping_plane_cam_dir();
+      translate_clipping_plane(deltaTime, true);
       break;
     case CONSTRAINT_AXIS:
       switch_constraint_axis();
@@ -1118,6 +1122,15 @@ namespace GLFW {
     });
   }
 
+  inline
+  void Basic_viewer::reset_camera_and_clipping_plane()
+  {
+    m_camera.reset_all();
+    m_clippingPlane.reset_all();
+    m_clippingPlane.set_size(m_camera.get_size());
+  }
+
+  inline
   void Basic_viewer::switch_display_mode()
   {
     switch(m_displayModeEnum) 
@@ -1159,131 +1172,43 @@ namespace GLFW {
     }
   }
 
-  // Normalize Device Coordinates
-  vec2f Basic_viewer::to_ndc(double x, double y)
-  {
-    vec2f result;
-    result << x / m_windowSize.x() * 2 - 1,
-        y / m_windowSize.y() * 2 - 1;
-
-    return result;
-  }
-
-  // mouse position mapped to the hemisphere
-  inline
-  vec3f Basic_viewer::mapping_cursor_toHemisphere(double x, double y)
-  {
-    vec3f pt{x, y, 0.};
-    float xySquarred = pt.x() * pt.x() + pt.y() * pt.y();
-    if (xySquarred > .5)
-    { // inside the sphere
-      pt.z() = .5 / sqrt(xySquarred);
-      pt.normalize();
-    }
-    else
-    {
-      // x²+y²+z²=r² => z²=r²-x²-y²
-      pt.z() = sqrt(1. - xySquarred);
-    }
-
-    if (m_constraintAxisEnum == Constraint_axis::NO_CONSTRAINT)
-      return pt;
-
-    // projection on the constraint axis
-    float dotPtAxis = pt.dot(m_constraintAxis);
-    vec3f proj = pt - (m_constraintAxis * dotPtAxis);
-    float norm = proj.norm();
-
-    if (norm > 0.)
-    {
-      float s = 1. / norm;
-      if (proj.z() < 0.)
-        s = -s;
-      pt = proj * s;
-    }
-    else if (m_constraintAxis.z() == 1.)
-    {
-      pt << 1., 0., 0.;
-    }
-    else
-    {
-      pt << -m_constraintAxis.y(), m_constraintAxis.x(), 0.;
-      pt.normalize();
-    }
-
-    return pt;
-  }
-
-  inline
-  mat4f Basic_viewer::get_rotation(vec3f const& start, vec3f const& end)
-  {
-    vec3f rotation_axis = start.cross(end).normalized();
-    float dot = start.dot(end);
-    float angle = acos(std::min(1.f, dot));
-
-    float d = m_clippingPlaneRotationSpeed;
-    // std::cout << "theta angle : " << angle << std::endl;
-    return transform::rotation(angle * d, rotation_axis);
-  }
-
-  /*********************CLIP STUFF**********************/
   inline
   void Basic_viewer::rotate_clipping_plane()
   {
-    vec2f oldCursor = get_cursor_old();
-    vec2f currentCursor = get_cursor();
-
-    if (currentCursor.x() != oldCursor.x() || currentCursor.y() != oldCursor.y()) 
-    {
-      vec2f oldPosition = to_ndc(oldCursor.x(), oldCursor.y());
-      vec3f start = mapping_cursor_toHemisphere(oldPosition.x(), oldPosition.y());
-
-      vec2f currentPosition = to_ndc(currentCursor.x(), currentCursor.y());
-      vec3f end = mapping_cursor_toHemisphere(currentPosition.x(), currentPosition.y());
-
-      mat4f rotation = get_rotation(start, end);
-      m_clippingMatrix = rotation * m_clippingMatrix;
-    } 
+    vec2f delta = get_cursor_delta();
+    
+    m_clippingPlane.rotation(
+      delta.x(), 
+      delta.y()
+    );
   }
 
   inline
-  void Basic_viewer::translate_clipping_plane()
+  void Basic_viewer::translate_clipping_plane(const double deltaTime, bool useCameraForward)
   {
-    // const float d = m_clippingPlaneMoveSpeed;
-
-    // vec2f delta = get_cursor_delta();
-    // vec3f dir;
-    // dir << delta.x(), delta.y(), 0.0f;
-
-    // vec3f up{0, 1, 0};
-    // vec3f right = (-up.cross(m_camForward)).normalized();
-    // up = m_camForward.cross(right).normalized();
-
-    // vec3f result =
-    //     dir.x() * right * d +
-    //     dir.y() * up * d;
-
-    // mat4f translation = transform::translation(result);
-    // m_clippingMatrix = translation * m_clippingMatrix;
-  }
-
-  inline
-  void Basic_viewer::translate_clipping_plane_cam_dir()
-  {
-
     vec2f mouseDelta = get_cursor_delta();
 
-    float s = mouseDelta.x();
-    if (abs(mouseDelta.y()) > abs(mouseDelta.x()))
-      s = -mouseDelta.y();
+    float deltaX = deltaTime * mouseDelta.x();
+    float deltaY = deltaTime * mouseDelta.y();
 
-    s *= m_clippingPlaneMoveSpeed;
-    mat4f translation = transform::translation(s * m_camera.forward());
-    m_clippingMatrix = translation * m_clippingMatrix;
+    if (useCameraForward)
+    {
+      vec3f forwardDirection = m_camera.forward_direction();
+
+    float s = deltaX;
+    if (abs(deltaY) > abs(deltaX))
+      s = -deltaY;
+
+      m_clippingPlane.translation(forwardDirection, s);
+    }
+    else 
+    {
+      m_clippingPlane.translation(-deltaX, deltaY);
+    }
   }
 
   inline
-  void Basic_viewer::mouse_rotate()
+  void Basic_viewer::rotate_camera()
   {
     vec2f delta = get_cursor_delta();
     
@@ -1291,14 +1216,19 @@ namespace GLFW {
       delta.x(), 
       delta.y()
     );
-    // std::cout << m_camera.position().x() << " "
-    //   << m_camera.position().y() << " "
-    //   << m_camera.position().z() << std::endl;
-    // std::cout
-    //   << m_camera.forward().x() << " "
-    //   << m_camera.forward().y() << " "
-    //   << m_camera.forward().z() <<
-    // std::endl;
+
+    m_clippingPlane.set_up_axis(m_camera.up_direction());
+    m_clippingPlane.set_right_axis(m_camera.right_direction());
+  }
+
+  inline
+  void Basic_viewer::translate_camera(const double deltaTime)
+  {
+    vec2f mouseDelta = get_cursor_delta();
+
+    m_camera.translation(
+      deltaTime * -mouseDelta.x(),
+      deltaTime * mouseDelta.y());
   }
 
   inline
@@ -1326,16 +1256,6 @@ namespace GLFW {
     m_windowSize = m_oldWindowSize;
     glfwSetWindowMonitor(m_window, nullptr, m_oldWindowPosition.x(), m_oldWindowPosition.y(), m_windowSize.x(), m_windowSize.y(), 60);
     glViewport(0, 0, m_windowSize.x(), m_windowSize.y());
-  }
-
-  inline
-  void Basic_viewer::mouse_translate(const double deltaTime)
-  {
-    vec2f mouseDelta = get_cursor_delta();
-
-    m_camera.translation(
-      deltaTime * -mouseDelta.x(),
-      deltaTime * mouseDelta.y());
   }
 
   inline
@@ -1385,6 +1305,7 @@ namespace GLFW {
     
     int k0 = glfwGetKey(m_window, GLFW_KEY_LEFT_CONTROL);
     int k1 = glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT);
+    int k2 = glfwGetKey(m_window, GLFW_KEY_LEFT_ALT);
 
     if (k0 == GLFW_PRESS) 
     {
@@ -1392,14 +1313,20 @@ namespace GLFW {
       {
         m_camera.set_zoom_smoothness(yoffset);
       } 
-      else if (!m_camera.is_orthographic()) 
+      else if (k2 == GLFW_PRESS && !m_camera.is_orthographic()) 
       {
         m_camera.set_fov(yoffset);
-      }
+        m_clippingPlane.set_size(m_camera.get_size());
+      } 
+      else
+      {
+        m_clippingPlane.translation(8.f * yoffset * deltaTime);
+      } 
     } 
     else 
     {
       m_camera.move(8.f * yoffset * deltaTime);
+      m_clippingPlane.set_size(m_camera.get_size());
     }
   }
 

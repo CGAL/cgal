@@ -32,6 +32,7 @@
 #include "internal/utils.h"
 #include "internal/Camera.h"
 #include "internal/Line_renderer.h"
+#include "internal/Clipping_plane.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -126,7 +127,7 @@ namespace GLFW
 
     // Getter section
     inline vec3f position() const { return m_camera.position(); }
-    inline vec3f forward() const { return m_camera.forward(); }
+    inline vec3f forward_direction() const { return m_camera.forward_direction(); }
 
     inline CGAL::IO::Color vertices_mono_color() const { return m_verticeMonoColor; }
     inline CGAL::IO::Color edges_mono_color() const { return m_edgesMonoColor; }
@@ -208,17 +209,10 @@ namespace GLFW
     void double_click_event(int btn) override;
     void scroll_event(const double deltaTime) override;
 
-    void translate(const vec3f dir);
-    void mouse_rotate();
-    void mouse_translate(const double deltaTime);
-
-    vec2f to_ndc(double, double);
-    vec3f mapping_cursor_toHemisphere(double x, double y);
-    mat4f get_rotation(const vec3f& start, const vec3f& end);
+    void rotate_camera();
     void rotate_clipping_plane();
-
-    void translate_clipping_plane();
-    void translate_clipping_plane_cam_dir();
+    void translate_camera(const double deltaTime);
+    void translate_clipping_plane(const double deltaTime, bool useCameraForward=false);
 
     void switch_constraint_axis();
     void switch_display_mode();
@@ -232,6 +226,8 @@ namespace GLFW
 
     void draw_world_axis();
     void draw_xy_grid();
+
+    void reset_camera_and_clipping_plane();
 
   private:
     enum ActionEnum
@@ -359,6 +355,8 @@ namespace GLFW
 
     /***************CLIPPING PLANE****************/
 
+    Clipping_plane m_clippingPlane;
+
     Display_mode m_displayModeEnum = Display_mode::CLIPPING_PLANE_OFF;
     Constraint_axis m_constraintAxisEnum = Constraint_axis::NO_CONSTRAINT;
     
@@ -368,7 +366,6 @@ namespace GLFW
     float m_clippingPlaneTransparency = CGAL_CLIPPING_PLANE_RENDERING_TRANSPARENCY; // to what extent the transparent part should be rendered;
     float m_clippingPlaneMoveSpeed = CGAL_CLIPPING_PLANE_MOVE_SPEED;
     float m_clippingPlaneRotationSpeed = CGAL_CLIPPING_PLANE_ROT_SPEED;
-
 
     vec3f m_constraintAxis{1., 0., 0.};
 

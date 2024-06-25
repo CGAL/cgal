@@ -49,7 +49,9 @@ public:
   void frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const;
 
   vec3f position() const;
-  vec3f forward() const;
+  vec3f forward_direction() const;
+  vec3f right_direction() const;
+  vec3f up_direction() const;
 
   void set_fov(float d);
 
@@ -74,11 +76,11 @@ public:
   inline bool is_orthographic() const { return m_mode == Mode::ORTHOGRAPHIC; }
   inline bool is_orbiter() const { return m_type == Type::ORBITER; }
 
-  inline void inc_rspeed() { m_rspeed = std::min(m_rspeed+10.f, 500.f); }
-  inline void dec_rspeed() { m_rspeed = std::max(m_rspeed-10.f, 50.f); }
+  inline void inc_rspeed() { m_rotationSpeed = std::min(m_rotationSpeed+10.f, 500.f); }
+  inline void dec_rspeed() { m_rotationSpeed = std::max(m_rotationSpeed-10.f, 50.f); }
 
-  inline void inc_tspeed() { m_tspeed = std::min(m_tspeed+.1f, 20.f); }
-  inline void dec_tspeed() { m_tspeed = std::max(m_tspeed-.1f, 0.5f); }
+  inline void inc_tspeed() { m_translationSpeed = std::min(m_translationSpeed+.1f, 20.f); }
+  inline void dec_tspeed() { m_translationSpeed = std::max(m_translationSpeed-.1f, 0.5f); }
 
   inline void inc_rotation_smoothness() { m_rotationSmoothFactor = std::max(m_rotationSmoothFactor-.01f, 0.01f); }
   inline void dec_rotation_smoothness() { m_rotationSmoothFactor = std::min(m_rotationSmoothFactor+.01f, 1.f); }
@@ -100,8 +102,8 @@ private:
   float m_height; // hauteur de l'image
   float m_fov;    // FOV pour la projection
   
-  float m_tspeed; 
-  float m_rspeed; 
+  float m_translationSpeed; 
+  float m_rotationSpeed; 
 
   Type m_type;
   Mode m_mode;
@@ -132,7 +134,7 @@ Camera::Camera() :
   m_position(vec3f::Zero()), 
   m_targetPosition(vec3f::Zero()), 
   m_orientation(quatf::Identity()), 
-  m_tspeed(1.f), m_rspeed(150.f), 
+  m_translationSpeed(1.f), m_rotationSpeed(100.f), 
   m_constSize(5.f), 
   m_radius(5.f),
   m_width(1.f), m_height(1.f),
@@ -192,20 +194,20 @@ void Camera::update(const float dt)
   float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
   float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
 
-  float pitchDelta = radians((smoothPitch - m_pitch) * m_rspeed) * dt;
-  float yawDelta = radians((smoothYaw - m_yaw) * m_rspeed) * dt;
+  float pitchDelta = radians((smoothPitch - m_pitch) * m_rotationSpeed) * dt;
+  float yawDelta = radians((smoothYaw - m_yaw) * m_rotationSpeed) * dt;
 
   if (is_orbiter()) 
   {
-    quatf rotX(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
-    quatf rotY(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
-    m_orientation = rotX * rotY * m_orientation;
+    quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
+    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
+    m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
   }
   else // free fly
   {
-    quatf rotX(Eigen::AngleAxisf(pitchDelta, m_orientation.inverse() * vec3f::UnitX()));
-    quatf rotY(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
-    m_orientation = m_orientation * rotX * rotY;
+    quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, right_direction()));
+    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
+    m_orientation = m_orientation * pitchQuaternion * yawQuaternion;
   }
   m_pitch = smoothPitch;
   m_yaw = smoothYaw;
@@ -218,8 +220,8 @@ void Camera::update(const float dt)
 inline 
 void Camera::translation(const float x, const float y)
 {
-  float xspeed = x * m_tspeed + x / m_translationSmoothFactor * .01;
-  float yspeed = y * m_tspeed + y / m_translationSmoothFactor * .01;
+  float xspeed = x * m_translationSpeed + x / m_translationSmoothFactor * .01;
+  float yspeed = y * m_translationSpeed + y / m_translationSmoothFactor * .01;
 
   if (is_orbiter()) 
   {
@@ -228,8 +230,8 @@ void Camera::translation(const float x, const float y)
   } 
   else // free fly  
   {
-    vec3f right = (m_orientation.inverse() * vec3f::UnitX()).normalized();
-    vec3f up = (m_orientation.inverse() * vec3f::UnitY()).normalized();
+    vec3f right = right_direction();
+    vec3f up = up_direction();
     m_targetPosition -= right * m_size * xspeed; 
     m_targetPosition -= up * m_size * yspeed; 
   }
@@ -253,8 +255,8 @@ void Camera::move(const float z)
   }
   else // free fly
   {
-    vec3f forward = (m_orientation.inverse() * vec3f::UnitZ()).normalized();
-    m_targetPosition -= forward * m_size * z * m_tspeed;
+    vec3f forward = forward_direction();
+    m_targetPosition -= forward * m_size * z * m_translationSpeed;
   }
 }
 
@@ -269,12 +271,12 @@ void Camera::move_right(const float dt)
 {
   if (is_orbiter()) 
   {
-    m_targetPosition.x() += m_size * dt * m_tspeed;
+    m_targetPosition.x() += m_size * dt * m_translationSpeed;
   }
   else // free fly
   {
-    vec3f right = (m_orientation.inverse() * -vec3f::UnitX()).normalized();
-    m_targetPosition -= right * m_size * dt * m_tspeed;
+    vec3f right = right_direction();
+    m_targetPosition += right * m_size * dt * m_translationSpeed;
   }
 }
 
@@ -283,12 +285,12 @@ void Camera::move_up(const float dt)
 {
   if (is_orbiter()) 
   {
-    m_targetPosition.y() += m_size * dt * m_tspeed;
+    m_targetPosition.y() += m_size * dt * m_translationSpeed;
   }
   else // free fly
   {
-    vec3f up = (m_orientation.inverse() * -vec3f::UnitY()).normalized();
-    m_targetPosition -= up * m_size * dt * m_tspeed;
+    vec3f up = up_direction();
+    m_targetPosition += up * m_size * dt * m_translationSpeed;
   }
 }
 
@@ -408,21 +410,39 @@ vec3f Camera::position() const
 }
 
 inline 
-vec3f Camera::forward() const
+vec3f Camera::forward_direction() const
 {
-  vec3f fw;
+  vec3f forward;
   if (is_orbiter()) 
   {
-    fw.x() = m_center.x() - position().x();
-    fw.y() = m_center.y() - position().y();
-    fw.z() = m_center.z() - position().z();
+    forward.x() = m_center.x() - position().x();
+    forward.y() = m_center.y() - position().y();
+    forward.z() = m_center.z() - position().z();
   }
   else 
   {
-    fw = m_orientation.inverse() * -vec3f::UnitZ();
+    forward = m_orientation.inverse() * vec3f::UnitZ();
   }
 
-  return fw.normalized();
+  return forward.normalized();
+}
+
+inline 
+vec3f Camera::right_direction() const
+{
+  vec3f right;
+  right = m_orientation.inverse() * vec3f::UnitX();
+
+  return right.normalized();
+}
+
+inline 
+vec3f Camera::up_direction() const
+{
+  vec3f up;
+  up = m_orientation.inverse() * vec3f::UnitY();
+
+  return up.normalized();
 }
 
 inline 
@@ -630,8 +650,8 @@ quatf compute_rotation(const vec3f& nearestForwardAxis, const vec3f& nearestUpAx
 inline 
 void Camera::align_to_nearest_axis() 
 {
-  vec3f forwardDirection = forward();
-  vec3f upDirection = m_orientation.inverse() * vec3f::UnitY();
+  vec3f forwardDirection = forward_direction();
+  vec3f upDirection = up_direction();
 
   auto [nearestForwardAxis, nearestUpAxis] = nearest_axis(forwardDirection, upDirection);
 
