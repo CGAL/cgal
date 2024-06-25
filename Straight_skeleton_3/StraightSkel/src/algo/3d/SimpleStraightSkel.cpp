@@ -2719,6 +2719,14 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                 if (KernelWrapper::side(facet->plane(), vertex->getPoint()) > 0) {
                     continue;
                 }
+
+                Point3SPtr point;
+                CGAL::FT offset_event;
+
+#if 0
+                // @fixme this filter seems overly restrictive?
+                // Could not we have an intersection between the OFFSET face
+                // and the arc's supporting line (but we don't know at what offset yet)?
                 if (!IsLineInFacet(facet, arc->line())) {
                     continue;
                 }
@@ -2753,12 +2761,105 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                         // facet to slow
                         continue;
                     }
-                    dist_vertex = (distance * speed_vertex) /
-                            (speed_facet - speed_vertex);
+                    dist_vertex = (distance * speed_vertex) / (speed_facet - speed_vertex);
                 }
-                CGAL::FT offset_event = -dist_vertex / speed_vertex;
-                Point3SPtr point = KernelWrapper::offsetPoint(vertex->getPoint(),
-                        arc->getDirection(), dist_vertex);
+
+                offset_event = -dist_vertex / speed_vertex;
+                point = KernelWrapper::offsetPoint(vertex->getPoint(), arc->getDirection(), dist_vertex);
+                // std::cout << "old result: " << *point << " time: " << offset_event << std::endl;
+#else
+                CGAL_assertion(vertex->facets().size() == 3);
+
+                FacetSPtr f0 = *(std::next(vertex->facets().begin(), 0));
+                FacetSPtr f1 = *(std::next(vertex->facets().begin(), 1));
+                FacetSPtr f2 = *(std::next(vertex->facets().begin(), 2));
+
+                Plane3SPtr plane = facet->plane();
+                Plane3SPtr plane_0 = f0->plane();
+                Plane3SPtr plane_1 = f1->plane();
+                Plane3SPtr plane_2 = f2->plane();
+
+                CGAL::FT speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+                CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(f0->getData())->getSpeed();
+                CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(f1->getData())->getSpeed();
+                CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(f2->getData())->getSpeed();
+
+                std::tie(point, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
+                  plane, speed, plane_0, speed_0, plane_1, speed_1, plane_2, speed_2);
+
+                // std::cout << " **" << std::endl;
+                // std::cout << "facet = " << facet->getID() << std::endl;
+                // std::cout << "plane = " << *plane << std::endl;
+                // std::cout << "f0 = " << f0->getID() << std::endl;
+                // std::cout << "f1 = " << f1->getID() << std::endl;
+                // std::cout << "f2 = " << f2->getID() << std::endl;
+                // std::cout << "new result: " << *point << " time: " << offset_event << std::endl;
+
+                if (0 < offset_event || // in the past
+                    offset_event <= curr_time_to_next_event) { // no better than the current best
+                    continue;
+                }
+
+                // check that the intersection point is on the correct side
+                // of the bisectors of the facet
+                //
+                // @todo this is more or less what's happening in the IsValidEvent
+                // and oriented_side_of_event_point_wrt_bisectorC2 in SLS2
+                bool reject_event = false;
+                std::list<EdgeSPtr>::iterator efit = facet->edges().begin();
+                while (efit != facet->edges().end())
+                {
+                  EdgeWPtr edge_wptr = *efit++;
+                  if (edge_wptr.expired())
+                      continue;
+                  EdgeSPtr edge(edge_wptr);
+                  FacetSPtr facet_o = edge->other(facet);
+                  Plane3SPtr plane_o = facet_o->getPlane();
+                  CGAL::FT a_o = plane_o->a();
+                  CGAL::FT b_o = plane_o->b();
+                  CGAL::FT c_o = plane_o->c();
+                  CGAL::FT d_o = plane_o->d();
+
+                  CGAL::FT speed_o = 1.0;
+                  if (facet_o->hasData()) {
+                      speed_o = std::dynamic_pointer_cast<SkelFacetData>(facet_o->getData())->getSpeed();
+                  }
+
+                  CGAL::FT t_o = a_o * (point->x())
+                               + b_o * (point->y())
+                               + c_o * (point->z())
+                               + d_o * speed_o;
+
+                  // std::cout << " compare to F" << facet_o->getID()
+                  //           << " reflex: " << isReflex(edge)
+                  //           << " t: " << t_o << std::endl;
+
+                  if(t_o > 0) // invalid event
+                    continue;
+
+                  if (isReflex(edge))
+                  {
+                    if (t_o < offset_event) // negative offsets!
+                      reject_event = true;
+                  }
+                  else
+                  {
+                    if (t_o > offset_event)
+                      reject_event = true;
+                  }
+
+                  if (reject_event)
+                  {
+                    // std::cout << "reject!" << std::endl;
+                    break;
+                  }
+                }
+
+                if (reject_event)
+                  continue;
+#endif
+
+                // @todo filter events in the past?
                 if (offset_event > curr_time_to_next_event) {
                     NodeSPtr node;
                     if (!result) {
@@ -2888,6 +2989,7 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PolyhedronSPtr polyhedron,
     std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
     std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~ Upcoming events! ~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
     std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+    std::cout << "Current offset: " << curr_offset << std::endl;
     if(events[0])
       std::cout << "Const Offset Event @ " << events[0]->getOffset() << std::endl;
     if(events[1])
