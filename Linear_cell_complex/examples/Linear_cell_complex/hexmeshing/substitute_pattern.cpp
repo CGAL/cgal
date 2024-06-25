@@ -166,6 +166,7 @@ void refine_3_template(LCC &lcc, std::vector<Dart_handle> &mcells_in_hex, Patter
   // Query replace with the partial 3-template, making it into two volumes
   pss.query_replace_one_volume(lcc, origin_dart);
 
+  // Face of the t<o neighboring volumes to the created volume
   Dart_handle face1 = lcc.beta(origin_dart, 2, 3);
   Dart_handle face2 = lcc.beta(origin_dart, 1, 2, 3);
   // lower_edge is created with the query_replace
@@ -196,6 +197,8 @@ void refine_3_template(LCC &lcc, std::vector<Dart_handle> &mcells_in_hex, Patter
 
   lcc.contract_cell<2>(face_to_remove_1);
   lcc.contract_cell<2>(face_to_remove_2);
+
+  // Remove the created volume and sew the two neighboring volumes
   lcc.remove_cell<3>(upper_d1);
   lcc.sew<3>(face1, face2);
 }
