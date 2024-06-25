@@ -354,6 +354,79 @@ void SimpleStraightSkel::run() {
     //    j++;
     //}
 
+// #define CGAL_SSE_ACUTE_WEIGHTS
+// #define CGAL_SSE_MERGING_WEIGHTS
+// #define CGAL_SSE_PERFORMANCE_WEIGHTS
+
+#if defined(CGAL_SSE_ACUTE_WEIGHTS) || defined(CGAL_SSE_MERGING_WEIGHTS) || defined(CGAL_SSE_PERFORMANCE_WEIGHTS)
+# ifdef CGAL_SSE_ACUTE_WEIGHTS
+    const CGAL::FT x_speed = 20;
+    const CGAL::FT y_speed = 20;
+    const CGAL::FT z_speed = 20;
+    const CGAL::FT other_speed = 18.7939;
+# elif defined(CGAL_SSE_MERGING_WEIGHTS)
+    const CGAL::FT x_speed = 20;
+    const CGAL::FT y_speed = 20;
+    const CGAL::FT z_speed = 20;
+    const CGAL::FT other_speed = 19.8777;
+# elif defined(CGAL_SSE_PERFORMANCE_WEIGHTS)
+    const CGAL::FT x_speed = 5;
+    const CGAL::FT y_speed = 5;
+    const CGAL::FT z_speed = 2;
+    const CGAL::FT other_speed = 5;
+# else
+#  error
+# endif
+
+    std::size_t fi = 0;
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        CGAL::FT speed = other_speed;
+        const auto pl = facet->plane();
+        const auto normal = KernelFactory::createVector3(pl);
+        std::cout << "SP X " << CGAL::scalar_product(*normal, Vector3(1,0,0)) << std::endl;
+        std::cout << "SP Y " << CGAL::scalar_product(*normal, Vector3(0,1,0)) << std::endl;
+        std::cout << "SP Z " << CGAL::scalar_product(*normal, Vector3(0,0,1)) << std::endl;
+        if(CGAL::abs(CGAL::abs(CGAL::scalar_product(*normal, Vector3(1,0,0))) - 1) < 1e-3)
+          speed = x_speed;
+        if(CGAL::abs(CGAL::abs(CGAL::scalar_product(*normal, Vector3(0,1,0))) - 1) < 1e-3)
+          speed = y_speed;
+        if(CGAL::abs(CGAL::abs(CGAL::scalar_product(*normal, Vector3(0,0,1))) - 1) < 1e-3)
+          speed = z_speed;
+
+        SkelFacetDataSPtr data = SkelFacetData::create(facet);
+        data->setSpeed(speed);
+        std::cout << "speed to " << speed << std::endl;
+
+        // for visualization, use color_ply_inputs.cpp to compile it into a single colored ply file
+        std::vector<CGAL::EPICK::Point_3> points;
+        std::vector<std::vector<std::size_t> > faces;
+
+        CGAL::Cartesian_converter<CGAL::K, CGAL::EPICK> to_epick;
+
+        std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+        while (it_v != facet->vertices().end()) {
+          points.push_back(to_epick(*((*it_v++)->getPoint())));
+        }
+
+        std::vector<std::size_t> f(points.size());
+        std::iota(f.begin(), f.end(), 0);
+        faces.push_back(f);
+
+        std::cout << points.size() << std::endl;
+        for(auto p : points)
+          std::cout << "  " << p << std::endl;
+
+        std::cout << faces.size() << std::endl;
+        std::cout << faces[0].size() << std::endl;
+        for(std::size_t i : faces[0])
+          std::cout << "  " << i << std::endl;
+
+        ++fi;
+    }
+#endif
+
     Point3SPtr p_box_min;
     Point3SPtr p_box_max;
     unsigned int i = 0;
