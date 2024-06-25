@@ -59,7 +59,7 @@ public:
   }
 
   inline 
-  mat4f matrix()
+  const mat4f& matrix() const
   {
     mat4f translation = transform::translation(m_translation);
     mat3f rotation3x3 = m_orientation.toRotationMatrix();

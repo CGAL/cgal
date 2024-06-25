@@ -361,7 +361,7 @@ namespace GLFW {
   inline 
   CGAL::Plane_3<Basic_viewer::Local_kernel> Basic_viewer::clipping_plane() const
   {
-    const mat4f CPM = m_clippingPlane.matrix();
+    const mat4f& CPM = m_clippingPlane.matrix();
     CGAL::Aff_transformation_3<Basic_viewer::Local_kernel> aff(
       CPM(0, 0), CPM(0, 1), CPM(0, 2), CPM(0, 3),
       CPM(1, 0), CPM(1, 1), CPM(1, 2), CPM(1, 3),
