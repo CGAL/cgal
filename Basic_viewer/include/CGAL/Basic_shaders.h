@@ -19,7 +19,7 @@ namespace CGAL
 {
 
 //------------------------------------------------------------------------------
-const char vertex_source_color[]=R"DELIM(
+const char VERTEX_SOURCE_COLOR[]=R"DELIM(
 #version 150
 in highp vec4 vertex;
 in highp vec3 normal;
@@ -47,7 +47,7 @@ void main(void)
 }
 )DELIM";
 
-const char fragment_source_color[]=R"DELIM(
+const char FRAGMENT_SOURCE_COLOR[]=R"DELIM(
 #version 150
 in highp vec4 fP;
 in highp vec3 fN;
@@ -100,7 +100,7 @@ void main(void)
 }
 )DELIM";
 
-const char vertex_source_p_l[]=R"DELIM(
+const char VERTEX_SOURCE_P_L[]=R"DELIM(
 #version 150
 in highp vec4 vertex;
 in highp vec3 color;
@@ -120,7 +120,7 @@ void main(void)
 }
 )DELIM";
 
-const char fragment_source_p_l[]=R"DELIM(
+const char FRAGMENT_SOURCE_P_L[]=R"DELIM(
 #version 150
 in highp vec4 fColor;
 in highp vec4 m_vertex;
@@ -150,7 +150,7 @@ void main(void)
 }
 )DELIM";
 
-const char vertex_source_clipping_plane[]=R"DELIM(
+const char VERTEX_SOURCE_CLIPPING_PLANE[]=R"DELIM(
 #version 150
 in highp vec4 vertex;
 
@@ -163,7 +163,7 @@ void main(void)
 }
 )DELIM";
 
-const char fragment_source_clipping_plane[]=R"DELIM(
+const char FRAGMENT_SOURCE_CLIPPING_PLANE[]=R"DELIM(
 #version 150
 out highp vec4 out_color;
 void main(void)
@@ -172,7 +172,7 @@ void main(void)
 }
 )DELIM";
 
-const char vertex_source_line[]=R"DELIM(
+const char VERTEX_SOURCE_LINE[]=R"DELIM(
 #version 150
 in highp vec3 vertex;
 in highp vec3 color;
@@ -186,7 +186,7 @@ void main(void)
 }
 )DELIM";
 
-const char fragment_source_line[]=R"DELIM(
+const char FRAGMENT_SOURCE_LINE[]=R"DELIM(
 #version 150
 
 in highp vec4 fcolor;
@@ -201,7 +201,7 @@ void main(void)
 //------------------------------------------------------------------------------
 //  compatibility shaders
 
-const char vertex_source_color_comp[]=R"DELIM(
+const char VERTEX_SOURCE_COLOR_COMP[]=R"DELIM(
 varying highp vec4 vertex;
 varying highp vec3 normal;
 varying highp vec3 color;
@@ -229,7 +229,7 @@ void main(void)
 }
 )DELIM";
 
-const char fragment_source_color_comp[]=R"DELIM(
+const char FRAGMENT_SOURCE_COLOR_COMP[]=R"DELIM(
 varying highp vec4 fP;
 varying highp vec3 fN;
 varying highp vec4 fColor;
@@ -257,7 +257,7 @@ void main(void)
 }
 )DELIM";
 
-const char vertex_source_p_l_comp[]=R"DELIM(
+const char VERTEX_SOURCE_P_L_COMP[]=R"DELIM(
 varying highp vec4 vertex;
 varying highp vec3 color;
 
@@ -274,7 +274,7 @@ void main(void)
 }
 )DELIM";
 
-const char fragment_source_p_l_comp[]=R"DELIM(
+const char FRAGMENT_SOURCE_P_L_COMP[]=R"DELIM(
 varying highp vec4 fColor;
 void main(void)
 {

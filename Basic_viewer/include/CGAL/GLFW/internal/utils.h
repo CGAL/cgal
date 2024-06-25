@@ -1,12 +1,11 @@
-#pragma once
+#ifndef CGAL_UTILS_EIGEN_H
+#define CGAL_UTILS_EIGEN_H
 
-#define _USE_MATH_DEFINES
 #include <math.h>
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Geometry>
 
-// https://en.wikipedia.org/wiki/Spherical_coordinate_system
 
 using vec2i = Eigen::Vector2i;
 using vec2f = Eigen::Vector2f;
@@ -17,27 +16,6 @@ using mat3f = Eigen::Matrix3f;
 using mat4f = Eigen::Matrix4f;
 
 using quatf = Eigen::Quaternionf;
-
-// x = theta, y = phi
-vec3f sphericalToCartesian(const vec2f &view)
-{
-  vec3f result;
-  result << sin(view.y()) * cos(view.x()),
-      cos(view.y()),
-      sin(view.y()) * sin(view.x());
-  return result;
-}
-
-// with z = forward
-vec2f cartesianToSpherical(const vec3f &dir)
-{
-  float signz = dir.z() > 0 ? 1 : -1;
-
-  vec2f result;
-  result << signz * acos(dir.x() / sqrt(dir.x() * dir.x() + dir.z() * dir.z())), // theta
-      acos(dir.y());                                                             // phi
-  return result;
-}
 
 float radians(float x)
 {
@@ -57,7 +35,7 @@ float degrees(float x)
   return 180 / M_PI * x;
 }
 
-mat4f eulerAngleXY(float const &angleX, float const &angleY)
+mat4f euler_angle_xy(float const &angleX, float const &angleY)
 {
   float cosX = std::cos(angleX);
   float sinX = std::sin(angleX);
@@ -77,7 +55,7 @@ mat4f eulerAngleXY(float const &angleX, float const &angleY)
   return result;
 }
 
-mat4f perspective(float fov, float aspect, float zNear, float zFar)
+mat4f PERSPECTIVE(float fov, float aspect, float zNear, float zFar)
 {
   assert(std::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0);
 
@@ -102,28 +80,6 @@ mat4f ortho(float left, float right, float bottom, float top, float zNear, float
   result(1, 3) = -(top + bottom) / (top - bottom);
   result(2, 3) = -(zFar + zNear) / (zFar - zNear);
 
-  return result;
-}
-
-mat4f lookAt(vec3f const &eye, vec3f const &center, vec3f const &up)
-{
-  const vec3f dir((center - eye).normalized());
-  const vec3f right(dir.cross(up.normalized()).normalized());
-  const vec3f newUp(right.cross(dir));
-
-  mat4f result = mat4f::Identity();
-  result(0, 0) = right.x();
-  result(1, 0) = right.y();
-  result(2, 0) = right.z();
-  result(0, 1) = newUp.x();
-  result(1, 1) = newUp.y();
-  result(2, 1) = newUp.z();
-  result(0, 2) = -dir.x();
-  result(1, 2) = -dir.y();
-  result(2, 2) = -dir.z();
-  result(0, 3) = -right.dot(eye);
-  result(1, 3) = -newUp.dot(eye);
-  result(2, 3) = dir.dot(eye);
   return result;
 }
 
@@ -161,7 +117,7 @@ vec3f subVec(vec3f const &u, vec3f const &v)
   return w;
 }
 
-vec3f multVecMat(vec3f const &u, mat4f const &m)
+vec3f mult_vec_mat(vec3f const &u, mat4f const &m)
 {
   vec4f v = u.homogeneous();
   float x = m.row(0).dot(v);
@@ -231,3 +187,5 @@ namespace transform
     return ret;
   }
 }; // transform
+
+#endif // CGAL_UTILS_EIGEN_H

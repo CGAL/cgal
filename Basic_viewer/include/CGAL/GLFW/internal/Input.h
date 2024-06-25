@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CGAL_INPUT_GLFW_H
+#define CGAL_INPUT_GLFW_H
 
 #include <GLFW/glfw3.h>
 #include <unordered_map>
@@ -13,12 +14,12 @@
  * TODO: Peux mieux faire, utiliser (int mod) pour shift/alt
  */
 
-struct KeyData
+struct Key_data
 {
   static const int MOUSE_KEY_OFFSET = GLFW_KEY_LAST + 1;
 
-  KeyData() {}
-  KeyData(int key1, int key2, int key3, bool hold, bool mouse = false) : key2(key2), key3(key3), hold(hold), mouse(mouse)
+  Key_data() {}
+  Key_data(int key1, int key2, int key3, bool hold, bool mouse = false) : key2(key2), key3(key3), hold(hold), mouse(mouse)
   {
     this->key1 = mouse ? key1 + MOUSE_KEY_OFFSET : key1;
 
@@ -44,9 +45,9 @@ struct KeyData
 struct Action
 {
   Action(){};
-  Action(KeyData keys, int action) : keys(keys), action(action){};
+  Action(Key_data keys, int action) : keys(keys), action(action){};
 
-  KeyData keys;
+  Key_data keys;
   int action;
 };
 
@@ -72,7 +73,7 @@ public:
   
   double get_scroll_yoffset();
 
-  static std::string get_key_string(KeyData keys);
+  static std::string get_key_string(Key_data keys);
 
   void add_action(int key, bool hold, ActionEnum action);
   void add_action(int key, int mod1, bool hold, ActionEnum action);
@@ -86,7 +87,7 @@ public:
   void set_action_description(std::unordered_map<ActionEnum, std::string> descriptions);
 
   std::string &get_action_description(ActionEnum action);
-  std::map<ActionEnum, std::vector<KeyData>> get_action_keys();
+  std::map<ActionEnum, std::vector<Key_data>> get_action_keys();
 
 protected:
   void on_key_event(int key, int scancode, int action, int mods);
@@ -103,7 +104,7 @@ protected:
   virtual void scroll_event(const double deltaTime) = 0;
 
 private:
-  void add_action(KeyData keys, ActionEnum action);
+  void add_action(Key_data keys, ActionEnum action);
 };
 
 std::string key_name(int key)
@@ -200,7 +201,7 @@ std::string key_name(int key)
   return result;
 }
 
-std::string Input::get_key_string(KeyData keys)
+std::string Input::get_key_string(Key_data keys)
 {
   std::string result = "";
 
@@ -233,35 +234,35 @@ double Input::get_scroll_yoffset()
 
 void Input::add_action(int key, int mod1, int mod2, bool hold, ActionEnum action)
 {
-  add_action(KeyData(key, mod1, mod2, hold), action);
+  add_action(Key_data(key, mod1, mod2, hold), action);
 };
 
 void Input::add_action(int key, int mod1, bool hold, ActionEnum action)
 {
-  add_action(KeyData(key, mod1, -1, hold), action);
+  add_action(Key_data(key, mod1, -1, hold), action);
 };
 
 void Input::add_action(int key, bool hold, ActionEnum action)
 {
-  add_action(KeyData(key, -1, -1, hold), action);
+  add_action(Key_data(key, -1, -1, hold), action);
 };
 
 void Input::add_mouse_action(int btn, bool hold, ActionEnum action)
 {
-  add_action(KeyData(btn, -1, -1, hold, true), action);
+  add_action(Key_data(btn, -1, -1, hold, true), action);
 };
 
 void Input::add_mouse_action(int btn, int mod1, bool hold, ActionEnum action)
 {
-  add_action(KeyData(btn, mod1, -1, hold, true), action);
+  add_action(Key_data(btn, mod1, -1, hold, true), action);
 };
 
 void Input::add_mouse_action(int btn, int mod1, int mod2, bool hold, ActionEnum action)
 {
-  add_action(KeyData(btn, mod1, mod2, hold, true), action);
+  add_action(Key_data(btn, mod1, mod2, hold, true), action);
 };
 
-void Input::add_action(KeyData keys, ActionEnum action)
+void Input::add_action(Key_data keys, ActionEnum action)
 {
   auto it = m_key_actions.begin();
   Action act(keys, action);
@@ -294,10 +295,10 @@ std::string &Input::get_action_description(ActionEnum action)
   return m_action_description[action];
 }
 
-std::map<Input::ActionEnum, std::vector<KeyData>> Input::get_action_keys()
+std::map<Input::ActionEnum, std::vector<Key_data>> Input::get_action_keys()
 {
   // A map sorts the key by increasing value;
-  std::map<ActionEnum, std::vector<KeyData>> result;
+  std::map<ActionEnum, std::vector<Key_data>> result;
 
   for (Action act : m_key_actions)
   {
@@ -346,7 +347,7 @@ constexpr auto ms = std::chrono::milliseconds(250);
 
 void Input::on_mouse_btn_event(int btn, int action, int mods)
 {
-  btn += KeyData::MOUSE_KEY_OFFSET;
+  btn += Key_data::MOUSE_KEY_OFFSET;
 
   if (action == GLFW_PRESS)
   {
@@ -357,7 +358,7 @@ void Input::on_mouse_btn_event(int btn, int action, int mods)
 
     if (last_btn_clicked == btn && dt < ms)
     {
-      this->double_click_event(btn - KeyData::MOUSE_KEY_OFFSET);
+      this->double_click_event(btn - Key_data::MOUSE_KEY_OFFSET);
     }
 
     last_btn_clicked = btn;
@@ -386,11 +387,8 @@ void Input::handle_events(const double deltaTime)
     this->scroll_event(deltaTime);
   }
 
-  for (Action act : m_key_actions)
+  for (auto& [k, action] : m_key_actions)
   {
-    KeyData k = act.keys;
-    ActionEnum action = act.action;
-
     std::unordered_map<int, bool> &key_map = k.hold ? m_holding_keys : m_pressed_keys;
 
     if (!m_consumed_keys[k.key1] && key_map[k.key1] && (k.key2 < 0 || m_holding_keys[k.key2]) && (k.key3 < 0 || m_holding_keys[k.key3]))
@@ -411,9 +409,9 @@ void Input::handle_events(const double deltaTime)
     }
   }
 
-  for (auto pair : m_started_actions)
+  for (auto& [key, value] : m_started_actions)
   {
-    ActionEnum action = pair.first;
+    ActionEnum action = key;
     if (!m_activated_actions[action])
     {
       m_started_actions[action] = false;
@@ -424,3 +422,5 @@ void Input::handle_events(const double deltaTime)
   m_cursor_old = m_cursor;
   m_cursor_delta << 0.0f, 0.0f;
 };
+
+#endif // CGAL_INPUT_GLFW_H

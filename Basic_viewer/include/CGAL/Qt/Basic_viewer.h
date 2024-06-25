@@ -642,16 +642,16 @@ protected:
     // Vertices and segments shader
 
     const char* source_ = isOpenGL_4_3()
-        ? vertex_source_p_l
-        : vertex_source_p_l_comp;
+        ? VERTEX_SOURCE_P_L
+        : VERTEX_SOURCE_P_L_COMP;
 
     QOpenGLShader *vertex_shader_p_l = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
     source_ = isOpenGL_4_3()
-        ? fragment_source_p_l
-        : fragment_source_p_l_comp;
+        ? FRAGMENT_SOURCE_P_L
+        : FRAGMENT_SOURCE_P_L_COMP;
 
     QOpenGLShader *fragment_shader_p_l= new QOpenGLShader(QOpenGLShader::Fragment);
     if(!fragment_shader_p_l->compileSourceCode(source_))
@@ -667,16 +667,16 @@ protected:
     // Faces shader
 
     source_ = isOpenGL_4_3()
-            ? vertex_source_color
-            : vertex_source_color_comp;
+            ? VERTEX_SOURCE_COLOR
+            : VERTEX_SOURCE_COLOR_COMP;
 
     QOpenGLShader *vertex_shader_face = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_face->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
 
     source_ = isOpenGL_4_3()
-            ? fragment_source_color
-            : fragment_source_color_comp;
+            ? FRAGMENT_SOURCE_COLOR
+            : FRAGMENT_SOURCE_COLOR_COMP;
 
     QOpenGLShader *fragment_shader_face= new QOpenGLShader(QOpenGLShader::Fragment);
     if(!fragment_shader_face->compileSourceCode(source_))
@@ -692,13 +692,13 @@ protected:
     if (isOpenGL_4_3())
     {
       // clipping plane shader
-      source_ = vertex_source_clipping_plane;
+      source_ = VERTEX_SOURCE_CLIPPING_PLANE;
 
       QOpenGLShader *vertex_shader_clipping_plane = new QOpenGLShader(QOpenGLShader::Vertex);
       if (!vertex_shader_clipping_plane->compileSourceCode(source_))
       { std::cerr << "Compiling vertex source for clipping plane FAILED" << std::endl; }
 
-      source_ = fragment_source_clipping_plane;
+      source_ = FRAGMENT_SOURCE_CLIPPING_PLANE;
 
       QOpenGLShader *fragment_shader_clipping_plane = new QOpenGLShader(QOpenGLShader::Fragment);
       if (!fragment_shader_clipping_plane->compileSourceCode(source_))
@@ -714,7 +714,7 @@ protected:
     }
 
     // source_ = isOpenGL_4_3()
-    //         ? vertex_source_clipping_plane
+    //         ? VERTEX_SOURCE_CLIPPING_PLANE
     //         : vertex_source_clipping_plane_comp;
 
     // QOpenGLShader *vertex_shader_clipping_plane = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -722,7 +722,7 @@ protected:
     // { std::cerr << "Compiling vertex source for clipping plane FAILED" << std::endl; }
 
     // source_ = isOpenGL_4_3()
-    //         ? fragment_source_clipping_plane
+    //         ? FRAGMENT_SOURCE_CLIPPING_PLANE
     //         : fragment_source_clipping_plane_comp;
 
     // QOpenGLShader *fragment_shader_clipping_plane = new QOpenGLShader(QOpenGLShader::Fragment);

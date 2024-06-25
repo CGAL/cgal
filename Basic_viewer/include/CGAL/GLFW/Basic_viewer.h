@@ -26,12 +26,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Shader.h"
-#include "Input.h"
 #include "Bv_Settings.h"
-#include "math.h"
-#include "Camera.h"
-#include "Line_renderer.h"
+#include "internal/Shader.h"
+#include "internal/Input.h"
+#include "internal/utils.h"
+#include "internal/Camera.h"
+#include "internal/Line_renderer.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -40,12 +40,35 @@ namespace CGAL
 {
 namespace GLFW 
 {
-  const int windowSamples = WINDOW_SAMPLES;
+  const int WINDOW_SAMPLES = CGAL_WINDOW_SAMPLES;
 
   class Basic_viewer : public Input
   {
   public:
     typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+
+    enum class Rendering_mode : int 
+    {                  
+      DRAW_ALL=-1,      // draw all
+      DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+      DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+    };
+
+    enum class Display_mode : int 
+    { 
+      CLIPPING_PLANE_OFF=0, 
+      CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF,
+      CLIPPING_PLANE_SOLID_HALF_WIRE_HALF,
+      CLIPPING_PLANE_SOLID_HALF_ONLY,  
+    };
+
+    enum class Constraint_axis : int 
+    {
+      NO_CONSTRAINT=0,
+      X_AXIS,
+      Y_AXIS,
+      Z_AXIS, 
+    };
 
   public:
     Basic_viewer(
@@ -67,8 +90,6 @@ namespace GLFW
     /***** Getter & Setter ****/
 
     // Setter Section
-    // inline void position(const vec3f& pos) { m_camPosition = pos; }
-    // inline void forward(const vec3f& dir) { m_camForward = dir; }
     inline void set_scene(const Graphics_scene* scene)
     {
       m_scene = scene;
@@ -104,8 +125,8 @@ namespace GLFW
     inline void flat_shading(bool b) { m_flatShading = b; }
 
     // Getter section
-    // inline vec3f position() const { return m_camPosition; }
-    // inline vec3f forward() const { return m_camForward; }
+    inline vec3f position() const { return m_camera.position(); }
+    inline vec3f forward() const { return m_camera.forward(); }
 
     inline CGAL::IO::Color vertices_mono_color() const { return m_verticeMonoColor; }
     inline CGAL::IO::Color edges_mono_color() const { return m_edgesMonoColor; }
@@ -133,7 +154,7 @@ namespace GLFW
     inline bool inverse_normal() const { return m_inverseNormal; }
     inline bool flat_shading() const { return m_flatShading; }
 
-    inline bool clipping_plane_enable() const { return m_clippingPlaneDisplayMode != CLIPPING_PLANE_OFF; }
+    inline bool clipping_plane_enable() const { return m_displayModeEnum != Display_mode::CLIPPING_PLANE_OFF; }
     inline bool is_orthograpic() const { return m_camera.is_orthographic(); }
 
     CGAL::Plane_3<Local_kernel> clipping_plane() const;
@@ -171,9 +192,9 @@ namespace GLFW
     void draw_rays();
     void draw_lines();
 
-    void draw_faces_bis(int mode);
-    void draw_vertices(int mode);
-    void draw_edges(int mode);
+    void draw_faces_bis(Rendering_mode mode);
+    void draw_vertices(Rendering_mode mode);
+    void draw_edges(Rendering_mode mode);
 
     void init_and_load_clipping_plane();
     void render_clipping_plane();
@@ -199,7 +220,8 @@ namespace GLFW
     void translate_clipping_plane();
     void translate_clipping_plane_cam_dir();
 
-    void switch_axis(int axis);
+    void switch_constraint_axis();
+    void switch_display_mode();
 
     void fullscreen();
     void screenshot(const std::string& filePath);
@@ -212,31 +234,6 @@ namespace GLFW
     void draw_xy_grid();
 
   private:
-    enum RenderingModeEnum
-    {                   // rendering mode
-      DRAW_ALL = -1,    // draw all
-      DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-      DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-    };
-
-    enum ClippingDisplayModeEnum
-    { // clipping mode
-      CLIPPING_PLANE_OFF = 0,
-      CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF,
-      CLIPPING_PLANE_SOLID_HALF_WIRE_HALF,
-      CLIPPING_PLANE_SOLID_HALF_ONLY,
-      CLIPPING_PLANE_END_INDEX
-    };
-
-    enum AxisEnum
-    {
-      NO_AXIS = 0,
-      X_AXIS,
-      Y_AXIS,
-      Z_AXIS,
-      NB_AXIS_ENUM
-    };
-
     enum ActionEnum
     {
       MOUSE_ROTATE,
@@ -325,23 +322,23 @@ namespace GLFW
     Line_renderer m_XYAxisRenderer; 
     Line_renderer m_clippingPlaneRenderer;
 
-    float m_sizePoints = SIZE_POINTS;
-    float m_sizeEdges = SIZE_EDGES;
-    float m_sizeRays = SIZE_RAYS;
-    float m_sizeLines = SIZE_LINES;
+    float m_sizePoints = CGAL_SIZE_POINTS;
+    float m_sizeEdges = CGAL_SIZE_EDGES;
+    float m_sizeRays = CGAL_SIZE_RAYS;
+    float m_sizeLines = CGAL_SIZE_LINES;
 
-    CGAL::IO::Color m_facesMonoColor = FACES_MONO_COLOR;
-    CGAL::IO::Color m_verticeMonoColor = VERTICES_MONO_COLOR;
-    CGAL::IO::Color m_edgesMonoColor = EDGES_MONO_COLOR;
-    CGAL::IO::Color m_raysMonoColor = RAYS_MONO_COLOR;
-    CGAL::IO::Color m_linesMonoColor = LINES_MONO_COLOR;
+    CGAL::IO::Color m_facesMonoColor = CGAL_FACES_MONO_COLOR;
+    CGAL::IO::Color m_verticeMonoColor = CGAL_VERTICES_MONO_COLOR;
+    CGAL::IO::Color m_edgesMonoColor = CGAL_EDGES_MONO_COLOR;
+    CGAL::IO::Color m_raysMonoColor = CGAL_RAYS_MONO_COLOR;
+    CGAL::IO::Color m_linesMonoColor = CGAL_LINES_MONO_COLOR;
 
-    vec4f m_lightPosition = LIGHT_POSITION;
-    vec4f m_ambientColor = AMBIENT_COLOR;
-    vec4f m_diffuseColor = DIFFUSE_COLOR;
-    vec4f m_specularColor = SPECULAR_COLOR;
+    vec4f m_lightPosition = CGAL_LIGHT_POSITION;
+    vec4f m_ambientColor = CGAL_AMBIENT_COLOR;
+    vec4f m_diffuseColor = CGAL_DIFFUSE_COLOR;
+    vec4f m_specularColor = CGAL_SPECULAR_COLOR;
 
-    float m_shininess = SHININESS;
+    float m_shininess = CGAL_SHININESS;
 
     vec4f m_clipPlane{0, 0, 1, 0};
     vec4f m_pointPlane{0, 0, 0, 1};
@@ -354,7 +351,7 @@ namespace GLFW
     Shader m_planeShader;
     Shader m_lineShader;
 
-    vec2i m_windowSize{WINDOW_WIDTH_INIT, WINDOW_HEIGHT_INIT};
+    vec2i m_windowSize{CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT};
     vec2i m_oldWindowSize;
     vec2i m_oldWindowPosition;
 
@@ -362,15 +359,16 @@ namespace GLFW
 
     /***************CLIPPING PLANE****************/
 
-    ClippingDisplayModeEnum m_clippingPlaneDisplayMode = CLIPPING_PLANE_OFF;
+    Display_mode m_displayModeEnum = Display_mode::CLIPPING_PLANE_OFF;
+    Constraint_axis m_constraintAxisEnum = Constraint_axis::NO_CONSTRAINT;
+    
     std::vector<float> m_clippingPlaneVertices;
 
     bool m_drawClippingPlane = true;                                                // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
-    float m_clippingPlaneRenderingTransparency = CLIPPING_PLANE_RENDERING_TRANSPARENCY; // to what extent the transparent part should be rendered;
-    float m_clippingPlaneMoveSpeed = CLIPPING_PLANE_MOVE_SPEED;
-    float m_clippingPlaneRotationSpeed = CLIPPING_PLANE_ROT_SPEED;
+    float m_clippingPlaneTransparency = CGAL_CLIPPING_PLANE_RENDERING_TRANSPARENCY; // to what extent the transparent part should be rendered;
+    float m_clippingPlaneMoveSpeed = CGAL_CLIPPING_PLANE_MOVE_SPEED;
+    float m_clippingPlaneRotationSpeed = CGAL_CLIPPING_PLANE_ROT_SPEED;
 
-    AxisEnum m_constraintAxisEnum = NO_AXIS;
 
     vec3f m_constraintAxis{1., 0., 0.};
 
@@ -396,7 +394,7 @@ namespace GLFW
     GLuint m_vao[NB_VAO_BUFFERS];
 
     static const unsigned int NB_GL_BUFFERS = (Graphics_scene::END_POS - Graphics_scene::BEGIN_POS) +
-                                              (Graphics_scene::END_COLOR - Graphics_scene::BEGIN_COLOR) + 3; // +2 for normals (mono and color), +1 for clipping plane
+                                              (Graphics_scene::END_COLOR - Graphics_scene::BEGIN_COLOR) + 2; // +2 for normals (mono and color)
 
     GLuint m_vbo[NB_GL_BUFFERS]; // +1 for the vbo buffer of clipping plane
   };

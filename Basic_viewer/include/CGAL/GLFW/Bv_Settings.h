@@ -2,122 +2,122 @@
 
 /*************OPENGL WINDOW PARAMS*************/
 
-#ifndef WINDOW_WIDTH_INIT
-#define WINDOW_WIDTH_INIT 500
+#ifndef CGAL_WINDOW_WIDTH_INIT
+#define CGAL_WINDOW_WIDTH_INIT 500
 #endif
 
-#ifndef WINDOW_HEIGHT_INIT
-#define WINDOW_HEIGHT_INIT 450
+#ifndef CGAL_WINDOW_HEIGHT_INIT
+#define CGAL_WINDOW_HEIGHT_INIT 450
 #endif
 
-#ifndef WINDOW_SAMPLES
-#define WINDOW_SAMPLES 1
+#ifndef CGAL_WINDOW_SAMPLES
+#define CGAL_WINDOW_SAMPLES 1
 #endif
 
 /*********************************************/
-#ifndef CLIPPING_PLANE_RENDERING_TRANSPARENCY
-#define CLIPPING_PLANE_RENDERING_TRANSPARENCY 0.5f
+#ifndef CGAL_CLIPPING_PLANE_RENDERING_TRANSPARENCY
+#define CGAL_CLIPPING_PLANE_RENDERING_TRANSPARENCY 0.5f
 #endif
 
-#ifndef SIZE_POINTS
-#define SIZE_POINTS 7.0f
+#ifndef CGAL_SIZE_POINTS
+#define CGAL_SIZE_POINTS 7.0f
 #endif
 
-#ifndef SIZE_EDGES
-#define SIZE_EDGES 3.1f
+#ifndef CGAL_SIZE_EDGES
+#define CGAL_SIZE_EDGES 3.1f
 #endif
 
-#ifndef SIZE_RAYS
-#define SIZE_RAYS 3.1f
+#ifndef CGAL_SIZE_RAYS
+#define CGAL_SIZE_RAYS 3.1f
 #endif
 
-#ifndef SIZE_LINES
-#define SIZE_LINES 3.1f
+#ifndef CGAL_SIZE_LINES
+#define CGAL_SIZE_LINES 3.1f
 #endif
 
-#ifndef FACES_MONO_COLOR
-#define FACES_MONO_COLOR \
+#ifndef CGAL_FACES_MONO_COLOR
+#define CGAL_FACES_MONO_COLOR \
     {                    \
         60, 60, 200      \
     }
 #endif
 
-#ifndef VERTICES_MONO_COLOR
-#define VERTICES_MONO_COLOR \
+#ifndef CGAL_VERTICES_MONO_COLOR
+#define CGAL_VERTICES_MONO_COLOR \
     {                       \
         200, 60, 60         \
     }
 #endif
 
-#ifndef EDGES_MONO_COLOR
-#define EDGES_MONO_COLOR \
+#ifndef CGAL_EDGES_MONO_COLOR
+#define CGAL_EDGES_MONO_COLOR \
     {                    \
         0, 0, 0          \
     }
 #endif
 
-#ifndef RAYS_MONO_COLOR
-#define RAYS_MONO_COLOR \
+#ifndef CGAL_RAYS_MONO_COLOR
+#define CGAL_RAYS_MONO_COLOR \
     {                   \
         0, 0, 0         \
     }
 #endif
 
-#ifndef LINES_MONO_COLOR
-#define LINES_MONO_COLOR \
+#ifndef CGAL_LINES_MONO_COLOR
+#define CGAL_LINES_MONO_COLOR \
     {                    \
         0, 0, 0          \
     }
 #endif
 
-#ifndef LIGHT_POSITION
-#define LIGHT_POSITION         \
+#ifndef CGAL_LIGHT_POSITION
+#define CGAL_LIGHT_POSITION         \
     {                          \
         0.0f, 0.0f, 0.0f, 0.0f \
     }
 #endif
 
-#ifndef AMBIENT_COLOR
-#define AMBIENT_COLOR         \
+#ifndef CGAL_AMBIENT_COLOR
+#define CGAL_AMBIENT_COLOR         \
     {                         \
         0.6f, 0.5f, 0.5f, 1.f \
     }
 #endif
 
-#ifndef DIFFUSE_COLOR
-#define DIFFUSE_COLOR          \
+#ifndef CGAL_DIFFUSE_COLOR
+#define CGAL_DIFFUSE_COLOR          \
     {                          \
         0.9f, 0.9f, 0.9f, 1.0f \
     }
 #endif
 
-#ifndef SPECULAR_COLOR
-#define SPECULAR_COLOR         \
+#ifndef CGAL_SPECULAR_COLOR
+#define CGAL_SPECULAR_COLOR         \
     {                          \
         0.0f, 0.0f, 0.0f, 1.0f \
     }
 #endif
 
-#ifndef SHININESS
-#define SHININESS 0.5f
+#ifndef CGAL_SHININESS
+#define CGAL_SHININESS 0.5f
 #endif
 
-#ifndef CAM_MOVE_SPEED
-#define CAM_MOVE_SPEED 5.f
+#ifndef CGAL_CAM_MOVE_SPEED
+#define CGAL_CAM_MOVE_SPEED 5.f
 #endif
 
-#ifndef CAM_ROT_SPEED
-#define CAM_ROT_SPEED 5.f
+#ifndef CGAL_CAM_ROT_SPEED
+#define CGAL_CAM_ROT_SPEED 5.f
 #endif
 
-#ifndef CLIPPING_PLANE_MOVE_SPEED
-#define CLIPPING_PLANE_MOVE_SPEED 0.04f
+#ifndef CGAL_CLIPPING_PLANE_MOVE_SPEED
+#define CGAL_CLIPPING_PLANE_MOVE_SPEED 0.04f
 #endif
 
-#ifndef CLIPPING_PLANE_ROT_SPEED
-#define CLIPPING_PLANE_ROT_SPEED 4.f
+#ifndef CGAL_CLIPPING_PLANE_ROT_SPEED
+#define CGAL_CLIPPING_PLANE_ROT_SPEED 4.f
 #endif
 
-#ifndef SCENE_ROT_SPEED
-#define SCENE_ROT_SPEED 0.5f
+#ifndef CGAL_SCENE_ROT_SPEED
+#define CGAL_SCENE_ROT_SPEED 0.5f
 #endif

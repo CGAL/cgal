@@ -1,6 +1,8 @@
 #ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
 #define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
+#include "Basic_viewer.h"
+
 namespace CGAL {
 namespace GLFW {
 
@@ -34,7 +36,7 @@ namespace GLFW {
 
     // Set additional window options
     glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
-    glfwWindowHint(GLFW_SAMPLES, windowSamples); // MSAA
+    glfwWindowHint(GLFW_SAMPLES, WINDOW_SAMPLES); // MSAA
 
     // Create window using GLFW
     GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
@@ -168,7 +170,7 @@ namespace GLFW {
   {
     for (unsigned int i = 0; i <= nbSubdivisions; ++i)
     {
-      const float pos = float(size * (2.0 * i / nbSubdivisions - 1.0));
+      float pos = float(size * (2.0 * i / nbSubdivisions - 1.0));
       renderer.add_line(vec3f(pos, -size, 0.f), vec3f(pos, size, 0.f), color);
       renderer.add_line(vec3f(-size, pos, 0.f), vec3f(size, pos, 0.f), color);
     }
@@ -177,21 +179,21 @@ namespace GLFW {
   inline
   void Basic_viewer::compile_shaders()
   {
-    const char* faceVertex = m_isOpengl4_3 ? vertex_source_color : vertex_source_color_comp;
-    const char* faceFragment = m_isOpengl4_3 ? fragment_source_color : fragment_source_color_comp;
-    const char* plVertex = m_isOpengl4_3 ? vertex_source_p_l : vertex_source_p_l_comp;
-    const char* plFragment = m_isOpengl4_3 ? fragment_source_p_l : fragment_source_p_l_comp;
-    const char* planeVertex = vertex_source_clipping_plane;
-    const char* planeFragment = fragment_source_clipping_plane;
+    const char* FACE_VERTEX = m_isOpengl4_3 ? VERTEX_SOURCE_COLOR : VERTEX_SOURCE_COLOR_COMP;
+    const char* FACE_FRAGMENT = m_isOpengl4_3 ? FRAGMENT_SOURCE_COLOR : FRAGMENT_SOURCE_COLOR_COMP;
+    const char* PL_VERTEX = m_isOpengl4_3 ? VERTEX_SOURCE_P_L : VERTEX_SOURCE_P_L_COMP;
+    const char* PL_FRAGMENT = m_isOpengl4_3 ? FRAGMENT_SOURCE_P_L : FRAGMENT_SOURCE_P_L_COMP;
+    const char* PLANE_VERTEX = VERTEX_SOURCE_CLIPPING_PLANE;
+    const char* PLANE_FRAGMENT = FRAGMENT_SOURCE_CLIPPING_PLANE;
 
-    m_faceShader = Shader::loadShader(faceVertex, faceFragment, "FACE");
-    m_plShader = Shader::loadShader(plVertex, plFragment, "PL");
-    m_planeShader = Shader::loadShader(planeVertex, planeFragment, "PLANE");
+    m_faceShader = Shader::load_shader(FACE_VERTEX, FACE_FRAGMENT, "FACE");
+    m_plShader = Shader::load_shader(PL_VERTEX, PL_FRAGMENT, "PL");
+    m_planeShader = Shader::load_shader(PLANE_VERTEX, PLANE_FRAGMENT, "PLANE");
 
     // For world axis and grid 
-    const char* lineVertex = vertex_source_line;
-    const char* lineFragment = fragment_source_line;
-    m_lineShader = Shader::loadShader(lineVertex, lineFragment, "LINE");
+    const char* LINE_VERTEX = VERTEX_SOURCE_LINE;
+    const char* LINE_FRAGMENT = FRAGMENT_SOURCE_LINE;
+    m_lineShader = Shader::load_shader(LINE_VERTEX, LINE_FRAGMENT, "LINE");
   }
 
   inline 
@@ -358,11 +360,11 @@ namespace GLFW {
   inline 
   CGAL::Plane_3<Basic_viewer::Local_kernel> Basic_viewer::clipping_plane() const
   {
-    const mat4f cpm = m_clippingMatrix;
+    const mat4f CPM = m_clippingMatrix;
     CGAL::Aff_transformation_3<Basic_viewer::Local_kernel> aff(
-      cpm(0, 0), cpm(0, 1), cpm(0, 2), cpm(0, 3),
-      cpm(1, 0), cpm(1, 1), cpm(1, 2), cpm(1, 3),
-      cpm(2, 0), cpm(2, 1), cpm(2, 2), cpm(2, 3)
+      CPM(0, 0), CPM(0, 1), CPM(0, 2), CPM(0, 3),
+      CPM(1, 0), CPM(1, 1), CPM(1, 2), CPM(1, 3),
+      CPM(2, 0), CPM(2, 1), CPM(2, 2), CPM(2, 3)
     );
 
     CGAL::Plane_3<Local_kernel> p3(0, 0, 1, 0);
@@ -392,18 +394,18 @@ namespace GLFW {
   {
     m_faceShader.use();
 
-    m_faceShader.setMatrix4f("mvp_matrix", m_modelViewProjectionMatrix.data());
-    m_faceShader.setMatrix4f("mv_matrix", m_modelViewMatrix.data());
+    m_faceShader.set_mat4f("mvp_matrix", m_modelViewProjectionMatrix.data());
+    m_faceShader.set_mat4f("mv_matrix", m_modelViewMatrix.data());
 
-    m_faceShader.setVec4f("light_pos", m_lightPosition.data());
-    m_faceShader.setVec4f("light_diff", m_diffuseColor.data());
-    m_faceShader.setVec4f("light_spec", m_specularColor.data());
-    m_faceShader.setVec4f("light_amb", m_ambientColor.data());
-    m_faceShader.setFloat("spec_power", m_shininess);
+    m_faceShader.set_vec4f("light_pos", m_lightPosition.data());
+    m_faceShader.set_vec4f("light_diff", m_diffuseColor.data());
+    m_faceShader.set_vec4f("light_spec", m_specularColor.data());
+    m_faceShader.set_vec4f("light_amb", m_ambientColor.data());
+    m_faceShader.set_float("spec_power", m_shininess);
 
-    m_faceShader.setVec4f("clipPlane", m_clipPlane.data());
-    m_faceShader.setVec4f("pointPlane", m_pointPlane.data());
-    m_faceShader.setFloat("rendering_transparency", m_clippingPlaneRenderingTransparency);
+    m_faceShader.set_vec4f("clipPlane", m_clipPlane.data());
+    m_faceShader.set_vec4f("pointPlane", m_pointPlane.data());
+    m_faceShader.set_float("rendering_transparency", m_clippingPlaneTransparency);
   }
 
   inline
@@ -411,10 +413,10 @@ namespace GLFW {
   {
     m_plShader.use();
 
-    m_plShader.setVec4f("clipPlane", m_clipPlane.data());
-    m_plShader.setVec4f("pointPlane", m_pointPlane.data());
-    m_plShader.setMatrix4f("mvp_matrix", m_modelViewProjectionMatrix.data());
-    m_plShader.setFloat("point_size", m_sizePoints);
+    m_plShader.set_vec4f("clipPlane", m_clipPlane.data());
+    m_plShader.set_vec4f("pointPlane", m_pointPlane.data());
+    m_plShader.set_mat4f("mvp_matrix", m_modelViewProjectionMatrix.data());
+    m_plShader.set_float("point_size", m_sizePoints);
   }
 
   inline
@@ -424,8 +426,8 @@ namespace GLFW {
     m_clipPlane = m_clippingMatrix * vec4f(0, 0, 1, 0);
 
     m_planeShader.use();
-    m_planeShader.setMatrix4f("vp_matrix", m_modelViewProjectionMatrix.data());
-    m_planeShader.setMatrix4f("m_matrix", m_clippingMatrix.data());
+    m_planeShader.set_mat4f("vp_matrix", m_modelViewProjectionMatrix.data());
+    m_planeShader.set_mat4f("m_matrix", m_clippingMatrix.data());
   }
 
   inline
@@ -451,14 +453,14 @@ namespace GLFW {
 
     mat4f mvp = proj * rotation4x4 * translate;
     m_lineShader.use();
-    m_lineShader.setMatrix4f("mvp_matrix", mvp.data()); 
+    m_lineShader.set_mat4f("mvp_matrix", mvp.data()); 
   }
 
   inline
   void Basic_viewer::set_XY_grid_uniforms()
   {
     m_lineShader.use();
-    m_lineShader.setMatrix4f("mvp_matrix", m_modelViewProjectionMatrix.data());
+    m_lineShader.set_mat4f("mvp_matrix", m_modelViewProjectionMatrix.data());
   }
 
   inline
@@ -477,15 +479,17 @@ namespace GLFW {
 
     update_uniforms(deltaTime);
 
-    bool half = m_clippingPlaneDisplayMode == CLIPPING_PLANE_SOLID_HALF_ONLY;
+    bool half = m_displayModeEnum == Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+
+    Rendering_mode mode = half ? Rendering_mode::DRAW_INSIDE_ONLY : Rendering_mode::DRAW_ALL;
 
     if (m_drawVertices)
     {
-      draw_vertices(half ? DRAW_INSIDE_ONLY : DRAW_ALL);
+      draw_vertices(mode);
     }
     if (m_drawEdges)
     {
-      draw_edges(half ? DRAW_INSIDE_ONLY : DRAW_ALL);
+      draw_edges(mode);
     }
     if (m_drawFaces)
     {
@@ -520,13 +524,13 @@ namespace GLFW {
   {
     m_faceShader.use();
 
-    if (m_clippingPlaneDisplayMode == CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
+    if (m_displayModeEnum == Display_mode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
     {
       // The z-buffer will prevent transparent objects from being displayed behind other transparent objects.
       // Before rendering all transparent objects, disable z-testing first.
 
       // 1. draw solid first
-      draw_faces_bis(DRAW_INSIDE_ONLY);
+      draw_faces_bis(Rendering_mode::DRAW_INSIDE_ONLY);
 
       // 2. draw transparent layer second with back face culling to avoid messy triangles
       glDepthMask(false); // disable z-testing
@@ -535,24 +539,24 @@ namespace GLFW {
       glEnable(GL_CULL_FACE);
       glCullFace(GL_BACK);
       glFrontFace(GL_CW);
-      draw_faces_bis(DRAW_OUTSIDE_ONLY);
+      draw_faces_bis(Rendering_mode::DRAW_OUTSIDE_ONLY);
 
       // 3. draw solid again without culling and blend to make sure the solid mesh is visible
       glDepthMask(true); // enable z-testing
       glDisable(GL_CULL_FACE);
       glDisable(GL_BLEND);
-      draw_faces_bis(DRAW_INSIDE_ONLY);
+      draw_faces_bis(Rendering_mode::DRAW_INSIDE_ONLY);
 
       // 4. render clipping plane here
       render_clipping_plane();
     } 
     else // Not CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF
     {
-      if (m_clippingPlaneDisplayMode == CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
-          m_clippingPlaneDisplayMode == CLIPPING_PLANE_SOLID_HALF_ONLY)
+      if (m_displayModeEnum == Display_mode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
+          m_displayModeEnum == Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY)
       {
         // 1. draw solid HALF
-        draw_faces_bis(DRAW_INSIDE_ONLY);
+        draw_faces_bis(Rendering_mode::DRAW_INSIDE_ONLY);
 
         // 2. render clipping plane here
         render_clipping_plane();
@@ -560,16 +564,16 @@ namespace GLFW {
       else
       {
         // 1. draw solid FOR ALL
-        draw_faces_bis(DRAW_ALL);
+        draw_faces_bis(Rendering_mode::DRAW_ALL);
       } 
     }
   }
 
   inline
-  void Basic_viewer::draw_faces_bis(int renderingMode)
+  void Basic_viewer::draw_faces_bis(Rendering_mode mode)
   {
     m_faceShader.use();
-    m_faceShader.setFloat("rendering_mode", renderingMode);
+    m_faceShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_facesMonoColor);
 
@@ -594,7 +598,7 @@ namespace GLFW {
   void Basic_viewer::draw_rays()
   {
     m_plShader.use();
-    m_plShader.setFloat("rendering_mode", RenderingModeEnum::DRAW_ALL);
+    m_plShader.set_float("rendering_mode", static_cast<float>(Rendering_mode::DRAW_ALL));
 
     vec4f color = color_to_vec4(m_raysMonoColor);
 
@@ -617,10 +621,10 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::draw_vertices(int renderingMode)
+  void Basic_viewer::draw_vertices(Rendering_mode mode)
   {
     m_plShader.use();
-    m_plShader.setFloat("rendering_mode", renderingMode);
+    m_plShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_verticeMonoColor);
 
@@ -644,7 +648,7 @@ namespace GLFW {
   void Basic_viewer::draw_lines()
   {
     m_plShader.use();
-    m_plShader.setFloat("rendering_mode", RenderingModeEnum::DRAW_ALL);
+    m_plShader.set_float("rendering_mode", static_cast<float>(Rendering_mode::DRAW_ALL));
 
     vec4f color = color_to_vec4(m_linesMonoColor);
 
@@ -666,10 +670,10 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::draw_edges(int renderingMode)
+  void Basic_viewer::draw_edges(Rendering_mode mode)
   {
     m_plShader.use();
-    m_plShader.setFloat("rendering_mode", renderingMode);
+    m_plShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_edgesMonoColor);
 
@@ -697,12 +701,12 @@ namespace GLFW {
                    (m_scene->bounding_box().ymax() - m_scene->bounding_box().ymin()) +
                    (m_scene->bounding_box().zmax() - m_scene->bounding_box().zmin()));
 
-    const unsigned int nbSubdivisions = 30;
+    const unsigned int NB_SUBDIVISIONS = 30;
 
     vec3f color(0,0,0);
     m_clippingPlaneRenderer.initialize_buffers();
     m_clippingPlaneRenderer.set_width(0.1f);
-    generate_grid(m_clippingPlaneRenderer, color, size, nbSubdivisions);
+    generate_grid(m_clippingPlaneRenderer, color, size, NB_SUBDIVISIONS);
     m_clippingPlaneRenderer.load_buffers();
   }
 
@@ -858,7 +862,7 @@ namespace GLFW {
       m_drawClippingPlane = !m_drawClippingPlane;
       break;
     case CLIPPING_PLANE_MODE:
-      m_clippingPlaneDisplayMode = static_cast<ClippingDisplayModeEnum>((m_clippingPlaneDisplayMode + 1) % CLIPPING_PLANE_END_INDEX);
+      switch_display_mode();
       break;
     case VERTICES_DISPLAY:
       m_drawVertices = !m_drawVertices;
@@ -955,8 +959,7 @@ namespace GLFW {
       translate_clipping_plane_cam_dir();
       break;
     case CONSTRAINT_AXIS:
-      m_constraintAxisEnum = static_cast<AxisEnum>((m_constraintAxisEnum + 1) % NB_AXIS_ENUM);
-      switch_axis(m_constraintAxisEnum);
+      switch_constraint_axis();
       break;
     case DISPLAY_WORLD_AXIS:
       m_drawWorldAxis = !m_drawWorldAxis;
@@ -1115,24 +1118,44 @@ namespace GLFW {
     });
   }
 
-  void Basic_viewer::switch_axis(int axis)
+  void Basic_viewer::switch_display_mode()
   {
-    switch(axis) 
+    switch(m_displayModeEnum) 
     {
-    case X_AXIS: 
-      std::cout << "Constrained on X" << std::endl;
+    case Display_mode::CLIPPING_PLANE_OFF:
+      m_displayModeEnum = Display_mode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF; 
+      break;
+    case Display_mode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF:
+      m_displayModeEnum = Display_mode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF; 
+      break;
+    case Display_mode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: 
+      m_displayModeEnum = Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY; 
+      break;
+    case Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY: 
+      m_displayModeEnum = Display_mode::CLIPPING_PLANE_OFF; 
+      break;
+    }
+  }
+
+  void Basic_viewer::switch_constraint_axis()
+  {
+    switch(m_constraintAxisEnum) 
+    {
+    case Constraint_axis::NO_CONSTRAINT:
+      m_constraintAxisEnum = Constraint_axis::X_AXIS; 
       m_constraintAxis << 1., 0., 0.;
       break;
-    case Y_AXIS: 
-      std::cout << "Constrained on Y" << std::endl;
+    case Constraint_axis::X_AXIS: 
+      m_constraintAxisEnum = Constraint_axis::Y_AXIS; 
       m_constraintAxis << 0., 1., 0.;
       break;
-    case Z_AXIS: 
-      std::cout << "Constrained on Z" << std::endl;
+    case Constraint_axis::Y_AXIS: 
+      m_constraintAxisEnum = Constraint_axis::Z_AXIS; 
       m_constraintAxis << 0., 0., 1.;
       break;
-    default: 
-      std::cout << "Constraint Axis Disabled" << std::endl;
+    case Constraint_axis::Z_AXIS: 
+      m_constraintAxisEnum = Constraint_axis::NO_CONSTRAINT; 
+      break;
     }
   }
 
@@ -1163,7 +1186,7 @@ namespace GLFW {
       pt.z() = sqrt(1. - xySquarred);
     }
 
-    if (m_constraintAxisEnum == NO_AXIS)
+    if (m_constraintAxisEnum == Constraint_axis::NO_CONSTRAINT)
       return pt;
 
     // projection on the constraint axis
@@ -1195,10 +1218,10 @@ namespace GLFW {
   mat4f Basic_viewer::get_rotation(vec3f const& start, vec3f const& end)
   {
     vec3f rotation_axis = start.cross(end).normalized();
-    const float dot = start.dot(end);
-    const float angle = acos(std::min(1.f, dot));
+    float dot = start.dot(end);
+    float angle = acos(std::min(1.f, dot));
 
-    const float d = m_clippingPlaneRotationSpeed;
+    float d = m_clippingPlaneRotationSpeed;
     // std::cout << "theta angle : " << angle << std::endl;
     return transform::rotation(angle * d, rotation_axis);
   }
@@ -1318,7 +1341,7 @@ namespace GLFW {
   inline
   void Basic_viewer::print_help()
   {
-    std::map<Input::ActionEnum, std::vector<KeyData>> keyActions = get_action_keys();
+    std::map<Input::ActionEnum, std::vector<Key_data>> keyActions = get_action_keys();
 
     std::cout << "\nHelp for Basic Viewer OpenGl :" << std::endl;
 
@@ -1369,7 +1392,7 @@ namespace GLFW {
       {
         m_camera.set_zoom_smoothness(yoffset);
       } 
-      else 
+      else if (!m_camera.is_orthographic()) 
       {
         m_camera.set_fov(yoffset);
       }
@@ -1387,8 +1410,8 @@ namespace GLFW {
     // https://github.com/nothings/stb/
     // The stb lib used here is from glfw/deps
 
-    const GLsizei nrChannels = 3;
-    GLsizei stride = nrChannels * m_windowSize.x();
+    const GLsizei NB_CHANNELS = 3;
+    GLsizei stride = NB_CHANNELS * m_windowSize.x();
     stride += (stride % 4) ? (4 - stride % 4) : 0; // stride must be a multiple of 4
     GLsizei bufferSize = stride * m_windowSize.y();
 
@@ -1399,7 +1422,7 @@ namespace GLFW {
     glReadPixels(0, 0, m_windowSize.x(), m_windowSize.y(), GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
 
     stbi_flip_vertically_on_write(true);
-    stbi_write_png(filepath.data(), m_windowSize.x(), m_windowSize.y(), nrChannels, buffer.data(), stride);
+    stbi_write_png(filepath.data(), m_windowSize.x(), m_windowSize.y(), NB_CHANNELS, buffer.data(), stride);
   }
 
   void Basic_viewer::draw_world_axis() 
