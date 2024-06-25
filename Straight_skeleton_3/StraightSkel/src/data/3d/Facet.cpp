@@ -570,10 +570,6 @@ bool Facet::initPlane() {
             point_prev = point;
         }
 
-        std::cout << " -- face points" << std::endl;
-        for(const auto& p : points)
-          std::cout << "   " << *p << std::endl;
-
         if (points.size() >= 3)
         {
           Point3SPtr p0 = points[0];
@@ -629,6 +625,7 @@ Plane3SPtr Facet::plane() {
 }
 
 bool Facet::makeFirstConvex() {
+
     bool result = false;
     if (!plane_) {
         return false;
@@ -714,6 +711,7 @@ bool Facet::makeFirstConvex() {
         DEBUG_VAL("Warning: Unable to make first 3 vertices convex.");
         DEBUG_VAR(toString());
     }
+
     return result;
 }
 

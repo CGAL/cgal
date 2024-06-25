@@ -305,6 +305,10 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
 // #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
 #ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
     std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
+    std::cout << a0*x + b0*y + c0*z + w0*t << std::endl;
+    std::cout << a1*x + b1*y + c1*z + w1*t << std::endl;
+    std::cout << a2*x + b2*y + c2*z + w2*t << std::endl;
+    std::cout << a3*x + b3*y + c3*z + w3*t << std::endl;
 #endif
 
     result = KernelFactory::createPoint3(x, y, z);

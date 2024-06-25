@@ -260,8 +260,7 @@ endif()
 
 
 # build executable
-set(StraightSkel_SOURCES
-        src/main.cpp)
+set(StraightSkel_SOURCES src/main.cpp)
 add_executable(StraightSkel ${StraightSkel_SOURCES})
 target_link_libraries(StraightSkel skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/res/StraightSkel.ini

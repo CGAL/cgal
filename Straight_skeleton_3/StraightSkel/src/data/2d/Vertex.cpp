@@ -15,10 +15,10 @@
  */
 
 #include "data/2d/Vertex.h"
-
 #include "data/2d/Edge.h"
 #include "debug.h"
 #include "util/StringFactory.h"
+
 #include <cmath>
 
 namespace data { namespace _2d {

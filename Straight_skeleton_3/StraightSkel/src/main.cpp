@@ -352,6 +352,7 @@ int main(int argc, const char* argv[]) {
                 rand_move_points = true;
             }
         }
+
         if (translate_and_scale_polyhedron) {
             data::_3d::Point3SPtr p_box_min =
                     data::_3d::KernelFactory::createPoint3(-10.0, -10.0, -10.0);

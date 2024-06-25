@@ -115,7 +115,7 @@ public:
 
     std::string toString() const;
 
-protected:
+public:
     Facet();
     std::list<VertexSPtr> vertices_;
     std::list<EdgeSPtr> edges_;

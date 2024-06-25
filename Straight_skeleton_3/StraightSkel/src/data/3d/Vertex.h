@@ -111,7 +111,7 @@ public:
 
     std::string toString() const;
 
-protected:
+public:
     Vertex(Point3SPtr point);
     Vertex(const Vertex& vertex);
     Point3SPtr point_;

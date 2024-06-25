@@ -529,7 +529,6 @@ bool Edge::isReflex() const {
     return result;
 }
 
-
 double Edge::angleTo(EdgeSPtr edge) const {
     double result = 0.0;
     VertexSPtr vertex;
@@ -604,7 +603,6 @@ double Edge::angleTo(EdgeSPtr edge) const {
     }
     return result;
 }
-
 
 std::string Edge::toString() const {
     std::string result("Edge(");

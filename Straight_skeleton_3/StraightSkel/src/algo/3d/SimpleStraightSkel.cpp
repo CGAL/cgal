@@ -59,8 +59,12 @@
 #include "util/Configuration.h"
 #include "util/Timer.h"
 #include "util/StringFactory.h"
+
+#include <CGAL/assertions.h>
+#include <CGAL/Real_timer.h>
+
 #include <limits>
-#include <sstream> 
+#include <sstream>
 #include <stdexcept>
 
 namespace algo { namespace _3d {
@@ -333,8 +337,8 @@ void SimpleStraightSkel::run() {
     DEBUG_PRINT("== Straight Skeleton 3D started ==");
 
     double t_start = util::Timer::now();
-    PolyhedronSPtr polyhedron = polyhedron_->clone();
 
+    PolyhedronSPtr polyhedron = polyhedron_->clone();
     DEBUG_VAR(polyhedron->toString());
 
     // Simple test for weighted straight skeleton.
@@ -353,8 +357,7 @@ void SimpleStraightSkel::run() {
     Point3SPtr p_box_min;
     Point3SPtr p_box_max;
     unsigned int i = 0;
-    DEBUG_VAL("Using " << vertex_splitter_->toString()
-            << " to initialize polyhedron.");
+    DEBUG_VAL("Using " << vertex_splitter_->toString() << " to initialize polyhedron.");
     if (init(polyhedron)) {
         if (controller_) {
             controller_->wait();
@@ -855,11 +858,11 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
         std::cout << "facetR: " << facetR->toString() << std::endl;
 # endif
         FacetSPtr facetP = edge->prev(facetL)->getFacetR();
-        if(!facetP || facetP == facetL) // urgh...
+        if(!facetP || facetP == facetL)
             facetP = edge->prev(facetL)->getFacetL();
         CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
         FacetSPtr facetN = edge->next(facetL)->getFacetR();
-        if(!facetN || facetN == facetL) // urgh...
+        if(!facetN || facetN == facetL)
             facetN = edge->next(facetL)->getFacetL();
 # ifdef CGAL_SS3_DEBUG_VANISH_AT
         std::cout << "facetP: " << facetP->toString() << std::endl;
@@ -872,19 +875,18 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
         Plane3SPtr plane_2 = facetP->plane();
         Plane3SPtr plane_3 = facetN->plane();
 
+        // @fixme in theory, it needs to check if the data exists etc. etc.
         CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facetL->getData())->getSpeed();
         CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facetR->getData())->getSpeed();
         CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facetP->getData())->getSpeed();
         CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facetN->getData())->getSpeed();
 
         Point3SPtr p_intersect = Point3SPtr();
-        std::tie(p_intersect, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0,
-                                                                                             plane_1, speed_1,
-                                                                                             plane_2, speed_2,
-                                                                                             plane_3, speed_3);
+        std::tie(p_intersect, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
+          plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
         if(p_intersect)
         {
-            // @fixme? negative offsets only?
+            // @fixme? filter positive offsets immediately?
             // @fixme should it check with the other incident facet as well?
             if (KernelWrapper::side(facetL->plane(), p_intersect) <= 0) {
                 // inside polyhedron
@@ -2628,6 +2630,7 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                     EdgeWPtr edge_wptr = *it_e++;
                     if (!edge_wptr.expired()) {
                         EdgeSPtr edge(edge_wptr);
+                        // @todo checking both because we don't know if vertex is the src or the dst of the edge?
                         FacetSPtr facet_src = edge->getFacetL()->next(edge->getVertexSrc());
                         FacetSPtr facet_dst = edge->getFacetR()->next(edge->getVertexDst());
                         if (facet == facet_src || facet == facet_dst) {
@@ -2668,8 +2671,7 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                 CGAL::FT speed_facet = KernelWrapper::distance(point_facet, point_facet_offset);
 
                 CGAL::FT distance = KernelWrapper::distance(vertex->getPoint(), point_facet);
-                CGAL::FT dist_vertex = (distance * speed_vertex) /
-                        (speed_vertex + speed_facet);
+                CGAL::FT dist_vertex = (distance * speed_vertex) / (speed_vertex + speed_facet);
                 if (KernelWrapper::comparePoints(arc->getDirection(),
                         point_facet, point_facet_offset) < 0) {
                     // for weighted straight skeleton
@@ -2860,10 +2862,12 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PolyhedronSPtr polyhedron,
             }
         }
     }
+    CGAL_assertion(result->getOffset() < 0);
     result->setHighlight(true);
     return result;
 }
 
+// normalize coefficients and make sure that coplanar facets have the same coefficients (@todo for the second part)
 void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
 {
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
@@ -2892,7 +2896,6 @@ void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
           facet->setPlane(normalized_plane);
         }
     }
-
 }
 
 Point3SPtr SimpleStraightSkel::shiftPoint(VertexSPtr vertex,
@@ -3155,10 +3158,18 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
     for (unsigned int i = 0; i < 4; i++) {
         vertices[i] = VertexSPtr();
     }
+
+    // @fixme? should seek a non collinear vertex?
     vertices[0] = vertex_src_offset->prev(edge_offset->getFacetL());
     vertices[1] = vertex_src_offset->next(edge_offset->getFacetR());
     vertices[2] = vertex_dst_offset->prev(edge_offset->getFacetR());
     vertices[3] = vertex_dst_offset->next(edge_offset->getFacetL());
+
+    std::cout << "vertices:\n"
+              << "     " << *(vertices[0]->getPoint()) << "\n"
+              << "     " << *(vertices[1]->getPoint()) << "\n"
+              << "     " << *(vertices[2]->getPoint()) << "\n"
+              << "     " << *(vertices[3]->getPoint()) << std::endl;
 
     FacetSPtr facets[4];
     for (unsigned int i = 0; i < 4; i++) {
@@ -4458,12 +4469,14 @@ void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, Polyhedr
 void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
 
+    NodeSPtr node = event->getNode();
+    appendEventNode(node);
+
     std::cout << "########################################" << std::endl;
     std::cout << "########  Handle Pierce Event  #########" << std::endl;
     std::cout << "########################################" << std::endl;
 
-    NodeSPtr node = event->getNode();
-    appendEventNode(node);
+    std::cout << "Node: " << node->toString() << std::endl;
 
     SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
             event->getVertex()->getData());

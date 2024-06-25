@@ -21,7 +21,7 @@
 
 #include <CGAL/double.h>
 #include <CGAL/float.h>
-#include <CGAL/number_utils.h> // to_double, to_interval, approximate_sqrt
+#include <CGAL/number_utils.h>
 
 #ifdef USE_CGAL
 

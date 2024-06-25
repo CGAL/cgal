@@ -85,6 +85,9 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                 if (strs.size() >= 4) {
                     facet_id_new++;
                     unsigned int num_vertices = strs.size() - 1;
+                    std::cout << "new face of size " << num_vertices << std::endl;
+                    CGAL_assertion(num_vertices > 2);
+
                     VertexSPtr poly_vertices[num_vertices];
                     Vector3SPtr normal_sum;
                     for (unsigned int i = 0; i < num_vertices; i++) {
@@ -117,12 +120,19 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                             }
                         }
                     }
+
                     FacetSPtr facet = Facet::create(num_vertices, poly_vertices);
                     facet->setID(facet_id_new);
+
+                    std::cout << "Final edges:" << std::endl;
+                    for(auto e : facet->edges())
+                      std::cout << e->toString() << std::endl;
+
                     if (num_vertices == 3) {
                         Triangle::create(facet, poly_vertices);
                     } else if (normal_sum && num_vertices > 3) {
                         // vertex normals are used as a hint for facet normal
+                        // @fixme no reason for these 3 points not to be collinear?
                         Plane3SPtr plane = KernelFactory::createPlane3(
                                 poly_vertices[0]->getPoint(),
                                 poly_vertices[1]->getPoint(),
@@ -173,6 +183,9 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                 DEBUG_VAR(edge->toString());
             }
         }
+
+        std::cout << "Loaded: " << result->toString() << std::endl;
+
         double epsilon = 0.0001;
         util::ConfigurationSPtr config = util::Configuration::getInstance();
         std::string section("db_3d_OBJFile");
@@ -313,6 +326,7 @@ bool OBJFile::save(const std::string& filename, PolyhedronSPtr polyhedron) {
                   polyhedron->facets().size() == facet_id);
         ofs.close();
     }
+    std::cout << "-- Write OBJ end --" << std::endl;
     return result;
 }
 
