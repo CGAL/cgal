@@ -40,6 +40,9 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
     FacetSPtr facet_l = edge->getFacetL();
     FacetSPtr facet_r = edge->getFacetR();
     if (facet_l && facet_r) {
+        if(epsilon == 0)
+          return (*(facet_l->plane()) == *(facet_r->plane())); // planes are normalized
+
         Vector3SPtr normal_l = KernelFactory::createVector3(facet_l->plane());
         Vector3SPtr normal_r = KernelFactory::createVector3(facet_r->plane());
         CGAL::FT length_l = 0.0;
