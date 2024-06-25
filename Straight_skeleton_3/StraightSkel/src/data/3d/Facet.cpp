@@ -644,22 +644,22 @@ bool Facet::makeFirstConvex() {
         points[0] = edge->src(self)->getPoint();
         points[1] = edge->dst(self)->getPoint();
         points[2] = edge_next->dst(self)->getPoint();
+
+#if 1 // @tmp, is this correct? the M_PI/4.0 below is confusing... Was it supposed to be M_PI/2.0?
+        if(!CGAL::collinear(*(points[0]), *(points[1]), *(points[2])))
+        {
+          if(CGAL::angle(*(points[0]), *(points[1]), *(points[2]), *normal) == CGAL::ACUTE)
+          {
+            edge_begin = edge;
+            result = true;
+            break;
+          }
+        }
+#else // old code; has issues with collinear points
         if (points[0] != points[1] &&
                 points[1] != points[2] &&
                 points[2] != points[0])
         {
-#if 1 // @tmp, is this correct? the M_PI/4.0 below is confusing... Was it supposed to be M_PI/2.0?
-          if(!CGAL::collinear(*(points[0]), *(points[1]), *(points[2])))
-          {
-            if(CGAL::angle(*(points[0]), *(points[1]), *(points[2]), *normal) == CGAL::ACUTE)
-            {
-              edge_begin = edge;
-              result = true;
-              break;
-            }
-          }
-
-#else // old code; has issues with collinear points
           Plane3SPtr plane_current = KernelFactory::createPlane3(
                   points[0], points[1], points[2]);
           Vector3SPtr normal_current = KernelFactory::createVector3(plane_current);
@@ -685,8 +685,8 @@ bool Facet::makeFirstConvex() {
               result = true;
               break;
           }
-#endif
         }
+#endif
         edge = edge_next;
     }
 
