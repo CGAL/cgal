@@ -182,22 +182,27 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
         bool point_inside_bounds = true;
         Plane3SPtr bisector_src;
         Plane3SPtr bisector_dst;
+
         if (vertex_src->degree() > 1) {
             bisector_src = bisector(facet, vertex_src);
-        }
-        if (vertex_dst->degree() > 1) {
-            bisector_dst = bisector(facet, vertex_dst);
-        }
-        if (bisector_src) {
-            if (KernelWrapper::side(bisector_src, point) < 0) {
-                point_inside_bounds = false;
+            if (bisector_src) {
+                if (KernelWrapper::side(bisector_src, point) < 0) {
+                    point_inside_bounds = false;
+                }
             }
         }
-        if (bisector_dst) {
-            if (KernelWrapper::side(bisector_dst, point) > 0) {
-                point_inside_bounds = false;
-            }
+
+        if(point_inside_bounds) {
+          if (vertex_dst->degree() > 1) {
+              bisector_dst = bisector(facet, vertex_dst);
+              if (bisector_dst) {
+                  if (KernelWrapper::side(bisector_dst, point) > 0) {
+                      point_inside_bounds = false;
+                  }
+              }
+          }
         }
+
         if (point_inside_bounds) {
             CGAL::FT sq_dist = KernelWrapper::squared_distance(edge->line(), point);
             if (sq_dist < sq_dist_min) {
