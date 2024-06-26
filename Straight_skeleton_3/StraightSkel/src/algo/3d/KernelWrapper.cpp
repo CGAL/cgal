@@ -103,6 +103,26 @@ Plane3SPtr KernelWrapper::bisector(Plane3SPtr plane1, Plane3SPtr plane2) {
     return result;
 }
 
+CGAL::FT KernelWrapper::squared_distance(Point3SPtr p1, Point3SPtr p2) {
+    CGAL::FT result = 0.0;
+#ifdef USE_CGAL
+    result = CGAL::squared_distance(*p1, *p2);
+#else
+    result = kernel::squared_distance(&(*p1), &(*p2));
+#endif
+    return result;
+}
+
+CGAL::FT KernelWrapper::squared_distance(Line3SPtr line, Point3SPtr point) {
+    CGAL::FT result = 0.0;
+#ifdef USE_CGAL
+    result = CGAL::squared_distance(*line, *point);
+#else
+    result = kernel::squared_distance(&(*line), &(*point));
+#endif
+    return result;
+}
+
 CGAL::FT KernelWrapper::distance(Point3SPtr p1, Point3SPtr p2) {
     CGAL::FT result = 0.0;
 #ifdef USE_CGAL

@@ -49,7 +49,7 @@ PolyhedronSPtr AbstractVertexSplitter::splitConvexVertex(VertexSPtr vertex) {
     assert(vertex->isConvex());
     PolyhedronSPtr result = vertex->getPolyhedron();
     while (vertex->degree() > 3) {
-        CGAL::FT speed_max = 0.0;
+        CGAL::FT sq_speed_max = 0.0;
         FacetSPtr facet_1;
         FacetSPtr facet_2;
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
@@ -69,12 +69,12 @@ PolyhedronSPtr AbstractVertexSplitter::splitConvexVertex(VertexSPtr vertex) {
                     KernelWrapper::offsetPlane(facet_next->plane(), -1.0);
             Point3SPtr offset_point = KernelWrapper::intersection(
                     offset_plane_prev, offset_plane, offset_plane_next);
-            CGAL::FT speed = KernelWrapper::distance(
+            CGAL::FT sq_speed = KernelWrapper::squared_distance(
                     vertex->getPoint(), offset_point);
-            if (speed > speed_max) {
+            if (sq_speed > sq_speed_max) {
                 facet_1 = facet_next;
                 facet_2 = facet_prev;
-                speed_max = speed;
+                sq_speed_max = sq_speed;
             }
         }
         VertexSPtr vertex_splitted = vertex->split(facet_1, facet_2);

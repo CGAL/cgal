@@ -173,7 +173,7 @@ Plane3SPtr SelfIntersection::bisector(FacetSPtr facet, VertexSPtr vertex) {
 
 EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
     EdgeSPtr result;
-    CGAL::FT dist_min = std::numeric_limits<double>::max(); // do not put FT
+    CGAL::FT sq_dist_min = std::numeric_limits<double>::max(); // do not put FT
     std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
     while (it_e != facet->edges().end()) {
         EdgeSPtr edge = *it_e++;
@@ -199,10 +199,10 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
             }
         }
         if (point_inside_bounds) {
-            CGAL::FT dist = KernelWrapper::distance(edge->line(), point);
-            if (dist < dist_min) {
+            CGAL::FT sq_dist = KernelWrapper::squared_distance(edge->line(), point);
+            if (sq_dist < sq_dist_min) {
                 result = edge;
-                dist_min = dist;
+                sq_dist_min = sq_dist;
             }
         }
     }
