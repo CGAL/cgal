@@ -3275,6 +3275,183 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
 }
 
 template <class K, class TriangleMesh>
+typename K::FT path_length(const std::vector<Face_location<TriangleMesh,typename K::FT>>& path,
+                           const TriangleMesh &tmesh)
+{
+  std::size_t lpath = path.size();
+  if(lpath<2)
+    return 0;
+
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
+
+  typename K::FT len(0);
+
+  for (std::size_t i=0; i<lpath-1; ++i)
+    len += sqrt(squared_distance(construct_point(path[i],tmesh),construct_point(path[i+1],tmesh)));
+
+  return len;
+}
+
+//TODO: factorise code
+template <class K, class TriangleMesh>
+std::vector<std::vector<typename K::Point_3>>
+trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, typename K::FT>>& supporting_curve,
+                                 const std::vector<std::vector<typename K::Point_2>>& polygons,
+                                 const typename K::FT scaling,
+                                 const typename K::FT padding,
+                                 const bool is_centered,
+                                 const TriangleMesh &tmesh,
+                                 const Dual_geodesic_solver<typename K::FT>& solver = {})
+{
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
+  using Point_2 = typename K::Point_2;
+  using Vector_2 = typename K::Vector_2;
+
+
+  std::vector<Bbox_2> polygon_bboxes;
+  polygon_bboxes.reserve(polygons.size());
+  Bbox_2 gbox;
+  for (const std::vector<typename K::Point_2>& polygon : polygons)
+  {
+    polygon_bboxes.push_back( bbox_2(polygon.begin(), polygon.end()) );
+    gbox+=polygon_bboxes.back();
+  }
+
+  const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
+  Dual_geodesic_solver<typename K::FT> local_solver;
+  if (solver.graph.empty())
+  {
+    solver_ptr = &local_solver;
+    init_geodesic_dual_solver(local_solver, tmesh);
+  }
+
+  std::vector<std::vector<typename K::Point_3>> result(polygons.size());
+  Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
+
+  // 1D partition of the letters
+  Point_2 c2( (gbox.xmin()+gbox.xmax())/2.,
+              (gbox.ymin()+gbox.ymax())/2. );
+  Point_2 left_most(gbox.xmin(), c2.y());
+  Point_2 right_most(gbox.xmax(), c2.y());
+
+  std::vector<typename K::FT> support_len(supporting_curve.size(),0);
+  for (std::size_t i=0; i<supporting_curve.size()-1; ++i)
+    support_len[i+1]=support_len[i]+std::sqrt(squared_distance(construct_point(supporting_curve[i], tmesh),
+                                                               construct_point(supporting_curve[i+1], tmesh)));
+
+  CGAL_assertion( (support_len.back()>padding + scaling * (gbox.xmax()-gbox.xmin())) ||
+                  (is_centered && (support_len.back()> scaling * (gbox.xmax()-gbox.xmin()))) );
+
+  typename K::FT pad = is_centered ? (support_len.back()-(scaling*(gbox.xmax()-gbox.xmin())))/2
+                                   : padding;
+
+  auto get_polygon_center = [&tmesh, &vpm, &supporting_curve, &support_len](double targetd)
+  {
+    // use left
+    std::size_t k=0;
+    while(true) // TODO get rid of the while and std::lower_bound
+    {
+      double acc = support_len[k];
+      if (acc == targetd)
+      {
+        double theta=0;
+        if (k!=0)
+        {
+          Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
+          CGAL_assertion_code(bool OK=)
+          locate_in_common_face(loc_k, loc_k1, tmesh);
+          CGAL_assertion(OK);
+          std::array<Vector_2,3> flat_triangle =
+            Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
+          Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
+          Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+
+          Vector_2 dir2 = tgt-src;
+          theta = atan2(dir2.y(), dir2.x());
+        }
+        return std::make_pair(supporting_curve[k+1], theta);
+      }
+
+      if (acc > targetd)
+      {
+        double excess = acc-targetd;
+
+        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
+        CGAL_assertion_code(bool OK=)
+        locate_in_common_face(loc_k, loc_k1, tmesh);
+        // CGAL_assertion(OK); // TODO: check with Claudio how to correctly implement transport along the curve
+
+        Face_location<TriangleMesh, typename K::FT> polygon_center;
+        polygon_center.first=loc_k.first;
+        double alpha = excess/(support_len[k]-support_len[k-1]);
+
+        for(int ii=0; ii<3;++ii)
+          polygon_center.second[ii] = loc_k.second[ii]*alpha+loc_k1.second[ii]*(1.-alpha);
+
+        std::array<Vector_2,3> flat_triangle =
+          Impl::init_flat_triangle(halfedge(polygon_center.first,tmesh),vpm,tmesh);
+        Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
+        Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+
+        Vector_2 dir2 = tgt-src;
+        double theta = atan2(dir2.y(), dir2.x());
+
+        return std::make_pair(polygon_center, theta);
+      }
+
+      if (++k==supporting_curve.size()-1)
+      {
+        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k-1], loc_k1=supporting_curve[k];
+        CGAL_assertion_code(bool OK=)
+        locate_in_common_face(loc_k, loc_k1, tmesh);
+        CGAL_assertion(OK);
+        std::array<Vector_2,3> flat_triangle =
+          Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
+        Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
+        Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+
+        Vector_2 dir2 = tgt-src;
+        double theta = atan2(dir2.y(), dir2.x());
+
+        return std::make_pair(supporting_curve.back(), theta);
+      }
+    }
+  };
+
+  for(std::size_t i=0;i<polygons.size();++i)
+  {
+    Face_location<TriangleMesh, typename K::FT> polygon_center;
+    double xc = (polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.;
+
+    double theta;
+    std::tie(polygon_center, theta)=get_polygon_center(scaling * (xc-gbox.xmin())+pad);
+    theta=CGAL_PI+theta;
+
+    std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
+      convert_polygon_to_polar_coordinates<K>(polygons[i],
+                                              typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
+                                                                  (gbox.ymin()+gbox.ymax())/2.));
+
+    std::vector<Vector_2> directions;
+    std::vector<typename K::FT> lens;
+    lens.reserve(polar_coords.size());
+    directions.reserve(polar_coords.size());
+
+    for (const std::pair<double, double>& coord : polar_coords)
+    {
+      lens.push_back(scaling * coord.first);
+      directions.emplace_back(std::cos(coord.second+theta), std::sin(coord.second+theta));
+    }
+    result[i] = trace_geodesic_polygon<K>(polygon_center, directions, lens, tmesh, *solver_ptr);
+  }
+
+  return result;
+}
+
+template <class K, class TriangleMesh>
 std::vector< std::vector<Face_location<TriangleMesh, typename K::FT>> >
 trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
                     const std::vector<std::array<typename K::Vector_2, 4>>& directions,
