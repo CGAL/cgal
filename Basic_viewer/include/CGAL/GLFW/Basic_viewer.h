@@ -63,14 +63,6 @@ namespace GLFW
       CLIPPING_PLANE_SOLID_HALF_ONLY,  
     };
 
-    enum class Constraint_axis : int 
-    {
-      NO_CONSTRAINT=0,
-      X_AXIS,
-      Y_AXIS,
-      Z_AXIS, 
-    };
-
   public:
     Basic_viewer(
       const Graphics_scene* graphicScene,
@@ -214,7 +206,6 @@ namespace GLFW
     void translate_camera(const double deltaTime);
     void translate_clipping_plane(const double deltaTime, bool useCameraForward=false);
 
-    void switch_constraint_axis();
     void switch_display_mode();
 
     void fullscreen();
@@ -358,18 +349,11 @@ namespace GLFW
     Clipping_plane m_clippingPlane;
 
     Display_mode m_displayModeEnum = Display_mode::CLIPPING_PLANE_OFF;
-    Constraint_axis m_constraintAxisEnum = Constraint_axis::NO_CONSTRAINT;
     
-    std::vector<float> m_clippingPlaneVertices;
-
     bool m_drawClippingPlane = true;                                                // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
     float m_clippingPlaneTransparency = CGAL_CLIPPING_PLANE_RENDERING_TRANSPARENCY; // to what extent the transparent part should be rendered;
     float m_clippingPlaneMoveSpeed = CGAL_CLIPPING_PLANE_MOVE_SPEED;
     float m_clippingPlaneRotationSpeed = CGAL_CLIPPING_PLANE_ROT_SPEED;
-
-    vec3f m_constraintAxis{1., 0., 0.};
-
-    mat4f m_clippingMatrix = mat4f::Identity();
 
     /*********************/
 

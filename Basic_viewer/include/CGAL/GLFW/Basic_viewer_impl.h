@@ -1,8 +1,6 @@
 #ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
 #define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
-#include "Basic_viewer.h"
-
 namespace CGAL {
 namespace GLFW {
 
@@ -963,7 +961,7 @@ namespace GLFW {
       translate_clipping_plane(deltaTime, true);
       break;
     case CONSTRAINT_AXIS:
-      switch_constraint_axis();
+      m_clippingPlane.switch_constraint_axis();
       break;
     case DISPLAY_WORLD_AXIS:
       m_drawWorldAxis = !m_drawWorldAxis;
@@ -1146,28 +1144,6 @@ namespace GLFW {
       break;
     case Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY: 
       m_displayModeEnum = Display_mode::CLIPPING_PLANE_OFF; 
-      break;
-    }
-  }
-
-  void Basic_viewer::switch_constraint_axis()
-  {
-    switch(m_constraintAxisEnum) 
-    {
-    case Constraint_axis::NO_CONSTRAINT:
-      m_constraintAxisEnum = Constraint_axis::X_AXIS; 
-      m_constraintAxis << 1., 0., 0.;
-      break;
-    case Constraint_axis::X_AXIS: 
-      m_constraintAxisEnum = Constraint_axis::Y_AXIS; 
-      m_constraintAxis << 0., 1., 0.;
-      break;
-    case Constraint_axis::Y_AXIS: 
-      m_constraintAxisEnum = Constraint_axis::Z_AXIS; 
-      m_constraintAxis << 0., 0., 1.;
-      break;
-    case Constraint_axis::Z_AXIS: 
-      m_constraintAxisEnum = Constraint_axis::NO_CONSTRAINT; 
       break;
     }
   }

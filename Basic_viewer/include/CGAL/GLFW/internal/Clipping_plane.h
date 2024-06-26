@@ -6,7 +6,12 @@
 class Clipping_plane 
 {
 public:
-  
+  enum class Constraint_axis  
+  { 
+    NO_CONSTRAINT,
+    RIGHT_AXIS,
+    UP_AXIS,
+  };
 public:
   Clipping_plane() : 
     m_orientation(quatf::Identity()), 
@@ -20,9 +25,10 @@ public:
     m_targetYaw(0.0f),
     m_translationSpeed(1.0f),
     m_rotationSpeed(200.0f),
-    m_smoothRotationFactor(0.2f),
-    m_smoothTranslationFactor(0.2f),
-    m_size(1.0f)
+    m_smoothRotationFactor(0.5f),
+    m_smoothTranslationFactor(0.5f),
+    m_size(1.0f),
+    m_constraintAxis(Constraint_axis::NO_CONSTRAINT)
   {
   }
 
@@ -91,8 +97,19 @@ public:
   inline 
   void rotation(const float x, const float y) 
   {
-    m_targetPitch += y;
-    m_targetYaw += x;
+    if (
+      m_constraintAxis == Constraint_axis::NO_CONSTRAINT ||
+      m_constraintAxis == Constraint_axis::RIGHT_AXIS) 
+    {
+      m_targetPitch += y;
+    }
+    
+    if (
+      m_constraintAxis == Constraint_axis::NO_CONSTRAINT ||
+      m_constraintAxis == Constraint_axis::UP_AXIS)
+    {
+      m_targetYaw += x;
+    }
   }
 
   inline 
@@ -105,14 +122,31 @@ public:
   inline 
   void translation(const vec3f& direction, const float s) 
   {
-    m_targetTranslation -= m_size * direction * s * m_translationSpeed; 
+    m_targetTranslation -= m_size * direction.normalized() * s * m_translationSpeed; 
   }
 
   inline 
   void translation(const float s) 
   {
-    vec3f forward = m_orientation * vec3f::UnitZ();
+    vec3f forward = (m_orientation * vec3f::UnitZ()).normalized();
     m_targetTranslation -= m_size * forward * s * m_translationSpeed; 
+  }
+
+  inline 
+  void switch_constraint_axis() 
+  {
+    switch(m_constraintAxis)
+    {
+      case Constraint_axis::NO_CONSTRAINT: 
+        m_constraintAxis = Constraint_axis::RIGHT_AXIS;
+        break;
+      case Constraint_axis::RIGHT_AXIS: 
+        m_constraintAxis = Constraint_axis::UP_AXIS;
+        break;
+      case Constraint_axis::UP_AXIS: 
+        m_constraintAxis = Constraint_axis::NO_CONSTRAINT;
+        break;
+    }
   }
 
   inline void set_size(const float size) { m_size = size; }
@@ -140,6 +174,8 @@ private:
   float m_smoothRotationFactor;
 
   float m_size; 
+
+  Constraint_axis m_constraintAxis;
 };
 
 #endif // CGAL_CLIPPING_PLANE_H

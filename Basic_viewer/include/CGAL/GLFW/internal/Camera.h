@@ -146,8 +146,8 @@ Camera::Camera() :
   m_targetSize(5.f),
   m_fov(45.f),
   m_zoomSmoothFactor(0.1f),
-  m_rotationSmoothFactor(0.15f),
-  m_translationSmoothFactor(0.15f)
+  m_rotationSmoothFactor(0.3f),
+  m_translationSmoothFactor(0.3f)
 {
 
 }
