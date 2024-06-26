@@ -3107,6 +3107,8 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
 }
 
 //TODO add groups of polygons for better rendering
+//TODO add a function dedicated to groups of polygons (like a sentence)
+//     that takes groups of polyons
 template <class K, class TriangleMesh>
 std::vector<std::vector<typename K::Point_3>>
 trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
@@ -3272,9 +3274,8 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
   return result;
 }
 
-
 template <class K, class TriangleMesh>
-std::vector< std::vector<typename K::Point_3> >
+std::vector< std::vector<Face_location<TriangleMesh, typename K::FT>> >
 trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
                     const std::vector<std::array<typename K::Vector_2, 4>>& directions,
                     const std::vector<std::array<typename K::FT, 4>>& lengths,
@@ -3288,7 +3289,7 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
   using FT = typename K::FT;
 
   std::size_t n=directions.size();
-  std::vector< std::vector<typename K::Point_3> > result(n);
+  std::vector< std::vector<Face_location<TriangleMesh, typename K::FT>> > result(n);
   std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
 
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
@@ -3331,7 +3332,7 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
 
     result[i].reserve(bezier.size());
     for(const Face_location<TriangleMesh, FT>& loc : bezier)
-      result[i].push_back(construct_point(loc,tmesh));
+      result[i].push_back(loc);
   }
 
   return result;
@@ -3344,19 +3345,17 @@ typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename
                           const Face_location<TriangleMesh, typename K::FT>& tgt,
                           const TriangleMesh &tmesh)
 {
-  if(path.size()==0)
-  return sqrt(squared_distance(construct_point(src,tmesh),construct_point(tgt,tmesh)));
+  std::size_t lpath = path.size();
+  if(lpath==0)
+    return sqrt(squared_distance(construct_point(src,tmesh),construct_point(tgt,tmesh)));
 
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   VPM vpm = get(CGAL::vertex_point, tmesh);
 
   typename K::FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
-  typename K::FT dist=[&](const Edge_location<TriangleMesh,typename K::FT>& p0,const Edge_location<TriangleMesh,typename K::FT>& p1)
-  {
-    return sqrt(squared_distance(construct_point(p0,tmesh),construct_point(p1,tmesh)));
-  };
 
-  len=std::accumulate(path.begin(),path.end(),dist);
+  for (std::size_t i=0; i<lpath-1; ++i)
+    len += sqrt(squared_distance(construct_point(path[i],tmesh),construct_point(path[i+1],tmesh)));
 
   len+=sqrt(squared_distance(construct_point(path.back(),tmesh),construct_point(tgt,tmesh)));
 

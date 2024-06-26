@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   PMP::Dual_geodesic_solver<double> solver;
   PMP::init_geodesic_dual_solver(solver, mesh);
 
-  std::vector< std::vector<typename K::Point_3> > res =
+  std::vector< std::vector<Face_location> > res =
     PMP::trace_bezier_curves<K>(center, directions, lengths, 6, mesh, solver);
 
   // write result
@@ -114,8 +114,8 @@ int main(int argc, char** argv)
   for (const auto& b : res)
   {
     out << b.size();
-    for (const K::Point_3& pt : b)
-      out << " " << pt;
+    for (const Face_location& loc : b)
+      out << " " << PMP::construct_point(loc,mesh);
     out << "\n";
   }
 
