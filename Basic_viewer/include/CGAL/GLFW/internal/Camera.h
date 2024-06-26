@@ -48,7 +48,7 @@ public:
   mat4f image_toWorld() const;
   void frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const;
 
-  vec3f position() const;
+  vec3f get_position() const;
   vec3f forward_direction() const;
   vec3f right_direction() const;
   vec3f up_direction() const;
@@ -71,7 +71,7 @@ public:
   void toggle_fly(); 
   void set_zoom_smoothness(const float s);
 
-  inline void mode(Mode mode) { m_mode = mode; }
+  inline void set_mode(Mode mode) { m_mode = mode; }
   inline void toggle_mode() { m_mode = (m_mode == Mode::ORTHOGRAPHIC) ? Mode::PERSPECTIVE : Mode::ORTHOGRAPHIC; }
   inline bool is_orthographic() const { return m_mode == Mode::ORTHOGRAPHIC; }
   inline bool is_orbiter() const { return m_type == Type::ORBITER; }
@@ -87,6 +87,10 @@ public:
 
   inline void inc_translation_smoothness() { m_translationSmoothFactor = std::max(m_translationSmoothFactor-.01f, 0.01f); }
   inline void dec_translation_smoothness() { m_translationSmoothFactor = std::min(m_translationSmoothFactor+.01f, 1.f); }
+
+  inline void set_orientation(const quatf& orientation) { m_orientation = orientation; }
+   
+  void set_position(const vec3f& position);
 
 private:
   vec3f m_center;   // centre de l'objet observé
@@ -303,21 +307,26 @@ void Camera::move_down(const float dt)
 inline 
 mat4f Camera::view() const
 {
-  mat3f rotation3x3 = m_orientation.toRotationMatrix();
-  mat4f rotation = mat4f::Identity();
-  rotation.block<3, 3>(0, 0) = rotation3x3;
+  mat4f rotation = transform::rotation(m_orientation);
 
   if (is_orbiter()) 
   {
-    mat4f camera = transform::translation(-m_position.x(), -m_position.y(), -m_size); 
+    mat4f translation = transform::translation(-m_position.x(), -m_position.y(), -m_size); 
     mat4f model = transform::translation(-m_center.x(), -m_center.y(), -m_center.z()); 
-    return  camera * rotation * model;
+    return translation * rotation * model;
   } 
   else // free fly  
   {
     mat4f translation = transform::translation(-m_position.x(), -m_position.y(), -m_position.z()-m_size); // translate camera to (0,0,0)
     return rotation * translation;
   }
+}
+
+inline 
+void Camera::set_position(const vec3f& position) 
+{ 
+  m_position = position; 
+  m_targetPosition = position; 
 }
 
 inline 
@@ -359,7 +368,7 @@ mat4f Camera::projection() const
     return ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, znear(), zfar());
   }
 
-  return PERSPECTIVE(radians(m_fov), m_width / m_height, znear(), zfar());
+  return perspective(radians(m_fov), m_width / m_height, znear(), zfar());
 }
 
 inline 
@@ -400,7 +409,7 @@ mat4f Camera::viewport() const
 }
 
 inline 
-vec3f Camera::position() const
+vec3f Camera::get_position() const
 {
   mat4f v = view();
   mat4f vi = v.inverse();
@@ -415,9 +424,9 @@ vec3f Camera::forward_direction() const
   vec3f forward;
   if (is_orbiter()) 
   {
-    forward.x() = m_center.x() - position().x();
-    forward.y() = m_center.y() - position().y();
-    forward.z() = m_center.z() - position().z();
+    forward.x() = m_center.x() - get_position().x();
+    forward.y() = m_center.y() - get_position().y();
+    forward.z() = m_center.z() - get_position().z();
   }
   else 
   {

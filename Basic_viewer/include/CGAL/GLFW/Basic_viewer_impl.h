@@ -1,6 +1,8 @@
 #ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
 #define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
+#include "Basic_viewer.h"
+
 namespace CGAL {
 namespace GLFW {
 
@@ -359,7 +361,7 @@ namespace GLFW {
   inline 
   CGAL::Plane_3<Basic_viewer::Local_kernel> Basic_viewer::clipping_plane() const
   {
-    const mat4f& CPM = m_clippingPlane.matrix();
+    mat4f CPM = m_clippingPlane.matrix();
     CGAL::Aff_transformation_3<Basic_viewer::Local_kernel> aff(
       CPM(0, 0), CPM(0, 1), CPM(0, 2), CPM(0, 3),
       CPM(1, 0), CPM(1, 1), CPM(1, 2), CPM(1, 3),
@@ -373,13 +375,19 @@ namespace GLFW {
   inline
   void Basic_viewer::update_uniforms(const double deltaTime)
   {
-    m_camera.update(deltaTime);
-    m_clippingPlane.update(deltaTime);
+    if (m_animationController.is_running())
+    {
+      m_modelViewMatrix = m_animationController.run();
+    }
+    else 
+    {
+      m_camera.update(deltaTime);
+      m_clippingPlane.update(deltaTime);
+      mat4f view = m_camera.view();
+      m_modelViewMatrix = view;
+    }
 
-    mat4f view = m_camera.view();
     mat4f projection = m_camera.projection(m_windowSize.x(), m_windowSize.y());
-
-    m_modelViewMatrix = view;
     m_modelViewProjectionMatrix = projection * m_modelViewMatrix;
 
     // ================================================================
@@ -438,7 +446,7 @@ namespace GLFW {
     int w = m_windowSize.x();
     int h = m_windowSize.y();
 
-    mat4f view = m_camera.view();
+    mat4f view = m_modelViewMatrix;
 
     // we only want the rotation part of the view matrix  
     mat3f rotation = view.block<3,3>(0,0);
@@ -969,6 +977,23 @@ namespace GLFW {
     case DISPLAY_XY_GRID:
       m_drawXYGrid = !m_drawXYGrid;
       break;
+    case SAVE_KEY_FRAME:
+      m_animationController.add_key_frame(
+        m_camera.get_position(),
+        m_camera.get_orientation()
+      );
+      break;
+    case RUN_OR_STOP_ANIMATION:
+      if (m_animationController.is_running()) 
+      {
+        m_animationController.stop(m_animationController.get_frame());
+        m_camera.set_orientation(m_animationController.get_rotation());
+        m_camera.set_position(m_animationController.get_translation());
+      }
+      else 
+      {
+        m_animationController.start();
+      }
     }
   }
 
@@ -1017,7 +1042,7 @@ namespace GLFW {
     add_action(GLFW_KEY_V, GLFW_KEY_LEFT_CONTROL, false, SWITCH_CAM_ROTATION);
 
     add_action(GLFW_KEY_ENTER, GLFW_KEY_LEFT_ALT, false, FULLSCREEN);
-    add_action(GLFW_KEY_F1, false, SCREENSHOT);
+    add_action(GLFW_KEY_F2, false, SCREENSHOT);
 
     add_action(GLFW_KEY_X, false, INC_MOVE_SPEED_1);
     add_action(GLFW_KEY_X, GLFW_KEY_LEFT_SHIFT, false, DEC_MOVE_SPEED_1);
@@ -1070,6 +1095,9 @@ namespace GLFW {
 
     add_mouse_action(GLFW_MOUSE_BUTTON_2, GLFW_KEY_LEFT_CONTROL, true, CP_TRANSLATION);
     add_mouse_action(GLFW_MOUSE_BUTTON_MIDDLE, GLFW_KEY_LEFT_CONTROL, true, CP_TRANS_CAM_DIR);
+
+    add_action(GLFW_KEY_F1, false, RUN_OR_STOP_ANIMATION);
+    add_action(GLFW_KEY_F1, GLFW_KEY_LEFT_ALT, false, SAVE_KEY_FRAME);
 
     /*===================== BIND DESCRIPTIONS ============================*/
 

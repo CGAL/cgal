@@ -33,6 +33,7 @@
 #include "internal/Camera.h"
 #include "internal/Line_renderer.h"
 #include "internal/Clipping_plane.h"
+#include "internal/Animation_controller.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -118,7 +119,7 @@ namespace GLFW
     inline void flat_shading(bool b) { m_flatShading = b; }
 
     // Getter section
-    inline vec3f position() const { return m_camera.position(); }
+    inline vec3f position() const { return m_camera.get_position(); }
     inline vec3f forward_direction() const { return m_camera.forward_direction(); }
 
     inline CGAL::IO::Color vertices_mono_color() const { return m_verticeMonoColor; }
@@ -221,67 +222,6 @@ namespace GLFW
     void reset_camera_and_clipping_plane();
 
   private:
-    enum ActionEnum
-    {
-      MOUSE_ROTATE,
-      MOUSE_TRANSLATE,
-      UP,
-      LEFT,
-      RIGHT,
-      DOWN,
-      FORWARD,
-      BACKWARDS,
-      SWITCH_CAM_MODE,
-      SWITCH_CAM_ROTATION,
-
-      FULLSCREEN,
-      SCREENSHOT,
-      INC_ZOOM,
-      DEC_ZOOM,
-      INC_MOVE_SPEED_1,
-      DEC_MOVE_SPEED_1,
-      INC_ROT_SPEED_1,
-      DEC_ROT_SPEED_1,
-      RESET_CAM,
-
-      CLIPPING_PLANE_MODE,
-      CLIPPING_PLANE_DISPLAY,
-      VERTICES_DISPLAY,
-      FACES_DISPLAY,
-      EDGES_DISPLAY,
-      INVERSE_NORMAL,
-      SHADING_MODE,
-      MONO_COLOR,
-      INC_LIGHT_ALL,
-      INC_LIGHT_R,
-      INC_LIGHT_G,
-      INC_LIGHT_B,
-      DEC_LIGHT_ALL,
-      DEC_LIGHT_R,
-      DEC_LIGHT_G,
-      DEC_LIGHT_B,
-      INC_POINTS_SIZE,
-      DEC_POINTS_SIZE,
-      INC_EDGES_SIZE,
-      DEC_EDGES_SIZE,
-
-      DISPLAY_WORLD_AXIS, 
-      DISPLAY_XY_GRID,
-
-      CP_ROTATION,
-      CP_TRANSLATION,
-      CP_TRANS_CAM_DIR,
-      CP_TRANS_N_DIR,
-      CONSTRAINT_AXIS,
-
-      INC_ROT_SMOOTHNESS, 
-      DEC_ROT_SMOOTHNESS, 
-      INC_TRA_SMOOTHNESS, 
-      DEC_TRA_SMOOTHNESS, 
-
-      EXIT
-    };
-
     GLFWwindow* m_window;
 
     const Graphics_scene* m_scene;
@@ -357,6 +297,8 @@ namespace GLFW
 
     /*********************/
 
+    Animation_controller m_animationController;
+
     enum VAOEnum 
     {
       VAO_MONO_POINTS = 0,
@@ -378,6 +320,70 @@ namespace GLFW
                                               (Graphics_scene::END_COLOR - Graphics_scene::BEGIN_COLOR) + 2; // +2 for normals (mono and color)
 
     GLuint m_vbo[NB_GL_BUFFERS]; // +1 for the vbo buffer of clipping plane
+
+    enum ActionEnum
+    {
+      MOUSE_ROTATE,
+      MOUSE_TRANSLATE,
+      UP,
+      LEFT,
+      RIGHT,
+      DOWN,
+      FORWARD,
+      BACKWARDS,
+      SWITCH_CAM_MODE,
+      SWITCH_CAM_ROTATION,
+
+      FULLSCREEN,
+      SCREENSHOT,
+      INC_ZOOM,
+      DEC_ZOOM,
+      INC_MOVE_SPEED_1,
+      DEC_MOVE_SPEED_1,
+      INC_ROT_SPEED_1,
+      DEC_ROT_SPEED_1,
+      RESET_CAM,
+
+      CLIPPING_PLANE_MODE,
+      CLIPPING_PLANE_DISPLAY,
+      VERTICES_DISPLAY,
+      FACES_DISPLAY,
+      EDGES_DISPLAY,
+      INVERSE_NORMAL,
+      SHADING_MODE,
+      MONO_COLOR,
+      INC_LIGHT_ALL,
+      INC_LIGHT_R,
+      INC_LIGHT_G,
+      INC_LIGHT_B,
+      DEC_LIGHT_ALL,
+      DEC_LIGHT_R,
+      DEC_LIGHT_G,
+      DEC_LIGHT_B,
+      INC_POINTS_SIZE,
+      DEC_POINTS_SIZE,
+      INC_EDGES_SIZE,
+      DEC_EDGES_SIZE,
+
+      DISPLAY_WORLD_AXIS, 
+      DISPLAY_XY_GRID,
+
+      CP_ROTATION,
+      CP_TRANSLATION,
+      CP_TRANS_CAM_DIR,
+      CP_TRANS_N_DIR,
+      CONSTRAINT_AXIS,
+
+      INC_ROT_SMOOTHNESS, 
+      DEC_ROT_SMOOTHNESS, 
+      INC_TRA_SMOOTHNESS, 
+      DEC_TRA_SMOOTHNESS, 
+
+      SAVE_KEY_FRAME,
+      RUN_OR_STOP_ANIMATION,
+
+      EXIT
+    };
   };
 } // end namespace GLFW
   using GLFW::Basic_viewer;

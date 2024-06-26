@@ -65,12 +65,10 @@ public:
   }
 
   inline 
-  const mat4f& matrix() const
+  mat4f matrix() const
   {
     mat4f translation = transform::translation(m_translation);
-    mat3f rotation3x3 = m_orientation.toRotationMatrix();
-    mat4f rotation = mat4f::Identity();
-    rotation.block<3, 3>(0, 0) = rotation3x3;
+    mat4f rotation = transform::rotation(m_orientation);
 
     return translation * rotation;
   }

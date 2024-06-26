@@ -55,7 +55,7 @@ mat4f euler_angle_xy(float const &angleX, float const &angleY)
   return result;
 }
 
-mat4f PERSPECTIVE(float fov, float aspect, float zNear, float zFar)
+mat4f perspective(float fov, float aspect, float zNear, float zFar)
 {
   assert(std::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0);
 
@@ -134,6 +134,11 @@ vec3f mult_vec_mat(vec3f const &u, mat4f const &m)
   return u;
 }
 
+vec3f lerp(const vec3f& u, const vec3f& v, const float t)
+{
+  return u * (1 - t) + v * t;
+}
+
 namespace transform
 {
   mat4f rotationX(float theta)
@@ -158,6 +163,15 @@ namespace transform
   {
     Eigen::Affine3f transform{Eigen::AngleAxisf(theta, axis).toRotationMatrix()};
     return transform.matrix();
+  }
+
+  mat4f rotation(const quatf& quaternion)
+  {
+    mat3f rotation3x3 = quaternion.toRotationMatrix();
+    mat4f rotation = mat4f::Identity();
+    rotation.block<3, 3>(0, 0) = rotation3x3;
+
+    return rotation;
   }
 
   mat4f translation(vec3f v)
