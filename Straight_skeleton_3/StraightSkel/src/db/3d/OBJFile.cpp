@@ -141,8 +141,10 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                         double angle = 0.0;
                         CGAL::FT arg = 0.0;
 #ifdef USE_CGAL
+                        // @fixme tolerating this sqrt for now, but this should find an extremum vertex
+                        // in the face plane, and then do an orientation test with prev/next
                         arg = ((*normal_plane)*(*normal_sum)) /
-                                CGAL::approximate_sqrt(normal_plane->squared_length() * normal_sum->squared_length());
+                                CGAL::sqrt_with_warning(normal_plane->squared_length() * normal_sum->squared_length());
 #else
                         arg = ((*normal_plane)*(*normal_sum)) /
                                 sqrt(normal_plane->squared_length() * normal_sum->squared_length());

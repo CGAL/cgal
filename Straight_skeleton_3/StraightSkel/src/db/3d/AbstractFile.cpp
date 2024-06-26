@@ -51,16 +51,16 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
             length_l += (*normal_l)[i] * (*normal_l)[i];
             length_r += (*normal_r)[i] * (*normal_r)[i];
         }
-        length_l = CGAL::approximate_sqrt(length_l);
-        length_r = CGAL::approximate_sqrt(length_r);
+        // @fixme tolerate this sqrt for now because it doesn't matter for robustness
+        length_l = CGAL::sqrt_with_warning(length_l);
+        length_r = CGAL::sqrt_with_warning(length_r);
         CGAL::FT diff = 0.0;
-        CGAL::FT length_diff = 0.0;
+        CGAL::FT diff_sq_length = 0.0;
         for (unsigned int i = 0; i < 3; i++) {
             diff = ((*normal_l)[i]/length_l) - ((*normal_r)[i]/length_r);
-            length_diff += diff*diff;
+            diff_sq_length += diff*diff;
         }
-        length_diff = CGAL::approximate_sqrt(length_diff);
-        result = (length_diff < epsilon);
+        result = (diff_sq_length < CGAL::square(epsilon));
     }
     return result;
 }
