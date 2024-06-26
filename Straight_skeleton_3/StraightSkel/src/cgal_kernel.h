@@ -57,6 +57,20 @@ typedef K::Triangle_3     Triangle3;
 typedef K::Plane_3        Plane3;
 typedef K::Sphere_3       Sphere3;
 
+template <typename FT>
+decltype(auto) sqrt_with_warning(const FT& v)
+{
+  return CGAL::approximate_sqrt(v);
+}
+
+template <typename FT>
+FT disallowed_sqrt(const FT& v)
+{
+  CGAL_assertion(false);
+  std::exit(1);
+  return CGAL::approximate_sqrt(v);
+}
+
 } // namespace CGAL
 
 #else /* USE_CGAL */

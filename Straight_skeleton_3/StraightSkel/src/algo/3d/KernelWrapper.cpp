@@ -72,7 +72,7 @@ Point3SPtr KernelWrapper::intersection(Sphere3SPtr sphere, Line3SPtr line) {
     Point3SPtr p_center = KernelFactory::createPoint3(sphere);
     CGAL::FT radius;
 #ifdef USE_CGAL
-    radius = CGAL::approximate_sqrt(sphere->squared_radius());
+    radius = CGAL::disallowed_sqrt(sphere->squared_radius());
 #else
     radius = sphere->getRadius();
 #endif
@@ -83,7 +83,7 @@ Point3SPtr KernelWrapper::intersection(Sphere3SPtr sphere, Line3SPtr line) {
     if (dist == radius) {
         result = p_intersect;
     } else if (dist < radius) {
-        CGAL::FT amount = - CGAL::approximate_sqrt(radius*radius - dist*dist);
+        CGAL::FT amount = - CGAL::disallowed_sqrt(radius*radius - dist*dist);
         result = KernelFactory::createPoint3((*p_intersect) + ((*dir)*amount));
     }
     //DEBUG_SPTR(result);
@@ -92,6 +92,8 @@ Point3SPtr KernelWrapper::intersection(Sphere3SPtr sphere, Line3SPtr line) {
 
 Plane3SPtr KernelWrapper::bisector(Plane3SPtr plane1, Plane3SPtr plane2) {
     Plane3SPtr result = Plane3SPtr();
+    std::cout << "WARNING: YOU ARE CALLING A BISECTOR, THAT'S AN APPROXIMATE SQRT" << std::endl;
+    CGAL_assertion(false);
 #ifdef USE_CGAL
     result = KernelFactory::createPlane3(CGAL::bisector(*plane1, *plane2));
 #else
@@ -104,7 +106,7 @@ Plane3SPtr KernelWrapper::bisector(Plane3SPtr plane1, Plane3SPtr plane2) {
 CGAL::FT KernelWrapper::distance(Point3SPtr p1, Point3SPtr p2) {
     CGAL::FT result = 0.0;
 #ifdef USE_CGAL
-    result = CGAL::approximate_sqrt(CGAL::squared_distance(*p1, *p2));
+    result = CGAL::disallowed_sqrt(CGAL::squared_distance(*p1, *p2));
 #else
     result = kernel::distance(&(*p1), &(*p2));
 #endif
@@ -114,7 +116,7 @@ CGAL::FT KernelWrapper::distance(Point3SPtr p1, Point3SPtr p2) {
 CGAL::FT KernelWrapper::distance(Plane3SPtr plane, Point3SPtr point) {
     CGAL::FT result = 0.0;
 #ifdef USE_CGAL
-    result = CGAL::approximate_sqrt(CGAL::squared_distance(*plane, *point));
+    result = CGAL::disallowed_sqrt(CGAL::squared_distance(*plane, *point));
 #else
     result = kernel::distance(&(*plane), &(*point));
 #endif
@@ -124,7 +126,7 @@ CGAL::FT KernelWrapper::distance(Plane3SPtr plane, Point3SPtr point) {
 CGAL::FT KernelWrapper::distance(Line3SPtr line, Point3SPtr point) {
     CGAL::FT result = 0.0;
 #ifdef USE_CGAL
-    result = CGAL::approximate_sqrt(CGAL::squared_distance(*line, *point));
+    result = CGAL::disallowed_sqrt(CGAL::squared_distance(*line, *point));
 #else
     result = kernel::distance(&(*line), &(*point));
 #endif
@@ -146,7 +148,7 @@ Line3SPtr KernelWrapper::opposite(Line3SPtr line) {
 Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
     Vector3SPtr result;
 #ifdef USE_CGAL
-    result = KernelFactory::createVector3(*v / CGAL::approximate_sqrt(v->squared_length()));
+    result = KernelFactory::createVector3(*v / CGAL::disallowed_sqrt(v->squared_length()));
 #else
     result = KernelFactory::createVector3(v->normalize());
 #endif
@@ -169,13 +171,13 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
 # endif
     // std::cout << "normalization check: " << a*a + b*b + c*c << std::endl;
     CGAL_assertion_code(auto sq_n = a*a + b*b + c*c;)
-    CGAL_assertion((sq_n - 1) < 1e-5); // inexact sqrt errors
+    CGAL_assertion((sq_n - 1) < 1e-5); // inaccuracies during normalization since the sqrt is usually not exact
     result = KernelFactory::createPlane3(a, b, c, d - offset);
 #else // old code, unnecessary sqrt and constructions
     const Point3& p = plane->point();
 # ifdef USE_CGAL
     Vector3 v_norm = plane->orthogonal_vector();
-    Vector3 v_normal = v_norm / CGAL::approximate_sqrt(v_norm.squared_length());
+    Vector3 v_normal = v_norm / CGAL::disallowed_sqrt(v_norm.squared_length());
 # else
     Vector3 v_normal = plane->normal().normalize();
 # endif
@@ -321,7 +323,7 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
 Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::FT offset) {
     Point3SPtr result;
 #ifdef USE_CGAL
-    Vector3 dir_normalized = *dir / CGAL::approximate_sqrt(dir->squared_length());
+    Vector3 dir_normalized = *dir / CGAL::disallowed_sqrt(dir->squared_length());
     Point3 p_moved = *point + (dir_normalized * offset);
 #else
     Point3 p_moved = *point + (dir->normalize() * offset);
@@ -421,7 +423,7 @@ double KernelWrapper::angle(Vector3SPtr v1, Vector3SPtr v2) {
     double result = 0.0;
     CGAL::FT arg = 0.0;
 #ifdef USE_CGAL
-    arg = ((*v1)*(*v2)) / CGAL::approximate_sqrt(v1->squared_length() * v2->squared_length());
+    arg = ((*v1)*(*v2)) / CGAL::disallowed_sqrt(v1->squared_length() * v2->squared_length());
 #else
     arg = ((*v1)*(*v2)) / sqrt(v1->squared_length() * v2->squared_length());
 #endif

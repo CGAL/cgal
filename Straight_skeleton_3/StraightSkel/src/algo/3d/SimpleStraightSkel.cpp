@@ -3056,6 +3056,7 @@ void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
         const CGAL::FT b = plane->b();
         const CGAL::FT c = plane->c();
         const CGAL::FT d = plane->d();
+        // this should be the only place with unavoidable SQRTs
         const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
 #else
         const double a = plane->getA();

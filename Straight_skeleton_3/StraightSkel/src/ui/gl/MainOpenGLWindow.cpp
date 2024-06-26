@@ -763,7 +763,7 @@ void MainOpenGLWindow::drawPolyhedron(PolyhedronSPtr polyhedron, bool bold, bool
                 pos_norm[i] = (a[i] + b[i] + c[i]) / 3;
                 length_norm += (*normal)[i] * (*normal)[i];
             }
-            length_norm = CGAL::approximate_sqrt(length_norm);
+            length_norm = CGAL::sqrt_with_warning(length_norm);
             for (unsigned int i = 0; i < 3; i++) {
                 dir_norm[i] = CGAL::to_double((*normal)[i] / length_norm) * 0.5 * thickness_/scale_;
             }

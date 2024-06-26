@@ -222,11 +222,11 @@ bool SphericalPolygon::isConsistent() const  {
 CGAL::FT SphericalPolygon::getRadius() const {
     CGAL::FT result = 0.0;
     if (sphere_) {
-#ifdef USE_CGAL
-        result = CGAL::approximate_sqrt(sphere_->squared_radius());
-#else
+# ifdef USE_CGAL
+        result = CGAL::disallowed_sqrt(sphere_->squared_radius());
+# else
         result = sphere_->getRadius();
-#endif
+# endif
     }
     return result;
 }

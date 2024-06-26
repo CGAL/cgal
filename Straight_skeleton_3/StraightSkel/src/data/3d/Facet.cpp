@@ -667,7 +667,7 @@ bool Facet::makeFirstConvex() {
           double arg = 0.0;
 #ifdef USE_CGAL
           arg = CGAL::to_double(((*normal)*(*normal_current)) /
-                  CGAL::approximate_sqrt(normal->squared_length() * normal_current->squared_length()));
+                  CGAL::disallowed_sqrt(normal->squared_length() * normal_current->squared_length()));
 #else
           arg = ((*normal)*(*normal_current)) /
                   sqrt(normal->squared_length() * normal_current->squared_length());
@@ -737,7 +737,7 @@ data::_2d::PolygonSPtr Facet::toPolygon() {
         for (unsigned int i = 0; i < 3; i++) {
             length += n[i]*n[i];
         }
-        length = CGAL::approximate_sqrt(length);
+        length = CGAL::disallowed_sqrt(length);
         for (unsigned int i = 0; i < 3; i++) {
             n[i] /= length;
         }
@@ -746,7 +746,7 @@ data::_2d::PolygonSPtr Facet::toPolygon() {
     for (unsigned int i = 0; i < 3; i++) {
         length += (*normal)[i] * (*normal)[i];
     }
-    length = CGAL::approximate_sqrt(length);
+    length = CGAL::disallowed_sqrt(length);
     // alpha = acos((normal * [0 0 1]) / normal.length())
     double alpha = acos(CGAL::to_double((*normal)[2] / length));
     const CGAL::FT cos_alpha = std::cos(alpha);

@@ -482,13 +482,13 @@ double Edge::angle() const {
         FacetSPtr facet_r = facet_r_.lock();
         Vector3SPtr v1 = KernelFactory::createVector3(facet_l->plane());
         Vector3SPtr v2 = KernelFactory::createVector3(facet_r->plane());
-#ifdef USE_CGAL
+# ifdef USE_CGAL
         result = acos(CGAL::to_double(((*v1) * (*v2)) /
-                   CGAL::approximate_sqrt(v1->squared_length() * v2->squared_length())));
-#else
+                   CGAL::disallowed_sqrt(v1->squared_length() * v2->squared_length())));
+# else
         result = acos(((*v1) * (*v2)) /
                    sqrt(v1->squared_length() * v2->squared_length()));
-#endif
+# endif
         result = M_PI - result;
         if (isReflex()) {
             result = 2.0*M_PI - result;
@@ -568,13 +568,13 @@ double Edge::angleTo(EdgeSPtr edge) const {
                     *(edge->getVertexSrc()->getPoint()) - *(edge->getVertexDst()->getPoint()));
         }
         double angle = 0.0;
-#ifdef USE_CGAL
+# ifdef USE_CGAL
         angle = acos(CGAL::to_double(((*dir_self) * (*dir_other)) /
-                CGAL::approximate_sqrt(dir_self->squared_length() * dir_other->squared_length())));
-#else
+                CGAL::disallowed_sqrt(dir_self->squared_length() * dir_other->squared_length())));
+# else
         angle = acos(((*dir_self) * (*dir_other)) /
                 sqrt(dir_self->squared_length() * dir_other->squared_length()));
-#endif
+# endif
         if ((facet_l == edge->getFacetR() && facet_r == edge->getFacetL()) ||
                 (facet_l == edge->getFacetL() && facet_r == edge->getFacetR())) {
             if (angle < M_PI/2.0) {
@@ -585,15 +585,15 @@ double Edge::angleTo(EdgeSPtr edge) const {
         } else {
             result = angle;
             double angle_normal = 0.0;
-#ifdef USE_CGAL
+# ifdef USE_CGAL
             Vector3 crossprod = CGAL::cross_product(*dir_self, *dir_other);
             angle_normal = acos(CGAL::to_double(((*normal) * crossprod) /
-                    CGAL::approximate_sqrt(normal->squared_length() * crossprod.squared_length())));
-#else
+                    CGAL::disallowed_sqrt(normal->squared_length() * crossprod.squared_length())));
+# else
             Vector3 crossprod = dir_self->cross(*dir_other);
             angle_normal = acos(((*normal) * crossprod) /
                     sqrt(normal->squared_length() * crossprod.squared_length()));
-#endif
+# endif
             if (angle_normal > M_PI/2.0) {
                 result += M_PI;
             }

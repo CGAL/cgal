@@ -45,6 +45,7 @@ Point2SPtr KernelWrapper::intersection(Line2SPtr line1, Line2SPtr line2) {
 Line2SPtr KernelWrapper::bisector(Line2SPtr line1, Line2SPtr line2) {
     Line2SPtr result = Line2SPtr();
 #ifdef USE_CGAL
+    std::cout << "WARNING: YOU ARE CALLING A BISECTOR (2D), THAT'S AN APPROXIMATE SQRT" << std::endl;
     result = KernelFactory::createLine2(CGAL::bisector(*line1, *line2));
 #else
     result = Line2SPtr(kernel::bisector(&(*line1), &(*line2)));
