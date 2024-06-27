@@ -1,10 +1,9 @@
 #include "hexmeshing.h"
 #include "utils.h"
 
-int main()
+int pattern_substitution()
 {
   LCC lcc;
-  Pattern_substituer<LCC> ps, pss;
   auto d1=
     lcc.make_hexahedron(Point(0,0,0), Point(5,0,0),
                         Point(5,5,0), Point(0,5,0),
@@ -25,9 +24,6 @@ int main()
 
   lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
   lcc.sew<3>(lcc.beta(d1, 0, 2), lcc.beta(d3, 1, 2));
-
-  // Load seperatly the partial 3 template
-  pss.load_vpatterns(CGAL::data_file_path("hexmeshing/vpattern/partial"));
 
   lcc.display_characteristics(std::cout);
 
@@ -60,4 +56,31 @@ int main()
 
   render(lcc, toprocess_mark, debug_edge_mark);
   return EXIT_SUCCESS;
+}
+
+int grid_test() {
+  using namespace CGAL::HexRefinement::TwoRefinement;
+
+  LCC lcc;
+  auto grid = generate_grid(lcc, Point(0,0,0), 5, 10);
+  
+  lcc.display_characteristics(std::cout);
+
+  auto m1 = lcc.get_new_mark();
+  auto m2 = lcc.get_new_mark();
+
+  mark_nodes_in_cell_pair(lcc, grid, Plane::ZX, m1, m1);
+
+  // auto a =  lcc.beta(lcc.first_dart(), 0, 2, 0);
+  // mark_face(lcc, a, m2);
+  // lcc.mark_cell<0>(a, m1);
+
+  render(lcc, m1, m2);
+
+  return EXIT_SUCCESS;
+}
+
+
+int main(){
+  return grid_test();
 }
