@@ -9,6 +9,7 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/aff_transformation_tags.h>
+#include <functional>
 
 #include "../query_replace/cmap_query_replace.h"
 #include "../query_replace/init_to_preserve_for_query_replace.h"
@@ -32,6 +33,13 @@ size_type debug_edge_mark;
  */
 
 namespace CGAL::HexRefinement::TwoRefinement {
+  enum Plane { XY, YZ, ZX, YX = XY, ZY = YZ, XZ = ZX };
+  struct Grid { 
+    Point center;
+    float half_size;
+    int nb_subdiv_per_dim;
+  };
+
   std::vector<Dart_handle> marked_cells_in_hex(LCC& lcc, Dart_handle& dart, size_type mark){
     auto checked_mark = lcc.get_new_mark();
     auto darts_of_volume = lcc.darts_of_cell<3>(dart);
@@ -137,7 +145,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     lcc.sew<3>(face1, face2);
   }
 
-  void refine_marked_hexes(LCC &lcc, Pattern_substituer<LCC> &ps_regular, Pattern_substituer<LCC> &ps_partial_3t, size_type toprocess_mark, size_type corner_mark)
+  void refine_marked_hexes(LCC &lcc, Pattern_substituer<LCC> &ps_regular, Pattern_substituer<LCC> &ps_partial_3t, size_type template_mark, size_type corner_mark)
   {
     // Replace all faces that has a matching fpattern
     std::vector<Dart_handle> marked_cells;
@@ -156,7 +164,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     int nbsub = 0;
     for (auto& dart : marked_cells)
     {
-      if (ps_regular.query_replace_one_face(lcc, dart, toprocess_mark) != SIZE_T_MAX) nbsub++;
+      if (ps_regular.query_replace_one_face(lcc, dart, template_mark) != SIZE_T_MAX) nbsub++;
     }
 
     std::cout << nbsub << " Faces substitution was made" << std::endl;
@@ -174,7 +182,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
         dit++)
     {
       Dart_handle dart = dit;
-      std::vector mcell_in_hex  = marked_cells_in_hex(lcc, dart, toprocess_mark);
+      std::vector mcell_in_hex = marked_cells_in_hex(lcc, dart, template_mark);
 
       if (mcell_in_hex.size() == 3){
         volumes_3_template.push_back(mcell_in_hex);
@@ -201,7 +209,104 @@ namespace CGAL::HexRefinement::TwoRefinement {
     std::cout << nbsub << " volumic substitution was made" << std::endl;
   }
 
-  void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_cells, size_type toprocess_mark)
+  void __mark_line(LCC& lcc, Dart_handle dit, std::vector<Dart_handle> &marked_cells, size_type template_mark, int nb_subdiv){
+    // Mark the first cell
+    lcc.mark_cell<0>(dit, template_mark);
+
+    // Mark the line 
+    for (int i = 0; i < nb_subdiv; i++) {
+      // Dart on the next vertex
+      dit = lcc.beta(dit, 0);
+      
+      // Change volume (if exists)
+      if (i < nb_subdiv - 1) 
+        dit = lcc.beta(dit, 0, 2, 3, 2); 
+      
+      lcc.mark_cell<0>(dit, template_mark);
+      marked_cells.push_back(dit);
+    }
+  }
+
+  Dart_handle __next_even_plane(LCC& lcc, Dart_handle start_plane, Plane plane){
+    int f = plane == Plane::YX ? 1 : 0;
+    return lcc.beta(start_plane, f, 2, 3, 2, f, f, 2, 3, 2, f);
+  }
+
+  Dart_handle __first_vertex_of_even_plane(LCC& lcc, Plane plane) {
+    switch (plane){
+      case YZ: return lcc.beta(lcc.first_dart(), 0, 2, 1, 2, 3, 2, 1); 
+      case XY: return lcc.beta(lcc.first_dart(), 2);
+      case ZX: return lcc.beta(lcc.first_dart(), 0, 2, 0);
+    }
+
+    CGAL_assertion_msg(false, "Unexpected value for plane");
+    return lcc.null_dart_descriptor;
+  }
+
+  // renommer  : between cell pairs
+  std::vector<Dart_handle> mark_nodes_in_cell_pair(LCC& lcc, Grid grid, Plane plane, size_type identified_mark, size_type template_mark){
+    std::vector<Dart_handle> marked_cells;
+    
+    // Method:  iterate line by line the studied plane (2d), 
+    // To get the next vertex on the line, we use the third dimension, because it is garanted to have an other plane of volume behind
+    // because we are operating on every even plane of the grid. 
+
+    // the first dart is the lowest in coordinates (-x, -y, -z), pointing towards -z; on the ZX plane  
+    Dart_handle start_plane = __first_vertex_of_even_plane(lcc, plane);
+    Dart_handle start_line = start_plane; // plan xy
+
+    int nb_subdiv = grid.nb_subdiv_per_dim;
+
+    for (int z = 0; z < nb_subdiv / 2; z++) {
+      for (int x = 0; x < nb_subdiv; x++){
+        __mark_line(lcc, start_line, marked_cells, template_mark, nb_subdiv);
+        
+        // Walk to the next line 
+        start_line = lcc.beta(start_line, 2, 0, 0, 2); 
+
+        if (x < nb_subdiv - 1) start_line = lcc.beta(start_line, 3);
+      }
+      
+      // The last starting dart is of opposite direction, walk backward into the odd plane
+      // for the dart to be incident from the proper vertex
+      start_line = lcc.beta(start_line, 1, 2, 3, 2, 1);
+      __mark_line(lcc, start_line, marked_cells, template_mark, nb_subdiv);
+
+      // Walk to the next even plane
+      start_plane = __next_even_plane(lcc, start_plane, plane); 
+      start_line = start_plane;
+    }
+
+    return marked_cells;
+
+  }
+
+  Grid generate_grid(LCC& lcc, Point center, float half_size, int nb_subdiv_per_dim) {
+    float s = (2*half_size) / nb_subdiv_per_dim;
+
+    CGAL_precondition_msg((nb_subdiv_per_dim % 2) == 0, "nb_subdiv must be even");
+
+    // hexahedron translated by pos
+    Vector pos;
+
+    for (int x = 0; x < nb_subdiv_per_dim; x++) {
+      for (int y = 0; y < nb_subdiv_per_dim; y++) {
+        for (int z = 0; z < nb_subdiv_per_dim; z++) {
+          pos = {x * s, y * s, z * s};
+          lcc.make_hexahedron(Point(0,0,0) + pos, Point(s,0,0) + pos,
+                              Point(s,s,0) + pos, Point(0,s,0) + pos,
+                              Point(0,s,s) + pos, Point(0,0,s) + pos,
+                              Point(s,0,s) + pos, Point(s,s,s) + pos);
+        }
+      }
+    }
+
+    lcc.sew3_same_facets();
+
+    return Grid{.center = center, .half_size = half_size, .nb_subdiv_per_dim = nb_subdiv_per_dim };
+  }
+
+  void create_vertices_for_templates(LCC &lcc, std::vector<Dart_handle>& marked_cells, size_type template_mark)
   {
 
     // 2 noeuds marqué l'un à coté de l'autre ne produit pas de sommet
@@ -224,7 +329,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
           continue;
 
         // If the node is next to an other marked node, we don't have to create vertices
-        if (lcc.is_marked(lcc.beta<1>(nit), toprocess_mark)){
+        if (lcc.is_marked(lcc.beta<1>(nit), template_mark)){
           lcc.mark_cell<1>(nit, arrete_done);
           continue;
         }
@@ -270,11 +375,37 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
 namespace CGAL::HexRefinement {
 
-  // TODO complete algorithm
-  void tworefinement(LCC& lcc); 
+  // Identifies which 3-cell should be refined 
+  using MarkingFunction = std::function<void(LCC&, size_type)>;
+
+  void tworefinement(LCC& lcc, MarkingFunction cellIdentifier) {
+    using namespace TwoRefinement;
+
+    LCC lcc_grid;
+    
+    Pattern_substituer<LCC> ps_regular, ps_partial_3t;
+    load_patterns(ps_regular, ps_partial_3t);
+
+  
+    auto identified_mark = lcc.get_new_mark();
+    auto template_mark = lcc.get_new_mark();
+    auto corner_mark = lcc.get_new_mark();
+    lcc.negate_mark(corner_mark);
+
+
+    Grid grid = generate_grid(lcc_grid, Point(0,0,0), 5, 10);
+
+    cellIdentifier(lcc_grid, identified_mark);
+
+    std::vector<Dart_handle> marked_cells = mark_nodes_in_cell_pair(lcc, grid, Plane::XY, identified_mark, template_mark);
+    create_vertices_for_templates(lcc, marked_cells, template_mark);
+    refine_marked_hexes(lcc, ps_regular, ps_partial_3t, template_mark, corner_mark);
+
+    lcc.free_mark(corner_mark);
+  } 
 
   // temporaire
-  void tworefinement_one_step_from_marked(LCC& lcc, std::vector<Dart_handle> marked_cells, size_type toprocess_mark) {
+  void tworefinement_one_step_from_marked(LCC& lcc, std::vector<Dart_handle> marked_cells, size_type template_mark) {
     using namespace TwoRefinement;
 
     Pattern_substituer<LCC> ps_regular, ps_partial_3t;
@@ -283,8 +414,8 @@ namespace CGAL::HexRefinement {
     auto corner_mark = lcc.get_new_mark();
     lcc.negate_mark(corner_mark);
 
-    create_vertices_for_templates(lcc, marked_cells, toprocess_mark);
-    refine_marked_hexes(lcc, ps_regular, ps_partial_3t, toprocess_mark, corner_mark);
+    create_vertices_for_templates(lcc, marked_cells, template_mark);
+    refine_marked_hexes(lcc, ps_regular, ps_partial_3t, template_mark, corner_mark);
 
     lcc.free_mark(corner_mark);
   }
