@@ -33,6 +33,7 @@ public:
     static unsigned int hasSelfIntersectingFacets(PolyhedronSPtr polyhedron);
 
     static Plane3SPtr bisector(FacetSPtr facet, VertexSPtr vertex);
+    static CGAL::Sign SideOfBisector(FacetSPtr facet, VertexSPtr vertex, Point3SPtr point);
     static EdgeSPtr findNearestEdge(FacetSPtr facet, Point3SPtr point);
     static bool isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool handle_deg1_as_ray);
     static bool hasSelfIntersectingSurface(PolyhedronSPtr polyhedron);

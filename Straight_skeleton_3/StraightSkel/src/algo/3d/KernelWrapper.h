@@ -60,6 +60,7 @@ public:
     static Plane3SPtr bisector(Plane3SPtr plane1, Plane3SPtr plane2);
 
     static CGAL::FT squared_distance(Point3SPtr p1, Point3SPtr p2);
+    static CGAL::FT squared_distance(Segment3SPtr segment, Point3SPtr point);
     static CGAL::FT squared_distance(Line3SPtr line, Point3SPtr point);
 
     static CGAL::FT distance(Point3SPtr p1, Point3SPtr p2);

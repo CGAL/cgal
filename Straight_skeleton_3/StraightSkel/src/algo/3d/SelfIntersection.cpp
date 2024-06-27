@@ -27,6 +27,7 @@
 
 namespace algo { namespace _3d {
 
+// @todo all of this should be a predicate
 Point3SPtr SelfIntersection::intersectEdges(FacetSPtr facet,
         EdgeSPtr edge1, EdgeSPtr edge2, bool handle_deg1_as_ray)
 {
@@ -160,6 +161,8 @@ Plane3SPtr SelfIntersection::bisector(FacetSPtr facet, VertexSPtr vertex) {
         if (KernelWrapper::side(plane_in, p_out) > 0) {
             reflex = true;
         }
+
+        // p_out is on the positive side of the bisector
         if (!reflex) {
             result = KernelWrapper::bisector(
                     KernelWrapper::opposite(plane_in), plane_out);
@@ -167,10 +170,103 @@ Plane3SPtr SelfIntersection::bisector(FacetSPtr facet, VertexSPtr vertex) {
             result = KernelWrapper::bisector(
                     plane_in, KernelWrapper::opposite(plane_out));
         }
+
+        CGAL_postcondition(KernelWrapper::side(result, p_out) >= 0);
     }
     return result;
 }
 
+// Returns:
+// - ON_POSITIVE_SIDE  if the query is on the positive side (see below for definition)
+//   of the planar bisector of the two edges incident to 'vertex'.
+// - ON_ORIENTED_BOUNDARY if the query is on the bisector
+// - ON_NEGATIVE_SIDE if the query is on the negative side of the bisector
+//
+// The positive side of the bisector is the side that has p_out
+// in the following (facet seen from above):
+//
+//                         | <-- planar bisector (positive side is here)
+//                         |
+//           edge_in       |          edge_out
+//  p_in --------------> vertex -------------------> p_out
+//                         |
+//                         |
+//
+// \pre `point` is coplanar with the edges incident to `vertex`
+CGAL::Sign SelfIntersection::SideOfBisector(FacetSPtr facet, VertexSPtr vertex, Point3SPtr point) {
+#ifndef USE_CGAL
+# error "This function is not compatible with the old kernel
+#endif
+
+    CGAL_precondition(vertex->degree() > 1);
+
+    CGAL::Sign result;
+    EdgeSPtr edge_in;
+    EdgeSPtr edge_out;
+
+    std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
+    while (it_e != vertex->edges().end()) {
+        EdgeWPtr edge_wptr = *it_e++;
+        if (!edge_wptr.expired()) {
+            EdgeSPtr edge(edge_wptr);
+            if (edge->src(facet) == vertex) {
+                edge_out = edge;
+            } else if (edge->dst(facet) == vertex) {
+                edge_in = edge;
+            }
+        }
+    }
+
+    if (edge_in && edge_out) {
+        // @fixme plenty of constructions below
+        Point3SPtr p_mid = vertex->getPoint();
+        Point3SPtr p_in = edge_in->src(facet)->getPoint();
+        Point3SPtr p_out = edge_out->dst(facet)->getPoint();
+        Vector3SPtr normal = KernelFactory::createVector3(facet->plane());
+        Point3SPtr p_normal = KernelFactory::createPoint3(*point + *normal);
+
+        CGAL::Orientation or_in = CGAL::orientation(*p_mid, *p_normal, *p_in, *point);
+        CGAL::Orientation or_out = CGAL::orientation(*p_mid, *p_out, *p_normal, *point);
+
+        CGAL::FT sq_dist_in = KernelWrapper::squared_distance(edge_in->line(), point);
+        CGAL::FT sq_dist_out = KernelWrapper::squared_distance(edge_out->line(), point);
+        std::cout << "sq_dist_in = " << sq_dist_in << std::endl;
+        std::cout << "sq_dist_out = " << sq_dist_out << std::endl;
+
+        if(or_in == CGAL::POSITIVE) {
+            if(or_out == CGAL::POSITIVE) {
+                // upper quadrant
+                result = CGAL::compare(sq_dist_out, sq_dist_in);
+            } else { // or_out != CGAL::POSITIVE
+                // in quadrant (left in convex, right in reflex)
+                if(*point == *p_mid) {
+                  result = CGAL::ON_ORIENTED_BOUNDARY;
+                } else {
+                  result = CGAL::ON_NEGATIVE_SIDE;
+                }
+            }
+        } else { // or_in != CGAL::POSITIVE
+            if(or_out == CGAL::POSITIVE) {
+                // out quadrant (left in reflex, right in convex)
+                if(*point == *p_mid) {
+                    result = CGAL::ON_ORIENTED_BOUNDARY;
+                } else {
+                    result = CGAL::ON_POSITIVE_SIDE;
+                }
+            } else { // or_out != CGAL::POSITIVE
+                // bottom quadrant
+                result = CGAL::compare(sq_dist_in, sq_dist_out);
+            }
+        }
+    } else {
+        CGAL_unreachable();
+    }
+
+    return result;
+}
+
+// @todo could be improved by storing the previous (query, edge) position
+// --> for consecutive edges only!
 EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
     EdgeSPtr result;
     CGAL::FT sq_dist_min = std::numeric_limits<double>::max(); // do not put FT
@@ -179,33 +275,59 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
         EdgeSPtr edge = *it_e++;
         VertexSPtr vertex_src = edge->src(facet);
         VertexSPtr vertex_dst = edge->dst(facet);
+
         bool point_inside_bounds = true;
-        Plane3SPtr bisector_src;
-        Plane3SPtr bisector_dst;
 
         if (vertex_src->degree() > 1) {
-            bisector_src = bisector(facet, vertex_src);
+// #define USE_OLD_FIND_NEAREST_EDGE_CODE
+#ifdef USE_OLD_FIND_NEAREST_EDGE_CODE
+            Plane3SPtr bisector_src = bisector(facet, vertex_src);
             if (bisector_src) {
                 if (KernelWrapper::side(bisector_src, point) < 0) {
                     point_inside_bounds = false;
                 }
             }
+
+            // if(!point_inside_bounds) {
+            //    CGAL_assertion(SideOfBisector(facet, vertex_src, point) == CGAL::ON_NEGATIVE_SIDE);
+            // } else {
+            //    CGAL_assertion(SideOfBisector(facet, vertex_src, point) != CGAL::ON_NEGATIVE_SIDE);
+            // }
+#else
+            CGAL::Sign res = SideOfBisector(facet, vertex_src, point);
+            if (res == CGAL::ON_NEGATIVE_SIDE) {
+                point_inside_bounds = false;
+            }
+#endif
         }
 
         if(point_inside_bounds) {
-          if (vertex_dst->degree() > 1) {
-              bisector_dst = bisector(facet, vertex_dst);
-              if (bisector_dst) {
-                  if (KernelWrapper::side(bisector_dst, point) > 0) {
-                      point_inside_bounds = false;
-                  }
-              }
-          }
+            if (vertex_dst->degree() > 1) {
+#ifdef USE_OLD_FIND_NEAREST_EDGE_CODE
+                Plane3SPtr bisector_dst = bisector(facet, vertex_dst);
+                if (bisector_dst) {
+                    if (KernelWrapper::side(bisector_dst, point) > 0) {
+                        point_inside_bounds = false;
+                    }
+                }
+
+                // if(!point_inside_bounds) {
+                //    CGAL_assertion(SideOfBisector(facet, vertex_src, point) == CGAL::ON_POSITIVE_SIDE);
+                // } else {
+                //    CGAL_assertion(SideOfBisector(facet, vertex_src, point) != CGAL::ON_POSITIVE_SIDE);
+                // }
+#else
+                CGAL::Sign res = SideOfBisector(facet, vertex_dst, point);
+                if (res == CGAL::ON_POSITIVE_SIDE) {
+                    point_inside_bounds = false;
+                }
+#endif
+            }
         }
 
         if (point_inside_bounds) {
             CGAL::FT sq_dist = KernelWrapper::squared_distance(edge->line(), point);
-            if (sq_dist < sq_dist_min) {
+            if (sq_dist < sq_dist_min) { // @fixme construction
                 result = edge;
                 sq_dist_min = sq_dist;
             }
@@ -220,6 +342,8 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool ha
     if (edge->getFacetL() == facet || edge->getFacetR() == facet) {
         return false;
     }
+
+    // @fixme? isn't it possible to have an edge coplanar with the facet?
     if (facet->containsVertex(edge->getVertexSrc()) ||
             facet->containsVertex(edge->getVertexDst())) {
         return false;
@@ -251,6 +375,9 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool ha
             EdgeSPtr edge_nearest = findNearestEdge(facet, point);
             Line3SPtr line_nearest = edge_nearest->line();
             if (edge_nearest->getFacetL() == facet) {
+                // @fixme the point could be aligned with the nearest edge
+                // (but currently it's fine because the closest edge is found using
+                // bisectors)
                 if (KernelWrapper::orientation(line_nearest, line_point) >= 0) {
                     result = true;
                 }

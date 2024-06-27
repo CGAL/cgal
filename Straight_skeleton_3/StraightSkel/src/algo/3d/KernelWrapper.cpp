@@ -123,6 +123,16 @@ CGAL::FT KernelWrapper::squared_distance(Line3SPtr line, Point3SPtr point) {
     return result;
 }
 
+CGAL::FT KernelWrapper::squared_distance(Segment3SPtr segment, Point3SPtr point) {
+    CGAL::FT result = 0.0;
+#ifdef USE_CGAL
+    result = CGAL::squared_distance(*segment, *point);
+#else
+    result = kernel::squared_distance(&(*segment), &(*point));
+#endif
+    return result;
+}
+
 CGAL::FT KernelWrapper::distance(Point3SPtr p1, Point3SPtr p2) {
     CGAL::FT result = 0.0;
 #ifdef USE_CGAL
