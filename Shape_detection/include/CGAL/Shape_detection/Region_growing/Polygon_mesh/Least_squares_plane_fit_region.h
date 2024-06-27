@@ -19,6 +19,7 @@
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 namespace CGAL {
 namespace Shape_detection {
@@ -83,11 +84,15 @@ namespace Polygon_mesh {
     using Point_3 = typename GeomTraits::Point_3;
     using Vector_3 = typename GeomTraits::Vector_3;
     using Plane_3 = typename GeomTraits::Plane_3;
+    using Triangle_3 = typename GeomTraits::Triangle_3;
 
     using Squared_length_3 = typename GeomTraits::Compute_squared_length_3;
     using Squared_distance_3 = typename GeomTraits::Compute_squared_distance_3;
     using Scalar_product_3 = typename GeomTraits::Compute_scalar_product_3;
     using Cross_product_3 = typename GeomTraits::Construct_cross_product_vector_3;
+
+    std::unordered_map<Item, Vector_3, internal::hash_item<Item> > m_face_normals;
+    std::unordered_map<Item, std::vector<Triangle_3>, internal::hash_item<Item> > m_face_triangulations;
 
   public:
     /// \name Initialization
@@ -157,6 +162,28 @@ namespace Polygon_mesh {
     m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
     m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
     m_cross_product_3(m_traits.construct_cross_product_vector_3_object()) {
+
+      for (const Item &i : faces(pmesh)) {
+        m_face_normals[i] = Polygon_mesh_processing::compute_face_normal(i, pmesh);
+        std::vector<Point_3> pts;
+        auto h = halfedge(i, pmesh);
+        auto s = h;
+
+        do {
+          pts.push_back(get(m_vertex_to_point_map, target(h, pmesh)));
+          h = next(h, pmesh);
+        } while (h != s);
+
+        std::vector<CGAL::Triple<int, int, int>> output;
+
+        Polygon_mesh_processing::triangulate_hole_polyline(pts, std::back_inserter(output), parameters::use_2d_constrained_delaunay_triangulation(true));
+
+        std::vector<Triangle_3>& tris = m_face_triangulations[i];
+        tris.reserve(output.size());
+        assert(!output.empty());
+        for (const auto& t : output)
+          tris.push_back(Triangle_3(pts[t.first], pts[t.second], pts[t.third]));
+      }
 
       CGAL_precondition(faces(m_face_graph).size() > 0);
       const FT max_distance = parameters::choose_parameter(
@@ -234,7 +261,7 @@ namespace Polygon_mesh {
       const FT squared_distance_threshold =
         m_distance_threshold * m_distance_threshold;
 
-      const Vector_3 face_normal = get_face_normal(query);
+      const Vector_3 face_normal = m_face_normals.at(query);
       const FT cos_value = m_scalar_product_3(face_normal, m_normal_of_best_fit);
       const FT squared_cos_value = cos_value * cos_value;
 
@@ -284,7 +311,7 @@ namespace Polygon_mesh {
         // The best fit plane will be a plane through this face centroid with
         // its normal being the face's normal.
         const Point_3 face_centroid = get_face_centroid(face);
-        const Vector_3 face_normal = get_face_normal(face);
+        const Vector_3 face_normal = m_face_normals.at(face);
         if (face_normal == CGAL::NULL_VECTOR) return false;
 
         CGAL_precondition(face_normal != CGAL::NULL_VECTOR);
@@ -308,15 +335,15 @@ namespace Polygon_mesh {
       // The best fit plane will be a plane fitted to all vertices of all
       // region faces with its normal being perpendicular to the plane.
       // Given that the points, and no normals, are used in estimating
-      // the plane, the estimated normal will point into an arbitray
+      // the plane, the estimated normal will point into an arbitrary
       // one of the two possible directions.
       // We flip it into the correct direction (the one that the majority
       // of faces agree with) below.
       // This fix is proposed by nh2:
       // https://github.com/CGAL/cgal/pull/4563
       const Plane_3 unoriented_plane_of_best_fit =
-        internal::create_plane_from_faces(
-          m_face_graph, region, m_vertex_to_point_map, m_traits).first;
+        internal::create_plane_from_triangulated_faces(
+          m_face_graph, region, m_face_triangulations, m_traits).first;
       const Vector_3 unoriented_normal_of_best_fit =
         unoriented_plane_of_best_fit.orthogonal_vector();
 
@@ -325,7 +352,7 @@ namespace Polygon_mesh {
       // Approach: each face gets one vote to keep or flip the current plane normal.
       long votes_to_keep_normal = 0;
       for (const auto &face : region) {
-        const Vector_3 face_normal = get_face_normal(face);
+        const Vector_3 face_normal = m_face_normals.at(face);
         const bool agrees =
           m_scalar_product_3(face_normal, unoriented_normal_of_best_fit) > FT(0);
         votes_to_keep_normal += (agrees ? 1 : -1);
@@ -381,25 +408,6 @@ namespace Polygon_mesh {
       y /= sum;
       z /= sum;
       return Point_3(x, y, z);
-    }
-
-    // Compute normal of the face.
-    template<typename Face>
-    Vector_3 get_face_normal(const Face& face) const {
-
-      const auto hedge = halfedge(face, m_face_graph);
-      const auto vertices = vertices_around_face(hedge, m_face_graph);
-      CGAL_precondition(vertices.size() >= 3);
-
-      auto vertex = vertices.begin();
-      const Point_3& point1 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point2 = get(m_vertex_to_point_map, *vertex); ++vertex;
-      const Point_3& point3 = get(m_vertex_to_point_map, *vertex);
-
-      const Vector_3 u = point2 - point1;
-      const Vector_3 v = point3 - point1;
-      const Vector_3 face_normal = m_cross_product_3(u, v);
-      return face_normal;
     }
 
     // The maximum squared distance from the vertices of the face
