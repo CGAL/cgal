@@ -1033,10 +1033,11 @@ Point3SPtr SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2)
     CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(edge_2->getFacetR()->getData())->getSpeed();
 
     Point3SPtr point = KernelWrapper::intersectionOffsetPlanes(plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
+
     if(!point)
         return point;
 
-    bool inside_bounds = true;
+    // Check that the point is inside bounds
     FacetSPtr facet_1_src = getFacetSrc(edge_1);
     FacetSPtr facet_1_dst = getFacetDst(edge_1);
     FacetSPtr facet_2_src = getFacetSrc(edge_2);
@@ -1044,7 +1045,7 @@ Point3SPtr SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2)
     Vector3SPtr normal_1 = KernelFactory::createVector3(data_1->getSheet()->getPlane());
     Line3SPtr line_normal_1 = KernelFactory::createLine3(point, normal_1);
     if (KernelWrapper::orientation(line(edge_1), line_normal_1) <= 0) {
-        inside_bounds = false;
+        return {};
     }
     if (!(facet_1_src == edge_2->getFacetL() ||
             facet_1_src == edge_2->getFacetR())) {
@@ -1052,7 +1053,7 @@ Point3SPtr SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2)
             edge_1->getVertexSrc()->getData());
         ArcSPtr arc_1_src = data_1_src->getArc();
         if (KernelWrapper::orientation(arc_1_src->line(), line_normal_1) > 0) {
-            inside_bounds = false;
+            return {};
         }
     }
     if (!(facet_1_dst == edge_2->getFacetL() ||
@@ -1061,13 +1062,13 @@ Point3SPtr SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2)
             edge_1->getVertexDst()->getData());
         ArcSPtr arc_1_dst = data_1_dst->getArc();
         if (KernelWrapper::orientation(arc_1_dst->line(), line_normal_1) < 0) {
-            inside_bounds = false;
+            return {};
         }
     }
     Vector3SPtr normal_2 = KernelFactory::createVector3(data_2->getSheet()->getPlane());
     Line3SPtr line_normal_2 = KernelFactory::createLine3(point, normal_2);
     if (KernelWrapper::orientation(line(edge_2), line_normal_2) <= 0) {
-        inside_bounds = false;
+        return {};
     }
     if (!(facet_2_src == edge_1->getFacetL() ||
             facet_2_src == edge_1->getFacetR())) {
@@ -1075,7 +1076,7 @@ Point3SPtr SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2)
             edge_2->getVertexSrc()->getData());
         ArcSPtr arc_2_src = data_2_src->getArc();
         if (KernelWrapper::orientation(arc_2_src->line(), line_normal_2) > 0) {
-            inside_bounds = false;
+            return {};
         }
     }
     if (!(facet_2_dst == edge_1->getFacetL() ||
@@ -1084,16 +1085,14 @@ Point3SPtr SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2)
             edge_2->getVertexDst()->getData());
         ArcSPtr arc_2_dst = data_2_dst->getArc();
         if (KernelWrapper::orientation(arc_2_dst->line(), line_normal_2) < 0) {
-            inside_bounds = false;
+            return {};
         }
     }
 
-    if (inside_bounds)
-      return point;
-    else
-      return Point3SPtr();
+    return point;
 }
 
+// this one does an early exit if the result is irrelevant (in the past or too far in the)
 std::pair<Point3SPtr, CGAL::FT>
 SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
                             const CGAL::FT offset_max) {
@@ -1132,7 +1131,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     if(offset_event > 0 || offset_event <= offset_max)
       return { Point3SPtr(), offset_event };
 
-    bool inside_bounds = true;
+    // Check that the point is inside bounds
     FacetSPtr facet_1_src = getFacetSrc(edge_1);
     FacetSPtr facet_1_dst = getFacetDst(edge_1);
     FacetSPtr facet_2_src = getFacetSrc(edge_2);
@@ -1140,7 +1139,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     Vector3SPtr normal_1 = KernelFactory::createVector3(data_1->getSheet()->getPlane());
     Line3SPtr line_normal_1 = KernelFactory::createLine3(point, normal_1);
     if (KernelWrapper::orientation(line(edge_1), line_normal_1) <= 0) {
-        inside_bounds = false;
+        return {};
     }
     if (!(facet_1_src == edge_2->getFacetL() ||
             facet_1_src == edge_2->getFacetR())) {
@@ -1148,7 +1147,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
             edge_1->getVertexSrc()->getData());
         ArcSPtr arc_1_src = data_1_src->getArc();
         if (KernelWrapper::orientation(arc_1_src->line(), line_normal_1) > 0) {
-            inside_bounds = false;
+            return {};
         }
     }
     if (!(facet_1_dst == edge_2->getFacetL() ||
@@ -1157,13 +1156,13 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
             edge_1->getVertexDst()->getData());
         ArcSPtr arc_1_dst = data_1_dst->getArc();
         if (KernelWrapper::orientation(arc_1_dst->line(), line_normal_1) < 0) {
-            inside_bounds = false;
+            return {};
         }
     }
     Vector3SPtr normal_2 = KernelFactory::createVector3(data_2->getSheet()->getPlane());
     Line3SPtr line_normal_2 = KernelFactory::createLine3(point, normal_2);
     if (KernelWrapper::orientation(line(edge_2), line_normal_2) <= 0) {
-        inside_bounds = false;
+        return {};
     }
     if (!(facet_2_src == edge_1->getFacetL() ||
             facet_2_src == edge_1->getFacetR())) {
@@ -1171,7 +1170,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
             edge_2->getVertexSrc()->getData());
         ArcSPtr arc_2_src = data_2_src->getArc();
         if (KernelWrapper::orientation(arc_2_src->line(), line_normal_2) > 0) {
-            inside_bounds = false;
+            return {};
         }
     }
     if (!(facet_2_dst == edge_1->getFacetL() ||
@@ -1180,14 +1179,11 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
             edge_2->getVertexDst()->getData());
         ArcSPtr arc_2_dst = data_2_dst->getArc();
         if (KernelWrapper::orientation(arc_2_dst->line(), line_normal_2) < 0) {
-            inside_bounds = false;
+            return {};
         }
     }
 
-    if (inside_bounds)
-      return { point, offset_event };
-    else
-      return { Point3SPtr(), offset_event };
+    return { point, offset_event };
 }
 
 CGAL::FT SimpleStraightSkel::offsetDist(FacetSPtr facet, Point3SPtr point) {
