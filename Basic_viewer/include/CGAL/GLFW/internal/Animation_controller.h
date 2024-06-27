@@ -17,6 +17,8 @@ struct CameraKeyFrame {
       orientation(_orientation) 
     {
     }
+
+    CameraKeyFrame() : position(vec3f::Identity()), orientation(quatf::Identity()) {}
 };
 
 class Animation_controller 
@@ -27,12 +29,13 @@ public:
   using KeyFrameBuffer = std::vector<CameraKeyFrame>;
 public:
   Animation_controller() 
-  : m_duration(5s), 
+  : m_duration(2s), 
     m_startTime(), 
     m_isRunning(false),
     m_lastFrame(0.00), 
     m_currentFrame(0.00), 
     m_timestamp(0.00),
+    m_lastFrameData(),
     m_interpolatedRotation(quatf::Identity()),
     m_interpolatedTranslation(vec3f::Identity())
   {
@@ -53,33 +56,26 @@ public:
   }
 
   inline 
-  mat4f run() 
+  CameraKeyFrame run() 
   {
     if (m_keyFrames.size() <= 1) 
     {
       stop(0.00);
-      return mat4f::Identity();
+      return m_lastFrameData;
     }
 
-    if (m_isRunning)
+    auto now = std::chrono::steady_clock::now();
+    double elapsedTime = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - m_startTime).count());
+    m_currentFrame = m_lastFrame + elapsedTime;
+    if (m_currentFrame >= static_cast<double>(m_duration.count())) 
     {
-      auto now = std::chrono::steady_clock::now();
-      m_currentFrame = m_lastFrame + static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - m_startTime).count());
-      std::cout << "current frame : " << m_currentFrame << '\n';
-      std::cout << "last frame : " << m_lastFrame << '\n';
-      std::cout << "duration : " << static_cast<double>(m_duration.count()) << '\n';
-      // std::cout << "animation is running since " << m_currentFrame << '\n';
-      if (m_currentFrame >= static_cast<double>(m_duration.count())) 
-      {
-        stop(0.00);
-        m_lastFrame = 0.00;
-        m_currentFrame = 0.00;
-      }
-
-      return key_frame_interpolation(m_currentFrame);
+      m_currentFrame = 0.00;
+      stop(0.00);
+      return m_lastFrameData;
     }
 
-    return mat4f::Identity();
+    m_lastFrameData = key_frame_interpolation(m_currentFrame); 
+    return m_lastFrameData;
   }
 
   inline 
@@ -88,7 +84,6 @@ public:
     std::cout << "animation stopped" << '\n';
     m_isRunning = false;
     m_lastFrame = frame;
-    std::cout << "last frame : " << m_lastFrame << "\n\n";
   }
 
   inline 
@@ -141,7 +136,7 @@ private:
   const double EPSILON = 0.001;
 
   inline 
-  mat4f key_frame_interpolation(const double time)
+  CameraKeyFrame key_frame_interpolation(const double time)
   {
     assert(m_timestamp > 0.00 + EPSILON || m_timestamp < 0.00 - EPSILON);
 
@@ -159,10 +154,7 @@ private:
 
     m_interpolatedTranslation = lerp(keyFrame0.position, keyFrame1.position, t);
 
-    mat4f rotation = transform::rotation(m_interpolatedRotation);
-    mat4f translation = transform::translation(-m_interpolatedTranslation);
-
-    return rotation * translation;
+    return {m_interpolatedTranslation, m_interpolatedRotation};
   }
 
   inline 
@@ -185,6 +177,8 @@ private:
   DurationType m_duration;   
 
   TimePoint m_startTime; 
+
+  CameraKeyFrame m_lastFrameData;
 
   bool m_isRunning;
 };

@@ -375,17 +375,17 @@ namespace GLFW {
   inline
   void Basic_viewer::update_uniforms(const double deltaTime)
   {
+    m_camera.update(deltaTime);
+    m_clippingPlane.update(deltaTime);
+
     if (m_animationController.is_running())
     {
-      m_modelViewMatrix = m_animationController.run();
+      auto animationFrame = m_animationController.run();
+      m_camera.set_orientation(animationFrame.orientation);
+      m_camera.set_position(animationFrame.position);
     }
-    else 
-    {
-      m_camera.update(deltaTime);
-      m_clippingPlane.update(deltaTime);
-      mat4f view = m_camera.view();
-      m_modelViewMatrix = view;
-    }
+
+    m_modelViewMatrix = m_camera.view();
 
     mat4f projection = m_camera.projection(m_windowSize.x(), m_windowSize.y());
     m_modelViewProjectionMatrix = projection * m_modelViewMatrix;
@@ -978,21 +978,25 @@ namespace GLFW {
       m_drawXYGrid = !m_drawXYGrid;
       break;
     case SAVE_KEY_FRAME:
-      m_animationController.add_key_frame(
-        m_camera.get_position(),
-        m_camera.get_orientation()
-      );
+      if (m_camera.is_orbiter())
+      {
+        m_animationController.add_key_frame(
+          m_camera.get_position(),
+          m_camera.get_orientation()
+        );
+      }
       break;
     case RUN_OR_STOP_ANIMATION:
-      if (m_animationController.is_running()) 
+      if (m_camera.is_orbiter())
       {
-        m_animationController.stop(m_animationController.get_frame());
-        m_camera.set_orientation(m_animationController.get_rotation());
-        m_camera.set_position(m_animationController.get_translation());
-      }
-      else 
-      {
-        m_animationController.start();
+        if (m_animationController.is_running()) 
+        {
+          m_animationController.stop(m_animationController.get_frame());
+        }
+        else 
+        {
+          m_animationController.start();
+        }
       }
     }
   }

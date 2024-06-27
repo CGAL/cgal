@@ -1,6 +1,8 @@
 #ifndef CGAL_CAMERA_H
 #define CGAL_CAMERA_H
 
+#include <vector>
+
 #include "utils.h"
 
 class Camera
@@ -45,9 +47,6 @@ public:
 
   mat4f viewport() const;
 
-  mat4f image_toWorld() const;
-  void frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const;
-
   vec3f get_position() const;
   vec3f forward_direction() const;
   vec3f right_direction() const;
@@ -58,7 +57,7 @@ public:
   inline float get_size() const { return m_size; }
 
   void reset_position();
-  void reset_rotation();
+  void reset_orientation();
   void reset_all();
 
   void align_to_nearest_axis();
@@ -260,7 +259,7 @@ void Camera::move(const float z)
   else // free fly
   {
     vec3f forward = forward_direction();
-    m_targetPosition -= forward * m_size * z * m_translationSpeed;
+    m_targetPosition += forward * m_size * z * m_translationSpeed;
   }
 }
 
@@ -327,6 +326,8 @@ void Camera::set_position(const vec3f& position)
 { 
   m_position = position; 
   m_targetPosition = position; 
+  m_size = position.z();
+  m_targetSize = position.z();
 }
 
 inline 
@@ -411,27 +412,35 @@ mat4f Camera::viewport() const
 inline 
 vec3f Camera::get_position() const
 {
-  mat4f v = view();
-  mat4f vi = v.inverse();
+  // mat4f v = view();
+  // mat4f vi = v.inverse();
 
-  vec3f o(0.f, 0.f, 0.f);
-  return mult_vec_mat(o, vi);
+  // vec3f o(0.f, 0.f, 0.f);
+  // return mult_vec_mat(o, vi);
+  if (is_orbiter()) 
+  {
+    return vec3f(m_position.x(), m_position.y(), m_size);
+  }
+  else 
+  {
+    return vec3f(m_position.x(), m_position.y(), m_position.z() + m_size);
+  } 
 }
 
 inline 
 vec3f Camera::forward_direction() const
 {
   vec3f forward;
-  if (is_orbiter()) 
-  {
-    forward.x() = m_center.x() - get_position().x();
-    forward.y() = m_center.y() - get_position().y();
-    forward.z() = m_center.z() - get_position().z();
-  }
-  else 
-  {
-    forward = m_orientation.inverse() * vec3f::UnitZ();
-  }
+  // if (is_orbiter()) 
+  // {
+  //   forward.x() = m_center.x() - get_position().x();
+  //   forward.y() = m_center.y() - get_position().y();
+  //   forward.z() = m_center.z() - get_position().z();
+  // }
+  // else 
+  // {
+    forward = m_orientation.inverse() * -vec3f::UnitZ();
+  // }
 
   return forward.normalized();
 }
@@ -455,7 +464,7 @@ vec3f Camera::up_direction() const
 }
 
 inline 
-void Camera::reset_rotation() 
+void Camera::reset_orientation() 
 { 
   m_pitch = 0.f; 
   m_yaw = 0; 
@@ -476,41 +485,13 @@ inline
 void Camera::reset_all()
 {
   reset_position();
-  reset_rotation();
+  reset_orientation();
   m_size = m_constSize;
   m_targetSize = m_constSize;
   m_fov = 45.f;
   m_zoomSmoothFactor = .1f;
   m_rotationSmoothFactor = .1f;
   m_translationSmoothFactor = .1f;
-}
-
-inline 
-mat4f Camera::image_toWorld() const 
-{
-  mat4f v = view();
-  mat4f p = projection();
-  mat4f vp = viewport();
-  mat4f w2i = vp * p * v;    
-
-  return w2i.inverse();
-}
-
-
-inline 
-void Camera::frame(const float z, vec3f &dO, vec3f &dx, vec3f &dy) const
-{
-  mat4f i2w = image_toWorld(); // passage de l'image vers le monde
-
-  vec3f uo(0, 0, z);
-  vec3f ux(1, 0, z);
-  vec3f uy(0, 1, z);
-  dO = mult_vec_mat(uo, i2w);
-  vec3f d1 = mult_vec_mat(ux, i2w); // récupère la colonne x
-  vec3f d2 = mult_vec_mat(uy, i2w); // récupère la colonne y
-
-  dx = subVec(dO, d1);
-  dy = subVec(dO, d2);
 }
 
 
