@@ -228,7 +228,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
   }
 
   Dart_handle __next_even_plane(LCC& lcc, Dart_handle start_plane, Plane plane){
-    int f = plane == Plane::YX ? 1 : 0;
+    int f = plane == Plane::ZY ? 1 : 0;
     return lcc.beta(start_plane, f, 2, 3, 2, f, f, 2, 3, 2, f);
   }
 
