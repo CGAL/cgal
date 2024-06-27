@@ -86,7 +86,7 @@ public:
       *m_p.holes_begin()->vertices_begin() + Vector_2(ORIGIN, t);
 
     // Use bounded_side_2() instead of on_bounded_side() because the latter
-    // checks vor simplicity every time.
+    // checks for simplicity every time.
     bool in_mp(true);
     if (! m_p.outer_boundary().is_empty())
       in_mp =

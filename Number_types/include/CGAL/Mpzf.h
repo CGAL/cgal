@@ -168,7 +168,7 @@ template <class T, class = void> struct pool3 {
     T data_ = 0;
     ~cleaner(){
       // Deallocate everything. As an alternative, we could store it in a
-      // global location, for re-use by a later thread.
+      // global location, for reuse by a later thread.
       while (!empty())
         delete[] (pop() - (extra + 1));
     }

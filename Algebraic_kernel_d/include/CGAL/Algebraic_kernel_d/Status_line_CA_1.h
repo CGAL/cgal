@@ -135,7 +135,7 @@ public:
     //! curve has vertical line at this x-coordinate
     mutable bool _m_vertical_line;
 
-    //! decsribes an event
+    //! describes an event
     mutable bool _m_event;
 
     //! number of arcs running down the pole

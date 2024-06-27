@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the PCA demo.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Principal_component_analysis_Demo)
 
 include_directories(./)

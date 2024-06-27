@@ -488,7 +488,7 @@ void Surface_sweep_2<Vis>::_remove_curve_from_status_line(Subcurve* leftCurve,
     return;
   }
 
-  // the subcurve will be removed for good from the stauts line, we need
+  // the subcurve will be removed for good from the status line, we need
   // to check for intersection between his two neighbors (below and above him)
   // but we need to make sure that its not the first or last subcurve
   // at the status line.
@@ -827,13 +827,13 @@ void Surface_sweep_2<Vis>::_create_intersection_point(const Point_2& xp,
     }
     else {
       if ((multiplicity % 2) == 1) {
-        // The mutiplicity of the intersection point is odd: Swap their
+        // The multiplicity of the intersection point is odd: Swap their
         // order to the right of this point.
         std::swap(c1,c2);
         e->add_curve_pair_to_right(c1, c2);
       }
       else {
-        // The mutiplicity of the intersection point is even, so they
+        // The multiplicity of the intersection point is even, so they
         // maintain their order to the right of this point.
         CGAL_assertion((multiplicity % 2) == 0);
         e->add_curve_pair_to_right(c1, c2);

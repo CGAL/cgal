@@ -60,7 +60,7 @@
 - `CGAL::Cartesian<FieldNumberType>`
 - `CGAL::Cartesian_converter<K1, K2, NTConverter>`
 - `CGAL::cartesian_to_homogeneous`
-- `CGAL::Filtered_kernel<CK>`
+- `CGAL::Filtered_kernel<CK,UseStaticFilters>`
 - `CGAL::Filtered_kernel_adaptor<CK>`
 - `CGAL::Filtered_predicate<EP, FP, C2E, C2F>`
 - `CGAL::Homogeneous<RingNumberType>`

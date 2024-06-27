@@ -130,7 +130,7 @@ struct Transform {
 /*!\brief
  * class template \c Curve_renderer_traits
  *
- * this traits class prodives various number type conversions for the
+ * this traits class provides various number type conversions for the
  * curve renderer
  */
 

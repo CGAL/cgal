@@ -175,7 +175,7 @@ for each boundary that does not contain the defining contour edge of its inciden
 </center>
 \cgalFigureCaptionBegin{SLSArtificial}
 A polygon with four holes (black) and its straight skeleton (red).
-Three artifical bisectors (green) are added in a post-processing step to recover the simply-connected
+Three artificial bisectors (green) are added in a post-processing step to recover the simply-connected
 property for the straight skeleton face (gray) of the rightmost vertical contour edge.
 \cgalFigureCaptionEnd
 

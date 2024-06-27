@@ -250,6 +250,29 @@ private:
     FT& operator[] (const std::size_t& idx) { return m_bary[idx]; }
   };
 
+  // Wrapper for thread safety of maintained cell hint for fast
+  // locate, with conversions atomic<Cell*>/Cell_handle
+  class Cell_hint
+  {
+    std::atomic<Cell*> m_cell;
+  public:
+
+    Cell_hint() : m_cell(nullptr) { }
+
+    // Poisson_reconstruction_function should be copyable, although we
+    // don't need to copy that
+    Cell_hint(const Cell_hint&) : m_cell(nullptr) { }
+
+    Cell_handle get() const
+    {
+      if(m_cell == nullptr)
+        return {};
+      else
+        return Triangulation_data_structure::Cell_range::s_iterator_to(*m_cell);
+    }
+    void set (Cell_handle ch) { m_cell = ch.operator->(); }
+  };
+
 // Data members.
 // Warning: the Surface Mesh Generation package makes copies of implicit functions,
 // thus this class must be lightweight and stateless.

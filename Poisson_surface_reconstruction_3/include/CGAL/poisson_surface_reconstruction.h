@@ -1,4 +1,4 @@
-// Copyright (c) 2017  GeometryFactory (France)
+// Copyright (c) 2017, 2024  GeometryFactory (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -7,17 +7,19 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
-// Author(s)     : Simon Giraudot
+// Author(s)     : Simon Giraudot, Jane Tournois
 
 #ifndef CGAL_POISSON_SURFACE_RECONSTRUCTION_H
 #define CGAL_POISSON_SURFACE_RECONSTRUCTION_H
 
 #include <CGAL/license/Poisson_surface_reconstruction_3.h>
 
-#include <CGAL/Surface_mesh_default_triangulation_3.h>
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/make_mesh_3.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/property_map.h>
 
@@ -97,9 +99,10 @@ namespace CGAL {
     typedef typename Kernel::FT FT;
 
     typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
-    typedef typename CGAL::Surface_mesher::Surface_mesh_default_triangulation_3_generator<Kernel>::Type STr;
-    typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-    typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+    typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+    typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Sequential_tag>::type Tr;
+    typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+    typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
     Poisson_reconstruction_function function(begin, end, point_map, normal_map);
     if ( ! function.compute_implicit_function() )
@@ -112,26 +115,34 @@ namespace CGAL {
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance * spacing / 1000.0;
 
-    Surface_3 surface(function,
-                      Sphere (inner_point, sm_sphere_radius * sm_sphere_radius),
-                      sm_dichotomy_error / sm_sphere_radius);
+    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, Sphere(inner_point, sm_sphere_radius),
+      CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria (sm_angle,
-                                                         sm_radius * spacing,
-                                                         sm_distance * spacing);
+    Mesh_criteria criteria(CGAL::parameters::facet_angle = sm_angle,
+                           CGAL::parameters::facet_size = sm_radius*spacing,
+                           CGAL::parameters::facet_distance = sm_distance*spacing);
 
-    STr tr;
-    C2t3 c2t3(tr);
 
-    CGAL::make_surface_mesh(c2t3,
-                            surface,
-                            criteria,
-                            tag);
+    auto turn_tag_into_mesh_3_manifold_option = [](Tag) {
+      if constexpr (std::is_same_v<Tag, CGAL::Manifold_with_boundary_tag>)
+        return CGAL::parameters::manifold_with_boundary();
+      else if constexpr (std::is_same_v<Tag, CGAL::Manifold_tag>)
+        return CGAL::parameters::manifold();
+      else
+        return CGAL::parameters::non_manifold();
+    };
+
+    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                        turn_tag_into_mesh_3_manifold_option(tag)
+                                        .no_exude().no_perturb()
+                                        .manifold_with_boundary());
+
+    const auto& tr = c3t3.triangulation();
 
     if(tr.number_of_vertices() == 0)
       return false;
 
-    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
 
     return true;
   }
