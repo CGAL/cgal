@@ -99,6 +99,7 @@ int main(int argc, char** argv)
   {
     std::vector<std::pair<double, double>> polar_coords =
       PMP::convert_polygon_to_polar_coordinates<K>(polygon, center_2);
+    if (polygon.front()==polygon.back()) polar_coords.pop_back();
 
     std::vector<K::Vector_2> directions;
     std::vector<K::FT> lens;
@@ -112,10 +113,10 @@ int main(int argc, char** argv)
     }
 
     // last point is duplicated
-    std::vector<K::Point_3> out_polygon = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
+    std::vector<Face_location> out_polygon = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
     out << out_polygon.size();
     for (auto p : out_polygon)
-      out << " " << p;
+      out << " " << PMP::construct_point(p, mesh);
     out << std::endl;
   }
 
@@ -124,14 +125,14 @@ int main(int argc, char** argv)
   out.open("geodesic_polygons.polylines.txt");
   out << std::setprecision(17);
 
-  std::vector<std::vector<K::Point_3>> polygons_3
+  std::vector<std::vector<Face_location>> polygons_3
     = PMP::trace_geodesic_polygons<K>(center, polygons, scaling, mesh, solver);
 
   for (const auto& polygon : polygons_3)
   {
     out << polygon.size();
     for (auto p : polygon)
-      out << " " << p;
+      out << " " << PMP::construct_point(p, mesh);
     out << std::endl;
   }
 
@@ -147,9 +148,20 @@ int main(int argc, char** argv)
   {
     out << polygon.size();
     for (auto p : polygon)
-      out << " " << p;
+      out << " " << PMP::construct_point(p, mesh);
     out << std::endl;
   }
+
+  // now refine the input mesh
+  std::vector<Mesh::Halfedge_index> cst_hedges;
+  PMP::refine_mesh_along_paths<K>(polygons_3, mesh, std::back_inserter(cst_hedges));
+
+  std::ofstream("mesh_refined.off") << std::setprecision(17) << mesh;
+
+  std::ofstream cst_edges("refinement_edges.polylines.txt");
+  cst_edges.precision(17);
+  for (Mesh::Halfedge_index h : cst_hedges)
+    cst_edges << "2 " << mesh.point(source(h,mesh)) << " " << mesh.point(target(h,mesh)) << "\n";
 
   return 0;
 }
