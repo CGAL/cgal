@@ -354,8 +354,7 @@ LCC3::Dart_handle make_one_hexa(LCC3& lcc, double x1, double y1, double z1,
                                 double x2, double y2, double z2)
 {
   LCC3::Dart_handle dh = lcc.make_hexahedron
-    (LCC3::Point(x1, y1, z1),
-     LCC3::Point(x2, y1, z1),
+    (LCC3::Point(x1, y1, z1), LCC3::Point(x2, y1, z1),
      LCC3::Point(x2, y2, z1),
      LCC3::Point(x1, y2, z1),
      LCC3::Point(x1, y2, z2),
