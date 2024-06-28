@@ -39,6 +39,8 @@
 #include <CGAL/Union_find.h>
 #include <CGAL/intersection_3.h>
 #include <CGAL/iterator.h>
+#include <CGAL/Iterator_range.h>
+
 
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/generators.h>
@@ -52,14 +54,15 @@
 
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
 
-#include <boost/graph/filtered_graph.hpp>
-#include <boost/graph/breadth_first_search.hpp>
-#include <boost/dynamic_bitset.hpp>
 
 #include <boost/container/flat_set.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/dynamic_bitset.hpp>
+#include <boost/graph/breadth_first_search.hpp>
+#include <boost/graph/filtered_graph.hpp>
+#include <boost/iterator/filter_iterator.hpp>
 #include <boost/iterator/function_output_iterator.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <algorithm>
 #include <optional>
@@ -72,9 +75,10 @@
 #  error "Compiler needs <format>"
 #endif
 
-#ifndef DOXYGEN_RUNNING
 
 namespace CGAL {
+
+#ifndef DOXYGEN_RUNNING
 
 template <class K>
 typename K::Boolean
@@ -469,32 +473,46 @@ class Constrained_Delaunay_triangulation_3_impl;
 
 /*!
  * \ingroup PkgCT_3Classes
- * \brief The class Constrained_Delaunay_triangulation_3 represents a 3D constrained Delaunay triangulation.
+ * \brief The class Constrained_Delaunay_triangulation_3 template represents a 3D constrained Delaunay triangulation.
  *
- * This class contains a data member of type `Triangulation_3` and provides additional functionality for handling
+ * This class contains a data member of type `Triangulation` and provides additional functionality for handling
  * polygonal constraints during the triangulation process.
  *
- * \todo Explain what is a CDT. Why a given input, like a polyhedron, might not admit a constrained Delaunay triangulation.
- * Explain "conforming to the faces of a polygon mesh".
- *
  * \tparam Traits is the geometric traits class and must be a model of `ConstrainedDelaunayTriangulationTraits_3`.
- * \tparam Triangulation_3 is the base triangulation class.
- *         It must be a an instance of the `Triangulation_3` class template with the same `Traits` template parameter.
+ * \tparam Triangulation is the underlying triangulation class.
+ *         It must be a an instance of the `CGAL::Triangulation_3` class template with the same `Traits` template parameter.
  *         Its `Vertex` type must be a model of `ConstrainedDelaunayTriangulationVertexBase_3`,
  *         and its `Cell` type must be a model of `ConstrainedDelaunayTriangulationCellBase_3`.
  *         <br>
  *         The default value is `Triangulation_3<Traits, TDS>` where `TDS` is
  *         `Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>`.
  *
- * @cgalModels{MeshComplex_2InTriangulation_3}
- *
  */
-template <typename Traits, typename Triangulation_3>
+template <typename Traits, typename Triangulation>
 class Constrained_Delaunay_triangulation_3 {
-  using DT_3 = Delaunay_triangulation_3<Traits, typename Triangulation_3::Triangulation_data_structure>;
-  static_assert(std::is_base_of_v<Triangulation_3, DT_3>);
+  using DT_3 = Delaunay_triangulation_3<Traits, typename Triangulation::Triangulation_data_structure>;
+  static_assert(std::is_base_of_v<Triangulation, DT_3>);
+  static_assert(CGAL::is_nothrow_movable_v<DT_3>);
+
   Constrained_Delaunay_triangulation_3_impl<DT_3> cdt_impl = {};
+  static_assert(CGAL::is_nothrow_movable_v<Constrained_Delaunay_triangulation_3_impl<DT_3>>);
+
+  struct Is_constrained {
+    const Constrained_Delaunay_triangulation_3& cdt;
+    bool operator()(typename Triangulation::Facet f) const {
+      return cdt.is_facet_constrained(f);
+    }
+  };
 public:
+  /// \name Constructors
+  /// @{
+  /*!
+    * \brief Default constructor.
+    *
+    * This constructor initializes an empty `Constrained_Delaunay_triangulation_3` object.
+    */
+  Constrained_Delaunay_triangulation_3() = default;
+
   /*!
     * \brief Create a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
     *
@@ -534,13 +552,12 @@ public:
     *   \cgalParamNBegin{face_patch_map}
     *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`}
     *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
-    *                   as key type and with any value type that is a *regular* type}
+    *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
     *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered as a separate patch.}
     *   \cgalParamExtra{Faces with the same patch identifier are considered as part of the same surface patch.}
     *   \cgalParamNEnd
     * \cgalNamedParamsEnd
     *
-    * \todo Create a documentation page to describe the concept *regular*, and link it to https://en.cppreference.com/w/cpp/concepts/regular
     */
   template <typename PolygonMesh, typename NamedParams = parameters::Default_named_parameters>
   Constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const NamedParams& np = parameters::default_values())
@@ -554,8 +571,8 @@ public:
     auto mesh_face_patch_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_patch),
                                                             boost::identity_property_map{});
 
-    using Vertex_handle = typename Triangulation_3::Vertex_handle;
-    using Cell_handle = typename Triangulation_3::Cell_handle;
+    using Vertex_handle = typename Triangulation::Vertex_handle;
+    using Cell_handle = typename Triangulation::Cell_handle;
     auto tr_vertex_map = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
     Cell_handle hint_ch{};
     for(auto v : vertices(mesh)) {
@@ -574,31 +591,158 @@ public:
     // std::cerr << cdt_3_format("cdt_impl: {} vertices, {} cells\n", cdt_impl.number_of_vertices(),
     //                          cdt_impl.number_of_cells());
   }
+  /// @} // end constructors section
 
+  /// \name Accessors for the Underlying Triangulation
+  /// @{
   /*!
     * \brief Get a const reference to the triangulation.
     *
-    * This function returns a const reference to the base triangulation used by the constrained Delaunay triangulation.
+    * This function returns a const reference to the underlying triangulation used
+    * by the constrained Delaunay triangulation.
     * That allows to use all non-modifying functions of the base triangulation.
-    *
-    * \return A const reference to the triangulation.
     */
-  const Triangulation_3& triangulation() & {
+  const Triangulation& triangulation() & {
     return cdt_impl;
   }
 
   /*!
-    * \brief Get an rvalue-reference to the triangulation, if `*this` is itself an rvalue.
+    * \brief Returns the triangulation.
     *
-    * This function returns an rvalue-reference to the triangulation used by the constrained Delaunay triangulation.
-    * That allows to move the triangulation our of this object.
+    * This function returns the triangulation used by the constrained Delaunay triangulation.
+    * That allows to move the triangulation out of this object.
     *
-    * \return An rvalue-reference to the triangulation.
+    * \note This function is only available if the object is an rvalue.
+    * \post The object is equal to the default constructed object.
     */
-  Triangulation_3&& triangulation() && {
-    Triangulation_3&& t = std::move(cdt_impl);
-    return std::move(t);
+  Triangulation triangulation() && {
+    Triangulation t = std::move(cdt_impl);
+    *this = Constrained_Delaunay_triangulation_3{};
+    return t;
   }
+  /// @} // end triangulation section
+
+  /// \cond SKIP_IN_MANUAL
+  Constrained_Delaunay_triangulation_3 convert_for_remeshing() && {
+    auto& tr = cdt_impl;
+    for(auto vh : tr.all_vertex_handles()) {
+      vh->sync();
+    }
+
+    for(auto ch : tr.all_cell_handles()) {
+      ch->set_subdomain_index(1);
+    }
+
+    std::stack<decltype(tr.infinite_cell())> stack;
+    stack.push(tr.infinite_cell());
+    while(!stack.empty()) {
+      auto ch = stack.top();
+      stack.pop();
+      ch->set_subdomain_index(0);
+      for(int i = 0; i < 4; ++i) {
+              if(ch->is_facet_on_surface(i))
+                continue;
+              auto n = ch->neighbor(i);
+              if(n->subdomain_index() == 1) {
+                stack.push(n);
+              }
+      }
+    }
+    Constrained_Delaunay_triangulation_3 result{std::move(*this)};
+    static_assert(CGAL::is_nothrow_movable_v<Constrained_Delaunay_triangulation_3>);
+    static_assert(std::is_same_v<std::remove_reference_t<decltype(*this)>, Constrained_Delaunay_triangulation_3>);
+    *this = Constrained_Delaunay_triangulation_3{};
+    return result;
+  }
+  /// \endcond
+  // end SKIP_IN_MANUAL for convert_for_remeshing
+
+  /**
+   * A bidirectional iterator to visit all the facets of the triangulation which are constrained.
+     The value type of this iterator is `Facet`.
+   */
+#ifndef DOXYGEN_RUNNING
+  using Constrained_facets_iterator =
+      boost::filter_iterator<Is_constrained, typename Triangulation::All_facets_iterator>;
+#else
+  using Constrained_facets_iterator = unspecified_type;
+#endif
+
+  /**
+   * A range type to iterate over the constrained faets.
+   */
+  using Constrained_facets_range = CGAL::Iterator_range<Constrained_facets_iterator>;
+
+  /// \name Accessors for Constrained Facets
+  /// @{
+  /*!
+   * \brief Check if a facet is constrained.
+   *
+   * This function checks if a given facet is constrained, i.e., if it belongs to a polygonal constraint.
+   *
+   * \param f The facet to check.
+   * \return `true` if the facet is constrained, `false` otherwise.
+   */
+  bool is_facet_constrained(typename Triangulation::Facet f) const {
+    return cdt_impl.is_facet_constrained(f);
+  }
+
+  /*!
+   * \brief Check if a facet is constrained.
+   *
+   * This function checks if a given facet is constrained, i.e., if it belongs to a polygonal constraint.
+   *
+   * \param ch The cell handle.
+   * \param index The index of the facet.
+   * \return `true` if the facet is constrained, `false` otherwise.
+   */
+  bool is_facet_constrained(typename Triangulation::Cell_handle ch, int index) const {
+    return cdt_impl.is_facet_constrained(typename Triangulation::Facet(ch, index));
+  }
+
+  /*!
+   * \brief Get the number of constrained facets in the triangulation.
+   *
+   * This function returns the number of facets in the triangulation that are constrained,
+   * i.e., that belong to a polygonal constraint.
+   *
+   * \return The number of constrained facets.
+   */
+  typename Triangulation::size_type number_of_constrained_facets() const {
+    static_assert(std::is_same_v<decltype(cdt_impl.number_of_constrained_facets()), std::ptrdiff_t>);
+    static_assert(std::is_same_v<typename Triangulation::size_type, std::size_t>);
+    return static_cast<typename Triangulation::size_type>(cdt_impl.number_of_constrained_facets());
+  }
+
+  /**
+   * \brief Returns an iterator pointing to the beginning of the constrained facets.
+   *
+   * This function returns an iterator pointing to the beginning of the constrained facets in the triangulation.
+   *
+   * \return An iterator pointing to the beginning of the constrained facets.
+   */
+  Constrained_facets_iterator constrained_facets_begin() const {
+    return {Is_constrained{*this}, cdt_impl.all_facets_begin(), cdt_impl.all_facets_end()};
+  }
+
+  /**
+   * \brief Returns an iterator pointing to the end of the constrained facets.
+   *
+   * This function returns an iterator pointing to the end of the constrained facets in the triangulation.
+   *
+   * \return An iterator pointing to the end of the constrained facets.
+   */
+  Constrained_facets_iterator constrained_facets_end() const {
+    return {Is_constrained{*this}, cdt_impl.all_facets_end(), cdt_impl.all_facets_end()};
+  }
+
+  /**
+   * \brief Returns a range of the constrained facets.
+   */
+  Constrained_facets_range constrained_facets() const {
+    return {constrained_facets_begin(), constrained_facets_end()};
+  }
+  /// @} // end constrained facets section
 };
 
 #ifndef DOXYGEN_RUNNING
@@ -607,6 +751,7 @@ template <typename T_3>
 class Constrained_Delaunay_triangulation_3_impl : public Conforming_Delaunay_triangulation_3<T_3> {
 public:
   using Conforming_Dt = Conforming_Delaunay_triangulation_3<T_3>;
+  using Conforming_Dt::tr;
 
   using Vertex_handle = typename T_3::Vertex_handle;
   using Edge = typename T_3::Edge;
@@ -649,8 +794,7 @@ private:
 
       using Projection_traits_3<Geom_traits>::Projection_traits_3; // inherit cstr
     };
-    static_assert(std::is_nothrow_move_constructible<Projection_traits>::value,
-                  "move cstr is missing");
+    static_assert(CGAL::is_nothrow_movable<Projection_traits>::value);
 
     struct Vertex_info {
       Vertex_handle vertex_handle_3d = {};
@@ -699,10 +843,7 @@ private:
   using CDT_2_traits = typename CDT_2_types::Projection_traits;
   using CDT_2_face_handle = typename CDT_2::Face_handle;
   using CDT_2_edge = typename CDT_2::Edge;
-  static_assert(std::is_nothrow_move_constructible<CDT_2>::value,
-                "move cstr is missing");
-  static_assert(std::is_nothrow_move_assignable<CDT_2>::value,
-                "move assignment is missing");
+  static_assert(CGAL::is_nothrow_movable_v<CDT_2>);
 
 protected:
   struct PLC_error : Error_exception {
@@ -720,7 +861,7 @@ protected:
 
   void register_facet_to_be_constrained(Cell_handle cell, int facet_index) {
     const auto face_id = static_cast<std::size_t>(cell->cdt_3_data().face_constraint_index(facet_index));
-    this->face_constraint_misses_subfaces.set(face_id);
+    this->face_constraint_misses_subfaces_set(face_id);
     auto fh_2 = cell->cdt_3_data().face_2(this->face_cdt_2[face_id], facet_index);
     fh_2->info().facet_3d = {};
     fh_2->info().missing_subface = true;
@@ -733,26 +874,26 @@ protected:
   }
 
   class Insert_in_conflict_visitor {
-    Constrained_Delaunay_triangulation_3_impl<T_3> &self;
+    Constrained_Delaunay_triangulation_3_impl<T_3> * self;
     typename Conforming_Dt::Insert_in_conflict_visitor conforming_dt_visitor;
 
   public:
-    Insert_in_conflict_visitor(Constrained_Delaunay_triangulation_3_impl &self)
+    Insert_in_conflict_visitor(Constrained_Delaunay_triangulation_3_impl *self)
         : self(self), conforming_dt_visitor(self) {}
 
     template <class InputIterator>
     void process_cells_in_conflict(const InputIterator cell_it_begin, const InputIterator end) {
-      CGAL_assertion(self.dimension() >= 2);
-      if(self.cdt_2_are_initialized) {
-        const int first_li = self.dimension() == 2 ? 3 : 0;
+      CGAL_assertion(self->dimension() >= 2);
+      if(self->cdt_2_are_initialized) {
+        const int first_li = self->dimension() == 2 ? 3 : 0;
         for(auto cell_it = cell_it_begin; cell_it != end; ++cell_it) {
           auto c = *cell_it;
           for(int li = first_li; li < 4; ++li) {
             if(c->cdt_3_data().is_facet_constrained(li)) {
-              self.register_facet_to_be_constrained(c, li);
+              self->register_facet_to_be_constrained(c, li);
   #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
               std::cerr << "Add missing triangle (from visitor), face #F" << face_id << ": \n";
-              self.write_2d_triangle(std::cerr, fh_2);
+              self->write_2d_triangle(std::cerr, fh_2);
   #endif // CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
             }
           }
@@ -780,13 +921,13 @@ protected:
                                             Vertex_handle vb,
                                             Vertex_handle v_Steiner) const
     {
-      const auto point = self.point(v_Steiner);
-      if(!self.cdt_2_are_initialized) return;
-      for(const auto [_, poly_id] : CGAL::make_range(self.constraint_to_faces.equal_range(constraint))) {
-        auto& non_const_cdt_2 = self.face_cdt_2[poly_id];
+      const auto point = self->point(v_Steiner);
+      if(!self->cdt_2_are_initialized) return;
+      for(const auto [_, poly_id] : CGAL::make_range(self->constraint_to_faces.equal_range(constraint))) {
+        auto& non_const_cdt_2 = self->face_cdt_2[poly_id];
         const auto& cdt_2 = non_const_cdt_2;
 
-        auto opt_edge = self.edge_of_cdt_2(cdt_2, va, vb);
+        auto opt_edge = self->edge_of_cdt_2(cdt_2, va, vb);
         CGAL_assume(opt_edge != std::nullopt);
         CGAL_assertion(cdt_2.is_constrained(*opt_edge));
         auto [fh_2d, edge_index]= *opt_edge;
@@ -832,16 +973,16 @@ protected:
           fc->info().is_edge_also_in_3d_triangulation.set(other_edge.first->info().is_edge_also_in_3d_triangulation.test(other_edge.second));
         } while(++fc != fc_begin);
 
-        self.face_constraint_misses_subfaces.set(poly_id);
+        self->face_constraint_misses_subfaces_set(poly_id);
       }
       conforming_dt_visitor.insert_Steiner_point_on_constraint(constraint, va, vb, v_Steiner);
     }
 
     Vertex_handle insert_in_triangulation(const Point_3& p, Locate_type lt, Cell_handle c, int li, int lj) {
-      if(self.is_Delaunay)
-        return self.insert_impl_do_not_split(p, lt, c, li, lj, *this);
+      if(self->is_Delaunay)
+        return self->insert_impl_do_not_split(p, lt, c, li, lj, *this);
       else 
-        return self.insert_in_cdt_3(p, lt, c, li, lj, *this);
+        return self->insert_in_cdt_3(p, lt, c, li, lj, *this);
     }
   };
 
@@ -866,14 +1007,14 @@ public:
     boost::container::small_vector<Facet,64> exterior_border_facets_of_original_cavity;
 
     auto output_iterator_to_facets = boost::make_function_output_iterator(
-        [&](Facet f) { exterior_border_facets_of_original_cavity.push_back(tr.mirror_facet(f)); });
+        [&](Facet f) { exterior_border_facets_of_original_cavity.push_back(tr().mirror_facet(f)); });
 
     auto triple_of_output_iterators = make_triple(
         output_iterator_to_facets,
         std::back_inserter(cells_of_original_cavity),
         Emptyset_iterator{});
 
-    switch(tr.dimension()) {
+    switch(tr().dimension()) {
     case 3: {
       typename T_3::Conflict_tester_3 tester(p, this);
       this->find_conflicts(ch, tester, triple_of_output_iterators);
@@ -900,7 +1041,7 @@ public:
     for(Cell_handle ch : cells_of_original_cavity) {
       for(int i = 0; i < 4; ++i) {
         auto v = ch->vertex(i);
-        if(tr.is_infinite(v)) {
+        if(tr().is_infinite(v)) {
           the_infinite_vertex_is_in_the_cavity = true;
         }
         vertices_of_original_cavity.insert(v);
@@ -914,7 +1055,7 @@ public:
     // vertices of the border of the cavity should point to cells outside of it
     for(auto [c, index]: exterior_border_facets_of_original_cavity) {
       for(int i = 0; i < 3; ++i) {
-        auto v = c->vertex(tr.vertex_triple_index(index, i));
+        auto v = c->vertex(tr().vertex_triple_index(index, i));
         v->set_cell(c);
       }
     }
@@ -937,7 +1078,7 @@ public:
       outer_map[vt] = f;
     }
 
-    const auto inner_map = tr.create_triangulation_inner_map(
+    const auto inner_map = tr().create_triangulation_inner_map(
         cavity_triangulation, map_cavity_vertices_to_ambient_vertices, the_infinite_vertex_is_in_the_cavity);
 
     this->copy_triangulation_into_hole(map_cavity_vertices_to_ambient_vertices,
@@ -971,7 +1112,7 @@ public:
     Locate_type lt;
     int li, lj;
 
-    Cell_handle c = tr.locate(p, lt, li, lj, start);
+    Cell_handle c = tr().locate(p, lt, li, lj, start);
     return insert(p, lt, c, li, lj, restore_Delaunay);
   }
 
@@ -988,16 +1129,22 @@ public:
     Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
   }
 
-  bool is_constrained(Facet f) const {
+  bool is_facet_constrained(Facet f) const {
     return f.first->cdt_3_data().is_facet_constrained(f.second);
+  }
+
+  auto number_of_constrained_facets() const
+  {
+    return std::count_if(tr().all_facets_begin(), tr().all_facets_end(),
+                         [this](auto f) { return is_facet_constrained(f); });
   }
 
   bool same_triangle(Facet f, CDT_2_face_handle fh) const {
     return true;
     const auto [c, facet_index] = f;
-    std::array<Vertex_handle, 3> f_vertices{c->vertex(tr.vertex_triple_index(facet_index,0)),
-                                            c->vertex(tr.vertex_triple_index(facet_index,1)),
-                                            c->vertex(tr.vertex_triple_index(facet_index,2))};
+    std::array<Vertex_handle, 3> f_vertices{c->vertex(tr().vertex_triple_index(facet_index,0)),
+                                            c->vertex(tr().vertex_triple_index(facet_index,1)),
+                                            c->vertex(tr().vertex_triple_index(facet_index,2))};
     std::sort(f_vertices.begin(), f_vertices.end());
     std::array<Vertex_handle, 3> fh_vertices{fh->vertex(0)->info().vertex_handle_3d,
                                              fh->vertex(1)->info().vertex_handle_3d,
@@ -1013,8 +1160,8 @@ public:
 
     const auto [c, facet_index] = f;
     c->cdt_3_data().set_facet_constraint(facet_index, polygon_contraint_id, fh);
-    if(tr.dimension() > 2) {
-      const auto [n, n_index] = tr.mirror_facet({c, facet_index});
+    if(tr().dimension() > 2) {
+      const auto [n, n_index] = tr().mirror_facet({c, facet_index});
       n->cdt_3_data().set_facet_constraint(n_index, polygon_contraint_id, fh);
     }
     if(fh == CDT_2_face_handle{}) return;
@@ -1093,9 +1240,9 @@ public:
     if(face_index < 0) {
       const auto accumulated_normal = std::invoke([&] {
         const auto last_it = std::next(first_it, size - 1);
-        const auto &last_point = tr.point(*last_it);
+        const auto &last_point = tr().point(*last_it);
 
-        auto &&traits = tr.geom_traits();
+        auto &&traits = tr().geom_traits();
         auto &&cross_product = traits.construct_cross_product_vector_3_object();
         auto &&vector = traits.construct_vector_3_object();
         auto &&sum_vector = traits.construct_sum_of_vectors_3_object();
@@ -1105,8 +1252,8 @@ public:
             next_it != last_it; ++vit, ++next_it) {
           accumulated_normal =
               sum_vector(accumulated_normal,
-                        cross_product(vector(last_point, tr.point(*vit)),
-                                      vector(last_point, tr.point(*next_it))));
+                        cross_product(vector(last_point, tr().point(*vit)),
+                                      vector(last_point, tr().point(*next_it))));
         }
         if (accumulated_normal.x() < 0 ||
             (accumulated_normal.x() == 0 && accumulated_normal.y() < 0) ||
@@ -1204,7 +1351,7 @@ private:
     std::cerr << "  points\n";
     for(const auto& handles : vec_of_handles) {
       for(auto it = handles.begin(), end = std::prev(handles.end()); it != end; ++it) {
-        std::cerr << "     " << tr.point(*it) << '\n';
+        std::cerr << "     " << tr().point(*it) << '\n';
       }
     }
 #endif
@@ -1213,7 +1360,7 @@ private:
     {
       for(const auto& handles : vec_of_handles)
       {
-        const auto first_2d  = cdt_2.insert(tr.point(handles.front()));
+        const auto first_2d  = cdt_2.insert(tr().point(handles.front()));
         first_2d->info().vertex_handle_3d = handles.front();
         auto previous_2d = first_2d;
         for(auto it = handles.begin(), end = std::prev(handles.end());
@@ -1241,13 +1388,13 @@ private:
                   --v_end;
                 };
                 while(vit != v_end) {
-                  auto vh_2d = cdt_2.insert(tr.point(*vit));
+                  auto vh_2d = cdt_2.insert(tr().point(*vit));
                   vh_2d->info().vertex_handle_3d = *vit;
   #if CGAL_DEBUG_CDT_3 & 4
                   std::cerr << "cdt_2.insert_constraint ("
-                            << tr.point(previous_2d->info().vertex_handle_3d)
+                            << tr().point(previous_2d->info().vertex_handle_3d)
                             << " , "
-                            << tr.point(vh_2d->info().vertex_handle_3d)
+                            << tr().point(vh_2d->info().vertex_handle_3d)
                             << ")\n";
   #endif // CGAL_DEBUG_CDT_3
                   cdt_2.insert_constraint(previous_2d, vh_2d);
@@ -1262,15 +1409,15 @@ private:
             }
           }
 
-          auto vh_2d = it == end ? first_2d : cdt_2.insert(tr.point(vb));
+          auto vh_2d = it == end ? first_2d : cdt_2.insert(tr().point(vb));
           if(it != end) {
             vh_2d->info().vertex_handle_3d = vb;
           }
   #if CGAL_DEBUG_CDT_3 & 4
           std::cerr << "cdt_2.insert_constraint ("
-                    << tr.point(previous_2d->info().vertex_handle_3d)
+                    << tr().point(previous_2d->info().vertex_handle_3d)
                     << " , "
-                    << tr.point(vh_2d->info().vertex_handle_3d)
+                    << tr().point(vh_2d->info().vertex_handle_3d)
                     << ")\n";
   #endif // CGAL_DEBUG_CDT_3
           cdt_2.insert_constraint(previous_2d, vh_2d);
@@ -1360,9 +1507,9 @@ private:
       const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
       Cell_handle c;
       int i, j, k;
-      if(!tr.is_facet(v0, v1, v2, c, i, j, k)) {
+      if(!tr().is_facet(v0, v1, v2, c, i, j, k)) {
         fh->info().missing_subface = true;
-        face_constraint_misses_subfaces.set(static_cast<std::size_t>(polygon_contraint_id));
+        face_constraint_misses_subfaces_set(static_cast<std::size_t>(polygon_contraint_id));
 #if CGAL_CDT_3_DEBUG_MISSING_TRIANGLES
         std::cerr << cdt_3_format("Missing triangle in polygon #{}:\n", polygon_contraint_id);
         write_triangle(std::cerr, v0, v1, v2);
@@ -1584,15 +1731,15 @@ private:
       Mesh tets_intersect_region_mesh;
       auto [color_vpmap, _] = tets_intersect_region_mesh.template add_property_map<Face_index, int>("f:patch_id");
 
-      for(auto ch : tr.finite_cell_handles()) {
-        auto tetrahedron = typename Geom_traits::Tetrahedron_3{tr.point(ch->vertex(0)), tr.point(ch->vertex(1)),
-                                                              tr.point(ch->vertex(2)), tr.point(ch->vertex(3))};
+      for(auto ch : tr().finite_cell_handles()) {
+        auto tetrahedron = typename Geom_traits::Tetrahedron_3{tr().point(ch->vertex(0)), tr().point(ch->vertex(1)),
+                                                               tr().point(ch->vertex(2)), tr().point(ch->vertex(3))};
         if(!std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
             const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
             const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
             const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-            const auto triangle = typename Geom_traits::Triangle_3{tr.point(v0), tr.point(v1), tr.point(v2)};
-            return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr.geom_traits());
+            const auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
+            return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
           }))
         {
           continue;
@@ -1613,8 +1760,8 @@ private:
             cdt_3_format("dump_intersecting_{}_{}_tetrahedron_{}.off", face_index, region_index, ch->time_stamp()));
         dump_tetrahedron.precision(17);
         Mesh mesh;
-        CGAL::make_tetrahedron(tr.point(ch->vertex(0)), tr.point(ch->vertex(1)), tr.point(ch->vertex(2)),
-                                tr.point(ch->vertex(3)), mesh);
+        CGAL::make_tetrahedron(tr().point(ch->vertex(0)), tr().point(ch->vertex(1)), tr().point(ch->vertex(2)),
+                               tr().point(ch->vertex(3)), mesh);
         dump_tetrahedron << mesh;
         dump_tetrahedron.close();
 
@@ -1623,7 +1770,7 @@ private:
           auto v0 = fh->vertex(0)->info().vertex_handle_3d;
           auto v1 = fh->vertex(1)->info().vertex_handle_3d;
           auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-          auto triangle = typename Geom_traits::Triangle_3{tr.point(v0), tr.point(v1), tr.point(v2)};
+          auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
 
           auto exact_triangle = to_exact(triangle);
           auto tetrahedron_triangle_intersection_opt = CGAL::intersection(exact_tetrahedron, exact_triangle);
@@ -1659,11 +1806,11 @@ private:
 #endif // CGAL_CDT_3_CAN_USE_CXX20_FORMAT
 
     intersecting_edges.push_back(first_intersecting_edge);
-    const auto [v0, v1] = tr.vertices(first_intersecting_edge);
+    const auto [v0, v1] = tr().vertices(first_intersecting_edge);
     (void)new_edge(v0, v1, true);
     for(std::size_t i = 0; i < intersecting_edges.size(); ++i) {
       const auto intersecting_edge = intersecting_edges[i];
-      const auto [v_above, v_below] = tr.vertices(intersecting_edge);
+      const auto [v_above, v_below] = tr().vertices(intersecting_edge);
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       if(this->debug_regions()) {
         std::cerr << cdt_3_format("restore_subface_region face index: {}, region #{}, intersecting edge #{}: ({}   {})\n",
@@ -1687,7 +1834,7 @@ private:
             auto v0 = fh->vertex(0)->info().vertex_handle_3d;
             auto v1 = fh->vertex(1)->info().vertex_handle_3d;
             auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-            auto triangle = typename Geom_traits::Triangle_3{tr.point(v0), tr.point(v1), tr.point(v2)};
+            auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
             auto exact_triangle = to_exact(triangle);
             if(auto edge_intersection_opt = CGAL::intersection(exact_edge_segment, exact_triangle)) {
               const auto& edge_intersection = *edge_intersection_opt;
@@ -1701,15 +1848,15 @@ private:
 
         auto cells_around_intersecting_edge = Container_from_circulator{this->incident_cells(intersecting_edge)};
         for(const auto& cell: cells_around_intersecting_edge) {
-          CGAL_assertion(!cell.has_vertex(tr.infinite_vertex()));
+          CGAL_assertion(!cell.has_vertex(tr().infinite_vertex()));
           auto tetrahedron =
-              typename Geom_traits::Tetrahedron_3{tr.point(cell.vertex(0)), tr.point(cell.vertex(1)),
-                                                  tr.point(cell.vertex(2)), tr.point(cell.vertex(3))};
+              typename Geom_traits::Tetrahedron_3{tr().point(cell.vertex(0)), tr().point(cell.vertex(1)),
+                                                  tr().point(cell.vertex(2)), tr().point(cell.vertex(3))};
           for(auto fh: fh_region) {
             auto v0 = fh->vertex(0)->info().vertex_handle_3d;
             auto v1 = fh->vertex(1)->info().vertex_handle_3d;
             auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-            auto triangle = typename Geom_traits::Triangle_3{tr.point(v0), tr.point(v1), tr.point(v2)};
+            auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
             auto exact_triangle = to_exact(triangle);
           }
 
@@ -1723,8 +1870,8 @@ private:
               auto v0 = fh->vertex(0)->info().vertex_handle_3d;
               auto v1 = fh->vertex(1)->info().vertex_handle_3d;
               auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-              auto triangle = typename Geom_traits::Triangle_3{tr.point(v0), tr.point(v1), tr.point(v2)};
-              bool b = does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr.geom_traits());
+              auto triangle = typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
+              bool b = does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
               if(b) {
                 std::cerr << "  intersects the region\n";
               }
@@ -1838,21 +1985,22 @@ private:
           }
           for(int i = 0; i < 4; ++i) {
             auto n_ch = ch->neighbor(i);
-            if(tr.is_infinite(n_ch))
+            if(tr().is_infinite(n_ch))
               continue;
             if(new_cell(n_ch)) {
               auto tetrahedron =
-                  typename Geom_traits::Tetrahedron_3{tr.point(n_ch->vertex(0)), tr.point(n_ch->vertex(1)),
-                                                      tr.point(n_ch->vertex(2)), tr.point(n_ch->vertex(3))};
+                  typename Geom_traits::Tetrahedron_3{tr().point(n_ch->vertex(0)), tr().point(n_ch->vertex(1)),
+                                                      tr().point(n_ch->vertex(2)), tr().point(n_ch->vertex(3))};
               auto tet_bbox = tetrahedron.bbox();
               if(std::any_of(fh_region.begin(), fh_region.end(), [&](auto fh) {
                    const auto v0 = fh->vertex(0)->info().vertex_handle_3d;
                    const auto v1 = fh->vertex(1)->info().vertex_handle_3d;
                    const auto v2 = fh->vertex(2)->info().vertex_handle_3d;
-                   const auto triangle = typename Geom_traits::Triangle_3{tr.point(v0), tr.point(v1), tr.point(v2)};
+                   const auto triangle =
+                       typename Geom_traits::Triangle_3{tr().point(v0), tr().point(v1), tr().point(v2)};
                    const auto tri_bbox = triangle.bbox();
                    if(CGAL::do_overlap(tet_bbox, tri_bbox)) {
-                     return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr.geom_traits());
+                     return does_tetrahedron_intersect_triangle_interior(tetrahedron, triangle, tr().geom_traits());
                    } else {
                      return false;
                    }
@@ -1877,7 +2025,7 @@ private:
     } // end loop on intersecting_edges
     if(this->use_older_cavity_algorithm()) {
       for(auto intersecting_edge: intersecting_edges) {
-        const auto [v_above, v_below] = tr.vertices(intersecting_edge);
+        const auto [v_above, v_below] = tr().vertices(intersecting_edge);
 
         auto cell_circ = this->incident_cells(intersecting_edge), end = cell_circ;
         CGAL_assume(cell_circ != nullptr);
@@ -1910,7 +2058,7 @@ private:
       }
       Unique_hash_map<Vertex_handle, typename Union_find<Vertex_handle>::handle> vertices_of_cavity_handles;
       for(auto c: intersecting_cells) {
-        for(auto v : tr.vertices(c)) {
+        for(auto v : tr().vertices(c)) {
           if(!v->cdt_3_data().is_marked()) {
             v->cdt_3_data().set_mark(Vertex_marker::CAVITY);
             vertices_of_cavity_handles[v] = vertices_of_cavity_union_find.make_set(v);
@@ -1918,7 +2066,7 @@ private:
         }
       }
       for(auto facet: facets_of_border) {
-        auto vertices = tr.vertices(facet);
+        auto vertices = tr().vertices(facet);
         for(int i = 0; i < 3; ++i) {
           auto v1 = vertices[i];
           auto v2 = vertices[(i + 1) % 3];
@@ -1954,14 +2102,14 @@ private:
         all_border_edges.emplace_back(edge.first, edge.third, edge.second);
       });
       for(const auto& border_edge: all_border_edges) {
-        const auto [border_edge_va, border_edge_vb] = tr.vertices(border_edge);
-        auto circ = tr.incident_cells(border_edge);
+        const auto [border_edge_va, border_edge_vb] = tr().vertices(border_edge);
+        auto circ = tr().incident_cells(border_edge);
         CGAL_assertion(circ != nullptr);
         const auto end = circ;
         do {
           const auto index_va = circ->index(border_edge_va);
           const auto index_vb = circ->index(border_edge_vb);
-          const auto face_index = tr.next_around_edge(index_va, index_vb);
+          const auto face_index = tr().next_around_edge(index_va, index_vb);
           if(facets_of_border.count(Facet{circ, face_index}) > 0) {
             const auto other_vertex_index = 6 - index_va - index_vb - face_index;
             const auto other_vertex = circ->vertex(other_vertex_index);
@@ -2001,7 +2149,7 @@ private:
         }
       }
       while(std::any_of(intersecting_cells.begin(), intersecting_cells.end(), [&](Cell_handle c) {
-           const auto vs = tr.vertices(c);
+           const auto vs = tr().vertices(c);
            return std::any_of(vs.begin(), vs.end(), [&](auto v) {
             if(!v->cdt_3_data().is_marked()) {
               std::cerr << "INFO: Vertex " << IO::oformat(v, with_point_and_info) << " is not marked\n";
@@ -2038,12 +2186,12 @@ private:
       ss_filename << "dump_facets_of_cavity_region_" << face_index << "_" << region_index << "_border.off";
       std::ofstream out(ss_filename.str());
       out.precision(17);
-      write_facets(out, tr, facets_of_border);
+      write_facets(out, tr(), facets_of_border);
     }
 
     if(this->debug_regions()) {
       for(auto edge : intersecting_edges) {
-        auto [v1, v2] = tr.vertices(edge);
+        auto [v1, v2] = tr().vertices(edge);
         std::cerr << cdt_3_format("  edge: {}   {}\n", IO::oformat(v1, with_point_and_info),
                                 IO::oformat(v2, with_point_and_info));
       }
@@ -2052,7 +2200,7 @@ private:
       for(auto facet: facets_of_border) {
         if(this->debug_regions()) {
           std::cerr << "  facet:  ";
-          const auto facet_vertices = tr.vertices(facet);
+          const auto facet_vertices = tr().vertices(facet);
           for(auto v: facet_vertices) {
             std::cerr << IO::oformat(v, with_point_and_info) << "  ";
           }
@@ -2061,7 +2209,7 @@ private:
           //                             [](auto v) { return v->is_marked(Vertex_marker::REGION_BORDER); }));
           std::cerr << "\n";
         }
-        for(auto v: tr.vertices(facet)) {
+        for(auto v: tr().vertices(facet)) {
           if(v->cdt_3_data().is_marked(Vertex_marker::CAVITY_ABOVE)) {
             facets_of_upper_cavity.push_back(facet);
             break;
@@ -2084,12 +2232,12 @@ private:
       ss_filename << "dump_facets_of_upper_cavity_region_" << face_index << "_" << region_index << "_border.off";
       std::ofstream out(ss_filename.str());
       out.precision(17);
-      write_facets(out, tr, facets_of_upper_cavity);
+      write_facets(out, tr(), facets_of_upper_cavity);
       out.close();
       ss_filename.str("");
       ss_filename << "dump_facets_of_lower_cavity_region_" << face_index << "_" << region_index << "_border.off";
       out.open(ss_filename.str());
-      write_facets(out, tr, facets_of_lower_cavity);
+      write_facets(out, tr(), facets_of_lower_cavity);
       out.close();
     }
 
@@ -2179,7 +2327,7 @@ private:
         const auto v1 = fh_region[0]->vertex(cdt_2.ccw(diagonal_index))->info().vertex_handle_3d;
         const auto v2 = fh_region[0]->vertex(cdt_2.cw(diagonal_index))->info().vertex_handle_3d;
         const auto v3 = fh_region[1]->vertex(fh_region[1]->index(fh_region[0]))->info().vertex_handle_3d;
-        if(tr.is_facet(v0, v1, v3) && tr.is_facet(v0, v3, v2))
+        if(tr().is_facet(v0, v1, v3) && tr().is_facet(v0, v3, v2))
         {
           if(cdt_2.orientation(v0->point(), v1->point(), v3->point()) == CGAL::POSITIVE &&
              cdt_2.orientation(v0->point(), v3->point(), v2->point()) == CGAL::POSITIVE)
@@ -2195,10 +2343,10 @@ private:
               }
               int i, j, k;
               Cell_handle c;
-              [[maybe_unused]] bool fh_is_3d_facet = tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
-                                                                fh->vertex(1)->info().vertex_handle_3d,
-                                                                fh->vertex(2)->info().vertex_handle_3d,
-                                                                c, i, j, k);
+              [[maybe_unused]] bool fh_is_3d_facet = tr().is_facet(fh->vertex(0)->info().vertex_handle_3d,
+                                                                   fh->vertex(1)->info().vertex_handle_3d,
+                                                                   fh->vertex(2)->info().vertex_handle_3d,
+                                                                   c, i, j, k);
               CGAL_assertion(fh_is_3d_facet);
               set_facet_constrained({c, 6-i-j-k}, face_index, fh);
               fh->info().missing_subface = false;
@@ -2399,7 +2547,7 @@ private:
           s.precision(std::cerr.precision());
           s << "(" << IO::oformat(v0, this->with_offset) << ", " << IO::oformat(v1, this->with_offset)
             << ", " << IO::oformat(v2, this->with_offset) << ") = ( "
-            << tr.point(v0) << "  " << tr.point(v1) << "  " << tr.point(v2)
+            << tr().point(v0) << "  " << tr().point(v1) << "  " << tr().point(v2)
             << " )";
           return s.str();
         };
@@ -2540,7 +2688,7 @@ private:
 //       write_facets(out, *this, std::ranges::views::values(outer_map));
 //       out.close();
 // #endif // CGAL_DEBUG_CDT_3
-      const auto upper_inner_map = tr.create_triangulation_inner_map(
+      const auto upper_inner_map = tr().create_triangulation_inner_map(
           upper_cavity_triangulation, map_upper_cavity_vertices_to_ambient_vertices, false);
 
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
@@ -2580,7 +2728,7 @@ private:
     }
     fill_outer_map_of_cavity(lower_cavity_triangulation, facets_of_lower_cavity);
     {
-      const auto lower_inner_map = tr.create_triangulation_inner_map(
+      const auto lower_inner_map = tr().create_triangulation_inner_map(
           lower_cavity_triangulation, map_lower_cavity_vertices_to_ambient_vertices, false);
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
       if(this->debug_copy_triangulation_into_hole()) {
@@ -2750,7 +2898,7 @@ private:
 
     auto insert_new_vertex = [&](Vertex_handle v, [[maybe_unused]] std::string_view extra = "") {
       const auto cavity_v =
-          tr.is_infinite(v) ? cavity_triangulation.infinite_vertex() : cavity_triangulation.insert(this->point(v));
+          tr().is_infinite(v) ? cavity_triangulation.infinite_vertex() : cavity_triangulation.insert(this->point(v));
       map_ambient_vertices_to_cavity_vertices[v] = cavity_v;
       map_cavity_vertices_to_ambient_vertices[cavity_v] = v;
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
@@ -2883,7 +3031,7 @@ private:
         f.first->neighbor(f.second)->tds_data().clear();
       }
     };
-    switch(tr.dimension()) {
+    switch(tr().dimension()) {
     case 3: {
       typename T_3::Conflict_tester_3 tester(steiner_pt, this);
       this->find_conflicts(ch,
@@ -2985,7 +3133,7 @@ private:
     // this->study_bug = true;
     Locate_type mid_lt;
     int mid_li, min_lj;
-    Cell_handle mid_c = tr.locate(mid, mid_lt, mid_li, min_lj, va_3d->cell());
+    Cell_handle mid_c = tr().locate(mid, mid_lt, mid_li, min_lj, va_3d->cell());
     CGAL_assertion(mid_lt != Locate_type::VERTEX);
     [[maybe_unused]] auto v =
       this->insert_Steiner_point_on_subconstraint(mid, mid_c, {va_3d, vb_3d},
@@ -3033,9 +3181,9 @@ private:
       }
       Cell_handle c;
       int i, j, k;
-      if(tr.is_facet(fh->vertex(0)->info().vertex_handle_3d,
-                     fh->vertex(1)->info().vertex_handle_3d,
-                     fh->vertex(2)->info().vertex_handle_3d, c, i, j, k))
+      if(tr().is_facet(fh->vertex(0)->info().vertex_handle_3d,
+                       fh->vertex(1)->info().vertex_handle_3d,
+                       fh->vertex(2)->info().vertex_handle_3d, c, i, j, k))
       {
         const int facet_index = 6 - i - j - k;
         set_facet_constrained({c, facet_index}, face_index, fh);
@@ -3118,7 +3266,7 @@ public:
                this->side_of_sphere(it, n->vertex(n_index)->point()) == ON_BOUNDED_SIDE)
             {
               if(verbose) {
-                const auto v = tr.vertices(it);
+                const auto v = tr().vertices(it);
                 std::cerr << "non-empty sphere at non-constrained facet (" << IO::oformat(Cell_handle(it))
                           << ", " << i << ") the cell is:\n  "
                           << IO::oformat(v[0], with_point) << "\n  "
@@ -3130,13 +3278,13 @@ public:
                 const auto to_exact = CGAL::Cartesian_converter<Geom_traits, EK>();
                 const auto from_exact = CGAL::Cartesian_converter<EK, Geom_traits>();
 
-                const auto exact_circ = CGAL::circumcenter(to_exact(tr.point(v[0])),
-                                                           to_exact(tr.point(v[1])),
-                                                           to_exact(tr.point(v[2])),
-                                                           to_exact(tr.point(v[3])));
-                const auto exact_sq_circumradius = CGAL::squared_distance(to_exact(tr.point(v[0])), exact_circ);
+                const auto exact_circ = CGAL::circumcenter(to_exact(tr().point(v[0])),
+                                                           to_exact(tr().point(v[1])),
+                                                           to_exact(tr().point(v[2])),
+                                                           to_exact(tr().point(v[3])));
+                const auto exact_sq_circumradius = CGAL::squared_distance(to_exact(tr().point(v[0])), exact_circ);
                 const auto exact_sq_distance =
-                    CGAL::squared_distance(exact_circ, to_exact(tr.point(n->vertex(n_index))));
+                    CGAL::squared_distance(exact_circ, to_exact(tr().point(n->vertex(n_index))));
                 std::cerr << "exact squared circumradius: " << exact_sq_circumradius << '\n';
                 std::cerr << "exact squared distance:     " << exact_sq_distance << '\n';
                 std::cerr << "ratio (non-squared):        "
@@ -3230,13 +3378,13 @@ public:
       search_for_missing_subfaces(i);
     }
     cdt_2_are_initialized = true;
-    const auto npos = face_constraint_misses_subfaces.npos;
-    auto i = face_constraint_misses_subfaces.find_first();
+    const auto npos = face_constraint_misses_subfaces_npos;
+    auto i = face_constraint_misses_subfaces_find_first();
     bool the_process_made_progress = false;
     while(i != npos) {
       try {
         if(restore_face(i)) {
-          face_constraint_misses_subfaces.reset(i);
+          face_constraint_misses_subfaces_reset(i);
         } else {
           std::cerr << "restore_face(" << i << ") incomplete, back to conforming...\n";
           Conforming_Dt::restore_Delaunay(insert_in_conflict_visitor);
@@ -3245,7 +3393,7 @@ public:
       }
       catch(PLC_error& e) {
         std::cerr << std::string("ERROR: PLC error with face #F") << std::to_string(e.face_index) + "\n";
-        i = face_constraint_misses_subfaces.find_next(i);
+        i = face_constraint_misses_subfaces_find_next(i);
         if(i == npos) {
           std::cerr << "ERROR: No more missing face to restore after a PLC error\n";
           dump_region(e.face_index, e.region_index);
@@ -3254,13 +3402,13 @@ public:
         std::cerr << "Next face is face #F " << i << '\n';
         continue;
       }
-      i = face_constraint_misses_subfaces.find_next(i);
+      i = face_constraint_misses_subfaces_find_next(i);
 
       // If we have made progress, we start again from the beginning.
       // Otherwise, either we are done, or there was a full loop with
       // only PLC errors.
       if(i == npos && true == the_process_made_progress) {
-        i = face_constraint_misses_subfaces.find_first();
+        i = face_constraint_misses_subfaces_find_first();
         the_process_made_progress = false;
       }
     }
@@ -3289,7 +3437,7 @@ public:
   }
 
   void write_3d_triangulation_to_OFF(std::ostream& out, const Constrained_Delaunay_triangulation_3_impl& tr) {
-    write_facets(out, tr, tr.finite_facets());
+    write_facets(out, tr, tr().finite_facets());
   }
 
   void dump_3d_triangulation(CDT_3_face_index face_index,
@@ -3325,8 +3473,7 @@ public:
   {
     out.precision(17);
     out << "4"
-        << " " << tr.point(v0) << " " << tr.point(v1) << " " << tr.point(v2)
-        << " " << tr.point(v0) << '\n';
+        << " " << tr().point(v0) << " " << tr().point(v1) << " " << tr().point(v2) << " " << tr().point(v0) << '\n';
   }
 
   static void write_segment(std::ostream &out, Point_3 p0, Point_3 p1)
@@ -3341,7 +3488,7 @@ public:
 
   void write_segment(std::ostream& out, Vertex_handle v0, Vertex_handle v1)
   {
-    write_segment(out, tr.point(v0), tr.point(v1));
+    write_segment(out, tr().point(v0), tr().point(v1));
   }
 
   void write_segment(std::ostream& out, Edge edge) {
@@ -3406,8 +3553,8 @@ public:
   }
 
   bool write_missing_subfaces_file(std::ostream& out) {
-    const auto npos = face_constraint_misses_subfaces.npos;
-    auto i = face_constraint_misses_subfaces.find_first();
+    const auto npos = face_constraint_misses_subfaces_npos;
+    auto i = face_constraint_misses_subfaces_find_first();
     bool has_missing_subfaces = i != npos;
     while(i != npos) {
       const CDT_2& cdt = face_cdt_2[i];
@@ -3418,7 +3565,7 @@ public:
           write_2d_triangle(out, fh);
         }
       }
-      i = face_constraint_misses_subfaces.find_next(i);
+      i = face_constraint_misses_subfaces_find_next(i);
     }
     return has_missing_subfaces;
   }
@@ -3430,9 +3577,7 @@ public:
   /// @}
 
 protected:
-  T_3 &tr = *this;
-  Conforming_Dt &conforming_dt = *this;
-  Insert_in_conflict_visitor insert_in_conflict_visitor = {*this};
+  Insert_in_conflict_visitor insert_in_conflict_visitor = {this};
   std::vector<CDT_2> face_cdt_2;
   bool cdt_2_are_initialized = false;
   struct Face_edge {
@@ -3441,12 +3586,43 @@ protected:
   };
   std::vector<std::vector<std::vector<Face_edge>>> face_borders;
   std::multimap<Constraint_id, CDT_3_face_index> constraint_to_faces;
-  boost::dynamic_bitset<> face_constraint_misses_subfaces;
+
+  // boost::dynamic_bitset<> face_constraint_misses_subfaces;
+  // std::size_t face_constraint_misses_subfaces_find_first() const {
+  //   return face_constraint_misses_subfaces.find_first();
+  // }
+  // std::size_t face_constraint_misses_subfaces_find_next(std::size_t pos) const {
+  //   return face_constraint_misses_subfaces.find_next(pos);
+  // }
+  // void face_constraint_misses_subfaces_set(std::size_t pos) {
+  //   face_constraint_misses_subfaces.set(pos);
+  // }
+  // void face_constraint_misses_subfaces_reset(std::size_t pos) {
+  //   face_constraint_misses_subfaces.reset(pos);
+  // }
+  // static inline constexpr std::size_t face_constraint_misses_subfaces_npos = boost::dynamic_bitset<>::npos;
+  // static_assert(false == CGAL::is_nothrow_movable_v<boost::dynamic_bitset<>>);
+  std::vector<bool> face_constraint_misses_subfaces;
+  std::size_t face_constraint_misses_subfaces_find_first(std::size_t pos = 0) const {
+    auto it = std::find(face_constraint_misses_subfaces.begin() + pos, face_constraint_misses_subfaces.end(), true);
+    return it == face_constraint_misses_subfaces.end() ? face_constraint_misses_subfaces_npos
+                                                       : std::distance(face_constraint_misses_subfaces.begin(), it);
+  }
+  std::size_t face_constraint_misses_subfaces_find_next(std::size_t pos) const {
+    return face_constraint_misses_subfaces_find_first(pos + 1);
+  }
+  void face_constraint_misses_subfaces_set(std::size_t pos) {
+    face_constraint_misses_subfaces[pos] = true;
+  }
+  void face_constraint_misses_subfaces_reset(std::size_t pos) {
+    face_constraint_misses_subfaces[pos] = false;
+  }
+  static inline constexpr std::size_t face_constraint_misses_subfaces_npos = boost::dynamic_bitset<>::npos;
   std::vector<std::size_t> faces_region_numbers;
 };
 
-} // end CGAL
-
 #endif // DOXYGEN_RUNNING
+
+} // end CGAL
 
 #endif // CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_3_H

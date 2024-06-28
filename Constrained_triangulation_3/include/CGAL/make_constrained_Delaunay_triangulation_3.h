@@ -35,7 +35,7 @@ namespace CGAL {
  * \ingroup PkgCT_3Classes
  * \brief The default 3D constrained Delaunay triangulation type.
  *
- * `Default_constrained_triangulation_3` is a metafunction that returns the
+ * `Default_constrained_Delaunay_triangulation_3` is a metafunction that returns the
  * default 3D constrained Delaunay triangulation type for a given geometric
  * traits class.
  *
@@ -43,14 +43,16 @@ namespace CGAL {
  *
  * \return `type` is the default 3D constrained Delaunay triangulation type.
  *
- * \sa default_constrained_triangulation_3_t
+ * \sa default_constrained_Delaunay_triangulation_3_t
 */
-template <typename Geom_traits>
-struct Default_constrained_triangulation_3 {
-  using Vb = Constrained_Delaunay_triangulation_vertex_base_3<Geom_traits>;
-  using Cb = Constrained_Delaunay_triangulation_cell_base_3<Geom_traits>;
+template <typename Geom_traits,
+          typename Vb = Constrained_Delaunay_triangulation_vertex_base_3<Geom_traits>,
+          typename Cb = Constrained_Delaunay_triangulation_cell_base_3<Geom_traits>>
+struct Default_constrained_Delaunay_triangulation_3
+{
   using Tds = Triangulation_data_structure_3<Vb, Cb>;
-  using type = Triangulation_3<Geom_traits, Tds>;
+  using Tr = Triangulation_3<Geom_traits, Tds>;
+  using type = Constrained_Delaunay_triangulation_3<Geom_traits, Tr>;
 };
 
 /*!
@@ -61,11 +63,10 @@ struct Default_constrained_triangulation_3 {
  * This alias template names the default 3D constrained Delaunay triangulation
  * type for a given geometric traits class.
  *
- * \sa Default_constrained_triangulation_3
+ * \sa Default_constrained_Delaunay_triangulation_3
  */
 template <typename Geom_traits>
-using default_constrained_triangulation_3_t =
-    typename Default_constrained_triangulation_3<Geom_traits>::type;
+using default_constrained_Delaunay_triangulation_3_t = typename Default_constrained_Delaunay_triangulation_3<Geom_traits>::type;
 
 /*!
  * \ingroup PkgCT_3Functions
@@ -83,13 +84,17 @@ using default_constrained_triangulation_3_t =
  * The generated triangulation will be constrained to conform to the faces of the polygon mesh, or to the surface patches
  * described by the `face_patch_map` property map if provided.
  *
- * \tparam Triangulation_3 An instance of the `Triangulation_3` class template.
- *         - Its `Geom_traits` type must be a model of `ConstrainedDelaunayTriangulationTraits_3`,
- *         - Its point type must be constructible from the point type of the polygon mesh,
- *         - its `Vertex` type must be a model of `ConstrainedDelaunayTriangulationVertexBase_3`, and
- *         - its `Cell` type must be a model of `ConstrainedDelaunayTriangulationCellBase_3`.
+ * \tparam Triangulation An instance of the `CGAL::Triangulation_3` class template (or `CGAL::Default`).
+ *           - Its `Geom_traits` type must be a model of `ConstrainedDelaunayTriangulationTraits_3`,
+ *           - Its point type must be constructible from the point type of the polygon mesh,
+ *           - its `Vertex` type must be a model of `ConstrainedDelaunayTriangulationVertexBase_3`, and
+ *           - its `Cell` type must be a model of `ConstrainedDelaunayTriangulationCellBase_3`.
  * \tparam PolygonMesh a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * If `Triangulation` is `CGAL::Default`, the geometric traits `Geom_traits` is deduced from the polygon mesh type
+ * `PolygonMesh` and the named parameters `NamedParameters`. And then the default constrained Delaunay triangulation is
+ * `Default_constrained_Delaunay_triangulation_3<Geom_traits>::type`.
  *
  * \param mesh The polygon mesh representing the constraints.
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -111,7 +116,7 @@ using default_constrained_triangulation_3_t =
  *   \cgalParamNBegin{face_patch_map}
  *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`}
  *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
- *                   as key type and with any value type that is a *regular* type}
+ *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
  *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered as a separate patch.}
  *   \cgalParamExtra{Faces with the same patch identifier are considered as part of the same surface patch.}
  *   \cgalParamNEnd
@@ -121,40 +126,19 @@ using default_constrained_triangulation_3_t =
  *      \link CGAL::Polygon_mesh_processing::does_self_intersect
  *      `CGAL::Polygon_mesh_processing::does_self_intersect(mesh, np) == false`
  *      \endlink
- *
- * \todo Create a documentation page to describe the concept *regular*, and link it to https://en.cppreference.com/w/cpp/concepts/regular
  */
-template <typename Triangulation_3, typename PolygonMesh, typename NamedParams = parameters::Default_named_parameters>
-Triangulation_3
-make_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const NamedParams& np = parameters::default_values())
+template <typename Triangulation = CGAL::Default,
+          typename PolygonMesh,
+          typename NamedParams = parameters::Default_named_parameters>
+auto make_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh,
+                                               const NamedParams& np = parameters::default_values())
 {
-  Constrained_Delaunay_triangulation_3<typename Triangulation_3::Geom_traits, Triangulation_3> cdt(mesh, np);
-  Triangulation_3 tr = std::move(cdt).triangulation();
-
-  for(auto vh : tr.all_vertex_handles()) {
-    vh->sync();
-  }
-
-  for(auto ch : tr.all_cell_handles()) {
-    ch->set_subdomain_index(1);
-  }
-
-  std::stack<typename Triangulation_3::Cell_handle> stack;
-  stack.push(tr.infinite_cell());
-  while(!stack.empty()) {
-    auto ch = stack.top();
-    stack.pop();
-    ch->set_subdomain_index(0);
-    for(int i = 0; i < 4; ++i) {
-      if(ch->is_facet_on_surface(i)) continue;
-      auto n = ch->neighbor(i);
-      if(n->subdomain_index() == 1) {
-        stack.push(n);
-      }
-    }
-  }
-
-  return tr;
+  using Mesh_geom_traits = typename GetGeomTraits<PolygonMesh, NamedParams>::type;
+  using CDT = typename CGAL::Default::Get<Triangulation, default_constrained_Delaunay_triangulation_3_t<Mesh_geom_traits>>::type;
+  CDT cdt(mesh, np);
+  auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
+  static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);
+  return remeshing_cdt;
 }
 
 } // end namespace CGAL

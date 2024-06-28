@@ -131,6 +131,10 @@ a.el {
     vertical-align:middle;
 }
 
+.PkgImage > .image > img {
+	border-radius: 10%;
+}
+
 .PkgAuthors {
     font-style: italic;
 }

@@ -16,6 +16,10 @@
 
 namespace CGAL {
 
+/// @brief A base class with a time stamp.
+///
+/// This class is a base class that can be used to add a time stamp to any class.
+/// \cgalModels{BaseWithTimeStamp}
 template <typename Base>
 class Base_with_time_stamp : public Base {
   std::size_t time_stamp_ = 0;

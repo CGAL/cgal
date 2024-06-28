@@ -564,7 +564,7 @@ int go(Mesh mesh, CDT_options options) {
       std::ofstream dump(options.output_filename);
       dump.precision(17);
       cdt.write_facets(dump, cdt, std::views::filter(cdt.finite_facets(), [&](auto f) {
-          return cdt.is_constrained(f);
+          return cdt.is_facet_constrained(f);
       }));
     }
     CGAL_CDT_3_TASK_END(output_task_handle);

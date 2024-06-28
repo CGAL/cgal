@@ -6,7 +6,7 @@ The concept `ConstrainedDelaunayTriangulationCellBase_3` refines the concept
 `TriangulationCellBase_3` and is the base cell class for
 the `CGAL::make_constrained_Delaunay_triangulation_3()` function template.
 
-\cgalRefines{TriangulationCellBase_3}
+\cgalRefines{TriangulationCellBase_3, BaseWithTimeStamp}
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Constrained_Delaunay_triangulation_cell_base_3}

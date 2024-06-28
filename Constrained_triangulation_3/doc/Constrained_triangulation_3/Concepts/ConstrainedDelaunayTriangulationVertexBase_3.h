@@ -6,13 +6,11 @@ The concept `ConstrainedDelaunayTriangulationVertexBase_3` refines the concept
 `TriangulationVertexBase_3` and is the base vertex class for
 the `CGAL::make_constrained_Delaunay_triangulation_3()` function template.
 
-\cgalRefines{TriangulationVertexBase_3}
+\cgalRefines{TriangulationVertexBase_3, BaseWithTimeStamp}
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Constrained_Delaunay_triangulation_vertex_base_3}
 \cgalHasModelsEnd
-
-\todo CDT_3 also requires `time_stamp()` but it is not documented in the concept.
 
 \sa `ConstrainedDelaunayTriangulationCellBase_3`
 

@@ -40,7 +40,7 @@ namespace CGAL {
  * @cgalModels{ConstrainedDelaunayTriangulationCellBase_3, SimplicialMeshCellBase_3, RemeshingCellBase_3}
  *
  * \note This cell base class also models the `SimplicialMeshCellBase_3` and `RemeshingCellBase_3` concepts, allowing the use of functionality from \ref Chapter_Tetrahedral_Remeshing "Tetrahedral Remeshing" and \ref Chapter_3D_Simplicial_Mesh_Data_Structure "3D Simplicial Mesh Data Structures", if the corresponding vertex base also models the right concepts.
- * \todo After discussion with Jane. The note above is wrong. There should be a second pair of Vb/Cb, designed to model the concepts of simplicial mesh and remeshing.
+ * \todo After discussion with Jane. Maybe there should be a second pair of Vb/Cb, designed to model the concepts of simplicial mesh and remeshing.
  *
  * \sa `CGAL::Constrained_Delaunay_triangulation_vertex_base_3`
  */

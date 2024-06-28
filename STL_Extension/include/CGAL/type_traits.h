@@ -27,6 +27,17 @@ struct is_same_or_derived :
   >
 {};
 
+template<typename T>
+struct is_nothrow_movable :
+  public std::bool_constant<
+    std::is_nothrow_move_constructible_v<T> &&
+    std::is_nothrow_move_assignable_v<T>
+  >
+{};
+
+template<typename T>
+inline constexpr bool is_nothrow_movable_v = is_nothrow_movable<T>::value;
+
 namespace cpp20 {
 
   template< class T >

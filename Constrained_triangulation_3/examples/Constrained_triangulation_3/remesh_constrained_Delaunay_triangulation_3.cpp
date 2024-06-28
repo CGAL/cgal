@@ -26,7 +26,8 @@ int main(int argc, char* argv[])
     std::cerr << "Error: cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }
-  Tr tr = CGAL::make_constrained_Delaunay_triangulation_3<Tr>(mesh);
+  auto cdt = CGAL::make_constrained_Delaunay_triangulation_3(mesh);
+  auto tr = std::move(cdt).triangulation();
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;
   CGAL::tetrahedral_isotropic_remeshing(tr, 0.1,
