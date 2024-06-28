@@ -99,6 +99,97 @@ using Edge_location =
     std::pair<typename boost::graph_traits<TriangleMesh>::edge_descriptor,
               std::array<FT, 2>>;
 
+/// \ingroup PMP_locate_grp
+/// returns `true` if `loc1` and `loc2` indicate the same point on `tm`, and `false` otherwise,
+template <class TriangleMesh, class FT>
+bool
+are_locations_identical(const Face_location<TriangleMesh, FT>& loc1,
+                        const Face_location<TriangleMesh, FT>& loc2,
+                        const TriangleMesh& tm)
+{
+  if (loc1==loc2) return true;
+
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
+  using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
+  using Barycentric_coordinates = CGAL::Polygon_mesh_processing::Barycentric_coordinates<FT>;
+
+  const face_descriptor fd1 = loc1.first;
+  const Barycentric_coordinates& bar1 = loc1.second;
+  const face_descriptor fd2 = loc2.first;
+  const Barycentric_coordinates& bar2 = loc2.second;
+
+  // the first barycentric coordinate corresponds to source(halfedge(fdX, tm), tm)
+  halfedge_descriptor hd1 = prev(halfedge(fd1, tm), tm);
+  halfedge_descriptor hd2 = prev(halfedge(fd2, tm), tm);
+
+  // check if the point is a vertex
+  for(int i=0; i<3; ++i)
+  {
+    if(bar1[i] == FT(1))
+    {
+      vertex_descriptor vd1 = target(hd1, tm);
+      for(int k=0; k<3; ++k)
+      {
+        if(bar2[k] == FT(1))
+          return target(hd2, tm) == vd1;
+        hd2 = next(hd2, tm);
+      }
+    }
+    hd1 = next(hd1, tm);
+  }
+  CGAL_assertion(hd1 == prev(halfedge(fd1, tm), tm));
+
+  // check loc2 is not a vertex
+  for(int k=0; k<3; ++k)
+  {
+    if(bar2[k] == FT(1))
+      return false;
+    hd2 = next(hd2, tm);
+  }
+  CGAL_assertion(hd2 == prev(halfedge(fd2, tm), tm));
+
+
+  // check if the point is on an edge
+  for(int i=0; i<3; ++i)
+  {
+    if(bar1[i] == FT(0)) // coordinate at target(hd1, tm)
+    {
+      for(int k=0; k<3; ++k)
+      {
+        if(bar2[k] == FT(0))  // coordinate at target(hd2, tm)
+          return prev(hd2, tm) == opposite(prev(hd1, tm), tm);
+        hd2 = next(hd2, tm);
+      }
+    }
+    hd1 = next(hd1, tm);
+  }
+
+  return false;
+}
+
+template <class TriangleMesh, class FT>
+Face_location<TriangleMesh,FT>
+to_face_location(Edge_location<TriangleMesh, FT> loc,
+                 const TriangleMesh& tm)
+{
+  auto h = halfedge(loc.first, tm);
+  if (is_border(h, tm))
+  {
+    h=opposite(h, tm);
+    std::swap(loc.second[0], loc.second[1]);
+  }
+
+  auto f = face(h, tm);
+  auto hf = halfedge(f, tm);
+  if (hf == h)
+    return Face_location<TriangleMesh, FT>(f, CGAL::make_array(loc.second[0], loc.second[1], FT(0)));
+  if (next(hf, tm)==h)
+    return Face_location<TriangleMesh, FT>(f, CGAL::make_array(FT(0),loc.second[0], loc.second[1]));
+  CGAL_assertion(prev(hf, tm)==h);
+  return Face_location<TriangleMesh, FT>(f, CGAL::make_array(loc.second[1],FT(0),loc.second[0]));
+}
+
 namespace internal {
 
 // The Ray must have the same ambient dimension as the property map's value type (aka, the point type)
@@ -533,11 +624,7 @@ random_location_on_mesh(const TriangleMesh& tm,
 ///
 template <typename FT, typename TriangleMesh>
 descriptor_variant<TriangleMesh>
-#ifdef DOXYGEN_RUNNING // just for convenience because template alias do not allow template deduction
 get_descriptor_from_location(const Face_location<TriangleMesh, FT>& loc,
-#else
-get_descriptor_from_location(const Face_location<TriangleMesh, FT>& loc,
-#endif
                              const TriangleMesh& tm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
