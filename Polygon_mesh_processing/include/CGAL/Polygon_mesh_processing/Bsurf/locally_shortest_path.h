@@ -3555,12 +3555,14 @@ typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename
   return len;
 }
 
-
-template <class K, class TriangleMesh, class OutputIterator>
+//TODO VNM should be optional as well as FNM
+template <class K, class TriangleMesh, class VNM, class FNM, class OutputIterator>
 // std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>
 OutputIterator
 refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh, typename K::FT>>>& paths,
                         TriangleMesh& tmesh,
+                        VNM vnm,
+                        FNM fnm,
                         OutputIterator out)
 {
   // TODO: nothing is done here to identify identical points
@@ -3770,9 +3772,11 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
   // add new vertices per face
   for (std::size_t fid=0; fid<faces_to_refine.size(); ++fid)
   {
+    typename K::Vector_3 face_normal=get(fnm, faces_to_refine[fid]);
     for(std::size_t vid : points_per_face[fid])
     {
       vertex_descriptor vd = add_vertex(tmesh);
+      put(vnm, vd, face_normal);
       put(vid_map, vd, vid);
       tmesh.point(vd)=construct_point(polyline_locations[vid], tmesh);
 
@@ -3795,6 +3799,9 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
   for (std::size_t eid=0; eid<edges_to_refine.size(); ++eid)
   {
     halfedge_descriptor href = hedges_to_refine[eid];
+    CGAL_assertion( !is_border_edge(href, tmesh) ); // TODO shall we throw if we reach boundary?
+    typename K::Vector_3 edge_normal = 0.5 * (get(fnm, face(href,tmesh))+get(fnm, face(opposite(href, tmesh), tmesh)));
+
     for (const std::pair<Point_3, std::size_t>& pt_and_id : points_on_hedges[eid])
     {
       CGAL_assertion( polyline_vertices[pt_and_id.second]==boost::graph_traits<TriangleMesh>::null_vertex() );
@@ -3803,6 +3810,7 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
       // TODO: use VPM
       tmesh.point(target(href,tmesh)) = std::move(pt_and_id.first);
       put(vid_map, target(href,tmesh), pt_and_id.second);
+      put(vnm, target(href,tmesh), edge_normal);
     }
   }
 
@@ -3952,6 +3960,7 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
 
     //grab triangles.
     face_descriptor current_face = fd;
+    typename K::Vector_3 face_normal = get(fnm, fd);
     for (typename CDT::Finite_faces_iterator it=cdt.finite_faces_begin(),
                                              it_end=cdt.finite_faces_end();;)
     {
@@ -3984,6 +3993,7 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
       if ( ++it!=it_end )
       {
         current_face=add_face(tmesh);
+        put(fnm, current_face, face_normal);
       }
       else
         break;
