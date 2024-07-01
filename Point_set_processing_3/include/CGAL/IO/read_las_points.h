@@ -43,7 +43,7 @@
 #  pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
-#define USE_AS_DLL
+#define USE_AS_DLL 1
 #include <lasreader_las.hpp>
 #undef USE_AS_DLL
 
@@ -384,7 +384,7 @@ bool read_LAS_with_properties(std::istream& is,
   if(!is)
     return false;
 
-  LASreaderLAS lasreader;
+  LASreaderLAS lasreader(nullptr);
   lasreader.open(is);
 
   while(lasreader.read_point())
