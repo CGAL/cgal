@@ -190,7 +190,7 @@ private :
     const FT ax=a.x(), ay=a.y(), az=a.z();
     const FT bx=b.x(), by=b.y(), bz=b.z();
 
-    auto minor = [](double ai, double bi, double aj, double bj)
+    auto minor = [](auto ai, auto bi, auto aj, auto bj)
     {
       // The main idea is that we expect ai and bi (and aj and bj) to have roughly the same magnitude
       // since this function is used to compute the cross product of two vectors that are defined
@@ -362,7 +362,7 @@ extract_triangle_data()
     Vector v01 = p1 - p0;
     Vector v02 = p2 - p0;
 
-    Vector lNormalV = cross_product(v01,v02);
+    Vector lNormalV = X_product(v01,v02);
     FT lNormalL = point_cross_product(p0,p1) * (p2 - ORIGIN);
 
     CGAL_SMS_LT_TRACE(1, "  Extracting triangle v" << tri.v0 << "->v" << tri.v1 << "->v" << tri.v2
@@ -394,11 +394,12 @@ compute_placement()
   //  A1 * v = b1
   //  A2 * v = b2
   //
-  // Which in matrix form is :  A * v = b
+  // Which in matrix form is:  A * v = b
   //
   // (with 'A' a 3x3 matrix and 'b' a vector)
   //
-  // The member variable mConstrinas contains A and b. Indidivual constraints (Ai,bi) can be added to it.
+  // The member variables mConstraints_A and mConstraints_b contain A and b.
+  // Indidivual constraints (Ai,bi) can be added to it.
   // Once 3 such constraints have been added 'v' is directly solved a:
   //
   //  v = b*inverse(A)
@@ -421,7 +422,7 @@ compute_placement()
   // In that case there is simply no good vertex placement
   if(mConstraints_n == 3)
   {
-    // If the matrix is singular it's inverse cannot be computed so an 'absent' value is returned.
+    // If the matrix is singular its inverse cannot be computed so an 'absent' value is returned.
     std::optional<Matrix> lOptional_Ai = inverse_matrix(mConstraints_A);
     if(lOptional_Ai)
     {
