@@ -757,7 +757,7 @@ The macros are then |CGAL_forall_svertices_of(v,V)|,
 |CGAL_forall_shalfedges_of(e,V)|, |CGAL_forall_sedges_of(e,V)|,
 |CGAL_forall_sfaces_of(f,V)|, |CGAL_forall_sface_cycles_of(fc,F)|.}*/
 
-void transform( const Aff_transformation_3& linear) {
+void transform( const Aff_transformation_3& linear, bool is_even, const Aff_transformation_3& transposed_inverse) {
   //  CGAL_NEF_TRACEN("transform sphere map of vertex" << center_vertex()->point());
     // The affine transformation is linear, i.e., no translation part.
     CGAL_precondition( linear.hm(0,3) == 0 &&
@@ -768,13 +768,17 @@ void transform( const Aff_transformation_3& linear) {
     for (SVertex_iterator i = svertices_begin(); i != svertices_end(); ++i)
       i->point() = normalized(Sphere_point( i->point().transform( linear)));
     for (SHalfedge_iterator i = shalfedges_begin(); i !=shalfedges_end(); ++i)
-      i->circle() = Sphere_circle( i->circle().transform( linear));
+      i->circle() = Sphere_circle( i->circle().transform( linear, is_even, transposed_inverse));
     if ( has_shalfloop()) {
       shalfloop()->circle() = Sphere_circle(shalfloop()->circle()
-                                          .transform( linear));
+                                          .transform( linear, is_even, transposed_inverse));
       shalfloop()->twin()->circle()
-        = Sphere_circle(shalfloop()->twin()->circle().transform( linear));
+        = Sphere_circle(shalfloop()->twin()->circle().transform( linear, is_even, transposed_inverse));
     }
+}
+
+void transform( const Aff_transformation_3& linear) {
+    return transform(linear, linear.is_even(), linear.transpose().inverse());
 }
 
 void extract_complement() {
