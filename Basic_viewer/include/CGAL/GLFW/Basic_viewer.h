@@ -34,6 +34,7 @@
 #include "internal/Line_renderer.h"
 #include "internal/Clipping_plane.h"
 #include "internal/Animation_controller.h"
+// #include "internal/Input_controller.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -173,6 +174,8 @@ namespace GLFW
     void init_and_load_renderers();
     void load_scene();
 
+    void print_application_state(const double deltaTime);
+
     void update_uniforms(const double deltaTime=0.00);
 
     void set_face_uniforms();
@@ -207,12 +210,18 @@ namespace GLFW
     void translate_camera(const double deltaTime);
     void translate_clipping_plane(const double deltaTime, bool useCameraForward=false);
 
+    void save_key_frame();
+    void run_or_stop_animation();
+
+    void increase_light_all(const double deltaTime);
+    void increase_red_component(const double deltaTime);
+    void increase_green_component(const double deltaTime);
+    void increase_blue_component(const double deltaTime);
+
     void switch_display_mode();
 
     void fullscreen();
     void screenshot(const std::string& filePath);
-
-    void print_help();
 
     vec4f color_to_vec4(const CGAL::IO::Color& c) const;
 
@@ -323,29 +332,12 @@ namespace GLFW
 
     enum ActionEnum
     {
-      MOUSE_ROTATE,
-      MOUSE_TRANSLATE,
-      UP,
-      LEFT,
-      RIGHT,
-      DOWN,
-      FORWARD,
-      BACKWARDS,
-      SWITCH_CAM_MODE,
-      SWITCH_CAM_ROTATION,
-
+      /*WINDOW*/
       FULLSCREEN,
       SCREENSHOT,
-      INC_ZOOM,
-      DEC_ZOOM,
-      INC_MOVE_SPEED_1,
-      DEC_MOVE_SPEED_1,
-      INC_ROT_SPEED_1,
-      DEC_ROT_SPEED_1,
-      RESET_CAM,
+      EXIT,
 
-      CLIPPING_PLANE_MODE,
-      CLIPPING_PLANE_DISPLAY,
+      /*SCENE*/
       VERTICES_DISPLAY,
       FACES_DISPLAY,
       EDGES_DISPLAY,
@@ -368,21 +360,48 @@ namespace GLFW
       DISPLAY_WORLD_AXIS, 
       DISPLAY_XY_GRID,
 
-      CP_ROTATION,
-      CP_TRANSLATION,
-      CP_TRANS_CAM_DIR,
-      CP_TRANS_N_DIR,
-      CONSTRAINT_AXIS,
+      /*CAMERA*/
+      ROTATE_CAMERA,
+      TRANSLATE_CAMERA,
+      
+      UP,
+      LEFT,
+      RIGHT,
+      DOWN,
+      FORWARD,
+      BACKWARDS,
 
-      INC_ROT_SMOOTHNESS, 
-      DEC_ROT_SMOOTHNESS, 
-      INC_TRA_SMOOTHNESS, 
-      DEC_TRA_SMOOTHNESS, 
+      SWITCH_CAM_MODE,
+      SWITCH_CAM_TYPE,   
+      RESET_CAM,
 
+      INC_CAMERA_TRANSLATION_SPEED,
+      DEC_CAMERA_TRANSLATION_SPEED,
+      INC_CAMERA_ROTATION_SPEED,
+      DEC_CAMERA_ROTATION_SPEED,
+
+      INC_CAMERA_ROTATION_SMOOTHNESS, 
+      DEC_CAMERA_ROTATION_SMOOTHNESS, 
+      INC_CAMERA_TRANSLATION_SMOOTHNESS, 
+      DEC_CAMERA_TRANSLATION_SMOOTHNESS, 
+
+      /*CLIPPING PLANE*/
+      ROTATE_CLIPPING_PLANE,
+      TRANSLATE_CLIPPING_PLANE,
+      TRANSLATE_CP_IN_CAMERA_DIRECTION,
+      TRANSLATE_CP_IN_NORMAL_DIRECTION,
+      TOGGLE_CLIPPING_PLANE_MODE,
+      TOGGLE_CLIPPING_PLANE_DISPLAY,
+      TOGGLE_CP_CONSTRAINT_AXIS,
+      INC_CP_TRANSLATION_SPEED,
+      INC_CP_ROTATION_SPEED,
+      DEC_CP_TRANSLATION_SPEED,
+      DEC_CP_ROTATION_SPEED,
+
+      /*ANIMATION*/
       SAVE_KEY_FRAME,
       RUN_OR_STOP_ANIMATION,
-
-      EXIT
+      CLEAR_ANIMATION, 
     };
   };
 } // end namespace GLFW

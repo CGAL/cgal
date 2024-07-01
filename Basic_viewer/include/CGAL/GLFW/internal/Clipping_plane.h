@@ -3,7 +3,7 @@
 
 #include "utils.h"
 
-class Clipping_plane 
+class Clipping_plane
 {
 public:
   enum class Constraint_axis  
@@ -147,9 +147,18 @@ public:
     }
   }
 
+  inline void increase_rotation_speed() { m_rotationSpeed = std::min(m_rotationSpeed+10.f, 360.f); }
+  inline void decrease_rotation_speed() { m_rotationSpeed = std::max(m_rotationSpeed-10.f, 60.f); }
+
+  inline void increase_translation_speed() { m_translationSpeed = std::min(m_translationSpeed+.1f, 20.f); }
+  inline void decrease_translation_speed() { m_translationSpeed = std::max(m_translationSpeed-.1f, 0.5f); }
+
   inline void set_size(const float size) { m_size = size; }
   inline void set_up_axis(const vec3f& upAxis) { m_upAxis = upAxis; }
   inline void set_right_axis(const vec3f& rightAxis) { m_rightAxis = rightAxis; }
+
+  inline float get_translation_speed() const { return m_translationSpeed; }
+  inline float get_rotation_speed() const { return m_rotationSpeed; }
 
 private:
   quatf m_orientation;

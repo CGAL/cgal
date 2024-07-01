@@ -12,13 +12,17 @@ struct CameraKeyFrame {
     vec3f position;
     quatf orientation;
 
-    CameraKeyFrame(const vec3f& _position, const quatf& _orientation)
-    : position(_position), 
+    CameraKeyFrame(const vec3f& _position, const quatf& _orientation) : 
+      position(_position), 
       orientation(_orientation) 
     {
     }
 
-    CameraKeyFrame() : position(vec3f::Identity()), orientation(quatf::Identity()) {}
+    CameraKeyFrame() : 
+      position(vec3f::Identity()), 
+      orientation(quatf::Identity()) 
+    {
+    }
 };
 
 class Animation_controller 
@@ -27,13 +31,14 @@ public:
   using DurationType = std::chrono::milliseconds;
   using TimePoint = std::chrono::_V2::steady_clock::time_point;
   using KeyFrameBuffer = std::vector<CameraKeyFrame>;
+  
 public:
-  Animation_controller() 
-  : m_duration(2s), 
+  Animation_controller() : 
+    m_duration(15s), 
     m_startTime(), 
     m_isRunning(false),
-    m_lastFrame(0.00), 
-    m_currentFrame(0.00), 
+    m_lastFrameNumber(0.00), 
+    m_currentFrameNumber(0.00), 
     m_timestamp(0.00),
     m_lastFrameData(),
     m_interpolatedRotation(quatf::Identity()),
@@ -47,9 +52,15 @@ public:
   inline 
   void start() 
   {
-    std::cout << "animation start" << '\n';
+    if (m_keyFrames.size() <= 1) 
+    {
+      std::cout << "not enougth key frame saved" << '\n';
+      return;
+    }
+
     if (!m_isRunning) 
     {
+      std::cout << "animation start" << '\n';
       m_startTime = std::chrono::steady_clock::now();
       m_isRunning = true;
     }
@@ -58,32 +69,26 @@ public:
   inline 
   CameraKeyFrame run() 
   {
-    if (m_keyFrames.size() <= 1) 
-    {
-      stop(0.00);
-      return m_lastFrameData;
-    }
-
     auto now = std::chrono::steady_clock::now();
     double elapsedTime = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(now - m_startTime).count());
-    m_currentFrame = m_lastFrame + elapsedTime;
-    if (m_currentFrame >= static_cast<double>(m_duration.count())) 
+    m_currentFrameNumber = m_lastFrameNumber + elapsedTime;
+    if (m_currentFrameNumber >= static_cast<double>(m_duration.count())) 
     {
-      m_currentFrame = 0.00;
+      m_currentFrameNumber = 0.00;
       stop(0.00);
       return m_lastFrameData;
     }
 
-    m_lastFrameData = key_frame_interpolation(m_currentFrame); 
+    m_lastFrameData = key_frame_interpolation(m_currentFrameNumber); 
     return m_lastFrameData;
   }
 
   inline 
-  void stop(const double frame) 
+  void stop(const double frameNumber) 
   {
     std::cout << "animation stopped" << '\n';
     m_isRunning = false;
-    m_lastFrame = frame;
+    m_lastFrameNumber = frameNumber;
   }
 
   inline 
@@ -129,7 +134,7 @@ public:
   inline 
   double get_frame() const 
   {
-    return m_currentFrame;
+    return m_currentFrameNumber;
   }
   
 private:
@@ -165,10 +170,6 @@ private:
   }
 
 private: 
-  double m_lastFrame;  
-  double m_currentFrame;  
-  double m_timestamp;  
-
   quatf m_interpolatedRotation;
   vec3f m_interpolatedTranslation;
 
@@ -179,6 +180,10 @@ private:
   TimePoint m_startTime; 
 
   CameraKeyFrame m_lastFrameData;
+
+  double m_lastFrameNumber;  
+  double m_currentFrameNumber;  
+  double m_timestamp;  
 
   bool m_isRunning;
 };

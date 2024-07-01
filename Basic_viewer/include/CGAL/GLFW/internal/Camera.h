@@ -75,11 +75,11 @@ public:
   inline bool is_orthographic() const { return m_mode == Mode::ORTHOGRAPHIC; }
   inline bool is_orbiter() const { return m_type == Type::ORBITER; }
 
-  inline void inc_rspeed() { m_rotationSpeed = std::min(m_rotationSpeed+10.f, 500.f); }
-  inline void dec_rspeed() { m_rotationSpeed = std::max(m_rotationSpeed-10.f, 50.f); }
+  inline void increase_rotation_speed() { m_rotationSpeed = std::min(m_rotationSpeed+10.f, 360.f); }
+  inline void decrease_rotation_speed() { m_rotationSpeed = std::max(m_rotationSpeed-10.f, 60.f); }
 
-  inline void inc_tspeed() { m_translationSpeed = std::min(m_translationSpeed+.1f, 20.f); }
-  inline void dec_tspeed() { m_translationSpeed = std::max(m_translationSpeed-.1f, 0.5f); }
+  inline void increase_translation_speed() { m_translationSpeed = std::min(m_translationSpeed+.1f, 20.f); }
+  inline void decrease_translation_speed() { m_translationSpeed = std::max(m_translationSpeed-.1f, 0.5f); }
 
   inline void inc_rotation_smoothness() { m_rotationSmoothFactor = std::max(m_rotationSmoothFactor-.01f, 0.01f); }
   inline void dec_rotation_smoothness() { m_rotationSmoothFactor = std::min(m_rotationSmoothFactor+.01f, 1.f); }
@@ -88,6 +88,9 @@ public:
   inline void dec_translation_smoothness() { m_translationSmoothFactor = std::min(m_translationSmoothFactor+.01f, 1.f); }
 
   inline void set_orientation(const quatf& orientation) { m_orientation = orientation; }
+
+  inline float get_translation_speed() const { return m_translationSpeed; }
+  inline float get_rotation_speed() const { return m_rotationSpeed; }
    
   void set_position(const vec3f& position);
 
@@ -137,7 +140,7 @@ Camera::Camera() :
   m_position(vec3f::Zero()), 
   m_targetPosition(vec3f::Zero()), 
   m_orientation(quatf::Identity()), 
-  m_translationSpeed(1.f), m_rotationSpeed(100.f), 
+  m_translationSpeed(1.f), m_rotationSpeed(120.f), 
   m_constSize(5.f), 
   m_radius(5.f),
   m_width(1.f), m_height(1.f),
@@ -152,7 +155,6 @@ Camera::Camera() :
   m_rotationSmoothFactor(0.3f),
   m_translationSmoothFactor(0.3f)
 {
-
 }
 
 inline 
@@ -412,11 +414,6 @@ mat4f Camera::viewport() const
 inline 
 vec3f Camera::get_position() const
 {
-  // mat4f v = view();
-  // mat4f vi = v.inverse();
-
-  // vec3f o(0.f, 0.f, 0.f);
-  // return mult_vec_mat(o, vi);
   if (is_orbiter()) 
   {
     return vec3f(m_position.x(), m_position.y(), m_size);
@@ -431,16 +428,7 @@ inline
 vec3f Camera::forward_direction() const
 {
   vec3f forward;
-  // if (is_orbiter()) 
-  // {
-  //   forward.x() = m_center.x() - get_position().x();
-  //   forward.y() = m_center.y() - get_position().y();
-  //   forward.z() = m_center.z() - get_position().z();
-  // }
-  // else 
-  // {
-    forward = m_orientation.inverse() * -vec3f::UnitZ();
-  // }
+  forward = m_orientation.inverse() * -vec3f::UnitZ();
 
   return forward.normalized();
 }
@@ -492,6 +480,8 @@ void Camera::reset_all()
   m_zoomSmoothFactor = .1f;
   m_rotationSmoothFactor = .1f;
   m_translationSmoothFactor = .1f;
+  m_translationSpeed = 1.0f;
+  m_rotationSpeed = 120.0f;
 }
 
 
