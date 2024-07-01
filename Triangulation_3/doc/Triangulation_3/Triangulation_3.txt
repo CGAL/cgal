@@ -807,7 +807,7 @@ in \cgalCite{msri52:liu-snoeyink-05}.
 
 \subsection Triangulation_3ParallelPerformance Parallel Performance
 
-Figure \cgalFigureRef{Triangulation3figparallelspeedup} shows insertion
+\cgalFigureRef{Triangulation3figparallelspeedup} shows insertion
 and removal speed-ups obtained using the parallel version of the
 triangulation algorithms of \cgal 4.5. The machine used is a PC running
 Windows 7 64-bits with two 6-core

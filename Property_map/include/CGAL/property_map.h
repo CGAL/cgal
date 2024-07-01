@@ -725,7 +725,7 @@ make_cartesian_converter_property_map(Vpm vpm)
 
 /// \ingroup PkgPropertyMapRef
 /// A property map with `std::size_t` as key-type that can be used
-/// to access the i'th element in a container with random access.
+/// to access the i-th element in a container with random access.
 /// \cgalModels{LvaluePropertyMap constness being than of `Container`.}
 template<typename Container>
 class Random_access_property_map
