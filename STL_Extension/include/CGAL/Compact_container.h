@@ -27,6 +27,7 @@
 #include <functional>
 #include <atomic>
 
+#include <CGAL/use.h>
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
@@ -302,6 +303,20 @@ public:
     clear();
   }
 
+  bool check_timestamps_are_valid() const {
+    if constexpr (Time_stamper::has_timestamp) {
+      for(size_type i = 0, end = capacity(); i < end; ++i) {
+        if(!is_used(i)) {
+          continue;
+        }
+        if(Time_stamper::time_stamp(&operator[](i)) != i) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   bool is_used(const_iterator ptr) const
   {
     return (type(&*ptr)==USED);
@@ -383,6 +398,7 @@ public:
     pointer ret = free_list;
     free_list = clean_pointee(ret);
     std::size_t ts;
+    CGAL_USE(ts);
     if constexpr (Time_stamper::has_timestamp) {
       ts = ret->time_stamp();
     }
@@ -404,6 +420,7 @@ public:
     pointer ret = free_list;
     free_list = clean_pointee(ret);
     std::size_t ts;
+    CGAL_USE(ts);
     if constexpr (Time_stamper::has_timestamp) {
       ts = ret->time_stamp();
     }
@@ -439,6 +456,7 @@ public:
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
     std::size_t ts;
+    CGAL_USE(ts);
     if constexpr (Time_stamper::has_timestamp) {
       ts = x->time_stamp();
     }

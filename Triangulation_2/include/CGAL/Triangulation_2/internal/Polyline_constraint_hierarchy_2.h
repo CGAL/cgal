@@ -21,15 +21,6 @@
 #include <map>
 #include <set>
 #include <list>
-
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 108100
-#  include <boost/unordered/unordered_flat_map.hpp>
-#  define CGAL_USE_BOOST_UNORDERED 1
-#else // BOOST before 1.81.0
-#  include <unordered_map>
-#endif
-
 #include <CGAL/Skiplist.h>
 #include <CGAL/assertions.h>
 
@@ -143,6 +134,24 @@ public:
     }
   };
 
+  class Pair_compare {
+    Compare comp;
+
+  public:
+    Pair_compare(const Compare& comp) : comp(comp) {}
+
+    bool operator()(const Edge& e1, const Edge& e2) const {
+      if(comp(e1.first, e2.first)) {
+        return true;
+      } else if((! comp(e2.first, e1.first)) && //  !less(e1,e2) && !less(e2,e1) == equal
+                comp(e1.second, e2.second)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
   class Context {
     friend class Polyline_constraint_hierarchy_2<T,Compare,Point>;
   private:
@@ -162,11 +171,8 @@ public:
   typedef typename Context_list::iterator Context_iterator;
 
   typedef std::set<Constraint_id>           Constraint_set;
-#if CGAL_USE_BOOST_UNORDERED
-  typedef boost::unordered_flat_map<Edge, Context_list*, boost::hash<Edge>> Sc_to_c_map;
-#else
-  typedef std::unordered_map<Edge, Context_list*, boost::hash<Edge>> Sc_to_c_map;
-#endif
+  typedef std::map<Edge, Context_list*,
+                   Pair_compare>            Sc_to_c_map;
   typedef typename Constraint_set::iterator C_iterator;
   typedef typename Sc_to_c_map::const_iterator    Sc_iterator;
   typedef Sc_iterator Subconstraint_iterator;
@@ -180,7 +186,7 @@ private:
 public:
   Polyline_constraint_hierarchy_2(const Compare& comp)
     : comp(comp)
-    , sc_to_c_map()
+    , sc_to_c_map(Pair_compare(comp))
   { }
   Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch);
   Polyline_constraint_hierarchy_2(Polyline_constraint_hierarchy_2&&) = default;
@@ -284,7 +290,7 @@ template <class T, class Compare, class Point>
 Polyline_constraint_hierarchy_2<T,Compare,Point>::
 Polyline_constraint_hierarchy_2(const Polyline_constraint_hierarchy_2& ch)
   : comp(ch.comp)
-  , sc_to_c_map()
+  , sc_to_c_map(Pair_compare(comp))
 {
   copy(ch);
 }

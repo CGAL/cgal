@@ -427,17 +427,9 @@ public: // methods
               << exudation_time << "s ====" << std::endl;
 #endif
 
-#ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
-    if (ret == BOUND_REACHED)
-    {
-      CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", exudation_time);
-    }
-    else
-    {
-      CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time",
-        (ret == CANT_IMPROVE_ANYMORE ?
-        "CANT_IMPROVE_ANYMORE" : "TIME_LIMIT_REACHED"));
-    }
+#if defined(CGAL_MESH_3_EXPORT_PERFORMANCE_DATA) \
+ && defined(CGAL_MESH_3_PROFILING)
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Exuder_optim_time", exudation_time);
 #endif
 
     return ret;
@@ -1206,7 +1198,7 @@ expand_prestar(const Cell_handle& cell_to_add,
 
         if(! tr_.is_infinite(current_mirror_cell))
         {
-          // if current_mirror_cell is finite, we can re-use the value
+          // if current_mirror_cell is finite, we can reuse the value
           // 'new_power_distance_to_power_sphere'
 
           // Ensure that 'new_power_distance_to_power_sphere' has been initialized
@@ -1295,7 +1287,7 @@ get_best_weight(const Vertex_handle& v, bool *could_lock_zone) const
         && pre_star.front()->first < (sq_delta_ * sq_d_v)
         && ! c3t3_.is_in_complex(pre_star.front()->second) )
   {
-    // Store critial radius (pre_star will be modified in expand_prestar)
+    // Store critical radius (pre_star will be modified in expand_prestar)
     FT power_distance_to_power_sphere = pre_star.front()->first;
 
     // expand prestar (insert opposite_cell facets in pre_star)

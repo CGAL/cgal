@@ -15,8 +15,8 @@
 
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Kernel_traits.h>
 #ifdef CGAL_LINKED_WITH_TBB
@@ -73,14 +73,14 @@ double compute_distances(const Mesh& m,
                          std::vector<double>& out)
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<Kernel, Primitive> Traits;
   typedef CGAL::AABB_tree< Traits > Tree;
 
   Tree tree( faces(m).first, faces(m).second, m);
   tree.build();
   typedef typename boost::property_map<Mesh, boost::vertex_point_t>::const_type VPMap;
   VPMap vpmap = get(boost::vertex_point, m);
-  typename Traits::Point_3 hint = get(vpmap, *vertices(m).begin());
+  typename Traits::Point hint = get(vpmap, *vertices(m).begin());
 
 #if !defined(CGAL_LINKED_WITH_TBB)
   double hdist = 0;
@@ -97,7 +97,7 @@ double compute_distances(const Mesh& m,
 #else
   std::atomic<double> distance;
   distance.store(0);
-  Distance_computation<Tree, typename Traits::Point_3> f(tree, hint, point_set, &distance, out);
+  Distance_computation<Tree, typename Traits::Point> f(tree, hint, point_set, &distance, out);
   tbb::parallel_for(tbb::blocked_range<Point_set::const_iterator>(point_set.begin(), point_set.end()), f);
   return distance;
 #endif
@@ -187,17 +187,16 @@ private Q_SLOTS:
       CGAL::Three::Three::warning("You must select the resulting point set.");
       return;
     }
-    PMap distance_map;
-     boost::tie (distance_map, boost::tuples::ignore) = item->point_set()->property_map<double>("distance");
-   double distance = dock_widget->distance_spinbox->value();
-   for (Point_set::iterator it = item->point_set()->begin();
-        it != item->point_set()->end(); ++ it)
-   {
-     if(distance <= distance_map[*it])
-       item->point_set()->select(*it);
-   }
-   item->invalidateOpenGLBuffers();
-   item->itemChanged();
+    PMap distance_map = item->point_set()->property_map<double>("distance").value();
+    double distance = dock_widget->distance_spinbox->value();
+    for (Point_set::iterator it = item->point_set()->begin();
+         it != item->point_set()->end(); ++ it)
+    {
+      if(distance <= distance_map[*it])
+        item->point_set()->select(*it);
+    }
+    item->invalidateOpenGLBuffers();
+    item->itemChanged();
   }
   void perform()
   {

@@ -271,7 +271,7 @@ public:
   class Halfedge;
   class Face;
 
-  // Definition of the halfedge data-structure itereators and circulators:
+  // Definition of the halfedge data-structure iterators and circulators:
   typedef I_Filtered_iterator<DVertex_iter, _Is_concrete_vertex,
                               Vertex, DDifference, DIterator_category>
     Vertex_iterator;
@@ -1043,7 +1043,7 @@ public:
   }
 
   /*!
-  returns a range over handles of the arrangement vertices .
+  returns a range over handles of the arrangement vertices.
   */
   Iterator_range<Prevent_deref<Vertex_iterator> >
   vertex_handles()
@@ -1068,7 +1068,7 @@ public:
   }
 
   /*!
-  returns a const range (model of `ConstRange`) over handles of the arrangement vertices .
+  returns a const range (model of `ConstRange`) over handles of the arrangement vertices.
   */
   Iterator_range<Prevent_deref<Vertex_const_iterator> >
   vertex_handles() const
@@ -1098,7 +1098,7 @@ public:
   }
 
   /*!
-  returns a range over handles of the arrangement halfedges .
+  returns a range over handles of the arrangement halfedges.
   */
   Iterator_range<Prevent_deref<Halfedge_iterator> >
   halfedge_handles()
@@ -1122,7 +1122,7 @@ public:
                                     _Is_valid_halfedge(&m_topol_traits)));
   }
   /*!
-  returns a const range (model of `ConstRange`) over handles of the arrangement halfedges .
+  returns a const range (model of `ConstRange`) over handles of the arrangement halfedges.
   */
   Iterator_range<Prevent_deref<Halfedge_const_iterator> >
   halfedge_handles() const
@@ -1149,7 +1149,7 @@ public:
   }
 
   /*!
-  returns a range over handles of the arrangement edges .
+  returns a range over handles of the arrangement edges.
   */
   Iterator_range<Prevent_deref<Edge_iterator> >
   edge_handles()
@@ -1172,7 +1172,7 @@ public:
   }
 
   /*!
-  returns a const range (model of `ConstRange`) over handles of the arrangement edges .
+  returns a const range (model of `ConstRange`) over handles of the arrangement edges.
   */
   Iterator_range<Prevent_deref<Edge_const_iterator> >
   edge_handles() const
@@ -1199,7 +1199,7 @@ public:
   }
 
   /*!
-  returns a range over handles of the arrangement faces .
+  returns a range over handles of the arrangement faces.
   */
   Iterator_range<Prevent_deref<Face_iterator> >
   face_handles()
@@ -1221,7 +1221,7 @@ public:
   }
 
   /*!
-  returns a const range (model of `ConstRange`) over handles of the arrangement faces .
+  returns a const range (model of `ConstRange`) over handles of the arrangement faces.
   */
   Iterator_range<Prevent_deref<Face_const_iterator> >
   face_handles() const

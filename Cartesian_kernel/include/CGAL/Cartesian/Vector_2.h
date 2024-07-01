@@ -50,7 +50,10 @@ public:
   VectorC2() {}
 
   VectorC2(const FT &x, const FT &y)
-    : base(CGAL::make_array(x, y)) {}
+    : base{x, y} {}
+
+  VectorC2(FT&& x, FT&& y)
+    : base{std::move(x), std::move(y)} {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
     : base( hw != FT(1) ? CGAL::make_array<FT>(hx/hw, hy/hw)

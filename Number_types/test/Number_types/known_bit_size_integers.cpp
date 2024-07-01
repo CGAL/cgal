@@ -4,7 +4,7 @@
 
 int main()
 {
-  std::cout << "Verifying the sizes of boost::[u]int{8,16,32,64}_t"
+  std::cout << "Verifying the sizes of std::[u]int{8,16,32,64}_t"
             << std::endl;
 
   static_assert(sizeof(std::int8_t)  == 1);

@@ -11,9 +11,8 @@ typedef Mesh::Property_map<Mesh::Edge_index, bool> ECM;
 
 bool test_one_side(Mesh::Halfedge_index h, Mesh m)
 {
-  std::pair<ECM, bool> ecm_and_bool = m.property_map<Mesh::Edge_index, bool>("ecm");
   Mesh::Vertex_index vkept=target(h, m);
-  CGAL::Euler::collapse_edge(edge(h, m), m, ecm_and_bool.first);
+  CGAL::Euler::collapse_edge(edge(h, m), m, m.property_map<Mesh::Edge_index, bool>("ecm").value());
   return (!m.is_removed(vkept) && CGAL::is_valid_polygon_mesh(m));
 }
 

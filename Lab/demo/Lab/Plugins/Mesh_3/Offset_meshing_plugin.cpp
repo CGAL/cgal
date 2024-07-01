@@ -8,7 +8,7 @@
 #include "C3t3_type.h"
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
 #include <CGAL/Side_of_triangle_mesh.h>
@@ -53,7 +53,7 @@ template <class TriangleMesh, class GeomTraits>
 class Offset_function
 {
   using Primitive = AABB_face_graph_triangle_primitive<TriangleMesh>;
-  using Traits = AABB_traits<GeomTraits, Primitive>;
+  using Traits = AABB_traits_3<GeomTraits, Primitive>;
   using Tree = AABB_tree<Traits>;
   using Side_of = Side_of_triangle_mesh<TriangleMesh, GeomTraits>;
 
@@ -198,7 +198,7 @@ class Polygon_soup_offset_function
     }
   }; // struct template Polygon_soup_primitive
 
-  using AABB_traits = CGAL::AABB_traits<EPICK, AABB_polygon_soup_triangle_primitive>;
+  using AABB_traits = CGAL::AABB_traits_3<EPICK, AABB_polygon_soup_triangle_primitive>;
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 
   std::shared_ptr<AABB_tree> m_tree_ptr;
@@ -743,7 +743,7 @@ inflate_mesh()
     return;
 
   auto vpm = get(CGAL::vertex_point, *sMesh);
-  auto vnm = sMesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").first;
+  auto vnm = sMesh->property_map<vertex_descriptor, EPICK::Vector_3 >("v:normal").value();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 

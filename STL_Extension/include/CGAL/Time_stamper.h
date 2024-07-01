@@ -36,12 +36,13 @@ struct Time_stamper
 
   template <typename time_stamp_t>
   static void set_time_stamp(T* pt, time_stamp_t& time_stamp_) {
+    CGAL_assertion(pt->time_stamp() != std::size_t(-2));
     if(pt->time_stamp() == std::size_t(-1)) {
       const std::size_t new_ts = time_stamp_++;
       pt->set_time_stamp(new_ts);
     }
     else {
-      // else: the time stamp is re-used
+      // else: the time stamp is reused
 
       // Enforces that the time stamp is greater than the current value.
       // That is used when a TDS_3 is copied: in that case, the
@@ -63,6 +64,7 @@ struct Time_stamper
 
   static std::size_t time_stamp(const T* pt)
   {
+    CGAL_assertion(pt == nullptr || pt->time_stamp() != std::size_t(-2));
     if(pt == nullptr){
       return std::size_t(-1);
     }
@@ -78,6 +80,7 @@ struct Time_stamper
   }
 
   static std::size_t hash_value(const T* p) {
+    CGAL_assertion(p == nullptr || p->time_stamp() != std::size_t(-2));
     if(nullptr == p)
       return std::size_t(-1);
     else

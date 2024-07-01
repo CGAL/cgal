@@ -495,7 +495,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Cell_handle() const { return Base::base(); }
+    operator const Cell_handle&() const { return Base::base(); }
   };
 
   // We derive in order to add a conversion to handle.
@@ -514,13 +514,13 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<Finite_cells_iterator,
-                                       Cell_handle> >         Finite_cell_handles;
+                                       const Cell_handle&> >         Finite_cell_handles;
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
-                                       Vertex_handle> >       Finite_vertex_handles;
+                                       const Vertex_handle&> >       Finite_vertex_handles;
 
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
@@ -532,7 +532,7 @@ public:
   typedef Triangulation_segment_simplex_iterator_3<Self> Segment_simplex_iterator;
 
   typedef Iterator_range<Prevent_deref<Segment_cell_iterator,
-                                       Cell_handle> >    Segment_traverser_cell_handles;
+                                       const Cell_handle&> >    Segment_traverser_cell_handles;
   typedef Iterator_range<Segment_simplex_iterator> Segment_traverser_simplices;
 
 private:
@@ -1624,7 +1624,7 @@ protected:
     // to make it more general one could have an internal function here
     // to remove v without touching its handle
 
-    // This insert must be from Delaunay (or the particular trian.)
+    // This insert must be from Delaunay (or the particular triangle.)
     // not the basic Triangulation_3.
     // Here we correct the recent triangulation (with decreased dimension) formed
     // in particular here a 2D (from 3D to 2D displacement)
@@ -2270,7 +2270,7 @@ public:
   Segment_traverser_cell_handles segment_traverser_cell_handles(Vertex_handle vs,
                                                                 Vertex_handle vt) const
   {
-    return {segment_traverser_cells_begin(vs, vt),segment_traverser_cells_end()};
+    return {segment_traverser_cells_begin(vs, vt), segment_traverser_cells_end()};
   }
   Segment_traverser_cell_handles segment_traverser_cell_handles(const Point& ps,
                                                                 const Point& pt,
@@ -5371,7 +5371,7 @@ remove(Vertex_handle v, VertexRemover& remover, bool *could_lock_zone)
 }
 
 // The remove here uses the remover, but
-// no function envolving hidden points
+// no function involving hidden points
 // will be used in this internal version
 template < class Gt, class Tds, class Lds >
 template < class VertexRemover, class OutputItCells >
@@ -5618,7 +5618,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
   if(((dim == 2) && (lt != OUTSIDE_AFFINE_HULL)) ||
      ((lt == OUTSIDE_AFFINE_HULL) && (dim == 1)))
   {
-    // This is insert must be from Delaunay (or the particular trian.)
+    // This is insert must be from Delaunay (or the particular triangle.)
     // not Triangulation_3 !
     Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
 
@@ -5687,7 +5687,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
     }
   }
 
-  // This is insert must be from Delaunay (or the particular trian.)
+  // This is insert must be from Delaunay (or the particular triangle.)
   // not Triangulation_3 !
   Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
 
@@ -5915,7 +5915,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
      ((lt == OUTSIDE_AFFINE_HULL) && (dim == 1)))
   {
     std::set<Cell_handle> cells_set;
-    // This is insert must be from Delaunay (or the particular trian.)
+    // This is insert must be from Delaunay (or the particular triangle.)
     // not Triangulation_3 !
     Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
     Cell_handle c = inserted->cell(), end = c;
@@ -6004,7 +6004,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
 
   std::set<Cell_handle> cells_set;
 
-  // This is insert must be from Delaunay (or the particular trian.)
+  // This is insert must be from Delaunay (or the particular triangle.)
   // not Triangulation_3 !
   Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
 

@@ -279,7 +279,7 @@ private:
   QString name(z_tag) const { return tr("Z Slice for %2").arg(name_); }
 
   //according to the tag, a,b,c dim change but not the scale. We look for the max dimension of the whole image.
-  //A high scale factor will often go with a low dimesion, to compensate it. So we don't want a max being the
+  //A high scale factor will often go with a low dimension, to compensate it. So we don't want a max being the
   //higher scale * the higher dim, hence the tag specialisation.
 //TODO: set the scale factors according to the dimensipon to avoid doing that.
   double compute_maxDim(x_tag) const

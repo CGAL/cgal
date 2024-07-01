@@ -162,7 +162,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<All_vertices_iterator> > All_vertex_handles;
@@ -179,11 +179,11 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
  };
 
   typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
-                                       Vertex_handle> > Finite_vertex_handles;
+                                       const Vertex_handle&>> Finite_vertex_handles;
 
   class Hidden_vertices_iterator :
     public Filter_iterator<Finite_vib, Unhidden_tester>
@@ -197,11 +197,11 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
  };
 
   typedef Iterator_range<Prevent_deref<Hidden_vertices_iterator,
-                                       Vertex_handle> > Hidden_vertex_handles;
+                                       const Vertex_handle&>> Hidden_vertex_handles;
 
  //for backward compatibility
   typedef Finite_faces_iterator                Face_iterator;

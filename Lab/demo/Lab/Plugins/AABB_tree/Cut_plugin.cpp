@@ -18,7 +18,7 @@
 #include <CGAL/Three/Edge_container.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/AABB_tree/internal/AABB_drawing_traits.h>
@@ -216,11 +216,11 @@ struct PPMAP
 };
 
 typedef CGAL::AABB_face_graph_triangle_primitive<SMesh, PPMAP<SMesh> > Facet_sm_primitive;
-typedef CGAL::AABB_traits<Simple_kernel, Facet_sm_primitive>           Facet_sm_traits;
+typedef CGAL::AABB_traits_3<Simple_kernel, Facet_sm_primitive>           Facet_sm_traits;
 typedef CGAL::AABB_tree<Facet_sm_traits>                               Facet_sm_tree;
 
 typedef CGAL::AABB_halfedge_graph_segment_primitive<SMesh, PPMAP<SMesh> > Edge_sm_primitive;
-typedef CGAL::AABB_traits<Simple_kernel, Edge_sm_primitive>              Edge_sm_traits;
+typedef CGAL::AABB_traits_3<Simple_kernel, Edge_sm_primitive>              Edge_sm_traits;
 typedef CGAL::AABB_tree<Edge_sm_traits>                                Edge_sm_tree;
 
 typedef QMap<QObject*, Facet_sm_tree*>                   Facet_sm_trees;

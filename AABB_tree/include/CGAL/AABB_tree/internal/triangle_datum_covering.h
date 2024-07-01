@@ -19,7 +19,7 @@
 
 #include <CGAL/AABB_tree/internal/AABB_traversal_traits.h>
 #include <CGAL/AABB_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/array.h>
 #include <CGAL/Bbox_3.h>
@@ -161,7 +161,7 @@ struct AABB_covered_triangle_tree_traits
                                          CGAL::Tag_false /*no caching*/>;
 
   using AABB_geom_traits = Kernel;
-  using AABB_traits = CGAL::AABB_traits<AABB_geom_traits, Primitive, BPM>;
+  using AABB_traits = CGAL::AABB_traits_3<AABB_geom_traits, Primitive, BPM>;
   using AABB_tree = CGAL::AABB_tree<AABB_traits>;
 };
 

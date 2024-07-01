@@ -22,7 +22,7 @@ as a gradient red/green corresponding to close/far from the source vertices.
 The heat method is highly efficient, since the algorithm
 boils down to two standard sparse linear algebra problems.  It is especially
 useful in situations where one wishes to perform repeated distance queries
-on a fixed domain, since precomputation done for the first query can be re-used.
+on a fixed domain, since precomputation done for the first query can be reused.
 
 As a rule of thumb, the method works well on triangle meshes, which are
 Delaunay, though in practice may also work fine for meshes that are far from

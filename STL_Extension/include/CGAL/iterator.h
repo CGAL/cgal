@@ -25,6 +25,7 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/tuple.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/use.h>
 
 #include <variant>
@@ -37,32 +38,32 @@
 
 namespace CGAL {
 
-template<typename I, typename Value_type = I>
+template<typename I, typename Reference_type = const I&>
 class Prevent_deref
   : public boost::iterator_adaptor<
-    Prevent_deref<I,Value_type>
+    Prevent_deref<I, Reference_type>
   , I // base
-  , Value_type // value
-  , boost::use_default
-  , Value_type // ref
+  , CGAL::cpp20::remove_cvref_t<Reference_type> // value
+  , boost::use_default // category
+  , Reference_type // ref
   >
 {
 public:
-  typedef boost::iterator_adaptor<
-  Prevent_deref<I,Value_type>
+  using Value_type = CGAL::cpp20::remove_cvref_t<Reference_type>;
+  using Base = boost::iterator_adaptor<
+    Prevent_deref<I, Reference_type>
   , I // base
   , Value_type // value
-  , boost::use_default
-  , Value_type // ref
-  > Base;
-  typedef typename Base::reference reference;
+  , boost::use_default // category
+  , Reference_type // ref
+  >;
   typedef typename std::pair<I, I> range;
 
   Prevent_deref() = default;
   Prevent_deref(const I& i) : Base(i) {}
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const {
+  Reference_type dereference() const {
     return this->base_reference();
   }
 };
@@ -614,7 +615,7 @@ public:
   reference operator*() const { return *c_;  }
   pointer operator->() const  { return &*c_; }
   const Predicate& predicate() const { return p_; }
-  Iterator base() const { return c_; }
+  const Iterator& base() const { return c_; }
 
   Iterator end() const { return e_; }
   bool is_end() const { return (c_ == e_); }

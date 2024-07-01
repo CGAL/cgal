@@ -6078,6 +6078,18 @@ public:
   Kernel::Point_2 operator()(const Kernel::Line_2& l,
                              const Kernel::Point_2& p);
 
+  /*!
+    returns the point of `s` that is the closest to `p`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s,
+                             const Kernel::Point_2& p);
+
+  /*!
+    returns the point of `t` that is the closest to `p`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Triangle_2& t,
+                             const Kernel::Point_3& p);
+
   /// @}
 
 }; /* end Kernel::ConstructProjectedPoint_2 */

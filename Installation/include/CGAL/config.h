@@ -501,7 +501,7 @@ namespace cpp11{
 #  define CGAL_FALLTHROUGH while(false){}
 #endif
 
-#if __cpp_lib_format >= 201907L || __cplusplus >= 202000L || _MSVC_LANG >= 202000L
+#if __cpp_lib_format >= 201907L || (__has_include(<format>) && (__cplusplus >= 202000L || _MSVC_LANG >= 202000L))
 #  define CGAL_CAN_USE_CXX20_FORMAT 1
 #endif
 

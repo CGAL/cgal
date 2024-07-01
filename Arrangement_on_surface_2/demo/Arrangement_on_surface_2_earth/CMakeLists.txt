@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Arrangement_on_surface_2_earth_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -14,7 +14,7 @@ endif()
 
 find_package(Qt6 QUIET COMPONENTS Core Gui OpenGL OpenGLWidgets Widgets Xml)
 find_package(CGAL COMPONENTS Qt6)
-find_package(nlohmann_json 3.9)
+find_package(nlohmann_json QUIET 3.9)
 
 if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND OR NOT nlohmann_json_FOUND)
   if (NOT CGAL_FOUND)
@@ -33,7 +33,7 @@ if (NOT CGAL_FOUND OR NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND OR NOT Boost_FOUND OR 
     set(MISSING_DEPS "JSON for Modern C++ 3.9+ (know as nlohmann_json), ${MISSING_DEPS}")
   endif()
 
-  message(STATUS "This project requires ${MISSING_DEPS} and will not be compiled.")
+  message(STATUS "NOTICE: This project requires ${MISSING_DEPS} and will not be compiled.")
   return()
 endif()
 

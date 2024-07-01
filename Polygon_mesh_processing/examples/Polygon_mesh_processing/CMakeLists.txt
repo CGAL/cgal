@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Polygon_mesh_processing_Examples)
 
 # CGAL and its components
@@ -35,6 +35,7 @@ create_single_source_cgal_program("corefinement_SM.cpp")
 create_single_source_cgal_program("corefinement_consecutive_bool_op.cpp")
 create_single_source_cgal_program("corefinement_difference_remeshed.cpp")
 create_single_source_cgal_program("corefinement_mesh_union.cpp")
+create_single_source_cgal_program("corefinement_mesh_non_manifold_intersection.cpp")
 create_single_source_cgal_program("corefinement_mesh_union_progress.cpp")
 create_single_source_cgal_program("corefinement_mesh_union_and_intersection.cpp")
 create_single_source_cgal_program("corefinement_mesh_union_with_attributes.cpp")

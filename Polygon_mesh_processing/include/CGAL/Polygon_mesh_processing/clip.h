@@ -26,7 +26,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
 #include <CGAL/iterator.h>
 
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -939,7 +939,7 @@ void split(TriangleMesh& tm,
   const bool do_not_modify_splitter = choose_parameter(get_parameter(np_s, internal_np::do_not_modify), false);
 
   PMP::corefine(tm, splitter,
-                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
+                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm).visitor(uv),
                 CGAL::parameters::vertex_point_map(vpm_s).do_not_modify(do_not_modify_splitter));
 
   //split mesh along marked edges

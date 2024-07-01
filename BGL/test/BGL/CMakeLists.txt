@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(BGL_Tests)
 
 # CGAL and its components
@@ -68,6 +68,10 @@ endif()
 
 find_package(VTK QUIET COMPONENTS vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
 if (VTK_FOUND)
+  if(VTK_USE_FILE)
+    include(${VTK_USE_FILE})
+  endif()
+
   if ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
     if(TARGET VTK::CommonCore)
       set(VTK_LIBRARIES VTK::CommonCore VTK::IOCore VTK::IOLegacy VTK::IOXML VTK::FiltersCore VTK::FiltersSources)
