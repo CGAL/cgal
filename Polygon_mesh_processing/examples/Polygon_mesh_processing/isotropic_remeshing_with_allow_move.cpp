@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
@@ -37,7 +38,7 @@ struct Allow_no_surface_crossing
 
 int main(int argc, char* argv[])
 {
-  const std::string filename = (argc > 1) ? std::string(argv[1]) : CGAL::data_file_path("meshes/pig.off");
+  const std::string filename = (argc > 1) ? std::string(argv[1]) : CGAL::data_file_path("meshes/triceratops.off");
 
   Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -46,8 +47,9 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
-  double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.05;
+  double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.3;
   unsigned int nb_iter = (argc > 3) ? std::stoi(std::string(argv[3])) : 1;
+  unsigned int nb_smoothing = (argc > 4) ? std::stoi(std::string(argv[4])) : 2;
 
   if (PMP::does_self_intersect(mesh))
     std::cout << "Input mesh self-intersects" << std::endl;
@@ -57,6 +59,7 @@ int main(int argc, char* argv[])
   Allow_no_surface_crossing shall_move(mesh);
   PMP::isotropic_remeshing(faces(mesh), target_edge_length, mesh,
     CGAL::parameters::number_of_iterations(nb_iter)
+    .number_of_relaxation_steps(nb_smoothing)
     .allow_move_functor(shall_move)
   );
 
