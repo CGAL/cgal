@@ -152,6 +152,7 @@
 
 \package_listing{Interpolation}
 \package_listing{Barycentric_coordinates_2}
+\package_listing{Barycentric_coordinates_3}
 
 \cgalPackageSection{PartSupportLibrary,Support Library}
 
