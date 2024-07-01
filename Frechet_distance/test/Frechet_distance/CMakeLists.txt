@@ -1,0 +1,10 @@
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
+
+cmake_minimum_required(VERSION 3.1...3.14)
+project( Frechet_distance_Tests )
+
+find_package(CGAL REQUIRED QUIET OPTIONAL_COMPONENTS Core )
+
+create_single_source_cgal_program( "Frechet_distance_test.cpp" )
+create_single_source_cgal_program( "Frechet_distance_minimal_traits_2.cpp" )

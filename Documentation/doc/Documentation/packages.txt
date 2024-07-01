@@ -39,6 +39,7 @@
 \package_listing{Straight_skeleton_2}
 \package_listing{Minkowski_sum_2}
 \package_listing{Polyline_simplification_2}
+\package_listing{Frechet_distance}
 \package_listing{Visibility_2}
 \package_listing{Set_movable_separability_2}
 
