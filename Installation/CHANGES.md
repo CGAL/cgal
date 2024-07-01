@@ -148,6 +148,10 @@ Release date: June 2024
 - **Breaking change**: the concept `MeshEdgeCriteria_3` was modified to include the new meshing criterion `edge_distance`.
 
 
+- Added two new meshing parameters that enable mesh initialization customization :
+  - `initial_points_generator` : enables the user to specify a functor that generate initial points.
+  - `initial_points` : enable the user to specify a `Range` of initial points.
+
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
 
 - **Breaking change**:
