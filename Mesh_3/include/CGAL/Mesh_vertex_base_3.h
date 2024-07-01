@@ -30,6 +30,10 @@
 #include <CGAL/tags.h>
 #include <atomic>
 
+#if CGAL_MESH_3_STATS_THREADS
+#  include <thread>
+#endif
+
 namespace CGAL {
 
 // Without erase counter
@@ -116,6 +120,10 @@ public:
   typedef Index_                      Index;
   typedef typename GT::FT             FT;
   typedef typename Vb::Point          Point;
+
+#if CGAL_MESH_3_STATS_THREADS
+  std::thread::id thread_id;
+#endif
 
   // Constructor
   Mesh_vertex_3()
