@@ -526,7 +526,7 @@ public:
     * surface patches (defined as the union of the mesh faces with a given patch id) is supposed to be a polygon or a
     * polygon with holes, with coplanar vertices (or almost coplanar up to the precision of the number type used).
     *
-    * The triangulation will be constrained to conform to the faces of the polygon mesh, or to the surface patches
+    * The generated triangulation will be constrained to conform to the faces of the polygon mesh, or to the surface patches
     * described by the `face_patch_map` property map if provided.
     *
     * \tparam PolygonMesh a model of `FaceListGraph`
@@ -536,6 +536,7 @@ public:
     * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
     *
     * \cgalNamedParamsBegin
+    *
     *   \cgalParamNBegin{vertex_point_map}
     *     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
     *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
@@ -544,11 +545,13 @@ public:
     *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
     *                     must be available in `PolygonMesh`.}
     *   \cgalParamNEnd
+    *
     *   \cgalParamNBegin{geom_traits}
     *     \cgalParamDescription{an instance of a geometric traits class}
     *     \cgalParamType{`Traits`}
     *     \cgalParamDefault{the default constructed traits object `Traits{}`}
     *   \cgalParamNEnd
+    *
     *   \cgalParamNBegin{face_patch_map}
     *    \cgalParamDescription{a property map associating a patch identifier to each face of `mesh`}
     *    \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
@@ -556,11 +559,16 @@ public:
     *   \cgalParamExtra{If this parameter is omitted, each face of the mesh is considered as a separate patch.}
     *   \cgalParamExtra{Faces with the same patch identifier are considered as part of the same surface patch.}
     *   \cgalParamNEnd
+    *
     * \cgalNamedParamsEnd
     *
+   * \pre `mesh` must not have self-intersections:
+   *      \link CGAL::Polygon_mesh_processing::does_self_intersect
+   *      `CGAL::Polygon_mesh_processing::does_self_intersect(mesh, np) == false`
+   *      \endlink
     */
-  template <typename PolygonMesh, typename NamedParams = parameters::Default_named_parameters>
-  Constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const NamedParams& np = parameters::default_values())
+  template <typename PolygonMesh, typename CGAL_NP_TEMPLATE_PARAMETERS>
+  Constrained_Delaunay_triangulation_3(const PolygonMesh& mesh, const CGAL_NP_CLASS& np = parameters::default_values())
       : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
   {
     auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
@@ -591,6 +599,90 @@ public:
     // std::cerr << cdt_3_format("cdt_impl: {} vertices, {} cells\n", cdt_impl.number_of_vertices(),
     //                          cdt_impl.number_of_cells());
   }
+
+  /*!
+    * \brief Create a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
+    *
+    * This constructor initializes a Constrained_Delaunay_triangulation_3 object using a polygon soup.
+    * The polygon soup represents the polygonal constraints that will be enforced during the triangulation process.
+    *
+    * By default, each face of the polygon soup is considered as a polygonal constraint for the triangulation. The
+    * named parameter `face_patch_map` can be used to describe bigger polygonal constraints, possibly with holes. If
+    * used, the argument of that parameter must be a property map that maps each face of the polygon soup to a patch
+    * identifier. Faces with the same patch identifier are considered as part of the same surface patch. Each of those
+    * surface patches (defined as the union of the faces with a given patch id) is supposed to be a polygon or a
+    * polygon with holes, with coplanar vertices (or almost coplanar up to the precision of the number type used).
+    *
+    * The triangulation will be constrained to conform to the faces of the polygon soup, or to the surface patches
+    * described by the `face_patch_map` property map if provided.
+    *
+    * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+    * \tparam PolygonRange a model of the concept `RandomAccessContainer` whose value type is a model of the concept
+    *    `RandomAccessContainer` whose value type is `std::size_t`
+    * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+    *
+    * \param points a range of points representing the vertices of the polygon soup
+    * \param polygons a range of ranges of indices representing the faces of the polygon soup
+    * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+    *
+    * \cgalNamedParamsBegin
+    *
+    *   \cgalParamNBegin{point_map}
+    *     \cgalParamDescription{a property map associating points to the elements of the range `points`}
+    *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type}
+    *     \cgalParamDefault{`CGAL::Identity_property_map`}
+    *   \cgalParamNEnd
+    *
+    *   \cgalParamNBegin{geom_traits}
+    *     \cgalParamDescription{an instance of a geometric traits class}
+    *     \cgalParamType{`Traits`}
+    *     \cgalParamDefault{the default constructed traits object `Traits{}`}
+    *   \cgalParamNEnd
+    *
+    *   \cgalParamNBegin{face_patch_map}
+    *    \cgalParamDescription{a property map associating a patch identifier to each face of `soup`}
+    *    \cgalParamType{a class model of `ReadWritePropertyMap` with `std::size_t`
+    *                   as key type and with any value type that is a *regular* type (model of `Regular`)}
+    *   \cgalParamExtra{If this parameter is omitted, each face of the polygon soup is considered as a separate patch.}
+    *   \cgalParamExtra{Faces with the same patch identifier are considered as part of the same surface patch.}
+    *   \cgalParamNEnd
+    *
+    * \cgalNamedParamsEnd
+    *
+    * \pre the polygon soup must not have self-intersections.
+    */
+  template <typename PointRange, typename PolygonRange, typename NamedParams = parameters::Default_named_parameters>
+  Constrained_Delaunay_triangulation_3(const PointRange& points,
+                                       const PolygonRange& polygons,
+                                       const NamedParams& np = parameters::default_values())
+  {
+    using PointRange_const_iterator = typename PointRange::const_iterator;
+    using PointRange_value_type = typename std::iterator_traits<PointRange_const_iterator>::value_type;
+
+    auto point_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_map),
+                                                   CGAL::Identity_property_map<PointRange_value_type>{});
+    auto geom_traits = parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{});
+    auto face_patch_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_patch),
+                                                       boost::identity_property_map{});
+    using Vertex_handle = typename Triangulation::Vertex_handle;
+    using Cell_handle = typename Triangulation::Cell_handle;
+    std::vector<Vertex_handle> vertices(points.size());
+    Cell_handle hint_ch{};
+    auto i = 0u;
+    for(auto p_descr : points) {
+      auto p = get(point_map, p_descr);
+      auto vh = cdt_impl.insert(p, hint_ch, false);
+      hint_ch = vh->cell();
+      vertices[i++] = vh;
+    }
+    for(auto polygon : polygons) {
+      cdt_impl.insert_constrained_face(
+          polygon | std::views::transform([&](auto i) { return vertices[i]; }), false);
+    }
+    cdt_impl.restore_Delaunay();
+    cdt_impl.restore_constrained_Delaunay();
+  }
+
   /// @} // end constructors section
 
   /// \name Accessors for the Underlying Triangulation
