@@ -12,6 +12,8 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REGISTER_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_REGISTER_MESH_H
 
+#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
+
 #include <CGAL/config.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
