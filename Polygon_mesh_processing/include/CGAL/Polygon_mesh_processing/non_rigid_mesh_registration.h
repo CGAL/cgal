@@ -33,6 +33,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>
+#include <CGAL/Point_set_3.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -268,7 +269,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   const PointRange& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
-  const std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>& correspondences = std::vector<std::pair<boost::graph_traits<TriangleMesh>::vertex_descriptor, boost::graph_traits<TriangleMesh>::vertex_descriptor>>(),
+  const std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>& correspondences = std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>(),
   const NamedParameters& np = parameters::default_values())
 {
   const size_t iter = parameters::choose_parameter(parameters::get_parameter(np, internal_np::number_of_iterations), 50);
@@ -669,15 +670,15 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
   const TriangleMesh2& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
-  const std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>& correspondences = std::vector<std::pair<boost::graph_traits<TriangleMesh1>::vertex_descriptor, boost::graph_traits<TriangleMesh2>::vertex_descriptor>>(),
+  const std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>& correspondences = std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>(),
   const NamedParameters1& np = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values())
 {
-  using Gt2 =  GetGeomTraits<TriangleMesh2, NamedParameters2>::type;
+  using Gt2 = typename GetGeomTraits<TriangleMesh2, NamedParameters2>::type;
   //using Point = typename GeomTraits2::Point_3;
   using Vertex_point_map = typename GetVertexPointMap<TriangleMesh2, NamedParameters2>::type;
   using Vector_map_tag = dynamic_vertex_property_t<typename Gt2::Vector_3>;
-  using Default_vector_map = boost::property_map<TriangleMesh2, Vector_map_tag>::const_type;
+  using Default_vector_map = typename boost::property_map<TriangleMesh2, Vector_map_tag>::const_type;
   using Vertex_normal_map = typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
     NamedParameters2,
     Default_vector_map>::type;
@@ -696,13 +697,13 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
 
   using Gt1 = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
 
-  CGAL::Point_set_3<Gt1::Point_3> points;
+  CGAL::Point_set_3<typename Gt1::Point_3> points;
   points.reserve(target.num_vertices());
 
   for (auto v : target.vertices())
     points.insert(get(vpm, v), get(vnm, v));
 
-  std::vector<std::pair<Mesh::Vertex_index, std::size_t>> correspondences_pts;
+  std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, std::size_t>> correspondences_pts;
   correspondences_pts.reserve(correspondences.size());
   for (auto p : correspondences)
     correspondences_pts.push_back(std::make_pair(p.first, static_cast<std::size_t>(p.second)));
@@ -757,7 +758,7 @@ void apply_non_rigid_transformation(TriangleMesh& mesh,
   using Vertex_point_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::type;
   using Vector_map_tag = dynamic_vertex_property_t<typename Gt::Vector_3>;
   using Vector_map_tag = dynamic_vertex_property_t<typename Gt::Vector_3>;
-  using Default_vector_map = boost::property_map<TriangleMesh, Vector_map_tag>::type;
+  using Default_vector_map = typename boost::property_map<TriangleMesh, Vector_map_tag>::type;
   using Vertex_normal_map = typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
     NamedParameters,
     Default_vector_map>::type;
