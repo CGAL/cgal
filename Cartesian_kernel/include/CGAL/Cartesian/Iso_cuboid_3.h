@@ -43,7 +43,7 @@ public:
   Iso_cuboidC3() {}
 
   Iso_cuboidC3(const Point_3 &p, const Point_3 &q, int)
-    : base(CGAL::make_array(p, q))
+    : base{p, q}
   {
     // I have to remove the assertions, because of Cartesian_converter.
     // CGAL_kernel_assertion(p.x()<=q.x());
@@ -68,8 +68,8 @@ public:
   Iso_cuboidC3(const Point_3 &left,   const Point_3 &right,
                const Point_3 &bottom, const Point_3 &top,
                const Point_3 &far_,   const Point_3 &close)
-    : base(CGAL::make_array(Construct_point_3()(left.x(),  bottom.y(), far_.z()),
-                             Construct_point_3()(right.x(), top.y(),    close.z())))
+    : base{Construct_point_3()(left.x(),  bottom.y(), far_.z()),
+           Construct_point_3()(right.x(), top.y(),    close.z())}
   {
     CGAL_kernel_precondition(!less_x(right, left));
     CGAL_kernel_precondition(!less_y(top, bottom));

@@ -65,7 +65,7 @@ struct Curve_interval_arcno_cache {
     //! type of second argument
     typedef bool                  second_argument_type;
 
-    //! type of third arguent
+    //! type of third argument
     typedef int                   third_argument_type;
 
     //! the result type

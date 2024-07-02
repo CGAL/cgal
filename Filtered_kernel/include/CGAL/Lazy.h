@@ -101,10 +101,25 @@ template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_e
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> exact (T d){return d;}
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, int> depth(T){return -1;}
 
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, Quotient<T>> approx(Quotient<T> d){return d;}
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, Quotient<T>> exact (Quotient<T> d){return d;}
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, int> depth(Quotient<T>){return -1;}
+
 // For tag classes: Return_base_tag, Homogeneous_tag, Null_vector, Origin
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> exact(T){return {};}
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> approx(T){return {};}
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, int> depth(T){return -1;}
+
+namespace internal{
+template <typename AT, typename ET, typename E2A>
+struct Evaluate<Lazy<AT,ET,E2A>>
+{
+  void operator()(const Lazy<AT,ET,E2A>& l)
+  {
+    exact(l);
+  }
+};
+} // internal namespace
 
 // For an iterator, exact/approx applies to the objects it points to
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>

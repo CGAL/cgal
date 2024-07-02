@@ -971,6 +971,7 @@ public:
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
 
+  typedef typename Rp::Compare_xyz_3                          Compare_xy_2;
 
   struct Less_xy_2 {
     typedef typename R::Boolean result_type;
@@ -1064,6 +1065,10 @@ public:
   Less_x_2
   less_x_2_object() const
     { return Less_x_2();}
+
+  Compare_xy_2
+  compare_xy_2_object() const
+    { return Compare_xy_2();}
 
   Less_xy_2
   less_xy_2_object() const

@@ -392,7 +392,7 @@ public:
     const bool points_collinear = (CGAL::sign(D) == ZERO);
 
     if (points_collinear) {
-      reset_flags();            // inavlid arc
+      reset_flags();            // invalid arc
       return;
     }
 
@@ -453,7 +453,7 @@ public:
        orient_f (p3, p4, p5) == COLLINEAR);
 
     if (point_collinear) {
-      reset_flags();            // inavlid arc
+      reset_flags();            // invalid arc
       return;
     }
 
@@ -511,7 +511,7 @@ public:
         ! _is_strictly_between_endpoints(mp3) ||
         ! _is_strictly_between_endpoints(mp4))
     {
-      reset_flags();            // inavlid arc
+      reset_flags();            // invalid arc
     }
   }
 
@@ -669,14 +669,14 @@ public:
       }
 
       if (! found) {
-        reset_flags();          // inavlid arc
+        reset_flags();          // invalid arc
         return;
       }
     }
 
     // Make sure that the source and the target are not the same.
     if (Alg_kernel().compare_xy_2_object()(m_source, m_target) == EQUAL) {
-      reset_flags();            // inavlid arc
+      reset_flags();            // invalid arc
       return;
     }
 
@@ -724,7 +724,7 @@ public:
       }
     }
     else {
-      // Use the source and target to initialize the exterme points.
+      // Use the source and target to initialize the extreme points.
       bool   source_left =
         CGAL::to_double(m_source.x()) < CGAL::to_double(m_target.x());
       x_min = source_left ?
@@ -892,7 +892,7 @@ protected:
     }
   }
 
-  /*! Find the vertical tangency points of the undelying conic.
+  /*! Find the vertical tangency points of the underlying conic.
    * \param ps The output points of vertical tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of vertical tangency points.
@@ -970,7 +970,7 @@ protected:
     return n;
   }
 
-  /*! Find the horizontal tangency points of the undelying conic.
+  /*! Find the horizontal tangency points of the underlying conic.
    * \param ps The output points of horizontal tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of horizontal tangency points.
@@ -1071,7 +1071,7 @@ protected:
       set_flag(IS_VALID);
       set_flag(IS_FULL_CONIC);
     }
-    else reset_flags();         // inavlid arc
+    else reset_flags();         // invalid arc
   }
 
   /*! Check whether the given point lies on the supporting conic of the arc.
@@ -1093,7 +1093,7 @@ protected:
     return (CGAL::sign(val) == ZERO);
   }
 
-  /*! Build the data for hyperbolic arc, contaning the characterization of the
+  /*! Build the data for hyperbolic arc, containing the characterization of the
    * hyperbolic branch the arc is placed on.
    */
   CGAL_DEPRECATED void _build_hyperbolic_arc_data() {
@@ -1110,9 +1110,9 @@ protected:
     //
     Nt_traits nt_traits;
     const int or_fact = (m_orient == CLOCKWISE) ? -1 : 1;
-    const Algebraic r = nt_traits.convert(or_fact * m_r);
-    const Algebraic s = nt_traits.convert(or_fact * m_s);
-    const Algebraic t = nt_traits.convert(or_fact * m_t);
+    const Algebraic r = nt_traits.convert(Integer(or_fact * m_r));
+    const Algebraic s = nt_traits.convert(Integer(or_fact * m_s));
+    const Algebraic t = nt_traits.convert(Integer(or_fact * m_t));
     const Algebraic cos_2phi = (r - s) / nt_traits.sqrt((r-s)*(r-s) + t*t);
     const Algebraic zero = 0;
     const Algebraic one = 1;
@@ -1158,8 +1158,8 @@ protected:
     //        4*r*s - t^2                4*r*s - t^2
     //
     // The denominator (4*r*s - t^2) must be negative for hyperbolas.
-    const Algebraic u = nt_traits.convert(or_fact * m_u);
-    const Algebraic v = nt_traits.convert(or_fact * m_v);
+    const Algebraic u = nt_traits.convert(Integer(or_fact * m_u));
+    const Algebraic v = nt_traits.convert(Integer(or_fact * m_v));
     const Algebraic det = 4*r*s - t*t;
     Algebraic x0, y0;
 
@@ -1372,7 +1372,7 @@ protected:
     if (! _is_on_supporting_conic(m_source) ||
         ! _is_on_supporting_conic(m_target))
     {
-      reset_flags();    // inavlid arc
+      reset_flags();    // invalid arc
       return;
     }
 
@@ -1394,7 +1394,7 @@ protected:
                         nt_traits.convert(m_v)) * p_mid.y() +
                        nt_traits.convert(m_w)) != ZERO)
         {
-          reset_flags();        // inavlid arc
+          reset_flags();        // invalid arc
           return;
         }
 
@@ -1419,7 +1419,7 @@ protected:
       }
       else {
         // The sign of (4rs - t^2) detetmines the conic type:
-        // - if it is possitive, the conic is an ellipse,
+        // - if it is positive, the conic is an ellipse,
         // - if it is negative, the conic is a hyperbola,
         // - if it is zero, the conic is a parabola.
         CGAL::Sign sign_conic = CGAL::sign(4*m_r*m_s - m_t*m_t);
@@ -1438,7 +1438,7 @@ protected:
           bool finite_at_y = (_points_at_y(p_mid, ps) > 0);
 
           if (! finite_at_x && ! finite_at_y) {
-            reset_flags();      // inavlid arc
+            reset_flags();      // invalid arc
             return;
           }
         }
@@ -1515,7 +1515,7 @@ public:
   /// \name Get the arc properties.
   //@{
 
-  /*! Determine wheather the arc is valid.
+  /*! Determine whether the arc is valid.
    */
   bool is_valid() const { return test_flag(IS_VALID); }
 
@@ -1600,7 +1600,7 @@ protected:
 
 public:
   /// \name Modifying functions (setters);
-  // only friends have the priviledge to use.
+  // only friends have the privilege to use.
   //@{
 
   /*! Set the source point of the conic arc.

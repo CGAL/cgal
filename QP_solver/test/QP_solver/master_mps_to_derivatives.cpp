@@ -32,7 +32,9 @@
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
 
+#ifdef CGAL_USE_BOOST_MP
 #include <CGAL/boost_mp.h>
+#endif
 //Currently already included in boost_mp.h
 //#ifdef CGAL_USE_BOOST_MP
 //# include <boost/multiprecision/cpp_int.hpp>

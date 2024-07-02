@@ -704,7 +704,7 @@ class Width_3 {
     RT maxdist=0;
     RT hompart=1;
     //Try every point to be an/the antipodal vertex of the facet f. Take the
-    //one with the bigest distance from E1
+    //one with the biggest distance from E1
     DEBUGENDL(INITIAL_VF_PAIR,"Plane E1:",f->plane());
     while (vtxit != P.vertices_end() ) {
       RT pix, piy, piz, pih;
@@ -871,7 +871,7 @@ class Width_3 {
                  <<"ASSERTION OK.");
         if ( a*nx+b*ny+c*nz+d*nh >= 0 ) {
           //Could be a violation. Now check if v and n lie on the
-          //same plane. If so no violation, othervise we can break
+          //same plane. If so no violation, otherwise we can break
           if (a*nx+b*ny+c*nz+d*nh == 0 ) {
             DEBUGMSG(CHECK_ABOUT_VF_PAIRS,"Additional Antipodal Vertex "
                      <<"found. Expanding "<<"set of witnesses.");

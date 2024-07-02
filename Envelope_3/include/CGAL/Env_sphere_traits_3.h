@@ -265,7 +265,7 @@ public:
           if (n_ys == 0) return o; // no intersection
 
           // the x coordinate of the solution points
-          Algebraic xs = m / (2*a_diff);
+          Algebraic xs = m / (Rational(2)*a_diff);
 
           if (n_ys == 1) {
             // intersection is a point
@@ -340,7 +340,7 @@ public:
           }
           if (n_xs == 1) {
             // intersection is a point
-            Point_2 inter_point(xs[0], (-2*a_diff*xs[0] + m)/(2*b_diff) );
+            Point_2 inter_point(xs[0], (-Rational(2)*a_diff*xs[0] + m)/(Rational(2)*b_diff) );
             *o++ = inter_point;
             return o;
           }
@@ -350,8 +350,8 @@ public:
           // so we construct a COLLINEAR conic (with equation as in (1))
           // with 2 endpoints
           Algebraic ys[2];
-          ys[0] = (-2*a_diff*xs[0] + m)/(2*b_diff);
-          ys[1] = (-2*a_diff*xs[1] + m)/(2*b_diff);
+          ys[0] = (-Rational(2)*a_diff*xs[0] + m)/(Rational(2)*b_diff);
+          ys[1] = (-Rational(2)*a_diff*xs[1] + m)/(Rational(2)*b_diff);
 
           Alg_point_2 end1(xs[0], ys[0]);
           Alg_point_2 end2(xs[1], ys[1]);
@@ -457,7 +457,7 @@ public:
         int envelope_coef = 1;
         if (! m_traits.m_is_lower) envelope_coef = -1;
 
-        Sign sign_c_diff = CGAL_NTS sign(c_diff);
+        Rational sign_c_diff = Rational(sign(c_diff));
         Rational la = envelope_coef*2*a_diff*sign_c_diff;
         Rational lb = envelope_coef*2*b_diff*sign_c_diff;
         Rational lc = envelope_coef*sign_c_diff*(2*c_diff*z_plane - m);
@@ -977,10 +977,10 @@ public:
     const Rational& u = cv.u();
     const Rational& v = cv.v();
     // const Rational& w = cv.w();      // unused
-    Algebraic m = -1 * (2*r*x0 + t*y0 + u);
-    Algebraic n = 2*s*y0 + t*x0 + v;
+    Algebraic m = -1 * (Rational(2)*r*x0 + t*y0 + u);
+    Algebraic n = Rational(2)*s*y0 + t*x0 + v;
     // line coefficients: A3, B3, C3
-    Algebraic A3 = -1*m, B3 = n, C3 = m*x0 - n*y0;
+    Algebraic A3 = -m, B3 = n, C3 = m*x0 - n*y0;
 
     // the tangences of the spheres (in point (x0,y0,z0)):
     Algebraic z0 = compute_envelope_z_in_point(cv_point, s1);
@@ -1077,8 +1077,8 @@ public:
     Algebraic x_diff = x1 - a, y_diff = y1 - b;
     // the coefficients are:
     Algebraic A = 1;
-    Algebraic B = -2*c;
-    Algebraic C = x_diff*x_diff + y_diff*y_diff + c*c - sqr_r;
+    Algebraic B = -Rational(2)*c;
+    Algebraic C = x_diff*x_diff + y_diff*y_diff + Algebraic(c*c - sqr_r);
 
     Algebraic zs[2];
     Algebraic* zs_end;

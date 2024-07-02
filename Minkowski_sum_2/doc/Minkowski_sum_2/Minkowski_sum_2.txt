@@ -611,7 +611,7 @@ edges of which are line segments and circular arcs of radius \f$ r\f$.
 
 The inset can be computed using the convolution method traversing the
 polygon in a <I>clockwise</I> order (as oppose to the
-<I>counterclockwise</I> order applied in the case of ofsetting a polygon).
+<I>counterclockwise</I> order applied in the case of offsetting a polygon).
 As with the (outer) offset functions, the Minkowski-sum package contains two
 functions for insetting a simple polygon, namely,
 `approximated_inset_2(P, r, eps, oi)` and `inset_polygon_2(P, r, traits, oi)`.
@@ -647,7 +647,7 @@ The package also provides overloaded versions of the functions
  and
 \link offset_polygon_2() `offset_polygon_2(P, r, traits)`\endlink
 that accept a <I>polygon with holes</I>
-\f$ P\f$ and compute its offset. This ofset is obtain by computing the
+\f$ P\f$ and compute its offset. This offset is obtain by computing the
 outer offset of the outer boundary of \f$ P\f$'s, and computing the inner
 offsets of the holes of \f$ P\f$. The former polygon defines the output
 boundary of \f$ P \oplus B_r\f$, and the latter define the holes within

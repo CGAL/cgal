@@ -3,6 +3,7 @@ Algebraic_foundations
 Arithmetic_kernel
 Arrangement_on_surface_2
 Boolean_set_operations_2
+CGAL_Core
 Cartesian_kernel
 Circulator
 Convex_hull_2

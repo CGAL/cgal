@@ -2015,7 +2015,7 @@ protected:
      * boundary implies equality
      *
      * \param p first endpoint
-     * \param q second endpint
+     * \param q second endpoint
      * \param equal_x \c true indicates to skip the comparison by x
      * \param only_x \c true indicates to report only the comparison by x
      * \returns the result of the queried comparison

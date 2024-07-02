@@ -311,7 +311,7 @@ protected:
         Halfedge_handle hh = vc;
         // update the map
         traversed_vertices[Vertex_face_pair(v, hh->face())] = hh;
-        // check for reult
+        // check for result
         if (hh->face() == f) result = hh;
       } while (++vc != vc_begin);
     }

@@ -2,6 +2,7 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/use.h>
 #include "test_Prefix.h"
 
@@ -512,7 +513,7 @@ void test_invalid_selections()
   assert(pinched_fg.is_selection_valid());
 
   // this creates a non-manifold vertex (multiple umbrellas)
-  clear(mesh);
+  CGAL::clear(mesh);
   read_a_mesh(mesh, "data/genus3.off");
   assert(is_valid_polygon_mesh(mesh));
 

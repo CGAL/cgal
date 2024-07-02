@@ -2549,7 +2549,7 @@ arrangement_type(const Site_2& p, const Site_2& q) const
 
   Arrangement_type res = geom_traits().arrangement_type_2_object()(p, q);
 
-  // The valeus that have to be treated are the following:
+  // The values that have to be treated are the following:
   // DISJOINT, TOUCH_1, TOUCH_2, CROSSING, IDENTICAL, INTERIOR,
   // TOUCH_11_INTERIOR_1, TOUCH_12_INTERIOR_1, TOUCH_21_INTERIOR_1 and
   // TOUCH_22_INTERIOR_1.

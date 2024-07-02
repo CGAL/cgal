@@ -64,6 +64,27 @@ protected:
   bool _ghost_flag;
 };
 
+template < class Gt, class Fb >
+std::ostream&
+operator<<(std::ostream &os, const Triangulation_on_sphere_face_base_2<Gt, Fb> &f)
+{
+  // non combinatorial information. Default = point
+    os << static_cast<const Fb&>(f);
+    os << (f.is_ghost() ? " 1" : " 0");
+    return os;
+}
+
+template < class Gt, class Fb >
+std::istream&
+operator>>(std::istream &is, Triangulation_on_sphere_face_base_2<Gt, Fb> &f)
+{
+  int g = -1;
+  is >>  static_cast<Fb&>(f);
+  is >> g;
+  f.set_ghost(g == 1);
+  return is;
+}
+
 } // namespace CGAL
 
 #endif //CGAL_TRIANGULATION_ON_SPHERE_FACE_BASE_2_H

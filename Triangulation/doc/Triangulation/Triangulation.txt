@@ -405,7 +405,7 @@ of an infinite full cell is the empty half-space bounded by the affine hull
 of the finite facet of this cell. The set of full cells that are in
 conflict with `p` form the <I>conflict zone</I>. The full cells
 in the conflict zone are removed, leaving a hole that contains `p`. That
-hole is ``star shaped'' around `p` and thus is re-triangulated using
+hole is &ldquo;star shaped&rdquo; around `p` and thus is re-triangulated using
 `p` as a center vertex.
 
 Delaunay triangulations support insertion of points, removal of vertices,

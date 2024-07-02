@@ -2636,7 +2636,7 @@ merge_edge(Halfedge_const_handle he1,
   Td_map_item rightp_item = locate(rightmost, lt2);
   Td_map_item mrgp_item = locate(ce, lt);
 
-  //varifying that all trapezoids are not nullptr and are of type POINT
+  //verifying that all trapezoids are not nullptr and are of type POINT
   CGAL_warning(std::visit(dag_node_visitor(), leftp_item) != nullptr);
   CGAL_warning(std::visit(dag_node_visitor(), rightp_item)!= nullptr);
   CGAL_warning(std::visit(dag_node_visitor(), mrgp_item)  != nullptr);

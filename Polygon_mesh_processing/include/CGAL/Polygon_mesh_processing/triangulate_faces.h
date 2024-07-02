@@ -196,15 +196,15 @@ public:
 
     if(original_size == 4)
     {
-      halfedge_descriptor v0, v1, v2, v3;
-      v0 = halfedge(f, pmesh);
-      Point_ref p0 = get(vpm, target(v0, pmesh));
-      v1 = next(v0, pmesh);
-      Point_ref p1 = get(vpm, target(v1, pmesh));
-      v2 = next(v1, pmesh);
-      Point_ref p2 = get(vpm, target(v2, pmesh));
-      v3 = next(v2, pmesh);
-      Point_ref p3 = get(vpm, target(v3, pmesh));
+      std::array<halfedge_descriptor,4> verts;
+      verts[0] = halfedge(f, pmesh);
+      verts[1] = next(verts[0], pmesh);
+      verts[2] = next(verts[1], pmesh);
+      verts[3] = next(verts[2], pmesh);
+      Point_ref p0 = get(vpm, target(verts[0], pmesh));
+      Point_ref p1 = get(vpm, target(verts[1], pmesh));
+      Point_ref p2 = get(vpm, target(verts[2], pmesh));
+      Point_ref p3 = get(vpm, target(verts[3], pmesh));
 
       /* Chooses the diagonal that will split the quad in two triangles that maximize
        * the scalar product of the un-normalized normals of the two triangles.
@@ -217,10 +217,33 @@ public:
        */
       visitor.before_subface_creations(f);
 
-      const FT p1p3 = cross_product(p2-p1, p3-p2) * cross_product(p0-p3, p1-p0);
-      const FT p0p2 = cross_product(p1-p0, p1-p2) * cross_product(p3-p2, p3-p0);
-      halfedge_descriptor res = (p0p2>p1p3) ?  CGAL::Euler::split_face(v0, v2, pmesh)
-                                            :  CGAL::Euler::split_face(v1, v3, pmesh);
+      typename Traits::Vector_3 p0p1=p1-p0;
+      typename Traits::Vector_3 p1p2=p2-p1;
+      typename Traits::Vector_3 p2p3=p3-p2;
+      typename Traits::Vector_3 p0p3=p3-p0;
+
+      const FT delta1 = cross_product(p1p2, p2p3) * cross_product(-p0p3, p0p1);
+      const FT delta2 = cross_product(p0p1, -p1p2) * cross_product(p2p3, p0p3);
+
+      halfedge_descriptor res = boost::graph_traits<PolygonMesh>::null_halfedge();
+
+      if (delta1!=delta2)
+        res = (delta2>delta1)
+            ?  CGAL::Euler::split_face(verts[0], verts[2], pmesh)
+            :  CGAL::Euler::split_face(verts[1], verts[3], pmesh);
+      else
+      {
+        halfedge_descriptor m =
+          *(std::min_element)(verts.begin(), verts.end(),
+                              [&pmesh,vpm](halfedge_descriptor v0, halfedge_descriptor v1)
+                              {
+                                return lexicographically_xyz_smaller(get(vpm, target(v0, pmesh)),
+                                                                     get(vpm, target(v1, pmesh)));
+                              });
+        res = (m==verts[0] || m==verts[2])
+            ? CGAL::Euler::split_face(verts[0], verts[2], pmesh)
+            : CGAL::Euler::split_face(verts[1], verts[3], pmesh);
+      }
 
       visitor.after_subface_created(face(res, pmesh));
       visitor.after_subface_created(face(opposite(res, pmesh), pmesh));
@@ -526,6 +549,7 @@ public:
                               NamedParameters,
                               Def_Kernel>::type;
     using FT = typename Traits::FT;
+    using PID = typename std::iterator_traits<typename Polygon::const_iterator>::value_type;
 
     // Visitor
     using Visitor = typename internal_np::Lookup_named_param_def<
@@ -564,17 +588,46 @@ public:
        */
       visitor.before_subface_creations(polygon);
 
-      const FT p1p3 = cross_product(p2-p1, p3-p2) * cross_product(p0-p3, p1-p0);
-      const FT p0p2 = cross_product(p1-p0, p1-p2) * cross_product(p3-p2, p3-p0);
-      if(p0p2 > p1p3)
+
+      typename Traits::Vector_3 p0p1=p1-p0;
+      typename Traits::Vector_3 p1p2=p2-p1;
+      typename Traits::Vector_3 p2p3=p3-p2;
+      typename Traits::Vector_3 p0p3=p3-p0;
+
+      const FT delta1 = cross_product(p1p2, p2p3) * cross_product(-p0p3, p0p1);
+      const FT delta2 = cross_product(p0p1, -p1p2) * cross_product(p2p3, p0p3);
+      if (delta1!=delta2)
       {
-        triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
-        triangulated_polygons.push_back({polygon[0], polygon[2], polygon[3]});
+        if(delta2 > delta1)
+        {
+          triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
+          triangulated_polygons.push_back({polygon[0], polygon[2], polygon[3]});
+        }
+        else
+        {
+          triangulated_polygons.push_back({polygon[0], polygon[1], polygon[3]});
+          triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
+        }
       }
       else
       {
-        triangulated_polygons.push_back({polygon[0], polygon[1], polygon[3]});
-        triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
+        PID mid =
+          *(std::min_element)(polygon.begin(), polygon.end(),
+                              [&points,pm](PID id1 , PID id2)
+                              {
+                                return lexicographically_xyz_smaller(get(pm, points[id1]),
+                                                                     get(pm, points[id2]));
+                              });
+        if (mid==0|| mid==2)
+        {
+          triangulated_polygons.push_back({polygon[0], polygon[1], polygon[2]});
+          triangulated_polygons.push_back({polygon[0], polygon[2], polygon[3]});
+        }
+        else
+        {
+          triangulated_polygons.push_back({polygon[0], polygon[1], polygon[3]});
+          triangulated_polygons.push_back({polygon[1], polygon[2], polygon[3]});
+        }
       }
 
       visitor.after_subface_created(triangulated_polygons[triangulated_polygons.size()-2]);

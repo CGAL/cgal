@@ -34,10 +34,11 @@ void OpenOFF(int i)
 
 
   SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
-      surface_mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
+      surface_mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").value();
 
   SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
-    surface_mesh.property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
+    surface_mesh.property_map<vertex_descriptor, CGAL::IO::Color >("v:color").value();
+
   CGAL::IO::Color c = fcolors[*(surface_mesh.faces().begin())];
   assert(c== CGAL::IO::Color(229,0,0));
   c = fcolors[*(--surface_mesh.faces().end())];

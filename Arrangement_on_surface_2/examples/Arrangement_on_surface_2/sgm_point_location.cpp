@@ -2,7 +2,6 @@
 
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_traits.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm.h>
 #include <CGAL/Arr_spherical_gaussian_map_3/Arr_polyhedral_sgm_polyhedron_3.h>
 
@@ -16,14 +15,13 @@
 
 using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
 using Point_3 = Kernel::Point_3;
-using Direction_3 = Kernel::Direction_3;
 
 #if 0
-using Gm_traits = CGAL::Arr_polyhedral_sgm_traits<Kernel, -8, 6>;
+using Gm_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -8, 6>;
 #elif 0
-using Gm_traits = CGAL::Arr_polyhedral_sgm_traits<Kernel, -11, 7>;
+using Gm_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -11, 7>;
 #else
-using Gm_traits = CGAL::Arr_polyhedral_sgm_traits<Kernel, -1, 0>;
+using Gm_traits = CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, -1, 0>;
 #endif
 
 using Gm = CGAL::Arr_polyhedral_sgm<Gm_traits>;

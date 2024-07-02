@@ -162,7 +162,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<All_vertices_iterator> > All_vertex_handles;
@@ -179,10 +179,11 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
  };
 
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       const Vertex_handle&>> Finite_vertex_handles;
 
   class Hidden_vertices_iterator :
     public Filter_iterator<Finite_vib, Unhidden_tester>
@@ -196,10 +197,11 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
  };
 
-  typedef Iterator_range<Prevent_deref<Hidden_vertices_iterator> > Hidden_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Hidden_vertices_iterator,
+                                       const Vertex_handle&>> Hidden_vertex_handles;
 
  //for backward compatibility
   typedef Finite_faces_iterator                Face_iterator;
@@ -2233,7 +2235,7 @@ typename Regular_triangulation_2<Gt,Tds>::Finite_vertex_handles
 Regular_triangulation_2<Gt,Tds>::
 finite_vertex_handles() const
 {
-  return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
+    return { finite_vertices_begin(), finite_vertices_end() };
 }
 
 template < class Gt, class Tds >
@@ -2260,7 +2262,7 @@ typename Regular_triangulation_2<Gt,Tds>::Hidden_vertex_handles
 Regular_triangulation_2<Gt,Tds>::
 hidden_vertex_handles() const
 {
-  return make_prevent_deref_range(hidden_vertices_begin(),hidden_vertices_end());
+  return { hidden_vertices_begin(), hidden_vertices_end() };
 }
 
 template < class Gt, class Tds >

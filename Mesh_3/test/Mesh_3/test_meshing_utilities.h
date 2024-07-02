@@ -30,7 +30,7 @@
 #include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 #include <CGAL/Triangle_accessor_3.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <CGAL/disable_warnings.h>
 
@@ -71,6 +71,8 @@ void verify_time_stamps(const C3t3& c3t3, CGAL::Sequential_tag) {
       assert(prev->time_stamp() < cit->time_stamp());
     }
   }
+  assert(tds.vertices().check_timestamps_are_valid());
+  assert(tds.cells().check_timestamps_are_valid());
 }
 
 // Do not verify time stamps in parallel mode

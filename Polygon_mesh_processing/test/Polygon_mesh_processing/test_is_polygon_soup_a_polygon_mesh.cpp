@@ -55,7 +55,7 @@ void test_polygon_soup(std::string fname, bool expected)
   {
     Polyhedron p;
 
-    // just to test the named paramers
+    // just to test the named parameters
     typedef std::pair<Point, bool>                                            Point_with_Boolean;
     std::vector<Point_with_Boolean> points_with_pairs;
     for(const Point& pt : points)

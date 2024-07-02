@@ -36,7 +36,7 @@
 \cgalPkgSince{3.1}
 \cgalPkgBib{cgal:kmz-isiobd}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

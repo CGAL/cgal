@@ -20,6 +20,7 @@
 #include <CGAL/property_map.h>
 
 #include <algorithm>
+#include <optional>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -339,16 +340,16 @@ public:
     };
 
     template <class T>
-    std::pair<typename Get_pmap_type<T>::type, bool>
+    std::optional<typename Get_pmap_type<T>::type>
     get(const std::string& name, std::size_t i) const
     {
       typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
       if (parrays_[i]->name() == name)
         {
           if (Property_array<T>* array = dynamic_cast<Property_array<T>*>(parrays_[i]))
-            return std::make_pair (Pmap(array), true);
+            return std::optional(Pmap(array));
         }
-      return std::make_pair(Pmap(), false);
+      return std::nullopt;
     }
 
     // add a property with name \c name and default value \c t
@@ -359,12 +360,9 @@ public:
         typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
         for (std::size_t i=0; i<parrays_.size(); ++i)
         {
-            std::pair<Pmap, bool> out = get<T>(name, i);
-            if (out.second)
-              {
-                out.second = false;
-                return out;
-              }
+            std::optional<Pmap> out = get<T>(name, i);
+            if (out.has_value())
+              return std::make_pair(*out, false);
         }
 
         // otherwise add the property
@@ -376,19 +374,19 @@ public:
     }
 
 
-    // get a property by its name. returns invalid property if it does not exist.
+    // get a property by its name. Returns std::nullopt when it doesn't exist
     template <class T>
-    std::pair<typename Get_pmap_type<T>::type, bool>
+    std::optional<typename Get_pmap_type<T>::type>
     get(const std::string& name) const
     {
         typedef typename Ref_class::template Get_property_map<Key, T>::type Pmap;
         for (std::size_t i=0; i<parrays_.size(); ++i)
           {
-            std::pair<Pmap, bool> out = get<T>(name, i);
-            if (out.second)
+            std::optional<Pmap> out = get<T>(name, i);
+            if (out.has_value())
               return out;
           }
-        return std::make_pair(Pmap(), false);
+        return std::nullopt;
     }
 
 
@@ -397,11 +395,11 @@ public:
     typename Get_pmap_type<T>::type
     get_or_add(const std::string& name, const T t=T())
     {
-      typename Ref_class::template Get_property_map<Key, T>::type p;
-      bool b;
-      boost::tie(p,b)= get<T>(name);
-        if (!b) p = add<T>(name, t).first;
-        return p;
+      std::optional<typename Get_pmap_type<T>::type> out = get<T>(name);
+      if (out.has_value())
+        return out.value();
+      else
+        return add<T>(name, t).first;
     }
 
 

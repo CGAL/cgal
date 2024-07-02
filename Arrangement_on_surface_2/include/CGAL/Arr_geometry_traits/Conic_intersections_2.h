@@ -64,8 +64,9 @@ int compute_resultant_roots(const Nt_traits& nt_traits,
   }
 
   // Act according to the degree of the first conic curve.
-  const typename Nt_traits::Integer two = 2;
-  typename Nt_traits::Integer c[5];
+  typedef typename Nt_traits::Integer Integer;
+  const Integer two = 2;
+  Integer c[5];
   unsigned int degree = 4;
   typename Nt_traits::Algebraic* xs_end;
 
@@ -73,7 +74,7 @@ int compute_resultant_roots(const Nt_traits& nt_traits,
     // The first curve has no quadratic coefficients, and represents a line.
     if (CGAL::sign (v1) == ZERO) {
       // The first line is u1*x + w1 = 0, therefore:
-      xs[0] = nt_traits.convert(-w1) / nt_traits.convert(u1);
+      xs[0] = nt_traits.convert(Integer(- w1)) / nt_traits.convert(u1);
       return 1;
     }
 
@@ -87,7 +88,7 @@ int compute_resultant_roots(const Nt_traits& nt_traits,
       // Return if the two lines are parallel
       if (CGAL::sign (c[1]) == ZERO) return 0;
 
-      xs[0] =  nt_traits.convert(-c[0]) / nt_traits.convert(c[1]);
+      xs[0] =  nt_traits.convert(Integer(- c[0])) / nt_traits.convert(c[1]);
       return 1;
     }
 

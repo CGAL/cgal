@@ -7,8 +7,12 @@
 \example AABB_tree/AABB_polyhedron_edge_example.cpp
 \example AABB_tree/AABB_polyhedron_facet_distance_example.cpp
 \example AABB_tree/AABB_polyhedron_facet_intersection_example.cpp
+\example AABB_tree/AABB_polyline_segment_2_example.cpp
 \example AABB_tree/AABB_segment_3_example.cpp
+\example AABB_tree/AABB_segment_2_example.cpp
 \example AABB_tree/AABB_ray_shooting_example.cpp
+\example AABB_tree/AABB_indexed_triangle_2_example.cpp
+\example AABB_tree/AABB_triangle_2_example.cpp
 \example AABB_tree/AABB_triangle_3_example.cpp
 \example AABB_tree/AABB_halfedge_graph_edge_example.cpp
 \example AABB_tree/AABB_face_graph_triangle_example.cpp

@@ -287,6 +287,11 @@ void test()
                                0, 1, // expected number of degenerate edges/faces in the selection
                                0, 0); // expected number of degenerate edges/faces in the mesh after partial removal
 
+  remove_degeneracies<K, Mesh>("data_degeneracies/all_degen.off",
+                               std::initializer_list<std::size_t>({0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}), // edge selection
+                               std::initializer_list<std::size_t>({0, 1, 2, 3, 4, 5, 6}), // face selection
+                               4, 7, 4, 7, 0, 0);
+
   remove_degeneracies<K, Mesh>("data_degeneracies/degtri_four.off",
                                std::initializer_list<std::size_t>({1}),
                                std::initializer_list<std::size_t>({3}),

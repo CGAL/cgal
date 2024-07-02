@@ -262,7 +262,7 @@ public:
     Self& operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator const Face_handle() const { return Base::base(); }
+    operator const Face_handle&() const { return Base::base(); }
   };
 
   typedef Iterator_range<Prevent_deref<Vertices_iterator> >          Vertex_handles;
@@ -275,7 +275,7 @@ public:
   // solid edges: both incident faces are solid
   typedef Filter_iterator<All_edges_iterator, Ghost_tester>          Solid_edges_iterator;
   typedef Iterator_range<Solid_edges_iterator>                       Solid_edges;
-  typedef Iterator_range<Prevent_deref<Solid_faces_iterator> >       Solid_face_handles;
+  typedef Iterator_range<Prevent_deref<Solid_faces_iterator, const Face_handle&>> Solid_face_handles;
 
   typedef Project_point<Vertex>                                      Pt_proj;
   typedef boost::transform_iterator<Pt_proj, Vertices_iterator>      Point_iterator;
@@ -321,7 +321,7 @@ public:
 
   Solid_face_handles solid_faces() const
   {
-    return make_prevent_deref_range(solid_faces_begin(), solid_faces_end());
+    return { solid_faces_begin(), solid_faces_end() };
   }
 
   Solid_edges_iterator solid_edges_begin() const
@@ -482,7 +482,7 @@ public:
 
   //-----------------------DEBUG--------------------------------------------------------------------
   void check_neighboring_faces() const;
-
+  bool is_plane() const;
   bool is_valid_vertex(Vertex_handle fh, bool verbose = false, int level = 0) const;
   bool is_valid(bool verbose = false, int level = 0) const;
 
@@ -1239,6 +1239,39 @@ check_neighboring_faces() const
   }
 }
 
+// checks whether a given triangulation is plane (all points are coplanar)
+template <typename Gt, typename Tds>
+bool
+Triangulation_on_sphere_2<Gt, Tds>::
+is_plane() const
+{
+  if(number_of_vertices() <= 3)
+    return true;
+
+  bool is_plane = true;
+
+  Vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1), it4(it1);
+  std::advance(it2, 1);
+  std::advance(it3, 2);
+  std::advance(it4, 3);
+
+  while(it4 != vertices_end())
+  {
+    Orientation s = orientation(point(it1), point(it2), point(it3), point(it4));
+    is_plane = is_plane && s == COPLANAR;
+
+    if(!is_plane)
+      return false;
+
+    ++it1;
+    ++it2;
+    ++it3;
+    ++it4;
+  }
+
+  return true;
+}
+
 template <typename Gt, typename Tds>
 bool
 Triangulation_on_sphere_2<Gt, Tds>::
@@ -1274,27 +1307,21 @@ is_valid(bool verbose,
   if(dimension() <= 0 || (dimension() == 1 && number_of_vertices() == 2))
     return result;
 
+  for(Vertices_iterator vit=vertices_begin(); vit!=vertices_end(); ++vit)
+    result = result && is_valid_vertex(vit, verbose, level);
+
   if(dimension() == 1)
   {
-    Vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1);
-    std::advance(it2, 1);
-    std::advance(it3, 2);
-    while(it3 != vertices_end())
-    {
-      const Orientation s = orientation(point(it1), point(it2), point(it3));
-      result = result && (s == COLLINEAR);
-      CGAL_assertion(result);
-      ++it1; ++it2; ++it3;
-    }
+    result = result && this->is_plane();
+    CGAL_assertion(result);
   }
   else // dimension() == 2
   {
     for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
     {
       const Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-      CGAL_assertion(s == LEFT_TURN || is_ghost(it));
-
       result = result && (s == LEFT_TURN || is_ghost(it));
+      CGAL_assertion(result);
     }
 
     // check number of faces. This cannot be done by the TDS,
@@ -1314,6 +1341,7 @@ void
 Triangulation_on_sphere_2<Gt, Tds>::
 file_output(std::ostream& os) const
 {
+  os << _gt.center() << " " << _gt.radius() << "\n";
   _tds.file_output(os, Vertex_handle(), true);
 }
 
@@ -1323,7 +1351,15 @@ Triangulation_on_sphere_2<Gt, Tds>::
 file_input(std::istream& is)
 {
   clear();
-  Vertex_handle v = _tds.file_input(is, true);
+
+  Point_3 center;
+  FT radius;
+  is >> center >> radius;
+  _gt.set_center(center);
+  _gt.set_radius(radius);
+
+  Vertex_handle v = _tds.file_input(is, false);
+  CGAL_assertion(is_valid());
   return v;
 }
 
@@ -1340,7 +1376,6 @@ std::istream&
 operator>>(std::istream& is, Triangulation_on_sphere_2<Gt, Tds>& tr)
 {
   tr.file_input(is);
-  CGAL_assertion(tr.is_valid());
   return is;
 }
 

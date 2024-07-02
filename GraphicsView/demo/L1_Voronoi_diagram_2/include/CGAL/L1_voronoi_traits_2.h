@@ -115,7 +115,7 @@ public:
 
     if (l.is_vertical()) {
       // Could be a tie.
-      // To be "above" the curve, we acutually need to have smaller x coordinate,
+      // To be "above" the curve, we actually need to have smaller x coordinate,
       // the order of the comparison function here is opposite to the none vertical
       // case.
       side = CGAL::opposite(side);

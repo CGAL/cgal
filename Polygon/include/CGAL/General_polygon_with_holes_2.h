@@ -28,8 +28,8 @@ namespace CGAL {
  *
  * The class `General_polygon_with_holes_2` models the concept
  * `GeneralPolygonWithHoles_2`. It represents a general polygon with holes.
- * It is parameterized with a type `Polygon` used to define the exposed
- * type `Polygon_2`. This type represents the outer boundary of the general
+ * It is parameterized with a type `Polygon_` used to define the exposed
+ * type `%Polygon_2`. This type represents the outer boundary of the general
  * polygon and each hole.
  *
  * \tparam Polygon_ must have input and output operators.
@@ -57,7 +57,7 @@ public:
 
   typedef unsigned int                                Size;
 
-  General_polygon_with_holes_2() : m_pgn() {}
+  General_polygon_with_holes_2() = default;
 
 
   explicit General_polygon_with_holes_2(const Polygon_2& pgn_boundary) :
@@ -122,6 +122,19 @@ public:
   }
 
   bool is_plane() const { return (m_pgn.is_empty() && m_holes.empty()); }
+
+  bool is_empty() const
+  {
+    if(! outer_boundary().is_empty()) {
+        return false;
+      }
+    for(const auto& h : holes()){
+      if(! h.is_empty()){
+        return false;
+      }
+    }
+    return true;
+  }
 
 protected:
   Polygon_2 m_pgn;

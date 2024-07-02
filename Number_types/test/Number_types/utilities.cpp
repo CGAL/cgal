@@ -5,7 +5,10 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Sqrt_extension.h>
+
+#ifdef CGAL_USE_BOOST_MP
 #include <CGAL/boost_mp.h>
+#endif
 
 #ifdef CGAL_USE_GMP
 #include <CGAL/Gmpz.h>

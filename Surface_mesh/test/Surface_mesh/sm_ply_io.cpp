@@ -91,13 +91,9 @@ int main()
     SMesh mesh_bis;
     CGAL::IO::read_PLY(in, mesh_bis);
 
-    assert((mesh_bis.property_map<SMesh::Vertex_index, float>("v:u").second));
-    assert((mesh_bis.property_map<SMesh::Vertex_index, float>("v:v").second));
-    assert((mesh_bis.property_map<SMesh::Vertex_index, std::vector<float>>("v:uv").second));
-
-    v_uvmap = mesh_bis.property_map<SMesh::Vertex_index, std::vector<float>>("v:uv").first;
-    v_umap = mesh_bis.property_map<SMesh::Vertex_index, float>("v:u").first;
-    v_vmap = mesh_bis.property_map<SMesh::Vertex_index, float>("v:v").first;
+    v_uvmap = mesh_bis.property_map<SMesh::Vertex_index, std::vector<float>>("v:uv").value();
+    v_umap = mesh_bis.property_map<SMesh::Vertex_index, float>("v:u").value();
+    v_vmap = mesh_bis.property_map<SMesh::Vertex_index, float>("v:v").value();
 
     fvalue=1001;
     for (SMesh::Vertex_index v : vertices(mesh_bis))
@@ -110,13 +106,9 @@ int main()
       ++fvalue;
     }
 
-    assert((mesh_bis.property_map<SMesh::Face_index, double>("f:u").second));
-    assert((mesh_bis.property_map<SMesh::Face_index, double>("f:v").second));
-    assert((mesh_bis.property_map<SMesh::Face_index, std::vector<double>>("f:uv").second));
-
-    f_uvmap = mesh_bis.property_map<SMesh::Face_index, std::vector<double>>("f:uv").first;
-    f_umap = mesh_bis.property_map<SMesh::Face_index, double>("f:u").first;
-    f_vmap = mesh_bis.property_map<SMesh::Face_index, double>("f:v").first;
+    f_uvmap = mesh_bis.property_map<SMesh::Face_index, std::vector<double>>("f:uv").value();
+    f_umap = mesh_bis.property_map<SMesh::Face_index, double>("f:u").value();
+    f_vmap = mesh_bis.property_map<SMesh::Face_index, double>("f:v").value();
 
     dvalue=2001;
     for (SMesh::Face_index f : faces(mesh_bis))

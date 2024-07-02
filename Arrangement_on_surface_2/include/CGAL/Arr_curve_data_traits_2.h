@@ -79,10 +79,10 @@ public:
   typedef typename internal::Arr_complete_right_side_category<Base_traits_2>::
   Category                                           Right_side_category;
 
-  // Representation of a curve with an additonal data field:
+  // Representation of a curve with an additional data field:
   typedef _Curve_data_ex<Base_curve_2, Curve_data>   Curve_2;
 
-  // Representation of an x-monotone curve with an additonal data field:
+  // Representation of an x-monotone curve with an additional data field:
   typedef _Curve_data_ex<Base_x_monotone_curve_2, X_monotone_curve_data>
                                                      X_monotone_curve_2;
 

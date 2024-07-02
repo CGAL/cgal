@@ -693,7 +693,7 @@ View of a remeshed surface. (Left) input mesh (Right) output mesh. Code from sub
 
 The following example produces a 3D mesh for a domain whose boundary surface
 is the isosurface associated to an isovalue inside the input gray-level
-3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with DICOM files as input.
+3D image. In the distribution you can also find the example \ref Mesh_3/mesh_3D_gray_vtk_image.cpp which can deal with `*.nii` as well as `DICOM` files as input.
 
 \cgalExample{Mesh_3/mesh_3D_gray_image.cpp}
 
@@ -1031,6 +1031,33 @@ to surface patches the
 current polyline feature does not belong to.
 
 \cgalExample{Mesh_3/mesh_polyhedral_domain_with_features_sizing.cpp}
+
+\subsubsection Mesh_WithEdgeDistanceCriterion Approximation Criterion for Feature Edges
+
+The following example shows how to generate a mesh with an approximation error criterion.
+Polyline features are covered by a set of so-called "protecting balls" which
+sizes are highly related to the `edge_size` and `edge_distance` criteria.
+This edge distance is driven by the distance component of `Mesh_edge_criteria_3`
+(see Section \ref Mesh_3Protectionof0and1dimensionalExposed).
+The parameter `edge_distance` enables the subdivision of edges that are too far away from the
+corresponding input sharp features. It may result in an output mesh with shorter edges along the
+input polyline features.
+\cgalExample{Mesh_3/mesh_polyhedral_domain_with_edge_distance.cpp}
+
+\cgalFigureAnchor{mesh3edge_distance}
+<center>
+<table border=0>
+<tr>
+<td><img border="0" src="./u_arch_no_edge_distance.png" alt="u_arch mesh without edge_distance criterion"></td>
+<td><img border="0" src="./u_arch_with_edge_distance.png" alt="u_arch mesh with edge_distance criterion"></td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{mesh3edge_distance}
+Left: the mesh without the `%edge_distance` criterion.
+
+Right: the mesh with the `%edge_distance` criterion set to the same value as `%facet_distance`.
+\cgalFigureCaptionEnd
 
 \subsection Mesh_3TuningMeshOptimization Tuning Mesh Optimization
 

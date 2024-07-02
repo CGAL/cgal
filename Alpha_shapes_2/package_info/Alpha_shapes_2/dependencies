@@ -1,6 +1,7 @@
 Algebraic_foundations
 Alpha_shapes_2
 Arithmetic_kernel
+CGAL_Core
 Cartesian_kernel
 Hash_map
 Homogeneous_kernel

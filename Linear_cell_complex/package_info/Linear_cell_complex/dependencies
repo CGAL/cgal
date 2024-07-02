@@ -1,6 +1,8 @@
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+Basic_viewer
+CGAL_Core
 Cartesian_kernel
 Circulator
 Combinatorial_map
@@ -8,7 +10,6 @@ Distance_2
 Distance_3
 Filtered_kernel
 Generalized_map
-GraphicsView
 HalfedgeDS
 Hash_map
 Homogeneous_kernel
@@ -21,8 +22,12 @@ Kernel_d
 Linear_cell_complex
 Modular_arithmetic
 Number_types
+Polygon
 Profiling_tools
 Property_map
 Random_numbers
 STL_Extension
+Spatial_sorting
 Stream_support
+TDS_2
+Triangulation_2

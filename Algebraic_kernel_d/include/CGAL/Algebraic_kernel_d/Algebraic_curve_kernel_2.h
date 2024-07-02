@@ -1811,7 +1811,7 @@ public:
      * An x-critical point (x,y) of \c f (or its induced curve)
      * satisfies f(x,y) = f_y(x,y) = 0,
      * where f_y means the derivative w.r.t. y.
-     * In pariticular, each singular point is x-critical.
+     * In particular, each singular point is x-critical.
      */
     class X_critical_points_2 :
         public CGAL::cpp98::binary_function< Curve_analysis_2,
@@ -1890,7 +1890,7 @@ public:
      * An y-critical point (x,y) of \c f (or its induced curve)
      * satisfies f(x,y) = f_x(x,y) = 0,
      * where f_x means the derivative w.r.t. x.
-     * In pariticular, each singular point is y-critical.
+     * In particular, each singular point is y-critical.
      */
     class Y_critical_points_2 :
         public CGAL::cpp98::binary_function< Curve_analysis_2,

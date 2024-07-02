@@ -28,6 +28,10 @@
 #include <limits>
 #include <queue>
 
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#include <CGAL/Real_timer.h>
+#endif
+
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
@@ -1268,9 +1272,11 @@ void collectBoundaryEdgesAndComputeVerticesValences(
     const Vertex_handle v0 = e.first->vertex(e.second);
     const Vertex_handle v1 = e.first->vertex(e.third);
 
+    const std::size_t n0 = vertices_subdomain_indices[v0].size();
+    const std::size_t n1 = vertices_subdomain_indices[v1].size();
+
     //In case of feature edge
-    if (vertices_subdomain_indices[v0].size() > 2
-      && vertices_subdomain_indices[v1].size() > 2)
+    if (n0 > 2 && n1 > 2)
     {
       Facet_circulator facet_circulator = tr.incident_facets(e);
       Facet_circulator done(facet_circulator);
@@ -1284,8 +1290,8 @@ void collectBoundaryEdgesAndComputeVerticesValences(
         }
       } while (++facet_circulator != done);
     }
-    else if (vertices_subdomain_indices[v0].size() == 2
-          || vertices_subdomain_indices[v1].size() == 2)
+    //Normal surface edge, or non-manifold edge on dangling facet
+    else
     {
       Facet_circulator facet_circulator = tr.incident_facets(e);
       Facet_circulator done(facet_circulator);
@@ -1796,7 +1802,7 @@ std::size_t flipBoundaryEdges(
 //      std::cerr << "boundary = " << b << std::endl;
 //    }
 
-    if (!on_boundary)
+    if (!on_boundary || boundary_facets.size() != 2)
       continue;
     CGAL_assertion(boundary_facets.size() == 2);
 
@@ -1807,7 +1813,7 @@ std::size_t flipBoundaryEdges(
     const Vertex_handle vh2 = third_vertex(f0, vh0, vh1, tr);
     const Vertex_handle vh3 = third_vertex(f1, vh0, vh1, tr);
 
-    CGAL_assertion_code(debug::check_facets(vh0, vh1, vh2, vh3, c3t3));
+    CGAL_expensive_assertion(debug::check_facets(vh0, vh1, vh2, vh3, c3t3));
 
     if (!tr.tds().is_edge(vh2, vh3)) // most-likely to happen early exit
     {
@@ -1817,6 +1823,10 @@ std::size_t flipBoundaryEdges(
       int v1 = boundary_vertices_valences.at(vh1)[surfi];
       int v2 = boundary_vertices_valences.at(vh2)[surfi];
       int v3 = boundary_vertices_valences.at(vh3)[surfi];
+
+      if(v0 < 2 || v1 < 2 || v2 < 2 || v3 < 2)
+        continue;
+
       int m0 = (boundary_vertices_valences.at(vh0).size() > 1 ? 4 : 6);
       int m1 = (boundary_vertices_valences.at(vh1).size() > 1 ? 4 : 6);
       int m2 = (boundary_vertices_valences.at(vh2).size() > 1 ? 4 : 6);
@@ -1837,10 +1847,10 @@ std::size_t flipBoundaryEdges(
                      + (v3 - m3)*(v3 - m3);
       if (initial_cost > final_cost)
       {
-        CGAL_assertion_code(std::size_t nbf =
+        CGAL_expensive_assertion_code(std::size_t nbf =
           std::distance(c3t3.facets_in_complex_begin(),
                         c3t3.facets_in_complex_end()));
-        CGAL_assertion_code(std::size_t nbe =
+        CGAL_expensive_assertion_code(std::size_t nbe =
           std::distance(c3t3.edges_in_complex_begin(),
                         c3t3.edges_in_complex_end()));
 
@@ -1850,27 +1860,27 @@ std::size_t flipBoundaryEdges(
                                                    visitor);
         if (db == VALID_FLIP)
         {
-          CGAL_assertion(tr.tds().is_edge(vh2, vh3));
+          CGAL_expensive_assertion(tr.tds().is_edge(vh2, vh3));
           Cell_handle c;
           int li, lj, lk;
-          CGAL_assertion_code(bool b =)
+          CGAL_expensive_assertion_code(bool b =)
           tr.tds().is_facet(vh2, vh3, vh0, c, li, lj, lk);
-          CGAL_assertion(b);
+          CGAL_expensive_assertion(b);
           c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
 
-          CGAL_assertion_code(b = )
+          CGAL_expensive_assertion_code(b = )
           tr.tds().is_facet(vh2, vh3, vh1, c, li, lj, lk);
-          CGAL_assertion(b);
+          CGAL_expensive_assertion(b);
           c3t3.add_to_complex(c, (6 - li - lj - lk), surfi);
 
-          CGAL_assertion_code(std::size_t nbf_post =
+          CGAL_expensive_assertion_code(std::size_t nbf_post =
             std::distance(c3t3.facets_in_complex_begin(),
                           c3t3.facets_in_complex_end()));
-          CGAL_assertion(nbf == nbf_post);
-          CGAL_assertion_code(std::size_t nbe_post =
+          CGAL_expensive_assertion(nbf == nbf_post);
+          CGAL_expensive_assertion_code(std::size_t nbe_post =
             std::distance(c3t3.edges_in_complex_begin(),
                           c3t3.edges_in_complex_end()));
-          CGAL_assertion(nbe == nbe_post);
+          CGAL_expensive_assertion(nbe == nbe_post);
 
           boundary_vertices_valences[vh0][surfi]--;
           boundary_vertices_valences[vh1][surfi]--;
@@ -1884,7 +1894,7 @@ std::size_t flipBoundaryEdges(
       }
     }
   }
-  CGAL_assertion(tr.tds().is_valid());
+  CGAL_expensive_assertion(tr.tds().is_valid());
 
   return nb_success;
 }
@@ -1908,6 +1918,8 @@ void flip_edges(C3T3& c3t3,
   std::cout.flush();
   std::size_t nb_flips_in_volume = 0;
   std::size_t nb_flips_on_surface = 0;
+  CGAL::Real_timer timer;
+  timer.start();
 #endif
 
   for (auto c : c3t3.cells_in_complex())
@@ -1971,9 +1983,11 @@ void flip_edges(C3T3& c3t3,
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+  timer.stop();
   std::cout << "\rFlip edges... done ("
     << nb_flips_on_surface << "/"
-    << nb_flips_in_volume << " surface/volume flips done)." << std::endl;
+    << nb_flips_in_volume << " surface/volume flips done, in "
+    << timer.time() << " seconds)." << std::endl;
 #endif
 }
 

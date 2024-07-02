@@ -25,6 +25,7 @@
 \example Mesh_3/mesh_polyhedral_complex_sm.cpp
 \example Mesh_3/remesh_polyhedral_surface.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_features.cpp
+\example Mesh_3/mesh_polyhedral_domain_with_edge_distance.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_features_sm.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_features_sizing.cpp
 \example Mesh_3/mesh_polyhedral_domain_with_surface_inside.cpp

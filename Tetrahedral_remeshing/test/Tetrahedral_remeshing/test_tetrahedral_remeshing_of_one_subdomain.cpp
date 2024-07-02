@@ -1,4 +1,4 @@
-#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
+//#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 

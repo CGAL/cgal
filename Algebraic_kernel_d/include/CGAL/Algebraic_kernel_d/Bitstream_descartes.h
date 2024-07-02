@@ -1153,7 +1153,7 @@ public:
   /*!
    * \brief Constructor for a polynomial \c f
    *
-   * See the documentation of the constrctor
+   * See the documentation of the constructor
    * with \c Square_free_descartes_tag
    */
   Bitstream_descartes(Polynomial f,

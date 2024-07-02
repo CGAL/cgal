@@ -26,7 +26,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/Generic_clip_output_builder.h>
 #include <CGAL/iterator.h>
 
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -566,7 +566,7 @@ generic_clip_impl(
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm` and `clipper` will be
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm` and `clipper` will be
   *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
   *     \cgalParamType{Boolean}
@@ -668,7 +668,7 @@ clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
@@ -738,7 +738,7 @@ bool clip(TriangleMesh& tm,
     case ON_NEGATIVE_SIDE:
       return true; // nothing to clip, the full mesh is on the negative side
     case ON_POSITIVE_SIDE:
-      clear(tm); // clear the mesh that is fully on the positive side
+      remove_all_elements(tm); // clear the mesh that is fully on the positive side
       return true;
     default:
       break;
@@ -778,7 +778,7 @@ bool clip(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
   *                           and `iso_cuboid` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
@@ -939,7 +939,7 @@ void split(TriangleMesh& tm,
   const bool do_not_modify_splitter = choose_parameter(get_parameter(np_s, internal_np::do_not_modify), false);
 
   PMP::corefine(tm, splitter,
-                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
+                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm).visitor(uv),
                 CGAL::parameters::vertex_point_map(vpm_s).do_not_modify(do_not_modify_splitter));
 
   //split mesh along marked edges
@@ -980,7 +980,7 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
   *                           and `plane` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}
@@ -1069,7 +1069,7 @@ void split(TriangleMesh& tm,
   *   \cgalParamNEnd
   *
   *   \cgalParamNBegin{throw_on_self_intersection}
-  *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm`
+  *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm`
   *                           and `iso_cuboid` will be checked for self-intersections
   *                           and `CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception`
   *                           will be thrown if at least one self-intersection is found.}

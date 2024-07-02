@@ -92,7 +92,7 @@ Bounded_side bounded_side(const Point_3<Kernel> &p) const;
 
 /// @}
 
-/// \name Convencience Boolean Functions
+/// \name Convenience Boolean Functions
 /// @{
 
 /*!

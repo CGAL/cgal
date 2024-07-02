@@ -136,8 +136,11 @@ bool read_OBJ(std::istream& is,
         }
 
         // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read vertex ids for now,
-        // so skip to the next vertex
-        iss.ignore(256, ' ');
+        // so skip to the next vertex, but be tolerant about which whitespace is used
+        if (!std::isspace(iss.peek())) {
+          std::string ignoreme;
+          iss >> ignoreme;
+        }
       }
 
       if(iss.bad())

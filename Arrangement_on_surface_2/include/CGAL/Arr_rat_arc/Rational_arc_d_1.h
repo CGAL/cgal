@@ -543,7 +543,7 @@ public:
     //check if the source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q, x_s) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do....
     }
     else
@@ -644,7 +644,7 @@ public:
     //check if source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q,x_s) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do ..
     }
     else
@@ -666,7 +666,7 @@ public:
     //check if target point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q,x_t) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       //nothing to do ..
     }
     else
@@ -1206,7 +1206,7 @@ public:
   // at their given intersection point.
   // param cv The given arc.
   // param p The intersection point.
-  // param mult Output: The mutiplicity of the intersection point.
+  // param mult Output: The multiplicity of the intersection point.
   // return SMALLER if (*this) slope is less than cv's;
   //      EQUAL if the two slopes are equal;
   //         LARGER if (*this) slope is greater than cv's.

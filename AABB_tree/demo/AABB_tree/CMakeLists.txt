@@ -1,6 +1,6 @@
 # This is the CMake script for compiling the AABB tree demo.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(AABB_tree_Demo)
 
 # Find includes in corresponding build directories

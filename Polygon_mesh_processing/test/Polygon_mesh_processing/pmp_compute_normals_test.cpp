@@ -146,9 +146,9 @@ void test_SM(const std::string file_name)
   }
 
   typename SM::template Property_map<vertex_descriptor, Vector> vnormals;
-  vnormals = mesh.template add_property_map<vertex_descriptor, Vector>("v:normals", CGAL::NULL_VECTOR).first;
+  vnormals = mesh.template add_property_map<vertex_descriptor, Vector>("v:normal", CGAL::NULL_VECTOR).first;
   typename SM::template Property_map<face_descriptor, Vector> fnormals;
-  fnormals = mesh.template add_property_map<face_descriptor, Vector>("f:normals", CGAL::NULL_VECTOR).first;
+  fnormals = mesh.template add_property_map<face_descriptor, Vector>("f:normal", CGAL::NULL_VECTOR).first;
 
   test<K>(mesh, vnormals, fnormals);
 }

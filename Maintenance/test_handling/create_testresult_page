@@ -16,6 +16,7 @@
 use Cwd;
 use strict;
 use Date::Format;
+use JSON;
 
 my $server_url="https://cgal.geometryfactory.com/";
 my $cgal_members="${server_url}CGAL/Members/";
@@ -205,7 +206,7 @@ sub collect_results()
 sub print_result_table()
 {
     my $platform_count = scalar(@platforms_to_do);
-
+    my $release_version = substr($release_name, 5);
     print OUTPUT <<"EOF";
 <table class="result" border="1" cellspacing="2" cellpadding="5">
 <tr align="CENTER">
@@ -227,7 +228,7 @@ EOF
 	    if ($test_num == 15) {
 	    	$test_num = 0;
 	    	print OUTPUT "\n<tr>  <td align=\"center\">\n";
-	    	print OUTPUT '<a href="#platforms">Platform Description</a>';
+	    	print OUTPUT "<a href=\"summary-$release_version.html?platform=all\">Platform Description</a>";
 	    	print OUTPUT "\n";
 		print_platforms_numbers();
 	    	print OUTPUT "\n</tr>\n";
@@ -243,7 +244,8 @@ EOF
 	#     close VERSION;
 	# }
 	print OUTPUT "\n<tr>\n";
-	print OUTPUT "<td><a class=\"package_name\" href=\"\#$test_directory\" name=\"$test_directory\">$test_directory</a></td>\n";
+
+    print OUTPUT "<td><a class=\"package_name\" href=\"summary-$release_version.html?package=$test_directory\" name=\"$test_directory\">$test_directory</a></td>\n";
 	# if ( $version ) {
 	#     print OUTPUT "<TD ALIGN=CENTER>$version</TD>\n";
 	# } else {
@@ -556,11 +558,13 @@ EOF
 sub print_platforms_numbers()
 {
     my ($platform_num,$platform)=(0,"");
+    my $release_version = substr($release_name, 5);
     foreach $platform (@platforms_to_do) {
 	++$platform_num;
 	my $pf_short = short_pfname($platform);
 	my $class = "";
 	my $tag = "";
+    my $platformlink = $platform;
 	if($platform_is_optimized{$platform} || $platform_is_64bits{$platform})
 	{
 	    $class = " class=\"";
@@ -576,7 +580,7 @@ sub print_platforms_numbers()
             $class = $class . "\"";
             $tag = $tag . " )";
 	}
-	print OUTPUT "<td$class><a href=\"#platform$platform_num\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
+	print OUTPUT "<td$class><a href=\"summary-$release_version.html?platform=$platformlink\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
     }
 }
 
@@ -730,8 +734,7 @@ sub get_warnings_and_errors {
         my $result = `zcat $result_file`;
         my @lines = split("\n", $result);
         foreach my $line (@lines) {
-            if ($line =~ /(warning|error):/i && !$seen{$line}++) {
-            #if ($line !~ /\b(ERROR|WARNING)\b/ && $line =~ /(warning|error):/i) {
+            if ($line =~ /(warning|error):/i && !$seen{$line}++ || $line =~ /(warning|error) [CJ]\d+:/i && !$seen{$line}++) {
 
                 $warnings_and_errors .= $line . "\n";
             }
@@ -748,6 +751,41 @@ sub create_summary_page {
     my $test_directory;
     my @letters = ('r', 'n', 'w', 'o');
     my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);
+    my $package_options = join("\n", map { "<option style=\"display: none;\" value=\"$_\">$_</option>" } sort keys %test_directories);
+
+    my @search_index;
+    my ($platform_num, $platform) = (0, "");
+    foreach $platform (@platforms_to_do) {
+        foreach my $letter (@letters) {
+            foreach my $test_directory (sort keys %test_directories) {
+                my $resulttext = $testresults[$platform_num]->{$test_directory};
+                if (defined($resulttext) && $resulttext eq $letter) {
+                    my $warnings_and_errors = get_warnings_and_errors("$testresult_dir/$release_name/$test_directory/TestReport_$platform.gz");
+                    push @search_index, {
+                        platform => $platform,
+                        test_directory => $test_directory,
+                        content => $warnings_and_errors,
+                        release => $release_name,
+                        letters => $letter,
+                    };
+                }
+            }
+        }
+        $platform_num++;
+    }
+
+    my $json = JSON->new->allow_nonref;
+    my $json_text = $json->pretty->encode(\@search_index);
+    open my $fh, '>', "$testresult_dir/$release_name/search_index.json" or die "Could not open file: $!";
+    print $fh $json_text;
+    close $fh;
+
+    my @all_releases = grep {-d $_ } glob("../*");
+    my %urls_for_js = (
+        current => ["$release_name/search_index.json"],
+        all     => [map { "TESTRESULTS/$_/search_index.json" } @all_releases],
+    );
+    my $json_urls = encode_json(\%urls_for_js);
     my $Summary_output = <<"EOF";
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
         "https://www.w3.org/TR/html4/strict.dtd">
@@ -758,93 +796,287 @@ sub create_summary_page {
   <link rel="shortcut icon" href="cgal.ico">
   <link rel="stylesheet" type="text/css" href="testresult.css">
   <script>
+    var searchURLs = $json_urls;
+    var url = searchURLs["current"]
+
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('platformSelector').value = 'all';
+        document.getElementById('platformSelector').addEventListener('change', function() {
+            filterByPlatform();
+            filterByLetter();
+        });
+        document.getElementById('letterSelector').addEventListener('change', function() {
+            filterByLetter();
+        });
+        document.getElementById('packagesSelector').addEventListener('change', function() {
+            filterByPackage();
+            filterByLetter();
+        });
+        var platformSelector = document.getElementById('platformSelector');
+        const platformQueryString = window.location.search;
+        const platformUrlParams = new URLSearchParams(platformQueryString);
+        const platform = platformUrlParams.get('platform');
+        for (let option of platformSelector.options) {
+            if (option.value === platform) {
+                platformSelector.value = platform;
+                break;
+            }
+        }
+        var letterSelector = document.getElementById('letterSelector');
+        var packagesSelector = document.getElementById('packagesSelector');
+        const packageQueryString = window.location.search;
+        const packageUrlParams = new URLSearchParams(packageQueryString);
+        const package = packageUrlParams.get('package');
+        for (let option of packagesSelector.options) {
+            if (option.value === package) {
+                packagesSelector.value = package;
+                document.getElementById('container').style.display = 'none';
+                break;
+            }
+        }
+    fetch(url)
+    .then(response => response.json())
+    .then(data => {
+        const groupedByPlatform = data.reduce((acc, item) => {
+            if (!acc[item.platform]) {
+                acc[item.platform] = [];
+            }
+            acc[item.platform].push(item);
+            return acc;
+        }, {});
+
+        const container = document.getElementById('container');
+
+        Object.entries(groupedByPlatform).forEach(([platform, items]) => {
+            const platformDiv = document.createElement('div');
+            platformDiv.className = "platform " + platform;
+            container.appendChild(platformDiv);
+            const platformHeader = document.createElement('h2');
+            platformHeader.innerText = "Results of " + platform;
+            platformDiv.appendChild(platformHeader);
+            const resultGrid = document.createElement('div');
+            resultGrid.className = "result-grid";
+            platformDiv.appendChild(resultGrid);
+
+            const letters = ['r', 'n', 'w', 'o'];
+            letters.forEach(letter => {
+                const letterDiv = document.createElement('div');
+                letterDiv.className = "letter " + letter + " result-container";
+                resultGrid.appendChild(letterDiv);
+                const letterHeader = document.createElement('h3');
+                letterHeader.innerText = letter;
+                letterDiv.appendChild(letterHeader);
+
+                const filteredItems = items.filter(item => item.letters === letter);
+                filteredItems.forEach(item => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.innerHTML = `<a href="\${item.release}/\${item.test_directory}/TestReport_\${item.platform}.gz">\${item.test_directory}</a>`;
+                    letterDiv.appendChild(resultDiv);
+                    if (item.content) {
+                        const pre = document.createElement('pre');
+                        pre.innerText = item.content;
+                        letterDiv.appendChild(pre);
+                    }
+                });
+            });
+        });
+        const testDirectories = [...new Set(data.map(item => item.test_directory))];
+        for (let option of packagesSelector.options) {
+            if (testDirectories.includes(option.value)) {
+                option.style.display = '';
+            }
+        }
+        const groupedByPackage = data.reduce((acc, item) => {
+            if (!acc[item.test_directory]) {
+                acc[item.test_directory] = [];
+            }
+            acc[item.test_directory].push(item);
+            return acc;
+        }
+        , {});
+        const packageContainer = document.getElementById('package_container');
+
+        Object.entries(groupedByPackage).forEach(([test_directory, items]) => {
+            const packageDiv = document.createElement('div');
+            packageDiv.className = "package";
+            packageContainer.appendChild(packageDiv);
+            const packageHeader = document.createElement('h2');
+            packageHeader.innerText = test_directory;
+            packageDiv.appendChild(packageHeader);
+            const resultGrid = document.createElement('div');
+            resultGrid.className = "result-grid";
+            packageDiv.appendChild(resultGrid);
+
+            const letters = ['r', 'n', 'w', 'o'];
+            letters.forEach(letter => {
+                const letterDiv = document.createElement('div');
+                letterDiv.className = "letter " + letter + " result-container";
+                resultGrid.appendChild(letterDiv);
+                const letterHeader = document.createElement('h3');
+                letterHeader.innerText = letter;
+                letterDiv.appendChild(letterHeader);
+
+                const filteredItems = items.filter(item => item.letters === letter);
+                filteredItems.forEach(item => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.innerHTML = `<a href="\${item.release}/\${item.test_directory}/TestReport_\${item.platform}.gz">\${item.platform}</a>`;
+                    letterDiv.appendChild(resultDiv);
+                    if (item.content) {
+                        const pre = document.createElement('pre');
+                        pre.innerText = item.content;
+                        letterDiv.appendChild(pre);
+                    }
+                });
+            });
+        });
+    })
+    .then(() => {
+        filterByPackage();
         filterByPlatform();
-        document.getElementById('letterSelector').value = 'all';
         filterByLetter();
+    })
+    .catch(error => console.error('Error loading search data:', error));
     });
+
+
     function filterByPlatform() {
         var selectedPlatform = document.getElementById('platformSelector').value;
-        var divs = document.querySelectorAll('div.platform');
-        divs.forEach(function(div) {
-            if (selectedPlatform === 'all' || div.classList.contains(selectedPlatform)) {
-                div.style.display = '';
+        var selectedLetter = document.getElementById('letterSelector').value;
+        var platforms = document.querySelectorAll('div.platform');
+        var packageSelector = document.getElementById('packagesSelector');
+        if (selectedPlatform !== 'all') {
+            packageSelector.disabled = true;
+            packageSelector.value = 'all';
+        } else {
+            packageSelector.disabled = false;
+        }
+
+        platforms.forEach(function(platform) {
+            var displayPlatform = false;
+            if (selectedPlatform === 'all' || platform.classList.contains(selectedPlatform)) {
+                var letters = platform.querySelectorAll('div.letter');
+                    letters.forEach(function(letter) {
+                    if (selectedLetter === 'all' || letter.classList.contains(selectedLetter)){
+                        letter.style.display = '';
+                        displayPlatform = true;
+                    } else {
+                        letter.style.display = 'none';
+                    }
+                });
+                platform.style.display = displayPlatform ? '' : 'none';
             } else {
-                div.style.display = 'none';
+                platform.style.display = 'none';
             }
         });
     }
 
     function filterByLetter() {
         var selectedLetter = document.getElementById('letterSelector').value;
-        var platforms = document.querySelectorAll('div.platform');
+        var letters = document.querySelectorAll('div.letter');
 
-        platforms.forEach(function(platform) {
-            var letters = platform.querySelectorAll('div.result-grid > div.letter');
-            var displayPlatform = false;
-
-            letters.forEach(function(letter) {
-                if (selectedLetter === 'all' || letter.classList.contains(selectedLetter)) {
-                    var childDivs = letter.querySelectorAll('div');
-                    if (childDivs.length > 0) {
-                        letter.style.display = '';
-                        displayPlatform = true;
-                    } else {
-                        letter.style.display = 'none';
-                    }
+        letters.forEach(function(letter) {
+            if (selectedLetter === 'all' || letter.classList.contains(selectedLetter)) {
+                if (letter.children.length > 1){
+                    letter.style.display = '';
                 } else {
                     letter.style.display = 'none';
                 }
-            });
-
-            platform.style.display = displayPlatform ? '' : 'none';
+            } else {
+                letter.style.display = 'none';
+            }
         });
     }
 
+    function filterByPackage() {
+        var selectedPackage = document.getElementById('packagesSelector').value;
+        var container = document.getElementById('container');
+        var package_container = document.getElementById('package_container');
+        let children = container.children;
+        if (selectedPackage === 'all') {
+            platformSelector.disabled = false;
+            for (let i = 0; i < children.length; i++) {
+                children[i].style.display = '';
+            }
+            package_container.style.display = 'none';
+            container.style.display = '';
+        } else {
+            platformSelector.disabled = true;
+            platformSelector.value = 'all';
+            for (let i = 0; i < children.length; i++) {
+                children[i].style.display = 'none';
+            }
+            package_container.style.display = '';
+            for (let i=0; i<package_container.children.length; i++) {
+                let packageDiv = package_container.children[i];
+                if (packageDiv.querySelector('h2').innerText === selectedPackage) {
+                    packageDiv.style.display = '';
+                } else {
+                    packageDiv.style.display = 'none';
+                }
+            }
+        }
+    }
+    function search() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const selectValue = document.getElementById('releaseSelector').value;
+    if (searchTerm === '') {
+        return;
+    }
+    const urls = searchURLs[selectValue];
+    if (!urls) {
+        console.error('No URLs found for select value:', selectValue);
+        return;
+    }
+    urls.forEach(url => {
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                const searchIndex = JSON.parse(data);
+                const searchResults = searchIndex.filter(item => item.content.toLowerCase().includes(searchTerm));
+                const searchResultsDiv = document.getElementById('searchResults');
+                if (url === urls[0]) searchResultsDiv.innerHTML = '';
+                searchResults.forEach(item => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.innerHTML = `<a href="\${item.release}/\${item.test_directory}/TestReport_\${item.platform}.gz">\${item.platform} - \${item.test_directory} - <strong>\${item.release}</strong></a>`;
+                    searchResultsDiv.appendChild(resultDiv);
+                });
+            })
+            .catch(error => console.error('Error loading search data:', error));
+    });
+}
 
   </script>
 <!-- This file is generated by a program. Do not edit manually!! -->
 </head>
 <body>
+<input type="text" id="searchInput" placeholder="Search ..." autocomplete="off" onkeypress="if(event.keyCode==13) search()">
+<select id="releaseSelector">
+<option value="current" selected>This release</option>
+<option value="all">All releases</option>
+</select>
+<button onclick="search()">Search</button>
+<div id="searchResults"></div>
 <h1>Summary Results of ${release_name}</h1>
 <select id="platformSelector" onchange="filterByPlatform()">
-<option value="all" selected>All Platforms</option>
+<option value="all" selected>Select a platform</option>
 $platform_options
 </select>
 <select id="letterSelector" onchange="filterByLetter()">
 <option value="all" selected>All</option>
 $letters_options
 </select>
+<select id="packagesSelector" onchange="filterByPackage()">
+<option value="all" selected>Select a package</option>
+$package_options
+</select>
+<div id="container"></div>
+<div id="package_container"></div>
 EOF
 
     my $summary_page_path = "$testresult_dir/summary".substr($release_name,4).".html";
     open(my $out, '>', $summary_page_path) or die "Could not open file '$summary_page_path' $!";
     print $out $Summary_output;
 
-    my ($platform_num, $platform) = (0, "");
-    foreach $platform (@platforms_to_do) {
-        print $out "<div class='platform $platform'><h2>Results of $platform</h2><div class='result-grid'>";
-        foreach my $letter (@letters) {
-            print $out "<div class='letter $letter result-container'><h3>$letter</h3>";
-            foreach my $test_directory (sort keys %test_directories) {
-                my $resulttext = $testresults[$platform_num]->{$test_directory};
-                if (defined($resulttext) && $resulttext eq $letter) {
-                    print $out '<div><a href=',"$release_name/$test_directory/TestReport_$platform.gz>", "$test_directory",'</a></div>';
-                    my $warnings_and_errors = get_warnings_and_errors("$testresult_dir/$release_name/$test_directory/TestReport_$platform.gz");
-                    if ($warnings_and_errors) {
-                        print $out "<pre>$warnings_and_errors</pre>";
-                    }
-                }
-            }
-            print $out "</div>";
-        }
-        print $out "</div></div>";
-        $platform_num++;
-    }
-
     print $out "</body>\n</html>\n";
     close $out;
 }
-
 main();

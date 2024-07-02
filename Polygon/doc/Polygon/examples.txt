@@ -7,4 +7,6 @@
 \example Stream_support/Polygon_WKT.cpp
 \example Polygon/draw_polygon.cpp
 \example Polygon/draw_polygon_with_holes.cpp
+\example Polygon/multipolygon.cpp
+\example Polygon/draw_multipolygon_with_holes.cpp
 */

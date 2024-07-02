@@ -42,7 +42,7 @@ public:
   //ACCESS
   size_type degree(); //should be const
 
-  //Deprecated access to circulators - for bacward compatibility
+  //Deprecated access to circulators - for backward compatibility
   // the following should be const
   // when Face_circulator, Vertex_circulator and Edge_circulator
   // are created from

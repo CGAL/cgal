@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Mesh_3_Examples)
 
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -103,6 +103,10 @@ create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sizing.c
 target_link_libraries(mesh_polyhedral_domain_with_features_sizing
                       PUBLIC CGAL::Eigen3_support)
 
+                    create_single_source_cgal_program("mesh_polyhedral_domain_with_edge_distance.cpp")
+target_link_libraries(mesh_polyhedral_domain_with_edge_distance
+                      PUBLIC CGAL::Eigen3_support)
+
 create_single_source_cgal_program("mesh_polyhedral_domain_with_features_sm.cpp")
 target_link_libraries(mesh_polyhedral_domain_with_features_sm
                       PUBLIC CGAL::Eigen3_support)
@@ -121,7 +125,7 @@ target_link_libraries(mesh_polyhedral_complex_sm PUBLIC CGAL::Eigen3_support)
 if(TARGET CGAL::CGAL_ImageIO)
   if(VTK_FOUND AND ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION
                                                           VERSION_GREATER 5))
-    add_executable(mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp)
+    create_single_source_cgal_program("mesh_3D_gray_vtk_image.cpp")
     target_link_libraries(
       mesh_3D_gray_vtk_image
       PUBLIC CGAL::Eigen3_support CGAL::CGAL CGAL::CGAL_ImageIO ${VTK_LIBRARIES})
@@ -219,6 +223,7 @@ if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
     mesh_polyhedral_domain_sm
     mesh_polyhedral_domain_with_features
     mesh_polyhedral_domain_with_features_sizing
+    mesh_polyhedral_domain_with_edge_distance
     mesh_polyhedral_domain_with_features_sm
     mesh_polyhedral_domain_with_lipschitz_sizing
     mesh_two_implicit_spheres_with_balls)

@@ -8,6 +8,7 @@
 /// \cgalRefines{CopyConstructible}
 /// \cgalHasModelsBegin
 /// \cgalHasModels{CGAL::Polygon_mesh_processing::Corefinement::Default_visitor}
+/// \cgalHasModels{CGAL::Polygon_mesh_processing::Corefinement::Non_manifold_output_visitor}
 /// \cgalHasModelsEnd
 
 class PMPCorefinementVisitor{

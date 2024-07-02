@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Arrangement_on_surface_2_Examples)
 
 find_package(CGAL REQUIRED COMPONENTS Core OPTIONAL_COMPONENTS Qt6)
@@ -24,6 +24,7 @@ if(CGAL_Qt6_FOUND)
   target_link_libraries(polylines PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(circles PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(circular_arcs PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(spherical_insert PUBLIC CGAL::CGAL_Basic_viewer)
 else()
   message(
     STATUS

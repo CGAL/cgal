@@ -17,10 +17,8 @@ typedef Point_set::Property_map<FT> FT_map;
 
 void print_point_set (const Point_set& point_set)
 {
-  Color_map color;
-  boost::tie (color, boost::tuples::ignore) = point_set.property_map<Color>("color");
-  FT_map intensity;
-  boost::tie (intensity, boost::tuples::ignore) =  point_set.property_map<FT>("intensity");
+  Color_map color = point_set.property_map<Color>("color").value();
+  FT_map intensity = point_set.property_map<FT>("intensity").value();
 
   std::cerr << "Content of point set:" << std::endl;
   for (Point_set::const_iterator it = point_set.begin(); it != point_set.end(); ++ it)

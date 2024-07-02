@@ -354,6 +354,7 @@ detect_corners_of_regions(
   using parameters::get_parameter;
   using parameters::is_default_parameter;
 
+  using VPM = typename GetVertexPointMap < PolygonMesh, NamedParameters>::const_type;
   using Traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   using Graph_traits = boost::graph_traits<PolygonMesh>;
   using halfedge_descriptor = typename Graph_traits::halfedge_descriptor;
@@ -377,7 +378,7 @@ detect_corners_of_regions(
   }
   Ecm ecm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained), dynamic_ecm);
 
-  using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<PolygonMesh>;
+  using Polyline_graph     = CGAL::Shape_detection::Polygon_mesh::Polyline_graph<PolygonMesh, VPM>;
   using Segment_map        = typename Polyline_graph::Segment_map;
   using Item               = typename Polyline_graph::Item;
 
@@ -424,7 +425,7 @@ detect_corners_of_regions(
       filtered_edges.push_back(e);
   }
 
-  Polyline_graph pgraph(mesh, filtered_edges, region_map);
+  Polyline_graph pgraph(mesh, filtered_edges, region_map, np);
   const auto& segment_range = pgraph.segment_range();
 
   Line_region line_region(np.segment_map(pgraph.segment_map()));

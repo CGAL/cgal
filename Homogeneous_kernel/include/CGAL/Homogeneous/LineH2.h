@@ -45,7 +45,7 @@ public:
 
     LineH2() {}
     LineH2(const RT& a, const RT& b, const RT& c)
-      : base(CGAL::make_array(a, b, c)) {}
+      : base{a, b, c} {}
 
     bool           operator==(const LineH2<R>& l) const;
     bool           operator!=(const LineH2<R>& l) const;

@@ -24,6 +24,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersection_nodes.h>
 #include <CGAL/Polygon_mesh_processing/internal/Corefinement/intersect_triangle_and_segment_3.h>
 #include <CGAL/Polygon_mesh_processing/Non_manifold_feature_map.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 #include <CGAL/utility.h>
 
 #include <boost/dynamic_bitset.hpp>
@@ -250,6 +251,8 @@ class Intersection_of_triangle_meshes
                             bool throw_on_self_intersection,
                             std::set<face_descriptor>& tm_f_faces,
                             std::set<face_descriptor>& tm_e_faces,
+                            Bbox_3 tm_f_bb,
+                            Bbox_3 tm_e_bb,
                             bool run_check)
   {
     std::vector<Box> face_boxes, edge_boxes;
@@ -260,12 +263,14 @@ class Intersection_of_triangle_meshes
     for(face_descriptor fd : faces(tm_f))
     {
       halfedge_descriptor h=halfedge(fd,tm_f);
-      face_boxes.push_back( Box(
-        get(vpm_f,source(h,tm_f)).bbox() +
-        get(vpm_f,target(h,tm_f)).bbox() +
-        get(vpm_f,target(next(h,tm_f),tm_f)).bbox(),
-        h ) );
-      face_boxes_ptr.push_back( &face_boxes.back() );
+      Bbox_3 bb = get(vpm_f,source(h,tm_f)).bbox() +
+                  get(vpm_f,target(h,tm_f)).bbox() +
+                  get(vpm_f,target(next(h,tm_f),tm_f)).bbox();
+      if (do_overlap(bb, tm_e_bb))
+      {
+        face_boxes.emplace_back(bb, h);
+        face_boxes_ptr.push_back( &face_boxes.back() );
+      }
     }
 
     edge_boxes.reserve(num_edges(tm_e));
@@ -275,11 +280,14 @@ class Intersection_of_triangle_meshes
       for(edge_descriptor ed : edges(tm_e))
       {
         halfedge_descriptor h=halfedge(ed,tm_e);
-        edge_boxes.push_back( Box(
-          get(vpm_e,source(h,tm_e)).bbox() +
-          get(vpm_e,target(h,tm_e)).bbox(),
-          h ) );
-        edge_boxes_ptr.push_back( &edge_boxes.back() );
+        Bbox_3 bb = get(vpm_e,source(h,tm_e)).bbox() +
+                    get(vpm_e,target(h,tm_e)).bbox();
+
+        if (do_overlap(bb, tm_f_bb))
+        {
+          edge_boxes.emplace_back(bb,h);
+          edge_boxes_ptr.push_back( &edge_boxes.back() );
+        }
       }
     else
       // non-manifold case
@@ -296,11 +304,14 @@ class Intersection_of_triangle_meshes
             // make sure the halfedge used is consistent with stored one
             h = halfedge(non_manifold_feature_map.non_manifold_edges[eid].front(), tm_e);
         }
-        edge_boxes.push_back( Box(
-          get(vpm_e,source(h,tm_e)).bbox() +
-          get(vpm_e,target(h,tm_e)).bbox(),
-          h ) );
-        edge_boxes_ptr.push_back( &edge_boxes.back() );
+        Bbox_3 bb = get(vpm_e,source(h,tm_e)).bbox() +
+                    get(vpm_e,target(h,tm_e)).bbox();
+
+        if (do_overlap(bb, tm_f_bb))
+        {
+          edge_boxes.emplace_back(bb,h);
+          edge_boxes_ptr.push_back( &edge_boxes.back() );
+        }
       }
 
     /// \todo experiments different cutoff values
@@ -1267,7 +1278,7 @@ class Intersection_of_triangle_meshes
             it_seg13->second.get_segments(f1f3_segments);
 
             /// TODO AUTOREF_TAG shall we ignore tangency points?
-            /// with the current code, Node_id_set::size()==1 is ignored as we only drop semgents
+            /// with the current code, Node_id_set::size()==1 is ignored as we only drop segments
             /// Actually it might be that it is not a tangency point if the third segment was considered!
             /// so not handling it is a bug
 
@@ -1716,13 +1727,18 @@ public:
     const VertexPointMap1& vpm1=nodes.vpm1;
     const VertexPointMap2& vpm2=nodes.vpm2;
 
+
+    Bbox_3 tm1_bb=bbox(tm1, parameters::vertex_point_map(vpm1)),
+           tm2_bb=bbox(tm2, parameters::vertex_point_map(vpm2));
+
+
     // used only if throw_on_self_intersection == true
     std::set<face_descriptor> tm1_faces;
     std::set<face_descriptor> tm2_faces;
 
     visitor.start_filtering_intersections();
-    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, false);
-    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, true);
+    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, tm1_bb, tm2_bb, false);
+    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, tm2_bb, tm1_bb, true);
     visitor.end_filtering_intersections();
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());

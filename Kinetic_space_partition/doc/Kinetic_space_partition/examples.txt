@@ -1,0 +1,3 @@
+/*!
+\example Kinetic_space_partition/kinetic_partition.cpp
+*/

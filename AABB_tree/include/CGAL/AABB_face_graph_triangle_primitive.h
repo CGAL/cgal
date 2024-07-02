@@ -48,7 +48,7 @@ namespace CGAL {
  *        The default is `CGAL::Tag_false` (datum is not stored).
  *\sa `AABBPrimitive`
  *\sa `AABB_primitive<Id,ObjectPropertyMap,PointPropertyMapPolyhedron,ExternalPropertyMaps,CacheDatum>`
- *\sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
+ *\sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,OneHalfedgeGraphPerTree,CacheDatum>`
  */
 template < class FaceGraph,
            class VertexPointPMap = Default,

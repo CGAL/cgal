@@ -166,7 +166,7 @@ class Filtered_Point_2
 #endif
 };
 
-// For filtered constructions, we should be able to re-use the same predicates,
+// For filtered constructions, we should be able to reuse the same predicates,
 // but have different constructions and objects Point_2...
 template <class EK, class IK = Cartesian<Interval> >
 class Filtered_kernel

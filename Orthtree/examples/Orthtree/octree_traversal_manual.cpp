@@ -7,14 +7,13 @@
 #include <CGAL/Point_set_3/IO.h>
 
 // Type Declarations
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_3 Point;
-typedef CGAL::Point_set_3<Point> Point_set;
-typedef Point_set::Point_map Point_map;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point = Kernel::Point_3;
+using Point_set = CGAL::Point_set_3<Point>;
+using Point_map = Point_set::Point_map;
+using Octree = CGAL::Octree<Kernel, Point_set, Point_map>;
 
-typedef CGAL::Octree<Kernel, Point_set, Point_map> Octree;
-
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
 
   // Point set will be used to hold our points
   Point_set points;
@@ -39,29 +38,30 @@ int main(int argc, char **argv) {
   std::cout << "Navigation relative to the root node" << std::endl;
   std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
   std::cout << "the root node: " << std::endl;
-  std::cout << octree.root() << std::endl;
+  std::cout << octree.to_string(octree.root()) << std::endl;
   std::cout << "the first child of the root node: " << std::endl;
-  std::cout << octree.root()[0] << std::endl;
+  std::cout << octree.to_string(octree.child(octree.root(), 0)) << std::endl;
   std::cout << "the fifth child: " << std::endl;
-  std::cout << octree.root()[4] << std::endl;
-  std::cout << "the fifth child, accessed without the root keyword: " << std::endl;
-  std::cout << octree[4] << std::endl;
+  std::cout << octree.to_string(octree.child(octree.root(), 4)) << std::endl;
+  std::cout << "the fifth child, accessed without going through root: " << std::endl;
+  std::cout << octree.to_string(octree.node(4)) << std::endl;
   std::cout << "the second child of the fourth child: " << std::endl;
-  std::cout << octree.root()[4][1] << std::endl;
-  std::cout << "the second child of the fourth child, accessed without the root keyword: " << std::endl;
-  std::cout << octree[4][1] << std::endl;
+  std::cout << octree.to_string(octree.child(octree.child(octree.root(), 4), 1)) << std::endl;
+  std::cout << "the second child of the fourth child, accessed without going through root: " << std::endl;
+  std::cout << octree.to_string(octree.node(4, 1)) << std::endl;
   std::cout << std::endl;
 
   // Retrieve one of the deeper children
-  Octree::Node cur = octree[3][2];
+  Octree::Node_index cur = octree.node(4, 3);
   std::cout << "Navigation relative to a child node" << std::endl;
   std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
   std::cout << "the third child of the fourth child: " << std::endl;
-  std::cout << cur << std::endl;
+  std::cout << octree.to_string(cur) << std::endl;
   std::cout << "the third child: " << std::endl;
-  std::cout << cur.parent() << std::endl;
+  std::cout << octree.to_string(octree.parent(cur)) << std::endl;
   std::cout << "the next sibling of the third child of the fourth child: " << std::endl;
-  std::cout << cur.parent()[cur.local_coordinates().to_ulong() + 1] << std::endl;
+  std::cout << octree.to_string(octree.child(octree.parent(cur), octree.local_coordinates(cur).to_ulong() + 1))
+            << std::endl;
 
   return EXIT_SUCCESS;
 }

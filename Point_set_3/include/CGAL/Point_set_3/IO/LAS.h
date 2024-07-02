@@ -302,25 +302,25 @@ bool write_LAS(std::ostream& os,
 
   if(remove_R)
   {
-    Uchar_map charR, charG, charB;
-    bool foundR, foundG, foundB;
-    boost::tie(charR, foundR) = point_set.template property_map<unsigned char>("r");
-    if(!foundR)
-      boost::tie(charR, foundR) = point_set.template property_map<unsigned char>("red");
-    boost::tie(charG, foundG) = point_set.template property_map<unsigned char>("g");
-    if(!foundG)
-      boost::tie(charG, foundG) = point_set.template property_map<unsigned char>("green");
-    boost::tie(charB, foundB) = point_set.template property_map<unsigned char>("b");
-    if(!foundB)
-      boost::tie(charB, foundB) = point_set.template property_map<unsigned char>("blue");
+    std::optional<Uchar_map> charR, charG, charB;
 
-    if(foundR && foundG && foundB)
+    charR = point_set.template property_map<unsigned char>("r");
+    if(!charR.has_value())
+      charR = point_set.template property_map<unsigned char>("red");
+    charG = point_set.template property_map<unsigned char>("g");
+    if(!charG.has_value())
+      charG = point_set.template property_map<unsigned char>("green");
+    charB = point_set.template property_map<unsigned char>("b");
+    if(!charB.has_value())
+      charB = point_set.template property_map<unsigned char>("blue");
+
+    if(charR.has_value() && charG.has_value() && charB.has_value())
     {
       for(typename Point_set::iterator it = point_set.begin(); it != point_set.end(); ++it)
       {
-        put(R, *it, (unsigned short)(get(charR, *it)));
-        put(G, *it, (unsigned short)(get(charG, *it)));
-        put(B, *it, (unsigned short)(get(charB, *it)));
+        put(R, *it, (unsigned short)(get(charR.value(), *it)));
+        put(G, *it, (unsigned short)(get(charG.value(), *it)));
+        put(B, *it, (unsigned short)(get(charB.value(), *it)));
       }
     }
   }

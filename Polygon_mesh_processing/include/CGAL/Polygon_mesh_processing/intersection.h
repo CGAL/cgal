@@ -18,7 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/box_intersection_d.h>
@@ -1109,7 +1109,7 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
                        const GT& gt)
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
 
   AABBTree tree1(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
@@ -1464,7 +1464,7 @@ struct Mesh_callback
   typedef typename boost::range_value<NamedParametersRange>::type NamedParameters;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
@@ -1711,7 +1711,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{throw_on_self_intersection}
- *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm1` and `tm2` will be
  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
  *                           will be thrown if at least one self-intersection is found.}
  *     \cgalParamType{Boolean}

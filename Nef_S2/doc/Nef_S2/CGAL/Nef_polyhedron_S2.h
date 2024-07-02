@@ -325,14 +325,14 @@ supporting `s`.
 const Sphere_circle& sphere_circle() ;
 
 /*!
-returns the sperical
+returns the spherical
 segment oriented from `target()` to `source()` with the same
 point set as `s`.
 */
 Sphere_segment opposite() ;
 
 /*!
-returns the sperical
+returns the spherical
 segment oriented from `target()` to `source()` with the
 point set completing `s` to a full circle.
 */

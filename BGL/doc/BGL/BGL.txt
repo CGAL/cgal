@@ -510,11 +510,12 @@ Dynamic property tags, such as `dynamic_vertex_property_t`, are a generalization
 value type of the dynamic property map, and a default value.
 `boost::property_map<G,T>::%type` is used to obtain the
 type of the dynamic property map for a graph of type `G`, for a
-dynamic property tag `T`.  This type must be default constructible and assignable.
+dynamic property tag `T`.  This type must be assignable, and if no
+default is provided it must be default constructible.
 As for ordinary properties, the function `%get()` is overloaded and
 serves for retrieving a property map for a given graph and dynamic
 property tag, as well as for retrieving a value for a given key and
-property map.
+property map. The default value is provided as third parameter.
 
 The following example shows how to attach a `string` property to vertices and
 a `double` value to the halfedges of a graph.

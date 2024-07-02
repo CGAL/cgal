@@ -16,7 +16,7 @@
 #include <CGAL/license/Polygon_mesh_processing/distance.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Bbox_3.h>
 
@@ -379,7 +379,7 @@ class Hausdorff_primitive_traits_tm1
   using Triangle_3 = typename Kernel::Triangle_3;
 
   using TM2_primitive = AABB_face_graph_triangle_primitive<TriangleMesh2, VPM2>;
-  using TM2_traits    = AABB_traits<Kernel, TM2_primitive>;
+  using TM2_traits    = AABB_traits_3<Kernel, TM2_primitive>;
   using TM2_tree      = AABB_tree<TM2_traits>;
   using TM2_hd_traits = Hausdorff_primitive_traits_tm2<Triangle_3, Kernel, TriangleMesh1, TriangleMesh2, VPM2>;
 

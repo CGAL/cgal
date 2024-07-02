@@ -1336,7 +1336,7 @@ cout <<"Number of roots at " << xCurr << " are " << numRoots<<endl;
     if (!xCurr.isExact()){
       std::ostringstream oss;
       oss << "xCurr has error! xCurr=" << xCurr;
-      core_error(oss.str(), __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, oss.str());
     }
    }//main while loop
 
@@ -1426,4 +1426,3 @@ void showIntervals(char* s, BFVecInterval &vI) {
 /*************************************************************************** */
 // END
 /*************************************************************************** */
-

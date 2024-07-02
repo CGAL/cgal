@@ -800,7 +800,7 @@ typename _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::Rat_point_2
 _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
         (const Rational& t) const
 {
-  // Check for extermal t values (either 0 or 1).
+  // Check for external t values (either 0 or 1).
   const CGAL::Sign   sign_t = CGAL::sign (t);
 
   CGAL_precondition (sign_t != NEGATIVE);
@@ -851,7 +851,7 @@ typename _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::Alg_point_2
 _Bezier_curve_2<RatKer, AlgKer, NtTrt, BndTrt>::operator()
           (const Algebraic& t) const
 {
-  // Check for extermal t values (either 0 or 1).
+  // Check for external t values (either 0 or 1).
   Nt_traits          nt_traits;
   const CGAL::Sign   sign_t = CGAL::sign (t);
 

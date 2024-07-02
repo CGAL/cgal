@@ -1,7 +1,5 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Documentation NONE)
-
-# Minimal version of CMake:
 
 # Check whether this cmake script is the top level one
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
@@ -28,6 +26,18 @@ endif()
 
 find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
+if (NOT Python3_EXECUTABLE)
+  message(FATAL_ERROR "Cannot build the documentation without Python3!")
+  return()
+endif()
+
+message(STATUS  ${Python3_EXECUTABLE})
+
+if(NOT DOXYGEN_FOUND)
+  message(WARNING "Cannot build the documentation without Doxygen!")
+  return()
+endif()
 
 #starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
 if(TARGET Doxygen::doxygen)
@@ -67,6 +77,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   if(NOT EXISTS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
     return()
   endif()
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
 
   set(CGAL_DOC_PACKAGE_DEFAULTS
       ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
@@ -154,6 +165,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     endforeach()
   else()
     if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
       file(STRINGS ${CGAL_PACKAGE_DOC_DIR}/dependencies DEPENDENCIES)
     endif()
   endif()
@@ -353,6 +365,10 @@ configure_file(${CGAL_DOC_RESOURCE_DIR}/BaseDoxyfile.in
                ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
 
 set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
+
+if (BE_QUIET)
+  file(APPEND ${CGAL_DOC_DOXY_DEFAULT} "WARN_LOGFILE=doxygen.log\n")
+endif()
 
 # pkglist_filter gets the path to the pkglist_filter of this source
 # directory.

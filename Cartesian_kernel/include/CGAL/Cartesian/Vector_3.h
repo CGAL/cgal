@@ -65,7 +65,10 @@ public:
   { *this = R().construct_vector_3_object()(l); }
 
   VectorC3(const FT_ &x, const FT_ &y, const FT_ &z)
-    : base(CGAL::make_array(x, y, z)) {}
+    : base{x, y, z} {}
+
+  VectorC3(FT_&& x, FT_&& y, FT_&& z)
+    : base{std::move(x), std::move(y), std::move(z)} {}
 
   VectorC3(const FT_ &x, const FT_ &y, const FT_ &z, const FT_ &w)
     : base( w != FT_(1) ? CGAL::make_array<FT_>(x/w, y/w, z/w)

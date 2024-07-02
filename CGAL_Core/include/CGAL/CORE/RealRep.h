@@ -92,10 +92,10 @@ public:
   int ID() const;
 
   long longValue() const {
-    return ker.longValue();
+    return CORE::longValue(ker);
   }
   double doubleValue() const {
-    return ker.doubleValue();
+    return CORE::doubleValue(ker);
   }
   BigInt BigIntValue() const {
     return BigInt(ker);
@@ -231,7 +231,7 @@ inline BigInt   RealBigInt::BigIntValue() const {
 }
 template<>
 inline BigInt   RealBigRat::BigIntValue() const {
-  return ker.BigIntValue();
+  return CORE::BigIntValue(ker);
 }
 template<>
 inline BigInt RealBigFloat::BigIntValue() const {
@@ -500,11 +500,11 @@ inline unsigned long RealBigRat::height() const {
 // toString()
 template<>
 inline std::string RealBigInt::toString(long, bool) const {
-  return ker.get_str();
+  return ker.convert_to<std::string>();
 }
 template<>
 inline std::string RealBigRat::toString(long, bool) const {
-  return ker.get_str();
+  return ker.convert_to<std::string>();
 }
 template<>
 inline std::string RealBigFloat::toString(long prec, bool sci) const {

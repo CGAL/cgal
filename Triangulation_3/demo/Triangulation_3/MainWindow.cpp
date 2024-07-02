@@ -137,6 +137,7 @@ void MainWindow::on_actionLoad_Points_triggered()
 
   // update viewer
   Q_EMIT( sceneChanged() );
+  viewer->changed();
 }
 
 void MainWindow::on_actionSave_Points_triggered()

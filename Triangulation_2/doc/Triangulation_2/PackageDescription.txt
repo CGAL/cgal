@@ -20,6 +20,12 @@
 /// \ingroup PkgTriangulation2Ref
 
 /*!
+\cgalInclude{CGAL/draw_constrained_triangulation_2.h}
+*/
+/// \defgroup PkgDrawConstrainedTriangulation2 Draw a Constrained Triangulation 2
+/// \ingroup PkgTriangulation2Ref
+
+/*!
 \addtogroup PkgTriangulation2Ref
 \todo check generated documentation
 \cgalPkgDescriptionBegin{2D Triangulations,PkgTriangulation2}

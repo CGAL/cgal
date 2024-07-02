@@ -115,7 +115,7 @@ namespace internal {
 
                         // The supporting planar segment of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, Planar_segment*> face_supporting_segments =
-                                mesh.template property_map<Face_descriptor, Planar_segment*>("f:supp_segment").first;
+                                mesh.template property_map<Face_descriptor, Planar_segment*>("f:supp_segment").value();
 
                         Planar_segment* segment = face_supporting_segments[face];
                         if (segment == nullptr)
@@ -123,7 +123,7 @@ namespace internal {
 
                         // The supporting plane of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, const Plane*> face_supporting_planes =
-                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").first;
+                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").value();
                         // We do everything by projecting the point onto the face's supporting plane
                         const Plane* supporting_plane = face_supporting_planes[face];
                         CGAL_assertion(supporting_plane == segment->supporting_plane());
@@ -186,7 +186,7 @@ namespace internal {
 
                         // The supporting plane of each face
                         typename Polygon_mesh::template Property_map<Face_descriptor, const Plane*> face_supporting_planes =
-                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").first;
+                                mesh.template property_map<Face_descriptor, const Plane*>("f:supp_plane").value();
 
                         FT degenerate_face_area_threshold = CGAL::snap_squared_distance_threshold<FT>() * CGAL::snap_squared_distance_threshold<FT>();
 

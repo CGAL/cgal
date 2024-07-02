@@ -45,7 +45,7 @@ public:
 
   TetrahedronC3(const Point_3 &p, const Point_3 &q, const Point_3 &r,
                 const Point_3 &s)
-    : base(CGAL::make_array(p, q, r, s)) {}
+    : base{p, q, r, s} {}
 
   const Point_3 &    vertex(int i) const;
   const Point_3 &    operator[](int i) const;

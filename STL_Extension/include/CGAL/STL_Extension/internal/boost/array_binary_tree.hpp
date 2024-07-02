@@ -30,7 +30,7 @@ namespace CGAL { namespace internal {
 namespace boost_ {
 
 /*
- * Note: array_binary_tree is a completey balanced binary tree.
+ * Note: array_binary_tree is a completely balanced binary tree.
  */
 #if !defined BOOST_NO_STD_ITERATOR_TRAITS
   template <class RandomAccessIterator, class ID>

@@ -313,6 +313,12 @@ set_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::ver
   static_cast<Sneak&>(*v).set_halfedge(h);
 }
 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A>
+void
+remove_all_elements(CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
+{
+  g.clear();
+}
 
 //
 // HalfedgeGraph

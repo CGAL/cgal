@@ -41,7 +41,7 @@ public:
   TriangleC2() {}
 
   TriangleC2(const Point_2 &p, const Point_2 &q, const Point_2 &r)
-    : base(CGAL::make_array(p, q, r)) {}
+    : base{p, q, r} {}
 
 
   const Point_2 &

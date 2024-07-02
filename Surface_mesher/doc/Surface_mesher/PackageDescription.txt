@@ -7,10 +7,6 @@
 /// \defgroup PkgSurfaceMesher3Classes Mesh and Domain Classes
 /// \ingroup PkgSurfaceMesher3Ref
 
-/// \defgroup PkgSurfaceMesher3TagClasses Tag Classes
-/// \ingroup PkgSurfaceMesher3Ref
-
-
 /// \defgroup PkgSurfaceMesher3Functions Functions
 /// \ingroup PkgSurfaceMesher3Ref
 
@@ -40,6 +36,9 @@
 \cgalPkgLicense{\ref licensesGPL}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
+
+\deprecated This package is deprecated since the version 6.0 of \cgal. The package \ref PkgMesh3 should be used instead.
+
 
 The surface mesh generation package offers a function template
 which builds a triangular mesh approximating a surface.

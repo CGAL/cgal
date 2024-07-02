@@ -48,7 +48,7 @@ struct _Less_handle
 
 /*!
  * Connect the given polygon with holes, turning it into a sequence of
- * points, where the holes are connceted to the outer boundary using
+ * points, where the holes are connected to the outer boundary using
  * zero-width passages.
  * For example:
  *              Input                             Output

@@ -9,7 +9,7 @@ of the geometric traits needed by the segmentation functions.
 \cgalHasModelsBare{All models of the \cgal concept `Kernel`}
 \cgalHasModelsEnd
 
-\cgalRefines{AABBGeomTraits}
+\cgalRefines{AABBGeomTraits_3}
 
 */
 
@@ -130,4 +130,3 @@ collinear_3_object()const
 
 /// @}
 }; /* end SegmentationGeomTraits */
-

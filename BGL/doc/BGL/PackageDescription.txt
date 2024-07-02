@@ -449,6 +449,9 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLHelperFct Helper Functions
 /// \ingroup PkgBGLRef
 
+/// \defgroup PkgBGLGeneratorFct Generator Functions
+/// \ingroup PkgBGLRef
+
 /// \defgroup PkgBGLIterators Iterators and Circulators
 /// \ingroup PkgBGLRef
 
@@ -520,7 +523,14 @@ by attaching and initializing external IDs to the elements of the graph.
 Generic convenience functions for testing if an edge is a border edge, if a mesh is triangular,
 for conversion between models of different `FaceGraph` concepts, etc.
 
-Most functions are in the header file `<CGAL/boost/graph/helpers.h>`
+All functions are in the header file `<CGAL/boost/graph/helpers.h>`
+*/
+
+/*!
+\addtogroup PkgBGLGeneratorrFct
+Generic convenience functions for generating meshes such as a triangle, a quad, or a grid.
+
+All functions are in the header file `<CGAL/boost/graph/generators.h>`
 */
 
 /*!
@@ -667,6 +677,7 @@ user might encounter.
 - `CGAL::is_valid_face_graph()`
 - `CGAL::is_valid_polygon_mesh()`
 
+\cgalCRPSection{Generator Functions}
 - `CGAL::is_tetrahedron()`
 - `CGAL::is_hexahedron()`
 - `CGAL::make_triangle()`
@@ -679,6 +690,7 @@ user might encounter.
 - `CGAL::make_grid()`
 
 - `CGAL::clear()`
+- `CGAL::remove_all_elements()`
 - `CGAL::copy_face_graph()`
 
 - `CGAL::set_triangulation_ids()`

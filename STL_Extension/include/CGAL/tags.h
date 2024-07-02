@@ -51,6 +51,11 @@ typedef CGAL::Parallel_tag Parallel_if_available_tag;
 typedef CGAL::Sequential_tag Parallel_if_available_tag;
 #endif
 
+// For Surface_mesher and Mesh_3
+struct Non_manifold_tag {};
+struct Manifold_tag {};
+struct Manifold_with_boundary_tag {};
+
 // A function that asserts a specific compile time tag
 // forcing its two arguments to have equal type.
 template <class Base>

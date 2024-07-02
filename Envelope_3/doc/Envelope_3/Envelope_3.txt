@@ -97,9 +97,9 @@ of planar arrangements, the `EnvelopeTraits_3` refines the
 concept must define the planar types `Point_2` and
 `X_monotone_curve_2` and support basic operations on them, as
 listed in Section \ref aos_sec-geom_traits. Moreover, it must define the
-spacial types `Surface_3` and `Xy_monotone_surface_3` (in practice,
+spatial types `Surface_3` and `Xy_monotone_surface_3` (in practice,
 these two types may be the same). Any model of the envelope-traits
-concept must also support the following operations on these spacial
+concept must also support the following operations on these spatial
 types:
 
 \cgalFigureAnchor{env3_figcomp_over}

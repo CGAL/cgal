@@ -1,3 +1,5 @@
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 
 // c2t3

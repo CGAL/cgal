@@ -6,7 +6,7 @@
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/Dynamic_property_map.h>
 
@@ -58,7 +58,7 @@ int main(int /*argc*/, char** /*argv*/)
   // The AABB tree can be cached in case many queries are performed (otherwise, it is rebuilt
   // on each call, which is expensive).
   typedef CGAL::AABB_face_graph_triangle_primitive<Mesh>                AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<K, AABB_face_graph_primitive>               AABB_face_graph_traits;
+  typedef CGAL::AABB_traits_3<K, AABB_face_graph_primitive>               AABB_face_graph_traits;
 
   CGAL::AABB_tree<AABB_face_graph_traits> tree;
   PMP::build_AABB_tree(tm, tree);

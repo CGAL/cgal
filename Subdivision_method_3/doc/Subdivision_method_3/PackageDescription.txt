@@ -20,7 +20,7 @@
 \cgalPkgSince{4.11}
 \cgalPkgBib{cgal:s-ssm2}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

@@ -172,7 +172,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
   class Finite_faces_iterator
@@ -187,7 +187,7 @@ public:
     Self & operator--() { Base::operator--(); return *this; }
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
-    operator Face_handle() const { return Base::base(); }
+    operator const Face_handle&() const { return Base::base(); }
   };
 
   typedef Filter_iterator<All_edges_iterator,
@@ -214,8 +214,10 @@ public:
   typedef typename Tds::Vertex_handles         All_vertex_handles;
   typedef typename Tds::Edges                  All_edges;
 
-  typedef Iterator_range<Prevent_deref<Finite_faces_iterator> >    Finite_face_handles;
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_faces_iterator,
+                                       const Face_handle&>>   Finite_face_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       const Vertex_handle&>> Finite_vertex_handles;
   typedef Iterator_range<Finite_edges_iterator>                    Finite_edges;
   typedef Iterator_range<Point_iterator>                           Points;
 
@@ -3267,7 +3269,7 @@ typename Triangulation_2<Gt, Tds>::Finite_face_handles
 Triangulation_2<Gt, Tds>::
 finite_face_handles() const
 {
-  return make_prevent_deref_range(finite_faces_begin(),finite_faces_end());
+  return { finite_faces_begin(), finite_faces_end() };
 }
 
 template <class Gt, class Tds >
@@ -3296,7 +3298,7 @@ typename Triangulation_2<Gt, Tds>::Finite_vertex_handles
 Triangulation_2<Gt, Tds>::
 finite_vertex_handles() const
 {
-  return make_prevent_deref_range(finite_vertices_begin(),finite_vertices_end());
+  return { finite_vertices_begin(), finite_vertices_end() };
 }
 
 template <class Gt, class Tds >
@@ -3671,13 +3673,8 @@ Comparison_result
 Triangulation_2<Gt, Tds>::
 compare_xy(const Point& p, const Point& q) const
 {
-  Comparison_result res = geom_traits().compare_x_2_object()(construct_point(p),
-                                                             construct_point(q));
-  if(res == EQUAL){
-    return geom_traits().compare_y_2_object()(construct_point(p),
-                                              construct_point(q));
-  }
-  return res;
+  return geom_traits().compare_xy_2_object()(construct_point(p),
+                                             construct_point(q));
 }
 
 template <class Gt, class Tds >

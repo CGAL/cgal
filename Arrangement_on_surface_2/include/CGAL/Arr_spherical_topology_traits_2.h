@@ -314,7 +314,7 @@ public:
   // defining a type that inherits from the template we need to alias.  However,
   // the non-C++11 code requires the (re)definition of all constructors of the
   // derived class. The non-C++11 code follows the commented out C++11 code.
-  // When we move to C++11 we can use the more elgant code.
+  // When we move to C++11 we can use the more elegant code.
   // Type definition for the construction surface-sweep visitor.
   template <typename Evt, typename Crv>
   struct Construction_helper :

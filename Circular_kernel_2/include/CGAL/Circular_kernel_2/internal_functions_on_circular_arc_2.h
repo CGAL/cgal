@@ -1453,7 +1453,7 @@ template < class CK, class OutputIterator >
 // returns extra information, descriptive of the position of the returned
 // xy-monotone arcs on the circle: The output iterator refers to pairs, the
 // first part of which is the object containing the arc and the second part
-// is another pair containing 2 booleans which equavalently describe whether the
+// is another pair containing 2 booleans which equivalently describe whether the
 // returned xy-monotone arc is on the upper part and the left side of the circle
 
 template < typename CK , typename Output_iterator>

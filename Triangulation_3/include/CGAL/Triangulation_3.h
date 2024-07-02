@@ -495,7 +495,7 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Cell_handle() const { return Base::base(); }
+    operator const Cell_handle&() const { return Base::base(); }
   };
 
   // We derive in order to add a conversion to handle.
@@ -514,11 +514,13 @@ public:
     Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
     Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
 
-    operator Vertex_handle() const { return Base::base(); }
+    operator const Vertex_handle&() const { return Base::base(); }
   };
 
-  typedef Iterator_range<Prevent_deref<Finite_cells_iterator> >    Finite_cell_handles;
-  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator> > Finite_vertex_handles;
+  typedef Iterator_range<Prevent_deref<Finite_cells_iterator,
+                                       const Cell_handle&> >         Finite_cell_handles;
+  typedef Iterator_range<Prevent_deref<Finite_vertices_iterator,
+                                       const Vertex_handle&> >       Finite_vertex_handles;
 
   typedef Filter_iterator<Edge_iterator, Infinite_tester>     Finite_edges_iterator;
   typedef Filter_iterator<Facet_iterator, Infinite_tester>    Finite_facets_iterator;
@@ -529,7 +531,8 @@ public:
   typedef Triangulation_segment_cell_iterator_3<Self>    Segment_cell_iterator;
   typedef Triangulation_segment_simplex_iterator_3<Self> Segment_simplex_iterator;
 
-  typedef Iterator_range<Prevent_deref<Segment_cell_iterator> >    Segment_traverser_cell_handles;
+  typedef Iterator_range<Prevent_deref<Segment_cell_iterator,
+                                       const Cell_handle&> >    Segment_traverser_cell_handles;
   typedef Iterator_range<Segment_simplex_iterator> Segment_traverser_simplices;
 
 private:
@@ -899,6 +902,7 @@ public:
                Cell_handle& c, int& i, int& j) const;
   bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
                 Cell_handle& c, int& i, int& j, int& k) const;
+  bool is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w) const;
   bool is_cell(Cell_handle c) const;
   bool is_cell(Vertex_handle u, Vertex_handle v,
                Vertex_handle w, Vertex_handle t,
@@ -1620,7 +1624,7 @@ protected:
     // to make it more general one could have an internal function here
     // to remove v without touching its handle
 
-    // This insert must be from Delaunay (or the particular trian.)
+    // This insert must be from Delaunay (or the particular triangle.)
     // not the basic Triangulation_3.
     // Here we correct the recent triangulation (with decreased dimension) formed
     // in particular here a 2D (from 3D to 2D displacement)
@@ -1801,7 +1805,7 @@ public:
 
   Finite_cell_handles finite_cell_handles() const
   {
-    return make_prevent_deref_range(finite_cells_begin(), finite_cells_end());
+    return {finite_cells_begin(), finite_cells_end()};
   }
 
 
@@ -1831,7 +1835,7 @@ public:
 
   Finite_vertex_handles finite_vertex_handles() const
   {
-    return make_prevent_deref_range(finite_vertices_begin(), finite_vertices_end());
+    return {finite_vertices_begin(), finite_vertices_end()};
   }
 
   Vertex_iterator vertices_begin() const { return _tds.vertices_begin(); }
@@ -2266,15 +2270,13 @@ public:
   Segment_traverser_cell_handles segment_traverser_cell_handles(Vertex_handle vs,
                                                                 Vertex_handle vt) const
   {
-    return make_prevent_deref_range(segment_traverser_cells_begin(vs, vt),
-                                    segment_traverser_cells_end());
+    return {segment_traverser_cells_begin(vs, vt), segment_traverser_cells_end()};
   }
   Segment_traverser_cell_handles segment_traverser_cell_handles(const Point& ps,
                                                                 const Point& pt,
                                                                 Cell_handle hint = Cell_handle()) const
   {
-    return make_prevent_deref_range(segment_traverser_cells_begin(ps, pt, hint),
-                                    segment_traverser_cells_end());
+    return {segment_traverser_cells_begin(ps, pt, hint), segment_traverser_cells_end()};
   }
 
   //// Segment Simplex Iterator
@@ -2711,6 +2713,16 @@ Triangulation_3<GT,Tds,Lds>::
 is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w,
          Cell_handle& c, int& i, int& j, int& k) const
 {
+  return _tds.is_facet(u, v, w, c, i, j, k);
+}
+
+template < class GT, class Tds, class Lds >
+bool
+Triangulation_3<GT,Tds,Lds>::
+is_facet(Vertex_handle u, Vertex_handle v, Vertex_handle w) const
+{
+  Cell_handle c;
+  int i; int j; int k;
   return _tds.is_facet(u, v, w, c, i, j, k);
 }
 
@@ -4976,35 +4988,22 @@ create_triangulation_inner_map(const Triangulation& t,
                                const Vertex_handle_unique_hash_map& vmap,
                                bool all_cells) {
   Vertex_triple_Facet_map inner_map;
+  auto create_triangulation_inner_map_aux = [&](const auto& cells_range) {
+    for(auto ch : cells_range) {
+      for(unsigned int index = 0; index < 4; index++) {
+        Facet f = std::pair<Cell_handle, int>(ch, index);
+        Vertex_triple vt_aux = make_vertex_triple(f);
+        Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
+        make_canonical_oriented_triple(vt);
+        inner_map[vt] = f;
+      }
+    }
+  };
 
-  if(all_cells)
-  {
-    for(All_cells_iterator it = t.all_cells_begin(),
-                           end = t.all_cells_end(); it != end; ++it)
-    {
-      for(unsigned int index=0; index < 4; index++)
-      {
-        Facet f = std::pair<Cell_handle,int>(it,index);
-        Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
-        make_canonical_oriented_triple(vt);
-        inner_map[vt] = f;
-      }
-    }
-  } else
-  {
-    for(Finite_cells_iterator it = t.finite_cells_begin(),
-                              end = t.finite_cells_end(); it != end; ++it)
-    {
-      for(unsigned int index=0; index < 4; index++)
-      {
-        Facet f = std::pair<Cell_handle,int>(it,index);
-        Vertex_triple vt_aux = make_vertex_triple(f);
-        Vertex_triple vt{vmap[vt_aux[0]], vmap[vt_aux[2]], vmap[vt_aux[1]]};
-        make_canonical_oriented_triple(vt);
-        inner_map[vt] = f;
-      }
-    }
+  if(all_cells) {
+    create_triangulation_inner_map_aux(t.all_cell_handles());
+  } else {
+    create_triangulation_inner_map_aux(t.finite_cell_handles());
   }
   return inner_map;
 }
@@ -5095,7 +5094,7 @@ Triangulation_3<Gt,Tds,Lds>::
 copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
                              Vertex_triple_Facet_map&& outer_map,
                              const Vertex_triple_Facet_map& inner_map,
-                             OutputItCells fit)
+                             OutputItCells cit)
 {
   while(! outer_map.empty())
   {
@@ -5109,20 +5108,20 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
       // because the infinite vertices are different
     }
 
-    typename Vertex_triple_Facet_map::value_type o_vt_f_pair = *oit;
+    const auto vertex_triple = oit->first;
+    const auto facet = oit->second;
     outer_map.erase(oit);
-    Cell_handle o_ch = o_vt_f_pair.second.first;
-    unsigned int o_i = o_vt_f_pair.second.second;
+    const Cell_handle o_ch = facet.first;
+    const unsigned int o_i = facet.second;
 
-    auto iit = inner_map.find(o_vt_f_pair.first);
+    const auto iit = inner_map.find(vertex_triple);
     CGAL_assertion(iit != inner_map.end());
-    typename Vertex_triple_Facet_map::value_type i_vt_f_pair = *iit;
-    Cell_handle i_ch = i_vt_f_pair.second.first;
-    unsigned int i_i = i_vt_f_pair.second.second;
+    const auto i_facet = iit->second;
+    const Cell_handle i_ch = i_facet.first;
+    const unsigned int i_i = i_facet.second;
 
     // Create a new cell and glue it to the outer surface
     Cell_handle new_ch = tds().create_cell();
-    *fit++ = new_ch;
     new_ch->set_vertices(vmap[i_ch->vertex(0)], vmap[i_ch->vertex(1)],
                          vmap[i_ch->vertex(2)], vmap[i_ch->vertex(3)]);
 
@@ -5132,12 +5131,14 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
     for(int j=0; j<4; j++)
      new_ch->vertex(j)->set_cell(new_ch);
 
+    *cit++ = new_ch;
+
     // For the other faces check, if they can also be glued
     for(unsigned int index = 0; index < 4; index++)
     {
       if(index != i_i)
       {
-        Facet f = std::pair<Cell_handle, int>(new_ch, index);
+        Facet f{new_ch, index};
         Vertex_triple vt = make_vertex_triple(f);
         make_canonical_oriented_triple(vt);
         std::swap(vt[1], vt[2]);
@@ -5151,9 +5152,9 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
         else
         {
           // glue the faces
-          typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
-          Cell_handle o_ch2 = o_vt_f_pair2.second.first;
-          int o_i2 = o_vt_f_pair2.second.second;
+          const auto facet2 = oit2->second;
+          const Cell_handle o_ch2 = facet2.first;
+          const int o_i2 = facet2.second;
           o_ch2->set_neighbor(o_i2, new_ch);
           new_ch->set_neighbor(index, o_ch2);
           outer_map.erase(oit2);
@@ -5161,7 +5162,7 @@ copy_triangulation_into_hole(const Vertex_handle_unique_hash_map& vmap,
       }
     }
   }
-  return fit;
+  return cit;
 }
 
 
@@ -5370,7 +5371,7 @@ remove(Vertex_handle v, VertexRemover& remover, bool *could_lock_zone)
 }
 
 // The remove here uses the remover, but
-// no function envolving hidden points
+// no function involving hidden points
 // will be used in this internal version
 template < class Gt, class Tds, class Lds >
 template < class VertexRemover, class OutputItCells >
@@ -5617,7 +5618,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
   if(((dim == 2) && (lt != OUTSIDE_AFFINE_HULL)) ||
      ((lt == OUTSIDE_AFFINE_HULL) && (dim == 1)))
   {
-    // This is insert must be from Delaunay (or the particular trian.)
+    // This is insert must be from Delaunay (or the particular triangle.)
     // not Triangulation_3 !
     Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
 
@@ -5686,7 +5687,7 @@ move_if_no_collision(Vertex_handle v, const Point& p,
     }
   }
 
-  // This is insert must be from Delaunay (or the particular trian.)
+  // This is insert must be from Delaunay (or the particular triangle.)
   // not Triangulation_3 !
   Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
 
@@ -5914,7 +5915,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
      ((lt == OUTSIDE_AFFINE_HULL) && (dim == 1)))
   {
     std::set<Cell_handle> cells_set;
-    // This is insert must be from Delaunay (or the particular trian.)
+    // This is insert must be from Delaunay (or the particular triangle.)
     // not Triangulation_3 !
     Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
     Cell_handle c = inserted->cell(), end = c;
@@ -6003,7 +6004,7 @@ move_if_no_collision_and_give_new_cells(Vertex_handle v, const Point& p,
 
   std::set<Cell_handle> cells_set;
 
-  // This is insert must be from Delaunay (or the particular trian.)
+  // This is insert must be from Delaunay (or the particular triangle.)
   // not Triangulation_3 !
   Vertex_handle inserted = inserter.insert(p, lt, loc, li, lj);
 

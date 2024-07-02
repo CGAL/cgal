@@ -489,7 +489,7 @@ weights, and weighting regions. All weights are available both in 2D and 3D.}
 \cgalPkgSince{5.4}
 \cgalPkgBib{cgal:a-wi}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

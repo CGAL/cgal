@@ -15,8 +15,8 @@ int main() {
   CGAL::Random theRandom(random_seed);
   int count = 0;
 
-  std::cout << "We will compute the approximate probability that 3 spheres wit"
-  << "h radius 1 intersect on a 5x5x5 box, it might take some time." << std::endl;
+  std::cout << "We will compute the approximate probability that 3 spheres with"
+  << " radius 1 intersect on a 5x5x5 box, it might take some time." << std::endl;
 
   for(int i=0; i<10000; i++) {
 

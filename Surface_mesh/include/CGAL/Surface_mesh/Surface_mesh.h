@@ -26,6 +26,7 @@
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/internal/helpers.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/circulator.h>
 #include <CGAL/Handle_hash_function.h>
@@ -2073,12 +2074,9 @@ private: //--------------------------------------------------- property handling
       return Property_selector<I>(this)().template add<T>(name, t);
     }
 
-    /// returns a property map named `name` with key type `I` and value type `T`,
-    /// and a Boolean that is `true` if the property exists.
-    /// In case it does not exist the Boolean is `false` and the behavior of
-    /// the property map is undefined.
+    /// returns an optional property map named `name` with key type `I` and value type `T`.
     template <class I, class T>
-    std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
+    std::optional<Property_map<I, T>> property_map(const std::string& name) const
     {
       return Property_selector<I>(const_cast<Surface_mesh*>(this))().template get<T>(name);
     }
@@ -2317,13 +2315,13 @@ operator=(const Surface_mesh<P>& rhs)
         fprops_ = rhs.fprops_;
 
         // property handles contain pointers, have to be reassigned
-        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity").first;
-        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").first;
-        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity").first;
-        vremoved_ = property_map<Vertex_index, bool>("v:removed").first;
-        eremoved_ = property_map<Edge_index, bool>("e:removed").first;
-        fremoved_ = property_map<Face_index, bool>("f:removed").first;
-        vpoint_   = property_map<Vertex_index, P>("v:point").first;
+        vconn_    = property_map<Vertex_index, Vertex_connectivity>("v:connectivity").value();
+        hconn_    = property_map<Halfedge_index, Halfedge_connectivity>("h:connectivity").value();
+        fconn_    = property_map<Face_index, Face_connectivity>("f:connectivity").value();
+        vremoved_ = property_map<Vertex_index, bool>("v:removed").value();
+        eremoved_ = property_map<Edge_index, bool>("e:removed").value();
+        fremoved_ = property_map<Face_index, bool>("f:removed").value();
+        vpoint_   = property_map<Vertex_index, P>("v:point").value();
 
         // how many elements are removed?
         removed_vertices_  = rhs.removed_vertices_;
@@ -2793,6 +2791,37 @@ namespace internal{
   }
 }
 
+namespace internal {
+
+template <typename P>
+std::size_t
+exact_num_faces(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_faces();
+}
+
+template <typename P>
+std::size_t
+exact_num_edges(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_edges();
+}
+
+template <typename P>
+std::size_t
+exact_num_halfedges(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_halfedges();
+}
+
+template <typename P>
+std::size_t
+exact_num_vertices(const CGAL::Surface_mesh<P>& sm)
+{
+ return sm.number_of_vertices();
+}
+
+} // namespace internal
 } // namespace CGAL
 
 #ifndef DOXYGEN_RUNNING

@@ -1,0 +1,25 @@
+// #define CGAL_LAB_DEMO_NO_NEF
+// #define CGAL_LAB_DEMO_NO_SURFACE_MESHER
+// #define CGAL_LAB_DEMO_NO_PARAMETRIZATION
+
+#ifndef CGAL_LAB_DEMO_CONFIG_H
+#define CGAL_LAB_DEMO_CONFIG_H
+
+#ifdef CGAL_USE_SSH
+//to avoid clashing between windows.h and winsock2.h
+#define _WINSOCKAPI_
+#endif
+
+#ifndef CGAL_LAB_DEMO_NO_PARAMETRIZATION
+#  define CGAL_LAB_DEMO_USE_PARAMETRIZATION
+#endif
+
+#ifndef CGAL_LAB_DEMO_NO_NEF
+#  define CGAL_LAB_DEMO_USE_NEF
+#endif
+
+#ifndef CGAL_LAB_DEMO_NO_SURFACE_MESHER
+#  define CGAL_LAB_DEMO_USE_SURFACE_MESHER
+#endif
+
+#endif // CGAL_LAB_DEMO_CONFIG_H

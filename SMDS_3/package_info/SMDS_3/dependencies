@@ -1,6 +1,7 @@
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -19,7 +20,6 @@ Number_types
 Polygon_mesh_processing
 Profiling_tools
 Property_map
-Random_numbers
 SMDS_3
 STL_Extension
 Spatial_sorting

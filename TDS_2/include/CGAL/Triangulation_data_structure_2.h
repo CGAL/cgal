@@ -183,7 +183,7 @@ public:
   }
 
   Face_handles face_handles() const {
-    return make_prevent_deref_range(faces_begin(),faces_end());
+    return { faces_begin(), faces_end() };
   }
 
   Vertex_iterator vertices_begin() const  {
@@ -195,7 +195,7 @@ public:
   }
 
   Vertex_handles vertex_handles() const {
-    return make_prevent_deref_range(vertices_begin(),vertices_end());
+    return { vertices_begin(), vertices_end() };
   }
 
   Edge_iterator edges_begin() const {
@@ -1351,7 +1351,7 @@ void
 Triangulation_data_structure_2<Vb,Fb>::
 make_hole(Vertex_handle v, List_edges& hole)
   // delete the faces incident to v and v
-  // and return the dscription of the hole in hole
+  // and return the description of the hole in hole
 {
  CGAL_precondition(dimension() == 2);
  std::list<Face_handle> to_delete;
@@ -1604,7 +1604,7 @@ split_vertex(Vertex_handle v, Face_handle f1, Face_handle g1)
   Vertex_handle v3 = f1->vertex( ccw(i1) );
   Vertex_handle v4 = g1->vertex( ccw(j1) );
 
-  // lst is the list of faces adjecent to v stored in
+  // lst is the list of faces adjacent to v stored in
   // counterclockwise order from g2 to f1) inclusive.
   // the list idx contains the indices of v in the
   // faces in lst.
@@ -2244,7 +2244,7 @@ Triangulation_data_structure_2<Vb,Fb>::
 vrml_output( std::ostream& os, Vertex_handle v, bool skip_infinite) const
 {
   // output to a vrml file style
-  // Point are assumed to be 3d points with a stream oprator <<
+  // Point are assumed to be 3d points with a stream operator <<
   // if non nullptr, v is the vertex to be output first
   // if skip_inf is true, the point in the first vertex is not output
   // and the faces incident to v are not output

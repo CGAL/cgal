@@ -317,7 +317,7 @@ namespace CGAL {
     }
 
     /*!
-     * Read a circular boundary of a conncted component.
+     * Read a circular boundary of a connected component.
      * \param formatter The formatter.
      * \param boundary_size The number of halfedges along the boundary.
      * \param p_outer The outer CCB.

@@ -110,7 +110,9 @@ of the concept `Periodic_2Offset_2`.
 - `CGAL::Periodic_2_triangulation_2::Locate_type`
 
 \cgalCRPSection{Draw 2D Periodic Triangulation}
- - \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
+- \link PkgDrawPeriodic2Triangulation2 CGAL::draw<P2T2>() \endlink
+- `GraphicsSceneOptionsPeriodic2Triangulation2`
+- `CGAL::Graphics_scene_options_periodic_2_triangulation_2`
 
 */
 

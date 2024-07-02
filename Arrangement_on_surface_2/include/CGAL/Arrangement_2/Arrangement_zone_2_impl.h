@@ -1176,7 +1176,7 @@ _zone_in_face(Face_handle face, bool on_boundary) {
         m_left_he = (m_right_he->direction() == ARR_LEFT_TO_RIGHT) ?
           inserted_he : m_right_he;
       else {
-        // Mutliplicity is unknown:
+        // Multiplicity is unknown:
         m_left_he = m_invalid_he;
       }
     }

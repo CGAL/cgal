@@ -145,12 +145,12 @@ struct Identity_functor
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `ouput`}
+ *     \cgalParamDescription{a property map associating points to the vertices of `output`}
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<OutputMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, output)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `ouput`.}
+ *                     should be available for the vertices of `output`.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */

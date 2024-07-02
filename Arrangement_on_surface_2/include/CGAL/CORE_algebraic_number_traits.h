@@ -106,7 +106,7 @@ public:
       ix1 = scaled_x1.BigIntValue();
       ix2 = scaled_x2.BigIntValue();
 
-      if (CORE::abs (ix2 - ix1) > one)
+      if (CGAL::abs (ix2 - ix1) > one)
         break;
 
       // Scale the values by a factor of 2.
@@ -179,9 +179,9 @@ public:
         temp_gcd = numer_gcd;
 
         denom_lcm *= denom;
-        denom_lcm /= CORE::gcd (temp_lcm, denom);
+        denom_lcm /= CGAL::gcd (temp_lcm, denom);
 
-        numer_gcd = CORE::gcd (temp_gcd, numer);
+        numer_gcd = CGAL::gcd (temp_gcd, numer);
       }
 
       ++q_iter;
@@ -246,8 +246,8 @@ public:
 
     if (sign_disc == ZERO)
     {
-      // We have one real root with mutliplicity 2.
-      *oi = -Algebraic (b) / Algebraic (2*a);
+      // We have one real root with multiplicity 2.
+      *oi = -Algebraic (b) / Algebraic (NT(2*a));
       ++oi;
     }
     else if (sign_disc == POSITIVE)
@@ -255,7 +255,7 @@ public:
       // We have two distinct real roots. We return them in ascending order.
       const Algebraic      sqrt_disc = CGAL::sqrt (Algebraic (disc));
       const Algebraic      alg_b = b;
-      const Algebraic      alg_2a = 2*a;
+      const Algebraic      alg_2a = NT(2*a);
 
       if (sign_a == POSITIVE)
       {
@@ -334,7 +334,7 @@ public:
         temp_lcm = denom_lcm;
 
         denom_lcm *= denom;
-        denom_lcm /= CORE::gcd (temp_lcm, denom);
+        denom_lcm /= CGAL::gcd (temp_lcm, denom);
       }
 
       index--;

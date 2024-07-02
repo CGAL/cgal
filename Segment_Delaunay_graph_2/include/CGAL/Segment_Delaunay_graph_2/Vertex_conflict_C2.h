@@ -147,7 +147,7 @@ private:
     bool q_exact = q.is_input();
     bool t_exact = t.is_input();
     bool filtered = false;
-    // the following if-statement does the gometric filtering...
+    // the following if-statement does the geometric filtering...
     // maybe it is not so important since this will only be
     // activated if a lot of intersection points appear on the
     // convex hull
@@ -239,7 +239,7 @@ private:
       bool q_exact = q.is_input();
       bool t_exact = t.is_input();
       bool filtered = false;
-      // the following if-statement does the gometric filtering...
+      // the following if-statement does the geometric filtering...
       // maybe it is not so important since this will only be
       // activated if a lot of intersection points appear on the
       // convex hull

@@ -16,7 +16,7 @@
 #include <CGAL/license/Polygon_mesh_processing/locate.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/graph/generators.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -1522,7 +1522,7 @@ template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = 
 void
 build_AABB_tree(const TriangleMesh& tm,
                 AABB_tree<
-                  AABB_traits<
+                  AABB_traits_3<
 #ifdef DOXYGEN_RUNNING
                     Geom_traits,
 #else
@@ -1596,12 +1596,12 @@ template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = 
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate_with_AABB_tree(const Point& p,
-                      const AABB_tree<AABB_traits<Geom_traits,
+                      const AABB_tree<AABB_traits_3<Geom_traits,
                                       AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
 #else
 typename internal::Location_traits<TriangleMesh, NamedParameters>::Face_location
 locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Point& p,
-                      const AABB_tree<AABB_traits<
+                      const AABB_tree<AABB_traits_3<
                                 typename GetGeomTraits<TriangleMesh, NamedParameters>::type,
                                 CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
 #endif
@@ -1613,7 +1613,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
 
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                      Geom_traits;
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>       Primitive;
-  typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                               AABB_traits;
+  typedef typename CGAL::AABB_traits_3<Geom_traits, Primitive>                             AABB_traits;
 
   typedef typename Primitive::Point                                                        Point_3;
   static_assert(std::is_same<Point_3, typename P_to_P3::Point_3>::value);
@@ -1701,7 +1701,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type                    Geom_traits;
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, WrappedVPM>                   AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<Geom_traits, AABB_face_graph_primitive>                      AABB_face_graph_traits;
+  typedef CGAL::AABB_traits_3<Geom_traits, AABB_face_graph_primitive>                    AABB_face_graph_traits;
 
   typedef internal::Point_to_Point_3<TriangleMesh, Intrinsic_point>                      P_to_P3;
   typedef typename AABB_face_graph_traits::Point_3                                       Point_3;
@@ -1772,12 +1772,12 @@ template <typename TriangleMesh, typename Point3VPM, typename NamedParameters = 
 #ifdef DOXYGEN_RUNNING
 Face_location<TriangleMesh, FT>
 locate_with_AABB_tree(const Ray& ray,
-                      const AABB_tree<AABB_traits<Geom_traits, AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
+                      const AABB_tree<AABB_traits_3<Geom_traits, AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM> > >& tree,
 #else
 typename internal::Location_traits<TriangleMesh, NamedParameters>::Face_location
 locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, NamedParameters>::Ray& ray,
                       const AABB_tree<
-                        CGAL::AABB_traits<
+                        CGAL::AABB_traits_3<
                           typename GetGeomTraits<TriangleMesh, NamedParameters>::type,
                           CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>
                       > >& tree,
@@ -1798,7 +1798,7 @@ locate_with_AABB_tree(const typename internal::Location_traits<TriangleMesh, Nam
   typedef internal::Ray_to_Ray_3<TriangleMesh>                                               R_to_R3;
 
   typedef typename CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, Point3VPM>         Primitive;
-  typedef typename CGAL::AABB_traits<Geom_traits, Primitive>                                 AABB_traits;
+  typedef typename CGAL::AABB_traits_3<Geom_traits, Primitive>                               AABB_traits;
   typedef AABB_tree<AABB_traits>                                                             AABB_face_graph_tree;
   typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
   typedef std::optional<Intersection_type>                                                 Ray_intersection;
@@ -1919,7 +1919,7 @@ locate(const typename internal::Location_traits<TriangleMesh, NamedParameters>::
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type               Geom_traits;
 
   typedef AABB_face_graph_triangle_primitive<TriangleMesh, VPM>                     AABB_face_graph_primitive;
-  typedef CGAL::AABB_traits<Geom_traits, AABB_face_graph_primitive>                 AABB_face_graph_traits;
+  typedef CGAL::AABB_traits_3<Geom_traits, AABB_face_graph_primitive>               AABB_face_graph_traits;
   using parameters::get_parameter;
   using parameters::choose_parameter;
 

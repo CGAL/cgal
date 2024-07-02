@@ -4,7 +4,7 @@
 #include <CGAL/Surface_mesh_shortest_path.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 
 #include <iostream>
@@ -21,7 +21,7 @@ typedef CGAL::Surface_mesh_shortest_path<Traits> Surface_mesh_shortest_path;
 
 typedef boost::property_map<Triangle_mesh, CGAL::vertex_point_t>::const_type VPM;
 typedef CGAL::AABB_face_graph_triangle_primitive<Triangle_mesh, VPM> AABB_face_graph_primitive;
-typedef CGAL::AABB_traits<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
+typedef CGAL::AABB_traits_3<Kernel, AABB_face_graph_primitive> AABB_face_graph_traits;
 
 void test_all_pairs()
 {

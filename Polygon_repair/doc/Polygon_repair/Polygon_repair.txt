@@ -1,0 +1,188 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_2D_Polygon_repair
+
+\cgalAutoToc
+\author Ken Arroyo Ohori
+
+\section SectionPolygonRepair_Introduction Introduction
+
+This package implements a polygon repair method. Starting from possibly
+invalid input in the form of a polygon, polygon with holes or multipolygon
+with holes, the method computes an arrangement of the input edges, labels
+each face according to what it represents (exterior, polygon interior
+or hole), and reconstructs the polygon(s) represented by the arrangement.
+The method returns valid output stored in a multipolygon with holes.
+
+Different arrangement and labelling heuristics are possible, but
+currently only the <em>even-odd</em> rule is implemented in this package.
+This rule results in areas that are alternately assigned as polygon
+interiors and exterior/holes each time that an input edge is passed.
+It does not distinguish between edges that are part of outer boundaries
+from those of inner boundaries.  In a next version we will add the
+<em>winding number</em> rule.
+
+\section SectionPolygonRepair_Definitions Definitions
+
+- A valid <em>polygon</em> (without holes) is a point set in \f$ \mathbb{R}^2\f$
+that is bounded by a cycle of linear edges, which is known as its
+<em>outer boundary</em>. This outer boundary should be <em>simple</em>,
+meaning that the interiors of its edges are pairwise disjoint and all of
+its vertices have a degree of two. It is thus topologically equivalent to a
+disk and is represented internally as the sequence of points at the common
+end points of the edges around its outer boundary.
+
+- A valid <em>polygon with holes</em> is a point set in \f$ \mathbb{R}^2\f$
+that is bounded by one outer boundary and zero or more <em>inner boundaries</em>,
+where each inner boundary represents a hole in the polygon. Considered
+independently, each boundary should be simple. The different boundaries of a polygon
+are allowed to intersect tangentially at their common vertices (with no common
+edges), forming vertices with degrees of a multiple of two the tangential points.
+The interior of a polygon with holes should form a connected point set.
+Note that a valid polygon can also be represented as a valid polygon with
+holes (where the number of holes is zero).
+
+- A valid <em>multipolygon with holes</em> is a point set in \f$ \mathbb{R}^2\f$
+that is represented by a set of zero or more valid polygons with holes.
+The interiors of the polygons with holes should be pairwise disjoint, but they
+are allowed to intersect tangentially at their common vertices. Note that
+a valid polygon with holes can also be represented as a valid multipolygon
+with holes (with only one polygon).
+
+\cgalFigureBegin{valid, valid.svg}
+Valid: (a) polygon, (b-c) polygons with holes, and (d-e) multipolygons with holes.
+(c) and (e) show cases where boundaries intersect tangentially at a single vertex.
+\cgalFigureEnd
+
+\cgalFigureBegin{invalid, invalid.svg}
+Invalid: (a) self-intersecting polygon self-intersection, (b) self-touching polygon,
+(c-d) polygons with badly nested holes, (e) polygon with hole touching at edge,
+(f) polygon with hole that separates interior into two parts, (g) multipolygon
+with overlapping polygons, and (h) multipolygon with polygons that touch at an edge.
+\cgalFigureEnd
+
+\subsection SubsectionPolygonRepair_Output Stricter Conditions for Output
+
+The conditions listed above are sufficient to define valid polygons, polygons
+with holes and multipolygons with holes for most applications. However, in
+order to ensure unique deterministic output from the repair algorithm,
+the valid multipolygons with holes returned by the package conform to more
+strict criteria:
+
+- Adjacent collinear edges touching at vertices of degree two are merged
+- The sequence of vertices representing a boundary starts from its
+lexicographically smallest vertex
+- Outer boundaries are oriented counter-clockwise and inner boundaries are
+oriented clockwise
+- The inner boundaries of a polygon with holes are stored in lexicographic
+order
+- The polygons with holes of a multipolygon with holes are also stored in
+lexicographic order
+
+\section SectionPolygonRepair_Algorithm Algorithm
+
+Broadly, the algorithm consists of three steps:
+
+-# <em>Arrangement</em>: the edges in the polygon, polygon with
+holes or multipolygon with holes are added as edges in the arrangement.
+-# <em>Labeling of the faces</em>: the resulting faces are labeled with ids
+according to what they represent (exterior, polygon interior or hole).
+-# <em>Reconstruction of the multipolygon</em>: each boundary is reconstructed,
+then these are assembled into individual polygons with holes and put into a
+single multipolygon with holes.
+
+\cgalFigureBegin{inout, inout.svg}
+Examples of polygons with holes (a-d) and multipolygons with holes
+(e-h) before (left) and after (right) being repaired.
+\cgalFigureEnd
+
+\subsection SubsectionPolygonRepair_Arrangement Arrangement
+
+For the purposes of the repair operation, the input polygon, polygon with holes
+or multipolygon is merely used as a container of input line segments. These line
+segments are added to the arrangement as edges. Internally, this is done using
+a constrained triangulation where they are added as constraints.
+
+With the even-odd rule, only the edges that are present an odd number of
+times in the input will be edges in the final arrangement.
+When these edges are only partially overlapping, only the parts that overlap
+an odd number of times will be edges in the final arrangement.
+
+This procedure is done in two steps: 1. preprocessing to eliminate identical
+edges that are present an even number of times, and 2. adding edges incrementally
+while applying an even-odd counting mechanism, which erases existing (parts of)
+edges when new overlapping ones are added.
+
+\subsection SubsectionPolygonRepair_Labeling Labeling
+
+First, the polygon exterior is labeled. For this, all of the faces that can be
+accessed from the exterior without passing through an edge are labeled as exterior
+faces.
+
+Then, all other faces are labeled. For the even-odd rule, the label applied
+alternates between polygon interior and hole every time that an edge is passed.
+
+\subsection SubsectionPolygonRepair_Reconstruction Reconstruction of the Multipolygon
+
+The algorithm reconstructs the multipolygon boundary by boundary, obtaining
+counter-clockwise cycles for outer boundaries and clockwise cycles for inner
+boundaries. Once all boundaries have been reconstructed, the boundaries are assembled
+into multipolygons using the face labels to know which polygon with holes inner/outer
+boundaries belong to, and using the orientation to distinguish between the outer and
+inner boundaries of each polygon with holes.
+
+\subsection SubsectionPolygonRepair_Notes Notes on the Output
+
+If the input is already valid, the method will return a valid output representing
+the same area. However, the output might be different in order to conform to the
+stricter conditions to generate deterministic output (see
+\ref SubsectionPolygonRepair_Output).
+
+Also, it is worth noting that even the repair of a single polygon without holes
+but with self-intersections can result in a multipolygon with holes. This is why
+the repair function will always return a multipolygon with holes. The user can
+then check whether it consists of a single polygon with holes, and if a polygon
+with holes has zero holes and extract these if needed.
+
+\section SectionPolygonRepair_Examples Examples
+
+\subsection SubsectionPolygonRepair_Repair Repairing a (Multi)polygon
+
+It is possible to repair a polygon, polygon with holes or multipolygon with holes
+using the even-odd rule by calling the `Polygon_repair::repair()` function
+as shown in the following example. This function returns a repaired multipolygon with holes.
+
+\cgalExample{Polygon_repair/repair_polygon_2.cpp}
+
+\section SectionPolygonRepair_Performance Performance
+
+The method can repair large invalid polygons of millions of vertices in a few
+seconds as long as the number of intersections between line segments is limited.
+This is a realistic assumption with many invalid data sets, which only have
+relatively minor issues involving a small number of their vertices/edges.
+However, it is worth noting that there can be a potentially quadratic number of
+intersection between edges in the worst case, leading to much worse performance
+since all of these intersections need to be calculated in the overlay.
+
+| Polygon                 | Vertices | Holes  | Time      |
+| :----:                  | :----:   | :----: |           |
+| ![ ](Corine180927.jpg)  | 101973   | 298    | 0.652 sec |
+| ![ ](Corine2018418.jpg) | 43925    | 125    | 0.190 sec |
+
+\section SectionPolygonRepair_History History
+
+The polygon repair method as originally developed is described by Ledoux et al.
+\cgalCite{ledoux2014triangulation} and implemented in the
+<a href="https://github.com/tudelft3d/prepair/"><em>prepair</em></a> software.
+This package is a reimplementation of the method with a new approach to label
+and reconstruct the multipolygons. It also incorporates improvements later
+added to <em>prepair</em>, such as the application of the even-odd counting heuristics
+to edges, which enables correct counting even on partially overlapping edges.
+
+Ken Arroyo Ohori developed this package during the Google Summer of
+Code 2023 mentored by Sébastien Loriot and Andreas Fabri.
+
+*/
+} /* namespace CGAL */

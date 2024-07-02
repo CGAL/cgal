@@ -1,7 +1,7 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 
 message("== CMake setup ==")
 project(CGAL CXX C)

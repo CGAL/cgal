@@ -65,7 +65,7 @@
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_primitive.h>
 
 #include <CGAL/Dynamic_property_map.h>
@@ -283,7 +283,7 @@ private:
   };
 
   typedef AABB_primitive<unsigned int, Datum_map<GeomTraits>, Point_map<GeomTraits>, Tag_true /*UseSharedData*/, Tag_false /*CacheDatum*/> Primitive;
-  typedef AABB_traits<GeomTraits, Primitive> Tree_traits;
+  typedef AABB_traits_3<GeomTraits, Primitive> Tree_traits;
   typedef AABB_tree<Tree_traits> Tree;
 
 // Data members
@@ -1749,7 +1749,7 @@ private:
           if (tti != CUT_FACE){
             continue;
           }
-          // now we know that there exists an intesection point
+          // now we know that there exists an intersection point
 
           std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
                                                                                     halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);

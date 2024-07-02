@@ -25,7 +25,7 @@ namespace CGAL {
 // This is a wrapper to convert a polyhedral surface to a periodic polyhedral domain
 // over a user-provided canonical domain.
 //
-// It is the user's responsability to ensure that the polyhedral domain is actually periodic
+// It is the user's responsibility to ensure that the polyhedral domain is actually periodic
 // over the canonical domain, i.e. there is periodic continuity at the boundaries
 // of the canonical domain.
 template<class TriangleMesh, class K>

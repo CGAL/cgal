@@ -266,6 +266,17 @@ class Is_valid
     };
 };
 
+namespace internal
+{
+// utility class to be used for calling exact(Lazy) when doing accumulation with EPECK
+template <class NT>
+struct Evaluate
+{
+  void operator()(const NT&)
+  {}
+};
+} // internal namespace
+
 } //namespace CGAL
 
 #endif // CGAL_UTILS_CLASSES_H

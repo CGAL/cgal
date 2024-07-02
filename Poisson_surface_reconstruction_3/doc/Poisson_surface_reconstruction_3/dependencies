@@ -4,6 +4,5 @@ STL_Extension
 Algebraic_foundations
 Circulator
 Stream_support
-Surface_mesher
 Point_set_processing_3
 Solver_interface

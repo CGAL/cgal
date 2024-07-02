@@ -183,7 +183,7 @@ class Output_rep
 
 public:
   //! initialize with a const reference to \a t.
-  Output_rep( const T& tt) : t(tt) {}
+  Output_rep( const T& tt, F = {}) : t(tt) {}
   //! perform the output, calls \c operator\<\< by default.
   std::ostream& operator()( std::ostream& os) const { return (os << t); }
 };
@@ -248,7 +248,12 @@ Convenience function to construct an output representation (`Output_rep`) for ty
 Generic IO for type `T` with formatting tag.
 */
 template <class T, class F>
-Output_rep<T,F> oformat( const T& t, F) { return Output_rep<T,F>(t); }
+Output_rep<T,F> oformat( const T& t, F format) {
+  if constexpr (std::is_constructible_v<Output_rep<T,F>, const T&, F>)
+    return Output_rep<T,F>(t, format);
+  else
+    return Output_rep<T,F>(t);
+}
 
 } // namespace IO
 
@@ -989,6 +994,53 @@ inline void read_float_or_quotient(std::istream& is, Rat &z)
 } // namespace internal
 
 } // namespace CGAL
+
+#if CGAL_CAN_USE_CXX20_FORMAT
+#  include <format>
+#  include <sstream>
+
+namespace std {
+
+template <typename T, typename F, typename CharT>
+struct formatter<CGAL::Output_rep<T, F>, CharT> : public std::formatter<std::basic_string<CharT>>
+{
+  constexpr auto parse(std::basic_format_parse_context<CharT>& ctx)
+  {
+    auto it = ctx.begin();
+    const auto end = ctx.end();
+    if(it == end)
+      return it;
+    if(*it != CharT('.')) {
+      if(*it == CharT('}')) return it;
+      throw std::format_error("formatter for CGAL::Output_rep only support precision, like `{:.6}`");
+    }
+    if(++it == end)
+      throw std::format_error("Missing precision");
+    if(*it < CharT('0') || *it > CharT('9'))
+      throw std::format_error("Invalid value for precision");
+    precision = *it - CharT('0');
+    while(++it != end) {
+      if(*it < CharT('0') || *it > CharT('9'))
+        return it;
+      precision = precision * 10 + (*it - CharT('0'));
+    }
+    return it;
+  }
+
+  template <typename FormatContext>
+  auto format(const CGAL::Output_rep<T, F> &rep, FormatContext& ctx) const
+  {
+    std::basic_stringstream<CharT> ss;
+    ss.precision(precision);
+    ss << rep;
+    return std::formatter<std::basic_string<CharT>>::format(ss.str(), ctx);
+  }
+
+  int precision = 17;
+};
+
+} // namespace std
+#endif // CGAL_CAN_USE_CXX20_FORMAT
 
 #include <CGAL/enable_warnings.h>
 

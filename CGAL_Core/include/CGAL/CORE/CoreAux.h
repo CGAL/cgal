@@ -156,12 +156,6 @@ CGAL_CORE_EXPORT double IntMantissa(double d);
 //      (See CORE_PATH/progs/ieee/frexp.cpp for details)
 CGAL_CORE_EXPORT int IntExponent(double d);
 
-/// Writes out an error or warning message in the local file CORE_DIAGFILE
-/** If last argument (err) is TRUE, then this is considered an error
- *  (not just warning).  In this case, the message is also printed in
- *  std::cerr, using std::perror().
- *  */
-CGAL_CORE_EXPORT void core_error(std::string msg, std::string file, int lineno, bool err);
 
 /// This is for debugging messages
 inline void core_debug(std::string msg){

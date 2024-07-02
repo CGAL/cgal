@@ -72,4 +72,3 @@ int main() { return 0; }
 #endif // CGAL_USE_CORE
 
 //EOF
-

@@ -3,6 +3,7 @@ Algebraic_foundations
 Alpha_shapes_3
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2

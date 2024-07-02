@@ -70,7 +70,7 @@ namespace CGAL {
 
 
     /// Type of 3D point.
-    typedef typename AABBTraits::Point_3 Point;
+    typedef typename AABBTraits::Point Point;
 
     /// Type of input primitive.
     typedef typename AABBTraits::Primitive Primitive;

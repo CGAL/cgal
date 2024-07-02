@@ -727,7 +727,7 @@ private:
     std::cout << "> Extract possibly non-manifold wrap... ()" << std::endl;
 #endif
 
-    clear(output_mesh);
+    remove_all_elements(output_mesh);
 
     CGAL_assertion_code(for(auto cit=m_tr.finite_cells_begin(), cend=m_tr.finite_cells_end(); cit!=cend; ++cit))
     CGAL_assertion(cit->tds_data().is_clear());
@@ -814,7 +814,7 @@ private:
     CGAL_assertion_code(for(Vertex_handle v : m_tr.finite_vertex_handles()))
     CGAL_assertion(!is_non_manifold(v));
 
-    clear(output_mesh);
+    remove_all_elements(output_mesh);
 
     std::vector<Point_3> points;
     std::vector<std::array<std::size_t, 3> > faces;
@@ -1153,15 +1153,17 @@ private:
     if(!is_positive(alpha) || !is_positive(offset))
     {
 #ifdef CGAL_AW3_DEBUG
-      std::cerr << "Error: invalid input parameters: " << alpha << " and" << offset << std::endl;
+      std::cerr << "Error: invalid input parameters: " << alpha << " and " << offset << std::endl;
 #endif
       return false;
     }
 
+#ifdef CGAL_AW3_DEBUG
     if(refining && alpha > m_alpha)
       std::cerr << "Warning: refining with an alpha greater than the last iteration's!" << std::endl;
     if(refining && offset != m_offset)
       std::cerr << "Warning: refining with a different offset value!" << std::endl;
+#endif
 
     m_alpha = FT(alpha);
     m_sq_alpha = square(m_alpha);
@@ -1189,7 +1191,7 @@ private:
 
     if(refining)
     {
-      // If we are re-using the triangulation, change the label of the extra elements
+      // If we are reusing the triangulation, change the label of the extra elements
       // that we have added to ensure a manifold result back to external ("manifold" -> "outside")
       reset_manifold_labels();
 

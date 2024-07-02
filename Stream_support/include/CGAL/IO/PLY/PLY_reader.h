@@ -17,7 +17,7 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/property_map.h>
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <boost/range/value_type.hpp>
 
 #include <iostream>

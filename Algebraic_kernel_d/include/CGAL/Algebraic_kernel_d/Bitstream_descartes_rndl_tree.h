@@ -206,7 +206,7 @@ polynomial_power_to_bernstein_approx(
     std::vector<Integer> f(n+1);
     polynomial_affine_transform_approx_log_denom(
             first, beyond, f.begin(),
-            upper_num - lower_num, lower_num, log_denom,
+            Integer(upper_num - lower_num), lower_num, log_denom,
             p+q,
             approx, log, logl
     );

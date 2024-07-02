@@ -53,7 +53,7 @@ struct Rational_traits_base<Rational, true>
 {
 private:
     typedef Fraction_traits<Rational> FT;
-    typedef typename FT::Decompose Decomose;
+    typedef typename FT::Decompose Decompose;
     typedef typename FT::Compose Compose;
 
 public:
@@ -61,13 +61,13 @@ public:
 
     RT numerator (const Rational& r) const {
         RT num,den;
-        Decomose()(r,num,den);
+        Decompose()(r,num,den);
         return num;
     }
 
     RT denominator (const Rational& r) const {
         RT num,den;
-        Decomose()(r,num,den);
+        Decompose()(r,num,den);
         return den;
     }
 

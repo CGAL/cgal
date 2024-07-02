@@ -168,7 +168,7 @@ Polynomial<NT> gcd_utcf_Integral_domain( Polynomial<NT> p1, Polynomial<NT> p2){
 
     Polynomial<NT> q, r;
 
-    // TODO measure performance of both methodes with respect to
+    // TODO measure performance of both methods with respect to
     // univariat polynomials on Integeres
     // univariat polynomials on Sqrt_extension<Integer,Integer>
     // multivariat polynomials

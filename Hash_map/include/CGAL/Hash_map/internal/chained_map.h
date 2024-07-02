@@ -19,6 +19,8 @@
 #include <CGAL/memory.h>
 #include <iostream>
 #include <limits>
+#include <type_traits>
+#include <utility>
 
 namespace CGAL {
 
@@ -85,6 +87,10 @@ public:
    chained_map(std::size_t n = default_size, const T& d = T());
    chained_map(const chained_map<T, Allocator>& D);
    chained_map& operator=(const chained_map<T, Allocator>& D);
+   chained_map(chained_map<T, Allocator>&& D)
+     noexcept(std::is_nothrow_move_constructible_v<Allocator> && std::is_nothrow_move_constructible_v<T>);
+   chained_map& operator=(chained_map<T, Allocator>&& D)
+     noexcept(std::is_nothrow_move_assignable_v<Allocator> && std::is_nothrow_move_assignable_v<T>);
 
    void reserve(std::size_t n);
    void clear();
@@ -246,6 +252,18 @@ chained_map<T, Allocator>::chained_map(const chained_map<T, Allocator>& D)
     }
   }
 }
+template <typename T, typename Allocator>
+chained_map<T, Allocator>::chained_map(chained_map<T, Allocator>&& D)
+  noexcept(std::is_nothrow_move_constructible_v<Allocator> && std::is_nothrow_move_constructible_v<T>)
+  : table(std::exchange(D.table, nullptr))
+  , table_end(std::exchange(D.table_end, nullptr))
+  , free(std::exchange(D.free, nullptr))
+  , table_size(std::exchange(D.table_size, 0))
+  , table_size_1(std::exchange(D.table_size_1, 0))
+  , alloc(std::move(D.alloc))
+  , reserved_size(std::exchange(D.reserved_size, 0))
+  , def(std::move(D.def))
+{}
 
 template <typename T, typename Allocator>
 chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_map<T, Allocator>& D)
@@ -260,6 +278,24 @@ chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(const chained_ma
       //copy_inf(p->i);    // see chapter Implementation
     }
   }
+  return *this;
+}
+
+template <typename T, typename Allocator>
+chained_map<T, Allocator>& chained_map<T, Allocator>::operator=(chained_map<T, Allocator>&& D)
+  noexcept(std::is_nothrow_move_assignable_v<Allocator> && std::is_nothrow_move_assignable_v<T>)
+{
+  clear();
+
+  table = std::exchange(D.table, nullptr);
+  table_end = std::exchange(D.table_end, nullptr);
+  free = std::exchange(D.free, nullptr);
+  table_size = std::exchange(D.table_size, 0);
+  table_size_1 = std::exchange(D.table_size_1, 0);
+  alloc = std::move(D.alloc);
+  reserved_size = std::exchange(D.reserved_size, 0);
+  def = std::move(D.def);
+
   return *this;
 }
 

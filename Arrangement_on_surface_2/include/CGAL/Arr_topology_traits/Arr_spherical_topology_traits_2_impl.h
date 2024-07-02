@@ -261,7 +261,7 @@ is_in_face(const Face* f, const Point_2& p, const Vertex* v) const
       // Ignore vertical curves:
       if (is_vertical(curr->curve())) {
         /* If this outer ccb chain contains the north pole, and our point
-         * lies horizontaly between the two vertical curves that meet at
+         * lies horizontally between the two vertical curves that meet at
          * the north pole, increase the intersection counter
          */
         if (curr->direction() == ARR_LEFT_TO_RIGHT) {
@@ -486,7 +486,7 @@ are_equal(const Vertex* v,
 
   CGAL_assertion(ps_x != ARR_INTERIOR);
   /* Both vertices have the same x boundary conditions =>
-   * comapare their y-position.
+   * compare their y-position.
    */
   const Point_2& p1 = v->point();
   const Point_2& p2 = (ind == ARR_MIN_END) ?

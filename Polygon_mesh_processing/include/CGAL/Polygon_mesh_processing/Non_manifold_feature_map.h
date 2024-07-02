@@ -75,6 +75,7 @@ struct Non_manifold_feature_map
       halfedge_descriptor hd = halfedge(ed, pm);
 
       // an edge can be non-manifold only if both its vertices are non-manifold
+      // THIS IS NOT TRUE!
       if ( get(v_nm_id, source(hd, pm))==std::size_t(-1) ||
            get(v_nm_id, target(hd, pm))==std::size_t(-1) ) continue;
 

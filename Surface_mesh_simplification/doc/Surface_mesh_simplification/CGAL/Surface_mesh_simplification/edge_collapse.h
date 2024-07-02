@@ -50,7 +50,7 @@ the number of edges effectively removed.
   \cgalParamNEnd
 
   \cgalParamNBegin{get_placement}
-    \cgalParamDescription{a policy which returns the placement (position of the replacemet vertex) for an edge}
+    \cgalParamDescription{a policy which returns the placement (position of the replacement vertex) for an edge}
     \cgalParamType{a model of the concept `GetPlacement`}
     \cgalParamDefault{`CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`}
   \cgalParamNEnd
