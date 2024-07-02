@@ -224,6 +224,40 @@ public:
     }
   }
 
+  void load_additional_vpattern(const std::string& directory_name,
+                      std::function<void(LCC&, size_type)> init_topreserve=nullptr)
+  {
+    std::size_t id = load_one_additional_pattern<3>(directory_name, m_vpatterns);
+    if (id < 0) {
+      std::cerr << "load_additional_vpattern: file not found or format not readable" << std::endl;
+      return;   
+    };
+
+    Signature signature;
+    Dart_handle dh;
+    size_type mark_to_preserve=LCC::INVALID_MARK;
+    auto& pattern = m_vpatterns[id];
+
+
+    if(init_topreserve!=nullptr) // true iff the std::function is not empty
+    {
+      mark_to_preserve=pattern.reserve_mark_to_preserve();
+      init_topreserve(pattern.lcc(), mark_to_preserve);
+    }
+    dh=vsignature_of_pattern(pattern.lcc(), mark_to_preserve, signature, false);
+    auto res=m_vsignatures.find(signature);
+    if(res==m_vsignatures.end())
+    {
+      pattern.compute_barycentric_coord();
+      m_vsignatures[signature]=std::make_pair(dh, id);
+    }
+    else
+    {
+      std::cout<<"[ERROR] load_vpatterns: two patterns have same signature "
+                <<id<<" and "<<res->second.second<<std::endl;
+    }
+  }
+
 protected:
   template<unsigned int type>
   void load_all_patterns(const std::string& directory_name,
@@ -517,7 +551,7 @@ std::size_t query_replace_one_volume(LCC& lcc,
   Dart_handle
       dh2=vsignature_of_volume(lcc, dh, marktopreserve, signature); //, true);
   std::size_t replaced=std::numeric_limits<std::size_t>::max();
-  auto res=m_vsignatures.find(signature);
+  auto res=m_vsignatures.find(  signature);
   if(res!=m_vsignatures.end())
   {
     replace_one_volume_from_dart(lcc, dh2, m_vpatterns[res->second.second],

@@ -113,6 +113,9 @@ int two_stacked_3_template_test() {
   
   load_patterns(hdata.regular_templates, hdata.partial_templates);
 
+  // render<LCC>(hdata.regular_templates.vpattern(1), debug_node_mark, debug_edge_mark);
+  // return 0;
+
   PlaneData plane;
   Dart_handle first = lcc.first_dart();
 
