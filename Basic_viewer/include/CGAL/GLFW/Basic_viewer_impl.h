@@ -9,7 +9,7 @@ namespace GLFW {
   inline 
   void Basic_viewer::error_callback(int error, const char *description)
   {
-    fprintf(stderr, "GLFW returned an error:\n\t%s (%i)\n", description, error);
+    std::cerr << "GLFW returned an error:\n\t" << description << "(" << error << ")\n";
   }
 
   inline
@@ -18,7 +18,7 @@ namespace GLFW {
     // Initialise GLFW
     if (!glfwInit())
     {
-      fprintf(stderr, "Could not start GLFW\n");
+      std::cerr << "Could not start GLFW\n";
       exit(EXIT_FAILURE);
     }
 
@@ -97,7 +97,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::show()
+  void Basic_viewer::initialize()
   {
     m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title);
     initialize_buffers();
@@ -130,12 +130,16 @@ namespace GLFW {
     print_help();
 
     set_keyboard_layout(KeyboardLayout::AZERTY);
+  }
 
-    double lastFrame = 0.00;
+  inline
+  void Basic_viewer::show()
+  {
+    float lastFrame = 0.0;
     while (!glfwWindowShouldClose(m_window))
     {
-      double currentFrame = glfwGetTime();
-      double deltaTime = currentFrame - lastFrame;
+      float currentFrame = static_cast<float>(glfwGetTime());
+      float deltaTime = currentFrame - lastFrame;
       lastFrame = currentFrame;
 
       handle_events(deltaTime);
@@ -365,7 +369,7 @@ namespace GLFW {
   inline 
   CGAL::Plane_3<Basic_viewer::Local_kernel> Basic_viewer::clipping_plane() const
   {
-    mat4f CPM = m_clippingPlane.matrix();
+    mat4f CPM = m_clippingPlane.get_matrix();
     CGAL::Aff_transformation_3<Basic_viewer::Local_kernel> aff(
       CPM(0, 0), CPM(0, 1), CPM(0, 2), CPM(0, 3),
       CPM(1, 0), CPM(1, 1), CPM(1, 2), CPM(1, 3),
@@ -377,7 +381,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::update_uniforms(const double deltaTime)
+  void Basic_viewer::update_uniforms(const float deltaTime)
   {
     m_camera.update(deltaTime);
     m_clippingPlane.update(deltaTime);
@@ -417,7 +421,7 @@ namespace GLFW {
 
     m_faceShader.set_vec4f("clipPlane", m_clipPlane.data());
     m_faceShader.set_vec4f("pointPlane", m_pointPlane.data());
-    m_faceShader.set_float("rendering_transparency", m_clippingPlaneTransparency);
+    m_faceShader.set_float("rendering_transparency", m_clippingPlane.get_transparency());
   }
 
   inline
@@ -434,7 +438,7 @@ namespace GLFW {
   inline
   void Basic_viewer::set_clipping_uniforms()
   {
-    mat4f clippingMatrix = m_clippingPlane.matrix();
+    mat4f clippingMatrix = m_clippingPlane.get_matrix();
 
     m_pointPlane = clippingMatrix * vec4f(0, 0, 0, 1);
     m_clipPlane = clippingMatrix * vec4f(0, 0, 1, 0);
@@ -478,7 +482,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::render_scene(const double deltaTime)
+  void Basic_viewer::render_scene(const float deltaTime)
   {
     if (!m_areBuffersInitialized)
     {
@@ -493,9 +497,9 @@ namespace GLFW {
 
     update_uniforms(deltaTime);
 
-    bool half = m_displayModeEnum == Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+    bool half = m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
 
-    Rendering_mode mode = half ? Rendering_mode::DRAW_INSIDE_ONLY : Rendering_mode::DRAW_ALL;
+    RenderingMode mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
     if (m_drawVertices)
     {
@@ -538,13 +542,13 @@ namespace GLFW {
   {
     m_faceShader.use();
 
-    if (m_displayModeEnum == Display_mode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
+    if (m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
     {
       // The z-buffer will prevent transparent objects from being displayed behind other transparent objects.
       // Before rendering all transparent objects, disable z-testing first.
 
       // 1. draw solid first
-      draw_faces_bis(Rendering_mode::DRAW_INSIDE_ONLY);
+      draw_faces_bis(RenderingMode::DRAW_INSIDE_ONLY);
 
       // 2. draw transparent layer second with back face culling to avoid messy triangles
       glDepthMask(false); // disable z-testing
@@ -553,24 +557,24 @@ namespace GLFW {
       glEnable(GL_CULL_FACE);
       glCullFace(GL_BACK);
       glFrontFace(GL_CW);
-      draw_faces_bis(Rendering_mode::DRAW_OUTSIDE_ONLY);
+      draw_faces_bis(RenderingMode::DRAW_OUTSIDE_ONLY);
 
       // 3. draw solid again without culling and blend to make sure the solid mesh is visible
       glDepthMask(true); // enable z-testing
       glDisable(GL_CULL_FACE);
       glDisable(GL_BLEND);
-      draw_faces_bis(Rendering_mode::DRAW_INSIDE_ONLY);
+      draw_faces_bis(RenderingMode::DRAW_INSIDE_ONLY);
 
       // 4. render clipping plane here
       render_clipping_plane();
     } 
     else // Not CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF
     {
-      if (m_displayModeEnum == Display_mode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
-          m_displayModeEnum == Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY)
+      if (m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF ||
+          m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY)
       {
         // 1. draw solid HALF
-        draw_faces_bis(Rendering_mode::DRAW_INSIDE_ONLY);
+        draw_faces_bis(RenderingMode::DRAW_INSIDE_ONLY);
 
         // 2. render clipping plane here
         render_clipping_plane();
@@ -578,13 +582,13 @@ namespace GLFW {
       else
       {
         // 1. draw solid FOR ALL
-        draw_faces_bis(Rendering_mode::DRAW_ALL);
+        draw_faces_bis(RenderingMode::DRAW_ALL);
       } 
     }
   }
 
   inline
-  void Basic_viewer::draw_faces_bis(Rendering_mode mode)
+  void Basic_viewer::draw_faces_bis(RenderingMode mode)
   {
     m_faceShader.use();
     m_faceShader.set_float("rendering_mode", static_cast<float>(mode));
@@ -612,7 +616,7 @@ namespace GLFW {
   void Basic_viewer::draw_rays()
   {
     m_plShader.use();
-    m_plShader.set_float("rendering_mode", static_cast<float>(Rendering_mode::DRAW_ALL));
+    m_plShader.set_float("rendering_mode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     vec4f color = color_to_vec4(m_raysMonoColor);
 
@@ -635,7 +639,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::draw_vertices(Rendering_mode mode)
+  void Basic_viewer::draw_vertices(RenderingMode mode)
   {
     m_plShader.use();
     m_plShader.set_float("rendering_mode", static_cast<float>(mode));
@@ -662,7 +666,7 @@ namespace GLFW {
   void Basic_viewer::draw_lines()
   {
     m_plShader.use();
-    m_plShader.set_float("rendering_mode", static_cast<float>(Rendering_mode::DRAW_ALL));
+    m_plShader.set_float("rendering_mode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     vec4f color = color_to_vec4(m_linesMonoColor);
 
@@ -684,7 +688,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::draw_edges(Rendering_mode mode)
+  void Basic_viewer::draw_edges(RenderingMode mode)
   {
     m_plShader.use();
     m_plShader.set_float("rendering_mode", static_cast<float>(mode));
@@ -773,22 +777,28 @@ namespace GLFW {
   }
 
   inline 
-  void Basic_viewer::print_application_state(const double deltaTime)
+  void Basic_viewer::print_application_state(const float deltaTime)
   {
-    
-    std::cout << "FPS: "            << std::round(deltaTime * 1000 * 60)                    << "    " 
-              << "Camera translation speed: "   << m_camera.get_translation_speed()         << "    " 
-              << "Camera rotation speed: "      << m_camera.get_rotation_speed()            << "    "
-              << "CP translation speed: "       << m_clippingPlane.get_translation_speed()  << "    "            
-              << "CP rotation speed: "          << m_clippingPlane.get_rotation_speed()     << "    "     
-              << "Light color: ("               << m_ambientColor.x()                       << ", " 
-                                                << m_ambientColor.y()                       << ", " 
-                                                << m_ambientColor.z()                       << ")   "     
-              << "\r" << std::flush;
+    if (m_printApplicationState)
+    {
+      std::cout << "FPS: "            << std::round(1 / deltaTime)                    << "    " 
+                << "Camera translation speed: "   << m_camera.get_translation_speed()         << "    " 
+                << "Camera rotation speed: "      << m_camera.get_rotation_speed()            << "    "
+                << "CP translation speed: "       << m_clippingPlane.get_translation_speed()  << "    "            
+                << "CP rotation speed: "          << m_clippingPlane.get_rotation_speed()     << "    "     
+                << "Light color: ("               << m_ambientColor.x()                       << ", " 
+                                                  << m_ambientColor.y()                       << ", " 
+                                                  << m_ambientColor.z()                       << ")   "     
+                << "\r" << std::flush;
+    }
+    else 
+    {
+      std::cout << "\33[2K\r";
+    }
   }
 
   inline
-  void Basic_viewer::start_action(int action, const double deltaTime)
+  void Basic_viewer::start_action(int action, const float deltaTime)
   {
     switch (action)
     {
@@ -803,16 +813,18 @@ namespace GLFW {
   }
 
   inline 
-  void Basic_viewer::exit_app() {
+  void Basic_viewer::exit_app() 
+  {
     m_plShader.destroy();
     m_faceShader.destroy();
-    m_planeShader.destroy();
     m_lineShader.destroy();
+    m_planeShader.destroy();
     glDeleteBuffers(NB_GL_BUFFERS, m_vbo);
     glDeleteVertexArrays(NB_VAO_BUFFERS, m_vao);
     glfwDestroyWindow(m_window);
     glfwTerminate();
-    std::cout << "APPLICATION EXITED" << std::endl;
+
+    std::cout << "\n APPLICATION EXITED" << std::endl;
     exit(EXIT_SUCCESS);
   }
 
@@ -821,11 +833,11 @@ namespace GLFW {
   {
     if (m_camera.is_orbiter()) 
     {
-      if (btn == CGAL_BV_MOUSE_BUTTON_RIGHT)
+      if (btn == GLFW_MOUSE_BUTTON_RIGHT)
       {
         m_camera.reset_position();
       }
-      if (btn == CGAL_BV_MOUSE_BUTTON_LEFT)
+      if (btn == GLFW_MOUSE_BUTTON_LEFT)
       {
         m_camera.align_to_nearest_axis();
       }
@@ -833,30 +845,23 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::scroll_event(const double deltaTime)
+  void Basic_viewer::scroll_event(const float deltaTime)
   {
     float yoffset = get_scroll_yOffset();
 
-    int k0 = glfwGetKey(m_window, GLFW_KEY_LEFT_CONTROL);
-    int k1 = glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT);
-    int k2 = glfwGetKey(m_window, GLFW_KEY_LEFT_ALT);
-
-    if (k0 == GLFW_PRESS) 
+    if (is_key_pressed(m_window, GLFW_KEY_LEFT_SHIFT))
     {
-      if (k1 == GLFW_PRESS) 
-      {
-        m_camera.set_zoom_smoothness(yoffset);
-      } 
-      else if (k2 == GLFW_PRESS && !m_camera.is_orthographic()) 
-      {
-        m_camera.set_fov(yoffset);
-        m_clippingPlane.set_size(m_camera.get_size());
-      } 
-      else
-      {
+      m_camera.increase_zoom_smoothness(yoffset);
+    }
+    else if (is_key_pressed(m_window, GLFW_KEY_Z) && !m_camera.is_orthographic())
+    {
+      m_camera.increase_fov(yoffset);
+      m_clippingPlane.set_size(m_camera.get_size());
+    }
+    else if (is_key_pressed(m_window, GLFW_KEY_LEFT_CONTROL) && m_displayMode != DisplayMode::CLIPPING_PLANE_OFF)
+    {
         m_clippingPlane.translation(8.f * yoffset * deltaTime);
-      } 
-    } 
+    }
     else 
     {
       m_camera.move(8.f * yoffset * deltaTime);
@@ -865,69 +870,17 @@ namespace GLFW {
   }
 
   inline 
-  void Basic_viewer::action_event(int action, const double deltaTime)
+  void Basic_viewer::action_event(int action, const float deltaTime)
   {
-    if (action == EXIT) exit_app();
-
     switch (action)
     {
-    case UP:
-      m_camera.move_up(deltaTime);
+    /*APPLICATION*/
+    case EXIT: 
+      exit_app();
+    case PRINT_APPLICATION_STATE:
+      m_printApplicationState = !m_printApplicationState; 
       break;
-    case DOWN:
-      m_camera.move_down(deltaTime);
-      break;
-    case LEFT:
-      m_camera.move_left(deltaTime);
-      break;
-    case RIGHT:
-      m_camera.move_right(deltaTime);
-      break;
-    case FORWARD:
-      m_camera.move(deltaTime);
-      break;
-    case BACKWARDS:
-      m_camera.move(-deltaTime);
-      break;
-    case INC_CAMERA_ROTATION_SMOOTHNESS:
-      m_camera.inc_rotation_smoothness();
-      break;
-    case DEC_CAMERA_ROTATION_SMOOTHNESS:
-      m_camera.dec_rotation_smoothness();
-      break;
-    case INC_CAMERA_TRANSLATION_SMOOTHNESS:
-      m_camera.inc_translation_smoothness();
-      break;
-    case DEC_CAMERA_TRANSLATION_SMOOTHNESS:
-      m_camera.dec_translation_smoothness();
-      break;
-    case SWITCH_CAM_MODE:
-      m_camera.toggle_mode();
-      break;
-    case SWITCH_CAM_TYPE:
-      m_camera.toggle_fly();
-      break;
-    case INC_CAMERA_TRANSLATION_SPEED:
-      m_camera.increase_translation_speed();
-      break;
-    case DEC_CAMERA_TRANSLATION_SPEED:
-      m_camera.decrease_translation_speed();
-      break;
-    case INC_CAMERA_ROTATION_SPEED:
-      m_camera.increase_rotation_speed();
-      break;
-    case DEC_CAMERA_ROTATION_SPEED:
-      m_camera.decrease_rotation_speed();
-      break;
-    case ROTATE_CAMERA:
-      rotate_camera();
-      break;
-    case TRANSLATE_CAMERA:
-      translate_camera(deltaTime);
-      break;
-    case RESET_CAM:
-      reset_camera_and_clipping_plane();
-      break;
+    /*WINDOW*/
     case FULLSCREEN:
       fullscreen();
       break;
@@ -935,24 +888,7 @@ namespace GLFW {
       screenshot("./screenshot.png");
       std::cout << "Screenshot saved in local directory." << std::endl;
       break;
-    case INC_CP_TRANSLATION_SPEED:
-      m_clippingPlane.increase_translation_speed();
-      break;
-    case DEC_CP_TRANSLATION_SPEED:
-      m_clippingPlane.decrease_translation_speed();
-      break;
-    case INC_CP_ROTATION_SPEED:
-      m_clippingPlane.increase_rotation_speed();
-      break;
-    case DEC_CP_ROTATION_SPEED:
-      m_clippingPlane.decrease_rotation_speed();
-      break;
-    case TOGGLE_CLIPPING_PLANE_DISPLAY:
-      m_drawClippingPlane = !m_drawClippingPlane;
-      break;
-    case TOGGLE_CLIPPING_PLANE_MODE:
-      switch_display_mode();
-      break;
+    /*SCENE*/
     case VERTICES_DISPLAY:
       m_drawVertices = !m_drawVertices;
       break;
@@ -975,16 +911,16 @@ namespace GLFW {
       m_useMonoColor = !m_useMonoColor;
       break;
     case INC_EDGES_SIZE:
-      m_sizeEdges = std::min(50.f, m_sizeEdges + 0.1f);
+      m_sizeEdges = std::min(50.f, m_sizeEdges + deltaTime);
       break;
     case DEC_EDGES_SIZE:
-      m_sizeEdges = std::max(2.f, m_sizeEdges - 0.1f);
+      m_sizeEdges = std::max(2.f, m_sizeEdges - deltaTime);
       break;
     case INC_POINTS_SIZE:
-      m_sizePoints = std::min(15.f, m_sizePoints + 0.1f);
+      m_sizePoints = std::min(15.f, m_sizePoints + deltaTime);
       break;
     case DEC_POINTS_SIZE:
-      m_sizePoints = std::max(5.f, m_sizePoints - 0.1f);
+      m_sizePoints = std::max(5.f, m_sizePoints - deltaTime);
       break;
     case INC_LIGHT_ALL:
       increase_light_all(deltaTime);
@@ -1010,6 +946,89 @@ namespace GLFW {
     case DEC_LIGHT_B:
       increase_blue_component(-deltaTime);
       break;
+    case DISPLAY_WORLD_AXIS:
+      m_drawWorldAxis = !m_drawWorldAxis;
+      break;
+    case DISPLAY_XY_GRID:
+      m_drawXYGrid = !m_drawXYGrid;
+      break;
+    /*CAMERA*/
+    case UP:
+      m_camera.move_up(deltaTime);
+      break;
+    case DOWN:
+      m_camera.move_down(deltaTime);
+      break;
+    case LEFT:
+      m_camera.move_left(deltaTime);
+      break;
+    case RIGHT:
+      m_camera.move_right(deltaTime);
+      break;
+    case FORWARD:
+      m_camera.move(deltaTime);
+      break;
+    case BACKWARDS:
+      m_camera.move(-deltaTime);
+      break;
+    case INC_CAMERA_ROTATION_SMOOTHNESS:
+      m_camera.increase_rotation_smoothness(deltaTime);
+      break;
+    case DEC_CAMERA_ROTATION_SMOOTHNESS:
+      m_camera.decrease_rotation_smoothness(deltaTime);
+      break;
+    case INC_CAMERA_TRANSLATION_SMOOTHNESS:
+      m_camera.increase_translation_smoothness(deltaTime);
+      break;
+    case DEC_CAMERA_TRANSLATION_SMOOTHNESS:
+      m_camera.decrease_translation_smoothness(deltaTime);
+      break;
+    case SWITCH_CAM_MODE:
+      m_camera.toggle_mode();
+      break;
+    case SWITCH_CAM_TYPE:
+      m_camera.toggle_type();
+      break;
+    case INC_CAMERA_TRANSLATION_SPEED:
+      m_camera.increase_translation_speed(deltaTime);
+      break;
+    case DEC_CAMERA_TRANSLATION_SPEED:
+      m_camera.decrease_translation_speed(deltaTime);
+      break;
+    case INC_CAMERA_ROTATION_SPEED:
+      m_camera.increase_rotation_speed(deltaTime);
+      break;
+    case DEC_CAMERA_ROTATION_SPEED:
+      m_camera.decrease_rotation_speed(deltaTime);
+      break;
+    case ROTATE_CAMERA:
+      rotate_camera();
+      break;
+    case TRANSLATE_CAMERA:
+      translate_camera(deltaTime);
+      break;
+    case RESET_CAM:
+      reset_camera_and_clipping_plane();
+      break;
+    /*CLIPPING PLANE*/
+    case INC_CP_TRANSLATION_SPEED:
+      m_clippingPlane.increase_translation_speed(deltaTime);
+      break;
+    case DEC_CP_TRANSLATION_SPEED:
+      m_clippingPlane.decrease_translation_speed(deltaTime);
+      break;
+    case INC_CP_ROTATION_SPEED:
+      m_clippingPlane.increase_rotation_speed(deltaTime);
+      break;
+    case DEC_CP_ROTATION_SPEED:
+      m_clippingPlane.decrease_rotation_speed(deltaTime);
+      break;
+    case TOGGLE_CLIPPING_PLANE_DISPLAY:
+      m_drawClippingPlane = !m_drawClippingPlane;
+      break;
+    case TOGGLE_CLIPPING_PLANE_MODE:
+      switch_display_mode();
+      break;
     case ROTATE_CLIPPING_PLANE:
       rotate_clipping_plane();
       break;
@@ -1022,12 +1041,7 @@ namespace GLFW {
     case TOGGLE_CP_CONSTRAINT_AXIS:
       m_clippingPlane.switch_constraint_axis();
       break;
-    case DISPLAY_WORLD_AXIS:
-      m_drawWorldAxis = !m_drawWorldAxis;
-      break;
-    case DISPLAY_XY_GRID:
-      m_drawXYGrid = !m_drawXYGrid;
-      break;
+    /*ANIMATION*/
     case SAVE_KEY_FRAME:
       save_key_frame();
       break;
@@ -1041,9 +1055,9 @@ namespace GLFW {
   }
 
   inline 
-  void Basic_viewer::increase_red_component(const double deltaTime)
+  void Basic_viewer::increase_red_component(const float deltaTime)
   {
-    float speed = 0.5f * deltaTime;
+    float speed = deltaTime;
     m_ambientColor.x() += speed;
     if (m_ambientColor.x() > 1.f)
       m_ambientColor.x() = 1.f;
@@ -1064,9 +1078,9 @@ namespace GLFW {
   }
 
   inline 
-  void Basic_viewer::increase_green_component(const double deltaTime)
+  void Basic_viewer::increase_green_component(const float deltaTime)
   {
-    float speed = 0.5f * deltaTime;
+    float speed = deltaTime;
     m_ambientColor.y() += speed;
     if (m_ambientColor.y() > 1.f)
       m_ambientColor.y() = 1.f;
@@ -1087,9 +1101,9 @@ namespace GLFW {
   }
 
   inline 
-  void Basic_viewer::increase_blue_component(const double deltaTime)
+  void Basic_viewer::increase_blue_component(const float deltaTime)
   {
-    float speed = 0.5f * deltaTime;
+    float speed = deltaTime;
     m_ambientColor.z() += speed;
     if (m_ambientColor.z() > 1.f)
       m_ambientColor.z() = 1.f;
@@ -1111,7 +1125,7 @@ namespace GLFW {
 
 
   inline 
-  void Basic_viewer::increase_light_all(const double deltaTime)
+  void Basic_viewer::increase_light_all(const float deltaTime)
   {
     increase_red_component(deltaTime);
     increase_green_component(deltaTime);
@@ -1157,19 +1171,19 @@ namespace GLFW {
   inline
   void Basic_viewer::switch_display_mode()
   {
-    switch(m_displayModeEnum) 
+    switch(m_displayMode) 
     {
-    case Display_mode::CLIPPING_PLANE_OFF:
-      m_displayModeEnum = Display_mode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF; 
+    case DisplayMode::CLIPPING_PLANE_OFF:
+      m_displayMode = DisplayMode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF; 
       break;
-    case Display_mode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF:
-      m_displayModeEnum = Display_mode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF; 
+    case DisplayMode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF:
+      m_displayMode = DisplayMode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF; 
       break;
-    case Display_mode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: 
-      m_displayModeEnum = Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY; 
+    case DisplayMode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF: 
+      m_displayMode = DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY; 
       break;
-    case Display_mode::CLIPPING_PLANE_SOLID_HALF_ONLY: 
-      m_displayModeEnum = Display_mode::CLIPPING_PLANE_OFF; 
+    case DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY: 
+      m_displayMode = DisplayMode::CLIPPING_PLANE_OFF; 
       break;
     }
   }
@@ -1177,25 +1191,25 @@ namespace GLFW {
   inline
   void Basic_viewer::rotate_clipping_plane()
   {
-    vec2f delta = get_mouse_delta();
+    auto [mouseDeltaX, mouseDeltaY] = get_mouse_delta();
     
     m_clippingPlane.rotation(
-      delta.x(), 
-      delta.y()
+      mouseDeltaX, 
+      mouseDeltaY
     );
   }
 
   inline
-  void Basic_viewer::translate_clipping_plane(const double deltaTime, bool useCameraForward)
+  void Basic_viewer::translate_clipping_plane(const float deltaTime, bool useCameraForward)
   {
-    vec2f mouseDelta = get_mouse_delta();
+    auto [mouseDeltaX, mouseDeltaY] = get_mouse_delta();
 
-    float deltaX = deltaTime * mouseDelta.x();
-    float deltaY = deltaTime * mouseDelta.y();
+    float deltaX = deltaTime * mouseDeltaX;
+    float deltaY = deltaTime * mouseDeltaY;
 
     if (useCameraForward)
     {
-      vec3f forwardDirection = m_camera.forward_direction();
+      vec3f forwardDirection = m_camera.get_forward();
 
     float s = deltaX;
     if (abs(deltaY) > abs(deltaX))
@@ -1212,25 +1226,26 @@ namespace GLFW {
   inline
   void Basic_viewer::rotate_camera()
   {
-    vec2f delta = get_mouse_delta();
+    auto [mouseDeltaX, mouseDeltaY] = get_mouse_delta();
     
     m_camera.rotation(
-      delta.x(), 
-      delta.y()
+      mouseDeltaX, 
+      mouseDeltaY
     );
 
-    m_clippingPlane.set_up_axis(m_camera.up_direction());
-    m_clippingPlane.set_right_axis(m_camera.right_direction());
+    m_clippingPlane.set_up_axis(m_camera.get_up());
+    m_clippingPlane.set_right_axis(m_camera.get_right());
   }
 
   inline
-  void Basic_viewer::translate_camera(const double deltaTime)
+  void Basic_viewer::translate_camera(const float deltaTime)
   {
-    vec2f mouseDelta = get_mouse_delta();
+    auto [mouseDeltaX, mouseDeltaY] = get_mouse_delta();
 
     m_camera.translation(
-      deltaTime * -mouseDelta.x(),
-      deltaTime * mouseDelta.y());
+      deltaTime * -mouseDeltaX,
+      deltaTime * mouseDeltaY
+    );
   }
 
   inline
@@ -1306,7 +1321,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::end_action(int action, const double deltaTime)
+  void Basic_viewer::end_action(int action, const float deltaTime)
   {
     switch (action)
     {
@@ -1320,82 +1335,86 @@ namespace GLFW {
   inline
   void Basic_viewer::init_keys_actions()
   {
+    /*APPLICATION*/
+    add_keyboard_action({GLFW_KEY_ESCAPE},                   InputMode::RELEASE, EXIT);
+    add_keyboard_action({GLFW_KEY_Q, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, EXIT);
+    add_keyboard_action({GLFW_KEY_T},                        InputMode::RELEASE, PRINT_APPLICATION_STATE);
+
     /*WINDOW*/
-    add_keyboard_action({CGAL_BV_KEY_ESCAPE},                      InputMode::RELEASE, EXIT);
-    add_keyboard_action({CGAL_BV_KEY_ENTER, CGAL_BV_KEY_LEFT_ALT}, InputMode::RELEASE, FULLSCREEN);
-    add_keyboard_action({CGAL_BV_KEY_F2},                          InputMode::RELEASE, SCREENSHOT);
+    add_keyboard_action({GLFW_KEY_ENTER, GLFW_KEY_LEFT_ALT}, InputMode::RELEASE, FULLSCREEN);
+    add_keyboard_action({GLFW_KEY_F2},                       InputMode::RELEASE, SCREENSHOT);
 
     /*SCENE*/
-    add_keyboard_action({CGAL_BV_KEY_A}, InputMode::RELEASE, DISPLAY_WORLD_AXIS);
-    add_keyboard_action({CGAL_BV_KEY_G}, InputMode::RELEASE, DISPLAY_XY_GRID);
+    add_keyboard_action({GLFW_KEY_A}, InputMode::RELEASE, DISPLAY_WORLD_AXIS);
+    add_keyboard_action({GLFW_KEY_G}, InputMode::RELEASE, DISPLAY_XY_GRID);
 
-    add_keyboard_action({CGAL_BV_KEY_F}, InputMode::RELEASE, FACES_DISPLAY);
-    add_keyboard_action({CGAL_BV_KEY_V}, InputMode::RELEASE, VERTICES_DISPLAY);
-    add_keyboard_action({CGAL_BV_KEY_E}, InputMode::RELEASE, EDGES_DISPLAY);
+    add_keyboard_action({GLFW_KEY_W}, InputMode::RELEASE, FACES_DISPLAY);
+    add_keyboard_action({GLFW_KEY_V}, InputMode::RELEASE, VERTICES_DISPLAY);
+    add_keyboard_action({GLFW_KEY_E}, InputMode::RELEASE, EDGES_DISPLAY);
 
-    add_keyboard_action({CGAL_BV_KEY_S}, InputMode::RELEASE, SHADING_MODE);
-    add_keyboard_action({CGAL_BV_KEY_N}, InputMode::RELEASE, INVERSE_NORMAL);
-    add_keyboard_action({CGAL_BV_KEY_M}, InputMode::RELEASE, MONO_COLOR);
+    add_keyboard_action({GLFW_KEY_S}, InputMode::RELEASE, SHADING_MODE);
+    add_keyboard_action({GLFW_KEY_N}, InputMode::RELEASE, INVERSE_NORMAL);
+    add_keyboard_action({GLFW_KEY_M}, InputMode::RELEASE, MONO_COLOR);
 
-    add_keyboard_action({CGAL_BV_KEY_H, CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, DEC_POINTS_SIZE);
-    add_keyboard_action({CGAL_BV_KEY_J, CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, INC_POINTS_SIZE);
-    add_keyboard_action({CGAL_BV_KEY_H},                           InputMode::RELEASE, DEC_EDGES_SIZE);
-    add_keyboard_action({CGAL_BV_KEY_J},                           InputMode::RELEASE, INC_EDGES_SIZE);
+    add_keyboard_action({GLFW_KEY_EQUAL, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, INC_POINTS_SIZE);
+    add_keyboard_action({GLFW_KEY_KP_ADD, GLFW_KEY_LEFT_CONTROL},                     InputMode::HOLD, INC_POINTS_SIZE);
+    add_keyboard_action({GLFW_KEY_8, GLFW_KEY_LEFT_CONTROL},                          InputMode::HOLD, DEC_POINTS_SIZE);
+    add_keyboard_action({GLFW_KEY_KP_SUBTRACT, GLFW_KEY_LEFT_CONTROL},                InputMode::HOLD, DEC_POINTS_SIZE);
+    add_keyboard_action({GLFW_KEY_EQUAL, GLFW_KEY_LEFT_SHIFT},                        InputMode::HOLD, INC_EDGES_SIZE);
+    add_keyboard_action({GLFW_KEY_KP_ADD},                                            InputMode::HOLD, INC_EDGES_SIZE);
+    add_keyboard_action({GLFW_KEY_8},                                                 InputMode::HOLD, DEC_EDGES_SIZE);
+    add_keyboard_action({GLFW_KEY_KP_SUBTRACT},                                       InputMode::HOLD, DEC_EDGES_SIZE);
 
-    add_keyboard_action({CGAL_BV_KEY_PAGE_UP},                              InputMode::RELEASE, INC_LIGHT_ALL);
-    add_keyboard_action({CGAL_BV_KEY_PAGE_DOWN},                            InputMode::RELEASE, DEC_LIGHT_ALL);
-    add_keyboard_action({CGAL_BV_KEY_PAGE_UP,    CGAL_BV_KEY_LEFT_SHIFT},   InputMode::RELEASE, INC_LIGHT_R);
-    add_keyboard_action({CGAL_BV_KEY_PAGE_DOWN,  CGAL_BV_KEY_LEFT_SHIFT},   InputMode::RELEASE, DEC_LIGHT_R);
-    add_keyboard_action({CGAL_BV_KEY_PAGE_UP,    CGAL_BV_KEY_LEFT_ALT},     InputMode::RELEASE, INC_LIGHT_G);
-    add_keyboard_action({CGAL_BV_KEY_PAGE_DOWN,  CGAL_BV_KEY_LEFT_ALT},     InputMode::RELEASE, DEC_LIGHT_G);
-    add_keyboard_action({CGAL_BV_KEY_PAGE_UP,    CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, INC_LIGHT_B);
-    add_keyboard_action({CGAL_BV_KEY_PAGE_DOWN,  CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, DEC_LIGHT_B);
+    add_keyboard_action({GLFW_KEY_PAGE_UP},                              InputMode::HOLD, INC_LIGHT_ALL);
+    add_keyboard_action({GLFW_KEY_PAGE_DOWN},                            InputMode::HOLD, DEC_LIGHT_ALL);
+    add_keyboard_action({GLFW_KEY_PAGE_UP,    GLFW_KEY_LEFT_SHIFT},      InputMode::HOLD, INC_LIGHT_R);
+    add_keyboard_action({GLFW_KEY_PAGE_DOWN,  GLFW_KEY_LEFT_SHIFT},      InputMode::HOLD, DEC_LIGHT_R);
+    add_keyboard_action({GLFW_KEY_PAGE_UP,    GLFW_KEY_LEFT_ALT},        InputMode::HOLD, INC_LIGHT_G);
+    add_keyboard_action({GLFW_KEY_PAGE_DOWN,  GLFW_KEY_LEFT_ALT},        InputMode::HOLD, DEC_LIGHT_G);
+    add_keyboard_action({GLFW_KEY_PAGE_UP,    GLFW_KEY_LEFT_CONTROL},    InputMode::HOLD, INC_LIGHT_B);
+    add_keyboard_action({GLFW_KEY_PAGE_DOWN,  GLFW_KEY_LEFT_CONTROL},    InputMode::HOLD, DEC_LIGHT_B);
 
     /*CAMERA*/
-    add_keyboard_action({CGAL_BV_KEY_UP,   CGAL_BV_KEY_LEFT_SHIFT}, InputMode::HOLD, FORWARD);
-    add_keyboard_action({CGAL_BV_KEY_DOWN, CGAL_BV_KEY_LEFT_SHIFT}, InputMode::HOLD, BACKWARDS);
+    add_keyboard_action({GLFW_KEY_UP,   GLFW_KEY_LEFT_SHIFT}, InputMode::HOLD, FORWARD);
+    add_keyboard_action({GLFW_KEY_DOWN, GLFW_KEY_LEFT_SHIFT}, InputMode::HOLD, BACKWARDS);
 
-    add_keyboard_action({CGAL_BV_KEY_UP},    InputMode::HOLD, UP);
-    add_keyboard_action({CGAL_BV_KEY_DOWN},  InputMode::HOLD, DOWN);
-    add_keyboard_action({CGAL_BV_KEY_LEFT},  InputMode::HOLD, LEFT);
-    add_keyboard_action({CGAL_BV_KEY_RIGHT}, InputMode::HOLD, RIGHT);
+    add_keyboard_action({GLFW_KEY_UP},    InputMode::HOLD, UP);
+    add_keyboard_action({GLFW_KEY_DOWN},  InputMode::HOLD, DOWN);
+    add_keyboard_action({GLFW_KEY_LEFT},  InputMode::HOLD, LEFT);
+    add_keyboard_action({GLFW_KEY_RIGHT}, InputMode::HOLD, RIGHT);
 
-    add_keyboard_action({CGAL_BV_KEY_R, CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, RESET_CAM);
-    add_keyboard_action({CGAL_BV_KEY_V, CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, SWITCH_CAM_TYPE);
-    add_keyboard_action({CGAL_BV_KEY_O},                           InputMode::RELEASE, SWITCH_CAM_MODE);
+    add_keyboard_action({GLFW_KEY_R, GLFW_KEY_LEFT_ALT}, InputMode::RELEASE, RESET_CAM);
+    
+    add_keyboard_action({GLFW_KEY_SPACE}, InputMode::RELEASE, SWITCH_CAM_TYPE);
+    add_keyboard_action({GLFW_KEY_O},     InputMode::RELEASE, SWITCH_CAM_MODE); 
 
-    add_keyboard_action({CGAL_BV_KEY_X},                         InputMode::RELEASE, INC_CAMERA_TRANSLATION_SPEED);
-    add_keyboard_action({CGAL_BV_KEY_R},                         InputMode::RELEASE, INC_CAMERA_ROTATION_SPEED);
-    add_keyboard_action({CGAL_BV_KEY_X, CGAL_BV_KEY_LEFT_SHIFT}, InputMode::RELEASE, DEC_CAMERA_TRANSLATION_SPEED);
-    add_keyboard_action({CGAL_BV_KEY_R, CGAL_BV_KEY_LEFT_SHIFT}, InputMode::RELEASE, DEC_CAMERA_ROTATION_SPEED);
+    add_keyboard_action({GLFW_KEY_X},                         InputMode::HOLD, INC_CAMERA_TRANSLATION_SPEED);
+    add_keyboard_action({GLFW_KEY_R},                         InputMode::HOLD, INC_CAMERA_ROTATION_SPEED);
+    add_keyboard_action({GLFW_KEY_X, GLFW_KEY_LEFT_SHIFT},    InputMode::HOLD, DEC_CAMERA_TRANSLATION_SPEED);
+    add_keyboard_action({GLFW_KEY_R, GLFW_KEY_LEFT_SHIFT},    InputMode::HOLD, DEC_CAMERA_ROTATION_SPEED);
 
-    add_keyboard_action({CGAL_BV_KEY_KP_ADD},                                InputMode::RELEASE, INC_CAMERA_ROTATION_SMOOTHNESS);
-    add_keyboard_action({CGAL_BV_KEY_KP_SUBTRACT},                           InputMode::RELEASE, DEC_CAMERA_ROTATION_SMOOTHNESS);
-    add_keyboard_action({CGAL_BV_KEY_KP_ADD,      CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, INC_CAMERA_TRANSLATION_SMOOTHNESS);
-    add_keyboard_action({CGAL_BV_KEY_KP_SUBTRACT, CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, DEC_CAMERA_TRANSLATION_SMOOTHNESS);
-
-    add_mouse_action({CGAL_BV_MOUSE_BUTTON_LEFT},  InputMode::HOLD, ROTATE_CAMERA);
-    add_mouse_action({CGAL_BV_MOUSE_BUTTON_RIGHT}, InputMode::HOLD, TRANSLATE_CAMERA);
+    add_mouse_action({GLFW_MOUSE_BUTTON_LEFT},  InputMode::HOLD, ROTATE_CAMERA);
+    add_mouse_action({GLFW_MOUSE_BUTTON_RIGHT}, InputMode::HOLD, TRANSLATE_CAMERA);
 
     /*CLIPPING PLANE*/
-    add_keyboard_action({CGAL_BV_KEY_C, CGAL_BV_KEY_LEFT_ALT}, InputMode::RELEASE, TOGGLE_CLIPPING_PLANE_DISPLAY);
-    add_keyboard_action({CGAL_BV_KEY_C},                       InputMode::RELEASE, TOGGLE_CLIPPING_PLANE_MODE);
+    add_keyboard_action({GLFW_KEY_C, GLFW_KEY_LEFT_ALT}, InputMode::RELEASE, TOGGLE_CLIPPING_PLANE_DISPLAY);
+    add_keyboard_action({GLFW_KEY_C},                    InputMode::RELEASE, TOGGLE_CLIPPING_PLANE_MODE);
 
-    add_keyboard_action({CGAL_BV_KEY_A, CGAL_BV_KEY_LEFT_CONTROL}, InputMode::RELEASE, TOGGLE_CP_CONSTRAINT_AXIS);
+    add_keyboard_action({GLFW_KEY_A, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, TOGGLE_CP_CONSTRAINT_AXIS);
 
-    add_keyboard_action({CGAL_BV_KEY_X, CGAL_BV_KEY_LEFT_CONTROL},                         InputMode::RELEASE, INC_CP_TRANSLATION_SPEED);
-    add_keyboard_action({CGAL_BV_KEY_X, CGAL_BV_KEY_LEFT_CONTROL, CGAL_BV_KEY_LEFT_SHIFT}, InputMode::RELEASE, DEC_CP_TRANSLATION_SPEED);
-    add_keyboard_action({CGAL_BV_KEY_R, CGAL_BV_KEY_LEFT_CONTROL},                         InputMode::RELEASE, INC_CP_ROTATION_SPEED);
-    add_keyboard_action({CGAL_BV_KEY_R, CGAL_BV_KEY_LEFT_CONTROL, CGAL_BV_KEY_LEFT_SHIFT}, InputMode::RELEASE, DEC_CP_ROTATION_SPEED);
+    add_keyboard_action({GLFW_KEY_X, GLFW_KEY_LEFT_CONTROL},                      InputMode::HOLD, INC_CP_TRANSLATION_SPEED);
+    add_keyboard_action({GLFW_KEY_X, GLFW_KEY_LEFT_CONTROL, GLFW_KEY_LEFT_SHIFT}, InputMode::HOLD, DEC_CP_TRANSLATION_SPEED);
+    add_keyboard_action({GLFW_KEY_R, GLFW_KEY_LEFT_CONTROL},                      InputMode::HOLD, INC_CP_ROTATION_SPEED);
+    add_keyboard_action({GLFW_KEY_R, GLFW_KEY_LEFT_CONTROL, GLFW_KEY_LEFT_SHIFT}, InputMode::HOLD, DEC_CP_ROTATION_SPEED);
 
-    add_mouse_action({CGAL_BV_MOUSE_BUTTON_LEFT,   CGAL_BV_KEY_LEFT_CONTROL}, InputMode::HOLD, ROTATE_CLIPPING_PLANE);
-    add_mouse_action({CGAL_BV_MOUSE_BUTTON_RIGHT,  CGAL_BV_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CLIPPING_PLANE);
-    add_mouse_action({CGAL_BV_MOUSE_BUTTON_MIDDLE, CGAL_BV_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CP_IN_CAMERA_DIRECTION);
+    add_mouse_action({GLFW_MOUSE_BUTTON_LEFT,   GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, ROTATE_CLIPPING_PLANE);
+    add_mouse_action({GLFW_MOUSE_BUTTON_RIGHT,  GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CLIPPING_PLANE);
+    add_mouse_action({GLFW_MOUSE_BUTTON_MIDDLE, GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CP_IN_CAMERA_DIRECTION);
 
     /*ANIMATION*/
-    add_keyboard_action({CGAL_BV_KEY_F1},                                      InputMode::RELEASE, RUN_OR_STOP_ANIMATION);
-    add_keyboard_action({CGAL_BV_KEY_F1, CGAL_BV_KEY_LEFT_ALT},                InputMode::RELEASE, SAVE_KEY_FRAME);
-    add_keyboard_action({CGAL_BV_KEY_F1, CGAL_BV_KEY_D, CGAL_BV_KEY_LEFT_ALT}, InputMode::RELEASE, CLEAR_ANIMATION);
+    add_keyboard_action({GLFW_KEY_F1},                                InputMode::RELEASE, RUN_OR_STOP_ANIMATION);
+    add_keyboard_action({GLFW_KEY_F1, GLFW_KEY_LEFT_ALT},             InputMode::RELEASE, SAVE_KEY_FRAME);
+    add_keyboard_action({GLFW_KEY_F1, GLFW_KEY_D, GLFW_KEY_LEFT_ALT}, InputMode::RELEASE, CLEAR_ANIMATION);
 
     /*===================== BIND DESCRIPTIONS ============================*/
 
@@ -1410,6 +1429,11 @@ namespace GLFW {
         {get_binding_text_from_action(TOGGLE_CLIPPING_PLANE_DISPLAY),     "Toggle clipping plane rendering on/off"},
         {get_binding_text_from_action(TOGGLE_CP_CONSTRAINT_AXIS),         "Toggle constraint axis for clipping plane rotation"},
         {"",                                                              ""},
+        {get_binding_text_from_action(INC_CP_ROTATION_SPEED),             "Increase rotation speed"},
+        {get_binding_text_from_action(DEC_CP_ROTATION_SPEED),             "Decrease rotation speed"},
+        {get_binding_text_from_action(INC_CP_TRANSLATION_SPEED),          "Increase translation speed"},
+        {get_binding_text_from_action(DEC_CP_TRANSLATION_SPEED),          "Decrease translation speed"},
+        {"",                                                              ""},
         {get_binding_text_from_action(ROTATE_CLIPPING_PLANE),             "Rotate the clipping plane when enabled"},
         {get_binding_text_from_action(TRANSLATE_CLIPPING_PLANE),          "Translate the clipping plane when enabled"},
         {get_binding_text_from_action(TRANSLATE_CP_IN_CAMERA_DIRECTION),  "Translate the clipping plane along camera direction axis when enabled"},
@@ -1418,57 +1442,55 @@ namespace GLFW {
         {get_binding_text_from_action(FORWARD),                               "Move camera forward"},
         {get_binding_text_from_action(BACKWARDS),                             "Move camera backwards"},
         {get_binding_text_from_action(UP),                                    "Move camera up"},
-        {get_binding_text_from_action(DOWN),                                  "Move cmaera down"},
+        {get_binding_text_from_action(DOWN),                                  "Move camera down"},
         {get_binding_text_from_action(RIGHT),                                 "Move camera right"},
         {get_binding_text_from_action(LEFT),                                  "Move camera left"},
         {"",                                                                  ""},
         {get_binding_text_from_action(SWITCH_CAM_MODE),                       "Switch to Perspective/Orthographic view"},
-        {get_binding_text_from_action(SWITCH_CAM_TYPE),                       "Switch to default/first person mode"},
+        {get_binding_text_from_action(SWITCH_CAM_TYPE),                       "Switch to Orbiter/Free-fly camera type"},
         {"",                                                                  ""},
-        {get_binding_text_from_action(ROTATE_CAMERA),                         "Rotate the view"},
-        {get_binding_text_from_action(TRANSLATE_CAMERA),                      "Move the view"},
-        {get_binding_text_from_action(RESET_CAM),                             "Reset camera focus"},
-        {"",                                                                  ""},
-        {get_binding_text_from_action(INC_CAMERA_ROTATION_SMOOTHNESS),        "Increase rotation smoothness"},
-        {get_binding_text_from_action(DEC_CAMERA_ROTATION_SMOOTHNESS),        "Decrease rotation smoothness"},
-        {get_binding_text_from_action(INC_CAMERA_TRANSLATION_SMOOTHNESS),     "Increase translation smoothness"},
-        {get_binding_text_from_action(DEC_CAMERA_TRANSLATION_SMOOTHNESS),     "Decrease translation smoothness"},
+        {get_binding_text_from_action(ROTATE_CAMERA),                         "Rotate the camera"},
+        {get_binding_text_from_action(TRANSLATE_CAMERA),                      "Translate the camera"},
+        {get_binding_text_from_action(RESET_CAM),                             "Reset camera"},
         {"",                                                                  ""},
         {get_binding_text_from_action(INC_CAMERA_ROTATION_SPEED),             "Increase rotation speed"},
         {get_binding_text_from_action(DEC_CAMERA_ROTATION_SPEED),             "Decrease rotation speed"},
         {get_binding_text_from_action(INC_CAMERA_TRANSLATION_SPEED),          "Increase translation speed"},
         {get_binding_text_from_action(DEC_CAMERA_TRANSLATION_SPEED),          "Decrease translation speed"},
         {"",                                                                  ""},
-        {"SCROLL",                                                            "Zoom in/out"},
-        {"DOUBLE_LEFT_CLICK",                                                 "Center the camera to the object"},
-        {"DOUBLE_RIGHT_CLICK",                                                "Aligns camera to nearest axis"},
-        {"LCTRL+SCROLL",                                                      "Increase/Decrease FOV"},
+        {"WHEEL",                                                             "Zoom in/out"},
+        {"LEFT_DOUBLE_CLICK",                                                 "Center the camera to the object"},
+        {"RIGHT_DOUBLE_CLICK",                                                "Aligns camera to nearest axis"},
+        {"Z+WHEEL",                                                           "Increase/Decrease FOV"},
       }},
       {"Scene", {
         {get_binding_text_from_action(INC_LIGHT_ALL),       "Increase light (all colors, use shift/alt/ctrl for one rgb component)"},
         {get_binding_text_from_action(DEC_LIGHT_ALL),       "Decrease light (all colors, use shift/alt/ctrl for one rgb component)"},
         {"",                                                ""},
-        {get_binding_text_from_action(VERTICES_DISPLAY),    "Toggles vertices display"},
-        {get_binding_text_from_action(EDGES_DISPLAY),       "Toggles edges display"},
-        {get_binding_text_from_action(FACES_DISPLAY),       "Toggles faces display"},
+        {get_binding_text_from_action(VERTICES_DISPLAY),    "Toggle vertices display"},
+        {get_binding_text_from_action(EDGES_DISPLAY),       "Toggle edges display"},
+        {get_binding_text_from_action(FACES_DISPLAY),       "Toggle faces display"},
         {"",                                                ""},
-        {get_binding_text_from_action(DISPLAY_WORLD_AXIS),  "Toggles the display of the world axis"},
-        {get_binding_text_from_action(DISPLAY_XY_GRID),     "Toggles the display of the XY grid"},
+        {get_binding_text_from_action(DISPLAY_WORLD_AXIS),  "Toggle the display of the world axis"},
+        {get_binding_text_from_action(DISPLAY_XY_GRID),     "Toggle the display of the XY grid"},
         {"",                                                ""},
         {get_binding_text_from_action(INC_POINTS_SIZE),     "Increase size of vertices"},
         {get_binding_text_from_action(DEC_POINTS_SIZE),     "Decrease size of vertices"},
         {get_binding_text_from_action(INC_EDGES_SIZE),      "Increase size of edges"},
         {get_binding_text_from_action(DEC_EDGES_SIZE),      "Decrease size of edges"},
         {"",                                                ""},
-        {get_binding_text_from_action(MONO_COLOR),          "Toggles mono color"},
-        {get_binding_text_from_action(INVERSE_NORMAL),      "Inverse direction of normals"},
+        {get_binding_text_from_action(MONO_COLOR),          "Toggle mono color"},
+        {get_binding_text_from_action(INVERSE_NORMAL),      "Invert direction of normals"},
         {get_binding_text_from_action(SHADING_MODE),        "Switch between flat/Gouraud shading display"},
       }},         
       {"Window", {
-        {get_binding_text_from_action(EXIT),        "Exits program"},
-        {"",                                        ""},
         {get_binding_text_from_action(FULLSCREEN),  "Switch to windowed/fullscreen mode"},
         {get_binding_text_from_action(SCREENSHOT),  "Take a screenshot of the current view"},
+      }},
+      {"Application", {
+        {get_binding_text_from_action(EXIT),                    "Exit program"},
+        {"",                                                    ""},
+        {get_binding_text_from_action(PRINT_APPLICATION_STATE), "Print application state within the terminal (FPS...)"},
       }},
     });
   }

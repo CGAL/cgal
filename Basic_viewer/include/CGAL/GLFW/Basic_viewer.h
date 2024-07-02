@@ -23,10 +23,10 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stdio.h>
+#include <iostream>
 #include <stdlib.h>
 
-#include "Bv_Settings.h"
+#include "bv_settings.h"
 #include "internal/Shader.h"
 #include "internal/Input.h"
 #include "internal/utils.h"
@@ -50,14 +50,14 @@ namespace GLFW
   public:
     typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 
-    enum class Rendering_mode : int 
+    enum class RenderingMode 
     {                  
       DRAW_ALL=-1,      // draw all
       DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
       DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
     };
 
-    enum class Display_mode : int 
+    enum class DisplayMode 
     { 
       CLIPPING_PLANE_OFF=0, 
       CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF,
@@ -79,6 +79,7 @@ namespace GLFW
       bool flatShading = true
     );
 
+    void initialize();
     void show();
     void make_screenshot(const std::string& filePath);
 
@@ -119,9 +120,16 @@ namespace GLFW
     inline void inverse_normal(bool b) { m_inverseNormal = b; }
     inline void flat_shading(bool b) { m_flatShading = b; }
 
+    inline void keyboard_layout(KeyboardLayout layout) { set_keyboard_layout(layout); }
+    inline void animation_duration(Animation_controller::DurationType duration) { m_animationController.set_duration(duration); }
+
+    inline void center(const vec3f& center) { m_camera.set_center(center); }
+    inline void position(const vec3f& position) { m_camera.set_position(position); m_camera.set_default_position(position); }
+    inline void direction(const vec3f& direction) { m_camera.set_orientation(direction); m_camera.set_default_orientation(direction); }
+
     // Getter section
     inline vec3f position() const { return m_camera.get_position(); }
-    inline vec3f forward_direction() const { return m_camera.forward_direction(); }
+    inline vec3f get_forward() const { return m_camera.get_forward(); }
 
     inline CGAL::IO::Color vertices_mono_color() const { return m_verticeMonoColor; }
     inline CGAL::IO::Color edges_mono_color() const { return m_edgesMonoColor; }
@@ -149,7 +157,7 @@ namespace GLFW
     inline bool inverse_normal() const { return m_inverseNormal; }
     inline bool flat_shading() const { return m_flatShading; }
 
-    inline bool clipping_plane_enable() const { return m_displayModeEnum != Display_mode::CLIPPING_PLANE_OFF; }
+    inline bool clipping_plane_enable() const { return m_displayMode != DisplayMode::CLIPPING_PLANE_OFF; }
     inline bool is_orthograpic() const { return m_camera.is_orthographic(); }
 
     CGAL::Plane_3<Local_kernel> clipping_plane() const;
@@ -174,9 +182,9 @@ namespace GLFW
     void init_and_load_renderers();
     void load_scene();
 
-    void print_application_state(const double deltaTime);
+    void print_application_state(const float deltaTime);
 
-    void update_uniforms(const double deltaTime=0.00);
+    void update_uniforms(const float deltaTime=0.0);
 
     void set_face_uniforms();
     void set_pl_uniforms();
@@ -184,39 +192,39 @@ namespace GLFW
     void set_world_axis_uniforms();
     void set_XY_grid_uniforms();
 
-    void render_scene(const double deltaTime=0.00);
+    void render_scene(const float deltaTime=0.0);
     void draw_faces();
     void draw_rays();
     void draw_lines();
 
-    void draw_faces_bis(Rendering_mode mode);
-    void draw_vertices(Rendering_mode mode);
-    void draw_edges(Rendering_mode mode);
+    void draw_faces_bis(RenderingMode mode);
+    void draw_vertices(RenderingMode mode);
+    void draw_edges(RenderingMode mode);
 
     void init_and_load_clipping_plane();
     void render_clipping_plane();
 
     void init_keys_actions();
 
-    void start_action(int action, const double deltaTime) override;
-    void action_event(int action, const double deltaTime) override;
-    void end_action(int action, const double deltaTime) override;
+    void start_action(int action, const float deltaTime) override;
+    void action_event(int action, const float deltaTime) override;
+    void end_action(int action, const float deltaTime) override;
 
     void double_click_event(int btn) override;
-    void scroll_event(const double deltaTime) override;
+    void scroll_event(const float deltaTime) override;
 
     void rotate_camera();
     void rotate_clipping_plane();
-    void translate_camera(const double deltaTime);
-    void translate_clipping_plane(const double deltaTime, bool useCameraForward=false);
+    void translate_camera(const float deltaTime);
+    void translate_clipping_plane(const float deltaTime, bool useCameraForward=false);
 
-    void save_key_frame();
+    void save_key_frame(); 
     void run_or_stop_animation();
 
-    void increase_light_all(const double deltaTime);
-    void increase_red_component(const double deltaTime);
-    void increase_green_component(const double deltaTime);
-    void increase_blue_component(const double deltaTime);
+    void increase_light_all(const float deltaTime);
+    void increase_red_component(const float deltaTime);
+    void increase_green_component(const float deltaTime);
+    void increase_blue_component(const float deltaTime);
 
     void switch_display_mode();
 
@@ -235,33 +243,35 @@ namespace GLFW
 
     const Graphics_scene* m_scene;
     const char* m_title;
-    bool m_drawVertices;
-    bool m_drawEdges;
-    bool m_drawFaces;
-    bool m_drawRays;
-    bool m_drawLines;
-    bool m_useMonoColor;
-    bool m_inverseNormal;
-    bool m_flatShading;
+    bool m_drawVertices { false };
+    bool m_drawEdges { true };
+    bool m_drawFaces { true };
+    bool m_drawRays { true };
+    bool m_drawLines { true };
+    bool m_useMonoColor { false };
+    bool m_inverseNormal { false };
+    bool m_flatShading { true };
 
-    bool m_areBuffersInitialized = false;
+    bool m_printApplicationState { true };
 
-    bool m_drawWorldAxis = true;
-    bool m_drawXYGrid = false;
+    bool m_areBuffersInitialized { false };
 
-    bool m_isOpengl4_3 = false;
+    bool m_drawWorldAxis { true };
+    bool m_drawXYGrid { false };
 
-    bool m_isFullscreen = false;
+    bool m_isOpengl4_3 { false };
+
+    bool m_isFullscreen { false };
     
     Line_renderer m_worldAxisRenderer; 
     Line_renderer m_XYGridRenderer; 
     Line_renderer m_XYAxisRenderer; 
     Line_renderer m_clippingPlaneRenderer;
 
-    float m_sizePoints = CGAL_SIZE_POINTS;
-    float m_sizeEdges = CGAL_SIZE_EDGES;
-    float m_sizeRays = CGAL_SIZE_RAYS;
-    float m_sizeLines = CGAL_SIZE_LINES;
+    float m_sizePoints { CGAL_SIZE_POINTS };
+    float m_sizeEdges { CGAL_SIZE_EDGES };
+    float m_sizeRays { CGAL_SIZE_RAYS };
+    float m_sizeLines { CGAL_SIZE_LINES };
 
     CGAL::IO::Color m_facesMonoColor = CGAL_FACES_MONO_COLOR;
     CGAL::IO::Color m_verticeMonoColor = CGAL_VERTICES_MONO_COLOR;
@@ -269,15 +279,15 @@ namespace GLFW
     CGAL::IO::Color m_raysMonoColor = CGAL_RAYS_MONO_COLOR;
     CGAL::IO::Color m_linesMonoColor = CGAL_LINES_MONO_COLOR;
 
-    vec4f m_lightPosition = CGAL_LIGHT_POSITION;
-    vec4f m_ambientColor = CGAL_AMBIENT_COLOR;
-    vec4f m_diffuseColor = CGAL_DIFFUSE_COLOR;
-    vec4f m_specularColor = CGAL_SPECULAR_COLOR;
+    vec4f m_lightPosition { CGAL_LIGHT_POSITION };
+    vec4f m_ambientColor { CGAL_AMBIENT_COLOR };
+    vec4f m_diffuseColor { CGAL_DIFFUSE_COLOR };
+    vec4f m_specularColor { CGAL_SPECULAR_COLOR };
 
-    float m_shininess = CGAL_SHININESS;
+    float m_shininess { CGAL_SHININESS };
 
-    vec4f m_clipPlane{0, 0, 1, 0};
-    vec4f m_pointPlane{0, 0, 0, 1};
+    vec4f m_clipPlane { 0, 0, 1, 0 };
+    vec4f m_pointPlane { 0, 0, 0, 1 };
 
     mat4f m_modelViewMatrix;
     mat4f m_modelViewProjectionMatrix;
@@ -287,7 +297,7 @@ namespace GLFW
     Shader m_planeShader;
     Shader m_lineShader;
 
-    vec2i m_windowSize{CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT};
+    vec2i m_windowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
     vec2i m_oldWindowSize;
     vec2i m_oldWindowPosition;
 
@@ -297,12 +307,9 @@ namespace GLFW
 
     Clipping_plane m_clippingPlane;
 
-    Display_mode m_displayModeEnum = Display_mode::CLIPPING_PLANE_OFF;
+    DisplayMode m_displayMode { DisplayMode::CLIPPING_PLANE_OFF };
     
-    bool m_drawClippingPlane = true;                                                // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
-    float m_clippingPlaneTransparency = CGAL_CLIPPING_PLANE_RENDERING_TRANSPARENCY; // to what extent the transparent part should be rendered;
-    float m_clippingPlaneMoveSpeed = CGAL_CLIPPING_PLANE_MOVE_SPEED;
-    float m_clippingPlaneRotationSpeed = CGAL_CLIPPING_PLANE_ROT_SPEED;
+    bool m_drawClippingPlane { true };  // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
 
     /*********************/
 
@@ -332,10 +339,13 @@ namespace GLFW
 
     enum ActionEnum
     {
+      /*APPLICATION*/
+      EXIT,
+      PRINT_APPLICATION_STATE,
+
       /*WINDOW*/
       FULLSCREEN,
       SCREENSHOT,
-      EXIT,
 
       /*SCENE*/
       VERTICES_DISPLAY,
@@ -410,8 +420,9 @@ namespace GLFW
   inline void draw_graphics_scene(const Graphics_scene& graphics_scene, const char* title="CGAL Basic Viewer (GLFW)")
   {
     Basic_viewer basic_viewer(&graphics_scene, title);
+    basic_viewer.initialize();
     basic_viewer.show();
-  }
+  } 
 } // end namespace CGAL 
 
 #include "Basic_viewer_impl.h"
