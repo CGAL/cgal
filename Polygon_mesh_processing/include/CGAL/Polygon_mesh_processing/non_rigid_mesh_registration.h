@@ -33,7 +33,6 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>
-#include <CGAL/Point_set_3.h>
 #include <CGAL/Splitters.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Search_traits_adapter.h>
@@ -264,35 +263,37 @@ template <typename TriangleMesh,
           typename PointRange,
           typename VertexTranslationMap,
           typename VertexRotationMap,
-          typename NamedParameters = parameters::Default_named_parameters>
+          typename NamedParameters1 = parameters::Default_named_parameters,
+          typename NamedParameters2 = parameters::Default_named_parameters>
 void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   const PointRange& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
   const std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>& correspondences = std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>(),
-  const NamedParameters& np = parameters::default_values())
+  const NamedParameters1& np1 = parameters::default_values(),
+  const NamedParameters2& np2 = parameters::default_values())
 {
-  const size_t iter = parameters::choose_parameter(parameters::get_parameter(np, internal_np::number_of_iterations), 50);
-  const double w1 = parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_to_plane_energy), 2);
-  const double w2 = parameters::choose_parameter(parameters::get_parameter(np, internal_np::point_to_point_energy), 0.1);
-  const double w3 = parameters::choose_parameter(parameters::get_parameter(np, internal_np::as_rigid_as_possible_energy), 20);
-  const double max_matching_dist = parameters::choose_parameter(parameters::get_parameter(np, internal_np::max_matching_dist), 0);
+  const size_t iter = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::number_of_iterations), 50);
+  const double w1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_energy), 2);
+  const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_point_energy), 0.1);
+  const double w3 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::as_rigid_as_possible_energy), 20);
+  const double max_matching_dist = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::max_matching_dist), 0);
 
   internal::Vertices X(num_vertices(source), 3), Y(target.size(), 3);
   internal::Faces XF(num_faces(source), 3);
 
-  using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
+  using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters2>;
   using Point_map = typename NP_helper::Point_map;
   using Normal_map = typename NP_helper::Normal_map;
 
-  Point_map point_map = NP_helper::get_const_point_map(target, np);
-  Normal_map normal_map = NP_helper::get_normal_map(target, np);
+  Point_map point_map = NP_helper::get_const_point_map(target, np2);
+  Normal_map normal_map = NP_helper::get_normal_map(target, np2);
 
-  using Gt = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
-  using Vertex_point_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::type;
+  using Gt = typename GetGeomTraits<TriangleMesh, NamedParameters1>::type;
+  using Vertex_point_map = typename GetVertexPointMap<TriangleMesh, NamedParameters1>::type;
   using Point = typename Gt::Point_3;
 
-  Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, source));
+  Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, source));
 
   std::size_t idx = 0;
   for (auto v : vertices(source)) {
@@ -697,18 +698,22 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
 
   using Gt1 = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
 
-  CGAL::Point_set_3<typename Gt1::Point_3> points;
+  typedef std::pair<typename Gt1::Point_3, typename Gt1::Vector_3> Point_with_normal;
+  typedef std::vector<Point_with_normal> Pwn_vector;
+  typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
+  typedef CGAL::Second_of_pair_property_map<Point_with_normal> Normal_map;
+  Pwn_vector points;
   points.reserve(target.num_vertices());
 
   for (auto v : target.vertices())
-    points.insert(get(vpm, v), get(vnm, v));
+    points.push_back(std::make_pair(get(vpm, v), get(vnm, v)));
 
   std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, std::size_t>> correspondences_pts;
   correspondences_pts.reserve(correspondences.size());
   for (auto p : correspondences)
     correspondences_pts.push_back(std::make_pair(p.first, static_cast<std::size_t>(p.second)));
 
-  non_rigid_mesh_to_points_registration(source, points, vtm, vrm, correspondences_pts, np);
+  non_rigid_mesh_to_points_registration(source, points, vtm, vrm, correspondences_pts, np, parameters::point_map(Point_map()).normal_map(Normal_map()));
 }
 
 /*!
