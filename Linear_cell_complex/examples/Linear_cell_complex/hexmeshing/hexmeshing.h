@@ -1,3 +1,5 @@
+#pragma once
+
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -11,6 +13,7 @@
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/Bbox_3.h>
 #include <functional>
+#include "utils.h"
 
 #include "../query_replace/cmap_query_replace.h"
 #include "../query_replace/init_to_preserve_for_query_replace.h"
@@ -184,7 +187,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     nbsub = 0;
     for (auto& dart : pdata.volumes_to_refine)
     {
-      if (hdata.regular_templates.query_replace_one_volume(lcc, dart) != SIZE_T_MAX) nbsub++;
+      if (hdata.regular_templates.query_replace_one_volume(lcc, dart, hdata.template_mark) != SIZE_T_MAX) nbsub++;
     }
 
     // // Refine remaining 3 patterns
@@ -301,9 +304,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
         // get incident faces to marked node to be refined
         // Incident faces normal to the plane 
         // We also need to prevent adding twice the faces by marking them
-
         
-        if (!lcc.is_marked(edge, hdata.template_mark))
+        if (!lcc.is_marked(edge, hdata.template_mark) && !lcc.is_marked(lcc.other_extremity(edge), hdata.template_mark))
           continue;
 
         auto top_face_1 = lcc.beta(edge, 2);
@@ -454,16 +456,66 @@ namespace CGAL::HexRefinement::TwoRefinement {
     lcc.mark_cell<0>(lcc.beta(dart, 1), mark);
   }
 
+  void mark_1template_volume(LCC& lcc, size_type mark){
+    auto first = lcc.first_dart();
+    lcc.mark_cell<0>(lcc.beta(first, 1, 2, 3, 1, 2, 0), mark);
+  }
+
+  void mark_2template_volume(LCC& lcc, size_type mark){
+    auto first = lcc.first_dart();
+    
+    auto node1 = lcc.beta(first, 0, 2, 3, 1, 1, 2, 0);
+    auto node2 = lcc.beta(node1, 0);
+
+    lcc.mark_cell<0>(node1, mark);
+    lcc.mark_cell<0>(node2, mark);
+  }
+
+  void mark_3template_partial_volume(LCC& lcc, size_type mark){
+    auto first = lcc.first_dart();
+
+    auto m2 = lcc.get_new_mark();
+
+    auto node1 = lcc.beta(first, 0, 0, 2, 1, 1, 2);
+    auto node2 = lcc.beta(node1, 1);
+    auto node3 = lcc.beta(node2, 1);
+
+    lcc.mark_cell<0>(node1, mark);
+    lcc.mark_cell<0>(node2, mark);
+    lcc.mark_cell<0>(node3, mark);
+  }
+
+  void mark_4template_volume(LCC& lcc, size_type mark){
+    auto first = lcc.first_dart();
+
+    auto node1 = first;
+    auto node2 = lcc.beta(node1, 0);
+    auto node3 = lcc.beta(node2, 0);
+    auto node4 = lcc.beta(node3, 0);
+
+    lcc.mark_cell<0>(node1, mark);
+    lcc.mark_cell<0>(node2, mark);
+    lcc.mark_cell<0>(node3, mark);
+    lcc.mark_cell<0>(node4, mark);
+  }
+
+
+
   void load_patterns(Pattern_substituer<LCC> &regular_templates, Pattern_substituer<LCC>& partial_3_template) {
     // BUG Manque des opérateurs de déplacements pour Pattern, le reserve est un fix temporaire
     // Pour pouvoir charger les patterns correctement sans réallocation
     regular_templates.m_fpatterns.reserve(10);
+    regular_templates.m_vpatterns.reserve(10);
+
     regular_templates.load_additional_fpattern(CGAL::data_file_path("hexmeshing/fpattern/pattern1-face.moka"), mark_1template_face);
     regular_templates.load_additional_fpattern(CGAL::data_file_path("hexmeshing/fpattern/pattern2-face.moka"), mark_2template_face);
-    regular_templates.load_vpatterns(CGAL::data_file_path("hexmeshing/vpattern/complete"));
+    
+    regular_templates.load_additional_vpattern(CGAL::data_file_path("hexmeshing/vpattern/complete/pattern1.moka"), mark_1template_volume);
+    regular_templates.load_additional_vpattern(CGAL::data_file_path("hexmeshing/vpattern/complete/pattern2.moka"), mark_2template_volume);
+    regular_templates.load_additional_vpattern(CGAL::data_file_path("hexmeshing/vpattern/complete/pattern4.moka"), mark_4template_volume);
   
     // TODO: Chargé séparément pour le moment, voir si je laisse comme ça 
-    partial_3_template.load_vpatterns(CGAL::data_file_path("hexmeshing/vpattern/partial"));
+    partial_3_template.load_additional_vpattern(CGAL::data_file_path("hexmeshing/vpattern/partial/pattern3.moka"), mark_3template_partial_volume);
   }
 
   void load_surface(const std::string& file, Polyhedron& out_surface, Tree& out_aab) {
