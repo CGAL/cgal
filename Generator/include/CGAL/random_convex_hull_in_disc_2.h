@@ -16,7 +16,8 @@
 
 #ifndef CGAL_RANDOM_CONVEX_HULL_DISC_H
 #define CGAL_RANDOM_CONVEX_HULL_DISC_H 1
-#include <boost/random.hpp>
+#include <random>
+//#include <boost/random.hpp>
 #include <CGAL/Polygon_2_algorithms.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/copy_n.h>
@@ -57,10 +58,8 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
                              double big_radius, std::list<P>& l,
                              GEN& gen) {  // generate n points between a and b
   if (n > 1) {
-    boost::binomial_distribution<long> bin_distribution(n, .5);
-    boost::variate_generator<GEN&, boost::binomial_distribution<long> >
-        g(gen, bin_distribution);
-    long nb = g();
+    std::binomial_distribution<long> bin_distribution(n, .5);
+    long nb = bin_distribution(gen);
     generate_points_annulus(nb, a, (a + b) / 2.0, small_radius, big_radius, l,
                             gen);
     generate_points_annulus(n - nb, (a + b) / 2.0, b, small_radius, big_radius,
@@ -68,17 +67,13 @@ void generate_points_annulus(long n, double a, double b, double small_radius,
   }
   if (n == 1)  // generation of a point
   {
-    boost::random::uniform_real_distribution<double> random_squared_radius_distribution(
+    std::uniform_real_distribution<double> random_squared_radius_distribution(
         small_radius * small_radius / (big_radius * big_radius), 1);
 
-    boost::random::uniform_real_distribution<double> random_angle_distribution(a, b);
-    boost::random::variate_generator<
-        GEN&, boost::random::uniform_real_distribution<double> > random_angle(gen, random_angle_distribution);
-    boost::random::variate_generator<
-        GEN&, boost::random::uniform_real_distribution<double> > random_squared_radius(gen, random_squared_radius_distribution);
+    std::uniform_real_distribution<double> random_angle_distribution(a, b);
 
-    double alpha = random_angle();
-    double r = big_radius * std::sqrt(random_squared_radius());
+    double alpha = random_angle_distribution(gen);
+    double r = big_radius * std::sqrt(random_squared_radius_distribution(gen));
     typedef  Creator_uniform_2<double, P> Creator;
     Creator creator;
     typedef typename Creator::argument_type T;
@@ -217,12 +212,10 @@ void random_convex_hull_in_disc_2(std::size_t n, double radius, std::list<typena
     } else {
       nb = static_cast<long>((std::min)(T, n - simulated_points));
     }
-    boost::binomial_distribution<long> dbin(nb, to_double(p_disc));
-    boost::variate_generator<
-        GEN&, boost::binomial_distribution<long> > bin(gen, dbin);
+    std::binomial_distribution<long> dbin(nb, to_double(p_disc));
 
     // How many points are falling in the small disc and won't be generated:
-    long k_disc = bin();
+    long k_disc = dbin(gen);
     simulated_points += k_disc;
 
     std::list<P> m;

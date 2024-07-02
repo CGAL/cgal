@@ -15,7 +15,7 @@
 
 #include <CGAL/license/Apollonius_graph_2.h>
 
-
+#include <random>
 
 // class implementation
 //---------------------
@@ -425,10 +425,9 @@ int
 Apollonius_graph_hierarchy_2<Gt,Agds,LTag>::
 random_level()
 {
-  boost::geometric_distribution<> proba(1.0/ag_hierarchy_2__ratio);
-  boost::variate_generator<boost::rand48&, boost::geometric_distribution<> > die(random, proba);
+  std::geometric_distribution<> proba(1.0/ag_hierarchy_2__ratio);
 
-  return (std::min)(die(), (int)ag_hierarchy_2__maxlevel)-1;
+  return (std::min)(proba(random), (int)ag_hierarchy_2__maxlevel)-1;
 }
 
 template<class Gt, class Agds, class LTag>
