@@ -7,12 +7,7 @@
 class Clipping_plane
 {
 public:
-  enum class ConstraintAxis  
-  { 
-    NO_CONSTRAINT,
-    RIGHT_AXIS,
-    UP_AXIS,
-  };
+  enum class ConstraintAxis { NO_CONSTRAINT, RIGHT_AXIS, UP_AXIS };
 
 public:
   void update(const float deltaTime);
@@ -34,6 +29,7 @@ public:
   inline float get_transparency() const { return m_transparency; }
   inline float get_rotation_speed() const { return m_rotationSpeed; }
   inline float get_translation_speed() const { return m_translationSpeed; }
+  inline std::string get_constraint_axis() const { return m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ? "None" : (m_constraintAxis == ConstraintAxis::RIGHT_AXIS ? "Right" : "Up"); }
 
   inline void set_size(const float size) { m_size = size; }
   inline void set_up_axis(const vec3f& upAxis) { m_upAxis = upAxis; }

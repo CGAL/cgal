@@ -60,7 +60,7 @@ public:
   void add_description(ActionEnum action, const std::string& section, const std::string& description);
   void add_description(const std::string& action, const std::string& section, const std::string& description);
 
-  void print_help() const;
+  void print_help();
 
   std::string get_binding_text_from_action(ActionEnum action);
   inline void set_action_description(const DescriptorType& descriptor) { m_descriptor = descriptor; }
@@ -296,7 +296,7 @@ void Input::add_description(const std::string& binding, const std::string& secti
   m_descriptor[section].emplace_back(binding, description);
 }
 
-void Input::print_help() const
+void Input::print_help()
 {
   std::cout << "Basic Viewer GLFW - Features shortcut :" << "\n\n";
 
@@ -326,13 +326,15 @@ void Input::print_help() const
         continue;
       }
 
-      std::cout << std::setw(n/4+4) << std::right << bindings
-                << " - " << description << '\n';
+      std::cout << std::setw(n/4+4) << std::right  << bindings
+                << " - "            << description << '\n';
     }
     
     std::cout << sectionFooter << "\n";
   }
   std::cout << std::endl;
+
+  m_descriptor.clear();
 }
 
 inline

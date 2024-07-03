@@ -8,18 +8,18 @@
 
 using namespace std::chrono_literals;
 
-struct CameraKeyFrame 
+struct AnimationKeyFrame 
 {
   vec3f position;
   quatf orientation;
 
-  CameraKeyFrame(const vec3f& _position, const quatf& _orientation) : 
+  AnimationKeyFrame(const vec3f& _position, const quatf& _orientation) : 
     position(_position), 
     orientation(_orientation) 
   {
   }
 
-  CameraKeyFrame() : 
+  AnimationKeyFrame() : 
     position(vec3f::Identity()), 
     orientation(quatf::Identity()) 
   {
@@ -31,11 +31,11 @@ class Animation_controller
 public:
   using DurationType = std::chrono::milliseconds;
   using TimePoint = std::chrono::_V2::steady_clock::time_point;
-  using KeyFrameBuffer = std::vector<CameraKeyFrame>;
+  using KeyFrameBuffer = std::vector<AnimationKeyFrame>;
   
 public:
   void start();
-  CameraKeyFrame run();
+  AnimationKeyFrame run();
   void stop(const float frameNumber);
 
   void add_key_frame(const vec3f& position, const quatf& orientation);
@@ -53,7 +53,7 @@ public:
   inline float get_frame() const { return m_currentFrameNumber; }
   
 private:
-  CameraKeyFrame key_frame_interpolation(const float time);
+  AnimationKeyFrame key_frame_interpolation(const float time);
 
   void compute_timestamp();
 
@@ -67,7 +67,7 @@ private:
 
   TimePoint m_startTime {}; 
 
-  CameraKeyFrame m_lastFrameData {};
+  AnimationKeyFrame m_lastFrameData {};
 
   float m_lastFrameNumber    { 0.0f };   
   float m_currentFrameNumber { 0.0f };  
@@ -94,7 +94,7 @@ void Animation_controller::start()
 }
 
 inline 
-CameraKeyFrame Animation_controller::run() 
+AnimationKeyFrame Animation_controller::run() 
 {
   auto now = std::chrono::steady_clock::now();
   float elapsedTime = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(now - m_startTime).count());
@@ -120,7 +120,7 @@ void Animation_controller::stop(const float frameNumber)
 inline 
 void Animation_controller::add_key_frame(const vec3f& position, const quatf& orientation) 
 { 
-  CameraKeyFrame keyFrame(position, orientation);
+  AnimationKeyFrame keyFrame(position, orientation);
   m_keyFrames.push_back(keyFrame);
   if (m_keyFrames.size() > 1) 
   {
@@ -141,7 +141,7 @@ void Animation_controller::set_duration(DurationType duration)
 static const float EPSILON = 0.001;
 
 inline 
-CameraKeyFrame Animation_controller::key_frame_interpolation(const float time)
+AnimationKeyFrame Animation_controller::key_frame_interpolation(const float time)
 {
   assert(m_timestamp > 0.0 + EPSILON || m_timestamp < 0.0 - EPSILON);
 
@@ -150,8 +150,8 @@ CameraKeyFrame Animation_controller::key_frame_interpolation(const float time)
   unsigned int lowerIndex = std::floor(t);
   unsigned int upperIndex = std::ceil(t);
 
-  CameraKeyFrame keyFrame0 = m_keyFrames.at(lowerIndex); 
-  CameraKeyFrame keyFrame1 = m_keyFrames.at(upperIndex);
+  AnimationKeyFrame keyFrame0 = m_keyFrames.at(lowerIndex); 
+  AnimationKeyFrame keyFrame1 = m_keyFrames.at(upperIndex);
 
   t -= static_cast<float>(lowerIndex); 
 

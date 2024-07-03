@@ -14,17 +14,16 @@
 
 #ifndef CGAL_BASIC_VIEWER_GLFW_H
 #define CGAL_BASIC_VIEWER_GLFW_H
+#include <iostream>
+#include <stdlib.h>
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Basic_shaders.h>
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/Plane_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
-#include <stdlib.h>
 
 #include "bv_settings.h"
 #include "internal/Shader.h"
@@ -34,7 +33,6 @@
 #include "internal/Line_renderer.h"
 #include "internal/Clipping_plane.h"
 #include "internal/Animation_controller.h"
-// #include "internal/Input_controller.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
@@ -83,6 +81,8 @@ namespace GLFW
     void show();
     void make_screenshot(const std::string& filePath);
 
+    void clear_application();
+
     /***** Getter & Setter ****/
 
     // Setter Section
@@ -121,7 +121,7 @@ namespace GLFW
     inline void flat_shading(bool b) { m_flatShading = b; }
 
     inline void keyboard_layout(KeyboardLayout layout) { set_keyboard_layout(layout); }
-    inline void animation_duration(Animation_controller::DurationType duration) { m_animationController.set_duration(duration); }
+    inline void animation_duration(std::chrono::milliseconds duration) { m_animationController.set_duration(duration); }
 
     inline void center(const vec3f& center) { m_camera.set_center(center); }
     inline void position(const vec3f& position) { m_camera.set_position(position); m_camera.set_default_position(position); }
@@ -179,16 +179,17 @@ namespace GLFW
     void load_buffer(int i, int location, const std::vector<float>& vector, int dataCount);
     void initialize_buffers();
     void initialize_camera();
-    void init_and_load_renderers();
+    void initialize_and_load_world_axis();
     void load_scene();
 
-    void print_application_state(const float deltaTime);
+    void print_application_state(float& elapsedTime, const float deltaTime);
 
-    void update_uniforms(const float deltaTime=0.0);
+    void compute_model_view_projection_matrix(const float deltaTime);
+    void update_uniforms(const float deltaTime);
 
-    void set_face_uniforms();
-    void set_pl_uniforms();
-    void set_clipping_uniforms();
+    void update_face_uniforms();
+    void update_pl_uniforms();
+    void update_clipping_uniforms();
     void set_world_axis_uniforms();
     void set_XY_grid_uniforms();
 
@@ -201,10 +202,10 @@ namespace GLFW
     void draw_vertices(RenderingMode mode);
     void draw_edges(RenderingMode mode);
 
-    void init_and_load_clipping_plane();
+    void initialize_and_load_clipping_plane();
     void render_clipping_plane();
 
-    void init_keys_actions();
+    void initialize_keys_actions();
 
     void start_action(int action, const float deltaTime) override;
     void action_event(int action, const float deltaTime) override;

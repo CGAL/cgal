@@ -3,8 +3,10 @@
 
 #include "Basic_viewer.h"
 
-namespace CGAL {
-namespace GLFW {
+namespace CGAL 
+{
+namespace GLFW 
+{
 
   inline 
   void Basic_viewer::error_callback(int error, const char *description)
@@ -73,26 +75,26 @@ namespace GLFW {
 
   inline
   Basic_viewer::Basic_viewer(
-      const Graphics_scene* graphicScene,
-      const char* title,
-      bool drawVertices,
-      bool drawEdges,
-      bool drawFaces,
-      bool drawRays,
-      bool drawLines, 
-      bool useMonoColor,
-      bool inverseNormal,
-      bool flatShading
+    const Graphics_scene* graphicScene,
+    const char* title,
+    bool drawVertices,
+    bool drawEdges,
+    bool drawFaces,
+    bool drawRays,
+    bool drawLines, 
+    bool useMonoColor,
+    bool inverseNormal,
+    bool flatShading
   ) : m_scene(graphicScene),
-      m_title(title),
-      m_drawVertices(drawVertices),
-      m_drawEdges(drawEdges),
-      m_drawFaces(drawFaces),
-      m_drawRays(drawRays),
-      m_drawLines(drawLines),
-      m_useMonoColor(useMonoColor),
-      m_inverseNormal(inverseNormal),
-      m_flatShading(flatShading)
+    m_title(title),
+    m_drawVertices(drawVertices),
+    m_drawEdges(drawEdges),
+    m_drawFaces(drawFaces),
+    m_drawRays(drawRays),
+    m_drawLines(drawLines),
+    m_useMonoColor(useMonoColor),
+    m_inverseNormal(inverseNormal),
+    m_flatShading(flatShading)
   {
   }
 
@@ -100,11 +102,8 @@ namespace GLFW {
   void Basic_viewer::initialize()
   {
     m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title);
-    initialize_buffers();
 
-    glGenBuffers(NB_GL_BUFFERS, m_vbo);
-    glGenVertexArrays(NB_VAO_BUFFERS, m_vao);
-
+    // Set event callbacks 
     glfwSetWindowUserPointer(m_window, this);
     glfwSetKeyCallback(m_window, key_callback);
     glfwSetCursorPosCallback(m_window, cursor_callback);
@@ -123,18 +122,16 @@ namespace GLFW {
 
     compile_shaders();
     initialize_camera();
-    init_and_load_renderers();
-    init_and_load_clipping_plane();
-    init_keys_actions();
-
-    print_help();
-
-    set_keyboard_layout(KeyboardLayout::AZERTY);
+    initialize_buffers();
+    initialize_keys_actions();
+    initialize_and_load_world_axis();
+    initialize_and_load_clipping_plane();
   }
 
   inline
   void Basic_viewer::show()
   {
+    float elapsedTime = 0.0f;
     float lastFrame = 0.0;
     while (!glfwWindowShouldClose(m_window))
     {
@@ -146,9 +143,21 @@ namespace GLFW {
       render_scene(deltaTime);
       glfwSwapBuffers(m_window);
 
-      print_application_state(deltaTime);
+      print_application_state(elapsedTime, deltaTime);
     }
 
+    clear_application();
+  }
+
+  void Basic_viewer::clear_application()
+  {
+    m_plShader.destroy();
+    m_faceShader.destroy();
+    m_lineShader.destroy();
+    m_planeShader.destroy();
+    glDeleteBuffers(NB_GL_BUFFERS, m_vbo);
+    glDeleteVertexArrays(NB_VAO_BUFFERS, m_vao);
+    glfwDestroyWindow(m_window);
     glfwTerminate();
   }
 
@@ -218,11 +227,10 @@ namespace GLFW {
       m_scene->bounding_box().zmax());
 
     m_camera.lookat(pmin, pmax);  
-    m_clippingPlane.set_size(m_camera.get_size());  
   }
 
   inline 
-  void Basic_viewer::init_and_load_renderers()
+  void Basic_viewer::initialize_and_load_world_axis()
   {
     {
       m_worldAxisRenderer.initialize_buffers();
@@ -262,7 +270,7 @@ namespace GLFW {
   {
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo[i]);
 
-    glBufferData(GL_ARRAY_BUFFER, vector.size() * sizeof(float), vector.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vector.size() * sizeof(float), vector.data(), GL_DYNAMIC_DRAW);
 
     glVertexAttribPointer(location, dataCount, GL_FLOAT, GL_FALSE, dataCount * sizeof(float), nullptr);
 
@@ -279,12 +287,8 @@ namespace GLFW {
   inline
   void Basic_viewer::initialize_buffers()
   {
-    if (m_areBuffersInitialized)
-    {
-      glGenBuffers(NB_GL_BUFFERS, m_vbo);
-      glGenVertexArrays(NB_VAO_BUFFERS, m_vao);
-      m_areBuffersInitialized = true;
-    }
+    glGenBuffers(NB_GL_BUFFERS, m_vbo);
+    glGenVertexArrays(NB_VAO_BUFFERS, m_vao);
   }
 
   inline
@@ -380,15 +384,15 @@ namespace GLFW {
     return p3.transform(aff);
   }
 
-  inline
-  void Basic_viewer::update_uniforms(const float deltaTime)
+  inline 
+  void Basic_viewer::compute_model_view_projection_matrix(const float deltaTime)
   {
     m_camera.update(deltaTime);
     m_clippingPlane.update(deltaTime);
 
     if (m_animationController.is_running())
     {
-      auto animationFrame = m_animationController.run();
+      AnimationKeyFrame animationFrame = m_animationController.run();
       m_camera.set_orientation(animationFrame.orientation);
       m_camera.set_position(animationFrame.position);
     }
@@ -397,16 +401,22 @@ namespace GLFW {
 
     mat4f projection = m_camera.projection(m_windowSize.x(), m_windowSize.y());
     m_modelViewProjectionMatrix = projection * m_modelViewMatrix;
-
-    // ================================================================
-
-    set_face_uniforms();
-    set_pl_uniforms();
-    set_clipping_uniforms();
   }
 
   inline
-  void Basic_viewer::set_face_uniforms()
+  void Basic_viewer::update_uniforms(const float deltaTime)
+  {
+    compute_model_view_projection_matrix(deltaTime);
+
+    // ================================================================
+
+    update_face_uniforms();
+    update_pl_uniforms();
+    update_clipping_uniforms();
+  }
+
+  inline
+  void Basic_viewer::update_face_uniforms()
   {
     m_faceShader.use();
 
@@ -425,7 +435,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::set_pl_uniforms()
+  void Basic_viewer::update_pl_uniforms()
   {
     m_plShader.use();
 
@@ -436,7 +446,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::set_clipping_uniforms()
+  void Basic_viewer::update_clipping_uniforms()
   {
     mat4f clippingMatrix = m_clippingPlane.get_matrix();
 
@@ -470,14 +480,12 @@ namespace GLFW {
     mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*aspect, halfHeight - 0.1f, 0.0f));
 
     mat4f mvp = proj * rotation4x4 * translate;
-    m_lineShader.use();
     m_lineShader.set_mat4f("mvp_matrix", mvp.data()); 
   }
 
   inline
   void Basic_viewer::set_XY_grid_uniforms()
   {
-    m_lineShader.use();
     m_lineShader.set_mat4f("mvp_matrix", m_modelViewProjectionMatrix.data());
   }
 
@@ -495,12 +503,21 @@ namespace GLFW {
     glEnable(GL_PROGRAM_POINT_SIZE);
     glEnable(GL_LINE_SMOOTH);
 
-    update_uniforms(deltaTime);
+    // update_uniforms(deltaTime);
+
+    compute_model_view_projection_matrix(deltaTime);
 
     bool half = m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
 
     RenderingMode mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
+    update_face_uniforms();
+    if (m_drawFaces)
+    {
+      draw_faces();
+    }
+
+    update_pl_uniforms();
     if (m_drawVertices)
     {
       draw_vertices(mode);
@@ -508,10 +525,6 @@ namespace GLFW {
     if (m_drawEdges)
     {
       draw_edges(mode);
-    }
-    if (m_drawFaces)
-    {
-      draw_faces();
     }
     if (m_drawRays)
     {
@@ -521,6 +534,7 @@ namespace GLFW {
     {
       draw_lines();
     }
+
     if (m_drawWorldAxis) 
     {
       draw_world_axis();
@@ -534,14 +548,12 @@ namespace GLFW {
   inline
   vec4f Basic_viewer::color_to_vec4(const CGAL::IO::Color& c) const
   {
-    return {(float)c.red() / 255, (float)c.green() / 255, (float)c.blue() / 255, 1.0f};
+    return { static_cast<float>(c.red()) / 255, static_cast<float>(c.green()) / 255, static_cast<float>(c.blue()) / 255, 1.0f };
   }
 
   inline
   void Basic_viewer::draw_faces()
   {
-    m_faceShader.use();
-
     if (m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
     {
       // The z-buffer will prevent transparent objects from being displayed behind other transparent objects.
@@ -590,14 +602,13 @@ namespace GLFW {
   inline
   void Basic_viewer::draw_faces_bis(RenderingMode mode)
   {
-    m_faceShader.use();
     m_faceShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_facesMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_FACES]);
     glVertexAttrib4fv(2, color.data());
-    // glDrawArrays(GL_TRIANGLES, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
+    glDrawArrays(GL_TRIANGLES, 0, m_scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
 
     glBindVertexArray(m_vao[VAO_COLORED_FACES]);
     if (m_useMonoColor)
@@ -615,7 +626,6 @@ namespace GLFW {
   inline
   void Basic_viewer::draw_rays()
   {
-    m_plShader.use();
     m_plShader.set_float("rendering_mode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     vec4f color = color_to_vec4(m_raysMonoColor);
@@ -641,7 +651,6 @@ namespace GLFW {
   inline
   void Basic_viewer::draw_vertices(RenderingMode mode)
   {
-    m_plShader.use();
     m_plShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_verticeMonoColor);
@@ -665,7 +674,6 @@ namespace GLFW {
   inline
   void Basic_viewer::draw_lines()
   {
-    m_plShader.use();
     m_plShader.set_float("rendering_mode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     vec4f color = color_to_vec4(m_linesMonoColor);
@@ -690,7 +698,6 @@ namespace GLFW {
   inline
   void Basic_viewer::draw_edges(RenderingMode mode)
   {
-    m_plShader.use();
     m_plShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_edgesMonoColor);
@@ -713,7 +720,7 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::init_and_load_clipping_plane()
+  void Basic_viewer::initialize_and_load_clipping_plane()
   {
     float size = ((m_scene->bounding_box().xmax() - m_scene->bounding_box().xmin()) +
                    (m_scene->bounding_box().ymax() - m_scene->bounding_box().ymin()) +
@@ -726,15 +733,19 @@ namespace GLFW {
     m_clippingPlaneRenderer.set_width(0.1f);
     generate_grid(m_clippingPlaneRenderer, color, size, NB_SUBDIVISIONS);
     m_clippingPlaneRenderer.load_buffers();
+
+    m_clippingPlane.set_size(m_camera.get_size());  
   }
 
   inline
   void Basic_viewer::render_clipping_plane()
   {
     if (!m_drawClippingPlane || !m_isOpengl4_3)
+    {
       return;
+    }
 
-    m_planeShader.use();
+    update_clipping_uniforms();
     m_clippingPlaneRenderer.draw();
   }
 
@@ -777,23 +788,26 @@ namespace GLFW {
   }
 
   inline 
-  void Basic_viewer::print_application_state(const float deltaTime)
+  void Basic_viewer::print_application_state(float& elapsedTime, const float deltaTime)
   {
-    if (m_printApplicationState)
+    elapsedTime += deltaTime;
+    if (elapsedTime * 1000 > 100) // update terminal display each 100ms
     {
-      std::cout << "FPS: "            << std::round(1 / deltaTime)                    << "    " 
-                << "Camera translation speed: "   << m_camera.get_translation_speed()         << "    " 
-                << "Camera rotation speed: "      << m_camera.get_rotation_speed()            << "    "
-                << "CP translation speed: "       << m_clippingPlane.get_translation_speed()  << "    "            
-                << "CP rotation speed: "          << m_clippingPlane.get_rotation_speed()     << "    "     
-                << "Light color: ("               << m_ambientColor.x()                       << ", " 
-                                                  << m_ambientColor.y()                       << ", " 
-                                                  << m_ambientColor.z()                       << ")   "     
-                << "\r" << std::flush;
-    }
-    else 
-    {
-      std::cout << "\33[2K\r";
+      elapsedTime = 0.0f;
+      if (m_printApplicationState)
+      {
+        std::cout << "\33[2K"  
+                  << "FPS: "                        << std::round(1 / deltaTime)                        << "    " 
+                  << "Camera translation speed: "   << m_camera.get_translation_speed()                 << "    " 
+                  << "Camera rotation speed: "      << std::round(m_camera.get_rotation_speed())        << "    "
+                  << "CP translation speed: "       << m_clippingPlane.get_translation_speed()          << "    "            
+                  << "CP rotation speed: "          << std::round(m_clippingPlane.get_rotation_speed()) << "    "     
+                  << "CP constraint axis: "         << m_clippingPlane.get_constraint_axis()            << "    "     
+                  << "Light color: ("               << m_ambientColor.x()                               << ", " 
+                                                    << m_ambientColor.y()                               << ", " 
+                                                    << m_ambientColor.z()                               << ")   "     
+                  << "\r" << std::flush;
+      }
     }
   }
 
@@ -815,14 +829,7 @@ namespace GLFW {
   inline 
   void Basic_viewer::exit_app() 
   {
-    m_plShader.destroy();
-    m_faceShader.destroy();
-    m_lineShader.destroy();
-    m_planeShader.destroy();
-    glDeleteBuffers(NB_GL_BUFFERS, m_vbo);
-    glDeleteVertexArrays(NB_VAO_BUFFERS, m_vao);
-    glfwDestroyWindow(m_window);
-    glfwTerminate();
+    clear_application();
 
     std::cout << "\n APPLICATION EXITED" << std::endl;
     exit(EXIT_SUCCESS);
@@ -835,6 +842,10 @@ namespace GLFW {
     {
       if (btn == GLFW_MOUSE_BUTTON_RIGHT)
       {
+        if (is_key_pressed(m_window, GLFW_KEY_LEFT_CONTROL)) 
+        {
+          m_camera.reset_orientation();
+        }
         m_camera.reset_position();
       }
       if (btn == GLFW_MOUSE_BUTTON_LEFT)
@@ -911,16 +922,16 @@ namespace GLFW {
       m_useMonoColor = !m_useMonoColor;
       break;
     case INC_EDGES_SIZE:
-      m_sizeEdges = std::min(50.f, m_sizeEdges + deltaTime);
+      m_sizeEdges = std::min(50.f, m_sizeEdges + 3.0f*deltaTime);
       break;
     case DEC_EDGES_SIZE:
-      m_sizeEdges = std::max(2.f, m_sizeEdges - deltaTime);
+      m_sizeEdges = std::max(1.f, m_sizeEdges - 3.0f*deltaTime);
       break;
     case INC_POINTS_SIZE:
-      m_sizePoints = std::min(15.f, m_sizePoints + deltaTime);
+      m_sizePoints = std::min(30.f, m_sizePoints + 3.0f*deltaTime);
       break;
     case DEC_POINTS_SIZE:
-      m_sizePoints = std::max(5.f, m_sizePoints - deltaTime);
+      m_sizePoints = std::max(1.f, m_sizePoints - 3.0f*deltaTime);
       break;
     case INC_LIGHT_ALL:
       increase_light_all(deltaTime);
@@ -1288,8 +1299,9 @@ namespace GLFW {
     GLsizei bufferSize = stride * m_windowSize.y();
 
     std::vector<char> buffer(bufferSize);
-
+    m_faceShader.use();
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
+
     glReadBuffer(GL_FRONT);
     glReadPixels(0, 0, m_windowSize.x(), m_windowSize.y(), GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
 
@@ -1305,7 +1317,6 @@ namespace GLFW {
     set_world_axis_uniforms();
 
     glViewport(w - w / 5, h - h / 5, w / 5, h / 5);
-    m_lineShader.use();
     m_worldAxisRenderer.draw();
 
     // Restore the main viewport
@@ -1315,7 +1326,6 @@ namespace GLFW {
   void Basic_viewer::draw_xy_grid() 
   { 
     set_XY_grid_uniforms();
-    m_lineShader.use();
     m_XYAxisRenderer.draw();
     m_XYGridRenderer.draw();
   }
@@ -1333,8 +1343,10 @@ namespace GLFW {
   }
 
   inline
-  void Basic_viewer::init_keys_actions()
+  void Basic_viewer::initialize_keys_actions()
   {
+    set_keyboard_layout(KeyboardLayout::AZERTY);
+
     /*APPLICATION*/
     add_keyboard_action({GLFW_KEY_ESCAPE},                   InputMode::RELEASE, EXIT);
     add_keyboard_action({GLFW_KEY_Q, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, EXIT);
@@ -1358,11 +1370,11 @@ namespace GLFW {
 
     add_keyboard_action({GLFW_KEY_EQUAL, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, INC_POINTS_SIZE);
     add_keyboard_action({GLFW_KEY_KP_ADD, GLFW_KEY_LEFT_CONTROL},                     InputMode::HOLD, INC_POINTS_SIZE);
-    add_keyboard_action({GLFW_KEY_8, GLFW_KEY_LEFT_CONTROL},                          InputMode::HOLD, DEC_POINTS_SIZE);
+    add_keyboard_action({GLFW_KEY_6, GLFW_KEY_LEFT_CONTROL},                          InputMode::HOLD, DEC_POINTS_SIZE);
     add_keyboard_action({GLFW_KEY_KP_SUBTRACT, GLFW_KEY_LEFT_CONTROL},                InputMode::HOLD, DEC_POINTS_SIZE);
     add_keyboard_action({GLFW_KEY_EQUAL, GLFW_KEY_LEFT_SHIFT},                        InputMode::HOLD, INC_EDGES_SIZE);
     add_keyboard_action({GLFW_KEY_KP_ADD},                                            InputMode::HOLD, INC_EDGES_SIZE);
-    add_keyboard_action({GLFW_KEY_8},                                                 InputMode::HOLD, DEC_EDGES_SIZE);
+    add_keyboard_action({GLFW_KEY_6},                                                 InputMode::HOLD, DEC_EDGES_SIZE);
     add_keyboard_action({GLFW_KEY_KP_SUBTRACT},                                       InputMode::HOLD, DEC_EDGES_SIZE);
 
     add_keyboard_action({GLFW_KEY_PAGE_UP},                              InputMode::HOLD, INC_LIGHT_ALL);
@@ -1460,6 +1472,7 @@ namespace GLFW {
         {"",                                                                  ""},
         {"WHEEL",                                                             "Zoom in/out"},
         {"LEFT_DOUBLE_CLICK",                                                 "Center the camera to the object"},
+        {"LCTRL+LEFT_DOUBLE_CLICK",                                           "Reset camera position & orientation"},
         {"RIGHT_DOUBLE_CLICK",                                                "Aligns camera to nearest axis"},
         {"Z+WHEEL",                                                           "Increase/Decrease FOV"},
       }},
@@ -1493,6 +1506,8 @@ namespace GLFW {
         {get_binding_text_from_action(PRINT_APPLICATION_STATE), "Print application state within the terminal (FPS...)"},
       }},
     });
+
+    print_help();
   }
 } // end namespace GLFW 
 } // end namespace CGAL

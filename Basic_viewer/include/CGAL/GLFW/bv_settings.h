@@ -11,7 +11,7 @@
 #endif
 
 #ifndef CGAL_WINDOW_SAMPLES
-#define CGAL_WINDOW_SAMPLES 1
+#define CGAL_WINDOW_SAMPLES 10
 #endif
 
 /*************GLFW SCENE PARAMS*************/
@@ -20,7 +20,7 @@
 #endif
 
 #ifndef CGAL_SIZE_EDGES
-#define CGAL_SIZE_EDGES 3.1f
+#define CGAL_SIZE_EDGES 1.1f
 #endif
 
 #ifndef CGAL_SIZE_RAYS
