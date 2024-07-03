@@ -116,11 +116,44 @@ namespace CGAL::HexRefinement::TwoRefinement {
       if (!lcc.is_marked(dit, mark)) lcc.mark_cell<0>(dit, mark);
   }
 
-  void refine_3_template(HexMeshingData& hdata, Dart_handle marked_face)
+  void clean_up_3_template(HexMeshingData &hdata, const Dart_handle &origin_dart, const Dart_handle &upper_edge, const Dart_handle lower_edge, Dart_handle &face1, Dart_handle &face2)
   {
     LCC& lcc = hdata.lcc;
 
+    Dart_handle lower_mid_1 = lcc.insert_barycenter_in_cell<1>(lower_edge);
+    Dart_handle lower_mid_2 = lcc.beta(lower_mid_1, 2, 1);
+
+    // Contract the lower edge asweel, this leads to two faces being partially contracted.
+    lcc.contract_cell<1>(lower_mid_1);
+    lcc.contract_cell<1>(lower_mid_2);
+
+    assert(!lcc.is_marked(lower_mid_2, hdata.corner_mark));
+
+    // Contract the two remaining 2-darts faces
+    Dart_handle face_to_remove_1 = lcc.beta(upper_edge, 2, 1);
+    Dart_handle face_to_remove_2 = lcc.beta(upper_edge, 2, 1, 1, 2, 1, 2);
+
+    assert(lcc.darts_of_orbit<1>(face_to_remove_1).size() == 2);
+    assert(lcc.darts_of_orbit<1>(face_to_remove_2).size() == 2);
+
+    // Contract the two remaining 2-darts faces
+    lcc.contract_cell<2>(face_to_remove_1);
+    lcc.contract_cell<2>(face_to_remove_2);
+
+    // Remove the created volume from the partial query replace and sew the two neighboring volumes
+    lcc.remove_cell<3>(origin_dart);
+
+    if (face1 != lcc.null_dart_descriptor && face2 != lcc.null_dart_descriptor)
+      lcc.sew<3>(face1, face2);
+  }
+
+  void refine_3_template(HexMeshingData &hdata, Dart_handle marked_face)
+  {
+    // TODO Might be written better 
+    LCC& lcc = hdata.lcc;
+
     Dart_handle origin_dart = find_3_template_origin(lcc, marked_face, hdata.corner_mark);  
+    Dart_handle vol2_origin_dart = lcc.beta(origin_dart, 3);
 
     Dart_handle upper_d1 = origin_dart;
     Dart_handle upper_d2 = lcc.beta(origin_dart, 1, 1);
@@ -128,46 +161,45 @@ namespace CGAL::HexRefinement::TwoRefinement {
     assert(!lcc.is_marked(upper_d2, hdata.corner_mark));
 
     Dart_handle upper_edge = lcc.insert_cell_1_in_cell_2(upper_d1, upper_d2);
+    Dart_handle vol2_upper_edge = lcc.beta(upper_edge, 3); 
 
     // Query replace with the partial 3-template, making it into two volumes
-    hdata.partial_templates.query_replace_one_volume(lcc, origin_dart);
+    size_type p = hdata.partial_templates.query_replace_one_volume(lcc, origin_dart, hdata.template_mark);
+    assert(p == 0);
+
+    // Also replace the other connected volume that is 3 template
+    p = hdata.partial_templates.query_replace_one_volume(lcc, lcc.beta(origin_dart, 3), hdata.template_mark);
+    assert(p == 0);
 
     // Face of the t<o neighboring volumes to the created volume
     Dart_handle face1 = lcc.beta(origin_dart, 2, 3);
     Dart_handle face2 = lcc.beta(origin_dart, 1, 2, 3);
-    // lower_edge is created with the query_replace
     Dart_handle lower_edge = lcc.beta(upper_edge, 2, 1, 1);
+
+    Dart_handle vol2_face1 = lcc.beta(vol2_origin_dart, 3, 2, 3);
+    Dart_handle vol2_face2 = lcc.beta(vol2_origin_dart, 3, 1, 2, 3);
+    Dart_handle vol2_lower_edge = lcc.beta(vol2_upper_edge, 2, 1, 1);
+    
+
+    // Created after substitution
+    
 
     // Contract upper and lower edge into its barycenter 
 
     Dart_handle upper_mid_1 = lcc.insert_barycenter_in_cell<1>(upper_edge);
     Dart_handle upper_mid_2 = lcc.beta(upper_mid_1, 2, 1);
-    Dart_handle lower_mid_1 = lcc.insert_barycenter_in_cell<1>(lower_edge);
-    Dart_handle lower_mid_2 = lcc.beta(lower_mid_1, 2, 1);
-
+    
     assert(!lcc.is_marked(upper_mid_2, hdata.corner_mark));
-    assert(!lcc.is_marked(lower_mid_2, hdata.corner_mark));
 
+    // contract the shared edge between the two volumes
     lcc.contract_cell<1>(upper_mid_1);
     lcc.contract_cell<1>(upper_mid_2);
-    lcc.contract_cell<1>(lower_mid_1);
-    lcc.contract_cell<1>(lower_mid_2);
 
-    // Contract the two remaining 2-darts faces 
-
-    Dart_handle face_to_remove_1 = lcc.beta(upper_edge, 2, 1);
-    Dart_handle face_to_remove_2 = lcc.beta(upper_edge, 2, 1, 1, 2, 1, 2);
-
-    assert(lcc.darts_of_orbit<1>(face_to_remove_1).size() == 2);
-    assert(lcc.darts_of_orbit<1>(face_to_remove_2).size() == 2);
-
-    lcc.contract_cell<2>(face_to_remove_1);
-    lcc.contract_cell<2>(face_to_remove_2);
-
-    // Remove the created volume and sew the two neighboring volumes
-    lcc.remove_cell<3>(upper_d1);
-    lcc.sew<3>(face1, face2);
+    clean_up_3_template(hdata, origin_dart, upper_edge, lower_edge, face1, face2);
+    clean_up_3_template(hdata, vol2_origin_dart, vol2_upper_edge, vol2_lower_edge, vol2_face1, vol2_face2);
   }
+
+
 
   void refine_marked_hexes(HexMeshingData& hdata, PlaneData& pdata)
   {
@@ -194,6 +226,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     for (auto marked_face : pdata.partial_templates_to_refine){
       refine_3_template(hdata, marked_face);
       nbsub++;
+      break;
     }
 
     std::cout << nbsub << " volumic substitution was made" << std::endl;
@@ -335,7 +368,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
           pdata.volumes_to_refine.push_back(lcc.beta(face, 3));
       }
       else {
-        // pdata.partial_templates_to_refine.push_back(face);
+        pdata.partial_templates_to_refine.push_back(face);
       }
     }
 
