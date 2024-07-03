@@ -104,7 +104,7 @@ int two_stacked_3_template_test() {
   HexMeshingData hdata;
   LCC& lcc = hdata.lcc;
 
-  hdata.grid = generate_grid(hdata.lcc, Point(0,0,0), 5, 2);
+  hdata.grid = generate_grid(hdata.lcc, Point(0,0,0), 5, 4);
   hdata.template_mark = lcc.get_new_mark();
   hdata.identified_mark = lcc.get_new_mark();
   hdata.corner_mark = lcc.get_new_mark();
@@ -115,6 +115,7 @@ int two_stacked_3_template_test() {
 
   PlaneData plane;
   Dart_handle first = lcc.first_dart();
+  first = lcc.beta(first, 0, 0, 2, 3, 2);
 
   lcc.mark_cell<0>(lcc.beta(first, 1, 2), hdata.identified_mark);
   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.identified_mark);
@@ -132,5 +133,5 @@ int two_stacked_3_template_test() {
 
 
 int main(){
-  return two_stacked_3_template_test();
+  return surface_test();
 }
