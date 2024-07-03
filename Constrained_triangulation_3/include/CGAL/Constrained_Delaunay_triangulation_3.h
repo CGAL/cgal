@@ -1064,7 +1064,7 @@ protected:
     Vertex_handle insert_in_triangulation(const Point_3& p, Locate_type lt, Cell_handle c, int li, int lj) {
       if(self->is_Delaunay)
         return self->insert_impl_do_not_split(p, lt, c, li, lj, *this);
-      else 
+      else
         return self->insert_in_cdt_3(p, lt, c, li, lj, *this);
     }
   };
