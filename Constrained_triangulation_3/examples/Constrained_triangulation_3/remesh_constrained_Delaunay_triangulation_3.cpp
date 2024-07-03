@@ -3,22 +3,24 @@
 
 #include <CGAL/make_constrained_Delaunay_triangulation_3.h>
 
-#include <CGAL/Tetrahedral_remeshing/Remeshing_cell_base_3.h>
-#include <CGAL/Tetrahedral_remeshing/Remeshing_vertex_base_3.h>
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/draw_triangulation_3.h>
+
+#include <fstream>
+#include <string>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Vb = CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>;
 using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
 using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
 using Tr = CGAL::Triangulation_3<K, Tds>;
+using CDT = CGAL::Constrained_Delaunay_triangulation_3<K, Tr>;
 
 int main(int argc, char* argv[])
 {
-  auto filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
+  std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/mpi.off");
   std::ifstream in(filename);
 
   CGAL::Surface_mesh<K::Point_3> mesh;
@@ -26,8 +28,8 @@ int main(int argc, char* argv[])
     std::cerr << "Error: cannot read file " << filename << std::endl;
     return EXIT_FAILURE;
   }
-  auto cdt = CGAL::make_constrained_Delaunay_triangulation_3(mesh);
-  auto tr = std::move(cdt).triangulation();
+  CDT cdt = CGAL::make_constrained_Delaunay_triangulation_3<CDT>(mesh);
+  Tr tr = std::move(cdt).triangulation();
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;
   CGAL::tetrahedral_isotropic_remeshing(tr, 0.1,

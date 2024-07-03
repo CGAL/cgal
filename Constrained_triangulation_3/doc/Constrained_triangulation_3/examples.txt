@@ -3,4 +3,6 @@
 \brief A simple example of the use of the Constrained_triangulation_3 package.
 \example Constrained_triangulation_3/constrained_Delaunay_triangulation_3_from_soup.cpp
 \brief A simple example of the use of the Constrained_triangulation_3 package.
+\example Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp
+\brief How to use `CGAL::tetrahedral_isotropic_remeshing` with a constrained Delaunay triangulation.
 */
