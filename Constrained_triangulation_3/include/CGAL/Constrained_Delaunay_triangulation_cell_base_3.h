@@ -14,6 +14,7 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
+#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Constrained_Delaunay_triangulation_cell_data_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 

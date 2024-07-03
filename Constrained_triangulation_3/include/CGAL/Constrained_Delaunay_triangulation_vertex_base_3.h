@@ -15,6 +15,7 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
+#include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_vertex_data_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
