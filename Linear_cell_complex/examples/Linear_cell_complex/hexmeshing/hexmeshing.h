@@ -226,7 +226,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
     for (auto marked_face : pdata.partial_templates_to_refine){
       refine_3_template(hdata, marked_face);
       nbsub++;
-      break;
     }
 
     std::cout << nbsub << " volumic substitution was made" << std::endl;
@@ -301,6 +300,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       ++i;
     }
+
     assert(i == 4);
    
     if (face_attr.marked_vertices > 0) {
