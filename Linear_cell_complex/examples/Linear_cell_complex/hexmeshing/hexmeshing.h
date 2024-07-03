@@ -171,18 +171,18 @@ namespace CGAL::HexRefinement::TwoRefinement {
     p = hdata.partial_templates.query_replace_one_volume(lcc, lcc.beta(origin_dart, 3), hdata.template_mark);
     assert(p == 0);
 
-    // Face of the t<o neighboring volumes to the created volume
+    // Assert the origin dart have different directions on the adjacent volume
+    // So assert that their opposite are equal
+    assert(lcc.beta(origin_dart, 1) == lcc.beta(vol2_origin_dart, 0, 3));
+
+    // Face of the two neighboring volumes to the created volume
     Dart_handle face1 = lcc.beta(origin_dart, 2, 3);
     Dart_handle face2 = lcc.beta(origin_dart, 1, 2, 3);
     Dart_handle lower_edge = lcc.beta(upper_edge, 2, 1, 1);
 
-    Dart_handle vol2_face1 = lcc.beta(vol2_origin_dart, 3, 2, 3);
-    Dart_handle vol2_face2 = lcc.beta(vol2_origin_dart, 3, 1, 2, 3);
+    Dart_handle vol2_face1 = lcc.beta(vol2_origin_dart, 2, 3);
+    Dart_handle vol2_face2 = lcc.beta(vol2_origin_dart, 0, 2, 3); // 0 because opposite directions
     Dart_handle vol2_lower_edge = lcc.beta(vol2_upper_edge, 2, 1, 1);
-    
-
-    // Created after substitution
-    
 
     // Contract upper and lower edge into its barycenter 
 
@@ -660,7 +660,7 @@ namespace CGAL::HexRefinement {
       refine_marked_hexes(hdata, pdata);
     }
 
-    // debug_node_mark = template_mark;
+    debug_node_mark = hdata.template_mark;
     // lcc.free_mark(corner_mark);
     return lcc;
   } 
