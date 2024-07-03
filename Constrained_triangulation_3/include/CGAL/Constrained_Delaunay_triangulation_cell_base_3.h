@@ -12,6 +12,8 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_CELL_BASE_3_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_CELL_BASE_3_H
 
+#include <CGAL/license/Constrained_triangulation_3.h>
+
 #include <CGAL/Constrained_Delaunay_triangulation_cell_data_3.h>
 #include <CGAL/Triangulation_cell_base_3.h>
 

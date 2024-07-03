@@ -12,12 +12,15 @@
 #ifndef CGAL_CDT_3_DEBUG_IO_H
 #define CGAL_CDT_3_DEBUG_IO_H
 
-#include <ostream>
+#include <CGAL/license/Constrained_triangulation_3.h>
+
 #include <CGAL/boost/graph/IO/OFF.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+
+#include <ostream>
 
 namespace CGAL {
 

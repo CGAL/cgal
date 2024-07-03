@@ -13,6 +13,8 @@
 #ifndef CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_VERTEX_BASE_3_H
 #define CGAL_CONSTRAINED_DELAUNAY_TRIANGULATION_VERTEX_BASE_3_H
 
+#include <CGAL/license/Constrained_triangulation_3.h>
+
 #include <CGAL/Triangulation_vertex_base_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_vertex_data_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
