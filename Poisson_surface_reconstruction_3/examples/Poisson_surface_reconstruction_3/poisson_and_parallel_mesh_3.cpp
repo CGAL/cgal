@@ -4,7 +4,6 @@
 
 #include <CGAL/Poisson_reconstruction_function.h>
 
-#include <CGAL/Implicit_surface_3.h>
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_criteria_3.h>
@@ -39,7 +38,6 @@ typedef Kernel::Sphere_3 Sphere;
 typedef std::vector<Point_with_normal> PointList;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
 
 namespace params = CGAL::parameters;
 
@@ -93,7 +91,6 @@ void poisson_reconstruction(const PointSet& points, const char* output)
 
   // Gets one point inside the implicit surface
   // and computes implicit function bounding sphere radius.
-  const Point inner_point = function.get_inner_point();
   const Sphere bsphere = function.bounding_sphere();
   FT radius = std::sqrt(bsphere.squared_radius());
 
@@ -103,9 +100,6 @@ void poisson_reconstruction(const PointSet& points, const char* output)
   FT sm_dichotomy_error = sm_distance * average_spacing / 1000.0; // Dichotomy error must be << sm_distance
   std::cout << "dichotomy error = " << sm_dichotomy_error << std::endl;
   std::cout << "sm_dichotomy_error / sm_sphere_radius = " << sm_dichotomy_error / sm_sphere_radius << std::endl;
-
-  Sphere sm_sphere(inner_point, sm_sphere_radius * sm_sphere_radius);
-  Surface_3 surface(function, sm_sphere, sm_dichotomy_error / sm_sphere_radius);
 
   time.stop();
   std::cout << "Surface created in " << time.time() << " seconds." << std::endl;
@@ -117,7 +111,7 @@ void poisson_reconstruction(const PointSet& points, const char* output)
                          params::facet_size = sm_radius * average_spacing,
                          params::facet_distance = sm_distance * average_spacing);
 
-  Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(surface, sm_sphere,
+  Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
     params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
   // Generates surface mesh with manifold option
