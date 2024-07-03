@@ -5,7 +5,7 @@
 #include <algorithm>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using CDT = CGAL::Default_constrained_Delaunay_triangulation_3<K>::type;
+using CDT = CGAL::Default_constrained_Delaunay_triangulation_3_type_generator<K>::type;
 
 int main(int argc, char* argv[])
 {

@@ -37,7 +37,7 @@
 `CGAL::make_constrained_Delaunay_triangulation_3()` is the main function to create
 a constrained Delaunay triangulation in 3D, an instance of the class template
 `CGAL::Constrained_Delaunay_triangulation_3`.
-The type alias `CGAL::default_constrained_Delaunay_triangulation_3_t<Kernel>` is the default
+The type alias `CGAL::Default_constrained_Delaunay_triangulation_3<Kernel>` is the default
 constrained triangulation class.
 
 \cgalCRPSection{Functions Templates}
@@ -53,7 +53,7 @@ constrained triangulation class.
 \cgalCRPSubsection{Class Templates}
 
 - `CGAL::Constrained_Delaunay_triangulation_3<Traits, Triangulation>`
-- `CGAL::Default_constrained_Delaunay_triangulation_3`
+- `CGAL::Default_constrained_Delaunay_triangulation_3_type_generator`
 - `CGAL::Constrained_Delaunay_triangulation_vertex_base_3`
 - `CGAL::Constrained_Delaunay_triangulation_cell_base_3`
 */
