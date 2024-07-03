@@ -178,9 +178,14 @@ namespace Polygon_mesh {
 
         Polygon_mesh_processing::triangulate_hole_polyline(pts, std::back_inserter(output), parameters::use_2d_constrained_delaunay_triangulation(true));
 
+        // Create entry in map. In case of degenerate polygonal faces, the list stays empty.
         std::vector<Triangle_3>& tris = m_face_triangulations[i];
+
+        // If the output is empty, the polygon is degenerate.
+        if (output.empty())
+          continue;
+
         tris.reserve(output.size());
-        assert(!output.empty());
         for (const auto& t : output)
           tris.push_back(Triangle_3(pts[t.first], pts[t.second], pts[t.third]));
       }
@@ -343,7 +348,7 @@ namespace Polygon_mesh {
       // https://github.com/CGAL/cgal/pull/4563
       const Plane_3 unoriented_plane_of_best_fit =
         internal::create_plane_from_triangulated_faces(
-          m_face_graph, region, m_face_triangulations, m_traits).first;
+          region, m_face_triangulations, m_traits).first;
       const Vector_3 unoriented_normal_of_best_fit =
         unoriented_plane_of_best_fit.orthogonal_vector();
 

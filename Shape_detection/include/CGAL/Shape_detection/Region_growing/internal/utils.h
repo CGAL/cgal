@@ -399,12 +399,10 @@ namespace internal {
 
   template<
     typename Traits,
-    typename FaceGraph,
     typename Region,
     typename FaceToTrianglesMap>
   std::pair<typename Traits::Plane_3, typename Traits::FT>
     create_plane_from_triangulated_faces(
-      const FaceGraph& face_graph,
       const Region& region,
       const FaceToTrianglesMap &face_to_triangles_map, const Traits&) {
 
@@ -427,12 +425,15 @@ namespace internal {
 
     for (const typename Region::value_type face : region) {
       const std::vector<Triangle_3>& tris = face_to_triangles_map.at(face);
-      CGAL_precondition(tris.size() > 0);
 
-      for (const auto tri : tris)
+      // Degenerate polygons are omitted.
+      if (tris.empty())
+        continue;
+
+      for (const auto &tri : tris)
         triangles.push_back(iconverter(tri));
     }
-    CGAL_precondition(triangles.size() >= region.size());
+    CGAL_precondition(!triangles.empty());
     IPlane_3 fitted_plane;
     IPoint_3 fitted_centroid;
     const IFT score = CGAL::linear_least_squares_fitting_3(
