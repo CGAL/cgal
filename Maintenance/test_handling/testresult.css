@@ -89,4 +89,30 @@ TABLE.result TD > a.package_name {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     padding: 20px;
-  }
+}
+
+.toggle-button {
+    text-decoration: underline;
+    border: none;
+    color: #0000EE;
+    cursor: pointer;
+}
+
+.summary-content{
+    overflow: auto;
+    max-height: 600px;
+}
+
+.directory_container{
+    display: flex;
+    align-items: center;
+}
+
+.platform-container {
+    display: flex;
+    align-items: center;
+}
+
+.platform-link {
+    margin-right: 10px;
+}
