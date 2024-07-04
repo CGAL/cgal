@@ -497,12 +497,12 @@ void SimpleStraightSkel::run() {
                 handlePierceEvent(std::dynamic_pointer_cast<PierceEvent>(event), polyhedron);
             }
 
-            db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + ".obj", polyhedron);
-
             DEBUG_PRINT("-- Check consistency... --");
 
             assert(polyhedron->isConsistent());
             assert(skel_result_->isConsistent());
+
+            db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + ".obj", polyhedron);
 
             if (p_box_min && p_box_max) {
                 assert(PolyhedronTransformation::isInsideBox(polyhedron, p_box_min, p_box_max));
@@ -914,7 +914,9 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
     // what happens if it's not the case, shouldn't we consider both fL fR fLP fLN,
     // but also fL fR fRP fRN? OR even fL fR & (2 out of all faces incident to any
     // extremity of 'edge')?
-#if 1 // new code / old code switch
+
+// #define CGAL_SS3_OLD_CODE_VANISH_AT
+#ifndef CGAL_SS3_OLD_CODE_VANISH_AT
     {
         FacetSPtr facetL = edge->getFacetL();
         FacetSPtr facetR = edge->getFacetR();
@@ -967,7 +969,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
             }
         }
     }
-#else // old code, needlessly uses constructed "sheets"
+#else // CGAL_SS3_OLD_CODE_VANISH_AT
     SheetSPtr sheets[3];
     for (unsigned int i = 0; i < 3; i++) {
         sheets[i] = SheetSPtr();
@@ -1005,7 +1007,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
             }
         }
     }
-#endif
+#endif // CGAL_SS3_OLD_CODE_VANISH_AT
 
     return { point, offset_event };
 }
@@ -1098,7 +1100,6 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
                             const CGAL::FT offset_max) {
 
 // #define CGAL_SS3_DEBUG_CRASH_AT
-
 #ifdef CGAL_SS3_DEBUG_CRASH_AT
     std::cout << "    -- Crash At\n    " << edge_1->toString() << "\n    " << edge_2->toString() << std::endl;
 
@@ -1127,7 +1128,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 
     // pointless to check the validity of the geometry if the event is:
     // - in the past
-    // - worse than the current best
+    // - worse than the current best (temporary optimization, to remove if a queue is used)
     if(offset_event > 0 || offset_event <= offset_max)
       return { Point3SPtr(), offset_event };
 
@@ -2719,7 +2720,8 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                 Point3SPtr point;
                 CGAL::FT offset_event;
 
-#if 0
+// #define CGAL_SS3_OLD_CODE_PIERCE_EVENT
+#ifdef CGAL_SS3_OLD_CODE_PIERCE_EVENT
                 // @fixme this filter seems overly restrictive?
                 // Could not we have an intersection between the OFFSET face
                 // and the arc's supporting line (but we don't know at what offset yet)?
@@ -2763,12 +2765,20 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                 offset_event = -dist_vertex / speed_vertex;
                 point = KernelWrapper::offsetPoint(vertex->getPoint(), arc->getDirection(), dist_vertex);
                 // std::cout << "old result: " << *point << " time: " << offset_event << std::endl;
-#else
+#else // CGAL_SS3_OLD_CODE_PIERCE_EVENT
                 CGAL_assertion(vertex->facets().size() == 3);
 
-                FacetSPtr f0 = *(std::next(vertex->facets().begin(), 0));
-                FacetSPtr f1 = *(std::next(vertex->facets().begin(), 1));
-                FacetSPtr f2 = *(std::next(vertex->facets().begin(), 2));
+                FacetWPtr wf0 = *(std::next(vertex->facets().begin(), 0));
+                FacetWPtr wf1 = *(std::next(vertex->facets().begin(), 1));
+                FacetWPtr wf2 = *(std::next(vertex->facets().begin(), 2));
+
+                CGAL_assertion(!wf0.expired());
+                CGAL_assertion(!wf1.expired());
+                CGAL_assertion(!wf2.expired());
+
+                FacetSPtr f0(wf0);
+                FacetSPtr f1(wf1);
+                FacetSPtr f2(wf2);
 
                 Plane3SPtr plane = facet->plane();
                 Plane3SPtr plane_0 = f0->plane();
@@ -2853,7 +2863,7 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
 
                 if (reject_event)
                   continue;
-#endif
+#endif // CGAL_SS3_OLD_CODE_PIERCE_EVENT
 
                 // @todo filter events in the past?
                 if (offset_event > curr_time_to_next_event) {

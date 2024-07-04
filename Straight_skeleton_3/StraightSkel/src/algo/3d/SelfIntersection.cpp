@@ -132,7 +132,8 @@ unsigned int SelfIntersection::hasSelfIntersectingFacets(PolyhedronSPtr polyhedr
     return result;
 }
 
-
+// #define CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
+#ifdef CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
 Plane3SPtr SelfIntersection::bisector(FacetSPtr facet, VertexSPtr vertex) {
     Plane3SPtr result;
     EdgeSPtr edge_in;
@@ -175,7 +176,7 @@ Plane3SPtr SelfIntersection::bisector(FacetSPtr facet, VertexSPtr vertex) {
     }
     return result;
 }
-
+#else // CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
 // Returns:
 // - ON_POSITIVE_SIDE  if the query is on the positive side (see below for definition)
 //   of the planar bisector of the two edges incident to 'vertex'.
@@ -228,6 +229,7 @@ CGAL::Sign SelfIntersection::SideOfBisector(FacetSPtr facet, VertexSPtr vertex, 
         CGAL::Orientation or_in = CGAL::orientation(*p_mid, *p_normal, *p_in, *point);
         CGAL::Orientation or_out = CGAL::orientation(*p_mid, *p_out, *p_normal, *point);
 
+        // @todo only compute this when necessary and it should be a predicate
         CGAL::FT sq_dist_in = KernelWrapper::squared_distance(edge_in->line(), point);
         CGAL::FT sq_dist_out = KernelWrapper::squared_distance(edge_out->line(), point);
         std::cout << "sq_dist_in = " << sq_dist_in << std::endl;
@@ -264,6 +266,7 @@ CGAL::Sign SelfIntersection::SideOfBisector(FacetSPtr facet, VertexSPtr vertex, 
 
     return result;
 }
+#endif // CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
 
 // @todo could be improved by storing the previous (query, edge) position
 // --> for consecutive edges only!
@@ -279,8 +282,7 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
         bool point_inside_bounds = true;
 
         if (vertex_src->degree() > 1) {
-// #define USE_OLD_FIND_NEAREST_EDGE_CODE
-#ifdef USE_OLD_FIND_NEAREST_EDGE_CODE
+#ifdef CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
             Plane3SPtr bisector_src = bisector(facet, vertex_src);
             if (bisector_src) {
                 if (KernelWrapper::side(bisector_src, point) < 0) {
@@ -303,7 +305,7 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
 
         if(point_inside_bounds) {
             if (vertex_dst->degree() > 1) {
-#ifdef USE_OLD_FIND_NEAREST_EDGE_CODE
+#ifdef CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
                 Plane3SPtr bisector_dst = bisector(facet, vertex_dst);
                 if (bisector_dst) {
                     if (KernelWrapper::side(bisector_dst, point) > 0) {

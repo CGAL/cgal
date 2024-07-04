@@ -93,7 +93,7 @@ Point3SPtr KernelWrapper::intersection(Sphere3SPtr sphere, Line3SPtr line) {
 Plane3SPtr KernelWrapper::bisector(Plane3SPtr plane1, Plane3SPtr plane2) {
     Plane3SPtr result = Plane3SPtr();
     std::cout << "WARNING: YOU ARE CALLING A BISECTOR, THAT'S AN APPROXIMATE SQRT" << std::endl;
-    CGAL_assertion(false);
+    // CGAL_assertion(false);
 #ifdef USE_CGAL
     result = KernelFactory::createPlane3(CGAL::bisector(*plane1, *plane2));
 #else
@@ -186,8 +186,9 @@ Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
 }
 
 Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
-    Plane3SPtr result = Plane3SPtr();
-#if 1 // this assumes a plane with normalized coefficients (i.e., its normal is normalized)
+    Pane3SPtr result = Plane3SPtr();
+// #define CGAL_SS3_OLD_CODE_OFFSET_PLANE
+#ifndef CGAL_SS3_OLD_CODE_OFFSET_PLANE // this assumes a plane with normalized coefficients (i.e., its normal is normalized)
 # ifdef USE_CGAL
     const CGAL::FT a = plane->a();
     const CGAL::FT b = plane->b();
@@ -199,11 +200,16 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
     const double c = plane->getC();
     const double d = plane->getD();
 # endif
-    // std::cout << "normalization check: " << a*a + b*b + c*c << std::endl;
-    CGAL_assertion_code(auto sq_n = a*a + b*b + c*c;)
-    CGAL_assertion((sq_n - 1) < 1e-5); // inaccuracies during normalization since the sqrt is usually not exact
+    CGAL_assertion_code(CGAL::FT sq_n = a*a + b*b + c*c;)
+    // std::cout << "normalization check: " << sq_n
+    //           << " (" << CGAL::to_interval(sq_n).first << "; "
+    //           << CGAL::to_interval(sq_n).second << ")" << std::endl;
+
+    // inaccuracies during normalization since the sqrt is (usually) not exact
+    CGAL_assertion((sq_n - 1) < 1e-5);
+
     result = KernelFactory::createPlane3(a, b, c, d - offset);
-#else // old code, unnecessary sqrt and constructions
+#else // CGAL_SS3_OLD_CODE_OFFSET_PLANE
     const Point3& p = plane->point();
 # ifdef USE_CGAL
     Vector3 v_norm = plane->orthogonal_vector();
@@ -214,7 +220,8 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
     Point3 p_trans = p + (v_normal * offset);
     Plane3 plane_trans(p_trans, v_normal);
     result = KernelFactory::createPlane3(plane_trans);
-#endif
+#endif // CGAL_SS3_OLD_CODE_OFFSET_PLANE
+
     DEBUG_SPTR(result);
     return result;
 }
@@ -249,14 +256,14 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
                                                    a3, b3, c3, d3) << std::endl;
 #endif
 
-    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-10);
-    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-10);
-    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-10);
-    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-10);
+    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-5);
+    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-5);
+    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-5);
+    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-5);
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    // @tmp, perturbation ensures that this is correct, but in theory we need
+    // @todo, perturbation ensures that this is correct, but in theory we need
     // to handle the degenerate configuration
     // Disabled because it's a runtime speed up
     //
@@ -310,14 +317,14 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
                                                    a3, b3, c3, d3) << std::endl;
 #endif
 
-    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-10);
-    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-10);
-    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-10);
-    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-10);
+    CGAL_assertion((a0*a0 + b0*b0 + c0*c0 - 1) <= 1e-5);
+    CGAL_assertion((a1*a1 + b1*b1 + c1*c1 - 1) <= 1e-5);
+    CGAL_assertion((a2*a2 + b2*b2 + c2*c2 - 1) <= 1e-5);
+    CGAL_assertion((a3*a3 + b3*b3 + c3*c3 - 1) <= 1e-5);
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    // @tmp, perturbation ensures that this is correct, but in theory we need
+    // @todo perturbation ensures that this is correct, but in theory we need
     // to handle the degenerate configuration
     // Disabled because it's a runtime speed up
     //

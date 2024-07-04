@@ -346,7 +346,7 @@ bool Polyhedron::isConsistent() const {
 
                 if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint())
                 {
-                    std::cout << "Warning: degenerate edge!" << std::endl;
+                    std::cout << "W: degenerate edge!" << std::endl;
                     DEBUG_VAR(edge->getVertexSrc());
                     std::cout << "Position of source: " << *(edge->getVertexSrc()->getPoint())<< std::endl;
                     DEBUG_VAR(edge->getVertexDst());
