@@ -28,7 +28,7 @@ struct Allow_no_surface_crossing
     : m_side_of_tmesh(mesh)
   {}
 
-  bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt) const
+  bool operator()(vertex_descriptor, Point_3 src, Point_3 tgt) const
   {
     const CGAL::Bounded_side s_src = m_side_of_tmesh(src);
     const CGAL::Bounded_side s_tgt = m_side_of_tmesh(tgt);
