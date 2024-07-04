@@ -77,8 +77,8 @@ namespace GLFW
       bool flatShading = true
     );
 
-    void initialize();
     void show();
+    void initialize(bool screenshotOnly=false);
     void make_screenshot(const std::string& filePath);
 
     void clear_application();
@@ -124,8 +124,11 @@ namespace GLFW
     inline void animation_duration(std::chrono::milliseconds duration) { m_animationController.set_duration(duration); }
 
     inline void center(const vec3f& center) { m_camera.set_center(center); }
+    inline void center(float x, float y, float z) { m_camera.set_center({x, y, z}); }
     inline void position(const vec3f& position) { m_camera.set_position(position); m_camera.set_default_position(position); }
+    inline void position(float x, float y, float z) { m_camera.set_position({x, y, z}); m_camera.set_default_position({x, y, z}); }
     inline void direction(const vec3f& direction) { m_camera.set_orientation(direction); m_camera.set_default_orientation(direction); }
+    inline void direction(float x, float y, float z) { m_camera.set_orientation({x, y, z}); m_camera.set_default_position({x, y, z});}
 
     // Getter section
     inline vec3f position() const { return m_camera.get_position(); }
@@ -230,7 +233,7 @@ namespace GLFW
     void switch_display_mode();
 
     void fullscreen();
-    void screenshot(const std::string& filePath);
+    void capture_screenshot(const std::string& filePath);
 
     vec4f color_to_vec4(const CGAL::IO::Color& c) const;
 
@@ -423,6 +426,7 @@ namespace GLFW
     Basic_viewer basic_viewer(&graphics_scene, title);
     basic_viewer.initialize();
     basic_viewer.show();
+    // basic_viewer.make_screenshot("test.png");
   } 
 } // end namespace CGAL 
 

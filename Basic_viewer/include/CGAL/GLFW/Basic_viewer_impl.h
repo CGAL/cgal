@@ -1,7 +1,7 @@
 #ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
 #define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
-#include "Basic_viewer.h"
+// #include "Basic_viewer.h"
 
 namespace CGAL 
 {
@@ -25,10 +25,10 @@ namespace GLFW
     }
 
     // OpenGL 2.1 with compatibilty
-    if (hidden)
-    {
-      glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-    }
+    // if (hidden)
+    // {
+    //   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+    // }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -58,11 +58,10 @@ namespace GLFW
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
       std::cerr << "Failed to initialized GLAD!";
+      glfwDestroyWindow(window);
+      glfwTerminate();
       exit(EXIT_FAILURE);
     }
-    // gladLoadGL();
-
-    // White background
 
     // Print various OpenGL information to stdout
     std::cout << glGetString(GL_VENDOR) << ": " << glGetString(GL_RENDERER) << '\n';
@@ -99,17 +98,20 @@ namespace GLFW
   }
 
   inline
-  void Basic_viewer::initialize()
+  void Basic_viewer::initialize(bool screenshotOnly)
   {
-    m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title);
+    m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title, screenshotOnly);
 
-    // Set event callbacks 
-    glfwSetWindowUserPointer(m_window, this);
-    glfwSetKeyCallback(m_window, key_callback);
-    glfwSetCursorPosCallback(m_window, cursor_callback);
-    glfwSetMouseButtonCallback(m_window, mouse_btn_callback);
-    glfwSetScrollCallback(m_window, scroll_callback);
-    glfwSetFramebufferSizeCallback(m_window, window_size_callback);
+    if (!screenshotOnly)
+    {
+      // Set event callbacks 
+      glfwSetWindowUserPointer(m_window, this);
+      glfwSetKeyCallback(m_window, key_callback);
+      glfwSetCursorPosCallback(m_window, cursor_callback);
+      glfwSetMouseButtonCallback(m_window, mouse_btn_callback);
+      glfwSetScrollCallback(m_window, scroll_callback);
+      glfwSetFramebufferSizeCallback(m_window, window_size_callback);
+    }
 
     GLint openglMajorVersion, openglMinorVersion;
     glGetIntegerv(GL_MAJOR_VERSION, &openglMajorVersion);
@@ -123,9 +125,12 @@ namespace GLFW
     compile_shaders();
     initialize_camera();
     initialize_buffers();
-    initialize_keys_actions();
     initialize_and_load_world_axis();
     initialize_and_load_clipping_plane();
+    if (!screenshotOnly)
+    {
+      initialize_keys_actions();
+    }
   }
 
   inline
@@ -164,23 +169,10 @@ namespace GLFW
   inline
   void Basic_viewer::make_screenshot(const std::string& filePath)
   {
-    m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title, true);
-    initialize_buffers();
-
-    GLint openglMajorVersion, openglMinorVersion;
-    glGetIntegerv(GL_MAJOR_VERSION, &openglMajorVersion);
-    glGetIntegerv(GL_MINOR_VERSION, &openglMinorVersion);
-
-    if (openglMajorVersion > 4 || openglMajorVersion == 4 && openglMinorVersion >= 3)
-    {
-      m_isOpengl4_3 = true;
-    }
-
-    compile_shaders();
-    render_scene();
+    render_scene(0);
     glfwSwapBuffers(m_window);
-    screenshot(filePath);
-    glfwTerminate();
+    capture_screenshot(filePath);
+    clear_application();
   }
 
   void generate_grid(Line_renderer& renderer, const vec3f& color, float size, int nbSubdivisions=10)
@@ -797,16 +789,16 @@ namespace GLFW
       if (m_printApplicationState)
       {
         std::cout << "\33[2K"  
-                  << "FPS: "                        << std::round(1 / deltaTime)                        << "    " 
+                  << "FPS: "                        << std::round(1 / deltaTime)                        << "\n\33[2K" 
                   << "Camera translation speed: "   << m_camera.get_translation_speed()                 << "    " 
                   << "Camera rotation speed: "      << std::round(m_camera.get_rotation_speed())        << "    "
-                  << "CP translation speed: "       << m_clippingPlane.get_translation_speed()          << "    "            
+                  << "CP translation speed: "       << m_clippingPlane.get_translation_speed()          << "\n\33[2K"            
                   << "CP rotation speed: "          << std::round(m_clippingPlane.get_rotation_speed()) << "    "     
-                  << "CP constraint axis: "         << m_clippingPlane.get_constraint_axis()            << "    "     
+                  << "CP constraint axis: "         << m_clippingPlane.get_constraint_axis()            << "\n\33[2K"     
                   << "Light color: ("               << m_ambientColor.x()                               << ", " 
                                                     << m_ambientColor.y()                               << ", " 
                                                     << m_ambientColor.z()                               << ")   "     
-                  << "\r" << std::flush;
+                  << "\033[F\033[F\033[F\r" << std::flush;
       }
     }
   }
@@ -896,8 +888,7 @@ namespace GLFW
       fullscreen();
       break;
     case SCREENSHOT:
-      screenshot("./screenshot.png");
-      std::cout << "Screenshot saved in local directory." << std::endl;
+      capture_screenshot("./screenshot.png");
       break;
     /*SCENE*/
     case VERTICES_DISPLAY:
@@ -1287,23 +1278,26 @@ namespace GLFW
   }
 
   inline
-  void Basic_viewer::screenshot(const std::string &filepath)
+  void Basic_viewer::capture_screenshot(const std::string &filepath)
   {
     // https://lencerf.github.io/post/2019-09-21-save-the-opengl-rendering-to-image-file/ (thanks)
     // https://github.com/nothings/stb/
     // The stb lib used here is from glfw/deps
 
-    const GLsizei NB_CHANNELS = 3;
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
+
+    const GLsizei NB_CHANNELS = 4;
     GLsizei stride = NB_CHANNELS * m_windowSize.x();
     stride += (stride % 4) ? (4 - stride % 4) : 0; // stride must be a multiple of 4
     GLsizei bufferSize = stride * m_windowSize.y();
 
     std::vector<char> buffer(bufferSize);
-    m_faceShader.use();
+    m_faceShader.use(); 
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
 
     glReadBuffer(GL_FRONT);
-    glReadPixels(0, 0, m_windowSize.x(), m_windowSize.y(), GL_RGB, GL_UNSIGNED_BYTE, buffer.data());
+    glReadPixels(0, 0, m_windowSize.x(), m_windowSize.y(), GL_RGBA, GL_UNSIGNED_BYTE, buffer.data());
 
     stbi_flip_vertically_on_write(true);
     stbi_write_png(filepath.data(), m_windowSize.x(), m_windowSize.y(), NB_CHANNELS, buffer.data(), stride);
@@ -1311,8 +1305,8 @@ namespace GLFW
 
   void Basic_viewer::draw_world_axis() 
   {
-    int w = m_windowSize.x();
-    int h = m_windowSize.y();
+    int &w = m_windowSize.x();
+    int &h = m_windowSize.y();
 
     set_world_axis_uniforms();
 
@@ -1329,7 +1323,7 @@ namespace GLFW
     m_XYAxisRenderer.draw();
     m_XYGridRenderer.draw();
   }
-
+ 
   inline
   void Basic_viewer::end_action(int action, const float deltaTime)
   {
