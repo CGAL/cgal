@@ -193,6 +193,7 @@ set(db_3d_SOURCES
         src/db/3d/StraightSkeletonDAO.cpp
         src/db/3d/AbstractFile.cpp
         src/db/3d/OBJFile.cpp
+        src/db/3d/PLYFile.cpp
         src/db/3d/FLMAFile.cpp)
 add_library(skeldb SHARED ${db_SOURCES} ${db_2d_SOURCES} ${db_3d_SOURCES})
 target_link_libraries(skeldb skeldata2d skeldata3d skelutil sqlite3 dl CGAL::CGAL)
