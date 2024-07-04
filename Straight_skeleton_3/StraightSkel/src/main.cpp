@@ -41,6 +41,7 @@
 #include "db/3d/PolyhedronDAO.h"
 #include "db/3d/StraightSkeletonDAO.h"
 #include "db/3d/OBJFile.h"
+#include "db/3d/PLYFile.h"
 #include "db/3d/FLMAFile.h"
 
 #include "algo/ptrs.h"
@@ -76,7 +77,7 @@ void printUsage(const char* argv0) {
     std::cout << std::endl;
     std::cout << "  3d options:" << std::endl;
     std::cout << "    PolyhedronID" << std::endl;
-    std::cout << "    load filename.obj" << std::endl;
+    std::cout << "    load filename.obj|ply|flma" << std::endl;
     std::cout << "    import filename.obj" << std::endl;
     std::cout << "    skel SkelID" << std::endl;
     std::cout << std::endl;
@@ -288,6 +289,8 @@ int main(int argc, const char* argv[]) {
             const char* filename = argv[3];
             if (util::StringFuncs::endsWith(filename, ".obj")) {
                 polyhedron = db::_3d::OBJFile::load(filename);
+            } else if (util::StringFuncs::endsWith(filename, ".ply")) {
+                polyhedron = db::_3d::PLYFile::load(filename);
             } else if (util::StringFuncs::endsWith(filename, ".flma")) {
                 polyhedron = db::_3d::FLMAFile::load(filename);
             }
