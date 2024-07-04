@@ -22,6 +22,7 @@
 
 namespace CGAL {
 
+#ifndef DOXYGEN_RUNNING
 /*!
  * \ingroup PkgCT_3Classes
  * \brief The default 3D constrained Delaunay triangulation type.
@@ -45,6 +46,7 @@ struct Default_constrained_Delaunay_triangulation_3_type_generator
   using Tr = Triangulation_3<Traits, Tds>;
   using type = Constrained_Delaunay_triangulation_3<Traits, Tr>;
 };
+#endif // DOXYGEN_RUNNING
 
 /*!
  * \ingroup PkgCT_3Classes
@@ -54,10 +56,9 @@ struct Default_constrained_Delaunay_triangulation_3_type_generator
  * This alias template names the default 3D constrained Delaunay triangulation
  * type for a given geometric traits class.
  *
- * \sa Default_constrained_Delaunay_triangulation_3_type_generator
  */
 template <typename Traits>
-using Default_constrained_Delaunay_triangulation_3 = typename Default_constrained_Delaunay_triangulation_3_type_generator<Traits>::type;
+using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triangulation_3<Triangulation_3<Traits, Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>>>;
 
 /*!
  * \ingroup PkgCT_3Functions
@@ -86,7 +87,7 @@ using Default_constrained_Delaunay_triangulation_3 = typename Default_constraine
  *
  * If `Triangulation` is `CGAL::Default`, the geometric traits `Traits` is deduced from the polygon mesh type
  * `PolygonMesh` and the named parameters `NamedParameters`. And then the default constrained Delaunay triangulation is
- * `Default_constrained_Delaunay_triangulation_3_type_generator<Traits>::type`.
+ * `CGAL::Default_constrained_Delaunay_triangulation_3<Traits>`.
  *
  * \param mesh The polygon mesh representing the constraints.
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -171,7 +172,7 @@ auto make_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh,
  *
  * If `Triangulation` is `CGAL::Default`, the geometric traits `Traits` is deduced from the point type
  * in `PointRange` and the named parameters `NamedParameters`. And then the default constrained Delaunay triangulation
- * is `Default_constrained_Delaunay_triangulation_3_type_generator<Traits>::type`.
+ * is `CGAL::Default_constrained_Delaunay_triangulation_3<Traits>`.
  *
  * \param points a range of points representing the vertices of the polygon soup
  * \param polygons a range of ranges of indices representing the faces of the polygon soup

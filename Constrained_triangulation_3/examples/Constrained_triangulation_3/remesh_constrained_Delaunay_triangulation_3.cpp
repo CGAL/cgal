@@ -11,11 +11,11 @@
 #include <fstream>
 #include <string>
 
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using Vb = CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>;
-using Cb = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
+using K   = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Vb  = CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>;
+using Cb  = CGAL::Constrained_Delaunay_triangulation_cell_base_3<K>;
 using Tds = CGAL::Triangulation_data_structure_3<Vb, Cb>;
-using Tr = CGAL::Triangulation_3<K, Tds>;
+using Tr  = CGAL::Triangulation_3<K, Tds>;
 using CDT = CGAL::Constrained_Delaunay_triangulation_3<K, Tr>;
 
 int main(int argc, char* argv[])

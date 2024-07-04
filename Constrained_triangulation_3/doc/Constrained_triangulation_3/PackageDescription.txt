@@ -52,8 +52,8 @@ constrained triangulation class.
 
 \cgalCRPSubsection{Class Templates}
 
+- `CGAL::Default_constrained_Delaunay_triangulation_3<Kernel>`
 - `CGAL::Constrained_Delaunay_triangulation_3<Traits, Triangulation>`
-- `CGAL::Default_constrained_Delaunay_triangulation_3_type_generator`
 - `CGAL::Constrained_Delaunay_triangulation_vertex_base_3`
 - `CGAL::Constrained_Delaunay_triangulation_cell_base_3`
 */
