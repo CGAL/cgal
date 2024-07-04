@@ -31,6 +31,11 @@ configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/confi
 
 find_package(CGAL REQUIRED Core)
 
+create_single_source_cgal_program("add_or_remove_bbox.cpp")
+create_single_source_cgal_program("color_ply_inputs.cpp")
+create_single_source_cgal_program("convert_to_weighted_PLY.cpp")
+create_single_source_cgal_program("compare_outputs.cpp")
+
 # to get help about a cmake module run:
 # $ cmake --help-module FindBoost
 if(BUILD_TESTS)
