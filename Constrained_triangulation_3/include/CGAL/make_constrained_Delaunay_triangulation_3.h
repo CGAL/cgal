@@ -58,7 +58,7 @@ struct Default_constrained_Delaunay_triangulation_3_type_generator
  *
  */
 template <typename Traits>
-using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triangulation_3<Triangulation_3<Traits, Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>>>;
+using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triangulation_3<Traits, Triangulation_3<Traits, Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>>>;
 
 /*!
  * \ingroup PkgCT_3Functions

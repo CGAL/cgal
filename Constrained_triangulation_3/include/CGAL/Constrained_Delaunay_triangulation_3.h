@@ -564,7 +564,6 @@ public:
   {
     auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get(CGAL::vertex_point, mesh));
-    // TODO: set the traits object in the triangulation
 
     [[maybe_unused]] /* TODO */
     auto mesh_face_patch_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_patch),
@@ -580,10 +579,20 @@ public:
       hint_ch = vh->cell();
       put(tr_vertex_map, v, vh);
     }
+    struct {
+      decltype(tr_vertex_map)* vertex_map;
+      Vertex_handle operator()(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v) const {
+        return get(*vertex_map, v);
+      }
+    } transform_function{&tr_vertex_map};
+
     for(auto f : faces(mesh)) {
       auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
-      cdt_impl.insert_constrained_face(
-          face_vertices | std::views::transform([&](auto v) { return get(tr_vertex_map, v); }), false);
+
+      auto begin = boost::make_transform_iterator(face_vertices.begin(), transform_function);
+      auto end = boost::make_transform_iterator(face_vertices.end(), transform_function);
+
+      cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
     }
     cdt_impl.restore_Delaunay();
     cdt_impl.restore_constrained_Delaunay();
@@ -646,6 +655,7 @@ public:
   Constrained_Delaunay_triangulation_3(const PointRange& points,
                                        const PolygonRange& polygons,
                                        const NamedParams& np = parameters::default_values())
+      : cdt_impl(parameters::choose_parameter(parameters::get_parameter(np, internal_np::geom_traits), Traits{}))
   {
     using PointRange_const_iterator = typename PointRange::const_iterator;
     using PointRange_value_type = typename std::iterator_traits<PointRange_const_iterator>::value_type;
@@ -657,7 +667,8 @@ public:
                                                        boost::identity_property_map{});
     using Vertex_handle = typename Triangulation::Vertex_handle;
     using Cell_handle = typename Triangulation::Cell_handle;
-    std::vector<Vertex_handle> vertices(points.size());
+    using Vec_vertex_handle = std::vector<Vertex_handle>;
+    Vec_vertex_handle vertices(points.size());
     Cell_handle hint_ch{};
     auto i = 0u;
     for(auto p_descr : points) {
@@ -666,9 +677,15 @@ public:
       hint_ch = vh->cell();
       vertices[i++] = vh;
     }
+
+    struct {
+      Vec_vertex_handle* vertices;
+      const Vertex_handle& operator()(std::size_t i) const { return (*vertices)[i]; }
+    } transform_function{&vertices};
     for(auto polygon : polygons) {
-      cdt_impl.insert_constrained_face(
-          polygon | std::views::transform([&](auto i) { return vertices[i]; }), false);
+      auto begin = boost::make_transform_iterator(polygon.begin(), transform_function);
+      auto end = boost::make_transform_iterator(polygon.end(), transform_function);
+      cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
     }
     cdt_impl.restore_Delaunay();
     cdt_impl.restore_constrained_Delaunay();
@@ -1803,12 +1820,12 @@ private:
       return visited_edges.emplace(CGAL::make_sorted_pair(v0, v1), does_intersect);
     };
 
+#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     using Mesh = Surface_mesh<Point_3>;
     using Face_index = typename Mesh::Face_index;
     using EK = CGAL::Exact_predicates_exact_constructions_kernel;
     const auto to_exact = CGAL::Cartesian_converter<Geom_traits, EK>();
     const auto from_exact = CGAL::Cartesian_converter<EK, Geom_traits>();
-#if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
     if(this->debug_regions()) {
 
       Mesh tets_intersect_region_mesh;
