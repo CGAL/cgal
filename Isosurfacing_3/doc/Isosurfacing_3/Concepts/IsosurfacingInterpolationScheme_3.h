@@ -17,7 +17,7 @@ class IsosurfacingInterpolationScheme_3
 public:
   /*!
   * The geometric traits type.
-  * Must be a model of `IsosurfacingTraits_3`, equal to that of the grid.
+  * Must be a model of `IsosurfacingTraits_3`.
   */
   typedef unspecified_type Geom_traits;
 
@@ -44,7 +44,7 @@ public:
   * \tparam ValueRange must be a model of `RandomAccessRange` with `FT` as value type
   */
   template <typename Grid, typename ValueRange>
-  FT interpolate_values(const Point_3& p, const Grid& g, const ValueRange& vr) const;
+  FT interpolate_values(Point_3 p, Grid g, ValueRange vr) const;
 
   /*!
    * \brief interpolates the gradient of the gradient field at the point `p`
@@ -54,5 +54,5 @@ public:
    * \tparam GradientRange must be a model of `RandomAccessRange` with `Vector_3` as value type
    */
   template <typename Grid, typename GradientRange>
-  Vector_3 interpolate_gradients(const Point_3& p, const Grid& g, const GradientRange& gr) const;
+  Vector_3 interpolate_gradients(Point_3 p, Grid g, GradientRange gr) const;
 };

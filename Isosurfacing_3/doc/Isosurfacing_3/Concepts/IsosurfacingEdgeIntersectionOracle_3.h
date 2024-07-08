@@ -31,14 +31,14 @@ public:
    * \param isovalue the isovalue defining the isosurface with which we seek an intersection
    * \param p the intersection point, if it exists
    *
-   * \return `true` if the intersection point exists, `false` otherwise
+   * \returns `true` if the intersection point exists, `false` otherwise.
    */
   template <typename Domain>
-  bool operator()(const typename Domain::Geom_traits::Point_3& p_0,
-                  const typename Domain::Geom_traits::Point_3& p_1,
-                  const typename Domain::Geom_traits::FT val_0,
-                  const typename Domain::Geom_traits::FT val_1,
-                  const Domain& domain,
-                  const typename Domain::Geom_traits::FT isovalue,
+  bool operator()(typename Domain::Geom_traits::Point_3 p_0,
+                  typename Domain::Geom_traits::Point_3 p_1,
+                  typename Domain::Geom_traits::FT val_0,
+                  typename Domain::Geom_traits::FT val_1,
+                  Domain domain,
+                  typename Domain::Geom_traits::FT isovalue,
                   typename Domain::Geom_traits::Point_3& p) const;
 };

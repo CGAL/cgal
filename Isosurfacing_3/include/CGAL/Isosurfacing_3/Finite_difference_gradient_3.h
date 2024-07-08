@@ -70,9 +70,9 @@ public:
   { }
 
   /**
-   * \brief evaluates the gradient at a point in 3D space.
+   * \brief returns the value the gradient at a point in 3D space.
    *
-   * \param p the position at which the gradient is computed
+   * \param p the position at which the gradient is computed.
    */
   Vector_3 operator()(const Point_3& p) const
   {

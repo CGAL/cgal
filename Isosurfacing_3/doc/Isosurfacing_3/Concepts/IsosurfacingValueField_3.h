@@ -36,12 +36,12 @@ public:
   typedef unspecified_type vertex_descriptor;
 
   /*!
-  returns the value of the value field at the point `p`.
+  returns the value of the field at the point `p`.
   */
-  FT operator()(const Point_3& p);
+  FT operator()(Point_3 p);
 
   /*!
-  returns the value of the value field at the vertex `v`.
+  returns the value of the field at the vertex `v`.
   */
-  FT operator()(const vertex_descriptor& v);
+  FT operator()(vertex_descriptor v);
 };

@@ -41,13 +41,13 @@ namespace Isosurfacing {
  *
  * \param domain the domain providing the spatial partition and the data
  * \param isovalue the value defining the isosurface
- * \param points the points of the triangles in the created indexed face set
- * \param triangles each element in the vector describes a triangle using the indices of the points in `points`
+ * \param points the points of the triangles in the output triangle soup
+ * \param triangles the faces of the output triangle soup. Each element in the vector describes a triangle using the indices of the points in `points`.
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{use_topologically_correct_marching_cubes}
- *     \cgalParamDescription{whether the topologically correct variant of Marching Cubes \cgalCite{cgal:g-ctcmi-16} should be used.}
+ *     \cgalParamDescription{whether the topologically correct variant of Marching Cubes \cgalCite{cgal:g-ctcmi-16} should be used, or the base version \cgalCite{cgal:c-mcctci-95}.}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd

@@ -32,7 +32,7 @@ public:
   typedef unspecified_type Vector_3;
 
   /*!
-  returns the gradient at the position `p`
+  returns the gradient at the position `p`.
   */
-  Vector_3 operator()(const Point_3& p) const;
+  Vector_3 operator()(Point_3 p) const;
 };

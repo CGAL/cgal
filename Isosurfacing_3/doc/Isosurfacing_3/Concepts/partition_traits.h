@@ -60,66 +60,66 @@ public:
   /*!
    * \returns the 3D position of the vertex `v`.
    */
-  static Point_3 point(const vertex_descriptor& v, const IsosurfacingPartition_3& partition);
+  static Point_3 point(vertex_descriptor v, IsosurfacingPartition_3 partition);
 
   /*!
    * \returns the two vertices incident to the edge `e`.
    */
-  static Edge_vertices incident_vertices(const edge_descriptor& e, const IsosurfacingPartition_3& partition);
+  static Edge_vertices incident_vertices(edge_descriptor e, IsosurfacingPartition_3 partition);
 
   /*!
    * \returns all the cells incident to the edge `e`, in a geometrically ordered manner around the edge.
    */
-  static Cells_incident_to_edge incident_cells(const edge_descriptor& e, const IsosurfacingPartition_3& partition);
+  static Cells_incident_to_edge incident_cells(edge_descriptor e, IsosurfacingPartition_3 partition);
 
   /*!
    * \returns all the vertices of the cell `c`.
    */
-  static Cell_vertices cell_vertices(const cell_descriptor& c, const IsosurfacingPartition_3& partition);
+  static Cell_vertices cell_vertices(cell_descriptor c, IsosurfacingPartition_3 partition);
 
   /*!
    * \returns all the edges of the cell `c`.
    */
-  static Cell_edges cell_edges(const cell_descriptor& c, const IsosurfacingPartition_3& partition);
+  static Cell_edges cell_edges(cell_descriptor c, IsosurfacingPartition_3 partition);
 
   /*!
    * iterates over all vertices, and calls the functor `f` on each one.
    *
    * \tparam ConcurrencyTag decides if the vertices are iterated sequentially or in parallel.
    * Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-   * \tparam Functor must implement `void operator()(const vertex_descriptor& vertex)`
+   * \tparam Functor must implement `void operator()(vertex_descriptor vertex)`
    *
    * \param f the functor called on every vertex
    * \param partition the partition whose vertices are being iterated over
   */
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_vertex(Functor& f, const IsosurfacingPartition_3& partition);
+  static void for_each_vertex(Functor& f, IsosurfacingPartition_3 partition);
 
   /*!
    * iterates over all edges, and calls the functor `f` on each one.
    *
    * \tparam ConcurrencyTag decides if the edges are iterated sequentially or in parallel.
    * Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-   * \tparam Functor must implement `void operator()(const edge_descriptor& edge)`.
+   * \tparam Functor must implement `void operator()(edge_descriptor edge)`.
    *
    * \param f the functor called on every edge
    * \param partition the partition whose edges are being iterated over
    */
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_edge(Functor& f, const IsosurfacingPartition_3& partition);
+  static void for_each_edge(Functor& f, IsosurfacingPartition_3 partition);
 
   /*!
    * iterates over all cells, and calls the functor `f` on each one.
    *
    * \tparam ConcurrencyTag decides if the cells are iterated sequentially or in parallel.
    * Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-   * \tparam Functor must implement `void operator()(const cell_descriptor& cell)`.
+   * \tparam Functor must implement `void operator()(cell_descriptor cell)`.
    *
    * \param f the functor called on every cell
    * \param partition the partition whose cells are being iterated over
    */
   template <typename ConcurrencyTag, typename Functor>
-  static void for_each_cell(Functor& f, const IsosurfacingPartition_3& partition);
+  static void for_each_cell(Functor& f, IsosurfacingPartition_3 partition);
 };
 
 } // namespace Isosurfacing

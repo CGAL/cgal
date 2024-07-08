@@ -43,8 +43,8 @@ namespace Isosurfacing {
  *
  * \param domain the domain providing the spatial partition and the values and gradient data
  * \param isovalue the value defining the isosurface
- * \param points the points of the polygons in the created polygon soup
- * \param polygons each element in the vector describes a polygon using the indices of the points in `points`
+ * \param points the points of the polygons in the output polygon soup
+ * \param polygons the faces of the output polygon soup. Each element in the vector describes a polygon using the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin
@@ -53,7 +53,7 @@ namespace Isosurfacing {
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
  *     \cgalParamExtra{Constraining the vertex to its dual cell guarantees that the resulting
- *                     surface is a without self-intersections (non-manifoldness aside). Oppositely,
+ *                     surface is without self-intersections (non-manifoldness aside). Oppositely,
  *                     an unconstrained positioning strategy might produce better looking surfaces
  *                     near sharp features (ridges, corners), at the cost of possible self-intersections.}
  *   \cgalParamNEnd

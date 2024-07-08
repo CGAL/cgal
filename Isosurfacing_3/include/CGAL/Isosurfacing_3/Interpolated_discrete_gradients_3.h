@@ -62,7 +62,7 @@ public:
     m_gradients.resize(nv);
   }
 
-  /// computes (using finite difference) and stores gradients at the vertices of the grid.
+  /// computes (using finite difference) and stores gradients at all vertices of the grid.
   /// \tparam ValueField must be a model of `IsosurfacingValueField_3`
   /// \param values a field of values whose gradient are being computed
   template <typename ValueField>
@@ -79,7 +79,7 @@ public:
 
 public:
   /**
-   * \brief returns the gradient stored at the grid vertex described by a set of indices.
+   * \brief returns the gradient stored at the grid vertex described by its three indices.
    *
    * \note This function can be used to set the gradient at a grid vertex.
    *

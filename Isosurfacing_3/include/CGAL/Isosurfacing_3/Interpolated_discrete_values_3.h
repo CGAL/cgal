@@ -64,13 +64,15 @@ public:
 
 public:
   /**
-   * \brief returns the scalar value stored at the grid vertex described by a set of indices.
+   * \brief returns the scalar value stored at the grid vertex described by its three indices.
    *
    * \note This function can be used to set the value at a grid vertex.
    *
    * \param i the index in the `x` direction
    * \param j the index in the `y` direction
    * \param k the index in the `z` direction
+   *
+   * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
    */
   FT& operator()(const std::size_t i,
                  const std::size_t j,
@@ -83,7 +85,7 @@ public:
   }
 
   /**
-   * \brief returns the scalar value stored at the grid vertex described by a set of indices.
+   * \brief returns the scalar value stored at the grid vertex described by its three indices.
    *
    * \param i the index in the `x` direction
    * \param j the index in the `y` direction
@@ -100,7 +102,7 @@ public:
   }
 
   /*!
-   * returns the value at vertex `v`.
+   * returns the interpolated value at vertex `v`.
    */
   FT operator()(const vertex_descriptor& v) const
   {
@@ -108,7 +110,7 @@ public:
   }
 
   /*!
-   * returns the value at point `p`.
+   * returns the interpolated value at point `p`.
    */
   FT operator()(const Point_3& p) const
   {

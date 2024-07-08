@@ -96,44 +96,44 @@ public:
   /*!
   returns the 3D position of the vertex `v`.
   */
-  Point_3 point(const vertex_descriptor& v) const;
+  Point_3 point(vertex_descriptor v) const;
 
   /*!
-  returns the value of the values field at the point `p`.
+  returns the value of the value field at the point `p`.
   */
-  FT value(const Point_3& p) const;
+  FT value(Point_3 p) const;
 
   /*!
-  returns the value of the values field at the vertex `v`.
+  returns the value of the value field at the vertex `v`.
   */
-  FT value(const vertex_descriptor& v) const;
+  FT value(vertex_descriptor v) const;
 
   /*!
   returns the two vertices incident to the edge `e`.
   */
-  Edge_vertices incident_vertices(const edge_descriptor& e) const;
+  Edge_vertices incident_vertices(edge_descriptor e) const;
 
   /*!
-  returns all the cells incident to the edge `e`, in a geometrically ordered manner around the edge.
+  returns all the cells incident to the edge `e`, in a clockwise or counterclockwise order.
   */
-  Cells_incident_to_edge incident_cells(const edge_descriptor& e) const;
+  Cells_incident_to_edge incident_cells(edge_descriptor e) const;
 
   /*!
   returns all the vertices of the cell `c`.
   */
-  Cell_vertices cell_vertices(const cell_descriptor& c) const;
+  Cell_vertices cell_vertices(cell_descriptor c) const;
 
   /*!
   returns all the edges of the cell `c`.
   */
-  Cell_edges cell_edges(const cell_descriptor& c) const;
+  Cell_edges cell_edges(cell_descriptor c) const;
 
   /*!
   iterates over all vertices, and calls the functor `f` on each one.
 
   \tparam ConcurrencyTag decides if the vertices are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-  \tparam Functor must implement `void operator()(const vertex_descriptor& vertex)`
+  \tparam Functor must implement `void operator()(vertex_descriptor vertex)`
 
   \param f the functor called on every vertex
   */
@@ -145,7 +145,7 @@ public:
 
   \tparam ConcurrencyTag decides if the edges are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-  \tparam Functor must implement `void operator()(const edge_descriptor& edge)`.
+  \tparam Functor must implement `void operator()(edge_descriptor edge)`.
 
   \param f the functor called on every edge
   */
@@ -157,7 +157,7 @@ public:
 
   \tparam ConcurrencyTag decides if the cells are iterated sequentially or in parallel.
   Can be either `CGAL::Sequential_tag`, `CGAL::Parallel_if_available_tag`, or `CGAL::Parallel_tag`.
-  \tparam Functor must implement `void operator()(const cell_descriptor& cell)`.
+  \tparam Functor must implement `void operator()(cell_descriptor cell)`.
 
   \param f the functor called on every cell
   */
@@ -174,12 +174,12 @@ public:
   \param isovalue the isovalue defining the isosurface with which we seek an intersection
   \param p the intersection point, if it exists
 
-  \returns `true` if the intersection point exists, `false` otherwise
+  \returns `true` if the intersection point exists, `false` otherwise.
   */
-  bool construct_intersection(const Point_3& p_0, const Point_3& p_1,
-                            const FT val_0, const FT val_1,
-                            const FT isovalue,
-                            Point_3& p) const;
+  bool construct_intersection(Point_3 p_0, Point_3 p_1,
+                              FT val_0, FT val_1,
+                              FT isovalue,
+                              Point_3& p) const;
 
   /// @}
 };

@@ -28,9 +28,10 @@ namespace Isosurfacing {
  * \brief The class `Dichotomy_edge_intersection` uses a dichotomy to find the intersection point
  * between an edge and the isosurface.
  *
- * This class is for example suitable to be used as the `EdgeIntersectionOracle` template parameter of isosurfacing
- * domain classes when values are computed using an implicit function.
- * It is however not optimal when the values are interpolated from discrete values
+ * This class is for example suitable to be used as the `EdgeIntersectionOracle` template
+ * parameter of isosurfacing domain classes when values are computed using an implicit function.
+ *
+ * \warning It is not optimal to use this class when values are interpolated from discrete values
  * since the intersection can be computed analytically in this case.
  *
  * \sa `CGAL::Isosurfacing::Linear_interpolation_edge_intersection`
@@ -39,11 +40,25 @@ namespace Isosurfacing {
  */
 struct Dichotomy_edge_intersection
 {
-  unsigned int m_max_iterations = 10;
-  double m_relative_eps = 1e-7;
+  unsigned int m_max_iterations;
+  double m_relative_eps;
+
+public:
+  /*!
+  * Constructor, enabling setting up the two criteria which can stop the dichotomy: either a
+  * threshold on the value (i.e., the difference between the isovalue and the value at the current
+  * point is smaller than `relative_eps * isovalue`), or a maximum number of iterations.
+  */
+  Dichotomy_edge_intersection(unsigned int max_iterations = 10,
+                              double relative_eps = 1e-7)
+    : m_max_iterations(max_iterations),
+      m_relative_eps(relative_eps)
+  { }
 
   /*!
    * \brief computes the intersection point between an edge and the isosurface.
+   *
+   * The result (if it exists) is stored in `p`.
    *
    * \tparam Domain must be a model of `IsosurfacingDomain_3`
    *

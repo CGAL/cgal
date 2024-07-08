@@ -36,8 +36,8 @@ namespace IO {
  * \tparam Values must be `CGAL::Isosurfacing::Interpolated_discrete_values_3<Grid>`
  *
  * \param image the image providing the data
- * \param grid the grid
- * \param values the values
+ * \param grid the output grid
+ * \param values the output values
  */
 // We need to have the API pass us an existing grid / values pair because the values
 // usually keep a reference to the grid.
@@ -77,10 +77,11 @@ bool convert_image_to_grid(const CGAL::Image_3& image,
 /**
  * \ingroup IS_IO_functions_grp
  *
- * \brief create an `CGAL::Image_3` from a grid and a field of values.
+ * \brief create a `CGAL::Image_3` from a grid and a field of values.
  *
  * \tparam Grid must be `CGAL::Isosurfacing::Cartesian_grid_3<GeomTraits>` with `GeomTraits`
  *              a model of `IsosurfacingTraits_3`
+ * \tparam Values must be `CGAL::Isosurfacing::Interpolated_discrete_values_3<Grid>`
  *
  * \param grid the space partitioning data structure
  * \param values the field of values

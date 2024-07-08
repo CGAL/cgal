@@ -220,9 +220,9 @@ public:
   { }
 
   /**
-   * \brief creates a %Cartesian grid with `xdim * ydim * zdim` grid vertices.
+   * \brief creates a %Cartesian grid with `dimensions[0]*dimensions[1]*dimensions[2]` grid vertices.
    *
-   * The grid covers the space described by an iso-cuboid.
+   * The grid covers the space described by the iso-cuboid `span`.
    *
    * \param span the geometric span of the grid
    * \param dimensions the number of grid vertices in the `x`, `y`, and `z` directions
@@ -241,10 +241,10 @@ public:
   }
 
   /**
-   * \brief creates a %Cartesian grid with `xdim * ydim * zdim` grid vertices.
+   * \brief creates a %Cartesian grid with `dimensions[0]*dimensions[1]*dimensions[2]` grid vertices.
    *
-   * The grid covers the space described by an iso-cuboid,
-   * itself described through two diagonal corners.
+   * The grid covers the space described by the iso-cuboid span,
+   * itself described through two diagonal corners `p` and `q`.
    *
    * \param p the lexicographically smallest corner of the iso-cuboid
    * \param q the lexicographically largest corner of the iso-cuboid
@@ -261,9 +261,9 @@ public:
   { }
 
   /**
-   * \brief creates a %Cartesian grid using a prescribed grid step.
+   * \brief creates a %Cartesian grid using a prescribed grid step `spacing`.
    *
-   * The grid covers the space described by an iso-cuboid.
+   * The grid covers the space described by the iso-cuboid `span`.
    *
    * \param span the geometric span of the grid
    * \param spacing the dimension of the paving cell, in the `x`, `y`, and `z` directions
@@ -302,7 +302,7 @@ public:
 
 public:
   /**
-   * returns the geometric traits class
+   * returns the geometric traits class.
    */
   const Geom_traits& geom_traits() const
   {
@@ -310,34 +310,34 @@ public:
   }
 
   /**
-   * returns an iso-cuboid representing the geometric span of the %Cartesian grid
+   * returns an iso-cuboid representing the geometric span of the %Cartesian grid.
    */
   const Iso_cuboid_3& span() const { return m_span; }
 
   /**
-   * returns the number of grid vertices in the `x` direction
+   * returns the number of grid vertices in the `x` direction.
    */
   std::size_t xdim() const { return m_dims[0]; }
 
   /**
-   * returns the number of grid vertices in the `y` direction
+   * returns the number of grid vertices in the `y` direction.
    */
   std::size_t ydim() const { return m_dims[1]; }
 
   /**
-   * returns the number of grid vertices in the `z` direction
+   * returns the number of grid vertices in the `z` direction.
    */
   std::size_t zdim() const { return m_dims[2]; }
 
   /**
    * returns the spacing of the %Cartesian grid, that is a vector whose coordinates are
-   * the grid steps in the `x`, `y`, and `z` directions, respectively
+   * the grid steps in the `x`, `y`, and `z` directions, respectively.
    */
   const Vector_3& spacing() const { return m_spacing; }
 
 public:
   /**
-   * \brief returns the index of a grid cell given its indices.
+   * returns the index of a grid cell given its indices (i.e., `(k * y_dim + j) * x_dim + i`).
   */
   std::size_t linear_index(const std::size_t i,
                            const std::size_t j,
@@ -349,7 +349,7 @@ public:
 
 public:
   /**
-   * \brief returns the index of the grid cell that contains a given point.
+   * \brief returns the coordinates of the grid cell that contains a given point.
    *
    * \param p the point to be located
    *
@@ -380,7 +380,7 @@ public:
   // Geometry
 public:
   /**
-   * \brief returns the geometric position of the grid vertex described by a set of indices.
+   * \brief returns the geometric position of the grid vertex described by its three indices.
    *
    * Depending on the value of the template parameter `cache_points`, positions might not be stored
    * but calculated on-the-fly.
@@ -390,6 +390,8 @@ public:
    * \param k the index in the `z` direction
    *
    * \pre `i < xdim()` and `j < ydim()` and `k < zdim()`
+   *
+   * \returns a const reference or a newly constructed point, depending on the caching policy.
    */
   decltype(auto) /*Point_3*/ point(const std::size_t i,
                                    const std::size_t j,

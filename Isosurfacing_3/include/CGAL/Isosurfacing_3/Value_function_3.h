@@ -69,7 +69,7 @@ public:
 
 public:
   /**
-   * \brief evaluates the function at the point `p`
+   * \brief returns the value of the function at the point `p`.
    */
   FT operator()(const Point_3& p) const
   {
@@ -77,7 +77,7 @@ public:
   }
 
   /**
-   * \brief evaluates the function at the vertex `v`
+   * \brief returns the value of the function at the vertex `v`.
    */
   FT operator()(const vertex_descriptor& v) const
   {
