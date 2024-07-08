@@ -208,9 +208,6 @@ public:
     if(!placement)
       return boost::optional<typename Profile::FT>();
 
-    CGAL_precondition(!get(vcm(), profile.v0()).isZero(0));
-    CGAL_precondition(!get(vcm(), profile.v1()).isZero(0));
-
     const Mat_4 combined_matrix = combine_matrices(get(vcm(), profile.v0()),
                                                    get(vcm(), profile.v1()));
     const Col_4 pt = point_to_homogenous_column(*placement);
@@ -224,9 +221,6 @@ public:
   template <typename Profile>
   boost::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
-    CGAL_precondition(!get(vcm(), profile.v0()).isZero(0));
-    CGAL_precondition(!get(vcm(), profile.v1()).isZero(0));
-
     // the combined matrix has already been computed in the evaluation of the cost...
     const Mat_4 combined_matrix = combine_matrices(get(vcm(), profile.v0()),
                                                    get(vcm(), profile.v1()));

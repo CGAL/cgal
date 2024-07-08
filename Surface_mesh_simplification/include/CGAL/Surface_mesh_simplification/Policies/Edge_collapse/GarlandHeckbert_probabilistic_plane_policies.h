@@ -116,7 +116,10 @@ public:
                                 const Col_4& /*p0*/,
                                 const Col_4& /*p1*/) const
   {
-    // @fixme check this
+    // TODO: an all-zero matrix is just a specific case of a non-invertible matrix;
+    // shouldn't this rather assert that quadric is invertible?
+    CGAL_precondition(!quadric.isZero(0));
+
     return construct_optimal_point_invertible<GeomTraits>(quadric);
   }
 };
