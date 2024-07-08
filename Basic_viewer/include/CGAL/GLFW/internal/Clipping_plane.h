@@ -82,8 +82,8 @@ void Clipping_plane::update(const float deltaTime)
   float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
   float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
 
-  float pitchDelta = radians((smoothPitch - m_pitch) * m_rotationSpeed) * deltaTime;
-  float yawDelta = radians((smoothYaw - m_yaw) * m_rotationSpeed) * deltaTime;
+  float pitchDelta = utils::radians((smoothPitch - m_pitch) * m_rotationSpeed) * deltaTime;
+  float yawDelta = utils::radians((smoothYaw - m_yaw) * m_rotationSpeed) * deltaTime;
 
   quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, m_rightAxis));
   quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, m_upAxis));

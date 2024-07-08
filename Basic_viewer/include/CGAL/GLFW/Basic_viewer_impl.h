@@ -1,7 +1,7 @@
 #ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
 #define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
-// #include "Basic_viewer.h"
+#include "Basic_viewer.h"
 
 namespace CGAL 
 {
@@ -95,6 +95,7 @@ namespace GLFW
     m_inverseNormal(inverseNormal),
     m_flatShading(flatShading)
   {
+    initialize();
   }
 
   inline
@@ -434,7 +435,7 @@ namespace GLFW
     m_plShader.set_vec4f("clipPlane", m_clipPlane.data());
     m_plShader.set_vec4f("pointPlane", m_pointPlane.data());
     m_plShader.set_mat4f("mvp_matrix", m_modelViewProjectionMatrix.data());
-    m_plShader.set_float("point_size", m_sizePoints);
+    m_plShader.set_float("point_size", m_sizeVertices);
   }
 
   inline
@@ -467,7 +468,7 @@ namespace GLFW
     float aspect = static_cast<float>(w) / h;
     float halfWidth = aspect * 0.1f;
     float halfHeight = 0.1f;
-    mat4f proj = ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
+    mat4f proj = utils::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
 
     mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*aspect, halfHeight - 0.1f, 0.0f));
 
@@ -791,14 +792,15 @@ namespace GLFW
         std::cout << "\33[2K"  
                   << "FPS: "                        << std::round(1 / deltaTime)                        << "\n\33[2K" 
                   << "Camera translation speed: "   << m_camera.get_translation_speed()                 << "    " 
-                  << "Camera rotation speed: "      << std::round(m_camera.get_rotation_speed())        << "    "
-                  << "CP translation speed: "       << m_clippingPlane.get_translation_speed()          << "\n\33[2K"            
+                  << "Camera rotation speed: "      << std::round(m_camera.get_rotation_speed())        << "\n\33[2K"
+                  << "CP translation speed: "       << m_clippingPlane.get_translation_speed()          << "    "            
                   << "CP rotation speed: "          << std::round(m_clippingPlane.get_rotation_speed()) << "    "     
                   << "CP constraint axis: "         << m_clippingPlane.get_constraint_axis()            << "\n\33[2K"     
                   << "Light color: ("               << m_ambientColor.x()                               << ", " 
                                                     << m_ambientColor.y()                               << ", " 
-                                                    << m_ambientColor.z()                               << ")   "     
-                  << "\033[F\033[F\033[F\r" << std::flush;
+                                                    << m_ambientColor.z()                               << ")\n\33[2K"     
+                  << "Size of vertices: "           << m_sizeVertices << "    edges: " <<  m_sizeEdges << "    "            
+                  << "\033[F\033[F\033[F\033[F\r" << std::flush;
       }
     }
   }
@@ -823,7 +825,7 @@ namespace GLFW
   {
     clear_application();
 
-    std::cout << "\n APPLICATION EXITED" << std::endl;
+    std::cout << "\n\n\n\n\n\nAPPLICATION IS CLOSING" << std::endl;
     exit(EXIT_SUCCESS);
   }
 
@@ -913,16 +915,16 @@ namespace GLFW
       m_useMonoColor = !m_useMonoColor;
       break;
     case INC_EDGES_SIZE:
-      m_sizeEdges = std::min(50.f, m_sizeEdges + 3.0f*deltaTime);
+      m_sizeEdges = std::min(10.f, m_sizeEdges + 10.0f*deltaTime);
       break;
     case DEC_EDGES_SIZE:
-      m_sizeEdges = std::max(1.f, m_sizeEdges - 3.0f*deltaTime);
+      m_sizeEdges = std::max(1.f, m_sizeEdges - 10.0f*deltaTime);
       break;
     case INC_POINTS_SIZE:
-      m_sizePoints = std::min(30.f, m_sizePoints + 3.0f*deltaTime);
+      m_sizeVertices = std::min(50.f, m_sizeVertices + 10.0f*deltaTime);
       break;
     case DEC_POINTS_SIZE:
-      m_sizePoints = std::max(1.f, m_sizePoints - 3.0f*deltaTime);
+      m_sizeVertices = std::max(1.f, m_sizeVertices - 10.0f*deltaTime);
       break;
     case INC_LIGHT_ALL:
       increase_light_all(deltaTime);
@@ -1339,8 +1341,6 @@ namespace GLFW
   inline
   void Basic_viewer::initialize_keys_actions()
   {
-    set_keyboard_layout(KeyboardLayout::AZERTY);
-
     /*APPLICATION*/
     add_keyboard_action({GLFW_KEY_ESCAPE},                   InputMode::RELEASE, EXIT);
     add_keyboard_action({GLFW_KEY_Q, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, EXIT);
@@ -1497,7 +1497,7 @@ namespace GLFW
       {"Application", {
         {get_binding_text_from_action(EXIT),                    "Exit program"},
         {"",                                                    ""},
-        {get_binding_text_from_action(PRINT_APPLICATION_STATE), "Print application state within the terminal (FPS...)"},
+        {get_binding_text_from_action(PRINT_APPLICATION_STATE), "Activate/Deactivate application state refreshing (FPS...)"},
       }},
     });
 

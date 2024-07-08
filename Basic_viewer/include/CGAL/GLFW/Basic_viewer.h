@@ -100,7 +100,7 @@ namespace GLFW
     inline void lines_mono_color(const CGAL::IO::Color& c) { m_linesMonoColor = c; }
     inline void faces_mono_color(const CGAL::IO::Color& c) { m_facesMonoColor = c; }
 
-    inline void size_points(const float size) { m_sizePoints = size; }
+    inline void size_points(const float size) { m_sizeVertices = size; }
     inline void size_edges(const float size) { m_sizeEdges = size; }
     inline void size_rays(const float size) { m_sizeRays = size; }
     inline void size_lines(const float size) { m_sizeLines = size; }
@@ -120,7 +120,7 @@ namespace GLFW
     inline void inverse_normal(bool b) { m_inverseNormal = b; }
     inline void flat_shading(bool b) { m_flatShading = b; }
 
-    inline void keyboard_layout(KeyboardLayout layout) { set_keyboard_layout(layout); }
+    inline void set_azerty_layout() { set_keyboard_layout(KeyboardLayout::AZERTY); }
     inline void animation_duration(std::chrono::milliseconds duration) { m_animationController.set_duration(duration); }
 
     inline void center(const vec3f& center) { m_camera.set_center(center); }
@@ -128,11 +128,11 @@ namespace GLFW
     inline void position(const vec3f& position) { m_camera.set_position(position); m_camera.set_default_position(position); }
     inline void position(float x, float y, float z) { m_camera.set_position({x, y, z}); m_camera.set_default_position({x, y, z}); }
     inline void direction(const vec3f& direction) { m_camera.set_orientation(direction); m_camera.set_default_orientation(direction); }
-    inline void direction(float x, float y, float z) { m_camera.set_orientation({x, y, z}); m_camera.set_default_position({x, y, z});}
+    inline void direction(float x, float y, float z) { m_camera.set_orientation({x, y, z}); m_camera.set_default_orientation({x, y, z});}
 
     // Getter section
     inline vec3f position() const { return m_camera.get_position(); }
-    inline vec3f get_forward() const { return m_camera.get_forward(); }
+    inline vec3f forward() const { return m_camera.get_forward(); }
 
     inline CGAL::IO::Color vertices_mono_color() const { return m_verticeMonoColor; }
     inline CGAL::IO::Color edges_mono_color() const { return m_edgesMonoColor; }
@@ -140,7 +140,7 @@ namespace GLFW
     inline CGAL::IO::Color lines_mono_color() const { return m_linesMonoColor; }
     inline CGAL::IO::Color faces_mono_color() const { return m_facesMonoColor; }
 
-    inline float size_points() const { return m_sizePoints; }
+    inline float size_points() const { return m_sizeVertices; }
     inline float size_edges() const { return m_sizeEdges; }
     inline float size_rays() const { return m_sizeRays; }
     inline float size_lines() const { return m_sizeLines; }
@@ -272,7 +272,7 @@ namespace GLFW
     Line_renderer m_XYAxisRenderer; 
     Line_renderer m_clippingPlaneRenderer;
 
-    float m_sizePoints { CGAL_SIZE_POINTS };
+    float m_sizeVertices { CGAL_SIZE_POINTS };
     float m_sizeEdges { CGAL_SIZE_EDGES };
     float m_sizeRays { CGAL_SIZE_RAYS };
     float m_sizeLines { CGAL_SIZE_LINES };
@@ -424,12 +424,10 @@ namespace GLFW
   inline void draw_graphics_scene(const Graphics_scene& graphics_scene, const char* title="CGAL Basic Viewer (GLFW)")
   {
     Basic_viewer basic_viewer(&graphics_scene, title);
-    basic_viewer.initialize();
     basic_viewer.show();
-    // basic_viewer.make_screenshot("test.png");
   } 
 } // end namespace CGAL 
 
 #include "Basic_viewer_impl.h"
   
-#endif // CGAL_BASIC_VIEWER_GLFW_H
+#endif // CGAL_BASIC_VIEWER_GLFW_H 

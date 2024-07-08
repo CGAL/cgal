@@ -157,7 +157,7 @@ AnimationKeyFrame Animation_controller::key_frame_interpolation(const float time
 
   m_interpolatedRotation = keyFrame0.orientation.slerp(t, keyFrame1.orientation); 
 
-  m_interpolatedTranslation = lerp(keyFrame0.position, keyFrame1.position, t);
+  m_interpolatedTranslation = utils::lerp(keyFrame0.position, keyFrame1.position, t);
 
   return {m_interpolatedTranslation, m_interpolatedRotation};
 }

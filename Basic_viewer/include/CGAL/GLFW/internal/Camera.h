@@ -67,13 +67,15 @@ public:
   inline void set_default_size(float size) { m_defaultSize = size; }
   inline void set_default_position(const vec3f& position) { m_defaultPosition = position; set_default_size(position.z()); }
   inline void set_default_orientation(const quatf& orientation) { m_defaultOrientation = orientation; }
-  inline void set_default_orientation(const vec3f& orientation) { m_defaultOrientation = quatf::FromTwoVectors(-vec3f::UnitZ(), orientation).inverse(); }
+
+  void set_default_orientation(const vec3f& orientation);
 
   inline void set_center(const vec3f& center) { m_center = center; }
 
   inline void set_mode(CameraMode mode) { m_mode = mode; }
   inline void set_orientation(const quatf& orientation) { m_orientation = orientation; }
-  inline void set_orientation(const vec3f& orientation) { m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(), orientation).inverse(); }
+  
+  void set_orientation(const vec3f& orientation);
 
   inline void toggle_mode() { m_mode = (m_mode == CameraMode::ORTHOGRAPHIC) ? CameraMode::PERSPECTIVE : CameraMode::ORTHOGRAPHIC; }
   inline bool is_orthographic() const { return m_mode == CameraMode::ORTHOGRAPHIC; }
@@ -148,8 +150,8 @@ void Camera::update(const float dt)
   float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
   float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
 
-  float pitchDelta = radians((smoothPitch - m_pitch) * m_rotationSpeed) * dt;
-  float yawDelta = radians((smoothYaw - m_yaw) * m_rotationSpeed) * dt;
+  float pitchDelta = utils::radians((smoothPitch - m_pitch) * m_rotationSpeed) * dt;
+  float yawDelta = utils::radians((smoothYaw - m_yaw) * m_rotationSpeed) * dt;
 
   if (is_orbiter()) 
   {
@@ -187,7 +189,7 @@ void Camera::lookat(vec3f const &center, const float size)
 inline 
 void Camera::lookat(vec3f const &pmin, vec3f const &pmax)
 {
-  lookat(center(pmin, pmax), distance(pmin, pmax));
+  lookat(utils::center(pmin, pmax), utils::distance(pmin, pmax));
 }
 
 inline 
@@ -307,10 +309,10 @@ mat4f Camera::projection() const
     float aspect = m_width / m_height;
     float halfWidth = m_size * aspect * 0.5f;
     float halfHeight = m_size * 0.5f;
-    return ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, znear(), zfar());
+    return utils::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, znear(), zfar());
   }
 
-  return perspective(radians(m_fov), m_width / m_height, znear(), zfar());
+  return utils::perspective(utils::radians(m_fov), m_width / m_height, znear(), zfar());
 }
 
 inline 
@@ -319,11 +321,11 @@ float Camera::znear() const
   float d;
   if (is_orbiter()) 
   {
-    d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
+    d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
   }
   else
   {
-    d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
+    d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
   }
   return std::max(0.1f, d - 2 * m_radius);
 }
@@ -334,11 +336,11 @@ float Camera::zfar() const
   float d;
   if (is_orbiter()) 
   {
-    d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
+    d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
   }
   else
   {
-    d = distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
+    d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
   }
 
   return std::max(100.f, d + 2 * m_radius);
@@ -613,8 +615,34 @@ void Camera::align_to_nearest_axis()
 inline
 void Camera::compute_target_size()
 {
-  float tanHalfFov = tan(radians(m_fov) * .5f);
+  float tanHalfFov = tan(utils::radians(m_fov) * .5f);
   m_targetSize = m_radius / tanHalfFov * .6f;
+}
+
+inline 
+void Camera::set_orientation(const vec3f& orientation) 
+{ 
+  if (static_cast<int>(orientation.x()) == 0 && static_cast<int>(orientation.y()) == 0 && static_cast<int>(orientation.z()) > 0)
+  {
+    m_orientation = quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY())); 
+  }
+  else 
+  {
+    m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(), orientation).inverse(); 
+  }
+}
+
+inline 
+void Camera::set_default_orientation(const vec3f& orientation) 
+{ 
+  if (static_cast<int>(orientation.x()) == 0 && static_cast<int>(orientation.y()) == 0 && static_cast<int>(orientation.z()) > 0)
+  {
+    m_defaultOrientation = quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY())); 
+  }
+  else 
+  {
+    m_defaultOrientation = quatf::FromTwoVectors(-vec3f::UnitZ(), orientation).inverse(); 
+  }
 }
 
 #endif // CGAL_CAMERA_H
