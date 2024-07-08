@@ -369,7 +369,7 @@ public:
         continue;
       }
 
-      // We have to comapare the two scalar products sk0 and sk1. Therefore
+      // We have to compare the two scalar products sk0 and sk1. Therefore
       // we have to normalize the input vectors vec0 and vec1, which means
       // that we have to divide them by their lengths len0 and len1.
       // To cicumvent irrational numbers, we square the whole inequality.

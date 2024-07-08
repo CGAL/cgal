@@ -123,7 +123,7 @@ private:
   // The shape must be a pointer, because the alpha of a Fixed_alpha_shape_3
   // can only be set at construction and its assignment operator is private.
   // We want to be able to set the alpha after constructing the scale-space
-  // reconstructer object.
+  // reconstructor object.
   Shape*          _shape;
 
   // The surface. If the surface is collected per shell, the triples of the

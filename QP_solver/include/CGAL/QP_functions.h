@@ -30,7 +30,7 @@ namespace QP_functions_detail {
   //    p is treated as LinearProgram / QuadraticProgram
   // Is_nonnegative == Tag_true / Tag_false
   //    p is treated as Nonnegative / Arbitrary
-  // the dmatrix parameter specificies whether the quadratic matrix (if any)
+  // the dmatrix parameter specifies whether the quadratic matrix (if any)
   // is written in DMATRIX format (no multiplication by two, good for
   // cross-checking output, or in QMATRIX format (good for using other
   // solvers like CPLEX)
@@ -83,7 +83,7 @@ namespace QP_functions_detail {
   bool is_in_equational_form (const R& r);
 
   // internal routine:
-  // test whether the row vectors of A that correpsond to equations
+  // test whether the row vectors of A that correspond to equations
   // are linearly independent; this is done using type ET. The value
   // type of LinearInequalitySystem must be convertible to ET
   template <class Ar, class ET>

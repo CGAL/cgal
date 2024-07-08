@@ -52,7 +52,7 @@ int main()
   Point_2 q(0.7, 0.7);
 
   // Searching an exact range
-  // using default value 0.0 for epsilon fuzziness paramater
+  // using default value 0.0 for epsilon fuzziness parameter
   Fuzzy_iso_box exact_range(p,q);
   tree.search( std::back_inserter( result ), exact_range);
   std::cout << "The points in the box [0.2, 0.7]^2 are: " << std::endl;
@@ -62,7 +62,7 @@ int main()
   result.clear();
 
   // Searching a fuzzy range
-  // using value 0.1 for fuzziness paramater
+  // using value 0.1 for fuzziness parameter
   Fuzzy_iso_box approximate_range(p, q, 0.1);
   tree.search(std::back_inserter( result ), approximate_range);
   std::cout << "The points in the fuzzy box [[0.1, 0.3], [0.6, 0.8]]^2 are: " << std::endl;
