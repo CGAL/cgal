@@ -59,10 +59,10 @@ int main(int argc, char** argv)
   for (double len : lenghts)
   {
     std::vector<K::FT> lens(n_sides,len);
-    std::vector<K::Point_3> polygon = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
+    std::vector<Face_location> polygon = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
     out << polygon.size();
     for (auto p : polygon)
-      out << " " << p;
+      out << " " << PMP::construct_point(p, mesh);
     out << "\n";
   }
 

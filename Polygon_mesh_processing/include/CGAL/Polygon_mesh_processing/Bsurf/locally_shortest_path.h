@@ -3310,7 +3310,7 @@ typename K::FT path_length(const std::vector<Face_location<TriangleMesh,typename
 
 //TODO: factorise code
 template <class K, class TriangleMesh>
-std::vector<std::vector<typename K::Point_3>>
+std::vector<std::vector<Face_location<TriangleMesh, typename K::FT>>>
 trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, typename K::FT>>& supporting_curve,
                                  const std::vector<std::vector<typename K::Point_2>>& polygons,
                                  const typename K::FT scaling,
@@ -3324,6 +3324,7 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
   VPM vpm = get(CGAL::vertex_point, tmesh);
   using Point_2 = typename K::Point_2;
   using Vector_2 = typename K::Vector_2;
+  using Face_loc = Face_location<TriangleMesh, typename K::FT>;
 
   std::vector<Bbox_2> polygon_bboxes;
   polygon_bboxes.reserve(polygons.size());
@@ -3342,7 +3343,7 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
     init_geodesic_dual_solver(local_solver, tmesh);
   }
 
-  std::vector<std::vector<typename K::Point_3>> result(polygons.size());
+  std::vector<std::vector<Face_loc>> result(polygons.size());
 //  Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
 
   // 1D partition of the letters

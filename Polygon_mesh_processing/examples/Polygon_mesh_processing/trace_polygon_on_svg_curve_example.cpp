@@ -196,14 +196,14 @@ int main(int argc, char** argv)
   std::ofstream out("label_on_curve.polylines.txt");
   out << std::setprecision(17);
 
-  std::vector<std::vector<K::Point_3>> polygons_3;
+  std::vector<std::vector<Face_location>> polygons_3;
   polygons_3 = PMP::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., true, mesh, solver);
 
   for (const auto& polygon : polygons_3)
   {
     out << polygon.size();
     for (auto p : polygon)
-      out << " " << p;
+      out << " " << PMP::construct_point(p, mesh);
     out << std::endl;
   }
 
