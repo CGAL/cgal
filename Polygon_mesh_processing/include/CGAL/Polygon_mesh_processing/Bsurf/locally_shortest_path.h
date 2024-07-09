@@ -630,6 +630,7 @@ struct Locally_shortest_path_imp
       // if I hit the source vertex v of h_curr, then h_next has v as source, thus we turn ccw around v in path
       // Similarly, if I hit the target vertex v of h_curr, then  h_next has v as target, thus we turn cw around v in path
       std::size_t curr_index = index+1;
+
       std::vector<halfedge_descriptor> new_hedges;
 
       if (is_target)
@@ -2633,6 +2634,8 @@ void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleM
 }
 #endif
 
+// points can be duplicated in the path in case you hit a vertex of the mesh,
+// in order to get continuity of edge locations
 template <class FT, class TriangleMesh, class EdgeLocationRange>
 void locally_shortest_path(Face_location<TriangleMesh, FT> src,
                            Face_location<TriangleMesh, FT> tgt,
@@ -2888,7 +2891,7 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
 
   std::vector<Bezier_segment<TriangleMesh, FT>> segments(1,control_points);
   std::vector<Bezier_segment<TriangleMesh, FT>> result;
-  for (auto subdivision = 0; subdivision < num_subdiv; subdivision++)
+  for (auto subdivision = 0; subdivision < num_subdiv; ++subdivision)
   {
     result.clear();
     result.reserve(segments.size() * 2);
@@ -3397,7 +3400,7 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
         Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
         CGAL_assertion_code(bool OK=)
         locate_in_common_face(loc_k, loc_k1, tmesh);
-        // CGAL_assertion(OK); // TODO: check with Claudio how to correctly implement transport along the curve
+        CGAL_assertion(OK);
 
         Face_location<TriangleMesh, typename K::FT> polygon_center;
         polygon_center.first=loc_k.first;
@@ -3525,8 +3528,23 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
                             );
 
     result[i].reserve(bezier.size());
-    for(const Face_location<TriangleMesh, FT>& loc : bezier)
-      result[i].push_back(loc);
+    result[i].push_back(bezier[0]);
+    for(std::size_t b=0; b<bezier.size()-1; ++b)
+    {
+      const Face_location<TriangleMesh, FT>& loc = bezier[b];
+      const Face_location<TriangleMesh, FT>& loc1 = bezier[b+1];
+
+      // connect the two face locations with shortest path is they are in different faces
+      if (loc.first!=loc1.first)
+      {
+        std::vector<Edge_location<TriangleMesh, FT>> edge_locations;
+        locally_shortest_path<FT>(loc, loc1, tmesh, edge_locations, solver);
+        result[i].reserve(result[i].size()+edge_locations.size());
+        for (const Edge_location<TriangleMesh, FT>& e : edge_locations)
+          result[i].push_back(to_face_location(e, tmesh));
+      }
+      result[i].push_back(loc1);
+    }
   }
 
   return result;
