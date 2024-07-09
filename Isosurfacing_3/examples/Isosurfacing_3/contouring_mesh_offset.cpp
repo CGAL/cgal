@@ -10,7 +10,7 @@
 #include <CGAL/Isosurfacing_3/Marching_cubes_domain_3.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Polygon_mesh_processing/bbox.h>
@@ -40,7 +40,7 @@ using Polygon_range = std::vector<std::vector<std::size_t> >;
 struct Offset_oracle
 {
   using Primitive = CGAL::AABB_face_graph_triangle_primitive<Mesh>;
-  using Traits = CGAL::AABB_traits<Kernel, Primitive>;
+  using Traits = CGAL::AABB_traits_3<Kernel, Primitive>;
   using Tree = CGAL::AABB_tree<Traits>;
 
 private:
