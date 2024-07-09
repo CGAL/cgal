@@ -90,7 +90,7 @@ int surface_test() {
   LCC lcc = tworefinement(CGAL::data_file_path("query_replace/mesh1.off"), 10, TwoRefinement::mark_intersecting_volume_with_poly);
   lcc.display_characteristics(std::cout);
 
-  render<LCC>(lcc, 0, 0);
+  render<LCC>(lcc, debug_node_mark, debug_edge_mark );
   return EXIT_SUCCESS;
 }
 
@@ -114,52 +114,61 @@ int two_stacked_3_template_test() {
 
   // TODO mark 2 volumes to shape two 3 templates using get_or_create_attr<3>
 
-  // lcc.mark_cell<0>(lcc.beta(first, 1, 2), hdata.identified_mark);
-  // lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.identified_mark);
-  // lcc.mark_cell<0>(lcc.beta(first, 1, 2, 0), hdata.identified_mark);
+  lcc.mark_cell<0>(lcc.beta(first, 1, 2), hdata.identified_mark);
+  lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.identified_mark);
+  lcc.mark_cell<0>(lcc.beta(first, 1, 2, 0), hdata.identified_mark);
 
   extract_first_faces_of_planes(hdata);
   extract_darts_from_even_planes(hdata, plane, Plane::XY);
   create_vertices_for_templates(hdata, plane);
   refine_marked_hexes(hdata, plane);
 
-  // render<LCC>(lcc, hdata.identified_mark, debug_edge_mark);
+  render<LCC>(lcc, hdata.identified_mark, debug_edge_mark);
 
   return 0;
 }
 
-// int test_signature() {
-//   using namespace CGAL::HexRefinement::TwoRefinement;
+int test_signature() {
+    using namespace CGAL::HexRefinement::TwoRefinement;
 
-//   HexMeshingData hdata;
-//   LCC& lcc = hdata.lcc;
+  HexMeshingData hdata;
+  LCC& lcc = hdata.lcc;
 
-//   hdata.grid = generate_grid(hdata.lcc, Point(0,0,0), 5, 2);
-//   hdata.template_mark = lcc.get_new_mark();
-//   hdata.identified_mark = lcc.get_new_mark();
-//   hdata.corner_mark = lcc.get_new_mark();
+  hdata.grid = generate_grid(hdata.lcc, Point(0,0,0), 5, 2);
+  hdata.identified_mark = lcc.get_new_mark();
+  hdata.template_mark = lcc.get_new_mark();
+  hdata.corner_mark = lcc.get_new_mark();
 
-//   lcc.negate_mark(hdata.corner_mark);
+  lcc.negate_mark(hdata.corner_mark);
   
-//   load_patterns(hdata.regular_templates, hdata.partial_templates);
+  load_patterns(hdata.regular_templates, hdata.partial_templates);
 
-//   PlaneData plane;
-//   Dart_handle first = lcc.first_dart();
-//   first = lcc.beta(first, 0, 0, 2, 3, 2);
+  PlaneData plane;
+  // TODO mark 2 volumes to shape two 3 templates using get_or_create_attr<3>
 
-//   lcc.mark_cell<0>(lcc.beta(first, 1, 2), hdata.identified_mark);
-//   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.identified_mark);
-//   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 0), hdata.identified_mark);
+  Dart_handle dart = lcc.beta(lcc.first_dart(), 1, 2, 1, 1);
+  lcc.mark_cell<0>(dart, hdata.identified_mark);
+  get_or_create_attr<3>(lcc, lcc.first_dart());
 
-//   extract_first_faces_of_planes(hdata);
-//   extract_darts_from_even_planes(hdata, plane, Plane::XY);
-//   create_vertices_for_templates(hdata, plane);
-//   refine_marked_hexes(hdata, plane);
+  auto m = lcc.get_new_mark();
 
-//   render<LCC>(lcc, hdata.identified_mark, debug_edge_mark);
+  auto d = lcc.beta(lcc.first_dart(), 1, 2, 0, 2, 3, 2);
+  // mark_edge(lcc, d, m);
 
-//   return 0;
-// }
+  extract_first_faces_of_planes(hdata);
+  extract_darts_from_even_planes(hdata, plane, Plane::XY);
+  create_vertices_for_templates(hdata, plane);
+  refine_marked_hexes(hdata, plane);
+
+  auto t = lcc.one_dart_per_incident_cell<2,2>(d);
+  for (auto it = t.begin(); it != t.end(); it++){
+    mark_face(lcc, it, m);
+  }
+
+  render<LCC>(lcc, m, m);
+
+  return 0;
+}
 
 
 int main(){
