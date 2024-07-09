@@ -71,20 +71,30 @@ get_supporting_curve(std::string svg_filename,
   directions.reserve(bezier_curves.size());
   lengths.reserve(bezier_curves.size());
 
+  CGAL_assertion_code(K::Point_2 prev = bezier_curves[0][0];)
   for (const std::array<K::Point_2, 4>& bezier  : bezier_curves)
   {
+    CGAL_assertion(bezier[0]==prev);
+    CGAL_assertion_code(prev=bezier[3];)
     std::vector<std::pair<double, double>> polar_coords =
       PMP::convert_polygon_to_polar_coordinates<K>(bezier, center_2);
+
+    int start_id=directions.empty()?0:1;
 
     directions.emplace_back();
     lengths.emplace_back();
 
     assert(polar_coords.size()==4);
 
-    for (int i=0;i<4; ++i)
+    for (int i=start_id;i<4; ++i)
     {
       lengths.back()[i] = scaling * polar_coords[i].first;
       directions.back()[i]=K::Vector_2(std::cos(polar_coords[i].second), std::sin(polar_coords[i].second));
+    }
+    if (start_id==1)
+    {
+      lengths.back()[0] = lengths[lengths.size()-2][3];
+      directions.back()[0] = directions[directions.size()-2][3];
     }
   }
 
@@ -180,7 +190,7 @@ int main(int argc, char** argv)
 
   std::cout <<"supporting_curve generated!\n";
   std::ofstream debug("debug.polylines.txt");
-  debug << supporting_curve.size();
+  debug << std::setprecision(17) << supporting_curve.size();
   for (auto loc : supporting_curve)
     debug << " " << PMP::construct_point(loc, mesh);
   debug << "\n";
