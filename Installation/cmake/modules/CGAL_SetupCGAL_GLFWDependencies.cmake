@@ -3,21 +3,14 @@ if(CGAL_SetupCGAL_GLFWDependencies_included)
 endif()
 set(CGAL_SetupCGAL_GLFWDependencies_included TRUE)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
-
 include(CMakeDependentOption)
 
-function(get_environment_variable VAR_NAME OUTPUT_VAR)
-  if(DEFINED ENV{${VAR_NAME}})
-    set(${OUTPUT_VAR} "$ENV{${VAR_NAME}}" PARENT_SCOPE)
-  else()
-    set(${OUTPUT_VAR} "" PARENT_SCOPE)
-  endif()
-endfunction()
-
 if (UNIX AND NOT APPLE)
-  get_environment_variable("XDG_SESSION_TYPE" XDG_SESSION_TYPE)
+  if(DEFINED ENV{XDG_SESSION_TYPE})
+    set(XDG_SESSION_TYPE "$ENV{XDG_SESSION_TYPE}")
+  else()
+    set(XDG_SESSION_TYPE "")
+  endif()
   if (XDG_SESSION_TYPE STREQUAL "wayland")
     set(GLFW_USE_WAYLAND ON)
   else()
@@ -25,8 +18,12 @@ if (UNIX AND NOT APPLE)
   endif()
 endif()
 
+if (GLFW_USE_WAYLAND)
+  add_definitions(-DGLFW_USE_WAYLAND)
+endif()
+
 # --------------------------------------------------
-# from glfw/CMakeLists.txt and glfw/src/CMakeLists
+# From glfw/CMakeLists.txt and glfw/src/CMakeLists
 # --------------------------------------------------
 
 cmake_dependent_option(GLFW_BUILD_WIN32 "Build support for Win32" ON "WIN32" OFF)
@@ -63,24 +60,24 @@ endif()
 # Apply Microsoft C runtime library option
 #--------------------------------------------------------------------
 if (MSVC AND NOT USE_MSVC_RUNTIME_LIBRARY_DLL)
-    if (CMAKE_VERSION VERSION_LESS 3.15)
-        foreach (flag CMAKE_C_FLAGS
-                      CMAKE_C_FLAGS_DEBUG
-                      CMAKE_C_FLAGS_RELEASE
-                      CMAKE_C_FLAGS_MINSIZEREL
-                      CMAKE_C_FLAGS_RELWITHDEBINFO)
+  if (CMAKE_VERSION VERSION_LESS 3.15)
+    foreach (flag CMAKE_C_FLAGS
+                  CMAKE_C_FLAGS_DEBUG
+                  CMAKE_C_FLAGS_RELEASE
+                  CMAKE_C_FLAGS_MINSIZEREL
+                  CMAKE_C_FLAGS_RELWITHDEBINFO)
 
-            if (flag MATCHES "/MD")
-                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-            endif()
-            if (flag MATCHES "/MDd")
-                string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
-            endif()
+      if (flag MATCHES "/MD")
+        string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
+      endif()
+      if (flag MATCHES "/MDd")
+        string(REGEX REPLACE "/MDd" "/MTd" ${flag} "${${flag}}")
+      endif()
 
-        endforeach()
-    else()
-        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    endif()
+    endforeach()
+  else()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+  endif()
 endif()
 
 
@@ -115,7 +112,7 @@ file(GLOB GLFW_SOURCES ${GLFW_SOURCE_DIR}/src/internal.h
                        ${GLFW_SOURCE_DIR}/src/null_window.c
                        ${GLFW_SOURCE_DIR}/src/null_joystick.c
 )
-add_library(glfw STATIC ${GLFW_SOURCES})
+add_library(glfw ${GLFW_SOURCES})
 
 if (APPLE)
   file(GLOB GLFW_APPLE_SOURCES ${GLFW_SOURCE_DIR}/src/cocoa_time.h
@@ -424,27 +421,11 @@ set(GLFW_PKG_CONFIG_LIBS_PRIVATE "${libs}" CACHE INTERNAL
 
 configure_file("${GLFW_SOURCE_DIR}/CMake/glfw3.pc.in" glfw3.pc @ONLY)
 
-if (GLFW_INSTALL)
-  install(TARGETS glfw
-          EXPORT glfwTargets
-          RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
-          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-endif()
-
-
 # Glad library
 file(GLOB GLAD_SOURCES ${GLAD_SOURCE_DIR}/src/glad.c)
-add_library(glad STATIC ${GLAD_SOURCES})
+add_library(glad ${GLAD_SOURCES})
 
-# GLFW library
-# file(GLOB GLFW_SOURCES ${GLFW_SOURCE_DIR}/src/*.c)
-# add_library(glfw STATIC ${GLFW_SOURCES})
 #--------------------------------------------------------------------
-
-# TODO DIFFERENT OPTION DEPENDING ON THE OS
-# CF the page https://www.glfw.org/docs/3.3/compile.html
-# target_compile_options(glfw PUBLIC "-D_GLFW_X11")
 
 set(CGAL_GLFW_FOUND TRUE)
 set_property(GLOBAL PROPERTY CGAL_GLFW_FOUND TRUE)

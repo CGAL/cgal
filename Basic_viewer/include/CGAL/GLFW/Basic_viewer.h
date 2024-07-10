@@ -19,6 +19,10 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Basic_shaders.h>
 #include <CGAL/Aff_transformation_3.h>
@@ -33,9 +37,6 @@
 #include "internal/Line_renderer.h"
 #include "internal/Clipping_plane.h"
 #include "internal/Animation_controller.h"
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
 
 namespace CGAL 
 {
@@ -303,7 +304,6 @@ namespace GLFW
 
     vec2i m_windowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
     vec2i m_oldWindowSize;
-    vec2i m_oldWindowPosition;
 
     Camera m_camera;
 

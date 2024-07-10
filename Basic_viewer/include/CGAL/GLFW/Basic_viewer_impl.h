@@ -1,7 +1,7 @@
 #ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
 #define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
-#include "Basic_viewer.h"
+// #include "Basic_viewer.h"
 
 namespace CGAL 
 {
@@ -1257,15 +1257,13 @@ namespace GLFW
   {
     m_isFullscreen = !m_isFullscreen;
 
+    int count;
+    GLFWmonitor *monitor = glfwGetMonitors(&count)[0];
+    const GLFWvidmode *mode = glfwGetVideoMode(monitor);
     if (m_isFullscreen)
     {
-      int count;
       m_oldWindowSize = m_windowSize;
 
-      GLFWmonitor *monitor = glfwGetMonitors(&count)[0];
-      const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-
-      glfwGetWindowPos(m_window, &m_oldWindowPosition.x(), &m_oldWindowPosition.y());
       glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
       glViewport(0, 0, mode->width, mode->height);
 
@@ -1275,7 +1273,7 @@ namespace GLFW
     }
 
     m_windowSize = m_oldWindowSize;
-    glfwSetWindowMonitor(m_window, nullptr, m_oldWindowPosition.x(), m_oldWindowPosition.y(), m_windowSize.x(), m_windowSize.y(), 60);
+    glfwSetWindowMonitor(m_window, nullptr, 0, 0, m_windowSize.x(), m_windowSize.y(), mode->refreshRate);
     glViewport(0, 0, m_windowSize.x(), m_windowSize.y());
   }
 

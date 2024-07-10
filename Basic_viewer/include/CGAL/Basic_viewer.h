@@ -1,8 +1,8 @@
 #include <CGAL/Graphics_scene.h>
 
-#ifdef CGAL_USE_BASIC_VIEWER || CGAL_USE_BASIC_VIEWER_QT 
+#if defined(CGAL_USE_BASIC_VIEWER_QT) || defined(CGAL_USE_BASIC_VIEWER)
 #include <CGAL/Qt/Basic_viewer.h>
-#elif CGAL_USE_BASIC_VIEWER_GLFW
+#elif defined(CGAL_USE_BASIC_VIEWER_GLFW)
 #include <CGAL/GLFW/Basic_viewer.h>
 #else 
 namespace CGAL
