@@ -11,7 +11,7 @@
 #endif
 
 #ifndef CGAL_WINDOW_SAMPLES
-#define CGAL_WINDOW_SAMPLES 10
+#define CGAL_WINDOW_SAMPLES 1
 #endif
 
 /*************GLFW SCENE PARAMS*************/

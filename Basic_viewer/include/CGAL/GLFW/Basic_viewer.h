@@ -121,7 +121,7 @@ namespace GLFW
     inline void inverse_normal(bool b) { m_inverseNormal = b; }
     inline void flat_shading(bool b) { m_flatShading = b; }
 
-    inline void set_azerty_layout() { set_keyboard_layout(KeyboardLayout::AZERTY); }
+    inline void azerty_layout() { set_keyboard_layout(KeyboardLayout::AZERTY); }
     inline void animation_duration(std::chrono::milliseconds duration) { m_animationController.set_duration(duration); }
 
     inline void center(const vec3f& center) { m_camera.set_center(center); }
@@ -305,6 +305,8 @@ namespace GLFW
     vec2i m_windowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
     vec2i m_oldWindowSize;
 
+    float m_aspectRatio { 1.f };
+
     Camera m_camera;
 
     /***************CLIPPING PLANE****************/
@@ -424,6 +426,7 @@ namespace GLFW
   inline void draw_graphics_scene(const Graphics_scene& graphics_scene, const char* title="CGAL Basic Viewer (GLFW)")
   {
     Basic_viewer basic_viewer(&graphics_scene, title);
+
     basic_viewer.show();
   } 
 } // end namespace CGAL 

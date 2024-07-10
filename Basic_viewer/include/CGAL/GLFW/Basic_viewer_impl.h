@@ -1,8 +1,6 @@
 #ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
 #define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
-// #include "Basic_viewer.h"
-
 namespace CGAL 
 {
 namespace GLFW 
@@ -102,6 +100,8 @@ namespace GLFW
   void Basic_viewer::initialize(bool screenshotOnly)
   {
     m_window = create_window(m_windowSize.x(), m_windowSize.y(), m_title, screenshotOnly);
+
+    m_aspectRatio = static_cast<float>(m_windowSize.x())/m_windowSize.y();
 
     if (!screenshotOnly)
     {
@@ -454,9 +454,6 @@ namespace GLFW
   inline
   void Basic_viewer::set_world_axis_uniforms()
   {
-    int w = m_windowSize.x();
-    int h = m_windowSize.y();
-
     mat4f view = m_modelViewMatrix;
 
     // we only want the rotation part of the view matrix  
@@ -465,12 +462,11 @@ namespace GLFW
     mat4f rotation4x4 = mat4f::Identity();
     rotation4x4.block<3,3>(0,0) = rotation;
 
-    float aspect = static_cast<float>(w) / h;
-    float halfWidth = aspect * 0.1f;
+    float halfWidth = m_aspectRatio * 0.1f;
     float halfHeight = 0.1f;
     mat4f proj = utils::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f);
 
-    mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*aspect, halfHeight - 0.1f, 0.0f));
+    mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*m_aspectRatio, halfHeight - 0.1f, 0.0f));
 
     mat4f mvp = proj * rotation4x4 * translate;
     m_lineShader.set_mat4f("mvp_matrix", mvp.data()); 
@@ -733,50 +729,54 @@ namespace GLFW
   inline
   void Basic_viewer::render_clipping_plane()
   {
-    if (!m_drawClippingPlane || !m_isOpengl4_3)
+    if (!m_isOpengl4_3)
     {
       return;
     }
 
     update_clipping_uniforms();
-    m_clippingPlaneRenderer.draw();
+    
+    if (m_drawClippingPlane)
+    {
+      m_clippingPlaneRenderer.draw();
+    }
   }
 
   inline
   void Basic_viewer::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
   {
-    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
+    auto viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->on_key_event(key, scancode, action, mods);
   }
 
   inline
   void Basic_viewer::cursor_callback(GLFWwindow* window, double xpos, double ypo)
   {
-    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
+    auto viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->on_cursor_event(xpos, ypo);
   }
 
   inline
   void Basic_viewer::mouse_btn_callback(GLFWwindow* window, int button, int action, int mods)
   {
-    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
+    auto viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->on_mouse_button_event(button, action, mods);
   }
 
   inline
   void Basic_viewer::window_size_callback(GLFWwindow* window, int width, int height)
   {
-    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
-
+    auto viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->m_windowSize = {width, height};
 
+    viewer->m_aspectRatio = static_cast<float>(width) / height;
     glViewport(0, 0, width, height);
   }
 
   inline
   void Basic_viewer::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
   {
-    Basic_viewer* viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
+    auto viewer = static_cast<Basic_viewer*>(glfwGetWindowUserPointer(window));
     viewer->on_scroll_event(xoffset, yoffset);
   }
 
@@ -852,7 +852,7 @@ namespace GLFW
   inline
   void Basic_viewer::scroll_event(const float deltaTime)
   {
-    float yoffset = get_scroll_yOffset();
+    float yoffset = get_scroll_yOffset() / m_aspectRatio;
 
     if (is_key_pressed(m_window, GLFW_KEY_LEFT_SHIFT))
     {
@@ -1196,10 +1196,10 @@ namespace GLFW
   void Basic_viewer::rotate_clipping_plane()
   {
     auto [mouseDeltaX, mouseDeltaY] = get_mouse_delta();
-    
+
     m_clippingPlane.rotation(
-      mouseDeltaX, 
-      mouseDeltaY
+      mouseDeltaX / m_aspectRatio, 
+      mouseDeltaY / m_aspectRatio
     );
   }
 
@@ -1208,16 +1208,14 @@ namespace GLFW
   {
     auto [mouseDeltaX, mouseDeltaY] = get_mouse_delta();
 
-    float deltaX = deltaTime * mouseDeltaX;
-    float deltaY = deltaTime * mouseDeltaY;
+    float deltaX = deltaTime * mouseDeltaX / m_aspectRatio;
+    float deltaY = deltaTime * mouseDeltaY / m_aspectRatio;
 
     if (useCameraForward)
     {
-      vec3f forwardDirection = m_camera.get_forward();
+      vec3f forwardDirection = m_camera.get_forward().normalized();
 
-    float s = deltaX;
-    if (abs(deltaY) > abs(deltaX))
-      s = -deltaY;
+      float s = abs(deltaY) > abs(deltaX) ? -deltaY : deltaX;
 
       m_clippingPlane.translation(forwardDirection, s);
     }
@@ -1233,8 +1231,8 @@ namespace GLFW
     auto [mouseDeltaX, mouseDeltaY] = get_mouse_delta();
     
     m_camera.rotation(
-      mouseDeltaX, 
-      mouseDeltaY
+      mouseDeltaX / m_aspectRatio, 
+      mouseDeltaY / m_aspectRatio
     );
 
     m_clippingPlane.set_up_axis(m_camera.get_up());
@@ -1247,8 +1245,8 @@ namespace GLFW
     auto [mouseDeltaX, mouseDeltaY] = get_mouse_delta();
 
     m_camera.translation(
-      deltaTime * -mouseDeltaX,
-      deltaTime * mouseDeltaY
+      deltaTime * -mouseDeltaX / m_aspectRatio,
+      deltaTime * mouseDeltaY / m_aspectRatio
     );
   }
 
@@ -1260,21 +1258,23 @@ namespace GLFW
     int count;
     GLFWmonitor *monitor = glfwGetMonitors(&count)[0];
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-    if (m_isFullscreen)
-    {
+
+
+    if (m_isFullscreen) {
       m_oldWindowSize = m_windowSize;
 
-      glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+      glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, 60);
       glViewport(0, 0, mode->width, mode->height);
 
       m_windowSize.x() = mode->width;
       m_windowSize.y() = mode->height;
-      return;
     }
-
-    m_windowSize = m_oldWindowSize;
-    glfwSetWindowMonitor(m_window, nullptr, 0, 0, m_windowSize.x(), m_windowSize.y(), mode->refreshRate);
-    glViewport(0, 0, m_windowSize.x(), m_windowSize.y());
+    else 
+    {
+      m_windowSize = m_oldWindowSize;
+      glfwSetWindowMonitor(m_window, nullptr, 0, 0, m_windowSize.x(), m_windowSize.y(), mode->refreshRate);
+      glViewport(0, 0, m_windowSize.x(), m_windowSize.y());
+    }
   }
 
   inline

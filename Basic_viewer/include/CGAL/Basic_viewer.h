@@ -9,7 +9,7 @@ namespace CGAL
 {
   inline
   void draw_graphics_scene(const Graphics_scene&,
-                           const char* ="CGAL Basic Viewer")
+                           const char* ="CGAL Basic Viewer (GLFW)")
   {
     std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
   }
