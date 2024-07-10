@@ -482,14 +482,63 @@ endif()
 
 find_package(TBB QUIET)
 if(TBB_FOUND)
-  message(STATUS "Third-parties libraries TBB ${TBB_VERSION}")
+  message(STATUS "Third-party library TBB ${TBB_VERSION}")
 endif()
 find_package(Eigen3 QUIET)
 if(Eigen3_FOUND)
-  message(STATUS "Third-parties libraries Eigen3 ${EIGEN3_VERSION}")
+  message(STATUS "Third-party library Eigen3 ${EIGEN3_VERSION}")
+endif()
+
+find_package(GMP QUIET)
+if(GMP_FOUND)
+  message(STATUS "Third-party library GMP ${GMP_VERSION}")
+endif()
+
+find_package(MPFR QUIET)
+if(MPFR_FOUND)
+  message(STATUS "Third-party library MPFR ${MPFR_VERSION}")
+endif()
+
+find_package(OpenGR QUIET)
+if(OpenGR_FOUND)
+  message(STATUS "Third-party library OpenGR found")
+endif()
+
+find_package(libpointmatcher QUIET)
+if(libpointmatcher_FOUND)
+  message(STATUS "Third-party library libpointmatcher found")
+endif()
+
+find_package(LEDA QUIET)
+if(LEDA_FOUND)
+  message(STATUS "Third-party library LEDA found")
+endif()
+
+find_package(MPFI QUIET)
+if(MPFI_FOUND)
+  message(STATUS "Third-party library MPFI found")
+endif()
+
+find_package(NTL QUIET)
+if(NTL_FOUND)
+  message(STATUS "Third-party library NTL found")
+endif()
+
+find_package(OpenCV QUIET)
+if(OpenCV_FOUND)
+  message(STATUS "Third-party library OpenCV ${OpenCV_VERSION}")
+endif()
+
+find_package(METIS QUIET)
+if(METIS_FOUND)
+  message(STATUS "Third-party library METIS found")
+endif()
+
+find_package(ZLIB QUIET)
+if(ZLIB_FOUND)
+  message(STATUS "Third-party library zlib ${ZLIB_VERSION_STRING}")
 endif()
 message("== Generate version files (DONE) ==\n")
-
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= External libraries =-
