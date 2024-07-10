@@ -63,6 +63,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
     Point center;
     double size;
     int nb_subdiv_per_dim;
+    Grid(): center(0,0,0), size(0), nb_subdiv_per_dim(0){}
+    Grid(Point c, double s, int n): center(c), size(s), nb_subdiv_per_dim(n){}
   };
 
   struct HexMeshingData { 
@@ -846,7 +848,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     lcc.sew3_same_facets();
 
     // Connected components must be equal to 1
-    return Grid{.center = pos, .size = size, .nb_subdiv_per_dim = nb_subdiv_per_dim };
+    return Grid(pos, size, nb_subdiv_per_dim);
   }
 
   Grid generate_grid(LCC& lcc, Tree& aabb, int nb_subdiv_per_dim) {
@@ -958,8 +960,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
     lcc.mark_cell<0>(node3, mark);
     lcc.mark_cell<0>(node4, mark);
   }
-
-
 
   void load_patterns(Pattern_substituer<LCC> &regular_templates, Pattern_substituer<LCC>& partial_3_template) {
     // BUG Manque des opérateurs de déplacements pour Pattern, le reserve est un fix temporaire

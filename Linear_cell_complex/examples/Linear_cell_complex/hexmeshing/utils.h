@@ -72,7 +72,7 @@ void render(LCC &lcc, typename LCC::size_type marked_cell_0, typename LCC::size_
       continue;
     }
 
-    buffer.add_point(lcc.template point(it));
+    buffer.add_point(lcc.point(it));
   }
 
   // Marked edges
@@ -86,7 +86,7 @@ void render(LCC &lcc, typename LCC::size_type marked_cell_0, typename LCC::size_
       continue;
     }
 
-    buffer.add_segment(lcc.template point(it), lcc.template point(lcc.template other_extremity(it)));
+    buffer.add_segment(lcc.point(it), lcc.point(lcc.other_extremity(it)));
   }
 
   draw_graphics_scene(buffer);
