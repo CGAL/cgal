@@ -124,8 +124,8 @@ public:
   void load_additional_fpattern(const std::string& file_name,
                       std::function<void(LCC&, size_type)> init_topreserve=nullptr)
   {
-    std::size_t id = load_one_additional_pattern<1>(file_name, m_fpatterns);
-    if (id < 0) {
+    auto [success, id] = load_one_additional_pattern<1>(file_name, m_fpatterns);
+    if (!success) {
       std::cerr << "load_additional_fpattern: file not found or format not readable" << std::endl;
       return;   
     };
@@ -227,8 +227,8 @@ public:
   void load_additional_vpattern(const std::string& directory_name,
                       std::function<void(LCC&, size_type)> init_topreserve=nullptr)
   {
-    std::size_t id = load_one_additional_pattern<3>(directory_name, m_vpatterns);
-    if (id < 0) {
+    auto [success, id] = load_one_additional_pattern<3>(directory_name, m_vpatterns);
+    if (!success) {
       std::cerr << "load_additional_vpattern: file not found or format not readable" << std::endl;
       return;   
     };
@@ -294,14 +294,14 @@ protected:
 
   // Returns the id of the loaded pattern, -1 if it couldn't be loaded
   template<unsigned int type>
-  std::size_t load_one_additional_pattern(const std::string& file_name,
+  std::pair<bool, std::size_t> load_one_additional_pattern(const std::string& file_name,
                          Pattern_set<type>& patterns)
   {
     const std::filesystem::path file(file_name);
     if (!std::filesystem::exists(file) 
       || !std::filesystem::is_regular_file(file) 
       || !is_lcc_readable_file(file.string()))
-    { return -1; }
+    { return {false, 0}; }
 
     std::size_t id = patterns.size();
     patterns.push_back(Pattern<LCC,type>());
@@ -309,7 +309,7 @@ protected:
     read_depending_extension(file.string(),
                                  patterns[id].lcc());
 
-    return id;
+    return {true, id};
   }
 
   ////////////////////////////////////////////////////////////////////////////////
