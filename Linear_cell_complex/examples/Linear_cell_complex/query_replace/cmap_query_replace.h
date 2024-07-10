@@ -294,7 +294,7 @@ protected:
 
   // Returns the id of the loaded pattern, -1 if it couldn't be loaded
   template<unsigned int type>
-  bool load_one_additional_pattern(const std::string& file_name,
+  std::size_t load_one_additional_pattern(const std::string& file_name,
                          Pattern_set<type>& patterns)
   {
     const std::filesystem::path file(file_name);
