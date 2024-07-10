@@ -128,48 +128,6 @@ int two_stacked_3_template_test() {
   return 0;
 }
 
-int test_signature() {
-    using namespace CGAL::HexRefinement::TwoRefinement;
-
-  HexMeshingData hdata;
-  LCC& lcc = hdata.lcc;
-
-  hdata.grid = generate_grid(hdata.lcc, Point(0,0,0), 5, 2);
-  hdata.identified_mark = lcc.get_new_mark();
-  hdata.template_mark = lcc.get_new_mark();
-  hdata.corner_mark = lcc.get_new_mark();
-
-  lcc.negate_mark(hdata.corner_mark);
-  
-  load_patterns(hdata.regular_templates, hdata.partial_templates);
-
-  PlaneData plane;
-  // TODO mark 2 volumes to shape two 3 templates using get_or_create_attr<3>
-
-  Dart_handle dart = lcc.beta(lcc.first_dart(), 1, 2, 1, 1);
-  lcc.mark_cell<0>(dart, hdata.identified_mark);
-  get_or_create_attr<3>(lcc, lcc.first_dart());
-
-  auto m = lcc.get_new_mark();
-
-  auto d = lcc.beta(lcc.first_dart(), 1, 2, 0, 2, 3, 2);
-  // mark_edge(lcc, d, m);
-
-  extract_first_faces_of_planes(hdata);
-  extract_darts_from_even_planes(hdata, plane, Plane::XY);
-  create_vertices_for_templates(hdata, plane);
-  refine_marked_hexes(hdata, plane);
-
-  auto t = lcc.one_dart_per_incident_cell<2,2>(d);
-  for (auto it = t.begin(); it != t.end(); it++){
-    mark_face(lcc, it, m);
-  }
-
-  render<LCC>(lcc, m, m);
-
-  return 0;
-}
-
 
 int main(){
   return surface_test();
