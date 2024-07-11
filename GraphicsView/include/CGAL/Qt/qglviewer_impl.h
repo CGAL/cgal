@@ -84,6 +84,7 @@ See the project main page for details on the project and installation steps. */
 
 CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::defaultConstructor() {
+  return;
   setFocusPolicy(::Qt::StrongFocus);
 
   CGAL::QGLViewer::QGLViewerPool().append(this);
