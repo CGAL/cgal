@@ -39,9 +39,11 @@ public:
 
   Hyperbolic_fundamental_domain_2();
   Hyperbolic_fundamental_domain_2(const std::vector<Point>& vertices, const std::vector<int>& pairings);
-
-  void set(const std::vector<Point>& vertices, const std::vector<int>& pairings);
-
+  void set(std::vector<Point>::iterator vfirst,
+	     std::vector<Point>::iterator vlast,
+	     std::vector<int>::iterator pfirst,
+	     std::vector<int>::iterator plast);
+  
   int size() const; // Returns the number of vertices (equivalently, the number of sides)
   Point vertex(int index) const; // Returns the index-th vertex
   int paired_side(int index) const; // Returns the index of the side paired to side A, where A is the index-th side
@@ -73,26 +75,24 @@ Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(const s
   set(vertices, pairings);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-template<class Traits>
-void Hyperbolic_fundamental_domain_2<Traits>::set(const std::vector<Point>& vertices, const std::vector<int>& pairings){
-  _vertices = vertices;
-  _pairings = pairings;
-}
-
-////////////////////////////////////////////////////////////////////////////////
+/* //////////////////////////////////////////////////////////////////////////////// */
 
 /* template<class Traits> */
-/*   void Hyperbolic_fundamental_domain_2<Traits>::setMARC(const std::ranges::range<Point> vertices, const std::ranges::range<int> pairings){ */
-/*   std::vector<std::ranges::range_value_t<decltype(vertices)>> _vertices; */
+/* void Hyperbolic_fundamental_domain_2<Traits>::set(const std::vector<Point>& vertices, const std::vector<int>& pairings){ */
+/*   _vertices = vertices; */
+/*   _pairings = pairings; */
+/* } */
 
-/*   if constexpr(std::ranges::sized_range<decltype(vertices)>) { */
-/*       _vertices.reserve(std::ranges::size(vertices)); */
-/*     } */
+////////////////////////////////////////////////////////////////////////////////
 
-/*   std::ranges::copy(vertices, std::back_inserter(_vertices)); */
-/*  } */
+ template<class Traits>
+   void Hyperbolic_fundamental_domain_2<Traits>::set(std::vector<Point>::iterator vfirst,
+						     std::vector<Point>::iterator vlast,
+						     std::vector<int>::iterator pfirst,
+						     std::vector<int>::iterator plast){
+   _vertices = std::vector<Point>(vfirst, vlast);
+   _pairings = std::vector<int>(pfirst, plast);
+ }
 
 ////////////////////////////////////////////////////////////////////////////////
 
