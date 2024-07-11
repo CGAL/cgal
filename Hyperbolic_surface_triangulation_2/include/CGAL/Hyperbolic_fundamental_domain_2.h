@@ -20,6 +20,7 @@
 
 #include <vector>
 #include <iostream>
+#include <ranges>
 
 namespace CGAL {
 
@@ -79,6 +80,19 @@ void Hyperbolic_fundamental_domain_2<Traits>::set(const std::vector<Point>& vert
   _vertices = vertices;
   _pairings = pairings;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+/* template<class Traits> */
+/*   void Hyperbolic_fundamental_domain_2<Traits>::setMARC(const std::ranges::range<Point> vertices, const std::ranges::range<int> pairings){ */
+/*   std::vector<std::ranges::range_value_t<decltype(vertices)>> _vertices; */
+
+/*   if constexpr(std::ranges::sized_range<decltype(vertices)>) { */
+/*       _vertices.reserve(std::ranges::size(vertices)); */
+/*     } */
+
+/*   std::ranges::copy(vertices, std::back_inserter(_vertices)); */
+/*  } */
 
 ////////////////////////////////////////////////////////////////////////////////
 

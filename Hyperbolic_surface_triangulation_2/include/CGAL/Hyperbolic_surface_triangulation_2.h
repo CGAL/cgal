@@ -107,6 +107,7 @@ private:
   ComplexNumber get_cross_ratio(Dart_const_handle dart) const;
 
   Dart_handle pick_edge_to_flip();
+  Dart_const_handle pick_edge_to_flip() const;
 
   void copy_from(const Combinatorial_map_with_cross_ratios& cmap);
   void copy_from(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
@@ -642,10 +643,23 @@ typename Hyperbolic_surface_triangulation_2<Traits>::ComplexNumber Hyperbolic_su
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+template<class Traits>
+  typename Hyperbolic_surface_triangulation_2<Traits>::Dart_handle Hyperbolic_surface_triangulation_2<Traits>::pick_edge_to_flip(){
+  auto &cm=_combinatorial_map.darts();
+  for (auto it = cm.begin(); it != cm.end(); ++it){
+    if ( is_delaunay_flippable(it) ){
+      return it;
+    }
+  }
+  return nullptr;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-typename Hyperbolic_surface_triangulation_2<Traits>::Dart_handle Hyperbolic_surface_triangulation_2<Traits>::pick_edge_to_flip() {
-  for (typename Dart_range::iterator it = _combinatorial_map.darts().begin(); it != _combinatorial_map.darts().end(); ++it){
+  typename Hyperbolic_surface_triangulation_2<Traits>::Dart_const_handle Hyperbolic_surface_triangulation_2<Traits>::pick_edge_to_flip() const{
+  const auto &cm=_combinatorial_map.darts();
+  for (auto it = cm.begin(); it != cm.end(); ++it){
     if ( is_delaunay_flippable(it) ){
       return it;
     }
