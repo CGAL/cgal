@@ -313,7 +313,7 @@ template<unsigned int d_, unsigned int ambient_dim, class Traits_,
 void draw(const CGAL_LCC_TYPE& alcc, const char *title="LCC Basic Viewer")
 {
   CGAL::Graphics_scene buffer;
-  // add_to_graphics_scene(alcc, buffer);
+  add_to_graphics_scene(alcc, buffer);
   draw_graphics_scene(buffer, title);
 }
 

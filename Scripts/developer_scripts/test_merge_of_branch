@@ -210,7 +210,7 @@ txt_not_utf8=$(git ls-files -z --stage | awk -F"\t" 'BEGIN { RS="\0" }; { printf
 if [ -n "${txt_not_utf8}" ]; then
   echo "The following files have non utf-8 characters:"
   echo ${txt_not_utf8}
-  exit 0
+  exit 1
 fi
 
 #check no file contains tab characters
