@@ -18,7 +18,7 @@ void test_property_creation() {
   static_assert(std::is_same_v<decltype(floats), std::reference_wrapper<Property_array<std::size_t, float>>>);
   assert(properties.num_properties() == 2);
 
-  // get() should retreive the same arrays
+  // get() should retrieve the same arrays
   assert(integers.get() == properties.get_property<int>("integer"));
   assert(floats.get() == properties.get_property<float>("float"));
 

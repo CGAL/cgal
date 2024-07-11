@@ -109,7 +109,7 @@ public:
     CGAL_precondition(m_active_indices.size() == m_data.size());
   }
 
-// deactived as MSVC 2017 as an issue with that but it is not currently used.
+// deactivated as MSVC 2017 has an issue with that but it is not currently used.
 #if 0
   virtual void move(Property_array_base<Index>&& other_base) override {
     auto&& other = static_cast<Property_array<Index, T>&&>(other_base);

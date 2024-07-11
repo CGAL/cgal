@@ -999,7 +999,7 @@ public:
 
   // Sign_at, Sign_at_homogeneous, Compare
   // define XXX_ even though ICoeff may not be Real_embeddable
-  // select propoer XXX among XXX_ or Null_functor using ::std::conditional_t
+  // select proper XXX among XXX_ or Null_functor using ::std::conditional_t
 private:
   struct Sign_at_ {
   private:

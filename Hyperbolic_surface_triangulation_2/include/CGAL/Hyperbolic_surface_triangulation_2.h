@@ -109,7 +109,7 @@ public:  // passé en public par Camille
 
   ComplexNumber get_cross_ratio(Dart_const_handle dart) const;
 
-  Dart_handle pick_edge_to_flip() ;  //Camille: removed const
+  Dart_handle pick_edge_to_flip();
 
   void copy_from(const Combinatorial_map_with_cross_ratios& cmap);
   void copy_from(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
@@ -647,9 +647,9 @@ typename Hyperbolic_surface_triangulation_2<Traits,Attributes>::ComplexNumber Hy
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits,Attributes>::Dart_handle Hyperbolic_surface_triangulation_2<Traits,Attributes>::pick_edge_to_flip() {
-  for (typename Dart_range::iterator it = _combinatorial_map.darts().begin(); it != _combinatorial_map.darts().end(); ++it){  // Camille : changé Dart_range en Dart_const_range
+template<class Traits, Attributes>
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Dart_handle Hyperbolic_surface_triangulation_2<Traits>::pick_edge_to_flip() {
+  for (typename Dart_range::iterator it = _combinatorial_map.darts().begin(); it != _combinatorial_map.darts().end(); ++it){
     if ( is_delaunay_flippable(it) ){
       return it;
     }

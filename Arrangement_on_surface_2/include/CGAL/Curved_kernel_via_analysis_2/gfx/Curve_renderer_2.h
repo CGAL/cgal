@@ -221,7 +221,7 @@ private:
     //! returns \c true when the precision limit for a specified number type is
     //! reached
     typename Renderer_traits::Precision_limit limit;
-    //! maximum level of subdivision dependending on specified number type
+    //! maximum level of subdivision depending on specified number type
     static const unsigned MAX_SUBDIVISION_LEVEL =
             Renderer_traits::MAX_SUBDIVISION_LEVEL;
 
