@@ -144,7 +144,7 @@ shared with other `My_geo_object` objects.
 
 \section Developer_manualTemplatedhandles Templated handles
 
-Factoring out the common functionality in base classes enables re-use of
+Factoring out the common functionality in base classes enables reuse of
 the code, but there is also a major drawback. The `Handle` class does not
 know the type of the representation object. It maintains a `Rep*` pointer.
 Therefore, this pointer must be cast to a pointer to the actual type

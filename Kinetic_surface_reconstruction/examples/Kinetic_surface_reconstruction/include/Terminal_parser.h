@@ -149,7 +149,7 @@ namespace KSR {
 
       std::cout <<
         "parameter name: -silent" << std::endl <<
-        "description: supress any intermediate output except for the final result" << std::endl << std::endl;
+        "description: suppress any intermediate output except for the final result" << std::endl << std::endl;
 
       std::cout <<
         "parameter name: -params" << std::endl <<

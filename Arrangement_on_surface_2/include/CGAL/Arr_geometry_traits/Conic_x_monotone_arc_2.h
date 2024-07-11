@@ -163,7 +163,7 @@ public:
     // Set the basic properties and clear the _info bits.
     this->set_endpoints(source, target);
     this->set_orientation(COLLINEAR);
-    this->reset_flags();                // inavlid arc
+    this->reset_flags();                // invalid arc
 
     // Check if the arc is directed right (the target is lexicographically
     // greater than the source point), or to the left.
@@ -180,7 +180,7 @@ public:
       res = ker.compare_y_2_object()(source, target);
       CGAL_precondition(res != EQUAL);
       if (res == EQUAL) {
-        reset_flags();  // inavlid arc
+        reset_flags();  // invalid arc
         return;
       }
     }
@@ -290,7 +290,7 @@ private:
 
     // Check whether the conic is facing up or facing down:
     // Check whether the arc (which is x-monotone of degree 2) lies above or
-    // below the segement that contects its two end-points (x1,y1) and (x2,y2).
+    // below the segment that contects its two end-points (x1,y1) and (x2,y2).
     // To do that, we find the y coordinate of a point on the arc whose x
     // coordinate is (x1+x2)/2 and compare it to (y1+y2)/2.
     Comparison_result res = ker.compare_y_2_object()(p_arc_mid, p_mid);
@@ -301,7 +301,7 @@ private:
   }
 
 public:
-  /// \name Public constrcutors, assignment operators, and destructors.
+  /// \name Public constructors, assignment operators, and destructors.
   //@{
 
   /*! Default constructor.
@@ -350,7 +350,7 @@ public:
 private:
   template <typename, typename, typename> friend class Arr_conic_traits_2;
 
-  /// \name private constrcutors to be used only by the traits class template.
+  /// \name private constructors to be used only by the traits class template.
   //@{
 
   /*! Construct an x-monotone arc from a conic arc.
@@ -421,7 +421,7 @@ public:
   bool is_lower() const { return this->test_flag(FACING_DOWN); }
 
   /*! Check whether the arc is a special segment connecting two algebraic
-   * endpoints (and has no undelying integer conic coefficients).
+   * endpoints (and has no underlying integer conic coefficients).
    */
   bool is_special_segment() const { return this->test_flag(IS_SPECIAL_SEGMENT); }
 
@@ -447,7 +447,7 @@ public:
   Conic_id id() const { return m_id; }
 
   /*! Check whether the given point lies on the arc.
-   * \param p The qury point.
+   * \param p The query point.
    * \param (true) if p lies on the arc; (false) otherwise.
    */
   CGAL_DEPRECATED
@@ -660,7 +660,7 @@ public:
   //@{
 
   /*! Flip the arc.
-   * \return An arc with swapped source and target and a reverse orienation.
+   * \return An arc with swapped source and target and a reverse orientation.
    */
   Self flip() const {
     // Make a copy of the current arc.
@@ -1316,7 +1316,7 @@ private:
 
     if (CGAL::compare(slope1_numer*slope2_denom, slope2_numer*slope1_denom) !=
         EQUAL) {
-      // Different slopes at p - the mutiplicity of p is 1:
+      // Different slopes at p - the multiplicity of p is 1:
       return 1;
     }
 
@@ -1337,7 +1337,7 @@ private:
     if (CGAL::compare(slope1_numer*slope2_denom,
                       slope2_numer*slope1_denom) != EQUAL)
     {
-      // Different curvatures at p - the mutiplicity of p is 2:
+      // Different curvatures at p - the multiplicity of p is 2:
       return 2;
     }
 

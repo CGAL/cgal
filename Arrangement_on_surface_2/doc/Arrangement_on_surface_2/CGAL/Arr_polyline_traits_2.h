@@ -209,7 +209,7 @@ public:
    * polyline.
    *
    * This functor constructs general polylines. Its `operator()` is
-   * oveloaded to support various input types.
+   * overloaded to support various input types.
    *
    * Note that the composing segments, depending on the `SegmentTraits_2`,
    * might not be \f$x\f$-monotone.

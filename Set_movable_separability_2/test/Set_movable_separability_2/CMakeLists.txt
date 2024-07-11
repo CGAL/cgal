@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Set_movable_separability_2_Tests)
 
 if(RUNNING_CGAL_AUTO_TEST OR CGAL_TEST_SUITE)

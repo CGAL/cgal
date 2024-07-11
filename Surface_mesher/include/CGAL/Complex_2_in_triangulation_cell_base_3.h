@@ -17,6 +17,11 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Complex_2_in_triangulation_cell_base_3.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/Delaunay_triangulation_cell_base_3.h>
 
 #include <bitset>

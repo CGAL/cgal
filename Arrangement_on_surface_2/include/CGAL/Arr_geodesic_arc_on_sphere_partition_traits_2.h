@@ -22,7 +22,7 @@
  * The partition traits class for geodesic arcs on the sphere enables
  * the partition of geodesic polygons to convex polygons. It models the
  * concept YMonotonePartitionTraits_2.
- * This partition of geodesic polygons is garenteed to work only for polygons
+ * This partition of geodesic polygons is guaranteed to work only for polygons
  * that are contained in a hemisphere and that do not intersect one of the
  * boundaries.
  * For larger polygons there is a chance that at least one steiner point may
@@ -329,7 +329,7 @@ public:
  * The partition traits class for geodesic arcs on the sphere enables
  * the partition of geodesic polygons to convex polygons. It models the
  * concept YMonotonePartitionTraits_2.
- * This partition of geodesic polygons is garenteed to work only for polygons
+ * This partition of geodesic polygons is guaranteed to work only for polygons
  * that are contained in a hemisphere and that do not intersect one of the
  * boundaries.
  * For larger polygons there is a chance that at least one steiner point may

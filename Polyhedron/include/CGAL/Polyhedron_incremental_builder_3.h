@@ -73,7 +73,7 @@ protected:
     bool                      first_vertex;
     bool                      last_vertex;
 
-    CGAL_assertion_code( int check_protocoll;)  // use to check protocoll.
+    CGAL_assertion_code( int check_protocoll;)  // use to check_protocoll.
     // states for checking: 0 = created, 1 = constructing, 2 = make face.
 
     // Implement the vertex_to_edge_map either with an array or

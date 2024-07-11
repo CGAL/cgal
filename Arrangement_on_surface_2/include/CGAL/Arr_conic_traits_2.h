@@ -1107,7 +1107,7 @@ public:
       return false;
     }
 
-    /*! Intersect the supporing conic curves of this arc and the given arc.
+    /*! Intersect the supporting conic curves of this arc and the given arc.
      * \param arc The arc to intersect with.
      * \param inter_list The list of intersection points.
      */
@@ -1133,7 +1133,7 @@ public:
       if (xcv2.is_special_segment()) {
         // The second arc is a special segment (a*x + b*y + c = 0).
         if (xcv1.is_special_segment()) {
-          // Both arc are sepcial segment, so they have at most one intersection
+          // Both arc are special segments, so they have at most one intersection
           // point.
           const auto* extra_data1 = xcv1.extra_data();
           const auto* extra_data2 = xcv2.extra_data();
@@ -1724,7 +1724,7 @@ public:
      *   r·𝑥^2 + s·𝑦^2 + t·𝑥·𝑦 + u·𝑥 + v·𝑦 + w = 0
      * where 4·r·s−t^2 > 0
      * We eliminate t so that the x·y term vanishes, applying an inverse
-     * rotation. Then, we compute the radi and the center. Finaly, we rotate
+     * rotation. Then, we compute the radi and the center. Finally, we rotate
      * back. The angle of rotation is given by:
      *   𝑡𝑎𝑛(2𝜃) = 𝐵 / (𝐴−𝐶)
      * Then
@@ -2260,7 +2260,7 @@ public:
                        const Rational& u, const Rational& v, const Rational& w,
                        Orientation orient,
                        const Point_2& source, const Point_2& target) const {
-      // Make sure that the source and the taget are not the same.
+      // Make sure that the source and the target are not the same.
       const auto alg_kernel = m_traits.m_alg_kernel;
       CGAL_precondition_code(auto eq = alg_kernel->compare_xy_2_object());
       CGAL_precondition(eq(source, target) != EQUAL);
@@ -2297,7 +2297,7 @@ public:
       Point_2 target(nt_traits->convert(x3), nt_traits->convert(y3));
       arc.set_endpoints(source, target);
 
-      // Make sure that the source and the taget are not the same.
+      // Make sure that the source and the target are not the same.
       CGAL_precondition_code(auto cmp_xy = alg_kernel->compare_xy_2_object());
       CGAL_precondition(cmp_xy(source, target) != EQUAL);
 
@@ -2324,7 +2324,7 @@ public:
       const bool points_collinear = (CGAL::sign(D) == ZERO);
 
       if (points_collinear) {
-        arc.reset_flags();            // inavlid arc
+        arc.reset_flags();            // invalid arc
         return arc;
       }
 
@@ -2381,7 +2381,7 @@ public:
          orient_f(p3, p4, p5) == COLLINEAR);
 
       if (point_collinear) {
-        arc.reset_flags();            // inavlid arc
+        arc.reset_flags();            // invalid arc
         return arc;
       }
 
@@ -2439,7 +2439,7 @@ public:
           ! m_traits.is_strictly_between_endpoints(arc, mp3) ||
           ! m_traits.is_strictly_between_endpoints(arc, mp4))
       {
-        arc.reset_flags();            // inavlid arc
+        arc.reset_flags();            // invalid arc
         return arc;
       }
       return arc;
@@ -2589,7 +2589,7 @@ public:
         }
 
         if (! found) {
-          arc.reset_flags();          // inavlid arc
+          arc.reset_flags();          // invalid arc
           return arc;
         }
       }
@@ -2597,7 +2597,7 @@ public:
       // Make sure that the source and the target are not the same.
       auto cmp_xy = m_traits.m_alg_kernel->compare_xy_2_object();
       if (cmp_xy(arc.source(), arc.target()) == EQUAL) {
-        arc.reset_flags();            // inavlid arc
+        arc.reset_flags();            // invalid arc
         return arc;
       }
 
@@ -2646,7 +2646,7 @@ public:
       cv.set_source(Point_2(nt_traits->convert(x1), nt_traits->convert(y1)));
       cv.set_target(Point_2(nt_traits->convert(x2), nt_traits->convert(y2)));
 
-      // Make sure that the source and the taget are not the same.
+      // Make sure that the source and the target are not the same.
       CGAL_precondition_code(auto cmp_xy = rat_kernel->compare_xy_2_object());
       CGAL_precondition(cmp_xy(source, target) != EQUAL);
 
@@ -2695,7 +2695,7 @@ public:
       Rational y0 = center.y();
       Rational r_sqr = rat_kernel->compute_squared_radius_2_object()(circ);
 
-      // Produce the correponding conic: if the circle center is (x0,y0)
+      // Produce the corresponding conic: if the circle center is (x0,y0)
       // and its squared radius is R^2, that its equation is:
       //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
       // Note that this equation describes a curve with a negative (clockwise)
@@ -2726,7 +2726,7 @@ public:
      */
     Curve_2 operator()(const Rat_circle_2& circ, Orientation orient,
                        const Point_2& source, const Point_2& target) const {
-      // Make sure that the source and the taget are not the same.
+      // Make sure that the source and the target are not the same.
       CGAL_precondition_code(auto cmp_xy =
                                m_traits.m_alg_kernel->compare_xy_2_object());
       CGAL_precondition(cmp_xy(source, target) != EQUAL);
@@ -2743,7 +2743,7 @@ public:
       Rational y0 = center.y();
       Rational r_sqr = rat_kernel->compute_squared_radius_2_object()(circ);
 
-      // Produce the correponding conic: if the circle center is (x0,y0)
+      // Produce the corresponding conic: if the circle center is (x0,y0)
       // and it squared radius is R^2, that its equation is:
       //   x^2 + y^2 - 2*x0*x - 2*y0*y + (x0^2 + y0^2 - R^2) = 0
       // Since this equation describes a curve with a negative (clockwise)
@@ -2853,7 +2853,7 @@ public:
                              m_traits.compare_y_at_x_2_object());
       CGAL_precondition_code(Equal_2 equal_2 = m_traits.equal_2_object());
       Compare_x_2 compare_x_2 = m_traits.compare_x_2_object();
-      // Check  whether source and taget are two distinct points and they lie
+      // Check  whether source and target are two distinct points and they lie
       // on the line.
       CGAL_precondition(compare_y_at_x_2(src, xcv) == EQUAL);
       CGAL_precondition(compare_y_at_x_2(tgt, xcv) == EQUAL);
@@ -2983,7 +2983,7 @@ public:
         }
       }
       else {
-        // Use the source and target to initialize the exterme points.
+        // Use the source and target to initialize the extreme points.
         bool source_left =
           CGAL::to_double(xcv.source().x()) < CGAL::to_double(xcv.target().x());
         x_min = (source_left) ?
@@ -3077,7 +3077,7 @@ public:
     if (! is_on_supporting_conic(cv, source) ||
         ! is_on_supporting_conic(cv, target))
     {
-      cv.reset_flags();            // inavlid arc
+      cv.reset_flags();            // invalid arc
       return;
     }
 
@@ -3098,7 +3098,7 @@ public:
                         m_nt_traits->convert(v)) * p_mid.y() +
                        m_nt_traits->convert(w)) != ZERO)
         {
-          cv.reset_flags();    // inavlid arc
+          cv.reset_flags();    // invalid arc
           return;
         }
 
@@ -3109,7 +3109,7 @@ public:
       }
       else {
         // The sign of (4rs - t^2) detetmines the conic type:
-        // - if it is possitive, the conic is an ellipse,
+        // - if it is positive, the conic is an ellipse,
         // - if it is negative, the conic is a hyperbola,
         // - if it is zero, the conic is a parabola.
         CGAL::Sign sign_conic = CGAL::sign(4*r*s - t*t);
@@ -3126,7 +3126,7 @@ public:
           bool finite_at_x = (points_at_x(cv, p_mid, ps) > 0);
           bool finite_at_y = (points_at_y(cv, p_mid, ps) > 0);
           if (! finite_at_x && ! finite_at_y) {
-            cv.reset_flags();              // inavlid arc
+            cv.reset_flags();              // invalid arc
             return;
           }
         }
@@ -3192,7 +3192,7 @@ public:
       cv.set_flag(Curve_2::IS_VALID);
       cv.set_flag(Curve_2::IS_FULL_CONIC);
     }
-    else cv.reset_flags();            // inavlid arc
+    else cv.reset_flags();            // invalid arc
   }
 
   /*! Check whether the given point lies on the supporting conic of the arc.
@@ -3300,7 +3300,7 @@ public:
       return (orient_f(source, p, target) == RIGHT_TURN);
   }
 
-  /*! Build the data for hyperbolic arc, contaning the characterization of the
+  /*! Build the data for hyperbolic arc, containing the characterization of the
    * hyperbolic branch the arc is placed on.
    */
   void build_hyperbolic_arc_data(Curve_2& cv) const {
@@ -3680,7 +3680,7 @@ public:
 
     // Check whether the conic is facing up or facing down:
     // Check whether the arc (which is x-monotone of degree 2) lies above or
-    // below the segement that connects its two end-points (x1,y1) and (x2,y2).
+    // below the segment that connects its two end-points (x1,y1) and (x2,y2).
     // To do that, we find the y coordinate of a point on the arc whose x
     // coordinate is (x1+x2)/2 and compare it to (y1+y2)/2.
     auto cmp_y = m_alg_kernel->compare_y_2_object();
@@ -3753,7 +3753,7 @@ public:
   }
 
   /*! Check whether the given point lies on the arc.
-   * \param p The qury point.
+   * \param p The query point.
    * \param (true) if p lies on the arc; (false) otherwise.
    */
   bool contains_point(const X_monotone_curve_2& xcv, const Point_2& p) const {
@@ -3778,7 +3778,7 @@ public:
     return is_between_endpoints(xcv, p);
   }
 
-  /*! Find the vertical tangency points of the undelying conic.
+  /*! Find the vertical tangency points of the underlying conic.
    * \param ps The output points of vertical tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of vertical tangency points.
@@ -3876,7 +3876,7 @@ public:
     return m;
   }
 
-  /*! Find the horizontal tangency points of the undelying conic.
+  /*! Find the horizontal tangency points of the underlying conic.
    * \param ps The output points of horizontal tangency.
    *           This area must be allocated at the size of 2.
    * \return The number of horizontal tangency points.

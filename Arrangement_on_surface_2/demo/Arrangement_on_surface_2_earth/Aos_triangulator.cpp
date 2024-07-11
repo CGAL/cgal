@@ -36,7 +36,7 @@ using json = nlohmann::ordered_json;
 
 namespace {
 
-  // use this traits everytime you construct an arrangment!
+  // use this traits every time you construct an arrangement!
   static Geom_traits s_traits;
   using Dir3 = Kernel::Direction_3;
   using Approximate_number_type = Geom_traits::Approximate_number_type;
@@ -71,7 +71,7 @@ std::vector<QVector3D> Aos_triangulator::get_all(Aos::Arr_handle arrh) {
     // COMPUTE THE CENTROID OF ALL FACE-POINTS
     std::vector<QVector3D> face_points;
 
-    // loop on the egdes of the current outer-ccb
+    // loop on the edges of the current outer-ccb
     auto first = fh->outer_ccb();
     auto curr = first;
     do {
@@ -225,7 +225,7 @@ Aos_triangulator::get_by_country(Aos::Arr_handle arrh, float error,
       if (0 == fh->number_of_outer_ccbs()) continue;
 
       std::vector<QVector3D> face_points;
-      // Loop on the egdes of the current outer-ccb
+      // Loop on the edges of the current outer-ccb
       auto first = fh->outer_ccb();
       auto curr = first;
       do {

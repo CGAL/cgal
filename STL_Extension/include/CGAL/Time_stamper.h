@@ -42,7 +42,7 @@ struct Time_stamper
       pt->set_time_stamp(new_ts);
     }
     else {
-      // else: the time stamp is re-used
+      // else: the time stamp is reused
 
       // Enforces that the time stamp is greater than the current value.
       // That is used when a TDS_3 is copied: in that case, the

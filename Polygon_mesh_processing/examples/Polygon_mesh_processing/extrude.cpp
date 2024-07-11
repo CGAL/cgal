@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
 
   CGAL::IO::read_polygon_mesh(filename, in);
 
-  VNMap vnormals = in.template add_property_map<vertex_descriptor, Vector>("v:normals", CGAL::NULL_VECTOR).first;
+  VNMap vnormals = in.template add_property_map<vertex_descriptor, Vector>("v:normal", CGAL::NULL_VECTOR).first;
 
   CGAL::Polygon_mesh_processing::compute_vertex_normals(in, vnormals);
   Bottom bottom(get(CGAL::vertex_point,out), vnormals, vlen);

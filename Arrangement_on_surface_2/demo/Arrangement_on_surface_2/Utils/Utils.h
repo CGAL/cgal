@@ -21,7 +21,7 @@
 
 class QGraphicsScene;
 
-// Genereic `Arr_compute_y_at_x_2`
+// Generic `Arr_compute_y_at_x_2`
 template <typename Traits_>
 class Arr_compute_y_at_x_2 : public GraphicsSceneMixin {
 public:

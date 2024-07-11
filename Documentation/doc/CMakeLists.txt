@@ -1,7 +1,5 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Documentation NONE)
-
-# Minimal version of CMake:
 
 # Check whether this cmake script is the top level one
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
@@ -79,6 +77,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   if(NOT EXISTS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
     return()
   endif()
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
 
   set(CGAL_DOC_PACKAGE_DEFAULTS
       ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
@@ -166,6 +165,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     endforeach()
   else()
     if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
       file(STRINGS ${CGAL_PACKAGE_DOC_DIR}/dependencies DEPENDENCIES)
     endif()
   endif()

@@ -226,6 +226,11 @@ Release date: June 2024
 -   **Breaking change**: Removed the class templates `CGAL::Gray_image_mesh_domain_3`, `CGAL::Implicit_mesh_domain_3`,
     and `CGAL::Labeled_image_mesh_domain_3`, which were deprecated since CGAL-4.13.
 
+### [3D Surface Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMesher3)
+
+-   This package is deprecated and the package [3D Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgMesh3) should
+    be used instead.
+
 ### [Surface Mesh Parameterization](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMeshParameterization)
 
 -   **Breaking change**: The method [`CGAL::Surface_mesh_parameterization::LSCM_parameterizer_3`](https://doc.cgal.org/6.0/Surface_mesh_parameterization/classCGAL_1_1Surface__mesh__parameterization_1_1LSCM__parameterizer__3.html)
@@ -3364,7 +3369,7 @@ Release date: October 2013
 #### CGAL and Boost Property Maps
 
 -   The `key_type` of the property maps provided by CGAL used to be an
-    iterator. In order to be more easily re-used, the `key_type` has
+    iterator. In order to be more easily reused, the `key_type` has
     been changed to be the `value_type` of the iterator. The packages
     that have been updated to match these changes are **Point Set
     Processing** and **Surface Reconstruction from Point Sets**.
@@ -4933,7 +4938,7 @@ CGAL now works around the preprocessor macros 'min' and 'max' defined in
         allows users to extend the DCEL of the underlying arrangement.
     -   Added a function template called connect\_holes() that connects
         the holes in a given polygon with holes, turning it into a
-        sequence of points, where the holes are connceted to the outer
+        sequence of points, where the holes are connected to the outer
         boundary using zero-width passages.
     -   Added a non-const function member to General\_polygon\_set\_2
         that obtains the underlying arrangement.

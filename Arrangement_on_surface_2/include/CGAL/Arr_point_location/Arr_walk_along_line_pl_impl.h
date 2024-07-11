@@ -113,7 +113,7 @@ Arr_walk_along_line_point_location<Arrangement>::locate(const Point_2& p) const
         face = closest_he->twin()->face();
 
         // Perform a vertical walk along the faces of the hole until locating
-        // a face that contains the qeury point.
+        // a face that contains the query point.
         do {
           CGAL_assertion_code
             (Halfedge_const_handle  old_closest_he = closest_he);
@@ -256,7 +256,7 @@ _vertical_ray_shoot(const Point_2& p, bool shoot_up) const
         face = closest_he->twin()->face();
 
         // Perform a vertical walk along the faces of the hole until locating
-        // a face that contains the qeury point.
+        // a face that contains the query point.
         do {
           CGAL_assertion_code (
             Halfedge_const_handle  old_closest_he = closest_he;

@@ -271,7 +271,7 @@ public:
   class Halfedge;
   class Face;
 
-  // Definition of the halfedge data-structure itereators and circulators:
+  // Definition of the halfedge data-structure iterators and circulators:
   typedef I_Filtered_iterator<DVertex_iter, _Is_concrete_vertex,
                               Vertex, DDifference, DIterator_category>
     Vertex_iterator;

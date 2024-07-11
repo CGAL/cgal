@@ -91,10 +91,10 @@ namespace CGAL {
 
   public:
     typedef Cell_attribute_with_point<LCC, Info_, Tag, Functor_on_merge_,
-                                      Functor_on_split_> Self;
+                                      Functor_on_split_, WithID> Self;
 
     typedef Cell_attribute<LCC, Info_, Tag,
-                           Functor_on_merge_, Functor_on_split_> Base1;
+                           Functor_on_merge_, Functor_on_split_, WithID> Base1;
     typedef Point_for_cell<typename LCC::Point> Base2;
 
     typedef typename LCC::Point             Point;

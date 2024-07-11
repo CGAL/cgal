@@ -643,7 +643,7 @@ public Q_SLOTS:
     QString filename;
 
     int classifier = get_classifier();
-    if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER) // Sum of Weighted Featuers
+    if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER) // Sum of Weighted Features
       filename = QFileDialog::getSaveFileName(mw,
                                               tr("Save classification configuration"),
                                               tr("%1 (CGAL classif config).xml").arg(classif->item()->name()),
@@ -690,7 +690,7 @@ public Q_SLOTS:
     QString filename;
 
     int classifier = get_classifier();
-    if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER) // Sum of Weighted Featuers
+    if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER) // Sum of Weighted Features
       filename = QFileDialog::getOpenFileName(mw,
                                               tr("Open CGAL classification configuration"),
                                               ".",
@@ -1321,7 +1321,7 @@ public Q_SLOTS:
     QMultipleInputDialog dialog ("Train Classifier", mw);
 
     int classifier = get_classifier();
-    if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER) // Sum of Weighted Featuers
+    if (classifier == CGAL_CLASSIFICATION_SOWF_NUMBER) // Sum of Weighted Features
     {
       QSpinBox* trials = dialog.add<QSpinBox> ("Number of trials: ", "trials");
       trials->setRange (1, 99999);

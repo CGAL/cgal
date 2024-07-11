@@ -197,7 +197,7 @@ namespace draw_function_for_arrangement_2
       }
     }
 
-    /*! Draw a region using aproximate coordinates.
+    /*! Draw a region using approximate coordinates.
      * Call this member function only if the geometry traits is equipped with
      * the coordinate-approximation functionality of a curve.
      * This function must be inlined (e.g., a template) to enable the
@@ -416,7 +416,7 @@ namespace draw_function_for_arrangement_2
     m_visited.clear();
   }
 
-  /*! Draw a curve using aproximate coordinates.
+  /*! Draw a curve using approximate coordinates.
    * Call this member function only of the geometry traits is equipped with
    * the coordinate-aproximation functionality of a curve.
    * This function must be inlined (e.g., a template) to enable the

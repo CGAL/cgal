@@ -62,6 +62,11 @@ a natural model of this concept.
 */
 typedef unspecified_type Is_facet_bad;
 
+/*!
+* Numerical type.
+*/
+typedef unspecified_type FT;
+
 /// @}
 
 /// \name Operations
@@ -72,6 +77,12 @@ Returns the `Is_facet_bad` value of the facet `f`, which lives in the triangulat
 The type `Tr` must be identical to the triangulation type used by the mesh generation function.
 */
 Is_facet_bad operator()(const Tr& tr, Facet f);
+
+/**
+* @returns the squared value of minimal radius bound if set,
+* and `std::nullopt` otherwise
+*/
+std::optional<FT> squared_min_radius_bound() const;
 
 /// @}
 

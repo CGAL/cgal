@@ -92,7 +92,7 @@ public:
             CGAL_CORE_finite(fpVal) && // Test for infinite and NaNs
             (core_abs(fpVal) >= maxAbs*ind*CORE_EPS));
   }
-  /// return the sign of fitered value.
+  /// return the sign of filtered value.
   /** (Note: must call isOK() to check whether the sign is ok
       before call this function.) */
   int sign() const {

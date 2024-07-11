@@ -30,7 +30,7 @@ int main()
   ib.add_facet({5,4,7,6});
 
   ib.begin_facet();          // Create a new facet version 2: begin facet
-  ib.add_vertex_to_facet(0); // add sucessively its indices
+  ib.add_vertex_to_facet(0); // add successively its indices
   ib.add_vertex_to_facet(3);
   ib.add_vertex_to_facet(4);
   ib.add_vertex_to_facet(5);

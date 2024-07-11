@@ -2185,7 +2185,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     // If smoothing fails, the face patch is restored to its pre-smoothing state.
     //
     // There is no need to update the working range because smoothing doesn`t change
-    // the number of faces (and old faces are re-used).
+    // the number of faces (and old faces are reused).
     //
     // Do not smooth if there are no self-intersections within the patch: this means the intersection
     // is with another CC and smoothing is unlikely to move the surface sufficiently

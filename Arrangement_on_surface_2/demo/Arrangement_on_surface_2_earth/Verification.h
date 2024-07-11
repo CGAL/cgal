@@ -20,7 +20,7 @@
 class Verification {
 public:
   // Use this to find the approximate of the true minimum projected error.
-  // we are ot using this complicated method, but provide it for completeness.
+  // we are not using this complicated method, but provide it for completeness.
   static void find_minimum_projected_error_on_sphere(float we, Camera& cam,
                                                      int vp_width,
                                                      int vp_height);

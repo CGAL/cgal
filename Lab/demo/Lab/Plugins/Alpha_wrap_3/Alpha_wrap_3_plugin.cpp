@@ -53,7 +53,7 @@ using Wrapper = CGAL::Alpha_wraps_3::internal::Alpha_wrapper_3<Oracle>;
 // - The visitor has a shared pointer to an emiter (can't emit directly from the visitor)
 // - The visitor has shared pointers to a polygon soup (+ colors), which it updates itself
 //   before emitting a signal
-// - There is a pause in the emition because it needs to wait for the main thread to draw the
+// - There is a pause in the starting of the thread because it needs to wait for the main thread to draw the
 //   polygon soup before the visitor updates the polygon soup.
 
 struct Iterative_update_emiter

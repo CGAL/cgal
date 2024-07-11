@@ -280,7 +280,7 @@ public:
     }
   }
 
-  /*! Notificaion before the removal of a vertex.
+  /*! Notification before the removal of a vertex.
    * \param v (in) A handle to the vertex to be deleted.
    */
   virtual void after_remove_vertex() override {
@@ -331,7 +331,7 @@ public:
     }
   }
 
-  /*! Notificaion after the removal of an inner CCB.
+  /*! Notification after the removal of an inner CCB.
    * \param f (in) The face that used to contain the inner CCB.
    */
   virtual void after_remove_inner_ccb(Face_handle /* f */) override {

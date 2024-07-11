@@ -2,7 +2,7 @@
 // of line segments it reads from a file.
 //
 // Usage: seg_arr <-a | -n | -w> <input file>
-// Where: -a  --  Use aggragated insertion (sweep-line);
+// Where: -a  --  Use aggregated insertion (sweep-line);
 //        -n  --  Use incremental insertion with naive point-location;
 //        -w  --  Use incremental insertion with walk point-location.
 //
@@ -70,7 +70,7 @@ int main (int argc, char **argv)
     std::cerr << "Usage: " << argv[0] << " <file name> <method> [format]"
               << std::endl
               << "method is either:" << std::endl
-              << "    -a for aggragated insertion;" << std::endl
+              << "    -a for aggregated insertion;" << std::endl
               << "    -n for incremental insertion with naive point-location;"
               << std::endl
               << "    -s for incremental insertion with simple point-location;"

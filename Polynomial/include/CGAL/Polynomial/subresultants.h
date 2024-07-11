@@ -130,7 +130,7 @@ namespace CGAL {
      * This is an implementation of Ducos' algorithm. It improves on the
      * classical methods for subresultant computation by reducing the
      * swell-up of intermediate results. For all details, see
-     * L.Ducos: Optimazations of the Subresultant algorithm. <i>Journal of Pure
+     * L.Ducos: Optimizations of the Subresultant algorithm. <i>Journal of Pure
      * and Applied Algebra</i> <b>145</b> (2000) 149--163
      */
   template <typename Polynomial_traits_d,typename OutputIterator> inline

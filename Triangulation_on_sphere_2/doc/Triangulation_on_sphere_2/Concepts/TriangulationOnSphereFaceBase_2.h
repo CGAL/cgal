@@ -34,4 +34,16 @@ public:
 
   /// provides write access to a Boolean used to indicate if the face is a ghost face.
   void set_ghost(const bool b);
+
+  /*!
+  inputs the non-combinatorial information given by the face:
+  its ghost status and other possible information.
+  */
+  std::istream& operator>>(std::istream& is, TriangulationOnSphereFaceBase_2& v);
+
+  /*!
+  outputs the non combinatorial operation given by the face:
+  its ghost status and other possible information.
+  */
+  std::ostream& operator<<(std::ostream& os, const TriangulationOnSphereFaceBase_2& v);
 };

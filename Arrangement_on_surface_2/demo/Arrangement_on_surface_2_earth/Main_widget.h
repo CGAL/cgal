@@ -73,7 +73,7 @@ protected:
   // This is called when the required approximation of the arcs is below the
   // currently required one defined by the zoom level and window size. If you
   // zoom-in or increase the window-size this can be called. But once a minimum
-  // approximation error is needed, it will stay there until futher change.
+  // approximation error is needed, it will stay there until further change.
   // SEE the definition of "m_current_approx_error" member variable below!
   float compute_backprojected_error(float pixel_error);
 
@@ -124,7 +124,7 @@ private:
   // After zooming in or making the viewport larger, the approximation-error
   // needs to be updated and checked against the old value. If a lower approxi-
   // mation error is needed the necessary graphics-side updates need to be made
-  // INSIDE the paintGL (or whereever the OpenGL context is active)!
+  // INSIDE the paintGL (or wherever the OpenGL context is active)!
   bool m_update_approx_error = false;
   float m_current_approx_error;
   std::size_t m_num_uniform_points;

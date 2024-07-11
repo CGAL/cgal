@@ -13,7 +13,6 @@ Point_set_3
 Point_set_processing_3
 STL_Extension
 Surface_mesh
-Surface_mesher
 SMDS_3
 Triangulation
 Triangulation_2

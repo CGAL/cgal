@@ -68,7 +68,7 @@ public:
 //////////////////////
 //Search_traits_kd_tree_2
 //
-//(Search traits modified to be used by the Spacial Searching kd_trees for Snap rounding)
+//(Search traits modified to be used by the Spatial Searching kd_trees for Snap rounding)
 //////////////////////
 
 template < class Traits_, class Point_ = typename Traits_::Point_2 >

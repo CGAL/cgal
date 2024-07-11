@@ -322,7 +322,7 @@ QString Scene_edit_box_item::toolTip() const {
 
 QMenu* Scene_edit_box_item::contextMenu()
 {
-  // diasable "Alpha slider" in menu
+  // disable "Alpha slider" in menu
   QMenu* resMenu = Scene_item::contextMenu();
   bool prop = property("menu_changed").toBool();
   if(!prop)

@@ -29,8 +29,8 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  auto vnormals = mesh.add_property_map<vertex_descriptor, Vector>("v:normals", CGAL::NULL_VECTOR).first;
-  auto fnormals = mesh.add_property_map<face_descriptor, Vector>("f:normals", CGAL::NULL_VECTOR).first;
+  auto vnormals = mesh.add_property_map<vertex_descriptor, Vector>("v:normal", CGAL::NULL_VECTOR).first;
+  auto fnormals = mesh.add_property_map<face_descriptor, Vector>("f:normal", CGAL::NULL_VECTOR).first;
 
   PMP::compute_normals(mesh, vnormals, fnormals);
 

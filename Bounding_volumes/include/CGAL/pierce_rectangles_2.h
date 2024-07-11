@@ -794,7 +794,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
   if (d.is_middle_empty()) {
 
     // now try to position the bottom piercing point in each
-    // of the intervalls formed by S_bt and S_br
+    // of the intervals formed by S_bt and S_br
     // (no need to consider S_bl, since we move from left
     // to right and leaving a rectangle won't make piercing easier)
 
@@ -813,7 +813,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     Citerator br = d.brstc_begin();
     Citerator rt = d.rtstc_begin();
 
-    // make sure the top intervall is covered (left endpoint)
+    // make sure the top interval is covered (left endpoint)
     // (it might be that top_i.first determines the placement of
     //  the top square)
     Point_2 top = top_i.first;
@@ -826,14 +826,14 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
     if (tl != d.tlstc_end()) {
       for (;;) {
 
-        // make sure the top intervall is covered (right endpoint)
+        // make sure the top interval is covered (right endpoint)
         if (sdistx(top_i.second, top) > FT(2) * d.r)
           break;
 
         // compute position of left square
         Point_2 left = lessy(left_i.second, *tl) ? *tl : left_i.second;
 
-        // make sure the left intervall is covered
+        // make sure the left interval is covered
         if (sdisty(left, left_i.first) <= FT(2) * d.r) {
 
           // compute position of bottom square
@@ -844,7 +844,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
             break;
           Point_2 bottom = lessx(bottom_i.first, *lb) ? bottom_i.first : *lb;
 
-          // check the shared x-intervall
+          // check the shared x-interval
           if (!share.empty() && d.is_x_greater_y()) {
             // compute position of top in share
     #ifndef _MSC_VER
@@ -862,7 +862,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                    sdistx(*(shl - 1), top) > FT(2) * d.r)
               --shl;
 
-            // make sure shared intervall is covered (left endpoint)
+            // make sure shared interval is covered (left endpoint)
     #ifndef _MSC_VER
            if ((shf != share.begin() || shl == share.end()) &&
                lessx(share.front(), bottom))
@@ -881,7 +881,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
           }
 
 
-          // make sure the bottom and the shared intervall (right endpoint)
+          // make sure the bottom and the shared interval (right endpoint)
           // are covered
     #ifndef _MSC_VER
           if (sdistx(bottom_i.second, bottom) <= FT(2) * d.r &&
@@ -907,7 +907,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                 break;
               Point_2 right = lessy(right_i.first, *br) ? right_i.first : *br;
 
-              // check the shared y-intervall
+              // check the shared y-interval
               if (!share.empty() && !d.is_x_greater_y()) {
                 // compute position of left in share
     #ifndef _MSC_VER
@@ -926,7 +926,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
                        lessy(left, *(shl - 1)))
                   --shl;
 
-                // make sure shared intervall is covered (bottom endpoint)
+                // make sure shared interval is covered (bottom endpoint)
     #ifndef _MSC_VER
                 if ((shf != share.begin() || shl == share.end()) &&
                     lessy(share.front(), right))
@@ -945,7 +945,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
               }
 
 
-              // make sure the right intervall and the shared intervall
+              // make sure the right interval and the shared interval
               // (top endpoint) are covered
     #ifndef _MSC_VER
               if (sdisty(right_i.second, right) <= FT(2) * d.r &&
@@ -985,7 +985,7 @@ four_cover_points(Staircases< Traits >& d, OutputIterator o, bool& ok)
 
               } // if (sdisty(right_i.second, right) <= FT(2) * d.r)
 
-            } // if (bottom and shared intervall are covered)
+            } // if (bottom and shared interval are covered)
 
         } // if (sdisty(left, left_i.first) <= FT(2) * d.r)
 

@@ -2138,7 +2138,7 @@ _intersect(const Self& cv,
   else {
     // Approximate the intersection points and store them in the map.
     // Note that we do not store approximated self-intersections in the map,
-    // as they realte only to the pecific x-monotone curves, and not to the
+    // as they relate only to the specific x-monotone curves, and not to the
     // entire curve.
     app_ok = _approximate_intersection_points(cv, inter_pts);
 

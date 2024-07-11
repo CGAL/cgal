@@ -1,21 +1,26 @@
-// poisson_reconstruction_test.cpp
+// poisson_reconstruction_test_mesh_3.cpp
 
 //----------------------------------------------------------
 // Test the Poisson Delaunay Reconstruction method:
 // For each input point set or mesh's set of vertices, reconstruct a surface.
 // No output.
 //----------------------------------------------------------
-// poisson_reconstruction_test mesh1.off point_set2.xyz...
+// poisson_reconstruction_test_mesh_3 mesh1.off point_set2.xyz...
 
 // CGAL
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_default_triangulation_3.h>
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/make_mesh_3.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
+
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
@@ -52,11 +57,13 @@ typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 // Poisson implicit function
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
-// Surface mesher
-typedef CGAL::Surface_mesh_default_triangulation_3 STr;
-typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+// Mesh_3
+typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
+namespace params = CGAL::parameters;
 
 // ----------------------------------------------------------------------------
 // main()
@@ -242,33 +249,29 @@ int main(int argc, char * argv[])
           // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
-    Surface_3 surface(function,
-                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
-                      sm_dichotomy_error/sm_sphere_radius);
 
     // Defines surface mesh generation criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*average_spacing,  // Max triangle size
-                                                        sm_distance*average_spacing); // Approximation error
+    Mesh_criteria criteria(params::facet_angle = sm_angle,
+                           params::facet_size = sm_radius*average_spacing,
+                           params::facet_distance = sm_distance*average_spacing);
 
-    std::cerr         << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
+    std::cerr         << "  make_mesh_3 with  sphere center=("<<inner_point << "),\n"
                       << "                    sphere radius="<<sm_sphere_radius<<",\n"
                       << "                    angle="<<sm_angle << " degrees,\n"
                       << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
                       << "                    distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
                       << "                    dichotomy = distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
-                      << "                    Manifold_with_boundary_tag)\n";
+                      << "                    manifold_with_boundary()\n";
 
     // Generates surface mesh with manifold option
-    STr tr; // 3D Delaunay triangulation for surface mesh generation
-    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
-                            surface,                              // implicit surface
-                            criteria,                             // meshing criteria
-                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
+    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
+        params::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
+    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+        params::no_exude().no_perturb().manifold_with_boundary());
 
     // Prints status
     /*long*/ memory = CGAL::Memory_sizer().virtual_size();
+    const Tr& tr = c3t3.triangulation();
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
                                      << tr.number_of_vertices() << " output vertices, "
                                      << (memory>>20) << " Mb allocated"
@@ -282,7 +285,7 @@ int main(int argc, char * argv[])
 
     // Converts to polyhedron
     Polyhedron output_mesh;
-    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";

@@ -59,7 +59,7 @@ Polynomial<NT> modular_gcd_utcf_algorithm_M(
 #endif
     typedef Polynomial<NT> Poly;
 
-    // will paly the role of content
+    // will play the role of content
     typedef typename CGAL::Scalar_factor_traits<Poly>::Scalar  Scalar;
 
     typedef typename CGAL::Modular_traits<Poly>::Residue_type   MPoly;

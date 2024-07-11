@@ -74,7 +74,7 @@ Tetrahedral mesh, modified by our tetrahedral remeshing method.
         dihedral angles in the interval [0.1; 179.8],
         33,936 vertices.
 (Middle) After remeshing with uniform sizing field,
-        targetting the average edge length of input (left) mesh;
+        targeting the average edge length of input (left) mesh;
         dihedral angles in the interval [9.8; 165.5],
         301,127 vertices.
 (Right) After remeshing with adaptive sizing field;

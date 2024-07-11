@@ -142,7 +142,7 @@ struct Point_on_triangle
   }
 };
 
-// the intersection of two triangles is computed by interatively intersection t2
+// the intersection of two triangles is computed by iteratively intersection t2
 // with halfspaces defined by edges of t1. The following function is called
 // for each each on t1 on edge of the current intersection.
 // pq is such an edge and p1q1 from t1 defines the halfspace intersection

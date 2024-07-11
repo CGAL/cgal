@@ -263,7 +263,7 @@ lexicographical_compare_three_valued( InputIterator1 first1, InputIterator1 last
     The iterator range \c [first,beyond) is written
     to \c os (obeying CGAL I/O modes). Each element is bracketed by
     \c pre and \c post (default: empty string). Adjacent values are
-    spearated by \c sep (default: ", ", i.e. comma space).
+    separated by \c sep (default: ", ", i.e. comma space).
     The stream \c os is returned in its new state after output.
 
     Example:

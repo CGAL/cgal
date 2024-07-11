@@ -2534,7 +2534,7 @@ _insert_at_vertices(DHalfedge* he_to,
       // EBEB 2012-07-26 the following code enables optimizations:
       // - avoid length-test
       // - search only local minima to find leftmost vertex
-      // - re-use of signs of ccbs
+      // - reuse of signs of ccbs
       // signs1/2 are only used when hole1 == hole2,
       // thus we have to init them now
       Arr_halfedge_direction cv_dir1 = cv_dir;

@@ -214,6 +214,6 @@ if ( NOT "${CGAL_CMAKE_EXACT_NT_BACKEND}" STREQUAL "Default" )
       TARGET CGAL
       APPEND PROPERTY
           INTERFACE_COMPILE_DEFINITIONS "CMAKE_OVERRIDDEN_DEFAULT_ENT_BACKEND=${DEB_VAL}"
-  ) # do not use set_target_properties to avoid overwritting
+  ) # do not use set_target_properties to avoid overwriting
 endif()
 

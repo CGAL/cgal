@@ -470,7 +470,7 @@ int main (int argc, char** argv)
     }
   }
 
-  // Fill all holes except the bigest (which is the outer hull of the mesh)
+  // Fill all holes except the biggest (which is the outer hull of the mesh)
   for (Mesh::Halfedge_index hi : holes)
     if (hi != outer_hull)
       CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole

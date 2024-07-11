@@ -135,7 +135,7 @@ resulting Voronoi diagram. What we care about is that firstly the
 policy itself is consistent and, secondly, that the adaptation is also
 done in a consistent manner. The latter is the responsibility of the
 adaptor provided by this package, whereas the former is the
-responsibility of the implementor of a policy.
+responsibility of the implementer of a policy.
 
 In this package we currently provide two types of adaptation
 policies. The first one is the simplest: we reject no feature of the

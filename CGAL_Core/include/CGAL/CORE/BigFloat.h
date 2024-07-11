@@ -332,7 +332,7 @@ public:
     return rep->clLgErr();
   }
 
-  /// division with relative precsion <tt>r</tt>
+  /// division with relative precision <tt>r</tt>
   BigFloat div(const BigFloat& x, const extLong& r) const {
     BigFloat y;
     y.rep->div(*rep, *x.rep, r);

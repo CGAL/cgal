@@ -550,7 +550,7 @@ void algebraic_real_test()
     }
     //simplify
     {
-        // just a synatx check
+        // just a syntax check
         ALGNUM(P_s2510,1,2).simplify();
     }
 }

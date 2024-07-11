@@ -109,21 +109,21 @@ public :
     //!
     //! Calls `Scene_item::draw()`, then calls `Scene_item::drawEdges()`
     //! and `Scene_item::drawPoints` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is adequate.
     //! @see #RenderingMode
     virtual void draw(CGAL::Three::Viewer_interface*) const override;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawEdges()`, then calls `Scene_item::draw()`
     //! and `Scene_item::drawPoints` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is adequate.
     //! @see #RenderingMode
     virtual void drawEdges(CGAL::Three::Viewer_interface*) const override;
     //!\brief draws all the children
     //!
     //! Calls `Scene_item::drawPoints()`, then calls `Scene_item::draw()`
     //! and `Scene_item::drawEdges()` for each child if its current
-    //! rendering mode is adequat.
+    //! rendering mode is adequate.
     //! @see #RenderingMode
     virtual void drawPoints(CGAL::Three::Viewer_interface*) const override;
     //!

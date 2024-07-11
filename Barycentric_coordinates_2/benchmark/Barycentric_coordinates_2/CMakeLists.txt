@@ -3,7 +3,7 @@
 
 project(Barycentric_coordinates_2_Benchmarks)
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
 

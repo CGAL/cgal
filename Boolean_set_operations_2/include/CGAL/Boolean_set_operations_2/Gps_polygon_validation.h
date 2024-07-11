@@ -691,7 +691,7 @@ bool are_holes_and_boundary_pairwise_disjoint
     bool intersect = gps.do_intersect(hole);
     if (intersect) return false;
     else {
-      /* to use gps.insert(hole) it is required that the set coponents and the
+      /* to use gps.insert(hole) it is required that the set components and the
        * new holes  do not intersect.
        * because the sweep detects shared edges and the do_intersect query
        * detects 2D intersections we can safely use the insert(pwh) function
