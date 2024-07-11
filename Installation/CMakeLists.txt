@@ -479,65 +479,52 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   endif()
 
 endif()
+set(LIBRARIES_TO_CHECK
+  Boost GMP MPFR
+  #VTK
+  Qt6
+  Eigen3 OpenGR libpointmatcher LEDA MPFI
+  NTL TBB OpenCV METIS ZLIB
+  Ceres GLPK SCIP OSQP
+)
 
-find_package(TBB QUIET)
-if(TBB_FOUND)
-  message(STATUS "Third-party library TBB ${TBB_VERSION}")
-endif()
-find_package(Eigen3 QUIET)
-if(Eigen3_FOUND)
-  message(STATUS "Third-party library Eigen3 ${EIGEN3_VERSION}")
-endif()
+function(check_library lib)
+  set(CMAKE_FIND_PACKAGE_QUIET TRUE)
+  find_package(${lib} QUIET)
+  set(CMAKE_FIND_PACKAGE_QUIET FALSE)
+  if(${lib}_FOUND)
+    set(version_var "")
+    if(${lib} STREQUAL "Eigen3")
+      set(version_var ${EIGEN3_VERSION})
+    elseif(${lib} STREQUAL "GMP")
+      set(version_var ${GMP_VERSION})
+    elseif(${lib} STREQUAL "MPFR")
+      set(version_var ${MPFR_VERSION})
+    elseif(${lib} STREQUAL "METIS")
+      set(version_var ${METIS_VERSION})
+    elseif(DEFINED ${lib}_VERSION)
+      set(version_var ${${lib}_VERSION})
+    elseif(DEFINED ${lib}_VERSION_STRING)
+      set(version_var ${${lib}_VERSION_STRING})
+    endif()
 
-find_package(GMP QUIET)
-if(GMP_FOUND)
-  message(STATUS "Third-party library GMP ${GMP_VERSION}")
-endif()
+    if(version_var)
+      message(STATUS "Third-party library ${lib} ${version_var}")
+    else()
+      message(STATUS "Third-party library ${lib} found")
+    endif()
+  else()
+    message(STATUS "Third-party library ${lib} not found")
+  endif()
+endfunction()
 
-find_package(MPFR QUIET)
-if(MPFR_FOUND)
-  message(STATUS "Third-party library MPFR ${MPFR_VERSION}")
-endif()
-
-find_package(OpenGR QUIET)
-if(OpenGR_FOUND)
-  message(STATUS "Third-party library OpenGR found")
-endif()
-
-find_package(libpointmatcher QUIET)
-if(libpointmatcher_FOUND)
-  message(STATUS "Third-party library libpointmatcher found")
-endif()
-
-find_package(LEDA QUIET)
-if(LEDA_FOUND)
-  message(STATUS "Third-party library LEDA found")
-endif()
-
-find_package(MPFI QUIET)
-if(MPFI_FOUND)
-  message(STATUS "Third-party library MPFI found")
-endif()
-
-find_package(NTL QUIET)
-if(NTL_FOUND)
-  message(STATUS "Third-party library NTL found")
-endif()
-
-find_package(OpenCV QUIET)
-if(OpenCV_FOUND)
-  message(STATUS "Third-party library OpenCV ${OpenCV_VERSION}")
-endif()
-
-find_package(METIS QUIET)
-if(METIS_FOUND)
-  message(STATUS "Third-party library METIS found")
-endif()
-
-find_package(ZLIB QUIET)
-if(ZLIB_FOUND)
-  message(STATUS "Third-party library zlib ${ZLIB_VERSION_STRING}")
-endif()
+foreach(lib IN LISTS LIBRARIES_TO_CHECK)
+  check_library(${lib})
+endforeach()
+#find_package(VTK REQUIRED)
+#if(VTK_FOUND)
+#  message(STATUS "Third-party library VTK ${VTK_VERSION}")
+#endif()
 message("== Generate version files (DONE) ==\n")
 #--------------------------------------------------------------------------------------------------
 #
