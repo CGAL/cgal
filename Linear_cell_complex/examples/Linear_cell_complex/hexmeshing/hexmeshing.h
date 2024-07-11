@@ -34,7 +34,7 @@ class DartInfo
 {
 public:
   struct FaceAttrValue { char template_id = 0; bool explored = false; };
-  struct VolumeAttrValue { char template_id = 0; char iteration = 0; };
+  struct VolumeAttrValue { char template_id = 0; char iteration = -1; };
   template < class Refs >
   struct Dart_wrapper
   {
@@ -69,7 +69,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
   struct HexMeshingData { 
     LCC lcc;
-    size_type identified_mark, template_mark, corner_mark;
+    size_type identified_mark, template_mark, corner_mark, propagation_face_mark;
     Pattern_substituer<LCC> regular_templates, partial_templates;
     Grid grid;
 
@@ -93,16 +93,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
   Vector plane_normal(Plane p){
     switch (p){
       case YZ : return {1, 0, 0};
-      case ZX : return {0, 1, 0};
-      case XY : return {0, 0, 1};
-    }
-
-    CGAL_assertion_msg(false, "plane_normal : unexpected value");
-  }
-
-  Vector plane_up_direction(Plane p){
-    switch (p){
-      case YZ : return {0, 1, 0};
       case ZX : return {0, 1, 0};
       case XY : return {0, 0, 1};
     }
@@ -170,11 +160,32 @@ namespace CGAL::HexRefinement::TwoRefinement {
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
       lcc.mark(dit, mark);
     
-      if (!lcc.is_free<2>(dit))
-        lcc.mark(lcc.beta<2>(dit), mark);
+      if (!lcc.is_free<3>(dit))
+        lcc.mark(lcc.beta<3>(dit), mark);
     }
 
+    assert(lcc.is_whole_cell_marked<2>(dart, mark));
   }
+
+  bool is_half_face_marked(LCC& lcc, Dart_handle dart, size_type mark ){
+    auto iterator = lcc.darts_of_cell<2, 1>(dart);
+    for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
+      if (!lcc.is_marked(dit, mark)) return false;
+    }
+
+    return true;
+  }
+
+  void mark_half_face_unchecked(LCC& lcc, Dart_handle dart, size_type mark){
+    auto iterator = lcc.darts_of_cell<2, 1>(dart);
+    for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
+      lcc.mark(dit, mark);
+    }
+
+    assert(is_half_face_marked(lcc, dart, mark));
+  }
+
+
 
   bool has_neighboring_face_on_plane(LCC& lcc, Dart_handle edge) {
     return !lcc.is_free<3>(lcc.beta(edge, 2));
@@ -266,6 +277,17 @@ namespace CGAL::HexRefinement::TwoRefinement {
       lcc.sew<3>(face1, face2);
   }
 
+  template <unsigned int i>
+  void assert_dart_attr_are_unique(LCC& lcc, std::vector<Dart_handle> array){
+    std::unordered_set<void*> attributes;
+    for (auto vol : array){
+      auto attr = lcc.attribute<i>(vol);
+      auto ptr = &attr->info();
+      assert(attributes.count(ptr) == 0);
+      attributes.insert(ptr);
+    }
+  }
+
   void refine_3_template(HexMeshingData &hdata, Dart_handle marked_face)
   {
     // TODO Might be written better 
@@ -324,6 +346,9 @@ namespace CGAL::HexRefinement::TwoRefinement {
     int nbsub = 0; 
     int nb_3_tp = 0;
 
+    assert_dart_attr_are_unique<3>(lcc, pdata.volumes_to_refine);
+    assert_dart_attr_are_unique<3>(lcc, pdata.partial_templates_to_refine);
+
     for (auto& dart : pdata.faces_to_refine)
     {
       if (hdata.regular_templates.query_replace_one_face(lcc, dart, hdata.template_mark) != SIZE_T_MAX) nbsub++;
@@ -343,13 +368,29 @@ namespace CGAL::HexRefinement::TwoRefinement {
       if (temp == 2) temp = 3;
       if (temp < 10) temp++;
       
-      auto vol_attr = lcc.attribute<3>(dart);
-      // assert(vol_attr != nullptr && (vol_attr->info().template_id == temp || temp == SIZE_T_MAX && vol_attr->info().template_id == 0));
+      auto vol_handle = lcc.attribute<3>(dart);
+      assert(vol_handle != nullptr);
+      auto vol_attr = vol_handle->info();
+      assert(vol_attr.template_id >= 0 && vol_attr.template_id <= 4 && vol_attr.template_id != 3 || vol_attr.template_id == 8);
+      // assert(vol_attr.template_id == temp || temp == SIZE_T_MAX && (vol_attr.template_id == 0 || vol_attr.template_id == 8));
+
+      // if (vol_attr.template_id != temp && vol_attr.template_id > 0){
+      //   mark_all_0_cells<3>(lcc, dart, debug_edge_mark);
+      //   mark_all_0_cells<3>(lcc, dart, debug_node_mark);
+      // }
     }
 
     // assert(nbsub == pdata.volumes_to_refine.size());
 
     // // Refine remaining 3 patterns
+
+    //debug
+    if (pdata.plane == 1) {
+    std::cout << nbsub << " volumic substitution was made" << std::endl;
+      return; 
+    };
+
+
     for (auto marked_face : pdata.partial_templates_to_refine){
       assert(lcc.attribute<2>(marked_face) != nullptr);
       assert(lcc.attribute<2>(marked_face)->info().template_id == 3);
@@ -535,7 +576,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
    * Gather 2-cells adjacent to marked 0-cells
    * Gather 3-cells adjacents to marked 0-cells
    */
-  void explore_face_of_plane(HexMeshingData& hdata, PlaneData& pdata, std::queue<Dart_handle>& queue, Dart_handle face, size_type explored_mark) {
+  void explore_face_of_plane(HexMeshingData& hdata, PlaneData& pdata, std::queue<Dart_handle>& queue, Dart_handle face, size_type explored_mark, size_type explored_face) {
     LCC& lcc = hdata.lcc;
 
     auto edges = lcc.darts_of_cell<2,1>(face);
@@ -550,6 +591,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     // Add neighboring faces
     for (auto dit = edges.begin(), dend = edges.end(); dit != dend; dit++){
       bool explored = lcc.is_marked(dit, explored_mark);
+      bool edge_explored = lcc.is_whole_cell_marked<1>(dit, explored_face);
       bool identified = lcc.is_marked(dit, hdata.identified_mark);
       bool has_opposite_face = !lcc.is_free<3>(lcc.beta(dit, 2));
 
@@ -567,9 +609,10 @@ namespace CGAL::HexRefinement::TwoRefinement {
         face_attr.template_id++;
       }
 
-      if (has_opposite_face) {
+      if (has_opposite_face && !edge_explored) {
         Dart_handle other_face = lcc.beta(dit, 2);
         bool collinear = false;
+        lcc.mark_cell<1>(dit, explored_face);
 
         for (int i = 0; i < 5 && !collinear; i++){
           // there is at most 3 steps to get to the face normal to the plane 
@@ -611,6 +654,142 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
   }
 
+  void mark_template_for_propagation(HexMeshingData &hdata, Dart_handle &face, DartInfo::FaceAttrValue &face_attr)
+  {
+    LCC& lcc = hdata.lcc;
+    Dart_handle marked_edge;
+    auto nodes = lcc.darts_of_cell<2, 0>(face);
+
+    bool found = false;
+
+    if (face_attr.template_id == 1)
+    {
+      for (auto it = nodes.begin(); it != nodes.end() && !found; it++)
+      {
+        if (lcc.is_marked(it, hdata.template_mark))
+        {
+          found = true;
+          marked_edge = it;
+        }
+      }
+    }
+
+    else if (face_attr.template_id == 2)
+    {
+      for (auto it = nodes.begin(); it != nodes.end() && !found; it++)
+      {
+        if (lcc.is_marked(it, hdata.template_mark) && lcc.is_marked(lcc.other_extremity(it), hdata.template_mark))
+        {
+          found = true;
+          marked_edge = it;
+        }
+      }
+    }
+
+    assert(found);
+
+    Dart_handle face1 = lcc.beta(marked_edge, 2, 1, 1, 2);
+    Dart_handle face2 = lcc.beta(face1, 0, 2);
+    Dart_handle face3 = lcc.beta(face1, 0, 0, 2);
+
+    mark_half_face_unchecked(lcc, face1, hdata.propagation_face_mark);
+    mark_half_face_unchecked(lcc, face3, hdata.propagation_face_mark);
+
+    // mark_all_0_cells<2>(lcc, face1, debug_edge_mark);
+    // mark_all_0_cells<2>(lcc, face3, debug_edge_mark);
+
+    if (face_attr.template_id == 1)
+    {
+      mark_half_face_unchecked(lcc, face2, hdata.propagation_face_mark);
+      // mark_all_0_cells<2>(lcc, face2, debug_edge_mark);
+    }
+  }
+
+  void propagate_face(HexMeshingData &hdata, PlaneData &pdata, const Dart_handle &face, size_type explored_node_mark, size_type explored_face_mark)
+  {
+    LCC& lcc = hdata.lcc;
+    Dart_handle back_face = lcc.beta(face, 2, 1, 1, 2);
+
+    mark_all_0_cells<2>(lcc, back_face, hdata.template_mark);
+    assert(lcc.attribute<3>(face) != nullptr);
+
+    auto &vol_attr = get_or_create_attr<3>(lcc, face)->info();
+    vol_attr.template_id = 8;
+    vol_attr.iteration = pdata.plane;
+
+    // /!\ ALSO: Mark add the hex attached to the back_face to the refinement.
+    // It is garuanted that faces and volumes added will be unique in our array
+    // Because that back_hex is only accessible within the template itself, and not
+    // accessible from the plane.
+
+    Dart_handle other_volume_face = lcc.beta(back_face, 3);
+    assert(other_volume_face != nullptr);
+
+    pdata.volumes_to_refine.push_back(other_volume_face);
+
+    // Also add the neighboring faces to that 4-template face forrefinement
+    pdata.faces_to_refine.push_back(other_volume_face);
+    auto &other_vol_attr = get_or_create_attr<3>(lcc, other_volume_face)->info();
+
+    other_vol_attr.template_id = 4;
+    other_vol_attr.iteration = pdata.plane;
+
+    auto edges = lcc.darts_of_cell<2, 1>(other_volume_face);
+
+    for (auto it = edges.begin(); it != edges.end(); it++)
+    {
+      auto top_face = lcc.beta(it, 2);
+
+      if (!lcc.is_marked(it, explored_node_mark)){
+        pdata.marked_nodes.push_back(it);
+        lcc.mark_cell<0>(it, explored_node_mark);
+      }
+
+      if (!lcc.is_whole_cell_marked<2>(top_face, explored_face_mark)){
+        pdata.faces_to_refine.push_back(top_face);
+        mark_face_unchecked(lcc, top_face, explored_face_mark);
+      }
+    }
+  }
+
+  void propagation_stage(HexMeshingData &hdata, PlaneData &pdata, size_type explored_node_mark, size_type explored_face_mark)
+  {
+    LCC& lcc = hdata.lcc;
+    
+    bool skip_propagation = pdata.plane == 0;
+    int propagated_count = 0;
+    int marked_for_prop_count = 0;
+
+    for (int i = 0; i < pdata.last_face_of_even_planes; i++){
+      Dart_handle face = pdata.faces_to_refine[i];
+      auto& face_attr = lcc.attribute<2>(face)->info();
+
+      // TODO attention propagation dans les volumes sandwhichés (?)
+
+      // Propagate the face if possible
+      if (!skip_propagation && face_attr.template_id == 4){
+        if (is_half_face_marked(lcc, face, hdata.propagation_face_mark)){
+          propagate_face(hdata, pdata, face, explored_node_mark, explored_face_mark);
+          propagated_count++;
+        }
+
+        if (!lcc.is_free<3>(face) && is_half_face_marked(lcc, lcc.beta(face, 3), hdata.propagation_face_mark)) {
+          propagate_face(hdata, pdata, lcc.beta(face, 3), explored_node_mark, explored_face_mark);
+          propagated_count++;
+        }
+      }
+
+      // Else mark the face for propagation if possible
+      else if (face_attr.template_id == 1 || face_attr.template_id == 2){
+        mark_template_for_propagation(hdata, face, face_attr);
+        marked_for_prop_count++;
+      }
+    }
+
+    std::cout << "Number of faces propagated : " << propagated_count << std::endl;
+    std::cout << "Number of faces marked for propagation : " << marked_for_prop_count << std::endl;
+  }
+
   void get_cells_to_refine_from_plane(HexMeshingData &hdata, PlaneData &pdata, size_type explored_faces)
   {
     LCC& lcc = hdata.lcc;
@@ -638,13 +817,13 @@ namespace CGAL::HexRefinement::TwoRefinement {
         if (!lcc.is_whole_cell_marked<2>(top_face_1, explored_faces))
         {
           pdata.faces_to_refine.push_back(top_face_1);
-          lcc.mark_cell<2>(top_face_1, explored_faces);
+          mark_face_unchecked(lcc, top_face_1, explored_faces);
         }
 
         if (top_face_2 != lcc.null_dart_descriptor && !lcc.is_whole_cell_marked<2>(top_face_2, explored_faces))
         {
           pdata.faces_to_refine.push_back(top_face_2);
-          lcc.mark_cell<2>(top_face_2, explored_faces);
+          mark_face_unchecked(lcc, top_face_2, explored_faces);
         }
       }
       // Also add the adjacent volumes if there is atleast one marked node
@@ -654,15 +833,18 @@ namespace CGAL::HexRefinement::TwoRefinement {
       auto &vol_attr = get_or_create_attr<3>(lcc, face)->info();
 
       // Create first volume attr
-      vol_attr.template_id = face_attr.template_id;
-      vol_attr.iteration = pdata.plane;
+      if (vol_attr.iteration != pdata.plane){ // due to propagation
+        vol_attr.template_id = face_attr.template_id;
+        vol_attr.iteration = pdata.plane;
+      }
 
       // Create second volume attr
       if (!lcc.is_free<3>(face))
       {
         Dart_handle other_face = lcc.beta(face, 3);
         auto &other_vol_attr = get_or_create_attr<3>(lcc, other_face)->info();
-        other_vol_attr = vol_attr;
+        if (other_vol_attr.iteration != pdata.plane) // due to propagation
+          other_vol_attr = vol_attr;
       }
 
       if (face_attr.template_id != 3)
@@ -690,7 +872,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
     {
       auto &attr = lcc.attribute<3>(initial_edge)->info();
 
-      assert(attr.iteration != pdata.plane);
+      // TODO We can accidentally twice (or thrice) the same volume
+      if (attr.iteration == pdata.plane) continue;
 
       attr.iteration = pdata.plane;
       attr.template_id = 0;
@@ -751,6 +934,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       }
     }
   }
+  
 
   void extract_darts_from_even_planes(HexMeshingData &hdata, PlaneData &pdata, Plane iterationPlane)
   {
@@ -759,7 +943,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     pdata.normal = plane_normal(iterationPlane);
 
     size_type explored_mark = lcc.get_new_mark();
-    size_type explored_faces = lcc.get_new_mark();
+    size_type explored_face = lcc.get_new_mark();
     
     for (auto start_plane : hdata.first_face_of_planes[iterationPlane]) {
       std::queue<Dart_handle> to_explore;
@@ -768,7 +952,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       while (!to_explore.empty()) {
         Dart_handle front = to_explore.front();
         to_explore.pop();
-        explore_face_of_plane(hdata, pdata, to_explore, front, explored_mark);
+        explore_face_of_plane(hdata, pdata, to_explore, front, explored_mark, explored_face);
       }
     }
 
@@ -777,13 +961,15 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     pdata.last_face_of_even_planes = pdata.faces_to_refine.size() - 1;
 
-    get_cells_to_refine_from_plane(hdata, pdata, explored_faces);
+    propagation_stage(hdata, pdata, explored_mark, explored_face);
+
+    get_cells_to_refine_from_plane(hdata, pdata, explored_face);
 
     // Treat the volumes that at least share an edge with the plane
-    get_cells_to_refine_from_additionnal_volumes(hdata, pdata, explored_faces);
+    // get_cells_to_refine_from_additionnal_volumes(hdata, pdata, explored_face);
 
     lcc.free_mark(explored_mark);
-    lcc.free_mark(explored_faces);
+    lcc.free_mark(explored_face);
   }
 
 
@@ -815,12 +1001,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
       mark_all_0_cells<3>(lcc, it->dart(), hdata.identified_mark);
     }
   }
-
-  void propagation_stage(HexMeshingData& hdata, PlaneData& pdata){
-    
-  }
-
-
 
   Grid generate_grid(LCC& lcc, Point pos, double size, int nb_subdiv_per_dim) {
     double s = size / nb_subdiv_per_dim;
@@ -876,6 +1056,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     auto arrete_done = lcc.get_new_mark();
 
+    int vertices_created = 0;
     for (auto dart : pdata.marked_nodes)
     {
       for (auto nit = lcc.one_dart_per_incident_cell<1, 0>(dart).begin(),
@@ -892,6 +1073,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
           continue;
         }
 
+        vertices_created++;
         edges_to_subdivide.push_back(nit);
         lcc.mark_cell<1>(nit, arrete_done);
       }
@@ -903,6 +1085,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
     {
       lcc.insert_barycenter_in_cell<1>(dart);
     }
+
+    std::cout << "Vertices created: " << vertices_created << std::endl;
 
     lcc.free_mark(arrete_done);
   }
@@ -1062,14 +1246,16 @@ namespace CGAL::HexRefinement {
     Polyhedron surface; 
     Tree aabb;
     load_surface(file, surface, aabb);
+
+    debug_node_mark = lcc.get_new_mark();
+    debug_edge_mark = lcc.get_new_mark();
   
     hdata.grid = generate_grid(hdata.lcc, aabb, nb_subdiv_per_dim);
     hdata.identified_mark = lcc.get_new_mark();
     hdata.template_mark = lcc.get_new_mark();
-    hdata.corner_mark = lcc.get_new_mark();
+    hdata.corner_mark = lcc.get_new_mark(); // TODO not useful to the algorithm, only for checks in 3template
+    hdata.propagation_face_mark = lcc.get_new_mark();
 
-    lcc.negate_mark(hdata.corner_mark);
-    
     for (auto dart = lcc.one_dart_per_cell<3>().begin(), end = lcc.one_dart_per_cell<3>().end(); dart != end; dart++){
       cellIdentifier(lcc, surface, aabb, dart);
     }
@@ -1080,16 +1266,11 @@ namespace CGAL::HexRefinement {
     for (int p = 0; p < 2; p++) {
       PlaneData pdata;
 
+      lcc.negate_mark(hdata.corner_mark);
+
       mark_identified_cells_from_3_attrs(hdata);
 
       extract_darts_from_even_planes(hdata, pdata, (Plane)p);
-
-      if (p > 0){
-        propagation_stage(hdata, pdata);
-        return lcc;
-      }
-
-      int count_3_attr = lcc.attributes<3>().size();
 
       create_vertices_for_templates(hdata, pdata);
 
@@ -1097,6 +1278,7 @@ namespace CGAL::HexRefinement {
 
       lcc.unmark_all(hdata.identified_mark);
       lcc.unmark_all(hdata.template_mark);
+      lcc.unmark_all(hdata.corner_mark); 
 
       // auto m = lcc.get_new_mark();
       // for (auto it = lcc.attributes<3>().begin(), end = lcc.attributes<3>().end(); it != end; it++){
@@ -1106,7 +1288,7 @@ namespace CGAL::HexRefinement {
       // debug_node_mark = hdata.template_mark;
       // debug_edge_mark = m;
       
-      return lcc;
+      // return lcc;
     }
 
     // debug_node_mark = hdata.template_mark;

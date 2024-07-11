@@ -128,6 +128,30 @@ int two_stacked_3_template_test() {
   return 0;
 }
 
+int propagation_face(){
+  LCC lcc;
+  auto d1=
+    lcc.make_hexahedron(Point(0,0,0), Point(5,0,0),
+                        Point(5,5,0), Point(0,5,0),
+                        Point(0,5,5), Point(0,0,5),
+                        Point(5,0,5), Point(5,5,5));
+
+  auto m1 = lcc.get_new_mark();
+  auto m2 = lcc.get_new_mark();
+
+  lcc.mark_cell<0>(lcc.first_dart(), m1);
+  
+  Dart_handle first = lcc.first_dart();
+
+  Dart_handle face1 = lcc.beta(first, 2, 1, 1, 2);
+  mark_face(lcc, face1, m2);
+  lcc.mark_cell<0>(lcc.other_extremity(lcc.first_dart()), m1);
+
+
+  render(lcc, m1, m2);
+  
+  return 1;
+}
 
 int main(){
   return surface_test();
