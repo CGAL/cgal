@@ -10,10 +10,10 @@
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
 
-// This file contains the declaration and the implementation of the class Hyperbolic_surfaces_traits_2
+// This file contains the declaration and the implementation of the class Hyperbolic_surface_traits_2
 
-#ifndef CGAL_HYPERBOLIC_SURFACES_TRAITS_2
-#define CGAL_HYPERBOLIC_SURFACES_TRAITS_2
+#ifndef CGAL_Hyperbolic_surface_traits_2
+#define CGAL_Hyperbolic_surface_traits_2
 
 #include "Complex_without_sqrt.h"
 #include <iostream>
@@ -59,7 +59,7 @@ Traits class offered by CGAL.
 
 /*
 template<class FieldType>
-class Hyperbolic_surfaces_traits_2 {
+class Hyperbolic_surface_traits_2 {
 public:
   typedef FieldType                          FT;
   typedef Complex_without_sqrt<FieldType>    Complex;
@@ -68,7 +68,7 @@ public:
 */
 
 template<class HyperbolicTraitsClass>
-class Hyperbolic_surfaces_traits_2 : public HyperbolicTraitsClass {
+class Hyperbolic_surface_traits_2 : public HyperbolicTraitsClass {
 public:
   typedef typename HyperbolicTraitsClass::FT                          FT;
   typedef typename HyperbolicTraitsClass::Hyperbolic_point_2          Hyperbolic_point_2;
@@ -77,4 +77,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_HYPERBOLIC_SURFACES_TRAITS_2
+#endif // CGAL_Hyperbolic_surface_traits_2

@@ -8,7 +8,7 @@ namespace CGAL{
 \cgalModels{HyperbolicSurfacesTraits_2}
 */
 template<class HyperbolicTraitsClass>
-class Hyperbolic_surfaces_traits_2 : public HyperbolicTraitsClass {
+class Hyperbolic_surface_traits_2 : public HyperbolicTraitsClass {
 };
 
 }; // namespace CGAL
