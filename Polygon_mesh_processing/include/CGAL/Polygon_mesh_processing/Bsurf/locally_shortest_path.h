@@ -926,9 +926,9 @@ struct Locally_shortest_path_imp
 #ifdef CGAL_DEBUG_BSURF
     std::cout<<"   k is "<<k<<"\n";
     std::cout<<"   Flat_prev"<<std::endl;
-     std::cout << "  " << flat_prev[0] << " " << flat_prev[1] << " " << flat_prev[2] << "\n";
-     std::cout<<"   Flat_curr"<<std::endl;
-     std::cout << "  " << flat_curr[0] << " " << flat_curr[1] << " " << flat_curr[2] << "\n";
+    std::cout << "  " << flat_prev[0] << " " << flat_prev[1] << " " << flat_prev[2] << "\n";
+    std::cout<<"   Flat_curr"<<std::endl;
+    std::cout << "  " << flat_curr[0] << " " << flat_curr[1] << " " << flat_curr[2] << "\n";
     //Unfold face take care of the orientation so flat_t1[1] - flat_t1[0] is our old
     //reference frame
     std::cout<<"   h_ref_curr"<<std::endl;
@@ -2865,6 +2865,9 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
   }
 }
 
+
+//TODO: do we want to also have a way to return Bezier segments?
+//      the output is actually bezier segments subdivided.
 template <class TriangleMesh, class FT>
 std::vector<Face_location<TriangleMesh, FT>>
 recursive_de_Casteljau(const TriangleMesh& mesh,
@@ -2901,13 +2904,28 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
       result.push_back(split0);
       result.push_back(split1);
     }
+
+    CGAL_assertion( 2*segments.size()==result.size() );
+
     std::swap(segments, result);
   }
 
+  std::vector<Face_location<TriangleMesh, FT>> final_result;
+  final_result.reserve(result.size() * 3 + 1);
+  final_result.push_back(std::move(result.front()[0]));
+  for (Bezier_segment<TriangleMesh, FT>& bs : result)
+  {
+    for (int i=1;i<4;++i)
+      final_result.push_back(std::move(bs[i]));
+  }
+
+#if 0
   // nasty trick to build the vector from a pair of iterators
   // using the fact that data in array and vector are contiguous
   return {(Face_location<TriangleMesh, FT>*)segments.data(),
           (Face_location<TriangleMesh, FT>*)segments.data() + segments.size() * 4};
+#endif
+  return final_result;
 }
 
 template <class FT, class TriangleMesh, class VertexDistanceMap>
@@ -3192,21 +3210,21 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
         acc+=len;
         if (acc == targetd)
         {
-          double theta=0;
-          if (k!=0)
-          {
-            Face_location<TriangleMesh, typename K::FT> loc_k=path[k], loc_k1=path[k+1];
-            CGAL_assertion_code(bool OK=)
-            locate_in_common_face(loc_k, loc_k1, tmesh);
-            CGAL_assertion(OK);
-            std::array<Vector_2,3> flat_triangle =
-              Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
-            Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
-            Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+          // TODO: if you land here and path[k] is on an input vertex, it might be that loc_k==loc_k1
 
-            Vector_2 dir2 = tgt-src;
-            theta = atan2(dir2.y(), dir2.x());
-          }
+          double theta=0;
+          Face_location<TriangleMesh, typename K::FT> loc_k=path[k], loc_k1=path[k+1];
+          CGAL_assertion_code(bool OK=)
+          locate_in_common_face(loc_k, loc_k1, tmesh);
+          CGAL_assertion(OK);
+          std::array<Vector_2,3> flat_triangle =
+            Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
+          Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
+          Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+
+          Vector_2 dir2 = tgt-src;
+          theta = atan2(dir2.y(), dir2.x());
+
           return std::make_pair(path[k+1], theta);
         }
 
@@ -3375,21 +3393,21 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
       double acc = support_len[k];
       if (acc == targetd)
       {
-        double theta=0;
-        if (k!=0)
-        {
-          Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
-          CGAL_assertion_code(bool OK=)
-          locate_in_common_face(loc_k, loc_k1, tmesh);
-          CGAL_assertion(OK);
-          std::array<Vector_2,3> flat_triangle =
-            Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
-          Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
-          Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+        // TODO: if you land here and supporting_curve[k] is on an input vertex, it might be that loc_k==loc_k1
 
-          Vector_2 dir2 = tgt-src;
-          theta = atan2(dir2.y(), dir2.x());
-        }
+        double theta=0;
+        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
+        CGAL_assertion_code(bool OK=)
+        locate_in_common_face(loc_k, loc_k1, tmesh);
+        CGAL_assertion(OK);
+        std::array<Vector_2,3> flat_triangle =
+          Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
+        Vector_2 src = loc_k.second[0]*flat_triangle[0]+loc_k.second[1]*flat_triangle[1]+loc_k.second[2]*flat_triangle[2];
+        Vector_2 tgt = loc_k1.second[0]*flat_triangle[0]+loc_k1.second[1]*flat_triangle[1]+loc_k1.second[2]*flat_triangle[2];
+
+        Vector_2 dir2 = tgt-src;
+        theta = atan2(dir2.y(), dir2.x());
+
         return std::make_pair(supporting_curve[k+1], theta);
       }
 
@@ -3446,7 +3464,6 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
 
     double theta;
     std::tie(polygon_center, theta)=get_polygon_center(scaling * (xc-gbox.xmin())+pad);
-    theta=CGAL_PI+theta;
 
     std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
       convert_polygon_to_polar_coordinates<K>(polygons[i],

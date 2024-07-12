@@ -106,7 +106,7 @@ int main(int argc, char** argv)
   PMP::init_geodesic_dual_solver(solver, mesh);
 
   std::vector< std::vector<Face_location> > res =
-    PMP::trace_bezier_curves<K>(center, directions, lengths, 6, mesh, solver);
+    PMP::trace_bezier_curves<K>(center, directions, lengths, 4, mesh, solver);
 
   // write result
   std::ofstream out("svg.polylines.txt");
