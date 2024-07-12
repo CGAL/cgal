@@ -122,8 +122,8 @@ private:
   Point fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const ComplexNumber& cratio) const;
 };
 
-template<class Traits> std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2);
-template<class Traits> void operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits>& triangulation);
+ template<class Traits, class Attributes> std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2);
+ template<class Traits, class Attributes> void operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits, Attributes>& triangulation);
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

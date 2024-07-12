@@ -20,7 +20,6 @@
 
 #include <vector>
 #include <iostream>
-#include <ranges>
 
 namespace CGAL {
 
