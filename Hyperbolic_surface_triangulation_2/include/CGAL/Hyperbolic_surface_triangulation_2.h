@@ -88,7 +88,7 @@ public:
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
 
-  bool is_delaunay_flippable(Dart_handle dart) const;
+  bool is_delaunay_flippable(Dart_const_handle dart) const;
   void flip(Dart_handle dart);
   bool is_delaunay() const;
   int make_delaunay();
@@ -247,7 +247,7 @@ typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor& Hyperbo
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits,class Attributes>
-bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_delaunay_flippable(Dart_handle dart) const{
+bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_delaunay_flippable(Dart_const_handle dart) const{
   return ( get_cross_ratio(dart).imaginary_part()>Number(0) );
 }
 

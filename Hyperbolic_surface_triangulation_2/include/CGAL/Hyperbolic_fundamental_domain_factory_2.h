@@ -70,8 +70,7 @@ Hyperbolic_fundamental_domain_factory_2<Traits>::Hyperbolic_fundamental_domain_f
 
 template<class Traits>
 Hyperbolic_fundamental_domain_2<Traits> Hyperbolic_fundamental_domain_factory_2<Traits>::generate_domain_g2(){
-  Hyperbolic_fundamental_domain_2<Traits> domain;
-
+ 
   bool is_domain_generated = false;
   _Cmplx exact_z0, exact_z1, exact_z2, exact_z3;
 
@@ -117,7 +116,7 @@ Hyperbolic_fundamental_domain_2<Traits> Hyperbolic_fundamental_domain_factory_2<
     pairings.push_back((k+4)%8);
   }
 
-  domain.set(vertices.begin(), vertices.end(), pairings.begin(), pairings.end());
+  Hyperbolic_fundamental_domain_2<Traits> domain(vertices.begin(), vertices.end(), pairings.begin(), pairings.end());
   return domain;
 }
 
