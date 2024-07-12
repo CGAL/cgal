@@ -5,7 +5,7 @@
 \cgalRefines{HyperbolicDelaunayTriangulationTraits_2}
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Hyperbolic_surfaces_traits_2}
+\cgalHasModels{CGAL::Hyperbolic_surface_traits_2}
 \cgalHasModelsEnd
 */
 class HyperbolicSurfacesTraits_2 {
