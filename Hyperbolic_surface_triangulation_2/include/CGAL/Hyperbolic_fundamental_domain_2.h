@@ -36,14 +36,10 @@ class Hyperbolic_fundamental_domain_2 {
 public:
   typedef typename Traits::Hyperbolic_point_2                    Point;
 
-  Hyperbolic_fundamental_domain_2();
-  /* Hyperbolic_fundamental_domain_2(const std::vector<Point>& vertices, const
-  std::vector<int>& pairings); Modify to include the set in the constructor MARC
-  TODO*/
-  void set(typename std::vector<Point>::iterator vfirst,
-	   typename std::vector<Point>::iterator vlast,
-	   typename std::vector<int>::iterator pfirst,
-	   typename std::vector<int>::iterator plast);
+  Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
+				  typename std::vector<Point>::iterator vlast,
+				  typename std::vector<int>::iterator pfirst,
+				  typename std::vector<int>::iterator plast);
   
   int size() const; // Returns the number of vertices (equivalently, the number of sides)
   Point vertex(int index) const; // Returns the index-th vertex
@@ -67,32 +63,15 @@ template<class Traits> void operator>>(std::istream& s, Hyperbolic_fundamental_d
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-template<class Traits>
-Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2() {}
-
-/* template<class Traits> */
-/* Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(const std::vector<Point>& vertices, const std::vector<int>& pairings){ */
-/*   set(vertices, pairings); */
-/* } */
-
-/* //////////////////////////////////////////////////////////////////////////////// */
-
-/* template<class Traits> */
-/* void Hyperbolic_fundamental_domain_2<Traits>::set(const std::vector<Point>& vertices, const std::vector<int>& pairings){ */
-/*   _vertices = vertices; */
-/*   _pairings = pairings; */
-/* } */
-
 ////////////////////////////////////////////////////////////////////////////////
 
- template<class Traits>
-   void Hyperbolic_fundamental_domain_2<Traits>::set(typename std::vector<Point>::iterator vfirst,
-						     typename std::vector<Point>::iterator vlast,
-						     typename std::vector<int>::iterator pfirst,
-						     typename std::vector<int>::iterator plast){
-   _vertices = std::vector<Point>(vfirst, vlast);
-   _pairings = std::vector<int>(pfirst, plast);
+template<class Traits>
+  Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
+					       typename std::vector<Point>::iterator vlast,
+					       typename std::vector<int>::iterator pfirst,
+					       typename std::vector<int>::iterator plast){
+  _vertices = std::vector<Point>(vfirst, vlast);
+  _pairings = std::vector<int>(pfirst, plast);
  }
 
 ////////////////////////////////////////////////////////////////////////////////

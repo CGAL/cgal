@@ -83,7 +83,7 @@ public:
 
   Combinatorial_map_with_cross_ratios& get_combinatorial_map_ref();
   bool has_anchor() const;
-  Anchor& get_anchor_ref();
+  Anchor& anchor();
 
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
@@ -219,7 +219,7 @@ template<class Traits,class Attributes>
 //Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2<Traits>::operator=(Hyperbolic_surface_triangulation_2<Traits>&& other){
   Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2<Traits, Attributes>::operator=(Hyperbolic_surface_triangulation_2<Traits, Attributes> other){
   if (other.has_anchor()){
-    copy_from(other.get_combinatorial_map_ref(), other.get_anchor_ref());
+    copy_from(other.get_combinatorial_map_ref(), other.anchor());
   }
   else {
     copy_from(other.get_combinatorial_map_ref());
@@ -240,7 +240,7 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::has_anchor() const 
 }
 
 template<class Traits,class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor& Hyperbolic_surface_triangulation_2<Traits, Attributes>::get_anchor_ref(){
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor& Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor(){
   return _anchor;
 }
 
