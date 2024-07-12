@@ -338,7 +338,7 @@ bool Hyperbolic_surface_triangulation_2<Traits,Attributes>::is_delaunay() const{
   if (! is_valid()){
     return false;
   }
-  return (pick_edge_to_flip() == nullptr);
+  return (const_cast<Hyperbolic_surface_triangulation_2<Traits,Attributes>*>(this)->pick_edge_to_flip() == nullptr);
 }
 
 template<class Traits,class Attributes>
@@ -647,8 +647,8 @@ typename Hyperbolic_surface_triangulation_2<Traits,Attributes>::ComplexNumber Hy
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits, Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Dart_handle Hyperbolic_surface_triangulation_2<Traits>::pick_edge_to_flip() {
+template<class Traits, class Attributes>
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Dart_handle Hyperbolic_surface_triangulation_2<Traits, Attributes>::pick_edge_to_flip() {
   for (typename Dart_range::iterator it = _combinatorial_map.darts().begin(); it != _combinatorial_map.darts().end(); ++it){
     if ( is_delaunay_flippable(it) ){
       return it;
