@@ -118,7 +118,7 @@ int two_stacked_3_template_test() {
   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.identified_mark);
   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 0), hdata.identified_mark);
 
-  extract_first_faces_of_planes(hdata);
+  setup_even_planes(hdata);
   extract_darts_from_even_planes(hdata, plane, Plane::XY);
   create_vertices_for_templates(hdata, plane);
   refine_marked_hexes(hdata, plane);
@@ -129,6 +129,8 @@ int two_stacked_3_template_test() {
 }
 
 int propagation_face(){
+  using namespace CGAL::HexRefinement::TwoRefinement;
+
   LCC lcc;
   auto d1=
     lcc.make_hexahedron(Point(0,0,0), Point(5,0,0),
@@ -136,17 +138,27 @@ int propagation_face(){
                         Point(0,5,5), Point(0,0,5),
                         Point(5,0,5), Point(5,5,5));
 
+  auto d2=
+    lcc.make_hexahedron(Point(5,0,0), Point(10,0,0),
+                        Point(10,5,0), Point(5,5,0),
+                        Point(5,5,5), Point(5,0,5),
+                        Point(10,0,5), Point(10,5,5));
+
+  auto d3=
+    lcc.make_hexahedron(Point(0,0,-5), Point(5,0,-5),
+                        Point(5,5,-5), Point(0,5,-5),
+                        Point(0,5,0), Point(0,0,0),
+                        Point(5,0,0), Point(5,5,0));
+
+  lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
+  lcc.sew<3>(lcc.beta(d1, 0, 2), lcc.beta(d3, 1, 2));
+
   auto m1 = lcc.get_new_mark();
   auto m2 = lcc.get_new_mark();
 
-  lcc.mark_cell<0>(lcc.first_dart(), m1);
-  
-  Dart_handle first = lcc.first_dart();
-
-  Dart_handle face1 = lcc.beta(first, 2, 1, 1, 2);
-  mark_face(lcc, face1, m2);
-  lcc.mark_cell<0>(lcc.other_extremity(lcc.first_dart()), m1);
-
+  auto a = lcc.beta(lcc.first_dart(), 1, 1, 2);
+  mark_half_face_unchecked(lcc, a, m1);
+  assert(!is_half_face_marked(lcc, lcc.beta(a,3), m1));
 
   render(lcc, m1, m2);
   
