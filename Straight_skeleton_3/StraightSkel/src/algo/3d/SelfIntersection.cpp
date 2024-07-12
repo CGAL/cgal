@@ -230,8 +230,15 @@ CGAL::Sign SelfIntersection::SideOfBisector(FacetSPtr facet, VertexSPtr vertex, 
         CGAL::Orientation or_out = CGAL::orientation(*p_mid, *p_out, *p_normal, *point);
 
         // @todo only compute this when necessary and it should be a predicate
+        // Note that there are no weights involved here: we are checking for self-intersections
+        // in a fixed polyhedron
         CGAL::FT sq_dist_in = KernelWrapper::squared_distance(edge_in->line(), point);
         CGAL::FT sq_dist_out = KernelWrapper::squared_distance(edge_out->line(), point);
+
+        std::cout << "p_in = " << *p_in << std::endl;
+        std::cout << "p_mid = " << *p_mid << std::endl;
+        std::cout << "p_out = " << *p_out << std::endl;
+        std::cout << "query = " << *point << std::endl;
         std::cout << "sq_dist_in = " << sq_dist_in << std::endl;
         std::cout << "sq_dist_out = " << sq_dist_out << std::endl;
 

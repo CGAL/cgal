@@ -594,7 +594,10 @@ ArcSPtr SimpleStraightSkel::createArc(VertexSPtr vertex) {
                 speed_3 = std::dynamic_pointer_cast<SkelFacetData>(
                         facets[2]->getData())->getSpeed();
             }
+
+            // @fixme simply vertex->getPoint() (avoids the issue of coplanar faces)?
             Point3SPtr src = KernelWrapper::intersection(plane_1, plane_2, plane_3);
+
             Plane3SPtr off_1 = KernelWrapper::offsetPlane(plane_1, -speed_1);
             Plane3SPtr off_2 = KernelWrapper::offsetPlane(plane_2, -speed_2);
             Plane3SPtr off_3 = KernelWrapper::offsetPlane(plane_3, -speed_3);
@@ -3042,7 +3045,7 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                 CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(f2->getData())->getSpeed();
 
                 std::tie(point, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
-                  plane, speed, plane_0, speed_0, plane_1, speed_1, plane_2, speed_2);
+                    plane, speed, plane_0, speed_0, plane_1, speed_1, plane_2, speed_2);
 
                 // std::cout << " **" << std::endl;
                 // std::cout << "facet = " << facet->getID() << std::endl;
@@ -3069,6 +3072,7 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                   EdgeWPtr edge_wptr = *efit++;
                   if (edge_wptr.expired())
                       continue;
+
                   EdgeSPtr edge(edge_wptr);
                   FacetSPtr facet_o = edge->other(facet);
                   Plane3SPtr plane_o = facet_o->getPlane();
