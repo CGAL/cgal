@@ -18,11 +18,15 @@
 #define ALGO_3D_SIMPLESTRAIGHTSKEL_H
 
 #include "typedefs_thread.h"
+
 #include "algo/ptrs.h"
 #include "algo/3d/ptrs.h"
 #include "data/3d/ptrs.h"
 #include "data/3d/skel/ptrs.h"
+
 #include <list>
+#include <optional>
+#include <utility>
 
 namespace algo { namespace _3d {
 
@@ -110,7 +114,7 @@ public:
      * Returns the point where 2 edges will crash into each other.
      */
     static std::pair<Point3SPtr, CGAL::FT> crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
-                                                   const CGAL::FT offset_max);
+                                                   const std::optional<CGAL::FT> offset_max);
 
     /**
      * Returns the offset (time) when the facet will reach the given point.

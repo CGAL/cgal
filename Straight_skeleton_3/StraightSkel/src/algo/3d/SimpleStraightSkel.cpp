@@ -1097,7 +1097,7 @@ Point3SPtr SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2)
 // this one does an early exit if the result is irrelevant (in the past or too far in the)
 std::pair<Point3SPtr, CGAL::FT>
 SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
-                            const CGAL::FT offset_max) {
+                            const std::optional<CGAL::FT> offset_max) {
 
 // #define CGAL_SS3_DEBUG_CRASH_AT
 #ifdef CGAL_SS3_DEBUG_CRASH_AT
@@ -1110,18 +1110,23 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
     SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
 
-    Plane3SPtr plane_0 = edge_1->getFacetL()->plane();
-    Plane3SPtr plane_1 = edge_1->getFacetR()->plane();
-    Plane3SPtr plane_2 = edge_2->getFacetL()->plane();
-    Plane3SPtr plane_3 = edge_2->getFacetR()->plane();
-    CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(edge_1->getFacetL()->getData())->getSpeed();
-    CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(edge_1->getFacetR()->getData())->getSpeed();
-    CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(edge_2->getFacetL()->getData())->getSpeed();
-    CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(edge_2->getFacetR()->getData())->getSpeed();
+    FacetSPtr facet_l1 = edge_1->getFacetL();
+    FacetSPtr facet_r1 = edge_1->getFacetR();
+    FacetSPtr facet_l2 = edge_2->getFacetL();
+    FacetSPtr facet_r2 = edge_2->getFacetR();
+    Plane3SPtr plane_l1 = facet_l1->plane();
+    Plane3SPtr plane_r1 = facet_r1->plane();
+    Plane3SPtr plane_l2 = facet_l2->plane();
+    Plane3SPtr plane_r2 = facet_r2->plane();
+    CGAL::FT speed_l1 = std::dynamic_pointer_cast<SkelFacetData>(facet_l1->getData())->getSpeed();
+    CGAL::FT speed_r1 = std::dynamic_pointer_cast<SkelFacetData>(facet_r1->getData())->getSpeed();
+    CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
+    CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
     Point3SPtr point;
     CGAL::FT offset_event;
-    std::tie(point, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
+    std::tie(point, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
+        plane_l1, speed_l1, plane_r1, speed_r1, plane_l2, speed_l2, plane_r2, speed_r2);
 
     if(!point)
       return { point, offset_event };
@@ -1129,60 +1134,306 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     // pointless to check the validity of the geometry if the event is:
     // - in the past
     // - worse than the current best (temporary optimization, to remove if a queue is used)
-    if(offset_event > 0 || offset_event <= offset_max)
-      return { Point3SPtr(), offset_event };
+    if (offset_max) {
+        if(offset_event >= 0 || offset_event <= offset_max.value())
+            return { Point3SPtr(), offset_event };
+    }
 
     // Check that the point is inside bounds
     FacetSPtr facet_1_src = getFacetSrc(edge_1);
     FacetSPtr facet_1_dst = getFacetDst(edge_1);
     FacetSPtr facet_2_src = getFacetSrc(edge_2);
     FacetSPtr facet_2_dst = getFacetDst(edge_2);
+
+#ifdef CGAL_SS3_DEBUG_CRASH_AT
+    std::cout << "Facet L1" << std::endl;
+    std::cout << facet_l1->toString() << std::endl;
+    std::cout << "Facet R1" << std::endl;
+    std::cout << facet_r1->toString() << std::endl;
+    std::cout << "Facet L2" << std::endl;
+    std::cout << facet_l2->toString() << std::endl;
+    std::cout << "Facet R2" << std::endl;
+    std::cout << facet_r2->toString() << std::endl;
+
+    std::cout << "Facet 1 SRC" << std::endl;
+    std::cout << facet_1_src->toString() << std::endl;
+    std::cout << "Facet 1 DST" << std::endl;
+    std::cout << facet_1_dst->toString() << std::endl;
+    std::cout << "Facet 2 SRC" << std::endl;
+    std::cout << facet_2_src->toString() << std::endl;
+    std::cout << "Facet 2 DST" << std::endl;
+    std::cout << facet_2_dst->toString() << std::endl;
+
+    std::cout << "Point: " << *point << std::endl;
+#endif
+
+#if 1//def CGAL_SS3_OLD_CODE_BOUND_CHECKS
+    bool reject_1 = false;
+    bool reject_2 = false;
+    bool reject_3 = false;
+    bool reject_4 = false;
+    bool reject_5 = false;
+    bool reject_6 = false;
     Vector3SPtr normal_1 = KernelFactory::createVector3(data_1->getSheet()->getPlane());
     Line3SPtr line_normal_1 = KernelFactory::createLine3(point, normal_1);
     if (KernelWrapper::orientation(line(edge_1), line_normal_1) <= 0) {
-        return {};
+        std::cout << "reject #1" << std::endl;
+        reject_1 = true;
     }
-    if (!(facet_1_src == edge_2->getFacetL() ||
-            facet_1_src == edge_2->getFacetR())) {
+    if (!(facet_1_src == facet_l2 ||
+            facet_1_src == facet_r2)) {
         SkelVertexDataSPtr data_1_src = std::dynamic_pointer_cast<SkelVertexData>(
             edge_1->getVertexSrc()->getData());
         ArcSPtr arc_1_src = data_1_src->getArc();
         if (KernelWrapper::orientation(arc_1_src->line(), line_normal_1) > 0) {
-            return {};
+            std::cout << "reject #2" << std::endl;
+            reject_2 = true;
         }
     }
-    if (!(facet_1_dst == edge_2->getFacetL() ||
-            facet_1_dst == edge_2->getFacetR())) {
+    if (!(facet_1_dst == facet_l2 ||
+            facet_1_dst == facet_r2)) {
         SkelVertexDataSPtr data_1_dst = std::dynamic_pointer_cast<SkelVertexData>(
             edge_1->getVertexDst()->getData());
         ArcSPtr arc_1_dst = data_1_dst->getArc();
         if (KernelWrapper::orientation(arc_1_dst->line(), line_normal_1) < 0) {
-            return {};
+            std::cout << "reject #3" << std::endl;
+            reject_3 = true;
         }
     }
     Vector3SPtr normal_2 = KernelFactory::createVector3(data_2->getSheet()->getPlane());
     Line3SPtr line_normal_2 = KernelFactory::createLine3(point, normal_2);
     if (KernelWrapper::orientation(line(edge_2), line_normal_2) <= 0) {
-        return {};
+            std::cout << "reject #4" << std::endl;
+            reject_4 = true;
     }
-    if (!(facet_2_src == edge_1->getFacetL() ||
-            facet_2_src == edge_1->getFacetR())) {
+    if (!(facet_2_src == facet_l1 ||
+            facet_2_src == facet_r1)) {
         SkelVertexDataSPtr data_2_src = std::dynamic_pointer_cast<SkelVertexData>(
             edge_2->getVertexSrc()->getData());
         ArcSPtr arc_2_src = data_2_src->getArc();
         if (KernelWrapper::orientation(arc_2_src->line(), line_normal_2) > 0) {
-            return {};
+            std::cout << "reject #5" << std::endl;
+            reject_5 = true;
         }
     }
-    if (!(facet_2_dst == edge_1->getFacetL() ||
-            facet_2_dst == edge_1->getFacetR())) {
+    if (!(facet_2_dst == facet_l1 ||
+            facet_2_dst == facet_r1)) {
         SkelVertexDataSPtr data_2_dst = std::dynamic_pointer_cast<SkelVertexData>(
             edge_2->getVertexDst()->getData());
         ArcSPtr arc_2_dst = data_2_dst->getArc();
         if (KernelWrapper::orientation(arc_2_dst->line(), line_normal_2) < 0) {
-            return {};
+            std::cout << "reject #6" << std::endl;
+            reject_6 = true;
         }
     }
+#endif // @tmp
+#if 1
+    bool reject_2b = false;
+    bool reject_3b = false;
+    bool reject_5b = false;
+    bool reject_6b = false;
+
+    // Not to be in the past is equivalent to be on the negative side (we are shrinking)
+    // of the planes of the facets incident to the edge
+    //
+    // Since we have filtered positive times, this shouldn't be needed (assuming positive weights)
+    CGAL_assertion(!(KernelWrapper::side(plane_l1, point) > 0 ||
+                     KernelWrapper::side(plane_r1, point) > 0));
+    CGAL_assertion(!(KernelWrapper::side(plane_l2, point) > 0 ||
+                     KernelWrapper::side(plane_r2, point) > 0));
+
+    CGAL::FT l1a = plane_l1->a();
+    CGAL::FT l1b = plane_l1->b();
+    CGAL::FT l1c = plane_l1->c();
+    CGAL::FT l1d = plane_l1->d();
+    CGAL::FT l2a = plane_l2->a();
+    CGAL::FT l2b = plane_l2->b();
+    CGAL::FT l2c = plane_l2->c();
+    CGAL::FT l2d = plane_l2->d();
+    CGAL::FT r1a = plane_r1->a();
+    CGAL::FT r1b = plane_r1->b();
+    CGAL::FT r1c = plane_r1->c();
+    CGAL::FT r1d = plane_r1->d();
+    CGAL::FT r2a = plane_r2->a();
+    CGAL::FT r2b = plane_r2->b();
+    CGAL::FT r2c = plane_r2->c();
+    CGAL::FT r2d = plane_r2->d();
+
+    CGAL::FT lt1 = (l1a * point->x() + l1b * point->y() + l1c * point->z() + l1d) / speed_l1;
+    CGAL::FT rt1 = (r1a * point->x() + r1b * point->y() + r1c * point->z() + r1d) / speed_r1;
+    CGAL::FT lt2 = (l2a * point->x() + l2b * point->y() + l2c * point->z() + l2d) / speed_l2;
+    CGAL::FT rt2 = (r2a * point->x() + r2b * point->y() + r2c * point->z() + r2d) / speed_r2;
+    std::cout << "time from l1 " << lt1 << std::endl;
+    std::cout << "time from r1 " << rt1 << std::endl;
+    std::cout << "time from l2 " << lt2 << std::endl;
+    std::cout << "time from r2 " << rt2 << std::endl;
+    CGAL_assertion(lt1 == rt1 && lt1 == lt2 && lt1 == rt2);
+
+    // @todo this should be a predicate (oriented_side_of_event_point_wrt_bisectorC2)
+
+    // We want the point to be left of the right arc, and right of the left arc
+    //
+    // We can just check the position of the query 'point' with respect
+    // to one of the other bisector. A few tricky parts:
+    // - The side of bisector is easy to know: it's comparing times, but that
+    //   depends on whether the edge is reflex or convex
+    // - Once we know on which side of the bisector it is, it's not done yet:
+    //   we need to know which side of the bisector is the correct one and since
+    //   faces can be non-convex polygons, we need to check if we are in a concave
+    //   (within the face) vertex to know if the clipping bisector is inverted
+
+    auto check_bisector = [&](EdgeSPtr edge,
+                              FacetSPtr f,
+                              CGAL::FT t,
+                              FacetSPtr f_third) -> bool
+    {
+        Plane3SPtr plane_third = f_third->plane();
+        CGAL::FT a_third = plane_third->a();
+        CGAL::FT b_third = plane_third->b();
+        CGAL::FT c_third = plane_third->c();
+        CGAL::FT d_third = plane_third->d();
+        CGAL::FT speed_third = std::dynamic_pointer_cast<SkelFacetData>(f_third->getData())->getSpeed();
+        CGAL::FT t_third = (a_third * point->x() + b_third * point->y() + c_third * point->z() + d_third) / speed_third;
+
+        // @todo could likely simply be a prev/next on edge_1|2
+        EdgeSPtr edge_f_f_third = edge->next(f);
+
+        std::cout << "time from third: " << t_third << std::endl;
+        std::cout << "edge = " << edge->toString() << std::endl;
+        std::cout << "edge_f_f_third = " << edge_f_f_third->toString() << std::endl;
+        CGAL_assertion(edge_f_f_third != edge);
+
+        // we want SMALLER to mean "on F1 side of the bisector"
+        // and     LARGER  to mean "on third side of the bisector"
+        CGAL::Comparison_result f_third_point_side;
+        if (isReflex(edge_f_f_third)) {
+            std::cout << "F1O: reflex edge " << std::endl;
+            f_third_point_side = CGAL::compare(t, t_third);
+        } else {
+            std::cout << "F1O: convex edge " << std::endl;
+            f_third_point_side = CGAL::compare(t_third, t);
+        }
+
+        std::cout << "f_third_point_side = " << f_third_point_side << std::endl;
+
+        // Now, we have to determine which side of f-third is legal
+        // and that is determined by the angle that the face makes at the vertex
+        // common
+        //
+        // We can't use the actual geometry of the edges because they might be degenerate,
+        // so everything must be done with planes
+        //
+        // @todo construction-less
+
+        FacetSPtr f_other = edge->other(f);
+        Plane3SPtr plane_f = f->plane();
+        Plane3SPtr plane_f_other = f_other->plane();
+        Vector3SPtr n_f = KernelFactory::createVector3(plane_f);
+        Vector3SPtr n_f_other = KernelFactory::createVector3(plane_f_other);
+        Vector3SPtr n_f_third = KernelFactory::createVector3(plane_third);
+
+        Vector3 v_f_f_other = isReflex(edge) ? CGAL::cross_product(*n_f_other, *n_f)
+                                             : CGAL::cross_product(*n_f, *n_f_other);
+        Vector3 v_f_f_third = isReflex(edge_f_f_third) ? CGAL::cross_product(*n_f_third, *n_f)
+                                                       : CGAL::cross_product(*n_f, *n_f_third);
+
+        Point3 pvp = *(edge->getVertexSrc()->getPoint()); // the position doesn't matter
+        Point3 vp = pvp + v_f_f_other;
+        Point3 nvp = vp + v_f_f_third;
+        CGAL_assertion(pvp != vp && vp != nvp);
+
+        auto n = CGAL::cross_product(nvp - vp, pvp - vp);
+        CGAL::FT sp = CGAL::scalar_product(*n_f, n);
+
+#ifdef CGAL_SS3_DEBUG_CRASH_AT
+        std::cout << "pv = " << pvp << std::endl;
+        std::cout << "v = " << vp << std::endl;
+        std::cout << "nv = " << nvp << std::endl;
+        std::cout << "n_f = " << *n_f << std::endl;
+        std::cout << "n_f_other = " << *n_f_other << std::endl;
+        std::cout << "n_f_third = " << *n_f_third << std::endl;
+        std::cout << "n = " << n << std::endl;
+        std::cout << "sp = " << sp << std::endl;
+#endif
+
+        // @todo below means that the edge is aligned, so the two bisectors are coplanar
+        // and it'll be annoying. In that case, we can simply check on which side the
+        // other vertex is and use the third bisector... but currently it's not possible
+        // because no 2 faces are coplanar, so below should be always true!
+        CGAL_assertion(sp != 0);
+
+        if (sp < 0) {
+            std::cout << "SP: right turn" << std::endl;
+            if (f_third_point_side == CGAL::SMALLER) {
+                std::cout << "reject!" << std::endl;
+                return false;
+            }
+        } else {
+            std::cout << "SP: left turn" << std::endl;
+            if (f_third_point_side == CGAL::LARGER) {
+                std::cout << "reject!" << std::endl;
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    // @fixme are these facet checks required?
+    // @todo lots of duplicate computations
+    if (!(facet_1_src == facet_l2 ||
+            facet_1_src == facet_r2)) {
+        std::cout << "-- check 1_src" << std::endl;
+        // src is the target of the edge when in the right face
+        if (!check_bisector(edge_1, facet_r1, rt1, facet_1_src)) {
+            std::cout << "reject #2b" << std::endl;
+            reject_2b = true;
+        }
+    }
+
+    if (!(facet_1_dst == facet_l2 ||
+            facet_1_dst == facet_r2)) {
+        std::cout << "-- check 1_dst" << std::endl;
+        if (!check_bisector(edge_1, facet_l1, lt1, facet_1_dst)) {
+            std::cout << "reject #3b" << std::endl;
+            reject_3b = true;
+        }
+    }
+
+    if (!(facet_2_src == facet_l1 ||
+            facet_2_src == facet_r1)) {
+        std::cout << "-- check 2_src" << std::endl;
+        std::cout << edge_2->getVertexSrc()->toString() << std::endl;
+        if (!check_bisector(edge_2, facet_r2, rt2, facet_2_src)) {
+            std::cout << "reject #5b" << std::endl;
+            reject_5b = true;
+        }
+    }
+
+    if (!(facet_2_dst == facet_l1 ||
+            facet_2_dst == facet_r1)) {
+          std::cout << "-- check 2_dst" << std::endl;
+          if (!check_bisector(edge_2, facet_l2, lt2, facet_2_dst)) {
+              std::cout << "reject #6b" << std::endl;
+              reject_6b = true;
+        }
+    }
+
+    CGAL_warning(reject_2 == reject_2b);
+    CGAL_warning(reject_3 == reject_3b);
+    CGAL_warning(reject_5 == reject_5b);
+    CGAL_warning(reject_6 == reject_6b);
+#endif
+
+    bool reject_old = (reject_1 || reject_2 || reject_3 || reject_4 || reject_5 || reject_6);
+    bool reject_new = (reject_2b || reject_3b || reject_5b || reject_6b);
+    CGAL_assertion(reject_old == reject_new);
+
+    // if(reject_2 || reject_3 || reject_5 || reject_6) return {};
+    // if(reject_old) return {};
+
+    if(reject_new) return {};
+    // if(reject_1 || reject_2b || reject_3b || reject_4 || reject_5b || reject_6b) return {};
 
     return { point, offset_event };
 }
