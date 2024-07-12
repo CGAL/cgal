@@ -3709,6 +3709,9 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
     } else if (not_flipped_valid && !flipped_valid) {
         flip_edge = false;
     } else if (flipped_valid && not_flipped_valid) {
+
+// #define CGAL_SS3_USE_APPROXIMATE_ANGLES // old code
+#ifdef CGAL_SS3_USE_APPROXIMATE_ANGLES
         double angle_flipped = KernelWrapper::angle(facets[0]->plane(), facets[2]->plane());
         double angle_no_flip = KernelWrapper::angle(facets[1]->plane(), facets[3]->plane());
         DEBUG_VAR(angle_no_flip);
@@ -3720,7 +3723,27 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
             // reflex
             // choose edge that moves faster
             flip_edge = (angle_flipped >= angle_no_flip);
-        } else if (edge_event_ == 2) {
+        }
+#else
+# ifndef USE_CGAL
+#  error
+# endif
+        Vector3SPtr n0 = KernelFactory::createVector3(facets[0]->plane());
+        Vector3SPtr n2 = KernelFactory::createVector3(facets[2]->plane());
+        Vector3SPtr n1 = KernelFactory::createVector3(facets[1]->plane());
+        Vector3SPtr n3 = KernelFactory::createVector3(facets[3]->plane());
+        CGAL::Comparison_result dac = CGAL::compare_angle(*n0, *n2, *n1, *n3);
+
+        if (edge_event_ == 0) {
+            // convex
+            flip_edge = (dac != CGAL::LARGER); // (angle_flipped <= angle_no_flip);
+        } else if (edge_event_ == 1) {
+            // reflex
+            // choose edge that moves faster
+            flip_edge = (dac != CGAL::SMALLER); // (angle_flipped >= angle_no_flip);
+        }
+#endif
+        else if (edge_event_ == 2) {
             // flip_when_possible
             flip_edge = true;
         } else if (edge_event_ == 3) {
