@@ -189,12 +189,17 @@ int main(int argc, char** argv)
   if (supporting_curve.empty()) return 1;
 
   std::cout <<"supporting_curve generated!\n";
-  std::ofstream debug("debug.polylines.txt");
-  debug << std::setprecision(17) << supporting_curve.size();
-  for (auto loc : supporting_curve)
-    debug << " " << PMP::construct_point(loc, mesh);
-  debug << "\n";
-  debug.close();
+  std::ofstream support_out("svg_support.polylines.txt");
+
+  std::vector<K::Point_3> support_poly;
+  support_poly.reserve(supporting_curve.size());
+  PMP::convert_path_to_polyline(supporting_curve, mesh, std::back_inserter(support_poly));
+
+  support_out << std::setprecision(17) << support_poly.size();
+  for (auto p : support_poly)
+    support_out << " " << p;
+  support_out << "\n";
+  support_out.close();
 
   // convert polygons to polar coordinates
   typename K::Point_2 center_2((bb2.xmax()+bb2.xmin())/2., (bb2.ymax()+bb2.ymin())/2.);
@@ -209,11 +214,15 @@ int main(int argc, char** argv)
   std::vector<std::vector<Face_location>> polygons_3;
   polygons_3 = PMP::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., true, mesh, solver);
 
-  for (const auto& polygon : polygons_3)
+  for (const auto& polygon_path : polygons_3)
   {
-    out << polygon.size();
-    for (auto p : polygon)
-      out << " " << PMP::construct_point(p, mesh);
+    std::vector<K::Point_3> poly;
+    poly.reserve(polygon_path.size());
+    PMP::convert_path_to_polyline(polygon_path, mesh, std::back_inserter(poly));
+
+    out << poly.size();
+    for (auto p : poly)
+      out << " " << p;
     out << std::endl;
   }
 

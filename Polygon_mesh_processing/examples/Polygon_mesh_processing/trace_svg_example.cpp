@@ -113,9 +113,14 @@ int main(int argc, char** argv)
   out << std::setprecision(17);
   for (const auto& b : res)
   {
-    out << b.size();
-    for (const Face_location& loc : b)
-      out << " " << PMP::construct_point(loc,mesh);
+    std::vector<K::Point_3> poly;
+    poly.reserve(b.size());
+    PMP::convert_path_to_polyline(b, mesh, std::back_inserter(poly));
+
+
+    out << poly.size();
+    for (const K::Point_3& p : poly)
+      out << " " << p;
     out << "\n";
   }
 

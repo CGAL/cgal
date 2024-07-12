@@ -59,10 +59,15 @@ int main(int argc, char** argv)
   for (double len : lenghts)
   {
     std::vector<K::FT> lens(n_sides,len);
-    std::vector<Face_location> polygon = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
-    out << polygon.size();
-    for (auto p : polygon)
-      out << " " << PMP::construct_point(p, mesh);
+    std::vector<Face_location> polygon_path = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
+
+    std::vector<K::Point_3> poly;
+    poly.reserve(polygon_path.size());
+    PMP::convert_path_to_polyline(polygon_path, mesh, std::back_inserter(poly));
+
+    out << poly.size();
+    for (auto p : poly)
+      out << " " << p;
     out << "\n";
   }
 

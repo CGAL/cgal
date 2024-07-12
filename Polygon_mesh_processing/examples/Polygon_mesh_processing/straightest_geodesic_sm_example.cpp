@@ -47,22 +47,17 @@ int main(int argc, char** argv)
 
 
   K::Vector_2 dir(1,1);
-#if 0
-  std::vector<K::Point_3> path;
-  PMP::walk_and_intersection_point_collection<K>(mesh, src_pt, src.first,
-                                                 K::Plane_3(src_pt, K::Vector_3(0,1,0)),
-                                                 K::Plane_3(src_pt, K::Vector_3(1,0,0)),
-                                                 target_distance,
-                                                 path);
-#else
   std::vector<Face_location> path = PMP::straightest_geodesic<K>(src, dir, target_distance, mesh);
-#endif
+
+  std::vector<K::Point_3> poly;
+  poly.reserve(path.size());
+  PMP::convert_path_to_polyline(path, mesh, std::back_inserter(poly));
 
   std::ofstream out("straightest_geodesic_path.polylines.txt");
   out << path.size() << " ";
 
-  for (auto fl : path)
-    out << " " << PMP::construct_point(fl, mesh);
+  for (auto p : poly)
+    out << " " << p;
   out << "\n";
 
   return 0;

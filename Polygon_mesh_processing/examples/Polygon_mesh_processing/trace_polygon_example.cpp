@@ -117,10 +117,14 @@ int main(int argc, char** argv)
     }
 
     // last point is duplicated
-    std::vector<Face_location> out_polygon = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
-    out << out_polygon.size();
-    for (auto p : out_polygon)
-      out << " " << PMP::construct_point(p, mesh);
+    std::vector<Face_location> out_polygon_path = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
+    std::vector<K::Point_3> poly;
+    poly.reserve(out_polygon_path.size());
+    PMP::convert_path_to_polyline(out_polygon_path, mesh, std::back_inserter(poly));
+
+    out << poly.size();
+    for (auto p : poly)
+      out << " " << p;
     out << std::endl;
   }
 

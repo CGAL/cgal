@@ -67,11 +67,16 @@ int main(int argc, char** argv)
   std::vector<Edge_location> edge_locations;
   CGAL::Polygon_mesh_processing::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
 
+
+  std::vector<K::Point_3> poly;
+  poly.reserve(edge_locations.size()+2);
+  PMP::convert_path_to_polyline(src, edge_locations, tgt, mesh, std::back_inserter(poly));
+
   std::ofstream out("locally_shortest_path.polylines.txt");
-  out << edge_locations.size()+2;
-  out << " " << PMP::construct_point(src, mesh);
-  for (auto el : edge_locations)
-    out << " " << PMP::construct_point(el, mesh);
-  out << " " << PMP::construct_point(tgt, mesh) << "\n";
+  out << poly.size();
+  for (auto p : poly)
+    out << " " << p;
+  out << "\n";
+
   return 0;
 }

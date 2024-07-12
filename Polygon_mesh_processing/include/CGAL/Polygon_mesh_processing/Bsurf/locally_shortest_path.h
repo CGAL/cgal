@@ -4039,6 +4039,57 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
   return out;
 }
 
+// TODO: add to doc
+// create a polyline from a path on a mesh. It does eliminate duplicated elements in the path
+// that are here to make a continuous face transition when the path goes though a mesh vertex
+template<class TriangleMesh, class FT, class OutputIterator>
+OutputIterator
+convert_path_to_polyline(const std::vector<Face_location<TriangleMesh, FT>>& path,
+                         const TriangleMesh& tmesh,
+                         OutputIterator poly_out)
+{
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+
+  vertex_descriptor vd = boost::graph_traits<TriangleMesh>::null_vertex();
+  for (const Face_location<TriangleMesh, FT>& loc : path)
+  {
+    std::optional<vertex_descriptor> ov = vertex_descriptor_from_location(loc, tmesh);
+    if (ov.has_value())
+    {
+      if (vd==*ov) continue;
+      vd=*ov;
+    }
+    *poly_out++=construct_point(loc, tmesh);
+  }
+  return poly_out;
+}
+
+// same as above but for edge locations
+template<class TriangleMesh, class FT, class OutputIterator>
+OutputIterator
+convert_path_to_polyline(const Face_location<TriangleMesh, FT>& src,
+                         const std::vector<Edge_location<TriangleMesh, FT>>& path,
+                         const Face_location<TriangleMesh, FT>& tgt,
+                         const TriangleMesh& tmesh,
+                         OutputIterator poly_out)
+{
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+
+  *poly_out++=construct_point(src, tmesh);
+  vertex_descriptor vd = boost::graph_traits<TriangleMesh>::null_vertex();
+  for (const Edge_location<TriangleMesh, FT>& loc : path)
+  {
+    std::optional<vertex_descriptor> ov = vertex_descriptor_from_location(loc, tmesh);
+    if (ov.has_value())
+    {
+      if (vd==*ov) continue;
+      vd=*ov;
+    }
+    *poly_out++=construct_point(loc, tmesh);
+  }
+  *poly_out++=construct_point(tgt, tmesh);
+  return poly_out;
+}
 
 // template <class K, class TriangleMesh>
 // std::vector<typename K::Vector_2>
