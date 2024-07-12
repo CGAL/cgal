@@ -804,17 +804,22 @@ std::string Facet::toString() const {
     }
     if (plane_) {
 #ifdef USE_CGAL
-        sstr << "<" << util::StringFactory::fromDouble(CGAL::to_double(plane_->a())) << ", "
+        sstr << "Plane: <" << util::StringFactory::fromDouble(CGAL::to_double(plane_->a())) << ", "
              << util::StringFactory::fromDouble(CGAL::to_double(plane_->b())) << ", "
              << util::StringFactory::fromDouble(CGAL::to_double(plane_->c())) << ", "
              << util::StringFactory::fromDouble(CGAL::to_double(plane_->d())) << ">, ";
 #else
-        sstr << "<" << util::StringFactory::fromDouble(plane_->getA()) << ", "
+        sstr << "Plane: <" << util::StringFactory::fromDouble(plane_->getA()) << ", "
              << util::StringFactory::fromDouble(plane_->getB()) << ", "
              << util::StringFactory::fromDouble(plane_->getC()) << ", "
              << util::StringFactory::fromDouble(plane_->getD()) << ">, ";
 #endif
     }
+
+    if (hasData()) {
+        sstr << "Speed: " << std::dynamic_pointer_cast<data::_3d::skel::SkelFacetData>(getData())->getSpeed() << ", ";
+    }
+
     sstr << "Vertices:" + util::StringFactory::fromInteger(vertices_.size()) + ", ";
     sstr << "Edges:" + util::StringFactory::fromInteger(edges_.size()) + ",";
     if (vertices_.size() > 0) {

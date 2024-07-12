@@ -592,12 +592,12 @@ std::string Vertex::toString() const {
     result += "<" + util::StringFactory::fromDouble(CGAL::to_double(getX())) + " ";
     result += util::StringFactory::fromDouble(CGAL::to_double(getY())) + " ";
     result += util::StringFactory::fromDouble(CGAL::to_double(getZ())) + ">";
-//    if (edges_.size() > 0) {
-//        result += ", Edges:" + util::StringFactory::fromInteger(edges_.size());
-//    }
-//    if (facets_.size() > 0) {
-//        result += ", Facets:" + util::StringFactory::fromInteger(facets_.size());
-//    }
+    if (edges_.size() > 0) {
+        result += ", Edges:" + util::StringFactory::fromInteger(edges_.size());
+    }
+    if (facets_.size() > 0) {
+        result += ", Facets:" + util::StringFactory::fromInteger(facets_.size());
+    }
     result += ")";
     return result;
 }

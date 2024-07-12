@@ -341,18 +341,23 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
 
     CGAL::FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
 
-// #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
-#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
-    std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
-    std::cout << a0*x + b0*y + c0*z + w0*t << std::endl;
-    std::cout << a1*x + b1*y + c1*z + w1*t << std::endl;
-    std::cout << a2*x + b2*y + c2*z + w2*t << std::endl;
-    std::cout << a3*x + b3*y + c3*z + w3*t << std::endl;
-#endif
-
     result = KernelFactory::createPoint3(x, y, z);
 
     CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
+
+// #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
+#ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
+    std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
+    std::cout << a0*x + b0*y + c0*z + d0 - w0*t << std::endl;
+    std::cout << a1*x + b1*y + c1*z + d1 - w1*t << std::endl;
+    std::cout << a2*x + b2*y + c2*z + d2 - w2*t << std::endl;
+    std::cout << a3*x + b3*y + c3*z + d3 - w3*t << std::endl;
+
+    CGAL_assertion(a0*x + b0*y + c0*z + d0 - w0*t == 0);
+    CGAL_assertion(a1*x + b1*y + c1*z + d1 - w1*t == 0);
+    CGAL_assertion(a2*x + b2*y + c2*z + d2 - w2*t == 0);
+    CGAL_assertion(a3*x + b3*y + c3*z + d3 - w3*t == 0);
+#endif
 
     return { result, t };
 }

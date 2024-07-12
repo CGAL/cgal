@@ -196,7 +196,7 @@ Plane3SPtr SelfIntersection::bisector(FacetSPtr facet, VertexSPtr vertex) {
 // \pre `point` is coplanar with the edges incident to `vertex`
 CGAL::Sign SelfIntersection::SideOfBisector(FacetSPtr facet, VertexSPtr vertex, Point3SPtr point) {
 #ifndef USE_CGAL
-# error "This function is not compatible with the old kernel
+# error "This function is not compatible with the old kernel"
 #endif
 
     CGAL_precondition(vertex->degree() > 1);
@@ -290,11 +290,11 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
                 }
             }
 
-            // if(!point_inside_bounds) {
-            //    CGAL_assertion(SideOfBisector(facet, vertex_src, point) == CGAL::ON_NEGATIVE_SIDE);
-            // } else {
-            //    CGAL_assertion(SideOfBisector(facet, vertex_src, point) != CGAL::ON_NEGATIVE_SIDE);
-            // }
+            if(point_inside_bounds) {
+               CGAL_assertion(SideOfBisector(facet, vertex_src, point) != CGAL::ON_NEGATIVE_SIDE);
+            } else {
+               CGAL_assertion(SideOfBisector(facet, vertex_src, point) == CGAL::ON_NEGATIVE_SIDE);
+            }
 #else
             CGAL::Sign res = SideOfBisector(facet, vertex_src, point);
             if (res == CGAL::ON_NEGATIVE_SIDE) {
@@ -313,11 +313,11 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
                     }
                 }
 
-                // if(!point_inside_bounds) {
-                //    CGAL_assertion(SideOfBisector(facet, vertex_src, point) == CGAL::ON_POSITIVE_SIDE);
-                // } else {
-                //    CGAL_assertion(SideOfBisector(facet, vertex_src, point) != CGAL::ON_POSITIVE_SIDE);
-                // }
+                if(point_inside_bounds) {
+                   CGAL_assertion(SideOfBisector(facet, vertex_dst, point) != CGAL::ON_POSITIVE_SIDE);
+                } else {
+                   CGAL_assertion(SideOfBisector(facet, vertex_dst, point) == CGAL::ON_POSITIVE_SIDE);
+                }
 #else
                 CGAL::Sign res = SideOfBisector(facet, vertex_dst, point);
                 if (res == CGAL::ON_POSITIVE_SIDE) {
