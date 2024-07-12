@@ -186,7 +186,7 @@ Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
 }
 
 Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
-    Pane3SPtr result = Plane3SPtr();
+    Plane3SPtr result = Plane3SPtr();
 // #define CGAL_SS3_OLD_CODE_OFFSET_PLANE
 #ifndef CGAL_SS3_OLD_CODE_OFFSET_PLANE // this assumes a plane with normalized coefficients (i.e., its normal is normalized)
 # ifdef USE_CGAL
