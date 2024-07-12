@@ -487,6 +487,7 @@ set(LIBRARIES_TO_CHECK
   NTL TBB OpenCV METIS ZLIB
   Ceres GLPK SCIP OSQP
 )
+
 function(check_library cgal_3rdparty_lib)
   set(QT_NO_CREATE_VERSIONLESS_TARGETS ON)
   set(CMAKE_FIND_PACKAGE_QUIET TRUE)
@@ -498,10 +499,44 @@ function(check_library cgal_3rdparty_lib)
       set(version_var ${EIGEN3_VERSION})
     elseif(${cgal_3rdparty_lib} STREQUAL "GMP")
       set(version_var ${GMP_VERSION})
-    elseif(${cgal_3rdparty_lib} STREQUAL "MPFR")
-      set(version_var ${MPFR_VERSION})
-    elseif(${cgal_3rdparty_lib} STREQUAL "METIS")
-      set(version_var ${METIS_VERSION})
+    elseif(${cgal_3rdparty_lib} STREQUAL "MPFR" OR ${cgal_3rdparty_lib} STREQUAL "METIS")
+      set(header_name "")
+      set(version_macros "")
+      if(${cgal_3rdparty_lib} STREQUAL "MPFR")
+        set(header_name "mpfr.h")
+        set(version_macros "MPFR_VERSION_MAJOR;MPFR_VERSION_MINOR;MPFR_VERSION_PATCHLEVEL")
+      elseif(${cgal_3rdparty_lib} STREQUAL "METIS")
+        set(header_name "metis.h")
+        set(version_macros "METIS_VER_MAJOR;METIS_VER_MINOR;METIS_VER_SUBMINOR")
+      endif()
+
+      find_path(INCLUDE_DIR
+          NAMES ${header_name}
+          PATHS ${${cgal_3rdparty_lib}_INCLUDE_DIRS}
+          PATH_SUFFIXES ${cgal_3rdparty_lib}
+      )
+
+      if(INCLUDE_DIR)
+        set(HEADER_PATH "${INCLUDE_DIR}/${header_name}")
+
+        if(EXISTS ${HEADER_PATH})
+          file(READ ${HEADER_PATH} HEADER_CONTENT)
+
+          list(GET version_macros 0 major_macro)
+          list(GET version_macros 1 minor_macro)
+          list(GET version_macros 2 patchlevel_macro)
+
+          string(REGEX MATCH "#define[ \t]+${major_macro}[ \t]+([0-9]+)" _major_match ${HEADER_CONTENT})
+          string(REGEX MATCH "#define[ \t]+${minor_macro}[ \t]+([0-9]+)" _minor_match ${HEADER_CONTENT})
+          string(REGEX MATCH "#define[ \t]+${patchlevel_macro}[ \t]+([0-9]+)" _patchlevel_match ${HEADER_CONTENT})
+
+          string(REGEX REPLACE ".*#define[ \t]+${major_macro}[ \t]+([0-9]+).*" "\\1" VERSION_MAJOR ${_major_match})
+          string(REGEX REPLACE ".*#define[ \t]+${minor_macro}[ \t]+([0-9]+).*" "\\1" VERSION_MINOR ${_minor_match})
+          string(REGEX REPLACE ".*#define[ \t]+${patchlevel_macro}[ \t]+([0-9]+).*" "\\1" VERSION_PATCHLEVEL ${_patchlevel_match})
+
+          set(version_var "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCHLEVEL}")
+        endif()
+      endif()
     elseif(DEFINED ${cgal_3rdparty_lib}_VERSION)
       set(version_var ${${cgal_3rdparty_lib}_VERSION})
     elseif(DEFINED ${cgal_3rdparty_lib}_VERSION_STRING)
