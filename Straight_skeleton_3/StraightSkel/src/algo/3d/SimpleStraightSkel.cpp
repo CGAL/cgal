@@ -3082,21 +3082,19 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                       speed_o = std::dynamic_pointer_cast<SkelFacetData>(facet_o->getData())->getSpeed();
                   }
 
-                  CGAL::FT t_o = a_o * (point->x())
-                               + b_o * (point->y())
-                               + c_o * (point->z())
-                               + d_o * speed_o;
+                  CGAL::FT t_o = (a_o*(point->x()) + b_o*(point->y()) + c_o*(point->z()) + d_o) / speed_o;
 
                   // std::cout << " compare to F" << facet_o->getID()
                   //           << " reflex: " << isReflex(edge)
                   //           << " t: " << t_o << std::endl;
 
+                  // @fixme is below overly zealous? See also the filtering in crashAt
                   if(t_o > 0) // invalid event
-                    continue;
+                      continue;
 
                   if (isReflex(edge))
                   {
-                    if (t_o < offset_event) // negative offsets!
+                    if (t_o < offset_event) // offsets are negative
                       reject_event = true;
                   }
                   else
