@@ -12,12 +12,12 @@
 #include <CGAL/Gmpq.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
-#include <CGAL/Hyperbolic_surfaces_traits_2.h>
+#include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
 
 typedef CGAL::Cartesian<CGAL::Gmpq>                                           Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef CGAL::Hyperbolic_surfaces_traits_2<ParentTraits>                      Traits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
 typedef Traits::Hyperbolic_point_2                                            Point;
 typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
 
