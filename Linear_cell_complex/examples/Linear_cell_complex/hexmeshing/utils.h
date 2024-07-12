@@ -82,7 +82,7 @@ void render(LCC &lcc, typename LCC::size_type marked_cell_0, typename LCC::size_
       it++){
     // lcc.is_whole_cell_marked<1>()
     if (lcc.template is_whole_cell_marked<1>(it, marked_cell_1)){
-      buffer.add_segment(lcc.point(it), lcc.point(lcc.other_extremity(it)), CGAL::Color(255, 0, 0));
+      buffer.add_segment(lcc.point(it), lcc.point(lcc.other_extremity(it)), CGAL::Color(0, 0, 255));
       continue;
     }
 
