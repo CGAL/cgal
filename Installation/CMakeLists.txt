@@ -481,14 +481,14 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 set(LIBRARIES_TO_CHECK
   Boost GMP MPFR
-  #VTK
+  VTK
   Qt6
   Eigen3 OpenGR libpointmatcher LEDA MPFI
   NTL TBB OpenCV METIS ZLIB
   Ceres GLPK SCIP OSQP
 )
-
 function(check_library lib)
+  set(QT_NO_CREATE_VERSIONLESS_TARGETS ON)
   set(CMAKE_FIND_PACKAGE_QUIET TRUE)
   find_package(${lib} QUIET)
   set(CMAKE_FIND_PACKAGE_QUIET FALSE)
@@ -521,10 +521,6 @@ endfunction()
 foreach(lib IN LISTS LIBRARIES_TO_CHECK)
   check_library(${lib})
 endforeach()
-#find_package(VTK REQUIRED)
-#if(VTK_FOUND)
-#  message(STATUS "Third-party library VTK ${VTK_VERSION}")
-#endif()
 message("== Generate version files (DONE) ==\n")
 #--------------------------------------------------------------------------------------------------
 #
