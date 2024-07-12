@@ -662,6 +662,80 @@ get_descriptor_from_location(const Face_location<TriangleMesh, FT>& loc,
   return fd;
 }
 
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a location, if it designates a vertex, returns the corresponding vertex descriptor and `std::nullopt` otherwise.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
+///
+/// \param loc a location with `loc.first` a face of `tm`
+/// \param tm a triangulated surface mesh
+///
+/// \pre `loc.first` is a face descriptor corresponding to a face of `tm`.
+/// \pre `loc` describes the barycentric coordinates of a point that lives within the face (boundary included),
+///      meaning the barycentric coordinates are all positive.
+///
+template <typename FT, typename TriangleMesh>
+std::optional<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>
+vertex_descriptor_from_location(const Face_location<TriangleMesh, FT>& loc,
+                                const TriangleMesh& tm)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor         halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor             face_descriptor;
+
+  typedef Barycentric_coordinates<FT>                                             Barycentric_coordinates;
+
+  const face_descriptor fd = loc.first;
+  const Barycentric_coordinates& bar = loc.second;
+
+  CGAL_precondition(is_valid_face_descriptor(fd, tm));
+  CGAL_precondition(is_triangle(halfedge(fd, tm), tm));
+  CGAL_precondition(is_in_face(loc, tm));
+
+  // the first barycentric coordinate corresponds to source(halfedge(fd, tm), tm)
+  halfedge_descriptor hd = prev(halfedge(fd, tm), tm);
+
+  // check if the point is a vertex
+  for(int i=0; i<3; ++i)
+  {
+    if(bar[i] == FT(1)) // coordinate at target(hd, tm)
+      return target(hd, tm);
+    hd = next(hd, tm);
+  }
+  return std::nullopt;
+}
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief Given a location, if it designates a vertex, returns the corresponding vertex descriptor and `std::nullopt` otherwise.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
+///
+/// \param loc a location with `loc.first` a face of `tm`
+/// \param tm a triangulated surface mesh
+///
+/// \pre `loc.first` is a face descriptor corresponding to a face of `tm`.
+/// \pre `loc` describes the barycentric coordinates of a point that lives within the face (boundary included),
+///      meaning the barycentric coordinates are all positive.
+///
+template <typename FT, typename TriangleMesh>
+std::optional<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>
+vertex_descriptor_from_location(const Edge_location<TriangleMesh, FT>& loc,
+                                const TriangleMesh& tm)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor           vertex_descriptor;
+
+  vertex_descriptor src = source(loc.first, tm), tgt = target(loc.first, tm);
+  const auto& bar = loc.second;
+
+  if (bar[1]==0) return src;
+  if (bar[0]==0) return tgt;
+
+  return std::nullopt;
+}
+
 
 /// \ingroup PMP_locate_grp
 ///
