@@ -41,10 +41,10 @@ public:
   /* Hyperbolic_fundamental_domain_2(const std::vector<Point>& vertices, const
   std::vector<int>& pairings); Modify to include the set in the constructor MARC
   TODO*/
-  void set(std::vector<Point>::iterator vfirst,
-	     std::vector<Point>::iterator vlast,
-	     std::vector<int>::iterator pfirst,
-	     std::vector<int>::iterator plast);
+  void set(typename std::vector<Point>::iterator vfirst,
+	   typename std::vector<Point>::iterator vlast,
+	   typename std::vector<int>::iterator pfirst,
+	   typename std::vector<int>::iterator plast);
   
   int size() const; // Returns the number of vertices (equivalently, the number of sides)
   Point vertex(int index) const; // Returns the index-th vertex
@@ -88,10 +88,10 @@ Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2() {}
 ////////////////////////////////////////////////////////////////////////////////
 
  template<class Traits>
-   void Hyperbolic_fundamental_domain_2<Traits>::set(std::vector<Point>::iterator vfirst,
-						     std::vector<Point>::iterator vlast,
-						     std::vector<int>::iterator pfirst,
-						     std::vector<int>::iterator plast){
+   void Hyperbolic_fundamental_domain_2<Traits>::set(typename std::vector<Point>::iterator vfirst,
+						     typename std::vector<Point>::iterator vlast,
+						     typename std::vector<int>::iterator pfirst,
+						     typename std::vector<int>::iterator plast){
    _vertices = std::vector<Point>(vfirst, vlast);
    _pairings = std::vector<int>(pfirst, plast);
  }
