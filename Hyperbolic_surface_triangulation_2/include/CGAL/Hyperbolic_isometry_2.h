@@ -45,14 +45,15 @@ public:
   // Evaluates the isometry at point
   Point evaluate(const Point& point) const;
 
-  // Returns the composition of self and other
-  Self compose(const Self& other) const;
-
 private:
   ComplexNumber _coefficients[4];
 };
 
-template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
+// Returns the composition of iso1 and iso2
+template<class Traits>
+  Hyperbolic_isometry_2<Traits>  operator*(const Hyperbolic_isometry_2<Traits>& iso1, const Hyperbolic_isometry_2<Traits>& iso2);
+
+ template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_isometry_2<Traits>& isometry);
 
 // When inverse=false, returns the hyperbolic translation that maps -p to zero, and zero to p. Otherwise, returns the hyperbolic translation that maps p to zero, and zero to -p.
 template<class Traits>
@@ -119,12 +120,12 @@ typename Traits::Hyperbolic_point_2 Hyperbolic_isometry_2<Traits>::evaluate(cons
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-Hyperbolic_isometry_2<Traits> Hyperbolic_isometry_2<Traits>::compose(const Hyperbolic_isometry_2<Traits>& other) const{
-  Self result;
+  Hyperbolic_isometry_2<Traits>  operator*(const Hyperbolic_isometry_2<Traits>& iso1, const Hyperbolic_isometry_2<Traits>& iso2) {
+  Hyperbolic_isometry_2<Traits> result;
   for (int i=0; i<2; i++){
     for (int j=0; j<2; j++){
       result.set_coefficient(2*i+j,
-            get_coefficient(2*i) * other.get_coefficient(j) + get_coefficient(2*i+1) * other.get_coefficient(2+j));
+            iso1.get_coefficient(2*i) * iso2.get_coefficient(j) + iso1.get_coefficient(2*i+1) * iso2.get_coefficient(2+j));
     }
   }
   return result;
@@ -175,7 +176,7 @@ Hyperbolic_isometry_2<Traits> isometry_pairing_the_sides(const typename Traits::
     B = hyperbolic_translation<Traits>(q1);
     Binv = hyperbolic_translation<Traits>(q1,true);
     C = hyperbolic_rotation<Traits>(A.evaluate(p2), B.evaluate(q2));
-    return (Binv.compose(C)).compose(A);
+    return (Binv*C)*A;
 }
 
 } // namespace CGAL
