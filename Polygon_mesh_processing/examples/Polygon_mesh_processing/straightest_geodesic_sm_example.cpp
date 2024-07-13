@@ -38,14 +38,20 @@ int main(int argc, char** argv)
 
   std::cout << "seed " << rnd.get_seed() << std::endl;
   Mesh::Face_index f = *std::next(faces(mesh).begin(), rnd.get_int(0, nb_faces));
-
   Face_location src(f, CGAL::make_array(0.3,0.3,0.4));
+
+//case opposite edge (for testsuite)
+//  Mesh::Face_index f = *std::next(faces(mesh).begin(), 1031);
+//  Face_location src(f, CGAL::make_array(0, 0.65258992669550031, 0.34741007330449963));
 
   K::Point_3 src_pt = PMP::construct_point(src, mesh);
   std::cout << "src = " << src_pt << "\n";
+
+//case opposite edge (for testsuite)
+//  double target_distance = 0.0072766352463858128;
+//  K::Vector_2 dir(0.079665117730984697, 0.99682168366107904);
+
   double target_distance = 0.5;
-
-
   K::Vector_2 dir(1,1);
   std::vector<Face_location> path = PMP::straightest_geodesic<K>(src, dir, target_distance, mesh);
 

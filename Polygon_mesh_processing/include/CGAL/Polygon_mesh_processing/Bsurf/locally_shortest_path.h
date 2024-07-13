@@ -922,7 +922,6 @@ struct Locally_shortest_path_imp
     Vector_2 prev_flat_p=prev_coords[0]*flat_prev[0]+prev_coords[1]*flat_prev[1]+prev_coords[2]*flat_prev[2];
     Vector_2 curr_flat_p=curr_coords[0]*flat_curr[0]+curr_coords[1]*flat_curr[1]+curr_coords[2]*flat_curr[2];
 
-
 #ifdef CGAL_DEBUG_BSURF
     std::cout<<"   k is "<<k<<"\n";
     std::cout<<"   Flat_prev"<<std::endl;
@@ -1267,13 +1266,29 @@ struct Locally_shortest_path_imp
     return {new_dir,face(prev_h,mesh), h};
   }
 
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+/////////////////////////////////////////
+
+  // dir is defined wrt the halfedge of start_loc.first that is used as y axis
   static
   std::vector<Face_location<TriangleMesh, FT>>
-  straightest_geodesic(const Face_location<TriangleMesh, FT>& p,
+  straightest_geodesic(const Face_location<TriangleMesh, FT>& start_loc,
                        const TriangleMesh& mesh,
                        const VertexPointMap &vpm,
-                       const Vector_2& dir,const FT& len)
+                       Vector_2 dir,const FT& len)
   {
+#ifdef CGAL_DEBUG_BSURF
+    {
+      std::ofstream log("/tmp/log.txt");
+      log << std::setprecision(17);
+      log << start_loc.first << " " << start_loc.second[0]  << " " << start_loc.second[1]  << " " << start_loc.second[2] << "\n";
+      log << "dir = " << dir << "\n";
+      log << "len = " << len << "\n";
+    }
+#endif
+
     auto get_halfedge_offset=[&mesh](const halfedge_descriptor& h_ref,const halfedge_descriptor& h_curr)
     {
       if( h_ref == h_curr) return 0;
@@ -1287,15 +1302,15 @@ struct Locally_shortest_path_imp
     };
 
 #ifdef CGAL_DEBUG_BSURF
-    auto fn = compute_face_normal(p.first, mesh);
+    auto fn = compute_face_normal(start_loc.first, mesh);
     double theta= std::acos(dir.y()/sqrt(dir*dir));
     if(dir.x()<0)
       theta*=-1;
-    auto dir3 = rotate_vector(mesh.point(target(halfedge(p.first, mesh), mesh)) -
-                              mesh.point(source(halfedge(p.first, mesh), mesh)),
+    auto dir3 = rotate_vector(mesh.point(target(halfedge(start_loc.first, mesh), mesh)) -
+                              mesh.point(source(halfedge(start_loc.first, mesh), mesh)),
                               fn, theta);
 
-    std::cout << "direction " << construct_point(p, mesh) << " " << construct_point(p, mesh)+dir3 << "\n";
+    std::cout << "direction " << construct_point(start_loc, mesh) << " " << construct_point(start_loc, mesh)+dir3 << "\n";
 #endif
 
     auto get_vid_offset=[&mesh](const halfedge_descriptor& h_ref,const vertex_descriptor& vid)
@@ -1365,30 +1380,86 @@ struct Locally_shortest_path_imp
 
     std::vector<Face_location<TriangleMesh, FT>> result;
     FT accumulated=0.;
-    face_descriptor curr_tid=p.first;
+    face_descriptor curr_tid=start_loc.first;
     std::array<Vector_2, 3> curr_flat_tid=init_flat_triangle(halfedge(curr_tid,mesh),vpm,mesh);
-    Vector_2 flat_p= p.second[0]*curr_flat_tid[0]+p.second[1]*curr_flat_tid[1]+p.second[2]*curr_flat_tid[2];
-    Face_location<TriangleMesh, FT> curr_p=p;
+    Vector_2 flat_p= start_loc.second[0]*curr_flat_tid[0]+start_loc.second[1]*curr_flat_tid[1]+start_loc.second[2]*curr_flat_tid[2];
+    Face_location<TriangleMesh, FT> curr_p=start_loc;
+
+    descriptor_variant<TriangleMesh> var_des = get_descriptor_from_location(start_loc,mesh);
+    switch(var_des.index())
+    {
+      case 0:
+      {
+        // TODO!
+      }
+      break;
+      case 1:
+      {
+        halfedge_descriptor h = std::get<halfedge_descriptor>(var_des);
+        halfedge_descriptor href = halfedge(face(h,mesh), mesh);
+        int opp_id = h==href?2:(next(href,mesh)==h?0:1);
+        Vector_2 opp = curr_flat_tid[opp_id];
+
+        // check if the line starts in the current face (TODO should be a predicate)
+        if ( (opp-flat_p) * dir < 0 )
+        {
+          // take the same point but in the opposite face
+          halfedge_descriptor h_start=h;
+          h=opposite(h, mesh);
+          curr_tid=face(h, mesh);
+          curr_p.first=curr_tid;
+          href=halfedge(curr_tid, mesh);
+          std::array<FT, 2> bary2 = CGAL::make_array(start_loc.second[(opp_id+2)%3], start_loc.second[(opp_id+1)%3]); // swap done here
+          int opp_id = h==href?2:(next(href,mesh)==h?0:1);
+          curr_p.second[0]=FT(0);
+          curr_p.second[(opp_id+1)%3]=bary2[0];
+          curr_p.second[(opp_id+2)%3]=bary2[1];
+
+
+          // dir must also be updated:
+          // unfold the new triangle into the basis of the input one
+          // compute the angle between the new triangle ref halfedge and dir
+          // compute the new dir thanks to that angle.
+          halfedge_descriptor start_href=halfedge(start_loc.first, mesh);
+          int k=h_start==prev(start_href,mesh)?2 :( h_start==next(start_href,mesh)?1:0);
+          std::array<Vector_2,3> new_flat_tid_in_curr_basis=unfold_face(h_start,vpm, mesh,curr_flat_tid, k);
+
+          Vector_2 ybase = new_flat_tid_in_curr_basis[1]-new_flat_tid_in_curr_basis[0];
+          double cos_theta = ybase * dir / std::sqrt(ybase*ybase) / std::sqrt(dir*dir);
+          double theta = std::acos(cos_theta);
+          dir = Vector_2(std::cos(CGAL_PI/2.-theta), std::sin(CGAL_PI/2.-theta));
+
+          curr_flat_tid=init_flat_triangle(halfedge(curr_tid,mesh),vpm,mesh);
+          flat_p= curr_p.second[0]*curr_flat_tid[0]+curr_p.second[1]*curr_flat_tid[1]+curr_p.second[2]*curr_flat_tid[2];
+        }
+      }
+      break;
+      default:
+      break;
+    }
+
     Face_location<TriangleMesh, FT> prev_p;
     Vector_2 curr_dir=dir;
     halfedge_descriptor h_ref=halfedge(curr_tid,mesh);
     halfedge_descriptor h_curr=h_ref;
 
 
-    result.push_back(p);
+
+    result.push_back(curr_p);
 #ifdef CGAL_DEBUG_BSURF
-  std::cout << "p= " << construct_point(p,mesh) << ")\n";
+  std::cout << "p= " << construct_point(curr_p,mesh) << ")\n";
 #endif
 
-    auto [is_vert, kv] = point_is_vert(p);
-    auto [is_edge, ke] = point_is_edge(p);
+    //TODO not sure why we need that
+    auto [is_vert, kv] = point_is_vert(curr_p);
+    auto [is_edge, ke] = point_is_edge(curr_p);
     if (is_vert)
       h_curr=get_halfedge(kv,h_ref);
     else if (is_edge)
       h_curr=get_halfedge(ke,h_ref);
 
 #ifdef CGAL_DEBUG_BSURF
-    std::cout << "Accululated loop starts\n";
+    std::cout << "Accumulated loop starts\n";
 #endif
     while (accumulated < len)
     {
