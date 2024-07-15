@@ -157,7 +157,7 @@ void Clipping_plane::rotation(const float x, const float y)
 }
 
 inline 
-void Clipping_plane::translation(const float s) 
+void Clipping_plane::translation(const float s)
 {
   vec3f forward = (m_orientation * vec3f::UnitZ()).normalized();
   m_targetPosition -= m_size * forward * s * m_translationSpeed; 

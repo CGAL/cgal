@@ -69,6 +69,7 @@ public:
 
   inline std::pair<float, float> get_mouse_position() const { return m_mousePosition; }
   inline std::pair<float, float> get_mouse_delta() const { return m_mouseDelta; }
+  inline std::pair<float, float> get_roll_mouse_delta() const { return m_rollMouseDelta; }
   
   inline float get_scroll_yOffset() { return clear_yOffset(); }
   inline void set_keyboard_layout(KeyboardLayout layout) { m_keyboardLayout = layout; }
@@ -95,7 +96,7 @@ protected:
   virtual void scroll_event(const float deltaTime) = 0;
 
   void on_key_event(int key, int scancode, int action, int mods);
-  void on_cursor_event(double xpos, double ypos);
+  void on_cursor_event(double xpos, double ypos, int windowWidth, int windowHeight);
   void on_mouse_button_event(int button, int action, int mods);
   void on_scroll_event(double xoffset, double yoffset);
 
@@ -116,6 +117,7 @@ private:
 
   std::pair<float, float> m_mousePosition {};
   std::pair<float, float> m_mouseDelta {};
+  std::pair<float, float> m_rollMouseDelta {};
 
   KeyboardLayout m_keyboardLayout { KeyboardLayout::QWERTY };
 
@@ -145,6 +147,7 @@ void Input::add_mouse_action(std::initializer_list<int> keys, InputMode mode, Ac
   }, action);
 }
 
+inline
 void Input::register_action_events(const InputBinding& binding, ActionEnum action)
 {
   m_actionEvents.insert(Action {
@@ -155,6 +158,7 @@ void Input::register_action_events(const InputBinding& binding, ActionEnum actio
   m_actionToBindingMapping[action].emplace_back(binding);
 }
 
+inline
 void Input::on_key_event(int key, int scancode, int action, int mods)
 {
   if (!is_qwerty_layout()) key = map_to_azerty(key);
@@ -171,18 +175,32 @@ void Input::on_key_event(int key, int scancode, int action, int mods)
   }
 }
 
-void Input::on_cursor_event(double xpos, double ypos)
+inline
+void Input::on_cursor_event(double xpos, double ypos, int windowWidth, int windowHeight)
 {
   auto& [mouseX, mouseY] = m_mousePosition; 
   m_mouseDelta = { xpos - mouseX, ypos - mouseY };
   m_mousePosition = { xpos, ypos };
+
+  m_rollMouseDelta = m_mouseDelta;
+  if (ypos < windowHeight / 2)
+  {
+    m_rollMouseDelta.first *= -1;
+  }
+
+  if (xpos < windowWidth / 2)
+  {
+    m_rollMouseDelta.second *= -1;
+  }
 }
 
+inline
 void Input::on_scroll_event(double xoffset, double yoffset)
 {
   m_yOffset = yoffset;
 }
 
+inline
 void Input::on_mouse_button_event(int button, int action, int mods)
 {
   if (action == GLFW_PRESS) 
@@ -209,6 +227,7 @@ void Input::on_mouse_button_event(int button, int action, int mods)
   }
 }
 
+inline
 void Input::handle_events(const float deltaTime)
 {
   m_keyPressed.clear();
@@ -257,6 +276,7 @@ void Input::handle_events(const float deltaTime)
   }
 
   m_mouseDelta = { 0.0f, 0.0f };
+  m_rollMouseDelta = { 0.0f, 0.0f };
 };
 
 inline 

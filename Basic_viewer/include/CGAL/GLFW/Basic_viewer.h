@@ -121,19 +121,24 @@ namespace GLFW
     inline void inverse_normal(bool b) { m_inverseNormal = b; }
     inline void flat_shading(bool b) { m_flatShading = b; }
 
+    inline void two_dimensional() { m_camera.set_orthographic(); } 
+
     inline void azerty_layout() { set_keyboard_layout(KeyboardLayout::AZERTY); }
     inline void animation_duration(std::chrono::milliseconds duration) { m_animationController.set_duration(duration); }
 
-    inline void center(const vec3f& center) { m_camera.set_center(center); }
-    inline void center(float x, float y, float z) { m_camera.set_center({x, y, z}); }
-    inline void position(const vec3f& position) { m_camera.set_position(position); m_camera.set_default_position(position); }
-    inline void position(float x, float y, float z) { m_camera.set_position({x, y, z}); m_camera.set_default_position({x, y, z}); }
-    inline void direction(const vec3f& direction) { m_camera.set_orientation(direction); m_camera.set_default_orientation(direction); }
-    inline void direction(float x, float y, float z) { m_camera.set_orientation({x, y, z}); m_camera.set_default_orientation({x, y, z});}
+    inline void scene_radius(float radius) { m_camera.set_radius(radius); }
+    inline void scene_center(const vec3f& center) { m_camera.set_center(center); }
+    inline void scene_center(float x, float y, float z) { m_camera.set_center({x, y, z}); }
+    inline void camera_position(const vec3f& position) { m_camera.set_position(position); m_camera.set_default_position(m_camera.get_position()); }
+    inline void camera_position(float x, float y, float z) { m_camera.set_position({x, y, z}); m_camera.set_default_position(m_camera.get_position()); }
+    inline void camera_orientation(const vec3f& forward, float upAngle) { m_camera.set_orientation(forward, upAngle); m_camera.set_default_orientation(m_camera.get_orientation()); }
+    inline void camera_orientation(const vec3f& forward, const vec3f& up) { m_camera.set_orientation(forward, up); m_camera.set_default_orientation(m_camera.get_orientation()); }
 
     // Getter section
     inline vec3f position() const { return m_camera.get_position(); }
     inline vec3f forward() const { return m_camera.get_forward(); }
+    inline vec3f right() const { return m_camera.get_right(); }
+    inline vec3f up() const { return m_camera.get_up(); }
 
     inline CGAL::IO::Color vertices_mono_color() const { return m_verticeMonoColor; }
     inline CGAL::IO::Color edges_mono_color() const { return m_edgesMonoColor; }
@@ -163,6 +168,7 @@ namespace GLFW
 
     inline bool clipping_plane_enable() const { return m_displayMode != DisplayMode::CLIPPING_PLANE_OFF; }
     inline bool is_orthograpic() const { return m_camera.is_orthographic(); }
+    inline bool is_two_dimensional() const { return !is_orthograpic() && m_scene->is_two_dimensional(); }
 
     CGAL::Plane_3<Local_kernel> clipping_plane() const;
 
@@ -303,7 +309,9 @@ namespace GLFW
     Shader m_lineShader;
 
     vec2i m_windowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
-    vec2i m_oldWindowSize;
+    vec2i m_oldWindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
+
+    vec2i m_old_window_pos { 0, 0 }; 
 
     float m_aspectRatio { 1.f };
 
@@ -387,8 +395,10 @@ namespace GLFW
       FORWARD,
       BACKWARDS,
 
-      SWITCH_CAM_MODE,
-      SWITCH_CAM_TYPE,   
+      SWITCH_CAMERA_MODE,
+      SWITCH_CAMERA_TYPE,
+      SWITCH_CAMERA_CONSTRAINT_AXIS,
+
       RESET_CAM,
 
       INC_CAMERA_TRANSLATION_SPEED,
@@ -406,9 +416,11 @@ namespace GLFW
       TRANSLATE_CLIPPING_PLANE,
       TRANSLATE_CP_IN_CAMERA_DIRECTION,
       TRANSLATE_CP_IN_NORMAL_DIRECTION,
-      TOGGLE_CLIPPING_PLANE_MODE,
-      TOGGLE_CLIPPING_PLANE_DISPLAY,
-      TOGGLE_CP_CONSTRAINT_AXIS,
+
+      SWITCH_CLIPPING_PLANE_MODE,
+      SWITCH_CLIPPING_PLANE_DISPLAY,
+      SWITCH_CP_CONSTRAINT_AXIS,
+
       INC_CP_TRANSLATION_SPEED,
       INC_CP_ROTATION_SPEED,
       DEC_CP_TRANSLATION_SPEED,
@@ -426,7 +438,6 @@ namespace GLFW
   inline void draw_graphics_scene(const Graphics_scene& graphics_scene, const char* title="CGAL Basic Viewer (GLFW)")
   {
     Basic_viewer basic_viewer(&graphics_scene, title);
-
     basic_viewer.show();
   } 
 } // end namespace CGAL 

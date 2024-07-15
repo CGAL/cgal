@@ -9,6 +9,7 @@
 class Camera
 {
 public:
+  enum class ConstraintAxis { NO_CONSTRAINT, RIGHT_AXIS, UP_AXIS, FORWARD_AXIS };
   enum class CameraMode { PERSPECTIVE, ORTHOGRAPHIC };
   enum class CameraType { ORBITER, FREE_FLY };
 
@@ -50,11 +51,15 @@ public:
 
   void toggle_type(); 
 
+  void switch_constraint_axis();
+
   void increase_fov(float d);
   void increase_zoom_smoothness(const float deltaTime);
 
   void align_to_nearest_axis();
 
+  std::string get_constraint_axis() const;
+  
   inline float get_translation_speed() const { return m_translationSpeed; }
   inline float get_rotation_speed() const { return m_rotationSpeed; }
 
@@ -70,12 +75,14 @@ public:
 
   void set_default_orientation(const vec3f& orientation);
 
+  inline void set_radius(float radius) { m_radius = radius; }
   inline void set_center(const vec3f& center) { m_center = center; }
 
+  inline void set_orthographic() { m_mode = CameraMode::ORTHOGRAPHIC; }
   inline void set_mode(CameraMode mode) { m_mode = mode; }
   inline void set_orientation(const quatf& orientation) { m_orientation = orientation; }
   
-  void set_orientation(const vec3f& orientation);
+  void set_orientation(const vec3f& forward, float upAngle);
 
   inline void toggle_mode() { m_mode = (m_mode == CameraMode::ORTHOGRAPHIC) ? CameraMode::PERSPECTIVE : CameraMode::ORTHOGRAPHIC; }
   inline bool is_orthographic() const { return m_mode == CameraMode::ORTHOGRAPHIC; }
@@ -121,6 +128,8 @@ private:
   CameraType m_type { CameraType::ORBITER };
   CameraMode m_mode { CameraMode::PERSPECTIVE };
 
+  ConstraintAxis m_constraintAxis { ConstraintAxis::NO_CONSTRAINT };
+
   float m_pitch       { 0.0f }; 
   float m_targetPitch { 0.0f }; 
   float m_yaw         { 0.0f };
@@ -155,14 +164,23 @@ void Camera::update(const float dt)
 
   if (is_orbiter()) 
   {
-    quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
-    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
-    m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
+    if (m_constraintAxis == ConstraintAxis::FORWARD_AXIS)
+    {
+      quatf rollQuaternion(Eigen::AngleAxisf(pitchDelta - yawDelta, -vec3f::UnitZ()));
+      m_orientation = rollQuaternion * m_orientation;
+    }
+    else 
+    {
+      quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
+      quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
+      m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
+    }
+
   }
   else // free fly
   {
     quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, get_right()));
-    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
+    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, get_up()));
     m_orientation = m_orientation * pitchQuaternion * yawQuaternion;
   }
   m_pitch = smoothPitch;
@@ -201,7 +219,7 @@ void Camera::move(const float z)
     if (m_targetSize < 0.001f)
         m_targetSize = 0.001f;
   }
-  else // free fly
+  else // free fly 
   {
     vec3f forward = get_forward();
     m_targetPosition += forward * m_size * z * m_translationSpeed;
@@ -211,8 +229,21 @@ void Camera::move(const float z)
 inline 
 void Camera::rotation(const float x, const float y)
 {
-  m_targetPitch += y + y / m_rotationSmoothFactor * .1;
-  m_targetYaw += x + x / m_rotationSmoothFactor * .1;
+  if (
+    m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ||
+    m_constraintAxis == ConstraintAxis::RIGHT_AXIS    ||
+    m_constraintAxis == ConstraintAxis::FORWARD_AXIS) 
+  {
+    m_targetPitch += y + y / m_rotationSmoothFactor * .1;
+  }
+  
+  if (
+    m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ||
+    m_constraintAxis == ConstraintAxis::UP_AXIS       ||
+    m_constraintAxis == ConstraintAxis::FORWARD_AXIS)
+  {
+    m_targetYaw += x + x / m_rotationSmoothFactor * .1;
+  }
 }
 
 inline 
@@ -338,7 +369,7 @@ float Camera::zfar() const
   {
     d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
   }
-  else
+  else // free fly 
   {
     d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
   }
@@ -368,7 +399,7 @@ vec3f Camera::get_position() const
   {
     return vec3f(m_position.x(), m_position.y(), m_size);
   }
-  else 
+  else // free fly
   {
     return vec3f(m_position.x(), m_position.y(), m_position.z() + m_size);
   } 
@@ -439,6 +470,26 @@ void Camera::toggle_type()
 { 
   m_type = (m_type == CameraType::ORBITER) ? CameraType::FREE_FLY : CameraType::ORBITER;  
   reset_all(); 
+}
+
+inline 
+void Camera::switch_constraint_axis() 
+{
+  switch(m_constraintAxis)
+  {
+    case ConstraintAxis::NO_CONSTRAINT: 
+      m_constraintAxis = ConstraintAxis::RIGHT_AXIS;
+      break;
+    case ConstraintAxis::RIGHT_AXIS: 
+      m_constraintAxis = ConstraintAxis::UP_AXIS;
+      break;
+    case ConstraintAxis::UP_AXIS: 
+      m_constraintAxis = ConstraintAxis::FORWARD_AXIS;
+      break;
+    case ConstraintAxis::FORWARD_AXIS: 
+      m_constraintAxis = ConstraintAxis::NO_CONSTRAINT;
+      break;
+  }
 }
 
 inline 
@@ -620,29 +671,19 @@ void Camera::compute_target_size()
 }
 
 inline 
-void Camera::set_orientation(const vec3f& orientation) 
+void Camera::set_orientation(const vec3f& forward, float upAngle) 
 { 
-  if (static_cast<int>(orientation.x()) == 0 && static_cast<int>(orientation.y()) == 0 && static_cast<int>(orientation.z()) > 0)
-  {
-    m_orientation = quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY())); 
-  }
-  else 
-  {
-    m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(), orientation).inverse(); 
-  }
+  m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(), forward.normalized()).inverse(); 
+  m_orientation *= quatf(Eigen::AngleAxisf(utils::radians(upAngle), get_forward()));
 }
 
 inline 
-void Camera::set_default_orientation(const vec3f& orientation) 
+std::string Camera::get_constraint_axis() const 
 { 
-  if (static_cast<int>(orientation.x()) == 0 && static_cast<int>(orientation.y()) == 0 && static_cast<int>(orientation.z()) > 0)
-  {
-    m_defaultOrientation = quatf(Eigen::AngleAxisf(M_PI, vec3f::UnitY())); 
-  }
-  else 
-  {
-    m_defaultOrientation = quatf::FromTwoVectors(-vec3f::UnitZ(), orientation).inverse(); 
-  }
+  if (m_constraintAxis == ConstraintAxis::UP_AXIS) return "Up";
+  if (m_constraintAxis == ConstraintAxis::RIGHT_AXIS) return "Right";
+  if (m_constraintAxis == ConstraintAxis::FORWARD_AXIS) return "Forward";
+  return "None"; 
 }
 
 #endif // CGAL_CAMERA_H
