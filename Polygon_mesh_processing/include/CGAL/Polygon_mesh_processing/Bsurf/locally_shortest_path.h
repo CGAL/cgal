@@ -3263,6 +3263,8 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
   CGAL_assertion(left_path.size() >=2);
   CGAL_assertion(right_path.size() >=2);
 
+  // TODO: precompute distances along supporting curve + stop when exceeding max distance needed
+
   for(std::size_t i=0;i<polygons.size();++i)
   {
     Face_location<TriangleMesh, typename K::FT> polygon_center;
@@ -3464,9 +3466,12 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
       double acc = support_len[k];
       if (acc == targetd)
       {
-        // TODO: if you land here and supporting_curve[k] is on an input vertex, it might be that loc_k==loc_k1
+        // note: if the supporting curve goes though supporting_curve[k], that vertex might be duplicated (if it's a path).
+        //       But it is not an issue for the code as the 0 lenght segments do not contribute to the distance and
+        //       points of loc_k and loc_k1 are expected to be always different.
 
         double theta=0;
+        //TODO: should pick k-1 if k==supporting_curve.size()-1
         Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
         CGAL_assertion_code(bool OK=)
         locate_in_common_face(loc_k, loc_k1, tmesh);
@@ -3479,14 +3484,14 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
         Vector_2 dir2 = tgt-src;
         theta = atan2(dir2.y(), dir2.x());
 
-        return std::make_pair(supporting_curve[k+1], theta);
+        return std::make_pair(supporting_curve[k], theta);
       }
 
       if (acc > targetd)
       {
         double excess = acc-targetd;
 
-        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
+        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k-1], loc_k1=supporting_curve[k];
         CGAL_assertion_code(bool OK=)
         locate_in_common_face(loc_k, loc_k1, tmesh);
         CGAL_assertion(OK);
@@ -3509,9 +3514,11 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
         return std::make_pair(polygon_center, theta);
       }
 
-      if (++k==supporting_curve.size()-1)
+      if (++k==supporting_curve.size())
       {
-        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k-1], loc_k1=supporting_curve[k];
+        //TODO: shall we throw an exception instead or return false?
+
+        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k-2], loc_k1=supporting_curve[k-1];
         CGAL_assertion_code(bool OK=)
         locate_in_common_face(loc_k, loc_k1, tmesh);
         CGAL_assertion(OK);

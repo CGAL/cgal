@@ -4,12 +4,6 @@
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
-#if 0
-#include <CGAL/Polygon_mesh_processing/walk_to_select.h>
-#else
-
-#endif
-
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;

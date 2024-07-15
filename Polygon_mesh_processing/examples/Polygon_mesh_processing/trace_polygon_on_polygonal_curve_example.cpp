@@ -279,7 +279,7 @@ int main(int argc, char** argv)
   out << std::setprecision(17);
 
   std::vector<std::vector<Face_location>> polygons_3;
-  polygons_3 = PMP::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., true, mesh, solver);
+  polygons_3 = PMP::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., false, mesh, solver);
 
   for (const auto& polygon_path : polygons_3)
   {
