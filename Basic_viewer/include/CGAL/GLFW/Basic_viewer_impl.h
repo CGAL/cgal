@@ -504,7 +504,7 @@ namespace GLFW
     if (m_drawFaces)
     {
       glEnable(GL_POLYGON_OFFSET_FILL);
-      glPolygonOffset(3.0, 1.0); 
+      glPolygonOffset(4.0, 1.0); 
       glDepthFunc(GL_LESS);
       draw_faces();
       glDisable(GL_POLYGON_OFFSET_FILL);
@@ -874,7 +874,14 @@ namespace GLFW
       }
       if (btn == GLFW_MOUSE_BUTTON_LEFT)
       {
-        m_camera.align_to_nearest_axis();
+        if (is_key_pressed(m_window, GLFW_KEY_LEFT_CONTROL))
+        {
+          m_camera.align_to_nearest_axis(m_clippingPlane.get_normal());
+        }
+        else
+        {
+          m_camera.align_to_nearest_axis();
+        }
       }
     }
   }
@@ -1044,7 +1051,7 @@ namespace GLFW
     case TRANSLATE_CAMERA:
       translate_camera(deltaTime);
       break;
-    case RESET_CAM:
+    case RESET_CAMERA_AND_CP:
       reset_camera_and_clipping_plane();
       break;
     /*CLIPPING PLANE*/
@@ -1077,6 +1084,9 @@ namespace GLFW
       break;
     case SWITCH_CP_CONSTRAINT_AXIS:
       m_clippingPlane.switch_constraint_axis();
+      break;
+    case RESET_CLIPPING_PLANE: 
+      reset_clipping_plane();
       break;
     /*ANIMATION*/
     case SAVE_KEY_FRAME:
@@ -1201,6 +1211,13 @@ namespace GLFW
   void Basic_viewer::reset_camera_and_clipping_plane()
   {
     m_camera.reset_all();
+    m_clippingPlane.reset_all();
+    m_clippingPlane.set_size(m_camera.get_size());
+  }
+
+  inline
+  void Basic_viewer::reset_clipping_plane()
+  {
     m_clippingPlane.reset_all();
     m_clippingPlane.set_size(m_camera.get_size());
   }
@@ -1401,6 +1418,7 @@ namespace GLFW
     add_keyboard_action({GLFW_KEY_PAGE_UP,    GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, INC_LIGHT_B);
     add_keyboard_action({GLFW_KEY_PAGE_DOWN,  GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, DEC_LIGHT_B);
 
+    add_keyboard_action({GLFW_KEY_R, GLFW_KEY_LEFT_ALT}, InputMode::RELEASE, RESET_CAMERA_AND_CP);
     /*CAMERA*/
     add_keyboard_action({GLFW_KEY_UP,   GLFW_KEY_LEFT_SHIFT}, InputMode::HOLD, FORWARD);
     add_keyboard_action({GLFW_KEY_DOWN, GLFW_KEY_LEFT_SHIFT}, InputMode::HOLD, BACKWARDS);
@@ -1410,7 +1428,6 @@ namespace GLFW
     add_keyboard_action({GLFW_KEY_LEFT }, InputMode::HOLD, LEFT);
     add_keyboard_action({GLFW_KEY_RIGHT}, InputMode::HOLD, RIGHT);
 
-    add_keyboard_action({GLFW_KEY_R, GLFW_KEY_LEFT_ALT}, InputMode::RELEASE, RESET_CAM);
     
     add_keyboard_action({GLFW_KEY_SPACE}, InputMode::RELEASE, SWITCH_CAMERA_TYPE);
     add_keyboard_action({GLFW_KEY_O    }, InputMode::RELEASE, SWITCH_CAMERA_MODE); 
@@ -1440,6 +1457,8 @@ namespace GLFW
     add_mouse_action({GLFW_MOUSE_BUTTON_RIGHT,  GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CLIPPING_PLANE);
     add_mouse_action({GLFW_MOUSE_BUTTON_MIDDLE, GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CP_IN_CAMERA_DIRECTION);
 
+    add_keyboard_action({GLFW_KEY_R, GLFW_KEY_TAB}, InputMode::RELEASE, RESET_CLIPPING_PLANE);
+
     /*ANIMATION*/
     add_keyboard_action({GLFW_KEY_F1                               }, InputMode::RELEASE, RUN_OR_STOP_ANIMATION);
     add_keyboard_action({GLFW_KEY_F1, GLFW_KEY_LEFT_ALT            }, InputMode::RELEASE, SAVE_KEY_FRAME);
@@ -1466,6 +1485,8 @@ namespace GLFW
         {get_binding_text_from_action(ROTATE_CLIPPING_PLANE),             "Rotate the clipping plane when enabled"},
         {get_binding_text_from_action(TRANSLATE_CLIPPING_PLANE),          "Translate the clipping plane when enabled"},
         {get_binding_text_from_action(TRANSLATE_CP_IN_CAMERA_DIRECTION),  "Translate the clipping plane along camera direction axis when enabled"},
+        {"",                                                              ""},
+        {get_binding_text_from_action(RESET_CLIPPING_PLANE),              "Reset clipping plane"},
       }},
       {"Camera", {
         {get_binding_text_from_action(FORWARD),                               "Move camera forward"},
@@ -1481,7 +1502,7 @@ namespace GLFW
         {"",                                                                  ""},
         {get_binding_text_from_action(ROTATE_CAMERA),                         "Rotate the camera"},
         {get_binding_text_from_action(TRANSLATE_CAMERA),                      "Translate the camera"},
-        {get_binding_text_from_action(RESET_CAM),                             "Reset camera"},
+        {get_binding_text_from_action(RESET_CAMERA_AND_CP),                             "Reset camera"},
         {"",                                                                  ""},
         {get_binding_text_from_action(INC_CAMERA_ROTATION_SPEED),             "Increase rotation speed"},
         {get_binding_text_from_action(DEC_CAMERA_ROTATION_SPEED),             "Decrease rotation speed"},

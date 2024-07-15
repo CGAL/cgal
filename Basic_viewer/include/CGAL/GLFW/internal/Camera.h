@@ -57,6 +57,7 @@ public:
   void increase_zoom_smoothness(const float deltaTime);
 
   void align_to_nearest_axis();
+  void align_to_nearest_axis(const vec3f& axis);
 
   std::string get_constraint_axis() const;
   
@@ -73,8 +74,7 @@ public:
   inline void set_default_position(const vec3f& position) { m_defaultPosition = position; set_default_size(position.z()); }
   inline void set_default_orientation(const quatf& orientation) { m_defaultOrientation = orientation; }
 
-  void set_default_orientation(const vec3f& orientation);
-
+  inline void set_size(float size) { m_size = size; m_targetSize = size; }
   inline void set_radius(float radius) { m_radius = radius; }
   inline void set_center(const vec3f& center) { m_center = center; }
 
@@ -661,6 +661,23 @@ void Camera::align_to_nearest_axis()
   m_position = m_targetPosition;
 
   m_orientation = compute_rotation(nearestForwardAxis, nearestUpAxis);
+}
+
+inline
+void Camera::align_to_nearest_axis(const vec3f& axis)
+{
+  vec3f forward = get_forward();
+  float dotFF = -forward.dot(axis);   
+  float dotFB = -forward.dot(-axis);  
+  
+  if (dotFF > dotFB)
+  {
+    m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(), -axis).inverse();
+  }
+  else 
+  {
+    m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(),  axis).inverse();
+  }
 }
 
 inline

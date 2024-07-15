@@ -132,7 +132,7 @@ namespace GLFW
     inline void camera_position(const vec3f& position) { m_camera.set_position(position); m_camera.set_default_position(m_camera.get_position()); }
     inline void camera_position(float x, float y, float z) { m_camera.set_position({x, y, z}); m_camera.set_default_position(m_camera.get_position()); }
     inline void camera_orientation(const vec3f& forward, float upAngle) { m_camera.set_orientation(forward, upAngle); m_camera.set_default_orientation(m_camera.get_orientation()); }
-    inline void camera_orientation(const vec3f& forward, const vec3f& up) { m_camera.set_orientation(forward, up); m_camera.set_default_orientation(m_camera.get_orientation()); }
+    inline void zoom(float zoom) { m_camera.set_size(zoom); }
 
     // Getter section
     inline vec3f position() const { return m_camera.get_position(); }
@@ -248,6 +248,7 @@ namespace GLFW
     void draw_xy_grid();
 
     void reset_camera_and_clipping_plane();
+    void reset_clipping_plane();
 
   private:
     GLFWwindow* m_window;
@@ -399,7 +400,7 @@ namespace GLFW
       SWITCH_CAMERA_TYPE,
       SWITCH_CAMERA_CONSTRAINT_AXIS,
 
-      RESET_CAM,
+      RESET_CAMERA_AND_CP,
 
       INC_CAMERA_TRANSLATION_SPEED,
       DEC_CAMERA_TRANSLATION_SPEED,
@@ -425,6 +426,8 @@ namespace GLFW
       INC_CP_ROTATION_SPEED,
       DEC_CP_TRANSLATION_SPEED,
       DEC_CP_ROTATION_SPEED,
+
+      RESET_CLIPPING_PLANE,
 
       /*ANIMATION*/
       SAVE_KEY_FRAME,

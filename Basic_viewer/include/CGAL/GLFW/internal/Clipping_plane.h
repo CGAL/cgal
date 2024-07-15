@@ -26,6 +26,8 @@ public:
 
   void switch_constraint_axis();
 
+  vec3f get_normal() const;
+
   inline float get_transparency() const { return m_transparency; }
   inline float get_rotation_speed() const { return m_rotationSpeed; }
   inline float get_translation_speed() const { return m_translationSpeed; }
@@ -127,6 +129,11 @@ void Clipping_plane::reset_position()
 {
   m_position = vec3f::Zero();
   m_targetPosition = vec3f::Zero();
+}
+
+inline vec3f Clipping_plane::get_normal() const
+{
+  return m_orientation * vec3f::UnitZ().normalized();
 }
 
 inline 

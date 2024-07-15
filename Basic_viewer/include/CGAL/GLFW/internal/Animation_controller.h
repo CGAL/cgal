@@ -61,7 +61,7 @@ private:
   quatf m_interpolatedRotation { quatf::Identity() };
   vec3f m_interpolatedTranslation { vec3f::Zero() };
 
-  DurationType m_duration { 15s };   
+  DurationType m_duration { 5s };   
 
   KeyFrameBuffer m_keyFrames {};
 
