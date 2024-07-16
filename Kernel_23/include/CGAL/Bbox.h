@@ -82,8 +82,8 @@ public:
         CGAL_assertion(dimension() == bbox.dimension());
         T result = 1;
         for(int i=0; i<dimension(); ++i) {
-            result *= std::min(max(i), bbox.max(i)) -
-                      std::max(min(i), bbox.min(i));
+            result *= (std::min)(max(i), bbox.max(i)) -
+                      (std::max)(min(i), bbox.min(i));
             if (result <= 0) return 0;
         }
         return result;
@@ -141,7 +141,7 @@ public:
     Bbox(int d = 0          ) { init_values(d); this->init(d       ); }
     Bbox(int d, const T& range) { init_values(d); this->init(d, range); }
     template <typename I>
-    Bbox(int d, I b, I e) { init_values(d); this->init(d, b, ); }
+    Bbox(int d, I b, I e) { init_values(d); this->init(d, b, e); }
 
 protected:
     void init_values(int d) {
