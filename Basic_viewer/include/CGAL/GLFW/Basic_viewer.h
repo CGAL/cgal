@@ -67,7 +67,7 @@ namespace GLFW
   public:
     Basic_viewer(
       const Graphics_scene* graphicScene,
-      const char* title = "",
+      const char* title = "CGAL Basic Viewer (GLFW)",
       bool drawVertices = false,
       bool drawEdges = true,
       bool drawFaces = true,
@@ -122,7 +122,7 @@ namespace GLFW
     inline void flat_shading(bool b) { m_flatShading = b; }
 
     inline void display_mode(DisplayMode mode) { m_displayMode = mode; }
-    inline void draw_clipping_plane(bool mode) { m_drawClippingPlane = mode; }
+    inline void draw_clipping_plane(bool b) { m_drawClippingPlane = b; }
 
     inline void two_dimensional() { m_camera.set_orthographic(); } 
 
@@ -132,12 +132,12 @@ namespace GLFW
     inline void scene_radius(float radius) { m_camera.set_radius(radius); }
     inline void scene_center(const vec3f& center) { m_camera.set_center(center); }
     inline void scene_center(float x, float y, float z) { m_camera.set_center({x, y, z}); }
-    inline void camera_position(const vec3f& position) { m_camera.set_position(position); m_camera.set_default_position(m_camera.get_position()); }
-    inline void camera_position(float x, float y, float z) { m_camera.set_position({x, y, z}); m_camera.set_default_position(m_camera.get_position()); }
-    inline void camera_orientation(const vec3f& forward, float upAngle) { m_camera.set_orientation(forward, upAngle); m_camera.set_default_orientation(m_camera.get_orientation()); }
+    inline void camera_position(const vec3f& position) { m_camera.set_position(position); }
+    inline void camera_position(float x, float y, float z) { m_camera.set_position({x, y, z}); }
+    inline void camera_orientation(const vec3f& forward, float upAngle) { m_camera.set_orientation(forward, upAngle); }
     inline void zoom(float zoom) { m_camera.set_size(zoom); }
     
-    inline void align_camera_to_clipping_plane() { m_camera.align_to_nearest_axis(m_clippingPlane.get_normal()); }
+    inline void align_camera_to_clipping_plane() { m_camera.align_to_plane(m_clippingPlane.get_normal()); }
     inline void clipping_plane_orientation(const vec3f& normal) { m_clippingPlane.set_orientation(normal); } 
     inline void clipping_plane_translate_along_normal(float t) { m_clippingPlane.translation(t*.1); } 
     inline void clipping_plane_translate_along_camera_forward(float t) { m_clippingPlane.translation(m_camera.get_forward(), t*.1); } 
@@ -211,7 +211,7 @@ namespace GLFW
     void set_world_axis_uniforms();
     void set_XY_grid_uniforms();
 
-    void render_scene(const float deltaTime=0.0);
+    void draw(const float deltaTime=0.0);
     void draw_faces();
     void draw_rays();
     void draw_lines();

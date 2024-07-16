@@ -146,10 +146,10 @@ namespace GLFW
       lastFrame = currentFrame;
 
       handle_events(deltaTime);
-      render_scene(deltaTime);
+      draw(deltaTime);
       glfwSwapBuffers(m_window);
 
-      // print_application_state(elapsedTime, deltaTime);t
+      print_application_state(elapsedTime, deltaTime);
     }
 
     clear_application();
@@ -170,8 +170,8 @@ namespace GLFW
   inline
   void Basic_viewer::make_screenshot(const std::string& filePath)
   {
-    render_scene(0);
-    render_scene(1);
+    draw(0);
+    draw(1);
     glfwSwapBuffers(m_window);
     capture_screenshot(filePath);
     clear_application();
@@ -480,7 +480,7 @@ namespace GLFW
   }
 
   inline
-  void Basic_viewer::render_scene(const float deltaTime)
+  void Basic_viewer::draw(const float deltaTime)
   {
     if (!m_areBuffersInitialized)
     {
@@ -878,7 +878,7 @@ namespace GLFW
       {
         if (is_key_pressed(m_window, GLFW_KEY_LEFT_CONTROL))
         {
-          m_camera.align_to_nearest_axis(m_clippingPlane.get_normal());
+          m_camera.align_to_plane(m_clippingPlane.get_normal());
         }
         else
         {

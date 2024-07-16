@@ -56,8 +56,8 @@ public:
   void increase_fov(float d);
   void increase_zoom_smoothness(const float deltaTime);
 
+  void align_to_plane(const vec3f& normal);
   void align_to_nearest_axis();
-  void align_to_nearest_axis(const vec3f& axis);
 
   std::string get_constraint_axis() const;
   
@@ -180,7 +180,7 @@ void Camera::update(const float dt)
   else // free fly
   {
     quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, get_right()));
-    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, get_up()));
+    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY())); // lock roll rotation 
     m_orientation = m_orientation * pitchQuaternion * yawQuaternion;
   }
   m_pitch = smoothPitch;
@@ -475,6 +475,12 @@ void Camera::toggle_type()
 inline 
 void Camera::switch_constraint_axis() 
 {
+  if (!is_orbiter() && m_constraintAxis == ConstraintAxis::UP_AXIS)
+  {
+    m_constraintAxis = ConstraintAxis::NO_CONSTRAINT;
+    return;
+  }
+
   switch(m_constraintAxis)
   {
     case ConstraintAxis::NO_CONSTRAINT: 
@@ -664,11 +670,11 @@ void Camera::align_to_nearest_axis()
 }
 
 inline
-void Camera::align_to_nearest_axis(const vec3f& axis)
+void Camera::align_to_plane(const vec3f& normal)
 {
   vec3f forward = get_forward();
-  float dotFF = -forward.dot(axis);   
-  float dotFB = -forward.dot(-axis);  
+  float dotFF = -forward.dot(normal);   
+  float dotFB = -forward.dot(-normal);  
   
   m_pitch = m_targetPitch;
   m_yaw = m_targetYaw;
@@ -676,11 +682,11 @@ void Camera::align_to_nearest_axis(const vec3f& axis)
 
   if (dotFF > dotFB)
   {
-    m_orientation *= quatf::FromTwoVectors(forward, -axis).inverse();
+    m_orientation *= quatf::FromTwoVectors(forward, -normal).inverse();
   }
   else 
   {
-    m_orientation *= quatf::FromTwoVectors(forward,  axis).inverse();
+    m_orientation *= quatf::FromTwoVectors(forward,  normal).inverse();
   }
 }
 
