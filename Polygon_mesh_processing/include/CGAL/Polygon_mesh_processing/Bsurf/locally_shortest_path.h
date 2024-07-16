@@ -1390,7 +1390,101 @@ struct Locally_shortest_path_imp
     {
       case 0:
       {
-        // TODO!
+        vertex_descriptor src_vertex = std::get<vertex_descriptor>(var_des);
+        halfedge_descriptor href = halfedge(curr_tid, mesh);
+        int src_index = source(href, mesh)==src_vertex?0:(target(href,mesh)==src_vertex?1:2);
+        // first get the direction in the basis of the triangle to get its angle with an edge incident to the vertex
+
+        Vector_2 v02 = curr_flat_tid[(src_index+2)%3] - curr_flat_tid[src_index];
+        Vector_2 v01 = curr_flat_tid[(src_index+1)%3] - curr_flat_tid[src_index];
+        double unnorm_cos_theta_1 = v02 * dir;
+        double unnorm_cos_theta_2 = v02 * v01;
+
+        // 2 orientation tests to check if the angle is larger or smaller than Pi
+        // 2 orientation tests are needed as curr_flat_tid orientation could be inverted during flattening
+        Orientation dir_ori=orientation(v02,dir), v01_ori=orientation(v02,v01);
+
+        std::cout << "dir_ori!=v01_ori ? " << (dir_ori!=v01_ori) << "\n";
+
+        // check if dir is  the cone centered at curr_flat_tid[src_vertex] (TODO: should be a predicate!)
+        if ( dir_ori!=v01_ori ||
+            unnorm_cos_theta_2 / std::sqrt(v01*v01) > unnorm_cos_theta_1 / std::sqrt(dir*dir)) // > because cos is decreasing from 0 -> Pi, should be < for the angle`
+        {
+          //TODO: should be made robust with snapping and predicates or something à la robust construction traits
+
+          // compute all the angles around the vertex from where the path starts
+          std::vector<double> angles;
+          double acc_angle=0;
+          halfedge_descriptor hloop=href;
+          while (target(hloop, mesh)!=src_vertex) hloop=next(hloop, mesh);
+          halfedge_descriptor hstart=hloop;
+          Vector_3 n(get(vpm,target(hloop, mesh)), get(vpm,source(hloop, mesh)));
+          n /= std::sqrt(n*n);
+          do{
+            Vector_3 nv(get(vpm,target(hloop, mesh)), get(vpm,target(next(hloop, mesh), mesh)));
+            nv /= std::sqrt(nv*nv);
+            angles.push_back( std::acos(n * nv) );
+            acc_angle+=angles.back();
+            n = nv;
+            hloop=opposite(next(hloop, mesh), mesh);
+          }while(hloop!=hstart);
+
+          std::cout << std::acos(unnorm_cos_theta_2 / std::sqrt((v01*v01) * (v02*v02))) << "  vs  " << angles[0] << "\n";
+
+          CGAL_assertion( std::acos(unnorm_cos_theta_2 / std::sqrt((v01*v01) * (v02*v02))) == angles[0]); // will not be true because of rounding
+
+          // normalise the angle to bring them in [0,1]
+          for (double& angle : angles)
+            angle /= acc_angle;
+
+          // compute and normalise the target angle
+          double target_theta = std::acos(unnorm_cos_theta_1 / std::sqrt((dir*dir) * (v02*v02)));
+          if ( dir_ori!=v01_ori ) target_theta = 2 * CGAL_PI - target_theta;
+          target_theta /= acc_angle;
+
+          double curr_angle = 0;
+          int ia = 0;
+          do{
+            curr_angle+=angles[ia];
+            if (curr_angle >= target_theta) break;
+            hloop=opposite(next(hloop, mesh), mesh);
+            ++ia;
+          }while(hloop!=hstart);
+
+          CGAL_assertion(hloop!=hstart);
+
+          // angle in target face wrt hloop
+          double delta = (target_theta - angles[ia-1]) * acc_angle;
+
+          // using the law of the sinus we have:
+          CGAL_assertion(target(hloop, mesh) == src_vertex);
+          Vector_3 vloop(get(vpm, source(hloop, mesh)),get(vpm, target(hloop, mesh)));
+          Vector_3 vprev(get(vpm, source(hloop, mesh)),get(vpm, target(next(hloop, mesh), mesh)));
+          double dvloop = std::sqrt(vloop*vloop);
+          double dvprev = std::sqrt(vprev*vprev);
+          double theta = std::acos( vloop*vprev / dvloop / dvprev );
+          double d_opp_delta =  dvloop * sin(delta) / sin(CGAL_PI-delta-theta);
+
+          double alpha = d_opp_delta/dvprev;
+
+          halfedge_descriptor href = halfedge(face(hloop,mesh),mesh);
+          curr_flat_tid=init_flat_triangle(href,vpm,mesh);
+          int src_id = source(href, mesh)==src_vertex?0:(target(href,mesh)==src_vertex?1:2);
+
+#ifdef CGAL_DEBUG_BSURF
+          std::cout << "new_face= " << face(href, mesh) << "\n";
+          std::array<Vector_3, 3> debug_pt;
+          debug_pt[0]=mesh.point(source(href,mesh)) - Point_3(0.,0.,0.);
+          debug_pt[1]=mesh.point(target(href,mesh)) - Point_3(0.,0.,0.);
+          debug_pt[2]=mesh.point(target(next(href,mesh),mesh)) - Point_3(0.,0.,0.);
+          std::cout << "direction inter pt: " << (alpha) * debug_pt[(src_id+1)%3] + (1-alpha) * debug_pt[(src_id+2)%3] << "\n";
+#endif
+          // point on the opposite edge of src_vertex in face(href, mesh)
+          Vector_2 ip = (alpha) * curr_flat_tid[(src_id+1)%3] + (1-alpha) * curr_flat_tid[(src_id+2)%3];
+          dir = ip - curr_flat_tid[src_id];
+          curr_tid=face(href, mesh);
+          flat_p = curr_flat_tid[src_id];
+        }
       }
       break;
       case 1:
