@@ -31,7 +31,7 @@ namespace CGAL
 {
 /*!
  * \ingroup PkgFrechetDistanceRef
- * This class ...
+ * 
 * \cgalModels{FrechetDistanceTraits}
 * \tparam GT  geometric traits class
 */
@@ -46,7 +46,7 @@ public:
     static const int dimension = 3;
 
 
-    // TODO: remove?
+    /// @todo remove?
     using Polyline = std::vector<Point>;
     using Polylines = std::vector<Polyline>;
     using PolylineID = std::size_t;

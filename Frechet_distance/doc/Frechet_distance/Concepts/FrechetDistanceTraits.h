@@ -2,7 +2,9 @@
 \ingroup PkgFrechetDistanceConcepts
 \cgalConcept
 
-The concept `FrechetDistanceTraits` defines the requirements ...
+The concept `FrechetDistanceTraits` defines the requirements of the
+first template parameter of the functions `CGAL::is_Frechet_distance_larger()`
+and `CGAL::approximate_Frechet_distance()`.
 
 
 \cgalHasModelsBegin

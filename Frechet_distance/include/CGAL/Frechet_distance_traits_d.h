@@ -29,7 +29,7 @@ namespace CGAL
 {
 /*!
  * \ingroup PkgFrechetDistanceRef
- * This class ...
+ *
 * \cgalModels{FrechetDistanceTraits}
 * \tparam GT  geometric traits class
 */
@@ -43,7 +43,7 @@ public:
     using FT = typename Kernel::FT;
     using Point = typename Kernel::Point_d;
 
-    // TODO: remove?
+    /// @todo  remove?
     using Polyline = std::vector<Point>;
     using Polylines = std::vector<Polyline>;
     using PolylineID = std::size_t;
