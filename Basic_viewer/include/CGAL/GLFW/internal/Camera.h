@@ -670,13 +670,17 @@ void Camera::align_to_nearest_axis(const vec3f& axis)
   float dotFF = -forward.dot(axis);   
   float dotFB = -forward.dot(-axis);  
   
+  m_pitch = m_targetPitch;
+  m_yaw = m_targetYaw;
+  m_position = m_targetPosition;
+
   if (dotFF > dotFB)
   {
-    m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(), -axis).inverse();
+    m_orientation *= quatf::FromTwoVectors(forward, -axis).inverse();
   }
   else 
   {
-    m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(),  axis).inverse();
+    m_orientation *= quatf::FromTwoVectors(forward,  axis).inverse();
   }
 }
 

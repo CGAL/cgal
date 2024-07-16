@@ -121,6 +121,9 @@ namespace GLFW
     inline void inverse_normal(bool b) { m_inverseNormal = b; }
     inline void flat_shading(bool b) { m_flatShading = b; }
 
+    inline void display_mode(DisplayMode mode) { m_displayMode = mode; }
+    inline void draw_clipping_plane(bool mode) { m_drawClippingPlane = mode; }
+
     inline void two_dimensional() { m_camera.set_orthographic(); } 
 
     inline void azerty_layout() { set_keyboard_layout(KeyboardLayout::AZERTY); }
@@ -133,6 +136,11 @@ namespace GLFW
     inline void camera_position(float x, float y, float z) { m_camera.set_position({x, y, z}); m_camera.set_default_position(m_camera.get_position()); }
     inline void camera_orientation(const vec3f& forward, float upAngle) { m_camera.set_orientation(forward, upAngle); m_camera.set_default_orientation(m_camera.get_orientation()); }
     inline void zoom(float zoom) { m_camera.set_size(zoom); }
+    
+    inline void align_camera_to_clipping_plane() { m_camera.align_to_nearest_axis(m_clippingPlane.get_normal()); }
+    inline void clipping_plane_orientation(const vec3f& normal) { m_clippingPlane.set_orientation(normal); } 
+    inline void clipping_plane_translate_along_normal(float t) { m_clippingPlane.translation(t*.1); } 
+    inline void clipping_plane_translate_along_camera_forward(float t) { m_clippingPlane.translation(m_camera.get_forward(), t*.1); } 
 
     // Getter section
     inline vec3f position() const { return m_camera.get_position(); }

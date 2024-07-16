@@ -33,6 +33,8 @@ public:
   inline float get_translation_speed() const { return m_translationSpeed; }
   inline std::string get_constraint_axis() const { return m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ? "None" : (m_constraintAxis == ConstraintAxis::RIGHT_AXIS ? "Right" : "Up"); }
 
+  void set_orientation(const vec3f& normal);
+
   inline void set_size(const float size) { m_size = size; }
   inline void set_up_axis(const vec3f& upAxis) { m_upAxis = upAxis; }
   inline void set_right_axis(const vec3f& rightAxis) { m_rightAxis = rightAxis; }
@@ -133,7 +135,7 @@ void Clipping_plane::reset_position()
 
 inline vec3f Clipping_plane::get_normal() const
 {
-  return m_orientation * vec3f::UnitZ().normalized();
+  return (m_orientation * vec3f::UnitZ()).normalized();
 }
 
 inline 
@@ -198,6 +200,12 @@ void Clipping_plane::switch_constraint_axis()
       m_constraintAxis = ConstraintAxis::NO_CONSTRAINT;
       break;
   }
+}
+
+inline 
+void Clipping_plane::set_orientation(const vec3f& normal)
+{
+  m_orientation = quatf::FromTwoVectors(vec3f::UnitZ(), normal);
 }
 
 #endif // CGAL_CLIPPING_PLANE_H

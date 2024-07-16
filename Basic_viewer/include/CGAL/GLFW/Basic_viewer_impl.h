@@ -149,7 +149,7 @@ namespace GLFW
       render_scene(deltaTime);
       glfwSwapBuffers(m_window);
 
-      print_application_state(elapsedTime, deltaTime);
+      // print_application_state(elapsedTime, deltaTime);t
     }
 
     clear_application();
@@ -171,6 +171,7 @@ namespace GLFW
   void Basic_viewer::make_screenshot(const std::string& filePath)
   {
     render_scene(0);
+    render_scene(1);
     glfwSwapBuffers(m_window);
     capture_screenshot(filePath);
     clear_application();
@@ -500,16 +501,6 @@ namespace GLFW
 
     RenderingMode mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    update_face_uniforms();
-    if (m_drawFaces)
-    {
-      glEnable(GL_POLYGON_OFFSET_FILL);
-      glPolygonOffset(4.0, 1.0); 
-      glDepthFunc(GL_LESS);
-      draw_faces();
-      glDisable(GL_POLYGON_OFFSET_FILL);
-    }
-
     update_pl_uniforms();
     if (m_drawVertices)
     {
@@ -517,7 +508,6 @@ namespace GLFW
     }
     if (m_drawEdges)
     {
-      glDepthFunc(GL_LEQUAL);
       draw_edges(mode);
     }
     if (m_drawRays)
@@ -529,7 +519,14 @@ namespace GLFW
       draw_lines();
     }
 
-    if (m_drawWorldAxis) 
+    update_face_uniforms();
+    if (m_drawFaces)
+    {
+      draw_faces();
+    }
+
+    m_lineShader.use();
+    if (m_drawWorldAxis)  
     {
       draw_world_axis();
     }
@@ -548,6 +545,9 @@ namespace GLFW
   inline
   void Basic_viewer::draw_faces()
   {
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(4.0, 1.0); 
+    glDepthFunc(GL_LESS);
     if (m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
     {
       // The z-buffer will prevent transparent objects from being displayed behind other transparent objects.
@@ -591,6 +591,7 @@ namespace GLFW
         draw_faces_bis(RenderingMode::DRAW_ALL);
       } 
     }
+    glDisable(GL_POLYGON_OFFSET_FILL);
   }
 
   inline
@@ -692,6 +693,7 @@ namespace GLFW
   inline
   void Basic_viewer::draw_edges(RenderingMode mode)
   {
+    glDepthFunc(GL_LEQUAL);
     m_plShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_edgesMonoColor);
@@ -1266,7 +1268,7 @@ namespace GLFW
 
     if (useCameraForward)
     {
-      vec3f forwardDirection = m_camera.get_forward().normalized();
+      vec3f forwardDirection = m_camera.get_forward();
 
       float s = abs(deltaY) > abs(deltaX) ? -deltaY : deltaX;
 
