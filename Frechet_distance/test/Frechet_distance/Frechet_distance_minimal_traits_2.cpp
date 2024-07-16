@@ -26,6 +26,6 @@ struct MinimalFrechetTraits {
 int main()
 {
   std::vector<MinimalFrechetTraits::Point> curve;
-  bool decision = CGAL::Frechet_distance_at_most<MinimalFrechetTraits>(curve, curve, 0.1);
+  bool decision = CGAL::is_Frechet_distance_larger<MinimalFrechetTraits>(curve, curve, 0.1);
   return 0;
 }

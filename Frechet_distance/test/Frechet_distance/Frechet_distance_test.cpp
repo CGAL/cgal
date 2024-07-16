@@ -168,14 +168,14 @@ void testFrechetDistance()
         for (auto const& query : queries) {
           /*
                         std::cout
-                            << CGAL::compute_Frechet_distance<TestCurve,
+                            << CGAL::approximate_Frechet_distance<TestCurve,
                                                               TestTraits>(
                                    curves[query.id1], curves[query.id2], 0.001)
                             << std::endl;
           */
             timer.start();
             auto decision =
-                CGAL::Frechet_distance_at_most<TestTraits>(
+                CGAL::is_Frechet_distance_larger<TestTraits>(
                     curves[query.id1], curves[query.id2], query.distance);
             timer.stop();
             if (decision != query.decision) {

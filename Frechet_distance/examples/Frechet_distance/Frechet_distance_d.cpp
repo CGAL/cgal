@@ -12,6 +12,6 @@ using Point = Traits::Point;
 int main(int argc, char* argv[])
 {
     std::vector<Point> A, B;
-    bool res = CGAL::Frechet_distance_at_most<Traits>(A, B, 0.001);
+    bool res = CGAL::is_Frechet_distance_larger<Traits>(A, B, 0.001);
     return 0;
 }

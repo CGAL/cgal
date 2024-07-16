@@ -27,7 +27,7 @@ namespace CGAL
 
 /**
  * \ingroup PkgFrechetDistanceFunctions
- * decides if the Frechet distance between two polylines is less than a given distance.
+ * decides if the Frechet distance between two polylines is larger than a given distance.
  *
  * \param polyline1 the first polyline defined by the sequence of consecutive points
  * \param polyline2 the second polyline defined by the sequence of consecutive points
@@ -39,7 +39,7 @@ namespace CGAL
  * with `Traits::Point` as value type.
  */
 template < class Traits, class PointRange>
-bool Frechet_distance_at_most(const PointRange& polyline1,
+bool is_Frechet_distance_larger(const PointRange& polyline1,
                               const PointRange& polyline2,
                               const double distance,
                               const Traits& traits = Traits())
@@ -49,7 +49,7 @@ bool Frechet_distance_at_most(const PointRange& polyline1,
     auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
     auto idistance = Frechet_distance_::internal::toDistance(distance);
 
-    return Frechet_distance_::internal::lessThan(icurve1, icurve2, idistance, traits);
+    return ! Frechet_distance_::internal::lessThan(icurve1, icurve2, idistance, traits);
 }
 
 /**
@@ -65,12 +65,15 @@ bool Frechet_distance_at_most(const PointRange& polyline1,
  * \tparam Traits a model of `FrechetDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
+ *
+ * @return an interval enclosing the exact result, the difference between the upper and
+ * the lower bound being less than `precision`.
  */
 template <class Traits,class PointRange>
-std::pair<double,double> compute_Frechet_distance(const PointRange& polyline1,
-                                                  const PointRange& polyline2,
-                                                  const double precision,
-                                                  const Traits& traits = Traits())
+std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline1,
+                                                      const PointRange& polyline2,
+                                                      const double precision,
+                                                      const Traits& traits = Traits())
 {
     Protect_FPU_rounding<true> p;
     auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
