@@ -71,12 +71,12 @@ public:
   size_t size();
 
   /*!
-    Return the `i`th entry, `i` from `0` to `size()-1`.
+    Return the `i`-th entry, `i` from `0` to `size()-1`.
   */
   FT operator()(size_t i);
 
   /*!
-    Set the `i`'th entry to `value`.
+    Set the `i`-th entry to `value`.
   */
   void set(size_t i, const FT value);
 

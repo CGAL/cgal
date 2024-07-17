@@ -1,0 +1,1 @@
+The 3D Isosurfacing package provides several isosurfacing algorithms (marching cubes, dual contouring) to generate triangle and quadrangle surface meshes from an input 3D domain and a user-defined isovalue.
