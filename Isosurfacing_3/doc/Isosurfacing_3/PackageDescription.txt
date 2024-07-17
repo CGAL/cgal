@@ -43,10 +43,10 @@
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Mael Rouxel-Labbé, Julian Stahl, Daniel Zint, and Pierre Alliez}
 \cgalPkgDesc{This package implements several grid-based isosurfacing algorithms (Marching Cubes,
-its topologically correct variant, and Dual Contouring) that enable generating meshes
-from value and gradient fields. The methods are generic with respect to the definition
+its topologically correct variant, and Dual Contouring) that enable generating surface meshes
+from 3D value and gradient fields. The methods are generic with respect to the definition
 of the grid and the fields, and all methods offer parallel implementations.
-The output is a polygon soup (i.e., a container of point coordinates and indexed faces).}
+The output is a polygon soup (i.e., a container of 3D point coordinates and indexed faces).}
 \cgalPkgManuals{Chapter_Isosurfacing3,PkgIsosurfacing3Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
