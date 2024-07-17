@@ -23,7 +23,7 @@ This constant value is referred to as "isovalue", and, for well-behaved scalar f
 the level set forms a surface.
 "Isosurfacing", also known as "isosurface extraction" or "contouring", is the process of constructing
 the isosurface corresponding to a given scalar field and isovalue.
-This process is often needed for volume visualization and for the simulation of physical phenomena.
+Isosurfacing is often needed for volume visualization and for the simulation of physical phenomena.
 
 This \cgal package provides methods to extract isosurfaces from 3D scalar fields.
 These contouring techniques rely on the discretization of the 3D space to construct
@@ -185,14 +185,14 @@ two containers: `points` and `polygons`. Depending on the algorithm, the polygon
 store either unorganized polygons with no relationship to one another (no connectivity between them)
 or polygons sharing points (the same point in adjacent polygons will be the same point in the point range).
 
-The isosurfacing algorithms can run either sequentially in one thread or in parallel (multithread).
+The isosurfacing algorithms can run either sequentially in one thread or in parallel via multithreading.
 The template parameter `ConcurrencyTag` is used to specify how the algorithm is executed.
-To enable parallelism, \cgal must be linked with the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a> (see the CMakeLists.txt files in the examples folder).
+To enable parallelism, \cgal must be linked with the <a href="https://github.com/oneapi-src/oneTBB">Intel TBB library</a> (see the CMakeLists.txt file in the examples folder).
 
 \subsection SubSecIsosurfacingDomains Domains
 
 A domain is an object that provides functions to access the partition of the 3D volume,
-the scalar field, and, optionally, the gradient field at a given position.
+the scalar field, and, optionally, the gradient field at a given point query.
 These requirements are described through two concepts: `IsosurfacingDomain_3` and `IsosurfacingDomainWithGradient_3`.
 
 Two domains, `CGAL::Isosurfacing::Marching_cubes_domain_3` and `CGAL::Isosurfacing::Dual_contouring_domain_3`,
@@ -202,7 +202,7 @@ Both these domain models have template parameters enabling the user to customize
                     The most basic example of such class is `CGAL::Isosurfacing::Cartesian_grid_3`, but users
                     can pass their own partition, provided it meets the requirements described
                     by the concept `IsosurfacingPartition_3`.
-- <b>ValueField:</b> this must be a class that provides the scalar field at the vertices of the partition.
+- <b>ValueField:</b> this must be a class that provides the 3D scalar field at the vertices of the partition.
                      A few classes are provided, such as `CGAL::Isosurfacing::Value_function_3` and
                      `CGAL::Isosurfacing::Interpolated_discrete_values_3`. Users can pass their own value class,
                      provided it meets the requirements described by the concept `IsosurfacingValueField_3`.
@@ -218,8 +218,8 @@ Both these domain models have template parameters enabling the user to customize
                                  between an edge and the isosurface. The default is linear interpolation
                                  for `CGAL::Isosurfacing::Marching_cubes_domain_3`, and a dichotomy
                                  for `CGAL::Isosurfacing::Dual_contouring_domain_3`. This parameter should
-                                 be adjusted depending on how your value field is defined: there is for
-                                 example no point doing a dichotomy in Dual Contouring if the value field is defined
+                                 be adjusted depending on how the scalar field is defined: there is for
+                                 example no point operating a dichotomy in Dual Contouring if the value field is defined
                                  through linear interpolation. Users can pass their own edge intersection
                                  oracle, provided it meets the requirements described by the concept
                                  `IsosurfacingEdgeIntersectionOracle_3`.
@@ -243,7 +243,7 @@ run both methods on different types of input data.
 
 The following example illustrates a basic run of the Marching Cubes algorithm, and in particular
 the free function to create a domain from a %Cartesian grid, and the named parameter
-that enable the user to switch beetween Marching Cubes and Topologically Correct Marching Cubes.
+that enable the user to switch from Marching Cubes to Topologically Correct Marching Cubes.
 
 \cgalExample{Isosurfacing_3/marching_cubes.cpp}
 
@@ -251,7 +251,7 @@ that enable the user to switch beetween Marching Cubes and Topologically Correct
 
 The following example illustrates a basic run of the %Dual Contouring algorithm, and in particular
 the free function to create a domain from a %Cartesian grid, and the named parameters
-that enable triangulating (or not) the output, and to constrain the vertex placement within the cell.
+that enable triangulating (or not) the output, and to constrain the vertex location within the cell.
 
 \cgalExample{Isosurfacing_3/dual_contouring.cpp}
 
@@ -267,8 +267,8 @@ unconstrained placement (top row) or constrained placement (bottom row).
 \subsection SubSecImplicitDataExample Implicit Data
 
 The following example shows the usage of Marching Cubes and %Dual Contouring algorithms to extract
-an isosurface. The domain is an implicit domain that describes the unit sphere
-by the distance to its center (set to the origin) as an implicit field.
+an isosurface. The domain is implicit and describes the unit sphere
+by the distance to its center (set to the origin) as an implicit 3D scalar field.
 
 \cgalExample{Isosurfacing_3/contouring_implicit_data.cpp}
 
@@ -280,7 +280,7 @@ In the following example, the input data is sampled at the vertices of a grid, a
 
 \subsection SubSecImageDataExample 3D Image
 
-The following example shows how to load data from an `Image_3`, and generate an isosurface
+The following example shows how to load data from an `Image_3`, and generates an isosurface
 from this voxel data.
 
 \cgalExample{Isosurfacing_3/contouring_inrimage.cpp}
@@ -309,7 +309,7 @@ The development of this package started during the 2022 Google Summer of Code, w
 of Julian Stahl, mentored by Daniel Zint and Pierre Alliez, providing a first implementation
 of Marching Cubes, Topologically Correct Marching Cubes, and %Dual Contouring. Marching Cubes tables
 were provided by Roberto Grosso (FAU Erlangen-Nürnberg). Mael Rouxel-Labbé worked on improving
-the initial %Dual Contouring implementation, and on the first version of the package.
+the initial %Dual Contouring implementation, and on the first complete version of the package.
 
 */
 } /* namespace CGAL */
