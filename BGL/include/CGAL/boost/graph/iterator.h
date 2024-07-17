@@ -213,17 +213,6 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_source_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
-  {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_source_iterator::this_type_does_not_support_comparisons : 0;
-  }
 
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);
@@ -313,17 +302,6 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_target_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
-  {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_target_iterator::this_type_does_not_support_comparisons : 0;
-  }
 
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);
@@ -411,18 +389,6 @@ public:
   const value_type& operator *  ( ) const { return  pos; }
   pointer           operator -> ( )       { return &pos; }
   const value_type* operator -> ( ) const { return &pos; }
-
-  // design patter: "safe bool"
-  // will be replaced by explicit operator bool with C++11
-  typedef void (Halfedge_around_face_iterator::*bool_type)() const;
-
-  void this_type_does_not_support_comparisons() const {}
-
-  operator bool_type() const
-  {
-    return (! (this->base() == nullptr)) ?
-      &Halfedge_around_face_iterator::this_type_does_not_support_comparisons : 0;
-  }
 
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);
