@@ -10,6 +10,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 
 include_directories(BEFORE include)
 
+create_single_source_cgal_program("Filtered_rational.cpp")
 create_single_source_cgal_program("bench_interval.cpp")
 create_single_source_cgal_program("cpp_float.cpp")
 create_single_source_cgal_program("constant.cpp")
