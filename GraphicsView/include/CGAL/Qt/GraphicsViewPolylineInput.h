@@ -50,6 +50,11 @@ public:
 
   bool eventFilter(QObject *obj, QEvent *event);
 
+  void setZValue(int v)
+    {
+      z = v;
+    }
+
 protected:
   // protected constructor
   GraphicsViewPolylineInput_non_templated_base(QObject* parent,
@@ -80,6 +85,7 @@ private:
   int n_;
   QPointF sp;
   QGraphicsScene *scene_;
+  int z;
 }; // end class GraphicsViewPolylineInput_non_templated_base
 
 template <typename K>

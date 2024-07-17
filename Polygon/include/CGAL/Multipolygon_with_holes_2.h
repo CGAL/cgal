@@ -46,6 +46,7 @@ public:
 
   /// @}
 
+  using Traits = Kernel;
   using value_type = Polygon_with_holes_2;
   using Polygon_with_holes_container = std::deque<Polygon_with_holes_2>;
 
