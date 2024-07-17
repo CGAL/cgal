@@ -23,6 +23,7 @@
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_complex_2_in_triangulation_3.h>
 
 #include <CGAL/disable_warnings.h>
 
