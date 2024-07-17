@@ -19,7 +19,7 @@ Generating a surface from a 3D gray level image using Marching Cubes (3D input i
 
 Given a scalar field, an isosurface is defined as the locus of points where the scalar field
 has a given constant value; in other words, it is a level set.
-This constant value is referred to as "isovalue", and, for well-behaved scalar fields,
+This constant value is referred to as the "isovalue", and, for well-behaved scalar fields,
 the level set forms a surface.
 "Isosurfacing", also known as "isosurface extraction" or "contouring", is the process of constructing
 the isosurface corresponding to a given scalar field and isovalue.
@@ -43,7 +43,7 @@ This package offers the following methods
 <ul>
  <li>\ref SubSecMarchingCubes : a simple and efficient method that generates a triangle mesh, with almost no guarantees.</li>
  <li>\ref SubSecTMC : an extension to Marching Cubes that provides additional guarantees for the output.</li>
- <li>\ref SubSecDualContouring : a method that generates a polygon mesh, with a focus on recovery of sharp features.</li>
+ <li>\ref SubSecDualContouring : a method that generates a polygon mesh, with a focus on sharp features recovery.</li>
 </ul>
 
 \subsection SubSecMarchingCubes Marching Cubes (MC)
@@ -52,12 +52,12 @@ Marching Cubes (MC) \cgalCite{LC87} uses a volumetric grid, i.e., a 3D iso-cuboi
 All cells of the grid are processed individually using values of the scalar field sampled at the grid corners.
 Each cell corner is assigned a sign (+/-) to indicate whether its scalar field value is above
 or below the user-defined isovalue.
-A vertex is created for each grid edge with a sign change, i.e., where the edge intersects the isosurface.
+A vertex is created along each grid edge where a sign change occurs, i.e., where the edge intersects the isosurface.
 More specifically, the vertex location is computed via linear interpolation of
 the scalar field values evaluated at the cell corners forming the edge.
 These vertices are connected to form triangles within the cell, depending on the configuration
 of signs at the cell corners. \cgalFigureRef{IsosurfacingMCCases} illustrates the configurations in 2D.
-In 3D, there is no less than 33 configurations (not shown) \cgalCite{cgal:c-mcctci-95}.
+In 3D, there are no less than 33 configurations (not shown) \cgalCite{cgal:c-mcctci-95}.
 
 \cgalFigureAnchor{IsosurfacingMCCases}
 <center>
@@ -77,7 +77,7 @@ If the mesh is 2-manifold and the isosurface does not intersect the domain bound
 As the Marching Cubes algorithm uses linear interpolation of the sampled scalar field along the grid edges,
 it can miss details or components that are not captured by the sampling of the scalar field.
 
-Compared to other meshing approaches such as Delaunay refinement, Marching Cubes is substantially faster, but often tends to generate more triangle facets for an equivalent desired sizing field. In addition, the quality of the triangle facets is in general poor, with many needles / caps shaped triangles.
+Compared to other meshing approaches such as Delaunay refinement, Marching Cubes is substantially faster, but often tends to generate more triangle facets for an equivalent desired sizing field. In addition, the quality of the triangle facets is in general poor, with many needle/cap shaped triangles.
 
 Furthermore, Marching Cubes does not preserve the sharp features present in the isovalue of the input scalar field (see \cgalFigureRef{IsosurfacingMCDC}).
 
@@ -102,7 +102,7 @@ Marching Cubes vs Topologically Correct Marching Cubes.
 \subsection SubSecDualContouring Dual Contouring (DC)
 
 %Dual Contouring (DC) \cgalCite{cgal:jlsw-dchd-02} is a method that does not generate vertices
-on the grid edges, but within cells instead. Next, a facet is created for each edge that intersects the isosurface by connecting the vertices of the incident cells. For a uniform hexahedral grid, this yields a quadrilateral surface mesh. %Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh. On the other hand, it generates fewer faces and higher quality faces than Marching Cubes, in general. Finally, its main advantage over Marching Cubes is its ability to recover sharp creases and corners.
+on the grid edges, but within cells instead. A facet is created for each edge that intersects the isosurface by connecting the vertices of the incident cells. For a uniform hexahedral grid, this results in a quadrilateral surface mesh. %Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh. On the other hand, it generates fewer faces and higher quality faces than Marching Cubes, in general. Finally, its main advantage over Marching Cubes is its ability to recover sharp creases and corners.
 
 \cgalFigureAnchor{IsosurfacingMCDC}
 <center>
@@ -162,7 +162,7 @@ The following functions are the main entry points to the isosurfacing algorithms
  <li>%Dual Contouring</li>: `CGAL::Isosurfacing::dual_contouring()`.
 </ul>
 
-These free functions share the same signature:
+These three functions share the same signature:
 
 \code{.cpp}
 template <typename ConcurrencyTag = CGAL::Sequential_tag,
@@ -182,7 +182,7 @@ The `isovalue` scalar parameter is the value that defines the isosurface being a
 
 The output discrete surface is provided in the form of a polygon soup, which is stored into
 two containers: `points` and `polygons`. Depending on the algorithm, the polygon soup may
-store either unorganized polygons with no relationship to one another (no connectivity between them)
+store either unorganized polygons with no relationship to one another (ie, no connectivity is shared between them)
 or polygons sharing points (the same point in adjacent polygons will be the same point in the point range).
 
 The isosurfacing algorithms can run either sequentially in one thread or in parallel via multithreading.
@@ -199,7 +199,7 @@ Two domains, `CGAL::Isosurfacing::Marching_cubes_domain_3` and `CGAL::Isosurfaci
 are provided as the respective default class models that fulfill the requirements of the concepts.
 Both these domain models have template parameters enabling the user to customize the domain:
 - <b>Partition:</b> this must be a class that describes the partition of the 3D volume into cells.
-                    The most basic example of such class is `CGAL::Isosurfacing::Cartesian_grid_3`, but users
+                    The most basic example of such a class is `CGAL::Isosurfacing::Cartesian_grid_3`, but users
                     can pass their own partition, provided it meets the requirements described
                     by the concept `IsosurfacingPartition_3`.
 - <b>ValueField:</b> this must be a class that provides the 3D scalar field at the vertices of the partition.
@@ -219,7 +219,7 @@ Both these domain models have template parameters enabling the user to customize
                                  for `CGAL::Isosurfacing::Marching_cubes_domain_3`, and a dichotomy
                                  for `CGAL::Isosurfacing::Dual_contouring_domain_3`. This parameter should
                                  be adjusted depending on how the scalar field is defined: there is for
-                                 example no point operating a dichotomy in Dual Contouring if the value field is defined
+                                 example no point incorporating a dichotomy in Dual Contouring if the value field is defined
                                  through linear interpolation. Users can pass their own edge intersection
                                  oracle, provided it meets the requirements described by the concept
                                  `IsosurfacingEdgeIntersectionOracle_3`.
@@ -243,7 +243,7 @@ run both methods on different types of input data.
 
 The following example illustrates a basic run of the Marching Cubes algorithm, and in particular
 the free function to create a domain from a %Cartesian grid, and the named parameter
-that enable the user to switch from Marching Cubes to Topologically Correct Marching Cubes.
+that enables the user to switch from Marching Cubes to Topologically Correct Marching Cubes.
 
 \cgalExample{Isosurfacing_3/marching_cubes.cpp}
 
@@ -251,7 +251,7 @@ that enable the user to switch from Marching Cubes to Topologically Correct Marc
 
 The following example illustrates a basic run of the %Dual Contouring algorithm, and in particular
 the free function to create a domain from a %Cartesian grid, and the named parameters
-that enable triangulating (or not) the output, and to constrain the vertex location within the cell.
+that enable (or disable) triangulation of the output, and to constrain the vertex location within the cell.
 
 \cgalExample{Isosurfacing_3/dual_contouring.cpp}
 
