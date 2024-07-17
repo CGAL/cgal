@@ -924,9 +924,9 @@ struct Locally_shortest_path_imp
 
 #ifdef CGAL_DEBUG_BSURF
     std::cout<<"   k is "<<k<<"\n";
-    std::cout<<"   Flat_prev"<<std::endl;
+    std::cout<<"   Flat_prev: ";
     std::cout << "  " << flat_prev[0] << " " << flat_prev[1] << " " << flat_prev[2] << "\n";
-    std::cout<<"   Flat_curr"<<std::endl;
+    std::cout<<"   Flat_curr: ";
     std::cout << "  " << flat_curr[0] << " " << flat_curr[1] << " " << flat_curr[2] << "\n";
     //Unfold face take care of the orientation so flat_t1[1] - flat_t1[0] is our old
     //reference frame
@@ -1145,7 +1145,7 @@ struct Locally_shortest_path_imp
 #ifdef CGAL_DEBUG_BSURF
           int h=((i+1)%3 + offset)%3;
           Vector_2 intersection_point=(1-t1)*tri[h]+t1*tri[(h+1)%3];
-          std::cout<<"2D intersection point: "<< intersection_point << std::endl;
+          std::cout<<"  2D intersection point: "<< intersection_point << std::endl;
 #endif
           return {((i+1)%3 + offset)%3, std::clamp(t1, 0., 1.)}; //return the offset w.r.t h_ref
       }
@@ -1484,6 +1484,9 @@ struct Locally_shortest_path_imp
           dir = ip - curr_flat_tid[src_id];
           curr_tid=face(href, mesh);
           flat_p = curr_flat_tid[src_id];
+          curr_p.second=CGAL::make_array(0.,0.,0.);
+          curr_p.second[src_id]=1.;
+          curr_p.first=curr_tid;
         }
       }
       break;
@@ -1563,7 +1566,9 @@ struct Locally_shortest_path_imp
       int curr_offset=get_halfedge_offset(h_ref,h_curr);
 
       auto [k, t1] = segment_in_tri(flat_p, curr_flat_tid, curr_dir,curr_offset);
-
+#ifdef CGAL_DEBUG_BSURF
+      std::cout << "  t1 = " << t1 << std::endl;
+#endif
       CGAL_assertion(k!=-1);
       std::array<FT,3> new_bary=make_array(0.,0.,0.);
       Face_location<TriangleMesh, FT> point_on_edge;
