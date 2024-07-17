@@ -1454,7 +1454,7 @@ struct Locally_shortest_path_imp
           CGAL_assertion(hloop!=hstart);
 
           // angle in target face wrt hloop
-          double delta = (target_theta - angles[ia-1]) * acc_angle;
+          double delta = (target_theta - curr_angle + angles[ia]) * acc_angle;
 
           // using the law of the sinus we have:
           CGAL_assertion(target(hloop, mesh) == src_vertex);
