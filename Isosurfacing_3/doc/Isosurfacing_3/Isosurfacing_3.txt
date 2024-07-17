@@ -23,7 +23,7 @@ This constant value is referred to as "isovalue", and, for well-behaved scalar f
 the level set forms a surface.
 "Isosurfacing", also known as "isosurface extraction" or "contouring", is the process of constructing
 the isosurface corresponding to a given scalar field and isovalue.
-This process is often needed for volume visualization and the simulation of physical phenomena.
+This process is often needed for volume visualization and for the simulation of physical phenomena.
 
 This \cgal package provides methods to extract isosurfaces from 3D scalar fields.
 These contouring techniques rely on the discretization of the 3D space to construct
@@ -32,9 +32,7 @@ The 3D scalar field can be described through various representations: an implici
 an interpolated set of discrete sampling values, etc. (see \ref SecIsosurfacingExamples). The isovalue is user-defined.
 The output is a polygon soup, made either of triangles or quads depending on the method,
 and may consist of a single connected component, or multiple, disjoint components.
-Note that due to the inherent approximate nature of these discrete methods, parts of the "true"
-isosurface may be missing from the output, and the output may contain artifacts that are not present
-in the true isosurface.
+Note that due to the inherent approximate nature of these discrete methods that only sample 3D scalar fields, parts of the "true" isosurface may be missing from the output, and the output may contain artifacts that are not present in the true isosurface.
 
 \section SecIsosurfacingMethods Isosurfacing Methods
 
@@ -45,21 +43,21 @@ This package offers the following methods
 <ul>
  <li>\ref SubSecMarchingCubes : a simple and efficient method that generates a triangle mesh, with almost no guarantees.</li>
  <li>\ref SubSecTMC : an extension to Marching Cubes that provides additional guarantees for the output.</li>
- <li>\ref SubSecDualContouring : a method that generates a polygon mesh, with focus on sharp features recovery.</li>
+ <li>\ref SubSecDualContouring : a method that generates a polygon mesh, with a focus on recovery of sharp features.</li>
 </ul>
 
 \subsection SubSecMarchingCubes Marching Cubes (MC)
 
 Marching Cubes (MC) \cgalCite{LC87} uses a volumetric grid, i.e., a 3D iso-cuboid partitioned into hexahedral cells.
-All cells of the grid are processed individually using values of the scalar field at the grid corners.
+All cells of the grid are processed individually using values of the scalar field sampled at the grid corners.
 Each cell corner is assigned a sign (+/-) to indicate whether its scalar field value is above
 or below the user-defined isovalue.
 A vertex is created for each grid edge with a sign change, i.e., where the edge intersects the isosurface.
-More specifically, the vertex position is computed via linear interpolation of
+More specifically, the vertex location is computed via linear interpolation of
 the scalar field values evaluated at the cell corners forming the edge.
 These vertices are connected to form triangles within the cell, depending on the configuration
 of signs at the cell corners. \cgalFigureRef{IsosurfacingMCCases} illustrates the configurations in 2D.
-In 3D, there is no less than 33 cases (not shown) \cgalCite{cgal:c-mcctci-95}.
+In 3D, there is no less than 33 configurations (not shown) \cgalCite{cgal:c-mcctci-95}.
 
 \cgalFigureAnchor{IsosurfacingMCCases}
 <center>
@@ -71,7 +69,7 @@ Examples of some configurations for 2D Marching Cubes.
 
 The implementation within \cgal is generic in the sense that it can process any grid-like data structure
 that consists of hexahedral cells. When the hexahedral grid is a conforming grid (meaning that the
-intersection of two hexahedral cells is a face, and edge, or a vertex), the Marching Cubes algorithm
+intersection of two hexahedral cells is a face, an edge or a vertex), the Marching Cubes algorithm
 generates as output a surface triangle mesh that is almost always combinatorially 2-manifold,
 but can also produce cracks in the surface.
 
@@ -79,41 +77,32 @@ If the mesh is 2-manifold and the isosurface does not intersect the domain bound
 As the Marching Cubes algorithm uses linear interpolation of the sampled scalar field along the grid edges,
 it can miss details or components that are not captured by the sampling of the scalar field.
 
-Compared to other meshing approaches such as Delaunay refinement, Marching Cubes is much faster,
-but often tends to generate more triangles for an equivalent desired sizing field. In addition,
-the quality of the elements if generally poor, with many needles / caps shaped faces.
+Compared to other meshing approaches such as Delaunay refinement, Marching Cubes is substantially faster, but often tends to generate more triangle facets for an equivalent desired sizing field. In addition, the quality of the triangle facets is in general poor, with many needles / caps shaped triangles.
 
-Furthermore, Marching Cubes does not preserve the sharp features present in the isovalue of the input scalar field
-(see \cgalFigureRef{IsosurfacingMCDC}).
+Furthermore, Marching Cubes does not preserve the sharp features present in the isovalue of the input scalar field (see \cgalFigureRef{IsosurfacingMCDC}).
 
 \subsection SubSecTMC Topologically Correct Marching Cubes (TMC)
 
 Topologically Correct Marching Cubes is an extension to the Marching Cubes algorithm
 which provides additional guarantees for the output \cgalCite{cgal:g-ctcmi-16}.
-It generates as output a mesh that is homeomorphic to the trilinear interpolant of the input scalar
-field inside each cube. This means that the output mesh can accurately represent small complex features.
+More specifically, it generates as output a mesh that is homeomorphic to the trilinear interpolant of the input scalar field inside each cube. This means that the output mesh can accurately represent small complex features.
 For example, a tunnel of the isosurface within a single cell is topologically resolved.
 To achieve this, the algorithm can insert additional vertices within cells.
 Furthermore, the mesh is guaranteed to be 2-manifold and watertight, as long as the isosurface
-does not intersect the domain boundaries. [and the input is 2-manifold?]
+does not intersect the domain boundaries. 
 
 \cgalFigureAnchor{IsosurfacingMCTMC}
 <center>
 <img src="MC_TMC.png" style="max-width:70%;"/>
 </center>
 \cgalFigureCaptionBegin{IsosurfacingMCTMC}
-MC vs TMC [todo]
+Marching Cubes vs Topologically Correct Marching Cubes.
 \cgalFigureCaptionEnd
 
 \subsection SubSecDualContouring Dual Contouring (DC)
 
 %Dual Contouring (DC) \cgalCite{cgal:jlsw-dchd-02} is a method that does not generate vertices
-on the grid edges, but within cells. Next, a face is created for each edge that intersects the isosurface
-by connecting the vertices of the incident cells. For a uniform hexahedral grid, this results
-into a quadrilateral surface mesh. %Dual Contouring can deal with any domain but guarantees neither
-a 2-manifold nor a watertight mesh. On the other hand it generates fewer faces and higher quality
-faces than Marching Cubes, in general. Finally, its main advantage over Marching Cubes is its ability
-to recover sharp creases and corners.
+on the grid edges, but within cells instead. Next, a facet is created for each edge that intersects the isosurface by connecting the vertices of the incident cells. For a uniform hexahedral grid, this yields a quadrilateral surface mesh. %Dual Contouring can deal with any domain but guarantees neither a 2-manifold nor a watertight mesh. On the other hand, it generates fewer faces and higher quality faces than Marching Cubes, in general. Finally, its main advantage over Marching Cubes is its ability to recover sharp creases and corners.
 
 \cgalFigureAnchor{IsosurfacingMCDC}
 <center>
@@ -123,18 +112,17 @@ to recover sharp creases and corners.
 Comparison between a mesh of a CSG shape generated by Marching Cubes (left) and %Dual Contouring (right).
 \cgalFigureCaptionEnd
 
-In addition to the scalar field, %Dual Contouring requires knowledge of the gradient of said scalar field.
+In addition to the 3D scalar field, %Dual Contouring requires knowledge about its gradient.
 
-The \cgal implementation uses a point positioning strategy based on *Quadric Error Metrics*: for
-a cell, the position of the vertex is computed by minimizing the error to the sum of the quadrics
+The \cgal implementation uses a vertex positioning strategy based on *Quadric Error Metrics*: for
+a cell, the vertex location is computed by minimizing the error to the sum of the quadrics
 defined at each edge-isosurface intersection.
-Using this strategy, the position can in fact lie outside the cell, which is a desirable property
+Using this approach, the vertex may be located outside the cell, which is a desirable property
 to improve the odds of recovering sharp features, but it might also create self-intersections.
-Users can choose to constrain the placement to lie within the cell.
+Users can choose to constrain the vertex location inside the cell.
 
-By default, %Dual Contouring creates quads, but using edge-isosurface intersections,
-one can "star" these quads to create four triangles. This is the default behavior in \cgal,
-and it can be changed in the named parameters.
+By default, %Dual Contouring generates quads, but using edge-isosurface intersections,
+one can "star" these quads to generate four triangles. Triangulating the quads is the default behavior in \cgal, but this can be changed via named parameters.
 
 \subsection SubSecIsosurfacingComparison Comparisons
 
