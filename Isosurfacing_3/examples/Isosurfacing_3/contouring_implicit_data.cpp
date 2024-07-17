@@ -38,6 +38,7 @@ auto iwp_value = [](const Point& point)
   const FT z = alpha * (point.z() + FT(1.0)) * CGAL_PI;
   return cos(x)*cos(y) + cos(y)*cos(z) + cos(z)*cos(x) - cos(x)*cos(y)*cos(z);  // isovalue = 0
 };
+
 auto iwp_gradient = [](const Point& point)
 {
   const FT x = alpha * (point.x() + FT(1.0)) * CGAL_PI;

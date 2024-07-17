@@ -59,7 +59,7 @@ public:
     FT d = sqrt((p - cp).squared_length());
 
     if(is_closed && sotm(p) == (CGAL::ON_BOUNDED_SIDE))
-      d *= -1;
+      d *= -1.0;
 
     return d;
   }
