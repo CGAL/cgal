@@ -29,7 +29,7 @@ public:
   Hyperbolic_fundamental_domain_2();
 
   /*!
-    Constructor from the list of vertices and the sides pairing.
+    Constructor from the vectors of vertices and side pairings.
   */
   Hyperbolic_fundamental_domain_2(const std::vector<Point>& vertices, const std::vector<int>& pairings);
   /// @}
@@ -37,7 +37,7 @@ public:
   /// \name Access functions
   /// @{
   /*!
-    Sets the vertices and the sides pairings of the domain.
+    Sets the vertices and the side pairings of the domain.
   */
   void set(const std::vector<Point>& vertices, const std::vector<int>& pairings);
 

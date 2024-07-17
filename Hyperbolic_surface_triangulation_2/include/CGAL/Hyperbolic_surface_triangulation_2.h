@@ -129,7 +129,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 Hyperbolic_surface_triangulation_2<Traits,Attributes>::Hyperbolic_surface_triangulation_2(const Domain& domain){
   // (Triangulates by adding an internal edge between domain.vertex(size-1) and the other vertices)
   _combinatorial_map.clear();
@@ -203,19 +203,19 @@ Hyperbolic_surface_triangulation_2<Traits,Attributes>::Hyperbolic_surface_triang
   _has_anchor = true;
 }
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
   Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap){
   copy_from(cmap);
 }
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
   Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor){
   copy_from(cmap, anchor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 //Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2<Traits>::operator=(Hyperbolic_surface_triangulation_2<Traits>&& other){
   Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2<Traits, Attributes>::operator=(Hyperbolic_surface_triangulation_2<Traits, Attributes> other){
   if (other.has_anchor()){
@@ -229,29 +229,29 @@ template<class Traits,class Attributes>
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Combinatorial_map_with_cross_ratios& Hyperbolic_surface_triangulation_2<Traits, Attributes>::get_combinatorial_map_ref(){
   return _combinatorial_map;
 }
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::has_anchor() const {
   return _has_anchor;
 }
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor& Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor(){
   return _anchor;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_delaunay_flippable(Dart_const_handle dart) const{
   return ( get_cross_ratio(dart).imaginary_part()>Number(0) );
 }
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 void Hyperbolic_surface_triangulation_2<Traits, Attributes>::flip(Dart_handle dart){
 
   // First gather all the information needed

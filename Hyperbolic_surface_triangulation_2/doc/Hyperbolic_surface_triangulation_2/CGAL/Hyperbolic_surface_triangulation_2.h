@@ -10,7 +10,7 @@ the Delaunay flip algorithm, and the construction of a portion of the lift of th
 
 \tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
 */
-template<class Traits>
+template<class Traits, class Attributes = Combinatorial_map_with_cross_ratios_item<Traits>>
 class Hyperbolic_surface_triangulation_2{
 public:
   /// \name Types
@@ -18,7 +18,7 @@ public:
   /*!
       Type of combinatorial map whose edges are decorated with complex numbers.
   */
-  typedef Combinatorial_map<2,unspecified_type>                                 Combinatorial_map_with_cross_ratios;
+  typedef Combinatorial_map<2, Attributes>                                 Combinatorial_map_with_cross_ratios;
   /*!
       Combinatorial map dart handle type.
   */
@@ -93,7 +93,7 @@ public:
 
       \pre <code> is_valid() && has_anchor() </code>
   */
-  Anchor& get_anchor_ref();
+  Anchor& anchor();
   /// @}
 
   /// \name Delaunay flip algorithm
