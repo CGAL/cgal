@@ -276,7 +276,8 @@ public:
 
     if(status != OK)
         return status;
-
+    std::cout << "Xu: " << Xu[120] << std::endl;
+    std::cout << "Xv: " << Xv[120] << std::endl;
     // WARNING: this package does not support homogeneous coordinates!
     CGAL_assertion(Du == 1.0);
     CGAL_assertion(Dv == 1.0);

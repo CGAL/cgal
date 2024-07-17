@@ -1,5 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 
+#include <CGAL/Timer.h>
+
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
@@ -19,6 +21,7 @@ typedef CGAL::Simple_cartesian<double>       Kernel;
 typedef Kernel::Point_2                      Point_2;
 typedef Kernel::Point_3                      Point_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3>  SurfaceMesh;
+typedef CGAL::Timer                          Timer;
 
 typedef boost::graph_traits<SurfaceMesh>::halfedge_descriptor  halfedge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::vertex_descriptor    vertex_descriptor;
@@ -47,8 +50,12 @@ int main(int argc, char** argv)
   typedef SMP::Circular_border_arc_length_parameterizer_3<SurfaceMesh>  Border_parameterizer;
   typedef SMP::Discrete_authalic_parameterizer_3<SurfaceMesh, Border_parameterizer> Parameterizer;
 
-  SMP::Error_code err = SMP::parameterize(sm, Parameterizer(), bhd, uv_map);
+  Timer t;
+  t.start();
 
+  SMP::Error_code err = SMP::parameterize(sm, Parameterizer(), bhd, uv_map);
+  std::cout << t.time() << " sec." << std::endl;
+  
   if(err != SMP::OK) {
     std::cerr << "Error: " << SMP::get_error_message(err) << std::endl;
     return EXIT_FAILURE;
