@@ -1,15 +1,16 @@
 #pragma once
 
+#include <CGAL/Graphics_scene.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/draw_linear_cell_complex.h>
 
 /**
- * 
+ *
  * Will be later removed
  * Used for debugging stuff
- * 
+ *
  */
 
 template <typename LCC>
@@ -48,12 +49,22 @@ void mark_edge(LCC& lcc, typename LCC::Dart_handle dart, typename LCC::size_type
   }
 }
 
-template <typename LCC>
-void render(LCC &lcc, typename LCC::size_type marked_cell_0, typename LCC::size_type marked_cell_1)
-{
-  CGAL::Graphics_scene buffer;
-  add_to_graphics_scene(lcc, buffer);
 
+template <typename LCC>
+using LCCSceneOptions = CGAL::Graphics_scene_options<LCC,
+                          typename LCC::Dart_const_handle,
+                          typename LCC::Dart_const_handle,
+                          typename LCC::Dart_const_handle,
+                          typename LCC::Dart_const_handle>;
+
+template <typename LCC>
+CGAL::IO::Color rand_color_from_dart(const LCC& lcc, typename LCC::Dart_const_handle dart){
+  CGAL::Random random((unsigned int)(lcc.darts().index(dart)));
+  return CGAL::get_random_color(random);
+}
+
+template <typename LCC>
+void render(LCC &lcc, CGAL::Graphics_scene& buffer, typename LCC::size_type marked_cell_0, typename LCC::size_type marked_cell_1){
   // Hacking a bit here, we are going to draw colored points for marked vertices and edges just for debugging purposes
   // All of this is temporary of course and very ugly
 
@@ -76,9 +87,9 @@ void render(LCC &lcc, typename LCC::size_type marked_cell_0, typename LCC::size_
   }
 
   // Marked edges
-  for (auto it = lcc.template one_dart_per_cell<1>().begin(), 
-      end = lcc.template one_dart_per_cell<1>().end(); 
-      it != end; 
+  for (auto it = lcc.template one_dart_per_cell<1>().begin(),
+      end = lcc.template one_dart_per_cell<1>().end();
+      it != end;
       it++){
     // lcc.is_whole_cell_marked<1>()
     if (lcc.template is_whole_cell_marked<1>(it, marked_cell_1)){
@@ -90,4 +101,22 @@ void render(LCC &lcc, typename LCC::size_type marked_cell_0, typename LCC::size_
   }
 
   draw_graphics_scene(buffer);
+}
+
+
+template <typename LCC>
+void render(LCC &lcc, typename LCC::size_type marked_cell_0, typename LCC::size_type marked_cell_1)
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(lcc, buffer);
+  render(lcc, buffer, marked_cell_0, marked_cell_1);
+}
+
+
+template <typename LCC>
+void render(LCC &lcc, LCCSceneOptions<LCC> options, typename LCC::size_type marked_cell_0, typename LCC::size_type marked_cell_1)
+{
+  CGAL::Graphics_scene buffer;
+  add_to_graphics_scene(lcc, buffer, options);
+  render(lcc, buffer, marked_cell_0, marked_cell_1);
 }

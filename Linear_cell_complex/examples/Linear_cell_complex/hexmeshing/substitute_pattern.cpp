@@ -2,6 +2,7 @@
 #include "utils.h"
 
 #include <CGAL/draw_polyhedron.h>
+#include <CGAL/Graphics_scene_options.h>
 
 // int pattern_substitution()
 // {
@@ -65,7 +66,7 @@
 
 //   LCC lcc;
 //   auto grid = generate_grid(lcc, Point(0,0,0), 65.059600000000003, 10);
-  
+
 //   lcc.display_characteristics(std::cout);
 
 //   auto m1 = lcc.get_new_mark();
@@ -87,10 +88,12 @@
 int surface_test() {
   using namespace CGAL::HexRefinement;
 
-  LCC lcc = tworefinement(CGAL::data_file_path("query_replace/mesh1.off"), 10, TwoRefinement::mark_intersecting_volume_with_poly);
+  LCC lcc = two_refinement(CGAL::data_file_path("query_replace/mesh1.off"), 10, TwoRefinement::mark_intersecting_volume_with_poly);
   lcc.display_characteristics(std::cout);
 
-  render<LCC>(lcc, debug_node_mark, debug_edge_mark );
+  // render<LCC>(lcc, debug_node_mark, debug_edge_mark );
+  render_two_refinement_result(lcc);
+
   return EXIT_SUCCESS;
 }
 
@@ -101,11 +104,13 @@ int two_stacked_3_template_test() {
   LCC& lcc = hdata.lcc;
 
   hdata.grid = generate_grid(hdata.lcc, Point(0,0,0), 5, 4);
+  hdata.identified_mark = lcc.get_new_mark();
   hdata.template_mark = lcc.get_new_mark();
   hdata.corner_mark = lcc.get_new_mark();
+  hdata.propagation_face_mark = lcc.get_new_mark();
 
   lcc.negate_mark(hdata.corner_mark);
-  
+
   load_patterns(hdata.regular_templates, hdata.partial_templates);
 
   PlaneData plane;
@@ -123,7 +128,14 @@ int two_stacked_3_template_test() {
   create_vertices_for_templates(hdata, plane);
   refine_marked_hexes(hdata, plane);
 
-  render<LCC>(lcc, hdata.identified_mark, debug_edge_mark);
+  lcc.unmark_all(debug_node_mark);
+  lcc.unmark_all(debug_edge_mark);
+  Dart_handle d = lcc.beta(first, 1, 2, 3, 2, 1, 2, 3, 0, 0, 2, 3, 2, 1, 1, 2, 3, 2,  1, 2, 3, 2, 1,       2, 3, 2    );
+  mark_edge(lcc, d, debug_node_mark);
+  mark_face(lcc, d, debug_edge_mark);
+
+  CGAL::save_combinatorial_map(lcc, "work.3map");
+  render<LCC>(lcc, debug_node_mark, debug_edge_mark);
 
   return 0;
 }
@@ -161,7 +173,7 @@ int propagation_face(){
   assert(!is_half_face_marked(lcc, lcc.beta(a,3), m1));
 
   render(lcc, m1, m2);
-  
+
   return 1;
 }
 
