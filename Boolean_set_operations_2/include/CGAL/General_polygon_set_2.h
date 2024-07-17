@@ -114,6 +114,109 @@ public:
   //@}
 };
 
+
+
+//-----------------------------------------------------------------------//
+//                          operator<<
+//-----------------------------------------------------------------------//
+/*!
+This operator exports a General_polygon_with_holes_2 to the output stream `out`.
+
+An \ascii and a binary format exist. The format can be selected with
+the \cgal modifiers for streams, `set_ascii_mode(0` and `set_binary_mode()`
+respectively. The modifier `set_pretty_mode()` can be used to allow for (a
+few) structuring comments in the output. Otherwise, the output would
+be free of comments. The default for writing is \ascii without comments.
+
+The number of curves of the outer boundary is exported followed by the
+curves themselves. Then, the number of holes
+is exported, and for each hole, the number of curves on its outer
+boundary is exported followed by the curves themselves.
+
+\relates General_polygon_with_holes_2
+*/
+template <class Traits_, class Dcel_ = Gps_default_dcel<Traits_> >
+std::ostream
+&operator<<(std::ostream &os, const General_polygon_set_2<Traits_, Dcel_>& g)
+{
+  typedef typename General_polygon_set_2<Traits_, Dcel_>::Polygon_with_holes_2 Polygon_with_holes_2;
+  std::vector<Polygon_with_holes_2> v;
+  const unsigned int n = g.number_of_polygons_with_holes();
+
+  v.reserve(n);
+  g.polygons_with_holes(std::back_inserter(v));
+
+  switch(IO::get_mode(os)) {
+    case IO::ASCII :
+      os << n;
+      for (const Polygon_with_holes_2 &H: v) {
+        os << ' ' << H;
+      }
+      return os;
+
+    case IO::BINARY :
+      write(os, n);
+      for (const Polygon_with_holes_2 &H: v) {
+        os << H;
+      }
+      return os;
+
+
+    default:
+      os << "General_polygon_set_2( " << std::endl;
+      os << n << " ";
+      for (const Polygon_with_holes_2 &H: v) {
+        os << H;
+      }
+      return os;
+  }
+}
+
+//-----------------------------------------------------------------------//
+//                          operator>>
+//-----------------------------------------------------------------------//
+
+/*!
+This operator imports a General_polygon_with_holes_2 from the input stream `in`.
+
+Both ASCII and binary formats are supported, and the format is automatically detected.
+
+The format consists of the number of curves of the outer boundary
+followed by the curves themselves, followed
+by the number of holes, and for each hole, the number of curves on its
+outer boundary is followed by the curves themselves.
+
+\relates General_polygon_with_holes_2
+*/
+template <class Traits_, class Dcel_ = Gps_default_dcel<Traits_> >
+std::istream
+&operator>>(std::istream &is, General_polygon_set_2<Traits_, Dcel_>& g)
+{
+  typedef typename General_polygon_set_2<Traits_, Dcel_>::Polygon_with_holes_2 Polygon_with_holes_2;
+
+  g.clear();
+
+  unsigned int n;
+
+  switch(IO::get_mode(is)) {
+    case IO::ASCII :
+      is >> n;
+      break;
+    case IO::BINARY :
+      read(is, n);
+      break;
+  }
+
+  for (unsigned int i = 0; i < n; i++) {
+    Polygon_with_holes_2 pgn_hole;
+    is >> pgn_hole;
+    g.insert(pgn_hole);
+  }
+
+  return is;
+}
+
+
 } //namespace CGAL
 
 #include <CGAL/enable_warnings.h>

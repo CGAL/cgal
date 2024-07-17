@@ -174,7 +174,8 @@ operator<<(std::ostream& os, const General_polygon_with_holes_2<Polygon_>& p) {
       return os;
 
     case IO::BINARY :
-      os << p.outer_boundary()  << p.number_of_holes();
+      write(os, p.outer_boundary());
+      write(os, p.number_of_holes());
       for (hit = p.holes_begin(); hit != p.holes_end(); ++hit) {
         os << *hit;
       }
