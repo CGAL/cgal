@@ -1,8 +1,12 @@
 #include "hexmeshing.h"
 #include "utils.h"
 
+#include <CGAL/Combinatorial_map_save_load.h>
+#include <CGAL/config.h>
 #include <CGAL/draw_polyhedron.h>
 #include <CGAL/Graphics_scene_options.h>
+#include <cstdlib>
+#include <filesystem>
 
 // int pattern_substitution()
 // {
@@ -88,7 +92,7 @@
 int surface_test() {
   using namespace CGAL::HexRefinement;
 
-  LCC lcc = two_refinement(CGAL::data_file_path("query_replace/mesh1.off"), 10, TwoRefinement::mark_intersecting_volume_with_poly);
+  LCC lcc = two_refinement(CGAL::data_file_path("query_replace/mesh2.off"), 10, TwoRefinement::mark_intersecting_volume_with_poly);
   lcc.display_characteristics(std::cout);
 
   // render<LCC>(lcc, debug_node_mark, debug_edge_mark );
@@ -175,6 +179,45 @@ int propagation_face(){
   render(lcc, m1, m2);
 
   return 1;
+}
+
+
+int create_validation_files(){
+  namespace fs = std::filesystem;
+  const std::string dir = CGAL::data_file_path("hexmeshing");
+
+  for (const auto& entry : fs::directory_iterator(dir + "/mesh")){
+    if (!entry.is_regular_file() or entry.path().extension() != ".off") continue;
+
+    LCC lcc = CGAL::HexRefinement::two_refinement(entry.path().string(), 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly);
+
+    std::string out = dir + "/validation/" + entry.path().filename().replace_extension().string() + ".3map";
+
+    CGAL::save_combinatorial_map(lcc, out.c_str());
+  }
+
+  return EXIT_SUCCESS;
+}
+
+int validation_test(){
+  namespace fs = std::filesystem;
+  const std::string dir = CGAL::data_file_path("hexmeshing");
+
+  for (const auto& entry : fs::directory_iterator(dir + "/validation")){
+    if (!entry.is_regular_file() or entry.path().extension() != ".3map") continue;
+
+    fs::directory_entry off_file(dir + "/mesh/" + entry.path().filename().replace_extension().string() + ".off");
+
+    if (!off_file.exists()) return EXIT_FAILURE;
+
+    LCC result = CGAL::HexRefinement::two_refinement(entry.path().string(), 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly);
+    LCC validation;
+
+    std::string off_file_string = entry.path().string();
+    if (!CGAL::load_combinatorial_map(off_file_string.c_str(), validation)) return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
 }
 
 int main(){
