@@ -224,7 +224,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
   std::vector<Dart_handle> incident_faces_to_0_cell_on_plane(LCC& lcc, PlaneData &pdata, Dart_handle edge){
     std::vector<Dart_handle> arr;
     arr.reserve(4);
-
     arr.push_back(edge);
 
     Dart_handle d2 = lcc.beta(edge, 0);
@@ -341,12 +340,22 @@ namespace CGAL::HexRefinement::TwoRefinement {
   void assert_all_faces_are_quadrilateral(LCC &lcc){
     auto iterator = lcc.one_dart_per_cell<2>();
     lcc.unmark_all(debug_edge_mark);
+    bool flag = false;
+
     for (auto it = iterator.begin(); it != iterator.end(); it++){
       auto edges = lcc.darts_of_cell<2, 0>(it);
-      assert(edges.size() == 4);
+
+      if (edges.size() != 4){
+        flag = true;
+      }
+
+      // assert(edges.size() == 4);
       if (edges.size() != 4)
         mark_face_unchecked(lcc, it, debug_edge_mark);
     }
+
+    if (flag)
+      CGAL::save_combinatorial_map(lcc, "debug_save.3map");
   }
 
   void assert_all_volumes_are_hexes(LCC &lcc){
@@ -533,11 +542,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       assert(other_face_handle != nullptr);
 
-      if (other_face_handle->info().template_id != 3)
-        continue;
+      if (other_face_handle->info().template_id == 3){
+        is_impossible = true;
+        break;
+      }
 
-      is_impossible = true;
-      break;
     }
 
     if (is_impossible) {
@@ -549,7 +558,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
 
     return false;
-
   }
 
   // If not all marks are chained consecutively, mark the whole face
@@ -579,7 +587,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       lcc.mark_cell<0>(edge, hdata.template_mark);
       pdata.marked_nodes.push_back(edge);
-
       __expand_0_cell_marking(lcc, pdata, faces_to_check, edge);
     }
 
@@ -1384,45 +1391,25 @@ namespace CGAL::HexRefinement {
   void debug_render(const LCC& lcc, TwoRefinement::HexMeshingData& hdata, TwoRefinement::PlaneData& pdata, const char* title = "TwoRefinement Result"){
     LCCSceneOptions<LCC> gso;
 
-    gso.draw_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){return lcc.attribute<3>(dart) != nullptr;};
-    // gso.volume_color = [](const LCC& lcc, LCC::Dart_const_handle dart){ return red(); };
-    // gso.colored_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){ return lcc.attribute<3>(dart) != nullptr && lcc.attribute<3>(dart)->info().draw; };
-
-    // gso.colored_edge = [](const LCC& lcc, LCC::Dart_const_handle dart){ return lcc.is_whole_cell_marked<1>(dart, debug3); };
-    // gso.edge_color = [](const LCC& lcc, LCC::Dart_const_handle dart){ return green(); }
-
-    // ============================= WORKS
-    // gso.draw_face = [](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
-    // gso.face_color = [](const LCC& lcc, LCC::Dart_const_handle dart){
-    //   auto a = lcc.attribute<2>(dart);
-    //   return a != nullptr && a->info().plane[2] ? red() : lcc.is_whole_cell_marked<2>(dart, debug_edge_mark) ? green() : white();};
-    // gso.colored_face = [&](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
-
-    // gso.colored_vertex = [](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
-    // gso.vertex_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){return lcc.is_marked(dart, hdata.template_mark) ? green() : blue();};
-    // =============================
-
     gso.draw_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){
       return true;
     };
-    // gso.colored_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){
-
-    // };
-    // gso.volume_color = [](const LCC& lcc, LCC::Dart_const_handle dart){
-    //   return red();
-    // };
-
-    // gso.face_wireframe = [](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
-
     gso.draw_face = [](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
     gso.face_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
       auto a = lcc.attribute<2>(dart);
-      auto b = lcc.attribute<3>(dart);
-      if (TwoRefinement::is_half_face_marked(lcc, dart, hdata.propagation_face_mark)
-          or (!lcc.is_free<3>(dart) && TwoRefinement::is_half_face_marked(lcc, lcc.beta(dart, 3), hdata.propagation_face_mark)))
-        return yellow();
+      // if (a != nullptr && a->info().plane[1]) return red();
 
-      return a != nullptr && a->info().plane[2] ? red() : lcc.is_whole_cell_marked<2>(dart, debug_edge_mark) ? green() : white();};
+      if (a != nullptr && a->info().plane[1] && a->info().explored[1]) return red();
+
+      // if (lcc.is_whole_cell_marked<2>(dart, debug_edge_mark)) return green();
+
+      // if (TwoRefinement::is_half_face_marked(lcc, dart, hdata.propagation_face_mark)
+      //     or (!lcc.is_free<3>(dart) && TwoRefinement::is_half_face_marked(lcc, lcc.beta(dart, 3), hdata.propagation_face_mark)))
+      //   return yellow();
+
+
+      return white();
+    };
     gso.colored_face = [&](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
 
     gso.colored_vertex = [](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
@@ -1479,9 +1466,9 @@ namespace CGAL::HexRefinement {
 
       refine_marked_hexes(hdata, pdata);
 
+      assert_all_faces_are_quadrilateral(lcc);
       debug_render(lcc, hdata, pdata);
 
-      assert_all_faces_are_quadrilateral(lcc);
       assert_all_volumes_are_hexes(lcc);
 
       lcc.unmark_all(hdata.identified_mark);
