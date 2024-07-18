@@ -147,7 +147,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     assert(lcc.is_whole_cell_marked<2>(dart, mark));
   }
 
-  bool is_half_face_marked(LCC& lcc, Dart_handle dart, size_type mark ){
+  bool is_half_face_marked(const LCC& lcc, LCC::Dart_const_handle dart, size_type mark ){
     auto iterator = lcc.darts_of_cell<2, 1>(dart);
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++) {
       if (!lcc.is_marked(dit, mark)) return false;
@@ -320,7 +320,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
   void assert_faces_of_plane_valid(HexMeshingData& hdata, PlaneData& pdata){
     LCC& lcc = hdata.lcc;
     assert_dart_attr_are_unique<2>(hdata.lcc, pdata.faces_to_refine);
-    
+
     for (int i = 0; i < pdata.face_of_even_planes_end; i++){
       Dart_handle face = pdata.faces_to_refine[i];
       auto& attr = lcc.attribute<2>(face)->info();
@@ -336,35 +336,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
   }
 
-  // void assert_templates_are_valid(HexMeshingData &hdata, PlaneData &pdata, std::vector<Dart_handle> array){
-  //   LCC& lcc = hdata.lcc;
-  //   int i = 0;
-  //   for (auto vol : array){
-  //     auto &attr = lcc.attribute<3>(vol)->info();
-
-  //     int count = 0;
-  //     auto d = lcc.darts_of_cell<2,0>(vol);
-  //     for (auto it = d.begin(); it != d.end(); it++){
-  //       if (lcc.is_marked(it, hdata.template_mark)) count++;
-  //     }
-
-  //     auto d2 = lcc.darts_of_cell<2,0>(lcc.beta(vol, 2, 1, 1, 2));
-  //     for (auto it = d2.begin(); it != d2.end(); it++){
-  //       if (lcc.is_marked(it, hdata.template_mark)) count++;
-  //     }
-
-  //     // assert( count == attr.template_id );
-  //     i++;
-  //     if (count != attr.template_id){
-  //       lcc.unmark_all(debug_edge_mark);
-  //       mark_all_0_cells<3>(lcc, vol, debug_edge_mark);
-  //       render(lcc, hdata.template_mark, debug_edge_mark);
-
-  //       assert(false);
-  //     }
-  //   }
-  // }
-
   // Ensures indirectly that all possible volumes are refined, since we know for sure create_vertices is valid
   // This is to ensure that we missed no volumes / faces for refinement.
   void assert_all_faces_are_quadrilateral(LCC &lcc){
@@ -372,7 +343,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     lcc.unmark_all(debug_edge_mark);
     for (auto it = iterator.begin(); it != iterator.end(); it++){
       auto edges = lcc.darts_of_cell<2, 0>(it);
-      // assert(edges.size() == 4);
+      assert(edges.size() == 4);
       if (edges.size() != 4)
         mark_face_unchecked(lcc, it, debug_edge_mark);
     }
@@ -382,7 +353,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     auto iterator = lcc.one_dart_per_cell<3>();
     for (auto it = iterator.begin(); it != iterator.end(); it++){
       auto edges = lcc.darts_of_cell<3, 0>(it);
-      // assert(edges.size() == (4 * 6));
+      assert(edges.size() == (4 * 6));
     }
   }
 
@@ -446,22 +417,31 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     for (auto& dart : pdata.faces_to_refine)
     {
-      // Utile uniquement si les faces marqués ne sont pas 100% templatés
-      // auto edges_range = lcc.darts_of_cell<2, 1>(dart);
-      // int marked_propagation = 0;
-      // std::vector<Dart_handle> edges_vec;
-      // for (auto it = edges_range.begin(), end = edges_range.end(); it != end; it++){
-      //   edges_vec.push_back(it);
-      //   if (lcc.is_marked(it, hdata.propagation_face_mark)) marked_propagation++;
-      // }
+      //Utile uniquement si les faces marqués ne sont pas 100% templatés
+      auto edges_range = lcc.darts_of_cell<2, 1>(dart);
+      int propagation = 0, beta3_propagation = 0;
+      bool has_beta3 = !lcc.is_free<3>(dart);
+
+      std::vector<Dart_handle> edges_vec;
+      for (auto it = edges_range.begin(), end = edges_range.end(); it != end; it++){
+        edges_vec.push_back(it);
+        if (lcc.is_marked(it, hdata.propagation_face_mark)) propagation++;
+        if (lcc.is_marked(lcc.beta<3>(it), hdata.propagation_face_mark)) beta3_propagation++;
+      }
 
       if (hdata.regular_templates.query_replace_one_face(lcc, dart, hdata.template_mark) != SIZE_T_MAX) nbsub++;
 
-      // if (marked_propagation >= 4){
-      //   for (auto dart : edges_vec){
-      //     mark_half_face_unchecked(lcc, dart, hdata.propagation_face_mark);
-      //   }
-      // }
+      if (propagation >= 1){
+        for (auto dart : edges_vec){
+          mark_half_face_unchecked(lcc, dart, hdata.propagation_face_mark);
+        }
+      }
+
+      if (beta3_propagation >= 1){
+        for (auto dart : edges_vec){
+            mark_half_face_unchecked(lcc, lcc.beta<3>(dart), hdata.propagation_face_mark);
+        }
+      }
     }
 
     // Cannot easily assert if all faces has been correctly treated, because some faces don't have attr
@@ -863,7 +843,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     if (pdata.plane >= 2) return;
 
-    lcc.unmark_all(hdata.propagation_face_mark);
+    //lcc.unmark_all(hdata.propagation_face_mark);
 
     for (auto face : faces_to_mark){
         auto& face_attr = lcc.attribute<2>(face)->info();
@@ -923,8 +903,13 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       bool vol_processed = vol_attr.iteration == pdata.plane;
 
+      // Two faces point to the same volume. We are on a merged cell (caused by 3 templates)
+      // if (vol_processed){
+      //   mark_all_0_cells<3>(lcc, face, hdata.template_mark);
+      // }
+
       // Create first volume attr and push back the volume
-      if (!vol_processed){
+      if (!vol_processed) {
         vol_attr.iteration = pdata.plane;
 
         if (face_attr.template_id != 3){
@@ -941,8 +926,9 @@ namespace CGAL::HexRefinement::TwoRefinement {
         auto &other_vol_attr = get_or_create_attr<3>(lcc, other_face)->info();
         bool other_vol_processed = other_vol_attr.iteration == pdata.plane;
 
-        if (!other_vol_processed)
-        {
+        // if (other_vol_processed)
+          // mark_all_0_cells<3>(lcc, other_face, hdata.template_mark);
+        if (!other_vol_processed) {
           other_vol_attr.iteration = pdata.plane;
 
           if (face_attr.template_id != 3){
@@ -1420,7 +1406,7 @@ namespace CGAL::HexRefinement {
       return true;
     };
     // gso.colored_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){
-      
+
     // };
     // gso.volume_color = [](const LCC& lcc, LCC::Dart_const_handle dart){
     //   return red();
@@ -1429,9 +1415,13 @@ namespace CGAL::HexRefinement {
     // gso.face_wireframe = [](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
 
     gso.draw_face = [](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
-    gso.face_color = [](const LCC& lcc, LCC::Dart_const_handle dart){
+    gso.face_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
       auto a = lcc.attribute<2>(dart);
       auto b = lcc.attribute<3>(dart);
+      if (TwoRefinement::is_half_face_marked(lcc, dart, hdata.propagation_face_mark)
+          or (!lcc.is_free<3>(dart) && TwoRefinement::is_half_face_marked(lcc, lcc.beta(dart, 3), hdata.propagation_face_mark)))
+        return yellow();
+
       return a != nullptr && a->info().plane[2] ? red() : lcc.is_whole_cell_marked<2>(dart, debug_edge_mark) ? green() : white();};
     gso.colored_face = [&](const LCC& lcc, LCC::Dart_const_handle dart){return true;};
 
@@ -1489,32 +1479,14 @@ namespace CGAL::HexRefinement {
 
       refine_marked_hexes(hdata, pdata);
 
-      // debug3 = lcc.get_new_mark();
-      for (auto a : pdata.additionnal_volumes_found){
-
-        if (pdata.plane != 2) continue;
-        
-        get_or_create_attr<3>(lcc, a)->info().draw = true;
-      }
-
-      for (auto a : pdata.faces_to_refine){
-
-        if (pdata.plane != 2) continue;
-        
-        get_or_create_attr<3>(lcc, a)->info().draw = true;
-      }
+      debug_render(lcc, hdata, pdata);
 
       assert_all_faces_are_quadrilateral(lcc);
-      debug_render(lcc, hdata, pdata);
-      // lcc.free_mark(debug3);
-
       assert_all_volumes_are_hexes(lcc);
 
       lcc.unmark_all(hdata.identified_mark);
       lcc.unmark_all(hdata.template_mark);
       lcc.unmark_all(hdata.corner_mark);
-
-
     }
 
     // debug_node_mark = hdata.template_mark;
