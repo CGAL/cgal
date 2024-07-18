@@ -132,7 +132,7 @@ sub reformat_results($)
 #            print PLATFORM_NEW_RESULTS $_;
 #            last;
 #        }
-    if (/^-- Third-party library ([\w\.]+ [\w\.\_\-]*)/) {
+    if (/^-- Third-party library (.+)$/) {
         $TPL = "$TPL $1,";
     }
 NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
