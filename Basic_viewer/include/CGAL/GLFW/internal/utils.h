@@ -19,6 +19,16 @@ using quatf = Eigen::Quaternionf;
 
 namespace utils
 {
+  bool equalFloat(float a, float b, float epsilon=0.001f)
+  {
+    return fabs(a-b) < epsilon;  
+  }
+
+  bool equalVec3Float(vec3f u, vec3f v, float epsilon=0.001f)
+  {
+    return equalFloat(u.x(), v.x(), epsilon) && equalFloat(u.y(), v.y(), epsilon) && equalFloat(u.z(), v.z(), epsilon);  
+  }
+
   float radians(float x)
   {
     return M_PI / 180 * x;

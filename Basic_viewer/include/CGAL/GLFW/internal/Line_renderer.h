@@ -17,6 +17,9 @@ public:
   void add_line(const vec3f& start, const vec3f& end, const vec3f& color);
   void draw();
 
+  inline bool are_buffers_loaded() const { return m_areBuffersLoaded; }
+  inline bool are_buffers_initialized() const { return m_areBuffersInitialized; }
+
   inline void set_width(const float width) { m_width = width; }
 
 private: 

@@ -76,7 +76,8 @@ public:
   inline bool is_qwerty_layout() const { return m_keyboardLayout == KeyboardLayout::QWERTY; }
 
   bool is_key_pressed(GLFWwindow* window, int key) const;
-  
+  bool has_active_actions() const;
+
   static int map_to_azerty(int key);
   static int map_to_qwerty(int key);
   static std::string get_string_from_keycode(int key);
@@ -238,7 +239,7 @@ void Input::handle_events(const float deltaTime)
 
   if (m_yOffset != 0)
   {
-    this->scroll_event(deltaTime);
+    scroll_event(deltaTime);
   }
 
   for (auto& [binding, action] : m_actionEvents)
@@ -252,9 +253,9 @@ void Input::handle_events(const float deltaTime)
     {
       m_keyConsumed[binding.get(0)] = true;
 
+      m_activatedActions[action] = true;
       if (binding.mode == InputMode::HOLD)
       {
-        m_activatedActions[action] = true;
         if (!m_startedActions[action])
         {
           m_startedActions[action] = true;
@@ -262,13 +263,13 @@ void Input::handle_events(const float deltaTime)
         }
       }
 
-      this->action_event(action, deltaTime);
+      action_event(action, deltaTime);
     }
   }
 
   for (auto& [action, state] : m_startedActions)
   {
-    if (!m_activatedActions[action])
+    if (m_activatedActions.find(action) != m_activatedActions.end() && !m_activatedActions[action])
     {
       m_startedActions[action] = false;
       end_action(action, deltaTime);
@@ -370,6 +371,12 @@ bool Input::is_key_pressed(GLFWwindow* window, int key) const
   int state = glfwGetKey(window, key);
 
   return state == GLFW_PRESS || state == GLFW_REPEAT;  
+}
+
+inline 
+bool Input::has_active_actions() const
+{
+  return m_activatedActions.size() > 0;
 }
 
 inline

@@ -120,6 +120,8 @@ namespace GLFW
     inline void use_mono_color(bool b) { m_useMonoColor = b; }
     inline void inverse_normal(bool b) { m_inverseNormal = b; }
     inline void flat_shading(bool b) { m_flatShading = b; }
+    inline void draw_world_axis(bool b) { m_drawWorldAxis = b; }
+    inline void draw_xy_grid(bool b) { m_drawXYGrid = b; }
 
     inline void display_mode(DisplayMode mode) { m_displayMode = mode; }
     inline void draw_clipping_plane(bool b) { m_drawClippingPlane = b; }
@@ -208,17 +210,20 @@ namespace GLFW
     void update_face_uniforms();
     void update_pl_uniforms();
     void update_clipping_uniforms();
-    void set_world_axis_uniforms();
-    void set_XY_grid_uniforms();
+    void update_world_axis_uniforms();
+    void update_XY_grid_uniforms();
 
-    void draw(const float deltaTime=0.0);
-    void draw_faces();
+    void render_scene(const float deltaTime);
+
+    void draw(const float deltaTime);
+    
     void draw_rays();
+    void draw_edges();
     void draw_lines();
+    void draw_vertices();
 
+    void draw_faces();
     void draw_faces_bis(RenderingMode mode);
-    void draw_vertices(RenderingMode mode);
-    void draw_edges(RenderingMode mode);
 
     void initialize_and_load_clipping_plane();
     void render_clipping_plane();
@@ -258,6 +263,8 @@ namespace GLFW
     void reset_camera_and_clipping_plane();
     void reset_clipping_plane();
 
+    bool need_update() const; 
+
   private:
     GLFWwindow* m_window;
 
@@ -286,7 +293,6 @@ namespace GLFW
     Line_renderer m_worldAxisRenderer; 
     Line_renderer m_XYGridRenderer; 
     Line_renderer m_XYAxisRenderer; 
-    Line_renderer m_clippingPlaneRenderer;
 
     float m_sizeVertices { CGAL_SIZE_POINTS };
     float m_sizeEdges { CGAL_SIZE_EDGES };
@@ -320,9 +326,11 @@ namespace GLFW
     vec2i m_windowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
     vec2i m_oldWindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
 
-    vec2i m_old_window_pos { 0, 0 }; 
+    vec2i m_oldWindowPosition { 0, 0 }; 
 
     float m_aspectRatio { 1.f };
+
+    float m_deltaTime { 0 };
 
     Camera m_camera;
 
@@ -423,8 +431,8 @@ namespace GLFW
       /*CLIPPING PLANE*/
       ROTATE_CLIPPING_PLANE,
       TRANSLATE_CLIPPING_PLANE,
-      TRANSLATE_CP_IN_CAMERA_DIRECTION,
-      TRANSLATE_CP_IN_NORMAL_DIRECTION,
+      TRANSLATE_CP_ALONG_CAMERA_DIRECTION,
+      TRANSLATE_CP_ALONG_NORMAL_DIRECTION,
 
       SWITCH_CLIPPING_PLANE_MODE,
       SWITCH_CLIPPING_PLANE_DISPLAY,

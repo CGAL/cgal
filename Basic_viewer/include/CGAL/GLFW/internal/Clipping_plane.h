@@ -2,9 +2,10 @@
 #define CGAL_CLIPPING_PLANE_H
 
 #include "utils.h"
+#include "Line_renderer.h"
 #include "../bv_settings.h"
 
-class Clipping_plane
+class Clipping_plane : public Line_renderer
 {
 public:
   enum class ConstraintAxis { NO_CONSTRAINT, RIGHT_AXIS, UP_AXIS };
@@ -28,10 +29,12 @@ public:
 
   vec3f get_normal() const;
 
+  bool need_update() const;
+
   inline float get_transparency() const { return m_transparency; }
   inline float get_rotation_speed() const { return m_rotationSpeed; }
   inline float get_translation_speed() const { return m_translationSpeed; }
-  inline std::string get_constraint_axis() const { return m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ? "None" : (m_constraintAxis == ConstraintAxis::RIGHT_AXIS ? "Right" : "Up"); }
+  inline std::string get_constraint_axis_str() const { return m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ? "None" : (m_constraintAxis == ConstraintAxis::RIGHT_AXIS ? "Right" : "Up"); }
 
   void set_orientation(const vec3f& normal);
 
@@ -83,20 +86,23 @@ private:
 inline 
 void Clipping_plane::update(const float deltaTime)
 {
-  float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
-  float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
+  if (need_update())
+  {
+    float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
+    float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
 
-  float pitchDelta = utils::radians((smoothPitch - m_pitch) * m_rotationSpeed) * deltaTime;
-  float yawDelta = utils::radians((smoothYaw - m_yaw) * m_rotationSpeed) * deltaTime;
+    float pitchDelta = utils::radians((smoothPitch - m_pitch) * m_rotationSpeed) * deltaTime;
+    float yawDelta = utils::radians((smoothYaw - m_yaw) * m_rotationSpeed) * deltaTime;
 
-  quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, m_rightAxis));
-  quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, m_upAxis));
-  m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
+    quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, m_rightAxis));
+    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, m_upAxis));
+    m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
 
-  m_pitch = smoothPitch;
-  m_yaw = smoothYaw;
+    m_pitch = smoothPitch;
+    m_yaw = smoothYaw;
 
-  m_position += m_translationSmoothFactor * (m_targetPosition - m_position);
+    m_position += m_translationSmoothFactor * (m_targetPosition - m_position);
+  }
 }
 
 inline 
@@ -168,8 +174,8 @@ void Clipping_plane::rotation(const float x, const float y)
 inline 
 void Clipping_plane::translation(const float s)
 {
-  vec3f forward = (m_orientation * vec3f::UnitZ()).normalized();
-  m_targetPosition -= m_size * forward * s * m_translationSpeed; 
+  vec3f normal = get_normal();
+  m_targetPosition -= m_size * normal * s * m_translationSpeed; 
 }
 
 inline 
@@ -200,6 +206,15 @@ void Clipping_plane::switch_constraint_axis()
       m_constraintAxis = ConstraintAxis::NO_CONSTRAINT;
       break;
   }
+}
+
+inline 
+bool Clipping_plane::need_update() const
+{
+  return !utils::equalFloat(m_targetPitch, m_pitch) 
+      || !utils::equalFloat(m_targetYaw, m_yaw) 
+      || !utils::equalVec3Float(m_targetPosition, m_position)
+      ; 
 }
 
 inline 

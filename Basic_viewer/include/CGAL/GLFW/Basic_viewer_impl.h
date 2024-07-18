@@ -142,14 +142,16 @@ namespace GLFW
     while (!glfwWindowShouldClose(m_window))
     {
       float currentFrame = static_cast<float>(glfwGetTime());
-      float deltaTime = currentFrame - lastFrame;
+      m_deltaTime = currentFrame - lastFrame;
       lastFrame = currentFrame;
+      if (m_deltaTime < 1e-3) m_deltaTime = 1e-3;
 
-      handle_events(deltaTime);
-      draw(deltaTime);
-      glfwSwapBuffers(m_window);
-
-      print_application_state(elapsedTime, deltaTime);
+      handle_events(m_deltaTime);
+      if (need_update()) 
+      {
+        render_scene(m_deltaTime);
+      }
+      print_application_state(elapsedTime, m_deltaTime);
     }
 
     clear_application();
@@ -171,7 +173,6 @@ namespace GLFW
   void Basic_viewer::make_screenshot(const std::string& filePath)
   {
     draw(0);
-    draw(1);
     glfwSwapBuffers(m_window);
     capture_screenshot(filePath);
     clear_application();
@@ -223,40 +224,38 @@ namespace GLFW
     m_camera.lookat(pmin, pmax);  
   }
 
+  /// @brief 
   inline 
   void Basic_viewer::initialize_and_load_world_axis()
   {
-    {
-      m_worldAxisRenderer.initialize_buffers();
-      m_worldAxisRenderer.set_width(3.f);
-      m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
-      m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
-      m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitZ(), vec3f(0, 0, 1)); // z-axis
-      m_worldAxisRenderer.load_buffers();
-    }
+    // World axis initialization
+    m_worldAxisRenderer.initialize_buffers();
+    m_worldAxisRenderer.set_width(3.f);
+    m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
+    m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
+    m_worldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitZ(), vec3f(0, 0, 1)); // z-axis
+    m_worldAxisRenderer.load_buffers();
 
     float cameraSize = m_camera.get_size() * 0.5;
-    {
-      m_XYAxisRenderer.initialize_buffers();
-      m_XYAxisRenderer.set_width(5.f);
-      m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
-      m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
-      m_XYAxisRenderer.load_buffers();
-    }
+    // XY grid axis initialization
+    m_XYAxisRenderer.initialize_buffers();
+    m_XYAxisRenderer.set_width(5.f);
+    m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
+    m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
+    m_XYAxisRenderer.load_buffers();
 
-    {
-      m_XYGridRenderer.initialize_buffers();
-      m_XYGridRenderer.set_width(2.f);
-      m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitX(), vec3f(.8f, .8f, .8f)); // -x-axis
-      m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitY(), vec3f(.8f, .8f, .8f)); // -y-axis
-      m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitZ(), vec3f(.8f, .8f, .8f)); // -z-axis
+    // XY grid initialization 
+    m_XYGridRenderer.initialize_buffers();
+    m_XYGridRenderer.set_width(2.f);
+    m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitX(), vec3f(.8f, .8f, .8f)); // -x-axis
+    m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitY(), vec3f(.8f, .8f, .8f)); // -y-axis
+    m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitZ(), vec3f(.8f, .8f, .8f)); // -z-axis
 
-      vec3f color(.8f, .8f, .8f);
+    vec3f color(.8f, .8f, .8f);
 
-      generate_grid(m_XYGridRenderer, color, cameraSize);
-      
-      m_XYGridRenderer.load_buffers();
-    }
+    generate_grid(m_XYGridRenderer, color, cameraSize);
+    
+    m_XYGridRenderer.load_buffers();
   }
 
   inline
@@ -453,7 +452,7 @@ namespace GLFW
   }
 
   inline
-  void Basic_viewer::set_world_axis_uniforms()
+  void Basic_viewer::update_world_axis_uniforms()
   {
     mat4f view = m_modelViewMatrix;
 
@@ -470,18 +469,43 @@ namespace GLFW
     mat4f translate = transform::translation(vec3f(halfWidth - 0.1f*m_aspectRatio, halfHeight - 0.1f, 0.0f));
 
     mat4f mvp = proj * rotation4x4 * translate;
+
+    m_lineShader.use();
     m_lineShader.set_mat4f("mvp_matrix", mvp.data()); 
   }
 
   inline
-  void Basic_viewer::set_XY_grid_uniforms()
+  void Basic_viewer::update_XY_grid_uniforms()
   {
+    m_lineShader.use();
     m_lineShader.set_mat4f("mvp_matrix", m_modelViewProjectionMatrix.data());
+  }
+
+  inline 
+  bool Basic_viewer::need_update() const
+  {
+    return m_camera.need_update() 
+        || m_clippingPlane.need_update() 
+        || has_active_actions() // inputs 
+        || m_animationController.is_running()
+        ; 
+  }
+
+  inline 
+  void Basic_viewer::render_scene(const float deltaTime)
+  {
+    draw(deltaTime);
+    glfwSwapBuffers(m_window);
+    // else 
+    // {
+    //   std::cout << "\33[2K UPDATE OFF " << deltaTime << "\r"  << std::flush;
+    // }
   }
 
   inline
   void Basic_viewer::draw(const float deltaTime)
   {
+    // std::cout << "\33[2K UPDATE ON " << deltaTime << "\r"  << std::flush;
     if (!m_areBuffersInitialized)
     {
       load_scene();
@@ -497,18 +521,14 @@ namespace GLFW
 
     compute_model_view_projection_matrix(deltaTime);
 
-    bool half = m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
-
-    RenderingMode mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
-
     update_pl_uniforms();
     if (m_drawVertices)
     {
-      draw_vertices(mode);
+      draw_vertices();
     }
     if (m_drawEdges)
     {
-      draw_edges(mode);
+      draw_edges();
     }
     if (m_drawRays)
     {
@@ -519,19 +539,27 @@ namespace GLFW
       draw_lines();
     }
 
-    update_face_uniforms();
+    if (clipping_plane_enable())
+    {
+      update_clipping_uniforms();
+      render_clipping_plane();
+    }
+
     if (m_drawFaces)
     {
+      update_face_uniforms();
       draw_faces();
     }
 
-    m_lineShader.use();
     if (m_drawWorldAxis)  
     {
+      update_world_axis_uniforms();
       draw_world_axis();
     }
+
     if (m_drawXYGrid) 
     {
+      update_XY_grid_uniforms();
       draw_xy_grid();
     }
   }
@@ -572,7 +600,7 @@ namespace GLFW
       draw_faces_bis(RenderingMode::DRAW_INSIDE_ONLY);
 
       // 4. render clipping plane here
-      render_clipping_plane();
+      // render_clipping_plane();
     } 
     else // Not CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF
     {
@@ -583,7 +611,7 @@ namespace GLFW
         draw_faces_bis(RenderingMode::DRAW_INSIDE_ONLY);
 
         // 2. render clipping plane here
-        render_clipping_plane();
+        // render_clipping_plane();
       } 
       else
       {
@@ -644,8 +672,11 @@ namespace GLFW
   }
 
   inline
-  void Basic_viewer::draw_vertices(RenderingMode mode)
+  void Basic_viewer::draw_vertices()
   {
+    bool half = m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+    auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
+
     m_plShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_verticeMonoColor);
@@ -691,9 +722,12 @@ namespace GLFW
   }
 
   inline
-  void Basic_viewer::draw_edges(RenderingMode mode)
+  void Basic_viewer::draw_edges()
   {
     glDepthFunc(GL_LEQUAL);
+    bool half = m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+    auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
+
     m_plShader.set_float("rendering_mode", static_cast<float>(mode));
 
     vec4f color = color_to_vec4(m_edgesMonoColor);
@@ -718,10 +752,12 @@ namespace GLFW
 
   void Basic_viewer::draw_world_axis() 
   {
+    glDepthFunc(GL_LEQUAL);
+
     int &w = m_windowSize.x();
     int &h = m_windowSize.y();
 
-    set_world_axis_uniforms();
+    update_world_axis_uniforms();
 
     glViewport(w - w / 5, h - h / 5, w / 5, h / 5);
     m_worldAxisRenderer.draw();
@@ -732,7 +768,9 @@ namespace GLFW
 
   void Basic_viewer::draw_xy_grid() 
   { 
-    set_XY_grid_uniforms();
+    glDepthFunc(GL_LEQUAL);
+
+    update_XY_grid_uniforms();
     m_XYGridRenderer.draw();
     m_XYAxisRenderer.draw();
   }
@@ -747,10 +785,10 @@ namespace GLFW
     const unsigned int NB_SUBDIVISIONS = 30;
 
     vec3f color(0,0,0);
-    m_clippingPlaneRenderer.initialize_buffers();
-    m_clippingPlaneRenderer.set_width(0.1f);
-    generate_grid(m_clippingPlaneRenderer, color, size, NB_SUBDIVISIONS);
-    m_clippingPlaneRenderer.load_buffers();
+    m_clippingPlane.initialize_buffers();
+    m_clippingPlane.set_width(0.1f);
+    generate_grid(m_clippingPlane, color, size, NB_SUBDIVISIONS);
+    m_clippingPlane.load_buffers();
 
     m_clippingPlane.set_size(m_camera.get_size());  
   }
@@ -764,10 +802,9 @@ namespace GLFW
     }
 
     update_clipping_uniforms();
-    
     if (m_drawClippingPlane)
     {
-      m_clippingPlaneRenderer.draw();
+      m_clippingPlane.draw();
     }
   }
 
@@ -802,6 +839,8 @@ namespace GLFW
 
     viewer->m_aspectRatio = static_cast<float>(width) / height;
     glViewport(0, 0, width, height);
+
+    viewer->render_scene(viewer->m_deltaTime);
   }
 
   inline
@@ -824,10 +863,10 @@ namespace GLFW
                   << "FPS: "                        << std::round(1 / deltaTime)                        << "\n\33[2K" 
                   << "Camera translation speed: "   << m_camera.get_translation_speed()                 << "    " 
                   << "Camera rotation speed: "      << std::round(m_camera.get_rotation_speed())        << "    "
-                  << "Camera constraint axis: "     << m_camera.get_constraint_axis()                   << "\n\33[2K"     
+                  << "Camera constraint axis: "     << m_camera.get_constraint_axis_str()                   << "\n\33[2K"     
                   << "CP translation speed: "       << m_clippingPlane.get_translation_speed()          << "    "            
                   << "CP rotation speed: "          << std::round(m_clippingPlane.get_rotation_speed()) << "    "     
-                  << "CP constraint axis: "         << m_clippingPlane.get_constraint_axis()            << "\n\33[2K"     
+                  << "CP constraint axis: "         << m_clippingPlane.get_constraint_axis_str()            << "\n\33[2K"     
                   << "Light color: ("               << m_ambientColor.x()                               << ", " 
                                                     << m_ambientColor.y()                               << ", " 
                                                     << m_ambientColor.z()                               << ")\n\33[2K"     
@@ -844,7 +883,7 @@ namespace GLFW
     {
     case ROTATE_CLIPPING_PLANE:
     case TRANSLATE_CLIPPING_PLANE:
-    case TRANSLATE_CP_IN_CAMERA_DIRECTION:
+    case TRANSLATE_CP_ALONG_CAMERA_DIRECTION:
     case TRANSLATE_CAMERA:
     case ROTATE_CAMERA:
       // glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -874,7 +913,7 @@ namespace GLFW
         }
         m_camera.reset_position();
       }
-      if (btn == GLFW_MOUSE_BUTTON_LEFT)
+      else if (btn == GLFW_MOUSE_BUTTON_LEFT)
       {
         if (is_key_pressed(m_window, GLFW_KEY_LEFT_CONTROL))
         {
@@ -1081,7 +1120,7 @@ namespace GLFW
     case TRANSLATE_CLIPPING_PLANE:
       translate_clipping_plane(deltaTime);
       break;
-    case TRANSLATE_CP_IN_CAMERA_DIRECTION:
+    case TRANSLATE_CP_ALONG_CAMERA_DIRECTION:
       translate_clipping_plane(deltaTime, true);
       break;
     case SWITCH_CP_CONSTRAINT_AXIS:
@@ -1285,7 +1324,7 @@ namespace GLFW
   {
     auto mouseDelta = get_mouse_delta();
 
-    if (m_camera.get_constraint_axis() == "Forward")
+    if (m_camera.get_constraint_axis_str() == "Forward")
     {
       mouseDelta = get_roll_mouse_delta();
     }
@@ -1319,12 +1358,12 @@ namespace GLFW
     GLFWmonitor *monitor = glfwGetMonitors(&count)[0];
     const GLFWvidmode *mode = glfwGetVideoMode(monitor);
 
-
-    if (m_isFullscreen) {
+    if (m_isFullscreen) 
+    {
       m_oldWindowSize = m_windowSize;
 
 #if !defined(GLFW_USE_WAYLAND)
-      glfwGetWindowPos(m_window, &m_old_window_pos.x(), &m_old_window_pos.y()); 
+      glfwGetWindowPos(m_window, &m_oldWindowPosition.x(), &m_oldWindowPosition.y()); 
 #endif 
       glfwSetWindowMonitor(m_window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
       glViewport(0, 0, mode->width, mode->height);
@@ -1335,7 +1374,7 @@ namespace GLFW
     else 
     {
       m_windowSize = m_oldWindowSize;
-      glfwSetWindowMonitor(m_window, nullptr, m_old_window_pos.x(), m_old_window_pos.y(), m_windowSize.x(), m_windowSize.y(), mode->refreshRate);
+      glfwSetWindowMonitor(m_window, nullptr, m_oldWindowPosition.x(), m_oldWindowPosition.y(), m_windowSize.x(), m_windowSize.y(), mode->refreshRate);
       glViewport(0, 0, m_windowSize.x(), m_windowSize.y());
     }
   }
@@ -1457,7 +1496,7 @@ namespace GLFW
 
     add_mouse_action({GLFW_MOUSE_BUTTON_LEFT,   GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, ROTATE_CLIPPING_PLANE);
     add_mouse_action({GLFW_MOUSE_BUTTON_RIGHT,  GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CLIPPING_PLANE);
-    add_mouse_action({GLFW_MOUSE_BUTTON_MIDDLE, GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CP_IN_CAMERA_DIRECTION);
+    add_mouse_action({GLFW_MOUSE_BUTTON_MIDDLE, GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, TRANSLATE_CP_ALONG_CAMERA_DIRECTION);
 
     add_keyboard_action({GLFW_KEY_R, GLFW_KEY_TAB}, InputMode::RELEASE, RESET_CLIPPING_PLANE);
 
@@ -1475,71 +1514,79 @@ namespace GLFW
         {get_binding_text_from_action(RUN_OR_STOP_ANIMATION), "Start/Stop animation (only available in orbiter)"},
       }},
       {"Clipping plane", {
-        {get_binding_text_from_action(SWITCH_CLIPPING_PLANE_MODE),        "Switch clipping plane display mode"},
-        {get_binding_text_from_action(SWITCH_CLIPPING_PLANE_DISPLAY),     "Toggle clipping plane rendering on/off"},
-        {get_binding_text_from_action(SWITCH_CP_CONSTRAINT_AXIS),         "Switch constraint axis for clipping plane rotation"},
-        {"",                                                              ""},
-        {get_binding_text_from_action(INC_CP_ROTATION_SPEED),             "Increase rotation speed"},
-        {get_binding_text_from_action(DEC_CP_ROTATION_SPEED),             "Decrease rotation speed"},
-        {get_binding_text_from_action(INC_CP_TRANSLATION_SPEED),          "Increase translation speed"},
-        {get_binding_text_from_action(DEC_CP_TRANSLATION_SPEED),          "Decrease translation speed"},
-        {"",                                                              ""},
-        {get_binding_text_from_action(ROTATE_CLIPPING_PLANE),             "Rotate the clipping plane when enabled"},
-        {get_binding_text_from_action(TRANSLATE_CLIPPING_PLANE),          "Translate the clipping plane when enabled"},
-        {get_binding_text_from_action(TRANSLATE_CP_IN_CAMERA_DIRECTION),  "Translate the clipping plane along camera direction axis when enabled"},
-        {"",                                                              ""},
-        {get_binding_text_from_action(RESET_CLIPPING_PLANE),              "Reset clipping plane"},
+        {get_binding_text_from_action(SWITCH_CLIPPING_PLANE_MODE),    "Switch clipping plane display mode"},
+        {get_binding_text_from_action(SWITCH_CLIPPING_PLANE_DISPLAY), "Toggle clipping plane rendering on/off"},
+        {get_binding_text_from_action(SWITCH_CP_CONSTRAINT_AXIS),     "Switch constraint axis for clipping plane rotation"},
+
+        {"", ""},
+
+        {get_binding_text_from_action(INC_CP_ROTATION_SPEED),    "Increase rotation speed"},
+        {get_binding_text_from_action(DEC_CP_ROTATION_SPEED),    "Decrease rotation speed"},
+        {get_binding_text_from_action(INC_CP_TRANSLATION_SPEED), "Increase translation speed"},
+        {get_binding_text_from_action(DEC_CP_TRANSLATION_SPEED), "Decrease translation speed"},
+
+        {"", ""},
+
+        {get_binding_text_from_action(ROTATE_CLIPPING_PLANE),               "Rotate the clipping plane when enabled"},
+        {get_binding_text_from_action(TRANSLATE_CLIPPING_PLANE),            "Translate the clipping plane when enabled"},
+        {get_binding_text_from_action(TRANSLATE_CP_ALONG_CAMERA_DIRECTION), "Translate the clipping plane along camera direction axis when enabled"},
+        {"[LCTRL+WHEEL]",                                                     "Translate the clipping plane along its normal when enabled"},
+
+        {"", ""},
+
+        {get_binding_text_from_action(RESET_CLIPPING_PLANE), "Reset clipping plane"},
       }},
       {"Camera", {
-        {get_binding_text_from_action(FORWARD),                               "Move camera forward"},
-        {get_binding_text_from_action(BACKWARDS),                             "Move camera backwards"},
-        {get_binding_text_from_action(UP),                                    "Move camera up"},
-        {get_binding_text_from_action(DOWN),                                  "Move camera down"},
-        {get_binding_text_from_action(RIGHT),                                 "Move camera right"},
-        {get_binding_text_from_action(LEFT),                                  "Move camera left"},
-        {"",                                                                  ""},
-        {get_binding_text_from_action(SWITCH_CAMERA_MODE),                    "Switch to Perspective/Orthographic view"},
-        {get_binding_text_from_action(SWITCH_CAMERA_TYPE),                    "Switch to Orbiter/Free-fly camera type"},
-        {get_binding_text_from_action(SWITCH_CAMERA_CONSTRAINT_AXIS),         "Switch constraint axis for camera rotation"},
-        {"",                                                                  ""},
-        {get_binding_text_from_action(ROTATE_CAMERA),                         "Rotate the camera"},
-        {get_binding_text_from_action(TRANSLATE_CAMERA),                      "Translate the camera"},
-        {get_binding_text_from_action(RESET_CAMERA_AND_CP),                             "Reset camera"},
-        {"",                                                                  ""},
-        {get_binding_text_from_action(INC_CAMERA_ROTATION_SPEED),             "Increase rotation speed"},
-        {get_binding_text_from_action(DEC_CAMERA_ROTATION_SPEED),             "Decrease rotation speed"},
-        {get_binding_text_from_action(INC_CAMERA_TRANSLATION_SPEED),          "Increase translation speed"},
-        {get_binding_text_from_action(DEC_CAMERA_TRANSLATION_SPEED),          "Decrease translation speed"},
-        {"",                                                                  ""},
-        {"WHEEL",                                                             "Zoom in/out"},
-        {"LEFT_DOUBLE_CLICK",                                                 "Center the camera to the object"},
-        {"LCTRL+LEFT_DOUBLE_CLICK",                                           "Reset camera position & orientation"},
-        {"RIGHT_DOUBLE_CLICK",                                                "Aligns camera to nearest axis"},
-        {"Z+WHEEL",                                                           "Increase/Decrease FOV"},
+        {get_binding_text_from_action(FORWARD),                      "Move camera forward"},
+        {get_binding_text_from_action(BACKWARDS),                    "Move camera backwards"},
+        {get_binding_text_from_action(UP),                           "Move camera up"},
+        {get_binding_text_from_action(DOWN),                         "Move camera down"},
+        {get_binding_text_from_action(RIGHT),                        "Move camera right"},
+        {get_binding_text_from_action(LEFT),                         "Move camera left"},
+        {"",                                                         ""},
+        {get_binding_text_from_action(SWITCH_CAMERA_MODE),           "Switch to Perspective/Orthographic view"},
+        {get_binding_text_from_action(SWITCH_CAMERA_TYPE),           "Switch to Orbiter/Free-fly camera type"},
+        {get_binding_text_from_action(SWITCH_CAMERA_CONSTRAINT_AXIS),"Switch constraint axis for camera rotation"},
+        {"",                                                         ""},
+        {get_binding_text_from_action(ROTATE_CAMERA),                "Rotate the camera"},
+        {get_binding_text_from_action(TRANSLATE_CAMERA),             "Translate the camera"},
+        {get_binding_text_from_action(RESET_CAMERA_AND_CP),                    "Reset camera"},
+        {"",                                                         ""},
+        {get_binding_text_from_action(INC_CAMERA_ROTATION_SPEED),    "Increase rotation speed"},
+        {get_binding_text_from_action(DEC_CAMERA_ROTATION_SPEED),    "Decrease rotation speed"},
+        {get_binding_text_from_action(INC_CAMERA_TRANSLATION_SPEED), "Increase translation speed"},
+        {get_binding_text_from_action(DEC_CAMERA_TRANSLATION_SPEED), "Decrease translation speed"},
+        {"",                                                         ""},
+        {"[WHEEL]",                                                    "Zoom in/out"},
+        {"[LEFT_DOUBLE_CLICK]",                                        "Aligns camera to nearest axis"},
+        {"[LCTRL+LEFT_DOUBLE_CLICK]",                                  "Aligns camera to clipping plane"},
+        {"[RIGHT_DOUBLE_CLICK]",                                       "Center the camera to the object"},
+        {"[LCTRL+RIGHT_DOUBLE_CLICK]",                                 "Reset camera position & orientation"},
+        {"[Z+WHEEL]",                                                  "Increase/Decrease FOV"},
       }},
       {"Scene", {
-        {get_binding_text_from_action(INC_LIGHT_ALL),       "Increase light (all colors, use shift/alt/ctrl for one rgb component)"},
-        {get_binding_text_from_action(DEC_LIGHT_ALL),       "Decrease light (all colors, use shift/alt/ctrl for one rgb component)"},
-        {"",                                                ""},
-        {get_binding_text_from_action(VERTICES_DISPLAY),    "Toggle vertices display"},
-        {get_binding_text_from_action(EDGES_DISPLAY),       "Toggle edges display"},
-        {get_binding_text_from_action(FACES_DISPLAY),       "Toggle faces display"},
-        {"",                                                ""},
-        {get_binding_text_from_action(DISPLAY_WORLD_AXIS),  "Toggle world axis display"},
-        {get_binding_text_from_action(DISPLAY_XY_GRID),     "Toggle XY grid display"},
-        {"",                                                ""},
-        {get_binding_text_from_action(INC_POINTS_SIZE),     "Increase size of vertices"},
-        {get_binding_text_from_action(DEC_POINTS_SIZE),     "Decrease size of vertices"},
-        {get_binding_text_from_action(INC_EDGES_SIZE),      "Increase size of edges"},
-        {get_binding_text_from_action(DEC_EDGES_SIZE),      "Decrease size of edges"},
-        {"",                                                ""},
-        {get_binding_text_from_action(MONO_COLOR),          "Toggle mono color"},
-        {get_binding_text_from_action(INVERSE_NORMAL),      "Invert direction of normals"},
-        {get_binding_text_from_action(SHADING_MODE),        "Switch between flat/Gouraud shading display"},
+        {get_binding_text_from_action(INC_LIGHT_ALL),      "Increase light (all colors, use shift/alt/ctrl for one rgb component)"},
+        {get_binding_text_from_action(DEC_LIGHT_ALL),      "Decrease light (all colors, use shift/alt/ctrl for one rgb component)"},
+        {"",                                               ""},
+        {get_binding_text_from_action(VERTICES_DISPLAY),   "Toggle vertices display"},
+        {get_binding_text_from_action(EDGES_DISPLAY),      "Toggle edges display"},
+        {get_binding_text_from_action(FACES_DISPLAY),      "Toggle faces display"},
+        {"",                                               ""},
+        {get_binding_text_from_action(DISPLAY_WORLD_AXIS), "Toggle world axis display"},
+        {get_binding_text_from_action(DISPLAY_XY_GRID),    "Toggle XY grid display"},
+        {"",                                               ""},
+        {get_binding_text_from_action(INC_POINTS_SIZE),    "Increase size of vertices"},
+        {get_binding_text_from_action(DEC_POINTS_SIZE),    "Decrease size of vertices"},
+        {get_binding_text_from_action(INC_EDGES_SIZE),     "Increase size of edges"},
+        {get_binding_text_from_action(DEC_EDGES_SIZE),     "Decrease size of edges"},
+        {"",                                               ""},
+        {get_binding_text_from_action(MONO_COLOR),         "Toggle mono color"},
+        {get_binding_text_from_action(INVERSE_NORMAL),     "Invert direction of normals"},
+        {get_binding_text_from_action(SHADING_MODE),       "Switch between flat/Gouraud shading display"},
       }},         
       {"Window", {
-        {get_binding_text_from_action(FULLSCREEN),  "Switch to windowed/fullscreen mode"},
-        {get_binding_text_from_action(SCREENSHOT),  "Take a screenshot of the current view"},
+        {get_binding_text_from_action(FULLSCREEN), "Switch to windowed/fullscreen mode"},
+        {get_binding_text_from_action(SCREENSHOT), "Take a screenshot of the current view"},
       }},
       {"Application", {
         {get_binding_text_from_action(EXIT),                    "Exit program"},

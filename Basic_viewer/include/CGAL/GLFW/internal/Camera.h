@@ -59,7 +59,9 @@ public:
   void align_to_plane(const vec3f& normal);
   void align_to_nearest_axis();
 
-  std::string get_constraint_axis() const;
+  std::string get_constraint_axis_str() const;
+
+  bool need_update() const;
   
   inline float get_translation_speed() const { return m_translationSpeed; }
   inline float get_rotation_speed() const { return m_rotationSpeed; }
@@ -145,50 +147,54 @@ private:
 inline 
 void Camera::update(const float dt) 
 {
-  if (m_type == CameraType::FREE_FLY) {
-    if (m_targetPitch > 90.f) 
-    {
-        m_targetPitch = 90.f;
-    }
-    else if (m_targetPitch < -90.f) 
-    {
-        m_targetPitch = -90.f;
-    }
-  }
-
-  float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
-  float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
-
-  float pitchDelta = utils::radians((smoothPitch - m_pitch) * m_rotationSpeed) * dt;
-  float yawDelta = utils::radians((smoothYaw - m_yaw) * m_rotationSpeed) * dt;
-
-  if (is_orbiter()) 
+  if (need_update())
   {
-    if (m_constraintAxis == ConstraintAxis::FORWARD_AXIS)
+    if (m_type == CameraType::FREE_FLY) 
     {
-      quatf rollQuaternion(Eigen::AngleAxisf(pitchDelta - yawDelta, -vec3f::UnitZ()));
-      m_orientation = rollQuaternion * m_orientation;
+      if (m_targetPitch > 90.f) 
+      {
+          m_targetPitch = 90.f;
+      }
+      else if (m_targetPitch < -90.f) 
+      {
+          m_targetPitch = -90.f;
+      }
     }
-    else 
+
+    float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
+    float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
+
+    float pitchDelta = utils::radians((smoothPitch - m_pitch) * m_rotationSpeed) * dt;
+    float yawDelta = utils::radians((smoothYaw - m_yaw) * m_rotationSpeed) * dt;
+
+    if (is_orbiter()) 
     {
-      quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
-      quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
-      m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
+      if (m_constraintAxis == ConstraintAxis::FORWARD_AXIS)
+      {
+        quatf rollQuaternion(Eigen::AngleAxisf(pitchDelta - yawDelta, -vec3f::UnitZ()));
+        m_orientation = rollQuaternion * m_orientation;
+      }
+      else 
+      {
+        quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
+        quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
+        m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
+      }
+
     }
+    else // free fly
+    {
+      quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, get_right()));
+      quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY())); // lock roll rotation 
+      m_orientation = m_orientation * pitchQuaternion * yawQuaternion;
+    }
+    m_pitch = smoothPitch;
+    m_yaw = smoothYaw;
 
+    m_position += m_translationSmoothFactor * (m_targetPosition - m_position);
+
+    m_size += m_zoomSmoothFactor * (m_targetSize - m_size);
   }
-  else // free fly
-  {
-    quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, get_right()));
-    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY())); // lock roll rotation 
-    m_orientation = m_orientation * pitchQuaternion * yawQuaternion;
-  }
-  m_pitch = smoothPitch;
-  m_yaw = smoothYaw;
-
-  m_position += m_translationSmoothFactor * (m_targetPosition - m_position);
-
-  m_size += m_zoomSmoothFactor * (m_targetSize - m_size);
 }
 
 inline 
@@ -697,6 +703,16 @@ void Camera::compute_target_size()
   m_targetSize = m_radius / tanHalfFov * .6f;
 }
 
+inline
+bool Camera::need_update() const
+{
+  return !utils::equalFloat(m_targetPitch, m_pitch) 
+      || !utils::equalFloat(m_targetYaw, m_yaw) 
+      || !utils::equalFloat(m_targetSize, m_size) 
+      || !utils::equalVec3Float(m_targetPosition, m_position)
+      ;
+}
+
 inline 
 void Camera::set_orientation(const vec3f& forward, float upAngle) 
 { 
@@ -705,7 +721,7 @@ void Camera::set_orientation(const vec3f& forward, float upAngle)
 }
 
 inline 
-std::string Camera::get_constraint_axis() const 
+std::string Camera::get_constraint_axis_str() const 
 { 
   if (m_constraintAxis == ConstraintAxis::UP_AXIS) return "Up";
   if (m_constraintAxis == ConstraintAxis::RIGHT_AXIS) return "Right";
