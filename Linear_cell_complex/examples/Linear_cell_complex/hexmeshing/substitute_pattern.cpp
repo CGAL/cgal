@@ -7,6 +7,7 @@
 #include <CGAL/Graphics_scene_options.h>
 #include <cstdlib>
 #include <filesystem>
+#include <iostream>
 
 // int pattern_substitution()
 // {
@@ -193,7 +194,10 @@ int create_validation_files(){
 
     std::string out = dir + "/validation/" + entry.path().filename().replace_extension().string() + ".3map";
 
-    CGAL::save_combinatorial_map(lcc, out.c_str());
+    if (!CGAL::save_combinatorial_map(lcc, out.c_str())){
+      std::cerr << "Error while saving result of tworefinement for " << entry.path().filename() << std::endl;
+      return EXIT_FAILURE;
+    }
   }
 
   return EXIT_SUCCESS;
@@ -210,16 +214,31 @@ int validation_test(){
 
     if (!off_file.exists()) return EXIT_FAILURE;
 
-    LCC result = CGAL::HexRefinement::two_refinement(entry.path().string(), 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly);
+    LCC result = CGAL::HexRefinement::two_refinement(off_file.path().string(), 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly);
     LCC validation;
 
-    std::string off_file_string = entry.path().string();
-    if (!CGAL::load_combinatorial_map(off_file_string.c_str(), validation)) return EXIT_FAILURE;
+    if (!CGAL::load_combinatorial_map(entry.path().string().c_str(), validation)) {
+      std::cerr << "Could not load cominatorial map from "
+                << entry.path().filename()
+                << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    if (!result.is_isomorphic_to(validation, true, false, true)) {
+      std::cerr << "Resulting tworefinement from polyhedron : "
+                << entry.path().filename()
+                << " is not isomorphic to its validation file "
+                << std::endl;
+      return EXIT_FAILURE;
+    }
   }
+
+  std::cout << "All meshes have been validated successfully" << std::endl;
 
   return EXIT_SUCCESS;
 }
 
 int main(){
-  return surface_test();
+  // /!\ Run validations only in Release mode, some assertions in Debug mode are very costly
+  return validation_test();
 }
