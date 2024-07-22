@@ -44,7 +44,9 @@ namespace Isosurfacing {
  * \param domain the domain providing the spatial partition and the values and gradient data
  * \param isovalue the value defining the isosurface
  * \param points the points of the polygons in the output polygon soup
- * \param polygons the faces of the output polygon soup. Each element in the vector describes a polygon using the indices of the points in `points`.
+ * \param polygons the faces of the output polygon soup. Each element in the vector describes a polygon
+ *                 (either quads or triangles, see the named parameter `do_not_triangulate_faces`)
+ *                  using the indices of the points in `points`.
  * \param np optional \ref bgl_namedparameters "Named Parameters" described below
  *
  * \cgalNamedParamsBegin

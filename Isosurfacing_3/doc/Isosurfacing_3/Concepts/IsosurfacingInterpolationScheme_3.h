@@ -44,7 +44,7 @@ public:
   * \tparam ValueRange must be a model of `RandomAccessRange` with `FT` as value type
   */
   template <typename Grid, typename ValueRange>
-  FT interpolate_values(Point_3 p, Grid g, ValueRange vr) const;
+  FT interpolated_value(Point_3 p, Grid g, ValueRange vr) const;
 
   /*!
    * \brief interpolates the gradient of the gradient field at the point `p`
@@ -54,5 +54,5 @@ public:
    * \tparam GradientRange must be a model of `RandomAccessRange` with `Vector_3` as value type
    */
   template <typename Grid, typename GradientRange>
-  Vector_3 interpolate_gradients(Point_3 p, Grid g, GradientRange gr) const;
+  Vector_3 interpolated_gradient(Point_3 p, Grid g, GradientRange gr) const;
 };

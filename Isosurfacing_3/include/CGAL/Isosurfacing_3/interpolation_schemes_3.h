@@ -52,7 +52,7 @@ public:
    * \param g the grid
    * \param values the continuous field of scalar values, defined over the geometric span of `g`
    */
-  FT interpolate_values(const Point_3& p,
+  FT interpolated_value(const Point_3& p,
                         const Grid& g,
                         const std::vector<FT>& values) const
 {
@@ -122,7 +122,7 @@ public:
    * \param g the grid
    * \param gradients the continuous field of vector values, defined over the geometric span of `g`
    */
-  Vector_3 interpolate_gradients(const Point_3& p,
+  Vector_3 interpolated_gradient(const Point_3& p,
                                  const Grid& g,
                                  const std::vector<Vector_3>& gradients) const
   {
@@ -222,12 +222,12 @@ public:
   { }
 
 public:
-  FT interpolate_values(const Point_3& p, const Grid&, const std::vector<FT>&) const
+  FT interpolated_value(const Point_3& p, const Grid&, const std::vector<FT>&) const
   {
     return m_value_fn(p);
   }
 
-  Vector_3 interpolate_gradients(const Point_3& p, const Grid&, const std::vector<Vector_3>&) const
+  Vector_3 interpolated_gradient(const Point_3& p, const Grid&, const std::vector<Vector_3>&) const
   {
     return m_gradient_fn(p);
   }

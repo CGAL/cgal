@@ -117,7 +117,7 @@ public:
    */
   Vector_3 operator()(const Point_3& p) const
   {
-    return m_interpolation.interpolate_gradients(p, m_grid, m_gradients);
+    return m_interpolation.interpolated_gradient(p, m_grid, m_gradients);
   }
 };
 

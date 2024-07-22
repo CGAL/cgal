@@ -114,7 +114,7 @@ public:
    */
   FT operator()(const Point_3& p) const
   {
-    return m_interpolation.interpolate_values(p, m_grid, m_values);
+    return m_interpolation.interpolated_value(p, m_grid, m_values);
   }
 };
 
