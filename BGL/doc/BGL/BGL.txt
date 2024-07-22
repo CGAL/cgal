@@ -659,7 +659,7 @@ of the same concept. See `CGAL/boost/graph/graph_traits_inheritance_macros.h` fo
 
 For algorithms that operate locally, partitioning is often an easy way to parallelize
 the algorithm at little cost.
-The functions `CGAL::METIS::partition_graph()` and `CGAL::METIS::partition_dual_graph()`
+The functions \link PkgBGLPartition `CGAL::METIS::partition_graph()` \endlink and \link PkgBGLPartition `CGAL::METIS::partition_dual_graph()` \endlink
 provide wrappers to the graph partitioning library METIS \cgalCite{karypis1998fast},
 allowing to split triangular meshes that are models of the concept `FaceListGraph`
 into a given number of subdomains.
