@@ -19,14 +19,28 @@ using quatf = Eigen::Quaternionf;
 
 namespace utils
 {
-  bool equalFloat(float a, float b, float epsilon=0.001f)
+  bool inside_bounding_box_2d(const vec2f& point, const vec2f& pmin, const vec2f& pmax)
+  {
+    return point.x() >= pmin.x() && point.x() <= pmax.x() && point.y() >= pmin.y() && point.y() <= pmax.y(); 
+  } 
+
+  vec2f normalized_coordinates(const vec2f& coords, float width, float height)
+  {
+    vec2f result; 
+    result.x() = coords.x() / width * 2 - 1;
+    result.y() = -1 * (coords.y() / height * 2 - 1);
+
+    return result; 
+  }
+
+  bool equal_float(float a, float b, float epsilon=0.001f)
   {
     return fabs(a-b) < epsilon;  
   }
 
-  bool equalVec3Float(vec3f u, vec3f v, float epsilon=0.001f)
+  bool equal_vec3f(vec3f u, vec3f v, float epsilon=0.001f)
   {
-    return equalFloat(u.x(), v.x(), epsilon) && equalFloat(u.y(), v.y(), epsilon) && equalFloat(u.z(), v.z(), epsilon);  
+    return equal_float(u.x(), v.x(), epsilon) && equal_float(u.y(), v.y(), epsilon) && equal_float(u.z(), v.z(), epsilon);  
   }
 
   float radians(float x)

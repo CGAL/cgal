@@ -48,6 +48,7 @@ public:
   void reset_all();
   void reset_position();
   void reset_orientation();
+  void reset_size();
 
   void toggle_type(); 
 
@@ -443,14 +444,19 @@ void Camera::reset_all()
 {
   reset_position();
   reset_orientation();
-  m_size = m_defaultSize;
   m_fov                     = CGAL_CAMERA_FOV;
   m_zoomSmoothFactor        = CGAL_CAMERA_ZOOM_SMOOTHNESS;
   m_rotationSmoothFactor    = CGAL_CAMERA_ROTATION_SMOOTHNESS;
   m_translationSmoothFactor = CGAL_CAMERA_TRANSLATION_SMOOTHNESS;
   m_translationSpeed        = CGAL_CAMERA_TRANSLATION_SPEED;
   m_rotationSpeed           = CGAL_CAMERA_ROTATION_SPEED;
+  reset_size();
+}
 
+inline 
+void Camera::reset_size()
+{
+  m_size = m_defaultSize;
   compute_target_size();
 }
 
@@ -706,10 +712,10 @@ void Camera::compute_target_size()
 inline
 bool Camera::need_update() const
 {
-  return !utils::equalFloat(m_targetPitch, m_pitch) 
-      || !utils::equalFloat(m_targetYaw, m_yaw) 
-      || !utils::equalFloat(m_targetSize, m_size) 
-      || !utils::equalVec3Float(m_targetPosition, m_position)
+  return !utils::equal_float(m_targetPitch, m_pitch) 
+      || !utils::equal_float(m_targetYaw, m_yaw) 
+      || !utils::equal_float(m_targetSize, m_size) 
+      || !utils::equal_vec3f(m_targetPosition, m_position)
       ;
 }
 

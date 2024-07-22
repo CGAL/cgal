@@ -69,7 +69,7 @@ void Line_renderer::initialize_buffers()
 inline 
 void Line_renderer::load_buffers() 
 {
-  assert(m_areBuffersInitialized);
+  assert(are_buffers_initialized());
 
   glBindVertexArray(m_vao);
 
@@ -95,7 +95,7 @@ void Line_renderer::add_line(const vec3f& start, const vec3f& end, const vec3f& 
 inline 
 void Line_renderer::draw()  
 {
-  assert(m_areBuffersLoaded);
+  assert(are_buffers_loaded());
 
   if (m_data.empty()) return; 
 

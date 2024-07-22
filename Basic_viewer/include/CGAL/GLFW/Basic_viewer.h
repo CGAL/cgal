@@ -212,6 +212,7 @@ namespace GLFW
     void update_clipping_uniforms();
     void update_world_axis_uniforms();
     void update_XY_grid_uniforms();
+    void update_normals_uniforms();
 
     void render_scene(const float deltaTime);
 
@@ -224,6 +225,10 @@ namespace GLFW
 
     void draw_faces();
     void draw_faces_bis(RenderingMode mode);
+
+    void draw_world_axis();
+    void draw_xy_grid();
+    void draw_normals();
 
     void initialize_and_load_clipping_plane();
     void render_clipping_plane();
@@ -257,11 +262,10 @@ namespace GLFW
 
     vec4f color_to_vec4(const CGAL::IO::Color& c) const;
 
-    void draw_world_axis();
-    void draw_xy_grid();
-
     void reset_camera_and_clipping_plane();
     void reset_clipping_plane();
+
+    void change_pivot_point(); 
 
     bool need_update() const; 
 
@@ -285,6 +289,7 @@ namespace GLFW
 
     bool m_drawWorldAxis { true };
     bool m_drawXYGrid { false };
+    bool m_drawNormals { false };
 
     bool m_isOpengl4_3 { false };
 
@@ -310,18 +315,26 @@ namespace GLFW
     vec4f m_diffuseColor { CGAL_DIFFUSE_COLOR };
     vec4f m_specularColor { CGAL_SPECULAR_COLOR };
 
+    vec4f m_normalColor { CGAL_NORMAL_COLOR };
+    float m_normalWidth { CGAL_NORMAL_WIDTH };
+
+    bool m_useNormalMonoColor { false };
+
     float m_shininess { CGAL_SHININESS };
 
     vec4f m_clipPlane { 0, 0, 1, 0 };
     vec4f m_pointPlane { 0, 0, 0, 1 };
 
-    mat4f m_modelViewMatrix;
-    mat4f m_modelViewProjectionMatrix;
+    mat4f m_modelMatrix          { mat4f::Identity() };
+    mat4f m_viewMatrix           { mat4f::Identity() };
+    mat4f m_projectionMatrix     { mat4f::Identity() };
+    mat4f m_viewProjectionMatrix { mat4f::Identity() };
 
     Shader m_plShader;
     Shader m_faceShader; 
     Shader m_planeShader;
     Shader m_lineShader;
+    Shader m_normalShader;
 
     vec2i m_windowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
     vec2i m_oldWindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
@@ -331,6 +344,8 @@ namespace GLFW
     float m_aspectRatio { 1.f };
 
     float m_deltaTime { 0 };
+
+    std::pair<vec3f, vec3f> m_boundingBox; 
 
     Camera m_camera;
 
@@ -379,11 +394,14 @@ namespace GLFW
       SCREENSHOT,
 
       /*SCENE*/
+      NORMALS_DISPLAY,
       VERTICES_DISPLAY,
       FACES_DISPLAY,
       EDGES_DISPLAY,
       INVERSE_NORMAL,
       SHADING_MODE,
+
+      NORMALS_MONO_COLOR,
       MONO_COLOR,
       INC_LIGHT_ALL,
       INC_LIGHT_R,
@@ -398,8 +416,10 @@ namespace GLFW
       INC_EDGES_SIZE,
       DEC_EDGES_SIZE,
 
-      DISPLAY_WORLD_AXIS, 
-      DISPLAY_XY_GRID,
+      WORLD_AXIS_DISPLAY, 
+      XY_GRID_DISPLAY,
+
+      SHOW_ENTIRE_SCENE,
 
       /*CAMERA*/
       ROTATE_CAMERA,
@@ -427,6 +447,8 @@ namespace GLFW
       DEC_CAMERA_ROTATION_SMOOTHNESS, 
       INC_CAMERA_TRANSLATION_SMOOTHNESS, 
       DEC_CAMERA_TRANSLATION_SMOOTHNESS, 
+
+      CHANGE_PIVOT_POINT, 
 
       /*CLIPPING PLANE*/
       ROTATE_CLIPPING_PLANE,

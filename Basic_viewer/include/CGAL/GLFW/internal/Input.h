@@ -321,7 +321,7 @@ void Input::add_description(const std::string& binding, const std::string& secti
 
 void Input::print_help()
 {
-  std::cout << "Basic Viewer GLFW - Features shortcut :" << "\n\n";
+  std::cout << "Basic Viewer GLFW - Features shortcuts  :" << "\n\n";
 
   int n = 140-2;
   std::string sectionFooter = "";

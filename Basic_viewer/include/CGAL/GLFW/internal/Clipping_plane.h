@@ -211,9 +211,9 @@ void Clipping_plane::switch_constraint_axis()
 inline 
 bool Clipping_plane::need_update() const
 {
-  return !utils::equalFloat(m_targetPitch, m_pitch) 
-      || !utils::equalFloat(m_targetYaw, m_yaw) 
-      || !utils::equalVec3Float(m_targetPosition, m_position)
+  return !utils::equal_float(m_targetPitch, m_pitch) 
+      || !utils::equal_float(m_targetYaw, m_yaw) 
+      || !utils::equal_vec3f(m_targetPosition, m_position)
       ; 
 }
 

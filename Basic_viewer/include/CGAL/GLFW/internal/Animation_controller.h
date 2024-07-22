@@ -1,5 +1,5 @@
-#ifndef CGAL_ANIMATION_MANAGER_H
-#define CGAL_ANIMATION_MANAGER_H
+#ifndef CGAL_ANIMATION_CONTROLLER_H
+#define CGAL_ANIMATION_CONTROLLER_H
 
 #include <vector>
 #include <chrono>
@@ -138,12 +138,11 @@ void Animation_controller::set_duration(DurationType duration)
   }
 }
 
-static const float EPSILON = 0.001;
 
 inline 
 AnimationKeyFrame Animation_controller::key_frame_interpolation(const float time)
 {
-  assert(m_timestamp > 0.0 + EPSILON || m_timestamp < 0.0 - EPSILON);
+  assert(!utils::equal_float(m_timestamp, 0));
 
   float t = time / m_timestamp;
 
@@ -169,4 +168,4 @@ void Animation_controller::compute_timestamp()
   m_timestamp = static_cast<float>(m_duration.count()) / static_cast<float>(m_keyFrames.size() - 1); 
 }
 
-#endif // CGAL_ANIMATION_MANAGER_H
+#endif // CGAL_ANIMATION_CONTROLLER_H
