@@ -12,7 +12,6 @@
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Polyhedron_kernel.h>
 #include <CGAL/convex_hull_3.h>
-#include <CGAL/Dualizer.h>
 #include <CGAL/translate.h>
 #include <CGAL/boost/graph/Dual.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
