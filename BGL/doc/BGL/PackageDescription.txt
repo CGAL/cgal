@@ -753,8 +753,8 @@ user might encounter.
 - `CGAL/boost/graph/graph_traits_inheritance_macros.h`
 
 \cgalCRPSection{Partitioning Methods}
-- `CGAL::METIS::partition_graph()`
-- `CGAL::METIS::partition_dual_graph()`
+- \link PkgBGLPartition `CGAL::METIS::partition_graph()` \endlink
+- \link PkgBGLPartition `CGAL::METIS::partition_dual_graph()` \endlink
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
