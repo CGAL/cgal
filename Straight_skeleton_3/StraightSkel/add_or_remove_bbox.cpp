@@ -31,6 +31,15 @@ bool invert_and_add_bbox(Mesh& sm)
 {
   std::cout << "Inverting and adding a Bbox..." << std::endl;
 
+  PMP::triangulate_faces(sm);
+
+  // check the sanity of the input
+  bool has_SI = PMP::does_self_intersect(sm);
+  if(has_SI) {
+    std::cerr << "Error: input has self intersections" << std::endl;
+    return false;
+  }
+
   auto vol_id_map = sm.add_property_map<face_descriptor, std::size_t>().first;
   std::size_t vccn = PMP::volume_connected_components(sm, vol_id_map,
                                                       CGAL::parameters::do_orientation_tests(false));
@@ -67,7 +76,7 @@ bool invert_and_add_bbox(Mesh& sm)
       put(*fwm, e.second, 0.01 * min_weight);
 
   if(CGAL::is_empty(sm) || !CGAL::is_closed(sm)) {
-    std::cerr << "empty or open output" << std::endl;
+    std::cerr << "Error: empty or open output" << std::endl;
     return false;
   }
 
@@ -109,7 +118,6 @@ bool remove_bbox_and_invert(Mesh& sm)
   } else if(!CGAL::is_triangle_mesh(sm)) {
     std::cerr << "Warning: non-triangle output" << std::endl;
     return false;
-    return PMP::triangulate_faces(sm); // @tmp
   }
 
   return true;
@@ -161,6 +169,11 @@ int main(int argc, char** argv)
   }
 
   std::cout << "Input mesh: " << num_vertices(sm) << " NV " << num_faces(sm) << " NF" << std::endl;
+
+  if(CGAL::is_empty(sm) || !CGAL::is_closed(sm)) {
+    std::cerr << "Error: empty or open input" << std::endl;
+    return EXIT_FAILURE;
+  }
 
   const bool res = do_add ? invert_and_add_bbox(sm) : remove_bbox_and_invert(sm);
 
