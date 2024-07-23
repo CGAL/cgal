@@ -1,6 +1,3 @@
-#define CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-#define CGAL_MESH_3_VERBOSE 1
-
 #include <iostream>
 
 #include <CGAL/Mesh_triangulation_3.h>
