@@ -1404,8 +1404,6 @@ struct Locally_shortest_path_imp
         // 2 orientation tests are needed as curr_flat_tid orientation could be inverted during flattening
         Orientation dir_ori=orientation(v02,dir), v01_ori=orientation(v02,v01);
 
-        std::cout << "dir_ori!=v01_ori ? " << (dir_ori!=v01_ori) << "\n";
-
         // check if dir is  the cone centered at curr_flat_tid[src_vertex] (TODO: should be a predicate!)
         if ( dir_ori!=v01_ori ||
             unnorm_cos_theta_2 / std::sqrt(v01*v01) > unnorm_cos_theta_1 / std::sqrt(dir*dir)) // > because cos is decreasing from 0 -> Pi, should be < for the angle`
@@ -1428,8 +1426,6 @@ struct Locally_shortest_path_imp
             n = nv;
             hloop=opposite(next(hloop, mesh), mesh);
           }while(hloop!=hstart);
-
-          std::cout << std::acos(unnorm_cos_theta_2 / std::sqrt((v01*v01) * (v02*v02))) << "  vs  " << angles[0] << "\n";
 
           CGAL_assertion( std::acos(unnorm_cos_theta_2 / std::sqrt((v01*v01) * (v02*v02))) == angles[0]); // will not be true because of rounding
 
