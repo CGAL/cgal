@@ -1,6 +1,3 @@
-#define CGAL_MESH_3_WEIGHTED_IMAGES_DEBUG
-#define CGAL_MESH_3_VERBOSE 1
-
 #include <iostream>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -23,18 +20,17 @@ using Mesh_domain = CGAL::Mesh_domain_with_polyline_features_3<Image_domain>;
 /// [Domain definition]
 
 #ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
+using Concurrency_tag = CGAL::Parallel_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+using Concurrency_tag = CGAL::Sequential_tag;
 #endif
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
-
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+using Tr = CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type;
+using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
