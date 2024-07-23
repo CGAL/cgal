@@ -1,6 +1,7 @@
 #!/bin/bash
 
 SCRIPT_NAME="${0##*/}"
+START_TIME=$(date +%s)
 
 CUSTOMER=""
 DATA_PATH=""
@@ -14,6 +15,8 @@ cd "$BUILD_DIR" || exit 1
 
 SUCCESS=()
 OFFSET_FAILURE=()
+PREPROCESS_FAILURE=()
+POSTPROCESS_FAILURE=()
 OTHER_FAILURE=()
 TIMEOUT=()
 BAD_OUTPUT=()
@@ -73,8 +76,8 @@ for FILE in $FILES; do
   timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1
   RES=$?
   if [ ! "$RES" -eq 0 ]; then
-    echo "[ERROR]: failed to create weighted PLY?!"
-    OTHER_FAILURE+=("$CMD")
+    echo "====== [ERROR]: failed to create weighted PLY?! ======"
+    PREPROCESS_FAILURE+=("$CMD")
     continue;
   fi
 
@@ -95,8 +98,8 @@ for FILE in $FILES; do
     timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1
     RES=$?
     if [ ! "$RES" -eq 0 ]; then
-      echo "[ERROR]: failed to invert and add bbox?!"
-      OTHER_FAILURE+=("$CMD")
+      echo "====== [ERROR]: failed to invert and add bbox?! ======"
+      PREPROCESS_FAILURE+=("$CMD")
       continue;
     fi
 
@@ -152,8 +155,8 @@ for FILE in $FILES; do
       timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1
       RES=$?
       if [ ! "$RES" -eq 0 ]; then
-        echo "[ERROR]: failed to remove bbox and invert?!"
-        OTHER_FAILURE+=("$CMD")
+        echo "====== [ERROR]: failed to remove bbox and invert?! ======"
+        POSTPROCESS_FAILURE+=("$CMD")
         continue;
       fi
     else
@@ -173,16 +176,17 @@ for FILE in $FILES; do
     timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1
     RES=$?
     if [ "$RES" -eq 0 ]; then
+      echo "====== [SUCCESS] ======"
       SUCCESS+=("$CMD")
     else
-      echo "[ERROR]: output does not match?!"
+      echo "====== [ERROR]: outputs differ ======"
       BAD_OUTPUT+=("$CMD")
     fi
   elif [ "$RES" -eq 143 ]; then
-    echo "====== offset time out! ====== "
+    echo "====== [ERROR]: offset time out! ======"
     TIMEOUT+=("$CMD")
   else
-    echo "====== offset failure! ====== "
+    echo "====== [ERROR]: offset failure! ======"
     OFFSET_FAILURE+=("$CMD")
   fi
   echo ""
@@ -204,6 +208,16 @@ for BASE_NAME in "${OFFSET_FAILURE[@]}"; do
   echo "$BASE_NAME"
 done
 echo ""
+echo "${#PREPROCESS_FAILURE[@]} PREPROCESS FAILURES:"
+for BASE_NAME in "${PREPROCESS_FAILURE[@]}"; do
+  echo "$BASE_NAME"
+done
+echo ""
+echo "${#POSTPROCESS_FAILURE[@]} POSTPROCESS FAILURES:"
+for BASE_NAME in "${POSTPROCESS_FAILURE[@]}"; do
+  echo "$BASE_NAME"
+done
+echo ""
 echo "${#OTHER_FAILURE[@]} OTHER FAILURES:"
 for BASE_NAME in "${OTHER_FAILURE[@]}"; do
   echo "$BASE_NAME"
@@ -214,7 +228,7 @@ for BASE_NAME in "${TIMEOUT[@]}"; do
   echo "$BASE_NAME"
 done
 echo ""
-echo "${#BAD_OUTPUT[@]} BAD OUTPUT:"
+echo "${#BAD_OUTPUT[@]} OUTPUTS DIFFER:"
 for BASE_NAME in "${BAD_OUTPUT[@]}"; do
   echo "$BASE_NAME"
 done
@@ -222,12 +236,17 @@ done
 echo ""
 echo "${#SUCCESS[@]} SUCCESSES"
 echo "${#OFFSET_FAILURE[@]} OFFSET FAILURES"
+echo "${#PREPROCESS_FAILURE[@]} PREPROCESS FAILURES"
+echo "${#POSTPROCESS_FAILURE[@]} POSTPROCESS FAILURES"
 echo "${#OTHER_FAILURE[@]} OTHER FAILURES"
 echo "${#TIMEOUT[@]} TIMEOUTS"
-echo "${#BAD_OUTPUT[@]} BAD OUTPUTS"
+echo "${#BAD_OUTPUT[@]} OUTPUTS DIFFER"
 
 SUCCESSES_COUNT=${#SUCCESS[@]}
-FAILURES_COUNT=$((${#OFFSET_FAILURE[@]} + ${#OTHER_FAILURE[@]} +${#TIMEOUT[@]} + ${#BAD_OUTPUT[@]}))
-TOTAL_COUNT=$((${SUCCESSES_COUNT} + ${FAILURES_COUNT}))
+FAILURES_COUNT=$((${#OFFSET_FAILURE[@]} + ${#PREPROCESS_FAILURE[@]} + ${#POSTPROCESS_FAILURE[@]} + ${#OTHER_FAILURE[@]} +${#TIMEOUT[@]}))
+TOTAL_COUNT=$((${SUCCESSES_COUNT} + ${FAILURES_COUNT} + ${#BAD_OUTPUT[@]}))
 echo "TOTAL: ${TOTAL_COUNT}"
-echo "Success %: $((${#SUCCESS[@]} * 100 / ${TOTAL_COUNT})) "
+echo "Success %: $((${#SUCCESS[@]} * 100 / ${TOTAL_COUNT}))"
+
+ELAPSED=$(($(date +%s) - START_TIME))
+printf "elapsed: %s\n\n" "$(date -d@$ELAPSED -u +%H\ hours\ %M\ min\ %S\ sec)"
