@@ -40,6 +40,7 @@ bool invert_and_add_bbox(Mesh& sm)
     return false;
   }
 
+  PMP::orient_to_bound_a_volume(sm);
   PMP::reverse_face_orientations(sm);
 
   const CGAL::Bbox_3 bb = PMP::bbox(sm, CGAL::parameters::bbox_scaling(100));
@@ -97,7 +98,7 @@ bool remove_bbox_and_invert(Mesh& sm)
 
   std::cout << vertices(sm).size() << " NV " << faces(sm).size() << " NF" << std::endl;
 
-  PMP::reverse_face_orientations(sm);
+  PMP::orient_to_bound_a_volume(sm);
 
   if(CGAL::is_empty(sm)) {
     std::cerr << "Error: empty output" << std::endl;
