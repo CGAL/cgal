@@ -107,14 +107,11 @@ public:
 
     /**
      * Returns the point where 2 edges will crash into each other.
-     */
-    static Point3SPtr crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2);
-
-    /**
-     * Returns the point where 2 edges will crash into each other.
+     *
+     * If `offset_max` is passed, ignore the crash if it happens in the future.
      */
     static std::pair<Point3SPtr, CGAL::FT> crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
-                                                   const std::optional<CGAL::FT> offset_max);
+                                                   const std::optional<CGAL::FT> offset_max = std::nullopt);
 
     /**
      * Returns the offset (time) when the facet will reach the given point.
