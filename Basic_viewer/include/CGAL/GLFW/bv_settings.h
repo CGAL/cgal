@@ -31,6 +31,14 @@
 #define CGAL_SIZE_LINES 3.1f
 #endif
 
+#ifndef CGAL_SIZE_NORMALS
+#define CGAL_SIZE_NORMALS 0.2f
+#endif 
+
+#ifndef CGAL_NORMAL_HEIGHT_FACTOR
+#define CGAL_NORMAL_HEIGHT_FACTOR 0.02f
+#endif
+
 #ifndef CGAL_FACES_MONO_COLOR
 #define CGAL_FACES_MONO_COLOR { 60, 60, 200 }
 #endif
@@ -51,6 +59,10 @@
 #define CGAL_LINES_MONO_COLOR { 0, 0, 0 }
 #endif
 
+#ifndef CGAL_NORMALS_MONO_COLOR
+#define CGAL_NORMALS_MONO_COLOR { 220, 20, 20 }
+#endif
+
 #ifndef CGAL_LIGHT_POSITION
 #define CGAL_LIGHT_POSITION { 0.0f, 0.0f, 0.0f, 0.0f }
 #endif
@@ -67,18 +79,6 @@
 #define CGAL_SPECULAR_COLOR { 0.0f, 0.0f, 0.0f, 1.0f }
 #endif
 
-#ifndef CGAL_NORMAL_COLOR
-#define CGAL_NORMAL_COLOR { 1.0f, 0.0f, 0.0f, 1.0f }
-#endif
-
-#ifndef CGAL_NORMAL_WIDTH
-#define CGAL_NORMAL_WIDTH 0.2f
-#endif 
-
-#ifndef CGAL_NORMAL_HEIGHT_FACTOR
-#define CGAL_NORMAL_HEIGHT_FACTOR 0.01f
-#endif
-
 #ifndef CGAL_SHININESS
 #define CGAL_SHININESS 1.0f
 #endif
@@ -89,7 +89,7 @@
 #endif
 
 #ifndef CGAL_CAMERA_ROTATION_SPEED
-#define CGAL_CAMERA_ROTATION_SPEED 180.f
+#define CGAL_CAMERA_ROTATION_SPEED 270.f
 #endif
 
 #ifndef CGAL_CAMERA_RADIUS
@@ -122,7 +122,7 @@
 #endif
 
 #ifndef CGAL_CLIPPING_PLANE_ROTATION_SPEED
-#define CGAL_CLIPPING_PLANE_ROTATION_SPEED 200.f
+#define CGAL_CLIPPING_PLANE_ROTATION_SPEED 270.f
 #endif
 
 #ifndef CGAL_CLIPPING_PLANE_TRANSLATION_SMOOTHNESS

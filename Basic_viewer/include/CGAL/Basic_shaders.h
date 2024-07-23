@@ -255,7 +255,7 @@ in highp vec4 P;
 in highp vec3 N;
  
 uniform highp mat4  u_Mv;
-uniform highp vec4  u_Color; 
+uniform highp vec4  u_Color;
 uniform highp float u_RenderingMode;
 
 out VS_OUT {
@@ -292,7 +292,6 @@ in VS_OUT {
 } gs_in[];
 
 uniform highp mat4  u_Projection;
-uniform highp float u_LineWidth;
 uniform highp float u_Factor;
 uniform highp float u_SceneRadius;
 
@@ -302,8 +301,6 @@ out GS_OUT {
 
 void GenerateLine(int index)
 {
-  gl_PointSize = u_LineWidth;
-
   gs_out.color = gs_in[index].color; 
   
   gl_Position = u_Projection * gl_in[index].gl_Position;

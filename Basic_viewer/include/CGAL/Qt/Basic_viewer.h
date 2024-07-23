@@ -89,8 +89,10 @@ public:
     m_draw_rays(draw_rays),
     m_draw_lines(draw_lines),
     m_draw_faces(draw_faces),
+    m_draw_normals(false),
     m_flatShading(true),
     m_use_mono_color(use_mono_color),
+    m_use_normal_mono_color(false),
     m_inverse_normal(inverse_normal),
     m_draw_text(draw_text),
     m_no_2D_mode(no_2D_mode),
@@ -98,11 +100,14 @@ public:
     m_size_edges(3.1),
     m_size_rays(3.1),
     m_size_lines(3.1),
+    m_size_normals(0.2),
+    m_height_factor_normals(0.02),
     m_vertices_mono_color(200, 60, 60),
     m_edges_mono_color(0, 0, 0),
     m_rays_mono_color(0, 0, 0),
     m_lines_mono_color(0, 0, 0),
     m_faces_mono_color(60, 60, 200),
+    m_normals_mono_color(220, 60, 20),
     m_ambient_color(0.6f, 0.5f, 0.5f, 0.5f),
     m_are_buffers_initialized(false)
   {
@@ -172,6 +177,8 @@ public:
       delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_clipping_plane.shaders())
       delete shader;
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_normal.shaders())
+      delete shader;
     delete m_frame_plane;
   }
 
@@ -200,6 +207,8 @@ public:
   { m_lines_mono_color=c; }
   void faces_mono_color(const CGAL::IO::Color& c)
   { m_faces_mono_color=c; }
+  void normals_mono_color(const CGAL::IO::Color& c)
+  { m_normals_mono_color=c; }
 
   void toggle_draw_vertices()
   { m_draw_vertices = !m_draw_vertices; }
@@ -213,9 +222,10 @@ public:
   { m_draw_faces = !m_draw_faces; }
   void toggle_use_mono_color()
   { m_use_mono_color = !m_use_mono_color; }
+  void toggle_use_normal_mono_color()
+  { m_use_normal_mono_color = !m_use_normal_mono_color; }
   void toggle_draw_text()
   { m_draw_text = !m_draw_text; }
-
   bool draw_vertices() const
   { return m_draw_vertices; }
   bool draw_edges() const
@@ -365,7 +375,6 @@ public:
         rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
         rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-        std::cout << m_size_edges << "\n";
         glLineWidth(m_size_edges);
         glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
         vao[VAO_MONO_SEGMENTS].release();
@@ -477,6 +486,31 @@ public:
         rendering_program_p_l.release();
     }
 
+    if (m_draw_normals)
+    {
+      rendering_program_normal.bind();
+
+      vao[VAO_COLORED_FACES].bind();
+      color.setRgbF((double)m_normals_mono_color.red()/(double)255,
+                    (double)m_normals_mono_color.green()/(double)255,
+                    (double)m_normals_mono_color.blue()/(double)255);
+      rendering_program_normal.setUniformValue("u_Color", color);
+      if (m_use_normal_mono_color)
+      {
+        rendering_program_normal.setUniformValue("u_RenderingMode", static_cast<GLfloat>(1.0));
+      }
+      else 
+      {
+        rendering_program_normal.setUniformValue("u_RenderingMode", static_cast<GLfloat>(0.0));
+      }
+      rendering_program_normal.setUniformValue("u_Factor", static_cast<GLfloat>(m_height_factor_normals));
+      rendering_program_normal.setUniformValue("u_SceneRadius", static_cast<GLfloat>(sceneRadius()));
+
+      glLineWidth(m_size_normals);
+      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
+      vao[VAO_COLORED_FACES].release();
+    }
+
     // Fix Z-fighting by drawing faces at a depth
     GLfloat offset_factor;
     GLfloat offset_units;
@@ -494,19 +528,19 @@ public:
       // rendering_mode == -1: draw all as solid;
       // rendering_mode == 0: draw solid only;
       // rendering_mode == 1: draw transparent only;
-      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-
-      vao[VAO_MONO_FACES].bind();
-      color.setRgbF((double)m_faces_mono_color.red()/(double)255,
-                    (double)m_faces_mono_color.green()/(double)255,
-                    (double)m_faces_mono_color.blue()/(double)255);
-      rendering_program_face.setAttributeValue("Color",color);
-      rendering_program_face.setUniformValue("u_RenderingMode", rendering_mode);
-      rendering_program_face.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
-      rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
-      rendering_program_face.setUniformValue("u_PointPlane", plane_point);
-      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
-      vao[VAO_MONO_FACES].release();
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) 
+      {
+        vao[VAO_MONO_FACES].bind();
+        color.setRgbF((double)m_faces_mono_color.red()/(double)255,
+                      (double)m_faces_mono_color.green()/(double)255,
+                      (double)m_faces_mono_color.blue()/(double)255);
+        rendering_program_face.setAttributeValue("Color",color);
+        rendering_program_face.setUniformValue("u_RenderingMode", rendering_mode);
+        rendering_program_face.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
+        rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
+        rendering_program_face.setUniformValue("u_PointPlane", plane_point);
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+        vao[VAO_MONO_FACES].release();
 
         vao[VAO_COLORED_FACES].bind();
         if (m_use_mono_color)
@@ -626,6 +660,7 @@ protected:
     rendering_program_face.removeAllShaders();
     rendering_program_p_l.removeAllShaders();
     rendering_program_clipping_plane.removeAllShaders();
+    rendering_program_normal.removeAllShaders();
 
     // Create the buffers
     for (unsigned int i=0; i<NB_GL_BUFFERS; ++i)
@@ -736,6 +771,40 @@ protected:
     // { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
     // if (!rendering_program_clipping_plane.link())
     // { std::cerr << "Linking Program for clipping plane FAILED" << std::endl; }
+
+    // normal shader
+
+    if (isOpenGL_4_3())
+    {
+      // clipping plane shader
+      source_ = VERTEX_SOURCE_NORMAL;
+
+      QOpenGLShader *vertex_shader_normal = new QOpenGLShader(QOpenGLShader::Vertex);
+      if (!vertex_shader_normal->compileSourceCode(source_))
+      { std::cerr << "Compiling vertex source for normal FAILED" << std::endl; }
+
+      source_ = GEOMETRY_SOURCE_NORMAL;
+
+      QOpenGLShader *geometry_shader_normal = new QOpenGLShader(QOpenGLShader::Geometry);
+      if (!geometry_shader_normal->compileSourceCode(source_))
+      { std::cerr << "Compiling geometry source for normal FAILED" << std::endl; }
+
+      source_ = FRAGMENT_SOURCE_NORMAL;
+
+      QOpenGLShader *fragment_shader_normal = new QOpenGLShader(QOpenGLShader::Fragment);
+      if (!fragment_shader_normal->compileSourceCode(source_))
+      { std::cerr << "Compiling fragment source for normal FAILED" << std::endl; }
+
+
+      if (!rendering_program_normal.addShader(vertex_shader_normal))
+      { std::cerr << "Adding vertex shader for normal FAILED" << std::endl;}
+      if (!rendering_program_normal.addShader(geometry_shader_normal))
+      { std::cerr << "Adding geometry shader for normal FAILED" << std::endl;}
+      if (!rendering_program_normal.addShader(fragment_shader_normal))
+      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      if (!rendering_program_normal.link())
+      { std::cerr << "Linking Program for normal FAILED" << std::endl; }
+    }
   }
 
   void initialize_buffers()
@@ -975,6 +1044,11 @@ protected:
     rendering_program_face.enableAttributeArray("P");
     rendering_program_face.setAttributeBuffer("P",GL_FLOAT,0,3);
 
+    rendering_program_normal.bind(); 
+    rendering_program_normal.enableAttributeArray("P");
+    rendering_program_normal.setAttributeBuffer("P",GL_FLOAT,0,3);
+    rendering_program_face.bind();
+
     buffers[bufn].release();
 
     // 5.2.2) normals of the color faces
@@ -993,6 +1067,11 @@ protected:
     }
     rendering_program_face.enableAttributeArray("N");
     rendering_program_face.setAttributeBuffer("N",GL_FLOAT,0,3);
+
+    rendering_program_normal.bind(); 
+    rendering_program_normal.enableAttributeArray("N");
+    rendering_program_normal.setAttributeBuffer("N",GL_FLOAT,0,3);
+    rendering_program_face.bind();
 
     buffers[bufn].release();
 
@@ -1114,6 +1193,25 @@ protected:
       rendering_program_clipping_plane.setUniformValue(vpLocation, mvpMatrix);
       rendering_program_clipping_plane.setUniformValue(mLocation, clipping_mMatrix);
       rendering_program_clipping_plane.release();
+    }
+
+    if (isOpenGL_4_3())
+    {
+      rendering_program_normal.bind();
+
+      QMatrix4x4 projection;
+      double mat[16];
+      viewer->camera()->getProjectionMatrix(mat);
+      for(unsigned int i=0; i < 16; i++)
+      {
+        projection.data()[i] = (float)mat[i];
+      }
+      
+      int mvLocation = rendering_program_normal.uniformLocation("u_Mv");
+      int pLocation = rendering_program_normal.uniformLocation("u_Projection");
+      rendering_program_normal.setUniformValue(mvLocation, mvMatrix);
+      rendering_program_normal.setUniformValue(pLocation, projection);
+      rendering_program_normal.release();
     }
   }
 
@@ -1428,6 +1526,18 @@ protected:
           update();
         }
       }
+      else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::ControlModifier))
+      {
+        m_draw_normals = !m_draw_normals;
+        displayMessage(QString("Draw normals=%1.").arg(m_draw_normals?"true":"false"));
+        update();
+      }
+      else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::ControlModifier))
+      {
+        m_use_normal_mono_color = !m_use_normal_mono_color;
+        displayMessage(QString("Normal mono color=%1.").arg(m_use_normal_mono_color?"true":"false"));
+        redraw();
+      }
       else
       { CGAL::QGLViewer::keyPressEvent(e); } // By default call QGLViewer key press
     }
@@ -1480,9 +1590,11 @@ protected:
   bool m_draw_faces;
   bool m_flatShading;
   bool m_use_mono_color;
+  bool m_use_normal_mono_color;
   bool m_inverse_normal;
   bool m_draw_text;
   bool m_no_2D_mode;
+  bool m_draw_normals;
 
   enum {
     CLIPPING_PLANE_OFF = 0,
@@ -1503,12 +1615,16 @@ protected:
   double m_size_edges;
   double m_size_rays;
   double m_size_lines;
+  double m_size_normals; 
+
+  double m_height_factor_normals; 
 
   CGAL::IO::Color m_vertices_mono_color;
   CGAL::IO::Color m_edges_mono_color;
   CGAL::IO::Color m_rays_mono_color;
   CGAL::IO::Color m_lines_mono_color;
   CGAL::IO::Color m_faces_mono_color;
+  CGAL::IO::Color m_normals_mono_color;
   QVector4D m_ambient_color;
 
   bool m_are_buffers_initialized;
@@ -1541,6 +1657,7 @@ protected:
   QOpenGLShaderProgram rendering_program_face;
   QOpenGLShaderProgram rendering_program_p_l;
   QOpenGLShaderProgram rendering_program_clipping_plane;
+  QOpenGLShaderProgram rendering_program_normal;
 
   // variables for clipping plane
   bool clipping_plane_rendering = true; // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;

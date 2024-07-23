@@ -260,7 +260,7 @@ namespace GLFW
     void fullscreen();
     void capture_screenshot(const std::string& filePath);
 
-    vec4f color_to_vec4(const CGAL::IO::Color& c) const;
+    vec4f color_to_normalized_vec4(const CGAL::IO::Color& c) const;
 
     void reset_camera_and_clipping_plane();
     void reset_clipping_plane();
@@ -279,7 +279,10 @@ namespace GLFW
     bool m_drawFaces { true };
     bool m_drawRays { true };
     bool m_drawLines { true };
+
+    bool m_useNormalMonoColor { false };
     bool m_useMonoColor { false };
+
     bool m_inverseNormal { false };
     bool m_flatShading { true };
 
@@ -300,25 +303,24 @@ namespace GLFW
     Line_renderer m_XYAxisRenderer; 
 
     float m_sizeVertices { CGAL_SIZE_POINTS };
-    float m_sizeEdges { CGAL_SIZE_EDGES };
-    float m_sizeRays { CGAL_SIZE_RAYS };
-    float m_sizeLines { CGAL_SIZE_LINES };
+    float m_sizeEdges    { CGAL_SIZE_EDGES  };
+    float m_sizeRays     { CGAL_SIZE_RAYS   };
+    float m_sizeLines    { CGAL_SIZE_LINES  };
+    float m_sizeNormals  { CGAL_SIZE_NORMALS};
 
-    CGAL::IO::Color m_facesMonoColor = CGAL_FACES_MONO_COLOR;
+    float m_normalHeightFactor { CGAL_NORMAL_HEIGHT_FACTOR };
+
+    CGAL::IO::Color m_facesMonoColor   = CGAL_FACES_MONO_COLOR;
     CGAL::IO::Color m_verticeMonoColor = CGAL_VERTICES_MONO_COLOR;
-    CGAL::IO::Color m_edgesMonoColor = CGAL_EDGES_MONO_COLOR;
-    CGAL::IO::Color m_raysMonoColor = CGAL_RAYS_MONO_COLOR;
-    CGAL::IO::Color m_linesMonoColor = CGAL_LINES_MONO_COLOR;
+    CGAL::IO::Color m_edgesMonoColor   = CGAL_EDGES_MONO_COLOR;
+    CGAL::IO::Color m_raysMonoColor    = CGAL_RAYS_MONO_COLOR;
+    CGAL::IO::Color m_linesMonoColor   = CGAL_LINES_MONO_COLOR;
+    CGAL::IO::Color m_normalsMonoColor = CGAL_NORMALS_MONO_COLOR;
 
     vec4f m_lightPosition { CGAL_LIGHT_POSITION };
-    vec4f m_ambientColor { CGAL_AMBIENT_COLOR };
-    vec4f m_diffuseColor { CGAL_DIFFUSE_COLOR };
+    vec4f m_ambientColor  { CGAL_AMBIENT_COLOR  };
+    vec4f m_diffuseColor  { CGAL_DIFFUSE_COLOR  };
     vec4f m_specularColor { CGAL_SPECULAR_COLOR };
-
-    vec4f m_normalColor { CGAL_NORMAL_COLOR };
-    float m_normalWidth { CGAL_NORMAL_WIDTH };
-
-    bool m_useNormalMonoColor { false };
 
     float m_shininess { CGAL_SHININESS };
 

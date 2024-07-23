@@ -501,13 +501,10 @@ namespace GLFW
   void Basic_viewer::update_normals_uniforms()
   {
     m_normalShader.use();
+   
+    vec4f color = color_to_normalized_vec4(m_normalsMonoColor);
     m_normalShader.set_mat4f("u_Mv", m_viewMatrix.data());
-    m_normalShader.set_mat4f("u_Projection", m_projectionMatrix.data());
-    m_normalShader.set_vec4f("u_Color", m_normalColor.data());
-    m_normalShader.set_float("u_LineWidth", m_normalWidth);
-    m_normalShader.set_float("u_SceneRadius", m_camera.get_radius());
-    m_normalShader.set_float("u_Factor", CGAL_NORMAL_HEIGHT_FACTOR);
-
+    m_normalShader.set_vec4f("u_Color", color.data());
     if (m_useNormalMonoColor)
     {
       m_normalShader.set_float("u_RenderingMode", 1.0);
@@ -516,6 +513,10 @@ namespace GLFW
     {
       m_normalShader.set_float("u_RenderingMode", 0.0);
     }
+    m_normalShader.set_mat4f("u_Projection", m_projectionMatrix.data());
+    m_normalShader.set_float("u_Factor", m_normalHeightFactor);
+    m_normalShader.set_float("u_SceneRadius", m_camera.get_radius());
+
   }
 
   inline 
@@ -523,8 +524,8 @@ namespace GLFW
   {
     return m_camera.need_update() 
         || m_clippingPlane.need_update() 
-        || has_active_actions() // inputs 
         || m_animationController.is_running()
+        || has_active_actions() 
         ; 
   }
 
@@ -603,7 +604,7 @@ namespace GLFW
   }
 
   inline
-  vec4f Basic_viewer::color_to_vec4(const CGAL::IO::Color& c) const
+  vec4f Basic_viewer::color_to_normalized_vec4(const CGAL::IO::Color& c) const
   {
     return { static_cast<float>(c.red()) / 255, static_cast<float>(c.green()) / 255, static_cast<float>(c.blue()) / 255, 1.0f };
   }
@@ -665,7 +666,7 @@ namespace GLFW
   {
     m_faceShader.set_float("u_RenderingMode", static_cast<float>(mode));
 
-    vec4f color = color_to_vec4(m_facesMonoColor);
+    vec4f color = color_to_normalized_vec4(m_facesMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_FACES]);
     glVertexAttrib4fv(2, color.data());
@@ -689,7 +690,7 @@ namespace GLFW
   {
     m_plShader.set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
-    vec4f color = color_to_vec4(m_raysMonoColor);
+    vec4f color = color_to_normalized_vec4(m_raysMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_RAYS]);
     glVertexAttrib4fv(1, color.data());
@@ -712,7 +713,7 @@ namespace GLFW
   inline
   void Basic_viewer::draw_vertices()
   {
-    vec4f color = color_to_vec4(m_verticeMonoColor);
+    vec4f color = color_to_normalized_vec4(m_verticeMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_POINTS]);
     glVertexAttrib4fv(1, color.data());
@@ -735,7 +736,7 @@ namespace GLFW
   {
     m_plShader.set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
-    vec4f color = color_to_vec4(m_linesMonoColor);
+    vec4f color = color_to_normalized_vec4(m_linesMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_LINES]);
     glVertexAttrib4fv(1, color.data());
@@ -759,7 +760,7 @@ namespace GLFW
   {
     glDepthFunc(GL_LEQUAL);
 
-    vec4f color = color_to_vec4(m_edgesMonoColor);
+    vec4f color = color_to_normalized_vec4(m_edgesMonoColor);
 
     glBindVertexArray(m_vao[VAO_MONO_SEGMENTS]);
     glVertexAttrib4fv(1, color.data());
@@ -806,7 +807,7 @@ namespace GLFW
     glDepthFunc(GL_LEQUAL);
 
     glBindVertexArray(m_vao[VAO_COLORED_FACES]);
-    glLineWidth(CGAL_NORMAL_WIDTH);
+    glLineWidth(m_sizeNormals);
     glDrawArrays(GL_TRIANGLES, 0, m_scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
   }
 
