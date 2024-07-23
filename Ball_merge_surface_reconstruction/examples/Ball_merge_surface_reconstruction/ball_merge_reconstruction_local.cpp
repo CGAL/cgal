@@ -10,10 +10,10 @@ typedef K::Point_3 Point;
 
 int main(int argc, char **argv)
 {
+  // reading input points and parameters
   std::string inFilename=argc>1?argv[1]:CGAL::data_file_path("points_3/hippo2.ply"); //Test input file
   double delta = argc>2?atof(argv[2]):1.8;
   double eta= argc>3?atof(argv[3]):40.;
-
   std::vector<Point> points;
   CGAL::IO::read_points(inFilename, std::back_inserter(points)); //Reading the input points
 
@@ -23,8 +23,13 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  //vector for storing output triangle indices
   std::vector<std::array<int,3>> meshFaceIndices;
+
+  // run the reconstruction with the given parameters
   CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, delta, eta);
+
+  // write output triangle soups
   CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices);
 
   return 0;
