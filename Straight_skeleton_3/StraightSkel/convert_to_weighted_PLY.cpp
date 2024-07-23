@@ -38,8 +38,9 @@ bool assign_weights(Mesh& sm,
   auto fwm = res.first;
 
   std::ifstream weights_in(weights_filename) ;
-  std::string x1, x2, y1, y2;
-  double vx1, vx2, vy1, vy2;
+  std::string x1, x2, y1, y2, z1, z2;
+  double vx1, vx2, vy1, vy2, vz1, vz2;
+  vx1 = vx2 = vy1 = vy2 = vz1 = vz2 = 0;
 
   if(!(weights_in >> x1 >> vx1
                   >> x2 >> vx2
@@ -49,18 +50,52 @@ bool assign_weights(Mesh& sm,
     return false;
   }
 
-  if(vx1 < 0 || vx2 < 0 || vy1 < 0 || vy2 < 0) {
-    std::cerr << "Warning: negative weights?" << std::endl;
+  if(weights_in >> z1 >> vz1
+                >> z2 >> vz2) {
+    std::cout << "bottom & top info is present" << std::endl;
+  } else {
+    if(vx2 != vy2) {
+      std::cerr << "Error: unknown z speeds, and x-speed and y-speed differ..." << std::endl;
+      return false;
+    }
+
+    // assign the uniform speed to the "up" direction
+    vz2 = vx2;
   }
 
-  double eps_weight = 1e-2 * (std::min)({vx1, vx2, vy1, vy2});
+  if(vx1 < 0 || vx2 < 0 || vy1 < 0 || vy2 < 0 || vz1 < 0 || vz2 < 0) {
+    std::cerr << "Error: negative weights?" << std::endl;
+    return false;
+  }
+
+  double eps_weight = std::numeric_limits<double>::max();
+  if(vx1 > 0.) eps_weight = (std::min)(eps_weight, vx1);
+  if(vx2 > 0.) eps_weight = (std::min)(eps_weight, vx2);
+  if(vy1 > 0.) eps_weight = (std::min)(eps_weight, vy1);
+  if(vy2 > 0.) eps_weight = (std::min)(eps_weight, vy2);
+  if(vz1 > 0.) eps_weight = (std::min)(eps_weight, vz1);
+  if(vz2 > 0.) eps_weight = (std::min)(eps_weight, vz2);
+
+  if(eps_weight == 0.) {
+    std::cerr << "Error: all weights to zero" << std::endl;
+    return false;
+  }
+
+  eps_weight = 1e-2 * eps_weight;
+
+  if(vx1 == 0.) { std::cout << "vx1 to eps weight" << std::endl; vx1 = eps_weight; }
+  if(vx2 == 0.) { std::cout << "vx2 to eps weight" << std::endl; vx2 = eps_weight; }
+  if(vy1 == 0.) { std::cout << "vy1 to eps weight" << std::endl; vy1 = eps_weight; }
+  if(vy2 == 0.) { std::cout << "vy2 to eps weight" << std::endl; vy2 = eps_weight; }
+  if(vz1 == 0.) { std::cout << "vz1 to eps weight" << std::endl; vz1 = eps_weight; }
+  if(vz2 == 0.) { std::cout << "vz2 to eps weight" << std::endl; vz2 = eps_weight; }
 
   const Vector east  {  1,  0,  0 }; // x2
   const Vector south {  0, -1,  0 }; // y1
   const Vector west  { -1,  0,  0 }; // x1
   const Vector north {  0,  1,  0 }; // y2
-  const Vector up    {  0,  0,  1 };
-  const Vector down  {  0,  0, -1 };
+  const Vector up    {  0,  0,  1 }; // z2
+  const Vector down  {  0,  0, -1 }; // z1
 
   for(face_descriptor f : faces(sm))
   {
@@ -74,9 +109,9 @@ bool assign_weights(Mesh& sm,
 
     if(v.x() == 0 && v.y() == 0) {
       if(v.z() > 0)
-        weight = vx1;
+        weight = vz2;
       else
-        weight = eps_weight;
+        weight = vz1;
     } else {
       if(v.x() >= 0) {
         const FT sq_cos = CGAL::square(CGAL::scalar_product(v, west)) / sq_n;
@@ -125,6 +160,8 @@ int main(int argc, char** argv)
     std::cerr << "  x2: val" << std::endl;
     std::cerr << "  y1: val" << std::endl;
     std::cerr << "  y2: val" << std::endl;
+    std::cerr << "  bottom: val (optional line)" << std::endl;
+    std::cerr << "  top: val (optional line)" << std::endl;
     return EXIT_FAILURE;
   }
 
