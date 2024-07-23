@@ -286,7 +286,7 @@ public:
  *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
  *                          being constructible from `std::size_t`.
  *
- * \param points is the input points (without additional information like normal or texture)
+ * \param points is the input points
  * \param out_triangles is the output parameter storing triangles approximating the surface
  * \param delta is the value of \f$ \delta \f$
  * \param eta is the optional parameter \f$ \eta \f$
@@ -319,7 +319,7 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  *                          being a model of `RandomAccessContainer` and `BackInsertionSequence` with `value_type`
  *                          being constructible from `std::size_t`.
  *
- * \param points is the input points (without additional information like normal or texture)
+ * \param points is the input points representing a single connected component of a watertight surface
  * \param out_triangles1 is the output parameter storing the first resulting mesh
  * \param out_triangles2 is the output parameter storing the second resulting mesh
  * \param delta is the value of \f$ \delta \f$

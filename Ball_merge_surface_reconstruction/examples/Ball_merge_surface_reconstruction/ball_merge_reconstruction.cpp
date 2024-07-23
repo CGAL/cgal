@@ -17,6 +17,12 @@ int main(int argc, char **argv)
   std::vector<Point> points;
   CGAL::IO::read_points(inFilename, std::back_inserter(points));
 
+  if (points.empty())
+  {
+    std::cerr << inFilename << " cannot be read correctly or is empty.\n";
+    return 1;
+  }
+
   if (option == 0)
   {
     double eta = (argc >= 5) ? atof(argv[4]) : 200.;
