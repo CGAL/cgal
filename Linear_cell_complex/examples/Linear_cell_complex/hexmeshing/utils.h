@@ -1,11 +1,37 @@
 #pragma once
 
 #include <CGAL/Graphics_scene.h>
+#include <CGAL/Handle.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Union_find.h>
 #include <CGAL/draw_linear_cell_complex.h>
+#include <unordered_set>
 
+template <typename T>
+// TODO make union_find arg const
+std::unordered_set<typename CGAL::Union_find<T>::pointer> get_partitions(CGAL::Union_find<T>& union_find){
+  using Ptr = typename CGAL::Union_find<T>::pointer;
+  using Handle = typename CGAL::Union_find<T>::handle;
+
+  std::unordered_set<Ptr> result;
+
+  if (union_find.number_of_sets() == 0) return result;
+
+  for (auto it = union_find.begin(), end = union_find.end(); it != end; it++ ){
+    Ptr uf_pointer = it.ptr();
+    if (uf_pointer->up == nullptr) {
+      result.insert(uf_pointer);
+
+      if (result.size() == union_find.number_of_sets())
+        return result;
+    }
+  }
+
+  CGAL_assertion_msg(false, "get_partions(Union_find<T>) function did not find all sets. Bug?");
+  return result;
+};
 /**
  *
  * Will be later removed
