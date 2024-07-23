@@ -118,7 +118,7 @@ int two_stacked_3_template_test() {
 
   load_patterns(hdata.regular_templates, hdata.partial_templates);
 
-  PlaneData plane;
+  RefinementData plane;
   Dart_handle first = lcc.first_dart();
   first = lcc.beta(first, 0, 0, 2, 3, 2);
 
@@ -128,7 +128,7 @@ int two_stacked_3_template_test() {
   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.identified_mark);
   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 0), hdata.identified_mark);
 
-  setup_even_planes(hdata);
+  setup_initial_planes(hdata);
   extract_darts_from_even_planes(hdata, plane, Plane::XY);
   create_vertices_for_templates(hdata, plane);
   refine_marked_hexes(hdata, plane);
@@ -218,7 +218,7 @@ int validation_test(){
     LCC validation;
 
     if (!CGAL::load_combinatorial_map(entry.path().string().c_str(), validation)) {
-      std::cerr << "Could not load cominatorial map from "
+      std::cerr << "Could not load combinatorial map from "
                 << entry.path().filename()
                 << std::endl;
       return EXIT_FAILURE;
@@ -240,5 +240,5 @@ int validation_test(){
 
 int main(){
   // /!\ Run validations only in Release mode, some assertions in Debug mode are very costly
-  return validation_test();
+  return surface_test();
 }
