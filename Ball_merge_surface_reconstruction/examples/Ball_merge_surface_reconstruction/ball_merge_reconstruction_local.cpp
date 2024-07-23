@@ -8,6 +8,8 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
 
+namespace params=CGAL::parameters;
+
 int main(int argc, char **argv)
 {
   // reading input points and parameters
@@ -27,7 +29,8 @@ int main(int argc, char **argv)
   std::vector<std::array<int,3>> meshFaceIndices;
 
   // run the reconstruction with the given parameters
-  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(points, meshFaceIndices, delta, eta);
+  CGAL::ball_merge_surface_reconstruction_local<CGAL::Parallel_if_available_tag>(
+    points, meshFaceIndices, params::delta(delta).eta(eta));
 
   // write output triangle soups
   CGAL::IO::write_polygon_soup("BMOut1.ply", points, meshFaceIndices);

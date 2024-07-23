@@ -55,6 +55,7 @@
 #include <CGAL/Triangulation_cell_base_with_info_3.h>
 #include <CGAL/Container_helper.h>
 #include <boost/iterator/zip_iterator.hpp>
+#include <CGAL/Named_function_parameters.h>
 
 #include <queue>
 
@@ -288,17 +289,41 @@ public:
  *
  * \param points is the input points
  * \param out_triangles is the output parameter storing triangles approximating the surface
- * \param delta is the value of \f$ \delta \f$
- * \param eta is the optional parameter \f$ \eta \f$
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{delta}
+ *     \cgalParamDescription{the value of \f$ \delta \f$}
+ *     \cgalParamType{double}
+ *     \cgalParamDefault{1.7}
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{eta}
+ *     \cgalParamDescription{the value of \f$ \eta \f$}
+ *     \cgalParamType{double}
+ *     \cgalParamDefault{200.}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ *
+ * \cgalNamedParamsEnd
  *
  */
-template <class Concurrency_tag = Sequential_tag, class Traits = Default, class PointRange, class TripleIndexRange>
+template <class Concurrency_tag = Sequential_tag,
+          class Traits = Default,
+          class NamedParameters = parameters::Default_named_parameters,
+          class PointRange,
+          class TripleIndexRange>
 void ball_merge_surface_reconstruction_local(const PointRange& points,
                                              TripleIndexRange& out_triangles,
-                                             double delta, double eta=200.)
+                                             const NamedParameters& np = parameters::default_values())
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
+  const double eta = choose_parameter(get_parameter(np, internal_np::eta), 200.);
 
   CGAL::internal::Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
   bmsr.option=0;
@@ -322,17 +347,36 @@ void ball_merge_surface_reconstruction_local(const PointRange& points,
  * \param points is the input points representing a single connected component of a watertight surface
  * \param out_triangles1 is the output parameter storing the first resulting mesh
  * \param out_triangles2 is the output parameter storing the second resulting mesh
- * \param delta is the value of \f$ \delta \f$
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{delta}
+ *     \cgalParamDescription{the value of \f$ \delta \f$}
+ *     \cgalParamType{double}
+ *     \cgalParamDefault{1.7}
+ *   \cgalParamNEnd
+ *
+ * \cgalNamedParamsEnd
+ *
  */
-template <class Concurrency_tag= Sequential_tag, class Traits = Default, class PointRange, class TripleIndexRange>
+template <class Concurrency_tag= Sequential_tag,
+          class Traits = Default,
+          class NamedParameters = parameters::Default_named_parameters,
+          class PointRange,
+          class TripleIndexRange>
 void ball_merge_surface_reconstruction_global(const PointRange& points,
                                               TripleIndexRange& out_triangles1,
                                               TripleIndexRange& out_triangles2,
-                                              double delta)
+                                              const NamedParameters& np = parameters::default_values())
 {
   using Point_3 = std::remove_const_t<typename std::iterator_traits<typename PointRange::const_iterator>::value_type>;
   using Traits_ = typename Default::Get<Traits,typename Kernel_traits<Point_3>::type>::type;
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
   CGAL::internal::Ball_merge_surface_reconstruction<Traits_, Concurrency_tag> bmsr;
+  const double delta = choose_parameter(get_parameter(np, internal_np::delta), 1.7);
+
   bmsr.option=1;
   bmsr(points, delta, 0);
   bmsr.set_triangle_indices_hull1(out_triangles1);

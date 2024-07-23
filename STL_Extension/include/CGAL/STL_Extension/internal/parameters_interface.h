@@ -367,3 +367,7 @@ CGAL_add_named_parameter_with_compatibility(bounding_object_param_t, bounding_ob
 //List of named parameters used in Straight_skeleton_2
 CGAL_add_named_parameter_with_compatibility_ref_only(angles_param_t, angles_param, angles)
 CGAL_add_named_parameter(maximum_height_t, maximum_height, maximum_height)
+
+// Ball merge parameters
+CGAL_add_named_parameter(delta_t, delta, delta)
+CGAL_add_named_parameter(eta_t, eta, eta)
