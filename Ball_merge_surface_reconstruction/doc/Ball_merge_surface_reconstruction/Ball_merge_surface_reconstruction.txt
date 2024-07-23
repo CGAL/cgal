@@ -95,7 +95,7 @@ is an optional parameter \f$ \eta \f$ in case the user opts for the local varian
 \cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction.cpp}
 
 Ideally, the current implementation takes a dense point cloud as input (plain x,y,z coordinates without any additional information like normal and texture) sampled over a smooth surface. Thanks to the "intersection
-ratio", the algorithm can also handle a few challenging cases with mild noise, outliers or missing data up to an extent. It is worth noting that, while using \f$ GloablBallMerge \f$, outliers sometimes create deep
+ratio", the algorithm can also handle a few challenging cases with mild noise, outliers or missing data up to an extent. It is worth noting that, while using \f$ GlobalBallMerge \f$, outliers sometimes create deep
 cavities over the surface and increased amount of noise shrinks and sometimes miss important features.
 
 Finally, the algorithm is lightweight and requires only a little computation in terms of input size as it performs only two quick linear-time passes on the Delaunay complex (global), or just a single pass (local).
