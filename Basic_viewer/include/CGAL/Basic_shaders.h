@@ -197,8 +197,6 @@ const char VERTEX_SOURCE_LINE[]=R"DELIM(
 in highp vec3 P;
 in highp vec3 Color;
 
-uniform mat4 u_Mvp;
-
 out VS_OUT {
   highp vec4 color;
 } vs_out;
@@ -207,32 +205,122 @@ void main(void)
 {
   vs_out.color = vec4(Color, 1.0);
 
-  gl_Position = u_Mvp * vec4(P, 1.0);
+  gl_Position = vec4(P, 1.0);
 }
 )DELIM";
 
 const char GEOMETRY_SOURCE_LINE[]=R"DELIM(
-#version 150 
+#version 150
 layout(lines) in; 
-layout(line_strip, max_vertices = 2) out; 
+layout(triangle_strip, max_vertices = 120) out;
+
+#define PI 3.14159265358979323846
 
 in VS_OUT {
   highp vec4 color; 
-} gs_in[];
+} gs_in[]; 
+
+uniform mat4 u_Mvp;
 
 out highp vec4 fColor; 
+
+void drawTriangle(in vec4 v1, in vec4 v2, in vec4 v3)
+{
+  gl_Position = u_Mvp*v1;
+  EmitVertex();
+  gl_Position = u_Mvp*v2;
+  EmitVertex();
+  gl_Position = u_Mvp*v3;
+  EmitVertex();
+  EndPrimitive();
+}
+
+void drawDisc(in vec3 u, in vec3 v, in vec4 center, in float radius, in int resolution)
+{
+  float step = 2*PI/resolution;
+  for(int i=0; i<resolution; ++i)
+  {
+    float theta = step*i;
+    float cosf = radius*cos(theta);
+    float sinf = radius*sin(theta);
+    vec3 xAxis = cosf*u.xyz;
+    vec3 yAxis = sinf*v.xyz;
+    vec4 edge1 = vec4(center.xyz+xAxis.xyz+yAxis.xyz, 1.0);
+    theta = step*(i+1);
+    cosf = radius*cos(theta);
+    sinf = radius*sin(theta);
+    xAxis = cosf*u.xyz;
+    yAxis = sinf*v.xyz;
+    vec4 edge2 = vec4(center.xyz+xAxis.xyz+yAxis.xyz, 1.0);
+    drawTriangle(center, edge1, edge2);
+  } 
+}
+
+void drawCone(in vec3 u, in vec3 v, in vec3 n, in vec4 center, in float radius, in float height, in int resolution)
+{
+  float step = 2*PI/resolution;
+  for(int i=0; i<resolution; ++i)
+  {
+    float theta = step*i;
+    float cosf = radius*cos(theta);
+    float sinf = radius*sin(theta);
+    vec3 xAxis = cosf*u.xyz;
+    vec3 yAxis = sinf*v.xyz;
+    vec4 edge1 = vec4(center.xyz+xAxis.xyz+yAxis.xyz-height*n.xyz, 1.0);
+    theta = step*(i+1);
+    cosf = radius*cos(theta);
+    sinf = radius*sin(theta);
+    xAxis = cosf*u.xyz;
+    yAxis = sinf*v.xyz;
+    vec4 edge2 = vec4(center.xyz+xAxis.xyz+yAxis.xyz-height*n.xyz, 1.0);
+    drawTriangle(center, edge1, edge2);
+  } 
+}
+
+void drawCylinder(in vec3 u, in vec3 v, in vec4 bot, in vec4 top, in float radius, in float resolution)
+{
+  float step = 2*PI/resolution;
+  for(int i=0; i<resolution; ++i)
+  {
+    float theta = step*i;
+    float cosf = radius*cos(theta);
+    float sinf = radius*sin(theta);
+    vec3 xAxis = cosf*u.xyz;
+    vec3 yAxis = sinf*v.xyz;
+    vec4 top0 = vec4(top.xyz+xAxis.xyz+yAxis.xyz, 1.0);
+    vec4 bot0 = vec4(bot.xyz+xAxis.xyz+yAxis.xyz, 1.0);
+    theta = step*(i+1);
+    cosf = radius*cos(theta);
+    sinf = radius*sin(theta);
+    xAxis = cosf*u.xyz;
+    yAxis = sinf*v.xyz;
+    vec4 top1 = vec4(top.xyz+xAxis.xyz+yAxis.xyz, 1.0);
+    vec4 bot1 = vec4(bot.xyz+xAxis.xyz+yAxis.xyz, 1.0);
+    drawTriangle(top0, top1, bot0);
+    drawTriangle(bot0, bot1, top1);
+  }
+}
 
 void main(void)
 {
   fColor = gs_in[0].color;
 
-  gl_Position = gl_in[0].gl_Position;
-  EmitVertex();
+  vec4 a = gl_in[0].gl_Position;
+  vec4 b = gl_in[1].gl_Position;
 
-  gl_Position = gl_in[1].gl_Position;
-  EmitVertex();
+  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute normal 
+  vec3 w = normalize(vec3(-b.z, b.x, b.y));
+  vec3 u = normalize(cross(n, w));
+  vec3 v = normalize(cross(n, u));
 
-  EndPrimitive();
+  float radius = 0.013;
+  float height = 0.035;
+  int resolution = 10;
+
+  vec4 c = vec4(b.xyz-height*n.xyz, 1.0);
+  drawDisc(u, v, c, radius, resolution);
+  drawCone(u, v, n, b, radius, height, resolution);
+  drawCylinder(u, v, a, c, radius*0.5, resolution);
 }
 )DELIM";
 
