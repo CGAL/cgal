@@ -31,10 +31,18 @@ bool invert_and_add_bbox(Mesh& sm)
 {
   std::cout << "Inverting and adding a Bbox..." << std::endl;
 
-  const CGAL::Bbox_3 bb = PMP::bbox(sm, CGAL::parameters::bbox_scaling(100));
+  auto vol_id_map = sm.add_property_map<face_descriptor, std::size_t>().first;
+  std::size_t vccn = PMP::volume_connected_components(sm, vol_id_map,
+                                                      CGAL::parameters::do_orientation_tests(false));
+  std::size_t ccn = PMP::internal::number_of_connected_components(sm);
+  if(vccn != ccn) {
+    std::cerr << "Error: input has nested connected components" << std::endl;
+    return false;
+  }
 
   PMP::reverse_face_orientations(sm);
 
+  const CGAL::Bbox_3 bb = PMP::bbox(sm, CGAL::parameters::bbox_scaling(100));
   Mesh bbox_mesh;
   CGAL::make_hexahedron(Iso_cuboid(Point(bb.xmin(), bb.ymin(), bb.zmin()),
                                    Point(bb.xmax(), bb.ymax(), bb.zmax())), bbox_mesh);
