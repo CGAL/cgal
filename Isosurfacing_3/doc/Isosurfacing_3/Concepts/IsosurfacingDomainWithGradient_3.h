@@ -44,7 +44,7 @@ public:
   /// @{
 
   /*!
-  returns the gradient at the position `p`.
+  returns the gradient at the point `p`.
   */
   Vector_3 gradient(Point_3 p) const;
 

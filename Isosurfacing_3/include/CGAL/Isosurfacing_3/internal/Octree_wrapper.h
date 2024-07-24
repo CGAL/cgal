@@ -445,7 +445,7 @@ public:
   //   std::array<Vertex_handle, 8> v;
   //   for(int v_id=0; v_id<Tables::N_VERTICES; ++v_id)
   //   {
-  //     const auto& l = Tables::local_vertex_position[v_id];
+  //     const auto& l = Tables::local_vertex_location[v_id];
   //     const auto lex = lex_index(i + df * l[0], j + df * l[1], k + df * l[2], max_depth_);
   //     v[v_id] = lex;
   //   }
@@ -487,7 +487,7 @@ public:
     std::array<Vertex_handle, 8> v;
     for(int v_id=0; v_id<Tables::N_VERTICES; ++v_id)
     {
-      const int* l = Tables::local_vertex_position[v_id];
+      const int* l = Tables::local_vertex_location[v_id];
       const std::size_t lex = lex_index(i + df * l[0], j + df * l[1], k + df * l[2], max_depth_);
       v[v_id] = lex;
     }
@@ -507,7 +507,7 @@ public:
   //   std::array<Vertex_handle, 8> v;
   //   for(int v_id=0; v_id<Tables::N_VERTICES; ++v_id)
   //   {
-  //     const auto& l = Tables::local_vertex_position[v_id];
+  //     const auto& l = Tables::local_vertex_location[v_id];
   //     const auto lex = lex_index(i + df * l[0], j + df * l[1], k + df * l[2], max_depth_);
   //     v[v_id] = lex;
   //   }
@@ -518,7 +518,7 @@ public:
   //   return s;
   // }
 
-  std::array<Point_3, 8> voxel_vertex_positions(const Voxel_handle& vox) const
+  std::array<Point_3, 8> voxel_vertex_locations(const Voxel_handle& vox) const
   {
     Node_index node_index = get_node(vox);
     return node_points(node_index);
@@ -541,7 +541,7 @@ public:
 
     // v1
     const std::size_t e_local_index = Tables::edge_store_index[e_global_id % 3];
-    const int* v1_local = Tables::local_vertex_position[Tables::edge_to_vertex[e_local_index][1]];
+    const int* v1_local = Tables::local_vertex_location[Tables::edge_to_vertex[e_local_index][1]];
 
     const std::size_t i1 = i0 + v1_local[0];
     const std::size_t j1 = j0 + v1_local[1];
@@ -568,7 +568,7 @@ public:
 
     // v1
     const std::size_t e_local_index = Tables::edge_store_index[e_global_id % 3];
-    const int* v1_local = Tables::local_vertex_position[Tables::edge_to_vertex[e_local_index][1]];
+    const int* v1_local = Tables::local_vertex_location[Tables::edge_to_vertex[e_local_index][1]];
 
     const std::size_t i1 = i0 + v1_local[0];
     const std::size_t j1 = j0 + v1_local[1];

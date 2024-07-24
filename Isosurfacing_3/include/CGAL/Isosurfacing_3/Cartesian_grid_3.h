@@ -31,9 +31,9 @@ namespace Isosurfacing {
 /**
  * \ingroup IS_Partitions_helpers_grp
  *
- * A policy to choose whether grid vertex positions should be cached, or recomputed at each access.
+ * A policy to choose whether grid vertex locations should be cached, or recomputed at each access.
  *
- * \tparam Tag a tag that is either `Tag_true` (positions are cached) or `Tag_false` (positions are not cached).
+ * \tparam Tag a tag that is either `Tag_true` (locations are cached) or `Tag_false` (locations are not cached).
  */
 template <typename Tag>
 struct Grid_vertex_memory_policy : public Tag { };
@@ -41,30 +41,30 @@ struct Grid_vertex_memory_policy : public Tag { };
 /**
  * \ingroup IS_Partitions_helpers_grp
  *
- * A convenience alias for the policy that caches grid vertex positions.
+ * A convenience alias for the policy that caches grid vertex locations.
  */
-using Cache_positions = Grid_vertex_memory_policy<Tag_true>;
+using Cache_vertex_locations = Grid_vertex_memory_policy<Tag_true>;
 
 /**
  * \ingroup IS_Partitions_helpers_grp
  *
- * A convenience alias for the policy that does not cache grid vertex positions.
+ * A convenience alias for the policy that does not cache grid vertex locations.
  */
-using Do_not_cache_positions = Grid_vertex_memory_policy<Tag_false>;
+using Do_not_cache_vertex_locations = Grid_vertex_memory_policy<Tag_false>;
 
 namespace internal {
 
 template <typename GeomTraits,
-          typename MemoryPolicy = Do_not_cache_positions>
-struct Cartesian_grid_position
+          typename MemoryPolicy = Do_not_cache_vertex_locations>
+struct Cartesian_grid_location
 {
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
   using Iso_cuboid_3 = typename GeomTraits::Iso_cuboid_3;
 
-  Cartesian_grid_position() { } // just for compilation
+  Cartesian_grid_location() { } // just for compilation
 
-  Cartesian_grid_position(const Iso_cuboid_3& /*span*/,
+  Cartesian_grid_location(const Iso_cuboid_3& /*span*/,
                           const std::array<std::size_t, 3>& /*dims*/,
                           const Vector_3& /*spacing*/)
   { }
@@ -89,7 +89,7 @@ struct Cartesian_grid_position
 };
 
 template <typename GeomTraits>
-struct Cartesian_grid_position<GeomTraits, Cache_positions>
+struct Cartesian_grid_location<GeomTraits, Cache_vertex_locations>
 {
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
@@ -97,9 +97,9 @@ struct Cartesian_grid_position<GeomTraits, Cache_positions>
 
   std::vector<Point_3> m_points;
 
-  Cartesian_grid_position() { } // just for compilation
+  Cartesian_grid_location() { } // just for compilation
 
-  Cartesian_grid_position(const Iso_cuboid_3& span,
+  Cartesian_grid_location(const Iso_cuboid_3& span,
                           const std::array<std::size_t, 3>& dims,
                           const Vector_3& spacing)
   {
@@ -136,14 +136,14 @@ struct Cartesian_grid_position<GeomTraits, Cache_positions>
  * that can be used along with value and gradient fields to make up a domain.
  *
  * \tparam GeomTraits must be a model of `IsosurfacingTraits_3`.
- * \tparam MemoryPolicy whether the geometric positions of the grid vertices are stored or not.
- *                      Possible values are `CGAL::Isosurfacing::Cache_positions` and `CGAL::Isosurfacing::Do_not_cache_positions`.
+ * \tparam MemoryPolicy whether the geometric locations of the grid vertices are stored or not.
+ *                      Possible values are `CGAL::Isosurfacing::Cache_vertex_locations` and `CGAL::Isosurfacing::Do_not_cache_vertex_locations`.
  *
  * \sa `CGAL::Isosurfacing::Marching_cubes_domain_3()`
  * \sa `CGAL::Isosurfacing::Dual_contouring_domain_3()`
  */
 template <typename GeomTraits,
-          typename MemoryPolicy = Do_not_cache_positions>
+          typename MemoryPolicy = Do_not_cache_vertex_locations>
 class Cartesian_grid_3
 {
 public:
@@ -153,7 +153,7 @@ public:
   using Vector_3 = typename Geom_traits::Vector_3;
   using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
 
-  using Positioner = internal::Cartesian_grid_position<GeomTraits, MemoryPolicy>;
+  using Positioner = internal::Cartesian_grid_location<GeomTraits, MemoryPolicy>;
 
 private:
   Iso_cuboid_3 m_span;
@@ -228,7 +228,7 @@ public:
    * \param dimensions the number of grid vertices in the `x`, `y`, and `z` directions
    * \param gt the geometric traits
    *
-   * \pre all dimensions are (strictly) positive.
+   * \pre all dimensions are strictly positive.
    */
   Cartesian_grid_3(const Iso_cuboid_3& span,
                    const std::array<std::size_t, 3>& dimensions,
@@ -251,8 +251,8 @@ public:
    * \param dimensions the number of grid vertices in the `x`, `y`, and `z` directions
    * \param gt the geometric traits
    *
-   * \pre `p` is lexicographically (strictly) smaller than `q`
-   * \pre all dimensions are (strictly) positive.
+   * \pre `p` is lexicographically strictly smaller than `q`
+   * \pre all dimensions are strictly positive.
    */
   Cartesian_grid_3(const Point_3& p, const Point_3& q,
                    const std::array<std::size_t, 3>& dimensions,
@@ -291,7 +291,7 @@ public:
    * \param spacing the dimension of the paving cell, in the `x`, `y`, and `z` directions, respectively.
    * \param gt the geometric traits
    *
-   * \pre `p` is lexicographically (strictly) smaller than `q`
+   * \pre `p` is lexicographically strictly smaller than `q`
    * \pre the diagonal of the iso-cuboid has length a multiple of `spacing`
    */
   Cartesian_grid_3(const Point_3& p, const Point_3& q,
@@ -380,9 +380,9 @@ public:
   // Geometry
 public:
   /**
-   * \brief returns the geometric position of the grid vertex described by its three indices.
+   * \brief returns the geometric location of the grid vertex described by its three indices.
    *
-   * Depending on the value of the template parameter `cache_points`, positions might not be stored
+   * Depending on the value of the template parameter `MemoryPolicy`, locations might not be stored
    * but calculated on-the-fly.
    *
    * \param i the index in the `x` direction

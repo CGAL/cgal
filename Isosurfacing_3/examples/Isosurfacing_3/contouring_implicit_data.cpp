@@ -20,8 +20,8 @@ using FT = typename Kernel::FT;
 using Point = typename Kernel::Point_3;
 using Vector = typename Kernel::Vector_3;
 
-// using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel, CGAL::Isosurfacing::Do_not_cache_positions>;
-using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel, CGAL::Isosurfacing::Cache_positions>;
+// using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel, CGAL::Isosurfacing::Do_not_cache_vertex_locations>;
+using Grid = CGAL::Isosurfacing::Cartesian_grid_3<Kernel, CGAL::Isosurfacing::Cache_vertex_locations>;
 using Values = CGAL::Isosurfacing::Value_function_3<Grid>;
 using Gradients = CGAL::Isosurfacing::Gradient_function_3<Grid>;
 

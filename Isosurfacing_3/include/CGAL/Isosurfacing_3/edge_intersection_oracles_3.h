@@ -62,8 +62,8 @@ public:
    *
    * \tparam Domain must be a model of `IsosurfacingDomain_3`
    *
-   * \param p_0 the geometric position of the first vertex of the edge
-   * \param p_1 the geometric position of the second vertex of the edge
+   * \param p_0 the location of the first vertex of the edge
+   * \param p_1 the location of the second vertex of the edge
    * \param val_0 the value at the first vertex of the edge
    * \param val_1 the value at the second vertex of the edge
    * \param domain the isosurfacing domain
@@ -149,8 +149,8 @@ struct Linear_interpolation_edge_intersection
    *
    * \tparam Domain must be a model of `IsosurfacingDomain_3`
    *
-   * \param p_0 the geometric position of the first vertex of the edge
-   * \param p_1 the geometric position of the second vertex of the edge
+   * \param p_0 the location of the first vertex of the edge
+   * \param p_1 the location of the second vertex of the edge
    * \param val_0 the value at the first vertex of the edge
    * \param val_1 the value at the second vertex of the edge
    * \param domain the isosurfacing domain

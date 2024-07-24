@@ -60,7 +60,7 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-// Interpolate linearly between two vertex positions v0, v1 with values d0 and d1 according to the isovalue
+// Interpolate linearly between two vertex locations v0, v1 with values d0 and d1 according to the isovalue
 template <typename GeomTraits>
 typename GeomTraits::Point_3 vertex_interpolation(const typename GeomTraits::Point_3& p0,
                                                   const typename GeomTraits::Point_3& p1,

@@ -51,7 +51,7 @@ namespace Isosurfacing {
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{constrain_to_cell}
- *     \cgalParamDescription{whether to constrain the vertex position to the geometrical space of its cell}
+ *     \cgalParamDescription{whether to constrain the vertex location to the geometrical space of its cell}
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`false`}
  *     \cgalParamExtra{Constraining the vertex to its dual cell guarantees that the resulting

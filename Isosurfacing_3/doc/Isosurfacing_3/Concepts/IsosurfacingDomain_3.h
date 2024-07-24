@@ -94,7 +94,7 @@ public:
   Geom_traits geom_traits();
 
   /*!
-  returns the 3D position of the vertex `v`.
+  returns the 3D location of the vertex `v`.
   */
   Point_3 point(vertex_descriptor v) const;
 
@@ -167,8 +167,8 @@ public:
   /*!
   Constructs the intersection - if it exists - between an edge and an isosurface.
 
-  \param p_0 the geometric position of the first vertex of the edge
-  \param p_1 the geometric position of the second vertex of the edge
+  \param p_0 the location of the first vertex of the edge
+  \param p_1 the location of the second vertex of the edge
   \param val_0 the value at the first vertex of the edge
   \param val_1 the value at the second vertex of the edge
   \param isovalue the isovalue defining the isosurface with which we seek an intersection

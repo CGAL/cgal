@@ -111,7 +111,7 @@ struct partition_traits<Cartesian_grid_3<GeomTraits, MemoryPolicy> >
       for(std::size_t j=0; j<c.size(); ++j)
       {
         // lookup the relative vertex indices and offset them by the cell position
-        cv[i][j] = c[j] + internal::Cube_table::local_vertex_position[i][j];
+        cv[i][j] = c[j] + internal::Cube_table::local_vertex_location[i][j];
       }
     }
 

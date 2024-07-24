@@ -58,7 +58,7 @@ public:
   typedef unspecified_type Cell_edges;
 
   /*!
-   * \returns the 3D position of the vertex `v`.
+   * \returns the 3D location of the vertex `v`.
    */
   static Point_3 point(vertex_descriptor v, IsosurfacingPartition_3 partition);
 

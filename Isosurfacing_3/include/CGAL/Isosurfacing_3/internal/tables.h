@@ -113,7 +113,7 @@ constexpr int edge_to_vertex[N_EDGES][2] =
 };
 
 // The local vertex coordinates within a voxel.
-constexpr int local_vertex_position[N_VERTICES][3] =
+constexpr int local_vertex_location[N_VERTICES][3] =
 {
   {0, 0, 0},  // v0
   {1, 0, 0},  // v1

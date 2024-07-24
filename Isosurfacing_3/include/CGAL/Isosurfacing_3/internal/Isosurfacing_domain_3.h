@@ -89,7 +89,7 @@ public:
 public:
   // The following functions are dispatching to the partition_traits' static functions.
 
-  // returns the position of vertex `v`
+  // returns the location of vertex `v`
   decltype(auto) /*Point_3*/ point(const vertex_descriptor& v) const
   {
     return PT::point(v, m_partition);
