@@ -100,6 +100,17 @@ public:
     static bool isTetrahedron(EdgeSPtr edge_begin);
 
     /**
+     * Checks if the point `point` is on the correct side of the bisector arc
+     * emaneting from the vertex common to `edge` and the edge
+     * shared by `edge->next(f)` and `f_third`
+     */
+    static bool check_bisector(EdgeSPtr edge,
+                               FacetSPtr f,
+                               CGAL::FT t,
+                               FacetSPtr f_third,
+                               Point3SPtr point);
+
+    /**
      * Returns the point where the edge will vanish.
      */
     // static Point3SPtr vanishesAt(EdgeSPtr edge);
