@@ -1,8 +1,12 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/Bsurf/locally_shortest_path.h>
+#include <CGAL/boost/graph/split_graph_into_polylines.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/Real_timer.h>
+
+#include <boost/graph/adjacency_list.hpp>
 
 #include <nanosvg.h>
 
@@ -22,6 +26,11 @@ int main(int argc, char** argv)
   std::string svg_filename = (argc > 2) ? std::string(argv[2])
     : CGAL::data_file_path("polylines_2/nano.svg");
 
+  int face_index = (argc>3) ? atoi(argv[3]) : 2154;
+  double b0 = (argc>4) ? atof(argv[4]) : 0.3;
+  double b1 = (argc>5) ? atof(argv[5]) : 0.3;
+  double b2 = (argc>6) ? atof(argv[6]) : 0.4;
+
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(mesh_filename, mesh) || !CGAL::is_triangle_mesh(mesh))
   {
@@ -36,7 +45,7 @@ int main(int argc, char** argv)
   }
 
   // extract control points
-  std::vector< std::array<K::Point_2, 4> > bezier_curves;
+  std::vector< std::array<K::Point_2, 4> > bezier_control_points;
   CGAL::Bbox_2 bb2;
 
   // in SVG's the y axis points downward, so we must take the opposite y coordinates
@@ -53,75 +62,267 @@ int main(int argc, char** argv)
 
       for (int i=0; i<npts-1; i += 3)
       {
-        bezier_curves.emplace_back();
+        bezier_control_points.emplace_back();
         float* p = &pts[i*2];
-        bezier_curves.back()[0]=K::Point_2(p[0],-p[1]);
-        bezier_curves.back()[1]=K::Point_2(p[2],-p[3]);
-        bezier_curves.back()[2]=K::Point_2(p[4],-p[5]);
-        bezier_curves.back()[3]=K::Point_2(p[6],-p[7]);
+        bezier_control_points.back()[0]=K::Point_2(p[0],-p[1]);
+        bezier_control_points.back()[1]=K::Point_2(p[2],-p[3]);
+        bezier_control_points.back()[2]=K::Point_2(p[4],-p[5]);
+        bezier_control_points.back()[3]=K::Point_2(p[6],-p[7]);
       }
     }
   }
 
   nsvgDelete(g_image);
 
-  std::cout << "#Bezier curves read: " << bezier_curves.size() << "\n";
+  std::cout << "#Bezier curves read: " << bezier_control_points.size() << "\n";
 
   // convert control points to polar coordinates
   typename K::Point_2 center_2((bb2.xmax()+bb2.xmin())/2., (bb2.ymax()+bb2.ymin())/2.);
   double diag = std::sqrt( CGAL::square(bb2.xmin()-bb2.xmax()) + CGAL::square(bb2.xmin()-bb2.xmax()) );
-  const double expected_diag = 0.45; // user parameter for scaling
+  //~ const double expected_diag = 0.45; // user parameter for scaling
+  const double expected_diag = 0.6; // user parameter for scaling
   const double scaling = expected_diag/diag;
 
   //TODO: do the scaling at read time!
 
-  std::vector<std::array<K::Vector_2, 4>> directions;
-  std::vector<std::array<K::FT, 4>> lengths;
-  directions.reserve(bezier_curves.size());
-  lengths.reserve(bezier_curves.size());
-
-  for (const std::array<K::Point_2, 4>& bezier  : bezier_curves)
-  {
-    std::vector<std::pair<double, double>> polar_coords =
-      PMP::convert_polygon_to_polar_coordinates<K>(bezier, center_2);
-
-    directions.emplace_back();
-    lengths.emplace_back();
-
-    assert(polar_coords.size()==4);
-
-    for (int i=0;i<4; ++i)
-    {
-      lengths.back()[i] = scaling * polar_coords[i].first;
-      directions.back()[i]=K::Vector_2(std::cos(polar_coords[i].second), std::sin(polar_coords[i].second));
-    }
-  }
-
-  // trace bezier curves
-  std::size_t nb_faces = faces(mesh).size();
-  Mesh::Face_index f = *std::next(faces(mesh).begin(), (2154)%nb_faces);
-  Face_location center(f, CGAL::make_array(0.3,0.3,0.4));
-
   PMP::Dual_geodesic_solver<double> solver;
   PMP::init_geodesic_dual_solver(solver, mesh);
 
-  std::vector< std::vector<Face_location> > res =
-    PMP::trace_bezier_curves<K>(center, directions, lengths, 4, mesh, solver);
+  std::size_t nb_faces = faces(mesh).size();
+  Mesh::Face_index f = *std::next(faces(mesh).begin(), (face_index)%nb_faces);
+  Face_location center(f, CGAL::make_array(b0,b1,b2));
 
-  // write result
-  std::ofstream out("svg.polylines.txt");
-  out << std::setprecision(17);
-  for (const auto& b : res)
+  std::size_t num_subdiv = 3;
+
+  // option 1: trace bezier curves with a single center
   {
-    std::vector<K::Point_3> poly;
-    poly.reserve(b.size());
-    PMP::convert_path_to_polyline(b, mesh, std::back_inserter(poly));
+    CGAL::Real_timer time;
+    time.start();
+    std::vector<std::array<K::Vector_2, 4>> directions;
+    std::vector<std::array<K::FT, 4>> lengths;
+    directions.reserve(bezier_control_points.size());
+    lengths.reserve(bezier_control_points.size());
+
+    for (const std::array<K::Point_2, 4>& bezier  : bezier_control_points)
+    {
+      std::vector<std::pair<double, double>> polar_coords =
+        PMP::convert_polygon_to_polar_coordinates<K>(bezier, center_2);
+
+      directions.emplace_back();
+      lengths.emplace_back();
+
+      assert(polar_coords.size()==4);
+
+      for (int i=0;i<4; ++i)
+      {
+        lengths.back()[i] = scaling * polar_coords[i].first;
+        directions.back()[i]=K::Vector_2(std::cos(polar_coords[i].second), std::sin(polar_coords[i].second));
+      }
+    }
+
+    std::vector< std::vector<Face_location> > res =
+      PMP::trace_bezier_curves<K>(center, directions, lengths, num_subdiv, mesh, solver);
+
+    // write result
+    std::ofstream out("svg_option1.polylines.txt");
+    out << std::setprecision(17);
+    for (const auto& b : res)
+    {
+      std::vector<K::Point_3> poly;
+      poly.reserve(b.size());
+      PMP::convert_path_to_polyline(b, mesh, std::back_inserter(poly));
 
 
-    out << poly.size();
-    for (const K::Point_3& p : poly)
-      out << " " << p;
-    out << "\n";
+      out << poly.size();
+      for (const K::Point_3& p : poly)
+        out << " " << p;
+      out << "\n";
+    }
+    time.stop();
+    std::cout << "option 1 took: " << time.time() << "\n";
+  }
+
+  // option 2: regroup control polygon and trace bezier curves with a center per group
+  {
+    CGAL::Real_timer time;
+    time.start();
+
+    typedef boost::adjacency_list< boost::vecS, boost::vecS,
+                                   boost::undirectedS,
+                                   K::Point_2> Graph;
+    using Graph_vertex = Graph::vertex_descriptor;
+
+    Graph graph;
+
+    std::vector<Graph_vertex> vrts;
+    std::map<K::Point_2, Graph_vertex> pt_map;
+    Graph_vertex null_vertex = boost::graph_traits<Graph>::null_vertex();
+
+    // build bezier control segment graph
+    for (std::size_t eid=0; eid<bezier_control_points.size(); ++eid)
+    {
+      const std::array<K::Point_2, 4>& bezier = bezier_control_points[eid];
+
+      auto insert_res_0 = pt_map.emplace(bezier[0], null_vertex);
+      if (insert_res_0.second)
+      {
+        vrts.push_back(add_vertex(graph));
+        graph[vrts.back()]=bezier[0];
+        insert_res_0.first->second = vrts.back();
+      }
+
+      auto insert_res_3 = pt_map.emplace(bezier[3], null_vertex);
+      if (insert_res_3.second)
+      {
+        vrts.push_back(add_vertex(graph));
+        graph[vrts.back()]=bezier[3];
+        insert_res_3.first->second = vrts.back();
+      }
+
+      Graph_vertex v1 = add_vertex(graph);
+      Graph_vertex v2 = add_vertex(graph);
+      graph[v1]=bezier[1];
+      graph[v2]=bezier[2];
+
+      add_edge(insert_res_0.first->second, v1, graph);
+      add_edge(v1, v2, graph);
+      add_edge(v2, insert_res_3.first->second,  graph);
+    }
+
+    // visitor for split_graph_into_polylines that will also take care of
+    // the drawing and writing in the output file
+    struct Draw_visitor
+    {
+      std::ofstream out;
+      const Graph& graph;
+      const Face_location& center;
+      const K::Point_2& center_2;
+      double scaling, num_subdiv;
+      const Mesh& mesh;
+      PMP::Dual_geodesic_solver<double>& solver;
+
+      Draw_visitor(const Graph& g, const Face_location& c, const K::Point_2& c2, double s, double ns,
+                   const Mesh& tm, PMP::Dual_geodesic_solver<double>& sol)
+        : graph(g)
+        , center(c)
+        , center_2(c2)
+        , scaling(s)
+        , num_subdiv(ns)
+        , mesh(tm)
+        , solver(sol)
+      {
+        out.open("svg_option2.polylines.txt");
+        out << std::setprecision(17);
+      }
+
+      std::vector<Graph_vertex> current_polyline;
+
+      void start_new_polyline()
+      {
+        current_polyline.clear();
+      }
+
+      void add_node(Graph_vertex v)
+      {
+        current_polyline.push_back(v);
+      }
+
+      void end_polyline()
+      {
+        //TODO: we should collect polylines and use union-find to group them when their bbox overlaps
+        //      this would save some center computations + make sure close polylines have the same center
+        std::vector<K::Vector_2> directions;
+        std::vector<K::FT> lengths;
+        directions.reserve(current_polyline.size());
+        lengths.reserve(current_polyline.size());
+
+        // recover polyline of control points
+        std::vector<K::Point_2> poly2;
+        poly2.reserve(current_polyline.size());
+        for (Graph_vertex v  : current_polyline)
+          poly2.push_back(graph[v]);
+
+        // center of the polyline
+        CGAL::Bbox_2 poly_bb=CGAL::bbox_2(poly2.begin(), poly2.end());
+        K::Point_2 poly_center((poly_bb.xmin()+poly_bb.xmax())/2., (poly_bb.ymin()+poly_bb.ymax())/2.);
+
+        // path from the general center to the polyline center
+        K::Vector_2 dir(center_2, poly_center);
+        std::vector<Face_location> path_2_center =
+          PMP::straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()), mesh);
+        Face_location poly_center_loc = path_2_center.back();
+
+        // update initial angle from the global center to the polyline center
+        using Impl=PMP::internal::Locally_shortest_path_imp<K, Mesh, decltype(mesh.points())>;
+        K::Vector_2 initial_dir(1,0);// TODO: this is arbitray and could be a user input or from PCA...
+
+
+        // TODO: avoid using the shortest path and directly use the straightest!
+        std::vector<Edge_location> shortest_path;
+          PMP::locally_shortest_path<K::FT>(center, poly_center_loc, mesh, shortest_path, solver);
+
+        typename K::Vector_2 v = initial_dir;
+        // TODO: the code uses the straightest path but since the code expects Edge_location,
+        // it is not working directly. We need to extract the edge encoded by the face location
+        // for(std::size_t i=1;i<path_2_center.size();++i)
+        // {
+        //   Mesh::Halfedge_index h_curr = halfedge(path_2_center[i].first, mesh);
+        //   v = Impl::parallel_transport_f2f(h_curr, v, mesh.points(), mesh);
+        // }
+        for(std::size_t i=0;i<shortest_path.size();++i)
+        {
+          Mesh::Halfedge_index h_curr = halfedge(shortest_path[i].first, mesh);
+          v = Impl::parallel_transport_f2f(h_curr, v, mesh.points(), mesh);
+        }
+        double theta = atan2(v.y(),v.x());
+
+        // polar coordinates from the polyline center and convertion to lengths and directions
+        std::vector<std::pair<double, double>> polar_coords =
+          PMP::convert_polygon_to_polar_coordinates<K>(poly2, poly_center);
+
+        for (const std::pair<double, double>& polar_coord : polar_coords)
+        {
+          lengths.push_back(scaling * polar_coord.first);
+          directions.push_back(K::Vector_2(std::cos(polar_coord.second+theta), std::sin(polar_coord.second+theta)));
+        }
+
+        bool is_closed=current_polyline.front()==current_polyline.back();
+        if (is_closed)
+        {
+          lengths.pop_back();
+          directions.pop_back();
+        }
+
+
+        std::vector<Face_location> res =
+          PMP::trace_polyline_of_bezier_curves<K>(poly_center_loc, directions, lengths,
+                                                  is_closed, // use [directions/lengths].front as last control point?
+                                                  num_subdiv, mesh, solver);
+        // write result
+        std::vector<K::Point_3> poly3;
+        poly3.reserve(res.size());
+        PMP::convert_path_to_polyline(res, mesh, std::back_inserter(poly3));
+
+        out << poly3.size();
+        for (const K::Point_3& p : poly3)
+          out << " " << p;
+        out << "\n";
+      }
+    };
+
+    Draw_visitor svisitor(graph, center, center_2, scaling, num_subdiv, mesh, solver);
+    CGAL::split_graph_into_polylines(graph, svisitor);
+
+    // for loop
+
+    std::vector<K::Vector_2> directions;
+    std::vector<K::FT> lengths;
+
+
+
+
+    time.stop();
+    std::cout << "option 2 took: " << time.time() << "\n";
   }
 
   return 0;
