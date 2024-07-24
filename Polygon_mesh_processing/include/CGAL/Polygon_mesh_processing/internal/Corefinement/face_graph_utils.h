@@ -428,6 +428,7 @@ struct Default_visitor{
   void before_face_copy(face_descriptor /*f_old*/, const TriangleMesh&, TriangleMesh&){}
   void after_face_copy(face_descriptor /*f_old*/, const TriangleMesh&,
                        face_descriptor /* f_new */, TriangleMesh&){}
+  void input_coplanar_face(face_descriptor /*f*/, TriangleMesh&) {}
 // edge visitor functions
   void before_edge_split(halfedge_descriptor /* h */, TriangleMesh& /* tm */){}
   void edge_split(halfedge_descriptor /* hnew */, TriangleMesh& /* tm */){}
