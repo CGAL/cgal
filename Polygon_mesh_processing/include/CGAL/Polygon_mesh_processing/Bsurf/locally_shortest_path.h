@@ -1289,6 +1289,8 @@ struct Locally_shortest_path_imp
     }
 #endif
 
+    if (len == 0) return {start_loc};
+
     auto get_halfedge_offset=[&mesh](const halfedge_descriptor& h_ref,const halfedge_descriptor& h_curr)
     {
       if( h_ref == h_curr) return 0;
@@ -3269,6 +3271,7 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
       straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()),tmesh);
     Face_location<TriangleMesh, typename K::FT> polygon_center = spath.back();
 
+    // TODO: avoid using the shortest path and directly use the straightest!
     std::vector<Edge_location<TriangleMesh, typename K::FT>> shortest_path;
       locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, *solver_ptr);
 
@@ -3677,7 +3680,6 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
 
   std::size_t n=directions.size();
   std::vector< std::vector<Face_location<TriangleMesh, typename K::FT>> > result(n);
-  std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
 
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
   const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
