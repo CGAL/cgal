@@ -74,7 +74,7 @@ int main() {
   output_centered = triangulation.lift();
 
   Triangulation::Combinatorial_map_with_cross_ratios& cmap = triangulation.get_combinatorial_map_ref();
-  Triangulation::Anchor& anchor = triangulation.get_anchor_ref();
+  Triangulation::Anchor& anchor = triangulation.anchor();
   assert( cmap.is_dart_used(anchor.dart) );
 
   std::cout << "printing triangulation for test purposes : " << std::endl << triangulation;
