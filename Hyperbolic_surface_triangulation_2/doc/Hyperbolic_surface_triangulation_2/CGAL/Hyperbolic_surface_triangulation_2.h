@@ -3,12 +3,35 @@ namespace CGAL{
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
+
+This item defines attributes of edges that are
+`Complex_without_sqrt` reprensenting cross-ratios.
+
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
+
+\cgalModels{GenericMapItems}
+*/
+template<class Traits>
+struct Combinatorial_map_with_cross_ratios_item{
+    template <class CMap>
+    struct Dart_wrapper{
+        typedef Cell_attribute<CMap, Complex_without_sqrt<typename Traits::FT>> Edge_attrib;
+        typedef std::tuple<void,Edge_attrib,void>   Attributes;
+    };
+  };
+
+
+/*!
+\ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
+
 Represents a triangulation of a closed orientable hyperbolic surface.
 
 Offers facilities such as the generation of the triangulation from a convex fundamental domain,
 the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
 
 \tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
+
+\tparam Attributes must be a model of `GenericMapItems` (default model : `Combinatorial_map_with_cross_ratios_item<Traits>`).
 */
 template<class Traits, class Attributes = Combinatorial_map_with_cross_ratios_item<Traits>>
 class Hyperbolic_surface_triangulation_2{

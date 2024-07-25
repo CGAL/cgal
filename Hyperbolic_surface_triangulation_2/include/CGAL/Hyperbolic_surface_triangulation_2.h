@@ -83,7 +83,7 @@ public:
 
   Combinatorial_map_with_cross_ratios& get_combinatorial_map_ref();
   bool has_anchor() const;
-  Anchor& anchor();
+  Anchor& anchor() const;
 
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
@@ -239,8 +239,9 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::has_anchor() const 
   return _has_anchor;
 }
 
-template<class Traits, class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor& Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor(){
+ template<class Traits, class Attributes>
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
+Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor() const{
   return _anchor;
 }
 

@@ -29,18 +29,16 @@ public:
   Hyperbolic_fundamental_domain_2();
 
   /*!
-    Constructor from the vectors of vertices and side pairings.
+    Constructor from vertices and side pairings interators.
   */
-  Hyperbolic_fundamental_domain_2(const std::vector<Point>& vertices, const std::vector<int>& pairings);
+   Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
+				  typename std::vector<Point>::iterator vlast,
+				  typename std::vector<int>::iterator pfirst,
+				  typename std::vector<int>::iterator plast);
   /// @}
 
   /// \name Access functions
   /// @{
-  /*!
-    Sets the vertices and the side pairings of the domain.
-  */
-  void set(const std::vector<Point>& vertices, const std::vector<int>& pairings);
-
   /*!
       Returns the number of vertices (equivalently, the number of sides) of the domain.
 
