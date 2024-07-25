@@ -222,6 +222,7 @@ public:
   \cgalHasModels{CGAL::Line_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::AreParallel_3`
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructDirection_3`
   \sa `Kernel::ConstructLine_3`
@@ -299,18 +300,23 @@ public:
   \cgalHasModels{CGAL::Plane_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::AreParallel_3`
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructBaseVector_3`
   \sa `Kernel::ConstructBisector_3`
+  \sa `Kernel::ConstructCircle_3`
   \sa `Kernel::ConstructLiftedPoint_3`
   \sa `Kernel::ConstructOppositePlane_3`
   \sa `Kernel::ConstructOrthogonalVector_3`
+  \sa `Kernel::ConstructProjectedXYPoint_2`
   \sa `Kernel::ConstructPerpendicularLine_3`
   \sa `Kernel::ConstructPerpendicularPlane_3`
   \sa `Kernel::ConstructPlane_3`
   \sa `Kernel::ConstructPointOn_3`
   \sa `Kernel::ConstructProjectedPoint_3`
   \sa `Kernel::ConstructProjectedXYPoint_2`
+  \sa `Kernel::ConstructRadicalPlane_3`
+  \sa `Kernel::ConstructSupportingPlane_3`
   \sa `Kernel::DoIntersect_3`
   \sa `Kernel::Equal_3`
   \sa `Kernel::HasOnNegativeSide_3`
@@ -496,6 +502,7 @@ public:
   \cgalHasModels{CGAL::Ray_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::AreParallel_3`
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ConstructDirection_3`
   \sa `Kernel::ConstructLine_3`
@@ -562,6 +569,7 @@ public:
   \cgalHasModels{CGAL::Segment_3<Kernel>}
   \cgalHasModelsEnd
 
+  \sa `Kernel::AreParallel_3`
   \sa `Kernel::ComputeSquaredDistance_3`
   \sa `Kernel::ComputeSquaredLength_3`
   \sa `Kernel::ConstructDirection_3`
