@@ -2,6 +2,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/Bsurf/locally_shortest_path.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
+#include <CGAL/Polygon_mesh_processing/clip.h>
+#include <CGAL/Polygon_mesh_processing/extrude.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Real_timer.h>
@@ -26,10 +28,11 @@ int main(int argc, char** argv)
   std::string svg_filename = (argc > 2) ? std::string(argv[2])
     : CGAL::data_file_path("polylines_2/nano.svg");
 
-  int face_index = (argc>3) ? atoi(argv[3]) : 2154;
-  double b0 = (argc>4) ? atof(argv[4]) : 0.3;
-  double b1 = (argc>5) ? atof(argv[5]) : 0.3;
-  double b2 = (argc>6) ? atof(argv[6]) : 0.4;
+  const double expected_diag = (argc>3) ? atof(argv[3]) : 0.6; // user parameter for scaling
+  int face_index = (argc>4) ? atoi(argv[4]) : 2154;
+  double b0 = (argc>5) ? atof(argv[5]) : 0.3;
+  double b1 = (argc>6) ? atof(argv[6]) : 0.3;
+  double b2 = (argc>7) ? atof(argv[7]) : 0.4;
 
   Mesh mesh;
   if(!CGAL::IO::read_polygon_mesh(mesh_filename, mesh) || !CGAL::is_triangle_mesh(mesh))
@@ -79,8 +82,6 @@ int main(int argc, char** argv)
   // convert control points to polar coordinates
   typename K::Point_2 center_2((bb2.xmax()+bb2.xmin())/2., (bb2.ymax()+bb2.ymin())/2.);
   double diag = std::sqrt( CGAL::square(bb2.xmin()-bb2.xmax()) + CGAL::square(bb2.xmin()-bb2.xmax()) );
-  //~ const double expected_diag = 0.45; // user parameter for scaling
-  const double expected_diag = 0.6; // user parameter for scaling
   const double scaling = expected_diag/diag;
 
   //TODO: do the scaling at read time!
@@ -200,9 +201,12 @@ int main(int argc, char** argv)
       double scaling, num_subdiv;
       const Mesh& mesh;
       PMP::Dual_geodesic_solver<double>& solver;
+      std::vector<std::vector<Face_location>>& polygons_3;
+      bool all_closed=true;
 
       Draw_visitor(const Graph& g, const Face_location& c, const K::Point_2& c2, double s, double ns,
-                   const Mesh& tm, PMP::Dual_geodesic_solver<double>& sol)
+                   const Mesh& tm, PMP::Dual_geodesic_solver<double>& sol,
+                   std::vector<std::vector<Face_location>>& ps3)
         : graph(g)
         , center(c)
         , center_2(c2)
@@ -210,6 +214,7 @@ int main(int argc, char** argv)
         , num_subdiv(ns)
         , mesh(tm)
         , solver(sol)
+        , polygons_3(ps3)
       {
         out.open("svg_option2.polylines.txt");
         out << std::setprecision(17);
@@ -292,6 +297,8 @@ int main(int argc, char** argv)
           lengths.pop_back();
           directions.pop_back();
         }
+        else
+          all_closed=false;
 
 
         std::vector<Face_location> res =
@@ -307,22 +314,163 @@ int main(int argc, char** argv)
         for (const K::Point_3& p : poly3)
           out << " " << p;
         out << "\n";
+
+        polygons_3.push_back(std::move(res));
       }
     };
 
-    Draw_visitor svisitor(graph, center, center_2, scaling, num_subdiv, mesh, solver);
+    std::vector<std::vector<Face_location>> polygons_3;
+    Draw_visitor svisitor(graph, center, center_2, scaling, num_subdiv, mesh, solver, polygons_3);
     CGAL::split_graph_into_polylines(graph, svisitor);
 
     // for loop
 
     std::vector<K::Vector_2> directions;
     std::vector<K::FT> lengths;
-
+    svisitor.out.close();
 
 
 
     time.stop();
     std::cout << "option 2 took: " << time.time() << "\n";
+
+
+    if (svisitor.all_closed)
+    {
+      std::cout << "Now carve the input mesh\n";
+      // copy/pasted from trace_polygon_example.cpp
+      // now refine the input mesh
+      std::vector<Mesh::Halfedge_index> cst_hedges;
+      auto vnm = mesh.add_property_map<Mesh::Vertex_index, K::Vector_3>("vnm", K::Vector_3(0,0,0)).first;
+      auto fnm = mesh.add_property_map<Mesh::Face_index, K::Vector_3>("fnm", K::Vector_3(0,0,0)).first;
+      using VNM = decltype(vnm);
+
+      PMP::compute_normals(mesh, vnm, fnm);
+      PMP::refine_mesh_along_paths<K>(polygons_3, mesh, vnm, fnm, std::back_inserter(cst_hedges));
+
+      std::ofstream("mesh_refined.off") << std::setprecision(17) << mesh;
+
+      std::ofstream cst_edges("refinement_edges.polylines.txt");
+      cst_edges.precision(17);
+      for (Mesh::Halfedge_index h : cst_hedges)
+        cst_edges << "2 " << mesh.point(source(h,mesh)) << " " << mesh.point(target(h,mesh)) << "\n";
+
+
+      auto ecm = mesh.add_property_map<Mesh::Edge_index, bool>("ecm", false).first;
+      for (Mesh::Halfedge_index h : cst_hedges)
+        ecm[edge(h, mesh)]=true;
+
+
+      // face index for doing flood fill and mark inside-out
+      Mesh::Face_index out_face(2612);
+      std::vector<int> in_out(num_faces(mesh), -1);
+
+      bool inorout=false;
+      std::vector<Mesh::Face_index> queue, next_queue;
+      queue.push_back(out_face);
+
+      while(!queue.empty())
+      {
+        Mesh::Face_index f = queue.back();
+        queue.pop_back();
+        if (in_out[f]==-1)
+        {
+          in_out[f]=inorout?1:0;
+          Mesh::Halfedge_index h=halfedge(f, mesh);
+          for (int i=0; i<3; ++i)
+          {
+            Mesh::Face_index nf = face(opposite(h, mesh), mesh);
+            if (nf!=boost::graph_traits<Mesh>::null_face() && in_out[nf]==-1)
+            {
+              if (ecm[edge(h,mesh)])
+                next_queue.push_back(nf);
+              else
+                queue.push_back(nf);
+            }
+            h=next(h, mesh);
+          }
+        }
+        if (queue.empty())
+        {
+          queue.swap(next_queue);
+          inorout=!inorout;
+        }
+      }
+
+      struct Visitor
+        : public PMP::Corefinement::Default_visitor<Mesh>
+      {
+        VNM vnm;
+        Visitor(VNM vnm) : vnm(vnm) {}
+
+        std::vector<std::pair<Mesh::Halfedge_index, Mesh::Halfedge_index> > hedge_map;
+        void after_edge_duplicated(Mesh::Halfedge_index h, Mesh::Halfedge_index new_hedge, const Mesh&)
+        {
+          hedge_map.emplace_back(h, new_hedge);
+        }
+
+        void after_vertex_copy(Mesh::Vertex_index v, const Mesh&, Mesh::Vertex_index nv, const Mesh&)
+        {
+          put(vnm, nv, get(vnm, v));
+        }
+      };
+      Visitor visitor(vnm);
+
+      PMP::internal::split_along_edges(mesh, ecm, mesh.points(), visitor);
+
+      double delta = -0.005;
+      for (const auto& ph : visitor.hedge_map)
+      {
+        Mesh::Halfedge_index h1 = ph.first;
+        Mesh::Halfedge_index h2 = ph.second;
+        if (is_border(h1, mesh)) h1=opposite(h1, mesh);
+        if (is_border(h2, mesh)) h2=opposite(h2, mesh);
+        Mesh::Halfedge_index h = in_out[face(h1, mesh)]==1 ? h1 : h2;
+
+        Mesh::Vertex_index v = target(h, mesh);
+        K::Vector_3 n = get(vnm, v);
+        mesh.point(v) = mesh.point(v)+delta*n;
+      }
+
+      // interior vertices
+      for (Mesh::Vertex_index v : vertices(mesh))
+      {
+        bool skip=false;
+        Mesh::Halfedge_index h = halfedge(v, mesh);
+        for (Mesh::Halfedge_index h : CGAL::halfedges_around_target(v, mesh))
+        {
+          if (is_border(h, mesh) || in_out[face(h, mesh)]==0)
+          {
+            skip=true;
+            break;
+          }
+        }
+        if (!skip)
+        {
+          K::Vector_3 n = get(vnm, v);
+          mesh.point(v) = mesh.point(v)+delta*n;
+        }
+      }
+
+      std::vector<Mesh::Halfedge_index> b1(visitor.hedge_map.size());
+      std::vector<Mesh::Halfedge_index> b2(visitor.hedge_map.size());
+      for (std::size_t i=0; i<visitor.hedge_map.size(); ++i)
+      {
+        Mesh::Halfedge_index h1 = visitor.hedge_map[i].first;
+        Mesh::Halfedge_index h2 = visitor.hedge_map[i].second;
+        if (is_border(h1, mesh)) h1=opposite(h1, mesh);
+        if (is_border(h2, mesh)) h2=opposite(h2, mesh);
+        if (in_out[face(h1, mesh)]==1) std::swap(h1,h2);
+
+        b1[i]=opposite(h1, mesh);
+        b2[i]=opposite(h2, mesh);
+
+      }
+
+      PMP::extrude_impl::create_strip(b1, b2, mesh);
+
+      std::ofstream("mesh_refined_split.off") << std::setprecision(17) << mesh;
+    }
   }
 
   return 0;

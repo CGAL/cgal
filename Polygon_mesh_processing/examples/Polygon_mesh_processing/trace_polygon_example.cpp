@@ -4,7 +4,6 @@
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/extrude.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
@@ -241,7 +240,7 @@ int main(int argc, char** argv)
 
   PMP::internal::split_along_edges(mesh, ecm, mesh.points(), visitor);
 
-  // TODO should actually only handle interior vertices...
+
   double delta = -0.005;
   for (const auto& ph : visitor.hedge_map)
   {
@@ -254,6 +253,26 @@ int main(int argc, char** argv)
     Mesh::Vertex_index v = target(h, mesh);
     K::Vector_3 n = get(vnm, v);
     mesh.point(v) = mesh.point(v)+delta*n;
+  }
+
+  // interior vertices
+  for (Mesh::Vertex_index v : vertices(mesh))
+  {
+    bool skip=false;
+    Mesh::Halfedge_index h = halfedge(v, mesh);
+    for (Mesh::Halfedge_index h : CGAL::halfedges_around_target(v, mesh))
+    {
+      if (is_border(h, mesh) || in_out[face(h, mesh)]==0)
+      {
+        skip=true;
+        break;
+      }
+    }
+    if (!skip)
+    {
+      K::Vector_3 n = get(vnm, v);
+      mesh.point(v) = mesh.point(v)+delta*n;
+    }
   }
 
   std::vector<Mesh::Halfedge_index> b1(visitor.hedge_map.size());
