@@ -497,11 +497,11 @@ public:
       rendering_program_normal.setUniformValue("u_Color", color);
       if (m_use_normal_mono_color)
       {
-        rendering_program_normal.setUniformValue("u_RenderingMode", static_cast<GLfloat>(1.0));
+        rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLfloat>(1.0));
       }
       else 
       {
-        rendering_program_normal.setUniformValue("u_RenderingMode", static_cast<GLfloat>(0.0));
+        rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLfloat>(0.0));
       }
       rendering_program_normal.setUniformValue("u_Factor", static_cast<GLfloat>(m_height_factor_normals));
       rendering_program_normal.setUniformValue("u_SceneRadius", static_cast<GLfloat>(sceneRadius()));

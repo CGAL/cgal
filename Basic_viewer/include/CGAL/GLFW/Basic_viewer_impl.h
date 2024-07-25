@@ -96,6 +96,12 @@ namespace GLFW
     m_flatShading(flatShading)
   {
     initialize();
+    GLint maxGeometryOutputVertices = 0;
+    glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &maxGeometryOutputVertices);
+    std::cout << "Maximum geometry output vertices: " << maxGeometryOutputVertices << "\n";
+    GLint maxGeometryOutputComponents = 0;
+    glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_COMPONENTS, &maxGeometryOutputComponents);
+    std::cout << "Maximum geometry output Component: " << maxGeometryOutputComponents << "\n";
   }
 
   inline
@@ -161,10 +167,11 @@ namespace GLFW
 
   void Basic_viewer::clear_application()
   {
-    m_plShader.destroy();
-    m_faceShader.destroy();
-    m_lineShader.destroy();
-    m_planeShader.destroy();
+    m_shaderPl.destroy();
+    m_shaderFace.destroy();
+    m_shaderLine.destroy();
+    m_shaderArrow.destroy();
+    m_shaderPlane.destroy();
     glDeleteBuffers(NB_GL_BUFFERS, m_vbo);
     glDeleteVertexArrays(NB_VAO_BUFFERS, m_vao);
     glfwDestroyWindow(m_window);
@@ -196,25 +203,33 @@ namespace GLFW
     const char* FACE_VERTEX = m_isOpengl4_3 ? VERTEX_SOURCE_COLOR : VERTEX_SOURCE_COLOR_COMP;
     const char* FACE_FRAGMENT = m_isOpengl4_3 ? FRAGMENT_SOURCE_COLOR : FRAGMENT_SOURCE_COLOR_COMP;
     const char* PL_VERTEX = m_isOpengl4_3 ? VERTEX_SOURCE_P_L : VERTEX_SOURCE_P_L_COMP;
-    const char* PL_GEOMETRY = GEOMETRY_SOURCE_P_L;
     const char* PL_FRAGMENT = m_isOpengl4_3 ? FRAGMENT_SOURCE_P_L : FRAGMENT_SOURCE_P_L_COMP;
     const char* PLANE_VERTEX = VERTEX_SOURCE_CLIPPING_PLANE;
     const char* PLANE_FRAGMENT = FRAGMENT_SOURCE_CLIPPING_PLANE;
 
-    m_faceShader = Shader::create_shader(FACE_VERTEX, FACE_FRAGMENT);
-    m_plShader = Shader::create_shader(PL_VERTEX, PL_FRAGMENT);
-    m_planeShader = Shader::create_shader(PLANE_VERTEX, PLANE_FRAGMENT);
+    m_shaderPl = Shader::create_shader(PL_VERTEX, PL_FRAGMENT);
+    m_shaderFace = Shader::create_shader(FACE_VERTEX, FACE_FRAGMENT);
+    m_shaderPlane = Shader::create_shader(PLANE_VERTEX, PLANE_FRAGMENT);
+
+    const char* POINT_GEOMETRY = GEOMETRY_SOURCE_SPHERE;
+    m_shaderSphere = Shader::create_shader(PL_VERTEX, PL_FRAGMENT, POINT_GEOMETRY);
+
+    const char* EDGE_GEOMETRY = GEOMETRY_SOURCE_CYLINDER;
+    m_shaderCylinder = Shader::create_shader(PL_VERTEX, PL_FRAGMENT, EDGE_GEOMETRY);
 
     // For world axis and grid 
     const char* LINE_VERTEX = VERTEX_SOURCE_LINE;
     const char* LINE_GEOMETRY = GEOMETRY_SOURCE_LINE;
     const char* LINE_FRAGMENT = FRAGMENT_SOURCE_LINE;
-    m_lineShader = Shader::create_shader(LINE_VERTEX, LINE_FRAGMENT, LINE_GEOMETRY);
+    m_shaderLine = Shader::create_shader(LINE_VERTEX, LINE_FRAGMENT, LINE_GEOMETRY);
+
+    const char* ARROW_GEOMETRY = GEOMETRY_SOURCE_ARROW;
+    m_shaderArrow = Shader::create_shader(LINE_VERTEX, LINE_FRAGMENT, ARROW_GEOMETRY);
 
     const char* NORMAL_VERTEX = VERTEX_SOURCE_NORMAL;
     const char* NORMAL_GEOMETRY = GEOMETRY_SOURCE_NORMAL;
     const char* NORMAL_FRAGMENT = FRAGMENT_SOURCE_NORMAL;
-    m_normalShader = Shader::create_shader(NORMAL_VERTEX, NORMAL_FRAGMENT, NORMAL_GEOMETRY);
+    m_shaderNormal = Shader::create_shader(NORMAL_VERTEX, NORMAL_FRAGMENT, NORMAL_GEOMETRY);
   }
 
   inline 
@@ -422,36 +437,73 @@ namespace GLFW
   inline
   void Basic_viewer::update_face_uniforms()
   {
-    m_faceShader.use();
+    m_shaderFace.use();
 
-    m_faceShader.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
-    m_faceShader.set_mat4f("u_Mv",  m_viewMatrix.data());
+    m_shaderFace.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
+    m_shaderFace.set_mat4f("u_Mv",  m_viewMatrix.data());
 
-    m_faceShader.set_vec4f("u_LightPos",  m_lightPosition.data());
-    m_faceShader.set_vec4f("u_LightDiff", m_diffuseColor.data());
-    m_faceShader.set_vec4f("u_LightSpec", m_specularColor.data());
-    m_faceShader.set_vec4f("u_LightAmb",  m_ambientColor.data());
-    m_faceShader.set_float("u_SpecPower", m_shininess);
+    m_shaderFace.set_vec4f("u_LightPos",  m_lightPosition.data());
+    m_shaderFace.set_vec4f("u_LightDiff", m_diffuseColor.data());
+    m_shaderFace.set_vec4f("u_LightSpec", m_specularColor.data());
+    m_shaderFace.set_vec4f("u_LightAmb",  m_ambientColor.data());
+    m_shaderFace.set_float("u_SpecPower", m_shininess);
 
-    m_faceShader.set_vec4f("u_ClipPlane",  m_clipPlane.data());
-    m_faceShader.set_vec4f("u_PointPlane", m_pointPlane.data());
-    m_faceShader.set_float("u_RenderingTransparency", m_clippingPlane.get_transparency());
+    m_shaderFace.set_vec4f("u_ClipPlane",  m_clipPlane.data());
+    m_shaderFace.set_vec4f("u_PointPlane", m_pointPlane.data());
+    m_shaderFace.set_float("u_RenderingTransparency", m_clippingPlane.get_transparency());
+  }
+
+  inline 
+  void Basic_viewer::update_point_uniforms()
+  {
+    m_shaderSphere.use();
+
+    bool half = m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+    auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
+
+    m_shaderSphere.set_float("u_RenderingMode", static_cast<float>(mode));
+
+    m_shaderSphere.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
+    m_shaderSphere.set_vec4f("u_ClipPlane",  m_clipPlane.data());
+    m_shaderSphere.set_vec4f("u_PointPlane", m_pointPlane.data());
+    m_shaderSphere.set_float("u_UseGeometryShader", 1.0);
+    m_shaderSphere.set_float("u_PointSize", m_sizeVertices);
+    m_shaderSphere.set_float("u_Radius", m_camera.get_radius()*m_sizeVertices*0.001);
+  }
+
+  inline 
+  void Basic_viewer::update_edge_uniforms()
+  {
+    m_shaderCylinder.use();
+
+    bool half = m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+    auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
+
+    m_shaderCylinder.set_float("u_RenderingMode", static_cast<float>(mode));
+
+    m_shaderCylinder.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
+    m_shaderCylinder.set_vec4f("u_ClipPlane",  m_clipPlane.data());
+    m_shaderCylinder.set_vec4f("u_PointPlane", m_pointPlane.data());
+    m_shaderCylinder.set_float("u_PointSize", m_sizeEdges);
+    m_shaderCylinder.set_float("u_UseGeometryShader", 1.0);
+    m_shaderCylinder.set_float("u_Radius", m_camera.get_radius()*m_sizeEdges*0.001);
   }
 
   inline
   void Basic_viewer::update_pl_uniforms()
   {
-    m_plShader.use();
+    m_shaderPl.use();
 
     bool half = m_displayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    m_plShader.set_float("u_RenderingMode", static_cast<float>(mode));
+    m_shaderPl.set_float("u_RenderingMode", static_cast<float>(mode));
 
-    m_plShader.set_vec4f("u_ClipPlane",  m_clipPlane.data());
-    m_plShader.set_vec4f("u_PointPlane", m_pointPlane.data());
-    m_plShader.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
-    m_plShader.set_float("u_PointSize", m_sizeVertices);
+    m_shaderPl.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
+    m_shaderPl.set_vec4f("u_ClipPlane",  m_clipPlane.data());
+    m_shaderPl.set_vec4f("u_PointPlane", m_pointPlane.data());
+    m_shaderPl.set_float("u_PointSize", m_sizeVertices);
+    m_shaderPl.set_float("u_UseGeometryShader", 0.0);
   }
 
   inline
@@ -462,9 +514,9 @@ namespace GLFW
     m_pointPlane = clippingModelMatrix * vec4f(0, 0, 0, 1);
     m_clipPlane = clippingModelMatrix * vec4f(0, 0, 1, 0);
 
-    m_planeShader.use();
-    m_planeShader.set_mat4f("u_Vp", m_viewProjectionMatrix.data());
-    m_planeShader.set_mat4f("u_M",  clippingModelMatrix.data());
+    m_shaderPlane.use();
+    m_shaderPlane.set_mat4f("u_Vp", m_viewProjectionMatrix.data());
+    m_shaderPlane.set_mat4f("u_M",  clippingModelMatrix.data());
   }
 
   inline
@@ -486,36 +538,45 @@ namespace GLFW
 
     mat4f mvp = projection * rotation4x4 * translation;
 
-    m_lineShader.use();
-    m_lineShader.set_mat4f("u_Mvp", mvp.data()); 
+    m_shaderArrow.use();
+    m_shaderArrow.set_mat4f("u_Mvp", mvp.data()); 
+    m_shaderArrow.set_float("u_SceneRadius", 1.0f); 
+  }
+
+  inline
+  void Basic_viewer::update_XY_axis_uniforms()
+  {
+    m_shaderArrow.use();
+    m_shaderArrow.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
+    m_shaderArrow.set_float("u_SceneRadius", m_camera.get_radius()); 
   }
 
   inline
   void Basic_viewer::update_XY_grid_uniforms()
   {
-    m_lineShader.use();
-    m_lineShader.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
+    m_shaderLine.use();
+    m_shaderLine.set_mat4f("u_Mvp", m_viewProjectionMatrix.data());
   }
 
   inline 
   void Basic_viewer::update_normals_uniforms()
   {
-    m_normalShader.use();
+    m_shaderNormal.use();
    
     vec4f color = color_to_normalized_vec4(m_normalsMonoColor);
-    m_normalShader.set_mat4f("u_Mv", m_viewMatrix.data());
-    m_normalShader.set_vec4f("u_Color", color.data());
+    m_shaderNormal.set_mat4f("u_Mv", m_viewMatrix.data());
+    m_shaderNormal.set_vec4f("u_Color", color.data());
     if (m_useNormalMonoColor)
     {
-      m_normalShader.set_float("u_RenderingMode", 1.0);
+      m_shaderNormal.set_float("u_UseMonoColor", 1.0);
     }
     else
     {
-      m_normalShader.set_float("u_RenderingMode", 0.0);
+      m_shaderNormal.set_float("u_UseMonoColor", 0.0);
     }
-    m_normalShader.set_mat4f("u_Projection", m_projectionMatrix.data());
-    m_normalShader.set_float("u_Factor", m_normalHeightFactor);
-    m_normalShader.set_float("u_SceneRadius", m_camera.get_radius());
+    m_shaderNormal.set_mat4f("u_Projection", m_projectionMatrix.data());
+    m_shaderNormal.set_float("u_Factor", m_normalHeightFactor);
+    m_shaderNormal.set_float("u_SceneRadius", m_camera.get_radius());
 
   }
 
@@ -555,14 +616,6 @@ namespace GLFW
     compute_model_view_projection_matrix(deltaTime);
 
     update_pl_uniforms();
-    if (m_drawVertices)
-    {
-      draw_vertices();
-    }
-    if (m_drawEdges)
-    {
-      draw_edges();
-    }
     if (m_drawRays)
     {
       draw_rays();
@@ -570,6 +623,24 @@ namespace GLFW
     if (m_drawLines)
     {
       draw_lines();
+    }
+    if (m_drawEdges)
+    {
+      update_pl_uniforms();
+      if (m_drawCylinderEdge)
+      {
+        update_edge_uniforms();
+      }
+      draw_edges();
+    }
+    if (m_drawVertices)
+    {
+      update_pl_uniforms();
+      if (m_drawSphereVertex)
+      {
+        update_point_uniforms();
+      }
+      draw_vertices();
     }
 
     if (clipping_plane_enable())
@@ -598,7 +669,6 @@ namespace GLFW
 
     if (m_drawXYGrid) 
     { 
-      update_XY_grid_uniforms();
       draw_xy_grid();
     }
   }
@@ -664,7 +734,7 @@ namespace GLFW
   inline
   void Basic_viewer::draw_faces_bis(RenderingMode mode)
   {
-    m_faceShader.set_float("u_RenderingMode", static_cast<float>(mode));
+    m_shaderFace.set_float("u_RenderingMode", static_cast<float>(mode));
 
     vec4f color = color_to_normalized_vec4(m_facesMonoColor);
 
@@ -688,7 +758,7 @@ namespace GLFW
   inline
   void Basic_viewer::draw_rays()
   {
-    m_plShader.set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
+    m_shaderPl.set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     vec4f color = color_to_normalized_vec4(m_raysMonoColor);
 
@@ -734,7 +804,7 @@ namespace GLFW
   inline
   void Basic_viewer::draw_lines()
   {
-    m_plShader.set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
+    m_shaderPl.set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     vec4f color = color_to_normalized_vec4(m_linesMonoColor);
 
@@ -798,7 +868,9 @@ namespace GLFW
   { 
     glDepthFunc(GL_LEQUAL);
 
+    update_XY_grid_uniforms();
     m_XYGridRenderer.draw();
+    update_XY_axis_uniforms();
     m_XYAxisRenderer.draw();
   }
 
@@ -1051,11 +1123,17 @@ namespace GLFW
     case VERTICES_DISPLAY:
       m_drawVertices = !m_drawVertices;
       break;
+    case SPHERE_VERTEX_DISPLAY:
+      m_drawSphereVertex = !m_drawSphereVertex;
+      break;
     case FACES_DISPLAY:
       m_drawFaces = !m_drawFaces;
       break;
     case EDGES_DISPLAY:
       m_drawEdges = !m_drawEdges;
+      break;
+    case CYLINDER_EDGE_DISPLAY:
+      m_drawCylinderEdge = !m_drawCylinderEdge;
       break;
     case SHADING_MODE:
       m_flatShading = !m_flatShading;
@@ -1073,16 +1151,16 @@ namespace GLFW
       m_useNormalMonoColor = !m_useNormalMonoColor;
       break;
     case INC_EDGES_SIZE:
-      m_sizeEdges = std::min(10.f, m_sizeEdges + 10.0f*deltaTime);
+      m_sizeEdges = std::min(25.f, m_sizeEdges + 10.0f*deltaTime);
       break;
     case DEC_EDGES_SIZE:
-      m_sizeEdges = std::max(1.f, m_sizeEdges - 10.0f*deltaTime);
+      m_sizeEdges = std::max(0.1f, m_sizeEdges - 10.0f*deltaTime);
       break;
     case INC_POINTS_SIZE:
       m_sizeVertices = std::min(50.f, m_sizeVertices + 10.0f*deltaTime);
       break;
     case DEC_POINTS_SIZE:
-      m_sizeVertices = std::max(1.f, m_sizeVertices - 10.0f*deltaTime);
+      m_sizeVertices = std::max(0.1f, m_sizeVertices - 10.0f*deltaTime);
       break;
     case INC_LIGHT_ALL:
       increase_light_all(deltaTime);
@@ -1478,7 +1556,7 @@ namespace GLFW
     GLsizei bufferSize = stride * m_windowSize.y();
 
     std::vector<char> buffer(bufferSize);
-    m_faceShader.use(); 
+    m_shaderFace.use(); 
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
 
     glReadBuffer(GL_FRONT);
@@ -1526,6 +1604,9 @@ namespace GLFW
     add_keyboard_action({GLFW_KEY_S}, InputMode::RELEASE, SHADING_MODE);
     add_keyboard_action({GLFW_KEY_N}, InputMode::RELEASE, INVERSE_NORMAL);
     add_keyboard_action({GLFW_KEY_M}, InputMode::RELEASE, MONO_COLOR);
+
+    add_keyboard_action({GLFW_KEY_E, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, CYLINDER_EDGE_DISPLAY);
+    add_keyboard_action({GLFW_KEY_V, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, SPHERE_VERTEX_DISPLAY);
 
     add_keyboard_action({GLFW_KEY_EQUAL, GLFW_KEY_LEFT_SHIFT, GLFW_KEY_LEFT_CONTROL}, InputMode::HOLD, INC_POINTS_SIZE);
     add_keyboard_action({GLFW_KEY_KP_ADD, GLFW_KEY_LEFT_CONTROL                    }, InputMode::HOLD, INC_POINTS_SIZE);
@@ -1655,28 +1736,30 @@ namespace GLFW
         {"[Z+WHEEL]",                                                "Increase/Decrease FOV"},
       }},
       {"Scene", {
-        {get_binding_text_from_action(INC_LIGHT_ALL),      "Increase light (all colors, use shift/alt/ctrl for one rgb component)"},
-        {get_binding_text_from_action(DEC_LIGHT_ALL),      "Decrease light (all colors, use shift/alt/ctrl for one rgb component)"},
-        {"",                                               ""},
-        {get_binding_text_from_action(NORMALS_DISPLAY),   "Toggle normals display"},
-        {get_binding_text_from_action(VERTICES_DISPLAY),   "Toggle vertices display"},
-        {get_binding_text_from_action(EDGES_DISPLAY),      "Toggle edges display"},
-        {get_binding_text_from_action(FACES_DISPLAY),      "Toggle faces display"},
-        {"",                                               ""},
-        {get_binding_text_from_action(WORLD_AXIS_DISPLAY), "Toggle world axis display"},
-        {get_binding_text_from_action(XY_GRID_DISPLAY),    "Toggle XY grid display"},
-        {"",                                               ""},
-        {get_binding_text_from_action(INC_POINTS_SIZE),    "Increase size of vertices"},
-        {get_binding_text_from_action(DEC_POINTS_SIZE),    "Decrease size of vertices"},
-        {get_binding_text_from_action(INC_EDGES_SIZE),     "Increase size of edges"},
-        {get_binding_text_from_action(DEC_EDGES_SIZE),     "Decrease size of edges"},
-        {"",                                               ""},
-        {get_binding_text_from_action(MONO_COLOR),         "Toggle mono color"},
-        {get_binding_text_from_action(NORMALS_MONO_COLOR),         "Toggle normals mono color"},
-        {get_binding_text_from_action(INVERSE_NORMAL),     "Invert direction of normals"},
-        {get_binding_text_from_action(SHADING_MODE),       "Switch between flat/Gouraud shading display"},
-        {"",                                               ""},
-        {"[MIDDLE_DOUBLE_CLICK]",                          "Show entire scene"},
+        {get_binding_text_from_action(INC_LIGHT_ALL),         "Increase light (all colors, use shift/alt/ctrl for one rgb component)"},
+        {get_binding_text_from_action(DEC_LIGHT_ALL),         "Decrease light (all colors, use shift/alt/ctrl for one rgb component)"},
+        {"",                                                  ""},
+        {get_binding_text_from_action(NORMALS_DISPLAY),       "Toggle normals display"},
+        {get_binding_text_from_action(VERTICES_DISPLAY),      "Toggle vertices display"},
+        {get_binding_text_from_action(SPHERE_VERTEX_DISPLAY), "Toggle vertices display as sphere"},
+        {get_binding_text_from_action(EDGES_DISPLAY),         "Toggle edges display"},
+        {get_binding_text_from_action(CYLINDER_EDGE_DISPLAY), "Toggle edges display as cylinder"},
+        {get_binding_text_from_action(FACES_DISPLAY),         "Toggle faces display"},
+        {"",                                                  ""},
+        {get_binding_text_from_action(WORLD_AXIS_DISPLAY),    "Toggle world axis display"},
+        {get_binding_text_from_action(XY_GRID_DISPLAY),       "Toggle XY grid display"},
+        {"",                                                  ""},
+        {get_binding_text_from_action(INC_POINTS_SIZE),       "Increase size of vertices"},
+        {get_binding_text_from_action(DEC_POINTS_SIZE),       "Decrease size of vertices"},
+        {get_binding_text_from_action(INC_EDGES_SIZE),        "Increase size of edges"},
+        {get_binding_text_from_action(DEC_EDGES_SIZE),        "Decrease size of edges"},
+        {"",                                                  ""},
+        {get_binding_text_from_action(MONO_COLOR),            "Toggle mono color"},
+        {get_binding_text_from_action(NORMALS_MONO_COLOR),    "Toggle normals mono color"},
+        {get_binding_text_from_action(INVERSE_NORMAL),        "Invert direction of normals"},
+        {get_binding_text_from_action(SHADING_MODE),          "Switch between flat/Gouraud shading display"},
+        {"",                                                  ""},
+        {"[MIDDLE_DOUBLE_CLICK]",                             "Show entire scene"},
       }},         
       {"Window", {
         {get_binding_text_from_action(FULLSCREEN), "Switch to windowed/fullscreen mode"},

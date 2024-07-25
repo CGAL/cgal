@@ -208,9 +208,12 @@ namespace GLFW
     void update_uniforms(const float deltaTime);
 
     void update_face_uniforms();
+    void update_point_uniforms();
+    void update_edge_uniforms();
     void update_pl_uniforms();
     void update_clipping_uniforms();
     void update_world_axis_uniforms();
+    void update_XY_axis_uniforms();
     void update_XY_grid_uniforms();
     void update_normals_uniforms();
 
@@ -279,6 +282,8 @@ namespace GLFW
     bool m_drawFaces { true };
     bool m_drawRays { true };
     bool m_drawLines { true };
+    bool m_drawCylinderEdge { false };
+    bool m_drawSphereVertex { false };
 
     bool m_useNormalMonoColor { false };
     bool m_useMonoColor { false };
@@ -332,11 +337,14 @@ namespace GLFW
     mat4f m_projectionMatrix     { mat4f::Identity() };
     mat4f m_viewProjectionMatrix { mat4f::Identity() };
 
-    Shader m_plShader;
-    Shader m_faceShader; 
-    Shader m_planeShader;
-    Shader m_lineShader;
-    Shader m_normalShader;
+    Shader m_shaderFace; 
+    Shader m_shaderSphere;
+    Shader m_shaderCylinder;
+    Shader m_shaderPl;
+    Shader m_shaderPlane;
+    Shader m_shaderLine;
+    Shader m_shaderNormal;
+    Shader m_shaderArrow;
 
     vec2i m_windowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
     vec2i m_oldWindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
@@ -402,6 +410,9 @@ namespace GLFW
       EDGES_DISPLAY,
       INVERSE_NORMAL,
       SHADING_MODE,
+
+      CYLINDER_EDGE_DISPLAY,
+      SPHERE_VERTEX_DISPLAY,
 
       NORMALS_MONO_COLOR,
       MONO_COLOR,
