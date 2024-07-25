@@ -40,28 +40,28 @@ public:
   /// \name Access functions
   /// @{
   /*!
-      Returns the number of vertices (equivalently, the number of sides) of the domain.
+      returns the number of vertices (equivalently, the number of sides) of the domain.
 
       \pre <code> is_valid() </code>
   */
   int size() const;
 
   /*!
-      Returns the \f$ i \f$-th vertex.
+      returns the \f$ i \f$-th vertex.
 
       \pre <code> is_valid() </code>
   */
   Point vertex(int i) const;
 
   /*!
-      Returns the index of the side paired to the \f$ i \f$-th side.
+      returns the index of the side paired to the \f$ i \f$-th side.
 
       \pre <code> is_valid() </code>
   */
   int paired_side(int i) const;
 
   /*!
-       Returns the isometry that maps side \f$ \overline A \f$ to side \f$ A
+       returns the isometry that maps side \f$ \overline A \f$ to side \f$ A
        \f$, where \f$ A \f$ is the \f$ i \f$-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
 
        \pre <code> is_valid() </code>
@@ -81,7 +81,7 @@ public:
   void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
   /*!
-      Writes the domain in a stream.
+      writes the domain in a stream.
 
       The format of the output is the following.
       The first line prints the number n of vertices of the domain.

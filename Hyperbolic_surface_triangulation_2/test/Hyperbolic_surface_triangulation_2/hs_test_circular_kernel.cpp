@@ -31,7 +31,7 @@ int main() {
 
   assert( triangulation0.is_valid() );
 
-  Triangulation triangulation1 = Triangulation(triangulation0.get_combinatorial_map_ref());
+  Triangulation triangulation1 = Triangulation(triangulation0.combinatorial_map());
   assert( ! triangulation1.has_anchor() );
 
   Triangulation triangulation (triangulation0);
@@ -57,7 +57,8 @@ int main() {
   output_not_centered = triangulation.lift(false);
   output_centered = triangulation.lift();
 
-  Triangulation::Combinatorial_map_with_cross_ratios& cmap = triangulation.get_combinatorial_map_ref();
+
+  Triangulation::Combinatorial_map_with_cross_ratios& cmap = triangulation.combinatorial_map();
   Triangulation::Anchor& anchor = triangulation.anchor();
   assert( cmap.is_dart_used(anchor.dart) );
 
