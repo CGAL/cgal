@@ -29,7 +29,9 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
   CDT cdt = CGAL::make_constrained_Delaunay_triangulation_3<CDT>(mesh);
+  //! [move cdt to tr]
   Tr tr = std::move(cdt).triangulation();
+  //! [move cdt to tr]
   std::cout << "Number of vertices in tr: "
             << tr.number_of_vertices() << std::endl;
   CGAL::tetrahedral_isotropic_remeshing(tr, 0.1,

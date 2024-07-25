@@ -46,19 +46,10 @@ struct Default_constrained_Delaunay_triangulation_3_type_generator
   using Tr = Triangulation_3<Traits, Tds>;
   using type = Constrained_Delaunay_triangulation_3<Traits, Tr>;
 };
-#endif // DOXYGEN_RUNNING
-
-/*!
- * \ingroup PkgCT_3Classes
- * \brief The default 3D constrained Delaunay triangulation type.
- * \tparam Traits a geometric traits class.
- *
- * This alias template names the default 3D constrained Delaunay triangulation
- * type for a given geometric traits class.
- *
- */
 template <typename Traits>
-using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triangulation_3<Traits, Triangulation_3<Traits, Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>, Constrained_Delaunay_triangulation_cell_base_3<Traits>>>>;
+using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triangulation_3<Traits>;
+
+#endif // DOXYGEN_RUNNING
 
 /*!
  * \ingroup PkgCT_3Functions
@@ -87,7 +78,7 @@ using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triang
  *
  * If `Triangulation` is `CGAL::Default`, the geometric traits `Traits` is deduced from the polygon mesh type
  * `PolygonMesh` and the named parameters `NamedParameters`. And then the default constrained Delaunay triangulation is
- * `CGAL::Default_constrained_Delaunay_triangulation_3<Traits>`.
+ * `CGAL::Constrained_Delaunay_triangulation_3<Traits>`.
  *
  * \param mesh The polygon mesh representing the constraints.
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -136,7 +127,7 @@ auto make_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh,
 {
   using Mesh_geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
   using CDT = typename CGAL::Default::Get<Triangulation,
-                                          Default_constrained_Delaunay_triangulation_3<Mesh_geom_traits>>::type;
+                                          Constrained_Delaunay_triangulation_3<Mesh_geom_traits>>::type;
   CDT cdt(mesh, np);
   auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
   static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);
@@ -172,7 +163,7 @@ auto make_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh,
  *
  * If `Triangulation` is `CGAL::Default`, the geometric traits `Traits` is deduced from the point type
  * in `PointRange` and the named parameters `NamedParameters`. And then the default constrained Delaunay triangulation
- * is `CGAL::Default_constrained_Delaunay_triangulation_3<Traits>`.
+ * is `CGAL::Constrained_Delaunay_triangulation_3<Traits>`.
  *
  * \param points a range of points representing the vertices of the polygon soup
  * \param polygons a range of ranges of indices representing the faces of the polygon soup
@@ -229,7 +220,7 @@ auto make_constrained_Delaunay_triangulation_3(const PointRange& points,
 
   using Geom_traits = decltype(get_geom_traits_type());
   using CDT =
-      typename CGAL::Default::Get<Triangulation, Default_constrained_Delaunay_triangulation_3<Geom_traits>>::type;
+      typename CGAL::Default::Get<Triangulation, Constrained_Delaunay_triangulation_3<Geom_traits>>::type;
   CDT cdt(points, polygons, np);
   auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
   static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);

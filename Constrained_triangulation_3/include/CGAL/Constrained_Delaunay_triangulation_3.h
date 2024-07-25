@@ -462,6 +462,13 @@ class Constrained_Delaunay_triangulation_3_impl;
 
 #endif // not DOXYGEN_RUNNING
 
+template <typename Traits,
+          typename Triangulation =
+              Triangulation_3<Traits,
+                              Triangulation_data_structure_3<Constrained_Delaunay_triangulation_vertex_base_3<Traits>,
+                                                             Constrained_Delaunay_triangulation_cell_base_3<Traits>>>>
+class Constrained_Delaunay_triangulation_3;
+
 /*!
  * \ingroup PkgCT_3Classes
  * \brief This class template represents a 3D constrained Delaunay triangulation.

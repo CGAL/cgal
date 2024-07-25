@@ -1,11 +1,12 @@
 #include <CGAL/make_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <algorithm>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using CDT = CGAL::Default_constrained_Delaunay_triangulation_3_type_generator<K>::type;
+using CDT = CGAL::Constrained_Delaunay_triangulation_3<K>;
 
 int main(int argc, char* argv[])
 {
