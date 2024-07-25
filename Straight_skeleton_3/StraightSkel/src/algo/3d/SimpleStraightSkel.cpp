@@ -469,6 +469,9 @@ void SimpleStraightSkel::run() {
                 ss_filename << "offset_" << offset << ".obj";
                 db::_3d::OBJFile::save(ss_filename.str(), polyhedron);
                 save_offsets_.pop_front();
+                if (save_offsets_.empty()) { // @todo ought to be a config flag
+                    break;
+                }
             } else if (event->getType() == AbstractEvent::EDGE_EVENT) {
                 handleEdgeEvent(std::dynamic_pointer_cast<EdgeEvent>(event), polyhedron);
             } else if (event->getType() == AbstractEvent::EDGE_MERGE_EVENT) {
