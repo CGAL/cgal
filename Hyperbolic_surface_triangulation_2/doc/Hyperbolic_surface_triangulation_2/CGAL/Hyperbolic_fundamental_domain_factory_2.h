@@ -21,7 +21,7 @@ public:
   /// \name Generation of a domain
   /// @{
   /*!
-    Randomly generates a convex domain of a closed orientable hyperbolic surface of genus two.
+    randomly generates a convex domain of a closed orientable hyperbolic surface of genus two.
   */
   Hyperbolic_fundamental_domain_2<Traits> generate_domain_g2();
   /// @}

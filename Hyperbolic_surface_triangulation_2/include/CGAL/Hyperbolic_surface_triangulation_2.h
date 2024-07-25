@@ -81,7 +81,7 @@ public:
   //Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2&& other);
   Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2 other);
 
-  Combinatorial_map_with_cross_ratios& get_combinatorial_map_ref();
+  Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
   Anchor& anchor() const;
 
@@ -219,10 +219,10 @@ template<class Traits, class Attributes>
 //Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2<Traits>::operator=(Hyperbolic_surface_triangulation_2<Traits>&& other){
   Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2<Traits, Attributes>::operator=(Hyperbolic_surface_triangulation_2<Traits, Attributes> other){
   if (other.has_anchor()){
-    copy_from(other.get_combinatorial_map_ref(), other.anchor());
+    copy_from(other.combinatorial_map(), other.anchor());
   }
   else {
-    copy_from(other.get_combinatorial_map_ref());
+    copy_from(other.combinatorial_map());
   }
   return *this;
 }
@@ -230,7 +230,7 @@ template<class Traits, class Attributes>
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Combinatorial_map_with_cross_ratios& Hyperbolic_surface_triangulation_2<Traits, Attributes>::get_combinatorial_map_ref(){
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Combinatorial_map_with_cross_ratios& Hyperbolic_surface_triangulation_2<Traits, Attributes>::combinatorial_map(){
   return _combinatorial_map;
 }
 
@@ -239,7 +239,7 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::has_anchor() const 
   return _has_anchor;
 }
 
- template<class Traits, class Attributes>
+template<class Traits, class Attributes>
 typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
 Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor() const{
   return _anchor;
