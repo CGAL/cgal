@@ -4,6 +4,7 @@
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/extrude.h>
+#include <CGAL/Union_find.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 #include <CGAL/Real_timer.h>
@@ -192,35 +193,16 @@ int main(int argc, char** argv)
 
     // visitor for split_graph_into_polylines that will also take care of
     // the drawing and writing in the output file
-    struct Draw_visitor
+    struct Collect_visitor
     {
-      std::ofstream out;
       const Graph& graph;
-      const Face_location& center;
-      const K::Point_2& center_2;
-      double scaling, num_subdiv;
-      const Mesh& mesh;
-      PMP::Dual_geodesic_solver<double>& solver;
-      std::vector<std::vector<Face_location>>& polygons_3;
-      bool all_closed=true;
-
-      Draw_visitor(const Graph& g, const Face_location& c, const K::Point_2& c2, double s, double ns,
-                   const Mesh& tm, PMP::Dual_geodesic_solver<double>& sol,
-                   std::vector<std::vector<Face_location>>& ps3)
-        : graph(g)
-        , center(c)
-        , center_2(c2)
-        , scaling(s)
-        , num_subdiv(ns)
-        , mesh(tm)
-        , solver(sol)
-        , polygons_3(ps3)
-      {
-        out.open("svg_option2.polylines.txt");
-        out << std::setprecision(17);
-      }
-
+      std::vector<std::vector<K::Point_2>>& polylines_2;
       std::vector<Graph_vertex> current_polyline;
+
+      Collect_visitor(const Graph& g, std::vector<std::vector<K::Point_2>>& poly2)
+        : graph(g)
+        , polylines_2(poly2)
+      {}
 
       void start_new_polyline()
       {
@@ -234,56 +216,109 @@ int main(int argc, char** argv)
 
       void end_polyline()
       {
-        //TODO: we should collect polylines and use union-find to group them when their bbox overlaps
-        //      this would save some center computations + make sure close polylines have the same center
+        // recover polyline of control points
+        polylines_2.emplace_back();
+        polylines_2.back().reserve(current_polyline.size());
+        for (Graph_vertex v  : current_polyline)
+          polylines_2.back().push_back(graph[v]);
+      }
+    };
+
+
+    std::vector<std::vector<K::Point_2>> polylines_2;
+    Collect_visitor svisitor(graph, polylines_2);
+    CGAL::split_graph_into_polylines(graph, svisitor);
+    std::size_t nb_poly = polylines_2.size();
+
+    // regroup polylines if they have overlapping bboxes
+    std::vector<CGAL::Bbox_2> bboxes_2(nb_poly);
+    using UF = CGAL::Union_find<std::size_t>;
+    std::vector<UF::handle> uf_handles(nb_poly);
+    UF uf;
+    for(std::size_t i=0;i<nb_poly; ++i)
+    {
+      bboxes_2[i]=CGAL::bbox_2(polylines_2[i].begin(), polylines_2[i].end());
+      uf_handles[i]=uf.make_set(i);
+    }
+
+    // TODO: use box intersection d?
+    for (std::size_t i=0; i<nb_poly-1; ++i)
+    {
+      for (std::size_t j=i+1; j<nb_poly; ++j)
+      {
+        if (CGAL::do_overlap(bboxes_2[i], bboxes_2[j]))
+          uf.unify_sets(uf_handles[i], uf_handles[j]);
+      }
+    }
+
+    std::vector<std::size_t> partition_id(nb_poly,-1);
+    std::vector< std::vector<std::size_t> > partition;
+    partition.reserve(uf.number_of_sets());
+
+    for (std::size_t i=0; i<nb_poly; ++i)
+    {
+      std::size_t master_i = *uf.find(uf_handles[i]);
+      if (partition_id[master_i]==std::size_t(-1))
+      {
+        partition_id[master_i]=partition.size();
+        partition.emplace_back();
+      }
+      partition[partition_id[master_i]].push_back(i);
+    }
+
+    // now draw each group of polyline
+    std::vector<std::vector<Face_location>> polygons_3;
+    std::ofstream out("svg_option2.polylines.txt");
+    out << std::setprecision(17);
+    bool all_closed=true;
+    for (const std::vector<std::size_t>& pids : partition)
+    {
+      // center of the polyline
+      CGAL::Bbox_2 poly_bb;
+      for (std::size_t i : pids)
+        poly_bb+=bboxes_2[i];
+      K::Point_2 poly_center((poly_bb.xmin()+poly_bb.xmax())/2., (poly_bb.ymin()+poly_bb.ymax())/2.);
+
+      // path from the general center to the polyline center
+      K::Vector_2 dir(center_2, poly_center);
+      std::vector<Face_location> path_2_center =
+        PMP::straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()), mesh);
+      Face_location poly_center_loc = path_2_center.back();
+
+      // update initial angle from the global center to the polyline center
+      using Impl=PMP::internal::Locally_shortest_path_imp<K, Mesh, decltype(mesh.points())>;
+      K::Vector_2 initial_dir(1,0);// TODO: this is arbitray and could be a user input or from PCA...
+
+
+      // TODO: avoid using the shortest path and directly use the straightest!
+      std::vector<Edge_location> shortest_path;
+        PMP::locally_shortest_path<K::FT>(center, poly_center_loc, mesh, shortest_path, solver);
+
+      typename K::Vector_2 v = initial_dir;
+      // TODO: the code uses the straightest path but since the code expects Edge_location,
+      // it is not working directly. We need to extract the edge encoded by the face location
+      // for(std::size_t i=1;i<path_2_center.size();++i)
+      // {
+      //   Mesh::Halfedge_index h_curr = halfedge(path_2_center[i].first, mesh);
+      //   v = Impl::parallel_transport_f2f(h_curr, v, mesh.points(), mesh);
+      // }
+      for(std::size_t i=0;i<shortest_path.size();++i)
+      {
+        Mesh::Halfedge_index h_curr = halfedge(shortest_path[i].first, mesh);
+        v = Impl::parallel_transport_f2f(h_curr, v, mesh.points(), mesh);
+      }
+      double theta = atan2(v.y(),v.x());
+
+      for (std::size_t pid : pids)
+      {
         std::vector<K::Vector_2> directions;
         std::vector<K::FT> lengths;
-        directions.reserve(current_polyline.size());
-        lengths.reserve(current_polyline.size());
-
-        // recover polyline of control points
-        std::vector<K::Point_2> poly2;
-        poly2.reserve(current_polyline.size());
-        for (Graph_vertex v  : current_polyline)
-          poly2.push_back(graph[v]);
-
-        // center of the polyline
-        CGAL::Bbox_2 poly_bb=CGAL::bbox_2(poly2.begin(), poly2.end());
-        K::Point_2 poly_center((poly_bb.xmin()+poly_bb.xmax())/2., (poly_bb.ymin()+poly_bb.ymax())/2.);
-
-        // path from the general center to the polyline center
-        K::Vector_2 dir(center_2, poly_center);
-        std::vector<Face_location> path_2_center =
-          PMP::straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()), mesh);
-        Face_location poly_center_loc = path_2_center.back();
-
-        // update initial angle from the global center to the polyline center
-        using Impl=PMP::internal::Locally_shortest_path_imp<K, Mesh, decltype(mesh.points())>;
-        K::Vector_2 initial_dir(1,0);// TODO: this is arbitray and could be a user input or from PCA...
-
-
-        // TODO: avoid using the shortest path and directly use the straightest!
-        std::vector<Edge_location> shortest_path;
-          PMP::locally_shortest_path<K::FT>(center, poly_center_loc, mesh, shortest_path, solver);
-
-        typename K::Vector_2 v = initial_dir;
-        // TODO: the code uses the straightest path but since the code expects Edge_location,
-        // it is not working directly. We need to extract the edge encoded by the face location
-        // for(std::size_t i=1;i<path_2_center.size();++i)
-        // {
-        //   Mesh::Halfedge_index h_curr = halfedge(path_2_center[i].first, mesh);
-        //   v = Impl::parallel_transport_f2f(h_curr, v, mesh.points(), mesh);
-        // }
-        for(std::size_t i=0;i<shortest_path.size();++i)
-        {
-          Mesh::Halfedge_index h_curr = halfedge(shortest_path[i].first, mesh);
-          v = Impl::parallel_transport_f2f(h_curr, v, mesh.points(), mesh);
-        }
-        double theta = atan2(v.y(),v.x());
+        directions.reserve(polylines_2[pid].size());
+        lengths.reserve(polylines_2[pid].size());
 
         // polar coordinates from the polyline center and convertion to lengths and directions
         std::vector<std::pair<double, double>> polar_coords =
-          PMP::convert_polygon_to_polar_coordinates<K>(poly2, poly_center);
+          PMP::convert_polygon_to_polar_coordinates<K>(polylines_2[pid], poly_center);
 
         for (const std::pair<double, double>& polar_coord : polar_coords)
         {
@@ -291,7 +326,7 @@ int main(int argc, char** argv)
           directions.push_back(K::Vector_2(std::cos(polar_coord.second+theta), std::sin(polar_coord.second+theta)));
         }
 
-        bool is_closed=current_polyline.front()==current_polyline.back();
+        bool is_closed=polylines_2[pid].front()==polylines_2[pid].back();
         if (is_closed)
         {
           lengths.pop_back();
@@ -317,25 +352,14 @@ int main(int argc, char** argv)
 
         polygons_3.push_back(std::move(res));
       }
-    };
-
-    std::vector<std::vector<Face_location>> polygons_3;
-    Draw_visitor svisitor(graph, center, center_2, scaling, num_subdiv, mesh, solver, polygons_3);
-    CGAL::split_graph_into_polylines(graph, svisitor);
-
-    // for loop
-
-    std::vector<K::Vector_2> directions;
-    std::vector<K::FT> lengths;
-    svisitor.out.close();
-
-
+    }
+    out.close();
 
     time.stop();
     std::cout << "option 2 took: " << time.time() << "\n";
 
 
-    if (svisitor.all_closed)
+    if (all_closed)
     {
       std::cout << "Now carve the input mesh\n";
       // copy/pasted from trace_polygon_example.cpp
@@ -418,7 +442,7 @@ int main(int argc, char** argv)
 
       PMP::internal::split_along_edges(mesh, ecm, mesh.points(), visitor);
 
-      double delta = -0.005;
+      double delta = -0.0005;
       for (const auto& ph : visitor.hedge_map)
       {
         Mesh::Halfedge_index h1 = ph.first;
