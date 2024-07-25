@@ -109,12 +109,8 @@ int two_stacked_3_template_test() {
   LCC& lcc = hdata.lcc;
 
   hdata.grid = generate_grid(hdata.lcc, Point(0,0,0), 5, 4);
-  hdata.identified_mark = lcc.get_new_mark();
   hdata.template_mark = lcc.get_new_mark();
-  hdata.corner_mark = lcc.get_new_mark();
   hdata.propagation_face_mark = lcc.get_new_mark();
-
-  lcc.negate_mark(hdata.corner_mark);
 
   load_patterns(hdata.regular_templates, hdata.partial_templates);
 
@@ -124,9 +120,9 @@ int two_stacked_3_template_test() {
 
   // TODO mark 2 volumes to shape two 3 templates using get_or_create_attr<3>
 
-  lcc.mark_cell<0>(lcc.beta(first, 1, 2), hdata.identified_mark);
-  lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.identified_mark);
-  lcc.mark_cell<0>(lcc.beta(first, 1, 2, 0), hdata.identified_mark);
+  lcc.mark_cell<0>(lcc.beta(first, 1, 2), hdata.template_mark);
+  lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.template_mark);
+  lcc.mark_cell<0>(lcc.beta(first, 1, 2, 0), hdata.template_mark);
 
   setup_initial_planes(hdata);
   extract_darts_from_even_planes(hdata, plane, Plane::XY);
@@ -213,7 +209,6 @@ int validation_test(){
     fs::directory_entry off_file(dir + "/mesh/" + entry.path().filename().replace_extension().string() + ".off");
 
     if (!off_file.exists()) return EXIT_FAILURE;
-
     LCC result = CGAL::HexRefinement::two_refinement(off_file.path().string(), 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly);
     LCC validation;
 
