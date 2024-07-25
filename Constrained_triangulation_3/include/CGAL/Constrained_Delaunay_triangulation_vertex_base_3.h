@@ -30,16 +30,16 @@ namespace CGAL {
  * This class is derived from the `Triangulation_vertex_base_3` class and provides additional functionality
  * required by `make_constrained_Delaunay_triangulation_3()`.
  *
- * @tparam Gt The geometric traits class, model of `DelaunayTriangulationTraits_3`.
+ * @tparam Traits The geometric traits class, model of `DelaunayTriangulationTraits_3`.
  *         It must be the same as the geometric traits class of the triangulation.
- * @tparam Vb The base class for the vertex. It must be a model of `TriangulationVertexBase_3`.
+ * @tparam Vertex_base The base class for the vertex. It must be a model of `TriangulationVertexBase_3`.
  *
  * @cgalModels{ConstrainedDelaunayTriangulationVertexBase_3}
  *
  * \sa `CGAL::Constrained_Delaunay_triangulation_cell_base_3`
  */
-template < typename Gt, typename Vb = Triangulation_vertex_base_3<Gt> >
-class Constrained_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vb>
+template < typename Traits, typename Vertex_base = Triangulation_vertex_base_3<Traits> >
+class Constrained_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vertex_base>
 {
   Constrained_Delaunay_triangulation_vertex_data_3 cdt_3_data_;
   bool cache_validity_ = false;
@@ -52,12 +52,12 @@ public:
   // To get correct vertex type in TDS
   template <class TDS3> struct Rebind_TDS
   {
-    using Vb3 = typename Vb::template Rebind_TDS<TDS3>::Other;
-    using Other = Constrained_Delaunay_triangulation_vertex_base_3<Gt, Vb3>;
+    using Vb3 = typename Vertex_base::template Rebind_TDS<TDS3>::Other;
+    using Other = Constrained_Delaunay_triangulation_vertex_base_3<Traits, Vb3>;
   };
 
   // constructors, inherited from the base class
-  using Base = Base_with_time_stamp<Vb>;
+  using Base = Base_with_time_stamp<Vertex_base>;
   using Base::Base;
 
   // model of SimplicialMeshVertexBase_3
@@ -106,7 +106,7 @@ public:
   const Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() const { return cdt_3_data_; }
 
   static std::string io_signature() {
-    return Get_io_signature<Vb>()();
+    return Get_io_signature<Vertex_base>()();
   }
 };
 
