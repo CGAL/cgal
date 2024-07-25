@@ -75,15 +75,15 @@ public:
 
   Hyperbolic_surface_triangulation_2() {};
   Hyperbolic_surface_triangulation_2(const Hyperbolic_fundamental_domain_2<Traits>& domain);
-  Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap);
-  Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor);
 
   //Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2&& other);
   Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2 other);
 
   Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
-  Anchor& anchor() const;
+  Anchor& anchor();
 
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
@@ -113,8 +113,8 @@ private:
   Dart_handle pick_edge_to_flip();
   Dart_const_handle pick_edge_to_flip() const;
 
-  void copy_from(const Combinatorial_map_with_cross_ratios& cmap);
-  void copy_from(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
+  void copy_from(Combinatorial_map_with_cross_ratios& cmap);
+  void copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
 
   // Returns the cross ratio of the points a,b,c,d
   ComplexNumber cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
@@ -204,12 +204,12 @@ Hyperbolic_surface_triangulation_2<Traits,Attributes>::Hyperbolic_surface_triang
 }
 
 template<class Traits, class Attributes>
-  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap){
+  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap){
   copy_from(cmap);
 }
 
 template<class Traits, class Attributes>
-  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor){
+  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor){
   copy_from(cmap, anchor);
 }
 
@@ -241,7 +241,7 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::has_anchor() const 
 
 template<class Traits, class Attributes>
 typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
-Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor() const{
+Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor(){
   return _anchor;
 }
 
@@ -675,14 +675,14 @@ template<class Traits, class Attributes>
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(const Combinatorial_map_with_cross_ratios& cmap){
+void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(Combinatorial_map_with_cross_ratios& cmap){
   //_combinatorial_map.copy_from_const(cmap);
   _combinatorial_map.copy(cmap);
   _has_anchor = false;
 }
 
 template<class Traits, class Attributes>
-void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor){
+void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor){
   // Because of the anchor, we must operate the copy ourself
   _combinatorial_map.clear();
 
