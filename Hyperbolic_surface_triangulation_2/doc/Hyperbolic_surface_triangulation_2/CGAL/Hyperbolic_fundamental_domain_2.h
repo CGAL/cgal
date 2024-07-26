@@ -29,41 +29,39 @@ public:
   Hyperbolic_fundamental_domain_2();
 
   /*!
-    Constructor from the list of vertices and the sides pairing.
+    Constructor from vertices and side pairings interators.
   */
-  Hyperbolic_fundamental_domain_2(const std::vector<Point>& vertices, const std::vector<int>& pairings);
+   Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
+				  typename std::vector<Point>::iterator vlast,
+				  typename std::vector<int>::iterator pfirst,
+				  typename std::vector<int>::iterator plast);
   /// @}
 
   /// \name Access functions
   /// @{
   /*!
-    Sets the vertices and the sides pairings of the domain.
-  */
-  void set(const std::vector<Point>& vertices, const std::vector<int>& pairings);
-
-  /*!
-      Returns the number of vertices (equivalently, the number of sides) of the domain.
+      returns the number of vertices (equivalently, the number of sides) of the domain.
 
       \pre <code> is_valid() </code>
   */
   int size() const;
 
   /*!
-      Returns the \f$ i \f$-th vertex.
+      returns the \f$ i \f$-th vertex.
 
       \pre <code> is_valid() </code>
   */
   Point vertex(int i) const;
 
   /*!
-      Returns the index of the side paired to the \f$ i \f$-th side.
+      returns the index of the side paired to the \f$ i \f$-th side.
 
       \pre <code> is_valid() </code>
   */
   int paired_side(int i) const;
 
   /*!
-       Returns the isometry that maps side \f$ \overline A \f$ to side \f$ A
+       returns the isometry that maps side \f$ \overline A \f$ to side \f$ A
        \f$, where \f$ A \f$ is the \f$ i \f$-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
 
        \pre <code> is_valid() </code>
@@ -83,7 +81,7 @@ public:
   void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
   /*!
-      Writes the domain in a stream.
+      writes the domain in a stream.
 
       The format of the output is the following.
       The first line prints the number n of vertices of the domain.

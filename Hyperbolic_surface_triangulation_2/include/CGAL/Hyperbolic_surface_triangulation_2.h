@@ -75,13 +75,13 @@ public:
 
   Hyperbolic_surface_triangulation_2() {};
   Hyperbolic_surface_triangulation_2(const Hyperbolic_fundamental_domain_2<Traits>& domain);
-  Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap);
-  Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor);
 
   //Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2&& other);
   Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2 other);
 
-  Combinatorial_map_with_cross_ratios& get_combinatorial_map_ref();
+  Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
   Anchor& anchor();
 
@@ -95,31 +95,33 @@ public:
   std::vector<std::tuple<Dart_const_handle,Point,Point,Point>> lift(bool center=true) const;
 
   bool is_valid() const;
-
-public:  // Camille : passé en public
-  Combinatorial_map_with_cross_ratios _combinatorial_map;
-  bool _has_anchor = false;
-  Anchor _anchor;
-
+  
+  //The following methods are not documented but they are non private for internal future use.
+  
   Dart_handle ccw(Dart_handle dart);
   Dart_handle cw(Dart_handle dart);
   Dart_handle opposite(Dart_handle dart);
   Dart_const_handle const_ccw(Dart_const_handle dart) const;
   Dart_const_handle const_cw(Dart_const_handle dart) const;
   Dart_const_handle const_opposite(Dart_const_handle dart) const;
-
+  
   ComplexNumber get_cross_ratio(Dart_const_handle dart) const;
-
-  Dart_handle pick_edge_to_flip();
-  Dart_const_handle pick_edge_to_flip() const;
-
-  void copy_from(const Combinatorial_map_with_cross_ratios& cmap);
-  void copy_from(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
-
+  
   // Returns the cross ratio of the points a,b,c,d
   ComplexNumber cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
   // Returns the point d such that the cross ratio of a,b,c,d is cratio
   Point fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const ComplexNumber& cratio) const;
+
+protected:
+  Combinatorial_map_with_cross_ratios _combinatorial_map;
+  bool _has_anchor = false;
+  Anchor _anchor;
+
+  Dart_handle pick_edge_to_flip();
+  Dart_const_handle pick_edge_to_flip() const;
+
+  void copy_from(Combinatorial_map_with_cross_ratios& cmap);
+  void copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
 };
 
  template<class Traits, class Attributes> std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2);
@@ -129,7 +131,7 @@ public:  // Camille : passé en public
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 Hyperbolic_surface_triangulation_2<Traits,Attributes>::Hyperbolic_surface_triangulation_2(const Domain& domain){
   // (Triangulates by adding an internal edge between domain.vertex(size-1) and the other vertices)
   _combinatorial_map.clear();
@@ -203,55 +205,56 @@ Hyperbolic_surface_triangulation_2<Traits,Attributes>::Hyperbolic_surface_triang
   _has_anchor = true;
 }
 
-template<class Traits,class Attributes>
-  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap){
+template<class Traits, class Attributes>
+  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap){
   copy_from(cmap);
 }
 
-template<class Traits,class Attributes>
-  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor){
+template<class Traits, class Attributes>
+  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor){
   copy_from(cmap, anchor);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 //Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2<Traits>::operator=(Hyperbolic_surface_triangulation_2<Traits>&& other){
   Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2<Traits, Attributes>::operator=(Hyperbolic_surface_triangulation_2<Traits, Attributes> other){
   if (other.has_anchor()){
-    copy_from(other.get_combinatorial_map_ref(), other.anchor());
+    copy_from(other.combinatorial_map(), other.anchor());
   }
   else {
-    copy_from(other.get_combinatorial_map_ref());
+    copy_from(other.combinatorial_map());
   }
   return *this;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Combinatorial_map_with_cross_ratios& Hyperbolic_surface_triangulation_2<Traits, Attributes>::get_combinatorial_map_ref(){
+template<class Traits, class Attributes>
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Combinatorial_map_with_cross_ratios& Hyperbolic_surface_triangulation_2<Traits, Attributes>::combinatorial_map(){
   return _combinatorial_map;
 }
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::has_anchor() const {
   return _has_anchor;
 }
 
-template<class Traits,class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor& Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor(){
+template<class Traits, class Attributes>
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
+Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor(){
   return _anchor;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_delaunay_flippable(Dart_const_handle dart) const{
   return ( get_cross_ratio(dart).imaginary_part()>Number(0) );
 }
 
-template<class Traits,class Attributes>
+template<class Traits, class Attributes>
 void Hyperbolic_surface_triangulation_2<Traits, Attributes>::flip(Dart_handle dart){
 
   // First gather all the information needed
@@ -480,9 +483,9 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_valid() const{
 
     // Check that the three vertices of the anchor lie within the open unit disk
     for (int k=0; k<3; k++){
-      // if (_anchor.vertices[k].get_z().squared_modulus() >= Number(1)){  Camille
-      //   return false;
-      // }
+      if (_anchor.vertices[k].get_z().squared_modulus() >= Number(1)){
+        return false;
+      }
     }
   }
 
@@ -674,14 +677,14 @@ template<class Traits, class Attributes>
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(const Combinatorial_map_with_cross_ratios& cmap){
+void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(Combinatorial_map_with_cross_ratios& cmap){
   //_combinatorial_map.copy_from_const(cmap);
   _combinatorial_map.copy(cmap);
   _has_anchor = false;
 }
 
 template<class Traits, class Attributes>
-void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor){
+void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor){
   // Because of the anchor, we must operate the copy ourself
   _combinatorial_map.clear();
 
