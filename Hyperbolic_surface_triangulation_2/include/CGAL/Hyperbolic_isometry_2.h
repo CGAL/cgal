@@ -49,7 +49,7 @@ private:
   ComplexNumber _coefficients[4];
 };
 
-// Returns the composition of iso1 and iso2
+//  returns the composition of two isometries.
 template<class Traits>
   Hyperbolic_isometry_2<Traits>  operator*(const Hyperbolic_isometry_2<Traits>& iso1, const Hyperbolic_isometry_2<Traits>& iso2);
 

@@ -36,6 +36,8 @@ class Hyperbolic_fundamental_domain_2 {
 public:
   typedef typename Traits::Hyperbolic_point_2                    Point;
 
+  Hyperbolic_fundamental_domain_2();
+
   Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
 				  typename std::vector<Point>::iterator vlast,
 				  typename std::vector<int>::iterator pfirst,
@@ -64,6 +66,9 @@ template<class Traits> void operator>>(std::istream& s, Hyperbolic_fundamental_d
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+
+template<class Traits>
+  Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(){}
 
 template<class Traits>
   Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,

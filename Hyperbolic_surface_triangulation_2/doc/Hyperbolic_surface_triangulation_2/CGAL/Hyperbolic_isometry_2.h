@@ -39,12 +39,18 @@ class Hyperbolic_isometry_2{
     void set_to_identity();
 
     /*!
-      can be used to set the coefficients of the isometry manually, be careful when doing so : the implementation does not check that the resulting Möbius transform fixes the unit circle.
+      can be used to set the coefficients of the isometry manually. \note  Be
+      careful when doing so : the implementation does not check that the
+      resulting Möbius transform fixes the unit circle. 
+
     */
     void set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3);
 
     /*!
-      can be used to set one coefficient of the isometry manually, be careful when doing so : the implementation does not check that the resulting Möbius transform fixes the unit circle.
+      can be used to set one coefficient of the isometry manually. \note  Be
+      careful when doing so : the implementation does not check that the
+      resulting Möbius transform fixes the unit circle. 
+
     */
     void set_coefficient(int index, const ComplexNumber& coefficient);
 
@@ -63,10 +69,12 @@ class Hyperbolic_isometry_2{
     */
     Point evaluate(const Point& point) const;
 
+    /// @{
     /*!
-      returns the composition of <code> other </code> by <code> itself </code>.
+      returns the composition of two isometries.
     */
-    Hyperbolic_isometry_2<Traits> compose(const Hyperbolic_isometry_2<Traits>& other) const;
+    template<class Traits>
+      Hyperbolic_isometry_2<Traits>  operator*(const Hyperbolic_isometry_2<Traits>& iso1, const Hyperbolic_isometry_2<Traits>& iso2);
     /// @}
 
     /// \name Input/Output

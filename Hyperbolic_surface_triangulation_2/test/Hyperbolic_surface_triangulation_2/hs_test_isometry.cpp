@@ -50,7 +50,7 @@ int main() {
   assert( g.get_coefficient(2)==Complex(FT(56,7), FT(-21,5)) );
   assert( g.get_coefficient(3)==Complex(FT(-12,17), FT(-1,3)) );
 
-  Isometry h = f.compose(g);
+  Isometry h = f*g;
   assert( h.get_coefficient(0) == Complex(FT(5333816,65025),FT(-8,17)) );
   assert( h.get_coefficient(1) == Complex(FT(-192,17),FT(-504,85)) );
   assert( h.get_coefficient(2) == Complex(FT(-192,17),FT(504,85)) );
@@ -66,7 +66,7 @@ int main() {
   Isometry tau_1_prime = hyperbolic_translation<Traits>(Point (FT(-3,11),FT(1,73)), true);
   Isometry tau_1_inv = hyperbolic_translation<Traits>(point, true);
   assert( tau_1.evaluate(image_point) == tau_1_prime.evaluate(image_point) );
-  assert( tau_1.compose(tau_1_inv).evaluate(image_point) == image_point );
+  assert( (tau_1*tau_1_inv).evaluate(image_point) == image_point );
 
   Point p (FT(2,15),FT(0));
   Point q (FT(0),FT(17,93));
@@ -74,7 +74,7 @@ int main() {
   Isometry rotation_prime = hyperbolic_rotation<Traits>(q, p, true);
   Isometry rotation_inv = hyperbolic_rotation<Traits>(p, q, true);
   assert( rotation.evaluate(image_point) == rotation_prime.evaluate(image_point) );
-  assert( rotation.compose(rotation_inv).evaluate(image_point) == image_point );
+  assert( (rotation*rotation_inv).evaluate(image_point) == image_point );
 
   Point p_imag = rotation.evaluate(p);
   Point q_imag = rotation.evaluate(q);

@@ -3,14 +3,37 @@ namespace CGAL{
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
+
+This item defines attributes of edges that are
+`Complex_without_sqrt` reprensenting cross-ratios.
+
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
+
+\cgalModels{GenericMapItems}
+*/
+template<class Traits>
+struct Combinatorial_map_with_cross_ratios_item{
+    template <class CMap>
+    struct Dart_wrapper{
+        typedef Cell_attribute<CMap, Complex_without_sqrt<typename Traits::FT>> Edge_attrib;
+        typedef std::tuple<void,Edge_attrib,void>   Attributes;
+    };
+  };
+
+
+/*!
+\ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
+
 Represents a triangulation of a closed orientable hyperbolic surface.
 
 Offers facilities such as the generation of the triangulation from a convex fundamental domain,
 the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
 
 \tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
+
+\tparam Attributes must be a model of `GenericMapItems` (default model : `Combinatorial_map_with_cross_ratios_item<Traits>`).
 */
-template<class Traits>
+template<class Traits, class Attributes = Combinatorial_map_with_cross_ratios_item<Traits>>
 class Hyperbolic_surface_triangulation_2{
 public:
   /// \name Types
@@ -18,7 +41,7 @@ public:
   /*!
       Type of combinatorial map whose edges are decorated with complex numbers.
   */
-  typedef Combinatorial_map<2,unspecified_type>                                 Combinatorial_map_with_cross_ratios;
+  typedef Combinatorial_map<2, Attributes>                                 Combinatorial_map_with_cross_ratios;
   /*!
       Combinatorial map dart handle type.
   */
@@ -33,7 +56,7 @@ public:
   typedef typename Traits::Hyperbolic_point_2                                                           Point;
 
   /*!
-      Stores a dart \f$ d \f$ of the combinatorial map, belonging to a triangle \f$ t \f$, and stores the three vertices of a lift of \f$ t \f$ in the hyperbolic plane.
+      stores a dart \f$ d \f$ of the combinatorial map, belonging to a triangle \f$ t \f$, and stores the three vertices of a lift of \f$ t \f$ in the hyperbolic plane.
   */
   struct Anchor{
     typename Combinatorial_map_with_cross_ratios::Dart_handle dart;
@@ -75,50 +98,50 @@ public:
   /// \name Access functions
   /// @{
   /*!
-      Returns the decorated combinatorial map.
+      returns the decorated combinatorial map.
 
       \pre <code> is_valid() </code>
   */
-  Combinatorial_map_with_cross_ratios& get_combinatorial_map_ref();
+  Combinatorial_map_with_cross_ratios& combinatorial_map();
 
   /*!
-      Tells if the triangulation has an anchor.
+      tells if the triangulation has an anchor.
 
       \pre <code> is_valid() </code>
   */
   bool has_anchor() const;
 
   /*!
-      Returns the anchor.
+      returns the anchor.
 
       \pre <code> is_valid() && has_anchor() </code>
   */
-  Anchor& get_anchor_ref();
+  Anchor& anchor();
   /// @}
 
   /// \name Delaunay flip algorithm
   /// @{
   /*!
-      Tells if if the edge supported by the dart is Delaunay flippable.
+      tells if if the edge supported by the dart is Delaunay flippable.
 
       \pre <code> is_valid() </code>
   */
   bool is_delaunay_flippable(Dart_handle dart) const;
 
   /*!
-      Flips the edge supported by the dart.
+      flips the edge supported by the dart.
 
       \pre <code> is_valid() </code>
   */
   void flip(Dart_handle dart);
 
   /*!
-      Determines if the triangulation is a valid Delaunay triangulation.
+      determines if the triangulation is a valid Delaunay triangulation.
   */
   bool is_delaunay() const;
 
   /*!
-      Applies the Delaunay flip algorithm: flips Delaunay flippable edges until there is no such edge anymore.
+      applies the Delaunay flip algorithm: flips Delaunay flippable edges until there is no such edge anymore.
 
       \pre <code> is_valid() </code>
   */
@@ -128,7 +151,7 @@ public:
   /// \name Lifting
   /// @{
   /*!
-      Lifts the triangulation in the hyperbolic plane.
+      lifts the triangulation in the hyperbolic plane.
       Returns, for every triangle \f$ t \f$ of the triangulation, one of the darts of \f$ t \f$ in the combinatorial map of the triangulation, together with a triple \f$ p,q,r \f$ of points in the hyperbolic plane.
       The points \f$ p,q,r \f$ are the vertices of a lift of \f$ t \f$ in the hyperbolic plane.
       If the center parameter is set to true, then one of the lifted triangles admits the origin \f$ 0 \f$ as a vertex.
@@ -151,7 +174,7 @@ public:
   /// \name Input/output
   /// @{
   /*!
-      Writes the triangulation in a stream.
+      writes the triangulation in a stream.
       The format of the output is the following.
       Each dart of the triangulation is given an index between \f$ 0 \f$ and \f$ n-1 \f$, where \f$ n \f$ is the number of darts of the triangulation.
       The first line contains the number \f$ n \f$ of darts.
@@ -165,7 +188,7 @@ public:
   std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2);
 
   /*!
-      Reads the triangulation from a stream.
+      reads the triangulation from a stream.
       The format of the input should be the same as the format of the output of the '<<' operator.
 
       \pre <code> is_valid() </code>
