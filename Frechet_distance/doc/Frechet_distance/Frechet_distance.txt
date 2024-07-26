@@ -48,6 +48,9 @@ In both cases the result is guaranteed to be correct.
 Internally all computations are done using interval arithmetic. In case of filter failures
 the algorithm switches to the usage of square root extensions.
 
+The algorithms in this package are an adaption of the implementation of a <a href="https://doi.org/10.4230/LIPIcs.SoCG.2019.17">SoCG</a>/<a href="https://doi.org/10.20382/jocg.v12i1a4">JoCG</a> paper. In particular, the implementation can decide non-difficult cases very fast while for difficult cases it still has the quadratic running time guarantee of the classical Fréchet distance algorithm by Alt and Godau. This is achieved by using fast filtering methods and a divide and conquer algorithm with pruning rules on the free-space diagram.
+
+
 \section secFrechetDistanceExamples Examples
 
 In the examples we use different kernels to illustrate that the functions
