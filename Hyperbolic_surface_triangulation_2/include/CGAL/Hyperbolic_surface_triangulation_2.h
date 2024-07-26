@@ -95,31 +95,33 @@ public:
   std::vector<std::tuple<Dart_const_handle,Point,Point,Point>> lift(bool center=true) const;
 
   bool is_valid() const;
-
-private:
-  Combinatorial_map_with_cross_ratios _combinatorial_map;
-  bool _has_anchor = false;
-  Anchor _anchor;
-
+  
+  //The following methods are not documented but they are non private for internal future use.
+  
   Dart_handle ccw(Dart_handle dart);
   Dart_handle cw(Dart_handle dart);
   Dart_handle opposite(Dart_handle dart);
   Dart_const_handle const_ccw(Dart_const_handle dart) const;
   Dart_const_handle const_cw(Dart_const_handle dart) const;
   Dart_const_handle const_opposite(Dart_const_handle dart) const;
-
+  
   ComplexNumber get_cross_ratio(Dart_const_handle dart) const;
+  
+  // Returns the cross ratio of the points a,b,c,d
+  ComplexNumber cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
+  // Returns the point d such that the cross ratio of a,b,c,d is cratio
+  Point fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const ComplexNumber& cratio) const;
+
+protected:
+  Combinatorial_map_with_cross_ratios _combinatorial_map;
+  bool _has_anchor = false;
+  Anchor _anchor;
 
   Dart_handle pick_edge_to_flip();
   Dart_const_handle pick_edge_to_flip() const;
 
   void copy_from(Combinatorial_map_with_cross_ratios& cmap);
   void copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
-
-  // Returns the cross ratio of the points a,b,c,d
-  ComplexNumber cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
-  // Returns the point d such that the cross ratio of a,b,c,d is cratio
-  Point fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const ComplexNumber& cratio) const;
 };
 
  template<class Traits, class Attributes> std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2);
