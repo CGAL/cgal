@@ -93,7 +93,7 @@
 int surface_test() {
   using namespace CGAL::HexRefinement;
 
-  LCC lcc = two_refinement(CGAL::data_file_path("query_replace/mesh2.off"), 10, TwoRefinement::mark_intersecting_volume_with_poly);
+  LCC lcc = two_refinement(CGAL::data_file_path("query_replace/mesh2.off"), 10, TwoRefinement::mark_intersecting_volume_with_poly, 3);
   lcc.display_characteristics(std::cout);
 
   // render<LCC>(lcc, debug_node_mark, debug_edge_mark );
