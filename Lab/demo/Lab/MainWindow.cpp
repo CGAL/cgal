@@ -111,7 +111,7 @@ MainWindow::MainWindow(const QStringList &keywords, bool verbose, QWidget* paren
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   menuBar()->setNativeMenuBar(false);
-  searchAction = new QWidgetAction(nullptr);
+  searchAction = new QWidgetAction(this);
   CGAL::Three::Three::s_mainwindow = this;
   menu_map[ui->menuOperations->title()] = ui->menuOperations;
   this->verbose = verbose;
