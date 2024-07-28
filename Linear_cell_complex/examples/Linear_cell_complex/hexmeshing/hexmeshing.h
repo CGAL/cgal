@@ -18,7 +18,6 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <bitset>
 #include <functional>
-#include <guiddef.h>
 #include "utils.h"
 
 #include "../query_replace/cmap_query_replace.h"
@@ -481,65 +480,10 @@ namespace CGAL::HexRefinement::TwoRefinement {
   void assert_all_faces_are_quadrilateral(LCC &lcc, HexMeshingData& hdata){
     #ifndef NDEBUG
       auto iterator = lcc.one_dart_per_cell<2>();
-      bool f = false;
       for (auto it = iterator.begin(); it != iterator.end(); it++){
         auto edges = lcc.darts_of_cell<2, 0>(it);
-        // assert(edges.size() == 4);
-        if (edges.size() != 4)
-        {
-          f = true;
-        lcc.mark_cell<2>(it, debug3);
-        }
+        assert(edges.size() == 4);
       }
-
-
-
-      if (!f) return;
-            LCCSceneOptions<LCC> gso;
-
-
-
-            gso.draw_face = [](const LCC& lcc, LCC::Dart_const_handle dart){
-              return true;
-            };
-            gso.face_color = [](const LCC& lcc, LCC::Dart_const_handle dart){
-              auto a = lcc.attribute<2>(dart);
-              auto b = lcc.attribute<3>(dart);
-
-              return lcc.is_whole_cell_marked<2>(dart, debug_edge_mark) ? purple()
-              : lcc.is_whole_cell_marked<2>(dart, debug3) ? red()
-              : b != nullptr && b->info().type == VolumeType::IDENTIFIED ? green()
-              : b != nullptr && b->info().type == VolumeType::ID_EXPANSION ? yellow()
-              : blue();
-
-              // return lcc.is_whole_cell_marked<3>(dart, debug3)? red() : a != nullptr && a->info().type == VolumeType::IDENTIFIED ? green() : blue();
-            };
-            gso.colored_face = [](const LCC& lcc, LCC::Dart_const_handle dart){ return true; };
-
-            gso.colored_vertex = [](const LCC& lcc, LCC::Dart_const_handle dart){
-              return true;
-            };
-            gso.draw_vertex = [](const LCC& lcc, LCC::Dart_const_handle dart){
-              return true;
-            };
-            gso.vertex_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
-              return lcc.is_marked(dart, hdata.template_mark) ? red() : blue();
-            };
-
-            gso.colored_edge = [](const LCC& lcc, LCC::Dart_const_handle dart){
-              return true;
-            };
-            gso.draw_edge = [](const LCC& lcc, LCC::Dart_const_handle dart){
-              return true;
-            };
-            gso.edge_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
-              return lcc.is_marked(dart, debug_node_mark) ? red() : blue();
-            };
-
-            CGAL::Graphics_scene buffer;
-            add_to_graphics_scene(lcc, buffer, gso);
-            CGAL::draw_graphics_scene(buffer);
-
     #endif
   }
 
@@ -1533,6 +1477,9 @@ namespace CGAL::HexRefinement::TwoRefinement {
     LCC& lcc = hdata.lcc;
     std::array<HexMeshingData::PlaneSet, 3> new_planes;
 
+    size_type edge_mark = lcc.get_new_mark();
+    size_type face_mark = lcc.get_new_mark();
+    
     for (int p = 0; p < 3; p++){
       HexMeshingData::PlaneSet new_plane_set;
 
@@ -1544,8 +1491,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
         std::queue<Dart_handle> to_explore;
         Union_find<Dart_handle> odd_union_find, even_union_find;
 
-        size_type edge_mark = lcc.get_new_mark();
-        size_type face_mark = lcc.get_new_mark();
 
         for (auto start : old_plane_set)
           to_explore.push(start);
@@ -1574,14 +1519,18 @@ namespace CGAL::HexRefinement::TwoRefinement {
         new_plane_set.push_back(std::move(odd_plane_cc));
         new_plane_set.push_back(std::move(even_plane_cc));
 
-        lcc.free_mark(edge_mark);
-        lcc.free_mark(face_mark);
       }
 
       new_planes[p] = std::move(new_plane_set);
+
+      lcc.unmark_all(edge_mark);
+      lcc.unmark_all(face_mark);
     }
 
     hdata.first_face_of_planes = std::move(new_planes);
+    
+    lcc.free_mark(edge_mark);
+    lcc.free_mark(face_mark);
   }
 
   void setup_next_level(HexMeshingData& hdata, MarkingFunction& cellIdentifier, Polyhedron& surface, Tree& aabb){
