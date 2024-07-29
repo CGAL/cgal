@@ -64,122 +64,121 @@ public:
 
   bool need_update() const;
   
-  inline float get_translation_speed() const { return m_translationSpeed; }
-  inline float get_rotation_speed() const { return m_rotationSpeed; }
+  inline float get_translation_speed() const { return m_TranslationSpeed; }
+  inline float get_rotation_speed() const { return m_RotationSpeed; }
 
-  inline float get_size() const { return m_size; }
-  inline float get_radius() const { return m_radius; }
-  inline vec3f get_center() const { return m_center; }
+  inline float get_size() const { return m_Size; }
+  inline float get_radius() const { return m_Radius; }
+  inline vec3f get_center() const { return m_Center; }
 
-  inline quatf get_orientation() const { return m_orientation; }
+  inline quatf get_orientation() const { return m_Orientation; }
 
-  inline void set_default_size(float size) { m_defaultSize = size; }
-  inline void set_default_position(const vec3f& position) { m_defaultPosition = position; set_default_size(position.z()); }
-  inline void set_default_orientation(const quatf& orientation) { m_defaultOrientation = orientation; }
+  inline void set_default_size(float size) { m_DefaultSize = size; }
+  inline void set_default_position(const vec3f& position) { m_DefaultPosition = position; set_default_size(position.z()); }
+  inline void set_default_orientation(const quatf& orientation) { m_DefaultOrientation = orientation; }
 
-  inline void set_size(float size) { m_size = size; m_targetSize = size; }
-  inline void set_radius(float radius) { m_radius = radius; }
-  inline void set_center(const vec3f& center) { m_center = center; }
+  inline void set_size(float size) { m_Size = size; m_TargetSize = size; }
+  inline void set_radius(float radius) { m_Radius = radius; }
+  inline void set_center(const vec3f& center) { m_Center = center; }
 
-  inline void set_orthographic() { m_mode = CameraMode::ORTHOGRAPHIC; }
-  inline void set_mode(CameraMode mode) { m_mode = mode; }
-  inline void set_orientation(const quatf& orientation) { m_orientation = orientation; }
+  inline void set_orthographic() { m_Mode = CameraMode::ORTHOGRAPHIC; }
+  inline void set_mode(CameraMode mode) { m_Mode = mode; }
+  inline void set_orientation(const quatf& orientation) { m_Orientation = orientation; }
   
   void set_orientation(const vec3f& forward, float upAngle);
 
-  inline void toggle_mode() { m_mode = (m_mode == CameraMode::ORTHOGRAPHIC) ? CameraMode::PERSPECTIVE : CameraMode::ORTHOGRAPHIC; }
-  inline bool is_orthographic() const { return m_mode == CameraMode::ORTHOGRAPHIC; }
-  inline bool is_orbiter() const { return m_type == CameraType::ORBITER; }
+  inline void toggle_mode() { m_Mode = (m_Mode == CameraMode::ORTHOGRAPHIC) ? CameraMode::PERSPECTIVE : CameraMode::ORTHOGRAPHIC; }
+  inline bool is_orthographic() const { return m_Mode == CameraMode::ORTHOGRAPHIC; }
+  inline bool is_orbiter() const { return m_Type == CameraType::ORBITER; }
 
-  inline void increase_rotation_speed(const float deltaTime) { m_rotationSpeed = std::min(m_rotationSpeed+100.f*deltaTime, 360.f); }
-  inline void decrease_rotation_speed(const float deltaTime) { m_rotationSpeed = std::max(m_rotationSpeed-100.f*deltaTime, 60.f); }
+  inline void increase_rotation_speed(const float deltaTime) { m_RotationSpeed = std::min(m_RotationSpeed+100.f*deltaTime, 360.f); }
+  inline void decrease_rotation_speed(const float deltaTime) { m_RotationSpeed = std::max(m_RotationSpeed-100.f*deltaTime, 60.f); }
 
-  inline void increase_translation_speed(const float deltaTime) { m_translationSpeed = std::min(m_translationSpeed+deltaTime, 20.f); }
-  inline void decrease_translation_speed(const float deltaTime) { m_translationSpeed = std::max(m_translationSpeed-deltaTime, 0.5f); }
+  inline void increase_translation_speed(const float deltaTime) { m_TranslationSpeed = std::min(m_TranslationSpeed+deltaTime, 20.f); }
+  inline void decrease_translation_speed(const float deltaTime) { m_TranslationSpeed = std::max(m_TranslationSpeed-deltaTime, 0.5f); }
 
-  inline void increase_rotation_smoothness(const float deltaTime) { m_rotationSmoothFactor = std::max(m_rotationSmoothFactor-deltaTime, 0.01f); }
-  inline void decrease_rotation_smoothness(const float deltaTime) { m_rotationSmoothFactor = std::min(m_rotationSmoothFactor+deltaTime, 1.f); }
+  inline void increase_rotation_smoothness(const float deltaTime) { m_RotationSmoothFactor = std::max(m_RotationSmoothFactor-deltaTime, 0.01f); }
+  inline void decrease_rotation_smoothness(const float deltaTime) { m_RotationSmoothFactor = std::min(m_RotationSmoothFactor+deltaTime, 1.f); }
 
-  inline void increase_translation_smoothness(const float deltaTime) { m_translationSmoothFactor = std::max(m_translationSmoothFactor-deltaTime, 0.01f); }
-  inline void decrease_translation_smoothness(const float deltaTime) { m_translationSmoothFactor = std::min(m_translationSmoothFactor+deltaTime, 1.f); }
+  inline void increase_translation_smoothness(const float deltaTime) { m_TranslationSmoothFactor = std::max(m_TranslationSmoothFactor-deltaTime, 0.01f); }
+  inline void decrease_translation_smoothness(const float deltaTime) { m_TranslationSmoothFactor = std::min(m_TranslationSmoothFactor+deltaTime, 1.f); }
 
 private: 
   void compute_target_size();
 
 private:
-  quatf m_orientation       { quatf::Identity() }; 
-  quatf m_defaultOrientation  { quatf::Identity() };
+  quatf m_Orientation       { quatf::Identity() }; 
+  quatf m_DefaultOrientation  { quatf::Identity() };
 
-  vec3f m_center { vec3f::Zero() };   
+  vec3f m_Center { vec3f::Zero() };   
 
-  vec3f m_position       { vec3f::Zero() }; 
-  vec3f m_targetPosition { vec3f::Zero() };
-  vec3f m_defaultPosition  { vec3f::Zero() }; 
+  vec3f m_Position       { vec3f::Zero() }; 
+  vec3f m_TargetPosition { vec3f::Zero() };
+  vec3f m_DefaultPosition  { vec3f::Zero() }; 
 
-  float m_size       { CGAL_CAMERA_RADIUS };
-  float m_defaultSize  { CGAL_CAMERA_RADIUS };
-  float m_targetSize { CGAL_CAMERA_RADIUS };
-  float m_radius     { CGAL_CAMERA_RADIUS };
+  float m_Size       { CGAL_CAMERA_RADIUS };
+  float m_DefaultSize  { CGAL_CAMERA_RADIUS };
+  float m_TargetSize { CGAL_CAMERA_RADIUS };
+  float m_Radius     { CGAL_CAMERA_RADIUS };
 
-  float m_width     { 1.0f };  
-  float m_height    { 1.0f }; 
-  float m_fov       { CGAL_CAMERA_FOV };    
+  float m_Width     { 1.0f };  
+  float m_Height    { 1.0f }; 
+  float m_FOV       { CGAL_CAMERA_FOV };    
   
-  float m_rotationSpeed    { CGAL_CAMERA_ROTATION_SPEED }; 
-  float m_translationSpeed { CGAL_CAMERA_TRANSLATION_SPEED }; 
+  float m_RotationSpeed    { CGAL_CAMERA_ROTATION_SPEED }; 
+  float m_TranslationSpeed { CGAL_CAMERA_TRANSLATION_SPEED }; 
 
-  CameraType m_type { CameraType::ORBITER };
-  CameraMode m_mode { CameraMode::PERSPECTIVE };
+  CameraType m_Type { CameraType::ORBITER };
+  CameraMode m_Mode { CameraMode::PERSPECTIVE };
 
-  ConstraintAxis m_constraintAxis { ConstraintAxis::NO_CONSTRAINT };
+  ConstraintAxis m_ConstraintAxis { ConstraintAxis::NO_CONSTRAINT };
 
-  float m_pitch       { 0.0f }; 
-  float m_targetPitch { 0.0f }; 
-  float m_yaw         { 0.0f };
-  float m_targetYaw   { 0.0f }; 
+  float m_Pitch       { 0.0f }; 
+  float m_TargetPitch { 0.0f }; 
+  float m_Yaw         { 0.0f };
+  float m_TargetYaw   { 0.0f }; 
   
-  float m_zoomSmoothFactor        { CGAL_CAMERA_ZOOM_SMOOTHNESS };
-  float m_rotationSmoothFactor    { CGAL_CAMERA_ROTATION_SMOOTHNESS };
-  float m_translationSmoothFactor { CGAL_CAMERA_TRANSLATION_SMOOTHNESS };
+  float m_ZoomSmoothFactor        { CGAL_CAMERA_ZOOM_SMOOTHNESS };
+  float m_RotationSmoothFactor    { CGAL_CAMERA_ROTATION_SMOOTHNESS };
+  float m_TranslationSmoothFactor { CGAL_CAMERA_TRANSLATION_SMOOTHNESS };
 };
 
-/********************METHOD DEFINITIONS********************/
+/********************METHOD IMPLEMENTATIONS********************/
 
-inline 
 void Camera::update(const float dt) 
 {
   if (need_update())
   {
-    if (m_type == CameraType::FREE_FLY) 
+    if (m_Type == CameraType::FREE_FLY) 
     {
-      if (m_targetPitch > 90.f) 
+      if (m_TargetPitch > 90.f) 
       {
-          m_targetPitch = 90.f;
+          m_TargetPitch = 90.f;
       }
-      else if (m_targetPitch < -90.f) 
+      else if (m_TargetPitch < -90.f) 
       {
-          m_targetPitch = -90.f;
+          m_TargetPitch = -90.f;
       }
     }
 
-    float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
-    float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
+    float smoothPitch = m_Pitch + m_RotationSmoothFactor * (m_TargetPitch - m_Pitch);   
+    float smoothYaw = m_Yaw + m_RotationSmoothFactor * (m_TargetYaw - m_Yaw);   
 
-    float pitchDelta = utils::radians((smoothPitch - m_pitch) * m_rotationSpeed) * dt;
-    float yawDelta = utils::radians((smoothYaw - m_yaw) * m_rotationSpeed) * dt;
+    float pitchDelta = utils::radians((smoothPitch - m_Pitch) * m_RotationSpeed) * dt;
+    float yawDelta = utils::radians((smoothYaw - m_Yaw) * m_RotationSpeed) * dt;
 
     if (is_orbiter()) 
     {
-      if (m_constraintAxis == ConstraintAxis::FORWARD_AXIS)
+      if (m_ConstraintAxis == ConstraintAxis::FORWARD_AXIS)
       {
         quatf rollQuaternion(Eigen::AngleAxisf(pitchDelta - yawDelta, -vec3f::UnitZ()));
-        m_orientation = rollQuaternion * m_orientation;
+        m_Orientation = rollQuaternion * m_Orientation;
       }
       else 
       {
         quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, vec3f::UnitX()));
         quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
-        m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
+        m_Orientation = pitchQuaternion * yawQuaternion * m_Orientation;
       }
 
     }
@@ -187,345 +186,317 @@ void Camera::update(const float dt)
     {
       quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, get_right()));
       quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY())); // lock roll rotation 
-      m_orientation = m_orientation * pitchQuaternion * yawQuaternion;
+      m_Orientation = m_Orientation * pitchQuaternion * yawQuaternion;
     }
-    m_pitch = smoothPitch;
-    m_yaw = smoothYaw;
+    m_Pitch = smoothPitch;
+    m_Yaw = smoothYaw;
 
-    m_position += m_translationSmoothFactor * (m_targetPosition - m_position);
+    m_Position += m_TranslationSmoothFactor * (m_TargetPosition - m_Position);
 
-    m_size += m_zoomSmoothFactor * (m_targetSize - m_size);
+    m_Size += m_ZoomSmoothFactor * (m_TargetSize - m_Size);
   }
 }
 
-inline 
 void Camera::lookat(vec3f const &center, const float size)
 {
-  m_center = center;   // camera focus
-  m_size = size;
-  m_defaultSize = size; // allowing reset
-  m_radius = size;
+  m_Center = center;   // camera focus
+  m_Size = size;
+  m_DefaultSize = size; // allowing reset
+  m_Radius = size;
 
   compute_target_size();
 
-  m_orientation = quatf::Identity();
+  m_Orientation = quatf::Identity();
 }
 
-inline 
 void Camera::lookat(vec3f const &pmin, vec3f const &pmax)
 {
   lookat(utils::center(pmin, pmax), utils::distance(pmin, pmax));
 }
 
-inline 
 void Camera::move(const float z)
 {
   if (is_orbiter()) 
   {
-    m_targetSize -= m_targetSize * z;
-    if (m_targetSize < 0.001f)
-        m_targetSize = 0.001f;
+    m_TargetSize -= m_TargetSize * z;
+    if (m_TargetSize < 0.001f)
+        m_TargetSize = 0.001f;
   }
   else // free fly 
   {
     vec3f forward = get_forward();
-    m_targetPosition += forward * m_size * z * m_translationSpeed;
+    m_TargetPosition += forward * m_Size * z * m_TranslationSpeed;
   }
 }
 
-inline 
 void Camera::rotation(const float x, const float y)
 {
   if (
-    m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ||
-    m_constraintAxis == ConstraintAxis::RIGHT_AXIS    ||
-    m_constraintAxis == ConstraintAxis::FORWARD_AXIS) 
+    m_ConstraintAxis == ConstraintAxis::NO_CONSTRAINT ||
+    m_ConstraintAxis == ConstraintAxis::RIGHT_AXIS    ||
+    m_ConstraintAxis == ConstraintAxis::FORWARD_AXIS) 
   {
-    m_targetPitch += y + y / m_rotationSmoothFactor * .1;
+    m_TargetPitch += y + y / m_RotationSmoothFactor * .1;
   }
   
   if (
-    m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ||
-    m_constraintAxis == ConstraintAxis::UP_AXIS       ||
-    m_constraintAxis == ConstraintAxis::FORWARD_AXIS)
+    m_ConstraintAxis == ConstraintAxis::NO_CONSTRAINT ||
+    m_ConstraintAxis == ConstraintAxis::UP_AXIS       ||
+    m_ConstraintAxis == ConstraintAxis::FORWARD_AXIS)
   {
-    m_targetYaw += x + x / m_rotationSmoothFactor * .1;
+    m_TargetYaw += x + x / m_RotationSmoothFactor * .1;
   }
 }
 
-inline 
 void Camera::translation(const float x, const float y)
 {
-  float xspeed = x * m_translationSpeed + x / m_translationSmoothFactor * .01;
-  float yspeed = y * m_translationSpeed + y / m_translationSmoothFactor * .01;
+  float xspeed = x * m_TranslationSpeed + x / m_TranslationSmoothFactor * .01;
+  float yspeed = y * m_TranslationSpeed + y / m_TranslationSmoothFactor * .01;
 
   if (is_orbiter()) 
   {
-    m_targetPosition.x() += m_size * xspeed;
-    m_targetPosition.y() += m_size * yspeed;
+    m_TargetPosition.x() += m_Size * xspeed;
+    m_TargetPosition.y() += m_Size * yspeed;
   } 
   else // free fly  
   {
     vec3f right = get_right();
     vec3f up = get_up();
-    m_targetPosition -= right * m_size * xspeed; 
-    m_targetPosition -= up * m_size * yspeed; 
+    m_TargetPosition -= right * m_Size * xspeed; 
+    m_TargetPosition -= up * m_Size * yspeed; 
   }
 }
 
-inline 
 void Camera::move_up(const float dt)
 {
   if (is_orbiter()) 
   {
-    m_targetPosition.y() += m_size * dt * m_translationSpeed;
+    m_TargetPosition.y() += m_Size * dt * m_TranslationSpeed;
   }
   else // free fly
   {
     vec3f up = get_up();
-    m_targetPosition += up * m_size * dt * m_translationSpeed;
+    m_TargetPosition += up * m_Size * dt * m_TranslationSpeed;
   }
 }
 
-inline 
 void Camera::move_down(const float dt)
 {
   move_up(-dt);
 }
 
-inline 
 void Camera::move_right(const float dt)
 {
   if (is_orbiter()) 
   {
-    m_targetPosition.x() += m_size * dt * m_translationSpeed;
+    m_TargetPosition.x() += m_Size * dt * m_TranslationSpeed;
   }
   else // free fly
   {
     vec3f right = get_right();
-    m_targetPosition += right * m_size * dt * m_translationSpeed;
+    m_TargetPosition += right * m_Size * dt * m_TranslationSpeed;
   }
 }
 
-inline 
 void Camera::move_left(const float dt)
 {
   move_right(-dt);
 }
 
-inline 
 mat4f Camera::view() const
 {
-  mat4f rotation = transform::rotation(m_orientation);
+  mat4f rotation = transform::rotation(m_Orientation);
 
   if (is_orbiter()) 
   {
-    mat4f translation = transform::translation(-m_position.x(), -m_position.y(), -m_size); 
-    mat4f model = transform::translation(-m_center.x(), -m_center.y(), -m_center.z()); 
+    mat4f translation = transform::translation(-m_Position.x(), -m_Position.y(), -m_Size); 
+    mat4f model = transform::translation(-m_Center.x(), -m_Center.y(), -m_Center.z()); 
     return translation * rotation * model;
   } 
   else // free fly  
   {
-    mat4f translation = transform::translation(-m_position.x(), -m_position.y(), -m_position.z()-m_size); // translate camera to (0,0,0)
+    mat4f translation = transform::translation(-m_Position.x(), -m_Position.y(), -m_Position.z()-m_Size); // translate camera to (0,0,0)
     return rotation * translation;
   }
 }
 
-inline 
 mat4f Camera::projection(const float width, const float height)
 {
-  m_width = width;
-  m_height = height;
+  m_Width = width;
+  m_Height = height;
 
   return projection();
 }
 
-inline 
 mat4f Camera::projection() const
 { 
-  if (m_mode == CameraMode::ORTHOGRAPHIC) {
-    float aspect = m_width / m_height;
-    float halfWidth = m_size * aspect * 0.5f;
-    float halfHeight = m_size * 0.5f;
+  if (m_Mode == CameraMode::ORTHOGRAPHIC) {
+    float aspect = m_Width / m_Height;
+    float halfWidth = m_Size * aspect * 0.5f;
+    float halfHeight = m_Size * 0.5f;
     return utils::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, znear(), zfar());
   }
 
-  return utils::perspective(utils::radians(m_fov), m_width / m_height, znear(), zfar());
+  return utils::perspective(utils::radians(m_FOV), m_Width / m_Height, znear(), zfar());
 }
 
-inline 
 float Camera::znear() const
 {
   float d;
   if (is_orbiter()) 
   {
-    d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
+    d = utils::distance(m_Center, vec3f(m_Position.x(), m_Position.y(), m_Size));
   }
   else
   {
-    d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
+    d = utils::distance(m_Center, vec3f(m_Position.x(), m_Position.y(), m_Position.z()+m_Size));
   }
-  return std::max(0.1f, d - 2 * m_radius);
+  return std::max(0.1f, d - 2 * m_Radius);
 }
 
-inline 
 float Camera::zfar() const
 {
   float d;
   if (is_orbiter()) 
   {
-    d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_size));
+    d = utils::distance(m_Center, vec3f(m_Position.x(), m_Position.y(), m_Size));
   }
   else // free fly 
   {
-    d = utils::distance(m_center, vec3f(m_position.x(), m_position.y(), m_position.z()+m_size));
+    d = utils::distance(m_Center, vec3f(m_Position.x(), m_Position.y(), m_Position.z()+m_Size));
   }
 
-  return std::max(100.f, d + 2 * m_radius);
+  return std::max(100.f, d + 2 * m_Radius);
 }
 
-inline 
 mat4f Camera::viewport() const
 {
-  return transform::viewport(m_width, m_height);
+  return transform::viewport(m_Width, m_Height);
 }
 
-inline 
 void Camera::set_position(const vec3f& position) 
 { 
-  m_position = position; 
-  m_targetPosition = position; 
-  m_size = position.z();
-  m_targetSize = position.z();
+  m_Position = position; 
+  m_TargetPosition = position; 
+  m_Size = position.z();
+  m_TargetSize = position.z();
 }
 
-inline 
 vec3f Camera::get_position() const
 {
   if (is_orbiter()) 
   {
-    return vec3f(m_position.x(), m_position.y(), m_size);
+    return vec3f(m_Position.x(), m_Position.y(), m_Size);
   }
   else // free fly
   {
-    return vec3f(m_position.x(), m_position.y(), m_position.z() + m_size);
+    return vec3f(m_Position.x(), m_Position.y(), m_Position.z() + m_Size);
   } 
 }
 
-inline 
 vec3f Camera::get_forward() const
 {
   vec3f forward;
-  forward = m_orientation.inverse() * -vec3f::UnitZ();
+  forward = m_Orientation.inverse() * -vec3f::UnitZ();
 
   return forward.normalized();
 }
 
-inline 
 vec3f Camera::get_right() const
 {
   vec3f right;
-  right = m_orientation.inverse() * vec3f::UnitX();
+  right = m_Orientation.inverse() * vec3f::UnitX();
 
   return right.normalized();
 }
 
-inline 
 vec3f Camera::get_up() const
 {
   vec3f up;
-  up = m_orientation.inverse() * vec3f::UnitY();
+  up = m_Orientation.inverse() * vec3f::UnitY();
 
   return up.normalized();
 }
 
-inline 
 void Camera::reset_all()
 {
   reset_position();
   reset_orientation();
-  m_fov                     = CGAL_CAMERA_FOV;
-  m_zoomSmoothFactor        = CGAL_CAMERA_ZOOM_SMOOTHNESS;
-  m_rotationSmoothFactor    = CGAL_CAMERA_ROTATION_SMOOTHNESS;
-  m_translationSmoothFactor = CGAL_CAMERA_TRANSLATION_SMOOTHNESS;
-  m_translationSpeed        = CGAL_CAMERA_TRANSLATION_SPEED;
-  m_rotationSpeed           = CGAL_CAMERA_ROTATION_SPEED;
+  m_FOV                     = CGAL_CAMERA_FOV;
+  m_ZoomSmoothFactor        = CGAL_CAMERA_ZOOM_SMOOTHNESS;
+  m_RotationSmoothFactor    = CGAL_CAMERA_ROTATION_SMOOTHNESS;
+  m_TranslationSmoothFactor = CGAL_CAMERA_TRANSLATION_SMOOTHNESS;
+  m_TranslationSpeed        = CGAL_CAMERA_TRANSLATION_SPEED;
+  m_RotationSpeed           = CGAL_CAMERA_ROTATION_SPEED;
   reset_size();
 }
 
-inline 
 void Camera::reset_size()
 {
-  m_size = m_defaultSize;
+  m_Size = m_DefaultSize;
   compute_target_size();
 }
 
-inline 
 void Camera::reset_position()
 {
-  m_position = m_defaultPosition;
-  m_targetPosition = m_defaultPosition; 
+  m_Position = m_DefaultPosition;
+  m_TargetPosition = m_DefaultPosition; 
 }
 
-inline 
 void Camera::reset_orientation() 
 { 
-  m_pitch = 0.f; 
-  m_yaw = 0; 
-  m_targetPitch = 0.f; 
-  m_targetYaw = 0; 
-  m_orientation = m_defaultOrientation; 
+  m_Pitch = 0.f; 
+  m_Yaw = 0; 
+  m_TargetPitch = 0.f; 
+  m_TargetYaw = 0; 
+  m_Orientation = m_DefaultOrientation; 
 }
 
-inline 
 void Camera::toggle_type() 
 { 
-  m_type = (m_type == CameraType::ORBITER) ? CameraType::FREE_FLY : CameraType::ORBITER;  
+  m_Type = (m_Type == CameraType::ORBITER) ? CameraType::FREE_FLY : CameraType::ORBITER;  
   reset_all(); 
 }
 
-inline 
 void Camera::switch_constraint_axis() 
 {
-  if (!is_orbiter() && m_constraintAxis == ConstraintAxis::UP_AXIS)
+  if (!is_orbiter() && m_ConstraintAxis == ConstraintAxis::UP_AXIS)
   {
-    m_constraintAxis = ConstraintAxis::NO_CONSTRAINT;
+    m_ConstraintAxis = ConstraintAxis::NO_CONSTRAINT;
     return;
   }
 
-  switch(m_constraintAxis)
+  switch(m_ConstraintAxis)
   {
     case ConstraintAxis::NO_CONSTRAINT: 
-      m_constraintAxis = ConstraintAxis::RIGHT_AXIS;
+      m_ConstraintAxis = ConstraintAxis::RIGHT_AXIS;
       break;
     case ConstraintAxis::RIGHT_AXIS: 
-      m_constraintAxis = ConstraintAxis::UP_AXIS;
+      m_ConstraintAxis = ConstraintAxis::UP_AXIS;
       break;
     case ConstraintAxis::UP_AXIS: 
-      m_constraintAxis = ConstraintAxis::FORWARD_AXIS;
+      m_ConstraintAxis = ConstraintAxis::FORWARD_AXIS;
       break;
     case ConstraintAxis::FORWARD_AXIS: 
-      m_constraintAxis = ConstraintAxis::NO_CONSTRAINT;
+      m_ConstraintAxis = ConstraintAxis::NO_CONSTRAINT;
       break;
   }
 }
 
-inline 
 void Camera::increase_fov(const float d) 
 { 
-  m_fov += d * 2.f; 
-  if (m_fov > 90.f) m_fov = 90.;
-  if (m_fov < 45.f) m_fov = 45.f;
+  m_FOV += d * 2.f; 
+  if (m_FOV > 90.f) m_FOV = 90.;
+  if (m_FOV < 45.f) m_FOV = 45.f;
 
   compute_target_size();
 }
 
-inline 
 void Camera::increase_zoom_smoothness(const float s)
 {
-  m_zoomSmoothFactor += s * 0.01; 
-  if (m_zoomSmoothFactor > 1.f) m_zoomSmoothFactor = 1.;
-  if (m_zoomSmoothFactor < 0.01f) m_zoomSmoothFactor = .01;
+  m_ZoomSmoothFactor += s * 0.01; 
+  if (m_ZoomSmoothFactor > 1.f) m_ZoomSmoothFactor = 1.;
+  if (m_ZoomSmoothFactor < 0.01f) m_ZoomSmoothFactor = .01;
 }
 
 using NearestAxisResult = std::pair<vec3f, vec3f>;
@@ -666,7 +637,6 @@ quatf compute_rotation(const vec3f& nearestForwardAxis, const vec3f& nearestUpAx
   return rotation;
 }
 
-inline 
 void Camera::align_to_nearest_axis() 
 {
   vec3f forwardDirection = get_forward();
@@ -674,64 +644,59 @@ void Camera::align_to_nearest_axis()
 
   auto [nearestForwardAxis, nearestUpAxis] = nearest_axis(forwardDirection, upDirection);
 
-  m_pitch = m_targetPitch;
-  m_yaw = m_targetYaw;
-  m_position = m_targetPosition;
+  m_Pitch = m_TargetPitch;
+  m_Yaw = m_TargetYaw;
+  m_Position = m_TargetPosition;
 
-  m_orientation = compute_rotation(nearestForwardAxis, nearestUpAxis);
+  m_Orientation = compute_rotation(nearestForwardAxis, nearestUpAxis);
 }
 
-inline
 void Camera::align_to_plane(const vec3f& normal)
 {
   vec3f forward = get_forward();
   float dotFF = -forward.dot(normal);   
   float dotFB = -forward.dot(-normal);  
   
-  m_pitch = m_targetPitch;
-  m_yaw = m_targetYaw;
-  m_position = m_targetPosition;
+  m_Pitch = m_TargetPitch;
+  m_Yaw = m_TargetYaw;
+  m_Position = m_TargetPosition;
 
   if (dotFF > dotFB)
   {
-    m_orientation *= quatf::FromTwoVectors(forward, -normal).inverse();
+    m_Orientation *= quatf::FromTwoVectors(forward, -normal).inverse();
   }
   else 
   {
-    m_orientation *= quatf::FromTwoVectors(forward,  normal).inverse();
+    m_Orientation *= quatf::FromTwoVectors(forward,  normal).inverse();
   }
 }
 
-inline
 void Camera::compute_target_size()
 {
-  float tanHalfFov = tan(utils::radians(m_fov) * .5f);
-  m_targetSize = m_radius / tanHalfFov * .6f;
+  float tanHalfFov = tan(utils::radians(m_FOV) * .5f);
+  m_TargetSize = m_Radius / tanHalfFov * .6f;
 }
 
-inline
 bool Camera::need_update() const
 {
-  return !utils::equal_float(m_targetPitch, m_pitch) 
-      || !utils::equal_float(m_targetYaw, m_yaw) 
-      || !utils::equal_float(m_targetSize, m_size) 
-      || !utils::equal_vec3f(m_targetPosition, m_position)
+  return !utils::equal_float(m_TargetPitch, m_Pitch) 
+      || !utils::equal_float(m_TargetYaw, m_Yaw) 
+      || !utils::equal_float(m_TargetSize, m_Size) 
+      || !utils::equal_vec3f(m_TargetPosition, m_Position)
       ;
 }
 
-inline 
 void Camera::set_orientation(const vec3f& forward, float upAngle) 
 { 
-  m_orientation = quatf::FromTwoVectors(-vec3f::UnitZ(), forward.normalized()).inverse(); 
-  m_orientation *= quatf(Eigen::AngleAxisf(utils::radians(upAngle), get_forward()));
+  m_Orientation = quatf::FromTwoVectors(-vec3f::UnitZ(), forward.normalized()).inverse(); 
+  m_Orientation *= quatf(Eigen::AngleAxisf(utils::radians(upAngle), get_forward()));
 }
 
-inline 
 std::string Camera::get_constraint_axis_str() const 
 { 
-  if (m_constraintAxis == ConstraintAxis::UP_AXIS) return "Up";
-  if (m_constraintAxis == ConstraintAxis::RIGHT_AXIS) return "Right";
-  if (m_constraintAxis == ConstraintAxis::FORWARD_AXIS) return "Forward";
+  if (m_ConstraintAxis == ConstraintAxis::UP_AXIS) return "Up";
+  if (m_ConstraintAxis == ConstraintAxis::RIGHT_AXIS) return "Right";
+  if (m_ConstraintAxis == ConstraintAxis::FORWARD_AXIS) return "Forward";
   return "None"; 
 }
 

@@ -42,15 +42,15 @@ public:
 
   void set_duration(DurationType duration);
 
-  inline bool is_running() const { return m_isRunning; }
+  inline bool is_running() const { return m_IsRunning; }
 
-  inline void clear_buffer() { m_keyFrames.clear(); }
+  inline void clear_buffer() { m_KeyFrames.clear(); }
 
-  inline quatf get_rotation() const { return m_interpolatedRotation; }
+  inline quatf get_rotation() const { return m_InterpolatedRotation; }
 
-  inline vec3f get_translation() const { return m_interpolatedTranslation; }
+  inline vec3f get_translation() const { return m_InterpolatedTranslation; }
 
-  inline float get_frame() const { return m_currentFrameNumber; }
+  inline float get_frame() const { return m_CurrentFrameNumber; }
   
 private:
   AnimationKeyFrame key_frame_interpolation(const float time);
@@ -58,114 +58,106 @@ private:
   void compute_timestamp();
 
 private: 
-  quatf m_interpolatedRotation { quatf::Identity() };
-  vec3f m_interpolatedTranslation { vec3f::Zero() };
+  quatf m_InterpolatedRotation { quatf::Identity() };
+  vec3f m_InterpolatedTranslation { vec3f::Zero() };
 
-  DurationType m_duration { 5s };   
+  DurationType m_Duration { 5s };   
 
-  KeyFrameBuffer m_keyFrames {};
+  KeyFrameBuffer m_KeyFrames {};
 
-  TimePoint m_startTime {}; 
+  TimePoint m_StartTime {}; 
 
-  AnimationKeyFrame m_lastFrameData {};
+  AnimationKeyFrame m_LastFrameData {};
 
-  float m_lastFrameNumber    { 0.0f };   
-  float m_currentFrameNumber { 0.0f };  
-  float m_timestamp          { 0.0f };  
+  float m_LastFrameNumber    { 0.0f };   
+  float m_CurrentFrameNumber { 0.0f };  
+  float m_Timestamp          { 0.0f };  
 
-  bool m_isRunning { false };
+  bool m_IsRunning { false };
 };
 
-/********************METHOD DEFINITIONS********************/
+/********************METHOD IMPLEMENTATIONS********************/
 
-inline 
 void Animation_controller::start() 
 {
-  if (m_keyFrames.size() <= 1) 
+  if (m_KeyFrames.size() <= 1) 
   {
     return;
   }
 
-  if (!m_isRunning) 
+  if (!m_IsRunning) 
   {
-    m_startTime = std::chrono::steady_clock::now();
-    m_isRunning = true;
+    m_StartTime = std::chrono::steady_clock::now();
+    m_IsRunning = true;
   }
 }
 
-inline 
 AnimationKeyFrame Animation_controller::run() 
 {
   auto now = std::chrono::steady_clock::now();
-  float elapsedTime = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(now - m_startTime).count());
-  m_currentFrameNumber = m_lastFrameNumber + elapsedTime;
-  if (m_currentFrameNumber >= static_cast<float>(m_duration.count())) 
+  float elapsedTime = static_cast<float>(std::chrono::duration_cast<std::chrono::milliseconds>(now - m_StartTime).count());
+  m_CurrentFrameNumber = m_LastFrameNumber + elapsedTime;
+  if (m_CurrentFrameNumber >= static_cast<float>(m_Duration.count())) 
   {
-    m_currentFrameNumber = 0.0;
+    m_CurrentFrameNumber = 0.0;
     stop(0.0);
-    return m_lastFrameData;
+    return m_LastFrameData;
   }
 
-  m_lastFrameData = key_frame_interpolation(m_currentFrameNumber); 
-  return m_lastFrameData;
+  m_LastFrameData = key_frame_interpolation(m_CurrentFrameNumber); 
+  return m_LastFrameData;
 }
 
-inline 
 void Animation_controller::stop(const float frameNumber) 
 {
-  m_isRunning = false;
-  m_lastFrameNumber = frameNumber;
+  m_IsRunning = false;
+  m_LastFrameNumber = frameNumber;
 }
 
-inline 
 void Animation_controller::add_key_frame(const vec3f& position, const quatf& orientation) 
 { 
   AnimationKeyFrame keyFrame(position, orientation);
-  m_keyFrames.push_back(keyFrame);
-  if (m_keyFrames.size() > 1) 
+  m_KeyFrames.push_back(keyFrame);
+  if (m_KeyFrames.size() > 1) 
   {
     compute_timestamp();
   } 
 }
 
-inline 
 void Animation_controller::set_duration(DurationType duration) 
 { 
-  m_duration = duration; 
-  if (m_keyFrames.size() > 1) 
+  m_Duration = duration; 
+  if (m_KeyFrames.size() > 1) 
   {
     compute_timestamp();
   }
 }
 
-
-inline 
 AnimationKeyFrame Animation_controller::key_frame_interpolation(const float time)
 {
-  assert(!utils::equal_float(m_timestamp, 0));
+  assert(!utils::equal_float(m_Timestamp, 0));
 
-  float t = time / m_timestamp;
+  float t = time / m_Timestamp;
 
   unsigned int lowerIndex = std::floor(t);
   unsigned int upperIndex = std::ceil(t);
 
-  AnimationKeyFrame keyFrame0 = m_keyFrames.at(lowerIndex); 
-  AnimationKeyFrame keyFrame1 = m_keyFrames.at(upperIndex);
+  AnimationKeyFrame keyFrame0 = m_KeyFrames.at(lowerIndex); 
+  AnimationKeyFrame keyFrame1 = m_KeyFrames.at(upperIndex);
 
   t -= static_cast<float>(lowerIndex); 
 
-  m_interpolatedRotation = keyFrame0.orientation.slerp(t, keyFrame1.orientation); 
+  m_InterpolatedRotation = keyFrame0.orientation.slerp(t, keyFrame1.orientation); 
 
-  m_interpolatedTranslation = utils::lerp(keyFrame0.position, keyFrame1.position, t);
+  m_InterpolatedTranslation = utils::lerp(keyFrame0.position, keyFrame1.position, t);
 
-  return {m_interpolatedTranslation, m_interpolatedRotation};
+  return {m_InterpolatedTranslation, m_InterpolatedRotation};
 }
 
-inline 
 void Animation_controller::compute_timestamp() 
 { 
-  assert(m_keyFrames.size() > 1);
-  m_timestamp = static_cast<float>(m_duration.count()) / static_cast<float>(m_keyFrames.size() - 1); 
+  assert(m_KeyFrames.size() > 1);
+  m_Timestamp = static_cast<float>(m_Duration.count()) / static_cast<float>(m_KeyFrames.size() - 1); 
 }
 
 #endif // CGAL_ANIMATION_CONTROLLER_H

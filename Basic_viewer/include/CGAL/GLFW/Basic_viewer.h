@@ -89,96 +89,96 @@ namespace GLFW
     // Setter Section
     inline void set_scene(const Graphics_scene* scene)
     {
-      m_scene = scene;
-      m_areBuffersInitialized = false;
+      m_Scene = scene;
+      m_AreBuffersInitialized = false;
     }
 
-    inline void window_size(const vec2f &size) { window_size_callback(m_window, size.x(), size.y()); }
+    inline void window_size(const vec2f &size) { window_size_callback(m_Window, size.x(), size.y()); }
 
-    inline void vertices_mono_color(const CGAL::IO::Color& c) { m_verticeMonoColor = c; }
-    inline void edges_mono_color(const CGAL::IO::Color& c) { m_edgesMonoColor = c; }
-    inline void rays_mono_color(const CGAL::IO::Color& c) { m_raysMonoColor = c; }
-    inline void lines_mono_color(const CGAL::IO::Color& c) { m_linesMonoColor = c; }
-    inline void faces_mono_color(const CGAL::IO::Color& c) { m_facesMonoColor = c; }
+    inline void vertices_mono_color(const CGAL::IO::Color& c) { m_VerticeMonoColor = c; }
+    inline void edges_mono_color(const CGAL::IO::Color& c) { m_EdgesMonoColor = c; }
+    inline void rays_mono_color(const CGAL::IO::Color& c) { m_RaysMonoColor = c; }
+    inline void lines_mono_color(const CGAL::IO::Color& c) { m_LinesMonoColor = c; }
+    inline void faces_mono_color(const CGAL::IO::Color& c) { m_FacesMonoColor = c; }
 
-    inline void size_points(const float size) { m_sizeVertices = size; }
-    inline void size_edges(const float size) { m_sizeEdges = size; }
-    inline void size_rays(const float size) { m_sizeRays = size; }
-    inline void size_lines(const float size) { m_sizeLines = size; }
+    inline void size_points(const float size) { m_SizeVertices = size; }
+    inline void size_edges(const float size) { m_SizeEdges = size; }
+    inline void size_rays(const float size) { m_SizeRays = size; }
+    inline void size_lines(const float size) { m_SizeLines = size; }
 
-    inline void light_position(const vec4f& pos) { m_lightPosition = pos; }
-    inline void light_ambient(const vec4f& color) { m_ambientColor = color; }
-    inline void light_diffuse(const vec4f& color) { m_diffuseColor = color; }
-    inline void light_specular(const vec4f& color) { m_specularColor = color; }
-    inline void light_shininess(const float shininess) { m_shininess = shininess; }
+    inline void light_position(const vec4f& pos) { m_LightPosition = pos; }
+    inline void light_ambient(const vec4f& color) { m_AmbientColor = color; }
+    inline void light_diffuse(const vec4f& color) { m_DiffuseColor = color; }
+    inline void light_specular(const vec4f& color) { m_SpecularColor = color; }
+    inline void light_shininess(const float shininess) { m_Shininess = shininess; }
 
-    inline void draw_vertices(bool b) { m_drawVertices = b; }
-    inline void draw_edges(bool b) { m_drawEdges = b; }
-    inline void draw_rays(bool b) { m_drawRays = b; }
-    inline void draw_lines(bool b) { m_drawLines = b; }
-    inline void draw_faces(bool b) { m_drawFaces = b; }
-    inline void use_mono_color(bool b) { m_useMonoColor = b; }
-    inline void inverse_normal(bool b) { m_inverseNormal = b; }
-    inline void flat_shading(bool b) { m_flatShading = b; }
-    inline void draw_world_axis(bool b) { m_drawWorldAxis = b; }
-    inline void draw_xy_grid(bool b) { m_drawXYGrid = b; }
+    inline void draw_vertices(bool b) { m_DrawVertices = b; }
+    inline void draw_edges(bool b) { m_DrawEdges = b; }
+    inline void draw_rays(bool b) { m_DrawRays = b; }
+    inline void draw_lines(bool b) { m_DrawLines = b; }
+    inline void draw_faces(bool b) { m_DrawFaces = b; }
+    inline void use_mono_color(bool b) { m_UseMonoColor = b; }
+    inline void inverse_normal(bool b) { m_InverseNormal = b; }
+    inline void flat_shading(bool b) { m_FlatShading = b; }
+    inline void draw_world_axis(bool b) { m_DrawWorldAxis = b; }
+    inline void draw_xy_grid(bool b) { m_DrawXYGrid = b; }
 
-    inline void display_mode(DisplayMode mode) { m_displayMode = mode; }
-    inline void draw_clipping_plane(bool b) { m_drawClippingPlane = b; }
+    inline void display_mode(DisplayMode mode) { m_DisplayMode = mode; }
+    inline void draw_clipping_plane(bool b) { m_DrawClippingPlane = b; }
 
-    inline void two_dimensional() { m_camera.set_orthographic(); } 
+    inline void two_dimensional() { m_Camera.set_orthographic(); } 
 
     inline void azerty_layout() { set_keyboard_layout(KeyboardLayout::AZERTY); }
-    inline void animation_duration(std::chrono::milliseconds duration) { m_animationController.set_duration(duration); }
+    inline void animation_duration(std::chrono::milliseconds duration) { m_AnimationController.set_duration(duration); }
 
-    inline void scene_radius(float radius) { m_camera.set_radius(radius); }
-    inline void scene_center(const vec3f& center) { m_camera.set_center(center); }
-    inline void scene_center(float x, float y, float z) { m_camera.set_center({x, y, z}); }
-    inline void camera_position(const vec3f& position) { m_camera.set_position(position); }
-    inline void camera_position(float x, float y, float z) { m_camera.set_position({x, y, z}); }
-    inline void camera_orientation(const vec3f& forward, float upAngle) { m_camera.set_orientation(forward, upAngle); }
-    inline void zoom(float zoom) { m_camera.set_size(zoom); }
+    inline void scene_radius(float radius) { m_Camera.set_radius(radius); }
+    inline void scene_center(const vec3f& center) { m_Camera.set_center(center); }
+    inline void scene_center(float x, float y, float z) { m_Camera.set_center({x, y, z}); }
+    inline void camera_position(const vec3f& position) { m_Camera.set_position(position); }
+    inline void camera_position(float x, float y, float z) { m_Camera.set_position({x, y, z}); }
+    inline void camera_orientation(const vec3f& forward, float upAngle) { m_Camera.set_orientation(forward, upAngle); }
+    inline void zoom(float zoom) { m_Camera.set_size(zoom); }
     
-    inline void align_camera_to_clipping_plane() { m_camera.align_to_plane(m_clippingPlane.get_normal()); }
-    inline void clipping_plane_orientation(const vec3f& normal) { m_clippingPlane.set_orientation(normal); } 
-    inline void clipping_plane_translate_along_normal(float t) { m_clippingPlane.translation(t*.1); } 
-    inline void clipping_plane_translate_along_camera_forward(float t) { m_clippingPlane.translation(m_camera.get_forward(), t*.1); } 
+    inline void align_camera_to_clipping_plane() { m_Camera.align_to_plane(m_ClippingPlane.get_normal()); }
+    inline void clipping_plane_orientation(const vec3f& normal) { m_ClippingPlane.set_orientation(normal); } 
+    inline void clipping_plane_translate_along_normal(float t) { m_ClippingPlane.translation(t*.1); } 
+    inline void clipping_plane_translate_along_camera_forward(float t) { m_ClippingPlane.translation(m_Camera.get_forward(), t*.1); } 
 
     // Getter section
-    inline vec3f position() const { return m_camera.get_position(); }
-    inline vec3f forward() const { return m_camera.get_forward(); }
-    inline vec3f right() const { return m_camera.get_right(); }
-    inline vec3f up() const { return m_camera.get_up(); }
+    inline vec3f position() const { return m_Camera.get_position(); }
+    inline vec3f forward() const { return m_Camera.get_forward(); }
+    inline vec3f right() const { return m_Camera.get_right(); }
+    inline vec3f up() const { return m_Camera.get_up(); }
 
-    inline CGAL::IO::Color vertices_mono_color() const { return m_verticeMonoColor; }
-    inline CGAL::IO::Color edges_mono_color() const { return m_edgesMonoColor; }
-    inline CGAL::IO::Color rays_mono_color() const { return m_raysMonoColor; }
-    inline CGAL::IO::Color lines_mono_color() const { return m_linesMonoColor; }
-    inline CGAL::IO::Color faces_mono_color() const { return m_facesMonoColor; }
+    inline CGAL::IO::Color vertices_mono_color() const { return m_VerticeMonoColor; }
+    inline CGAL::IO::Color edges_mono_color() const { return m_EdgesMonoColor; }
+    inline CGAL::IO::Color rays_mono_color() const { return m_RaysMonoColor; }
+    inline CGAL::IO::Color lines_mono_color() const { return m_LinesMonoColor; }
+    inline CGAL::IO::Color faces_mono_color() const { return m_FacesMonoColor; }
 
-    inline float size_points() const { return m_sizeVertices; }
-    inline float size_edges() const { return m_sizeEdges; }
-    inline float size_rays() const { return m_sizeRays; }
-    inline float size_lines() const { return m_sizeLines; }
+    inline float size_points() const { return m_SizeVertices; }
+    inline float size_edges() const { return m_SizeEdges; }
+    inline float size_rays() const { return m_SizeRays; }
+    inline float size_lines() const { return m_SizeLines; }
 
-    inline vec4f light_position() const { return m_lightPosition; }
-    inline vec4f light_ambient() const { return m_ambientColor; }
-    inline vec4f light_diffuse() const { return m_diffuseColor; }
-    inline vec4f light_specular() const { return m_specularColor; }
-    inline float light_shininess() const { return m_shininess; }
+    inline vec4f light_position() const { return m_LightPosition; }
+    inline vec4f light_ambient() const { return m_AmbientColor; }
+    inline vec4f light_diffuse() const { return m_DiffuseColor; }
+    inline vec4f light_specular() const { return m_SpecularColor; }
+    inline float light_shininess() const { return m_Shininess; }
 
-    inline bool draw_vertices() const { return m_drawVertices; }
-    inline bool draw_edges() const { return m_drawEdges; }
-    inline bool draw_rays() const { return m_drawRays; }
-    inline bool draw_lines() const { return m_drawLines; }
-    inline bool draw_faces() const { return m_drawFaces; }
-    inline bool use_mono_color() const { return m_useMonoColor; }
-    inline bool inverse_normal() const { return m_inverseNormal; }
-    inline bool flat_shading() const { return m_flatShading; }
+    inline bool draw_vertices() const { return m_DrawVertices; }
+    inline bool draw_edges() const { return m_DrawEdges; }
+    inline bool draw_rays() const { return m_DrawRays; }
+    inline bool draw_lines() const { return m_DrawLines; }
+    inline bool draw_faces() const { return m_DrawFaces; }
+    inline bool use_mono_color() const { return m_UseMonoColor; }
+    inline bool inverse_normal() const { return m_InverseNormal; }
+    inline bool flat_shading() const { return m_FlatShading; }
 
-    inline bool clipping_plane_enable() const { return m_displayMode != DisplayMode::CLIPPING_PLANE_OFF; }
-    inline bool is_orthograpic() const { return m_camera.is_orthographic(); }
-    inline bool is_two_dimensional() const { return !is_orthograpic() && m_scene->is_two_dimensional(); }
+    inline bool clipping_plane_enable() const { return m_DisplayMode != DisplayMode::CLIPPING_PLANE_OFF; }
+    inline bool is_orthograpic() const { return m_Camera.is_orthographic(); }
+    inline bool is_two_dimensional() const { return !is_orthograpic() && m_Scene->is_two_dimensional(); }
 
     CGAL::Plane_3<Local_kernel> clipping_plane() const;
 
@@ -273,103 +273,103 @@ namespace GLFW
     bool need_update() const; 
 
   private:
-    GLFWwindow* m_window;
+    GLFWwindow* m_Window;
 
-    const Graphics_scene* m_scene;
-    const char* m_title;
-    bool m_drawVertices { false };
-    bool m_drawEdges { true };
-    bool m_drawFaces { true };
-    bool m_drawRays { true };
-    bool m_drawLines { true };
-    bool m_drawCylinderEdge { false };
-    bool m_drawSphereVertex { false };
+    const Graphics_scene* m_Scene;
+    const char* m_Title;
+    bool m_DrawVertices { false };
+    bool m_DrawEdges { true };
+    bool m_DrawFaces { true };
+    bool m_DrawRays { true };
+    bool m_DrawLines { true };
+    bool m_DrawCylinderEdge { false };
+    bool m_DrawSphereVertex { false };
 
-    bool m_useNormalMonoColor { false };
-    bool m_useMonoColor { false };
+    bool m_UseNormalMonoColor { false };
+    bool m_UseMonoColor { false };
 
-    bool m_inverseNormal { false };
-    bool m_flatShading { true };
+    bool m_InverseNormal { false };
+    bool m_FlatShading { true };
 
-    bool m_printApplicationState { true };
+    bool m_PrintApplicationState { true };
+    bool m_AreBuffersInitialized { false };
 
-    bool m_areBuffersInitialized { false };
+    bool m_DrawWorldAxis { true };
+    bool m_DrawXYGrid { false };
+    bool m_DrawNormals { false };
 
-    bool m_drawWorldAxis { true };
-    bool m_drawXYGrid { false };
-    bool m_drawNormals { false };
+    bool m_IsOpengl4_3 { false };
+    bool m_IsFullscreen { false };
 
-    bool m_isOpengl4_3 { false };
-
-    bool m_isFullscreen { false };
+    bool m_CylinderSphereFeatureEnabled { true };    
     
-    Line_renderer m_worldAxisRenderer; 
+    Line_renderer m_WorldAxisRenderer; 
     Line_renderer m_XYGridRenderer; 
     Line_renderer m_XYAxisRenderer; 
 
-    float m_sizeVertices { CGAL_SIZE_POINTS };
-    float m_sizeEdges    { CGAL_SIZE_EDGES  };
-    float m_sizeRays     { CGAL_SIZE_RAYS   };
-    float m_sizeLines    { CGAL_SIZE_LINES  };
-    float m_sizeNormals  { CGAL_SIZE_NORMALS};
+    float m_SizeVertices { CGAL_SIZE_POINTS };
+    float m_SizeEdges    { CGAL_SIZE_EDGES  };
+    float m_SizeRays     { CGAL_SIZE_RAYS   };
+    float m_SizeLines    { CGAL_SIZE_LINES  };
+    float m_SizeNormals  { CGAL_SIZE_NORMALS};
 
-    float m_normalHeightFactor { CGAL_NORMAL_HEIGHT_FACTOR };
+    float m_NormalHeightFactor { CGAL_NORMAL_HEIGHT_FACTOR };
 
-    CGAL::IO::Color m_facesMonoColor   = CGAL_FACES_MONO_COLOR;
-    CGAL::IO::Color m_verticeMonoColor = CGAL_VERTICES_MONO_COLOR;
-    CGAL::IO::Color m_edgesMonoColor   = CGAL_EDGES_MONO_COLOR;
-    CGAL::IO::Color m_raysMonoColor    = CGAL_RAYS_MONO_COLOR;
-    CGAL::IO::Color m_linesMonoColor   = CGAL_LINES_MONO_COLOR;
-    CGAL::IO::Color m_normalsMonoColor = CGAL_NORMALS_MONO_COLOR;
+    CGAL::IO::Color m_FacesMonoColor   = CGAL_FACES_MONO_COLOR;
+    CGAL::IO::Color m_VerticeMonoColor = CGAL_VERTICES_MONO_COLOR;
+    CGAL::IO::Color m_EdgesMonoColor   = CGAL_EDGES_MONO_COLOR;
+    CGAL::IO::Color m_RaysMonoColor    = CGAL_RAYS_MONO_COLOR;
+    CGAL::IO::Color m_LinesMonoColor   = CGAL_LINES_MONO_COLOR;
+    CGAL::IO::Color m_NormalsMonoColor = CGAL_NORMALS_MONO_COLOR;
 
-    vec4f m_lightPosition { CGAL_LIGHT_POSITION };
-    vec4f m_ambientColor  { CGAL_AMBIENT_COLOR  };
-    vec4f m_diffuseColor  { CGAL_DIFFUSE_COLOR  };
-    vec4f m_specularColor { CGAL_SPECULAR_COLOR };
+    vec4f m_LightPosition { CGAL_LIGHT_POSITION };
+    vec4f m_AmbientColor  { CGAL_AMBIENT_COLOR  };
+    vec4f m_DiffuseColor  { CGAL_DIFFUSE_COLOR  };
+    vec4f m_SpecularColor { CGAL_SPECULAR_COLOR };
 
-    float m_shininess { CGAL_SHININESS };
+    float m_Shininess { CGAL_SHININESS };
 
-    vec4f m_clipPlane { 0, 0, 1, 0 };
-    vec4f m_pointPlane { 0, 0, 0, 1 };
+    vec4f m_ClipPlane { 0, 0, 1, 0 };
+    vec4f m_PointPlane { 0, 0, 0, 1 };
 
-    mat4f m_modelMatrix          { mat4f::Identity() };
-    mat4f m_viewMatrix           { mat4f::Identity() };
-    mat4f m_projectionMatrix     { mat4f::Identity() };
-    mat4f m_viewProjectionMatrix { mat4f::Identity() };
+    mat4f m_ModelMatrix          { mat4f::Identity() };
+    mat4f m_ViewMatrix           { mat4f::Identity() };
+    mat4f m_ProjectionMatrix     { mat4f::Identity() };
+    mat4f m_ViewProjectionMatrix { mat4f::Identity() };
 
-    Shader m_shaderFace; 
-    Shader m_shaderSphere;
-    Shader m_shaderCylinder;
-    Shader m_shaderPl;
-    Shader m_shaderPlane;
-    Shader m_shaderLine;
-    Shader m_shaderNormal;
-    Shader m_shaderArrow;
+    Shader m_ShaderFace; 
+    Shader m_ShaderSphere;
+    Shader m_ShaderCylinder;
+    Shader m_ShaderPl;
+    Shader m_ShaderPlane;
+    Shader m_ShaderLine;
+    Shader m_ShaderNormal;
+    Shader m_ShaderArrow;
 
-    vec2i m_windowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
-    vec2i m_oldWindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
+    vec2i m_WindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
+    vec2i m_OldWindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
 
-    vec2i m_oldWindowPosition { 0, 0 }; 
+    vec2i m_OldWindowPosition { 0, 0 }; 
 
-    float m_aspectRatio { 1.f };
+    float m_AspectRatio { 1.f };
 
-    float m_deltaTime { 0 };
+    float m_DeltaTime { 0 };
 
-    std::pair<vec3f, vec3f> m_boundingBox; 
+    std::pair<vec3f, vec3f> m_BoundingBox; 
 
-    Camera m_camera;
+    Camera m_Camera;
 
     /***************CLIPPING PLANE****************/
 
-    Clipping_plane m_clippingPlane;
+    Clipping_plane m_ClippingPlane;
 
-    DisplayMode m_displayMode { DisplayMode::CLIPPING_PLANE_OFF };
+    DisplayMode m_DisplayMode { DisplayMode::CLIPPING_PLANE_OFF };
     
-    bool m_drawClippingPlane { true };  // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
+    bool m_DrawClippingPlane { true };  // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;
 
     /*********************/
 
-    Animation_controller m_animationController;
+    Animation_controller m_AnimationController;
 
     enum VAOEnum 
     {
@@ -386,12 +386,12 @@ namespace GLFW
       NB_VAO_BUFFERS
     };
 
-    GLuint m_vao[NB_VAO_BUFFERS];
+    unsigned int m_VAO[NB_VAO_BUFFERS];
 
     static const unsigned int NB_GL_BUFFERS = (Graphics_scene::END_POS - Graphics_scene::BEGIN_POS) +
                                               (Graphics_scene::END_COLOR - Graphics_scene::BEGIN_COLOR) + 2; // +2 for normals (mono and color)
 
-    GLuint m_vbo[NB_GL_BUFFERS]; // +1 for the vbo buffer of clipping plane
+    unsigned int m_VBO[NB_GL_BUFFERS]; // +1 for the vbo buffer of clipping plane
 
     enum ActionEnum
     {

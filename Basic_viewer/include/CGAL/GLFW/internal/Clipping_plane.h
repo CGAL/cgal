@@ -31,196 +31,183 @@ public:
 
   bool need_update() const;
 
-  inline float get_transparency() const { return m_transparency; }
-  inline float get_rotation_speed() const { return m_rotationSpeed; }
-  inline float get_translation_speed() const { return m_translationSpeed; }
-  inline std::string get_constraint_axis_str() const { return m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ? "None" : (m_constraintAxis == ConstraintAxis::RIGHT_AXIS ? "Right" : "Up"); }
+  inline float get_transparency() const { return m_Transparency; }
+  inline float get_rotation_speed() const { return m_RotationSpeed; }
+  inline float get_translation_speed() const { return m_TranslationSpeed; }
+  inline std::string get_constraint_axis_str() const { return m_ConstraintAxis == ConstraintAxis::NO_CONSTRAINT ? "None" : (m_ConstraintAxis == ConstraintAxis::RIGHT_AXIS ? "Right" : "Up"); }
 
   void set_orientation(const vec3f& normal);
 
-  inline void set_size(const float size) { m_size = size; }
-  inline void set_up_axis(const vec3f& upAxis) { m_upAxis = upAxis; }
-  inline void set_right_axis(const vec3f& rightAxis) { m_rightAxis = rightAxis; }
+  inline void set_size(const float size) { m_Size = size; }
+  inline void set_up_axis(const vec3f& upAxis) { m_UpAxis = upAxis; }
+  inline void set_right_axis(const vec3f& rightAxis) { m_RightAxis = rightAxis; }
 
-  inline void increase_rotation_speed(const float deltaTime) { m_rotationSpeed = std::min(m_rotationSpeed+100.f*deltaTime, 360.f); }
-  inline void decrease_rotation_speed(const float deltaTime) { m_rotationSpeed = std::max(m_rotationSpeed-100.f*deltaTime, 60.f); }
+  inline void increase_rotation_speed(const float deltaTime) { m_RotationSpeed = std::min(m_RotationSpeed+100.f*deltaTime, 360.f); }
+  inline void decrease_rotation_speed(const float deltaTime) { m_RotationSpeed = std::max(m_RotationSpeed-100.f*deltaTime, 60.f); }
 
-  inline void increase_translation_speed(const float deltaTime) { m_translationSpeed = std::min(m_translationSpeed+deltaTime, 20.f); }
-  inline void decrease_translation_speed(const float deltaTime) { m_translationSpeed = std::max(m_translationSpeed-deltaTime, 0.5f); }
+  inline void increase_translation_speed(const float deltaTime) { m_TranslationSpeed = std::min(m_TranslationSpeed+deltaTime, 20.f); }
+  inline void decrease_translation_speed(const float deltaTime) { m_TranslationSpeed = std::max(m_TranslationSpeed-deltaTime, 0.5f); }
 
-  inline void increase_rotation_smoothness(const float deltaTime) { m_rotationSmoothFactor = std::max(m_rotationSmoothFactor-deltaTime, 0.01f); }
-  inline void decrease_rotation_smoothness(const float deltaTime) { m_rotationSmoothFactor = std::min(m_rotationSmoothFactor+deltaTime, 1.f); }
+  inline void increase_rotation_smoothness(const float deltaTime) { m_RotationSmoothFactor = std::max(m_RotationSmoothFactor-deltaTime, 0.01f); }
+  inline void decrease_rotation_smoothness(const float deltaTime) { m_RotationSmoothFactor = std::min(m_RotationSmoothFactor+deltaTime, 1.f); }
 
-  inline void increase_translation_smoothness(const float deltaTime) { m_translationSmoothFactor = std::max(m_translationSmoothFactor-deltaTime, 0.01f); }
-  inline void decrease_translation_smoothness(const float deltaTime) { m_translationSmoothFactor = std::min(m_translationSmoothFactor+deltaTime, 1.f); }
+  inline void increase_translation_smoothness(const float deltaTime) { m_TranslationSmoothFactor = std::max(m_TranslationSmoothFactor-deltaTime, 0.01f); }
+  inline void decrease_translation_smoothness(const float deltaTime) { m_TranslationSmoothFactor = std::min(m_TranslationSmoothFactor+deltaTime, 1.f); }
 
 private:
-  quatf m_orientation { quatf::Identity() };
+  quatf m_Orientation { quatf::Identity() };
 
-  vec3f m_position       { vec3f::Zero() };
-  vec3f m_targetPosition { vec3f::Zero() };
+  vec3f m_Position       { vec3f::Zero() };
+  vec3f m_TargetPosition { vec3f::Zero() };
 
-  vec3f m_upAxis    { vec3f::UnitY() };
-  vec3f m_rightAxis { vec3f::UnitX() };
+  vec3f m_UpAxis    { vec3f::UnitY() };
+  vec3f m_RightAxis { vec3f::UnitX() };
 
-  float m_pitch       { 0.0f };
-  float m_targetPitch { 0.0f };
-  float m_yaw         { 0.0f };
-  float m_targetYaw   { 0.0f };
+  float m_Pitch       { 0.0f };
+  float m_TargetPitch { 0.0f };
+  float m_Yaw         { 0.0f };
+  float m_TargetYaw   { 0.0f };
 
-  float m_rotationSpeed    { CGAL_CLIPPING_PLANE_ROTATION_SPEED };
-  float m_translationSpeed { CGAL_CLIPPING_PLANE_TRANSLATION_SPEED };
+  float m_RotationSpeed    { CGAL_CLIPPING_PLANE_ROTATION_SPEED };
+  float m_TranslationSpeed { CGAL_CLIPPING_PLANE_TRANSLATION_SPEED };
 
-  float m_rotationSmoothFactor    { CGAL_CLIPPING_PLANE_ROTATION_SMOOTHNESS };
-  float m_translationSmoothFactor { CGAL_CLIPPING_PLANE_TRANSLATION_SMOOTHNESS };
+  float m_RotationSmoothFactor    { CGAL_CLIPPING_PLANE_ROTATION_SMOOTHNESS };
+  float m_TranslationSmoothFactor { CGAL_CLIPPING_PLANE_TRANSLATION_SMOOTHNESS };
 
-  float m_size { 1.0f }; 
+  float m_Size { 1.0f }; 
 
-  float m_transparency { CGAL_CLIPPING_PLANE_RENDERING_TRANSPARENCY }; // to what extent the transparent part should be rendered;
+  float m_Transparency { CGAL_CLIPPING_PLANE_RENDERING_TRANSPARENCY }; // to what extent the transparent part should be rendered;
 
-  ConstraintAxis m_constraintAxis { ConstraintAxis::NO_CONSTRAINT };
+  ConstraintAxis m_ConstraintAxis { ConstraintAxis::NO_CONSTRAINT };
 };
 
-/********************METHOD DEFINITIONS********************/
-
-inline 
+/********************METHOD IMPLEMENTATIONS********************/
+ 
 void Clipping_plane::update(const float deltaTime)
 {
   if (need_update())
   {
-    float smoothPitch = m_pitch + m_rotationSmoothFactor * (m_targetPitch - m_pitch);   
-    float smoothYaw = m_yaw + m_rotationSmoothFactor * (m_targetYaw - m_yaw);   
+    float smoothPitch = m_Pitch + m_RotationSmoothFactor * (m_TargetPitch - m_Pitch);   
+    float smoothYaw = m_Yaw + m_RotationSmoothFactor * (m_TargetYaw - m_Yaw);   
 
-    float pitchDelta = utils::radians((smoothPitch - m_pitch) * m_rotationSpeed) * deltaTime;
-    float yawDelta = utils::radians((smoothYaw - m_yaw) * m_rotationSpeed) * deltaTime;
+    float pitchDelta = utils::radians((smoothPitch - m_Pitch) * m_RotationSpeed) * deltaTime;
+    float yawDelta = utils::radians((smoothYaw - m_Yaw) * m_RotationSpeed) * deltaTime;
 
-    quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, m_rightAxis));
-    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, m_upAxis));
-    m_orientation = pitchQuaternion * yawQuaternion * m_orientation;
+    quatf pitchQuaternion(Eigen::AngleAxisf(pitchDelta, m_RightAxis));
+    quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, m_UpAxis));
+    m_Orientation = pitchQuaternion * yawQuaternion * m_Orientation;
 
-    m_pitch = smoothPitch;
-    m_yaw = smoothYaw;
+    m_Pitch = smoothPitch;
+    m_Yaw = smoothYaw;
 
-    m_position += m_translationSmoothFactor * (m_targetPosition - m_position);
+    m_Position += m_TranslationSmoothFactor * (m_TargetPosition - m_Position);
   }
 }
-
-inline 
+ 
 void Clipping_plane::reset_all()
 {
   reset_position();
   reset_orientation();
   
-  m_rotationSmoothFactor    = CGAL_CLIPPING_PLANE_ROTATION_SMOOTHNESS;
-  m_translationSmoothFactor = CGAL_CLIPPING_PLANE_TRANSLATION_SMOOTHNESS;
-  m_rotationSpeed           = CGAL_CLIPPING_PLANE_ROTATION_SPEED;
-  m_translationSpeed        = CGAL_CLIPPING_PLANE_TRANSLATION_SPEED;
+  m_RotationSmoothFactor    = CGAL_CLIPPING_PLANE_ROTATION_SMOOTHNESS;
+  m_TranslationSmoothFactor = CGAL_CLIPPING_PLANE_TRANSLATION_SMOOTHNESS;
+  m_RotationSpeed           = CGAL_CLIPPING_PLANE_ROTATION_SPEED;
+  m_TranslationSpeed        = CGAL_CLIPPING_PLANE_TRANSLATION_SPEED;
 
-  m_size = 1.0f;
+  m_Size = 1.0f;
 }
-
-inline 
+ 
 void Clipping_plane::reset_orientation() 
 {
-  m_orientation = quatf::Identity(); 
-  m_pitch = 0.0f;
-  m_targetPitch = 0.0f;
-  m_yaw = 0.0f;
-  m_targetYaw = 0.0f;
+  m_Orientation = quatf::Identity(); 
+  m_Pitch = 0.0f;
+  m_TargetPitch = 0.0f;
+  m_Yaw = 0.0f;
+  m_TargetYaw = 0.0f;
 
-  m_upAxis = vec3f::UnitY();
-  m_rightAxis = vec3f::UnitX();
+  m_UpAxis = vec3f::UnitY();
+  m_RightAxis = vec3f::UnitX();
 }
-
-inline 
+ 
 void Clipping_plane::reset_position() 
 {
-  m_position = vec3f::Zero();
-  m_targetPosition = vec3f::Zero();
+  m_Position = vec3f::Zero();
+  m_TargetPosition = vec3f::Zero();
 }
-
-inline vec3f Clipping_plane::get_normal() const
+ vec3f Clipping_plane::get_normal() const
 {
-  return (m_orientation * vec3f::UnitZ()).normalized();
+  return (m_Orientation * vec3f::UnitZ()).normalized();
 }
-
-inline 
+ 
 mat4f Clipping_plane::get_matrix() const
 {
-  mat4f translation = transform::translation(m_position);
-  mat4f rotation = transform::rotation(m_orientation);
+  mat4f translation = transform::translation(m_Position);
+  mat4f rotation = transform::rotation(m_Orientation);
 
   return translation * rotation;
 }
-
-inline 
+ 
 void Clipping_plane::rotation(const float x, const float y) 
 {
   if (
-    m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ||
-    m_constraintAxis == ConstraintAxis::RIGHT_AXIS) 
+    m_ConstraintAxis == ConstraintAxis::NO_CONSTRAINT ||
+    m_ConstraintAxis == ConstraintAxis::RIGHT_AXIS) 
   {
-    m_targetPitch += y;
+    m_TargetPitch += y;
   }
   
   if (
-    m_constraintAxis == ConstraintAxis::NO_CONSTRAINT ||
-    m_constraintAxis == ConstraintAxis::UP_AXIS)
+    m_ConstraintAxis == ConstraintAxis::NO_CONSTRAINT ||
+    m_ConstraintAxis == ConstraintAxis::UP_AXIS)
   {
-    m_targetYaw += x;
+    m_TargetYaw += x;
   }
 }
-
-inline 
+ 
 void Clipping_plane::translation(const float s)
 {
   vec3f normal = get_normal();
-  m_targetPosition -= m_size * normal * s * m_translationSpeed; 
+  m_TargetPosition -= m_Size * normal * s * m_TranslationSpeed; 
 }
-
-inline 
+ 
 void Clipping_plane::translation(const float x, const float y) 
 {
-  m_targetPosition -= m_size * m_rightAxis * x * m_translationSpeed; 
-  m_targetPosition -= m_size * m_upAxis * y * m_translationSpeed; 
+  m_TargetPosition -= m_Size * m_RightAxis * x * m_TranslationSpeed; 
+  m_TargetPosition -= m_Size * m_UpAxis * y * m_TranslationSpeed; 
 }
-
-inline 
+ 
 void Clipping_plane::translation(const vec3f& direction, const float s) 
 {
-  m_targetPosition -= m_size * direction.normalized() * s * m_translationSpeed; 
+  m_TargetPosition -= m_Size * direction.normalized() * s * m_TranslationSpeed; 
 }
-
-inline 
+ 
 void Clipping_plane::switch_constraint_axis() 
 {
-  switch(m_constraintAxis)
+  switch(m_ConstraintAxis)
   {
     case ConstraintAxis::NO_CONSTRAINT: 
-      m_constraintAxis = ConstraintAxis::RIGHT_AXIS;
+      m_ConstraintAxis = ConstraintAxis::RIGHT_AXIS;
       break;
     case ConstraintAxis::RIGHT_AXIS: 
-      m_constraintAxis = ConstraintAxis::UP_AXIS;
+      m_ConstraintAxis = ConstraintAxis::UP_AXIS;
       break;
     case ConstraintAxis::UP_AXIS: 
-      m_constraintAxis = ConstraintAxis::NO_CONSTRAINT;
+      m_ConstraintAxis = ConstraintAxis::NO_CONSTRAINT;
       break;
   }
 }
-
-inline 
+ 
 bool Clipping_plane::need_update() const
 {
-  return !utils::equal_float(m_targetPitch, m_pitch) 
-      || !utils::equal_float(m_targetYaw, m_yaw) 
-      || !utils::equal_vec3f(m_targetPosition, m_position)
+  return !utils::equal_float(m_TargetPitch, m_Pitch) 
+      || !utils::equal_float(m_TargetYaw, m_Yaw) 
+      || !utils::equal_vec3f(m_TargetPosition, m_Position)
       ; 
 }
-
-inline 
+ 
 void Clipping_plane::set_orientation(const vec3f& normal)
 {
-  m_orientation = quatf::FromTwoVectors(vec3f::UnitZ(), normal);
+  m_Orientation = quatf::FromTwoVectors(vec3f::UnitZ(), normal);
 }
 
 #endif // CGAL_CLIPPING_PLANE_H
