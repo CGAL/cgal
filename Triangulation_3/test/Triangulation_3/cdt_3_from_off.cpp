@@ -339,44 +339,6 @@ int main(int argc, char* argv[])
   }
 }
 
-template <typename Range_of_segments>
-auto segment_soup_to_polylines(Range_of_segments&& segment_soup) {
-  using Point = decltype([&](){ using std::begin; auto [a, b] = *begin(segment_soup); return a; } ());
-
-  std::vector<std::vector<Point>> polylines;
-
-  using Graph = boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, Point>;
-  using Map2v = std::map<Point, typename Graph::vertex_descriptor>;
-  Graph graph;
-  Map2v map2v;
-  auto get_v = [&](const Point& p) {
-    auto it = map2v.find(p);
-    if(it != map2v.end()) return it->second;
-    auto v = boost::add_vertex(p, graph);
-    map2v.emplace(p, v);
-    return v;
-  };
-  for(auto [a, b]: segment_soup) {
-    auto va = get_v(a);
-    auto vb = get_v(b);
-    boost::add_edge(va, vb, graph);
-  }
-
-  struct Polylines_visitor
-  {
-    Graph& graph;
-    std::vector<std::vector<Point>>& polylines;
-
-    void start_new_polyline() { polylines.emplace_back(); }
-    void add_node(typename Graph::vertex_descriptor vd) { polylines.back().push_back(graph[vd]); }
-    void end_polyline() {}
-  };
-  Polylines_visitor visitor{graph, polylines};
-  CGAL::split_graph_into_polylines(graph, visitor);
-
-  return polylines;
-}
-
 int go(Mesh mesh, CDT_options options) {
   CDT cdt;
   cdt.debug_Steiner_points(options.verbose > 0);
@@ -709,16 +671,10 @@ int go(Mesh mesh, CDT_options options) {
         for(auto& polyline: polylines) {
           assert(polyline.front() == polyline.back());
           polyline.pop_back();
-          if(face_index) {
-            cdt.insert_constrained_face(
-              polyline | std::views::transform([&](vertex_descriptor v) { return get(tr_vertex_pmap, v); }),
-              false,
-              *face_index);
-          } else {
-            face_index = cdt.insert_constrained_face(
-              polyline | std::views::transform([&](vertex_descriptor v) { return get(tr_vertex_pmap, v); }),
-              false);
-          }
+          cdt.insert_constrained_face(
+            polyline | std::views::transform([&](vertex_descriptor v) { return get(tr_vertex_pmap, v); }),
+            false,
+            face_index ? *face_index : -1);
         }
       }
     } else {

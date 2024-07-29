@@ -408,7 +408,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_Mesh_3)
 
   add_executable(CGAL_CDT_3 CGAL_Lab_CDT_3.cpp)
-  add_dependencies(CGAL_CDT_3 CDT_3 Viewer)
+  add_dependencies(CGAL_CDT_3 CDT_3 IO_surface_meshes)
   target_link_libraries(CGAL_CDT_3 PRIVATE cgal_lab)
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGAL_CDT_3)
 

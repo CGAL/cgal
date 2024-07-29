@@ -13,6 +13,6 @@ int main(int argc, char **argv)
   CGAL_Lab app(argc, argv,
                "CGAL Lab (3D Constrained Delaunay Triangulations)",
                "Polyhedron_3 demo",
-               QStringList() << "Viewer" << "CDT_3");
+               QStringList() << "IO_surface_meshes" << "CDT_3");
   return app.try_exec();
 }

@@ -59,6 +59,7 @@
 #include <optional>
 #include <unordered_map>
 #include <ranges>
+#include <vector>
 #if __has_include(<format>)
 #  include <format>
 #  include <concepts>
@@ -70,6 +71,51 @@
 namespace CGAL {
 
 #ifndef DOXYGEN_RUNNING
+
+template <typename Range_of_segments>
+auto segment_soup_to_polylines_point_type_aux(const Range_of_segments& segment_soup) {
+  for(auto [a, b]: segment_soup) {
+    return a;
+  }
+}
+
+template <typename Range_of_segments>
+auto segment_soup_to_polylines(const Range_of_segments& segment_soup) {
+  using Point = decltype(segment_soup_to_polylines_point_type_aux(segment_soup));
+
+  std::vector<std::vector<Point>> polylines;
+
+  using Graph = boost::adjacency_list<boost::listS, boost::vecS, boost::undirectedS, Point>;
+  using Map2v = std::map<Point, typename Graph::vertex_descriptor>;
+  Graph graph;
+  Map2v map2v;
+  auto get_v = [&](const Point& p) {
+    auto it = map2v.find(p);
+    if(it != map2v.end()) return it->second;
+    auto v = boost::add_vertex(p, graph);
+    map2v.emplace(p, v);
+    return v;
+  };
+  for(auto [a, b]: segment_soup) {
+    auto va = get_v(a);
+    auto vb = get_v(b);
+    boost::add_edge(va, vb, graph);
+  }
+
+  struct Polylines_visitor
+  {
+    Graph& graph;
+    std::vector<std::vector<Point>>& polylines;
+
+    void start_new_polyline() { polylines.emplace_back(); }
+    void add_node(typename Graph::vertex_descriptor vd) { polylines.back().push_back(graph[vd]); }
+    void end_polyline() {}
+  };
+  Polylines_visitor visitor{graph, polylines};
+  CGAL::split_graph_into_polylines(graph, visitor);
+
+  return polylines;
+}
 
 template <class K>
 typename K::Boolean
@@ -571,34 +617,108 @@ public:
     auto mesh_vp_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point),
                                                     get(CGAL::vertex_point, mesh));
 
-    [[maybe_unused]] /* TODO */
-    auto mesh_face_patch_map = parameters::choose_parameter(parameters::get_parameter(np, internal_np::face_patch),
-                                                            boost::identity_property_map{});
+    auto mesh_face_patch_map = parameters::get_parameter(np, internal_np::face_patch);
+    using vertex_descriptor = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+    std::vector<std::vector<std::pair<vertex_descriptor, vertex_descriptor>>> patch_edges;
+
+    auto v_selected_map = get(CGAL::dynamic_vertex_property_t<bool>{}, mesh);
+
+    int number_of_patches = 0;
+    constexpr bool has_face_patch_map = !std::is_same_v<decltype(mesh_face_patch_map), CGAL::internal_np::Param_not_found>;
+    if constexpr (has_face_patch_map) {
+      int max_patch_id = 0;
+      for(auto f : faces(mesh)) {
+        max_patch_id = (std::max)(max_patch_id, get(mesh_face_patch_map, f));
+      }
+      for(auto f : faces(mesh)) {
+        if(get(mesh_face_patch_map, f) < 0) {
+          put(mesh_face_patch_map, f, max_patch_id++);
+        }
+      }
+      number_of_patches = max_patch_id + 1;
+      patch_edges.resize(number_of_patches);
+      for(auto h : halfedges(mesh)) {
+        if(is_border(h, mesh))
+          continue;
+        auto f = face(h, mesh);
+        auto patch_id = get(mesh_face_patch_map, f);
+        auto opp = opposite(h, mesh);
+        if(is_border(opp, mesh) || patch_id != get(mesh_face_patch_map, face(opp, mesh))) {
+          auto va = source(h, mesh);
+          auto vb = target(h, mesh);
+          patch_edges[patch_id].emplace_back(va, vb);
+          put(v_selected_map, va, true);
+          put(v_selected_map, vb, true);
+        }
+      }
+
+    } else {
+      number_of_patches = num_faces(mesh);
+    }
 
     using Vertex_handle = typename Triangulation::Vertex_handle;
     using Cell_handle = typename Triangulation::Cell_handle;
     auto tr_vertex_map = get(CGAL::dynamic_vertex_property_t<Vertex_handle>(), mesh);
     Cell_handle hint_ch{};
     for(auto v : vertices(mesh)) {
+      if constexpr(has_face_patch_map) {
+        if(false == get(v_selected_map, v)) continue;
+      }
       auto p = get(mesh_vp_map, v);
       auto vh = cdt_impl.insert(p, hint_ch, false);
       hint_ch = vh->cell();
       put(tr_vertex_map, v, vh);
     }
+
     struct {
       decltype(tr_vertex_map)* vertex_map;
-      Vertex_handle operator()(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v) const {
-        return get(*vertex_map, v);
+      auto operator()(vertex_descriptor v) const { return get(*vertex_map, v); }
+    } tr_vertex_fct{&tr_vertex_map};
+
+    if constexpr(has_face_patch_map) {
+      for(int i = 0; i < number_of_patches; ++i) {
+        auto& edges = patch_edges[i];
+        if(edges.empty())
+          continue;
+        auto polylines = segment_soup_to_polylines(edges);
+        while(true) {
+          const auto non_closed_polylines_begin =
+              std::partition(polylines.begin(), polylines.end(),
+                             [](const auto& polyline) { return polyline.front() == polyline.back(); });
+          if(non_closed_polylines_begin == polylines.end())
+            break;
+          edges.clear();
+          for(auto it = non_closed_polylines_begin; it != polylines.end(); ++it) {
+            auto& polyline = *it;
+            for(auto it = polyline.begin(), end = polyline.end() - 1; it != end; ++it) {
+              edges.emplace_back(*it, *(it + 1));
+            }
+          }
+          polylines.erase(non_closed_polylines_begin, polylines.end());
+          auto other_polylines = segment_soup_to_polylines(edges);
+          polylines.insert(polylines.end(), std::make_move_iterator(other_polylines.begin()),
+                           std::make_move_iterator(other_polylines.end()));
+        }
+
+        std::optional<int> face_index;
+        for(auto& polyline : polylines) {
+          CGAL_assertion(polyline.front() == polyline.back());
+          polyline.pop_back();
+          auto begin = boost::make_transform_iterator(polyline.begin(), tr_vertex_fct);
+          auto end   = boost::make_transform_iterator(polyline.end(), tr_vertex_fct);
+          cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false,
+                                           face_index ? *face_index : -1);
+        }
       }
-    } transform_function{&tr_vertex_map};
+    } else {
+      for(auto f : faces(mesh)) {
+        auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
 
-    for(auto f : faces(mesh)) {
-      auto face_vertices = vertices_around_face(halfedge(f, mesh), mesh);
+        auto begin = boost::make_transform_iterator(face_vertices.begin(), tr_vertex_fct);
+        auto end = boost::make_transform_iterator(face_vertices.end(), tr_vertex_fct);
 
-      auto begin = boost::make_transform_iterator(face_vertices.begin(), transform_function);
-      auto end = boost::make_transform_iterator(face_vertices.end(), transform_function);
-
-      cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
+        cdt_impl.insert_constrained_face(CGAL::make_range(begin, end), false);
+      }
     }
     cdt_impl.restore_Delaunay();
     cdt_impl.restore_constrained_Delaunay();

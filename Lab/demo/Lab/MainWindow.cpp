@@ -49,7 +49,7 @@
 #include <QSequentialIterable>
 #include <QDir>
 #include <QJSValue>
-
+#include <QLoggingCategory>
 
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
@@ -543,6 +543,8 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
   }
 }
 
+QLoggingCategory qlog_cgallab_plugins("cgal.lab.plugins");
+
 bool MainWindow::load_plugin(QString fileName, bool blacklisted)
 {
   if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
@@ -563,9 +565,8 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
         return true;
       }
     }
-    QDebug qdebug = qDebug();
     if(verbose)
-      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      qCDebug(qlog_cgallab_plugins) << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
     QPluginLoader loader;
     loader.setFileName(fileinfo.absoluteFilePath());
     QJsonArray keywords = loader.metaData().value("MetaData").toObject().value("Keywords").toArray();
@@ -595,7 +596,7 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
       bool init2 = initIOPlugin(obj);
       if (!init1 && !init2)
       {
-        pluginsStatus_map[name] = QString("Not for this program.");
+        pluginsStatus_map[name] = QString("ERROR: Not for this program.");
       }
       else{
         QJSValue objectValue =
@@ -607,12 +608,16 @@ bool MainWindow::load_plugin(QString fileName, bool blacklisted)
     }
     else if(!do_load)
     {
-      pluginsStatus_map[name]="Wrong Keywords.";
+      pluginsStatus_map[name]="ERROR: Wrong Keywords.";
       ignored_map[name] = true;
     }
     else{
-      pluginsStatus_map[name] = loader.errorString();
-
+      pluginsStatus_map[name] = "ERROR: " + loader.errorString();
+    }
+    if(verbose && pluginsStatus_map[name].startsWith("ERROR")) {
+      qCDebug(qlog_cgallab_plugins) << "  plugin " << name << ": " << pluginsStatus_map[name]
+          << "\n  plugin keywords: " << s_keywords
+          << "\n     app keywords: " << accepted_keywords;
     }
     PathNames_map[name].push_back(fileinfo.absoluteDir().absolutePath());
     return true;

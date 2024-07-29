@@ -44,22 +44,24 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::CGAL_Lab_plugin_interface)
-  Q_PLUGIN_METADATA(IID "com.geometryfactory.CGALLab.PluginInterface/1.0")
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.CGALLab.PluginInterface/1.0" FILE "cdt_3_plugin.json")
 
   QAction* actionCDT;
   CGAL::Three::Scene_interface* scene;
 
   void cdt_3()
   {
-    Scene_surface_mesh_item* item =
+    Scene_surface_mesh_item* mesh_item =
         qobject_cast<Scene_surface_mesh_item*>(scene->item(scene->mainSelectionIndex()));
-    if(!item)
+    if(!mesh_item)
       return;
-    auto* mesh = item->face_graph();
+    auto* mesh = mesh_item->face_graph();
     if(!mesh)
       return;
-    using CDT = CGAL::Constrained_Delaunay_triangulation_3<EPICK>;
-    CDT cdt = CGAL::make_constrained_Delaunay_triangulation_3(*mesh);
+    auto patch_id_pmap = mesh->property_map<SMesh::Face_index, int>("f:patch_id");
+    auto  cdt = patch_id_pmap
+        ? CGAL::make_constrained_Delaunay_triangulation_3(*mesh, CGAL::parameters::face_patch_map(*patch_id_pmap))
+        : CGAL::make_constrained_Delaunay_triangulation_3(*mesh);
     const auto& cdt_tr = cdt.triangulation();
     auto triangulation_item = std::make_unique<Scene_c3t3_item>();
     auto& item_tr = triangulation_item->triangulation();
@@ -68,10 +70,11 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
     item_tr.set_infinite_vertex(inf_v);
     triangulation_item->triangulation_changed();
 
-    triangulation_item->setParent(item->parent());
-    triangulation_item->setName("CDT of " + item->name());
+    triangulation_item->setParent(mesh_item->parent());
+    triangulation_item->setName("CDT of " + mesh_item->name());
     triangulation_item->show_intersection(false);
     scene->addItem(triangulation_item.release());
+    mesh_item->setVisible(false);
   }
 
 public:
