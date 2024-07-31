@@ -14,8 +14,10 @@
 
 #ifndef CGAL_BASIC_VIEWER_GLFW_H
 #define CGAL_BASIC_VIEWER_GLFW_H
+
 #include <iostream>
 #include <stdlib.h>
+#include <memory>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -37,6 +39,7 @@
 #include "internal/Line_renderer.h"
 #include "internal/Clipping_plane.h"
 #include "internal/Animation_controller.h"
+#include "internal/buffer/VAO.h"
 
 namespace CGAL 
 {
@@ -217,6 +220,9 @@ namespace GLFW
     void update_XY_grid_uniforms();
     void update_normals_uniforms();
 
+    void generate_grid(Line_renderer& renderer, float size, int nbSubdivisions=10) const;
+    void generate_grid(Line_renderer& renderer, const vec3f& color, float size, int nbSubdivisions=10) const;
+
     void render_scene(const float deltaTime);
 
     void draw(const float deltaTime);
@@ -272,6 +278,8 @@ namespace GLFW
 
     bool need_update() const; 
 
+    void check_geometry_feature_availability(); 
+
   private:
     GLFWwindow* m_Window;
 
@@ -301,7 +309,7 @@ namespace GLFW
     bool m_IsOpengl4_3 { false };
     bool m_IsFullscreen { false };
 
-    bool m_CylinderSphereFeatureEnabled { true };    
+    bool m_geometryFeatureEnabled { true };    
     
     Line_renderer m_WorldAxisRenderer; 
     Line_renderer m_XYGridRenderer; 
@@ -337,14 +345,14 @@ namespace GLFW
     mat4f m_ProjectionMatrix     { mat4f::Identity() };
     mat4f m_ViewProjectionMatrix { mat4f::Identity() };
 
-    Shader m_ShaderFace; 
-    Shader m_ShaderSphere;
-    Shader m_ShaderCylinder;
-    Shader m_ShaderPl;
-    Shader m_ShaderPlane;
-    Shader m_ShaderLine;
-    Shader m_ShaderNormal;
-    Shader m_ShaderArrow;
+    std::shared_ptr<Shader> m_ShaderFace; 
+    std::shared_ptr<Shader> m_ShaderSphere;
+    std::shared_ptr<Shader> m_ShaderCylinder;
+    std::shared_ptr<Shader> m_ShaderPl;
+    std::shared_ptr<Shader> m_ShaderPlane;
+    std::shared_ptr<Shader> m_ShaderLine;
+    std::shared_ptr<Shader> m_ShaderNormal;
+    std::shared_ptr<Shader> m_ShaderArrow;
 
     vec2i m_WindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
     vec2i m_OldWindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };

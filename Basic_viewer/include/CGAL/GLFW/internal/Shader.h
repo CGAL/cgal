@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <iostream>
+#include <memory>
 
 #include <glad/glad.h>
 
@@ -11,6 +12,7 @@ class Shader
 public:
   Shader()=default;
   Shader(int program);
+  ~Shader();
 
   inline void use() const { glUseProgram(m_Program); }
   inline void destroy() { if (m_Program != 0) glDeleteProgram(m_Program); }
@@ -23,7 +25,7 @@ public:
   inline void set_float(const GLchar* name, const float data) { glUniform1f(get_uniform_location(name), data); }
   inline void set_int(const GLchar* name, const int data) { glUniform1i(get_uniform_location(name), data); }
 
-  static Shader create_shader(const GLchar* sourceVertex, const GLchar* sourceFragment, const GLchar* sourceGeometry=nullptr);
+  static std::shared_ptr<Shader> create(const GLchar* sourceVertex, const GLchar* sourceFragment, const GLchar* sourceGeometry=nullptr);
 
   static GLchar* enum_type_to_str(GLenum type);
 
@@ -41,6 +43,11 @@ private:
 Shader::Shader(int program) : 
   m_Program(program) 
 {
+}
+
+Shader::~Shader()
+{
+  destroy();
 }
 
 int Shader::get_uniform_location(const GLchar* name)
@@ -63,7 +70,9 @@ GLchar* Shader::enum_type_to_str(GLenum type)
   case GL_VERTEX_SHADER:   return "VERTEX";
   case GL_GEOMETRY_SHADER: return "GEOMETRY";
   case GL_FRAGMENT_SHADER: return "FRAGMENT";
-  default:                 return "UNSUPPORTED TYPE";
+  default: 
+    std::cerr << "Unsupported shader enum type!" << std::endl; 
+    return "UNSUPPORTED TYPE";
   }
 }
 
@@ -76,7 +85,7 @@ unsigned int  Shader::compile_shader(GLenum type, const GLchar* source)
   return shader; 
 }
 
-Shader Shader::create_shader(const GLchar* sourceVertex, const GLchar* sourceFragment, const GLchar* sourceGeometry)
+std::shared_ptr<Shader> Shader::create(const GLchar* sourceVertex, const GLchar* sourceFragment, const GLchar* sourceGeometry)
 {
   unsigned int  vertexShader = Shader::compile_shader(GL_VERTEX_SHADER, sourceVertex);
   unsigned int  geometryShader;
@@ -104,7 +113,7 @@ Shader Shader::create_shader(const GLchar* sourceVertex, const GLchar* sourceFra
   }
   glDeleteShader(fragmentShader);
 
-  return Shader(program);
+  return std::make_shared<Shader>(program);
 }
 
 void Shader::check_compile_errors(unsigned int  shader, const GLchar* type)

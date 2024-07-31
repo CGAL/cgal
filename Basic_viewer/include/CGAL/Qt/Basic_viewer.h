@@ -90,6 +90,8 @@ public:
     m_draw_lines(draw_lines),
     m_draw_faces(draw_faces),
     m_draw_normals(false),
+    m_draw_cylinder_edge(false),
+    m_draw_sphere_vertex(false),
     m_flatShading(true),
     m_use_mono_color(use_mono_color),
     m_use_normal_mono_color(false),
@@ -101,7 +103,7 @@ public:
     m_size_rays(3.1),
     m_size_lines(3.1),
     m_size_normals(0.2),
-    m_height_factor_normals(0.02),
+    m_height_factor_normals(0.05),
     m_vertices_mono_color(200, 60, 60),
     m_edges_mono_color(0, 0, 0),
     m_rays_mono_color(0, 0, 0),
@@ -160,6 +162,21 @@ public:
 
     if (inverse_normal)
     { reverse_all_normals(); }
+    
+    // int maxGeometryOutputVertices = 0;
+    // glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &maxGeometryOutputVertices);
+    // int maxGeometryOutputComponents = 0;
+    // glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &maxGeometryOutputComponents);
+
+    // if (maxGeometryOutputVertices < 128 || maxGeometryOutputComponents < 1024)
+    // {
+    //   std::cout << "Cylinder edge and sphere vertex feature disabled! (maxGeometryOutputVertices=" << maxGeometryOutputVertices << ", maxGeometryOutputComponents=" << maxGeometryOutputComponents << ")\n";
+    //   m_geometry_feature_enabled = false; 
+    // }
+    // else 
+    // {
+      m_geometry_feature_enabled = true; 
+    // }
   }
 
   ~Basic_viewer()
@@ -176,6 +193,10 @@ public:
     Q_FOREACH(QOpenGLShader* shader, rendering_program_face.shaders())
       delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_clipping_plane.shaders())
+      delete shader;
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_sphere.shaders())
+      delete shader;
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_cylinder.shaders())
       delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_normal.shaders())
       delete shader;
@@ -302,120 +323,232 @@ public:
 
     if(m_draw_vertices)
     {
-      rendering_program_p_l.bind();
+      if (m_draw_sphere_vertex && m_geometry_feature_enabled)
+      {
+        rendering_program_sphere.bind();
 
-      // rendering_mode == -1: draw all
-      // rendering_mode == 0: draw inside clipping plane
-      // rendering_mode == 1: draw outside clipping plane
-      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-        vao[VAO_MONO_POINTS].bind();
-        color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
-                      (double)m_vertices_mono_color.green()/(double)255,
-                      (double)m_vertices_mono_color.blue()/(double)255);
-        rendering_program_p_l.setAttributeValue("Color",color);
-        rendering_program_p_l.setUniformValue("u_PointSize", GLfloat(m_size_points));
-        rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
-        rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
-        rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
-        vao[VAO_MONO_POINTS].release();
-
-        vao[VAO_COLORED_POINTS].bind();
-        if (m_use_mono_color)
-        {
+        auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+          vao[VAO_MONO_POINTS].bind();
           color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
                         (double)m_vertices_mono_color.green()/(double)255,
-                      (double)m_vertices_mono_color.blue()/(double)255);
-          rendering_program_p_l.disableAttributeArray("Color");
+                        (double)m_vertices_mono_color.blue()/(double)255);
           rendering_program_p_l.setAttributeValue("Color",color);
+          rendering_program_sphere.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_points));
+          rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_points*0.001));
+          rendering_program_sphere.setUniformValue("u_UseGeometryShader", static_cast<GLfloat>(1.0));
+          rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
+          rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
+          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
+          vao[VAO_MONO_POINTS].release();
+
+          vao[VAO_COLORED_POINTS].bind();
+          if (m_use_mono_color)
+          {
+            color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
+                          (double)m_vertices_mono_color.green()/(double)255,
+                        (double)m_vertices_mono_color.blue()/(double)255);
+            rendering_program_sphere.disableAttributeArray("Color");
+            rendering_program_sphere.setAttributeValue("Color",color);
+          }
+          else
+          {
+            rendering_program_sphere.enableAttributeArray("Color");
+          }
+          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS)));
+          vao[VAO_COLORED_POINTS].release();
+        };
+
+        enum {
+          DRAW_ALL = -1, // draw all
+          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+        };
+
+        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+        {
+          renderer(DRAW_INSIDE_ONLY);
         }
         else
         {
-          rendering_program_p_l.enableAttributeArray("Color");
+          renderer(DRAW_ALL);
         }
-        rendering_program_p_l.setUniformValue("u_PointSize", GLfloat(m_size_points));
-        rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
-        rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
-        rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS)));
-        vao[VAO_COLORED_POINTS].release();
-      };
 
-      enum {
-        DRAW_ALL = -1, // draw all
-        DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-        DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-      };
-
-      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-      {
-        renderer(DRAW_INSIDE_ONLY);
+        rendering_program_sphere.release();
       }
-      else
+      else 
       {
-        renderer(DRAW_ALL);
-      }
 
-      rendering_program_p_l.release();
+        rendering_program_p_l.bind();
+
+        // rendering_mode == -1: draw all
+        // rendering_mode == 0: draw inside clipping plane
+        // rendering_mode == 1: draw outside clipping plane
+        auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+          vao[VAO_MONO_POINTS].bind();
+          color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
+                        (double)m_vertices_mono_color.green()/(double)255,
+                        (double)m_vertices_mono_color.blue()/(double)255);
+          rendering_program_p_l.setAttributeValue("Color",color);
+          rendering_program_p_l.setUniformValue("u_PointSize", GLfloat(m_size_points));
+          rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
+          rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
+          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
+          vao[VAO_MONO_POINTS].release();
+
+          vao[VAO_COLORED_POINTS].bind();
+          if (m_use_mono_color)
+          {
+            color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
+                          (double)m_vertices_mono_color.green()/(double)255,
+                        (double)m_vertices_mono_color.blue()/(double)255);
+            rendering_program_p_l.disableAttributeArray("Color");
+            rendering_program_p_l.setAttributeValue("Color",color);
+          }
+          else
+          {
+            rendering_program_p_l.enableAttributeArray("Color");
+          }
+          rendering_program_p_l.setUniformValue("u_PointSize", GLfloat(m_size_points));
+          rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
+          rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
+          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS)));
+          vao[VAO_COLORED_POINTS].release();
+        };
+
+        enum {
+          DRAW_ALL = -1, // draw all
+          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+        };
+
+        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+        {
+          renderer(DRAW_INSIDE_ONLY);
+        }
+        else
+        {
+          renderer(DRAW_ALL);
+        }
+
+        rendering_program_p_l.release();
+      }
     }
 
     if(m_draw_edges)
     {
-      rendering_program_p_l.bind();
+      if (m_draw_cylinder_edge && m_geometry_feature_enabled)
+      {
+        rendering_program_cylinder.bind();
 
-      // rendering_mode == -1: draw all
-      // rendering_mode == 0: draw inside clipping plane
-      // rendering_mode == 1: draw outside clipping plane
-      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-        vao[VAO_MONO_SEGMENTS].bind();
-        color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-                      (double)m_edges_mono_color.green()/(double)255,
-                      (double)m_edges_mono_color.blue()/(double)255);
-        rendering_program_p_l.setAttributeValue("Color",color);
-        rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
-        rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
-        rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-        glLineWidth(m_size_edges);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
-        vao[VAO_MONO_SEGMENTS].release();
-
-        vao[VAO_COLORED_SEGMENTS].bind();
-        if (m_use_mono_color)
-        {
+        auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+          vao[VAO_MONO_SEGMENTS].bind();
           color.setRgbF((double)m_edges_mono_color.red()/(double)255,
                         (double)m_edges_mono_color.green()/(double)255,
                         (double)m_edges_mono_color.blue()/(double)255);
-          rendering_program_p_l.disableAttributeArray("Color");
-          rendering_program_p_l.setAttributeValue("Color",color);
+          rendering_program_cylinder.setAttributeValue("Color",color);
+          rendering_program_cylinder.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges));
+          rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
+          rendering_program_cylinder.setUniformValue("u_UseGeometryShader", static_cast<GLfloat>(1.0));
+          rendering_program_cylinder.setUniformValue("u_ClipPlane",  clipPlane);
+          rendering_program_cylinder.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
+          vao[VAO_COLORED_SEGMENTS].bind();
+          if (m_use_mono_color)
+          {
+            color.setRgbF((double)m_edges_mono_color.red()/(double)255,
+                          (double)m_edges_mono_color.green()/(double)255,
+                          (double)m_edges_mono_color.blue()/(double)255);
+            rendering_program_cylinder.disableAttributeArray("Color");
+            rendering_program_cylinder.setAttributeValue("Color",color);
+          }
+          else
+          {
+            rendering_program_cylinder.enableAttributeArray("Color");
+          }
+          glLineWidth(m_size_edges);
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
+          vao[VAO_COLORED_SEGMENTS].release();
+        };
+
+        enum {
+          DRAW_ALL = -1, // draw all
+          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+        };
+
+        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+        {
+          renderer(DRAW_INSIDE_ONLY);
         }
         else
         {
-          rendering_program_p_l.enableAttributeArray("Color");
+          renderer(DRAW_ALL);
         }
-        rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
-        rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
-        rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-        glLineWidth(m_size_edges);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
-        vao[VAO_COLORED_SEGMENTS].release();
-      };
 
-      enum {
-        DRAW_ALL = -1, // draw all
-        DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-        DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-      };
-
-      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-      {
-        renderer(DRAW_INSIDE_ONLY);
+        rendering_program_cylinder.release();
       }
-      else
+      else 
       {
-        renderer(DRAW_ALL);
-      }
+        rendering_program_p_l.bind();
 
-      rendering_program_p_l.release();
+        // rendering_mode == -1: draw all
+        // rendering_mode == 0: draw inside clipping plane
+        // rendering_mode == 1: draw outside clipping plane
+        auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+          vao[VAO_MONO_SEGMENTS].bind();
+          color.setRgbF((double)m_edges_mono_color.red()/(double)255,
+                        (double)m_edges_mono_color.green()/(double)255,
+                        (double)m_edges_mono_color.blue()/(double)255);
+          rendering_program_p_l.setAttributeValue("Color",color);
+          rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
+          rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
+          glLineWidth(m_size_edges);
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
+          vao[VAO_MONO_SEGMENTS].release();
+
+          vao[VAO_COLORED_SEGMENTS].bind();
+          if (m_use_mono_color)
+          {
+            color.setRgbF((double)m_edges_mono_color.red()/(double)255,
+                          (double)m_edges_mono_color.green()/(double)255,
+                          (double)m_edges_mono_color.blue()/(double)255);
+            rendering_program_p_l.disableAttributeArray("Color");
+            rendering_program_p_l.setAttributeValue("Color",color);
+          }
+          else
+          {
+            rendering_program_p_l.enableAttributeArray("Color");
+          }
+          rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
+          rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
+          glLineWidth(m_size_edges);
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
+          vao[VAO_COLORED_SEGMENTS].release();
+        };
+
+        enum {
+          DRAW_ALL = -1, // draw all
+          DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+          DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+        };
+
+        if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+        {
+          renderer(DRAW_INSIDE_ONLY);
+        }
+        else
+        {
+          renderer(DRAW_ALL);
+        }
+
+        rendering_program_p_l.release();
+      }
     }
 
     if(m_draw_rays)
@@ -490,25 +623,48 @@ public:
     {
       rendering_program_normal.bind();
 
-      vao[VAO_COLORED_FACES].bind();
-      color.setRgbF((double)m_normals_mono_color.red()/(double)255,
-                    (double)m_normals_mono_color.green()/(double)255,
-                    (double)m_normals_mono_color.blue()/(double)255);
-      rendering_program_normal.setUniformValue("u_Color", color);
-      if (m_use_normal_mono_color)
-      {
-        rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLfloat>(1.0));
-      }
-      else 
-      {
-        rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLfloat>(0.0));
-      }
-      rendering_program_normal.setUniformValue("u_Factor", static_cast<GLfloat>(m_height_factor_normals));
-      rendering_program_normal.setUniformValue("u_SceneRadius", static_cast<GLfloat>(sceneRadius()));
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+        vao[VAO_COLORED_FACES].bind();
+        color.setRgbF((double)m_normals_mono_color.red()/(double)255,
+                      (double)m_normals_mono_color.green()/(double)255,
+                      (double)m_normals_mono_color.blue()/(double)255);
+        rendering_program_normal.setUniformValue("u_Color", color);
+        if (m_use_normal_mono_color)
+        {
+          rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLfloat>(1.0));
+        }
+        else 
+        {
+          rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLfloat>(0.0));
+        }
+        rendering_program_normal.setUniformValue("u_Factor", static_cast<GLfloat>(m_height_factor_normals));
+        rendering_program_normal.setUniformValue("u_SceneRadius", static_cast<GLfloat>(sceneRadius()));
 
-      glLineWidth(m_size_normals);
-      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
-      vao[VAO_COLORED_FACES].release();
+        rendering_program_normal.setUniformValue("u_ClipPlane",  clipPlane);
+        rendering_program_normal.setUniformValue("u_PointPlane", plane_point);
+        rendering_program_normal.setUniformValue("u_RenderingMode", rendering_mode);
+
+        glLineWidth(m_size_normals);
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
+        vao[VAO_COLORED_FACES].release();
+      };
+
+      enum {
+        DRAW_ALL = -1, // draw all
+        DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+        DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+      };
+
+      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+      {
+        renderer(DRAW_INSIDE_ONLY);
+      }
+      else
+      {
+        renderer(DRAW_ALL);
+      }
+
+      rendering_program_normal.release();
     }
 
     // Fix Z-fighting by drawing faces at a depth
@@ -660,6 +816,8 @@ protected:
     rendering_program_face.removeAllShaders();
     rendering_program_p_l.removeAllShaders();
     rendering_program_clipping_plane.removeAllShaders();
+    rendering_program_sphere.removeAllShaders();
+    rendering_program_cylinder.removeAllShaders();
     rendering_program_normal.removeAllShaders();
 
     // Create the buffers
@@ -772,11 +930,74 @@ protected:
     // if (!rendering_program_clipping_plane.link())
     // { std::cerr << "Linking Program for clipping plane FAILED" << std::endl; }
 
-    // normal shader
+    // Sphere shader
+    if (isOpenGL_4_3())
+    {
+      source_ = VERTEX_SOURCE_P_L;
 
+      QOpenGLShader *vertex_shader_sphere = new QOpenGLShader(QOpenGLShader::Vertex);
+      if (!vertex_shader_sphere->compileSourceCode(source_))
+      { std::cerr << "Compiling vertex source for sphere FAILED" << std::endl; }
+
+      source_ = GEOMETRY_SOURCE_SPHERE;
+
+      QOpenGLShader *geometry_shader_sphere = new QOpenGLShader(QOpenGLShader::Geometry);
+      if (!geometry_shader_sphere->compileSourceCode(source_))
+      { std::cerr << "Compiling geometry source for sphere FAILED" << std::endl; }
+
+      source_ = FRAGMENT_SOURCE_P_L;
+
+      QOpenGLShader *fragment_shader_sphere = new QOpenGLShader(QOpenGLShader::Fragment);
+      if (!fragment_shader_sphere->compileSourceCode(source_))
+      { std::cerr << "Compiling fragment source for sphere FAILED" << std::endl; }
+
+
+      if (!rendering_program_sphere.addShader(vertex_shader_sphere))
+      { std::cerr << "Adding vertex shader for sphere FAILED" << std::endl;}
+      if (!rendering_program_sphere.addShader(geometry_shader_sphere))
+      { std::cerr << "Adding geometry shader for sphere FAILED" << std::endl;}
+      if (!rendering_program_sphere.addShader(fragment_shader_sphere))
+      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      if (!rendering_program_sphere.link())
+      { std::cerr << "Linking Program for sphere FAILED" << std::endl; }
+    }
+
+    // Cylinder shader
     if (isOpenGL_4_3())
     {
       // clipping plane shader
+      source_ = VERTEX_SOURCE_P_L;
+
+      QOpenGLShader *vertex_shader_cylinder = new QOpenGLShader(QOpenGLShader::Vertex);
+      if (!vertex_shader_cylinder->compileSourceCode(source_))
+      { std::cerr << "Compiling vertex source for cylinder FAILED" << std::endl; }
+
+      source_ = GEOMETRY_SOURCE_CYLINDER;
+
+      QOpenGLShader *geometry_shader_cylinder = new QOpenGLShader(QOpenGLShader::Geometry);
+      if (!geometry_shader_cylinder->compileSourceCode(source_))
+      { std::cerr << "Compiling geometry source for cylinder FAILED" << std::endl; }
+
+      source_ = FRAGMENT_SOURCE_P_L;
+
+      QOpenGLShader *fragment_shader_cylinder = new QOpenGLShader(QOpenGLShader::Fragment);
+      if (!fragment_shader_cylinder->compileSourceCode(source_))
+      { std::cerr << "Compiling fragment source for cylinder FAILED" << std::endl; }
+
+
+      if (!rendering_program_cylinder.addShader(vertex_shader_cylinder))
+      { std::cerr << "Adding vertex shader for cylinder FAILED" << std::endl;}
+      if (!rendering_program_cylinder.addShader(geometry_shader_cylinder))
+      { std::cerr << "Adding geometry shader for cylinder FAILED" << std::endl;}
+      if (!rendering_program_cylinder.addShader(fragment_shader_cylinder))
+      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      if (!rendering_program_cylinder.link())
+      { std::cerr << "Linking Program for cylinder FAILED" << std::endl; }
+    }
+    
+    // Normal shader
+    if (isOpenGL_4_3())
+    {
       source_ = VERTEX_SOURCE_NORMAL;
 
       QOpenGLShader *vertex_shader_normal = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -789,7 +1010,7 @@ protected:
       if (!geometry_shader_normal->compileSourceCode(source_))
       { std::cerr << "Compiling geometry source for normal FAILED" << std::endl; }
 
-      source_ = FRAGMENT_SOURCE_NORMAL;
+      source_ = FRAGMENT_SOURCE_P_L;
 
       QOpenGLShader *fragment_shader_normal = new QOpenGLShader(QOpenGLShader::Fragment);
       if (!fragment_shader_normal->compileSourceCode(source_))
@@ -824,8 +1045,8 @@ protected:
                            gBuffer.get_size_of_index(GS::POS_MONO_POINTS));
     rendering_program_p_l.enableAttributeArray("P");
     rendering_program_p_l.setAttributeBuffer("P",GL_FLOAT,0,3);
-    // TODO/QUESTION can we use double for BufferType?
-    // if not remove the template parameter and use float everywhere.
+    // TODO/QUESTION can we use double for BufferType? 
+    // if not remove the template parameter and use float everywhere.    
 
     buffers[bufn].release();
 
@@ -843,7 +1064,15 @@ protected:
                            gBuffer.get_size_of_index(GS::POS_COLORED_POINTS));
     rendering_program_p_l.enableAttributeArray("P");
     rendering_program_p_l.setAttributeBuffer("P",GL_FLOAT,0,3);
+    
+    rendering_program_sphere.bind();
+    rendering_program_sphere.enableAttributeArray("P");
+    rendering_program_sphere.setAttributeBuffer("P",GL_FLOAT,0,3);
+    rendering_program_p_l.bind();
+    
     buffers[bufn].release();
+
+
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
@@ -852,6 +1081,12 @@ protected:
                            gBuffer.get_size_of_index(GS::COLOR_POINTS));
     rendering_program_p_l.enableAttributeArray("Color");
     rendering_program_p_l.setAttributeBuffer("Color",GL_FLOAT,0,3);
+
+    rendering_program_sphere.bind();
+    rendering_program_sphere.enableAttributeArray("Color");
+    rendering_program_sphere.setAttributeBuffer("Color",GL_FLOAT,0,3);
+    rendering_program_p_l.bind();
+
     buffers[bufn].release();
 
     vao[VAO_COLORED_POINTS].release();
@@ -886,6 +1121,11 @@ protected:
     rendering_program_p_l.enableAttributeArray("P");
     rendering_program_p_l.setAttributeBuffer("P",GL_FLOAT,0,3);
 
+    rendering_program_cylinder.bind();
+    rendering_program_cylinder.enableAttributeArray("P");
+    rendering_program_cylinder.setAttributeBuffer("P",GL_FLOAT,0,3);
+    rendering_program_p_l.bind();
+
     buffers[bufn].release();
 
     ++bufn;
@@ -895,6 +1135,12 @@ protected:
                            gBuffer.get_size_of_index(GS::COLOR_SEGMENTS));
     rendering_program_p_l.enableAttributeArray("Color");
     rendering_program_p_l.setAttributeBuffer("Color",GL_FLOAT,0,3);
+
+    rendering_program_cylinder.bind();
+    rendering_program_cylinder.enableAttributeArray("Color");
+    rendering_program_cylinder.setAttributeBuffer("Color",GL_FLOAT,0,3);
+    rendering_program_p_l.bind();
+
     buffers[bufn].release();
 
     vao[VAO_COLORED_SEGMENTS].release();
@@ -1175,10 +1421,21 @@ protected:
     rendering_program_face.release();
 
     rendering_program_p_l.bind();
-    int mvpLocation2 = rendering_program_p_l.uniformLocation("u_Mvp");
-    rendering_program_p_l.setUniformValue(mvpLocation2, mvpMatrix);
+    mvpLocation = rendering_program_p_l.uniformLocation("u_Mvp");
+    rendering_program_p_l.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program_p_l.release();
 
+    // cylinder edge feature
+    rendering_program_cylinder.bind();
+    mvpLocation = rendering_program_cylinder.uniformLocation("u_Mvp");
+    rendering_program_cylinder.setUniformValue(mvpLocation, mvpMatrix);
+    rendering_program_cylinder.release();
+
+    // sphere vertex feature
+    rendering_program_sphere.bind();
+    mvpLocation = rendering_program_sphere.uniformLocation("u_Mvp");
+    rendering_program_sphere.setUniformValue(mvpLocation, mvpMatrix);
+    rendering_program_sphere.release();
 
     if (isOpenGL_4_3())
     {
@@ -1526,6 +1783,18 @@ protected:
           update();
         }
       }
+      else if ((e->key()==::Qt::Key_V) && (modifiers==::Qt::ControlModifier))
+      {
+        m_draw_sphere_vertex = !m_draw_sphere_vertex;
+        displayMessage(QString("Draw sphere vertex=%1.").arg(m_draw_sphere_vertex?"true":"false"));
+        redraw();
+      }
+      else if ((e->key()==::Qt::Key_E) && (modifiers==::Qt::ControlModifier))
+      {
+        m_draw_cylinder_edge = !m_draw_cylinder_edge;
+        displayMessage(QString("Draw cylinder edge=%1.").arg(m_draw_cylinder_edge?"true":"false"));
+        redraw();
+      }
       else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::ControlModifier))
       {
         m_draw_normals = !m_draw_normals;
@@ -1595,6 +1864,9 @@ protected:
   bool m_draw_text;
   bool m_no_2D_mode;
   bool m_draw_normals;
+  bool m_draw_cylinder_edge;
+  bool m_draw_sphere_vertex;
+  bool m_geometry_feature_enabled;
 
   enum {
     CLIPPING_PLANE_OFF = 0,
@@ -1657,6 +1929,8 @@ protected:
   QOpenGLShaderProgram rendering_program_face;
   QOpenGLShaderProgram rendering_program_p_l;
   QOpenGLShaderProgram rendering_program_clipping_plane;
+  QOpenGLShaderProgram rendering_program_sphere;
+  QOpenGLShaderProgram rendering_program_cylinder;
   QOpenGLShaderProgram rendering_program_normal;
 
   // variables for clipping plane

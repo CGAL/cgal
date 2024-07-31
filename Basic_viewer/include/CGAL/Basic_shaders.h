@@ -131,16 +131,6 @@ void main(void)
 }
 )DELIM";
 
-// This two values are hardware specific (using a fragment shader with signed distance function instead of gs could be a better choice for cylinder edge and sphere vertex feature)
-// GL_MAX_GEOMETRY_OUTPUT_VERTICES = 128
-// GL_MAX_GEOMETRY_OUTPUT_COMPONENTS = 1024
-
-// To have a defined behavior for the gs shader, we must stay under these bounds. 
-// We can compute the max_vertices value like so : max_vertices = min(GL_MAX_GEOMETRY_OUTPUT_VERTICES, GL_MAX_GEOMETRY_OUTPUT_COMPONENTS / components per vertex) 
-// Components are values passed to the fragment shader per vertex (below, we have fColor, ls_fP and gl_Position, 3 * vec4 = 12 components)
-// To draw a UV sphere, we provide an even resolution value. In the following shader, the maximum resolution is 8 because it needs 72 vertices to be rendered
-// and the max_vertices value is about : 1024 / 12 = 85 vertices.
-// A resolution of 10 would necessit 110 (max 128) vertices, and 1320 (max 1024) components which go beyond the bounds.   
 const char GEOMETRY_SOURCE_SPHERE[]=R"DELIM(
 #version 150 
 layout(points) in; 
@@ -285,14 +275,14 @@ void main(void)
 
 const char VERTEX_SOURCE_CLIPPING_PLANE[]=R"DELIM(
 #version 150
-in highp vec4 P;
+in highp vec3 P;
 
 uniform highp mat4 u_Vp;
 uniform highp mat4 u_M;
 
 void main(void)
 {
-  gl_Position = u_Vp * u_M * P;
+  gl_Position = u_Vp * u_M * vec4(P, 1.0);
 }
 )DELIM";
 
@@ -493,7 +483,7 @@ void main(void)
   mat3 normalMatrix = mat3(transpose(inverse(u_Mv)));
   vs_out.normal = normalize(vec3(vec4(normalMatrix * N, 0.0)));
   
-  gl_Position = u_Mv * P; 
+  gl_Position = P; 
 }
 )DELIM";
 
@@ -507,22 +497,25 @@ in VS_OUT {
   highp vec3  normal;
 } gs_in[]; // geometry shader input
 
+out highp vec4 fColor;
+out highp vec4 ls_fP;
+
 uniform highp mat4  u_Projection;
 uniform highp float u_Factor;
 uniform highp float u_SceneRadius;
-
-out GS_OUT {
-  highp vec4 color;
-} gs_out; // geometry shader output
+uniform highp mat4  u_Mv;
 
 void GenerateLine(int index)
 {
-  gs_out.color = gs_in[index].color; 
+  fColor = gs_in[index].color; 
   
-  gl_Position = u_Projection * gl_in[index].gl_Position;
+  ls_fP = gl_in[index].gl_Position;
+  gl_Position = u_Projection * u_Mv * gl_in[index].gl_Position;
   EmitVertex();
 
-  gl_Position = u_Projection * (gl_in[index].gl_Position + vec4(gs_in[index].normal, 0.0) * u_SceneRadius * u_Factor);
+  vec4 newPosition = u_Mv * gl_in[index].gl_Position + vec4(gs_in[index].normal, 0.0) * u_SceneRadius * u_Factor;
+  ls_fP = inverse(u_Mv) * newPosition;
+  gl_Position = u_Projection * newPosition;
   EmitVertex();
 
   EndPrimitive();

@@ -1,11 +1,25 @@
 #ifndef CGAL_UTILS_EIGEN_H
 #define CGAL_UTILS_EIGEN_H
 
-#include <math.h>
+#include <cmath>
+#include <chrono>
+
+
 #include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Geometry>
 
+std::chrono::high_resolution_clock::time_point start;
+std::chrono::high_resolution_clock::time_point stop;
+
+std::chrono::microseconds duration;
+
+#define MEASURE_TIME(func) \
+        start = std::chrono::high_resolution_clock::now(); \
+        func; \
+        stop = std::chrono::high_resolution_clock::now(); \
+        duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start); \
+        std::cout << "Time taken by " << #func << ": " << (duration.count() / 1000.0) << "ms" << std::endl; \
 
 using vec2i = Eigen::Vector2i;
 using vec2f = Eigen::Vector2f;

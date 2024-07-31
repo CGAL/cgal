@@ -94,19 +94,22 @@ namespace GLFW
     m_FlatShading(flatShading)
   {
     initialize();
+  } 
 
+  void Basic_viewer::check_geometry_feature_availability()
+  {
     int maxGeometryOutputVertices = 0;
     glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &maxGeometryOutputVertices);
     int maxGeometryOutputComponents = 0;
-    glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_COMPONENTS, &maxGeometryOutputComponents);
+    glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &maxGeometryOutputComponents);
 
     if (maxGeometryOutputVertices < 128 || maxGeometryOutputComponents < 1024)
     {
-      std::cout << "Cylinder edge and sphere vertex feature disabled!\n";
-      m_CylinderSphereFeatureEnabled = false;
+      std::cout << "Cylinder edge and sphere vertex feature disabled! (maxGeometryOutputVertices=" << maxGeometryOutputVertices << ", maxGeometryOutputComponents=" << maxGeometryOutputComponents << ")\n";
+      m_geometryFeatureEnabled = false; 
     }
   }
-
+ 
   void Basic_viewer::initialize(bool screenshotOnly)
   {
     m_Window = create_window(m_WindowSize.x(), m_WindowSize.y(), m_Title, screenshotOnly);
@@ -124,7 +127,7 @@ namespace GLFW
       glfwSetFramebufferSizeCallback(m_Window, window_size_callback);
     }
 
-    GLint openglMajorVersion, openglMinorVersion;
+    int openglMajorVersion, openglMinorVersion;
     glGetIntegerv(GL_MAJOR_VERSION, &openglMajorVersion);
     glGetIntegerv(GL_MINOR_VERSION, &openglMinorVersion);
 
@@ -133,15 +136,17 @@ namespace GLFW
       m_IsOpengl4_3 = true;
     }
 
-    compile_shaders();
-    initialize_camera();
-    initialize_buffers();
-    initialize_and_load_world_axis();
-    initialize_and_load_clipping_plane();
+    MEASURE_TIME(compile_shaders());
+    MEASURE_TIME(initialize_camera());
+    MEASURE_TIME(initialize_buffers());
+    MEASURE_TIME(initialize_and_load_world_axis());
+    MEASURE_TIME(initialize_and_load_clipping_plane());
     if (!screenshotOnly)
     {
-      initialize_keys_actions();
+      MEASURE_TIME(initialize_keys_actions());
     }
+
+    check_geometry_feature_availability();
   }
 
   void Basic_viewer::show()
@@ -168,11 +173,6 @@ namespace GLFW
 
   void Basic_viewer::clear_application()
   {
-    m_ShaderPl.destroy();
-    m_ShaderFace.destroy();
-    m_ShaderLine.destroy();
-    m_ShaderArrow.destroy();
-    m_ShaderPlane.destroy();
     glDeleteBuffers(NB_GL_BUFFERS, m_VBO);
     glDeleteVertexArrays(NB_VAO_BUFFERS, m_VAO);
     glfwDestroyWindow(m_Window);
@@ -187,7 +187,17 @@ namespace GLFW
     clear_application();
   }
 
-  void generate_grid(Line_renderer& renderer, const vec3f& color, float size, int nbSubdivisions=10)
+  void Basic_viewer::generate_grid(Line_renderer& renderer, float size, int nbSubdivisions) const 
+  {
+    for (unsigned int i = 0; i <= nbSubdivisions; ++i)
+    {
+      float pos = float(size * (2.0 * i / nbSubdivisions - 1.0));
+      renderer.add_line(vec3f(pos, -size, 0.f), vec3f(pos, size, 0.f));
+      renderer.add_line(vec3f(-size, pos, 0.f), vec3f(size, pos, 0.f));
+    }
+  }
+
+  void Basic_viewer::generate_grid(Line_renderer& renderer, const vec3f& color, float size, int nbSubdivisions) const 
   {
     for (unsigned int i = 0; i <= nbSubdivisions; ++i)
     {
@@ -206,29 +216,29 @@ namespace GLFW
     const char* PLANE_VERTEX = VERTEX_SOURCE_CLIPPING_PLANE;
     const char* PLANE_FRAGMENT = FRAGMENT_SOURCE_CLIPPING_PLANE;
 
-    m_ShaderPl = Shader::create_shader(PL_VERTEX, PL_FRAGMENT);
-    m_ShaderFace = Shader::create_shader(FACE_VERTEX, FACE_FRAGMENT);
-    m_ShaderPlane = Shader::create_shader(PLANE_VERTEX, PLANE_FRAGMENT);
+    m_ShaderPl = Shader::create(PL_VERTEX, PL_FRAGMENT);
+    m_ShaderFace = Shader::create(FACE_VERTEX, FACE_FRAGMENT);
+    m_ShaderPlane = Shader::create(PLANE_VERTEX, PLANE_FRAGMENT);
 
     const char* POINT_GEOMETRY = GEOMETRY_SOURCE_SPHERE;
-    m_ShaderSphere = Shader::create_shader(PL_VERTEX, PL_FRAGMENT, POINT_GEOMETRY);
+    m_ShaderSphere = Shader::create(PL_VERTEX, PL_FRAGMENT, POINT_GEOMETRY);
 
     const char* EDGE_GEOMETRY = GEOMETRY_SOURCE_CYLINDER;
-    m_ShaderCylinder = Shader::create_shader(PL_VERTEX, PL_FRAGMENT, EDGE_GEOMETRY);
+    m_ShaderCylinder = Shader::create(PL_VERTEX, PL_FRAGMENT, EDGE_GEOMETRY);
 
     // For world axis and grid 
     const char* LINE_VERTEX = VERTEX_SOURCE_LINE;
     const char* LINE_GEOMETRY = GEOMETRY_SOURCE_LINE;
     const char* LINE_FRAGMENT = FRAGMENT_SOURCE_LINE;
-    m_ShaderLine = Shader::create_shader(LINE_VERTEX, LINE_FRAGMENT, LINE_GEOMETRY);
+    m_ShaderLine = Shader::create(LINE_VERTEX, LINE_FRAGMENT, LINE_GEOMETRY);
 
     const char* ARROW_GEOMETRY = GEOMETRY_SOURCE_ARROW;
-    m_ShaderArrow = Shader::create_shader(LINE_VERTEX, LINE_FRAGMENT, ARROW_GEOMETRY);
+    m_ShaderArrow = Shader::create(LINE_VERTEX, LINE_FRAGMENT, ARROW_GEOMETRY);
 
     const char* NORMAL_VERTEX = VERTEX_SOURCE_NORMAL;
     const char* NORMAL_GEOMETRY = GEOMETRY_SOURCE_NORMAL;
     const char* NORMAL_FRAGMENT = FRAGMENT_SOURCE_NORMAL;
-    m_ShaderNormal = Shader::create_shader(NORMAL_VERTEX, NORMAL_FRAGMENT, NORMAL_GEOMETRY);
+    m_ShaderNormal = Shader::create(NORMAL_VERTEX, PL_FRAGMENT, NORMAL_GEOMETRY);
   }
 
   void Basic_viewer::initialize_camera()
@@ -251,7 +261,10 @@ namespace GLFW
   void Basic_viewer::initialize_and_load_world_axis()
   {
     // World axis initialization
-    m_WorldAxisRenderer.initialize_buffers();
+    m_WorldAxisRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE"
+      {ShaderDataType::FLOAT3}, // P"
+      {ShaderDataType::FLOAT3}, // Color
+    });
     m_WorldAxisRenderer.set_width(3.f);
     m_WorldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
     m_WorldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
@@ -260,14 +273,20 @@ namespace GLFW
 
     float cameraSize = m_Camera.get_size() * 0.5;
     // XY grid axis initialization
-    m_XYAxisRenderer.initialize_buffers();
+    m_XYAxisRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE
+      {ShaderDataType::FLOAT3}, // P
+      {ShaderDataType::FLOAT3}, // Color
+    });
     m_XYAxisRenderer.set_width(5.f);
     m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
     m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
     m_XYAxisRenderer.load_buffers();
 
     // XY grid initialization 
-    m_XYGridRenderer.initialize_buffers();
+    m_XYGridRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE
+      {ShaderDataType::FLOAT3}, // P
+      {ShaderDataType::FLOAT3}, // Color
+    });
     m_XYGridRenderer.set_width(2.f);
     m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitX(), vec3f(.8f, .8f, .8f)); // -x-axis
     m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitY(), vec3f(.8f, .8f, .8f)); // -y-axis
@@ -425,70 +444,70 @@ namespace GLFW
 
   void Basic_viewer::update_face_uniforms()
   {
-    m_ShaderFace.use();
+    m_ShaderFace->use();
 
-    m_ShaderFace.set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
-    m_ShaderFace.set_mat4f("u_Mv",  m_ViewMatrix.data());
+    m_ShaderFace->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderFace->set_mat4f("u_Mv",  m_ViewMatrix.data());
 
-    m_ShaderFace.set_vec4f("u_LightPos",  m_LightPosition.data());
-    m_ShaderFace.set_vec4f("u_LightDiff", m_DiffuseColor.data());
-    m_ShaderFace.set_vec4f("u_LightSpec", m_SpecularColor.data());
-    m_ShaderFace.set_vec4f("u_LightAmb",  m_AmbientColor.data());
-    m_ShaderFace.set_float("u_SpecPower", m_Shininess);
+    m_ShaderFace->set_vec4f("u_LightPos",  m_LightPosition.data());
+    m_ShaderFace->set_vec4f("u_LightDiff", m_DiffuseColor.data());
+    m_ShaderFace->set_vec4f("u_LightSpec", m_SpecularColor.data());
+    m_ShaderFace->set_vec4f("u_LightAmb",  m_AmbientColor.data());
+    m_ShaderFace->set_float("u_SpecPower", m_Shininess);
 
-    m_ShaderFace.set_vec4f("u_ClipPlane",  m_ClipPlane.data());
-    m_ShaderFace.set_vec4f("u_PointPlane", m_PointPlane.data());
-    m_ShaderFace.set_float("u_RenderingTransparency", m_ClippingPlane.get_transparency());
+    m_ShaderFace->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
+    m_ShaderFace->set_vec4f("u_PointPlane", m_PointPlane.data());
+    m_ShaderFace->set_float("u_RenderingTransparency", m_ClippingPlane.get_transparency());
   }
 
   void Basic_viewer::update_point_uniforms()
   {
-    m_ShaderSphere.use();
+    m_ShaderSphere->use();
 
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    m_ShaderSphere.set_float("u_RenderingMode", static_cast<float>(mode));
+    m_ShaderSphere->set_float("u_RenderingMode", static_cast<float>(mode));
 
-    m_ShaderSphere.set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
-    m_ShaderSphere.set_vec4f("u_ClipPlane",  m_ClipPlane.data());
-    m_ShaderSphere.set_vec4f("u_PointPlane", m_PointPlane.data());
-    m_ShaderSphere.set_float("u_UseGeometryShader", 1.0);
-    m_ShaderSphere.set_float("u_PointSize", m_SizeVertices);
-    m_ShaderSphere.set_float("u_Radius", m_Camera.get_radius()*m_SizeVertices*0.001);
+    m_ShaderSphere->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderSphere->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
+    m_ShaderSphere->set_vec4f("u_PointPlane", m_PointPlane.data());
+    m_ShaderSphere->set_float("u_UseGeometryShader", 1.0);
+    m_ShaderSphere->set_float("u_PointSize", m_SizeVertices);
+    m_ShaderSphere->set_float("u_Radius", m_Camera.get_radius()*m_SizeVertices*0.001);
   }
 
   void Basic_viewer::update_edge_uniforms()
   {
-    m_ShaderCylinder.use();
+    m_ShaderCylinder->use();
 
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    m_ShaderCylinder.set_float("u_RenderingMode", static_cast<float>(mode));
+    m_ShaderCylinder->set_float("u_RenderingMode", static_cast<float>(mode));
 
-    m_ShaderCylinder.set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
-    m_ShaderCylinder.set_vec4f("u_ClipPlane",  m_ClipPlane.data());
-    m_ShaderCylinder.set_vec4f("u_PointPlane", m_PointPlane.data());
-    m_ShaderCylinder.set_float("u_PointSize", m_SizeEdges);
-    m_ShaderCylinder.set_float("u_UseGeometryShader", 1.0);
-    m_ShaderCylinder.set_float("u_Radius", m_Camera.get_radius()*m_SizeEdges*0.001);
+    m_ShaderCylinder->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderCylinder->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
+    m_ShaderCylinder->set_vec4f("u_PointPlane", m_PointPlane.data());
+    m_ShaderCylinder->set_float("u_PointSize", m_SizeEdges);
+    m_ShaderCylinder->set_float("u_UseGeometryShader", 1.0);
+    m_ShaderCylinder->set_float("u_Radius", m_Camera.get_radius()*m_SizeEdges*0.001);
   }
 
   void Basic_viewer::update_pl_uniforms()
   {
-    m_ShaderPl.use();
+    m_ShaderPl->use();
 
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    m_ShaderPl.set_float("u_RenderingMode", static_cast<float>(mode));
+    m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(mode));
 
-    m_ShaderPl.set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
-    m_ShaderPl.set_vec4f("u_ClipPlane",  m_ClipPlane.data());
-    m_ShaderPl.set_vec4f("u_PointPlane", m_PointPlane.data());
-    m_ShaderPl.set_float("u_PointSize", m_SizeVertices);
-    m_ShaderPl.set_float("u_UseGeometryShader", 0.0);
+    m_ShaderPl->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderPl->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
+    m_ShaderPl->set_vec4f("u_PointPlane", m_PointPlane.data());
+    m_ShaderPl->set_float("u_PointSize", m_SizeVertices);
+    m_ShaderPl->set_float("u_UseGeometryShader", 0.0);
   }
 
   void Basic_viewer::update_clipping_uniforms()
@@ -498,9 +517,9 @@ namespace GLFW
     m_PointPlane = clippingModelMatrix * vec4f(0, 0, 0, 1);
     m_ClipPlane = clippingModelMatrix * vec4f(0, 0, 1, 0);
 
-    m_ShaderPlane.use();
-    m_ShaderPlane.set_mat4f("u_Vp", m_ViewProjectionMatrix.data());
-    m_ShaderPlane.set_mat4f("u_M",  clippingModelMatrix.data());
+    m_ShaderPlane->use();
+    m_ShaderPlane->set_mat4f("u_Vp", m_ViewProjectionMatrix.data());
+    m_ShaderPlane->set_mat4f("u_M",  clippingModelMatrix.data());
   }
 
   void Basic_viewer::update_world_axis_uniforms()
@@ -521,43 +540,49 @@ namespace GLFW
 
     mat4f mvp = projection * rotation4x4 * translation;
 
-    m_ShaderArrow.use();
-    m_ShaderArrow.set_mat4f("u_Mvp", mvp.data()); 
-    m_ShaderArrow.set_float("u_SceneRadius", 1.0f); 
+    m_ShaderArrow->use();
+    m_ShaderArrow->set_mat4f("u_Mvp", mvp.data()); 
+    m_ShaderArrow->set_float("u_SceneRadius", 1.0f); 
   }
 
   void Basic_viewer::update_XY_axis_uniforms()
   {
-    m_ShaderArrow.use();
-    m_ShaderArrow.set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
-    m_ShaderArrow.set_float("u_SceneRadius", m_Camera.get_radius()); 
+    m_ShaderArrow->use();
+    m_ShaderArrow->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderArrow->set_float("u_SceneRadius", m_Camera.get_radius()); 
   }
 
   void Basic_viewer::update_XY_grid_uniforms()
   {
-    m_ShaderLine.use();
-    m_ShaderLine.set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderLine->use();
+    m_ShaderLine->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
   }
 
   void Basic_viewer::update_normals_uniforms()
   {
-    m_ShaderNormal.use();
-   
+    m_ShaderNormal->use();
+
+    bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+    auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
+
     vec4f color = color_to_normalized_vec4(m_NormalsMonoColor);
-    m_ShaderNormal.set_mat4f("u_Mv", m_ViewMatrix.data());
-    m_ShaderNormal.set_vec4f("u_Color", color.data());
+    m_ShaderNormal->set_mat4f("u_Mv", m_ViewMatrix.data());
+    m_ShaderNormal->set_vec4f("u_Color", color.data());
     if (m_UseNormalMonoColor)
     {
-      m_ShaderNormal.set_float("u_UseMonoColor", 1.0);
+      m_ShaderNormal->set_float("u_UseMonoColor", 1.0);
     }
     else
     {
-      m_ShaderNormal.set_float("u_UseMonoColor", 0.0);
+      m_ShaderNormal->set_float("u_UseMonoColor", 0.0);
     }
-    m_ShaderNormal.set_mat4f("u_Projection", m_ProjectionMatrix.data());
-    m_ShaderNormal.set_float("u_Factor", m_NormalHeightFactor);
-    m_ShaderNormal.set_float("u_SceneRadius", m_Camera.get_radius());
-
+    m_ShaderNormal->set_mat4f("u_Projection", m_ProjectionMatrix.data());
+    m_ShaderNormal->set_float("u_Factor", m_NormalHeightFactor);
+    m_ShaderNormal->set_float("u_SceneRadius", m_Camera.get_radius());
+    
+    m_ShaderNormal->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
+    m_ShaderNormal->set_vec4f("u_PointPlane", m_PointPlane.data());
+    m_ShaderNormal->set_float("u_RenderingMode", static_cast<float>(mode));
   }
 
   bool Basic_viewer::need_update() const
@@ -604,7 +629,7 @@ namespace GLFW
     if (m_DrawEdges)
     {
       update_pl_uniforms();
-      if (m_DrawCylinderEdge && m_CylinderSphereFeatureEnabled)
+      if (m_DrawCylinderEdge && m_geometryFeatureEnabled)
       {
         update_edge_uniforms();
       }
@@ -613,7 +638,7 @@ namespace GLFW
     if (m_DrawVertices)
     {
       update_pl_uniforms();
-      if (m_DrawSphereVertex && m_CylinderSphereFeatureEnabled)
+      if (m_DrawSphereVertex && m_geometryFeatureEnabled)
       {
         update_point_uniforms();
       }
@@ -709,7 +734,7 @@ namespace GLFW
 
   void Basic_viewer::draw_faces_bis(RenderingMode mode)
   {
-    m_ShaderFace.set_float("u_RenderingMode", static_cast<float>(mode));
+    m_ShaderFace->set_float("u_RenderingMode", static_cast<float>(mode));
 
     vec4f color = color_to_normalized_vec4(m_FacesMonoColor);
 
@@ -732,7 +757,7 @@ namespace GLFW
 
   void Basic_viewer::draw_rays()
   {
-    m_ShaderPl.set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
+    m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     vec4f color = color_to_normalized_vec4(m_RaysMonoColor);
 
@@ -776,7 +801,7 @@ namespace GLFW
 
   void Basic_viewer::draw_lines()
   {
-    m_ShaderPl.set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
+    m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     vec4f color = color_to_normalized_vec4(m_LinesMonoColor);
 
@@ -852,6 +877,10 @@ namespace GLFW
     glBindVertexArray(m_VAO[VAO_COLORED_FACES]);
     glLineWidth(m_SizeNormals);
     glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+
+    glBindVertexArray(m_VAO[VAO_MONO_FACES]);
+    glLineWidth(m_SizeNormals);
+    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
   }
 
   void Basic_viewer::initialize_and_load_clipping_plane()
@@ -862,10 +891,11 @@ namespace GLFW
 
     const unsigned int NB_SUBDIVISIONS = 30;
 
-    vec3f color(0,0,0);
-    m_ClippingPlane.initialize_buffers();
+    m_ClippingPlane.initialize_buffers({ // Use VERTEX_SOURCE_CLIPPING_PLANE
+      {ShaderDataType::FLOAT3}, // P
+    });
     m_ClippingPlane.set_width(0.1f);
-    generate_grid(m_ClippingPlane, color, size, NB_SUBDIVISIONS);
+    generate_grid(m_ClippingPlane, size, NB_SUBDIVISIONS);
     m_ClippingPlane.load_buffers();
 
     m_ClippingPlane.set_size(m_Camera.get_size());  
@@ -931,7 +961,8 @@ namespace GLFW
       if (m_PrintApplicationState)
       {
         std::cout << "\33[2K"  
-                  << "FPS: "                        << std::round(1 / deltaTime)                               << "\n\33[2K" 
+                  << std::round(1 / deltaTime)      << " fps    " 
+                  << deltaTime*1000                 << " ms\n\33[2K" 
                   << "Camera translation speed: "   << m_Camera.get_translation_speed()                        << "    " 
                   << "Camera rotation speed: "      << std::round(m_Camera.get_rotation_speed())               << "    "
                   << "Camera constraint axis: "     << m_Camera.get_constraint_axis_str()                      << "\n\33[2K"     
@@ -1499,7 +1530,7 @@ namespace GLFW
     GLsizei bufferSize = stride * m_WindowSize.y();
 
     std::vector<char> buffer(bufferSize);
-    m_ShaderFace.use(); 
+    m_ShaderFace->use(); 
     glPixelStorei(GL_PACK_ALIGNMENT, 4);
 
     glReadBuffer(GL_FRONT);
