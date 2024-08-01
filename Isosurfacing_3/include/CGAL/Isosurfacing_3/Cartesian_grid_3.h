@@ -351,6 +351,8 @@ public:
   /**
    * \brief returns the coordinates of the grid cell that contains a given point.
    *
+   * For points on the boundary between two cells, the smaller index is returned.
+   *
    * \param p the point to be located
    *
    * \pre `p` is inside the grid.
