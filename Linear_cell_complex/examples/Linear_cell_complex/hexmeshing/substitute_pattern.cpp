@@ -9,91 +9,34 @@
 #include <filesystem>
 #include <iostream>
 
-// int pattern_substitution()
-// {
-//   LCC lcc;
-//   auto d1=
-//     lcc.make_hexahedron(Point(0,0,0), Point(5,0,0),
-//                         Point(5,5,0), Point(0,5,0),
-//                         Point(0,5,5), Point(0,0,5),
-//                         Point(5,0,5), Point(5,5,5));
+auto default_two_refinement(const std::string& path, int cube_cells_per_dim, int nb_levels = 1){
+  using namespace CGAL::HexRefinement;
+  using namespace CGAL::HexRefinement::TwoRefinement;
+  Tree aabb;
+  // Meh
+  return two_refinement_mt(path, 2,
+    [&](Polyhedron& poly){
+      simple_voxelisation_setup(aabb)(poly);
+      auto bbox = aabb.bbox();
 
-//   auto d2=
-//     lcc.make_hexahedron(Point(5,0,0), Point(10,0,0),
-//                         Point(10,5,0), Point(5,5,0),
-//                         Point(5,5,5), Point(5,0,5),
-//                         Point(10,0,5), Point(10,5,5));
+      Point center = {bbox.xmin() + (bbox.x_span()/2),
+                      bbox.ymin() + (bbox.y_span()/2),
+                      bbox.zmin() + (bbox.z_span()/2)};
 
-//   auto d3=
-//     lcc.make_hexahedron(Point(0,0,-5), Point(5,0,-5),
-//                         Point(5,5,-5), Point(0,5,-5),
-//                         Point(0,5,0), Point(0,0,0),
-//                         Point(5,0,0), Point(5,5,0));
-
-//   lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
-//   lcc.sew<3>(lcc.beta(d1, 0, 2), lcc.beta(d3, 1, 2));
-
-//   lcc.display_characteristics(std::cout);
-
-//   auto toprocess_mark = lcc.get_new_mark();
-//   debug_edge_mark = lcc.get_new_mark();
-
-//   lcc.mark_cell<0>(d1, toprocess_mark);
-//   auto md1 = lcc.beta(d1, 1);
-//   lcc.mark_cell<0>(md1, toprocess_mark);
-//   auto md2 = lcc.beta(d2, 1);
-//   lcc.mark_cell<0>(md2, toprocess_mark);
-//   auto md3 = lcc.beta(d2, 1, 1);
-//   lcc.mark_cell<0>(md3, toprocess_mark);
-//   auto md4 = d3;
-//   lcc.mark_cell<0>(md4, toprocess_mark);
-
-//   // lcc.mark_cell<0>(md3, toprocess_mark);
-
-//   std::vector<Dart_handle> marked_cells;
-
-//   // We assume we already filled out marked_cells earlier
-
-//   marked_cells.push_back(d1);
-//   marked_cells.push_back(md1);
-//   marked_cells.push_back(md2);
-//   marked_cells.push_back(md3);
-//   marked_cells.push_back(md4);
-
-//   CGAL::HexRefinement::tworefinement_one_step_from_marked(lcc, marked_cells, toprocess_mark);
-
-//   render(lcc, toprocess_mark, debug_edge_mark);
-//   return EXIT_SUCCESS;
-// }
-
-// int grid_test() {
-//   using namespace CGAL::HexRefinement::TwoRefinement;
-
-//   LCC lcc;
-//   auto grid = generate_grid(lcc, Point(0,0,0), 65.059600000000003, 10);
-
-//   lcc.display_characteristics(std::cout);
-
-//   auto m1 = lcc.get_new_mark();
-//   auto m2 = lcc.get_new_mark();
-
-//   mark_nodes_in_cell_pair(lcc, grid, Plane::XY, m1, m1);
-
-//   // auto a =  lcc.beta(lcc.first_dart(), 0, 2, 0);
-//   // mark_face(lcc, a, m2);
-//   // lcc.mark_cell<0>(a, m1);
-
-//   render<LCC>(lcc, m1, m2);
-//   lcc.display_characteristics(std::cout);
-
-//   return EXIT_SUCCESS;
-// }
-
+      double max_size = std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
+      return Grid::make_centered_cube(center, max_size / cube_cells_per_dim, cube_cells_per_dim);
+    },
+    mark_intersecting_volume_with_poly(aabb),
+    nb_levels
+  );
+}
 
 int surface_test() {
   using namespace CGAL::HexRefinement;
 
-  auto [lcc, aabb, _]= two_refinement(CGAL::data_file_path("query_replace/mesh1.off"), 10, TwoRefinement::mark_intersecting_volume_with_poly);
+  auto [lcc, _]= default_two_refinement(
+    CGAL::data_file_path("query_replace/mesh1.off"), 10);
+
   lcc.display_characteristics(std::cout);
 
   // render_two_refinement_result(lcc, aabb);
@@ -185,21 +128,21 @@ using ValidationData = std::tuple<InputFile, OutputFile, GeneratorFunction>;
 
 ValidationData validation_data[] = {
   {"mesh1.off", "mesh1-1r-20x20x20", [](const std::string& path){
-    auto tuple = CGAL::HexRefinement::two_refinement(path, 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly);
+    auto tuple = default_two_refinement(path, 20);
     return std::get<LCC>(tuple);
   }},
   {"mesh2.off", "mesh2-1r-20x20x20", [](const std::string& path){
-    auto tuple = CGAL::HexRefinement::two_refinement(path, 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly);
+    auto tuple = default_two_refinement(path, 20);
     return std::get<LCC>(tuple);
   }},
   {"mesh3.off", "mesh3-1r-20x20x20", [](const std::string& path){
-    auto tuple = CGAL::HexRefinement::two_refinement(path, 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly);
+    auto tuple = default_two_refinement(path, 20);
     return std::get<LCC>(tuple);
   }},
 
   // 2 Levels of refinement
   {"mesh1.off", "mesh1-2r-20x20x20", [](const std::string& path){
-    auto tuple = CGAL::HexRefinement::two_refinement(path, 20, CGAL::HexRefinement::TwoRefinement::mark_intersecting_volume_with_poly, 2);
+    auto tuple = default_two_refinement(path, 20, 2);
     return std::get<LCC>(tuple);
   }},
 
@@ -290,5 +233,8 @@ int test_deterministic_mt_refinement(){
 
 int main(){
   // /!\ Run validations only in Release mode, some assertions in Debug mode are very costly
+  // /!\ Github cannot store >50Mb files, and thus we cannot track the .3map on github,
+  // To run validations, first run create_validation_files in a older commit, also check if the
+  // Generator function and data is still the same. Then fast forward to latest commit and run validation_test()
   return validation_test();
 }
