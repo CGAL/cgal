@@ -220,11 +220,12 @@ namespace GLFW
     m_ShaderFace = Shader::create(FACE_VERTEX, FACE_FRAGMENT);
     m_ShaderPlane = Shader::create(PLANE_VERTEX, PLANE_FRAGMENT);
 
+    const char* SHAPE_VERTEX = VERTEX_SOURCE_SHAPE;
     const char* POINT_GEOMETRY = GEOMETRY_SOURCE_SPHERE;
-    m_ShaderSphere = Shader::create(PL_VERTEX, PL_FRAGMENT, POINT_GEOMETRY);
+    m_ShaderSphere = Shader::create(SHAPE_VERTEX, PL_FRAGMENT, POINT_GEOMETRY);
 
     const char* EDGE_GEOMETRY = GEOMETRY_SOURCE_CYLINDER;
-    m_ShaderCylinder = Shader::create(PL_VERTEX, PL_FRAGMENT, EDGE_GEOMETRY);
+    m_ShaderCylinder = Shader::create(SHAPE_VERTEX, PL_FRAGMENT, EDGE_GEOMETRY);
 
     // For world axis and grid 
     const char* LINE_VERTEX = VERTEX_SOURCE_LINE;
@@ -237,8 +238,11 @@ namespace GLFW
 
     const char* NORMAL_VERTEX = VERTEX_SOURCE_NORMAL;
     const char* NORMAL_GEOMETRY = GEOMETRY_SOURCE_NORMAL;
-    const char* NORMAL_FRAGMENT = FRAGMENT_SOURCE_NORMAL;
     m_ShaderNormal = Shader::create(NORMAL_VERTEX, PL_FRAGMENT, NORMAL_GEOMETRY);
+
+    const char* TRIANGLE_VERTEX = VERTEX_SOURCE_TRIANGLE;
+    const char* TRIANGLE_GEOMETRY = GEOMETRY_SOURCE_TRIANGLE;
+    m_ShaderTriangles = Shader::create(TRIANGLE_VERTEX, PL_FRAGMENT, TRIANGLE_GEOMETRY);
   }
 
   void Basic_viewer::initialize_camera()
@@ -472,7 +476,6 @@ namespace GLFW
     m_ShaderSphere->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
     m_ShaderSphere->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderSphere->set_vec4f("u_PointPlane", m_PointPlane.data());
-    m_ShaderSphere->set_float("u_UseGeometryShader", 1.0);
     m_ShaderSphere->set_float("u_PointSize", m_SizeVertices);
     m_ShaderSphere->set_float("u_Radius", m_Camera.get_radius()*m_SizeVertices*0.001);
   }
@@ -490,7 +493,6 @@ namespace GLFW
     m_ShaderCylinder->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderCylinder->set_vec4f("u_PointPlane", m_PointPlane.data());
     m_ShaderCylinder->set_float("u_PointSize", m_SizeEdges);
-    m_ShaderCylinder->set_float("u_UseGeometryShader", 1.0);
     m_ShaderCylinder->set_float("u_Radius", m_Camera.get_radius()*m_SizeEdges*0.001);
   }
 
@@ -507,7 +509,6 @@ namespace GLFW
     m_ShaderPl->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderPl->set_vec4f("u_PointPlane", m_PointPlane.data());
     m_ShaderPl->set_float("u_PointSize", m_SizeVertices);
-    m_ShaderPl->set_float("u_UseGeometryShader", 0.0);
   }
 
   void Basic_viewer::update_clipping_uniforms()
@@ -593,6 +594,20 @@ namespace GLFW
     m_ShaderNormal->set_float("u_RenderingMode", static_cast<float>(mode));
   }
 
+  void Basic_viewer::update_triangles_uniforms()
+  {
+    m_ShaderTriangles->use();
+
+    bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+    auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
+
+    m_ShaderTriangles->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+
+    m_ShaderTriangles->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
+    m_ShaderTriangles->set_vec4f("u_PointPlane", m_PointPlane.data());
+    m_ShaderTriangles->set_float("u_RenderingMode", static_cast<float>(mode));
+  }
+
   bool Basic_viewer::need_update() const
   {
     return m_Camera.need_update() 
@@ -621,8 +636,6 @@ namespace GLFW
     glEnable(GL_PROGRAM_POINT_SIZE);
     glEnable(GL_LINE_SMOOTH);
 
-    // update_uniforms(deltaTime);
-
     compute_model_view_projection_matrix(deltaTime);
 
     update_pl_uniforms();
@@ -634,46 +647,39 @@ namespace GLFW
     {
       draw_lines();
     }
+   
     if (m_DrawEdges)
     {
-      update_pl_uniforms();
-      if (m_DrawCylinderEdge && m_geometryFeatureEnabled)
-      {
-        update_edge_uniforms();
-      }
       draw_edges();
     }
+    
     if (m_DrawVertices)
     {
-      update_pl_uniforms();
-      if (m_DrawSphereVertex && m_geometryFeatureEnabled)
-      {
-        update_point_uniforms();
-      }
       draw_vertices();
     }
 
     if (clipping_plane_enable())
     {
-      update_clipping_uniforms();
       render_clipping_plane();
     }
 
     if (m_DrawNormals)
     {
-      update_normals_uniforms();
       draw_normals();
     }  
         
     if (m_DrawFaces)
     {
-      update_face_uniforms();
       draw_faces();
+    }
+
+    if (m_DrawTriangles)
+    {
+      draw_triangles();
     }
     
     if (m_DrawWorldAxis)  
     {
-      update_world_axis_uniforms();
       draw_world_axis();
     }
 
@@ -691,6 +697,8 @@ namespace GLFW
 
   void Basic_viewer::draw_faces()
   {
+    update_face_uniforms();
+
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(2.0, 1.0); 
     glDepthFunc(GL_LESS);
@@ -760,7 +768,6 @@ namespace GLFW
       glEnableVertexAttribArray(2);
     }
     glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
-
   }
 
   void Basic_viewer::draw_rays()
@@ -789,6 +796,12 @@ namespace GLFW
 
   void Basic_viewer::draw_vertices()
   {
+    update_pl_uniforms();
+    if (m_DrawSphereVertex && m_geometryFeatureEnabled)
+    {
+      update_point_uniforms();
+    }
+
     vec4f color = color_to_normalized_vec4(m_VerticeMonoColor);
 
     glBindVertexArray(m_VAO[VAO_MONO_POINTS]);
@@ -832,6 +845,12 @@ namespace GLFW
 
   void Basic_viewer::draw_edges()
   {
+    update_pl_uniforms();
+    if (m_DrawCylinderEdge && m_geometryFeatureEnabled)
+    {
+      update_edge_uniforms();
+    }
+
     glDepthFunc(GL_LEQUAL);
 
     vec4f color = color_to_normalized_vec4(m_EdgesMonoColor);
@@ -856,6 +875,7 @@ namespace GLFW
 
   void Basic_viewer::draw_world_axis() 
   {
+    update_world_axis_uniforms();
     glDepthFunc(GL_LEQUAL);
 
     int &w = m_WindowSize.x();
@@ -880,6 +900,8 @@ namespace GLFW
 
   void Basic_viewer::draw_normals()
   {
+    update_normals_uniforms();
+
     glDepthFunc(GL_LEQUAL);
 
     glBindVertexArray(m_VAO[VAO_COLORED_FACES]);
@@ -889,6 +911,22 @@ namespace GLFW
     glBindVertexArray(m_VAO[VAO_MONO_FACES]);
     glLineWidth(m_SizeNormals);
     glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
+  }
+
+  void Basic_viewer::draw_triangles()
+  {
+    update_triangles_uniforms();
+
+    glDepthFunc(GL_LEQUAL);
+
+    vec4f color = color_to_normalized_vec4(m_EdgesMonoColor);
+
+    glBindVertexArray(m_VAO[VAO_MONO_FACES]);
+    glLineWidth(1.0);
+    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
+
+    glBindVertexArray(m_VAO[VAO_COLORED_FACES]);
+    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
   }
 
   void Basic_viewer::initialize_and_load_clipping_plane()
@@ -1123,6 +1161,9 @@ namespace GLFW
       break;
     case FACE_NORMALS_DISPLAY:
       m_DisplayFaceNormal = !m_DisplayFaceNormal; 
+      break;
+    case TRIANGLES_DISPLAY: 
+      m_DrawTriangles = !m_DrawTriangles;
       break;
     case VERTICES_DISPLAY:
       m_DrawVertices = !m_DrawVertices;
@@ -1583,6 +1624,8 @@ namespace GLFW
     add_keyboard_action({GLFW_KEY_N, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, NORMALS_DISPLAY);
     add_keyboard_action({GLFW_KEY_M, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, NORMALS_MONO_COLOR);
 
+    add_keyboard_action({GLFW_KEY_T, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, TRIANGLES_DISPLAY);
+
     add_keyboard_action({GLFW_KEY_A}, InputMode::RELEASE, WORLD_AXIS_DISPLAY);
     add_keyboard_action({GLFW_KEY_G}, InputMode::RELEASE, XY_GRID_DISPLAY);
 
@@ -1731,6 +1774,7 @@ namespace GLFW
         {"",                                                  ""},
         {get_binding_text_from_action(FACE_NORMALS_DISPLAY),  "Toggle face/vertex normals for normal display"},
         {get_binding_text_from_action(NORMALS_DISPLAY),       "Toggle normals display"},
+        {get_binding_text_from_action(TRIANGLES_DISPLAY),     "Toggle triangles display"},
         {get_binding_text_from_action(VERTICES_DISPLAY),      "Toggle vertices display"},
         {get_binding_text_from_action(SPHERE_VERTEX_DISPLAY), "Toggle vertices display as sphere"},
         {get_binding_text_from_action(EDGES_DISPLAY),         "Toggle edges display"},

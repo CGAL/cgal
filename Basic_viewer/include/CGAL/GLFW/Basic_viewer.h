@@ -219,6 +219,7 @@ namespace GLFW
     void update_XY_axis_uniforms();
     void update_XY_grid_uniforms();
     void update_normals_uniforms();
+    void update_triangles_uniforms();
 
     void generate_grid(Line_renderer& renderer, float size, int nbSubdivisions=10) const;
     void generate_grid(Line_renderer& renderer, const vec3f& color, float size, int nbSubdivisions=10) const;
@@ -238,6 +239,7 @@ namespace GLFW
     void draw_world_axis();
     void draw_xy_grid();
     void draw_normals();
+    void draw_triangles();
 
     void initialize_and_load_clipping_plane();
     void render_clipping_plane();
@@ -292,8 +294,9 @@ namespace GLFW
     bool m_DrawLines { true };
     bool m_DrawCylinderEdge { false };
     bool m_DrawSphereVertex { false };
+    bool m_DrawTriangles { false };
 
-    bool m_DisplayFaceNormal { true };
+    bool m_DisplayFaceNormal { false };
     bool m_UseNormalMonoColor { false };
     bool m_UseMonoColor { false };
 
@@ -354,6 +357,7 @@ namespace GLFW
     std::shared_ptr<Shader> m_ShaderLine;
     std::shared_ptr<Shader> m_ShaderNormal;
     std::shared_ptr<Shader> m_ShaderArrow;
+    std::shared_ptr<Shader> m_ShaderTriangles;
 
     vec2i m_WindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
     vec2i m_OldWindowSize { CGAL_WINDOW_WIDTH_INIT, CGAL_WINDOW_HEIGHT_INIT };
@@ -414,13 +418,14 @@ namespace GLFW
 
       /*SCENE*/
       NORMALS_DISPLAY,
-      FACE_NORMALS_DISPLAY,
+      TRIANGLES_DISPLAY,
       VERTICES_DISPLAY,
       FACES_DISPLAY,
       EDGES_DISPLAY,
       INVERSE_NORMAL,
       SHADING_MODE,
 
+      FACE_NORMALS_DISPLAY,
       CYLINDER_EDGE_DISPLAY,
       SPHERE_VERTEX_DISPLAY,
 

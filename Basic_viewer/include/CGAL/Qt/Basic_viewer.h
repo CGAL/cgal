@@ -92,6 +92,8 @@ public:
     m_draw_normals(false),
     m_draw_cylinder_edge(false),
     m_draw_sphere_vertex(false),
+    m_draw_triangles(false),
+    m_geometry_feature_enabled(true),
     m_flatShading(true),
     m_use_mono_color(use_mono_color),
     m_use_normal_mono_color(false),
@@ -185,6 +187,8 @@ public:
     Q_FOREACH(QOpenGLShader* shader, rendering_program_cylinder.shaders())
       delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_normal.shaders())
+      delete shader;
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_triangle.shaders())
       delete shader;
     delete m_frame_plane;
   }
@@ -321,7 +325,6 @@ public:
           rendering_program_p_l.setAttributeValue("a_Color",color);
           rendering_program_sphere.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_points));
           rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_points*0.001));
-          rendering_program_sphere.setUniformValue("u_UseGeometryShader", static_cast<GLfloat>(1.0));
           rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
           rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
@@ -437,7 +440,6 @@ public:
           rendering_program_cylinder.setAttributeValue("a_Color",color);
           rendering_program_cylinder.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges));
           rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
-          rendering_program_cylinder.setUniformValue("u_UseGeometryShader", static_cast<GLfloat>(1.0));
           rendering_program_cylinder.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_cylinder.setUniformValue("u_PointPlane", plane_point);
           rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
@@ -778,6 +780,42 @@ public:
       rendering_program_face.release();
     }
 
+    if (m_draw_triangles)
+    {
+      rendering_program_triangle.bind();
+
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) 
+      {
+        vao[VAO_MONO_FACES].bind();
+        rendering_program_triangle.setUniformValue("u_RenderingMode", rendering_mode);
+        rendering_program_triangle.setUniformValue("u_ClipPlane", clipPlane);
+        rendering_program_triangle.setUniformValue("u_PointPlane", plane_point);
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+        vao[VAO_MONO_FACES].release();
+
+        vao[VAO_COLORED_FACES].bind();
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
+        vao[VAO_COLORED_FACES].release();
+      };
+      
+      enum {
+        DRAW_ALL = -1, // draw all
+        DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+        DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+      };
+
+      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+      {
+        renderer(DRAW_INSIDE_ONLY);
+      }
+      else
+      {
+        renderer(DRAW_ALL);
+      }
+
+      rendering_program_triangle.release();
+    }
+
     if (m_draw_text)
     {
       glDisable(GL_LIGHTING);
@@ -812,6 +850,7 @@ protected:
     rendering_program_sphere.removeAllShaders();
     rendering_program_cylinder.removeAllShaders();
     rendering_program_normal.removeAllShaders();
+    rendering_program_triangle.removeAllShaders();
 
     // Create the buffers
     for (unsigned int i=0; i<NB_GL_BUFFERS; ++i)
@@ -926,7 +965,7 @@ protected:
     // Sphere shader
     if (isOpenGL_4_3())
     {
-      source_ = VERTEX_SOURCE_P_L;
+      source_ = VERTEX_SOURCE_SHAPE;
 
       QOpenGLShader *vertex_shader_sphere = new QOpenGLShader(QOpenGLShader::Vertex);
       if (!vertex_shader_sphere->compileSourceCode(source_))
@@ -959,7 +998,7 @@ protected:
     if (isOpenGL_4_3())
     {
       // clipping plane shader
-      source_ = VERTEX_SOURCE_P_L;
+      source_ = VERTEX_SOURCE_SHAPE;
 
       QOpenGLShader *vertex_shader_cylinder = new QOpenGLShader(QOpenGLShader::Vertex);
       if (!vertex_shader_cylinder->compileSourceCode(source_))
@@ -1019,6 +1058,38 @@ protected:
       if (!rendering_program_normal.link())
       { std::cerr << "Linking Program for normal FAILED" << std::endl; }
     }
+
+    // Normal shader
+    if (isOpenGL_4_3())
+    {
+      source_ = VERTEX_SOURCE_TRIANGLE;
+
+      QOpenGLShader *vertex_shader_triangle = new QOpenGLShader(QOpenGLShader::Vertex);
+      if (!vertex_shader_triangle->compileSourceCode(source_))
+      { std::cerr << "Compiling vertex source for triangle FAILED" << std::endl; }
+
+      source_ = GEOMETRY_SOURCE_TRIANGLE;
+
+      QOpenGLShader *geometry_shader_triangle = new QOpenGLShader(QOpenGLShader::Geometry);
+      if (!geometry_shader_triangle->compileSourceCode(source_))
+      { std::cerr << "Compiling geometry source for triangle FAILED" << std::endl; }
+
+      source_ = FRAGMENT_SOURCE_P_L;
+
+      QOpenGLShader *fragment_shader_triangle = new QOpenGLShader(QOpenGLShader::Fragment);
+      if (!fragment_shader_triangle->compileSourceCode(source_))
+      { std::cerr << "Compiling fragment source for triangle FAILED" << std::endl; }
+
+
+      if (!rendering_program_triangle.addShader(vertex_shader_triangle))
+      { std::cerr << "Adding vertex shader for triangle FAILED" << std::endl;}
+      if (!rendering_program_triangle.addShader(geometry_shader_triangle))
+      { std::cerr << "Adding geometry shader for triangle FAILED" << std::endl;}
+      if (!rendering_program_triangle.addShader(fragment_shader_triangle))
+      { std::cerr << "Adding fragment shader for clipping plane FAILED" << std::endl; }
+      if (!rendering_program_triangle.link())
+      { std::cerr << "Linking Program for triangle FAILED" << std::endl; }
+    }
   }
 
   void initialize_buffers()
@@ -1057,10 +1128,6 @@ protected:
                            gBuffer.get_size_of_index(GS::POS_COLORED_POINTS));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
-    
-    rendering_program_sphere.bind();
-    rendering_program_sphere.enableAttributeArray("a_Pos");
-    rendering_program_sphere.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
     rendering_program_p_l.bind();
     
     buffers[bufn].release();
@@ -1074,10 +1141,6 @@ protected:
                            gBuffer.get_size_of_index(GS::COLOR_POINTS));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
-
-    rendering_program_sphere.bind();
-    rendering_program_sphere.enableAttributeArray("a_Color");
-    rendering_program_sphere.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
     rendering_program_p_l.bind();
 
     buffers[bufn].release();
@@ -1113,10 +1176,6 @@ protected:
                            gBuffer.get_size_of_index(GS::POS_COLORED_SEGMENTS));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
-
-    rendering_program_cylinder.bind();
-    rendering_program_cylinder.enableAttributeArray("a_Pos");
-    rendering_program_cylinder.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
     rendering_program_p_l.bind();
 
     buffers[bufn].release();
@@ -1128,10 +1187,6 @@ protected:
                            gBuffer.get_size_of_index(GS::COLOR_SEGMENTS));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
-
-    rendering_program_cylinder.bind();
-    rendering_program_cylinder.enableAttributeArray("a_Color");
-    rendering_program_cylinder.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
     rendering_program_p_l.bind();
 
     buffers[bufn].release();
@@ -1282,10 +1337,6 @@ protected:
                            gBuffer.get_size_of_index(GS::POS_COLORED_FACES));
     rendering_program_face.enableAttributeArray("a_Pos");
     rendering_program_face.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
-
-    rendering_program_normal.bind(); 
-    rendering_program_normal.enableAttributeArray("a_Pos");
-    rendering_program_normal.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
     rendering_program_face.bind();
 
     buffers[bufn].release();
@@ -1306,10 +1357,6 @@ protected:
     }
     rendering_program_face.enableAttributeArray("a_Normal");
     rendering_program_face.setAttributeBuffer("a_Normal",GL_FLOAT,0,3);
-
-    rendering_program_normal.bind(); 
-    rendering_program_normal.enableAttributeArray("a_Normal");
-    rendering_program_normal.setAttributeBuffer("a_Normal",GL_FLOAT,0,3);
     rendering_program_face.bind();
 
     buffers[bufn].release();
@@ -1463,6 +1510,15 @@ protected:
       rendering_program_normal.setUniformValue(pLocation, projection);
       rendering_program_normal.release();
     }
+
+    if (isOpenGL_4_3())
+    {
+      rendering_program_triangle.bind();
+
+      int mvpLocation = rendering_program_triangle.uniformLocation("u_Mvp");
+      rendering_program_triangle.setUniformValue(mvpLocation, mvpMatrix);
+      rendering_program_triangle.release();
+    }
   }
 
   void set_camera_mode()
@@ -1536,10 +1592,6 @@ protected:
     {
       std::cout << "Cylinder edge and sphere vertex feature disabled! (maxGeometryOutputVertices=" << maxGeometryOutputVertices << ", maxGeometryOutputComponents=" << maxGeometryOutputComponents << ")\n";
       m_geometry_feature_enabled = false; 
-    }
-    else 
-    {
-      m_geometry_feature_enabled = true; 
     }
 
     this->showEntireScene();
@@ -1810,6 +1862,12 @@ protected:
         displayMessage(QString("Draw normals=%1.").arg(m_draw_normals?"true":"false"));
         update();
       }
+      else if ((e->key()==::Qt::Key_T) && (modifiers==::Qt::ControlModifier))
+      {
+        m_draw_triangles = !m_draw_triangles;
+        displayMessage(QString("Draw triangles=%1.").arg(m_draw_triangles?"true":"false"));
+        update();
+      }
       else if ((e->key()==::Qt::Key_M) && (modifiers==::Qt::ControlModifier))
       {
         m_use_normal_mono_color = !m_use_normal_mono_color;
@@ -1882,6 +1940,7 @@ protected:
   bool m_draw_normals;
   bool m_draw_cylinder_edge;
   bool m_draw_sphere_vertex;
+  bool m_draw_triangles;
   bool m_geometry_feature_enabled;
 
   enum {
@@ -1948,6 +2007,7 @@ protected:
   QOpenGLShaderProgram rendering_program_sphere;
   QOpenGLShaderProgram rendering_program_cylinder;
   QOpenGLShaderProgram rendering_program_normal;
+  QOpenGLShaderProgram rendering_program_triangle;
 
   // variables for clipping plane
   bool clipping_plane_rendering = true; // will be toggled when alt+c is pressed, which is used for indicating whether or not to render the clipping plane ;

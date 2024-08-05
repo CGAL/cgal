@@ -106,27 +106,35 @@ in highp vec3 a_Color;
 
 uniform highp mat4  u_Mvp;
 uniform highp float u_PointSize;
-uniform highp float u_UseGeometryShader;
 
-out highp vec4 fColor; // use if not u_UseGeometryShader
-out highp vec4 gColor; // else 
+out highp vec4 fColor; 
+out highp vec4 ls_fP; // local space 
+
+void main(void)
+{
+  fColor = vec4(a_Color, 1.0);
+  ls_fP  = a_Pos;
+
+  gl_PointSize = u_PointSize;
+  gl_Position  = u_Mvp * a_Pos;
+}
+)DELIM";
+
+const char VERTEX_SOURCE_SHAPE[]=R"DELIM(
+#version 150
+in highp vec4 a_Pos;
+in highp vec3 a_Color;
+
+uniform highp mat4  u_Mvp;
+uniform highp float u_PointSize;
+
+out highp vec4 gColor; 
 out highp vec4 ls_fP; 
 
 void main(void)
 {
-  if(u_UseGeometryShader > 0.0)
-  {
-    gColor      = vec4(Color, 1.0);
-    gl_Position = P;
-  }
-  else 
-  {
-    fColor = vec4(Color, 1.0);
-    ls_fP  = P;
-
-    gl_PointSize = u_PointSize;
-    gl_Position  = u_Mvp * P;
-  }
+  gColor = vec4(a_Color, 1.0);
+  gl_Position = a_Pos;
 }
 )DELIM";
 
@@ -557,18 +565,58 @@ void main()
 }
 )DELIM";
 
-const char FRAGMENT_SOURCE_NORMAL[]=R"DELIM(
+const char VERTEX_SOURCE_TRIANGLE[]=R"DELIM(
 #version 150
+in highp vec4 a_Pos;
+in highp vec3 a_Color;
 
-in GS_OUT {
-  highp vec4 color;
-} fs_in; // fragment shader input
+uniform highp mat4  u_Mvp;
 
-out highp vec4 out_color;
+out VS_OUT {
+  highp vec4 color; 
+  highp vec4 ls_fP; 
+} vs_out;
 
-void main()
+void main(void)
 {
-  out_color = fs_in.color;
+  vs_out.color = vec4(a_Color, 1.0);
+  vs_out.ls_fP  = a_Pos;
+
+  gl_Position  = u_Mvp * a_Pos;
+}
+)DELIM";
+
+const char GEOMETRY_SOURCE_TRIANGLE[]=R"DELIM(
+#version 150
+layout (triangles) in;
+layout (line_strip, max_vertices=4) out; 
+
+in VS_OUT {
+  highp vec4 color; 
+  highp vec4 ls_fP; 
+} gs_in[];
+
+out highp vec4 fColor; 
+out highp vec4 ls_fP; 
+
+void main(void)
+{
+  fColor = vec4(0.0, 0.0, 1.0, 1.0); 
+  ls_fP = gs_in[0].ls_fP;
+  gl_Position = gl_in[0].gl_Position; 
+  EmitVertex(); 
+
+  ls_fP = gs_in[1].ls_fP;
+  gl_Position = gl_in[1].gl_Position; 
+  EmitVertex(); 
+
+  ls_fP = gs_in[2].ls_fP;
+  gl_Position = gl_in[2].gl_Position; 
+  EmitVertex(); 
+
+  ls_fP = gs_in[0].ls_fP;
+  gl_Position = gl_in[0].gl_Position; 
+  EmitVertex(); 
 }
 )DELIM";
 
