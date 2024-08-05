@@ -482,8 +482,7 @@ endif()
 set(LIBRARIES_TO_CHECK
   Boost GMP MPFR VTK Qt6
   Eigen3 OpenGR libpointmatcher LEDA MPFI
-  NTL TBB OpenCV METIS ZLIB
-  Ceres GLPK SCIP OSQP
+  TBB OpenCV METIS ZLIB GLPK SCIP
 )
 
 function(check_library cgal_3rdparty_lib)

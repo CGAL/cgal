@@ -167,12 +167,29 @@ function packageContainer(platforms) {
     }
 }
 
-
 function platformContainer(platforms) {
     platforms.forEach(platform => {
         const $container = $('<div>', { class: 'platform ' + platform.name }).appendTo($platformContainer);
         $container.html("<h2>Results of " + platform.name + "</h2>");
-        $('<p>', { class: 'tplinfo', html: platform.third_party_libraries }).appendTo($container);
+        
+        // Parse third_party_libraries and structure them in a table format
+        const tplString = platform.third_party_libraries.replace("TPL: ", "").trim();
+        const tplArray = tplString.split(",").map(tpl => tpl.trim()).filter(tpl => tpl.length > 0);
+        
+        const $tplTable = $('<table>', { class: 'tpl-table' }).appendTo($container);
+        const $thead = $('<thead>').appendTo($tplTable);
+        const $tbody = $('<tbody>').appendTo($tplTable);
+        
+        $('<tr>').append('<th>Third Party Libraries</th>').appendTo($thead);
+        
+        let $row = $('<tr>').appendTo($tbody);
+        tplArray.forEach((tpl, index) => {
+            if (index > 0 && index % 5 === 0) {
+                $row = $('<tr>').appendTo($tbody);
+            }
+            $('<td>').text(tpl).appendTo($row);
+        });
+
         const letters = ['n', 'w', 'o', 'r'];
         letters.forEach(letter => {
             const $letterContainer = $('<div>', { class: 'letter_container ' + letter }).appendTo($container);

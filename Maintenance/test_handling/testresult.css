@@ -116,3 +116,35 @@ TABLE.result TD > a.package_name {
 .platform-link {
     margin-right: 10px;
 }
+
+/* Summary Page */
+
+.tpl-table {
+    width: auto;
+    border-collapse: collapse;
+    margin-top: 10px;
+    table-layout: fixed;
+}
+
+.tpl-table th, .tpl-table td {
+    border: 1px solid #e0e0e0; /* Couleur légèrement différente */
+    padding: 4px 8px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.tpl-table tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.tpl-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.tpl-table th {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: #f7f7f7;
+    color: #333;
+    font-weight: normal;
+}
