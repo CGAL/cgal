@@ -16,14 +16,12 @@
 
 #include <CGAL/config.h>
 
-#ifdef CGAL_EIGEN3_ENABLED
+//#ifdef CGAL_EIGEN3_ENABLED
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/SVD>
 #include <Eigen/Sparse>
-
-//#include <boost/iterator/iterator_facade.hpp>
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -96,9 +94,6 @@ std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nearest_neighbor(Vertices& points, V
   const int ndim = 3;
 
   Eigen_matrix_to_point_map a(points);
-  Point_3 p0 = get(a, 0);
-  Point_3 p1 = get(a, 1);
-  Point_3 p5 = get(a, 5);
 
   KDTree kdtree(boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(points.rows()), KDTree::Splitter(), Search_traits(Eigen_matrix_to_point_map(points)));
   kdtree.build();
@@ -117,7 +112,7 @@ std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nearest_neighbor(Vertices& points, V
   }
 
   return std::make_pair(idz, dist);
-}
+}/*
 
 Vertices calc_normals(Vertices& points, Faces& faces) {
   Vertices face_normals(faces.rows(), 3);
@@ -140,7 +135,7 @@ Vertices calc_normals(Vertices& points, Faces& faces) {
   }
 
   return normals;
-}
+}*/
 
 template <typename T>
 int sign(T val) {
@@ -153,6 +148,7 @@ void insertSparseMatrix(const SparseMat& mat, std::vector<SparseTriplet>& coeffi
       coefficients.push_back(SparseTriplet(start_i + it.row(), start_j + it.col(), it.value()));
 }
 
+/*
 std::pair<Matrix, Vertex> point2point(Vertices X, Vertices Y) { // Transform step for rigid ICP
   assert(X.rows() == Y.rows());
 
@@ -171,7 +167,7 @@ std::pair<Matrix, Vertex> point2point(Vertices X, Vertices Y) { // Transform ste
   Vertex t = y_mean - R * x_mean;
 
   return std::make_pair(R, t);
-}
+}*/
 
 template <typename T>
 Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
@@ -191,23 +187,26 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *
 * \brief calculates non-rigid transformation of a mesh onto a set of oriented points.
 *
-* A non-rigid ICP, iterative closest point, method based on https://vgl.ict.usc.edu/Research/NonRigidRegistration/MODERN%20TECHNIQUES%20AND%20APPLICATIONS%20FOR%20REAL-TIME%20NON-RIGID%20REGISTRATION.pdf .
+* A non-rigid ICP, iterative closest point, method based on
+* <A HREF="https://vgl.ict.usc.edu/Research/NonRigidRegistration/MODERN%20TECHNIQUES%20AND%20APPLICATIONS%20FOR%20REAL-TIME%20NON-RIGID%20REGISTRATION.pdf">a SIGGRAPH'16 Tutorial</A>.
 * The method uses a few correspondences between the source and the target for the rough alignment. The iterative closest point method
 * iteratively approaches the target by minimizing the distance between vertices of the source and points of the target.
 *
 * @tparam TriangleMesh a model of `MutableFaceGraph`.
 * @tparam PointRange a model of the `concept ForwardRange` whose value type is the point type.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
- *   as key type and a \cgal Kernel `Vector_3` as value type.
+*   as key type and a \cgal Kernel `Vector_3` as value type.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
- *   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+*   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
+* @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
+* @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param source the triangle mesh that should be mapped onto target.
 * @param target the target triangle mesh.
 * @param vtm a writeable vertex property map of source to store the translation vector of the registration.
 * @param vrm a writeable vertex property map of source to store the rotation part of the registration.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" providing a point_map and normal_map for the PointRange
 * @param correspondences a vector given matching points between the source and the target
 *
 * \cgalNamedParamsBegin
@@ -274,8 +273,8 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   const NamedParameters2& np2 = parameters::default_values())
 {
   const size_t iter = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::number_of_iterations), 50);
-  const double w1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_energy), 2);
-  const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_point_energy), 0.1);
+  const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_energy), 2);
+  const double w1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_point_energy), 0.1);
   const double w3 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::as_rigid_as_possible_energy), 20);
   const double max_matching_dist = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::max_matching_dist), 0);
 
@@ -431,16 +430,17 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   weight_coefficients.clear();
   internal::SparseMat D(Z.rows() + 2 * dim + 3 * edim, Z.rows() + 2 * dim + 3 * edim);
   for (internal::Index i = 0; i < Z.rows(); ++i) {
-    weight_coefficients.push_back(internal::SparseTriplet(i, i, w1));
+    weight_coefficients.push_back(internal::SparseTriplet(i, i, w2));
   }
   for (internal::Index i = Z.rows(); i < Z.rows() + dim; ++i) {
-    weight_coefficients.push_back(internal::SparseTriplet(i, i, w2));
+    weight_coefficients.push_back(internal::SparseTriplet(i, i, w1));
   }
   for (internal::Index i = Z.rows() + dim; i < Z.rows() + dim + 3 * edim; ++i) {
     weight_coefficients.push_back(internal::SparseTriplet(i, i, w3));
   }
   D.setFromTriplets(weight_coefficients.begin(), weight_coefficients.end());
 
+  /// Setting very high weight for given correspondences.
   for (internal::Index i = 0; i < corr.rows(); ++i) {
     D.coeffRef(Z.rows() + corr(i, 0), Z.rows() + corr(i, 0)) = 1e15f;
     D.coeffRef(Z.rows() * 2 + corr(i, 0), Z.rows() * 2 + corr(i, 0)) = 1e15f;
@@ -455,8 +455,8 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   std::vector<Eigen::Matrix<internal::ScalarType, 3, 3>> Rotations(Z.rows());
 
   size_t coefficients_size = coefficients.size();
+
   for (size_t it = 0; it < iter; ++it) {
-    std::cout << "=";
     if (it > 0) {
       coefficients.erase(coefficients.begin() + coefficients_size, coefficients.end());
     }
@@ -526,9 +526,10 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 
     A.setFromTriplets(coefficients.begin(), coefficients.end());
 
-    if (it == 0) {
+    // There does not seem to be an advantage in performance
+    /*if (it == 0) {
       cg.analyzePattern(A.transpose() * D * A + W);
-    }
+    }*/
     cg.factorize(A.transpose() * D * A + W);
     internal::Vector x = cg.solve(A.transpose() * D * b);
 
@@ -536,6 +537,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     Z(Eigen::indexing::all, 0) = x(Eigen::seq(0, Z.rows() - 1));
     Z(Eigen::indexing::all, 1) = x(Eigen::seq(Z.rows(), 2 * Z.rows() - 1));
     Z(Eigen::indexing::all, 2) = x(Eigen::seq(2 * Z.rows(), 3 * Z.rows() - 1));
+
 
     // Update edge neighborhoods by new local rotation
     if (it == (iter - 1)) {
@@ -560,6 +562,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
       }
     }
     else {
+      // Regular matrix update is happening here (taking linearized coefficients, recreating matrix and updating rotations)
       for (internal::Index i = 0; i < edim; ++i) {
         int ni = Ni(i);
         internal::Matrix R = internal::rot(x(dim + 2 * Z.rows() + ni),
@@ -569,7 +572,6 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
       }
     }
   }
-  std::cout << " done." << std::endl;
 
   idx = 0;
   for (auto v : vertices(source)) {
@@ -587,15 +589,15 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     idx++;
   }
 }
-/*
 
 /*!
 * \ingroup PMP_registration_grp
 *
 * \brief calculates non-rigid transformation of a mesh onto another mesh.
 *
-* A non-rigid ICP, iterative closest point, method based on https://vgl.ict.usc.edu/Research/NonRigidRegistration/MODERN%20TECHNIQUES%20AND%20APPLICATIONS%20FOR%20REAL-TIME%20NON-RIGID%20REGISTRATION.pdf .
-* The method uses a few correspondences between the source and the target for the rough alignment. The iterative closest point method
+* A non-rigid ICP, iterative closest point, method based on
+* <A HREF="https://vgl.ict.usc.edu/Research/NonRigidRegistration/MODERN%20TECHNIQUES%20AND%20APPLICATIONS%20FOR%20REAL-TIME%20NON-RIGID%20REGISTRATION.pdf">a SIGGRAPH'16 Tutorial</A>.
+* The method uses optional correspondences between the source and the target for the rough alignment. The iterative closest point method
 * iteratively approaches the target by minimizing the distance between vertices of the source and points of the target.
 *
 * @tparam TriangleMesh1 a model of `MutableFaceGraph`.
@@ -604,13 +606,15 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
  *   as key type and a \cgal Kernel `Vector_3` as value type.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
  *   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+* @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters1"
+* @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters2"
 *
 * @param source the triangle mesh that should be mapped onto target.
 * @param target the target point range with oriented normals.
 * @param vtm a writeable vertex property map of source to store the translation vector of the registration.
 * @param vrm a writeable vertex property map of source to store the rotation part of the registration.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters1" of the source and the method among the ones listed below
+* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters2" of the target providing a vertex point map and a vertex normal map.
 * @param correspondences a vector given matching points between the source and the target
 *
 * \cgalNamedParamsBegin
@@ -635,11 +639,11 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 *   \cgalParamNBegin{as_rigid_as_possible_energy}
 *     \cgalParamDescription{uses the topology of the mesh to determine how a vertex it deforming with respect to its neighbors.}
 *     \cgalParamType{double}
-*     \cgalParamDefault{`20`}
+*     \cgalParamDefault{`50`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{max_matching_dist}
-*     \cgalParamDescription{the maximum distance for a vertex in source to match with a point in target}
+*     \cgalParamDescription{the maximum distance for a vertex in source to match with a point in target. 0 means that there is no max distance.}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
@@ -660,6 +664,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
+*
 */
 
 template <typename TriangleMesh1, typename TriangleMesh2,
@@ -672,7 +677,7 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
   const std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>& correspondences = std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>(),
-  const NamedParameters1& np = parameters::default_values(),
+  const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values())
 {
   using Gt2 = typename GetGeomTraits<TriangleMesh2, NamedParameters2>::type;
@@ -713,7 +718,7 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
   for (auto p : correspondences)
     correspondences_pts.push_back(std::make_pair(p.first, static_cast<std::size_t>(p.second)));
 
-  non_rigid_mesh_to_points_registration(source, points, vtm, vrm, correspondences_pts, np, parameters::point_map(Point_map()).normal_map(Normal_map()));
+  non_rigid_mesh_to_points_registration(source, points, vtm, vrm, correspondences_pts, np1, parameters::point_map(Point_map()).normal_map(Normal_map()));
 }
 
 /*!
@@ -721,7 +726,7 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
 *
 * \brief applies a non-rigid transformation to the vertices of the mesh. Face and vertex normal vectors are invalid after transformation.
 *
-* @tparam TriangleMesh1 a model of `MutableFaceGraph`.
+* @tparam TriangleMesh a model of `MutableFaceGraph`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
  *   as key type and a \cgal Kernel `Vector_3` as value type.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
@@ -733,7 +738,7 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
 * @param vrm a readable vertex property map of source to store the rotation part of the registration.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 *
-* \cgalNamedParamsBegin*
+* \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
@@ -789,6 +794,6 @@ void apply_non_rigid_transformation(TriangleMesh& mesh,
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
-#endif
+//#endif // CGAL_EIGEN3_ENABLED
 
 #endif
