@@ -17,13 +17,12 @@
 
 namespace CGAL
 {
-
 //------------------------------------------------------------------------------
 const char VERTEX_SOURCE_COLOR[]=R"DELIM(
 #version 150
-in highp vec4 P;
-in highp vec3 N;
-in highp vec3 Color;
+in highp vec4 a_Pos;
+in highp vec3 a_Normal;
+in highp vec3 a_Color;
 
 uniform highp mat4 u_Mvp;
 uniform highp mat4 u_Mv;
@@ -36,13 +35,13 @@ out highp vec4 fColor;
 
 void main(void)
 {
-  ls_fP = P;
-  vs_fP = u_Mv * P;
+  ls_fP = a_Pos;
+  vs_fP = u_Mv * a_Pos;
 
-  fN = mat3(u_Mv)* N;
-  fColor = vec4(Color, 1.0);
+  fN = mat3(u_Mv)* a_Normal;
+  fColor = vec4(a_Color, 1.0);
 
-  gl_Position = u_Mvp * P;
+  gl_Position = u_Mvp * a_Pos;
   gl_PointSize = u_PointSize;
 }
 )DELIM";
@@ -72,12 +71,12 @@ void main(void)
   highp vec3 L = u_LightPos.xyz - vs_fP.xyz;
   highp vec3 V = -vs_fP.xyz;
 
-  highp vec3 N = normalize(fN);
+  highp vec3 a_Normal = normalize(fN);
   L = normalize(L);
   V = normalize(V);
 
-  highp vec3 R = reflect(-L, N);
-  highp vec4 diffuse = vec4(max(dot(N,L), 0.0) * u_LightDiff.rgb * fColor.rgb, 1.0);
+  highp vec3 R = reflect(-L, a_Normal);
+  highp vec4 diffuse = vec4(max(dot(a_Normal,L), 0.0) * u_LightDiff.rgb * fColor.rgb, 1.0);
   highp vec4 ambient = vec4(u_LightAmb.rgb * fColor.rgb, 1.0);
   highp vec4 specular = pow(max(dot(R,V), 0.0), u_SpecPower) * u_LightSpec;
 
@@ -102,8 +101,8 @@ void main(void)
 
 const char VERTEX_SOURCE_P_L[]=R"DELIM(
 #version 150
-in highp vec4 P;
-in highp vec3 Color;
+in highp vec4 a_Pos;
+in highp vec3 a_Color;
 
 uniform highp mat4  u_Mvp;
 uniform highp float u_PointSize;
@@ -275,14 +274,14 @@ void main(void)
 
 const char VERTEX_SOURCE_CLIPPING_PLANE[]=R"DELIM(
 #version 150
-in highp vec3 P;
+in highp vec3 a_Pos;
 
 uniform highp mat4 u_Vp;
 uniform highp mat4 u_M;
 
 void main(void)
 {
-  gl_Position = u_Vp * u_M * vec4(P, 1.0);
+  gl_Position = u_Vp * u_M * vec4(a_Pos, 1.0);
 }
 )DELIM";
 
@@ -299,8 +298,8 @@ void main(void)
 
 const char VERTEX_SOURCE_LINE[]=R"DELIM(
 #version 150
-in highp vec3 P;
-in highp vec3 Color;
+in highp vec3 a_Pos;
+in highp vec3 a_Color;
 
 out VS_OUT {
   highp vec4 color;
@@ -308,9 +307,9 @@ out VS_OUT {
 
 void main(void)
 {
-  vs_out.color = vec4(Color, 1.0);
+  vs_out.color = vec4(a_Color, 1.0);
 
-  gl_Position = vec4(P, 1.0);
+  gl_Position = vec4(a_Pos, 1.0);
 }
 )DELIM";
 
@@ -457,12 +456,12 @@ void main(void)
 
 const char VERTEX_SOURCE_NORMAL[]=R"DELIM(
 #version 150
-in highp vec4 P;
-in highp vec3 N;
+in highp vec4 a_Pos;
+in highp vec3 a_Normal;
  
 uniform highp mat4  u_Mv;
 uniform highp vec4  u_Color;
-uniform highp float u_UseMonoColor;
+uniform bool        u_UseMonoColor;
 
 out VS_OUT {
   highp vec4  color;
@@ -471,19 +470,19 @@ out VS_OUT {
 
 void main(void)
 {
-  if (u_UseMonoColor > 0.0)
+  if (u_UseMonoColor)
   {
     vs_out.color = u_Color; 
   }
   else 
   {
-    vs_out.color = vec4(abs(normalize(N)), 1); 
+    vs_out.color = vec4(abs(normalize(a_Normal)), 1); 
   }
 
   mat3 normalMatrix = mat3(transpose(inverse(u_Mv)));
-  vs_out.normal = normalize(vec3(vec4(normalMatrix * N, 0.0)));
+  vs_out.normal = normalize(vec3(vec4(normalMatrix * a_Normal, 0.0)));
   
-  gl_Position = P; 
+  gl_Position = a_Pos; 
 }
 )DELIM";
 
@@ -504,6 +503,7 @@ uniform highp mat4  u_Projection;
 uniform highp float u_Factor;
 uniform highp float u_SceneRadius;
 uniform highp mat4  u_Mv;
+uniform bool        u_DisplayFaceNormal;
 
 void GenerateLine(int index)
 {
@@ -521,11 +521,39 @@ void GenerateLine(int index)
   EndPrimitive();
 }
 
-void main()
+void DrawVerticesNormal()
 {
   GenerateLine(0); // first vertex normal
   GenerateLine(1); // second vertex normal
   GenerateLine(2); // third vertex normal
+}
+
+void DrawFaceNormal()
+{
+  fColor = (gs_in[0].color + gs_in[1].color + gs_in[2].color) / 3; 
+  vec4 center = (gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position) / 3;
+  ls_fP = center;
+  gl_Position = u_Projection * u_Mv * center;
+  EmitVertex();
+
+  vec3 n = normalize((gs_in[0].normal.xyz + gs_in[1].normal.xyz + gs_in[2].normal.xyz) / 3);
+
+  vec4 newPosition = u_Mv * center + vec4(n, 0.0) * u_SceneRadius * u_Factor;
+  ls_fP = inverse(u_Mv) * newPosition;
+  gl_Position = u_Projection * newPosition;
+  EmitVertex();
+}
+
+void main()
+{
+  if (u_DisplayFaceNormal)
+  {
+    DrawFaceNormal();
+  }
+  else 
+  {
+    DrawVerticesNormal();
+  }
 }
 )DELIM";
 
@@ -591,12 +619,12 @@ void main(void)
   highp vec3 L = u_LightPos.xyz - fP.xyz;
   highp vec3 V = -fP.xyz;
 
-  highp vec3 N = normalize(fN);
+  highp vec3 a_Normal = normalize(fN);
   L = normalize(L);
   V = normalize(V);
 
-  highp vec3 R = reflect(-L, N);
-  highp vec4 diffuse = max(dot(N,L), 0.0) * u_LightDiff * fColor;
+  highp vec3 R = reflect(-L, a_Normal);
+  highp vec4 diffuse = max(dot(a_Normal,L), 0.0) * u_LightDiff * fColor;
   highp vec4 specular = pow(max(dot(R,V), 0.0), u_SpecPower) * u_LightSpec;
 
   gl_FragColor = u_LightAmb*fColor + diffuse;

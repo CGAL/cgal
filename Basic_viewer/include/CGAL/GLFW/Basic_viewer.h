@@ -293,6 +293,7 @@ namespace GLFW
     bool m_DrawCylinderEdge { false };
     bool m_DrawSphereVertex { false };
 
+    bool m_DisplayFaceNormal { true };
     bool m_UseNormalMonoColor { false };
     bool m_UseMonoColor { false };
 
@@ -413,6 +414,7 @@ namespace GLFW
 
       /*SCENE*/
       NORMALS_DISPLAY,
+      FACE_NORMALS_DISPLAY,
       VERTICES_DISPLAY,
       FACES_DISPLAY,
       EDGES_DISPLAY,

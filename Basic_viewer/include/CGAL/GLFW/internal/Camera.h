@@ -396,26 +396,17 @@ vec3f Camera::get_position() const
 
 vec3f Camera::get_forward() const
 {
-  vec3f forward;
-  forward = m_Orientation.inverse() * -vec3f::UnitZ();
-
-  return forward.normalized();
+  return (m_Orientation.inverse() * -vec3f::UnitZ()).normalized();
 }
 
 vec3f Camera::get_right() const
 {
-  vec3f right;
-  right = m_Orientation.inverse() * vec3f::UnitX();
-
-  return right.normalized();
+  return (m_Orientation.inverse() * vec3f::UnitX()).normalized();
 }
 
 vec3f Camera::get_up() const
 {
-  vec3f up;
-  up = m_Orientation.inverse() * vec3f::UnitY();
-
-  return up.normalized();
+  return (m_Orientation.inverse() * vec3f::UnitY()).normalized();
 }
 
 void Camera::reset_all()
@@ -654,8 +645,8 @@ void Camera::align_to_nearest_axis()
 void Camera::align_to_plane(const vec3f& normal)
 {
   vec3f forward = get_forward();
-  float dotFF = -forward.dot(normal);   
-  float dotFB = -forward.dot(-normal);  
+  float dotFF = forward.dot(-normal);   
+  float dotFB = forward.dot(normal);  
   
   m_Pitch = m_TargetPitch;
   m_Yaw = m_TargetYaw;

@@ -54,6 +54,8 @@ public:
   inline void increase_translation_smoothness(const float deltaTime) { m_TranslationSmoothFactor = std::max(m_TranslationSmoothFactor-deltaTime, 0.01f); }
   inline void decrease_translation_smoothness(const float deltaTime) { m_TranslationSmoothFactor = std::min(m_TranslationSmoothFactor+deltaTime, 1.f); }
 
+  void align_to_direction(const vec3f& direction);
+
 private:
   quatf m_Orientation { quatf::Identity() };
 
@@ -208,6 +210,26 @@ bool Clipping_plane::need_update() const
 void Clipping_plane::set_orientation(const vec3f& normal)
 {
   m_Orientation = quatf::FromTwoVectors(vec3f::UnitZ(), normal);
+}
+
+void Clipping_plane::align_to_direction(const vec3f& direction)
+{
+  vec3f normal = get_normal();
+  float dotFF = normal.dot(-direction);   
+  float dotFB = normal.dot(direction);  
+  
+  m_Pitch = m_TargetPitch;
+  m_Yaw = m_TargetYaw;
+  m_Position = m_TargetPosition;
+
+  if (dotFF > dotFB)
+  {
+    m_Orientation = quatf::FromTwoVectors(normal, -direction) * m_Orientation;
+  }
+  else 
+  {
+    m_Orientation = quatf::FromTwoVectors(normal,  direction) * m_Orientation;
+  }
 }
 
 #endif // CGAL_CLIPPING_PLANE_H

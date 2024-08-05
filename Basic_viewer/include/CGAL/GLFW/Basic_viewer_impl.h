@@ -262,8 +262,8 @@ namespace GLFW
   {
     // World axis initialization
     m_WorldAxisRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE"
-      {ShaderDataType::FLOAT3}, // P"
-      {ShaderDataType::FLOAT3}, // Color
+      {ShaderDataType::FLOAT3}, // a_Pos"
+      {ShaderDataType::FLOAT3}, // a_Color
     });
     m_WorldAxisRenderer.set_width(3.f);
     m_WorldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
@@ -274,8 +274,8 @@ namespace GLFW
     float cameraSize = m_Camera.get_size() * 0.5;
     // XY grid axis initialization
     m_XYAxisRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE
-      {ShaderDataType::FLOAT3}, // P
-      {ShaderDataType::FLOAT3}, // Color
+      {ShaderDataType::FLOAT3}, // a_Pos
+      {ShaderDataType::FLOAT3}, // a_Color
     });
     m_XYAxisRenderer.set_width(5.f);
     m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
@@ -284,8 +284,8 @@ namespace GLFW
 
     // XY grid initialization 
     m_XYGridRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE
-      {ShaderDataType::FLOAT3}, // P
-      {ShaderDataType::FLOAT3}, // Color
+      {ShaderDataType::FLOAT3}, // a_Pos
+      {ShaderDataType::FLOAT3}, // a_Color
     });
     m_XYGridRenderer.set_width(2.f);
     m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitX(), vec3f(.8f, .8f, .8f)); // -x-axis
@@ -570,16 +570,24 @@ namespace GLFW
     m_ShaderNormal->set_vec4f("u_Color", color.data());
     if (m_UseNormalMonoColor)
     {
-      m_ShaderNormal->set_float("u_UseMonoColor", 1.0);
+      m_ShaderNormal->set_int("u_UseMonoColor", 1);
     }
     else
     {
-      m_ShaderNormal->set_float("u_UseMonoColor", 0.0);
+      m_ShaderNormal->set_int("u_UseMonoColor", 0);
     }
     m_ShaderNormal->set_mat4f("u_Projection", m_ProjectionMatrix.data());
     m_ShaderNormal->set_float("u_Factor", m_NormalHeightFactor);
     m_ShaderNormal->set_float("u_SceneRadius", m_Camera.get_radius());
-    
+    if (m_DisplayFaceNormal)
+    {
+      m_ShaderNormal->set_int("u_DisplayFaceNormal", 1);
+    }
+    else
+    {
+      m_ShaderNormal->set_int("u_DisplayFaceNormal", 0);
+    }
+
     m_ShaderNormal->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderNormal->set_vec4f("u_PointPlane", m_PointPlane.data());
     m_ShaderNormal->set_float("u_RenderingMode", static_cast<float>(mode));
@@ -892,9 +900,9 @@ namespace GLFW
     const unsigned int NB_SUBDIVISIONS = 30;
 
     m_ClippingPlane.initialize_buffers({ // Use VERTEX_SOURCE_CLIPPING_PLANE
-      {ShaderDataType::FLOAT3}, // P
+      {ShaderDataType::FLOAT3}, // a_Pos
     });
-    m_ClippingPlane.set_width(0.1f);
+    m_ClippingPlane.set_width(0.2f);
     generate_grid(m_ClippingPlane, size, NB_SUBDIVISIONS);
     m_ClippingPlane.load_buffers();
 
@@ -1017,6 +1025,10 @@ namespace GLFW
       {
         if (is_key_pressed(m_Window, GLFW_KEY_LEFT_CONTROL))
         {
+          m_ClippingPlane.align_to_direction(m_Camera.get_forward());
+        }
+        else if (is_key_pressed(m_Window, GLFW_KEY_LEFT_SHIFT))
+        {
           m_Camera.align_to_plane(m_ClippingPlane.get_normal());
         }
         else
@@ -1108,6 +1120,9 @@ namespace GLFW
     /*SCENE*/
     case NORMALS_DISPLAY:
       m_DrawNormals = !m_DrawNormals;
+      break;
+    case FACE_NORMALS_DISPLAY:
+      m_DisplayFaceNormal = !m_DisplayFaceNormal; 
       break;
     case VERTICES_DISPLAY:
       m_DrawVertices = !m_DrawVertices;
@@ -1563,6 +1578,8 @@ namespace GLFW
     add_keyboard_action({GLFW_KEY_F2                      }, InputMode::RELEASE, SCREENSHOT);
 
     /*SCENE*/
+
+    add_keyboard_action({GLFW_KEY_N, GLFW_KEY_LEFT_SHIFT}, InputMode::RELEASE, FACE_NORMALS_DISPLAY);
     add_keyboard_action({GLFW_KEY_N, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, NORMALS_DISPLAY);
     add_keyboard_action({GLFW_KEY_M, GLFW_KEY_LEFT_CONTROL}, InputMode::RELEASE, NORMALS_MONO_COLOR);
 
@@ -1701,7 +1718,8 @@ namespace GLFW
         {"",                                                         ""},
         {"[WHEEL]",                                                  "Zoom in/out"},
         {"[LEFT_DOUBLE_CLICK]",                                      "Aligns camera to nearest axis"},
-        {"[LCTRL+LEFT_DOUBLE_CLICK]",                                "Aligns camera to clipping plane"},
+        {"[LSHIFT+LEFT_DOUBLE_CLICK]",                               "Aligns camera to clipping plane"},
+        {"[LCTRL+LEFT_DOUBLE_CLICK]",                                "Aligns clipping plane to camera"},
         {"[RIGHT_DOUBLE_CLICK]",                                     "Center the camera to the object"},
         {"[LCTRL+RIGHT_DOUBLE_CLICK]",                               "Reset camera position & orientation"},
         {get_binding_text_from_action(CHANGE_PIVOT_POINT),           "Change pivot point (center of the scene)"},
@@ -1711,6 +1729,7 @@ namespace GLFW
         {get_binding_text_from_action(INC_LIGHT_ALL),         "Increase light (all colors, use shift/alt/ctrl for one rgb component)"},
         {get_binding_text_from_action(DEC_LIGHT_ALL),         "Decrease light (all colors, use shift/alt/ctrl for one rgb component)"},
         {"",                                                  ""},
+        {get_binding_text_from_action(FACE_NORMALS_DISPLAY),  "Toggle face/vertex normals for normal display"},
         {get_binding_text_from_action(NORMALS_DISPLAY),       "Toggle normals display"},
         {get_binding_text_from_action(VERTICES_DISPLAY),      "Toggle vertices display"},
         {get_binding_text_from_action(SPHERE_VERTEX_DISPLAY), "Toggle vertices display as sphere"},
