@@ -170,13 +170,17 @@ function packageContainer(platforms) {
 function platformContainer(platforms) {
     platforms.forEach(platform => {
         const $container = $('<div>', { class: 'platform ' + platform.name }).appendTo($platformContainer);
-        $container.html("<h2>Results of " + platform.name + "</h2>");
-        
-        // Parse third_party_libraries and structure them in a table format
+        $container.html(`<h2>Results of ${platform.name}</h2>`);
         const tplString = platform.third_party_libraries.replace("TPL: ", "").trim();
         const tplArray = tplString.split(",").map(tpl => tpl.trim()).filter(tpl => tpl.length > 0);
-        
-        const $tplTable = $('<table>', { class: 'tpl-table' }).appendTo($container);
+        const $toggleButton = $('<button>', {
+            text: 'Third Party Libraries',
+            class: 'tpl-toggle-button',
+            click: function() {
+                $tplTable.toggle();
+            }
+        }).appendTo($container);
+        const $tplTable = $('<table>', { class: 'tpl-table', css: { display: 'none' } }).appendTo($container);
         const $thead = $('<thead>').appendTo($tplTable);
         const $tbody = $('<tbody>').appendTo($tplTable);
         
