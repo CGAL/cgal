@@ -440,7 +440,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   }
   D.setFromTriplets(weight_coefficients.begin(), weight_coefficients.end());
 
-  /// Setting very high weight for given correspondences.
+  // Setting very high weight for given correspondences.
   for (internal::Index i = 0; i < corr.rows(); ++i) {
     D.coeffRef(Z.rows() + corr(i, 0), Z.rows() + corr(i, 0)) = 1e15f;
     D.coeffRef(Z.rows() * 2 + corr(i, 0), Z.rows() * 2 + corr(i, 0)) = 1e15f;
