@@ -79,6 +79,7 @@ public:
     void appendDescription(const std::string& desc);
 
     std::string toString() const;
+    void dumpEdges(const std::string& base_filename) const;
 
 protected:
     Polyhedron();

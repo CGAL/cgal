@@ -32,6 +32,8 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2, Pla
     CGAL::Object obj = CGAL::intersection(*plane1, *plane2, *plane3);
     if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj))
       result = KernelFactory::createPoint3(*ipoint);
+    else
+      CGAL_warning_msg(false, "intersection of 3 planes failed to produce a point");
 #else
     result = Point3SPtr(kernel::intersection(&(*plane1), &(*plane2), &(*plane3)));
 #endif

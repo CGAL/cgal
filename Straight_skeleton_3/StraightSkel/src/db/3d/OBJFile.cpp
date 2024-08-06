@@ -317,8 +317,8 @@ bool OBJFile::save(const std::string& filename, PolyhedronSPtr polyhedron) {
                   num_edges++;
               }
               if (num_edges != facet->edges().size()) {
-                  DEBUG_VAL("W: Facet does not consist of connected edges only (" << num_edges << " VS " << facet->edges().size() << ")");
-                  DEBUG_VAL("W: It is impossible for an obj file to store holes inside a facet.");
+                  DEBUG_VAL("Warning: Facet does not consist of connected edges only (" << num_edges << " VS " << facet->edges().size() << ")");
+                  DEBUG_VAL("Warning: It is impossible for an obj file to store holes inside a facet.");
                   DEBUG_VAR(facet->toString());
               }
               ofs << "\n";

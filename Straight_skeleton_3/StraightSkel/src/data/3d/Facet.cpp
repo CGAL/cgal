@@ -587,7 +587,6 @@ bool Facet::initPlane() {
             result = true;
           }
         }
-
 #else // old code; issues with collinear points
         Point3SPtr points[3];
         unsigned int i = 0;
@@ -827,7 +826,7 @@ std::string Facet::toString() const {
         std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
         while (it_v != vertices_.end()) {
             VertexSPtr vertex = *it_v++;
-            sstr << "\t" << vertex->toString() << "\n";
+            sstr << vertex->toString() << "\n";
         }
     }
     if (edges_.size() > 0) {
@@ -835,7 +834,7 @@ std::string Facet::toString() const {
         std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
             while (it_e != edges_.end()) {
             EdgeSPtr edge = *it_e++;
-            sstr << "\t" << edge->toString() << "\n";
+            sstr << edge->toString() << "\n";
         }
     }
     if (triangles_.size() > 0) {
@@ -843,10 +842,10 @@ std::string Facet::toString() const {
         std::list<TriangleSPtr>::const_iterator it_t = triangles_.begin();
         while (it_t != triangles_.end()) {
             TriangleSPtr triangle = *it_t++;
-            sstr << "\t" << triangle->toString() << "\n";
+            sstr << triangle->toString() << "\n";
         }
     }
-    sstr << ")\n";
+    sstr << ") END FACET TOSTRING()\n";
 
     return sstr.str();
 }

@@ -339,7 +339,8 @@ void SimpleStraightSkel::run() {
     double t_start = util::Timer::now();
 
     PolyhedronSPtr polyhedron = polyhedron_->clone();
-    DEBUG_VAR(polyhedron->toString());
+
+    db::_3d::OBJFile::save("results/init_pre.obj", polyhedron);
 
     // Simple test for weighted straight skeleton.
     //unsigned int j = 0;
@@ -438,7 +439,7 @@ void SimpleStraightSkel::run() {
         CGAL::FT offset = 0.0;
         CGAL::FT offset_prev = 0.0;
 
-        db::_3d::OBJFile::save("results/init.obj", polyhedron);
+        db::_3d::OBJFile::save("results/init_post.obj", polyhedron);
 
         AbstractEventSPtr event = nextEvent(polyhedron, offset);
         while (event) {
@@ -453,6 +454,8 @@ void SimpleStraightSkel::run() {
             }
             offset = event->getOffset();
             polyhedron = shiftFacets(polyhedron, offset - offset_prev);
+            db::_3d::OBJFile::save("results/shift_" + std::to_string(CGAL::to_double(offset)) + ".obj", polyhedron);
+
             if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT) {
                 event->setPolyhedronResult(polyhedron);
                 skel_result_->addEvent(event);
@@ -463,6 +466,7 @@ void SimpleStraightSkel::run() {
                     controller_->screenshot();
                 }
             } else if (event->getType() == AbstractEvent::SAVE_OFFSET_EVENT) {
+                // @fixme handle "save events" being at the same time as another event type
                 event->setPolyhedronResult(polyhedron);
                 skel_result_->addEvent(event);
                 std::stringstream ss_filename;
@@ -532,6 +536,8 @@ void SimpleStraightSkel::run() {
         //skel_result_->appendDescription("controller=" +
         //        util::StringFactory::fromBoolean(controller_) + "; ");
         DEBUG_VAR(skel_result_->toString());
+    } else {
+        DEBUG_PRINT("Error: Failed to initialize");
     }
 }
 
@@ -789,12 +795,15 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         }
 
         if (use_fast_vertex_splitter_ && equal_speeds && vertex->isConvex()) {
+            std::cout << "Split convex vertex" << std::endl;
             AbstractVertexSplitter::splitConvexVertex(vertex);
         } else if (use_fast_vertex_splitter_ && equal_speeds && vertex->isReflex()) {
+            std::cout << "Split reflex vertex" << std::endl;
             AbstractVertexSplitter::splitReflexVertex(vertex);
         } else {
             l.unlock();
             DEBUG_VAR(vertex->toString());
+            std::cout << "Split generic vertex" << std::endl;
             vertex_splitter_->splitVertex(vertex);
             if (controller_) {
                 controller_->setDispPolyhedron(polyhedron);
@@ -3390,6 +3399,9 @@ PolyhedronSPtr SimpleStraightSkel::shiftFacets(PolyhedronSPtr polyhedron, CGAL::
 {
     std::cout << "~~~~ Shift by " << offset << std::endl;
 
+    std::ofstream shift_out("results/last_shift.polylines.txt");
+    shift_out.precision(17);
+
     PolyhedronSPtr result = Polyhedron::create();
 
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
@@ -3415,6 +3427,7 @@ PolyhedronSPtr SimpleStraightSkel::shiftFacets(PolyhedronSPtr polyhedron, CGAL::
         if (i >= 3) {
             Point3SPtr point;
             point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+            shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
 
             if (!point) {
                 result = PolyhedronSPtr();
@@ -3606,17 +3619,11 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
         vertices[i] = VertexSPtr();
     }
 
-    // @fixme? should seek a non collinear vertex?
+    // @fixme? should seek the first non-collinear vertex? Or is a different type of event?
     vertices[0] = vertex_src_offset->prev(edge_offset->getFacetL());
     vertices[1] = vertex_src_offset->next(edge_offset->getFacetR());
     vertices[2] = vertex_dst_offset->prev(edge_offset->getFacetR());
     vertices[3] = vertex_dst_offset->next(edge_offset->getFacetL());
-
-    std::cout << "vertices:\n"
-              << "     " << *(vertices[0]->getPoint()) << "\n"
-              << "     " << *(vertices[1]->getPoint()) << "\n"
-              << "     " << *(vertices[2]->getPoint()) << "\n"
-              << "     " << *(vertices[3]->getPoint()) << std::endl;
 
     FacetSPtr facets[4];
     for (unsigned int i = 0; i < 4; i++) {
@@ -3626,6 +3633,19 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
     facets[3] = edge_offset->getFacetL();
     facets[0] = facets[3]->next(vertex_src_offset);
     facets[2] = facets[1]->next(vertex_dst_offset);
+
+    std::cout << "vertices:\n"
+              << "     " << *(vertices[0]->getPoint()) << "\n"
+              << "     " << *(vertices[1]->getPoint()) << "\n"
+              << "     " << *(vertices[2]->getPoint()) << "\n"
+              << "     " << *(vertices[3]->getPoint()) << std::endl;
+
+    for(std::size_t i=0; i<4; ++i)
+    {
+      std::cout << "facet #" << i << "\n";
+      for(auto p : facets[i]->vertices_)
+        std::cout << "  " << *(p->getPoint()) << "\n";
+    }
 
     // check if edge should be flipped
     bool flip_edge = true;

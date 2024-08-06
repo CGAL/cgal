@@ -161,6 +161,7 @@ bool Configuration::getBool(const std::string& section, const std::string& key) 
             result = true;
         }
     }
+    std::cout << "GetBool(" << section << " | " << key << ") = " << result << std::endl;
     return result;
 }
 

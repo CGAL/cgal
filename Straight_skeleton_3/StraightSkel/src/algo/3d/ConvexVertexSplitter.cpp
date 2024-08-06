@@ -65,6 +65,8 @@ int ConvexVertexSplitter::countConvexEdges(PolyhedronSPtr polyhedron) {
 }
 
 PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
+    std::cout << "\n> Splitting vertex " << vertex->toString() << std::endl;
+
     PolyhedronSPtr polyhedron = vertex->getPolyhedron();
     if (vertex->degree() <= 3) {
         return polyhedron;
@@ -72,6 +74,8 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
     WriteLock l(polyhedron->mutex());
     vertex->sort();
     std::list<combi> combinations = generateAllCombinations(vertex->degree());
+    std::cout << combinations.size() << " combinations" << std::endl;
+
     combi combi_opt;
     PolyhedronSPtr poly_opt;
     PolyhedronSPtr poly_opt_offset;
@@ -87,6 +91,10 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
         if (!poly_c_offset) {
             continue;
         }
+        std::cout << "= Base Polyhedron\n" << poly_c->toString() << std::endl;
+        std::cout << "= Shifted Polyhedron\n" << poly_c_offset->toString() << std::endl;
+        poly_c->dumpEdges("results/last_convex_split_base");
+        poly_c_offset->dumpEdges("results/last_convex_split_offset");
         if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
             DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
             num_convex_edges = countConvexEdges(poly_c_offset);

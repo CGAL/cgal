@@ -607,11 +607,11 @@ double Edge::angleTo(EdgeSPtr edge) const {
 std::string Edge::toString() const {
     std::string result("Edge(");
     if (id_ != -1) {
-        result += "id=" + util::StringFactory::fromInteger(id_) + ", ";
+        result += "id=" + util::StringFactory::fromInteger(id_) + ",\n     ";
     } else {
-        // result += util::StringFactory::fromPointer(this) + ", ";
+        // result += util::StringFactory::fromPointer(this) + ",";
     }
-    result += "src=" + vertex_src_->toString() + ", ";
+    result += "src=" + vertex_src_->toString() + ",\n     ";
     result += "dst=" + vertex_dst_->toString();
     if (!facet_l_.expired()) {
         result += ", l=";

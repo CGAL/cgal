@@ -66,6 +66,10 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
 }
 
 int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron, double epsilon) {
+    std::cout << "\n> Merging coplanar faces" << std::endl;
+
+    db::_3d::OBJFile::save("results/coplanar_merge_before.obj", polyhedron, false /*do not triangulate*/);
+
     int result = 0;
     std::list<EdgeSPtr> edges_toremove;
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
@@ -75,6 +79,7 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron, double epsilon)
             edges_toremove.push_back(edge);
         }
     }
+    std::cout << edges_toremove.size() << " edges to merge" << std::endl;
     if (edges_toremove.size() > 0) {
         DEBUG_PRINT("Adjacent facets of the following edges are detected to be coplanar and will be merged.");
     }
@@ -98,6 +103,7 @@ int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron, double epsilon)
         }
         result++;
     }
+    db::_3d::OBJFile::save("results/coplanar_merge_after.obj", polyhedron, false /*do not triangulate*/);
     return result;
 }
 

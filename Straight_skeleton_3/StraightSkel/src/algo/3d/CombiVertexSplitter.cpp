@@ -542,6 +542,12 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
         }
     }
 
+    CGAL_assertion(!combinations_valid.empty());
+    CGAL_assertion(!polys_split.empty());
+    CGAL_assertion(polys_split.size() == combinations_valid.size());
+
+    DEBUG_VAL("Valid split-combination #: " << combinations_valid.size());
+
     unsigned int selected_combi = selected_combi_ % combinations_valid.size();
     it_combi = combinations_valid.begin();
     std::list<PolyhedronSPtr>::iterator it_p = polys_split.begin();

@@ -162,6 +162,7 @@ PolyhedronSPtr AbstractVertexSplitter::splitReflexVertex(VertexSPtr vertex) {
 }
 
 
+// @fixme complete duplicate of the one in SimpleStraightSkel...?
 PolyhedronSPtr AbstractVertexSplitter::shiftFacets(PolyhedronSPtr polyhedron, CGAL::FT offset) {
     PolyhedronSPtr result = Polyhedron::create();
 

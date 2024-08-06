@@ -560,4 +560,23 @@ std::string Polyhedron::toString() const {
     return sstr.str();
 }
 
+void Polyhedron::dumpEdges(const std::string& base_filename) const
+{
+    unsigned int fi = 0;
+    std::list<FacetSPtr>::const_iterator it_f = facets_.begin();
+    while (it_f != facets_.end()) {
+        FacetSPtr facet = *it_f++;
+
+        std::ofstream edge_out(base_filename + "_" + std::to_string(fi++) + ".polylines.txt");
+        edge_out.precision(17);
+
+        std::list<EdgeSPtr>::const_iterator it_e = facet->edges().begin();
+        while (it_e != facet->edges().end()) {
+            EdgeSPtr edge = *it_e++;
+            edge_out << "2 " << *(edge->getVertexSrc()->getPoint()) << " "
+                             << *(edge->getVertexDst()->getPoint()) << std::endl;
+        }
+    }
+}
+
 } }

@@ -236,15 +236,15 @@ CGAL::Sign SelfIntersection::SideOfBisector(FacetSPtr facet, VertexSPtr vertex, 
         CGAL::FT sq_dist_in = KernelWrapper::squared_distance(edge_in->line(), point);
         CGAL::FT sq_dist_out = KernelWrapper::squared_distance(edge_out->line(), point);
 
-        std::cout << "p_in = " << *p_in << std::endl;
-        std::cout << "p_mid = " << *p_mid << std::endl;
-        std::cout << "p_out = " << *p_out << std::endl;
-        std::cout << "query = " << *point << std::endl;
-        std::cout << "or_in = " << or_in << std::endl;
-        std::cout << "or_out = " << or_out << std::endl;
-        std::cout << "or_edge = " << or_edge << std::endl;
-        std::cout << "sq_dist_in = " << sq_dist_in << std::endl;
-        std::cout << "sq_dist_out = " << sq_dist_out << std::endl;
+        // std::cout << "p_in = " << *p_in << std::endl;
+        // std::cout << "p_mid = " << *p_mid << std::endl;
+        // std::cout << "p_out = " << *p_out << std::endl;
+        // std::cout << "query = " << *point << std::endl;
+        // std::cout << "or_in = " << or_in << std::endl;
+        // std::cout << "or_out = " << or_out << std::endl;
+        // std::cout << "or_edge = " << or_edge << std::endl;
+        // std::cout << "sq_dist_in = " << sq_dist_in << std::endl;
+        // std::cout << "sq_dist_out = " << sq_dist_out << std::endl;
 
         // that's for the left turn (convex); for reflex, it's the opposite
         if(or_in == CGAL::POSITIVE) {
@@ -356,8 +356,9 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
         }
 
         if (point_inside_bounds) {
+             // @fixme construction
             CGAL::FT sq_dist = KernelWrapper::squared_distance(edge->line(), point);
-            if (sq_dist < sq_dist_min) { // @fixme construction
+            if (sq_dist < sq_dist_min) {
                 result = edge;
                 sq_dist_min = sq_dist;
             }
@@ -383,10 +384,13 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool ha
         return false;
     }
 
+    // @todo could do with a segment or ray (if degree 1) direclty
     Line3SPtr line = edge->line();
 
-    // @fixme? what if the intersection isn't a point?
     Point3SPtr point = KernelWrapper::intersection(facet->plane(), line);
+    CGAL_assertion(bool(point)); // @fixme? what if the intersection isn't a point?
+    std::cout << "Intersection point " << *point << std::endl;
+
     if (point) {
         Point3SPtr p_src = edge->getVertexSrc()->getPoint();
         Point3SPtr p_dst = edge->getVertexDst()->getPoint();
@@ -439,6 +443,8 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool ha
 }
 
 bool SelfIntersection::hasSelfIntersectingSurface(PolyhedronSPtr polyhedron) {
+    std::cout << "\n> hasSelfIntersectingSurface()" << std::endl;
+
     bool result = false;
     if (SelfIntersection::hasSelfIntersectingFacets(polyhedron)) {
         result = true;
@@ -449,8 +455,10 @@ bool SelfIntersection::hasSelfIntersectingSurface(PolyhedronSPtr polyhedron) {
             std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
             while (it_e != polyhedron->edges().end()) {
                 EdgeSPtr edge = *it_e++;
-                if (isEdgeInsideFacet(facet, edge, true)) {
+                if (isEdgeInsideFacet(facet, edge, true /*handle_deg1_as_ray*/)) {
                     DEBUG_PRINT("Polyhedron has no self-intersecting facets, but the surface is self-intersecting.");
+                    std::cout << facet->toString() << std::endl;
+                    std::cout << edge->toString() << std::endl;
                     result = true;
                     break;
                 }

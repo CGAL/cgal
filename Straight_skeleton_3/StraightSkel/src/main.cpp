@@ -353,6 +353,8 @@ int main(int argc, const char* argv[]) {
             if (!algo::_3d::PolyhedronTransformation::doAll3PlanesIntersect(polyhedron)) {
                 std::cout << "Warning: Not all combinations of 3 planes intersect." << std::endl;
                 rand_move_points = true;
+            } else {
+                std::cout << "No need to perturb" << std::endl;
             }
         }
 
@@ -367,19 +369,24 @@ int main(int argc, const char* argv[]) {
         if (rand_move_points) {
             std::cout << "Points will be moved randomly. "
                  << "(rand_move_points_range=" << rand_move_points_range << ")" << std::endl;
+            db::_3d::OBJFile::save("results/randomized_input_pre.obj", polyhedron);
             algo::_3d::PolyhedronTransformation::randMovePoints(polyhedron, rand_move_points_range);
+            db::_3d::OBJFile::save("results/randomized_input_mid.obj", polyhedron);
         }
 
-        // always sanitize, even if we have not moved points
         std::cout << "Normalize plane coefficients..." << std::endl;
         algo::_3d::SimpleStraightSkel::harmonizeFacetPlanes(polyhedron);
 
+        // always sanitize, even if we have not moved points
         std::cout << "Sanitize..." << std::endl;
         std::string description = polyhedron->getDescription();
         polyhedron = algo::_3d::SimpleStraightSkel::shiftFacets(polyhedron, 0.0);
         polyhedron->clearData();
         polyhedron->setDescription(description);
-        db::_3d::OBJFile::save("results/randomized_input_post.obj", polyhedron);
+
+        if (rand_move_points) {
+            db::_3d::OBJFile::save("results/randomized_input_post.obj", polyhedron);
+        }
 
         if (translate_and_scale_view) {
             data::_3d::Point3SPtr p_box_min =
