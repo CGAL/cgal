@@ -116,7 +116,8 @@ SimpleStraightSkelSPtr SimpleStraightSkel::create(PolyhedronSPtr polyhedron, Con
 }
 
 void SimpleStraightSkel::initVertexSplitter() {
-    use_fast_vertex_splitter_ = true;
+    use_fast_vertex_splitter_ = false;
+
     util::ConfigurationSPtr config = util::Configuration::getInstance();
     std::string s_vertex_splitter;
     if (config->isLoaded()) {
