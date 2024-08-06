@@ -232,6 +232,10 @@ public:
     check_no_intersection(L(p(0,0,0),p(1,0,0)), R(p(3,0,1),p(6,0,1)));
     check_no_intersection(L(p(0,0,0),p(1,0,0)), R(p(0,2,0),p(0,4,0)));
     check_no_intersection(L(p(0,0,0),p(1,0,0)), R(p(6,2,0),p(5,4,0)));
+    check_no_intersection(L(p(0,0,0),p(0,1,0)), R(p(1,-1,0),p(1,0,0)));
+    check_no_intersection(L(p(0,-10,0),p(0,-9,0)), R(p(1,-1,0),p(2,0,0)));
+    check_no_intersection(L(p(0,-10,0),p(0,0,0)), R(p(1,-1,0),p(2,0,0)));
+    check_no_intersection(L(p(0,0,0),p(0,1,0)), R(p(1,-1,0),p(2,0,0)));
 
     // Point intersection
     check_intersection   (L(p(0,0,0),p(1,0,0)), R(p(3,0,0),p(6,4,0)),
