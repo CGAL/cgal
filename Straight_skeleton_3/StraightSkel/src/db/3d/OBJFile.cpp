@@ -186,19 +186,26 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
             }
         }
 
-        std::cout << "Loaded: " << result->toString() << std::endl;
+        std::cout << "Loaded OBJ: " << result->toString() << std::endl;
 
-        double epsilon = 0.0001;
         util::ConfigurationSPtr config = util::Configuration::getInstance();
-        std::string section("db_3d_OBJFile");
-        std::string key("epsilon_coplanarity");
-        if (config->contains(section, key)) {
-            epsilon = config->getDouble(section, key);
+        if (config->contains("main", "merge_coplanar_faces") &&
+            config->getBool("main", "merge_coplanar_faces")) {
+            double epsilon = 0.;
+            std::string section("db_3d_OBJFile");
+            std::string key("epsilon_coplanarity");
+            if (config->contains(section, key)) {
+                epsilon = config->getDouble(section, key);
+            }
+            mergeCoplanarFacets(result, epsilon);
         }
-        mergeCoplanarFacets(result, epsilon);
+
         removeVerticesDegLt3(result);
         assert(result->isConsistent());
     }
+
+    std::cout << "Final load: " << result->toString() << std::endl;
+
     return result;
 }
 
