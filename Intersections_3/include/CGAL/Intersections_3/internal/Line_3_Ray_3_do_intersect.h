@@ -38,11 +38,8 @@ do_intersect(const typename K::Line_3& l,
   if(p0p1s == COLLINEAR)
     return true;
 
-  CGAL::Orientation stp0 = pred(r.source(), r.second_point(), l.point(0));
-  if(stp0 == COLLINEAR)
-    return Ray_3_has_on_collinear_Point_3(r,l.point(0),k);
-
-  return (p0p1s != stp0);
+  typename K::Point_3 lst = l.point(0) + (r.point(1) - r.point(0));
+  return (pred(l.point(0), l.point(1), r.point(0), lst) != CGAL::POSITIVE);
 }
 
 template <class K>
