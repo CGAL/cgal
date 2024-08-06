@@ -1627,7 +1627,20 @@ protected:
     }
   }
 
-  virtual void keyPressEvent(QKeyEvent *e)
+  virtual void mouseDoubleClickEvent(QMouseEvent *e) 
+  {
+    if ((e->modifiers()==::Qt::ShiftModifier) && (e->button()==::Qt::LeftButton))
+    {
+      if (manipulatedFrame())
+      {
+        camera()->frame()->alignWithFrame(manipulatedFrame(), true);
+      }
+    } else {
+      CGAL::QGLViewer::mouseDoubleClickEvent(e);
+    }
+  }
+
+  virtual void keyPressEvent(QKeyEvent *e) 
   {
     if(!on_key_pressed || !on_key_pressed(e, this))
     {
