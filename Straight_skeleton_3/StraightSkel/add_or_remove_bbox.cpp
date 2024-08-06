@@ -55,7 +55,9 @@ bool invert_and_add_bbox(Mesh& sm)
   const CGAL::Bbox_3 bb = PMP::bbox(sm, CGAL::parameters::bbox_scaling(100));
   Mesh bbox_mesh;
   CGAL::make_hexahedron(Iso_cuboid(Point(bb.xmin(), bb.ymin(), bb.zmin()),
-                                   Point(bb.xmax(), bb.ymax(), bb.zmax())), bbox_mesh);
+                                   Point(bb.xmax(), bb.ymax(), bb.zmax())),
+                        bbox_mesh,
+                        CGAL::parameters::do_not_triangulate_faces(false));
 
   // if the face:weight pmap exists, get the smallest value
   // as to assign an even smaller value to the bounding box's faces
