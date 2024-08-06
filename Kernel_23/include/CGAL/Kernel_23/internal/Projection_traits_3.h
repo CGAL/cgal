@@ -773,6 +773,51 @@ public:
   }
 };
 
+
+template <class R, int dim>
+class Construct_bisector_projected_3
+{
+public:
+  typedef typename R::Line_2                    Line_2;
+  typedef typename R::Line_3                    Line_3;
+  typedef typename R::Point_2                   Point_2;
+  typedef typename R::Point_3                   Point_3;
+  typedef typename R::FT                        FT;
+
+  FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
+  FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
+
+  Point_2 project(const Point_3& p) const
+  {
+    return R().construct_point_2_object()(x(p), y(p));
+  }
+
+  Line_3 embed (const Line_2& l) const
+  {
+    Point_2 p0 = l.point(0);
+    Point_2 p1 = l.point(1);
+
+    FT coords_p0[3];
+    coords_p0[Projector<R,dim>::x_index] = p0.x();
+    coords_p0[Projector<R,dim>::y_index] = p0.y();
+    coords_p0[dim] = FT(0);
+
+    FT coords_p1[3];
+    coords_p1[Projector<R,dim>::x_index] = p1.x();
+    coords_p1[Projector<R,dim>::y_index] = p1.y();
+    coords_p1[dim] = FT(0);
+
+    return Line_3(Point_3(coords_p0[0], coords_p0[1], coords_p0[2]),
+                  Point_3(coords_p1[0], coords_p1[1], coords_p1[2]));
+  }
+
+public:
+  Line_3 operator() (const Point_3& p1, const Point_3& p2) const
+  {
+    return embed( CGAL::bisector(project(p1), project(p2)) );
+  }
+};
+
 template <class R, int dim>
 class Construct_weighted_circumcenter_projected_3
 {
@@ -952,6 +997,7 @@ public:
   typedef Compute_squared_radius_smallest_orthogonal_circle_projected_3<Rp,dim>
                                                               Compute_squared_radius_smallest_orthogonal_circle_2;
   typedef Construct_radical_axis_projected_3<Rp,dim>          Construct_radical_axis_2;
+  typedef Construct_bisector_projected_3<Rp,dim>            Construct_bisector_2;
   typedef Construct_weighted_circumcenter_projected_3<Rp,dim> Construct_weighted_circumcenter_2;
   typedef Power_side_of_bounded_power_circle_projected_3<Rp,dim> Power_side_of_bounded_power_circle_2;
   typedef Power_side_of_oriented_power_circle_projected_3<Rp, dim> Power_side_of_oriented_power_circle_2;
