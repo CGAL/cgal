@@ -58,19 +58,33 @@ PolyhedronSPtr AbstractVertexSplitter::splitConvexVertex(VertexSPtr vertex) {
             if (facet_wptr.expired()) {
                 continue;
             }
+
             FacetSPtr facet(facet_wptr);
             FacetSPtr facet_prev = facet->prev(vertex);
             FacetSPtr facet_next = facet->next(vertex);
-            Plane3SPtr offset_plane =
-                    KernelWrapper::offsetPlane(facet->plane(), -1.0);
-            Plane3SPtr offset_plane_prev =
-                    KernelWrapper::offsetPlane(facet_prev->plane(), -1.0);
-            Plane3SPtr offset_plane_next =
-                    KernelWrapper::offsetPlane(facet_next->plane(), -1.0);
-            Point3SPtr offset_point = KernelWrapper::intersection(
-                    offset_plane_prev, offset_plane, offset_plane_next);
-            CGAL::FT sq_speed = KernelWrapper::squared_distance(
-                    vertex->getPoint(), offset_point);
+            CGAL::FT speed = 1.0;
+            if (facet->hasData()) {
+                speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+            }
+            CGAL::FT speed_prev = 1.0;
+            if (facet_prev->hasData()) {
+                speed_prev = std::dynamic_pointer_cast<SkelFacetData>(facet_prev->getData())->getSpeed();
+            }
+            CGAL::FT speed_next = 1.0;
+            if (facet_next->hasData()) {
+                speed_next = std::dynamic_pointer_cast<SkelFacetData>(facet_next->getData())->getSpeed();
+            }
+
+            // @todo I don't think the quick split of this function works for weighted cases
+            CGAL_assertion(speed == 1.0 && speed_prev == 1.0 && speed_next == 1.0);
+
+            Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), - speed);
+            Plane3SPtr offset_plane_prev = KernelWrapper::offsetPlane(facet_prev->plane(), -speed_prev);
+            Plane3SPtr offset_plane_next = KernelWrapper::offsetPlane(facet_next->plane(), -speed_next);
+
+            Point3SPtr offset_point = KernelWrapper::intersection(offset_plane_prev, offset_plane, offset_plane_next);
+
+            CGAL::FT sq_speed = KernelWrapper::squared_distance(vertex->getPoint(), offset_point);
             if (sq_speed > sq_speed_max) {
                 facet_1 = facet_next;
                 facet_2 = facet_prev;
@@ -105,20 +119,34 @@ PolyhedronSPtr AbstractVertexSplitter::splitReflexVertex(VertexSPtr vertex) {
             FacetSPtr facet(facet_wptr);
             FacetSPtr facet_prev = facet->prev(vertex);
             FacetSPtr facet_next = facet->next(vertex);
-            Plane3SPtr offset_plane =
-                    KernelWrapper::offsetPlane(facet->plane(), -1.0);
-            Plane3SPtr offset_plane_prev =
-                    KernelWrapper::offsetPlane(facet_prev->plane(), -1.0);
-            Plane3SPtr offset_plane_next =
-                    KernelWrapper::offsetPlane(facet_next->plane(), -1.0);
+            CGAL::FT speed = 1.0;
+            if (facet->hasData()) {
+                speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+            }
+            CGAL::FT speed_prev = 1.0;
+            if (facet_prev->hasData()) {
+                speed_prev = std::dynamic_pointer_cast<SkelFacetData>(facet_prev->getData())->getSpeed();
+            }
+            CGAL::FT speed_next = 1.0;
+            if (facet_next->hasData()) {
+                speed_next = std::dynamic_pointer_cast<SkelFacetData>(facet_next->getData())->getSpeed();
+            }
+
+            // @todo I don't think the quick split of this function works for weighted cases
+            CGAL_assertion(speed == 1.0 && speed_prev == 1.0 && speed_next == 1.0);
+
+            Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), -speed);
+            Plane3SPtr offset_plane_prev = KernelWrapper::offsetPlane(facet_prev->plane(), -speed_prev);
+            Plane3SPtr offset_plane_next = KernelWrapper::offsetPlane(facet_next->plane(), -speed_next);
+
             Point3SPtr offset_point = KernelWrapper::intersection(
                     offset_plane_prev, offset_plane, offset_plane_next);
-            CGAL::FT speed = KernelWrapper::distance(
-                    vertex->getPoint(), offset_point);
-            if (speed < speed_min) {
+
+            CGAL::FT v_speed = KernelWrapper::distance(vertex->getPoint(), offset_point);
+            if (v_speed < speed_min) {
                 facet_1 = facet_next;
                 facet_2 = facet_prev;
-                speed_min = speed;
+                speed_min = v_speed;
             }
         }
         VertexSPtr vertex_splitted = vertex->split(facet_1, facet_2);
