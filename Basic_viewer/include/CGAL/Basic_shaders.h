@@ -620,6 +620,106 @@ void main(void)
 }
 )DELIM";
 
+const char VERTEX_SOURCE_LINE_WIDTH[]=R"DELIM(
+#version 150
+
+in highp vec4 a_Pos; 
+in highp vec3 a_Color;
+ 
+out VS_OUT {
+  highp float pointSize; 
+  highp vec4 color; 
+  highp vec4 ls_fP; 
+} vs_out; 
+
+uniform highp mat4  u_Mvp;
+uniform highp float u_PointSize;
+uniform       bool  u_IsOrthographic;
+
+bool EqualZero(float value)
+{
+  return abs(value) < 0.00001;
+}
+
+void main(void)
+{
+  vs_out.color = vec4(a_Color, 1.0);
+  vs_out.ls_fP = a_Pos;
+
+  gl_Position  = u_Mvp * a_Pos;
+
+  float distance;
+  if (u_IsOrthographic) {
+    distance = u_PointSize;
+  } else {
+    distance = gl_Position.w;
+  }
+
+  float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
+  vs_out.pointSize = u_PointSize / effectiveDistance;
+}
+)DELIM";
+
+const char GEOMETRY_SOURCE_LINE_WIDTH[]=R"DELIM(
+#version 150
+layout (lines) in;
+layout (triangle_strip, max_vertices = 4) out;
+
+in highp vec4 g_Color[]; 
+
+in VS_OUT {
+  highp float pointSize; 
+  highp vec4 color; 
+  highp vec4 ls_fP; 
+} gs_in[]; 
+
+out highp vec4 fColor; 
+out highp vec4 ls_fP; 
+
+uniform highp float u_PointSize; 
+uniform highp vec2  u_Viewport;
+
+vec2 ToScreenSpace(vec4 vertex)
+{
+  return vec2(vertex.xy / vertex.w) * u_Viewport; 
+}
+
+vec4 ToWorldSpace(vec4 vertex)
+{
+  return vec4((vertex.xy * vertex.w) / u_Viewport, vertex.zw); 
+}
+
+void main(void)
+{
+  vec2 p0 = ToScreenSpace(gl_in[0].gl_Position);
+  vec2 p1 = ToScreenSpace(gl_in[1].gl_Position);
+  vec2 v0 = normalize(p1 - p0);
+  vec2 n0 = vec2(-v0.y, v0.x) * u_PointSize;
+  
+  // line start
+  gl_Position = ToWorldSpace(vec4(p0 - n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw)); 
+  fColor = gs_in[0].color;
+  ls_fP = gs_in[0].ls_fP;
+  EmitVertex();
+  
+  gl_Position = ToWorldSpace(vec4(p0 + n0 * gs_in[0].pointSize, gl_in[0].gl_Position.zw));
+  fColor = gs_in[0].color;
+  ls_fP = gs_in[0].ls_fP;
+  EmitVertex();
+  
+  // line end
+  gl_Position = ToWorldSpace(vec4(p1 - n0 * gs_in[1].pointSize, gl_in[1].gl_Position.zw));
+  fColor = gs_in[1].color;
+  ls_fP = gs_in[1].ls_fP;
+  EmitVertex();
+  
+  gl_Position = ToWorldSpace(vec4(p1 + n0 * gs_in[1].pointSize, gl_in[1].gl_Position.zw));
+  fColor = gs_in[1].color;
+  ls_fP = gs_in[1].ls_fP;
+  EmitVertex();
+}
+)DELIM";
+
 //------------------------------------------------------------------------------
 //  compatibility shaders
 

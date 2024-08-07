@@ -22,6 +22,7 @@ public:
   inline void set_mat4f(const GLchar* name, const GLfloat* data, GLboolean transpose=false) { glUniformMatrix4fv(get_uniform_location(name), 1, transpose, data); }
   inline void set_vec4f(const GLchar* name, const GLfloat* data) { glUniform4fv(get_uniform_location(name), 1, data); }
   inline void set_vec3f(const GLchar* name, const GLfloat* data) { glUniform3fv(get_uniform_location(name), 1, data); }
+  inline void set_vec2f(const GLchar* name, const GLfloat* data) { glUniform2fv(get_uniform_location(name), 1, data); }
   inline void set_float(const GLchar* name, const float data) { glUniform1f(get_uniform_location(name), data); }
   inline void set_int(const GLchar* name, const int data) { glUniform1i(get_uniform_location(name), data); }
 

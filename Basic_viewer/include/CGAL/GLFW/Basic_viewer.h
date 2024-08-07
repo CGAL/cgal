@@ -214,6 +214,7 @@ namespace GLFW
     void update_point_uniforms();
     void update_edge_uniforms();
     void update_pl_uniforms();
+    void update_line_uniforms();
     void update_clipping_uniforms();
     void update_world_axis_uniforms();
     void update_XY_axis_uniforms();
@@ -351,10 +352,12 @@ namespace GLFW
 
     std::shared_ptr<Shader> m_ShaderFace; 
     std::shared_ptr<Shader> m_ShaderSphere;
-    std::shared_ptr<Shader> m_ShaderCylinder;
-    std::shared_ptr<Shader> m_ShaderPl;
-    std::shared_ptr<Shader> m_ShaderPlane;
+    std::shared_ptr<Shader> m_ShaderPoint;
     std::shared_ptr<Shader> m_ShaderLine;
+    std::shared_ptr<Shader> m_ShaderPl;
+    std::shared_ptr<Shader> m_ShaderCylinder;
+    std::shared_ptr<Shader> m_ShaderPlane;
+    std::shared_ptr<Shader> m_ShaderGrid;
     std::shared_ptr<Shader> m_ShaderNormal;
     std::shared_ptr<Shader> m_ShaderArrow;
     std::shared_ptr<Shader> m_ShaderTriangles;

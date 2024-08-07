@@ -209,40 +209,51 @@ namespace GLFW
 
   void Basic_viewer::compile_shaders()
   {
-    const char* FACE_VERTEX = m_IsOpengl4_3 ? VERTEX_SOURCE_COLOR : VERTEX_SOURCE_COLOR_COMP;
-    const char* FACE_FRAGMENT = m_IsOpengl4_3 ? FRAGMENT_SOURCE_COLOR : FRAGMENT_SOURCE_COLOR_COMP;
     const char* PL_VERTEX = m_IsOpengl4_3 ? VERTEX_SOURCE_P_L : VERTEX_SOURCE_P_L_COMP;
     const char* PL_FRAGMENT = m_IsOpengl4_3 ? FRAGMENT_SOURCE_P_L : FRAGMENT_SOURCE_P_L_COMP;
+    m_ShaderPl = Shader::create(PL_VERTEX, PL_FRAGMENT);
+
+    const char* FACE_VERTEX = m_IsOpengl4_3 ? VERTEX_SOURCE_COLOR : VERTEX_SOURCE_COLOR_COMP;
+    const char* FACE_FRAGMENT = m_IsOpengl4_3 ? FRAGMENT_SOURCE_COLOR : FRAGMENT_SOURCE_COLOR_COMP;
+    m_ShaderFace = Shader::create(FACE_VERTEX, FACE_FRAGMENT);
+    
     const char* PLANE_VERTEX = VERTEX_SOURCE_CLIPPING_PLANE;
     const char* PLANE_FRAGMENT = FRAGMENT_SOURCE_CLIPPING_PLANE;
-
-    m_ShaderPl = Shader::create(PL_VERTEX, PL_FRAGMENT);
-    m_ShaderFace = Shader::create(FACE_VERTEX, FACE_FRAGMENT);
     m_ShaderPlane = Shader::create(PLANE_VERTEX, PLANE_FRAGMENT);
 
     const char* SHAPE_VERTEX = VERTEX_SOURCE_SHAPE;
     const char* POINT_GEOMETRY = GEOMETRY_SOURCE_SPHERE;
     m_ShaderSphere = Shader::create(SHAPE_VERTEX, PL_FRAGMENT, POINT_GEOMETRY);
 
+    const char* EDGE_VERTEX = VERTEX_SOURCE_SHAPE;
     const char* EDGE_GEOMETRY = GEOMETRY_SOURCE_CYLINDER;
-    m_ShaderCylinder = Shader::create(SHAPE_VERTEX, PL_FRAGMENT, EDGE_GEOMETRY);
+    const char* EDGE_FRAGMENT = m_IsOpengl4_3 ? FRAGMENT_SOURCE_P_L : FRAGMENT_SOURCE_P_L_COMP;
+    m_ShaderCylinder = Shader::create(EDGE_VERTEX, PL_FRAGMENT, EDGE_GEOMETRY);
 
-    // For world axis and grid 
-    const char* LINE_VERTEX = VERTEX_SOURCE_LINE;
-    const char* LINE_GEOMETRY = GEOMETRY_SOURCE_LINE;
-    const char* LINE_FRAGMENT = FRAGMENT_SOURCE_LINE;
+    const char* LINE_VERTEX = VERTEX_SOURCE_LINE_WIDTH;
+    const char* LINE_GEOMETRY = GEOMETRY_SOURCE_LINE_WIDTH;
+    const char* LINE_FRAGMENT = FRAGMENT_SOURCE_P_L;
     m_ShaderLine = Shader::create(LINE_VERTEX, LINE_FRAGMENT, LINE_GEOMETRY);
 
+    const char* GRID_VERTEX = VERTEX_SOURCE_LINE;
+    const char* GRID_GEOMETRY = GEOMETRY_SOURCE_LINE;
+    const char* GRID_FRAGMENT = FRAGMENT_SOURCE_LINE;
+    m_ShaderGrid = Shader::create(GRID_VERTEX, GRID_FRAGMENT, GRID_GEOMETRY);
+
+    const char* ARROW_VERTEX = VERTEX_SOURCE_LINE;
     const char* ARROW_GEOMETRY = GEOMETRY_SOURCE_ARROW;
-    m_ShaderArrow = Shader::create(LINE_VERTEX, LINE_FRAGMENT, ARROW_GEOMETRY);
+    const char* ARROW_FRAGMENT = FRAGMENT_SOURCE_LINE;
+    m_ShaderArrow = Shader::create(ARROW_VERTEX, ARROW_FRAGMENT, ARROW_GEOMETRY);
 
     const char* NORMAL_VERTEX = VERTEX_SOURCE_NORMAL;
     const char* NORMAL_GEOMETRY = GEOMETRY_SOURCE_NORMAL;
-    m_ShaderNormal = Shader::create(NORMAL_VERTEX, PL_FRAGMENT, NORMAL_GEOMETRY);
+    const char* NORMAL_FRAGMENT = m_IsOpengl4_3 ? FRAGMENT_SOURCE_P_L : FRAGMENT_SOURCE_P_L_COMP;
+    m_ShaderNormal = Shader::create(NORMAL_VERTEX, NORMAL_FRAGMENT, NORMAL_GEOMETRY);
 
     const char* TRIANGLE_VERTEX = VERTEX_SOURCE_TRIANGLE;
     const char* TRIANGLE_GEOMETRY = GEOMETRY_SOURCE_TRIANGLE;
-    m_ShaderTriangles = Shader::create(TRIANGLE_VERTEX, PL_FRAGMENT, TRIANGLE_GEOMETRY);
+    const char* TRIANGLE_FRAGMENT = m_IsOpengl4_3 ? FRAGMENT_SOURCE_P_L : FRAGMENT_SOURCE_P_L_COMP;
+    m_ShaderTriangles = Shader::create(TRIANGLE_VERTEX, TRIANGLE_FRAGMENT, TRIANGLE_GEOMETRY);
   }
 
   void Basic_viewer::initialize_camera()
@@ -503,12 +514,36 @@ namespace GLFW
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(mode));
+    float viewport[2] = { m_WindowSize.x(), m_WindowSize.y() }; 
 
     m_ShaderPl->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderPl->set_vec2f("u_Viewport", &viewport[0]);
+    m_ShaderPl->set_float("u_PointSize", m_SizeVertices);
+
     m_ShaderPl->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderPl->set_vec4f("u_PointPlane", m_PointPlane.data());
-    m_ShaderPl->set_float("u_PointSize", m_SizeVertices);
+    m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(mode));
+  }
+
+  void Basic_viewer::update_line_uniforms()
+  {
+    m_ShaderLine->use(); 
+
+    bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
+    auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
+
+    float viewport[2] = { m_WindowSize.x(), m_WindowSize.y() }; 
+
+    m_ShaderLine->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderLine->set_float("u_PointSize", m_SizeEdges);
+    
+    m_ShaderLine->set_int("u_IsOrthographic", static_cast<int>(m_Camera.is_orthographic()));
+    m_ShaderLine->set_vec2f("u_Viewport", &viewport[0]);
+
+
+    m_ShaderLine->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
+    m_ShaderLine->set_vec4f("u_PointPlane", m_PointPlane.data());
+    m_ShaderLine->set_float("u_RenderingMode", static_cast<float>(mode));
   }
 
   void Basic_viewer::update_clipping_uniforms()
@@ -555,8 +590,8 @@ namespace GLFW
 
   void Basic_viewer::update_XY_grid_uniforms()
   {
-    m_ShaderLine->use();
-    m_ShaderLine->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
+    m_ShaderGrid->use();
+    m_ShaderGrid->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
   }
 
   void Basic_viewer::update_normals_uniforms()
@@ -845,7 +880,7 @@ namespace GLFW
 
   void Basic_viewer::draw_edges()
   {
-    update_pl_uniforms();
+    update_line_uniforms();
     if (m_DrawCylinderEdge && m_geometryFeatureEnabled)
     {
       update_edge_uniforms();
@@ -1196,7 +1231,7 @@ namespace GLFW
       m_UseNormalMonoColor = !m_UseNormalMonoColor;
       break;
     case INC_EDGES_SIZE:
-      m_SizeEdges = std::min(25.f, m_SizeEdges + 10.0f*deltaTime);
+      m_SizeEdges = std::min(10.f, m_SizeEdges + 10.0f*deltaTime);
       break;
     case DEC_EDGES_SIZE:
       m_SizeEdges = std::max(0.1f, m_SizeEdges - 10.0f*deltaTime);

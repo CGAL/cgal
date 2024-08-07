@@ -8,7 +8,6 @@
 #include "BufferObject.h"
 
 // Inspired by https://github.com/TheCherno/Hazel/blob/master/Hazel/src/Platform/OpenGL/OpenGLVertexArray.h
-
 class VAO 
 {
 public:

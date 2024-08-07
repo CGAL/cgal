@@ -486,11 +486,19 @@ public:
         // rendering_mode == 0: draw inside clipping plane
         // rendering_mode == 1: draw outside clipping plane
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+
+          QVector2D viewport = {
+            CGAL_BASIC_VIEWER_INIT_SIZE_X,
+            CGAL_BASIC_VIEWER_INIT_SIZE_Y
+          };
+
           vao[VAO_MONO_SEGMENTS].bind();
           color.setRgbF((double)m_edges_mono_color.red()/(double)255,
                         (double)m_edges_mono_color.green()/(double)255,
                         (double)m_edges_mono_color.blue()/(double)255);
           rendering_program_p_l.setAttributeValue("a_Color",color);
+          rendering_program_p_l.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges));
+          rendering_program_p_l.setUniformValue("u_Viewport", viewport);
           rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
           rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
           rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
@@ -867,13 +875,21 @@ protected:
 
     // Vertices and segments shader
 
-    const char* source_ = isOpenGL_4_3()
-        ? VERTEX_SOURCE_P_L
-        : VERTEX_SOURCE_P_L_COMP;
+    // const char* source_ = isOpenGL_4_3()
+    //     ? VERTEX_SOURCE_P_L
+    //     : VERTEX_SOURCE_P_L_COMP;
+
+    const char* source_ = VERTEX_SOURCE_LINE_WIDTH;
 
     QOpenGLShader *vertex_shader_p_l = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
+
+    source_ = GEOMETRY_SOURCE_LINE_WIDTH;
+
+    QOpenGLShader *geometry_shader_p_l= new QOpenGLShader(QOpenGLShader::Geometry);
+    if(!geometry_shader_p_l->compileSourceCode(source_))
+    { std::cerr<<"Compiling geometry source FAILED"<<std::endl; }
 
     source_ = isOpenGL_4_3()
         ? FRAGMENT_SOURCE_P_L
@@ -881,10 +897,12 @@ protected:
 
     QOpenGLShader *fragment_shader_p_l= new QOpenGLShader(QOpenGLShader::Fragment);
     if(!fragment_shader_p_l->compileSourceCode(source_))
-    { std::cerr<<"Compiling fragmentsource FAILED"<<std::endl; }
+    { std::cerr<<"Compiling fragment source FAILED"<<std::endl; }
 
     if(!rendering_program_p_l.addShader(vertex_shader_p_l))
     { std::cerr<<"adding vertex shader FAILED"<<std::endl; }
+    if(!rendering_program_p_l.addShader(geometry_shader_p_l))
+    { std::cerr<<"adding geometry shader FAILED"<<std::endl; }
     if(!rendering_program_p_l.addShader(fragment_shader_p_l))
     { std::cerr<<"adding fragment shader FAILED"<<std::endl; }
     if(!rendering_program_p_l.link())
