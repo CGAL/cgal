@@ -644,8 +644,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
   template <unsigned int i>
   void mark_all_0_cells(LCC& lcc, Dart_handle dart, size_type mark){
     auto iterator = lcc.darts_of_cell<i, 0>(dart);
-    for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++)
-      if (!lcc.is_marked(dit, mark)) lcc.mark_cell<0>(dit, mark);
+    for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++){
+      if (!lcc.is_marked(dit, mark)) {
+        lcc.mark_cell<0>(dit, mark);
+      }
+    }
   }
 
   void mark_face_unchecked(LCC& lcc, Dart_handle dart, size_type mark){
@@ -1211,7 +1214,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
       is_markable = front_vol.owned && (back_vol_attr == nullptr or !back_vol_attr->info().owned);
     }
 
-    int nb = 0;
     auto edges = lcc.darts_of_cell<2,1>(face);
     // Add neighboring faces
     for (auto dit = edges.begin(), dend = edges.end(); dit != dend; dit++){
@@ -1246,11 +1248,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
         if (other_face != lcc.null_dart_descriptor)
           queue.push(other_face);
       }
-
-      ++nb;
     }
 
-    assert(nb == 4);
 
     if (face_attr.template_id > 0) {
       rdata.faces_to_refine.push_back(face);
@@ -1554,7 +1553,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
     PlaneSet& plane_set = hdata.first_face_of_planes[iterationPlane];
 
     // Explore all even planes
-    lcc.unmark_all(debug3);
     for (int i = 1; i < plane_set.size(); i += 2) {
       std::queue<Dart_handle> to_explore;
 
@@ -1741,15 +1739,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
   }
 
-  //
-  //
-  // ATTENTION
-  // Séparer les ghostcc selon owning / non owning
-  // AAAA
-  //
-  //
-
-
   // TODO, messy code but it works
   // Only works on a uniform grid
   Dart_handle find_area_on_grid(ProcessData& proc, Dart_handle from, PlaneNormal fromPlane, const AreaId& area, bool owned){
@@ -1813,29 +1802,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
     return position;
   };
 
-  // Gather the faces first, if we don't we will have issues later manually
-  // Iterating to the next plane after a first refinement stage
-  void initial_setup(HexMeshingData& hdata, MarkingFunction& cellIdentifier){
-    LCC& lcc = hdata.lcc;
-    setup_initial_planes(hdata);
-
-    // Mark initial identified cells
-    for (auto dart = lcc.one_dart_per_cell<3>().begin(), end = lcc.one_dart_per_cell<3>().end(); dart != end; dart++){
-      // Create a 3-attr for all 3-cells in the LCC
-      auto& vol_attr = get_or_create_attr<3>(lcc, dart)->info();
-
-      // Mark those who are identified
-      if (cellIdentifier(lcc, hdata.ext->surface, dart))
-        vol_attr.type = VolumeType::IDENTIFIED;
-    }
-  }
-
-  // thread_initial_setup
-  void initial_setup(ProcessData& proc, MarkingFunction& markingFunction){
-    initial_setup(static_cast<HexMeshingData&>(proc), markingFunction);
-
+  void setup_ghost_areas(ProcessData& proc){
     LCC& lcc = proc.lcc;
-
     // TODO Le code peut etre mieux écrit que ça ?
 
     // Attributes a AreaID to each volumes and sets the ownership of an area
@@ -1940,6 +1908,48 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       proc.owned_ghost_areas[p] = std::move(owned_ghost_set);
       proc.unowned_ghost_areas[p] = std::move(unowned_ghost_set);
+    }
+  }
+
+  // Gather the faces first, if we don't we will have issues later manually
+  // Iterating to the next plane after a first refinement stage
+  void initial_setup(HexMeshingData& hdata, MarkingFunction& cellIdentifier){
+    LCC& lcc = hdata.lcc;
+    setup_initial_planes(hdata);
+
+    // Mark initial identified cells
+    auto volumes = lcc.one_dart_per_cell<3>();
+    for (auto dart = volumes.begin(), end = volumes.end(); dart != end; dart++){
+      // Create a 3-attr for all 3-cells in the LCC
+      auto& vol_attr = get_or_create_attr<3>(lcc, dart)->info();
+
+      // Mark those who are identified
+      if (cellIdentifier(lcc, hdata.ext->surface, dart))
+        vol_attr.type = VolumeType::IDENTIFIED;
+    }
+  }
+
+  // thread_initial_setup
+  void initial_setup(ProcessData& proc, MarkingFunction& cellIdentifier){
+    LCC& lcc = proc.lcc;
+
+    auto volumes = lcc.one_dart_per_cell<3>();
+    // Mark initial identified cells
+    for (auto dart = volumes.begin(), end = volumes.end(); dart != end; dart++){
+      // Create a 3-attr for all 3-cells in the LCC
+      auto& vol_attr = get_or_create_attr<3>(lcc, dart)->info();
+    }
+
+    setup_initial_planes(proc);
+    setup_ghost_areas(proc);
+
+    // Mark initial identified cells
+    for (auto dart = volumes.begin(), end = volumes.end(); dart != end; dart++){
+      auto& vol_attr = lcc.attribute<3>(dart)->info();
+
+      // Mark those who are identified
+      if (vol_attr.owned && cellIdentifier(lcc, proc.ext->surface, dart))
+        vol_attr.type = VolumeType::IDENTIFIED;
     }
   }
 
@@ -2112,10 +2122,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
     auto& attributes = lcc.attributes<3>();
 
     for (auto it = attributes.begin(), end = attributes.end(); it != end; it++){
-      if (it->info().type > static_cast<VolumeType>(0)){
+      if (it->info().type > VolumeType::NONE){
         mark_all_0_cells<3>(lcc, it->dart(), hdata.identified_mark);
       }
     }
+
   }
 
 
@@ -2419,6 +2430,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
   template <typename HexData>
   void two_refinement_algorithm(HexData& hdata, MarkingFunction& cellIdentifier, int nb_levels){
+    static_assert(std::is_same_v<HexData, HexMeshingData> or std::is_same_v<HexData, ProcessData>);
+
     LCC& lcc = hdata.lcc;
 
     hdata.identified_mark = lcc.get_new_mark();
@@ -2661,9 +2674,9 @@ namespace CGAL::HexRefinement {
     CGAL::draw_graphics_scene(buffer);
   }
 
-  void debug_render(TwoRefinement::ProcessData& proc){
+  void debug_render(TwoRefinement::HexMeshingData& hdata){
     LCCSceneOptions<LCC> gso;
-    LCC& lcc = proc.lcc;
+    LCC& lcc = hdata.lcc;
 
     AreaIDMap<CGAL::IO::Color> colors;
     colors[{0,0,0}] = blue();
@@ -2675,8 +2688,16 @@ namespace CGAL::HexRefinement {
     gso.volume_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
       auto a = lcc.attribute<2>(dart);
       auto b = lcc.attribute<3>(dart);
+
+      // if (a == nullptr) return blue();
+      // if (a->info().plane[0]) return yellow();
+      // if (a->info().plane[1]) return red();
+      // if (a->info().plane[2]) return green();
+      // return blue();
+
       if (b == nullptr) return black();
-      // if (b->info().owned) return red();
+      // if (b->info().type > VolumeType::NONE) return red();
+      // return blue();
 
       if (colors.count(b->info().area_id) == 0){
         CGAL::Random random((i+=3));
@@ -2696,18 +2717,18 @@ namespace CGAL::HexRefinement {
       return true;
     };
     gso.vertex_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
-      return lcc.is_marked(dart, proc.identified_mark) ? red() : black();
+      return lcc.is_whole_cell_marked<0>(dart, hdata.identified_mark) ? red() : black();
     };
 
-    gso.colored_edge = [](const LCC& lcc, LCC::Dart_const_handle dart){
-      return true;
-    };
-    gso.draw_edge = [](const LCC& lcc, LCC::Dart_const_handle dart){
-      return true;
-    };
-    gso.edge_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
-      return lcc.is_whole_cell_marked<1>(dart, debug3) ? red() : black();
-    };
+    // gso.colored_edge = [](const LCC& lcc, LCC::Dart_const_handle dart){
+    //   return true;
+    // };
+    // gso.draw_edge = [](const LCC& lcc, LCC::Dart_const_handle dart){
+    //   return true;
+    // };
+    // gso.edge_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
+    //   return lcc.is_whole_cell_marked<1>(dart, debug3) ? red() : black();
+    // };
     CGAL::Graphics_scene buffer;
     add_to_graphics_scene(lcc, buffer, gso);
     CGAL::draw_graphics_scene(buffer);
@@ -2734,6 +2755,8 @@ namespace CGAL::HexRefinement {
     hdata.init(&res, setupFunction(res.surface));
 
     two_refinement_algorithm(hdata, cellIdentifier, nb_levels);
+
+    debug_render(hdata);
 
     return {hdata.lcc, res.surface};
   }
