@@ -39,14 +39,9 @@ int main(int argc, char** argv) {
   std::vector<std::pair<Mesh::Vertex_index, Mesh::Vertex_index>> correspondences_mesh;
   std::ifstream corr(corr_fn);
   if (corr.is_open()) {
-    std::string line;
-    while (std::getline(corr, line)) {
-      if (line.size() == 0) continue;
-      std::istringstream iss(line);
-
-      std::size_t v0, v1;
-      if (iss >> v0 >> v1)
-        Mesh source, target;
+    std::size_t v0, v1;
+    while (corr >> v0 >> v1) {
+      std::cout << v0 << " " << v1 << std::endl;
       correspondences_mesh.push_back(std::make_pair(*(source.vertices_begin() + v0), *(target.vertices_begin() + v1)));
     }
 
@@ -57,28 +52,12 @@ int main(int argc, char** argv) {
   if (vnm.second)
     PMP::compute_vertex_normals(target, vnm.first);
 
-  typename Mesh::Property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>> vrm = source.add_property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>>("v:rotation").first;
-  typename Mesh::Property_map<Mesh::Vertex_index, K::Vector_3> vtm = source.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:transformations").first;
-
-/*
-  CGAL::Point_set_3<K::Point_3> points;
-  points.reserve(target.num_vertices());
-
-  for (auto v : target.vertices())
-    points.insert(target.point(v), get(vnm.first, v));
-
-  std::vector<std::pair<Mesh::Vertex_index, std::size_t>> correspondences_pts;
-  correspondences_pts.reserve(correspondences_mesh.size());
-  for (auto p : correspondences_mesh)
-    correspondences_pts.push_back(std::make_pair(p.first, static_cast<std::size_t>(p.second)));
-
-  PMP::non_rigid_mesh_to_points_registration(source, points, vtm, vrm, correspondences_pts, CGAL::parameters::point_to_plane_energy(2.0).point_to_point_energy(0.1).as_rigid_as_possible_energy(10));
-  PMP::apply_non_rigid_transformation(source, vtm, vrm);
-  CGAL::IO::write_polygon_mesh("mapped.off", source);*/
+  Mesh::Property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>> vrm = source.add_property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>>("v:rotation").first;
+  Mesh::Property_map<Mesh::Vertex_index, K::Vector_3> vtm = source.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:translation").first;
 
   FT w1 = 1.0;
   FT w2 = 2.0;
-  FT w3 = 5000000;
+  FT w3 = 500;
 
   PMP::non_rigid_mesh_to_mesh_registration(source, target, vtm, vrm, correspondences_mesh, CGAL::parameters::point_to_point_energy(w1).point_to_plane_energy(w2).as_rigid_as_possible_energy(w3));
   PMP::apply_non_rigid_transformation(source, vtm, vrm);
