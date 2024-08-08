@@ -171,8 +171,10 @@ log() const
              .arg(detect_connected_components);
     res << QString("use weights: %1").arg(weights_ptr != nullptr);
   }
-  res << QString("use aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
-  res << QString("manifold: %1").arg(manifold);
+  if(use_sizing_field_with_aabb_tree)
+    res << QString("use sizing field with aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
+  if(manifold)
+    res << QString("manifold: %1").arg(manifold);
 
   return res;
 }
