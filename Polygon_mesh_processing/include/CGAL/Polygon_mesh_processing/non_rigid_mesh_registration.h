@@ -195,7 +195,7 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *     \cgalParamDefault{`50`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{max_matching_dist}
+*   \cgalParamNBegin{maximum_matching_distance}
 *     \cgalParamDescription{the maximum distance for a vertex in `source` to match with a point in `target`. The default value 0 means no maximum matching distance.}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`0`}

@@ -1459,7 +1459,7 @@ where:
 
 The \f$\mathbf{E_{match}}\f$ energy penalizes the distance between point pairs \f$\mathbf{v}_i\f$ and \f$\mathbf{\tilde{v}}_i\f$. The point pairs are restablished after each iteration. In addition, the method can take fixed point pairs of correspondences between source and target. This greatly improves the quality of the registration and is generally required for non-simple meshes.
 
-The \f$\mathbf{E_{point\_to\_plane}}\f$ energy, point to plane, is similar to \f$\mathbf{E_{match}}\f$, but instead penalizes the distance to the plane given by the target vertex and its normal. This energy compensates for different discretizations, i.e., for source and target mesh that were not created by deforming one mesh into the other.
+The \f$\mathbf{E_{point\_to\_plane}}\f$ energy is similar to \f$\mathbf{E_{match}}\f$, but instead penalizes the distance to the plane given by the target vertex and its normal. This energy compensates for different discretizations, i.e., for source and target mesh that were not created by deforming one mesh into the other.
 
 The \f$\mathbf{E_{arap}}\f$ energy, as-rigid-as-possible, controls the rigidity of the transformation. It measures the deformation of the edges connected to each vertex that results from applying an individual transformation to each vertex of the source mesh.
 
