@@ -16,12 +16,12 @@
 
 #include <CGAL/config.h>
 
-//#ifdef CGAL_EIGEN3_ENABLED
-
+#ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Core>
 #include <Eigen/Dense>
 #include <Eigen/SVD>
 #include <Eigen/Sparse>
+#endif
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
@@ -42,17 +42,18 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal_registration {
 
-typedef double ScalarType;
-typedef Eigen::Vector<ScalarType, 3> Vertex;
-typedef Eigen::Matrix<ScalarType, Eigen::Dynamic, 3> Vertices;
-typedef Eigen::Matrix<int, Eigen::Dynamic, 3> Faces;
-typedef Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic> Matrix;
-typedef Eigen::Vector<ScalarType, Eigen::Dynamic> Vector;
+#ifdef CGAL_EIGEN3_ENABLED
+using ScalarType = double;
+using Vertex = Eigen::Vector<ScalarType, 3>;
+using Vertices = Eigen::Matrix<ScalarType, Eigen::Dynamic, 3>;
+using Faces = Eigen::Matrix<int, Eigen::Dynamic, 3>;
+using Matrix = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>;
+using Vector = Eigen::Vector<ScalarType, Eigen::Dynamic>;
 
-typedef Eigen::SparseMatrix<ScalarType> SparseMat;
-typedef Eigen::Triplet<ScalarType> SparseTriplet;
+using SparseMat = Eigen::SparseMatrix<ScalarType>;
+using SparseTriplet = Eigen::Triplet<ScalarType>;
 
-typedef Eigen::Index Index;
+using Index = Eigen::Index;
 
 using Point_3 = Simple_cartesian<double>::Point_3;
 class Eigen_matrix_to_point_map {
@@ -133,9 +134,11 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
   R << cb * cc, cc* sa* sb - ca * sc, ca* cc* sb + sa * sc,
     cb* sc, ca* cc + sa * sb * sc, ca* sb* sc - cc * sa,
     -sb, cb* sa, ca* cb;
+
   return R;
 }
 
+#endif
 } // namespace internal
 
 /*!
@@ -160,9 +163,9 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
 * @param source the triangle mesh that should be mapped onto `target`.
-* @param target the target triangle mesh.
-* @param vtm a writeable vertex property map of `source` to store the translation vector of the registration.
-* @param vrm a writeable vertex property map of `source` to store the rotation part of the registration.
+* @param target the target point set.
+* @param vtm a writable vertex property map of `source` to store the translation vector of the registration.
+* @param vrm a writable vertex property map of `source` to store the rotation part of the registration.
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" providing a point_map and normal_map for the `PointRange`
 * @param correspondences a vector given matching points between the `source` and the `target`
@@ -187,13 +190,13 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{as_rigid_as_possible_energy}
-*     \cgalParamDescription{uses the topology of the mesh to determine how a vertex it deforming with respect to its neighbors}
+*     \cgalParamDescription{defines the rigidity of the registration}
 *     \cgalParamType{double}
-*     \cgalParamDefault{`20`}
+*     \cgalParamDefault{`50`}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{max_matching_dist}
-*     \cgalParamDescription{the maximum distance for a vertex in source to match with a point in target}
+*     \cgalParamDescription{the maximum distance for a vertex in `source` to match with a point in `target`. The default value 0 means no maximum matching distance.}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
@@ -230,6 +233,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values())
 {
+#ifdef CGAL_EIGEN3_ENABLED
   const size_t iter = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::number_of_iterations), 50);
   const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_energy), 2);
   const double w1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_point_energy), 0.1);
@@ -363,7 +367,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   B.setFromTriplets(edge_coefficients.begin(), edge_coefficients.end());
   internal_registration::Index edim = B.rows();
 
-  internal_registration::Vertices BX = B * X;
+  internal_registration::Vertices BX = B * X;// edges in order: b to a, c to b, a to c.
   internal_registration::Vertices BX_original(BX);
 
   std::vector<internal_registration::SparseTriplet> coefficients;
@@ -388,13 +392,13 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   weight_coefficients.clear();
   internal_registration::SparseMat D(Z.rows() + 2 * dim + 3 * edim, Z.rows() + 2 * dim + 3 * edim);
   for (internal_registration::Index i = 0; i < Z.rows(); ++i) {
-    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w2));
+    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w2)); // point to plane energy
   }
   for (internal_registration::Index i = Z.rows(); i < Z.rows() + dim; ++i) {
-    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w1));
+    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w1)); // point to point energy
   }
   for (internal_registration::Index i = Z.rows() + dim; i < Z.rows() + dim + 3 * edim; ++i) {
-    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w3));
+    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w3)); // arap energy
   }
   D.setFromTriplets(weight_coefficients.begin(), weight_coefficients.end());
 
@@ -415,6 +419,8 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   size_t coefficients_size = coefficients.size();
 
   for (size_t it = 0; it < iter; ++it) {
+    std::cout << "." << std::flush;
+    // Reset coefficients (removes point pairs, e.g.)
     if (it > 0) {
       coefficients.erase(coefficients.begin() + coefficients_size, coefficients.end());
     }
@@ -447,6 +453,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
       }
     }
 
+    // Restore hard correspondences
     for (internal_registration::Index i = 0; i < corr.rows(); ++i) {
       idz(corr(i, 0)) = corr(i, 1);
     }
@@ -454,12 +461,14 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     internal_registration::Vertices P(Y(idz, Eigen::indexing::all)); // target points
     internal_registration::Vertices NP(NY(idz, Eigen::indexing::all)); // target normals
 
+    // Filling coefficients for first part of A -> point_to_plane_energy
     for (internal_registration::Index i = 0; i < Z.rows(); ++i) {
       coefficients.push_back(internal_registration::SparseTriplet(i, i, NP(i, 0)));
       coefficients.push_back(internal_registration::SparseTriplet(i, Z.rows() + i, NP(i, 1)));
       coefficients.push_back(internal_registration::SparseTriplet(i, 2 * Z.rows() + i, NP(i, 2)));
     }
 
+    // Filling coefficients from edges for last part of A -> as_rigid_as_possible_energy
     for (internal_registration::Index i = 0; i < edim; ++i) {
       size_t ni = Ni(i);
       coefficients.push_back(internal_registration::SparseTriplet(Z.rows() + dim + i, ni + dim, BX(i, 1)));
@@ -471,7 +480,8 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     }
 
     for (internal_registration::Index i = 0; i < Z.rows(); ++i) {
-      b(i) = NP(i, 0) * P(i, 0) + NP(i, 1) * P(i, 1) + NP(i, 2) * P(i, 2);
+      b(i) = NP(i, 0) * P(i, 0) + NP(i, 1) * P(i, 1) + NP(i, 2) * P(i, 2); // distance of matched point to origin for point to plane energy
+      // Coordinates of matched point for point to point energy
       b(i + Z.rows()) = P(i, 0);
       b(i + Z.rows() * 2) = P(i, 1);
       b(i + Z.rows() * 3) = P(i, 2);
@@ -484,10 +494,10 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 
     A.setFromTriplets(coefficients.begin(), coefficients.end());
 
-    // There does not seem to be an advantage in performance
-    /*if (it == 0) {
+    if (it == 0) {
       cg.analyzePattern(A.transpose() * D * A + W);
-    }*/
+    }
+
     cg.factorize(A.transpose() * D * A + W);
     internal_registration::Vector x = cg.solve(A.transpose() * D * b);
 
@@ -495,7 +505,6 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     Z(Eigen::indexing::all, 0) = x(Eigen::seq(0, Z.rows() - 1));
     Z(Eigen::indexing::all, 1) = x(Eigen::seq(Z.rows(), 2 * Z.rows() - 1));
     Z(Eigen::indexing::all, 2) = x(Eigen::seq(2 * Z.rows(), 3 * Z.rows() - 1));
-
 
     // Update edge neighborhoods by new local rotation
     if (it == (iter - 1)) {
@@ -520,7 +529,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
       }
     }
     else {
-      // Regular matrix update is happening here (taking linearized coefficients, recreating matrix and updating rotations)
+      // Regular matrix update is happening here (taking linearized coefficients, recreating matrix and rotating edges)
       for (internal_registration::Index i = 0; i < edim; ++i) {
         int ni = Ni(i);
         internal_registration::Matrix R = internal_registration::rot(x(dim + 2 * Z.rows() + ni),
@@ -535,8 +544,9 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   for (auto v : vertices(source)) {
     Point z(Z(idx, 0), Z(idx, 1), Z(idx, 2));
     Point x(X(idx, 0), X(idx, 1), X(idx, 2));
+/*
     Aff_transformation_3<Gt> t1(CGAL::TRANSLATION, CGAL::ORIGIN - x);
-    Aff_transformation_3<Gt> t2(CGAL::TRANSLATION, -(CGAL::ORIGIN - z));
+    Aff_transformation_3<Gt> t2(CGAL::TRANSLATION, -(CGAL::ORIGIN - z));*/
     const auto& r = Rotations[idx];
     Aff_transformation_3<Gt> rota(r(0, 0), r(0, 1), r(0, 2), 0,
       r(1, 0), r(1, 1), r(1, 2), 0,
@@ -546,6 +556,9 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     put(vrm, v, rota);
     idx++;
   }
+#else
+static_assert(false, "Eigen library is required for non-rigid mesh registration");
+#endif
 }
 
 /*!
@@ -571,8 +584,8 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 *
 * @param source the triangle mesh that should be mapped onto `target`
 * @param target the target triangle mesh
-* @param vtm a writeable vertex property map of `source` to store the translation vector of the registration
-* @param vrm a writeable vertex property map of `source` to store the rotation part of the registration
+* @param vtm a writable vertex property map of `source` to store the translation vector of the registration
+* @param vrm a writable vertex property map of `source` to store the rotation part of the registration
 * @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters1" of the `source` and the method among the ones listed below
 * @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters2" of the `target` providing a vertex point map and a vertex normal map
 * @param correspondences a vector given matching points between the `source` and the `target`
@@ -597,13 +610,13 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{as_rigid_as_possible_energy}
-*     \cgalParamDescription{uses the topology of the mesh to determine how a vertex it deforming with respect to its neighbors.}
+*     \cgalParamDescription{defines the rigidity of the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`50`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{max_matching_dist}
-*     \cgalParamDescription{the maximum distance for a vertex in `source` to match with a vertex in `target`. 0 means that there is no max distance.}
+*   \cgalParamNBegin{maximum_matching_distance}
+*     \cgalParamDescription{the maximum distance for a vertex in `source` to match with a point in `target`. The default value 0 means no maximum matching distance.}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
@@ -640,6 +653,7 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
   const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values())
 {
+#ifdef CGAL_EIGEN3_ENABLED
   using Gt2 = typename GetGeomTraits<TriangleMesh2, NamedParameters2>::type;
   using Vertex_point_map = typename GetVertexPointMap<TriangleMesh2, NamedParameters2>::type;
   using Vector_map_tag = dynamic_vertex_property_t<typename Gt2::Vector_3>;
@@ -678,6 +692,10 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
     correspondences_pts.push_back(std::make_pair(p.first, static_cast<std::size_t>(p.second)));
 
   non_rigid_mesh_to_points_registration(source, points, vtm, vrm, correspondences_pts, np1, parameters::point_map(Point_map()).normal_map(Normal_map()));
+
+#else
+  static_assert(false, "Eigen library is required for non-rigid mesh registration");
+#endif
 }
 
 /*!
@@ -737,7 +755,6 @@ void apply_non_rigid_transformation(TriangleMesh& mesh,
   Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_property_map(CGAL::vertex_point, mesh));
   Vertex_normal_map vnm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_normal_map), get(Vector_map_tag(), mesh));
 
-
   for (auto v : vertices(mesh)) {
     Point p = get(vpm, v);
     p += get(vtm, v);
@@ -752,7 +769,5 @@ void apply_non_rigid_transformation(TriangleMesh& mesh,
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
-
-//#endif // CGAL_EIGEN3_ENABLED
 
 #endif
