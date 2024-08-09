@@ -31,6 +31,28 @@ auto default_two_refinement(const std::string& path, int cube_cells_per_dim, int
   );
 }
 
+// auto default_two_refinement(const std::string& path, int cube_cells_per_dim, int nb_levels = 1){
+//   using namespace CGAL::HexRefinement;
+//   using namespace CGAL::HexRefinement::TwoRefinement;
+//   Tree aabb;
+//   // Meh
+//   return two_refinement(path,
+//     [&](Polyhedron& poly){
+//       simple_voxelisation_setup(aabb)(poly);
+//       auto bbox = aabb.bbox();
+
+//       Point center = {bbox.xmin() + (bbox.x_span()/2),
+//                       bbox.ymin() + (bbox.y_span()/2),
+//                       bbox.zmin() + (bbox.z_span()/2)};
+
+//       double max_size = std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
+//       return Grid::make_centered_cube(center, max_size / cube_cells_per_dim, cube_cells_per_dim);
+//     },
+//     mark_intersecting_volume_with_poly(aabb),
+//     nb_levels
+//   );
+// }
+
 int surface_test() {
   using namespace CGAL::HexRefinement;
 

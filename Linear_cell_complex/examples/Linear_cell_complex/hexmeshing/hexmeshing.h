@@ -22,6 +22,7 @@
 #include <algorithm>
 #include <bitset>
 #include <boost/container_hash/hash_fwd.hpp>
+#include <exception>
 #include <functional>
 #include "utils.h"
 #include <CGAL/Simple_Cartesian.h>
@@ -30,6 +31,7 @@
 #include "../query_replace/init_to_preserve_for_query_replace.h"
 
 #include <boost/container/static_vector.hpp>
+#include <boost/range/join.hpp>
 #include <limits>
 #include <mutex>
 #include <qnamespace.h>
@@ -204,10 +206,7 @@ bool operator==(const DartInfo::FaceAttrValue& first, const DartInfo::FaceAttrVa
 }
 const size_t SIZE_T_MAX = std::numeric_limits<size_t>::max();
 
-// to be removed
-size_type debug_node_mark;
-size_type debug_edge_mark;
-size_type debug3;
+
 
 namespace CGAL::HexRefinement::TwoRefinement {
   enum PlaneNormal { X, Y, Z, NONE = -1};
@@ -276,7 +275,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     // Initialized by the algorithm
     LCC lcc;
-    size_type identified_mark, template_mark, propagation_face_mark;
+    size_type identified_mark, template_mark, propagation_face_mark, debug, debug2;
     int level = 0;
     std::array<PlaneSet, 3> first_face_of_planes;
 
@@ -291,12 +290,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
     PlaneNormal iteration;
 
     std::vector<Dart_handle> marked_nodes;
+    std::vector<Dart_handle> faces_of_plane;
     std::vector<Dart_handle> additionnal_volumes_found;
 
     std::vector<Dart_handle> volumes_to_refine;
-    std::vector<Dart_handle> faces_to_refine; // Array =  [ faces of even planes , faces adjacent to a marked edege of even planes ]
-    size_t face_of_even_planes_end = -1;
-
+    std::vector<Dart_handle> faces_to_refine;
     std::vector<Dart_handle> partial_templates_to_refine;
   };
 
@@ -366,11 +364,26 @@ namespace CGAL::HexRefinement::TwoRefinement {
     std::array<bool, 3> positive_axes = {false, false, false};
     std::array<bool, 3> negative_axes = {false, false, false};;
     PointInt pos;
+
+    size_type three_template_node_mark;
+    std::vector<Dart_handle> marked_three_template;
   };
 
+
+  template <unsigned int i, unsigned int k>
+  void mark_k_cells_of_i_cell(LCC& lcc, Dart_handle dart, size_type mark){
+    auto iterator = lcc.darts_of_cell<i, 0>(dart);
+    for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++){
+      if (!lcc.is_marked(dit, mark)) {
+        lcc.mark_cell<k>(dit, mark);
+      }
+    }
+  }
+
+  template <typename FaceOp, typename EdgeOp>
   inline void __plane_for_each_face(LCC& lcc, std::queue<Dart_handle>& to_explore,
-                                    const std::function<void(Dart_handle&)>& face_operation,
-                                    const std::function<Dart_handle(Dart_handle&)>& edge_operation)
+                                    const FaceOp&& face_operation,
+                                    const EdgeOp&& edge_operation)
   {
     size_type face_mark = lcc.get_new_mark();
     size_type edge_mark = lcc.get_new_mark();
@@ -397,23 +410,32 @@ namespace CGAL::HexRefinement::TwoRefinement {
     lcc.free_mark(edge_mark);
   }
 
+
+  template <typename FaceOp, typename EdgeOp>
   void plane_for_each_face(LCC& lcc, std::vector<Dart_handle> starts,
-                            const std::function<void(Dart_handle&)>& face_operation,
-                            const std::function<Dart_handle(Dart_handle&)>& edge_operation)
+                            const FaceOp&& face_operation,
+                            const EdgeOp&& edge_operation)
   {
     std::queue<Dart_handle> to_explore;
-    for (Dart_handle start : starts)
+    for (Dart_handle start : starts){
       to_explore.push(start);
-    __plane_for_each_face(lcc, to_explore, face_operation, edge_operation);
+    }
+
+    __plane_for_each_face(lcc, to_explore,
+      std::forward<const FaceOp>(face_operation),
+      std::forward<const EdgeOp>(edge_operation));
   }
 
+  template <typename FaceOp, typename EdgeOp>
   void plane_for_each_face(LCC& lcc, Dart_handle start,
-                            const std::function<void(Dart_handle&)>& face_operation,
-                            const std::function<Dart_handle(Dart_handle&)>& edge_operation)
+                            const FaceOp&& face_operation,
+                            const EdgeOp&& edge_operation)
   {
     std::queue<Dart_handle> to_explore;
     to_explore.push(start);
-    __plane_for_each_face(lcc, to_explore, face_operation, edge_operation);
+    __plane_for_each_face(lcc, to_explore,
+      std::forward<const FaceOp>(face_operation),
+      std::forward<const EdgeOp>(edge_operation));
   }
 
   PointInt grid_cell_from_index_2x2xN(int i){
@@ -556,13 +578,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
   }
 
   LCC::Attribute_descriptor<3>::type get_or_create_refinement_volume(LCC& lcc, Dart_handle dart){
-    auto attr = lcc.attribute<3>(dart);
-
-    if (attr == nullptr){
-      attr = lcc.create_attribute<3>();
-
-      lcc.set_attribute<3>(dart, attr);
-    }
+    auto attr = get_or_create_attr<3>(lcc, dart);
 
     // Previously NONE volumes are tagged as refined
     if (attr->info().type == VolumeType::NONE)
@@ -639,16 +655,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
     assert(found);
 
     return dart;
-  }
-
-  template <unsigned int i>
-  void mark_all_0_cells(LCC& lcc, Dart_handle dart, size_type mark){
-    auto iterator = lcc.darts_of_cell<i, 0>(dart);
-    for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++){
-      if (!lcc.is_marked(dit, mark)) {
-        lcc.mark_cell<0>(dit, mark);
-      }
-    }
   }
 
   void mark_face_unchecked(LCC& lcc, Dart_handle dart, size_type mark){
@@ -883,10 +889,9 @@ namespace CGAL::HexRefinement::TwoRefinement {
   void assert_faces_of_plane_valid(HexMeshingData& hdata, RefinementData& rdata){
     #ifndef NDEBUG
       LCC& lcc = hdata.lcc;
-      assert_dart_attr_are_unique<2>(hdata.lcc, rdata.faces_to_refine);
+      assert_dart_attr_are_unique<2>(hdata.lcc, rdata.faces_of_plane);
 
-      for (int i = 0; i < rdata.face_of_even_planes_end; i++){
-        Dart_handle face = rdata.faces_to_refine[i];
+      for (Dart_handle face : rdata.faces_of_plane){
         auto& attr = lcc.attribute<2>(face)->info();
         auto nodes = lcc.darts_of_cell<2, 0>(face);
         int marked = 0;
@@ -920,7 +925,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
     #endif
   }
 
-  void refine_3_template(HexMeshingData &hdata, Dart_handle marked_face)
+  template <typename HexData>
+  void refine_3_template(HexData &hdata, Dart_handle marked_face)
   {
     // TODO Might be written better
     LCC& lcc = hdata.lcc;
@@ -933,6 +939,17 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     Dart_handle upper_edge = lcc.insert_cell_1_in_cell_2(upper_d1, upper_d2);
     Dart_handle vol2_upper_edge = lcc.beta(upper_edge, 3);
+
+    if constexpr (std::is_same_v<HexData, ProcessData>){
+      // TODO : Instead of adding in a seperate vec, calculate origin dart before inserting
+      // the volume in partial_templates
+
+      // Weird, normally we don't process twice the same face
+      if (lcc.is_whole_cell_unmarked<0>(origin_dart, hdata.three_template_node_mark)) {
+        lcc.mark_cell<0>(origin_dart, hdata.three_template_node_mark);
+        hdata.marked_three_template.push_back(origin_dart);
+      }
+    }
 
     // Query replace with the partial 3-template, making it into two volumes
     size_type p = hdata.ext->partial_templates.query_replace_one_volume(lcc, origin_dart, hdata.template_mark);
@@ -971,7 +988,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
   void refine_marked_faces(HexMeshingData& hdata, RefinementData& rdata){
     LCC& lcc = hdata.lcc;
     int nbsub = 0;
-    for (auto& dart : rdata.faces_to_refine)
+    for (Dart_handle& dart : boost::join(rdata.faces_of_plane, rdata.faces_to_refine))
     {
       //Utile uniquement si les faces marqués ne sont pas 100% templatés
       auto edges_range = lcc.darts_of_cell<2, 1>(dart);
@@ -1006,7 +1023,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
     std::cout << nbsub << " face substitution was made" << std::endl;
   }
 
-  void refine_marked_hexes(HexMeshingData& hdata, RefinementData& rdata)
+  template <typename HexData>
+  void refine_marked_hexes(HexData& hdata, RefinementData& rdata)
   {
     LCC& lcc = hdata.lcc;
     int nbsub = 0;
@@ -1038,16 +1056,399 @@ namespace CGAL::HexRefinement::TwoRefinement {
     std::cout << nbsub << " volumic substitution was made" << std::endl;
   }
 
+
+
+  // TODO : All those functions are duplicated code, refactor ?
+  // =============================================================================================================
+  // =============================================================================================================
+  MarkedCellsTree create_marked_cells_tree(ProcessData& proc, Dart_handle start, PlaneNormal plane, AreaId area_id){
+    LCC& lcc = proc.lcc;
+
+    MarkedCellsTree tree(1);
+    tree.reserve(256);
+
+    using FaceNode = std::pair<Dart_handle, size_t>;
+    std::queue<FaceNode> to_explore;
+
+    size_type face_mark = lcc.get_new_mark();
+    size_type edge_mark = lcc.get_new_mark();
+
+    to_explore.push({start, 0});
+    lcc.mark_cell<2>(start, face_mark);
+
+    // I changed the loop to only iterate on unique element, because we associate a new node element to a face prior
+    // to iterate on it.
+    while (!to_explore.empty()){
+      auto [face, face_id] = to_explore.front();
+      to_explore.pop();
+
+      Dart_handle edge = face;
+      for (int i = 0; i < 4; edge = lcc.beta(edge, 1), i++){
+        if (lcc.is_whole_cell_marked<1>(edge, edge_mark)) continue;
+        lcc.mark_cell<1>(edge, edge_mark);
+
+        if (lcc.is_marked(edge, proc.template_mark))
+          tree[face_id].marked_nodes[i] = true;
+
+        Dart_handle other_face = adjacent_face_on_plane(lcc, plane, edge);
+
+        // Verify if the face is not already marked
+        if (other_face == lcc.null_dart_descriptor or lcc.is_whole_cell_marked<2>(other_face, face_mark))
+          continue;
+
+        lcc.mark_cell<2>(other_face, face_mark);
+        auto front_vol = lcc.attribute<3>(other_face);
+        auto back_vol = lcc.attribute<3>(other_face);
+
+        bool same_area = front_vol != nullptr
+          && front_vol->info().owned
+          && are_areas_equivalent(front_vol->info().area_id, area_id, true)
+        or back_vol != nullptr
+          && back_vol->info().owned
+          && are_areas_equivalent(back_vol->info().area_id, area_id, true);
+
+        if (same_area){
+          size_t new_child_id = tree.size();
+          tree.push_back(MarkedCellsNode());
+          to_explore.push({other_face, new_child_id});
+          tree[face_id].childs[i] = new_child_id;
+        }
+      }
+
+      assert(edge == face);
+    }
+
+    lcc.free_mark(face_mark);
+    lcc.free_mark(edge_mark);
+
+    assert(tree.size() > 1);
+
+    return tree;
+  }
+
+  CellsPositionTree create_cells_position_tree(ProcessData& proc, Dart_handle start, PlaneNormal plane, AreaId area_id){
+    LCC& lcc = proc.lcc;
+
+    CellsPositionTree tree(1);
+    tree.reserve(256);
+
+    using FaceNode = std::pair<Dart_handle, size_t>;
+    std::queue<FaceNode> to_explore;
+
+    size_type face_mark = lcc.get_new_mark();
+    size_type edge_mark = lcc.get_new_mark();
+
+    to_explore.push({start, 0});
+    lcc.mark_cell<2>(start, face_mark);
+
+    // I changed the loop to only iterate on unique element, because we associate a new node element to a face prior
+    // to iterate on it.
+    while (!to_explore.empty()){
+      auto [face, face_id] = to_explore.front();
+      to_explore.pop();
+
+      Dart_handle edge = face;
+      bool found = false;
+      for (int i = 0; i < 4; edge = lcc.beta(edge, 1), i++){
+        if (lcc.is_whole_cell_marked<1>(edge, edge_mark)) continue;
+        lcc.mark_cell<1>(edge, edge_mark);
+
+        if (!found && lcc.is_marked(edge, proc.three_template_node_mark)){
+          tree[face_id].cell0_id = i;
+          tree[face_id].position = lcc.attribute<0>(edge)->point();
+          found = true;
+        }
+
+        Dart_handle other_face = adjacent_face_on_plane(lcc, plane, edge);
+
+        // Verify if the face is not already marked
+        if (other_face == lcc.null_dart_descriptor or lcc.is_whole_cell_marked<2>(other_face, face_mark))
+          continue;
+
+        lcc.mark_cell<2>(other_face, face_mark);
+        auto front_vol = lcc.attribute<3>(other_face);
+        auto back_vol = lcc.attribute<3>(other_face);
+
+        bool same_area = front_vol != nullptr
+          && front_vol->info().owned
+          && are_areas_equivalent(front_vol->info().area_id, area_id, true)
+        or back_vol != nullptr
+          && back_vol->info().owned
+          && are_areas_equivalent(back_vol->info().area_id, area_id, true);
+
+        if (same_area){
+          size_t new_child_id = tree.size();
+          tree.push_back(CellPositionNode());
+          to_explore.push({other_face, new_child_id});
+          tree[face_id].childs[i] = new_child_id;
+        }
+      }
+
+      assert(edge == face);
+    }
+
+    lcc.free_mark(face_mark);
+    lcc.free_mark(edge_mark);
+
+    assert(tree.size() > 1);
+
+    return tree;
+  }
+
+  // TODO renommer
+  void mct_action(ProcessData& proc, RefinementData& rdata, Dart_handle node){
+    LCC& lcc = proc.lcc;
+    lcc.mark_cell<0>(node, proc.template_mark);
+    rdata.marked_nodes.push_back(node);
+
+    for (Dart_handle face : incident_faces_to_0_cell_on_plane(lcc, rdata, node)){
+      auto& face_attr =  lcc.attribute<2>(face)->info();
+
+      // If the face didn't have any template before, it will have one
+      if (face_attr.template_id == 0)
+        rdata.faces_of_plane.push_back(face);
+
+      face_attr.template_id++;
+      assert(face_attr.template_id <= 4);
+    }
+  }
+
+  void parse_marked_cells_tree(ProcessData& proc, RefinementData& rdata, const AreaId& area_id, const MarkedCellsTree& tree, Dart_handle start){
+    assert(tree.size() != 0);
+    LCC& lcc = proc.lcc;
+    using FaceNode = std::pair<Dart_handle, size_t>;
+
+    std::queue<FaceNode> to_explore;
+    to_explore.push({start, 0});
+
+    while (!to_explore.empty()){
+      auto [face, index] = to_explore.front();
+      to_explore.pop();
+
+      const MarkedCellsNode& node = tree[index];
+
+      Dart_handle edge = face;
+      for (int i = 0; i < 4; edge = lcc.beta(edge, 1), i++){
+        size_t child = node.childs[i];
+        bool marked = node.marked_nodes[i];
+
+        if (marked && !lcc.is_whole_cell_marked<0>(edge, proc.template_mark)){
+          mct_action(proc, rdata, edge);
+        }
+
+        if (child == node.none_child())
+          continue;
+
+        Dart_handle next_face = adjacent_face_on_plane(lcc, rdata.iteration, edge);
+        auto back_vol_attr = lcc.attribute<3>(next_face);
+        auto vol_attr = lcc.attribute<3>(next_face);
+
+        bool is_valid_face = next_face != lcc.null_dart_descriptor && (
+          vol_attr != nullptr
+          && !vol_attr->info().owned
+          && are_areas_equivalent(vol_attr->info().area_id, area_id, false)
+          or
+          back_vol_attr != nullptr
+          && !back_vol_attr->info().owned
+          && are_areas_equivalent(back_vol_attr->info().area_id, area_id, false)
+        );
+
+        assert(is_valid_face);
+
+        to_explore.push({next_face, child});
+      }
+
+      assert(edge == face);
+    }
+  }
+
+  void parse_cells_position_tree(ProcessData& proc, const AreaId& area_id, const CellsPositionTree& tree, Dart_handle start, PlaneNormal plane){
+    assert(tree.size() != 0);
+    LCC& lcc = proc.lcc;
+    using FaceNode = std::pair<Dart_handle, size_t>;
+
+    std::queue<FaceNode> to_explore;
+    to_explore.push({start, 0});
+
+    while (!to_explore.empty()){
+      auto [face, index] = to_explore.front();
+      to_explore.pop();
+
+      const CellPositionNode& node = tree[index];
+
+      auto edges = lcc.darts_of_cell<2,1>(face);
+
+      Dart_handle edge = face;
+      for (int i = 0; i < 4; edge = lcc.beta(edge, 1), i++){
+        size_t child = node.childs[i];
+
+        if (i == node.cell0_id)
+          lcc.attribute<0>(edge)->point() = node.position;
+
+        if (child == node.none_child())
+          continue;
+
+        Dart_handle next_face = adjacent_face_on_plane(lcc, plane, edge);
+        auto back_vol_attr = lcc.attribute<3>(next_face);
+        auto vol_attr = lcc.attribute<3>(next_face);
+
+        bool is_valid_face = next_face != lcc.null_dart_descriptor && (
+          vol_attr != nullptr
+          && !vol_attr->info().owned
+          && are_areas_equivalent(vol_attr->info().area_id, area_id, false)
+          or
+          back_vol_attr != nullptr
+          && !back_vol_attr->info().owned
+          && are_areas_equivalent(back_vol_attr->info().area_id, area_id, false)
+        );
+
+        assert(is_valid_face);
+
+        to_explore.push({next_face, child});
+      }
+
+      assert(edge == face);
+    }
+  }
+
+  template <typename HexData>
+  void thread_communicate_marked_nodes(HexData&, RefinementData&) {}
+
+  template <>
+  void thread_communicate_marked_nodes(ProcessData& proc, RefinementData& rdata){
+    LCC& lcc = proc.lcc;
+
+    // First send node information to other threads
+    // Computes the marked cell tree for a specific thread (identified by the AreaId)
+    // Multiples trees are computed if the size of CC > 1
+    for (auto& [area_id, stream] : proc.neighboring_threads){
+      GhostAreaSet& areas = proc.owned_ghost_areas[rdata.iteration];
+      MCT_Set marked_cells_set;
+
+      for (int i = 1; i < areas.size(); i += 2){
+        if (areas[i].count(area_id) == 0) continue;
+        // Calculate the plane_id, because the plane index won't be the same on other threads
+        int plane_id = proc.grid.dims_id_start[rdata.iteration] + i;
+
+        GhostCC& ghost_cc = areas[i][area_id];
+        MCT_CC& marked_cells_cc = marked_cells_set[plane_id];
+
+        marked_cells_cc = MCT_CC(ghost_cc.size());
+
+        for (int cc = 0; cc < ghost_cc.size(); cc++)
+          marked_cells_cc[cc] = create_marked_cells_tree(proc, ghost_cc[cc], rdata.iteration, area_id);
+      }
+
+      stream << std::move(marked_cells_set);
+    }
+
+    // Receive other threads trees, execute the path and mark flagged nodes from the tree.
+    for (auto& [area_id, stream] : proc.neighboring_threads){
+      ThreadMsg msg;
+      stream >> msg;
+
+      if (!std::holds_alternative<MCT_Set>(msg)){
+        // what to do ?
+        return;
+      }
+
+      MCT_Set& mct_set = std::get<MCT_Set>(msg);
+
+      for (auto& [plane_id, tree_cc] : mct_set){
+        // Calculate the plane_index from the plane_id
+        int plane_index = plane_id - proc.grid.dims_id_start[rdata.iteration];
+        assert(plane_index >= 0 && plane_index <= proc.unowned_ghost_areas[rdata.iteration].size());
+
+        AreaIDToGhostCC& ghosts = proc.unowned_ghost_areas[rdata.iteration][plane_index];
+
+        assert(ghosts.count(area_id) != 0);
+        auto& ghost_cc = ghosts[area_id];
+        assert(ghost_cc.size() == tree_cc.size());
+
+        for (int i = 0; i < tree_cc.size(); i++){
+          parse_marked_cells_tree(proc, rdata, area_id, tree_cc[i], ghost_cc[i]);
+        }
+      }
+    }
+  }
+
+  template <typename HexData>
+  void thread_communicate_3_templates(HexData&, RefinementData&){}
+
+  template <>
+  void thread_communicate_3_templates(ProcessData& proc, RefinementData& rdata){
+    LCC& lcc = proc.lcc;
+
+    // First send node information to other threads
+    // Computes the marked cell tree for a specific thread (identified by the AreaId)
+    // Multiples trees are computed if the size of CC > 1
+    for (auto& [area_id, stream] : proc.neighboring_threads){
+      GhostAreaSet& areas = proc.owned_ghost_areas[rdata.iteration];
+      CPT_Set cells_position_tree;
+
+      for (int i = 1; i < areas.size(); i += 2){
+        if (areas[i].count(area_id) == 0) continue;
+        // Calculate the plane_id, because the plane index won't be the same on other threads
+        int plane_id = proc.grid.dims_id_start[rdata.iteration] + i;
+
+        GhostCC& ghost_cc = areas[i][area_id];
+        CPT_CC& marked_cells_cc = cells_position_tree[plane_id];
+
+        marked_cells_cc = CPT_CC(ghost_cc.size());
+
+        for (int cc = 0; cc < ghost_cc.size(); cc++)
+          marked_cells_cc[cc] = create_cells_position_tree(proc, ghost_cc[cc], rdata.iteration, area_id);
+      }
+
+      stream << std::move(cells_position_tree);
+    }
+
+    // Receive other threads trees, execute the path and mark flagged nodes from the tree.
+    for (auto& [area_id, stream] : proc.neighboring_threads){
+      ThreadMsg msg;
+      stream >> msg;
+
+      if (!std::holds_alternative<CPT_Set>(msg)){
+        // Terminate thread
+        exit(EXIT_FAILURE);
+        return;
+      }
+
+      CPT_Set& cell_position_set = std::get<CPT_Set>(msg);
+
+      for (auto& [plane_id, tree_cc] : cell_position_set){
+        // Calculate the plane_index from the plane_id
+        int plane_index = plane_id - proc.grid.dims_id_start[rdata.iteration];
+        assert(plane_index >= 0 && plane_index <= proc.unowned_ghost_areas[rdata.iteration].size());
+
+        AreaIDToGhostCC& ghosts = proc.unowned_ghost_areas[rdata.iteration][plane_index];
+
+        assert(ghosts.count(area_id) != 0);
+        auto& ghost_cc = ghosts[area_id];
+        assert(ghost_cc.size() == tree_cc.size());
+
+        for (int i = 0; i < tree_cc.size(); i++){
+          parse_cells_position_tree(proc, area_id, tree_cc[i], ghost_cc[i], rdata.iteration);
+        }
+      }
+    }
+  }
+
+  // =============================================================================================================
+  // =============================================================================================================
+
   void __expand_0_cell_marking(LCC &lcc, RefinementData &rdata, std::queue<Dart_handle>& faces_to_check, Dart_handle &edge) {
     auto faces = incident_faces_to_0_cell_on_plane(lcc, rdata, edge);
+    int s = faces.size();
 
     for (Dart_handle face : faces){
       assert( lcc.attribute<2>(face) != nullptr);
       auto& face_attr =  lcc.attribute<2>(face)->info();
 
       // If the face didn't have any template before, it will have one, so add it in faces to refine
-      if (face_attr.template_id == 0)
+      if (face_attr.template_id == 0) {
         rdata.faces_to_refine.push_back(face);
+      }
 
       face_attr.template_id++;
       assert(face_attr.template_id <= 4);
@@ -1104,6 +1505,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     if (is_impossible) {
       lcc.mark_cell<0>(edges_unmarked[0], hdata.template_mark);
       rdata.marked_nodes.push_back(edges_unmarked[0]);
+      lcc.mark_cell<0>(edges_unmarked[0], hdata.debug2);
       __expand_0_cell_marking(lcc, rdata, faces_to_check, edges_unmarked[0]);
 
       return true;
@@ -1157,11 +1559,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     // First iteration
 
-    // face_to_refine will grow, we only want to examine only faces that existed right now
-    int faces_end = rdata.faces_to_refine.size();
+    // faces_of_plane will grow, we only want to examine only faces that existed right now
+    int faces_end = rdata.faces_of_plane.size();
 
     for (int i = 0; i < faces_end; i++){
-      Dart_handle face = rdata.faces_to_refine[i];
+      Dart_handle face = rdata.faces_of_plane[i];
       auto& face_attr = hdata.lcc.attribute<2>(face)->info();
 
       if (face_attr.template_id == 2 && fix_mark_connectivity(hdata, rdata, faces_to_check, face))
@@ -1196,7 +1598,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
    * Gather 3-cells adjacents to marked 0-cells
    */
   template <typename HexData>
-  void explore_face_of_plane(HexData& hdata, RefinementData& rdata, std::queue<Dart_handle>& queue, Dart_handle face, size_type explored_mark, size_type explored_edge, size_type explored_face) {
+  void explore_face_of_plane(HexData& hdata, RefinementData& rdata, std::queue<Dart_handle>& queue,
+        Dart_handle face, size_type explored_mark, size_type explored_edge, size_type explored_face) {
     LCC& lcc = hdata.lcc;
 
     auto& face_attr = lcc.attribute<2>(face)->info();
@@ -1211,7 +1614,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     if constexpr (std::is_same_v<HexData, ProcessData>){
       auto& front_vol = lcc.attribute<3>(face)->info();
       auto back_vol_attr = lcc.attribute<3>(lcc.beta<3>(face));
-      is_markable = front_vol.owned && (back_vol_attr == nullptr or !back_vol_attr->info().owned);
+      is_markable = front_vol.owned && (back_vol_attr == nullptr or back_vol_attr->info().owned);
     }
 
     auto edges = lcc.darts_of_cell<2,1>(face);
@@ -1221,16 +1624,18 @@ namespace CGAL::HexRefinement::TwoRefinement {
       bool edge_explored = lcc.is_whole_cell_marked<1>(dit, explored_edge);
       bool identified = lcc.is_marked(dit, hdata.identified_mark);
 
-      if (!explored){
-        lcc.mark_cell<0>(dit, explored_mark);
+      if (is_markable){
+        if (!explored){
+          lcc.mark_cell<0>(dit, explored_mark);
+        }
+
+        if (!explored && identified){
+          lcc.mark_cell<0>(dit, hdata.template_mark);
+          rdata.marked_nodes.push_back(dit);
+        }
       }
 
-      if (!explored && is_markable && identified){
-        lcc.mark_cell<0>(dit, hdata.template_mark);
-        rdata.marked_nodes.push_back(dit);
-      }
-
-      if (is_markable && identified){
+      if (identified){
         face_attr.template_id++;
       }
 
@@ -1252,7 +1657,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
 
     if (face_attr.template_id > 0) {
-      rdata.faces_to_refine.push_back(face);
+      rdata.faces_of_plane.push_back(face);
     }
   }
 
@@ -1308,7 +1713,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     LCC& lcc = hdata.lcc;
     Dart_handle back_face = lcc.beta(face, 2, 1, 1, 2);
 
-    mark_all_0_cells<2>(lcc, back_face, hdata.template_mark);
+    mark_k_cells_of_i_cell<2, 0>(lcc, back_face, hdata.template_mark);
     assert(lcc.attribute<3>(face) != nullptr);
 
     auto &vol_attr = get_or_create_refinement_volume(lcc, face)->info();
@@ -1360,16 +1765,10 @@ namespace CGAL::HexRefinement::TwoRefinement {
     int propagated_count = 0;
     int marked_for_prop_count = 0;
 
-    std::vector<Dart_handle> faces_to_mark;
-
-    for (int i = 0; i < rdata.face_of_even_planes_end; i++){
-      Dart_handle face = rdata.faces_to_refine[i];
+    if (!skip_propagation) for (Dart_handle face : rdata.faces_of_plane){
       auto& face_attr = lcc.attribute<2>(face)->info();
 
-      // TODO attention propagation dans les volumes sandwhichés (?)
-
-      // Propagate the face if possible
-      if (!skip_propagation && face_attr.template_id == 4){
+      if (face_attr.template_id == 4){
         if (is_half_face_marked(lcc, face, hdata.propagation_face_mark)){
           propagate_face(hdata, rdata, face, explored_node_mark, explored_face_mark);
           propagated_count++;
@@ -1381,25 +1780,21 @@ namespace CGAL::HexRefinement::TwoRefinement {
           propagated_count++;
         }
       }
-      // Else mark the face for propagation if possible
-      else if (face_attr.template_id == 1 || face_attr.template_id == 2){
-        faces_to_mark.push_back(face);
-      }
     }
 
     if (rdata.iteration >= 2) return;
 
-    //lcc.unmark_all(hdata.propagation_face_mark);
+    for (Dart_handle face : rdata.faces_of_plane){
+      auto& face_attr = lcc.attribute<2>(face)->info();
+      if (face_attr.template_id < 1 or face_attr.template_id > 2) continue;
 
-    for (auto face : faces_to_mark){
-        auto& face_attr = lcc.attribute<2>(face)->info();
-        mark_template_for_propagation(hdata, face, face_attr);
+      mark_template_for_propagation(hdata, face, face_attr);
+      marked_for_prop_count++;
+
+      if (!lcc.is_free<3>(face)){
+        mark_template_for_propagation(hdata, lcc.beta(face, 3), face_attr);
         marked_for_prop_count++;
-
-        if (!lcc.is_free<3>(face)){
-          mark_template_for_propagation(hdata, lcc.beta(face, 3), face_attr);
-          marked_for_prop_count++;
-        }
+      }
     }
 
     std::cout << "Number of faces propagated : " << propagated_count << std::endl;
@@ -1411,10 +1806,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
     LCC& lcc = hdata.lcc;
 
     // Iterate over all faces of even planes
-    for (int i = 0; i < rdata.face_of_even_planes_end; i++)
+    for (Dart_handle face : rdata.faces_of_plane)
     {
-      Dart_handle face = rdata.faces_to_refine[i];
-
       auto edges = lcc.darts_of_cell<2, 0>(face);
 
       for (auto edge = edges.begin(); edge != edges.end(); edge++)
@@ -1541,11 +1934,13 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
   }
 
-  void extract_darts_from_even_planes(HexMeshingData &hdata, RefinementData &rdata, PlaneNormal iterationPlane)
+  template <typename HexData>
+  void get_cells_to_refine(HexData &hdata, RefinementData &rdata, PlaneNormal iterationPlane)
   {
     LCC& lcc = hdata.lcc;
     rdata.iteration = iterationPlane;
 
+    // TODO refactor?
     size_type explored_mark = lcc.get_new_mark();
     size_type explored_edge = lcc.get_new_mark();
     size_type explored_face = lcc.get_new_mark();
@@ -1562,23 +1957,22 @@ namespace CGAL::HexRefinement::TwoRefinement {
       while (!to_explore.empty()) {
         Dart_handle front = to_explore.front();
         to_explore.pop();
-        explore_face_of_plane(hdata, rdata, to_explore, front, explored_mark, explored_edge, explored_face);
+        explore_face_of_plane(hdata, rdata, to_explore, front,
+          explored_mark, explored_edge, explored_face);
       }
     }
 
-    rdata.face_of_even_planes_end = rdata.faces_to_refine.size();
     assert_faces_of_plane_valid(hdata, rdata);
 
     fix_impossible_cases(hdata, rdata);
 
-    rdata.face_of_even_planes_end = rdata.faces_to_refine.size();
     assert_faces_of_plane_valid(hdata, rdata);
 
     propagation_stage(hdata, rdata, explored_mark, explored_face);
 
-    get_cells_to_refine_from_plane(hdata, rdata, explored_face);
+    thread_communicate_marked_nodes(hdata, rdata);
+    get_cells_to_refine_from_plane(hdata, rdata,  explored_face);
     get_cells_to_refine_from_additionnal_volumes(hdata, rdata, explored_face);
-
 
     lcc.free_mark(explored_mark);
     lcc.free_mark(explored_edge);
@@ -2123,193 +2517,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     for (auto it = attributes.begin(), end = attributes.end(); it != end; it++){
       if (it->info().type > VolumeType::NONE){
-        mark_all_0_cells<3>(lcc, it->dart(), hdata.identified_mark);
+        mark_k_cells_of_i_cell<3, 0>(lcc, it->dart(), hdata.identified_mark);
       }
     }
 
   }
-
-
-  MarkedCellsTree create_marked_cells_tree(ProcessData& proc, Dart_handle start, PlaneNormal plane, AreaId area_id){
-    LCC& lcc = proc.lcc;
-
-    MarkedCellsTree tree(1);
-    tree.reserve(256);
-
-    using FaceNode = std::pair<Dart_handle, size_t>;
-    std::queue<FaceNode> to_explore;
-
-    size_type face_mark = lcc.get_new_mark();
-    size_type edge_mark = lcc.get_new_mark();
-
-    to_explore.push({start, 0});
-    lcc.mark_cell<2>(start, face_mark);
-
-    // I changed the loop to only iterate on unique element, because we associate a new node element to a face prior
-    // to iterate on it.
-    while (!to_explore.empty()){
-      auto [face, face_id] = to_explore.front();
-      to_explore.pop();
-
-      Dart_handle edge = face;
-      for (int i = 0; i < 4; edge = lcc.beta(edge, 1), i++){
-        if (lcc.is_whole_cell_marked<1>(edge, edge_mark)) continue;
-        lcc.mark_cell<1>(edge, edge_mark);
-
-        if (lcc.is_marked(edge, proc.template_mark))
-          tree[face_id].marked_nodes[i] = true;
-
-        Dart_handle other_face = adjacent_face_on_plane(lcc, plane, edge);
-
-        // Verify if the face is not already marked
-        if (other_face == lcc.null_dart_descriptor or lcc.is_whole_cell_marked<2>(other_face, face_mark))
-          continue;
-
-        lcc.mark_cell<2>(other_face, face_mark);
-        auto front_vol = lcc.attribute<3>(other_face);
-        auto back_vol = lcc.attribute<3>(other_face);
-
-        bool same_area = front_vol != nullptr
-          && front_vol->info().owned
-          && are_areas_equivalent(front_vol->info().area_id, area_id, true)
-        or back_vol != nullptr
-          && back_vol->info().owned
-          && are_areas_equivalent(back_vol->info().area_id, area_id, true);
-
-        if (same_area){
-          size_t new_child_id = tree.size();
-          tree.push_back(MarkedCellsNode());
-          to_explore.push({other_face, new_child_id});
-          tree[face_id].childs[i] = new_child_id;
-        }
-      }
-
-      assert(edge == face);
-    }
-
-    lcc.free_mark(face_mark);
-    lcc.free_mark(edge_mark);
-
-    assert(tree.size() > 1);
-
-    return tree;
-  }
-
-  void mark_cells_from_tree(ProcessData& proc, const AreaId& area_id, const MarkedCellsTree& tree, Dart_handle start, PlaneNormal plane){
-    assert(tree.size() != 0);
-    LCC& lcc = proc.lcc;
-    using FaceNode = std::pair<Dart_handle, size_t>;
-
-    std::queue<FaceNode> to_explore;
-    to_explore.push({start, 0});
-
-    while (!to_explore.empty()){
-      auto [face, index] = to_explore.front();
-      to_explore.pop();
-
-      const MarkedCellsNode& node = tree[index];
-
-      auto edges = lcc.darts_of_cell<2,1>(face);
-
-      Dart_handle edge = face;
-      for (int i = 0; i < 4; edge = lcc.beta(edge, 1), i++){
-        size_t child = node.childs[i];
-        bool marked = node.marked_nodes[i];
-
-        if (marked)
-          lcc.mark(edge, proc.template_mark);
-
-        if (child == node.none_child())
-          continue;
-
-        Dart_handle next_face = adjacent_face_on_plane(lcc, plane, edge);
-        auto back_vol_attr = lcc.attribute<3>(next_face);
-        auto vol_attr = lcc.attribute<3>(next_face);
-
-        bool is_valid_face = next_face != lcc.null_dart_descriptor && (
-          vol_attr != nullptr
-          && !vol_attr->info().owned
-          && are_areas_equivalent(vol_attr->info().area_id, area_id, false)
-          or
-          back_vol_attr != nullptr
-          && !back_vol_attr->info().owned
-          && are_areas_equivalent(back_vol_attr->info().area_id, area_id, false)
-        );
-
-        assert(is_valid_face);
-
-        to_explore.push({next_face, child});
-      }
-
-      assert(edge == face);
-
-    }
-  }
-
-  template <typename HexData>
-  void thread_communicate_marked_nodes(HexData&, RefinementData&){}
-
-  template <>
-  void thread_communicate_marked_nodes(ProcessData& proc, RefinementData& rdata){
-    LCC& lcc = proc.lcc;
-
-    // First send node information to other threads
-    // Computes the marked cell tree for a specific thread (identified by the AreaId)
-    // Multiples trees are computed if the size of CC > 1
-    for (auto& [area_id, stream] : proc.neighboring_threads){
-      GhostAreaSet& areas = proc.owned_ghost_areas[rdata.iteration];
-      MCT_Set marked_cells_set;
-
-      for (int i = 1; i < areas.size(); i += 2){
-        if (areas[i].count(area_id) == 0) continue;
-        // Calculate the plane_id, because the plane index won't be the same on other threads
-        int plane_id = proc.grid.dims_id_start[rdata.iteration] + i;
-
-        GhostCC& ghost_cc = areas[i][area_id];
-        MCT_CC& marked_cells_cc = marked_cells_set[plane_id];
-
-        marked_cells_cc = MCT_CC(ghost_cc.size());
-
-        for (int cc = 0; cc < ghost_cc.size(); cc++)
-          marked_cells_cc[cc] = create_marked_cells_tree(proc, ghost_cc[cc], rdata.iteration, area_id);
-      }
-
-      stream << std::move(marked_cells_set);
-    }
-
-    // Receive other threads trees, execute the path and mark flagged nodes from the tree.
-    for (auto& [area_id, stream] : proc.neighboring_threads){
-      ThreadMsg msg;
-      stream >> msg;
-
-      if (!std::holds_alternative<MCT_Set>(msg)){
-        // Terminate thread
-        exit(EXIT_FAILURE);
-        return;
-      }
-
-      MCT_Set& mct_set = std::get<MCT_Set>(msg);
-
-      for (auto& [plane_id, tree_cc] : mct_set){
-        // Calculate the plane_index from the plane_id
-        int plane_index = plane_id - proc.grid.dims_id_start[rdata.iteration];
-        assert(plane_index >= 0 && plane_index <= proc.unowned_ghost_areas[rdata.iteration].size());
-
-        AreaIDToGhostCC& ghosts = proc.unowned_ghost_areas[rdata.iteration][plane_index];
-
-        assert(ghosts.count(area_id) != 0);
-        auto& ghost_cc = ghosts[area_id];
-        assert(ghost_cc.size() == tree_cc.size());
-
-        for (int i = 0; i < tree_cc.size(); i++){
-          mark_cells_from_tree(proc, area_id, tree_cc[i], ghost_cc[i], rdata.iteration);
-        }
-      }
-    }
-  }
-
-  template <typename HexData>
-  void thread_communicate_3_templates(HexData&, RefinementData&){}
 
   void generate_grid(HexMeshingData& hdata) {
     Grid& grid = hdata.grid;
@@ -2348,18 +2560,21 @@ namespace CGAL::HexRefinement::TwoRefinement {
       }
     }
 
-    grid.size = full_grid.size;
-
-    grid.pos = full_grid.pos - Vector{
-      proc.negative_axes[0] ? grid.size.x() * 2 : 0,
-      proc.negative_axes[1] ? grid.size.y() * 2 : 0,
-      proc.negative_axes[2] ? grid.size.z() * 2 : 0
-    };
-
     // TODO : Calculate this outside of this function
     PointInt proc_cell_dimension = nb_threads % 4 == 0
       ? full_grid.dims / PointInt{2, 2, nb_threads / 4}
       : full_grid.dims / PointInt{2, 1, nb_threads / 2};
+
+    grid.size = full_grid.size;
+
+    grid.pos = full_grid.pos
+    + Vector{
+      full_grid.size.x() * proc_cell_dimension.x * proc.pos.x - proc.negative_axes[0] * 2 * full_grid.size.x(),
+      full_grid.size.y() * proc_cell_dimension.y * proc.pos.y - proc.negative_axes[1] * 2 * full_grid.size.y(),
+      full_grid.size.z() * proc_cell_dimension.z * proc.pos.z - proc.negative_axes[2] * 2 * full_grid.size.z(),
+    };
+
+
 
     grid.dims = proc_cell_dimension + PointInt{
       (proc.negative_axes[0] + proc.positive_axes[0]) * 2,
@@ -2434,9 +2649,15 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     LCC& lcc = hdata.lcc;
 
+    hdata.debug = lcc.get_new_mark();
+    hdata.debug2 = lcc.get_new_mark();
     hdata.identified_mark = lcc.get_new_mark();
     hdata.template_mark = lcc.get_new_mark();
     hdata.propagation_face_mark = lcc.get_new_mark();
+
+    if constexpr (std::is_same_v<HexData, ProcessData>){
+      hdata.three_template_node_mark = lcc.get_new_mark();
+    }
 
     generate_grid(hdata);
 
@@ -2451,23 +2672,22 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
         mark_identified_cells_from_3_attrs(hdata);
 
-        extract_darts_from_even_planes(hdata, rdata, (PlaneNormal)p);
+        get_cells_to_refine(hdata, rdata, (PlaneNormal)p);
 
         assert_dart_attr_are_unique<3>(lcc, rdata.volumes_to_refine, rdata.partial_templates_to_refine);
 
-        // Empty if not multi threaded data
-        thread_communicate_marked_nodes(hdata, rdata);
-        return;
-
+        // Refinement stage
         create_vertices_for_templates(hdata, rdata);
         refine_marked_faces(hdata, rdata);
         refine_marked_hexes(hdata, rdata);
 
-        // Empty if not multi threaded data
-        thread_communicate_3_templates(hdata, rdata);
-
         assert_all_faces_are_quadrilateral(lcc, hdata);
         assert_all_volumes_are_hexes(lcc);
+
+        // Empty if not multi threaded data
+        thread_communicate_3_templates(hdata, rdata);
+        return;
+
 
         lcc.unmark_all(hdata.identified_mark);
         lcc.unmark_all(hdata.template_mark);
@@ -2641,39 +2861,6 @@ namespace CGAL::HexRefinement {
     CGAL::draw_graphics_scene(buffer);
   }
 
-  void debug_render_2(const LCC& lcc, TwoRefinement::HexMeshingData& hdata, const char* title = "TwoRefinement Result"){
-    LCCSceneOptions<LCC> gso;
-
-    gso.draw_face = [](const LCC& lcc, LCC::Dart_const_handle dart){
-      return true;
-    };
-    gso.face_color = [](const LCC& lcc, LCC::Dart_const_handle dart){
-      auto a = lcc.attribute<2>(dart);
-      auto b = lcc.attribute<3>(dart);
-      return lcc.is_whole_cell_marked<2>(dart, debug3) ? red()
-      : a != nullptr && a->info().plane[0] ? green()
-      : a != nullptr && a->info().plane[1] ? red()
-      : a != nullptr && a->info().plane[2] ? yellow()
-      : blue();
-
-      // return lcc.is_whole_cell_marked<3>(dart, debug3)? red() : a != nullptr && a->info().type == VolumeType::IDENTIFIED ? green() : blue();
-    };
-    gso.colored_face = [](const LCC& lcc, LCC::Dart_const_handle dart){ return true; };
-
-    // gso.colored_vertex = [](const LCC& lcc, LCC::Dart_const_handle dart){
-    //   return true;
-    // };
-    // gso.draw_vertex = [](const LCC& lcc, LCC::Dart_const_handle dart){
-    //   return true;
-    // };
-    // gso.vertex_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
-    //   return lcc.is_marked(dart, hdata.template_mark) ? red() : blue();
-    // };
-    CGAL::Graphics_scene buffer;
-    add_to_graphics_scene(lcc, buffer, gso);
-    CGAL::draw_graphics_scene(buffer);
-  }
-
   void debug_render(TwoRefinement::HexMeshingData& hdata){
     LCCSceneOptions<LCC> gso;
     LCC& lcc = hdata.lcc;
@@ -2682,12 +2869,14 @@ namespace CGAL::HexRefinement {
     colors[{0,0,0}] = blue();
     int i = 0;
 
-    gso.draw_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){
+    gso.draw_face = [](const LCC& lcc, LCC::Dart_const_handle dart){
       return true;
     };
-    gso.volume_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
+    gso.face_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
       auto a = lcc.attribute<2>(dart);
       auto b = lcc.attribute<3>(dart);
+
+      return lcc.is_marked(dart, hdata.debug) ? red() : blue();
 
       // if (a == nullptr) return blue();
       // if (a->info().plane[0]) return yellow();
@@ -2695,20 +2884,20 @@ namespace CGAL::HexRefinement {
       // if (a->info().plane[2]) return green();
       // return blue();
 
-      if (b == nullptr) return black();
+      // if (b == nullptr) return black();
       // if (b->info().type > VolumeType::NONE) return red();
       // return blue();
 
-      if (colors.count(b->info().area_id) == 0){
-        CGAL::Random random((i+=3));
-        colors[b->info().area_id] = CGAL::get_random_color(random);
-      }
+      // if (colors.count(b->info().area_id) == 0){
+      //   CGAL::Random random((i+=3));
+      //   colors[b->info().area_id] = CGAL::get_random_color(random);
+      // }
 
-      return colors[b->info().area_id];
+      // return colors[b->info().area_id];
 
       // return lcc.is_whole_cell_marked<3>(dart, debug3)? red() : a != nullptr && a->info().type == VolumeType::IDENTIFIED ? green() : blue();
     };
-    gso.colored_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){ return true; };
+    gso.colored_face = [](const LCC& lcc, LCC::Dart_const_handle dart){ return true; };
 
     gso.colored_vertex = [](const LCC& lcc, LCC::Dart_const_handle dart){
       return true;
@@ -2717,7 +2906,8 @@ namespace CGAL::HexRefinement {
       return true;
     };
     gso.vertex_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
-      return lcc.is_whole_cell_marked<0>(dart, hdata.identified_mark) ? red() : black();
+      return lcc.is_whole_cell_marked<0>(dart, hdata.debug) ? yellow()
+      : lcc.is_whole_cell_marked<0>(dart, hdata.template_mark) ? red() : black();
     };
 
     // gso.colored_edge = [](const LCC& lcc, LCC::Dart_const_handle dart){
@@ -2795,6 +2985,8 @@ namespace CGAL::HexRefinement {
       proc.init(&res, calculate_thread_grid(proc, grid, nb_threads));
     }
 
+    // two_refinement_algorithm<ProcessData>(proc_datas[1], cellIdentifier, nb_levels);
+
     for (int i = 0; i < nb_threads; i++){
       threads[i] = std::thread(two_refinement_algorithm<ProcessData>, std::ref(proc_datas[i]), std::ref(cellIdentifier), nb_levels);
     }
@@ -2803,12 +2995,19 @@ namespace CGAL::HexRefinement {
       threads[i].join();
     }
 
-    for (auto& proc : proc_datas){
-      debug_render(proc);
+    LCC& combined = proc_datas[0].lcc;
+    for (int i = 1; i < proc_datas.size(); i++){
+      combined.copy(proc_datas[i].lcc);
     }
 
-    ProcessData& proc = proc_datas[2];
-    int i = 0;
+    debug_render(proc_datas[0]);
+
+    // for (auto& proc : proc_datas){
+    //   debug_render(proc);
+    // }
+
+    // ProcessData& proc = proc_datas[2];
+    // int i = 0;
     // for (auto& proc : proc_datas){
       // two_refinement_algorithm(proc, cellIdentifier, 1);
       // i++;
