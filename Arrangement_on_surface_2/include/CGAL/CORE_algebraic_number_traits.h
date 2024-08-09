@@ -541,7 +541,7 @@ public:
 
     for (i = 1; i <= n_roots; i++)
     {
-      // Get the i'th real-valued root.
+      // Get the i-th real-valued root.
       *oi = rootOf(poly, i);
       ++oi;
     }
@@ -603,7 +603,7 @@ public:
 
     for (i = 0; i < root_intervals.size(); i++)
     {
-      // Get the i'th real-valued root.
+      // Get the i-th real-valued root.
       *oi = rootOf(poly, root_intervals[i]);
       ++oi;
     }

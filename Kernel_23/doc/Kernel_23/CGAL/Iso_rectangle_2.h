@@ -95,7 +95,7 @@ Test for inequality.
 bool operator!=(const Iso_rectangle_2<Kernel> &r2) const;
 
 /*!
-returns the i'th vertex modulo 4 of `r` in counterclockwise order,
+returns the i-th vertex modulo 4 of `r` in counterclockwise order,
 starting with the lower left vertex.
 \cgalEpicExact
 */
@@ -144,7 +144,7 @@ returns the \f$ y\f$ coordinate of upper right vertex of `r`.
 Kernel::FT ymax() const;
 
 /*!
-returns the `i`'th %Cartesian coordinate of the
+returns the `i`-th %Cartesian coordinate of the
 lower left vertex of `r`.
 \pre `0 <= i <= 1`.
 
@@ -153,7 +153,7 @@ lower left vertex of `r`.
 Kernel::FT min_coord(int i) const;
 
 /*!
-returns the `i`'th %Cartesian coordinate of the
+returns the `i`-th %Cartesian coordinate of the
 upper right vertex of `r`.
 \pre `0 <= i <= 1`.
 

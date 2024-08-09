@@ -62,7 +62,7 @@ computation has to be re-invoked for a larger number of neighbors,
 thereby performing redundant computations. Therefore, Hjaltason and
 Samet \cgalCite{hs-rsd-95} introduced <I>incremental nearest neighbor
 searching</I> in the sense that having obtained the  `k` nearest
-neighbors, the `k + 1`th neighbor can be obtained without having
+neighbors, the `k + 1`-th neighbor can be obtained without having
 to calculate the `k + 1` nearest neighbor from scratch.
 
 Spatial searching typically consists of a preprocessing phase and a
@@ -85,7 +85,7 @@ neighbor exactly, one of these objects may be returned as the
 approximate nearest/furthest neighbor. I.e., given some non-negative
 constant \f$ \epsilon\f$ the distance of an object returned as an
 approximate `k`-nearest neighbor must not be larger than
-\f$ (1+\epsilon)r\f$, where \f$ r\f$ denotes the distance to the real `k`th
+\f$ (1+\epsilon)r\f$, where \f$ r\f$ denotes the distance to the real `k`-th
 nearest neighbor. Similar the distance of an approximate `k`-furthest
 neighbor must not be smaller than \f$ r/(1+\epsilon)\f$. Obviously, for
 \f$ \epsilon=0\f$ we get the exact result, and the larger \f$ \epsilon\f$ is,
@@ -495,13 +495,13 @@ rectangles. Data points are only stored in the leaf nodes of the
 tree, not in the internal nodes.
 
 Friedmann, Bentley and Finkel \cgalCite{fbf-afbml-77} described the
-standard search algorithm to find the `k`th nearest neighbor by
+standard search algorithm to find the `k`-th nearest neighbor by
 searching a `kd` tree recursively.
 
 When encountering a node of the tree, the algorithm first visits the
 child that is closest to the query point. On return, if the rectangle
 containing the other child lies within 1/ (1+\f$ \epsilon\f$) times the
-distance to the `k`th nearest neighbors so far, then the other child
+distance to the `k`-th nearest neighbors so far, then the other child
 is visited recursively. Priority search \cgalCite{am-annqf-93} visits the
 nodes in increasing order of distance from the queue with help of a
 priority queue. The search stops when the distance of the query point
