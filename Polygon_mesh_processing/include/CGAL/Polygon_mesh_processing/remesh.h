@@ -174,7 +174,7 @@ namespace Polygon_mesh_processing {
 *   \cgalParamNBegin{allow_move_functor}
 *     \cgalParamDescription{A function object used to determinate if a vertex move should
 *                           be allowed or not during the relaxation step.}
-*     \cgalParamType{Unary functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)`
+*     \cgalParamType{Functor that provides `bool operator()(vertex_descriptor v, Point_3 src, Point_3 tgt)`
 *                    returning `true`
 *                    if the vertex `v` can be moved from `src` to `tgt`;
 *                    `%Point_3` being the value type of the vertex point map }
