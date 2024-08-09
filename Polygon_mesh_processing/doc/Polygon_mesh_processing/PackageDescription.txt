@@ -48,6 +48,10 @@
 /// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
 
+/// \defgroup PMP_registration_grp Registration Functions
+/// Functions to compute the transformation for mapping one mesh onto another or onto a set of points.
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /// \defgroup PMP_corefinement_grp Corefinement and Boolean Operations
 /// Functions to corefine triangulated surface meshes and compute triangulated
 /// surface meshes of the union, difference and intersection
