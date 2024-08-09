@@ -11,8 +11,8 @@
 int main(int argc, char **argv)
 {
   CGAL_Lab app(argc, argv,
-                      "Mesh_3 demo",
-                      "CGAL Mesh_3 Demo",
-                      QStringList() << "Mesh_3");
+               "CGAL Mesh_3 Demo",
+               "CGAL Lab (Mesh_3)",
+               QStringList() << "Mesh_3");
   return app.try_exec();
 }

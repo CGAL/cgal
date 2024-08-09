@@ -13,7 +13,6 @@ body, table, div, p, dl {
 #back-nav {
     border-bottom: 1px solid;
     padding: 0.5em;
-    background-color: #FAF9FB;
 }
 
 #back-nav h2 {
@@ -46,7 +45,6 @@ h1 {
 h2 {
     font-size: 120%;
 }
-
 
 .icon-namespace {
     font-family: Arial, Helvetica;
@@ -231,10 +229,6 @@ div.groupText {
     font: 200% Tahoma, Arial,sans-serif;
 }
 
-#titlearea {
-    background: white;
-}
-
 #MSearchResultsWindow {
     z-index: 2;
 }
@@ -249,24 +243,14 @@ dl.todo, dl.test, dl.bug
 
 div.CGALAdvanced
 {
-  background:     #eeb;
-  border:         1px solid #9e9e7d;
-  box-shadow:     0.5ex 0.5ex #ccc;
 }
 div.CGALDebug
 {
-  background:     #c8a8d0;
-  border:         1px solid #846f8a;
-  box-shadow:     0.5ex 0.5ex #777;
 }
 dl.deprecated
 {
   border-left:    4px solid;
   border-color:   #505050;
-
-  background:     #d8c0a0;
-  border:         1px solid #94836e;
-  box-shadow:     0.5ex 0.5ex #aaa;
 }
 
 div.CGALAdvanced,
@@ -283,9 +267,6 @@ dl.deprecated
 
 div.CGALModification
 {
-  background:     #f85858;
-  border:         1px solid #000000;
-  box-shadow:     0.5ex 0.5ex #777;
   border-radius:  1ex;
   padding-top:    0.5ex;
   padding-bottom: 0.25ex;
@@ -296,7 +277,6 @@ div.CGALModification
 
 .Modification
 {
-  background:     #f85858;
   border:         0px;
   padding-top:    0ex;
   padding-bottom: 0ex;
@@ -347,9 +327,6 @@ div.summary
 }
 
 .collapsible {
-  background-color: white;
-  color: #602020;
-  cursor: pointer;
   padding: 3px;
   width: 100%;
   border: none;
@@ -359,13 +336,8 @@ div.summary
   user-select: auto;
 }
 
-.active, .collapsible:hover {
-  background-color: white;
-}
-
 .collapsible:after {
   content: '\25B6';
-  color: #7A93C5;
   font-weight: bold;
   float: left;
   margin-left: -20px;
@@ -378,9 +350,163 @@ div.summary
 
 .content {
   padding: 0 18px;
-  color: black;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.2s ease-out;
-  background-color: white;
+}
+
+@media print {
+  .collapsible:after {
+     content: '';
+  }
+
+  .content {
+    max-height: unset;
+  }
+}
+
+/* Color and background rules */
+:root {
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: light) {
+
+  #back-nav {
+    background-color: #FAF9FB;
+  }
+
+  #titlearea {
+    background: white;
+  }
+
+  .package_section h1 {
+    padding: 1ex 0 1ex 0;
+    background-color: #EEEDF2;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  div.CGALAdvanced
+  {
+    background:     #eeb;
+    border:         1px solid #9e9e7d;
+    box-shadow:     0.5ex 0.5ex #ccc;
+  }
+  div.CGALDebug
+  {
+    background:     #c8a8d0;
+    border:         1px solid #846f8a;
+    box-shadow:     0.5ex 0.5ex #777;
+  }
+  dl.deprecated
+  {
+    background:     #d8c0a0;
+    border:         1px solid #94836e;
+    box-shadow:     0.5ex 0.5ex #aaa;
+  }
+
+  div.CGALModification
+  {
+    background:     #f85858;
+    border:         1px solid #000000;
+    box-shadow:     0.5ex 0.5ex #777;
+  }
+
+  .Modification
+  {
+    background:     #f85858;
+  }
+
+  .collapsible {
+    background-color: white;
+    color: #602020;
+    cursor: pointer;
+  }
+
+  .active, .collapsible:hover {
+    background-color: white;
+  }
+
+  .active, .collapsible:hover {
+    background-color: white;
+  }
+
+  .collapsible:after {
+    color: #7A93C5;
+  }
+
+  .content {
+    color: black;
+    background-color: white;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  .PkgImage > .image > img {
+    border-radius: 10%;
+  }
+
+  #back-nav {
+    background-color: #1A1A1A;
+  }
+
+  #titlearea {
+    background: #1A1A1A;
+  }
+
+  div.CGALAdvanced
+  {
+    background:     #4f4f19;
+    border:         1px solid #9e9e7d;
+    box-shadow:     0.5ex 0.5ex #ccc;
+  }
+  div.CGALDebug
+  {
+    background:     #45244d;
+    border:         1px solid #846f8a;
+    box-shadow:     0.5ex 0.5ex #777;
+  }
+  dl.deprecated
+  {
+    background:     #684618;
+    border:         1px solid #94836e;
+    box-shadow:     0.5ex 0.5ex #aaa;
+  }
+
+  div.CGALModification
+  {
+    background:     #601616;
+    border:         1px solid #000000;
+    box-shadow:     0.5ex 0.5ex #777;
+  }
+
+  .Modification
+  {
+    background:     #601616;
+  }
+
+  .collapsible {
+    background-color: black;
+    color: #B0B0B0;
+    cursor: pointer;
+  }
+
+  .active, .collapsible:hover {
+    background-color: black;
+  }
+
+  .active, .collapsible:hover {
+    background-color: black;
+  }
+
+  .collapsible:after {
+    color: #7A93C5;
+  }
+
+  .content {
+    color: white;
+    background-color: black;
+  }
 }

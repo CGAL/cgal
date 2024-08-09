@@ -6,8 +6,6 @@
  */
 int main(int argc, char **argv)
 {
-  CGAL_Lab app(argc, argv,
-                      "Polyhedron_3 demo",
-                      "CGAL Lab");
+  CGAL_Lab app(argc, argv);
   return app.try_exec();
 }
