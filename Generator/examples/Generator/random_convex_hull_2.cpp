@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/random_convex_hull_in_disc_2.h>
 #include <CGAL/Polygon_2_algorithms.h>
-#include <boost/random.hpp>
+#include <random>
 #include <iostream>
 #include <vector>
 using namespace CGAL;
@@ -15,7 +15,7 @@ int main( )
 {
    int N=10000;
    std::vector<Point> v;
-   boost::mt19937 gen;
+   std::mt19937 gen;
    gen.seed(0u);
 
    random_convex_hull_in_disc_2(N,RADIUS,gen,std::back_inserter(v),K());
