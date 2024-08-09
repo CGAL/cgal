@@ -5,6 +5,7 @@ find_package(CGAL REQUIRED COMPONENTS Core)
 
 include_directories(BEFORE "include")
 
+create_single_source_cgal_program("CustomKernel.cpp")
 create_single_source_cgal_program("Cartesian.cpp")
 create_single_source_cgal_program("determinant_77.cpp")
 create_single_source_cgal_program("Dimension.cpp")
