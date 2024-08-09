@@ -87,6 +87,43 @@ PLATFORM=""
 USE_REFERENCE_PLATFORMS=""
 SHOW_PROGRESS=""
 
+
+# ----------------------------------------------------------------------------------------
+#setup sfcgal as a package to be tested
+# ----------------------------------------------------------------------------------------
+install_sfcgal()
+{
+  if [ -d ${CGAL_DIR}/test/xternal_SFCGAL ]; then
+    return 0;
+  fi
+  #get SFCGAL
+  git clone https://gitlab.com/Oslandia/SFCGAL.git ${CGAL_DIR}/test/xternal_SFCGAL
+  #add a test script
+  pushd ${CGAL_DIR}/xternal_SFCGAL
+  cat > cgal_test_with_cmake<<EOF
+  #! /bin/sh
+  if [ -z "${MAKE_CMD}" ]; then
+    MAKE_CMD=make
+  fi
+  mkdir build
+  cd build
+  echo "configuring cmake..."
+  cmake -DCGAL_DIR="\$CGAL_RELEASE_DIR/lib/cmake/CGAL" -DSFCGAL_BUILD_TESTS=ON -DCMAKE_CXX_FLAGS_RELEASE="-O3" ..
+  echo "done."
+  echo "building..."
+  "${MAKE_CMD}" all
+  echo "done. Testing.."
+  if ctest -VV --output-on-failure; then
+    echo "done. Cleaning up..."
+  else
+    exit 1
+  fi
+  echo "done."
+EOF
+  chmod +x cgal_test_with_cmake
+  popd
+}
+
 # ----------------------------------------------------------------------------------------
 # write to logfile
 # $1 = logfile
@@ -179,10 +216,10 @@ value_of()
 remote_command()
 {
   if [ "${1}" = "localhost" ]; then
-      eval $2
+      eval 'TEST_XTERNAL=$TEST_XTERNAL $2'
   else
     printf "** Logging into host ${1} **\n"
-    ${RSH} ${1} ${MYSHELL} \"${2}\"
+    ${RSH} ${1} ${MYSHELL} \"TEST_XTERNAL=$TEST_XTERNAL ${2}\"
   fi
 }
 
@@ -832,6 +869,10 @@ do
       echo "Compiled test/ directory will be kept."
       KEEP_TESTS="y"
       ;;
+    "-x")
+      echo "Add the external projects to the testsuite."
+      TEST_XTERNAL="y"
+      ;;
     *)
       CGAL_LOCATION=$arg
   esac
@@ -930,6 +971,10 @@ if [ "${BUILD_HOSTS}" = "localhost" ]; then
       DO_NOT_TEST="y"
     fi
   fi
+fi
+
+if [ -n "${TEST_XTERNAL}" ]; then
+  install_sfcgal
 fi
 
 if [ -z "${DO_NOT_TEST}" ]; then
