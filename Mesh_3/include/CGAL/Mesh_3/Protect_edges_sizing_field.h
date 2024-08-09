@@ -152,7 +152,7 @@ public:
   Protect_edges_sizing_field(C3T3& c3t3,
                              const MeshDomain& domain,
                              SizingFunction size=SizingFunction(),
-                             const FT minimal_size = FT(-1),
+                             const FT minimal_size = FT(0),
                              const Distance_Function edge_distance = Distance_Function(),
                              const std::size_t maximal_number_of_vertices = 0,
                              Mesh_error_code* error_code = 0
@@ -273,8 +273,7 @@ private:
 
   /// Returns `true` if the edge `(va,vb)` is a not good enough approximation
   /// of its feature.
-  bool approx_is_too_large(const Vertex_handle& va,
-                           const Vertex_handle& vb,
+  bool approx_is_too_large(const Edge& e,
                            const bool is_edge_in_complex) const;
 
   /// Returns `true` if the balls of `va` and `vb` intersect.
@@ -458,10 +457,12 @@ private:
       dim = -1 - dim;
 
     const FT s = field(p, dim, index);
-    if(s <= FT(0)) {
+    if(s < minimal_size_)
+    {
       std::stringstream msg;
       msg.precision(17);
-      msg << "Error: the field is null at ";
+      msg << "Error: the field is smaller than minimal size ("
+        << minimal_size_ << ") at ";
       if(dim == 0) msg << "corner (";
       else msg << "point (";
       msg << p << ")";
@@ -493,7 +494,7 @@ private:
 
   bool use_minimal_size() const
   {
-    return minimal_size_ != FT(-1);
+    return minimal_size_ != FT(0);
   }
   Weight minimal_weight() const
   {
@@ -645,7 +646,10 @@ insert_corners()
 #endif
 
     // Get weight (the ball radius is given by the 'query_size' function)
-    FT w = CGAL::square(query_size(p, 0, p_index));
+    const FT query_weight = CGAL::square(query_size(p, 0, p_index));
+    FT w = use_minimal_size()
+         ? (std::min)(minimal_weight_, query_weight)
+         : query_weight;
 
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "Weight from sizing field: " << w << std::endl;
@@ -1178,12 +1182,12 @@ insert_balls(const Vertex_handle& vp,
   const Weighted_point& vp_wp = c3t3_.triangulation().point(vp);
 
 #if ! defined(CGAL_NO_PRECONDITIONS)
-  if(sp <= 0) {
-    std::stringstream msg;;
+  if(sp <= minimal_size_) {
+    std::stringstream msg;
     msg.precision(17);
-    msg << "Error: the mesh sizing field is null at point (";
-    msg << cp(vp_wp) << ")!";
-    CGAL_precondition_msg(sp > 0, msg.str().c_str());
+    msg << "Error: the mesh sizing field is smaller than minimal size ";
+    msg << " at point (" << cp(vp_wp) << ")!";
+    CGAL_precondition_msg(sp > minimal_size_, msg.str().c_str());
   }
 #endif // ! CGAL_NO_PRECONDITIONS
 
@@ -1428,7 +1432,7 @@ refine_balls()
       if( // topology condition
           non_adjacent_but_intersect(va, vb, is_edge_in_complex)
           // approximation condition
-       || (use_distance_field() && approx_is_too_large(va, vb, is_edge_in_complex)))
+       || (use_distance_field() && approx_is_too_large(*eit, is_edge_in_complex)))
       {
         using CGAL::Mesh_3::internal::distance_divisor;
 
@@ -1557,34 +1561,29 @@ do_balls_intersect(const Vertex_handle& va, const Vertex_handle& vb) const
 template <typename C3T3, typename MD, typename Sf, typename Df>
 bool
 Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
-approx_is_too_large(const Vertex_handle& va, const Vertex_handle& vb, const bool is_edge_in_complex) const
+approx_is_too_large(const Edge& e, const bool is_edge_in_complex) const
 {
   if ( ! is_edge_in_complex )
-  {
     return false;
-  }
-  typedef typename Kernel::Point_3 Point_3;
 
-  Curve_index curve_index = domain_.curve_index((va->in_dimension() < vb->in_dimension()) ? vb->index() : va->index());
+  const auto& [va, vb] = c3t3_.triangulation().vertices(e);
 
-  const Point_3& pa = va->point().point();
-  const Point_3& pb = vb->point().point();
-  const Point_3& segment_middle = CGAL::midpoint(pa, pb);
-  // Obtain the geodesic middle point
-  FT signed_geodesic_distance = domain_.signed_geodesic_distance(pa, pb, curve_index);
-  Point_3 geodesic_middle;
-  if (signed_geodesic_distance >= FT(0))
-  {
-    geodesic_middle = domain_.construct_point_on_curve(pa, curve_index, signed_geodesic_distance / 2);
-  }
-  else
-  {
-    geodesic_middle = domain_.construct_point_on_curve(pb, curve_index, -signed_geodesic_distance / 2);
-  }
-  // Compare distance to the parameter's distance
-  FT squared_evaluated_distance = CGAL::squared_distance(segment_middle, geodesic_middle);
-  FT segment_middle_edge_distance = query_distance(segment_middle, 1, curve_index);
-  return squared_evaluated_distance > CGAL::square(segment_middle_edge_distance);
+  const Bare_point& pa = va->point().point();
+  const Bare_point& pb = vb->point().point();
+
+  // Construct the geodesic middle point
+  const Curve_index curve_index = c3t3_.curve_index(e);
+  const FT signed_geodesic_distance = domain_.signed_geodesic_distance(pa, pb, curve_index);
+  const Bare_point geodesic_middle = (signed_geodesic_distance >= FT(0))
+      ? domain_.construct_point_on_curve(pa, curve_index, signed_geodesic_distance / 2)
+      : domain_.construct_point_on_curve(pb, curve_index, -signed_geodesic_distance / 2);
+
+  const Bare_point edge_middle = CGAL::midpoint(pa, pb);
+  const FT squared_evaluated_distance = CGAL::squared_distance(edge_middle, geodesic_middle);
+
+  // Compare distance to the distance field from criteria
+  const FT max_distance_to_curve = query_distance(edge_middle, 1, curve_index);
+  return squared_evaluated_distance > CGAL::square(max_distance_to_curve);
 }
 
 template <typename C3T3, typename MD, typename Sf, typename Df>
