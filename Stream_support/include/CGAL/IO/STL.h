@@ -317,7 +317,7 @@ bool write_STL(std::ostream& os,
       const Point& q = get(point_map, points[face[1]]);
       const Point& r = get(point_map, points[face[2]]);
 
-      const Vector_3 n = collinear(p,q,r) ? Vector_3(1,0,0) : unit_normal(p,q,r);
+      const Vector_3 n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       const float coords[12] = { static_cast<float>(n.x()), static_cast<float>(n.y()), static_cast<float>(n.z()),
                                  static_cast<float>(p.x()), static_cast<float>(p.y()), static_cast<float>(p.z()),
