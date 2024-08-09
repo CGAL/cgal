@@ -178,6 +178,8 @@ public:
 
     Q_FOREACH(QOpenGLShader* shader, rendering_program_p_l.shaders())
       delete shader;
+    Q_FOREACH(QOpenGLShader* shader, rendering_program_line.shaders())
+      delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_face.shaders())
       delete shader;
     Q_FOREACH(QOpenGLShader* shader, rendering_program_clipping_plane.shaders())
@@ -322,9 +324,8 @@ public:
           color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
                         (double)m_vertices_mono_color.green()/(double)255,
                         (double)m_vertices_mono_color.blue()/(double)255);
-          rendering_program_p_l.setAttributeValue("a_Color",color);
-          rendering_program_sphere.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_points));
-          rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_points*0.001));
+          rendering_program_sphere.setAttributeValue("a_Color",color);
+          rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_points*0.002));
           rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
           rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
@@ -441,8 +442,7 @@ public:
                         (double)m_edges_mono_color.green()/(double)255,
                         (double)m_edges_mono_color.blue()/(double)255);
           rendering_program_cylinder.setAttributeValue("a_Color",color);
-          rendering_program_cylinder.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges));
-          rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.002));
+          rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
           rendering_program_cylinder.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_cylinder.setUniformValue("u_PointPlane", plane_point);
           rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
@@ -483,7 +483,7 @@ public:
       }
       else 
       {
-        rendering_program_p_l.bind();
+        rendering_program_line.bind();
 
         // rendering_mode == -1: draw all
         // rendering_mode == 0: draw inside clipping plane
@@ -499,13 +499,14 @@ public:
           color.setRgbF((double)m_edges_mono_color.red()/(double)255,
                         (double)m_edges_mono_color.green()/(double)255,
                         (double)m_edges_mono_color.blue()/(double)255);
-          rendering_program_p_l.setAttributeValue("a_Color",color);
-          rendering_program_p_l.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges));
-          rendering_program_p_l.setUniformValue("u_Viewport", viewport);
-          rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
-          rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
-          rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-          glLineWidth(m_size_edges);
+          rendering_program_line.setAttributeValue("a_Color",color);
+          rendering_program_line.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges));
+          rendering_program_line.setUniformValue("u_IsOrthographic", static_cast<GLint>(is_two_dimensional()));
+
+          rendering_program_line.setUniformValue("u_Viewport", viewport);
+          rendering_program_line.setUniformValue("u_ClipPlane", clipPlane);
+          rendering_program_line.setUniformValue("u_PointPlane", plane_point);
+          rendering_program_line.setUniformValue("u_RenderingMode", rendering_mode);
           glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
           vao[VAO_MONO_SEGMENTS].release();
 
@@ -515,17 +516,13 @@ public:
             color.setRgbF((double)m_edges_mono_color.red()/(double)255,
                           (double)m_edges_mono_color.green()/(double)255,
                           (double)m_edges_mono_color.blue()/(double)255);
-            rendering_program_p_l.disableAttributeArray("a_Color");
-            rendering_program_p_l.setAttributeValue("a_Color",color);
+            rendering_program_line.disableAttributeArray("a_Color");
+            rendering_program_line.setAttributeValue("a_Color",color);
           }
           else
           {
-            rendering_program_p_l.enableAttributeArray("a_Color");
+            rendering_program_line.enableAttributeArray("a_Color");
           }
-          rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
-          rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
-          rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-          glLineWidth(m_size_edges);
           glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
           vao[VAO_COLORED_SEGMENTS].release();
         };
@@ -545,7 +542,7 @@ public:
           renderer(DRAW_ALL);
         }
 
-        rendering_program_p_l.release();
+        rendering_program_line.release();
       }
     }
 
@@ -857,6 +854,7 @@ protected:
   {
     rendering_program_face.removeAllShaders();
     rendering_program_p_l.removeAllShaders();
+    rendering_program_line.removeAllShaders();
     rendering_program_clipping_plane.removeAllShaders();
     rendering_program_sphere.removeAllShaders();
     rendering_program_cylinder.removeAllShaders();
@@ -882,17 +880,13 @@ protected:
     //     ? VERTEX_SOURCE_P_L
     //     : VERTEX_SOURCE_P_L_COMP;
 
-    const char* source_ = VERTEX_SOURCE_LINE_WIDTH;
+    const char* source_ = isOpenGL_4_3()
+                          ? VERTEX_SOURCE_P_L
+                          : VERTEX_SOURCE_P_L_COMP;
 
     QOpenGLShader *vertex_shader_p_l = new QOpenGLShader(QOpenGLShader::Vertex);
     if(!vertex_shader_p_l->compileSourceCode(source_))
     { std::cerr<<"Compiling vertex source FAILED"<<std::endl; }
-
-    source_ = GEOMETRY_SOURCE_LINE_WIDTH;
-
-    QOpenGLShader *geometry_shader_p_l= new QOpenGLShader(QOpenGLShader::Geometry);
-    if(!geometry_shader_p_l->compileSourceCode(source_))
-    { std::cerr<<"Compiling geometry source FAILED"<<std::endl; }
 
     source_ = isOpenGL_4_3()
         ? FRAGMENT_SOURCE_P_L
@@ -904,8 +898,6 @@ protected:
 
     if(!rendering_program_p_l.addShader(vertex_shader_p_l))
     { std::cerr<<"adding vertex shader FAILED"<<std::endl; }
-    if(!rendering_program_p_l.addShader(geometry_shader_p_l))
-    { std::cerr<<"adding geometry shader FAILED"<<std::endl; }
     if(!rendering_program_p_l.addShader(fragment_shader_p_l))
     { std::cerr<<"adding fragment shader FAILED"<<std::endl; }
     if(!rendering_program_p_l.link())
@@ -1111,6 +1103,38 @@ protected:
       if (!rendering_program_triangle.link())
       { std::cerr << "Linking Program for triangle FAILED" << std::endl; }
     }
+
+    // Line shader
+    if (isOpenGL_4_3())
+    {
+      source_ = VERTEX_SOURCE_LINE_WIDTH;
+
+      QOpenGLShader *vertex_shader_line = new QOpenGLShader(QOpenGLShader::Vertex);
+      if (!vertex_shader_line->compileSourceCode(source_))
+      { std::cerr << "Compiling vertex source for line FAILED" << std::endl; }
+
+      source_ = GEOMETRY_SOURCE_LINE_WIDTH;
+
+      QOpenGLShader *geometry_shader_line = new QOpenGLShader(QOpenGLShader::Geometry);
+      if (!geometry_shader_line->compileSourceCode(source_))
+      { std::cerr << "Compiling geometry source for line FAILED" << std::endl; }
+
+      source_ = FRAGMENT_SOURCE_P_L;
+
+      QOpenGLShader *fragment_shader_line = new QOpenGLShader(QOpenGLShader::Fragment);
+      if (!fragment_shader_line->compileSourceCode(source_))
+      { std::cerr << "Compiling fragment source for line FAILED" << std::endl; }
+
+
+      if (!rendering_program_line.addShader(vertex_shader_line))
+      { std::cerr << "Adding vertex shader for line FAILED" << std::endl;}
+      if (!rendering_program_line.addShader(geometry_shader_line))
+      { std::cerr << "Adding geometry shader for line FAILED" << std::endl;}
+      if (!rendering_program_line.addShader(fragment_shader_line))
+      { std::cerr << "Adding fragment shader for line FAILED" << std::endl; }
+      if (!rendering_program_line.link())
+      { std::cerr << "Linking Program for line FAILED" << std::endl; }
+    }
   }
 
   void initialize_buffers()
@@ -1208,7 +1232,6 @@ protected:
                            gBuffer.get_size_of_index(GS::COLOR_SEGMENTS));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
-    rendering_program_p_l.bind();
 
     buffers[bufn].release();
 
@@ -1539,6 +1562,15 @@ protected:
       int mvpLocation = rendering_program_triangle.uniformLocation("u_Mvp");
       rendering_program_triangle.setUniformValue(mvpLocation, mvpMatrix);
       rendering_program_triangle.release();
+    }
+
+    if (isOpenGL_4_3())
+    {
+      rendering_program_line.bind();
+
+      int mvpLocation = rendering_program_line.uniformLocation("u_Mvp");
+      rendering_program_line.setUniformValue(mvpLocation, mvpMatrix);
+      rendering_program_line.release();
     }
   }
 
@@ -2037,6 +2069,7 @@ protected:
 
   QOpenGLShaderProgram rendering_program_face;
   QOpenGLShaderProgram rendering_program_p_l;
+  QOpenGLShaderProgram rendering_program_line;
   QOpenGLShaderProgram rendering_program_clipping_plane;
   QOpenGLShaderProgram rendering_program_sphere;
   QOpenGLShaderProgram rendering_program_cylinder;

@@ -487,7 +487,6 @@ namespace GLFW
     m_ShaderSphere->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
     m_ShaderSphere->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderSphere->set_vec4f("u_PointPlane", m_PointPlane.data());
-    m_ShaderSphere->set_float("u_PointSize", m_SizeVertices);
     m_ShaderSphere->set_float("u_Radius", m_Camera.get_radius()*m_SizeVertices*0.001);
   }
 
@@ -503,7 +502,6 @@ namespace GLFW
     m_ShaderCylinder->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
     m_ShaderCylinder->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderCylinder->set_vec4f("u_PointPlane", m_PointPlane.data());
-    m_ShaderCylinder->set_float("u_PointSize", m_SizeEdges);
     m_ShaderCylinder->set_float("u_Radius", m_Camera.get_radius()*m_SizeEdges*0.001);
   }
 
