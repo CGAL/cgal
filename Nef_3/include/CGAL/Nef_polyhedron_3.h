@@ -1442,6 +1442,39 @@ protected:
   }
 
   Nef_polyhedron_3<Kernel,Items, Mark>
+  append(const Nef_polyhedron_3<Kernel,Items, Mark>& N1)
+  /*{\Mop returns |\Mvar| with N1 appended }*/ {
+    CGAL_NEF_TRACEN(" append between nef3 "<<&*this<<" and "<<&N1);
+    Shell_entry_const_iterator si;
+    CGAL_forall_shells_of(si,N1.volumes_begin())
+      CGAL::shell_to_nef_3(N1,si,snc(),true);
+    SNC_external_structure es(snc());
+    es.clear_external_structure();
+    build_external_structure();
+    mark_bounded_volumes();
+
+    return *this;
+  }
+
+  template <typename Range>
+  Nef_polyhedron_3<Kernel,Items, Mark>
+  append(const Range& N)
+  /*{\Mop returns |\Mvar| with the range N appended }*/ {
+    for(typename Range::const_iterator N1=N.begin(); N1!=N.end(); ++N1) {
+      CGAL_NEF_TRACEN(" append between nef3 "<<&*this<<" and "<<&*N1);
+      Shell_entry_const_iterator si;
+      CGAL_forall_shells_of(si,N1->volumes_begin())
+        CGAL::shell_to_nef_3(*N1,si,snc(),true);
+    }
+    SNC_external_structure es(snc());
+    es.clear_external_structure();
+    build_external_structure();
+    mark_bounded_volumes();
+
+    return *this;
+  }
+
+  Nef_polyhedron_3<Kernel,Items, Mark>
   difference(const Nef_polyhedron_3<Kernel,Items, Mark>& N1) const
   /*{\Mop returns |\Mvar| $-$ |N1|. }*/ {
     CGAL_NEF_TRACEN(" difference between nef3 "<<&*this<<" and "<<&N1);
