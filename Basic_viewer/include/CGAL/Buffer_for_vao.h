@@ -431,7 +431,7 @@ public:
   }
 
   /// End the face: compute the triangulation.
-  void face_end()
+  void face_end() 
   {
     if (!is_a_face_started()) return;
 

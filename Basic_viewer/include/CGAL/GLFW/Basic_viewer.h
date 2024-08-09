@@ -267,6 +267,11 @@ namespace GLFW
     void increase_green_component(const float deltaTime);
     void increase_blue_component(const float deltaTime);
 
+    void increase_size_edge(const float deltaTime);
+    void decrease_size_edge(const float deltaTime);
+    void increase_size_vertex(const float deltaTime);
+    void decrease_size_vertex(const float deltaTime);
+
     void switch_display_mode();
 
     void fullscreen();

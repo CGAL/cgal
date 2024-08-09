@@ -18,7 +18,7 @@ namespace GLFW
   {
     // Initialise GLFW
     if (!glfwInit())
-    {
+    { 
       std::cerr << "Could not start GLFW\n";
       exit(EXIT_FAILURE);
     }
@@ -514,11 +514,9 @@ namespace GLFW
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    float viewport[2] = { m_WindowSize.x(), m_WindowSize.y() }; 
-
     m_ShaderPl->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
-    m_ShaderPl->set_vec2f("u_Viewport", &viewport[0]);
-    m_ShaderPl->set_float("u_PointSize", m_SizeVertices);
+    m_ShaderPl->set_float("u_PointSize", m_Camera.get_radius()*m_SizeVertices*0.1);
+    m_ShaderPl->set_int("u_IsOrthographic", static_cast<int>(m_Camera.is_orthographic()));
 
     m_ShaderPl->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderPl->set_vec4f("u_PointPlane", m_PointPlane.data());
@@ -536,10 +534,9 @@ namespace GLFW
 
     m_ShaderLine->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
     m_ShaderLine->set_float("u_PointSize", m_SizeEdges);
-    
     m_ShaderLine->set_int("u_IsOrthographic", static_cast<int>(m_Camera.is_orthographic()));
+    
     m_ShaderLine->set_vec2f("u_Viewport", &viewport[0]);
-
 
     m_ShaderLine->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderLine->set_vec4f("u_PointPlane", m_PointPlane.data());
@@ -886,13 +883,13 @@ namespace GLFW
       update_edge_uniforms();
     }
 
-    glDepthFunc(GL_LEQUAL);
+    // glDepthFunc(GL_LEQUAL);
 
     vec4f color = color_to_normalized_vec4(m_EdgesMonoColor);
 
     glBindVertexArray(m_VAO[VAO_MONO_SEGMENTS]);
     glVertexAttrib4fv(1, color.data());
-    glLineWidth(m_SizeEdges);
+    // glLineWidth(m_SizeEdges);
     glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS));
 
     glBindVertexArray(m_VAO[VAO_COLORED_SEGMENTS]);
@@ -1231,16 +1228,16 @@ namespace GLFW
       m_UseNormalMonoColor = !m_UseNormalMonoColor;
       break;
     case INC_EDGES_SIZE:
-      m_SizeEdges = std::min(10.f, m_SizeEdges + 10.0f*deltaTime);
+      increase_size_edge(deltaTime);
       break;
     case DEC_EDGES_SIZE:
-      m_SizeEdges = std::max(0.1f, m_SizeEdges - 10.0f*deltaTime);
+      decrease_size_edge(deltaTime);
       break;
     case INC_POINTS_SIZE:
-      m_SizeVertices = std::min(50.f, m_SizeVertices + 10.0f*deltaTime);
+      increase_size_vertex(deltaTime);
       break;
     case DEC_POINTS_SIZE:
-      m_SizeVertices = std::max(0.1f, m_SizeVertices - 10.0f*deltaTime);
+      decrease_size_vertex(deltaTime);
       break;
     case INC_LIGHT_ALL:
       increase_light_all(deltaTime);
@@ -1383,6 +1380,30 @@ namespace GLFW
     }
   }
  
+  void Basic_viewer::increase_size_edge(const float deltaTime)
+  {
+    float upperBound = 20.0;  
+    m_SizeEdges = std::min(upperBound, m_SizeEdges + 10.0f*deltaTime);
+  }
+
+  void Basic_viewer::decrease_size_edge(const float deltaTime)
+  {
+    float lowerBound = 0.01;
+    m_SizeEdges = std::max(lowerBound, m_SizeEdges - 10.0f*deltaTime);
+  }
+
+  void Basic_viewer::increase_size_vertex(const float deltaTime)
+  {
+    float upperBound = 20.0;  
+    m_SizeVertices = std::min(upperBound, m_SizeVertices + 10.0f*deltaTime);
+  }
+
+  void Basic_viewer::decrease_size_vertex(const float deltaTime)
+  {
+    float lowerBound = 0.01;
+    m_SizeVertices = std::max(lowerBound, m_SizeVertices - 10.0f*deltaTime);
+  }
+
   void Basic_viewer::increase_red_component(const float deltaTime)
   {
     float speed = deltaTime;

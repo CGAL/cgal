@@ -379,7 +379,9 @@ public:
                         (double)m_vertices_mono_color.green()/(double)255,
                         (double)m_vertices_mono_color.blue()/(double)255);
           rendering_program_p_l.setAttributeValue("a_Color",color);
-          rendering_program_p_l.setUniformValue("u_PointSize", GLfloat(m_size_points));
+          rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_points));
+          rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
+
           rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
           rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
           rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
@@ -428,6 +430,7 @@ public:
 
     if(m_draw_edges)
     {
+
       if (m_draw_cylinder_edge && m_geometry_feature_enabled)
       {
         rendering_program_cylinder.bind();
@@ -439,7 +442,7 @@ public:
                         (double)m_edges_mono_color.blue()/(double)255);
           rendering_program_cylinder.setAttributeValue("a_Color",color);
           rendering_program_cylinder.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges));
-          rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
+          rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.002));
           rendering_program_cylinder.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_cylinder.setUniformValue("u_PointPlane", plane_point);
           rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
