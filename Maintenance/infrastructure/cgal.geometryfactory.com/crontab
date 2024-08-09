@@ -11,6 +11,8 @@
 
 PATH=/home/lrineau/bin-cmake3:/bin:/usr/bin:/home/lrineau/bin
 LC_CTYPE=en_US.UTF-8
+DOCKER_HOST=unix:///run/podman/podman.sock
+CONTAINER_HOST=unix:///run/podman/podman.sock
 
 # Update testsuite result pages
 5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection || echo ERROR
@@ -71,10 +73,10 @@ LC_CTYPE=en_US.UTF-8
 #0 * * * * docker inspect --format='{{json .State.Health.Status}}' cgal-mediawiki-docker_wiki_1 | grep -q '"healthy"' || docker logs cgal-mediawiki-docker_wiki_1
 
 # cgal->cgal2 with git-multimail
-*/5 * * * * cd $HOME/Git/cgal-dev-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-dev         cgal-dev-receiver
-*/5 * * * * cd $HOME/Git/cgal-pusher.git          && $HOME/bin/git-fetch-and-push-to-multimail cgal             cgal-receiver
-*/5 * * * * cd $HOME/Git/cgal-students-pusher.git && $HOME/bin/git-fetch-and-push-to-multimail cgal-public-dev  cgal-students-receiver
-*/5 * * * * cd $HOME/Git/cgal-web-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-web         cgal-web-receiver
+#*/5 * * * * cd $HOME/Git/cgal-dev-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-dev         cgal-dev-receiver
+#*/5 * * * * cd $HOME/Git/cgal-pusher.git          && $HOME/bin/git-fetch-and-push-to-multimail cgal             cgal-receiver
+#*/5 * * * * cd $HOME/Git/cgal-students-pusher.git && $HOME/bin/git-fetch-and-push-to-multimail cgal-public-dev  cgal-students-receiver
+#*/5 * * * * cd $HOME/Git/cgal-web-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-web         cgal-web-receiver
 
 ####################################
 #             Old stuff
