@@ -745,6 +745,11 @@ static_assert(std::is_same<CGAL::Dimension_tag<3>,Ker3::Dimension>::value);
 static_assert(std::is_same<CGAL::Dynamic_dimension_tag,Kerd::Dimension>::value);
 static_assert(std::is_same<CGAL::Dimension_tag<2>,CGAL::Ambient_dimension<Ker2::Point_d>::type>::value);
 static_assert(std::is_same<CGAL::Dimension_tag<3>,CGAL::Ambient_dimension<Ker3::Point_d,Ker3>::type>::value);
+
+static_assert(Ker2::Has_filtered_predicates_tag::value);
+static_assert(Ker3::Has_filtered_predicates_tag::value);
+static_assert(Kerd::Has_filtered_predicates_tag::value);
+
 int main(){
   //Broken with Linear_base_d (output iterator)
   //test2<CGAL::Kernel_d_interface<KK> >();
