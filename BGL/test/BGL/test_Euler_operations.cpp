@@ -18,6 +18,7 @@ test_copy_face_graph_nm_umbrella()
   Kernel::Point_3 p(0,0,0);
 
   CGAL::make_tetrahedron(p, p, p, p, g);
+  CGAL::make_tetrahedron(p, p, p, p, g);
 
   std::vector<vertex_descriptor> verts(vertices(g).begin(), vertices(g).end());
 
