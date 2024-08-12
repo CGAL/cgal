@@ -332,7 +332,7 @@ private:
       check_squared_distance(S{p2, p3}, S{p6, p5}, 0);
       check_squared_distance(S{p2, p3}, S{p5, p6}, 0);
       check_squared_distance(S{p3, p2}, S{p6, p5}, 0);
-      check_squared_distance(S{p3, p2}, S{p, p6}, 0);
+      check_squared_distance(S{p3, p2}, S{p5, p6}, 0);
 
       const double lambda_7 = r.get_double(1, 2);
       const P p7 = p3 + FT(lambda_7) * V{p3 - p2};
