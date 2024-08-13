@@ -210,11 +210,6 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene)
     {
       ++counter;
       //each line is : "x1, y1, z1, x2, y2, z2"
-      std::vector<Pt> new_polyline;
-      polylines.push_back(new_polyline);
-      std::vector<Pt>& polyline = polylines.back();
-      polyline.reserve(2);
-
       std::istringstream tokenizer(line);
 
       std::array<std::string, 3> p_s; //point p as string
