@@ -11,6 +11,7 @@ create_single_source_cgal_program( "test_simplicial_cb_vb.cpp")
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
+  create_single_source_cgal_program( "test_c2t3.cpp" )
   create_single_source_cgal_program( "test_c3t3.cpp" )
   create_single_source_cgal_program( "test_c3t3_io.cpp" )
   create_single_source_cgal_program( "test_c3t3_with_features.cpp" )
@@ -19,6 +20,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program( "test_c3t3_io_MEDIT.cpp" )
 
   foreach(target
+      test_c2t3
       test_c3t3
       test_c3t3_io
       test_c3t3_with_features
