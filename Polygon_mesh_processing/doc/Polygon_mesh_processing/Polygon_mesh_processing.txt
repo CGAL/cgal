@@ -1420,8 +1420,8 @@ and the number of surface patches that are separated by these edges.
 
 Registration of one mesh onto another is often required to map between multiple acquisitions of an object or between an acquisition and a CAD model, e.g., in quality assurance. A simple linear transformation is only sufficient in the case of rigid objects.
 
-The functions `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_mesh_registration()` and `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_points_registration()` calculate a non-rigid registration from a source mesh onto target mesh or a target oriented point cloud. For each vertex in the source mesh a translation vector and a rotation matrix is returned.
-The registration is formulated as an energy to minimize the distance between source and target. The energy is iteratively minimized by solving sparse linear systems and finding closest rotation matrices. 
+The functions `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_mesh_registration()` and `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_points_registration()` calculate a non-rigid registration from a source mesh onto a target mesh or a target oriented point cloud. For each vertex in the source mesh a translation vector and a rotation matrix is returned.
+The registration is formulated as an energy to minimize the distance between source and target. The energy is iteratively minimized by solving sparse linear systems and finding closest rotation matrices.
 The core algorithm is ICP, iterative closest point. In each iteration, the method identifies vertex or point pairs between the intermediate, initially a copy of the source, and the target and subsequently calculates the transformations which minimize the distance between them. The intermediate is updated after each iteration and converges towards the target.
 
 \f{equation}{
@@ -1442,7 +1442,7 @@ with the single energy terms:
 \f}
 
 \f{equation}{
-\mathbf{E_{arap}} = 
+\mathbf{E_{arap}} =
 \sum_{\mathbf{v}_i \in M}
 \sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}
 \left\| (\mathbf{R}_i\mathbf{v}_i + \mathbf{t}_i - \mathbf{R}_j\mathbf{v}_j + \mathbf{t}_j) - \mathbf{R}_i(\mathbf{v}_i - \mathbf{v}_j) \right\|^2_2,
