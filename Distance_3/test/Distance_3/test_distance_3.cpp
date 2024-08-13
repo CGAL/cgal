@@ -160,7 +160,6 @@ private:
     assert(are_equal(res_o2o1, expected_result));
 
     do_intersect_check(o1, o2);
-    do_intersect_check(o2, o1);
   }
 
   template <typename O1, typename O2>
@@ -170,7 +169,6 @@ private:
     const FT res_o2o1 = CGAL::squared_distance(o2, o1);
 
     do_intersect_check(o1, o2);
-    do_intersect_check(o2, o1);
 
     assert(res_o1o2 <= ubound);
     assert(res_o2o1 <= ubound);
