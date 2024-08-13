@@ -17,6 +17,8 @@
 #include <limits>
 #include <array>
 #include <iostream>
+#include <iterator>
+#include <CGAL/assertion.h>
 
 namespace CGAL {
 namespace Impl {
@@ -109,6 +111,7 @@ protected:
 
     template <typename I>
     void init(int d, I b, I e) {
+        CGAL_assertion(d == std::distance(b,e));
         for(int i=0; i<d; ++i,++b)
         {
             min_values[i] = (*b).first;
@@ -126,10 +129,10 @@ class Bbox : public Impl::Bbox<std::array<T, N>, Bbox<N,T>>
     enum { D = N };
 public:
     inline constexpr int dimension() const { return D; }
-    Bbox(int d = 0          ) { assert(d==N || d==0); this->init(d       ); }
-    Bbox(int d, const T& range) { assert(d==N || d==0); this->init(d, range); }
+    Bbox(int d = 0          ) { CGAL_assertion(d==N || d==0); this->init(d       ); }
+    Bbox(int d, const T& range) { CGAL_assertion(d==N || d==0); this->init(d, range); }
     template <typename I>
-    Bbox(int d, I b, I e) { assert(d==N || d==0); this->init(d, b, e); }
+    Bbox(int d, I b, I e) { CGAL_assertion(d==N || d==0); this->init(d, b, e); }
 };
 
 // A dynamic D-dimensional axis aligned box
