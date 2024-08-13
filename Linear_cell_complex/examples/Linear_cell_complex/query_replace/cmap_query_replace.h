@@ -60,18 +60,18 @@ public:
   std::size_t number_of_vpatterns() const
   { return m_vpatterns.size(); }
 
-  LCC& fpattern(std::size_t i) 
+  LCC& fpattern(std::size_t i)
   { return m_fpatterns[i].lcc(); }
-  LCC& spattern(std::size_t i) 
+  LCC& spattern(std::size_t i)
   { return m_spatterns[i].lcc(); }
-  LCC& vpattern(std::size_t i) 
+  LCC& vpattern(std::size_t i)
   { return m_vpatterns[i].lcc(); }
 
-   Signature_mapping& fsignatures() 
+   Signature_mapping& fsignatures()
   { return m_fsignatures; }
-   Signature_mapping& ssignatures() 
+   Signature_mapping& ssignatures()
   { return m_ssignatures; }
-   Signature_mapping& vsignatures() 
+   Signature_mapping& vsignatures()
   { return m_vsignatures; }
 
   typename Signature_mapping::const_iterator find_fpattern(const Signature& s) const
@@ -127,13 +127,13 @@ public:
     auto [success, id] = load_one_additional_pattern<1>(file_name, m_fpatterns);
     if (!success) {
       std::cerr << "load_additional_fpattern: file not found or format not readable" << std::endl;
-      return;   
+      return;
     };
-    
+
     Signature signature;
     Dart_handle dh;
     size_type mark_to_preserve=LCC::INVALID_MARK;
-    
+
     auto& pattern = m_fpatterns[id];
 
     if(init_topreserve!=nullptr) // true iff the std::function is not empty
@@ -230,7 +230,7 @@ public:
     auto [success, id] = load_one_additional_pattern<3>(directory_name, m_vpatterns);
     if (!success) {
       std::cerr << "load_additional_vpattern: file not found or format not readable" << std::endl;
-      return;   
+      return;
     };
 
     Signature signature;
@@ -298,8 +298,8 @@ protected:
                          Pattern_set<type>& patterns)
   {
     const std::filesystem::path file(file_name);
-    if (!std::filesystem::exists(file) 
-      || !std::filesystem::is_regular_file(file) 
+    if (!std::filesystem::exists(file)
+      || !std::filesystem::is_regular_file(file)
       || !is_lcc_readable_file(file.string()))
     { return {false, 0}; }
 
@@ -539,6 +539,26 @@ std::size_t query_replace_one_volume_from_dart(LCC& lcc,
   // else { std::cout<<"NOT found"<<std::endl; }
   return replaced;
 }
+
+bool replace_one_volume_from_signature(LCC& lcc,
+                                Dart_handle dh1,
+                                Signature& signature,
+                                Dart_handle dh2)
+{
+  //std::cout<<"Source: "; print_signature(signature);
+  std::size_t replaced=std::numeric_limits<std::size_t>::max();
+  auto res=m_vsignatures.find(signature);
+  if(res!=m_vsignatures.end())
+  {
+    // std::cout<<"FOUND Pattern "<<res->second.second+1<<std::endl;
+    replace_one_volume_from_dart(lcc, dh2, m_vpatterns[res->second.second],
+        res->second.first);
+    replaced=res->second.second;
+  }
+  // else { std::cout<<"face NOT found"<<std::endl; }
+  return replaced;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Query volume(dh) in the set of patterns, and if one pattern matches,
 /// replace volume(dh).
@@ -550,25 +570,10 @@ std::size_t query_replace_one_volume(LCC& lcc,
   Signature signature;
   Dart_handle
       dh2=vsignature_of_volume(lcc, dh, marktopreserve, signature); //, true);
-  std::size_t replaced=std::numeric_limits<std::size_t>::max();
-  auto res=m_vsignatures.find(  signature);
-  if(res!=m_vsignatures.end())
-  {
-    replace_one_volume_from_dart(lcc, dh2, m_vpatterns[res->second.second],
-        res->second.first);
-    replaced=res->second.second;
-  }
-  else { // std::cout<<"volume NOT found"<<std::endl;
-    /* static std::size_t nberrors=0; // TODO REMOVE (or add an option to enable/disable dynamically)
-    LCC lcc_error;
-    copy_cell<3>(lcc, dh, lcc_error);
-    // CGAL::draw(lcc_error);
-    // save_object_3D(std::string("error"+std::to_string(nberrors++)+".mesh"), lcc_error);
-    CGAL::write_off(lcc_error, std::string("error"+(std::to_string(nberrors++)+
-                                           ".off")).c_str()); */
-  }
-  return replaced;
+  return replace_one_volume_from_signature(lcc, dh, signature, dh2);
 }
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Query volume(dh) but without using signatures. If one pattern matches,
 /// replace volume(dh).
@@ -685,8 +690,15 @@ std::size_t query_replace_one_face(LCC& lcc,
                                    size_type marktopreserve=LCC::INVALID_MARK)
 {
   Signature signature;
-  Dart_handle
-      dh2=fsignature_of_face(lcc, dh, marktopreserve, signature); //, true);
+  Dart_handle dh2=fsignature_of_face(lcc, dh, marktopreserve, signature); //, true);
+  return replace_one_face_from_signature(lcc, dh, signature, dh2);
+}
+
+bool replace_one_face_from_signature(LCC& lcc,
+                                Dart_handle dh1,
+                                Signature& signature,
+                                Dart_handle dh2)
+{
   //std::cout<<"Source: "; print_signature(signature);
   std::size_t replaced=std::numeric_limits<std::size_t>::max();
   auto res=m_fsignatures.find(signature);
@@ -700,6 +712,7 @@ std::size_t query_replace_one_face(LCC& lcc,
   // else { std::cout<<"face NOT found"<<std::endl; }
   return replaced;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 /// Query face(dh) but without using signatures. If one pattern matches,
 /// replace face(dh).
