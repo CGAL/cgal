@@ -67,45 +67,6 @@ int surface_test() {
   return EXIT_SUCCESS;
 }
 
-// int two_stacked_3_template_test() {
-//   using namespace CGAL::HexRefinement::TwoRefinement;
-
-//   HexMeshingData hdata;
-//   LCC& lcc = hdata.lcc;
-
-//   hdata.grid = generate_grid(hdata.lcc, Point(0,0,0), 5, 4);
-//   hdata.template_mark = lcc.get_new_mark();
-//   hdata.propagation_face_mark = lcc.get_new_mark();
-
-//   load_patterns(hdata.regular_templates, hdata.partial_templates);
-
-//   RefinementData plane;
-//   Dart_handle first = lcc.first_dart();
-//   first = lcc.beta(first, 0, 0, 2, 3, 2);
-
-//   // TODO mark 2 volumes to shape two 3 templates using get_or_create_attr<3>
-
-//   lcc.mark_cell<0>(lcc.beta(first, 1, 2), hdata.template_mark);
-//   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 1), hdata.template_mark);
-//   lcc.mark_cell<0>(lcc.beta(first, 1, 2, 0), hdata.template_mark);
-
-//   setup_initial_planes(hdata);
-//   extract_darts_from_even_planes(hdata, plane, Plane::XY);
-//   create_vertices_for_templates(hdata, plane);
-//   refine_marked_hexes(hdata, plane);
-
-//   lcc.unmark_all(debug_node_mark);
-//   lcc.unmark_all(debug_edge_mark);
-//   Dart_handle d = lcc.beta(first, 1, 2, 3, 2, 1, 2, 3, 0, 0, 2, 3, 2, 1, 1, 2, 3, 2,  1, 2, 3, 2, 1,       2, 3, 2    );
-//   mark_edge(lcc, d, debug_node_mark);
-//   mark_face(lcc, d, debug_edge_mark);
-
-//   CGAL::save_combinatorial_map(lcc, "work.3map");
-//   render<LCC>(lcc, debug_node_mark, debug_edge_mark);
-
-//   return 0;
-// }
-
 int propagation_face(){
   using namespace CGAL::HexRefinement::TwoRefinement;
 
@@ -134,9 +95,10 @@ int propagation_face(){
   auto m1 = lcc.get_new_mark();
   auto m2 = lcc.get_new_mark();
 
-  auto a = lcc.beta(lcc.first_dart(), 1, 1, 2);
-  mark_half_face_unchecked(lcc, a, m1);
-  assert(!is_half_face_marked(lcc, lcc.beta(a,3), m1));
+  HexMeshingData hdata;
+  RefinementData rdata;
+
+  // initial_setup(hdata, cellIdentifier);
 
   render(lcc, m1, m2);
 
