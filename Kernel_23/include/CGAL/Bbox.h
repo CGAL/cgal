@@ -82,8 +82,8 @@ public:
         CGAL_assertion(dimension() == bbox.dimension());
         T result = 1;
         for(int i=0; i<dimension(); ++i) {
-            result *= (std::min)(max(i), bbox.max(i)) -
-                      (std::max)(min(i), bbox.min(i));
+            result *= (std::min)((max)(i), (bbox.max)(i)) -
+                      (std::max)((min)(i), (bbox.min)(i));
             if (result <= 0) return 0;
         }
         return result;
