@@ -431,7 +431,6 @@ public:
 
     if(m_draw_edges)
     {
-
       if (m_draw_cylinder_edge && m_geometry_feature_enabled)
       {
         rendering_program_cylinder.bind();
@@ -689,6 +688,9 @@ public:
       // rendering_mode == 1: draw transparent only;
       auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) 
       {
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glPolygonOffset(2.0, 2.0); 
+        glDepthFunc(GL_LESS);
         vao[VAO_MONO_FACES].bind();
         color.setRgbF((double)m_faces_mono_color.red()/(double)255,
                       (double)m_faces_mono_color.green()/(double)255,
@@ -720,6 +722,7 @@ public:
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
         vao[VAO_COLORED_FACES].release();
+        glDisable(GL_POLYGON_OFFSET_FILL);
       };
 
       auto renderer_clipping_plane = [this](bool clipping_plane_rendering) {

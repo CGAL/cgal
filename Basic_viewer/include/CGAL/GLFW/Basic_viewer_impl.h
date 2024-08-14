@@ -106,10 +106,10 @@ namespace GLFW
     if (maxGeometryOutputVertices < 128 || maxGeometryOutputComponents < 1024)
     {
       std::cout << "Cylinder edge and sphere vertex feature disabled! (maxGeometryOutputVertices=" << maxGeometryOutputVertices << ", maxGeometryOutputComponents=" << maxGeometryOutputComponents << ")\n";
-      m_geometryFeatureEnabled = false; 
+      m_GeometryFeatureEnabled = false; 
     }
   }
- 
+
   void Basic_viewer::initialize(bool screenshotOnly)
   {
     m_Window = create_window(m_WindowSize.x(), m_WindowSize.y(), m_Title, screenshotOnly);
@@ -141,6 +141,7 @@ namespace GLFW
     MEASURE_TIME(initialize_buffers());
     MEASURE_TIME(initialize_and_load_world_axis());
     MEASURE_TIME(initialize_and_load_clipping_plane());
+
     if (!screenshotOnly)
     {
       MEASURE_TIME(initialize_keys_actions());
@@ -337,80 +338,113 @@ namespace GLFW
     glGenVertexArrays(NB_VAO_BUFFERS, m_VAO);
   }
 
+  std::vector<float> Basic_viewer::aggregate_data(int monoEnum, int coloredEnum) const
+  {
+    std::vector<float> data; 
+    
+    auto mono = m_Scene->get_array_of_index(monoEnum); 
+    auto colored = m_Scene->get_array_of_index(coloredEnum);
+
+    data.insert(data.end(), mono.begin(), mono.end()); 
+    data.insert(data.end(), colored.begin(), colored.end());
+
+    return data; 
+  }
+
+  std::vector<float> Basic_viewer::aggregate_color_data(int monoEnum, int coloredEnum, const CGAL::IO::Color& monoColor) const
+  {
+    std::vector<float> data; 
+    vec3f color = color_to_normalized_vec3(monoColor);
+
+    for (int i = 0; i < m_Scene->number_of_elements(monoEnum); ++i)
+    {
+      data.push_back(color.x());
+      data.push_back(color.y());
+      data.push_back(color.z());
+    } 
+
+    auto colored = m_Scene->get_array_of_index(coloredEnum);
+    data.insert(data.end(), colored.begin(), colored.end());
+
+    return data; 
+  }
+
   void Basic_viewer::load_scene()
   {
     unsigned int bufn = 0;
 
+    std::vector<float> positions, normals, colors; 
+
     // 1) POINT SHADER
 
-    // 1.1) Mono points
-    glBindVertexArray(m_VAO[VAO_MONO_POINTS]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_MONO_POINTS, 3);
+    positions = aggregate_data(Graphics_scene::POS_MONO_POINTS, Graphics_scene::POS_COLORED_POINTS); 
+    colors = aggregate_color_data(
+      Graphics_scene::POS_MONO_POINTS, 
+      Graphics_scene::COLOR_POINTS, 
+      m_VerticesMonoColor
+    );
 
-    // 1.2) Color points
-    glBindVertexArray(m_VAO[VAO_COLORED_POINTS]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_COLORED_POINTS, 3);
-    load_buffer(bufn++, 1, Graphics_scene::COLOR_POINTS, 3);
+    glBindVertexArray(m_VAO[VAO_POINTS]);
+    load_buffer(bufn++, 0, positions, 3);
+    load_buffer(bufn++, 1, colors, 3);
 
     // 2) SEGMENT SHADER
 
-    // 2.1) Mono segments
-    glBindVertexArray(m_VAO[VAO_MONO_SEGMENTS]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_MONO_SEGMENTS, 3);
+    positions = aggregate_data(Graphics_scene::POS_MONO_SEGMENTS, Graphics_scene::POS_COLORED_SEGMENTS); 
+    colors = aggregate_color_data(
+      Graphics_scene::POS_MONO_SEGMENTS, 
+      Graphics_scene::COLOR_SEGMENTS, 
+      m_EdgesMonoColor
+    );
 
-    // 2.2) Colored segments
-    glBindVertexArray(m_VAO[VAO_COLORED_SEGMENTS]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_COLORED_SEGMENTS, 3);
-    load_buffer(bufn++, 1, Graphics_scene::COLOR_SEGMENTS, 3);
+    glBindVertexArray(m_VAO[VAO_SEGMENTS]);
+    load_buffer(bufn++, 0, positions, 3);
+    load_buffer(bufn++, 1, colors, 3);
 
     // 3) RAYS SHADER
 
-    // 2.1) Mono segments
-    glBindVertexArray(m_VAO[VAO_MONO_RAYS]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_MONO_RAYS, 3);
+    positions = aggregate_data(Graphics_scene::POS_MONO_RAYS, Graphics_scene::POS_COLORED_RAYS); 
+    colors = aggregate_color_data(
+      Graphics_scene::POS_MONO_RAYS, 
+      Graphics_scene::COLOR_RAYS, 
+      m_RaysMonoColor
+    );
 
-    // 2.2) Colored segments
-    glBindVertexArray(m_VAO[VAO_COLORED_RAYS]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_COLORED_RAYS, 3);
-    load_buffer(bufn++, 1, Graphics_scene::COLOR_RAYS, 3);
+    glBindVertexArray(m_VAO[VAO_RAYS]);
+    load_buffer(bufn++, 0, positions, 3);
+    load_buffer(bufn++, 1, colors, 3);
 
     // 4) LINES SHADER
 
-    // 2.1) Mono lines
-    glBindVertexArray(m_VAO[VAO_MONO_LINES]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_MONO_LINES, 3);
+    positions = aggregate_data(Graphics_scene::POS_MONO_LINES, Graphics_scene::POS_COLORED_LINES); 
+    colors = aggregate_color_data(
+      Graphics_scene::POS_MONO_LINES, 
+      Graphics_scene::COLOR_LINES, 
+      m_LinesMonoColor
+    );
 
-    // 2.2) Colored lines
-    glBindVertexArray(m_VAO[VAO_COLORED_LINES]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_COLORED_LINES, 3);
-    load_buffer(bufn++, 1, Graphics_scene::COLOR_LINES, 3);
+    glBindVertexArray(m_VAO[VAO_RAYS]);
+    load_buffer(bufn++, 0, positions, 3);
+    load_buffer(bufn++, 1, colors, 3);
 
     // 5) FACE SHADER
 
-    // 5.1) Mono faces
-    glBindVertexArray(m_VAO[VAO_MONO_FACES]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_MONO_FACES, 3);
-    if (m_FlatShading)
-    {
-      load_buffer(bufn++, 1, Graphics_scene::FLAT_NORMAL_MONO_FACES, 3);
-    }
-    else
-    {
-      load_buffer(bufn++, 1, Graphics_scene::SMOOTH_NORMAL_MONO_FACES, 3);
-    }
+    positions = aggregate_data(Graphics_scene::POS_MONO_FACES, Graphics_scene::POS_COLORED_FACES); 
+    normals = aggregate_data(
+      m_FlatShading ? Graphics_scene::FLAT_NORMAL_MONO_FACES : Graphics_scene::SMOOTH_NORMAL_MONO_FACES, 
+      m_FlatShading ? Graphics_scene::FLAT_NORMAL_COLORED_FACES : Graphics_scene::SMOOTH_NORMAL_COLORED_FACES
+    ); 
 
-    // 5.2) Colored faces
-    glBindVertexArray(m_VAO[VAO_COLORED_FACES]);
-    load_buffer(bufn++, 0, Graphics_scene::POS_COLORED_FACES, 3);
-    if (m_FlatShading)
-    {
-      load_buffer(bufn++, 1, Graphics_scene::FLAT_NORMAL_COLORED_FACES, 3);
-    }
-    else
-    {
-      load_buffer(bufn++, 1, Graphics_scene::SMOOTH_NORMAL_COLORED_FACES, 3);
-    }
-    load_buffer(bufn++, 2, Graphics_scene::COLOR_FACES, 3);
+    colors = aggregate_color_data(
+      Graphics_scene::POS_MONO_FACES, 
+      Graphics_scene::COLOR_FACES, 
+      m_FacesMonoColor
+    );
+
+    glBindVertexArray(m_VAO[VAO_FACES]);
+    load_buffer(bufn++, 0, positions, 3);
+    load_buffer(bufn++, 1, normals, 3);
+    load_buffer(bufn++, 2, colors, 3);
 
     m_AreBuffersInitialized = true;
   }
@@ -475,7 +509,7 @@ namespace GLFW
     m_ShaderFace->set_float("u_RenderingTransparency", m_ClippingPlane.get_transparency());
   }
 
-  void Basic_viewer::update_point_uniforms()
+  void Basic_viewer::update_sphere_uniforms()
   {
     m_ShaderSphere->use();
 
@@ -490,7 +524,7 @@ namespace GLFW
     m_ShaderSphere->set_float("u_Radius", m_Camera.get_radius()*m_SizeVertices*0.001);
   }
 
-  void Basic_viewer::update_edge_uniforms()
+  void Basic_viewer::update_cylinder_uniforms()
   {
     m_ShaderCylinder->use();
 
@@ -725,12 +759,18 @@ namespace GLFW
     return { static_cast<float>(c.red()) / 255, static_cast<float>(c.green()) / 255, static_cast<float>(c.blue()) / 255, 1.0f };
   }
 
+  inline
+  vec3f Basic_viewer::color_to_normalized_vec3(const CGAL::IO::Color& c) const
+  {
+    return { static_cast<float>(c.red()) / 255, static_cast<float>(c.green()) / 255, static_cast<float>(c.blue()) / 255 };
+  }
+
   void Basic_viewer::draw_faces()
   {
     update_face_uniforms();
 
     glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(2.0, 1.0); 
+    glPolygonOffset(2.0, 2.0); 
     glDepthFunc(GL_LESS);
     if (m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF)
     {
@@ -782,124 +822,184 @@ namespace GLFW
   {
     m_ShaderFace->set_float("u_RenderingMode", static_cast<float>(mode));
 
-    vec4f color = color_to_normalized_vec4(m_FacesMonoColor);
+    glBindVertexArray(m_VAO[VAO_FACES]);
 
-    glBindVertexArray(m_VAO[VAO_MONO_FACES]);
-    glVertexAttrib4fv(2, color.data());
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
-
-    glBindVertexArray(m_VAO[VAO_COLORED_FACES]);
     if (m_UseMonoColor)
     {
-      glDisableVertexAttribArray(2);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES) == 0)
+      {
+        vec4f color = color_to_normalized_vec4(m_FacesMonoColor);
+        glVertexAttrib4fv(2, color.data());
+        glDisableVertexAttribArray(2);
+        glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+      }
+      else 
+      {
+        glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
+      }
     }
     else
     {
       glEnableVertexAttribArray(2);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES) == 0)
+      {
+        glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
+      }
+      else 
+      {
+        glDrawArrays(GL_TRIANGLES, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+      }
     }
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
   }
 
   void Basic_viewer::draw_rays()
   {
     m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
-    vec4f color = color_to_normalized_vec4(m_RaysMonoColor);
-
-    glBindVertexArray(m_VAO[VAO_MONO_RAYS]);
-    glVertexAttrib4fv(1, color.data());
-
     glLineWidth(m_SizeRays);
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_RAYS));
-
-    glBindVertexArray(m_VAO[VAO_COLORED_RAYS]);
+    glBindVertexArray(m_VAO[VAO_RAYS]);
     if (m_UseMonoColor)
     {
-      glDisableVertexAttribArray(1);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_MONO_RAYS) == 0)
+      {
+        vec4f color = color_to_normalized_vec4(m_RaysMonoColor);
+        glDisableVertexAttribArray(1);
+        glVertexAttrib4fv(1, color.data());
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_RAYS));
+      }
+      else 
+      {
+        glEnableVertexAttribArray(1);
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_RAYS));
+      }
     }
     else
     {
       glEnableVertexAttribArray(1);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_RAYS) == 0)
+      {
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_RAYS));
+      }
+      else
+      {
+        glDrawArrays(GL_LINES, m_Scene->number_of_elements(Graphics_scene::POS_MONO_RAYS), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_RAYS));
+      }
     }
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_RAYS));
+    glLineWidth(1.0);
   }
 
   void Basic_viewer::draw_vertices()
   {
     update_pl_uniforms();
-    if (m_DrawSphereVertex && m_geometryFeatureEnabled)
+    if (m_DrawSphereVertex && m_GeometryFeatureEnabled)
     {
-      update_point_uniforms();
+      update_sphere_uniforms();
     }
 
-    vec4f color = color_to_normalized_vec4(m_VerticeMonoColor);
-
-    glBindVertexArray(m_VAO[VAO_MONO_POINTS]);
-    glVertexAttrib4fv(1, color.data());
-    glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS));
-
-    glBindVertexArray(m_VAO[VAO_COLORED_POINTS]);
+    glBindVertexArray(m_VAO[VAO_POINTS]);
     if (m_UseMonoColor)
     {
-      glDisableVertexAttribArray(1);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS) == 0)
+      {
+        vec4f color = color_to_normalized_vec4(m_VerticesMonoColor);
+        glDisableVertexAttribArray(1);
+        glVertexAttrib4fv(1, color.data());
+        glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS));
+      }
+      else 
+      {
+        glEnableVertexAttribArray(1);
+        glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS));
+      }
     }
     else
     {
       glEnableVertexAttribArray(1);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS) == 0)
+      {
+        glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS));
+      }
+      else
+      {
+        glDrawArrays(GL_POINTS, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS));
+      }
     }
-    glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS));
   }
 
   void Basic_viewer::draw_lines()
   {
     m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
-    vec4f color = color_to_normalized_vec4(m_LinesMonoColor);
-
-    glBindVertexArray(m_VAO[VAO_MONO_LINES]);
-    glVertexAttrib4fv(1, color.data());
     glLineWidth(m_SizeLines);
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_LINES));
-
-    glBindVertexArray(m_VAO[VAO_COLORED_LINES]);
+    glBindVertexArray(m_VAO[VAO_LINES]);
     if (m_UseMonoColor)
     {
-      glDisableVertexAttribArray(1);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_MONO_LINES) == 0)
+      {
+        vec4f color = color_to_normalized_vec4(m_LinesMonoColor);
+        glDisableVertexAttribArray(1);
+        glVertexAttrib4fv(1, color.data());
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_LINES));
+      }
+      else 
+      {
+        glEnableVertexAttribArray(1);
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_LINES));
+      }
     }
     else
     {
       glEnableVertexAttribArray(1);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_LINES) == 0)
+      {
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_LINES));
+      }
+      else
+      {
+        glDrawArrays(GL_LINES, m_Scene->number_of_elements(Graphics_scene::POS_MONO_LINES), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_LINES));
+      }
     }
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_LINES));
+    glLineWidth(1.0);
   }
 
   void Basic_viewer::draw_edges()
   {
     update_line_uniforms();
-    if (m_DrawCylinderEdge && m_geometryFeatureEnabled)
+    if (m_DrawCylinderEdge && m_GeometryFeatureEnabled)
     {
-      update_edge_uniforms();
+      update_cylinder_uniforms();
     }
 
-    // glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LEQUAL);
 
-    vec4f color = color_to_normalized_vec4(m_EdgesMonoColor);
+    glBindVertexArray(m_VAO[VAO_SEGMENTS]);
 
-    glBindVertexArray(m_VAO[VAO_MONO_SEGMENTS]);
-    glVertexAttrib4fv(1, color.data());
-    // glLineWidth(m_SizeEdges);
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS));
-
-    glBindVertexArray(m_VAO[VAO_COLORED_SEGMENTS]);
     if (m_UseMonoColor)
     {
-      glDisableVertexAttribArray(1);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS) == 0)
+      {
+        vec4f color = color_to_normalized_vec4(m_EdgesMonoColor);
+        glVertexAttrib4fv(1, color.data());
+        glDisableVertexAttribArray(1);
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_SEGMENTS));
+      }
+      else 
+      {
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS));
+      }
     }
     else
     {
       glEnableVertexAttribArray(1);
+      if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_SEGMENTS) == 0)
+      {
+        glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS));
+      }
+      else 
+      {
+        glDrawArrays(GL_LINES, m_Scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_SEGMENTS));
+      }
     }
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_SEGMENTS));
   }
 
 
@@ -934,13 +1034,9 @@ namespace GLFW
 
     glDepthFunc(GL_LEQUAL);
 
-    glBindVertexArray(m_VAO[VAO_COLORED_FACES]);
+    glBindVertexArray(m_VAO[VAO_FACES]);
     glLineWidth(m_SizeNormals);
     glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
-
-    glBindVertexArray(m_VAO[VAO_MONO_FACES]);
-    glLineWidth(m_SizeNormals);
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
   }
 
   void Basic_viewer::draw_triangles()
@@ -949,13 +1045,7 @@ namespace GLFW
 
     glDepthFunc(GL_LEQUAL);
 
-    vec4f color = color_to_normalized_vec4(m_EdgesMonoColor);
-
-    glBindVertexArray(m_VAO[VAO_MONO_FACES]);
-    glLineWidth(1.0);
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
-
-    glBindVertexArray(m_VAO[VAO_COLORED_FACES]);
+    glBindVertexArray(m_VAO[VAO_FACES]);
     glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
   }
 
@@ -1166,7 +1256,7 @@ namespace GLFW
     // std::cout << "Mouse position : " << nc.x() << " " << nc.y() << ", Camera position : " << cameraPosition.transpose() << "\n";
     // std::cout << "BBOX : " << m_BoundingBox.first.transpose() << " " << m_BoundingBox.second.transpose() << "\n";
   }
- 
+
   void Basic_viewer::action_event(int action, const float deltaTime)
   {
     switch (action)
@@ -1392,7 +1482,7 @@ namespace GLFW
 
   void Basic_viewer::increase_size_vertex(const float deltaTime)
   {
-    float upperBound = 20.0;  
+    float upperBound = 50.0;  
     m_SizeVertices = std::min(upperBound, m_SizeVertices + 10.0f*deltaTime);
   }
 

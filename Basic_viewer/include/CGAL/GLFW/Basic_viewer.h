@@ -98,7 +98,7 @@ namespace GLFW
 
     inline void window_size(const vec2f &size) { window_size_callback(m_Window, size.x(), size.y()); }
 
-    inline void vertices_mono_color(const CGAL::IO::Color& c) { m_VerticeMonoColor = c; }
+    inline void vertices_mono_color(const CGAL::IO::Color& c) { m_VerticesMonoColor = c; }
     inline void edges_mono_color(const CGAL::IO::Color& c) { m_EdgesMonoColor = c; }
     inline void rays_mono_color(const CGAL::IO::Color& c) { m_RaysMonoColor = c; }
     inline void lines_mono_color(const CGAL::IO::Color& c) { m_LinesMonoColor = c; }
@@ -153,7 +153,7 @@ namespace GLFW
     inline vec3f right() const { return m_Camera.get_right(); }
     inline vec3f up() const { return m_Camera.get_up(); }
 
-    inline CGAL::IO::Color vertices_mono_color() const { return m_VerticeMonoColor; }
+    inline CGAL::IO::Color vertices_mono_color() const { return m_VerticesMonoColor; }
     inline CGAL::IO::Color edges_mono_color() const { return m_EdgesMonoColor; }
     inline CGAL::IO::Color rays_mono_color() const { return m_RaysMonoColor; }
     inline CGAL::IO::Color lines_mono_color() const { return m_LinesMonoColor; }
@@ -211,8 +211,8 @@ namespace GLFW
     void update_uniforms(const float deltaTime);
 
     void update_face_uniforms();
-    void update_point_uniforms();
-    void update_edge_uniforms();
+    void update_sphere_uniforms();
+    void update_cylinder_uniforms();
     void update_pl_uniforms();
     void update_line_uniforms();
     void update_clipping_uniforms();
@@ -278,16 +278,19 @@ namespace GLFW
     void capture_screenshot(const std::string& filePath);
 
     vec4f color_to_normalized_vec4(const CGAL::IO::Color& c) const;
+    vec3f color_to_normalized_vec3(const CGAL::IO::Color& c) const;
 
     void reset_camera_and_clipping_plane();
     void reset_clipping_plane();
 
     void change_pivot_point(); 
-
-    bool need_update() const; 
-
     void check_geometry_feature_availability(); 
 
+    bool need_update() const; 
+    
+    std::vector<float> aggregate_data(int monoEnum, int coloredEnum) const;
+    std::vector<float> aggregate_color_data(int monoEnum, int coloredEnum, const CGAL::IO::Color& monoColor) const;
+ 
   private:
     GLFWwindow* m_Window;
 
@@ -319,7 +322,7 @@ namespace GLFW
     bool m_IsOpengl4_3 { false };
     bool m_IsFullscreen { false };
 
-    bool m_geometryFeatureEnabled { true };    
+    bool m_GeometryFeatureEnabled { true };    
     
     Line_renderer m_WorldAxisRenderer; 
     Line_renderer m_XYGridRenderer; 
@@ -334,7 +337,7 @@ namespace GLFW
     float m_NormalHeightFactor { CGAL_NORMAL_HEIGHT_FACTOR };
 
     CGAL::IO::Color m_FacesMonoColor   = CGAL_FACES_MONO_COLOR;
-    CGAL::IO::Color m_VerticeMonoColor = CGAL_VERTICES_MONO_COLOR;
+    CGAL::IO::Color m_VerticesMonoColor = CGAL_VERTICES_MONO_COLOR;
     CGAL::IO::Color m_EdgesMonoColor   = CGAL_EDGES_MONO_COLOR;
     CGAL::IO::Color m_RaysMonoColor    = CGAL_RAYS_MONO_COLOR;
     CGAL::IO::Color m_LinesMonoColor   = CGAL_LINES_MONO_COLOR;
@@ -394,14 +397,19 @@ namespace GLFW
 
     enum VAOEnum 
     {
-      VAO_MONO_POINTS = 0,
+      VAO_POINTS = 0,
+      VAO_MONO_POINTS,
       VAO_COLORED_POINTS,
       VAO_MONO_SEGMENTS,
       VAO_COLORED_SEGMENTS,
+      VAO_SEGMENTS,
+      VAO_RAYS,
       VAO_MONO_RAYS,
       VAO_COLORED_RAYS,
+      VAO_LINES,
       VAO_MONO_LINES,
       VAO_COLORED_LINES,
+      VAO_FACES,
       VAO_MONO_FACES,
       VAO_COLORED_FACES,
       NB_VAO_BUFFERS

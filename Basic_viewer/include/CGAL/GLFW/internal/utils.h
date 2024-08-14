@@ -216,7 +216,7 @@ namespace transform
     return rotation;
   }
 
-  mat4f translation(vec3f v)
+  mat4f translation(const vec3f& v)
   {
     Eigen::Affine3f transform{Eigen::Translation3f(v)};
     return transform.matrix();
