@@ -25,6 +25,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Nef_S2/Generic_handle_map.h>
 
 #include <unordered_map>
 
@@ -81,6 +82,7 @@ struct Shell_polygons_visitor
   Vertex_index_map& vertex_indices;
   PolygonRange& polygons;
   bool triangulate_all_faces;
+  CGAL::Generic_handle_map<bool> Done;
 
   Shell_polygons_visitor(Vertex_index_map& vertex_indices,
                          PolygonRange& polygons,
@@ -88,6 +90,7 @@ struct Shell_polygons_visitor
     : vertex_indices( vertex_indices )
     , polygons(polygons)
     , triangulate_all_faces(triangulate_all_faces)
+    , Done(false)
   {}
 
   std::size_t get_cycle_length( typename Nef_polyhedron::Halffacet_cycle_const_iterator hfc) const
@@ -103,6 +106,14 @@ struct Shell_polygons_visitor
 
   void visit(typename Nef_polyhedron::Halffacet_const_handle opposite_facet)
   {
+    typename Nef_polyhedron::Halffacet_const_handle twin_facet = opposite_facet->twin();
+
+    // skip when we have to do with the unbounded volume and a surface with boundaries
+    if ((twin_facet->incident_volume() == opposite_facet->incident_volume()) && Done[twin_facet])
+        return;
+
+    Done[opposite_facet] = true;
+
     bool is_marked=opposite_facet->incident_volume()->mark();
 
     CGAL_assertion(Nef_polyhedron::Infi_box::is_standard(opposite_facet->plane()));
@@ -352,11 +363,9 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();
 
-  if (Nef_polyhedron::Infi_box::extended_kernel()) {
-      ++vol_it; // skip Infi_box
-  }
+  if (Nef_polyhedron::Infi_box::extended_kernel()) ++vol_it; // skip Infi_box
 
-  CGAL_assertion ( vol_it != vol_end );
+  if ( vol_it == vol_end ) return;
 
   Converter to_output;
   bool handling_unbounded_volume = true;
@@ -374,71 +383,15 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
         CGAL_For_all(ec,ee)
         {
           typename Nef_polyhedron::SVertex_const_handle vv = ec->twin()->source();
-          //~ if ( !SD.is_isolated(vv) && !Done[vv] ) {
-            //~ V.visit(vv); // report edge
-            //~ Done[vv] = Done[vv->twin()] = true;
-          //~ }
+
           typename Nef_polyhedron::Halffacet_const_handle f = ec->twin()->facet();
-          return f->incident_volume()!=f->twin()->incident_volume();
-          //~ if ( Done[f] ) continue;
-          //~ Halffacet_handle tf = f->twin();
-          //~ }
-          //~ FacetCandidates.push_back(f); Done[f] = true;
+          if (f->incident_volume()==f->twin()->incident_volume())
+            return false;
         }
       }
-
-#if 0
-      else if (fc.is_svertex() ) {
-        SVertex_handle v(fc);
-        if ( Done[v] ) continue;
-        V.visit(v); // report edge
-        V.visit(v->twin());
-        Done[v] = Done[v->twin()] = true;
-        CGAL_assertion(SD.is_isolated(v));
-        SFaceCandidates.push_back(v->twin()->incident_sface());
-        Done[v->twin()->incident_sface()]=true;
-        // note that v is isolated, thus twin(v) is isolated too
-        //          SM_const_decorator SD;
-        //          SFace_const_handle fo;
-        //          fo = v->twin()->incident_sface();
-        /*
-        if(SD.is_isolated(v))
-          fo = v->source()->sfaces_begin();
-        else
-          fo = v->twin()->incident_sface();
-        */
-      } else if (fc.is_shalfloop() ) {
-        SHalfloop_handle l(fc);
-        V.visit(l);
-        Halffacet_handle f = l->twin()->facet();
-        if ( Done[f] ) continue;
-        FacetCandidates.push_back(f);  Done[f] = true;
-      } else CGAL_error_msg("Damn wrong handle.");
-#endif
     }
 
-    return false;
-
-    //~ typename Nef_polyhedron::SHalfedge_const_handle e(sf);
-    //~ typename Nef_polyhedron::SHalffacet_const_handle f = e->facet();
-  //~ e->facet()
-  //~ SHalfedge_around_sface_circulator ec(e),ee(e);
-  //~ CGAL_For_all(ec,ee) {
-          //~ SVertex_handle vv = ec->twin()->source();
-          //~ if ( !SD.is_isolated(vv) && !Done[vv] ) {
-            //~ V.visit(vv); // report edge
-            //~ Done[vv] = Done[vv->twin()] = true;
-          //~ }
-          //~ Halffacet_handle f = ec->twin()->facet();
-          //~ if ( Done[f] ) continue;
-
-  //~ if (CGAL::assign(f,*sfh))
-  //~ {
-    //~ std::cout << "COUCOU\n";
-      //~ return f->incident_volume()!=f->twin()->incident_volume();
-    //~ }
-    //~ else
-      //~ return false;
+    return true;
   };
 
   for (;vol_it!=vol_end;++vol_it)

@@ -40,5 +40,6 @@ int main()
     CGAL::convert_nef_polyhedron_to_polygon_mesh(nefPoly, convertedSurfaceMesh, true);
     std::cout << "After conversion, number_of_faces: " << convertedSurfaceMesh.number_of_faces() << std::endl;
     std::cout << convertedSurfaceMesh << std::endl;
+    std::ofstream("out.off") << convertedSurfaceMesh;
     return EXIT_SUCCESS;
 }
