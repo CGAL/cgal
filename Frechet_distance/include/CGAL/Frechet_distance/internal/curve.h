@@ -21,6 +21,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/Bbox.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
 #include <vector>
 
@@ -44,6 +45,18 @@ double length_of_diagonal(const Bbox_3& bb)
     d +=  square(I(bb.zmax()) - I(bb.zmin()));
     return sqrt(d).sup();
 }
+
+template<unsigned int N, typename T>
+double length_of_diagonal(const Bbox<N,T>& bb)
+{
+    using I = Interval_nt<false>;
+    I d = square(I((bb.max)(0)) - I((bb.min)(0)));
+    for(int i = 1; i < bb.dimension(); ++i){
+      d += square(I((bb.max)(i)) - I((bb.min)(i)));
+    }
+    return sqrt(d).sup();
+}
+
 // TODO: Clean up Curve
 
 /*!

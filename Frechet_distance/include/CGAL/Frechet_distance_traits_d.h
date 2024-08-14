@@ -20,7 +20,7 @@
 #include <CGAL/Frechet_distance/internal/id.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Bbox_d.h>
+#include <CGAL/Bbox.h>
 
 // TODO: is it too restrictive to use vectors by default?
 #include <vector>
