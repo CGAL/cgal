@@ -18,7 +18,7 @@
 #include <array>
 #include <iostream>
 #include <iterator>
-#include <CGAL/assertion.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Impl {
