@@ -236,7 +236,7 @@ public:
     void remove(Vertex_handle v);
 
     /*!
-      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
+      Removes the vertices in the iterator range `[first, last)` from the triangulation.
       \pre all vertices in `[first, last)` are vertices of the triangulation.
     */
     template <class VertexRemoveIterator>
