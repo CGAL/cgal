@@ -82,7 +82,7 @@ int main()
 
   {
   //Dimension d
-  typedef CGAL::Bbox<3,double> BBox3;
+  typedef CGAL::Bbox<CGAL::Dimension_tag<3>,double> BBox3;
   BBox3 bb3(3), bb3a(3,1.0);
   assert(bb3.dimension() == 3);
   assert(bb3 != bb3a);

@@ -1010,15 +1010,16 @@ namespace CartesianDKernelFunctors {
 template<class R_> struct ConstructBbox : private Store_kernel<R_> {
         CGAL_FUNCTOR_INIT_STORE(ConstructBbox)
         typedef R_ R;
+        typedef typename R::Dimension Dimension;
         typedef typename Get_type<R, RT_tag>::type RT;
         typedef typename Get_type<R, Point_tag>::type Point;
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
-        typedef Bbox<DIM,double> result_type;
+        typedef Bbox<Dimension,double> result_type;
         typedef Point argument_type;
         result_type operator()(Point const&a)const{
                 CI ci(this->kernel());
                 To_interval f;
-                return result_type(DIM, make_transforming_iterator(ci(a,Begin_tag()),f), make_transforming_iterator(ci(a,End_tag())), f);
+                return result_type(a.dimension(), make_transforming_iterator(ci(a,Begin_tag()),f), make_transforming_iterator(ci(a,End_tag())), f);
         }
 };
 }
