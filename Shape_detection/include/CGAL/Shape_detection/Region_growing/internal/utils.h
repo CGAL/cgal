@@ -350,7 +350,7 @@ namespace internal {
 #else
     //use a triangulation using the centroid
     std::size_t nb_edges = points.size();
-    Point_3 c = CGAL::centroid(points.begin(), points.end());
+    typename Traits::Point_3 c = CGAL::centroid(points.begin(), points.end());
     triangles.reserve(nb_edges);
     for (std::size_t i=0; i<nb_edges-1; ++i)
       triangles.emplace_back(points[i], points[i+1], c);
