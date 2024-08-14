@@ -46,7 +46,9 @@
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Iterator_range.h>
+#ifdef CGAL_SD_RG_USE_PMP
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#endif
 
 namespace CGAL {
 namespace Shape_detection {
@@ -330,6 +332,30 @@ namespace internal {
     return create_plane(tmp, item_map, traits);
   }
 
+  template <class Traits>
+  void
+  triangulate_face(const std::vector<typename Traits::Point_3>& points,
+                         std::vector<typename Traits::Triangle_3>& triangles)
+  {
+#ifdef CGAL_SD_RG_USE_PMP
+    std::vector<CGAL::Triple<int, int, int>> output;
+
+    Polygon_mesh_processing::triangulate_hole_polyline(points, std::back_inserter(output), parameters::use_2d_constrained_delaunay_triangulation(true));
+
+    triangles.reserve(output.size());
+    for (const auto& t : output)
+      triangles.emplace_back(points[t.first], points[t.second], points[t.third]);
+#else
+    //use a triangulation using the centroid
+    std::size_t nb_edges = points.size();
+    Point_3 c = CGAL::centroid(points.begin(), points.end());
+    triangles.reserve(nb_edges);
+    for (std::size_t i=0; i<nb_edges-1; ++i)
+      triangles.emplace_back(points[i], points[i+1], c);
+    triangles.emplace_back(points.back(), points.front(), c);
+#endif
+  }
+
   template<
   typename Traits,
   typename FaceGraph,
@@ -370,15 +396,7 @@ namespace internal {
       if (points.size()==3)
         triangles.push_back(ITriangle_3(points[0], points[1], points[2]));
       else
-      {
-        std::vector<CGAL::Triple<int, int, int>> output;
-
-        Polygon_mesh_processing::triangulate_hole_polyline(points, std::back_inserter(output), parameters::use_2d_constrained_delaunay_triangulation(true));
-
-        assert(!output.empty());
-        for (const auto& t : output)
-          triangles.push_back(ITriangle_3(points[t.first], points[t.second], points[t.third]));
-      }
+        triangulate_face<ITraits>(points, triangles);
     }
     CGAL_precondition(triangles.size() >= region.size());
     IPlane_3 fitted_plane;

@@ -19,7 +19,9 @@
 // Internal includes.
 #include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 #include <CGAL/Shape_detection/Region_growing/internal/utils.h>
+#ifdef CGAL_SD_RG_USE_PMP
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#endif
 
 namespace CGAL {
 namespace Shape_detection {
@@ -163,8 +165,36 @@ namespace Polygon_mesh {
     m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
     m_cross_product_3(m_traits.construct_cross_product_vector_3_object()) {
 
+#ifdef CGAL_SD_RG_USE_PMP
+    auto get_face_normal = [this](Item face, const PolygonMesh& pmesh)
+    {
+      return Polygon_mesh_processing::compute_face_normal(face, pmesh, parameters::vertex_point_map(m_vertex_to_point_map));
+    };
+#else
+    auto get_face_normal = [this](Item face, const PolygonMesh& pmesh) -> Vector_3
+    {
+      const auto hedge = halfedge(face, pmesh);
+      const auto vertices = vertices_around_face(hedge, pmesh);
+      CGAL_precondition(vertices.size() >= 3);
+
+      auto vertex = vertices.begin();
+      const Point_3& p1 = get(m_vertex_to_point_map, *vertex); ++vertex;
+      const Point_3& p2 = get(m_vertex_to_point_map, *vertex); ++vertex;
+      Point_3 p3 = get(m_vertex_to_point_map, *vertex);
+      while(collinear(p1, p2, p3))
+      {
+        if (++vertex == vertices.end()) return NULL_VECTOR;
+        p3 = get(m_vertex_to_point_map, *vertex);
+      }
+
+      const Vector_3 u = p2 - p1;
+      const Vector_3 v = p3 - p1;
+      return m_cross_product_3(u, v);
+    };
+#endif
+
       for (const Item &i : faces(pmesh)) {
-        m_face_normals[i] = Polygon_mesh_processing::compute_face_normal(i, pmesh);
+        m_face_normals[i] = get_face_normal(i, pmesh);
         std::vector<Point_3> pts;
         auto h = halfedge(i, pmesh);
         auto s = h;
@@ -174,20 +204,7 @@ namespace Polygon_mesh {
           h = next(h, pmesh);
         } while (h != s);
 
-        std::vector<CGAL::Triple<int, int, int>> output;
-
-        Polygon_mesh_processing::triangulate_hole_polyline(pts, std::back_inserter(output), parameters::use_2d_constrained_delaunay_triangulation(true));
-
-        // Create entry in map. In case of degenerate polygonal faces, the list stays empty.
-        std::vector<Triangle_3>& tris = m_face_triangulations[i];
-
-        // If the output is empty, the polygon is degenerate.
-        if (output.empty())
-          continue;
-
-        tris.reserve(output.size());
-        for (const auto& t : output)
-          tris.push_back(Triangle_3(pts[t.first], pts[t.second], pts[t.third]));
+        internal::triangulate_face<GeomTraits>(pts, m_face_triangulations[i]);
       }
 
       CGAL_precondition(faces(m_face_graph).size() > 0);
