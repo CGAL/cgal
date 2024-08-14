@@ -35,11 +35,11 @@ int main()
 
     NefPolyhedron nefPoly(surfaceMesh);
     std::cout << "NefPolyhedron, number_of_faces: " << nefPoly.number_of_facets() << std::endl;
-    std::cout << nefPoly << std::endl;
     SurfaceMesh convertedSurfaceMesh;
     CGAL::convert_nef_polyhedron_to_polygon_mesh(nefPoly, convertedSurfaceMesh, true);
     std::cout << "After conversion, number_of_faces: " << convertedSurfaceMesh.number_of_faces() << std::endl;
-    std::cout << convertedSurfaceMesh << std::endl;
     std::ofstream("out.off") << convertedSurfaceMesh;
+    assert(vertices(convertedSurfaceMesh).size()==10);
+    assert(faces(convertedSurfaceMesh).size()==6);
     return EXIT_SUCCESS;
 }
