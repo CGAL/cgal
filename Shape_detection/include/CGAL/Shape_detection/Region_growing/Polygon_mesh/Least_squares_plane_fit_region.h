@@ -93,9 +93,6 @@ namespace Polygon_mesh {
     using Scalar_product_3 = typename GeomTraits::Compute_scalar_product_3;
     using Cross_product_3 = typename GeomTraits::Construct_cross_product_vector_3;
 
-    std::unordered_map<Item, Vector_3, internal::hash_item<Item> > m_face_normals;
-    std::unordered_map<Item, std::vector<Triangle_3>, internal::hash_item<Item> > m_face_triangulations;
-
   public:
     /// \name Initialization
     /// @{
@@ -163,7 +160,10 @@ namespace Polygon_mesh {
     m_squared_length_3(m_traits.compute_squared_length_3_object()),
     m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
     m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
-    m_cross_product_3(m_traits.construct_cross_product_vector_3_object()) {
+    m_cross_product_3(m_traits.construct_cross_product_vector_3_object()),
+    m_face_normals( get(CGAL::dynamic_face_property_t<Vector_3>(), pmesh) ),
+    m_face_triangulations( get(CGAL::dynamic_face_property_t<std::vector<Triangle_3>>(), pmesh) )
+    {
 
 #ifdef CGAL_SD_RG_USE_PMP
     auto get_face_normal = [this](Item face, const PolygonMesh& pmesh)
@@ -194,7 +194,7 @@ namespace Polygon_mesh {
 #endif
 
       for (const Item &i : faces(pmesh)) {
-        m_face_normals[i] = get_face_normal(i, pmesh);
+        put(m_face_normals, i, get_face_normal(i, pmesh));
         std::vector<Point_3> pts;
         auto h = halfedge(i, pmesh);
         auto s = h;
@@ -204,7 +204,9 @@ namespace Polygon_mesh {
           h = next(h, pmesh);
         } while (h != s);
 
-        internal::triangulate_face<GeomTraits>(pts, m_face_triangulations[i]);
+        std::vector<Triangle_3> face_triangulation;
+        internal::triangulate_face<GeomTraits>(pts, face_triangulation);
+        put(m_face_triangulations, i, face_triangulation);
       }
 
       CGAL_precondition(faces(m_face_graph).size() > 0);
@@ -283,7 +285,7 @@ namespace Polygon_mesh {
       const FT squared_distance_threshold =
         m_distance_threshold * m_distance_threshold;
 
-      const Vector_3 face_normal = m_face_normals.at(query);
+      const Vector_3 face_normal = get(m_face_normals, query);
       const FT cos_value = m_scalar_product_3(face_normal, m_normal_of_best_fit);
       const FT squared_cos_value = cos_value * cos_value;
 
@@ -333,7 +335,7 @@ namespace Polygon_mesh {
         // The best fit plane will be a plane through this face centroid with
         // its normal being the face's normal.
         const Point_3 face_centroid = get_face_centroid(face);
-        const Vector_3 face_normal = m_face_normals.at(face);
+        const Vector_3 face_normal = get(m_face_normals, face);
         if (face_normal == CGAL::NULL_VECTOR) return false;
 
         CGAL_precondition(face_normal != CGAL::NULL_VECTOR);
@@ -374,7 +376,7 @@ namespace Polygon_mesh {
       // Approach: each face gets one vote to keep or flip the current plane normal.
       long votes_to_keep_normal = 0;
       for (const auto &face : region) {
-        const Vector_3 face_normal = m_face_normals.at(face);
+        const Vector_3 face_normal = get(m_face_normals, face);
         const bool agrees =
           m_scalar_product_3(face_normal, unoriented_normal_of_best_fit) > FT(0);
         votes_to_keep_normal += (agrees ? 1 : -1);
@@ -405,6 +407,9 @@ namespace Polygon_mesh {
     const Squared_distance_3 m_squared_distance_3;
     const Scalar_product_3 m_scalar_product_3;
     const Cross_product_3 m_cross_product_3;
+
+    typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<Vector_3> >::const_type m_face_normals;
+    typename boost::property_map<Face_graph, CGAL::dynamic_face_property_t<std::vector<Triangle_3>> >::const_type m_face_triangulations;
 
     Plane_3 m_plane_of_best_fit;
     Vector_3 m_normal_of_best_fit;

@@ -442,7 +442,7 @@ namespace internal {
     const IConverter iconverter = IConverter();
 
     for (const typename Region::value_type face : region) {
-      const std::vector<Triangle_3>& tris = face_to_triangles_map.at(face);
+      const std::vector<Triangle_3>& tris = get(face_to_triangles_map, face);
 
       // Degenerate polygons are omitted.
       if (tris.empty())
