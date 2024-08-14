@@ -48,6 +48,8 @@
 #include <CGAL/Iterator_range.h>
 #ifdef CGAL_SD_RG_USE_PMP
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#else
+#include <CGAL/centroid.h>
 #endif
 
 namespace CGAL {
