@@ -62,8 +62,6 @@ public Q_SLOTS:
   void on_SaveROIPushButton_clicked();
   void on_ReadROIPushButton_clicked();
   void dock_widget_visibility_changed(bool visible);
-  void on_Select_isolated_components_button_clicked();
-  void on_Get_minimum_button_clicked();
 
   void on_BrushSpinBoxCtrlVert_changed(int);
   void on_BrushSpinBoxRoi_changed(int);
@@ -150,8 +148,6 @@ void CGAL_Lab_edit_cgal_lab_plugin::init(QMainWindow* mainWindow, CGAL::Three::S
   connect(ui_widget.ActivateFixedPlaneCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivateFixedPlaneCheckBox_stateChanged(int)));
   connect(ui_widget.ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
   connect(ui_widget.OverwritePushButton, SIGNAL(clicked()), this, SLOT(on_OverwritePushButton_clicked()));
-  connect(ui_widget.Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
-  connect(ui_widget.Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
 
   connect(ui_widget.SaveROIPushButton, SIGNAL(clicked()), this, SLOT(on_SaveROIPushButton_clicked()));
   connect(ui_widget.ReadROIPushButton, SIGNAL(clicked()), this, SLOT(on_ReadROIPushButton_clicked()));
@@ -303,28 +299,6 @@ void CGAL_Lab_edit_cgal_lab_plugin::on_OverwritePushButton_clicked()
   if(!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->overwrite_deform_object();
-}
-void CGAL_Lab_edit_cgal_lab_plugin::on_Select_isolated_components_button_clicked() {
-  int item_id = scene->selectionIndices().front();
-  Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
-  if(!edit_item) return;                             // the selected item is not of the right type
-
-  std::optional<std::size_t> minimum =
-    edit_item->select_isolated_components(ui_widget.Threshold_size_spin_box->value());
-  if(minimum) {
-    ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
-  }
-}
-
-void CGAL_Lab_edit_cgal_lab_plugin::on_Get_minimum_button_clicked() {
-  int item_id = scene->selectionIndices().front();
-  Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
-  if(!edit_item) return;                             // the selected item is not of the right type
-
-  std::optional<std::size_t> minimum = edit_item->get_minimum_isolated_component();
-  if(minimum) {
-    ui_widget.Threshold_size_spin_box->setValue((int) *minimum);
-  }
 }
 
 void CGAL_Lab_edit_cgal_lab_plugin::on_SaveROIPushButton_clicked()

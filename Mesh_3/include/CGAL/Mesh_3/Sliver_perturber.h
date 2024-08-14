@@ -816,7 +816,7 @@ operator()(Visitor visitor)
 #endif
 
   running_time_.stop();
-  helper_.reset_cache();//in case we re-use caches in another operation
+  helper_.reset_cache();//in case we reuse caches in another operation
                                // after this perturbation
 
 #ifdef CGAL_MESH_3_PERTURBER_VERBOSE
@@ -855,16 +855,7 @@ operator()(Visitor visitor)
 
 #if defined(CGAL_MESH_3_EXPORT_PERFORMANCE_DATA) \
  && defined(CGAL_MESH_3_PROFILING)
-  if (ret == BOUND_REACHED)
-  {
-    CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", perturbation_time);
-  }
-  else
-  {
-    CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time",
-      (ret == CANT_IMPROVE_ANYMORE ?
-      "CANT_IMPROVE_ANYMORE" : "TIME_LIMIT_REACHED"));
-  }
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Perturber_optim_time", perturbation_time);
 #endif
 
   return ret;

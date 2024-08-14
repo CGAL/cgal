@@ -17,7 +17,7 @@ understand why
 
 remove variant for supporting circle or line of bisector
 call it only when we know that it is a circle
-it will simplyfy the code of Construct_hyperbolic_bisector_2 at least in some cases
+it will simplify the code of Construct_hyperbolic_bisector_2 at least in some cases
 
 test bisectors dual functions in special cases of euclidean line segments
 

@@ -13,6 +13,14 @@ exec > "$LOGFILE"
 # Display commands as if using `set -o xtrace`, but to the stdout
 trap 'echo "[$BASH_SOURCE:$LINENO] $BASH_COMMAND" >&1' DEBUG
 
+# Report errxit errors on cerr (&2)
+report_errexit() {
+    echo "errexit on line $(caller)" >&1
+    echo "errexit on line $(caller)" >&2
+}
+
+trap report_errexit ERR
+
 # A helper error function that outputs both to stderr and stdout before
 # aborting the script.
 function error() {

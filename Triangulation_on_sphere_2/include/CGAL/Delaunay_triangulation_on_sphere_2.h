@@ -327,9 +327,8 @@ public:
   Arc_on_sphere_2 dual_on_sphere(const All_edges_iterator ei) const { return dual_on_sphere(*ei); }
 
   // Validity
-  bool is_plane() const;
-  bool is_valid(bool verbose = false, int level = 0) const;
   bool is_valid_face(Face_handle fh, bool verbose = false, int level = 0) const;
+  bool is_valid(bool verbose = false, int level = 0) const;
 };
 
 // ------------------------ PREDICATES / CONSTRUCTIONS --------------------------------//
@@ -521,7 +520,7 @@ insert_outside_affine_hull_regular(const Point& p)
   if(orient2 == POSITIVE)
     conform = true;
 
-  // find smallest vertex this step garanties a unique triangulation
+  // find smallest vertex this step guarantees a unique triangulation
   Vertex_handle w = vertices_begin();
   Vertices_iterator vi;
   for(vi=vertices_begin(); vi!=vertices_end(); ++vi)
@@ -1090,39 +1089,6 @@ dual_on_sphere(const Edge& e) const
 
 //-------------------------------------------CHECK------------------------------------------------//
 
-// checks whether a given triangulation is plane (all points are coplanar)
-template <typename Gt, typename Tds>
-bool
-Delaunay_triangulation_on_sphere_2<Gt, Tds>::
-is_plane() const
-{
-  if(number_of_vertices() <= 3)
-    return true;
-
-  bool plane = true;
-
-  Vertices_iterator it1 = vertices_begin(), it2(it1), it3(it1), it4(it1);
-  std::advance(it2, 1);
-  std::advance(it3, 2);
-  std::advance(it4, 3);
-
-  while(it4 != vertices_end())
-  {
-    Orientation s = side_of_oriented_circle(point(it1), point(it2), point(it3), point(it4));
-    plane = plane && s == ON_ORIENTED_BOUNDARY;
-
-    if(!plane)
-      return false;
-
-    ++it1;
-    ++it2;
-    ++it3;
-    ++it4;
-  }
-
-  return true;
-}
-
 template <typename Gt, typename Tds>
 bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
@@ -1154,46 +1120,18 @@ bool
 Delaunay_triangulation_on_sphere_2<Gt, Tds>::
 is_valid(bool verbose, int level) const
 {
-  bool result = true;
-
-  if(!tds().is_valid(verbose, level))
+  // in any dimension
+  if(verbose)
   {
-    if(verbose)
-      std::cerr << "invalid data structure" << std::endl;
-
-    CGAL_assertion(false);
-    return false;
+    std::cerr << " number of vertices " << number_of_vertices() << "\t" << std::endl;
+    std::cerr << " number of faces " << number_of_faces() << "\t" << std::endl;
   }
+
+  bool result = Base::is_valid(verbose, level);
+  CGAL_assertion(result);
 
   for(All_faces_iterator fit=all_faces_begin(); fit!=all_faces_end(); ++fit)
     result = result && is_valid_face(fit, verbose, level);
-
-  for(Vertices_iterator vit=vertices_begin(); vit!=vertices_end(); ++vit)
-    result = result && Base::is_valid_vertex(vit, verbose, level);
-
-  switch(dimension())
-  {
-    case 0:
-      break;
-    case 1:
-      CGAL_assertion(this->is_plane());
-      break;
-    case 2:
-      for(All_faces_iterator it=all_faces_begin(); it!=all_faces_end(); ++it)
-      {
-        Orientation s = orientation_on_sphere(point(it, 0), point(it, 1), point(it, 2));
-        result = result && (s != NEGATIVE || it->is_ghost());
-        CGAL_assertion(result);
-      }
-
-      result = result && (number_of_faces() == 2 * number_of_vertices() - 4);
-      CGAL_assertion(result);
-      break;
-  }
-
-  // in any dimension
-  if(verbose)
-    std::cerr << " number of vertices " << number_of_vertices() << "\t" << std::endl;
 
   CGAL_assertion(result);
   return result;

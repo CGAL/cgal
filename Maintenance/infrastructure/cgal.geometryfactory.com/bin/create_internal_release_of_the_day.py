@@ -18,7 +18,7 @@ actions = {
     "Thursday": integration,
     "Friday": release("5.5"),
     "Saturday": release("5.6"),
-    "Sunday": beta_release_from_master(1),
+    "Sunday": beta_release_from_master(2),
 }
 
 
