@@ -3896,7 +3896,7 @@ public:
   /*!
     returns a bounding box of `i`.
   */
-  CGAL::Bbox_3 operator()(const Kernel::Iso_Cuboid_3
+  CGAL::Bbox_3 operator()(const Kernel::Iso_cuboid_3
                           &i);
 
   /*!
