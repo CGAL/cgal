@@ -14,6 +14,7 @@
 
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Bbox.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/NewKernel_d/store_kernel.h>
 #include <CGAL/type_traits/is_iterator.h>
