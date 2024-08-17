@@ -448,35 +448,6 @@ public:
     {
       if (m_draw_cylinder_edge && m_geometry_feature_enabled)
       {
-        // rendering_program_cylinder.bind();
-
-        // auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-        //   vao[VAO_MONO_SEGMENTS].bind();
-        //   color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-        //                 (double)m_edges_mono_color.green()/(double)255,
-        //                 (double)m_edges_mono_color.blue()/(double)255);
-        //   rendering_program_cylinder.setAttributeValue("a_Color",color);
-        //   rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
-        //   rendering_program_cylinder.setUniformValue("u_ClipPlane",  clipPlane);
-        //   rendering_program_cylinder.setUniformValue("u_PointPlane", plane_point);
-        //   rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
-        //   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
-        //   vao[VAO_COLORED_SEGMENTS].bind();
-        //   if (m_use_mono_color)
-        //   {
-        //     color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-        //                   (double)m_edges_mono_color.green()/(double)255,
-        //                   (double)m_edges_mono_color.blue()/(double)255);
-        //     rendering_program_cylinder.disableAttributeArray("a_Color");
-        //     rendering_program_cylinder.setAttributeValue("a_Color",color);
-        //   }
-        //   else
-        //   {
-        //     rendering_program_cylinder.enableAttributeArray("a_Color");
-        //   }
-        //   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
-        //   vao[VAO_COLORED_SEGMENTS].release();
-        // };
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
           rendering_program_cylinder.bind();
           rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
