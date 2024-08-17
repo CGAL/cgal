@@ -317,36 +317,48 @@ public:
     {
       if (m_draw_sphere_vertex && m_geometry_feature_enabled)
       {
-        rendering_program_sphere.bind();
-
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-          vao[VAO_MONO_POINTS].bind();
-          color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
-                        (double)m_vertices_mono_color.green()/(double)255,
-                        (double)m_vertices_mono_color.blue()/(double)255);
+          rendering_program_sphere.bind();
           rendering_program_sphere.setAttributeValue("a_Color",color);
           rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_points*0.002));
           rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
           rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
           glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
-          vao[VAO_MONO_POINTS].release();
 
-          vao[VAO_COLORED_POINTS].bind();
+          vao[VAO_POINTS].bind();
           if (m_use_mono_color)
           {
-            color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
-                          (double)m_vertices_mono_color.green()/(double)255,
-                        (double)m_vertices_mono_color.blue()/(double)255);
-            rendering_program_sphere.disableAttributeArray("a_Color");
-            rendering_program_sphere.setAttributeValue("a_Color",color);
+            if (gBuffer.number_of_elements(GS::POS_MONO_POINTS) == 0)
+            {
+              color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
+                            (double)m_vertices_mono_color.green()/(double)255,
+                            (double)m_vertices_mono_color.blue()/(double)255);
+              rendering_program_sphere.disableAttributeArray("a_Color");
+              rendering_program_sphere.setAttributeValue("a_Color",color);
+              glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS)));
+            }
+            else
+            {
+              rendering_program_sphere.enableAttributeArray("a_Color");
+              glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
+            }
           }
-          else
+          else 
           {
             rendering_program_sphere.enableAttributeArray("a_Color");
+            if (gBuffer.number_of_elements(GS::POS_COLORED_POINTS) == 0)
+            {
+              glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
+            }
+            else
+            {
+              glDrawArrays(GL_POINTS, 
+                static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)), 
+                static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS))
+              );
+            }
           }
-          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS)));
-          vao[VAO_COLORED_POINTS].release();
         };
 
         enum {
@@ -368,46 +380,49 @@ public:
       }
       else 
       {
-
-        rendering_program_p_l.bind();
-
-        // rendering_mode == -1: draw all
-        // rendering_mode == 0: draw inside clipping plane
-        // rendering_mode == 1: draw outside clipping plane
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-          vao[VAO_MONO_POINTS].bind();
-          color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
-                        (double)m_vertices_mono_color.green()/(double)255,
-                        (double)m_vertices_mono_color.blue()/(double)255);
-          rendering_program_p_l.setAttributeValue("a_Color",color);
+          vao[VAO_POINTS].bind();
+
+          rendering_program_p_l.bind();
           rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_points));
           rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
 
           rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
           rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
           rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
-          vao[VAO_MONO_POINTS].release();
 
-          vao[VAO_COLORED_POINTS].bind();
           if (m_use_mono_color)
           {
-            color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
-                          (double)m_vertices_mono_color.green()/(double)255,
-                        (double)m_vertices_mono_color.blue()/(double)255);
-            rendering_program_p_l.disableAttributeArray("a_Color");
-            rendering_program_p_l.setAttributeValue("a_Color",color);
+            if (gBuffer.number_of_elements(GS::POS_MONO_POINTS) == 0)
+            {
+              color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
+                            (double)m_vertices_mono_color.green()/(double)255,
+                            (double)m_vertices_mono_color.blue()/(double)255);
+              rendering_program_p_l.disableAttributeArray("a_Color");
+              rendering_program_p_l.setAttributeValue("a_Color",color);
+              glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS)));
+            }
+            else
+            {
+              rendering_program_p_l.enableAttributeArray("a_Color");
+              glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
+            }
           }
-          else
+          else 
           {
             rendering_program_p_l.enableAttributeArray("a_Color");
+            if (gBuffer.number_of_elements(GS::POS_COLORED_POINTS) == 0)
+            {
+              glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)));
+            }
+            else
+            {
+              glDrawArrays(GL_POINTS, 
+                static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_POINTS)), 
+                static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS))
+              );
+            }
           }
-          rendering_program_p_l.setUniformValue("u_PointSize", GLfloat(m_size_points));
-          rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
-          rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
-          rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
-          glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_POINTS)));
-          vao[VAO_COLORED_POINTS].release();
         };
 
         enum {
@@ -433,34 +448,74 @@ public:
     {
       if (m_draw_cylinder_edge && m_geometry_feature_enabled)
       {
-        rendering_program_cylinder.bind();
+        // rendering_program_cylinder.bind();
 
+        // auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+        //   vao[VAO_MONO_SEGMENTS].bind();
+        //   color.setRgbF((double)m_edges_mono_color.red()/(double)255,
+        //                 (double)m_edges_mono_color.green()/(double)255,
+        //                 (double)m_edges_mono_color.blue()/(double)255);
+        //   rendering_program_cylinder.setAttributeValue("a_Color",color);
+        //   rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
+        //   rendering_program_cylinder.setUniformValue("u_ClipPlane",  clipPlane);
+        //   rendering_program_cylinder.setUniformValue("u_PointPlane", plane_point);
+        //   rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
+        //   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
+        //   vao[VAO_COLORED_SEGMENTS].bind();
+        //   if (m_use_mono_color)
+        //   {
+        //     color.setRgbF((double)m_edges_mono_color.red()/(double)255,
+        //                   (double)m_edges_mono_color.green()/(double)255,
+        //                   (double)m_edges_mono_color.blue()/(double)255);
+        //     rendering_program_cylinder.disableAttributeArray("a_Color");
+        //     rendering_program_cylinder.setAttributeValue("a_Color",color);
+        //   }
+        //   else
+        //   {
+        //     rendering_program_cylinder.enableAttributeArray("a_Color");
+        //   }
+        //   glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
+        //   vao[VAO_COLORED_SEGMENTS].release();
+        // };
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-          vao[VAO_MONO_SEGMENTS].bind();
-          color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-                        (double)m_edges_mono_color.green()/(double)255,
-                        (double)m_edges_mono_color.blue()/(double)255);
-          rendering_program_cylinder.setAttributeValue("a_Color",color);
+          rendering_program_cylinder.bind();
           rendering_program_cylinder.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_edges*0.001));
           rendering_program_cylinder.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_cylinder.setUniformValue("u_PointPlane", plane_point);
           rendering_program_cylinder.setUniformValue("u_RenderingMode", rendering_mode);
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
-          vao[VAO_COLORED_SEGMENTS].bind();
+          vao[VAO_SEGMENTS].bind();
           if (m_use_mono_color)
           {
-            color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-                          (double)m_edges_mono_color.green()/(double)255,
-                          (double)m_edges_mono_color.blue()/(double)255);
-            rendering_program_cylinder.disableAttributeArray("a_Color");
-            rendering_program_cylinder.setAttributeValue("a_Color",color);
+            if (gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS) == 0)
+            {
+              color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
+                            (double)m_vertices_mono_color.green()/(double)255,
+                            (double)m_vertices_mono_color.blue()/(double)255);
+              rendering_program_line.disableAttributeArray("a_Color");
+              rendering_program_line.setAttributeValue("a_Color",color);
+              glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
+            }
+            else
+            {
+              rendering_program_line.enableAttributeArray("a_Color");
+              glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
+            }
           }
-          else
+          else 
           {
-            rendering_program_cylinder.enableAttributeArray("a_Color");
+            rendering_program_line.enableAttributeArray("a_Color");
+            if (gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS) == 0)
+            {
+              glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
+            }
+            else
+            {
+              glDrawArrays(GL_LINES, 
+                static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)), 
+                static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS))
+              );
+            }
           }
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
-          vao[VAO_COLORED_SEGMENTS].release();
         };
 
         enum {
@@ -482,11 +537,6 @@ public:
       }
       else 
       {
-        rendering_program_line.bind();
-
-        // rendering_mode == -1: draw all
-        // rendering_mode == 0: draw inside clipping plane
-        // rendering_mode == 1: draw outside clipping plane
         auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
 
           QVector2D viewport = {
@@ -494,11 +544,7 @@ public:
             CGAL_BASIC_VIEWER_INIT_SIZE_Y
           };
 
-          vao[VAO_MONO_SEGMENTS].bind();
-          color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-                        (double)m_edges_mono_color.green()/(double)255,
-                        (double)m_edges_mono_color.blue()/(double)255);
-          rendering_program_line.setAttributeValue("a_Color",color);
+          rendering_program_line.bind();
           rendering_program_line.setUniformValue("u_PointSize", static_cast<GLfloat>(m_size_edges));
           rendering_program_line.setUniformValue("u_IsOrthographic", static_cast<GLint>(is_two_dimensional()));
 
@@ -506,24 +552,40 @@ public:
           rendering_program_line.setUniformValue("u_ClipPlane", clipPlane);
           rendering_program_line.setUniformValue("u_PointPlane", plane_point);
           rendering_program_line.setUniformValue("u_RenderingMode", rendering_mode);
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
-          vao[VAO_MONO_SEGMENTS].release();
 
-          vao[VAO_COLORED_SEGMENTS].bind();
+          vao[VAO_SEGMENTS].bind();
           if (m_use_mono_color)
           {
-            color.setRgbF((double)m_edges_mono_color.red()/(double)255,
-                          (double)m_edges_mono_color.green()/(double)255,
-                          (double)m_edges_mono_color.blue()/(double)255);
-            rendering_program_line.disableAttributeArray("a_Color");
-            rendering_program_line.setAttributeValue("a_Color",color);
+            if (gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS) == 0)
+            {
+              color.setRgbF((double)m_vertices_mono_color.red()/(double)255,
+                            (double)m_vertices_mono_color.green()/(double)255,
+                            (double)m_vertices_mono_color.blue()/(double)255);
+              rendering_program_line.disableAttributeArray("a_Color");
+              rendering_program_line.setAttributeValue("a_Color",color);
+              glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
+            }
+            else
+            {
+              rendering_program_line.enableAttributeArray("a_Color");
+              glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
+            }
           }
-          else
+          else 
           {
             rendering_program_line.enableAttributeArray("a_Color");
+            if (gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS) == 0)
+            {
+              glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)));
+            }
+            else
+            {
+              glDrawArrays(GL_LINES, 
+                static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_SEGMENTS)), 
+                static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS))
+              );
+            }
           }
-          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_SEGMENTS)));
-          vao[VAO_COLORED_SEGMENTS].release();
         };
 
         enum {
@@ -547,78 +609,86 @@ public:
 
     if(m_draw_rays)
     {
-        rendering_program_p_l.bind();
+      rendering_program_p_l.bind();
 
-        vao[VAO_MONO_RAYS].bind();
-        color.setRgbF((double)m_rays_mono_color.red()/(double)255,
-                      (double)m_rays_mono_color.green()/(double)255,
-                      (double)m_rays_mono_color.blue()/(double)255);
-        rendering_program_p_l.setAttributeValue("a_Color",color);
-        glLineWidth(m_size_rays);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_RAYS)));
-        vao[VAO_MONO_RAYS].release();
-
-        vao[VAO_COLORED_RAYS].bind();
-        if (m_use_mono_color)
+      vao[VAO_RAYS].bind();
+      if (m_use_mono_color)
+      {
+        if (gBuffer.number_of_elements(GS::POS_MONO_RAYS) == 0)
         {
-            color.setRgbF((double)m_rays_mono_color.red()/(double)255,
-                          (double)m_rays_mono_color.green()/(double)255,
-                          (double)m_rays_mono_color.blue()/(double)255);
-            rendering_program_p_l.disableAttributeArray("a_Color");
-            rendering_program_p_l.setAttributeValue("a_Color",color);
+          color.setRgbF((double)m_rays_mono_color.red()/(double)255,
+                        (double)m_rays_mono_color.green()/(double)255,
+                        (double)m_rays_mono_color.blue()/(double)255);
+          rendering_program_p_l.disableAttributeArray("a_Color");
+          rendering_program_p_l.setAttributeValue("a_Color",color);
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_RAYS)));
         }
         else
         {
-            rendering_program_p_l.enableAttributeArray("a_Color");
+          rendering_program_p_l.enableAttributeArray("a_Color");
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_RAYS)));
         }
-        glLineWidth(m_size_rays);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_RAYS)));
-        vao[VAO_COLORED_RAYS].release();
-
-        rendering_program_p_l.release();
+      }
+      else 
+      {
+        rendering_program_p_l.enableAttributeArray("a_Color");
+        if (gBuffer.number_of_elements(GS::POS_COLORED_RAYS) == 0)
+        {
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_RAYS)));
+        }
+        else
+        {
+          glDrawArrays(GL_LINES, 
+            static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_RAYS)), 
+            static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_RAYS))
+          );
+        }
+      }
     }
 
     if(m_draw_lines)
     {
-        rendering_program_p_l.bind();
+      rendering_program_p_l.bind();
 
-        vao[VAO_MONO_LINES].bind();
-        color.setRgbF((double)m_lines_mono_color.red()/(double)255,
-                      (double)m_lines_mono_color.green()/(double)255,
-                      (double)m_lines_mono_color.blue()/(double)255);
-        rendering_program_p_l.setAttributeValue("a_Color",color);
-        glLineWidth(m_size_lines);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_LINES)));
-        vao[VAO_MONO_LINES].release();
-
-        rendering_program_p_l.release();
-
-        vao[VAO_COLORED_LINES].bind();
-        if (m_use_mono_color)
+      vao[VAO_LINES].bind();
+      if (m_use_mono_color)
+      {
+        if (gBuffer.number_of_elements(GS::POS_MONO_LINES) == 0)
         {
-            color.setRgbF((double)m_lines_mono_color.red()/(double)255,
-                          (double)m_lines_mono_color.green()/(double)255,
-                          (double)m_lines_mono_color.blue()/(double)255);
-            rendering_program_p_l.disableAttributeArray("a_Color");
-            rendering_program_p_l.setAttributeValue("a_Color",color);
+          color.setRgbF((double)m_lines_mono_color.red()/(double)255,
+                        (double)m_lines_mono_color.green()/(double)255,
+                        (double)m_lines_mono_color.blue()/(double)255);
+          rendering_program_p_l.disableAttributeArray("a_Color");
+          rendering_program_p_l.setAttributeValue("a_Color",color);
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_LINES)));
         }
         else
         {
-            rendering_program_p_l.enableAttributeArray("a_Color");
+          rendering_program_p_l.enableAttributeArray("a_Color");
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_LINES)));
         }
-        glLineWidth(m_size_lines);
-        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_LINES)));
-        vao[VAO_COLORED_LINES].release();
-
-        rendering_program_p_l.release();
+      }
+      else 
+      {
+        rendering_program_p_l.enableAttributeArray("a_Color");
+        if (gBuffer.number_of_elements(GS::POS_COLORED_LINES) == 0)
+        {
+          glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_LINES)));
+        }
+        else
+        {
+          glDrawArrays(GL_LINES, 
+            static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_LINES)), 
+            static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_LINES))
+          );
+        }
+      }
     }
 
     if (m_draw_normals)
     {
-      rendering_program_normal.bind();
-
       auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-        vao[VAO_COLORED_FACES].bind();
+        rendering_program_normal.bind();
         color.setRgbF((double)m_normals_mono_color.red()/(double)255,
                       (double)m_normals_mono_color.green()/(double)255,
                       (double)m_normals_mono_color.blue()/(double)255);
@@ -646,9 +716,39 @@ public:
         rendering_program_normal.setUniformValue("u_PointPlane", plane_point);
         rendering_program_normal.setUniformValue("u_RenderingMode", rendering_mode);
 
-        glLineWidth(m_size_normals);
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
-        vao[VAO_COLORED_FACES].release();
+        vao[VAO_FACES].bind();
+        if (m_use_mono_color)
+        {
+          if (gBuffer.number_of_elements(GS::POS_MONO_FACES) == 0)
+          {
+            color.setRgbF((double)m_lines_mono_color.red()/(double)255,
+                          (double)m_lines_mono_color.green()/(double)255,
+                          (double)m_lines_mono_color.blue()/(double)255);
+            rendering_program_normal.disableAttributeArray("a_Color");
+            rendering_program_normal.setAttributeValue("a_Color",color);
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
+          }
+          else
+          {
+            rendering_program_normal.enableAttributeArray("a_Color");
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+          }
+        }
+        else 
+        {
+          rendering_program_normal.enableAttributeArray("a_Color");
+          if (gBuffer.number_of_elements(GS::POS_COLORED_FACES) == 0)
+          {
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+          }
+          else
+          {
+            glDrawArrays(GL_TRIANGLES, 
+              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)), 
+              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES))
+            );
+          }
+        }
       };
 
       enum {
@@ -680,7 +780,6 @@ public:
 
     if (m_draw_faces)
     {
-      rendering_program_face.bind();
 
       // reference: https://stackoverflow.com/questions/37780345/opengl-how-to-create-order-independent-transparency
       // rendering_mode == -1: draw all as solid;
@@ -691,37 +790,46 @@ public:
         glEnable(GL_POLYGON_OFFSET_FILL);
         glPolygonOffset(2.0, 2.0); 
         glDepthFunc(GL_LESS);
-        vao[VAO_MONO_FACES].bind();
-        color.setRgbF((double)m_faces_mono_color.red()/(double)255,
-                      (double)m_faces_mono_color.green()/(double)255,
-                      (double)m_faces_mono_color.blue()/(double)255);
-        rendering_program_face.setAttributeValue("a_Color",color);
+        
+        rendering_program_face.bind();
         rendering_program_face.setUniformValue("u_RenderingMode", rendering_mode);
         rendering_program_face.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
         rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_face.setUniformValue("u_PointPlane", plane_point);
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
-        vao[VAO_MONO_FACES].release();
 
-        vao[VAO_COLORED_FACES].bind();
+        vao[VAO_FACES].bind();
         if (m_use_mono_color)
         {
-          color.setRgbF((double)m_faces_mono_color.red()/(double)255,
-                        (double)m_faces_mono_color.green()/(double)255,
-                        (double)m_faces_mono_color.blue()/(double)255);
-          rendering_program_face.disableAttributeArray("a_Color");
-          rendering_program_face.setAttributeValue("a_Color",color);
+          if (gBuffer.number_of_elements(GS::POS_MONO_FACES) == 0)
+          {
+            color.setRgbF((double)m_faces_mono_color.red()/(double)255,
+                          (double)m_faces_mono_color.green()/(double)255,
+                          (double)m_faces_mono_color.blue()/(double)255);
+            rendering_program_face.disableAttributeArray("a_Color");
+            rendering_program_face.setAttributeValue("a_Color",color);
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
+          }
+          else
+          {
+            rendering_program_face.enableAttributeArray("a_Color");
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+          }
         }
-        else
+        else 
         {
           rendering_program_face.enableAttributeArray("a_Color");
+          if (gBuffer.number_of_elements(GS::POS_COLORED_FACES) == 0)
+          {
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+          }
+          else
+          {
+            glDrawArrays(GL_TRIANGLES, 
+              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)), 
+              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES))
+            );
+          }
         }
-        rendering_program_face.setUniformValue("u_RenderingMode", rendering_mode);
-        rendering_program_face.setUniformValue("u_RenderingTransparency", clipping_plane_rendering_transparency);
-        rendering_program_face.setUniformValue("u_ClipPlane", clipPlane);
-        rendering_program_face.setUniformValue("u_PointPlane", plane_point);
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
-        vao[VAO_COLORED_FACES].release();
         glDisable(GL_POLYGON_OFFSET_FILL);
       };
 
@@ -793,20 +901,40 @@ public:
 
     if (m_draw_triangles)
     {
-      rendering_program_triangle.bind();
 
       auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) 
       {
-        vao[VAO_MONO_FACES].bind();
+        rendering_program_triangle.bind();
         rendering_program_triangle.setUniformValue("u_RenderingMode", rendering_mode);
         rendering_program_triangle.setUniformValue("u_ClipPlane", clipPlane);
         rendering_program_triangle.setUniformValue("u_PointPlane", plane_point);
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
-        vao[VAO_MONO_FACES].release();
 
-        vao[VAO_COLORED_FACES].bind();
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
-        vao[VAO_COLORED_FACES].release();
+        vao[VAO_FACES].bind();
+        if (m_use_mono_color)
+        {
+          if (gBuffer.number_of_elements(GS::POS_MONO_FACES) == 0)
+          {
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
+          }
+          else
+          {
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+          }
+        }
+        else 
+        {
+          if (gBuffer.number_of_elements(GS::POS_COLORED_FACES) == 0)
+          {
+            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+          }
+          else
+          {
+            glDrawArrays(GL_TRIANGLES, 
+              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)), 
+              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES))
+            );
+          }
+        }
       };
       
       enum {
@@ -1140,289 +1268,156 @@ protected:
     }
   }
 
+  std::vector<float> aggregating_data(int monoEnum, int coloredEnum) const
+  {
+    std::vector<float> data; 
+    
+    auto mono = gBuffer.get_array_of_index(monoEnum); 
+    auto colored = gBuffer.get_array_of_index(coloredEnum);
+
+    data.insert(data.end(), mono.begin(), mono.end()); 
+    data.insert(data.end(), colored.begin(), colored.end());
+
+    return data; 
+  }
+
+  std::vector<float> aggregating_color_data(int monoEnum, int coloredEnum, const CGAL::IO::Color& monoColor) const
+  {
+    std::vector<float> data; 
+    QColor color; 
+    color.setRgbF((double)monoColor.red()/(double)255,
+                  (double)monoColor.green()/(double)255,
+                  (double)monoColor.blue()/(double)255);
+
+    for (int i = 0; i < gBuffer.number_of_elements(monoEnum); ++i)
+    {
+      data.push_back(color.redF());
+      data.push_back(color.greenF());
+      data.push_back(color.blueF());
+    } 
+
+    auto colored = gBuffer.get_array_of_index(coloredEnum);
+    data.insert(data.end(), colored.begin(), colored.end());
+
+    return data; 
+  }
+
   void initialize_buffers()
   {
     set_camera_mode();
     rendering_program_p_l.bind();
 
+    unsigned int bufn = 0;
+    std::vector<float> positions, normals, colors; 
     // 1) POINT SHADER
 
-    // 1.1) Mono points
-    vao[VAO_MONO_POINTS].bind();
+    vao[VAO_POINTS].bind(); 
+    positions = aggregating_data(GS::POS_MONO_POINTS, GS::POS_COLORED_POINTS); 
+    colors = aggregating_color_data(GS::POS_MONO_POINTS, GS::COLOR_POINTS, m_vertices_mono_color);
 
-    unsigned int bufn = 0;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_POINTS).data(),
-                           gBuffer.get_size_of_index(GS::POS_MONO_POINTS));
+    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
-    // TODO/QUESTION can we use double for BufferType? 
-    // if not remove the template parameter and use float everywhere.    
-
-    buffers[bufn].release();
-
-    rendering_program_p_l.disableAttributeArray("a_Color");
-
-    vao[VAO_MONO_POINTS].release();
-
-    // 1.2) Color points
-    vao[VAO_COLORED_POINTS].bind();
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_POINTS).data(),
-                           gBuffer.get_size_of_index(GS::POS_COLORED_POINTS));
-    rendering_program_p_l.enableAttributeArray("a_Pos");
-    rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
-    rendering_program_p_l.bind();
-    
-    buffers[bufn].release();
-
-
-
-    ++bufn;
-    CGAL_assertion(bufn<NB_GL_BUFFERS);
-    buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_POINTS).data(),
-                           gBuffer.get_size_of_index(GS::COLOR_POINTS));
+    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
-    rendering_program_p_l.bind();
-
-    buffers[bufn].release();
-
-    vao[VAO_COLORED_POINTS].release();
 
     // 2) SEGMENT SHADER
 
-    // 2.1) Mono segments
-    vao[VAO_MONO_SEGMENTS].bind();
+    vao[VAO_SEGMENTS].bind(); 
+    positions = aggregating_data(GS::POS_MONO_SEGMENTS, GS::POS_COLORED_SEGMENTS); 
+    colors = aggregating_color_data(GS::POS_MONO_SEGMENTS, GS::COLOR_SEGMENTS, m_edges_mono_color);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_SEGMENTS).data(),
-                           gBuffer.get_size_of_index(GS::POS_MONO_SEGMENTS));
+    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
-    buffers[bufn].release();
-
-    rendering_program_p_l.disableAttributeArray("a_Color");
-
-    vao[VAO_MONO_SEGMENTS].release();
-
-    // 2.1) Color segments
-    vao[VAO_COLORED_SEGMENTS].bind();
-
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_SEGMENTS).data(),
-                           gBuffer.get_size_of_index(GS::POS_COLORED_SEGMENTS));
-    rendering_program_p_l.enableAttributeArray("a_Pos");
-    rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
-    rendering_program_p_l.bind();
-
-    buffers[bufn].release();
-
-    ++bufn;
-    CGAL_assertion(bufn<NB_GL_BUFFERS);
-    buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_SEGMENTS).data(),
-                           gBuffer.get_size_of_index(GS::COLOR_SEGMENTS));
+    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
-
-    buffers[bufn].release();
-
-    vao[VAO_COLORED_SEGMENTS].release();
-
-    rendering_program_p_l.release();
 
     // 3) RAYS SHADER
 
-    // 3.1) Mono rays
-    vao[VAO_MONO_RAYS].bind();
+    vao[VAO_RAYS].bind(); 
+    positions = aggregating_data(GS::POS_MONO_RAYS, GS::POS_COLORED_RAYS); 
+    colors = aggregating_color_data(GS::POS_MONO_RAYS, GS::COLOR_RAYS, m_rays_mono_color);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_RAYS).data(),
-                           gBuffer.get_size_of_index(GS::POS_MONO_RAYS));
-    rendering_program_p_l.enableAttributeArray("a_Pos");
-    rendering_program_p_l.setAttributeArray("a_Pos",GL_FLOAT,0,3);
-
-    buffers[bufn].release();
-
-    rendering_program_p_l.disableAttributeArray("a_Color");
-
-    vao[VAO_MONO_RAYS].release();
-
-    // 3.2) Color rays
-
-    vao[VAO_COLORED_RAYS].bind();
-
-    ++bufn;
-    CGAL_assertion(bufn<NB_GL_BUFFERS);
-    buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_RAYS).data(),
-                           gBuffer.get_size_of_index(GS::POS_COLORED_RAYS));
+    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
-    buffers[bufn].release();
-
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_RAYS).data(),
-                           gBuffer.get_size_of_index(GS::COLOR_RAYS));
+    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
-    buffers[bufn].release();
-
-    vao[VAO_COLORED_RAYS].release();
-
-    rendering_program_p_l.release();
 
     // 4) LINES SHADER
-    // 4.1) Mono lines
-    vao[VAO_MONO_LINES].bind();
+
+    vao[VAO_LINES].bind(); 
+    positions = aggregating_data(GS::POS_MONO_LINES, GS::POS_COLORED_LINES); 
+    colors = aggregating_color_data(GS::POS_MONO_LINES, GS::COLOR_LINES, m_lines_mono_color);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_LINES).data(),
-                           gBuffer.get_size_of_index(GS::POS_MONO_LINES));
-    rendering_program_p_l.enableAttributeArray("a_Pos");
-    rendering_program_p_l.setAttributeArray("a_Pos",GL_FLOAT,0,3);
-
-    buffers[bufn].release();
-
-    rendering_program_p_l.disableAttributeArray("a_Color");
-
-    vao[VAO_MONO_LINES].release();
-
-    // 4.2 Color lines
-
-    vao[VAO_COLORED_LINES].bind();
-
-    ++bufn;
-    CGAL_assertion(bufn<NB_GL_BUFFERS);
-    buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_LINES).data(),
-                           gBuffer.get_size_of_index(GS::POS_COLORED_LINES));
+    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
     rendering_program_p_l.enableAttributeArray("a_Pos");
     rendering_program_p_l.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
-    buffers[bufn].release();
-
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_LINES).data(),
-                           gBuffer.get_size_of_index(GS::COLOR_LINES));
+    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
     rendering_program_p_l.enableAttributeArray("a_Color");
     rendering_program_p_l.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
-    buffers[bufn].release();
-
-    vao[VAO_COLORED_LINES].release();
-
-    rendering_program_p_l.release();
 
     // 5) FACE SHADER
-    rendering_program_face.bind();
 
-    // 5.1) Mono faces
-    vao[VAO_MONO_FACES].bind();
+    vao[VAO_FACES].bind(); 
+    positions = aggregating_data(GS::POS_MONO_FACES, GS::POS_COLORED_FACES); 
+    normals = aggregating_data(
+      m_flatShading ? GS::FLAT_NORMAL_MONO_FACES : GS::SMOOTH_NORMAL_MONO_FACES,  
+      m_flatShading ? GS::FLAT_NORMAL_COLORED_FACES : GS::SMOOTH_NORMAL_COLORED_FACES 
+    );
+    colors = aggregating_color_data(GS::POS_MONO_FACES, GS::COLOR_FACES, m_faces_mono_color);
 
-    // 5.1.1) points of the mono faces
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_MONO_FACES).data(),
-                           gBuffer.get_size_of_index(GS::POS_MONO_FACES));
+    buffers[bufn].allocate(positions.data(), positions.size()*sizeof(float));
     rendering_program_face.enableAttributeArray("a_Pos");
     rendering_program_face.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
 
-    buffers[bufn].release();
-
-    // 5.1.2) normals of the mono faces
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    if (m_flatShading)
-    {
-      buffers[bufn].allocate(gBuffer.get_array_of_index(GS::FLAT_NORMAL_MONO_FACES).data(),
-                             gBuffer.get_size_of_index(GS::FLAT_NORMAL_MONO_FACES));
-    }
-    else
-    {
-      buffers[bufn].allocate(gBuffer.get_array_of_index(GS::SMOOTH_NORMAL_MONO_FACES).data(),
-                             gBuffer.get_size_of_index(GS::SMOOTH_NORMAL_MONO_FACES));
-    }
+    buffers[bufn].allocate(normals.data(), normals.size()*sizeof(float));
     rendering_program_face.enableAttributeArray("a_Normal");
     rendering_program_face.setAttributeBuffer("a_Normal",GL_FLOAT,0,3);
 
-    buffers[bufn].release();
-
-    // 5.1.3) color of the mono faces
-    rendering_program_face.disableAttributeArray("a_Color");
-    vao[VAO_MONO_FACES].release();
-
-    // 5.2) Color faces
-    vao[VAO_COLORED_FACES].bind();
-
-    // 5.2.1) points of the color faces
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::POS_COLORED_FACES).data(),
-                           gBuffer.get_size_of_index(GS::POS_COLORED_FACES));
-    rendering_program_face.enableAttributeArray("a_Pos");
-    rendering_program_face.setAttributeBuffer("a_Pos",GL_FLOAT,0,3);
-    rendering_program_face.bind();
-
-    buffers[bufn].release();
-
-    // 5.2.2) normals of the color faces
-    ++bufn;
-    CGAL_assertion(bufn<NB_GL_BUFFERS);
-    buffers[bufn].bind();
-    if (m_flatShading)
-    {
-      buffers[bufn].allocate(gBuffer.get_array_of_index(GS::FLAT_NORMAL_COLORED_FACES).data(),
-                             gBuffer.get_size_of_index(GS::FLAT_NORMAL_COLORED_FACES));
-    }
-    else
-    {
-      buffers[bufn].allocate(gBuffer.get_array_of_index(GS::SMOOTH_NORMAL_COLORED_FACES).data(),
-                             gBuffer.get_size_of_index(GS::SMOOTH_NORMAL_COLORED_FACES));
-    }
-    rendering_program_face.enableAttributeArray("a_Normal");
-    rendering_program_face.setAttributeBuffer("a_Normal",GL_FLOAT,0,3);
-    rendering_program_face.bind();
-
-    buffers[bufn].release();
-
-    // 5.2.3) colors of the faces
-    ++bufn;
-    CGAL_assertion(bufn<NB_GL_BUFFERS);
-    buffers[bufn].bind();
-    buffers[bufn].allocate(gBuffer.get_array_of_index(GS::COLOR_FACES).data(),
-                           gBuffer.get_size_of_index(GS::COLOR_FACES));
+    buffers[bufn].allocate(colors.data(), colors.size()*sizeof(float));
     rendering_program_face.enableAttributeArray("a_Color");
     rendering_program_face.setAttributeBuffer("a_Color",GL_FLOAT,0,3);
-
-    buffers[bufn].release();
-
-    vao[VAO_COLORED_FACES].release();
-
-    rendering_program_face.release();
-
 
     // 6) clipping plane shader
     if (isOpenGL_4_3())
@@ -2055,19 +2050,15 @@ protected:
 
   // The following enum gives the indices of the different vao.
   enum
-    { VAO_MONO_POINTS=0,
-      VAO_COLORED_POINTS,
-      VAO_MONO_SEGMENTS,
-      VAO_COLORED_SEGMENTS,
-      VAO_MONO_RAYS,
-      VAO_COLORED_RAYS,
-      VAO_MONO_LINES,
-      VAO_COLORED_LINES,
-      VAO_MONO_FACES,
-      VAO_COLORED_FACES,
-      VAO_CLIPPING_PLANE,
-      NB_VAO_BUFFERS
-    };
+  { 
+    VAO_POINTS=0,
+    VAO_SEGMENTS,
+    VAO_RAYS,
+    VAO_LINES,
+    VAO_FACES,
+    VAO_CLIPPING_PLANE,
+    NB_VAO_BUFFERS
+  };
   QOpenGLVertexArrayObject vao[NB_VAO_BUFFERS];
 
   QOpenGLShaderProgram rendering_program_face;

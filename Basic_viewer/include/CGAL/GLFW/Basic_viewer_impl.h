@@ -338,7 +338,7 @@ namespace GLFW
     glGenVertexArrays(NB_VAO_BUFFERS, m_VAO);
   }
 
-  std::vector<float> Basic_viewer::aggregate_data(int monoEnum, int coloredEnum) const
+  std::vector<float> Basic_viewer::aggregating_data(int monoEnum, int coloredEnum) const
   {
     std::vector<float> data; 
     
@@ -351,7 +351,7 @@ namespace GLFW
     return data; 
   }
 
-  std::vector<float> Basic_viewer::aggregate_color_data(int monoEnum, int coloredEnum, const CGAL::IO::Color& monoColor) const
+  std::vector<float> Basic_viewer::aggregating_color_data(int monoEnum, int coloredEnum, const CGAL::IO::Color& monoColor) const
   {
     std::vector<float> data; 
     vec3f color = color_to_normalized_vec3(monoColor);
@@ -377,71 +377,71 @@ namespace GLFW
 
     // 1) POINT SHADER
 
-    positions = aggregate_data(Graphics_scene::POS_MONO_POINTS, Graphics_scene::POS_COLORED_POINTS); 
-    colors = aggregate_color_data(
+    glBindVertexArray(m_VAO[VAO_POINTS]);
+    positions = aggregating_data(Graphics_scene::POS_MONO_POINTS, Graphics_scene::POS_COLORED_POINTS); 
+    colors = aggregating_color_data(
       Graphics_scene::POS_MONO_POINTS, 
       Graphics_scene::COLOR_POINTS, 
       m_VerticesMonoColor
     );
 
-    glBindVertexArray(m_VAO[VAO_POINTS]);
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, colors, 3);
 
     // 2) SEGMENT SHADER
 
-    positions = aggregate_data(Graphics_scene::POS_MONO_SEGMENTS, Graphics_scene::POS_COLORED_SEGMENTS); 
-    colors = aggregate_color_data(
+    glBindVertexArray(m_VAO[VAO_SEGMENTS]);
+    positions = aggregating_data(Graphics_scene::POS_MONO_SEGMENTS, Graphics_scene::POS_COLORED_SEGMENTS); 
+    colors = aggregating_color_data(
       Graphics_scene::POS_MONO_SEGMENTS, 
       Graphics_scene::COLOR_SEGMENTS, 
       m_EdgesMonoColor
     );
 
-    glBindVertexArray(m_VAO[VAO_SEGMENTS]);
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, colors, 3);
 
     // 3) RAYS SHADER
 
-    positions = aggregate_data(Graphics_scene::POS_MONO_RAYS, Graphics_scene::POS_COLORED_RAYS); 
-    colors = aggregate_color_data(
+    glBindVertexArray(m_VAO[VAO_RAYS]);
+    positions = aggregating_data(Graphics_scene::POS_MONO_RAYS, Graphics_scene::POS_COLORED_RAYS); 
+    colors = aggregating_color_data(
       Graphics_scene::POS_MONO_RAYS, 
       Graphics_scene::COLOR_RAYS, 
       m_RaysMonoColor
     );
 
-    glBindVertexArray(m_VAO[VAO_RAYS]);
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, colors, 3);
 
     // 4) LINES SHADER
 
-    positions = aggregate_data(Graphics_scene::POS_MONO_LINES, Graphics_scene::POS_COLORED_LINES); 
-    colors = aggregate_color_data(
+    glBindVertexArray(m_VAO[VAO_RAYS]);
+    positions = aggregating_data(Graphics_scene::POS_MONO_LINES, Graphics_scene::POS_COLORED_LINES); 
+    colors = aggregating_color_data(
       Graphics_scene::POS_MONO_LINES, 
       Graphics_scene::COLOR_LINES, 
       m_LinesMonoColor
     );
 
-    glBindVertexArray(m_VAO[VAO_RAYS]);
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, colors, 3);
 
     // 5) FACE SHADER
 
-    positions = aggregate_data(Graphics_scene::POS_MONO_FACES, Graphics_scene::POS_COLORED_FACES); 
-    normals = aggregate_data(
+    glBindVertexArray(m_VAO[VAO_FACES]);
+    positions = aggregating_data(Graphics_scene::POS_MONO_FACES, Graphics_scene::POS_COLORED_FACES); 
+    normals = aggregating_data(
       m_FlatShading ? Graphics_scene::FLAT_NORMAL_MONO_FACES : Graphics_scene::SMOOTH_NORMAL_MONO_FACES, 
       m_FlatShading ? Graphics_scene::FLAT_NORMAL_COLORED_FACES : Graphics_scene::SMOOTH_NORMAL_COLORED_FACES
     ); 
 
-    colors = aggregate_color_data(
+    colors = aggregating_color_data(
       Graphics_scene::POS_MONO_FACES, 
       Graphics_scene::COLOR_FACES, 
       m_FacesMonoColor
     );
 
-    glBindVertexArray(m_VAO[VAO_FACES]);
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, normals, 3);
     load_buffer(bufn++, 2, colors, 3);
@@ -828,8 +828,8 @@ namespace GLFW
     {
       if (m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES) == 0)
       {
-        vec4f color = color_to_normalized_vec4(m_FacesMonoColor);
-        glVertexAttrib4fv(2, color.data());
+        vec3f color = color_to_normalized_vec3(m_FacesMonoColor);
+        glVertexAttrib3fv(2, color.data());
         glDisableVertexAttribArray(2);
         glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
       }
@@ -862,9 +862,9 @@ namespace GLFW
     {
       if (m_Scene->number_of_elements(Graphics_scene::POS_MONO_RAYS) == 0)
       {
-        vec4f color = color_to_normalized_vec4(m_RaysMonoColor);
+        vec3f color = color_to_normalized_vec3(m_RaysMonoColor);
         glDisableVertexAttribArray(1);
-        glVertexAttrib4fv(1, color.data());
+        glVertexAttrib3fv(1, color.data());
         glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_RAYS));
       }
       else 
@@ -901,9 +901,9 @@ namespace GLFW
     {
       if (m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS) == 0)
       {
-        vec4f color = color_to_normalized_vec4(m_VerticesMonoColor);
+        vec3f color = color_to_normalized_vec3(m_VerticesMonoColor);
         glDisableVertexAttribArray(1);
-        glVertexAttrib4fv(1, color.data());
+        glVertexAttrib3fv(1, color.data());
         glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS));
       }
       else 
@@ -917,11 +917,14 @@ namespace GLFW
       glEnableVertexAttribArray(1);
       if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS) == 0)
       {
-        glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS));
+        glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS) / 3);
       }
       else
       {
-        glDrawArrays(GL_POINTS, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS));
+        glDrawArrays(GL_POINTS, 
+          m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS), 
+          m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS)
+        );
       }
     }
   }

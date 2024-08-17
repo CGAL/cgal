@@ -288,8 +288,8 @@ namespace GLFW
 
     bool need_update() const; 
     
-    std::vector<float> aggregate_data(int monoEnum, int coloredEnum) const;
-    std::vector<float> aggregate_color_data(int monoEnum, int coloredEnum, const CGAL::IO::Color& monoColor) const;
+    std::vector<float> aggregating_data(int monoEnum, int coloredEnum) const;
+    std::vector<float> aggregating_color_data(int monoEnum, int coloredEnum, const CGAL::IO::Color& monoColor) const;
  
   private:
     GLFWwindow* m_Window;
@@ -398,20 +398,10 @@ namespace GLFW
     enum VAOEnum 
     {
       VAO_POINTS = 0,
-      VAO_MONO_POINTS,
-      VAO_COLORED_POINTS,
-      VAO_MONO_SEGMENTS,
-      VAO_COLORED_SEGMENTS,
       VAO_SEGMENTS,
       VAO_RAYS,
-      VAO_MONO_RAYS,
-      VAO_COLORED_RAYS,
       VAO_LINES,
-      VAO_MONO_LINES,
-      VAO_COLORED_LINES,
       VAO_FACES,
-      VAO_MONO_FACES,
-      VAO_COLORED_FACES,
       NB_VAO_BUFFERS
     };
 
