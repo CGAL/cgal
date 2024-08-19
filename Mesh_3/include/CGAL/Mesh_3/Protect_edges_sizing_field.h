@@ -720,7 +720,10 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
   typename GT::Construct_weighted_point_3 cwp =
     c3t3_.triangulation().geom_traits().construct_weighted_point_3_object();
 
-  const Weighted_point wp = cwp(p,w*weight_modifier);
+  const FT wwm = use_minimal_size()
+               ? (std::max)(w * weight_modifier, minimal_weight())
+               : w * weight_modifier;
+  const Weighted_point wp = cwp(p, wwm);
 
   typename Tr::Locate_type lt;
   int li, lj;
@@ -1182,7 +1185,7 @@ insert_balls(const Vertex_handle& vp,
   const Weighted_point& vp_wp = c3t3_.triangulation().point(vp);
 
 #if ! defined(CGAL_NO_PRECONDITIONS)
-  if(sp <= minimal_size_) {
+  if(sp < minimal_size_) {
     std::stringstream msg;
     msg.precision(17);
     msg << "Error: the mesh sizing field is smaller than minimal size ";
