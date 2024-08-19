@@ -137,6 +137,12 @@ public:
     setKeyDescription(::Qt::Key_PageDown, "Increase light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_PageUp, "Decrease light (all colors, use shift/alt/ctrl for one rgb component)");
     setKeyDescription(::Qt::Key_O, "Toggles 2D mode only");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_V, "Toggle vertices display as sphere");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_E, "Toggle edges display as cylinder");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_N, "Toggle normals display");
+    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_N, "Toggle face/vertex normals for normal display");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_M, "Toggle normals mono color");
+    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_T, "Toggle triangles display");
 
     // Add custom mouse description
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton,
