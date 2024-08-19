@@ -160,7 +160,6 @@ private:
     assert(are_equal(res_o2o1, expected_result));
 
     do_intersect_check(o1, o2);
-    do_intersect_check(o1, o2);
   }
 
   template <typename O1, typename O2>
@@ -169,7 +168,6 @@ private:
     const FT res_o1o2 = CGAL::squared_distance(o1, o2);
     const FT res_o2o1 = CGAL::squared_distance(o2, o1);
 
-    do_intersect_check(o1, o2);
     do_intersect_check(o1, o2);
 
     assert(res_o1o2 <= ubound);
@@ -324,7 +322,7 @@ private:
       check_squared_distance(S{p2, p3}, S{p4, p5}, 0);
       check_squared_distance(S{p2, p3}, S{p5, p4}, 0);
       check_squared_distance(S{p3, p2}, S{p4, p5}, 0);
-      check_squared_distance(S{p3, p2}, S{p4, p5}, 0);
+      check_squared_distance(S{p3, p2}, S{p5, p4}, 0);
 
       const double lambda_6 = r.get_double(0, 1);
       const P p6 = p3 + FT(lambda_6) * V{p3 - p2};
@@ -332,7 +330,7 @@ private:
       check_squared_distance(S{p2, p3}, S{p6, p5}, 0);
       check_squared_distance(S{p2, p3}, S{p5, p6}, 0);
       check_squared_distance(S{p3, p2}, S{p6, p5}, 0);
-      check_squared_distance(S{p3, p2}, S{p6, p5}, 0);
+      check_squared_distance(S{p3, p2}, S{p5, p6}, 0);
 
       const double lambda_7 = r.get_double(1, 2);
       const P p7 = p3 + FT(lambda_7) * V{p3 - p2};

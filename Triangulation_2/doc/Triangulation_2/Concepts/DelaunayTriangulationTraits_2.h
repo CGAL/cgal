@@ -26,7 +26,6 @@ required if the  method `nearest_vertex()` is used.
 \cgalHasModelsBare{All models of the \cgal concept `Kernel`}
 \cgalHasModelsBare{`CGAL::Projection_traits_3<K>` (not for dual Voronoi functions)}
 \cgalHasModelsBare{`CGAL::Projection_traits_xy_3<K>` (not for dual Voronoi functions)}
-\cgalHasModelsBare{`CGAL::Projection_traits_xy_3<K>` (not for dual Voronoi functions)}
 \cgalHasModelsBare{`CGAL::Projection_traits_yz_3<K>` (not for dual Voronoi functions)}
 \cgalHasModelsBare{`CGAL::Projection_traits_xz_3<K>` (not for dual Voronoi functions)}
 \cgalHasModelsEnd

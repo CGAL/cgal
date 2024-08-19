@@ -122,7 +122,7 @@ int main() {
         CGAL_catch_error((bool)(I<=J),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(I>=J),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
-        CGAL_catch_error((bool)(J> I),CGAL::Uncertain_conversion_exception&);
+        CGAL_catch_error((bool)(J< I),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J>=I),CGAL::Uncertain_conversion_exception&);
         CGAL_catch_error((bool)(J<=I),CGAL::Uncertain_conversion_exception&);
 
