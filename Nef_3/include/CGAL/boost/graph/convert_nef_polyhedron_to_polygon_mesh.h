@@ -382,8 +382,6 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
         typename Nef_polyhedron::SHalfedge_around_sface_const_circulator ec(e),ee(e);
         CGAL_For_all(ec,ee)
         {
-          typename Nef_polyhedron::SVertex_const_handle vv = ec->twin()->source();
-
           typename Nef_polyhedron::Halffacet_const_handle f = ec->twin()->facet();
           if (f->incident_volume()==f->twin()->incident_volume())
             return false;
