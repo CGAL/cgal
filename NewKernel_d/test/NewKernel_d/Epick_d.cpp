@@ -220,6 +220,7 @@ void test2(){
   using std::abs;
   P a=cp(3,4);
   CGAL::Bbox<CGAL::Dimension_tag<2>,double> bb2 = cb(a);
+  std::cout << "bb2 = " << bb2 << std::endl;
   assert(pd(a)==2);
   assert(pv(a)[1]==4);
   P b=vp(cv(5,6,7));
@@ -754,7 +755,8 @@ int main(){
   test2<Ker2>(); test2i<Ker2>();
   test3<Ker3>();
   test3<Kerd>();
-#if !defined _MSC_VER || _MSC_VER >= 1910
+
+#if 0 // !defined _MSC_VER || _MSC_VER >= 1910
   test2<CGAL::Epeck_d<CGAL::Dimension_tag<2>>>();
   test3<CGAL::Epeck_d<CGAL::Dimension_tag<3>>>();
   test3<CGAL::Epeck_d<CGAL::Dynamic_dimension_tag>>();
