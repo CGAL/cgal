@@ -106,7 +106,7 @@ public:
     m_size_rays(3.1),
     m_size_lines(3.1),
     m_size_normals(0.2),
-    m_height_factor_normals(0.05),
+    m_height_factor_normals(0.02),
     m_vertices_mono_color(200, 60, 60),
     m_edges_mono_color(0, 0, 0),
     m_rays_mono_color(0, 0, 0),
@@ -662,90 +662,6 @@ public:
       }
     }
 
-    if (m_draw_normals)
-    {
-      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
-        rendering_program_normal.bind();
-        color.setRgbF((double)m_normals_mono_color.red()/(double)255,
-                      (double)m_normals_mono_color.green()/(double)255,
-                      (double)m_normals_mono_color.blue()/(double)255);
-        rendering_program_normal.setUniformValue("u_Color", color);
-        if (m_use_normal_mono_color)
-        {
-          rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLint>(1));
-        }
-        else 
-        {
-          rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLint>(0));
-        }
-        rendering_program_normal.setUniformValue("u_Factor", static_cast<GLfloat>(m_height_factor_normals));
-        rendering_program_normal.setUniformValue("u_SceneRadius", static_cast<GLfloat>(sceneRadius()));
-        if (m_display_face_normal)
-        {
-          rendering_program_normal.setUniformValue("u_DisplayFaceNormal", static_cast<GLint>(1));
-        }
-        else 
-        {
-          rendering_program_normal.setUniformValue("u_DisplayFaceNormal", static_cast<GLint>(0));
-        }
-
-        rendering_program_normal.setUniformValue("u_ClipPlane",  clipPlane);
-        rendering_program_normal.setUniformValue("u_PointPlane", plane_point);
-        rendering_program_normal.setUniformValue("u_RenderingMode", rendering_mode);
-
-        vao[VAO_FACES].bind();
-        if (m_use_mono_color)
-        {
-          if (gBuffer.number_of_elements(GS::POS_MONO_FACES) == 0)
-          {
-            color.setRgbF((double)m_lines_mono_color.red()/(double)255,
-                          (double)m_lines_mono_color.green()/(double)255,
-                          (double)m_lines_mono_color.blue()/(double)255);
-            rendering_program_normal.disableAttributeArray("a_Color");
-            rendering_program_normal.setAttributeValue("a_Color",color);
-            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
-          }
-          else
-          {
-            rendering_program_normal.enableAttributeArray("a_Color");
-            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
-          }
-        }
-        else 
-        {
-          rendering_program_normal.enableAttributeArray("a_Color");
-          if (gBuffer.number_of_elements(GS::POS_COLORED_FACES) == 0)
-          {
-            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
-          }
-          else
-          {
-            glDrawArrays(GL_TRIANGLES, 
-              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)), 
-              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES))
-            );
-          }
-        }
-      };
-
-      enum {
-        DRAW_ALL = -1, // draw all
-        DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
-        DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
-      };
-
-      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
-      {
-        renderer(DRAW_INSIDE_ONLY);
-      }
-      else
-      {
-        renderer(DRAW_ALL);
-      }
-
-      rendering_program_normal.release();
-    }
-
     // Fix Z-fighting by drawing faces at a depth
     GLfloat offset_factor;
     GLfloat offset_units;
@@ -876,6 +792,67 @@ public:
       rendering_program_face.release();
     }
 
+    if (m_draw_normals)
+    {
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+        rendering_program_normal.bind();
+        color.setRgbF((double)m_normals_mono_color.red()/(double)255,
+                      (double)m_normals_mono_color.green()/(double)255,
+                      (double)m_normals_mono_color.blue()/(double)255);
+        rendering_program_normal.setUniformValue("u_Color", color);
+        if (m_use_normal_mono_color)
+        {
+          rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLint>(1));
+        }
+        else 
+        {
+          rendering_program_normal.setUniformValue("u_UseMonoColor", static_cast<GLint>(0));
+        }
+        rendering_program_normal.setUniformValue("u_Factor", static_cast<GLfloat>(m_height_factor_normals));
+        rendering_program_normal.setUniformValue("u_SceneRadius", static_cast<GLfloat>(sceneRadius()));
+        if (m_display_face_normal)
+        {
+          rendering_program_normal.setUniformValue("u_DisplayFaceNormal", static_cast<GLint>(1));
+        }
+        else 
+        {
+          rendering_program_normal.setUniformValue("u_DisplayFaceNormal", static_cast<GLint>(0));
+        }
+
+        rendering_program_normal.setUniformValue("u_ClipPlane",  clipPlane);
+        rendering_program_normal.setUniformValue("u_PointPlane", plane_point);
+        rendering_program_normal.setUniformValue("u_RenderingMode", rendering_mode);
+
+        vao[VAO_FACES].bind();
+        glLineWidth(m_size_normals);
+        if (gBuffer.number_of_elements(GS::POS_COLORED_FACES) == 0)
+        {
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
+        }
+        else
+        {
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
+        }
+      };
+
+      enum {
+        DRAW_ALL = -1, // draw all
+        DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+        DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+      };
+
+      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
+      {
+        renderer(DRAW_INSIDE_ONLY);
+      }
+      else
+      {
+        renderer(DRAW_ALL);
+      }
+
+      rendering_program_normal.release();
+    }
+
     if (m_draw_triangles)
     {
 
@@ -887,30 +864,13 @@ public:
         rendering_program_triangle.setUniformValue("u_PointPlane", plane_point);
 
         vao[VAO_FACES].bind();
-        if (m_use_mono_color)
+        if (gBuffer.number_of_elements(GS::POS_COLORED_FACES) == 0)
         {
-          if (gBuffer.number_of_elements(GS::POS_MONO_FACES) == 0)
-          {
-            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
-          }
-          else
-          {
-            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
-          }
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
         }
-        else 
+        else
         {
-          if (gBuffer.number_of_elements(GS::POS_COLORED_FACES) == 0)
-          {
-            glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)));
-          }
-          else
-          {
-            glDrawArrays(GL_TRIANGLES, 
-              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_MONO_FACES)), 
-              static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES))
-            );
-          }
+          glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_COLORED_FACES)));
         }
       };
       
@@ -1889,13 +1849,13 @@ protected:
       {
         m_draw_sphere_vertex = !m_draw_sphere_vertex;
         displayMessage(QString("Draw sphere vertex=%1.").arg(m_draw_sphere_vertex?"true":"false"));
-        redraw();
+        update();
       }
       else if ((e->key()==::Qt::Key_E) && (modifiers==::Qt::ControlModifier))
       {
         m_draw_cylinder_edge = !m_draw_cylinder_edge;
         displayMessage(QString("Draw cylinder edge=%1.").arg(m_draw_cylinder_edge?"true":"false"));
-        redraw();
+        update();
       }
       else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::ControlModifier))
       {
@@ -1913,13 +1873,13 @@ protected:
       {
         m_use_normal_mono_color = !m_use_normal_mono_color;
         displayMessage(QString("Normal mono color=%1.").arg(m_use_normal_mono_color?"true":"false"));
-        redraw();
+        update();
       }
       else if ((e->key()==::Qt::Key_N) && (modifiers==::Qt::ShiftModifier))
       {
         m_display_face_normal = !m_display_face_normal;
         displayMessage(QString("Display face normal=%1.").arg(m_display_face_normal?"true":"false"));
-        redraw();
+        update();
       }
       else
       { CGAL::QGLViewer::keyPressEvent(e); } // By default call QGLViewer key press

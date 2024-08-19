@@ -214,7 +214,7 @@ namespace GLFW
     void update_sphere_uniforms();
     void update_cylinder_uniforms();
     void update_pl_uniforms();
-    void update_line_uniforms();
+    void update_line_uniforms(float size);
     void update_clipping_uniforms();
     void update_world_axis_uniforms();
     void update_XY_axis_uniforms();

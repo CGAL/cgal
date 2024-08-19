@@ -180,7 +180,6 @@ void Camera::update(const float dt)
         quatf yawQuaternion(Eigen::AngleAxisf(yawDelta, vec3f::UnitY()));
         m_Orientation = pitchQuaternion * yawQuaternion * m_Orientation;
       }
-
     }
     else // free fly
     {

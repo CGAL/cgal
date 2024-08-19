@@ -555,7 +555,7 @@ namespace GLFW
     m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(mode));
   }
 
-  void Basic_viewer::update_line_uniforms()
+  void Basic_viewer::update_line_uniforms(float size)
   {
     m_ShaderLine->use(); 
 
@@ -565,7 +565,7 @@ namespace GLFW
     float viewport[2] = { m_WindowSize.x(), m_WindowSize.y() }; 
 
     m_ShaderLine->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
-    m_ShaderLine->set_float("u_PointSize", m_SizeEdges);
+    m_ShaderLine->set_float("u_PointSize", size);
     m_ShaderLine->set_int("u_IsOrthographic", static_cast<int>(m_Camera.is_orthographic()));
     
     m_ShaderLine->set_vec2f("u_Viewport", &viewport[0]);
@@ -967,7 +967,7 @@ namespace GLFW
 
   void Basic_viewer::draw_edges()
   {
-    update_line_uniforms();
+    update_line_uniforms(m_SizeEdges);
     if (m_DrawCylinderEdge && m_GeometryFeatureEnabled)
     {
       update_cylinder_uniforms();
@@ -1039,7 +1039,14 @@ namespace GLFW
 
     glBindVertexArray(m_VAO[VAO_FACES]);
     glLineWidth(m_SizeNormals);
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+    if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES) == 0)
+    {
+      glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
+    }
+    else 
+    {
+      glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+    }
   }
 
   void Basic_viewer::draw_triangles()
@@ -1049,7 +1056,14 @@ namespace GLFW
     glDepthFunc(GL_LEQUAL);
 
     glBindVertexArray(m_VAO[VAO_FACES]);
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+    if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES) == 0)
+    {
+      glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES));
+    }
+    else 
+    {
+      glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+    }
   }
 
   void Basic_viewer::initialize_and_load_clipping_plane()
