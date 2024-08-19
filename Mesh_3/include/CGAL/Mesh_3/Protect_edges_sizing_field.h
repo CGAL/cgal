@@ -741,7 +741,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index,
     std::cerr << "SPECIAL ";
   std::cerr << "protecting ball ";
   if(v == Vertex_handle())
-    std::cerr << cwp(p,w*weight_modifier);
+    std::cerr << cwp(p, wwm);
   else
     std::cerr << disp_vert(v);
 
