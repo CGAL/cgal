@@ -1369,6 +1369,13 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
     }
   }
 
+  const auto& tm = *facegraph_item->face_graph();
+  if (!is_triangle_mesh(tm))
+  {
+    QMessageBox::warning(mw, "Non triangle mesh", "Selection of edges works only on a triangulated surface.");
+    return;
+  }
+
   //check for existing selection for the same polyhedral surface
   Scene_polyhedron_selection_item* selection_item = nullptr;
   bool should_add = true;
@@ -1396,8 +1403,6 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   const auto& features = polylines_item->polylines;
-  std::cout << "nb features = " << features.size() << std::endl;
-  const auto& tm = *facegraph_item->face_graph();
   CGAL::AABB_tree<AABB_face_graph_traits> tree;
 
   PMP::build_AABB_tree(tm, tree);
@@ -1424,14 +1429,12 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
       else if (w1 > w0 && w1 > w2) return target(halfedge(f, tm), tm);
       else if (w2 > w0 && w2 > w1) return target(next(halfedge(f, tm), tm), tm);
 
-      std::cerr << "ERROR : Can't locate vertex!" << std::endl;
+      std::cerr << "ERROR : Can't locate vertex at " << p << std::endl;
       return SMesh::null_vertex();
     };
 
   unsigned int count_edges_added = 0;
   unsigned int count_edges_not_found = 0;
-
-  std::cout << "nb features before loop = " << features.size() << std::endl;
 
   // add edges to selection
   for(const Scene_polylines_item::Polyline& polyline : features)
