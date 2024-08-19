@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include "Scene_surface_mesh_item.h"
 #include "Scene_plane_item.h"
+#include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Three.h>
@@ -254,7 +255,18 @@ public Q_SLOTS:
           try{
             if(sm_item)
             {
-              CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
+              Scene_polyhedron_selection_item* selection = nullptr;
+              for (int id : scene->selectionIndices())
+              {
+                Scene_polyhedron_selection_item* tmp
+                  = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(id));
+                if (tmp != nullptr && tmp->polyhedron_item() == sm_item)
+                  selection = tmp;
+              }
+
+              if(selection == nullptr)
+              {
+                CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
                                                   plane->plane(),
                                                   CGAL::parameters::clip_volume(ui_widget.close_checkBox->isChecked())
                                                   .do_not_triangulate_faces(!ui_widget.triangulated_checkBox->isChecked())
@@ -262,6 +274,17 @@ public Q_SLOTS:
                                                   .use_compact_clipper(
                                                     !ui_widget.coplanarCheckBox->isChecked())
                                                   .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
+              }
+              else
+              {
+                CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
+                  plane->plane(),
+                  CGAL::parameters::clip_volume(ui_widget.close_checkBox->isChecked())
+                  .throw_on_self_intersection(true)
+                  .use_compact_clipper(!ui_widget.coplanarCheckBox->isChecked())
+                  .edge_is_constrained_map(selection->constrained_edges_pmap())
+                  .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
+              }
             }
           }
           catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
