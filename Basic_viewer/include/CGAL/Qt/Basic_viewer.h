@@ -450,7 +450,7 @@ public:
       }
     }
 
-    if(m_draw_edges)
+    if(m_draw_edges && !m_draw_triangles)
     {
       if (m_draw_cylinder_edge && m_geometry_feature_enabled)
       {

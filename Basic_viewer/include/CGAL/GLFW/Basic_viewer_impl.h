@@ -712,7 +712,7 @@ namespace GLFW
       draw_lines();
     }
    
-    if (m_DrawEdges)
+    if (m_DrawEdges && !m_DrawTriangles)
     {
       draw_edges();
     }
