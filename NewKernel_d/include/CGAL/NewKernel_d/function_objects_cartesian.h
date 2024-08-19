@@ -1008,24 +1008,26 @@ template<class R_> struct Squared_length : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Squared_length_tag,(CartesianDKernelFunctors::Squared_length<K>),(Vector_tag),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
 
 namespace CartesianDKernelFunctors {
-template<class R_> struct Construct_Bbox : private Store_kernel<R_> {
-        CGAL_FUNCTOR_INIT_STORE(Construct_Bbox)
+template<class R_> struct Construct_bbox : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Construct_bbox)
         typedef R_ R;
         typedef typename R::Dimension Dimension;
         typedef typename Get_type<R, RT_tag>::type RT;
         typedef typename Get_type<R, Point_tag>::type Point;
         typedef typename Get_functor<R, Construct_ttag<Point_cartesian_const_iterator_tag> >::type CI;
+        
         typedef Bbox<Dimension,double> result_type;
         typedef Point argument_type;
         result_type operator()(Point const&a)const{
                 CI ci(this->kernel());
-                To_interval<RT> f;
-                return result_type(a.dimension(), make_transforming_iterator(ci(a,Begin_tag()),f), make_transforming_iterator(ci(a,End_tag())), f);
+                typename Real_embeddable_traits<RT>::To_interval f;
+                typename Get_functor<R, Point_dimension_tag>::type pd(this->kernel());
+                return result_type(pd(a), make_transforming_iterator(ci(a,Begin_tag()),f), make_transforming_iterator(ci(a,End_tag())), f);
         }
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(Construct_Bbox_tag,(CartesianDKernelFunctors::Construct_Bbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+CGAL_KD_DEFAULT_FUNCTOR(Construct_bbox_tag,(CartesianDKernelFunctors::Construct_bbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
 
 
 namespace CartesianDKernelFunctors {

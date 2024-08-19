@@ -181,7 +181,7 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
         typedef typename Construct_cartesian_const_iterator_d::result_type Cartesian_const_iterator_d;
         typedef typename Get_functor<Base, Squared_distance_tag>::type Squared_distance_d;
         typedef typename Get_functor<Base, Squared_length_tag>::type Squared_length_d;
-        typedef typename Get_functor<Base, Construct_Bbox_tag>::type Construct_bbox_d;
+        typedef typename Get_functor<Base, Construct_bbox_tag>::type Construct_bbox_d;
         typedef typename Get_functor<Base, Scalar_product_tag>::type Scalar_product_d;
         typedef typename Get_functor<Base, Affine_rank_tag>::type Affine_rank_d;
         typedef typename Get_functor<Base, Affinely_independent_tag>::type Affinely_independent_d;

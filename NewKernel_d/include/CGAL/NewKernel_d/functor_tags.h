@@ -201,7 +201,7 @@ namespace CGAL {
         CGAL_DECL_COMPUTE(Squared_distance);
         CGAL_DECL_COMPUTE(Squared_distance_to_origin);
         CGAL_DECL_COMPUTE(Squared_length);
-        CGAL_DECL_COMPUTE(Construct_Bbox);
+        CGAL_DECL_COMPUTE(Construct_bbox);
         CGAL_DECL_COMPUTE(Squared_radius);
         CGAL_DECL_COMPUTE(Squared_circumradius);
         CGAL_DECL_COMPUTE(Scalar_product);

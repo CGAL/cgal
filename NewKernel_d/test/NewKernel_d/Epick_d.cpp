@@ -211,7 +211,6 @@ void test2(){
   PSBPS psbps Kinit(power_side_of_bounded_power_sphere_d_object);
   CSRSOS csrsos Kinit(compute_squared_radius_smallest_orthogonal_sphere_d_object);
 
-  CGAL_USE(cb);
   CGAL_USE(bc);
   CGAL_USE(pol);
   CGAL_USE(cat);
@@ -220,6 +219,7 @@ void test2(){
   CGAL_USE(cr);
   using std::abs;
   P a=cp(3,4);
+  CGAL::Bbox<CGAL::Dimension_tag<2>,double> bb2 = cb(a);
   assert(pd(a)==2);
   assert(pv(a)[1]==4);
   P b=vp(cv(5,6,7));
