@@ -111,7 +111,7 @@ void CurveInputMethod::beginInput_()
 
 static inline void clearPainterPath(QPainterPath& ppath)
 {
-  ppath = {};
+  ppath.clear();
 }
 
 
