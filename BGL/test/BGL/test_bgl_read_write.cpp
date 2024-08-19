@@ -783,6 +783,8 @@ template<typename Mesh, typename K>
 void test_bgl_VTP(const char* filename,
                   const bool binary = false)
 {
+    std::cout << typeid(Mesh).name() << std::endl
+        << filename << "  binary = " << std::boolalpha << binary << std::endl;
   Mesh fg;
   bool ok = CGAL::IO::read_VTP(filename, fg);
   assert(ok);
@@ -790,6 +792,7 @@ void test_bgl_VTP(const char* filename,
          (num_vertices(fg) == 2154 && num_faces(fg) == 4204));
 
   // write with VTP
+  std::cout << "write with VTP" << std::endl;
   {
     std::ofstream os;
     if(binary){
@@ -808,6 +811,8 @@ void test_bgl_VTP(const char* filename,
   }
 
   // write with PM
+
+  std::cout << "write with PM" << std::endl;
   {
     if(binary)
       ok = CGAL::IO::write_polygon_mesh("tmp.vtp", fg);
@@ -824,6 +829,8 @@ void test_bgl_VTP(const char* filename,
   typedef typename K::Point_3 Point;
   typedef typename boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<Point> >::type VertexPointMap;
   // Test NPs
+
+  std::cout << "Test NPs" << std::endl;
   {
     CGAL::clear(fg);
 
@@ -843,6 +850,7 @@ void test_bgl_VTP(const char* filename,
   }
 
   // write with VTP
+  std::cout << "write with VTP" << std::endl;
   {
     std::ofstream os;
     if(binary)
@@ -865,6 +873,7 @@ void test_bgl_VTP(const char* filename,
   }
 
   // write with PM
+  std::cout << "write with PM" << std::endl;
   {
     if(binary)
       ok = CGAL::IO::write_polygon_mesh("tmp.vtp", fg);
@@ -880,19 +889,33 @@ void test_bgl_VTP(const char* filename,
   }
 
   // test wrong inputs
+  std::cout << "test wrong inputs" << std::endl;
   std::cerr << " ########### Error text is expected to follow." << std::endl;
+  std::cout << "  data/mesh_that_doesnt_exist.vtp" << std::endl;
   ok = CGAL::IO::read_VTP("data/mesh_that_doesnt_exist.vtp", fg);
   assert(!ok);
+
+  std::cout << "  data/invalid_cut.vtp" << std::endl;
   ok = CGAL::IO::read_VTP("data/invalid_cut.vtp", fg); // cut in half
   assert(!ok);
+
+  std::cout << "  data/invalid_header.vtp" << std::endl;
   ok = CGAL::IO::read_VTP("data/invalid_header.vtp", fg); // missing header
   assert(!ok);
+
+  std::cout << "  data/wrong_nb_points.vtp" << std::endl;
   ok = CGAL::IO::read_VTP("data/wrong_nb_points.vtp", fg); // wrong number of points
   assert(!ok);
+
+  std::cout << "  data/sphere.obj" << std::endl;
   ok = CGAL::IO::read_VTP("data/sphere.obj", fg);
   assert(!ok);
+
+  std::cout << "  data/full.off" << std::endl;
   ok = CGAL::IO::read_VTP("data/full.off", fg);
   assert(!ok);
+
+  std::cout << "  data/corrupted_bin.vtp" << std::endl;
   ok = CGAL::IO::read_VTP("corrupted_bin.vtp", fg);
   assert(!ok);
   std::cerr << " ########### No more error text from here." << std::endl;
