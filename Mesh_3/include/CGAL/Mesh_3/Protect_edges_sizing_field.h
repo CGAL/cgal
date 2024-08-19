@@ -867,13 +867,11 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index,
                       std::back_inserter(cells_in_conflicts),
                       CGAL::Emptyset_iterator());
 
-    for(typename std::vector<Cell_handle>::const_iterator
-          it = cells_in_conflicts.begin(),
-        end = cells_in_conflicts.end(); it != end; ++it)
+    for(Cell_handle cit : cells_in_conflicts)
     {
       for(int i=0, d=tr.dimension(); i<=d; ++i)
       {
-        const Vertex_handle v = (*it)->vertex(i);
+        const Vertex_handle v = cit->vertex(i);
         if(c3t3_.triangulation().is_infinite(v))
           continue;
         if(!vertices_in_conflict_zone_set.insert(v).second)
@@ -1030,21 +1028,20 @@ insert_balls_on_edges()
   domain_.get_curves(std::back_inserter(input_features));
 
   // Iterate on edges
-  for ( typename Input_features::iterator fit = input_features.begin(),
-       end = input_features.end() ; fit != end ; ++fit )
+  for (const Feature_tuple& ft : input_features)
   {
     if(forced_stop()) break;
-    const Curve_index& curve_index = std::get<0>(*fit);
+    const Curve_index& curve_index = std::get<0>(ft);
     if ( ! is_treated(curve_index) )
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "\n** treat curve #" << curve_index << std::endl;
 #endif
-      const Bare_point& p = std::get<1>(*fit).first;
-      const Bare_point& q = std::get<2>(*fit).first;
+      const Bare_point& p = std::get<1>(ft).first;
+      const Bare_point& q = std::get<2>(ft).first;
 
-      const Index& p_index = std::get<1>(*fit).second;
-      const Index& q_index = std::get<2>(*fit).second;
+      const Index& p_index = std::get<1>(ft).second;
+      const Index& q_index = std::get<2>(ft).second;
 
       Vertex_handle vp,vq;
       if ( ! domain_.is_loop(curve_index) )
@@ -1487,14 +1484,11 @@ refine_balls()
     new_sizes.clear();
 
     // Update size of balls
-    for ( typename std::vector<std::pair<Vertex_handle,FT> >::iterator
-          it = new_sizes_copy.begin(),
-          end = new_sizes_copy.end();
-          it != end ; ++it )
+    for (const std::pair<Vertex_handle,FT>& it : new_sizes_copy)
     {
       if(forced_stop()) break;
-      const Vertex_handle v = it->first;
-      const FT new_size = it->second;
+      const Vertex_handle v = it.first;
+      const FT new_size = it.second;
       // Set size of the ball to new value
       if(use_minimal_size() && new_size < minimal_size_) {
         if(!is_special(v)) {
