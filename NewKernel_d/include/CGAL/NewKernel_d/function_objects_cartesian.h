@@ -1008,8 +1008,8 @@ template<class R_> struct Squared_length : private Store_kernel<R_> {
 CGAL_KD_DEFAULT_FUNCTOR(Squared_length_tag,(CartesianDKernelFunctors::Squared_length<K>),(Vector_tag),(Construct_ttag<Vector_cartesian_const_iterator_tag>));
 
 namespace CartesianDKernelFunctors {
-template<class R_> struct ConstructBbox : private Store_kernel<R_> {
-        CGAL_FUNCTOR_INIT_STORE(ConstructBbox)
+template<class R_> struct Construct_Bbox : private Store_kernel<R_> {
+        CGAL_FUNCTOR_INIT_STORE(Construct_Bbox)
         typedef R_ R;
         typedef typename R::Dimension Dimension;
         typedef typename Get_type<R, RT_tag>::type RT;
@@ -1025,7 +1025,7 @@ template<class R_> struct ConstructBbox : private Store_kernel<R_> {
 };
 }
 
-// CGAL_KD_DEFAULT_FUNCTOR(ConstructBbox_tag,(CartesianDKernelFunctors::ConstructBbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+CGAL_KD_DEFAULT_FUNCTOR(Construct_Bbox_tag,(CartesianDKernelFunctors::Construct_Bbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
 
 
 namespace CartesianDKernelFunctors {
