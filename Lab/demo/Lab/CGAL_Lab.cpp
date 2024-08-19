@@ -27,6 +27,9 @@ int& code_to_call_before_creation_of_QCoreApplication(int& i) {
   fmt.setOption(QSurfaceFormat::DebugContext);
   QSurfaceFormat::setDefaultFormat(fmt);
 
+  // for windows
+  QCoreApplication::setAttribute(Qt::AA_UseDesktopOpenGL);
+
   return i;
 }
 

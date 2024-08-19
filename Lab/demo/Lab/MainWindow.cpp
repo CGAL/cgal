@@ -663,6 +663,12 @@ void MainWindow::loadPlugins()
     }
   }
   QString env_path = qgetenv("LAB_DEMO_PLUGINS_PATH");
+  QChar separator = QDir::listSeparator();
+  #if defined(_WIN32)
+    QChar separator = ';';
+  #else
+    QChar separator = ':';
+  #endif
   if(!env_path.isEmpty()) {
 #if defined(_WIN32)
     QString path = qgetenv("PATH");

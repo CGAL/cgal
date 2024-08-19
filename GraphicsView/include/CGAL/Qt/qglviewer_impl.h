@@ -720,6 +720,28 @@ CGAL_INLINE_FUNCTION
 void CGAL::QGLViewer::drawLight(GLenum, qreal ) const {
 }
 
+CGAL_INLINE_FUNCTION
+void CGAL::QGLViewer::renderText(int x, int y, const QString &str,
+                           const QFont &font) {
+  QColor fontColor = QColor(0, 0,
+                            0, 255);
+
+  // Render text
+  QPainter painter(this);
+  painter.setPen(fontColor);
+  painter.setFont(font);
+  painter.drawText(x, y, str);
+  painter.end();
+}
+
+CGAL_INLINE_FUNCTION
+void CGAL::QGLViewer::renderText(double x, double y, double z, const QString &str,
+                           const QFont &font) {
+  using CGAL::qglviewer::Vec;
+  const Vec proj = camera_->projectedCoordinatesOf(Vec(x, y, z));
+  renderText(int(proj.x), int(proj.y), str, font);
+}
+
 /*! Draws \p text at position \p x, \p y (expressed in screen coordinates
 pixels, origin in the upper left corner of the widget).
 
