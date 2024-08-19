@@ -1019,13 +1019,13 @@ template<class R_> struct ConstructBbox : private Store_kernel<R_> {
         typedef Point argument_type;
         result_type operator()(Point const&a)const{
                 CI ci(this->kernel());
-                To_interval f;
+                To_interval<RT> f;
                 return result_type(a.dimension(), make_transforming_iterator(ci(a,Begin_tag()),f), make_transforming_iterator(ci(a,End_tag())), f);
         }
 };
 }
 
-CGAL_KD_DEFAULT_FUNCTOR(ConstructBbox_tag,(CartesianDKernelFunctors::ConstructBbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
+// CGAL_KD_DEFAULT_FUNCTOR(ConstructBbox_tag,(CartesianDKernelFunctors::ConstructBbox<K>),(Point_tag),(Construct_ttag<Point_cartesian_const_iterator_tag>));
 
 
 namespace CartesianDKernelFunctors {
