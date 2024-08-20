@@ -164,7 +164,7 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param source the triangle mesh that should be mapped onto `target`.
+* @param source the triangle mesh to be mapped onto `target`.
 * @param target the target point set.
 * @param vtm a writable vertex property map of `source` to store the translation vector of the registration.
 * @param vrm a writable vertex property map of `source` to store the rotation part of the registration.
@@ -585,7 +585,7 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters1"
 * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters2"
 *
-* @param source the triangle mesh that should be mapped onto `target`
+* @param source the triangle mesh to be mapped onto `target`
 * @param target the target triangle mesh
 * @param vtm a writable vertex property map of `source` to store the translation vector of the registration
 * @param vrm a writable vertex property map of `source` to store the rotation part of the registration
@@ -713,7 +713,7 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
  *   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
-* @param mesh the triangle mesh that should be transformed.
+* @param mesh the triangle mesh to be transformed.
 * @param vtm a readable vertex property map of `mesh` to store the translation vector of the registration.
 * @param vrm a readable vertex property map of `mesh` to store the rotation part of the registration.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
