@@ -136,15 +136,15 @@ namespace GLFW
       m_IsOpengl4_3 = true;
     }
 
-    MEASURE_TIME(compile_shaders());
-    MEASURE_TIME(initialize_camera());
-    MEASURE_TIME(initialize_buffers());
-    MEASURE_TIME(initialize_and_load_world_axis());
-    MEASURE_TIME(initialize_and_load_clipping_plane());
+    compile_shaders();
+    initialize_camera();
+    initialize_buffers();
+    initialize_and_load_world_axis();
+    initialize_and_load_clipping_plane();
 
     if (!screenshotOnly)
     {
-      MEASURE_TIME(initialize_keys_actions());
+      initialize_keys_actions();
     }
 
     check_geometry_feature_availability();
@@ -416,7 +416,7 @@ namespace GLFW
 
     // 4) LINES SHADER
 
-    glBindVertexArray(m_VAO[VAO_RAYS]);
+    glBindVertexArray(m_VAO[VAO_LINES]);
     positions = aggregating_data(Graphics_scene::POS_MONO_LINES, Graphics_scene::POS_COLORED_LINES); 
     colors = aggregating_color_data(
       Graphics_scene::POS_MONO_LINES, 
@@ -847,7 +847,10 @@ namespace GLFW
       }
       else 
       {
-        glDrawArrays(GL_TRIANGLES, m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+        glDrawArrays(GL_TRIANGLES, 
+          m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES)*3, 
+          m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES)
+        );
       }
     }
   }
@@ -882,7 +885,10 @@ namespace GLFW
       }
       else
       {
-        glDrawArrays(GL_LINES, m_Scene->number_of_elements(Graphics_scene::POS_MONO_RAYS), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_RAYS));
+        glDrawArrays(GL_LINES, 
+          m_Scene->number_of_elements(Graphics_scene::POS_MONO_RAYS)*3, 
+          m_Scene->number_of_elements(Graphics_scene::POS_COLORED_RAYS)
+        );
       }
     }
     glLineWidth(1.0);
@@ -917,12 +923,12 @@ namespace GLFW
       glEnableVertexAttribArray(1);
       if (m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS) == 0)
       {
-        glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS) / 3);
+        glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS));
       }
       else
       {
         glDrawArrays(GL_POINTS, 
-          m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS), 
+          m_Scene->number_of_elements(Graphics_scene::POS_MONO_POINTS)*3, 
           m_Scene->number_of_elements(Graphics_scene::POS_COLORED_POINTS)
         );
       }
@@ -959,7 +965,10 @@ namespace GLFW
       }
       else
       {
-        glDrawArrays(GL_LINES, m_Scene->number_of_elements(Graphics_scene::POS_MONO_LINES), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_LINES));
+        glDrawArrays(GL_LINES, 
+          m_Scene->number_of_elements(Graphics_scene::POS_MONO_LINES)*3, 
+          m_Scene->number_of_elements(Graphics_scene::POS_COLORED_LINES)
+        );
       }
     }
     glLineWidth(1.0);
@@ -1000,7 +1009,10 @@ namespace GLFW
       }
       else 
       {
-        glDrawArrays(GL_LINES, m_Scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS), m_Scene->number_of_elements(Graphics_scene::POS_COLORED_SEGMENTS));
+        glDrawArrays(GL_LINES, 
+          m_Scene->number_of_elements(Graphics_scene::POS_MONO_SEGMENTS)*3, 
+          m_Scene->number_of_elements(Graphics_scene::POS_COLORED_SEGMENTS)
+        );
       }
     }
   }
@@ -1045,7 +1057,10 @@ namespace GLFW
     }
     else 
     {
-      glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+      glDrawArrays(GL_TRIANGLES, 
+        m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES)*3, 
+        m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES)
+      );
     }
   }
 
@@ -1062,7 +1077,10 @@ namespace GLFW
     }
     else 
     {
-      glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES));
+      glDrawArrays(GL_TRIANGLES, 
+        m_Scene->number_of_elements(Graphics_scene::POS_MONO_FACES)*3, 
+        m_Scene->number_of_elements(Graphics_scene::POS_COLORED_FACES)
+      );
     }
   }
 
@@ -1156,7 +1174,7 @@ namespace GLFW
                                                     << m_AmbientColor.y()                                      << ", " 
                                                     << m_AmbientColor.z()                                      << ")\n\33[2K"     
                   << "Size of vertices: "           << m_SizeVertices << "    Size of edges: " <<  m_SizeEdges << "    "            
-                  << "\033[F\033[F\033[F\033[F\r" << std::flush;
+                  << "\033[F\033[F\033[F\033[F\r"   << std::flush;
       }
     }
   }

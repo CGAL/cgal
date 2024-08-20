@@ -20,7 +20,7 @@ namespace CGAL
 //------------------------------------------------------------------------------
 const char VERTEX_SOURCE_COLOR[]=R"DELIM(
 #version 150
-in highp   vec4 a_Pos;
+in highp   vec3 a_Pos;
 in highp   vec3 a_Normal;
 in mediump vec3 a_Color;
 
@@ -35,13 +35,15 @@ uniform mediump float u_PointSize;
 
 void main(void)
 {
-  ls_fP = a_Pos;
-  vs_fP = u_Mv * a_Pos;
+  vec4 pos = vec4(a_Pos, 1.0); 
+
+  ls_fP = pos;
+  vs_fP = u_Mv * pos;
 
   fN = mat3(u_Mv)* a_Normal;
   fColor = vec4(a_Color, 1.0);
 
-  gl_Position = u_Mvp * a_Pos;
+  gl_Position = u_Mvp * pos;
   gl_PointSize = u_PointSize;
 }
 )DELIM";
@@ -101,7 +103,7 @@ void main(void)
 
 const char VERTEX_SOURCE_P_L[]=R"DELIM(
 #version 150
-in highp   vec4 a_Pos;
+in highp   vec3 a_Pos;
 in mediump vec3 a_Color;
 
 out mediump vec4 fColor; 
@@ -118,10 +120,12 @@ bool EqualZero(float value)
 
 void main(void)
 {
-  fColor = vec4(a_Color, 1.0);
-  ls_fP  = a_Pos;
+  vec4 pos = vec4(a_Pos, 1.0); 
 
-  gl_Position  = u_Mvp * a_Pos;
+  fColor = vec4(a_Color, 1.0);
+  ls_fP  = pos;
+
+  gl_Position  = u_Mvp * pos;
 
   float distance;
   if (u_IsOrthographic) 
@@ -140,18 +144,18 @@ void main(void)
 
 const char VERTEX_SOURCE_SHAPE[]=R"DELIM(
 #version 150
-in highp   vec4 a_Pos;
+in highp   vec3 a_Pos;
 in mediump vec3 a_Color;
 
 out mediump vec4 gColor; 
 out highp   vec4 ls_fP; 
 
-uniform highp   mat4  u_Mvp;
+uniform highp mat4 u_Mvp;
 
 void main(void)
 {
   gColor = vec4(a_Color, 1.0);
-  gl_Position = a_Pos;
+  gl_Position = vec4(a_Pos, 1.0);
 }
 )DELIM";
 
@@ -253,9 +257,9 @@ void main(void)
   vec4 a = gl_in[0].gl_Position;
   vec4 b = gl_in[1].gl_Position;
 
-  vec3 w = normalize(vec3(-b.z, b.x, b.y));
-  
   vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute normal 
+  
+  vec3 w = normalize(vec3(-n.z, n.x, n.y));
 
   // Axis vectors 
   vec3 u = normalize(cross(n, w));
@@ -421,9 +425,8 @@ void main(void)
   vec4 a = gl_in[0].gl_Position;
   vec4 b = gl_in[1].gl_Position;
 
-  vec3 w = normalize(vec3(-b.z, b.x, b.y));
-  
   vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute normal 
+  vec3 w = normalize(vec3(-n.z, n.x, n.y));
 
   // Axis vectors 
   vec3 u = normalize(cross(n, w));
@@ -481,7 +484,7 @@ void main(void)
 
 const char VERTEX_SOURCE_NORMAL[]=R"DELIM(
 #version 150
-in highp vec4 a_Pos;
+in highp vec3 a_Pos;
 in highp vec3 a_Normal;
 
 out VS_OUT {
@@ -507,7 +510,7 @@ void main(void)
   mat3 normalMatrix = mat3(transpose(inverse(u_Mv)));
   vs_out.normal = normalize(vec3(vec4(normalMatrix * a_Normal, 0.0)));
   
-  gl_Position = a_Pos; 
+  gl_Position = vec4(a_Pos, 1.0); 
 }
 )DELIM";
 
@@ -584,7 +587,7 @@ void main()
 
 const char VERTEX_SOURCE_TRIANGLE[]=R"DELIM(
 #version 150
-in highp   vec4 a_Pos;
+in highp   vec3 a_Pos;
 in mediump vec3 a_Color;
 
 out VS_OUT {
@@ -596,10 +599,12 @@ uniform highp mat4 u_Mvp;
 
 void main(void)
 {
-  vs_out.color = vec4(a_Color, 1.0);
-  vs_out.ls_fP  = a_Pos;
+  vec4 pos = vec4(a_Pos, 1.0);
 
-  gl_Position  = u_Mvp * a_Pos;
+  vs_out.color = vec4(a_Color, 1.0);
+  vs_out.ls_fP  = pos;
+
+  gl_Position  = u_Mvp * pos;
 }
 )DELIM";
 
@@ -640,7 +645,7 @@ void main(void)
 const char VERTEX_SOURCE_LINE_WIDTH[]=R"DELIM(
 #version 150
 
-in highp   vec4 a_Pos; 
+in highp   vec3 a_Pos; 
 in mediump vec3 a_Color;
  
 out VS_OUT {
@@ -660,10 +665,12 @@ bool EqualZero(float value)
 
 void main(void)
 {
-  vs_out.color = vec4(a_Color, 1.0);
-  vs_out.ls_fP = a_Pos;
+  vec4 pos = vec4(a_Pos, 1.0);
 
-  gl_Position  = u_Mvp * a_Pos;
+  vs_out.color = vec4(a_Color, 1.0);
+  vs_out.ls_fP = pos;
+
+  gl_Position  = u_Mvp * pos;
 
   float distance;
   if (u_IsOrthographic) 
@@ -745,48 +752,50 @@ void main(void)
 //  compatibility shaders
 
 const char VERTEX_SOURCE_COLOR_COMP[]=R"DELIM(
-varying highp vec4 vertex;
-varying highp vec3 normal;
-varying highp vec3 color;
+varying highp   vec3 a_Pos;
+varying highp   vec3 a_Normal;
+varying mediump vec3 a_Color;
 
-uniform highp mat4 mvp_matrix;
-uniform highp mat4 mv_matrix;
-uniform highp float point_size;
+varying highp   vec4 vs_fP; // view space position
+varying highp   vec3 fN;
+varying mediump vec4 fColor;
 
-varying highp vec4 fP;
-varying highp vec3 fN;
-varying highp vec4 fColor;
+uniform highp   mat4 u_Mvp;
+uniform highp   mat4 u_Mv;
+uniform mediump float u_PointSize;
 
 void main(void)
 {
-  fP = mv_matrix * vertex;
+  vec4 pos = vec4(a_Pos, 1.0);
+
+  vs_fP = u_Mv * pos;
   highp mat3 mv_matrix_3;
   mv_matrix_3[0] = mv_matrix[0].xyz;
   mv_matrix_3[1] = mv_matrix[1].xyz;
   mv_matrix_3[2] = mv_matrix[2].xyz;
-  fN = mv_matrix_3* normal;
-  fColor = vec4(color, 1.0);
-  gl_PointSize = point_size;
+  fN = mv_matrix_3* a_Normal;
+  fColor = vec4(a_Color, 1.0);
+  gl_PointSize = u_PointSize;
 
-  gl_Position = mvp_matrix * vertex;
+  gl_Position = u_Mvp * pos;
 }
 )DELIM";
 
 const char FRAGMENT_SOURCE_COLOR_COMP[]=R"DELIM(
-varying highp vec4 fP;
-varying highp vec3 fN;
-varying highp vec4 fColor;
+varying highp   vec4 vs_fP;
+varying highp   vec3 fN;
+varying mediump vec4 fColor;
 
-uniform highp vec4 u_LightPos;
-uniform highp vec4 u_LightDiff;
-uniform highp vec4 u_LightSpec;
-uniform highp vec4 u_LightAmb;
-uniform highp float u_SpecPower ;
+uniform highp   vec4 u_LightPos;
+uniform mediump vec4 u_LightDiff;
+uniform mediump vec4 u_LightSpec;
+uniform mediump vec4 u_LightAmb;
+uniform mediump float u_SpecPower ;
 
 void main(void)
 {
-  highp vec3 L = u_LightPos.xyz - fP.xyz;
-  highp vec3 V = -fP.xyz;
+  highp vec3 L = u_LightPos.xyz - vs_fP.xyz;
+  highp vec3 V = -vs_fP.xyz;
 
   highp vec3 a_Normal = normalize(fN);
   L = normalize(L);
@@ -801,24 +810,25 @@ void main(void)
 )DELIM";
 
 const char VERTEX_SOURCE_P_L_COMP[]=R"DELIM(
-varying highp vec4 vertex;
-varying highp vec3 color;
+varying highp   vec3 a_Pos;
+varying mediump vec3 a_Color;
 
-uniform highp mat4 mvp_matrix;
-uniform highp float point_size;
+varying mediump vec4 fColor;
 
-varying highp vec4 fColor;
+uniform highp   mat4  u_Mvp;
+uniform mediump float u_PointSize;
 
 void main(void)
 {
-  gl_PointSize = point_size;
-  fColor = vec4(color, 1.0);
-  gl_Position = mvp_matrix * vertex;
+  gl_PointSize = u_PointSize;
+  fColor = vec4(a_Color, 1.0);
+  gl_Position = u_Mvp * vec4(a_Pos, 1.0);
 }
 )DELIM";
 
 const char FRAGMENT_SOURCE_P_L_COMP[]=R"DELIM(
-varying highp vec4 fColor;
+varying mediump vec4 fColor;
+
 void main(void)
 {
   gl_FragColor = fColor;
