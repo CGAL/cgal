@@ -161,6 +161,8 @@ public:
     for(int i=0; i<N; ++i)
     {
       P c = random_point(), q = random_point();
+      while(c==q)
+        q = random_point();
       Sph sph(c, CGAL::squared_distance(c, q));
 
       // single point
