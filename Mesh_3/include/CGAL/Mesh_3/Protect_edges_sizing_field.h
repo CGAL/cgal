@@ -1563,10 +1563,8 @@ approx_is_too_large(const Edge& e, const bool is_edge_in_complex) const
   if ( ! is_edge_in_complex )
     return false;
 
-  const auto& [va, vb] = c3t3_.triangulation().vertices(e);
-
-  const Bare_point& pa = va->point().point();
-  const Bare_point& pb = vb->point().point();
+  const Bare_point& pa = e.first->vertex(e.second)->point().point();
+  const Bare_point& pb = e.first->vertex(e.third)->point().point();
 
   // Construct the geodesic middle point
   const Curve_index curve_index = c3t3_.curve_index(e);
