@@ -13,6 +13,51 @@
 #include <iostream>
 #include <fstream>
 
+namespace CGAL {
+namespace IO {
+
+template <typename SM, typename VSelectionPM, typename EFeaturePM>
+bool read_OM(std::string fname, SM& sm, VSelectionPM vspm, EFeaturePM efpm)
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<> Mesh;
+  Mesh mesh;
+  OpenMesh::IO::Options options  = OpenMesh::IO::Options::Status;
+  bool ok = OpenMesh::IO::read_mesh(mesh, fname, options);
+  if(! ok){
+    return false;
+  }
+
+  std::map<vertex_descriptor,sm_vertex_descriptor> v2v;
+  auto v2vpmap = boost::make_assoc_property_map(v2v);
+
+  std::map<halfedge_descriptor,sm_halfedge_descriptor> h2h;
+  auto h2hpmap = boost::make_assoc_property_map(h2h);
+
+  CGAL::copy_face_graph<Mesh,SM>(mesh, sm, CGAL::parameters::vertex_to_vertex_map(v2vpmap).halfedge_to_halfedge_map(h2hpmap));
+
+  if(options.vertex_has_status()){
+    for(auto v : vertices(mesh)){
+        put(vspm, v2v[v], mesh.status(v).selected());
+    }
+  }else{
+    std::cout << "no vertex status" << std::endl;
+  }
+
+  if(options.edge_has_status()){
+    for(auto e : edges(mesh)){
+        auto sme = edge(h2h[halfedge(e,mesh)], sm);
+        put(efpm, sme , mesh.status(e).feature());
+    }
+  }else{
+    std::cout << "no edge status" << std::endl;
+  }
+  return true;
+}
+
+} // namespace IO
+} // namespace CGAL
+
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Mesh;
@@ -49,43 +94,15 @@ int main(int argc, char** argv )
 
   OpenMesh::IO::write_mesh(mesh, outname, OpenMesh::IO::Options::Status);
 
-  Mesh mesh2;
-  OpenMesh::IO::Options options  = OpenMesh::IO::Options::Status;
-  bool read = OpenMesh::IO::read_mesh(mesh2, outname, options);
-  assert(read);
-
   SM sm;
-  std::map<vertex_descriptor,sm_vertex_descriptor> v2v;
-  auto v2vpmap = boost::make_assoc_property_map(v2v);
-
-  std::map<halfedge_descriptor,sm_halfedge_descriptor> h2h;
-  auto h2hpmap = boost::make_assoc_property_map(h2h);
-
-  CGAL::copy_face_graph<Mesh,SM>(mesh, sm, CGAL::parameters::vertex_to_vertex_map(v2vpmap).halfedge_to_halfedge_map(h2hpmap));
 
   std::map<sm_vertex_descriptor,bool> sm_selected_map;
   auto sm_selected_pmap = boost::make_assoc_property_map(sm_selected_map);
-  if(options.vertex_has_status()){
-    for(auto v : vertices(mesh2)){
-        put(sm_selected_pmap, v2v[v], mesh2.status(v).selected());
-        std::cout << std::boolalpha <<  mesh2.status(v).selected() << std::endl;
-    }
-  }else{
-    std::cout << "no vertex status" << std::endl;
-  }
-
 
   std::map<sm_edge_descriptor,bool> sm_feature_map;
   auto sm_feature_pmap = boost::make_assoc_property_map(sm_feature_map);
-  if(options.edge_has_status()){
-    for(auto e : edges(mesh2)){
-        auto sme = edge(h2h[halfedge(e,mesh2)], sm);
-        put(sm_feature_pmap, sme , mesh2.status(e).feature());
-        std::cout << std::boolalpha <<  mesh2.status(e).feature() << std::endl;
-    }
-  }else{
-    std::cout << "no edge status" << std::endl;
-  }
+
+  CGAL::IO::read_OM(outname, sm, sm_selected_pmap, sm_feature_pmap);
 
   std::cout << "vertex selection values:\n";
   for(auto v : vertices(sm)){
