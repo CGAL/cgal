@@ -12,7 +12,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REGISTER_MESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_REGISTER_MESH_H
 
-#include <CGAL/license/Polygon_mesh_processing/miscellaneous.h>
+#include <CGAL/license/Polygon_mesh_processing/registration.h>
 
 #include <CGAL/config.h>
 
@@ -40,7 +40,8 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
-namespace internal_registration {
+namespace internal {
+namespace registration {
 
 #ifdef CGAL_EIGEN3_ENABLED
 using ScalarType = double;
@@ -139,6 +140,7 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 }
 
 #endif
+} // namespace registration
 } // namespace internal
 
 /*!
@@ -240,8 +242,9 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   const double w3 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::as_rigid_as_possible_energy), 20);
   const double max_matching_dist = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::maximum_matching_distance), 0);
 
-  internal_registration::Vertices X(num_vertices(source), 3), Y(target.size(), 3);
-  internal_registration::Faces XF(num_faces(source), 3);
+  using namespace internal::registration;
+  Vertices X(num_vertices(source), 3), Y(target.size(), 3);
+  Faces XF(num_faces(source), 3);
 
   using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters2>;
   using Point_map = typename NP_helper::Point_map;
@@ -282,7 +285,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   if (corr.rows() > 0)
     std::cout << "# correspondences = " << corr.rows() << std::endl;
 
-  internal_registration::Vertices NY(target.size(), 3);
+  Vertices NY(target.size(), 3);
 
   idx = 0;
   for (auto p : target) {
@@ -297,7 +300,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   std::cout << std::endl;
 
   std::vector<std::set<int>> neighbors(X.rows());
-  for (internal_registration::Index i = 0; i < XF.rows(); ++i) {
+  for (Index i = 0; i < XF.rows(); ++i) {
     int a = XF(i, 0);
     int b = XF(i, 1);
     int c = XF(i, 2);
@@ -310,15 +313,15 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   }
 
   // Non-rigid ICP
-  internal_registration::Vertices Z(X);
-  internal_registration::Index dim = Z.rows() * Z.cols();
+  Vertices Z(X);
+  Index dim = Z.rows() * Z.cols();
 
-  std::vector<internal_registration::SparseTriplet> edge_coefficients;
+  std::vector<SparseTriplet> edge_coefficients;
 
   // build Ni
   Eigen::MatrixXi Ni(XF.rows() * XF.cols(), 1);
   idx = 0;
-  for (internal_registration::Index i = 0; i < XF.rows(); ++i) {
+  for (Index i = 0; i < XF.rows(); ++i) {
     int a = XF(i, 0);
     int b = XF(i, 1);
     int c = XF(i, 2);
@@ -331,90 +334,90 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   edge_coefficients.clear();
   edge_coefficients.reserve(XF.rows() * XF.cols());
   idx = 0;
-  for (internal_registration::Index i = 0; i < XF.rows(); ++i) {
+  for (Index i = 0; i < XF.rows(); ++i) {
     int a = XF(i, 0);
     int b = XF(i, 1);
     int c = XF(i, 2);
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, b, 1));
+    edge_coefficients.push_back(SparseTriplet(idx, b, 1));
     idx++;
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, c, 1));
+    edge_coefficients.push_back(SparseTriplet(idx, c, 1));
     idx++;
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, a, 1));
+    edge_coefficients.push_back(SparseTriplet(idx, a, 1));
     idx++;
   }
-  internal_registration::SparseMat Nr(XF.rows() * XF.cols(), X.rows());
+  SparseMat Nr(XF.rows() * XF.cols(), X.rows());
   Nr.setFromTriplets(edge_coefficients.begin(), edge_coefficients.end());
 
   // build MX
   edge_coefficients.clear();
   edge_coefficients.reserve(XF.rows() * XF.cols() * 2);
   idx = 0;
-  for (internal_registration::Index i = 0; i < XF.rows(); ++i) {
+  for (Index i = 0; i < XF.rows(); ++i) {
     int a = XF(i, 0);
     int b = XF(i, 1);
     int c = XF(i, 2);
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, a, 1));
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, b, -1));
+    edge_coefficients.push_back(SparseTriplet(idx, a, 1));
+    edge_coefficients.push_back(SparseTriplet(idx, b, -1));
     idx++;
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, b, 1));
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, c, -1));
+    edge_coefficients.push_back(SparseTriplet(idx, b, 1));
+    edge_coefficients.push_back(SparseTriplet(idx, c, -1));
     idx++;
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, c, 1));
-    edge_coefficients.push_back(internal_registration::SparseTriplet(idx, a, -1));
+    edge_coefficients.push_back(SparseTriplet(idx, c, 1));
+    edge_coefficients.push_back(SparseTriplet(idx, a, -1));
     idx++;
   }
-  internal_registration::SparseMat B(XF.rows() * XF.cols(), X.rows());
+  SparseMat B(XF.rows() * XF.cols(), X.rows());
   B.setFromTriplets(edge_coefficients.begin(), edge_coefficients.end());
-  internal_registration::Index edim = B.rows();
+  Index edim = B.rows();
 
-  internal_registration::Vertices BX = B * X;// edges in order: b to a, c to b, a to c.
-  internal_registration::Vertices BX_original(BX);
+  Vertices BX = B * X;// edges in order: b to a, c to b, a to c.
+  Vertices BX_original(BX);
 
-  std::vector<internal_registration::SparseTriplet> coefficients;
-  internal_registration::SparseMat A(Z.rows() + 2 * dim + 3 * edim, dim + dim);
-  for (internal_registration::Index i = 0; i < dim; ++i) {
-    coefficients.push_back(internal_registration::SparseTriplet(Z.rows() + i, i, 1));
+  std::vector<SparseTriplet> coefficients;
+  SparseMat A(Z.rows() + 2 * dim + 3 * edim, dim + dim);
+  for (Index i = 0; i < dim; ++i) {
+    coefficients.push_back(SparseTriplet(Z.rows() + i, i, 1));
   }
 
-  internal_registration::insertSparseMatrix(B, coefficients, Z.rows() + dim, 0);
-  internal_registration::insertSparseMatrix(B, coefficients, Z.rows() + dim + edim, Z.rows());
-  internal_registration::insertSparseMatrix(B, coefficients, Z.rows() + dim + 2 * edim, 2 * Z.rows());
+  insertSparseMatrix(B, coefficients, Z.rows() + dim, 0);
+  insertSparseMatrix(B, coefficients, Z.rows() + dim + edim, Z.rows());
+  insertSparseMatrix(B, coefficients, Z.rows() + dim + 2 * edim, 2 * Z.rows());
 
-  internal_registration::Matrix b(Z.rows() + 2 * dim + 3 * edim, 1);
+  Matrix b(Z.rows() + 2 * dim + 3 * edim, 1);
 
-  std::vector<internal_registration::SparseTriplet> weight_coefficients; // system regularizer
-  internal_registration::SparseMat W(dim + dim, dim + dim);
-  for (internal_registration::Index i = dim; i < dim + dim; ++i) {
-    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, 1));
+  std::vector<SparseTriplet> weight_coefficients; // system regularizer
+  SparseMat W(dim + dim, dim + dim);
+  for (Index i = dim; i < dim + dim; ++i) {
+    weight_coefficients.push_back(SparseTriplet(i, i, 1));
   }
   W.setFromTriplets(weight_coefficients.begin(), weight_coefficients.end());
 
   weight_coefficients.clear();
-  internal_registration::SparseMat D(Z.rows() + 2 * dim + 3 * edim, Z.rows() + 2 * dim + 3 * edim);
-  for (internal_registration::Index i = 0; i < Z.rows(); ++i) {
-    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w2)); // point to plane energy
+  SparseMat D(Z.rows() + 2 * dim + 3 * edim, Z.rows() + 2 * dim + 3 * edim);
+  for (Index i = 0; i < Z.rows(); ++i) {
+    weight_coefficients.push_back(SparseTriplet(i, i, w2)); // point to plane energy
   }
-  for (internal_registration::Index i = Z.rows(); i < Z.rows() + dim; ++i) {
-    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w1)); // point to point energy
+  for (Index i = Z.rows(); i < Z.rows() + dim; ++i) {
+    weight_coefficients.push_back(SparseTriplet(i, i, w1)); // point to point energy
   }
-  for (internal_registration::Index i = Z.rows() + dim; i < Z.rows() + dim + 3 * edim; ++i) {
-    weight_coefficients.push_back(internal_registration::SparseTriplet(i, i, w3)); // arap energy
+  for (Index i = Z.rows() + dim; i < Z.rows() + dim + 3 * edim; ++i) {
+    weight_coefficients.push_back(SparseTriplet(i, i, w3)); // arap energy
   }
   D.setFromTriplets(weight_coefficients.begin(), weight_coefficients.end());
 
   // Setting very high weight for given correspondences.
-  for (internal_registration::Index i = 0; i < corr.rows(); ++i) {
+  for (Index i = 0; i < corr.rows(); ++i) {
     D.coeffRef(Z.rows() + corr(i, 0), Z.rows() + corr(i, 0)) = 1e15f;
     D.coeffRef(Z.rows() * 2 + corr(i, 0), Z.rows() * 2 + corr(i, 0)) = 1e15f;
     D.coeffRef(Z.rows() * 3 + corr(i, 0), Z.rows() * 3 + corr(i, 0)) = 1e15f;
   }
 
   // Solver
-  Eigen::ConjugateGradient<internal_registration::SparseMat, Eigen::Lower | Eigen::Upper> cg;
+  Eigen::ConjugateGradient<SparseMat, Eigen::Lower | Eigen::Upper> cg;
   //cg.setMaxIterations(1000);
   //cg.setTolerance(1e-6);
-  Eigen::JacobiSVD<Eigen::Matrix<internal_registration::ScalarType, 3, 3>> svd;
-  std::vector<Eigen::Matrix<internal_registration::ScalarType, 3, 3>> Rotations(Z.rows());
+  Eigen::JacobiSVD<Eigen::Matrix<ScalarType, 3, 3>> svd;
+  std::vector<Eigen::Matrix<ScalarType, 3, 3>> Rotations(Z.rows());
 
   size_t coefficients_size = coefficients.size();
 
@@ -427,7 +430,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 
     // Compute correspondence
     //Eigen::VectorXi idz = nearest_neighbor(V1, Z).first.col(0);
-    std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nn_result = internal_registration::nearest_neighbor(Y, Z);
+    std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nn_result = nearest_neighbor(Y, Z);
     Eigen::VectorXi idz = nn_result.first.col(0);
     Eigen::VectorXf dist = nn_result.second.col(0);
 
@@ -435,7 +438,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
       D.setFromTriplets(weight_coefficients.begin(), weight_coefficients.end()); // reset weights
       // prune correspondences that are too distant
       int count = 0;
-      for (internal_registration::Index i = 0; i < Z.rows(); ++i) {
+      for (Index i = 0; i < Z.rows(); ++i) {
         if (dist[i] > max_matching_dist) {
           count++;
           D.coeffRef(i, i) = 0;
@@ -446,7 +449,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
       }
       std::cout << "active = " << Z.rows() - count << " / " << Z.rows() << std::endl;
       // ensure hard correspondences have not been removed
-      for (internal_registration::Index i = 0; i < corr.rows(); ++i) {
+      for (Index i = 0; i < corr.rows(); ++i) {
         D.coeffRef(Z.rows() + corr(i, 0), Z.rows() + corr(i, 0)) = 1e15f;
         D.coeffRef(Z.rows() * 2 + corr(i, 0), Z.rows() * 2 + corr(i, 0)) = 1e15f;
         D.coeffRef(Z.rows() * 3 + corr(i, 0), Z.rows() * 3 + corr(i, 0)) = 1e15f;
@@ -454,39 +457,39 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     }
 
     // Restore hard correspondences
-    for (internal_registration::Index i = 0; i < corr.rows(); ++i) {
+    for (Index i = 0; i < corr.rows(); ++i) {
       idz(corr(i, 0)) = corr(i, 1);
     }
 
-    internal_registration::Vertices P(Y(idz, Eigen::indexing::all)); // target points
-    internal_registration::Vertices NP(NY(idz, Eigen::indexing::all)); // target normals
+    Vertices P(Y(idz, Eigen::indexing::all)); // target points
+    Vertices NP(NY(idz, Eigen::indexing::all)); // target normals
 
     // Filling coefficients for first part of A -> point_to_plane_energy
-    for (internal_registration::Index i = 0; i < Z.rows(); ++i) {
-      coefficients.push_back(internal_registration::SparseTriplet(i, i, NP(i, 0)));
-      coefficients.push_back(internal_registration::SparseTriplet(i, Z.rows() + i, NP(i, 1)));
-      coefficients.push_back(internal_registration::SparseTriplet(i, 2 * Z.rows() + i, NP(i, 2)));
+    for (Index i = 0; i < Z.rows(); ++i) {
+      coefficients.push_back(SparseTriplet(i, i, NP(i, 0)));
+      coefficients.push_back(SparseTriplet(i, Z.rows() + i, NP(i, 1)));
+      coefficients.push_back(SparseTriplet(i, 2 * Z.rows() + i, NP(i, 2)));
     }
 
     // Filling coefficients from edges for last part of A -> as_rigid_as_possible_energy
-    for (internal_registration::Index i = 0; i < edim; ++i) {
+    for (Index i = 0; i < edim; ++i) {
       size_t ni = Ni(i);
-      coefficients.push_back(internal_registration::SparseTriplet(Z.rows() + dim + i, ni + dim, BX(i, 1)));
-      coefficients.push_back(internal_registration::SparseTriplet(Z.rows() + dim + i, Z.rows() + ni + dim, -BX(i, 2)));
-      coefficients.push_back(internal_registration::SparseTriplet(Z.rows() + dim + edim + i, ni + dim, -BX(i, 0)));
-      coefficients.push_back(internal_registration::SparseTriplet(Z.rows() + dim + edim + i, 2 * Z.rows() + ni + dim, BX(i, 2)));
-      coefficients.push_back(internal_registration::SparseTriplet(Z.rows() + dim + 2 * edim + i, Z.rows() + ni + dim, BX(i, 0)));
-      coefficients.push_back(internal_registration::SparseTriplet(Z.rows() + dim + 2 * edim + i, 2 * Z.rows() + ni + dim, -BX(i, 1)));
+      coefficients.push_back(SparseTriplet(Z.rows() + dim + i, ni + dim, BX(i, 1)));
+      coefficients.push_back(SparseTriplet(Z.rows() + dim + i, Z.rows() + ni + dim, -BX(i, 2)));
+      coefficients.push_back(SparseTriplet(Z.rows() + dim + edim + i, ni + dim, -BX(i, 0)));
+      coefficients.push_back(SparseTriplet(Z.rows() + dim + edim + i, 2 * Z.rows() + ni + dim, BX(i, 2)));
+      coefficients.push_back(SparseTriplet(Z.rows() + dim + 2 * edim + i, Z.rows() + ni + dim, BX(i, 0)));
+      coefficients.push_back(SparseTriplet(Z.rows() + dim + 2 * edim + i, 2 * Z.rows() + ni + dim, -BX(i, 1)));
     }
 
-    for (internal_registration::Index i = 0; i < Z.rows(); ++i) {
+    for (Index i = 0; i < Z.rows(); ++i) {
       b(i) = NP(i, 0) * P(i, 0) + NP(i, 1) * P(i, 1) + NP(i, 2) * P(i, 2); // distance of matched point to origin for point to plane energy
       // Coordinates of matched point for point to point energy
       b(i + Z.rows()) = P(i, 0);
       b(i + Z.rows() * 2) = P(i, 1);
       b(i + Z.rows() * 3) = P(i, 2);
     }
-    for (internal_registration::Index i = 0; i < edim; ++i) {
+    for (Index i = 0; i < edim; ++i) {
       b(i + Z.rows() + dim) = BX(i, 0);
       b(i + Z.rows() + dim + edim) = BX(i, 1);
       b(i + Z.rows() + dim + edim * 2) = BX(i, 2);
@@ -499,7 +502,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     }
 
     cg.factorize(A.transpose() * D * A + W);
-    internal_registration::Vector x = cg.solve(A.transpose() * D * b);
+    Vector x = cg.solve(A.transpose() * D * b);
 
     // Solution
     Z(Eigen::indexing::all, 0) = x(Eigen::seq(0, Z.rows() - 1));
@@ -510,29 +513,29 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     if (it == (iter - 1)) {
       // Should replace with CGAL's ARAP implementation https://github.com/CGAL/cgal/blob/master/Surface_mesh_deformation/include/CGAL/Surface_mesh_deformation.h
       // See also: compute_close_rotation https://github.com/CGAL/cgal/blob/master/Surface_mesh_deformation/include/CGAL/Deformation_Eigen_closest_rotation_traits_3.h
-      for (internal_registration::Index i = 0; i < Z.rows(); ++i) {
+      for (Index i = 0; i < Z.rows(); ++i) {
         std::vector<int> nbrs(neighbors[i].begin(), neighbors[i].end());
-        internal_registration::Matrix A = X(nbrs, Eigen::indexing::all).rowwise() - X.row(i);
-        internal_registration::Matrix B_ = Z(nbrs, Eigen::indexing::all).rowwise() - Z.row(i);
+        Matrix A = X(nbrs, Eigen::indexing::all).rowwise() - X.row(i);
+        Matrix B_ = Z(nbrs, Eigen::indexing::all).rowwise() - Z.row(i);
 
         svd.compute(A.transpose() * B_, Eigen::ComputeFullU | Eigen::ComputeFullV);
         Rotations[i] = svd.matrixV() * svd.matrixU().transpose();
         if (Rotations[i].determinant() < 0) {
-          Eigen::Matrix<internal_registration::ScalarType, 3, 3> M = Eigen::Matrix3d::Identity();
+          Eigen::Matrix<ScalarType, 3, 3> M = Eigen::Matrix3d::Identity();
           M(2, 2) = -1;
           Rotations[i] = svd.matrixV() * M * svd.matrixU().transpose();
         }
       }
-      for (internal_registration::Index i = 0; i < edim; ++i) {
-        internal_registration::Matrix R = Rotations[Ni(i)];
+      for (Index i = 0; i < edim; ++i) {
+        Matrix R = Rotations[Ni(i)];
         BX.row(i) = BX.row(i) * R.transpose();
       }
     }
     else {
       // Regular matrix update is happening here (taking linearized coefficients, recreating matrix and rotating edges)
-      for (internal_registration::Index i = 0; i < edim; ++i) {
+      for (Index i = 0; i < edim; ++i) {
         int ni = Ni(i);
-        internal_registration::Matrix R = internal_registration::rot(x(dim + 2 * Z.rows() + ni),
+        Matrix R = rot(x(dim + 2 * Z.rows() + ni),
           x(dim + Z.rows() + ni),
           x(dim + ni));
         BX.row(i) = BX.row(i) * R.transpose();
