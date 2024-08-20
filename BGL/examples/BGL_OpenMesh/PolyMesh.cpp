@@ -25,14 +25,11 @@ int main(int argc, char** argv )
 {
   Mesh mesh;
 
-  std::vector<vertex_descriptor> V;
   const std::string filename = (argc>1)?argv[1]:CGAL::data_file_path("meshes/in.off");
   const char* outname= (argc>2)?argv[2]:"out.om";
   CGAL::IO::read_polygon_mesh(filename, mesh);
 
   mesh.request_vertex_status();
-  // typedef boost::property_map<Mesh, CGAL::dynamic_edge_property_t<int> >::type EdgeLabelMap;
-  // EdgeLabelMap elm  = get(CGAL::dynamic_edge_property_t<int>(), mesh);
 
   int i = 0;
   for(auto v : vertices(mesh)){
@@ -44,7 +41,7 @@ int main(int argc, char** argv )
   OpenMesh::IO::write_mesh(mesh, outname, OpenMesh::IO::Options::Status);
 
   Mesh mesh2;
-  OpenMesh::IO::Options options;
+  OpenMesh::IO::Options options  = OpenMesh::IO::Options::Status;
   bool read = OpenMesh::IO::read_mesh(mesh2, outname, options);
   std::cout << num_vertices(mesh2) << std::endl;
   assert(read);
@@ -53,7 +50,7 @@ int main(int argc, char** argv )
         std::cout << std::boolalpha <<  mesh2.status(v).selected() << std::endl;
     }
   }else{
-    std::cout << "no status" << std::endl;
+    std::cout << "no vertex status" << std::endl;
   }
 
   return 0;
