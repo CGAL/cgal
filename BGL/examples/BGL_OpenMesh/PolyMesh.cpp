@@ -42,8 +42,8 @@ int main(int argc, char** argv )
   }
 
   i = 0;
-  for(auto e : edges(omesh)){
-        omesh.status(e).set_feature(i > 2);
+  for(auto eit = omesh.edges_begin(); eit != omesh.edges_end(); ++eit){
+        omesh.status(*eit).set_feature(i > 2);
         ++i;
   }
 

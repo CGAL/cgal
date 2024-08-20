@@ -48,7 +48,7 @@ bool read_OM(std::string fname, SM& sm, VSelectionPM vspm, EFeaturePM efpm)
   if(options.edge_has_status()){
     for(auto e : edges(omesh)){
         auto sme = edge(h2h[halfedge(e,omesh)], sm);
-        put(efpm, sme , omesh.status(e).feature());
+        put(efpm, sme , omesh.status(OpenMesh::EdgeHandle(e.idx())).feature());
     }
   }else{
     std::cout << "no edge status" << std::endl;
