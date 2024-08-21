@@ -156,11 +156,14 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 * @note This function requires the \ref thirdpartyEigen library.
 *
 * @tparam TriangleMesh a model of `MutableFaceGraph`.
-* @tparam PointRange a model of the `concept ForwardRange` whose value type is the point type.
-* @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
+* @tparam PointRange is a model of `ConstRange`. The value type of
+*   its iterator is the key type of the named parameter `point_map`.
+* @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *   as key type and a \cgal Kernel `Vector_3` as value type.
-* @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
+* @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
+* @tparam CorrespondenceRange a model of the `ConstRange` whose value type is a pair of
+*   `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and the element type of `PointRange`.
 * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
 * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -168,9 +171,9 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 * @param target the target point set.
 * @param vtm a writable vertex property map of `source` to store the translation vector of the registration.
 * @param vrm a writable vertex property map of `source` to store the rotation part of the registration.
-* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
-* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" providing a point_map and normal_map for the `PointRange`
-* @param correspondences a vector given matching points between the `source` and the `target`
+* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
+* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" providing a point_map and normal_map for the `PointRange`.
+* @param correspondences a `CorrespondenceRange` containing matching points between the `source` and the `target`.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}
@@ -225,13 +228,14 @@ template <typename TriangleMesh,
           typename PointRange,
           typename VertexTranslationMap,
           typename VertexRotationMap,
+          typename CorrespondenceRange,
           typename NamedParameters1 = parameters::Default_named_parameters,
           typename NamedParameters2 = parameters::Default_named_parameters>
 void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   const PointRange& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
-  const std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>& correspondences = std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>(),
+  const CorrespondenceRange &correspondences = std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>(),
   const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values())
 {
@@ -576,22 +580,22 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *
 * @note This function requires the \ref thirdpartyEigen library.
 *
-* @tparam TriangleMesh1 a model of `MutableFaceGraph`
-* @tparam TriangleMesh2 a const model of the `MutableFaceGraph`
+* @tparam TriangleMesh1 a model of `MutableFaceGraph`.
+* @tparam TriangleMesh2 a const model of the `MutableFaceGraph`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
- *   as key type and a \cgal Kernel `Vector_3` as value type
+ *   as key type and a \cgal Kernel `Vector_3` as value type.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
- *   as key type and a \cgal Kernel `Aff_transformation_3` as value type
-* @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters1"
-* @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters2"
+ *   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
+* @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters1".
+* @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters2".
 *
-* @param source the triangle mesh to be mapped onto `target`
-* @param target the target triangle mesh
-* @param vtm a writable vertex property map of `source` to store the translation vector of the registration
-* @param vrm a writable vertex property map of `source` to store the rotation part of the registration
-* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters1" of the `source` and the method among the ones listed below
-* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters2" of the `target` providing a vertex point map and a vertex normal map
-* @param correspondences a vector given matching points between the `source` and the `target`
+* @param source the triangle mesh to be mapped onto `target`.
+* @param target the target triangle mesh.
+* @param vtm a writable vertex property map of `source` to store the translation vector of the registration.
+* @param vrm a writable vertex property map of `source` to store the rotation part of the registration.
+* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters1" of the `source` and the method among the ones listed below.
+* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters2" of the `target` providing a vertex point map and a vertex normal map.
+* @param correspondences a `CorrespondenceRange` containing matching points between the `source` and the `target`.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{number_of_iterations}
@@ -646,13 +650,14 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 template <typename TriangleMesh1, typename TriangleMesh2,
   typename VertexTranslationMap,
   typename VertexRotationMap,
+  typename CorrespondenceRange,
   typename NamedParameters1 = parameters::Default_named_parameters,
   typename NamedParameters2 = parameters::Default_named_parameters>
 void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
   const TriangleMesh2& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
-  const std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>& correspondences = std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>(),
+  const CorrespondenceRange &correspondences = std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>(),
   const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values())
 {
@@ -709,14 +714,11 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
 * @tparam TriangleMesh a model of `MutableFaceGraph`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
  *   as key type and a \cgal Kernel `Vector_3` as value type.
-* @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
- *   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
-* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+* @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param mesh the triangle mesh to be transformed.
 * @param vtm a readable vertex property map of `mesh` to store the translation vector of the registration.
-* @param vrm a readable vertex property map of `mesh` to store the rotation part of the registration.
-* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+* @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 *
 * \cgalNamedParamsBegin
 *   \cgalParamNBegin{geom_traits}
@@ -738,11 +740,9 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
 */
 template <typename TriangleMesh,
   typename VertexTranslationMap,
-  typename VertexRotationMap,
   typename NamedParameters = parameters::Default_named_parameters>
 void apply_non_rigid_transformation(TriangleMesh& mesh,
                                     const VertexTranslationMap& vtm,
-                                    const VertexRotationMap& vrm,
                                     const NamedParameters& np = parameters::default_values()) {
   using Gt =  typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
   using Vertex_point_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::type;
