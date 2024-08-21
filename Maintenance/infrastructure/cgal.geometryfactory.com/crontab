@@ -11,6 +11,8 @@
 
 PATH=/home/lrineau/bin-cmake3:/bin:/usr/bin:/home/lrineau/bin
 LC_CTYPE=en_US.UTF-8
+DOCKER_HOST=unix:///run/podman/podman.sock
+CONTAINER_HOST=unix:///run/podman/podman.sock
 
 # Update testsuite result pages
 5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection || echo ERROR
@@ -61,7 +63,7 @@ LC_CTYPE=en_US.UTF-8
 # Launch our  Docker testsuite , at 21:36,
 # after a pull of all new images at 20:23.
 06 20 * * * for i in $(cat /home/lrineau/.config/CGAL/test_cgal_docker_images); do docker pull $i; done; docker rmi $(docker images | awk '/<none>/ {print $3}')
-36 21 * * * cd /home/lrineau/Git/cgal-testsuite-dockerfiles && /usr/bin/time ./test_cgal.py --use-fedora-selinux-policy --force-rm --max-cpus 12 --container-cpus 4 --jobs 5 --upload-results --images $($HOME/bin/docker_images_to_test_today)
+36 21 * * * cd /home/lrineau/Git/cgal-testsuite-dockerfiles && /usr/bin/time ./test_cgal.py --use-fedora-selinux-policy --force-rm --max-cpus 20 --container-cpus 8 --jobs 10 --upload-results --images $($HOME/bin/docker_images_to_test_today)
 
 
 # Dump the crontab to SVN every hour at minute 18
@@ -71,10 +73,10 @@ LC_CTYPE=en_US.UTF-8
 #0 * * * * docker inspect --format='{{json .State.Health.Status}}' cgal-mediawiki-docker_wiki_1 | grep -q '"healthy"' || docker logs cgal-mediawiki-docker_wiki_1
 
 # cgal->cgal2 with git-multimail
-*/5 * * * * cd $HOME/Git/cgal-dev-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-dev         cgal-dev-receiver
-*/5 * * * * cd $HOME/Git/cgal-pusher.git          && $HOME/bin/git-fetch-and-push-to-multimail cgal             cgal-receiver
-*/5 * * * * cd $HOME/Git/cgal-students-pusher.git && $HOME/bin/git-fetch-and-push-to-multimail cgal-public-dev  cgal-students-receiver
-*/5 * * * * cd $HOME/Git/cgal-web-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-web         cgal-web-receiver
+#*/5 * * * * cd $HOME/Git/cgal-dev-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-dev         cgal-dev-receiver
+#*/5 * * * * cd $HOME/Git/cgal-pusher.git          && $HOME/bin/git-fetch-and-push-to-multimail cgal             cgal-receiver
+#*/5 * * * * cd $HOME/Git/cgal-students-pusher.git && $HOME/bin/git-fetch-and-push-to-multimail cgal-public-dev  cgal-students-receiver
+#*/5 * * * * cd $HOME/Git/cgal-web-pusher.git      && $HOME/bin/git-fetch-and-push-to-multimail cgal-web         cgal-web-receiver
 
 ####################################
 #             Old stuff
