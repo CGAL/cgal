@@ -828,8 +828,8 @@ Triangulation_data_structure<Dim, Vb, Fcb>
         delete_vertex(v);
         delete_full_cell(s);
         inf1->set_vertex(1, Vertex_handle());
-        inf1->set_vertex(1, Vertex_handle());
-        inf2->set_neighbor(1, Full_cell_handle());
+        inf2->set_vertex(1, Vertex_handle());
+        inf1->set_neighbor(1, Full_cell_handle());
         inf2->set_neighbor(1, Full_cell_handle());
         associate_vertex_with_full_cell(inf1, 0, star);
         associate_vertex_with_full_cell(inf2, 0, v2);

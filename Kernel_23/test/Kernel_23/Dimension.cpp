@@ -10,7 +10,6 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Dimension.h>
-#include <CGAL/Dimension.h>
 
 template < typename K >
 void test(CGAL::Dimension_tag<2>)

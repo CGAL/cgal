@@ -25,7 +25,6 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Iterator_range.h>
-#include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>

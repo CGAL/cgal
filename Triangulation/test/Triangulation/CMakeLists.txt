@@ -23,8 +23,9 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("test_torture.cpp")
   create_single_source_cgal_program("test_insert_if_in_star.cpp")
   create_single_source_cgal_program("simple_io_test.cpp")
+  create_single_source_cgal_program("issue_8347.cpp")
   foreach(target test_triangulation test_delaunay test_regular test_tds
-                 test_torture test_insert_if_in_star simple_io_test)
+                 test_torture test_insert_if_in_star simple_io_test issue_8347)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 

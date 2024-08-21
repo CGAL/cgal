@@ -118,7 +118,7 @@ public:
   void cleanup_cache() const;
 
   /*!
-    Returns a pointer to the used algerbaic kernel object.
+    Returns a pointer to the used algebraic kernel object.
   */
   const Algebraic_kernel_d_1* algebraic_kernel_d_1() const;
 

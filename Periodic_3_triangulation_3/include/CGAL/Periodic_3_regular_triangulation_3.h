@@ -931,7 +931,7 @@ public:
 
         CGAL_assertion(this->int_to_off(offsets[i])[0] == 0 || this->int_to_off(offsets[i])[0] == 1);
         CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
-        CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
+        CGAL_assertion(this->int_to_off(offsets[i])[2] == 0 || this->int_to_off(offsets[i])[2] == 1);
       }
 
       c->set_offsets(offsets[0], offsets[1], offsets[2], offsets[3]);

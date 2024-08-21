@@ -85,7 +85,6 @@ namespace CGAL {
                                    ConstraintIterator beyond)
   {
     typedef typename T::Point Point;
-    typedef typename T::Point Point;
     std::vector<Point> points;
     for (ConstraintIterator s_it=first; s_it!=beyond; ++s_it)
     {

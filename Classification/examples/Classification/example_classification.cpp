@@ -48,7 +48,7 @@ typedef Classification::Feature::Vertical_dispersion<Kernel, Point_range, Pmap> 
 
 int main (int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/b9.ply");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("points_3/b9.ply");
 
   std::cerr << "Reading input" << std::endl;
   std::vector<Point> pts;
