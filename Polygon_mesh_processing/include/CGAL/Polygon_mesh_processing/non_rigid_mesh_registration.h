@@ -207,6 +207,7 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *     \cgalParamDescription{an range of matching vertex-point pairs between the `source` and the `target`.}
 *     \cgalParamType{`ConstRange` whose value type is a pair of `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and the element type of `PointRange`.}
 *     \cgalParamDefault{empty}
+*     \cgalParamExtra{to avoid copies, this parameter can be passed using `std::cref`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_point_map}
@@ -651,6 +652,7 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *     \cgalParamDescription{a range of matching vertex pairs between the `source` and the `target`.}
 *     \cgalParamType{`ConstRange` whose value type is a pair of `boost::graph_traits<TriangleMesh1>::%vertex_descriptor` and `boost::graph_traits<TriangleMesh2>::%vertex_descriptor`.}
 *     \cgalParamDefault{empty}
+*     \cgalParamExtra{to avoid copies, this parameter can be passed using `std::cref`.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{vertex_point_map}
