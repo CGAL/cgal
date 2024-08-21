@@ -1,0 +1,35 @@
+/// \defgroup PkgVGoS_Ref Vector Graphics on Triangulated Surface Meshes Reference
+/// \defgroup VGSConcepts Concepts
+/// \ingroup PkgVGoS_Ref
+
+/// \defgroup VGSAlgorithmClasses Algorithm Classes
+/// \ingroup PkgVGoS_Ref
+
+/// \defgroup VGSTraitsClasses Traits Classes
+/// \ingroup PkgVGoS_Ref
+
+/// \defgroup VGSMiscellaneous Miscellaneous
+/// \ingroup PkgVGoS_Ref
+
+/*!
+\cgalPkgDescriptionBegin{Vector Graphics on Triangulated Surface Meshes,PkgVGoS}
+\cgalPkgPicture{vgos-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Claudio Mancinelli and Sébastien Loriot}
+\cgalPkgDesc{The package provides functions to draw and manipulate basic geometric primitives such as geodesics, Bézier and B-Spline curves
+             on triangulated surface meshes.}
+\cgalPkgManuals{Chapter_VGoS,PkgVGoS_Ref}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{6.2}
+\cgalPkgDependsOn{\ref PkgPolygonMeshProcessing}
+\cgalPkgBib{cgal:ml-vgos}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+*/

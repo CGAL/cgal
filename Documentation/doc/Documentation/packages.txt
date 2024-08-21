@@ -118,6 +118,7 @@
 \package_listing{Surface_mesh_shortest_path}
 \package_listing{Surface_mesh_skeletonization}
 \package_listing{Surface_mesh_approximation}
+\package_listing{Vector_graphics_on_surfaces}
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_3}
