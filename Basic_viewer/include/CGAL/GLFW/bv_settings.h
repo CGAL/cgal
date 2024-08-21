@@ -39,26 +39,6 @@
 #define CGAL_NORMAL_HEIGHT_FACTOR 0.02f
 #endif
 
-#ifndef CGAL_FACES_MONO_COLOR
-#define CGAL_FACES_MONO_COLOR { 60, 60, 200 }
-#endif
-
-#ifndef CGAL_VERTICES_MONO_COLOR
-#define CGAL_VERTICES_MONO_COLOR { 200, 60, 60 }
-#endif
-
-#ifndef CGAL_EDGES_MONO_COLOR
-#define CGAL_EDGES_MONO_COLOR { 0, 0, 0 }
-#endif
-
-#ifndef CGAL_RAYS_MONO_COLOR
-#define CGAL_RAYS_MONO_COLOR { 0, 0, 0 }
-#endif
-
-#ifndef CGAL_LINES_MONO_COLOR
-#define CGAL_LINES_MONO_COLOR { 0, 0, 0 }
-#endif
-
 #ifndef CGAL_NORMALS_MONO_COLOR
 #define CGAL_NORMALS_MONO_COLOR { 220, 20, 20 }
 #endif

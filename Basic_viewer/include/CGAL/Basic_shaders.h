@@ -257,7 +257,7 @@ void main(void)
   vec4 a = gl_in[0].gl_Position;
   vec4 b = gl_in[1].gl_Position;
 
-  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute normal 
+  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute top normal 
   
   vec3 w = normalize(vec3(-n.z, n.x, n.y));
 
@@ -425,7 +425,7 @@ void main(void)
   vec4 a = gl_in[0].gl_Position;
   vec4 b = gl_in[1].gl_Position;
 
-  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute normal 
+  vec3 n = normalize(vec3(b.x-a.x, b.y-a.y, b.z-a.z)); // compute top normal 
   vec3 w = normalize(vec3(-n.z, n.x, n.y));
 
   // Axis vectors 

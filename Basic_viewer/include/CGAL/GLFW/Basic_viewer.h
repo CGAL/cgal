@@ -98,12 +98,6 @@ namespace GLFW
 
     inline void window_size(const vec2f &size) { window_size_callback(m_Window, size.x(), size.y()); }
 
-    inline void vertices_mono_color(const CGAL::IO::Color& c) { m_VerticesMonoColor = c; }
-    inline void edges_mono_color(const CGAL::IO::Color& c) { m_EdgesMonoColor = c; }
-    inline void rays_mono_color(const CGAL::IO::Color& c) { m_RaysMonoColor = c; }
-    inline void lines_mono_color(const CGAL::IO::Color& c) { m_LinesMonoColor = c; }
-    inline void faces_mono_color(const CGAL::IO::Color& c) { m_FacesMonoColor = c; }
-
     inline void size_points(const float size) { m_SizeVertices = size; }
     inline void size_edges(const float size) { m_SizeEdges = size; }
     inline void size_rays(const float size) { m_SizeRays = size; }
@@ -153,11 +147,11 @@ namespace GLFW
     inline vec3f right() const { return m_Camera.get_right(); }
     inline vec3f up() const { return m_Camera.get_up(); }
 
-    inline CGAL::IO::Color vertices_mono_color() const { return m_VerticesMonoColor; }
-    inline CGAL::IO::Color edges_mono_color() const { return m_EdgesMonoColor; }
-    inline CGAL::IO::Color rays_mono_color() const { return m_RaysMonoColor; }
-    inline CGAL::IO::Color lines_mono_color() const { return m_LinesMonoColor; }
-    inline CGAL::IO::Color faces_mono_color() const { return m_FacesMonoColor; }
+    inline const CGAL::IO::Color& vertices_mono_color() const { return m_Scene->get_default_color_point(); }
+    inline const CGAL::IO::Color& edges_mono_color() const { return m_Scene->get_default_color_segment(); }
+    inline const CGAL::IO::Color& rays_mono_color() const { return m_Scene->get_default_color_ray(); }
+    inline const CGAL::IO::Color& lines_mono_color() const { return m_Scene->get_default_color_line(); }
+    inline const CGAL::IO::Color& faces_mono_color() const { return m_Scene->get_default_color_face(); }
 
     inline float size_points() const { return m_SizeVertices; }
     inline float size_edges() const { return m_SizeEdges; }
@@ -208,7 +202,6 @@ namespace GLFW
     void print_application_state(float& elapsedTime, const float deltaTime);
 
     void compute_model_view_projection_matrix(const float deltaTime);
-    void update_uniforms(const float deltaTime);
 
     void update_face_uniforms();
     void update_sphere_uniforms();
@@ -227,7 +220,7 @@ namespace GLFW
 
     void render_scene(const float deltaTime);
 
-    void draw(const float deltaTime);
+    void draw(const float deltaTime=0);
     
     void draw_rays();
     void draw_edges();
@@ -336,12 +329,7 @@ namespace GLFW
 
     float m_NormalHeightFactor { CGAL_NORMAL_HEIGHT_FACTOR };
 
-    CGAL::IO::Color m_FacesMonoColor   = CGAL_FACES_MONO_COLOR;
-    CGAL::IO::Color m_VerticesMonoColor = CGAL_VERTICES_MONO_COLOR;
-    CGAL::IO::Color m_EdgesMonoColor   = CGAL_EDGES_MONO_COLOR;
-    CGAL::IO::Color m_RaysMonoColor    = CGAL_RAYS_MONO_COLOR;
-    CGAL::IO::Color m_LinesMonoColor   = CGAL_LINES_MONO_COLOR;
-    CGAL::IO::Color m_NormalsMonoColor = CGAL_NORMALS_MONO_COLOR;
+    CGAL::IO::Color m_NormalsMonoColor  = CGAL_NORMALS_MONO_COLOR;
 
     vec4f m_LightPosition { CGAL_LIGHT_POSITION };
     vec4f m_AmbientColor  { CGAL_AMBIENT_COLOR  };
