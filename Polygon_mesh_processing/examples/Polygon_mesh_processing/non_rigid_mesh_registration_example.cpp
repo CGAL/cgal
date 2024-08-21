@@ -44,8 +44,6 @@ int main(int argc, char** argv) {
       std::cout << v0 << " " << v1 << std::endl;
       correspondences_mesh.push_back(std::make_pair(*(source.vertices_begin() + v0), *(target.vertices_begin() + v1)));
     }
-
-    std::cout << correspondences_mesh.size() << " correspondences provided" << std::endl;
   }
 
   auto vnm = target.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:normal");
@@ -59,7 +57,7 @@ int main(int argc, char** argv) {
   FT w2 = 2.0;
   FT w3 = 500;
 
-  PMP::non_rigid_mesh_to_mesh_registration(source, target, vtm, vrm, correspondences_mesh, CGAL::parameters::point_to_point_energy(w1).point_to_plane_energy(w2).as_rigid_as_possible_energy(w3));
+  PMP::non_rigid_mesh_to_mesh_registration(source, target, vtm, vrm, CGAL::parameters::point_to_point_energy(w1).point_to_plane_energy(w2).as_rigid_as_possible_energy(w3).correspondences(correspondences_mesh));
   PMP::apply_non_rigid_transformation(source, vtm);
   CGAL::IO::write_polygon_mesh("bear" + std::to_string(w1) + "_" + std::to_string(w2) + "_" + std::to_string(w3) + ".off", source);
 
