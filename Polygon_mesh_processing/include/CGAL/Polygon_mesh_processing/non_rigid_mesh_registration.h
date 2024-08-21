@@ -146,7 +146,7 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 /*!
 * \ingroup PMP_registration_grp
 *
-* \brief calculates non-rigid transformation of a mesh onto a set of oriented points.
+* \brief computes non-rigid transformation of a mesh onto a set of oriented points.
 *
 * A non-rigid ICP, iterative closest point, method based on
 * <A HREF="https://vgl.ict.usc.edu/Research/NonRigidRegistration/MODERN%20TECHNIQUES%20AND%20APPLICATIONS%20FOR%20REAL-TIME%20NON-RIGID%20REGISTRATION.pdf">a SIGGRAPH'16 Tutorial</A>.
@@ -567,7 +567,7 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 /*!
 * \ingroup PMP_registration_grp
 *
-* \brief calculates non-rigid transformation of a mesh onto another mesh.
+* \brief computes non-rigid transformation of a mesh onto another mesh.
 *
 * A non-rigid ICP, iterative closest point, method based on
 * <A HREF="https://vgl.ict.usc.edu/Research/NonRigidRegistration/MODERN%20TECHNIQUES%20AND%20APPLICATIONS%20FOR%20REAL-TIME%20NON-RIGID%20REGISTRATION.pdf">a SIGGRAPH'16 Tutorial</A>.

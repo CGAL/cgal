@@ -261,7 +261,7 @@ mesh relaxation function can be used.
 - Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_shape()`
 moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
 The curvature flow algorithm for shape smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al. \cgalCite{kazhdan2012can}.
-The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
+The algorithm uses the mean curvature flow to compute the translation of vertices along the surface normal with a speed equal
 to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
 If the region around a vertex is flat, this vertex does not move (zero curvature). To avoid the formation
 of undesirable neck pinches (cylindrical surface areas that form singularities) the algorithm slows
@@ -1420,9 +1420,9 @@ and the number of surface patches that are separated by these edges.
 
 Registration of one mesh onto another is often required to map between multiple acquisitions of an object or between an acquisition and a CAD model, e.g., in quality assurance. A simple linear transformation is only sufficient in the case of rigid objects.
 
-The functions `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_mesh_registration()` and `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_points_registration()` calculate a non-rigid registration from a source mesh onto a target mesh or a target oriented point cloud. For each vertex in the source mesh a translation vector and a rotation matrix is returned.
+The functions `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_mesh_registration()` and `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_points_registration()` compute a non-rigid registration from a source mesh onto a target mesh or a target oriented point cloud. For each vertex in the source mesh a translation vector and a rotation matrix is returned.
 The registration is formulated as an energy to minimize the distance between source and target. The energy is iteratively minimized by solving sparse linear systems and finding closest rotation matrices.
-The core algorithm is ICP, iterative closest point. In each iteration, the method identifies vertex or point pairs between the intermediate, initially a copy of the source, and the target and subsequently calculates the transformations which minimize the distance between them. The intermediate is updated after each iteration and converges towards the target.
+The core algorithm is ICP, iterative closest point. In each iteration, the method identifies vertex or point pairs between the intermediate, initially a copy of the source, and the target and subsequently computes the transformations which minimize the distance between them. The intermediate is updated after each iteration and converges towards the target.
 
 \f{equation}{
 \mathbf{E_{reg}} = w_1\mathbf{E_{match}} + w_2\mathbf{E_{point\_to\_plane}} + w_3\mathbf{E_{arap}},
