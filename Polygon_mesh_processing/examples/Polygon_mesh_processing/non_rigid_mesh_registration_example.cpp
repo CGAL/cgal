@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
   FT w3 = 500;
 
   PMP::non_rigid_mesh_to_mesh_registration(source, target, vtm, vrm, correspondences_mesh, CGAL::parameters::point_to_point_energy(w1).point_to_plane_energy(w2).as_rigid_as_possible_energy(w3));
-  PMP::apply_non_rigid_transformation(source, vtm, vrm);
+  PMP::apply_non_rigid_transformation(source, vtm);
   CGAL::IO::write_polygon_mesh("bear" + std::to_string(w1) + "_" + std::to_string(w2) + "_" + std::to_string(w3) + ".off", source);
 
   return EXIT_SUCCESS;
