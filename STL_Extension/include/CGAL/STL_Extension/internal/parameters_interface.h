@@ -164,6 +164,7 @@ CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_pr
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
 CGAL_add_named_parameter(sizing_function_t, sizing_function, sizing_function)
 CGAL_add_named_parameter(bbox_scaling_t, bbox_scaling, bbox_scaling)
+CGAL_add_named_parameter(correspondences_t, correspondences, correspondences)
 CGAL_add_named_parameter(point_to_plane_energy_t, point_to_plane_energy, point_to_plane_energy)
 CGAL_add_named_parameter(point_to_point_energy_t, point_to_point_energy, point_to_point_energy)
 CGAL_add_named_parameter(as_rigid_as_possible_energy_t, as_rigid_as_possible_energy, as_rigid_as_possible_energy)

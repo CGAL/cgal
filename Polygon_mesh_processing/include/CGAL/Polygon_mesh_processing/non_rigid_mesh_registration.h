@@ -162,20 +162,17 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *   as key type and a \cgal Kernel `Vector_3` as value type.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
-* @tparam CorrespondenceRange a model of the `ConstRange` whose value type is a pair of
-*   `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and the element type of `PointRange`.
-* @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters"
-* @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters"
+* @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters".
+* @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param source the triangle mesh to be mapped onto `target`.
 * @param target the target point set.
 * @param vtm a writable vertex property map of `source` to store the translation vector of the registration.
 * @param vrm a writable vertex property map of `source` to store the rotation part of the registration.
-* @param correspondences a `CorrespondenceRange` containing matching points between the `source` and the `target`.
-* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
-* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters" providing a point_map and normal_map for the `PointRange`.
+* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters 1" among the ones listed below.
+* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters 2" providing a point_map and normal_map for the `PointRange` as listed below.
 *
-* \cgalNamedParamsBegin
+* \cgalNamedParamsBegin{Named Parameters 1}
 *   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{the number of registration iterations using ICP, iterative closest point}
 *     \cgalParamType{unsigned int}
@@ -206,6 +203,12 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{correspondences}
+*     \cgalParamDescription{an range of matching vertex-point pairs between the `source` and the `target`.}
+*     \cgalParamType{`ConstRange` whose value type is a pair of `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and the element type of `PointRange`.}
+*     \cgalParamDefault{empty}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `source`}
 *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -222,24 +225,34 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
+*
+* \cgalNamedParamsBegin{Named Parameters 2}
+*   \cgalParamNBegin{point_map}
+*     \cgalParamDescription{a property map associating points to the elements of the point set `target`.}
+*     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+*                    of the iterator of `PointRange` and whose value type is `geom_traits::Point_3`.}
+*     \cgalParamDefault{`CGAL::Identity_property_map<geom_traits::Point_3>`.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{normal_map}
+*     \cgalParamDescription{a property map associating normals to the elements of the point set `target`.}
+*     \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type
+*                    of the iterator of `PointRange` and whose value type is `geom_traits::Vector_3`.}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
 */
 
 template <typename TriangleMesh,
           typename PointRange,
           typename VertexTranslationMap,
           typename VertexRotationMap,
-#ifdef DOXYGEN_RUNNING
-          typename CorrespondenceRange,
-#else
-          typename CorrespondenceRange = std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>,
-#endif
           typename NamedParameters1 = parameters::Default_named_parameters,
           typename NamedParameters2 = parameters::Default_named_parameters>
 void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   const PointRange& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
-  const CorrespondenceRange &correspondences = CorrespondenceRange(),
   const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values())
 {
@@ -266,6 +279,9 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   using Point = typename Gt::Point_3;
 
   Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, source));
+
+  typedef typename CGAL::internal_np::Lookup_named_param_def<internal_np::correspondences_t, NamedParameters1, std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>>::reference Correspondences_type;
+  Correspondences_type correspondences = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter_reference(np1, CGAL::internal_np::correspondences), std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>());
 
   std::size_t idx = 0;
   for (auto v : vertices(source)) {
@@ -590,8 +606,6 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *   as key type and a \cgal Kernel `Vector_3` as value type.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
 *   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
-* @tparam CorrespondenceRange a model of the `ConstRange` whose value type is a pair of
-*   `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and the element type of `PointRange`.
 * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters1".
 * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters2".
 *
@@ -599,11 +613,10 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 * @param target the target triangle mesh.
 * @param vtm a writable vertex property map of `source` to store the translation vector of the registration.
 * @param vrm a writable vertex property map of `source` to store the rotation part of the registration.
-* @param correspondences a `CorrespondenceRange` containing matching points between the `source` and the `target`.
-* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters1" of the `source` and the method among the ones listed below.
-* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters2" of the `target` providing a vertex point map and a vertex normal map.
+* @param np1 an optional sequence of \ref bgl_namedparameters "Named Parameters 1" of the `source` and the method among the ones listed below.
+* @param np2 an optional sequence of \ref bgl_namedparameters "Named Parameters 2" of the `target` providing a vertex point map and a vertex normal map as listed below.
 *
-* \cgalNamedParamsBegin
+* \cgalNamedParamsBegin{Named Parameters 1}
 *   \cgalParamNBegin{number_of_iterations}
 *     \cgalParamDescription{the number of registration iterations using ICP, iterative closest point}
 *     \cgalParamType{unsigned int}
@@ -634,9 +647,15 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *     \cgalParamDefault{`0`}
 *   \cgalParamNEnd
 *
+*   \cgalParamNBegin{correspondences}
+*     \cgalParamDescription{a range of matching vertex pairs between the `source` and the `target`.}
+*     \cgalParamType{`ConstRange` whose value type is a pair of `boost::graph_traits<TriangleMesh1>::%vertex_descriptor` and `boost::graph_traits<TriangleMesh2>::%vertex_descriptor`.}
+*     \cgalParamDefault{empty}
+*   \cgalParamNEnd
+*
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `source`}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`get_const_property_map(CGAL::vertex_point, source)`}
 *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -651,23 +670,36 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
 *
+* \cgalNamedParamsBegin{Named Parameters 2}
+*   \cgalParamNBegin{vertex_normal_map}
+*     \cgalParamDescription{a property map associating normals to the vertices of `target`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Vector_3` as value type}
+*     \cgalParamDefault{`get_const_property_map(dynamic_vertex_property_t<Vector_3>(), target)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_normal_map_t`
+*                     must be available in `TriangleMesh2`.}
+*   \cgalParamNEnd
+*   \cgalParamNBegin{vertex_point_map}
+*     \cgalParamDescription{a property map associating points to the vertices of `target`}
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Point_3` as value type}
+*     \cgalParamDefault{`get_const_property_map(CGAL::vertex_point, target)`}
+*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+*                     must be available in `TriangleMesh2`.}
+*   \cgalParamNEnd
+* \cgalNamedParamsEnd
+*
 */
 
 template <typename TriangleMesh1, typename TriangleMesh2,
   typename VertexTranslationMap,
   typename VertexRotationMap,
-#ifdef DOXYGEN_RUNNING
-  typename CorrespondenceRange,
-#else
-  typename CorrespondenceRange = std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>,
-#endif
   typename NamedParameters1 = parameters::Default_named_parameters,
   typename NamedParameters2 = parameters::Default_named_parameters>
 void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
   const TriangleMesh2& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
-  const CorrespondenceRange &correspondences = CorrespondenceRange(),
   const NamedParameters1& np1 = parameters::default_values(),
   const NamedParameters2& np2 = parameters::default_values())
 {
@@ -687,6 +719,9 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
    if (parameters::is_default_parameter<NamedParameters2, internal_np::vertex_normal_map_t>::value)
      compute_vertex_normals(target, vnm, np2);
 
+  typedef typename CGAL::internal_np::Lookup_named_param_def<internal_np::correspondences_t, NamedParameters1, std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>>::reference Correspondences_type;
+  Correspondences_type correspondences = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter_reference(np1, CGAL::internal_np::correspondences), std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>());
+
   using Gt1 = typename GetGeomTraits<TriangleMesh1, NamedParameters1>::type;
 
   typedef std::pair<typename Gt1::Point_3, typename Gt1::Vector_3> Point_with_normal;
@@ -704,7 +739,7 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
   for (auto p : correspondences)
     correspondences_pts.push_back(std::make_pair(p.first, static_cast<std::size_t>(p.second)));
 
-  non_rigid_mesh_to_points_registration(source, points, vtm, vrm, correspondences_pts, np1, parameters::point_map(Point_map()).normal_map(Normal_map()));
+  non_rigid_mesh_to_points_registration(source, points, vtm, vrm, np1.combine(parameters::correspondences(correspondences_pts)), parameters::point_map(Point_map()).normal_map(Normal_map()));
 
 #else
   static_assert(false, "Eigen library is required for non-rigid mesh registration");
