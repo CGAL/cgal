@@ -81,41 +81,35 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
   {
     typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
     typedef boost::graph_traits<SMesh>::edge_descriptor edge_descriptor;
-    std::map<vertex_descriptor,bool> sm_selected_map;
-    auto sm_selected_pmap = boost::make_assoc_property_map(sm_selected_map);
+    std::map<vertex_descriptor,bool> sm_vfeature_map;
+    auto sm_vfeature_pmap = boost::make_assoc_property_map(sm_vfeature_map);
 
-    std::map<edge_descriptor,bool> sm_feature_map;
-    auto sm_feature_pmap = boost::make_assoc_property_map(sm_feature_map);
+    std::map<edge_descriptor,bool> sm_efeature_map;
+    auto sm_efeature_pmap = boost::make_assoc_property_map(sm_efeature_map);
 
     // Try building a surface_mesh
     SMesh* SM = new SMesh();
-    if (CGAL::IO::read_OM((const char*)fileinfo.filePath().toUtf8(), *SM, sm_selected_pmap, sm_feature_pmap))
-    {
-      /*
-      std::cout << "vertex selection values:\n";
-      for(auto v : vertices(*SM)){
-        std::cout << std::boolalpha << get(sm_selected_pmap, v) << std::endl;
-      }
+    ok = CGAL::IO::read_OM((const char*)fileinfo.filePath().toUtf8(), *SM, sm_vfeature_pmap, sm_efeature_pmap);
 
-      std::cout << "edge feature values:\n";
-      for(auto e : edges(*SM)){
-        std::cout  << std::boolalpha << get(sm_feature_pmap, e) << std::endl;
-      }
-      */
-    }
-
-    if(!SM->is_valid() || SM->is_empty()){
+    if(!ok || !SM->is_valid() || SM->is_empty()){
       std::cerr << "Error: Invalid facegraph" << std::endl;
     }
     else{
       Scene_surface_mesh_item* item = new Scene_surface_mesh_item(SM);
 
       Scene_polyhedron_selection_item* selection_item = new Scene_polyhedron_selection_item(item, CGAL::Three::Three::mainWindow());
-      bool selected = false;
+      bool eselected = false;
+      bool vselected = false;
+      for(auto v : vertices(*SM)){
+        if(get(sm_vfeature_pmap, v)){
+          selection_item->selected_vertices.insert(v);
+          vselected = true;
+        }
+      }
       for(auto e : edges(*SM)){
-        if(get(sm_feature_pmap, e)){
+        if(get(sm_efeature_pmap, e)){
           selection_item->selected_edges.insert(e);
-          selected = true;
+          eselected = true;
         }
       }
       item->setName(fileinfo.completeBaseName());

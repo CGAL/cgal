@@ -24,8 +24,8 @@
 namespace CGAL {
 namespace IO {
 
-template <typename SM, typename VSelectionPM, typename EFeaturePM>
-bool read_OM(std::string fname, SM& sm, VSelectionPM vspm, EFeaturePM efpm)
+template <typename SM, typename VFeaturePM, typename EFeaturePM>
+bool read_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
   typedef boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
@@ -50,7 +50,7 @@ bool read_OM(std::string fname, SM& sm, VSelectionPM vspm, EFeaturePM efpm)
 
   if(options.vertex_has_status()){
     for(auto v : vertices(omesh)){
-        put(vspm, v2v[v], omesh.status(v).selected());
+        put(vfpm, v2v[v], omesh.status(v).feature());
     }
   }else{
     std::cout << "no vertex status" << std::endl;
