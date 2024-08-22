@@ -201,7 +201,6 @@ namespace CGAL {
         CGAL_DECL_COMPUTE(Squared_distance);
         CGAL_DECL_COMPUTE(Squared_distance_to_origin);
         CGAL_DECL_COMPUTE(Squared_length);
-        CGAL_DECL_COMPUTE(Construct_bbox);
         CGAL_DECL_COMPUTE(Squared_radius);
         CGAL_DECL_COMPUTE(Squared_circumradius);
         CGAL_DECL_COMPUTE(Scalar_product);
@@ -261,6 +260,7 @@ namespace CGAL {
         CGAL_DECL_CONSTRUCT(Construct_circumcenter,Point);
         CGAL_DECL_CONSTRUCT(Point_drop_weight,Point);
         CGAL_DECL_CONSTRUCT(Power_center,Weighted_point);
+        CGAL_DECL_CONSTRUCT(Construct_bbox,Bbox);
 #undef CGAL_DECL_CONSTRUCT
 #if 0
 #define CGAL_DECL_ITER_CONSTRUCT(X,Y) struct X##_tag {}; \
