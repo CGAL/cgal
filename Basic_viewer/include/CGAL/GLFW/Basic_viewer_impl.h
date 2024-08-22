@@ -79,7 +79,7 @@ namespace GLFW
     bool drawFaces,
     bool drawRays,
     bool drawLines, 
-    bool useMonoColor,
+    bool useDefaultColor,
     bool inverseNormal,
     bool flatShading
   ) : m_Scene(graphicScene),
@@ -89,7 +89,7 @@ namespace GLFW
     m_DrawFaces(drawFaces),
     m_DrawRays(drawRays),
     m_DrawLines(drawLines),
-    m_UseMonoColor(useMonoColor),
+    m_UseDefaultColor(useDefaultColor),
     m_InverseNormal(inverseNormal),
     m_FlatShading(flatShading)
   {
@@ -148,6 +148,12 @@ namespace GLFW
     }
 
     check_geometry_feature_availability();
+
+    m_DefaultColorRay = color_to_normalized_vec3(m_Scene->get_default_color_ray());
+    m_DefaultColorFace = color_to_normalized_vec3(m_Scene->get_default_color_face());
+    m_DefaultColorLine = color_to_normalized_vec3(m_Scene->get_default_color_line());
+    m_DefaultColorPoint = color_to_normalized_vec3(m_Scene->get_default_color_point());
+    m_DefaultColorSegment = color_to_normalized_vec3(m_Scene->get_default_color_segment());
   }
 
   void Basic_viewer::show()
@@ -433,6 +439,15 @@ namespace GLFW
 
     m_ShaderFace->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
     m_ShaderFace->set_mat4f("u_Mv",  m_ViewMatrix.data());
+    if (m_UseDefaultColor)
+    {
+      m_ShaderFace->set_int("u_UseDefaultColor", 1);
+      m_ShaderFace->set_vec3f("u_DefaultColor", m_DefaultColorFace.data());
+    }
+    else 
+    {
+      m_ShaderFace->set_int("u_UseDefaultColor", 0);
+    }
 
     m_ShaderFace->set_vec4f("u_LightPos",  m_LightPosition.data());
     m_ShaderFace->set_vec4f("u_LightDiff", m_DiffuseColor.data());
@@ -452,6 +467,16 @@ namespace GLFW
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
+    if (m_UseDefaultColor)
+    {
+      m_ShaderSphere->set_int("u_UseDefaultColor", 1);
+      m_ShaderSphere->set_vec3f("u_DefaultColor", m_DefaultColorPoint.data());
+    }
+    else 
+    {
+      m_ShaderSphere->set_int("u_UseDefaultColor", 0);
+    }
+
     m_ShaderSphere->set_float("u_RenderingMode", static_cast<float>(mode));
 
     m_ShaderSphere->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
@@ -467,6 +492,16 @@ namespace GLFW
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
+    if (m_UseDefaultColor)
+    {
+      m_ShaderCylinder->set_int("u_UseDefaultColor", 1);
+      m_ShaderCylinder->set_vec3f("u_DefaultColor", m_DefaultColorSegment.data());
+    }
+    else 
+    {
+      m_ShaderCylinder->set_int("u_UseDefaultColor", 0);
+    }
+
     m_ShaderCylinder->set_float("u_RenderingMode", static_cast<float>(mode));
 
     m_ShaderCylinder->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
@@ -475,7 +510,7 @@ namespace GLFW
     m_ShaderCylinder->set_float("u_Radius", m_Camera.get_radius()*m_SizeEdges*0.001);
   }
 
-  void Basic_viewer::update_pl_uniforms()
+  void Basic_viewer::update_pl_uniforms(const vec3f& defaultColor)
   {
     m_ShaderPl->use();
 
@@ -485,13 +520,22 @@ namespace GLFW
     m_ShaderPl->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
     m_ShaderPl->set_float("u_PointSize", m_Camera.get_radius()*m_SizeVertices*0.1);
     m_ShaderPl->set_int("u_IsOrthographic", static_cast<int>(m_Camera.is_orthographic()));
+    if (m_UseDefaultColor)
+    {
+      m_ShaderPl->set_int("u_UseDefaultColor", 1);
+      m_ShaderPl->set_vec3f("u_DefaultColor", defaultColor.data());
+    }
+    else 
+    {
+      m_ShaderPl->set_int("u_UseDefaultColor", 0);
+    }
 
     m_ShaderPl->set_vec4f("u_ClipPlane",  m_ClipPlane.data());
     m_ShaderPl->set_vec4f("u_PointPlane", m_PointPlane.data());
     m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(mode));
   }
 
-  void Basic_viewer::update_line_uniforms(float size)
+  void Basic_viewer::update_line_uniforms(float size, const vec3f& defaultColor)
   {
     m_ShaderLine->use(); 
 
@@ -503,6 +547,15 @@ namespace GLFW
     m_ShaderLine->set_mat4f("u_Mvp", m_ViewProjectionMatrix.data());
     m_ShaderLine->set_float("u_PointSize", size);
     m_ShaderLine->set_int("u_IsOrthographic", static_cast<int>(m_Camera.is_orthographic()));
+    if (m_UseDefaultColor)
+    {
+      m_ShaderLine->set_int("u_UseDefaultColor", 1);
+      m_ShaderLine->set_vec3f("u_DefaultColor", defaultColor.data());
+    }
+    else 
+    {
+      m_ShaderLine->set_int("u_UseDefaultColor", 0);
+    }
     
     m_ShaderLine->set_vec2f("u_Viewport", &viewport[0]);
 
@@ -568,14 +621,14 @@ namespace GLFW
 
     vec4f color = color_to_normalized_vec4(m_NormalsMonoColor);
     m_ShaderNormal->set_mat4f("u_Mv", m_ViewMatrix.data());
-    m_ShaderNormal->set_vec4f("u_Color", color.data());
     if (m_UseNormalMonoColor)
     {
-      m_ShaderNormal->set_int("u_UseMonoColor", 1);
+      m_ShaderNormal->set_int("u_UseDefaultColor", 1);
+      m_ShaderNormal->set_vec3f("u_DefaultColor", color.data());
     }
     else
     {
-      m_ShaderNormal->set_int("u_UseMonoColor", 0);
+      m_ShaderNormal->set_int("u_UseDefaultColor", 0);
     }
     m_ShaderNormal->set_mat4f("u_Projection", m_ProjectionMatrix.data());
     m_ShaderNormal->set_float("u_Factor", m_NormalHeightFactor);
@@ -638,11 +691,11 @@ namespace GLFW
 
     compute_model_view_projection_matrix(deltaTime);
 
-    update_pl_uniforms();
     if (m_DrawRays)
     {
       draw_rays();
     }
+
     if (m_DrawLines)
     {
       draw_lines();
@@ -759,88 +812,48 @@ namespace GLFW
     m_ShaderFace->set_float("u_RenderingMode", static_cast<float>(mode));
 
     glBindVertexArray(m_VAO[VAO_FACES]);
-    if (m_UseMonoColor)
-    {
-      vec3f color = color_to_normalized_vec3(m_Scene->get_default_color_face());
-      glDisableVertexAttribArray(2);
-      glVertexAttrib3fv(2, color.data());
-      glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_FACES));
-    }
-    else
-    {
-      glEnableVertexAttribArray(2);
-      glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_FACES));
-    }
+    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_FACES));
   }
 
   void Basic_viewer::draw_rays()
   {
+    update_pl_uniforms(m_DefaultColorRay);
+
     m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     glLineWidth(m_SizeRays);
     glBindVertexArray(m_VAO[VAO_RAYS]);
-    if (m_UseMonoColor)
-    {
-      vec3f color = color_to_normalized_vec3(m_Scene->get_default_color_ray());
-      glDisableVertexAttribArray(1);
-      glVertexAttrib3fv(1, color.data());
-      glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_RAYS));
-    }
-    else
-    {
-      glEnableVertexAttribArray(1);
-      glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_RAYS));
-    }
+    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_RAYS));
     glLineWidth(1.0);
   }
 
   void Basic_viewer::draw_vertices()
   {
-    update_pl_uniforms();
+    update_pl_uniforms(m_DefaultColorPoint);
     if (m_DrawSphereVertex && m_GeometryFeatureEnabled)
     {
       update_sphere_uniforms();
     }
 
     glBindVertexArray(m_VAO[VAO_POINTS]);
-    if (m_UseMonoColor)
-    {
-      vec3f color = color_to_normalized_vec3(m_Scene->get_default_color_point());
-      glDisableVertexAttribArray(1);
-      glVertexAttrib3fv(1, color.data());
-      glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_POINTS));
-    }
-    else
-    {
-      glEnableVertexAttribArray(1);
-      glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_POINTS));
-    }
+    glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_POINTS));
   }
 
   void Basic_viewer::draw_lines()
   {
+    update_pl_uniforms(m_DefaultColorLine);
+
     m_ShaderPl->set_float("u_RenderingMode", static_cast<float>(RenderingMode::DRAW_ALL));
 
     glLineWidth(m_SizeLines);
     glBindVertexArray(m_VAO[VAO_LINES]);
-    if (m_UseMonoColor)
-    {
-      vec3f color = color_to_normalized_vec3(m_Scene->get_default_color_line());
-      glDisableVertexAttribArray(1);
-      glVertexAttrib4fv(1, color.data());
-      glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_LINES));
-    }
-    else
-    {
-      glEnableVertexAttribArray(1);
-      glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_LINES));
-    }
+    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_LINES));
     glLineWidth(1.0);
   }
 
   void Basic_viewer::draw_edges()
   {
-    update_line_uniforms(m_SizeEdges);
+    update_line_uniforms(m_SizeEdges, m_DefaultColorSegment);
     if (m_DrawCylinderEdge && m_GeometryFeatureEnabled)
     {
       update_cylinder_uniforms();
@@ -848,18 +861,7 @@ namespace GLFW
 
     glDepthFunc(GL_LEQUAL);
     glBindVertexArray(m_VAO[VAO_SEGMENTS]);
-    if (m_UseMonoColor)
-    {
-      vec3f color = color_to_normalized_vec3(m_Scene->get_default_color_segment());
-      glDisableVertexAttribArray(1);
-      glVertexAttrib4fv(1, color.data());
-      glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_SEGMENTS));
-    }
-    else
-    {
-      glEnableVertexAttribArray(1);
-      glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_SEGMENTS));
-    }
+    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_SEGMENTS));
   }
 
 
@@ -1168,7 +1170,7 @@ namespace GLFW
       m_AreBuffersInitialized = false;
       break;
     case MONO_COLOR:
-      m_UseMonoColor = !m_UseMonoColor;
+      m_UseDefaultColor = !m_UseDefaultColor;
       break;
     case NORMALS_MONO_COLOR: 
       m_UseNormalMonoColor = !m_UseNormalMonoColor;

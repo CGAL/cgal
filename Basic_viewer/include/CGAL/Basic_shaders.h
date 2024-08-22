@@ -29,19 +29,26 @@ out highp   vec4 ls_fP; // local space position
 out highp   vec3 fN;
 out mediump vec4 fColor;
 
-uniform highp   mat4 u_Mvp;
-uniform highp   mat4 u_Mv;
+uniform highp   mat4  u_Mvp;
+uniform highp   mat4  u_Mv;
 uniform mediump float u_PointSize;
+uniform mediump vec3  u_DefaultColor; 
+uniform         bool  u_UseDefaultColor; 
 
 void main(void)
-{
+{ 
+  fColor = vec4(a_Color, 1.0); 
+  if (u_UseDefaultColor)
+  {
+    fColor = vec4(u_DefaultColor, 1.0);
+  }
+
   vec4 pos = vec4(a_Pos, 1.0); 
 
   ls_fP = pos;
   vs_fP = u_Mv * pos;
 
   fN = mat3(u_Mv)* a_Normal;
-  fColor = vec4(a_Color, 1.0);
 
   gl_Position = u_Mvp * pos;
   gl_PointSize = u_PointSize;
@@ -112,6 +119,8 @@ out highp   vec4 ls_fP; // local space
 uniform highp   mat4  u_Mvp;
 uniform mediump float u_PointSize;
 uniform         bool  u_IsOrthographic;
+uniform mediump vec3  u_DefaultColor; 
+uniform         bool  u_UseDefaultColor; 
 
 bool EqualZero(float value)
 {
@@ -120,22 +129,23 @@ bool EqualZero(float value)
 
 void main(void)
 {
+  fColor = vec4(a_Color, 1.0); 
+  if (u_UseDefaultColor)
+  {
+    fColor = vec4(u_DefaultColor, 1.0);
+  }
+
   vec4 pos = vec4(a_Pos, 1.0); 
 
-  fColor = vec4(a_Color, 1.0);
   ls_fP  = pos;
 
   gl_Position  = u_Mvp * pos;
 
-  float distance;
+  float distance = gl_Position.w;
   if (u_IsOrthographic) 
   {
     distance = u_PointSize;
   } 
-  else 
-  {
-    distance = gl_Position.w;
-  }
 
   float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
   gl_PointSize = u_PointSize / effectiveDistance * 5.0;
@@ -150,11 +160,18 @@ in mediump vec3 a_Color;
 out mediump vec4 gColor; 
 out highp   vec4 ls_fP; 
 
-uniform highp mat4 u_Mvp;
+uniform highp   mat4 u_Mvp;
+uniform mediump vec3 u_DefaultColor;
+uniform         bool u_UseDefaultColor;
 
 void main(void)
 {
   gColor = vec4(a_Color, 1.0);
+  if (u_UseDefaultColor)
+  {
+    gColor = vec4(u_DefaultColor, 1.0);
+  }
+
   gl_Position = vec4(a_Pos, 1.0);
 }
 )DELIM";
@@ -334,9 +351,16 @@ out VS_OUT {
   mediump vec4 color;
 } vs_out; // vertex shader output
 
+uniform mediump vec3 u_DefaultColor; 
+uniform         bool u_UseDefaultColor; 
+
 void main(void)
 {
   vs_out.color = vec4(a_Color, 1.0);
+  if (u_UseDefaultColor)
+  {
+    vs_out.color = vec4(u_DefaultColor, 1.0);
+  }
 
   gl_Position = vec4(a_Pos, 1.0);
 }
@@ -493,18 +517,15 @@ out VS_OUT {
 } vs_out; // vertex shader output
  
 uniform highp   mat4 u_Mv;
-uniform mediump vec4 u_Color;
-uniform bool         u_UseMonoColor;
+uniform mediump vec3 u_DefaultColor;
+uniform         bool u_UseDefaultColor;
 
 void main(void)
 {
-  if (u_UseMonoColor)
+  vs_out.color = vec4(abs(normalize(a_Normal)), 1.0); 
+  if (u_UseDefaultColor)
   {
-    vs_out.color = u_Color; 
-  }
-  else 
-  {
-    vs_out.color = vec4(abs(normalize(a_Normal)), 1); 
+    vs_out.color = vec4(u_DefaultColor, 1.0); 
   }
 
   mat3 normalMatrix = mat3(transpose(inverse(u_Mv)));
@@ -588,7 +609,6 @@ void main()
 const char VERTEX_SOURCE_TRIANGLE[]=R"DELIM(
 #version 150
 in highp   vec3 a_Pos;
-in mediump vec3 a_Color;
 
 out VS_OUT {
   mediump vec4 color; 
@@ -601,10 +621,10 @@ void main(void)
 {
   vec4 pos = vec4(a_Pos, 1.0);
 
-  vs_out.color = vec4(a_Color, 1.0);
-  vs_out.ls_fP  = pos;
+  vs_out.color = vec4(0.85, 0.85, 0.85, 1.0);
+  vs_out.ls_fP = pos;
 
-  gl_Position  = u_Mvp * pos;
+  gl_Position = u_Mvp * pos;
 }
 )DELIM";
 
@@ -623,7 +643,7 @@ out highp   vec4 ls_fP;
 
 void main(void)
 {
-  fColor = vec4(0.85, 0.85, 0.85, 1.0); 
+  fColor = gs_in[0].color; 
   ls_fP = gs_in[0].ls_fP;
   gl_Position = gl_in[0].gl_Position; 
   EmitVertex(); 
@@ -657,6 +677,8 @@ out VS_OUT {
 uniform highp   mat4  u_Mvp;
 uniform mediump float u_PointSize;
 uniform         bool  u_IsOrthographic;
+uniform mediump vec3  u_DefaultColor;
+uniform         bool  u_UseDefaultColor;
 
 bool EqualZero(float value)
 {
@@ -667,20 +689,20 @@ void main(void)
 {
   vec4 pos = vec4(a_Pos, 1.0);
 
-  vs_out.color = vec4(a_Color, 1.0);
   vs_out.ls_fP = pos;
+  vs_out.color = vec4(a_Color, 1.0); 
+  if (u_UseDefaultColor)
+  {
+    vs_out.color = vec4(u_DefaultColor, 1.0);
+  }
 
   gl_Position  = u_Mvp * pos;
 
-  float distance;
+  float distance = gl_Position.w;
   if (u_IsOrthographic) 
   {
     distance = u_PointSize;
   } 
-  else 
-  {
-    distance = gl_Position.w;
-  }
 
   float effectiveDistance = EqualZero(distance) ? 0.00001 : distance;
   vs_out.pointSize = u_PointSize / effectiveDistance;
@@ -760,9 +782,11 @@ varying highp   vec4 vs_fP; // view space position
 varying highp   vec3 fN;
 varying mediump vec4 fColor;
 
-uniform highp   mat4 u_Mvp;
-uniform highp   mat4 u_Mv;
+uniform highp   mat4  u_Mvp;
+uniform highp   mat4  u_Mv;
 uniform mediump float u_PointSize;
+uniform mediump vec3  u_DefaultColor;
+uniform         bool  u_UseDefaultColor;
 
 void main(void)
 {
@@ -774,7 +798,13 @@ void main(void)
   mv_matrix_3[1] = mv_matrix[1].xyz;
   mv_matrix_3[2] = mv_matrix[2].xyz;
   fN = mv_matrix_3* a_Normal;
+
   fColor = vec4(a_Color, 1.0);
+  if (u_UseDefaultColor)
+  {
+    fColor = vec4(u_DefaultColor, 1.0);
+  }
+
   gl_PointSize = u_PointSize;
 
   gl_Position = u_Mvp * pos;
@@ -817,11 +847,18 @@ varying mediump vec4 fColor;
 
 uniform highp   mat4  u_Mvp;
 uniform mediump float u_PointSize;
+uniform mediump vec3  u_DefaultColor;
+uniform         bool  u_UseDefaultColor;
 
 void main(void)
 {
-  gl_PointSize = u_PointSize;
   fColor = vec4(a_Color, 1.0);
+  if (u_UseDefaultColor)
+  {
+    fColor = vec4(u_DefaultColor, 1.0);
+  }
+
+  gl_PointSize = u_PointSize;
   gl_Position = u_Mvp * vec4(a_Pos, 1.0);
 }
 )DELIM";

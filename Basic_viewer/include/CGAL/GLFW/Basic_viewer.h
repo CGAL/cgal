@@ -76,7 +76,7 @@ namespace GLFW
       bool drawFaces = true,
       bool drawRays = true,
       bool drawLines = true,
-      bool useMonoColor = false,
+      bool useDefaultColor = false,
       bool inverseNormal = false,
       bool flatShading = true
     );
@@ -114,7 +114,7 @@ namespace GLFW
     inline void draw_rays(bool b) { m_DrawRays = b; }
     inline void draw_lines(bool b) { m_DrawLines = b; }
     inline void draw_faces(bool b) { m_DrawFaces = b; }
-    inline void use_mono_color(bool b) { m_UseMonoColor = b; }
+    inline void use_mono_color(bool b) { m_UseDefaultColor = b; }
     inline void inverse_normal(bool b) { m_InverseNormal = b; }
     inline void flat_shading(bool b) { m_FlatShading = b; }
     inline void draw_world_axis(bool b) { m_DrawWorldAxis = b; }
@@ -169,7 +169,7 @@ namespace GLFW
     inline bool draw_rays() const { return m_DrawRays; }
     inline bool draw_lines() const { return m_DrawLines; }
     inline bool draw_faces() const { return m_DrawFaces; }
-    inline bool use_mono_color() const { return m_UseMonoColor; }
+    inline bool use_mono_color() const { return m_UseDefaultColor; }
     inline bool inverse_normal() const { return m_InverseNormal; }
     inline bool flat_shading() const { return m_FlatShading; }
 
@@ -206,8 +206,8 @@ namespace GLFW
     void update_face_uniforms();
     void update_sphere_uniforms();
     void update_cylinder_uniforms();
-    void update_pl_uniforms();
-    void update_line_uniforms(float size);
+    void update_pl_uniforms(const vec3f& defaultColor={0,0,0});
+    void update_line_uniforms(float size, const vec3f& defaultColor={0,0,0});
     void update_clipping_uniforms();
     void update_world_axis_uniforms();
     void update_XY_axis_uniforms();
@@ -300,7 +300,7 @@ namespace GLFW
 
     bool m_DisplayFaceNormal { false };
     bool m_UseNormalMonoColor { false };
-    bool m_UseMonoColor { false };
+    bool m_UseDefaultColor { false };
 
     bool m_InverseNormal { false };
     bool m_FlatShading { true };
@@ -337,6 +337,12 @@ namespace GLFW
     vec4f m_SpecularColor { CGAL_SPECULAR_COLOR };
 
     float m_Shininess { CGAL_SHININESS };
+
+    vec3f m_DefaultColorRay;
+    vec3f m_DefaultColorFace;
+    vec3f m_DefaultColorLine;
+    vec3f m_DefaultColorPoint;
+    vec3f m_DefaultColorSegment;
 
     vec4f m_ClipPlane { 0, 0, 1, 0 };
     vec4f m_PointPlane { 0, 0, 0, 1 };
