@@ -6,10 +6,10 @@
 
 #include <CGAL/Three/CGAL_Lab_io_plugin_interface.h>
 #include <CGAL/Three/Three.h>
+#include "Scene_polyhedron_selection_item.h"
 
 #include <CGAL/IO/OM.h>
 #include <CGAL/boost/graph/io.h>
-#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <QColor>
 #include <QString>
@@ -90,7 +90,8 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
     // Try building a surface_mesh
     SMesh* SM = new SMesh();
     if (CGAL::IO::read_OM((const char*)fileinfo.filePath().toUtf8(), *SM, sm_selected_pmap, sm_feature_pmap))
-    {/*
+    {
+      /*
       std::cout << "vertex selection values:\n";
       for(auto v : vertices(*SM)){
         std::cout << std::boolalpha << get(sm_selected_pmap, v) << std::endl;
@@ -108,11 +109,22 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
     }
     else{
       Scene_surface_mesh_item* item = new Scene_surface_mesh_item(SM);
+
+      Scene_polyhedron_selection_item* selection_item = new Scene_polyhedron_selection_item(item, CGAL::Three::Three::mainWindow());
+      bool selected = false;
+      for(auto e : edges(*SM)){
+        if(get(sm_feature_pmap, e)){
+          selection_item->selected_edges.insert(e);
+          selected = true;
+        }
+      }
       item->setName(fileinfo.completeBaseName());
       ok = true;
-      if(add_to_scene)
+      if(add_to_scene){
         CGAL::Three::Three::scene()->addItem(item);
-      return QList<Scene_item*>()<<item;
+        CGAL::Three::Three::scene()->addItem(selection_item);
+      }
+      return QList<Scene_item*>()<<item << selection_item;
     }
   }
   catch(...){}

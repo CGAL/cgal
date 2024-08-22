@@ -1,4 +1,15 @@
-#pragma once
+// Copyright (c) 2024 GeometryFactory
+//
+// This file is part of CGAL (www.cgal.org);
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+// Author(s)     : Andreas Fabri
+
+#ifndef CGAL_IO_OM_H
+#define CGAL_IO_OM_H
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
@@ -59,4 +70,4 @@ bool read_OM(std::string fname, SM& sm, VSelectionPM vspm, EFeaturePM efpm)
 } // namespace IO
 } // namespace CGAL
 
-
+#endif // CGAL_IO_OM
