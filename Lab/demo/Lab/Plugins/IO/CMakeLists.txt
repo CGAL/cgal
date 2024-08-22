@@ -43,6 +43,16 @@ target_link_libraries(surf_io_plugin PUBLIC scene_surface_mesh_item)
 cgal_lab_plugin(lcc_io_plugin lcc_io_plugin KEYWORDS Viewer)
 target_link_libraries(lcc_io_plugin PUBLIC scene_lcc_item)
 
+find_package(OpenMesh)
+if(OpenMesh_FOUND)
+  include(UseOpenMesh)
+  cgal_lab_plugin(om_plugin OM_io_plugin KEYWORDS Viewer PMP)
+  target_link_libraries(om_plugin PUBLIC scene_surface_mesh_item scene_polygon_soup_item)
+  target_link_libraries(om_plugin PRIVATE ${OPENMESH_LIBRARIES})
+else()
+  message(STATUS "NOTICE: the OM IO plugin needs OpenMesh libraries and will not be compiled.")
+endif()
+
 find_package(VTK 9.0 QUIET COMPONENTS CommonCore IOCore IOLegacy IOXML FiltersCore FiltersSources)
 set_package_properties(
   VTK PROPERTIES
