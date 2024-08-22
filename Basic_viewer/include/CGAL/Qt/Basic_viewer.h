@@ -1433,6 +1433,14 @@ protected:
       array.push_back(pos);
       array.push_back(0.f);
     }
+
+    // Normal 
+    array.push_back(0.f);
+    array.push_back(0.f);
+    array.push_back(0.f);
+    array.push_back(0.f);
+    array.push_back(0.f);
+    array.push_back(1.f);
   }
 
   virtual void mouseDoubleClickEvent(QMouseEvent *e) 

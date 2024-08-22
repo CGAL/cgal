@@ -783,9 +783,6 @@ namespace GLFW
       glDisable(GL_CULL_FACE);
       glDisable(GL_BLEND);
       draw_faces_bis(RenderingMode::DRAW_INSIDE_ONLY);
-
-      // 4. render clipping plane here
-      // render_clipping_plane();
     } 
     else // Not CLIPPING_PLANE_SOLID_HALF_TRANSPARENT_HALF
     {
@@ -794,9 +791,6 @@ namespace GLFW
       {
         // 1. draw solid HALF
         draw_faces_bis(RenderingMode::DRAW_INSIDE_ONLY);
-
-        // 2. render clipping plane here
-        // render_clipping_plane();
       } 
       else
       {
@@ -921,6 +915,7 @@ namespace GLFW
       {ShaderDataType::FLOAT3}, // a_Pos
     });
     m_ClippingPlane.set_width(0.2f);
+    m_ClippingPlane.add_line({0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, 0.0});
     generate_grid(m_ClippingPlane, size, NB_SUBDIVISIONS);
     m_ClippingPlane.load_buffers();
 
