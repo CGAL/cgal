@@ -157,7 +157,7 @@ namespace CGAL {
         CGAL_DECL_OBJ(Hyperplane, Object);
         CGAL_DECL_OBJ(Ray, Object);
         CGAL_DECL_OBJ(Iso_box, Object);
-        CGAL_DECL_OBJ(Bbox, Object);
+        CGAL_DECL_OBJ(Bbox, Bbox);
         CGAL_DECL_OBJ(Aff_transformation, Object);
         CGAL_DECL_OBJ(Weighted_point, Object);
 #undef CGAL_DECL_OBJ_

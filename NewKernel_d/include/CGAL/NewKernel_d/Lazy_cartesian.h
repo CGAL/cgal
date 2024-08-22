@@ -221,6 +221,9 @@ struct Lazy_cartesian_types
     template <class T> struct Type<T,Number_tag> {
       typedef CGAL::Lazy_exact_nt<typename Get_type<EK_,T>::type>  type;
     };
+    template <class T> struct Type<T,Bbox_tag> {
+      typedef typename Get_type<EK_,T>::type  type;
+    };
 
     template <class T> struct Iterator {
       typedef typename iterator_tag_traits<T>::value_tag Vt;
@@ -278,11 +281,13 @@ struct Lazy_cartesian :
       C2A(){}
       C2A(Kernel const&, Approximate_kernel const&){}
       template<class T>decltype(auto)operator()(T const&t)const{return CGAL::approx(t);}
+      template <class A, class B>  Bbox<A,B> operator()(const Bbox<A,B>& b) const{ return b; }
     };
     struct C2E {
       C2E(){}
       C2E(Kernel const&, Exact_kernel const&){}
       template<class T>decltype(auto)operator()(T const&t)const{return  CGAL::exact(t);}
+      template <class A, class B>  Bbox<A,B> operator()(const Bbox<A,B>& b) const{ return b; }
     };
 
     typedef typename Exact_kernel::Rep_tag Rep_tag;
@@ -309,6 +314,24 @@ struct Lazy_cartesian :
     template<class T,class D> struct Functor<T,D,Construct_tag> {
             typedef Lazy_construction2<T,Kernel> type;
     };
+    //specialize for Bbox
+    template<class D> struct Functor<Construct_bbox_tag,D,Construct_tag>
+    {
+      struct type
+      {
+        template <class TT>
+        type(TT){}
+
+        template <class TT>
+        auto operator()(const TT& t) const
+        {
+          return CartesianDKernelFunctors::Construct_bbox<Approximate_kernel>()(approx(t));
+        }
+      };
+    };
+
+
+
     template<class D> struct Functor<Point_dimension_tag,D,Misc_tag> {
             typedef typename Get_functor<Approximate_kernel, Point_dimension_tag>::type FA;
             struct type {
