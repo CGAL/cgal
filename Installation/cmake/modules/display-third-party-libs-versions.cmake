@@ -1,7 +1,9 @@
 set(LIBRARIES_TO_CHECK
-  Boost GMP MPFR VTK Qt6
-  Eigen3 OpenGR libpointmatcher LEDA MPFI
-  TBB OpenCV METIS ZLIB GLPK SCIP
+  Eigen3 Qt6 TBB OpenMesh Boost
+  GMP Threads SuiteSparse MPFI METIS
+  VTK SCIP OSQP LASLIB GLPK
+  ITT Ceres MPFR libpointmatcher ITK
+  OpenGR OpenCV ZLIB
 )
 
 function(get_library_version header_path major_macro minor_macro patchlevel_macro version_var)
@@ -20,7 +22,7 @@ function(get_library_version header_path major_macro minor_macro patchlevel_macr
     endif()
     if(VERSION_PATCHLEVEL)
       set(${version_var} "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCHLEVEL}" PARENT_SCOPE)
-    elseif(VERSION_MAJOR AND VERSION_MINOR)
+    elseif(VERSION_MAJOR GREATER_EQUAL 0 OR VERSION_MINOR GREATER_EQUAL 0)
       set(${version_var} "${VERSION_MAJOR}.${VERSION_MINOR}" PARENT_SCOPE)
     endif()
   endif()
@@ -65,8 +67,11 @@ function(check_library cgal_3rdparty_lib)
       get_library_version("${MPFR_INCLUDE_DIR}/mpfr.h" "MPFR_VERSION_MAJOR" "MPFR_VERSION_MINOR" "MPFR_VERSION_PATCHLEVEL" version_var)
     elseif(${cgal_3rdparty_lib} STREQUAL "METIS")
       get_library_version("${METIS_INCLUDE_DIR}/metis.h" "METIS_VER_MAJOR" "METIS_VER_MINOR" "METIS_VER_SUBMINOR" version_var)
+    elseif(${cgal_3rdparty_lib} STREQUAL "SuiteSparse")
+      get_library_version("${SuiteSparse_Config_INCLUDE_DIR}/SuiteSparse_config.h" "SUITESPARSE_MAIN_VERSION" "SUITESPARSE_SUB_VERSION" "SUITESPARSE_SUBSUB_VERSION" version_var)
+    elseif(${cgal_3rdparty_lib} STREQUAL "LASLIB")
+      get_library_version("${LASLIB_INCLUDE_DIR}/lasdefinitions.hpp" "LAS_TOOLS_VERSION" "" "" version_var)
     endif()
-
     if(version_var)
       message(STATUS "Third-party library ${cgal_3rdparty_lib} ${version_var}")
     else()
