@@ -65,6 +65,7 @@ bash -$- ./process_doc.sh /home/cgal-testsuite/bin/doxygen_1_8_13 /home/cgal-tes
 if head -2 ../../.scm-branch | grep -q cgal/master; then
     rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output2/" /srv/CGAL/www/doc/master/
 fi
+restorecon -R /srv/CGAL/www/doc/master/ /srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}
 rm -rf "${CGAL_DOC_BUILD}"
 # Then gzip the log file, to save space
 exec
