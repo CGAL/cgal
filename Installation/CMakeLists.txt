@@ -480,7 +480,9 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
 endif()
 
-include(display-third-party-libs-versions)
+if(CGAL_TEST_SUITE)
+  include(display-third-party-libs-versions)
+endif()
 
 message("== Generate version files (DONE) ==\n")
 #--------------------------------------------------------------------------------------------------
