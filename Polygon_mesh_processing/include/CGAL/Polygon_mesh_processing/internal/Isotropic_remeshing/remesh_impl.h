@@ -1711,7 +1711,10 @@ private:
         degenerate_faces.erase(degenerate_faces.begin());
 
         if(is_border(h, mesh_))
+        {
+          CGAL::Euler::remove_face(h, mesh_);
           continue;
+        }
 
         for(halfedge_descriptor hf :
             halfedges_around_face(h, mesh_))
