@@ -42,6 +42,7 @@
 #include <qnamespace.h>
 #include <qpointingdevice.h>
 #include <thread>
+#include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -347,7 +348,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     std::monostate,
     AltVertexIdSingle,
     AltVertexIdPair,
-    // AltVertexIdPairPair,
+    AltVertexIdPairPair,
     AltVertexIdTripletPair
   >;
 
@@ -383,14 +384,14 @@ namespace CGAL::HexRefinement::TwoRefinement {
     std::unordered_map<AltVertexIdSingle, T, AltVertexIdHasher> vertexId;
     std::unordered_map<AltVertexIdPair, T, AltVertexIdHasher> vertexIdPair;
     std::unordered_map<AltVertexIdTripletPair, T, AltVertexIdHasher> vertexIdTripletPair;
-    // std::unordered_map<AltVertexIdPairPair, T, AltVertexIdHasher> vertexIdPairPair;
+    std::unordered_map<AltVertexIdPairPair, T, AltVertexIdHasher> vertexIdPairPair;
   };
 
   struct TempVertexIdStorage {
     std::unordered_map<size_t, AltVertexIdSingle> vertexId;
     std::unordered_map<size_t, AltVertexIdPair> vertexIdPair;
     std::unordered_map<size_t, AltVertexIdTripletPair> vertexIdTripletPair;
-    // std::unordered_map<VertexAttrPtr, AltVertexIdPairPair> vertexIdPairPair;
+    std::unordered_map<size_t, AltVertexIdPairPair> vertexIdPairPair;
   };
 
   // Attributes the id of cells after a refinement and their positions
@@ -1338,7 +1339,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
   void thread_join_3_template_vertex__pair(ProcessData& proc, Dart_handle edge) {
     LCC& lcc = proc.lcc;
 
-    NumberableCell v_numberable = is_edge_numberable(proc, edge);
+    NumberableCell v_numberable = is_face_numberable(proc, edge);
     if (v_numberable == NumberableCell::None)
       return;
 
@@ -1355,16 +1356,18 @@ namespace CGAL::HexRefinement::TwoRefinement {
     assert(id1 != max_v_id && proc.vertex_temp_ids.vertexId.count(id1));
     auto tid0 = proc.vertex_temp_ids.vertexId[id0];
     auto tid1 = proc.vertex_temp_ids.vertexId[id1];
-
+    auto tid = get_temp_vertex_id<AltVertexIdPair>(tid0, tid1);
 
     if (v_numberable == NumberableCell::True){
-      size_t new_id = proc.get_new_vertex_id();
-      proc.vertices_to_share.vertexId[tid0] = proc.vertices_to_share.vertexId[tid1];
+      vertex_attr->id = proc.get_new_vertex_id();
+      proc.vertices_to_share.vertexId[tid0] = vertex_attr->id;
+      proc.vertices_to_share.vertexId[tid1] = vertex_attr->id;
+      proc.vertices_to_share.vertexIdPair[tid] = vertex_attr->id;
+    } else {
+      vertex_attr->id = proc.get_temp_vertex_id();
     }
 
-    // TODO, is only storing one ID from the two nodes enough? or store in a Pair of Pair?
-    proc.vertex_temp_ids.vertexId[id0] = proc.vertex_temp_ids.vertexId[id1];
-    proc.vertex_temp_ids.vertexId.erase(id1);
+    proc.vertex_temp_ids.vertexIdPair[vertex_attr->id] = tid;
 
   }
 
@@ -1374,13 +1377,13 @@ namespace CGAL::HexRefinement::TwoRefinement {
   void thread_join_3_template_vertex__pairpair(ProcessData& proc, Dart_handle edge) {
     LCC& lcc = proc.lcc;
 
-    NumberableCell v_numberable = is_face_numberable(proc, edge);
+    NumberableCell v_numberable = is_volume_numberable(proc, edge);
     if (v_numberable == NumberableCell::None)
       return;
 
     Dart_handle ext0 = edge;
     Dart_handle node = lcc.beta(edge, 1);
-    Dart_handle ext1 = lcc.beta(node, 1);
+    Dart_handle ext1 = lcc.beta(edge, 1, 1);
 
     auto vertex_attr = lcc.attribute<0>(node);
     size_t id0 = lcc.attribute<0>(ext0)->id;
@@ -1394,24 +1397,23 @@ namespace CGAL::HexRefinement::TwoRefinement {
     proc.vertex_temp_ids.vertexIdPair.erase(id0);
     proc.vertex_temp_ids.vertexIdPair.erase(id1);
 
-    // if (v_numberable == NumberableCell::True){
-    //   size_t new_id = proc.get_new_vertex_id();
-    //   proc.vertices_to_share.vertexIdPair[tid0] = new_id;
-    //   proc.vertices_to_share.vertexIdPair[tid1] = new_id;
-    // }
+    auto tid = get_temp_vertex_id<AltVertexIdPairPair>(tid0, tid1);
 
     if (v_numberable == NumberableCell::True){
-      size_t new_id = proc.get_new_vertex_id();
-      proc.vertices_to_share.vertexIdPair[tid0] = proc.vertices_to_share.vertexIdPair[tid1];
+      vertex_attr->id = proc.get_new_vertex_id();
+      proc.vertices_to_share.vertexIdPair[tid0] = vertex_attr->id;
+      proc.vertices_to_share.vertexIdPair[tid1] = vertex_attr->id;
+      proc.vertices_to_share.vertexIdPairPair[tid] = vertex_attr->id;
+    } else {
+      vertex_attr->id = proc.get_temp_vertex_id();
     }
 
-    // TODO, is only storing one ID from the two nodes enough? or store in a Pair of Pair?
-    proc.vertex_temp_ids.vertexIdPair[id0] = proc.vertex_temp_ids.vertexIdPair[id1];
-    proc.vertex_temp_ids.vertexIdPair.erase(id1);
+    proc.vertex_temp_ids.vertexIdPairPair[vertex_attr->id] = tid;
 
   }
 
-  void clean_up_3_template(HexMeshingData &hdata, const Dart_handle &origin_dart, const Dart_handle &upper_edge, const Dart_handle lower_edge, Dart_handle &face1, Dart_handle &face2)
+  template <typename HexData>
+  void clean_up_3_template(HexData &hdata, const Dart_handle &origin_dart, const Dart_handle &upper_edge, const Dart_handle lower_edge, Dart_handle &face1, Dart_handle &face2)
   {
     LCC& lcc = hdata.lcc;
 
@@ -1424,6 +1426,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     Dart_handle lower_mid_2 = lcc.beta(lower_mid_1, 2, 1);
 
     thread_join_3_template_vertex__pairpair(hdata, lower_edge);
+
     lcc.contract_cell<1>(lower_mid_1);
     lcc.contract_cell<1>(lower_mid_2);
 
@@ -1762,6 +1765,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
       ret = proc.vertex_temp_ids.vertexIdPair.at(id);
       if (!assertion) return ret;
     }
+    else if (proc.vertex_temp_ids.vertexIdPairPair.count(id)){
+      if (assertion) CGAL_assertion_msg(ret.index() == 0, "Duplicate temp id found");
+      ret = proc.vertex_temp_ids.vertexIdPairPair.at(id);
+      if (!assertion) return ret;
+    }
     else if (proc.vertex_temp_ids.vertexIdTripletPair.count(id)){
       if (assertion) CGAL_assertion_msg(ret.index() == 0, "Duplicate temp id found");
       ret = proc.vertex_temp_ids.vertexIdTripletPair.at(id);
@@ -1792,7 +1800,15 @@ namespace CGAL::HexRefinement::TwoRefinement {
           if (assertion) CGAL_assertion_msg(ret == DartInfo::VertexAttr::max_id, "Duplicate real id found");
           ret = ptr->ids.vertexIdPair[tid];
           if (!assertion) return ret;
+        }
+      }
 
+      if (std::holds_alternative<AltVertexIdPairPair>(vtid)){
+        const AltVertexIdPairPair& tid = std::get<AltVertexIdPairPair>(vtid);
+        if (ptr->ids.vertexIdPairPair.count(tid)){
+          if (assertion) CGAL_assertion_msg(ret == DartInfo::VertexAttr::max_id, "Duplicate real id found");
+          ret = ptr->ids.vertexIdPairPair[tid];
+          if (!assertion) return ret;
         }
       }
 
@@ -3314,12 +3330,14 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
         thread_communicate_cells_id_and_3t(hdata, rdata);
 
+        debug_stream.push(l_thread_id);
+      std::this_thread::sleep_for(std::chrono::hours(1));
+
+
         lcc.unmark_all(hdata.identified_mark);
         lcc.unmark_all(hdata.template_mark);
-
-        std::this_thread::sleep_for(std::chrono::hours(1));
-
       }
+
 
       lcc.unmark_all(hdata.propagation_face_mark);
     }
@@ -3507,6 +3525,8 @@ namespace CGAL::HexRefinement {
       auto a = lcc.attribute<2>(dart);
       auto b = lcc.attribute<3>(dart);
 
+      return TwoRefinement::is_volume_numberable(hdata, dart) != TwoRefinement::NumberableCell::None ? red(): blue();
+
       // return b->info().type >= VolumeType::REFINEMENT ? red() : blue();
 
 
@@ -3554,6 +3574,7 @@ namespace CGAL::HexRefinement {
       return true;
     };
     gso.vertex_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
+      return lcc.attribute<0>(dart)->id == DartInfo::VertexAttr::max_id ? red() : blue();
       // return lcc.is_whole_cell_marked<0>(dart, hdata.template_mark) ? red() : black();
       auto a = lcc.is_whole_cell_marked<0>(dart, hdata.debug);
       auto b = lcc.is_whole_cell_marked<0>(dart, hdata.debug2);
