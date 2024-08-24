@@ -36,7 +36,11 @@ namespace GLFW
     glfwSetErrorCallback(error_callback);
 
     // Set additional window options
-    glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+    if (!hidden)
+    {
+      glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+    }
+
     glfwWindowHint(GLFW_SAMPLES, WINDOW_SAMPLES); // MSAA
 
     // Create window using GLFW
@@ -72,7 +76,7 @@ namespace GLFW
   }
 
   Basic_viewer::Basic_viewer(
-    const Graphics_scene* graphicScene,
+    const Graphics_scene& graphicScene,
     const char* title,
     bool drawVertices,
     bool drawEdges,
@@ -82,7 +86,8 @@ namespace GLFW
     bool useDefaultColor,
     bool inverseNormal,
     bool flatShading
-  ) : m_Scene(graphicScene),
+  ) : 
+    m_Scene(graphicScene),
     m_Title(title),
     m_DrawVertices(drawVertices),
     m_DrawEdges(drawEdges),
@@ -96,18 +101,12 @@ namespace GLFW
     initialize();
   } 
 
-  void Basic_viewer::check_geometry_feature_availability()
+  Basic_viewer::~Basic_viewer()
   {
-    int maxGeometryOutputVertices = 0;
-    glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &maxGeometryOutputVertices);
-    int maxGeometryOutputComponents = 0;
-    glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &maxGeometryOutputComponents);
-
-    if (maxGeometryOutputVertices < 128 || maxGeometryOutputComponents < 1024)
-    {
-      std::cout << "Cylinder edge and sphere vertex feature disabled! (maxGeometryOutputVertices=" << maxGeometryOutputVertices << ", maxGeometryOutputComponents=" << maxGeometryOutputComponents << ")\n";
-      m_GeometryFeatureEnabled = false; 
-    }
+    glDeleteBuffers(NB_GL_BUFFERS, m_VBO);
+    glDeleteVertexArrays(NB_VAO_BUFFERS, m_VAO);
+    glfwDestroyWindow(m_Window);
+    glfwTerminate();
   }
 
   void Basic_viewer::initialize(bool screenshotOnly)
@@ -149,11 +148,11 @@ namespace GLFW
 
     check_geometry_feature_availability();
 
-    m_DefaultColorRay = color_to_normalized_vec3(m_Scene->get_default_color_ray());
-    m_DefaultColorFace = color_to_normalized_vec3(m_Scene->get_default_color_face());
-    m_DefaultColorLine = color_to_normalized_vec3(m_Scene->get_default_color_line());
-    m_DefaultColorPoint = color_to_normalized_vec3(m_Scene->get_default_color_point());
-    m_DefaultColorSegment = color_to_normalized_vec3(m_Scene->get_default_color_segment());
+    m_DefaultColorRay = color_to_normalized_vec3(m_Scene.get_default_color_ray());
+    m_DefaultColorFace = color_to_normalized_vec3(m_Scene.get_default_color_face());
+    m_DefaultColorLine = color_to_normalized_vec3(m_Scene.get_default_color_line());
+    m_DefaultColorPoint = color_to_normalized_vec3(m_Scene.get_default_color_point());
+    m_DefaultColorSegment = color_to_normalized_vec3(m_Scene.get_default_color_segment());
   }
 
   void Basic_viewer::show()
@@ -174,16 +173,6 @@ namespace GLFW
       }
       print_application_state(elapsedTime, m_DeltaTime);
     }
-
-    clear_application();
-  }
-
-  void Basic_viewer::clear_application()
-  {
-    glDeleteBuffers(NB_GL_BUFFERS, m_VBO);
-    glDeleteVertexArrays(NB_VAO_BUFFERS, m_VAO);
-    glfwDestroyWindow(m_Window);
-    glfwTerminate();
   }
 
   void Basic_viewer::make_screenshot(const std::string& filePath)
@@ -191,7 +180,6 @@ namespace GLFW
     draw();
     glfwSwapBuffers(m_Window);
     capture_screenshot(filePath);
-    clear_application();
   }
 
   void Basic_viewer::generate_grid(Line_renderer& renderer, float size, int nbSubdivisions) const 
@@ -266,14 +254,14 @@ namespace GLFW
   void Basic_viewer::initialize_camera()
   {
     vec3f pmin(
-      m_Scene->bounding_box().xmin(),
-      m_Scene->bounding_box().ymin(),
-      m_Scene->bounding_box().zmin());
+      m_Scene.bounding_box().xmin(),
+      m_Scene.bounding_box().ymin(),
+      m_Scene.bounding_box().zmin());
 
     vec3f pmax(
-      m_Scene->bounding_box().xmax(),
-      m_Scene->bounding_box().ymax(),
-      m_Scene->bounding_box().zmax());
+      m_Scene.bounding_box().xmax(),
+      m_Scene.bounding_box().ymax(),
+      m_Scene.bounding_box().zmax());
 
     m_BoundingBox = { pmin, pmax };
 
@@ -334,7 +322,7 @@ namespace GLFW
 
   void Basic_viewer::load_buffer(int i, int location, int gsEnum, int dataCount)
   {
-    const auto& vector = m_Scene->get_array_of_index(gsEnum);
+    const auto& vector = m_Scene.get_array_of_index(gsEnum);
     load_buffer(i, location, vector, dataCount);
   }
 
@@ -353,8 +341,8 @@ namespace GLFW
     // 1) POINT SHADER
 
     glBindVertexArray(m_VAO[VAO_POINTS]);
-    positions = m_Scene->get_array_of_index(Graphics_scene::POS_POINTS); 
-    colors = m_Scene->get_array_of_index(Graphics_scene::COLOR_POINTS);
+    positions = m_Scene.get_array_of_index(Graphics_scene::POS_POINTS); 
+    colors = m_Scene.get_array_of_index(Graphics_scene::COLOR_POINTS);
 
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, colors, 3);
@@ -362,8 +350,8 @@ namespace GLFW
     // 2) SEGMENT SHADER
 
     glBindVertexArray(m_VAO[VAO_SEGMENTS]);
-    positions = m_Scene->get_array_of_index(Graphics_scene::POS_SEGMENTS); 
-    colors = m_Scene->get_array_of_index(Graphics_scene::COLOR_SEGMENTS);
+    positions = m_Scene.get_array_of_index(Graphics_scene::POS_SEGMENTS); 
+    colors = m_Scene.get_array_of_index(Graphics_scene::COLOR_SEGMENTS);
 
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, colors, 3);
@@ -371,8 +359,8 @@ namespace GLFW
     // 3) RAYS SHADER
 
     glBindVertexArray(m_VAO[VAO_RAYS]);
-    positions = m_Scene->get_array_of_index(Graphics_scene::POS_RAYS); 
-    colors = m_Scene->get_array_of_index(Graphics_scene::COLOR_RAYS);
+    positions = m_Scene.get_array_of_index(Graphics_scene::POS_RAYS); 
+    colors = m_Scene.get_array_of_index(Graphics_scene::COLOR_RAYS);
 
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, colors, 3);
@@ -380,8 +368,8 @@ namespace GLFW
     // 4) LINES SHADER
 
     glBindVertexArray(m_VAO[VAO_LINES]);
-    positions = m_Scene->get_array_of_index(Graphics_scene::POS_LINES); 
-    colors = m_Scene->get_array_of_index(Graphics_scene::COLOR_LINES);
+    positions = m_Scene.get_array_of_index(Graphics_scene::POS_LINES); 
+    colors = m_Scene.get_array_of_index(Graphics_scene::COLOR_LINES);
 
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, colors, 3);
@@ -389,11 +377,11 @@ namespace GLFW
     // 5) FACE SHADER
 
     glBindVertexArray(m_VAO[VAO_FACES]);
-    positions = m_Scene->get_array_of_index(Graphics_scene::POS_FACES); 
-    normals = m_Scene->get_array_of_index(
+    positions = m_Scene.get_array_of_index(Graphics_scene::POS_FACES); 
+    normals = m_Scene.get_array_of_index(
       m_FlatShading ? Graphics_scene::FLAT_NORMAL_FACES : Graphics_scene::SMOOTH_NORMAL_FACES
     );
-    colors = m_Scene->get_array_of_index(Graphics_scene::COLOR_FACES);
+    colors = m_Scene.get_array_of_index(Graphics_scene::COLOR_FACES);
 
     load_buffer(bufn++, 0, positions, 3);
     load_buffer(bufn++, 1, normals, 3);
@@ -619,7 +607,7 @@ namespace GLFW
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    vec4f color = color_to_normalized_vec4(m_NormalsMonoColor);
+    vec4f color = color_to_normalized_vec4(m_DefaultColorNormals);
     m_ShaderNormal->set_mat4f("u_Mv", m_ViewMatrix.data());
     if (m_UseNormalMonoColor)
     {
@@ -806,7 +794,7 @@ namespace GLFW
     m_ShaderFace->set_float("u_RenderingMode", static_cast<float>(mode));
 
     glBindVertexArray(m_VAO[VAO_FACES]);
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_FACES));
+    glDrawArrays(GL_TRIANGLES, 0, m_Scene.number_of_elements(Graphics_scene::POS_FACES));
   }
 
   void Basic_viewer::draw_rays()
@@ -817,7 +805,7 @@ namespace GLFW
 
     glLineWidth(m_SizeRays);
     glBindVertexArray(m_VAO[VAO_RAYS]);
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_RAYS));
+    glDrawArrays(GL_LINES, 0, m_Scene.number_of_elements(Graphics_scene::POS_RAYS));
     glLineWidth(1.0);
   }
 
@@ -830,7 +818,7 @@ namespace GLFW
     }
 
     glBindVertexArray(m_VAO[VAO_POINTS]);
-    glDrawArrays(GL_POINTS, 0, m_Scene->number_of_elements(Graphics_scene::POS_POINTS));
+    glDrawArrays(GL_POINTS, 0, m_Scene.number_of_elements(Graphics_scene::POS_POINTS));
   }
 
   void Basic_viewer::draw_lines()
@@ -841,7 +829,7 @@ namespace GLFW
 
     glLineWidth(m_SizeLines);
     glBindVertexArray(m_VAO[VAO_LINES]);
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_LINES));
+    glDrawArrays(GL_LINES, 0, m_Scene.number_of_elements(Graphics_scene::POS_LINES));
     glLineWidth(1.0);
   }
 
@@ -855,7 +843,7 @@ namespace GLFW
 
     glDepthFunc(GL_LEQUAL);
     glBindVertexArray(m_VAO[VAO_SEGMENTS]);
-    glDrawArrays(GL_LINES, 0, m_Scene->number_of_elements(Graphics_scene::POS_SEGMENTS));
+    glDrawArrays(GL_LINES, 0, m_Scene.number_of_elements(Graphics_scene::POS_SEGMENTS));
   }
 
 
@@ -891,7 +879,7 @@ namespace GLFW
     glDepthFunc(GL_LEQUAL);
     glBindVertexArray(m_VAO[VAO_FACES]);
     glLineWidth(m_SizeNormals);
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_FACES));
+    glDrawArrays(GL_TRIANGLES, 0, m_Scene.number_of_elements(Graphics_scene::POS_FACES));
   }
 
   void Basic_viewer::draw_triangles()
@@ -900,14 +888,14 @@ namespace GLFW
 
     glDepthFunc(GL_LEQUAL);
     glBindVertexArray(m_VAO[VAO_FACES]);
-    glDrawArrays(GL_TRIANGLES, 0, m_Scene->number_of_elements(Graphics_scene::POS_FACES));
+    glDrawArrays(GL_TRIANGLES, 0, m_Scene.number_of_elements(Graphics_scene::POS_FACES));
   }
 
   void Basic_viewer::initialize_and_load_clipping_plane()
   {
-    float size = ((m_Scene->bounding_box().xmax() - m_Scene->bounding_box().xmin()) +
-                  (m_Scene->bounding_box().ymax() - m_Scene->bounding_box().ymin()) +
-                  (m_Scene->bounding_box().zmax() - m_Scene->bounding_box().zmin()));
+    float size = ((m_Scene.bounding_box().xmax() - m_Scene.bounding_box().xmin()) +
+                  (m_Scene.bounding_box().ymax() - m_Scene.bounding_box().ymin()) +
+                  (m_Scene.bounding_box().zmax() - m_Scene.bounding_box().zmin()));
 
     const unsigned int NB_SUBDIVISIONS = 30;
 
@@ -989,12 +977,25 @@ namespace GLFW
                   << "Camera constraint axis: "     << m_Camera.get_constraint_axis_str()                      << "\n\33[2K"     
                   << "CP translation speed: "       << m_ClippingPlane.get_translation_speed()                 << "    "            
                   << "CP rotation speed: "          << std::round(m_ClippingPlane.get_rotation_speed())        << "    "     
-                  << "CP constraint axis: "         << m_ClippingPlane.get_constraint_axis_str()               << "\n\33[2K"     
+                  << "CP constraint axis: "         << m_ClippingPlane.get_constraint_axis_str()               << "\n\33[2K" 
+                  << "Reversed normals : "          << (m_InverseNormal ? "TRUE" : "FALSE")                    << "    " 
+                  << "Face normal : "               << (m_DisplayFaceNormal ? "TRUE" : "FALSE")                << "    " 
+                  << "Shading : "                   << (m_FlatShading ? "FLAT" : "SMOOTH")                          << "\n\33[2K"
+                  << "Draw faces: "                 << (m_DrawFaces ? "TRUE" : "FALSE")                        << "    " 
+                  << "Draw edges: "                 << (m_DrawEdges ? "TRUE" : "FALSE")                        << "    " 
+                  << "Draw vertices: "              << (m_DrawVertices ? "TRUE" : "FALSE")                     << "\n\33[2K"
+                  << "Draw edges as cylinder: "     << (m_DrawCylinderEdge ? "TRUE" : "FALSE")                 << "    " 
+                  << "Draw vertices as sphere: "    << (m_DrawSphereVertex ? "TRUE" : "FALSE")                 << "\n\33[2K"    
+                  << "Draw lines: "                 << (m_DrawLines ? "TRUE" : "FALSE")                        << "    " 
+                  << "Draw rays: "                  << (m_DrawRays ? "TRUE" : "FALSE")                         << "    " 
+                  << "Draw normals: "               << (m_DrawNormals ? "TRUE" : "FALSE")                      << "\n\33[2K"  
+                  << "Use default color: "          << (m_UseDefaultColor ? "TRUE" : "FALSE")                  << "    " 
+                  << "Number of key frames: "       << m_AnimationController.number_of_key_frames()            << "\n\33[2K"     
                   << "Light color: ("               << m_AmbientColor.x()                                      << ", " 
                                                     << m_AmbientColor.y()                                      << ", " 
                                                     << m_AmbientColor.z()                                      << ")\n\33[2K"     
                   << "Size of vertices: "           << m_SizeVertices << "    Size of edges: " <<  m_SizeEdges << "    "            
-                  << "\033[F\033[F\033[F\033[F\r"   << std::flush;
+                  << "\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\r"   << std::flush;
       }
     }
   }
@@ -1015,12 +1016,23 @@ namespace GLFW
  
   void Basic_viewer::exit_app() 
   {
-    clear_application();
-
-    std::cout << "\n\n\n\n\n\nAPPLICATION IS CLOSING" << std::endl;
+    std::cout << "\n\n\n\n\n\n\n\n\n\n\nAPPLICATION IS CLOSING" << std::endl;
     exit(EXIT_SUCCESS);
   }
 
+  void Basic_viewer::check_geometry_feature_availability()
+  {
+    int maxGeometryOutputVertices = 0;
+    glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &maxGeometryOutputVertices);
+    int maxGeometryOutputComponents = 0;
+    glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &maxGeometryOutputComponents);
+
+    if (maxGeometryOutputVertices < 128 || maxGeometryOutputComponents < 1024)
+    {
+      std::cout << "Cylinder edge and sphere vertex feature disabled! (maxGeometryOutputVertices=" << maxGeometryOutputVertices << ", maxGeometryOutputComponents=" << maxGeometryOutputComponents << ")\n";
+      m_GeometryFeatureEnabled = false; 
+    }
+  }
 
   void Basic_viewer::double_click_event(int btn)
   {
@@ -1121,7 +1133,8 @@ namespace GLFW
       exit_app();
     case PRINT_APPLICATION_STATE:
       m_PrintApplicationState = !m_PrintApplicationState; 
-      std::cout << "\33[2K" << "\n\33[2K" << "\n\33[2K" << "\n\33[2K" << "\n\33[2K" << "\033[F\033[F\033[F\033[F\r" << std::flush;
+      std::cout << "\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K"
+                << "\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\r" << std::flush;
       break;
     /*WINDOW*/
     case FULLSCREEN:
@@ -1161,7 +1174,7 @@ namespace GLFW
       break;
     case INVERSE_NORMAL:
       m_InverseNormal = !m_InverseNormal;
-      m_Scene->reverse_all_normals();
+      m_Scene.reverse_all_normals();
       m_AreBuffersInitialized = false;
       break;
     case MONO_COLOR:

@@ -51,6 +51,8 @@ public:
   inline vec3f get_translation() const { return m_InterpolatedTranslation; }
 
   inline float get_frame() const { return m_CurrentFrameNumber; }
+
+  inline size_t number_of_key_frames() const { return m_KeyFrames.size(); }
   
 private:
   AnimationKeyFrame key_frame_interpolation(const float time);

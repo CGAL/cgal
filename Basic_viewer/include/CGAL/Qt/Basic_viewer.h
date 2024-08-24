@@ -100,10 +100,10 @@ public:
     m_inverse_normal(inverse_normal),
     m_draw_text(draw_text),
     m_no_2D_mode(no_2D_mode),
-    m_size_points(3.),
-    m_size_edges(1.1),
-    m_size_rays(3.1),
-    m_size_lines(3.1),
+    m_size_points(1.0),
+    m_size_edges(1.0),
+    m_size_rays(1.0),
+    m_size_lines(1.0),
     m_size_normals(0.2),
     m_height_factor_normals(0.02),
     m_normals_default_color(220, 60, 20),
@@ -137,6 +137,7 @@ public:
     setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_N, "Toggle face/vertex normals for normal display");
     setKeyDescription(::Qt::ControlModifier, ::Qt::Key_M, "Toggle normals mono color");
     setKeyDescription(::Qt::ControlModifier, ::Qt::Key_T, "Toggle triangles display");
+    setKeyDescription(::Qt::Key_F2, "Take a screenshot");
 
     // Add custom mouse description
     setMouseBindingDescription(::Qt::Key_C, ::Qt::ControlModifier, ::Qt::LeftButton,
@@ -207,8 +208,19 @@ public:
   { m_draw_faces = b; }
   void use_default_color(bool b)
   { m_use_default_color = b; }
+  void flat_shading(bool b)
+  { m_flat_shading = b; }
   void draw_text(bool b)
   { m_draw_text = b; }
+
+  void size_vertices(float s)
+  { m_size_vertices = s; }
+  void size_edges(float s)
+  { m_size_edges = s; }
+  void size_rays(float s)
+  { m_size_rays = s; }
+  void size_lines(float s)
+  { m_size_lines = s; }
 
   void toggle_draw_vertices()
   { m_draw_vertices = !m_draw_vertices; }
@@ -224,6 +236,8 @@ public:
   { m_use_default_color = !m_use_default_color; }
   void toggle_use_normal_default_color()
   { m_use_normal_default_color = !m_use_normal_default_color; }
+  void toggle_flat_shading()
+  { m_flat_shading = !m_flat_shading; }
   void toggle_draw_text()
   { m_draw_text = !m_draw_text; }
   bool draw_vertices() const
@@ -240,24 +254,10 @@ public:
   { return m_use_default_color; }
   bool reverse_normal() const
   { return m_inverse_normal; }
+  bool flat_shading() const
+  { return m_flat_shading; }
   bool draw_text() const
   { return m_draw_text; }
-
-  inline 
-  const CGAL::IO::Color& vertices_default_color() const 
-  { return gBuffer.get_default_color_point(); }
-  inline 
-  const CGAL::IO::Color& edges_default_color() const 
-  { return gBuffer.get_default_color_segment(); }
-  inline 
-  const CGAL::IO::Color& rays_default_color() const 
-  { return gBuffer.get_default_color_ray(); }
-  inline 
-  const CGAL::IO::Color& lines_default_color() const 
-  { return gBuffer.get_default_color_line(); }
-  inline 
-  const CGAL::IO::Color& faces_default_color() const 
-  { return gBuffer.get_default_color_face(); }
 
   Local_kernel::Plane_3 clipping_plane() const
   {
@@ -272,12 +272,6 @@ public:
 
   const Graphics_scene& graphics_scene() const
   { return gBuffer; }
-
-  void make_screenshot()
-  {
-    draw();
-    capture_screenshot();
-  }
 
   virtual void redraw()
   {
@@ -507,46 +501,96 @@ public:
 
     if(m_draw_rays)
     {
-      rendering_program_p_l.bind();
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+        rendering_program_p_l.bind();
 
-      if (m_use_default_color)
+        if (m_use_default_color)
+        {
+          auto ray_color = gBuffer.get_default_color_ray();
+          color = QVector3D((double)ray_color.red()/(double)255,
+                            (double)ray_color.green()/(double)255,
+                            (double)ray_color.blue()/(double)255);
+          rendering_program_p_l.setUniformValue("u_DefaultColor", color); 
+          rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1)); 
+        }
+        else 
+        {
+          rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); 
+        }
+        rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_rays));
+        rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
+
+        rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
+        rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
+        rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
+
+        vao[VAO_RAYS].bind();
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_RAYS)));
+      };
+
+      enum {
+        DRAW_ALL = -1, // draw all
+        DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+        DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+      };
+
+      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
       {
-        auto ray_color = gBuffer.get_default_color_ray();
-        color = QVector3D((double)ray_color.red()/(double)255,
-                          (double)ray_color.green()/(double)255,
-                          (double)ray_color.blue()/(double)255);
-        rendering_program_p_l.setUniformValue("u_DefaultColor", color); 
-        rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1)); 
+        renderer(DRAW_INSIDE_ONLY);
       }
-      else 
+      else
       {
-        rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); 
+        renderer(DRAW_ALL);
       }
 
-      vao[VAO_RAYS].bind();
-      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_RAYS)));
+      rendering_program_p_l.release();
     }
 
     if(m_draw_lines)
     {
-      rendering_program_p_l.bind();
+      auto renderer = [this, &color, &clipPlane, &plane_point](float rendering_mode) {
+        rendering_program_p_l.bind();
 
-      if (m_use_default_color)
+        if (m_use_default_color)
+        {
+          auto line_color = gBuffer.get_default_color_line();
+          color = QVector3D((double)line_color.red()/(double)255,
+                            (double)line_color.green()/(double)255,
+                            (double)line_color.blue()/(double)255);
+          rendering_program_p_l.setUniformValue("u_DefaultColor", color); 
+          rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1)); 
+        }
+        else 
+        {
+          rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); 
+        }
+        rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_lines));
+        rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
+
+        rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
+        rendering_program_p_l.setUniformValue("u_PointPlane", plane_point);
+        rendering_program_p_l.setUniformValue("u_RenderingMode", rendering_mode);
+
+        vao[VAO_LINES].bind();
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_LINES)));
+      };
+
+      enum {
+        DRAW_ALL = -1, // draw all
+        DRAW_INSIDE_ONLY, // draw only the part inside the clipping plane
+        DRAW_OUTSIDE_ONLY // draw only the part outside the clipping plane
+      };
+
+      if (m_use_clipping_plane == CLIPPING_PLANE_SOLID_HALF_ONLY)
       {
-        auto line_color = gBuffer.get_default_color_line();
-        color = QVector3D((double)line_color.red()/(double)255,
-                          (double)line_color.green()/(double)255,
-                          (double)line_color.blue()/(double)255);
-        rendering_program_p_l.setUniformValue("u_DefaultColor", color); 
-        rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(1)); 
+        renderer(DRAW_INSIDE_ONLY);
       }
-      else 
+      else
       {
-        rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); 
+        renderer(DRAW_ALL);
       }
 
-      vao[VAO_LINES].bind();
-      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(gBuffer.number_of_elements(GS::POS_LINES)));
+      rendering_program_p_l.release();
     }
 
     // Fix Z-fighting by drawing faces at a depth
@@ -1070,8 +1114,8 @@ protected:
     // 1) POINT SHADER
 
     vao[VAO_POINTS].bind(); 
-    positions = gBuffer.get_array_of_index(Graphics_scene::POS_POINTS); 
-    colors = gBuffer.get_array_of_index(Graphics_scene::COLOR_POINTS);
+    positions = gBuffer.get_array_of_index(GS::POS_POINTS); 
+    colors = gBuffer.get_array_of_index(GS::COLOR_POINTS);
 
     CGAL_assertion(bufn<NB_GL_BUFFERS);
     buffers[bufn].bind();
@@ -1089,8 +1133,8 @@ protected:
     // 2) SEGMENT SHADER
 
     vao[VAO_SEGMENTS].bind(); 
-    positions = gBuffer.get_array_of_index(Graphics_scene::POS_SEGMENTS); 
-    colors = gBuffer.get_array_of_index(Graphics_scene::COLOR_SEGMENTS);
+    positions = gBuffer.get_array_of_index(GS::POS_SEGMENTS); 
+    colors = gBuffer.get_array_of_index(GS::COLOR_SEGMENTS);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
@@ -1109,8 +1153,8 @@ protected:
     // 3) RAYS SHADER
 
     vao[VAO_RAYS].bind(); 
-    positions = gBuffer.get_array_of_index(Graphics_scene::POS_RAYS); 
-    colors = gBuffer.get_array_of_index(Graphics_scene::COLOR_RAYS);
+    positions = gBuffer.get_array_of_index(GS::POS_RAYS); 
+    colors = gBuffer.get_array_of_index(GS::COLOR_RAYS);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
@@ -1129,8 +1173,8 @@ protected:
     // 4) LINES SHADER
 
     vao[VAO_LINES].bind(); 
-    positions = gBuffer.get_array_of_index(Graphics_scene::POS_LINES); 
-    colors = gBuffer.get_array_of_index(Graphics_scene::COLOR_LINES);
+    positions = gBuffer.get_array_of_index(GS::POS_LINES); 
+    colors = gBuffer.get_array_of_index(GS::COLOR_LINES);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
@@ -1149,11 +1193,11 @@ protected:
     // 5) FACE SHADER
 
     vao[VAO_FACES].bind(); 
-    positions = gBuffer.get_array_of_index(Graphics_scene::POS_FACES); 
+    positions = gBuffer.get_array_of_index(GS::POS_FACES); 
     normals = gBuffer.get_array_of_index(
-      m_flat_shading ? Graphics_scene::FLAT_NORMAL_FACES : Graphics_scene::SMOOTH_NORMAL_FACES
+      m_flat_shading ? GS::FLAT_NORMAL_FACES : GS::SMOOTH_NORMAL_FACES
     );
-    colors = gBuffer.get_array_of_index(Graphics_scene::COLOR_FACES);
+    colors = gBuffer.get_array_of_index(GS::COLOR_FACES);
 
     ++bufn;
     CGAL_assertion(bufn<NB_GL_BUFFERS);
@@ -1711,7 +1755,7 @@ protected:
       }
       else if ((e->key()==::Qt::Key_F2))
       {
-        capture_screenshot();
+        capture_screenshot(QString("./screenshot.png"));
         displayMessage(QString("Screenshot saved in ./screenshot"));
       }
       else
@@ -1754,15 +1798,14 @@ protected:
     return text;
   }
 
-  void capture_screenshot()
+  void capture_screenshot(const QString& file_path)
   {
     QScreen *screen;
     screen = QApplication::primaryScreen();
 
     auto geom = screen->geometry();
     auto qpx_pixmap = screen->grabWindow(this->winId());
-    QString filePath = QDir::currentPath()+"/screenshot.png";
-    qpx_pixmap.save(filePath);
+    qpx_pixmap.save(file_path);
   }
 
 public: 
@@ -1805,7 +1848,7 @@ protected:
   std::vector<BufferType> m_array_for_clipping_plane;
 
   double m_size_points;
-  double m_size_edges;
+  double m_size_edges; 
   double m_size_rays;
   double m_size_lines;
   double m_size_normals; 

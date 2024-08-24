@@ -5,7 +5,7 @@ namespace CGAL {
 /*!
  \ingroup PkgBasicViewerClasses
 
-The class `Basic_viewer` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements are added through the scene. This class requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+The class `Basic_viewer` is a Qt widget based on `QGLViewer` that allows to visualize 3D elements: points, segments, triangles, rays and lines. This class stores a reference to a `Graphics_scene`. Elements are added through the scene. This class requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER_QT` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` or `CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER` & `CGAL_USE_BASIC_VIEWER_QT`.
 
 CGAL::QGLViewer is our internal fork of <a href="https://github.com/GillesDebunne/libQGLViewer">QGLViewer class</a> which is <em>A versatile 3D OpenGL viewer based on QOpenGLWidget</em>.
 */
@@ -17,6 +17,18 @@ public:
   Basic_viewer(QWidget* parent,
                const Graphics_scene& scene,
                const char* title="");
+
+  /// Set size of points 
+  void size_points(float s);
+
+  /// Set size of edges 
+  void size_edges(float s); 
+
+  /// Set size of rays 
+  void size_rays(float s); 
+
+  /// Set size of lines 
+  void size_lines(float s); 
 
   /// enables or disables the drawing of vertices.
   void draw_vertices(bool b);
@@ -34,25 +46,13 @@ public:
   void draw_faces(bool b);
 
   /// enables or disables the use of only one color (if `b` is `true`) or the use of multiple colors (if `b` is `false`).
-  void use_mono_color(bool b);
+  void use_default_color(bool b);
+
+  /// enables or disables the use of flat shading (if `b` is `true`) or the use of smooth shading (if `b` is `false`).
+  void flat_shading(bool b);
 
   /// enables or disables the drawing of texts.
   void draw_text(bool b);
-
-  /// sets the color used for vertices in mono color mode.
-  void vertices_mono_color(const CGAL::IO::Color& c);
-
-  /// sets the color used for edges in mono color mode.
-  void edges_mono_color(const CGAL::IO::Color& c);
-
-  /// sets the color used for rays in mono color mode.
-  void rays_mono_color(const CGAL::IO::Color& c);
-
-  /// sets the color used for lines in mono color mode.
-  void lines_mono_color(const CGAL::IO::Color& c);
-
-  /// sets the color used for faces in mono color mode.
-  void faces_mono_color(const CGAL::IO::Color& c);
 
   /// toggles the drawing of vertices.
   void toggle_draw_vertices();
@@ -70,7 +70,10 @@ public:
   void toggle_draw_faces();
 
   /// toggles the use of mono color mode.
-  void toggle_use_mono_color();
+  void toggle_use_default_color();
+
+  /// toggles the use of flat shading.
+  void toggle_flat_shading();
 
   /// toggles the drawing of text.
   void toggle_draw_text();
@@ -91,28 +94,13 @@ public:
   bool draw_faces() const;
 
   /// returns `true` if mono color mode is used.
-  bool use_mono_color() const;
+  bool use_default_color() const;
 
   /// returns `true` if normals are reversed.
   bool reverse_normal() const;
 
   /// returns `true` if text are drawn.
   bool draw_text() const;
-
-  /// returns the mono color used for vertices.
-  const CGAL::IO::Color& vertices_mono_color() const;
-
-  /// returns the mono color used for edges.
-  const CGAL::IO::Color& edges_mono_color() const;
-
-  /// returns the mono color used for rays.
-  const CGAL::IO::Color& rays_mono_color() const;
-
-  /// returns the mono color used for lines.
-  const CGAL::IO::Color& lines_mono_color() const;
-
-  /// returns the mono color used for faces.
-  const CGAL::IO::Color& faces_mono_color() const;
 
   /// returns `true` if the clipping plane is enabled.
   bool clipping_plane_enabled() const;
@@ -144,7 +132,7 @@ public:
 
 The class `QApplication_and_basic_viewer` regroups a `Basic_viewer` and Qt `QApplication`. The `QApplication` is created in the constructor, but started by the `run()` method. This allows for example users to modify the `on_key_pressed` method of the `Basic_viewer` to define their own behavior.
 
-This class requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+This class requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` or `CGAL_USE_BASIC_VIEWER_QT` is defined. Linking with the cmake target `CGAL::CGAL_Basic_viewer` or `CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER` & `CGAL_USE_BASIC_VIEWER_QT`.
 
 */
 class QApplication_and_basic_viewer

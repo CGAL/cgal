@@ -19,6 +19,8 @@ create_single_source_cgal_program("draw_several_windows.cpp")
 create_single_source_cgal_program("draw_surface_mesh_height.cpp")
 create_single_source_cgal_program("draw_surface_mesh_small_faces.cpp")
 create_single_source_cgal_program("draw_surface_mesh_vcolor.cpp")
+create_single_source_cgal_program("draw_voronoi_diagram_2.cpp")
+create_single_source_cgal_program("basic_viewer_glfw_screenshot.cpp")
 
 if(CGAL_Qt6_FOUND)
   #link it with the required CGAL libraries
@@ -36,7 +38,8 @@ if(CGAL_GLFW_FOUND)
   #link it with the required CGAL libraries
   target_link_libraries(draw_mesh_and_points PUBLIC CGAL::CGAL_Basic_viewer_GLFW)
   target_link_libraries(draw_surface_mesh_height PUBLIC CGAL::CGAL_Basic_viewer_GLFW)
-else()
+  target_link_libraries(basic_viewer_glfw_screenshot PUBLIC CGAL::CGAL_Basic_viewer_GLFW)
+  else()
   message("CGAL_GLFW not configured: examples that require GLFW will not be compiled.")
 endif()
 

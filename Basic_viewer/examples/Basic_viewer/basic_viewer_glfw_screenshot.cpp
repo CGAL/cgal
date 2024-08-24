@@ -64,11 +64,15 @@ int main(int argc, char* argv[])
   // CGAL::draw(sm, Colored_faces_given_height(sm));
 
   CGAL::Graphics_scene buffer;
-  add_to_graphics_scene(sm, buffer);
-  CGAL::Basic_viewer bv(&buffer, "Surface_mesh Basic Viewer"); 
-  bv.make_screenshot();
-  // draw_graphics_scene(buffer, "Surface_mesh Basic Viewer");
+  add_to_graphics_scene(sm, buffer, Colored_faces_given_height(sm));
+  CGAL::Basic_viewer bv(buffer, "Basic viewer"); 
 
+  using DisplayMode = CGAL::GLFW::Basic_viewer::DisplayMode;
+
+  bv.camera_orientation({0, 0, 1}, 180);
+  bv.display_mode(DisplayMode::CLIPPING_PLANE_SOLID_HALF_WIRE_HALF);
+  bv.clipping_plane_orientation({-1, 0, 0});
+  bv.make_screenshot("./screenshot.png");
 
   return EXIT_SUCCESS;
 }

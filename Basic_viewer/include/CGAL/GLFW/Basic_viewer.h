@@ -69,7 +69,7 @@ namespace GLFW
 
   public:
     Basic_viewer(
-      const Graphics_scene* graphicScene,
+      const Graphics_scene& graphicScene,
       const char* title = "CGAL Basic Viewer (GLFW)",
       bool drawVertices = false,
       bool drawEdges = true,
@@ -81,46 +81,54 @@ namespace GLFW
       bool flatShading = true
     );
 
+    ~Basic_viewer();
+
     void show();
     void initialize(bool screenshotOnly=false);
     void make_screenshot(const std::string& filePath);
 
-    void clear_application();
-
-    /***** Getter & Setter ****/
-
-    // Setter Section
-    inline void set_scene(const Graphics_scene* scene)
-    {
-      m_Scene = scene;
-      m_AreBuffersInitialized = false;
-    }
+    /***** Setter ****/
 
     inline void window_size(const vec2f &size) { window_size_callback(m_Window, size.x(), size.y()); }
 
-    inline void size_points(const float size) { m_SizeVertices = size; }
-    inline void size_edges(const float size) { m_SizeEdges = size; }
-    inline void size_rays(const float size) { m_SizeRays = size; }
-    inline void size_lines(const float size) { m_SizeLines = size; }
+    inline void size_points(float s) { m_SizeVertices = s; }
+    inline void size_edges(float s) { m_SizeEdges = s; }
+    inline void size_rays(float s) { m_SizeRays = s; }
+    inline void size_lines(float s) { m_SizeLines = s; }
 
-    inline void light_position(const vec4f& pos) { m_LightPosition = pos; }
-    inline void light_ambient(const vec4f& color) { m_AmbientColor = color; }
-    inline void light_diffuse(const vec4f& color) { m_DiffuseColor = color; }
-    inline void light_specular(const vec4f& color) { m_SpecularColor = color; }
-    inline void light_shininess(const float shininess) { m_Shininess = shininess; }
+    inline void light_position(const vec4f& p) { m_LightPosition = p; }
+    inline void light_ambient(const vec4f& c) { m_AmbientColor = c; }
+    inline void light_diffuse(const vec4f& c) { m_DiffuseColor = c; }
+    inline void light_specular(const vec4f& c) { m_SpecularColor = c; }
+    inline void light_shininess(float s) { m_Shininess = s; }
+
+    inline void default_color_normals(const CGAL::IO::Color& c) { m_DefaultColorNormals = c; }
+    inline void normal_height_factor(float h) { m_NormalHeightFactor = h; }
 
     inline void draw_vertices(bool b) { m_DrawVertices = b; }
     inline void draw_edges(bool b) { m_DrawEdges = b; }
     inline void draw_rays(bool b) { m_DrawRays = b; }
     inline void draw_lines(bool b) { m_DrawLines = b; }
     inline void draw_faces(bool b) { m_DrawFaces = b; }
-    inline void use_mono_color(bool b) { m_UseDefaultColor = b; }
-    inline void inverse_normal(bool b) { m_InverseNormal = b; }
-    inline void flat_shading(bool b) { m_FlatShading = b; }
     inline void draw_world_axis(bool b) { m_DrawWorldAxis = b; }
     inline void draw_xy_grid(bool b) { m_DrawXYGrid = b; }
 
-    inline void display_mode(DisplayMode mode) { m_DisplayMode = mode; }
+    inline void toggle_draw_vertices() { m_DrawVertices = !m_DrawVertices; }
+    inline void toggle_draw_edges() { m_DrawEdges = !m_DrawEdges; }
+    inline void toggle_draw_rays() { m_DrawRays = !m_DrawRays; }
+    inline void toggle_draw_lines() { m_DrawLines = !m_DrawLines; }
+    inline void toggle_draw_faces() { m_DrawFaces = !m_DrawFaces; }
+    inline void toggle_draw_world_axis() { m_DrawWorldAxis = !m_DrawWorldAxis; }
+    inline void toggle_draw_xy_grid() { m_DrawXYGrid = !m_DrawXYGrid; }
+    inline void toggle_use_default_color() { m_UseDefaultColor = !m_UseDefaultColor; }
+    inline void toggle_print_application_state() { m_PrintApplicationState = !m_PrintApplicationState; }
+
+    inline void print_application_state(bool b) { m_PrintApplicationState = b; }
+    inline void use_default_color(bool b) { m_UseDefaultColor = b; }
+    inline void reverse_normal(bool b) { m_InverseNormal = b; }
+    inline void flat_shading(bool b) { m_FlatShading = b; }
+
+    inline void display_mode(DisplayMode m) { m_DisplayMode = m; }
     inline void draw_clipping_plane(bool b) { m_DrawClippingPlane = b; }
 
     inline void two_dimensional() { m_Camera.set_orthographic(); } 
@@ -128,30 +136,25 @@ namespace GLFW
     inline void azerty_layout() { set_keyboard_layout(KeyboardLayout::AZERTY); }
     inline void animation_duration(std::chrono::milliseconds duration) { m_AnimationController.set_duration(duration); }
 
-    inline void scene_radius(float radius) { m_Camera.set_radius(radius); }
-    inline void scene_center(const vec3f& center) { m_Camera.set_center(center); }
+    inline void scene_radius(float r) { m_Camera.set_radius(r); }
+    inline void scene_center(const vec3f& c) { m_Camera.set_center(c); }
     inline void scene_center(float x, float y, float z) { m_Camera.set_center({x, y, z}); }
-    inline void camera_position(const vec3f& position) { m_Camera.set_position(position); }
+    inline void camera_position(const vec3f& p) { m_Camera.set_position(p); }
     inline void camera_position(float x, float y, float z) { m_Camera.set_position({x, y, z}); }
-    inline void camera_orientation(const vec3f& forward, float upAngle) { m_Camera.set_orientation(forward, upAngle); }
-    inline void zoom(float zoom) { m_Camera.set_size(zoom); }
+    inline void camera_orientation(const vec3f& f, float u) { m_Camera.set_orientation(f, u); }
+    inline void zoom(float z) { m_Camera.set_size(z); }
     
     inline void align_camera_to_clipping_plane() { m_Camera.align_to_plane(m_ClippingPlane.get_normal()); }
-    inline void clipping_plane_orientation(const vec3f& normal) { m_ClippingPlane.set_orientation(normal); } 
+    inline void clipping_plane_orientation(const vec3f& n) { m_ClippingPlane.set_orientation(n); } 
     inline void clipping_plane_translate_along_normal(float t) { m_ClippingPlane.translation(t*.1); } 
     inline void clipping_plane_translate_along_camera_forward(float t) { m_ClippingPlane.translation(m_Camera.get_forward(), t*.1); } 
 
-    // Getter section
+    /******* Getter ********/  
+
     inline vec3f position() const { return m_Camera.get_position(); }
     inline vec3f forward() const { return m_Camera.get_forward(); }
     inline vec3f right() const { return m_Camera.get_right(); }
     inline vec3f up() const { return m_Camera.get_up(); }
-
-    inline const CGAL::IO::Color& vertices_mono_color() const { return m_Scene->get_default_color_point(); }
-    inline const CGAL::IO::Color& edges_mono_color() const { return m_Scene->get_default_color_segment(); }
-    inline const CGAL::IO::Color& rays_mono_color() const { return m_Scene->get_default_color_ray(); }
-    inline const CGAL::IO::Color& lines_mono_color() const { return m_Scene->get_default_color_line(); }
-    inline const CGAL::IO::Color& faces_mono_color() const { return m_Scene->get_default_color_face(); }
 
     inline float size_points() const { return m_SizeVertices; }
     inline float size_edges() const { return m_SizeEdges; }
@@ -169,19 +172,24 @@ namespace GLFW
     inline bool draw_rays() const { return m_DrawRays; }
     inline bool draw_lines() const { return m_DrawLines; }
     inline bool draw_faces() const { return m_DrawFaces; }
-    inline bool use_mono_color() const { return m_UseDefaultColor; }
-    inline bool inverse_normal() const { return m_InverseNormal; }
+    inline bool print_application_state() const { return m_PrintApplicationState; }
+    inline bool use_default_color() const { return m_UseDefaultColor; }
+    inline bool reverse_normal() const { return m_InverseNormal; }
     inline bool flat_shading() const { return m_FlatShading; }
+
+    inline void reverse_all_normals() { m_InverseNormal = !m_InverseNormal; m_Scene.reverse_all_normals(); }
 
     inline bool clipping_plane_enable() const { return m_DisplayMode != DisplayMode::CLIPPING_PLANE_OFF; }
     inline bool is_orthograpic() const { return m_Camera.is_orthographic(); }
-    inline bool is_two_dimensional() const { return !is_orthograpic() && m_Scene->is_two_dimensional(); }
+    inline bool is_two_dimensional() const { return !is_orthograpic() && m_Scene.is_two_dimensional(); }
 
     CGAL::Plane_3<Local_kernel> clipping_plane() const;
 
-    void exit_app();
+    inline const Graphics_scene& graphics_scene() const { return m_Scene; }
 
   private:
+    void exit_app();
+
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void cursor_callback(GLFWwindow* window, double xpos, double ypo);
     static void mouse_btn_callback(GLFWwindow* window, int button, int action, int mods);
@@ -287,7 +295,8 @@ namespace GLFW
   private:
     GLFWwindow* m_Window;
 
-    const Graphics_scene* m_Scene;
+    const Graphics_scene& m_Scene;
+    
     const char* m_Title;
     bool m_DrawVertices { false };
     bool m_DrawEdges { true };
@@ -329,7 +338,7 @@ namespace GLFW
 
     float m_NormalHeightFactor { CGAL_NORMAL_HEIGHT_FACTOR };
 
-    CGAL::IO::Color m_NormalsMonoColor  = CGAL_NORMALS_MONO_COLOR;
+    CGAL::IO::Color m_DefaultColorNormals  = CGAL_NORMALS_MONO_COLOR;
 
     vec4f m_LightPosition { CGAL_LIGHT_POSITION };
     vec4f m_AmbientColor  { CGAL_AMBIENT_COLOR  };
@@ -504,11 +513,13 @@ namespace GLFW
 } // end namespace GLFW
   using GLFW::Basic_viewer;
 
-  inline void draw_graphics_scene(const Graphics_scene& graphics_scene, const char* title="CGAL Basic Viewer (GLFW)")
+  inline 
+  void draw_graphics_scene(const Graphics_scene& graphics_scene, const char* title="CGAL Basic Viewer (GLFW)")
   {
-    Basic_viewer basic_viewer(&graphics_scene, title);
+    Basic_viewer basic_viewer(graphics_scene, title);
     basic_viewer.show();
   } 
+
 } // end namespace CGAL 
 
 #include "Basic_viewer_impl.h"
