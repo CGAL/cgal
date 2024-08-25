@@ -106,24 +106,24 @@ public:
   { return m_buffer_for_points; }
 
   inline 
-  void set_default_color_face(const CGAL::IO::Color& color)  
-  { m_default_color_face = color; }
+  void set_default_color_face(const CGAL::IO::Color& c)  
+  { m_default_color_face = c; }
 
   inline 
-  void set_default_color_point(const CGAL::IO::Color& color)  
-  { m_default_color_point = color; }
+  void set_default_color_point(const CGAL::IO::Color& c)  
+  { m_default_color_point = c; }
 
   inline 
-  void set_default_color_segment(const CGAL::IO::Color& color)  
-  { m_default_color_segment = color; }
+  void set_default_color_segment(const CGAL::IO::Color& c)  
+  { m_default_color_segment = c; }
 
   inline 
-  void set_default_color_ray(const CGAL::IO::Color& color)  
-  { m_default_color_ray = color; }
+  void set_default_color_ray(const CGAL::IO::Color& c)  
+  { m_default_color_ray = c; }
 
   inline 
-  void set_default_color_line(const CGAL::IO::Color& color)  
-  { m_default_color_line = color; }
+  void set_default_color_line(const CGAL::IO::Color& c)  
+  { m_default_color_line = c; }
 
   inline
   const Buffer_for_vao &get_buffer_for_segments() const

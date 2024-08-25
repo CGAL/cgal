@@ -973,6 +973,9 @@ namespace GLFW
         std::cout << "\33[2K"  
                   << std::round(1 / deltaTime)      << " fps    " 
                   << deltaTime*1000                 << " ms\n\33[2K" 
+                  << "Camera type: "                << (m_Camera.is_orbiter() ? "ORBITER" : "FREE_FLY")               << "    " 
+                  << "Camera mode: "                << (m_Camera.is_orthographic() ? "ORTHOGRAPHIC" : "PERSPECTIVE")  << "    " 
+                  << "FOV: "                        << m_Camera.get_fov()                                             << " \n\33[2K" 
                   << "Camera translation speed: "   << m_Camera.get_translation_speed()                        << "    " 
                   << "Camera rotation speed: "      << std::round(m_Camera.get_rotation_speed())               << "    "
                   << "Camera constraint axis: "     << m_Camera.get_constraint_axis_str()                      << "\n\33[2K"     
@@ -985,18 +988,18 @@ namespace GLFW
                   << "Draw faces: "                 << (m_DrawFaces ? "TRUE" : "FALSE")                        << "    " 
                   << "Draw edges: "                 << (m_DrawEdges ? "TRUE" : "FALSE")                        << "    " 
                   << "Draw vertices: "              << (m_DrawVertices ? "TRUE" : "FALSE")                     << "\n\33[2K"
-                  << "Draw edges as cylinder: "     << (m_DrawCylinderEdge ? "TRUE" : "FALSE")                 << "    " 
-                  << "Draw vertices as sphere: "    << (m_DrawSphereVertex ? "TRUE" : "FALSE")                 << "\n\33[2K"    
                   << "Draw lines: "                 << (m_DrawLines ? "TRUE" : "FALSE")                        << "    " 
                   << "Draw rays: "                  << (m_DrawRays ? "TRUE" : "FALSE")                         << "    " 
                   << "Draw normals: "               << (m_DrawNormals ? "TRUE" : "FALSE")                      << "\n\33[2K"  
+                  << "Draw edges as cylinder: "     << (m_DrawCylinderEdge ? "TRUE" : "FALSE")                 << "    " 
+                  << "Draw vertices as sphere: "    << (m_DrawSphereVertex ? "TRUE" : "FALSE")                 << "\n\33[2K"    
                   << "Use default color: "          << (m_UseDefaultColor ? "TRUE" : "FALSE")                  << "    " 
                   << "Number of key frames: "       << m_AnimationController.number_of_key_frames()            << "\n\33[2K"     
                   << "Light color: ("               << m_AmbientColor.x()                                      << ", " 
                                                     << m_AmbientColor.y()                                      << ", " 
                                                     << m_AmbientColor.z()                                      << ")\n\33[2K"     
                   << "Size of vertices: "           << m_SizeVertices << "    Size of edges: " <<  m_SizeEdges << "    "            
-                  << "\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\r"   << std::flush;
+                  << "\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\r"   << std::flush;
       }
     }
   }
@@ -1017,7 +1020,7 @@ namespace GLFW
  
   void Basic_viewer::exit_app() 
   {
-    std::cout << "\n\n\n\n\n\n\n\n\n\n\nAPPLICATION IS CLOSING" << std::endl;
+    std::cout << "\n\n\n\n\n\n\n\n\n\n\n\nAPPLICATION IS CLOSING" << std::endl;
     exit(EXIT_SUCCESS);
   }
 
@@ -1134,8 +1137,8 @@ namespace GLFW
       exit_app();
     case PRINT_APPLICATION_STATE:
       m_PrintApplicationState = !m_PrintApplicationState; 
-      std::cout << "\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K"
-                << "\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\r" << std::flush;
+      std::cout << "\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K\n\33[2K"
+                << "\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\033[F\r" << std::flush;
       break;
     /*WINDOW*/
     case FULLSCREEN:

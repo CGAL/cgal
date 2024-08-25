@@ -72,6 +72,8 @@ public:
   inline float get_radius() const { return m_Radius; }
   inline vec3f get_center() const { return m_Center; }
 
+  inline float get_fov() const { return m_FOV; }
+
   inline quatf get_orientation() const { return m_Orientation; }
 
   inline void set_default_size(float size) { m_DefaultSize = size; }

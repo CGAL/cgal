@@ -100,7 +100,7 @@ public:
     m_display_face_normal(false),
     m_inverse_normal(inverse_normal),
     m_no_2D_mode(no_2D_mode),
-    m_size_points(1.0),
+    m_size_vertices(1.0),
     m_size_edges(1.0),
     m_size_rays(1.0),
     m_size_lines(1.0),
@@ -199,7 +199,7 @@ public:
   /*****SETTERS*****/
 
   inline void size_vertices(float s)
-  { m_size_points = s; }
+  { m_size_vertices = s; }
   inline void size_edges(float s)
   { m_size_edges = s; }
   inline void size_rays(float s)
@@ -344,7 +344,7 @@ public:
           {
             rendering_program_sphere.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); 
           }
-          rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_points*0.002));
+          rendering_program_sphere.setUniformValue("u_Radius", static_cast<GLfloat>(sceneRadius()*m_size_vertices*0.002));
           rendering_program_sphere.setUniformValue("u_ClipPlane",  clipPlane);
           rendering_program_sphere.setUniformValue("u_PointPlane", plane_point);
           rendering_program_sphere.setUniformValue("u_RenderingMode", rendering_mode);
@@ -388,7 +388,7 @@ public:
           {
             rendering_program_p_l.setUniformValue("u_UseDefaultColor", static_cast<GLint>(0)); 
           }
-          rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_points));
+          rendering_program_p_l.setUniformValue("u_PointSize",  GLfloat(m_size_vertices));
           rendering_program_p_l.setUniformValue("u_IsOrthographic", GLint(is_two_dimensional()));
 
           rendering_program_p_l.setUniformValue("u_ClipPlane", clipPlane);
@@ -1642,14 +1642,14 @@ protected:
       }
       else if ((e->key()==::Qt::Key_Plus) && (modifiers.testFlag(::Qt::ControlModifier)))
       {
-        m_size_points+=.5;
-        displayMessage(QString("Size of points=%1.").arg(m_size_points));
+        m_size_vertices+=.5;
+        displayMessage(QString("Size of points=%1.").arg(m_size_vertices));
         update();
       }
       else if ((e->key()==::Qt::Key_Minus) && (modifiers.testFlag(::Qt::ControlModifier)))
       {
-        if (m_size_points>.5) m_size_points-=.5;
-        displayMessage(QString("Size of points=%1.").arg(m_size_points));
+        if (m_size_vertices>.5) m_size_vertices-=.5;
+        displayMessage(QString("Size of points=%1.").arg(m_size_vertices));
         update();
       }
       else if ((e->key()==::Qt::Key_PageUp) && (modifiers==::Qt::NoButton))
@@ -1867,7 +1867,7 @@ protected:
   // filled by users but by the basic viewer.
   std::vector<BufferType> m_array_for_clipping_plane;
 
-  double m_size_points;
+  double m_size_vertices;
   double m_size_edges; 
   double m_size_rays;
   double m_size_lines;
