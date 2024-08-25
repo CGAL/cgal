@@ -297,12 +297,11 @@ namespace CGAL::HexRefinement::TwoRefinement {
   };
 
   // Identifies which 3-cell should be refined
-  using MarkingFunction = std::function<bool(LCC&, Polyhedron&, Dart_handle)>;
-  using SetupFunction = std::function<Grid(Polyhedron&)>;
+  using TrimmingFunction = std::function<bool(LCC&, Dart_handle)>;
+  using MarkingFunction = std::function<bool(LCC&, Dart_handle)>;
 
   struct ExternalRessources {
     Pattern_substituer<LCC> regular_templates, partial_templates;
-    Polyhedron surface;
   };
 
   using PlaneCC = std::vector<Dart_handle>; // One dart per face connected components
@@ -1535,6 +1534,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
         (lcc, dart, signature, f_signature_start);
 
       assert(temp_id < SIZE_T_MAX);
+      nbsub++;
 
       if (temp_id == 0) {
         // lcc.mark_cell<1>(lcc.beta(f_signature_start, 1, 1), l_debug_mark_2);
@@ -1576,6 +1576,9 @@ namespace CGAL::HexRefinement::TwoRefinement {
       Signature signature;
       Dart_handle v_signature_start = vsignature_of_volume(lcc, dart, hdata.template_mark, signature);
       size_type temp_id = substituer.replace_one_volume_from_signature(lcc, dart, signature, v_signature_start);
+      if (temp_id < SIZE_T_MAX)
+        nbsub++;
+
       if (temp_id == 0){
         thread_number_vertex_in_1t_vol(hdata, v_signature_start);
       }
@@ -2469,7 +2472,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       current_info = DartInfo::VolumeAttrValue();
 
       // Reevaluate the identification status of those who were identified
-      if (old_info.type == VolumeType::IDENTIFIED && cellIdentifier(lcc, hdata.ext->surface, it->dart()))
+      if (old_info.type == VolumeType::IDENTIFIED && cellIdentifier(lcc, it->dart()))
         current_info.type = VolumeType::IDENTIFIED;
     }
 
@@ -2956,7 +2959,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       auto& vol_attr = get_or_create_attr<3>(lcc, dart)->info();
 
       // Mark those who are identified
-      if (cellIdentifier(lcc, hdata.ext->surface, dart))
+      if (cellIdentifier(lcc, dart))
         vol_attr.type = VolumeType::IDENTIFIED;
     }
   }
@@ -2981,7 +2984,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       auto& vol_attr = lcc.attribute<3>(dart)->info();
 
       // Mark those who are identified
-      if (vol_attr.owned && cellIdentifier(lcc, proc.ext->surface, dart))
+      if (vol_attr.owned && cellIdentifier(lcc, dart))
         vol_attr.type = VolumeType::IDENTIFIED;
     }
   }
@@ -3330,10 +3333,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
         thread_communicate_cells_id_and_3t(hdata, rdata);
 
-        debug_stream.push(l_thread_id);
-      std::this_thread::sleep_for(std::chrono::hours(1));
-
-
         lcc.unmark_all(hdata.identified_mark);
         lcc.unmark_all(hdata.template_mark);
       }
@@ -3414,19 +3413,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
     partial_3_template.load_additional_vpattern(CGAL::data_file_path("hexmeshing/vpattern/partial/pattern3.moka"), mark_3template_partial_volume);
   }
 
-  void load_surface(const std::string& file, Polyhedron& out_surface) {
-    std::ifstream off_file(file);
-    CGAL_precondition_msg(off_file.good(), ("Input .off couldn't be read : " + file).c_str());
-
-    Polyhedron surface;
-    off_file>>out_surface;
-  }
-
-  void load_resources(const std::string& file, ExternalRessources& res){
-    load_patterns(res.regular_templates, res.partial_templates);
-    load_surface(file, res.surface);
-  }
-
   bool is_intersect(double x1, double y1, double z1,
                   double x2, double y2, double z2,
                   double x3, double y3, double z3,
@@ -3475,31 +3461,31 @@ namespace CGAL::HexRefinement::TwoRefinement {
                         bbox.xmax(), bbox.ymax(), bbox.zmax(), t);
   }
 
-  auto simple_voxelisation_setup(Tree& tree) {
-    return [&](Polyhedron& poly){
-      // Triangulate before AABB
-      CGAL::Polygon_mesh_processing::triangulate_faces(poly);
-      // Compute AABB tree
-      tree.insert(faces(poly).first, faces(poly).second, poly);
-      tree.accelerate_distance_queries();
-      tree.bbox();
+  auto is_volume_intersecting_poly(Tree& tree) {
+    return [&](LCC& lcc, Dart_handle dart){
+      return is_intersect(lcc, dart, tree);
     };
   }
 
-  auto mark_intersecting_volume_with_poly(Tree& tree) {
-    return [&](LCC& lcc, Polyhedron& poly, Dart_handle dart){
-      return is_intersect(lcc, dart, tree);
-    };
+  void trim_excedent_volumes(LCC& lcc, TrimmingFunction func){
+    auto volumes = lcc.one_dart_per_cell<3>();
+    for (auto it = volumes.begin(); it != volumes.end(); it++){
+      if (func(lcc, it)) continue;
+      lcc.contract_cell<3>(it);
+    }
   }
 }
 
 namespace CGAL::HexRefinement {
 
-  void render_two_refinement_result(const LCC& lcc, Tree& aabb, const char* title = "TwoRefinement Result"){
+  void render_two_refinement_result(const LCC& lcc, Tree& aabb, bool trim = true, const char* title = "TwoRefinement Result"){
     LCCSceneOptions<LCC> gso;
 
+    gso.volume_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
+      return rand_color_from_dart(lcc, dart);
+    };
     gso.draw_volume = [&](const LCC& lcc, LCC::Dart_const_handle dart){
-      return TwoRefinement::is_intersect(lcc, dart, aabb);
+      return !trim or TwoRefinement::is_intersect(lcc, dart, aabb);
     };
 
     CGAL::Graphics_scene buffer;
@@ -3507,7 +3493,7 @@ namespace CGAL::HexRefinement {
     CGAL::draw_graphics_scene(buffer);
   }
 
-  void debug_render(TwoRefinement::ProcessData& hdata){
+  void debug_render(TwoRefinement::HexMeshingData& hdata){
     LCCSceneOptions<LCC> gso;
     LCC& lcc = hdata.lcc;
 
@@ -3525,7 +3511,7 @@ namespace CGAL::HexRefinement {
       auto a = lcc.attribute<2>(dart);
       auto b = lcc.attribute<3>(dart);
 
-      return TwoRefinement::is_volume_numberable(hdata, dart) != TwoRefinement::NumberableCell::None ? red(): blue();
+      // return TwoRefinement::is_volume_numberable(hdata, dart) != TwoRefinement::NumberableCell::None ? red(): blue();
 
       // return b->info().type >= VolumeType::REFINEMENT ? red() : blue();
 
@@ -3610,39 +3596,31 @@ namespace CGAL::HexRefinement {
     CGAL::draw_graphics_scene(buffer);
   }
 
-  using R = std::tuple<LCC, Polyhedron>;
-
-  // Pas convaincu que c'est la meilleure façon d'appeller la fonction ...
-  // Les lambdas permettent de capturer des variables en dehors de ce qui est donné en argument
-  // Si une fonction a besoins d'un AABB tree, dans markingfunction par exemple.
-  // C'est à la fonction setup de capturer et générer l'aabb pour que markingfunction puisse l'utiliser.
-  R two_refinement(
-        const std::string& file,
-        TwoRefinement::SetupFunction setupFunction,
-        TwoRefinement::MarkingFunction cellIdentifier,
-        int nb_levels = 1)
+  LCC two_refinement(
+      TwoRefinement::Grid grid,
+      TwoRefinement::MarkingFunction cellIdentifier,
+      TwoRefinement::TrimmingFunction trimmingFunction,
+      int nb_levels = 1)
   {
     using namespace TwoRefinement;
 
     HexMeshingData hdata;
     ExternalRessources res;
-    load_resources(file, res);
 
-    hdata.init(&res, setupFunction(res.surface));
+    load_patterns(res.regular_templates, res.partial_templates);
+    hdata.init(&res, grid);
 
     two_refinement_algorithm(hdata, cellIdentifier, nb_levels);
+    // trim_excedent_volumes(hdata.lcc, trimmingFunction);
 
-    // debug_render(hdata);
-
-    return {hdata.lcc, res.surface};
+    return hdata.lcc;
   }
 
-  R two_refinement_mt(
-        const std::string& file,
-        int nb_threads,
-        TwoRefinement::SetupFunction setupFunction,
-        TwoRefinement::MarkingFunction cellIdentifier,
-        int nb_levels = 1)
+  LCC two_refinement_mt(
+    TwoRefinement::Grid grid,
+    TwoRefinement::MarkingFunction cellIdentifier,
+    int nb_threads,
+    int nb_levels = 1)
   {
     using namespace TwoRefinement;
     nb_threads = 4;
@@ -3652,9 +3630,7 @@ namespace CGAL::HexRefinement {
     std::vector<std::thread> threads(nb_threads);
 
     ExternalRessources res;
-    load_resources(file, res);
-
-    Grid grid = setupFunction(res.surface);
+    load_patterns(res.regular_templates, res.partial_templates);
 
     // TODO : Make the N dimension on the largest axis
     // TODO : Verify if the layout is possible, else try an other layout.

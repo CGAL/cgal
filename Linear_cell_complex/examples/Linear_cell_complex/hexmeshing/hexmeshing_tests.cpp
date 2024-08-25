@@ -1,3 +1,4 @@
+
 #include "hexmeshing.h"
 #include "utils.h"
 
@@ -9,100 +10,52 @@
 #include <filesystem>
 #include <iostream>
 
-auto default_two_refinement(const std::string& path, int cube_cells_per_dim, int nb_levels = 1){
-  using namespace CGAL::HexRefinement;
-  using namespace CGAL::HexRefinement::TwoRefinement;
-  Tree aabb;
-  // Meh
-  return two_refinement_mt(path, 2,
-    [&](Polyhedron& poly){
-      simple_voxelisation_setup(aabb)(poly);
-      auto bbox = aabb.bbox();
+using namespace CGAL::HexRefinement;
 
-      Point center = {bbox.xmin() + (bbox.x_span()/2),
-                      bbox.ymin() + (bbox.y_span()/2),
-                      bbox.zmin() + (bbox.z_span()/2)};
+Polyhedron load_surface(const std::string& file) {
+  std::ifstream off_file(file);
+  CGAL_precondition_msg(off_file.good(), ("Input .off couldn't be read : " + file).c_str());
 
-      double max_size = std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
-      return Grid::make_centered_cube(center, max_size / cube_cells_per_dim, cube_cells_per_dim);
-    },
-    mark_intersecting_volume_with_poly(aabb),
+  Polyhedron surface;
+  off_file>>surface;
+  return surface;
+}
+
+Tree get_surface_aabb(Polyhedron& poly) {
+  // Triangulate before AABB
+  Tree tree;
+  CGAL::Polygon_mesh_processing::triangulate_faces(poly);
+  // Compute AABB tree
+  tree.insert(faces(poly).first, faces(poly).second, poly);
+  tree.accelerate_distance_queries();
+  tree.bbox();
+
+  return tree;
+}
+
+TwoRefinement::Grid cubic_grid_from_aabb(Tree& aabb, int cube_cells_per_dim){
+  auto bbox = aabb.bbox();
+
+  Point center = {bbox.xmin() + (bbox.x_span()/2),
+                  bbox.ymin() + (bbox.y_span()/2),
+                  bbox.zmin() + (bbox.z_span()/2)};
+
+  double max_size = std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
+  return TwoRefinement::Grid::make_centered_cube(center, max_size / cube_cells_per_dim, cube_cells_per_dim);
+}
+
+LCC default_two_refinement(const std::string& path, int cube_cells_per_dim, int nb_levels = 1){
+  Polyhedron poly = load_surface(path);
+  Tree aabb = get_surface_aabb(poly);
+  TwoRefinement::Grid grid = cubic_grid_from_aabb(aabb, cube_cells_per_dim);
+
+  return two_refinement(
+    grid,
+    TwoRefinement::is_volume_intersecting_poly(aabb),
+    TwoRefinement::is_volume_intersecting_poly(aabb),
+    // 2,
     nb_levels
   );
-}
-
-// auto default_two_refinement(const std::string& path, int cube_cells_per_dim, int nb_levels = 1){
-//   using namespace CGAL::HexRefinement;
-//   using namespace CGAL::HexRefinement::TwoRefinement;
-//   Tree aabb;
-//   // Meh
-//   return two_refinement(path,
-//     [&](Polyhedron& poly){
-//       simple_voxelisation_setup(aabb)(poly);
-//       auto bbox = aabb.bbox();
-
-//       Point center = {bbox.xmin() + (bbox.x_span()/2),
-//                       bbox.ymin() + (bbox.y_span()/2),
-//                       bbox.zmin() + (bbox.z_span()/2)};
-
-//       double max_size = std::max(std::max(bbox.x_span(), bbox.y_span()), bbox.z_span());
-//       return Grid::make_centered_cube(center, max_size / cube_cells_per_dim, cube_cells_per_dim);
-//     },
-//     mark_intersecting_volume_with_poly(aabb),
-//     nb_levels
-//   );
-// }
-
-int surface_test() {
-  using namespace CGAL::HexRefinement;
-
-  auto [lcc, _]= default_two_refinement(
-    CGAL::data_file_path("query_replace/mesh1.off"), 10);
-
-  lcc.display_characteristics(std::cout);
-
-  // render_two_refinement_result(lcc, aabb);
-  CGAL::draw(lcc);
-
-  return EXIT_SUCCESS;
-}
-
-int propagation_face(){
-  using namespace CGAL::HexRefinement::TwoRefinement;
-
-  LCC lcc;
-  auto d1=
-    lcc.make_hexahedron(Point(0,0,0), Point(5,0,0),
-                        Point(5,5,0), Point(0,5,0),
-                        Point(0,5,5), Point(0,0,5),
-                        Point(5,0,5), Point(5,5,5));
-
-  auto d2=
-    lcc.make_hexahedron(Point(5,0,0), Point(10,0,0),
-                        Point(10,5,0), Point(5,5,0),
-                        Point(5,5,5), Point(5,0,5),
-                        Point(10,0,5), Point(10,5,5));
-
-  auto d3=
-    lcc.make_hexahedron(Point(0,0,-5), Point(5,0,-5),
-                        Point(5,5,-5), Point(0,5,-5),
-                        Point(0,5,0), Point(0,0,0),
-                        Point(5,0,0), Point(5,5,0));
-
-  lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
-  lcc.sew<3>(lcc.beta(d1, 0, 2), lcc.beta(d3, 1, 2));
-
-  auto m1 = lcc.get_new_mark();
-  auto m2 = lcc.get_new_mark();
-
-  HexMeshingData hdata;
-  RefinementData rdata;
-
-  // initial_setup(hdata, cellIdentifier);
-
-  render(lcc, m1, m2);
-
-  return 1;
 }
 
 using InputFile = const std::string;
@@ -112,22 +65,18 @@ using ValidationData = std::tuple<InputFile, OutputFile, GeneratorFunction>;
 
 ValidationData validation_data[] = {
   {"mesh1.off", "mesh1-1r-20x20x20", [](const std::string& path){
-    auto tuple = default_two_refinement(path, 20);
-    return std::get<LCC>(tuple);
+    return default_two_refinement(path, 20);
   }},
   {"mesh2.off", "mesh2-1r-20x20x20", [](const std::string& path){
-    auto tuple = default_two_refinement(path, 20);
-    return std::get<LCC>(tuple);
+    return default_two_refinement(path, 20);
   }},
   {"mesh3.off", "mesh3-1r-20x20x20", [](const std::string& path){
-    auto tuple = default_two_refinement(path, 20);
-    return std::get<LCC>(tuple);
+    return default_two_refinement(path, 20);
   }},
 
   // 2 Levels of refinement
   {"mesh1.off", "mesh1-2r-20x20x20", [](const std::string& path){
-    auto tuple = default_two_refinement(path, 20, 2);
-    return std::get<LCC>(tuple);
+    return default_two_refinement(path, 20, 2);
   }},
 
   // 3 Levels of refinement
