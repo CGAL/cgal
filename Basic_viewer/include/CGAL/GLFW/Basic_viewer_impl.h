@@ -177,6 +177,7 @@ namespace GLFW
 
   void Basic_viewer::make_screenshot(const std::string& filePath)
   {
+    m_Camera.disable_smoothness();
     draw();
     glfwSwapBuffers(m_Window);
     capture_screenshot(filePath);
@@ -607,9 +608,9 @@ namespace GLFW
     bool half = m_DisplayMode == DisplayMode::CLIPPING_PLANE_SOLID_HALF_ONLY;
     auto mode = half ? RenderingMode::DRAW_INSIDE_ONLY : RenderingMode::DRAW_ALL;
 
-    vec4f color = color_to_normalized_vec4(m_DefaultColorNormals);
+    vec4f color = color_to_normalized_vec4(m_DefaultColorNormal);
     m_ShaderNormal->set_mat4f("u_Mv", m_ViewMatrix.data());
-    if (m_UseNormalMonoColor)
+    if (m_UseDefaultColorNormal)
     {
       m_ShaderNormal->set_int("u_UseDefaultColor", 1);
       m_ShaderNormal->set_vec3f("u_DefaultColor", color.data());
@@ -689,7 +690,7 @@ namespace GLFW
       draw_lines();
     }
    
-    if (m_DrawEdges && !m_DrawTriangles)
+    if (m_DrawEdges && !m_DrawMeshTriangles)
     {
       draw_edges();
     }
@@ -714,7 +715,7 @@ namespace GLFW
       draw_faces();
     }
 
-    if (m_DrawTriangles)
+    if (m_DrawMeshTriangles)
     {
       draw_triangles();
     }
@@ -1151,7 +1152,7 @@ namespace GLFW
       m_DisplayFaceNormal = !m_DisplayFaceNormal; 
       break;
     case TRIANGLES_DISPLAY: 
-      m_DrawTriangles = !m_DrawTriangles;
+      m_DrawMeshTriangles = !m_DrawMeshTriangles;
       break;
     case VERTICES_DISPLAY:
       m_DrawVertices = !m_DrawVertices;
@@ -1181,7 +1182,7 @@ namespace GLFW
       m_UseDefaultColor = !m_UseDefaultColor;
       break;
     case NORMALS_MONO_COLOR: 
-      m_UseNormalMonoColor = !m_UseNormalMonoColor;
+      m_UseDefaultColorNormal = !m_UseDefaultColorNormal;
       break;
     case INC_EDGES_SIZE:
       increase_size_edge(deltaTime);

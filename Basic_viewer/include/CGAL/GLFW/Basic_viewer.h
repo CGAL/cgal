@@ -89,9 +89,9 @@ namespace GLFW
 
     /***** Setter ****/
 
-    inline void window_size(const vec2f &size) { window_size_callback(m_Window, size.x(), size.y()); }
+    inline void window_size(const vec2f &s) { window_size_callback(m_Window, s.x(), s.y()); }
 
-    inline void size_points(float s) { m_SizeVertices = s; }
+    inline void size_vertices(float s) { m_SizeVertices = s; }
     inline void size_edges(float s) { m_SizeEdges = s; }
     inline void size_rays(float s) { m_SizeRays = s; }
     inline void size_lines(float s) { m_SizeLines = s; }
@@ -102,34 +102,40 @@ namespace GLFW
     inline void light_specular(const vec4f& c) { m_SpecularColor = c; }
     inline void light_shininess(float s) { m_Shininess = s; }
 
-    inline void default_color_normals(const CGAL::IO::Color& c) { m_DefaultColorNormals = c; }
-    inline void normal_height_factor(float h) { m_NormalHeightFactor = h; }
-
     inline void draw_vertices(bool b) { m_DrawVertices = b; }
     inline void draw_edges(bool b) { m_DrawEdges = b; }
     inline void draw_rays(bool b) { m_DrawRays = b; }
     inline void draw_lines(bool b) { m_DrawLines = b; }
     inline void draw_faces(bool b) { m_DrawFaces = b; }
+    inline void draw_clipping_plane(bool b) { m_DrawClippingPlane = b; }
     inline void draw_world_axis(bool b) { m_DrawWorldAxis = b; }
     inline void draw_xy_grid(bool b) { m_DrawXYGrid = b; }
+    inline void draw_mesh_triangles(bool b) { m_DrawMeshTriangles = b; }
 
     inline void toggle_draw_vertices() { m_DrawVertices = !m_DrawVertices; }
     inline void toggle_draw_edges() { m_DrawEdges = !m_DrawEdges; }
     inline void toggle_draw_rays() { m_DrawRays = !m_DrawRays; }
     inline void toggle_draw_lines() { m_DrawLines = !m_DrawLines; }
     inline void toggle_draw_faces() { m_DrawFaces = !m_DrawFaces; }
+    inline void toggle_draw_clipping_plane() { m_DrawClippingPlane = !m_DrawClippingPlane; }
     inline void toggle_draw_world_axis() { m_DrawWorldAxis = !m_DrawWorldAxis; }
     inline void toggle_draw_xy_grid() { m_DrawXYGrid = !m_DrawXYGrid; }
-    inline void toggle_use_default_color() { m_UseDefaultColor = !m_UseDefaultColor; }
+    inline void toggle_draw_mesh_triangles() { m_DrawMeshTriangles = !m_DrawMeshTriangles; }
     inline void toggle_print_application_state() { m_PrintApplicationState = !m_PrintApplicationState; }
+    inline void toggle_use_default_color() { m_UseDefaultColor = !m_UseDefaultColor; }
+    inline void toggle_use_default_color_normals() { m_UseDefaultColor = !m_UseDefaultColor; }
+    inline void toggle_reverse_normal() { m_InverseNormal = !m_InverseNormal; }
+    inline void toggle_flat_shading() { m_FlatShading = !m_FlatShading; }
 
     inline void print_application_state(bool b) { m_PrintApplicationState = b; }
     inline void use_default_color(bool b) { m_UseDefaultColor = b; }
+    inline void use_default_color_normals(bool b) { m_UseDefaultColorNormal = b; }
     inline void reverse_normal(bool b) { m_InverseNormal = b; }
     inline void flat_shading(bool b) { m_FlatShading = b; }
+    inline void default_color_normals(const CGAL::IO::Color& c) { m_DefaultColorNormal = c; }
+    inline void normal_height_factor(float h) { m_NormalHeightFactor = h; }
 
     inline void display_mode(DisplayMode m) { m_DisplayMode = m; }
-    inline void draw_clipping_plane(bool b) { m_DrawClippingPlane = b; }
 
     inline void two_dimensional() { m_Camera.set_orthographic(); } 
 
@@ -149,6 +155,8 @@ namespace GLFW
     inline void clipping_plane_translate_along_normal(float t) { m_ClippingPlane.translation(t*.1); } 
     inline void clipping_plane_translate_along_camera_forward(float t) { m_ClippingPlane.translation(m_Camera.get_forward(), t*.1); } 
 
+    inline void reverse_all_normals() { m_InverseNormal = !m_InverseNormal; m_Scene.reverse_all_normals(); }
+
     /******* Getter ********/  
 
     inline vec3f position() const { return m_Camera.get_position(); }
@@ -156,7 +164,7 @@ namespace GLFW
     inline vec3f right() const { return m_Camera.get_right(); }
     inline vec3f up() const { return m_Camera.get_up(); }
 
-    inline float size_points() const { return m_SizeVertices; }
+    inline float size_vertices() const { return m_SizeVertices; }
     inline float size_edges() const { return m_SizeEdges; }
     inline float size_rays() const { return m_SizeRays; }
     inline float size_lines() const { return m_SizeLines; }
@@ -172,12 +180,14 @@ namespace GLFW
     inline bool draw_rays() const { return m_DrawRays; }
     inline bool draw_lines() const { return m_DrawLines; }
     inline bool draw_faces() const { return m_DrawFaces; }
+    inline bool draw_world_axis() const { return m_DrawWorldAxis; }
+    inline bool draw_xy_grid() const { return m_DrawXYGrid; }
+    inline bool draw_mesh_triangles() const { return m_DrawMeshTriangles; }
     inline bool print_application_state() const { return m_PrintApplicationState; }
     inline bool use_default_color() const { return m_UseDefaultColor; }
+    inline bool use_default_color_normal() const { return m_UseDefaultColorNormal; }
     inline bool reverse_normal() const { return m_InverseNormal; }
     inline bool flat_shading() const { return m_FlatShading; }
-
-    inline void reverse_all_normals() { m_InverseNormal = !m_InverseNormal; m_Scene.reverse_all_normals(); }
 
     inline bool clipping_plane_enable() const { return m_DisplayMode != DisplayMode::CLIPPING_PLANE_OFF; }
     inline bool is_orthograpic() const { return m_Camera.is_orthographic(); }
@@ -305,10 +315,10 @@ namespace GLFW
     bool m_DrawLines { true };
     bool m_DrawCylinderEdge { false };
     bool m_DrawSphereVertex { false };
-    bool m_DrawTriangles { false };
+    bool m_DrawMeshTriangles { false };
 
     bool m_DisplayFaceNormal { false };
-    bool m_UseNormalMonoColor { false };
+    bool m_UseDefaultColorNormal { false };
     bool m_UseDefaultColor { false };
 
     bool m_InverseNormal { false };
@@ -330,7 +340,7 @@ namespace GLFW
     Line_renderer m_XYGridRenderer; 
     Line_renderer m_XYAxisRenderer; 
 
-    float m_SizeVertices { CGAL_SIZE_POINTS };
+    float m_SizeVertices { CGAL_size_vertices };
     float m_SizeEdges    { CGAL_SIZE_EDGES  };
     float m_SizeRays     { CGAL_SIZE_RAYS   };
     float m_SizeLines    { CGAL_SIZE_LINES  };
@@ -338,7 +348,7 @@ namespace GLFW
 
     float m_NormalHeightFactor { CGAL_NORMAL_HEIGHT_FACTOR };
 
-    CGAL::IO::Color m_DefaultColorNormals  = CGAL_NORMALS_MONO_COLOR;
+    CGAL::IO::Color m_DefaultColorNormal  = CGAL_NORMALS_MONO_COLOR;
 
     vec4f m_LightPosition { CGAL_LIGHT_POSITION };
     vec4f m_AmbientColor  { CGAL_AMBIENT_COLOR  };

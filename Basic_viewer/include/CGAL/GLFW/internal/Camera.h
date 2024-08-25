@@ -55,6 +55,7 @@ public:
   void switch_constraint_axis();
 
   void increase_fov(float d);
+  void disable_smoothness();
   void increase_zoom_smoothness(const float deltaTime);
 
   void align_to_plane(const vec3f& normal);
@@ -480,6 +481,13 @@ void Camera::increase_fov(const float d)
   if (m_FOV < 45.f) m_FOV = 45.f;
 
   compute_target_size();
+}
+
+void Camera::disable_smoothness()
+{
+  m_ZoomSmoothFactor = 1.0;
+  m_TranslationSmoothFactor = 1.0;
+  m_RotationSmoothFactor = 1.0;
 }
 
 void Camera::increase_zoom_smoothness(const float s)

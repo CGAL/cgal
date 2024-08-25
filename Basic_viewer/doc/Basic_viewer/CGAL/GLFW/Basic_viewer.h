@@ -66,11 +66,11 @@ public:
 
   /// \brief Sets the window size.
   /// \param size The size of the window as a 2D vector.
-  void window_size(const Eigen::Vector2f &size);
+  void window_size(const Eigen::Vector2f &s);
 
-  /// \brief Sets the size of points.
-  /// \param s The size of points.
-  void size_points(float s);
+  /// \brief Sets the size of vertices.
+  /// \param s The size of vertices.
+  void size_vertices(float s);
 
   /// \brief Sets the size of edges.
   /// \param s The size of edges.
@@ -103,14 +103,6 @@ public:
   /// \brief Sets the shininess/brightness value of the light.
   /// \param s The shininess value.
   void light_shininess(float s);
-
-  /// \brief Sets the default color of the normals.
-  /// \param c The default color of the normals.
-  void default_color_normals(const CGAL::IO::Color& c);
-
-  /// \brief Sets the height factor value of the normals.
-  /// \param h The height factor value of the normals.
-  void normal_height_factor(float h);
   
   /// \brief Enables or disables the drawing of vertices.
   /// \param b Set to `true` to enable, `false` to disable.
@@ -132,6 +124,10 @@ public:
   /// \param b Set to `true` to enable, `false` to disable.
   void draw_faces(bool b);
 
+  /// \brief Enables or disables the clipping plane.
+  /// \param b Set to `true` to enable the clipping plane, `false` to disable.
+  void draw_clipping_plane(bool b);
+
   /// \brief Enables or disables the drawing of the world axis.
   /// \param b Set to `true` to enable, `false` to disable.
   void draw_world_axis(bool b);
@@ -140,9 +136,17 @@ public:
   /// \param b Set to `true` to enable, `false` to disable.
   void draw_xy_grid(bool b);
 
+  /// \brief Enables or disables the drawing of mesh triangles.
+  /// \param b Set to `true` to enable, `false` to disable.
+  void draw_mesh_triangles(bool b);
+
   /// \brief Enables or disables the use of a single color for all elements.
   /// \param b Set to `true` to use a single color, `false` for multiple colors.
   void use_default_color(bool b);
+
+  /// \brief Enables or disables the use of a single color for all normals.
+  /// \param b Set to `true` to enable, `false` to disable.
+  void use_default_color_normals(bool b);
 
   /// \brief Enables or disables the printing of the application state to the terminal.
   /// \param b Set to `true` to enable printing, `false` to disable.
@@ -155,6 +159,14 @@ public:
   /// \brief Enables or disables flat shading (as opposed to smooth shading).
   /// \param b Set to `true` for flat shading, `false` for smooth shading.
   void flat_shading(bool b);
+
+  /// \brief Sets the default color of the normals.
+  /// \param c The default color of the normals.
+  void default_color_normals(const CGAL::IO::Color& c);
+
+  /// \brief Sets the height factor value of the normals.
+  /// \param h The height factor value of the normals.
+  void normal_height_factor(float h);
 
   /// \brief Toggles the drawing of vertices.
   void toggle_draw_vertices();
@@ -171,14 +183,23 @@ public:
   /// \brief Toggles the drawing of faces.
   void toggle_draw_faces();
 
+  /// \brief Toggles the drawing of the clipping plane.
+  void toggle_draw_clipping_plane();
+
   /// \brief Toggles the drawing of the world axis.
   void toggle_draw_world_axis();
 
   /// \brief Toggles the drawing of the XY grid.
   void toggle_draw_xy_grid(); 
 
+  /// \brief Toggles the drawing of mesh triangles.
+  void toggle_draw_mesh_triangles(); 
+
   /// \brief Toggles the use of the default color mode.
   void toggle_use_default_color();
+
+  /// \brief Toggles the use of the default color mode for normals.
+  void toggle_use_default_color_normal();
 
   /// \brief Toggles the printing of the application state.
   void toggle_print_application_state();
@@ -191,10 +212,6 @@ public:
   /// - `CLIPPING_PLANE_SOLID_HALF_WIRE_HALF`: Renders half of the clipped object as solid and half with wireframe.
   /// - `CLIPPING_PLANE_SOLID_HALF_ONLY`: Only renders the positive side of the clipped object.
   void display_mode(DisplayMode m);
-
-  /// \brief Enables or disables the clipping plane.
-  /// \param b Set to `true` to enable the clipping plane, `false` to disable.
-  void draw_clipping_plane(bool b);
 
   /// \brief Enables the 2D/orthographic camera mode.
   void two_dimensional(); 
@@ -254,6 +271,9 @@ public:
   /// \param t The translation amount.
   void clipping_plane_translate_along_camera_forward(float t);
 
+  /// \brief Reverses all normals of vertices and faces.
+  void reverse_all_normals();
+
   /// @}
 
   /// \name Getters
@@ -277,7 +297,7 @@ public:
 
   /// \brief Gets the size of points.
   /// \return The size of points.
-  float size_points() const;
+  float size_vertices() const;
 
   /// \brief Gets the size of edges.
   /// \return The size of edges.
@@ -331,9 +351,25 @@ public:
   /// \return `true` if faces are drawn, `false` otherwise.
   bool draw_faces() const;
 
+  /// \brief Checks if world axis are drawn.
+  /// \return `true` if world axis are drawn, `false` otherwise.
+  bool draw_world_axis() const;
+
+  /// \brief Checks if XY grid is drawn.
+  /// \return `true` if XY grid is drawn, `false` otherwise.
+  bool draw_xy_grid() const;
+
+  /// \brief Checks if mesh triangles are drawn.
+  /// \return `true` if mesh triangles are drawn, `false` otherwise.
+  bool draw_mesh_triangles() const;
+
   /// \brief Checks if the default color mode is used.
-  /// \return `true` if mono color mode is used, `false` otherwise.
+  /// \return `true` if default color mode is used, `false` otherwise.
   bool use_default_color() const;
+
+  /// \brief Checks if the default color mode for normals is used.
+  /// \return `true` if default color mode for normals is used, `false` otherwise.
+  bool use_default_color_normal() const;
 
   /// \brief Checks if normals are reversed.
   /// \return `true` if normals are reversed, `false` otherwise.
@@ -363,8 +399,7 @@ public:
   /// \return A reference to the `Graphics_scene` object.
   const Graphics_scene& graphics_scene() const;
 
-  /// \brief Reverses all normals of vertices and faces.
-  void reverse_all_normals();
+  /// @}
 };
 
 //------------------------------------------------------------------------------
