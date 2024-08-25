@@ -17,16 +17,11 @@
 #include <CGAL/disable_warnings.h>
 
 /*! \file
- * A tracing traits-class for the arrangement package.
- * This is a meta-traits class. It is parameterized with another traits class
- * and inherits from it. For each traits method it prints out its input
- * parameters and its output result
  */
 
 #include <iostream>
 #include <list>
 #include <variant>
-#include <type_traits>
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
@@ -35,7 +30,12 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementTraits_2 concept that counts the methods invoked.
+ * A meradata traits-class decorator for the arrangement package. It traces the
+ * invocations of traits-class functors. It is parameterized with another traits
+ * class and inherits from it. For each traits method it prints out its input
+ * parameters and its output result
+ *
+ * It models all the concept that the original trais models.
  */
 template <typename BaseTraits>
 class Arr_tracing_traits_2 : public BaseTraits {
@@ -180,7 +180,6 @@ public:
   void enable_trace(Operation_id id) { m_flags |= 0x1 << id; }
 
   /*! Enable the trace of all traits operations
-   * \param id the operation identifier
    */
   void enable_all_traces() { m_flags = 0xffffffff; }
 
@@ -190,7 +189,6 @@ public:
   void disable_trace(Operation_id id) { m_flags &= ~(0x1 << id); }
 
   /*! Disable the trace of all traits operations
-   * \param id the operation identifier
    */
   void disable_all_traces() { m_flags = 0x0; }
 

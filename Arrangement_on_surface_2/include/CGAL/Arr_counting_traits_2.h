@@ -18,10 +18,6 @@
 #include <CGAL/disable_warnings.h>
 
 /*! \file
- * A counting traits-class for the arrangement package.
- * This is a meta-traits class. It is parameterized with another traits class
- * and inherits from it. For each traits method it maintains a counter that
- * counts the number of invocations into the method.
  */
 
 #include <iostream>
@@ -37,7 +33,12 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementTraits_2 concept that counts the methods invoked.
+ * A meradata traits-class decorator for the arrangement package. It counts the
+ * number of invocations of traits-class functors. It is parameterized with
+ * another traits class and inherits from it. For each traits method it
+ * maintains a counter that counts the number of invocations into the method.
+ *
+ * It models all the concept that the original trais models.
  */
 template <typename BaseTraits>
 class Arr_counting_traits_2 : public BaseTraits {
