@@ -33,14 +33,17 @@ This section describes a minimal example of a program that uses \cgal and Qt6 fo
 \skip cmake_minimum_required
 \until project
 
+
 \skip #CGAL_Qt6 is needed for the drawing.
-\until endif()
+\until find_package
+
 
 \skip #create the executable of the application
 \until "draw_surface_mesh.cpp"
 
+
 \skip if(CGAL_Qt6_FOUND)
-\until target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Qt6)
+\until target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Basic_viewer)
 \skip endif
 \until #end of the file
 
