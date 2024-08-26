@@ -1710,7 +1710,7 @@ private:
         halfedge_descriptor h = *(degenerate_faces.begin());
         degenerate_faces.erase(degenerate_faces.begin());
 
-        if(is_border(h, mesh_))
+        if(is_border(opposite(h, mesh_), mesh_))
         {
           CGAL::Euler::remove_face(h, mesh_);
           continue;
@@ -1721,8 +1721,11 @@ private:
         {
           halfedge_descriptor hfo = opposite(hf, mesh_);
 
-          if(is_border(hfo, mesh_)) continue;
-
+          if(is_border(hfo, mesh_))
+          {
+            CGAL::Euler::remove_face(h, mesh_);
+            break;
+          }
           vertex_descriptor vc = target(hf, mesh_);
           vertex_descriptor va = target(next(hf, mesh_), mesh_);
           vertex_descriptor vb = target(next(next(hf, mesh_), mesh_), mesh_);
