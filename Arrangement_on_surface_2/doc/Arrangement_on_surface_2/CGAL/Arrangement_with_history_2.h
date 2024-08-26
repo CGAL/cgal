@@ -24,19 +24,19 @@ namespace CGAL {
  * The `Arrangement_with_history_2` template has two parameters:
  * <UL>
  * <LI>The `Traits` template-parameter should be substituted by a model of
- * the `ArrangementTraits_2` concept. The traits class defines the `Curve_2`
+ * the `AosTraits_2` concept. The traits class defines the `Curve_2`
  * type, which represents an input curve.  It also defines the types of \f$
  * x\f$-monotone curves and two-dimensional points, namely
- * `ArrangementTraits_2::X_monotone_curve_2` and `ArrangementTraits_2::Point_2`,
+ * `AosTraits_2::X_monotone_curve_2` and `AosTraits_2::Point_2`,
  * respectively, and supports basic geometric predicates on them.
  * <LI>The `Dcel` template-parameter should be substituted by a class that is
- * a model of the `ArrangementDcelWithRebind` concept. The value of this
+ * a model of the `AosDcelWithRebind` concept. The value of this
  * parameter is by default `Arr_default_dcel<Traits>`.
  * </UL>
  *
- * \sa `ArrangementDcel`
+ * \sa `AosDcel`
  * \sa `Arr_default_dcel<Traits>`
- * \sa `ArrangementTraits_2`
+ * \sa `AosTraits_2`
  * \sa `Arrangement_2<Traits,Dcel>`
  * \sa `insertion functions`
  * \sa `removal functions`
@@ -161,7 +161,6 @@ template <typename Traits, typename Dcel>
 Size remove_curve(Arrangement_with_history_2<Traits,Dcel>& arr,
                   typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle ch);
 
-
 /*! \addtogroup PkgArrangementOnSurface2Overlay
  * Computes the overlay of two arrangements with history `arr1` and `arr2`, and
  * sets the output arrangement with history `res` to represent the overlaid
@@ -176,7 +175,6 @@ void overlay(const Arrangement_with_history_2<Traits,Dcel1>& arr1,
              const Arrangement_with_history_2<Traits,Dcel2>& arr2,
              Arrangement_with_history_2<Traits,ResDcel>& res,
              OverlayTraits& ovl_tr);
-
 
 /*! \addtogroup PkgArrangementOnSurface2Overlay
  *

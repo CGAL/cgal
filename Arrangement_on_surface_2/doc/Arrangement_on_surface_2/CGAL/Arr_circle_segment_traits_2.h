@@ -3,7 +3,7 @@ namespace CGAL {
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
  * The class `Arr_circle_segment_traits_2` is a model of the
- * `ArrangementTraits_2` concept and can be used to construct and maintain
+ * `AosTraits_2` concept and can be used to construct and maintain
  * arrangements of circular arcs and line segments.
  *
  * The traits class must be instantiated with a geometric kernel, such that the
@@ -27,12 +27,12 @@ namespace CGAL {
  * For more details see the documentation of `Sqrt_extension<NT,ROOT>`.
  *
  * While `Arr_circle_segment_traits_2` models the concept
- * `ArrangementDirectionalXMonotoneTraits_2`, the implementation of the
+ * `AosDirectionalXMonotoneTraits_2`, the implementation of the
  * `Are_mergeable_2` operation does not enforce the input curves to have the
  * same direction as a precondition. Moreover, `Arr_circle_segment_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2}
+ * \cgalModels{AosTraits_2,AosDirectionalXMonotoneTraits_2}
  *
  */
 template< typename Kernel >
@@ -88,7 +88,7 @@ public:
      * center point with rational coordinates and whose <I>squared</I> radius is
      * rational, with the given endpoints. The orientation of the arc is the
      * same as the orientation of `circ`.
-
+     *
      * \pre Both endpoints must lie on the given supporting circle.
      */
     Curve_2(const typename Kernel::Circle_2& circ,
@@ -133,7 +133,7 @@ public:
     /*! returns the target point.
      *
      * \pre `cv` is not a full circle.
-    */
+     */
     const Point_2& target() const;
 
     /*! returns the orientation of the curve (`COLLINEAR` in case of line
@@ -315,7 +315,6 @@ public:
     Bbox_2 bbox() const;
 
     /// @}
-
   }; /* end Arr_circle_segment_traits_2::X_monotone_curve_2 */
 
   class Trim_2 {
@@ -331,7 +330,7 @@ public:
                        const Point_2& src,
                        const Point_2& tgt)const
     /// @}
-      } /* end Arr_circle_segment_traits_2::Trim_2 */
+  } /* end Arr_circle_segment_traits_2::Trim_2 */
 
 }; /* end Arr_circle_segment_traits_2 */
 

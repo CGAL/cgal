@@ -2,10 +2,10 @@ namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
- * The class `Arr_curve_data_traits_2` is a model of the `ArrangementTraits_2`
+ * The class `Arr_curve_data_traits_2` is a model of the `AosTraits_2`
  * concept and serves as a decorator class that allows the extension of the
  * curves defined by the base traits-class (the `Tr` parameter), which serves as
- * a geometric traits-class (a model of the `ArrangementTraits_2` concept), with
+ * a geometric traits-class (a model of the `AosTraits_2` concept), with
  * extraneous (non-geometric) data fields.
  *
  * The traits class inherits its point type from `Traits::Point_2`, and defines
@@ -49,12 +49,11 @@ namespace CGAL {
  * `d1` and `d2`. The \f$ x\f$-monotone curve that represents the overlap is
  * associated with the output of this functor.
  *
- * \cgalModels{ArrangementTraits_2}
+ * \cgalModels{AosTraits_2}
  */
 template <typename Tr, typename XData, typename Mrg, typename CData, typename Cnv>
 class Arr_curve_data_traits_2 : public Tr {
 public:
-
   /// \name Types
   /// @{
 
@@ -97,7 +96,6 @@ public:
    */
   class Curve_2 : public Base_curve_2 {
   public:
-
     /// \name Creation
     /// @{
 
@@ -130,7 +128,6 @@ public:
     void set_data(const Curve_data& data);
 
     /// @}
-
 }; /* end Arr_curve_data_traits_2::Curve_2 */
 
 /*! The `X_monotone_curve_2` class nested within the curve-data traits extends
@@ -138,7 +135,6 @@ public:
  */
 class X_monotone_curve_2 : public Base_x_monotone_curve_2 {
 public:
-
   /// \name Creation
   /// @{
 
@@ -172,7 +168,6 @@ public:
   void set_data(const X_monotone_curve_data& data);
 
   /// @}
-
 }; /* end Arr_curve_data_traits_2::X_monotone_curve_2 */
 
 }; /* end Arr_curve_data_traits_2 */

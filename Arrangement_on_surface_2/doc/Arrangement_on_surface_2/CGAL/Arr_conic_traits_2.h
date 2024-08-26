@@ -2,7 +2,7 @@ namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
- * The class `Arr_conic_traits_2` is a model of the `ArrangementTraits_2`
+ * The class `Arr_conic_traits_2` is a model of the `AosTraits_2`
  * concept and can be used to construct and maintain arrangements of bounded
  * segments of algebraic curves of degree \f$2\f$ at most, also known as
  * <I>conic curves</I>.
@@ -75,12 +75,12 @@ namespace CGAL {
  * and defines a curve and \f$x\f$-monotone curve types, as detailed below.
  *
  * While the `Arr_conic_traits_2` models the concept
- * `ArrangementDirectionalXMonotoneTraits_2`, the implementation of
+ * `AosDirectionalXMonotoneTraits_2`, the implementation of
  * the `Are_mergeable_2` operation does not enforce the input curves
  * to have the same direction as a precondition. Moreover, `Arr_conic_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementDirectionalXMonotoneTraits_2}
+ * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosDirectionalXMonotoneTraits_2}
  *
  * \cgalHeading{Types}
  */

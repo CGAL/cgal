@@ -18,21 +18,21 @@ namespace CGAL {
  * <UL>
  * <LI>The `GeometryTraits` template-parameter should be substituted by
  * a model of a geometry traits. The minimal requirements are defined by the
- * `ArrangementBasicTraits_2` concept. A model of this concept defines
+ * `AosBasicTraits_2` concept. A model of this concept defines
  * the types of \f$ x\f$-monotone curves and two-dimensional points, namely
- * `ArrangementBasicTraits_2::X_monotone_curve_2` and
- * `ArrangementBasicTraits_2::Point_2`, respectively, and supports basic
+ * `AosBasicTraits_2::X_monotone_curve_2` and
+ * `AosBasicTraits_2::Point_2`, respectively, and supports basic
  * geometric predicates on them.
  * <LI>The `TopologyTraits` template-parameter should be substituted by a
- * class that is a model of the `ArrangementTopologyTraits` concept.
+ * class that is a model of the `AosTopologyTraits` concept.
  * </UL>
  *
  * The available traits classes and <span class="textsc">Dcel</span> classes are
  * described below.
 
- * \sa `ArrangementDcel`
+ * \sa `AosDcel`
  * \sa `Arr_default_dcel<Traits>`
- * \sa `ArrangementBasicTraits_2`
+ * \sa `AosBasicTraits_2`
  * \sa `CGAL::overlay()`
 
  * Insertion Functions
@@ -1024,14 +1024,14 @@ namespace CGAL {
  *
  * <UL>
  * <LI>If the curve is \f$ x\f$-monotone curve then The instantiated
- * `Traits` class must model the `ArrangementXMonotoneTraits_2`
+ * `Traits` class must model the `AosXMonotoneTraits_2`
  * concept. In case that the curve is not \f$ x\f$-monotone then the
  * instantiated `Traits` class must model the
- * `ArrangementTraits_2` concept. That is, it should define the
+ * `AosTraits_2` concept. That is, it should define the
  * `Curve_2` type, and support its subdivision into \f$ x\f$-monotone
  * subcurves (and perhaps isolated points).
  * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 
@@ -1112,13 +1112,13 @@ void insert(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  *
  * <UL>
  * <LI>If `c` is \f$ x\f$-monotone then the instantiated `GeometryTraits`
- * class must model the `ArrangementXMonotoneTraits_2` concept. If
+ * class must model the `AosXMonotoneTraits_2` concept. If
  * `c` is a curve then the instantiated `GeometryTraits` class must
- * model the `ArrangementTraits_2` concept. That is, it should
+ * model the `AosTraits_2` concept. That is, it should
  * define the `Curve_2` type, and support its subdivision into
  * \f$ x\f$-monotone subcurves (and perhaps isolated points).
  * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 template <typename GeometryTraits, typename TopologyTraits, typename Curve,
@@ -1152,9 +1152,9 @@ bool do_intersect(Arrangement_on_surface_2<GeometryTraits, TopologyTraits>& arr,
  *
  * <UL>
  * <LI>The instantiated `Traits` class must model the restricted
- * `ArrangementBasicTraits_2` concept, as no intersections are computed.
+ * `AosBasicTraits_2` concept, as no intersections are computed.
  * <LI>The point-location object `pl` must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 template <typename GeometryTraits, typename TopologyTraits,
@@ -1180,7 +1180,7 @@ insert_non_intersecting_curve
  *
  * <UL>
  * <LI>The instantiated `Traits` class must model the
- * `ArrangementBasicTraits_2` concept, as no intersections are computed.
+ * `AosBasicTraits_2` concept, as no intersections are computed.
  * <LI>`InputIterator::value_type` must be `Traits::X_monotone_curve_2`
  * </UL>
  */
@@ -1209,12 +1209,12 @@ void insert_non_intersecting_curves
  *
  * <UL>
  * <LI>The instantiated `Traits` class must model the
- * `ArrangementXMonotoneTraits_2` concept. Not all expressions listed
+ * `AosXMonotoneTraits_2` concept. Not all expressions listed
  * by this concept are required. In fact the traits class must model the
- * `ArrangementBasicTraits_2` concept, and support the splitting
+ * `AosBasicTraits_2` concept, and support the splitting
  * functionality.
  * <LI>The point-location object `pl`, must model the
- * `ArrangementPointLocation_2` concept.
+ * `AosPointLocation_2` concept.
  * </UL>
  */
 template <typename GeometryTraits, typename TopologyTraits,
@@ -1253,7 +1253,7 @@ bool is_valid
  * its endpoints become isolated, they are removed as well. The call
  * `remove_edge(arr, e)` is equivalent to the call `arr.remove_edge (e, true,
  * true)`. However, this free function requires that `Traits` be a model of the
- * refined concept `ArrangementXMonotoneTraits_2`, which requires merge
+ * refined concept `AosXMonotoneTraits_2`, which requires merge
  * operations on \f$ x\f$-monotone curves. If one of the end-vertices of the
  * given edge becomes redundant after the edge is removed (see `remove_vertex()`
  * for the definition of a redundant vertex), it is removed, and its incident
@@ -1265,7 +1265,7 @@ bool is_valid
  *
  * <UL>
  * <LI>The instantiated traits class must model the concept
- * `ArrangementXMonotoneTraits_2`.
+ * `AosXMonotoneTraits_2`.
  * </UL>
  */
 template<typename GeometryTraits, typename TopologyTraits>
@@ -1287,9 +1287,9 @@ remove_edge
  *
  * <UL>
  * <LI>The instantiated `Traits` class must model the
- * `ArrangementXMonotoneTraits_2` concept. Not all expressions listed
+ * `AosXMonotoneTraits_2` concept. Not all expressions listed
  * by this concept are required. In fact the traits class must model the
- * `ArrangementBasicTraits_2` concept and support the merging
+ * `AosBasicTraits_2` concept and support the merging
  * functionality.
  * </UL>
  */
@@ -1323,9 +1323,9 @@ bool remove_vertex
  *
  * \pre If provided, `pl` must be attached to the given arrangement `arr`.
  * \pre The instantiated `GeometryTraits` class must model the
- *      `ArrangementXMonotoneTraits_2` concept.
+ *      `AosXMonotoneTraits_2` concept.
  * \pre The point-location object `pl`, must model the
- *      `ArrangementPointLocation_2` concept.
+ *      `AosPointLocation_2` concept.
  * \pre Dereferencing `oi` must yield a polymorphic object of type
  *      `std::variant<Arrangement_on_surface_2::Vertex_handle, Arrangement_on_surface_2::Halfedge_handle, Arrangement_on_surface_2::Face_handle>`.
  *
