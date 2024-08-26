@@ -419,8 +419,6 @@ set(GLFW_PKG_CONFIG_REQUIRES_PRIVATE "${deps}" CACHE INTERNAL
 set(GLFW_PKG_CONFIG_LIBS_PRIVATE "${libs}" CACHE INTERNAL
     "GLFW pkg-config Libs.private")
 
-# configure_file("${GLFW_SOURCE_DIR}/CMake/glfw3.pc.in" glfw3.pc @ONLY)
-
 # Glad library
 file(GLOB GLAD_SOURCES ${GLAD_SOURCE_DIR}/src/glad.c)
 add_library(glad ${GLAD_SOURCES})

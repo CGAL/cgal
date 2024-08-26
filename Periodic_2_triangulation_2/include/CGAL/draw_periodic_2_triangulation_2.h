@@ -14,7 +14,7 @@
 #define DRAW_PERIODIC_2_TRIANGULATION_2_H
 
 #include <CGAL/license/Periodic_2_triangulation_2.h>
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -220,7 +220,7 @@ void add_to_graphics_scene(const CGAL_P2T2_TYPE& p2t2,
   add_to_graphics_scene(p2t2, graphics_scene, gs_options);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#if defined(CGAL_USE_BASIC_VIEWER_QT) || defined(CGAL_USE_BASIC_VIEWER)
 
 // Specialization of draw function
 template<class Gt, class Tds, class GSOptions>
@@ -278,7 +278,7 @@ void draw(const CGAL_P2T2_TYPE& ap2t2,
   draw(ap2t2, gs_options, title);
 }
 
-#endif // CGAL_USE_BASIC_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER_QT || CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_P2T2_TYPE
 

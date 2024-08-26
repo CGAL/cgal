@@ -19,10 +19,10 @@
 
 #include <CGAL/license/Boolean_set_operations_2.h>
 
-#include <CGAL/Qt/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polygon_set_2.h>
+#include <CGAL/Basic_viewer.h>
 
 namespace CGAL {
 
@@ -166,7 +166,7 @@ void compute_elements(const PWH& pwh,
 
 } // End namespace draw_function_for_boolean_set_2
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#if defined(CGAL_USE_BASIC_VIEWER_QT) || defined(CGAL_USE_BASIC_VIEWER)
 
 template <typename PolygonSet_2, typename GSOptions>
 class Polygon_set_2_basic_viewer_qt : public Basic_viewer
@@ -319,7 +319,7 @@ void draw(const CGAL_PS2_TYPE& ps,
   draw(ps, gso, title);
 }
 
-#endif // CGAL_USE_BASIC_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER_QT || CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_PS2_TYPE
 
