@@ -168,7 +168,8 @@ Remarks
   of segments in all the polylines together. The same holds for the
   more general type <em>polycurve</em>, which are piecewise curves
   that are not necessarily linear; see Section \ref
-  arr_sssectr_polycurves.  </li>
+  arr_sssectr_polycurves.
+</li>
 
 </ol>
 
@@ -5472,9 +5473,9 @@ with source endpoint and ending at the target endpoint.
 
 Decorator is a structural pattern that allows adding new behaviors to
 objects by placing them inside special wrapper objects, called
-decorators. One type of decoretors attaches auxiliary data to the
+decorators. One type of decorators attaches auxiliary data to the
 geometric objects handled by the original traits. Another type enables
-the extraction of debugging and informative metadata.
+the retrieval of debugging and informative metadata.
 
 <!-- ----------------------------------------------------------------------- -->
 \subsubsection arr_sssec_tr_data_decorators Data Decorators
@@ -5658,19 +5659,19 @@ the curve-data traits:
 The package provides two traits-class decorators, namely
 `Arr_counting_traits_2<BaseTraits>` and
 `Arr_tracing_traits_2<BaseTraits>`, that can be used to insert
-debuging and informative metadata to an output stream. The former is
+debugging and informative metadata to an output stream. The former is
 used to count the number of invocations of traits-class functors, and
 the latter is used to trace these invocations. Note that the
-constructors of each of these calss templates applies prefect
-forwarding. The counting traits also export the count of traits-class
+constructors of each of these calls templates applies prefect
+forwarding. The counting traits also exports the count of traits-class
 objects of specific types constructed during the execution of the
-program . The tracing traits supports filtering of traced
+program. The tracing traits supports filtering of traced
 functors. The calls `traits.enable_trace(id)` and
 `traits.disable_trace(id)` enables and disables the tracing of a
 functor identified by `id`, respectively. A functor is identified by
 an enumeration. For example, the functor \link
 ArrangementTraits_2::Make_x_monotone_2 `Make_x_monotone_2`\endlink is
-idenfied by the enumeration
+identified by the enumeration
 `Arr_tracing_traits_2::MAKE_X_MONOTONE_OP`. The calls
 `traits.enable_all_traces()` and `traits.disable_all_traces()` enables
 and disables the traces of all functors, respectively. The example
