@@ -36,7 +36,7 @@ cmake_dependent_option(GLFW_USE_HYBRID_HPG "Force use of high-performance GPU on
 cmake_dependent_option(USE_MSVC_RUNTIME_LIBRARY_DLL "Use MSVC runtime library DLL" ON
                        "MSVC" OFF)
 
-list(APPEND CMAKE_MODULE_PATH "${GLFW_SOURCE_DIR}/CMake/modules")
+list(APPEND CMAKE_MODULE_PATH .)
 
 find_package(Threads REQUIRED)
 
@@ -419,7 +419,7 @@ set(GLFW_PKG_CONFIG_REQUIRES_PRIVATE "${deps}" CACHE INTERNAL
 set(GLFW_PKG_CONFIG_LIBS_PRIVATE "${libs}" CACHE INTERNAL
     "GLFW pkg-config Libs.private")
 
-configure_file("${GLFW_SOURCE_DIR}/CMake/glfw3.pc.in" glfw3.pc @ONLY)
+# configure_file("${GLFW_SOURCE_DIR}/CMake/glfw3.pc.in" glfw3.pc @ONLY)
 
 # Glad library
 file(GLOB GLAD_SOURCES ${GLAD_SOURCE_DIR}/src/glad.c)

@@ -9,7 +9,6 @@
 //
 //
 // Author(s)     : Théo Benard <benard320@gmail.com>
-
 //                 Théo Grillon <theogrillon6f9@gmail.com>
 
 #ifndef CGAL_BASIC_VIEWER_GLFW_H
@@ -39,7 +38,6 @@
 #include "internal/Line_renderer.h"
 #include "internal/Clipping_plane.h"
 #include "internal/Animation_controller.h"
-#include "internal/buffer/VAO.h"
 
 namespace CGAL 
 {

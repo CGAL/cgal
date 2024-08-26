@@ -6,8 +6,8 @@
 
 # Qt & GLFW viewer 
 - Mesh selection 
+- Screenshot with Wayland (?) 
 
 # Graphics scene
-- Add a size component for points, segments (, rays and lines ?) 
-
-
+- Add a default size component for points, segments (, rays and lines ?) 
+- Add methods to set size of points, segments (, rays and lines ?) 
