@@ -74,6 +74,14 @@ public:
     check_no_intersection  (R(p(0,0,0), p(1,0,0)), R(p(0,1,0), p(0,2,0)));
     check_no_intersection  (R(p(0,0,0), p(1,0,0)), R(p(-1,0,0), p(-1,-1,0)));
 
+    check_no_intersection  (R(p(1,-1,0), p(2,0,0)), R(p(2,-1,0), p(3,0,0)));
+    check_no_intersection  (R(p(1,-1,0), p(2,0,0)), R(p(2,-1,0), p(3,-1,0)));
+    check_no_intersection  (R(p(1,-1,0), p(2,0,0)), R(p(2,-1,0), p(3,-2,0)));
+    check_no_intersection  (R(p(0,0,0), p(0,1,0)), R(p(0,-1,0), p(1,-1,0)));
+    check_no_intersection  (R(p(0,0,0), p(0,1,0)), R(p(-1,-3,0),p(2,0,0)));
+    check_no_intersection  (R(p(0,0,0), p(0,1,0)), R(p(-2,-4,0),p(-1,-3,0)));
+    check_no_intersection  (R(p(0,0,0), p(0,1,0)), R(p(1,-1,0), p(2,0,0)));
+
     // Point
     check_intersection     (R(p(0,0,0), p(1,0,0)), R(p(0,0,0), p(-1,0,0)),
                             p(0,0,0));
@@ -87,6 +95,10 @@ public:
                             p(1,0,0));
     check_intersection     (R(p(0,0,0), p(1,0,0)), R(p(1,-2,0), p(1,-1,0)),
                             p(1,0,0));
+
+    check_intersection     (R(p(0,0,0), p(1,0,0)), R(p(1,-2,0), p(1,-1,0)),
+                            p(1,0,0));
+
 
     // Segment
     check_intersection     (R(p(0,0,0), p(1,0,0)), R(p(2,0,0), p(-3,0,0)),
