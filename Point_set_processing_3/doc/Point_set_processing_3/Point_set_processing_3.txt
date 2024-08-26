@@ -52,12 +52,12 @@ typedef CGAL::First_of_pair_property_map<PointVectorPair> Point_map;
 typedef CGAL::Second_of_pair_property_map<PointVectorPair> Vector_map;
 
 CGAL::jet_estimate_normals
-<CGAL::Parallel_tag>           // concurrency tag
-  (points,                     // input range of points
-   12,                         // parameter: number of neighbors
-   CGAL::parameters::          // named parameters:
-   point_map (Point_map()).    //  * point map
-   normal_map (Vector_map())); //  * normal map
+<CGAL::Parallel_tag> // concurrency tag
+ (points, // input range of points
+ 12, // parameter: number of neighbors
+ CGAL::parameters:: // named parameters:
+ point_map (Point_map()). // * point map
+ normal_map (Vector_map())); // * normal map
 \endcode
 
 This API was introduced in \cgal 4.12. Please refer to the
@@ -116,10 +116,10 @@ std::vector<PointVectorPair> points;
 
 // Old pre-CGAL 4.12 API
 CGAL::jet_estimate_normals<Concurrency_tag>
-  (points.begin(), points.end(),
-   CGAL::First_of_pair_property_map<PointVectorPair>(),
-   CGAL::Second_of_pair_property_map<PointVectorPair>(),
-   12); // Number of neighbors
+ (points.begin(), points.end(),
+ CGAL::First_of_pair_property_map<PointVectorPair>(),
+ CGAL::Second_of_pair_property_map<PointVectorPair>(),
+ 12); // Number of neighbors
 \endcode
 
 The pair of iterators is replaced by a range and the optional
@@ -133,10 +133,10 @@ std::vector<PointVectorPair> points;
 
 // New API
 CGAL::jet_estimate_normals<Concurrency_tag>
-  (points,
-   12, // Number of neighbors
-   CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
-   normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
+ (points,
+ 12, // Number of neighbors
+ CGAL::parameters::point_map (CGAL::First_of_pair_property_map<PointVectorPair>()).
+ normal_map (CGAL::Second_of_pair_property_map<PointVectorPair>()));
 \endcode
 
 Please refer to the [Reference Manual](@ref PkgPointSetProcessing3Ref) for
@@ -524,66 +524,66 @@ above-mentioned example was used.
 \cgalFigureAnchor{Point_set_processing_3tableRegistrationRegistration_visualization_table}
 <table>
 <tr>
-  <th>       </th>
-  <th>Scan 1 </th>
-  <th>Scan 1 (possibly transformed, green) and Scan 2 (the reference, red)</th>
+ <th> </th>
+ <th>Scan 1 </th>
+ <th>Scan 1 (possibly transformed, green) and Scan 2 (the reference, red)</th>
 </tr>
 <tr>
-  <th>Unregistered</th>
-  <td>
-    \cgalFigureBegin{Point_set_processing_3figRegistrationUnregistered_hippo2_view1, registration_view1_hippo2_unregistered.png}
-    \cgalFigureEnd
-  </td>
-  <td>
-    \cgalFigureBegin{Point_set_processing_3figRegistrationUnregistered_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_unregistered.png}
-    \cgalFigureEnd
-  </td>
+ <th>Unregistered</th>
+ <td>
+ \cgalFigureBegin{Point_set_processing_3figRegistrationUnregistered_hippo2_view1, registration_view1_hippo2_unregistered.png}
+ \cgalFigureEnd
+ </td>
+ <td>
+ \cgalFigureBegin{Point_set_processing_3figRegistrationUnregistered_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_unregistered.png}
+ \cgalFigureEnd
+ </td>
 </tr>
 <tr>
-  <th>
-    Registered
-    using
-    %OpenGR
-  </th>
-  <td>
-    \cgalFigureBegin{Point_set_processing_3figRegistrationOpenGR_hippo2_view1, registration_view1_hippo2_opengr.png}
-    \cgalFigureEnd
-  </td>
-  <td>
-    \cgalFigureBegin{Point_set_processing_3figRegistrationOpenGR_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_opengr.png}
-    \cgalFigureEnd
-  </td>
+ <th>
+ Registered
+ using
+ %OpenGR
+ </th>
+ <td>
+ \cgalFigureBegin{Point_set_processing_3figRegistrationOpenGR_hippo2_view1, registration_view1_hippo2_opengr.png}
+ \cgalFigureEnd
+ </td>
+ <td>
+ \cgalFigureBegin{Point_set_processing_3figRegistrationOpenGR_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_opengr.png}
+ \cgalFigureEnd
+ </td>
 </tr>
 <tr>
-  <th>
-    Registered
-    using
-    PointMatcher
-  </th>
-  <td>
-    \cgalFigureBegin{Point_set_processing_3figRegistrationPointMatcher_hippo2_view1, registration_view1_hippo2_pointmatcher.png}
-    \cgalFigureEnd
-  </td>
-  <td>
-    \cgalFigureBegin{Point_set_processing_3figRegistrationPointMatcher_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_pointmatcher.png}
-    \cgalFigureEnd
-  </td>
+ <th>
+ Registered
+ using
+ PointMatcher
+ </th>
+ <td>
+ \cgalFigureBegin{Point_set_processing_3figRegistrationPointMatcher_hippo2_view1, registration_view1_hippo2_pointmatcher.png}
+ \cgalFigureEnd
+ </td>
+ <td>
+ \cgalFigureBegin{Point_set_processing_3figRegistrationPointMatcher_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_pointmatcher.png}
+ \cgalFigureEnd
+ </td>
 </tr>
 <tr>
-  <th>
-    Registered
-    using
-    OpenGR+PointMatcher
-    Pipeline
-  </th>
-  <td>
-    \cgalFigureBegin{Point_set_processing_3figRegistrationPipeline_hippo2_view1, registration_view1_hippo2_opengr_pointmatcher_pipeline.png}
-    \cgalFigureEnd
-  </td>
-  <td>
-    \cgalFigureBegin{Point_set_processing_3figRegistrationPipeline_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_opengr_pointmatcher_pipeline.png}
-    \cgalFigureEnd
-  </td>
+ <th>
+ Registered
+ using
+ OpenGR+PointMatcher
+ Pipeline
+ </th>
+ <td>
+ \cgalFigureBegin{Point_set_processing_3figRegistrationPipeline_hippo2_view1, registration_view1_hippo2_opengr_pointmatcher_pipeline.png}
+ \cgalFigureEnd
+ </td>
+ <td>
+ \cgalFigureBegin{Point_set_processing_3figRegistrationPipeline_hippo1_hippo2_view1, registration_view1_hippo1_hippo2_opengr_pointmatcher_pipeline.png}
+ \cgalFigureEnd
+ </td>
 </tr>
 </table>
 \cgalFigureCaptionBegin{Point_set_processing_3tableRegistrationRegistration_visualization_table}
@@ -698,7 +698,7 @@ in two until each cluster's size is less than the parameter `size`.
 \cgalFigureBegin{Point_set_processing_3figHierarchy_simplification_size, hierarchical_clustering_size.jpg}
 Input point set and hierarchy simplification with different `size`
 parameter: \f$10\f$, \f$100\f$ and \f$1000\f$. In the 3 cases,
-`var_max`\f$=1/3\f$.  \cgalFigureEnd
+`var_max`\f$=1/3\f$. \cgalFigureEnd
 
 
 \subsubsection Point_set_processing_3Hierarchy_simplification_parameter_var_max Parameter: var_max
@@ -706,7 +706,7 @@ In addition to the size parameter, a variation parameter allows to
 increase simplification in monotonous regions. For each cluster, a
 surface variation measure is computed using the sorted eigenvalues of
 the covariance matrix: \f[ \sigma(p) = \frac{\lambda_0}{\lambda_0 +
-    \lambda_1 + \lambda_2}. \f]
+ \lambda_1 + \lambda_2}. \f]
 
 This function goes from \f$0\f$ if the cluster is coplanar to
 \f$1/3\f$ if it is fully isotropic. If a cluster's variation is above
@@ -717,7 +717,7 @@ point set.
 \cgalFigureBegin{Point_set_processing_3figHierarchical_clustering_var_max, hierarchical_clustering_var_max.jpg}
 Input point set and hierarchy simplification with different `var_max`
 parameter: \f$0.00001\f$, \f$0.001\f$ and \f$0.1\f$. In the 3 cases,
-`size`\f$=1000\f$.  \cgalFigureEnd
+`size`\f$=1000\f$. \cgalFigureEnd
 
 
 \subsection Point_set_processing_3Example_wlop WLOP Simplification Example
@@ -925,6 +925,30 @@ is greater than a given threshold.
 The following example reads a point set from a file, estimates the
 points that are on sharp edges:
 \cgalExample{Point_set_processing_3/edges_example.cpp}
+
+\section Point_set_processing_3LFSEstimation Local Feature Size Estimation
+
+Function `estimate_local_feature_size()` can estimate the local feature size for each point
+by giving a raw point set. If the points have no normals, the function also estimates normals using jet fitting.
+The function works by calculating the curvature and shape diameter.
+Then, the local feature size will be the minimum of the curvature radius and half of the shape diameter.
+
+Function `median_filter_smoothing_lfs()` performs the median filter to smooth the estimated local feature size.
+
+Function `lipschitz_continuity_smoothing_lfs()` smooth the local feature size
+based on the property of 1-Lipschitz continuity of the local feature size function.
+
+Function `laplacian_smoothing_lfs()` performs the laplacian smoothing to smooth the estimated local feature size.
+
+\subsection Point_set_processing_3Example_LFS_point_set Point_set_3 Example
+
+The following example uses the `CGAL::Point_set_3<Point,Vector>` to store a point cloud and estimates the local feature size for each point:
+\cgalExample{Point_set_processing_3/lfs_example_pointset.cpp}
+
+\subsection Point_set_processing_3Example_LFS_tuple std::vector Example
+
+The following example uses the `std::vector` to store a point cloud and estimates the local feature size for each point:
+\cgalExample{Point_set_processing_3/lfs_example_tuple.cpp}
 
 
 \section Point_set_processing_3Structuring Structuring
