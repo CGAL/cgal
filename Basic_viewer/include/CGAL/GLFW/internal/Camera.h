@@ -53,6 +53,7 @@ public:
   void toggle_type(); 
 
   void switch_constraint_axis();
+  void set_constraint_axis(ConstraintAxis axis);
 
   void increase_fov(float d);
   void disable_smoothness();
@@ -474,6 +475,11 @@ void Camera::switch_constraint_axis()
       m_ConstraintAxis = ConstraintAxis::NO_CONSTRAINT;
       break;
   }
+}
+
+void Camera::set_constraint_axis(ConstraintAxis axis)
+{
+  m_ConstraintAxis = axis;
 }
 
 void Camera::increase_fov(const float d) 

@@ -267,6 +267,12 @@ namespace GLFW
     m_BoundingBox = { pmin, pmax };
 
     m_Camera.lookat(pmin, pmax);  
+
+    if (is_two_dimensional())
+    {
+      m_Camera.set_constraint_axis(Camera::ConstraintAxis::FORWARD_AXIS);
+      m_Camera.set_orthographic();
+    }
   }
 
   void Basic_viewer::initialize_and_load_world_axis()
