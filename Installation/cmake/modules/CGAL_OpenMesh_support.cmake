@@ -1,23 +1,17 @@
 
 if(OpenMesh_FOUND AND NOT TARGET CGAL::OpenMesh_support)
 
-  add_library(CGAL::OpenMesh_support UNKNOWN IMPORTED)
+  add_library(CGAL::OpenMesh_support INTERFACE IMPORTED)
 
-  set_target_properties(OpenMesh::OpenMesh PROPERTIES
-    INTERFACE_COMPILE_DEFINITIONS "CGAL_USE_OPENMESH;NOMINMAX;_USE_MATH_DEFINES"
-    INTERFACE_INCLUDE_DIRECTORIES  "${OPENMESH_INCLUDE_DIRS}")
-
-  if(OPENMESH_CORE_LIBRARY_RELEASE)
-    set_property(TARGET OpenMesh::OpenMesh APPEND PROPERTY
-      IMPORTED_CONFIGURATIONS RELEASE)
-    set_target_properties(OpenMesh::OpenMesh PROPERTIES
-      IMPORTED_LOCATION_RELEASE "${OPENMESH_CORE_LIBRARY_RELEASE}")
+  if(TARGET OpenMeshCore)
+    target_link_libraries(CGAL::OpenMesh_support INTERFACE OpenMeshCore)
   endif()
 
-  if(OPENMESH_CORE_LIBRARY_DEBUG)
-    set_property(TARGET OpenMesh::OpenMesh APPEND PROPERTY
-      IMPORTED_CONFIGURATIONS DEBUG)
-    set_target_properties(OpenMesh::OpenMesh PROPERTIES
-      IMPORTED_LOCATION_DEBUG "${OPENMESH_CORE_LIBRARY_DEBUG}")
+  if(TARGET OpenMeshTools)
+    target_link_libraries(CGAL::OpenMesh_support INTERFACE OpenMeshTools)
   endif()
+
+  target_compile_definitions(CGAL::OpenMesh_support
+    INTERFACE  "CGAL_USE_OPENMESH;NOMINMAX;_USE_MATH_DEFINES")
+
 endif()
