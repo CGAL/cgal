@@ -31,14 +31,14 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 
-  find_package(OpenMesh QUIET)
+  find_package(OpenMesh CONFIG QUIET)
   if(OpenMesh_FOUND)
-    include(UseOpenMesh)
+    include(CGAL_OpenMesh_support)
     message(STATUS "Found OpenMesh")
 
     create_single_source_cgal_program("all_roi_assign_example_with_OpenMesh.cpp")
     target_link_libraries(all_roi_assign_example_with_OpenMesh
-                          PRIVATE ${OPENMESH_LIBRARIES} CGAL::Eigen3_support)
+                          PRIVATE CGAL::OpenMesh_support CGAL::Eigen3_support)
   else()
     message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
   endif()

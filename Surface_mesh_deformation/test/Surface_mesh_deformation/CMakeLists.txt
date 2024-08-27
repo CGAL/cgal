@@ -16,14 +16,14 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("Symmetry_test.cpp")
   target_link_libraries(Symmetry_test PUBLIC CGAL::Eigen3_support)
 
-  find_package(OpenMesh QUIET)
+  find_package(OpenMesh CONFIG QUIET)
   if(OpenMesh_FOUND)
-    include(UseOpenMesh)
+    include(CGAL_OpenMesh_support)
     message(STATUS "Found OpenMesh")
 
     create_single_source_cgal_program("Cactus_deformation_session_OpenMesh.cpp")
     target_link_libraries(Cactus_deformation_session_OpenMesh
-                          PRIVATE ${OPENMESH_LIBRARIES} CGAL::Eigen3_support)
+                          PRIVATE CGAL::OpenMesh_support CGAL::Eigen3_support)
   else()
     message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
   endif()
