@@ -7,14 +7,14 @@ This concept refines the basic arrangement \f$ x\f$-monotone traits concept.
 A model of this concept is able to handle <I>directed</I> \f$ x\f$-monotone curves
 that intersect in their interior. Namely, an instance of the
 `X_monotone_curve_2` type defined by a model of the concept
-`ArrangementXMonotoneTraits_2` is only required to have a <I>left</I>
+`AosXMonotoneTraits_2` is only required to have a <I>left</I>
 (lexicographically smaller) endpoint and a <I>right</I> endpoint.
 If the traits class is also a model of
-`ArrangementDirectionalXMonotoneTraits_2`, the \f$ x\f$-monotone curve is
+`AosDirectionalXMonotoneTraits_2`, the \f$ x\f$-monotone curve is
 also required to have a direction, namely one of these two endpoint serves
 as its <I>source</I> and the other as its <I>target</I>.
 
-\cgalRefines{ArrangementXMonotoneTraits_2}
+\cgalRefines{AosXMonotoneTraits_2}
 
 \cgalHasModelsBegin
 \cgalHasModels{CGAL::Arr_segment_traits_2<Kernel>}
@@ -26,11 +26,11 @@ as its <I>source</I> and the other as its <I>target</I>.
 \cgalHasModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
 \cgalHasModelsEnd
 
-\sa `ArrangementXMonotoneTraits_2`
+\sa `AosXMonotoneTraits_2`
 
 */
 
-class ArrangementDirectionalXMonotoneTraits_2 {
+class AosDirectionalXMonotoneTraits_2 {
 public:
 
 /// \name Functor Types
@@ -74,17 +74,17 @@ typedef unspecified_type Merge_2;
 /*!
 default constructor.
 */
-ArrangementDirectionalXMonotoneTraits_2();
+AosDirectionalXMonotoneTraits_2();
 
 /*!
 copy constructor
 */
-ArrangementDirectionalXMonotoneTraits_2(ArrangementDirectionalXMonotoneTraits_2 other);
+AosDirectionalXMonotoneTraits_2(AosDirectionalXMonotoneTraits_2 other);
 
 /*!
 assignment operator.
 */
-ArrangementDirectionalXMonotoneTraits_2 operator=(other);
+AosDirectionalXMonotoneTraits_2 operator=(other);
 
 /// @}
 
@@ -103,5 +103,4 @@ Construct_opposite_2 construct_opposite_2_object();
 
 /// @}
 
-}; /* end ArrangementDirectionalXMonotoneTraits_2 */
-
+}; /* end AosDirectionalXMonotoneTraits_2 */

@@ -42,7 +42,7 @@ containment predicates.
 - `GpsTraitsGeneralPolygon_2`
 - `GpsTraitsGeneralPolygonWithHoles_2`
 - `GeneralPolygon_2`
-- `ArrangementDirectionalXMonotoneTraits_2`
+- `AosDirectionalXMonotoneTraits_2`
 - `GeneralPolygonSetTraits_2`
 - `GeneralPolygonSetDcel`
 - `GeneralPolygonSetDcelFace`
