@@ -25,6 +25,11 @@
 
 namespace CGAL {
 
+#if (_MSC_VER == 1500)
+#undef SCIP_CALL(x)
+#define SCIP_CALL(x) (x)
+#endif
+
 /// \ingroup PkgSolverInterfaceMIP
 ///
 /// This class provides an interface for formulating and solving
