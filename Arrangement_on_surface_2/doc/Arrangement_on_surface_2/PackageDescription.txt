@@ -112,6 +112,7 @@ implemented as peripheral classes or as free (global) functions.
 
 \cgalCRPSection{Concepts}
 
+- `AosApproximateTraits_2`
 - `AosApproximatePointTraits_2`
 - `AosBasicTopologyTraits`
 - `AosBasicTraits_2`
@@ -166,32 +167,32 @@ implemented as peripheral classes or as free (global) functions.
 
 \cgalCRPSection{Function Object Concepts}
 
+- `AosTraits::Approximate_2`
+- `AosTraits::AreMergeable_2`
 - `AosTraits::CompareX_2`
 - `AosTraits::CompareXy_2`
-- `AosTraits::ConstructMinVertex_2`
-- `AosTraits::ConstructMaxVertex_2`
-- `AosTraits::IsVertical_2`
-- `AosTraits::IsOnXIdentification_2`
-- `AosTraits::IsOnYIdentification_2`
 - `AosTraits::CompareYAtX_2`
 - `AosTraits::CompareYAtXLeft_2`
 - `AosTraits::CompareYAtXRight_2`
-- `AosTraits::Equal_2`
-- `AosTraits::ParameterSpaceInX_2`
-- `AosTraits::ParameterSpaceInY_2`
+- `AosTraits::ConstructMinVertex_2`
+- `AosTraits::ConstructMaxVertex_2`
 - `AosTraits::CompareXOnBoundary_2`
 - `AosTraits::CompareYOnBoundary_2`
 - `AosTraits::CompareXNearBoundary_2`
 - `AosTraits::CompareYNearBoundary_2`
 - `AosTraits::CompareXOnBoundaryOfCurveEnd_2`
-- `AosTraits::Intersect_2`
-- `AosTraits::Split_2`
-- `AosTraits::AreMergeable_2`
-- `AosTraits::Merge_2`
-- `AosTraits::MakeXMonotone_2`
-- `AosTraits::Approximate_2`
-- `AosTraits::ConstructXMonotoneCurve_2`
 - `AosTraits::ConstructCurve_2`
+- `AosTraits::ConstructXMonotoneCurve_2`
+- `AosTraits::Equal_2`
+- `AosTraits::Intersect_2`
+- `AosTraits::IsVertical_2`
+- `AosTraits::IsOnXIdentification_2`
+- `AosTraits::IsOnYIdentification_2`
+- `AosTraits::MakeXMonotone_2`
+- `AosTraits::Merge_2`
+- `AosTraits::ParameterSpaceInX_2`
+- `AosTraits::ParameterSpaceInY_2`
+- `AosTraits::Split_2`
 
 \cgalCRPSection{Classes}
 

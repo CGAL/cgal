@@ -39,7 +39,7 @@ namespace CGAL {
  * normalized vector \f$(x,y)\f$ in the \f$xy\f$-plane that bisects the
  * identification curve.
 
- * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosSphericalBoundaryTraits_2}
+ * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosApproximateTraits_2,AosSphericalBoundaryTraits_2}
  */
 template <typename Kernel, typename X, typename Y>
 class Arr_geodesic_arc_on_sphere_traits_2 {

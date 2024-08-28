@@ -7,6 +7,7 @@
  * \cgalRefines{AosBasicTraits_2}
  *
  * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arr_circle_segment_traits_2<Kernel>}
  * \cgalHasModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
  * \cgalHasModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2}
  * \cgalHasModels{CGAL::Arr_linear_traits_2<Kernel>}

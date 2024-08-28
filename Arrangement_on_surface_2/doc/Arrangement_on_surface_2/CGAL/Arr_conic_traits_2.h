@@ -80,7 +80,7 @@ namespace CGAL {
  * to have the same direction as a precondition. Moreover, `Arr_conic_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosDirectionalXMonotoneTraits_2}
+ * \cgalModels{AosTraits_2,AosLandmarkTraits_2,AosApproximateTraits_2,AosDirectionalXMonotoneTraits_2}
  *
  * \cgalHeading{Types}
  */
@@ -438,56 +438,13 @@ public:
     Bbox_2 operator()(const X_monotone_curve_2& xcv) const { return bbox(xcv); }
   };
 
-  /*! \name Auxiliary Functor definitions, used gor, e.g., the landmarks
-   * point-location strategy and the drawing function.
+  /*! \name Auxiliary Functor definitions.
    */
-  //@{
+  /// @{
   typedef double                                        Approximate_number_type;
   typedef CGAL::Cartesian<Approximate_number_type>      Approximate_kernel;
   typedef Approximate_kernel::Point_2                   Approximate_point_2;
-
-  /*! \class Approximate_2
-   * A functor that approximates a point and an \f$x\f$-monotone curve.
-   */
-  class Approximate_2 {
-  public:
-    /*! Obtain an approximation of a point coordinate.
-     * \param p The exact point.
-     * \param i The coordinate index (either 0 or 1).
-     * \pre `i` is either 0 or 1.
-     * \return An approximation of p's \f$x\f$-coordinate (if `i` == 0), or an
-     *         approximation of p's \f$y\f$-coordinate (if `i` == 1).
-     */
-    Approximate_number_type operator()(const Point_2& p, int i) const;
-
-    /*! Obtain an approximation of a point.
-     * \param p The exact point.
-     */
-    Approximate_point_2 operator()(const Point_2& p) const;
-
-    /*! approximates a given \f$x\f$-monotone curve. It computes a sequence of
-     * approximate points that represent an approximate polyline, and inserts
-     * them into an output container given through an output iterator.  The
-     * first and last points in the sequence are always approximations of the
-     * endpoints of the given arc.
-     *
-     * \param oi An output iterator for the output container.
-     * \param error The error bound of the polyline approximation. This is the
-     *        Hausdorff distance between the arc and the polyline that
-     *        approximates the arc.
-     * \param xcv The exact \f$x\f$-monotone arc.
-     * \param l2r A Boolean flag that indicates whether the arc direction is
-     *        left to right.
-     * \return The past-the-end iterator of the output container.
-     *
-     * \pre Dereferencing `oi` must yield an object of type
-     *      `Arr_conic_traits_2::Approximate_point_2`.
-     */
-    template <typename OutputIterator>
-    OutputIterator operator()(OutputIterator oi, double error,
-                              const X_monotone_curve_2& xcv,
-                              bool l2r = true) const;
-  };
+  /// @}
 
   /*! \class Trim_2
    * A functor that trims a conic arc.
@@ -520,9 +477,6 @@ public:
 
   /*! Obtain a `Trim_2` functor. */
   Trim_2 trim_2_object() const;
-
-  /*! Obtain an `Approximate_2` functor. */
-  Approximate_2 approximate_2_object() const;
 
   /// @}
 }; /* end Arr_conic_traits_2 */

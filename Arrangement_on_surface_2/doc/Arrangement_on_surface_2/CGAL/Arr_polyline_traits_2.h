@@ -36,9 +36,9 @@ namespace CGAL {
  *   - `AosConstructCurveTraits_2`.
  *
  * If, in addition, the GeometryTraits_2 models the concept
- * `AosApproximatePointTraits_2` then `Arr_polycurve_traits_2` models
- * this concept as well. The same holds for the concept
- * `AosOpenBoundaryTraits_2`. If no type is provided, then
+ * `AosApproximateTraits_2` (or `AosApproximatePointTraits_2`) then
+ * `Arr_polycurve_traits_2` models this concept as well. The same holds for the
+ * concept `AosOpenBoundaryTraits_2`. If no type is provided, then
  * `Arr_segment_traits_2` (instantiated with
  * `Exact_predicates_exact_constructions_kernel` as the kernel) is used.
  * Otherwise,
@@ -77,7 +77,7 @@ namespace CGAL {
  * the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
  * included.
  *
- * \cgalModels{AosTraits_2,AosDirectionalXMonotoneTraits_2,AosConstructXMonotoneCurveTraits_2,AosConstructCurveTraits_2,AosApproximatePointTraits_2
+ * \cgalModels{AosTraits_2,AosDirectionalXMonotoneTraits_2,AosConstructXMonotoneCurveTraits_2,AosConstructCurveTraits_2,AosApproximateTraits_2
  * (if the type that substitutes the template parameter `SegmentTraits_2`
  * models the concept as well)}
  *
