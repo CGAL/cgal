@@ -35,7 +35,7 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementTraits_2 concept that counts the methods invoked.
+ * A model of the AosTraits_2 concept that counts the methods invoked.
  */
 template <typename Base_traits>
 class Arr_tracing_traits_2 : public Base_traits {

@@ -3,11 +3,11 @@ namespace CGAL {
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
  * The traits class `Arr_rational_function_traits_2` is a model of the
- * `ArrangementTraits_2` concept. It handles bounded and unbounded arcs of
+ * `AosTraits_2` concept. It handles bounded and unbounded arcs of
  * rational functions, referred to as <i>rational arcs</i> (in particular, such
  * an arc may correspond to the entire graph of a rational function). It
  * supports bounded and unbounded arcs. Thus, it is also a model of the concept
- * `ArrangementOpenBoundaryTraits_2`. The traits class enables the construction
+ * `AosOpenBoundaryTraits_2`. The traits class enables the construction
  * and maintenance of arrangements of such arcs.
  *
  * A rational function \f$y = \frac{P(x)}{Q(x)}\f$ is defined by two polynomials
@@ -19,7 +19,7 @@ namespace CGAL {
  * functions are represented by the nested type `Curve_2`.  Note that a rational
  * function may be not continuous since roots of \f$Q\f$ induce vertical
  * asymptotes, which would contradict the notion of an \f$x\f$-monotone curve as
- * it is introduced by the `ArrangementTraits_2` concept.  Thus, continuous
+ * it is introduced by the `AosTraits_2` concept.  Thus, continuous
  * portions of rational functions are represented by the nested type
  * `X_monotone_curve_2`, which is different from `Curve_2`.  Constructors for
  * both classes are provided by the traits.  A `Curve_2` may be split up into
@@ -43,12 +43,12 @@ namespace CGAL {
  * cleans up the cache on demand.
  *
  * While `Arr_rational_function_traits_2` models the concept
- * `ArrangementDirectionalXMonotoneTraits_2`, the implementation of the
+ * `AosDirectionalXMonotoneTraits_2`, the implementation of the
  * `Are_mergeable_2` operation does not enforce the input curves to have the
  * same direction as a precondition. Moreover, `Arr_rational_function_traits_2`
  * supports the merging of curves of opposite directions.
  *
- * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2,ArrangementOpenBoundaryTraits_2}
+ * \cgalModels{AosTraits_2,AosDirectionalXMonotoneTraits_2,AosOpenBoundaryTraits_2}
  */
 template <typename AlgebraicKernel_d_1>
 class Arr_rational_function_traits_2 {

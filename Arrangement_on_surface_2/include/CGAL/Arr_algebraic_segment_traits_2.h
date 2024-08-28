@@ -75,7 +75,7 @@ public:
 
     typedef typename Algebraic_kernel_d_2::Polynomial_2 Polynomial_2;
 
-    /// public types for ArrangementTraits_2
+    /// public types for AosTraits_2
 
     typedef typename Algebraic_kernel_d_2::Curve_analysis_2 Curve_2;
 

@@ -1037,7 +1037,7 @@ public:
   //@}
 
   /// \name Types and functors defined here, required by the
-  // ArrangementDirectionalXMonotoneTraits_2 concept.
+  // AosDirectionalXMonotoneTraits_2 concept.
   //@{
 
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const

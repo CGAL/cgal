@@ -17,7 +17,7 @@ namespace CGAL {
  * \sa `Arr_closed_side_tag`
  * \sa `Arr_contracted_side_tag`
  * \sa `Arr_identified_side_tag`
- * \sa `ArrangementBasicTraits_2`
+ * \sa `AosBasicTraits_2`
  */
 struct Arr_oblivious_side_tag {};
 

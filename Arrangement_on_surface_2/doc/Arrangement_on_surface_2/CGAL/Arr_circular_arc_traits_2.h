@@ -6,7 +6,7 @@ namespace CGAL {
  * of concept `CircularKernel`.
  * It provides curves of type `CGAL::Circular_arc_2<CircularKernel>`.
  *
- * \cgalModels{ArrangementTraits_2}
+ * \cgalModels{AosTraits_2}
  */
 template <typename CircularKernel>
 class Arr_circular_arc_traits_2 {};
