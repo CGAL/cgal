@@ -73,7 +73,7 @@ if(Boost_FILESYSTEM_FOUND)
     KEYWORDS Viewer Mesh_3)
   target_link_libraries(io_image_plugin PUBLIC scene_image_item ${VTK_LIBRARIES} CGAL::CGAL_ImageIO)
   if(VTK_LIBRARIES)
-    target_compile_definitions(io_image_plugin PRIVATE CGAL_USE_VTK)
+    target_compile_definitions(io_image_plugin PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
   endif()
   if(TARGET Boost::filesystem)
     target_link_libraries(io_image_plugin PUBLIC Boost::filesystem
