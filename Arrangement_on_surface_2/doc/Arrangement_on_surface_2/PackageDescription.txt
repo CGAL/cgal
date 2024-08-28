@@ -112,7 +112,7 @@ implemented as peripheral classes or as free (global) functions.
 
 \cgalCRPSection{Concepts}
 
-- `AosApproximateTraits_2`
+- `AosApproximatePointTraits_2`
 - `AosBasicTopologyTraits`
 - `AosBasicTraits_2`
 - `AosBottomSideTraits_2`

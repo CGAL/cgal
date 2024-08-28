@@ -28,7 +28,7 @@ namespace CGAL {
  *   - `AosDirectionalXMonotoneTraits_2`.
  *
  * If, in addition, the SubcurveTraits_2 models the concept
- * `AosApproximateTraits_2` then `Arr_polycurve_traits_2` models this
+ * `AosApproximatePointTraits_2` then `Arr_polycurve_traits_2` models this
  * concept as well. The same holds for the concept
  * `AosOpenBoundaryTraits_2`. If no type is provided, then
  * `Arr_segment_traits_2` (instantiated with
@@ -74,7 +74,7 @@ namespace CGAL {
  * included.
  *
  * \cgalModels{AosTraits_2,AosDirectionalXMonotoneTraits_2,
- *             AosApproximateTraits_2 (if the type that substitutes
+ *             AosApproximatePointTraits_2 (if the type that substitutes
  *   the template parameter `SubcurveTraits_2` models the concept as well)}
  *
  * \sa `Arr_algebraic_segment_traits_2<Coefficient>`
@@ -286,13 +286,11 @@ public:
     /// \name Types
     /// @{
 
-    /*! The container of the subcurves that comprises the polycurve.
-     */
+    /// The container of the subcurves that comprises the polycurve.
     typedef typename std::vector<Subcurve_2>        Subcurves_container;
 
   public:
-    /*! The size of the container that comprises the polycurve.
-     */
+    /// The size of the container that comprises the polycurve.
     typedef typename Subcurves_container::size_type Size;
     typedef typename Subcurves_container::size_type size_type;
 

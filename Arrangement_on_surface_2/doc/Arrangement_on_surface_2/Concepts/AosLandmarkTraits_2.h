@@ -2,14 +2,14 @@
  * \cgalConcept
  *
  * The concept `AosLandmarkTraits_2` refines the traits concepts
- * `AosApproximateTraits_2` and
+ * `AosApproximatePointTraits_2` and
  * `AosConstructXMonotoneCurveTraits_2`. The type of an arrangement
  * associated with the landmark point-location strategy (see
  * `CGAL::Arr_landmarks_point_location`) must be an instance of the
  * `CGAL::Arrangement_2<Traits,Dcel>` class template, where the Traits parameter
  * is substituted by a model of this concept.
  *
- * \cgalRefines{AosApproximateTraits_2,AosConstructXMonotoneCurveTraits_2}
+ * \cgalRefines{AosApproximatePointTraits_2,AosConstructXMonotoneCurveTraits_2}
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}

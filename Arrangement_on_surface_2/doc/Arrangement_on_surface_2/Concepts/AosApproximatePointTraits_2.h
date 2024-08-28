@@ -1,7 +1,7 @@
 /*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * The concept `AosApproximateTraits_2` refines the basic traits concept
+ * The concept `AosApproximatePointTraits_2` refines the basic traits concept
  * `AosBasicTraits_2`. A model of this concept is able to approximate a point.
  *
  * \cgalRefines{AosBasicTraits_2}
@@ -21,7 +21,7 @@
  * \sa `AosXMonotoneTraits_2`
  * \sa `AosTraits_2`
  */
-class AosApproximateTraits_2 {
+class AosApproximatePointTraits_2 {
 public:
   /// \name Types
   /// @{

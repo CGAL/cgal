@@ -3487,11 +3487,11 @@ where the `GeomTraits` parameter is substituted by a model of the
 concept `AosLandmarkTraits_2`. (Naturally, it can also model
 either the `AosXMonotoneTraits_2` concept or the
 `AosTraits_2` concept.) The `AosLandmarkTraits_2`
-concept refines the two concepts `AosApproximateTraits_2` and
+concept refines the two concepts `AosApproximatePointTraits_2` and
 `AosConstructXMonotoneCurveTraits_2`. Each of these two
 concepts, in turn, refines the concept `AosBasicTraits_2`.
 
-A model of the `AosApproximateTraits_2` concept must define a
+A model of the `AosApproximatePointTraits_2` concept must define a
 fixed precision number type (typically the double-precision
 floating-point `double`) and support the operation below (in addition
 to fulfilling the requirements listed by the `AosBasicTraits_2`
@@ -3499,7 +3499,7 @@ concept).
 
 <DL>
 
-<DT>\link AosApproximateTraits_2::Approximate_2 <B>`Approximate_2`</B>\endlink:
+<DT>\link AosApproximatePointTraits_2::Approximate_2 <B>`Approximate_2`</B>\endlink:
 <DD> Given a point `p`, approximate the \f$x\f$ and
 \f$y\f$-coordinates of `p` using a not necessarily multi-precision
 number type. We use this operation for approximate
@@ -4251,10 +4251,10 @@ a geometry-traits class that models the same four concepts.  We refer
 to the type that substitutes the template parameter `SubcurveTraits_2`
 as the <em>subcurve traits</em> hereafter.  If, in addition, the
 subcurve traits also models the concept
-`AosApproximateTraits_2` then the instantiated
+`AosApproximatePointTraits_2` then the instantiated
 `Arr_polyline_traits_2<SubcurveTraits>` type models the concept
-`AosApproximateTraits_2` as well. (By definition, modeling the
-concepts `AosApproximateTraits_2` and
+`AosApproximatePointTraits_2` as well. (By definition, modeling the
+concepts `AosApproximatePointTraits_2` and
 `AosConstructXMonotoneCurveTraits_2` implies modeling the
 concept `AosLandmarkTraits_2`.) Similarly, if the subcurve
 traits also models the concept `AosOpenBoundaryTraits_2` then

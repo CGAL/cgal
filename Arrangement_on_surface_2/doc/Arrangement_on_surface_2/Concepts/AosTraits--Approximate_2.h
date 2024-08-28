@@ -6,7 +6,7 @@ namespace AosTraits {
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{AosApproximateTraits_2::Approximate_2}
+ * \cgalHasModels{AosApproximatePointTraits_2::Approximate_2}
  * \cgalHasModelsEnd
  */
 class Approximate_2 {
