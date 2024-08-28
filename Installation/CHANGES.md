@@ -13,6 +13,8 @@ Release date: June 2024
   - LLVM Clang version 15.0.7 or later (on Linux)
   - Apple Clang compiler versions 10.0.1, 12.0.5, and 15.0.0 (on macOS)
 - The minimal supported version of Boost is now 1.72.0.
+- GMP/MPFR are no longer mandatory to use CGAL, [Boost.Multiprecision](https://www.boost.org/doc/libs/1_72_0/libs/multiprecision/doc/html/index.html).
+  can be used instead.
 - The CGAL `Core` library is no longer based on GMP, but on
   [Boost.Multiprecision](https://www.boost.org/doc/libs/1_72_0/libs/multiprecision/doc/html/index.html).
   Either GMP backend or Boost backend can be used.
