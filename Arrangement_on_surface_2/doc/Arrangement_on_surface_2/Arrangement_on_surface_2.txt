@@ -3701,8 +3701,9 @@ parameter space in this case is open and unbounded.}
 
 <!-- ----------------------------------------------------------------------- -->
 \cgalFigureBegin{aos_fig-spherical_concept_hierarchy,spherical_concept_hierarchy.png}
-Bottom portion of the refinement hierarchy of the geometry-traits
-concepts for curves embedded in a sphere-like parameterized surface
+The entire spherical boundary cluster of the refinement hierarchy of the
+geometry-traits concepts for curves embedded in a sphere-like parameterized
+surface.
 \cgalFigureEnd
 <!-- ----------------------------------------------------------------------- -->
 
