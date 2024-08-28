@@ -50,7 +50,7 @@ namespace CGAL {
  * without loss of precision), in order to avoid robustness problems, although
  * other inexact number types could be used at the user's own risk.
  *
- * A polycurve that comprises \f$n > 0\f$ subcurves has \f$n+1f$ subcurve
+ * A polycurve that comprises \f$n > 0\f$ subcurves has \f$n+1\f$ subcurve
  * end-points, and they are represented as objects of type
  * `SubcurveTraits_2::Point_2`. Since the notion of a \a vertex is reserved to
  * 0-dimensional elements of an arrangement, we use, in this context, the
@@ -73,9 +73,7 @@ namespace CGAL {
  * set the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
  * included.
  *
- * \cgalModels{AosTraits_2,AosDirectionalXMonotoneTraits_2,
- *             AosApproximatePointTraits_2 (if the type that substitutes
- *   the template parameter `SubcurveTraits_2` models the concept as well)}
+ * \cgalModels{AosTraits_2,AosDirectionalXMonotoneTraits_2,AosApproximatePointTraits_2 (if the type that substitutes the template parameter `SubcurveTraits_2` models the concept as well)}
  *
  * \sa `Arr_algebraic_segment_traits_2<Coefficient>`
  * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
