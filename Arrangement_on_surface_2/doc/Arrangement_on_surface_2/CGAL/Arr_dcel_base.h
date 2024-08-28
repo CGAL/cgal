@@ -14,10 +14,9 @@ namespace CGAL {
  *
  * \cgalModels{Aos}
  */
-template< typename V, typename H, typename F >
+template <typename V, typename H, typename F>
 class Arr_dcel_base {
 public:
-
   /*! The basic \dcel face type. Serves as a basis class for an extended
    * face record with auxiliary data fields.
    *
@@ -27,7 +26,7 @@ public:
 
   /*! The basic \dcel halfedge type. Serves as a basis class for an extended
    * halfedge record with auxiliary data fields. The `Curve` parameter is the
-   * type of \f$ x\f$-monotone curves associated with the vertices.
+   * type of \f$x\f$-monotone curves associated with the vertices.
    *
    * \cgalModels{AosHalfedge}
    */
@@ -42,6 +41,6 @@ public:
    */
   template <typename Point>
   class Arr_vertex_base {};
-
 }; /* end Arr_dcel_base */
+
 } /* end namespace CGAL */

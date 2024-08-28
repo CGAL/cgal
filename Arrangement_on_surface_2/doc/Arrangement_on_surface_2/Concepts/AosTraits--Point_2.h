@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsGeometricObjects
  * \cgalConcept
@@ -8,12 +8,9 @@ namespace ArrTraits {
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementBasicTraits_2::Point_2}
+ * \cgalHasModels{AosBasicTraits_2::Point_2}
  * \cgalHasModelsEnd
  */
-class Point_2 {
-public:
-
-}; /* end ArrTraits::Point_2 */
+class Point_2 {};
 
 }

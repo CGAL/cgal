@@ -1,24 +1,22 @@
-/*!
- * \ingroup PkgArrangementOnSurface2ConceptsTraits
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * A model of the concept `ArrangementClosedTopTraits_2` must be used when the
+ * A model of the concept `AosClosedTopTraits_2` must be used when the
  * parameter space of the surface, the arrangement is embedded on, is closed on
  * the top side and curves inserted into the arrangement are expected to reach
  * this boundary side. A model of this concept can handle curves that reach the
  * top boundary side when it is closed.
  *
- * \cgalRefines{ArrangementTopSideTraits_2}
+ * \cgalRefines{AosTopSideTraits_2}
  *
- * \sa `ArrangementClosedLeftTraits_2`,
- *     `ArrangementClosedRightTraits_2`,
- *     `ArrangementClosedBottomTraits_2`,
- *     `ArrangementOpenTopTraits_2`,
- *     `ArrangementContractedTopTraits_2`, and
- *     `ArrangementIdentifiedHorizontalTraits_2`
+ * \sa `AosClosedLeftTraits_2`
+ * \sa `AosClosedRightTraits_2`
+ * \sa `AosClosedBottomTraits_2`
+ * \sa `AosOpenTopTraits_2`
+ * \sa `AosContractedTopTraits_2`
+ * \sa `AosIdentifiedHorizontalTraits_2`
  */
-
-class ArrangementClosedTopTraits_2 {
+class AosClosedTopTraits_2 {
 public:
   /// \name Categories
   /// @{
@@ -34,7 +32,7 @@ public:
   /// \name Functor Types
   /// @{
 
-  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
+  /// models the concept `AosTraits::CompareXOnBoundary_2`.
   typedef unspecified_type Compare_x_on_boundary_2;
 
   /// @}

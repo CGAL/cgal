@@ -1,23 +1,22 @@
 /*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * A model of the concept `ArrangementIdentifiedHorizontalTraits_2` must be used
+ * A model of the concept `AosIdentifiedHorizontalTraits_2` must be used
  * when the parameter space of the surface, the arrangement is embedded on, is
  * identified on the bottom and top sides and curves inserted into the
  * arrangement are expected to reach these boundary sides.
  *
- * \cgalRefines{ArrangementBasicTraits_2}
+ * \cgalRefines{AosBasicTraits_2}
  *
- * \sa `ArrangementIdentifiedVerticalTraits_2`,
- *     `ArrangementOpenBottomTraits_2`,
- *     `ArrangementClosedBottomTraits_2`, and
- *     `ArrangementContractedBottomTraits_2`
- *     `ArrangementOpenTopTraits_2`,
- *     `ArrangementClosedTopTraits_2`, and
- *     `ArrangementContractedTopTraits_2`
+ * \sa `AosIdentifiedVerticalTraits_2`
+ * \sa `AosOpenBottomTraits_2`
+ * \sa `AosClosedBottomTraits_2`
+ * \sa `AosContractedBottomTraits_2`
+ * \sa `AosOpenTopTraits_2`
+ * \sa `AosClosedTopTraits_2`
+ * \sa `AosContractedTopTraits_2`
  */
-
-class ArrangementIdentifiedHorizontalTraits_2 {
+class AosIdentifiedHorizontalTraits_2 {
 public:
   /// \name Categories
   /// @{
@@ -34,10 +33,10 @@ public:
   /// \name Functor Types
   /// @{
 
-  /// models the concept `ArrTraits::CompareXOnBoundary_2`.
+  /// models the concept `AosTraits::CompareXOnBoundary_2`.
   typedef unspecified_type Compare_x_on_boundary_2;
 
-  /// models the concept `ArrTraits::IsOnXIdentification_2`.
+  /// models the concept `AosTraits::IsOnXIdentification_2`.
   typedef unspecified_type Is_on_x_identification_2;
 
   /// @}

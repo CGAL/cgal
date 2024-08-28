@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableUnaryFunction}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementBasicTraits_2::Construct_min_vertex_2}
+ * \cgalHasModels{AosBasicTraits_2::Construct_min_vertex_2}
  * \cgalHasModelsEnd
  */
 class ConstructMinVertex_2 {
@@ -18,10 +18,10 @@ public:
 
   /*! returns the lexicographically smaller (left) endpoint of `xc`.
    */
-  ArrTraits::Point_2 operator()(ArrTraits::X_monotone_curve_2 xc);
+  AosTraits::Point_2 operator()(AosTraits::X_monotone_curve_2 xc);
 
   /// @}
 
-}; /* end ArrTraits::ConstructMinVertex_2 */
+}; /* end AosTraits::ConstructMinVertex_2 */
 
 }

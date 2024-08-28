@@ -2,8 +2,8 @@
  * \cgalConcept
  *
  * A doubly-connected edge-list (\dcel for short) data-structure. It consists of
- * three containers of records: vertices \f$ V\f$, halfedges \f$ E\f$, and faces
- * \f$ F\f$.  It maintains the incidence relation among them. The halfedges are
+ * three containers of records: vertices \f$V\f$, halfedges \f$E\f$, and faces
+ * \f$F\f$.  It maintains the incidence relation among them. The halfedges are
  * ordered in pairs sometimes referred to as twins, such that each halfedge pair
  * represent an edge.
  *
@@ -34,46 +34,46 @@ public:
   /// \name Types
   /// @{
 
-  //! the vertex type.
+  /// the vertex type.
   typedef unspecified_type Vertex;
 
-  //! the halfedge type.
+  /// the halfedge type.
   typedef unspecified_type Halfedge;
 
-  //! the face type.
+  /// the face type.
   typedef unspecified_type Face;
 
-  //! the Outer CCB type.
+  /// the Outer CCB type.
   typedef unspecified_type Outer_ccb;
 
-  //! the Inner CCB type.
+  /// the Inner CCB type.
   typedef unspecified_type Inner_ccb;
 
-  //! the hole (i.e., Inner_ccb) type.
+  /// the hole (i.e., Inner_ccb) type.
   typedef unspecified_type Hole;
 
-  //! the isolated vertex type.
+  /// the isolated vertex type.
   typedef unspecified_type Isolated_vertex;
 
-  //! used to represent size values (e.g., `size_t`).
+  /// used to represent size values (e.g., `size_t`).
   typedef unspecified_type Size;
 
-  //! a bidirectional iterator over the vertices. Its value-type is `Vertex`.
+  /// a bidirectional iterator over the vertices. Its value-type is `Vertex`.
   typedef unspecified_type Vertex_iterator;
 
-  //! a bidirectional iterator over the vertices. Its value-type is `Vertex`.
+  /// a bidirectional iterator over the vertices. Its value-type is `Vertex`.
   typedef unspecified_type Vertex_const_iterator;
 
-  //! a bidirectional iterator over the halfedges. Its value-type is `Halfedge`.
+  /// a bidirectional iterator over the halfedges. Its value-type is `Halfedge`.
   typedef unspecified_type Halfedge_iterator;
 
-  //! a bidirectional iterator over the halfedges. Its value-type is `Halfedge`.
+  /// a bidirectional iterator over the halfedges. Its value-type is `Halfedge`.
   typedef unspecified_type Halfedge_const_iterator;
 
-  //! a bidirectional iterator over the faces. Its value-type is `Face`.
+  /// a bidirectional iterator over the faces. Its value-type is `Face`.
   typedef unspecified_type Face_iterator;
 
-  //! a bidirectional iterator over the faces. Its value-type is `Face`.
+  /// a bidirectional iterator over the faces. Its value-type is `Face`.
   typedef unspecified_type Face_const_iterator;
 
   /// @}

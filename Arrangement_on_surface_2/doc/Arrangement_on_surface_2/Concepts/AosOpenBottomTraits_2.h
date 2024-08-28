@@ -1,24 +1,23 @@
-/*!
- * \ingroup PkgArrangementOnSurface2ConceptsTraits
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * A model of the concept `ArrangementOpenBottomTraits_2` must be used when the
+ * A model of the concept `AosOpenBottomTraits_2` must be used when the
  * parameter space of the surface, the arrangement is embedded on, is open on
  * the bottom side and curves inserted into the arrangement are expected to
  * reach this boundary side. A model of this concept can handle curves that
  * reach the bottom boundary side when it is open.
  *
- * \cgalRefines{ArrangementBottomSideTraits_2}
+ * \cgalRefines{AosBottomSideTraits_2}
  *
- * \sa `ArrangementOpenLeftTraits_2`,
- *     `ArrangementOpenRightTraits_2`,
- *     `ArrangementOpenTopTraits_2`,
- *     `ArrangementClosedBottomTraits_2`,
- *     `ArrangementContractedBottomTraits_2`, and
- *     `ArrangementIdentifiedHorizontalTraits_2`
+ * \sa `AosOpenLeftTraits_2`,
+ *     `AosOpenRightTraits_2`,
+ *     `AosOpenTopTraits_2`,
+ *     `AosClosedBottomTraits_2`,
+ *     `AosContractedBottomTraits_2`, and
+ *     `AosIdentifiedHorizontalTraits_2`
  */
 
-class ArrangementOpenBottomTraits_2 {
+class AosOpenBottomTraits_2 {
 public:
   /// \name Categories
   /// @{

@@ -1,11 +1,11 @@
 /*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * The concept `ArrangementConstructXMonotoneCurveTraits_2` refines the basic
- * traits concept `ArrangementBasicTraits_2`. A model of this concept is able to
- * construct an \f$ x\f$-monotone curve from two points.
+ * The concept `AosConstructXMonotoneCurveTraits_2` refines the basic
+ * traits concept `AosBasicTraits_2`. A model of this concept is able to
+ * construct an \f$x\f$-monotone curve from two points.
  *
- * \cgalRefines{ArrangementBasicTraits_2}
+ * \cgalRefines{AosBasicTraits_2}
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
@@ -17,17 +17,17 @@
  * \cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
  * \cgalHasModelsEnd
  *
- * \sa `ArrangementApproximateTraits_2`,
- *     `ArrangementXMonotoneTraits_2`
- *     `ArrangementTraits_2`, and
- *     `ArrangementConstructCurveTraits_2`.
+ * \sa `AosApproximateTraits_2`
+ * \sa `AosXMonotoneTraits_2`
+ * \sa `AosTraits_2`
+ * \sa `AosConstructCurveTraits_2`
  */
-class ArrangementConstructXMonotoneCurveTraits_2 {
+class AosConstructXMonotoneCurveTraits_2 {
 public:
   /// \name Functor Types
   /// @{
 
-  /*! models the concept `ArrTraits::ConstructXMonotoneCurve_2`.
+  /*! models the concept `AosTraits::ConstructXMonotoneCurve_2`.
    */
   typedef unspecified_type Construct_x_monotone_curve_2;
 
@@ -36,8 +36,7 @@ public:
   /// \name Accessing Functor Objects
   /// @{
 
-  /*!
-   */
+  ///
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;
 
   /// @}

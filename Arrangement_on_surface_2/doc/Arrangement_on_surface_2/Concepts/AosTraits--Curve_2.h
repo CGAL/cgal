@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsGeometricObjects
  * \cgalConcept
@@ -7,12 +7,9 @@ namespace ArrTraits {
  *
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementTraits_2::Curve_2}
+ * \cgalHasModels{AosTraits_2::Curve_2}
  * \cgalHasModelsEnd
  */
-class Curve_2 {
-public:
-
-}; /* end ArrTraits::Curve_2 */
+class Curve_2 {};
 
 }

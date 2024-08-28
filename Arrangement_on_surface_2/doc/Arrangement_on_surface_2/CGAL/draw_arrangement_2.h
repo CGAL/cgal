@@ -37,9 +37,9 @@ namespace CGAL {
  *
  * \tparam GeometryTraits_2 a geometry traits type, a model of a 2D arrangement
  * traits concept. At this point it must be an instance of either
- * `CGAL::Arr_segment_traits_2` or `CGAL::Arr_conic_traits_2`.  \tparam Dcel the
- * \dcel type, a model of the `AosDcel` concept.  \tparam GSOptions a model of
- * `GraphicsSceneOptions` concept.
+ * `CGAL::Arr_segment_traits_2` or `CGAL::Arr_conic_traits_2`.
+ * \tparam Dcel the \dcel type, a model of the `AosDcel` concept.
+ * \tparam GSOptions a model of `GraphicsSceneOptions` concept.
  *
  * \param arr the 2D arrangement to draw.
  * \param gso the graphics scene options parameter.
@@ -67,9 +67,9 @@ void draw(const Arrangement_2<GeometryTraits_2, Dcel>& arr);
  *
  * \tparam GeometryTraits_2 a geometry traits type, a model of a 2D arrangement
  * traits concept. At this point it must be an instance of either
- * `CGAL::Arr_segment_traits_2` or `CGAL::Arr_conic_traits_2`.  \tparam Dcel the
- * \dcel type, a model of the `AosDcel` concept.  \tparam GSOptions a model of
- * `GraphicsSceneOptions` concept.
+ * `CGAL::Arr_segment_traits_2` or `CGAL::Arr_conic_traits_2`.
+ * \tparam Dcel the \dcel type, a model of the `AosDcel` concept.
+ * \tparam GSOptions a model of `GraphicsSceneOptions` concept.
  *
  * \param arr the 2D arrangement to draw.
  * \param gs the graphic scene to fill.

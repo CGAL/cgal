@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
@@ -6,27 +6,25 @@ namespace ArrTraits {
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementXMonotoneTraits_2::Merge_2}
+ * \cgalHasModels{AosXMonotoneTraits_2::Merge_2}
  * \cgalHasModelsEnd
  */
 class Merge_2 {
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
 
-  /*! accepts two <I>mergeable</I> \f$ x\f$-monotone curves `xc1` and `xc2`
+  /*! accepts two <I>mergeable</I> \f$x\f$-monotone curves `xc1` and `xc2`
    * and assigns `xc` with the merged curve.
    *
    * \pre `are_mergeable_2`(`xc1`, `xc2`) is true.
    */
-  void merge(ArrTraits::X_monotone_curve_2 xc1,
-             ArrTraits::X_monotone_curve_2 xc2,
-             ArrTraits::X_monotone_curve_2& xc);
+  void merge(AosTraits::X_monotone_curve_2 xc1,
+             AosTraits::X_monotone_curve_2 xc2,
+             AosTraits::X_monotone_curve_2& xc);
 
   /// @}
-
-}; /* end ArrTraits::Merge_2 */
+}; /* end AosTraits::Merge_2 */
 
 }

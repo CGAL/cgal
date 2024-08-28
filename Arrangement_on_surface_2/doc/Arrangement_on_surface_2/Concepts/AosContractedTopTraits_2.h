@@ -1,24 +1,22 @@
-/*!
- * \ingroup PkgArrangementOnSurface2ConceptsTraits
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * A model of the concept `ArrangementContractedTopTraits_2` must be used when
+ * A model of the concept `AosContractedTopTraits_2` must be used when
  * the parameter space of the surface, the arrangement is embedded on, is
  * contracted on the top side and curves inserted into the arrangement are
  * expected to reach this boundary side. A model of this concept can handle
  * curves that reach the top boundary side when it is contracted.
  *
- * \cgalRefines{ArrangementTopSideTraits_2}
+ * \cgalRefines{AosTopSideTraits_2}
  *
- * \sa `ArrangementContractedLeftTraits_2`,
- *     `ArrangementContractedRightTraits_2`,
- *     `ArrangementContractedBottomTraits_2`,
- *     `ArrangementOpenTopTraits_2`,
- *     `ArrangementSlosedTopTraits_2`, and
- *     `ArrangementIdentifiedHorizontalTraits_2`
+ * \sa `AosContractedLeftTraits_2`
+ * \sa `AosContractedRightTraits_2`
+ * \sa `AosContractedBottomTraits_2`
+ * \sa `AosOpenTopTraits_2`
+ * \sa `AosSlosedTopTraits_2`
+ * \sa `AosIdentifiedHorizontalTraits_2`
  */
-
-class ArrangementContractedTopTraits_2 {
+class AosContractedTopTraits_2 {
 public:
   /// \name Categories
   /// @{

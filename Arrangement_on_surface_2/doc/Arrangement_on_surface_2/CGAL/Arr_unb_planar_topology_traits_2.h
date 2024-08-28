@@ -62,16 +62,16 @@ public:
   /// \name Accessors
   /// @{
 
-  /*! Obtain the DCEL (const version). */
+  /*! obtains the \dcel (const version). */
   const Dcel& dcel() const;
 
-  /*! Obtain the DCEL (non-const version). */
+  /*! obtains the \dcel (non-const version). */
   Dcel& dcel();
 
-  /*! Obtain the unbounded face (const version). */
+  /*! obtains the unbounded face (const version). */
   const Face* unbounded_face() const;
 
-  /*! Obtain the unbounded face (non-const version). */
+  /*! obtains the unbounded face (non-const version). */
   Face* unbounded_face();
 
   /// @}

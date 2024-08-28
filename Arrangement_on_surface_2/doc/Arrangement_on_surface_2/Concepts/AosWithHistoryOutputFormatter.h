@@ -1,21 +1,19 @@
+/*! \ingroup PkgArrangementOnSurface2Concepts
+ * \cgalConcept
 
-/*!
-\ingroup PkgArrangementOnSurface2Concepts
-\cgalConcept
-
-A model for the `ArrangementWithHistoryOutputFormatter` concept supports a set of functions that enable
+A model for the `AosWithHistoryOutputFormatter` concept supports a set of functions that enable
 writing an arrangement-with-history instance to an output stream using a
 specific format.
 
-\cgalRefines{ArrangementOutputFormatter}
+\cgalRefines{AosOutputFormatter}
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Arr_with_history_text_formatter<ArrFormatter>}
+\cgalHasModels{CGAL::Arr_with_history_text_formatter<AosFormatter>}
 \cgalHasModelsEnd
 
 */
 
-class ArrangementWithHistoryOutputFormatter {
+class AosWithHistoryOutputFormatter {
 public:
 
 /// \name Types
@@ -74,5 +72,4 @@ void write_induced_edges_end();
 
 /// @}
 
-}; /* end ArrangementWithHistoryOutputFormatter */
-
+}; /* end AosWithHistoryOutputFormatter */

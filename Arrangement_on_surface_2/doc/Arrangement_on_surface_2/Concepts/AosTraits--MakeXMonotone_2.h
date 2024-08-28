@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementTraits_2::Make_x_monotone_2}
+ * \cgalHasModels{AosTraits_2::Make_x_monotone_2}
  * \cgalHasModelsEnd
  */
 class MakeXMonotone_2 {
@@ -27,13 +27,13 @@ public:
    *
    * \pre Dereferencing `oi` must yield a polymorphic object of type
    * `std::variant<%Point_2, X_monotone_curve_2>`, where `%Point_2` is a model
-   * of `ArrTraits::Point_2` and `X_monotone_curve_2` is a model of
-   * `ArrTraits::XMonotoneCurve_2`.
+   * of `AosTraits::Point_2` and `X_monotone_curve_2` is a model of
+   * `AosTraits::XMonotoneCurve_2`.
    */
   template <typename OutputIterator>
-  OutputIterator operator()(ArrTraits::Curve_2 c, OutputIterator oi);
+  OutputIterator operator()(AosTraits::Curve_2 c, OutputIterator oi);
 
   /// @}
-}; /* end ArrTraits::MakeXMonotone_2 */
+}; /* end AosTraits::MakeXMonotone_2 */
 
 }

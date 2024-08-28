@@ -29,16 +29,15 @@
  * \sa `Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>`
  */
 
-class ArrangementTopologyTraits {
+class AosTopologyTraits {
 public:
-
   /// \name Types
   /// @{
 
-  /*! */
+  ///
   typedef unspecified_type Geometry_traits_2;
 
-  /*! */
+  ///
   typedef unspecified_type Dcel;
   /// @}
 

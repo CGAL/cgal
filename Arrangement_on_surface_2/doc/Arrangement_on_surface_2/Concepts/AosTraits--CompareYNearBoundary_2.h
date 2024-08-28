@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
@@ -6,12 +6,11 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableTernaryFunction}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementOpenBoundaryTraits_2::Compare_y_near_boundary_2}
+ * \cgalHasModels{AosOpenBoundaryTraits_2::Compare_y_near_boundary_2}
  * \cgalHasModelsEnd
  */
 class CompareYNearBoundary_2 {
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -30,18 +29,17 @@ public:
    * to `xcv2` and `ce`. In that case \f$p\f$ is located far to the right in a
    * similar manner.
    *
-   * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv2`, `ce`) =
-   * \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv1`, `ce`).
+   * \pre \link AosVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv2`, `ce`) =
+   * \link AosVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv1`, `ce`).
    *
-   * \pre \link ArrangementVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv1`, `ce`) \f$\neq\f$
+   * \pre \link AosVerticalSideTraits_2::Parameter_space_in_x_2 `parameter_space_in_x_2`\endlink(`xcv1`, `ce`) \f$\neq\f$
    * `CGAL::ARR_INTERIOR`.
    */
-  Comparison_result operator()(const ArrTraits::X_monotone_curve_2& xcv1,
-                               const ArrTraits::X_monotone_curve_2& xcv2,
+  Comparison_result operator()(const AosTraits::X_monotone_curve_2& xcv1,
+                               const AosTraits::X_monotone_curve_2& xcv2,
                                CGAL::Arr_curve_end ce);
 
   /// @}
-
-}; /* end ArrTraits::CompareYNearBoundary_2 */
+}; /* end AosTraits::CompareYNearBoundary_2 */
 
 }

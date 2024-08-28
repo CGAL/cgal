@@ -1,24 +1,22 @@
-/*!
- * \ingroup PkgArrangementOnSurface2ConceptsTraits
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * A model of the concept `ArrangementContractedBottomTraits_2` must be used
+ * A model of the concept `AosContractedBottomTraits_2` must be used
  * when the parameter space of the surface, the arrangement is embedded on, is
  * contracted on the bottom side and curves inserted into the arrangement are
  * expected to reach this boundary side. A model of this concept can handle
  * curves that reach the bottom boundary side when it is contracted.
  *
- * \cgalRefines{ArrangementBottomSideTraits_2}
+ * \cgalRefines{AosBottomSideTraits_2}
  *
- * \sa `ArrangementContractedLeftTraits_2`,
- *     `ArrangementContractedRightTraits_2`,
- *     `ArrangementContractedTopTraits_2`,
- *     `ArrangementClosedBottomTraits_2`,
- *     `ArrangementContractedBottomTraits_2`, and
- *     `ArrangementIdentifiedHorizontalTraits_2`
+ * \sa `AosContractedLeftTraits_2`
+ * \sa `AosContractedRightTraits_2`
+ * \sa `AosContractedTopTraits_2`
+ * \sa `AosClosedBottomTraits_2`
+ * \sa `AosContractedBottomTraits_2`
+ * \sa `AosIdentifiedHorizontalTraits_2`
  */
-
-class ArrangementContractedBottomTraits_2 {
+class AosContractedBottomTraits_2 {
 public:
   /// \name Categories
   /// @{

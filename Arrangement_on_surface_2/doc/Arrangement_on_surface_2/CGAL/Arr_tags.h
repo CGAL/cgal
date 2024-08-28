@@ -21,10 +21,6 @@ namespace CGAL {
  */
 struct Arr_oblivious_side_tag {};
 
-}
-
-namespace CGAL {
-
 /*! \ingroup PkgArrangementOnSurface2Tags
  *
  * This type tag is used to indicate that a side of the parameter space, either
@@ -35,7 +31,7 @@ namespace CGAL {
  * `Bottom_side_category`, and `Top_side_category`, nested in every geometry
  * traits class, must be convertible to the type `Arr_open_side_tag`. For
  * example, all categories above, nested in every model of the
- * `ArrangementOpenBoundaryTraits_2` concept, must be convertible to
+ * `AosOpenBoundaryTraits_2` concept, must be convertible to
  * `Arr_open_side_tag`, as curves are expected to approach all the four boundary
  * sides of the parameter space (i.e., left, right, bottom, and top).
  *
@@ -46,13 +42,9 @@ namespace CGAL {
  * \sa `Arr_closed_side_tag`
  * \sa `Arr_contracted_side_tag`
  * \sa `Arr_identified_side_tag`
- * \sa `ArrangementOpenBoundaryTraits_2`
+ * \sa `AosOpenBoundaryTraits_2`
  */
 struct Arr_open_side_tag : {};
-
-}
-
-namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Tags
  *
@@ -73,13 +65,9 @@ namespace CGAL {
  * \sa `Arr_open_side_tag`
  * \sa `Arr_contracted_side_tag`
  * \sa `Arr_identified_side_tag`
- * \sa `ArrangementOpenBoundaryTraits_2`
+ * \sa `AosOpenBoundaryTraits_2`
  */
 struct Arr_closed_side_tag {};
-
-}
-
-namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Tags
  *
@@ -92,7 +80,7 @@ namespace CGAL {
  * nested in every geometry traits class, must be convertible to the type
  * `Arr_contracted_side_tag`. For example, the `Bottom_side_category` and
  * `Top_side_category` category types, nested in every model of the
- * `ArrangementSphericalBoundaryTraits_2 concept` (such as any instance of the
+ * `AosSphericalBoundaryTraits_2 concept` (such as any instance of the
  * `Arr_geodesic_arc_on_sphere_traits_2` class template) must be convertible to
  * `Arr_contracted_side_tag`
  *
@@ -103,13 +91,9 @@ namespace CGAL {
  * \sa `Arr_open_side_tag`
  * \sa `Arr_closed_side_tag`
  * \sa `Arr_identified_side_tag`
- * \sa `ArrangementOpenBoundaryTraits_2`
+ * \sa `AosOpenBoundaryTraits_2`
  */
 struct Arr_contracted_side_tag {};
-
-}
-
-namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2Tags
  *
@@ -122,7 +106,7 @@ namespace CGAL {
  * nested in every geometry traits class, must be convertible to the type
  * `Arr_identified_side_tag`. For example, the `Left_side_category` and
  * `Right_side_category` category types, nested in every model of the
- * `ArrangementSphericalBoundaryTraits_2 concept` (such as any instance of the
+ * `AosSphericalBoundaryTraits_2 concept` (such as any instance of the
  * `Arr_geodesic_arc_on_sphere_traits_2` class template) must be convertible to
  * `Arr_identified_side_tag`
  *
@@ -133,7 +117,7 @@ namespace CGAL {
  * \sa `Arr_open_side_tag`
  * \sa `Arr_closed_side_tag`
  * \sa `Arr_contracted_side_tag`
- * \sa `ArrangementOpenBoundaryTraits_2`
+ * \sa `AosOpenBoundaryTraits_2`
  */
 struct Arr_identified_side_tag {};
 

@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
@@ -6,12 +6,11 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableBinaryFunction}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementBasicTraits_2::Compare_y_at_x_2}
+ * \cgalHasModels{AosBasicTraits_2::Compare_y_at_x_2}
  * \cgalHasModelsEnd
  */
 class CompareYAtX_2 {
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
@@ -20,11 +19,10 @@ public:
    * of `p` on `xc`, and returns `CGAL::SMALLER`, `CGAL::EQUAL`, or
    * `CGAL::LARGER` according to the result.
    */
-  Comparison_result operator()(ArrTraits::Point_2 p,
-                               ArrTraits::X_monotone_curve_2 xc);
+  Comparison_result operator()(AosTraits::Point_2 p,
+                               AosTraits::X_monotone_curve_2 xc);
 
   /// @}
-
-}; /* end ArrTraits::CompareYAtX_2 */
+}; /* end AosTraits::CompareYAtX_2 */
 
 }

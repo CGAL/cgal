@@ -46,11 +46,11 @@ namespace CGAL {
  *
  * The number type used by the injected subcurve traits should support exact
  * rational arithmetic (that is, the number type should support the arithmetic
- * operations \f$ +\f$, \f$ -\f$, \f$ \times\f$ and \f$ \div\f$ carried out
+ * operations \f$+\f$, \f$-\f$, \f$\times\f$ and \f$\div\f$ carried out
  * without loss of precision), in order to avoid robustness problems, although
  * other inexact number types could be used at the user's own risk.
  *
- * A polycurve that comprises \f$n > 0\f$ subcurves has \f$ n+1 \f$ subcurve
+ * A polycurve that comprises \f$n > 0\f$ subcurves has \f$n+1f$ subcurve
  * end-points, and they are represented as objects of type
  * `SubcurveTraits_2::Point_2`. Since the notion of a \a vertex is reserved to
  * 0-dimensional elements of an arrangement, we use, in this context, the
@@ -87,22 +87,19 @@ namespace CGAL {
  * \sa `Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
  * \sa `CGAL_ALWAYS_LEFT_TO_RIGHT`
  */
-
 template <typename SubcurveTraits_2>
 class Arr_polycurve_traits_2 {
 public:
   /// \name Types
   /// @{
 
-  /*!
-   */
-  // TODO: Have to turn these into links, so whenever I mention Point_2 it
-  //       will point here and *not* to Kernel::Point_2 for instance.
+  ///
   typedef SubcurveTraits_2::Point_2                   Point_2;
 
-  /*!
-   */
+  ///
   typedef SubcurveTraits_2::Curve_2                   Subcurve_2;
+
+  ///
   typedef SubcurveTraits_2::X_monotone_curve_2        X_monotone_subcurve_2;
 
   /// @}
@@ -361,8 +358,8 @@ public:
 
     /*! \deprecated
      * Obtain the number of subcurve end-points that comprise the polycurve.
-     * Note that for a bounded polycurve, if there are \f$ n\f$ points in the
-     * polycurve, it comprises \f$ (n - 1)\f$ subcurves.
+     * Note that for a bounded polycurve, if there are \f$n\f$ points in the
+     * polycurve, it comprises \f$(n - 1)\f$ subcurves.
      * Currently, only bounded polycurves are supported.
      */
     unsigned_int points() const;
@@ -414,7 +411,7 @@ public:
      */
     size_type number_of_subcurves() const;
 
-    /*! Obtain the \f$ k\f$th subcurve of the polycurve.
+    /*! Obtain the \f$k\f$th subcurve of the polycurve.
      * \pre \f$k\f$ is not greater than or equal to \f$n-1\f$, where
      *      \f$n\f$ is the number of subcurves.
      */
@@ -463,28 +460,25 @@ public:
     void clear();
 
     /// @} /* End of Operations */
-
   }; /* end Arr_polycurve_traits_2::Curve_2 */
 
-
-  /*! The `X_monotone_curve_2` class nested within the polycurve
-   * traits is used to represent \f$ x\f$-monotone piecewise linear subcurves.
+  /*! The `X_monotone_curve_2` class nested within the polycurve traits is
+   * used to represent \f$x\f$-monotone piecewise linear subcurves.
    *
    * It inherits from the `Curve_2` type. `X_monotone_curve_2` can be
-   * constructed just like `Curve_2`. However, there is precondition
-   * (which is not tested) that the input defines an \f$
-   * x\f$-monotone polycurve. Furthermore, in contrast to the general
-   * `Curve_2` type, in this case, the subcurves that an
-   * `X_monotone_curve_2` comprises have to be instances of the type
-   * `SubcurveTraits_2::X_monotone_curve_2`. Note that the \f$
-   * x\f$-monotonicity ensures that an \f$ x\f$-monotone polycurve
-   * is not self-intersecting. (A self-intersecting polycurve is
-   * subdivided into several interior-disjoint \f$x\f$-monotone subcurves).
+   * constructed just like `Curve_2`. However, there is precondition (which
+   * is not tested) that the input defines an \f$x\f$-monotone polycurve.
+   * Furthermore, in contrast to the general `Curve_2` type, in this case,
+   * the subcurves that an `X_monotone_curve_2` comprises have to be
+   * instances of the type `SubcurveTraits_2::X_monotone_curve_2`. Note that
+   * the \f$x\f$-monotonicity ensures that an \f$x\f$-monotone polycurve is
+   * not self-intersecting. (A self-intersecting polycurve is subdivided
+   * into several interior-disjoint \f$x\f$-monotone subcurves).
    *
-   * The defined \f$ x\f$-monotone polycurve can be directed either from
+   * The defined \f$x\f$-monotone polycurve can be directed either from
    * right-to-left (and in turn its vertices are stored in an ascending
-   * lexicographical \f$ xy\f$-order) or left-to-right (and in this case the
-   * vertices are stored in a descending lexicographical \f$ xy\f$-order).
+   * lexicographical \f$xy\f$-order) or left-to-right (and in this case the
+   * vertices are stored in a descending lexicographical \f$xy\f$-order).
    */
   template <typename SubcurveType_2, typename PointType_2>
   class X_monotone_curve_2 {};

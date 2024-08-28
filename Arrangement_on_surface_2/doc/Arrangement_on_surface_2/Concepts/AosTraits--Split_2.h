@@ -1,11 +1,12 @@
-namespace ArrTraits {
+namespace AosTraits {
+
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementXMonotoneTraits_2::Split_2}
+ * \cgalHasModels{AosXMonotoneTraits_2::Split_2}
  * \cgalHasModelsEnd
  */
 class Split_2 {
@@ -18,13 +19,12 @@ public:
    * splits `xc` at the split point into two subcurves `xc1` and `xc2`, such
    * that `p` is `xc1`'s <I>right</I> endpoint and `xc2`'s <I>left</I> endpoint.
    */
-  void operator()(ArrTraits::X_monotone_curve_2 xc,
-                  ArrTraits::Point_2 p,
-                  ArrTraits::X_monotone_curve_2& xc1,
-                  ArrTraits::X_monotone_curve_2& xc2);
+  void operator()(AosTraits::X_monotone_curve_2 xc,
+                  AosTraits::Point_2 p,
+                  AosTraits::X_monotone_curve_2& xc1,
+                  AosTraits::X_monotone_curve_2& xc2);
 
   /// @}
-
-}; /* end ArrTraits::Split_2 */
+}; /* end AosTraits::Split_2 */
 
 }

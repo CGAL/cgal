@@ -5,56 +5,52 @@
  * stores the face that contains the hole in its interior, along with an
  * iterator for the hole in the holes' container of this face.
  *
- * \sa `ArrangementDcel`
- * \sa `ArrangementDcelFace`
- *
+ * \sa `AosDcel`
+ * \sa `AosDcelFace`
  */
 
-class ArrangementDcelInnerCcb {
+class AosDcelInnerCcb {
 public:
+  /// \name Types
+  /// @{
 
-/// \name Types
-/// @{
+  /*! the corresponding <span class="textsc">Dcel</span> face type. */
+  typedef unspecified_type Face;
 
-/*! the corresponding <span class="textsc">Dcel</span> face type. */
-typedef unspecified_type Face;
+  /*!
+   */
+  typedef Face::InnerCcb_iterator InnerCcb_iterator;
 
-/*!
+  /// @}
 
-*/
-typedef Face::InnerCcb_iterator InnerCcb_iterator;
+  /// \name Creation
+  /// @{
 
-/// @}
+  /*! default constructor. */
+  Arr_dcel_hole();
 
-/// \name Creation
-/// @{
+  /// @}
 
-/*! default constructor. */
-Arr_dcel_hole();
+  /// \name Access Functions
+  /// All functions below also have `const` counterparts, returning non-mutable pointers or iterators:
+  /// @{
 
-/// @}
+  /*! returns the incident face, which contains `ho` in its interior. */
+  Face* face();
 
-/// \name Access Functions
-/// All functions below also have `const` counterparts, returning non-mutable pointers or iterators:
-/// @{
+  /*! returns an iterator for the hole. */
+  InnerCcb_iterator iterator();
 
-/*! returns the incident face, which contains `ho` in its interior. */
-Face* face();
+  /// @}
 
-/*! returns an iterator for the hole. */
-InnerCcb_iterator iterator();
+  /// \name Modifiers
+  /// @{
 
-/// @}
+  /*! sets the incident face. */
+  void set_face(Face* f);
 
-/// \name Modifiers
-/// @{
+  /*! sets the hole iterator. */
+  void set_iterator(InnerCcb_iterator it);
 
-/*! sets the incident face. */
-void set_face(Face* f);
-
-/*! sets the hole iterator. */
-void set_iterator(InnerCcb_iterator it);
-
-/// @}
-
-}; /* end ArrangementDcelInnerCcb */
+  /// @}
+}; /* end AosDcelInnerCcb */

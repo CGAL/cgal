@@ -26,9 +26,9 @@ public:
   /// \name Types
   /// @{
 
-  /*! the type of the attached arrangement.
-   */
+  /// the type of the attached arrangement.
   typedef Arrangement_                                Arrangement_2;
+
   typedef typename Arrangement_2::Base_aos            Base_aos;
 
   typedef boost::readable_property_map_tag            category;
@@ -39,12 +39,10 @@ public:
 
   typedef Vertex_handle                               key_type;
 
-  /*! The vertex handle type.
-   */
+  /// The vertex handle type.
   typedef typename Base_aos::Vertex_handle            Vertex_handle;
 
-  /*! The type of mapping of vertices to indices.
-   */
+  /// The type of mapping of vertices to indices.
   typedef Unique_hash_map<Vertex_handle, value_type>  Index_map;
 
   /// @}

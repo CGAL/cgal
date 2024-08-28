@@ -5,17 +5,17 @@ namespace CGAL {
  * \anchor arr_refarr_with_hist
  *
  * An object `arr` of the class `Arrangement_with_history_2` represents the
- * planar subdivision induced by a set of input curves \f$ \cal C\f$.  The
+ * planar subdivision induced by a set of input curves \f$\cal C\f$.  The
  * arrangement is represented as a doubly-connected edge-list (\dcel).  As is
  * the case for the `Arrangement_2<Traits,Dcel>`, each \dcel vertex is
- * associated with a point and each edge is associated with an \f$ x\f$-monotone
+ * associated with a point and each edge is associated with an \f$x\f$-monotone
  * curve whose interior is disjoint from all other curves and points. Each such
- * \f$ x\f$-monotone curve is a subcurve of some \f$ C \in \cal C\f$, or may
- * represent an overlap among several curves in \f$ \cal C\f$.
+ * \f$x\f$-monotone curve is a subcurve of some \f$C \in \cal C\f$, or may
+ * represent an overlap among several curves in \f$\cal C\f$.
  *
  * The `Arrangement_with_history_2` class-template extends the `Arrangement_2`
  * class-template by keeping an additional container of input curves
- * representing \f$ \cal C\f$, and by maintaining a cross-mapping between these
+ * representing \f$\cal C\f$, and by maintaining a cross-mapping between these
  * curves and the arrangement edges they induce. This way it is possible to
  * determine the inducing curve(s) of each arrangement edge. This mapping also
  * allows the traversal of input curves, and the traversal of edges induced by
@@ -43,20 +43,20 @@ namespace CGAL {
  * \sa `overlaying arrangements`
  */
 template <typename Traits, typename Dcel>
-class Arrangement_with_history_2 : public Arrangement_on_surface_with_history_2<Traits, typename Default_planar_topology<Traits, Dcel>::Traits> {
+class Arrangement_with_history_2 :
+    public Arrangement_on_surface_with_history_2<Traits, typename Default_planar_topology<Traits, Dcel>::Traits> {
 public:
-
   /// \name Types
   /// @{
 
-  //! the geometry traits class.
+  /// the geometry traits class.
   typedef Traits                                  Geometry_traits;
 
-  //! The topology traits.
+  /// The topology traits.
   typedef typename Default_planar_topology<Geometry_traits, Dcel>::Traits
     Topology_traits;
 
-  //! The base arrangement on surface type.
+  /// The base arrangement on surface type.
   typedef Arrangement_on_surface_with_history_2<Geometry_traits, Topology_traits>
     Base;
 
@@ -129,13 +129,13 @@ public:
  * computing its zone until reaching the right endpoint.
  *
  * The given point-location object `pl` is used to locate the left endpoints of
- * the \f$ x\f$-monotone curves. By default, the function uses the "walk along
+ * the \f$x\f$-monotone curves. By default, the function uses the "walk along
  * line" point-location strategy - namely an instance of the class
  * `Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >`.
  *
  * \pre If provided, `pl` is attached to the given arrangement `arr`.
  */
-template<typename Traits, typename Dcel, typename PointLocation>
+template <typename Traits, typename Dcel, typename PointLocation>
 typename Arrangement_with_history_2<Traits, Dcel>::Curve_handle
 insert(Arrangement_with_history_2<Traits, Dcel>& arr,
        const typename Traits::Curve_2& c,
@@ -169,8 +169,8 @@ Size remove_curve(Arrangement_with_history_2<Traits,Dcel>& arr,
  *
  * \pre `res` does not refer to either `arr1` or `arr2`.
  */
-template<typename Traits, typename Dcel1, typename Dcel2,
-         typename ResDcel, typename OverlayTraits>
+template <typename Traits, typename Dcel1, typename Dcel2,
+          typename ResDcel, typename OverlayTraits>
 void overlay(const Arrangement_with_history_2<Traits,Dcel1>& arr1,
              const Arrangement_with_history_2<Traits,Dcel2>& arr2,
              Arrangement_with_history_2<Traits,ResDcel>& res,
@@ -187,8 +187,7 @@ void overlay(const Arrangement_with_history_2<Traits,Dcel1>& arr1,
  * \pre `res` does not refer to either `arr1` or `arr2` (that is, "self overlay"
  * is not supported).
  */
-template<typename Traits, typename Dcel1, typename Dcel2,
-         typename ResDcel>
+template <typename Traits, typename Dcel1, typename Dcel2, typename ResDcel>
 void overlay(const Arrangement_with_history_2<Traits,Dcel1>& arr1,
              const Arrangement_with_history_2<Traits,Dcel2>& arr2,
              Arrangement_with_history_2<Traits,ResDcel>& res);

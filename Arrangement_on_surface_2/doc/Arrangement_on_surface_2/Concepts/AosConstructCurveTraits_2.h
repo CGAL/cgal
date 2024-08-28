@@ -1,11 +1,11 @@
 /*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * The concept `ArrangementConstructCurveTraits_2` refines the basic
- * traits concept `ArrangementBasicTraits_2`. A model of this concept is able
+ * The concept `AosConstructCurveTraits_2` refines the basic
+ * traits concept `AosBasicTraits_2`. A model of this concept is able
  * to construct a curve from two points.
  *
- * \cgalRefines{ArrangementTraits_2}
+ * \cgalRefines{AosTraits_2}
  *
  * \cgalHasModelsBegin
  * \cgalHasModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
@@ -17,15 +17,15 @@
  * \cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
  * \cgalHasModelsEnd
  *
- * \sa `ArrangementConstructXMonotoneCurveTraits_2`, and
- *     `ArrangementTraits_2`
+ * \sa `AosConstructXMonotoneCurveTraits_2`
+ * \sa `AosTraits_2`
  */
-class ArrangementConstructCurveTraits_2 {
+class AosConstructCurveTraits_2 {
 public:
   /// \name Functor Types
   /// @{
 
-  /*! models the concept `ArrTraits::ConstructCurve_2`.
+  /*! models the concept `AosTraits::ConstructCurve_2`.
    */
   typedef unspecified_type Construct_curve_2;
 

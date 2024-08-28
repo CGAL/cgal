@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
@@ -6,9 +6,9 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableFunctor}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementClosedBottomTraits_2::Compare_x_on_boundary_2}
- * \cgalHasModels{ArrangementClosedTopTraits_2::Compare_x_on_boundary_2}
- * \cgalHasModels{ArrangementIdentifiedHorizontalTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{AosClosedBottomTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{AosClosedTopTraits_2::Compare_x_on_boundary_2}
+ * \cgalHasModels{AosIdentifiedHorizontalTraits_2::Compare_x_on_boundary_2}
  * \cgalHasModelsEnd
  */
 class CompareXOnBoundary_2 {
@@ -23,16 +23,16 @@ public:
    * x\f$-coordinate of `p1` and the \f$x\f$-coordinate of `p2`. Returns
    * `CGAL::SMALLER`, `CGAL::EQUAL`, or `CGAL::LARGER` accordingly.
    *
-   * \pre \link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2
+   * \pre \link AosHorizontalSideTraits_2::Parameter_space_in_y_2
    * `Parameter_space_in_y_2`\endlink (`p1`) \f$\neq\f$ `CGAL::ARR_INTERIOR` or
-   * \link ArrangementHorizontalSideTraits_2::Parameter_space_in_y_2
+   * \link AosHorizontalSideTraits_2::Parameter_space_in_y_2
    * `Parameter_space_in_y_2`\endlink (`p2`) \f$\neq\f$ `CGAL::ARR_INTERIOR`.
    */
-  Comparison_result operator()(const ArrTraits::Point_2& p1,
-                               const ArrTraits::Point_2& p2);
+  Comparison_result operator()(const AosTraits::Point_2& p1,
+                               const AosTraits::Point_2& p2);
 
 /// @}
 
-}; /* end ArrTraits::CompareXOnBoundaryOfCurveEnd_2 */
+}; /* end AosTraits::CompareXOnBoundaryOfCurveEnd_2 */
 
 }

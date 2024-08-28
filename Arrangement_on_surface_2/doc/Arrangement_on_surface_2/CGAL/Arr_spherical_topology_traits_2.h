@@ -62,10 +62,10 @@ public:
   /// \name Accessors
   /// @{
 
-  /*! Obtain the DCEL (const version). */
+  /*! Obtain the \dcel (const version). */
   const Dcel& dcel() const;
 
-  /*! Obtain the DCEL (non-const version). */
+  /*! Obtain the \dcel (non-const version). */
   Dcel& dcel();
 
   /*! Obtain the spherical face (const version). */

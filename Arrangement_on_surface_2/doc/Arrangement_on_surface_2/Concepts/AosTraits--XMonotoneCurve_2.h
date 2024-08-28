@@ -1,4 +1,5 @@
-namespace ArrTraits {
+namespace AosTraits {
+
 /*! \ingroup PkgArrangementOnSurface2ConceptsGeometricObjects
  * \cgalConcept
  *
@@ -7,12 +8,9 @@ namespace ArrTraits {
  * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementBasicTraits_2::X_monotone_curve_2}
+ * \cgalHasModels{AosBasicTraits_2::X_monotone_curve_2}
  * \cgalHasModelsEnd
  */
-class XMonotoneCurve_2 {
-public:
-
-}; /* end ArrTraits::XMonotoneCurve_2 */
+class XMonotoneCurve_2 {};
 
 }

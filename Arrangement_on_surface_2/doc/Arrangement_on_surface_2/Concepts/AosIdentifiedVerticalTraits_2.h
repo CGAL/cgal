@@ -1,23 +1,22 @@
 /*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * A model of the concept `ArrangementIdentifiedVerticalTraits_2` must be used
- * when the parameter space of the surface, the arrangement is embedded on, is
- * identified on the left and right sides and curves inserted into the
+ * A model of the concept `AosIdentifiedVerticalTraits_2` must be used
+ * when the parameter space of the surface, the arrangement is embedded on,
+ * is identified on the left and right sides and curves inserted into the
  * arrangement are expected to reach these boundary sides.
  *
- * \cgalRefines{ArrangementBasicTraits_2}
+ * \cgalRefines{AosBasicTraits_2}
  *
- * \sa `ArrangementIdentifiedHorizontalTraits_2`,
- *     `ArrangementOpenLeftTraits_2`,
- *     `ArrangementClosedLeftTraits_2`, and
- *     `ArrangementContractedLeftTraits_2`
- *     `ArrangementOpenRightTraits_2`,
- *     `ArrangementClosedRightTraits_2`, and
- *     `ArrangementContractedRightTraits_2`
+ * \sa `AosIdentifiedHorizontalTraits_2`
+ * \sa `AosOpenLeftTraits_2`
+ * \sa `AosClosedLeftTraits_2`
+ * \sa `AosContractedLeftTraits_2`
+ * \sa `AosOpenRightTraits_2`
+ * \sa `AosClosedRightTraits_2`
+ * \sa `AosContractedRightTraits_2`
  */
-
-class ArrangementIdentifiedVerticalTraits_2 {
+class AosIdentifiedVerticalTraits_2 {
 public:
   /// \name Categories
   /// @{
@@ -34,10 +33,10 @@ public:
   /// \name Functor Types
   /// @{
 
-  /// models the concept `ArrTraits::CompareYOnBoundary_2`.
+  /// models the concept `AosTraits::CompareYOnBoundary_2`.
   typedef unspecified_type Compare_y_on_boundary_2;
 
-  /// models the concept `ArrTraits::IsOnYIdentification_2`.
+  /// models the concept `AosTraits::IsOnYIdentification_2`.
   typedef unspecified_type Is_on_y_identification_2;
 
   /// @}

@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
@@ -6,22 +6,20 @@ namespace ArrTraits {
  * \cgalRefines{AdaptableUnaryFunction}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementBasicTraits_2::Is_vertical_2}
+ * \cgalHasModels{AosBasicTraits_2::Is_vertical_2}
  * \cgalHasModelsEnd
  */
 class IsVertical_2 {
 public:
-
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
 
   /*! determines whether `xc` is a vertical segment.
    */
-  bool operator()(ArrTraits::X_monotone_curve_2 xc);
+  bool operator()(AosTraits::X_monotone_curve_2 xc);
 
   /// @}
-
-}; /* end ArrTraits::IsVertical_2 */
+}; /* end AosTraits::IsVertical_2 */
 
 }

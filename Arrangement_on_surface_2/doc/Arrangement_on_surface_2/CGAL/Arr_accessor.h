@@ -18,7 +18,6 @@ namespace CGAL {
 template <typename Arrangement>
 class Arr_accessor {
 public:
-
   /// \name Types
   /// @{
 
@@ -28,7 +27,7 @@ public:
   /*! the point type. */
   typedef typename Arrangement_2::Point_2 Point_2;
 
-  /*! the \f$ x\f$-monotone curve type. */
+  /*! the \f$x\f$-monotone curve type. */
   typedef typename Arrangement_2::X_monotone_curve_2 X_monotone_curve_2;
 
   /*! */
@@ -165,16 +164,16 @@ Halfedge_handle insert_from_vertex_ex(const X_monotone_curve_2& c,
   /*! inserts the curve `c` into the arrangement, such that both `c`'s endpoints
    * correspond to existing arrangement vertices, given by `pred1->target()` and
    * `pred2->target()`. `res` is the comparison result between these two
-   * end-vertices. The function creates a new halfedge pair that connects the two
-   * vertices (with `pred1` and `pred2` indicate the exact place for these
+   * end-vertices. The function creates a new halfedge pair that connects the
+   * two vertices (with `pred1` and `pred2` indicate the exact place for these
    * halfedges around the two target vertices) and returns a handle for the
    * halfedge directed from `pred1->target()` to `pred2->target()`.  The output
    * flag `new_face` indicates whether a new face has been created following the
    * insertion of the new curve.
    *
    * \pre `pred1->target()` and `pred2->target()` are associated with `c`'s
-   * endpoints and that if a new face is created, then `is_inside_new_face (pred1,
-   * pred2, c)` is `true`.
+   * endpoints and that if a new face is created, then
+   * `is_inside_new_face(pred1, pred2, c)` is `true`.
    */
   Halfedge_handle insert_at_vertices_ex(const X_monotone_curve_2& c,
                                         Halfedge_handle pred1,
@@ -228,7 +227,7 @@ Halfedge_handle insert_from_vertex_ex(const X_monotone_curve_2& c,
    */
   Vertex_handle modify_vertex_ex(Vertex_handle v, const Point_2& p);
 
-  /*! modifies the \f$ x\f$-monotone curve associated with the edge `e` (the
+  /*! modifies the \f$x\f$-monotone curve associated with the edge `e` (the
    * curve `c` may be geometrically different than the one currently associated
    * with `e`).  The function returns a handle to the modified edge (same as
    * `e`).
@@ -278,6 +277,6 @@ Halfedge_handle insert_from_vertex_ex(const X_monotone_curve_2& c,
                              bool remove_target = true);
 
   /// @}
-
 }; /* end Arr_accessor */
+
 } /* end namespace CGAL */

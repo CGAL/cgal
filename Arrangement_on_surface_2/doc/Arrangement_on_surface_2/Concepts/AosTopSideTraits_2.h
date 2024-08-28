@@ -1,8 +1,7 @@
-/*!
- * \ingroup PkgArrangementOnSurface2ConceptsTraits
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * `ArrangementTopSideTraits_2` is an abstract concept. It generalizes all
+ * `AosTopSideTraits_2` is an abstract concept. It generalizes all
  * concepts that handle curves that either reach or approach the top boundary
  * side of the parameter space.  (An "abstract" concept is a concept that is
  * useless on its own.) Only a combination of this concept and additional
@@ -10,14 +9,13 @@
  * boundary sides (that is, left, right, and bottom) are purposeful, and can
  * have models.
  *
- * \cgalRefines{ArrangementHorizontalSideTraits_2}
+ * \cgalRefines{AosHorizontalSideTraits_2}
  *
- * \sa `ArrangementLeftSideTraits_2`,
- *     `ArrangementRightSideTraits_2`, and
- *     `ArrangementBottomSideTraits_2`
+ * \sa `AosLeftSideTraits_2`
+ * \sa `AosRightSideTraits_2`
+ * \sa `AosBottomSideTraits_2`
  */
-
-class ArrangementTopSideTraits_2 {
+class AosTopSideTraits_2 {
 public:
   /// \name Categories
   /// @{

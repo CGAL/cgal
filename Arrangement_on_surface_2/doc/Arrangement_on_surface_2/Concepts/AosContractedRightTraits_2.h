@@ -1,24 +1,22 @@
-/*!
- * \ingroup PkgArrangementOnSurface2ConceptsTraits
+/*! \ingroup PkgArrangementOnSurface2ConceptsTraits
  * \cgalConcept
  *
- * A model of the concept `ArrangementContractedRightTraits_2` must be used when
+ * A model of the concept `AosContractedRightTraits_2` must be used when
  * the parameter space of the surface, the arrangement is embedded on, is
  * contracted on the right side and curves inserted into the arrangement are
  * expected to reach this boundary side. A model of this concept can handle
  * curves that reach the right boundary side when it is contracted.
  *
- * \cgalRefines{ArrangementRightSideTraits_2}
+ * \cgalRefines{AosRightSideTraits_2}
  *
- * \sa `ArrangementContractedLeftTraits_2`,
- *     `ArrangementContractedBottomTraits_2`,
- *     `ArrangementContractedTopTraits_2`,
- *     `ArrangementOpenRightTraits_2`,
- *     `ArrangementClosedRightTraits_2`, and
- *     `ArrangementIdentifiedVerticalTraits_2`
+ * \sa `AosContractedLeftTraits_2`
+ * \sa `AosContractedBottomTraits_2`
+ * \sa `AosContractedTopTraits_2`
+ * \sa `AosOpenRightTraits_2`
+ * \sa `AosClosedRightTraits_2`
+ * \sa `AosIdentifiedVerticalTraits_2`
  */
-
-class ArrangementContractedRightTraits_2 {
+class AosContractedRightTraits_2 {
 public:
   /// \name Categories
   /// @{

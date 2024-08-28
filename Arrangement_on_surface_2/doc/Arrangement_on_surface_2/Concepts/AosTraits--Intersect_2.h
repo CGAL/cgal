@@ -1,4 +1,4 @@
-namespace ArrTraits {
+namespace AosTraits {
 
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
@@ -6,7 +6,7 @@ namespace ArrTraits {
  * \cgalRefines{Functor}
  *
  * \cgalHasModelsBegin
- * \cgalHasModels{ArrangementXMonotoneTraits_2::Intersect_2}
+ * \cgalHasModels{AosXMonotoneTraits_2::Intersect_2}
  * \cgalHasModelsEnd
  */
 class Intersect_2 {
@@ -40,17 +40,17 @@ public:
    * nondeterministic.
    *
    * \pre Dereferencing `oi` must yield an object of type
-   * `std::optional<std::variant<std::pair<%Point_2,ArrangementXMonotoneTraits_2::Multiplicity,X_monotone_curve_2>>`,
-   * where `%Point_2` is a model of `ArrTraits::Point_2` and
-   * `X_monotone_curve_2` is a model of `ArrTraits::XMonotoneCurve_2`.
+   * `std::optional<std::variant<std::pair<%Point_2,AosXMonotoneTraits_2::Multiplicity,X_monotone_curve_2>>`,
+   * where `%Point_2` is a model of `AosTraits::Point_2` and
+   * `X_monotone_curve_2` is a model of `AosTraits::XMonotoneCurve_2`.
    */
   template <typename OutputIterator>
-  OutputIterator operator()(ArrTraits::X_monotone_curve_2 xc1,
-                            ArrTraits::X_monotone_curve_2 xc2,
+  OutputIterator operator()(AosTraits::X_monotone_curve_2 xc1,
+                            AosTraits::X_monotone_curve_2 xc2,
                             OutputIterator& oi);
 
-/// @}
+  /// @}
 
-}; /* end ArrTraits::Intersect_2 */
+}; /* end AosTraits::Intersect_2 */
 
 }

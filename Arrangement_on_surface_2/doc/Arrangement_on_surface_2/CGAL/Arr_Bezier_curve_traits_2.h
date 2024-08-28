@@ -4,21 +4,21 @@ namespace CGAL {
  *
  * The traits class `Arr_Bezier_curve_traits_2` is a model of the `AosTraits_2`
  * concept that handles planar B&eacute;zier curves. A planar <I>B&eacute;zier
- * curve</I> \f$ B\f$ is a parametric curve defined by a sequence of <I>control
- * points</I> \f$ p_0, \ldots, p_n\f$ as follows:
+ * curve</I> \f$B\f$ is a parametric curve defined by a sequence of <I>control
+ * points</I> \f$p_0, \ldots, p_n\f$ as follows:
 
  * \f{eqnarray*}{
  *   B(t) = \left(X(t), Y(t)\right) = \ccSum{k=0}{n}{p_k \cdot \frac{n!}{k! (n-k)!} \cdot t^k (1-t)^{n-k}}\ ,
 \f}
- * where \f$ t \in [0, 1]\f$. The degree of the curve is therefore \f$n\f$,
- * namely, \f$ X(t)\f$ and \f$ Y(t)\f$ are polynomials of degree \f$ n\f$.
+ * where \f$t \in [0, 1]\f$. The degree of the curve is therefore \f$n\f$,
+ * namely, \f$X(t)\f$ and \f$Y(t)\f$ are polynomials of degree \f$n\f$.
  * B&eacute;zier curves have numerous applications in computer graphics and
  * solid modelling. They are used, for example, in free-form sketches and for
  * defining the true-type fonts.
 
  * In our representation, we assume that the coordinates of all control points
  * are rational numbers (namely they are given as objects of the
- * `RatKernel::Point_2` type), so both \f$ X(t)\f$ and \f$ Y(t)\f$ are
+ * `RatKernel::Point_2` type), so both \f$X(t)\f$ and \f$Y(t)\f$ are
  * polynomials with rational coefficients. The intersection points between
  * curves are however algebraic numbers, and their exact computation is
  * time-consuming.  The traits class therefore contains a layer of geometric
@@ -102,20 +102,20 @@ public:
      */
     size_t number_of_control_points() const;
 
-    /*! returns the \f$ k\f$th control point. Note that the first control point
+    /*! returns the \f$k\f$th control point. Note that the first control point
      * equals the curve source, while the last control point equals its
      * target. The rest of the control points do not lie on the curve.
      *
-     * \pre \f$ k\f$ is smaller than the number of control points.
+     * \pre \f$k\f$ is smaller than the number of control points.
      */
     typename RatKernel::Point_2 control_point(std::size_t k) const;
 
-    /*! returns the point \f$ B(t)\f$ on the curve that corresponds to the given
+    /*! returns the point \f$B(t)\f$ on the curve that corresponds to the given
      * rational parameter value.
      */
     typename RatKernel::Point_2 operator()(const Rational& t) const;
 
-    /*! returns the point \f$ B(t)\f$ on the curve that corresponds to the given
+    /*! returns the point \f$B(t)\f$ on the curve that corresponds to the given
      * algebraic parameter value.
      */
     typename AlgKernel::Point_2 operator()(const Algebraic& t) const;
@@ -126,7 +126,7 @@ public:
 
   /*! The `Point_2` class nested within the B&eacute;zier traits class is used
    * to represent: (i) an endpoint of a B&eacute;zier curve, (ii) a vertical
-   * tangency point of a curve, used to subdivide it into \f$ x\f$-monotone
+   * tangency point of a curve, used to subdivide it into \f$x\f$-monotone
    * subcurve, and (iii) an intersection point between two curves. While, points
    * of type (i) have rational coordinates and are given as part of the input,
    * points of the two latter types have algebraic coordinates. However, to
@@ -150,13 +150,13 @@ public:
     Point_2();
 
     /*!
-      constructs the point \f$ B(t_0)\f$ on the given curve. As \f$ t_0\f$ is an
+      constructs the point \f$B(t_0)\f$ on the given curve. As \f$t_0\f$ is an
       algebraic number, the point has algebraic coordinates.
     */
     Point_2(const Curve_2& B, const Algebraic& t_0);
 
     /*!
-      constructs the point \f$ B(t_0)\f$ on the given curve. As \f$ t_0\f$ is a
+      constructs the point \f$B(t_0)\f$ on the given curve. As \f$t_0\f$ is a
       rational number, the point has rational coordinates.
     */
     Point_2(const Curve_2& B, const Rational& t_0);
@@ -174,13 +174,13 @@ public:
     */
     bool is_exact() const;
 
-    /*! returns the \f$ x\f$-coordinate of `p`.
+    /*! returns the \f$x\f$-coordinate of `p`.
      *
      * \pre `p` is exactly computed.
      */
     Algebraic x() const;
 
-    /*! returns the \f$ y\f$-coordinate of `p`.
+    /*! returns the \f$y\f$-coordinate of `p`.
      *
      * \pre `p` is exactly computed.
      */
@@ -200,16 +200,16 @@ public:
   }; /* end Arr_Bezier_curve_traits_2::Point_2 */
 
   /*! The `X_monotone_curve_2` class nested within the B&eacute;zier traits is
-   * used to represent \f$ x\f$-monotone subcurves of B&eacute;zier curves. The
-   * subcurve is defined by a supporting B&eacute;zier curve \f$ B(t)\f$ and a
-   * range of definition in the parameter space \f$ [t_1, t_2] \subseteq [0,1]\f$,
-   * where \f$ B(t_1)\f$ is the subcurve source and \f$ B(t_2)\f$ is its target.
+   * used to represent \f$x\f$-monotone subcurves of B&eacute;zier curves. The
+   * subcurve is defined by a supporting B&eacute;zier curve \f$B(t)\f$ and a
+   * range of definition in the parameter space \f$[t_1, t_2] \subseteq [0,1]\f$,
+   * where \f$B(t_1)\f$ is the subcurve source and \f$B(t_2)\f$ is its target.
    * Note that as the point endpoints may only be approximated, the parameter
    * range defining the subcurve may only be approximately known.
    *
-   * It is not possible to construct \f$ x\f$-monotone subcurves directly.
+   * It is not possible to construct \f$x\f$-monotone subcurves directly.
    * Instead, use the `Make_x_monotone_2` functor supplied by the traits class to
-   * subdivide a `Curve_2` object into \f$ x\f$-monotone subcurves.
+   * subdivide a `Curve_2` object into \f$x\f$-monotone subcurves.
    */
   class X_monotone_curve_2 {
   public:

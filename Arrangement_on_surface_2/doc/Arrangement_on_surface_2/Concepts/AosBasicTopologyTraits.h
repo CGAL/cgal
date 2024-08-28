@@ -1,7 +1,7 @@
 /*! \ingroup PkgArrangementOnSurface2ConceptsTopologyTraits
  * \cgalConcept
  *
- * The concept `ArrangementBasicTopologyTraits` defines the minimal
+ * The concept `AosBasicTopologyTraits` defines the minimal
  * functionality needed for a model of a topology traits, which can substitutes
  * the `TopolTraits` template parameters when the class template
  * `Arrangement_on_surface_2<GeomTraits, TopolTraits>` is instantiated.  In
@@ -13,19 +13,18 @@
  * \cgalHasModels{CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2, Dcel>}
  * \cgalHasModelsEnd
  */
-
-class ArrangementBasicTopologyTraits {
+class AosBasicTopologyTraits {
 public:
   /// \name Types
   /// @{
 
-  //! models the concept `ArrTraits::Point_2`.
+  /// models the concept `AosTraits::Point_2`.
   typedef unspecified_type                              Point_2;
 
-  //! models the concept `ArrTraits::XMonotoneCurve_2`.
+  /// models the concept `AosTraits::XMonotoneCurve_2`.
   typedef unspecified_type                              X_monotone_curve_2;
 
-  //! models the concept `ArrangementDcel`.
+  /// models the concept `AosDcel`.
   typedef unspecified_type                              Dcel;
 
   /// @}
@@ -38,10 +37,10 @@ public:
   /// \name Access Functions
   /// @{
 
-  /*! Obtain the DCEL (const version). */
+  /*! obtains the \dcel (const version). */
   const Dcel& dcel() const;
 
-  /*! Obtain the DCEL (non-const version). */
+  /*! obtains the \dcel (non-const version). */
   Dcel& dcel();
 
   /// @}
@@ -49,5 +48,4 @@ public:
   /// \name Modifiers
   /// @{
   /// @}
-
 };
