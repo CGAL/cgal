@@ -89,7 +89,7 @@ int main()
   }
 
   // Saves the mesh model
-    const std::string& output_file("data/ball_result.off");
+    const std::string& output_file("user_provided_planes_result.off");
     if (CGAL::IO::write_OFF(output_file, model))
         std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
     else {
