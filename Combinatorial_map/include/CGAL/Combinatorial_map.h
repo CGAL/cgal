@@ -1781,7 +1781,6 @@ namespace CGAL {
                                         unsigned int i)
     {
       CGAL_assertion( i>=2 && i<=dimension );
-      CGAL_assertion( i>=2 && i<=dimension );
       dart_link_beta(adart1, adart2, i);
       dart_link_beta(adart2, adart1, i);
     }

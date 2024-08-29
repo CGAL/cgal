@@ -111,12 +111,9 @@ void CurveInputMethod::beginInput_()
 
 static inline void clearPainterPath(QPainterPath& ppath)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
   ppath.clear();
-#else
-  ppath = {};
-#endif
 }
+
 
 void CurveInputMethod::reset()
 {

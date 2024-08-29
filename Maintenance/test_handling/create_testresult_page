@@ -103,13 +103,13 @@ sub write_select()
   print OUTPUTV '<option disabled selected value="">(select a release)', "</option>\n";
   my %results;
   foreach $_ (glob("results-*.shtml")) {
-      my $ctime = (stat($_))[10];
-      $results{$_} = $ctime;
+      my $mtime = (stat($_))[9];
+      $results{$_} = $mtime;
   }
   foreach $_ (sort { $results{$b} <=> $results{$a} } keys %results) {
       $_ =~ /results-${pattern}(\.\d+)?(-.*|)\.shtml/ || next;
-      my $ctime = (stat($_))[10];
-      my $date = time2str('%a %Y/%m/%d', $ctime);
+      my $mtime = (stat($_))[9];
+      my $date = time2str('%a %Y/%m/%d', $mtime);
      print OUTPUTV '<option value="', $_, '">';
      ($filename) = m/results-(.*?)\.shtml\s*/;
 #     printf OUTPUTV "%-20s (last modified: %s)</option>\n", $filename, $date;

@@ -642,6 +642,7 @@ public:
     unsigned int i = 1;
     for (InputIterator itr = begin; itr != end; ++itr, ++i)
     {
+      ValidationPolicy::is_valid((*itr), *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr, *(arr_vec[i].first));
     }
@@ -666,6 +667,7 @@ public:
     unsigned int i = 1;
     for (InputIterator itr = begin; itr!=end; ++itr, ++i)
     {
+      ValidationPolicy::is_valid((*itr), *m_traits);
       arr_vec[i].first = new Aos_2(m_traits);
       _insert(*itr, *(arr_vec[i].first));
     }

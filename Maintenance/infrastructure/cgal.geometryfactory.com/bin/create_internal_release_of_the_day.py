@@ -13,12 +13,12 @@ from cgal_release import release, integration, master, beta_release, master, bet
 # Define a dictionary that maps day of the week to an action
 actions = {
     "Monday": integration,
-    "Tuesday": integration,
-    "Wednesday": integration,
+    "Tuesday": release("5.5"), #integration,
+    "Wednesday": release("5.6"), #integration,
     "Thursday": integration,
     "Friday": release("5.5"),
     "Saturday": release("5.6"),
-    "Sunday": beta_release_from_master(1),
+    "Sunday": beta_release_from_master(2),
 }
 
 

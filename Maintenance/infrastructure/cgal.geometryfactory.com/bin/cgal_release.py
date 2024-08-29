@@ -19,7 +19,7 @@ class Release:
         """return the command to create and publish the release"""
         return (
             f"PATH=/home/lrineau/bin-cmake3:/bin:/usr/bin:/home/lrineau/bin; cd {self.cwd} &&"
-            + " /usr/bin/time scl enable rh-git29 -- "
+            + " /usr/bin/time -v bash -x "
             + f"$HOME/bin/create_release {self.repo}{self.extra_options} --do-it"
         )
 

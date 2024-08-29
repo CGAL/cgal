@@ -1237,7 +1237,7 @@ public:
     //! \brief checks whether curve has only finitely many self-intersection
     //! points, i.e., it has no self-overlapped continuous parts
     //!
-    //! for algerbaic curves this means that supporting polynomial is
+    //! for algebraic curves this means that supporting polynomial is
     //! square-free
     struct Has_finite_number_of_self_intersections_2 :
             public CGAL::cpp98::unary_function< Polynomial_2, bool > {
@@ -1252,7 +1252,7 @@ public:
     //! \brief checks whether a curve pair has finitely many intersections,
     //! in other words, whether two curves have no continuous common part
     //!
-    //! in case of algerbaic curves: checks whether supporting polynomials are
+    //! in case of algebraic curves: checks whether supporting polynomials are
     //! coprime
     struct Has_finite_number_of_intersections_2 :
         public CGAL::cpp98::binary_function< Curve_analysis_2, Curve_analysis_2, bool > {

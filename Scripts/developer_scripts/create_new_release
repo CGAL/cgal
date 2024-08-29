@@ -323,6 +323,9 @@ if [ -n "$DO_PUBLIC" ]; then
     zip -q -r ${public_release_name}-library.zip ${public_release_name}
     mv ${public_release_name}*.tar.xz "${HTML_DIR}/${release_name}-public/"
     mv ${public_release_name}*.zip "${HTML_DIR}/${release_name}-public/"
+    if command -v sestatus >/dev/null 2>&1; then
+        sestatus && restorecon -R "${HTML_DIR}/${release_name}-public"
+    fi
     rm -f "$HTML_DIR/CGAL-last-public"
     ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
 fi

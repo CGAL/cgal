@@ -52,12 +52,7 @@ public :
         :x(p_x), y(p_y), z(p_z),_3D(p_3D), _is_always_visible(always_visible), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
        _width = float(fm.horizontalAdvance(m_text)+2);
-#else
-       _width = float(fm.width(m_text)+2);
-#endif
-
        _height = float(fm.height());
     }
     //!\brief Accessor for the string

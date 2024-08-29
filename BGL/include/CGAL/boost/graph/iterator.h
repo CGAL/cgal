@@ -214,11 +214,6 @@ public:
 
 #ifndef DOXYGEN_RUNNING
 
-  explicit operator bool() const
-  {
-    return (! (this->base() == nullptr));
-  }
-
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);
     return  ( g == i.g) && ( pos == i.pos) && ( winding == i.winding);
@@ -308,11 +303,6 @@ public:
 
 #ifndef DOXYGEN_RUNNING
 
-  explicit operator bool() const
-  {
-    return (! (this->base() == nullptr));
-  }
-
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);
     return  ( g == i.g) && ( pos == i.pos) && ( winding == i.winding);
@@ -399,11 +389,6 @@ public:
   const value_type& operator *  ( ) const { return  pos; }
   pointer           operator -> ( )       { return &pos; }
   const value_type* operator -> ( ) const { return &pos; }
-
-  explicit operator bool() const
-  {
-    return (! (this->base() == nullptr));
-  }
 
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);

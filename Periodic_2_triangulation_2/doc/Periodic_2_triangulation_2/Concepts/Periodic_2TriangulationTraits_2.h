@@ -6,7 +6,7 @@
 \cgalConcept
 
 The concept `Periodic_2TriangulationTraits_2` is the first template parameter of the classes
-`Periodic_2_triangulation_2<Traits, Tds>`. This concept provides the types of
+`CGAL::Periodic_2_triangulation_2<Traits, Tds>`. This concept provides the types of
 the geometric primitives used in the triangulation and some function
 object types for the required predicates on those primitives.
 
@@ -296,4 +296,3 @@ public:
 /// @}
 
 }; /* end Periodic_2TriangulationTraits_2 */
-

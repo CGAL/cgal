@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
   Polyhedron P1, P2;
   std::ifstream ifs1((argc > 1) ? argv[1] : CGAL::data_file_path("meshes/cross_quad.off"));
   ifs1 >> P1;
-  std::ifstream ifs2((argc > 1) ? argv[1] : CGAL::data_file_path("meshes/beam.off"));
+  std::ifstream ifs2((argc > 2) ? argv[2] : CGAL::data_file_path("meshes/beam.off"));
   ifs2 >> P2;
 
   // initialize nef from polyhedron
