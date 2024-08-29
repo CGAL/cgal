@@ -39,10 +39,9 @@ if(CGAL_GLFW_FOUND)
   target_link_libraries(draw_mesh_and_points PUBLIC CGAL::CGAL_Basic_viewer_GLFW)
   target_link_libraries(draw_surface_mesh_height PUBLIC CGAL::CGAL_Basic_viewer_GLFW)
   target_link_libraries(basic_viewer_glfw_screenshot PUBLIC CGAL::CGAL_Basic_viewer_GLFW)
-  else()
+else()
   message("CGAL_GLFW not configured: examples that require GLFW will not be compiled.")
 endif()
-
 
 if(TARGET CGAL::Eigen3_support)
   target_link_libraries(draw_mesh_and_points PUBLIC CGAL::Eigen3_support)
