@@ -125,7 +125,7 @@ int main()
     return EXIT_FAILURE;
   }
 
-  const std::string& output_file("data/cube_result.off");
+  const std::string& output_file("cube_result.off");
   if (CGAL::IO::write_OFF(output_file, model))
     std::cout << " Done. Saved to " << output_file << ". Time: " << t.time() << " sec." << std::endl;
   else {
