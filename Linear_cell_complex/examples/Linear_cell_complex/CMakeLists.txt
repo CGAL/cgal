@@ -44,5 +44,4 @@ if(CGAL_Qt6_FOUND)
   target_link_libraries(linear_cell_complex_3_insert PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(hexa-subdivision PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(tetra-to-hexa PUBLIC CGAL::CGAL_Basic_viewer)
-
 endif()
