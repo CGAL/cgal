@@ -55,7 +55,7 @@ public:
   /// the isolated vertex type.
   typedef unspecified_type Isolated_vertex;
 
-  /// used to represent size values (e.g., `size_t`).
+  /// used to represent size values (e.g., `std::size_t`).
   typedef unspecified_type Size;
 
   /// a bidirectional iterator over the vertices. Its value-type is `Vertex`.

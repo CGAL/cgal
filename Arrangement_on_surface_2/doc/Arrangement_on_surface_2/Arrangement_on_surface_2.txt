@@ -766,7 +766,7 @@ void print_face(typename Arrangement::Face_const_handle f) {
   }
 
   // Print the boundary of each of the holes.
-  size_t index = 1;
+  std::size_t index = 1;
   for (auto hi = f->holes_begin(); hi != f->holes_end(); ++hi) {
     std::cout << " Hole #" << index++ << ": ";
     print_ccb(*hi);

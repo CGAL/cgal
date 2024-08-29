@@ -100,7 +100,7 @@ public:
 
     /*! returns the number of control points that define `B`.
      */
-    size_t number_of_control_points() const;
+    std::size_t number_of_control_points() const;
 
     /*! returns the \f$k\f$th control point. Note that the first control point
      * equals the curve source, while the last control point equals its

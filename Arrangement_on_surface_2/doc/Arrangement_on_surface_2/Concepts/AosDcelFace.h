@@ -1,5 +1,4 @@
-/*!
- * \ingroup PkgArrangementOnSurface2ConceptsDCEL
+/*! \ingroup PkgArrangementOnSurface2ConceptsDCEL
  * \cgalConcept
  *
  * A face record in a \dcel data structure. A face represents a region, which
@@ -14,7 +13,6 @@
  * \sa `AosDcelVertex`
  * \sa `AosDcelHalfedge`
  */
-
 class AosDcelFace {
 public:
   /// \name Types
@@ -23,10 +21,10 @@ public:
   /// `Isolated_vertex_const_iterator` are also defined.
   /// @{
 
-  /*! the corresponding \dcel vertex type. */
+  //! the corresponding \dcel vertex type.
   typedef unspecified_type Vertex;
 
-  /*! the corresponding \dcel halfedge type. */
+  //! the corresponding \dcel halfedge type.
   typedef unspecified_type Halfedge;
 
   /*! a bidirectional iterator over the outer CCBs of the face. Its value-type
@@ -78,7 +76,7 @@ public:
   /*! obtains the number of outer CCBs of `f`. In case of planar arrangement
    * this is either 0 or 1.
    */
-  size_t number_of_outer_ccbs() const;
+  std::size_t number_of_outer_ccbs() const;
 
   /*! obtains a begin iterator for the outer CCBs of `f`. */
   Outer_ccb_iterator outer_ccbs_begin();
@@ -87,7 +85,7 @@ public:
   Outer_ccb_iterator outer_ccbs_end();
 
   /*! obtains the number of inner CCBs of `f`. */
-  size_t number_of_inner_ccbs() const;
+  std::size_t number_of_inner_ccbs() const;
 
   /*! obtains a begin iterator for the inner CCBs of `f`. */
   Inner_ccb_iterator inner_ccbs_begin();
@@ -96,7 +94,7 @@ public:
   Inner_ccb_iterator inner_ccbs_end();
 
   /*! obtains the number of holes (i.e., inner CCBs) inside `f`. */
-  size_t number_of_holes() const;
+  std::size_t number_of_holes() const;
 
   /*! obtains a begin-iterator for the holes (i.e., inner CCBs) of `f`. */
   Hole_iterator holes_begin();
@@ -105,7 +103,7 @@ public:
   Hole_iterator holes_end();
 
   /*! obtains the number of isolated vertices inside `f`. */
-  size_t number_of_isolated_vertices() const;
+  std::size_t number_of_isolated_vertices() const;
 
   /*! obtains a begin-iterator for the isolated vertices inside `f`. */
   Isolated_vertex_iterator isolated_vertices_begin();

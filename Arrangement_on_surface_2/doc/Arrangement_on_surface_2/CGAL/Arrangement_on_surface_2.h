@@ -84,7 +84,7 @@ public:
   /// the \f$x\f$-monotone curve type, as defined by the traits class.
   typedef typename Geometry_traits_2::X_monotone_curve_2 X_monotone_curve_2;
 
-  /// the size type (equivalent to `size_t`).
+  /// the size type (equivalent to `std::size_t`).
   typedef typename Dcel::Size                           Size;
 
   /*! \ingroup PkgArrangementOnSurface2DCEL

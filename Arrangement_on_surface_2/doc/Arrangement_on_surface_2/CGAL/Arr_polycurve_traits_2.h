@@ -412,7 +412,7 @@ public:
      *      \f$n\f$ is the number of subcurves.
      */
     typename SubcurveTraits_2::X_monotone_curve_2
-    operator[](size_t k) const;
+    operator[](std::size_t k) const;
 
     /*! Obtain the bounding box of the polycurve.
      */
