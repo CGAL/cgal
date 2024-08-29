@@ -338,7 +338,7 @@ namespace GLFW
     Line_renderer m_XYGridRenderer; 
     Line_renderer m_XYAxisRenderer; 
 
-    float m_SizeVertices { CGAL_size_vertices };
+    float m_SizeVertices { CGAL_SIZE_VERTICES };
     float m_SizeEdges    { CGAL_SIZE_EDGES  };
     float m_SizeRays     { CGAL_SIZE_RAYS   };
     float m_SizeLines    { CGAL_SIZE_LINES  };

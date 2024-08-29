@@ -1,8 +1,6 @@
 #ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
 #define CGAL_BASIC_VIEWER_GLFW_IMPL_H
 
-#include "Basic_viewer.h"
-
 namespace CGAL 
 {
 namespace GLFW 

@@ -15,8 +15,8 @@
 #endif
 
 /*************GLFW SCENE PARAMS*************/
-#ifndef CGAL_size_vertices
-#define CGAL_size_vertices 7.0f
+#ifndef CGAL_SIZE_VERTICES
+#define CGAL_SIZE_VERTICES 7.0f
 #endif
 
 #ifndef CGAL_SIZE_EDGES

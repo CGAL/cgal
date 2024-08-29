@@ -9,6 +9,7 @@
 # Qt & GLFW viewer 
 - Mesh selection 
 - Screenshot with Wayland (?) 
+- Only `Segment` primitive use the _SOURCE_LINE_WIDTH shaders. Do the same thing for both `lines` and `rays` primitives. 
 - Add compatibility shaders in `Basic_shaders.h` for : 
   - `VERTEX_SOURCE_SHAPE`   
   - `GEOMETRY_SOURCE_SPHERE`
