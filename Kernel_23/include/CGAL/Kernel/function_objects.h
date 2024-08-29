@@ -206,16 +206,15 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     result_type
-    operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
-               const Point_3& a2, const Point_3& b2, const Point_3& c2) const
+    operator()(const Vector_3& ba1, const Vector_3& bc1,
+               const Vector_3& ba2, const Vector_3& bc2) const
     {
-      using FT = typename K::FT;
-      const Vector_3 ba1 = a1 - b1;
-      const Vector_3 bc1 = c1 - b1;
-      const Vector_3 ba2 = a2 - b2;
-      const Vector_3 bc2 = c2 - b2;
-      const FT sc_prod_1 = ba1 * bc1;
-      const FT sc_prod_2 = ba2 * bc2;
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      typename K::Compute_squared_length_3 sq_length = K().compute_squared_length_3_object();
+
+      const FT sc_prod_1 = scalar_product(ba1, bc1);
+      const FT sc_prod_2 = scalar_product(ba2, bc2);
+
       // Reminder: cos(angle) = scalar_product(ba, bc) / (length(ba)*length(bc))
       // cosine is decreasing on 0, pi
       // thus angle1 < angle2 is equivalent to cos(angle1) > cos(angle2)
@@ -223,24 +222,34 @@ namespace CommonKernelFunctors {
         if(sc_prod_2 >= 0) {
           // the two cosine are >= 0, we can compare the squares
           // (square(x) is increasing when x>=0
-          return CGAL::compare(CGAL::square(sc_prod_2)*
-                               ba1.squared_length()*bc1.squared_length(),
-                               CGAL::square(sc_prod_1)*
-                               ba2.squared_length()*bc2.squared_length());
+          return CGAL::compare(CGAL::square(sc_prod_2) * sq_length(ba1) * sq_length(bc1),
+                               CGAL::square(sc_prod_1) * sq_length(ba2) * sq_length(bc2));
         } else {
           return SMALLER;
         }
       } else {
         if(sc_prod_2 < 0) {
           // the two cosine are < 0, square(x) is decreasing when x<0
-          return CGAL::compare(CGAL::square(sc_prod_1)*
-                               ba2.squared_length()*bc2.squared_length(),
-                               CGAL::square(sc_prod_2)*
-                               ba1.squared_length()*bc1.squared_length());
+          return CGAL::compare(CGAL::square(sc_prod_1) * sq_length(ba2) * sq_length(bc2),
+                               CGAL::square(sc_prod_2) * sq_length(ba1) * sq_length(bc1));
         } else {
           return LARGER;
         }
       }
+    }
+
+    result_type
+    operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
+               const Point_3& a2, const Point_3& b2, const Point_3& c2) const
+    {
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+
+      const Vector_3 ba1 = vector(b1, a1);
+      const Vector_3 bc1 = vector(b1, c1);
+      const Vector_3 ba2 = vector(b2, a2);
+      const Vector_3 bc2 = vector(b2, c2);
+
+      return this->operator()(ba1, bc1, ba2, bc2);
     }
 
     result_type
