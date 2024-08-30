@@ -533,11 +533,7 @@ Ridges on the ellipsoid, normals pointing outward. Color coding :
 \subsection Ridges_3ExampleFilteringofCrestRidgesona Example: Filtering of Crest Ridges on a Mechanical Part
 
 \cgalFigureRef{figmechanical_crest_filteredintro} illustrates the filtering
-of crest ridges on a mechanical model, and has been computed as follows:
-
-\code{.cpp}
-./Compute_Ridges_Umbilics -f data/rocker-arm.off -d 4 -m 4 -a 4 -t 4
-\endcode
+of crest ridges on a mechanical model.
 
 \cgalFigureBegin{figmechanical_crest_filteredintro,mecanic-sub1_crest-jpg.png}
 Mechanical part (37k pts). Left: All crest lines. Middle:  crests filtered
