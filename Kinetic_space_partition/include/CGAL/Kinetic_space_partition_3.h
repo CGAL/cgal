@@ -566,7 +566,15 @@ public:
 
 #ifndef DOXYGEN_RUNNING
   void partition(std::size_t k, FT& partition_time, FT& finalization_time, FT& conformal_time) {
-    m_volumes.clear();
+    if (!m_volumes.empty()) {
+      for (Sub_partition& node : m_partition_nodes) {
+        node.m_data->reset_to_initialization();
+        node.face_neighbors.clear();
+        node.face2vertices.clear();
+        node.volumes.clear();
+      }
+      m_volumes.clear();
+    }
     Timer timer;
     timer.start();
     partition_time = 0;

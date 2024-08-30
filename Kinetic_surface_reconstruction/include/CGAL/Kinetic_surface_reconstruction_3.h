@@ -94,6 +94,9 @@ public:
     const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {
     m_verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
     m_debug = parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false);
+
+    m_point_map = Point_set_processing_3_np_helper<Point_range, NamedParameters, Point_map>::get_point_map(m_points, np);
+    m_normal_map = Point_set_processing_3_np_helper<Point_range, NamedParameters, Normal_map>::get_normal_map(m_points, np);
   }
 
   /*!
@@ -188,9 +191,6 @@ public:
     m_region_map.clear();
     m_regions.clear();
     m_planar_regions.clear();
-
-    m_point_map = Point_set_processing_3_np_helper<Point_range, CGAL_NP_CLASS, Point_map>::get_point_map(m_points, np);
-    m_normal_map = Point_set_processing_3_np_helper<Point_range, CGAL_NP_CLASS, Normal_map>::get_normal_map(m_points, np);
 
     create_planar_shapes(np);
 
@@ -323,6 +323,31 @@ public:
     partition(k);
   }
 
+  void estimate_detection_parameters(FT& max_distance, FT& normal_dev, std::size_t& min_inliers) {
+    if (!m_neighbor_query) {
+      m_neighbor_query = std::unique_ptr<Neighbor_query>(new Neighbor_query(m_points, parameters::point_map(m_point_map).k_neighbors(12)));
+      m_sorting = std::unique_ptr<Sorting>(new Sorting(m_points, *m_neighbor_query, parameters::point_map(m_point_map)));
+      m_sorting->sort();
+    }
+
+    max_distance = 2 * m_sorting->mean_distance();
+    normal_dev = m_sorting->mean_deviation();
+    min_inliers = m_points.size() * 0.005; // difficult to estimate as it depends on the kind of data, e.g., object scan vs. large scale urban acquisition
+  }
+
+  std::size_t estimate_max_subdivision_depth() {
+    std::size_t max_depth = 1;
+    std::size_t num_shapes = m_polygon_indices.size();
+
+    if (num_shapes > 60)
+      while (num_shapes > 20) {
+        max_depth++;
+        num_shapes >>= 3;
+      }
+
+    return max_depth;
+  }
+
   /*!
   \brief initializes the kinetic partition.
 
@@ -347,8 +372,6 @@ public:
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   void initialize_partition(const CGAL_NP_CLASS& np = parameters::default_values()) {
-    m_kinetic_partition.insert(m_polygon_pts, m_polygon_indices, np);
-
     m_kinetic_partition.initialize(np);
   }
 
@@ -408,6 +431,9 @@ public:
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstruct_with_ground(FT lambda, OutputPointIterator pit, OutputPolygonIterator polyit) {
+    if (m_kinetic_partition.number_of_volumes() == 0)
+      return;
+
     KSR_3::Graphcut<Kernel> gc(lambda);
 
     // add ground consideration here
@@ -482,6 +508,9 @@ public:
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstruct(FT lambda, std::map<typename KSP::Face_support, bool> external_nodes, OutputPointIterator pit, OutputPolygonIterator polyit) {
+    if (m_kinetic_partition.number_of_volumes() == 0)
+      return;
+
     KSR_3::Graphcut<Kernel> gc(lambda);
 
     // add node consideration here
@@ -564,6 +593,9 @@ private:
 
   bool m_verbose;
   bool m_debug;
+
+  std::unique_ptr<Neighbor_query> m_neighbor_query;
+  std::unique_ptr<Sorting> m_sorting;
 
   Point_range &m_points;
   Point_map m_point_map;
@@ -1785,8 +1817,9 @@ private:
     m_detection_distance_tolerance = max_distance_to_plane;
 
     // Region growing.
-    Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query(
-      m_points, CGAL::parameters::k_neighbors(k));
+    if (!m_neighbor_query) {
+        m_neighbor_query = std::unique_ptr<Neighbor_query>(new Neighbor_query(m_points, parameters::point_map(m_point_map).k_neighbors(k)));
+    }
 
     Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region(
       m_points,
@@ -1795,11 +1828,13 @@ private:
       maximum_angle(max_accepted_angle).
       minimum_region_size(min_region_size));
 
-    Sorting sorting = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_sorting(m_points, neighbor_query);
-    sorting.sort();
+    if (!m_sorting) {
+      m_sorting = std::unique_ptr<Sorting>(new Sorting(m_points, *m_neighbor_query, parameters::point_map(m_point_map)));
+      m_sorting->sort();
+    }
 
     Region_growing region_growing(
-      m_points, sorting.ordered(), neighbor_query, region_type);
+      m_points, m_sorting->ordered(), *m_neighbor_query, region_type);
     region_growing.detect(std::back_inserter(m_regions));
 
     std::size_t unassigned = 0;
@@ -1817,6 +1852,9 @@ private:
     auto range = m_regions | boost::adaptors::transformed([](typename Region_growing::Primitive_and_region& pr)->Plane_3& {return pr.first; });
 
     std::size_t num_shapes = m_regions.size();
+
+    if (m_regions.empty())
+      return;
 
     const bool regularize_axis_symmetry = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_axis_symmetry), false);
     const bool regularize_coplanarity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_coplanarity), false);
@@ -1936,6 +1974,8 @@ private:
     }
 
     num_shapes = m_planar_regions.size();
+
+    m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices);
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
