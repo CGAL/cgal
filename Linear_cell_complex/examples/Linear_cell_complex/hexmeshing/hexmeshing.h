@@ -2,6 +2,7 @@
 
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -24,11 +25,12 @@
 #include <bitset>
 #include <boost/container_hash/hash_fwd.hpp>
 #include <chrono>
+#include <condition_variable>
 #include <cstddef>
 #include <exception>
+#include <float.h>
 #include <functional>
 #include "utils.h"
-#include <CGAL/Simple_Cartesian.h>
 
 #include "../query_replace/cmap_query_replace.h"
 #include "../query_replace/init_to_preserve_for_query_replace.h"
@@ -48,8 +50,9 @@
 #include <utility>
 #include <variant>
 #include <vector>
-#include <winnt.h>
-#include <CGAL/Simple_cartesian.h>
+#include <boost/bimap.hpp>
+
+using uint = uint;
 
 template <typename T>
 struct GenericPoint {
@@ -201,10 +204,13 @@ public:
     };
 
     struct FaceAttrValue {
+      static constexpr uint max_plane_id = std::numeric_limits<uint>::max();
+      static constexpr uint max_cc_id = std::numeric_limits<uint>::max();
+
       char template_id = 0;
       std::bitset<3> plane;
-      typename CGAL::Union_find<typename Storage::Dart_handle>::handle cc_id;
-      bool cc_wave = false;
+      uint plane_id = max_plane_id;
+      uint cc_id = max_cc_id;
     };
 
     typedef CGAL::Cell_attribute<Storage, FaceAttrValue> FaceAttr;
@@ -323,6 +329,109 @@ namespace CGAL::HexRefinement::TwoRefinement {
       this->ext = ext;
       this->grid = grid;
     }
+
+    // After refinement, some dart_handles may be invalid. the iterates over all attributes to replace all non valid handles
+    void fix_plane_sets(){
+      // Data that we'll use to know which plane/cc we are looking for, while iterating on attributes
+      using DartRef = std::reference_wrapper<Dart_handle>;
+      using CCIdToFace = std::unordered_map<size_t, DartRef>;
+      using InvalidPlaneSet = std::unordered_map<size_t, CCIdToFace>;
+      std::array<InvalidPlaneSet, 3> plane_non_valid_faces;
+
+      bool should_fix = false;
+      for (size_t p = 0; p < 3; p++){
+        PlaneSet& plane_set = first_face_of_planes[p];
+        for (size_t plane_id = 0; plane_id < plane_set.size(); plane_id++){
+          PlaneCC& plane_cc = plane_set[plane_id];
+          CCIdToFace non_valid_face;
+
+          for (int cc_id = 0; cc_id < plane_cc.size(); cc_id++){
+            Dart_handle& dart = plane_cc[cc_id];
+            auto face_attr = lcc.attribute<2>(dart);
+            auto& face_info = face_attr->info();
+
+            if (!lcc.is_dart_used(dart) or !face_attr->is_valid() or face_info.plane[p] == false or face_info.cc_id != cc_id){
+              non_valid_face.emplace(cc_id, std::ref(dart));
+              should_fix = true;
+            }
+          }
+
+          if (non_valid_face.size() > 0)
+            plane_non_valid_faces[p][plane_id] = std::move(non_valid_face);
+        }
+      }
+
+      if (!should_fix) return;
+
+      // We don't care if a face has multiple planes, there is atleast one face for each cc that is not a merged face
+      // Eitherway we cannot treat a face belonging to multiple planes, because the cc_id is undefined
+      const auto get_plane_normal = [&](DartInfo::FaceAttrValue& face) -> std::optional<char>{
+        std::bitset<3>& plane = face.plane;
+        char sum = plane[0] + plane[1] + plane[2];
+        if (sum > 1 or sum == 0) return {};
+
+        for (char i = 0; i < 3; i++){
+          if (plane[i]) return i;
+        }
+
+        CGAL_assertion_msg(false, "get_plane_normal: Unreachable code accessed");
+        return {};
+      };
+
+      // Invalidated handles are rare, we can afford scanning all 2 attributes
+      auto& attributes = lcc.attributes<2>();
+      for (auto it = attributes.begin(); it != attributes.end(); it++){
+        auto& info = it->info();
+        std::optional<char> normal = get_plane_normal(info);
+        if (!normal) continue;
+
+        auto& nvf_plane_set = plane_non_valid_faces[*normal];
+
+        // Get plane
+        auto plane_it = nvf_plane_set.find(info.plane_id);
+        if (plane_it == nvf_plane_set.end()) continue;
+        CCIdToFace& non_valid_faces = plane_it->second;
+
+        // Get cc_id that was invalidated
+        auto face_it = non_valid_faces.find(info.cc_id);
+        if (face_it == non_valid_faces.end()) continue;
+
+        // If both plane and cc_id match, reassign the handle
+        DartRef handle_ptr = face_it->second;
+        non_valid_faces.erase(face_it);
+
+        handle_ptr.get() = it->dart();
+
+        if (non_valid_faces.size() == 0){
+          nvf_plane_set.erase(plane_it);
+        }
+      }
+
+      auto all_valid = [&](){
+        for (int p = 0; p < 3; p++){
+        for (auto& non_valid : plane_non_valid_faces[p]){
+          CGAL_assertion_msg(non_valid.second.size() == 0, "HexMeshingData::fix_planes_sets, not all stored planes were fixed");
+        }}
+
+        for (int p = 0; p < 3; p++){
+          auto& plane_set = first_face_of_planes[p];
+          for (int plane_id = 0; plane_id < plane_set.size(); plane_id++){
+            auto& plane_cc = plane_set[plane_id];
+            for (int cc_id = 0; cc_id < plane_cc.size(); cc_id++){
+              auto& face = plane_cc[cc_id];
+              auto face_attr = lcc.attribute<2>(face);
+              bool valid = face_attr != nullptr
+                && face_attr->info().plane[p]
+                && face_attr->info().plane_id == plane_id
+                && face_attr->info().cc_id == cc_id;
+              CGAL_assertion_msg(valid, "HexMeshingData::fix_planes_sets, face was not valid after fix");
+            }
+          }
+        }
+      };
+
+      CGAL_assertion_code(all_valid());
+    };
   };
 
   struct RefinementData {
@@ -484,7 +593,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
   };
 
 
-  template <unsigned int i, unsigned int k>
+  template <uint i, uint k>
   void mark_k_cells_of_i_cell(LCC& lcc, Dart_handle dart, size_type mark){
     auto iterator = lcc.darts_of_cell<i, 0>(dart);
     for (auto dit = iterator.begin(), dend = iterator.end(); dit != dend; dit++){
@@ -754,7 +863,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
   }
 
-  template <unsigned int i>
+  template <uint i>
   typename LCC::Attribute_descriptor<i>::type get_or_create_attr(LCC& lcc, Dart_handle dart){
     auto attr = lcc.attribute<i>(dart);
 
@@ -1036,7 +1145,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     return arr;
   }
 
-  template <unsigned int i, typename... DartArray>
+  template <uint i, typename... DartArray>
   void assert_dart_attr_are_unique(LCC& lcc, DartArray... array){
     auto assertion = [&](){
       std::unordered_map<void*, int> attributes;
@@ -2574,30 +2683,34 @@ namespace CGAL::HexRefinement::TwoRefinement {
     // Create attributes of all faces of all planes
     // To be able to iterate properly at later stages
     for (int p = 0; p < 3; p++){
-       for (auto& plane_cc :  hdata.first_face_of_planes[p]) {
-         plane_for_each_face(lcc, plane_cc,
-           [&](Dart_handle face){
-             auto& face_attr = get_or_create_attr<2>(lcc, face)->info();
-             face_attr.plane[p] = true;
-           },
-           [&](Dart_handle edge){
-             return lcc.beta(edge, 2, 3, 2);
-           });
-       }
+      auto& plane_set = hdata.first_face_of_planes[p];
+      for (int i = 0; i < plane_set.size(); i++) {
+        plane_for_each_face(lcc, plane_set[i],
+          [&](Dart_handle face){
+            auto& face_attr = get_or_create_attr<2>(lcc, face)->info();
+            face_attr.plane[p] = true;
+            face_attr.plane_id = i;
+            face_attr.cc_id = 0;
+          },
+          [&](Dart_handle edge){
+            return lcc.beta(edge, 2, 3, 2);
+          });
+      }
 
        // Last odd plane
-       int size = hdata.first_face_of_planes[p].size();
-       Dart_handle start = hdata.first_face_of_planes[p][size-1][0];
-       start = lcc.beta(start, 2, 1, 1, 2);
+       // int size = hdata.first_face_of_planes[p].size();
+       // Dart_handle start = hdata.first_face_of_planes[p][size-1][0];
+       // start = lcc.beta(start, 2, 1, 1, 2);
 
-       plane_for_each_face(lcc, start,
-         [&](Dart_handle face){
-           auto& face_attr = get_or_create_attr<2>(lcc, face)->info();
-           face_attr.plane[p] = true;
-         },
-         [&](Dart_handle edge){
-           return lcc.beta(edge, 2, 3, 2);
-         });
+       // plane_for_each_face(lcc, start,
+       //  [&](Dart_handle face){
+       //    auto& face_attr = get_or_create_attr<2>(lcc, face)->info();
+       //    face_attr.plane[p] = true;
+       //    face_attr.cc_id = 0;
+       //  },
+       //  [&](Dart_handle edge){
+       //    return lcc.beta(edge, 2, 3, 2);
+       //  });
      }
 
   }
@@ -2991,11 +3104,14 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
 
   void setup_next_level_face(HexMeshingData& hdata,
+                            std::unordered_map<LCC::Attribute_handle<2>::type, Union_find<Dart_handle>::handle>& odd_face_to_handle,
+                            std::unordered_map<LCC::Attribute_handle<2>::type, Union_find<Dart_handle>::handle>& even_face_to_handle,
                             std::queue<Dart_handle>& to_explore,
                             Union_find<Dart_handle>& odd_union_find,
                             Union_find<Dart_handle>& even_union_find,
                             Dart_handle face,
                             PlaneNormal planeIteration,
+                            size_t plane_id,
                             int edge_mark, int face_mark){
     LCC& lcc = hdata.lcc;
     auto vol_handle = lcc.attribute<3>(face);
@@ -3003,8 +3119,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     bool identified = vol_handle != nullptr && vol_handle->info().type >= VolumeType::ID_EXPANSION;
     bool beta3_identified = beta3_vol_handle != nullptr && beta3_vol_handle->info().type >= VolumeType::ID_EXPANSION;
-    bool cc_wave = (hdata.level % 2) == 0;  // Cycling between true and false each level
-                                            // To prevent doing one full iteration to remove all cc_ids
 
     if (lcc.is_whole_cell_marked<2>(face, face_mark)) return;
     lcc.mark_cell<2>(face, face_mark);
@@ -3033,58 +3147,56 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       // Union find, only if a volume attached to the face is identified
       if (identified || beta3_identified){
-        auto& adj_face_attr = lcc.attribute<2>(adjacent_face)->info();
+        auto adj_face_attr = lcc.attribute<2>(adjacent_face);
+        auto adj_cc_id = odd_face_to_handle.find(adj_face_attr);
 
         if (odd_cc_id != nullptr
-          && adj_face_attr.cc_wave == cc_wave
-          && adj_face_attr.cc_id != nullptr
-          && !odd_union_find.same_set(odd_cc_id, adj_face_attr.cc_id)){
-          odd_union_find.unify_sets(odd_cc_id, adj_face_attr.cc_id);
+          && adj_cc_id != odd_face_to_handle.end()
+          && !odd_union_find.same_set(odd_cc_id, adj_cc_id->second)){
+          odd_union_find.unify_sets(odd_cc_id, adj_cc_id->second);
         }
 
         if (odd_cc_id == nullptr
-          && adj_face_attr.cc_wave == cc_wave
-          && adj_face_attr.cc_id != nullptr)
-          odd_cc_id = odd_union_find.find(adj_face_attr.cc_id);
+          && adj_cc_id != odd_face_to_handle.end())
+          odd_cc_id = odd_union_find.find(adj_cc_id->second);
       }
 
       // Even plane union find, only if the studied volume is identified
       if (identified){
-        auto back_face_handle = lcc.attribute<2>(lcc.beta(adjacent_face, 2, 1, 1, 2));
+        auto back_face_attr = lcc.attribute<2>(lcc.beta(adjacent_face, 2, 1, 1, 2));
         // Skip back face with no attributes
-        if (back_face_handle == nullptr) continue;
-        auto& back_face_attr = back_face_handle->info();
+        if (back_face_attr == nullptr) continue;
+        auto back_cc_id = even_face_to_handle.find(back_face_attr);
 
         if (even_cc_id != nullptr
-          && back_face_attr.cc_wave == cc_wave
-          && back_face_attr.cc_id != nullptr
-          && !even_union_find.same_set(even_cc_id, back_face_attr.cc_id)){
-          even_union_find.unify_sets(even_cc_id, back_face_attr.cc_id);
+          && back_cc_id != even_face_to_handle.end()
+          && !even_union_find.same_set(even_cc_id, back_cc_id->second)){
+          even_union_find.unify_sets(even_cc_id, back_cc_id->second);
         }
 
         if (even_cc_id == nullptr
-          && back_face_attr.cc_wave == cc_wave
-          && back_face_attr.cc_id != nullptr)
-          even_cc_id = even_union_find.find(back_face_attr.cc_id);
+          && back_cc_id != even_face_to_handle.end())
+          even_cc_id = even_union_find.find(back_cc_id->second);
       }
     }
 
     if (identified or beta3_identified){
-      auto& face_attr = lcc.attribute<2>(face)->info();
-      face_attr = DartInfo::FaceAttrValue();
-      face_attr.plane[planeIteration] = true;
-      face_attr.cc_wave = cc_wave;
-      face_attr.cc_id = odd_cc_id != nullptr ? odd_cc_id : odd_union_find.make_set(face);
+      auto face_attr = lcc.attribute<2>(face);
+      auto& face_info = face_attr->info();
+      auto cc_id = odd_cc_id != nullptr ? odd_cc_id : odd_union_find.make_set(face);
+      odd_face_to_handle[face_attr] = cc_id;
     }
 
     if (identified) {
       assert(lcc.attribute<2>(back_face) == nullptr);
       assert(!lcc.is_free<3>(back_face));
 
-      auto& back_face_attr = get_or_create_attr<2>(lcc, back_face)->info();
-      back_face_attr.plane[planeIteration] = true;
-      back_face_attr.cc_wave = cc_wave;
-      back_face_attr.cc_id = even_cc_id != nullptr ? even_cc_id : even_union_find.make_set(lcc.beta<3>(back_face));
+      auto back_face_attr = get_or_create_attr<2>(lcc, back_face);
+      auto& back_face_info = back_face_attr->info();
+      auto cc_id = even_cc_id != nullptr ? even_cc_id : even_union_find.make_set(back_face);
+      even_face_to_handle[back_face_attr] = cc_id;
+
+
     }
   }
 
@@ -3095,36 +3207,119 @@ namespace CGAL::HexRefinement::TwoRefinement {
     size_type edge_mark = lcc.get_new_mark();
     size_type face_mark = lcc.get_new_mark();
 
+    const auto find_next_plane_id = [&](Dart_handle face, char axis) -> std::optional<size_t>{
+      if (face == lcc.null_dart_descriptor) return {};
+      face = lcc.beta(face, 2, 1, 1, 2);
+      auto attr = lcc.attribute<2>(face);
+
+      if (attr != nullptr){
+        assert(attr->info().plane[axis]);
+        return attr->info().plane_id;
+      }
+
+      face = lcc.beta(face, 3);
+      if (face == lcc.null_dart_descriptor) return {};
+
+      // Checks the second volume, if we are on a 1/2 template, we might have to check
+      // all faces of the hex to find the next plane of 'axis'
+
+      for (Dart_handle f : faces_of_hex(lcc, face)){
+        attr = lcc.attribute<2>(f);
+        if (attr != nullptr && attr->info().plane[axis]){
+          return attr->info().plane_id;
+        }
+      }
+
+      return {};
+    };
+
     for (int p = 0; p < 3; p++){
+      PlaneSet& old_plane_set = hdata.first_face_of_planes[p];
       PlaneSet new_plane_set;
 
-      int i = 0;
-      for (auto& old_plane_set : hdata.first_face_of_planes[p]){
+      for (int pid = 0; pid < old_plane_set.size(); pid++){
         std::queue<Dart_handle> to_explore;
+        std::unordered_map<LCC::Attribute_handle<2>::type, Union_find<Dart_handle>::handle> odd_face_to_handle, even_face_to_handle;
         Union_find<Dart_handle> odd_union_find, even_union_find;
 
 
-        for (auto start : old_plane_set)
-          to_explore.push(start);
+        for (auto start : old_plane_set[pid]){
+          // Check the orientation of the face, facing up or down relative to its plane axis
+
+          bool is_facing_backwards = false;
+          bool found = false;
+
+          std::optional<size_t> id;
+          if ((id = find_next_plane_id(start, p))) {
+            is_facing_backwards = *id < pid;
+            found = true;
+          }
+          else if ((id = find_next_plane_id(lcc.beta(start, 3), p))){
+            is_facing_backwards = *id > pid;
+            found = true;
+          }
+
+          assert(found);
+          to_explore.push(is_facing_backwards ?  lcc.beta(start, 3) : start );
+        }
 
         while (!to_explore.empty()){
           Dart_handle face = to_explore.front();
           to_explore.pop();
 
-          setup_next_level_face(hdata, to_explore, odd_union_find, even_union_find, face, (PlaneNormal)p, edge_mark, face_mark);
+          // TODO write this in a better way, there is so much args / lines
+          setup_next_level_face(hdata, odd_face_to_handle, even_face_to_handle, to_explore, odd_union_find,
+              even_union_find, face, (PlaneNormal)p, pid,
+              edge_mark, face_mark);
         }
 
         PlaneCC odd_plane_cc, even_plane_cc;
         odd_plane_cc.reserve(odd_union_find.number_of_sets());
-        even_plane_cc.reserve(odd_union_find.number_of_sets());
+        even_plane_cc.reserve(even_union_find.number_of_sets());
 
-        for (auto uf_handle : get_partitions(odd_union_find)){
-          Dart_handle face_cc = uf_handle->value;
+        // Attribute new planes cc_id
+        std::unordered_map<Union_find<Dart_handle>::pointer, size_t> ptr_to_id;
+        auto odd_partitions = get_partitions(odd_union_find);
+        auto even_partitions = get_partitions(even_union_find);
+
+        // TODO same here, use lambda probably to shrink code size
+        for (int i = 0; i < odd_partitions.size(); i++){
+          ptr_to_id[odd_partitions[i].ptr()] = i;
+        }
+
+        for (int i = 0; i < even_partitions.size(); i++){
+          ptr_to_id[even_partitions[i].ptr()] = i;
+        }
+
+        int plane_id = pid * 2;
+
+        for (auto& [face, handle] : odd_face_to_handle){
+          auto id_it = ptr_to_id.find(odd_union_find.find(handle).ptr());
+          if (id_it != ptr_to_id.end()){
+            face->info() = DartInfo::FaceAttrValue();
+            face->info().plane[p] = true;
+            face->info().plane_id = plane_id;
+            face->info().cc_id = id_it->second;
+          }
+        }
+
+        for (auto& [face, handle] : even_face_to_handle){
+          auto id_it = ptr_to_id.find(even_union_find.find(handle).ptr());
+          if (id_it != ptr_to_id.end()){
+            face->info().plane[p] = true;
+            face->info().plane_id = plane_id + 1;
+            face->info().cc_id = id_it->second;
+          }
+        }
+        // ======
+
+        for (auto uf_handle : odd_partitions){
+          Dart_handle face_cc = *uf_handle;
           odd_plane_cc.push_back(face_cc);
         }
 
-        for (auto uf_handle : get_partitions(even_union_find)){
-          Dart_handle face_cc = uf_handle->value;
+        for (auto uf_handle : even_partitions){
+          Dart_handle face_cc = *uf_handle;
           even_plane_cc.push_back(face_cc);
         }
 
@@ -3166,8 +3361,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
   }
 
-  void generate_grid(HexMeshingData& hdata) {
-    Grid& grid = hdata.grid;
+  void generate_grid(LCC& lcc, Grid& grid) {
     for (int x = 0; x < grid.dims.x; x++) {
       for (int y = 0; y < grid.dims.y; y++) {
         for (int z = 0; z < grid.dims.z; z++) {
@@ -3179,7 +3373,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
           double y2 = grid.pos.y() + (y+1)*grid.size.y();
           double z2 = grid.pos.z() + (z+1)*grid.size.z();
 
-          hdata.lcc.make_hexahedron(Point(x1,y1,z1), Point(x2,y1,z1),
+          lcc.make_hexahedron(Point(x1,y1,z1), Point(x2,y1,z1),
                               Point(x2,y2,z1), Point(x1,y2,z1),
                               Point(x1,y2,z2), Point(x1,y1,z2),
                               Point(x2,y1,z2), Point(x2,y2,z2));
@@ -3187,7 +3381,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       }
     }
 
-    hdata.lcc.sew3_same_facets();
+    lcc.sew3_same_facets();
   }
 
   Grid calculate_thread_grid(ProcessData& proc, const Grid& full_grid, int thread_id, int nb_threads){
@@ -3300,7 +3494,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       hdata.reset_temp_vertex_ids();
     }
 
-    generate_grid(hdata);
+    generate_grid(lcc, hdata.grid);
 
     // Levels of refinement
     for (int r = 0; r < nb_levels; r++){
@@ -3330,6 +3524,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
         assert_all_faces_are_quadrilateral(lcc, hdata);
         assert_all_volumes_are_hexes(lcc);
+
+        hdata.fix_plane_sets();
 
         thread_communicate_cells_id_and_3t(hdata, rdata);
 
@@ -3471,7 +3667,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     auto volumes = lcc.one_dart_per_cell<3>();
     for (auto it = volumes.begin(); it != volumes.end(); it++){
       if (func(lcc, it)) continue;
-      lcc.contract_cell<3>(it);
+      lcc.remove_cell<3>(it);
     }
   }
 }
@@ -3613,6 +3809,8 @@ namespace CGAL::HexRefinement {
 
     two_refinement_algorithm(hdata, cellIdentifier, nb_levels);
     // trim_excedent_volumes(hdata.lcc, trimmingFunction);
+
+    // debug_render(hdata);
 
     return hdata.lcc;
   }

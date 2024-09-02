@@ -11,18 +11,15 @@
 
 template <typename T>
 // TODO make union_find arg const
-std::unordered_set<typename CGAL::Union_find<T>::pointer> get_partitions(CGAL::Union_find<T>& union_find){
-  using Ptr = typename CGAL::Union_find<T>::pointer;
+std::vector<typename CGAL::Union_find<T>::handle> get_partitions(CGAL::Union_find<T>& union_find){
   using Handle = typename CGAL::Union_find<T>::handle;
-
-  std::unordered_set<Ptr> result;
+  std::vector<Handle> result;
 
   if (union_find.number_of_sets() == 0) return result;
 
   for (auto it = union_find.begin(), end = union_find.end(); it != end; it++ ){
-    Ptr uf_pointer = it.ptr();
-    if (uf_pointer->up == nullptr) {
-      result.insert(uf_pointer);
+    if (it.ptr()->up == nullptr) {
+      result.push_back(it);
 
       if (result.size() == union_find.number_of_sets())
         return result;
