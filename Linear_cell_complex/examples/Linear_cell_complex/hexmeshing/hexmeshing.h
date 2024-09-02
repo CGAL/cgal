@@ -19,6 +19,7 @@
 #include <CGAL/Union_find.h>
 #include <CGAL/aff_transformation_tags.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/basic.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <algorithm>
@@ -37,6 +38,7 @@
 
 #include <boost/container/static_vector.hpp>
 #include <boost/range/join.hpp>
+#include <iterator>
 #include <limits>
 #include <memory>
 #include <mutex>
@@ -196,11 +198,14 @@ public:
     };
 
     struct VolumeAttrValue {
+      static constexpr uint max_cc_id = std::numeric_limits<uint>::max();
+
       char iteration = -1;
       VolumeType type = VolumeType::NONE;
 
       AreaId area_id = {0,0,0}; // Used for ghost cells;
       bool owned = true; // Disable this when creating others constraint area
+      size_t cc_id = max_cc_id;
     };
 
     struct FaceAttrValue {
@@ -209,8 +214,8 @@ public:
 
       char template_id = 0;
       std::bitset<3> plane;
-      uint plane_id = max_plane_id;
-      uint cc_id = max_cc_id;
+      size_t plane_id = max_plane_id;
+      size_t cc_id = max_cc_id;
     };
 
     typedef CGAL::Cell_attribute<Storage, FaceAttrValue> FaceAttr;
@@ -331,7 +336,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
 
     // After refinement, some dart_handles may be invalid. the iterates over all attributes to replace all non valid handles
-    void fix_plane_sets(){
+    void fix_dart_storage(){
       // Data that we'll use to know which plane/cc we are looking for, while iterating on attributes
       using DartRef = std::reference_wrapper<Dart_handle>;
       using CCIdToFace = std::unordered_map<size_t, DartRef>;
@@ -350,7 +355,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
             auto face_attr = lcc.attribute<2>(dart);
             auto& face_info = face_attr->info();
 
-            if (!lcc.is_dart_used(dart) or !face_attr->is_valid() or face_info.plane[p] == false or face_info.cc_id != cc_id){
+            if (!lcc.is_dart_used(dart) or face_attr != nullptr or !face_attr->is_valid() or face_info.plane[p] == false or face_info.cc_id != cc_id){
               non_valid_face.emplace(cc_id, std::ref(dart));
               should_fix = true;
             }
@@ -378,6 +383,29 @@ namespace CGAL::HexRefinement::TwoRefinement {
         return {};
       };
 
+      const auto fix_face_orientation = [&](Dart_handle face, char plane_normal) -> Dart_handle {
+        auto n0 = lcc.attribute<0>(face)->point();
+        auto n1 = lcc.attribute<0>(lcc.beta(face, 1))->point();
+        auto n2 = lcc.attribute<0>(lcc.beta(face, 1, 1))->point();
+        // auto n3 = lcc.attribute<0>(lcc.beta(face, 1, 1, 1));
+
+        Vector normal = CGAL::cross_product(n1 - n0, n2 - n1);
+        Vector plane_up = [&]() -> Vector {
+          switch (plane_normal){
+            default: return {1,0,0};
+            case 1: return {0,1,0};
+            case 2: return {0,0,1};
+          }
+        }();
+
+        if (plane_up * normal < 0) {
+          assert(!lcc.is_free<3>(face));
+          return lcc.beta(face, 3);
+        }
+
+        return face;
+      };
+
       // Invalidated handles are rare, we can afford scanning all 2 attributes
       auto& attributes = lcc.attributes<2>();
       for (auto it = attributes.begin(); it != attributes.end(); it++){
@@ -400,7 +428,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
         DartRef handle_ptr = face_it->second;
         non_valid_faces.erase(face_it);
 
-        handle_ptr.get() = it->dart();
+        handle_ptr.get() = fix_face_orientation(it->dart(), *normal);
 
         if (non_valid_faces.size() == 0){
           nvf_plane_set.erase(plane_it);
@@ -555,9 +583,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     TempVertexIdStorage vertex_temp_ids;
     AltVertexIdMap<size_t> vertices_to_share;
 
-    // TODO : Handles may be deleted and point to an other dart
-    // Find a way to keep them on any valid volume / face (for HexMeshingData::first_face_of_planes)
-    Dart_handle owned_ghosts_begin, unowned_ghosts_begin;
+    std::vector<Dart_handle> owned_ghost_area, unowned_ghost_area;
 
     std::array<bool, 3> positive_axes = {false, false, false};
     std::array<bool, 3> negative_axes = {false, false, false};;
@@ -590,6 +616,78 @@ namespace CGAL::HexRefinement::TwoRefinement {
     bool is_temp_id(size_t id){
       return id >= v_temp_id_begin && id < v_domain_end;
     }
+
+    void fix_dart_storage(){
+      HexMeshingData::fix_dart_storage();
+
+      bool should_fix = false;
+      using CCToHandle = std::unordered_map<size_t, std::reference_wrapper<Dart_handle>>;
+      CCToHandle owned_cc_to_handle, unowned_cc_to_handle;
+
+      const auto gather_fixable_volumes = [&](std::vector<Dart_handle>& ghost_area, CCToHandle& cc_to_handle, bool owned){
+        for (int cc_id = 0; cc_id < ghost_area.size(); cc_id++){
+          Dart_handle& start = ghost_area[cc_id];
+          auto attr = lcc.attribute<3>(start);
+          if (!lcc.is_dart_used(start) or attr == nullptr
+            or !attr->is_valid()
+            or attr->info().owned != owned
+            or attr->info().cc_id != cc_id)
+          {
+            should_fix = true;
+            cc_to_handle.emplace(cc_id, start);
+          }
+        }
+      };
+
+      const auto has_invalid_volume = [&](std::vector<Dart_handle>& ghost_area, CCToHandle& cc_to_handle, bool owned){
+        for (int cc_id = 0; cc_id < ghost_area.size(); cc_id++){
+          Dart_handle& start = ghost_area[cc_id];
+          auto attr = lcc.attribute<3>(start);
+          if (!lcc.is_dart_used(start) or attr == nullptr
+            or !attr->is_valid()
+            or attr->info().owned != owned
+            or attr->info().cc_id != cc_id)
+          {
+            return true;
+          }
+        }
+
+        return false;
+      };
+
+      gather_fixable_volumes(owned_ghost_area, owned_cc_to_handle, true);
+      gather_fixable_volumes(unowned_ghost_area, unowned_cc_to_handle, false);
+
+      if (!should_fix) return;
+
+      auto& attributes = lcc.attributes<3>();
+      for (auto it = attributes.begin(); it != attributes.end(); it++){
+        auto& info = it->info();
+        auto& cc_to_handle = info.owned
+        ? owned_cc_to_handle
+        : unowned_cc_to_handle;
+
+        auto dart_it = cc_to_handle.find(info.cc_id);
+        if (dart_it == cc_to_handle.end()) continue;
+
+        auto& dart_ref = dart_it->second;
+        dart_ref.get() = it->dart();
+
+        cc_to_handle.erase(dart_it);
+
+        if (owned_cc_to_handle.empty() && unowned_cc_to_handle.empty())
+          break;
+      }
+
+      const auto all_valid = [&](){
+        CGAL_postcondition_msg(owned_cc_to_handle.empty() && unowned_cc_to_handle.empty(), "");
+        bool invalid = has_invalid_volume(owned_ghost_area, owned_cc_to_handle, true)
+                    or has_invalid_volume(unowned_ghost_area, unowned_cc_to_handle, false);
+        CGAL_postcondition_msg(invalid, "");
+      };
+
+      CGAL_postcondition_code(all_valid());
+    }
   };
 
 
@@ -619,9 +717,10 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       if (lcc.is_whole_cell_marked<2>(face, face_mark)) continue;
       lcc.mark_cell<2>(face, face_mark);
-      face_operation(face);
 
       auto edges = lcc.darts_of_cell<2,1>(face);
+      face_operation(face, edges);
+
       for (auto it = edges.begin(), end = edges.end(); it != end; it++){
         if (lcc.is_whole_cell_marked<1>(it, edge_mark)) continue;
         lcc.mark_cell<1>(it, edge_mark);
@@ -671,15 +770,18 @@ namespace CGAL::HexRefinement::TwoRefinement {
   }
 
   template <typename VolumeOp, typename VolumeSelector>
-  inline void for_each_hex(LCC& lcc, Dart_handle start,
+  inline void for_each_hex(LCC& lcc, std::vector<Dart_handle> starts,
                             const VolumeOp&& volume_operation,
                             const VolumeSelector&& volume_selector)
   {
-    std::queue<Dart_handle> to_explore;
-    to_explore.push(start);
     size_type volume_mark = lcc.get_new_mark();
     size_type face_mark = lcc.get_new_mark();
-    lcc.mark_cell<3>(start, volume_mark);
+
+    std::queue<Dart_handle> to_explore;
+    for (Dart_handle start : starts){
+      to_explore.push(start);
+      lcc.mark_cell<3>(start, volume_mark);
+    }
 
     while (!to_explore.empty()){
       Dart_handle volume = to_explore.front();
@@ -1897,19 +1999,20 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     size_type node_mark = lcc.get_new_mark();
 
-    ThreadMarkedCellsPtr marked_cells = std::make_shared<ThreadMarkedCellsMsg>();
+    ThreadMarkedCellsMsg all_sent_cells;
+    ThreadMarkedCellsPtr marked_cells; // TODO: remove all_sent_cells if we avoid iterating the plane for getting nodes, see todo below
     std::vector<ThreadMarkedCellsPtr> others_msg;
-
     others_msg.reserve(proc.neighboring_threads.size());
 
     auto retrieve_nodes_in_face = [&](Dart_handle face){
       auto nodes =  lcc.darts_of_cell<2,0>(face);
       for (auto it = nodes.begin(); it != nodes.end(); it++){
-        if (!lcc.is_marked(it, proc.template_mark)) continue;
-
         size_t id = lcc.attribute<0>(it)->id;
+
+        if (!lcc.is_marked(it, proc.template_mark) or all_sent_cells.count(id)) continue;
         assert(id != DartInfo::VertexAttr::max_id);
         marked_cells->insert(id);
+        all_sent_cells.insert(id);
       }
     };
 
@@ -1961,47 +2064,62 @@ namespace CGAL::HexRefinement::TwoRefinement {
       }
     };
 
-    auto& plane_set = proc.first_face_of_planes[rdata.iteration];
-    for (int i = 1; i < plane_set.size(); i += 2){
-      plane_for_each_face(lcc, plane_set[i],
-        [&](Dart_handle face){
-          auto back_vol = lcc.attribute<3>(lcc.beta(face, 3));
-          auto front_vol = lcc.attribute<3>(face);
+    AreaIDMap<ProcessData::Neighbor> threads = proc.neighboring_threads;
 
-          const auto owned_sharable = [&](LCC::Attribute_handle<3>::type v){
-            return v->info().owned && v->info().area_id != AreaId{0,0,0};
-          };
+    while (true){
+      // Create a new vector, while other threads might be working on the older one
+      marked_cells = std::make_shared<ThreadMarkedCellsMsg>();
 
-          if (owned_sharable(front_vol) or (back_vol != nullptr && owned_sharable(back_vol))){
-            retrieve_nodes_in_face(face);
+      // Retrieves nodes to send
+      // TODO (?): Avoid iterating again, by directly adding any vertices that is connected to a owned ghost volume when created
+      auto& plane_set = proc.first_face_of_planes[rdata.iteration];
+      for (int i = 1; i < plane_set.size(); i += 2){
+        plane_for_each_face(lcc, plane_set[i],
+          [&](Dart_handle face, auto& edges){
+            auto back_vol = lcc.attribute<3>(lcc.beta(face, 3));
+            auto front_vol = lcc.attribute<3>(face);
+
+            const auto owned_sharable = [&](LCC::Attribute_handle<3>::type v){
+              return v->info().owned && v->info().area_id != AreaId{0,0,0};
+            };
+
+            if (owned_sharable(front_vol) or (back_vol != nullptr && owned_sharable(back_vol))){
+              retrieve_nodes_in_face(face);
+            }
+          },
+          [&](Dart_handle edge){
+            return adjacent_face_on_plane(lcc, rdata.iteration, edge);
           }
-        },
-        [&](Dart_handle edge){
-          return adjacent_face_on_plane(lcc, rdata.iteration, edge);
-        }
-      );
-    }
-
-    for (auto& [area, thread] : proc.neighboring_threads){
-      // Use a shared pointer to avoid copy
-      thread.stream << marked_cells;
-    }
-
-    for (auto& [area, thread] : proc.neighboring_threads){
-      ThreadMsg msg;
-      thread.stream >> msg;
-
-      if (!std::holds_alternative<ThreadMarkedCellsPtr>(msg)){
-        assert(false);
-        exit(0);
+        );
       }
 
-      others_msg.push_back(std::get<ThreadMarkedCellsPtr>(msg));
-    }
+      // Send them
+      for (auto& [area, thread] : proc.neighboring_threads){
+        // Use a shared pointer to avoid copy
+        thread.stream << marked_cells;
+      }
 
-    for (int i = 1; i < plane_set.size(); i += 2){
-      plane_for_each_face(lcc, plane_set[i],
-        [&](Dart_handle face){
+      // Receive all newly marked nodes
+      int empty_count = 0;
+      for (auto& [area, thread] : proc.neighboring_threads){
+        ThreadMsg msg;
+        thread.stream >> msg;
+
+        if (std::holds_alternative<ThreadMarkedCellsPtr>(msg)){
+          auto& others_cells = std::get<ThreadMarkedCellsPtr>(msg);
+          if (others_cells->empty()) empty_count++;
+          others_msg.push_back(std::move(others_cells));
+        }
+        else {
+          // TODO what now?
+          assert(false);
+          exit(0);
+        }
+      }
+
+      for (int i = 1; i < plane_set.size(); i += 2){
+        plane_for_each_face(lcc, plane_set[i],
+        [&](Dart_handle face, auto& edges){
           auto back_vol = lcc.attribute<3>(lcc.beta(face, 3));
           auto front_vol = lcc.attribute<3>(face);
           auto face_attr = lcc.attribute<2>(face);
@@ -2015,10 +2133,21 @@ namespace CGAL::HexRefinement::TwoRefinement {
         [&](Dart_handle edge){
           return adjacent_face_on_plane(lcc, rdata.iteration, edge);
         });
+      }
+
+      // EXIT: if no more changes are received
+      if (empty_count >= proc.neighboring_threads.size())
+        break;
+
+      // Clear all received nodes
+      others_msg.clear();
+      empty_count = 0;
+
+      size_t nb_changes = fix_impossible_cases(proc, rdata);
+      assert_faces_of_plane_valid(proc, rdata);
+
     }
 
-    fix_impossible_cases(proc, rdata);
-    assert_faces_of_plane_valid(proc, rdata);
 
     lcc.free_mark(node_mark);
   }
@@ -2145,24 +2274,43 @@ namespace CGAL::HexRefinement::TwoRefinement {
       v_id = r_id;
     };
 
-    // TODO carefull, make a version that takes a vector to put {owned, unowned}, one of them may be null;
-    // IF both are null then we have nothing to process.
     // Explore all assignable volumes
-    for_each_hex(lcc, proc.owned_ghosts_begin,
+    for_each_hex(lcc, proc.owned_ghost_area,
       [&](Dart_handle vol, auto faces){
         for (Dart_handle node : nodes_of_hex(lcc, vol)){
           node_operation(node);
         }
       },
       [&](Dart_handle vol) -> bool{
-        auto attr = lcc.attribute<3>(vol)->info();
-        return attr.area_id != AreaId{0,0,0};
+        auto attr = lcc.attribute<3>(vol);
+        return attr != nullptr && attr->info().area_id != AreaId{0,0,0};
       });
 
 
     thread_assert_no_temporary_ids(proc);
 
     // lcc.unmark_all(proc.three_template_node_mark);
+  }
+
+  template <typename HexData>
+  void thread_remove_ghosts(HexData& hdata) {}
+
+  template <>
+  void thread_remove_ghosts(ProcessData& proc){
+    LCC& lcc = proc.lcc;
+    std::vector<Dart_handle> vol_to_delete;
+
+    Dart_handle start;
+    auto& attributes = lcc.attributes<3>();
+    for (auto it = attributes.begin(); it != attributes.end(); it++){
+      if (!it->info().owned) {
+        vol_to_delete.push_back(it->dart());
+      }
+    }
+
+    for (Dart_handle dart : vol_to_delete){
+      lcc.remove_cell<3>(dart);
+    }
   }
 
   /**
@@ -2184,11 +2332,14 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
     // In multi threaded code, check if both volumes are owned, otherwise skip
     bool is_markable = true;
-    if constexpr (std::is_same_v<HexData, ProcessData>){
-      auto& front_vol = lcc.attribute<3>(face)->info();
-      auto back_vol_attr = lcc.attribute<3>(lcc.beta<3>(face));
-      is_markable = front_vol.owned or (back_vol_attr != nullptr && back_vol_attr->info().owned);
-    }
+
+    // Might not be needed,
+
+    // if constexpr (std::is_same_v<HexData, ProcessData>){
+    //   auto& front_vol = lcc.attribute<3>(face)->info();
+    //   auto back_vol_attr = lcc.attribute<3>(lcc.beta<3>(face));
+    //   is_markable = front_vol.owned or (back_vol_attr != nullptr && back_vol_attr->info().owned);
+    // }
 
     auto edges = lcc.darts_of_cell<2,1>(face);
     assert(edges.size() == 4);
@@ -2571,8 +2722,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
       DartInfo::VolumeAttrValue old_info = it->info();
       DartInfo::VolumeAttrValue& current_info = it->info();
 
-      // Delete volumes outside of refinement domain
-      if (old_info.type <= VolumeType::REFINEMENT ){
+      // Delete volumes outside of refinement domain, and outside of unowned ghosted zone
+      if (old_info.type <= VolumeType::REFINEMENT && old_info.owned){
         volumes_to_delete.push_back(it);
         continue;
       }
@@ -2686,7 +2837,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
       auto& plane_set = hdata.first_face_of_planes[p];
       for (int i = 0; i < plane_set.size(); i++) {
         plane_for_each_face(lcc, plane_set[i],
-          [&](Dart_handle face){
+          [&](Dart_handle face, auto& edges){
             auto& face_attr = get_or_create_attr<2>(lcc, face)->info();
             face_attr.plane[p] = true;
             face_attr.plane_id = i;
@@ -2781,18 +2932,18 @@ namespace CGAL::HexRefinement::TwoRefinement {
   void assign_ghost_handles(ProcessData& proc){
     auto& volumes = proc.lcc.attributes<3>();
     bool found_owned = false, found_unowned = false;
-    proc.unowned_ghosts_begin = nullptr;
-    proc.owned_ghosts_begin = nullptr;
+    proc.unowned_ghost_area = {};
+    proc.owned_ghost_area = {};
 
     for (auto& handle : volumes){
       if (!found_owned && handle.info().owned && handle.info().area_id != AreaId(0,0,0)){
         found_owned = true;
-        proc.owned_ghosts_begin = handle.dart();
+        proc.owned_ghost_area = { handle.dart() };
       }
 
       if (!found_unowned && !handle.info().owned){
         found_unowned = true;
-        proc.unowned_ghosts_begin = handle.dart();
+        proc.unowned_ghost_area = { handle.dart() };
       }
 
       if (found_owned && found_unowned) break;
@@ -2812,7 +2963,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
     // If the area is unowned, no overlaps happens, two id are must be strictly equal to belong in the same area
     auto mark_ghost_area = [&](std::vector<Dart_handle> starts, int& plane, bool positive_axis, bool owned){
       plane_for_each_face(lcc, starts,
-        [&](Dart_handle face){
+        [&](Dart_handle face, auto& edges){
           auto& front_vol = lcc.attribute<3>(face)->info();
           auto back_vol_attr = lcc.attribute<3>(lcc.beta(face, 3));
 
@@ -2822,11 +2973,13 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
           front_vol.area_id[plane] = positive_axis ? 1 : -1;
           front_vol.owned = owned;
+          front_vol.cc_id = 0;
 
           if (back_vol_attr != nullptr){
             auto& back_vol = back_vol_attr->info();
             back_vol.area_id[plane] = positive_axis ? 1 : -1;
             back_vol.owned = owned;
+            back_vol.cc_id = 0;
           }
         },
         [&](Dart_handle edge){
@@ -3085,21 +3238,16 @@ namespace CGAL::HexRefinement::TwoRefinement {
     for (auto dart = volumes.begin(), end = volumes.end(); dart != end; dart++){
       // Create a 3-attr for all 3-cells in the LCC
       auto& vol_attr = get_or_create_attr<3>(lcc, dart)->info();
+
+      // Mark those who are identified
+      if (cellIdentifier(lcc, dart))
+        vol_attr.type = VolumeType::IDENTIFIED;
     }
 
     setup_initial_planes(proc);
     setup_ghost_areas(proc);
     setup_vertex_ids(proc);
     setup_volume_boundaries(proc);
-
-    // Mark initial identified cells
-    for (auto dart = volumes.begin(), end = volumes.end(); dart != end; dart++){
-      auto& vol_attr = lcc.attribute<3>(dart)->info();
-
-      // Mark those who are identified
-      if (vol_attr.owned && cellIdentifier(lcc, dart))
-        vol_attr.type = VolumeType::IDENTIFIED;
-    }
   }
 
 
@@ -3188,6 +3336,12 @@ namespace CGAL::HexRefinement::TwoRefinement {
     }
 
     if (identified) {
+      if (lcc.attribute<2>(back_face) != nullptr){
+        lcc.mark_cell<2>(back_face, hdata.debug);
+        lcc.mark_cell<2>(face, hdata.debug2);
+        debug_stream.push(l_thread_id);
+        std::this_thread::sleep_for(std::chrono::hours(1));
+      }
       assert(lcc.attribute<2>(back_face) == nullptr);
       assert(!lcc.is_free<3>(back_face));
 
@@ -3195,14 +3349,16 @@ namespace CGAL::HexRefinement::TwoRefinement {
       auto& back_face_info = back_face_attr->info();
       auto cc_id = even_cc_id != nullptr ? even_cc_id : even_union_find.make_set(back_face);
       even_face_to_handle[back_face_attr] = cc_id;
-
-
     }
   }
 
   void setup_next_level_plane(HexMeshingData& hdata){
     LCC& lcc = hdata.lcc;
     std::array<PlaneSet, 3> new_planes;
+
+    using FaceToHandle = std::unordered_map<LCC::Attribute_handle<2>::type, Union_find<Dart_handle>::handle>;
+    using Union_find = Union_find<Dart_handle>;
+    using UF_Partition = std::vector<Union_find::handle>;
 
     size_type edge_mark = lcc.get_new_mark();
     size_type face_mark = lcc.get_new_mark();
@@ -3233,34 +3389,63 @@ namespace CGAL::HexRefinement::TwoRefinement {
       return {};
     };
 
+    const auto create_plane = [&](char plane_normal, size_t plane_id, const UF_Partition& partition,
+        const Union_find& uf, const FaceToHandle& face_to_handle) -> std::vector<Dart_handle>
+    {
+      std::vector<Dart_handle> plane_cc;
+      std::unordered_map<Union_find::pointer, size_t> ptr_to_id;
+
+      for (int i = 0; i < partition.size(); i++){
+        ptr_to_id[partition[i].ptr()] = i;
+      }
+
+      for (auto uf_handle : partition){
+        Dart_handle face_cc = *uf_handle;
+        plane_cc.push_back(face_cc);
+      }
+
+      for (auto& [face, handle] : face_to_handle){
+        auto id_it = ptr_to_id.find(uf.find(handle).ptr());
+        if (id_it != ptr_to_id.end()){
+          face->info() = DartInfo::FaceAttrValue();
+          face->info().plane[plane_normal] = true;
+          face->info().plane_id = plane_id;
+          face->info().cc_id = id_it->second;
+        }
+      }
+
+      return plane_cc;
+    };
+
     for (int p = 0; p < 3; p++){
       PlaneSet& old_plane_set = hdata.first_face_of_planes[p];
       PlaneSet new_plane_set;
 
       for (int pid = 0; pid < old_plane_set.size(); pid++){
         std::queue<Dart_handle> to_explore;
-        std::unordered_map<LCC::Attribute_handle<2>::type, Union_find<Dart_handle>::handle> odd_face_to_handle, even_face_to_handle;
-        Union_find<Dart_handle> odd_union_find, even_union_find;
+        Union_find odd_union_find, even_union_find;
+        FaceToHandle odd_face_to_handle, even_face_to_handle;
 
 
         for (auto start : old_plane_set[pid]){
           // Check the orientation of the face, facing up or down relative to its plane axis
 
-          bool is_facing_backwards = false;
-          bool found = false;
+          // bool is_facing_backwards = false;
+          // bool found = false;
 
-          std::optional<size_t> id;
-          if ((id = find_next_plane_id(start, p))) {
-            is_facing_backwards = *id < pid;
-            found = true;
-          }
-          else if ((id = find_next_plane_id(lcc.beta(start, 3), p))){
-            is_facing_backwards = *id > pid;
-            found = true;
-          }
+          // std::optional<size_t> id;
+          // if ((id = find_next_plane_id(start, p))) {
+          //   is_facing_backwards = *id < pid;
+          //   found = true;
+          // }
+          // else if ((id = find_next_plane_id(lcc.beta(start, 3), p))){
+          //   is_facing_backwards = *id > pid;
+          //   found = true;
+          // }
 
-          assert(found);
-          to_explore.push(is_facing_backwards ?  lcc.beta(start, 3) : start );
+          // assert(found);
+          // to_explore.push(is_facing_backwards ?  lcc.beta(start, 3) : start );
+          to_explore.push( start );
         }
 
         while (!to_explore.empty()){
@@ -3278,53 +3463,13 @@ namespace CGAL::HexRefinement::TwoRefinement {
         even_plane_cc.reserve(even_union_find.number_of_sets());
 
         // Attribute new planes cc_id
-        std::unordered_map<Union_find<Dart_handle>::pointer, size_t> ptr_to_id;
         auto odd_partitions = get_partitions(odd_union_find);
         auto even_partitions = get_partitions(even_union_find);
 
-        // TODO same here, use lambda probably to shrink code size
-        for (int i = 0; i < odd_partitions.size(); i++){
-          ptr_to_id[odd_partitions[i].ptr()] = i;
-        }
-
-        for (int i = 0; i < even_partitions.size(); i++){
-          ptr_to_id[even_partitions[i].ptr()] = i;
-        }
-
         int plane_id = pid * 2;
 
-        for (auto& [face, handle] : odd_face_to_handle){
-          auto id_it = ptr_to_id.find(odd_union_find.find(handle).ptr());
-          if (id_it != ptr_to_id.end()){
-            face->info() = DartInfo::FaceAttrValue();
-            face->info().plane[p] = true;
-            face->info().plane_id = plane_id;
-            face->info().cc_id = id_it->second;
-          }
-        }
-
-        for (auto& [face, handle] : even_face_to_handle){
-          auto id_it = ptr_to_id.find(even_union_find.find(handle).ptr());
-          if (id_it != ptr_to_id.end()){
-            face->info().plane[p] = true;
-            face->info().plane_id = plane_id + 1;
-            face->info().cc_id = id_it->second;
-          }
-        }
-        // ======
-
-        for (auto uf_handle : odd_partitions){
-          Dart_handle face_cc = *uf_handle;
-          odd_plane_cc.push_back(face_cc);
-        }
-
-        for (auto uf_handle : even_partitions){
-          Dart_handle face_cc = *uf_handle;
-          even_plane_cc.push_back(face_cc);
-        }
-
-        new_plane_set.push_back(std::move(odd_plane_cc));
-        new_plane_set.push_back(std::move(even_plane_cc));
+        new_plane_set.push_back(create_plane(p, plane_id, odd_partitions, odd_union_find, odd_face_to_handle));
+        new_plane_set.push_back(create_plane(p, plane_id+1, even_partitions, even_union_find, even_face_to_handle));
       }
 
       new_planes[p] = std::move(new_plane_set);
@@ -3339,6 +3484,89 @@ namespace CGAL::HexRefinement::TwoRefinement {
     lcc.free_mark(face_mark);
   }
 
+  void setup_ghost_cell_cc(ProcessData& proc){
+    LCC& lcc = proc.lcc;
+    using Union_find = Union_find<Dart_handle>;
+    using HandleToId = std::unordered_map<Union_find::pointer, size_t>;
+    using VolToHandle = std::unordered_map<LCC::Attribute_handle<3>::type, Union_find::handle>;
+
+    Union_find owned_uf, unowned_uf;
+    VolToHandle owned_vol_to_handles, unowned_vol_to_handles;
+
+    const auto process_volume = [&](Union_find& uf, VolToHandle& vol_to_handles){
+      return [&](Dart_handle vol, auto& faces){
+        Union_find::handle cc_id = nullptr;
+        auto vol_attr = lcc.attribute<3>(vol);
+
+        assert(vol != lcc.null_dart_descriptor);
+        if (vol_attr->info().type < VolumeType::ID_EXPANSION)
+          return;
+
+        for (Dart_handle other_face : faces){
+          Dart_handle other_vol = lcc.beta(other_face, 3);
+          if (other_vol == lcc.null_dart_descriptor) continue;
+          auto other_vol_attr = lcc.attribute<3>(other_vol);
+          if (other_vol_attr == nullptr or other_vol_attr->info().type < VolumeType::ID_EXPANSION) continue;
+
+          auto other_cc_it = owned_vol_to_handles.find(other_vol_attr);
+
+          if (other_cc_it != owned_vol_to_handles.end()){
+            Union_find::handle other_cc_id = other_cc_it->second;
+            if (cc_id == nullptr)
+              cc_id = other_cc_id;
+            else if (!uf.same_set(cc_id, other_cc_id))
+              uf.unify_sets(cc_id, other_cc_id);
+          }
+        }
+
+        if (cc_id == nullptr){
+          cc_id = uf.make_set(vol);
+        }
+
+        owned_vol_to_handles[vol_attr] = cc_id;
+      };
+    };
+
+    const auto assign_cc_ids = [&](std::vector<Dart_handle>& old_ghost_vol_cc ,const Union_find& uf,
+                                                  const std::vector<Union_find::handle>& partition, VolToHandle& vol_to_handle){
+      HandleToId handle_to_ids;
+
+      // Assign the new CC to the processdata::owned/unowned volumes cc
+      old_ghost_vol_cc.clear();
+      for (int i = 0; i < partition.size(); i++){
+        handle_to_ids.emplace(partition[i].ptr(), i);
+        old_ghost_vol_cc.push_back(*partition[i]);
+      }
+
+      for (auto& [vol, handle] : vol_to_handle){
+        Union_find::handle cc_handle = uf.find(handle);
+        auto cc_id = handle_to_ids.find(cc_handle.ptr());
+        assert(cc_id != handle_to_ids.end());
+        vol->info().cc_id = cc_id->second;
+      }
+    };
+
+    // Calculate connected components of owned / unowned hexes
+    for_each_hex(lcc, proc.owned_ghost_area, process_volume(owned_uf, owned_vol_to_handles),
+      [&](Dart_handle vol){
+        auto attr = lcc.attribute<3>(vol);
+        auto& info = attr->info();
+        return attr != nullptr && info.area_id != AreaId{0,0,0} && info.owned;
+      }
+    );
+
+    for_each_hex(lcc, proc.unowned_ghost_area, process_volume(unowned_uf, unowned_vol_to_handles),
+      [&](Dart_handle vol){
+        auto attr = lcc.attribute<3>(vol);
+        auto& info = attr->info();
+        return attr != nullptr && !info.owned;
+      }
+    );
+
+    assign_cc_ids(proc.owned_ghost_area, owned_uf, get_partitions(owned_uf), owned_vol_to_handles);
+    assign_cc_ids(proc.unowned_ghost_area, unowned_uf, get_partitions(unowned_uf), unowned_vol_to_handles);
+  }
+
   void setup_next_level(HexMeshingData& hdata, MarkingFunction& cellIdentifier){
     setup_next_level_plane(hdata);
     clean_up_and_reevaluate_attributes(hdata, cellIdentifier);
@@ -3346,7 +3574,10 @@ namespace CGAL::HexRefinement::TwoRefinement {
   }
 
   void setup_next_level(ProcessData& proc, MarkingFunction& cellIdentifier){
-    setup_next_level(static_cast<HexMeshingData&>(proc), cellIdentifier);
+    setup_next_level_plane(proc);
+    setup_ghost_cell_cc(proc);
+    clean_up_and_reevaluate_attributes(proc, cellIdentifier);
+    proc.level++;
   }
 
   void mark_identified_cells_from_3_attrs(HexMeshingData& hdata) {
@@ -3501,6 +3732,9 @@ namespace CGAL::HexRefinement::TwoRefinement {
       if (r == 0) initial_setup(hdata, cellIdentifier);
       else setup_next_level(hdata, cellIdentifier);
 
+      // debug_stream.push(l_thread_id);
+      // std::this_thread::sleep_for(std::chrono::hours(1));
+
       expand_identified_cells(hdata, r, nb_levels);
 
       // For each plane
@@ -3525,7 +3759,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
         assert_all_faces_are_quadrilateral(lcc, hdata);
         assert_all_volumes_are_hexes(lcc);
 
-        hdata.fix_plane_sets();
+        hdata.fix_dart_storage();
 
         thread_communicate_cells_id_and_3t(hdata, rdata);
 
@@ -3536,6 +3770,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
       lcc.unmark_all(hdata.propagation_face_mark);
     }
+
+    thread_remove_ghosts(hdata);
   }
 
   void mark_1template_face(LCC& lcc, size_type mark){
@@ -3698,41 +3934,18 @@ namespace CGAL::HexRefinement {
     colors[{0,0,0}] = blue();
     int i = 0;
 
-    gso.draw_face = [](const LCC& lcc, LCC::Dart_const_handle dart){
-      return true;
+    gso.draw_face = [&](const LCC& lcc, LCC::Dart_const_handle dart){
       auto a = lcc.attribute<2>(dart);
-
-      return a != nullptr && a->info().plane[1];
+      return true;
+      return a != nullptr or lcc.is_whole_cell_marked<2>(dart, hdata.debug) or lcc.is_whole_cell_marked<2>(dart, hdata.debug2);
     };
     gso.face_color = [&](const LCC& lcc, LCC::Dart_const_handle dart){
       auto a = lcc.attribute<2>(dart);
       auto b = lcc.attribute<3>(dart);
 
-      // return TwoRefinement::is_volume_numberable(hdata, dart) != TwoRefinement::NumberableCell::None ? red(): blue();
+      return b->info().cc_id != DartInfo::VolumeAttrValue::max_cc_id ? red() : blue();
 
-      // return b->info().type >= VolumeType::REFINEMENT ? red() : blue();
-
-
-      // if (b == nullptr) return black();
-      // if (b->info().type > VolumeType::NONE) return red();
-      // return blue();
-
-      // auto n = TwoRefinement::is_face_numberable(hdata, dart);
-      // if (n != TwoRefinement::NumberableCell::None) {
-      //   if (n == TwoRefinement::NumberableCell::True) return purple();
-      //   if (n == TwoRefinement::NumberableCell::False) return yellow();
-      // };
-
-      // return blue();
-      // if (lcc.is_whole_cell_marked<2>(dart, hdata.debug)) return white();
-      // if (lcc.is_whole_cell_marked<2>(dart, hdata.debug2)) return black();
-      // if (a != nullptr && a->info().template_id == 3 && lcc.is_whole_cell_marked<2>(dart, hdata.debug2)) return purple();
-      // if (a != nullptr && a->info().template_id == 3) return red();
-      // if (a == nullptr) return blue();
-      // if (a->info().plane[0]) return yellow();
-      // if (a->info().plane[1]) return green();
-      // if (a != nullptr && a->info().plane[hdata.d]) return purple();
-      // return blue();
+      if (b == nullptr) return blue();
 
       colors[{0,0,0}] = blue();
 
@@ -3745,10 +3958,10 @@ namespace CGAL::HexRefinement {
     };
     gso.colored_face = [](const LCC& lcc, LCC::Dart_const_handle dart){ return true; };
 
-    gso.draw_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){
-      return true;
-      return lcc.attribute<3>(dart)->info().owned;
-    };
+    // gso.draw_volume = [](const LCC& lcc, LCC::Dart_const_handle dart){
+    //   return true;
+    //   return lcc.attribute<3>(dart)->info().owned;
+    // };
 
     gso.colored_vertex = [](const LCC& lcc, LCC::Dart_const_handle dart){
       return true;
@@ -3864,26 +4077,25 @@ namespace CGAL::HexRefinement {
       threads[i] = std::thread(two_refinement_algorithm<ProcessData>, std::ref(proc_datas[i]), std::ref(cellIdentifier), nb_levels, i);
     }
 
-    while (true){
-    int i = debug_stream.waitNextItem();
-    debug_render(proc_datas[i]);
-    debug_stream2.push(1);
-    }
+    // while (true) {
+    //   auto i = debug_stream.waitNextItem();
+    //   debug_render(proc_datas[i]);
+    // }
 
     for (int i = 0; i < nb_threads; i++){
       threads[i].join();
     }
 
-    // LCC& combined = proc_datas[0].lcc;
-    // for (int i = 1; i < proc_datas.size(); i++){
-    //   combined.copy(proc_datas[i].lcc);
-    // }
-
-    // debug_render(proc_datas[0]);
-
-    for (auto& proc : proc_datas){
-      debug_render(proc);
+    LCC& combined = proc_datas[0].lcc;
+    for (int i = 1; i < proc_datas.size(); i++){
+      combined.copy(proc_datas[i].lcc);
     }
+
+    debug_render(proc_datas[0]);
+
+    // for (auto& proc : proc_datas){
+    //   debug_render(proc);
+    // }
 
     // ProcessData& proc = proc_datas[2];
     // int i = 0;

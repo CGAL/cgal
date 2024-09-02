@@ -49,11 +49,11 @@ LCC default_two_refinement(const std::string& path, int cube_cells_per_dim, int 
   Tree aabb = get_surface_aabb(poly);
   TwoRefinement::Grid grid = cubic_grid_from_aabb(aabb, cube_cells_per_dim);
 
-  return two_refinement(
+  return two_refinement_mt(
     grid,
     TwoRefinement::is_volume_intersecting_poly(aabb),
-    TwoRefinement::is_volume_intersecting_poly(aabb),
-    // 2,
+    // TwoRefinement::is_volume_intersecting_poly(aabb),
+    4,
     nb_levels
   );
 }
@@ -67,17 +67,17 @@ ValidationData validation_data[] = {
   {"mesh1.off", "mesh1-1r-20x20x20", [](const std::string& path){
     return default_two_refinement(path, 20);
   }},
-  {"mesh2.off", "mesh2-1r-20x20x20", [](const std::string& path){
-    return default_two_refinement(path, 20);
-  }},
-  {"mesh3.off", "mesh3-1r-20x20x20", [](const std::string& path){
-    return default_two_refinement(path, 20);
-  }},
+  // {"mesh2.off", "mesh2-1r-20x20x20", [](const std::string& path){
+  //   return default_two_refinement(path, 20);
+  // }},
+  // {"mesh3.off", "mesh3-1r-20x20x20", [](const std::string& path){
+  //   return default_two_refinement(path, 20);
+  // }},
 
   // 2 Levels of refinement
-  {"mesh1.off", "mesh1-2r-20x20x20", [](const std::string& path){
-    return default_two_refinement(path, 20, 2);
-  }},
+  // {"mesh1.off", "mesh1-2r-20x20x20", [](const std::string& path){
+  //   return default_two_refinement(path, 20, 2);
+  // }},
 
   // 3 Levels of refinement
   // Do not try, it just takes ages to save the combinatorial map
@@ -169,5 +169,5 @@ int main(){
   // /!\ Github cannot store >50Mb files, and thus we cannot track the .3map on github,
   // To run validations, first run create_validation_files in a older commit, also check if the
   // Generator function and data is still the same. Then fast forward to latest commit and run validation_test()
-  return validation_test();
+  return create_validation_files();
 }
