@@ -34,7 +34,7 @@ std::size_t run(std::string path)
   for (const Polyhedron_3& P : convex_parts)
   {
 //    std::ofstream("out_"+std::to_string(i++)+".off") << std::setprecision(17) << P;
-    CGAL_assertion(P.size_of_vertices()!=0);
+    assert(P.size_of_vertices()!=0);
   }
 
   return convex_parts.size();
