@@ -49,7 +49,7 @@ if(NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()
 else()
-  message(STATUS "NOTICE : the LAS reader does not work with Visual Studio 2017.")
+  message(STATUS "NOTICE : the LAS reader does not work with your version of Visual Studio 2017.")
 endif()
 
 # Use Eigen
