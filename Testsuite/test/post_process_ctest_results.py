@@ -108,8 +108,11 @@ with open(input_report_file_name, "rt", encoding="utf-8") as input_report_file:
                     if not os.path.isdir(name):
                         is_ignored = True
                         os.mkdir(name)
+                        with open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r', encoding="utf-8") as scm_branch_file:
+                            scm_branch_content = scm_branch_file.read()
+
                         with open("{dir}/{file}".format(dir=name, file=report_file_name), "w+", encoding="utf-8") as report_file_handle:
-                            report_file_handle.write(open("{}/../../../../../.scm-branch".format(os.getcwd()), 'r', encoding="utf-8").read())
+                            report_file_handle.write(scm_branch_content)
                     else:
                         is_ignored = False
                         file_path = "{dir}/{file}".format(dir=name, file=report_file_name)
