@@ -17,6 +17,7 @@ find_path(LASZIP_INCLUDE_DIR
           NAMES mydefs.hpp
           PATHS /usr/local/include/LASzip/
                 ${LASLIB_INCLUDE_DIR}/../../LASzip/src
+                ${LASLIB_INCLUDE_DIR}/../LASzip
                 ${LASLIB_INCLUDE_DIR}
          )
 
