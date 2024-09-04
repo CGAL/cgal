@@ -1,5 +1,5 @@
 #include <CGAL/Complex_without_sqrt.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Exact_integer.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>

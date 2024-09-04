@@ -87,7 +87,7 @@ int Hyperbolic_fundamental_domain_2<Traits>::size() const{
 }
 
 template<class Traits>
-typename Hyperbolic_fundamental_domain_2<Traits>::Point Hyperbolic_fundamental_domain_2<Traits>::vertex(int index) const{
+typename const Hyperbolic_fundamental_domain_2<Traits>::Point& Hyperbolic_fundamental_domain_2<Traits>::vertex(int index) const{
   return _vertices[index];
 }
 
@@ -101,7 +101,7 @@ Hyperbolic_isometry_2<Traits> Hyperbolic_fundamental_domain_2<Traits>::side_pair
   int n = size();
   int paired_index = paired_side(index);
 
-  Point p1,p2,q1,q2;
+  const Point& p1,p2,q1,q2;
   q1 = vertex(index);
   q2 = vertex((index+1)%n);
   p2 = vertex(paired_index);
@@ -136,6 +136,9 @@ void Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream& s){
   std::string line;
   s >> line;
   int size = std::stoi(line);
+  _vertices.reserve(size);
+  _pairings.reserve(size);
+  
   for (int k=0; k<size; k++){
     s >> line;
     _pairings.push_back(std::stoi(line));

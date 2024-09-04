@@ -1,14 +1,14 @@
-#include <iostream>
-#include <sstream>
-
-#include <CGAL/Gmpq.h>
-#include <CGAL/Lazy_exact_nt.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
+
+#include <iostream>
+#include <sstream>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Lazy_exact_nt.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
 using namespace CGAL;
 

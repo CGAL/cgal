@@ -67,7 +67,7 @@ public:
   typedef typename Combinatorial_map_with_cross_ratios::template One_dart_per_cell_const_range<2>       Face_const_range;
 
   typedef typename Traits::FT                                                                Number;
-  typedef typename Traits::Complex                                                           ComplexNumber;
+  typedef typename Traits::Complex                                                           Complex_number;
   typedef typename Traits::Hyperbolic_point_2                                                Point;
   typedef Hyperbolic_isometry_2<Traits>                                                      Isometry;
   typedef Hyperbolic_fundamental_domain_2<Traits>                                            Domain;
@@ -104,12 +104,12 @@ public:
   Dart_const_handle const_cw(Dart_const_handle dart) const;
   Dart_const_handle const_opposite(Dart_const_handle dart) const;
   
-  ComplexNumber get_cross_ratio(Dart_const_handle dart) const;
+  Complex_number get_cross_ratio(Dart_const_handle dart) const;
   
   // Returns the cross ratio of the points a,b,c,d
-  ComplexNumber cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
+  Complex_number cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
   // Returns the point d such that the cross ratio of a,b,c,d is cratio
-  Point fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const ComplexNumber& cratio) const;
+  Point fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const Complex_number& cratio) const;
 
 protected:
   Combinatorial_map_with_cross_ratios _combinatorial_map;
@@ -266,11 +266,11 @@ void Hyperbolic_surface_triangulation_2<Traits, Attributes>::flip(Dart_handle da
    Dart_handle e = ccw(d);
    Dart_handle f = cw(d);
 
-   ComplexNumber cross_ratio_AB = get_cross_ratio(e);
-   ComplexNumber cross_ratio_BC = get_cross_ratio(f);
-   ComplexNumber cross_ratio_CD = get_cross_ratio(b);
-   ComplexNumber cross_ratio_DA = get_cross_ratio(c);
-   ComplexNumber cross_ratio_AC = get_cross_ratio(a);
+   Complex_number cross_ratio_AB = get_cross_ratio(e);
+   Complex_number cross_ratio_BC = get_cross_ratio(f);
+   Complex_number cross_ratio_CD = get_cross_ratio(b);
+   Complex_number cross_ratio_DA = get_cross_ratio(c);
+   Complex_number cross_ratio_AC = get_cross_ratio(a);
 
    // Modify the anchor
 
@@ -292,12 +292,12 @@ void Hyperbolic_surface_triangulation_2<Traits, Attributes>::flip(Dart_handle da
 
    // Compute the new cross ratios
 
-   ComplexNumber one (Number(1), Number(0));
-   ComplexNumber cross_ratio_BD = (cross_ratio_AC) / ((cross_ratio_AC) - one) ;
-   ComplexNumber cross_ratio_AB_2 = one - (one - (cross_ratio_AB)) * (cross_ratio_AC) ;
-   ComplexNumber cross_ratio_BC_2 = one - (one - (cross_ratio_BC)) / (cross_ratio_BD) ;
-   ComplexNumber cross_ratio_CD_2 = one - (one - (cross_ratio_CD)) * (cross_ratio_AC) ;
-   ComplexNumber cross_ratio_DA_2 = one - (one - (cross_ratio_DA)) / (cross_ratio_BD) ;
+   Complex_number one (Number(1), Number(0));
+   Complex_number cross_ratio_BD = (cross_ratio_AC) / ((cross_ratio_AC) - one) ;
+   Complex_number cross_ratio_AB_2 = one - (one - (cross_ratio_AB)) * (cross_ratio_AC) ;
+   Complex_number cross_ratio_BC_2 = one - (one - (cross_ratio_BC)) / (cross_ratio_BD) ;
+   Complex_number cross_ratio_CD_2 = one - (one - (cross_ratio_CD)) * (cross_ratio_AC) ;
+   Complex_number cross_ratio_DA_2 = one - (one - (cross_ratio_DA)) / (cross_ratio_BD) ;
 
    // Make the topological flip
 
@@ -396,9 +396,9 @@ std::vector<std::tuple<typename Hyperbolic_surface_triangulation_2<Traits, Attri
   std::tuple<Dart_const_handle,Point,Point,Point> value = std::make_tuple(_anchor.dart, positions[_anchor.dart], positions[const_ccw(_anchor.dart)], positions[const_cw(_anchor.dart)]);
   realizations.push_back(value);
 
-  ComplexNumber anchor_z0 (_anchor.vertices[0].x(), _anchor.vertices[0].y());
-  ComplexNumber anchor_z1 (_anchor.vertices[1].x(), _anchor.vertices[1].y());
-  ComplexNumber anchor_z2 (_anchor.vertices[2].x(), _anchor.vertices[2].y());
+  Complex_number anchor_z0 (_anchor.vertices[0].x(), _anchor.vertices[0].y());
+  Complex_number anchor_z1 (_anchor.vertices[1].x(), _anchor.vertices[1].y());
+  Complex_number anchor_z2 (_anchor.vertices[2].x(), _anchor.vertices[2].y());
 
   double weight_of_anchor_dart = CGAL::to_double(anchor_z0.squared_modulus() + anchor_z1.squared_modulus());
   double weight_of_ccw_anchor_dart = CGAL::to_double(anchor_z1.squared_modulus() + anchor_z2.squared_modulus());
@@ -424,18 +424,18 @@ std::vector<std::tuple<typename Hyperbolic_surface_triangulation_2<Traits, Attri
       Point a = positions[const_ccw(invader)];
       Point b = positions[const_cw(invader)];
       Point c = positions[invader];
-      ComplexNumber cross_ratio = get_cross_ratio(invader);
+      Complex_number cross_ratio = get_cross_ratio(invader);
 
       positions[invaded] = a;
       positions[const_ccw(invaded)] = c;
       Point d = fourth_point_from_cross_ratio(a, b, c, cross_ratio);
       positions[const_cw(invaded)] = d;
 
-      ComplexNumber za (a.x(), a.y());
-      ComplexNumber zc (c.x(), c.y());
+      Complex_number za (a.x(), a.y());
+      Complex_number zc (c.x(), c.y());
       double invaded_distance_to_zero = CGAL::to_double(za.squared_modulus());
       double invaded_ccw_distance_to_zero = CGAL::to_double(zc.squared_modulus());
-      ComplexNumber znew (positions[const_cw(invaded)].x(), positions[const_cw(invaded)].y());
+      Complex_number znew (positions[const_cw(invaded)].x(), positions[const_cw(invaded)].y());
       double invaded_cw_distance_to_zero = CGAL::to_double(znew.squared_modulus());
 
       double invaded_ccw_weight = invaded_ccw_distance_to_zero + invaded_cw_distance_to_zero;
@@ -577,7 +577,7 @@ void Hyperbolic_surface_triangulation_2<Traits, Attributes>::from_stream(std::is
 
   // Load the edges
   Dart_handle dart_1, dart_2;
-  ComplexNumber cross_ratio;
+  Complex_number cross_ratio;
   for (int k=0; k<nb_darts/2; k++){
     s >> line;
     index1 = std::stoi(line);
@@ -644,7 +644,7 @@ typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Dart_const_hand
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::ComplexNumber Hyperbolic_surface_triangulation_2<Traits, Attributes>::get_cross_ratio(Dart_const_handle dart) const{
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Complex_number Hyperbolic_surface_triangulation_2<Traits, Attributes>::get_cross_ratio(Dart_const_handle dart) const{
   return _combinatorial_map.template info_of_attribute<1>(_combinatorial_map.template attribute<1>(dart));
 }
 
@@ -700,7 +700,7 @@ void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(Combinato
   for (typename Edge_const_range::const_iterator it=cmap.template one_dart_per_cell<1>().begin(); it!=cmap.template one_dart_per_cell<1>().end(); ++it){
     Dart_handle dart_1 = darts_table[it];
     Dart_handle dart_2 = darts_table[cmap.opposite(it)];
-    ComplexNumber cratio = cmap.template info_of_attribute<1>(cmap.template attribute<1>(it));
+    Complex_number cratio = cmap.template info_of_attribute<1>(cmap.template attribute<1>(it));
 
     _combinatorial_map.template sew<2>(dart_1, dart_2);
     _combinatorial_map.template set_attribute<1>(dart_1, _combinatorial_map.template create_attribute<1>(cratio));
@@ -720,19 +720,19 @@ void Hyperbolic_surface_triangulation_2<Traits, Attributes>::copy_from(Combinato
 
 template<class Traits, class Attributes>
 typename Traits::Complex Hyperbolic_surface_triangulation_2<Traits, Attributes>::cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const{
-  ComplexNumber za (a.x(), a.y());
-  ComplexNumber zb (b.x(), b.y());
-  ComplexNumber zc (c.x(), c.y());
-  ComplexNumber zd (d.x(), d.y());
+  Complex_number za (a.x(), a.y());
+  Complex_number zb (b.x(), b.y());
+  Complex_number zc (c.x(), c.y());
+  Complex_number zd (d.x(), d.y());
   return (zd-zb)*(zc-za) / ((zd-za)*(zc-zb));
 }
 
 template<class Traits, class Attributes>
-typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Point Hyperbolic_surface_triangulation_2<Traits, Attributes>::fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const ComplexNumber& cratio) const{
-  ComplexNumber za (a.x(), a.y());
-  ComplexNumber zb (b.x(), b.y());
-  ComplexNumber zc (c.x(), c.y());
-  ComplexNumber result = ( cratio*za*(zc-zb) + zb*(za-zc) ) / ( cratio*(zc-zb) + (za-zc) );
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Point Hyperbolic_surface_triangulation_2<Traits, Attributes>::fourth_point_from_cross_ratio(const Point& a, const Point& b, const Point& c, const Complex_number& cratio) const{
+  Complex_number za (a.x(), a.y());
+  Complex_number zb (b.x(), b.y());
+  Complex_number zc (c.x(), c.y());
+  Complex_number result = ( cratio*za*(zc-zb) + zb*(za-zc) ) / ( cratio*(zc-zb) + (za-zc) );
   return Point(result.real_part(), result.imaginary_part());
 }
 
