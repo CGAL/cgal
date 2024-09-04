@@ -328,7 +328,7 @@ FacetSPtr SimpleStraightSkel::getFacetDst(EdgeSPtr edge) {
 }
 
 
-void SimpleStraightSkel::run() {
+bool SimpleStraightSkel::run() {
     if (controller_) {
         controller_->wait();
         controller_->setDispPolyhedron(polyhedron_);
@@ -539,7 +539,10 @@ void SimpleStraightSkel::run() {
         DEBUG_VAR(skel_result_->toString());
     } else {
         DEBUG_PRINT("Error: Failed to initialize");
+        return false;
     }
+
+    return true;
 }
 
 ThreadSPtr SimpleStraightSkel::startThread() {

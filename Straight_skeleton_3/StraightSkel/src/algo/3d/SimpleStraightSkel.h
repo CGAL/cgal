@@ -50,7 +50,7 @@ public:
 
     static Line3SPtr line(EdgeSPtr edge);
 
-    void run();
+    bool run();
     ThreadSPtr startThread();
 
     /**
