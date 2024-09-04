@@ -39,15 +39,30 @@ bool compare(const Mesh& ours,
     return false;
   }
 
+  // volume
   const FT vol_ours = PMP::volume(ours);
   const FT vol_theirs = PMP::volume(theirs);
   std::cout << "vol_ours = " << vol_ours << std::endl;
   std::cout << "vol_theirs = " << vol_theirs << std::endl;
 
-  if(CGAL::abs(vol_ours - vol_theirs) > 0.01 * vol_ours) {
+  if(CGAL::abs(vol_ours - vol_theirs) > 0.001 * vol_ours) {
     std::cerr << "Error: significant difference in volume" << std::endl;
     return false;
   }
+
+  // area
+  const FT area_ours = PMP::area(ours);
+  const FT area_theirs = PMP::area(theirs);
+  std::cout << "area_ours = " << area_ours << std::endl;
+  std::cout << "area_theirs = " << area_theirs << std::endl;
+
+  if(CGAL::abs(area_ours - area_theirs) > 0.01 * area_ours) {
+    std::cerr << "Error: significant difference in area" << std::endl;
+    return false;
+  }
+
+  // @todo add:
+  // - Hausdorff
 
   return true;
 }
