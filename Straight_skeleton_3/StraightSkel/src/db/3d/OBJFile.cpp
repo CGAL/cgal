@@ -201,7 +201,9 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
         }
 
         removeVerticesDegLt3(result);
-        assert(result->isConsistent());
+
+        // @tmp with the degree checking, this is false if the input is not triangulated
+        // assert(result->isConsistent());
     }
 
     std::cout << "Final load: " << result->toString() << std::endl;

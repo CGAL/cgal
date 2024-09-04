@@ -323,6 +323,7 @@ bool Polyhedron::isConsistent() const {
             break;
         }
         std::list<EdgeWPtr>::const_iterator it_e = vertex->edges().begin();
+        unsigned int vne = 0;
         while (it_e != vertex->edges().end()) {
             EdgeWPtr edge_wptr = *it_e++;
             if (edge_wptr.expired()) {
@@ -346,15 +347,23 @@ bool Polyhedron::isConsistent() const {
 
                 if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint())
                 {
-                    std::cout << "W: degenerate edge!" << std::endl;
-                    DEBUG_VAR(edge->getVertexSrc());
-                    std::cout << "Position of source: " << *(edge->getVertexSrc()->getPoint())<< std::endl;
-                    DEBUG_VAR(edge->getVertexDst());
-                    std::cout << "Position of destination: " << *(edge->getVertexDst()->getPoint()) << std::endl;
+                    std::cerr << "- Degenerate edge!" << std::endl;
+                    std::cerr << edge->getVertexSrc()->toString() << std::endl;
+                    std::cerr << edge->getVertexDst()->toString() << std::endl;
                 }
+
+                ++vne;
             }
         }
+
+        if (vne != 3) {
+            std::cerr << "- Vertex with not 3 incident edges? " << vne << std::endl;
+            std::cerr << vertex->toString() << std::endl;
+            result = false;
+        }
+
         std::list<FacetWPtr>::const_iterator it_f = vertex->facets().begin();
+        unsigned int vnf = 0;
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
             if (facet_wptr.expired()) {
@@ -367,7 +376,14 @@ bool Polyhedron::isConsistent() const {
                     result = false;
                     break;
                 }
+                ++vnf;
             }
+        }
+
+        if (vnf != 3) {
+            std::cerr << "- Vertex with not 3 incident faces? " << vnf << std::endl;
+            std::cerr << vertex->toString() << std::endl;
+            result = false;
         }
     }
 
