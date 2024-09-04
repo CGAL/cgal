@@ -20,6 +20,7 @@
 #include "data/3d/Vertex.h"
 #include "data/3d/Edge.h"
 #include "data/3d/Facet.h"
+#include "data/3d/skel/SkelFacetData.h"
 #include "data/3d/Triangle.h"
 #include "util/StringFactory.h"
 #include <sstream>
@@ -75,6 +76,14 @@ PolyhedronSPtr Polyhedron::clone() const {
     while (it_f != facets_.end()) {
         FacetSPtr facet = *it_f++;
         FacetSPtr facet_c = Facet::create();
+        facet_c->setPlane(facet->getPlane());
+        if (facet->hasData()) {
+          skel::SkelFacetDataSPtr data = std::dynamic_pointer_cast<skel::SkelFacetData>(facet->getData());
+          skel::SkelFacetDataSPtr data_c = skel::SkelFacetData::create(facet_c);
+          data_c->setSpeed(data->getSpeed());
+        }
+        // @todo copy the two below too?
+        facet_c->setID(facet->getID());
         facet_c->setPlane(facet->getPlane());
         std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
         while (it_v != facet->vertices().end()) {

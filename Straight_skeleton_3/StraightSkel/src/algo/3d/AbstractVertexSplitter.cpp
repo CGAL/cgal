@@ -285,6 +285,7 @@ PolyhedronSPtr AbstractVertexSplitter::shiftFacets(PolyhedronSPtr polyhedron, CG
             data_offset->setSpeed(data->getSpeed());
         } else {
             data = SkelFacetData::create(facet);
+            data->setSpeed(speed);
         }
         Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
         offset_facet->setPlane(offset_plane);
