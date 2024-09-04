@@ -36,6 +36,11 @@ exec > ${GLOBAL_LOG} 2>&1
 COUNTER=0
 
 for FILE in $FILES; do
+  if [ $COUNTER -ge ${MAX_ITEM_NUMBER} ]; then
+    echo "Breaking the loop as the counter has reached ${MAX_ITEM_NUMBER}."
+    break
+  fi
+
   ((COUNTER++))
 
   echo "FILE: $FILE" | tee -a "${GLOBAL_LOG}"
@@ -116,10 +121,29 @@ for FILE in $FILES; do
   echo "  $CMD"
   echo "  $LOG_FILE"
 
-  # Run offset code
-  timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1
+  TIMING_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/timing.txt
+  echo "$TIMING_FILE"
 
-  RES=$?
+  # Run offset code
+  RES_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/res.txt
+  time ( timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1; echo $? > "$RES_FILE" ) 2> "$TIMING_FILE"
+
+  # Extract runtime from the output of timeout
+  runtime=$(cat "$TIMING_FILE" | grep "real" | awk '{print $2}')
+
+  # Convert runtime to seconds
+  if [[ $runtime =~ m ]]; then
+    minutes=$(echo "$runtime" | sed 's/m.*//')
+    seconds=$(echo "$runtime" | sed 's/.*m//;s/s//')
+    runtime=$(echo "$minutes * 60 + $seconds" | bc)
+  else
+    runtime=$(echo "$runtime" | sed 's/s//')
+  fi
+
+  RUNTIME_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/runtime.txt
+  echo $runtime > ${RUNTIME_FILE}
+
+  RES=$(cat "$RES_FILE")
   if [ "$RES" -eq 0 ]; then
     # ----------------------------------------------------------------
     # Got a result, compare it
@@ -190,11 +214,6 @@ for FILE in $FILES; do
     OFFSET_FAILURE+=("$CMD")
   fi
   echo ""
-
-  if [ $COUNTER -ge ${MAX_ITEM_NUMBER} ]; then
-    echo "Breaking the loop as the counter has reached ${MAX_ITEM_NUMBER}."
-    break
-  fi
 done
 
 echo ""
