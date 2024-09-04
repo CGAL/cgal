@@ -44,7 +44,7 @@ public:
 				  typename std::vector<int>::iterator plast);
   
   int size() const; // Returns the number of vertices (equivalently, the number of sides)
-  Point vertex(int index) const; // Returns the index-th vertex
+  const Point& vertex(int index) const; // Returns the index-th vertex
   int paired_side(int index) const; // Returns the index of the side paired to side A, where A is the index-th side
   Hyperbolic_isometry_2<Traits> side_pairing(int index) const;// Returns the isometry that maps side A to side B, where B is the index-th side, and A is the side paired to B
 
@@ -87,7 +87,7 @@ int Hyperbolic_fundamental_domain_2<Traits>::size() const{
 }
 
 template<class Traits>
-typename const Hyperbolic_fundamental_domain_2<Traits>::Point& Hyperbolic_fundamental_domain_2<Traits>::vertex(int index) const{
+const typename Hyperbolic_fundamental_domain_2<Traits>::Point& Hyperbolic_fundamental_domain_2<Traits>::vertex(int index) const{
   return _vertices[index];
 }
 
@@ -101,11 +101,11 @@ Hyperbolic_isometry_2<Traits> Hyperbolic_fundamental_domain_2<Traits>::side_pair
   int n = size();
   int paired_index = paired_side(index);
 
-  const Point& p1,p2,q1,q2;
-  q1 = vertex(index);
-  q2 = vertex((index+1)%n);
-  p2 = vertex(paired_index);
-  p1 = vertex((paired_index+1)%n);
+  //const Point& p1,p2,q1,q2;
+  const Point& q1 = vertex(index);
+  const Point& q2 = vertex((index+1)%n);
+  const Point& p2 = vertex(paired_index);
+  const Point& p1 = vertex((paired_index+1)%n);
 
   Hyperbolic_isometry_2<Traits> isom = isometry_pairing_the_sides<Traits>(p1,p2,q1,q2);
   return isom;

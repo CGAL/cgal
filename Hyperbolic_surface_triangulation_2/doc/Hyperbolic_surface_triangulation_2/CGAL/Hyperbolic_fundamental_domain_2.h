@@ -51,7 +51,7 @@ public:
 
       \pre <code> is_valid() </code>
   */
-  Point vertex(int i) const;
+  const Point& vertex(int i) const;
 
   /*!
       returns the index of the side paired to the \f$ i \f$-th side.
