@@ -15,12 +15,10 @@
 #ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2
 #define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2
 
-#include "Complex_without_sqrt.h"
-#include "Hyperbolic_isometry_2.h"
-#include "Hyperbolic_fundamental_domain_2.h"
-
+#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Hyperbolic_isometry_2.h>
+#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <cmath>
-
 #include <CGAL/Random.h>
 
 namespace CGAL {

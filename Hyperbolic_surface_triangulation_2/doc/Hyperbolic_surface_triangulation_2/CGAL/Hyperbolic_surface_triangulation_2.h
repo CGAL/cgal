@@ -79,12 +79,12 @@ public:
   /*!
       Constructor from a decorated combinatorial map.
   */
-  Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
 
   /*!
       Constructor from a decorated combinatorial map and an anchor.
   */
-  Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap,  Anchor& anchor);
   /// @}
 
   /// \name Assignment

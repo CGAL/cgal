@@ -15,7 +15,7 @@
 #ifndef CGAL_Hyperbolic_surface_traits_2
 #define CGAL_Hyperbolic_surface_traits_2
 
-#include "Complex_without_sqrt.h"
+#include <CGAL/Complex_without_sqrt.h>
 #include <iostream>
 
 namespace CGAL {
