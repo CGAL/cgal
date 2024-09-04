@@ -27,7 +27,7 @@ cgal_add_compilation_test(Combinatorial_map_copy_test_index)
 create_single_source_cgal_program(cmap_test_split_attribute.cpp)
 
 # Link with OpenMesh if possible
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   message(STATUS "Found OpenMesh")
   include(CGAL_OpenMesh_support)

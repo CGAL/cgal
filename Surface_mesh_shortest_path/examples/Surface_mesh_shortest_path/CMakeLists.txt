@@ -13,7 +13,7 @@ create_single_source_cgal_program("shortest_paths_with_id.cpp")
 create_single_source_cgal_program("shortest_paths.cpp")
 create_single_source_cgal_program("shortest_path_with_locate.cpp")
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
   message(STATUS "Found OpenMesh")

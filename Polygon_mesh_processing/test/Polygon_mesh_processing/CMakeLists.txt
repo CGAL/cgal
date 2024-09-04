@@ -112,7 +112,7 @@ else()
   message(STATUS "NOTICE: Intel TBB was not found. Tests will use sequential code.")
 endif()
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
   create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp")

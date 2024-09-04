@@ -15,7 +15,7 @@ create_single_source_cgal_program("segmentation_from_sdf_values_SM_example.cpp")
 create_single_source_cgal_program("segmentation_from_sdf_values_LCC_example.cpp")
 create_single_source_cgal_program("extract_segmentation_into_mesh_example.cpp")
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
   message(STATUS "Found OpenMesh")

@@ -28,7 +28,7 @@ else()
   message(STATUS "NOTICE: Garland-Heckbert polices require the Eigen library, which has not been found; related examples will not be compiled.")
 endif()
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
   message(STATUS "Found OpenMesh")

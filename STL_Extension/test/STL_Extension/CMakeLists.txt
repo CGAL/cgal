@@ -61,7 +61,7 @@ if(TARGET CGAL::TBB_support)
   target_link_libraries(test_for_each PUBLIC CGAL::TBB_support)
 endif()
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   message(STATUS "Found OpenMesh")
   include(CGAL_OpenMesh_support)

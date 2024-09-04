@@ -18,7 +18,7 @@ include_directories(BEFORE "/usr/include/libxml2/")
 # add_definitions("-g")
 
 # OpenMesh
-find_package(OpenMesh CONFIG REQUIRED)
+find_package(OpenMesh REQUIRED)
 include(CGAL_OpenMesh_support)
 
 # Polyhedron

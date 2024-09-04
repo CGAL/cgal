@@ -19,7 +19,7 @@ create_single_source_cgal_program("quickhull_any_dim_3.cpp")
 create_single_source_cgal_program("extreme_points_3_sm.cpp")
 create_single_source_cgal_program("extreme_indices_3.cpp")
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
   message(STATUS "Found OpenMesh")

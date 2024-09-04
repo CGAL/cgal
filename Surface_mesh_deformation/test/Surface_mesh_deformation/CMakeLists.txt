@@ -16,7 +16,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("Symmetry_test.cpp")
   target_link_libraries(Symmetry_test PUBLIC CGAL::Eigen3_support)
 
-  find_package(OpenMesh CONFIG QUIET)
+  find_package(OpenMesh QUIET)
   if(OpenMesh_FOUND)
     include(CGAL_OpenMesh_support)
     message(STATUS "Found OpenMesh")

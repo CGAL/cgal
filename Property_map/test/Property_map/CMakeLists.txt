@@ -10,7 +10,7 @@ create_single_source_cgal_program("dynamic_properties_test.cpp")
 create_single_source_cgal_program("kernel_converter_properties_test.cpp")
 create_single_source_cgal_program("test_Property_container.cpp")
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   message(STATUS "Found OpenMesh")
   include(CGAL_OpenMesh_support)

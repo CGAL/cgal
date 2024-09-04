@@ -7,7 +7,7 @@ project(BGL_OpenMesh_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-find_package(OpenMesh CONFIG)
+find_package(OpenMesh)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
   create_single_source_cgal_program("TriMesh.cpp")

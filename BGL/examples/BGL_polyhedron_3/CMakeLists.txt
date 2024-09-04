@@ -16,7 +16,7 @@ create_single_source_cgal_program("range.cpp")
 create_single_source_cgal_program("transform_iterator.cpp")
 create_single_source_cgal_program("copy_polyhedron.cpp")
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
   target_link_libraries(copy_polyhedron PRIVATE CGAL::OpenMesh_support)

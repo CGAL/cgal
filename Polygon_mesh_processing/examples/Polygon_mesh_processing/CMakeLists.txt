@@ -93,7 +93,7 @@ else()
   message(STATUS "NOTICE: Examples that use Eigen will not be compiled.")
 endif()
 
-find_package(OpenMesh CONFIG QUIET)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
 

@@ -31,7 +31,7 @@ if(TARGET CGAL::Eigen3_support)
     target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
   endforeach()
 
-  find_package(OpenMesh CONFIG QUIET)
+  find_package(OpenMesh QUIET)
   if(OpenMesh_FOUND)
     include(CGAL_OpenMesh_support)
     message(STATUS "Found OpenMesh")
