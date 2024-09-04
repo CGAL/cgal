@@ -27,14 +27,14 @@ class SelfIntersection {
 public:
     virtual ~SelfIntersection();
 
-    static Point3SPtr intersectEdges(FacetSPtr facet,
-            EdgeSPtr edge1, EdgeSPtr edge2, bool handle_deg1_as_ray);
+    static bool intersectEdges(FacetSPtr facet, EdgeSPtr edge1, EdgeSPtr edge2, bool handle_deg1_as_ray);
     static bool isSelfIntersectingFacet(FacetSPtr facet);
     static unsigned int hasSelfIntersectingFacets(PolyhedronSPtr polyhedron);
-
     static Plane3SPtr bisector(FacetSPtr facet, VertexSPtr vertex);
     static CGAL::Sign SideOfBisector(FacetSPtr facet, VertexSPtr vertex, Point3SPtr point);
     static EdgeSPtr findNearestEdge(FacetSPtr facet, Point3SPtr point);
+    static bool isInsideWithRayShooting(Point3SPtr point,
+                                        FacetSPtr facet);
     static bool isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool handle_deg1_as_ray);
     static bool hasSelfIntersectingSurface(PolyhedronSPtr polyhedron);
 

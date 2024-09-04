@@ -22,18 +22,31 @@
 #include "data/3d/Facet.h"
 #include "data/3d/Polyhedron.h"
 #include "algo/3d/KernelWrapper.h"
+
+#include <CGAL/point_generators_3.h>
+
 #include <limits>
 #include <list>
 
+#define CGAL_SS3_EXIT_ASAP
+
 namespace algo { namespace _3d {
 
-// @todo all of this should be a predicate
-Point3SPtr SelfIntersection::intersectEdges(FacetSPtr facet,
-        EdgeSPtr edge1, EdgeSPtr edge2, bool handle_deg1_as_ray)
+// whether the edges intersect in their interior, with edges possibly being rays
+// @todo this must be rewritten to be predicates
+bool SelfIntersection::intersectEdges(FacetSPtr facet,
+                                      EdgeSPtr edge1,
+                                      EdgeSPtr edge2,
+                                      bool handle_degree_1_as_ray)
 {
+    CGAL_assertion(edge1 != edge2);
+    CGAL_assertion(edge1->getVertexSrc()->degree() != 1 || edge1->getVertexDst()->degree() != 1);
+    CGAL_assertion(edge2->getVertexSrc()->degree() != 1 || edge2->getVertexDst()->degree() != 1);
+
+// #define CGAL_SS3_OLD_CODE_INTERSECT_EDGES
+#ifdef CGAL_SS3_OLD_CODE_INTERSECT_EDGES
     Point3SPtr result = Point3SPtr();
 
-    // @fixme? full overlaps?
     if (edge1->getVertexSrc() == edge2->getVertexSrc() ||
             edge1->getVertexSrc() == edge2->getVertexDst()) {
         result = edge1->getVertexSrc()->getPoint();
@@ -45,10 +58,12 @@ Point3SPtr SelfIntersection::intersectEdges(FacetSPtr facet,
         Point3SPtr p_11 = edge1->getVertexSrc()->getPoint();
         Point3SPtr p_12 = edge1->getVertexDst()->getPoint();
         Point3SPtr p_13 = KernelFactory::createPoint3((*p_11) + (*normal));
+        CGAL_assertion(!CGAL::collinear(*p_11, *p_12, *p_13));
         Plane3SPtr plane1 = KernelFactory::createPlane3(p_11, p_12, p_13);
         Point3SPtr p_21 = edge2->getVertexSrc()->getPoint();
         Point3SPtr p_22 = edge2->getVertexDst()->getPoint();
         Point3SPtr p_23 = KernelFactory::createPoint3((*p_21) + (*normal));
+        CGAL_assertion(!CGAL::collinear(*p_21, *p_22, *p_23));
         Plane3SPtr plane2 = KernelFactory::createPlane3(p_21, p_22, p_23);
         Point3SPtr p_intersection = KernelWrapper::intersection(plane1, plane2,
                 facet->plane());
@@ -64,7 +79,7 @@ Point3SPtr SelfIntersection::intersectEdges(FacetSPtr facet,
             }
         }
 
-        if (handle_deg1_as_ray) {
+        if (handle_degree_1_as_ray) {
             // 0 * inf = nan
             // const double infinity = std::numeric_limits<double>::infinity();
             // 0 * max = 0
@@ -86,16 +101,102 @@ Point3SPtr SelfIntersection::intersectEdges(FacetSPtr facet,
                         (*p_22-*p_21) * max);
             }
         }
+
         if (KernelWrapper::isInside(p_intersection, p_11, p_12) &&
                 KernelWrapper::isInside(p_intersection, p_21, p_22)) {
             result = p_intersection;
         }
     }
-    return result;
+
+    return (result != Point3SPtr());
+#else
+    // if there are intersections, tolerate it only if it's an extremity
+    auto treat_seg_seg = [](const Segment3& s1, const Segment3& s2) -> bool
+    {
+        CGAL::Object obj = CGAL::intersection(s1, s2);
+        if (!obj) {
+          return false;
+        } else if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
+            return (*ipoint != s1.source() && *ipoint != s1.target() &&
+                    *ipoint != s2.source() && *ipoint != s2.target());
+        } else {
+            return true; // intersection is a segment
+        }
+    };
+
+    auto treat_seg_ray = [](const Segment3& s, const Ray3& r) -> bool
+    {
+        CGAL::Object obj = CGAL::intersection(s, r);
+        if (!obj) {
+          return false;
+        } else if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
+            return (*ipoint != s.source() && *ipoint != s.target() && *ipoint != r.source());
+        } else {
+            return true; // intersection is a segment
+        }
+    };
+
+    auto treat_ray_ray = [](const Ray3& r1, const Ray3& r2) -> bool
+    {
+        CGAL::Object obj = CGAL::intersection(r1, r2);
+        if (!obj) {
+          return false;
+        } else if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
+            return (*ipoint != r1.source() && *ipoint != r2.source());
+        } else {
+            return true; // intersection is a segment
+        }
+    };
+
+    Point3SPtr p_11 = edge1->getVertexSrc()->getPoint();
+    Point3SPtr p_12 = edge1->getVertexDst()->getPoint();
+    Point3SPtr p_21 = edge2->getVertexSrc()->getPoint();
+    Point3SPtr p_22 = edge2->getVertexDst()->getPoint();
+
+    // skip if one is degenerate: if there is a real intersection,
+    // we'll meet it through a non-degenerate combination
+    if(*p_11 == *p_12 || *p_21 == *p_22) {
+        return false;
+    }
+
+    if (handle_degree_1_as_ray) {
+        if (edge1->getVertexSrc()->degree() == 1) {
+            if (edge2->getVertexSrc()->degree() == 1) {
+                return treat_ray_ray(Ray3{*p_12,*p_11}, Ray3{*p_22,*p_21});
+            } else if(edge2->getVertexDst()->degree() == 1) {
+                return treat_ray_ray(Ray3{*p_12,*p_11}, Ray3{*p_21,*p_22});
+            } else {
+                return treat_seg_ray(Segment3{*p_21,*p_22}, Ray3{*p_12,*p_11});
+            }
+        } else if (edge1->getVertexDst()->degree() == 1) {
+            if (edge2->getVertexSrc()->degree() == 1) {
+                return treat_ray_ray(Ray3{*p_11,*p_12}, Ray3{*p_22,*p_21});
+            } else if(edge2->getVertexDst()->degree() == 1) {
+                return treat_ray_ray(Ray3{*p_11,*p_12}, Ray3{*p_21,*p_22});
+            } else {
+                return treat_seg_ray(Segment3{*p_21,*p_22}, Ray3{*p_11,*p_12});
+            }
+        } else { // no degree 1 in edge1
+            if (edge2->getVertexSrc()->degree() == 1) {
+                return treat_seg_ray(Segment3{*p_11,*p_12}, Ray3{*p_22,*p_21});
+            } else if(edge2->getVertexDst()->degree() == 1) {
+                return treat_seg_ray(Segment3{*p_11,*p_12}, Ray3{*p_21,*p_22});
+            }
+            // neither edge having degree 1 vertices is below
+        }
+    }
+
+    return treat_seg_seg(Segment3{*p_11, *p_12}, Segment3{*p_21,*p_22});
+#endif
 }
 
+// @todo currently has square complexity, it could be a sweep like in "is_simple_polygon_2"
 bool SelfIntersection::isSelfIntersectingFacet(FacetSPtr facet) {
     bool result = false;
+
+    // We can't use is_simple_polygon_2 + projection traits because:
+    // - some edges are not segments but ray
+    // - some edges can be degenerate
     std::list<EdgeSPtr>::iterator it_e1 = facet->edges().begin();
     while (it_e1 != facet->edges().end()) {
         EdgeSPtr edge1 = *it_e1++;
@@ -109,7 +210,15 @@ bool SelfIntersection::isSelfIntersectingFacet(FacetSPtr facet) {
                 continue;
             }
             if (intersectEdges(facet, edge1, edge2, true)) {
+                std::cout << "edges intersect within the face:" << std::endl;
+                std::cout << facet->toString() << std::endl;
+                std::cout << edge1->toString() << std::endl;
+                std::cout << edge2->toString() << std::endl;
+#ifdef CGAL_SS3_EXIT_ASAP
+                return true;
+#else
                 result = true;
+#endif
                 break;
             }
         }
@@ -126,7 +235,11 @@ unsigned int SelfIntersection::hasSelfIntersectingFacets(PolyhedronSPtr polyhedr
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
         if (isSelfIntersectingFacet(facet)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+            return 1;
+#else
             result++;
+#endif
         }
     }
     return result;
@@ -299,7 +412,7 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
         bool point_inside_bounds = true;
 
         if (vertex_src->degree() > 1) {
-// #define CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
+#define CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
 #ifdef CGAL_SS3_OLD_CODE_FIND_NEAREST_EDGE_CODE
             Plane3SPtr bisector_src = bisector(facet, vertex_src);
             if (bisector_src) {
@@ -367,12 +480,154 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
     return result;
 }
 
-bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool handle_deg1_as_ray)
+// @todo construction galore...
+bool SelfIntersection::isInsideWithRayShooting(Point3SPtr point,
+                                               FacetSPtr facet)
 {
-#define CGAL_SS3_EXIT_ASAP
-#ifndef CGAL_SS3_EXIT_ASAP
+    std::cout << "\n> isInsideWithRayShooting()" << std::endl;
+    std::cout << facet->toString() << std::endl;
+
+    Plane3SPtr pl = facet->plane();
+    Vector3SPtr normal = KernelFactory::createVector3(pl);
+
+    // shoot random rays till something is hit
+    // essential to this: we know the facet does not self-intersect
+    CGAL::Random rng(0);
+    CGAL::Random_points_on_sphere_3<Point3> random_point_on_sphere(1, rng);
+
+    // some initial rays that we know are in the plane, and know will hit something
+    std::vector<Point3> candidate_ray_targets;
+
+    std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+    while (it_e != facet->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        Point3SPtr p_src = edge->getVertexSrc()->getPoint();
+        Point3SPtr p_dst = edge->getVertexDst()->getPoint();
+
+        // std::cout << " p_src = " << *p_src << std::endl;
+        // std::cout << " p_dst = " << *p_dst << std::endl;
+
+        // @todo this only stands for EPECK and faces merged with zero tolerance
+        CGAL_assertion(pl->has_on(*point));
+        CGAL_assertion(pl->has_on(*p_src));
+        CGAL_assertion(pl->has_on(*p_dst));
+        CGAL_assertion(CGAL::scalar_product(Vector3(*p_src, *p_dst), *normal) == 0);
+
+        candidate_ray_targets.push_back(CGAL::midpoint(*p_src, *p_dst));
+    }
+
+    // @fixme handle the case of an half plane face with the query point on the boundary
+
+    for(;;) {
+        Ray3 shooting_ray;
+        if (!candidate_ray_targets.empty()) {
+            shooting_ray = Ray3(*point, candidate_ray_targets.back());
+            candidate_ray_targets.pop_back();
+        } else {
+            Point3 rnd_p = *random_point_on_sphere++;
+            Point3 target_p = *point + Vector3(CGAL::ORIGIN, rnd_p);
+            Point3 proj_p = pl->projection(target_p);
+            if(proj_p == *point) {
+                continue;
+            }
+            shooting_ray = Ray3(*point, proj_p);
+        }
+
+        // std::cout << "shooting_ray = " << shooting_ray.point(0) << " " << shooting_ray.point(1) << std::endl;
+
+        CGAL_assertion(shooting_ray.point(0) == *point);
+        CGAL_assertion(pl->has_on(shooting_ray.point(0)));
+        CGAL_assertion(pl->has_on(shooting_ray.point(1)));
+
+        CGAL::FT sq_dist_to_closest = std::numeric_limits<double>::max();
+        EdgeSPtr closest_edge;
+
+        auto treat_edge = [&](EdgeSPtr target_edge, const auto& edge_geometry) -> void
+        {
+            CGAL::Object obj = CGAL::intersection(shooting_ray, edge_geometry);
+            if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
+                CGAL::FT sqd = CGAL::squared_distance(*point, *ipoint);
+                // std::cout << "intersects & sq_dst: " << sqd << std::endl;
+                CGAL::Comparison_result res = CGAL::compare(sqd, sq_dist_to_closest);
+                if (res == CGAL::SMALLER) {
+                    sq_dist_to_closest = sqd;
+                    closest_edge = target_edge;
+                }
+            }
+        };
+
+        // @todo brute force finding the closest, but faces are small so...
+        std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+        while (it_e != facet->edges().end()) {
+            EdgeSPtr edge = *it_e++;
+            // std::cout << "consider edge: " << edge->toString() << std::endl;
+            VertexSPtr v_src = edge->src(facet);
+            VertexSPtr v_dst = edge->dst(facet);
+            Point3SPtr p_src = v_src->getPoint();
+            Point3SPtr p_dst = v_dst->getPoint();
+
+            // We'll use a (coplanar) orientation check with the edge to determine
+            // whether we are on the 'outside' or 'inside'
+            if (CGAL::collinear(*p_src, *p_dst, *point)) {
+                std::cout << " skipping because collinear" << std::endl;
+                continue;
+            }
+
+            if (v_src->degree() == 1) {
+                if (v_dst->degree() == 1) {
+                    // std::cout << "L3" << std::endl;
+                    treat_edge(edge, Line3(*p_src, *p_dst));
+                } else {
+                    // std::cout << "R3 from DST " << *p_dst << std::endl;
+                    treat_edge(edge, Ray3(*p_dst, *p_src));
+                }
+            } else if (v_dst->degree() == 1) {
+                // std::cout << "R3 from SRC " << *p_src << std::endl;
+                treat_edge(edge, Ray3(*p_src, *p_dst));
+            } else {
+                // std::cout << "S3" << std::endl;
+                treat_edge(edge, Segment3(*p_src, *p_dst));
+            }
+        }
+
+        // if (closest_edge)
+        //     std::cout << "closest_edge = " << closest_edge->toString() << std::endl;
+        // else
+        //     std::cout << "closest_edge = NONE" << std::endl;
+
+        // Being in the cone where the distance is the same to multiple edges
+        // makes the orientation test not usable
+        if (closest_edge == EdgeSPtr()) {
+            continue; // try another ray; we'll hit something eventually!
+        }
+
+        Point3SPtr p_src = closest_edge->src(facet)->getPoint();
+        Point3SPtr p_dst = closest_edge->dst(facet)->getPoint();
+
+        // std::cout << "p_src = " << *p_src << std::endl;
+        // std::cout << "p_src + normal = " << *p_src + *normal << std::endl;
+        // std::cout << "p_dst = " << *p_dst << std::endl;
+        // std::cout << "point = " << *point << std::endl;
+        CGAL_assertion(!CGAL::collinear(*p_src, *p_src + *normal, *p_dst));
+        CGAL_assertion(CGAL::scalar_product(Vector3(*p_src, *p_src + *normal), Vector3(*p_src, *p_dst)) == 0);
+
+        CGAL::Orientation o = CGAL::orientation(*p_src, *p_src + *normal, *p_dst, *point);
+        // std::cout << "Orientation = " << o << std::endl;
+
+        return (o != CGAL::NEGATIVE);
+    }
+
+    CGAL_unreachable();
+    return false;
+}
+
+bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
+                                         EdgeSPtr edge,
+                                         bool handle_degree_1_as_ray)
+{
+    // std::cout << "\n> isEdgeInsideFacet()" << std::endl;
+
     bool result = false;
-#endif
 
     if (edge->getFacetL() == facet || edge->getFacetR() == facet) {
         return false;
@@ -384,66 +639,87 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet, EdgeSPtr edge, bool ha
         return false;
     }
 
+    if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint()) {
+        return false;
+    }
+
     // @todo could do with a segment or ray (if degree 1) direclty
     Line3SPtr line = edge->line();
 
     Point3SPtr point = KernelWrapper::intersection(facet->plane(), line);
     CGAL_assertion(bool(point)); // @fixme? what if the intersection isn't a point?
-    std::cout << "Intersection point " << *point << std::endl;
+    // std::cout << "Intersection point " << *point << std::endl;
 
     if (point) {
         Point3SPtr p_src = edge->getVertexSrc()->getPoint();
         Point3SPtr p_dst = edge->getVertexDst()->getPoint();
-        if (handle_deg1_as_ray) {
+        if (handle_degree_1_as_ray) {
             // 0 * inf = nan
             // 0 * max = 0
             const CGAL::FT max = std::numeric_limits<double>::max();
             if (edge->getVertexSrc()->degree() == 1) {
-                p_src = KernelFactory::createPoint3(*p_src +
-                        (*p_src-*p_dst) * max);
+                p_src = KernelFactory::createPoint3(*p_src + (*p_src-*p_dst) * max);
             }
             if (edge->getVertexDst()->degree() == 1) {
-                p_dst = KernelFactory::createPoint3(*p_dst +
-                        (*p_dst-*p_src) * max);
+                p_dst = KernelFactory::createPoint3(*p_dst + (*p_dst-*p_src) * max);
             }
         }
+
         if (KernelWrapper::isInside(point, p_src, p_dst)) {
+
+// #define CGAL_SS3_USE_OLD_CODE_FOR_INSIDE_OUT_CHECKS
+#ifdef CGAL_SS3_USE_OLD_CODE_FOR_INSIDE_OUT_CHECKS
+            // This old code is broken because the findNearestEdge might not return the correct
+            // edge.
+
+            // !! WARNING!! if you use this stuff again, you can't call the intersection function
+            // with degenerate edges (so, no checking for self intersections after event handling
+            // for example)
+
             Vector3SPtr normal = KernelFactory::createVector3(facet->plane());
             Line3SPtr line_point = KernelFactory::createLine3(point, normal);
             EdgeSPtr edge_nearest = findNearestEdge(facet, point);
             Line3SPtr line_nearest = edge_nearest->line();
+            std::cout << "Nearest edge " << edge_nearest->toString() << std::endl;
+
             if (edge_nearest->getFacetL() == facet) {
-                // @fixme the point could be aligned with the nearest edge
-                // (but currently it's fine because the closest edge is found using
-                // bisectors)
                 if (KernelWrapper::orientation(line_nearest, line_point) >= 0) {
-#ifdef CGAL_SS3_EXIT_ASAP
+# ifdef CGAL_SS3_EXIT_ASAP
                     return true;
-#else
+# else
                     result = true;
-#endif
+# endif
                 }
             } else if (edge_nearest->getFacetR() == facet) {
                 if (KernelWrapper::orientation(line_nearest, line_point) <= 0) {
-#ifdef CGAL_SS3_EXIT_ASAP
+# ifdef CGAL_SS3_EXIT_ASAP
                     return true;
-#else
+# else
                     result = true;
-#endif
+# endif
                 }
             }
+#else
+            if (isInsideWithRayShooting(point, facet)) {
+//                CGAL_assertion(result); // @tmp
+# ifdef CGAL_SS3_EXIT_ASAP
+                return true;
+# else
+                result = true;
+# endif
+            } else {
+//              CGAL_assertion(!result); // @tmp
+            }
+#endif
         }
     }
 
-#ifdef CGAL_SS3_EXIT_ASAP
-    return false;
-#else
     return result;
-#endif
 }
 
+// @fixme self-intersection on boundaries doesn't seem solidly defined
 bool SelfIntersection::hasSelfIntersectingSurface(PolyhedronSPtr polyhedron) {
-    std::cout << "\n> hasSelfIntersectingSurface()" << std::endl;
+    // std::cout << "\n> hasSelfIntersectingSurface()" << std::endl;
 
     bool result = false;
     if (SelfIntersection::hasSelfIntersectingFacets(polyhedron)) {
@@ -455,19 +731,21 @@ bool SelfIntersection::hasSelfIntersectingSurface(PolyhedronSPtr polyhedron) {
             std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
             while (it_e != polyhedron->edges().end()) {
                 EdgeSPtr edge = *it_e++;
-                if (isEdgeInsideFacet(facet, edge, true /*handle_deg1_as_ray*/)) {
-                    DEBUG_PRINT("Polyhedron has no self-intersecting facets, but the surface is self-intersecting.");
+                if (isEdgeInsideFacet(facet, edge, true /*handle_degree_1_as_ray*/)) {
+                    std::cout << "\nPolyhedron has no self-intersecting facets, but the surface is self-intersecting!" << std::endl;
                     std::cout << facet->toString() << std::endl;
                     std::cout << edge->toString() << std::endl;
                     result = true;
                     break;
                 }
             }
-            if (result) {
+
+            if (result) { // @fixme just return early...
                 break;
             }
         }
     }
+
     return result;
 }
 
