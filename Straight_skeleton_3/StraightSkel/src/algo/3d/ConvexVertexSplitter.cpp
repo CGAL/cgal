@@ -123,6 +123,7 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
             }
         }
     }
+    // CGAL_assertion(combi_opt != combi());
     DEBUG_VAL("Selected split-combination: " << combiToString(combi_opt));
     CombiVertexSplitter::apply(poly_opt, vertex);
     return polyhedron;

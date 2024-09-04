@@ -534,7 +534,7 @@ std::string Polyhedron::toString() const {
     if (id_ != -1) {
         sstr << "id=" << util::StringFactory::fromInteger(id_) << ", ";
     } else {
-        sstr << util::StringFactory::fromPointer(this) << ", ";
+        // sstr << util::StringFactory::fromPointer(this) << ", ";
     }
     sstr << "Vertices:" + util::StringFactory::fromInteger(vertices_.size()) + ", ";
     sstr << "Edges:" + util::StringFactory::fromInteger(edges_.size()) + ", ";

@@ -174,6 +174,7 @@ void SimpleStraightSkel::initEdgeEvent() {
 }
 
 
+// @fixme return three states to handle flat cases?
 bool SimpleStraightSkel::isReflex(EdgeSPtr edge) {
     bool result = false;
     VertexSPtr vertex_src = edge->getVertexSrc();
@@ -431,7 +432,6 @@ bool SimpleStraightSkel::run() {
 
     Point3SPtr p_box_min;
     Point3SPtr p_box_max;
-    unsigned int i = 0;
     DEBUG_VAL("Using " << vertex_splitter_->toString() << " to initialize polyhedron.");
     if (init(polyhedron)) {
         if (controller_) {
@@ -505,12 +505,15 @@ bool SimpleStraightSkel::run() {
                 handlePierceEvent(std::dynamic_pointer_cast<PierceEvent>(event), polyhedron);
             }
 
+            DEBUG_PRINT("-- Finished handling Event --");
+
+            db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
+            db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
+
             DEBUG_PRINT("-- Check consistency... --");
 
             assert(polyhedron->isConsistent());
             assert(skel_result_->isConsistent());
-
-            db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + ".obj", polyhedron);
 
             if (p_box_min && p_box_max) {
                 assert(PolyhedronTransformation::isInsideBox(polyhedron, p_box_min, p_box_max));
@@ -518,9 +521,9 @@ bool SimpleStraightSkel::run() {
                 p_box_min = PolyhedronTransformation::boundingBoxMin(polyhedron);
                 p_box_max = PolyhedronTransformation::boundingBoxMax(polyhedron);
             }
-            DEBUG_PRINT("-- Finished handling Event --");
-            i++;
-            DEBUG_VAR(i);
+
+            // @tmp this is tempting, but the mesh is usually not in a nice state here...
+            // assert(!SelfIntersection::hasSelfIntersectingSurface(polyhedron));
 
             if (controller_) {
                 controller_->wait();
@@ -1087,9 +1090,9 @@ SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     Vector3SPtr n_f_third = KernelFactory::createVector3(plane_third);
 
     Vector3 v_f_f_other = isReflex(edge) ? CGAL::cross_product(*n_f_other, *n_f)
-                                          : CGAL::cross_product(*n_f, *n_f_other);
+                                         : CGAL::cross_product(*n_f, *n_f_other);
     Vector3 v_f_f_third = isReflex(edge_f_f_third) ? CGAL::cross_product(*n_f_third, *n_f)
-                                                    : CGAL::cross_product(*n_f, *n_f_third);
+                                                   : CGAL::cross_product(*n_f, *n_f_third);
 
     Point3 pvp = *(edge->getVertexSrc()->getPoint()); // the position doesn't matter
     Point3 vp = pvp + v_f_f_other;
@@ -2953,13 +2956,14 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
+
         if (isReflex(vertex)) {
             SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
             ArcSPtr arc = data->getArc();
+
             std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
             while (it_f != polyhedron->facets().end()) {
                 FacetSPtr facet = *it_f++;
-
                 bool contains_vertex = false;
                 std::list<VertexSPtr>::iterator it_v2 = facet->vertices().begin();
                 while (it_v2 != facet->vertices().end()) {
@@ -2992,6 +2996,7 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                     continue;
                 }
 
+                // @fixme assumes positive weights
                 if (KernelWrapper::side(facet->plane(), vertex->getPoint()) > 0) {
                     continue;
                 }
@@ -3044,10 +3049,10 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                 offset_event = -dist_vertex / speed_vertex;
                 point = KernelWrapper::offsetPoint(vertex->getPoint(), arc->getDirection(), dist_vertex);
                 // std::cout << "old result: " << *point << " time: " << offset_event << std::endl;
-#else // CGAL_SS3_OLD_CODE_PIERCE_EVENT
+#else
                 CGAL_assertion(vertex->facets().size() == 3);
 
-                FacetWPtr wf0 = *(std::next(vertex->facets().begin(), 0));
+                FacetWPtr wf0 = *(std::next(vertex->facets().begin(), 0)); // @todo can be factorized
                 FacetWPtr wf1 = *(std::next(vertex->facets().begin(), 1));
                 FacetWPtr wf2 = *(std::next(vertex->facets().begin(), 2));
 
@@ -3614,6 +3619,7 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
     }
 
     // check if edge should be flipped
+    // @todo if one fails, just take the other immediately without SI checks
     bool flip_edge = true;
 
     bool not_flipped_valid = false;
@@ -3639,8 +3645,11 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
                         facets[i]->getData())->getSpeed());
             }
         }
-        edge_no_flip->setFacetL(facets_clone[3]);
+
         edge_no_flip->setFacetR(facets_clone[1]);
+        edge_no_flip->setFacetL(facets_clone[3]);
+
+        // In edge events, we have unbounded faces (degree 1 vertices)
         facets_clone[3]->addEdge(edge_no_flip);
         facets_clone[1]->addEdge(edge_no_flip);
         for (unsigned int i = 0; i < 4; i++) {
@@ -3682,8 +3691,10 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
                         facets[i]->getData())->getSpeed());
             }
         }
-        edge_flipped->setFacetL(facets_clone[0]);
+
         edge_flipped->setFacetR(facets_clone[2]);
+        edge_flipped->setFacetL(facets_clone[0]);
+
         facets_clone[0]->addEdge(edge_flipped);
         facets_clone[2]->addEdge(edge_flipped);
         for (unsigned int i = 0; i < 4; i++) {
@@ -3947,6 +3958,12 @@ void SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event, Polyhedron
 
     VertexSPtr vertices[3];
     event->getVertices(vertices);
+
+    std::cout << "VS:\n"
+              << *(vertices[0]->getPoint()) << "\n"
+              << *(vertices[1]->getPoint()) << "\n"
+              << *(vertices[2]->getPoint()) << std::endl;
+
     VertexSPtr vertices_offset[3];
     for (unsigned int i = 0; i < 3; i++) {
         SkelVertexDataSPtr data = std::dynamic_pointer_cast<SkelVertexData>(
@@ -4471,6 +4488,8 @@ void SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event, PolyhedronSP
     std::cout << "########################################" << std::endl;
 
     NodeSPtr node = event->getNode();
+    std::cout << "N: " << node->toString() << std::endl;
+
     appendEventNode(node);
 
     SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(
