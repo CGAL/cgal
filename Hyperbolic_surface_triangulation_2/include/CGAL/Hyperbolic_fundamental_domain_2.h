@@ -15,7 +15,7 @@
 #ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 #define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 
-#include "Complex_without_sqrt.h"
+#include <CGAL/Complex_without_sqrt.h>
 #include "Hyperbolic_isometry_2.h"
 
 #include <vector>
