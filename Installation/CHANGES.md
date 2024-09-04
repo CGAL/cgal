@@ -146,10 +146,6 @@ Release date: June 2024
     to the [`GenericMap`](https://doc.cgal.org/6.0/Combinatorial_map/classGenericMap.html)
     concept, which enables users to insert an edge between two different faces in order to create faces with holes.
 
--   Added new meshing criterion `edge_distance`, an upper bound for the distance from the edge to the 1D feature.
-- **Breaking change**: the concept `MeshEdgeCriteria_3` was modified to include the new meshing criterion `edge_distance`.
-
-
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
 
 - **Breaking change**:
@@ -227,6 +223,9 @@ Release date: June 2024
     as well as the class `Triangle_accessor`. These were no longer used for several releases.
 -   **Breaking change**: Removed the class templates `CGAL::Gray_image_mesh_domain_3`, `CGAL::Implicit_mesh_domain_3`,
     and `CGAL::Labeled_image_mesh_domain_3`, which were deprecated since CGAL-4.13.
+-   Added new meshing criterion `edge_distance`, an upper bound for the distance from the edge to the 1D feature.
+- **Breaking change**: the concept `MeshEdgeCriteria_3` was modified to include the new meshing criterion `edge_distance`.
+
 
 ### [3D Surface Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMesher3)
 
