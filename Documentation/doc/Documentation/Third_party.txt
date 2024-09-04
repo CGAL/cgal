@@ -98,8 +98,6 @@ solutions, and we recommend using one of them.
 
 The CMake variable `CGAL_CMAKE_EXACT_NT_BACKEND` can be used to select
 the library that will be used internally for multi precision number types.
-The variable `CGAL_CMAKE_EXACT_NT_BACKEND-STRINGS` contains all the possible
-values.
 
 \section secoptional3rdpartysoftware Optional Third Party Libraries
 
