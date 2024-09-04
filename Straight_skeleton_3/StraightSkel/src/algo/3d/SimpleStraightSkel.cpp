@@ -3080,68 +3080,30 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                 // std::cout << "f2 = " << f2->getID() << std::endl;
                 // std::cout << "new result: " << *point << " time: " << offset_event << std::endl;
 
-                if (0 < offset_event || // in the past
+                // @fixme the ">=" is probably wrong: simultaneous events?
+
+                if (offset_event >= 0 || // in the past
                     offset_event <= curr_time_to_next_event) { // no better than the current best
                     continue;
                 }
 
-                // check that the intersection point is on the correct side
-                // of the bisectors of the facet
+                // Naively we might wish to filter using bisectors like in 2D SLS code,
+                // but unlike a segment, a face in the 3D SS code has no reason to be convex,
+                // which changes everything and can result in false positives.
                 //
-                // @todo this is more or less what's happening in the IsValidEvent
-                // and oriented_side_of_event_point_wrt_bisectorC2 in SLS2
-                bool reject_event = false;
-                std::list<EdgeSPtr>::iterator efit = facet->edges().begin();
-                while (efit != facet->edges().end())
-                {
-                  EdgeWPtr edge_wptr = *efit++;
-                  if (edge_wptr.expired())
-                      continue;
-
-                  EdgeSPtr edge(edge_wptr);
-                  FacetSPtr facet_o = edge->other(facet);
-                  Plane3SPtr plane_o = facet_o->getPlane();
-                  CGAL::FT a_o = plane_o->a();
-                  CGAL::FT b_o = plane_o->b();
-                  CGAL::FT c_o = plane_o->c();
-                  CGAL::FT d_o = plane_o->d();
-
-                  CGAL::FT speed_o = 1.0;
-                  if (facet_o->hasData()) {
-                      speed_o = std::dynamic_pointer_cast<SkelFacetData>(facet_o->getData())->getSpeed();
-                  }
-
-                  CGAL::FT t_o = (a_o*(point->x()) + b_o*(point->y()) + c_o*(point->z()) + d_o) / speed_o;
-
-                  // std::cout << " compare to F" << facet_o->getID()
-                  //           << " reflex: " << isReflex(edge)
-                  //           << " t: " << t_o << std::endl;
-
-                  // @fixme is below overly zealous? See also the filtering in crashAt
-                  if(t_o > 0) // invalid event
-                      continue;
-
-                  if (isReflex(edge))
-                  {
-                    if (t_o < offset_event) // offsets are negative
-                      reject_event = true;
-                  }
-                  else
-                  {
-                    if (t_o > offset_event)
-                      reject_event = true;
-                  }
-
-                  if (reject_event)
-                  {
-                    // std::cout << "reject!" << std::endl;
-                    break;
-                  }
-                }
-
-                if (reject_event)
-                  continue;
+                // The bisector filter in 2D is equivalent to checking if the point is on the offset
+                // face. We could check this here, but determining what is the offset face at this
+                // point (i.e., while searching for events) is rough: plenty of other events
+                // might modify the face before this particular pierce event appears, and so
+                // we can't just do shift_face(facet) because the result might be a self-intersecting
+                // polygon with holes.
+                //
+                // Instead, we do not filter here, but simply put it in the queue. When the event
+                // will be popped, then we know it's the next event globally and nothing else
+                // can mess up the face, and we can do the in-test check then.
 #endif // CGAL_SS3_OLD_CODE_PIERCE_EVENT
+
+                std::cout << "Accepted event" << std::endl;
 
                 // @todo filter events in the past?
                 if (offset_event > curr_time_to_next_event) {
@@ -4963,14 +4925,15 @@ void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, Polyhedr
 void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr polyhedron) {
     WriteLock l(skel_result_->mutex());
 
-    NodeSPtr node = event->getNode();
-    appendEventNode(node);
-
     std::cout << "########################################" << std::endl;
     std::cout << "########  Handle Pierce Event  #########" << std::endl;
     std::cout << "########################################" << std::endl;
 
+    NodeSPtr node = event->getNode();
+
     std::cout << "Node: " << node->toString() << std::endl;
+    std::cout << "V: " << event->getVertex()->toString() << std::endl;
+    std::cout << "F: " << event->getFacet()->toString() << std::endl;
 
     SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
             event->getVertex()->getData());
@@ -4978,6 +4941,101 @@ void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr
     SkelFacetDataSPtr facet_data = std::dynamic_pointer_cast<SkelFacetData>(
             event->getFacet()->getData());
     FacetSPtr facet_offset = facet_data->getOffsetFacet();
+
+#ifndef CGAL_SS3_OLD_CODE_PIERCE_EVENT
+    // Check if it is a valid pierce event: the piercing point must be in the face
+    bool reject_event = false;
+
+# if 1 // not sure which one is better
+    // with ray shooting
+    reject_event = !(SelfIntersection::isInsideWithRayShooting(node->getPoint(), facet_offset));
+# else
+    using Itag = CGAL::No_constraint_intersection_tag;
+    using PK = CGAL::Projection_traits_3<CGAL::K>;
+    using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>; // @todo not needed
+    using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
+    using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
+    using PTDS = CGAL::Triangulation_data_structure_2<PVb,PFb>;
+    using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
+    using PCDT_VH = PCDT::Vertex_handle;
+    using PCDT_FH = PCDT::Face_handle;
+
+    Vector3SPtr n = KernelFactory::createVector3(facet_offset->plane());
+    CGAL_assertion(*n != CGAL::NULL_VECTOR);
+    PK traits(*n);
+    PCDT pcdt(traits);
+
+    std::map<VertexSPtr, PCDT_VH> face_vhs;
+    std::list<VertexSPtr>::iterator it_v = facet_offset->vertices().begin();
+    while (it_v != facet_offset->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        auto res = face_vhs.emplace(vertex, PCDT_VH());
+        if(res.second) // first time seeing this point
+        {
+            PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
+            res.first->second = vh;
+        }
+    }
+
+    std::list<EdgeSPtr>::iterator it_e = facet_offset->edges().begin();
+    while (it_e != facet_offset->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        VertexSPtr v0 = edge->src(facet_offset);
+        VertexSPtr v1 = edge->dst(facet_offset);
+
+        if(*(v0->getPoint()) == *(v1->getPoint()))
+        {
+            std::cerr << "W: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
+        }
+        else
+        {
+            PCDT_VH vh0 = face_vhs.at(v0);
+            PCDT_VH vh1 = face_vhs.at(v1);
+
+            try
+            {
+                pcdt.insert_constraint(vh0, vh1);
+            }
+            catch(const typename PCDT::Intersection_of_constraints_exception&)
+            {
+                std::cerr << "Error: Intersection of constraints" << std::endl;
+                DEBUG_VAR(facet_offset->toString());
+                CGAL_assertion_msg(false, "Intersections in CDT2 not allowed");
+                break;
+            }
+        }
+    }
+
+    std::unordered_map<PCDT_FH, bool> in_domain_map;
+    boost::associative_property_map< std::unordered_map<PCDT_FH, bool> > in_domain(in_domain_map);
+    CGAL::mark_domain_in_triangulation(pcdt, in_domain);
+
+    int li;
+    PCDT::Locate_type lt;
+    PCDT_FH fh = pcdt.locate(*(node->getPoint()), lt, li);
+
+    std::cout << "lt = " << lt << std::endl;
+
+    if (lt == PCDT::VERTEX || lt == PCDT::EDGE) {
+        CGAL_assertion(false); // @todo handle this by looping over incident faces
+    } else if (lt == PCDT::FACE) {
+        reject_event = !(get(in_domain, fh));
+    } else { // outside of convex hull
+        reject_event = true;
+    }
+# endif // ray shooting or CDT
+    if (reject_event) {
+        std::cout << "Pierce rejected" << std::endl;
+        event->setPolyhedronResult(polyhedron);
+        // skel_result_->addEvent(event);
+        return;
+    }
+#endif
+
+    std::cout << "Pierce accepted" << std::endl;
+
+    appendEventNode(node);
+
     FacetSPtr facets[3];
     EdgeSPtr edges[3];
     EdgeSPtr edge = vertex_offset->firstEdge();
