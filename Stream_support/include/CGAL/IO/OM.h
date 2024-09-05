@@ -88,7 +88,7 @@ bool write_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
 
   omesh.request_edge_status();
   omesh.request_vertex_status();
-  
+
   std::size_t nbe = 0;
   std::size_t nbv = 0;
   for (auto h : halfedges(sm))
