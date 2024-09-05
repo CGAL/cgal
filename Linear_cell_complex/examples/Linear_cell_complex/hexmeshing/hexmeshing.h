@@ -343,6 +343,12 @@ namespace CGAL::HexRefinement::TwoRefinement {
       using InvalidPlaneSet = std::unordered_map<size_t, CCIdToFace>;
       std::array<InvalidPlaneSet, 3> plane_non_valid_faces;
 
+      const auto valid_face = [&](Dart_handle& face, char p, size_t cc_id){
+        auto face_attr = lcc.attribute<2>(face);
+        auto& face_info = face_attr->info();
+        return lcc.is_dart_used(face) && face_attr != nullptr && face_attr->is_valid() && face_info.plane[p] == true && face_info.cc_id == cc_id;
+      };
+
       bool should_fix = false;
       for (size_t p = 0; p < 3; p++){
         PlaneSet& plane_set = first_face_of_planes[p];
@@ -352,10 +358,8 @@ namespace CGAL::HexRefinement::TwoRefinement {
 
           for (int cc_id = 0; cc_id < plane_cc.size(); cc_id++){
             Dart_handle& dart = plane_cc[cc_id];
-            auto face_attr = lcc.attribute<2>(dart);
-            auto& face_info = face_attr->info();
 
-            if (!lcc.is_dart_used(dart) or face_attr != nullptr or !face_attr->is_valid() or face_info.plane[p] == false or face_info.cc_id != cc_id){
+            if (!valid_face(dart, p, cc_id)){
               non_valid_face.emplace(cc_id, std::ref(dart));
               should_fix = true;
             }
@@ -448,11 +452,7 @@ namespace CGAL::HexRefinement::TwoRefinement {
             for (int cc_id = 0; cc_id < plane_cc.size(); cc_id++){
               auto& face = plane_cc[cc_id];
               auto face_attr = lcc.attribute<2>(face);
-              bool valid = face_attr != nullptr
-                && face_attr->info().plane[p]
-                && face_attr->info().plane_id == plane_id
-                && face_attr->info().cc_id == cc_id;
-              CGAL_assertion_msg(valid, "HexMeshingData::fix_planes_sets, face was not valid after fix");
+              CGAL_assertion_msg(valid_face(face, p, cc_id), "HexMeshingData::fix_planes_sets, face was not valid after fix");
             }
           }
         }
@@ -3134,84 +3134,6 @@ namespace CGAL::HexRefinement::TwoRefinement {
     assign_plane(start, size_of_planes, false);
   }
 
-  // Sets up the plane between two processors boundaries.
-  // The thread with the lowest id owns the interface
-  void setup_volume_boundaries(ProcessData& proc){
-    // LCC& lcc = proc.lcc;
-    // const auto can_move = [&](Dart_handle it, int f) { return !lcc.is_free<3>(lcc.beta(it, f, 2)); };
-    // const auto move = [&](Dart_handle it, int f) { return lcc.beta(it, f, 2, 3, 2, f); };
-
-    // // Since we only use the attr to determine whether a edge is owned or not.
-    // // We just need create only one attribute for all darts
-    // proc.numberable_edge_attr = lcc.create_attribute<1>(true);
-    // proc.unnumberable_edge_attr = lcc.create_attribute<1>(false);
-
-    // const auto is_edge_numberable = [&](Dart_handle edge) -> bool {
-    //   auto face_orbit = lcc.darts_of_orbit<2,3>(edge);
-
-    //   for (auto it = face_orbit.begin(); it != face_orbit.end(); it++){
-    //     auto vol = lcc.attribute<3>(it)->info();
-    //     if (vol.owned or vol.area_id == AreaId{0,0,0}) {
-    //       continue;
-    //     }
-
-    //     assert(proc.neighboring_threads.count(vol.area_id));
-    //     auto other_id = proc.neighboring_threads[vol.area_id].thread_id;
-    //     if (other_id < proc.thread_id)
-    //       return false;
-    //   }
-
-    //   return true;
-    // };
-
-    // const auto assign_edge_boundaries = [&](Dart_handle vol, std::array<Dart_handle,6> faces){
-    //   auto edges = lcc.darts_of_cell<3,1>(vol);
-    //   for (auto it = edges.begin(); it != edges.end(); it++){
-    //     auto edge_attr = lcc.attribute<1>(it);
-    //     if (edge_attr != nullptr) continue;
-
-    //     auto& attr = is_edge_numberable(it) ? proc.numberable_edge_attr : proc.unnumberable_edge_attr;
-    //     lcc.set_attribute<1>(it, attr);
-    //   }
-    // };
-
-    // const auto assign_edge_unowned_boundaries = [&](Dart_handle vol, std::array<Dart_handle,6> faces){
-    //   auto edges = lcc.darts_of_cell<3,1>(vol);
-    //   for (auto it = edges.begin(); it != edges.end(); it++){
-    //     auto edge_attr = lcc.attribute<1>(it);
-    //     if (edge_attr != nullptr) continue;
-
-    //     lcc.set_attribute<1>(it, proc.unnumberable_edge_attr);
-    //   }
-    // };
-
-
-    // size_type face_mark = lcc.get_new_mark();
-
-    // for_each_hex(lcc, proc.owned_ghosts_begin,
-    //   [&](Dart_handle vol, std::array<Dart_handle,6> faces) {
-    //     assign_edge_boundaries(vol, faces);
-    //   },
-    //   [&](Dart_handle vol){
-    //     auto attr = lcc.attribute<3>(vol);
-    //     return attr != nullptr && attr->info().owned && attr->info().area_id != AreaId{0,0,0};
-    //   });
-
-    // for_each_hex(lcc, proc.unowned_ghosts_begin,
-    //   [&](Dart_handle vol, std::array<Dart_handle,6> faces) {
-    //     assign_edge_unowned_boundaries(vol, faces);
-    //   },
-    //   [&](Dart_handle vol){
-    //     auto attr = lcc.attribute<3>(vol);
-    //     return attr != nullptr && !attr->info().owned;
-    //   });
-
-    // lcc.free_mark(face_mark);
-
-    // debug_stream.push(l_thread_id);
-    // assert(false);
-  }
-
   // Gather the faces first, if we don't we will have issues later manually
   // Iterating to the next plane after a first refinement stage
   void initial_setup(HexMeshingData& hdata, MarkingFunction& cellIdentifier){
@@ -3231,23 +3153,9 @@ namespace CGAL::HexRefinement::TwoRefinement {
   }
 
   void initial_setup(ProcessData& proc, MarkingFunction& cellIdentifier){
-    LCC& lcc = proc.lcc;
-
-    auto volumes = lcc.one_dart_per_cell<3>();
-    // Mark initial identified cells
-    for (auto dart = volumes.begin(), end = volumes.end(); dart != end; dart++){
-      // Create a 3-attr for all 3-cells in the LCC
-      auto& vol_attr = get_or_create_attr<3>(lcc, dart)->info();
-
-      // Mark those who are identified
-      if (cellIdentifier(lcc, dart))
-        vol_attr.type = VolumeType::IDENTIFIED;
-    }
-
-    setup_initial_planes(proc);
+    initial_setup(static_cast<HexMeshingData&>(proc), cellIdentifier);
     setup_ghost_areas(proc);
     setup_vertex_ids(proc);
-    setup_volume_boundaries(proc);
   }
 
 
