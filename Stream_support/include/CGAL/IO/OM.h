@@ -67,6 +67,50 @@ bool read_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
   return true;
 }
 
+template <typename SM, typename VFeaturePM, typename EFeaturePM>
+bool write_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
+{
+  typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
+  typedef boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
+  typedef boost::graph_traits<SM>::vertex_descriptor sm_vertex_descriptor;
+  typedef boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
+  typedef boost::graph_traits<SM>::halfedge_descriptor sm_halfedge_descriptor;
+
+  std::map<sm_vertex_descriptor, om_vertex_descriptor> v2v;
+  auto v2vpmap = boost::make_assoc_property_map(v2v);
+
+  std::map<sm_halfedge_descriptor, om_halfedge_descriptor> h2h;
+  auto h2hpmap = boost::make_assoc_property_map(h2h);
+
+  OMesh omesh;
+  CGAL::copy_face_graph<SM, OMesh>(sm, omesh,
+    CGAL::parameters::vertex_to_vertex_map(v2vpmap).halfedge_to_halfedge_map(h2hpmap));
+
+  omesh.request_edge_status();
+  omesh.request_vertex_status();
+  
+  std::size_t nbe = 0;
+  std::size_t nbv = 0;
+  for (auto h : halfedges(sm))
+  {
+    om_halfedge_descriptor omh = h2h.at(h);
+    const bool isfeature = get(efpm, edge(h, sm));
+    if (isfeature) nbe++;
+    omesh.status(omesh.edge_handle(omh)).set_feature(isfeature);
+  }
+  for (auto v : vertices(sm))
+  {
+    auto omv = v2v.at(v);
+    const bool isfeature = get(vfpm, v);
+    if (isfeature) nbv++;
+    omesh.status(omv).set_feature(isfeature);
+  }
+
+  std::cout << nbv << " feature vertices" << std::endl;
+  std::cout << nbe << " feature edges" << std::endl;
+  return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status);
+}
+
 } // namespace IO
 } // namespace CGAL
 

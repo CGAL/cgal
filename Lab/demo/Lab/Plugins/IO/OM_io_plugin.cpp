@@ -129,47 +129,73 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
 
 bool CGAL_Lab_om_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
-  return qobject_cast<const Scene_surface_mesh_item*>(item);
+  return qobject_cast<const Scene_surface_mesh_item*>(item)
+      || qobject_cast<const Scene_polyhedron_selection_item*>(item);
 }
 
 bool CGAL_Lab_om_plugin::
-save(QFileInfo fileinfo,QList<CGAL::Three::Scene_item*>& items)
+save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items)
 {
-#if 0
   Scene_item* item = items.front();
-  const Scene_surface_mesh_item* sm_item =
-    qobject_cast<const Scene_surface_mesh_item*>(item);
 
-  if(!sm_item)
+  Scene_surface_mesh_item* sm_item = nullptr;
+  Scene_polyhedron_selection_item* selection_item = nullptr;
+
+  for (Scene_item* item : items)
+  {
+    if (sm_item == nullptr)
+    {
+      sm_item = qobject_cast<Scene_surface_mesh_item*>(item);
+      if (sm_item != nullptr) //surface_mesh_item found
+        continue;
+    }
+    if (selection_item == nullptr)
+    {
+      selection_item = qobject_cast<Scene_polyhedron_selection_item*>(item);
+    }
+  }
+
+  if (sm_item == nullptr && selection_item == nullptr)
     return false;
 
-  QStringList list;
-  list << tr("Binary");
-  list << tr("Ascii");
-  bool ok = false;
-  QString choice
-    = QInputDialog::getItem(nullptr, tr("Save om file"), tr("Format"), list, 0, false, &ok);
+  if (selection_item != nullptr)
+  {
+    if (sm_item == nullptr)
+      sm_item = selection_item->polyhedron_item();
 
-  if (!ok)
-    return false;
+    if (sm_item != selection_item->polyhedron_item())
+    {
+      std::cerr << "Warning! Selection is not associated to the surface_mesh. Ignoring selection." << std::endl;
+      selection_item = nullptr;
+    }
+  }
 
-  std::ofstream out(fileinfo.filePath().toUtf8(), std::ios::out | std::ios::binary);
-  if ( choice == tr("Binary") )
-    CGAL::IO::set_mode(out, CGAL::IO::BINARY);
+  bool res = false;
+  if (selection_item != nullptr)
+  {
+    res = CGAL::IO::write_OM((const char*)fileinfo.filePath().toUtf8()
+                            , *sm_item->face_graph()
+                            , selection_item->constrained_vertices_pmap()
+                            , selection_item->constrained_edges_pmap());
+  }
   else
   {
-    CGAL::IO::set_mode(out, CGAL::IO::ASCII);
-    out.precision (std::numeric_limits<double>::digits10 + 2);
+    using edge_descriptor = typename boost::graph_traits<SMesh>::edge_descriptor;
+    using vertex_descriptor = typename boost::graph_traits<SMesh>::vertex_descriptor;
+
+    res = CGAL::IO::write_OM((const char*)fileinfo.filePath().toUtf8()
+                            , *sm_item->face_graph()
+                            , CGAL::Constant_property_map<vertex_descriptor, bool>(false)
+                            , CGAL::Constant_property_map<edge_descriptor, bool>(false));
   }
 
-  if (sm_item)
+  if (res)
   {
-    CGAL::IO::write_om(out, *sm_item->face_graph());
-    items.pop_front();
-    return true;
+    items.removeAll(sm_item);
+    if (selection_item != nullptr)
+      items.removeAll(selection_item);
   }
-  #endif
-  return false;
+  return res;
 }
 
 #include "om_io_plugin.moc"
