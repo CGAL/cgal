@@ -381,7 +381,7 @@ int main(int argc, const char* argv[]) {
         std::cout << "Sanitize..." << std::endl;
         std::string description = polyhedron->getDescription();
         polyhedron = algo::_3d::SimpleStraightSkel::shiftFacets(polyhedron, 0.0);
-        polyhedron->clearData();
+        // polyhedron->clearData(); // @fixme: done to not clear speed, but what are the side effects?
         polyhedron->setDescription(description);
 
         if (rand_move_points) {
