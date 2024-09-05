@@ -36,7 +36,10 @@ public:
     /**
      * It is impossible for an obj file to store holes inside a facet.
      */
-    static bool save(const std::string& filename, PolyhedronSPtr polyhedron);
+    static bool save(const std::string& filename,
+                     PolyhedronSPtr polyhedron,
+                     bool do_triangulate = true,
+                     bool convert_to_double = true);
 
 protected:
     OBJFile();

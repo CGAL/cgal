@@ -211,104 +211,155 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
     return result;
 }
 
-bool OBJFile::save(const std::string& filename, PolyhedronSPtr polyhedron) {
+bool OBJFile::save(const std::string& filename,
+                   PolyhedronSPtr polyhedron,
+                   const bool do_triangulate,
+                   const bool convert_to_double)
+{
+    std::cout << " -- Save OBJ " << filename << " -- " << std::endl;
+    std::cout << "options: " << std::boolalpha << do_triangulate << " " << convert_to_double << std::endl;
+    std::cout << polyhedron->toString() << std::endl;
+
+    using Itag = CGAL::No_constraint_intersection_tag;
+    using PK = CGAL::Projection_traits_3<CGAL::K>;
+    using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
+    using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
+    using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
+    using PTDS = CGAL::Triangulation_data_structure_2<PVb,PFb>;
+    using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
+    using PCDT_VH = PCDT::Vertex_handle;
+    using PCDT_FH = PCDT::Face_handle;
+
     bool result = false;
     std::ofstream ofs(filename.c_str());
+    ofs.precision(17);
     if (ofs.is_open()) {
         WriteLock l(polyhedron->mutex());
+
+        std::map<VertexSPtr, std::size_t> v_ids;
         unsigned int vertex_id = 0;
         std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
         while (it_v != polyhedron->vertices().end()) {
             VertexSPtr vertex = *it_v++;
-            vertex_id++;
-            vertex->setID(vertex_id);
-            ofs << "v " << CGAL::to_double(vertex->getX()) << " "
-                        << CGAL::to_double(vertex->getY()) << " "
-                        << CGAL::to_double(vertex->getZ()) << "\n";
+            vertex->setID(vertex_id++);
+            if(convert_to_double)
+            {
+              ofs << "v " << CGAL::to_double(vertex->getX()) << " "
+                          << CGAL::to_double(vertex->getY()) << " "
+                          << CGAL::to_double(vertex->getZ()) << "\n";
+            }
+            else
+            {
+              ofs << "v " << vertex->getX() << " "
+                          << vertex->getY() << " "
+                          << vertex->getZ() << "\n";
+            }
+
+            v_ids[vertex] = vertex_id;
         }
+
         unsigned int facet_id = 0;
         std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
         while (it_f != polyhedron->facets().end()) {
             FacetSPtr facet = *it_f++;
             facet->makeFirstConvex();
-            facet_id++;
-            facet->setID(facet_id);
+            facet->setID(facet_id++);
 
-            using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
-            using PK = CGAL::Projection_traits_3<CGAL::K>;
-            using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
-            using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
-            using PFb = CGAL::Constrained_triangulation_face_base_2<PK>;
-            using PTDS = CGAL::Triangulation_data_structure_2<PVb,PFb>;
-            using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
-            using PCDT_VH = PCDT::Vertex_handle;
-            using PCDT_FH = PCDT::Face_handle;
+            bool do_triangulate_face = do_triangulate;
+            if (facet->edges().size() < 3)
+                do_triangulate_face = false;
 
-            auto eit = facet->edges().begin();
-            const VertexSPtr p0 = (*eit++)->src(facet);
-            const VertexSPtr p1 = (*eit++)->src(facet);
-            const VertexSPtr p2 = (*eit)->src(facet);
-
-            const auto n = CGAL::cross_product(*(p1->getPoint()) - *(p0->getPoint()),
-                                               *(p2->getPoint()) - *(p0->getPoint()));
-            PK traits(n);
-            PCDT pcdt(traits);
-
-            std::map<VertexSPtr, PCDT_VH> face_vhs;
-
-            auto ins = [&pcdt, &face_vhs] (const VertexSPtr v) -> PCDT_VH
+            if (do_triangulate_face)
             {
-              auto res = face_vhs.emplace(v, PCDT_VH());
-              if(res.second) // first time seeing this point
-              {
-                PCDT_VH vh = pcdt.insert(*(v->getPoint()));
-                vh->info() = v;
-                res.first->second = vh;
-              }
-              return res.first->second;
-            };
+                Vector3SPtr n = KernelFactory::createVector3(facet->plane());
 
-            bool use_default = false;
+                // @todo might have to do something fancier than staring from a single vertex
+                // for degenerate faces with zigzagging edges...
+                CGAL_assertion(*n != CGAL::NULL_VECTOR);
 
-            for(auto e : facet->edges_)
-            {
-              PCDT_VH vh0 = ins(e->src(facet));
-              PCDT_VH vh1 = ins(e->dst(facet));
+                PK traits(*n);
+                PCDT pcdt(traits);
 
-              try
-              {
-                pcdt.insert_constraint(vh0, vh1);
-              }
-              catch(const typename PCDT::Intersection_of_constraints_exception&)
-              {
-                std::cerr << "Warning: Failed to triangulate face" << std::endl;
-                DEBUG_VAR(facet->toString());
-                use_default = true;
-              }
+                std::map<VertexSPtr, PCDT_VH> face_vhs;
+
+                std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+                while (it_v != facet->vertices().end()) {
+                    VertexSPtr vertex = *it_v++;
+                    auto res = face_vhs.emplace(vertex, PCDT_VH());
+                    if(res.second) // first time seeing this point
+                    {
+                        PCDT_VH vh = pcdt.insert(*(vertex->getPoint()));
+                        vh->info() = vertex;
+                        res.first->second = vh;
+                    }
+                }
+
+                auto ne = 0;
+                std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+                while (it_e != facet->edges().end()) {
+                    EdgeSPtr edge = *it_e++;
+                    VertexSPtr v0 = edge->src(facet);
+                    VertexSPtr v1 = edge->dst(facet);
+
+                    if(*(v0->getPoint()) == *(v1->getPoint()))
+                    {
+                        std::cerr << "W: encountered degenerate edge @ " << *(v0->getPoint()) << std::endl;
+
+                        CGAL_assertion(v0->degree() != 1); // @todo handle that...
+                        VertexSPtr vm1 = edge->prev(facet)->src(facet);
+
+                        ofs << "f " << v_ids.at(vm1) << " "
+                                    << v_ids.at(v0) << " "
+                                    << v_ids.at(v1) << "\n";
+                    }
+                    else
+                    {
+                        PCDT_VH vh0 = face_vhs.at(v0);
+                        PCDT_VH vh1 = face_vhs.at(v1);
+
+                        try
+                        {
+                            pcdt.insert_constraint(vh0, vh1);
+                        }
+                        catch(const typename PCDT::Intersection_of_constraints_exception&)
+                        {
+                            std::cerr << "Error: Intersection of constraints" << std::endl;
+                            DEBUG_VAR(facet->toString());
+                            CGAL_warning_msg(false, "Intersections in CDT2 not allowed");
+                            do_triangulate_face = false;
+                            break;
+                        }
+                        ++ne;
+                    }
+                }
+
+                if(ne < 3) // degenerate face
+                {
+                    std::cerr << "Warning: skipping degenerate face" << std::endl;
+                    continue;
+                }
+
+                if(do_triangulate_face)
+                {
+                    std::unordered_map<PCDT_FH, bool> in_domain_map;
+                    boost::associative_property_map< std::unordered_map<PCDT_FH, bool> > in_domain(in_domain_map);
+
+                    CGAL::mark_domain_in_triangulation(pcdt, in_domain);
+
+                    for(auto fh : pcdt.finite_face_handles())
+                    {
+                        if(!get(in_domain, fh))
+                          continue;
+
+                        ofs << "f " << v_ids.at(fh->vertex(0)->info()) << " "
+                                    << v_ids.at(fh->vertex(1)->info()) << " "
+                                    << v_ids.at(fh->vertex(2)->info()) << "\n";
+
+                    }
+                }
             }
 
-            if(!use_default)
-            {
-              std::unordered_map<PCDT_FH, bool> in_domain_map;
-              boost::associative_property_map< std::unordered_map<PCDT_FH, bool> > in_domain(in_domain_map);
-
-              CGAL::mark_domain_in_triangulation(pcdt, in_domain);
-
-              unsigned int num_f = 0;
-              for(auto fh : pcdt.finite_face_handles())
-              {
-                if(!get(in_domain, fh))
-                  continue;
-
-                ofs << "f " << fh->vertex(0)->info()->getID() << " "
-                            << fh->vertex(1)->info()->getID() << " "
-                            << fh->vertex(2)->info()->getID() << "\n";
-
-                ++num_f;
-              }
-              // std::cout << "face split into " << num_f << " faces" << std::endl;
-            }
-            else
+            if(!do_triangulate_face)
             {
               ofs << "f ";
               unsigned int num_edges = 0;
