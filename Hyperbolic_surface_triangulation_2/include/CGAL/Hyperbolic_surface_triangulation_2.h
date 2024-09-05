@@ -217,7 +217,6 @@ template<class Traits, class Attributes>
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-//Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2<Traits>::operator=(Hyperbolic_surface_triangulation_2<Traits>&& other){
   Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2<Traits, Attributes>::operator=(Hyperbolic_surface_triangulation_2<Traits, Attributes> other){
   if (other.has_anchor()){
     copy_from(other.combinatorial_map(), other.anchor());

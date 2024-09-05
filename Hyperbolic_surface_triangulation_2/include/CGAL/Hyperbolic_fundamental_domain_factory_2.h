@@ -52,7 +52,7 @@ private:
 
   bool sanity_check(_Cmplx& z0, _Cmplx& z1, _Cmplx& z2, _Cmplx& z3);
 
-  const int _DENOMINATOR_FOR_GENERATION = 10000;
+  const int CGAL_DENOMINATOR_FOR_GENERATION = 10000;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ typename Traits::FT Hyperbolic_fundamental_domain_factory_2<Traits>::exact_numbe
   if (x< 0){
     return _FT(0)-exact_number_from_float(-x);
   }
-  return _FT(int(x*_DENOMINATOR_FOR_GENERATION)%_DENOMINATOR_FOR_GENERATION)/_FT( _DENOMINATOR_FOR_GENERATION);
+  return _FT(int(x*CGAL_DENOMINATOR_FOR_GENERATION)%CGAL_DENOMINATOR_FOR_GENERATION)/_FT(CGAL_DENOMINATOR_FOR_GENERATION);
 }
 
 template<class Traits>

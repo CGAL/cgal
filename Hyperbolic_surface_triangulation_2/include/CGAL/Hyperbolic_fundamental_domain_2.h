@@ -48,8 +48,8 @@ public:
   int paired_side(int index) const; // Returns the index of the side paired to side A, where A is the index-th side
   Hyperbolic_isometry_2<Traits> side_pairing(int index) const;// Returns the isometry that maps side A to side B, where B is the index-th side, and A is the side paired to B
 
-  void from_stream(std::istream& s);
-  void to_stream(std::ostream& s) const;
+  std::istream& from_stream(std::istream& s);
+  std::ostream& to_stream(std::ostream& s) const;
 
   bool is_valid() const;
 
@@ -59,7 +59,7 @@ private:
 };
 
 template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
-template<class Traits> void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
+template<class Traits> std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ Hyperbolic_isometry_2<Traits> Hyperbolic_fundamental_domain_2<Traits>::side_pair
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-void Hyperbolic_fundamental_domain_2<Traits>::to_stream(std::ostream& s) const{
+std::ostream& Hyperbolic_fundamental_domain_2<Traits>::to_stream(std::ostream& s) const{
   int n = size();
 
   s << std::to_string(n) << std::endl;
@@ -126,10 +126,11 @@ void Hyperbolic_fundamental_domain_2<Traits>::to_stream(std::ostream& s) const{
   for (int k=0; k<n; k++){
     s << vertex(k) << std::endl;
   }
+  return s;
 }
 
 template<class Traits>
-void Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream& s){
+std::istream& Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream& s){
   _vertices.clear();
   _pairings.clear();
 
@@ -149,19 +150,19 @@ void Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream& s){
     s >> p;
     _vertices.push_back(p);
   }
+  return s;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain){
-  domain.to_stream(s);
-  return s;
+  return domain.to_stream(s);
 }
 
 template<class Traits>
-void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain){
-  domain.from_stream(s);
+std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain){
+  return domain.from_stream(s);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

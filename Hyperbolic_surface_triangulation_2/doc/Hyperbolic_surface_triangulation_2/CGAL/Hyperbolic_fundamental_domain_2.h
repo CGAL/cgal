@@ -78,7 +78,7 @@ public:
 
       \pre <code> is_valid() </code>
   */
-  void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
+  std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
   /*!
       writes the domain in a stream.
