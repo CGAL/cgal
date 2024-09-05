@@ -3295,7 +3295,7 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PolyhedronSPtr polyhedron,
 }
 
 // normalize coefficients and make sure that coplanar facets have the same coefficients (@todo for the second part)
-void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
+void SimpleStraightSkel::normalizeFacetPlanes(PolyhedronSPtr polyhedron)
 {
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
@@ -3322,6 +3322,77 @@ void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
         {
           Plane3SPtr normalized_plane = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
           facet->setPlane(normalized_plane);
+        }
+    }
+}
+
+// normalize coefficients and make sure that coplanar facets have the same coefficients (@todo for the second part)
+void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
+{
+    std::cout << "\n> harmonizeFacetPlanes()" << std::endl;
+
+    // @todo this needs to be rewritten to use kernel predicates to sort the planes
+    // Order all the supporting planes in a global order
+    // The order is completely arbitrary, the only thing that we care about
+    // is to quickly find which planes are identical
+
+    // @todo also harmonize parallel but non equal planes (including opposite directions)
+
+    // for now, abuse unordered containers because it's less code to write than above
+    struct FEqual
+    {
+        bool operator()(FacetSPtr facet_1, FacetSPtr facet_2) const {
+            Plane3SPtr plane_1 = facet_1->plane(); // calls initPlane() if needed
+            Plane3SPtr plane_2 = facet_2->plane();
+            std::cout << "facet #" << facet_1->getID() << " VS facet #" << facet_2->getID()
+                      << " --> " << (*plane_1 == *plane_2) << std::endl;
+            return CGAL::parallel(*plane_1, *plane_2);
+        }
+    };
+
+    struct FHash
+    {
+        std::size_t operator()(FacetSPtr facet) const {
+            return 1; // equality is only checked if the hash is the same
+        }
+    };
+
+    std::unordered_map<FacetSPtr, Plane3SPtr, FHash, FEqual> facet_coefficients;
+
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+
+        auto res = facet_coefficients.emplace(facet, Plane3SPtr{});
+        if(res.second) { // never seen this supporting plane before
+            Plane3SPtr plane = facet->plane(); // calls initPlane() if needed
+
+#ifdef USE_CGAL
+            const CGAL::FT a = plane->a();
+            const CGAL::FT b = plane->b();
+            const CGAL::FT c = plane->c();
+            const CGAL::FT d = plane->d();
+            // this should be the only place with unavoidable SQRTs
+            const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
+#else
+            const double a = plane->getA();
+            const double b = plane->getB();
+            const double c = plane->getC();
+            const double d = plane->getD();
+            const double n = sqrt(a*a + b*b + c*c);
+#endif
+
+            if(!is_zero(n))
+            {
+              Plane3SPtr normalized_plane = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
+              facet->setPlane(normalized_plane);
+            }
+        }
+        else {
+            std::cout << "Facet " << facet->getID() << " is reusing coefficients from Facet " << res.first->first->getID() << std::endl;
+
+            // plane already exists, use the same plane
+            facet->setPlane(res.first->second);
         }
     }
 }

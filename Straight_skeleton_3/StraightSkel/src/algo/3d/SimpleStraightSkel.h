@@ -215,7 +215,11 @@ public:
 
     /**
      * Normalize facet planes
-     * @todo also do the SLS2 harmonization
+    */
+    static void normalizeFacetPlanes(PolyhedronSPtr polyhedron);
+
+    /**
+     * Normalize facet planes, ensuring parallel facets receive the same plane coefficients.
     */
     static void harmonizeFacetPlanes(PolyhedronSPtr polyhedron);
 
