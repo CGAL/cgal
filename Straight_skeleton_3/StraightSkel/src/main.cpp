@@ -462,7 +462,9 @@ int main(int argc, const char* argv[]) {
             }
             thread_algo = algoskel3d->startThread();
         } else {
-            algoskel3d->run();
+            if (!algoskel3d->run()) {
+                return EXIT_FAILURE;
+            }
         }
     }
     if (window) {
