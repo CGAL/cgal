@@ -71,7 +71,9 @@ find_package(LASLIB)
 include(CGAL_LASLIB_support)
 if(TARGET CGAL::LASLIB_support)
   create_single_source_cgal_program("read_las_example.cpp")
+  create_single_source_cgal_program("write_las_example.cpp")
   target_link_libraries(read_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
+  target_link_libraries(write_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
 else()
   message(
     STATUS
