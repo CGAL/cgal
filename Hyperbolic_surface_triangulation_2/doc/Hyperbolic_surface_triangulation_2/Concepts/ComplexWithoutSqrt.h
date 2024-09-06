@@ -40,22 +40,22 @@ public:
   /// \name Get and set
   /// @{
   /*!
-    Sets the real part to <code> real_part </code>.
+    sets the real part to <code> real_part </code>.
   */
   void set_real_part(const FT& real_part);
 
   /*!
-    Sets the imaginary part to <code> imaginary_part </code>.
+    sets the imaginary part to <code> imaginary_part </code>.
   */
   void set_imaginary_part(const FT& imaginary_part);
 
   /*!
-    Returns the real part.
+    returns the real part.
   */
   FT real_part() const;
 
   /*!
-    Returns the imaginary part.
+    returns the imaginary part.
   */
   FT imaginary_part() const;
     /// @}
@@ -63,12 +63,12 @@ public:
   /// \name Operations
   /// @{
   /*!
-    Returns the square of the modulus.
+    returns the square of the modulus.
   */
   FT squared_modulus() const;
 
   /*!
-    Returns the conjugate.
+    returns the conjugate.
   */
   ComplexWithoutSqrt<FT> conjugate() const;
 
@@ -83,7 +83,7 @@ public:
   ComplexWithoutSqrt<FT> operator-(const ComplexWithoutSqrt<FT>& other) const;
 
   /*!
-    Returns the opposite.
+    returns the opposite.
   */
   ComplexWithoutSqrt<FT> operator-() const;
 
@@ -106,11 +106,11 @@ public:
   */
   bool operator!=(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<FT>& z2);
   /*!
-    Writes the complex in a stream.
+    writes the complex in a stream.
   */
   std::ostream& operator<<(std::ostream& s, const Complex_without_sqrt<FT>& z);
   /*!
-    Reads the complex from a stream.
+    reads the complex from a stream.
   */
   void operator>>(std::istream& s, Complex_without_sqrt<FT>& z);
   /// @}
