@@ -127,7 +127,7 @@ Also, the concept `ComplexWithoutSqrt` describes a complex number type that does
 \section Section_Hyperbolic_Surface_Triangulations_Example Example
 
 The example below generates a convex fundamental domain of a surface of genus two, triangulates the domain, applies the Delaunay flip algorithm to the resulting triangulation, saves and prints the Delaunay triangulation.
-\cgalExample{Hyperbolic_surface_triangulation_2/Hyperbolic_surface_triangulation.cpp}
+\cgalExample{Hyperbolic_surface_triangulation_2/hyperbolic_surface_triangulation.cpp}
 
 \section Section_Hyperbolic_Surface_Implementation_History Design and implementation history
 
