@@ -10,25 +10,22 @@
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
-
 #include <time.h>
 
 using namespace CGAL;
-
-typedef Simple_cartesian<Gmpq>                                                 Kernel;
-typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
-typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
-typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
-
+typedef Simple_cartesian<Gmpq>                                       Kernel;
+typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>           ParentTraits;
+typedef Hyperbolic_surface_traits_2<ParentTraits>                    Traits;
+typedef Hyperbolic_fundamental_domain_2<Traits>                      Domain;
+typedef Hyperbolic_fundamental_domain_factory_2<Traits>              Factory;
+typedef Hyperbolic_surface_triangulation_2<Traits>                   Triangulation;
 
 int main(){
   // Generates the domain:

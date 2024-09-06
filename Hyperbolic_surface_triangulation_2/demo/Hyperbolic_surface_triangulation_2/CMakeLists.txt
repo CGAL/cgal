@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1...3.15)
 
-project( Hyperbolic_surface_triangulation_2_Demo )
+project( Hyperbolic_surface_triangulation_2_demo )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -43,12 +43,12 @@ endif()
 # ui files, created with Qt Designer
 qt6_wrap_ui(UIS drawing_window_description.ui)
 
-add_executable( demo demo.cpp window.cpp ${UIS})
+add_executable( Hyperbolic_surface_triangulation_2_demo Hyperbolic_surface_triangulation_2_demo.cpp window.cpp ${UIS})
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS demo )
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_surface_triangulation_2_demo )
 
-target_link_libraries(demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets )
+target_link_libraries(Hyperbolic_surface_triangulation_2_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::Widgets )
 
 set(CMAKE_BUILD_TYPE "Release")
 
-target_include_directories(demo PRIVATE ../../include/)
+target_include_directories(Hyperbolic_surface_triangulation_2_demo PRIVATE ../../include/)

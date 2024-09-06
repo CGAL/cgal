@@ -193,7 +193,7 @@ public:
 
       \pre <code> is_valid() </code>
   */
-  void operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits>& triangulation);
+  std::istream& operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits>& triangulation);
   /// @}
 };
 
