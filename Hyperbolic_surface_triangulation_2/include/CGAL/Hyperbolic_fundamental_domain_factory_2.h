@@ -68,7 +68,7 @@ Hyperbolic_fundamental_domain_factory_2<Traits>::Hyperbolic_fundamental_domain_f
 
 template<class Traits>
 Hyperbolic_fundamental_domain_2<Traits> Hyperbolic_fundamental_domain_factory_2<Traits>::generate_domain_g2(){
- 
+
   bool is_domain_generated = false;
   _Cmplx exact_z0, exact_z1, exact_z2, exact_z3;
 

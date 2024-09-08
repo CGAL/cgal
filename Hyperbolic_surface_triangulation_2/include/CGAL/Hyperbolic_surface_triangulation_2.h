@@ -94,18 +94,18 @@ public:
   std::vector<std::tuple<Dart_const_handle,Point,Point,Point>> lift(bool center=true) const;
 
   bool is_valid() const;
-  
+
   //The following methods are not documented but they are non private for internal future use.
-  
+
   Dart_handle ccw(Dart_handle dart);
   Dart_handle cw(Dart_handle dart);
   Dart_handle opposite(Dart_handle dart);
   Dart_const_handle const_ccw(Dart_const_handle dart) const;
   Dart_const_handle const_cw(Dart_const_handle dart) const;
   Dart_const_handle const_opposite(Dart_const_handle dart) const;
-  
+
   Complex_number get_cross_ratio(Dart_const_handle dart) const;
-  
+
   // Returns the cross ratio of the points a,b,c,d
   Complex_number cross_ratio(const Point& a, const Point& b, const Point& c, const Point& d) const;
   // Returns the point d such that the cross ratio of a,b,c,d is cratio
