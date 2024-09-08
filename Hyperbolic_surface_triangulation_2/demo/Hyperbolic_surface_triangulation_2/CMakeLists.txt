@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1...3.15)
 
-project( Hyperbolic_surface_triangulation_2_demo )
+project( Hyperbolic_surface_triangulation_2_Demo )
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
