@@ -8,7 +8,7 @@
 #include <time.h>
 
 using namespace CGAL;
-typedef Simple_cartesian<Gmpq>                                       Kernel;
+typedef Simple_cartesian<CGAL::Exact_rational>                       Kernel;
 typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>           ParentTraits;
 typedef Hyperbolic_surface_traits_2<ParentTraits>                    Traits;
 typedef Hyperbolic_fundamental_domain_2<Traits>                      Domain;
