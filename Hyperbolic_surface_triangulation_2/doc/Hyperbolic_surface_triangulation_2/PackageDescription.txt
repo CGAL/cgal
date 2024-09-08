@@ -51,6 +51,6 @@
 
 - `CGAL::Hyperbolic_isometry_2` represents an isometry in the Poincaré disk model. Facilities are offered to compose isometries, and apply an isometry to a point.
 
-Models for `HyperbolicSurfacesTraits_2` and `ComplexWithoutSqrt` are provided : `CGAL::Hyperbolic_surface_traits_2` and `CGAL::Complex_without_sqrt`.
+Models for `HyperbolicSurfacesTraits_2` and `ComplexWithoutSqrt` are provided: `CGAL::Hyperbolic_surface_traits_2` and `CGAL::Complex_without_sqrt`.
 
 */

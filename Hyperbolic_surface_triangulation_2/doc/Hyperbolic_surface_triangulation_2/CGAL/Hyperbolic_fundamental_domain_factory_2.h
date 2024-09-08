@@ -5,7 +5,7 @@ namespace CGAL{
 
 Factory class, whose purpose is to generate some convex domains of surfaces of genus two.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 */
 template<class Traits>
 class Hyperbolic_fundamental_domain_factory_2{

@@ -24,7 +24,7 @@ A triangulation of a surface can be generated from a convex fundamental domain o
 We assume some familiarity with basic notions from covering space theory, and from the theory of hyperbolic surfaces.
 The <b>Poincaré disk</b> \f$ \mathbb{D} \f$ is a model of the hyperbolic plane whose point set is the open unit disk of the complex plane \f$ \mathbb{C} \f$.
 In this package, every hyperbolic surface \f$ S \f$ is closed (compact, and without boundary) and orientable: this is without further mention.
-The Poincaré disk \f$ \mathbb{D} \f$ is a universal covering space for \f$ S \f$, whose projection map \f$ \pi : \mathbb{D} \to S \f$ is a (local) isometry.
+The Poincaré disk \f$ \mathbb{D} \f$ is a universal covering space for \f$ S \f$, whose projection map \f$ \pi: \mathbb{D} \to S \f$ is a (local) isometry.
 The pre-image set \f$ \pi^{-1}(x) \f$ of a point \f$ x \in S \f$ is infinite, its points are the <b>lifts</b> of \f$ x \f$.
 We usually denote by \f$ \widetilde x \f$ a lift of \f$ x \f$.
 Paths and triangulations of \f$ S \f$ can also be lifted in \f$ \mathbb{D} \f$.
