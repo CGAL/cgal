@@ -32,9 +32,9 @@ public:
     Constructor from vertices and side pairings interators.
   */
    Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
-				  typename std::vector<Point>::iterator vlast,
-				  typename std::vector<int>::iterator pfirst,
-				  typename std::vector<int>::iterator plast);
+                                  typename std::vector<Point>::iterator vlast,
+                                  typename std::vector<int>::iterator pfirst,
+                                  typename std::vector<int>::iterator plast);
   /// @}
 
   /// \name Access functions

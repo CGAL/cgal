@@ -39,10 +39,10 @@ public:
   Hyperbolic_fundamental_domain_2();
 
   Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
-				  typename std::vector<Point>::iterator vlast,
-				  typename std::vector<int>::iterator pfirst,
-				  typename std::vector<int>::iterator plast);
-  
+                                  typename std::vector<Point>::iterator vlast,
+                                  typename std::vector<int>::iterator pfirst,
+                                  typename std::vector<int>::iterator plast);
+
   int size() const; // Returns the number of vertices (equivalently, the number of sides)
   const Point& vertex(int index) const; // Returns the index-th vertex
   int paired_side(int index) const; // Returns the index of the side paired to side A, where A is the index-th side
@@ -72,9 +72,9 @@ template<class Traits>
 
 template<class Traits>
   Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
-					       typename std::vector<Point>::iterator vlast,
-					       typename std::vector<int>::iterator pfirst,
-					       typename std::vector<int>::iterator plast){
+                                               typename std::vector<Point>::iterator vlast,
+                                               typename std::vector<int>::iterator pfirst,
+                                               typename std::vector<int>::iterator plast){
   _vertices = std::vector<Point>(vfirst, vlast);
   _pairings = std::vector<int>(pfirst, plast);
  }
@@ -139,7 +139,7 @@ std::istream& Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream&
   int size = std::stoi(line);
   _vertices.reserve(size);
   _pairings.reserve(size);
-  
+
   for (int k=0; k<size; k++){
     s >> line;
     _pairings.push_back(std::stoi(line));
