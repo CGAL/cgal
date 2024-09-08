@@ -88,25 +88,25 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
     auto sm_efeature_pmap = boost::make_assoc_property_map(sm_efeature_map);
 
     // Try building a surface_mesh
-    SMesh* SM = new SMesh();
-    ok = CGAL::IO::read_OM((const char*)fileinfo.filePath().toUtf8(), *SM, sm_vfeature_pmap, sm_efeature_pmap);
+    SMesh* sm = new SMesh();
+    ok = CGAL::IO::read_OM((const char*)fileinfo.filePath().toUtf8(), *sm, sm_vfeature_pmap, sm_efeature_pmap);
 
-    if(!ok || !SM->is_valid() || SM->is_empty()){
+    if(!ok || !sm->is_valid() || sm->is_empty()){
       std::cerr << "Error: Invalid facegraph" << std::endl;
     }
     else{
-      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(SM);
+      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(sm);
 
       Scene_polyhedron_selection_item* selection_item = new Scene_polyhedron_selection_item(item, CGAL::Three::Three::mainWindow());
       bool eselected = false;
       bool vselected = false;
-      for(auto v : vertices(*SM)){
+      for(auto v : vertices(*sm)){
         if(get(sm_vfeature_pmap, v)){
           selection_item->selected_vertices.insert(v);
           vselected = true;
         }
       }
-      for(auto e : edges(*SM)){
+      for(auto e : edges(*sm)){
         if(get(sm_efeature_pmap, e)){
           selection_item->selected_edges.insert(e);
           eselected = true;
