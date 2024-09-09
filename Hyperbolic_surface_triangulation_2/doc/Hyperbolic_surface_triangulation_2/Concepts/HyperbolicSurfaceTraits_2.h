@@ -8,7 +8,7 @@
 \cgalHasModels{CGAL::Hyperbolic_surface_traits_2}
 \cgalHasModelsEnd
 */
-class HyperbolicSurfacesTraits_2 {
+class HyperbolicSurfaceTraits_2 {
 public:
   /// \name Types
   /// @{

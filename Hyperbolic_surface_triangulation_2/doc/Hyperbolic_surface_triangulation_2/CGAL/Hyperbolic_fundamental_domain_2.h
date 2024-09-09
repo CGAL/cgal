@@ -9,7 +9,7 @@ together with a pairing of the sides of \f$ P \f$.
 The \f$ n \f$-th side of \f$ P \f$ is the side between the \f$ n \f$-th and the \f$ (n+1) \f$-th vertex, where indices are modulo the number of vertices of \f$ P \f$.
 The sides pairing are represented by a list of integers, such that if the \f$ n \f$-th integer of the list is \f$ m \f$, then the \f$ n \f$-th side is paired to the \f$ m \f$-th side.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model: `Hyperbolic_surface_traits_2`).
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 */
 template<class Traits>
 class Hyperbolic_fundamental_domain_2 {
