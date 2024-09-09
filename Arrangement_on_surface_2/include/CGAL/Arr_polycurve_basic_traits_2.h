@@ -675,24 +675,20 @@ public:
                      ((ce1 == ARR_MIN_END) && (ps_x1 != ARR_RIGHT_BOUNDARY)));
 
       if (ps_x1 == ARR_INTERIOR) {
+        auto p = (ce1 == ARR_MAX_END) ? max_vertex(xs1) : min_vertex(xs1);
         if (ps_y1 == ARR_TOP_BOUNDARY) {
           auto equal = geom_traits->equal_2_object();
-          auto p = (ce1 == ARR_MAX_END) ?
-            max_vertex(xs1) : min_vertex(xs1);
           if (equal(p, max_vertex(xs2))) return EQUAL;
           if (equal(p, min_vertex(xs2))) return EQUAL;
           return LARGER;
         }
         if (ps_y1 == ARR_BOTTOM_BOUNDARY) {
           auto equal = geom_traits->equal_2_object();
-          auto p = (ce1 == ARR_MAX_END) ?
-            max_vertex(xs1) : min_vertex(xs1);
           if (equal(p, max_vertex(xs2))) return EQUAL;
           if (equal(p, min_vertex(xs2))) return EQUAL;
           return SMALLER;
         }
         // ps_y1 == ARR_INTERIOR
-        auto p = (ce1 == ARR_MAX_END) ? max_vertex(xs1) : min_vertex(xs1);
         return geom_traits->compare_y_at_x_2_object()(p, xs2);
       }
       // ps_x1 == ARR_RIGHT_BOUNDARY || ARR_LEFT_BOUNDARY
