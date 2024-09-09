@@ -9,7 +9,7 @@ so that \f$ f(z) = (c_0 z + c_1) / (c_2 z + c_3) \f$ holds on every complex \f$ 
 
 Facilities are offered to compose isometries, and apply an isometry to a point.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model: `Hyperbolic_surface_traits_2`).
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 */
 template<class Traits>
 class Hyperbolic_isometry_2{
@@ -39,7 +39,7 @@ class Hyperbolic_isometry_2{
     void set_to_identity();
 
     /*!
-      can be used to set the coefficients of the isometry manually. \note  Be
+      sets the coefficients of the isometry manually. \note  Be
       careful when doing so: the implementation does not check that the
       resulting Möbius transform fixes the unit circle.
 
@@ -47,7 +47,7 @@ class Hyperbolic_isometry_2{
     void set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3);
 
     /*!
-      can be used to set one coefficient of the isometry manually. \note  Be
+      sets a particular coefficient of the isometry manually. \note  Be
       careful when doing so: the implementation does not check that the
       resulting Möbius transform fixes the unit circle.
 

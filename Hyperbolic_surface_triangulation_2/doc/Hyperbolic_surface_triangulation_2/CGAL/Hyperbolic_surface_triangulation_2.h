@@ -7,7 +7,7 @@ namespace CGAL{
 This item defines attributes of edges that are
 `Complex_without_sqrt` reprensenting cross-ratios.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model: `Hyperbolic_surface_traits_2`).
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 
 \cgalModels{GenericMapItems}
 */
@@ -29,7 +29,7 @@ Represents a triangulation of a closed orientable hyperbolic surface.
 Offers facilities such as the generation of the triangulation from a convex fundamental domain,
 the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model: `Hyperbolic_surface_traits_2`).
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 
 \tparam Attributes must be a model of `GenericMapItems` (default model: `Combinatorial_map_with_cross_ratios_item<Traits>`).
 */
@@ -126,7 +126,7 @@ public:
 
       \pre <code> is_valid() </code>
   */
-  bool is_delaunay_flippable(Dart_handle dart) const;
+  bool is_Delaunay_flippable(Dart_handle dart) const;
 
   /*!
       flips the edge supported by the dart.
@@ -138,14 +138,14 @@ public:
   /*!
       determines if the triangulation is a valid Delaunay triangulation.
   */
-  bool is_delaunay() const;
+  bool is_Delaunay() const;
 
   /*!
       applies the Delaunay flip algorithm: flips Delaunay flippable edges until there is no such edge anymore.
 
       \pre <code> is_valid() </code>
   */
-  int make_delaunay();
+  int make_Delaunay();
   /// @}
 
   /// \name Lifting

@@ -38,7 +38,7 @@ int main(int argc, char** argv){
   Factory factory = Factory(time(NULL));
   Domain domain = factory.generate_domain_g2();
   Triangulation triangulation = Triangulation(domain);
-  triangulation.make_delaunay();
+  triangulation.make_Delaunay();
 
   // 2. Draw the triangulation
   QApplication app(argc, argv);
