@@ -114,7 +114,7 @@ Hyperbolic_fundamental_domain_2<Traits> Hyperbolic_fundamental_domain_factory_2<
     pairings.push_back((k+4)%8);
   }
 
-  Hyperbolic_fundamental_domain_2<Traits> domain(vertices.begin(), vertices.end(), pairings.begin(), pairings.end());
+  Hyperbolic_fundamental_domain_2<Traits> domain(vertices, pairings);
   return domain;
 }
 

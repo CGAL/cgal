@@ -38,7 +38,7 @@ Domain build_domain(){
     pairings.push_back((k+4)%8);
   }
 
-  return Domain(vertices.begin(),vertices.end(), pairings.begin(),pairings.end());
+  return Domain(vertices, pairings);
 }
 
 int main() {

@@ -83,7 +83,7 @@ public:
   Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
   Anchor& anchor();
-
+ 
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
 

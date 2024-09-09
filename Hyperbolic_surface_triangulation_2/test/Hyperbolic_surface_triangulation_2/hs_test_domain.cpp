@@ -43,7 +43,7 @@ int main() {
     pairings.push_back((k+4)%8);
   }
 
-  Domain domain = Domain(vertices.begin(),vertices.end(),pairings.begin(),pairings.end());
+  Domain domain = Domain(vertices, pairings);
   assert( domain.size()==8 );
   for (int k=0; k<8; k++){
     assert( domain.vertex(k)==vertices[k] );
@@ -55,7 +55,7 @@ int main() {
 
   assert( domain.is_valid() );
 
-  Domain domain_prime = Domain(vertices.begin(),vertices.end(),pairings.begin(),pairings.end());;
+  Domain domain_prime = Domain(vertices, pairings);
   assert( domain_prime.size()==8 );
   for (int k=0; k<8; k++){
     assert( domain_prime.vertex(k)==vertices[k]);

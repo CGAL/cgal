@@ -38,11 +38,15 @@ public:
 
   Hyperbolic_fundamental_domain_2();
 
-  Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
-                                  typename std::vector<Point>::iterator vlast,
-                                  typename std::vector<int>::iterator pfirst,
-                                  typename std::vector<int>::iterator plast);
-
+  /* template<class PointRange, class PairingRange>  */
+  /*   Hyperbolic_fundamental_domain_2(PointRange vertices, */
+  /*                                   PairingRange pairings); */
+  template<class PointRange, class PairingRange> 
+    Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings){
+      _vertices = std::vector<Point>(vertices.begin(), vertices.end());
+      _pairings = std::vector<int>(pairings.begin(), pairings.end());
+  }
+ 
   int size() const; // Returns the number of vertices (equivalently, the number of sides)
   const Point& vertex(int index) const; // Returns the index-th vertex
   int paired_side(int index) const; // Returns the index of the side paired to side A, where A is the index-th side
@@ -70,14 +74,11 @@ template<class Traits> std::istream& operator>>(std::istream& s, Hyperbolic_fund
 template<class Traits>
   Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(){}
 
-template<class Traits>
-  Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
-                                               typename std::vector<Point>::iterator vlast,
-                                               typename std::vector<int>::iterator pfirst,
-                                               typename std::vector<int>::iterator plast){
-  _vertices = std::vector<Point>(vfirst, vlast);
-  _pairings = std::vector<int>(pfirst, plast);
- }
+/* template<class Traits, class PointRange, class PairingRange>  */
+/*   Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings){ */
+/*   _vertices = std::vector<Point>(vertices.begin(), vertices.end()); */
+/*   _pairings = std::vector<int>(pairings.begin(), pairings.end()); */
+/* } */
 
 ////////////////////////////////////////////////////////////////////////////////
 

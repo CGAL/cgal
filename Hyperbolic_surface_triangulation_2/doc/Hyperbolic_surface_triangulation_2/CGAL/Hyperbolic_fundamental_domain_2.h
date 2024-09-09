@@ -7,7 +7,7 @@ Represents a fundamental domain of a closed orientable hyperbolic surface.
 The domain is given as a polygon \f$ P  \f$ represented by the list of its vertices in the Poincaré disk model,
 together with a pairing of the sides of \f$ P \f$.
 The \f$ n \f$-th side of \f$ P \f$ is the side between the \f$ n \f$-th and the \f$ (n+1) \f$-th vertex, where indices are modulo the number of vertices of \f$ P \f$.
-The sides pairing are represented by a list of integers, such that if the \f$ n \f$-th integer of the list is \f$ m \f$, then the \f$ n \f$-th side is paired to the \f$ m \f$-th side.
+The side pairings are represented by a list of integers, such that if the \f$ n \f$-th integer of the list is \f$ m \f$, then the \f$ n \f$-th side is paired to the \f$ m \f$-th side.
 
 \tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 */
@@ -29,12 +29,12 @@ public:
   Hyperbolic_fundamental_domain_2();
 
   /*!
-    Constructor from vertices and side pairings interators.
+    Constructor from vertices and pairings ranges. 
+    @tparam PointRange a model of the concepts `RandomAccessContainer` whose `value_type` is Point.
+    @tparam PairingRange a model of the concepts `RandomAccessContainer` whose `value_type` is int.
   */
-   Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
-                                  typename std::vector<Point>::iterator vlast,
-                                  typename std::vector<int>::iterator pfirst,
-                                  typename std::vector<int>::iterator plast);
+     template<class PointRange, class PairingRange> 
+       Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings);
   /// @}
 
   /// \name Access functions
