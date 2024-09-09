@@ -26,6 +26,7 @@
 
 #include <iterator>
 #include <type_traits>
+#include <tuple>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -1613,7 +1614,7 @@ public:
       auto cmp_x_on_boundary = geom_traits->compare_x_on_boundary_2_object();
 
       size_type index = this->get_curve_index(xcv, ce);
-      return cmp_x_on_boundary(p, xcv[index], ce );
+      return cmp_x_on_boundary(p, xcv[index], ce);
     }
 
     /*! Given two x-monotone curves C1(t) = (X1(t),Y1(t)) and
@@ -1643,7 +1644,7 @@ public:
                                  Arr_curve_end ce2/*! for xseg */) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_x_on_boundary = geom_traits->compare_x_on_boundary_2_object();
-      size_type index = this->get_curve_index(xcv, ce1 );
+      size_type index = this->get_curve_index(xcv, ce1);
       return cmp_x_on_boundary(xcv[index], ce1, xseg, ce2);
     }
   };
@@ -1927,7 +1928,7 @@ public:
 
   private:
     // Oblivious implementation
-    template<typename>
+    template <typename>
     void push_back_2_impl(X_monotone_curve_2& xcv,
                           const X_monotone_subcurve_2& seg,
                           Arr_all_sides_oblivious_tag) const {
@@ -2028,7 +2029,7 @@ public:
                                 ((max_x_cv == ARR_INTERIOR) &&
                                  (max_y_cv == ARR_INTERIOR))),
                                "Polycurve reaches the boundary to the right."
-                               "Can not push back any subcurve further." );
+                               "Can not push back any subcurve further.");
 
          // A subcurve should not be pushed if the polycurve is directed to
          // the left and reaches the boundary.
@@ -2036,7 +2037,7 @@ public:
                                 ((min_x_cv == ARR_INTERIOR) &&
                                  (min_y_cv == ARR_INTERIOR))),
                                "Polycurve reaches the boundary to the left."
-                               "Can not push back any subcurve further." );
+                               "Can not push back any subcurve further.");
 
          // Something like a line should not be pushed if there is already a
          // subcurve present in the polycurve.
@@ -2044,7 +2045,7 @@ public:
                                  (min_y_seg == ARR_INTERIOR)) ||
                                 ((max_x_seg == ARR_INTERIOR) &&
                                  (max_y_seg == ARR_INTERIOR)) ||
-                                (num_seg == 0) ),
+                                (num_seg == 0)),
                                "Subcurve reaching the boundary at both ends "
                                "can not be pushed if there is already one or "
                                "more subcurves present in the polycurve.");
@@ -2065,7 +2066,7 @@ public:
                                  "Seg does not connect to the right!");
          }
 
-         if ((max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR) ) {
+         if ((max_x_seg == ARR_INTERIOR) && (max_y_seg == ARR_INTERIOR)) {
            CGAL_precondition_msg((num_seg == 0) ||
                                  (((dir != LARGER) ||
                                    equal(get_min_v(xcv[num_seg-1]),
@@ -2107,7 +2108,7 @@ public:
 
   private:
     // Oblivious implementation
-    template<typename>
+    template <typename>
     void push_front_2_impl(X_monotone_curve_2& xcv,
                            const X_monotone_subcurve_2& seg,
                            Arr_all_sides_oblivious_tag) const {
@@ -2273,29 +2274,21 @@ public:
        * since the direction of the poly-line/curve should not be changed.
        * we will interchange the source and the target.
        */
-      Point_2 src = source;
-      Point_2 trg = target;
 
-      // If curve is oriented from right to left but points are left to right.
-      if (m_poly_traits.compare_endpoints_xy_2_object()(xcv) == LARGER &&
-          m_poly_traits.compare_x_2_object()(source, target) == SMALLER) {
-        src = target;
-        trg = source;
-      }
-
-      /* If curve is oriented from left to right but points are from right
-       * to left.
+      /* If the curve is oriented from right to left but points are left to
+       * right or if the curve is oriented from left to right but points are
+       * from right to left, reverse.
        */
-      else if (m_poly_traits.compare_endpoints_xy_2_object()(xcv) == SMALLER &&
-               m_poly_traits.compare_x_2_object()(source, target) == LARGER) {
-        src = target;
-        trg = source;
-      }
+      auto [src, trg] =
+        (((m_poly_traits.compare_endpoints_xy_2_object()(xcv) == LARGER) &&
+          (m_poly_traits.compare_x_2_object()(source, target) == SMALLER)) ||
+         ((m_poly_traits.compare_endpoints_xy_2_object()(xcv) == SMALLER) &&
+          (m_poly_traits.compare_x_2_object()(source, target) == LARGER))) ?
+        std::make_tuple(target, source) : std::make_tuple(source, target);
 
       // std::cout << "**************the new source: " << source
       //           << "the new target: " << target << std::endl;
-      /*
-       * Get the source and target subcurve numbers from the polycurve.
+      /* Get the source and target subcurve numbers from the polycurve.
        * The trimmed polycurve will have trimmed end subcurves(containing
        * source and target) along with complete
        * subcurves in between them.
@@ -2319,24 +2312,22 @@ public:
       //push the trimmed version of the source subcurve.
       // if(sorientation == SMALLER && source != src_max_vertex)
       if ((orientation == SMALLER) &&
-          ! geom_traits->equal_2_object()(src, src_max_vertex) )
-      {
-        if (src_id != trg_id )
+          ! geom_traits->equal_2_object()(src, src_max_vertex)) {
+        if (src_id != trg_id)
           trimmed_subcurves.push_back(trim(xcv[src_id], src, src_max_vertex));
         else trimmed_subcurves.push_back(trim(xcv[src_id], src, trg));
       }
       //else if(orientation == LARGER && source != src_min_vertex)
       else if ((orientation == LARGER) &&
-               ! geom_traits->equal_2_object()(src, src_min_vertex))
-      {
-        if (src_id != trg_id )
+               ! geom_traits->equal_2_object()(src, src_min_vertex)) {
+        if (src_id != trg_id)
           trimmed_subcurves.push_back(trim(xcv[src_id], src, src_min_vertex));
         else trimmed_subcurves.push_back(trim(xcv[src_id], src, trg));
       }
 
       //push the middle subcurves as they are.
-      for (size_t i = src_id+1; i<trg_id; ++i)
-        trimmed_subcurves.push_back(xcv[i] );
+      for (size_t i = src_id+1; i < trg_id; ++i)
+        trimmed_subcurves.push_back(xcv[i]);
 
       //push the appropriately trimmed target subcurve.
       if (src_id != trg_id) {
@@ -2403,12 +2394,10 @@ protected:
     // Perform a binary search to locate the subcurve that contains q in its
     // range:
     while (((direction == SMALLER) && (to > from)) ||
-           ((direction == LARGER) && (to < from)))
-    {
+           ((direction == LARGER) && (to < from))) {
       std::size_t mid = (from + to) / 2;
       if (((direction == SMALLER) && (mid > from)) ||
-          ((direction == LARGER) && (mid < from)))
-      {
+          ((direction == LARGER) && (mid < from))) {
         Comparison_result res_mid = compare(cv[mid], ARR_MIN_END);
         if (res_mid == EQUAL) {
           // Ensure that the returned subcurve contains the query point
@@ -2600,12 +2589,12 @@ protected:
       Comparison_result res = cmp_x(min_vertex(xcv[0]), q);
       if (res != EQUAL) return INVALID_INDEX;
 
-      Compare_points<Compare_xy_2>compare(*geom_traits,
+      Compare_points<Compare_xy_2> compare(*geom_traits,
                                            compare_xy_2_object(), q);
       return locate_gen(xcv, compare);
     }
 
-    Compare_points<Compare_x_2>compare(*geom_traits, compare_x_2_object(), q);
+    Compare_points<Compare_x_2> compare(*geom_traits, compare_x_2_object(), q);
     return locate_gen(xcv, compare);
   }
 
