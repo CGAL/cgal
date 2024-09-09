@@ -997,7 +997,7 @@ public:
             else return false;
           }
           else if (LARGER == res_x) {
-            Comparison_result res_y_at_x = cmp_y_at_x(point2,cv1[cv1_seg_ind]);
+            Comparison_result res_y_at_x = cmp_y_at_x(point2, cv1[cv1_seg_ind]);
             if (EQUAL == res_y_at_x) ++j;
             else return false;
           }
@@ -2525,9 +2525,9 @@ protected:
    * of a curve.
    * This implementation is used in the case where all sides of the parameter
    * space is oblivious.
-   * \param xcv (in) the given polycurve.
-   * \param xs (in) the given curve.
-   * \param cd (in) the curve-end indicator.
+   * \param(in) xcv the given polycurve.
+   * \param(in) xs the given curve.
+   * \param(in) cd the curve-end indicator.
    */
   std::size_t locate_impl(const X_monotone_curve_2& xcv,
                           const X_monotone_subcurve_2& xs,
@@ -2540,12 +2540,11 @@ protected:
     return locate(xcv, p);
   }
 
-  /*! Locate the index of a curve in a polycurve that contains an endpoint
-   * of a curve.
+  /*! Locate the index of a curve in a polycurve that contains a point.
    * This implementation is used in the case where at least one side of the
    * parameter space is not oblivious.
    * \param(in) xcv the given polycurve.
-   * \param(in) p the endpoint of a curve.
+   * \param(in) p the query point.
    */
   std::size_t locate_impl(const X_monotone_curve_2& xcv,
                           const Point_2& p,
@@ -2568,12 +2567,11 @@ protected:
     return locate_gen(xcv, compare);
   }
 
-  /*! Locate the index of a curve in a polycurve that contains an endpoint
-   * of a curve.
+  /*! Locate the index of a curve in a polycurve that contains a point.
    * This implementation is used in the case where all sides of the parameter
-   * space is oblivious.
+   * space are oblivious.
    * \param(in) xcv the given polycurve.
-   * \param(in) p the endpoint of a curve.
+   * \param(in) p the query point.
    */
   std::size_t locate_impl(const X_monotone_curve_2& xcv, const Point_2& p,
                           Arr_all_sides_oblivious_tag) const
