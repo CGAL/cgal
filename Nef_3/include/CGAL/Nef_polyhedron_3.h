@@ -901,10 +901,11 @@ protected:
 
       Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
       int nov, nof;
+      bool hh;
 
     public:
       Find_holes(Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_)
-        : omit_vertex(omit_vertex_), nov(0), nof(0) {}
+        : omit_vertex(omit_vertex_), nov(0), nof(0), hh(false) {}
 
       void visit(Halffacet_const_handle f) {
         ++nof;
@@ -917,10 +918,11 @@ protected:
             CGAL_For_all(sfc, send) {
               omit_vertex[sfc->source()->source()] = true;
               --nov;
+            hh=true;
             }
           } else if(fc.is_shalfloop()) {
             SHalfloop_const_handle sl(fc);
-            omit_vertex[sl->incident_sface()->center_vertex()];
+            omit_vertex[sl->incident_sface()->center_vertex()] = true;
             --nov;
           } else
             CGAL_error_msg( "wrong handle type");
@@ -935,6 +937,63 @@ protected:
 
       int number_of_vertices() const {
         return nov;
+      }
+
+      int number_of_facets() const {
+        return nof;
+      }
+
+      bool holes_detected() const {
+        return hh;
+      }
+    };
+
+    class Nested_holes {
+
+      Unique_hash_map<Vertex_const_handle, bool>& omit_vertex;
+      int norv, nof;
+
+    public:
+      Nested_holes(Unique_hash_map<Vertex_const_handle, bool>& omit_vertex_)
+        : omit_vertex(omit_vertex_), norv(0), nof(0) {}
+
+      void visit(Halffacet_const_handle f) {
+        Halffacet_cycle_const_iterator fc = f->facet_cycles_begin();
+        CGAL_assertion(fc.is_shalfedge());
+
+        SHalfedge_around_facet_const_circulator sfc(fc), send(sfc);
+        bool all_in=true;
+        bool all_out=true;
+        CGAL_For_all(sfc, send) {
+          if (omit_vertex[sfc->source()->source()])
+            all_in=false;
+          else
+            all_out=false;
+        }
+        if (!all_in && !all_out)
+        {
+          SHalfedge_around_facet_const_circulator sfc(fc), send(sfc);
+          ++nof;
+          CGAL_For_all(sfc, send) {
+            if (!omit_vertex[sfc->source()->source()])
+            {
+              omit_vertex[sfc->source()->source()]=true;
+              ++norv;
+            }
+          }
+        }
+        if (all_in)
+          ++nof;
+      }
+
+      void visit(Vertex_const_handle) {}
+      void visit(SFace_const_handle) {}
+      void visit(Halfedge_const_handle) {}
+      void visit(SHalfedge_const_handle) {}
+      void visit(SHalfloop_const_handle) {}
+
+      int number_of_removed_vertices() const {
+        return norv;
       }
 
       int number_of_facets() const {
@@ -998,14 +1057,19 @@ protected:
         se = SHalfedge_const_handle(fc);
         CGAL_assertion(se!=0);
         if(omit_vertex[se->source()->source()]) return;
-        B.begin_facet();
+
         SHalfedge_around_facet_const_circulator hc_start(se);
         SHalfedge_around_facet_const_circulator hc_end(hc_start);
+        std::vector<std::size_t> vids;
         CGAL_For_all(hc_start,hc_end) {
-          CGAL_NEF_TRACEN("   add vertex " << hc_start->source()->center_vertex()->point());
-          B.add_vertex_to_facet(VI[hc_start->source()->center_vertex()]);
+          if (omit_vertex[hc_start->source()->center_vertex()])
+          {
+            std::cout << "issue with " << se->source()->source()->point() << "\n";
+            return;
+          }
+          vids.push_back(VI[hc_start->source()->center_vertex()]);
         }
-        B.end_facet();
+        B.add_facet (vids.begin(), vids.end());
       }
 
       void visit(SFace_const_handle) {}
@@ -1030,11 +1094,29 @@ protected:
 
       Polyhedron_incremental_builder_3<HDS> B(hds, true);
 
+      // first mark vertices of holes of each halffacet as omitted.
       Find_holes F(omit_vertex);
       scd.visit_shell_objects(sf, F);
+      std::size_t nb_v = F.number_of_vertices();
+      std::size_t nb_f = F.number_of_facets();
 
-      B.begin_surface(F.number_of_vertices(),
-                      F.number_of_facets(),
+      // then if a halffacet contains a vertex marked as omitted, all its vertices
+      // must be marked as such
+      if (F.holes_detected())
+      {
+        while(true)
+        {
+          Nested_holes F2(omit_vertex);
+          scd.visit_shell_objects(sf, F2);
+          if (F2.number_of_removed_vertices()==0) break;
+          nb_v-=F2.number_of_removed_vertices();
+          nb_f=F2.number_of_facets();
+        }
+      }
+
+
+      B.begin_surface(nb_v,
+                      nb_f,
                       F.number_of_vertices()+F.number_of_facets()-2);
 
       Add_vertices A(B,omit_vertex, VI);

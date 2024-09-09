@@ -74,7 +74,7 @@ Scene_textured_surface_mesh_item_priv::compute_normals_and_vertices(void) const
   faces_buffer.resize(0);
 
   typedef boost::graph_traits<SMesh>::face_iterator face_iterator;
-  typedef boost::graph_traits<SMesh>::face_iterator face_iterator;
+
   const CGAL::qglviewer::Vec offset = static_cast<CGAL::Three::Viewer_interface*>(CGAL::QGLViewer::QGLViewerPool().first())->offset();
 
   //Faces

@@ -26,6 +26,7 @@ creationpath = args.creationpath
 
 doxystring = \
 r"""@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
+
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Put title of project here"
 """
 
