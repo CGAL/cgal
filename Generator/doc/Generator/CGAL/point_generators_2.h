@@ -30,7 +30,6 @@ are needed from `rnd` for each point.
 \sa `CGAL::points_on_segment_2()`
 \sa `CGAL::points_on_square_grid_2()`
 \sa `CGAL::random_selection()`
-\sa `CGAL::random_selection()`
 \sa `std::random_shuffle()`
 
 */
