@@ -19,6 +19,7 @@
 #include <iostream>
 #include <iterator>
 #include <CGAL/assertions.h>
+#include <CGAL/Dimension.h>
 
 namespace CGAL {
 namespace Impl {
@@ -122,9 +123,12 @@ protected:
 
 }
 
+template <typename Di, typename T>
+class Bbox;
+
 // A fixed D-dimensional axis aligned box
-template<unsigned int N, typename T>
-class Bbox : public Impl::Bbox<std::array<T, N>, Bbox<N,T>>
+template<int N, typename T>
+class Bbox<Dimension_tag<N>, T> : public Impl::Bbox<std::array<T, N>, Bbox<Dimension_tag<N>,T>>
 {
     enum { D = N };
 public:
@@ -137,7 +141,7 @@ public:
 
 // A dynamic D-dimensional axis aligned box
 template<typename T>
-class Bbox<0,T> : public Impl::Bbox<std::vector<T>, Bbox<0,T>>
+class Bbox<Dynamic_dimension_tag,T> : public Impl::Bbox<std::vector<T>, Bbox<Dynamic_dimension_tag,T>>
 {
 public:
     inline int dimension() const { return this->min_values.size(); }
