@@ -28,5 +28,5 @@ int main(int argc, char* argv[])
             << "Number of constrained facets in the CDT: "
             << cdt.number_of_constrained_facets() << '\n';
 
-  // CGAL::draw(cdt.triangulation());
+  CGAL::draw(cdt.triangulation());
 }
