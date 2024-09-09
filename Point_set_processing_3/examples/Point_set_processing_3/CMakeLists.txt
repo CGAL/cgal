@@ -145,11 +145,11 @@ if(TARGET CGAL::Eigen3_support)
         STATUS
           "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled."
       )
-    endif()    
+    endif()
   else()
       message(
         STATUS
-          "NOTICE : your compiler does not support OpenGR, registration_with_OpenGR will not be compiled."
+          "NOTICE : OpenGR does not support your compiler, registration_with_OpenGR will not be compiled."
       )
   endif()
 else()
