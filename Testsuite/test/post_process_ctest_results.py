@@ -57,6 +57,7 @@ def mark_package_as_missing_requirements(global_report_file_name, name):
         print(f"Error opening global report file {global_report_file_name}: {e}")
 
 def handle_end_of_package(package_name, report_file_name, lines_to_write):
+    """Handle the end of a package by inserting the lines to write into the report file."""
     if not lines_to_write:
         return
 
@@ -79,6 +80,7 @@ def handle_end_of_package(package_name, report_file_name, lines_to_write):
 SCM_BRANCH_FILE_CONTENT = read_file_lines(f"{os.getcwd()}/../../../../../.scm-branch")
 
 def handle_new_package__is_ignored(name, report_file_name, cmake_logs):
+    """Handle new package creation or update logs if package already exists."""
     if not os.path.isdir(name):
         os.mkdir(name)
         write_file_lines(f"{name}/{report_file_name}", SCM_BRANCH_FILE_CONTENT)
@@ -101,6 +103,7 @@ def handle_new_package__is_ignored(name, report_file_name, cmake_logs):
         return False
 
 def retrieve_cmake_logs(file_path):
+    """Retrieve the CMake logs from a file and return them as a list."""
     logging.debug("Opening file %s", file_path)
     contents = read_file_lines(file_path)
 
@@ -117,6 +120,7 @@ def retrieve_cmake_logs(file_path):
     return cmake_logs
 
 def main():
+    """Main function that processes the input report file and performs necessary operations."""
     input_report_file_name = sys.argv[1]
     report_file_name = sys.argv[2]
     global_report_file_name = sys.argv[3]
@@ -151,7 +155,9 @@ def main():
                 package_name = ""
                 continue
             else:
-                is_ignored = handle_new_package__is_ignored(package_name, report_file_name, cmake_logs)
+                is_ignored = handle_new_package__is_ignored(
+                    package_name, report_file_name, cmake_logs
+                )
                 logging.debug("Is package %s ignored? %s", package_name, is_ignored)
                 if is_ignored:
                     mark_package_as_missing_requirements(global_report_file_name, package_name)
