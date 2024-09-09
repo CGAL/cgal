@@ -145,7 +145,7 @@ namespace internal
         {
           typename CDT::Edge e(fh,i);
           auto n = fh->neighbor(i);
-          if (n->info().m_nesting_level==-1)
+          if (n!=nullptr && n->info().m_nesting_level==-1)
           {
             if (tri.is_constrained(e)) { border.push(e); }
             else { queue.push(n); }
@@ -431,7 +431,7 @@ public:
   }
 
   /// End the face: compute the triangulation.
-  void face_end() 
+  void face_end()
   {
     if (!is_a_face_started()) return;
 
