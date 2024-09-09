@@ -24,7 +24,7 @@ int main(){
   Triangulation triangulation = Triangulation(domain);
 
   // Applies the Delaunay flip algorithm to the triangulation:
-  triangulation.make_delaunay();
+  triangulation.make_Delaunay();
 
   // Saves the triangulation:
   std::ofstream  output_file = std::ofstream ("OutputTriangulation.txt");

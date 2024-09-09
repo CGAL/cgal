@@ -63,9 +63,9 @@ int main() {
   input_not_centered = triangulation.lift(false);
   input_centered = triangulation.lift();
 
-  triangulation.make_delaunay();
+  triangulation.make_Delaunay();
 
-  assert( triangulation.is_delaunay() );
+  assert( triangulation.is_Delaunay() );
 
   std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,Point,Point,Point>> output_not_centered;
   std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,Point,Point,Point>> output_centered;

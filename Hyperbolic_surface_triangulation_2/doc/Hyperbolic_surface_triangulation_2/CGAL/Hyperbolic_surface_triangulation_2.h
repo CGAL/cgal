@@ -126,7 +126,7 @@ public:
 
       \pre <code> is_valid() </code>
   */
-  bool is_delaunay_flippable(Dart_handle dart) const;
+  bool is_Delaunay_flippable(Dart_handle dart) const;
 
   /*!
       flips the edge supported by the dart.
@@ -138,14 +138,14 @@ public:
   /*!
       determines if the triangulation is a valid Delaunay triangulation.
   */
-  bool is_delaunay() const;
+  bool is_Delaunay() const;
 
   /*!
       applies the Delaunay flip algorithm: flips Delaunay flippable edges until there is no such edge anymore.
 
       \pre <code> is_valid() </code>
   */
-  int make_delaunay();
+  int make_Delaunay();
   /// @}
 
   /// \name Lifting

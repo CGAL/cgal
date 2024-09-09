@@ -87,10 +87,10 @@ public:
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
 
-  bool is_delaunay_flippable(Dart_const_handle dart) const;
+  bool is_Delaunay_flippable(Dart_const_handle dart) const;
   void flip(Dart_handle dart);
-  bool is_delaunay() const;
-  int make_delaunay();
+  bool is_Delaunay() const;
+  int make_Delaunay();
   std::vector<std::tuple<Dart_const_handle,Point,Point,Point>> lift(bool center=true) const;
 
   bool is_valid() const;
@@ -248,7 +248,7 @@ Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor(){
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_delaunay_flippable(Dart_const_handle dart) const{
+bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_Delaunay_flippable(Dart_const_handle dart) const{
   return ( get_cross_ratio(dart).imaginary_part()>Number(0) );
 }
 
@@ -337,7 +337,7 @@ void Hyperbolic_surface_triangulation_2<Traits, Attributes>::flip(Dart_handle da
 }
 
 template<class Traits, class Attributes>
-bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_delaunay() const{
+bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_Delaunay() const{
   if (! is_valid()){
     return false;
   }
@@ -345,7 +345,7 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_delaunay() const
 }
 
 template<class Traits, class Attributes>
-int Hyperbolic_surface_triangulation_2<Traits, Attributes>::make_delaunay(){
+int Hyperbolic_surface_triangulation_2<Traits, Attributes>::make_Delaunay(){
   int number_of_flips_done = 0;
 
   Dart_handle edge_to_flip = pick_edge_to_flip();
@@ -652,7 +652,7 @@ template<class Traits, class Attributes>
   typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Dart_handle Hyperbolic_surface_triangulation_2<Traits, Attributes>::pick_edge_to_flip(){
   auto &cm=_combinatorial_map.darts();
   for (auto it = cm.begin(); it != cm.end(); ++it){
-    if ( is_delaunay_flippable(it) ){
+    if ( is_Delaunay_flippable(it) ){
       return it;
     }
   }
@@ -665,7 +665,7 @@ template<class Traits, class Attributes>
   typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Dart_const_handle Hyperbolic_surface_triangulation_2<Traits, Attributes>::pick_edge_to_flip() const{
   const auto &cm=_combinatorial_map.darts();
   for (auto it = cm.begin(); it != cm.end(); ++it){
-    if ( is_delaunay_flippable(it) ){
+    if ( is_Delaunay_flippable(it) ){
       return it;
     }
   }
