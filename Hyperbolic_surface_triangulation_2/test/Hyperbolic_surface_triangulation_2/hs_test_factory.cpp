@@ -22,8 +22,8 @@ typedef typename Traits::Complex                                        Complex;
 
 
 int main() {
-  Factory factory (3459);
-  Domain domain = factory.generate_domain_g2();
+  Factory factory;
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(3459);
 
   std::vector<Point> vertices;
   Point z0 = Point(FT("4881/5000"),FT("0"));

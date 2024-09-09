@@ -17,8 +17,8 @@ typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>             Triangulati
 
 int main(){
   // Generates the domain:
-  Factory factory = Factory(time(NULL));
-  Domain domain = factory.generate_domain_g2();
+  Factory factory = Factory();
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(time(NULL));
 
   // Triangulates the domain:
   Triangulation triangulation = Triangulation(domain);

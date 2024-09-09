@@ -24,7 +24,10 @@
 namespace CGAL {
 
 /*
-Factory class, whose only purpose is to construct random domains of genus 2 closed orientable hyperbolic surfaces, via its method generate_domain_g2.
+Factory class, whose only purpose is to construct random fundamental domains of
+closed orientable hyperbolic surfaces. The method
+make_hyperbolic_fundamental_domain_g2 constructs such a domain for a surface of
+genus 2. 
 */
 template<class Traits>
 class Hyperbolic_fundamental_domain_factory_2{
@@ -36,8 +39,8 @@ private:
   Random _random;
 
 public:
-  Hyperbolic_fundamental_domain_factory_2(unsigned int seed);
-  Hyperbolic_fundamental_domain_2<Traits> generate_domain_g2();
+  Hyperbolic_fundamental_domain_factory_2();
+  Hyperbolic_fundamental_domain_2<Traits> make_hyperbolic_fundamental_domain_g2(unsigned int seed);
 
 private:
   float random_positive_float(); // returns number in [0,1]
@@ -60,15 +63,14 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-Hyperbolic_fundamental_domain_factory_2<Traits>::Hyperbolic_fundamental_domain_factory_2(unsigned int seed){
-  _random = Random(seed);
-}
+  Hyperbolic_fundamental_domain_factory_2<Traits>::Hyperbolic_fundamental_domain_factory_2(){}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-Hyperbolic_fundamental_domain_2<Traits> Hyperbolic_fundamental_domain_factory_2<Traits>::generate_domain_g2(){
+Hyperbolic_fundamental_domain_2<Traits> Hyperbolic_fundamental_domain_factory_2<Traits>::make_hyperbolic_fundamental_domain_g2(unsigned int seed){
 
+  _random = Random(seed);
   bool is_domain_generated = false;
   _Cmplx exact_z0, exact_z1, exact_z2, exact_z3;
 

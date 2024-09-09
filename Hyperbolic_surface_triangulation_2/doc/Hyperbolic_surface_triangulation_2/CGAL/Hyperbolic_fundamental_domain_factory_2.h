@@ -13,17 +13,18 @@ public:
   /// \name Creation
   /// @{
   /*!
-    Constructor, the seed is used for generation.
+    Constructor.
   */
-  Hyperbolic_fundamental_domain_factory_2(unsigned int seed);
+  Hyperbolic_fundamental_domain_factory_2();
   /// @}
 
-  /// \name Generation of a domain
+  /// \name Generation of a domain in genus 2.
   /// @{
   /*!
-    randomly generates a convex domain of a closed orientable hyperbolic surface of genus two.
+    randomly generates a convex domain of a closed orientable hyperbolic surface
+   of genus two from a seed.
   */
-  Hyperbolic_fundamental_domain_2<Traits> generate_domain_g2();
+  Hyperbolic_fundamental_domain_2<Traits> make_hyperbolic_fundamental_domain_g2(unsigned int seed);
   /// @}
 
 };

@@ -117,7 +117,14 @@ public:
       \pre <code> is_valid() && has_anchor() </code>
   */
   Anchor& anchor();
+  /*!
+      constant version of the getter.
+
+      \pre <code> is_valid() && has_anchor() </code>
+  */
+  const Anchor& const_anchor();
   /// @}
+
 
   /// \name Delaunay flip algorithm
   /// @{
@@ -190,9 +197,7 @@ public:
   /*!
       reads the triangulation from a stream.
       The format of the input should be the same as the format of the output of the '<<' operator.
-
-      \pre <code> is_valid() </code>
-  */
+ */
   std::istream& operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits>& triangulation);
   /// @}
 };

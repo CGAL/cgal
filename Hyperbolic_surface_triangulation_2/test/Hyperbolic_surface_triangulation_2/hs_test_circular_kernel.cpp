@@ -24,8 +24,8 @@ typedef Hyperbolic_surface_triangulation_2<Traits>                              
 typedef typename Traits::Hyperbolic_point_2                             Point;
 
 int main() {
-  Factory factory (3459);
-  Domain domain = factory.generate_domain_g2();
+  Factory factory;
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(3459);
   Triangulation triangulation0 = Triangulation(domain);
 
   assert( triangulation0.is_valid() );

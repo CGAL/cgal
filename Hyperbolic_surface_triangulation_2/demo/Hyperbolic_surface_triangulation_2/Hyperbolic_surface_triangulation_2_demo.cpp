@@ -35,8 +35,8 @@ typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangul
 
 int main(int argc, char** argv){
   // 1. Generate the triangulation
-  Factory factory = Factory(time(NULL));
-  Domain domain = factory.generate_domain_g2();
+  Factory factory;
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(time(NULL));
   Triangulation triangulation = Triangulation(domain);
   triangulation.make_Delaunay();
 
