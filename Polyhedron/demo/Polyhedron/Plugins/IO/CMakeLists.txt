@@ -1,12 +1,16 @@
 include(polyhedron_demo_macros)
 
-find_package(LASLIB)
-set_package_properties(
-  LASLIB PROPERTIES
-  DESCRIPTION "A library for some I/O."
-  PURPOSE "Requiered for reading or writing LAS files.")
+if (NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910)
+  find_package(LASLIB)
+  set_package_properties(
+    LASLIB PROPERTIES
+    DESCRIPTION "A library for some I/O."
+    PURPOSE "Requiered for reading or writing LAS files.")
+  include(CGAL_LASLIB_support)
+else()
+  message(STATUS "NOTICE : the LAS reader does not work with your version of Visual Studio 2017.")
+endif()
 
-include(CGAL_LASLIB_support)
 
 polyhedron_demo_plugin(gocad_plugin GOCAD_io_plugin KEYWORDS Viewer)
 target_link_libraries(gocad_plugin PUBLIC scene_surface_mesh_item)
@@ -103,6 +107,7 @@ else()
   target_link_libraries(ply_plugin PUBLIC scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_textured_item)
   target_compile_features(ply_plugin PRIVATE ${needed_cxx_features})
 
+  #disable if MSVC 2017
   if (TARGET CGAL::LASLIB_support)
     polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
     target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item CGAL::LASLIB_support)
