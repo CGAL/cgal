@@ -1632,7 +1632,7 @@ public:
     */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  Arr_curve_end ce1/* for xcv1 */,
-                                 const X_monotone_curve_2 & xcv2,
+                                 const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce2/*! for xcv2 */,
                                  Arr_has_open_side_tag) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
@@ -1679,8 +1679,8 @@ public:
                               const Arr_curve_end ce) const
     { return (ce == ARR_MIN_END) ? 0 : xcv.number_of_subcurves() - 1; }
 
-    Comparison_result operator()(const X_monotone_curve_2 xcv1,
-                                 const X_monotone_curve_2 xcv2,
+    Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                 const X_monotone_curve_2& xcv2,
                                  Arr_curve_end ce) const {
       const auto* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_x_near_boundary = geom_traits->compare_x_near_boundary_2_object();
