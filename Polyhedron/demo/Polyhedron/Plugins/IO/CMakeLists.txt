@@ -107,7 +107,6 @@ else()
   target_link_libraries(ply_plugin PUBLIC scene_points_with_normal_item scene_polygon_soup_item scene_surface_mesh_item scene_textured_item)
   target_compile_features(ply_plugin PRIVATE ${needed_cxx_features})
 
-  #disable if MSVC 2017
   if (TARGET CGAL::LASLIB_support)
     polyhedron_demo_plugin(las_plugin LAS_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
     target_link_libraries(las_plugin PUBLIC scene_points_with_normal_item CGAL::LASLIB_support)

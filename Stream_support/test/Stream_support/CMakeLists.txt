@@ -41,7 +41,6 @@ foreach(cppfile ${cppfiles})
     endif()
   else()
     if("${cppfile}" STREQUAL "test_LAS.cpp")
-      #disable if MSVC 2017
       if(TARGET CGAL::LASLIB_support)
         create_single_source_cgal_program("test_LAS.cpp")
         target_link_libraries(test_LAS PRIVATE CGAL::LASLIB_support)
