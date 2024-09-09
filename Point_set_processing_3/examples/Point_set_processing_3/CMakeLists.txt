@@ -120,33 +120,38 @@ if(TARGET CGAL::Eigen3_support)
     )
   endif()
   # Executables that require OpenGR
-  find_package(OpenGR QUIET)
-  include(CGAL_OpenGR_support)
-  if(TARGET CGAL::OpenGR_support)
-    create_single_source_cgal_program("registration_with_OpenGR.cpp")
-    target_link_libraries(registration_with_OpenGR PRIVATE ${CGAL_libs}
-                          CGAL::OpenGR_support)
+  if (NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1910)
+    find_package(OpenGR QUIET)
+    include(CGAL_OpenGR_support)
+    if(TARGET CGAL::OpenGR_support)
+      create_single_source_cgal_program("registration_with_OpenGR.cpp")
+      target_link_libraries(registration_with_OpenGR PRIVATE ${CGAL_libs}
+                            CGAL::OpenGR_support)
+    else()
+      message(
+        STATUS
+          "NOTICE : registration_with_OpenGR requires OpenGR, and will not be compiled."
+      )
+    endif()
+    # Executables that require both libpointmatcher and OpenGR
+    if (TARGET CGAL::pointmatcher_support AND
+        TARGET CGAL::OpenGR_support)
+      create_single_source_cgal_program("registration_with_opengr_pointmatcher_pipeline.cpp")
+      target_link_libraries(
+        registration_with_opengr_pointmatcher_pipeline PRIVATE ${CGAL_libs}
+        CGAL::pointmatcher_support CGAL::OpenGR_support)
+    else()
+      message(
+        STATUS
+          "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled."
+      )
+    endif()
   else()
-    message(
-      STATUS
-        "NOTICE : registration_with_OpenGR requires OpenGR, and will not be compiled."
-    )
+      message(
+        STATUS
+          "NOTICE : OpenGR does not support your compiler, registration_with_OpenGR will not be compiled."
+      )
   endif()
-
-  # Executables that require both libpointmatcher and OpenGR
-  if (TARGET CGAL::pointmatcher_support AND
-      TARGET CGAL::OpenGR_support)
-    create_single_source_cgal_program("registration_with_opengr_pointmatcher_pipeline.cpp")
-    target_link_libraries(
-      registration_with_opengr_pointmatcher_pipeline PRIVATE ${CGAL_libs}
-      CGAL::pointmatcher_support CGAL::OpenGR_support)
-  else()
-    message(
-      STATUS
-        "NOTICE : registration_with_opengr_pointmatcher_pipeline requires libpointmatcher and OpenGR, and will not be compiled."
-    )
-  endif()
-
 else()
   message(
     STATUS
