@@ -992,7 +992,7 @@ public:
           ++j;
         }
         else {
-          Comparison_result res_x = cmp_x(point1,point2);
+          Comparison_result res_x = cmp_x(point1, point2);
           // Check if the different point is a collinear point situated on
           // the line between its two neighbors.
           if (SMALLER == res_x) {
@@ -1213,7 +1213,7 @@ public:
          auto get_max_v = geom_traits->construct_max_vertex_2_object();
          auto equal = geom_traits->equal_2_object();
 
-         CGAL_precondition_msg(! equal(get_min_v(seg),get_max_v(seg)),
+         CGAL_precondition_msg(! equal(get_min_v(seg), get_max_v(seg)),
                                "Cannot construct a degenerated subcurve");
          );
 
@@ -1403,9 +1403,9 @@ public:
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction = cmp_endpt(xcv[0]);
       const X_monotone_subcurve_2& xs =
-        (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
-         ((direction == LARGER) && (ce == ARR_MIN_END))) ?
-        xcv[xcv.number_of_subcurves()-1] : xcv[0];
+        (((direction == SMALLER) && (ce == ARR_MIN_END)) ||
+         ((direction == LARGER) && (ce == ARR_MAX_END))) ?
+        xcv[0] : xcv[xcv.number_of_subcurves()-1];
       return geom_traits->parameter_space_in_x_2_object()(xs, ce);
     }
 
@@ -1468,9 +1468,9 @@ public:
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction = cmp_endpt(xcv[0]);
       const X_monotone_subcurve_2& xs =
-        (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
-         ((direction == LARGER) && (ce == ARR_MIN_END))) ?
-        xcv[xcv.number_of_subcurves()-1] : xcv[0];
+        (((direction == SMALLER) && (ce == ARR_MIN_END)) ||
+         ((direction == LARGER) && (ce == ARR_MAX_END))) ?
+        xcv[0] : xcv[xcv.number_of_subcurves()-1];
       return geom_traits->parameter_space_in_y_2_object()(xs, ce);
     }
 
@@ -1568,8 +1568,8 @@ public:
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction = cmp_endpt(xcv[0]);
       const X_monotone_subcurve_2& xs =
-        (((direction == SMALLER) && (ce == ARR_MAX_END)) ||
-         ((direction == LARGER) && (ce == ARR_MIN_END))) ?
+        (((direction == SMALLER) && (ce == ARR_MIN_END)) ||
+         ((direction == LARGER) && (ce == ARR_MAX_END))) ?
         xcv[0] : xcv[xcv.number_of_subcurves()-1];
       return geom_traits->compare_x_on_boundary_2_object()(point, xs, ce);
     }
@@ -1586,13 +1586,13 @@ public:
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction1 = cmp_endpt(xcv1[0]);
       const X_monotone_subcurve_2& xs1 =
-        (((direction1 == SMALLER) && (ce1 == ARR_MAX_END)) ||
-         ((direction1 == LARGER) && (ce1 == ARR_MIN_END))) ?
+        (((direction1 == SMALLER) && (ce1 == ARR_MIN_END)) ||
+         ((direction1 == LARGER) && (ce1 == ARR_MAX_END))) ?
         xcv1[0] : xcv1[xcv1.number_of_subcurves()-1];
       Comparison_result direction2 = cmp_endpt(xcv2[0]);
       const X_monotone_subcurve_2& xs2 =
-        (((direction2 == SMALLER) && (ce2 == ARR_MAX_END)) ||
-         ((direction2 == LARGER) && (ce2 == ARR_MIN_END))) ?
+        (((direction2 == SMALLER) && (ce2 == ARR_MIN_END)) ||
+         ((direction2 == LARGER) && (ce2 == ARR_MAX_END))) ?
         xcv2[0] : xcv2[xcv2.number_of_subcurves()-1];
       return geom_traits->compare_x_on_boundary_2_object()(xs1, ce1, xs2, ce2);
     }
@@ -2509,10 +2509,13 @@ protected:
                           Arr_not_all_sides_oblivious_tag) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
-      // Verify that q has the same x-coord as xcv (which is vertical)
-      Compare_x_2 cmp_x = compare_x_2_object();
-      Comparison_result res = cmp_x(xcv[0], ARR_MIN_END, xs, ce);
-      if (res != EQUAL) return INVALID_INDEX;
+      CGAL_precondition_code
+        (
+         // Verify that q has the same x-coord as xcv (which is vertical)
+         Compare_x_2 cmp_x = compare_x_2_object();
+         Comparison_result res = cmp_x(xcv[0], ARR_MIN_END, xs, ce);
+         if (res != EQUAL) return INVALID_INDEX;
+         );
 
       Compare_curve_ends<Compare_xy_2> compare(compare_xy_2_object(), xs, ce);
       return locate_gen(xcv, compare);
@@ -2553,10 +2556,13 @@ protected:
                           Arr_not_all_sides_oblivious_tag) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
-      // Verify that q has the same x-coord as xcv (which is vertical)
-      auto cmp_x = compare_x_2_object();
-      Comparison_result res = cmp_x(xcv[0], ARR_MIN_END, p);
-      if (res != EQUAL) return INVALID_INDEX;
+      CGAL_precondition_code
+        (
+         // Verify that q has the same x-coord as xcv (which is vertical)
+         auto cmp_x = compare_x_2_object();
+         Comparison_result res = cmp_x(xcv[0], ARR_MIN_END, p);
+         if (res != EQUAL) return INVALID_INDEX;
+         );
 
       Compare_point_curve_end<Compare_xy_2> compare(compare_xy_2_object(), p);
       return locate_gen(xcv, compare);
@@ -2581,11 +2587,14 @@ protected:
   std::size_t locate(const X_monotone_curve_2& xcv, const Point_2& q) const {
     const Subcurve_traits_2* geom_traits = subcurve_traits_2();
     if (geom_traits->is_vertical_2_object()(xcv[0])) {
-      // Verify that q has the same x-coord as cv (which is vertical)
-      auto min_vertex = geom_traits->construct_min_vertex_2_object();
-      auto cmp_x = geom_traits->compare_x_2_object();
-      Comparison_result res = cmp_x(min_vertex(xcv[0]), q);
-      if (res != EQUAL) return INVALID_INDEX;
+      CGAL_precondition_code
+        (
+         // Verify that q has the same x-coord as cv (which is vertical)
+         auto min_vertex = geom_traits->construct_min_vertex_2_object();
+         auto cmp_x = geom_traits->compare_x_2_object();
+         Comparison_result res = cmp_x(min_vertex(xcv[0]), q);
+         if (res != EQUAL) return INVALID_INDEX;
+         );
 
       Compare_points<Compare_xy_2> compare(*geom_traits,
                                            compare_xy_2_object(), q);
@@ -2621,7 +2630,7 @@ protected:
     Comparison_result direction = cmp_endpts(cv[i]);
 
     if ((! is_vert(cv[0]) && (cmp_x(get_min_v(cv[i]), q) == EQUAL)) ||
-        (is_vert(cv[0]) && equal(get_min_v(cv[i]), q))){
+        (is_vert(cv[0]) && equal(get_min_v(cv[i]), q))) {
       // q is the left endpoint of the i'th subcurve:
       if (to_right) return i;
       else {
@@ -2638,8 +2647,7 @@ protected:
     }
 
     if ((! is_vert(cv[0]) && (cmp_x(get_max_v(cv[i]), q) == EQUAL)) ||
-        (is_vert(cv[0]) && equal(get_max_v(cv[i]), q)))
-    {
+        (is_vert(cv[0]) && equal(get_max_v(cv[i]), q))) {
       // q is the right endpoint of the i'th subcurve:
       if (! to_right) return i;
       else {
