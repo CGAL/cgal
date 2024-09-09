@@ -1772,13 +1772,13 @@ public:
       auto cmp_endpt = geom_traits->compare_endpoints_xy_2_object();
       Comparison_result direction1 = cmp_endpt(xcv1[0]);
       const X_monotone_subcurve_2& xs1 =
-        (((direction1 == SMALLER) && (ce == ARR_MAX_END)) ||
-         ((direction1 == LARGER) && (ce == ARR_MIN_END))) ?
+        (((direction1 == SMALLER) && (ce == ARR_MIN_END)) ||
+         ((direction1 == LARGER) && (ce == ARR_MAX_END))) ?
         xcv1[0] : xcv1[xcv1.number_of_subcurves()-1];
       Comparison_result direction2 = cmp_endpt(xcv2[0]);
       const X_monotone_subcurve_2& xs2 =
-        (((direction2 == SMALLER) && (ce == ARR_MAX_END)) ||
-         ((direction2 == LARGER) && (ce == ARR_MIN_END))) ?
+        (((direction2 == SMALLER) && (ce == ARR_MIN_END)) ||
+         ((direction2 == LARGER) && (ce == ARR_MAX_END))) ?
         xcv2[0] : xcv2[xcv2.number_of_subcurves()-1];
       return geom_traits->compare_y_near_boundary_2_object()(xs1, xs2, ce);
     }
