@@ -341,6 +341,13 @@ Michael Hemmer and Michael Kerber, respectively. Notwithstanding, the authors al
 contribution of all authors of the \exacus project,
 particularly the contribution of Arno Eigenwillig, Sebastian Limbach and Pavel Emeliyanenko.
 
+In 2010, two univariate kernels that interface the library RS \cgalCite{cgal:r-rs} were
+written by Luis Peñaranda and Sylvain Lazard \cgalCite{cgal:2009-ESA}.
+Both models interface the library RS \cgalCite{cgal:r-rs} by Fabrice Rouillier.
+The authors want to thank Fabrice Rouillier and Elias Tsigaridas for
+strong support and many useful discussions that lead to the integration of RS.
+Due to lack of maintenance, these kernels have been removed in 2024.
+
 
 */
 } /* namespace CGAL */
