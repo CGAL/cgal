@@ -65,12 +65,12 @@ def handle_end_of_package(package_name, report_file_name, lines_to_write):
     position = find_third_separator(contents)
 
     if not any(re.search("- CMake Results .*", content) for content in contents):
-        lines_to_write.insert(0, f"""{SEPARATOR}
-    - CMake Results for {package_name}
-    {SEPARATOR}
+        lines_to_write.insert(0, f"""
+{SEPARATOR}
+- CMake Results for {package_name}
+{SEPARATOR}
 
-    """)
-    lines_to_write.insert(0, "\n")
+""")
     contents[position:position] = lines_to_write
 
     write_file_lines(file_path, contents)
@@ -104,7 +104,7 @@ def retrieve_cmake_logs(file_path):
     logging.debug("Opening file %s", file_path)
     contents = read_file_lines(file_path)
 
-    position_begin = find_last(contents, SEPARATOR)
+    position_begin = 1 + find_last(contents, SEPARATOR)
     position_end = 1 + find_last(contents, "== Generating build files for tests ==")
 
     cmake_logs = contents[position_begin:position_end]
@@ -129,38 +129,35 @@ def main():
     for line in read_file_lines(input_report_file_name):
 
         line_matches_new_package = CONFIG_REGEX.match(line)
+        if package_name and line_matches_new_package:
+            handle_end_of_package(package_name, report_file_name, lines_to_write)
+            lines_to_write = []
+            package_name = ""
+
         if line_matches_new_package:
             logging.debug("Found new package %s", line_matches_new_package.group(0))
             logging.debug("          group 1 %s", line_matches_new_package.group(1))
             new_package_name = line_matches_new_package.group(0).replace(
                 line_matches_new_package.group(1), ""
             )
+            logging.debug("Setting package name to %s", new_package_name)
+            package_name = new_package_name
+            if DEMO_REGEX.match(line):
+                package_name = f"{package_name}_Demo"
+            elif EXAMPLES_REGEX.match(line):
+                package_name = f"{package_name}_Examples"
+
+            if package_name == "incomplete":
+                package_name = ""
+                continue
+            else:
+                is_ignored = handle_new_package__is_ignored(package_name, report_file_name, cmake_logs)
+                logging.debug("Is package %s ignored? %s", package_name, is_ignored)
+                if is_ignored:
+                    mark_package_as_missing_requirements(global_report_file_name, package_name)
 
         if package_name and not line_matches_new_package and line.strip() != "":
             lines_to_write.append(line)
-
-        if package_name and line_matches_new_package:
-            handle_end_of_package(
-                package_name,
-                report_file_name,
-                lines_to_write,
-            )
-            lines_to_write = []
-        if not package_name:
-            if line_matches_new_package:
-                package_name = new_package_name
-                if DEMO_REGEX.match(line):
-                    package_name = f"{package_name}_Demo"
-                elif EXAMPLES_REGEX.match(line):
-                    package_name = f"{package_name}_Examples"
-
-                if package_name == "incomplete":
-                    package_name = ""
-                    continue
-                else:
-                    is_ignored = handle_new_package__is_ignored(package_name, report_file_name, cmake_logs)
-                    if is_ignored:
-                        mark_package_as_missing_requirements(global_report_file_name, package_name)
 
 if __name__ == "__main__":
     main()
