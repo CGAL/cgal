@@ -342,13 +342,13 @@ public:
     {}
 
     /*! Operate */
-    bool operator()(const X_monotone_curve_2& xc1,
-                    const X_monotone_curve_2& xc2) const
-    { ++m_counter1; return m_object(xc1, xc2); }
+    bool operator()(const Point_2& p1, const Point_2& p2) const
+    { ++m_counter1; return m_object(p1, p2); }
 
     /*! Operate */
-    bool operator()(const Point_2& p1, const Point_2& p2) const
-    { ++m_counter2; return m_object(p1, p2); }
+    bool operator()(const X_monotone_curve_2& xc1,
+                    const X_monotone_curve_2& xc2) const
+    { ++m_counter2; return m_object(xc1, xc2); }
   };
 
   /*! A functor that compares compares the y-coordinates of two x-monotone
@@ -824,10 +824,10 @@ public:
                                     m_counters[IS_ON_X_IDENTIFICATION_CURVE_OP]);
   }
 
-  Compare_y_on_boundary_2 compare_on_boundary_2_object() const
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   { return Compare_y_on_boundary_2(this, m_counters[COMPARE_Y_ON_BOUNDARY_OP]); }
 
-  Compare_y_near_boundary_2 compare_near_boundary_2_object() const
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   {
     return Compare_y_near_boundary_2(this,
                                      m_counters[COMPARE_Y_NEAR_BOUNDARY_OP]);
