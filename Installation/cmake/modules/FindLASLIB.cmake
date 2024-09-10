@@ -37,6 +37,7 @@ if (NOT LASLIB_LIBRARIES)
                PATHS ENV LD_LIBRARY_PATH
                      ENV LIBRARY_PATH
                      /usr/local/lib
+                     /usr/local/lib/LASlib
                      ${LASLIB_INCLUDE_DIR}/../../lib
                     ENV LASLIB_LIB_DIR
               )
