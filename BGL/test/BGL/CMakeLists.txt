@@ -54,7 +54,7 @@ if(OpenMesh_FOUND)
 
   create_single_source_cgal_program("graph_concept_OpenMesh.cpp")
   target_link_libraries(graph_concept_OpenMesh PRIVATE CGAL::OpenMesh_support)
-  
+
   create_single_source_cgal_program("test_OpenMesh.cpp")
   target_link_libraries(test_OpenMesh PRIVATE CGAL::OpenMesh_support)
 
