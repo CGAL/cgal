@@ -110,16 +110,6 @@ public:
       return true;
     else
       return false;
-
-/*
-    if (pwn_item == nullptr && m_pwn_item == nullptr) {
-      enable_detection(false);
-      enable_regularization(false);
-      enable_partition(false);
-      enable_reconstruction(false);
-    }*/
-
-    //return pwn_item != nullptr;
   }
 
   QList<QAction*> actions() const override
@@ -431,7 +421,7 @@ private:
     Point_set* points = m_pwn_item->point_set();
     m_ksr = new KSR(*points);
 
-    /*if (filename == "foam_box" || filename == "foam_box_new") {
+    if (filename == "foam_box" || filename == "foam_box_new") {
       // Shape detection parameters
       dock_widget->sdMaxDistanceBox->setValue(0.05);
       dock_widget->sdMaxAngleBox->setValue(15);
@@ -585,14 +575,14 @@ private:
       dock_widget->recGroundCheck->setChecked(false);
       dock_widget->recLambdaBox->setValue(0.5);
     }
-    else */{
+    else {
       m_known_file = false;
       FT max_distance, max_angle;
       std::size_t min_region_size;
       m_ksr->estimate_detection_parameters(max_distance, max_angle, min_region_size);
       dock_widget->sdMaxDistanceBox->setValue(max_distance);
       dock_widget->sdMaxAngleBox->setValue(max_angle);
-      dock_widget->sdMinRegionSizeBox->setValue(points->number_of_points() * 0.01);
+      dock_widget->sdMinRegionSizeBox->setValue(min_region_size);
       dock_widget->sdkNeighborsBox->setValue(12);
       dock_widget->srCoplanarityCheck->setChecked(true);
       dock_widget->srMaxOffsetBox->setValue(max_distance * 0.5);

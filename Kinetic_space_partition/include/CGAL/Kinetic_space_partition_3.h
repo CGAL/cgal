@@ -2279,6 +2279,7 @@ private:
 
     m_points.clear();
     m_points.reserve(count);
+    m_polygons.clear();
     m_polygons.reserve(m_input_polygons.size());
 
     To_exact to_exact;
@@ -2321,6 +2322,7 @@ private:
       max_count = (std::max<std::size_t>)(max_count, node);
     }
 
+    m_partition_nodes.clear();
     m_partition_nodes.resize(leaf_count);
 
     m_node2partition.resize(max_count + 1, std::size_t(-1));

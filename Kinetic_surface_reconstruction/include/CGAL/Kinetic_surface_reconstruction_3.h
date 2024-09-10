@@ -330,7 +330,7 @@ public:
       m_sorting->sort();
     }
 
-    max_distance = 2 * m_sorting->mean_distance();
+    max_distance = 4 * m_sorting->mean_distance();
     normal_dev = m_sorting->mean_deviation();
     min_inliers = m_points.size() * 0.005; // difficult to estimate as it depends on the kind of data, e.g., object scan vs. large scale urban acquisition
   }
@@ -651,7 +651,9 @@ private:
     m_face_inliers.clear();
 
     auto face_range = m_lcc.template one_dart_per_cell<2>();
+    m_faces_lcc.clear();
     m_faces_lcc.reserve(face_range.size());
+    m_attrib2index_lcc.clear();
 
     for (auto& d : face_range) {
       typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
@@ -675,9 +677,13 @@ private:
     // Create value arrays for graph cut
     m_face_inliers.resize(m_faces_lcc.size());
     m_face_area.resize(m_faces_lcc.size());
+    m_face_area_lcc.clear();
     m_face_area_lcc.resize(m_faces_lcc.size());
+    m_face_neighbors_lcc.clear();
     m_face_neighbors_lcc.resize(m_faces_lcc.size(), std::pair<int, int>(-1, -1));
+    m_neighbors2index_lcc.clear();
 
+    m_cost_matrix.clear();
     m_cost_matrix.resize(2);
     m_cost_matrix[0].resize(m_kinetic_partition.number_of_volumes() + 6, 0);
     m_cost_matrix[1].resize(m_kinetic_partition.number_of_volumes() + 6, 0);
