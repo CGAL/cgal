@@ -13,6 +13,8 @@ Release date: June 2024
   - LLVM Clang version 15.0.7 or later (on Linux)
   - Apple Clang compiler versions 10.0.1, 12.0.5, and 15.0.0 (on macOS)
 - The minimal supported version of Boost is now 1.72.0.
+- GMP/MPFR are no longer mandatory to use CGAL, [Boost.Multiprecision](https://www.boost.org/doc/libs/1_72_0/libs/multiprecision/doc/html/index.html).
+  can be used instead.
 - The CGAL `Core` library is no longer based on GMP, but on
   [Boost.Multiprecision](https://www.boost.org/doc/libs/1_72_0/libs/multiprecision/doc/html/index.html).
   Either GMP backend or Boost backend can be used.
@@ -144,10 +146,6 @@ Release date: June 2024
     to the [`GenericMap`](https://doc.cgal.org/6.0/Combinatorial_map/classGenericMap.html)
     concept, which enables users to insert an edge between two different faces in order to create faces with holes.
 
--   Added new meshing criterion `edge_distance`, an upper bound for the distance from the edge to the 1D feature.
-- **Breaking change**: the concept `MeshEdgeCriteria_3` was modified to include the new meshing criterion `edge_distance`.
-
-
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
 
 - **Breaking change**:
@@ -225,6 +223,9 @@ Release date: June 2024
     as well as the class `Triangle_accessor`. These were no longer used for several releases.
 -   **Breaking change**: Removed the class templates `CGAL::Gray_image_mesh_domain_3`, `CGAL::Implicit_mesh_domain_3`,
     and `CGAL::Labeled_image_mesh_domain_3`, which were deprecated since CGAL-4.13.
+-   Added new meshing criterion `edge_distance`, an upper bound for the distance from the edge to the 1D feature.
+- **Breaking change**: the concept `MeshEdgeCriteria_3` was modified to include the new meshing criterion `edge_distance`.
+
 
 ### [3D Surface Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgSurfaceMesher3)
 

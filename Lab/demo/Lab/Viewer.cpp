@@ -1152,13 +1152,7 @@ void Viewer::drawVisualHints()
     //Prints the displayMessage
     QFont font = QFont();
     QFontMetrics fm(font);
-    TextItem *message_text = new TextItem(float(10 +
-                                            #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-                                                   fm.horizontalAdvance(d->message)/2)
-                                            #else
-                                                   fm.width(d->message)/2)
-                                            #endif
-                                          ,
+    TextItem *message_text = new TextItem(float(10 + fm.horizontalAdvance(d->message)/2),
                                           float(height()-20),
                                           0, d->message, false,
                                           QFont(), Qt::gray );
