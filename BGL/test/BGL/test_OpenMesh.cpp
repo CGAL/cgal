@@ -4,7 +4,6 @@
 
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 
-
 typedef OpenMesh::PolyMesh_ArrayKernelT<> Om;
 typedef boost::graph_traits< Om >         Traits;
 typedef Traits::edge_descriptor           edge_descriptor;
@@ -17,7 +16,7 @@ int main()
 {
   Om om;
   for (Om::EdgeHandle ed : edges(om)) {
-	  std::cout << "edge" << std::endl;
+          std::cout << "edge" << std::endl;
   }
   return 0;
 }
