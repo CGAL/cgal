@@ -1,10 +1,14 @@
 include(polyhedron_demo_macros)
 
-find_package(LASLIB QUIET)
-set_package_properties(
-  LASLIB PROPERTIES
-  DESCRIPTION "A library for LIDAR I/O."
-  PURPOSE "Required for reading or writing LAS files.")
+if (NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910)
+  find_package(LASLIB QUIET)
+  set_package_properties(
+    LASLIB PROPERTIES
+    DESCRIPTION "A library for LIDAR I/O."
+    PURPOSE "Required for reading or writing LAS files.")
+else()
+  message(STATUS "NOTICE: the LAS reader does not work with your version of Visual Studio 2017.")
+endif()
 
 include(CGAL_LASLIB_support)
 

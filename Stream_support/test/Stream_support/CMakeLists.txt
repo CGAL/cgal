@@ -13,8 +13,12 @@ find_library(
   NAMES 3MF
   DOC "Path to the lib3MF library")
 
-find_package(LASLIB QUIET)
-include(CGAL_LASLIB_support)
+if (NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910)
+  find_package(LASLIB QUIET)
+  include(CGAL_LASLIB_support)
+else()
+  message(STATUS "NOTICE : the LAS reader does not work with your version of Visual Studio 2017.")
+endif()
 
 # create a target per cppfile
 file(
