@@ -36,11 +36,11 @@ public:
       return false;
     }
   }
-  /*
+
   operator OpenMesh::EdgeHandle () const {
     return OpenMesh::EdgeHandle(idx());
   }
-  */
+
   bool operator<(const OMesh_edge& other) const
   {
     return this->idx() < other.idx();
