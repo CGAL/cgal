@@ -47,7 +47,7 @@ double length_of_diagonal(const Bbox_3& bb)
 }
 
 template<unsigned int N, typename T>
-double length_of_diagonal(const Bbox<N,T>& bb)
+double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
 {
     using I = Interval_nt<false>;
     I d = square(I((bb.max)(0)) - I((bb.min)(0)));
@@ -116,7 +116,9 @@ public:
 
     using Bbox = std::conditional_t<(dimension == 2),
                                      Bbox_2,
-                                     Bbox_3>;
+                                     std::conditional_t<(dimension == 3),
+                                     Bbox_3,
+                                     Bbox<Dimension_tag<dimension>,double>>>;
 
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
