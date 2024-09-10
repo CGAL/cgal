@@ -114,11 +114,18 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
       }
       item->setName(fileinfo.completeBaseName());
       ok = true;
-      if(add_to_scene){
+      if(add_to_scene)
+      {
         CGAL::Three::Three::scene()->addItem(item);
-        CGAL::Three::Three::scene()->addItem(selection_item);
+        if(!selection_item->isEmpty())
+          CGAL::Three::Three::scene()->addItem(selection_item);
       }
-      return QList<Scene_item*>()<<item << selection_item;
+
+      QList<Scene_item*> res;
+      res << item;
+      if(!selection_item->isEmpty())
+        res << selection_item;
+      return res;
     }
   }
   catch(...){}
