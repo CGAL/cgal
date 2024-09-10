@@ -472,6 +472,7 @@ sub print_platform_descriptions()
 <th class="timeout">o</th>
 <th class="error">n</th>
 <th class="requirements">r</th>
+<th>DEBUG/RELEASE</th>
 <th>CMake</th>
 <th>BOOST</th>
 <th>MPFR</th>
@@ -524,6 +525,7 @@ EOF
 	    ($platform_is_optimized{$pf}) = ($tmp[1] =~ m|([-/]x?O[1-9])|);
 	    $_ = <PLATFORM_INFO>;
 	    chomp;
+	    my $build_type = $platform_is_optimized{$pf} ? "RELEASE" : "DEBUG";
 	    print OUTPUT "</td>\n";
 	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
 	    print OUTPUT "<td>$county</td>\n";
@@ -532,6 +534,7 @@ EOF
 	    print OUTPUT "<td>$counto</td>\n";
  	    print OUTPUT "<td>$countn</td>\n";
  	    print OUTPUT "<td>$countr</td>\n";
+	    print OUTPUT "<td>$build_type</td>\n";
 	    $index = 8;
 	    while ($index) {
 	        $index--;
