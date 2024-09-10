@@ -29,15 +29,15 @@ public:
   Hyperbolic_fundamental_domain_2();
 
   /*!
-    Constructor from vertices and pairings ranges. 
-    @tparam PointRange a model of the concepts `RandomAccessContainer` whose `value_type` is Point.
-    @tparam PairingRange a model of the concepts `RandomAccessContainer` whose `value_type` is int.
+    Constructor from vertices and pairings ranges.
+    @tparam PointRange a model of the concepts `RandomAccessContainer` whose `value_type` is `Point`.
+    @tparam PairingRange a model of the concepts `RandomAccessContainer` whose `value_type` is `int`.
   */
-     template<class PointRange, class PairingRange> 
+     template<class PointRange, class PairingRange>
        Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings);
   /// @}
 
-  /// \name Access functions
+  /// \name Access Functions
   /// @{
   /*!
       returns the number of vertices (equivalently, the number of sides) of the domain.
@@ -69,28 +69,26 @@ public:
   Hyperbolic_isometry_2<Traits> side_pairing(int i) const;
   /// @}
 
-  /// \name Input/output
+  /// \name Input/Output
   /// @{
-  /*!
-      Reads the domain from a stream.
-
-      The format of the input should be the same as the format of the output of the 'from_stream' method.
-
-      \pre <code> is_valid() </code>
-  */
-  std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
-
   /*!
       writes the domain in a stream.
 
       The format of the output is the following.
-      The first line prints the number n of vertices of the domain.
+      The first line prints the number \f$n\f$ of vertices of the domain.
       For \f$ i=0 \f$ to \f$ n-1 \f$ the index of the side paired to side \f$ i \f$ is printed on a separate line.
       For \f$ i=0 \f$ to \f$ n-1 \f$ the \f$ i \f$-th vertex is printed on a separate line.
 
       \pre <code> is_valid() </code>
   */
   std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
+
+  /*!
+      Reads the domain from a stream.
+
+      The format of the input must be the same as the format of the output of 'operator<<()'.
+  */
+  std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
   /// @}
 
   /// @{

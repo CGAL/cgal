@@ -41,12 +41,12 @@ public:
   /* template<class PointRange, class PairingRange>  */
   /*   Hyperbolic_fundamental_domain_2(PointRange vertices, */
   /*                                   PairingRange pairings); */
-  template<class PointRange, class PairingRange> 
+  template<class PointRange, class PairingRange>
     Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings){
       _vertices = std::vector<Point>(vertices.begin(), vertices.end());
       _pairings = std::vector<int>(pairings.begin(), pairings.end());
   }
- 
+
   int size() const; // Returns the number of vertices (equivalently, the number of sides)
   const Point& vertex(int index) const; // Returns the index-th vertex
   int paired_side(int index) const; // Returns the index of the side paired to side A, where A is the index-th side
