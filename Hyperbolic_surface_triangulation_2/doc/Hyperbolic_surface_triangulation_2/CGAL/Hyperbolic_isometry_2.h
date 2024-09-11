@@ -19,7 +19,7 @@ class Hyperbolic_isometry_2{
     /*!
     Complex number type.
     */
-    typedef typename Traits::Complex                         ComplexNumber;
+    typedef typename Traits::Complex                         Complex_number;
     /*!
     Point type.
     */
@@ -44,7 +44,7 @@ class Hyperbolic_isometry_2{
       resulting Möbius transform fixes the unit circle.
 
     */
-    void set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3);
+    void set_coefficients(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3);
 
     /*!
       sets a particular coefficient of the isometry manually. \note  Be
@@ -52,14 +52,14 @@ class Hyperbolic_isometry_2{
       resulting Möbius transform fixes the unit circle.
 
     */
-    void set_coefficient(int index, const ComplexNumber& coefficient);
+    void set_coefficient(int index, const Complex_number& coefficient);
 
     /// \name Access functions
     /// @{
     /*!
       returns the index-th coefficient.
     */
-    ComplexNumber get_coefficient(int index) const;
+    Complex_number get_coefficient(int index) const;
     /// @}
 
     /// \name Operations

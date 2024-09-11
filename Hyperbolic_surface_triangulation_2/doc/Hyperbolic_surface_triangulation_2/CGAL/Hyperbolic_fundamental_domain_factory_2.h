@@ -3,7 +3,10 @@ namespace CGAL{
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-Factory class, whose purpose is to generate some convex domains of surfaces of genus two.
+Factory class, whose only purpose is to construct random fundamental domains of
+closed orientable hyperbolic surfaces. The method
+make_hyperbolic_fundamental_domain_g2 constructs such a domain for a surface of
+genus 2. 
 
 \tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 */
