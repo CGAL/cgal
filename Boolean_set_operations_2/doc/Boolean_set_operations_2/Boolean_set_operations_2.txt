@@ -575,13 +575,13 @@ If the `UsePolylines` template parameter is substitited with
 
 <li>Instead of using an instance of the `Polygon_set_2` class
 template, as described above, an instance of the
-`General_polygon_set_2` class template is used, which utilzes the
+`General_polygon_set_2` class template is used, which utilizes the
 `Arr_polyline_traits_2` class template; see Section \ref
 arr_ssectr_polylines in the 2D Arrangements package.
 
 <li>Each input linear polygon (respectively linear polygon with holes) is
 converted into a general polygon (respectively general polygon with holes)
-bounded by \f$x\f$-monotone polylines. Then, the resulting generl
+bounded by \f$x\f$-monotone polylines. Then, the resulting general
 polygons, which are also bounded by \f$x\f$-monotone polylines, are
 converted back to standard polygons.
 

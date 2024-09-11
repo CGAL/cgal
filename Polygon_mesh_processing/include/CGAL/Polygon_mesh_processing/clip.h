@@ -939,7 +939,7 @@ void split(TriangleMesh& tm,
   const bool do_not_modify_splitter = choose_parameter(get_parameter(np_s, internal_np::do_not_modify), false);
 
   PMP::corefine(tm, splitter,
-                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm),
+                CGAL::parameters::vertex_point_map(vpm_tm).edge_is_constrained_map(ecm).visitor(uv),
                 CGAL::parameters::vertex_point_map(vpm_s).do_not_modify(do_not_modify_splitter));
 
   //split mesh along marked edges

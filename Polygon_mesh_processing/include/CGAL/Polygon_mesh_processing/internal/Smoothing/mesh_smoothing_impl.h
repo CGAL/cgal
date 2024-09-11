@@ -366,7 +366,7 @@ private:
         s_av(s_av)
     { }
 
-    // next two functions are just for convencience, the only thing ceres cares about is the operator()
+    // next two functions are just for convenience, the only thing ceres cares about is the operator()
     template <typename T>
     FT area(const T x, const T y, const T z) const
     {

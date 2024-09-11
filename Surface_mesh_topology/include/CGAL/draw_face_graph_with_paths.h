@@ -62,7 +62,7 @@ protected:
 
 namespace draw_function_for_lcc
 {
-  // We need to re-use the namespace draw_function_for_lcc because we want to specialize
+  // We need to reuse the namespace draw_function_for_lcc because we want to specialize
   // the previous struct LCC_geom_utils
 //   template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
 // struct LCC_geom_utils;

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Mesh_3_Examples)
 
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
@@ -26,19 +26,11 @@ if(NOT TARGET CGAL::Eigen3_support)
   return()
 endif()
 
-find_package(VTK QUIET COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
+find_package(VTK 9.0
+             COMPONENTS ImagingGeneral IOImage
+             QUIET)
 if(VTK_FOUND)
-  if(VTK_USE_FILE)
-    include(${VTK_USE_FILE})
-  endif()
-  if("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
-    message(STATUS "VTK found")
-    if(TARGET VTK::IOImage)
-      set(VTK_LIBRARIES VTK::ImagingGeneral VTK::IOImage)
-    endif()
-  else()
-    message(STATUS "VTK version 6.0 or greater is required")
-  endif()
+  message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
 else()
   message(STATUS "VTK was not found")
 endif()
@@ -123,13 +115,12 @@ create_single_source_cgal_program("mesh_polyhedral_complex_sm.cpp")
 target_link_libraries(mesh_polyhedral_complex_sm PUBLIC CGAL::Eigen3_support)
 
 if(TARGET CGAL::CGAL_ImageIO)
-  if(VTK_FOUND AND ("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION
-                                                          VERSION_GREATER 5))
+  if(VTK_FOUND)
     create_single_source_cgal_program("mesh_3D_gray_vtk_image.cpp")
-    target_link_libraries(
-      mesh_3D_gray_vtk_image
-      PUBLIC CGAL::Eigen3_support CGAL::CGAL CGAL::CGAL_ImageIO ${VTK_LIBRARIES})
-    cgal_add_test(mesh_3D_gray_vtk_image)
+    target_link_libraries(mesh_3D_gray_vtk_image
+                          PUBLIC CGAL::Eigen3_support
+                                 CGAL::CGAL_ImageIO
+                          PRIVATE ${VTK_LIBRARIES})
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS mesh_3D_gray_vtk_image)
   endif()
 

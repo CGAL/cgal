@@ -626,11 +626,17 @@ void Scene_surface_mesh_item_priv::compute_elements(Scene_item_rendering_helper:
       }
       else if(is_convex)
       {
-        triangulate_convex_facet(fd, &fnormals, &fcolors.value(), nullptr, name, false);
+        if(has_fcolors)
+          triangulate_convex_facet(fd, &fnormals, &fcolors.value(), nullptr, name, false);
+        else
+          triangulate_convex_facet(fd, &fnormals, nullptr, nullptr, name, false);
       }
       else
       {
-        triangulate_facet(fd, &fnormals, &fcolors.value(), nullptr, name, false);
+        if(has_fcolors)
+          triangulate_facet(fd, &fnormals, &fcolors.value(), nullptr, name, false);
+        else
+          triangulate_facet(fd, &fnormals, nullptr, nullptr, name, false);
       }
     }
   }

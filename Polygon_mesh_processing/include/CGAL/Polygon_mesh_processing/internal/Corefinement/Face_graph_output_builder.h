@@ -276,11 +276,11 @@ struct Non_manifold_output_visitor
 
     if (vid_not_used.any()){
       std::vector<ID> free_vids;
-      for (ID i = vid_not_used.find_first();
+      for (auto i = vid_not_used.find_first();
                        i < vid_not_used.npos;
                        i = vid_not_used.find_next(i))
       {
-        free_vids.push_back(i);
+        free_vids.push_back(static_cast<ID>(i));
       }
       // now reindex the vertices
       for (auto& p : vid1)

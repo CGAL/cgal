@@ -109,7 +109,7 @@ namespace CGAL {
      * polycurve.
      *
      * This functor constructs general polycurve. Its `operator()` is
-     * oveloaded to support various input types.
+     * overloaded to support various input types.
      *
      * Note that the composing subcurves, depending on the `SubcurveTraits_2`,
      * might not be \f$x\f$-monotone.

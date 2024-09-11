@@ -66,7 +66,7 @@ public:
 
 int main (int argc, char** argv)
 {
-  std::string filename (argc > 1 ? argv[1] : CGAL::data_file_path("meshes/b9.ply"));
+  std::string filename (argc > 1 ? argv[1] : CGAL::data_file_path("points_3/b9.ply"));
   std::vector<Point> pts;
 
   std::cerr << "Reading input" << std::endl;

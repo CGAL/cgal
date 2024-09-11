@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Point_set_processing_3_Examples)
 
 # Find CGAL
@@ -58,7 +58,9 @@ find_package(LASLIB QUIET)
 include(CGAL_LASLIB_support)
 if(TARGET CGAL::LASLIB_support)
   create_single_source_cgal_program("read_las_example.cpp")
+  create_single_source_cgal_program("write_las_example.cpp")
   target_link_libraries(read_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
+  target_link_libraries(write_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
 else()
   message(STATUS "NOTICE: the LAS reader example requires LASlib and will not be compiled.")
 endif()

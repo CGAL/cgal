@@ -189,7 +189,7 @@ namespace HomogeneousKernelFunctors {
       // want to solve  alpha*v1 + beta*v2 + gamma*v3 == vp
       // let vi' == vi*vi.hw()
       // we solve alpha'*v1' + beta'*v2' + gamma'*v3' == vp' / vp.hw()
-      //          muliplied by vp.hw()
+      //          multiplied by vp.hw()
       // then we have  alpha = alpha'*v1.hw() / vp.hw()
       // and           beta  = beta' *v2.hw() / vp.hw()
       // and           gamma = gamma'*v3.hw() / vp.hw()

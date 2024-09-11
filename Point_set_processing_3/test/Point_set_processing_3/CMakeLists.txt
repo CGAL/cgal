@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Point_set_processing_3_Tests)
 
 # Find CGAL
@@ -33,7 +33,7 @@ create_single_source_cgal_program( "structuring_test.cpp" )
 
 #Use LAS
 #disable if MSVC 2017
-if(NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1919 AND  MSVC_VERSION LESS 1910))
+if(NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910)
   find_package(LASLIB QUIET)
   include(CGAL_LASLIB_support)
   if (TARGET CGAL::LASLIB_support)
@@ -43,7 +43,7 @@ if(NOT MSVC_VERSION OR (MSVC_VERSION GREATER_EQUAL 1919 AND  MSVC_VERSION LESS 1
     message(STATUS "NOTICE: the LAS reader test requires LASlib and will not be compiled.")
   endif()
 else()
-  message(STATUS "NOTICE: the LAS reader does not work with Visual Studio 2017.")
+  message(STATUS "NOTICE: the LAS reader does not work with your version of Visual Studio 2017.")
 endif()
 
 # Use Eigen

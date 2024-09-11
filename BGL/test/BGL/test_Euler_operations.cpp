@@ -17,6 +17,7 @@ test_copy_face_graph_nm_umbrella()
   T g;
   Kernel::Point_3 p(0,0,0);
 
+  // make two connected components
   CGAL::make_tetrahedron(p, p, p, p, g);
   CGAL::make_tetrahedron(p, p, p, p, g);
 
@@ -531,7 +532,7 @@ add_faces()
   typedef typename boost::graph_traits<T>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<T>::halfedge_descriptor halfedge_descriptor;
 
-  // read a mesh with bord + test append
+  // read a mesh with border + test append
   {
   T m;
 
