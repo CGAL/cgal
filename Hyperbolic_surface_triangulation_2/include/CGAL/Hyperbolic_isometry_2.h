@@ -40,7 +40,7 @@ public:
   void set_coefficient(int index, const Complex_number& coefficient);
 
   // Returns the index-th coefficient
-  Complex_number get_coefficient(int index) const;
+  const Complex_number& get_coefficient(int index) const;
 
   // Evaluates the isometry at point
   Point evaluate(const Point& point) const;
@@ -102,7 +102,7 @@ void Hyperbolic_isometry_2<Traits>::set_coefficient(int index, const Complex_num
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-typename Traits::Complex Hyperbolic_isometry_2<Traits>::get_coefficient(int index) const{
+const typename Traits::Complex& Hyperbolic_isometry_2<Traits>::get_coefficient(int index) const{
   return _coefficients[index];
 }
 

@@ -59,7 +59,7 @@ class Hyperbolic_isometry_2{
     /*!
       returns the index-th coefficient.
     */
-    Complex_number get_coefficient(int index) const;
+    const Complex_number& get_coefficient(int index) const;
     /// @}
 
     /// \name Operations

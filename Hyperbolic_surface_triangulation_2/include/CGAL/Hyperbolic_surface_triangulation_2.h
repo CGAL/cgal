@@ -427,9 +427,9 @@ std::vector<std::tuple<typename Hyperbolic_surface_triangulation_2<Traits, Attri
       _combinatorial_map.mark(const_ccw(invaded), visited_darts_mark);
       _combinatorial_map.mark(const_cw(invaded), visited_darts_mark);
 
-      Point a = positions[const_ccw(invader)];
-      Point b = positions[const_cw(invader)];
-      Point c = positions[invader];
+      const Point &a = positions[const_ccw(invader)];
+      const Point &b = positions[const_cw(invader)];
+      const Point &c = positions[invader];
       Complex_number cross_ratio = get_cross_ratio(invader);
 
       positions[invaded] = a;
