@@ -37,7 +37,7 @@ public:
   ComplexWithoutSqrt(const FT& real_part, const FT& imaginary_part);
   /// @}
 
-  /// \name Get and set
+  /// \name Get and Set
   /// @{
   /*!
     sets the real part to <code> real_part </code>.
