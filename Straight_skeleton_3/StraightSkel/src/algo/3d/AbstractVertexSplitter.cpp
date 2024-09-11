@@ -28,6 +28,7 @@
 #include "data/3d/skel/SkelVertexData.h"
 #include "data/3d/skel/SkelEdgeData.h"
 #include "data/3d/skel/SkelFacetData.h"
+
 #include <limits>
 
 namespace algo { namespace _3d {

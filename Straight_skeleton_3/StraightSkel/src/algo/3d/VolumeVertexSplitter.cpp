@@ -29,7 +29,9 @@
 #include "data/3d/Polyhedron.h"
 #include "util/ptrs.h"
 #include "util/Configuration.h"
+
 #include <list>
+#include <string>
 
 namespace algo { namespace _3d {
 

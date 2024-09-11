@@ -26,6 +26,7 @@
 #include "data/3d/Polyhedron.h"
 #include "data/3d/KernelFactory.h"
 #include "util/StringFactory.h"
+
 #include <cmath>
 #include <sstream>
 

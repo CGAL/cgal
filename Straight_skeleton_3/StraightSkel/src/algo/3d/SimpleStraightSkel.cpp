@@ -342,7 +342,7 @@ bool SimpleStraightSkel::run() {
 
     PolyhedronSPtr polyhedron = polyhedron_->clone();
 
-    db::_3d::OBJFile::save("results/init_pre.obj", polyhedron);
+    db::_3d::OBJFile::save("results/init_pre.obj", polyhedron, false /*do not triangulate*/);
 
     // Simple test for weighted straight skeleton.
     //unsigned int j = 0;
@@ -440,7 +440,7 @@ bool SimpleStraightSkel::run() {
         CGAL::FT offset = 0.0;
         CGAL::FT offset_prev = 0.0;
 
-        db::_3d::OBJFile::save("results/init_post.obj", polyhedron);
+        db::_3d::OBJFile::save("results/init_post.obj", polyhedron, false /*do not triangulate*/);
 
         AbstractEventSPtr event = nextEvent(polyhedron, offset);
         while (event) {
@@ -595,11 +595,29 @@ ArcSPtr SimpleStraightSkel::createArc(VertexSPtr vertex) {
                 i++;
             }
         }
+
+        // std::cout << "Facet #" << facets[0]->getID() << std::endl;
+        // std::cout << "Facet #" << facets[1]->getID() << std::endl;
+        // std::cout << "Facet #" << facets[2]->getID() << std::endl;
+
         if (i >= 3) {
             Vector3SPtr direction;
             Plane3SPtr plane_1 = facets[0]->plane();
             Plane3SPtr plane_2 = facets[1]->plane();
             Plane3SPtr plane_3 = facets[2]->plane();
+            // std::cout << "Plane #" << facets[0]->getID() << " --> " << *plane_1 << std::endl;
+            // std::cout << "\t" << plane_1->point() << std::endl;
+            // std::cout << "\t" << plane_1->point() + plane_1->base1() << std::endl;
+            // std::cout << "\t" << plane_1->point() + plane_1->base2() << std::endl;
+            // std::cout << "Plane #" << facets[1]->getID() << " --> " << *plane_2 << std::endl;
+            // std::cout << "\t" << plane_2->point() << std::endl;
+            // std::cout << "\t" << plane_2->point() + plane_2->base1() << std::endl;
+            // std::cout << "\t" << plane_2->point() + plane_2->base2() << std::endl;
+            // std::cout << "Plane #" << facets[2]->getID() << " --> " << *plane_3 << std::endl;
+            // std::cout << "\t" << plane_3->point() << std::endl;
+            // std::cout << "\t" << plane_3->point() + plane_3->base1() << std::endl;
+            // std::cout << "\t" << plane_3->point() + plane_3->base2() << std::endl;
+
             CGAL::FT speed_1 = 1.0;
             if (facets[0]->hasData()) {
                 speed_1 = std::dynamic_pointer_cast<SkelFacetData>(
@@ -1436,12 +1454,14 @@ EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
         if (vertex_src->getPoint() == vertex_dst->getPoint()) {
             continue;
         }
+
         FacetSPtr facet_l = edge->getFacetL();
         FacetSPtr facet_r = edge->getFacetR();
         if (isTriangle(facet_l, edge) || isTriangle(facet_r, edge)) {
             // triangle event
             continue;
         }
+
         Point3SPtr point = Point3SPtr();
         CGAL::FT offset_event;
         std::tie(point, offset_event) = vanishesAt(edge);
@@ -1626,17 +1646,20 @@ EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhed
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
         EdgeSPtr edge = *it_e++;
+
         VertexSPtr vertex_src = edge->getVertexSrc();
         VertexSPtr vertex_dst = edge->getVertexDst();
         if (vertex_src->getPoint() == vertex_dst->getPoint()) {
             continue;
         }
+
         FacetSPtr facet_l = edge->getFacetL();
         FacetSPtr facet_r = edge->getFacetR();
         if (isTriangle(facet_l, edge) || isTriangle(facet_r, edge)) {
             // triangle event
             continue;
         }
+
         FacetSPtr facet_other = edge->getFacetL();
         EdgeSPtr edge_next = edge->next(facet_other);
         facet_other = edge_next->other(facet_other);
@@ -1649,6 +1672,7 @@ EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhed
             // dbl edge merge event
             continue;
         }
+
         facet_other = edge->getFacetR();
         edge_next = edge->prev(facet_other);
         facet_other = edge_next->other(facet_other);
@@ -1661,6 +1685,7 @@ EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhed
             // dbl edge merge event
             continue;
         }
+
         FacetSPtr facet = FacetSPtr();
         EdgeSPtr edge_1 = EdgeSPtr();
         EdgeSPtr edge_2 = EdgeSPtr();
@@ -1671,6 +1696,7 @@ EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhed
             edge_1 = edge_prev;
             edge_2 = edge_next;
         }
+        // @todo do we need to test these other combinations if above matched?
         edge_prev = edge->prev(facet_l)->prev(facet_l);
         edge_next = edge->next(facet_l);
         if (edge_prev->hasSameFacets(edge_next) && edge_prev != edge_next) {
@@ -1757,13 +1783,16 @@ TriangleEventSPtr SimpleStraightSkel::nextTriangleEvent(PolyhedronSPtr polyhedro
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
         EdgeSPtr edge = *it_e++;
+
         if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint()) {
             continue;
         }
+
         if (isTetrahedron(edge)) {
             // tetrahedron event
             continue;
         }
+
         FacetSPtr facet;
         if (isTriangle(edge->getFacetL(), edge)) {
             facet = edge->getFacetL();
@@ -1797,6 +1826,7 @@ TriangleEventSPtr SimpleStraightSkel::nextTriangleEvent(PolyhedronSPtr polyhedro
         if (!point) {
             continue;
         }
+
         if ((KernelWrapper::side(edge->getFacetL()->plane(), point) > 0) ||
                 KernelWrapper::side(edge->getFacetR()->plane(), point) > 0) {
             // triangle may not be a hole
@@ -1852,6 +1882,7 @@ DblEdgeMergeEventSPtr SimpleStraightSkel::nextDblEdgeMergeEvent(PolyhedronSPtr p
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
         EdgeSPtr edge = *it_e++;
+
         if (!isReflex(edge)) {
             continue;
         }
@@ -1880,6 +1911,7 @@ DblEdgeMergeEventSPtr SimpleStraightSkel::nextDblEdgeMergeEvent(PolyhedronSPtr p
             edge_21 = edge->prev(facet_2);
             edge_22 = edge->next(facet_2)->next(facet_2);
         }
+
         facet_other = edge->getFacetR();
         edge_next = edge->prev(facet_other);
         facet_other = edge_next->other(facet_other);
@@ -1897,10 +1929,12 @@ DblEdgeMergeEventSPtr SimpleStraightSkel::nextDblEdgeMergeEvent(PolyhedronSPtr p
             edge_21 = edge->prev(facet_2)->prev(facet_2);
             edge_22 = edge->next(facet_2);
         }
+
         if (edge_11 == edge_12 || edge_21 == edge_22) {
             // double triangle event
             continue;
         }
+
         if (!is_dbl_edge_merge_event) {
             continue;
         }
@@ -3175,6 +3209,10 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PolyhedronSPtr polyhedron,
     // just the total offset, with value initialized from events[0] and events[1]
     CGAL::FT curr_time_to_next_event = - (std::numeric_limits<double>::max());
 
+    // @todo merge "next..." into a single event
+
+    // --- Vanish Events
+
     events[2] = nextEdgeEvent(polyhedron, curr_offset, curr_time_to_next_event);
     if(events[2])
       std::cout << "Edge Event @ " << events[2]->getOffset() << std::endl;
@@ -3204,6 +3242,8 @@ AbstractEventSPtr SimpleStraightSkel::nextEvent(PolyhedronSPtr polyhedron,
     if(events[7])
       std::cout << "Tetrahedron Event @ " << events[7]->getOffset() << std::endl;
     std::cout << "Current time to earliest next event: " << curr_time_to_next_event << std::endl;
+
+    // --- Contact Event
 
     events[8] = nextVertexEvent(polyhedron, curr_offset, curr_time_to_next_event);
     if(events[8])
@@ -3367,7 +3407,7 @@ void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
         FacetSPtr facet = *it_f++;
 
         auto res = facet_coefficients.emplace(facet, Plane3SPtr{});
-        if(res.second) { // never seen this supporting plane before
+        if(res.second) { // never seen this direction of planes before
             Plane3SPtr plane = facet->plane(); // calls initPlane() if needed
 
 #ifdef USE_CGAL

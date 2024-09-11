@@ -24,7 +24,9 @@
 #include "data/3d/Polyhedron.h"
 #include "util/ptrs.h"
 #include "util/Configuration.h"
+
 #include <list>
+#include <string>
 
 namespace algo { namespace _3d {
 
@@ -85,6 +87,7 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
         combi combination = *it_combi++;
+        DEBUG_VAL("-- Testing split-combination: " << combiToString(combination));
         PolyhedronSPtr poly_c = copyVertex(vertex);
         VertexSPtr vertex_c = poly_c->vertices().front();
         CombiVertexSplitter::splitVertex(vertex_c, combination);
@@ -92,8 +95,12 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
         if (!poly_c_offset) {
             continue;
         }
-        std::cout << "= Base Polyhedron\n" << poly_c->toString() << std::endl;
-        std::cout << "= Shifted Polyhedron\n" << poly_c_offset->toString() << std::endl;
+
+        // std::cout << "= Base Polyhedron\n" << poly_c->toString() << std::endl;
+        // std::cout << "= Shifted Polyhedron\n" << poly_c_offset->toString() << std::endl;
+        db::_3d::OBJFile::save("results/last_tested_split.obj", poly_c, false);
+        db::_3d::OBJFile::save("results/last_tested_split_offset.obj", poly_c_offset, false);
+
         poly_c->dumpEdges("results/last_convex_split_base");
         poly_c_offset->dumpEdges("results/last_convex_split_offset");
         if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {

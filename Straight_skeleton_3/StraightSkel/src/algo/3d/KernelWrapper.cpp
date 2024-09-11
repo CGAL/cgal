@@ -33,7 +33,17 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2, Pla
     if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj))
       result = KernelFactory::createPoint3(*ipoint);
     else
-      CGAL_warning_msg(false, "intersection of 3 planes failed to produce a point");
+    {
+      // Shouldn't be there, but let's investigate
+      if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj))
+          std::cerr << "Intersection is a line" << std::endl;
+      else if(const CGAL::Plane3 *iplane = CGAL::object_cast<CGAL::Plane3>(&obj))
+          std::cerr << "Intersection is a plane" << std::endl;
+      else
+          std::cerr << "Intersection is... not?" << std::endl;
+
+      CGAL_assertion_msg(false, "intersection of 3 planes failed to produce a point");
+    }
 #else
     result = Point3SPtr(kernel::intersection(&(*plane1), &(*plane2), &(*plane3)));
 #endif
@@ -197,7 +207,8 @@ Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
     return result;
 }
 
-Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
+Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset)
+{
     Plane3SPtr result = Plane3SPtr();
 // #define CGAL_SS3_OLD_CODE_OFFSET_PLANE
 #ifndef CGAL_SS3_OLD_CODE_OFFSET_PLANE // this assumes a plane with normalized coefficients (i.e., its normal is normalized)
@@ -213,9 +224,13 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset) {
     const double d = plane->getD();
 # endif
     CGAL_assertion_code(CGAL::FT sq_n = a*a + b*b + c*c;)
-    // std::cout << "normalization check: " << sq_n
+    // std::cout << "normalization check (post offset): " << sq_n
     //           << " (" << CGAL::to_interval(sq_n).first << "; "
     //           << CGAL::to_interval(sq_n).second << ")" << std::endl;
+    // std::cout << "a: " << a << std::endl;
+    // std::cout << "b: " << b << std::endl;
+    // std::cout << "c: " << c << std::endl;
+    // std::cout << "d: " << d << std::endl;
 
     // inaccuracies during normalization since the sqrt is (usually) not exact
     CGAL_assertion((sq_n - 1) < 1e-5);
