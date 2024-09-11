@@ -154,6 +154,15 @@ struct has_construct_opposite_2 : std::false_type {};
 template <typename T>
 struct has_construct_opposite_2<T, std::void_t<typename T::Construct_opposite_2>> : std::true_type {};
 
+// Construct_point_2
+// Helper trait to check for the presence of nested Construct_point_2
+template <typename, typename = std::void_t<>>
+struct has_construct_point_2 : std::false_type {};
+
+// Specialization if the nested type Construct_point_2 exists
+template <typename T>
+struct has_construct_point_2<T, std::void_t<typename T::Construct_point_2>> : std::true_type {};
+
 // Compare_endpoints_xy_2
 // Helper trait to check for the presence of nested Compare_endpoints_xy_2
 template <typename, typename = std::void_t<>>
@@ -163,8 +172,6 @@ struct has_compare_endpoints_xy_2 : std::false_type {};
 template <typename T>
 struct has_compare_endpoints_xy_2<T, std::void_t<typename T::Compare_endpoints_xy_2>> : std::true_type {};
 
-
-
 // Approximate_2
 // Helper trait to check for the presence of nested Approximate_2
 template <typename, typename = std::void_t<>>
@@ -173,7 +180,6 @@ struct has_approximate_2 : std::false_type {};
 // Specialization if the nested type Approximate_2 exists
 template <typename T>
 struct has_approximate_2<T, std::void_t<typename T::Approximate_2>> : std::true_type {};
-
 
 // Parameter_space_in_x_2
 // Helper trait to check for the presence of nested Parameter_space_in_x_2
