@@ -17,8 +17,9 @@
 #include "algo/3d/VolumeVertexSplitter.h"
 
 #include "debug.h"
-#include "algo/3d/SelfIntersection.h"
 #include "algo/3d/KernelWrapper.h"
+#include "algo/3d/PolyhedronTransformation.h"
+#include "algo/3d/SelfIntersection.h"
 #include "data/2d/Vertex.h"
 #include "data/2d/Edge.h"
 #include "data/2d/Polygon.h"
@@ -188,7 +189,7 @@ PolyhedronSPtr VolumeVertexSplitter::splitVertex(VertexSPtr vertex) {
         PolyhedronSPtr poly_c = copyVertex(vertex);
         VertexSPtr vertex_c = poly_c->vertices().front();
         CombiVertexSplitter::splitVertex(vertex_c, combination);
-        PolyhedronSPtr poly_c_offset = shiftFacets(poly_c, -1.0);
+        PolyhedronSPtr poly_c_offset = PolyhedronTransformation::shiftFacets(poly_c, -1.0);
         if (!poly_c_offset) {
             continue;
         }

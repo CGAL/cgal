@@ -224,17 +224,6 @@ public:
     static void harmonizeFacetPlanes(PolyhedronSPtr polyhedron);
 
     /**
-     * returns the shifted position of the vertex of a polyhedron
-     */
-    static Point3SPtr shiftPoint(VertexSPtr vertex, CGAL::FT offset);
-
-    /**
-     * Creates an offset polyhedron.
-     * Negative offset points to the interior of the polyhedron.
-     */
-    static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron, CGAL::FT offset);
-
-    /**
      * Appends a node of an event to the skeleton.
      * It links all adjacent arcs and sheets to this node.
      */

@@ -18,10 +18,12 @@
 #define ALGO_3D_POLYHEDRONTRANSFORMATION_H
 
 #include "data/3d/ptrs.h"
+#include "data/3d/skel/ptrs.h"
 
 namespace algo { namespace _3d {
 
 using namespace data::_3d;
+using namespace data::_3d::skel;
 
 class PolyhedronTransformation {
 public:
@@ -29,6 +31,20 @@ public:
 
     static void translate(PolyhedronSPtr polyhedron, Vector3SPtr t);
     static void scale(PolyhedronSPtr polyhedron, Vector3SPtr s);
+
+    /**
+     * returns the shifted position of the vertex of a polyhedron
+     */
+    static Point3SPtr shiftPoint(VertexSPtr vertex, CGAL::FT offset);
+
+    /**
+     * Creates an offset polyhedron.
+     * Negative offset points to the interior of the polyhedron.
+     */
+    static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron,
+                                      CGAL::FT offset,
+                                      const bool recompute_positions = true,
+                                      const bool with_sanity_checks = false);
 
     /**
      * To check for parallel planes is not enough.

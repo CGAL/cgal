@@ -377,11 +377,11 @@ int main(int argc, const char* argv[]) {
         std::cout << "Normalize plane coefficients..." << std::endl;
         algo::_3d::SimpleStraightSkel::harmonizeFacetPlanes(polyhedron);
 
-        // always sanitize, even if we have not moved points
+        // since we have sanitized plane values, always sanitize so the points are on the facets
         std::cout << "Sanitize..." << std::endl;
         std::string description = polyhedron->getDescription();
-        polyhedron = algo::_3d::SimpleStraightSkel::shiftFacets(polyhedron, 0.0);
-        // polyhedron->clearData(); // @fixme: done to not clear speed, but what are the side effects?
+        polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
+        // polyhedron->clearData(); // @fixme: as to not clear facet speeds, but what side effects?
         polyhedron->setDescription(description);
 
         if (rand_move_points) {

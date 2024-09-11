@@ -453,8 +453,11 @@ bool SimpleStraightSkel::run() {
             if (controller_) {
                 controller_->wait();
             }
+
             offset = event->getOffset();
-            polyhedron = shiftFacets(polyhedron, offset - offset_prev);
+            const CGAL::FT shift = offset - offset_prev;
+            const bool recompute_positions = (shift != 0);
+            polyhedron = PolyhedronTransformation::shiftFacets(polyhedron, shift, recompute_positions);
 
             // will have degeneracies since we haven't treated the event yet
             db::_3d::OBJFile::save("results/shift_" + std::to_string(event_id) + ".obj", polyhedron, false /*do not triangulate*/);
@@ -3101,7 +3104,7 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                 // face. We could check this here, but determining what is the offset face at this
                 // point (i.e., while searching for events) is rough: plenty of other events
                 // might modify the face before this particular pierce event appears, and so
-                // we can't just do shift_face(facet) because the result might be a self-intersecting
+                // we can't just do shift(facet) because the result might be a self-intersecting
                 // polygon with holes.
                 //
                 // Instead, we do not filter here, but simply put it in the queue. When the event
@@ -3382,232 +3385,50 @@ void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
             const double n = sqrt(a*a + b*b + c*c);
 #endif
 
-            if(!is_zero(n))
-            {
-              Plane3SPtr normalized_plane = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
-              facet->setPlane(normalized_plane);
-            }
-        }
-        else {
-            std::cout << "Facet " << facet->getID() << " is reusing coefficients from Facet " << res.first->first->getID() << std::endl;
+            CGAL_assertion(!is_zero(n)); // degenerate faces are not allowed
 
-            // plane already exists, use the same plane
-            facet->setPlane(res.first->second);
-        }
-    }
-}
-
-Point3SPtr SimpleStraightSkel::shiftPoint(VertexSPtr vertex,
-                                          CGAL::FT offset)
-{
-  Point3SPtr result;
-
-  Plane3SPtr planes[3];
-  unsigned int i = 0;
-
-  std::cout << "shift point, " << vertex->facets().size() << " incident facets" << std::endl;
-
-  std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-  while (i < 3 && it_f != vertex->facets().end()) {
-      FacetWPtr facet_wptr = *it_f++;
-      if (!facet_wptr.expired()) {
-          FacetSPtr facet = FacetSPtr(facet_wptr);
-          CGAL::FT speed = 1.0;
-          if (facet->hasData()) {
-              speed = std::dynamic_pointer_cast<SkelFacetData>(
-                      facet->getData())->getSpeed();
-          }
-
-          planes[i] = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
-          ++i;
-      }
-  }
-
-  std::cout << "Found " << i << " facets" << std::endl;
-
-  if (i >= 3)
-  {
-      result = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
-      std::cout << "Point position from: " << vertex->toString() << " to " << *result << std::endl;
-
-      if (!result) {
-          DEBUG_SPTR(result);
-      }
-  }
-
-  return result;
-}
-
-PolyhedronSPtr SimpleStraightSkel::shiftFacets(PolyhedronSPtr polyhedron, CGAL::FT offset)
-{
-    std::cout << "~~~~ Shift by " << offset << std::endl;
-
-    std::ofstream shift_out("results/last_shift.polylines.txt");
-    shift_out.precision(17);
-
-    PolyhedronSPtr result = Polyhedron::create();
-
-    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
-    while (it_v != polyhedron->vertices().end()) {
-        VertexSPtr vertex = *it_v++;
-        Plane3SPtr planes[3];
-        unsigned int i = 0;
-        std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-        while (i < 3 && it_f != vertex->facets().end()) {
-            FacetWPtr facet_wptr = *it_f++;
-            if (!facet_wptr.expired()) {
-                FacetSPtr facet = FacetSPtr(facet_wptr);
-                CGAL::FT speed = 1.0;
-                if (facet->hasData()) {
-                    speed = std::dynamic_pointer_cast<SkelFacetData>(
-                            facet->getData())->getSpeed();
-                }
-
-                planes[i] = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
-                i++;
-            }
-        }
-        if (i >= 3) {
-            Point3SPtr point;
-            point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
-            shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
-
-            if (!point) {
-                result = PolyhedronSPtr();
-                DEBUG_SPTR(result);
-                return result;
-            }
-            VertexSPtr offset_vertex = Vertex::create(point);
-            // SkelVertexData for each vertex should be created by init
-            SkelVertexDataSPtr data;
-            if (vertex->hasData()) {
-                data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-                SkelVertexDataSPtr offset_data = SkelVertexData::create(offset_vertex);
-                offset_data->setArc(data->getArc());
-            } else {
-                data = SkelVertexData::create(vertex);
-            }
-            data->setOffsetVertex(offset_vertex);
-            result->addVertex(offset_vertex);
-        }
-    }
-
-    it_v = polyhedron->vertices().begin();
-    while (it_v != polyhedron->vertices().end()) {
-        VertexSPtr vertex = *it_v++;
-        EdgeSPtr edge;
-        unsigned int i = 0;
-        std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
-        while (it_e != vertex->edges().end()) {
-            EdgeWPtr edge_wptr = *it_e++;
-            if (!edge_wptr.expired()) {
-                edge = EdgeSPtr(edge_wptr);
-                i++;
-            }
-        }
-        if (i == 1) {
-            VertexSPtr vertex_other;
-            if (edge->getVertexSrc() == vertex) {
-                vertex_other = edge->getVertexDst();
-            } else if (edge->getVertexDst() == vertex) {
-                vertex_other = edge->getVertexSrc();
-            }
-            SkelVertexDataSPtr data_other = std::dynamic_pointer_cast<SkelVertexData>(
-                    vertex_other->getData());
-            VertexSPtr offset_vertex_other = data_other->getOffsetVertex();
-            Vector3 direction =
-                    *(offset_vertex_other->getPoint()) - *(vertex_other->getPoint());
-            Point3SPtr point = KernelFactory::createPoint3(
-                    *(vertex->getPoint()) + direction);
-            VertexSPtr offset_vertex = Vertex::create(point);
-            SkelVertexDataSPtr data;
-            if (vertex->hasData()) {
-                data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
-            } else {
-                data = SkelVertexData::create(vertex);
-            }
-            data->setOffsetVertex(offset_vertex);
-            result->addVertex(offset_vertex);
-        }
-    }
-
-    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
-    while (it_e != polyhedron->edges().end()) {
-        EdgeSPtr edge = *it_e++;
-        SkelVertexDataSPtr vertex_src_data = std::dynamic_pointer_cast<SkelVertexData>(
-                edge->getVertexSrc()->getData());
-        SkelVertexDataSPtr vertex_dst_data = std::dynamic_pointer_cast<SkelVertexData>(
-                edge->getVertexDst()->getData());
-        if (vertex_src_data && vertex_dst_data) {
-            VertexSPtr offset_vertex_src = vertex_src_data->getOffsetVertex();
-            VertexSPtr offset_vertex_dst = vertex_dst_data->getOffsetVertex();
-            EdgeSPtr offset_edge = Edge::create(offset_vertex_src, offset_vertex_dst);
-            SkelEdgeDataSPtr data;
-            if (edge->hasData()) {
-                data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
-                SkelEdgeDataSPtr offset_data = SkelEdgeData::create(offset_edge);
-                offset_data->setSheet(data->getSheet());
-            } else {
-                data = SkelEdgeData::create(edge);
-            }
-            data->setOffsetEdge(offset_edge);
-            result->addEdge(offset_edge);
-        }
-    }
-
-    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
-    while (it_f != polyhedron->facets().end()) {
-        FacetSPtr facet = *it_f++;
-        FacetSPtr offset_facet = Facet::create();
-        SkelFacetDataSPtr data;
-        CGAL::FT speed = 1.0;
-        if (facet->hasData()) {
-            data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
-            speed = data->getSpeed();
-            SkelFacetDataSPtr data_offset = SkelFacetData::create(offset_facet);
-            data_offset->setFacetOrigin(data->getFacetOrigin());
-            data_offset->setSpeed(speed);
+            Plane3SPtr normalized_plane = KernelFactory::createPlane3(a/n, b/n, c/n, d/n);
+            facet->setPlane(normalized_plane);
+            res.first->second = normalized_plane;
         } else {
-            data = SkelFacetData::create(facet);
-            data->setSpeed(speed);
+            std::cout << "Facet #" << facet->getID() << " is reusing coefficients from Facet #" << res.first->first->getID() << std::endl;
+
+            // a parallel plane already exists, so we re-use its a, b, c coordinates
+            // but need the 'd' to be shifted so the plane goes through the facet's vertices
+            Plane3SPtr plane = facet->plane(); // calls initPlane() if needed
+            Plane3SPtr parallel_plane = res.first->second;
+
+            Vector3SPtr n = KernelFactory::createVector3(plane);
+            Vector3SPtr n_p = KernelFactory::createVector3(parallel_plane);
+            CGAL::FT sign = (CGAL::scalar_product(*n, *n_p) > 0) ? 1 : -1;
+
+            VertexSPtr v = facet->vertices().front();
+            Point3SPtr p = v->getPoint();
+            const CGAL::FT a = sign * parallel_plane->a();
+            const CGAL::FT b = sign * parallel_plane->b();
+            const CGAL::FT c = sign * parallel_plane->c();
+            const CGAL::FT d = - (a * p->x() + b * p->y() + c * p->z());
+            Plane3SPtr normalized_plane = KernelFactory::createPlane3(a, b, c, d);
+            CGAL_assertion(normalized_plane->has_on(*p));
+            facet->setPlane(normalized_plane);
         }
-        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
-        offset_facet->setPlane(offset_plane);
-        std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
-        while (it_v != facet->vertices().end()) {
-            VertexSPtr vertex = *it_v++;
-            if (vertex->hasData()) {
-                SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
-                    vertex->getData());
-                VertexSPtr offset_vertex = vertex_data->getOffsetVertex();
-                if (offset_vertex) {
-                    offset_facet->addVertex(offset_vertex);
-                }
-            }
-        }
-        std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
-        while (it_e != facet->edges().end()) {
-            EdgeSPtr edge = *it_e++;
-            SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
-                edge->getData());
-            EdgeSPtr offset_edge = edge_data->getOffsetEdge();
-            if (facet == edge->getFacetL()) {
-                offset_edge->setFacetL(offset_facet);
-                offset_facet->addEdge(offset_edge);
-            }
-            if (facet == edge->getFacetR()) {
-                offset_edge->setFacetR(offset_facet);
-                offset_facet->addEdge(offset_edge);
-            }
-        }
-        data->setOffsetFacet(offset_facet);
-        result->addFacet(offset_facet);
+
+        const CGAL::FT a = facet->plane()->a();
+        const CGAL::FT b = facet->plane()->b();
+        const CGAL::FT c = facet->plane()->c();
+        const CGAL::FT d = facet->plane()->d();
+        CGAL_assertion_code(CGAL::FT sq_n = a*a + b*b + c*c;)
+        // std::cout << "normalization check (post harmonize): " << sq_n
+        //           << " (" << CGAL::to_interval(sq_n).first << "; "
+        //           << CGAL::to_interval(sq_n).second << ")" << std::endl;
+        // std::cout << "a: " << a << std::endl;
+        // std::cout << "b: " << b << std::endl;
+        // std::cout << "c: " << c << std::endl;
+        // std::cout << "d: " << d << std::endl;
+
+        // inaccuracies during normalization since the sqrt is (usually) not exact
+        CGAL_assertion((sq_n - 1) < 1e-5);
     }
-
-    assert(polyhedron->edges().size() == result->edges().size());
-    assert(polyhedron->facets().size() == result->facets().size());
-
-    return result;
 }
 
 void SimpleStraightSkel::appendEventNode(NodeSPtr node) {
@@ -3730,11 +3551,11 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
             facets_clone[(i+3)%4]->addEdge(edges[i]);
             facets_clone[i]->addEdge(edges[i]);
         }
+
         PolyhedronSPtr polyhedron_no_flip = Polyhedron::create(4, facets_clone);
-        PolyhedronSPtr polyhedron_no_flip_offset = shiftFacets(
-                polyhedron_no_flip, -1.0);
-        if (!SelfIntersection::hasSelfIntersectingSurface(
-                polyhedron_no_flip_offset)) {
+        PolyhedronSPtr polyhedron_no_flip_offset = PolyhedronTransformation::shiftFacets(polyhedron_no_flip, -1.0);
+
+        if (!SelfIntersection::hasSelfIntersectingSurface(polyhedron_no_flip_offset)) {
             not_flipped_valid = true;
         }
     }
@@ -3775,11 +3596,11 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
             facets_clone[(i+3)%4]->addEdge(edges[i]);
             facets_clone[i]->addEdge(edges[i]);
         }
+
         PolyhedronSPtr polyhedron_flipped = Polyhedron::create(4, facets_clone);
-        PolyhedronSPtr polyhedron_flipped_offset = shiftFacets(
-                polyhedron_flipped, -1.0);
-        if (!SelfIntersection::hasSelfIntersectingSurface(
-                polyhedron_flipped_offset)) {
+        PolyhedronSPtr polyhedron_flipped_offset = PolyhedronTransformation::shiftFacets(polyhedron_flipped, -1.0);
+
+        if (!SelfIntersection::hasSelfIntersectingSurface(polyhedron_flipped_offset)) {
             flipped_valid = true;
         }
     }

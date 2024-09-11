@@ -70,6 +70,291 @@ void PolyhedronTransformation::scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s)
             util::StringFactory::fromDouble(CGAL::to_double((*v_s)[2])) + ">; ");
 }
 
+Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
+                                                CGAL::FT offset)
+{
+  // @todo this function doesn't try to find an independent triplet of planes,
+  // nor can it deal with degree 1 vertices
+
+  Point3SPtr result;
+
+  Plane3SPtr planes[3];
+  unsigned int i = 0;
+
+  std::cout << "shift point, " << vertex->facets().size() << " incident facets" << std::endl;
+
+  std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+  while (i < 3 && it_f != vertex->facets().end()) {
+      FacetWPtr facet_wptr = *it_f++;
+      if (!facet_wptr.expired()) {
+          FacetSPtr facet = FacetSPtr(facet_wptr);
+          CGAL::FT speed = 1.0;
+          if (facet->hasData()) {
+              speed = std::dynamic_pointer_cast<SkelFacetData>(
+                      facet->getData())->getSpeed();
+          }
+
+          planes[i] = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
+          ++i;
+      }
+  }
+
+  std::cout << "Found " << i << " facets" << std::endl;
+
+  if (i >= 3)
+  {
+      result = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+      std::cout << "Point position from: " << vertex->toString() << " to " << *result << std::endl;
+
+      if (!result) {
+          DEBUG_SPTR(result);
+      }
+  }
+
+  return result;
+}
+
+// @todo plenty of needless recomputations
+PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
+                                                     CGAL::FT offset,
+                                                     const bool recompute_positions,
+                                                     const bool with_sanity_checks)
+{
+    std::cout << "~~~~ Shift by " << offset << std::endl;
+
+    std::ofstream shift_out("results/last_shift.polylines.txt");
+    shift_out.precision(17);
+
+    PolyhedronSPtr result = Polyhedron::create();
+
+    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        Point3SPtr point = vertex->getPoint();
+
+        // those are treated in the next loop
+        if (vertex->degree() == 1) {
+            continue;
+        }
+
+        if (offset != 0 || recompute_positions) {
+            Plane3SPtr planes[3];
+
+            unsigned int i = 0;
+            std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+            while (i < 3 && it_f != vertex->facets().end()) {
+                FacetWPtr facet_wptr = *it_f++;
+                if (!facet_wptr.expired()) {
+                    FacetSPtr facet = FacetSPtr(facet_wptr);
+                    Plane3SPtr plane = facet->plane();
+                    std::cout << "Facet #" << facet->getID() << std::endl;
+                    std::cout << "  Plane: " << *plane << std::endl;
+
+                    bool independent = true;
+                    for(unsigned int j=0; j<i; ++j) {
+                        if (CGAL::parallel(*plane, *(planes[j]))) {
+                            independent = false;
+                            break;
+                        }
+                    }
+
+                    if (!independent) {
+                        continue;
+                    }
+
+                    CGAL::FT speed = 1.0;
+                    if (facet->hasData()) {
+                        speed = std::dynamic_pointer_cast<SkelFacetData>(
+                                facet->getData())->getSpeed();
+                    }
+
+                    planes[i] = KernelWrapper::offsetPlane(plane, offset*speed);
+                    std::cout << "  Offset Plane[" << i << "] = " << *(planes[i]) << std::endl;
+
+                    if (with_sanity_checks) {
+                        std::cout << KernelWrapper::squared_distance(planes[i], vertex->getPoint()) << " VS0 " << CGAL::square(offset*speed) << std::endl;
+                        CGAL_assertion(KernelWrapper::squared_distance(
+                                          planes[i], vertex->getPoint()) == CGAL::square(offset*speed));
+                    }
+
+                    ++i;
+                }
+            }
+
+            // If we can't find three independent planes incident to the vertex,
+            // that vertex should have been simplified in the input...
+            //
+            // @todo handle vertices with only 2 incident planes AND no simplification of inputs
+            CGAL_assertion(i >= 3);
+
+            point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+            if (!point) {
+                result = PolyhedronSPtr();
+                DEBUG_SPTR(result);
+                return result;
+            }
+        }
+
+        VertexSPtr offset_vertex = Vertex::create(point);
+        // SkelVertexData for each vertex should be created by init
+        SkelVertexDataSPtr data;
+        if (vertex->hasData()) {
+            data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+            SkelVertexDataSPtr offset_data = SkelVertexData::create(offset_vertex);
+            offset_data->setArc(data->getArc());
+        } else {
+            data = SkelVertexData::create(vertex);
+        }
+        data->setOffsetVertex(offset_vertex);
+        result->addVertex(offset_vertex);
+
+        std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
+        shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
+    }
+
+    // Now, deal with degree 1 vertices.
+    //
+    // Do NOT merge the two vertices loops together: this function assumes that degree 1 vertices
+    // are adjacent to degree 3+ vertices that have been offset in the first loop, and offsets
+    // degree 1 vertices using the offset of the adjacent degree 3+ vertex.
+    it_v = polyhedron->vertices().begin();
+    while (it_v != polyhedron->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        Point3SPtr point = vertex->getPoint();
+
+        EdgeSPtr edge;
+        unsigned int i = 0;
+        std::list<EdgeWPtr>::iterator it_e = vertex->edges().begin();
+        while (it_e != vertex->edges().end()) {
+            EdgeWPtr edge_wptr = *it_e++;
+            if (!edge_wptr.expired()) {
+                edge = EdgeSPtr(edge_wptr);
+                i++;
+            }
+        }
+        if (i == 1) {
+            VertexSPtr vertex_other = (edge->getVertexSrc() == vertex) ? edge->getVertexDst()
+                                                                       : edge->getVertexSrc();
+
+            // otherwise vertex_other has not been offset in the previous vertex loop
+            CGAL_assertion(vertex_other->degree() >= 3);
+
+            if (offset != 0 || recompute_positions) {
+                SkelVertexDataSPtr data_other = std::dynamic_pointer_cast<SkelVertexData>(vertex_other->getData());
+                VertexSPtr offset_vertex_other = data_other->getOffsetVertex();
+                Vector3 direction = *(offset_vertex_other->getPoint()) - *(vertex_other->getPoint());
+                point = KernelFactory::createPoint3(*(vertex->getPoint()) + direction);
+            }
+
+            VertexSPtr offset_vertex = Vertex::create(point);
+            SkelVertexDataSPtr data;
+            if (vertex->hasData()) {
+                data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
+            } else {
+                data = SkelVertexData::create(vertex);
+            }
+            data->setOffsetVertex(offset_vertex);
+            result->addVertex(offset_vertex);
+
+            std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
+            shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
+        } else {
+            CGAL_assertion_msg(i != 0, "no edge on degree 1 vertex?");
+        }
+    }
+
+    std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
+    while (it_e != polyhedron->edges().end()) {
+        EdgeSPtr edge = *it_e++;
+        SkelVertexDataSPtr vertex_src_data = std::dynamic_pointer_cast<SkelVertexData>(
+                edge->getVertexSrc()->getData());
+        SkelVertexDataSPtr vertex_dst_data = std::dynamic_pointer_cast<SkelVertexData>(
+                edge->getVertexDst()->getData());
+        if (vertex_src_data && vertex_dst_data) {
+            VertexSPtr offset_vertex_src = vertex_src_data->getOffsetVertex();
+            VertexSPtr offset_vertex_dst = vertex_dst_data->getOffsetVertex();
+            EdgeSPtr offset_edge = Edge::create(offset_vertex_src, offset_vertex_dst);
+            SkelEdgeDataSPtr data;
+            if (edge->hasData()) {
+                data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
+                SkelEdgeDataSPtr offset_data = SkelEdgeData::create(offset_edge);
+                offset_data->setSheet(data->getSheet());
+            } else {
+                data = SkelEdgeData::create(edge);
+            }
+            data->setOffsetEdge(offset_edge);
+            result->addEdge(offset_edge);
+        }
+    }
+
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        FacetSPtr offset_facet = Facet::create();
+        SkelFacetDataSPtr data;
+        CGAL::FT speed = 1.0;
+        if (facet->hasData()) {
+            data = std::dynamic_pointer_cast<SkelFacetData>(facet->getData());
+            speed = data->getSpeed();
+            SkelFacetDataSPtr data_offset = SkelFacetData::create(offset_facet);
+            data_offset->setFacetOrigin(data->getFacetOrigin());
+            data_offset->setSpeed(speed);
+        } else {
+            data = SkelFacetData::create(facet);
+            data->setSpeed(speed);
+        }
+        Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
+        offset_facet->setPlane(offset_plane);
+        std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
+        while (it_v != facet->vertices().end()) {
+            VertexSPtr vertex = *it_v++;
+            if (vertex->hasData()) {
+                SkelVertexDataSPtr vertex_data = std::dynamic_pointer_cast<SkelVertexData>(
+                    vertex->getData());
+                VertexSPtr offset_vertex = vertex_data->getOffsetVertex();
+                if (offset_vertex) {
+                    offset_facet->addVertex(offset_vertex);
+
+                    // @fixme only a warning because sometimes I still run perturbed, non-triangulated cases
+                    CGAL_warning(offset_plane->has_on(*(offset_vertex->getPoint())));
+
+                    if (with_sanity_checks) {
+                        std::cout << KernelWrapper::squared_distance(facet->getPlane(),
+                                                                     offset_vertex->getPoint())
+                                  << " VS1 " << CGAL::square(offset*speed) << std::endl;
+                        CGAL_assertion(CGAL::abs(KernelWrapper::squared_distance(
+                                           facet->getPlane(), offset_vertex->getPoint()) - CGAL::square(offset*speed)) < 1e-5);
+                        CGAL_assertion(KernelWrapper::squared_distance(
+                                           facet->getPlane(), offset_vertex->getPoint()) == CGAL::square(offset*speed));
+                    }
+                }
+            }
+        }
+        std::list<EdgeSPtr>::iterator it_e = facet->edges().begin();
+        while (it_e != facet->edges().end()) {
+            EdgeSPtr edge = *it_e++;
+            SkelEdgeDataSPtr edge_data = std::dynamic_pointer_cast<SkelEdgeData>(
+                edge->getData());
+            EdgeSPtr offset_edge = edge_data->getOffsetEdge();
+            if (facet == edge->getFacetL()) {
+                offset_edge->setFacetL(offset_facet);
+                offset_facet->addEdge(offset_edge);
+            }
+            if (facet == edge->getFacetR()) {
+                offset_edge->setFacetR(offset_facet);
+                offset_facet->addEdge(offset_edge);
+            }
+        }
+        data->setOffsetFacet(offset_facet);
+        result->addFacet(offset_facet);
+    }
+
+    assert(polyhedron->edges().size() == result->edges().size());
+    assert(polyhedron->facets().size() == result->facets().size());
+
+    return result;
+}
+
 bool PolyhedronTransformation::hasParallelPlanes(PolyhedronSPtr polyhedron) {
     bool result = false;
     std::list<FacetSPtr>::iterator it_f1 = polyhedron->facets().begin();

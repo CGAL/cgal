@@ -45,7 +45,6 @@ public:
     static PolyhedronSPtr splitConvexVertex(VertexSPtr vertex);
     static PolyhedronSPtr splitReflexVertex(VertexSPtr vertex);
 
-    static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron, CGAL::FT offset);
     static bool checkSplitted(PolyhedronSPtr polyhedron);
 
     virtual std::string toString() const;
