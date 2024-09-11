@@ -54,7 +54,7 @@ class Hyperbolic_isometry_2{
     */
     void set_coefficient(int index, const Complex_number& coefficient);
 
-    /// \name Access functions
+    /// \name Access Functions
     /// @{
     /*!
       returns the index-th coefficient.

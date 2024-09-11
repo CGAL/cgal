@@ -95,7 +95,7 @@ public:
   Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2 other);
   /// @}
 
-  /// \name Access functions
+  /// \name Access Functions
   /// @{
   /*!
       returns the decorated combinatorial map.
@@ -126,7 +126,7 @@ public:
   /// @}
 
 
-  /// \name Delaunay flip algorithm
+  /// \name Delaunay Flip Algorithm
   /// @{
   /*!
       tells if if the edge supported by the dart is Delaunay flippable.
@@ -178,7 +178,7 @@ public:
   bool is_valid() const;
   /// @}
 
-  /// \name Input/output
+  /// \name Input/Output
   /// @{
   /*!
       writes the triangulation in a stream.
