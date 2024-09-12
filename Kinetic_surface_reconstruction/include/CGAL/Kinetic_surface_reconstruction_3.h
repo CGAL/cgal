@@ -136,7 +136,7 @@ public:
     \cgalParamNBegin{minimum_region_size}
       \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
       \cgalParamType{`std::size_t`}
-      \cgalParamDefault{1% of input points}
+      \cgalParamDefault{0.5% of input points}
     \cgalParamNEnd
     \cgalParamNBegin{angle_tolerance}
       \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
@@ -266,7 +266,7 @@ public:
     \cgalParamNBegin{minimum_region_size}
       \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
       \cgalParamType{`std::size_t`}
-      \cgalParamDefault{1% of input points}
+      \cgalParamDefault{0.5% of input points}
     \cgalParamNEnd
     \cgalParamNBegin{angle_tolerance}
       \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
@@ -1725,12 +1725,7 @@ private:
       m_volumes[i] = 0;
     }
 
-//    std::size_t count_faces = 0;
-//    std::size_t count_points = 0;
-
     From_exact from_exact;
-
-//    std::size_t idx = 0;
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       std::size_t v[] = { std::size_t(-1), std::size_t(-1) };
@@ -1814,11 +1809,33 @@ private:
     }
     if (m_verbose) std::cout << "* getting planar shapes using region growing" << std::endl;
 
+    FT xmin, ymin, zmin, xmax, ymax, zmax;
+    auto pit = m_points.begin();
+    const Point_3& p = get(m_point_map, *pit);
+    xmin = xmax = p.x();
+    ymin = ymax = p.y();
+    zmin = zmax = p.z();
+
+    pit++;
+
+    while (pit != m_points.end()) {
+      const Point_3& p = get(m_point_map, *pit);
+      xmin = (std::min)(xmin, p.x());
+      xmax = (std::max)(xmax, p.x());
+      ymin = (std::min)(ymin, p.y());
+      ymax = (std::max)(ymax, p.y());
+      zmin = (std::min)(zmin, p.z());
+      zmax = (std::max)(zmax, p.z());
+      pit++;
+    }
+
+    FT diag = CGAL::sqrt((xmax - xmin) * (xmax - xmin) + (ymax - ymin) * (ymax - ymin) + (zmax - zmin) * (zmax - zmin));
+
     // Parameters.
     const std::size_t k = parameters::choose_parameter(parameters::get_parameter(np, internal_np::k_neighbors), 12);
-    const FT max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
+    const FT max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), diag * 0.02);
     const FT max_accepted_angle = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_angle), FT(15));
-    const std::size_t min_region_size = parameters::choose_parameter(parameters::get_parameter(np, internal_np::minimum_region_size), 50);
+    const std::size_t min_region_size = parameters::choose_parameter(parameters::get_parameter(np, internal_np::minimum_region_size), m_points.size() * 0.005);
 
     m_detection_distance_tolerance = max_distance_to_plane;
 
@@ -1863,11 +1880,11 @@ private:
       return;
 
     const bool regularize_axis_symmetry = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_axis_symmetry), false);
-    const bool regularize_coplanarity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_coplanarity), false);
+    const bool regularize_coplanarity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_coplanarity), true);
     const bool regularize_orthogonality = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_orthogonality), false);
     const bool regularize_parallelism = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_parallelism), false);
-    const FT angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 25);
-    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), 0.01);
+    const FT angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 5);
+    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), max_distance_to_plane * 0.5);
 
     // Regularize detected planes.
 

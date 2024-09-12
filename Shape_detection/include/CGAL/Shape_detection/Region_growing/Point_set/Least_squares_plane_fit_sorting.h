@@ -133,7 +133,7 @@ namespace Point_set {
       const CGAL_NP_CLASS& np = parameters::default_values()) :
       m_neighbor_query(neighbor_query),
       m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
-      m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_normal_map(input_range, np)),
+      m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap, NormalMap>::get_normal_map(input_range, np)),
       m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits)))
     {
       CGAL_precondition(input_range.size() > 0);
@@ -190,14 +190,14 @@ namespace Point_set {
       \brief the average of the maximal point to fitted plane distance in each neighborhood.
     */
 
-    const FT mean_distance() {
+    const double mean_distance() {
       return mean_d;
     }
 
     /*!
       \brief the average of the maximal normal deviation to fitted plane in each neighborhood.
     */
-    const FT mean_deviation() {
+    const double mean_deviation() {
       return mean_dev;
     }
     /// @}
@@ -211,8 +211,8 @@ namespace Point_set {
     Seed_range m_ordered;
     std::vector<FT> m_scores;
 
-    FT mean_d;
-    FT mean_dev;
+    double mean_d;
+    double mean_dev;
 
     void compute_scores() {
 
@@ -232,12 +232,12 @@ namespace Point_set {
 
         auto plane = p.first;
 
-        FT max_dist = 0;
-        FT max_dev = 0;
+        double max_dist = 0;
+        double max_dev = 0;
 
         for (const Item &n : neighbors) {
-          FT d = (get(m_point_map, n) - plane.point()) * plane.orthogonal_vector();
-          FT dev = acos(CGAL::abs(get(m_normal_map, n) * plane.orthogonal_vector()));
+          double d = CGAL::to_double((get(m_point_map, n) - plane.point()) * plane.orthogonal_vector());
+          double dev = acos(CGAL::to_double(CGAL::abs(get(m_normal_map, n) * plane.orthogonal_vector())));
 
           if (d > max_dist)
             max_dist = d;
