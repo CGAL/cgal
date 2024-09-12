@@ -95,7 +95,8 @@ struct Construct_initial_points_labeled_image
   { }
 
   /*!
-  * \brief Constructs points by scanning the image and
+  * \brief Constructs at least `n` initial points,
+  * by scanning the image and
   * collecting points in each object in the image,
   * even if they are non-connected components.
   * This ensures that each component will be initialized.
@@ -104,8 +105,6 @@ struct Construct_initial_points_labeled_image
   * `MeshDomain::Intersection`
   * @tparam MeshDomain model of `MeshDomain_3`
   * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
-  *
-  * @param n a lower bound on the number of constructed points
   */
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
@@ -127,8 +126,6 @@ struct Construct_initial_points_labeled_image
    *   `result_type operator()(Word v)`
    *   with `Word` the type of the image values.
    * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
-   *
-   * @param n a lower bound on the number of constructed points
    */
   template <typename OutputIterator, typename MeshDomain, typename C3t3, typename TransformOperator>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, TransformOperator transform, const C3t3& c3t3, int n = 20) const

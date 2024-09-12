@@ -19,7 +19,7 @@ public:
 /// @{
 
 /*!
-Outputs a set of at least `n` surface points to the
+Outputs a set of surface points, for mesh initialization, to the
 output iterator `pts`, as objects of type
 `MeshDomain::Intersection`.
 
@@ -27,19 +27,19 @@ output iterator `pts`, as objects of type
 `MeshDomain::Intersection`
 @tparam MeshDomain model of `MeshDomain_3`
 @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+
 @param pts the output points
 @param domain the input domain
 @param c3t3 the input complex
-@param n an estimation of the number of points to output.
+@param n a lower bound on the number of points to construct for initialization.
 A generator can choose to ignore this parameter.
 If it does not output enough points, then more points will be added automatically.
-
 */
 template <typename OutputIterator, typename MeshDomain, typename C3t3>
 OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n);
 
 /*!
-Outputs a set of surface points to the
+Outputs a set of surface points, for mesh initialization, to the
 output iterator `pts`, as objects of type
 `MeshDomain::Intersection`.
 Since there is no `n` given like above, the functor must provide enough

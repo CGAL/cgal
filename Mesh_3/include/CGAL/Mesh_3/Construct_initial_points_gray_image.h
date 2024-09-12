@@ -56,7 +56,7 @@ struct Construct_initial_points_gray_image
   { }
 
   /*!
-  * \brief Constructs points by collecting them on the surface of all objects
+  * \brief Constructs at least `n` points by collecting them on the surface of all objects
   * in the image,
   * even if they are non-connected components.
   * Using this functor guarantees to initialize each connected component.
@@ -66,7 +66,6 @@ struct Construct_initial_points_gray_image
   * \tparam MeshDomain model of `MeshDomain_3`
   * \tparam C3t3 model of `MeshComplex_3InTriangulation_3`
   *
-  * \param n a lower bound on the number of points to be constructed
   */
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
