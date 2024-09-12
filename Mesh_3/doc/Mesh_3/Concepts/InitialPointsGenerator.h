@@ -19,7 +19,7 @@ public:
 /// @{
 
 /*!
-Outputs a set of `n` surface points to the
+Outputs a set of at least `n` surface points to the
 output iterator `pts`, as objects of type
 `std::tuple<Weighted_point_3, int, Index>`.
 `Weighted_point_3` is the point's position and weight,
@@ -35,14 +35,14 @@ output iterator `pts`, as objects of type
 @param c3t3 the input complex
 @param n an estimation of the number of points to output.
 A generator can choose to ignore this parameter.
-If a generator does not output enough points, then more points will be added automatically.
+If it does not output enough points, then more points will be added automatically.
 
 */
 template <typename OutputIterator, typename MeshDomain, typename C3t3>
 OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n);
 
 /*!
-Output a set of surface points to the
+Outputs a set of surface points to the
 output iterator `pts`, as objects of type
 `std::tuple<Weighted_point_3, int, Index>`.
 `Weighted_point_3` is the point's position and weight,
