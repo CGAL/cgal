@@ -101,7 +101,7 @@ struct Construct_initial_points_labeled_image
   * This ensures that each component will be initialized.
   *
   * @tparam OutputIterator model of `OutputIterator` that contains points of type
-  * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
+  * `MeshDomain::Intersection`
   * @tparam MeshDomain model of `MeshDomain_3`
   * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
   *
@@ -118,7 +118,7 @@ struct Construct_initial_points_labeled_image
    * \brief Same as above, but a `TransformOperator` that transforms values of the image is used.
    *
    * @tparam OutputIterator model of `OutputIterator` that contains points of type
-   *   `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
+   *   `MeshDomain::Intersection`
    * @tparam MeshDomain model of `MeshDomain_3`
    * @tparam TransformOperator functor that transforms values of the image.
    *   It must provide the following type:<br>

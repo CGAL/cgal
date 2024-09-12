@@ -21,13 +21,10 @@ public:
 /*!
 Outputs a set of at least `n` surface points to the
 output iterator `pts`, as objects of type
-`std::tuple<Weighted_point_3, int, Index>`.
-`Weighted_point_3` is the point's position and weight,
-`int` is the dimension of the minimal dimension subcomplex on which the point lies, and
-`Index` is the corresponding subcomplex index.
+`MeshDomain::Intersection`.
 
 @tparam OutputIterator model of `OutputIterator`, containing points of type
-`std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>`
+`MeshDomain::Intersection`
 @tparam MeshDomain model of `MeshDomain_3`
 @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 @param pts the output points
@@ -44,15 +41,12 @@ OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3
 /*!
 Outputs a set of surface points to the
 output iterator `pts`, as objects of type
-`std::tuple<Weighted_point_3, int, Index>`.
-`Weighted_point_3` is the point's position and weight,
-`int` is the dimension of the minimal dimension subcomplex on which the point lies, and
-`Index` is the corresponding subcomplex index.
+`MeshDomain::Intersection`.
 Since there is no `n` given like above, the functor must provide enough
 points to initialize the mesh generation process.
 
 @tparam OutputIterator model of `OutputIterator`, containing points of type
-`std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>`
+  `MeshDomain::Intersection`
 @tparam MeshDomain model of `MeshDomain_3`
 @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
 
