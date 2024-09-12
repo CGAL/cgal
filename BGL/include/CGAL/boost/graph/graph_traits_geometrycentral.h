@@ -1,7 +1,16 @@
-
+// Copyright (c) 2024  GeometryFactory (France).  All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org)
+//
+// $URL$
+// $Id$
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+//
+//
 // Author(s)     : Andreas Fabri
 
-#pragma once
+#ifndef CGAL_BOOST_GRAPH_TRAITS_GEOMETRYCENTRAL_H
+#define CGAL_BOOST_GRAPH_TRAITS_GEOMETRYCENTRAL_H
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -602,3 +611,4 @@ bool is_valid_face_descriptor(typename boost::graph_traits<geometrycentral::surf
 } // namespace surface
 } // namespace geometrycentral
 
+#endif
