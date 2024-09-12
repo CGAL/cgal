@@ -31,8 +31,9 @@ namespace CGAL
  * and can be passed as a parameter to `CGAL::make_mesh_3` using the
  * `CGAL::parameters::initial_points_generator()` parameter function.
  *
- * On images that contains multiple non-connected objects,
- * this functor will output points on every object.
+ * On images that contain multiple non-connected components,
+ * this functor will scan the full image and
+ * output points on every component.
  *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
@@ -53,15 +54,19 @@ struct Construct_initial_points_gray_image
       , iso_value_(iso_value)
       , image_values_to_subdomain_indices_(image_values_to_subdomain_indices)
   { }
+
   /*!
-  * \brief Constructs points by collecting them in all objects of the image,
-  * even if they are not connected.
-  * This guarantees to initialize all objects
+  * \brief Constructs points by collecting them on the surface of all objects
+  * in the image,
+  * even if they are non-connected components.
+  * Using this functor guarantees to initialize each connected component.
   *
-  * \tparam OutputIterator An `OutputIterator` of points of type
-  * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`.
-  * \tparam MeshDomain A model of `MeshDomain_3`.
-  * \tparam C3t3 A model of `MeshComplex_3InTriangulation_3`.
+  * \tparam OutputIterator model of `OutputIterator`, collecting points of type
+  * `std::tuple<MeshDomain::Point_3, int, MeshDomain::Index>`
+  * \tparam MeshDomain model of `MeshDomain_3`
+  * \tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+  *
+  * \param n a lower bound on the number of points to be constructed
   */
   template <typename OutputIterator, typename MeshDomain, typename C3t3>
   OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
