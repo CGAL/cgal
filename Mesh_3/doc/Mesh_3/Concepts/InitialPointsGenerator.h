@@ -24,7 +24,7 @@ output iterator `pts`, as objects of type
 `std::tuple<Weighted_point_3, int, Index>`.
 `Weighted_point_3` is the point's position and weight,
 `int` is the dimension of the minimal dimension subcomplex on which the point lies, and
-`Index` is the underlying subcomplex index.
+`Index` is the corresponding subcomplex index.
 
 @tparam OutputIterator model of `OutputIterator`, containing points of type
 `std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>`
@@ -47,7 +47,7 @@ output iterator `pts`, as objects of type
 `std::tuple<Weighted_point_3, int, Index>`.
 `Weighted_point_3` is the point's position and weight,
 `int` is the dimension of the minimal dimension subcomplex on which the point lies, and
-`Index` is the underlying subcomplex index.
+`Index` is the corresponding subcomplex index.
 Since there is no `n` given like above, the functor must provide enough
 points to initialize the mesh generation process.
 
