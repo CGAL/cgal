@@ -29,7 +29,7 @@
 /// The two main functions to generate a mesh are `make_mesh_3()` and `refine_mesh_3()`.
 /// The other functions enable to optimize an existing mesh.
 
-/// \defgroup PkgMesh3Initializers Mesh Initialization Functions
+/// \defgroup PkgMesh3Initializers Mesh Initialization Functors
 /// \ingroup PkgMesh3Ref
 /// The functors in this group perform mesh initialization by providing initial points.
 /// \defgroup PkgMesh3Parameters Parameter Functions
