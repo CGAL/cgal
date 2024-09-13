@@ -248,9 +248,8 @@ imported target `CGAL::LASLIB_support` provided in
 \laslib information can be obtained from
 <a href="https://lastools.github.io/">https://lastools.github.io/</a> and
 <a href="https://rapidlasso.de/product-overview/">https://rapidlasso.de/product-overview/</a>.
-\laslib is usually distributed along with LAStools: for simplicity, \cgal
-provides <a href="https://github.com/CGAL/LAStools">a fork with a
-CMake based install procedure</a>.
+\laslib is usually distributed along with LAStools. Current versions of \laslib provide CMake support.
+BUILD_SHARED_LIBS needs to be set to true on windows to create a dynamic linked library.
 
 \subsection thirdpartyOpenCV OpenCV
 

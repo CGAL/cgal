@@ -134,57 +134,51 @@ namespace LAS {
     output_value (point, get(current.first, *it), current.second);
   }
 
-  template<typename Value, typename Tuple, std::size_t I>
-  void output_tuple(LASpoint& point, const Value& v, const Tuple& t, std::index_sequence<I>) {
-    output_value(point, std::get<I>(v), std::get<I>(t));
-  }
-
-  template<typename Value, typename Tuple, std::size_t I, std::size_t... Is>
-  void output_tuple(LASpoint& point, const Value& v, const Tuple& t, std::index_sequence<I, Is...>) {
-    output_value(point, std::get<I>(v), std::get<I>(t));
-    output_tuple(point, v, t, std::index_sequence<Is...>());
+  template<typename Value, typename Tuple, std::size_t... Is>
+  void output_tuple(LASpoint& point, const Value& v, const Tuple& t, std::index_sequence<Is...>) {
+    (output_value(point, std::get<Is>(v), std::get<Is>(t)), ...);
   }
 
   template <typename ForwardIterator,
-    typename PropertyMap,
-    typename ... T>
+            typename PropertyMap,
+            typename ... T>
   void output_properties(LASpoint& point,
-    ForwardIterator it,
-    std::tuple<PropertyMap, T ...>&& current)
+                         ForwardIterator it,
+                         std::tuple<PropertyMap, T ...>&& current)
   {
     output_tuple(point, get(std::get<0>(current), *it), std::tuple<T ...>(), std::index_sequence_for<T ...>{});
   }
 
   template <typename ForwardIterator,
-    typename PropertyMap,
-    typename T,
-    typename NextPropertyHandler,
-    typename ... PropertyHandler>
+            typename PropertyMap,
+            typename T,
+            typename NextPropertyHandler,
+            typename ... PropertyHandler>
   void output_properties(LASpoint& point,
-    ForwardIterator it,
-    std::pair<PropertyMap, T>&& current,
-    NextPropertyHandler&& next,
-    PropertyHandler&& ... properties)
+                         ForwardIterator it,
+                         std::pair<PropertyMap, T>&& current,
+                         NextPropertyHandler&& next,
+                         PropertyHandler&& ... properties)
   {
-    output_value(point, get(current.first, *it), current.second);
-    output_properties(point, it, std::forward<NextPropertyHandler>(next),
-      std::forward<PropertyHandler>(properties)...);
+    output_value (point, get(current.first, *it), current.second);
+    output_properties (point, it, std::forward<NextPropertyHandler>(next),
+                       std::forward<PropertyHandler>(properties)...);
   }
 
   template <typename ForwardIterator,
-    typename PropertyMap,
-    typename ... T,
-    typename NextPropertyHandler,
-    typename ... PropertyHandler>
+            typename PropertyMap,
+            typename ... T,
+            typename NextPropertyHandler,
+            typename ... PropertyHandler>
   void output_properties(LASpoint& point,
-    ForwardIterator it,
-    std::tuple<PropertyMap, T ...>&& current,
-    NextPropertyHandler&& next,
-    PropertyHandler&& ... properties)
+                         ForwardIterator it,
+                         std::tuple<PropertyMap, T ...>&& current,
+                         NextPropertyHandler&& next,
+                         PropertyHandler&& ... properties)
   {
     output_tuple(point, get(std::get<0>(current), *it), std::tuple<T ...>(), std::index_sequence_for<T ...>{});
     output_properties(point, it, std::forward<NextPropertyHandler>(next),
-      std::forward<PropertyHandler>(properties)...);
+                      std::forward<PropertyHandler>(properties)...);
   }
 
 } // namespace LAS
