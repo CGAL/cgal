@@ -18,6 +18,7 @@
 
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 #include <CGAL/boost/graph/iterator.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 namespace  std {
 template <>
@@ -288,15 +289,18 @@ inline next(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfa
   return h.next();
 }
 
-/*
 
 typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor
 prev(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor h,
      const geometrycentral::surface::ManifoldSurfaceMesh& sm)
 {
-  return sm.prev(h);
+  typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor res, it = h.next();
+  while(it != h){
+    res = it;
+    it = it.next();
+  }
+  return res;
 }
-*/
 
 
 typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor
@@ -335,13 +339,12 @@ inline halfedge(typename boost::graph_traits<geometrycentral::surface::ManifoldS
 // HalfedgeListGraph
 //
 
-// CGAL::Iterator_range<typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_iterator>
-geometrycentral::surface::HalfedgeSet
+CGAL::Iterator_range<typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_iterator>
 inline halfedges(const geometrycentral::surface::ManifoldSurfaceMesh& sm)
 {
-  return const_cast<geometrycentral::surface::ManifoldSurfaceMesh&>(sm).halfedges();
+  geometrycentral::surface::HalfedgeSet es = const_cast<geometrycentral::surface::ManifoldSurfaceMesh&>(sm).halfedges();
+  return CGAL::make_range(es.begin(), es.end());
 }
-
 
 
 typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedges_size_type
@@ -608,7 +611,63 @@ bool is_valid_face_descriptor(typename boost::graph_traits<geometrycentral::surf
 }
 #endif
 
+
+class GC_point_pmap
+{
+public:
+
+  typedef boost::read_write_property_map_tag category;
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_3 P;
+  typedef P value_type;
+  typedef P reference;
+
+  typedef typename boost::graph_traits<ManifoldSurfaceMesh>::vertex_descriptor key_type;
+
+  GC_point_pmap()
+    : vpg_(nullptr)
+  {}
+
+  GC_point_pmap(const VertexPositionGeometry& vpg)
+    : vpg_(&vpg)
+    {}
+
+  GC_point_pmap(const GC_point_pmap& pm)
+    : vpg_(pm.vpg_)
+    {}
+
+  inline friend reference get(const GC_point_pmap& pm, key_type v)
+  {
+    CGAL_assertion(pm.vpg_!=nullptr);
+    typename Vector3 const& gcp = pm.vpg_->inputVertexPositions[v];
+    return value_type(gcp[0], gcp[1], gcp[2]);
+  }
+
+  inline friend void put(const GC_point_pmap& pm, key_type v, const value_type& p)
+  {
+    CGAL_precondition(pm.vpg_!=nullptr);
+    typedef double Scalar;
+    Vector3 vec;
+    vec.x = p.x();
+    vec.y = p.y();
+    vec.z = p.z();
+    const_cast<VertexPositionGeometry&>(*pm.vpg_).inputVertexPositions[v] =  vec;
+  }
+
+  private:
+  const VertexPositionGeometry* vpg_;
+};
+
+
 } // namespace surface
 } // namespace geometrycentral
+
+namespace boost {
+template<>
+struct property_map<geometrycentral::surface::ManifoldSurfaceMesh, boost::vertex_point_t >
+{
+  typedef geometrycentral::surface::GC_point_pmap type;
+  typedef type const_type;
+};
+} // namespace boost
 
 #endif

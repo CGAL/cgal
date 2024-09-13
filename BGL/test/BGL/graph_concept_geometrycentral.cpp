@@ -5,6 +5,7 @@
 #include <geometrycentral/surface/vertex_position_geometry.h>
 
 #include <CGAL/boost/graph/graph_traits_geometrycentral.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <map>
 #include <unordered_map>
@@ -68,6 +69,10 @@ int main()
   for(auto v : mesh->vertices()){
     std::cout << v << " at distance " << distance[v] << std::endl;
   }
+
+  geometrycentral::surface::GC_point_pmap vpm;
+  auto he = *(halfedges(*mesh).first);
+  CGAL::Polygon_mesh_processing::edge_length(he,*mesh, CGAL::parameters::vertex_point_map(vpm));
 
   return 0;
 }
