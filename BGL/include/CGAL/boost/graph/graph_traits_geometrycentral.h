@@ -422,7 +422,9 @@ typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::fa
 inline face(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor h,
             const geometrycentral::surface::ManifoldSurfaceMesh& )
 {
-  return h.face();
+  if(h.isInterior())
+    return h.face();
+  return   boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::null_face();
 }
 
 #if 0
