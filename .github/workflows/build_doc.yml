@@ -76,7 +76,7 @@ jobs:
         with:
           result-encoding: string
           script: |
-            if ( context.payload.inputs.doc_version ) {
+            if ( context.payload.input && context.payload.inputs.doc_version ) {
               return context.payload.inputs.doc_version
             }
             const body = context.payload.comment.body
