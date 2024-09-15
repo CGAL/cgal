@@ -59,7 +59,7 @@ jobs:
         run: echo "Authorized"
 
       - name: No permissions
-        if: ! inputs.pr_number && env.author_association != 'OWNER' || env.author_association != 'MEMBER'
+        if: ${{ ! inputs.pr_number && env.author_association != 'OWNER' && env.author_association != 'MEMBER' }}
         run: |
           echo "Not Authorized"
           exit 1
