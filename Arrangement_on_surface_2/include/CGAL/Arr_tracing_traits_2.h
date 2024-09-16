@@ -283,7 +283,10 @@ public:
      * \param xcv the curve the left endpoint of which is obtained
      * \return the left endpoint
      */
-    const Point_2 operator()(const X_monotone_curve_2& xcv) const {
+    using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
+    decltype(std::declval<Subcurve_ctr_minv>().
+             operator()(std::declval<X_monotone_curve_2>()))
+    operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
       std::cout << "construct_min_vertex" << std::endl
                 << "  xcv: " << xcv << std::endl;
@@ -308,7 +311,10 @@ public:
      * \param xcv the curve the right endpoint of which is obtained
      * \return the right endpoint
      */
-    const Point_2 operator()(const X_monotone_curve_2& xcv) const {
+    using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
+    decltype(std::declval<Subcurve_ctr_maxv>().
+             operator()(std::declval<X_monotone_curve_2>()))
+    operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
       std::cout << "construct_max_vertex" << std::endl
                 << "  xcv: " << xcv << std::endl;

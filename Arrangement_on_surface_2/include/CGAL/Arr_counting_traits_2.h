@@ -173,8 +173,11 @@ public:
       m_object(base.construct_min_vertex_2_object()), m_counter(counter) {}
 
     /*! Operate */
-    const Point_2 operator()(const X_monotone_curve_2& xc) const
-    { ++m_counter; return m_object(xc); }
+    using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
+    decltype(std::declval<Subcurve_ctr_minv>().
+             operator()(std::declval<X_monotone_curve_2>()))
+    operator()(const X_monotone_curve_2& xcv) const
+    { ++m_counter; return m_object(xcv); }
   };
 
   /*! A functor that obtains the right endpoint of an \f$x\f$-monotone curve. */
@@ -189,8 +192,11 @@ public:
       m_object(base.construct_max_vertex_2_object()), m_counter(counter) {}
 
     /*! Operate */
-    const Point_2 operator()(const X_monotone_curve_2& xc) const
-    { ++m_counter; return m_object(xc); }
+    using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
+    decltype(std::declval<Subcurve_ctr_maxv>().
+             operator()(std::declval<X_monotone_curve_2>()))
+    operator()(const X_monotone_curve_2& xcv) const
+    { ++m_counter; return m_object(xcv); }
   };
 
   /*! A functor that checks whether a given \f$x\f$-monotone curve is vertical. */
