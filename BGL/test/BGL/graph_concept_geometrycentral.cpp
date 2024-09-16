@@ -6,7 +6,6 @@
 
 #include <CGAL/boost/graph/graph_traits_geometrycentral.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-
 #include <map>
 #include <unordered_map>
 
@@ -18,6 +17,10 @@ using SurfaceMesh = geometrycentral::surface::ManifoldSurfaceMesh;
 using VertexPositionGeometry = geometrycentral::surface::VertexPositionGeometry;
 
 using vertex_descriptor = boost::graph_traits<SurfaceMesh>::vertex_descriptor;
+using edge_descriptor = boost::graph_traits<SurfaceMesh>::edge_descriptor;
+using halfedge_descriptor = boost::graph_traits<SurfaceMesh>::halfedge_descriptor;
+using face_descriptor = boost::graph_traits<SurfaceMesh>::face_descriptor;
+
 
 using vertex_iterator = boost::graph_traits<SurfaceMesh>::vertex_iterator;
 
@@ -32,6 +35,60 @@ void test_concepts()
   boost::function_requires< boost::BidirectionalGraphConcept<SurfaceMesh> >();
 }
 
+void test_maps(const SurfaceMesh& sm)
+{
+  std::map<vertex_descriptor,int> vim;
+  std::unordered_map<vertex_descriptor,int> vium;
+  std::map<halfedge_descriptor,int> him;
+  std::unordered_map<halfedge_descriptor,int> hium;
+  std::map<edge_descriptor,int> eim;
+  std::unordered_map<edge_descriptor,int> eium;
+  std::map<face_descriptor,int> fim;
+  std::unordered_map<face_descriptor,int> fium;
+
+  int i = 0, j = 0;
+  for(auto v : vertices(sm)){
+    vim[v] = i++;
+    vium[v] = j++;
+  }
+  i = 0; j = 0;
+  for(auto v : vertices(sm)){
+    assert(vim[v] == i++);
+    assert(vium[v] == j++);
+  }
+
+  i = 0; j = 0;
+  for(auto v : halfedges(sm)){
+    him[v] = i++;
+    hium[v] = j++;
+  }
+  i = 0; j = 0;
+  for(auto v : halfedges(sm)){
+    assert(him[v] == i++);
+    assert(hium[v] == j++);
+  }
+  i = 0; j = 0;
+  for(auto v : edges(sm)){
+    eim[v] = i++;
+    eium[v] = j++;
+  }
+  i = 0; j = 0;
+  for(auto v : edges(sm)){
+    assert(eim[v] == i++);
+    assert(eium[v] == j++);
+  }
+
+  i = 0; j = 0;
+  for(auto v : faces(sm)){
+    fim[v] = i++;
+    fium[v] = j++;
+  }
+  i = 0; j = 0;
+  for(auto v : faces(sm)){
+    assert(fim[v] == i++);
+    assert(fium[v] == j++);
+  }
+}
 
 int main()
 {
@@ -40,10 +97,25 @@ int main()
   std::unique_ptr<SurfaceMesh> mesh;
   std::unique_ptr<VertexPositionGeometry> geometry;
   std::tie(mesh, geometry) = geometrycentral::surface::readManifoldSurfaceMesh("./data/tetrahedron.off");
+
+  test_maps(*mesh);
+
+  std::cout  << num_vertices(*mesh) << " vertices" << std::endl;
+
+  for(auto h : halfedges(*mesh)){
+    assert(halfedge(edge(h,*mesh),*mesh) == h);
+    if(CGAL::is_border(h,*mesh)){ std::cout  << "b" << std::endl;}else{ std::cout  << "nb" << std::endl;}
+  }
   num_vertices(*mesh);
 
   for( auto v : mesh->vertices()){
     assert(v == v.halfedge().twin().tipVertex());
+    for(auto e : out_edges(v,*mesh)){
+      assert(v == source(e,*mesh));
+    }
+    for(auto e : in_edges(v,*mesh)){
+      assert(v == target(e,*mesh));
+    }
   }
 
   int index = 0;
@@ -70,9 +142,10 @@ int main()
     std::cout << v << " at distance " << distance[v] << std::endl;
   }
 
-  geometrycentral::surface::GC_point_pmap vpm;
-  auto he = *(halfedges(*mesh).first);
-  CGAL::Polygon_mesh_processing::edge_length(he,*mesh, CGAL::parameters::vertex_point_map(vpm));
+  geometrycentral::surface::GC_point_pmap vpm(*geometry);
+  for(auto he : halfedges(*mesh)){
+    std::cout << "edge length: " << CGAL::Polygon_mesh_processing::edge_length(he,*mesh, CGAL::parameters::vertex_point_map(vpm)) << std::endl;
+  }
 
   return 0;
 }

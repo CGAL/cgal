@@ -62,6 +62,80 @@ struct iterator_traits<geometrycentral::RangeIteratorBase<geometrycentral::surfa
 };
 }
 
+namespace geometrycentral {
+namespace surface {
+
+// As Edge is not BGL compliant, we need an alternative for BGL algorithms
+template <class Halfedge_handle>
+class BGL_Edge {
+public:
+  BGL_Edge(const geometrycentral::surface::Edge& e)
+  : halfedge_(e.halfedge())
+  {}
+
+  BGL_Edge()
+  : halfedge_()
+  {}
+
+  explicit BGL_Edge(const Halfedge_handle& h)
+  : halfedge_(h)
+  {}
+
+  Halfedge_handle halfedge() const
+  {
+    return halfedge_;
+    }
+
+
+  bool
+  operator==(const BGL_Edge& other) const
+  {
+    if(halfedge_ == other.halfedge_) {
+      return true;
+    } else if(halfedge_ != Halfedge_handle()) {
+      return halfedge_.twin() == other.halfedge_;
+    } else {
+      return false;
+    }
+  }
+
+  operator geometrycentral::surface::Edge() const
+  {
+    return gometrycentral::surface::Edge(halfedge_);
+  }
+
+  bool operator<(const BGL_Edge& other) const
+  {
+    return idx() < other.idx();
+  }
+
+  bool
+  operator!=(const BGL_Edge& other) const
+  {
+    return !(*this == other);
+  }
+
+  std::size_t idx() const { return (std::min)(halfedge_.getIndex(), halfedge_.twin().getIndex()); }
+private:
+  Halfedge_handle halfedge_;
+};
+}
+}
+
+namespace std {
+template <typename H>
+struct hash<geometrycentral::surface::BGL_Edge<H> >
+  : public CGAL::cpp98::unary_function<geometrycentral::surface::BGL_Edge<H>, std::size_t>
+{
+
+  std::size_t operator()(const geometrycentral::surface::BGL_Edge<H>& e) const
+  {
+    return e.halfedge().getIndex();
+  }
+};
+
+}
+
 namespace boost {
 
 template <>
@@ -79,16 +153,17 @@ private:
 public:
   // Graph
   typedef geometrycentral::surface::Vertex                                 vertex_descriptor;
-  typedef geometrycentral::surface::Edge  edge_descriptor;
   typedef boost::undirected_tag                                            directed_category;
   typedef boost::disallow_parallel_edge_tag                                edge_parallel_category;
   typedef SM_graph_traversal_category                                      traversal_category;
 
   // HalfedgeGraph
-  typedef geometrycentral::surface::Halfedge              halfedge_descriptor;
+  typedef geometrycentral::surface::Halfedge                               halfedge_descriptor;
+
+  typedef geometrycentral::surface::BGL_Edge<halfedge_descriptor>          edge_descriptor;
 
    // FaceGraph
-  typedef geometrycentral::surface::Face   face_descriptor;
+  typedef geometrycentral::surface::Face                                   face_descriptor;
 
   // VertexListGraph
   typedef typename geometrycentral::RangeIteratorBase<geometrycentral::surface::VertexRangeF>   vertex_iterator;
@@ -135,6 +210,10 @@ namespace surface {
 // Forward declarations
 typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor
 halfedge(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::vertex_descriptor v,
+         const geometrycentral::surface::ManifoldSurfaceMesh& );
+
+typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor
+halfedge(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::edge_descriptor e,
          const geometrycentral::surface::ManifoldSurfaceMesh& );
 
 
@@ -188,9 +267,9 @@ inline in_degree(typename boost::graph_traits<geometrycentral::surface::Manifold
 
 typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::vertex_descriptor
 inline source(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::edge_descriptor e,
-              const geometrycentral::surface::ManifoldSurfaceMesh& )
+              const geometrycentral::surface::ManifoldSurfaceMesh& sm)
 {
-  return e.halfedge().tailVertex();
+  return halfedge(e,sm).tailVertex();
 }
 
 
@@ -206,7 +285,7 @@ typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::ve
 inline target(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::edge_descriptor e,
               const geometrycentral::surface::ManifoldSurfaceMesh& sm)
 {
-  return e.halfedge().tipVertex();
+  return halfedge(e,sm).tipVertex();
 }
 
 
@@ -269,8 +348,8 @@ inline edge(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfa
             typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::vertex_descriptor v,
             const geometrycentral::surface::ManifoldSurfaceMesh& sm) {
   typedef typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::edge_descriptor edge_descriptor;
-  for(auto e : u.adjacentEdges()) {
-    if(e.otherVertex(u) == v){
+  for(auto e : out_edges(u, sm)) {
+    if(target(e,sm) == v){
       return std::make_pair(e, true);
     }
   }
@@ -315,7 +394,7 @@ typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::ed
 inline edge(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor h,
             const geometrycentral::surface::ManifoldSurfaceMesh& )
 {
-  return h.edge();
+  return typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::edge_descriptor(h);
 }
 
 
@@ -582,7 +661,7 @@ bool is_valid_vertex_descriptor(typename boost::graph_traits<geometrycentral::su
 
 bool is_valid_halfedge_descriptor(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::halfedge_descriptor h,
                                   const geometrycentral::surface::ManifoldSurfaceMesh& g,
-                                  const bool verbose = false)
+                                  const bool verbose = true)
 {
   if(!g.is_valid(h, verbose))
     return false;
