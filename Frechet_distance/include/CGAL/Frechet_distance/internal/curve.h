@@ -60,16 +60,59 @@ double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
 
 // TODO: Clean up Curve
 
+template <typename T, int dim>
+struct Curve_base
+{
+    using distance_t = Interval_nt<false>;
+    using iKernel = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dim>>> ;
+    using Point = typename iKernel::Point_d;
+    using Bbox = Bbox<Dimension_tag<dim>,double>;
+    using Construct_bbox = typename iKernel::Construct_bbox_d;
+    using Squared_distance = typename iKernel::Squared_distance_d;
+    using Difference_of_points = typename iKernel::Difference_of_points_d;
+    using Scaled_vector = typename iKernel::Scaled_vector_d;
+    using Translated_point = typename iKernel::Translated_point_d;
+    };
+
+template <typename T>
+struct Curve_base<T,2>
+{
+    using distance_t = CGAL::Interval_nt<false>;
+    using iKernel = CGAL::Simple_cartesian<distance_t>;
+    using Point = typename iKernel::Point_2;
+    using Bbox = Bbox_2;
+    using Construct_bbox = typename iKernel::Construct_bbox_2;
+    using Squared_distance = typename iKernel::Compute_squared_distance_2;
+    using Difference_of_points = typename iKernel::Construct_vector_2;
+    using Scaled_vector = typename iKernel::Construct_scaled_vector_2;
+    using Translated_point = typename iKernel::Consgtruct_translated_point_2;
+};
+
+template <typename T>
+struct Curve_base<T,3>
+{
+    using distance_t = CGAL::Interval_nt<false>;
+    using iKernel = CGAL::Simple_cartesian<distance_t>;
+    using Point = typename iKernel::Point_3;
+    using Bbox = Bbox_3;
+    using Construct_bbox = typename iKernel::Construct_bbox_3;
+    using Squared_distance = typename iKernel::Compute_squared_distance_3;
+    using Difference_of_points = typename iKernel::Construct_vector_3;
+    using Scaled_vector = typename iKernel::Construct_scaled_vector_3;
+    using Translated_point = typename iKernel::Consgtruct_translated_point_3;
+};
+
 /*!
  * \ingroup PkgFrechetDistanceFunctions
  * A class representing a trajectory. Additionally to the points given in the
  * input file, we also store the length of any prefix of the trajectory.
  */
 template <typename T>
-class Curve
+class Curve : public Curve_base<T, T::dimension>
 {
 public:
     using K = typename T::Kernel;
+    using Base = Curve_base<T, T::dimension>;
     using Self  = Curve<T>;
 
     static auto get_is_filtered()
@@ -109,51 +152,22 @@ public:
     static constexpr int dimension =  T::dimension;
 
     using distance_t = CGAL::Interval_nt<false>;
-    using iKernel = std::conditional_t<(dimension == 2) || (dimension == 3),
-                                       CGAL::Simple_cartesian<distance_t>,
-                                       CGAL::Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>>;
 
-    using Point = std::conditional_t<(dimension == 2),
-                                     typename iKernel::Point_2 ,
-                                     std::conditional_t<(dimension == 3),
-                                     typename iKernel::Point_3,
-                                     typename iKernel::Point_d>>;
+    using iKernel = typename Base::iKernel;
 
-    using Bbox = std::conditional_t<(dimension == 2),
-                                     Bbox_2,
-                                     std::conditional_t<(dimension == 3),
-                                     Bbox_3,
-                                     Bbox<Dimension_tag<dimension>,double>>>;
+    using Point = typename Base::Point;
 
-    using  Construct_bbox = std::conditional_t<(dimension == 2),
-                                                typename iKernel::Construct_bbox_2,
-                                                std::conditional_t<(dimension == 3),
-                                                typename iKernel::Construct_bbox_3,
-                                                typename iKernel::Construct_bbox_d>>;
+    using Bbox = typename Base::Bbox;
 
-    using  Squared_distance = std::conditional_t<(dimension == 2),
-                                                typename iKernel::Compute_squared_distance_2,
-                                                std::conditional_t<(dimension == 3),
-                                                typename iKernel::Compute_squared_distance_3,
-                                                typename iKernel::Squared_distance_d>>;
+    using  Construct_bbox = typename Base::Construct_bbox;
 
-    using Difference_of_points = std::conditional_t<(dimension == 2),
-                                                typename iKernel::Construct_vector_2,
-                                                std::conditional_t<(dimension == 3),
-                                                typename iKernel::Construct_vector_3,
-                                                typename iKernel::Difference_of_points_d>>;
+    using  Squared_distance = typename Base::Squared_distance;
 
-    using Scaled_vector = std::conditional_t<(dimension == 2),
-                                                typename iKernel::Construct_scaled_vector_2,
-                                                std::conditional_t<(dimension == 3),
-                                                typename iKernel::Construct_scaled_vector_3,
-                                                typename iKernel::Scaled_vector_d>>;
+    using Difference_of_points = typename Base::Difference_of_points;
 
-    using Translated_point = std::conditional_t<(dimension == 2),
-                                                typename iKernel::Construct_translated_point_2,
-                                                std::conditional_t<(dimension == 3),
-                                                typename iKernel::Construct_translated_point_3,
-                                                typename iKernel::Translated_point_d>>;
+    using Scaled_vector = typename Base::Scaled_vector;
+
+    using Translated_point = typename Base::Translated_point;
 
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
