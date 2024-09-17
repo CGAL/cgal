@@ -125,6 +125,13 @@ public:
                                      Bbox_3,
                                      Bbox<Dimension_tag<dimension>,double>>>;
 
+    using  Construct_bbox = std::conditional_t<(dimension == 2) || (dimension == 3),
+                                                typename iKernel::Construct_bbox,
+                                                typename iKernel::Construct_bbox_d>;
+
+    using  Squared_distance = std::conditional_t<(dimension == 2) || (dimension == 3),
+                                                typename iKernel::Compute_squared_distance,
+                                                typename iKernel::Squared_distance_d>;
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
     using InputPoints = std::vector<typename T::Point>;
@@ -136,7 +143,9 @@ public:
                                      typename Rational_kernel::Point_3,
                                      typename Rational_kernel::Point_d>>;
     using D2D = NT_converter<distance_t,double>;
-    using I2R = Cartesian_converter<iKernel, Rational_kernel, D2D>;
+    using I2R = std::conditional_t<(dimension == 2) || (dimension == 3),
+                                    Cartesian_converter<iKernel, Rational_kernel, D2D>,
+                                    KernelD_converter<iKernel, Rational_kernel>>;
 
 
     struct K2I
@@ -190,11 +199,12 @@ public:
 
         prefix_length[0] = 0;
 
+        Construct_bbox cbb;
         Bbox bb;
         for (PointID i = 1; i < points.size(); ++i) {
             auto segment_distance = distance(points[i - 1], points[i]);
             prefix_length[i] = prefix_length[i - 1] + segment_distance;
-            bb += points[i].bbox();
+            bb += cbb(points[i]);
         }
         extreme_points = bb;
     }
@@ -238,7 +248,7 @@ public:
 
     distance_t distance(Point const& p, Point const& q) const
     {
-        return CGAL::sqrt(CGAL::squared_distance(p, q));
+        return CGAL::sqrt(Squared_distance()(p, q));
     }
 
 

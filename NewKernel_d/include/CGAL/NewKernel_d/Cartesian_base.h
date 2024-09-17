@@ -24,6 +24,8 @@ struct Cartesian_base_d : public CGAL_BASE
 {
     typedef void Point_2;
     typedef void Point_3;
+    typedef  void Construct_bbox;
+    typedef  void Compute_squared_distance;
     typedef FT_  FT;
     constexpr Cartesian_base_d(){}
     constexpr Cartesian_base_d(int d):CGAL_BASE(d){}
