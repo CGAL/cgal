@@ -261,8 +261,8 @@ public:
     Rational_point rpoint(PointID const& i) const
     {
         if constexpr (std::is_floating_point<typename K::FT>::type::value) {
-            // I2R convert;
-            return Rational_point(); // convert(points[i]);
+            I2R convert;
+            return convert(points[i]);
         }
         if constexpr (is_filtered) {
             return typename K::C2E()(input[i]);
