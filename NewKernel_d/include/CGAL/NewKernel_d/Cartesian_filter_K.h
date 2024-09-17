@@ -80,6 +80,8 @@ struct Cartesian_filter_K : public Base_
     typedef KernelD_converter<Kernel_base,AK> C2A;
     typedef KernelD_converter<Kernel_base,EK> C2E;
 
+    typedef C2A C2F;
+
     // fix the types
     // TODO: only fix some types, based on some criterion?
     template<class T> struct Type : Get_type<Kernel_base,T> {};
