@@ -125,13 +125,36 @@ public:
                                      Bbox_3,
                                      Bbox<Dimension_tag<dimension>,double>>>;
 
-    using  Construct_bbox = std::conditional_t<(dimension == 2) || (dimension == 3),
-                                                typename iKernel::Construct_bbox,
-                                                typename iKernel::Construct_bbox_d>;
+    using  Construct_bbox = std::conditional_t<(dimension == 2),
+                                                typename iKernel::Construct_bbox_2,
+                                                std::conditional_t<(dimension == 3),
+                                                typename iKernel::Construct_bbox_3,
+                                                typename iKernel::Construct_bbox_d>>;
 
-    using  Squared_distance = std::conditional_t<(dimension == 2) || (dimension == 3),
-                                                typename iKernel::Compute_squared_distance,
-                                                typename iKernel::Squared_distance_d>;
+    using  Squared_distance = std::conditional_t<(dimension == 2),
+                                                typename iKernel::Compute_squared_distance_2,
+                                                std::conditional_t<(dimension == 3),
+                                                typename iKernel::Compute_squared_distance_3,
+                                                typename iKernel::Squared_distance_d>>;
+
+    using Difference_of_points = std::conditional_t<(dimension == 2),
+                                                typename iKernel::Construct_vector_2,
+                                                std::conditional_t<(dimension == 3),
+                                                typename iKernel::Construct_vector_3,
+                                                typename iKernel::Difference_of_points_d>>;
+
+    using Scaled_vector = std::conditional_t<(dimension == 2),
+                                                typename iKernel::Construct_scaled_vector_2,
+                                                std::conditional_t<(dimension == 3),
+                                                typename iKernel::Construct_scaled_vector_3,
+                                                typename iKernel::Scaled_vector_d>>;
+
+    using Translated_point = std::conditional_t<(dimension == 2),
+                                                typename iKernel::Construct_translated_point_2,
+                                                std::conditional_t<(dimension == 3),
+                                                typename iKernel::Construct_translated_point_3,
+                                                typename iKernel::Translated_point_d>>;
+
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
     using InputPoints = std::vector<typename T::Point>;
@@ -267,9 +290,12 @@ public:
         if (pt.getFraction()==0) {
             return points[pt.getPoint()];
         }
+        Difference_of_points difference;
+        Scaled_vector scale;
+        Translated_point translate;
         auto fraction = pt.getFraction().approx;
-        return points[pt.getPoint()] +
-               (fraction * (points[pt.getPoint() + 1] - points[pt.getPoint()]));
+        return translate(points[pt.getPoint()] ,
+                         scale(difference(points[pt.getPoint() + 1], points[pt.getPoint()]), fraction));
     }
 
     Point interpolate_at(PointID const& pt) const { return points[pt]; }
