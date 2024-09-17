@@ -35,22 +35,23 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 namespace params = CGAL::parameters;
 
-// Custom_Initial_points_generator will put points on the mesh for initialisation.
+// Custom_initial_points_generator will put points on the mesh for initialisation.
 // Those points are objects of type std::tuple<Weighted_point_3, int, Index>.
 //   Weighted_point_3 is the point's position and weight,
 //   int is the dimension of the minimal dimension subcomplex on which the point lies,
 //   Index is the underlying subcomplex index.
-struct Custom_Initial_points_generator
+struct Custom_initial_points_generator
 {
-  CGAL::Image_3& image_;
-  Custom_Initial_points_generator(CGAL::Image_3& image) : image_(image) { }
+  const CGAL::Image_3& image_;
 
-  template <typename OutputIterator, typename MeshDomain, typename C3t3>
-  OutputIterator operator()(OutputIterator pts, const MeshDomain& /* domain */, const C3t3& c3t3, int /* n */ = 1) const
+  template <typename OutputIterator>
+  OutputIterator operator()(OutputIterator pts) const
   {
-    typedef typename C3t3::Triangulation::Geom_traits::Point_3   Point_3;
-    typedef typename C3t3::Triangulation::Geom_traits::Vector_3  Vector_3;
-    typedef typename C3t3::Triangulation::Geom_traits::Segment_3 Segment_3;
+    typedef Tr::Geom_traits     Gt;
+    typedef Gt::Point_3         Point_3;
+    typedef Gt::Vector_3        Vector_3;
+    typedef Gt::Segment_3       Segment_3;
+    typedef Mesh_domain::Index  Index;
 
     typename C3t3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
         c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
@@ -64,10 +65,11 @@ struct Custom_Initial_points_generator
     Vector_3 vector = segment.to_vector();
     double edge_size = 5;
     std::size_t nb = static_cast<int>(CGAL::sqrt(segment.squared_length()) / edge_size);
+    const double frac = 1. / (double)nb;
+
     for (std::size_t i = 1; i < nb; i++)
     {
-      *pts++ = std::make_tuple(
-         cwp(source + (i/(double)nb)*vector, edge_size*edge_size), 1, 0);
+      *pts++ = {cwp(source + (i * frac) * vector), 1, Index(1));
     }
     return pts;
   }
@@ -95,7 +97,7 @@ int main()
 
   /// [Meshing]
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria
-    , params::initial_points_generator(Custom_Initial_points_generator(image))
+    , params::initial_points_generator(Custom_initial_points_generator{ image })
   );
   /// [Meshing]
 

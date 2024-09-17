@@ -62,8 +62,8 @@ int main()
 
   // Creation of the initial_points vector
   std::vector<Initial_point_t> initial_points = {
-    std::make_tuple(Weighted_point_3(Point_3(30.0, 50.0, 83.33), 30.0), 1, 0),
-    std::make_tuple(Weighted_point_3(Point_3(70.0, 50.0, 83.33), 50.0), 1, 0)
+    {Weighted_point_3(Point_3(30.0, 50.0, 83.33), 30.0), 1, Index(1)},
+    {Weighted_point_3(Point_3(70.0, 50.0, 83.33), 50.0), 1, Index(1)}
   };
 
   /// [Meshing]
