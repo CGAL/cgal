@@ -111,7 +111,7 @@ public:
     using distance_t = CGAL::Interval_nt<false>;
     using iKernel = std::conditional_t<(dimension == 2) || (dimension == 3),
                                        CGAL::Simple_cartesian<distance_t>,
-                                       CGAL::Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
+                                       CGAL::Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>>;
 
     using Point = std::conditional_t<(dimension == 2),
                                      typename iKernel::Point_2 ,

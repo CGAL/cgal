@@ -15,6 +15,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/NewKernel_d/KernelD_converter.h>
 #include <CGAL/NewKernel_d/Filtered_predicate2.h>
+#include <CGAL/NewKernel_d/Kernel_d_interface.h>
 #include <boost/mpl/and.hpp>
 
 namespace CGAL {
@@ -65,7 +66,7 @@ struct Cartesian_filter_K : public Base_
 
 
     // Added to be similar to CGAL::Filtered_kernel
-    typedef EK Exact_kernel;
+    typedef Kernel_d_interface<EK> Exact_kernel;
     enum { Has_filtered_predicates = true };
     typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
 
