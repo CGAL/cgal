@@ -20,6 +20,7 @@
 #include <iterator>
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 namespace Impl {
@@ -112,6 +113,7 @@ protected:
 
     template <typename I>
     void init(int d, I b, I e) {
+        CGAL_USE(e);
         CGAL_assertion(d == std::distance(b,e));
         for(int i=0; i<d; ++i,++b)
         {
