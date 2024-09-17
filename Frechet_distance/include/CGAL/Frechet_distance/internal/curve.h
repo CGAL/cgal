@@ -17,6 +17,7 @@
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/id.h>
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Epick_d.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
@@ -108,11 +109,15 @@ public:
     static constexpr int dimension =  T::dimension;
 
     using distance_t = CGAL::Interval_nt<false>;
-    using iKernel = CGAL::Simple_cartesian<distance_t>;
+    using iKernel = std::conditional_t<(dimension == 2) || (dimension == 3),
+                                       CGAL::Simple_cartesian<distance_t>,
+                                       CGAL::Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
 
     using Point = std::conditional_t<(dimension == 2),
                                      typename iKernel::Point_2 ,
-                                     typename iKernel::Point_3>;
+                                     std::conditional_t<(dimension == 3),
+                                     typename iKernel::Point_3,
+                                     typename iKernel::Point_d>>;
 
     using Bbox = std::conditional_t<(dimension == 2),
                                      Bbox_2,
@@ -127,7 +132,9 @@ public:
     using Rational = typename Rational_kernel::FT;
     using Rational_point = std::conditional_t<(dimension == 2),
                                      typename Rational_kernel::Point_2 ,
-                                     typename Rational_kernel::Point_3>;
+                                     std::conditional_t<(dimension == 3),
+                                     typename Rational_kernel::Point_3,
+                                     typename Rational_kernel::Point_d>>;
     using D2D = NT_converter<distance_t,double>;
     using I2R = Cartesian_converter<iKernel, Rational_kernel, D2D>;
 
