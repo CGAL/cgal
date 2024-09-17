@@ -11,6 +11,8 @@
 #ifndef CGAL_IO_OM_H
 #define CGAL_IO_OM_H
 
+#if defined(CGAL_USE_OPENMESH) || defined(DOXYGEN_RUNNING)
+
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
@@ -114,4 +116,5 @@ bool write_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
 } // namespace IO
 } // namespace CGAL
 
+#endif // CGAL_USE_OPENMESH || DOXYGEN_RUNNING
 #endif // CGAL_IO_OM
