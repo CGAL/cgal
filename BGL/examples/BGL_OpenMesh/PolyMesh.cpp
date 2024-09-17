@@ -6,7 +6,7 @@
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/IO/polygon_mesh_io.h>
-#include <CXGAL/IO/OM.h>
+#include <CGAL/IO/OM.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <iostream>
