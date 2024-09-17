@@ -85,7 +85,7 @@ struct Curve_base<T,2>
     using Squared_distance = typename iKernel::Compute_squared_distance_2;
     using Difference_of_points = typename iKernel::Construct_vector_2;
     using Scaled_vector = typename iKernel::Construct_scaled_vector_2;
-    using Translated_point = typename iKernel::Consgtruct_translated_point_2;
+    using Translated_point = typename iKernel::Construct_translated_point_2;
 };
 
 template <typename T>
@@ -99,7 +99,7 @@ struct Curve_base<T,3>
     using Squared_distance = typename iKernel::Compute_squared_distance_3;
     using Difference_of_points = typename iKernel::Construct_vector_3;
     using Scaled_vector = typename iKernel::Construct_scaled_vector_3;
-    using Translated_point = typename iKernel::Consgtruct_translated_point_3;
+    using Translated_point = typename iKernel::Construct_translated_point_3;
 };
 
 /*!
@@ -261,8 +261,8 @@ public:
     Rational_point rpoint(PointID const& i) const
     {
         if constexpr (std::is_floating_point<typename K::FT>::type::value) {
-            I2R convert;
-            return convert(points[i]);
+            // I2R convert;
+            return Rational_point(); // convert(points[i]);
         }
         if constexpr (is_filtered) {
             return typename K::C2E()(input[i]);
