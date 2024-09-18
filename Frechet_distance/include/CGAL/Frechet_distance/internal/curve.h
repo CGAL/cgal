@@ -290,13 +290,12 @@ public:
         if constexpr (std::is_floating_point<typename K::FT>::type::value) {
             I2R convert;
             return convert(points[i]);
-        }
-        if constexpr (is_filtered) {
-            return typename K::C2E()(input[i]);
-        }
-        if constexpr (! std::is_floating_point<typename K::FT>::type::value &&
-                      ! is_filtered) {
-            return input[i];
+        }else{
+          if constexpr (is_filtered) {
+              return typename K::C2E()(input[i]);
+          }else{
+              return input[i];
+          }
         }
         CGAL_assertion(false);
         return Rational_point();
