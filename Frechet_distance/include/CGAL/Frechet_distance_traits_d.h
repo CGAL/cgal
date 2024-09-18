@@ -37,7 +37,7 @@ template <class GT>
 class Frechet_distance_traits_d
 {
 public:
-    static constexpr int dimension = typename GT::Dimension::value;
+    static constexpr int dimension = GT::Dimension::value;
 
     using Kernel = GT;
     using FT = typename Kernel::FT;
