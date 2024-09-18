@@ -80,6 +80,7 @@ struct Get_rational_kernel {
     }
 
     static constexpr bool is_filtered = decltype(get_is_filtered())::value;
+    static constexpr bool  is_floating_point = std::is_floating_point_v<typename K::FT>;
 
     static auto get_type()
     {
@@ -89,7 +90,7 @@ struct Get_rational_kernel {
       }
       else
       {
-        if constexpr (std::is_floating_point_v<typename K::FT>)
+        if constexpr (is_floating_point)
             return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
         else
             return K{};
@@ -104,6 +105,8 @@ template <typename T, int dim>
 struct Curve_base
 {
     static constexpr bool is_filtered = Get_rational_kernel<T>::is_filtered;
+    static constexpr bool  is_floating_point = Get_rational_kernel<T>::is_floating_point;
+
     using distance_t = Interval_nt<false>;
     using Kernel = typename T::Kernel;
     using iKernel = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dim>>>;
@@ -128,6 +131,7 @@ template <typename T>
 struct Curve_base<T,2>
 {
     static constexpr bool is_filtered = Get_rational_kernel<T>::is_filtered;
+    static constexpr bool  is_floating_point = Get_rational_kernel<T>::is_floating_point;
 
     using distance_t = CGAL::Interval_nt<false>;
     using Kernel = typename T::Kernel;
@@ -153,6 +157,8 @@ template <typename T>
 struct Curve_base<T,3>
 {
     static constexpr bool is_filtered = Get_rational_kernel<T>::is_filtered;
+    static constexpr bool  is_floating_point = Get_rational_kernel<T>::is_floating_point;
+
     using distance_t = CGAL::Interval_nt<false>;
     using Kernel = typename T::Kernel;
     using iKernel = CGAL::Simple_cartesian<distance_t>;
@@ -189,6 +195,7 @@ public:
 
 
     static constexpr bool is_filtered = Base::is_filtered;
+    static constexpr bool is_floating_point = Base::is_floating_point;
 public:
     static constexpr int dimension =  T::dimension;
 
@@ -238,7 +245,7 @@ public:
     Curve(const PointRange& point_range)
     : prefix_length(point_range.size())
     {
-        if constexpr ( ! std::is_floating_point<typename K::FT>::type::value) {
+        if constexpr ( ! is_floating_point) {
             input.reserve(point_range.size());
             for (auto const& p : point_range) {
                 input.push_back(p);
@@ -287,7 +294,7 @@ public:
 
     Rational_point rpoint(PointID const& i) const
     {
-        if constexpr (std::is_floating_point<typename K::FT>::type::value) {
+        if constexpr (is_floating_point) {
             I2R convert;
             return convert(points[i]);
         }else{
