@@ -18,6 +18,7 @@
 #include <type_traits>
 #include <CGAL/Object.h>
 #include <CGAL/Origin.h>
+#include <CGAL/Default.h>
 #include <CGAL/NT_converter.h>
 #include <CGAL/NewKernel_d/functor_tags.h>
 #include <CGAL/Kernel/mpl.h>
@@ -114,19 +115,25 @@ class KernelD_converter_<Final_,K1,K2,typeset<> > {
 
 
 // TODO: use the intersection of Kn::Object_list.
-template<class K1, class K2, class List_=
-typename typeset_intersection<typename K1::Object_list, typename K2::Object_list>::type
+template<class K1, class K2,
+         class List_= Default,
+         typename NTc = NT_converter<typename Get_type<K1, FT_tag>::type, typename Get_type<K2, FT_tag>::type>
 //typeset<Point_tag>::add<Vector_tag>::type/*::add<Segment_tag>::type*/
 > class KernelD_converter
         : public Store_kernel<K1>, public Store_kernel2<K2>,
-        public KernelD_converter_<KernelD_converter<K1,K2,List_>,K1,K2,List_>
+        public KernelD_converter_<KernelD_converter<K1,K2,List_,NTc>,
+                                                    K1,K2,typename Default::Get<List_,
+                                                              typename typeset_intersection<typename K1::Object_list,
+                                                              typename K2::Object_list>::type>::type>
 {
+        typedef typename Default::Get<List_,
+                      typename typeset_intersection<typename K1::Object_list,
+                                                    typename K2::Object_list>::type>::type List;
         typedef KernelD_converter Self;
         typedef Self Final_;
-        typedef KernelD_converter_<Self,K1,K2,List_> Base;
+        typedef KernelD_converter_<Self,K1,K2,List> Base;
         typedef typename Get_type<K1, FT_tag>::type FT1;
         typedef typename Get_type<K2, FT_tag>::type FT2;
-        typedef NT_converter<FT1, FT2> NTc;
         NTc c; // TODO: compressed storage as this is likely empty and the converter gets passed around (and stored in iterators)
 
         public:
@@ -176,7 +183,7 @@ typename typeset_intersection<typename K1::Object_list, typename K2::Object_list
         Object
         operator()(const Object &obj) const
         {
-                typedef typename internal::Map_taglist_to_typelist<K1,List_>::type Possibilities;
+                typedef typename internal::Map_taglist_to_typelist<K1,List>::type Possibilities;
                 //TODO: add Empty, vector<Point>, etc to the list.
                 return Object_converter<Possibilities>()(obj,*this);
         }
