@@ -171,8 +171,7 @@ function platformContainer(platforms) {
     platforms.forEach(platform => {
         const $container = $('<div>', { class: 'platform ' + platform.name }).appendTo($platformContainer);
         $container.html(`<h2>Results of ${platform.name}</h2>`);
-        const tplString = platform.third_party_libraries.replace("TPL: ", "").trim();
-        const tplArray = tplString.split(",").map(tpl => tpl.trim()).filter(tpl => tpl.length > 0);
+        const tplArray = platform.tpl;
         const $toggleButton = $('<button>', {
             text: 'Third Party Libraries',
             class: 'tpl-toggle-button',
@@ -183,15 +182,18 @@ function platformContainer(platforms) {
         const $tplTable = $('<table>', { class: 'tpl-table', css: { display: 'none' } }).appendTo($container);
         const $thead = $('<thead>').appendTo($tplTable);
         const $tbody = $('<tbody>').appendTo($tplTable);
-        
-        $('<tr>').append('<th>Third Party Libraries</th>').appendTo($thead);
-        
-        let $row = $('<tr>').appendTo($tbody);
-        tplArray.forEach((tpl, index) => {
-            if (index > 0 && index % 5 === 0) {
-                $row = $('<tr>').appendTo($tbody);
-            }
-            $('<td>').text(tpl).appendTo($row);
+        $('<tr>').append('<th>Library</th><th>Version</th><th>Status</th>').appendTo($thead);
+        tplArray.forEach(tpl => {
+            $('<tr>').append(
+                $('<td>').html(`<a href="#" class="tpl-link" data-tpl="${tpl.name}">${tpl.name}</a>`),
+                $('<td>').text(tpl.version || 'N/A'),
+                $('<td>').text(tpl.status)
+            ).appendTo($tbody);
+        });
+        $('.tpl-link').click(function(event) {
+            event.preventDefault();
+            const tplName = $(this).data('tpl');
+            showVersionsForTPL(tplName);
         });
 
         const letters = ['n', 'w', 'o', 'r'];
@@ -242,6 +244,34 @@ function openAll() {
 function closeAll() {
     $('.summary-content').hide().css('background-color', 'transparent');
     $('.toggle-button').text('Show More');
+}
+
+function showVersionsForTPL(tplName) {
+    const $modal = $('#tplModal');
+    const $modalTitle = $('#tplModalTitle');
+    const $modalBody = $('#tplModalBody');
+    $modalTitle.text(`Versions of ${tplName} across platforms`);
+    $modalBody.empty();
+    let tplFound = false;
+    window.data.platforms.forEach(platform => {
+        const matchingTPL = platform.tpl.find(tpl => tpl.name === tplName);
+        if (matchingTPL) {
+            tplFound = true;
+            $modalBody.append(`<p><strong>Platform:</strong> ${platform.name} | <strong>Version:</strong> ${matchingTPL.version || 'N/A'} | <strong>Status:</strong> ${matchingTPL.status}</p>`);
+        }
+    });
+    if (!tplFound) {
+        $modalBody.append('<p>No versions of this TPL found across platforms.</p>');
+    }
+    $modal.show();
+    $('.close').click(function() {
+        $modal.hide();
+    });
+    $(window).click(function(event) {
+        if (event.target == $modal[0]) {
+            $modal.hide();
+        }
+    });
 }
 
 function main() {
