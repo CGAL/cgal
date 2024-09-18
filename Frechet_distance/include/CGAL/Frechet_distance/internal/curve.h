@@ -235,7 +235,8 @@ public:
     == Epeck_with_sqrt
 */
     template <class PointRange>
-    Curve(const PointRange& point_range) : prefix_length(point_range.size())
+    Curve(const PointRange& point_range)
+    : prefix_length(point_range.size())
     {
         if constexpr ( ! std::is_floating_point<typename K::FT>::type::value) {
             input.reserve(point_range.size());
@@ -376,11 +377,11 @@ std::ostream& operator<<(std::ostream& out, const Curve<K>& curve);
 template <typename K>
 void Curve<K>::push_back(Point const& point)
 {
-    if (prefix_length.size()) {
+    if (prefix_length.empty()) {
+        prefix_length.push_back(0);
+    } else {
         auto segment_distance = distance(points.back(), point);
         prefix_length.push_back(prefix_length.back() + segment_distance);
-    } else {
-        prefix_length.push_back(0);
     }
     if (points.empty()){
       extreme_points = point.bbox();
