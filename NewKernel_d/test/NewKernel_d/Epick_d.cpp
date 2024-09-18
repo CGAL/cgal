@@ -352,6 +352,7 @@ void test2(){
 #endif
   P z0=cp( 0+2,5-3);
   P z1=cp(-5+2,0-3);
+  cv(z0,z1);
   assert(abs(sd(z0,z1)-50)<.0001);
   assert(ed(z0,z0) && !ed(z0,z1));
   P z2=cp( 3+2,4-3);

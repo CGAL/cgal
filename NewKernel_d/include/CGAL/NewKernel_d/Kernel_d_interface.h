@@ -17,7 +17,6 @@
 #include <CGAL/NewKernel_d/utils.h>
 #include <CGAL/tuple.h>
 
-
 namespace CGAL {
 template <class Base_> struct Kernel_d_interface : public Base_ {
   constexpr Kernel_d_interface(){}
@@ -96,7 +95,25 @@ template <class Base_> struct Kernel_d_interface : public Base_ {
             return CP(this->kernel())(std::forward<T>(t)...);
           }
         };
-        typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
+        //typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type Construct_vector_d;
+        struct Construct_vector_d : private Store_kernel<Kernel> {
+          typedef Kernel R_; // for the macro
+          CGAL_FUNCTOR_INIT_STORE(Construct_vector_d)
+          typedef typename Get_functor<Base, Construct_ttag<Vector_tag> >::type CV;
+          typedef Vector_d result_type;
+          Vector_d operator()(Point_d const& p, Point_d const& q)const{
+            return Difference_of_points_d(this->kernel())(q,p);
+          }
+          Vector_d operator()(Point_d & p, Point_d & q)const{
+            return Difference_of_points_d(this->kernel())(q,p);
+          }
+          template<class...T>
+          decltype(auto)
+          operator()(T&&...t)const{
+            return CV(this->kernel())(std::forward<T>(t)...);
+          }
+        };
+
         typedef typename Get_functor<Base, Construct_ttag<Segment_tag> >::type Construct_segment_d;
         typedef typename Get_functor<Base, Construct_ttag<Sphere_tag> >::type Construct_sphere_d;
         typedef typename Get_functor<Base, Construct_ttag<Hyperplane_tag> >::type Construct_hyperplane_d;
