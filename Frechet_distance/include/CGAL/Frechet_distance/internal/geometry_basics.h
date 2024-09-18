@@ -437,7 +437,7 @@ public:
         return stream.str();
     }
 
-    friend std::ostream& operator<<(std::ostream& out, const CPoint& p);
+    friend std::ostream& operator<<(std::ostream& out, const CPoint<C>& p);
 };
 
 

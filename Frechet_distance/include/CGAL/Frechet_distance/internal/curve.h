@@ -110,7 +110,7 @@ struct Curve_base
     using Rational_kernel = typename Get_rational_kernel<T>::type;
     using Point = typename iKernel::Point_d;
     using Rational_point = typename Rational_kernel::Point_d;
-    using Bbox = Bbox<Dimension_tag<dim>,double>;
+    using Bbox = CGAL::Bbox<Dimension_tag<dim>,double>;
     using Construct_bbox = typename iKernel::Construct_bbox_d;
     using Squared_distance = typename iKernel::Squared_distance_d;
     using Difference_of_points = typename iKernel::Construct_vector_d;

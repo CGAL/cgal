@@ -30,7 +30,7 @@ template <typename T>
 struct ID {
 public:
     using IDType = uint32_t;
-    static constexpr IDType invalid_value = std::numeric_limits<IDType>::max();
+    static constexpr IDType invalid_value = (std::numeric_limits<IDType>::max)();
 
     ID(IDType id = invalid_value) : id(id) {}
 
