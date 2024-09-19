@@ -175,7 +175,7 @@ private:
 template<typename MeshDomain, typename C3t3>
 struct Initial_point_type
 {
-  typename C3t3::Triangulation::Point m_point;
+  typename C3t3::Triangulation::Point m_weighted_point;
   int m_dimension;
   typename MeshDomain::Index m_index;
 };
@@ -214,6 +214,8 @@ struct Initialization_options
 
     return initial_points_generator_(pts, n);
   }
+
+  InitialPointsGenerator generator() const { return initial_points_generator_; }
 
   bool is_default() const { return is_default_; }
 
