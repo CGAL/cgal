@@ -170,6 +170,11 @@ TABLE.result TD > a.package_name {
     color: #1A0DAB;
 }
 
+.sortable{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 /* TPL Modal */
 .modal {
     display: none;
@@ -215,4 +220,26 @@ TABLE.result TD > a.package_name {
     margin: 10px 0;
     font-size: 14px;
     color: #555;
+}
+
+.modaltable{
+    border-collapse: collapse;
+    cellspacing: 0;
+}
+
+.modalHeader{
+    text-align: center;
+    width: auto;
+}
+
+.modalBody {
+    text-align: center;
+}
+
+.modal-table-row {
+    border-bottom: 2px ridge #000;
+}
+
+.modal-table-row td {
+    padding: 7px;
 }

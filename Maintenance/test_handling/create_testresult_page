@@ -843,7 +843,16 @@ sub create_summary_page {
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2 id="tplModalTitle">Versions of TPL</h2>
-                <div id="tplModalBody"></div>
+                <table class="modaltable">
+                    <thead>
+                        <tr>
+                            <th class="modalHeader sortable" data-sort="0">Platform</th>
+                            <th class="modalHeader sortable" data-sort="1">Version</th>
+                            <th class="modalHeader sortable" data-sort="2">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="modalBody"></tbody>
+                </table>
             </div>
         </div>
         <input type="text" id="searchInput" placeholder="Search ..." autocomplete="off" onkeypress="if(event.keyCode==13) search()">
