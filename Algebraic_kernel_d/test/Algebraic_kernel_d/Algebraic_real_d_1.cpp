@@ -268,7 +268,7 @@ void algebraic_number_test()
 
     //simplify
     {
-        // just a synatx check
+        // just a syntax check
         Algebraic_real_d_1(P_s2510,1,2).simplify();
     }
 }

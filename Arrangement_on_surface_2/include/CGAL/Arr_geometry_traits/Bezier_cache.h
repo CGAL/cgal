@@ -588,7 +588,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   Integer                  coeff;
   int                      k;
 
-  // Consruct the bivariate polynomial that corresponds to Equation I.
+  // Construct the bivariate polynomial that corresponds to Equation I.
   // Note that we represent a bivariate polynomial as a vector of univariate
   // polynomials, whose i'th entry corresponds to the coefficient of t^i,
   // which is in turn a polynomial it s.
@@ -602,7 +602,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   }
   coeffsX_st[0] = coeffsX_st[0] - nt_traits.scale (polyX_1, normX_2);
 
-  // Consruct the bivariate polynomial that corresponds to Equation II.
+  // Construct the bivariate polynomial that corresponds to Equation II.
   const int                degY_2 = nt_traits.degree (polyY_2);
   std::vector<Polynomial>  coeffsY_st (degY_2 < 0 ? 1 : (degY_2 + 1));
 
@@ -655,7 +655,7 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   Integer                 *coeffs;
   int                      i;
 
-  // Consruct the bivariate polynomial that corresponds to Equation I.
+  // Construct the bivariate polynomial that corresponds to Equation I.
   // Note that we represent a bivariate polynomial as a vector of univariate
   // polynomials, whose i'th entry corresponds to the coefficient of t^i,
   // which is in turn a polynomial it s.
@@ -675,7 +675,7 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
 
   delete[] coeffs;
 
-  // Consruct the bivariate polynomial that corresponds to Equation II.
+  // Construct the bivariate polynomial that corresponds to Equation II.
   const int                degY = nt_traits.degree (polyY);
   CGAL_assertion(degY > 0);
   if (degY <= 0) return; //no self intersection if Y is constant

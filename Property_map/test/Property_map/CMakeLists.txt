@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Property_map_Tests)
 
 # CGAL and its components
@@ -13,10 +13,8 @@ create_single_source_cgal_program("test_Property_container.cpp")
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   message(STATUS "Found OpenMesh")
-  include(UseOpenMesh)
-
-  target_link_libraries(dynamic_properties_test PRIVATE ${OPENMESH_LIBRARIES})
-  target_compile_definitions(dynamic_properties_test PRIVATE -DCGAL_USE_OPENMESH)
+  include(CGAL_OpenMesh_support)
+  target_link_libraries(dynamic_properties_test PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Tests will not use OpenMesh.")
 endif()

@@ -59,7 +59,6 @@ void compute(SMesh* sMesh,
   namespace PMP = CGAL::Polygon_mesh_processing;
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
   typedef Epic_kernel::Point_3 Point;
-  typedef Epic_kernel::Point_3 Point;
   typedef Epic_kernel::Vector_3 Vector;
   typedef boost::graph_traits<SMesh>::vertex_descriptor Vertex_descriptor;
 

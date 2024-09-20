@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Polygon_mesh_processing_Examples)
 
 # CGAL and its components
@@ -95,30 +95,29 @@ endif()
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
-  include(UseOpenMesh)
+  include(CGAL_OpenMesh_support)
 
   create_single_source_cgal_program("compute_normals_example_OM.cpp")
-  target_link_libraries(compute_normals_example_OM PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(compute_normals_example_OM PRIVATE CGAL::OpenMesh_support)
   create_single_source_cgal_program("corefinement_OM_union.cpp")
-  target_link_libraries(corefinement_OM_union PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(corefinement_OM_union PRIVATE CGAL::OpenMesh_support)
 
   if(TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program("hole_filling_example_OM.cpp")
-    target_link_libraries(hole_filling_example_OM PRIVATE CGAL::Eigen3_support ${OPENMESH_LIBRARIES})
+    target_link_libraries(hole_filling_example_OM PRIVATE CGAL::Eigen3_support CGAL::OpenMesh_support)
   endif()
 
   create_single_source_cgal_program("point_inside_example_OM.cpp")
-  target_link_libraries(point_inside_example_OM PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(point_inside_example_OM PRIVATE CGAL::OpenMesh_support)
 
   create_single_source_cgal_program("stitch_borders_example_OM.cpp")
-  target_link_libraries(stitch_borders_example_OM PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(stitch_borders_example_OM PRIVATE CGAL::OpenMesh_support)
 
   #create_single_source_cgal_program("remove_degeneracies_example.cpp")
-  #target_link_libraries(remove_degeneracies_example PRIVATE ${OPENMESH_LIBRARIES})
-  #target_compile_definitions(remove_degeneracies_example PRIVATE -DCGAL_USE_OPENMESH)
+  #target_link_libraries(remove_degeneracies_example PRIVATE CGAL::OpenMesh_support)
 
   create_single_source_cgal_program("triangulate_faces_example_OM.cpp")
-  target_link_libraries(triangulate_faces_example_OM PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(triangulate_faces_example_OM PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
 endif()

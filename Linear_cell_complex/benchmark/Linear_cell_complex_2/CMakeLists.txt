@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(LCC_performance_2)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/)
@@ -18,10 +18,8 @@ include_directories(BEFORE "/usr/include/libxml2/")
 # add_definitions("-g")
 
 # OpenMesh
-set(OPENMESH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/openmesh")
 find_package(OpenMesh REQUIRED)
-include_directories(${OPENMESH_INCLUDE_DIR})
-link_directories(${OPENMESH_LIBRARY_DIR})
+include(CGAL_OpenMesh_support)
 
 # Polyhedron
 add_executable(polyhedron_performance performance_2.h polyhedron_performance.h
@@ -42,7 +40,7 @@ target_link_libraries(surface_mesh_performance surface_mesh)
 # Open_mesh
 add_executable(openmesh_performance performance_2.h openmesh_performance.h
                                     openmesh_performance.cpp)
-target_link_libraries(openmesh_performance ${OPENMESH_LIBRARIES})
+target_link_libraries(openmesh_performance CGAL::OpenMesh_support)
 
 # CGoGN
 find_package(Qt REQUIRED)
@@ -91,4 +89,4 @@ target_link_libraries(
   Zinri
   z
   ${QT_LIBRARIES}
-  ${OPENMESH_LIBRARIES})
+  CGAL::OpenMesh_support)
