@@ -50,7 +50,7 @@ add_points_from_generator(C3T3& c3t3,
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef CGAL::Mesh_3::Triangulation_helpers<Tr> Th;
 
-  using PointDimIndex = parameters::internal::Initial_point_type<MeshDomain, C3t3>;
+  using PointDimIndex = parameters::internal::Initial_point_type<MeshDomain, C3T3>;
 
   const auto& cwp = c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
@@ -210,22 +210,24 @@ template < typename C3T3,
            typename MeshDomain,
            typename MeshCriteria,
            bool MeshDomainHasHasFeatures,
-           typename HasFeatures,
-           typename InitOptions>
-struct C3t3_initializer { };
+           typename HasFeatures = int>
+struct C3t3_initializer {};
 
 // Partial specialization of C3t3_initializer
 // Handle cases where MeshDomain::Has_features is not a valid type
-template < typename C3T3, typename MD, typename MC, typename HasFeatures, typename InitOptions>
-struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures, InitOptions >
+template < typename C3T3, typename MD, typename MC, typename HasFeatures>
+struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures>
 {
   typedef parameters::internal::Mesh_3_options Mesh_3_options;
+  typedef parameters::internal::Initialization_options<MD, C3T3> Default_init_options;
+
+  template<typename InitOptions = Default_init_options>
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
                   Mesh_3_options mesh_options = Mesh_3_options(),
-                  const InitOptions& init_options = InitOptions())
+                  const InitOptions& init_options = Default_init_options())
   {
     if ( with_features )
     {
@@ -241,19 +243,21 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures, InitOptions >
 
 // Partial specialization of C3t3_initializer
 // Handles cases where MeshDomain::Has_features is a valid type
-template < typename C3T3, typename MD, typename MC, typename HasFeatures, typename InitOptions>
-struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures, InitOptions>
+template < typename C3T3, typename MD, typename MC, typename HasFeatures>
+struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures>
 {
   typedef parameters::internal::Mesh_3_options Mesh_3_options;
+  typedef parameters::internal::Initialization_options<MD, C3T3> Default_init_options;
 
+  template<typename InitOptions = Default_init_options>
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
                   Mesh_3_options mesh_options = Mesh_3_options(),
-                  const InitOptions& init_options = InitOptions())
+                  const InitOptions& init_options = Default_init_options())
   {
-    C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features, InitOptions >()
+    C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features >()
       (c3t3,domain,criteria,with_features,mesh_options,init_options);
   }
 };
@@ -261,20 +265,22 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures, InitOptions>
 // Partial specialization of C3t3_initializer
 // Handles cases where MeshDomain::Has_features is a valid type and is defined
 // to CGAL::Tag_true
-template < typename C3T3, typename MD, typename MC, typename InitOptions >
-struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true, InitOptions >
+template < typename C3T3, typename MD, typename MC >
+struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true>
   : public C3t3_initializer_base < C3T3, MD, MC >
 {
   virtual ~C3t3_initializer() { }
 
   typedef parameters::internal::Mesh_3_options Mesh_3_options;
+  typedef parameters::internal::Initialization_options<MD, C3T3> Default_init_options;
 
+  template<typename InitOptions = Default_init_options>
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
                   Mesh_3_options mesh_options = Mesh_3_options(),
-                  const InitOptions& init_options = InitOptions())
+                  const InitOptions& init_options = Default_init_options())
   {
     if ( with_features ) {
       this->initialize_features(c3t3, domain, criteria,mesh_options);
@@ -311,17 +317,19 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true, InitOptions >
 // Partial specialization of C3t3_initializer
 // Handles cases where MeshDomain::Has_features is a valid type and is defined
 // to CGAL::Tag_false
-template < typename C3T3, typename MD, typename MC, typename InitOptions >
-struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false, InitOptions >
+template < typename C3T3, typename MD, typename MC >
+struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false>
 {
   typedef parameters::internal::Mesh_3_options Mesh_3_options;
-  typedef parameters::internal::Initialization_options<MD, C3T3>  Initialization_options;
+  typedef parameters::internal::Initialization_options<MD, C3T3> Default_init_options;
+
+  template<typename InitOptions = Default_init_options>
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
                   Mesh_3_options mesh_options = Mesh_3_options(),
-                  const Initialization_options& init_options = Initialization_options())
+                  const InitOptions& init_options = Default_init_options())
   {
     if ( with_features )
     {
@@ -609,13 +617,12 @@ void make_mesh_3_impl(C3T3& c3t3,
     MeshDomain,
     MeshCriteria,
     ::CGAL::internal::has_Has_features<MeshDomain>::value,
-    int,
-    Init_options>() (c3t3,
-            domain,
-            criteria,
-            with_features,
-            mesh_options,
-            initialization_options);
+    int>()(c3t3,
+           domain,
+           criteria,
+           with_features,
+           mesh_options,
+           initialization_options);
 
   CGAL_assertion( c3t3.triangulation().dimension() >= 2 );
 

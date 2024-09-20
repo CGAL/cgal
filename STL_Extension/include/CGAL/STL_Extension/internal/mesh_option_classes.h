@@ -17,6 +17,7 @@
 #include <boost/iterator/function_output_iterator.hpp>
 #include <type_traits>
 #include <iterator>
+#include <optional>
 
 namespace CGAL {
 
@@ -180,20 +181,26 @@ struct Initial_point_type
   typename MeshDomain::Index m_index;
 };
 
+struct Dummy_initial_points_generator
+{
+  template<typename OutputIterator>
+  OutputIterator operator()(OutputIterator oit, int n = 0) const { return oit; }
+};
+
 // Holds the two parameters `initial_points_generator` and `initial_points`,
 // without knowing their types, into a single generator.
 template <typename MeshDomain,
           typename C3t3,
-          typename InitialPointsGenerator = typename MeshDomain::Construct_initial_points,
+          typename InitialPointsGenerator = Dummy_initial_points_generator,
           typename InitialPointsRange = std::vector<Initial_point_type<MeshDomain, C3t3> > >
 struct Initialization_options
 {
-  using DefaultGenerator = typename MeshDomain::Construct_initial_points;
+  using DefaultGenerator = Dummy_initial_points_generator;
   using Initial_points_const_iterator = typename InitialPointsRange::const_iterator;
   using Initial_point = typename std::iterator_traits<Initial_points_const_iterator>::value_type;
 
+
   Initialization_options()
-    : is_default_(true)
   {}
 
   Initialization_options(const InitialPointsGenerator& generator,
@@ -201,8 +208,6 @@ struct Initialization_options
     : initial_points_generator_(generator)
     , begin_it(initial_points.begin())
     , end_it(initial_points.end())
-    , is_default_(boost::is_same<InitialPointsGenerator, DefaultGenerator>::value
-               && std::empty(initial_points))
   {}
 
   template<typename OutputIterator>
@@ -215,9 +220,16 @@ struct Initialization_options
     return initial_points_generator_(pts, n);
   }
 
-  InitialPointsGenerator generator() const { return initial_points_generator_; }
+  const InitialPointsGenerator& generator() const
+  {
+    return initial_points_generator_;
+  }
 
-  bool is_default() const { return is_default_; }
+  bool is_default() const
+  {
+    return begin_it == end_it
+        && std::is_same_v<InitialPointsGenerator, DefaultGenerator>;
+  }
 
 private:
   InitialPointsGenerator initial_points_generator_;
@@ -225,9 +237,6 @@ private:
   // The two iterators point to the `initial_points` container
   Initial_points_const_iterator begin_it;
   Initial_points_const_iterator end_it;
-
-  // Is the option a default-constructed one ?
-  const bool is_default_;
 };
 
 // -----------------------------------
