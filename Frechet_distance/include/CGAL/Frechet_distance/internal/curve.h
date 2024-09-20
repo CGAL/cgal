@@ -273,9 +273,9 @@ public:
         Construct_bbox cbb;
         Bbox bb;
         for (PointID i = 1; i < points.size(); ++i) {
-            auto segment_distance = distance(points[i - 1], points[i]);
+            auto segment_distance = distance(point(i - 1), point(i));
             prefix_length[i] = prefix_length[i - 1] + segment_distance;
-            bb += cbb(points[i]);
+            bb += cbb(point(i));
         }
         extreme_points = bb;
     }
@@ -296,7 +296,7 @@ public:
     {
         if constexpr (is_floating_point) {
             I2R convert;
-            return convert(points[i]);
+            return convert(point(i));
         }else{
           if constexpr (is_filtered) {
               return typename K::C2E()(input[i]);
@@ -335,17 +335,17 @@ public:
 
 //        if (is_zero(pt.getFraction())) {
         if (pt.getFraction()==0) {
-            return points[pt.getPoint()];
+            return point(pt.getPoint());
         }
         Difference_of_points difference;
         Scaled_vector scale;
         Translated_point translate;
         auto fraction = pt.getFraction().approx;
-        return translate(points[pt.getPoint()] ,
-                         scale(difference(points[pt.getPoint() ], points[pt.getPoint() + 1]), fraction));
+        return translate(point(pt.getPoint()) ,
+                         scale(difference(point(pt.getPoint() ), point(pt.getPoint() + 1)), fraction));
     }
 
-    Point interpolate_at(PointID const& pt) const { return points[pt]; }
+    Point interpolate_at(PointID const& pt) const { return point(pt); }
 
     distance_t curve_length(PointID const& i, PointID const& j) const
     {
