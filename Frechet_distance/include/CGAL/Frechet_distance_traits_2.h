@@ -18,6 +18,7 @@
 
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/id.h>
+#include <CGAL/Frechet_distance/internal/Get_exact_kernel.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Simple_cartesian.h>

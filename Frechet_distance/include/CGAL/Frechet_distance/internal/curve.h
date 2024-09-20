@@ -16,12 +16,12 @@
 #pragma once
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/id.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_rational.h>
+
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <CGAL/Bbox.h>
-#include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 #include <vector>
 
 namespace CGAL {
@@ -58,46 +58,6 @@ double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
 
 // TODO: Clean up Curve
 
-template <typename T>
-struct Get_exact_kernel {
-
-    using K = typename T::Kernel;
-
-    static auto get_is_filtered()
-    {
-      if constexpr (::CGAL::internal::Has_nested_type_Has_filtered_predicates_tag<K>::value)
-      {
-        if constexpr (K::Has_filtered_predicates_tag::value) {
-            return std::true_type();
-        }
-        else
-          return std::false_type();
-      }
-      else
-        return std::false_type();
-    }
-
-    static constexpr bool is_filtered = decltype(get_is_filtered())::value;
-    static constexpr bool  is_floating_point = std::is_floating_point_v<typename K::FT>;
-
-    static auto get_type()
-    {
-      if constexpr (is_filtered)
-      {
-        return typename K::Exact_kernel{};
-      }
-      else
-      {
-        if constexpr (is_floating_point)
-            return CGAL::Simple_cartesian<CGAL::Exact_rational>{};
-        else
-            return K{};
-      }
-    }
-
-    using type = decltype(get_type());
-
-};
 
 
 /*!
