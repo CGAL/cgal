@@ -342,7 +342,7 @@ public:
         Translated_point translate;
         auto fraction = pt.getFraction().approx;
         return translate(points[pt.getPoint()] ,
-                         scale(difference(points[pt.getPoint() + 1], points[pt.getPoint()]), fraction));
+                         scale(difference(points[pt.getPoint() ], points[pt.getPoint() + 1]), fraction));
     }
 
     Point interpolate_at(PointID const& pt) const { return points[pt]; }
