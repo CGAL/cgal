@@ -30,19 +30,18 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2, Pla
     Point3SPtr result = Point3SPtr();
 #ifdef USE_CGAL
     CGAL::Object obj = CGAL::intersection(*plane1, *plane2, *plane3);
-    if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj))
-      result = KernelFactory::createPoint3(*ipoint);
-    else
-    {
-      // Shouldn't be there, but let's investigate
-      if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj))
-          std::cerr << "Intersection is a line" << std::endl;
-      else if(const CGAL::Plane3 *iplane = CGAL::object_cast<CGAL::Plane3>(&obj))
-          std::cerr << "Intersection is a plane" << std::endl;
-      else
-          std::cerr << "Intersection is... not?" << std::endl;
+    if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
+        result = KernelFactory::createPoint3(*ipoint);
+    } else {
+        // Let's investigate...
+        if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj))
+            std::cerr << "Intersection of 3 planes is a line" << std::endl;
+        else if(const CGAL::Plane3 *iplane = CGAL::object_cast<CGAL::Plane3>(&obj))
+            std::cerr << "Intersection of 3 planes is a plane" << std::endl;
+        else
+            std::cerr << "Intersection of 3 planes is... not?" << std::endl;
 
-      CGAL_assertion_msg(false, "intersection of 3 planes failed to produce a point");
+        CGAL_warning_msg(false, "intersection of 3 planes failed to produce a point");
     }
 #else
     result = Point3SPtr(kernel::intersection(&(*plane1), &(*plane2), &(*plane3)));
@@ -57,6 +56,9 @@ Line3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2) {
     CGAL::Object obj = CGAL::intersection(*plane1, *plane2);
     if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj)) {
         result = KernelFactory::createLine3(*iline);
+    } else {
+        std::cerr << "Intersection is... not?" << std::endl;
+        CGAL_warning_msg(false, "intersection of 2 planes failed to produce a line");
     }
 #else
     result = Line3SPtr(kernel::intersection(&(*plane1), &(*plane2)));
@@ -71,6 +73,14 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane, Line3SPtr line) {
     CGAL::Object obj = CGAL::intersection(*plane, *line);
     if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
         result = KernelFactory::createPoint3(*ipoint);
+    } else {
+        // Let's investigate
+        if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj))
+            std::cerr << "Intersection of plane and line is the line itself" << std::endl;
+        else
+            std::cerr << "Intersection of plane and line is... not?" << std::endl;
+
+        CGAL_warning_msg(false, "intersection of plane and line failed to produce a point");
     }
 #else
     result = Point3SPtr(kernel::intersection(&(*plane), &(*line)));
