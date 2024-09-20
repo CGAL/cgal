@@ -20,17 +20,16 @@ class FrechetDistanceTraits {
 /*!  a fixed dimension >= 2 */
     const int dimension;
 
-/*!  a fixed dimension >= 2 */
-    static constexpr bool is_filtered;
-    /*!  a fixed dimension >= 2 */
-    static constexpr bool  is_floating_point;
+/*!  must be `true` if  `Kernel` has a nested type `Has_filtered_predicates_tag`  with `value == true`
+*/
+    static constexpr bool is_filtered = unspecified;
+
+    /*!  Must be `true` if the number type of `Kernel` is a floating point number type*/
+    static constexpr bool  is_floating_point = unspecified;
 /// \name Types
 /// @{
 
 /*! The kernel type. If this type has a nested type `Has_filtered_predicates_tag`  with `value == true`,
-    it must have a nested type `Exact_kernel`, and a nested type `C2E` with an  `operator()` that converts
-    a point of `Kernel` to a point of `Exact_kernel`. Otherwise, it must have a nested type `FT` for
-    which an overload of `to_double()` exists.
 */
 using Kernel = unspecified;
 
@@ -38,7 +37,7 @@ using Kernel = unspecified;
 */
 using Point = unspecified_type;
 
-/*! The number type of the filtered kernel. If
+/*! The number type of the filtered kernel.
 */
 using distance_t = Filtered_kernel::FT;
 

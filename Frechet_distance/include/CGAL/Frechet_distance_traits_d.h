@@ -44,13 +44,13 @@ public:
     using FT = typename Kernel::FT;
     using Point = typename Kernel::Point_d;
 
-    using Bbox = CGAL::Bbox<Dimension_tag<dim>,double>;
+    using Bbox = CGAL::Bbox<Dimension_tag<dimension>,double>;
 
     static constexpr bool is_filtered = CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::is_filtered;
     static constexpr bool  is_floating_point = CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::is_floating_point;
 
     using distance_t = Interval_nt<false>;
-    using Filtered_kernel = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dim>>>;
+    using Filtered_kernel = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
     using Filtered_point = typename Filtered_kernel::Point_d;
     using Construct_bbox = typename Filtered_kernel::Construct_bbox_d;
     using Squared_distance = typename Filtered_kernel::Squared_distance_d;
