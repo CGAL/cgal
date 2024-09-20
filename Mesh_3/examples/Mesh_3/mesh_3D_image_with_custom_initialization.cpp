@@ -40,12 +40,13 @@ namespace params = CGAL::parameters;
 //   Weighted_point_3 is the point's position and weight,
 //   int is the dimension of the minimal dimension subcomplex on which the point lies,
 //   Index is the underlying subcomplex index.
+
 struct Custom_initial_points_generator
 {
   const CGAL::Image_3& image_;
 
   template <typename OutputIterator>
-  OutputIterator operator()(OutputIterator pts) const
+  OutputIterator operator()(OutputIterator pts, int n = 20) const
   {
     typedef Tr::Geom_traits     Gt;
     typedef Gt::Point_3         Point_3;
@@ -53,13 +54,11 @@ struct Custom_initial_points_generator
     typedef Gt::Segment_3       Segment_3;
     typedef Mesh_domain::Index  Index;
 
-    typename C3t3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
-        c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
+    Gt::Construct_weighted_point_3 cwp = Gt().construct_weighted_point_3_object();
 
     // Add points along the segment
     Segment_3 segment(Point_3(  0.0, 50.0, 66.66),
                       Point_3(100.0, 50.0, 66.66));
-
 
     Point_3 source = segment.source();
     Vector_3 vector = segment.to_vector();
@@ -69,7 +68,7 @@ struct Custom_initial_points_generator
 
     for (std::size_t i = 1; i < nb; i++)
     {
-      *pts++ = {cwp(source + (i * frac) * vector), 1, Index(1));
+      *pts++ = std::make_tuple( cwp(source + (i * frac) * vector), 1, Index(1) );
     }
     return pts;
   }

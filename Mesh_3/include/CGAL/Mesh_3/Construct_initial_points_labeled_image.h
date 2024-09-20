@@ -82,16 +82,23 @@ struct Get_point
  * this functor scans the complete image and
  * outputs points to initialize each component.
  *
+ * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+ * @tparam MeshDomain model of `MeshDomain_3`
+ *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
  * \sa `CGAL::Construct_initial_points_gray_image`
  */
+template<typename C3t3, typename MeshDomain>
 struct Construct_initial_points_labeled_image
 {
-  const CGAL::Image_3 & image;
+  const CGAL::Image_3& image_;
+  const MeshDomain& domain_;
 
-  Construct_initial_points_labeled_image(const CGAL::Image_3 & image_)
-      : image(image_)
+  Construct_initial_points_labeled_image(const CGAL::Image_3& image,
+                                         const MeshDomain& domain)
+    : image_(image)
+    , domain_(domain)
   { }
 
   /*!
@@ -102,14 +109,12 @@ struct Construct_initial_points_labeled_image
   * This ensures that each component will be initialized.
   *
   * @tparam OutputIterator model of `OutputIterator` that contains points of type
-  * `MeshDomain::Intersection`
-  * @tparam MeshDomain model of `MeshDomain_3`
-  * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+  * @todo describe type
   */
-  template <typename OutputIterator, typename MeshDomain, typename C3t3>
-  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n = 20) const
+  template <typename OutputIterator>
+  OutputIterator operator()(OutputIterator pts, int n = 20) const
   {
-    CGAL_IMAGE_IO_CASE(image.image(), operator()(pts, domain, CGAL::Identity<Word>(), c3t3, n));
+    CGAL_IMAGE_IO_CASE(image_.image(), operator()(pts, CGAL::Identity<Word>(), n));
     return pts;
   }
 
@@ -127,8 +132,8 @@ struct Construct_initial_points_labeled_image
    *   with `Word` the type of the image values.
    * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
    */
-  template <typename OutputIterator, typename MeshDomain, typename C3t3, typename TransformOperator>
-  OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, TransformOperator transform, const C3t3& c3t3, int n = 20) const
+  template <typename OutputIterator, typename TransformOperator>
+  OutputIterator operator()(OutputIterator pts, TransformOperator transform, int n = 20) const
   {
     typedef typename MeshDomain::Subdomain     Subdomain;
     typedef typename MeshDomain::Point_3       Point_3;
@@ -143,7 +148,8 @@ struct Construct_initial_points_labeled_image
     typedef typename Tr::Cell_handle           Cell_handle;
     typedef typename GT::Vector_3              Vector_3;
 
-    const Tr& tr = c3t3.triangulation();
+    C3t3 c3t3;
+    Tr& tr = c3t3.triangulation();
 
     typename GT::Compare_weighted_squared_radius_3 cwsr =
       tr.geom_traits().compare_weighted_squared_radius_3_object();
@@ -152,9 +158,9 @@ struct Construct_initial_points_labeled_image
     typename GT::Construct_weighted_point_3 cwp =
       tr.geom_traits().construct_weighted_point_3_object();
 
-    const double max_v = (std::max)((std::max)(image.vx(),
-                                               image.vy()),
-                                               image.vz());
+    const double max_v = (std::max)((std::max)(image_.vx(),
+                                               image_.vy()),
+                                               image_.vz());
 
     struct Seed {
       std::size_t i, j, k;
@@ -163,9 +169,9 @@ struct Construct_initial_points_labeled_image
     using Seeds = std::vector<Seed>;
 
     Seeds seeds;
-    Mesh_3::internal::Get_point<Point_3> get_point(&image);
+    Mesh_3::internal::Get_point<Point_3> get_point(&image_);
     std::cout << "Searching for connected components..." << std::endl;
-    CGAL_IMAGE_IO_CASE(image.image(), search_for_connected_components_in_labeled_image(image,
+    CGAL_IMAGE_IO_CASE(image_.image(), search_for_connected_components_in_labeled_image(image_,
                                                      std::back_inserter(seeds),
                                                      CGAL::Emptyset_iterator(),
                                                      transform,
@@ -178,13 +184,13 @@ struct Construct_initial_points_labeled_image
       Cell_handle seed_cell = tr.locate(cwp(seed_point));
 
       const Subdomain seed_label
-        = domain.is_in_domain_object()(seed_point);
+        = domain_.is_in_domain_object()(seed_point);
       const Subdomain seed_cell_label
         = (   tr.dimension() < 3
            || seed_cell == Cell_handle()
            || tr.is_infinite(seed_cell))
           ? Subdomain()  //seed_point is OUTSIDE_AFFINE_HULL
-          : domain.is_in_domain_object()(
+          : domain_.is_in_domain_object()(
               seed_cell->weighted_circumcenter(tr.geom_traits()));
 
       if ( seed_label != std::nullopt
@@ -196,7 +202,7 @@ struct Construct_initial_points_labeled_image
       CGAL::Random_points_on_sphere_3<Point_3> points_on_sphere_3(radius);
       // [construct intersection]
       typename MeshDomain::Construct_intersection construct_intersection =
-          domain.construct_intersection_object();
+          domain_.construct_intersection_object();
       // [construct intersection]
 
       std::vector<Vector_3> directions;
@@ -219,7 +225,7 @@ struct Construct_initial_points_labeled_image
       for(const Vector_3& v : directions)
       {
         const Point_3 test = seed_point + v;
-        const Segment_3 test_segment = Segment_3(seed_point, test);
+        const Segment_3 test_segment(seed_point, test);
 
         // [use construct intersection]
         const typename MeshDomain::Intersection intersect =
@@ -231,7 +237,7 @@ struct Construct_initial_points_labeled_image
           const Point_3& intersect_point = std::get<0>(intersect);
           const Index& intersect_index = std::get<1>(intersect);
           // [get construct intersection]
-          Weighted_point pi = Weighted_point(intersect_point);
+          Weighted_point pi(intersect_point);
 
           // This would cause trouble to optimizers
           // check pi will not be hidden
@@ -293,7 +299,20 @@ struct Construct_initial_points_labeled_image
           if (pi_inside_protecting_sphere)
             continue;
 
-          *pts++ = {cwp(intersect_point), 2, intersect_index}; // dimension 2 by construction, points are on surface
+          // insert point in temporary triangulation
+
+          /// The following lines show how to insert initial points in the
+          /// `c3t3` object. [insert initial points]
+          Vertex_handle v = tr.insert(pi);
+
+          // `v` could be null if `pi` is hidden by other vertices of `tr`.
+          CGAL_assertion(v != Vertex_handle());
+
+          c3t3.set_dimension(v, 2); // by construction, points are on surface
+          c3t3.set_index(v, intersect_index);
+          /// [insert initial points]
+
+          *pts++ = std::make_pair(pi, intersect_index); // dimension 2 by construction, points are on surface
         }
       }
     }

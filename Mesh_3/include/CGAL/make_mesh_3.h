@@ -60,13 +60,13 @@ add_points_from_generator(C3T3& c3t3,
       using T = std::remove_cv_t < std::remove_reference_t<decltype(initial_pt)>>;
       if constexpr (std::tuple_size_v<T> == 3)
       {
-        const auto& [wp, d, i] = initial_pt;
-        initial_points.push_back(PointDimIndex{ wp, d, i });
+        const auto& [weighted_pt, dim, index] = initial_pt;
+        initial_points.push_back(PointDimIndex{ weighted_pt, dim, index });
       }
       else
       {
-        const auto& [p, i] = initial_pt;
-        initial_points.push_back(PointDimIndex{ cwp(p), 2, i });
+        const auto& [pt, index] = initial_pt;
+        initial_points.push_back(PointDimIndex{ cwp(pt), 2, index });
       }
     };
 
@@ -519,7 +519,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
     using parameters::choose_parameter;
     using parameters::get_parameter;
     using parameters::get_parameter_reference;
-    C3T3 c3t3;
+
     parameters::internal::Exude_options exude_param = choose_parameter(get_parameter(np, internal_np::exude_options_param), parameters::exude().v);
     parameters::internal::Perturb_options perturb_param = choose_parameter(get_parameter(np, internal_np::perturb_options_param), parameters::perturb().v);
     parameters::internal::Odt_options odt_param = choose_parameter(get_parameter(np, internal_np::odt_options_param), parameters::no_odt().v);
@@ -547,6 +547,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
     const parameters::internal::Initialization_options<MeshDomain, C3T3, Initial_points_generator, Initial_points_range>
       initial_points_gen_param(initial_points_generator, initial_points);
 
+    C3T3 c3t3;
     make_mesh_3_impl(c3t3, domain, criteria,
             exude_param, perturb_param, odt_param, lloyd_param,
             features_param.features(), mesh_options_param,
