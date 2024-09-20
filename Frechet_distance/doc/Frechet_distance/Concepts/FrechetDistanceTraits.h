@@ -17,9 +17,13 @@ and `CGAL::approximate_Frechet_distance()`.
 class FrechetDistanceTraits {
 
     public:
-/*!  2 or 3 */
+/*!  a fixed dimension >= 2 */
     const int dimension;
 
+/*!  a fixed dimension >= 2 */
+    static constexpr bool is_filtered;
+    /*!  a fixed dimension >= 2 */
+    static constexpr bool  is_floating_point;
 /// \name Types
 /// @{
 
@@ -33,6 +37,51 @@ using Kernel = unspecified;
 /*! The point type of `Kernel` corresponding to `dimension`
 */
 using Point = unspecified_type;
+
+/*! The number type of the filtered kernel. If
+*/
+using distance_t = Filtered_kernel::FT;
+
+/*! The filtered kernel
+*/
+using Filtered_kernel = unspecified_type;
+
+
+/*! The point type of the filtered kernel corresponding to `dimension`.
+*/
+using Filtered_point = unspecified_type;
+
+/*! A functor of the filtered kernel for filtered points
+*/
+using Construct_bbox = unspecified_type;
+
+/*! A functor of the filtered kernel for two filtered points
+*/
+using Squared_distance = unspecified_type;
+
+
+/*! A functor of the filtered kernel for two filtered points
+*/
+using Difference_of_points = unspecified_type;
+
+
+/*! A functor of the filtered kernel the return type of `Difference_of_points`
+*/
+using Scaled_vector = unspecified_type;
+
+
+/*! A functor of the filtered kernel the return type of `Scaled_vector`
+*/
+using Translated_point = unspecified_type;
+
+/*! The exact kernel
+*/
+using Exact_kernel = unspecified_type;
+
+/*! The point type of the exact kernel corresponding to `dimension`.
+The  point type must have `operator[]` returning a number type which can be used as first template parameter of `Sqrt_extension`.
+*/
+using Exact_point = unspecified_type;
 
 /// @}
 };
