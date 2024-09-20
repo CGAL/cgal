@@ -17,11 +17,9 @@
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/id.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Epick_d.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
-#include <CGAL/Cartesian_converter.h>
 #include <CGAL/Bbox.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
 #include <vector>
@@ -61,7 +59,7 @@ double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
 // TODO: Clean up Curve
 
 template <typename T>
-struct Get_rational_kernel {
+struct Get_exact_kernel {
 
     using K = typename T::Kernel;
 
@@ -101,84 +99,6 @@ struct Get_rational_kernel {
 
 };
 
-template <typename T, int dim>
-struct Curve_base
-{
-    static constexpr bool is_filtered = Get_rational_kernel<T>::is_filtered;
-    static constexpr bool  is_floating_point = Get_rational_kernel<T>::is_floating_point;
-
-    using distance_t = Interval_nt<false>;
-    using Kernel = typename T::Kernel;
-    using iKernel = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dim>>>;
-    using Rational_kernel = typename Get_rational_kernel<T>::type;
-    using Point = typename iKernel::Point_d;
-    using Rational_point = typename Rational_kernel::Point_d;
-    using Bbox = CGAL::Bbox<Dimension_tag<dim>,double>;
-    using Construct_bbox = typename iKernel::Construct_bbox_d;
-    using Squared_distance = typename iKernel::Squared_distance_d;
-    using Difference_of_points = typename iKernel::Construct_vector_d;
-    using Scaled_vector = typename iKernel::Scaled_vector_d;
-    using Translated_point = typename iKernel::Translated_point_d;
-
-    using D2D = NT_converter<distance_t,double>;
-    using I2R = KernelD_converter<iKernel, Rational_kernel, Default, D2D>;
-
-    using FT2I = NT_converter<typename Kernel::FT,distance_t>;
-    using K2I = KernelD_converter<Kernel, iKernel, Default, FT2I>;
-};
-
-template <typename T>
-struct Curve_base<T,2>
-{
-    static constexpr bool is_filtered = Get_rational_kernel<T>::is_filtered;
-    static constexpr bool  is_floating_point = Get_rational_kernel<T>::is_floating_point;
-
-    using distance_t = CGAL::Interval_nt<false>;
-    using Kernel = typename T::Kernel;
-    using iKernel = CGAL::Simple_cartesian<distance_t>;
-    using Rational_kernel = typename Get_rational_kernel<T>::type;
-    using Point = typename iKernel::Point_2;
-    using Rational_point = typename Rational_kernel::Point_2;
-    using Bbox = Bbox_2;
-    using Construct_bbox = typename iKernel::Construct_bbox_2;
-    using Squared_distance = typename iKernel::Compute_squared_distance_2;
-    using Difference_of_points = typename iKernel::Construct_vector_2;
-    using Scaled_vector = typename iKernel::Construct_scaled_vector_2;
-    using Translated_point = typename iKernel::Construct_translated_point_2;
-
-    using D2D = NT_converter<distance_t,double>;
-    using I2R = Cartesian_converter<iKernel, Rational_kernel, D2D>;
-
-    using FT2I = NT_converter<typename Kernel::FT,distance_t>;
-    using K2I = Cartesian_converter<Kernel, iKernel, FT2I>;
-};
-
-template <typename T>
-struct Curve_base<T,3>
-{
-    static constexpr bool is_filtered = Get_rational_kernel<T>::is_filtered;
-    static constexpr bool  is_floating_point = Get_rational_kernel<T>::is_floating_point;
-
-    using distance_t = CGAL::Interval_nt<false>;
-    using Kernel = typename T::Kernel;
-    using iKernel = CGAL::Simple_cartesian<distance_t>;
-    using Rational_kernel = typename Get_rational_kernel<T>::type;
-    using Point = typename iKernel::Point_3;
-    using Rational_point = typename Rational_kernel::Point_3;
-    using Bbox = Bbox_3;
-    using Construct_bbox = typename iKernel::Construct_bbox_3;
-    using Squared_distance = typename iKernel::Compute_squared_distance_3;
-    using Difference_of_points = typename iKernel::Construct_vector_3;
-    using Scaled_vector = typename iKernel::Construct_scaled_vector_3;
-    using Translated_point = typename iKernel::Construct_translated_point_3;
-
-    using D2D = NT_converter<distance_t,double>;
-    using I2R = Cartesian_converter<iKernel, Rational_kernel, D2D>;
-
-    using FT2I = NT_converter<typename Kernel::FT,distance_t>;
-    using K2I = Cartesian_converter<Kernel, iKernel, FT2I>;
-};
-
 
 /*!
  * \ingroup PkgFrechetDistanceFunctions
@@ -186,48 +106,47 @@ struct Curve_base<T,3>
  * input file, we also store the length of any prefix of the trajectory.
  */
 template <typename T>
-class Curve : public Curve_base<T, T::dimension>
+class Curve
 {
 public:
-    using K = typename T::Kernel;
-    using Base = Curve_base<T, T::dimension>;
-    using Self  = Curve<T>;
+    using Traits = T;
+    using Self = Curve<T>;
+    using K    = typename Traits::Kernel;
 
-
-    static constexpr bool is_filtered = Base::is_filtered;
-    static constexpr bool is_floating_point = Base::is_floating_point;
+    static constexpr bool is_filtered = Traits::is_filtered;
+    static constexpr bool is_floating_point = Traits::is_floating_point;
 public:
     static constexpr int dimension =  T::dimension;
 
-    using distance_t = CGAL::Interval_nt<false>;
+    using distance_t = typename Traits::distance_t;
 
-    using iKernel = typename Base::iKernel;
+    using iKernel = typename Traits::Filtered_kernel;
 
-    using Point = typename Base::Point;
+    using Point = typename Traits::Filtered_point;
 
-    using Bbox = typename Base::Bbox;
+    using Bbox = typename Traits::Bbox;
 
-    using Construct_bbox = typename Base::Construct_bbox;
+    using Construct_bbox = typename Traits::Construct_bbox;
 
-    using Squared_distance = typename Base::Squared_distance;
+    using Squared_distance = typename Traits::Squared_distance;
 
-    using Difference_of_points = typename Base::Difference_of_points;
+    using Difference_of_points = typename Traits::Difference_of_points;
 
-    using Scaled_vector = typename Base::Scaled_vector;
+    using Scaled_vector = typename Traits::Scaled_vector;
 
-    using Translated_point = typename Base::Translated_point;
+    using Translated_point = typename Traits::Translated_point;
 
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
     using InputPoints = std::vector<typename T::Point>;
 
-    using Rational_kernel = typename Base::Rational_kernel;
+    using Rational_kernel = typename Traits::Exact_kernel;
     using Rational = typename Rational_kernel::FT;
-    using Rational_point = typename Base::Rational_point;
+    using Rational_point = typename Traits::Exact_point;
 
-    using I2R = typename Base::I2R;
+    using I2R = typename Traits::I2R;
 
-    using K2I = typename Base::K2I;
+    using K2I = typename Traits::K2I;
 
     Curve() = default;
 
