@@ -70,48 +70,68 @@ void PolyhedronTransformation::scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s)
             util::StringFactory::fromDouble(CGAL::to_double((*v_s)[2])) + ">; ");
 }
 
+// @todo this function cannot deal with degree 1 vertices
 Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                                                 CGAL::FT offset)
 {
-  // @todo this function doesn't try to find an independent triplet of planes,
-  // nor can it deal with degree 1 vertices
+    // std::cout << "shift point, " << vertex->facets().size() << " incident facets" << std::endl;
 
-  Point3SPtr result;
+    Plane3SPtr planes[3];
+    unsigned int i = 0;
+    std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
+    while (i < 3 && it_f != vertex->facets().end()) {
+        FacetWPtr facet_wptr = *it_f++;
+        if (!facet_wptr.expired()) {
+            FacetSPtr facet = FacetSPtr(facet_wptr);
+            Plane3SPtr plane = facet->plane();
+            // std::cout << "Facet #" << facet->getID() << std::endl;
+            // std::cout << "  Plane: " << *plane << std::endl;
 
-  Plane3SPtr planes[3];
-  unsigned int i = 0;
+            // @fixme do a proper independence by checking
+            // at i = 1, that cross(u, v) != null_vector
+            // at i = 2, that det(u, v, w) != 0
+            bool independent = true;
+            for(unsigned int j=0; j<i; ++j) {
+                if (CGAL::parallel(*plane, *(planes[j]))) {
+                    independent = false;
+                    break;
+                }
+            }
 
-  std::cout << "shift point, " << vertex->facets().size() << " incident facets" << std::endl;
+            if (!independent) {
+                continue;
+            }
 
-  std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-  while (i < 3 && it_f != vertex->facets().end()) {
-      FacetWPtr facet_wptr = *it_f++;
-      if (!facet_wptr.expired()) {
-          FacetSPtr facet = FacetSPtr(facet_wptr);
-          CGAL::FT speed = 1.0;
-          if (facet->hasData()) {
-              speed = std::dynamic_pointer_cast<SkelFacetData>(
-                      facet->getData())->getSpeed();
-          }
+            CGAL::FT speed = 1.0;
+            if (facet->hasData()) {
+                speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+            }
 
-          planes[i] = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
-          ++i;
-      }
-  }
+            planes[i] = KernelWrapper::offsetPlane(plane, offset*speed);
+            // std::cout << "  Offset Plane[" << i << "] = " << *(planes[i]) << std::endl;
 
-  std::cout << "Found " << i << " facets" << std::endl;
+            ++i;
+        }
+    }
 
-  if (i >= 3)
-  {
-      result = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
-      std::cout << "Point position from: " << vertex->toString() << " to " << *result << std::endl;
+    if (i < 3) {
+        std::cerr << "Warning: Couldn't find three independent planes" << std::endl;
+        return { };
+    }
 
-      if (!result) {
-          DEBUG_SPTR(result);
-      }
-  }
+    Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
 
-  return result;
+    if (!point) {
+#if 1 // Temporarily allowing points to not exist for simultaneous events:
+        std::cerr << "Warning: triplet of planes doesn't define a point!" << std::endl;
+#else
+        Point3SPtr result = PolyhedronSPtr();
+        DEBUG_SPTR(result);
+        return result;
+#endif
+    }
+
+    return point;
 }
 
 // @todo plenty of needless recomputations
@@ -138,60 +158,10 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         }
 
         if (offset != 0 || recompute_positions) {
-            Plane3SPtr planes[3];
-
-            unsigned int i = 0;
-            std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
-            while (i < 3 && it_f != vertex->facets().end()) {
-                FacetWPtr facet_wptr = *it_f++;
-                if (!facet_wptr.expired()) {
-                    FacetSPtr facet = FacetSPtr(facet_wptr);
-                    Plane3SPtr plane = facet->plane();
-                    std::cout << "Facet #" << facet->getID() << std::endl;
-                    std::cout << "  Plane: " << *plane << std::endl;
-
-                    bool independent = true;
-                    for(unsigned int j=0; j<i; ++j) {
-                        if (CGAL::parallel(*plane, *(planes[j]))) {
-                            independent = false;
-                            break;
-                        }
-                    }
-
-                    if (!independent) {
-                        continue;
-                    }
-
-                    CGAL::FT speed = 1.0;
-                    if (facet->hasData()) {
-                        speed = std::dynamic_pointer_cast<SkelFacetData>(
-                                facet->getData())->getSpeed();
-                    }
-
-                    planes[i] = KernelWrapper::offsetPlane(plane, offset*speed);
-                    std::cout << "  Offset Plane[" << i << "] = " << *(planes[i]) << std::endl;
-
-                    if (with_sanity_checks) {
-                        std::cout << KernelWrapper::squared_distance(planes[i], vertex->getPoint()) << " VS0 " << CGAL::square(offset*speed) << std::endl;
-                        CGAL_assertion(KernelWrapper::squared_distance(
-                                          planes[i], vertex->getPoint()) == CGAL::square(offset*speed));
-                    }
-
-                    ++i;
-                }
-            }
-
-            // If we can't find three independent planes incident to the vertex,
-            // that vertex should have been simplified in the input...
-            //
-            // @todo handle vertices with only 2 incident planes AND no simplification of inputs
-            CGAL_assertion(i >= 3);
-
-            point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
+            point = shiftPoint(vertex, offset);
             if (!point) {
-                result = PolyhedronSPtr();
-                DEBUG_SPTR(result);
-                return result;
+                std::cerr << "Warning: Failed to create shifted polyhedron" << std::endl;
+                return { };
             }
         }
 
@@ -208,7 +178,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         data->setOffsetVertex(offset_vertex);
         result->addVertex(offset_vertex);
 
-        std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
+        // std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
         shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
     }
 
