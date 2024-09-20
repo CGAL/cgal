@@ -272,8 +272,6 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
                                                    Plane3SPtr plane_3,
                                                    CGAL::FT w3)
 {
-    Point3SPtr result;
-
     CGAL::FT a0 = plane_0->a(); CGAL::FT b0 = plane_0->b(); CGAL::FT c0 = plane_0->c(); CGAL::FT d0 = plane_0->d();
     CGAL::FT a1 = plane_1->a(); CGAL::FT b1 = plane_1->b(); CGAL::FT c1 = plane_1->c(); CGAL::FT d1 = plane_1->d();
     CGAL::FT a2 = plane_2->a(); CGAL::FT b2 = plane_2->b(); CGAL::FT c2 = plane_2->c(); CGAL::FT d2 = plane_2->d();
@@ -300,15 +298,11 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    // @todo, perturbation ensures that this is correct, but in theory we need
-    // to handle the degenerate configuration
-    // Disabled because it's a runtime speed up
-    //
-    // if(CGAL::is_zero(den))
-    // {
-    //   std::cerr << "Warning: degenerate case (coplanar planes)" << std::endl;
-    //   return Point3SPtr();
-    // }
+    if(CGAL::is_zero(den))
+    {
+        std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
+        return { };
+    }
 
     // warning: only valid for normalized coefficients!!
     CGAL::FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
@@ -321,7 +315,7 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
     std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
 #endif
 
-    result = KernelFactory::createPoint3(x, y, z);
+    Point3SPtr result = KernelFactory::createPoint3(x, y, z);
     return result;
 }
 
@@ -335,8 +329,6 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
                                                                                Plane3SPtr plane_3,
                                                                                CGAL::FT w3)
 {
-    Point3SPtr result;
-
     CGAL::FT a0 = plane_0->a(); CGAL::FT b0 = plane_0->b(); CGAL::FT c0 = plane_0->c(); CGAL::FT d0 = plane_0->d();
     CGAL::FT a1 = plane_1->a(); CGAL::FT b1 = plane_1->b(); CGAL::FT c1 = plane_1->c(); CGAL::FT d1 = plane_1->d();
     CGAL::FT a2 = plane_2->a(); CGAL::FT b2 = plane_2->b(); CGAL::FT c2 = plane_2->c(); CGAL::FT d2 = plane_2->d();
@@ -361,15 +353,10 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    // @todo perturbation ensures that this is correct, but in theory we need
-    // to handle the degenerate configuration
-    // Disabled because it's a runtime speed up
-    //
-    // if(CGAL::is_zero(den))
-    // {
-    //   std::cerr << "Warning: degenerate case (coplanar planes)" << std::endl;
-    //   return Point3SPtr();
-    // }
+    if (CGAL::is_zero(den)) {
+        std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
+        return { };
+    }
 
     // warning: only valid for normalized coefficients!!
     CGAL::FT x = (b0*c1*d2*w3 - b0*c1*d3*w2 - b0*c2*d1*w3 + b0*c2*d3*w1 + b0*c3*d1*w2 - b0*c3*d2*w1 - b1*c0*d2*w3 + b1*c0*d3*w2 + b1*c2*d0*w3 - b1*c2*d3*w0 - b1*c3*d0*w2 + b1*c3*d2*w0 + b2*c0*d1*w3 - b2*c0*d3*w1 - b2*c1*d0*w3 + b2*c1*d3*w0 + b2*c3*d0*w1 - b2*c3*d1*w0 - b3*c0*d1*w2 + b3*c0*d2*w1 + b3*c1*d0*w2 - b3*c1*d2*w0 - b3*c2*d0*w1 + b3*c2*d1*w0) / den;
@@ -378,7 +365,7 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
 
     CGAL::FT z = (a0*b1*d2*w3 - a0*b1*d3*w2 - a0*b2*d1*w3 + a0*b2*d3*w1 + a0*b3*d1*w2 - a0*b3*d2*w1 - a1*b0*d2*w3 + a1*b0*d3*w2 + a1*b2*d0*w3 - a1*b2*d3*w0 - a1*b3*d0*w2 + a1*b3*d2*w0 + a2*b0*d1*w3 - a2*b0*d3*w1 - a2*b1*d0*w3 + a2*b1*d3*w0 + a2*b3*d0*w1 - a2*b3*d1*w0 - a3*b0*d1*w2 + a3*b0*d2*w1 + a3*b1*d0*w2 - a3*b1*d2*w0 - a3*b2*d0*w1 + a3*b2*d1*w0) / den;
 
-    result = KernelFactory::createPoint3(x, y, z);
+    Point3SPtr result = KernelFactory::createPoint3(x, y, z);
 
     CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
 
