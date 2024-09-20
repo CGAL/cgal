@@ -1918,7 +1918,7 @@ Straight_skeleton_builder_2<Gt,Ss,V>::CreateMultinode( Halfedge_handle begin, Ha
 //
 // Two skeleton nodes are "coincident" IFF they have 2 defining edges in common and each triedge of edges collide
 // at the same time and point. IOW, 2 nodes are coincident if they represent the simultaneous
-// coallison of exactly 4 edges (the union of 2 triedges with 2 common elements is a set of 4).
+// collision of exactly 4 edges (the union of 2 triedges with 2 common elements is a set of 4).
 //
 template<class Gt, class Ss, class V>
 bool Straight_skeleton_builder_2<Gt,Ss,V>::MergeCoincidentNodes()
