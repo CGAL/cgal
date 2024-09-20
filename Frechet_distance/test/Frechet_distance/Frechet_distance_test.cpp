@@ -175,7 +175,7 @@ void testFrechetDistance()
           */
             timer.start();
             auto decision =
-                CGAL::is_Frechet_distance_larger<TestTraits>(
+                ! CGAL::is_Frechet_distance_larger<TestTraits>(
                     curves[query.id1], curves[query.id2], query.distance);
             timer.stop();
             if (decision != query.decision) {
