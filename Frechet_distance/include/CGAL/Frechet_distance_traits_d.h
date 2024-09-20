@@ -62,10 +62,10 @@ public:
     using Exact_point = typename Exact_kernel::Point_d;
 
     using D2D = NT_converter<distance_t,double>;
-    using I2R = KernelD_converter<Filtered_kernel, Exact_kernel, Default, D2D>;
+    using F2E = KernelD_converter<Filtered_kernel, Exact_kernel, Default, D2D>;
 
     using FT2I = NT_converter<typename Kernel::FT,distance_t>;
-    using K2I = KernelD_converter<Kernel, Filtered_kernel, Default, FT2I>;
+    using K2F = KernelD_converter<Kernel, Filtered_kernel, Default, FT2I>;
 
 
     /// @todo  remove?

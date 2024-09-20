@@ -104,9 +104,9 @@ public:
     using Rational = typename Rational_kernel::FT;
     using Rational_point = typename Traits::Exact_point;
 
-    using I2R = typename Traits::I2R;
+    using I2R = typename Traits::F2E;
 
-    using K2I = typename Traits::K2I;
+    using K2I = typename Traits::K2F;
 
     Curve() = default;
 

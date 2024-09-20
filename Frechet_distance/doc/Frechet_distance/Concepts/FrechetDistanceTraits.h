@@ -83,5 +83,13 @@ The  point type must have `operator[]` returning a number type which can be used
 */
 using Exact_point = unspecified_type;
 
+/*! A converter for points from `Kernel` to  `Filtered_kernel`
+*/
+using K2F = unspecified_type;
+
+
+/*! A converter for points from `Filtered_kernel` to  `Exact_kernel`
+*/
+using F2E = unspecified_type;
 /// @}
 };
