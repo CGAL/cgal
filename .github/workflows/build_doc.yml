@@ -103,7 +103,7 @@ jobs:
       force_build: ${{ needs.pre_build_checks.outputs.force_build }}
       pr_number: ${{ needs.pre_build_checks.outputs.pr_number }}
       doc_version: ${{ needs.pre_build_checks.outputs.doc_version }}
-    if: ${{ fromJSON(needs.pre_build_checks.outputs.trigger_build) }}
+    if: ${{ fromJSON(needs.pre_build_checks.outputs.trigger_build || false) }}
     steps:
 
       - name: Emoji-comment
