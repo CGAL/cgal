@@ -32,36 +32,6 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-// this is to be able to specialize std::hash
-struct OW_Edge_handle : public std::tuple<std::size_t, std::size_t>
-{
-  using std::tuple<std::size_t, std::size_t>::tuple; // inherit constructors
-};
-
-} // namespace internal
-} // namespace Isosurfacing
-} // namespace CGAL
-
-namespace std {
-
-template <>
-struct hash<CGAL::Isosurfacing::internal::OW_Edge_handle>
-{
-  std::size_t operator()(const CGAL::Isosurfacing::internal::OW_Edge_handle& e) const
-  {
-    std::size_t seed = 0;
-    boost::hash_combine(seed, std::get<0>(e));
-    boost::hash_combine(seed, std::get<1>(e));
-    return seed;
-  }
-};
-
-} // namespace std
-
-namespace CGAL {
-namespace Isosurfacing {
-namespace internal {
-
 template <typename GeomTraits>
 class Octree_wrapper
 {
@@ -95,7 +65,6 @@ public:
   using Octree = CGAL::Octree<Geom_traits, std::vector<Point_3> >;
 
   using Vertex_handle = std::size_t;
-  using Edge_handle = OW_Edge_handle;
   using Voxel_handle = std::size_t;
 
   using Node_index = typename Octree::Node_index;
@@ -148,14 +117,17 @@ public:
     hx_ = bbox_.x_span() / dim_;
 
     // store leaf elements in sets + initialize value maps
-    std::set<Voxel_handle> leaf_voxels_set;
+    /*std::set<Voxel_handle> leaf_voxels_set;
     std::set<Edge_handle> leaf_edges_set;
     std::set<Vertex_handle> leaf_vertices_set;
+    std::size_t cell_count = 0;
     for(Node_index node_index : octree_.traverse(CGAL::Orthtrees::Leaves_traversal<Octree>(octree_)))
     {
       const Uniform_coords& coords_uniform = uniform_coordinates(node_index);
+
       // write all leaf nodes in a set
       leaf_voxels_set.insert(lex_index(coords_uniform[0], coords_uniform[1], coords_uniform[2], max_depth_));
+      cell_count++;
 
       // init vertex values
       for(int i=0; i<Tables::N_VERTICES; ++i)
@@ -205,7 +177,7 @@ public:
 
     leaf_voxels_ = std::vector<Voxel_handle>{leaf_voxels_set.begin(), leaf_voxels_set.end()};
     leaf_edges_ = std::vector<Edge_handle>{leaf_edges_set.begin(), leaf_edges_set.end()};
-    leaf_vertices_ = std::vector<Vertex_handle>{leaf_vertices_set.begin(), leaf_vertices_set.end()};
+    leaf_vertices_ = std::vector<Vertex_handle>{leaf_vertices_set.begin(), leaf_vertices_set.end()};*/
   }
 
   const Octree& octree() const
@@ -263,6 +235,11 @@ public:
     return leaf_voxels_;
   }
 
+  std::size_t depth(const std::size_t lex) const {
+    Node_index n = get_node(lex);
+    return octree_.depth(n);
+  }
+
   std::size_t depth_factor(const std::size_t depth) const
   {
     return std::size_t(1) << (max_depth_ - depth);
@@ -276,32 +253,6 @@ public:
       coords[i] *= static_cast<uint32_t>(df);
 
     return coords;
-  }
-
-  std::array<Point_3, 8> node_points(Node_index node_index) const
-  {
-    const Uniform_coords& coords = octree_.global_coordinates(node_index);
-    const std::size_t df = depth_factor(octree_.depth(node_index));
-
-    const FT x0 = offset_x_ + coords[0] * df * hx_;
-    const FT y0 = offset_y_ + coords[1] * df * hx_;
-    const FT z0 = offset_z_ + coords[2] * df * hx_;
-    const FT x1 = offset_x_ + (coords[0] + 1) * df * hx_;
-    const FT y1 = offset_y_ + (coords[1] + 1) * df * hx_;
-    const FT z1 = offset_z_ + (coords[2] + 1) * df * hx_;
-
-    std::array<Point_3, 8> points;
-    points[0] = {x0, y0, z0};
-    points[1] = {x1, y0, z0};
-    points[2] = {x0, y1, z0};
-    points[3] = {x1, y1, z0};
-
-    points[4] = {x0, y0, z1};
-    points[5] = {x1, y0, z1};
-    points[6] = {x0, y1, z1};
-    points[7] = {x1, y1, z1};
-
-    return points;
   }
 
   Point_3 point(const Uniform_coords& vertex_coordinates) const
@@ -384,175 +335,12 @@ public:
     return k * dim * dim + j * dim + i;
   }
 
-  std::size_t i_index(const std::size_t lex_index,
-                      const std::size_t depth) const
-  {
-    std::size_t dim = (std::size_t(1) << depth) + 1;
-    return lex_index % dim;
-  }
-
-  std::size_t j_index(const std::size_t lex_index,
-                      const std::size_t depth) const
-  {
-    std::size_t dim = (std::size_t(1) << depth) + 1;
-    return ((lex_index / dim) % dim);
-  }
-
-  std::size_t k_index(const std::size_t lex_index,
-                      const std::size_t depth) const
-  {
-    std::size_t dim = (std::size_t(1) << depth) + 1;
-    return (lex_index / (dim * dim));
-  }
-
   std::tuple<std::size_t, std::size_t, std::size_t> ijk_index(const std::size_t lex_index,
                                                               const std::size_t depth) const
   {
     const std::size_t dim = (std::size_t(1) << depth) + 1;
     return std::make_tuple(lex_index % dim, (lex_index / dim) % dim, lex_index / (dim * dim));
   }
-
-  // computes unique edge global index.
-  // \param e local edge index
-  // \param i_idx i-index of cell
-  // \param j_idx j-index of cell
-  // \param k_idx k-index of cell
-  // \param depth of cell
-  std::size_t e_glIndex(const std::size_t e,
-                        const std::size_t i_idx,
-                        const std::size_t j_idx,
-                        const std::size_t k_idx,
-                        const std::size_t depth) const
-  {
-    const unsigned long long gei_pattern_ = 670526590282893600ull;
-    const size_t i = i_idx + (size_t)((gei_pattern_ >> 5 * e) & 1);        // global_edge_id[eg][0];
-    const size_t j = j_idx + (size_t)((gei_pattern_ >> (5 * e + 1)) & 1);  // global_edge_id[eg][1];
-    const size_t k = k_idx + (size_t)((gei_pattern_ >> (5 * e + 2)) & 1);  // global_edge_id[eg][2];
-    const size_t offs = (size_t)((gei_pattern_ >> (5 * e + 3)) & 3);
-
-    return (3 * lex_index(i, j, k, depth) + offs);
-  }
-
-  // std::array<FT, 8> voxel_values(const Voxel_handle& vox) const
-  // {
-  //   namespace Tables = internal::Cube_table;
-  //
-  //   std::size_t i, j, k;
-  //   std::tie(i, j, k) = ijk_index(vox, max_depth_);
-  //   Node node = get_node(i, j, k);
-  //   const auto& df = depth_factor(node.depth());
-  //
-  //   std::array<Vertex_handle, 8> v;
-  //   for(int v_id=0; v_id<Tables::N_VERTICES; ++v_id)
-  //   {
-  //     const auto& l = Tables::local_vertex_location[v_id];
-  //     const auto lex = lex_index(i + df * l[0], j + df * l[1], k + df * l[2], max_depth_);
-  //     v[v_id] = lex;
-  //   }
-  //
-  //   std::array<FT, 8> s;
-  //   std::transform(v.begin(), v.end(), s.begin(), [this](const auto& e) { return this->vertex_values_.at(e); });
-  //
-  //   return s;
-  // }
-
-  std::array<Edge_handle, 12> voxel_edges(const Voxel_handle& vox) const
-  {
-    std::size_t i, j, k;
-    std::tie(i, j, k) = ijk_index(vox, max_depth_);
-    Node_index node_index = get_node(i, j, k);
-
-    const Uniform_coords& coords_global = octree_.global_coordinates(node_index);
-    const std::size_t depth = octree_.depth(node_index);
-
-    std::array<Edge_handle, internal::Cube_table::N_EDGES> edges;
-    for(std::size_t e_id=0; e_id<edges.size(); ++e_id)
-    {
-      const std::size_t e_gl = e_glIndex(e_id, coords_global[0], coords_global[1], coords_global[2], depth);
-      edges[e_id] = {e_gl, depth};
-    }
-
-    return edges;
-  }
-
-  std::array<Vertex_handle, 8> voxel_vertices(const Voxel_handle& vox) const
-  {
-    namespace Tables = internal::Cube_table;
-
-    std::size_t i, j, k;
-    std::tie(i, j, k) = ijk_index(vox, max_depth_);
-    Node_index node_index = get_node(i, j, k);
-    const std::size_t df = depth_factor(octree_.depth(node_index));
-
-    std::array<Vertex_handle, 8> v;
-    for(int v_id=0; v_id<Tables::N_VERTICES; ++v_id)
-    {
-      const int* l = Tables::local_vertex_location[v_id];
-      const std::size_t lex = lex_index(i + df * l[0], j + df * l[1], k + df * l[2], max_depth_);
-      v[v_id] = lex;
-    }
-
-    return v;
-  }
-
-  // std::array<Vector_3, 8> voxel_gradients(const Voxel_handle& vox) const
-  // {
-  //   namespace Tables = internal::Cube_table;
-  //
-  //   std::size_t i, j, k;
-  //   std::tie(i, j, k) = ijk_index(vox, max_depth_);
-  //   Node node = get_node(i, j, k);
-  //   const auto& df = depth_factor(node.depth());
-  //
-  //   std::array<Vertex_handle, 8> v;
-  //   for(int v_id=0; v_id<Tables::N_VERTICES; ++v_id)
-  //   {
-  //     const auto& l = Tables::local_vertex_location[v_id];
-  //     const auto lex = lex_index(i + df * l[0], j + df * l[1], k + df * l[2], max_depth_);
-  //     v[v_id] = lex;
-  //   }
-  //
-  //   std::array<Vector_3, 8> s;
-  //   std::transform(v.begin(), v.end(), s.begin(), [this](const auto& e) { return this->vertex_gradients_.at(e); });
-  //
-  //   return s;
-  // }
-
-  std::array<Point_3, 8> voxel_vertex_locations(const Voxel_handle& vox) const
-  {
-    Node_index node_index = get_node(vox);
-    return node_points(node_index);
-  }
-
-/*
-  // returns the values at the incident two vertices.
-  // Vertices are sorted in ascending order.
-  std::array<FT, 2> edge_values(const Edge_handle& e_id) const
-  {
-    namespace Tables = internal::Cube_table;
-
-    std::size_t e_global_id, depth;
-    std::tie(e_global_id, depth) = e_id;
-    const std::size_t df = depth_factor(depth);
-
-    const size_t v0_lex_index = e_global_id / 3;
-    std::size_t i0, j0, k0;
-    std::tie(i0, j0, k0) = ijk_index(v0_lex_index, depth);
-
-    // v1
-    const std::size_t e_local_index = Tables::edge_store_index[e_global_id % 3];
-    const int* v1_local = Tables::local_vertex_location[Tables::edge_to_vertex[e_local_index][1]];
-
-    const std::size_t i1 = i0 + v1_local[0];
-    const std::size_t j1 = j0 + v1_local[1];
-    const std::size_t k1 = k0 + v1_local[2];
-
-    const auto v0 = lex_index(df * i0, df * j0, df * k0, max_depth_);
-    const auto v1 = lex_index(df * i1, df * j1, df * k1, max_depth_);
-
-    return { value(v0), value(v1) };
-  }
-*/
 
   std::array<Vertex_handle, 2> edge_vertices(const Edge_handle& e_id) const
   {

@@ -34,6 +34,7 @@
 #define TBB_PREVIEW_CONCURRENT_ORDERED_CONTAINERS 1
 #endif
 #include <tbb/concurrent_map.h>
+#include <tbb/parallel_for_each.h>
 #endif
 #include <iostream>
 #include <map>

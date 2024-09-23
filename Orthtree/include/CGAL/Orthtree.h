@@ -132,6 +132,7 @@ public:
 #endif
   static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
   using Kernel = typename Traits::Kernel; ///< Kernel type.
+  using Geom_traits = Kernel;
   using FT = typename Traits::FT; ///< Number type.
   using Point = typename Traits::Point_d; ///< Point type.
   using Bbox = typename Traits::Bbox_d; ///< Bounding box type.
@@ -215,6 +216,7 @@ private: // data members :
   using Property_array = typename Properties::Experimental::Property_container<Node_index>::template Array<T>;
 
   Traits m_traits; /* the tree traits */
+  Kernel m_kernel;
 
   Node_property_container m_node_properties;
   Orthtree_impl::Node_data_wrapper<Traits, has_data> m_node_contents;
@@ -458,6 +460,11 @@ public:
    * \brief provides direct read-only access to the tree traits.
    */
   const Traits& traits() const { return m_traits; }
+
+  const Kernel& geom_traits() const
+  {
+    return m_kernel;
+  }
 
   /*!
     \brief provides access to the root node, and by
