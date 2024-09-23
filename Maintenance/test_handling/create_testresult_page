@@ -17,6 +17,7 @@ use Cwd;
 use strict;
 use Date::Format;
 use JSON;
+use File::Copy;
 
 my $server_url="https://cgal.geometryfactory.com/";
 my $cgal_members="${server_url}CGAL/Members/";
@@ -752,7 +753,9 @@ sub create_summary_page {
     my @letters = ('r', 'n', 'w', 'o');
     my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);
     my $package_options = join("\n", map { "<option value=\"$_\">$_</option>" } sort keys %test_directories);
-
+    my $summary_script_src = "$testresult_dir/../Summary_Script.js";
+    my $summary_script_dest = "$testresult_dir/$release_name/Summary_Script.js";
+    my $summary_page_path = "$testresult_dir/summary".substr($release_name,4).".html";
     my @platforms_data;
     my ($platform_num, $platform) = (0, "");
     foreach $platform (@platforms_to_do) {
@@ -887,10 +890,13 @@ sub create_summary_page {
             <div id="platform_container"></div>
             <div id="package_container"></div>
         </div>
-        <script src="Summary_Script.js"></script>
+        <script src="$release_name/Summary_Script.js" type="application/javascript"></script>
 EOF
-
-    my $summary_page_path = "$testresult_dir/summary".substr($release_name,4).".html";
+    if (-e $summary_script_src) {
+        copy($summary_script_src, $summary_script_dest) or die "Copy failed: $!";
+    } else {
+        die "Source file $summary_script_src does not exist.";
+    }
     open(my $out, '>', $summary_page_path) or die "Could not open file '$summary_page_path' $!";
     print $out $Summary_output;
 
