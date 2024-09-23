@@ -42,22 +42,22 @@ public:
   /*!
     sets the real part to <code> real_part </code>.
   */
-  void set_real_part(const FT& real_part);
+  void real(const FT& real_part);
 
   /*!
     sets the imaginary part to <code> imaginary_part </code>.
   */
-  void set_imaginary_part(const FT& imaginary_part);
+  void imag(const FT& imaginary_part);
 
   /*!
     returns the real part.
   */
-  FT real_part() const;
+  FT real() const;
 
   /*!
     returns the imaginary part.
   */
-  FT imaginary_part() const;
+  FT imag() const;
     /// @}
 
   /// \name Operations

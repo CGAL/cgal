@@ -256,7 +256,7 @@ const typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
 
 template<class Traits, class Attributes>
 bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_Delaunay_flippable(Dart_const_handle dart) const{
-  return ( get_cross_ratio(dart).imaginary_part()>Number(0) );
+  return ( get_cross_ratio(dart).imag()>Number(0) );
 }
 
 template<class Traits, class Attributes>
@@ -739,7 +739,7 @@ typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Point Hyperboli
   Complex_number zb (b.x(), b.y());
   Complex_number zc (c.x(), c.y());
   Complex_number result = ( cratio*za*(zc-zb) + zb*(za-zc) ) / ( cratio*(zc-zb) + (za-zc) );
-  return Point(result.real_part(), result.imaginary_part());
+  return Point(result.real(), result.imag());
 }
 
 } // namespace CGAL
