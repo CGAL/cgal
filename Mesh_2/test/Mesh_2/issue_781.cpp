@@ -1,16 +1,19 @@
+#define CGAL_MESH_2_DEBUG_REFINEMENT_POINTS
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 // mesh refinement
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
+#include <CGAL/Delaunay_mesh_vertex_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                                 meshTriKernel;
 typedef meshTriKernel::Point_2                                                              meshTriPoint;
 
-typedef CGAL::Triangulation_vertex_base_2<meshTriKernel>                                    meshTriVertexBase;
+typedef CGAL::Delaunay_mesh_vertex_base_2<meshTriKernel>                                    meshTriVertexBase;
 
 typedef CGAL::Constrained_triangulation_face_base_2<meshTriKernel>                          Fbb;
 typedef CGAL::Delaunay_mesh_face_base_2<meshTriKernel,Fbb>                                  meshTriFaceBase;
