@@ -74,7 +74,7 @@ namespace Polygon_mesh_processing {
 *                           the mean curvature flow tends to shrink the surface.}
 *     \cgalParamType{Boolean}
 *     \cgalParamDefault{`true`}
-*     \cgalParamExtra{Scaling can only be applied if the mesh is closed and if there is no more than
+*     \cgalParamExtra{%Scaling can only be applied if the mesh is closed and if there is no more than
 *                     a single constrained vertex.}
 *     \cgalParamExtra{If a vertex is constrained, it is the fixed point of the scaling, otherwise
 *                     the centroid is used.}
