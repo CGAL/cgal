@@ -190,14 +190,14 @@ namespace Point_set {
       \brief the average of the maximal point to fitted plane distance in each neighborhood.
     */
 
-    const double mean_distance() {
+    double mean_distance() {
       return mean_d;
     }
 
     /*!
       \brief the average of the maximal normal deviation to fitted plane in each neighborhood.
     */
-    const double mean_deviation() {
+    double mean_deviation() {
       return mean_dev;
     }
     /// @}
