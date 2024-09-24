@@ -1,4 +1,4 @@
-name: Documentation
+name: Build Documentation
 
 on:
   workflow_dispatch:
@@ -30,8 +30,9 @@ permissions:
 jobs:
   pre_build_checks:
     runs-on: ubuntu-latest
-    name: Checks if the workflow should be executed
+    name: Trigger the build?
     outputs:
+      trigger_build: ${{ steps.get_doc_version.outputs.result && steps.get_doc_version.outputs.result != '' }}
       force_build: ${{ steps.check_comment_body.outputs.force_build }}
       pr_number: ${{ steps.get_pr_number.outputs.pr_number }}
       doc_version: ${{ steps.get_doc_version.outputs.result }}
@@ -53,24 +54,27 @@ jobs:
             exit 1
           fi
           echo "force_build=${force_build}" >> $GITHUB_OUTPUT
+          echo "trigger_build=${trigger_build}" >> $GITHUB_OUTPUT
 
       - name: Check permissions
-        if: inputs.pr_number || env.author_association == 'OWNER' || env.author_association == 'MEMBER'
+        if: ( steps.check_comment_body.outputs.trigger_build || false ) && (inputs.pr_number || env.author_association == 'OWNER' || env.author_association == 'MEMBER')
         run: echo "Authorized"
 
       - name: No permissions
-        if: ${{ ! inputs.pr_number && env.author_association != 'OWNER' && env.author_association != 'MEMBER' }}
+        if: ( steps.check_comment_body.outputs.trigger_build || false ) && (! inputs.pr_number && env.author_association != 'OWNER' && env.author_association != 'MEMBER' )
         run: |
-          echo "Not Authorized"
+          echo 'ERROR: User ${{ github.actor }} is not allowed to trigger the build of the documentation with /build:* or /force-build:*'
           exit 1
 
       - name: Get PR number
+        if: ( steps.check_comment_body.outputs.trigger_build || false )
         id: get_pr_number
         env:
           pr_number: ${{ inputs.pr_number || github.event.issue.number }}
         run: echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
 
       - name: Get doc version
+        if: ( steps.check_comment_body.outputs.trigger_build || false )
         uses: actions/github-script@v7
         id: get_doc_version
         with:
@@ -88,7 +92,8 @@ jobs:
             throw new Error('No version found')
 
   build_doc:
-    name: Build PR Documentation
+    name: |
+      ${{ format('{0}: Build Documentation version "{1}"', github.actor, needs.pre_build_checks.outputs.doc_version) }}
     needs: pre_build_checks
     permissions:
       contents: read # to fetch code (actions/checkout)
@@ -98,6 +103,7 @@ jobs:
       force_build: ${{ needs.pre_build_checks.outputs.force_build }}
       pr_number: ${{ needs.pre_build_checks.outputs.pr_number }}
       doc_version: ${{ needs.pre_build_checks.outputs.doc_version }}
+    if: ${{ fromJSON(needs.pre_build_checks.outputs.trigger_build || false) }}
     steps:
 
       - name: Emoji-comment
