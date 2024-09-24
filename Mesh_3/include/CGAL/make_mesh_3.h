@@ -499,13 +499,13 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false>
  *     \cgalParamExtra{If the parameter `parameters::initial_points()` is set,
  *                    the functor will be called after insertion of the points.}
  *   \cgalParamSectionBegin{Mesh initialization with points}
- *    \cgalParamDescription{a `std::vector` of initial points, represented as
- *                          `std::vector<std::tuple<Weighted_point_3, int, Index>>` can optionally
+ *    \cgalParamDescription{a `Range` of initial points, represented as
+ *                          tuple-like objects made of `tuple-like<Weighted_point_3, int, Index>` can optionally
  *                          be provided to start the meshing process.
  *                          `Weighted_point_3` is the point's position and weight,
  *                          `int` is the dimension of the minimal dimension subcomplex on which
  *                          the point lies, and
- *                          `Index` is the underlying subcomplex index.
+ *                          `Index` is the corresponding subcomplex index.
  *                          The following named parameter controls this option:
  *                          <UL>
  *                            <LI> `parameters::initial_points()`

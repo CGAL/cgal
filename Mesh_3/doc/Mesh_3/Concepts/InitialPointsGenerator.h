@@ -15,46 +15,54 @@ a set of initial points on the surface of the domain.
 class InitialPointsGenerator {
 public:
 
+/// \name Types
+/// @{
+
+/*!
+* Mesh domain type to be meshed, model of `MeshDomain_3`
+*/
+typedef unspecified_type MeshDomain;
+
+/*!
+ * Type of the output mesh complex, model of `MeshComplex_3InTriangulation_3`
+ */
+typedef unspecified_type C3t3;
+/// @}
+
 /// \name Operations
 /// @{
 
 /*!
 Outputs a set of surface points, for mesh initialization, to the
-output iterator `pts`, as objects of type
-`MeshDomain::Intersection`.
+output iterator `pts`.
 
-@tparam OutputIterator model of `OutputIterator`, containing points of type
-`MeshDomain::Intersection`
-@tparam MeshDomain model of `MeshDomain_3`
-@tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+@tparam OutputIterator model of `OutputIterator`, containing tuple-like objects made of 3 elements :
+  - a `C3t3::Triangulation::Point` : the point `p`,
+  - a `int` : the minimal dimension of the subcomplexes on which `p` lies,
+  - a `MeshDomain_3::Index` : the index of the corresponding subcomplex.
 
 @param pts the output points
-@param domain the input domain
-@param c3t3 the input complex
 @param n a lower bound on the number of points to construct for initialization.
 A generator can choose to ignore this parameter.
-If it does not output enough points, then more points will be added automatically.
+If this operator does not output enough points, then more points will be added automatically
+by the mesher.
 */
-template <typename OutputIterator, typename MeshDomain, typename C3t3>
-OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n);
+template <typename OutputIterator>
+OutputIterator operator()(OutputIterator pts, int n);
 
 /*!
-Outputs a set of surface points, for mesh initialization, to the
-output iterator `pts`, as objects of type
-`MeshDomain::Intersection`.
+Same as above, without the `n` parameter.
 Since there is no `n` given like above, the functor must provide enough
 points to initialize the mesh generation process.
 
-@tparam OutputIterator model of `OutputIterator`, containing points of type
-  `MeshDomain::Intersection`
-@tparam MeshDomain model of `MeshDomain_3`
-@tparam C3t3 model of `MeshComplex_3InTriangulation_3`
-
+@tparam OutputIterator model of `OutputIterator`, containing tuple-like objects made of 3 elements :
+  - a `C3t3::Triangulation::Point` : the point `p`,
+  - a `int` : the minimal dimension of the subcomplexes to which `p` belongs,
+  - a `MeshDomain_3::Index` : the index of the corresponding subcomplex.
 */
-template <typename OutputIterator, typename MeshDomain, typename C3t3>
-OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3);
-
+template <typename OutputIterator>
+OutputIterator operator()(OutputIterator pts);
 
 /// @}
 
-}; /* end MeshEdgeCriteria_3 */
+}; /* end InitialPointsGenerator */
