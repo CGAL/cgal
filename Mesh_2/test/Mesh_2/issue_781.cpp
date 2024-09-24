@@ -31,8 +31,6 @@ int main(int argc, char* argv[])
 
     cdt.insert( pt );
 
-
-    meshTriPoint s(5.4688567999999904, 44.256729199999995);
     meshTriPoint t(5.4693788499999929, 44.256578099999999);
 
     meshTriPoint m(5.4691178249999917, 44.256653649999997);
