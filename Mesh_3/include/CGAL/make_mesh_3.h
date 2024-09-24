@@ -50,7 +50,12 @@ add_points_from_generator(C3T3& c3t3,
   typedef typename C3T3::Vertex_handle Vertex_handle;
   typedef CGAL::Mesh_3::Triangulation_helpers<Tr> Th;
 
-  using PointDimIndex = parameters::internal::Initial_point_type<MeshDomain, C3T3>;
+  struct PointDimIndex
+  {
+    typename Tr::Point m_wpt;
+    int m_dim;
+    typename MeshDomain::Index m_index;
+  };
 
   const auto& cwp = c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
@@ -99,11 +104,18 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
           const int nb_initial_points,
           const InitializationOptions& init_options)
 {
-  add_points_from_generator(c3t3, domain, nb_initial_points, init_options.generator());
+  add_points_from_generator(c3t3, domain, nb_initial_points, init_options);
+
+  typedef CGAL::parameters::internal::Initialization_options<MeshDomain, C3T3> Default_init_options;
+  bool is_default_init = false;
+  if constexpr (std::is_same_v<InitializationOptions, Default_init_options>)
+  {
+    is_default_init = init_options.is_default();
+  }
 
   // If c3t3 initialization is not sufficient (may happen if
   // the user has not specified enough points ), add some surface points
-  bool need_more_init = c3t3.triangulation().dimension() != 3 || !init_options.is_default();
+  bool need_more_init = c3t3.triangulation().dimension() != 3 || !is_default_init;
   if(!need_more_init)
   {
     CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
@@ -287,8 +299,13 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true>
 
       // If c3t3 initialization is not sufficient (may happen if there is only
       // a planar curve as feature for example), add some surface points
+      bool is_default_init = false;
+      if constexpr (std::is_same_v<InitOptions, Default_init_options>)
+      {
+        is_default_init = init_options.is_default();
+      }
 
-      bool need_more_init = c3t3.triangulation().dimension() != 3 || !init_options.is_default();
+      bool need_more_init = c3t3.triangulation().dimension() != 3 || !is_default_init;
       if(!need_more_init) {
         CGAL::Mesh_3::C3T3_helpers<C3T3, MD> helper(c3t3, domain);
         helper.update_restricted_facets();
@@ -537,7 +554,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
     parameters::internal::Manifold_options manifold_options_param = choose_parameter(get_parameter(np, internal_np::manifold_param), parameters::internal::Manifold_options());
 
     // range of initial points
-    using Initial_point = parameters::internal::Initial_point_type<MeshDomain, C3T3>;
+    using Initial_point = std::pair<typename MeshDomain::Point_3, typename MeshDomain::Index>;
     using Initial_points_range_ref = typename internal_np::Lookup_named_param_def<internal_np::initial_points_param_t,
                                                                               CGAL_NP_CLASS,
                                                                               std::vector<Initial_point>>::reference;
@@ -608,8 +625,6 @@ void make_mesh_3_impl(C3T3& c3t3,
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::get_default_random() = CGAL::Random(0);
 #endif
-
-  using Init_options = parameters::internal::Initialization_options<MeshDomain, C3T3, InitPtsGenerator, InitPtsVec>;
 
   // Initialize c3t3
   Mesh_3::internal::C3t3_initializer<

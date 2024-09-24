@@ -257,9 +257,7 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag)
        p_.protect_features,
        p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
                          p::nonlinear_growth_of_balls = true).v,
-       p::internal::Initial_points_generator_generator<D_, C3t3>()
-          (p::initial_points_generator(
-            CGAL::Construct_initial_points_labeled_image(*p_.image_3_ptr)).v));
+       CGAL::Construct_initial_points_labeled_image<C3t3, Domain>(*p_.image_3_ptr, *domain_));
   }
   else
   {
@@ -278,6 +276,11 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Gray_image_domain_tag)
   // features, or with the initial points (or both).
   if (p_.detect_connected_components)
   {
+    CGAL::Construct_initial_points_gray_image<C3t3, Domain, Compare_to_isovalue> generator
+       (*p_.image_3_ptr,
+        *domain_,
+        p_.iso_value,
+        Compare_to_isovalue(p_.iso_value, p_.inside_is_less));
     CGAL::Mesh_3::internal::C3t3_initializer<
         C3t3,
         Domain,
@@ -289,9 +292,7 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Gray_image_domain_tag)
          p_.protect_features,
          p::mesh_3_options(p::pointer_to_stop_atomic_boolean = &stop_,
                            p::nonlinear_growth_of_balls = true).v,
-         p::internal::Initial_points_generator_generator<D_, C3t3>()
-           (p::initial_points_generator(
-             CGAL::Construct_initial_points_gray_image(*p_.image_3_ptr, p_.iso_value, Compare_to_isovalue(p_.iso_value, p_.inside_is_less))).v));
+         generator);
   }
   else
   {
