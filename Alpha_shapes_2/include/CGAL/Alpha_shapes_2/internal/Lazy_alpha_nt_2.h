@@ -229,7 +229,7 @@ public:
         approx_ = Approx_squared_radius()( to_approx(*data().p0),to_approx(*data().p1),to_approx(*data().p2) );
         break;
       default:
-        CGAL_unreachable());
+        CGAL_unreachable();
     }
   }
 

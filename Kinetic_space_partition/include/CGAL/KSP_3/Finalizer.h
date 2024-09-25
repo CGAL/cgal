@@ -414,7 +414,7 @@ private:
       return true;
     }
 
-    CGAL_assertion(false);
+    CGAL_unreachable();
     return false;
   }
 
