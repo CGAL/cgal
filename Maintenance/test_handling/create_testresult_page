@@ -838,6 +838,7 @@ sub create_summary_page {
         <title>Summary</title>
         <link rel="shortcut icon" href="cgal.ico">
         <link rel="stylesheet" type="text/css" href="testresult.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             var searchURLs = $json_urls;
@@ -849,15 +850,14 @@ sub create_summary_page {
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <h2 id="tplModalTitle">Versions of TPL</h2>
-                <table class="modaltable">
+                <table class="tablesorter">
                     <thead>
                         <tr>
-                            <th class="modalHeader sortable" data-sort="0">Platform</th>
-                            <th class="modalHeader sortable" data-sort="1">Version</th>
-                            <th class="modalHeader sortable" data-sort="2">Status</th>
+                            <th>Platform</th>
+                            <th>Version</th>
                         </tr>
                     </thead>
-                    <tbody class="modalBody"></tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
@@ -891,6 +891,7 @@ sub create_summary_page {
             <div id="package_container"></div>
         </div>
         <script src="$release_name/Summary_Script.js" type="application/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.32.0/js/jquery.tablesorter.min.js"></script>
 EOF
     if (-e $summary_script_src) {
         copy($summary_script_src, $summary_script_dest) or die "Copy failed: $!";

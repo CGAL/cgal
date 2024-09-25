@@ -179,23 +179,25 @@ function platformContainer(platforms) {
                 $tplTable.toggle();
             }
         }).appendTo($container);
-        const $tplTable = $('<table>', { class: 'tpl-table', css: { display: 'none' } }).appendTo($container);
+        const $tplTable = $('<table>', {
+            class: 'tablesorter',
+            css: {
+            display: 'none',
+            maxWidth: '300px'
+            }
+        }).appendTo($container);
         const $thead = $('<thead>').appendTo($tplTable);
         const $tbody = $('<tbody>').appendTo($tplTable);
         const $headerRow = $('<tr>');
-        $('<th>', { class: 'sortable', 'data-sort': 0, text: 'Library' }).appendTo($headerRow);
-        $('<th>', { class: 'sortable', 'data-sort': 1, text: 'Version' }).appendTo($headerRow);
-        $('<th>', { class: 'sortable', 'data-sort': 2, text: 'Status' }).appendTo($headerRow);
+        $('<th>', { text: 'Library' }).appendTo($headerRow);
+        $('<th>', { text: 'Version' }).appendTo($headerRow);
         $headerRow.appendTo($thead);
         tplArray.forEach(tpl => {
             $('<tr>').append(
                 $('<td>').html(`<a href="#" class="tpl-link" data-tpl="${tpl.name}">${tpl.name}</a>`),
                 $('<td>').text(tpl.version || 'N/A'),
-                $('<td>').text(tpl.status)
             ).appendTo($tbody);
         });
-        initializeTableSorting($thead, $tbody);
-        $thead.find('.sortable').first().click();
         $('.tpl-link').click(function(event) {
             event.preventDefault();
             const tplName = $(this).data('tpl');
@@ -268,7 +270,6 @@ function showVersionsForTPL(tplName) {
                 <tr class="modal-table-row">
                     <td>${platform.name}</td>
                     <td>${matchingTPL.version || 'N/A'}</td>
-                    <td><strong>${matchingTPL.status}</strong></td>
                 </tr>
             `);
         }
@@ -276,6 +277,7 @@ function showVersionsForTPL(tplName) {
     if (!tplFound) {
         $modalBody.append('<tr><td colspan="3">No versions of this TPL found across platforms.</td></tr>');
     }
+    $modalTable.trigger("update");
     $modal.show();
     $('.close').click(function() {
         $modal.hide();
@@ -284,28 +286,6 @@ function showVersionsForTPL(tplName) {
         if (event.target == $modal[0]) {
             $modal.hide();
         }
-    });
-    const $thead = $modalTable.find('thead');
-    initializeTableSorting($thead, $modalBody);
-    $thead.find('.sortable').first().click();
-}
-
-function initializeTableSorting($thead, $tbody) {
-    let sortOrder = 1;
-    $thead.find('.sortable').click(function() {
-    const columnIndex = $(this).data('sort');
-    const rows = $tbody.find('tr').get();
-    rows.sort((a, b) => {
-        const keyA = $(a).children('td').eq(columnIndex).text().toUpperCase();
-        const keyB = $(b).children('td').eq(columnIndex).text().toUpperCase();
-        if (keyA < keyB) return -1 * sortOrder;
-        if (keyA > keyB) return 1 * sortOrder;
-        return 0;
-    });
-    $.each(rows, (_index, row) => {
-        $tbody.append(row);
-    });
-    sortOrder *= -1;
     });
 }
 
@@ -319,7 +299,9 @@ function main() {
         platformContainer(data.platforms);
         packageContainer(data.platforms);
         $packageContainer.hide();
-
+        $(document).ready(function() {
+            $("table.tablesorter").tablesorter();
+        });
         const urlParams = new URLSearchParams(window.location.search);
         const platform = urlParams.get('platform');
         if (platform) {

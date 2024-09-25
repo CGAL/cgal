@@ -170,11 +170,6 @@ TABLE.result TD > a.package_name {
     color: #1A0DAB;
 }
 
-.sortable{
-    cursor: pointer;
-    text-decoration: underline;
-}
-
 /* TPL Modal */
 .modal {
     display: none;
@@ -222,24 +217,51 @@ TABLE.result TD > a.package_name {
     color: #555;
 }
 
-.modaltable{
+table.tablesorter {
+    width: 100%;
+    margin: 20px 0;
     border-collapse: collapse;
-    cellspacing: 0;
+    background-color: #f0f0f0;
+    color: #333;
+    font-family: Arial, sans-serif;
 }
 
-.modalHeader{
-    text-align: center;
-    width: auto;
+table.tablesorter thead th {
+    background-color: #d9d9d9;
+    color: #333;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+    cursor: pointer;
 }
 
-.modalBody {
-    text-align: center;
+table.tablesorter thead th.tablesorter-headerAsc {
+    background-repeat: no-repeat;
+    background-position: right center;
+    padding-right: 20px;
 }
 
-.modal-table-row {
-    border-bottom: 2px ridge #000;
+table.tablesorter thead th.tablesorter-headerDesc {
+    background-repeat: no-repeat;
+    background-position: right center;
+    padding-right: 20px;
 }
 
-.modal-table-row td {
-    padding: 7px;
+table.tablesorter tbody tr:nth-child(odd) {
+    background-color: #e6e6e6;
+}
+
+table.tablesorter tbody tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+table.tablesorter tbody td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+table.tablesorter tbody tr:hover {
+    background-color: #d1d1d1
 }
