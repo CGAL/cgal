@@ -26,6 +26,7 @@ namespace util {
 template<class T> class SharedPtr : public std::shared_ptr<T> {
 public:
     SharedPtr() : std::shared_ptr<T>() {}
+    SharedPtr(std::nullptr_t) : std::shared_ptr<T>() {}
     explicit SharedPtr(T* p) : std::shared_ptr<T>(p) {}
     template<class Y> SharedPtr(const SharedPtr<Y>& r) : std::shared_ptr<T>(r) {}
     SharedPtr(const std::shared_ptr<T>& r) : std::shared_ptr<T>(r) {}
