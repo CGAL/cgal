@@ -26,7 +26,7 @@ namespace data { namespace _3d { namespace skel {
 class EdgeSplitEvent : public AbstractEvent {
 public:
     virtual ~EdgeSplitEvent();
-    static EdgeSplitEventSPtr create();
+    static EdgeSplitEventSPtr create(PolyhedronSPtr polyhedron);
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -36,7 +36,7 @@ public:
     void setEdge2(EdgeSPtr edge2);
     void setHighlight(bool highlight);
 protected:
-    EdgeSplitEvent();
+    EdgeSplitEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;
     EdgeSPtr edge1_;
     EdgeSPtr edge2_;

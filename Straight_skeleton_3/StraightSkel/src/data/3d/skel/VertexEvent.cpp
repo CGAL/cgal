@@ -23,7 +23,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-VertexEvent::VertexEvent() {
+VertexEvent::VertexEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
     type_ = AbstractEvent::VERTEX_EVENT;
 }
 
@@ -35,8 +35,8 @@ VertexEvent::~VertexEvent() {
     facet_2_.reset();
 }
 
-VertexEventSPtr VertexEvent::create() {
-    VertexEventSPtr result = VertexEventSPtr(new VertexEvent());
+VertexEventSPtr VertexEvent::create(PolyhedronSPtr polyhedron) {
+    VertexEventSPtr result = VertexEventSPtr(new VertexEvent(polyhedron));
     return result;
 }
 

@@ -23,7 +23,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-DblEdgeMergeEvent::DblEdgeMergeEvent() {
+DblEdgeMergeEvent::DblEdgeMergeEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
     type_ = AbstractEvent::DBL_EDGE_MERGE_EVENT;
 }
 
@@ -37,8 +37,8 @@ DblEdgeMergeEvent::~DblEdgeMergeEvent() {
     edge_22_.reset();
 }
 
-DblEdgeMergeEventSPtr DblEdgeMergeEvent::create() {
-    DblEdgeMergeEventSPtr result = DblEdgeMergeEventSPtr(new DblEdgeMergeEvent());
+DblEdgeMergeEventSPtr DblEdgeMergeEvent::create(PolyhedronSPtr polyhedron) {
+    DblEdgeMergeEventSPtr result = DblEdgeMergeEventSPtr(new DblEdgeMergeEvent(polyhedron));
     return result;
 }
 

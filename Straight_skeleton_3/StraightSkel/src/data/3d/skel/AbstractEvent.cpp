@@ -22,7 +22,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-AbstractEvent::AbstractEvent() {
+AbstractEvent::AbstractEvent(PolyhedronSPtr polyhedron) : polyhedron_(polyhedron) {
     id_ = -1;
 }
 

@@ -26,7 +26,7 @@ namespace data { namespace _3d { namespace skel {
 class VertexEvent : public AbstractEvent {
 public:
     virtual ~VertexEvent();
-    static VertexEventSPtr create();
+    static VertexEventSPtr create(PolyhedronSPtr polyhedron);
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -40,7 +40,7 @@ public:
     void setFacet2(FacetSPtr facet_2);
     void setHighlight(bool highlight);
 protected:
-    VertexEvent();
+    VertexEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;
     VertexSPtr vertex_1_;
     VertexSPtr vertex_2_;

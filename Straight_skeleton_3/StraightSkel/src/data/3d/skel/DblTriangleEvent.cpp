@@ -25,7 +25,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-DblTriangleEvent::DblTriangleEvent() {
+DblTriangleEvent::DblTriangleEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
     type_ = AbstractEvent::DBL_TRIANGLE_EVENT;
 }
 
@@ -33,8 +33,8 @@ DblTriangleEvent::~DblTriangleEvent() {
     node_.reset();
 }
 
-DblTriangleEventSPtr DblTriangleEvent::create() {
-    DblTriangleEventSPtr result = DblTriangleEventSPtr(new DblTriangleEvent());
+DblTriangleEventSPtr DblTriangleEvent::create(PolyhedronSPtr polyhedron) {
+    DblTriangleEventSPtr result = DblTriangleEventSPtr(new DblTriangleEvent(polyhedron));
     return result;
 }
 

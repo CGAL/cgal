@@ -1609,7 +1609,7 @@ EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = EdgeEvent::create();
+                result = EdgeEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -1736,7 +1736,7 @@ EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhed
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = EdgeMergeEvent::create();
+                result = EdgeMergeEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -1842,7 +1842,7 @@ TriangleEventSPtr SimpleStraightSkel::nextTriangleEvent(PolyhedronSPtr polyhedro
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = TriangleEvent::create();
+                result = TriangleEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -1954,7 +1954,7 @@ DblEdgeMergeEventSPtr SimpleStraightSkel::nextDblEdgeMergeEvent(PolyhedronSPtr p
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = DblEdgeMergeEvent::create();
+                result = DblEdgeMergeEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -2024,7 +2024,7 @@ DblTriangleEventSPtr SimpleStraightSkel::nextDblTriangleEvent(PolyhedronSPtr pol
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = DblTriangleEvent::create();
+                result = DblTriangleEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -2079,7 +2079,7 @@ TetrahedronEventSPtr SimpleStraightSkel::nextTetrahedronEvent(PolyhedronSPtr pol
                 NodeSPtr node;
                 if (!result) {
                     node = Node::create(point);
-                    result = TetrahedronEvent::create();
+                    result = TetrahedronEvent::create(polyhedron);
                     result->setNode(node);
                 }
                 node = result->getNode();
@@ -2259,7 +2259,7 @@ VertexEventSPtr SimpleStraightSkel::nextVertexEvent(PolyhedronSPtr polyhedron,
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = VertexEvent::create();
+                result = VertexEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -2429,7 +2429,7 @@ FlipVertexEventSPtr SimpleStraightSkel::nextFlipVertexEvent(PolyhedronSPtr polyh
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = FlipVertexEvent::create();
+                result = FlipVertexEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -2571,7 +2571,7 @@ SurfaceEventSPtr SimpleStraightSkel::nextSurfaceEvent(PolyhedronSPtr polyhedron,
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = SurfaceEvent::create();
+                result = SurfaceEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -2662,7 +2662,7 @@ PolyhedronSplitEventSPtr SimpleStraightSkel::nextPolyhedronSplitEvent(Polyhedron
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = PolyhedronSplitEvent::create();
+                result = PolyhedronSplitEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -2845,7 +2845,7 @@ SplitMergeEventSPtr SimpleStraightSkel::nextSplitMergeEvent(PolyhedronSPtr polyh
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = SplitMergeEvent::create();
+                result = SplitMergeEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();
@@ -2946,7 +2946,7 @@ EdgeSplitEventSPtr SimpleStraightSkel::nextEdgeSplitEvent(PolyhedronSPtr polyhed
             NodeSPtr node;
             if (!result) {
                 node = Node::create(point);
-                result = EdgeSplitEvent::create();
+                result = EdgeSplitEvent::create(polyhedron);
                 result->setNode(node);
             }
             node = result->getNode();

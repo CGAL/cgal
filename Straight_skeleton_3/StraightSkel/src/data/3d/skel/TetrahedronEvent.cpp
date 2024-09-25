@@ -26,7 +26,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-TetrahedronEvent::TetrahedronEvent() {
+TetrahedronEvent::TetrahedronEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
     type_ = AbstractEvent::TETRAHEDRON_EVENT;
 }
 
@@ -34,8 +34,8 @@ TetrahedronEvent::~TetrahedronEvent() {
     node_.reset();
 }
 
-TetrahedronEventSPtr TetrahedronEvent::create() {
-    TetrahedronEventSPtr result = TetrahedronEventSPtr(new TetrahedronEvent());
+TetrahedronEventSPtr TetrahedronEvent::create(PolyhedronSPtr polyhedron) {
+    TetrahedronEventSPtr result = TetrahedronEventSPtr(new TetrahedronEvent(polyhedron));
     return result;
 }
 

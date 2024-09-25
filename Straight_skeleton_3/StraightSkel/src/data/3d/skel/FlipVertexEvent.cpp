@@ -23,7 +23,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-FlipVertexEvent::FlipVertexEvent() {
+FlipVertexEvent::FlipVertexEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
     type_ = AbstractEvent::FLIP_VERTEX_EVENT;
 }
 
@@ -35,8 +35,8 @@ FlipVertexEvent::~FlipVertexEvent() {
     facet_2_.reset();
 }
 
-FlipVertexEventSPtr FlipVertexEvent::create() {
-    FlipVertexEventSPtr result = FlipVertexEventSPtr(new FlipVertexEvent());
+FlipVertexEventSPtr FlipVertexEvent::create(PolyhedronSPtr polyhedron) {
+    FlipVertexEventSPtr result = FlipVertexEventSPtr(new FlipVertexEvent(polyhedron));
     return result;
 }
 

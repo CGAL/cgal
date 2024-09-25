@@ -88,8 +88,9 @@ public:
     virtual std::string toString() const;
 
 protected:
-    AbstractEvent();
+    AbstractEvent(PolyhedronSPtr);
 
+    PolyhedronSPtr polyhedron_; // to ensure sanity of polyhedron elements
     PolyhedronSPtr polyhedron_result_;
     StraightSkeletonWPtr skel_;
     std::list<AbstractEventSPtr>::iterator list_it_;

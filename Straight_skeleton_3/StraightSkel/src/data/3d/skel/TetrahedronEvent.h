@@ -26,7 +26,7 @@ namespace data { namespace _3d { namespace skel {
 class TetrahedronEvent : public AbstractEvent {
 public:
     virtual ~TetrahedronEvent();
-    static TetrahedronEventSPtr create();
+    static TetrahedronEventSPtr create(PolyhedronSPtr polyhedron);
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -37,7 +37,7 @@ public:
     void getFacets(FacetSPtr out[4]) const;
     void setHighlight(bool highlight);
 protected:
-    TetrahedronEvent();
+    TetrahedronEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;
     EdgeSPtr edge_begin_;
 };

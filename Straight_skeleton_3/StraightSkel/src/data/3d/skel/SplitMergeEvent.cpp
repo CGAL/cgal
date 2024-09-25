@@ -23,7 +23,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-SplitMergeEvent::SplitMergeEvent() {
+SplitMergeEvent::SplitMergeEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
     type_ = AbstractEvent::SPLIT_MERGE_EVENT;
 }
 
@@ -35,8 +35,8 @@ SplitMergeEvent::~SplitMergeEvent() {
     facet_2_.reset();
 }
 
-SplitMergeEventSPtr SplitMergeEvent::create() {
-    SplitMergeEventSPtr result = SplitMergeEventSPtr(new SplitMergeEvent());
+SplitMergeEventSPtr SplitMergeEvent::create(PolyhedronSPtr polyhedron) {
+    SplitMergeEventSPtr result = SplitMergeEventSPtr(new SplitMergeEvent(polyhedron));
     return result;
 }
 

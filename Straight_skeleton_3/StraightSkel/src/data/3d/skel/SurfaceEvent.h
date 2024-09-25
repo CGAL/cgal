@@ -26,7 +26,7 @@ namespace data { namespace _3d { namespace skel {
 class SurfaceEvent : public AbstractEvent {
 public:
     virtual ~SurfaceEvent();
-    static SurfaceEventSPtr create();
+    static SurfaceEventSPtr create(PolyhedronSPtr polyhedron);
     NodeSPtr getNode() const;
     void setNode(NodeSPtr node);
     CGAL::FT getOffset() const;
@@ -36,7 +36,7 @@ public:
     void setEdge2(EdgeSPtr edge2);
     void setHighlight(bool highlight);
 protected:
-    SurfaceEvent();
+    SurfaceEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;
     EdgeSPtr edge1_;
     EdgeSPtr edge2_;

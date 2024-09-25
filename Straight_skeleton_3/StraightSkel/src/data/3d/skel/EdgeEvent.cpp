@@ -23,7 +23,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-EdgeEvent::EdgeEvent() {
+EdgeEvent::EdgeEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
     type_ = AbstractEvent::EDGE_EVENT;
 }
 
@@ -32,8 +32,8 @@ EdgeEvent::~EdgeEvent() {
     edge_.reset();
 }
 
-EdgeEventSPtr EdgeEvent::create() {
-    EdgeEventSPtr result = EdgeEventSPtr(new EdgeEvent());
+EdgeEventSPtr EdgeEvent::create(PolyhedronSPtr polyhedron) {
+    EdgeEventSPtr result = EdgeEventSPtr(new EdgeEvent(polyhedron));
     return result;
 }
 

@@ -28,7 +28,7 @@
 
 namespace data { namespace _3d { namespace skel {
 
-PierceEvent::PierceEvent() {
+PierceEvent::PierceEvent(PolyhedronSPtr polyhedron) : AbstractEvent(polyhedron) {
     type_ = AbstractEvent::PIERCE_EVENT;
 }
 
@@ -37,8 +37,8 @@ PierceEvent::~PierceEvent() {
     facet_.reset();
 }
 
-PierceEventSPtr PierceEvent::create() {
-    PierceEventSPtr result = PierceEventSPtr(new PierceEvent());
+PierceEventSPtr PierceEvent::create(PolyhedronSPtr polyhedron) {
+    PierceEventSPtr result = PierceEventSPtr(new PierceEvent(polyhedron));
     return result;
 }
 
