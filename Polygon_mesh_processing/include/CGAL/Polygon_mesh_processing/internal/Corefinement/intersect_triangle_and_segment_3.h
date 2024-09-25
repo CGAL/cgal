@@ -167,7 +167,7 @@ intersection_type(
       CGAL_unreachable();
       return result_type(EMPTY,GT::null_halfedge(),false,false);
     }
-  default:.
+  default:
     CGAL_unreachable();
     return result_type(EMPTY,GT::null_halfedge(),false,false);
   }
