@@ -696,16 +696,39 @@ ArcSPtr SimpleStraightSkel::createArc(VertexSPtr vertex) {
                         facets[2]->getData())->getSpeed();
             }
 
-            // @fixme simply vertex->getPoint() (avoids the issue of coplanar faces)?
-            Point3SPtr src = KernelWrapper::intersection(plane_1, plane_2, plane_3);
+#if 0 // supporting planes might not intersect in a point
+            Point3SPtr src = vertex->getPoint();
 
             Plane3SPtr off_1 = KernelWrapper::offsetPlane(plane_1, -speed_1);
             Plane3SPtr off_2 = KernelWrapper::offsetPlane(plane_2, -speed_2);
             Plane3SPtr off_3 = KernelWrapper::offsetPlane(plane_3, -speed_3);
+            std::cout << "Offset Plane #:" << facets[0]->getID() << " --> " << *off_1 << std::endl;
+            std::cout << "\t" << off_1->point() << std::endl;
+            std::cout << "\t" << off_1->point() + off_1->base1() << std::endl;
+            std::cout << "\t" << off_1->point() + off_1->base2() << std::endl;
+            std::cout << "Offset Plane #:" << facets[1]->getID() << " --> " << *off_2 << std::endl;
+            std::cout << "\t" << off_2->point() << std::endl;
+            std::cout << "\t" << off_2->point() + off_2->base1() << std::endl;
+            std::cout << "\t" << off_2->point() + off_2->base2() << std::endl;
+            std::cout << "Offset Plane #:" << facets[2]->getID() << " --> " << *off_3 << std::endl;
+            std::cout << "\t" << off_3->point() << std::endl;
+            std::cout << "\t" << off_3->point() + off_3->base1() << std::endl;
+            std::cout << "\t" << off_3->point() + off_3->base2() << std::endl;
+
             Point3SPtr dst = KernelWrapper::intersection(off_1, off_2, off_3);
             if (src && dst) {
                 direction = KernelFactory::createVector3(*dst - *src);
             }
+#else
+            Vector3SPtr n_1 = KernelFactory::createVector3(plane_1);
+            Vector3SPtr n_2 = KernelFactory::createVector3(plane_2);
+            Vector3SPtr n_3 = KernelFactory::createVector3(plane_3);
+
+            // "/ speed"? Is it even correct anyway?
+            CGAL_warning_msg(false, "check this");
+            direction = KernelFactory::createVector3(speed_1 * (*n_1) + speed_2 * (*n_2) + speed_3 * (*n_3));
+#endif
+
             if (direction) {
                 result = Arc::create(data->getNode(), direction);
                 data->setArc(result);
