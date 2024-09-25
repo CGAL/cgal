@@ -18,8 +18,12 @@
 
 #include "debug.h"
 #include "data/3d/Vertex.h"
+#include "data/3d/Facet.h"
 #include "data/3d/skel/Node.h"
 #include "data/3d/skel/SkelVertexData.h"
+#include "util/StringFactory.h"
+
+#include <sstream>
 
 namespace data { namespace _3d { namespace skel {
 
@@ -102,6 +106,16 @@ void FlipVertexEvent::setHighlight(bool highlight) {
         SkelVertexData::create(vertex_2_);
     }
     vertex_2_->getData()->setHighlight(highlight);
+}
+
+std::string FlipVertexEvent::toString() const {
+    std::stringstream sstr;
+    sstr.precision(17);
+    sstr << "FlipVertexEvent\n";
+    sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(vertex A=" << getVertex1()->getID() << "; vertex B=" << getVertex2()->getID() << ")\n";
+    sstr << "\t(facet A=" << getFacet1()->getID() << "; facet B=" << getFacet2()->getID() << ")";
+    return sstr.str();
 }
 
 } } }

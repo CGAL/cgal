@@ -21,6 +21,8 @@
 #include "data/3d/skel/ptrs.h"
 #include "data/3d/skel/AbstractEvent.h"
 
+#include <string>
+
 namespace data { namespace _3d { namespace skel {
 
 class DblEdgeMergeEvent : public AbstractEvent {
@@ -45,6 +47,7 @@ public:
     void getVertices(VertexSPtr out[4]) const;
     void getEdges(EdgeSPtr out[4]) const;
     void setHighlight(bool highlight);
+    std::string toString() const override;
 protected:
     DblEdgeMergeEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;

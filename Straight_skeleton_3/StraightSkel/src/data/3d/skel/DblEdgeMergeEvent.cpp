@@ -18,8 +18,12 @@
 
 #include "debug.h"
 #include "data/3d/Edge.h"
+#include "data/3d/Facet.h"
 #include "data/3d/skel/Node.h"
 #include "data/3d/skel/SkelEdgeData.h"
+#include "util/StringFactory.h"
+
+#include <sstream>
 
 namespace data { namespace _3d { namespace skel {
 
@@ -159,6 +163,27 @@ void DblEdgeMergeEvent::setHighlight(bool highlight) {
         }
         edges[i]->getData()->setHighlight(highlight);
     }
+}
+
+std::string DblEdgeMergeEvent::toString() const {
+    VertexSPtr vertices[4];
+    getVertices(vertices);
+
+    EdgeSPtr edges[4];
+    getEdges(edges);
+
+    std::stringstream sstr;
+    sstr.precision(17);
+    sstr << "DblEdgeMergeEvent\n";
+    sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(facet A=" << getFacet1()->getID()
+          << "; edge A1=" << getEdge11()->getID()
+          << "; edge A2=" << getEdge12()->getID() << ")\n";
+    sstr << "\t(facet B=" << getFacet2()->getID()
+          << "; edge B1=" << getEdge21()->getID()
+          << "; edge B2=" << getEdge22()->getID() << ")";
+    return sstr.str();
 }
 
 } } }

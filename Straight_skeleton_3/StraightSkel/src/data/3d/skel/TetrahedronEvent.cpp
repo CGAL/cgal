@@ -23,6 +23,9 @@
 #include "data/3d/skel/Node.h"
 #include "data/3d/skel/SkelVertexData.h"
 #include "data/3d/skel/SkelEdgeData.h"
+#include "util/StringFactory.h"
+
+#include <sstream>
 
 namespace data { namespace _3d { namespace skel {
 
@@ -118,6 +121,29 @@ void TetrahedronEvent::setHighlight(bool highlight) {
 //        }
 //        edges[i]->getData()->setHighlight(highlight);
 //    }
+}
+
+std::string TetrahedronEvent::toString() const {
+    VertexSPtr vertices[4];
+    getVertices(vertices);
+
+    EdgeSPtr edges[6];
+    getEdges(edges);
+
+    std::stringstream sstr;
+    sstr.precision(17);
+    sstr << "TetrahedronEvent\n";
+    sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(vertices";
+    for(int i=0; i<4; ++i)
+        sstr << " " << vertices[i]->getID();
+    sstr << ")\n";
+    sstr << "\t(edges";
+    for(int i=0; i<6; ++i)
+        sstr << " " << edges[i]->getID();
+    sstr << ")\n";
+    return sstr.str();
 }
 
 } } }

@@ -27,7 +27,6 @@ public:
     virtual ~ConstOffsetEvent();
     static ConstOffsetEventSPtr create();
     static ConstOffsetEventSPtr create(CGAL::FT offset);
-
     CGAL::FT getOffset() const;
     void setOffset(CGAL::FT offset);
 protected:

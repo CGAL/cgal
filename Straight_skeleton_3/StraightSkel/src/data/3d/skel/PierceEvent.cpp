@@ -24,7 +24,10 @@
 #include "data/3d/skel/SkelVertexData.h"
 #include "data/3d/skel/SkelEdgeData.h"
 #include "data/3d/skel/SkelFacetData.h"
+#include "util/StringFactory.h"
+
 #include <list>
+#include <sstream>
 
 namespace data { namespace _3d { namespace skel {
 
@@ -94,6 +97,16 @@ void PierceEvent::setHighlight(bool highlight) {
         }
         edge->getData()->setHighlight(highlight);
     }
+}
+
+std::string PierceEvent::toString() const {
+    std::stringstream sstr;
+    sstr.precision(17);
+    sstr << "PierceEvent\n";
+    sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(vertex=" << getVertex()->getID() << ", face=" << getFacet()->getID() << ")";
+    return sstr.str();
 }
 
 } } }

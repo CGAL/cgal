@@ -21,6 +21,8 @@
 #include "data/3d/skel/ptrs.h"
 #include "data/3d/skel/AbstractEvent.h"
 
+#include <string>
+
 namespace data { namespace _3d { namespace skel {
 
 class PierceEvent : public AbstractEvent {
@@ -35,6 +37,7 @@ public:
     VertexSPtr getVertex() const;
     void setVertex(VertexSPtr vertex);
     void setHighlight(bool highlight);
+    std::string toString() const override;
 protected:
     PierceEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;

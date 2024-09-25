@@ -39,6 +39,8 @@ public:
     FacetSPtr getFacet2() const;
     void setFacet2(FacetSPtr facet_2);
     void setHighlight(bool highlight);
+    std::string toString() const override;
+
 protected:
     FlipVertexEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;

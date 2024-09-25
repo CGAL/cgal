@@ -21,6 +21,8 @@
 #include "data/3d/skel/ptrs.h"
 #include "data/3d/skel/AbstractEvent.h"
 
+#include <string>
+
 namespace data { namespace _3d { namespace skel {
 
 class VertexEvent : public AbstractEvent {
@@ -39,6 +41,7 @@ public:
     FacetSPtr getFacet2() const;
     void setFacet2(FacetSPtr facet_2);
     void setHighlight(bool highlight);
+    std::string toString() const override;
 protected:
     VertexEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;

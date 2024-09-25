@@ -37,6 +37,7 @@ public:
     EdgeSPtr getEdge2() const;
     void setEdge2(EdgeSPtr edge2);
     void setHighlight(bool highlight);
+    std::string toString() const override;
 protected:
     EdgeMergeEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;
