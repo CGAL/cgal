@@ -1488,7 +1488,7 @@ insert(const Point& p, Locate_type lt, Face_handle loc, int li)
   case VERTEX:
     return loc->vertex(li);
   }
-  CGAL_assertion(false); // locate step failed
+  CGAL_unreachable(); // AF: The comment  "locate step failed" gives the idea that it may fail, but all cases are covered
   return Vertex_handle();
 }
 

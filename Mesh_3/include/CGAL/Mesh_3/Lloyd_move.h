@@ -100,9 +100,7 @@ public:
         break;
       default:
         // Should not happen
-        CGAL_assertion(false);
-        return CGAL::NULL_VECTOR;
-        break;
+        CGAL_unreachable();
     }
 
     return CGAL::NULL_VECTOR;

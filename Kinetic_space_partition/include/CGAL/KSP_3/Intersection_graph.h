@@ -420,7 +420,7 @@ public:
   }
 
   void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) {
-    CGAL_assertion(false);
+    CGAL_assertion(false);  // AF:  I am surprised that after the assert we do something
     m_graph[edge].crossed.insert(sp_idx);
   }
 };

@@ -489,7 +489,7 @@ public:
       pit = propagate_conflicts(p,fh,2,pit);
       return pit;
     }
-    CGAL_assertion(false);
+    CGAL_unreachable();
     return std::make_pair(fit,eit);
   }
 

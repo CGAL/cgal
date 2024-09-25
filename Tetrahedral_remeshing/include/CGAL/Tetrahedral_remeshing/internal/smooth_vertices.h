@@ -875,7 +875,7 @@ std::size_t smooth_vertices_on_surfaces(C3t3& c3t3,
               return CGAL::midpoint(s->source(), s->target());
             else
             {
-              CGAL_assertion(false);
+              CGAL_assertion(false);   AF:  So are we not completely sure?
               return std::nullopt;
             }
           };

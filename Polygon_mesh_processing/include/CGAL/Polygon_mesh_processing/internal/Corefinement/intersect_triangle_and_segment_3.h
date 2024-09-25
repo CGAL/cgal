@@ -126,8 +126,8 @@ intersection_type(
       // p sees the triangle in counterclockwise order
     return find_intersection(p,q,a,b,c,h_2,tm2,false,true);
 
-    default: // should not happen.
-      CGAL_assertion(false);
+    default:
+      CGAL_unreachable();
       return result_type(EMPTY,GT::null_halfedge(),false,false);
     }
   case NEGATIVE:
@@ -143,8 +143,8 @@ intersection_type(
       // q belongs to the triangle's supporting plane
       // p sees the triangle in clockwise order
       return find_intersection(q,p,a,b,c,h_2,tm2,false,true);
-    default: // should not happen.
-      CGAL_assertion(false);
+    default:
+      CGAL_unreachable();
       return result_type(EMPTY,GT::null_halfedge(),false,false);
     }
   case COPLANAR: // p belongs to the triangle's supporting plane
@@ -163,12 +163,12 @@ intersection_type(
         return result_type(COPLANAR_TRIANGLES,GT::null_halfedge(),true,true);
       return result_type(EMPTY,GT::null_halfedge(),true,true);
 
-    default: // should not happen.
-      CGAL_assertion(false);
+    default:
+      CGAL_unreachable();
       return result_type(EMPTY,GT::null_halfedge(),false,false);
     }
-  default: // should not happen.
-    CGAL_assertion(false);
+  default:.
+    CGAL_unreachable();
     return result_type(EMPTY,GT::null_halfedge(),false,false);
   }
 }

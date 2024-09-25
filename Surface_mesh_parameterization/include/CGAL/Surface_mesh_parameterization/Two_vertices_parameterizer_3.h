@@ -205,7 +205,7 @@ public:
       V1_max = zmax;
       break;
     default:
-      CGAL_assertion(false);
+      CGAL_unreachable();
     }
     switch (second_longest_axis)
     {
@@ -225,7 +225,7 @@ public:
       V2_max = zmax;
       break;
     default:
-      CGAL_assertion(false);
+      CGAL_unreachable();
     }
 
     // Project onto longest bounding box axes,
