@@ -1760,6 +1760,7 @@ CGAL::FT SimpleStraightSkel::offsetDist(FacetSPtr facet, Point3SPtr point) {
     return result;
 }
 
+#if 0 // individual events of a given type
 EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
                                                 const CGAL::FT current_offset,
                                                 CGAL::FT& current_offset_to_nearest_event)
