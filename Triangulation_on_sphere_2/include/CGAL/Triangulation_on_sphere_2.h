@@ -964,17 +964,11 @@ march_locate_2D(Face_handle f,
         li = (o0 == COLLINEAR) ? 2 : (o1 == COLLINEAR) ? 0 : 1;
         break;
       }
-      case 2:
+      default:   // i.e., case 2:
       {
         lt = VERTEX;
         li = (o0 != COLLINEAR) ? 2 : (o1 != COLLINEAR) ? 0 : 1;
         break;
-      }
-      default:
-      {
-        // impossible
-        CGAL_assertion(false);
-        return f;
       }
     }
 
