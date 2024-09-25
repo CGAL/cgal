@@ -408,42 +408,36 @@ void CGAL_Lab_point_set_normal_estimation_plugin::on_actionNormalOrientation_tri
       CGAL::Timer task_timer; task_timer.start();
       std::cerr << "Orient normals with along 2.5D scanlines..." << std::endl;
 
-      Point_set::Property_map<float> scan_angle;
-      Point_set::Property_map<unsigned char> scan_direction_flag;
-      bool angle_found = false, flag_found = false;
+      std::optional<Point_set::Property_map<float>> scan_angle = points->property_map<float>("scan_angle");
+      std::optional<Point_set::Property_map<unsigned char>> scan_direction_flag = points->property_map<unsigned char>("scan_direction_flag");
 
-      std::tie (scan_angle, angle_found)
-        = points->property_map<float>("scan_angle");
-      std::tie (scan_direction_flag, flag_found)
-        = points->property_map<unsigned char>("scan_direction_flag");
-
-      if (!angle_found && !flag_found)
+      if (!scan_angle.has_value() && !scan_direction_flag.has_value())
       {
         std::cerr << "  using no additional properties" << std::endl;
         CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
                                       points->parameters());
       }
-      else if (!angle_found && flag_found)
+      else if (!scan_angle.has_value() && scan_direction_flag.has_value())
       {
         std::cerr << "  using scan direction flag" << std::endl;
         CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
                                       points->parameters().
-                                      scanline_id_map (scan_direction_flag));
+                                      scanline_id_map (scan_direction_flag.value()));
       }
-      else if (angle_found && !flag_found)
+      else if (scan_angle.has_value() && !scan_direction_flag.has_value())
       {
         std::cerr << "  using scan angle" << std::endl;
         CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
                                       points->parameters().
-                                      scan_angle_map (scan_angle));
+                                      scan_angle_map (scan_angle.value()));
       }
       else // if (angle_found && flag_found)
       {
         std::cerr << "  using scan angle and direction flag" << std::endl;
         CGAL::scanline_orient_normals(points->all_or_selection_if_not_empty(),
                                       points->parameters().
-                                      scan_angle_map (scan_angle).
-                                      scanline_id_map (scan_direction_flag));
+                                      scan_angle_map (scan_angle.value()).
+                                      scanline_id_map (scan_direction_flag.value()));
       }
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Orient normals: "

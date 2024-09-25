@@ -5,8 +5,8 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_segment_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_segment_primitive_3.h>
 
 typedef CGAL::Simple_cartesian<double> K;
 
@@ -17,8 +17,8 @@ typedef K::Segment_3 Segment;
 typedef K::Triangle_3 Triangle;
 
 typedef std::list<Segment>::iterator Iterator;
-typedef CGAL::AABB_segment_primitive<K, Iterator> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_segment_primitive_3<K, Iterator> Primitive;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 int main()

@@ -31,7 +31,7 @@ opens a new window and draws a point set. Parameters of the drawing are taken fr
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam PS which must be an instanciation of a `CGAL::Point_set_3<...>`.
+\tparam PS which must be an instantiation of a `CGAL::Point_set_3<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param ps the point set to draw.
@@ -63,7 +63,7 @@ A shortcut to `CGAL::draw(ps, Graphics_scene_options{})`.
 
 adds the vertices, edges and faces of `ps` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
-\tparam PS which must be an instanciation of a `CGAL::Point_set_3<...>`.
+\tparam PS which must be an instantiation of a `CGAL::Point_set_3<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param ps the point set to draw.

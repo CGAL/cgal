@@ -53,7 +53,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
 
   Arr_accessor<Arrangement> m_arr_access(arr);
 
-  // Preprocessing loop - merge all the edges that were splited
+  // Preprocessing loop - merge all the edges that were split
   // (meaning have a common endpoint that lies on the boundary and their degree
   // is 2) on the identification curve.
   for (auto vi1 = arr.vertices_begin(); vi1 != arr.vertices_end(); ) {
@@ -151,7 +151,7 @@ void Arr_transform_on_sphere(Arrangement & arr,
 
     // If the curve is not x-monotone - split it into 2 x_monotone parts.
     // Since the curves were x_monotone before , can assume that it will be
-    // splited into 2 parts max.
+    // split into 2 parts max.
     if (objects.size() == 2) {
       auto it = objects.begin();
 

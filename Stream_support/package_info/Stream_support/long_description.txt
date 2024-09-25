@@ -12,7 +12,7 @@ Stream_support Package
     -  CGAL/IO/Verbose_ostream.h
 
          The class CGAL_Verbose_ostream is useful for debugging and
-         diagnostic output, for example in inplementing the member
+         diagnostic output, for example in implementing the member
          function `bool is_valid( bool verbose = false, ...)' of
          complex data structures.
 

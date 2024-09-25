@@ -5,10 +5,6 @@
 
 #include "tetrahedral_remeshing_generate_input.h"
 
-#include <iostream>
-#include <fstream>
-#include <string>
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Tetrahedral_remeshing::Remeshing_triangulation_3<K> Remeshing_triangulation;

@@ -8,7 +8,7 @@ opens a new window and draws a nef polyhedron. Parameters of the drawing are tak
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam NP3 which must be an instanciation of a `CGAL::Nef_polyhedron_3<...>`.
+\tparam NP3 which must be an instantiation of a `CGAL::Nef_polyhedron_3<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param np3 the nef polyhedron to draw.
@@ -40,7 +40,7 @@ A shortcut to `CGAL::draw(np3, Graphics_scene_options{})`.
 
 adds the vertices, edges and faces of `np3` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
-\tparam NP3 which must be an instanciation of a `CGAL::Nef_polyhedron_3<...>`.
+\tparam NP3 which must be an instantiation of a `CGAL::Nef_polyhedron_3<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param np3 the nef polyhedron to draw.

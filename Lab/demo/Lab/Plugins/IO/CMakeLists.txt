@@ -1,10 +1,14 @@
 include(CGALlab_macros)
 
-find_package(LASLIB QUIET)
-set_package_properties(
-  LASLIB PROPERTIES
-  DESCRIPTION "A library for LIDAR I/O."
-  PURPOSE "Required for reading or writing LAS files.")
+if (NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910)
+  find_package(LASLIB QUIET)
+  set_package_properties(
+    LASLIB PROPERTIES
+    DESCRIPTION "A library for LIDAR I/O."
+    PURPOSE "Required for reading or writing LAS files.")
+else()
+  message(STATUS "NOTICE: the LAS reader does not work with your version of Visual Studio 2017.")
+endif()
 
 include(CGAL_LASLIB_support)
 
@@ -43,38 +47,23 @@ target_link_libraries(surf_io_plugin PUBLIC scene_surface_mesh_item)
 cgal_lab_plugin(lcc_io_plugin lcc_io_plugin KEYWORDS Viewer)
 target_link_libraries(lcc_io_plugin PUBLIC scene_lcc_item)
 
-find_package(VTK QUIET COMPONENTS vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
-                                  vtkFiltersCore vtkFiltersSources)
+find_package(VTK 9.0 QUIET COMPONENTS CommonCore IOCore IOLegacy IOXML FiltersCore FiltersSources)
 set_package_properties(
   VTK PROPERTIES
   DESCRIPTION "A library for image processing."
-  PURPOSE "Can be used for I/O (DICOM, VTU, VTP.")
+  PURPOSE "Can be used for I/O (DICOM, VTU, VTP).")
 
 cgal_lab_plugin(triangulation_3_io_plugin triangulation_3_io_plugin KEYWORDS Viewer)
 target_link_libraries(triangulation_3_io_plugin PUBLIC scene_triangulation_3_item)
 
-if(VTK_FOUND)
-  if(VTK_USE_FILE)
-    include(${VTK_USE_FILE})
-  endif()
-  if("${VTK_VERSION_MAJOR}" GREATER "5" OR VTK_VERSION VERSION_GREATER 5)
-    if(TARGET VTK::CommonCore)
-      set(VTK_LIBRARIES VTK::CommonCore VTK::IOCore VTK::IOLegacy VTK::IOXML
-                        VTK::FiltersCore VTK::FiltersSources)
-    endif()
-    if(VTK_LIBRARIES)
-      cgal_lab_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer Mesh_3)
-      target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item scene_points_with_normal_item
-                                       ${VTK_LIBRARIES})
-      target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
-    else()
-      message(STATUS "NOTICE: the vtk IO plugin needs VTK libraries and will not be compiled.")
-    endif()
-  else()
-    message(STATUS "NOTICE: the vtk IO plugin needs VTK 6.0 or greater and will not be compiled (incorrect version found).")
-  endif()
+if(VTK_FOUND AND VTK_LIBRARIES)
+  message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
+  cgal_lab_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer Mesh_3)
+  target_link_libraries(vtk_plugin PUBLIC scene_surface_mesh_item scene_polylines_item scene_c3t3_item scene_points_with_normal_item
+                                    ${VTK_LIBRARIES})
+  target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
 else()
-  message(STATUS "NOTICE: the vtk IO plugin needs VTK 6.0 or greater and will not be compiled.")
+  message(STATUS "NOTICE: the vtk IO plugin needs VTK 9.0 or greater and will not be compiled.")
 endif()
 cgal_lab_plugin(xyz_plugin XYZ_io_plugin KEYWORDS Viewer PointSetProcessing Classification)
 target_link_libraries(xyz_plugin PUBLIC scene_points_with_normal_item)

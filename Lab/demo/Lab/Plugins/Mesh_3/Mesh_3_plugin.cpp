@@ -72,6 +72,7 @@ class Mesh_3_plugin :
              WRITE set_sharp_edges_angle_bound)
   Q_PROPERTY(double edges_sizing READ get_edges_sizing WRITE set_edges_sizing)
   Q_PROPERTY(double edges_min_sizing READ get_edges_min_sizing WRITE set_edges_min_sizing)
+  Q_PROPERTY(double edges_approx READ get_edges_approx WRITE set_edges_approx)
   Q_PROPERTY(double facets_sizing READ get_facets_sizing WRITE set_facets_sizing)
   Q_PROPERTY(double approx READ get_approx WRITE set_approx)
   Q_PROPERTY(double tets_sizing READ get_tets_sizing WRITE set_tets_sizing)
@@ -158,6 +159,7 @@ public Q_SLOTS:
   }
   void set_edges_sizing(const double v) { edges_sizing = v; };
   void set_edges_min_sizing(const double v) { edges_min_sizing = v; };
+  void set_edges_approx(const double v) { edges_approx = v; };
   void set_facets_sizing(const double v) { facets_sizing = v; };
   void set_approx(const double v) { approx = v; };
   void set_tets_sizing(const double v) { tets_sizing = v; };
@@ -171,6 +173,7 @@ public Q_SLOTS:
   double get_sharp_edges_angle_bound() { return sharp_edges_angle_bound; }
   double get_edges_sizing() { return edges_sizing; };
   double get_edges_min_sizing() { return edges_min_sizing; };
+  double get_edges_approx() { return edges_approx; };
   double get_facets_sizing() { return facets_sizing; };
   double get_approx() { return approx; };
   double get_tets_sizing() { return tets_sizing; };
@@ -184,6 +187,53 @@ public Q_SLOTS:
 private:
   enum class Mesh_type : bool { VOLUME, SURFACE_ONLY };
   enum class Dialog_choice : bool { NO_DIALOG, DIALOG };
+  // This is a helper class for an interface row.
+  //  A row is composed of a label, a widget.
+  //  It can also have a minimum, maximum and default value.
+  //  It can also have a list of checkboxes that enable/disable the row.
+  class Setup_ui_row : public QObject
+  {
+    QWidget* label_;
+    QWidget* edit_;
+    std::vector<QAbstractButton*> toggles_;
+
+    void connect_and_update_ui_row()
+    {
+      for( QAbstractButton* toggle : toggles_ )
+      {
+        connect(toggle, &QAbstractButton::toggled, this, &Setup_ui_row::update);
+        connect(toggle, &QAbstractButton::toggled, this, &Setup_ui_row::update);
+      }
+      update();
+    }
+  public:
+    Setup_ui_row(QWidget* label, DoubleEdit* edit, double minimum, double maximum, double value, std::initializer_list<QAbstractButton*> toggles)
+      : label_(label), edit_(edit), toggles_(toggles)
+    {
+      edit->setRange(minimum, maximum);
+      edit->setValue(value);
+      connect_and_update_ui_row();
+    }
+    Setup_ui_row(QWidget* label, QWidget* edit, std::initializer_list<QAbstractButton*> toggles)
+    : label_(label), edit_(edit), toggles_(toggles)
+    {
+      connect_and_update_ui_row();
+    }
+
+    void update()
+    {
+      bool should_be_enabled = true;
+      for( QAbstractButton* toggle : toggles_ )
+      {
+        should_be_enabled = should_be_enabled & toggle->isChecked();
+        if (!should_be_enabled)
+          break;
+      }
+      label_->setEnabled(should_be_enabled);
+      edit_ ->setEnabled(should_be_enabled);
+    }
+  };
+
   void mesh_3(const Mesh_type mesh_type, const Dialog_choice dialog = Dialog_choice::DIALOG);
   void launch_thread(Meshing_thread* mesh_thread);
   void treat_result(Scene_item& source_item, Scene_c3t3_item* result_item) const;
@@ -207,6 +257,7 @@ private:
   int approx_decimals;
   double edges_sizing;
   double edges_min_sizing;
+  double edges_approx;
   double facets_sizing;
   double facets_min_sizing;
   double tets_sizing;
@@ -424,15 +475,22 @@ void Mesh_3_plugin::set_defaults() {
   auto error = get_items_or_return_error_string();
   if(error) return;
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
-  facets_sizing = get_approximate(diag * 0.05, 2, sizing_decimals);
-  edges_sizing = facets_sizing;
-  edges_min_sizing = 0.1 * facets_sizing;
-  tets_sizing = facets_sizing;
-  facets_min_sizing = 0.1 * facets_sizing;
-  tets_min_sizing = 0.1 * tets_sizing;
-  angle = 25.;
+  double default_sizing = get_approximate(diag * 0.05,  2, sizing_decimals);
+  double default_approx = get_approximate(diag * 0.005, 2, approx_decimals);
+  //edge parameters
   sharp_edges_angle_bound = 60.;
-  approx = get_approximate(diag * 0.005, 2, approx_decimals);
+  edges_sizing = default_sizing;
+  edges_min_sizing = 0.1 * default_sizing;
+  edges_approx = default_approx;
+  //triangle parameters
+  approx = default_approx;
+  facets_sizing = default_sizing;
+  facets_min_sizing = 0.1 * default_sizing;
+  angle = 25.;
+  //tetrahedra parameters
+  tets_sizing = default_sizing;
+  tets_min_sizing = 0.1 * default_sizing;
+  tets_shape = 3.0;
 }
 
 void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
@@ -474,123 +532,6 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   Ui::Meshing_dialog ui;
   ui.setupUi(&dialog);
 
-  ui.facetAngle->setRange(0.0, 30.0);
-  ui.facetAngle->setValue(25.0);
-  ui.edgeSizing->setMinimum(0.0);
-  ui.sharpEdgesAngle->setMaximum(180);
-  ui.iso_value_spinBox->setRange(-65536.0, 65536.0);
-  ui.tetShape->setMinimum(1.0);
-
-  ui.advanced->setVisible(false);
-  connect(ui.facetTopologyLabel,
-          &QLabel::linkActivated,
-          &QDesktopServices::openUrl);
-
-  dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint |
-                        Qt::WindowCloseButtonHint);
-  connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-  connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-
-  // Connect checkboxes to spinboxes
-  connect(
-      ui.noApprox, SIGNAL(toggled(bool)), ui.approx, SLOT(setEnabled(bool)));
-
-  connect(ui.noFacetSizing,
-          SIGNAL(toggled(bool)),
-          ui.facetSizing,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.noFacetMinSizing,
-          SIGNAL(toggled(bool)),
-          ui.facetMinSizing,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.noFacetMinSizing,
-          SIGNAL(toggled(bool)),
-          ui.sizingMinLabel,
-          SLOT(setEnabled(bool)));
-
-  connect(
-      ui.noAngle, SIGNAL(toggled(bool)), ui.facetAngle, SLOT(setEnabled(bool)));
-
-  connect(ui.noTetSizing,
-          SIGNAL(toggled(bool)),
-          ui.tetSizing,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.noTetMinSizing,
-          SIGNAL(toggled(bool)),
-          ui.tetMinSizing,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.noTetMinSizing,
-          SIGNAL(toggled(bool)),
-          ui.tetMinSizingLabel,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.noTetShape,
-          SIGNAL(toggled(bool)),
-          ui.tetShape,
-          SLOT(setEnabled(bool)));
-
-  //edge sizing
-  connect(ui.protect,
-          SIGNAL(toggled(bool)),
-          ui.noEdgeSizing,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.protect,
-          SIGNAL(toggled(bool)),
-          ui.noEdgeSizing,
-          SLOT(setChecked(bool)));
-
-  connect(ui.noEdgeSizing,
-          SIGNAL(toggled(bool)),
-          ui.edgeLabel,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.noEdgeSizing,
-          SIGNAL(toggled(bool)),
-          ui.edgeSizing,
-          SLOT(setEnabled(bool)));
-
-  //edge min sizing
-  connect(ui.protect,
-          SIGNAL(toggled(bool)),
-          ui.noEdgeMinSizing,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.protect,
-          SIGNAL(toggled(bool)),
-          ui.noEdgeMinSizing,
-          SLOT(setChecked(bool)));
-
-  connect(ui.noEdgeMinSizing,
-          SIGNAL(toggled(bool)),
-          ui.edgeMinSizingLabel,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.noEdgeMinSizing,
-          SIGNAL(toggled(bool)),
-          ui.edgeMinSizing,
-          SLOT(setEnabled(bool)));
-
-  //sharp edges
-  connect(ui.protect,
-          SIGNAL(toggled(bool)),
-          ui.sharpEdgesAngle,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.protect,
-          SIGNAL(toggled(bool)),
-          ui.sharpEdgesAngleLabel,
-          SLOT(setEnabled(bool)));
-
-  connect(ui.protect,
-          SIGNAL(toggled(bool)),
-          ui.protectEdges,
-          SLOT(setEnabled(bool)));
-
   QString item_name =
       more_than_one_item ? QString("%1...").arg(item->name()) : item->name();
 
@@ -605,44 +546,63 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
 
   set_defaults();
   double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
-  ui.facetSizing->setRange(diag * 10e-6, // min
-                           diag); // max
-  ui.facetSizing->setValue(facets_sizing);
-  ui.facetMinSizing->setValue(facets_min_sizing);
-  ui.facetMinSizing->setEnabled(false);
-  ui.noFacetMinSizing->setChecked(false);
-  ui.edgeSizing->setValue(edges_sizing);
-  ui.edgeMinSizing->setValue(edges_min_sizing);
 
-  ui.tetSizing->setRange(diag * 10e-6, // min
-                         diag);        // max
-  ui.tetSizing->setValue(tets_sizing); // default value
-  ui.tetMinSizing->setValue(tets_min_sizing);
-  ui.tetMinSizing->setEnabled(false);
-  ui.noTetMinSizing->setChecked(false);
+  // Setup fields :
+  // Set minimum, maximum and default values
+  // Connect checkboxes to spinboxes
+  double default_max =  std::numeric_limits<double>::infinity();
 
-  ui.approx->setRange(diag * 10e-7, // min
-                      diag);        // max
-  ui.approx->setValue(approx);
+  //edge parameters
+  std::vector<Setup_ui_row> v;
+  Setup_ui_row s0(ui.protectLabel,         ui.protectEdges,                                                        {ui.protect});
+  Setup_ui_row s1(ui.sharpEdgesAngleLabel, ui.sharpEdgesAngle, 0.0         , 180,         sharp_edges_angle_bound, {ui.protect});
+  Setup_ui_row s2(ui.edgeLabel,            ui.edgeSizing,      0.0         , default_max, edges_sizing,            {ui.protect, ui.noEdgeSizing});
+  Setup_ui_row s3(ui.edgeMinSizingLabel,   ui.edgeMinSizing,   0.0         , default_max, edges_min_sizing,        {ui.protect, ui.noEdgeMinSizing});
+  Setup_ui_row s4(ui.edgeApproxLabel,      ui.edgeApprox,      diag * 10e-7, diag,        edges_approx,            {ui.protect, ui.noEdgeApprox});
+  //connect protect edge checkbox
+  connect(ui.protect, SIGNAL(toggled(bool)), ui.noEdgeSizing, SLOT(setEnabled(bool)));
+  connect(ui.protect, SIGNAL(toggled(bool)), ui.noEdgeMinSizing, SLOT(setEnabled(bool)));
+  connect(ui.protect, SIGNAL(toggled(bool)), ui.noEdgeApprox, SLOT(setEnabled(bool)));
+
+  //triangle parameters
+  Setup_ui_row s5(ui.approxLabel,    ui.approx,         diag * 10e-7, diag, approx,            {ui.noApprox});
+  Setup_ui_row s6(ui.sizingLabel,    ui.facetSizing,    diag * 10e-6, diag, facets_sizing,     {ui.noFacetSizing});
+  Setup_ui_row s7(ui.sizingMinLabel, ui.facetMinSizing, diag * 10e-6, diag, facets_min_sizing, {ui.noFacetMinSizing});
+  Setup_ui_row s8(ui.angleLabel,     ui.facetAngle,     0.0,          30.0, angle,             {ui.noAngle});
+
+  //tetrahedra parameters
+  Setup_ui_row s9(ui.tetSizingLabel,    ui.tetSizing,    diag * 10e-6, diag,        tets_sizing,     {ui.noTetSizing});
+  Setup_ui_row sA(ui.tetMinSizingLabel, ui.tetMinSizing, diag * 10e-6, diag,        tets_min_sizing, {ui.noTetMinSizing});
+  Setup_ui_row sB(ui.tetShapeLabel,     ui.tetShape,     1.0,          default_max, tets_shape,      {ui.noTetShape});
+
+  //gray image parameters
+  Setup_ui_row sC(ui.label_3, ui.iso_value_spinBox, -65536.0, 65536.0, 0.0, {});
+
+
+  // Setup domain specific parameters and groups
+  ui.advanced->setVisible(false);
+  connect(ui.facetTopologyLabel,
+          &QLabel::linkActivated,
+          &QDesktopServices::openUrl);
+
   ui.approx->setToolTip(tr("Approximation error: in [%1; %2]")
                        .arg(diag * 10e-7).arg(diag));
 
   ui.protect->setEnabled(features_protection_available);
   ui.protect->setChecked(features_protection_available);
-  ui.protectEdges->setEnabled(features_protection_available);
-  if(input_is_gray_img)
-    ui.sharpFeaturesGroup->setEnabled(false);
 
   ui.facegraphCheckBox->setVisible(mesh_type == Mesh_type::SURFACE_ONLY);
   ui.initializationGroup->setVisible(input_is_labeled_img);
   ui.grayImgGroup->setVisible(input_is_gray_img);
+
+  if(input_is_gray_img)
+    ui.sharpFeaturesGroup->setEnabled(false);
 
   if (items->index() == POLYHEDRAL_MESH_ITEMS)
     ui.volumeGroup->setVisible(mesh_type == Mesh_type::VOLUME &&
                                nullptr != bounding_sm_item);
   else
     ui.volumeGroup->setVisible(mesh_type == Mesh_type::VOLUME);
-  ui.sharpEdgesAngle->setValue(sharp_edges_angle_bound);
   if (items->index() != POLYHEDRAL_MESH_ITEMS || polylines_item != nullptr) {
     ui.sharpEdgesAngleLabel->setVisible(false);
     ui.sharpEdgesAngle->setVisible(false);
@@ -656,10 +616,12 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   }
   ui.noEdgeSizing->setChecked(ui.protect->isChecked());
   ui.noEdgeMinSizing->setChecked(false);
-  ui.edgeLabel->setEnabled(ui.noEdgeSizing->isChecked());
-  ui.edgeSizing->setEnabled(ui.noEdgeSizing->isChecked());
-  ui.edgeMinSizingLabel->setEnabled(ui.noEdgeMinSizing->isChecked());
-  ui.edgeMinSizing->setEnabled(ui.noEdgeMinSizing->isChecked());
+  ui.noEdgeApprox->setChecked(ui.protect->isChecked());
+
+  dialog.setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint |
+                        Qt::WindowCloseButtonHint);
+  connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
 
   using Item = std::pair<QString, Protection_flags>;
   const Item sharp_and_boundary{"Sharp and Boundary edges", FEATURES};
@@ -734,6 +696,8 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       !ui.noEdgeSizing->isChecked() ? DBL_MAX : ui.edgeSizing->value();
   edges_min_sizing =
       !ui.noEdgeMinSizing->isChecked() ? 0. : ui.edgeMinSizing->value();
+  edges_approx =
+      !ui.noEdgeApprox->isChecked() ? DBL_MAX : ui.edgeApprox->value();
   facets_sizing = !ui.noFacetSizing->isChecked() ? 0 : ui.facetSizing->value();
   facets_min_sizing = !ui.noFacetMinSizing->isChecked() ? 0 : ui.facetMinSizing->value();
   approx = !ui.noApprox->isChecked() ? 0 : ui.approx->value();
@@ -786,7 +750,9 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
       }
     }
 
-    if(mesh_type != Mesh_type::SURFACE_ONLY && !material_ids_valid)
+    if(mesh_type != Mesh_type::SURFACE_ONLY
+      && !material_ids_valid
+      && bounding_sm_item != nullptr)
     {
       sm_items.removeAll(make_not_null(bounding_sm_item));
     }
@@ -816,6 +782,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_min_sizing,
         edges_sizing,
         edges_min_sizing,
+        edges_approx,
         tets_shape,
         protect_features,
         protect_borders,
@@ -838,6 +805,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_min_sizing,
         edges_sizing,
         edges_min_sizing,
+        edges_approx,
         tets_shape,
         protect_features,
         protect_borders,
@@ -865,6 +833,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
                               tets_min_sizing,
                               edges_sizing,
                               edges_min_sizing,
+                              edges_approx,
                               tets_shape,
                               manifold,
                               mesh_type == Mesh_type::SURFACE_ONLY);
@@ -907,6 +876,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
         tets_min_sizing,
         edges_sizing,
         edges_min_sizing,
+        edges_approx,
         tets_shape,
         protect_features,
         protect_borders,

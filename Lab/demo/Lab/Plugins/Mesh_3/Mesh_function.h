@@ -52,6 +52,7 @@ struct Mesh_parameters
   double tet_min_sizing;
   double edge_sizing;
   double edge_min_sizing;
+  double edge_distance;
   bool protect_features;
   bool detect_connected_components;
   int manifold;
@@ -111,8 +112,8 @@ private:
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag);
   void initialize(const Mesh_criteria& criteria, Mesh_fnt::Labeled_image_domain_tag);
 
-  Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Domain_tag);
-  Edge_criteria edge_criteria(double b, double minb, Mesh_fnt::Polyhedral_domain_tag);
+  Edge_criteria edge_criteria(double b, double minb, double d, Mesh_fnt::Domain_tag);
+  Edge_criteria edge_criteria(double b, double minb, double d, Mesh_fnt::Polyhedral_domain_tag);
 
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Domain_tag) {}
   void tweak_criteria(Mesh_criteria&, Mesh_fnt::Polyhedral_domain_tag);
@@ -145,6 +146,8 @@ log() const
     res << QString("edge max size: %1").arg(edge_sizing);
   if(edge_min_sizing > 0)
     res << QString("edge min size: %1").arg(edge_min_sizing);
+  if(edge_distance > 0)
+    res << QString("edge max distance: %1").arg(edge_distance);
   if(facet_angle > 0)
     res << QString("facet min angle: %1").arg(facet_angle);
   if(facet_sizing > 0)
@@ -168,8 +171,10 @@ log() const
              .arg(detect_connected_components);
     res << QString("use weights: %1").arg(weights_ptr != nullptr);
   }
-  res << QString("use aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
-  res << QString("manifold: %1").arg(manifold);
+  if(use_sizing_field_with_aabb_tree)
+    res << QString("use sizing field with aabb tree: %1").arg(use_sizing_field_with_aabb_tree);
+  if(manifold)
+    res << QString("manifold: %1").arg(manifold);
 
   return res;
 }
@@ -265,9 +270,9 @@ initialize(const Mesh_criteria& criteria, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double b, double minb, Mesh_fnt::Domain_tag)
+edge_criteria(double edge_size, double minb, double edge_dist, Mesh_fnt::Domain_tag)
 {
-  return Edge_criteria(b, minb);
+  return Edge_criteria(edge_size, minb, edge_dist);
 }
 
 #include <CGAL/Sizing_field_with_aabb_tree.h>
@@ -276,7 +281,7 @@ edge_criteria(double b, double minb, Mesh_fnt::Domain_tag)
 template < typename D_, typename Tag >
 typename Mesh_function<D_,Tag>::Edge_criteria
 Mesh_function<D_,Tag>::
-edge_criteria(double edge_size, double minb, Mesh_fnt::Polyhedral_domain_tag)
+edge_criteria(double edge_size, double minb, double edge_dist, Mesh_fnt::Polyhedral_domain_tag)
 {
   if(p_.use_sizing_field_with_aabb_tree) {
     typedef typename Domain::Surface_patch_index_set Set_of_patch_ids;
@@ -302,9 +307,9 @@ edge_criteria(double edge_size, double minb, Mesh_fnt::Polyhedral_domain_tag)
                      QSharedPointer<Patches_ids_vector>(patches_ids_vector_p));
 
     std::cerr << "Note: Mesh_3 is using a sizing field based on AABB tree.\n";
-    return Edge_criteria(*sizing_field_ptr, minb);
+    return Edge_criteria(*sizing_field_ptr, minb, edge_dist);
   } else {
-    return Edge_criteria(edge_size, minb);
+    return Edge_criteria(edge_size, minb, edge_dist);
   }
 }
 
@@ -320,6 +325,7 @@ launch()
   // Create mesh criteria
   Mesh_criteria criteria(edge_criteria(p_.edge_sizing,
                                        p_.edge_min_sizing,
+                                       p_.edge_distance,
                                        Tag()),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,

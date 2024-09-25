@@ -5,21 +5,25 @@
 
 // CGAL
 #include <CGAL/AABB_tree.h> // must be included before kernel
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/Timer.h>
-#include <CGAL/Surface_mesh_default_triangulation_3.h>
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
+
 #include <CGAL/Poisson_reconstruction_function.h>
 #include <CGAL/compute_average_spacing.h>
+
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/make_mesh_3.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
 
 #include <CGAL/Eigen_solver_traits.h>
 
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 
 #include <math.h>
+#include <CGAL/Timer.h>
 
 #include "Kernel_type.h"
 #include "SMesh_type.h"
@@ -179,14 +183,15 @@ SMesh* poisson_reconstruct(Point_set& points,
   // Poisson implicit function
   typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
 
-  // Surface mesher
-  typedef CGAL::Surface_mesh_default_triangulation_3 STr;
-  typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-  typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+  // Mesh_3
+  typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+  typedef typename CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type Tr;
+  typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+  typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
   // AABB tree
   typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
-  typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
+  typedef CGAL::AABB_traits_3<Kernel, Primitive> AABB_traits;
   typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
   CGAL::Timer task_timer; task_timer.start();
 
@@ -273,7 +278,7 @@ SMesh* poisson_reconstruct(Point_set& points,
   else
   {
     //***************************************
-    // Surface mesh generation
+    // Surface mesh generation using Mesh_3
     //***************************************
 
     std::cerr << "Surface meshing...\n";
@@ -301,45 +306,43 @@ SMesh* poisson_reconstruct(Point_set& points,
     // conservative bounding sphere centered at inner point.
     Kernel::FT sm_sphere_radius = 5.0 * radius;
     Kernel::FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
-    Surface_3 surface(function,
-                      Kernel::Sphere_3(inner_point,sm_sphere_radius*sm_sphere_radius),
-                      sm_dichotomy_error/sm_sphere_radius);
 
     // Defines surface mesh generation criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*average_spacing,  // Max triangle size
-                                                        sm_distance*average_spacing); // Approximation error
+    Mesh_criteria criteria(CGAL::parameters::facet_angle = sm_angle,
+                           CGAL::parameters::facet_size = sm_radius*average_spacing,
+                           CGAL::parameters::facet_distance = sm_distance*average_spacing);
 
-    CGAL_TRACE_STREAM << "  make_surface_mesh(sphere center=("<<inner_point << "),\n"
-                      << "                    sphere radius="<<sm_sphere_radius<<",\n"
-                      << "                    angle="<<sm_angle << " degrees,\n"
-                      << "                    triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
-                      << "                    distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
-                      << "                    dichotomy error=distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
-                      << "                    Manifold_with_boundary_tag)\n";
+    CGAL_TRACE_STREAM << "  make_mesh_3 with\n"
+                      << "  \t sphere center = ("<<inner_point << "), \n"
+                      << "  \t sphere radius="<<sm_sphere_radius<<",\n"
+                      << "  \t angle="<<sm_angle << " degrees,\n"
+                      << "  \t triangle size="<<sm_radius<<" * average spacing="<<sm_radius*average_spacing<<",\n"
+                      << "  \t distance="<<sm_distance<<" * average spacing="<<sm_distance*average_spacing<<",\n"
+                      << "  \t dichotomy error=distance/"<<sm_distance*average_spacing/sm_dichotomy_error<<",\n"
+                      << "  \t Manifold_with_boundary_tag\n";
 
-    // Generates surface mesh with manifold option
-    STr tr; // 3D Delaunay triangulation for surface mesh generation
-    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
-                            surface,                              // implicit surface
-                            criteria,                             // meshing criteria
-                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
+    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
+      CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
+
+    // Generates mesh with manifold option
+    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                        CGAL::parameters::no_exude().no_perturb()
+                                        .manifold_with_boundary());
 
     // Prints status
     std::cerr << "Surface meshing: " << task_timer.time() << " seconds, "
-              << tr.number_of_vertices() << " output vertices"
+              << c3t3.triangulation().number_of_vertices() << " output vertices"
               << std::endl;
     task_timer.reset();
 
-    if(tr.number_of_vertices() == 0)
+    if(c3t3.triangulation().number_of_vertices() == 0)
     {
       delete mesh;
       return nullptr;
     }
 
     // Converts to polyhedron
-    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, *mesh);
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, *mesh);
 
     // Prints total reconstruction duration
     std::cerr << "Total reconstruction (implicit function + meshing): " << reconstruction_timer.time() << " seconds\n";
@@ -393,4 +396,3 @@ SMesh* poisson_reconstruct(Point_set& points,
   }
   return mesh;
 }
-

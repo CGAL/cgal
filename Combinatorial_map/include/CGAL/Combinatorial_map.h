@@ -1781,7 +1781,6 @@ namespace CGAL {
                                         unsigned int i)
     {
       CGAL_assertion( i>=2 && i<=dimension );
-      CGAL_assertion( i>=2 && i<=dimension );
       dart_link_beta(adart1, adart2, i);
       dart_link_beta(adart2, adart1, i);
     }
@@ -3716,7 +3715,7 @@ namespace CGAL {
 
     /** Create an edge.
      * if closed==true, the edge has no 2-free dart.
-     * (note that for CMap there is no differente between true and false, but
+     * (note that for CMap there is no difference between true and false, but
      *  this is not the case for GMap)
      * @return a dart of the new edge.
      */
@@ -3733,7 +3732,7 @@ namespace CGAL {
      * @param h0 the first vertex descriptor.
      * @param h1 the second vertex descriptor.
      * if closed==true, the edge has no 2-free dart.
-     * (note that for CMap there is no differente between true and false, but
+     * (note that for CMap there is no difference between true and false, but
      *  this is not the case for GMap)
      * @return the dart of the new edge incident to h0.
      */

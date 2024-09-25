@@ -11,6 +11,8 @@
 #include <CGAL/use.h>
 #include <QApplication>
 
+#include "Color_map.h"
+
 // -----------------------------------
 // Internal classes
 // -----------------------------------
@@ -88,15 +90,15 @@ Image_accessor<Word_type>::Image_accessor(const Image& im, int dx, int dy, int d
     }
   }
 
-  const double nb_Colors = colors_.size()+1;
-  double i=0;
-  const double starting_hue = default_color.hueF();
-  for ( auto it = colors_.begin(),
-       end = colors_.end() ; it != end ; ++it, i += 1.)
+  // Compute subdomains colors (the background has no color)
+
+  std::vector<QColor> subdomain_colors;
+  compute_deterministic_color_map(default_color, colors_.size(), std::back_inserter(subdomain_colors));
+
+  int i = 0;
+  for (auto& it : colors_)
   {
-    double hue =  starting_hue + 1./nb_Colors * i;
-    if ( hue > 1. ) { hue -= 1.; }
-    it->second = QColor::fromHsvF(hue, default_color.saturationF(), default_color.valueF());
+    it.second = subdomain_colors[i++];
   }
 }
 

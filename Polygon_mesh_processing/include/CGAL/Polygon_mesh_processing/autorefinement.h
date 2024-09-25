@@ -79,6 +79,7 @@ namespace Polygon_mesh_processing {
 namespace Autorefinement {
 
 /** \ingroup PMP_corefinement_grp
+ * \cgalModels{PMPAutorefinementVisitor}
  *  %Default visitor model of `PMPAutorefinementVisitor`.
  *  All of its functions have an empty body. This class can be used as a
  *  base class if only some of the functions of the concept require to be

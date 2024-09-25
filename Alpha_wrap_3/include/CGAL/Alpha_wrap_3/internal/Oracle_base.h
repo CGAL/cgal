@@ -49,7 +49,7 @@ struct AABB_tree_oracle_helper
   using GT = typename AABB_traits::Geom_traits;
 
   using FT = typename AABB_traits::FT;
-  using Point_3 = typename AABB_traits::Point_3;
+  using Point_3 = typename AABB_traits::Point;
 
   template <typename Query>
   static bool do_intersect(const Query& query,

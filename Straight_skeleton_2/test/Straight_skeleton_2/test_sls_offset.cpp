@@ -20,6 +20,7 @@
 #include <CGAL/Straight_skeleton_builder_2.h>
 #include <CGAL/Polygon_offset_builder_2.h>
 #include <CGAL/Straight_skeleton_2/IO/print.h>
+#include <CGAL/Timer.h>
 
 #include <memory>
 
@@ -32,6 +33,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel            EPECK;
 typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK_w_sqrt;
 
+typedef CGAL::Timer Timer;
 template <typename K>
 void test_API()
 {
@@ -936,9 +938,12 @@ void test_offset(const char* filename,
   int i = 0;
   for(const FT& ot : offset_times)
   {
+    Timer t;
+    t.start();
     std::cout << "Offset #" << i++ << " = " << ot << std::endl;
     Polygon_with_holes_2_ptr_container offset_poly_with_holes =
       CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(ot, p, K());
+    std::cout << t.time() << " sec." << std::endl;
 
     std::cout << offset_poly_with_holes.size() << " polygons with holes" << std::endl;
     for(const auto& offp : offset_poly_with_holes)
@@ -1162,6 +1167,10 @@ int main(int, char**)
   test_kernel<EPICK>();
   test_kernel<EPECK>();
   test_kernel<EPECK_w_sqrt>();
+
+  // those two are really slow
+  // test_offset<EPECK_w_sqrt>("data/near_degenerate_0.poly");
+  // test_offset<EPECK_w_sqrt>("data/degenerate20.poly");
 
   std::cout << "Done!" << std::endl;
 

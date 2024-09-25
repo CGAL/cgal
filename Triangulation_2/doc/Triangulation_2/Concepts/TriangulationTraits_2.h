@@ -145,6 +145,19 @@ according to the
 typedef unspecified_type Compare_y_2;
 
 /*!
+A function object that lexicographically compares two points by their Cartesian
+coordinates.
+It provides the operator:
+
+`Comparison_result operator()(Point p, Point q)`
+
+which returns
+(`SMALLER, EQUAL` or `LARGER`)
+according to the lexicographical order of points `p` and `q`.
+*/
+typedef unspecified_type Compare_xy_2;
+
+/*!
 A function object to compute the orientation of three points.
 
 Provides the operator:
@@ -242,6 +255,11 @@ Compare_x_2 compare_x_2_object();
 
 */
 Compare_y_2 compare_y_2_object();
+
+/*!
+
+*/
+Compare_xy_2 compare_xy_2_object();
 
 /*!
 

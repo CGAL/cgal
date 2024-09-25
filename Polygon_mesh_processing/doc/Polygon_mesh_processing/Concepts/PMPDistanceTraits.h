@@ -2,11 +2,11 @@
 /// \cgalConcept
 ///
 /// The concept `PMPDistanceTraits` is a refinement of the
-/// concepts `AABBGeomTraits` and `SpatialSortingTraits_3`. In addition to the types required by
+/// concepts `AABBGeomTraits_3` and `SpatialSortingTraits_3`. In addition to the types required by
 /// those concepts,  it also requires types and functors needed by the functions `approximate_max_distance_to_point_set()`,
 /// `sample_triangle_mesh()`, `approximate_Hausdorff_distance()` and `max_distance_to_triangle_mesh()`
 ///
-/// \cgalRefines{AABBGeomTraits,SpatialSortingTraits_3}
+/// \cgalRefines{AABBGeomTraits_3, SpatialSortingTraits_3}
 /// \cgalHasModelsBegin
 /// \cgalHasModelsBare{Any 3D Kernel is a model of this concept}
 /// \cgalHasModelsEnd

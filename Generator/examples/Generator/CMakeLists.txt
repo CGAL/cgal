@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Generator_Examples)
 
 find_package(CGAL REQUIRED)
@@ -15,6 +15,7 @@ create_single_source_cgal_program("random_convex_hull_2.cpp")
 create_single_source_cgal_program("random_convex_set.cpp")
 create_single_source_cgal_program("random_degenerate_point_set.cpp")
 create_single_source_cgal_program("random_grid.cpp")
+create_single_source_cgal_program("random_points_23.cpp")
 create_single_source_cgal_program("random_points_in_triangles_2.cpp")
 create_single_source_cgal_program("random_points_in_triangles_3.cpp")
 create_single_source_cgal_program("random_points_on_triangle_mesh_2.cpp")

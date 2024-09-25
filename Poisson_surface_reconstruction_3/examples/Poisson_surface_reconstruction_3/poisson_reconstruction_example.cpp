@@ -1,10 +1,14 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Surface_mesh_default_triangulation_3.h>
-#include <CGAL/make_surface_mesh.h>
-#include <CGAL/Implicit_surface_3.h>
-#include <CGAL/IO/facets_in_complex_2_to_triangle_mesh.h>
 #include <CGAL/Poisson_reconstruction_function.h>
+
+#include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_criteria_3.h>
+#include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/make_mesh_3.h>
+#include <CGAL/facets_in_complex_3_to_triangle_mesh.h>
+
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_points.h>
 #include <CGAL/compute_average_spacing.h>
@@ -28,9 +32,10 @@ typedef Kernel::Sphere_3 Sphere;
 typedef std::vector<Point_with_normal> PointList;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;
-typedef CGAL::Surface_mesh_default_triangulation_3 STr;
-typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
-typedef CGAL::Implicit_surface_3<Kernel, Poisson_reconstruction_function> Surface_3;
+typedef CGAL::Labeled_mesh_domain_3<Kernel> Mesh_domain;
+typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
 int main(void)
 {
@@ -67,40 +72,35 @@ int main(void)
       (points, 6 /* knn = 1 ring */,
        CGAL::parameters::point_map (Point_map()));
 
-    // Gets one point inside the implicit surface
-    // and computes implicit function bounding sphere radius.
-    Point inner_point = function.get_inner_point();
+    //Computes implicit function bounding sphere radius.
     Sphere bsphere = function.bounding_sphere();
     FT radius = std::sqrt(bsphere.squared_radius());
 
-    // Defines the implicit surface: requires defining a
-    // conservative bounding sphere centered at inner point.
     FT sm_sphere_radius = 5.0 * radius;
     FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
-    Surface_3 surface(function,
-                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
-                      sm_dichotomy_error/sm_sphere_radius);
 
     // Defines surface mesh generation criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*average_spacing,  // Max triangle size
-                                                        sm_distance*average_spacing); // Approximation error
+    Mesh_criteria criteria(CGAL::parameters::facet_angle = sm_angle,
+                           CGAL::parameters::facet_size = sm_radius*average_spacing,
+                           CGAL::parameters::facet_distance = sm_distance*average_spacing);
 
-    // Generates surface mesh with manifold option
-    STr tr; // 3D Delaunay triangulation for surface mesh generation
-    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
-                            surface,                              // implicit surface
-                            criteria,                             // meshing criteria
-                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
+    // Defines mesh domain
+    Mesh_domain domain = Mesh_domain::create_implicit_mesh_domain(function, bsphere,
+        CGAL::parameters::relative_error_bound(sm_dichotomy_error / sm_sphere_radius));
 
+    // Generates mesh with manifold option
+    C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                        CGAL::parameters::no_exude().no_perturb()
+                                        .manifold_with_boundary());
+
+    const Tr& tr = c3t3.triangulation();
     if(tr.number_of_vertices() == 0)
       return EXIT_FAILURE;
 
     // saves reconstructed surface mesh
     std::ofstream out("kitten_poisson-20-30-0.375.off");
     Polyhedron output_mesh;
-    CGAL::facets_in_complex_2_to_triangle_mesh(c2t3, output_mesh);
+    CGAL::facets_in_complex_3_to_triangle_mesh(c3t3, output_mesh);
     out << output_mesh;
 
 

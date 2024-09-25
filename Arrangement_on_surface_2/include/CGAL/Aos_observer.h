@@ -519,12 +519,12 @@ public:
    */
   virtual void after_move_isolated_vertex(Vertex_handle /* v */) {}
 
-  /*! Notificaion before the removal of a vertex.
+  /*! Notification before the removal of a vertex.
    * \param v A handle to the vertex to be deleted.
    */
   virtual void before_remove_vertex(Vertex_handle /* v */) {}
 
-  /*! Notificaion after the removal of a vertex. */
+  /*! Notification after the removal of a vertex. */
   virtual void after_remove_vertex() {}
 
   /*! Notification before the removal of an edge.
@@ -532,7 +532,7 @@ public:
    */
   virtual void before_remove_edge(Halfedge_handle /* e */) {}
 
-  /*! Notificaion after the removal of an edge. */
+  /*! Notification after the removal of an edge. */
   virtual void after_remove_edge() {}
 
   /*! Notification before the removal of an outer CCB.
@@ -543,7 +543,7 @@ public:
                                        Ccb_halfedge_circulator /* h */)
   {}
 
-  /*! Notificaion after the removal of an outer CCB.
+  /*! Notification after the removal of an outer CCB.
    * \param f The face that used to own the outer CCB.
    */
   virtual void after_remove_outer_ccb(Face_handle /* f */) {}
@@ -556,7 +556,7 @@ public:
                                        Ccb_halfedge_circulator /* h */)
   {}
 
-  /*! Notificaion after the removal of an inner CCB.
+  /*! Notification after the removal of an inner CCB.
    * \param f The face that used to contain the inner CCB.
    */
   virtual void after_remove_inner_ccb(Face_handle /* f */) {}
