@@ -647,12 +647,11 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
         return false;
     }
 
-    // @todo could do with a segment or ray (if degree 1) direclty
+    // @todo could do with a segment or ray (if degree 1) directly
     Line3SPtr line = edge->line();
 
+    // @fixme? could be a line intersecting the face non conformingly?
     Point3SPtr point = KernelWrapper::intersection(facet->plane(), line);
-    CGAL_assertion(bool(point)); // @fixme? what if the intersection isn't a point?
-    // std::cout << "Intersection point " << *point << std::endl;
 
     if (point) {
         Point3SPtr p_src = edge->getVertexSrc()->getPoint();

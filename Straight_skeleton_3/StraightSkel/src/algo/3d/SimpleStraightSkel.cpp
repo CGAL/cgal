@@ -64,6 +64,9 @@
 #include <CGAL/Real_timer.h>
 
 #include <limits>
+#include <list>
+#include <random>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 
@@ -1381,9 +1384,9 @@ SimpleStraightSkel::check_bisector(EdgeSPtr edge,
 
     EdgeSPtr edge_f_f_third = edge->next(f);
 
-    // std::cout << "time from third: " << t_third << std::endl;
     // std::cout << "edge = " << edge->toString() << std::endl;
     // std::cout << "edge_f_f_third = " << edge_f_f_third->toString() << std::endl;
+    // std::cout << "time from third = " << t_third << std::endl;
     CGAL_assertion(edge_f_f_third != edge);
 
     // we want SMALLER to mean "on F1 side of the bisector"
@@ -1758,7 +1761,7 @@ CGAL::FT SimpleStraightSkel::offsetDist(FacetSPtr facet, Point3SPtr point) {
 }
 
 EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
-                                                const CGAL::FT curr_offset,
+                                                const CGAL::FT current_offset,
                                                 CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Edge Event" << std::endl;
@@ -1788,8 +1791,10 @@ EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
         if (!point) {
             continue;
         }
-        // std::cout << "Tentative edge event @ " << edge->toString() << std::endl;
-        // std::cout << "Would give: " << *point << " (at t=" << offset_event << ")" << std::endl;
+
+        std::cout << "Tentative edge event @ " << edge->toString() << std::endl;
+        std::cout << "Would give: " << *point << " (at t=" << offset_event << ")" << std::endl;
+
         FacetSPtr facet_src = getFacetSrc(edge);
         FacetSPtr facet_dst = getFacetDst(edge);
 
@@ -1928,7 +1933,7 @@ EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
             }
             node = result->getNode();
             node->clear();
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setEdge(edge);
             SkelVertexDataSPtr data_src = std::dynamic_pointer_cast<SkelVertexData>(
@@ -1944,16 +1949,11 @@ EdgeEventSPtr SimpleStraightSkel::nextEdgeEvent(PolyhedronSPtr polyhedron,
         }
     }
 
-    if(result)
-    {
-      std::cout << "Found an Edge Event at time " << result->getOffset() << std::endl;
-    }
-
     return result;
 }
 
 EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhedron,
-                                                          const CGAL::FT curr_offset,
+                                                          const CGAL::FT current_offset,
                                                           CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Edge Merge Event" << std::endl;
@@ -2055,7 +2055,7 @@ EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhed
             }
             node = result->getNode();
             node->clear();
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setFacet(facet);
             result->setEdge1(edge_1);
@@ -2090,7 +2090,7 @@ EdgeMergeEventSPtr SimpleStraightSkel::nextEdgeMergeEvent(PolyhedronSPtr polyhed
 }
 
 TriangleEventSPtr SimpleStraightSkel::nextTriangleEvent(PolyhedronSPtr polyhedron,
-                                                        const CGAL::FT curr_offset,
+                                                        const CGAL::FT current_offset,
                                                         CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Triangle Event" << std::endl;
@@ -2161,7 +2161,7 @@ TriangleEventSPtr SimpleStraightSkel::nextTriangleEvent(PolyhedronSPtr polyhedro
             }
             node = result->getNode();
             node->clear();
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setFacet(facet);
             result->setEdgeBegin(edge);
@@ -2190,7 +2190,7 @@ TriangleEventSPtr SimpleStraightSkel::nextTriangleEvent(PolyhedronSPtr polyhedro
 }
 
 DblEdgeMergeEventSPtr SimpleStraightSkel::nextDblEdgeMergeEvent(PolyhedronSPtr polyhedron,
-                                                                const CGAL::FT curr_offset,
+                                                                const CGAL::FT current_offset,
                                                                 CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Dbl Edge Merge Event" << std::endl;
@@ -2273,7 +2273,7 @@ DblEdgeMergeEventSPtr SimpleStraightSkel::nextDblEdgeMergeEvent(PolyhedronSPtr p
             }
             node = result->getNode();
             node->clear();
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setFacet1(facet_1);
             result->setEdge11(edge_11);
@@ -2304,7 +2304,7 @@ DblEdgeMergeEventSPtr SimpleStraightSkel::nextDblEdgeMergeEvent(PolyhedronSPtr p
 }
 
 DblTriangleEventSPtr SimpleStraightSkel::nextDblTriangleEvent(PolyhedronSPtr polyhedron,
-                                                              const CGAL::FT curr_offset,
+                                                              const CGAL::FT current_offset,
                                                               CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Dbl Triangle Event" << std::endl;
@@ -2343,7 +2343,7 @@ DblTriangleEventSPtr SimpleStraightSkel::nextDblTriangleEvent(PolyhedronSPtr pol
             }
             node = result->getNode();
             node->clear();
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setEdge(edge);
 
@@ -2370,7 +2370,7 @@ DblTriangleEventSPtr SimpleStraightSkel::nextDblTriangleEvent(PolyhedronSPtr pol
 }
 
 TetrahedronEventSPtr SimpleStraightSkel::nextTetrahedronEvent(PolyhedronSPtr polyhedron,
-                                                              const CGAL::FT curr_offset,
+                                                              const CGAL::FT current_offset,
                                                               CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Tetrahedron Event" << std::endl;
@@ -2398,7 +2398,7 @@ TetrahedronEventSPtr SimpleStraightSkel::nextTetrahedronEvent(PolyhedronSPtr pol
                 }
                 node = result->getNode();
                 node->clear();
-                node->setOffset(curr_offset + offset_event);
+                node->setOffset(current_offset + offset_event);
                 node->setPoint(point);
                 result->setEdgeBegin(edge);
                 VertexSPtr vertices[4];
@@ -2426,7 +2426,7 @@ TetrahedronEventSPtr SimpleStraightSkel::nextTetrahedronEvent(PolyhedronSPtr pol
 }
 
 VertexEventSPtr SimpleStraightSkel::nextVertexEvent(PolyhedronSPtr polyhedron,
-                                                    const CGAL::FT curr_offset,
+                                                    const CGAL::FT current_offset,
                                                     CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Vertex Event" << std::endl;
@@ -2584,7 +2584,7 @@ VertexEventSPtr SimpleStraightSkel::nextVertexEvent(PolyhedronSPtr polyhedron,
             SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(
                     vertex_2->getData());
             node->addArc(data_2->getArc());
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setVertex1(vertex_1);
             result->setVertex2(vertex_2);
@@ -2597,7 +2597,7 @@ VertexEventSPtr SimpleStraightSkel::nextVertexEvent(PolyhedronSPtr polyhedron,
 }
 
 FlipVertexEventSPtr SimpleStraightSkel::nextFlipVertexEvent(PolyhedronSPtr polyhedron,
-                                                            const CGAL::FT curr_offset,
+                                                            const CGAL::FT current_offset,
                                                             CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Flip Vertex Event" << std::endl;
@@ -2754,7 +2754,7 @@ FlipVertexEventSPtr SimpleStraightSkel::nextFlipVertexEvent(PolyhedronSPtr polyh
             SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(
                     vertex_2->getData());
             node->addArc(data_2->getArc());
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setVertex1(vertex_1);
             result->setVertex2(vertex_2);
@@ -2767,7 +2767,7 @@ FlipVertexEventSPtr SimpleStraightSkel::nextFlipVertexEvent(PolyhedronSPtr polyh
 }
 
 SurfaceEventSPtr SimpleStraightSkel::nextSurfaceEvent(PolyhedronSPtr polyhedron,
-                                                      const CGAL::FT curr_offset,
+                                                      const CGAL::FT current_offset,
                                                       CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Surface Event" << std::endl;
@@ -2890,7 +2890,7 @@ SurfaceEventSPtr SimpleStraightSkel::nextSurfaceEvent(PolyhedronSPtr polyhedron,
             }
             node = result->getNode();
             node->clear();
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setEdge1(edge_1);
             result->setEdge2(edge_2);
@@ -2926,7 +2926,7 @@ SurfaceEventSPtr SimpleStraightSkel::nextSurfaceEvent(PolyhedronSPtr polyhedron,
 }
 
 PolyhedronSplitEventSPtr SimpleStraightSkel::nextPolyhedronSplitEvent(PolyhedronSPtr polyhedron,
-                                                                      const CGAL::FT curr_offset,
+                                                                      const CGAL::FT current_offset,
                                                                       CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Polyhedron Split Event" << std::endl;
@@ -2981,7 +2981,7 @@ PolyhedronSplitEventSPtr SimpleStraightSkel::nextPolyhedronSplitEvent(Polyhedron
             }
             node = result->getNode();
             node->clear();
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setEdge1(edge_1);
             result->setEdge2(edge_2);
@@ -3013,7 +3013,7 @@ PolyhedronSplitEventSPtr SimpleStraightSkel::nextPolyhedronSplitEvent(Polyhedron
 }
 
 SplitMergeEventSPtr SimpleStraightSkel::nextSplitMergeEvent(PolyhedronSPtr polyhedron,
-                                                            const CGAL::FT curr_offset,
+                                                            const CGAL::FT current_offset,
                                                             CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Split Merge Event" << std::endl;
@@ -3170,7 +3170,7 @@ SplitMergeEventSPtr SimpleStraightSkel::nextSplitMergeEvent(PolyhedronSPtr polyh
             SkelVertexDataSPtr data_2 = std::dynamic_pointer_cast<SkelVertexData>(
                     vertex_2->getData());
             node->addArc(data_2->getArc());
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setVertex1(vertex_1);
             result->setVertex2(vertex_2);
@@ -3183,7 +3183,7 @@ SplitMergeEventSPtr SimpleStraightSkel::nextSplitMergeEvent(PolyhedronSPtr polyh
 }
 
 EdgeSplitEventSPtr SimpleStraightSkel::nextEdgeSplitEvent(PolyhedronSPtr polyhedron,
-                                                          const CGAL::FT curr_offset,
+                                                          const CGAL::FT current_offset,
                                                           CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Edge Split Event" << std::endl;
@@ -3201,8 +3201,6 @@ EdgeSplitEventSPtr SimpleStraightSkel::nextEdgeSplitEvent(PolyhedronSPtr polyhed
             edges_reflex.push_back(edge);
         }
     }
-
-    std::cout << edges_reflex.size() << " reflex edges" << std::endl;
 
     std::list<EdgeSPtr>::iterator it_e1 = edges_reflex.begin();
     while (it_e1 != edges_reflex.end()) {
@@ -3265,7 +3263,7 @@ EdgeSplitEventSPtr SimpleStraightSkel::nextEdgeSplitEvent(PolyhedronSPtr polyhed
             }
             node = result->getNode();
             node->clear();
-            node->setOffset(curr_offset + offset_event);
+            node->setOffset(current_offset + offset_event);
             node->setPoint(point);
             result->setEdge1(edge_1);
             result->setEdge2(edge_2);
@@ -3301,7 +3299,7 @@ EdgeSplitEventSPtr SimpleStraightSkel::nextEdgeSplitEvent(PolyhedronSPtr polyhed
 }
 
 PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
-                                                    const CGAL::FT curr_offset,
+                                                    const CGAL::FT current_offset,
                                                     CGAL::FT& current_offset_to_nearest_event)
 {
     std::cout << ">>> Seek -- Next Pierce Event" << std::endl;
@@ -3478,7 +3476,7 @@ PierceEventSPtr SimpleStraightSkel::nextPierceEvent(PolyhedronSPtr polyhedron,
                     node = result->getNode();
                     node->clear();
                     node->addArc(arc);
-                    node->setOffset(curr_offset + offset_event);
+                    node->setOffset(current_offset + offset_event);
                     node->setPoint(point);
                     result->setFacet(facet);
                     result->setVertex(vertex);
