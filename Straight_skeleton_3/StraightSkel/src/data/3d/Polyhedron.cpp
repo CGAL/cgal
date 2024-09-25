@@ -366,9 +366,8 @@ bool Polyhedron::isConsistent() const {
         }
 
         if (vne != 3) {
-            std::cerr << "- Vertex with not 3 incident edges? " << vne << std::endl;
+            std::cerr << "Warning: Vertex with not 3 incident edges? " << vne << std::endl;
             std::cerr << vertex->toString() << std::endl;
-            result = false;
         }
 
         std::list<FacetWPtr>::const_iterator it_f = vertex->facets().begin();
@@ -390,9 +389,8 @@ bool Polyhedron::isConsistent() const {
         }
 
         if (vnf != 3) {
-            std::cerr << "- Vertex with not 3 incident faces? " << vnf << std::endl;
+            std::cerr << "Warning: Vertex with not 3 incident faces? " << vnf << std::endl;
             std::cerr << vertex->toString() << std::endl;
-            result = false;
         }
     }
 
@@ -436,6 +434,10 @@ bool Polyhedron::isConsistent() const {
             if (EdgeSPtr(edge_wptr) != edge) {
                 DEBUG_VAR(edge->toString());
             }
+        } else {
+            std::cerr << "no left facet?" << std::endl;
+            DEBUG_VAR(edge->toString());
+            result = false;
         }
         if (edge->getFacetR()) {
             if (!edge->getFacetR()->containsEdge(edge)) {
@@ -448,6 +450,10 @@ bool Polyhedron::isConsistent() const {
             if (EdgeSPtr(edge_wptr) != edge) {
                 DEBUG_VAR(edge->toString());
             }
+        } else {
+            std::cerr << "no right facet?" << std::endl;
+            DEBUG_VAR(edge->toString());
+            result = false;
         }
     }
 
