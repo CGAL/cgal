@@ -62,11 +62,10 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
             if (line.find("v ") == 0) {  // vertex
                 std::vector<std::string> strs = util::StringFuncs::split(line, " \t", false);
                 if (strs.size() >= 4) {
-                    vertex_id_new++;
                     Point3SPtr point = KernelFactory::createPoint3(
                             atof(strs[1].c_str()), atof(strs[2].c_str()), atof(strs[3].c_str()));
                     VertexSPtr vertex = Vertex::create(point);
-                    vertex->setID(vertex_id_new);
+                    vertex->setID(vertex_id_new++);
                     result->addVertex(vertex);
                 }
             } else if (line.find("vn ") == 0) {  // vertex normal
@@ -83,7 +82,6 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                 }
                 std::vector<std::string> strs = util::StringFuncs::split(line, " \t", false);
                 if (strs.size() >= 4) {
-                    facet_id_new++;
                     unsigned int num_vertices = strs.size() - 1;
                     std::cout << "new face of size " << num_vertices << std::endl;
                     CGAL_assertion(num_vertices > 2);
@@ -122,7 +120,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                     }
 
                     FacetSPtr facet = Facet::create(num_vertices, poly_vertices);
-                    facet->setID(facet_id_new);
+                    facet->setID(facet_id_new++);
 
                     std::cout << "Final edges:" << std::endl;
                     for(auto e : facet->edges())
@@ -203,7 +201,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
         removeVerticesDegLt3(result);
 
         // @tmp with the degree checking, this is false if the input is not triangulated
-        // assert(result->isConsistent());
+        CGAL_postcondition(result->isConsistent());
     }
 
     std::cout << "Final load: " << result->toString() << std::endl;
@@ -218,7 +216,9 @@ bool OBJFile::save(const std::string& filename,
 {
     std::cout << " -- Save OBJ " << filename << " -- " << std::endl;
     std::cout << "options: " << std::boolalpha << do_triangulate << " " << convert_to_double << std::endl;
-    std::cout << polyhedron->toString() << std::endl;
+
+    polyhedron->initializeAllIDs();
+    // std::cout << polyhedron->toString() << std::endl;
 
     using Itag = CGAL::No_constraint_intersection_tag;
     using PK = CGAL::Projection_traits_3<CGAL::K>;
@@ -237,11 +237,10 @@ bool OBJFile::save(const std::string& filename,
         WriteLock l(polyhedron->mutex());
 
         std::map<VertexSPtr, std::size_t> v_ids;
-        unsigned int vertex_id = 0;
         std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
         while (it_v != polyhedron->vertices().end()) {
             VertexSPtr vertex = *it_v++;
-            vertex->setID(vertex_id++);
+            unsigned int id = vertex->getID();
             if(convert_to_double)
             {
               ofs << "v " << CGAL::to_double(vertex->getX()) << " "
@@ -255,15 +254,14 @@ bool OBJFile::save(const std::string& filename,
                           << vertex->getZ() << "\n";
             }
 
-            v_ids[vertex] = vertex_id;
+            v_ids[vertex] = id + 1;
         }
 
-        unsigned int facet_id = 0;
         std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
         while (it_f != polyhedron->facets().end()) {
             FacetSPtr facet = *it_f++;
             facet->makeFirstConvex();
-            facet->setID(facet_id++);
+            unsigned int id = facet->getID();
 
             bool do_triangulate_face = do_triangulate;
             if (facet->edges().size() < 3)
@@ -363,29 +361,39 @@ bool OBJFile::save(const std::string& filename,
             {
               ofs << "f ";
               unsigned int num_edges = 0;
-              EdgeSPtr first = EdgeSPtr();
-              EdgeSPtr edge = facet->edges().front();
-              while (first != edge) {
-                  if (!first) {
-                      first = edge;
-                  } else {
-                      ofs << " ";
-                  }
+              EdgeSPtr first = facet->edges().front();
+              EdgeSPtr edge = first;
+              EdgeSPtr prev_edge = edge;
+              do {
+                  prev_edge = edge;
+                  edge = edge->prev(facet); // this is to get the first edge in case the face is open
+                  // std::cout << edge->toString() << std::endl;
+              } while (edge != prev_edge && edge != first);
+
+              first = edge;
+              do {
                   VertexSPtr vertex = edge->src(facet);
-                  ofs << vertex->getID();
+                  ofs << vertex->getID() + 1 << " ";
+                  prev_edge = edge;
                   edge = edge->next(facet);
-                  num_edges++;
+                  ++num_edges;
+              } while(edge != prev_edge && edge != first);
+
+              if (edge != first) { // open face
+                  VertexSPtr vertex = edge->dst(facet);
+                  ofs << vertex->getID() + 1;
               }
+
               if (num_edges != facet->edges().size()) {
                   DEBUG_VAL("Warning: Facet does not consist of connected edges only (" << num_edges << " VS " << facet->edges().size() << ")");
                   DEBUG_VAL("Warning: It is impossible for an obj file to store holes inside a facet.");
-                  DEBUG_VAR(facet->toString());
+                  // DEBUG_VAR(facet->toString());
               }
               ofs << "\n";
             }
         }
-        result = (polyhedron->vertices().size() == vertex_id &&
-                  polyhedron->facets().size() == facet_id);
+        // result = (polyhedron->vertices().size() == vertex_id &&
+        //           polyhedron->facets().size() == facet_id);
         ofs.close();
     }
     std::cout << "-- Write OBJ end --" << std::endl;
