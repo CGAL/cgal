@@ -18,7 +18,9 @@ CONTAINER_HOST=unix:///run/podman/podman.sock
 5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection || echo ERROR
 
 # Create internal release
-0 21  *  *  *                        python3 /home/lrineau/CGAL/branches/local-master.git/Maintenance/infrastructure/cgal.geometryfactory.com/bin/create_internal_release_of_the_day.py
+#0 21  *  *  *                        python3 /home/lrineau/CGAL/branches/local-master.git/Maintenance/infrastructure/cgal.geometryfactory.com/bin/create_internal_release_of_the_day.py
+0 21  *  *  *                        python3 /home/lrineau/CGAL/cgal-testsuite-cgal-gf.git/bin/create_internal_release_of_the_day.py
+
 
 30 16 *  *  *	echo ESSAI; false
 ## Older stuff
