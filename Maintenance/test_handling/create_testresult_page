@@ -18,6 +18,7 @@ use strict;
 use Date::Format;
 use JSON;
 use File::Copy;
+use FindBin;
 
 my $server_url="https://cgal.geometryfactory.com/";
 my $cgal_members="${server_url}CGAL/Members/";
@@ -753,7 +754,7 @@ sub create_summary_page {
     my @letters = ('r', 'n', 'w', 'o');
     my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);
     my $package_options = join("\n", map { "<option value=\"$_\">$_</option>" } sort keys %test_directories);
-    my $summary_script_src = "$testresult_dir/../Summary_Script.js";
+    my $summary_script_src = $FindBin::RealBin . "/Summary_Script.js";
     my $summary_script_dest = "$testresult_dir/$release_name/Summary_Script.js";
     my $summary_page_path = "$testresult_dir/summary".substr($release_name,4).".html";
     my @platforms_data;
