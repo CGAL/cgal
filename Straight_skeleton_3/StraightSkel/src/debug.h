@@ -34,13 +34,13 @@
 #define LOC DBGOUT << "[DEBUG] " << __FILE__ << ":" << __LINE__ << ": ";
 
 /* macro using var args */
-#define DEBUG_PRINT(...) LOC fprintf(stdout, __VA_ARGS__); DBGOUT << std::endl;
+#define DEBUG_PRINT(...) /*LOC*/ fprintf(stdout, __VA_ARGS__); DBGOUT << std::endl;
 
 /* macro for general debug print statements. */
-#define DEBUG_VAL(var) LOC DBGOUT << var << std::endl;
+#define DEBUG_VAL(var) /*LOC*/ DBGOUT << var << std::endl;
 
 /* macro that dumps a variable name and its actual value */
-#define DEBUG_VAR(var) LOC DBGOUT << (#var) << "=" << var << std::endl;
+#define DEBUG_VAR(var) /*LOC*/ DBGOUT << (#var) << "=" << var << std::endl;
 
 /* macro that warns, if a smart pointer is invalid */
 #define DEBUG_SPTR(sptr) if (!sptr) { LOC DBGOUT << "shared pointer is invalid: " << (#sptr) << std::endl; util::StackTrace::print(DBGOUT); }
