@@ -569,7 +569,11 @@ bool SelfIntersection::isInsideWithRayShooting(Point3SPtr point,
             // We'll use a (coplanar) orientation check with the edge to determine
             // whether we are on the 'outside' or 'inside'
             if (CGAL::collinear(*p_src, *p_dst, *point)) {
-                std::cout << " skipping because collinear" << std::endl;
+                if (CGAL::collinear_are_ordered_along_line(*p_src, *point, *p_dst)) {
+                    return true; // on edge
+                } else {
+                    std::cout << " skipping because collinear" << std::endl;
+                }
                 continue;
             }
 
