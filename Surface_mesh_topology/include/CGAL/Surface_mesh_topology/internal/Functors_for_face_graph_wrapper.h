@@ -36,16 +36,8 @@ namespace internal {
 /// Get_beta
 template<typename HEG, unsigned int i>
 struct Get_beta
-{
-  typedef typename boost::graph_traits<HEG>::halfedge_descriptor Dart_const_descriptor;
+{};
 
-  static Dart_const_descriptor value(const HEG& /*heg*/, Dart_const_descriptor /*dh*/)
-  {
-    std::cout<<"ERROR Get_beta<HEG, "<<i<<">"<<std::endl;
-    CGAL_assertion(false);
-    return nullptr;
-  }
-};
 template<typename HEG>
 struct Get_beta<HEG, 0>
 {
