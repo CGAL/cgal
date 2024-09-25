@@ -1009,12 +1009,238 @@ bool SimpleStraightSkel::isTetrahedron(EdgeSPtr edge_begin) {
     return result;
 }
 
+/*
+  vanishAt:
+
+      \                      /
+       \       F0           /
+        \                  /
+   F1    ------------------   F3
+        /                  \
+       /       F2           \
+      /                      \
+
+  crashAt:
+
+      \                      /                  \                      /
+       \       F0           /                    \       F2           /
+        \                  /                      \                  /
+         ------------------                          ----------------
+        /                  \                      /                  \
+       /       F1           \                    /       F3           \
+      /                      \                  /                      \
+*/
+enum Quadplane_parallelism {
+    PLANES_PARALLELISM_NONE = 0, // No planes are parallel
+    PLANES_PARALLEL_01,          // Planes 0 and 1 are parallel (1)
+    PLANES_PARALLEL_02,          // Planes 0 and 2 are parallel (2)
+    PLANES_PARALLEL_03,          // Planes 0 and 3 are parallel (3)
+    PLANES_PARALLEL_12,          // Planes 1 and 2 are parallel (4)
+    PLANES_PARALLEL_13,          // Planes 1 and 3 are parallel (5)
+    PLANES_PARALLEL_23,          // Planes 2 and 3 are parallel (6)
+    PLANES_PARALLEL_012,         // Planes 0, 1, and 2 are parallel (7)
+    PLANES_PARALLEL_013,         // Planes 0, 1, and 3 are parallel (8)
+    PLANES_PARALLEL_023,         // Planes 0, 2, and 3 are parallel (9)
+    PLANES_PARALLEL_123,         // Planes 1, 2, and 3 are parallel (10)
+    PLANES_PARALLEL_01_23,       // Planes 0 and 1 are parallel, and planes 2 and 3 are parallel (11)
+    PLANES_PARALLEL_02_13,       // Planes 0 and 2 are parallel, and planes 1 and 3 are parallel (12)
+    PLANES_PARALLEL_03_12,       // Planes 0 and 3 are parallel, and planes 1 and 2 are parallel (13)
+    PLANES_PARALLEL_0123         // All planes are parallel (14)
+};
+
+Quadplane_parallelism quadplane_parallelism(FacetSPtr facet_0,
+                                            FacetSPtr facet_1,
+                                            FacetSPtr facet_2,
+                                            FacetSPtr facet_3)
+{
+    Plane3SPtr plane_0 = facet_0->getPlane();
+    Plane3SPtr plane_1 = facet_1->getPlane();
+    Plane3SPtr plane_2 = facet_2->getPlane();
+    Plane3SPtr plane_3 = facet_3->getPlane();
+
+    // Function to check if two planes are parallel
+    auto are_planes_parallel = [](const Plane3SPtr pl1, const Plane3SPtr pl2) {
+        // plane coefficients are normalized
+        return ((pl1->a() == pl2->a() && pl1->b() == pl2->b() && pl1->c() == pl2->c()) ||
+                (pl1->a() == - pl2->a() && pl1->b() == - pl2->b() && pl1->c() == - pl2->c()));
+    };
+
+    // @todo could avoid some computations: 1&2 + 2&3 ==> no need to do 1&3,
+    // but it would be a lot more code and branches
+    int mask = (are_planes_parallel(plane_0, plane_1) << 5) |
+               (are_planes_parallel(plane_0, plane_2) << 4) |
+               (are_planes_parallel(plane_0, plane_3) << 3) |
+               (are_planes_parallel(plane_1, plane_2) << 2) |
+               (are_planes_parallel(plane_1, plane_3) << 1) |
+               (are_planes_parallel(plane_2, plane_3));
+
+    // Switch based on the bitmask to return the appropriate enum
+    switch (mask) {
+        case 0b111111: return PLANES_PARALLEL_0123;    // All planes are parallel
+        case 0b111000: return PLANES_PARALLEL_012;     // 0, 1, 2 are parallel
+        case 0b101100: return PLANES_PARALLEL_013;     // 0, 1, 3 are parallel
+        case 0b011010: return PLANES_PARALLEL_023;     // 0, 2, 3 are parallel
+        case 0b000111: return PLANES_PARALLEL_123;     // 1, 2, 3 are parallel
+        case 0b100001: return PLANES_PARALLEL_01_23;   // 0, 1 are parallel, and 2, 3 are parallel
+        case 0b001001: return PLANES_PARALLEL_02_13;   // 0, 2 are parallel, and 1, 3 are parallel
+        case 0b010010: return PLANES_PARALLEL_03_12;   // 0, 3 are parallel, and 1, 2 are parallel
+        case 0b100000: return PLANES_PARALLEL_01;      // 0, 1 are parallel
+        case 0b010000: return PLANES_PARALLEL_02;      // 0, 2 are parallel
+        case 0b001000: return PLANES_PARALLEL_03;      // 0, 3 are parallel
+        case 0b000100: return PLANES_PARALLEL_12;      // 1, 2 are parallel
+        case 0b000010: return PLANES_PARALLEL_13;      // 1, 3 are parallel
+        case 0b000001: return PLANES_PARALLEL_23;      // 2, 3 are parallel
+        default:       return PLANES_PARALLELISM_NONE; // No planes are parallel
+    }
+}
+
+std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtGeneric(FacetSPtr facet_0,
+                                                                      FacetSPtr facet_1,
+                                                                      FacetSPtr facet_2,
+                                                                      FacetSPtr facet_3)
+{
+    Plane3SPtr plane_0 = facet_0->plane();
+    Plane3SPtr plane_1 = facet_1->plane();
+    Plane3SPtr plane_2 = facet_2->plane();
+    Plane3SPtr plane_3 = facet_3->plane();
+
+    // @fixme in theory, one needs to check if the data exists etc. etc.
+    CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
+    CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
+    CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
+    CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+
+    Point3SPtr point = Point3SPtr();
+    CGAL::FT event_offset;
+    std::tie(point, event_offset) = KernelWrapper::intersectionAndTimeOffsetPlanes(
+      plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
+
+    if(point && event_offset <= 0) {
+        return { point, event_offset };
+    } else {
+        return { };
+    }
+}
+
+std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtOnePairOpposite(FacetSPtr facet_0,
+                                                                              FacetSPtr facet_1,
+                                                                              FacetSPtr facet_2,
+                                                                              FacetSPtr facet_3)
+{
+    std::cout << "vanishesAtOnePairOpposite()" << std::endl;
+
+    Point3SPtr point = Point3SPtr();
+
+    Plane3SPtr plane_0 = facet_0->plane();
+    Plane3SPtr plane_1 = facet_1->plane();
+    Plane3SPtr plane_2 = facet_2->plane();
+    Plane3SPtr plane_3 = facet_3->plane();
+
+    CGAL_precondition(CGAL::parallel(*plane_1, *plane_3));
+
+    CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
+    CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
+    CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
+    CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+
+    // The facet #1 and #3 are parallel
+    // - Get the time of intersection of #1 and #3 as the intersection is at that time
+    // - Intersec the three non planar planes at that time
+
+    Vector3SPtr n_1 = KernelFactory::createVector3(plane_1);
+    Vector3SPtr n_3 = KernelFactory::createVector3(plane_3);
+    Point3 seed_1 = plane_1->point();
+    Line3 orth_line (seed_1, *n_1);
+
+#ifdef CGAL_SS3_DEBUG_VANISH_AT
+    std::cout << "facet1 = " << facet_1->getID() << std::endl;
+    std::cout << "facet3 = " << facet_3->getID() << std::endl;
+    std::cout << "plane1 = " << *plane_1 << std::endl;
+    std::cout << "plane3 = " << *plane_3 << std::endl;
+    std::cout << "n1 = " << *n_1 << std::endl;
+    std::cout << "n3 = " << *n_3 << std::endl;
+    std::cout << "speed1 = " << speed_1 << std::endl;
+    std::cout << "speed3 = " << speed_3 << std::endl;
+    std::cout << "seed_1 = " << seed_1 << std::endl;
+#endif
+
+    CGAL::Object obj = CGAL::intersection(orth_line, *plane_3);
+    if (const CGAL::Point3* seed_3_ptr = CGAL::object_cast<CGAL::Point3>(&obj)) {
+#ifdef CGAL_SS3_DEBUG_VANISH_AT
+        std::cout << "seed_3 = " << *seed_3_ptr << std::endl;
+#endif
+
+        // (1): p = seed_1 + t * speed_1 * n_1
+        // (2): p = seed_3 + t * speed_3 * n_3
+        // t = (seed_3.i - seed_1.i) / (speed_1 * n_1.i - speed_3 * n_3.i)
+
+        CGAL::FT t;
+        for (int i=0; i<3; ++i) {
+            if(is_zero(n_1->operator[](i)) && is_zero(n_3->operator[](i)))
+                continue;
+
+            const CGAL::FT den = speed_1 * n_1->operator[](i) - speed_3 * n_3->operator[](i);
+            if (is_zero(den)) {
+                std::cerr << "Moving in the same direction, no event" << std::endl;
+                return { };
+            }
+
+            t = (seed_3_ptr->operator[](i) - seed_1[i]) / den;
+            break;
+        }
+
+        if (t > 0) {
+            std::cerr << "Event in the past" << std::endl;
+            return { };
+        }
+
+        Plane3SPtr shifted_planed_0 = KernelWrapper::offsetPlane(plane_0, t*speed_0);
+        Plane3SPtr shifted_planed_1 = KernelWrapper::offsetPlane(plane_1, t*speed_1);
+        Plane3SPtr shifted_planed_2 = KernelWrapper::offsetPlane(plane_2, t*speed_2);
+
+        point = KernelWrapper::intersection(shifted_planed_0, shifted_planed_1, shifted_planed_2);
+        if (!point) {
+            std::cerr << "No intersection of shifted planes" << std::endl;
+            return { };
+        } else {
+            std::cout << "---> " << *point << " at " << t << std::endl;
+            return { point, t };
+        }
+    } else {
+        CGAL_assertion_msg(false, "Unknown second point...?");
+    }
+
+    return { };
+}
+
+std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtOnePairContiguous(FacetSPtr,
+                                                                                FacetSPtr,
+                                                                                FacetSPtr,
+                                                                                FacetSPtr)
+{
+    CGAL_assertion(false);
+    return {};
+}
+
+std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtTwoPairs(FacetSPtr,
+                                                                       FacetSPtr,
+                                                                       FacetSPtr,
+                                                                       FacetSPtr)
+{
+    // the only possibility is if the middle edge is degenerate?
+    // otherwise, the bisecting planes going through edges O2 and 13 are parallel and not intersecting?
+
+    CGAL_assertion(false);
+    return {};
+}
+
 std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
 {
     Point3SPtr point = Point3SPtr();
     CGAL::FT offset_event;
 
-# ifdef CGAL_SS3_DEBUG_VANISH_AT
+// #define CGAL_SS3_DEBUG_VANISH_AT
+#ifdef CGAL_SS3_DEBUG_VANISH_AT
     std::cout << "vanishesAt " << edge->toString() << std::endl;
 #endif
 
@@ -1024,60 +1250,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
     // extremity of 'edge')?
 
 // #define CGAL_SS3_OLD_CODE_VANISH_AT
-#ifndef CGAL_SS3_OLD_CODE_VANISH_AT
-    {
-        FacetSPtr facetL = edge->getFacetL();
-        FacetSPtr facetR = edge->getFacetR();
-        CGAL_assertion(facetL && facetR && facetL != facetR);
-# ifdef CGAL_SS3_DEBUG_VANISH_AT
-        std::cout << "Degrees: " << edge->getVertexSrc()->degree() << " " << edge->getVertexDst()->degree() << std::endl;
-        std::cout << "Incident to Src:" << std::endl;
-        for(auto f : edge->getVertexSrc()->facets_)
-          std::cout << "  " << FacetSPtr(f) << std::endl;
-        std::cout << "Incident to Dst:" << std::endl;
-        for(auto f : edge->getVertexDst()->facets_)
-          std::cout << "  " << FacetSPtr(f) << std::endl;
-        std::cout << "facetL: " << facetL->toString() << std::endl;
-        std::cout << "facetR: " << facetR->toString() << std::endl;
-# endif
-        FacetSPtr facetP = edge->prev(facetL)->getFacetR();
-        if(!facetP || facetP == facetL)
-            facetP = edge->prev(facetL)->getFacetL();
-        CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
-        FacetSPtr facetN = edge->next(facetL)->getFacetR();
-        if(!facetN || facetN == facetL)
-            facetN = edge->next(facetL)->getFacetL();
-# ifdef CGAL_SS3_DEBUG_VANISH_AT
-        std::cout << "facetP: " << facetP->toString() << std::endl;
-        std::cout << "facetN: " << facetN->toString() << std::endl;
-# endif
-        CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
-
-        Plane3SPtr plane_0 = facetL->plane();
-        Plane3SPtr plane_1 = facetR->plane();
-        Plane3SPtr plane_2 = facetP->plane();
-        Plane3SPtr plane_3 = facetN->plane();
-
-        // @fixme in theory, it needs to check if the data exists etc. etc.
-        CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facetL->getData())->getSpeed();
-        CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facetR->getData())->getSpeed();
-        CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facetP->getData())->getSpeed();
-        CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facetN->getData())->getSpeed();
-
-        Point3SPtr p_intersect = Point3SPtr();
-        std::tie(p_intersect, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
-          plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
-        if(p_intersect)
-        {
-            // @fixme? filter positive offsets immediately?
-            // @fixme should it check with the other incident facet as well?
-            if (KernelWrapper::side(facetL->plane(), p_intersect) <= 0) {
-                // inside polyhedron
-                point = p_intersect;
-            }
-        }
-    }
-#else // CGAL_SS3_OLD_CODE_VANISH_AT
+#ifdef CGAL_SS3_OLD_CODE_VANISH_AT
     SheetSPtr sheets[3];
     for (unsigned int i = 0; i < 3; i++) {
         sheets[i] = SheetSPtr();
@@ -1113,6 +1286,73 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
                 point = p_intersect;
                 offset_event = offsetDist(facet_l, point);
             }
+        }
+    }
+#else // CGAL_SS3_OLD_CODE_VANISH_AT
+    {
+        FacetSPtr facetL = edge->getFacetL();
+        FacetSPtr facetR = edge->getFacetR();
+        CGAL_assertion(facetL && facetR && facetL != facetR);
+# ifdef CGAL_SS3_DEBUG_VANISH_AT
+        std::cout << "facetL: " << facetL->getID() << std::endl;
+        std::cout << "facetR: " << facetR->getID() << std::endl;
+# endif
+        FacetSPtr facetP = edge->prev(facetL)->other(facetL);
+        FacetSPtr facetN = edge->next(facetL)->other(facetL);
+# ifdef CGAL_SS3_DEBUG_VANISH_AT
+        if (facetP) {
+            std::cout << "facetP: " << facetP->getID() << std::endl;
+        }
+        if (facetN) {
+            std::cout << "facetN: " << facetN->getID() << std::endl;
+        }
+# endif
+        CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
+        CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
+
+        Quadplane_parallelism parallelism = quadplane_parallelism(facetL, facetP, facetR, facetN);
+
+        if(parallelism != PLANES_PARALLELISM_NONE)
+          std::cout << "parallelism = " << parallelism << std::endl;
+
+        if (parallelism == PLANES_PARALLELISM_NONE) {
+            // generic case
+            std::tie(point, offset_event) = vanishesAtGeneric(facetL, facetP, facetR, facetN);
+        } else if (parallelism == PLANES_PARALLEL_01) {
+            CGAL_assertion(false);
+            // std::tie(point, offset_event) = vanishesAtOnePairContiguous();
+        } else if (parallelism == PLANES_PARALLEL_02) {
+            // if the two main faces are parallel, everything should be parallel
+            CGAL_assertion_msg(false, "This configuration shouldn't be possible with vanish events");
+        } else if (parallelism == PLANES_PARALLEL_03) {
+            CGAL_assertion(false);
+            // std::tie(point, offset_event) = vanishesAtOnePairContiguous();
+        } else if (parallelism == PLANES_PARALLEL_12) {
+            CGAL_assertion(false);
+            // std::tie(point, offset_event) = vanishesAtOnePairContiguous();
+        } else if (parallelism == PLANES_PARALLEL_13) {
+            std::tie(point, offset_event) = vanishesAtOnePairOpposite(facetL, facetP, facetR, facetN);
+        } else if (parallelism == PLANES_PARALLEL_23) {
+            CGAL_assertion(false);
+            // std::tie(point, offset_event) = vanishesAtOnePairContiguous();
+        } else if (parallelism == PLANES_PARALLEL_012 ||
+                   parallelism == PLANES_PARALLEL_013 ||
+                   parallelism == PLANES_PARALLEL_023 ||
+                   parallelism == PLANES_PARALLEL_123) {
+         // if 3 are parallel, it should be all 4 since the faces are contiguous
+          CGAL_assertion_msg(false, "This configuration shouldn't be possible with vanish events");
+        } else if (parallelism == PLANES_PARALLEL_02_13) {
+            CGAL_assertion_msg(false, "This configuration shouldn't be possible with vanish events");
+        } else if (parallelism == PLANES_PARALLEL_03_12) {
+            CGAL_assertion(false);
+            // std::tie(point, offset_event) = vanishesAtTwoPairs();
+        } else if (parallelism == PLANES_PARALLEL_01_23) {
+            CGAL_assertion(false);
+            // std::tie(point, offset_event) = vanishesAtTwoPairs();
+        } else if (parallelism == PLANES_PARALLEL_0123) {
+            // nothing happens
+        } else {
+            CGAL_assertion_msg(false, "Unknown parallelism enum value");
         }
     }
 #endif // CGAL_SS3_OLD_CODE_VANISH_AT
@@ -1225,14 +1465,6 @@ std::pair<Point3SPtr, CGAL::FT>
 SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
                             const std::optional<CGAL::FT> offset_max)
 {
-// #define CGAL_SS3_DEBUG_CRASH_AT
-#ifdef CGAL_SS3_DEBUG_CRASH_AT
-    std::cout << "    -- Crash At\n    " << edge_1->toString() << "\n    " << edge_2->toString() << std::endl;
-
-    CGAL_warning(edge_1->getVertexSrc()->getPoint() == edge_1->getVertexDst()->getPoint());
-    CGAL_warning(edge_2->getVertexSrc()->getPoint() == edge_2->getVertexDst()->getPoint());
-#endif
-
     SkelEdgeDataSPtr data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
     SkelEdgeDataSPtr data_2 = std::dynamic_pointer_cast<SkelEdgeData>(edge_2->getData());
 
@@ -1248,6 +1480,42 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     CGAL::FT speed_r1 = std::dynamic_pointer_cast<SkelFacetData>(facet_r1->getData())->getSpeed();
     CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
     CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
+
+    Quadplane_parallelism parallelism = quadplane_parallelism(facet_l1, facet_r1, facet_l2, facet_r2);
+
+// #define CGAL_SS3_DEBUG_CRASH_AT
+#ifdef CGAL_SS3_DEBUG_CRASH_AT
+    std::cout << "    -- Crash At\n    " << edge_1->toString() << "\n    " << edge_2->toString() << std::endl;
+
+    CGAL_warning(*(edge_1->getVertexSrc()->getPoint()) == *(edge_1->getVertexDst()->getPoint()));
+    CGAL_warning(*(edge_2->getVertexSrc()->getPoint()) == *(edge_2->getVertexDst()->getPoint()));
+
+    std::cout << "Facet L1" << std::endl;
+    std::cout << facet_l1->getID() << std::endl;
+    std::cout << "Facet R1" << std::endl;
+    std::cout << facet_r1->getID() << std::endl;
+    std::cout << "Facet L2" << std::endl;
+    std::cout << facet_l2->getID() << std::endl;
+    std::cout << "Facet R2" << std::endl;
+    std::cout << facet_r2->getID() << std::endl;
+
+    std::cout << "Parallelism: " << parallelism << std::endl;
+#endif
+
+    if (parallelism != PLANES_PARALLELISM_NONE) {
+        std::cerr << "WARNING: QUADFACES WITH PARALLEL PLANES!" << std::endl;
+        std::cerr << "parallelism = " << parallelism << std::endl;
+        if (parallelism == PLANES_PARALLEL_01 ||
+            parallelism == PLANES_PARALLEL_23 ||
+            parallelism == PLANES_PARALLEL_012 ||
+            parallelism == PLANES_PARALLEL_013 ||
+            parallelism == PLANES_PARALLEL_023 ||
+            parallelism == PLANES_PARALLEL_123 ||
+            parallelism == PLANES_PARALLEL_01_23 ||
+            parallelism == PLANES_PARALLEL_0123) {
+            std::exit(1);
+        }
+    }
 
     Point3SPtr point;
     CGAL::FT offset_event;
@@ -1282,15 +1550,6 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     FacetSPtr facet_2_dst = getFacetDst(edge_2);
 
 #ifdef CGAL_SS3_DEBUG_CRASH_AT
-    std::cout << "Facet L1" << std::endl;
-    std::cout << facet_l1->toString() << std::endl;
-    std::cout << "Facet R1" << std::endl;
-    std::cout << facet_r1->toString() << std::endl;
-    std::cout << "Facet L2" << std::endl;
-    std::cout << facet_l2->toString() << std::endl;
-    std::cout << "Facet R2" << std::endl;
-    std::cout << facet_r2->toString() << std::endl;
-
     std::cout << "Facet 1 SRC" << std::endl;
     std::cout << facet_1_src->toString() << std::endl;
     std::cout << "Facet 1 DST" << std::endl;

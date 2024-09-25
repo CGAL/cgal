@@ -116,6 +116,23 @@ public:
                                FacetSPtr f_third,
                                Point3SPtr point);
 
+    static std::pair<Point3SPtr, CGAL::FT> vanishesAtGeneric(FacetSPtr facet_0,
+                                                             FacetSPtr facet_1,
+                                                             FacetSPtr facet_2,
+                                                             FacetSPtr facet_3);
+    static std::pair<Point3SPtr, CGAL::FT> vanishesAtOnePairOpposite(FacetSPtr facet_0,
+                                                                     FacetSPtr facet_1,
+                                                                     FacetSPtr facet_2,
+                                                                     FacetSPtr facet_3);
+    static std::pair<Point3SPtr, CGAL::FT> vanishesAtOnePairContiguous(FacetSPtr facet_0,
+                                                                       FacetSPtr facet_1,
+                                                                       FacetSPtr facet_2,
+                                                                       FacetSPtr facet_3);
+    static std::pair<Point3SPtr, CGAL::FT> vanishesAtTwoPairs(FacetSPtr facet_0,
+                                                              FacetSPtr facet_1,
+                                                              FacetSPtr facet_2,
+                                                              FacetSPtr facet_3);
+
     /**
      * Returns the point where the edge will vanish.
      */
