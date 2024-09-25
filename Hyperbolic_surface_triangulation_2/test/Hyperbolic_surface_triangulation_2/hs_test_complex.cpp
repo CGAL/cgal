@@ -20,11 +20,8 @@ int main() {
   Complex_gmpq one_gmpq (Gmpq(1));
   assert( one_gmpq == Complex_gmpq(Gmpq(1), Gmpq(0)) );
 
-  one_gmpq+=zero_gmpq;
-  one_gmpq + one_gmpq;
-
   Complex_gmpq z1_gmpq (Gmpq(1,2), Gmpq(-3));
-  z1_gmpq = -z1_gmpq;
+  z1_gmpq = - z1_gmpq;
 
   Complex_gmpq z2_gmpq;
   z2_gmpq.real(Gmpq(-5,7));

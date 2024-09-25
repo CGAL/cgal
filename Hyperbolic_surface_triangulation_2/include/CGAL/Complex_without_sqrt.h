@@ -32,6 +32,8 @@ public:
   Complex_without_sqrt();
   Complex_without_sqrt(const FT& real_part);
   Complex_without_sqrt(const FT& real_part, const FT& imaginary_part);
+  template<class U,class V>
+    Complex_without_sqrt(U&& real_part, V&& imaginary_part): _real(std::forward<U>(real_part)), _imag(std::forward<V>(imaginary_part)) {}
 
   void real(const FT& real_part);
   void imag(const FT& imaginary_part);
@@ -46,27 +48,57 @@ public:
   _Self& operator/=(const _Self& other);
   _Self& operator=(const _Self& other);
 
-  template<class FT_>
-  friend Complex_without_sqrt<FT_> operator+(const Complex_without_sqrt<FT_>& z);
-  template<class FT_>
-  friend Complex_without_sqrt<FT_> operator-(const Complex_without_sqrt<FT_>& z);
-  template<class FT_>
-  friend bool operator==(const Complex_without_sqrt<FT_>& z1, const Complex_without_sqrt<FT_>& z2);
-  template<class FT_>
-  friend bool operator!=(const Complex_without_sqrt<FT_>& z1, const Complex_without_sqrt<FT_>& z2);
-  template<class FT_>
-  friend Complex_without_sqrt<FT_> operator+(const Complex_without_sqrt<FT_>& z1, const Complex_without_sqrt<FT_>& z2);
-  template<class FT_>
-  friend Complex_without_sqrt<FT_> operator-(const Complex_without_sqrt<FT_>& z1, const Complex_without_sqrt<FT_>& z2);
-  template<class FT_>
-  friend Complex_without_sqrt<FT_> operator*(const Complex_without_sqrt<FT_>& z1, const Complex_without_sqrt<FT_>& z2);
-  template<class FT_>
-  friend Complex_without_sqrt<FT_> operator/(const Complex_without_sqrt<FT_>& z1, const Complex_without_sqrt<FT_>& z2);
+  // These member versions are not working ?
+  /* _Self operator+(const _Self& z) const; */
+  /* _Self operator-(const _Self& z) const; */
 
-  template<class FT_>
-  friend std::ostream& operator<<(std::ostream& s, const Complex_without_sqrt<FT_>& z);
-  template<class FT_>
-  friend void operator>>(std::istream& s, Complex_without_sqrt<FT_>& z);
+  // Hidden friends
+  friend _Self operator+(const _Self& z) {
+    return z;
+  }
+
+  friend _Self operator-(const _Self& z) {
+    return _Self(-z._real,-z._imag);
+  }
+
+  friend bool operator==(const _Self& z1, const _Self& z2) {
+    return (z1._real==z2._real && z1._imag==z2._imag);
+  }
+
+  friend bool operator!=(const _Self& z1, const _Self& z2) {
+    return !operator==(z1, z2);
+  }
+
+  friend _Self operator+(const _Self& z1, const _Self& z2){
+    return _Self(z1._real+z2._real, z1._imag+z2._imag);
+  }
+
+  friend _Self operator-(const _Self& z1, const _Self& z2) {
+  return _Self(z1._real-z2._real, z1._imag-z2._imag);
+  }
+
+  friend _Self operator*(const _Self& z1, const _Self& z2) {
+    return _Self(z1._real*z2._real-z1._imag*z2._imag, z1._real*z2._imag+z1._imag*z2._real);
+  }
+
+  friend _Self operator/(const _Self& z1, const _Self& z2){
+    FT m2 = z2.squared_modulus();
+    return _Self(z1._real/m2, z2._imag/m2)*z2.conjugate();
+  }
+
+  friend std::ostream& operator<<(std::ostream& s, const _Self& z){
+    s << z._real << std::endl << z._imag << std::endl;
+    return s;
+  }
+
+  friend void operator>>(std::istream& s, _Self& z){
+    std::string line;
+    s >> line;
+    z.real(FT(line));
+    s >> line;
+    z.imag(FT(line));
+  }
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -163,66 +195,6 @@ Complex_without_sqrt<FT>& Complex_without_sqrt<FT>::operator=(const Complex_with
   _real = other.real();
   _imag = other.imag();
   return *this;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-template<class FT>
-Complex_without_sqrt<FT> operator+(const Complex_without_sqrt<FT>& z) {
-  return z;
-}
-
-template<class FT>
-Complex_without_sqrt<FT> operator-(const Complex_without_sqrt<FT>& z) {
-  return Complex_without_sqrt<FT>(-z._real,-z._imag);
-}
-
-template<class FT>
-bool operator==(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<FT>& z2){
-  return (z1._real==z2._real && z1._imag==z2._imag);
-}
-
-template<class FT>
-bool operator!=(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<FT>& z2){
-  return !operator==(z1, z2);
-}
-
-template<class FT>
-Complex_without_sqrt<FT> operator+(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<FT>& z2) {
-  return Complex_without_sqrt<FT>(z1._real+z2._real, z1._imag+z2._imag);
-}
-
-template<class FT>
-Complex_without_sqrt<FT> operator-(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<FT>& z2) {
-  return Complex_without_sqrt<FT>(z1._real-z2._real, z1._imag-z2._imag);
-}
-
-template<class FT>
-Complex_without_sqrt<FT> operator*(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<FT>& z2) {
-  return Complex_without_sqrt<FT>(z1._real*z2._real-z1._imag*z2._imag, z1._real*z2._imag+z1._imag*z2._real);
-}
-
-template<class FT>
-Complex_without_sqrt<FT> operator/(const Complex_without_sqrt<FT>& z1, const Complex_without_sqrt<FT>& z2) {
-  FT m2 = z2.squared_modulus();
-  return Complex_without_sqrt<FT>(z1._real/m2, z2._imag/m2)*z2.conjugate();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-template<class FT>
-std::ostream& operator<<(std::ostream& s, const Complex_without_sqrt<FT>& z){
-  s << z._real << std::endl << z._imag << std::endl;
-  return s;
-}
-
-template<class FT>
-void operator>>(std::istream& s, Complex_without_sqrt<FT>& z){
-  std::string line;
-  s >> line;
-  z.real(FT(line));
-  s >> line;
-  z.imag(FT(line));
 }
 
 } // namespace CGAL
