@@ -41,47 +41,48 @@ public:
     virtual void setHighlight(bool highlight);
     virtual CGAL::FT getOffset() const = 0;  // abstract
 
+    static const int SAVE_OFFSET_EVENT = 0;
+
     static const int CONST_OFFSET_EVENT = 1;
-    static const int SAVE_OFFSET_EVENT = 2;
 
     /** 1 edge vanish event */
-    static const int EDGE_EVENT = 3;
+    static const int EDGE_EVENT = 2;
 
     /** 2 edge vanish event */
-    static const int EDGE_MERGE_EVENT = 4;
+    static const int EDGE_MERGE_EVENT = 3;
 
     /** 3 edge vanish event */
-    static const int TRIANGLE_EVENT = 5;
+    static const int TRIANGLE_EVENT = 4;
 
     /** 4 edge vanish event */
-    static const int DBL_EDGE_MERGE_EVENT = 6;
+    static const int DBL_EDGE_MERGE_EVENT = 5;
 
     /** 5 edge vanish event */
-    static const int DBL_TRIANGLE_EVENT = 7;
+    static const int DBL_TRIANGLE_EVENT = 6;
 
     /** 6 edge vanish event */
-    static const int TETRAHEDRON_EVENT = 8;
+    static const int TETRAHEDRON_EVENT = 7;
 
     /** vertex-vertex contact event I */
-    static const int VERTEX_EVENT = 9;
+    static const int VERTEX_EVENT = 8;
 
     /** vertex-vertex contact event II */
-    static const int FLIP_VERTEX_EVENT = 10;
+    static const int FLIP_VERTEX_EVENT = 9;
 
     /** vertex-edge contact event */
-    static const int SURFACE_EVENT = 11;
+    static const int SURFACE_EVENT = 10;
 
     /** vertex-vertex-edge contact event I */
-    static const int POLYHEDRON_SPLIT_EVENT = 12;
+    static const int POLYHEDRON_SPLIT_EVENT = 11;
 
     /** vertex-vertex-edge contact event II */
-    static const int SPLIT_MERGE_EVENT = 13;
+    static const int SPLIT_MERGE_EVENT = 12;
 
     /** edge-edge contact event */
-    static const int EDGE_SPLIT_EVENT = 14;
+    static const int EDGE_SPLIT_EVENT = 13;
 
     /** vertex-facet contact event */
-    static const int PIERCE_EVENT = 15;
+    static const int PIERCE_EVENT = 14;
 
     virtual int getType() const;
 
