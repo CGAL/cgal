@@ -54,7 +54,7 @@ Because there is no need for dividing values during the algorithm, the
 numbers can get really huge (all the computations are made using a lot
 of multiplications). Therefore it is strongly recommended to use a
 number type that can handle numbers of arbitrary length (e.g.,
-`leda_integer` in combination with the homogeneous representation
+`Exact_integer` in combination with the homogeneous representation
 of the points). But these large numbers have a disadvantage:
 Operations on them are slower as greater the number gets. Therefore it
 is possible to shorten the numbers by using the compiler flag
