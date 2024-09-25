@@ -237,6 +237,7 @@ bool SimpleStraightSkel::isReflex(VertexSPtr vertex) {
             EdgeSPtr edge = EdgeSPtr(edge_wptr);
             if (!isReflex(edge)) {
                 result = false;
+                break;
             }
         }
     }
@@ -255,6 +256,7 @@ bool SimpleStraightSkel::isConvex(VertexSPtr vertex) {
             EdgeSPtr edge = EdgeSPtr(edge_wptr);
             if (isReflex(edge)) {
                 result = false;
+                break;
             }
         }
     }
