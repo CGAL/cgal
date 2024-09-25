@@ -98,6 +98,21 @@ protected:
     int id_;
 };
 
+class AbstractEventSPtrCompare
+  : public CGAL::cpp98::binary_function<bool, AbstractEventSPtr, AbstractEventSPtr>
+{
+public:
+    bool operator()(const AbstractEventSPtr& eventA,
+                    const AbstractEventSPtr& eventB) const
+    {
+        if (eventA->getOffset() == eventB->getOffset()) {
+            return (eventA->getType() > eventB->getType());
+        }
+
+        return (eventA->getOffset() < eventB->getOffset());
+    }
+};
+
 } } }
 
 #endif /* DATA_3D_ABSTRACTEVENT_H */

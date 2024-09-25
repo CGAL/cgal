@@ -25,9 +25,12 @@
 #include "data/3d/Triangle.h"
 #include "data/3d/Polyhedron.h"
 #include "data/3d/KernelFactory.h"
+#include "data/3d/skel/SkelFacetData.h"
+
 #include "util/StringFactory.h"
 
 #include <cmath>
+#include <random>
 #include <sstream>
 
 namespace data { namespace _3d {
@@ -622,6 +625,48 @@ Plane3SPtr Facet::plane() {
     }
     DEBUG_SPTR(this->plane_);
     return this->plane_;
+}
+
+void Facet::storePlaneCoefficients()
+{
+    if (!this->plane_) {
+        this->initPlane();
+    }
+    cachedPlane_ = plane_;
+}
+
+void Facet::perturbPlaneCoefficients()
+{
+    if (!this->plane_) {
+        this->initPlane();
+    }
+
+    auto nudge = [](const CGAL::FT& v) {
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<> rdist(1e-10, 1e-9);
+
+        CGAL::FT step = rdist(gen);
+        CGAL::FT nv = v + step;
+        return nv;
+    };
+
+    CGAL::FT na = nudge(plane_->a());
+    CGAL::FT nb = nudge(plane_->b());
+    CGAL::FT nc = nudge(plane_->c());
+    CGAL::FT nd = nudge(plane_->d());
+    CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc));
+
+    // @todo if it's zero, nudge differently
+    // @todo also, it shouldn't invert the face (bounded normal change)
+    CGAL_assertion(!is_zero(n));
+
+    plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, nd/n);
+}
+
+void Facet::restorePlaneCoefficients()
+{
+    plane_ = cachedPlane_;
 }
 
 bool Facet::makeFirstConvex() {

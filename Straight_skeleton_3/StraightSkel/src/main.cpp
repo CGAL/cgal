@@ -377,7 +377,7 @@ int main(int argc, const char* argv[]) {
         std::cout << "Normalize plane coefficients..." << std::endl;
         algo::_3d::SimpleStraightSkel::harmonizeFacetPlanes(polyhedron);
 
-        // since we have sanitized plane values, always sanitize so the points are on the facets
+        // since we have modified plane coeffiecients, ensure that points are on the facets
         std::cout << "Sanitize..." << std::endl;
         std::string description = polyhedron->getDescription();
         polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);

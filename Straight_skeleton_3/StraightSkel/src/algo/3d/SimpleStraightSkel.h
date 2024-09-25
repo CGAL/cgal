@@ -22,10 +22,12 @@
 #include "algo/ptrs.h"
 #include "algo/3d/ptrs.h"
 #include "data/3d/ptrs.h"
+#include "data/3d/skel/AbstractEvent.h"
 #include "data/3d/skel/ptrs.h"
 
 #include <list>
 #include <optional>
+#include <queue>
 #include <utility>
 
 namespace algo { namespace _3d {
@@ -35,6 +37,10 @@ using namespace data::_3d::skel;
 
 class SimpleStraightSkel {
 public:
+    using PQ = std::priority_queue<AbstractEventSPtr,
+                                   std::vector<AbstractEventSPtr>,
+                                   AbstractEventSPtrCompare>;
+
     virtual ~SimpleStraightSkel();
 
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron);
@@ -132,86 +138,106 @@ public:
     /**
      * Edge flip event.
      */
-    static EdgeEventSPtr nextEdgeEvent(PolyhedronSPtr polyhedron,
-                                       const CGAL::FT curr_offset,
-                                       CGAL::FT& curr_time_to_next_event);
+    static void collectEdgeEvents(PolyhedronSPtr polyhedron,
+                                  const CGAL::FT current_offset,
+                                  CGAL::FT& curr_time_to_next_event,
+                                  PQ& queue);
 
-    static EdgeMergeEventSPtr nextEdgeMergeEvent(PolyhedronSPtr polyhedron,
-                                                 const CGAL::FT curr_offset,
-                                                 CGAL::FT& curr_time_to_next_event);
+    static void collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
+                                       const CGAL::FT current_offset,
+                                       CGAL::FT& curr_time_to_next_event,
+                                       PQ& queue);
 
     /**
      * The triangle on the surface vanishes.
      */
-    static TriangleEventSPtr nextTriangleEvent(PolyhedronSPtr polyhedron,
-                                               const CGAL::FT curr_offset,
-                                               CGAL::FT& curr_time_to_next_event);
+    static void collectTriangleEvents(PolyhedronSPtr polyhedron,
+                                      const CGAL::FT current_offset,
+                                      CGAL::FT& curr_time_to_next_event,
+                                      PQ& queue);
 
-    static DblEdgeMergeEventSPtr nextDblEdgeMergeEvent(PolyhedronSPtr polyhedron,
-                                                       const CGAL::FT curr_offset,
-                                                       CGAL::FT& curr_time_to_next_event);
+    static void collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
+                                          const CGAL::FT current_offset,
+                                          CGAL::FT& curr_time_to_next_event,
+                                          PQ& queue);
 
-    static DblTriangleEventSPtr nextDblTriangleEvent(PolyhedronSPtr polyhedron,
-                                                     const CGAL::FT curr_offset,
-                                                     CGAL::FT& curr_time_to_next_event);
+    static void collectDblTriangleEvents(PolyhedronSPtr polyhedron,
+                                         const CGAL::FT current_offset,
+                                         CGAL::FT& curr_time_to_next_event,
+                                         PQ& queue);
 
     /**
      * A tetrahedron causes one final event only.
      */
-    static TetrahedronEventSPtr nextTetrahedronEvent(PolyhedronSPtr polyhedron,
-                                                     const CGAL::FT curr_offset,
-                                                     CGAL::FT& curr_time_to_next_event);
+    static void collectTetrahedronEvents(PolyhedronSPtr polyhedron,
+                                         const CGAL::FT current_offset,
+                                         CGAL::FT& curr_time_to_next_event,
+                                         PQ& queue);
 
     /**
      * Two vertices crash into each other.
      */
-    static VertexEventSPtr nextVertexEvent(PolyhedronSPtr polyhedron,
-                                           const CGAL::FT curr_offset,
-                                           CGAL::FT& curr_time_to_next_event);
+    static void collectVertexEvents(PolyhedronSPtr polyhedron,
+                                    const CGAL::FT current_offset,
+                                    CGAL::FT& curr_time_to_next_event,
+                                    PQ& queue);
 
-    static FlipVertexEventSPtr nextFlipVertexEvent(PolyhedronSPtr polyhedron,
-                                                   const CGAL::FT curr_offset,
-                                                   CGAL::FT& curr_time_to_next_event);
+    static void collectFlipVertexEvents(PolyhedronSPtr polyhedron,
+                                        const CGAL::FT current_offset,
+                                        CGAL::FT& curr_time_to_next_event,
+                                        PQ& queue);
 
     /**
      * Split event on the surface.
      * Edges do not need to be reflex.
      */
-    static SurfaceEventSPtr nextSurfaceEvent(PolyhedronSPtr polyhedron,
-                                             const CGAL::FT curr_offset,
-                                             CGAL::FT& curr_time_to_next_event);
+    static void collectSurfaceEvents(PolyhedronSPtr polyhedron,
+                                     const CGAL::FT current_offset,
+                                     CGAL::FT& curr_time_to_next_event,
+                                     PQ& queue);
 
     /**
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
-    static PolyhedronSplitEventSPtr nextPolyhedronSplitEvent(PolyhedronSPtr polyhedron,
-                                                             const CGAL::FT curr_offset,
-                                                             CGAL::FT& curr_time_to_next_event);
+    static void collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
+                                             const CGAL::FT current_offset,
+                                             CGAL::FT& curr_time_to_next_event,
+                                             PQ& queue);
 
-    static SplitMergeEventSPtr nextSplitMergeEvent(PolyhedronSPtr polyhedron,
-                                                   const CGAL::FT curr_offset,
-                                                   CGAL::FT& curr_time_to_next_event);
+    static void collectSplitMergeEvents(PolyhedronSPtr polyhedron,
+                                        const CGAL::FT current_offset,
+                                        CGAL::FT& curr_time_to_next_event,
+                                        PQ& queue);
 
     /**
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
-    static EdgeSplitEventSPtr nextEdgeSplitEvent(PolyhedronSPtr polyhedron,
-                                                 const CGAL::FT curr_offset,
-                                                 CGAL::FT& curr_time_to_next_event);
+    static void collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
+                                       const CGAL::FT current_offset,
+                                       CGAL::FT& curr_time_to_next_event,
+                                       PQ& queue);
 
     /**
      * A reflex vertex reaches a facet.
      */
-    static PierceEventSPtr nextPierceEvent(PolyhedronSPtr polyhedron,
-                                           const CGAL::FT curr_offset,
-                                           CGAL::FT& curr_time_to_next_event);
+    static void collectPierceEvents(PolyhedronSPtr polyhedron,
+                                    const CGAL::FT current_offset,
+                                    CGAL::FT& curr_time_to_next_event,
+                                    PQ& queue);
+
+    /**
+     * Collect all events for the polyhedron
+     */
+    void collectEvents(PolyhedronSPtr polyhedron,
+                       const CGAL::FT current_offset,
+                       PQ& queue);
 
     /**
      * Determines the next event.
      */
-    AbstractEventSPtr nextEvent(PolyhedronSPtr polyhedron, CGAL::FT offset);
+    std::pair<AbstractEventSPtr, bool> nextEvent(PQ& queue);
 
     /**
      * Normalize facet planes
@@ -222,6 +248,12 @@ public:
      * Normalize facet planes, ensuring parallel facets receive the same plane coefficients.
     */
     static void harmonizeFacetPlanes(PolyhedronSPtr polyhedron);
+
+    PolyhedronSPtr enablePerturbedMode(PolyhedronSPtr polyhedron, const CGAL::FT simultaneousTime);
+
+    PolyhedronSPtr disablePerturbedMode(PolyhedronSPtr polyhedron,
+                                        CGAL::FT currentOffset,
+                                        CGAL::FT nextEventOffset);
 
     /**
      * Appends a node of an event to the skeleton.
@@ -260,6 +292,9 @@ protected:
     AbstractVertexSplitterSPtr vertex_splitter_;
     int edge_event_;
     StraightSkeletonSPtr skel_result_;
+
+    bool usingPerturbedMode_ = false;
+    CGAL::FT simultaneousOffset_ = 0;
 };
 
 } }

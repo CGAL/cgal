@@ -109,6 +109,21 @@ public:
     bool initPlane();
     Plane3SPtr plane();
 
+    /**
+     * Store the current plane ahead of perturbation
+     */
+    void storePlaneCoefficients();
+
+    /**
+     * Nudge the plane coefficients to get rid of simultaneous events
+     */
+    void perturbPlaneCoefficients();
+
+    /**
+     * Nudge back the plane coefficients to the previous value
+     */
+    void restorePlaneCoefficients();
+
     bool makeFirstConvex();
 
     data::_2d::PolygonSPtr toPolygon();
@@ -125,6 +140,9 @@ public:
     FacetDataSPtr data_;
     int id_;
     Plane3SPtr plane_;
+
+    Plane3SPtr cachedPlane_;
+    CGAL::FT cachedSpeed_;
 };
 
 } }

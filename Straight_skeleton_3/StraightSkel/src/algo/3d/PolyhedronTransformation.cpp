@@ -273,6 +273,10 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
             data = SkelFacetData::create(facet);
             data->setSpeed(speed);
         }
+
+        offset_facet->cachedPlane_ = facet->cachedPlane_;
+        offset_facet->cachedSpeed_ = facet->cachedSpeed_;
+
         Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
         offset_facet->setPlane(offset_plane);
         std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
@@ -319,8 +323,10 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         result->addFacet(offset_facet);
     }
 
-    assert(polyhedron->edges().size() == result->edges().size());
-    assert(polyhedron->facets().size() == result->facets().size());
+    result->initializeAllIDs();
+
+    CGAL_postcondition(polyhedron->edges().size() == result->edges().size());
+    CGAL_postcondition(polyhedron->facets().size() == result->facets().size());
 
     return result;
 }
