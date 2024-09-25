@@ -517,6 +517,36 @@ void Polyhedron::setID(int id) {
     this->id_ = id;
 }
 
+void Polyhedron::initializeAllIDs() {
+    resetAllIDs();
+
+    unsigned int vertex_id = 0;
+    unsigned int edge_id = 0;
+    unsigned int facet_id = 0;
+
+    std::list<FacetSPtr>::iterator it_f = facets_.begin();
+    while (it_f != facets_.end()) {
+        FacetSPtr facet = *it_f++;
+        std::list<TriangleSPtr>::iterator it_t = facet->triangles().begin();
+        while (it_t != facet->triangles().end()) {
+            TriangleSPtr triangle = *it_t++;
+            triangle->setID(-1);
+        }
+        facet->setID(facet_id++);
+    }
+    std::list<EdgeSPtr>::iterator it_e = edges_.begin();
+    while (it_e != edges_.end()) {
+        EdgeSPtr edge = *it_e++;
+        edge->setID(edge_id++);
+    }
+    std::list<VertexSPtr>::iterator it_v = vertices_.begin();
+    while (it_v != vertices_.end()) {
+        VertexSPtr vertex = *it_v++;
+        vertex->setID(vertex_id++);
+    }
+    setID(-1);
+}
+
 void Polyhedron::resetAllIDs() {
     std::list<FacetSPtr>::iterator it_f = facets_.begin();
     while (it_f != facets_.end()) {

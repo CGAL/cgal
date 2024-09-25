@@ -72,6 +72,7 @@ public:
     int getID() const;
     void setID(int id);
 
+    void initializeAllIDs();
     void resetAllIDs();
 
     std::string getDescription() const;
