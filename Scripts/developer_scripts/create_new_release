@@ -136,7 +136,7 @@ HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
 
 
-PATH=$PATH:/usr/local/bin:/usr/bin/gnu
+PATH=$PATH:/usr/local/bin:/usr/sbin
 
 # Working dir
 TMPDIR="`pwd`"
