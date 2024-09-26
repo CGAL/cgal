@@ -6,6 +6,7 @@
 #include <CGAL/Isosurfacing_3/Marching_cubes_domain_3.h>
 #include <CGAL/Isosurfacing_3/Value_function_3.h>
 #include <CGAL/Isosurfacing_3/Gradient_function_3.h>
+#include <CGAL/Isosurfacing_3/internal/Orthtree_domain_3.h>
 #include <CGAL/Octree.h>
 
 #include <CGAL/IO/polygon_soup_io.h>

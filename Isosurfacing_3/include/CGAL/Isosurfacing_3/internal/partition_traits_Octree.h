@@ -263,12 +263,24 @@ public:
                             const Orthtree& o,
                             Sequential_tag)
   {
-    //for (const cell_descriptor& v : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
-    //  f(v);
-
     std::set<edge_descriptor> edge_set = get_leaf_edges(o);
     for(const edge_descriptor& e : o.leaf_edges())
        f(e);
+  }
+
+  template <typename Functor>
+  static void for_each_edge(Functor& f,
+                            std::vector<edge_descriptor>& edges,
+                            const Orthtree& o,
+                            Sequential_tag)
+  {
+    if (edges.empty()) {
+      std::set<edge_descriptor> edge_set = get_leaf_edges(o, edges);
+      std::copy(edge_set.begin(), edge_set.end(), std::back_inserter(edges));
+    }
+
+    for (const edge_descriptor& e : edges)
+      f(e);
   }
 
   template <typename Functor>
@@ -277,6 +289,20 @@ public:
                             CGAL::Sequential_tag)
   {
     for (const cell_descriptor& v : o.traverse(CGAL::Orthtrees::Leaves_traversal<typename Orthtree::Orthtree>(o)))
+      f(v);
+  }
+
+  template <typename Functor>
+  static void for_each_cell(Functor& f,
+                            std::vector<cell_descriptor>& cells,
+                            const Orthtree& o,
+                            CGAL::Sequential_tag)
+  {
+    if (cells.empty()) {
+      auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<typename Orthtree::Orthtree>(o));
+      std::copy(cell_range.begin(), cell_range.end(), std::back_inserter(cells));
+    }
+    for (const cell_descriptor& v : cells)
       f(v);
   }
 
@@ -306,6 +332,25 @@ public:
 
     tbb::parallel_for_each(edges.begin(), edges.end(), f);
   }
+  template <typename Functor>
+  static void for_each_edge(Functor& f,
+                            std::vector<edge_descriptor>& edges,
+                            const Orthtree& o,
+                            Parallel_tag)
+  {
+    if (edges.empty()) {
+      std::set<edge_descriptor> edge_set = get_leaf_edges(o);
+      std::copy(edge_set.begin(), edge_set.end(), std::back_inserter(edges));
+    }
+
+    auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
+      {
+        for (std::size_t i = r.begin(); i != r.end(); ++i)
+          f(edges[i]);
+      };
+
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, edges.size()), iterator);
+  }
 
   template <typename Functor>
   static void for_each_cell(Functor& f,
@@ -321,12 +366,37 @@ public:
     const auto& cells = o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o));
     tbb::parallel_for_each(cells.begin(), cells.end(), func);
   }
+  template <typename Functor>
+  static void for_each_cell(Functor& f,
+                            std::vector<cell_descriptor>& cells,
+                            const Orthtree& o,
+                            Parallel_tag)
+  {
+    if (cells.empty()) {
+      auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<typename Orthtree::Orthtree>(o));
+      std::copy(cell_range.begin(), cell_range.end(), std::back_inserter(cells));
+    }
+
+    auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
+      {
+        for (std::size_t i = r.begin(); i != r.end(); ++i) {
+          const Uniform_coords& uc = uniform_coordinates(cells[i], o);
+          f(lex_index(uc[0], uc[1], uc[2], o.depth()));
+        }
+      };
+
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, cells.size()), iterator);
+  }
 #endif // CGAL_LINKED_WITH_TBB
 
   template <typename ConcurrencyTag, typename Functor>
   static void for_each_vertex(Functor& f, const Orthtree& o) { return for_each_vertex(f, o, ConcurrencyTag{}); }
   template <typename ConcurrencyTag, typename Functor>
+  static void for_each_edge(Functor& f, std::vector<edge_descriptor>& edges, const Orthtree& o) { return for_each_edge(f, edges, o, ConcurrencyTag{}); }
+  template <typename ConcurrencyTag, typename Functor>
   static void for_each_edge(Functor& f, const Orthtree& o) { return for_each_edge(f, o, ConcurrencyTag{}); }
+  template <typename ConcurrencyTag, typename Functor>
+  static void for_each_cell(Functor& f, std::vector<cell_descriptor>& cells, const Orthtree& o) { return for_each_cell(f, cells, o, ConcurrencyTag{}); }
   template <typename ConcurrencyTag, typename Functor>
   static void for_each_cell(Functor& f, const Orthtree& o) { return for_each_cell(f, o, ConcurrencyTag{}); }
 
