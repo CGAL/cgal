@@ -487,6 +487,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * `std::tuple<Weighted_point_3, int, Index>`, where `Weighted_point_3` represents the position and weight of the point,
  * `int` the dimension of the minimal subcomplex on which the point lies, and `Index` the corresponding subcomplex index.
  *
+ * If the parameter `parameters::initial_points_generator()` is set, the points will be inserted before calling the functor.
  * If this parameter is set, the domain's `construct_initial_points_object()` will not be called.
  * If the parameter `parameters::initial_points_generator()` is set, the points will be inserted before calling the functor.
  *
