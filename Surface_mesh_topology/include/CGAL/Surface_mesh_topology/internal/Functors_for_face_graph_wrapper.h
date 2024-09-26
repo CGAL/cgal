@@ -35,8 +35,7 @@ namespace internal {
 ////////////////////////////////////////////////////////////////////////////////
 /// Get_beta
 template<typename HEG, unsigned int i>
-struct Get_beta
-{};
+struct Get_beta;
 
 template<typename HEG>
 struct Get_beta<HEG, 0>
