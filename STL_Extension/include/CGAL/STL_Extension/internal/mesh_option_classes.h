@@ -219,11 +219,6 @@ struct Initialization_options
     return initial_points_generator_(pts, n);
   }
 
-  const Initial_points_generator& generator() const
-  {
-    return initial_points_generator_;
-  }
-
   bool is_default() const
   {
     return begin_it == end_it
