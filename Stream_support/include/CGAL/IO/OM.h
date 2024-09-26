@@ -31,10 +31,10 @@ template <typename SM, typename VFeaturePM, typename EFeaturePM>
 bool read_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
-  typedef boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
-  typedef boost::graph_traits<SM>::vertex_descriptor sm_vertex_descriptor;
-  typedef boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
-  typedef boost::graph_traits<SM>::halfedge_descriptor sm_halfedge_descriptor;
+  typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
+  typedef typename boost::graph_traits<SM>::vertex_descriptor sm_vertex_descriptor;
+  typedef typename boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
+  typedef typename boost::graph_traits<SM>::halfedge_descriptor sm_halfedge_descriptor;
 
   OMesh omesh;
   OpenMesh::IO::Options options = OpenMesh::IO::Options::Status;
@@ -74,10 +74,10 @@ template <typename SM, typename VFeaturePM, typename EFeaturePM>
 bool write_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
-  typedef boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
-  typedef boost::graph_traits<SM>::vertex_descriptor sm_vertex_descriptor;
-  typedef boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
-  typedef boost::graph_traits<SM>::halfedge_descriptor sm_halfedge_descriptor;
+  typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
+  typedef typename boost::graph_traits<SM>::vertex_descriptor sm_vertex_descriptor;
+  typedef typename boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
+  typedef typename boost::graph_traits<SM>::halfedge_descriptor sm_halfedge_descriptor;
 
   std::map<sm_vertex_descriptor, om_vertex_descriptor> v2v;
   auto v2vpmap = boost::make_assoc_property_map(v2v);

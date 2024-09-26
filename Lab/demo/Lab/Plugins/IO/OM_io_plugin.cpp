@@ -187,8 +187,8 @@ save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items)
   }
   else
   {
-    using edge_descriptor = typename boost::graph_traits<SMesh>::edge_descriptor;
-    using vertex_descriptor = typename boost::graph_traits<SMesh>::vertex_descriptor;
+    using edge_descriptor = boost::graph_traits<SMesh>::edge_descriptor;
+    using vertex_descriptor = boost::graph_traits<SMesh>::vertex_descriptor;
 
     res = CGAL::IO::write_OM((const char*)fileinfo.filePath().toUtf8()
                             , *sm_item->face_graph()
