@@ -55,8 +55,6 @@ bool read_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
     for(auto v : vertices(omesh)){
         put(vfpm, v2v[v], omesh.status(v).feature());
     }
-  }else{
-    std::cout << "no vertex status" << std::endl;
   }
 
   if(options.edge_has_status()){
@@ -64,8 +62,6 @@ bool read_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
         auto sme = edge(h2h[halfedge(e,omesh)], sm);
         put(efpm, sme , omesh.status(OpenMesh::EdgeHandle(e.idx())).feature());
     }
-  }else{
-    std::cout << "no edge status" << std::endl;
   }
   return true;
 }
@@ -92,25 +88,19 @@ bool write_OM(std::string fname, SM& sm, VFeaturePM vfpm, EFeaturePM efpm)
   omesh.request_edge_status();
   omesh.request_vertex_status();
 
-  std::size_t nbe = 0;
-  std::size_t nbv = 0;
   for (auto h : halfedges(sm))
   {
     om_halfedge_descriptor omh = h2h.at(h);
     const bool isfeature = get(efpm, edge(h, sm));
-    if (isfeature) nbe++;
     omesh.status(omesh.edge_handle(omh)).set_feature(isfeature);
   }
   for (auto v : vertices(sm))
   {
     auto omv = v2v.at(v);
     const bool isfeature = get(vfpm, v);
-    if (isfeature) nbv++;
     omesh.status(omv).set_feature(isfeature);
   }
 
-  std::cout << nbv << " feature vertices" << std::endl;
-  std::cout << nbe << " feature edges" << std::endl;
   return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status);
 }
 
