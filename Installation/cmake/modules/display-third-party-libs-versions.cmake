@@ -6,6 +6,8 @@ set(LIBRARIES_TO_CHECK
   OpenGR OpenCV ZLIB
 )
 
+include(${CMAKE_CURRENT_LIST_DIR}/CGAL_TweakFindBoost.cmake)
+
 function(get_library_version header_path major_macro minor_macro patchlevel_macro version_var)
   if(EXISTS ${header_path})
     file(READ ${header_path} HEADER_CONTENT)
