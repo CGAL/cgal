@@ -419,10 +419,6 @@ public:
     return m_graph[edge].crossed.count(sp_idx) == 1;
   }
 
-  void set_crossed(const Edge_descriptor& edge, std::size_t sp_idx) {
-    CGAL_assertion(false);  // AF:  I am surprised that after the assert we do something
-    m_graph[edge].crossed.insert(sp_idx);
-  }
 };
 
 template<typename GeomTraits, typename IntersectionKernel> std::size_t Intersection_graph<GeomTraits, IntersectionKernel>::Edge_property::edge_counter = 0;
