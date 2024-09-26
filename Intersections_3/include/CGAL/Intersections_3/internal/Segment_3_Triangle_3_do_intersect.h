@@ -15,7 +15,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
-
+#include <CGAL/assertions.h>
 namespace CGAL {
 namespace Intersections {
 namespace internal {
@@ -80,7 +80,7 @@ bool do_intersect_coplanar(const typename K::Point_3& A,
       return coplanar_orientation(*a,*b,q) != NEGATIVE
           && coplanar_orientation(*c,*a,p) != NEGATIVE;
     default:// should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return false;
     }
   case NEGATIVE:
@@ -110,7 +110,7 @@ bool do_intersect_coplanar(const typename K::Point_3& A,
           && coplanar_orientation(*c,*a,q) != NEGATIVE;
 
     default:// should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return false;
     }
   case COLLINEAR:
@@ -140,12 +140,12 @@ bool do_intersect_coplanar(const typename K::Point_3& A,
       // assumed to be non flat
 
     default:// should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return false;
 
     }
   default:// should not happen.
-    CGAL_kernel_assertion(false);
+    CGAL_unreachable();
     return false;
   }
 }
@@ -216,7 +216,7 @@ do_intersect(const typename K::Triangle_3& t,
           && orientation(p,q,b,c) != POSITIVE
           && orientation(p,q,c,a) != POSITIVE;
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return false;
     }
   case NEGATIVE:
@@ -238,7 +238,7 @@ do_intersect(const typename K::Triangle_3& t,
           && orientation(q,p,c,a) != POSITIVE;
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return false;
     }
   case COPLANAR: // p belongs to the triangle's supporting plane
@@ -260,11 +260,11 @@ do_intersect(const typename K::Triangle_3& t,
       return do_intersect_coplanar(t,s,k);
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return false;
     }
   default: // should not happen.
-    CGAL_kernel_assertion(false);
+    CGAL_unreachable();
     return false;
   }
 }

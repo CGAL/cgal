@@ -15,6 +15,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Intersections {
@@ -58,11 +59,11 @@ do_intersect(const typename K::Triangle_3& t,
           case NEGATIVE: return (orientation(p,q,c,a) != POSITIVE);
           case COPLANAR: return true;
           default: // should not happen.
-            CGAL_kernel_assertion(false);
+            CGAL_unreachable();
             return false;
         }
       default: // should not happen.
-        CGAL_kernel_assertion(false);
+        CGAL_unreachable();
         return false;
     }
   }

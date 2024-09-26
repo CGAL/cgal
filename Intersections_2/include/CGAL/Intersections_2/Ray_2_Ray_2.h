@@ -22,6 +22,7 @@
 #include <CGAL/Segment_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/kernel_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Intersections_2/Line_2_Line_2.h>
 #include <CGAL/Intersection_traits_2.h>
@@ -185,7 +186,7 @@ Ray_2_Ray_2_pair<K>::intersection_type() const
         }
         }
     default:
-        CGAL_kernel_assertion(false); // should not be reached:
+        CGAL_unreachable(); // should not be reached:
         return _result;
     }
 }

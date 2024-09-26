@@ -387,8 +387,8 @@ ts_intersection(const typename K::Triangle_3 &t,
         // Mesh_3, because if the intersection is not a point, it is
         // ignored anyway.
         return result_type();
-      default: // should not happen.
-        CGAL_kernel_assertion(false);
+      default:
+        CGAL_unreachable();
         return result_type();
       }
   }

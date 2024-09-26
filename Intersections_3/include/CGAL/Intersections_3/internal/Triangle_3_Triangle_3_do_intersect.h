@@ -15,6 +15,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Uncertain.h>
 
 namespace CGAL {
@@ -305,19 +306,19 @@ do_intersect(const typename K::Triangle_3& t1,
             case COPLANAR:
               return do_intersect_coplanar(t1,t2,k);
             default: // should not happen.
-              CGAL_kernel_assertion(false);
+              CGAL_unreachable();
               return false;
           }
           break;
 
         default: // should not happen.
-          CGAL_kernel_assertion(false);
+          CGAL_unreachable();
           return false;
       }
       break;
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return false;
   }
 
@@ -430,19 +431,19 @@ do_intersect(const typename K::Triangle_3& t1,
 
               return do_intersect_coplanar(t1,t2,k);
             default: // should not happen.
-              CGAL_kernel_assertion(false);
+              CGAL_unreachable();
               return false;
           }
           break;
 
         default: // should not happen.
-          CGAL_kernel_assertion(false);
+          CGAL_unreachable();
           return false;
       }
       break;
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return false;
   }
 

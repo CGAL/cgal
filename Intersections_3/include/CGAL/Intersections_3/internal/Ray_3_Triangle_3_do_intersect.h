@@ -15,6 +15,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Intersections {
@@ -140,7 +141,7 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       return visitor.result(coplanar_orientation(*a,*c,p) != POSITIVE);
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return visitor.result(false);
     }
 
@@ -166,7 +167,7 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       return visitor.result(coplanar_orientation(*b,*a,p) != POSITIVE);
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return visitor.result(false);
     }
 
@@ -191,12 +192,12 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       // case pqc == COLLINEAR is imposiible
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return visitor.result(false);
     }
 
   default: // should not happen.
-    CGAL_kernel_assertion(false);
+    CGAL_unreachable();
     return visitor.result(false);
   }
 }
@@ -263,7 +264,7 @@ do_intersect(const typename K::Triangle_3& t,
     }
     // case COPLANAR: should not happen
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return visitor.result(false);
     }
 
@@ -293,7 +294,7 @@ do_intersect(const typename K::Triangle_3& t,
       // case COPLANAR: should not happen
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return visitor.result(false);
     }
 
@@ -317,12 +318,12 @@ do_intersect(const typename K::Triangle_3& t,
       // case COPLANAR: should not happen
 
     default: // should not happen.
-      CGAL_kernel_assertion(false);
+      CGAL_unreachable();
       return visitor.result(false);
     }
 
   default: // should not happen.
-    CGAL_kernel_assertion(false);
+    CGAL_unreachable();
     return visitor.result(false);
   }
 }
