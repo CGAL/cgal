@@ -483,19 +483,21 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \ingroup PkgMesh3Parameters
  *
  * The function `parameters::initial_points()` enables the user to specify a container model of `Range` that contains
- * initial points to be used in the `make_mesh_3()` function for mesh generation. The `Range` contains elements of type
- * `std::tuple<Weighted_point_3, int, Index>`, where `Weighted_point_3` represents the position and weight of the point,
- * `int` the dimension of the minimal subcomplex on which the point lies, and `Index` the corresponding subcomplex index.
+ * initial points to be used in the `make_mesh_3()` function for mesh generation. The `Range` contains
+ * tuple-like objects containing a `Weighted_point_3`, an `int`, and an `Index`,
+ * where `Weighted_point_3` represents the position and weight of the point,
+ * `int` the dimension of the minimal subcomplex on which the point lies,
+ * and `Index` the corresponding subcomplex index.
  *
  * If the parameter `parameters::initial_points_generator()` is set, the points will be inserted before calling the functor.
- * If this parameter is set, the domain's `construct_initial_points_object()` will not be called.
- * If the parameter `parameters::initial_points_generator()` is set, the points will be inserted before calling the functor.
+ * If the insertion of initial points, together with the input generator, do not generate enough points,
+ * the domain's `construct_initial_points_object()` will be called.
  *
  * \tparam MeshDomain a model of `MeshDomain_3`
  * \tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
  *
- *  @param initial_points a `Range` that contains points of type
- *  `std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>`
+ * @param initial_points a `Range` that contains points of tuple-like objects of
+ *  `C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index`.
  *
  * \cgalHeading{Example}
  *
