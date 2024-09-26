@@ -780,7 +780,7 @@ march_locate_2D(Face_handle f,
           }
         }
 
-        CGAL_precondition(false);
+        CGAL_assertion(false);
       }
     }
 

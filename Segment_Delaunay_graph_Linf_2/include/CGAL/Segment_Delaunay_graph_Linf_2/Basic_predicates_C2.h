@@ -642,7 +642,7 @@ public:
         return ON_BOUNDED_SIDE;
       default:
         CGAL_SDG_DEBUG(std::cout << "error: should never reach here";);
-        CGAL_assertion( false );
+        CGAL_assertion(false);
         return ON_BOUNDARY;
     }
   }

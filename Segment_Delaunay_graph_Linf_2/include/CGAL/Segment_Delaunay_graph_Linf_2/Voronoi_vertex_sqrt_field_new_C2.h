@@ -1120,7 +1120,7 @@ private:
     } else if (bdiff == 6) {
       compute_pss_lines_side(p, lq, lr, (br+1)%8);
     } else {
-      CGAL_assertion( false );
+      CGAL_assertion(false);
     }
     CGAL_assertion( oriented_side_of_line(lq, this->point()) != ZERO );
     CGAL_assertion( oriented_side_of_line(lr, this->point()) != ZERO );
