@@ -382,7 +382,7 @@ int Polynomial<NT>::getTrueDegree() const {
   return -1;        // Zero polynomial
 }
 
-//get i'th Coeff. We check whether i is not greater than the
+//get i-th Coeff. We check whether i is not greater than the
 // true degree and if not then return coeff[i] o/w 0
 template <class NT>
 NT Polynomial<NT>::getCoeffi(int i) const {

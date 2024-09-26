@@ -605,15 +605,15 @@ public:
       if (dir == SMALLER){
         // Check whether the split point is xcv[i]'s source or target.
         if (equal(max_vertex(xcv[i]), p)) {
-          // The entire i'th subcurve belongs to xcv1:
+          // The entire i-th subcurve belongs to xcv1:
           xcv1.push_back(xcv[i]);
         }
         else if (equal(min_vertex(xcv[i]), p)) {
-          // The entire i'th subcurves belongs to xcv2:
+          // The entire i-th subcurves belongs to xcv2:
           xcv2.push_back(xcv[i]);
         }
         else {
-          // The i'th subcurve should be split: The left part(seg1)
+          // The i-th subcurve should be split: The left part(seg1)
           // goes to xcv1, and the right part(seg2) goes to xcv2.
           X_monotone_subcurve_2 seg1, seg2;
           m_poly_traits.subcurve_traits_2()->split_2_object()(xcv[i], p,
