@@ -25,9 +25,10 @@ width-planes.
 \f$ \mathcal{W(S)}=\mathcal{W}_{d_{opt}}\mathcal{(S)}\f$
 </OL>
 
-<I>Note:</I> There might be several optimal build directions. Hence
+\Note There might be several optimal build directions. Hence
 neither the width-planes nor the direction \f$ \mathbf{d}_{opt}\f$ are
-unique - only the width is.
+unique - only the width is.   There may also be duplicates reported,
+different vectors having the same or the opposite directions.
 
 \tparam Traits must be a model for `WidthTraits_3`.
 
