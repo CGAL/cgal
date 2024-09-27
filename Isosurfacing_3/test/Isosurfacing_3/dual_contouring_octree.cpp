@@ -6,13 +6,10 @@
 #include <CGAL/Isosurfacing_3/Marching_cubes_domain_3.h>
 #include <CGAL/Isosurfacing_3/Value_function_3.h>
 #include <CGAL/Isosurfacing_3/Gradient_function_3.h>
-#include <CGAL/Isosurfacing_3/internal/Orthtree_domain_3.h>
-#include <CGAL/Octree.h>
+#include <CGAL/Isosurfacing_3/Octree_partition.h>
 
 #include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/Real_timer.h>
-
-#include <CGAL/Isosurfacing_3/internal/partition_traits_Octree.h>
 
 #include <cmath>
 #include <iostream>
@@ -26,17 +23,15 @@ using Point = typename Kernel::Point_3;
 using Point_range = std::vector<Point>;
 using Polygon_range = std::vector<std::vector<std::size_t> >;
 
-using Orthtree = CGAL::Octree<Kernel, std::vector<typename Kernel::Point_3> >;
-using Values = CGAL::Isosurfacing::Value_function_3<Orthtree>;
-using Gradients = CGAL::Isosurfacing::Gradient_function_3<Orthtree>;
-using MC_Domain = CGAL::Isosurfacing::Marching_cubes_domain_3<Orthtree, Values>;
-using Domain = CGAL::Isosurfacing::Dual_contouring_domain_3<Orthtree, Values, Gradients>;
+using Octree = CGAL::Octree<Kernel, std::vector<typename Kernel::Point_3> >;
+using Values = CGAL::Isosurfacing::Value_function_3<Octree>;
+using Gradients = CGAL::Isosurfacing::Gradient_function_3<Octree>;
+using MC_Domain = CGAL::Isosurfacing::Marching_cubes_domain_3<Octree, Values>;
+using Domain = CGAL::Isosurfacing::Dual_contouring_domain_3<Octree, Values, Gradients>;
 
 // Refine one of the octant
 struct Refine_one_eighth
 {
-  using Octree = Orthtree;
-
   std::size_t min_depth_;
   std::size_t max_depth_;
 
@@ -101,7 +96,11 @@ int main(int argc, char** argv)
   const CGAL::Bbox_3 bbox{-1., -1., -1.,  1., 1., 1.};
   std::vector<Kernel::Point_3> bbox_points { {bbox.xmin(), bbox.ymin(), bbox.zmin()},
     { bbox.xmax(), bbox.ymax(), bbox.zmax() } };
-  Orthtree octree(bbox_points);
+
+  CGAL::Real_timer timer;
+  timer.start();
+
+  Octree octree(bbox_points);
   Refine_one_eighth split_predicate(3, 5);
   octree.refine(split_predicate);
 
@@ -110,9 +109,6 @@ int main(int argc, char** argv)
   octree.dump_to_polylines(oo);
 
   std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
-
-  CGAL::Real_timer timer;
-  timer.start();
 
   // fill up values and gradients
   Values values { sphere_function, octree };
@@ -125,10 +121,10 @@ int main(int argc, char** argv)
   Polygon_range triangles;
 
   // run Dual Contouring
-  CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_tag>(domain, isovalue, points, triangles,
-     CGAL::parameters::do_not_triangulate_faces(true));
+  CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_tag>(domain, isovalue, points, triangles, CGAL::parameters::do_not_triangulate_faces(true));
 
   // run Marching Cubes
+  // ToDo: Does not yet work with topologically correct marching cubes
   //CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(mcdomain, isovalue, points, triangles);
 
   timer.stop();

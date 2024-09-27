@@ -10,8 +10,8 @@
 // Author(s)     : Julian Stahl
 //                 Mael Rouxel-Labbé
 
-#ifndef CGAL_ISOSURFACING_3_INTERNAL_ORTHTREE_DOMAIN_3_H
-#define CGAL_ISOSURFACING_3_INTERNAL_ORTHTREE_DOMAIN_3_H
+#ifndef CGAL_ISOSURFACING_3_INTERNAL_OCTREE_DOMAIN_3_H
+#define CGAL_ISOSURFACING_3_INTERNAL_OCTREE_DOMAIN_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
 
@@ -179,4 +179,4 @@ public:
 } // namespace Isosurfacing
 } // namespace CGAL
 
-#endif // CGAL_ISOSURFACING_3_INTERNAL_ORTHTREE_DOMAIN_3_H
+#endif // CGAL_ISOSURFACING_3_INTERNAL_OCTREE_DOMAIN_3_H

@@ -25,7 +25,7 @@ using Triangle_range = std::vector<std::array<std::size_t, 3> >;
 
 using Mesh = CGAL::Surface_mesh<Point>;
 
-#define CGAL_TESTUISTE_ISOSURFACING_OUTPUT
+#define CGAL_TESTSUITE_ISOSURFACING_OUTPUT
 
 namespace IS = CGAL::Isosurfacing;
 
@@ -62,7 +62,7 @@ void test_implicit_sphere()
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #polygons: " << triangles.size() << std::endl;
 
-#ifdef CGAL_TESTUISTE_ISOSURFACING_OUTPUT
+#ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
   CGAL::IO::write_polygon_soup("MC_implicit_sphere.off", points, triangles);
 #endif
 
@@ -123,7 +123,7 @@ void test_grid_sphere(const std::size_t n)
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #polygons: " << triangles.size() << std::endl;
 
-#ifdef CGAL_TESTUISTE_ISOSURFACING_OUTPUT
+#ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
   const std::string test_name = "test_grid_sphere(" + std::to_string(n) + ")";
   CGAL::IO::write_polygon_soup(test_name + ".off", points, triangles);
 #endif
