@@ -114,18 +114,18 @@ int main(int argc, char** argv)
   Values values { sphere_function, octree };
   Gradients gradients { sphere_gradient, octree };
   Domain domain { octree, values, gradients };
-  MC_Domain mcdomain{ octree, values };
 
   // output containers
   Point_range points;
   Polygon_range triangles;
 
   // run Dual Contouring
-  CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_tag>(domain, isovalue, points, triangles, CGAL::parameters::do_not_triangulate_faces(true));
+  CGAL::Isosurfacing::dual_contouring<CGAL::Parallel_if_available_tag>(domain, isovalue, points, triangles, CGAL::parameters::do_not_triangulate_faces(true));
 
   // run Marching Cubes
   // ToDo: Does not yet work with topologically correct marching cubes
-  //CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(mcdomain, isovalue, points, triangles);
+  // MC_Domain mcdomain{ octree, values };
+  // CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(mcdomain, isovalue, points, triangles);
 
   timer.stop();
 
