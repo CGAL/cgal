@@ -55,6 +55,7 @@ create_single_source_cgal_program("cc_compatible_orientations.cpp")
 create_single_source_cgal_program("hausdorff_distance_remeshing_example.cpp")
 create_single_source_cgal_program("hausdorff_bounded_error_distance_example.cpp")
 create_single_source_cgal_program("isotropic_remeshing_with_custom_sizing_example.cpp")
+create_single_source_cgal_program("isotropic_remeshing_with_allow_move.cpp")
 create_single_source_cgal_program("triangle_mesh_autorefinement.cpp")
 create_single_source_cgal_program("soup_autorefinement.cpp")
 
