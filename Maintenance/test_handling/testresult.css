@@ -92,7 +92,12 @@ TABLE.result TD > a.package_name {
 }
 
 .toggle-button {
-    text-decoration: underline;
+    color: #333;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    text-align: center;
+    border-radius: 5px;
 }
 
 .summary-content{
@@ -145,29 +150,20 @@ TABLE.result TD > a.package_name {
 
 .tpl-toggle-button {
     display: inline-block;
-    margin-bottom: 10px;
-    padding: 6px 12px;
+    padding: 0.3em 0.5em;
     font-size: 14px;
-    color: #333;
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: underline;
 }
 
-.tpl-toggle-button:hover {
+.toggle-button:hover {
     background-color: #e0e0e0;
 }
 
-.tpl-link {
-    color: #0000EE;
-    text-decoration: underline;
+.tpl-row {
     cursor: pointer;
 }
 
-.tpl-link:hover {
-    color: #1A0DAB;
+.tpl-row:hover td {
+    background-color: #d1d1d1 !important;
 }
 
 /* TPL Modal */
@@ -248,11 +244,11 @@ table.tablesorter thead th.tablesorter-headerDesc {
     padding-right: 20px;
 }
 
-table.tablesorter tbody tr:nth-child(odd) {
+table.tablesorter tbody tr:nth-child(odd) td {
     background-color: #e6e6e6;
 }
 
-table.tablesorter tbody tr:nth-child(even) {
+table.tablesorter tbody tr:nth-child(even) td {
     background-color: #f0f0f0;
 }
 
@@ -260,8 +256,4 @@ table.tablesorter tbody td {
     padding: 8px;
     border: 1px solid #ccc;
     text-align: left;
-}
-
-table.tablesorter tbody tr:hover {
-    background-color: #d1d1d1
 }
