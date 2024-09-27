@@ -97,7 +97,7 @@ public:
 private:
   static std::set<edge_descriptor> get_leaf_edges(const Orthtree& o) {
     std::set<edge_descriptor> leaf_edge_set;
-    std::size_t dim = 1 << o.depth();
+    std::size_t dim = std::size_t(1) << o.depth();
     for (Node_index node_index : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
     {
       const Uniform_coords& coords_uniform = uniform_coordinates(node_index, o);
@@ -105,7 +105,7 @@ private:
       // write all leaf edges in a set
       const Uniform_coords& coords_global = o.global_coordinates(node_index);
       const std::size_t depth = o.depth(node_index);
-      const std::size_t df = 1 << (o.depth() - depth);
+      const std::size_t df = std::size_t(1) << (o.depth() - depth);
       for (const auto& edge_voxels : internal::Cube_table::edge_to_voxel_neighbor)
       {
         bool are_all_voxels_leafs = true;
@@ -404,7 +404,7 @@ private:
   static Uniform_coords uniform_coordinates(Node_index node_index, const Orthtree &o)
   {
     Uniform_coords coords = o.global_coordinates(node_index);
-    const std::size_t df = 1 << (o.depth() - o.depth(node_index));
+    const std::size_t df = std::size_t(1) << (o.depth() - o.depth(node_index));
     for (int i = 0; i < 3; ++i)
       coords[i] *= static_cast<uint32_t>(df);
 

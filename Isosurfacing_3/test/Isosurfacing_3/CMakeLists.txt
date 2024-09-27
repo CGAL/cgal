@@ -25,16 +25,13 @@ if(TARGET CGAL::Eigen3_support)
   endif()
 
   #examples to be moved in example when reading to be documented
-  create_single_source_cgal_program("dual_contouring_octree.cpp")
   create_single_source_cgal_program("dual_contouring_strategies.cpp")
   create_single_source_cgal_program("dual_contouring_intersection_oracles.cpp")
 
-  target_link_libraries(dual_contouring_octree PRIVATE CGAL::Eigen3_support)
   target_link_libraries(dual_contouring_strategies PRIVATE CGAL::Eigen3_support)
   target_link_libraries(dual_contouring_intersection_oracles PRIVATE CGAL::Eigen3_support)
 
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(dual_contouring_octree PRIVATE CGAL::TBB_support)
     target_link_libraries(dual_contouring_strategies PRIVATE CGAL::TBB_support)
     target_link_libraries(dual_contouring_intersection_oracles PRIVATE CGAL::TBB_support)
   endif()
