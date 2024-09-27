@@ -277,6 +277,12 @@ Results of the %Dual Contouring algorithm: untriangulated (left column) or trian
 unconstrained vertex location (top row) or constrained vertex location (bottom row).
 \cgalFigureCaptionEnd
 
+\subsection SubSecDCOctreeExample Dual Contouring using Octree
+
+The following example shows the use of an octree for dual contouring or marching cubes.
+
+\cgalExample{Isosurfacing_3/dual_contouring_octree.cpp}
+
 \subsection SubSecImplicitDataExample Implicit Data
 
 The following example shows the usage of Marching Cubes and %Dual Contouring algorithms to extract

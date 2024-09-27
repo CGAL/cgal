@@ -15,6 +15,7 @@ This is similar to graph traits in \ref PkgBGL.
 
 \cgalHasModelsBegin
 \cgalHasModels{`CGAL::Isosurfacing::Cartesian_grid_3`}
+\cgalHasModels{`CGAL::Octree`}
 \cgalHasModelsEnd
 */
 class IsosurfacingPartition_3
