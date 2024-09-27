@@ -2,7 +2,7 @@
 
 ## [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 
-Release date: June 2024
+Release date: September 2024
 
 ### General Changes
 
