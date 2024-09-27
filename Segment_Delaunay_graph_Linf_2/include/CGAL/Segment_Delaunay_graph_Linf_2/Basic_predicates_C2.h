@@ -641,9 +641,7 @@ public:
         CGAL_SDG_DEBUG(std::cout << "ON_BOUNDED_SIDE" << std::endl;);
         return ON_BOUNDED_SIDE;
       default:
-        CGAL_SDG_DEBUG(std::cout << "error: should never reach here";);
-        CGAL_assertion(false);
-        return ON_BOUNDARY;
+        CGAL_unreachable();
     }
   }
 

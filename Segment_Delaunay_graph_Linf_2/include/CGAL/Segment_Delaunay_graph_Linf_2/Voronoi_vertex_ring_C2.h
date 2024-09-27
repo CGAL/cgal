@@ -592,8 +592,8 @@ private:
     const unsigned int bq = bearing(lq);
     const unsigned int br = bearing(lr);
     const unsigned int bdiff = bearing_diff(bq, br);
-    CGAL_assertion( bdiff != 0 );
-    CGAL_assertion( bdiff != 7 );
+    CGAL_assertion( bdiff > 0 );
+    CGAL_assertion( bdiff < 7 );
 
     if (bdiff == 1) {
       compute_pss_corner_and_pt(p, q, r, lq, lr, bq, br);
@@ -605,8 +605,6 @@ private:
       compute_pss_side_p_known(p, q, r, lq, lr, bq, br);
     } else if (bdiff == 6) {
       compute_pss_lines_side(p, lq, lr, (br+1)%8);
-    } else {
-      CGAL_assertion(false);
     }
     CGAL_assertion_code( is_v_computed = true );
     CGAL_assertion( oriented_side_of_line(lq, this->point()) != ZERO );
