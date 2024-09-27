@@ -14,10 +14,7 @@
 #define CGAL_ISOSURFACING_3_INTERNAL_OCTREE_DOMAIN_3_H
 
 #include <CGAL/license/Isosurfacing_3.h>
-
-#include <CGAL/Isosurfacing_3/internal/Cell_type.h>
-#include <CGAL/Isosurfacing_3/internal/partition_traits.h>
-#include <CGAL/Isosurfacing_3/edge_intersection_oracles_3.h>
+#include <CGAL/Isosurfacing_3/internal/Isosurfacing_domain_3.h>
 
 #include <CGAL/Octree.h>
 
