@@ -212,7 +212,7 @@ class Io_3mf_plugin:
       {
         colors.reserve(triangles.size());
         SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
-            mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
+            mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").value();
         for(auto fd : mesh.faces())
         {
           colors.push_back(get(fcolors, fd));
@@ -222,7 +222,7 @@ class Io_3mf_plugin:
       {
         colors.reserve(triangles.size());
         SMesh::Property_map<face_descriptor, int> fpid =
-            mesh.property_map<face_descriptor, int >("f:patch_id").first;
+            mesh.property_map<face_descriptor, int >("f:patch_id").value();
         for(auto fd : mesh.faces())
         {
           int pid = get(fpid, fd);

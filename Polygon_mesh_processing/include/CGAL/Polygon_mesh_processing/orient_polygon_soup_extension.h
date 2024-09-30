@@ -19,8 +19,8 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -190,8 +190,8 @@ void orient_triangle_soup_with_reference_triangle_soup(const ReferencePointRange
   }
 
   typedef typename std::vector<Triangle>::const_iterator Iterator;
-  typedef CGAL::AABB_triangle_primitive<K, Iterator> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
+  typedef CGAL::AABB_triangle_primitive_3<K, Iterator> Primitive;
+  typedef CGAL::AABB_traits_3<K, Primitive> Tree_traits;
 
   CGAL::AABB_tree<Tree_traits> tree(ref_triangles.begin(), ref_triangles.end());
 
@@ -326,7 +326,7 @@ void orient_triangle_soup_with_reference_triangle_mesh(const TriangleMesh& tm_re
   };
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<K, Primitive> Tree_traits;
+  typedef CGAL::AABB_traits_3<K, Primitive> Tree_traits;
 
   boost::filter_iterator<Face_predicate, typename GrT::face_iterator>
       begin(is_not_deg, faces(tm_ref).begin(), faces(tm_ref).end()),

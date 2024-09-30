@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Surface_mesh_deformation_Tests)
 
 find_package(CGAL REQUIRED)
@@ -18,12 +18,12 @@ if(TARGET CGAL::Eigen3_support)
 
   find_package(OpenMesh QUIET)
   if(OpenMesh_FOUND)
-    include(UseOpenMesh)
+    include(CGAL_OpenMesh_support)
     message(STATUS "Found OpenMesh")
 
     create_single_source_cgal_program("Cactus_deformation_session_OpenMesh.cpp")
     target_link_libraries(Cactus_deformation_session_OpenMesh
-                          PRIVATE ${OPENMESH_LIBRARIES} CGAL::Eigen3_support)
+                          PRIVATE CGAL::OpenMesh_support CGAL::Eigen3_support)
   else()
     message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
   endif()

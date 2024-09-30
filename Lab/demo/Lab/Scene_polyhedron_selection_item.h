@@ -501,7 +501,7 @@ public:
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     Travel_isolated_components<Face_graph>::Minimum_visitor visitor;
     Travel_isolated_components<Face_graph>(*polyhedron()).travel<HandleType>
-      (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
+      (tr.iterator_begin(), tr.iterator_end(), tr.size(), visitor);
     return visitor.minimum;
   }
 
@@ -516,7 +516,8 @@ public:
     }
   }
   template<class HandleType> // use fg_vertex_descriptor, fg_face_descriptor, fg_edge_descriptor
-  std::optional<std::size_t> select_isolated_components(std::size_t threshold) {
+  std::optional<std::size_t> select_isolated_components(std::size_t threshold)
+  {
     typedef Selection_traits<HandleType, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
     typedef std::insert_iterator<typename Tr::Container> Output_iterator;
@@ -524,7 +525,7 @@ public:
 
     Travel_isolated_components<Face_graph>::Selection_visitor<Output_iterator> visitor(threshold , out);
     Travel_isolated_components<Face_graph>(*polyhedron()).travel<HandleType>
-      (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
+      (tr.iterator_begin(), tr.iterator_end(), tr.size(), visitor);
 
     if(visitor.any_inserted) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
     return visitor.minimum_visitor.minimum;
@@ -778,6 +779,66 @@ public:
       points, polygons, *out);
 
     return num_vertices(*out) > 0;
+  }
+
+  fg_face_descriptor add_facet_from_selected_vertices()
+  {
+    fg_face_descriptor null_face = boost::graph_traits<Face_graph>::null_face();
+
+    if(selected_vertices.size() != 3) // NYI
+      return null_face;
+
+    // since the selected vertices are a set, we lost order in the process,
+    // so find back the correct orientation
+    std::array<fg_vertex_descriptor, 3> vs;
+    for(std::size_t i=0; i<3; ++i)
+      vs[i] = *(std::next(selected_vertices.begin(), i));
+
+    int pos_counter = 0, neg_counter = 0;
+    for(std::size_t i=0; i<3; ++i)
+    {
+      auto res = halfedge(vs[i], vs[(i+1)%3], *polyhedron());
+      if(res.second && !is_border(res.first, *polyhedron()))
+      {
+        // the halfedge 'vs[i] - vs[i+1]' already exists in the graph and is not border,
+        // so vote for orienting the facet the other way
+        ++neg_counter;
+      }
+
+      res = halfedge(vs[(i+1)%3], vs[i], *polyhedron());
+      if(res.second && !is_border(res.first, *polyhedron()))
+      {
+        // the halfedge 'vs[i+1] - vs[i]' already exists in the graph and is not border,
+        // so vote for keeping the current orientationorientation
+        ++pos_counter;
+      }
+    }
+
+    if(pos_counter > 0 && neg_counter > 0)
+    {
+      // disagreement, can't insert the face (@todo duplicate and insert?)
+      std::cerr << "Failed to find a valid orientation (" << pos_counter << " VS " << neg_counter << ")!" << std::endl;
+      return null_face;
+    }
+    else if(neg_counter > 0)
+    {
+      std::swap(vs[0], vs[1]);
+    }
+
+    fg_face_descriptor new_f = CGAL::Euler::add_face(vs, *polyhedron());
+    const bool successful_insertion = (new_f != null_face);
+    if(successful_insertion)
+    {
+      selected_vertices.clear();
+      invalidateOpenGLBuffers();
+      changed_with_poly_item();
+    }
+    else
+    {
+      std::cerr << "Failed to insert face!" << std::endl;
+    }
+
+    return new_f;
   }
 
   void select_sharp_edges(const double angle)

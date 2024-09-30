@@ -39,6 +39,30 @@ compute_color_map(QColor base_color,
   return out;
 }
 
+template <typename Output_color_iterator>
+Output_color_iterator
+compute_deterministic_color_map(QColor base_color,
+                                std::size_t nb_of_colors,
+                                Output_color_iterator out)
+{
+  qreal hue = base_color.hueF();
+  qreal saturation = base_color.saturationF();
+  qreal value = base_color.valueF();
+  const qreal hue_step = (hue == -1) ? 0 : (static_cast<qreal>(1)) / nb_of_colors;
+
+  if (hue == -1)
+    hue = 0;
+  for(std::size_t i=0; i<nb_of_colors; ++i)
+  {
+    hue += hue_step;
+    if(hue > 1)
+      hue -= 1;
+    *out++ = QColor::fromHsvF(hue, saturation, value);
+  }
+
+  return out;
+}
+
 inline QColor generate_random_color()
 {
   std::size_t h = static_cast<std::size_t>(std::rand() % 360);

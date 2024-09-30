@@ -25,7 +25,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/is_streamable.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/property_map.h>
@@ -252,8 +252,8 @@ public:
         : (- negative_distance);
     } else {
       return (pit <= qit)
-        ?     curve_segment_length(p, q, CGAL::POSITIVE)
-        : ( - curve_segment_length(p, q, CGAL::NEGATIVE) );
+        ?     curve_segment_length(p, q, CGAL::POSITIVE, pit, qit)
+        : ( - curve_segment_length(p, q, CGAL::NEGATIVE, pit, qit) );
     }
   }
 
@@ -848,8 +848,8 @@ private:
     GT,
     typename Edges::const_iterator> Curves_primitives;
 
-  typedef CGAL::AABB_traits<GT,
-                            Curves_primitives> AABB_curves_traits;
+  typedef CGAL::AABB_traits_3<GT,
+                              Curves_primitives> AABB_curves_traits;
 
   Corners corners_;
   Corners_tmp_incidences corners_tmp_incidences_;

@@ -143,89 +143,83 @@ public:
 
   bool check_colors()
   {
-    bool found = false;
+    std::optional<Byte_map> red_map = this->template property_map<unsigned char>("red");
+    if (!red_map.has_value()) {
+      red_map = this->template property_map<unsigned char>("r");
+      if (!red_map.has_value())
+        return get_float_colors();
+    }
+    m_red = red_map.value();
 
-    boost::tie (m_red, found) = this->template property_map<unsigned char>("red");
-    if (!found)
-      {
-        boost::tie (m_red, found) = this->template property_map<unsigned char>("r");
-        if (!found)
-          return get_float_colors();
-      }
+    std::optional<Byte_map> green_map = this->template property_map<unsigned char>("green");
+    if (!green_map.has_value()) {
+      green_map = this->template property_map<unsigned char>("g");
+      if (!green_map.has_value())
+        return false;
+    }
+    m_green = green_map.value();
 
-    boost::tie (m_green, found) = this->template property_map<unsigned char>("green");
-    if (!found)
-      {
-        boost::tie (m_green, found) = this->template property_map<unsigned char>("g");
-        if (!found)
-          return false;
-      }
-
-    boost::tie (m_blue, found) = this->template property_map<unsigned char>("blue");
-    if (!found)
-      {
-        boost::tie (m_blue, found) = this->template property_map<unsigned char>("b");
-        if (!found)
-          return false;
-      }
+    std::optional<Byte_map> blue_map = this->template property_map<unsigned char>("blue");
+    if (!blue_map.has_value()) {
+      blue_map = this->template property_map<unsigned char>("b");
+      if (!blue_map.has_value())
+        return false;
+    }
+    m_blue = blue_map.value();
 
     return true;
   }
 
   bool get_float_colors()
   {
-    bool found = false;
+    std::optional<Double_map> red_map = this->template property_map<double>("red");
+    if (!red_map.has_value()) {
+      red_map = this->template property_map<double>("r");
+      if (!red_map.has_value())
+        return get_las_colors();
+    }
+    m_fred = red_map.value();
 
-    boost::tie (m_fred, found) = this->template property_map<double>("red");
-    if (!found)
-      {
-        boost::tie (m_fred, found) = this->template property_map<double>("r");
-        if (!found)
-          return get_las_colors();
-      }
+    std::optional<Double_map> green_map = this->template property_map<double>("green");
+    if (!green_map.has_value()) {
+      green_map = this->template property_map<double>("g");
+      if (!green_map.has_value())
+        return false;
+    }
+    m_fgreen = green_map.value();
 
-    boost::tie (m_fgreen, found) = this->template property_map<double>("green");
-    if (!found)
-      {
-        boost::tie (m_fgreen, found) = this->template property_map<double>("g");
-        if (!found)
-          return false;
-      }
+    std::optional<Double_map> blue_map = this->template property_map<double>("blue");
+    if (!blue_map.has_value()) {
+      blue_map = this->template property_map<double>("b");
+      if (!blue_map.has_value())
+        return false;
+    }
+    m_fblue = blue_map.value();
 
-    boost::tie (m_fblue, found) = this->template property_map<double>("blue");
-    if (!found)
-      {
-        boost::tie (m_fblue, found) = this->template property_map<double>("b");
-        if (!found)
-          return false;
-      }
     return true;
   }
 
   bool get_las_colors()
   {
-    bool found = false;
-
     typedef typename Base::template Property_map<unsigned short> Ushort_map;
-    Ushort_map red, green, blue;
 
-    boost::tie (red, found) = this->template property_map<unsigned short>("R");
-    if (!found)
+    std::optional<Ushort_map> red_map = this->template property_map<unsigned short>("R");
+    if (!red_map.has_value())
       return false;
 
-    boost::tie (green, found) = this->template property_map<unsigned short>("G");
-    if (!found)
+    std::optional<Ushort_map> green_map = this->template property_map<unsigned short>("G");
+    if (!green_map.has_value())
       return false;
 
-    boost::tie (blue, found) = this->template property_map<unsigned short>("B");
-    if (!found)
+    std::optional<Ushort_map> blue_map = this->template property_map<unsigned short>("B");
+    if (!blue_map.has_value())
       return false;
 
     unsigned int bit_short_to_char = 0;
     for (iterator it = begin(); it != end(); ++ it)
-      if (get(red, *it) > 255
-          || get(green, *it) > 255
-          || get(blue, *it) > 255)
+      if (get(red_map.value(), *it) > 255
+          || get(green_map.value(), *it) > 255
+          || get(blue_map.value(), *it) > 255)
         {
           bit_short_to_char = 8;
           break;
@@ -236,13 +230,13 @@ public:
     m_blue = this->template add_property_map<unsigned char>("b").first;
     for (iterator it = begin(); it != end(); ++ it)
       {
-        put (m_red, *it, (unsigned char)((get(red, *it) >> bit_short_to_char)));
-        put (m_green, *it, (unsigned char)((get(green, *it) >> bit_short_to_char)));
-        put (m_blue, *it, (unsigned char)((get(blue, *it) >> bit_short_to_char)));
+        put (m_red, *it, (unsigned char)((get(red_map.value(), *it) >> bit_short_to_char)));
+        put (m_green, *it, (unsigned char)((get(green_map.value(), *it) >> bit_short_to_char)));
+        put (m_blue, *it, (unsigned char)((get(blue_map.value(), *it) >> bit_short_to_char)));
       }
-    this->remove_property_map(red);
-    this->remove_property_map(green);
-    this->remove_property_map(blue);
+    this->remove_property_map(red_map.value());
+    this->remove_property_map(green_map.value());
+    this->remove_property_map(blue_map.value());
 
     return true;
   }

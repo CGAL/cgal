@@ -764,6 +764,32 @@ public:
                                const K::Point_3& b,
                                const K::Point_3& c,
                                const K::FT& cosine);
+
+  /*!
+  compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ of the triangle
+  \f$ (a1, b1, c1)\f$ at the vertex `b1`, and \f$ \theta_2\f$
+  is the angle in \f$ [0, \pi]\f$ of the triangle \f$ (a2, b2, c2)\f$ at the vertex `b2`.
+  \pre `a1!=b1 && c1!=b1 && a2!=b2 && c2!=b2`.
+  */
+  Comparison_result operator()(const K::Point_3& a1,
+                               const K::Point_3& b1,
+                               const K::Point_3& c1,
+                               const K::Point_3& a2,
+                               const K::Point_3& b2,
+                               const K::Point_3& c2);
+
+  /*!
+  compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where
+  \f$ \theta_1\f$ is the angle in \f$ [0, \pi]\f$ between the vectors
+  \f$ u1\f$ and \f$ v1\f$, and \f$ \theta_2\f$ is the angle in \f$ [0, \pi]\f$
+  between the vectors \f$ u2\f$ and \f$ v2\f$.
+  \pre none of the vectors have zero length.
+  */
+  Comparison_result operator()(const K::Vector_3& u1,
+                               const K::Vector_3& v1,
+                               const K::Vector_3& u2,
+                               const K::Vector_3& v2);
 };
 
 /*!
@@ -6077,6 +6103,18 @@ public:
   */
   Kernel::Point_2 operator()(const Kernel::Line_2& l,
                              const Kernel::Point_2& p);
+
+  /*!
+    returns the point of `s` that is the closest to `p`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Segment_2& s,
+                             const Kernel::Point_2& p);
+
+  /*!
+    returns the point of `t` that is the closest to `p`.
+  */
+  Kernel::Point_2 operator()(const Kernel::Triangle_2& t,
+                             const Kernel::Point_3& p);
 
   /// @}
 

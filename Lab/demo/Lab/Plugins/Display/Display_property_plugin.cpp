@@ -669,11 +669,11 @@ private:
       return;
 
     // Here we only target the property maps added by this plugin, so 'double' is fine
-    SMesh::Property_map<face_descriptor, double> property;
-    bool found;
-    std::tie(property, found) = sm->property_map<face_descriptor, double>(property_name);
-    if(found)
-      sm->remove_property_map(property);
+    std::optional<SMesh::Property_map<face_descriptor, double>> property
+      = sm->property_map<face_descriptor, double>(property_name);
+
+    if(property.has_value())
+      sm->remove_property_map(property.value());
   }
 
   void removeDisplayPluginProperties(Scene_item* item)
@@ -929,8 +929,7 @@ private:
 
     SMesh& smesh = *item->face_graph();
 
-    const auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").first;
-    const bool vnm_exists = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation").second;
+    auto vnm = smesh.property_map<vertex_descriptor, EPICK::Vector_3>("v:normal_before_perturbation");
 
     // compute once and store the value per vertex
     bool non_init;
@@ -938,21 +937,21 @@ private:
     std::tie(mu_i_map, non_init) = smesh.add_property_map<vertex_descriptor, double>(tied_string, 0);
     if(non_init || expand_radius_updated)
     {
-      if(vnm_exists)
+      if(vnm.has_value())
       {
         if(mu_index == MEAN_CURVATURE)
         {
           PMP::interpolated_corrected_curvatures(smesh,
                                                  CGAL::parameters::vertex_mean_curvature_map(mu_i_map)
                                                                   .ball_radius(expand_radius)
-                                                                  .vertex_normal_map(vnm));
+                                                                  .vertex_normal_map(vnm.value()));
         }
         else
         {
           PMP::interpolated_corrected_curvatures(smesh,
                                                  CGAL::parameters::vertex_Gaussian_curvature_map(mu_i_map)
                                                                   .ball_radius(expand_radius)
-                                                                  .vertex_normal_map(vnm));
+                                                                  .vertex_normal_map(vnm.value()));
         }
       }
       else
@@ -1512,26 +1511,26 @@ call_on_PS_property(const std::string& name,
                     const Point_set& ps,
                     const Functor& functor) const
 {
-  if(ps.template property_map<std::int8_t>(name).second)
-    return functor(ps.template property_map<std::int8_t>(name).first);
-  else if(ps.template property_map<std::uint8_t>(name).second)
-    return functor(ps.template property_map<std::uint8_t>(name).first);
-  else if(ps.template property_map<std::int16_t>(name).second)
-    return functor(ps.template property_map<std::int16_t>(name).first);
-  else if(ps.template property_map<std::uint16_t>(name).second)
-    return functor(ps.template property_map<std::uint16_t>(name).first);
-  else if(ps.template property_map<std::int32_t>(name).second)
-    return functor(ps.template property_map<std::int32_t>(name).first);
-  else if(ps.template property_map<std::uint32_t>(name).second)
-    return functor(ps.template property_map<std::uint32_t>(name).first);
-  else if(ps.template property_map<std::int64_t>(name).second)
-    return functor(ps.template property_map<std::int64_t>(name).first);
-  else if(ps.template property_map<std::uint64_t>(name).second)
-    return functor(ps.template property_map<std::uint64_t>(name).first);
-  else if(ps.template property_map<float>(name).second)
-    return functor(ps.template property_map<float>(name).first);
-  else if(ps.template property_map<double>(name).second)
-    return functor(ps.template property_map<double>(name).first);
+  if(ps.template property_map<std::int8_t>(name).has_value())
+    return functor(ps.template property_map<std::int8_t>(name).value());
+  else if(ps.template property_map<std::uint8_t>(name).has_value())
+    return functor(ps.template property_map<std::uint8_t>(name).value());
+  else if(ps.template property_map<std::int16_t>(name).has_value())
+    return functor(ps.template property_map<std::int16_t>(name).value());
+  else if(ps.template property_map<std::uint16_t>(name).has_value())
+    return functor(ps.template property_map<std::uint16_t>(name).value());
+  else if(ps.template property_map<std::int32_t>(name).has_value())
+    return functor(ps.template property_map<std::int32_t>(name).value());
+  else if(ps.template property_map<std::uint32_t>(name).has_value())
+    return functor(ps.template property_map<std::uint32_t>(name).value());
+  else if(ps.template property_map<std::int64_t>(name).has_value())
+    return functor(ps.template property_map<std::int64_t>(name).value());
+  else if(ps.template property_map<std::uint64_t>(name).has_value())
+    return functor(ps.template property_map<std::uint64_t>(name).value());
+  else if(ps.template property_map<float>(name).has_value())
+    return functor(ps.template property_map<float>(name).value());
+  else if(ps.template property_map<double>(name).has_value())
+    return functor(ps.template property_map<double>(name).value());
 
   return false;
 }
@@ -1543,26 +1542,26 @@ call_on_SM_property(const std::string& name,
                     const SMesh& mesh,
                     const Functor& functor) const
 {
-  if(mesh.template property_map<Simplex, std::int8_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::int8_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::uint8_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::uint8_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::int16_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::int16_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::uint16_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::uint16_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::int32_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::int32_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::uint32_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::uint32_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::int64_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::int64_t>(name).first);
-  else if(mesh.template property_map<Simplex, std::uint64_t>(name).second)
-    return functor(mesh.template property_map<Simplex, std::uint64_t>(name).first);
-  else if(mesh.template property_map<Simplex, float>(name).second)
-    return functor(mesh.template property_map<Simplex, float>(name).first);
-  else if(mesh.template property_map<Simplex, double>(name).second)
-    return functor(mesh.template property_map<Simplex, double>(name).first);
+  if(mesh.template property_map<Simplex, std::int8_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::int8_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::uint8_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::uint8_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::int16_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::int16_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::uint16_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::uint16_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::int32_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::int32_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::uint32_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::uint32_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::int64_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::int64_t>(name).value());
+  else if(mesh.template property_map<Simplex, std::uint64_t>(name).has_value())
+    return functor(mesh.template property_map<Simplex, std::uint64_t>(name).value());
+  else if(mesh.template property_map<Simplex, float>(name).has_value())
+    return functor(mesh.template property_map<Simplex, float>(name).value());
+  else if(mesh.template property_map<Simplex, double>(name).has_value())
+    return functor(mesh.template property_map<Simplex, double>(name).value());
 
   return false;
 }

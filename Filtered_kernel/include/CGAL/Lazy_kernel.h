@@ -280,7 +280,13 @@ public:
   C Cf() const { return C(); }
 
 #include <CGAL/Kernel/interface_macros.h>
+
+  // Useless meta-function, added to workaround a bug with Visual C++ 2022 and before
+  // See issue https://github.com/CGAL/cgal/issues/8140
+  template < typename T >
+  struct Handle { typedef T   type; };
 };
+
 
 
 

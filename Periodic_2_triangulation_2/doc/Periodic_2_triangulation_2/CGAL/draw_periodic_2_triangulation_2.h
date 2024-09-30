@@ -30,7 +30,7 @@ opens a new window and draws a periodic 2D triangulation. Parameters of the draw
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam P2T2 which must be an instanciation of a `CGAL::Periodic_2_triangulation_2<...>`.
+\tparam P2T2 which must be an instantiation of a `CGAL::Periodic_2_triangulation_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptionsPeriodic2Triangulation2` concept.
 
 \param p2t2 the periodic triangulation to draw.
@@ -62,7 +62,7 @@ void draw(const P2T2& p2t2);
 
 adds the vertices, edges and faces of `p2t2` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
-\tparam P2T2 which must be an instanciation of a `CGAL::Periodic_2_triangulation_2<...>`.
+\tparam P2T2 which must be an instantiation of a `CGAL::Periodic_2_triangulation_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptionsPeriodic2Triangulation2` concept.
 
 \param p2t2 the periodic triangulation to draw.

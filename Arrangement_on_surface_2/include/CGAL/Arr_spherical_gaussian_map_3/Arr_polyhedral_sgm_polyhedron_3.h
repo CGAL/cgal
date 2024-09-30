@@ -8,13 +8,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
-// Author(s)     : Efi Fogel          <efif@post.tau.ac.il>
+// Author(s) : Efi Fogel          <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_POLYHEDRAL_SGM_POLYHEDRON_3_H
 #define CGAL_ARR_POLYHEDRAL_SGM_POLYHEDRON_3_H
 
 #include <CGAL/license/Arrangement_on_surface_2.h>
-
 
 /*! \file
  * Related definition of a Polyhedron_3 data structure, an instance of which
@@ -49,10 +48,10 @@ namespace CGAL {
 /*! The extended Polyhedron vertex type */
 template <class T_Refs, class T_Point>
 class Arr_polyhedral_sgm_polyhedron_3_vertex :
-  public HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point>
-{
+  public HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point> {
+
 private:
-  typedef HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point> Base;
+  using Base = HalfedgeDS_vertex_base<T_Refs, CGAL::Tag_true, T_Point>;
 
   /*! Indicates that the vertex has been processed already */
   bool m_processed;
@@ -61,7 +60,7 @@ private:
   bool m_marked;
 
 public:
-  typedef typename Base::Point                                  Point;
+  using Point = typename Base::Point;
 
   /*! Constructor */
   Arr_polyhedral_sgm_polyhedron_3_vertex() :
@@ -72,10 +71,10 @@ public:
     Base(p), m_processed(false), m_marked(false) {}
 
   /*! Obtain the mutable (geometrical) point. Delegate */
-  Point & point() { return Base::point(); }
+  Point& point() { return Base::point(); }
 
   /*! Obtain the constant (geometrical) point. Delegate */
-  const Point & point () const { return Base::point(); }
+  const Point& point () const { return Base::point(); }
 
   /*! Set the flag */
   void set_processed(bool processed) { m_processed = processed; }
@@ -93,8 +92,7 @@ public:
 /*! The extended Polyhedron halfedge type */
 template <class T_Refs>
 class Arr_polyhedral_sgm_polyhedron_3_halfedge :
-  public HalfedgeDS_halfedge_base<T_Refs>
-{
+  public HalfedgeDS_halfedge_base<T_Refs> {
 private:
   /*! Indicates that the halfedge has been processed already */
   bool m_processed;
@@ -123,12 +121,11 @@ public:
 /*! The extended Polyhedron face type */
 template <class T_Refs, class T_Plane, class Sgm>
 class Arr_polyhedral_sgm_polyhedron_3_face :
-  public HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, T_Plane>
-{
+  public HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, T_Plane> {
+
 private:
-  typedef HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, T_Plane>
-                                                        Base;
-  typedef typename Sgm::Vertex_handle                   Arr_vertex_handle;
+  using Base = HalfedgeDS_face_base<T_Refs, CGAL::Tag_true, T_Plane>;
+  using Arr_vertex_handle = typename Sgm::Vertex_handle;
 
   /*! The arrangement vertex handle of the projected normal. */
   Arr_vertex_handle m_vertex;
@@ -137,16 +134,16 @@ private:
   bool m_marked;
 
 public:
-  typedef typename Base::Plane                        Plane;
+  using Plane = typename Base::Plane;
 
   /*! Constructor */
   Arr_polyhedral_sgm_polyhedron_3_face() : m_vertex(nullptr), m_marked(false) {}
 
   /*! Obtain the mutable plane. Delegate */
-  Plane & plane() { return Base::plane(); }
+  Plane& plane() { return Base::plane(); }
 
   /*! Obtain the constant plane. Delegate */
-  const Plane & plane() const { return Base::plane(); }
+  const Plane& plane() const { return Base::plane(); }
 
   /*! Obtain the vertex */
   Arr_vertex_handle vertex() { return m_vertex; }
@@ -174,37 +171,35 @@ template <class Sgm>
 struct Arr_polyhedral_sgm_polyhedron_items : public Polyhedron_items_3 {
   template <class T_Refs, class T_Traits>
   struct Vertex_wrapper {
-    typedef typename T_Traits::Point_3                              Point_3;
-    typedef Arr_polyhedral_sgm_polyhedron_3_vertex<T_Refs, Point_3>     Vertex;
+    using Point_3 = typename T_Traits::Point_3;
+    using Vertex = Arr_polyhedral_sgm_polyhedron_3_vertex<T_Refs, Point_3>;
   };
   template <class T_Refs, class T_Traits>
   struct Halfedge_wrapper {
-    typedef Arr_polyhedral_sgm_polyhedron_3_halfedge<T_Refs>            Halfedge;
+    using Halfedge = Arr_polyhedral_sgm_polyhedron_3_halfedge<T_Refs>;
   };
   template <class T_Refs, class T_Traits>
   struct Face_wrapper {
-    typedef typename T_Traits::Plane_3                              Plane_3;
-    typedef Arr_polyhedral_sgm_polyhedron_3_face<T_Refs, Plane_3, Sgm>  Face;
+    using Plane_3 = typename T_Traits::Plane_3;
+    using Face = Arr_polyhedral_sgm_polyhedron_3_face<T_Refs, Plane_3, Sgm>;
   };
 };
 
 /*! The default polyhedron type. If the Arr_polyhedral_sgm object is indirectly
  * constructed from the points and the facets provided as indices, then a
- * temporary object of type Arr_polyhedral_sgm_default_polyhedron_3 is constructed
- * internally, and used to represent the polyhedron. Similarly, if the user
- * provides a reference to a polyhedron object as input for the construction
- * of the Arr_polyhedral_sgm object, and she/he has no need to extend the
- * polyhedron features, this type should be used to represent the polyhedron.
- * However, if the user need to extend the vertex, halfedge, or face of the
- * polyhedron, she/he must extend the appropriate type(s), define a new items
- * type that is based on the extended types, and define a new polyhedron type
- * based on the new items type.
+ * temporary object of type Arr_polyhedral_sgm_default_polyhedron_3 is
+ * constructed internally, and used to represent the polyhedron. Similarly, if
+ * the user provides a reference to a polyhedron object as input for the
+ * construction of the Arr_polyhedral_sgm object, and she/he has no need to
+ * extend the polyhedron features, this type should be used to represent the
+ * polyhedron.  However, if the user need to extend the vertex, halfedge, or
+ * face of the polyhedron, she/he must extend the appropriate type(s), define a
+ * new items type that is based on the extended types, and define a new
+ * polyhedron type based on the new items type.
  */
 template <class Sgm, class Traits>
 struct Arr_polyhedral_sgm_polyhedron_3 :
-  public Polyhedron_3<Traits,
-                      Arr_polyhedral_sgm_polyhedron_items<Sgm> >
-{
+  public Polyhedron_3<Traits, Arr_polyhedral_sgm_polyhedron_items<Sgm>> {
   /*! Constructor */
   Arr_polyhedral_sgm_polyhedron_3() {}
 };
@@ -212,21 +207,12 @@ struct Arr_polyhedral_sgm_polyhedron_3 :
 } //namespace CGAL
 
 //! Make the polyhedron a model of FaceGraph
-namespace boost {
-
-template <typename Sgm, typename Traits>
-struct graph_traits<CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Traits> > :
-  public graph_traits<CGAL::Polyhedron_3
-                      <Traits, CGAL::Arr_polyhedral_sgm_polyhedron_items<Sgm> > >
-{};
-
-template <typename Sgm, typename Traits, typename Tag>
-struct property_map<CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Traits>, Tag> :
-  public property_map<CGAL::Polyhedron_3
-                      <Traits, CGAL::Arr_polyhedral_sgm_polyhedron_items<Sgm> >,
-                      Tag>
-{};
-
-}
+#define CGAL_GRAPH_TRAITS_INHERITANCE_TEMPLATE_PARAMS \
+  typename Sgm, typename Traits
+#define CGAL_GRAPH_TRAITS_INHERITANCE_CLASS_NAME \
+  CGAL::Arr_polyhedral_sgm_polyhedron_3<Sgm, Traits>
+#define CGAL_GRAPH_TRAITS_INHERITANCE_BASE_CLASS_NAME \
+  CGAL::Polyhedron_3<Traits, CGAL::Arr_polyhedral_sgm_polyhedron_items<Sgm>>
+#include <CGAL/boost/graph/graph_traits_inheritance_macros.h>
 
 #endif

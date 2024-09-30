@@ -20,7 +20,7 @@
 #include <CGAL/Surface_mesh_shortest_path.h>
 #include <CGAL/double.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
@@ -250,11 +250,7 @@ protected:
     }
     case QEvent::Wheel: {
       QWheelEvent* event = static_cast<QWheelEvent*>(ev);
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-      QPoint pos = event->pos();
-#else
       QPointF pos = event->position();
-#endif
       QPointF old_pos = v->mapToScene(pos.x(), pos.y());
       if(event->angleDelta().y() <0)
         v->scale(1.2, 1.2);
@@ -307,7 +303,7 @@ private:
   typedef CGAL::Surface_mesh_shortest_path<SP_traits> Surface_mesh_shortest_path;
   typedef Surface_mesh_shortest_path::Face_location Face_location;
   typedef CGAL::AABB_face_graph_triangle_primitive<SMesh> Primitive;
-  typedef CGAL::AABB_traits<EPICK, Primitive> Tree_traits;
+  typedef CGAL::AABB_traits_3<EPICK, Primitive> Tree_traits;
   typedef CGAL::AABB_tree<Tree_traits> Tree;
   typedef EPICK::Point_3 Point_3;
   Messages_interface* messages;
@@ -638,7 +634,7 @@ public Q_SLOTS:
         ("h:v", 0.0f).first;
       SMesh::Halfedge_iterator it;
       SMesh::Property_map<SMesh::Vertex_index, EPICK::Point_2> uv_map =
-          sm->property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").first;
+          sm->property_map<SMesh::Vertex_index, EPICK::Point_2>("v:uv").value();
       for(it = sm->halfedges_begin();
           it != sm->halfedges_end();
           ++it)

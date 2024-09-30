@@ -277,7 +277,7 @@ private:
 template<typename AABBTraits>
 class Do_intersect_joined_traits
 {
-  typedef typename AABBTraits::Point_3 Point;
+  typedef typename AABBTraits::Point Point;
   typedef typename AABBTraits::Primitive Primitive;
   typedef AABB_node_with_join<AABBTraits> Node;
 

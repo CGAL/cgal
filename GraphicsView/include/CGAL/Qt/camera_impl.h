@@ -155,7 +155,7 @@ since the latter automatically updates these values when it is resized (hence
 overwriting your values).
 
 Non-positive dimension are silently replaced by a 1 pixel value to ensure
-frustrum coherence.
+frustum coherence.
 
 If your Camera is used without a CGAL::QGLViewer (offscreen rendering, shadow maps),
 use setAspectRatio() instead to define the projection matrix. */

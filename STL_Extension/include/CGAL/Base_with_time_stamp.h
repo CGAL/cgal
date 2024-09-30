@@ -18,9 +18,11 @@ namespace CGAL {
 
 template <typename Base>
 class Base_with_time_stamp : public Base {
-  std::size_t time_stamp_ = -1;
+  std::size_t time_stamp_ = std::size_t(-2);
 public:
-  typedef CGAL::Tag_true Has_timestamp;
+  using Base::Base;
+
+  using Has_timestamp = CGAL::Tag_true;
 
   std::size_t time_stamp() const {
     return time_stamp_;

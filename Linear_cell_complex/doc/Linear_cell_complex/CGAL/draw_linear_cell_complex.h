@@ -8,7 +8,7 @@ opens a new window and draws a linear cell complex. Parameters of the drawing ar
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam LCC which must be an instanciation of a `CGAL::Linear_cell_complex_for_combinatorial_map<...>` or `CGAL::Linear_cell_complex_for_generalized_map<...>`.
+\tparam LCC which must be an instantiation of a `CGAL::Linear_cell_complex_for_combinatorial_map<...>` or `CGAL::Linear_cell_complex_for_generalized_map<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param lcc the linear cell complex to draw.
@@ -40,7 +40,7 @@ A shortcut to `CGAL::draw(lcc, Graphics_scene_options{})`.
 
 adds the vertices, edges and faces of `lcc` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
-\tparam LCC which must be an instanciation of a `CGAL::Linear_cell_complex_for_combinatorial_map<...>` or `CGAL::Linear_cell_complex_for_generalized_map<...>`.
+\tparam LCC which must be an instantiation of a `CGAL::Linear_cell_complex_for_combinatorial_map<...>` or `CGAL::Linear_cell_complex_for_generalized_map<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param lcc the linear cell complex to draw.

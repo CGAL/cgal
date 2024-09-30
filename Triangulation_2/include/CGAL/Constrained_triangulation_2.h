@@ -37,28 +37,6 @@
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
-#ifdef CGAL_CDT_2_DEBUG_INTERSECTIONS
-#  include <CGAL/IO/io.h>
-#  include <CGAL/Compact_container.h>
-#  include <iostream>
-namespace CGAL {
-
-struct With_point_tag {};
-
-template <class DSC, bool Const>
-struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
-  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
-{
-  using Base = Output_rep<CGAL::internal::CC_iterator<DSC, Const>>;
-  using Base::Base;
-
-  std::ostream& operator()(std::ostream& out) const {
-    return Base::operator()(out) << "= " << this->it->point();
-  }
-};
-} // namespace CGAL
-#endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
-
 namespace CGAL {
 
 struct No_constraint_intersection_tag{};
@@ -367,13 +345,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb, OutputIterator out)
     // if the segment (or a subpart of the segment) that we are trying to constraint is already
     // present in the triangulation and is already marked as constrained,
     // then this is an intersection
-    if(std::is_same<Itag, No_constraint_intersection_tag>::value) {
-      if(dimension() == 1) {
-        if(fr->is_constrained(2))
-          throw Intersection_of_constraints_exception();
-      } else {
-        if(fr->is_constrained(i))
-          throw Intersection_of_constraints_exception();
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+      if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+        throw Intersection_of_constraints_exception();
       }
     }
 
@@ -749,7 +723,7 @@ insert(const Point& a, Locate_type lt, Face_handle loc, int li)
   }
   if ( lt == Triangulation::EDGE && loc->is_constrained(li) )
   {
-    if(std::is_same<Itag, No_constraint_intersection_tag>::value)
+    if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>)
       throw Intersection_of_constraints_exception();
 
     insert_in_constrained_edge = true;
@@ -851,7 +825,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
               << " , " << display_vertex(vbb)
               << " ) remaining stack size: "
               << stack.size() << '\n';
-    CGAL_assertion(this->is_valid());
+    CGAL_assertion(this->is_valid(true));
 #endif // CGAL_CDT_2_DEBUG_INTERSECTIONS
     Vertex_handle vi;
 
@@ -862,13 +836,9 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
       // if the segment (or a subpart of the segment) that we are trying to constraint is already
       // present in the triangulation and is already marked as constrained,
       // then this is an intersection
-      if(std::is_same<Itag, No_constraint_intersection_tag>::value) {
-        if(dimension() == 1) {
-          if(fr->is_constrained(2))
-            throw Intersection_of_constraints_exception();
-        } else {
-          if(fr->is_constrained(i))
-            throw Intersection_of_constraints_exception();
+      if constexpr (std::is_same_v<Itag, No_constraint_intersection_tag>) {
+        if(fr->is_constrained(dimension() == 1 ? 2 : i)) {
+          throw Intersection_of_constraints_exception();
         }
       }
 

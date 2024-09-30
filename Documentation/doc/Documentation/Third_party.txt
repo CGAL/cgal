@@ -11,19 +11,19 @@ supporting C++17 or later.
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 11.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+| Linux            | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
 |                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 15.0.7 |
-| \ms Windows      | \gnu `g++` 10.2.1 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+| \ms Windows      | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
 |                  | \ms Visual `C++` 15.9, 16.10, 17.0 (\visualstudio 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
-| MacOS X          | \gnu `g++` 11.3.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
-|                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 13.0.0 |
+| MacOS X          | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 15.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
 Older versions of the above listed compilers might work, but no guarantee is provided.
 
 \section seccmake CMake
-<b>Version 3.14 or later</b>
+<b>Version 3.22 or later</b>
 
 In order to configure and build the \cgal examples, demos, or libraries,
 you need <a href="https://cmake.org/">CMake</a>, a cross-platform "makefile generator".
@@ -33,9 +33,7 @@ Please refer to the <a href="https://cmake.org/documentation/">CMake documentati
 for further details.
 
 \attention Recent versions of CMake are needed for the most recent versions of MS Visual C++.
-Please refer to CMake's documentation for further information, for example
-<a href="https://cmake.org/cmake/help/latest/generator/Visual%20Studio%2016%202019.html">here</a>
-for Visual Studio 16 2019.
+Please refer to CMake's documentation for further information.
 
 \section secessential3rdpartysoftware Essential Third Party Libraries
 
@@ -74,23 +72,32 @@ As there is no canonical directory for where to find \boost on Windows,
 we recommend that you define the environment variable
 `BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_70_0`.
 
-\subsection thirdpartyMPFR GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
-<b>GMP Version 4.2 or later, MPFR Version 2.2.1 or later</b>
+\subsection thirdpartyMP Multi Precision Number Type Library
 
-The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt6` require
-\gmp and \mpfr which are libraries for multi precision integers and rational numbers,
-and for multi precision floating point numbers.
-
-\cgal combines floating point arithmetic with exact arithmetic
-in order to be efficient and reliable. \cgal has a built-in
-number type for that, but \gmp and \mpfr provide a faster
-solution, and we recommend using them.
+GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
+are libraries for multi precision integers and rational numbers, and for multi precision floating point numbers.
 
 These libraries can be obtained from <A HREF="https://gmplib.org/">`https://gmplib.org/`</A>
 and <A HREF="https://www.mpfr.org/">`https://www.mpfr.org/`</A>.
 Since Visual \cpp is not properly supported by the \gmp and \mpfr projects,
 we provide precompiled versions of \gmp and \mpfr, which can be downloaded
 from the <a href="https://github.com/CGAL/cgal/releases">assets of a release</a>.
+Version supported are <b>GMP Version 5.0.1 or later, MPFR Version 3.0.0 or later</b>.
+
+The \boost library also provides a module for multi precision integers and rational numbers:
+<A HREF="https://www.boost.org/doc/libs/release/libs/multiprecision/doc/html/index.html">\boost multiprecision</A>.
+Versions supported are <b>\boost Version 1.72 or later</b>.
+
+The components \cgal, and `CGAL_Qt6` require either \gmp and \mpfr, or \boost multiprecision
+for multi precision numbers. `CGAL_Core` requires \boost multiprecision.
+
+\cgal combines floating point arithmetic with exact arithmetic
+in order to be efficient and reliable. \cgal has a built-in
+number type for that, but previous alternatives are faster
+solutions, and we recommend using one of them.
+
+The CMake variable `CGAL_CMAKE_EXACT_NT_BACKEND` can be used to select
+the library that will be used internally for multi precision number types.
 
 \section secoptional3rdpartysoftware Optional Third Party Libraries
 
@@ -107,7 +114,7 @@ the location of third-party software during configuration.
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGAL_Qt6 is essential to run the \cgal demos and basic viewers.
+The component `CGAL_Qt6` is essential to run the \cgal demos and basic viewers.
 It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
 it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
@@ -117,7 +124,7 @@ The exhaustive list of \qt6 components used in demos is:
 `WebSockets`,  `Network`, and `qcollectiongenerator` (with `sqlite` driver plugin).
 
 \subsection thirdpartyEigen Eigen
-<b>Version 3.3.4 or later</b>
+<b>Version 3.3.7 or later</b>
 
 \eigen is a `C++` template library for linear algebra. \eigen supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
@@ -155,7 +162,7 @@ executables should be linked with the CMake imported target
 The \libpointmatcher web site is <A
 HREF="https://github.com/ethz-asl/libpointmatcher">`https://github.com/ethz-asl/libpointmatcher`</A>.
 \attention On Windows, we only support version 1.3.1 of PointMatcher with version 3.3.7 of Eigen, with some changes to the recipe at
-`https://github.com/ethz-asl/libpointmatcher/blob/master/doc/CompilationWindows.md`:`NABO_INCLUDE_DIR` becomes `libnabo_INCLUDE_DIRS`
+`https://github.com/ethz-asl/libpointmatcher/blob/master/doc/Compilation.md`:`NABO_INCLUDE_DIR` becomes `libnabo_INCLUDE_DIRS`
 and `NABO_LIBRARY` becomes `libnabo_LIBRARIES` in the "Build libpointmatcher" section.
 
 
@@ -241,9 +248,8 @@ imported target `CGAL::LASLIB_support` provided in
 \laslib information can be obtained from
 <a href="https://lastools.github.io/">https://lastools.github.io/</a> and
 <a href="https://rapidlasso.de/product-overview/">https://rapidlasso.de/product-overview/</a>.
-\laslib is usually distributed along with LAStools: for simplicity, \cgal
-provides <a href="https://github.com/CGAL/LAStools">a fork with a
-CMake based install procedure</a>.
+\laslib is usually distributed along with LAStools. Current versions of \laslib provide CMake support.
+BUILD_SHARED_LIBS needs to be set to true on windows to create a dynamic linked library.
 
 \subsection thirdpartyOpenCV OpenCV
 

@@ -32,15 +32,13 @@ int main (int argc, char** argv)
     std::cerr << " * " << properties[i] << std::endl;
 
   // Recover "label" property of type int
-  Point_set::Property_map<std::int32_t> label_prop;
-  bool found = false;
-  boost::tie(label_prop, found)  = point_set.property_map<std::int32_t> ("label");
+  std::optional<Point_set::Property_map<std::int32_t>> label_prop = point_set.property_map<std::int32_t> ("label");
 
-  if(found)
+  if(label_prop.has_value())
   {
     std::cerr << "Point set has an integer \"label\" property with values:" << std::endl;
     for (Point_set::iterator it = point_set.begin(); it != point_set.end(); ++ it)
-      std::cerr << " * " << label_prop[*it] << std::endl;
+      std::cerr << " * " << (*label_prop)[*it] << std::endl;
   }
 
   if(argc > 2 && strcmp (argv[2], "-b") == 0) // Optional binary output

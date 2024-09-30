@@ -45,7 +45,7 @@ ball_d.cpp
     generates random points within an hyper ball in dim d.
 
 cube_d.cpp                       
-    generates random points wthin an hyper cube in dim d.
+    generates random points within an hyper cube in dim d.
 
 grid_d.cpp                       
     generates points on a grid in dim d.

@@ -1027,8 +1027,17 @@ scan_triangulation_impl()
   }
 
 #ifdef CGAL_MESH_3_PROFILING
-  std::cerr << "==== Facet scan: " << t.elapsed() << " seconds ===="
+  double facet_scan_time = t.elapsed();
+  std::cerr << "==== Facet scan: " << facet_scan_time << " seconds ===="
             << std::endl << std::endl;
+
+ # ifdef CGAL_MESH_3_EXPORT_PERFORMANCE_DATA
+    // If it's parallel but the refinement is forced to sequential, we don't
+    // output the value
+ #   ifndef CGAL_DEBUG_FORCE_SEQUENTIAL_MESH_REFINEMENT
+  CGAL_MESH_3_SET_PERFORMANCE_DATA("Facets_scan_time", facet_scan_time);
+ #   endif
+ # endif
 #endif
 
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
@@ -1677,9 +1686,11 @@ compute_facet_properties(const Facet& facet,
           r_oracle_.surface_patch_index(std::get<1>(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      fp =  Facet_properties(std::make_tuple(*surface,
-                                    std::get<1>(intersect),
-                                    std::get<0>(intersect)));
+      {
+        fp =  Facet_properties(std::make_tuple(*surface,
+                                      std::get<1>(intersect),
+                                      std::get<0>(intersect)));
+      }
     }
   }
   // If the dual is a ray

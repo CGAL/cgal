@@ -1057,12 +1057,12 @@ public:
   typedef unspecified_type SHalfedge_around_facet_const_circulator;
 
 /*!
-  non-mutable iterator over the cylces of a sface.
+  non-mutable iterator over the cycles of a sface.
 */
   typedef unspecified_type SFace_cycle_const_iterator;
 
 /*!
-  non-mutable iterator over the cylces of a halffacet.
+  non-mutable iterator over the cycles of a halffacet.
 */
   typedef unspecified_type Halffacet_cycle_const_iterator;
 

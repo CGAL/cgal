@@ -1,3 +1,4 @@
+AABB_tree
 Algebraic_foundations
 Arithmetic_kernel
 BGL
@@ -22,6 +23,7 @@ Profiling_tools
 Property_map
 SMDS_3
 STL_Extension
+Spatial_searching
 Spatial_sorting
 Stream_support
 TDS_3

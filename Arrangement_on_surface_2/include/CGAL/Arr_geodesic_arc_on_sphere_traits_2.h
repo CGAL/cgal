@@ -154,7 +154,6 @@ public:
   /*! Default constructor */
   Arr_geodesic_arc_on_sphere_traits_2() {}
 
-protected:
   using FT = typename Kernel::FT;
 
   using Direction_3 = typename Kernel::Direction_3;
@@ -162,6 +161,7 @@ protected:
   using Direction_2 = typename Kernel::Direction_2;
   using Vector_2 = typename Kernel::Vector_2;
 
+protected:
   /*! Obtain the intersection of the identification arc and the xy plane.
    * By default, it is the vector directed along the negative x axis
    * (x = -infinity).
@@ -641,8 +641,7 @@ public:
      * \param[in] plane the containing plane.
      * \param[in] source the source-point direction.
      * \param[in] target the target-point direction.
-     * \pre Both endpoint lie on the given plane.
-     * \pre Both endpoint lie on the given plane.
+     * \pre Both endpoints lie on the given plane.
      */
     X_monotone_curve_2 operator()(const Point_2& source, const Point_2& target,
                                   const Direction_3& normal) const
@@ -3113,7 +3112,7 @@ public:
    * \param is_directed_right is the arc directed from left to right?
    * \param is_full is the arc a full circle?
    * \param is_degenerate is the arc degenerate (single point)?
-   * \pre Both endpoint lie on the given plane.
+   * \pre Both endpoints lie on the given plane.
    */
   Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3& src,
@@ -3312,8 +3311,7 @@ public:
    * \param plane the containing plane.
    * \param source the source-point direction.
    * \param target the target-point direction.
-   * \pre Both endpoint lie on the given plane.
-   * \pre Both endpoint lie on the given plane.
+   * \pre Both endpoints lie on the given plane.
    */
   Arr_x_monotone_geodesic_arc_on_sphere_3
   (const Arr_extended_direction_3& source,
