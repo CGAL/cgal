@@ -1564,8 +1564,10 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     }
 
     // Ignore the event if it happens further the future compared to the soonest top event.
-    // @todo this should disappear if a queue is used.
-    if(offset_max && offset_event <= offset_max.value()) {
+    if(offset_max && offset_max.value() > offset_event) {
+#ifdef CGAL_SS3_DEBUG_CRASH_AT
+        std::cout << "event is strictly in the future" << std::endl;
+#endif
         return { };
     }
 
