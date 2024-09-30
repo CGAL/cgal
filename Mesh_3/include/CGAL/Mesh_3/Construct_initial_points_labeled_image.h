@@ -134,7 +134,7 @@ struct Construct_initial_points_labeled_image
    * @tparam MeshDomain model of `MeshDomain_3`
    * @tparam TransformOperator functor that transforms values of the image.
    *   It must provide the following type:<br>
-   *   `result_type` a type that supports the '==' operator<br>
+   *   `result_type`: a type that supports the '==' operator<br>
    *   and the following operator:<br>
    *   `result_type operator()(Word v)`
    *   with `Word` the type of the image values.
