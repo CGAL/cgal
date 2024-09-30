@@ -459,7 +459,8 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * for the initialization of the meshing process. If this parameter is specified without arguments, the default behavior
  * is executed, which calls the domain's `construct_initial_points_object()` for the initialization of the meshing process.
  *
- * If the parameter `parameters::initial_points()` is used, the points it provides are inserted before any other initialization.
+ * If the parameter `parameters::initial_points()` is used,
+ * the points it provides are inserted after one dimensional features initialization.
  *
  * Initialization is considered to be complete if the triangulation is a 3D triangulation
  * with at least one facet in the restricted Delaunay triangulation (i.e. its dual intersects the
@@ -488,10 +489,11 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  *
  * The function `parameters::initial_points()` enables the user to specify a container model of `Range` that contains
  * initial points to be used in the `make_mesh_3()` function for mesh generation. The `Range` contains
- * tuple-like objects containing a `Weighted_point_3`, an `int`, and an `Index`,
+ * tuple-like objects containing a `Weighted_point_3`, an `int`, and a `MeshDomain::Index`,
  * where `Weighted_point_3` represents the position and weight of the point,
  * `int` the dimension of the minimal subcomplex on which the point lies,
  * and `Index` the corresponding subcomplex index.
+ * These initial points are inserted after one dimensional features initialization.
  *
  * Initialization is considered to be complete if the triangulation is a 3D triangulation
  * with at least one facet in the restricted Delaunay triangulation (i.e. its dual intersects the
