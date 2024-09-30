@@ -158,7 +158,7 @@ public:
       for (int i = 0; i < internal::Cube_table::N_VERTICES; ++i)
       {
         Uniform_coords v_coords = coords_global;
-        typename Octree::Local_coordinates local_coords(i);
+        typename Orthtree::Local_coordinates local_coords(i);
 
         for (int j = 0; j < 3; ++j)
           v_coords[j] += std::size_t(local_coords[j]);
@@ -166,7 +166,7 @@ public:
         for (int j = 0; j < 3; ++j)
           v_coords[j] *= static_cast<uint32_t>(df);
 
-        const std::size_t lex = lex_index(v_coords[0], v_coords[1], v_coords[2], max_depth_);
+        const std::size_t lex = lex_index(v_coords[0], v_coords[1], v_coords[2], o.depth());
         leaf_vertex_set.insert(lex);
       }
     }
