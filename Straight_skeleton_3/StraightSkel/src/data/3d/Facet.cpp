@@ -88,8 +88,8 @@ FacetSPtr Facet::clone() const {
         Point3SPtr p_dst = edge->getVertexDst()->getPoint();
         VertexSPtr src;
         VertexSPtr dst;
-        std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
-        while (it_v != vertices_.end()) {
+        std::list<VertexSPtr>::const_iterator it_v = result->vertices().begin();
+        while (it_v != result->vertices().end()) {
             VertexSPtr vertex = *it_v++;
             if (vertex->getPoint() == p_src) {
                 src = vertex;
