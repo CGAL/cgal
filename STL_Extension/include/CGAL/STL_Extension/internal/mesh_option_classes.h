@@ -203,7 +203,7 @@ struct Initialization_options
   {}
 
   Initialization_options(const Initial_points_generator& generator,
-                         const Initial_points_range& initial_points = Initial_points_range())
+                         const Initial_points_range& initial_points)
     : initial_points_generator_(generator)
     , begin_it(initial_points.begin())
     , end_it(initial_points.end())
@@ -272,84 +272,6 @@ struct Domain_features_generator< MeshDomain, true >
   Features_options operator()()
   {
     return Features_options_generator<typename MeshDomain::Has_features>()();
-  }
-};
-
-// Evaluate the two parameters `initial_points_generator` and `initial_points`
-// and returns the appropriate `Initialization_options`.
-// If no generator and no initial points, then use the domain's construct_initial_points_object.
-template <typename MeshDomain, typename C3t3>
-struct Initial_points_generator_generator
-{
-  typedef typename CGAL::parameters::internal::Initialization_options<MeshDomain, C3t3> Initialization_options;
-  typedef typename Initialization_options::Value_type     Value_type;
-  typedef typename Initialization_options::OutputIterator OutputIterator;
-
-  struct Initial_points_generator_domain_traductor
-  {
-    OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3)
-    {
-      // Use boost to easily create an output iterator.
-      // This iterator take the domain's construct_initial_points_object output : an std::pair<Point_3, Index>
-      // and outputs an std::tuple<Weighted_point_3, dimension, Index>
-      // As points are on the surfaces by construction, dimension is always 2.
-      typename C3t3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
-          c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
-      domain.construct_initial_points_object()(
-             boost::make_function_output_iterator([&](const auto& domain_generated_point) {
-               *pts++ = std::make_tuple(cwp(domain_generated_point.first), 2, domain_generated_point.second);
-             }));
-      return pts;
-    }
-    OutputIterator operator()(OutputIterator pts, const MeshDomain& domain, const C3t3& c3t3, int n)
-    {
-      typename C3t3::Triangulation::Geom_traits::Construct_weighted_point_3 cwp =
-          c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
-      domain.construct_initial_points_object()(
-             boost::make_function_output_iterator([&](const auto& domain_generated_point) {
-               *pts++ = std::make_tuple(cwp(domain_generated_point.first), 2, domain_generated_point.second);
-             }), n);
-      return pts;
-    }
-  };
-
-  struct Initial_points_generator_empty
-  {
-    OutputIterator operator()(OutputIterator pts, const MeshDomain& , const C3t3& )
-    { return pts; }
-    OutputIterator operator()(OutputIterator pts, const MeshDomain& , const C3t3& , int )
-    { return pts; }
-  };
-
-  // With a custom InitialPointsGenerator
-  template <typename InitialPointsGenerator, typename InitalPointsRange>
-  Initialization_options operator()(const InitialPointsGenerator& initial_points_generator, const InitalPointsRange& input_points)
-  {
-    return Initialization_options(initial_points_generator, input_points, false);
-  }
-
-  template <typename InitialPointsGenerator>
-  Initialization_options operator()(const InitialPointsGenerator& initial_points_generator)
-  {
-    std::vector<Value_type> empty_input_points;
-    return operator()(initial_points_generator, empty_input_points);
-  }
-
-  // Without a custom InitialPointsGenerator
-  template <typename InitalPointsRange>
-  Initialization_options operator()(const Null_functor&, const InitalPointsRange& input_points)
-  {
-    // The domain's construct_initial_points_object is called only if input_points is empty
-    if (input_points.empty()) {
-      return Initialization_options(Initial_points_generator_domain_traductor(), input_points, true);
-    }
-    return Initialization_options(Initial_points_generator_empty(), input_points, true);
-  }
-
-  // Default construction
-  Initialization_options operator()()
-  {
-    return operator()(Null_functor());
   }
 };
 
