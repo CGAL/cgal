@@ -5281,6 +5281,10 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                 std::tie(point, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
                     plane, speed, plane_0, speed_0, plane_1, speed_1, plane_2, speed_2);
 
+                if (!point) {
+                    continue;
+                }
+
                 // std::cout << " **" << std::endl;
                 // std::cout << "facet = " << facet->getID() << std::endl;
                 // std::cout << "plane = " << *plane << std::endl;
