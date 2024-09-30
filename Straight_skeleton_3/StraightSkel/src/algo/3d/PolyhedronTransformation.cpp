@@ -84,18 +84,17 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
         if (!facet_wptr.expired()) {
             FacetSPtr facet = FacetSPtr(facet_wptr);
             Plane3SPtr plane = facet->plane();
-            // std::cout << "Facet #" << facet->getID() << std::endl;
-            // std::cout << "  Plane: " << *plane << std::endl;
+            // std::cout << "Facet #" << facet->toString() << std::endl;
 
-            // @fixme do a proper independence by checking
-            // at i = 1, that cross(u, v) != null_vector
-            // at i = 2, that det(u, v, w) != 0
+            // planes are _offset_ planes, but it doesn't matter for the tests
             bool independent = true;
-            for(unsigned int j=0; j<i; ++j) {
-                if (CGAL::parallel(*plane, *(planes[j]))) {
-                    independent = false;
-                    break;
-                }
+            if (i == 1) {
+                independent = !(CGAL::parallel(*(planes[0]), *plane));
+            } else if (i == 2) {
+                // @todo a little redundant to compute the intersection from scratch later
+                independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
+                                                         planes[1]->a(), planes[1]->b(), planes[1]->c(),
+                                                         plane->a(), plane->b(), plane->c()));
             }
 
             if (!independent) {
@@ -108,6 +107,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
             }
 
             planes[i] = KernelWrapper::offsetPlane(plane, offset*speed);
+            // std::cout << "facet[" << i << "] = " << facet->toString() << std::endl;
             // std::cout << "  Offset Plane[" << i << "] = " << *(planes[i]) << std::endl;
 
             ++i;
@@ -115,7 +115,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
     }
 
     if (i < 3) {
-        std::cerr << "Warning: Couldn't find three independent planes" << std::endl;
+        std::cerr << "Warning: Couldn't find three independent planes for vertex " << *(vertex->getPoint()) << std::endl;
         return { };
     }
 
@@ -160,7 +160,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         if (offset != 0 || recompute_positions) {
             point = shiftPoint(vertex, offset);
             if (!point) {
-                std::cerr << "Warning: Failed to create shifted polyhedron" << std::endl;
+                std::cerr << "Error: Failed to create shifted polyhedron" << std::endl;
                 return { };
             }
         }
