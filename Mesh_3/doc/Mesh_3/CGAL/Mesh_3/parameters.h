@@ -501,7 +501,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * input surface).
  *
  * If the parameter `parameters::initial_points_generator()` is set,
- * the points from this parameter will be inserted before calling the initial points generator
+ * the points from this parameter will be inserted before calling the initial points generator.
  *
  * If after the insertion of initial points (possibly together with the input generator),
  * the initialization is not complete,
