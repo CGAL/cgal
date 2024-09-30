@@ -1,6 +1,16 @@
 Release History
 ===============
 
+[Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
+-----------
+
+### [3D Mesh Generation](https://doc.cgal.org/6.0/Manual/packages.html#PkgMesh3)
+
+-   Added two new meshing parameters that enable mesh initialization customization :
+  - `initial_points_generator` : enables the user to specify a functor that generates initial points.
+  - `initial_points` : enables the user to specify a `Range` of initial points.
+
+
 [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 -----------
 
@@ -54,10 +64,6 @@ Release date: June 2024
 
 -   Removed the class templates `Gray_image_mesh_domain_3`, `Implicit_mesh_domain_3`, and `Labeled_image_mesh_domain_3`
     which are deprecated since CGAL-4.13.
-
--   Added two new meshing parameters that enable mesh initialization customization :
-  - `initial_points_generator` : enables the user to specify a functor that generates initial points.
-  - `initial_points` : enables the user to specify a `Range` of initial points.
 
 ### [Quadtrees, Octrees, and Orthtrees](https://doc.cgal.org/6.0/Manual/packages.html#PkgOrthtree)
 - **Breaking change**:
