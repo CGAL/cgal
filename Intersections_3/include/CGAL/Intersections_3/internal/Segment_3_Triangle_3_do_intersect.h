@@ -210,7 +210,7 @@ do_intersect(const typename K::Triangle_3& t,
       return orientation(p,q,a,b) != POSITIVE
           && orientation(p,q,b,c) != POSITIVE
           && orientation(p,q,c,a) != POSITIVE;
-    default: 
+    default:
       CGAL_unreachable();
     }
   case NEGATIVE:
@@ -231,7 +231,7 @@ do_intersect(const typename K::Triangle_3& t,
           && orientation(q,p,b,c) != POSITIVE
           && orientation(q,p,c,a) != POSITIVE;
 
-    default: 
+    default:
       CGAL_unreachable();
     }
   case COPLANAR: // p belongs to the triangle's supporting plane
@@ -252,10 +252,10 @@ do_intersect(const typename K::Triangle_3& t,
       // supporting plane
       return do_intersect_coplanar(t,s,k);
 
-    default: 
+    default:
       CGAL_unreachable();
     }
-  default: 
+  default:
     CGAL_unreachable();
   }
 }

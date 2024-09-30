@@ -140,7 +140,7 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       // a is isolated on the positive side
       return visitor.result(coplanar_orientation(*a,*c,p) != POSITIVE);
 
-    default: 
+    default:
       CGAL_unreachable();
     }
 
@@ -165,7 +165,7 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       // a is isolated on the negative side
       return visitor.result(coplanar_orientation(*b,*a,p) != POSITIVE);
 
-    default: 
+    default:
       CGAL_unreachable();
     }
 
@@ -189,11 +189,11 @@ do_intersect_coplanar(const typename K::Triangle_3& t,
       return visitor.result(coplanar_orientation(*a,*c,p) != POSITIVE);
       // case pqc == COLLINEAR is imposiible
 
-    default: 
+    default:
       CGAL_unreachable();
     }
 
-  default: 
+  default:
     CGAL_unreachable();
   }
 }
@@ -259,7 +259,7 @@ do_intersect(const typename K::Triangle_3& t,
       return visitor.result(true);
     }
     // case COPLANAR: should not happen
-    default: 
+    default:
       CGAL_unreachable();
     }
 
@@ -288,7 +288,7 @@ do_intersect(const typename K::Triangle_3& t,
 
       // case COPLANAR: should not happen
 
-    default: 
+    default:
       CGAL_unreachable();
     }
 
@@ -311,11 +311,11 @@ do_intersect(const typename K::Triangle_3& t,
 
       // case COPLANAR: should not happen
 
-    default: 
+    default:
       CGAL_unreachable();
     }
 
-  default: 
+  default:
     CGAL_unreachable();
   }
 }

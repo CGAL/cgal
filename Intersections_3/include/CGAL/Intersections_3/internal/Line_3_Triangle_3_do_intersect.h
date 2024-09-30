@@ -61,7 +61,7 @@ do_intersect(const typename K::Triangle_3& t,
           default:
             CGAL_unreachable();
         }
-      default: 
+      default:
         CGAL_unreachable();
     }
   }

@@ -305,17 +305,17 @@ do_intersect(const typename K::Triangle_3& t1,
 
             case COPLANAR:
               return do_intersect_coplanar(t1,t2,k);
-            default: 
+            default:
               CGAL_unreachable();
           }
           break;
 
-        default: 
+        default:
           CGAL_unreachable();
       }
       break;
 
-    default: 
+    default:
       CGAL_unreachable();
   }
 
@@ -427,17 +427,17 @@ do_intersect(const typename K::Triangle_3& t1,
               // since the triangles are assumed to be non-flat
 
               return do_intersect_coplanar(t1,t2,k);
-            default: 
+            default:
               CGAL_unreachable();
           }
           break;
 
-        default: 
+        default:
           CGAL_unreachable();
       }
       break;
 
-    default: 
+    default:
       CGAL_unreachable();
   }
 
