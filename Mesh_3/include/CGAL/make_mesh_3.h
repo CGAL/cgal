@@ -98,41 +98,48 @@ add_points_from_generator(C3T3& c3t3,
   }
 }
 
+template<typename C3T3, typename MeshDomain>
+bool
+needs_more_init(C3T3& c3t3, const MeshDomain& domain)
+{
+  // If c3t3 initialization is not sufficient (may happen if
+  // the user has not specified enough points ), add some surface points
+
+  if (c3t3.triangulation().dimension() != 3)
+    return true;
+  else // dimension is 3 but it may not be enough
+  {
+    CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
+    helper.update_restricted_facets();
+
+    if (c3t3.number_of_facets() == 0) {
+      return true;
+    }
+    else
+    {
+      helper.update_restricted_cells();
+      if (c3t3.number_of_cells() == 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
 template < typename C3T3, typename MeshDomain, typename MeshCriteria, typename InitializationOptions>
 void
 init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
           const int nb_initial_points,
           const InitializationOptions& init_options)
 {
+  // 1st insert points from initial_points range and initial_points_generator
   add_points_from_generator(c3t3, domain, nb_initial_points, init_options);
-
-  typedef CGAL::parameters::internal::Initialization_options<MeshDomain, C3T3> Default_init_options;
-  bool is_default_init = false;
-  if constexpr (std::is_same_v<InitializationOptions, Default_init_options>)
-  {
-    is_default_init = init_options.is_default();
-  }
 
   // If c3t3 initialization is not sufficient (may happen if
   // the user has not specified enough points ), add some surface points
-  bool need_more_init = c3t3.triangulation().dimension() != 3 || !is_default_init;
-  if(!need_more_init)
-  {
-    CGAL::Mesh_3::C3T3_helpers<C3T3, MeshDomain> helper(c3t3, domain);
-    helper.update_restricted_facets();
 
-    if (c3t3.number_of_facets() == 0) {
-      need_more_init = true;
-    }
-    else
-    {
-      helper.update_restricted_cells();
-      if(c3t3.number_of_cells() == 0) {
-        need_more_init = true;
-      }
-    }
-  }
-  if(need_more_init)
+  // use mesh domain's Construct_initial_points to complete initialization
+  if(needs_more_init(c3t3, domain))
   {
     add_points_from_generator(c3t3, domain, nb_initial_points,
                               domain.construct_initial_points_object());
@@ -297,31 +304,21 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true>
     if ( with_features ) {
       this->initialize_features(c3t3, domain, criteria,mesh_options);
 
-      // If c3t3 initialization is not sufficient (may happen if there is only
-      // a planar curve as feature for example), add some surface points
-      bool is_default_init = false;
-      if constexpr (std::is_same_v<InitOptions, Default_init_options>)
+      // If the initial points are not provided by the default generator,
+      // there is no need to count the restricted facets and cells for now
+      // because more vertices will be inserted anyway.
+      // The check will be done later in init_c3t3()
+      bool use_default_initializer = false;
+      if constexpr (std::is_same_v<InitOptions, Default_init_options>) // check default type
       {
-        is_default_init = init_options.is_default();
+        use_default_initializer = init_options.is_default(); //check it also has no additional vertices
       }
 
-      bool need_more_init = c3t3.triangulation().dimension() != 3 || !is_default_init;
-      if(!need_more_init) {
-        CGAL::Mesh_3::C3T3_helpers<C3T3, MD> helper(c3t3, domain);
-        helper.update_restricted_facets();
-
-        if (c3t3.number_of_facets() == 0) {
-          need_more_init = true;
-        }
-        else
-        {
-          helper.update_restricted_cells();
-          if(c3t3.number_of_cells() == 0) {
-            need_more_init = true;
-          }
-        }
-      }
-      if(need_more_init) {
+      // If c3t3 initialization from features initialization
+      // is not sufficient (may happen if there is only
+      // a planar curve as feature for example), add some surface points.
+      if (!use_default_initializer || CGAL::Mesh_3::internal::needs_more_init(c3t3, domain))
+      {
         init_c3t3(c3t3, domain, criteria,
                   mesh_options.number_of_initial_points, init_options);
       }
@@ -492,15 +489,16 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false>
  *                           <UL>
  *                             <LI> `parameters::initial_points_generator()`
  *                           </UL>}
- *     \cgalParamDefault{`CGAL::Null_Functor()`, the domain's `construct_initial_points_object()`
+ *     \cgalParamDefault{the domain's `construct_initial_points_object()`
  *                       will be called for the points initialization.}
  *     \cgalParamExtra{If the generator does not generate enough points,
  *                    the domain's `construct_initial_points_object()` will be called.}
  *     \cgalParamExtra{If the parameter `parameters::initial_points()` is set,
  *                    the functor will be called after insertion of the points.}
+ *   \cgalParamSectionEnd
  *   \cgalParamSectionBegin{Mesh initialization with points}
  *    \cgalParamDescription{a `Range` of initial points, represented as
- *                          tuple-like objects made of `tuple-like<Weighted_point_3, int, Index>` can optionally
+ *                          tuple-like objects made of `tuple-like` objects of `<Weighted_point_3, int, Index>` can optionally
  *                          be provided to start the meshing process.
  *                          `Weighted_point_3` is the point's position and weight,
  *                          `int` is the dimension of the minimal dimension subcomplex on which
@@ -512,7 +510,9 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false>
  *                          </UL>}
  *    \cgalParamDefault{`std::vector<std::tuple<Weighted_point_3, int, Index>>()`}
  *    \cgalParamExtra{If this parameter is set,
- *                    the domain's `construct_initial_points_object()` will not be called.}
+ *                    the domain's `construct_initial_points_object()` will be called
+ *                    only if there is no facet in the restricted Delaunay triangulation
+ *                    after points insertion.}
  *    \cgalParamExtra{If the parameter `parameters::initial_points_generator()` is set,
  *                    the points will be inserted before calling the functor.}
  *   \cgalParamSectionEnd

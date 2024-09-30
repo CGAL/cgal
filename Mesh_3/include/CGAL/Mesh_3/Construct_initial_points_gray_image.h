@@ -63,8 +63,11 @@ struct Construct_initial_points_gray_image
   * even if they are non-connected components.
   * Using this functor guarantees to initialize each connected component.
   *
-  * \tparam OutputIterator model of `OutputIterator`, collecting points of type
-  * `MeshDomain::Intersection`
+  * @tparam OutputIterator model of `OutputIterator` for
+  * tuple-like objects containing
+  * - a `Weighted_point_3` for the point
+  * - an `int` for the minimal dimension of the subcomplexes on which the point lies
+  * - a `MeshDomain::Index` for the corresponding subcomplex index
   * \tparam MeshDomain model of `MeshDomain_3`
   * \tparam C3t3 model of `MeshComplex_3InTriangulation_3`
   *

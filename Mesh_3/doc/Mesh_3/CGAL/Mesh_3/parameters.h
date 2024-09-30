@@ -461,7 +461,11 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  *
  * If the parameter `parameters::initial_points()` is used, the points it provides are inserted before any other initialization.
  *
- * If the generator does not generate enough points, the domain's `construct_initial_points_object()` will be called.
+ * Initialization is considered to be complete if the triangulation is a 3D triangulation
+ * with at least one facet in the restricted Delaunay triangulation (i.e. its dual intersects the
+ * input surface).
+ * If the generator does not generate enough points for the initialization to be complete,
+ * the domain's `construct_initial_points_object()` will be called to generate enough input points.
  *
  * \tparam InitialPointsGenerator a functor that follows the `InitialPointsGenerator` concept
  *
@@ -489,8 +493,15 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * `int` the dimension of the minimal subcomplex on which the point lies,
  * and `Index` the corresponding subcomplex index.
  *
- * If the parameter `parameters::initial_points_generator()` is set, the points will be inserted before calling the functor.
- * If the insertion of initial points, together with the input generator, do not generate enough points,
+ * Initialization is considered to be complete if the triangulation is a 3D triangulation
+ * with at least one facet in the restricted Delaunay triangulation (i.e. its dual intersects the
+ * input surface).
+ *
+ * If the parameter `parameters::initial_points_generator()` is set,
+ * the points will be inserted before calling the functor.
+ *
+ * If after the insertion of initial points, together with the input generator,
+ * the initialization is not complete,
  * the domain's `construct_initial_points_object()` will be called.
  *
  * \tparam MeshDomain a model of `MeshDomain_3`
@@ -510,8 +521,8 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  *                               parameters::initial_points(std::cref(initial_points))); // Use std::cref to avoid a copy
  * \endcode
  *
- * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
+ * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `MeshDomain_3::Construct_initial_points`
  *
  */

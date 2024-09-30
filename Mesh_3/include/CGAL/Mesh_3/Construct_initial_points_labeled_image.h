@@ -108,8 +108,11 @@ struct Construct_initial_points_labeled_image
   * even if they are non-connected components.
   * This ensures that each component will be initialized.
   *
-  * @tparam OutputIterator model of `OutputIterator` that contains points of type
-  * @todo describe type
+  * @tparam OutputIterator model of `OutputIterator` for
+  * tuple-like objects containing
+  * - a `Weighted_point_3` for the point
+  * - an `int` for the minimal dimension of the subcomplexes on which the point lies
+  * - a `MeshDomain::Index` for the corresponding subcomplex index
   */
   template <typename OutputIterator>
   OutputIterator operator()(OutputIterator pts, int n = 20) const
@@ -121,8 +124,11 @@ struct Construct_initial_points_labeled_image
   /*!
    * \brief Same as above, but a `TransformOperator` that transforms values of the image is used.
    *
-   * @tparam OutputIterator model of `OutputIterator` that contains points of type
-   *   `MeshDomain::Intersection`
+   * @tparam OutputIterator model of `OutputIterator` for
+   * tuple-like objects containing
+   * - a `Weighted_point_3` for the point
+   * - an `int` for the minimal dimension of the subcomplexes on which the point lies
+   * - a `MeshDomain::Index` for the corresponding subcomplex index
    * @tparam MeshDomain model of `MeshDomain_3`
    * @tparam TransformOperator functor that transforms values of the image.
    *   It must provide the following type:<br>

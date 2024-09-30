@@ -36,6 +36,11 @@ typedef unspecified_type C3t3;
 Outputs a set of surface points, for mesh initialization, to the
 output iterator `pts`.
 
+If, after insertion of these points, the triangulation is still not 3D,
+or does not have any facets
+in the restricted Delaunay triangulation, then more points will be added automatically
+by the mesher.
+
 @tparam OutputIterator model of `OutputIterator`, containing tuple-like objects made of 3 elements :
   - a `C3t3::Triangulation::Point` : the point `p`,
   - a `int` : the minimal dimension of the subcomplexes on which `p` lies,
@@ -44,8 +49,7 @@ output iterator `pts`.
 @param pts the output points
 @param n a lower bound on the number of points to construct for initialization.
 A generator can choose to ignore this parameter.
-If this operator does not output enough points, then more points will be added automatically
-by the mesher.
+
 */
 template <typename OutputIterator>
 OutputIterator operator()(OutputIterator pts, int n);
@@ -53,7 +57,11 @@ OutputIterator operator()(OutputIterator pts, int n);
 /*!
 Same as above, without the `n` parameter.
 Since there is no `n` given like above, the functor must provide enough
-points to initialize the mesh generation process.
+points to initialize the mesh generation process, i.e. to have a 3D triangulation
+with at least one facet in the restricted Delaunay triangulation.
+
+If these conditions are not satisfied, then more points will be added automatically
+by the mesher.
 
 @tparam OutputIterator model of `OutputIterator`, containing tuple-like objects made of 3 elements :
   - a `C3t3::Triangulation::Point` : the point `p`,
