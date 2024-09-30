@@ -45,7 +45,6 @@ do_intersect(const typename K::Triangle_3& t,
     return true;
   default:// should not happen.
     CGAL_unreachable();
-    return false;
   }
 }
 

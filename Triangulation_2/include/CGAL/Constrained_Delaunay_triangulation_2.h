@@ -490,7 +490,6 @@ public:
       return pit;
     }
     CGAL_unreachable();
-    return std::make_pair(fit,eit);
   }
 
   template <class OutputItFaces>

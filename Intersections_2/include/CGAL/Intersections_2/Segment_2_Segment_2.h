@@ -143,7 +143,6 @@ seg_seg_do_intersect_crossing(
       CGAL_unreachable();
     }
     CGAL_unreachable();
-    return S2S2_inter_info(false);
 }
 
 // used internally by Arr_segment_traits_2template <class K>
@@ -204,7 +203,6 @@ seg_seg_do_intersect_contained(
       CGAL_unreachable();
     }
     CGAL_unreachable();
-    return S2S2_inter_info(false);
 }
 
 // used internally by Arr_segment_traits_2
@@ -321,7 +319,6 @@ do_intersect_with_info(const typename K::Segment_2 &seg1,
     }
 
     CGAL_unreachable();
-    return S2S2_inter_info(false);
 }
 
 

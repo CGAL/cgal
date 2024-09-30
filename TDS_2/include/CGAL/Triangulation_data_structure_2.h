@@ -1119,7 +1119,7 @@ insert_dim_up(Vertex_handle w,  bool orient)
     break;
   default:
     CGAL_unreachable();
-    break;  }
+  }
   return v;
 }
 

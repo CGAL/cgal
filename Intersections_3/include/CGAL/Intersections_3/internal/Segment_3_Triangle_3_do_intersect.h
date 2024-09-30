@@ -79,9 +79,8 @@ bool do_intersect_coplanar(const typename K::Point_3& A,
       // a is isolated on the positive side
       return coplanar_orientation(*a,*b,q) != NEGATIVE
           && coplanar_orientation(*c,*a,p) != NEGATIVE;
-    default:// should not happen.
+    default:
       CGAL_unreachable();
-      return false;
     }
   case NEGATIVE:
     switch ( pqb ) {
@@ -109,9 +108,8 @@ bool do_intersect_coplanar(const typename K::Point_3& A,
       return coplanar_orientation(*a,*b,p) != NEGATIVE
           && coplanar_orientation(*c,*a,q) != NEGATIVE;
 
-    default:// should not happen.
+    default:
       CGAL_unreachable();
-      return false;
     }
   case COLLINEAR:
     switch ( pqb ) {
@@ -139,14 +137,11 @@ bool do_intersect_coplanar(const typename K::Point_3& A,
       // case pqc == COLLINEAR is impossible since the triangle is
       // assumed to be non flat
 
-    default:// should not happen.
+    default:
       CGAL_unreachable();
-      return false;
-
     }
-  default:// should not happen.
+  default:
     CGAL_unreachable();
-    return false;
   }
 }
 
@@ -215,9 +210,8 @@ do_intersect(const typename K::Triangle_3& t,
       return orientation(p,q,a,b) != POSITIVE
           && orientation(p,q,b,c) != POSITIVE
           && orientation(p,q,c,a) != POSITIVE;
-    default: // should not happen.
+    default: 
       CGAL_unreachable();
-      return false;
     }
   case NEGATIVE:
     switch ( abcq ) {
@@ -237,9 +231,8 @@ do_intersect(const typename K::Triangle_3& t,
           && orientation(q,p,b,c) != POSITIVE
           && orientation(q,p,c,a) != POSITIVE;
 
-    default: // should not happen.
+    default: 
       CGAL_unreachable();
-      return false;
     }
   case COPLANAR: // p belongs to the triangle's supporting plane
     switch ( abcq ) {
@@ -259,13 +252,11 @@ do_intersect(const typename K::Triangle_3& t,
       // supporting plane
       return do_intersect_coplanar(t,s,k);
 
-    default: // should not happen.
+    default: 
       CGAL_unreachable();
-      return false;
     }
-  default: // should not happen.
+  default: 
     CGAL_unreachable();
-    return false;
   }
 }
 

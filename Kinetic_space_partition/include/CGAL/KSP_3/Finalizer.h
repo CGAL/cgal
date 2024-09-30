@@ -415,7 +415,6 @@ private:
     }
 
     CGAL_unreachable();
-    return false;
   }
 
   IVertex non_collinear_vertex(const PFace& pface, const IEdge& iedge) const {

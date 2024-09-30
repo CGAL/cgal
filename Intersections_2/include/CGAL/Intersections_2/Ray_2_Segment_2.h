@@ -204,8 +204,7 @@ Ray_2_Segment_2_pair<K>::intersection_type() const
         }
         }
     default:
-        CGAL_unreachable(); // should not be reached:
-        return _result;
+        CGAL_unreachable();
     }
 
 }

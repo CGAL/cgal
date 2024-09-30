@@ -167,7 +167,6 @@ public:
         return w(2);
       default:
         CGAL_unreachable();
-        return w(0); // arbitrary, meaningless value because a const& is expected
     }
   }
 

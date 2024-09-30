@@ -876,7 +876,6 @@ Aff_transformation_repH2<R>::homogeneous(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return RT(0);
 }
 
 template < class R >
@@ -920,7 +919,6 @@ Translation_repH2<R>::homogeneous(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return RT(0);
 }
 
 template < class R >
@@ -955,7 +953,6 @@ Translation_repH2<R>::cartesian(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return FT(0);
 }
 
 template < class R >
@@ -991,7 +988,6 @@ homogeneous(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return RT(0);
 }
 
 template < class R >
@@ -1027,7 +1023,6 @@ cartesian(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return FT(0);
 }
 
 template < class R >
@@ -1063,7 +1058,6 @@ homogeneous(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return RT(0);
 }
 
 template <class R>
@@ -1099,7 +1093,6 @@ cartesian(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return FT(0);
 }
 
 template < class R >
@@ -1136,7 +1129,6 @@ homogeneous(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return RT(0);
 }
 
 template <class R>
@@ -1173,7 +1165,6 @@ cartesian(int i, int j) const
             }
   }
   CGAL_unreachable();
-  return FT(0);
 }
 
 } //namespace CGAL

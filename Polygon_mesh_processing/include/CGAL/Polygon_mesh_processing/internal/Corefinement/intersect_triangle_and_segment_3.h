@@ -128,7 +128,6 @@ intersection_type(
 
     default:
       CGAL_unreachable();
-      return result_type(EMPTY,GT::null_halfedge(),false,false);
     }
   case NEGATIVE:
     switch ( abcq ) {
@@ -145,7 +144,6 @@ intersection_type(
       return find_intersection(q,p,a,b,c,h_2,tm2,false,true);
     default:
       CGAL_unreachable();
-      return result_type(EMPTY,GT::null_halfedge(),false,false);
     }
   case COPLANAR: // p belongs to the triangle's supporting plane
     switch ( abcq ) {
@@ -165,11 +163,9 @@ intersection_type(
 
     default:
       CGAL_unreachable();
-      return result_type(EMPTY,GT::null_halfedge(),false,false);
     }
   default:
     CGAL_unreachable();
-    return result_type(EMPTY,GT::null_halfedge(),false,false);
   }
 }
 

@@ -58,13 +58,11 @@ do_intersect(const typename K::Triangle_3& t,
           case POSITIVE: return (orientation(p,q,c,a) != NEGATIVE);
           case NEGATIVE: return (orientation(p,q,c,a) != POSITIVE);
           case COPLANAR: return true;
-          default: // should not happen.
+          default:
             CGAL_unreachable();
-            return false;
         }
-      default: // should not happen.
+      default: 
         CGAL_unreachable();
-        return false;
     }
   }
 

@@ -389,7 +389,6 @@ ts_intersection(const typename K::Triangle_3 &t,
         return result_type();
       default:
         CGAL_unreachable();
-        return result_type();
       }
   }
 }

@@ -61,11 +61,9 @@ do_intersect(const typename K::Triangle_3& t,
     case COLLINEAR: return true;
     default: // should not happen.
       CGAL_unreachable();
-      return false;
     }
   default: // should not happen.
     CGAL_unreachable();
-    return false;
   }
 }
 
