@@ -94,7 +94,7 @@ public:
   using Cell_vertices = std::array<vertex_descriptor, 8>;
   using Cell_edges = std::array<edge_descriptor, 12>;
 
-private:
+public:
   static std::set<edge_descriptor> get_leaf_edges(const Orthtree& o) {
     std::set<edge_descriptor> leaf_edge_set;
     std::size_t dim = std::size_t(1) << o.depth();
@@ -143,7 +143,108 @@ private:
     return leaf_edge_set;
   }
 
-public:
+  static std::set<vertex_descriptor> get_leaf_vertices(const Orthtree& o) {
+    std::set<vertex_descriptor> leaf_vertex_set;
+    std::size_t dim = std::size_t(1) << o.depth();
+    for (Node_index node_index : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
+    {
+      const Uniform_coords& coords_uniform = uniform_coordinates(node_index, o);
+
+      // write all vertices edges in a set
+      const Uniform_coords& coords_global = o.global_coordinates(node_index);
+      const std::size_t depth = o.depth(node_index);
+      const std::size_t df = std::size_t(1) << (o.depth() - depth);
+
+      for (int i = 0; i < internal::Cube_table::N_VERTICES; ++i)
+      {
+        Uniform_coords v_coords = coords_global;
+        typename Octree::Local_coordinates local_coords(i);
+
+        for (int j = 0; j < 3; ++j)
+          v_coords[j] += std::size_t(local_coords[j]);
+
+        for (int j = 0; j < 3; ++j)
+          v_coords[j] *= static_cast<uint32_t>(df);
+
+        const std::size_t lex = lex_index(v_coords[0], v_coords[1], v_coords[2], max_depth_);
+        leaf_vertex_set.insert(lex);
+      }
+    }
+
+    return leaf_vertex_set;
+  }
+
+  static void get_leaves(const Orthtree& o, std::vector<cell_descriptor> &cells, std::vector<edge_descriptor>& edges, std::vector<vertex_descriptor>& vertices) {
+    std::set<edge_descriptor> leaf_edge_set;
+    std::set<vertex_descriptor> leaf_vertex_set;
+    std::size_t dim = std::size_t(1) << o.depth();
+    cells.clear();
+    for (Node_index node_index : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
+    {
+      const Uniform_coords& coords_uniform = uniform_coordinates(node_index, o);
+      cells.push_back(node_index);
+
+      // write all leaf edges in a set
+      const Uniform_coords& coords_global = o.global_coordinates(node_index);
+      const std::size_t depth = o.depth(node_index);
+      const std::size_t df = std::size_t(1) << (o.depth() - depth);
+
+      for (int i = 0; i < internal::Cube_table::N_VERTICES; ++i)
+      {
+        Uniform_coords v_coords = coords_global;
+        typename Orthtree::Local_coordinates local_coords(i);
+
+        for (int j = 0; j < 3; ++j)
+          v_coords[j] += std::size_t(local_coords[j]);
+
+        for (int j = 0; j < 3; ++j)
+          v_coords[j] *= static_cast<uint32_t>(df);
+
+        const std::size_t lex = lex_index(v_coords[0], v_coords[1], v_coords[2], o.depth());
+        leaf_vertex_set.insert(lex);
+      }
+
+      for (const auto& edge_voxels : internal::Cube_table::edge_to_voxel_neighbor)
+      {
+        bool are_all_voxels_leafs = true;
+        for (const auto& node_ijk : edge_voxels)
+        {
+          const std::size_t x = coords_uniform[0] + df * node_ijk[0];
+          const std::size_t y = coords_uniform[1] + df * node_ijk[1];
+          const std::size_t z = coords_uniform[2] + df * node_ijk[2];
+          // check for overflow / ignore edges on boundary
+          if (x >= dim || y >= dim || z >= dim)
+          {
+            are_all_voxels_leafs = false;
+            break;
+          }
+
+          const Node_index n = get_node(x, y, z, o);
+          if (o.depth(n) > depth)
+          {
+            are_all_voxels_leafs = false;
+            break;
+          }
+        }
+
+        if (are_all_voxels_leafs)
+        {
+          // add to leaf edge set
+          std::size_t e_gl = e_glIndex(edge_voxels[0][3],
+            coords_global[0], coords_global[1], coords_global[2],
+            depth);
+          leaf_edge_set.insert({ e_gl, depth });
+        }
+      }
+    }
+
+    edges.clear();
+    vertices.clear();
+
+    std::copy(leaf_edge_set.begin(), leaf_edge_set.end(), std::back_inserter(edges));
+    std::copy(leaf_vertex_set.begin(), leaf_vertex_set.end(), std::back_inserter(vertices));
+  }
+
   static Point_3 point(const vertex_descriptor& v,
                                           const Orthtree& o)
   {
@@ -254,8 +355,18 @@ public:
                               const Orthtree& o,
                               const CGAL::Sequential_tag)
   {
-//     for(const vertex_descriptor& v : o.leaf_vertices())
-//       f(v);
+    for(const vertex_descriptor& v : get_leaf_vertices(o))
+      f(v);
+  }
+
+  template <typename Functor>
+  static void for_each_vertex(Functor& f,
+                              std::vector<vertex_descriptor>& vertices,
+                              const Orthtree& o,
+                              const CGAL::Sequential_tag)
+  {
+    for (const vertex_descriptor& v : vertices)
+      f(v);
   }
 
   template <typename Functor>
@@ -263,8 +374,7 @@ public:
                             const Orthtree& o,
                             Sequential_tag)
   {
-    std::set<edge_descriptor> edge_set = get_leaf_edges(o);
-    for(const edge_descriptor& e : o.leaf_edges())
+    for(const edge_descriptor& e : get_leaf_edges(o))
        f(e);
   }
 
@@ -302,6 +412,7 @@ public:
       auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<typename Orthtree::Orthtree>(o));
       std::copy(cell_range.begin(), cell_range.end(), std::back_inserter(cells));
     }
+
     for (const cell_descriptor& v : cells)
       f(v);
   }
@@ -312,15 +423,24 @@ public:
                               const Orthtree& o,
                               Parallel_tag)
   {
-//     const auto& vertices = o.leaf_vertices();
-//
-//     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
-//     {
-//       for(std::size_t i = r.begin(); i != r.end(); ++i)
-//         f(vertices[i]);
-//     };
-//
-//     tbb::parallel_for(tbb::blocked_range<std::size_t>(0, vertices.size()), iterator);
+    auto edges = get_leaf_edges(o);
+
+    tbb::parallel_for_each(edges.begin(), edges.end(), f);
+  }
+
+  template <typename Functor>
+  static void for_each_vertex(Functor& f,
+                              std::vector<vertex_descriptor>& vertices,
+                              const Orthtree& o,
+                              Parallel_tag)
+  {
+    auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
+    {
+      for(std::size_t i = r.begin(); i != r.end(); ++i)
+        f(vertices[i]);
+    };
+
+    tbb::parallel_for(tbb::blocked_range<std::size_t>(0, vertices.size()), iterator);
   }
 
   template <typename Functor>
@@ -332,6 +452,7 @@ public:
 
     tbb::parallel_for_each(edges.begin(), edges.end(), f);
   }
+
   template <typename Functor>
   static void for_each_edge(Functor& f,
                             std::vector<edge_descriptor>& edges,
@@ -366,6 +487,7 @@ public:
     const auto& cells = o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o));
     tbb::parallel_for_each(cells.begin(), cells.end(), func);
   }
+
   template <typename Functor>
   static void for_each_cell(Functor& f,
                             std::vector<cell_descriptor>& cells,

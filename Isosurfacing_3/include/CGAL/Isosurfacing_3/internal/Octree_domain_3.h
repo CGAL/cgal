@@ -25,12 +25,7 @@ namespace CGAL {
 namespace Isosurfacing {
 namespace internal {
 
-// This class is pretty much just the concatenation of the following classes:
-// - Partition: Space partitioning data structure, e.g. Cartesian grid, octree, ...
-// - Values: values over the 3D space
-// - Gradients: gradients over the 3D space
-// - Oracle: edge-isosurface intersection computation
-//  typedef Kernel_traits<Point>::Kernel::Triangle_3 Datum;
+// Specialization of the Isosurfacing_domain_3 for Orthtree
 template <typename ValueField,
           typename GradientField,
           typename IntersectionOracle>
@@ -66,6 +61,7 @@ private:
   const ValueField& m_values;
   const GradientField& m_gradients;
   const IntersectionOracle m_intersection_oracle;
+  mutable std::vector<vertex_descriptor> m_leaf_vertices; // cache variable
   mutable std::vector<edge_descriptor> m_leaf_edges; // cache variable
   mutable std::vector<cell_descriptor> m_leaf_cells; // cache variable
 
@@ -145,13 +141,18 @@ public:
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_vertex(Functor& f) const
   {
-    PT::template for_each_vertex<ConcurrencyTag>(f, m_partition);
+    if (m_leaf_vertices.empty())
+      PT::get_leaves(m_partition, m_leaf_cells, m_leaf_edges, m_leaf_vertices);
+
+    PT::template for_each_vertex<ConcurrencyTag>(f, m_leaf_vertices, m_partition);
   }
 
   // iterates over all edges `e`, calling `f(e)` on each of them
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_edge(Functor& f) const
   {
+    if (m_leaf_edges.empty())
+      PT::get_leaves(m_partition, m_leaf_cells, m_leaf_edges, m_leaf_vertices);
     PT::template for_each_edge<ConcurrencyTag>(f, m_leaf_edges, m_partition);
   }
 
@@ -159,6 +160,8 @@ public:
   template <typename ConcurrencyTag = CGAL::Sequential_tag, typename Functor>
   void for_each_cell(Functor& f) const
   {
+    if (m_leaf_cells.empty())
+      PT::get_leaves(m_partition, m_leaf_cells, m_leaf_edges, m_leaf_vertices);
     PT::template for_each_cell<ConcurrencyTag>(f, m_leaf_cells, m_partition);
   }
 
