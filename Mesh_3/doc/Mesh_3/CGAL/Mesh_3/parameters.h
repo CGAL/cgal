@@ -456,7 +456,8 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  *
  * The function `parameters::initial_points_generator()` enables the user to specify a functor that follows
  * the `InitialPointsGenerator` concept to the mesh generation function `make_mesh_3()`. This functor is called
- * for the initialization of the meshing process. If this parameter is specified without arguments, the default behavior
+ * for the initialization of the meshing process, by inserting well-distributed surface vertices.
+ * If this parameter is specified without arguments, the default behavior
  * is executed, which calls the domain's `construct_initial_points_object()` for the initialization of the meshing process.
  *
  * If the parameter `parameters::initial_points()` is used,
@@ -468,7 +469,7 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * If the generator does not generate enough points for the initialization to be complete,
  * the domain's `construct_initial_points_object()` will be called to generate enough input points.
  *
- * \tparam InitialPointsGenerator a functor that follows the `InitialPointsGenerator` concept
+ * \tparam InitialPointsGenerator a model of the `InitialPointsGenerator` concept
  *
  * @param generator an instance of `InitialPointsGenerator`
  *
@@ -487,12 +488,12 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::initial_points()` enables the user to specify a container model of `Range` that contains
- * initial points to be used in the `make_mesh_3()` function for mesh generation. The `Range` contains
+ * The function `parameters::initial_points()` enables the user to specify a container, model of `Range`, that contains
+ * initial points to be used in the `make_mesh_3()` function for mesh generation. Items in the container are
  * tuple-like objects containing a `Weighted_point_3`, an `int`, and a `MeshDomain::Index`,
- * where `Weighted_point_3` represents the position and weight of the point,
+ * where `Weighted_point_3` represents the position and the weight of the point,
  * `int` the dimension of the minimal subcomplex on which the point lies,
- * and `Index` the corresponding subcomplex index.
+ * and `MeshDomain::Index` the corresponding subcomplex index.
  * These initial points are inserted after one dimensional features initialization.
  *
  * Initialization is considered to be complete if the triangulation is a 3D triangulation
@@ -500,17 +501,18 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * input surface).
  *
  * If the parameter `parameters::initial_points_generator()` is set,
- * the points will be inserted before calling the functor.
+ * the points from this parameter will be inserted before calling the initial points generator
  *
- * If after the insertion of initial points, together with the input generator,
+ * If after the insertion of initial points (possibly together with the input generator),
  * the initialization is not complete,
  * the domain's `construct_initial_points_object()` will be called.
  *
  * \tparam MeshDomain a model of `MeshDomain_3`
  * \tparam C3t3 a model of `MeshComplex_3InTriangulation_3`
+ * \tparam InitialPointsRange a model of `Range` containing tuple-like objects of
+ *    `C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index`.
  *
- * @param initial_points a `Range` that contains points of tuple-like objects of
- *  `C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index`.
+ * @param initial_points an instance of `InitialPointsRange`
  *
  * \cgalHeading{Example}
  *
@@ -528,8 +530,8 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \sa `MeshDomain_3::Construct_initial_points`
  *
  */
-template <typename MeshDomain, typename C3t3>
-unspecified_type initial_points(const std::vector<std::tuple<C3t3::Triangulation::Geom_traits::Weighted_point_3, int, MeshDomain::Index>>& initial_points);
+template <typename MeshDomain, typename C3t3, typename InitialPointsRange>
+unspecified_type initial_points(const InitialPointsRange& initial_points);
 } /* namespace parameters */
 
 } /* namespace CGAL */

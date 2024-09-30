@@ -35,6 +35,8 @@ namespace CGAL
  * this functor will scan the full image and
  * output points on every component.
  *
+ * \cgalModels{InitialPointsGenerator}
+ *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
  * \sa `CGAL::Construct_initial_points_labeled_image`
@@ -58,7 +60,7 @@ struct Construct_initial_points_gray_image
   { }
 
   /*!
-  * \brief Constructs at least `n` points by collecting them on the surface of all objects
+  * \brief constructs at least `n` points by collecting them on the surface of all objects
   * in the image,
   * even if they are non-connected components.
   * Using this functor guarantees to initialize each connected component.
@@ -76,8 +78,9 @@ struct Construct_initial_points_gray_image
   OutputIterator operator()(OutputIterator pts, int n = 20) const
   {
     using CGAL::Mesh_3::internal::Create_gray_image_values_to_subdomain_indices;
-    typedef Create_gray_image_values_to_subdomain_indices<Functor> C_i_v_t_s_i;
-    typedef typename C_i_v_t_s_i::type Image_values_to_subdomain_indices;
+    using C_i_v_t_s_i = Create_gray_image_values_to_subdomain_indices<Functor>;
+    using Image_values_to_subdomain_indices = typename C_i_v_t_s_i::type;
+
     Image_values_to_subdomain_indices transform_fct =
       C_i_v_t_s_i()(image_values_to_subdomain_indices_, iso_value_);
     Construct_initial_points_labeled_image<C3t3, MeshDomain> init_pts{ image_, domain_ };

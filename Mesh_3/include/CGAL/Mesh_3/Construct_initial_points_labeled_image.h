@@ -85,6 +85,8 @@ struct Get_point
  * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
  * @tparam MeshDomain model of `MeshDomain_3`
  *
+ * \cgalModels{InitialPointsGenerator}
+ *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
  * \sa `CGAL::Construct_initial_points_gray_image`
@@ -102,7 +104,7 @@ struct Construct_initial_points_labeled_image
   { }
 
   /*!
-  * \brief Constructs at least `n` initial points,
+  * \brief constructs at least `n` initial points,
   * by scanning the image and
   * collecting points in each object in the image,
   * even if they are non-connected components.
@@ -132,7 +134,7 @@ struct Construct_initial_points_labeled_image
    * @tparam MeshDomain model of `MeshDomain_3`
    * @tparam TransformOperator functor that transforms values of the image.
    *   It must provide the following type:<br>
-   *   `result_type` : a type that supports the '==' operator<br>
+   *   `result_type` a type that supports the '==' operator<br>
    *   and the following operator:<br>
    *   `result_type operator()(Word v)`
    *   with `Word` the type of the image values.

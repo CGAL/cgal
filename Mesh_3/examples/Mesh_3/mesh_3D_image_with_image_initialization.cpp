@@ -44,15 +44,14 @@ int main()
 
   // Mesh criteria
   Mesh_criteria criteria(params::facet_angle(30).facet_size(3).facet_distance(1)
-                         .cell_radius_edge_ratio(3).cell_size(3)
-  );
+                         .cell_radius_edge_ratio(3).cell_size(3));
 
   /// [Meshing]
   // Mesh generation with a custom initialization that places points in each of the image components.
   CGAL::Construct_initial_points_labeled_image<C3t3, Mesh_domain> img_pts_generator(image, domain);
 
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, params::initial_points_generator(img_pts_generator)
-  );
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      params::initial_points_generator(img_pts_generator));
   /// [Meshing]
 
   // Output

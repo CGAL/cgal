@@ -47,13 +47,11 @@ int main()
 
   // Domain
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image
-      , params::features_detector(CGAL::Mesh_3::Detect_features_in_image())
-  );
+      , params::features_detector(CGAL::Mesh_3::Detect_features_in_image()));
 
   // Mesh criteria
   Mesh_criteria criteria(params::facet_angle(30).facet_size(3).facet_distance(1).edge_size(3)
-                         .cell_radius_edge_ratio(3).cell_size(3)
-  );
+                         .cell_radius_edge_ratio(3).cell_size(3));
 
   using Point_3 = K::Point_3;
   using Weighted_point_3 = K::Weighted_point_3;
@@ -68,9 +66,8 @@ int main()
 
   /// [Meshing]
   // Mesh generation from labeled image with initial points.
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria
-    , params::initial_points(std::cref(initial_points))
-  );
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+                                      params::initial_points(std::cref(initial_points)));
   /// [Meshing]
 
   // Output

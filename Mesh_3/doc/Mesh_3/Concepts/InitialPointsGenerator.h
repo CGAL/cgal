@@ -33,7 +33,7 @@ typedef unspecified_type C3t3;
 /// @{
 
 /*!
-Outputs a set of surface points, for mesh initialization, to the
+outputs a set of surface points for mesh initialization to the
 output iterator `pts`.
 
 If, after insertion of these points, the triangulation is still not 3D,
@@ -41,12 +41,12 @@ or does not have any facets
 in the restricted Delaunay triangulation, then more points will be added automatically
 by the mesher.
 
-@tparam OutputIterator model of `OutputIterator`, containing tuple-like objects made of 3 elements :
+@tparam OutputIterator model of `OutputIterator` whose value type is a tuple-like object made of 3 elements:
   - a `C3t3::Triangulation::Point` : the point `p`,
-  - a `int` : the minimal dimension of the subcomplexes on which `p` lies,
+  - an `int` : the minimal dimension of the subcomplexes on which `p` lies,
   - a `MeshDomain_3::Index` : the index of the corresponding subcomplex.
 
-@param pts the output points
+@param pts an output iterator for the points
 @param n a lower bound on the number of points to construct for initialization.
 A generator can choose to ignore this parameter.
 
@@ -63,9 +63,9 @@ with at least one facet in the restricted Delaunay triangulation.
 If these conditions are not satisfied, then more points will be added automatically
 by the mesher.
 
-@tparam OutputIterator model of `OutputIterator`, containing tuple-like objects made of 3 elements :
+@tparam OutputIterator model of `OutputIterator` whose value type is a tuple-like object made of 3 elements :
   - a `C3t3::Triangulation::Point` : the point `p`,
-  - a `int` : the minimal dimension of the subcomplexes to which `p` belongs,
+  - an `int` : the minimal dimension of the subcomplexes to which `p` belongs,
   - a `MeshDomain_3::Index` : the index of the corresponding subcomplex.
 */
 template <typename OutputIterator>

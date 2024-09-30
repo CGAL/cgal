@@ -11,14 +11,14 @@
 #ifndef CGAL_MESH_OPTION_CLASSES_H
 #define CGAL_MESH_OPTION_CLASSES_H
 
-#include <functional>
-
 #include <CGAL/STL_Extension/internal/Has_features.h>
 #include <CGAL/Default.h>
+
 #include <boost/iterator/function_output_iterator.hpp>
-#include <type_traits>
+
 #include <iterator>
 #include <optional>
+#include <type_traits>
 
 namespace CGAL {
 
