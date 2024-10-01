@@ -438,13 +438,13 @@ public Q_SLOTS:
           }
           else
           {
-            try {
-              SMesh tm_out;
-              auto ecmap_out = tm_out.add_property_map<fg_edge_descriptor, bool>("ecmap", false).first;
+            SMesh* tm_out = new SMesh();
+            auto ecmap_out = tm_out->add_property_map<fg_edge_descriptor, bool>("ecmap", false).first;
 
+            try {
               CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*(sm_item->face_graph()),
                 clipper,
-                tm_out,
+                *tm_out,
                 CGAL::parameters::edge_is_constrained_map(selection->constrained_edges_pmap()),
                 CGAL::parameters::default_values(),
                 CGAL::parameters::edge_is_constrained_map(ecmap_out));
@@ -453,6 +453,21 @@ public Q_SLOTS:
             {
               CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
             }
+
+            Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(tm_out);
+            new_item->setName(QString("Clip_ %1").arg(sm_item->name()));
+            new_item->setColor(sm_item->color());
+            new_item->setRenderingMode(sm_item->renderingMode());
+            new_item->setVisible(sm_item->visible());
+            scene->addItem(new_item);
+            new_item->invalidateOpenGLBuffers();
+
+            Scene_polyhedron_selection_item* new_selection = new Scene_polyhedron_selection_item();
+            new_selection->set_polyhedron_item(new_item);
+            new_selection->setName(QString("Clip_%1_selection").arg(sm_item->name()));
+            new_selection->setVisible(sm_item->visible());
+            scene->addItem(new_selection);
+            new_selection->invalidateOpenGLBuffers();
           }
         }
       }
