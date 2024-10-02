@@ -36,7 +36,7 @@ Using \cgal requires a few core components to be previously installed:
 <li> a supported compiler (see Section \ref seccompilers),</li>
 <li> \ref seccmake,</li>
 <li> \ref thirdpartyBoost,</li>
-<li> \ref thirdpartyMPFR.</li>
+<li> a \ref thirdpartyMP.</li>
 </ul>
 
 Optional third-party software might be required to build examples and demos shipped with \cgal,

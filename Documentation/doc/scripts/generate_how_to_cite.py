@@ -65,7 +65,7 @@ If you want to refer to \cgal manual, please cite the appropriate
 The \cgal Project.
  <em>\cgal User and Reference Manual</em>.
  \cgal Editorial Board, ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.
-[&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;|
+</td><td width="75px">[&nbsp;<a href="how_to_cite.html#cgal:eb-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;|
 <a href="packages.html">http</a>&nbsp;]
 
 </td>
@@ -160,7 +160,7 @@ def gen_txt_entry(title, authors, bib, anchor, k):
         + '.\n\
  In <em>\\cgal User and Reference Manual</em>. \\cgal Editorial Board,\n\
   ${CGAL_CREATED_VERSION_NUM} edition, ${CGAL_BUILD_YEAR4}.\n\
-[&nbsp;<a href="how_to_cite.html#'
+</td><td width="75px">[&nbsp;<a href="how_to_cite.html#'
         + bib
         + '-${CGAL_RELEASE_YEAR_ID}">bib</a>&nbsp;| \n\
 <a href="packages.html#'

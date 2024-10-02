@@ -372,6 +372,7 @@ run_test_on_platform()
   grep -e "^-- USING " "${CGAL_BINARY_DIR}/installation.log"|sort -u >> $RESULT_FILE
   #Use sed to get the content of DEBUG or RELEASE CXX FLAGS so that Multiconfiguration platforms do provide their CXXXFLAGS to the testsuite page (that greps USING CXXFLAGS to get info)
   sed -i -E 's/(^-- USING )(DEBUG|RELEASE) (CXXFLAGS)/\1\3/' $RESULT_FILE
+  sed -n '/^-- Third-party library /p' "${CGAL_BINARY_DIR}/installation.log" >> $RESULT_FILE
   echo "------------" >> "$RESULT_FILE"
   #if git branch, create empty scm file for python script
   if [ -n "${SCRIPTS_DIR}" ]; then

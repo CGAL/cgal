@@ -30,11 +30,11 @@ endif()
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
-  include(UseOpenMesh)
+  include(CGAL_OpenMesh_support)
   message(STATUS "Found OpenMesh")
 
   create_single_source_cgal_program("edge_collapse_OpenMesh.cpp")
-  target_link_libraries(edge_collapse_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(edge_collapse_OpenMesh PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
 endif()

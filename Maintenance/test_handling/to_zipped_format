@@ -51,7 +51,7 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","no");
+    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL) = ("-","-","-","-","-","-","-","-","-","-","-","no","TPL:");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -117,7 +117,7 @@ sub reformat_results($)
 #	if (/BOOST_BIMAP_VERSION = '([^']+)'/) {
 #	    $BOOST="$BOOST+bimap";
 #	}
-	if (/USING +CXXFLAGS = '([^']*)'/) {
+	if (/USING +CXXFLAGS = '([^']*)'/ && !$CXXFLAGS) {
 	    $CXXFLAGS="$CXXFLAGS $1";
 	}
 	if (/USING +LDFLAGS = '([^']*)'/) {
@@ -132,6 +132,9 @@ sub reformat_results($)
 #            print PLATFORM_NEW_RESULTS $_;
 #            last;
 #        }
+    if (/^-- Third-party library (.+)$/) {
+        $TPL = "$TPL $1,";
+    }
 NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
             # should never happen!!
             last;
@@ -154,6 +157,7 @@ $QT
 $LEDA_VERSION
 $CXXFLAGS
 $LDFLAGS
+$TPL
 EOF
     close(PLATFORM_INFO);
     close(PLATFORM_RESULTS);

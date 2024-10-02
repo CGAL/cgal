@@ -21,6 +21,12 @@
 
 set -e # Exit the script on first error, for safety
 
+err_report() {
+    echo "Error (code $?) on line $(caller)"
+}
+
+trap 'err_report $LINENO' ERR
+
 PREVIOUS_MAJOR_RELEASE=$1
 CURRENT_RELEASE=$2
 

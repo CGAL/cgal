@@ -252,8 +252,8 @@ public:
         : (- negative_distance);
     } else {
       return (pit <= qit)
-        ?     curve_segment_length(p, q, CGAL::POSITIVE)
-        : ( - curve_segment_length(p, q, CGAL::NEGATIVE) );
+        ?     curve_segment_length(p, q, CGAL::POSITIVE, pit, qit)
+        : ( - curve_segment_length(p, q, CGAL::NEGATIVE, pit, qit) );
     }
   }
 

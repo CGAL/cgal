@@ -49,5 +49,5 @@
 \example Polygon_mesh_processing/sample_example.cpp
 \example Polygon_mesh_processing/soup_autorefinement.cpp
 \example Polygon_mesh_processing/non_rigid_mesh_registration_example.cpp
-
+\example Polygon_mesh_processing/isotropic_remeshing_with_allow_move.cpp
 */

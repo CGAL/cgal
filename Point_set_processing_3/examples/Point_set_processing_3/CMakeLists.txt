@@ -54,13 +54,20 @@ foreach(
   target_link_libraries(${target} PRIVATE ${CGAL_libs})
 endforeach()
 
-find_package(LASLIB QUIET)
-include(CGAL_LASLIB_support)
-if(TARGET CGAL::LASLIB_support)
-  create_single_source_cgal_program("read_las_example.cpp")
-  target_link_libraries(read_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
+#disable if MSVC 2017
+if(NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910)
+  find_package(LASLIB QUIET)
+  include(CGAL_LASLIB_support)
+  if (TARGET CGAL::LASLIB_support)
+    create_single_source_cgal_program("read_las_example.cpp")
+    create_single_source_cgal_program("write_las_example.cpp")
+    target_link_libraries(read_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
+    target_link_libraries(write_las_example PRIVATE ${CGAL_libs} CGAL::LASLIB_support)
+  else()
+    message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
+  endif()
 else()
-  message(STATUS "NOTICE: the LAS reader example requires LASlib and will not be compiled.")
+  message(STATUS "NOTICE: the LAS reader does not work with your version of Visual Studio 2017.")
 endif()
 
 # Use Eigen
@@ -102,8 +109,15 @@ if(TARGET CGAL::Eigen3_support)
   endif()
 
   # Executables that require OpenGR
-  find_package(OpenGR QUIET)
-  include(CGAL_OpenGR_support)
+  if (NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1910)
+    find_package(OpenGR QUIET)
+    include(CGAL_OpenGR_support)
+      message(
+        STATUS
+          "NOTICE : OpenGR does not support your compiler, registration_with_OpenGR will not be compiled."
+      )
+  endif()
+
   if(TARGET CGAL::OpenGR_support)
     create_single_source_cgal_program("registration_with_OpenGR.cpp")
     target_link_libraries(registration_with_OpenGR PRIVATE ${CGAL_libs}

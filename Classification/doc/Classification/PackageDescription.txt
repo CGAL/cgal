@@ -75,7 +75,7 @@ Data structures specialized to classify clusters.
 \cgalPkgDependsOn{\ref PkgSolverInterface, \ref PkgSpatialSearchingD}
 \cgalPkgBib{cgal:lm-clscm-12}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
