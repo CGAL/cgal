@@ -28,6 +28,9 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Surface_mesh_deformation.h>
+#include <CGAL/Deformation_Eigen_closest_rotation_traits_3.h>
+#include <CGAL/Weights/cotangent_weights.h>
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Kd_tree.h>
@@ -92,8 +95,6 @@ std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nearest_neighbor(Vertices& points, V
   using Search_traits = CGAL::Search_traits_adapter<std::size_t, Eigen_matrix_to_point_map, CGAL::Search_traits_3<Simple_cartesian<double>>>;
   using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<Search_traits>;
   using KDTree = typename Neighbor_search::Tree;
-  const int leaf_max_size = 10;
-  const int ndim = 3;
 
   Eigen_matrix_to_point_map a(points);
 
@@ -106,7 +107,7 @@ std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nearest_neighbor(Vertices& points, V
   for (Index i = 0; i < query.rows(); ++i) {
     Point_3 query_pt = { query(i, 0), query(i, 1), query(i, 2) };
     Neighbor_search search(kdtree, query_pt, k, 0, true, Neighbor_search::Distance(Eigen_matrix_to_point_map(points)));
-    std::size_t j = 0;
+    Index j = 0;
     for (auto it = search.begin(); it != search.end() && j < k; ++it) {
       idz(i, j) = it->first;
       dist(i, j) = it->second;
@@ -137,6 +138,31 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
     -sb, cb* sa, ca* cb;
 
   return R;
+}
+
+template<typename T, typename Visitor, typename TriangleMesh>
+Eigen::Matrix<T, 3, 3> rotation(std::size_t index, Visitor &v, TriangleMesh &source, const Vertices& X, const Vertices& Z, const std::set<int>& neighbors, const std::vector<T> &weights, std::vector<Eigen::Matrix<ScalarType, 3, 3>> &rotations) {
+  using Vertex_index = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  Eigen::Matrix3d cov;
+  cov.setZero();
+
+  Eigen::Vector3d x_src = X.row(index), z_src = Z.row(index);
+  auto n = neighbors.begin();
+  auto w = weights.begin();
+
+  v.rotation_matrix_pre(Vertex_index(index), source);
+
+  for (std::size_t idx = 0; (n != neighbors.end()) && (w != weights.end()); idx++, n++, w++) {
+    Eigen::Vector3d x_dst = X.row(*n);
+    Eigen::Vector3d z_dst = Z.row(*n);
+    Eigen::Vector3d source_edge = x_src - x_dst;
+    Eigen::Vector3d moving_edge = z_src - z_dst;
+
+    cov += weights[idx] * (source_edge * moving_edge.transpose());
+    v.update_covariance_matrix(cov, rotations[index]);
+  }
+
+  return cov;
 }
 
 #endif
@@ -268,6 +294,8 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   Vertices X(num_vertices(source), 3), Y(target.size(), 3);
   Faces XF(num_faces(source), 3);
 
+  using Vertex_index = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+
   using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters2>;
   using Point_map = typename NP_helper::Point_map;
   using Normal_map = typename NP_helper::Normal_map;
@@ -284,20 +312,33 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   typedef typename CGAL::internal_np::Lookup_named_param_def<internal_np::correspondences_t, NamedParameters1, std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>>::reference Correspondences_type;
   Correspondences_type correspondences = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter_reference(np1, CGAL::internal_np::correspondences), std::vector<std::pair<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t>>());
 
+  using ARAP_visitor = typename CGAL::internal::Types_selectors < TriangleMesh, Vertex_point_map, SRE_ARAP>::ARAP_visitor;
+  using WC = typename CGAL::internal::Types_selectors < TriangleMesh, Vertex_point_map, SRE_ARAP>::Weight_calculator;
+  WC wc;
+
   std::size_t idx = 0;
+  std::map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t> vi;
+  std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> iv;
+  std::vector<std::vector<double> > he_weights;
+  std::map<std::pair<std::size_t, std::size_t>, FT> halfedge_weights;
+  iv.resize(num_vertices(source));
   for (auto v : vertices(source)) {
     X(idx, 0) = get(vpm, v).x();
     X(idx, 1) = get(vpm, v).y();
     X(idx, 2) = get(vpm, v).z();
+    iv[idx] = v;
+    vi[v] = idx;
     idx++;
   }
 
   idx = 0;
   for (auto f : faces(source)) {
-    Vertex_around_face_circulator vit = Vertex_around_face_circulator(halfedge(f, source), source);
-    XF(idx, 0) = *vit++;
-    XF(idx, 1) = *vit++;
-    XF(idx, 2) = *vit++;
+    auto h = halfedge(f, source);
+    XF(idx, 0) = CGAL::target(h, source);
+    h = next(h, source);
+    XF(idx, 1) = CGAL::target(h, source);
+    h = next(h, source);
+    XF(idx, 2) = CGAL::target(h, source);
     idx++;
   }
   std::cout << std::endl;
@@ -336,6 +377,22 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     neighbors[c].insert(a);
     neighbors[c].insert(b);
   }
+
+  // Calculate edge weights
+  he_weights.resize(X.rows());
+  for (Index i = 0; i < X.rows(); ++i) {
+    std::size_t vi = XF(i, 0);
+    he_weights[vi].resize(neighbors[vi].size());
+    std::size_t idx = 0;
+    for (int vj : neighbors[vi]) {
+      auto h = halfedge(Vertex_index(vi), Vertex_index(vj), source);
+      assert(h.second);
+      he_weights[vi][idx++] = wc(h.first, source, vpm);
+    }
+  }
+
+  ARAP_visitor visitor;
+  visitor.init(source, vpm);
 
   // Non-rigid ICP
   Vertices Z(X);
@@ -442,7 +499,10 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   //cg.setMaxIterations(1000);
   //cg.setTolerance(1e-6);
   Eigen::JacobiSVD<Eigen::Matrix<ScalarType, 3, 3>> svd;
-  std::vector<Eigen::Matrix<ScalarType, 3, 3>> Rotations(Z.rows());
+  std::vector<Eigen::Matrix<ScalarType, 3, 3>> rotations(Z.rows());
+
+  for (std::size_t i = 0; i < Z.rows(); i++)
+    rotations[i].setIdentity();
 
   size_t coefficients_size = coefficients.size();
 
@@ -538,34 +598,19 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     if (it == (iter - 1)) {
       // Should replace with CGAL's ARAP implementation https://github.com/CGAL/cgal/blob/master/Surface_mesh_deformation/include/CGAL/Surface_mesh_deformation.h
       // See also: compute_close_rotation https://github.com/CGAL/cgal/blob/master/Surface_mesh_deformation/include/CGAL/Deformation_Eigen_closest_rotation_traits_3.h
-      for (Index i = 0; i < Z.rows(); ++i) {
-        std::vector<int> nbrs(neighbors[i].begin(), neighbors[i].end());
-        Matrix A = X(nbrs, Eigen::indexing::all).rowwise() - X.row(i);
-        Matrix B_ = Z(nbrs, Eigen::indexing::all).rowwise() - Z.row(i);
+      for (Index i = 0; i < Z.rows(); ++i)
+        rotations[i] = rotation(std::size_t(i), visitor, source,  X, Z, neighbors[i], he_weights[i], rotations);
 
-        svd.compute(A.transpose() * B_, Eigen::ComputeFullU | Eigen::ComputeFullV);
-        Rotations[i] = svd.matrixV() * svd.matrixU().transpose();
-        if (Rotations[i].determinant() < 0) {
-          Eigen::Matrix<ScalarType, 3, 3> M = Eigen::Matrix3d::Identity();
-          M(2, 2) = -1;
-          Rotations[i] = svd.matrixV() * M * svd.matrixU().transpose();
+      for (Index i = 0; i < Z.rows(); ++i) {
+          rotations[i] = rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
+          BX.row(i) = BX.row(i) * rotations[i].transpose();
         }
-      }
-      for (Index i = 0; i < edim; ++i) {
-        Matrix R = Rotations[Ni(i)];
-        BX.row(i) = BX.row(i) * R.transpose();
-      }
     }
-    else {
-      // Regular matrix update is happening here (taking linearized coefficients, recreating matrix and rotating edges)
-      for (Index i = 0; i < edim; ++i) {
-        int ni = Ni(i);
-        Matrix R = rot(x(dim + 2 * Z.rows() + ni),
-          x(dim + Z.rows() + ni),
-          x(dim + ni));
-        BX.row(i) = BX.row(i) * R.transpose();
+    else
+      for (Index i = 0; i < Z.rows(); ++i) {
+        rotations[i] = rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
+        BX.row(i) = BX.row(i) * rotations[i].transpose();
       }
-    }
   }
 
   idx = 0;
@@ -575,7 +620,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 /*
     Aff_transformation_3<Gt> t1(CGAL::TRANSLATION, CGAL::ORIGIN - x);
     Aff_transformation_3<Gt> t2(CGAL::TRANSLATION, -(CGAL::ORIGIN - z));*/
-    const auto& r = Rotations[idx];
+    const auto& r = rotations[idx];
     Aff_transformation_3<Gt> rota(r(0, 0), r(0, 1), r(0, 2), 0,
       r(1, 0), r(1, 1), r(1, 2), 0,
       r(2, 0), r(2, 1), r(2, 2), 0,
@@ -795,7 +840,6 @@ void apply_non_rigid_transformation(TriangleMesh& mesh,
     NamedParameters,
     Default_vector_map>::type;
   using Point = typename Gt::Point_3;
-  using Vector = typename Gt::Vector_3;
 
   Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_property_map(CGAL::vertex_point, mesh));
   Vertex_normal_map vnm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_normal_map), get(Vector_map_tag(), mesh));
