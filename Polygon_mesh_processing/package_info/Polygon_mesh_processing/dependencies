@@ -31,6 +31,7 @@ Solver_interface
 Spatial_searching
 Spatial_sorting
 Stream_support
+Surface_mesh_deformation
 TDS_2
 TDS_3
 Triangulation_2

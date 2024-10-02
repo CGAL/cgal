@@ -320,7 +320,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   std::map<typename boost::graph_traits<TriangleMesh>::vertex_descriptor, std::size_t> vi;
   std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor> iv;
   std::vector<std::vector<double> > he_weights;
-  std::map<std::pair<std::size_t, std::size_t>, FT> halfedge_weights;
+
   iv.resize(num_vertices(source));
   for (auto v : vertices(source)) {
     X(idx, 0) = get(vpm, v).x();
