@@ -1128,7 +1128,7 @@ private:
     }
     while(circ != done);
 
-    CGAL_assertion(! voronoi_points.size() < 3);
+    CGAL_assertion(! (voronoi_points.size() < 3));
 
     // sum up areas
     FT area = 0.0;
