@@ -53,13 +53,13 @@ int main(int argc, char** argv) {
   Mesh::Property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>> vrm = source.add_property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>>("v:rotation").first;
   Mesh::Property_map<Mesh::Vertex_index, K::Vector_3> vtm = source.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:translation").first;
 
-  FT w1 = 1.0;
+  FT w1 = 2.0;
   FT w2 = 2.0;
-  FT w3 = 500;
+  FT w3 = 50;
 
-  PMP::non_rigid_mesh_to_mesh_registration(source, target, vtm, vrm, CGAL::parameters::point_to_point_energy(w1).point_to_plane_energy(w2).as_rigid_as_possible_energy(w3).correspondences(correspondences_mesh));
+  PMP::non_rigid_mesh_to_mesh_registration(source, target, vtm, vrm, CGAL::parameters::point_to_point_energy(w1).point_to_plane_energy(w2).as_rigid_as_possible_energy(w3).correspondences(std::cref(correspondences_mesh)));
   PMP::apply_non_rigid_transformation(source, vtm);
-  CGAL::IO::write_polygon_mesh("bear" + std::to_string(w1) + "_" + std::to_string(w2) + "_" + std::to_string(w3) + ".off", source);
+  CGAL::IO::write_polygon_mesh("bear_" + std::to_string(w1) + "_" + std::to_string(w2) + "_" + std::to_string(w3) + ".off", source);
 
   return EXIT_SUCCESS;
 }
