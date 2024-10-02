@@ -14,7 +14,7 @@ using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<Kernel>;
 
 int main(int argc, char* argv[]) {
 
-  char* filename = (argc > 1) ? argv[1] : "data/bridge-edge.wkt";
+  const char* filename = (argc > 1) ? argv[1] : "data/bridge-edge.wkt";
 
   std::ifstream in(filename);
   Polygon_with_holes_2 pin;
