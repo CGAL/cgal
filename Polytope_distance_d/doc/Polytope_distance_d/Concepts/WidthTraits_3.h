@@ -24,7 +24,7 @@ class WidthTraits_3 {
 public:
 
 /// \name Types
-/// <I>Notes:</I> If you want to compute the width of a <I>polyhedron</I> then you have to make sure that the point type in the traits class and the point type in the polyhedron class are the same! The same holds for `Traits::Plane_3` and `Polyhedron::Plane_3`.
+/// \note If you want to compute the width of a <I>polyhedron</I> then you have to make sure that the point type in the traits class and the point type in the polyhedron class are the same! The same holds for `Traits::Plane_3` and `Polyhedron::Plane_3`.
 /// @{
 
 /*!
