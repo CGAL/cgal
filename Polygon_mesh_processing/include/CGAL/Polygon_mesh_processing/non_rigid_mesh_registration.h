@@ -18,6 +18,7 @@
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Core>
+#include <Eigen/src/Core/ArithmeticSequence.h>
 #include <Eigen/Dense>
 #include <Eigen/SVD>
 #include <Eigen/Sparse>
@@ -48,11 +49,10 @@ namespace registration {
 
 #ifdef CGAL_EIGEN3_ENABLED
 using ScalarType = double;
-using Vertex = Eigen::Vector<ScalarType, 3>;
 using Vertices = Eigen::Matrix<ScalarType, Eigen::Dynamic, 3>;
 using Faces = Eigen::Matrix<int, Eigen::Dynamic, 3>;
 using Matrix = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>;
-using Vector = Eigen::Vector<ScalarType, Eigen::Dynamic>;
+using Vector = Eigen::VectorXd;
 
 using SparseMat = Eigen::SparseMatrix<ScalarType>;
 using SparseTriplet = Eigen::Triplet<ScalarType>;

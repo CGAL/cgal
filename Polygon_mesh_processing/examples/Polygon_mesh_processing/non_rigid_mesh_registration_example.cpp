@@ -18,7 +18,7 @@ using FT = K::FT;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-int main(int argc, char** argv) {
+int main(int, char**) {
   const std::string source_fn = CGAL::data_file_path("meshes/bear.off");
   const std::string target_fn = CGAL::data_file_path("meshes/bear_bis.off");
   const std::string corr_fn = "data/bear_bear_bis.corr";
