@@ -25,7 +25,7 @@ width-planes.
 \f$ \mathcal{W(S)}=\mathcal{W}_{d_{opt}}\mathcal{(S)}\f$
 </OL>
 
-\Note There might be several optimal build directions. Hence
+\note There might be several optimal build directions. Hence
 neither the width-planes nor the direction \f$ \mathbf{d}_{opt}\f$ are
 unique - only the width is.   There may also be duplicates reported,
 different vectors having the same or the opposite directions.
