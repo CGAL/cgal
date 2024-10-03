@@ -2054,11 +2054,7 @@ private:
     return std::make_pair(-1, -1);
   }
 
-  void adapt_internal_edges(const CDTplus& cdtC, const std::vector<Index> &faces_node, std::vector<std::vector<Constraint_info> >& c) {
-    assert(faces_node.size() == c.size());
-
-    //std::size_t not_skipped = 0;
-
+  void adapt_internal_edges(const CDTplus& cdtC, std::vector<std::vector<Constraint_info> >& c) {
     for (std::size_t f = 0; f < c.size(); f++) {
       std::vector<Index> faces_of_volume;
       // The face index is probably no longer valid and the full face has been replaced by a smaller face using merged indices
@@ -2222,13 +2218,13 @@ private:
 
     idx = 0;
     for (auto& p : a_sets) {
-      adapt_internal_edges(cdtC, p.second, a_constraints[idx]);
+      adapt_internal_edges(cdtC, a_constraints[idx]);
       idx++;
     }
 
     idx = 0;
     for (auto& p : b_sets) {
-      adapt_internal_edges(cdtC, p.second, b_constraints[idx]);
+      adapt_internal_edges(cdtC, b_constraints[idx]);
       idx++;
     }
   }
