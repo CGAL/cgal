@@ -2041,14 +2041,14 @@ private:
     // 4 xmin
     // 5 zmax
     const double force = static_cast<double>(m_total_inliers * 3);
-    // 0 - cost for labelled as outside
+    // 0 - cost for labeled as outside
     cost_matrix[0][0] = 0;
     cost_matrix[0][1] = 0;
     cost_matrix[0][2] = 0;
     cost_matrix[0][3] = 0;
     cost_matrix[0][4] = 0;
     cost_matrix[0][5] = 0;
-    // 1 - cost for labelled as inside
+    // 1 - cost for labeled as inside
     cost_matrix[1][0] = 0;
     cost_matrix[1][1] = 0;
     cost_matrix[1][2] = 0;
