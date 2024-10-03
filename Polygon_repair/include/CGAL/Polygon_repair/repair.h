@@ -541,7 +541,7 @@ public:
   static void label_region(T& tt, Face_handle face, int label,
                            std::list<Face_handle>& to_check,
                            std::list<int>& to_check_added_by) {
-    // std::cout << "Labelling region with " << label << std::endl;
+    // std::cout << "Labeling region with " << label << std::endl;
     std::list<Face_handle> to_check_in_region;
     face->label() = label;
     to_check_in_region.push_back(face);
