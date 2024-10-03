@@ -130,7 +130,7 @@ default constructor.
   Winding() = default;
 
 
-*!
+/*!
 sets the polygon as input of the winding number computation.
 */
   void
@@ -350,4 +350,4 @@ sets the polygon as input of the winding number computation.
 
 } // namespace CGAL
 
-#endif CGAL_POLYGON_REPAIR_WINDING_H
+#endif // CGAL_POLYGON_REPAIR_WINDING_H
