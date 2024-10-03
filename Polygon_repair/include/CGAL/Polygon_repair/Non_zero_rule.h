@@ -9,8 +9,8 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_POLYGON_REPAIR_UNION_RULE_H
-#define CGAL_POLYGON_REPAIR_UNION_RULE_H
+#ifndef CGAL_POLYGON_REPAIR_NON_ZERO_RULE_H
+#define CGAL_POLYGON_REPAIR_NON_ZERO_RULE_H
 
 #include <CGAL/license/Polygon_repair.h>
 
@@ -22,9 +22,9 @@ namespace Polygon_repair {
 /// @{
 
 /*!
-  Tag class to select the union rule when calling `CGAL::Polygon_repair::repair()`.
+  Tag class to select the non zero rule when calling `CGAL::Polygon_repair::repair()`.
   */
-  struct Union_rule {};
+  struct Non_zero_rule {};
 
 ///@}
 
@@ -32,4 +32,4 @@ namespace Polygon_repair {
 
 } // namespace CGAL
 
-#endif  // CGAL_POLYGON_REPAIR_UNION_RULE_H
+#endif  // CGAL_POLYGON_REPAIR_NON_ZERO_RULE_H

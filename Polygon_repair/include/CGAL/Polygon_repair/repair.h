@@ -24,9 +24,11 @@
 #include <CGAL/Multipolygon_with_holes_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_repair/Even_odd_rule.h>
+#include <CGAL/Polygon_repair/Non_zero_rule.h>
 
 #include <CGAL/Polygon_repair/internal/Triangulation_face_base_with_repair_info_2.h>
 #include <CGAL/Polygon_repair/internal/Triangulation_with_even_odd_constraints_2.h>
+#include <CGAL/Polygon_repair/Winding.h>
 
 namespace CGAL {
 
@@ -71,11 +73,23 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
   } return pr.multipolygon();
 }
 
+
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Non_zero_rule rule)
+{
+  Winding<Kernel> winding;
+  winding.insert(p);
+  winding.label();
+  winding.label_domains();
+  return winding();
+}
+
+
 /// \ingroup PkgPolygonRepairFunctions
 /// repairs multipolygon with holes `p` using the given rule
 /// \tparam Kernel parameter of the input and output polygons
 /// \tparam Container parameter of the input and output polygons
-///  \tparam Rule must be `Even_odd_rule`
+///  \tparam Rule must be `Even_odd_rule` or `Non_zero_rule`
 template <class Kernel, class Container, class Rule = Even_odd_rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Rule = Rule())
 {
@@ -87,6 +101,19 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
+/*
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Non_zero_rule rule)
+{
+  static_assert(std::is_same_v<Rule,Even_odd_rule>);
+  CGAL::Polygon_repair::Polygon_repair<Kernel, Container> pr;
+  pr.add_to_triangulation_even_odd(p);
+  if (pr.triangulation().number_of_faces() > 0) {
+    pr.label_triangulation_even_odd();
+    pr.reconstruct_multipolygon();
+  } return pr.multipolygon();
+}
+*/
 
 template <class Kernel, class Container>
 bool is_valid(const Polygon_2<Kernel, Container>& polygon) {
