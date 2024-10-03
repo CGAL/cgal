@@ -241,7 +241,7 @@ private:
 
   template <typename Fct>
   void
-  label_domains(Face_handle start, int label, const Fct& fct)
+  label_domain(Face_handle start, int label, const Fct& fct)
   {
     std::list<Face_handle> queue;
     start->info().label = label;
@@ -275,7 +275,7 @@ private:
     int label = 1;
     for (auto const face: cdt.all_face_handles()) {
       if(face->info().in_domain(fct) && face->info().label == 0){
-        label_domains(face, label, fct);
+        label_domain(face, label, fct);
         ++label;
       }
     }
