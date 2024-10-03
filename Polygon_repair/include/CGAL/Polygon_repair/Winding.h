@@ -15,8 +15,6 @@
 
 #include <CGAL/license/Polygon_repair.h>
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
 
