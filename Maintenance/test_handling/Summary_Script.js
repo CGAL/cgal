@@ -174,7 +174,7 @@ function platformContainer(platforms) {
         const tplArray = platform.tpl;
         const $toggleButton = $('<button>', {
             text: 'Third Party Libraries',
-            class: 'tpl-toggle-button',
+            class: 'tpl-toggle-button toggle-button',
             click: function() {
                 $tplTable.toggle();
             }
@@ -193,17 +193,15 @@ function platformContainer(platforms) {
         $('<th>', { text: 'Version' }).appendTo($headerRow);
         $headerRow.appendTo($thead);
         tplArray.forEach(tpl => {
-            $('<tr>').append(
-                $('<td>').html(`<a href="#" class="tpl-link" data-tpl="${tpl.name}">${tpl.name}</a>`),
+            const $row = $('<tr>').append(
+                $('<td>').text(tpl.name),
                 $('<td>').text(tpl.version || 'N/A'),
             ).appendTo($tbody);
+            $row.addClass('tpl-row');
+            $row.click(function() {
+                showVersionsForTPL(tpl.name);
+            });
         });
-        $('.tpl-link').click(function(event) {
-            event.preventDefault();
-            const tplName = $(this).data('tpl');
-            showVersionsForTPL(tplName);
-        });
-
         const letters = ['n', 'w', 'o', 'r'];
         letters.forEach(letter => {
             const $letterContainer = $('<div>', { class: 'letter_container ' + letter }).appendTo($container);
