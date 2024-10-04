@@ -128,18 +128,6 @@ void insertSparseMatrix(const SparseMat& mat, std::vector<SparseTriplet>& coeffi
       coefficients.push_back(SparseTriplet(start_i + it.row(), start_j + it.col(), it.value()));
 }
 
-template <typename T>
-Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
-  T ca = cos(a), cb = cos(b), cc = cos(c);
-  T sa = sin(a), sb = sin(b), sc = sin(c);
-  Eigen::Matrix<T, 3, 3> R;
-  R << cb * cc, cc* sa* sb - ca * sc, ca* cc* sb + sa * sc,
-    cb* sc, ca* cc + sa * sb * sc, ca* sb* sc - cc * sa,
-    -sb, cb* sa, ca* cb;
-
-  return R;
-}
-
 template<typename T, typename Visitor, typename TriangleMesh>
 Eigen::Matrix<T, 3, 3> rotation(std::size_t index, Visitor &v, TriangleMesh &source, const Vertices& X, const Vertices& Z, const std::set<int>& neighbors, const std::vector<T> &weights, std::vector<Eigen::Matrix<ScalarType, 3, 3>> &rotations) {
   using Vertex_index = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
@@ -501,7 +489,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   Eigen::JacobiSVD<Eigen::Matrix<ScalarType, 3, 3>> svd;
   std::vector<Eigen::Matrix<ScalarType, 3, 3>> rotations(Z.rows());
 
-  for (std::size_t i = 0; i < Z.rows(); i++)
+  for (std::size_t i = 0; i < std::size_t(Z.rows()); i++)
     rotations[i].setIdentity();
 
   size_t coefficients_size = coefficients.size();
