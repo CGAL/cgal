@@ -384,7 +384,7 @@ public:
                             Sequential_tag)
   {
     if (edges.empty()) {
-      std::set<edge_descriptor> edge_set = get_leaf_edges(o, edges);
+      std::set<edge_descriptor> edge_set = get_leaf_edges(o);
       edges.assign(edge_set.begin(), edge_set.end());
     }
 
