@@ -385,7 +385,7 @@ public:
   {
     if (edges.empty()) {
       std::set<edge_descriptor> edge_set = get_leaf_edges(o, edges);
-      std::copy(edge_set.begin(), edge_set.end(), std::back_inserter(edges));
+      edges.assign(edge_set.begin(), edge_set.end(), std::back_inserter(edges));
     }
 
     for (const edge_descriptor& e : edges)
@@ -409,7 +409,7 @@ public:
   {
     if (cells.empty()) {
       auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o));
-      std::copy(cell_range.begin(), cell_range.end(), std::back_inserter(cells));
+      cells.assign(cell_range.begin(), cell_range.end());
     }
 
     for (const cell_descriptor& v : cells)
@@ -460,7 +460,7 @@ public:
   {
     if (edges.empty()) {
       std::set<edge_descriptor> edge_set = get_leaf_edges(o);
-      std::copy(edge_set.begin(), edge_set.end(), std::back_inserter(edges));
+      edges.assign(edge_set.begin(), edge_set.end());
     }
 
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
@@ -495,7 +495,7 @@ public:
   {
     if (cells.empty()) {
       auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o));
-      std::copy(cell_range.begin(), cell_range.end(), std::back_inserter(cells));
+      cells.assign(cell_range.begin(), cell_range.end());
     }
 
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
