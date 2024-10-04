@@ -145,7 +145,6 @@ public:
 
   static std::set<vertex_descriptor> get_leaf_vertices(const Orthtree& o) {
     std::set<vertex_descriptor> leaf_vertex_set;
-    std::size_t dim = std::size_t(1) << o.depth();
     for (Node_index node_index : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
     {
       const Uniform_coords& coords_uniform = uniform_coordinates(node_index, o);
@@ -362,7 +361,7 @@ public:
   template <typename Functor>
   static void for_each_vertex(Functor& f,
                               std::vector<vertex_descriptor>& vertices,
-                              const Orthtree& o,
+                              const Orthtree&,
                               const CGAL::Sequential_tag)
   {
     for (const vertex_descriptor& v : vertices)
@@ -398,7 +397,7 @@ public:
                             const Orthtree& o,
                             CGAL::Sequential_tag)
   {
-    for (const cell_descriptor& v : o.traverse(CGAL::Orthtrees::Leaves_traversal<typename Orthtree::Orthtree>(o)))
+    for (const cell_descriptor& v : o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o)))
       f(v);
   }
 
@@ -409,7 +408,7 @@ public:
                             CGAL::Sequential_tag)
   {
     if (cells.empty()) {
-      auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<typename Orthtree::Orthtree>(o));
+      auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o));
       std::copy(cell_range.begin(), cell_range.end(), std::back_inserter(cells));
     }
 
@@ -495,7 +494,7 @@ public:
                             Parallel_tag)
   {
     if (cells.empty()) {
-      auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<typename Orthtree::Orthtree>(o));
+      auto cell_range = o.traverse(CGAL::Orthtrees::Leaves_traversal<Orthtree>(o));
       std::copy(cell_range.begin(), cell_range.end(), std::back_inserter(cells));
     }
 

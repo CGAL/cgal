@@ -104,12 +104,6 @@ int main(int argc, char** argv)
   Refine_one_eighth split_predicate(3, 5);
   octree.refine(split_predicate);
 
-  std::ofstream oo("octree2.polylines.txt");
-  oo.precision(17);
-  octree.dump_to_polylines(oo);
-
-  std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
-
   // fill up values and gradients
   Values values { sphere_function, octree };
   Gradients gradients { sphere_gradient, octree };
@@ -128,6 +122,12 @@ int main(int argc, char** argv)
   // CGAL::Isosurfacing::marching_cubes<CGAL::Parallel_if_available_tag>(mcdomain, isovalue, points, triangles);
 
   timer.stop();
+
+  std::ofstream oo("octree2.polylines.txt");
+  oo.precision(17);
+  octree.dump_to_polylines(oo);
+
+  std::cout << "Running Dual Contouring with isovalue = " << isovalue << std::endl;
 
   std::cout << "Output #vertices (DC): " << points.size() << std::endl;
   std::cout << "Output #triangles (DC): " << triangles.size() << std::endl;
