@@ -3,7 +3,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Triangulation_2/Boolean.h>
+#include <CGAL/Polygon_repair/Boolean.h>
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 #include <CGAL/IO/WKT.h>
@@ -36,7 +36,7 @@ typedef CGAL::Polygon_2<K> Polygon2;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes_2;
 typedef CGAL::Multipolygon_with_holes_2<K> Multipolygon_with_holes_2;
 
-typedef CGAL::Triangulations::Boolean<K> Boolean;
+typedef CGAL::Polygon_repair::Boolean<K> Boolean;
 typedef std::shared_ptr<Polygon2> PolygonPtr ;
 
 typedef std::vector<PolygonPtr> PolygonPtr_vector ;
@@ -211,6 +211,9 @@ MainWindow::on_actionClear_triggered()
 {
   pwhA.clear();
   mpwhA.clear();
+  pwhB.clear();
+  mpwhB.clear();
+  mpwhC.clear();
   clear();
   this->actionCreateInputPolygon->setChecked(true);
   Q_EMIT( changed());

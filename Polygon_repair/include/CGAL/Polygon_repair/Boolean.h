@@ -10,12 +10,10 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_TRIANGULATION_2_BOOLEAN_H
-#define CGAL_TRIANGULATION_2_BOOLEAN_H
+#ifndef CGAL_POLYGON_REPAIR_BOOLEAN_H
+#define CGAL_POLYGON_REPAIR_BOOLEAN_H
 
-#include <CGAL/license/Triangulation_2.h>
-
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/license/Polygon_repair.h>
 
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/Multipolygon_with_holes_2.h>
@@ -31,7 +29,7 @@
 #include <boost/property_map/property_map.hpp>
 
 namespace CGAL {
-namespace Triangulations {
+namespace Polygon_repair {
 
 /*!
 \ingroup PkgTriangulation2Miscellaneous
@@ -404,7 +402,7 @@ access to the underlying constrained triangulation.
 };
 
 
-} // namespace Triangulations
+} // namespace Polygon_repair
 } //namespace CGAL
 
-#endif CGAL_TRIANGULATION_2_BOOLEAN_H
+#endif CGAL_POLYGON_REPAIR_BOOLEAN_H
