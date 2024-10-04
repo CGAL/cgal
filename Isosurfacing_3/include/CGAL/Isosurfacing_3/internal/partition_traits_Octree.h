@@ -385,7 +385,7 @@ public:
   {
     if (edges.empty()) {
       std::set<edge_descriptor> edge_set = get_leaf_edges(o, edges);
-      edges.assign(edge_set.begin(), edge_set.end(), std::back_inserter(edges));
+      edges.assign(edge_set.begin(), edge_set.end());
     }
 
     for (const edge_descriptor& e : edges)
