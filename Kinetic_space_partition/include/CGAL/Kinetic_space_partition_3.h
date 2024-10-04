@@ -2216,17 +2216,11 @@ private:
 
     adapt_faces(cdtC);
 
-    idx = 0;
-    for (auto& p : a_sets) {
+    for (idx = 0; idx < a_sets.size(); idx++)
       adapt_internal_edges(cdtC, a_constraints[idx]);
-      idx++;
-    }
 
-    idx = 0;
-    for (auto& p : b_sets) {
+    for (idx = 0; idx < b_sets.size(); idx++)
       adapt_internal_edges(cdtC, b_constraints[idx]);
-      idx++;
-    }
   }
 
   void make_conformal(Octree_node node)  {
