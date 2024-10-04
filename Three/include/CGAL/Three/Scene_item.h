@@ -443,6 +443,8 @@ protected:
   RenderingMode rendering_mode;
   //!The default context menu.
   QMenu* defaultContextMenu;
+  //!Specifies if the context menu should be rebuild on the next call.
+  bool context_menu_outdated = false;
   /*! Contains the previous RenderingMode.
    * This is used to determine if invalidateOpenGLBuffers should be called or not
    * in certain cases.

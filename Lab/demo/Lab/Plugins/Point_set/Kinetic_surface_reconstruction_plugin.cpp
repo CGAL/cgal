@@ -146,6 +146,7 @@ public:
     connect(dock_widget->partRunButton, SIGNAL(clicked(bool)), this, SLOT(run_partition()));
     connect(dock_widget->recRunButton, SIGNAL(clicked(bool)), this, SLOT(run_reconstruction()));
     connect(dock_widget->partSubdivisionCheck, SIGNAL(stateChanged(int)), this, SLOT(onSubdivisionStateChanged(int)));
+    connect(dock_widget, SIGNAL(visibilityChanged(bool)), this, SLOT(onVisibilityChanged(bool)));
   }
 private Q_SLOTS:
   void openDialog()
@@ -165,6 +166,9 @@ private Q_SLOTS:
   }
 
   void onItemIndexSelected(int item_index) {
+    if (!dock_widget->isVisible())
+      return;
+
     Scene_points_with_normal_item *selection = qobject_cast<Scene_points_with_normal_item*>(scene->item(item_index));
     if (selection == nullptr) {
       // Keep old reference if no new point cloud has been selected.
@@ -223,8 +227,7 @@ private Q_SLOTS:
   void onItemChanged() {
     // Enable detection if the point set item has normals now
     assert(m_pwn_item);
-    Point_set* points = m_pwn_item->point_set();
-    std::cout << "item changed" << std::endl;
+
     if (m_pwn_item->has_normals())
       enable_detection(true);
   }
@@ -355,6 +358,12 @@ private Q_SLOTS:
   void onSubdivisionStateChanged(int state) {
     dock_widget->partMaxDepthBox->setEnabled(state != 0);
     dock_widget->partPolygonsPerNodeBox->setEnabled(state != 0);
+  }
+
+  void onVisibilityChanged(bool visibility) {
+    if (!dock_widget->isVisible())
+      return;
+    std::cout << "in visibility changed" << std::endl;
   }
 
 private:
