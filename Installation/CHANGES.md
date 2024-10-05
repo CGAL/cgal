@@ -1915,7 +1915,7 @@ Release date: April 2018
     after the observer is notified that the edge has been removed. This is
     symmetric (opposite) to the order of notification when an edge is inserted.
 
-    The user can restore old (non-symmetric) behaviour by defining the macro:
+    The user can restore old (non-symmetric) behavior by defining the macro:
 
     `CGAL_NON_SYMETRICAL_OBSERVER_EDGE_REMOVAL_BACKWARD_COMPATIBILITY`
 
@@ -3456,7 +3456,7 @@ Release date: October 2013
     vertices which would move of very small displacements.
 -   Introduce new data structures and options for speed-up and
     compacity. Note that `Compact_mesh_cell_base_3` and
-    `Mesh_vertex_base_3` are now our favoured implementations of the
+    `Mesh_vertex_base_3` are now our favored implementations of the
     concepts MeshCellBase\_3 and MeshVertexBase\_3.
 -   Introduce a new constructor for `Polyhedral_mesh_domain_3` that
     takes a bounding polyhedron to be meshed along with a polyhedral
@@ -4567,9 +4567,9 @@ fixes for this release.
 -   The new macro CGAL\_NO\_DEPRECATED\_CODE can be defined to disable
     deprecated code, helping users discover if they rely on code that
     may be removed in subsequent releases.
--   Assertion behaviour: It is not possible anymore to set the CONTINUE
+-   Assertion behavior: It is not possible anymore to set the CONTINUE
     mode for assertion failures. Functions that allow to change the
-    assertion behaviour are now declared in
+    assertion behavior are now declared in
     `<CGAL/assertions_behaviour.h>`.
 -   Qt3 based demos are still there but the documentation has been
     removed as the CGAL::Qt\_Widget will be deprecated.
@@ -5118,7 +5118,7 @@ static runtime (/ML).
 -   2D Placement of Streamlines (new package)
     Visualizing vector fields is important for many application domains.
     A good way to do it is to generate streamlines that describe the
-    flow behaviour. This package implements the "Farthest Point Seeding"
+    flow behavior. This package implements the "Farthest Point Seeding"
     algorithm for placing streamlines in 2D vector fields. It generates
     a list of streamlines corresponding to an input flow using a
     specified separating distance. The algorithm uses a Delaunay
@@ -5140,7 +5140,7 @@ static runtime (/ML).
     structures. The package supports exact or inexact operations on
     primitives which move along polynomial trajectories.
 -   Smallest Enclosing Ellipsoid (new package)
-    This algorithm is new in the chapter Geometric Optimisation.
+    This algorithm is new in the chapter Geometric Optimization.
 -   2D Arrangement (major revision)
     This package can be used to construct, maintain, alter, and display
     arrangements in the plane. Once an arrangement is constructed, the
@@ -5155,9 +5155,9 @@ static runtime (/ML).
     construction history of the arrangement, such that it is possible to
     obtain the originating curve of an arrangement subcurve.
 
--   Geometric Optimisation (major revision)
+-   Geometric Optimization (major revision)
     The underlying QP solver which is the foundation for several
-    algorithms in the Geometric Optimisation chapter has been completely
+    algorithms in the Geometric Optimization chapter has been completely
     rewritten.
 -   3D Triangulation (new functionality)
     Regular\_triangulation\_3 now offers vertex removal.
@@ -5483,7 +5483,7 @@ The following functionality has been added or changed:
         Face\_handle or Vertex\_handle.
     -   New classes Triangulation\_vertex\_base\_with\_info\_2 (and 3)
         and Triangulation\_face\_base\_with\_info\_2 (and 3) to make
-        easier the customisation of base classes in most cases.
+        easier the customization of base classes in most cases.
 -   2D Triangulation
     -   Regular triangulation provides an easy access to hidden points.
     -   The Triangulation\_hierarchy\_2, which provide an efficient
@@ -5985,7 +5985,7 @@ kernels themselves can be used as traits classes in many instances.
     -   The traits class requirements have been changed.
     -   The simplicity test has a completely new implementation.
     -   Properties like convexity, simplicity and area can now be cached
-        by polygons. You need to set a flag to select this behaviour.
+        by polygons. You need to set a flag to select this behavior.
 
 
 
@@ -6158,7 +6158,7 @@ The following functionality has been added:
     stored within a class, debugging is easier using this kernel. This
     kernel can also be faster in some cases than the reference-counted
     Cartesian kernel.
--   New optimisation algorithms
+-   New optimization algorithms
     -   Min\_annulus\_d - Algorithm for computing the smallest enclosing
         annulus of points in arbitrary dimension
     -   Polytope\_distance\_d - Algorithm for computing the (squared)
@@ -6215,7 +6215,7 @@ The following functionality has been added:
     triangulations.
 -   Triangulations in 3D were added, both Delaunay triangulations and
     regular triangulations.
--   Min\_quadrilateral optimisations have been added. These are
+-   Min\_quadrilateral optimizations have been added. These are
     algorithms to compute the minimum enclosing rectangle/parallelogram
     (arbitrary orientation) and the minimum enclosing strip of a convex
     point set.
