@@ -430,7 +430,7 @@ public:
   template <typename Functor>
   static void for_each_vertex(Functor& f,
                               std::vector<vertex_descriptor>& vertices,
-                              const Orthtree& o,
+                              const Orthtree&,
                               Parallel_tag)
   {
     auto iterator = [&](const tbb::blocked_range<std::size_t>& r)
