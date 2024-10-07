@@ -73,7 +73,7 @@ public:
 
 
    void* allocate(std::size_t size);
-   void free(void* p);
+   void free BOOST_PREVENT_MACRO_SUBSTITUTION (void* p);
 
   // Access the corresponding static global allocator.
   static MemoryPool<T,nObjects>& global_allocator() {

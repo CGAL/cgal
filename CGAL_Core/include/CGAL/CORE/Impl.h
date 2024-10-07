@@ -58,7 +58,7 @@
   { return MemoryPool<C<T> >::global_allocator().allocate(size); }        \
   template <typename T>                                                   \
   CGAL_INLINE_FUNCTION void C<T>::operator delete( void *p, size_t )      \
-  { MemoryPool<C<T> >::global_allocator().free(p); }
+  { (MemoryPool<C<T> >::global_allocator().free)(p); }
 #endif
 
 // include some common header files
