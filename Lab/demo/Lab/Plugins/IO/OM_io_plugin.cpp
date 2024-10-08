@@ -98,18 +98,14 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
       Scene_surface_mesh_item* item = new Scene_surface_mesh_item(sm);
 
       Scene_polyhedron_selection_item* selection_item = new Scene_polyhedron_selection_item(item, CGAL::Three::Three::mainWindow());
-      bool eselected = false;
-      bool vselected = false;
       for(auto v : vertices(*sm)){
         if(get(sm_vfeature_pmap, v)){
           selection_item->selected_vertices.insert(v);
-          vselected = true;
         }
       }
       for(auto e : edges(*sm)){
         if(get(sm_efeature_pmap, e)){
           selection_item->selected_edges.insert(e);
-          eselected = true;
         }
       }
       item->setName(fileinfo.completeBaseName());
@@ -143,8 +139,6 @@ bool CGAL_Lab_om_plugin::canSave(const CGAL::Three::Scene_item* item)
 bool CGAL_Lab_om_plugin::
 save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items)
 {
-  Scene_item* item = items.front();
-
   Scene_surface_mesh_item* sm_item = nullptr;
   Scene_polyhedron_selection_item* selection_item = nullptr;
 
@@ -205,4 +199,4 @@ save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items)
   return res;
 }
 
-#include "om_io_plugin.moc"
+#include "OM_io_plugin.moc"
