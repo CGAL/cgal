@@ -11,7 +11,7 @@ include(CGAL_CreateSingleSourceCGALProgram)
 find_package(Eigen3 3.1.0 REQUIRED)
 if(Eigen3_FOUND)
   message(STATUS "Found Eigen")
-  include(CGAL_Eigen_support)
+  include(CGAL_Eigen3_support)
 
   set(targets kinetic_partition)
 
