@@ -116,7 +116,7 @@ void* MemoryPool< T, nObjects >::allocate(std::size_t) {
 }
 
 template< class T, int nObjects >
-void MemoryPool< T, nObjects >::free(void* t) {
+void MemoryPool< T, nObjects >::free BOOST_PREVENT_MACRO_SUBSTITUTION (void* t) {
    CGAL_assertion(t != 0);
    if (t == 0) return; // for safety
    if(blocks.empty()){
