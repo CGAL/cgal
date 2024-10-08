@@ -360,7 +360,7 @@ private Q_SLOTS:
     dock_widget->partPolygonsPerNodeBox->setEnabled(state != 0);
   }
 
-  void onVisibilityChanged(bool visibility) {
+  void onVisibilityChanged(bool) {
     if (!dock_widget->isVisible())
       return;
     std::cout << "in visibility changed" << std::endl;
