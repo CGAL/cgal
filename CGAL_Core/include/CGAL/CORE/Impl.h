@@ -51,7 +51,7 @@
     CGAL_INLINE_FUNCTION void *T::operator new( size_t size)             \
     { return MemoryPool<T>::global_allocator().allocate(size); }         \
     CGAL_INLINE_FUNCTION void T::operator delete( void *p, size_t )      \
-    { MemoryPool<T>::global_allocator().free(p); }
+    { (MemoryPool<T>::global_allocator().free)(p); }
   #define CORE_MEMORY_IMPL_TEMPLATE_WITH_ONE_ARG(C)                       \
   template <typename T>                                                   \
   CGAL_INLINE_FUNCTION void *C<T>::operator new( size_t size)             \
