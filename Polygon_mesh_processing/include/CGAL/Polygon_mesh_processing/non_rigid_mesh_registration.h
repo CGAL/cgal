@@ -18,7 +18,6 @@
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <Eigen/Core>
-#include <Eigen/src/Core/ArithmeticSequence.h>
 #include <Eigen/Dense>
 #include <Eigen/SVD>
 #include <Eigen/Sparse>
@@ -129,8 +128,10 @@ void insertSparseMatrix(const SparseMat& mat, std::vector<SparseTriplet>& coeffi
 }
 
 template<typename T, typename Visitor, typename TriangleMesh>
-Eigen::Matrix<T, 3, 3> rotation(std::size_t index, Visitor &v, TriangleMesh &source, const Vertices& X, const Vertices& Z, const std::set<int>& neighbors, const std::vector<T> &weights, std::vector<Eigen::Matrix<ScalarType, 3, 3>> &rotations) {
+void rotation(std::size_t index, Visitor &v, TriangleMesh &source, const Vertices& X, const Vertices& Z, const std::set<int>& neighbors, const std::vector<T> &weights, std::vector<Eigen::Matrix<ScalarType, 3, 3>> &rotations) {
   using Vertex_index = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
+  Deformation_Eigen_closest_rotation_traits_3 cr;
+
   Eigen::Matrix3d cov;
   cov.setZero();
 
@@ -146,11 +147,23 @@ Eigen::Matrix<T, 3, 3> rotation(std::size_t index, Visitor &v, TriangleMesh &sou
     Eigen::Vector3d source_edge = x_src - x_dst;
     Eigen::Vector3d moving_edge = z_src - z_dst;
 
-    cov += weights[idx] * (source_edge * moving_edge.transpose());
+    cr.add_scalar_t_vector_t_vector_transpose(cov, *w, source_edge, moving_edge);
     v.update_covariance_matrix(cov, rotations[index]);
   }
 
-  return cov;
+  cr.compute_close_rotation(cov, rotations[index]);
+}
+
+template <typename T>
+Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
+  T ca = cos(a), cb = cos(b), cc = cos(c);
+  T sa = sin(a), sb = sin(b), sc = sin(c);
+  Eigen::Matrix<T, 3, 3> R;
+  R << cb * cc, cc* sa* sb - ca * sc, ca* cc* sb + sa * sc,
+    cb* sc, ca* cc + sa * sb * sc, ca* sb* sc - cc * sa,
+    -sb, cb* sa, ca* cb;
+
+  return R;
 }
 
 #endif
@@ -486,7 +499,13 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
   Eigen::ConjugateGradient<SparseMat, Eigen::Lower | Eigen::Upper> cg;
   //cg.setMaxIterations(1000);
   //cg.setTolerance(1e-6);
+
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+  Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> svd;
+#else
   Eigen::JacobiSVD<Eigen::Matrix<ScalarType, 3, 3>> svd;
+#endif
+
   std::vector<Eigen::Matrix<ScalarType, 3, 3>> rotations(Z.rows());
 
   for (std::size_t i = 0; i < std::size_t(Z.rows()); i++)
@@ -534,8 +553,17 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
       idz(corr(i, 0)) = corr(i, 1);
     }
 
+#if EIGEN_VERSION_AT_LEAST(3,4,0)
     Vertices P(Y(idz, Eigen::indexing::all)); // target points
     Vertices NP(NY(idz, Eigen::indexing::all)); // target normals
+#else
+    Vertices P(idz.size(), 3); // target points
+    Vertices NP(idz.size(), 3); // target normals
+    for (std::size_t i = 0; i < idz.rows(); i++) {
+      P.row(i) = Y.row(idz(i));
+      NP.row(i) = NY.row(idz(i));
+    }
+#endif
 
     // Filling coefficients for first part of A -> point_to_plane_energy
     for (Index i = 0; i < Z.rows(); ++i) {
@@ -578,26 +606,83 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
     Vector x = cg.solve(A.transpose() * D * b);
 
     // Solution
+#if EIGEN_VERSION_AT_LEAST(3,4,0)
     Z(Eigen::indexing::all, 0) = x(Eigen::seq(0, Z.rows() - 1));
     Z(Eigen::indexing::all, 1) = x(Eigen::seq(Z.rows(), 2 * Z.rows() - 1));
     Z(Eigen::indexing::all, 2) = x(Eigen::seq(2 * Z.rows(), 3 * Z.rows() - 1));
+#else
+    for (Index i = 0; i < Z.rows(); i++) {
+      Z(i, 0) = x(i);
+      Z(i, 1) = x(Z.rows() + i);
+      Z(i, 2) = x(2 * Z.rows() + i);
+    }
+#endif
 
     // Update edge neighborhoods by new local rotation
+    bool new_arap = true;
     if (it == (iter - 1)) {
-      // Should replace with CGAL's ARAP implementation https://github.com/CGAL/cgal/blob/master/Surface_mesh_deformation/include/CGAL/Surface_mesh_deformation.h
-      // See also: compute_close_rotation https://github.com/CGAL/cgal/blob/master/Surface_mesh_deformation/include/CGAL/Deformation_Eigen_closest_rotation_traits_3.h
-      for (Index i = 0; i < Z.rows(); ++i)
-        rotations[i] = rotation(std::size_t(i), visitor, source,  X, Z, neighbors[i], he_weights[i], rotations);
+      if (new_arap) {
+        for (Index i = 0; i < Z.rows(); ++i)
+          rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
 
-      for (Index i = 0; i < Z.rows(); ++i) {
-          rotations[i] = rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
-          BX.row(i) = BX.row(i) * rotations[i].transpose();
+        for (Index i = 0; i < edim; ++i) {
+          BX.row(i) = BX_original.row(i) * rotations[Ni(i)].transpose();
         }
+      }
+      else {
+        for (Index i = 0; i < Z.rows(); ++i) {
+#if EIGEN_VERSION_AT_LEAST(3,4,0)
+          std::vector<int> nbrs(neighbors[i].begin(), neighbors[i].end());
+          Matrix A = X(nbrs, Eigen::indexing::all).rowwise() - X.row(i);
+          Matrix B_ = Z(nbrs, Eigen::indexing::all).rowwise() - Z.row(i);
+#else
+          Matrix A(neighbors[i].size(), 3);
+          Matrix B_(neighbors[i].size(), 3);
+          auto xi = X.row(i);
+          auto zi = Z.row(i);
+          auto nit = neighbors[i].begin();
+          for (Index j = 0; j < neighbors[i].size(); j++, nit++) {
+            A.row(j) = X.row(*nit) - xi;
+            B_.row(j) = Z.row(*nit) - zi;
+          }
+#endif
+
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+          svd.compute(A.transpose() * B_);
+#else
+          svd.compute(A.transpose() * B_, Eigen::ComputeFullU | Eigen::ComputeFullV);
+#endif
+
+          rotations[i] = svd.matrixV() * svd.matrixU().transpose();
+          if (rotations[i].determinant() < 0) {
+            Eigen::Matrix<ScalarType, 3, 3> M = Eigen::Matrix3d::Identity();
+            M(2, 2) = -1;
+            rotations[i] = svd.matrixV() * M * svd.matrixU().transpose();
+          }
+        }
+        for (Index i = 0; i < edim; ++i) {
+          Matrix R = rotations[Ni(i)];
+          BX.row(i) = BX.row(i) * R.transpose();
+        }
+      }
     }
     else
-      for (Index i = 0; i < Z.rows(); ++i) {
-        rotations[i] = rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
-        BX.row(i) = BX.row(i) * rotations[i].transpose();
+      if (new_arap) {
+        for (Index i = 0; i < Z.rows(); ++i)
+          rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
+
+        for (Index i = 0; i < edim; ++i)
+          BX.row(i) = BX_original.row(i) * rotations[Ni(i)].transpose();
+      }
+      else {
+        // Regular matrix update is happening here (taking linearized coefficients, recreating matrix and rotating edges)
+        for (Index i = 0; i < edim; ++i) {
+          int ni = Ni(i);
+          Matrix R = rot(x(dim + 2 * Z.rows() + ni),
+            x(dim + Z.rows() + ni),
+            x(dim + ni));
+          BX.row(i) = BX.row(i) * R.transpose();
+        }
       }
   }
 
