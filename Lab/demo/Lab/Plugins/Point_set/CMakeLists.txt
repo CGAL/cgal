@@ -179,7 +179,7 @@ cgal_lab_plugin(point_set_clustering_plugin Point_set_clustering_plugin
                        KEYWORDS PointSetProcessing)
 target_link_libraries(
   point_set_clustering_plugin PUBLIC scene_points_with_normal_item
-                                     scene_callback_signaler)
+                                     scene_callback_signaler CGAL::Eigen3_support)
 
 cgal_lab_plugin(merge_point_sets_plugin Merge_point_sets_plugin KEYWORDS
                        PointSetProcessing Classification)

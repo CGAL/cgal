@@ -179,7 +179,8 @@ cgal_lab_plugin(engrave_text_plugin Engrave_text_plugin
                        ${engravUI_FILES})
 target_link_libraries(
   engrave_text_plugin PUBLIC scene_surface_mesh_item scene_selection_item
-                             scene_polylines_item)
+                             scene_polylines_item
+                             CGAL::Eigen3_support)
 
 if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(
