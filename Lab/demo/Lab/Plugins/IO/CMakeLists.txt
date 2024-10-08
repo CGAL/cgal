@@ -47,7 +47,7 @@ target_link_libraries(surf_io_plugin PUBLIC scene_surface_mesh_item)
 cgal_lab_plugin(lcc_io_plugin lcc_io_plugin KEYWORDS Viewer)
 target_link_libraries(lcc_io_plugin PUBLIC scene_lcc_item)
 
-find_package(OpenMesh)
+find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   include(CGAL_OpenMesh_support)
   cgal_lab_plugin(om_plugin OM_io_plugin KEYWORDS Viewer PMP)
