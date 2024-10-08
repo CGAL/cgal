@@ -61,7 +61,7 @@ else()
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
   target_link_libraries(Linear_cell_complex_3_demo
-                        PUBLIC CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGL)
+                        PRIVATE CGAL::CGAL CGAL::CGAL_Qt6 Qt6::OpenGL)
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
   cgal_add_compilation_test(Linear_cell_complex_3_demo)

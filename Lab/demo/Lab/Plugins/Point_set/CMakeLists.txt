@@ -41,9 +41,9 @@ if(TARGET CGAL::Eigen3_support)
            scene_points_with_normal_item CGAL::Eigen3_support)
 
   if(TARGET CGAL::SCIP_support)
-    target_link_libraries(surface_reconstruction_plugin PUBLIC CGAL::SCIP_support)
+    target_link_libraries(surface_reconstruction_plugin PRIVATE CGAL::SCIP_support)
   elseif(TARGET CGAL::GLPK_support)
-    target_link_libraries(surface_reconstruction_plugin PUBLIC CGAL::GLPK_support)
+    target_link_libraries(surface_reconstruction_plugin PRIVATE CGAL::GLPK_support)
   endif()
 
   qt6_wrap_ui(point_set_normal_estimationUI_FILES
@@ -109,14 +109,14 @@ if(TARGET CGAL::Eigen3_support)
       ${register_point_setsUI_FILES} KEYWORDS PointSetProcessing)
     target_link_libraries(register_point_sets_plugin
                           PUBLIC scene_points_with_normal_item)
-    target_link_libraries(register_point_sets_plugin PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(register_point_sets_plugin PRIVATE CGAL::Eigen3_support)
     if(TARGET CGAL::OpenGR_support)
       target_link_libraries(register_point_sets_plugin
-                            PUBLIC CGAL::OpenGR_support)
+                            PRIVATE CGAL::OpenGR_support)
     endif()
     if(TARGET CGAL::pointmatcher_support)
       target_link_libraries(register_point_sets_plugin
-                            PUBLIC CGAL::pointmatcher_support)
+                            PRIVATE CGAL::pointmatcher_support)
     endif()
   else()
     message(STATUS "NOTICE: OpenGR and libpointmatcher were not found. Registration plugin will not be available.")
@@ -226,7 +226,7 @@ if(TARGET CGAL::TBB_support)
     alpha_shape_plugin
     point_set_to_mesh_distance_plugin)
     if(TARGET ${plugin})
-      target_link_libraries(${plugin} PUBLIC CGAL::TBB_support)
+      target_link_libraries(${plugin} PRIVATE CGAL::TBB_support)
     endif()
   endforeach()
 endif()

@@ -54,14 +54,14 @@ if(TARGET CGAL::Eigen3_support)
     find_package(Ceres QUIET)
     include(CGAL_Ceres_support)
     if(TARGET CGAL::Ceres_support)
-      target_link_libraries(smoothing_plugin PUBLIC CGAL::Ceres_support)
+      target_link_libraries(smoothing_plugin PRIVATE CGAL::Ceres_support)
     endif()
 
     set_package_properties(
       Ceres PROPERTIES
       DESCRIPTION "A large scale non-linear optimization library."
       PURPOSE "Can be used as a solver in the smoothing plugin.")
-    target_link_libraries(extrude_plugin PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(extrude_plugin PRIVATE CGAL::Eigen3_support)
 
     qt6_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
     cgal_lab_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
@@ -135,7 +135,7 @@ qt6_wrap_ui( repairUI_FILES RemoveNeedlesDialog.ui SelfSnapDialog.ui AddBboxDial
 cgal_lab_plugin(repair_polyhedron_plugin Repair_polyhedron_plugin  ${repairUI_FILES} KEYWORDS PMP)
 target_link_libraries(repair_polyhedron_plugin PUBLIC scene_points_with_normal_item scene_surface_mesh_item scene_polygon_soup_item)
 if(TARGET CGAL::TBB_support)
-  target_link_libraries(repair_polyhedron_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(repair_polyhedron_plugin PRIVATE CGAL::TBB_support)
 endif()
 
 if(TARGET CGAL::Eigen3_support)
@@ -146,7 +146,7 @@ if(TARGET CGAL::Eigen3_support)
           scene_selection_item CGAL::Eigen3_support)
 
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(isotropic_remeshing_plugin PUBLIC CGAL::TBB_support)
+    target_link_libraries(isotropic_remeshing_plugin PRIVATE CGAL::TBB_support)
   endif()
 
 else()
@@ -157,7 +157,7 @@ cgal_lab_plugin(distance_plugin Distance_plugin KEYWORDS PMP)
 target_link_libraries(distance_plugin PUBLIC scene_surface_mesh_item
                                              scene_color_ramp)
 if(TARGET CGAL::TBB_support)
-  target_link_libraries(distance_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(distance_plugin PRIVATE CGAL::TBB_support)
 endif()
 
 cgal_lab_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin KEYWORDS Viewer Mesh_3 PMP)

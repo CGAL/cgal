@@ -48,16 +48,16 @@ if(TARGET CGAL::Eigen3_support)
     endif()
 
   if(TARGET CGAL::Boost_serialization_support AND TARGET CGAL::Boost_iostreams_support)
-    target_link_libraries(classification_plugin PUBLIC CGAL::Boost_serialization_support
+    target_link_libraries(classification_plugin PRIVATE CGAL::Boost_serialization_support
                                                        CGAL::Boost_iostreams_support)
   endif()
 
   if(TARGET CGAL::OpenCV_support)
-    target_link_libraries(classification_plugin PUBLIC CGAL::OpenCV_support)
+    target_link_libraries(classification_plugin PRIVATE CGAL::OpenCV_support)
   endif()
 
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(classification_plugin PUBLIC CGAL::TBB_support)
+    target_link_libraries(classification_plugin PRIVATE CGAL::TBB_support)
   endif()
 
   add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)

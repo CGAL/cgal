@@ -52,25 +52,25 @@ include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen
   create_single_source_cgal_program( "normal_estimation_test.cpp" )
-  target_link_libraries(normal_estimation_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(normal_estimation_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("hierarchy_simplification_test.cpp")
-  target_link_libraries(hierarchy_simplification_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(hierarchy_simplification_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("smoothing_test.cpp")
-  target_link_libraries(smoothing_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(smoothing_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("vcm_plane_test.cpp")
-  target_link_libraries(vcm_plane_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(vcm_plane_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("vcm_all_test.cpp")
-  target_link_libraries(vcm_all_test PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(vcm_all_test PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("jet_pointer_as_property_map.cpp")
-  target_link_libraries(jet_pointer_as_property_map PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(jet_pointer_as_property_map PRIVATE CGAL::Eigen3_support)
 
   create_single_source_cgal_program("psp_jet_includes.cpp")
-  target_link_libraries(psp_jet_includes PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(psp_jet_includes PRIVATE CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
@@ -84,7 +84,7 @@ if(TARGET CGAL::TBB_support)
     wlop_simplify_and_regularize_test edge_aware_upsample_test
     normal_estimation_test)
     if(TARGET ${target})
-      target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
     endif()
   endforeach()
 else()

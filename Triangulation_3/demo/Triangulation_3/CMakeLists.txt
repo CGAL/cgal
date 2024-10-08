@@ -57,7 +57,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(T3_demo PRIVATE CGAL::CGAL CGAL::CGAL_Qt6)
   target_link_libraries(T3_demo PRIVATE Qt6::OpenGL)
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(T3_demo PUBLIC CGAL::TBB_support)
+    target_link_libraries(T3_demo PRIVATE CGAL::TBB_support)
   endif()
 
   include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)

@@ -45,7 +45,7 @@ if(TARGET CGAL::Eigen3_support)
     test_region_growing_on_point_set_3_with_sorting
     test_region_growing_on_polygon_mesh_with_sorting
     test_region_growing_on_degenerated_mesh)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
 
   set(RANSAC_PROTO_DIR CACHE PATH "")

@@ -250,8 +250,8 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     scene_basic_objects ${TBB_LIBRARIES})
 
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(scene_c3t3_item PUBLIC CGAL::TBB_support)
-    target_link_libraries(scene_triangulation_3_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_c3t3_item PRIVATE CGAL::TBB_support)
+    target_link_libraries(scene_triangulation_3_item PRIVATE CGAL::TBB_support)
   endif()
   if(COMMAND target_precompile_headers)
     # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
@@ -278,7 +278,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
 
   if(TBB_FOUND)
-    target_link_libraries(scene_surface_mesh_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_surface_mesh_item PRIVATE CGAL::TBB_support)
   endif()
   # special
 
@@ -293,7 +293,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(scene_selection_item PUBLIC scene_item_decorator
                                                     scene_k_ring_selection)
   if(TBB_FOUND)
-    target_link_libraries(scene_selection_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_selection_item PRIVATE CGAL::TBB_support)
   endif()
 
   add_item(scene_shortest_path_item
@@ -307,9 +307,9 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   if(TARGET CGAL::Eigen3_support)
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp
              texture.cpp)
-    target_link_libraries(scene_textured_item PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(scene_textured_item PRIVATE CGAL::Eigen3_support)
     add_item(scene_mcf_item Plugins/PMP/Scene_mcf_item.cpp)
-    target_link_libraries(scene_mcf_item PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(scene_mcf_item PRIVATE CGAL::Eigen3_support)
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp)
@@ -325,12 +325,12 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   if(TARGET CGAL::Eigen3_support)
     target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::Eigen3_support)
+                          PRIVATE CGAL::Eigen3_support)
   endif()
 
   if(TBB_FOUND)
     target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::TBB_support)
+                          PRIVATE CGAL::TBB_support)
   endif()
 
   add_item(scene_polylines_item Scene_polylines_item.cpp)
@@ -381,7 +381,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(CGALlab PRIVATE demo_framework)
 
   # Link with CGAL
-  target_link_libraries(CGALlab PUBLIC CGAL::CGAL_Qt6)
+  target_link_libraries(CGALlab PRIVATE CGAL::CGAL_Qt6)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGALlab)
 

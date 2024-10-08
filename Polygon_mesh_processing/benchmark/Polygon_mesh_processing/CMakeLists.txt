@@ -29,7 +29,7 @@ if (FAST_ENVELOPE_BUILD_DIR)
   endif()
 
   create_single_source_cgal_program("fastE.cpp")
-  target_link_libraries( fastE PUBLIC CGAL::Eigen3_support)
+  target_link_libraries( fastE PRIVATE CGAL::Eigen3_support)
   target_link_libraries( fastE PUBLIC FastEnvelope IndirectPredicates geogram)
 
 else()
@@ -39,5 +39,5 @@ endif()
 create_single_source_cgal_program("fast.cpp")
 
 create_single_source_cgal_program("polygon_mesh_slicer.cpp")
-target_link_libraries(polygon_mesh_slicer PUBLIC CGAL::Eigen3_support)
+target_link_libraries(polygon_mesh_slicer PRIVATE CGAL::Eigen3_support)
 

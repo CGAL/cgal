@@ -26,7 +26,7 @@ if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("issue_8347.cpp")
   foreach(target test_triangulation test_delaunay test_regular test_tds
                  test_torture test_insert_if_in_star simple_io_test issue_8347)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
 
 else()

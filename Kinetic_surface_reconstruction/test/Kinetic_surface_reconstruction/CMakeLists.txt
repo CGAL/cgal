@@ -17,7 +17,7 @@ if(Eigen3_FOUND)
 
   foreach(target ${targets})
     create_single_source_cgal_program("${target}.cpp")
-    target_link_libraries(${target} PUBLIC CGAL::Eigen_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen_support)
   endforeach()
 else()
   message(ERROR "This program requires the Eigen library, and will not be compiled.")
