@@ -30,8 +30,6 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/tags.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_rational.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
 
 #include <boost/mpl/has_xxx.hpp>

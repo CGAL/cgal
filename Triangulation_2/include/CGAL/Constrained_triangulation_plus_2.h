@@ -26,13 +26,15 @@
 
 #include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
+
 #include <boost/container/flat_set.hpp>
 
 #include <type_traits>
 
 namespace CGAL {
+
+ class Epick;
 
 // Comparison functor that compares two Vertex_handle.
 // Used as 'Compare' functor for the constraint hierarchy.
@@ -59,20 +61,20 @@ template < class Tr_ = Default >
 class Constrained_triangulation_plus_2
   : public
 Default::Get< Tr_, Constrained_Delaunay_triangulation_2<
-                      Exact_predicates_inexact_constructions_kernel
+                      Epick
                       , Triangulation_data_structure_2<
-                            Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
-                          , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
+                            Triangulation_vertex_base_2<Epick>
+                          , Constrained_triangulation_face_base_2<Epick>
                           >
                       , CGAL::Exact_predicates_tag
                       > >::type
 {
   typedef typename
   Default::Get< Tr_, Constrained_Delaunay_triangulation_2<
-                  Exact_predicates_inexact_constructions_kernel
+                  Epick
                   , Triangulation_data_structure_2<
-                        Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
-                      , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
+                        Triangulation_vertex_base_2<Epick>
+                      , Constrained_triangulation_face_base_2<Epick>
                       >
                   , CGAL::Exact_predicates_tag
                   > >::type Tr;
