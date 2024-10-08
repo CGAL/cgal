@@ -11,6 +11,7 @@
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
+#include <CGAL/Three/CGAL_Lab_plugin_helper.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
@@ -81,22 +82,26 @@ public:
 
 class Q_DECL_EXPORT Clip_cgal_lab_plugin :
     public QObject,
-    public CGAL::Three::CGAL_Lab_plugin_interface
+    public CGAL_Lab_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::CGAL_Lab_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.CGALLab.PluginInterface/1.0")
+
 public :
   // Adds an action to the menu and configures the widget
   void init(QMainWindow* mw,
             CGAL::Three::Scene_interface* scene_interface,
-            Messages_interface* mi) {
+            Messages_interface* mi)
+  {
     //get the references
     this->scene = scene_interface;
+    this->mw = mw;
     this->messages = mi;
     plane = nullptr;
     clipper_item = nullptr;
     original_clipper = nullptr;
+
     //creates and link the actions
     actionClipPolyhedra = new QAction("Clip Polyhedra With Plane", mw);
     actionClipPolyhedra->setProperty("subMenuName","Polygon Mesh Processing/Corefinement");
@@ -411,12 +416,17 @@ public Q_SLOTS:
         if(sm_item)
         {
           Scene_polyhedron_selection_item* selection = nullptr;
+          CGAL::Three::Scene_interface::Item_id selection_id = -1;
           for (int id : scene->selectionIndices())
           {
             Scene_polyhedron_selection_item* tmp
               = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(id));
             if (tmp != nullptr && tmp->polyhedron_item() == sm_item)
+            {
               selection = tmp;
+              selection_id = id;
+              break;
+            }
           }
 
           if (selection == nullptr)
@@ -442,32 +452,62 @@ public Q_SLOTS:
             auto ecmap_out = tm_out->add_property_map<fg_edge_descriptor, bool>("ecmap", false).first;
 
             try {
-              CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*(sm_item->face_graph()),
+              bool success = CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*(sm_item->face_graph()),
                 clipper,
                 *tm_out,
                 CGAL::parameters::edge_is_constrained_map(selection->constrained_edges_pmap()),
                 CGAL::parameters::default_values(),
                 CGAL::parameters::edge_is_constrained_map(ecmap_out));
+
+              if (!success)
+                CGAL::Three::Three::warning(tr("corefine_and_compute_intersection() did not fully succeed"));
             }
             catch (const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
             {
               CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
             }
 
+            std::cout << "A - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
+
             Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(tm_out);
             new_item->setName(QString("Clip_ %1").arg(sm_item->name()));
             new_item->setColor(sm_item->color());
             new_item->setRenderingMode(sm_item->renderingMode());
             new_item->setVisible(sm_item->visible());
-            scene->addItem(new_item);
+            CGAL::Three::Scene_interface::Item_id id1 = scene->addItem(new_item);
             new_item->invalidateOpenGLBuffers();
 
-            Scene_polyhedron_selection_item* new_selection = new Scene_polyhedron_selection_item();
-            new_selection->set_polyhedron_item(new_item);
+            std::cout << "id1 = " << id1 << std::endl;
+            std::cout << "B - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
+
+            Scene_polyhedron_selection_item* new_selection = new Scene_polyhedron_selection_item(new_item, this->mw);
+            CGAL_assertion(new_selection->selected_edges.empty());
+            for (fg_edge_descriptor e : edges(*tm_out))
+            {
+              if(get(ecmap_out, e))
+                new_selection->selected_edges.insert(e);
+            }
             new_selection->setName(QString("Clip_%1_selection").arg(sm_item->name()));
             new_selection->setVisible(sm_item->visible());
-            scene->addItem(new_selection);
+            //scene->erase(selection_id);
+
+            std::cout << "BB - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
+
             new_selection->invalidateOpenGLBuffers();
+
+            std::cout << "BC - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
+
+            CGAL::Three::Scene_interface::Item_id id2 = scene->addItem(new_item);
+
+            std::cout << "id2 = " << id2 << std::endl;
+            std::cout << "BD - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
+
+
+            sm_item->setVisible(false);
+            selection->setVisible(false);
+
+            std::cout << "D - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
+
           }
         }
       }
