@@ -741,6 +741,12 @@ public:
       // Add a subcurve to the saved x-monotone curve
       auto update_saved_xcv = [&](const X_monotone_subcurve_2& sxcv) {
         xcv_saved = true;
+        // We maintain the invariant that if the input curves have opposite
+        // directions (! consistent), the overalpping curves are directed
+        // left=>right. This, however, is not guaranteed by all traits for the
+        // subcurves. (It is guaranteed by some traits, but this is
+        // insufficient.)  Therefore, we need to enforce it. That is, we make
+        // sure the subcurves are also directed left=>right in this case.
         if (! consistent && (cmp_endpts(sxcv) == LARGER)) {
           if (invert_ocv) {
             saved_xcv.push_front(ctr_opposite(sxcv));
