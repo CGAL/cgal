@@ -591,8 +591,7 @@ public:
       Comparison_result dir = cmp_seg_endpts(xcv[0]);
 
       // Locate the subcurve on the polycurve xcv that contains p.
-      std::size_t i = m_poly_traits.locate(xcv, p);
-
+      auto i = m_poly_traits.locate_impl(xcv, p, All_sides_oblivious_category());
       CGAL_precondition(i != Polycurve_traits_2::INVALID_INDEX);
 
       // Clear the output curves.
