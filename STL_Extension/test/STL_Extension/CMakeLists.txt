@@ -37,7 +37,7 @@ create_single_source_cgal_program("test_cgal_named_params.cpp")
 
 add_executable(test_multiset_cc "test_multiset.cpp")
 target_link_libraries(test_multiset_cc PRIVATE CGAL::CGAL)
-target_compile_options(test_multiset_cc PUBLIC -DCGAL_MULTISET_USE_COMPACT_CONTAINER_AS_DEFAULT)
+target_compile_options(test_multiset_cc PRIVATE -DCGAL_MULTISET_USE_COMPACT_CONTAINER_AS_DEFAULT)
 cgal_add_test(test_multiset_cc)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS test_multiset_cc)
 

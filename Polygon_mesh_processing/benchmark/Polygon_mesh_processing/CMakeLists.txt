@@ -30,7 +30,7 @@ if (FAST_ENVELOPE_BUILD_DIR)
 
   create_single_source_cgal_program("fastE.cpp")
   target_link_libraries( fastE PRIVATE CGAL::Eigen3_support)
-  target_link_libraries( fastE PUBLIC FastEnvelope IndirectPredicates geogram)
+  target_link_libraries( fastE PRIVATE FastEnvelope IndirectPredicates geogram)
 
 else()
   message(STATUS "CMake variable FAST_ENVELOPE_BUILD_DIR is not defined; benchmark 'fastE' will not be built")

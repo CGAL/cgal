@@ -15,12 +15,12 @@ create_single_source_cgal_program(Combinatorial_map_copy_test.cpp ${hfiles})
 
 # Same targets, defining USE_COMPACT_CONTAINER_WITH_INDEX to test index version
 add_executable(Combinatorial_map_test_index  Combinatorial_map_test.cpp ${hfiles})
-target_compile_definitions(Combinatorial_map_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
+target_compile_definitions(Combinatorial_map_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
 target_link_libraries(Combinatorial_map_test_index PRIVATE CGAL::CGAL CGAL::Data)
 cgal_add_compilation_test(Combinatorial_map_test_index)
 
 add_executable(Combinatorial_map_copy_test_index Combinatorial_map_copy_test.cpp ${hfiles})
-target_compile_definitions(Combinatorial_map_copy_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
+target_compile_definitions(Combinatorial_map_copy_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
 target_link_libraries(Combinatorial_map_copy_test_index PRIVATE CGAL::CGAL CGAL::Data)
 cgal_add_compilation_test(Combinatorial_map_copy_test_index)
 

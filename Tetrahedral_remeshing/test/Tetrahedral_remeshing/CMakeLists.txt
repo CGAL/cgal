@@ -22,7 +22,7 @@ add_executable(test_tetrahedral_remeshing_mls
               "test_tetrahedral_remeshing.cpp")
 target_link_libraries(test_tetrahedral_remeshing_mls PRIVATE CGAL::CGAL CGAL::Data)
 target_compile_definitions(test_tetrahedral_remeshing_mls
-                           PUBLIC -DCGAL_TET_REMESHING_SMOOTHING_WITH_MLS)
+                           PRIVATE -DCGAL_TET_REMESHING_SMOOTHING_WITH_MLS)
 cgal_add_test(test_tetrahedral_remeshing_mls)
 
 
@@ -45,7 +45,7 @@ if(TARGET CGAL::Eigen3_support)
   target_link_libraries(test_mesh_and_remesh_polyhedron_with_features_mls
                         PRIVATE CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
   target_compile_definitions(test_mesh_and_remesh_polyhedron_with_features_mls
-                             PUBLIC -DCGAL_TET_REMESHING_SMOOTHING_WITH_MLS)
+                             PRIVATE -DCGAL_TET_REMESHING_SMOOTHING_WITH_MLS)
   cgal_add_test(test_mesh_and_remesh_polyhedron_with_features_mls)
 
   if(CGAL_ImageIO_USE_ZLIB)

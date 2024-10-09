@@ -126,7 +126,7 @@ include(CGAL_Ceres_support)
 if(TARGET CGAL::Ceres_support AND TARGET CGAL::Eigen3_support)
   target_link_libraries(test_mesh_smoothing PRIVATE CGAL::Eigen3_support CGAL::Ceres_support)
 
-#  target_compile_definitions(test_pmp_repair_self_intersections PUBLIC CGAL_PMP_USE_CERES_SOLVER)
+#  target_compile_definitions(test_pmp_repair_self_intersections PRIVATE CGAL_PMP_USE_CERES_SOLVER)
 #  target_link_libraries(test_pmp_repair_self_intersections PRIVATE CGAL::Eigen3_support CGAL::Ceres_support)
 else()
   message(STATUS "NOTICE: Tests are not using Ceres.")
