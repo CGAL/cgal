@@ -214,7 +214,6 @@ jobs:
             done
             cat index.html | grep -F "$(echo */ | tr ' ' '\n')" > index.html
             git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "sole commit" && git push -q -f -u origin master
-            exit $exit_code
           else
             echo "DoxygenError=This round already exists. Overwrite it with /force-build." >> $GITHUB_OUTPUT
             exit 1
