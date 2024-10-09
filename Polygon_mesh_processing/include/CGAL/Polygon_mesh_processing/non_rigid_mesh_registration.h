@@ -141,7 +141,7 @@ void rotation(std::size_t index, Visitor &v, TriangleMesh &source, const Vertice
 
   v.rotation_matrix_pre(Vertex_index(index), source);
 
-  for (std::size_t idx = 0; (n != neighbors.end()) && (w != weights.end()); idx++, n++, w++) {
+  for (; (n != neighbors.end()) && (w != weights.end()); n++, w++) {
     Eigen::Vector3d x_dst = X.row(*n);
     Eigen::Vector3d z_dst = Z.row(*n);
     Eigen::Vector3d source_edge = x_src - x_dst;
@@ -559,7 +559,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 #else
     Vertices P(idz.size(), 3); // target points
     Vertices NP(idz.size(), 3); // target normals
-    for (std::size_t i = 0; i < idz.rows(); i++) {
+    for (Index i = 0; i < idz.rows(); i++) {
       P.row(i) = Y.row(idz(i));
       NP.row(i) = NY.row(idz(i));
     }
@@ -641,7 +641,7 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
           auto xi = X.row(i);
           auto zi = Z.row(i);
           auto nit = neighbors[i].begin();
-          for (Index j = 0; j < neighbors[i].size(); j++, nit++) {
+          for (std::size_t j = 0; j < neighbors[i].size(); j++, nit++) {
             A.row(j) = X.row(*nit) - xi;
             B_.row(j) = Z.row(*nit) - zi;
           }
