@@ -59,6 +59,11 @@ public:
 public Q_SLOTS:
   void processInput(CGAL::Object o);
 
+  void setZValue(int z)
+  {
+    pi->setZValue(z);
+  }
+
 typedef CGAL::Polygon_2<K> Polygon;
 typedef CGAL::Polygon_with_holes_2<K> Polygon_with_holes;
 
@@ -89,6 +94,7 @@ GraphicsViewPolygonWithHolesInput<K>::GraphicsViewPolygonWithHolesInput(QObject 
 {
   pwhItem = new CGAL::Qt::PolygonWithHolesGraphicsItem<Polygon_with_holes>(&pwh);
   pwhItem->setBrush(::Qt::yellow);
+  pwhItem->setZValue(8);
   scene_->addItem(pwhItem);
   pwhItem->hide();
 
