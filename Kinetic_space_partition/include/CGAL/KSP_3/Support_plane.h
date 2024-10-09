@@ -404,9 +404,9 @@ public:
     for (std::size_t i = 0; i < m_data->original_directions.size(); i++) {
       for (std::size_t j = 0; j < m_data->original_directions.size(); j++) {
         if (j < i)
-          assert(m_data->original_directions[j] < m_data->original_directions[i]);
+          CGAL_assertion(m_data->original_directions[j] < m_data->original_directions[i]);
         if (j > i)
-          assert(m_data->original_directions[i] < m_data->original_directions[j]);
+          CGAL_assertion(m_data->original_directions[i] < m_data->original_directions[j]);
       }
     }
 

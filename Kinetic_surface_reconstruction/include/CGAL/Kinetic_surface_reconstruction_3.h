@@ -653,7 +653,7 @@ private:
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       auto n = m_lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
 
-      assert(n.size() == 1 || n.size() == 2);
+      CGAL_assertion(n.size() == 1 || n.size() == 2);
       auto it = n.begin();
 
 //      auto& finf = m_lcc.template info<2>(m_faces_lcc[i]);
@@ -1585,7 +1585,7 @@ private:
         other_faces.push_back(dh); // Contains faces originating from the octree decomposition as well as bbox faces
     }
 
-    assert(m_kinetic_partition.input_planes().size() == m_regions.size());
+    CGAL_assertion(m_kinetic_partition.input_planes().size() == m_regions.size());
 
     for (std::size_t i = 0; i < m_kinetic_partition.input_planes().size(); i++) {
 
@@ -1942,7 +1942,7 @@ private:
     std::vector<Index> faces;
 
     if (polygon_index >= m_kinetic_partition.input_planes().size())
-      assert(false);
+      CGAL_assertion(false);
 
     From_exact from_exact;
 
