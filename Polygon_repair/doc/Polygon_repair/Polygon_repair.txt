@@ -16,13 +16,14 @@ each face according to what it represents (exterior, polygon interior
 or hole), and reconstructs the polygon(s) represented by the arrangement.
 The method returns valid output stored in a multipolygon with holes.
 
-Different arrangement and labelling heuristics are possible, but
-currently only the <em>even-odd</em> rule is implemented in this package.
-This rule results in areas that are alternately assigned as polygon
+Different arrangement and labeling heuristics are possible, but
+currently only the <em>even-odd</em> rule and <em>non-zero</em> rule are implemented in this package.
+The even-odd rule results in areas that are alternately assigned as polygon
 interiors and exterior/holes each time that an input edge is passed.
 It does not distinguish between edges that are part of outer boundaries
-from those of inner boundaries.  In a next version we will add the
-<em>winding number</em> rule.
+from those of inner boundaries.
+
+The non-zero rule results in areas with a non-zero winding number.
 
 \section SectionPolygonRepair_Definitions Definitions
 
@@ -81,7 +82,7 @@ order
 - The polygons with holes of a multipolygon with holes are also stored in
 lexicographic order
 
-\section SectionPolygonRepair_Algorithm Algorithm
+\section SectionPolygonRepair_Algorithm Even-Odd Algorithm
 
 Broadly, the algorithm consists of three steps:
 
@@ -95,7 +96,7 @@ single multipolygon with holes.
 
 \cgalFigureBegin{inout, inout.svg}
 Examples of polygons with holes (a-d) and multipolygons with holes
-(e-h) before (left) and after (right) being repaired.
+(e-h) before (left) and after (right) being repaired with the even-odd rule.
 \cgalFigureEnd
 
 \subsection SubsectionPolygonRepair_Arrangement Arrangement
@@ -133,7 +134,12 @@ into multipolygons using the face labels to know which polygon with holes inner/
 boundaries belong to, and using the orientation to distinguish between the outer and
 inner boundaries of each polygon with holes.
 
-\subsection SubsectionPolygonRepair_Notes Notes on the Output
+
+\section SectionPolygonRepair_Algorithm Non-Zero Algorithm
+
+Tbd.
+
+\section SubsectionPolygonRepair_Notes Notes on the Output
 
 If the input is already valid, the method will return a valid output representing
 the same area. However, the output might be different in order to conform to the
@@ -148,7 +154,7 @@ with holes has zero holes and extract these if needed.
 
 \section SectionPolygonRepair_Examples Examples
 
-\subsection SubsectionPolygonRepair_Repair Repairing a (Multi)polygon
+\subsection SubsectionPolygonRepair_Repair Repairing a (Multi)polygon with the Even-Odd Rule
 
 It is possible to repair a polygon, polygon with holes or multipolygon with holes
 using the even-odd rule by calling the `Polygon_repair::repair()` function
