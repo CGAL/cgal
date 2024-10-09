@@ -1392,6 +1392,7 @@ struct Locally_shortest_path_imp
     {
       case 0:
       {
+        // TODO: handle is src_vertex is a border vertex: does not necessarily mean early exist as it depends on the direction
         vertex_descriptor src_vertex = std::get<vertex_descriptor>(var_des);
         halfedge_descriptor href = halfedge(curr_tid, mesh);
         int src_index = source(href, mesh)==src_vertex?0:(target(href,mesh)==src_vertex?1:2);
@@ -1490,6 +1491,7 @@ struct Locally_shortest_path_imp
       break;
       case 1:
       {
+        //TODO: handle if h is on the boundary (does not necessarily mean early exit, depends on direction)
         halfedge_descriptor h = std::get<halfedge_descriptor>(var_des);
         halfedge_descriptor href = halfedge(face(h,mesh), mesh);
         int opp_id = h==href?2:(next(href,mesh)==h?0:1);
@@ -1590,6 +1592,12 @@ struct Locally_shortest_path_imp
         accumulated +=
             sqrt(squared_distance(construct_point(curr_p,mesh), get(vpm,vid)));
 
+        // stop if hitting the boundary
+        for (halfedge_descriptor h : halfedges_around_target(vid, mesh))
+          if (is_border(h, mesh))
+            break;
+
+
   //   Point_3 vert = get(vpm,vid);
   //   Point_3 vert_adj=get(vpm,source(h,mesh));
   //   Vector_3 v = vert - vert_adj;
@@ -1617,6 +1625,10 @@ struct Locally_shortest_path_imp
       else
       {
         h_curr=opposite(get_halfedge(k, h_ref),mesh);
+
+        // break if hitting the boundary
+        if (is_border(h_curr, mesh))
+          break;
 
         face_descriptor adj = face(h_curr,mesh);
         std::array<FT,2> curr_alpha=make_array(t1,1-t1); //reversed because will switch face
@@ -1650,6 +1662,15 @@ struct Locally_shortest_path_imp
     }
 
     double excess = accumulated - len;
+
+    if (excess <= 0)
+    {
+#ifdef CGAL_DEBUG_BSURF
+      std::cout << "excess " << excess << std::endl;
+#endif
+      return result;
+    }
+
     Point_3 prev_pos = construct_point(*std::next(result.rbegin()),mesh);
     Point_3 last_pos = construct_point(result.back(),mesh);
     double alpha = excess / sqrt((last_pos - prev_pos).squared_length());
