@@ -369,7 +369,7 @@ int which_side_in_slab(Point const &point, Point const &low, Point const &high,
 // precondition: low.y < point.y < high.y
 {
     // first we try to decide on x coordinate values alone
-    // This is an optimisation (whether this is really faster for
+    // This is an optimization (whether this is really faster for
     // a homogeneous kernel is not clear, as comparisons can be expensive.
     Comparison_result low_x_comp_res = compare_x_2(point, low);
     Comparison_result high_x_comp_res = compare_x_2(point, high);

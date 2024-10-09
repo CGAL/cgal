@@ -13,7 +13,7 @@
 //
 // file          : test/Polytope_distance_d/test_Polytope_distance_d_2.C
 // package       : $CGAL_Package: Polytope_distance_d $
-// chapter       : Geometric Optimisation
+// chapter       : Geometric Optimization
 //
 // source        : web/Polytope_distance_d.aw
 // revision      : $Id$

@@ -26,7 +26,7 @@ All interval operations are performed by the \mpfi library. The class `Gmpfi` is
 counted, but its members are.
 
 The default precision of `Gmpfi` is local to each thread and independent of
-the default precision of `Gmpfr` (in contrast to the behaviour of the \mpfi
+the default precision of `Gmpfr` (in contrast to the behavior of the \mpfi
 and \mpfr libraries,
 which share a default precision).
 

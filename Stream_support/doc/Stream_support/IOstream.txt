@@ -210,11 +210,11 @@ of `Output_rep`.
 
 If you do not specialize `Output_rep` for `T`, `T`'s
 stream output operator is called from within `Output_rep`, by
-default. If you want another behaviour for your type `T`, you
+default. If you want another behavior for your type `T`, you
 have to provide a specialization for that type. Furthermore, you can
 provide specializations with a second template parameter (a formatting
 tag). The second template parameter defaults to `Null_tag` and means
-<I>default behaviour</I>.
+<I>default behavior</I>.
 
 For example, specializing `Output_rep` for `CORE::BigRat` (without a
 formatting tag parameter) could look like this:

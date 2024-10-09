@@ -375,7 +375,7 @@ public Q_SLOTS:
 
   //!Emits an aboutToBeDestroyed() signal.
   //!Override this function to delete what needs to be deleted on destruction.
-  //!This might be needed as items are not always deleted right away by Qt and this behaviour may cause simply a
+  //!This might be needed as items are not always deleted right away by Qt and this behavior may cause simply a
   //!memory leak, for example when multiple items are created at the same time.
   virtual void itemAboutToBeDestroyed(Scene_item*);
   //!Returns the alpha value for the item.
