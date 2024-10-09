@@ -195,8 +195,26 @@ jobs:
             done
             cd ./cgal.github.io
             echo "<li><a href=https://cgal.github.io/${PR_NUMBER}/$ROUND/Manual/index.html>Manual for PR ${PR_NUMBER} ($ROUND).</a></li>" >> ./index.html
-            ./cleanup.bash
+
+            exit_code=0
+            for d in */; do
+                    pr=${d%/}
+                    STATE=$(GH_REPO=CGAL/cgal gh pr view "$pr" --json state --jq .state)
+                    if [ $? -ne 0 ]; then
+                            >&2 echo "ERROR: Failed to retrieve state for #$pr"
+                            exit_code=1
+                            continue
+                    fi
+                    echo "#$pr: $STATE"
+                    if [ "$STATE" != "OPEN" ]; then
+                            echo "-> Deleting ./$pr/"
+                            git rm -rf --quiet "./$pr" || >&2 echo "ERROR: Failed to delete ./$pr/" && exit_code=1
+                            sed -e "/$pr/d" -i index.html || >&2 echo "ERROR: Failed to remove $pr from index.html" && exit_code=1
+                    fi
+            done
+            cat index.html | grep -F "$(echo */ | tr ' ' '\n')" > index.html
             git add ${PR_NUMBER}/$ROUND index.html && git commit -q --amend -m "sole commit" && git push -q -f -u origin master
+            exit $exit_code
           else
             echo "DoxygenError=This round already exists. Overwrite it with /force-build." >> $GITHUB_OUTPUT
             exit 1
