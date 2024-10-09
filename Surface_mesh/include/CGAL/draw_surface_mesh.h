@@ -20,8 +20,9 @@
 
 opens a new window and draws a surface mesh. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
-A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6` or `CGAL_GLFW` depending on which basic viewer you want to use (if you use both, the Qt viewer will be used by default), and is only available if the macro `CGAL_USE_BASIC_VIEWER`/`CGAL_USE_BASIC_VIEWER_QT` (Qt viewer) or `CGAL_USE_BASIC_VIEWER_GLFW` (GLFW viewer) is defined.
+- Linking with the cmake target `CGAL::CGAL_Basic_viewer`/`CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`/`CGAL_USE_BASIC_VIEWER_QT`.
+- Linking with the cmake target `CGAL::CGAL_Basic_viewer_GLFW` will link with `CGAL_GLFW` and add the definition `CGAL_USE_BASIC_VIEWER_GLFW`.
 
 \tparam SM which must be an instantiation of a `CGAL::Surface_mesh<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
@@ -93,7 +94,9 @@ void add_to_graphics_scene(const SM& sm,
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/draw_face_graph.h>
-#include <CGAL/Qt/Basic_viewer.h>
+
+
+#include <CGAL/Basic_viewer.h>
 
 namespace CGAL {
 
@@ -164,8 +167,6 @@ void add_to_graphics_scene(const Surface_mesh<K>& amesh,
 { add_to_graphics_scene_for_fg(amesh, graphics_scene,
                                Graphics_scene_options_surface_mesh<K>(amesh)); }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
   // Specialization of draw function.
 template<class K>
 void draw(const Surface_mesh<K>& amesh,
@@ -185,8 +186,6 @@ void draw(const Surface_mesh<K>& amesh,
   add_to_graphics_scene(amesh, buffer, gs_options);
   draw_graphics_scene(buffer, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 } // End namespace CGAL
 
