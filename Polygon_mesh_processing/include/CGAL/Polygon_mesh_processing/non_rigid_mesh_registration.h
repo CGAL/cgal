@@ -41,6 +41,8 @@
 
 #include <CGAL/Aff_transformation_3.h>
 
+bool new_arap = true;
+
 namespace CGAL {
 namespace Polygon_mesh_processing {
 namespace internal {
@@ -619,7 +621,6 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 #endif
 
     // Update edge neighborhoods by new local rotation
-    bool new_arap = true;
     if (it == (iter - 1)) {
       if (new_arap) {
         for (Index i = 0; i < Z.rows(); ++i)
