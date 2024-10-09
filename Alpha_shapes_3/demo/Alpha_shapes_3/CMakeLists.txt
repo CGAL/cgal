@@ -13,7 +13,7 @@ find_package(Qt6 QUIET COMPONENTS Widgets OpenGL)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(-DQT_NO_KEYWORDS)
 
   # Instruct CMake to run moc/ui/rcc automatically when needed.
   set(CMAKE_AUTOMOC ON)

@@ -6,13 +6,13 @@ project(Mesh_3_benchmark)
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
-add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+add_compile_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
 # Activate verbose mode? (turned OFF by default)
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate verbose mode in Mesh_3" OFF)
 if(MESH_3_VERBOSE)
-  add_definitions(-DCGAL_MESH_3_VERBOSE)
+  add_compile_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()
 
 # Activate concurrency? (turned OFF by default)
@@ -20,7 +20,7 @@ option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
 if(CGAL_ACTIVATE_CONCURRENT_MESH_3)
-  add_definitions(-DCGAL_CONCURRENT_MESH_3)
+  add_compile_definitions(-DCGAL_CONCURRENT_MESH_3)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
 else()

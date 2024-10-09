@@ -50,7 +50,7 @@ if(TARGET CGAL::Eigen3_support)
 
   set(RANSAC_PROTO_DIR CACHE PATH "")
   if(NOT RANSAC_PROTO_DIR STREQUAL "")
-    add_definitions(-DPOINTSWITHINDEX -DCGAL_TEST_RANSAC_PROTOTYPE)
+    add_compile_definitions(-DPOINTSWITHINDEX -DCGAL_TEST_RANSAC_PROTOTYPE)
     include_directories(${RANSAC_PROTO_DIR})
     include_directories(${RANSAC_PROTO_DIR}/MiscLib/)
     file(GLOB proto_src "${RANSAC_PROTO_DIR}/*.cpp")
