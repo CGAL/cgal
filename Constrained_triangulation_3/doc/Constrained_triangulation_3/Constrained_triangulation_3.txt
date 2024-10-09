@@ -1,0 +1,32 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_CT_3
+\cgalAutoToc
+\author Laurent Rineau
+
+This chapter describes the ...
+
+ * \todo Explain what is a CDT. Why a given input, like a polyhedron, might not admit a constrained Delaunay triangulation.
+ * Explain "conforming to the faces of a polygon mesh".
+ *
+
+\section CT_3_definitions Definitions
+
+Section on definitions here ...
+
+\section CT_3examples Examples
+
+\subsection myFirstExample First Example
+
+The following example shows ...
+
+\cgalExample{Constrained_triangulation_3/constrained_Delaunay_triangulation_3.cpp }
+
+or from a polygon soup ...
+
+\cgalExample{Constrained_triangulation_3/constrained_Delaunay_triangulation_3_from_soup.cpp }
+
+*/
+} /* namespace CGAL */

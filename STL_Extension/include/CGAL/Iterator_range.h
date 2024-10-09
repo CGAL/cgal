@@ -120,4 +120,13 @@ namespace boost { namespace foreach
     {
     };
 }}
+
+#if CGAL_CXX20
+#  include <ranges>
+
+  template<typename I>
+  inline constexpr bool std::ranges::enable_borrowed_range<CGAL::Iterator_range<I>> = true;
+
+#endif // C++20
+
 #endif // CGAL_ITERATOR_RANGE_H
