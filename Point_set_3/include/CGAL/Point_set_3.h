@@ -245,8 +245,8 @@ public:
     m_base = ps.m_base;
     m_indices = this->property_map<Index> ("index").value();
     m_points = this->property_map<Point> ("point").value();
-    m_normals = this->property_map<Vector> ("normal").value();
     m_nb_removed = ps.m_nb_removed;
+    copy_properties(ps);
     return *this;
   }
 
@@ -257,7 +257,7 @@ public:
     m_base = ps.m_base;
     m_indices = this->property_map<Index> ("index").value();
     m_points = this->property_map<Point> ("point").value();
-    m_normals = this->property_map<Vector> ("normal").value();
+    copy_properties(ps);
     m_nb_removed = ps.m_nb_removed;
   }
   /// \endcond
