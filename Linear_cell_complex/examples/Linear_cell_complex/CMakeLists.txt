@@ -29,8 +29,19 @@ create_single_source_cgal_program("voronoi_2.cpp")
 create_single_source_cgal_program("voronoi_3.cpp")
 
 create_single_source_cgal_program("draw_linear_cell_complex.cpp")
+
+create_single_source_cgal_program("query_replace/hexa-subdivision.cpp")
+create_single_source_cgal_program("query_replace/tetra-to-hexa.cpp")
+
+create_single_source_cgal_program("hexmeshing/hexmeshing_demo.cpp")
+create_single_source_cgal_program("hexmeshing/hexmeshing_tests.cpp")
+
 if(CGAL_Qt6_FOUND)
   target_link_libraries(draw_linear_cell_complex PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(hexmeshing_demo PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(hexmeshing_tests PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(linear_cell_complex_3_incremental_builder PUBLIC CGAL::CGAL_Basic_viewer)
   target_link_libraries(linear_cell_complex_3_insert PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(hexa-subdivision PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(tetra-to-hexa PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
