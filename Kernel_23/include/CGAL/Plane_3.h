@@ -105,6 +105,11 @@ public:
     return t.transform(*this);
   }
 
+  Plane_3 transform(const Aff_transformation_3 &t, bool is_even, const Aff_transformation_3 &transposed_inverse) const
+  {
+    return t.transform(*this, is_even, transposed_inverse);
+  }
+
   Plane_3 opposite() const
   {
     return R().construct_opposite_plane_3_object()(*this);

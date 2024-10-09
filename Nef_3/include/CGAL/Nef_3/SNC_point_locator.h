@@ -111,6 +111,8 @@ public:
 
   virtual void transform(const Aff_transformation_3& t) = 0;
 
+  virtual void transform(const Aff_transformation_3& t, bool is_even, const Aff_transformation_3& transposed_inverse) = 0;
+
   virtual void add_facet(Halffacet_handle) {}
 
   virtual void add_edge(Halfedge_handle) {}
@@ -215,6 +217,10 @@ public:
 
   virtual void transform(const Aff_transformation_3& t) {
     candidate_provider->transform(t);
+  }
+
+  virtual void transform(const Aff_transformation_3& t, bool is_even, const Aff_transformation_3& transposed_inverse) {
+    candidate_provider->transform(t, is_even, transposed_inverse);
   }
 
   virtual ~SNC_point_locator_by_spatial_subdivision() noexcept(!CGAL_ASSERTIONS_ENABLED)
