@@ -57,12 +57,10 @@ if(Boost_FILESYSTEM_FOUND)
   if(VTK_LIBRARIES)
     target_compile_definitions(io_image_plugin PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
   endif()
-  if(TARGET Boost::filesystem)
-    target_link_libraries(io_image_plugin PUBLIC Boost::filesystem
-                                                 Boost::system)
-  else()
-    target_link_libraries(io_image_plugin PUBLIC ${Boost_LIBRARIES})
-  endif()
+
+  target_link_libraries(io_image_plugin PUBLIC Boost::filesystem
+                                               Boost::system)
+
 else()
   message(STATUS "NOTICE: the Io_image_plugin requires boost-filesystem, and will not be compiled")
 endif()
