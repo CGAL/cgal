@@ -205,13 +205,6 @@ public:
     }
   };
 
-  struct Reconstructed_model {
-    std::vector<PFace> pfaces;
-    void clear() {
-      pfaces.clear();
-    }
-  };
-
 private:
   std::vector<Support_plane> m_support_planes;
   std::vector<typename Support_plane::Data> m_initial_support_planes;
@@ -239,7 +232,6 @@ private:
   std::vector<std::size_t> m_face2sp;
   std::vector<std::set<std::size_t> > m_sp2input_polygon;
   std::map<std::size_t, std::size_t> m_input_polygon_map; // Maps index of input polygon onto support plane indices.
-  Reconstructed_model m_reconstructed_model;
 
 public:
   Data_structure(const Parameters& parameters, const std::string &prefix) : to_exact(), from_exact(), m_parameters(parameters), m_prefix(prefix) {
@@ -266,7 +258,6 @@ public:
     m_volumes.clear();
     m_pface_neighbors.clear();
     m_input_polygon_map.clear();
-    m_reconstructed_model.clear();
   }
 
   void precompute_iedge_data() {
@@ -593,9 +584,6 @@ public:
 
   const std::vector<std::size_t> &face(std::size_t face_index) const { return m_face2vertices[face_index]; }
   const Point_3& vertex(std::size_t vertex_index) const { return m_vertices[vertex_index]; }
-
-  Reconstructed_model& reconstructed_model() { return m_reconstructed_model; }
-  const Reconstructed_model& reconstructed_model() const { return m_reconstructed_model; }
 
   /*******************************
   **      SUPPORT PLANES        **
