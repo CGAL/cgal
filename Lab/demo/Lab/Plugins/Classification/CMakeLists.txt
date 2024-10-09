@@ -3,9 +3,8 @@ include(CGALlab_macros)
 if(TARGET CGAL::Eigen3_support)
 
   find_package(Boost QUIET OPTIONAL_COMPONENTS serialization iostreams)
-  include(CGAL_Boost_serialization_support)
-  include(CGAL_Boost_iostreams_support)
-  if(NOT TARGET CGAL::Boost_serialization_support OR NOT TARGET CGAL::Boost_iostreams_support)
+
+  if(NOT TARGET Boost::serialization OR NOT TARGET Boost::iostreams
     message(STATUS "NOTICE: Boost IO Streams and/or Serialization not found, reading deprecated Classification config files won't be possible.")
   endif()
 
@@ -47,9 +46,9 @@ if(TARGET CGAL::Eigen3_support)
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
 
-  if(TARGET CGAL::Boost_serialization_support AND TARGET CGAL::Boost_iostreams_support)
-    target_link_libraries(classification_plugin PRIVATE CGAL::Boost_serialization_support
-                                                       CGAL::Boost_iostreams_support)
+  if(TARGET Boost::serialization AND TARGET Boost::iostreams)
+    target_link_libraries(classification_plugin PRIVATE Boost::serialization
+                                                        Boost::iostreams)
   endif()
 
   if(TARGET CGAL::OpenCV_support)
