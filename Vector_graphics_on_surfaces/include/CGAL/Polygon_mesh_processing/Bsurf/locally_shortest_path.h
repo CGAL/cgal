@@ -1595,7 +1595,7 @@ struct Locally_shortest_path_imp
         // stop if hitting the boundary
         for (halfedge_descriptor h : halfedges_around_target(vid, mesh))
           if (is_border(h, mesh))
-            break;
+            return result;
 
 
   //   Point_3 vert = get(vpm,vid);
