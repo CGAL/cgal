@@ -1534,7 +1534,7 @@ private:
     // Start extraction of a border from each dart (each dart is a 1/n-edge)
     // Search starting darts by searching faces
     //borders contains Attribute<0> handles casted to std::size_t
-    std::vector<bool> processed(m_lcc.number_of_darts(), false);
+    std::vector<bool> processed(m_lcc.upper_bound_on_dart_ids(), false);
 
     borders_per_region.resize(region_index.size());
 
