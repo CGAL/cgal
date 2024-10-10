@@ -132,6 +132,7 @@ public:
 #endif
   static constexpr int dimension = Traits::dimension; ///< Dimension of the tree
   using Kernel = typename Traits::Kernel; ///< Kernel type.
+  using Geom_traits = Kernel;
   using FT = typename Traits::FT; ///< Number type.
   using Point = typename Traits::Point_d; ///< Point type.
   using Bbox = typename Traits::Bbox_d; ///< Bounding box type.
@@ -215,6 +216,7 @@ private: // data members :
   using Property_array = typename Properties::Experimental::Property_container<Node_index>::template Array<T>;
 
   Traits m_traits; /* the tree traits */
+  Kernel m_kernel;
 
   Node_property_container m_node_properties;
   Orthtree_impl::Node_data_wrapper<Traits, has_data> m_node_contents;
@@ -458,6 +460,11 @@ public:
    * \brief provides direct read-only access to the tree traits.
    */
   const Traits& traits() const { return m_traits; }
+
+  const Kernel& geom_traits() const
+  {
+    return m_kernel;
+  }
 
   /*!
     \brief provides access to the root node, and by
@@ -926,7 +933,7 @@ public:
     \return the index of the specified descendant node
    */
   template <typename... Indices>
-  Node_index descendant(Node_index node, Indices... indices) {
+  Node_index descendant(Node_index node, Indices... indices) const {
     return recursive_descendant(node, indices...);
   }
 
@@ -940,7 +947,7 @@ public:
     \return the index of the specified node
    */
   template <typename... Indices>
-  Node_index node(Indices... indices) {
+  Node_index node(Indices... indices) const {
     return descendant(root(), indices...);
   }
 
@@ -1261,10 +1268,10 @@ public:
 
 private: // functions :
 
-  Node_index recursive_descendant(Node_index node, std::size_t i) { return child(node, i); }
+  Node_index recursive_descendant(Node_index node, std::size_t i) const { return child(node, i); }
 
   template <typename... Indices>
-  Node_index recursive_descendant(Node_index node, std::size_t i, Indices... remaining_indices) {
+  Node_index recursive_descendant(Node_index node, std::size_t i, Indices... remaining_indices) const {
     return recursive_descendant(child(node, i), remaining_indices...);
   }
 
@@ -1401,15 +1408,8 @@ private: // functions :
 public:
 
   /// \cond SKIP_IN_MANUAL
-  void dump_to_polylines(std::ostream& os) const {
-    for (const auto n: traverse<Orthtrees::Preorder_traversal>())
-      if (is_leaf(n)) {
-        Bbox box = bbox(n);
-        dump_box_to_polylines(box, os);
-      }
-  }
-
-  void dump_box_to_polylines(const Bbox_2& box, std::ostream& os) const {
+  template <class K>
+  void dump_box_to_polylines(const Iso_rectangle_2<K>& box, std::ostream& os) const {
     // dump in 3D for visualisation
     os << "5 "
        << box.xmin() << " " << box.ymin() << " 0 "
@@ -1419,7 +1419,8 @@ public:
        << box.xmin() << " " << box.ymin() << " 0" << std::endl;
   }
 
-  void dump_box_to_polylines(const Bbox_3& box, std::ostream& os) const {
+  template <class K>
+  void dump_box_to_polylines(const Iso_cuboid_3<K>& box, std::ostream& os) const {
     // Back face
     os << "5 "
        << box.xmin() << " " << box.ymin() << " " << box.zmin() << " "
@@ -1449,6 +1450,14 @@ public:
     os << "2 "
        << box.xmax() << " " << box.ymax() << " " << box.zmin() << " "
        << box.xmax() << " " << box.ymax() << " " << box.zmax() << std::endl;
+  }
+
+  void dump_to_polylines(std::ostream& os) const {
+    for (Node_index n: traverse(Orthtrees::Preorder_traversal<Self>(*this)))
+      if (is_leaf(n)) {
+        Bbox box = bbox(n);
+        dump_box_to_polylines(box, os);
+      }
   }
 
   std::string to_string(Node_index node) {

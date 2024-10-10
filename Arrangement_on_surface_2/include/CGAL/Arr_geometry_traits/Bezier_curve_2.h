@@ -411,7 +411,7 @@ public:
   }
 
   /*!
-   * Get the i'th control point.
+   * Get the i-th control point.
    * \pre i must be between 0 and n - 1, where n is the number of control
    *      points.
    */
@@ -709,7 +709,7 @@ void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
     px = pts_begin->x();
     py = pts_begin->y();
 
-    // By simplifying (1 - t)^(n-k) we obtain that the k'th expression of
+    // By simplifying (1 - t)^(n-k) we obtain that the k-th expression of
     // the above sum is given by:
     //
     //     n-k

@@ -1055,7 +1055,7 @@ one can easily obtain the input constraints that induce `e`.
 \subsection Subsection_Edges_and_Constraints Edges, Constrained Edges, Constraints, and Subconstraints
 
 All triangulation classes define the type `Edge` as  `typedef std::pair<Face_handle, int> Edge`.
-For a pair `(fh,i)` it is the edge of the face `*fh`, which is opposite to the `i`'th vertex.
+For a pair `(fh,i)` it is the edge of the face `*fh`, which is opposite to the `i`-th vertex.
 
 A <em>constrained edge</em> `e` is an edge of a constrained triangulation `ct`, for which `ct.is_constrained(e)` returns `true`.
 
