@@ -4,7 +4,7 @@ if(TARGET CGAL::Eigen3_support)
 
   find_package(Boost QUIET OPTIONAL_COMPONENTS serialization iostreams)
 
-  if(NOT TARGET Boost::serialization OR NOT TARGET Boost::iostreams
+  if(NOT TARGET Boost::serialization OR NOT TARGET Boost::iostreams)
     message(STATUS "NOTICE: Boost IO Streams and/or Serialization not found, reading deprecated Classification config files won't be possible.")
   endif()
 
