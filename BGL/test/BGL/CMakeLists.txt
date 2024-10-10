@@ -82,3 +82,24 @@ if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/N
 else()
   message(STATUS "NOTICE: The test 'test_3mf_to_sm' requires the lib3MF library, and will not be compiled.")
 endif()
+
+
+find_path(geometrycentral_INCLUDE_DIR
+  NAMES geometrycentral/surface/surface_mesh.h
+  DOC "Path to geometrycentral headers"
+  )
+
+find_library(GEOMETRYCENTRAL_LIBRARY_DEBUG NAMES  geometry-central DOC "Path to the goemetrycentral library (debug)")
+
+
+find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
+include(CGAL_Eigen3_support)
+if(GEOMETRYCENTRAL_LIBRARY_DEBUG )
+  include_directories(${geometrycentral_INCLUDE_DIR})
+  create_single_source_cgal_program( graph_concept_geometrycentral.cpp )
+
+  target_link_libraries(graph_concept_geometrycentral PRIVATE ${GEOMETRYCENTRAL_LIBRARY_DEBUG})
+  target_link_libraries(graph_concept_geometrycentral PUBLIC CGAL::Eigen3_support)
+else()
+  message(STATUS "NOTICE: The test 'graph_concept_geometrycentral' requires the geometrycentral as well as the Eigen library, and will not be compiled.")
+endif()
