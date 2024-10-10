@@ -83,7 +83,7 @@ public:
 
   friend _Self operator/(const _Self& z1, const _Self& z2){
     FT m2 = z2.squared_modulus();
-    return _Self(z1._real/m2, z2._imag/m2)*z2.conjugate();
+    return _Self(z1._real/m2, z1._imag/m2)*z2.conjugate();
   }
 
   friend std::ostream& operator<<(std::ostream& s, const _Self& z){
@@ -199,4 +199,4 @@ Complex_number<FT>& Complex_number<FT>::operator=(const Complex_number<FT>& othe
 
 } // namespace CGAL
 
-#endif // CGAL_COMPLEX_WITHOUT_SQRT
+#endif // CGAL_COMPLEX_NUMBER

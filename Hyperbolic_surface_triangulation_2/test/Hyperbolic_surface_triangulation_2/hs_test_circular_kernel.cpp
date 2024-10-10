@@ -12,14 +12,12 @@
 #include <CGAL/Circular_kernel_2.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_CK_traits_2.h>
 
-using namespace CGAL;
-
-typedef Circular_kernel_2<Cartesian<Gmpq>,Algebraic_kernel_for_circles_2_2<Gmpq>>               Kernel;
-typedef Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                   ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>                                              Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                                                 Domain;
-typedef Hyperbolic_fundamental_domain_factory_2<Traits>                                         Factory;
-typedef Hyperbolic_surface_triangulation_2<Traits>                                              Triangulation;
+typedef CGAL::Circular_kernel_2<CGAL::Cartesian<CGAL::Exact_rational>,CGAL::Algebraic_kernel_for_circles_2_2<CGAL::Exact_rational>>               Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2<Kernel>                                   ParentTraits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                                              Traits;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                                                 Domain;
+typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>                                         Factory;
+typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>                                              Triangulation;
 
 typedef typename Traits::Hyperbolic_point_2                             Point;
 

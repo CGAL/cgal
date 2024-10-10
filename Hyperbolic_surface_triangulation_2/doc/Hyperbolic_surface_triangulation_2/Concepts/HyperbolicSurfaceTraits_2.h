@@ -13,7 +13,7 @@ public:
   /// \name Types
   /// @{
   /*!
-          represents a complex number over a field: must be a model of ComplexNumber.
+          represents a complex number over a field: must be a model of `ComplexNumber`.
   */
   typedef unspecified_type                                   Complex;
   /// @}

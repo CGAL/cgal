@@ -3,78 +3,47 @@
 #include <CGAL/Interval_nt.h>
 #include <iostream>
 #include <sstream>
-#include <complex>
 
-using namespace CGAL;
-
-typedef Complex_number<Gmpq> Complex_gmpq;
-typedef Complex_number<Exact_rational> Complex_rational;
-typedef Complex_number<Interval_nt<>> Complex_interval;
+typedef CGAL::Exact_rational Exact_rational;
+typedef CGAL::Interval_nt<> Interval;
+typedef CGAL::Complex_number<Exact_rational> Complex_rational;
+typedef CGAL::Complex_number<Interval> Complex_interval;
 
 int main() {
-  // Complex_gmpq tests :
-  Complex_gmpq zero_gmpq = Complex_gmpq ();
-  assert( zero_gmpq == Complex_gmpq(Gmpq(0), Gmpq(0)) );
-
-  Complex_gmpq one_gmpq (Gmpq(1));
-  assert( one_gmpq == Complex_gmpq(Gmpq(1), Gmpq(0)) );
-
-  Complex_gmpq z1_gmpq (Gmpq(1,2), Gmpq(-3));
-  z1_gmpq = - z1_gmpq;
-
-  Complex_gmpq z2_gmpq;
-  z2_gmpq.real(Gmpq(-5,7));
-  z2_gmpq.imag(Gmpq(11,13));
-  z2_gmpq = z2_gmpq.conjugate() + z1_gmpq - one_gmpq;
-
-  // assert( - z1_gmpq * z1_gmpq / z2_gmpq == -Complex_gmpq(Gmpq(855491,632146), Gmpq(844298,316073)) );
-  assert( z1_gmpq.real() == Gmpq(-1,2) );
-  assert( z1_gmpq.imag() == Gmpq(3) );
-  assert( z1_gmpq.squared_modulus() == Gmpq(37,4) );
-  assert( z1_gmpq != z2_gmpq);
-  assert( z2_gmpq == z2_gmpq );
-  assert( z2_gmpq == Complex_gmpq(Gmpq(-31,14), Gmpq(28,13)) );
-
-  std::cout << "printing a complex for test purposes : " << std::endl << z2_gmpq << std::endl;
-
-  Complex_gmpq z3_gmpq;
-  std::stringstream buffer;
-  buffer << z2_gmpq;
-  buffer >> z3_gmpq;
-  assert( z3_gmpq == z2_gmpq );
-
   // Complex_rational tests :
-  Complex_rational zero_integer = Complex_rational ();
-  assert( zero_integer == Complex_rational(Exact_rational(0),Exact_rational(0)) );
+  Complex_rational zero_rational = Complex_rational ();
+  assert( zero_rational == Complex_rational(Exact_rational(0), Exact_rational(0)) );
 
-  Complex_rational one_integer (Exact_rational(1));
-  assert( one_integer == Complex_rational(Exact_rational(1), Exact_rational(0)) );
+  Complex_rational one_rational (Exact_rational(1));
+  assert( one_rational == Complex_rational(Exact_rational(1), Exact_rational(0)) );
 
-  Complex_rational z1_integer (Exact_rational(17), Exact_rational(-13));
-  z1_integer = -z1_integer;
+  Complex_rational z1_rational (Exact_rational(1,2), Exact_rational(-3));
+  z1_rational = - z1_rational;
 
-  Complex_rational z2_integer;
-  z2_integer.real(Exact_rational(-7));
-  z2_integer.imag(Exact_rational(43));
-  z2_integer = z2_integer.conjugate() + z1_integer - one_integer;
+  Complex_rational z2_rational;
+  z2_rational.real(Exact_rational(-5,7));
+  z2_rational.imag(Exact_rational(11,13));
+  z2_rational = z2_rational.conjugate() + z1_rational - one_rational;
 
-  assert( z1_integer.real() ==  Exact_rational(-17) );
-  assert( z1_integer.imag() ==  Exact_rational(13) );
-  assert( z1_integer.squared_modulus() == 458 );
-  assert( z1_integer != z2_integer);
-  assert( z2_integer == z2_integer );
-  assert( z2_integer == Complex_rational(Exact_rational(-25),Exact_rational(-30)) );
+  assert( - z1_rational * z1_rational / z2_rational == -Complex_rational(Exact_rational(855491,632146), Exact_rational(844298,316073)) );
+  assert( z1_rational.real() == Exact_rational(-1,2) );
+  assert( z1_rational.imag() == Exact_rational(3) );
+  assert( z1_rational.squared_modulus() == Exact_rational(37,4) );
+  assert( z1_rational != z2_rational);
+  assert( z2_rational == z2_rational );
+  assert( z2_rational == Complex_rational(Exact_rational(-31,14), Exact_rational(28,13)) );
 
-  std::cout << "printing a complex for test purposes : " << std::endl << z2_integer << std::endl;
+  std::cout << "printing a complex for test purposes : " << std::endl << z2_rational << std::endl;
 
-  Complex_rational z3_integer;
-  buffer << z2_integer;
-  buffer >> z3_integer;
-  assert( z3_integer == z2_integer );
+  Complex_rational z3_rational;
+  std::stringstream buffer;
+  buffer << z2_rational;
+  buffer >> z3_rational;
+  assert( z3_rational == z2_rational );
 
   // Complex_interval test :
-  Complex_interval z_interval (Interval_nt<>(1, 2), Interval_nt<>(1, 2));
-  assert( (z_interval * z_interval / Complex_interval(Interval_nt<>(5, 6))).squared_modulus() < Interval_nt<>(10,20) );
+  Complex_interval z_interval (Interval(1, 2), Interval(1, 2));
+  assert( (z_interval * z_interval / Complex_interval(Interval(5, 6))).squared_modulus() < Interval(10,20) );
 
   return 0;
 }

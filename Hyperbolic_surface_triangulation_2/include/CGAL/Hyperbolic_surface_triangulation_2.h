@@ -380,7 +380,7 @@ std::vector<std::tuple<typename Hyperbolic_surface_triangulation_2<Traits, Attri
   };
   std::priority_queue<std::pair<Dart_const_handle,double>, std::vector<std::pair<Dart_const_handle,double>>, Compare> queue;
 
-  std::map<Dart_const_handle, Point> positions;
+  std::unordered_map<Dart_const_handle, Point> positions;
 
   Dart_const_range darts = _combinatorial_map.darts();
 
