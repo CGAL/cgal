@@ -23,7 +23,7 @@ public:
   /// The parameters of the primitive covering the region.
   typedef unspecified_type Primitive;
 
-  /// The reference type to the elements of the input range, e.g., a const_iterator of the input range.
+  /// The reference type to the elements of the input range, e.g., a const_iterator of the input range.  Must be a model of `Hashable`.
   typedef unspecified_type Item;
 
   // The region types is defined by a vector of Items.
