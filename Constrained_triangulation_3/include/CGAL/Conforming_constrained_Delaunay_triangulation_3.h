@@ -555,8 +555,11 @@ public:
     *
     * This constructor initializes an empty `Conforming_constrained_Delaunay_triangulation_3` object.
     */
+#ifdef DOXYGEN_RUNNING
+  Conforming_constrained_Delaunay_triangulation_3();
+#else
   Conforming_constrained_Delaunay_triangulation_3() = default;
-
+#endif
   /*!
     * \brief Creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
     *
