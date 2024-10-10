@@ -1106,32 +1106,7 @@ public:
     // Generic implementation
     using Approximate_number_type = void;
     using Approximate_point_2 = void;
-
-    struct Approximate_2 {
-      /*! Obtain an approximation of a point coordinate.
-       * \param p the exact point.
-       * \param i the coordinate index (either 0 or 1).
-       * \pre i is either 0 or 1.
-       * \return An approximation of p's x-coordinate (if i == 0), or an
-       *         approximation of p's y-coordinate (if i == 1).
-       */
-      Approximate_number_type operator()(const Point_2&, int) const
-      { CGAL_error_msg("The subtraits does not define Approximate_2!"); }
-
-      /*! Obtain an approximation of a point.
-       */
-      Approximate_point_2 operator()(const Point_2&) const
-      { CGAL_error_msg("The subtraits does not define Approximate_2!"); }
-
-      /*! Obtain an approximation of an \f$x\f$-monotone curve.
-       */
-      template <typename OutputIterator>
-      OutputIterator operator()(const X_monotone_curve_2&, double,
-                                OutputIterator oi, bool = true) const {
-        CGAL_error_msg("The subtraits does not define Approximate_2!");
-        return oi;
-      }
-    };
+    using Approximate_2 = void;
   };
 
   template <typename T>

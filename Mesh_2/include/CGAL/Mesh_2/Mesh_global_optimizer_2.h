@@ -29,6 +29,7 @@
 #include <CGAL/Constrained_voronoi_diagram_2.h>
 
 #include <vector>
+#include <set>
 #include <list>
 #include <algorithm>
 #include <iterator>

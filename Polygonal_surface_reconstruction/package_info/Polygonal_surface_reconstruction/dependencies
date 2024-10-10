@@ -2,6 +2,7 @@ Algebraic_foundations
 Alpha_shapes_2
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Convex_hull_2
@@ -21,13 +22,12 @@ Number_types
 Point_set_3
 Point_set_processing_3
 Polygon
-Polygonal_surface_reconstruction
 Polygon_mesh_processing
+Polygonal_surface_reconstruction
 Principal_component_analysis
 Principal_component_analysis_LGPL
 Profiling_tools
 Property_map
-Random_numbers
 STL_Extension
 Solver_interface
 Spatial_searching

@@ -45,25 +45,25 @@ bool read_polygon_mesh(std::istream& is,
   ok = read_OFF(is, g, np, false);
   if(ok)
     return true;
-  g.clear();
+  clear(g);
   is.clear();//reset the error state
   is.seekg (0, is.beg);
   ok = read_OBJ(is, g, np, false);
   if(ok)
     return true;
-  g.clear();
+  clear(g);
   is.clear();
   is.seekg (0, is.beg);
   ok = read_PLY(is, g, np, false);
   if(ok)
     return true;
-  g.clear();
+  clear(g);
   is.clear();
   is.seekg (0, is.beg);
   ok = read_STL(is, g, np, false);
   if(ok)
     return true;
-  g.clear();
+  clear(g);
   is.clear();
   is.seekg (0, is.beg);
   ok = read_GOCAD(is, g, np, false);

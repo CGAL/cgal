@@ -90,6 +90,7 @@ performing this adaptation.
 \cgalCRPSection{Draw Voronoi Diagram}
 
 - \link PkgDrawVoronoiDiagram2 CGAL::draw<VD>() \endlink
-
+- `GraphicsSceneOptionsVoronoiDiagram2`
+- `CGAL::Graphics_scene_options_voronoi_2`
 
 */

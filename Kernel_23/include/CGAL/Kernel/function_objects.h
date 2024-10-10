@@ -206,6 +206,53 @@ namespace CommonKernelFunctors {
     typedef typename K::Comparison_result  result_type;
 
     result_type
+    operator()(const Vector_3& ba1, const Vector_3& bc1,
+               const Vector_3& ba2, const Vector_3& bc2) const
+    {
+      typename K::Compute_scalar_product_3 scalar_product = K().compute_scalar_product_3_object();
+      typename K::Compute_squared_length_3 sq_length = K().compute_squared_length_3_object();
+
+      const FT sc_prod_1 = scalar_product(ba1, bc1);
+      const FT sc_prod_2 = scalar_product(ba2, bc2);
+
+      // Reminder: cos(angle) = scalar_product(ba, bc) / (length(ba)*length(bc))
+      // cosine is decreasing on 0, pi
+      // thus angle1 < angle2 is equivalent to cos(angle1) > cos(angle2)
+      if(sc_prod_1 >= 0) {
+        if(sc_prod_2 >= 0) {
+          // the two cosine are >= 0, we can compare the squares
+          // (square(x) is increasing when x>=0
+          return CGAL::compare(CGAL::square(sc_prod_2) * sq_length(ba1) * sq_length(bc1),
+                               CGAL::square(sc_prod_1) * sq_length(ba2) * sq_length(bc2));
+        } else {
+          return SMALLER;
+        }
+      } else {
+        if(sc_prod_2 < 0) {
+          // the two cosine are < 0, square(x) is decreasing when x<0
+          return CGAL::compare(CGAL::square(sc_prod_1) * sq_length(ba2) * sq_length(bc2),
+                               CGAL::square(sc_prod_2) * sq_length(ba1) * sq_length(bc1));
+        } else {
+          return LARGER;
+        }
+      }
+    }
+
+    result_type
+    operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
+               const Point_3& a2, const Point_3& b2, const Point_3& c2) const
+    {
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+
+      const Vector_3 ba1 = vector(b1, a1);
+      const Vector_3 bc1 = vector(b1, c1);
+      const Vector_3 ba2 = vector(b2, a2);
+      const Vector_3 bc2 = vector(b2, c2);
+
+      return this->operator()(ba1, bc1, ba2, bc2);
+    }
+
+    result_type
     operator()(const Point_3& a, const Point_3& b, const Point_3& c,
                const FT& cosine) const
     {
@@ -1046,7 +1093,7 @@ namespace CommonKernelFunctors {
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -1061,7 +1108,7 @@ namespace CommonKernelFunctors {
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -2871,6 +2918,206 @@ namespace CommonKernelFunctors {
     operator()( const Vector_3& v, int) const
     {
       return v.rep().cartesian_end();
+    }
+  };
+
+  template <typename K>
+  class Construct_projected_point_2
+  {
+    bool
+      is_inside_triangle_2_aux(
+        const typename K::Point_2& p1,
+        const typename K::Point_2& p2,
+        const typename K::Point_2& q,
+        typename K::Point_2& result,
+        bool& outside,
+        const K& k)
+    {
+      typedef typename K::Vector_2 Vector_2;
+      typedef typename K::FT FT;
+
+      typename K::Construct_vector_2 vector =
+        k.construct_vector_2_object();
+      typename K::Construct_projected_point_2 projection =
+        k.construct_projected_point_2_object();
+      typename K::Construct_line_2 line =
+        k.construct_line_2_object();
+      typename K::Compute_scalar_product_2 scalar_product =
+        k.compute_scalar_product_2_object();
+      typename K::Construct_direction_2 direction =
+        k.construct_direction_2_object();
+      typename K::Construct_perpendicular_direction_2 perpendicular =
+        k.construct_perpendicular_direction_2_object();
+
+      // Check whether the point is cw or ccw with the triangle side (p1,p2)
+      Vector_2 orth = vector(p1, p2);
+
+      if (scalar_product(vector(p1, q), vector(perpendicular(direction(orth), CGAL::COUNTERCLOCKWISE))) < FT(0))
+      {
+        if (scalar_product(vector(p1, q), vector(p1, p2)) >= FT(0)
+          && scalar_product(vector(p2, q), vector(p2, p1)) >= FT(0))
+        {
+          result = projection(line(p1, p2), q);
+          return true;
+        }
+        outside = true;
+      }
+
+      return false;
+    }
+
+    /**
+     * Returns the nearest point of `p1`, `p2`, `p3` from origin
+     * @param origin the origin point
+     * @param p1 the first point
+     * @param p2 the second point
+     * @param p3 the third point
+     * @param k the kernel
+     * @return the nearest point from origin
+     */
+    typename K::Point_2
+      nearest_point_2(const typename K::Point_2& origin,
+        const typename K::Point_2& p1,
+        const typename K::Point_2& p2,
+        const typename K::Point_2& p3,
+        const K& k)
+    {
+      typedef typename K::FT FT;
+
+      typename K::Compute_squared_distance_2 sq_distance =
+        k.compute_squared_distance_2_object();
+
+      const FT dist_origin_p1 = sq_distance(origin, p1);
+      const FT dist_origin_p2 = sq_distance(origin, p2);
+      const FT dist_origin_p3 = sq_distance(origin, p3);
+
+      if (dist_origin_p2 >= dist_origin_p1
+        && dist_origin_p3 >= dist_origin_p1)
+      {
+        return p1;
+      }
+      if (dist_origin_p3 >= dist_origin_p2)
+      {
+        return p2;
+      }
+
+      return p3;
+    }
+
+    /**
+     * @brief returns true if p is inside triangle t. If p is not inside t,
+     * result is the nearest point of t from p.
+     * @param p the reference point
+     * @param t the triangle
+     * @param result if p is not inside t, the nearest point of t from p
+     * @param k the kernel
+     * @return true if p is inside t
+     */
+    bool
+      is_inside_triangle_2(const typename K::Point_2& p,
+        const typename K::Triangle_2& t,
+        typename K::Point_2& result,
+        const K& k)
+    {
+      typedef typename K::Point_2 Point_2;
+
+      typename K::Construct_vertex_2 vertex_on =
+        k.construct_vertex_2_object();
+
+      const Point_2& t0 = vertex_on(t, 0);
+      const Point_2& t1 = vertex_on(t, 1);
+      const Point_2& t2 = vertex_on(t, 2);
+
+      bool outside = false;
+      if (is_inside_triangle_2_aux(t0, t1, p, result, outside, k)
+        || is_inside_triangle_2_aux(t1, t2, p, result, outside, k)
+        || is_inside_triangle_2_aux(t2, t0, p, result, outside, k))
+      {
+        return false;
+      }
+
+      if (outside)
+      {
+        result = nearest_point_2(p, t0, t1, t2, k);
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    }
+
+  public:
+    typename K::Point_2
+      operator()(const typename K::Triangle_2& triangle,
+        const typename K::Point_2& origin,
+        const K& k)
+    {
+      typedef typename K::Point_2 Point_2;
+      typename K::Construct_vertex_2 vertex_on;
+      typename K::Construct_segment_2 segment;
+
+      // Check if triangle is degenerated to call segment operator.
+      const Point_2& t0 = vertex_on(triangle, 0);
+      const Point_2& t1 = vertex_on(triangle, 1);
+      const Point_2& t2 = vertex_on(triangle, 2);
+
+      if (t0 == t1)
+        return (*this)(segment(t1, t2), origin, k);
+      if (t1 == t2)
+        return (*this)(segment(t2, t0), origin, k);
+      if (t2 == t0)
+        return (*this)(segment(t0, t1), origin, k);
+
+      Point_2 moved_point;
+      bool inside = is_inside_triangle_2(origin, triangle, moved_point, k);
+
+      // If proj is inside triangle, return it
+      if (inside)
+      {
+        return origin;
+      }
+
+      // Else return the constructed point
+      return moved_point;
+    }
+
+    typename K::Point_2
+      operator()(const typename K::Segment_2& s,
+        const typename K::Point_2& query,
+        const K& k) {
+
+      typename K::Construct_vector_2 vector =
+        k.construct_vector_2_object();
+
+      typename K::Compute_scalar_product_2 scalar_product =
+        k.compute_scalar_product_2_object();
+
+      typename K::Construct_scaled_vector_2 scaled_vector =
+        k.construct_scaled_vector_2_object();
+
+      const typename K::Point_2& a = s.source();
+      const typename K::Point_2& b = s.target();
+      const typename K::Vector_2 d = vector(a, b);
+
+      typename K::FT sqlen = scalar_product(d, d);
+
+      // Degenerate segment
+      if (is_zero(sqlen))
+        return a;
+
+      const typename K::Vector_2 p = vector(a, query);
+
+      typename K::FT proj = (scalar_product(p, d)) / sqlen;
+
+      if (!is_positive(proj))
+        return a;
+
+      if (proj >= 1.0)
+        return b;
+
+      typename K::Construct_point_2 construct_point_2;
+      return construct_point_2(a + scaled_vector(d, proj));
     }
   };
 

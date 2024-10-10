@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Combinatorial_map_Tests)
 
 find_package(CGAL REQUIRED)
@@ -28,13 +28,12 @@ create_single_source_cgal_program(cmap_test_split_attribute.cpp)
 
 # Link with OpenMesh if possible
 find_package(OpenMesh QUIET)
-if(TARGET OpenMesh::OpenMesh)
+if(OpenMesh_FOUND)
   message(STATUS "Found OpenMesh")
+  include(CGAL_OpenMesh_support)
 
-  target_link_libraries(Combinatorial_map_copy_test PRIVATE OpenMesh::OpenMesh)
-  target_compile_definitions(Combinatorial_map_copy_test PRIVATE -DCGAL_USE_OPENMESH)
-  target_link_libraries(Combinatorial_map_copy_test_index PRIVATE OpenMesh::OpenMesh)
-  target_compile_definitions(Combinatorial_map_copy_test_index PRIVATE -DCGAL_USE_OPENMESH)
+  target_link_libraries(Combinatorial_map_copy_test PRIVATE CGAL::OpenMesh_support)
+  target_link_libraries(Combinatorial_map_copy_test_index PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Tests will not use OpenMesh.")
 endif()

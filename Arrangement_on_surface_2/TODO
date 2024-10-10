@@ -4,7 +4,7 @@
     another chapter on "2D Arrangements on General Surfaces".
     This chapter can be much shorter, as all you can do with arrangements was
     explained and demonstrated in the "2D Arrangements" chapter. We should
-    however intorduce the concept of TopologyTraits, and re-interpret the
+    however introduce the concept of TopologyTraits, and re-interpret the
     functionality of the GeometryTraits.
 
   - Incoorporate:
@@ -98,7 +98,7 @@
   - The "planar" zone visitor is also used here. I believe this should work,
     as it is generic enough (I hope).
     Can you test it by trying to incrementally insert curves to an
-    arrrangement on a sphere.
+    arrangement on a sphere.
 
   - We can think of adding a test for the spherical topology, similar to the
     construction test developed by Baruch: Namely read n curves from a file,

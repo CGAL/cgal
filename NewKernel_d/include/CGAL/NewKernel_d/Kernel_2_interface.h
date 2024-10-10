@@ -48,6 +48,25 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
         typedef Help_2p_i<Less_point_cartesian_coordinate_tag,1> Less_y_2;
         typedef Help_2p_i<Compare_point_cartesian_coordinate_tag,0> Compare_x_2;
         typedef Help_2p_i<Compare_point_cartesian_coordinate_tag,1> Compare_y_2;
+
+        struct Compare_xy_2 {
+                Compare_x_2 cx_2;
+                Compare_y_2 cy_2;
+
+                Compare_xy_2(const Compare_x_2 & cx_2, const Compare_y_2 & cy_2)
+                  : cx_2(cx_2), cy_2(cy_2)
+                {}
+
+                typename Compare_x_2::result_type operator()(const Point_2 & p, const Point_2 & q)
+                {
+                        auto res = cx_2(p, q);
+                        if (res == EQUAL) {
+                                return cy_2(p, q);
+                        }
+                        return res;
+                }
+        };
+
         struct Compare_distance_2 {
                 typedef typename Get_functor<Base, Compare_distance_tag>::type CD;
                 typedef typename CD::result_type result_type;
@@ -88,6 +107,9 @@ template <class Base_> struct Kernel_2_interface : public Base_ {
         Less_y_2 less_y_2_object()const{ return Less_y_2(*this); }
         Compare_x_2 compare_x_2_object()const{ return Compare_x_2(*this); }
         Compare_y_2 compare_y_2_object()const{ return Compare_y_2(*this); }
+
+        Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(compare_x_2_object(), compare_y_2_object()); }
+
         Compare_distance_2 compare_distance_2_object()const{ return Compare_distance_2(*this); }
         Orientation_2 orientation_2_object()const{ return Orientation_2(*this); }
         Side_of_oriented_circle_2 side_of_oriented_circle_2_object()const{ return Side_of_oriented_circle_2(*this); }

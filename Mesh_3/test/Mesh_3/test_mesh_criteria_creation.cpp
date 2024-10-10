@@ -81,6 +81,13 @@ int main()
   Mc ec3(edge_size = 3.);
   assert( ec3.edge_criteria_object().sizing_field(bp1,1,index) == 3 );
 
+  Mc ec8(edge_distance = 8.);
+  assert( ec8.edge_criteria_object().distance_field(bp1, 1, index) == 8. );
+
+  Mc ec9(edge_distance = Esf(9.));
+  assert( ec9.edge_criteria_object().distance_field(bp1, 1, index) == 9.);
+
+
   // -----------------------------------
   // Test facet criteria
   // -----------------------------------

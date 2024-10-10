@@ -1,9 +1,9 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Three"
-INPUT        += ${CGAL_Polyhedron_DEMO_DIR}/Polyhedron/Scene.h \
-                ${CGAL_Polyhedron_DEMO_DIR}/Polyhedron/Polyhedron_demo.h \
+INPUT        += ${CGAL_Lab_DEMO_DIR}/Lab/Scene.h \
+                ${CGAL_Lab_DEMO_DIR}/Lab/CGALlab.h \
 
-EXAMPLE_PATH = ${CGAL_Polyhedron_DEMO_DIR}/Polyhedron/Plugins/
+EXAMPLE_PATH = ${CGAL_Lab_DEMO_DIR}/Lab/Plugins/
 IMAGE_PATH = ${CGAL_PACKAGE_DIR}/doc/Three/fig/
 
 EXTRACT_ALL                =  false

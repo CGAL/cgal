@@ -23,7 +23,9 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
 
-#include <CGAL/boost_mp.h>
+#ifdef CGAL_USE_BOOST_MP
+#include <CGAL/cpp_float.h>
+#endif
 
 #ifdef CGAL_USE_GMP
 #  include <CGAL/Gmpz.h>
@@ -314,6 +316,25 @@ struct Exact_ring_selector<Exact_NT_backend<BOOST_GMP_BACKEND>::Rational>
 template < typename ET >
 struct Exact_type_selector : Exact_field_selector< ET > {};
 #endif
+
+constexpr const char* exact_nt_backend_string()
+{
+  switch(Default_exact_nt_backend)
+  {
+    case GMP_BACKEND:
+      return "GMP_BACKEND";
+    case GMPXX_BACKEND:
+      return "GMPXX_BACKEND";
+    case BOOST_GMP_BACKEND:
+      return "BOOST_GMP_BACKEND";
+    case BOOST_BACKEND:
+      return "BOOST_BACKEND";
+    case LEDA_BACKEND:
+      return "LEDA_BACKEND";
+    default:
+      return "MP_FLOAT_BACKEND";
+  }
+}
 
 } } // namespace CGAL::internal
 

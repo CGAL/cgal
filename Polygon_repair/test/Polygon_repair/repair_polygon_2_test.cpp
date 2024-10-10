@@ -6,7 +6,7 @@
 
 // work around for old compilers (Apple clang < 11 for example)
 #define HAS_FILESYSTEM 1
-#if (__has_include)
+#if defined(__has_include)
 #if !__has_include(<filesystem>)
 #undef HAS_FILESYSTEM
 #define HAS_FILESYSTEM 0

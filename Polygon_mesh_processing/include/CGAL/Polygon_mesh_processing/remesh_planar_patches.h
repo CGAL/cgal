@@ -696,7 +696,7 @@ bool decimate_impl(const TriangleMesh& tm,
       {
         if (csts.size() > 3 && do_not_triangulate_faces)
         {
-          // TODO this is not optimal at all since we already have the set of contraints,
+          // TODO this is not optimal at all since we already have the set of constraints,
           //      we could work on the graph on constraint and recover only the orientation
           //      of the edge. To be done if someone find it too slow.
           std::vector<halfedge_descriptor> hborders;
@@ -1263,8 +1263,7 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
     }
     CGAL_assertion(is_polygon_soup_a_polygon_mesh(all_faces[mesh_id]));
 
-    //clear(tm);
-    tm.clear_without_removing_property_maps();
+    remove_all_elements(tm);
     polygon_soup_to_polygon_mesh(all_corners[mesh_id], all_faces[mesh_id],
                                  tm, parameters::default_values(), parameters::vertex_point_map(vpms[mesh_id]));
   }
@@ -1346,7 +1345,9 @@ bool decimate_meshes_with_common_interfaces_impl(TriangleMeshRange& meshes,
  *      \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
  *    \cgalParamNEnd
  *    \cgalParamNBegin{edge_is_constrained_map}
- *      \cgalParamDescription{a property map filled by this function and that will contain `true` if an edge is on the border of a patch and `false` otherwise.}
+ *      \cgalParamDescription{a property map where the user should put `true` for edges that must be considered as on the boundary of a patch.
+ *                            Additionally, the map is updated by this function and will contain `true` if, based on the angle criteria, an edge is
+ *                            on the boundary of a patch and `false` otherwise.}
  *      \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMeshIn>::%edge_descriptor`
  *                     as key type and `bool` as value type}
  *      \cgalParamDefault{None}
@@ -1429,6 +1430,7 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
   typedef typename GetVertexPointMap <TriangleMeshIn, NamedParametersOut>::type VPM_out;
   using parameters::choose_parameter;
   using parameters::get_parameter;
+  using parameters::is_default_parameter;
 
   typedef typename boost::graph_traits<TriangleMeshIn> graph_traits;
   typedef typename graph_traits::edge_descriptor edge_descriptor;
@@ -1464,7 +1466,8 @@ void remesh_planar_patches(const TriangleMeshIn& tm_in,
     face_cc_ids = choose_parameter<Default_FCM>(get_parameter(np_in, internal_np::face_patch),
                                                 dynamic_face_property_t<std::size_t>(), tm_in);
 
-  for(edge_descriptor e : edges(tm_in)) put(edge_is_constrained, e, false);
+  if (is_default_parameter<NamedParametersIn, internal_np::edge_is_constrained_t>::value)
+    for(edge_descriptor e : edges(tm_in)) put(edge_is_constrained, e, false);
   for(vertex_descriptor v : vertices(tm_in)) put(vertex_corner_id, v, Planar_segmentation::default_id());
   for(face_descriptor f : faces(tm_in)) put(face_cc_ids, f, -1);
 

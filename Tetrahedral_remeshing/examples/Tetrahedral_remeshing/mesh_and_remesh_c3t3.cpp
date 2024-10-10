@@ -6,10 +6,14 @@
 
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/property_map.h>
 
 #include <CGAL/tetrahedral_remeshing.h>
 
 #include <CGAL/IO/File_medit.h>
+
+#include <string>
+#include <unordered_set>
 
 // Domain
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -17,7 +21,7 @@ using Polyhedron = CGAL::Mesh_polyhedron_3<K>::type;
 using Mesh_domain = CGAL::Polyhedral_mesh_domain_with_features_3<K>;
 
 #ifdef CGAL_CONCURRENT_MESH_3
-using Concurrency_tag = CGAL::Parallel_tag;
+using Concurrency_tag = CGAL::Parallel_if_available_tag;
 #else
 using Concurrency_tag = CGAL::Sequential_tag;
 #endif
@@ -78,7 +82,7 @@ int main(int argc, char* argv[])
   Corners_pmap corners_pmap(corners);
 
   Triangulation_3 tr = CGAL::convert_to_triangulation_3(std::move(c3t3),
-    CGAL::parameters::edge_is_constrained_map(constraints_pmap).
+                      edge_is_constrained_map(constraints_pmap).
                       vertex_is_constrained_map(corners_pmap));
 
   //note we use the move semantic, with std::move(c3t3),
@@ -90,7 +94,8 @@ int main(int argc, char* argv[])
 
   const double target_edge_length = 0.1;//coarsen the mesh
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
-    CGAL::parameters::number_of_iterations(3)
+   number_of_iterations(5)
+   .smooth_constrained_edges(true)
    .edge_is_constrained_map(constraints_pmap));
 
   std::ofstream out("out_remeshed.mesh");

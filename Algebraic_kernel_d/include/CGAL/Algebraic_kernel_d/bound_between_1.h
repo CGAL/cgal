@@ -220,7 +220,7 @@ simple_bound_between(const Algebraic_real& a,
             final_mantissa = final_mantissa << 1;
             final_mantissa++;
             y_log--;
-            x_m = x_m==0 ? 0 : x_m & ((Integer(1) << x_log) - 1); //x_m - CGAL::ipower(Integer(2),x_log);
+            x_m = x_m==0 ? 0 : Integer(x_m & ((Integer(1) << x_log) - 1)); //x_m - CGAL::ipower(Integer(2),x_log);
             x_log = x_m==0 ? -1 : CGAL::internal::floor_log2_abs(x_m);
         }
         final_mantissa = final_mantissa << 1;

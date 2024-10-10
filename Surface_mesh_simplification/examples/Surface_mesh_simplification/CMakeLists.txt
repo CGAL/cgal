@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script_with_options
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Surface_mesh_simplification_Examples)
 
 # CGAL and its components
@@ -30,11 +30,11 @@ endif()
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
-  include(UseOpenMesh)
+  include(CGAL_OpenMesh_support)
   message(STATUS "Found OpenMesh")
 
   create_single_source_cgal_program("edge_collapse_OpenMesh.cpp")
-  target_link_libraries(edge_collapse_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(edge_collapse_OpenMesh PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
 endif()

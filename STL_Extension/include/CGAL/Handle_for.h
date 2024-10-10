@@ -42,7 +42,7 @@ class Handle_for
         T t;
         std::atomic_uint count;
         template <class... U>
-        RefCounted(U&&...u ) : t(std::forward<U>(u)...), count(1) {}
+        RefCounted(U&&...u ) : t{std::forward<U>(u)...}, count(1) {}
     };
 
 

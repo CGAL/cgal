@@ -27,6 +27,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 29
@@ -208,6 +209,7 @@ void polygon_mesh_to_nef_3(const PolygonMesh& P, SNC_structure& S, FaceIndexMap 
                  PolygonMesh, SNC_structure,HalfedgeIndexMap> index_adder(P,himap);
 
   for(vertex_descriptor pv : vertices(P) ) {
+    if (halfedge(pv, P) == boost::graph_traits<PolygonMesh>::null_halfedge()) continue; // skip isolated vertices
 
     typename boost::property_traits<PMap>::reference npv = get(pmap,pv);
     Vertex_handle nv = S.new_vertex();

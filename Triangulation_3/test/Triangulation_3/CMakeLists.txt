@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Triangulation_3_Tests)
 
 find_package(CGAL REQUIRED)
@@ -23,17 +23,8 @@ create_single_source_cgal_program("test_RT_cell_base_with_weighted_circumcenter_
 create_single_source_cgal_program("test_robust_weighted_circumcenter.cpp")
 create_single_source_cgal_program("test_simplex_3.cpp")
 create_single_source_cgal_program("test_segment_simplex_traverser_3.cpp" )
-if(cxx_std_17 IN_LIST CMAKE_CXX_COMPILE_FEATURES)
-  create_single_source_cgal_program("test_simplex_iterator_3.cpp" )
-  create_single_source_cgal_program("test_segment_cell_traverser_3.cpp" )
-  target_compile_features(test_simplex_iterator_3 PRIVATE cxx_std_17)
-  target_compile_features(test_segment_simplex_traverser_3 PRIVATE cxx_std_17)
-else()
-  message(
-  STATUS
-    "NOTICE: test_simplex_iterator_3.cpp and test_segment_simplex_traverser_3.cpp require C++17 and will not be compiled."
-  )
-endif()
+create_single_source_cgal_program("test_simplex_iterator_3.cpp" )
+create_single_source_cgal_program("test_segment_cell_traverser_3.cpp" )
 create_single_source_cgal_program("test_static_filters.cpp")
 create_single_source_cgal_program("test_triangulation_3.cpp")
 create_single_source_cgal_program("test_io_triangulation_3.cpp")

@@ -6,7 +6,7 @@
 # Used in /CGAL/Documentation/doc/Documentation/Developer_manual/create_and_use_a_cmakelist.txt.
 # Careful when modifying
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Surface_mesh_Examples)
 
 #CGAL_Qt6 is needed for the drawing.
@@ -23,7 +23,6 @@ create_single_source_cgal_program("sm_iterators.cpp")
 create_single_source_cgal_program("sm_kruskal.cpp")
 create_single_source_cgal_program("sm_memory.cpp")
 create_single_source_cgal_program("sm_properties.cpp")
-create_single_source_cgal_program("sm_draw_small_faces.cpp")
 create_single_source_cgal_program("check_orientation.cpp")
 
 #create the executable of the application
@@ -33,7 +32,6 @@ if(CGAL_Qt6_FOUND)
   #link it with the required CGAL libraries
   target_link_libraries(draw_surface_mesh PUBLIC CGAL::CGAL_Basic_viewer)
 
-  target_link_libraries(sm_draw_small_faces PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
 
 #end of the file

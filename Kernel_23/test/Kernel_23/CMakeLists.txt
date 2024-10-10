@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Kernel_23_Tests)
 
 find_package(CGAL REQUIRED COMPONENTS Core)
@@ -14,6 +14,7 @@ create_single_source_cgal_program("Filtered_homogeneous.cpp")
 create_single_source_cgal_program("Homogeneous.cpp")
 create_single_source_cgal_program("issue_129.cpp")
 create_single_source_cgal_program("issue_3301.cpp")
+create_single_source_cgal_program("issue_8140.cpp")
 create_single_source_cgal_program("Kernel_checker.cpp")
 create_single_source_cgal_program("Lazy_kernel.cpp")
 create_single_source_cgal_program("origin_3.cpp")

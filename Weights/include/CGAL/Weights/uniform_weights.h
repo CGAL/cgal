@@ -93,8 +93,8 @@ typename GeomTraits::FT uniform_weight(const CGAL::Point_3<GeomTraits>& p0,
 // It is currently used in:
 // Polygon_mesh_processing -> triangulate_hole_Polyhedron_3_test.cpp
 // Polygon_mesh_processing -> triangulate_hole_Polyhedron_3_no_delaunay_test.cpp
-// Polyhedron demo -> Fairing_plugin.cpp
-// Polyhedron demo -> Hole_filling_plugin.cpp
+// CGAL Lab -> Fairing_plugin.cpp
+// CGAL Lab -> Hole_filling_plugin.cpp
 template<class PolygonMesh>
 class Uniform_weight
 {

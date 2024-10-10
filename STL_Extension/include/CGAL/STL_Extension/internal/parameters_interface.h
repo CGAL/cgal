@@ -163,6 +163,7 @@ CGAL_add_named_parameter(patch_normal_map_t, patch_normal_map, patch_normal_map)
 CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_primitive_map)
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
 CGAL_add_named_parameter(sizing_function_t, sizing_function, sizing_function)
+CGAL_add_named_parameter(bbox_scaling_t, bbox_scaling, bbox_scaling)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
@@ -244,6 +245,7 @@ CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundari
 CGAL_add_named_parameter(cell_selector_t, cell_selector, cell_is_selected_map)
 CGAL_add_named_parameter(facet_is_constrained_t, facet_is_constrained, facet_is_constrained_map)
 CGAL_add_named_parameter(smooth_constrained_edges_t, smooth_constrained_edges, smooth_constrained_edges)
+CGAL_add_named_parameter(nb_flip_smooth_iterations_t, nb_flip_smooth_iterations, nb_flip_smooth_iterations)
 
 // List of named parameters used in Alpha_wrap_3
 CGAL_add_named_parameter(do_enforce_manifoldness_t, do_enforce_manifoldness, do_enforce_manifoldness)
@@ -271,6 +273,14 @@ CGAL_add_named_parameter(accuracy_t, accuracy, accuracy)
 CGAL_add_named_parameter(maximum_running_time_t, maximum_running_time, maximum_running_time)
 CGAL_add_named_parameter(overlap_t, overlap, overlap)
 CGAL_add_named_parameter(maximum_normal_deviation_t, maximum_normal_deviation, maximum_normal_deviation)
+
+// kinetic parameters
+CGAL_add_named_parameter(bbox_dilation_ratio_t, bbox_dilation_ratio, bbox_dilation_ratio)
+CGAL_add_named_parameter(reorient_bbox_t, reorient_bbox, reorient_bbox)
+CGAL_add_named_parameter(debug_t, debug, debug)
+CGAL_add_named_parameter(angle_tolerance_t, angle_tolerance, angle_tolerance)
+CGAL_add_named_parameter(max_octree_depth_t, max_octree_depth, max_octree_depth)
+CGAL_add_named_parameter(max_octree_node_size_t, max_octree_node_size, max_octree_node_size)
 
 // List of named parameters used in Shape_detection package
 CGAL_add_named_parameter(maximum_angle_t, maximum_angle, maximum_angle)
@@ -351,6 +361,7 @@ CGAL_add_named_parameter_with_compatibility(input_features_param_t, input_featur
 
 CGAL_add_named_parameter_with_compatibility(edge_size_param_t, edge_size_param, edge_size)
 CGAL_add_named_parameter_with_compatibility(edge_min_size_param_t, edge_min_size_param, edge_min_size)
+CGAL_add_named_parameter_with_compatibility_cref_only(edge_distance_param_t, edge_distance_param, edge_distance)
 CGAL_add_named_parameter_with_compatibility(facet_angle_param_t, facet_angle_param, facet_angle)
 CGAL_add_named_parameter_with_compatibility(facet_size_param_t, facet_size_param, facet_size)
 CGAL_add_named_parameter_with_compatibility_cref_only(facet_distance_param_t, facet_distance_param, facet_distance)

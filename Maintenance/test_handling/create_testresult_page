@@ -16,6 +16,9 @@
 use Cwd;
 use strict;
 use Date::Format;
+use JSON;
+use File::Copy;
+use FindBin;
 
 my $server_url="https://cgal.geometryfactory.com/";
 my $cgal_members="${server_url}CGAL/Members/";
@@ -102,13 +105,13 @@ sub write_select()
   print OUTPUTV '<option disabled selected value="">(select a release)', "</option>\n";
   my %results;
   foreach $_ (glob("results-*.shtml")) {
-      my $ctime = (stat($_))[10];
-      $results{$_} = $ctime;
+      my $mtime = (stat($_))[9];
+      $results{$_} = $mtime;
   }
   foreach $_ (sort { $results{$b} <=> $results{$a} } keys %results) {
       $_ =~ /results-${pattern}(\.\d+)?(-.*|)\.shtml/ || next;
-      my $ctime = (stat($_))[10];
-      my $date = time2str('%a %Y/%m/%d', $ctime);
+      my $mtime = (stat($_))[9];
+      my $date = time2str('%a %Y/%m/%d', $mtime);
      print OUTPUTV '<option value="', $_, '">';
      ($filename) = m/results-(.*?)\.shtml\s*/;
 #     printf OUTPUTV "%-20s (last modified: %s)</option>\n", $filename, $date;
@@ -205,7 +208,7 @@ sub collect_results()
 sub print_result_table()
 {
     my $platform_count = scalar(@platforms_to_do);
-
+    my $release_version = substr($release_name, 5);
     print OUTPUT <<"EOF";
 <table class="result" border="1" cellspacing="2" cellpadding="5">
 <tr align="CENTER">
@@ -227,7 +230,7 @@ EOF
 	    if ($test_num == 15) {
 	    	$test_num = 0;
 	    	print OUTPUT "\n<tr>  <td align=\"center\">\n";
-	    	print OUTPUT '<a href="#platforms">Platform Description</a>';
+	    	print OUTPUT "<a href=\"summary-$release_version.html?platform=all\">Platform Description</a>";
 	    	print OUTPUT "\n";
 		print_platforms_numbers();
 	    	print OUTPUT "\n</tr>\n";
@@ -243,7 +246,8 @@ EOF
 	#     close VERSION;
 	# }
 	print OUTPUT "\n<tr>\n";
-	print OUTPUT "<td><a class=\"package_name\" href=\"\#$test_directory\" name=\"$test_directory\">$test_directory</a></td>\n";
+
+    print OUTPUT "<td><a class=\"package_name\" href=\"summary-$release_version.html?package=$test_directory\" name=\"$test_directory\">$test_directory</a></td>\n";
 	# if ( $version ) {
 	#     print OUTPUT "<TD ALIGN=CENTER>$version</TD>\n";
 	# } else {
@@ -462,22 +466,23 @@ sub print_platform_descriptions()
 <h2><a name="platforms">Platform Description and Summary</a></h2>
 <table border="1" cellspacing="2" cellpadding="5" class="summary">
 <tr align="center">
-<th colspan="2">OS and compiler</th>
-<th>Tester</th>
-<th class="ok">y</th>
-<th class="third_party_warning">t</th>
-<th class="warning">w</th>
-<th class="timeout">o</th>
-<th class="error">n</th>
-<th class="requirements">r</th>
-<th>CMake</th>
-<th>BOOST</th>
-<th>MPFR</th>
-<th>GMP</th>
-<th>QT</th>
-<th>LEDA</th>
-<th>CXXFLAGS</th>
-<th>LDFLAGS</th>
+    <th colspan="2">OS and compiler</th>
+    <th>Tester</th>
+    <th class="ok">y</th>
+    <th class="third_party_warning">t</th>
+    <th class="warning">w</th>
+    <th class="timeout">o</th>
+    <th class="error">n</th>
+    <th class="requirements">r</th>
+    <th>DEBUG?</th>
+    <th>CMake</th>
+    <th>BOOST</th>
+    <th>MPFR</th>
+    <th>GMP</th>
+    <th>QT</th>
+    <th>LEDA</th>
+    <th>CXXFLAGS</th>
+    <th>LDFLAGS</th>
 </tr>
 EOF
     my ($platform_num)=(0);
@@ -522,6 +527,7 @@ EOF
 	    ($platform_is_optimized{$pf}) = ($tmp[1] =~ m|([-/]x?O[1-9])|);
 	    $_ = <PLATFORM_INFO>;
 	    chomp;
+	    my $build_type = $platform_is_optimized{$pf} ? " - " : "YES";
 	    print OUTPUT "</td>\n";
 	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
 	    print OUTPUT "<td>$county</td>\n";
@@ -530,6 +536,7 @@ EOF
 	    print OUTPUT "<td>$counto</td>\n";
  	    print OUTPUT "<td>$countn</td>\n";
  	    print OUTPUT "<td>$countr</td>\n";
+	    print OUTPUT "<td align=\"center\">$build_type</td>\n";
 	    $index = 8;
 	    while ($index) {
 	        $index--;
@@ -556,11 +563,13 @@ EOF
 sub print_platforms_numbers()
 {
     my ($platform_num,$platform)=(0,"");
+    my $release_version = substr($release_name, 5);
     foreach $platform (@platforms_to_do) {
 	++$platform_num;
 	my $pf_short = short_pfname($platform);
 	my $class = "";
 	my $tag = "";
+    my $platformlink = $platform;
 	if($platform_is_optimized{$platform} || $platform_is_64bits{$platform})
 	{
 	    $class = " class=\"";
@@ -576,7 +585,7 @@ sub print_platforms_numbers()
             $class = $class . "\"";
             $tag = $tag . " )";
 	}
-	print OUTPUT "<td$class><a href=\"#platform$platform_num\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
+	print OUTPUT "<td$class><a href=\"summary-$release_version.html?platform=$platformlink\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
     }
 }
 
@@ -609,35 +618,32 @@ sub print_little_header(){
         "https://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>${release_name} Test Results</title>
-  <link rel="shortcut icon" href="cgal.ico">
-  <link rel="stylesheet" type="text/css" href="testresult.css">
-<!-- This file is generated by a program. Do not edit manually!! -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>${release_name} Test Results</title>
+    <link rel="shortcut icon" href="cgal.ico">
+    <link rel="stylesheet" type="text/css" href="testresult.css">
+    <!-- This file is generated by a program. Do not edit manually!! -->
 </head>
 <body>
-<h1>Test Results of ${release_name}
-<a id="permalink" href="results-${release_version}.shtml">permalink</a>
-<a id="jump_to_results" href="#testresults">jump to results</a>
-<a id="compare" href="comparison/diff_testsuites.html?newTest=${release_name}">compare results...</a></h1>
-<!--#include virtual="versions.inc"-->
-<p>The results of the tests are presented in a table
-('y' = success, 'w' = warning, 't' = third party warning, 'o' = timeout, 'n' = failure, 'r' = a requirement is not found),
-and the error + compiler output from each test can be retrieved by clicking
-on it.</p>
-<p><b>N.B. The detection of warnings is not exact.
-Look at the output to be sure!</b></p>
-<ol>
-<li><a href="${releases_url}">
-Downloading internal releases</a></li>
-<li><a href="${doxygen_manual_test_url}${release_name}/" style="color: red">
-The doxygen documentation testpage</a>
-(and the <a href="${doxygen_manual_test_url}">overview page</a>)</li>
-<li><a href="https://cgal.geometryfactory.com/~cgaltest/testsuite_comparison/diff_testsuites.html">
-Diff of testsuites results</a></li>
-<li><a href="summary-$release_version.html">
-Summary Page</a></li>
-</ol>
+    <h1>Test Results of ${release_name}
+    <a id="permalink" href="results-${release_version}.shtml">permalink</a>
+    <a id="jump_to_results" href="#testresults">jump to results</a>
+    <a id="compare" href="comparison/diff_testsuites.html?newTest=${release_name}">compare results...</a></h1>
+    <!--#include virtual="versions.inc"-->
+    <p>The results of the tests are presented in a table
+    ('y' = success, 'w' = warning, 't' = third party warning, 'o' = timeout, 'n' = failure, 'r' = a requirement is not found),
+    and the error + compiler output from each test can be retrieved by clicking
+    on it.</p>
+    <p><b>N.B. The detection of warnings is not exact.
+    Look at the output to be sure!</b></p>
+    <ol>
+        <li><a href="${releases_url}">Downloading internal releases</a></li>
+        <li><a href="${doxygen_manual_test_url}${release_name}/" style="color: red">The doxygen documentation testpage</a>
+        (and the <a href="${doxygen_manual_test_url}">overview page</a>)</li>
+        <li><a href="https://cgal.geometryfactory.com/~cgaltest/testsuite_comparison/diff_testsuites.html">Diff of testsuites results</a></li>
+        <li><a href="summary-$release_version.html">
+        Summary Page</a></li>
+    </ol>
 EOF
 }
 
@@ -730,8 +736,7 @@ sub get_warnings_and_errors {
         my $result = `zcat $result_file`;
         my @lines = split("\n", $result);
         foreach my $line (@lines) {
-            if ($line =~ /(warning|error):/i && !$seen{$line}++) {
-            #if ($line !~ /\b(ERROR|WARNING)\b/ && $line =~ /(warning|error):/i) {
+            if ($line =~ /(warning|error):/i && !$seen{$line}++ || $line =~ /(warning|error) [CJ]\d+:/i && !$seen{$line}++) {
 
                 $warnings_and_errors .= $line . "\n";
             }
@@ -748,103 +753,156 @@ sub create_summary_page {
     my $test_directory;
     my @letters = ('r', 'n', 'w', 'o');
     my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);
+    my $package_options = join("\n", map { "<option value=\"$_\">$_</option>" } sort keys %test_directories);
+    my $summary_script_src = $FindBin::RealBin . "/Summary_Script.js";
+    my $summary_script_dest = "$testresult_dir/$release_name/Summary_Script.js";
+    my $summary_page_path = "$testresult_dir/summary".substr($release_name,4).".html";
+    my @platforms_data;
+    my ($platform_num, $platform) = (0, "");
+    foreach $platform (@platforms_to_do) {
+        my $third_party_libraries = "";
+        my @tpl_list = ();
+        if (open(PLATFORM_INFO, "results_${platform}.info")) {
+            my $line = "";
+            while (<PLATFORM_INFO>) {
+                $line = $_;
+                if ($line =~ /^TPL:/) {
+                    $third_party_libraries = $line;
+                    if ($third_party_libraries =~ /^TPL:\s*(.*)/) {
+                        my $tpl_data = $1;
+                        my @tpls = split /,\s*/, $tpl_data;
+                        foreach my $tpl (@tpls) {
+                            if ($tpl =~ /(.+)\s+not found/i) {
+                                push @tpl_list, {
+                                    name => $1,
+                                    version => undef,
+                                    status => "not found"
+                                };
+                            }
+                            elsif ($tpl =~ /(.+)\s+(\S+)/) {
+                                push @tpl_list, {
+                                    name => $1,
+                                    version => $2,
+                                    status => "found"
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            close PLATFORM_INFO;
+        }
+        my $platform_info = {
+            name => $platform,
+            tpl => \@tpl_list,
+            test_directories => [],
+        };
+        foreach my $letter (@letters) {
+            foreach my $test_directory (sort keys %test_directories) {
+                my $resulttext = $testresults[$platform_num]->{$test_directory};
+                if (defined($resulttext) && $resulttext eq $letter) {
+                    my $warnings_and_errors = get_warnings_and_errors("$testresult_dir/$release_name/$test_directory/TestReport_$platform.gz");
+                    push @{$platform_info->{test_directories}}, {
+                        test_directory => $test_directory,
+                        content => $warnings_and_errors,
+                        letters => $letter,
+                    };
+                }
+            }
+        }
+        push @platforms_data, $platform_info;
+        $platform_num++;
+    }
+
+    my $final_data = {
+        release => $release_name,
+        platforms => \@platforms_data,
+    };
+    my $json = JSON->new->allow_nonref;
+    my $json_text = $json->encode($final_data);
+    open my $fh, '>', "$testresult_dir/$release_name/search_index.json" or die "Could not open file: $!";
+    print $fh $json_text;
+    close $fh;
+
+    my @all_releases = grep {-d $_ } glob("../*");
+    my %urls_for_js = (
+        current => ["$release_name/search_index.json"],
+        all     => [map { "TESTRESULTS/$_/search_index.json" } @all_releases],
+    );
+    my $json_urls = encode_json(\%urls_for_js);
     my $Summary_output = <<"EOF";
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
         "https://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>Summary</title>
-  <link rel="shortcut icon" href="cgal.ico">
-  <link rel="stylesheet" type="text/css" href="testresult.css">
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('platformSelector').value = 'all';
-        filterByPlatform();
-        document.getElementById('letterSelector').value = 'all';
-        filterByLetter();
-    });
-    function filterByPlatform() {
-        var selectedPlatform = document.getElementById('platformSelector').value;
-        var divs = document.querySelectorAll('div.platform');
-        divs.forEach(function(div) {
-            if (selectedPlatform === 'all' || div.classList.contains(selectedPlatform)) {
-                div.style.display = '';
-            } else {
-                div.style.display = 'none';
-            }
-        });
-    }
-
-    function filterByLetter() {
-        var selectedLetter = document.getElementById('letterSelector').value;
-        var platforms = document.querySelectorAll('div.platform');
-
-        platforms.forEach(function(platform) {
-            var letters = platform.querySelectorAll('div.result-grid > div.letter');
-            var displayPlatform = false;
-
-            letters.forEach(function(letter) {
-                if (selectedLetter === 'all' || letter.classList.contains(selectedLetter)) {
-                    var childDivs = letter.querySelectorAll('div');
-                    if (childDivs.length > 0) {
-                        letter.style.display = '';
-                        displayPlatform = true;
-                    } else {
-                        letter.style.display = 'none';
-                    }
-                } else {
-                    letter.style.display = 'none';
-                }
-            });
-
-            platform.style.display = displayPlatform ? '' : 'none';
-        });
-    }
-
-
-  </script>
-<!-- This file is generated by a program. Do not edit manually!! -->
-</head>
-<body>
-<h1>Summary Results of ${release_name}</h1>
-<select id="platformSelector" onchange="filterByPlatform()">
-<option value="all" selected>All Platforms</option>
-$platform_options
-</select>
-<select id="letterSelector" onchange="filterByLetter()">
-<option value="all" selected>All</option>
-$letters_options
-</select>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Summary</title>
+        <link rel="shortcut icon" href="cgal.ico">
+        <link rel="stylesheet" type="text/css" href="testresult.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            var searchURLs = $json_urls;
+        </script>
+        <!-- This file is generated by a program. Do not edit manually!! -->
+    </head>
+    <body>
+        <div id="tplModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="tplModalTitle">Versions of TPL</h2>
+                <table class="tablesorter">
+                    <thead>
+                        <tr>
+                            <th>Platform</th>
+                            <th>Version</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search ..." autocomplete="off" onkeypress="if(event.keyCode==13) search()">
+        <select id="releaseSelector">
+            <option value="current" selected>This release</option>
+            <option value="all">All releases</option>
+        </select>
+        <button onclick="search()">Search</button>
+        <div id="searchResults"></div>
+        <h1>Summary Results of ${release_name}</h1>
+        <select id="platformSelector" onchange="filterByPlatform(this.value)">
+            <option value="all" selected>Select a platform</option>
+            $platform_options
+        </select>
+        <select id="letterSelector" onchange="filterByLetter(this.value)">
+            <option value="all" selected>All</option>
+            $letters_options
+        </select>
+        <select id="packagesSelector" onchange="filterByPackage(this.value)">
+            <option value="all" selected>Select a package</option>
+            $package_options
+        </select>
+        <br>
+        <div>
+            <button id="open-all" class="toggle-button">Open All</button>
+            <button id="close-all" class="toggle-button">Close All</button>
+        </div>
+        <div id="main_container">
+            <div id="platform_container"></div>
+            <div id="package_container"></div>
+        </div>
+        <script src="$release_name/Summary_Script.js" type="application/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.32.0/js/jquery.tablesorter.min.js"></script>
 EOF
-
-    my $summary_page_path = "$testresult_dir/summary".substr($release_name,4).".html";
+    if (-e $summary_script_src) {
+        copy($summary_script_src, $summary_script_dest) or die "Copy failed: $!";
+    } else {
+        die "Source file $summary_script_src does not exist.";
+    }
     open(my $out, '>', $summary_page_path) or die "Could not open file '$summary_page_path' $!";
     print $out $Summary_output;
-
-    my ($platform_num, $platform) = (0, "");
-    foreach $platform (@platforms_to_do) {
-        print $out "<div class='platform $platform'><h2>Results of $platform</h2><div class='result-grid'>";
-        foreach my $letter (@letters) {
-            print $out "<div class='letter $letter result-container'><h3>$letter</h3>";
-            foreach my $test_directory (sort keys %test_directories) {
-                my $resulttext = $testresults[$platform_num]->{$test_directory};
-                if (defined($resulttext) && $resulttext eq $letter) {
-                    print $out '<div><a href=',"$release_name/$test_directory/TestReport_$platform.gz>", "$test_directory",'</a></div>';
-                    my $warnings_and_errors = get_warnings_and_errors("$testresult_dir/$release_name/$test_directory/TestReport_$platform.gz");
-                    if ($warnings_and_errors) {
-                        print $out "<pre>$warnings_and_errors</pre>";
-                    }
-                }
-            }
-            print $out "</div>";
-        }
-        print $out "</div></div>";
-        $platform_num++;
-    }
 
     print $out "</body>\n</html>\n";
     close $out;
 }
-
 main();

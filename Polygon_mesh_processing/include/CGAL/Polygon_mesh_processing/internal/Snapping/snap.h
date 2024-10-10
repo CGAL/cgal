@@ -27,11 +27,12 @@
 
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
@@ -104,9 +105,12 @@ void simplify_range(HalfedgeRange& halfedge_range,
   typedef CGAL::dynamic_halfedge_property_t<bool>                                 Halfedge_bool_tag;
   typedef typename boost::property_map<TriangleMesh, Halfedge_bool_tag>::type     Range_halfedges;
 
-  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm);
-  for(halfedge_descriptor h : halfedge_range)
-    put(range_halfedges, h, true);
+  const bool all_hedges = (::CGAL::internal::exact_num_halfedges(tm)==halfedge_range.size());
+
+  Range_halfedges range_halfedges = get(Halfedge_bool_tag(), tm, all_hedges);
+  if (!all_hedges)
+    for(halfedge_descriptor h : halfedge_range)
+      put(range_halfedges, h, true);
 
   CGAL_postcondition_code(const std::size_t initial_n = halfedge_range.size();)
 
@@ -227,7 +231,7 @@ template <typename TriangleMesh,
 class Projection_traits
 {
   typedef typename AABBTraits::FT                                          FT;
-  typedef typename AABBTraits::Point_3                                     Point;
+  typedef typename AABBTraits::Point                                       Point;
   typedef typename AABBTraits::Primitive                                   Primitive;
   typedef typename AABBTraits::Bounding_box                                Bounding_box;
   typedef typename AABBTraits::Primitive::Id                               Primitive_id;
@@ -373,7 +377,7 @@ public:
       return;
 
     const typename Primitive::Datum& s = primitive.datum(m_traits.shared_data());
-    if(m_traits.equal_3_object()(s[0], query) || m_traits.equal_3_object()(s[1], query))
+    if(m_traits.equal_object()(s[0], query) || m_traits.equal_object()(s[1], query))
     {
       // If we are NOT using the same mesh and the query is (geometrically) equal to one extremity
       // of the target edge, we don't want to move the source point away from the target point
@@ -875,7 +879,7 @@ std::size_t snap_non_conformal_one_way(const HalfedgeRange& halfedge_range_S,
   typedef typename boost::property_traits<VPMT>::value_type                       Point;
 
   typedef CGAL::AABB_halfedge_graph_segment_primitive<TriangleMesh, VPMT>         Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive>                                        AABB_Traits;
+  typedef CGAL::AABB_traits_3<GT, Primitive>                                      AABB_Traits;
   typedef CGAL::AABB_tree<AABB_Traits>                                            AABB_tree;
 
   typedef std::pair<halfedge_descriptor, Point>                                   Vertex_with_new_position;
@@ -1233,10 +1237,10 @@ std::size_t snap_non_conformal(HalfedgeRange& halfedge_range_A,
   // We keep in memory pairs of source/target edges that are stitchable after vertex-vertex snapping
   // --> these halfedges should not be considered as targets in non-conformal snapping
   // Similarly, matching vertices whose incident edges have matching directions are also locked
-  Locked_vertices locked_vertices_A = get(Vertex_bool_tag(), tm_A);
-  Locked_vertices locked_vertices_B = get(Vertex_bool_tag(), tm_B);
-  Locked_halfedges locked_halfedges_A = get(Halfedge_bool_tag(), tm_A);
-  Locked_halfedges locked_halfedges_B = get(Halfedge_bool_tag(), tm_B);
+  Locked_vertices locked_vertices_A = get(Vertex_bool_tag(), tm_A, false);
+  Locked_vertices locked_vertices_B = get(Vertex_bool_tag(), tm_B, false);
+  Locked_halfedges locked_halfedges_A = get(Halfedge_bool_tag(), tm_A, false);
+  Locked_halfedges locked_halfedges_B = get(Halfedge_bool_tag(), tm_B, false);
 
   std::vector<std::pair<vertex_descriptor, vertex_descriptor> > locked_vertices;
   std::vector<halfedge_descriptor> locked_halfedges_A_vector, locked_halfedges_B_vector;

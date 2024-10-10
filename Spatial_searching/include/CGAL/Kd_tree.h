@@ -287,6 +287,15 @@ public:
     : traits_(traits), split(s), pts(first, beyond), built_(false)
   { }
 
+  template <class PointRange>
+  Kd_tree(const PointRange& points,
+          Splitter s = Splitter(), const SearchTraits traits = SearchTraits())
+    : traits_(traits),
+      split(s),
+      pts(std::begin(points), std::end(points)),
+      built_(false)
+  { }
+
   bool empty() const {
     return pts.empty();
   }
@@ -370,6 +379,7 @@ public:
     pts.swap(ptstmp);
 
     data.clear();
+    data.shrink_to_fit();
 
     built_ = true;
   }

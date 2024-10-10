@@ -47,7 +47,7 @@ to the user-specified conditions.}
 \cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:asgbl-sr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

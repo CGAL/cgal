@@ -5,6 +5,7 @@
 
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/Dynamic_property_map.h>
 
 #include <CGAL/Polyhedron_3.h>

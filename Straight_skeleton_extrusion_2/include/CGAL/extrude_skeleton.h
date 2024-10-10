@@ -886,7 +886,7 @@ void convert_angles(AngleRange& angles)
     CGAL_precondition(0 < angle && angle < 180);
 
     // @todo should this be an epsilon around 90°? As theta goes to 90°, tan(theta) goes to infinity
-    // and thus we could get numerical issues (overlfows) if the kernel is not exact
+    // and thus we could get numerical issues (overflows) if the kernel is not exact
     if(angle == 90)
       return 0;
     else
@@ -1034,7 +1034,7 @@ bool extrude_skeleton(const PolygonWithHoles& pwh,
   // build a soup, to be converted to a mesh afterwards
   std::vector<Point_3> points;
   std::vector<std::vector<std::size_t> > faces;
-  points.reserve(2 * pwh.outer_boundary().size()); // just a reasonnable guess
+  points.reserve(2 * pwh.outer_boundary().size()); // just a reasonable guess
   faces.reserve(2 * pwh.outer_boundary().size() + 2*pwh.number_of_holes());
 
   Extrusion_builder<Geom_traits> builder(gt);

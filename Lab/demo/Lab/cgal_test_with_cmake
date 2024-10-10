@@ -1,0 +1,236 @@
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test_with_cmake
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+  ERRORFILE=error.txt
+  DO_RUN=
+  if [ -z "${MAKE_CMD}" ]; then
+    MAKE_CMD=make
+  fi
+  NEED_CLEAN=
+
+#---------------------------------------------------------------------#
+#                    configure
+#---------------------------------------------------------------------#
+
+configure()
+{
+  echo "Configuring... "
+  
+  if eval 'cmake --no-warn-unused-cli ${INIT_FILE:+"-C${INIT_FILE}"} -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+                                     -DCGAL_DIR="$CGAL_DIR" \
+                                     .' ; then
+                                     
+    echo "   successful configuration" >> $ERRORFILE
+  else
+    echo "   ERROR:    configuration" >> $ERRORFILE
+  fi
+}
+
+#---------------------------------------------------------------------#
+#                    compile_and_run <target>
+#---------------------------------------------------------------------#
+
+compile_and_run()
+{
+  echo "Compiling $1 ... "
+  SUCCES="y"
+  
+  if eval '${MAKE_CMD} VERBOSE=ON -fMakefile $1' ; then
+    echo "   successful compilation of $1" >> $ERRORFILE
+  else
+    echo "   ERROR:    compilation of $1" >> $ERRORFILE
+    SUCCES=""
+  fi
+
+  if [ -n "$DO_RUN" ] ; then
+    if [ -n "${SUCCES}" ] ; then
+      OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+      rm -f $OUTPUTFILE
+      COMMAND="./$1"
+      if [ -f $1.cmd ] ; then
+        COMMAND="$COMMAND `cat $1.cmd`"
+      fi
+      if [ -f $1.cin ] ; then
+        COMMAND="cat $1.cin | $COMMAND"
+      fi
+      echo "Executing $1 ... "
+      echo
+      ulimit -t 3600 2> /dev/null
+      if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+        echo "   successful execution   of $1" >> $ERRORFILE
+      else
+        echo "   ERROR:    execution   of $1" >> $ERRORFILE
+      fi
+    else
+      echo   "   ERROR:    not executed   $1" >> $ERRORFILE
+    fi
+  fi
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    configure, compile and run the tests
+#---------------------------------------------------------------------#
+
+configure
+
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+  echo "Run all tests."
+
+  for target in  \
+demo_framework \
+gl_splat \
+point_dialog \
+CGALlab \
+cgal_lab \
+scene_basic_objects \
+scene_color_ramp \
+scene_c2t3_item \
+scene_c3t3_item \
+scene_combinatorial_map_item \
+scene_edit_polyhedron_item \
+scene_image_item \
+scene_implicit_function_item \
+scene_nef_polyhedron_item \
+scene_points_with_normal_item \
+scene_polygon_soup_item \
+scene_polyhedron_item \
+scene_polyhedron_item_decorator \
+scene_polyhedron_and_sm_item_k_ring_selection \
+scene_poly_item_k_ring_selection \
+scene_sm_item_k_ring_selection \
+scene_polyhedron_selection_item \
+scene_polyhedron_shortest_path_item \
+scene_polyhedron_transform_item \
+scene_polylines_item \
+scene_surface_mesh_item \
+scene_textured_polyhedron_item \
+basic_generator_plugin \
+c3t3_io_plugin \
+camera_positions_plugin \
+classification_plugin \
+clip_cgal_lab_plugin \
+convex_hull_plugin \
+corefinement_plugin \
+create_bbox_mesh_plugin \
+cut_plugin \
+detect_sharp_edges_plugin \
+detect_sharp_edges_sm_plugin \
+distance_plugin \
+distance_sm_plugin \
+edit_cgal_lab_plugin \
+edit_sm_plugin \
+extrude_poly_plugin \
+extrude_sm_plugin \
+fairing_plugin \
+features_detection_plugin \
+gocad_plugin \
+hole_filling_plugin \
+hole_filling_sm_plugin \
+hole_filling_polyline_plugin \
+inside_out_plugin \
+interpolated_corrected_principal_curvatures_plugin\
+surface_intersection_plugin \
+surface_intersection_sm_plugin \
+io_image_plugin \
+io_implicit_function_plugin \
+isotropic_remeshing_plugin \
+jet_fitting_plugin \
+join_and_split_polyhedra_plugin \
+kernel_plugin \
+mean_curvature_flow_skeleton_plugin \
+mean_curvature_flow_skeleton_sm_plugin \
+merge_point_sets_plugin \
+mesh_2_plugin \
+mesh_3_optimization_plugin \
+mesh_3_plugin \
+mesh_segmentation_plugin \
+mesh_segmentation_sm_plugin \
+mesh_simplification_plugin \
+nef_io_plugin \
+nef_plugin \
+off_plugin \
+off_to_nef_plugin \
+offset_meshing_plugin \
+alpha_wrap_3_plugin \
+orient_soup_plugin \
+parameterization_plugin \
+pca_plugin \
+p_klein_function_plugin \
+ply_to_xyz_plugin \
+point_inside_cgal_lab_plugin \
+point_set_average_spacing_plugin \
+point_set_bilateral_smoothing_plugin \
+point_set_from_vertices_plugin \
+point_set_interference_plugin \
+point_set_normal_estimation_plugin \
+point_set_outliers_removal_plugin \
+point_set_selection_plugin \
+point_set_shape_detection_plugin \
+point_set_simplification_plugin \
+point_set_smoothing_plugin \
+point_set_upsampling_plugin \
+point_set_wlop_plugin \
+polyhedron_slicer_plugin \
+polyhedron_stitching_plugin \
+polylines_io_plugin \
+p_sphere_function_plugin \
+p_tanglecube_function_plugin \
+random_perturbation_plugin \
+repair_cgal_lab_plugin \
+selection_io_plugin \
+selection_sm_io_plugin \
+selection_plugin \
+selection_sm_plugin \
+self_intersection_plugin \
+shortest_path_plugin \
+surface_mesh_approximation_plugin \
+stl_plugin \
+subdivision_methods_plugin \
+surface_mesh_io_plugin \
+surface_reconstruction_plugin \
+surf_to_sm_io_plugin \
+transform_cgal_lab_plugin \
+triangulate_facets_plugin \
+trivial_plugin \
+vtk_plugin \
+xyz_plugin \
+smoothing_plugin \
+      all
+  do
+      if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 
+          compile_and_run "$target"
+          NEED_CLEAN=y
+      fi
+  done
+fi
+
+#
+# The clean target generated by CMake under cygwin 
+# always fails for some reason
+#
+if [ -n "${NEED_CLEAN}" ]; then 
+  if ! ( uname | grep -q "CYGWIN" ) ; then
+    ${MAKE_CMD} -fMakefile clean || true
+  fi
+fi

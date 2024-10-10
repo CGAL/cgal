@@ -6,8 +6,8 @@ namespace CGAL {
 \cgalAutoToc
 \author Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno
 
-This package regroups the files making the API for creating and adding a new plugin to the Polyhedron_demo. \n
-\section intro Understanding the Polyhedron Demo
+This package regroups the files making the API for creating and adding a new plugin to the CGAL_Lab. \n
+\section intro Understanding the Lab
 
 
 There are several levels in this demo.
@@ -24,22 +24,22 @@ A plugin usually make use of objects that inherit from `CGAL::Three::Scene_item`
 
 \subsection examplePluginItself The Plugin Itself
 
-A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`.
+A basic plugin will inherit from `CGAL::Three::CGAL_Lab_plugin_interface`.
 It must be created in the corresponding folder named after its package, and containing all the files created for the plugin, and a CMakeLists.txt file.
 Its name must be of the form Xxxx_yyyy_plugin. \n
 
-  [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow*,CGAL::Three::Scene_interface*,Messages_interface*)
-  [applicable()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#applicable()
-  [actions()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#actions()
+  [init()]: @ref CGAL::Three::CGAL_Lab_plugin_interface#init(QMainWindow*,CGAL::Three::Scene_interface*,Messages_interface*)
+  [applicable()]: @ref CGAL::Three::CGAL_Lab_plugin_interface#applicable()
+  [actions()]: @ref CGAL::Three::CGAL_Lab_plugin_interface#actions()
   The class must contain the following lines :\n
 
 ~~~~~~~~~~~~~{.cpp}
     Q_OBJECT
-    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+    Q_INTERFACES(CGAL::Three::CGAL_Lab_plugin_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.CGALLab.PluginInterface/1.0")
 ~~~~~~~~~~~~~
 
-Your plugin must override the three pure virtual functions inherited from Polyhedron_demo_plugin_interface : \n
+Your plugin must override the three pure virtual functions inherited from CGAL_Lab_plugin_interface : \n
 - [actions()] that will hold the actions of the plugin
 - [applicable()] that will decide if the plugin can be used with the current selection of items
 - [init()] that will declare and link the actions of the plugin
@@ -64,8 +64,8 @@ If you created your plugin in an existing directory, the CMakeLists.txt file alr
 
 <b>The CMakeLists.txt file :</b>
 
-    include( polyhedron_demo_macros )
-    polyhedron_demo_plugin(basic_plugin Basic_plugin)
+    include( cgal_lab_macros )
+    cgal_lab_plugin(basic_plugin Basic_plugin)
 
 
 \subsection basicPluginDialog Adding a Dialog to Your Plugin
@@ -85,7 +85,7 @@ Then select among the template/form choices.
 Name it Xxxx_yyyy_dialog.ui (you may have to rename it once it is created as QtCreator tends to forget the capital letters), and add it to the project in the CMakeLists :
 
     qt6_wrap_ui( basicUI_FILES Basic_dialog.ui )
-    polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
+    cgal_lab_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
 
 Add a layout to the dialog with a drag and drop and lay it out.
 *  \image html menu_4.png
@@ -115,14 +115,14 @@ It is really simple to add a pop-up box with Qt. Use a QMessageBox and give it s
 \subsection examplePluginDockWidget Adding a Dock Widget
 
 This section describes how to add a dock widget to the application.\n
-You can make your plugin inherit from CGAL::Three::Polyhedron_demo_plugin_helper, which gives access to the function CGAL::Three::Polyhedron_demo_plugin_helper#addDockWidget.
+You can make your plugin inherit from CGAL::Three::CGAL_Lab_plugin_helper, which gives access to the function CGAL::Three::CGAL_Lab_plugin_helper#addDockWidget.
 This will manage automatically the position and tabification of a dock widget. \n
 Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget` in Widgets
 *  \image html menu_6.png
 Add it to the project in the CMakeLists.txt :
 
     qt6_wrap_ui( dockUI_FILES Basic_dock_widget.ui )
-    polyhedron_demo_plugin(dock_widget_plugin Dock_widget_plugin ${dockUI_FILES})
+    cgal_lab_plugin(dock_widget_plugin Dock_widget_plugin ${dockUI_FILES})
 
 Edit the ui file with the editor, then add the following line to your plugin file:
 ~~~~~~~~~~~~~{.cpp}
@@ -197,7 +197,7 @@ Simply create a new instance of the item you want and call the function CGAL::Th
 
 Once your code is written, you will need to link the item's library to your plugin thanks to the CMakeLists, using the command <b>target_link_library</b> :
 
-    polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)
+    cgal_lab_plugin(basic_item_plugin Basic_item_plugin)
     #  links the library containing the scene_plane_item with the plugin
     target_link_libraries(basic_item_plugin PUBLIC scene_basic_objects)
 
@@ -249,7 +249,7 @@ All the initialization and containers handling happen in the drawing function, b
 We start by checking all the switches and call the right initialization functions accordingly.
 After that, we can set the uniform values and actually draw the content of the containers.\n
 
-If you created your item in a specific file and you need to use it outside your plugin (like in another plugin), it is recommended to put it in the demo's root directory, and you will have to define your item in the general Polyhedron_demo's CMakeLists.txt by using the macro add_item :
+If you created your item in a specific file and you need to use it outside your plugin (like in another plugin), it is recommended to put it in the demo's root directory, and you will have to define your item in the general CGAL_Lab's CMakeLists.txt by using the macro add_item :
 
     add_item(scene_trivial_item Scene_trivial_item.cpp)
     target_link_libraries(scene_trivial_item PUBLIC scene_dependances_item)
@@ -275,20 +275,20 @@ You also have the possibility to "lock" a child of a group with `CGAL::Three::Sc
 \section exampleIOPlugin Creating an I/O Plugin
 
 An I/O plugin is a plugin desined to load from  and save to a certain type of file. Its name is generally of the form Xxxx_yyyy_io_plugin \n
-It inherits from the CGAL::Three::Polyhedron_demo_io_plugin_interface. It must implement the following functions :
-- CGAL::Three::Polyhedron_demo_io_plugin_interface#name which returns the plugin's name.
+It inherits from the CGAL::Three::CGAL_Lab_io_plugin_interface. It must implement the following functions :
+- CGAL::Three::CGAL_Lab_io_plugin_interface#name which returns the plugin's name.
 ~~~~~~~~~~~~~{.cpp}
 QString name() const { return "Xxxx_yyyy_io_plugin"; }
 ~~~~~~~~~~~~~
-- CGAL::Three::Polyhedron_demo_io_plugin_interface#nameFilters which returns a list of extensions of the files the plugin can read :
+- CGAL::Three::CGAL_Lab_io_plugin_interface#nameFilters which returns a list of extensions of the files the plugin can read :
 ~~~~~~~~~~~~~{.cpp}
  QString nameFilters() const { return "Text files (*.txt)"; }
 ~~~~~~~~~~~~~
-- CGAL::Three::Polyhedron_demo_io_plugin_interface#canLoad which returns true if the plugin is able to load :
+- CGAL::Three::CGAL_Lab_io_plugin_interface#canLoad which returns true if the plugin is able to load :
 ~~~~~~~~~~~~~{.cpp}
 bool canLoad() const { return true; }
 ~~~~~~~~~~~~~
-- CGAL::Three::Polyhedron_demo_io_plugin_interface#load : which fills the data of an object from a file :
+- CGAL::Three::CGAL_Lab_io_plugin_interface#load : which fills the data of an object from a file :
 ~~~~~~~~~~~~~{.cpp}
 CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
     if(fileinfo.suffix().toLower() != "txt") return 0;
@@ -300,13 +300,13 @@ CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
     return item;
 }
 ~~~~~~~~~~~~~
-- CGAL::Three::Polyhedron_demo_io_plugin_interface#canSave which returns true if the plugin is able to save :
+- CGAL::Three::CGAL_Lab_io_plugin_interface#canSave which returns true if the plugin is able to save :
 ~~~~~~~~~~~~~{.cpp}
 bool canSave(const CGAL::Three::Scene_item* scene_item) {
     return qobject_cast<const Scene_trivial_item*>(scene_item);
 }
 ~~~~~~~~~~~~~
-- CGAL::Three::Polyhedron_demo_io_plugin_interface#save which fills a file with the data of an item
+- CGAL::Three::CGAL_Lab_io_plugin_interface#save which fills a file with the data of an item
 ~~~~~~~~~~~~~{.cpp}
 bool save(const CGAL::Three::Scene_item* scene_item, QFileInfo fileinfo) {
     const Scene_trivial_item* item = qobject_cast<const Scene_trivial_item*>(scene_item);
@@ -328,7 +328,7 @@ Configure CMake as you desire and fetch the right Qt6 packages :
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 3.1...3.23)
+    cmake_minimum_required(VERSION 3.12...3.29)
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt6)
@@ -338,24 +338,24 @@ Configure CMake as you desire and fetch the right Qt6 packages :
                  COMPONENTS            OpenGLWidgets Svg
                  OPTIONAL_COMPONENTS   WebSockets)
 
-You will probably have to fetch the libraries exported by the Polyhedron_demo, like the Scene_items.
+You will probably have to fetch the libraries exported by the CGAL_Lab, like the Scene_items.
 
-    find_package(CGAL_polyhedron_demo
-    HINTS "${CGAL_DIR}" "${CGAL_DIR}/Polyhedron/demo/Polyhedron-build"
+    find_package(CGAL_cgal_lab
+    HINTS "${CGAL_DIR}" "${CGAL_DIR}/Lab/demo/Lab-build"
     )
-    include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
+    include( ${CGAL_LAB_DEMO_USE_FILE} )
 
-Be careful, the polyhedron_demo build directory must contain a build of the demo that comes from the same CGAL version than the one of your CGAL_DIR.
+Be careful, the cgal_lab build directory must contain a build of the demo that comes from the same CGAL version than the one of your CGAL_DIR.
 Finally, you can declare your plugin
 
-    polyhedron_demo_plugin(example_plugin Example_plugin)
+    cgal_lab_plugin(example_plugin Example_plugin)
 
-If you need targets from the Polyhedron_demo, you will have to add the prefix 'Polyhedron_' to the target's name, as the exported targets belong to the namespace Polyhedron_
+If you need targets from the CGAL_Lab, you will have to add the prefix 'Lab_' to the target's name, as the exported targets belong to the namespace Lab_
 
-    polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)
-    target_link_libraries(basic_item_plugin PUBLIC Polyhedron_scene_basic_objects)
+    cgal_lab_plugin(basic_item_plugin Basic_item_plugin)
+    target_link_libraries(basic_item_plugin PUBLIC Lab_scene_basic_objects)
 
-Notice that an external plugin will not be automatically loaded in the Polyhedron demo. It must be built in its own project.
+Notice that an external plugin will not be automatically loaded in the Lab. It must be built in its own project.
 
 <b> Complete CMakeLists :</b>
 
@@ -366,7 +366,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 3.1...3.23)
+    cmake_minimum_required(VERSION 3.12...3.29)
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt6)
@@ -376,14 +376,14 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
                  OPTIONAL_COMPONENTS WebSockets)
 
     if(Qt6_FOUND AND CGAL_FOUND)
-      find_package(CGAL_polyhedron_demo)
+      find_package(CGAL_cgal_lab)
 
-    include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
+    include( ${CGAL_LAB_DEMO_USE_FILE} )
     # Let plugins be compiled in the same directory as the executable.
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 
-      polyhedron_demo_plugin(example_plugin Example_plugin)
+      cgal_lab_plugin(example_plugin Example_plugin)
 
     endif()
 
