@@ -738,6 +738,25 @@ public:
   const VertexPositionGeometry* vpg_;
 };
 
+template <typename K, typename VEF>
+class GC_index_pmap
+{
+public:
+  typedef boost::readable_property_map_tag category;
+  typedef std::size_t                      value_type;
+  typedef std::size_t                      reference;
+  typedef VEF                              key_type;
+
+  GC_index_pmap()
+  {}
+
+  value_type operator[](const key_type& vd) const
+  {
+    return vd.getIndex();
+  }
+
+  friend inline value_type get(const GC_index_pmap& m, const key_type& k) { return m[k]; }
+};
 
 } // namespace surface
 } // namespace geometrycentral
