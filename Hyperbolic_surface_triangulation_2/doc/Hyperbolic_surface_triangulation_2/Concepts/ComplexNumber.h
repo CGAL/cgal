@@ -5,7 +5,8 @@
 \ingroup PkgHyperbolicSurfaceTriangulation2Concepts
 \cgalConcept
 
-Describes a complex number type that does not use square root.
+Describes a complex number type over a `FieldNumberType` for its real and
+imaginary parts.
 
 \cgalRefines{Field}
 
@@ -18,7 +19,7 @@ public:
   /// \name Types
   /// @{
   /*!
-    Field number type: must be a model of `FieldNumberType`.
+    Number type for real and imaginary parts: must be a model of `FieldNumberType`.
   */
   typedef unspecified_type FT;
   /// \name Creation
@@ -42,7 +43,7 @@ public:
     Constructor, sets the real part to <code> real_part </code> and the imaginary part to <code> imaginary_part </code>.
   */
     template<class U,class V>
-      Complex_number(U&& real_part, V&& imaginary_part);
+      ComplexNumber(U&& real_part, V&& imaginary_part);
   /// @}
 
   /// \name Get and Set
@@ -70,16 +71,6 @@ public:
 
   /// \name Operations
   /// @{
-  /*!
-    returns the square of the modulus.
-  */
-  FT norm(Complex_number<FT> z) const;
-
-  /*!
-    returns the conjugate.
-  */
-  ComplexNumber<FT> conj(Complex_number<FT> z) const;
-
   /*!
     returns +z.
   */
@@ -118,39 +109,52 @@ public:
   /*!
     Equality test.
   */
-  bool operator==(const Complex_number<FT>& z1, const Complex_number<FT>& z2);
+  bool operator==(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
   /*!
     Inequality test.
   */
-  bool operator!=(const Complex_number<FT>& z1, const Complex_number<FT>& z2);
+  bool operator!=(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
 
   /*!
     Binary complex addition.
   */
-  Complex_number<FT> operator+(const Complex_number<FT>& z1, const Complex_number<FT>& z2);
+  ComplexNumber<FT> operator+(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
 
   /*!
     Binary complex substraction.
   */
-  Complex_number<FT> operator-(const Complex_number<FT>& z1, const Complex_number<FT>& z2);
+  ComplexNumber<FT> operator-(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
 
  /*!
     Binary complex multiplication.
   */
-  Complex_number<FT> operator*(const Complex_number<FT>& z1, const Complex_number<FT>& z2);
+  ComplexNumber<FT> operator*(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
 
   /*!
     Binary complex division.
   */
-  Complex_number<FT> operator/(const Complex_number<FT>& z1, const Complex_number<FT>& z2);
+  ComplexNumber<FT> operator/(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
 
   /*!
     writes the complex in a stream.
   */
-  std::ostream& operator<<(std::ostream& s, const Complex_number<FT>& z);
+  std::ostream& operator<<(std::ostream& s, const ComplexNumber<FT>& z);
   /*!
     reads the complex from a stream.
   */
-  void operator>>(std::istream& s, Complex_number<FT>& z);
+  void operator>>(std::istream& s, ComplexNumber<FT>& z);
+  /// @}
+
+  /// \relates ComplexNumber
+  /// @{
+  /*!
+    returns the square of the modulus.
+  */
+  FT norm(ComplexNumber<FT> z) const;
+
+  /*!
+    returns the conjugate.
+  */
+  ComplexNumber<FT> conj(ComplexNumber<FT> z) const;
   /// @}
 };

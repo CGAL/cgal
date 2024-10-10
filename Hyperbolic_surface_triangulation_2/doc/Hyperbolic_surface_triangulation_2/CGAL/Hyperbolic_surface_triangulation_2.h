@@ -5,7 +5,7 @@ namespace CGAL{
 
 
 This item defines attributes of edges that are
-`Complex_without_sqrt` reprensenting cross-ratios.
+`Complex_number` reprensenting cross-ratios.
 
 \tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 
@@ -15,7 +15,7 @@ template<class Traits>
 struct Combinatorial_map_with_cross_ratios_item{
     template <class CMap>
     struct Dart_wrapper{
-        typedef Cell_attribute<CMap, Complex_without_sqrt<typename Traits::FT>> Edge_attrib;
+        typedef Cell_attribute<CMap, Complex_number<typename Traits::FT>> Edge_attrib;
         typedef std::tuple<void,Edge_attrib,void>   Attributes;
     };
   };
