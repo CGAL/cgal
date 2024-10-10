@@ -34,23 +34,23 @@
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
-`CGAL::make_constrained_Delaunay_triangulation_3()` is the main function to create
-a constrained Delaunay triangulation in 3D, an instance of the class template
-`CGAL::Constrained_Delaunay_triangulation_3`.
+`CGAL::make_conforming_constrained_Delaunay_triangulation_3()` is the main function to create
+a conforming constrained Delaunay triangulation in 3D, an instance of the class template
+`CGAL::Conforming_constrained_Delaunay_triangulation_3`.
 
 \cgalCRPSection{Functions Templates}
 
-- `CGAL::make_constrained_Delaunay_triangulation_3()`
+- `CGAL::make_conforming_constrained_Delaunay_triangulation_3()`
 
 \cgalCRPSection{Concepts}
 
-- `ConstrainedDelaunayTriangulationTraits_3`
-- `ConstrainedDelaunayTriangulationVertexBase_3`
-- `ConstrainedDelaunayTriangulationCellBase_3`
+- `ConformingConstrainedDelaunayTriangulationTraits_3`
+- `ConformingConstrainedDelaunayTriangulationVertexBase_3`
+- `ConformingConstrainedDelaunayTriangulationCellBase_3`
 
 \cgalCRPSubsection{Class Templates}
 
-- `CGAL::Constrained_Delaunay_triangulation_3<Traits, Triangulation>`
-- `CGAL::Constrained_Delaunay_triangulation_vertex_base_3<Traits, Vertex_base>`
-- `CGAL::Constrained_Delaunay_triangulation_cell_base_3<Traits, Cell_base>`
+- `CGAL::Conforming_constrained_Delaunay_triangulation_3<Traits, Triangulation>`
+- `CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<Traits, Vertex_base>`
+- `CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<Traits, Cell_base>`
 */

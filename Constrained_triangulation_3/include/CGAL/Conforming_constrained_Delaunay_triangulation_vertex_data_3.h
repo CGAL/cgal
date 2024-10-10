@@ -23,14 +23,14 @@ namespace CGAL {
 
 #ifdef DOXYGEN_RUNNING
 /*!
- * @brief Internal per-vertex data for \cgal 3D constrained Delaunay triangulations
+ * @brief Internal per-vertex data for \cgal 3D conforming constrained Delaunay triangulations
  *
- * This class is an internal detail of the implementation of \cgal 3D constrained Delaunay triangulations.
+ * This class is an internal detail of the implementation of \cgal 3D conforming constrained Delaunay triangulations.
  *
- * Any model of the `ConstrainedDelaunayTriangulationVertexBase_3` concept must include one object of this type
+ * Any model of the `ConformingConstrainedDelaunayTriangulationVertexBase_3` concept must include one object of this type
  * as a non-static data member.
  */
-struct Constrained_Delaunay_triangulation_vertex_data_3 {};
+struct Conforming_constrained_Delaunay_triangulation_vertex_data_3 {};
 #else // DOXYGEN_RUNNING
 
 enum class CDT_3_vertex_type { FREE, CORNER, STEINER_ON_EDGE, STEINER_IN_FACE };
@@ -45,7 +45,7 @@ enum class CDT_3_vertex_marker {
   nb_of_markers
 };
 
-struct Constrained_Delaunay_triangulation_vertex_data_3 {
+struct Conforming_constrained_Delaunay_triangulation_vertex_data_3 {
 protected:
   // TODO: check and improve the compactness of this class
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
@@ -61,8 +61,8 @@ protected:
   } u {U::On_edge{}};
 
 public:
-  friend bool operator==(const Constrained_Delaunay_triangulation_vertex_data_3& lhs,
-                         const Constrained_Delaunay_triangulation_vertex_data_3& rhs) {
+  friend bool operator==(const Conforming_constrained_Delaunay_triangulation_vertex_data_3& lhs,
+                         const Conforming_constrained_Delaunay_triangulation_vertex_data_3& rhs) {
     return lhs.m_vertex_type == rhs.m_vertex_type && lhs.mark == rhs.mark && std::invoke([&]() {
              if(lhs.m_vertex_type == CDT_3_vertex_type::STEINER_ON_EDGE) {
                return lhs.u.on_edge.nb_of_incident_constraints == rhs.u.on_edge.nb_of_incident_constraints &&
@@ -136,7 +136,7 @@ public:
 #if CGAL_CXX20
 #  include <concepts>
 
-  static_assert(std::regular<CGAL::Constrained_Delaunay_triangulation_vertex_data_3>);
+  static_assert(std::regular<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_data_3>);
 
 #endif
 

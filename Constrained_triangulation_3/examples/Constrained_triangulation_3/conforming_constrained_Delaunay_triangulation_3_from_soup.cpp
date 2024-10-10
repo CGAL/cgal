@@ -1,4 +1,4 @@
-#include <CGAL/make_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <vector>
 #include <CGAL/draw_triangulation_3.h>
@@ -22,12 +22,12 @@ int main(int argc, char* argv[])
   std::cout << "Read " << points.size() << " vertices and "
             << polygons.size() << " polygons" << std::endl;
 
-  auto cdt = CGAL::make_constrained_Delaunay_triangulation_3(points, polygons);
+  auto ccdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3(points, polygons);
 
   std::cout << "Number of vertices in the CDT: "
-            << cdt.triangulation().number_of_vertices() << '\n'
+            << ccdt.triangulation().number_of_vertices() << '\n'
             << "Number of constrained facets in the CDT: "
-            << cdt.number_of_constrained_facets() << '\n';
+            << ccdt.number_of_constrained_facets() << '\n';
 
-  // CGAL::draw(cdt.triangulation());
+  CGAL::draw(ccdt.triangulation());
 }

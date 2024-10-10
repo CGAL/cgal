@@ -29,16 +29,16 @@ enum class CDT_3_cell_marker {
 };
 
 /*!
- * @brief Internal per-cell data for \cgal 3D constrained Delaunay triangulations
+ * @brief Internal per-cell data for \cgal 3D conforming constrained Delaunay triangulations
  *
- * This class is an internal detail of the implementation of \cgal 3D constrained Delaunay triangulations.
+ * This class is an internal detail of the implementation of \cgal 3D conforming constrained Delaunay triangulations.
  *
- * Any model of the `ConstrainedDelaunayTriangulationCellBase_3` concept must include one object of this type
+ * Any model of the `ConformingConstrainedDelaunayTriangulationCellBase_3` concept must include one object of this type
  * as a non-static data member.
  */
-class Constrained_Delaunay_triangulation_cell_data_3 {
+class Conforming_constrained_Delaunay_triangulation_cell_data_3 {
   /// @cond SKIP_IN_MANUAL
-  template <typename Tr> friend class Constrained_Delaunay_triangulation_3_impl;
+  template <typename Tr> friend class Conforming_constrained_Delaunay_triangulation_3_impl;
   /// @endcond
 
   std::array<CDT_3_face_index, 4> face_id = { -1, -1, -1, -1 };

@@ -1,12 +1,12 @@
-#include <CGAL/make_constrained_Delaunay_triangulation_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_3.h>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <algorithm>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
-using CDT = CGAL::Constrained_Delaunay_triangulation_3<K>;
+using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3<K>;
 
 int main(int argc, char* argv[])
 {
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   std::cout << "Read " << mesh.number_of_vertices() << " vertices and "
             << mesh.number_of_faces() << " faces" << std::endl;
 
-  auto cdt = CGAL::make_constrained_Delaunay_triangulation_3<CDT>(mesh);
+  auto cdt = CGAL::make_conforming_constrained_Delaunay_triangulation_3<CDT>(mesh);
   static_assert(std::is_same_v<decltype(cdt), CDT>);
   CDT cdt2(mesh);
   const auto nb_cstr_facets = cdt2.number_of_constrained_facets();

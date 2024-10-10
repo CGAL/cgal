@@ -14,42 +14,13 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
-#include <CGAL/Constrained_Delaunay_triangulation_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_vertex_base_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_cell_base_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_cell_base_3.h>
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 
 namespace CGAL {
-
-#ifndef DOXYGEN_RUNNING
-/*!
- * \ingroup PkgCT_3Classes
- * \brief The default 3D constrained Delaunay triangulation type.
- *
- * `Default_constrained_Delaunay_triangulation_3_type_generator` is a metafunction that returns the
- * default 3D constrained Delaunay triangulation type for a given geometric
- * traits class.
- *
- * \tparam Traits a geometric traits class.
- *
- * \return `type` is the default 3D constrained Delaunay triangulation type.
- *
- * \sa Default_constrained_Delaunay_triangulation_3
-*/
-template <typename Traits,
-          typename Vb = Constrained_Delaunay_triangulation_vertex_base_3<Traits>,
-          typename Cb = Constrained_Delaunay_triangulation_cell_base_3<Traits>>
-struct Default_constrained_Delaunay_triangulation_3_type_generator
-{
-  using Tds = Triangulation_data_structure_3<Vb, Cb>;
-  using Tr = Triangulation_3<Traits, Tds>;
-  using type = Constrained_Delaunay_triangulation_3<Traits, Tr>;
-};
-template <typename Traits>
-using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triangulation_3<Traits>;
-
-#endif // DOXYGEN_RUNNING
 
 /*!
  * \ingroup PkgCT_3Functions
@@ -67,18 +38,18 @@ using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triang
  * The generated triangulation will be constrained to conform to the faces of the polygon mesh, or to the surface patches
  * described by the `face_patch_map` property map if provided.
  *
- * \tparam Triangulation An instance of the `CGAL::Constrained_Delaunay_triangulation_3` class template
+ * \tparam Triangulation An instance of the `CGAL::Conforming_constrained_Delaunay_triangulation_3` class template
  *   (or `CGAL::Default`).
- *           - Its `Traits` type must be a model of `ConstrainedDelaunayTriangulationTraits_3`,
+ *           - Its `Traits` type must be a model of `ConformingConstrainedDelaunayTriangulationTraits_3`,
  *           - Its point type must be constructible from the point type of the polygon mesh,
- *           - its `Vertex` type must be a model of `ConstrainedDelaunayTriangulationVertexBase_3`, and
- *           - its `Cell` type must be a model of `ConstrainedDelaunayTriangulationCellBase_3`.
+ *           - its `Vertex` type must be a model of `ConformingConstrainedDelaunayTriangulationVertexBase_3`, and
+ *           - its `Cell` type must be a model of `ConformingConstrainedDelaunayTriangulationCellBase_3`.
  * \tparam PolygonMesh a model of `FaceListGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * If `Triangulation` is `CGAL::Default`, the geometric traits `Traits` is deduced from the polygon mesh type
- * `PolygonMesh` and the named parameters `NamedParameters`. And then the default constrained Delaunay triangulation is
- * `CGAL::Constrained_Delaunay_triangulation_3<Traits>`.
+ * `PolygonMesh` and the named parameters `NamedParameters`. And then the default conforming constrained Delaunay
+ * triangulation is `CGAL::Conforming_constrained_Delaunay_triangulation_3<Traits>`.
  *
  * \param mesh The polygon mesh representing the constraints.
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -122,12 +93,12 @@ using Default_constrained_Delaunay_triangulation_3 = Constrained_Delaunay_triang
 template <typename Triangulation = CGAL::Default,
           typename PolygonMesh,
           typename CGAL_NP_TEMPLATE_PARAMETERS>
-auto make_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh,
+auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh,
                                                const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using Mesh_geom_traits = typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type;
   using CDT = typename CGAL::Default::Get<Triangulation,
-                                          Constrained_Delaunay_triangulation_3<Mesh_geom_traits>>::type;
+                                          Conforming_constrained_Delaunay_triangulation_3<Mesh_geom_traits>>::type;
   CDT cdt(mesh, np);
   auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
   static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);
@@ -150,20 +121,20 @@ auto make_constrained_Delaunay_triangulation_3(const PolygonMesh& mesh,
  * The generated triangulation will be constrained to conform to the faces of the polygon soup, or to the surface patches
  * described by the `face_patch_map` property map if provided.
  *
- * \tparam Triangulation An instance of the `CGAL::Constrained_Delaunay_triangulation_3` class template
+ * \tparam Triangulation An instance of the `CGAL::Conforming_constrained_Delaunay_triangulation_3` class template
  *   (or `CGAL::Default`).
- *           - Its `Traits` type must be a model of `ConstrainedDelaunayTriangulationTraits_3`,
+ *           - Its `Traits` type must be a model of `ConformingConstrainedDelaunayTriangulationTraits_3`,
  *           - Its point type must be constructible from the point type of the polygon soup,
- *           - its `Vertex` type must be a model of `ConstrainedDelaunayTriangulationVertexBase_3`, and
- *           - its `Cell` type must be a model of `ConstrainedDelaunayTriangulationCellBase_3`.
+ *           - its `Vertex` type must be a model of `ConformingConstrainedDelaunayTriangulationVertexBase_3`, and
+ *           - its `Cell` type must be a model of `ConformingConstrainedDelaunayTriangulationCellBase_3`.
  * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
  * \tparam PolygonRange a model of the concept `RandomAccessContainer` whose value type is a model of the concept
  *    `RandomAccessContainer` whose value type is `std::size_t`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * If `Triangulation` is `CGAL::Default`, the geometric traits `Traits` is deduced from the point type
- * in `PointRange` and the named parameters `NamedParameters`. And then the default constrained Delaunay triangulation
- * is `CGAL::Constrained_Delaunay_triangulation_3<Traits>`.
+ * in `PointRange` and the named parameters `NamedParameters`. And then the default conforming constrained
+ * Delaunay triangulation is `CGAL::Conforming_constrained_Delaunay_triangulation_3<Traits>`.
  *
  * \param points a range of points representing the vertices of the polygon soup
  * \param polygons a range of ranges of indices representing the faces of the polygon soup
@@ -199,7 +170,7 @@ template <typename Triangulation = CGAL::Default,
           typename PointRange,
           typename PolygonRange,
           typename NamedParameters = parameters::Default_named_parameters>
-auto make_constrained_Delaunay_triangulation_3(const PointRange& points,
+auto make_conforming_constrained_Delaunay_triangulation_3(const PointRange& points,
                                                const PolygonRange& polygons,
                                                const NamedParameters& np = parameters::default_values())
 {
@@ -220,7 +191,7 @@ auto make_constrained_Delaunay_triangulation_3(const PointRange& points,
 
   using Geom_traits = decltype(get_geom_traits_type());
   using CDT =
-      typename CGAL::Default::Get<Triangulation, Constrained_Delaunay_triangulation_3<Geom_traits>>::type;
+      typename CGAL::Default::Get<Triangulation, Conforming_constrained_Delaunay_triangulation_3<Geom_traits>>::type;
   CDT cdt(points, polygons, np);
   auto remeshing_cdt{std::move(cdt).convert_for_remeshing()};
   static_assert(std::is_same_v<decltype(remeshing_cdt), CDT>);

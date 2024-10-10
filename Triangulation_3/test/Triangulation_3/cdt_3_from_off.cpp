@@ -3,8 +3,8 @@
 // #define CGAL_DEBUG_CDT_3 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_vertex_base_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_base_3.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/IO/File_binary_mesh_3.h>
@@ -56,11 +56,11 @@ using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 #endif // use Epick
 
-struct Vb : public CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K> {};
-struct Cb : public CGAL::Constrained_Delaunay_triangulation_cell_base_3<K> {};
+struct Vb : public CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K> {};
+struct Cb : public CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K> {};
 struct Tds: public CGAL::Triangulation_data_structure_3<Vb, Cb> {};
 using Delaunay = CGAL::Delaunay_triangulation_3<K, Tds>;
-using CDT = CGAL::Constrained_Delaunay_triangulation_3_impl<Delaunay>;
+using CDT = CGAL::Conforming_constrained_Delaunay_triangulation_3_impl<Delaunay>;
 using Point = Delaunay::Point;
 using Point_3 = K::Point_3;
 
@@ -717,7 +717,7 @@ int go(Mesh mesh, CDT_options options) {
       for(auto v: cdt.finite_vertex_handles()) {
         [[maybe_unused]] const auto time_stamp = v->time_stamp();
         assert(++time_stamp_counter == time_stamp);
-        if(!v->cdt_3_data().is_Steiner_vertex_on_edge()) continue;
+        if(!v->ccdt_3_data().is_Steiner_vertex_on_edge()) continue;
         const auto [va, vb] = cdt.ancestors_of_Steiner_vertex_on_edge(v);
         const auto index_va = Vertex_index{static_cast<unsigned>(va->time_stamp() - 1)};
         const auto index_vb = Vertex_index{static_cast<unsigned>(vb->time_stamp() - 1)};

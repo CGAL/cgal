@@ -17,31 +17,31 @@
 
 #include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_vertex_data_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_vertex_data_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
 
 namespace CGAL {
 
 /**
  * @ingroup PkgCT_3Classes
- * @brief The Constrained_Delaunay_triangulation_vertex_base_3 class is a vertex base class for the
- *        Constrained Delaunay Triangulation in 3D.
+ * @brief The Conforming_constrained_Delaunay_triangulation_vertex_base_3 class is a vertex base class for the
+ *        conforming constrained Delaunay triangulation in 3D.
  *
  * This class is derived from the `Triangulation_vertex_base_3` class and provides additional functionality
- * required by `make_constrained_Delaunay_triangulation_3()`.
+ * required by `make_conforming_constrained_Delaunay_triangulation_3()`.
  *
  * @tparam Traits The geometric traits class, model of `DelaunayTriangulationTraits_3`.
  *         It must be the same as the geometric traits class of the triangulation.
  * @tparam Vertex_base The base class for the vertex. It must be a model of `TriangulationVertexBase_3`.
  *
- * @cgalModels{ConstrainedDelaunayTriangulationVertexBase_3}
+ * @cgalModels{ConformingConstrainedDelaunayTriangulationVertexBase_3}
  *
- * \sa `CGAL::Constrained_Delaunay_triangulation_cell_base_3`
+ * \sa `CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3`
  */
 template < typename Traits, typename Vertex_base = Triangulation_vertex_base_3<Traits> >
-class Constrained_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vertex_base>
+class Conforming_constrained_Delaunay_triangulation_vertex_base_3 : public Base_with_time_stamp<Vertex_base>
 {
-  Constrained_Delaunay_triangulation_vertex_data_3 cdt_3_data_;
+  Conforming_constrained_Delaunay_triangulation_vertex_data_3 ccdt_3_data_;
   bool cache_validity_ = false;
   CDT_3_face_index index_ = 0;
   int dim_ = -1;
@@ -53,7 +53,7 @@ public:
   template <class TDS3> struct Rebind_TDS
   {
     using Vb3 = typename Vertex_base::template Rebind_TDS<TDS3>::Other;
-    using Other = Constrained_Delaunay_triangulation_vertex_base_3<Traits, Vb3>;
+    using Other = Conforming_constrained_Delaunay_triangulation_vertex_base_3<Traits, Vb3>;
   };
 
   // constructors, inherited from the base class
@@ -78,7 +78,7 @@ public:
   std::size_t cached_number_of_components() const { return number_of_components_; }
 
   void sync() {
-    switch(cdt_3_data().vertex_type()) {
+    switch(ccdt_3_data().vertex_type()) {
       case CDT_3_vertex_type::FREE:
         set_dimension(3);
         set_index(0);
@@ -93,7 +93,7 @@ public:
         break;
       case CDT_3_vertex_type::STEINER_IN_FACE:
         set_dimension(2);
-        set_index(cdt_3_data().face_index());
+        set_index(ccdt_3_data().face_index());
         break;
       default:
         CGAL_error();
@@ -101,9 +101,9 @@ public:
     }
   }
 
-  // model of ConstrainedDelaunayTriangulationVertexBase_3
-  Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() { return cdt_3_data_; }
-  const Constrained_Delaunay_triangulation_vertex_data_3& cdt_3_data() const { return cdt_3_data_; }
+  // model of ConformingConstrainedDelaunayTriangulationVertexBase_3
+  Conforming_constrained_Delaunay_triangulation_vertex_data_3& ccdt_3_data() { return ccdt_3_data_; }
+  const Conforming_constrained_Delaunay_triangulation_vertex_data_3& ccdt_3_data() const { return ccdt_3_data_; }
 
   static std::string io_signature() {
     return Get_io_signature<Vertex_base>()();

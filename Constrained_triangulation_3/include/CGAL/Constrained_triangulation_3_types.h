@@ -22,8 +22,8 @@ namespace CGAL {
  * @addtogroup PkgCT_3Classes
  * @typedef CDT_3_face_index
  * Integral type to store the index of constraints.
- * @see `Constrained_Delaunay_triangulation_cell_data_3`
- * @see `Constrained_Delaunay_triangulation_vertex_base_3`
+ * @see `Conforming_constrained_Delaunay_triangulation_cell_data_3`
+ * @see `Conforming_constrained_Delaunay_triangulation_vertex_base_3`
  *
  */
 using CDT_3_face_index = int; // must be signed

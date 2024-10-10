@@ -22,11 +22,11 @@ Section on definitions here ...
 
 The following example shows ...
 
-\cgalExample{Constrained_triangulation_3/constrained_Delaunay_triangulation_3.cpp }
+\cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp }
 
 or from a polygon soup ...
 
-\cgalExample{Constrained_triangulation_3/constrained_Delaunay_triangulation_3_from_soup.cpp }
+\cgalExample{Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp }
 
 */
 } /* namespace CGAL */

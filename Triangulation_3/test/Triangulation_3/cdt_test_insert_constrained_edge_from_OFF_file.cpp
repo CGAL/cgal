@@ -4,7 +4,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 
 #include <CGAL/Surface_mesh.h>
 
@@ -17,8 +17,8 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Triangulation_data_structure_3<
-  CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>,
-  CGAL::Constrained_Delaunay_triangulation_cell_base_3<K> >     Tds;
+  CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K>,
+  CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K> >     Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                  Delaunay;
 typedef Delaunay::Point                                         Point;
 using Point_3 = K::Point_3;
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 #ifndef CGAL_TEST_CDT_3_USE_CDT
   CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt_edge;
 #else
-  CGAL::Constrained_Delaunay_triangulation_3_impl<Delaunay> cdt_edge;
+  CGAL::Conforming_constrained_Delaunay_triangulation_3_impl<Delaunay> cdt_edge;
 #endif
   auto point_map = get(CGAL::vertex_point, mesh);
   auto dt_vertex_handle_map =

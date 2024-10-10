@@ -3,7 +3,7 @@
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/make_constrained_Delaunay_triangulation_3.h>
+#include <CGAL/make_conforming_constrained_Delaunay_triangulation_3.h>
 #include <QAction>
 #include <QList>
 
@@ -60,8 +60,8 @@ class CDT_3_plugin : public QObject, public CGAL_Lab_plugin_interface
       return;
     auto patch_id_pmap = mesh->property_map<SMesh::Face_index, int>("f:patch_id");
     auto  cdt = patch_id_pmap
-        ? CGAL::make_constrained_Delaunay_triangulation_3(*mesh, CGAL::parameters::face_patch_map(*patch_id_pmap))
-        : CGAL::make_constrained_Delaunay_triangulation_3(*mesh);
+        ? CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh, CGAL::parameters::face_patch_map(*patch_id_pmap))
+        : CGAL::make_conforming_constrained_Delaunay_triangulation_3(*mesh);
     const auto& cdt_tr = cdt.triangulation();
     auto triangulation_item = std::make_unique<Scene_c3t3_item>();
     auto& item_tr = triangulation_item->triangulation();

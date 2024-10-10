@@ -4,7 +4,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Random.h>
 #include <CGAL/Conforming_Delaunay_triangulation_3.h>
-#include <CGAL/Constrained_Delaunay_triangulation_3.h>
+#include <CGAL/Conforming_constrained_Delaunay_triangulation_3.h>
 #include <CGAL/Base_with_time_stamp.h>
 #include <CGAL/draw_triangulation_3.h>
 
@@ -14,8 +14,8 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Triangulation_data_structure_3<
-  CGAL::Base_with_time_stamp<CGAL::Constrained_Delaunay_triangulation_vertex_base_3<K>>,
-  CGAL::Constrained_Delaunay_triangulation_cell_base_3<K> >                 Tds;
+  CGAL::Base_with_time_stamp<CGAL::Conforming_constrained_Delaunay_triangulation_vertex_base_3<K>>,
+  CGAL::Conforming_constrained_Delaunay_triangulation_cell_base_3<K> >                 Tds;
 typedef CGAL::Delaunay_triangulation_3<K, Tds>                  Delaunay;
 typedef Delaunay::Point                                         Point;
 using Point_3 = K::Point_3;
@@ -67,7 +67,7 @@ int main()
 #ifndef CGAL_TEST_CDT_3_USE_CDT
     CGAL::Conforming_Delaunay_triangulation_3<Delaunay> cdt;
 #else
-    CGAL::Constrained_Delaunay_triangulation_3_impl<Delaunay> cdt;
+    CGAL::Conforming_constrained_Delaunay_triangulation_3_impl<Delaunay> cdt;
 #endif
 
     std::ifstream input(filename);
@@ -105,7 +105,7 @@ int main()
 
     for (auto v : cdt.finite_vertex_handles()) {
       std::cout << "Point ( " << v->point() << " )\n";
-      std::cout << "  on " << v->cdt_3_data().number_of_incident_constraints()
+      std::cout << "  on " << v->ccdt_3_data().number_of_incident_constraints()
                 << " constraint(s)\n";
     }
     std::cerr << "test2: " << filename << "  "
