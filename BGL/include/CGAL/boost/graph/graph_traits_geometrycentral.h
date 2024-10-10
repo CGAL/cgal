@@ -222,14 +222,14 @@ halfedge(typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceM
 typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::vertices_size_type
 inline num_vertices(const geometrycentral::surface::ManifoldSurfaceMesh& sm)
 {
-  return sm.nVertices();
+  return sm.vertexIndexSize();
 }
 
 
 typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::edges_size_type
 inline num_edges(const geometrycentral::surface::ManifoldSurfaceMesh& sm)
 {
-  return sm.nEdges();
+  return sm.edgeIndexSize();
 }
 
 
@@ -540,7 +540,7 @@ set_halfedge(typename boost::graph_traits<geometrycentral::surface::ManifoldSurf
 typename boost::graph_traits<geometrycentral::surface::ManifoldSurfaceMesh >::faces_size_type
 inline num_faces(const geometrycentral::surface::ManifoldSurfaceMesh& sm)
 {
-  return sm.nFaces();
+  return sm.faceIndexSize();
 }
 
 
