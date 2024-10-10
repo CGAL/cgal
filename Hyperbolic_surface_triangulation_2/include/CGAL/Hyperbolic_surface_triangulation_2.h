@@ -15,7 +15,7 @@
 #ifndef CGAL_HYPERBOLIC_SURFACE_TRIANGULATION_2
 #define CGAL_HYPERBOLIC_SURFACE_TRIANGULATION_2
 
-#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Complex_number.h>
 #include <CGAL/Hyperbolic_isometry_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/basic.h>
@@ -39,7 +39,7 @@ template<class Traits>
 struct Combinatorial_map_with_cross_ratios_item{
     template <class CMap>
     struct Dart_wrapper{
-        typedef Cell_attribute<CMap, Complex_without_sqrt<typename Traits::FT>> Edge_attrib;
+        typedef Cell_attribute<CMap, Complex_number<typename Traits::FT>> Edge_attrib;
         typedef std::tuple<void,Edge_attrib,void>   Attributes;
     };
   };
@@ -488,7 +488,8 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_valid() const{
 
     // Check that the three vertices of the anchor lie within the open unit disk
     for (int k=0; k<3; k++){
-      if (_anchor.vertices[k].get_z().squared_modulus() >= Number(1)){
+      //      if (_anchor.vertices[k].get_z().squared_modulus() >= Number(1)){
+      if ( Complex_number(_anchor.vertices[k].x(),_anchor.vertices[k].y()).squared_modulus() >= Number(1)){
         return false;
       }
     }

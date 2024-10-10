@@ -6,7 +6,7 @@ project(Hyperbolic_surface_triangulation_2_Tests)
 
 find_package(CGAL REQUIRED)
 
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
 
 include_directories(../../include/)
 

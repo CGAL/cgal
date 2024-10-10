@@ -1,5 +1,5 @@
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Complex_number.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 
 #include <iostream>
@@ -48,6 +48,8 @@ int main() {
   for (int k=0; k<8; k++){
     assert( domain.vertex(k)==vertices[k] );
     assert( domain.paired_side(k)==(k+4)%8 );
+
+    std::cout << "domain.side_pairing(k).evaluate(domain.vertex((k+4)%8))= " << domain.side_pairing(k).evaluate(domain.vertex((k+4)%8)) << "domain.vertex((k+1)%8)= " << domain.vertex((k+1)%8) << std::endl;
 
     assert( domain.side_pairing(k).evaluate(domain.vertex((k+4)%8))==domain.vertex((k+1)%8) );
     assert( domain.side_pairing(k).evaluate(domain.vertex((k+5)%8))==domain.vertex(k) );

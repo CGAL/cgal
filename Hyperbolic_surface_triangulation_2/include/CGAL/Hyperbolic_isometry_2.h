@@ -15,7 +15,7 @@
 #ifndef CGAL_HYPERBOLIC_ISOMETRY_2
 #define CGAL_HYPERBOLIC_ISOMETRY_2
 
-#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Complex_number.h>
 
 namespace CGAL {
 

@@ -15,7 +15,7 @@
 #ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2
 #define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_FACTORY_2
 
-#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Complex_number.h>
 #include <CGAL/Hyperbolic_isometry_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <cmath>
@@ -45,12 +45,12 @@ public:
 private:
   float random_positive_float(); // returns number in [0,1]
   float random_float(); // returns number in [-1,1]
-  Complex_without_sqrt<float> random_complex_float(); // returns complex z such that modulus(z) < 1 and imag(z) > 0
+  Complex_number<float> random_complex_float(); // returns complex z such that modulus(z) < 1 and imag(z) > 0
 
   _FT exact_number_from_float(float x);
-  _Cmplx exact_complex_from_float_complex(const Complex_without_sqrt<float>& z);
+  _Cmplx exact_complex_from_float_complex(const Complex_number<float>& z);
 
-  bool try_to_compute_inexact_z0_from_z1_z2_z3(Complex_without_sqrt<float>& z0, Complex_without_sqrt<float>& z1, Complex_without_sqrt<float>& z2, Complex_without_sqrt<float>& z3);
+  bool try_to_compute_inexact_z0_from_z1_z2_z3(Complex_number<float>& z0, Complex_number<float>& z1, Complex_number<float>& z2, Complex_number<float>& z3);
   bool try_to_compute_exact_z3_from_z0_z1_z2(_Cmplx& z0, _Cmplx& z1, _Cmplx& z2, _Cmplx& z3);
 
   bool sanity_check(_Cmplx& z0, _Cmplx& z1, _Cmplx& z2, _Cmplx& z3);
@@ -76,7 +76,7 @@ Hyperbolic_fundamental_domain_2<Traits> Hyperbolic_fundamental_domain_factory_2<
 
   while (!is_domain_generated){
     // 1. Generate inexact z0,z1,z2,z3
-    Complex_without_sqrt<float> z0, z1, z2, z3;
+    Complex_number<float> z0, z1, z2, z3;
     z1 = random_complex_float();
     z2 = random_complex_float();
     z3 = random_complex_float();
@@ -133,8 +133,8 @@ float Hyperbolic_fundamental_domain_factory_2<Traits>::random_float(){
 }
 
 template<class Traits>
-Complex_without_sqrt<float> Hyperbolic_fundamental_domain_factory_2<Traits>::random_complex_float(){
-  Complex_without_sqrt<float> result (random_float(), random_positive_float());
+Complex_number<float> Hyperbolic_fundamental_domain_factory_2<Traits>::random_complex_float(){
+  Complex_number<float> result (random_float(), random_positive_float());
   while (result.squared_modulus() >= 1){
     result.real(random_float());
     result.imag(random_positive_float());
@@ -154,20 +154,20 @@ typename Traits::FT Hyperbolic_fundamental_domain_factory_2<Traits>::exact_numbe
 }
 
 template<class Traits>
-typename Traits::Complex Hyperbolic_fundamental_domain_factory_2<Traits>::exact_complex_from_float_complex(const Complex_without_sqrt<float>& z){
+typename Traits::Complex Hyperbolic_fundamental_domain_factory_2<Traits>::exact_complex_from_float_complex(const Complex_number<float>& z){
   return _Cmplx(exact_number_from_float(z.real()), exact_number_from_float(z.imag()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-bool Hyperbolic_fundamental_domain_factory_2<Traits>::try_to_compute_inexact_z0_from_z1_z2_z3(Complex_without_sqrt<float>& z0, Complex_without_sqrt<float>& z1, Complex_without_sqrt<float>& z2, Complex_without_sqrt<float>& z3){
+bool Hyperbolic_fundamental_domain_factory_2<Traits>::try_to_compute_inexact_z0_from_z1_z2_z3(Complex_number<float>& z0, Complex_number<float>& z1, Complex_number<float>& z2, Complex_number<float>& z3){
   if (   ((z2/z1).imag()<=0) || ((z3/z2).imag()<=0)   ){
     return false;
   }
 
-  Complex_without_sqrt<float> one (1,0);
-  Complex_without_sqrt<float> u = (one - z1*z2.conjugate())   *   (one - z2*z3.conjugate());
+  Complex_number<float> one (1,0);
+  Complex_number<float> u = (one - z1*z2.conjugate())   *   (one - z2*z3.conjugate());
   float a = -(u*z1.conjugate()*z3).imag();
   float b = (u*(z3-z1.conjugate())).imag();
   float c = u.imag();

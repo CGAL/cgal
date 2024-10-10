@@ -15,7 +15,7 @@
 #ifndef CGAL_Hyperbolic_surface_traits_2
 #define CGAL_Hyperbolic_surface_traits_2
 
-#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Complex_number.h>
 #include <iostream>
 
 namespace CGAL {
@@ -72,7 +72,7 @@ class Hyperbolic_surface_traits_2 : public HyperbolicTraitsClass {
 public:
   typedef typename HyperbolicTraitsClass::FT                          FT;
   typedef typename HyperbolicTraitsClass::Hyperbolic_point_2          Hyperbolic_point_2;
-  typedef Complex_without_sqrt<FT>                                    Complex;
+  typedef Complex_number<FT>                                    Complex;
 };
 
 } // namespace CGAL

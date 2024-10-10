@@ -15,7 +15,7 @@
 #ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 #define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 
-#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Complex_number.h>
 #include <CGAL/Hyperbolic_isometry_2.h>
 
 #include <vector>
@@ -201,8 +201,8 @@ bool Hyperbolic_fundamental_domain_2<Traits>::is_valid()const{
 
   // Check that the vertices all lie within the open unit disk
   for (int k=0; k<n; k++){
-    if (_vertices[k].get_z().squared_modulus() >= typename Traits::FT(1)){
-      return false;
+    if (Complex_number(_vertices[k].x(),_vertices[k].y()).squared_modulus() >= typename Traits::FT(1)){
+   return false;
     }
   }
 

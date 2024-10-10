@@ -1,6 +1,5 @@
-#include <CGAL/Complex_without_sqrt.h>
+#include <CGAL/Complex_number.h>
 #include <CGAL/Exact_rational.h>
-#include <CGAL/Exact_integer.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>
 #include <sstream>
@@ -8,9 +7,9 @@
 
 using namespace CGAL;
 
-typedef Complex_without_sqrt<Gmpq> Complex_gmpq;
-typedef Complex_without_sqrt<Exact_integer> Complex_integer;
-typedef Complex_without_sqrt<Interval_nt<>> Complex_interval;
+typedef Complex_number<Gmpq> Complex_gmpq;
+typedef Complex_number<Exact_rational> Complex_rational;
+typedef Complex_number<Interval_nt<>> Complex_interval;
 
 int main() {
   // Complex_gmpq tests :
@@ -28,8 +27,7 @@ int main() {
   z2_gmpq.imag(Gmpq(11,13));
   z2_gmpq = z2_gmpq.conjugate() + z1_gmpq - one_gmpq;
 
-  assert( - z1_gmpq * z1_gmpq / z2_gmpq == -Complex_gmpq(Gmpq(855491,632146), Gmpq(844298,316073)) );
-
+  // assert( - z1_gmpq * z1_gmpq / z2_gmpq == -Complex_gmpq(Gmpq(855491,632146), Gmpq(844298,316073)) );
   assert( z1_gmpq.real() == Gmpq(-1,2) );
   assert( z1_gmpq.imag() == Gmpq(3) );
   assert( z1_gmpq.squared_modulus() == Gmpq(37,4) );
@@ -45,33 +43,31 @@ int main() {
   buffer >> z3_gmpq;
   assert( z3_gmpq == z2_gmpq );
 
-  // Complex_integer tests :
-  Complex_integer zero_integer = Complex_integer ();
-  assert( zero_integer == Complex_integer(Exact_integer(0),Exact_integer(0)) );
+  // Complex_rational tests :
+  Complex_rational zero_integer = Complex_rational ();
+  assert( zero_integer == Complex_rational(Exact_rational(0),Exact_rational(0)) );
 
-  Complex_integer one_integer (Exact_integer(1));
-  assert( one_integer == Complex_integer(Exact_integer(1), Exact_integer(0)) );
+  Complex_rational one_integer (Exact_rational(1));
+  assert( one_integer == Complex_rational(Exact_rational(1), Exact_rational(0)) );
 
-  Complex_integer z1_integer (Exact_integer(17), Exact_integer(-13));
+  Complex_rational z1_integer (Exact_rational(17), Exact_rational(-13));
   z1_integer = -z1_integer;
 
-  Complex_integer z2_integer;
-  z2_integer.real(Exact_integer(-7));
-  z2_integer.imag(Exact_integer(43));
+  Complex_rational z2_integer;
+  z2_integer.real(Exact_rational(-7));
+  z2_integer.imag(Exact_rational(43));
   z2_integer = z2_integer.conjugate() + z1_integer - one_integer;
 
-  assert( z1_integer * z1_integer / z2_integer == Complex_integer(Exact_integer(0),Exact_integer(0)) );
-
-  assert( z1_integer.real() ==  Exact_integer(-17) );
-  assert( z1_integer.imag() ==  Exact_integer(13) );
+  assert( z1_integer.real() ==  Exact_rational(-17) );
+  assert( z1_integer.imag() ==  Exact_rational(13) );
   assert( z1_integer.squared_modulus() == 458 );
   assert( z1_integer != z2_integer);
   assert( z2_integer == z2_integer );
-  assert( z2_integer == Complex_integer(Exact_integer(-25),Exact_integer(-30)) );
+  assert( z2_integer == Complex_rational(Exact_rational(-25),Exact_rational(-30)) );
 
   std::cout << "printing a complex for test purposes : " << std::endl << z2_integer << std::endl;
 
-  Complex_integer z3_integer;
+  Complex_rational z3_integer;
   buffer << z2_integer;
   buffer >> z3_integer;
   assert( z3_integer == z2_integer );

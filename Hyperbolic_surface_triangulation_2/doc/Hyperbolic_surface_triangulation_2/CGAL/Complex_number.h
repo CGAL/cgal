@@ -3,12 +3,12 @@ namespace CGAL{
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-\cgalModels{ComplexWithoutSqrt}
+\cgalModels{ComplexNumber}
 
 \tparam FT is the field type and must be a model of `FieldNumberType`.
 */
 template <class FT>
-class Complex_without_sqrt {
+class Complex_number {
 };
 
 }; // namespace CGAL

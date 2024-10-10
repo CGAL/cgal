@@ -10,10 +10,10 @@
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
 
-// This file contains the declaration and the implementation of the class Complex_without_sqrt
+// This file contains the declaration and the implementation of the class Complex_number
 
-#ifndef CGAL_COMPLEX_WITHOUT_SQRT
-#define CGAL_COMPLEX_WITHOUT_SQRT
+#ifndef CGAL_COMPLEX_NUMBER
+#define CGAL_COMPLEX_NUMBER
 
 #include <fstream>
 #include <sstream>
@@ -23,17 +23,17 @@ namespace CGAL {
 Templated by a field FT. Represents a complex number over FT.
 */
 template <class FT>
-class Complex_without_sqrt {
+class Complex_number {
 private:
-  typedef Complex_without_sqrt<FT>            _Self;
+  typedef Complex_number<FT>            _Self;
   FT _real, _imag;
 
 public:
-  Complex_without_sqrt();
-  Complex_without_sqrt(const FT& real_part);
-  Complex_without_sqrt(const FT& real_part, const FT& imaginary_part);
+  Complex_number();
+  Complex_number(const FT& real_part);
+  Complex_number(const FT& real_part, const FT& imaginary_part);
   template<class U,class V>
-    Complex_without_sqrt(U&& real_part, V&& imaginary_part): _real(std::forward<U>(real_part)), _imag(std::forward<V>(imaginary_part)) {}
+    Complex_number(U&& real_part, V&& imaginary_part): _real(std::forward<U>(real_part)), _imag(std::forward<V>(imaginary_part)) {}
 
   void real(const FT& real_part);
   void imag(const FT& imaginary_part);
@@ -106,19 +106,19 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class FT>
-Complex_without_sqrt<FT>::Complex_without_sqrt(){
+Complex_number<FT>::Complex_number(){
   _real = FT(0);
   _imag = FT(0);
 }
 
 template<class FT>
-Complex_without_sqrt<FT>::Complex_without_sqrt(const FT& real_part){
+Complex_number<FT>::Complex_number(const FT& real_part){
   _real = real_part;
   _imag = FT(0);
 }
 
 template<class FT>
-Complex_without_sqrt<FT>::Complex_without_sqrt(const FT& real_part, const FT& imaginary_part){
+Complex_number<FT>::Complex_number(const FT& real_part, const FT& imaginary_part){
   _real = real_part;
   _imag = imaginary_part;
 }
@@ -126,63 +126,63 @@ Complex_without_sqrt<FT>::Complex_without_sqrt(const FT& real_part, const FT& im
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class FT>
-void Complex_without_sqrt<FT>::real(const FT& real_part){
+void Complex_number<FT>::real(const FT& real_part){
   _real = real_part;
 }
 
 template<class FT>
-void Complex_without_sqrt<FT>::imag(const FT& imaginary_part){
+void Complex_number<FT>::imag(const FT& imaginary_part){
   _imag = imaginary_part;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class FT>
-FT Complex_without_sqrt<FT>::real() const{
+FT Complex_number<FT>::real() const{
   return _real;
 }
 
 template<class FT>
-FT Complex_without_sqrt<FT>::imag() const{
+FT Complex_number<FT>::imag() const{
   return _imag;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class FT>
-FT Complex_without_sqrt<FT>::squared_modulus() const{
+FT Complex_number<FT>::squared_modulus() const{
   return _real*_real + _imag*_imag;
 }
 
 template<class FT>
-Complex_without_sqrt<FT> Complex_without_sqrt<FT>::conjugate() const{
-  return Complex_without_sqrt<FT>(_real, -_imag);
+Complex_number<FT> Complex_number<FT>::conjugate() const{
+  return Complex_number<FT>(_real, -_imag);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 template<class FT>
-Complex_without_sqrt<FT>& Complex_without_sqrt<FT>::operator+=(const Complex_without_sqrt<FT>& other) {
+Complex_number<FT>& Complex_number<FT>::operator+=(const Complex_number<FT>& other) {
   _real += other.real();
   _imag += other.imag();
   return *this;
 }
 
 template<class FT>
-Complex_without_sqrt<FT>& Complex_without_sqrt<FT>::operator-=(const Complex_without_sqrt<FT>& other) {
+Complex_number<FT>& Complex_number<FT>::operator-=(const Complex_number<FT>& other) {
   _real -= other.real();
   _imag -= other.imag();
   return *this;
 }
 
  template<class FT>
-Complex_without_sqrt<FT>& Complex_without_sqrt<FT>::operator*=(const Complex_without_sqrt<FT>& other) {
+Complex_number<FT>& Complex_number<FT>::operator*=(const Complex_number<FT>& other) {
   _real = _real*other.real() - _imag*other.imag();
   _imag = _real*other.imag() + _imag*other.real();
   return *this;
 }
 
  template<class FT>
-Complex_without_sqrt<FT>& Complex_without_sqrt<FT>::operator/=(const Complex_without_sqrt<FT>& other) {
+Complex_number<FT>& Complex_number<FT>::operator/=(const Complex_number<FT>& other) {
    FT m2 = other.squared_modulus();
    _real /= m2;
    _imag /= m2;
@@ -191,7 +191,7 @@ Complex_without_sqrt<FT>& Complex_without_sqrt<FT>::operator/=(const Complex_wit
 }
 
  template<class FT>
-Complex_without_sqrt<FT>& Complex_without_sqrt<FT>::operator=(const Complex_without_sqrt<FT>& other) {
+Complex_number<FT>& Complex_number<FT>::operator=(const Complex_number<FT>& other) {
   _real = other.real();
   _imag = other.imag();
   return *this;
