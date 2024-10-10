@@ -19,6 +19,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 template <typename PolygonWithHoles>
 bool read_dat_polygon(const char* filename,
@@ -36,7 +37,7 @@ bool read_dat_polygon(const char* filename,
   }
 
   bool is_number_of_CC_in_input = false;
-  if(CGAL::IO::internal::get_file_extension(filename) == "poly")
+  if(std::filesystem::path(filename).extension().string() == ".poly")
   {
     is_number_of_CC_in_input = true;
   }
