@@ -24,7 +24,7 @@ namespace CGAL {
 
 /*!
  * \ingroup PkgCT_3Functions
- * \brief Create a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
+ * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
  *
  * The polygon mesh represents the polygonal constraints that will be enforced during the triangulation process.
  *
@@ -107,7 +107,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh& mes
 
 /*!
  * \ingroup PkgCT_3Functions
- * \brief Create a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
+ * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
  *
  * The polygon soup represents the polygonal constraints that will be enforced during the triangulation process.
  *

@@ -551,7 +551,7 @@ public:
   /// \name Constructors
   /// @{
   /*!
-    * \brief %Default constructor.
+    * \brief %default constructor.
     *
     * This constructor initializes an empty `Conforming_constrained_Delaunay_triangulation_3` object.
     */
@@ -561,7 +561,7 @@ public:
   Conforming_constrained_Delaunay_triangulation_3() = default;
 #endif
   /*!
-    * \brief Creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
+    * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
     *
     * The polygon mesh represents the polygonal constraints that will be enforced during the triangulation process.
     *
@@ -730,7 +730,7 @@ public:
   }
 
   /*!
-    * \brief Creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
+    * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
     *
     * The polygon soup represents the polygonal constraints that will be enforced during the triangulation process.
     *
@@ -827,7 +827,7 @@ public:
   /// \name Accessors for the Underlying Triangulation
   /// @{
   /*!
-    * \brief Returns a const reference to the underlying triangulation.
+    * \brief returns a const reference to the underlying triangulation.
     *
     * This allows the use of all non-modifying functions of the base triangulation.
     * See the other overload for a way to move the triangulation out of this object and then modify it.
@@ -837,7 +837,7 @@ public:
   }
 
   /*!
-    * \brief Moves and returns the underlying triangulation, then clears the object.
+    * \brief moves and returns the underlying triangulation, then clears the object.
     *
     * This function allows the underlying triangulation to be moved out of this object.
     * Example usage:
@@ -901,7 +901,7 @@ public:
 #endif
 
   /**
-   * \brief Defines a range type for iterating over the constrained facets.
+   * \brief defines a range type for iterating over the constrained facets.
    *
    * This type is used to iterate through all facets that are constrained.
    * Its iterator type is ::Constrained_facets_iterator.
@@ -911,14 +911,14 @@ public:
   /// \name Accessors for Constrained Facets
   /// @{
   /*!
-   * \brief Determines if a facet is constrained.
+   * \brief determines if a facet is constrained.
    */
   bool is_facet_constrained(typename Triangulation::Facet f) const {
     return cdt_impl.is_facet_constrained(f);
   }
 
   /*!
-   * \brief Determines if a facet is constrained.
+   * \brief determines if a facet is constrained.
    *
    * The facet is identified by a cell handle and an index.
    *
@@ -930,7 +930,7 @@ public:
   }
 
 /*!
-   * \brief Returns the number of constrained facets in the triangulation.
+   * \brief returns the number of constrained facets in the triangulation.
    *
    */
   typename Triangulation::size_type number_of_constrained_facets() const {
@@ -940,7 +940,7 @@ public:
   }
 
 /**
-   * \brief Returns an iterator to the start of the sequence of constrained facets.
+   * \brief returns an iterator to the start of the sequence of constrained facets.
    *
    * This function provides an iterator to the first facet that is constrained within the triangulation.
    * The sequence of constrained facets is in an arbitrary order.
@@ -950,14 +950,14 @@ public:
   }
 
   /**
-   * \brief Returns the past-the-end iterator of the sequence of constrained facets.
+   * \brief returns the past-the-end iterator of the sequence of constrained facets.
    */
   Constrained_facets_iterator constrained_facets_end() const {
     return {Is_constrained{*this}, cdt_impl.all_facets_end(), cdt_impl.all_facets_end()};
   }
 
 /**
-  * \brief Returns a range of the constrained facets.
+  * \brief returns a range of the constrained facets.
   *
   * Its iterator type is ::Constrained_facets_iterator.
   */
