@@ -400,9 +400,9 @@ namespace internal {
       for(edge_descriptor e : edge_range)
       {
         const halfedge_descriptor he = halfedge(e, mesh_);
-        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
+        auto sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
         if(sqlen != std::nullopt)
-          long_edges.emplace(he, sqlen.value());
+          long_edges.emplace(he, CGAL::to_double(sqlen.value()));
       }
 
       //split long edges
@@ -437,14 +437,14 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
+        auto sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
         if(sqlen_new != std::nullopt)
-          long_edges.emplace(hnew, sqlen_new.value());
+          long_edges.emplace(hnew, CGAL::to_double(sqlen_new.value()));
 
         const halfedge_descriptor hnext = next(hnew, mesh_);
         sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_), mesh_);
         if (sqlen_new != std::nullopt)
-          long_edges.emplace(hnext, sqlen_new.value());
+          long_edges.emplace(hnext, CGAL::to_double(sqlen_new.value()));
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_border(hnew, mesh_))
@@ -500,9 +500,9 @@ namespace internal {
         if (!is_split_allowed(e))
           continue;
         const halfedge_descriptor he = halfedge(e, mesh_);
-        std::optional<double> sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
+        auto sqlen = sizing.is_too_long(source(he, mesh_), target(he, mesh_), mesh_);
         if(sqlen != std::nullopt)
-          long_edges.emplace(halfedge(e, mesh_), sqlen.value());
+          long_edges.emplace(halfedge(e, mesh_), CGAL::to_double(sqlen.value()));
       }
 
       //split long edges
@@ -554,14 +554,14 @@ namespace internal {
 
         //check sub-edges
         //if it was more than twice the "long" threshold, insert them
-        std::optional<double> sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
+        auto sqlen_new = sizing.is_too_long(source(hnew, mesh_), target(hnew, mesh_), mesh_);
         if(sqlen_new != std::nullopt)
-          long_edges.emplace(hnew, sqlen_new.value());
+          long_edges.emplace(hnew, CGAL::to_double(sqlen_new.value()));
 
         const halfedge_descriptor hnext = next(hnew, mesh_);
         sqlen_new = sizing.is_too_long(source(hnext, mesh_), target(hnext, mesh_), mesh_);
         if (sqlen_new != std::nullopt)
-          long_edges.emplace(hnext, sqlen_new.value());
+          long_edges.emplace(hnext, CGAL::to_double(sqlen_new.value()));
 
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
@@ -580,9 +580,9 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
+            auto sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
             if(sql != std::nullopt)
-              long_edges.emplace(hnew2, sql.value());
+              long_edges.emplace(hnew2, CGAL::to_double(sql.value()));
           }
         }
 
@@ -603,9 +603,9 @@ namespace internal {
 
           if (snew == PATCH)
           {
-            std::optional<double> sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
+            auto sql = sizing.is_too_long(source(hnew2, mesh_), target(hnew2, mesh_), mesh_);
             if (sql != std::nullopt)
-              long_edges.emplace(hnew2, sql.value());
+              long_edges.emplace(hnew2, CGAL::to_double(sql.value()));
           }
         }
       }
@@ -648,10 +648,10 @@ namespace internal {
       Boost_bimap short_edges;
       for(edge_descriptor e : edges(mesh_))
       {
-        std::optional<double> sqlen = sizing.is_too_short(halfedge(e, mesh_), mesh_);
+        auto sqlen = sizing.is_too_short(halfedge(e, mesh_), mesh_);
         if(sqlen != std::nullopt
           && is_collapse_allowed(e, collapse_constraints))
-          short_edges.insert(short_edge(halfedge(e, mesh_), sqlen.value()));
+          short_edges.insert(short_edge(halfedge(e, mesh_), CGAL::to_double(sqlen.value())));
       }
 #ifdef CGAL_PMP_REMESHING_VERBOSE_PROGRESS
       std::cout << "done." << std::endl;
@@ -747,8 +747,7 @@ namespace internal {
         for(halfedge_descriptor ha : halfedges_around_target(va, mesh_))
         {
           vertex_descriptor va_i = source(ha, mesh_);
-          std::optional<double> sqha = sizing.is_too_long(vb, va_i, mesh_);
-          if (sqha != std::nullopt)
+          if (sizing.is_too_long(vb, va_i, mesh_))
           {
             collapse_ok = false;
             break;
@@ -813,10 +812,10 @@ namespace internal {
             //insert new/remaining short edges
             for (halfedge_descriptor ht : halfedges_around_target(vkept, mesh_))
             {
-              std::optional<double> sqlen = sizing.is_too_short(ht, mesh_);
+              auto sqlen = sizing.is_too_short(ht, mesh_);
               if (sqlen != std::nullopt
                 && is_collapse_allowed(edge(ht, mesh_), collapse_constraints))
-                short_edges.insert(short_edge(ht, sqlen.value()));
+                short_edges.insert(short_edge(ht, CGAL::to_double(sqlen.value())));
             }
           }
         }//end if(collapse_ok)
@@ -1772,9 +1771,9 @@ private:
             //insert new edges in 'short_edges'
             if (is_collapse_allowed(edge(hf, mesh_), collapse_constraints))
             {
-              std::optional<double> sqlen = sizing.is_too_short(hf, mesh_);
+              auto sqlen = sizing.is_too_short(hf, mesh_);
               if (sqlen != std::nullopt)
-                short_edges.insert(typename Bimap::value_type(hf, sqlen.value()));
+                short_edges.insert(typename Bimap::value_type(hf, CGAL::to_double(sqlen.value())));
             }
 
             break;
