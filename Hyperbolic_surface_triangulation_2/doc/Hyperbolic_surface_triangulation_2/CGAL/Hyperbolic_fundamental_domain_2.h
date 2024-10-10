@@ -47,14 +47,14 @@ public:
   int size() const;
 
   /*!
-      returns the \f$ i \f$-th vertex.
+      returns the i-th vertex.
 
       \pre <code> is_valid() </code>
   */
   const Point& vertex(int i) const;
 
   /*!
-      returns the index of the side paired to the \f$ i \f$-th side.
+      returns the index of the side paired to the i-th side.
 
       \pre <code> is_valid() </code>
   */
@@ -62,7 +62,7 @@ public:
 
   /*!
        returns the isometry that maps side \f$ \overline A \f$ to side \f$ A
-       \f$, where \f$ A \f$ is the \f$ i \f$-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
+       \f$, where \f$ A \f$ is the i-th side, and \f$ \overline A \f$ is the side paired to \f$ A \f$.
 
        \pre <code> is_valid() </code>
   */
@@ -77,7 +77,7 @@ public:
       The format of the output is the following.
       The first line prints the number \f$n\f$ of vertices of the domain.
       For \f$ i=0 \f$ to \f$ n-1 \f$ the index of the side paired to side \f$ i \f$ is printed on a separate line.
-      For \f$ i=0 \f$ to \f$ n-1 \f$ the \f$ i \f$-th vertex is printed on a separate line.
+      For \f$ i=0 \f$ to \f$ n-1 \f$ the i-th vertex is printed on a separate line.
 
       \pre <code> is_valid() </code>
   */

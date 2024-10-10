@@ -404,9 +404,9 @@ std::vector<std::tuple<typename Hyperbolic_surface_triangulation_2<Traits, Attri
   Complex_number anchor_z1 (_anchor.vertices[1].x(), _anchor.vertices[1].y());
   Complex_number anchor_z2 (_anchor.vertices[2].x(), _anchor.vertices[2].y());
 
-  double weight_of_anchor_dart = CGAL::to_double(anchor_z0.squared_modulus() + anchor_z1.squared_modulus());
-  double weight_of_ccw_anchor_dart = CGAL::to_double(anchor_z1.squared_modulus() + anchor_z2.squared_modulus());
-  double weight_of_cw_anchor_dart = CGAL::to_double(anchor_z2.squared_modulus() + anchor_z0.squared_modulus());
+  double weight_of_anchor_dart = CGAL::to_double(norm(anchor_z0) + norm(anchor_z1));
+  double weight_of_ccw_anchor_dart = CGAL::to_double(norm(anchor_z1) + norm(anchor_z2));
+  double weight_of_cw_anchor_dart = CGAL::to_double(norm(anchor_z2) + norm(anchor_z0));
 
   queue.push(std::make_pair(_anchor.dart, weight_of_anchor_dart));
   queue.push(std::make_pair(const_ccw(_anchor.dart), weight_of_ccw_anchor_dart));
@@ -437,10 +437,10 @@ std::vector<std::tuple<typename Hyperbolic_surface_triangulation_2<Traits, Attri
 
       Complex_number za (a.x(), a.y());
       Complex_number zc (c.x(), c.y());
-      double invaded_distance_to_zero = CGAL::to_double(za.squared_modulus());
-      double invaded_ccw_distance_to_zero = CGAL::to_double(zc.squared_modulus());
+      double invaded_distance_to_zero = CGAL::to_double(norm(za));
+      double invaded_ccw_distance_to_zero = CGAL::to_double(norm(zc));
       Complex_number znew (positions[const_cw(invaded)].x(), positions[const_cw(invaded)].y());
-      double invaded_cw_distance_to_zero = CGAL::to_double(znew.squared_modulus());
+      double invaded_cw_distance_to_zero = CGAL::to_double(norm(znew));
 
       double invaded_ccw_weight = invaded_ccw_distance_to_zero + invaded_cw_distance_to_zero;
       double invaded_cw_weight = invaded_cw_distance_to_zero + invaded_distance_to_zero;
@@ -486,8 +486,8 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::is_valid() const{
 
     // Check that the three vertices of the anchor lie within the open unit disk
     for (int k=0; k<3; k++){
-      //      if (_anchor.vertices[k].get_z().squared_modulus() >= Number(1)){
-      if ( Complex_number(_anchor.vertices[k].x(),_anchor.vertices[k].y()).squared_modulus() >= Number(1)){
+      //      if (_anchor.vertices[k].get_z() >= Number(1)){
+      if ( norm(Complex_number(_anchor.vertices[k].x(),_anchor.vertices[k].y())) >= Number(1)){
         return false;
       }
     }

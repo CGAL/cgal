@@ -200,7 +200,7 @@ bool Hyperbolic_fundamental_domain_2<Traits>::is_valid()const{
 
   // Check that the vertices all lie within the open unit disk
   for (int k=0; k<n; k++){
-    if (Complex_number(_vertices[k].x(),_vertices[k].y()).squared_modulus() >= typename Traits::FT(1)){
+    if (norm(Complex_number(_vertices[k].x(),_vertices[k].y())) >= typename Traits::FT(1)){
    return false;
     }
   }

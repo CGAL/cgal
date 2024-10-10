@@ -6,14 +6,14 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
 
 // This file contains the declaration and the implementation of the class Complex_number
 
-#ifndef CGAL_COMPLEX_NUMBER
-#define CGAL_COMPLEX_NUMBER
+#ifndef CGAL_COMPLEX_NUMBER_H
+#define CGAL_COMPLEX_NUMBER_H
 
 #include <fstream>
 #include <sstream>
@@ -39,8 +39,6 @@ public:
   void imag(const FT& imaginary_part);
   FT real() const;
   FT imag() const;
-  FT squared_modulus() const;
-  _Self conjugate() const;
 
   _Self& operator+=(const _Self& other);
   _Self& operator-=(const _Self& other);
@@ -82,8 +80,8 @@ public:
   }
 
   friend _Self operator/(const _Self& z1, const _Self& z2){
-    FT m2 = z2.squared_modulus();
-    return _Self(z1._real/m2, z1._imag/m2)*z2.conjugate();
+    FT m2 = norm(z2);
+    return _Self(z1._real/m2, z1._imag/m2)*conj(z2);
   }
 
   friend std::ostream& operator<<(std::ostream& s, const _Self& z){
@@ -148,18 +146,6 @@ FT Complex_number<FT>::imag() const{
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-template<class FT>
-FT Complex_number<FT>::squared_modulus() const{
-  return _real*_real + _imag*_imag;
-}
-
-template<class FT>
-Complex_number<FT> Complex_number<FT>::conjugate() const{
-  return Complex_number<FT>(_real, -_imag);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 template<class FT>
 Complex_number<FT>& Complex_number<FT>::operator+=(const Complex_number<FT>& other) {
   _real += other.real();
@@ -183,10 +169,10 @@ Complex_number<FT>& Complex_number<FT>::operator*=(const Complex_number<FT>& oth
 
  template<class FT>
 Complex_number<FT>& Complex_number<FT>::operator/=(const Complex_number<FT>& other) {
-   FT m2 = other.squared_modulus();
+   FT m2 = norm(other);
    _real /= m2;
    _imag /= m2;
-   this *= other.conjugate();
+   this *= conj(other);
    return *this;
 }
 
@@ -197,6 +183,18 @@ Complex_number<FT>& Complex_number<FT>::operator=(const Complex_number<FT>& othe
   return *this;
 }
 
+ template<class FT>
+   FT norm(Complex_number<FT> z) {
+   return z.real()*z.real() + z.imag()*z.imag();
+}
+
+template<class FT>
+Complex_number<FT> conj(Complex_number<FT> z) {
+  return Complex_number<FT>(z.real(), -z.imag());
+}
+
+
+
 } // namespace CGAL
 
-#endif // CGAL_COMPLEX_NUMBER
+#endif // CGAL_COMPLEX_NUMBER_H

@@ -16,5 +16,5 @@ file(
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 foreach(cppfile ${cppfiles})
-  create_single_source_cgal_program("${cppfile}" ../../include/)
+  create_single_source_cgal_program("${cppfile}")
 endforeach()

@@ -42,7 +42,7 @@ public:
     Constructor, sets the real part to <code> real_part </code> and the imaginary part to <code> imaginary_part </code>.
   */
     template<class U,class V>
-      Complex_number(U&& real_part, V&& imaginary_part): _real(std::forward<U>(real_part)), _imag(std::forward<V>(imaginary_part));
+      Complex_number(U&& real_part, V&& imaginary_part);
   /// @}
 
   /// \name Get and Set
@@ -73,12 +73,12 @@ public:
   /*!
     returns the square of the modulus.
   */
-  FT squared_modulus() const;
+  FT norm(Complex_number<FT> z) const;
 
   /*!
     returns the conjugate.
   */
-  ComplexNumber<FT> conjugate() const;
+  ComplexNumber<FT> conj(Complex_number<FT> z) const;
 
   /*!
     returns +z.

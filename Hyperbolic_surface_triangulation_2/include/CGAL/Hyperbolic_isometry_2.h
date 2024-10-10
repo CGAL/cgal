@@ -153,7 +153,7 @@ Hyperbolic_isometry_2<Traits> hyperbolic_translation(const typename Traits::Hype
     z = - typename Traits::Complex(p.x(), p.y());
   }
   Hyperbolic_isometry_2<Traits> result;
-  result.set_coefficients(one, z, z.conjugate(), one);
+  result.set_coefficients(one, z, conj(z), one);
   return result;
 }
 

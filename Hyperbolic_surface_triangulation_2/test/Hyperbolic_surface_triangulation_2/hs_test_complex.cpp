@@ -23,12 +23,12 @@ int main() {
   Complex_rational z2_rational;
   z2_rational.real(Exact_rational(-5,7));
   z2_rational.imag(Exact_rational(11,13));
-  z2_rational = z2_rational.conjugate() + z1_rational - one_rational;
+  z2_rational = conj(z2_rational) + z1_rational - one_rational;
 
   assert( - z1_rational * z1_rational / z2_rational == -Complex_rational(Exact_rational(855491,632146), Exact_rational(844298,316073)) );
   assert( z1_rational.real() == Exact_rational(-1,2) );
   assert( z1_rational.imag() == Exact_rational(3) );
-  assert( z1_rational.squared_modulus() == Exact_rational(37,4) );
+  assert( norm(z1_rational) == Exact_rational(37,4) );
   assert( z1_rational != z2_rational);
   assert( z2_rational == z2_rational );
   assert( z2_rational == Complex_rational(Exact_rational(-31,14), Exact_rational(28,13)) );
@@ -43,7 +43,7 @@ int main() {
 
   // Complex_interval test :
   Complex_interval z_interval (Interval(1, 2), Interval(1, 2));
-  assert( (z_interval * z_interval / Complex_interval(Interval(5, 6))).squared_modulus() < Interval(10,20) );
+  assert( norm(z_interval * z_interval / Complex_interval(Interval(5, 6))) < Interval(10,20) );
 
   return 0;
 }

@@ -1,15 +1,3 @@
-// Copyright (c) 2024
-// INRIA Nancy (France), and Université Gustave Eiffel Marne-la-Vallee (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org)
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-// Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
-
 #include "window.h"
 
 #include <CGAL/Exact_rational.h>

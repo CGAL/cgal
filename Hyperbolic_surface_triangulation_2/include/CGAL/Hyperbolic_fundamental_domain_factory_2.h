@@ -133,7 +133,7 @@ float Hyperbolic_fundamental_domain_factory_2<Traits>::random_float(){
 template<class Traits>
 Complex_number<float> Hyperbolic_fundamental_domain_factory_2<Traits>::random_complex_float(){
   Complex_number<float> result (random_float(), random_positive_float());
-  while (result.squared_modulus() >= 1){
+  while (norm(result) >= 1){
     result.real(random_float());
     result.imag(random_positive_float());
   }
@@ -165,9 +165,9 @@ bool Hyperbolic_fundamental_domain_factory_2<Traits>::try_to_compute_inexact_z0_
   }
 
   Complex_number<float> one (1,0);
-  Complex_number<float> u = (one - z1*z2.conjugate())   *   (one - z2*z3.conjugate());
-  float a = -(u*z1.conjugate()*z3).imag();
-  float b = (u*(z3-z1.conjugate())).imag();
+  Complex_number<float> u = (one - conj(z1*z2))   *   (one - conj(z2*z3));
+  float a = -(conj(u*z1)*z3).imag();
+  float b = (u*(conj(z3-z1))).imag();
   float c = u.imag();
 
   const float COMPUTATION_TRESHOLD = 0.00001;
@@ -188,7 +188,7 @@ bool Hyperbolic_fundamental_domain_factory_2<Traits>::try_to_compute_exact_z3_fr
     return false;
   }
 
-  if ( (z0.squared_modulus()>=one_number) || (z1.squared_modulus()>=one_number) || (z2.squared_modulus()>=one_number) || (z3.squared_modulus()>=one_number) ){
+  if ( (norm(z0)>=one_number) || (norm(z1)>=one_number) || (norm(z2)>=one_number) || (norm(z3)>=one_number) ){
     return false;
   }
 
@@ -204,9 +204,9 @@ bool Hyperbolic_fundamental_domain_factory_2<Traits>::try_to_compute_exact_z3_fr
   _Cmplx f_of_z2 = (z0 + z2) / (z0*z2 + one_cmplx);
   _Cmplx f_of_z3 = (z0 + z3) / (z0*z3 + one_cmplx);
 
-  _Cmplx intermediate = (one_cmplx - f_of_z0*f_of_z1.conjugate()) * (one_cmplx - f_of_z1*f_of_z2.conjugate());
+  _Cmplx intermediate = (one_cmplx - f_of_z0*conj(f_of_z1)) * (one_cmplx - f_of_z1*conj(f_of_z2));
   _FT P_of_zero = intermediate.imag();
-  _FT P_of_one = (intermediate * (one_cmplx-f_of_z2*f_of_z3.conjugate())).imag();
+  _FT P_of_one = (intermediate * (one_cmplx-f_of_z2*conj(f_of_z3))).imag();
 
   if (P_of_one == P_of_zero){
     return false;
@@ -215,7 +215,7 @@ bool Hyperbolic_fundamental_domain_factory_2<Traits>::try_to_compute_exact_z3_fr
   _FT lbda = P_of_zero / (P_of_zero - P_of_one);
   _Cmplx V (lbda*(f_of_z3.real()), lbda*(f_of_z3.imag()));
 
-  if ( (V.imag()<=zero_number) || (V.squared_modulus()>=one_number) || ((V/f_of_z2).imag()<=zero_number) ){
+  if ( (V.imag()<=zero_number) || (norm(V)>=one_number) || ((V/f_of_z2).imag()<=zero_number) ){
     return false;
   }
 
@@ -236,7 +236,7 @@ bool Hyperbolic_fundamental_domain_factory_2<Traits>::sanity_check(_Cmplx& z0, _
     return false;
   }
 
-  if ( (z0.squared_modulus()>=one_number) || (z1.squared_modulus()>=one_number) || (z2.squared_modulus()>=one_number) || (z3.squared_modulus()>=one_number) ){
+  if ( (norm(z0)>=one_number) || (norm(z1)>=one_number) || (norm(z2)>=one_number) || (norm(z3)>=one_number) ){
     return false;
   }
 
@@ -246,7 +246,7 @@ bool Hyperbolic_fundamental_domain_factory_2<Traits>::sanity_check(_Cmplx& z0, _
 
   // 2. Check the area
   _Cmplx one_cmplx (one_number, zero_number);
-  _Cmplx Z = (one_cmplx-z0*z1.conjugate()) * (one_cmplx-z1*z2.conjugate()) *(one_cmplx-z2*z3.conjugate()) *(one_cmplx+z3*z0.conjugate());
+  _Cmplx Z = (one_cmplx-z0*conj(z1)) * (one_cmplx-z1*conj(z2)) *(one_cmplx-z2*conj(z3)) *(one_cmplx+z3*conj(z0));
   if (Z.imag()!=zero_number){
     return false;
   }
