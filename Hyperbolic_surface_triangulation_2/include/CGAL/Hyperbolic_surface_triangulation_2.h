@@ -15,8 +15,6 @@
 #ifndef CGAL_HYPERBOLIC_SURFACE_TRIANGULATION_2
 #define CGAL_HYPERBOLIC_SURFACE_TRIANGULATION_2
 
-#include <CGAL/Complex_number.h>
-#include <CGAL/Hyperbolic_isometry_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/basic.h>
 #include <CGAL/Combinatorial_map.h>

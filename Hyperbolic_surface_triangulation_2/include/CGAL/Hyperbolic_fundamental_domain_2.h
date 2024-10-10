@@ -15,7 +15,6 @@
 #ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 #define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 
-#include <CGAL/Complex_number.h>
 #include <CGAL/Hyperbolic_isometry_2.h>
 
 #include <vector>

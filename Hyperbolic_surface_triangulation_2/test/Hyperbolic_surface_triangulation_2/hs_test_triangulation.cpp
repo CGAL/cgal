@@ -1,8 +1,5 @@
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Complex_number.h>
-#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
-#include <CGAL/Hyperbolic_surface_traits_2.h>
 
 #include <iostream>
 #include <sstream>

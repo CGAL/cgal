@@ -1,5 +1,4 @@
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
 

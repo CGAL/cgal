@@ -1,5 +1,4 @@
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Complex_number.h>
 #include <CGAL/Hyperbolic_isometry_2.h>
 
 #include <iostream>
