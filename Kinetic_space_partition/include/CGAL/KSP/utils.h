@@ -41,7 +41,6 @@
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_2_algorithms.h>
 
 // Boost includes.
 #include <boost/iterator/function_output_iterator.hpp>
