@@ -31,7 +31,7 @@ cgal_lab_plugin(create_obb_mesh_plugin Create_obb_mesh_plugin)
 target_link_libraries(create_obb_mesh_plugin PUBLIC scene_surface_mesh_item
                                                     scene_polygon_soup_item
                                                     scene_selection_item
-                                                    scene_points_with_normal_item)
+                                                    scene_points_with_normal_item CGAL::Eigen3_support)
 
 qt6_wrap_ui(volumesUI_FILES Basic_generator_widget.ui)
 cgal_lab_plugin(

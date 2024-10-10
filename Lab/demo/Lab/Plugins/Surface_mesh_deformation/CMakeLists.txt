@@ -7,7 +7,7 @@ if(TARGET CGAL::Eigen3_support AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
            Scene_edit_polyhedron_item.cpp
            ${editionUI_FILES})
   target_link_libraries(
-    scene_edit_item PUBLIC CGAL::Eigen3_support scene_surface_mesh_item
+    scene_edit_item PRIVATE CGAL::Eigen3_support scene_surface_mesh_item
                            scene_k_ring_selection scene_basic_objects)
 
   cgal_lab_plugin(edit_plugin Edit_polyhedron_plugin Deform_mesh.ui)

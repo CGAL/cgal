@@ -22,5 +22,5 @@ file(
 foreach(cppfile ${cppfiles})
   create_single_source_cgal_program("${cppfile}")
   get_filename_component(target ${cppfile} NAME_WE)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()

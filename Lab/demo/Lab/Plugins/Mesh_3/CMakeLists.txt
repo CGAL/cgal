@@ -34,7 +34,7 @@ if(ITK_FOUND)
   include(CGAL_ITK_support)
   message(STATUS "ITK found")
   include(${ITK_USE_FILE})
-  target_link_libraries(mesh_3_plugin PUBLIC CGAL::ITK_support)
+  target_link_libraries(mesh_3_plugin PRIVATE CGAL::ITK_support)
 endif(ITK_FOUND)
 
 find_package(VTK 9.0 QUIET COMPONENTS ImagingGeneral IOImage IOXML NO_MODULE)
@@ -57,12 +57,10 @@ if(Boost_FILESYSTEM_FOUND)
   if(VTK_LIBRARIES)
     target_compile_definitions(io_image_plugin PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
   endif()
-  if(TARGET Boost::filesystem)
-    target_link_libraries(io_image_plugin PUBLIC Boost::filesystem
-                                                 Boost::system)
-  else()
-    target_link_libraries(io_image_plugin PUBLIC ${Boost_LIBRARIES})
-  endif()
+
+  target_link_libraries(io_image_plugin PUBLIC Boost::filesystem
+                                               Boost::system)
+
 else()
   message(STATUS "NOTICE: the Io_image_plugin requires boost-filesystem, and will not be compiled")
 endif()
@@ -83,7 +81,7 @@ target_link_libraries(
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
-  target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(mesh_3_optimization_plugin PRIVATE CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: The Mesh_3_optimization_plugin requires Eigen, which was not found."
                  "A deprecated class will be used to replace it. Warnings are to be expected.")
@@ -102,10 +100,10 @@ cgal_lab_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin
 target_link_libraries(c3t3_rib_exporter_plugin PUBLIC scene_c3t3_item)
 
 if(TBB_FOUND)
-  target_link_libraries(mesh_3_plugin PUBLIC CGAL::TBB_support)
-  target_link_libraries(mesh_3_optimization_plugin PUBLIC CGAL::TBB_support)
-  target_link_libraries(c3t3_io_plugin PUBLIC CGAL::TBB_support)
-  target_link_libraries(c3t3_rib_exporter_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(mesh_3_plugin PRIVATE CGAL::TBB_support)
+  target_link_libraries(mesh_3_optimization_plugin PRIVATE CGAL::TBB_support)
+  target_link_libraries(c3t3_io_plugin PRIVATE CGAL::TBB_support)
+  target_link_libraries(c3t3_rib_exporter_plugin PRIVATE CGAL::TBB_support)
 endif()
 
 qt6_wrap_ui(offsetMeshingUI_FILES Offset_meshing_dialog.ui)
@@ -115,8 +113,8 @@ target_link_libraries(offset_meshing_plugin PUBLIC scene_surface_mesh_item
                                                    scene_polygon_soup_item
                                                    scene_polylines_item)
 if(TARGET CGAL::Eigen3_support)
-  target_link_libraries(offset_meshing_plugin PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(offset_meshing_plugin PRIVATE CGAL::Eigen3_support)
 endif()
 if(TARGET CGAL::TBB_support)
-  target_link_libraries(offset_meshing_plugin PUBLIC CGAL::TBB_support)
+  target_link_libraries(offset_meshing_plugin PRIVATE CGAL::TBB_support)
 endif()
