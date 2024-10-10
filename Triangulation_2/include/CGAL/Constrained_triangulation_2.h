@@ -30,9 +30,8 @@
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/tags.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_rational.h>
 #include <CGAL/Kernel_23/internal/Has_boolean_tags.h>
+#include <CGAL/NT_converter.h>
 
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/iterator/filter_iterator.hpp>
