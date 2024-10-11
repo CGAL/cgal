@@ -136,7 +136,8 @@ int main()
   boost::breadth_first_search(*mesh,
                               source,
                               boost::visitor(boost::make_bfs_visitor(boost::record_distances(boost::make_assoc_property_map(distance), boost::on_tree_edge())))
-                              .vertex_index_map(boost::associative_property_map<geometrycentral::surface::VertexData<std::size_t>>(mesh->getVertexIndices())));
+                         //     .vertex_index_map(boost::associative_property_map<geometrycentral::surface::VertexData<std::size_t>>(mesh->getVertexIndices()))
+                              );
 
   for(auto v : mesh->vertices()){
     std::cout << v << " at distance " << distance[v] << std::endl;

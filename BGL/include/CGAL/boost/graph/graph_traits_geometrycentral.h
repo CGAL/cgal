@@ -738,7 +738,7 @@ public:
   const VertexPositionGeometry* vpg_;
 };
 
-template <typename K, typename VEF>
+template <typename VEF>
 class GC_index_pmap
 {
 public:
@@ -768,6 +768,32 @@ struct property_map<geometrycentral::surface::ManifoldSurfaceMesh, boost::vertex
   typedef geometrycentral::surface::GC_point_pmap type;
   typedef type const_type;
 };
+
+
+template <>
+struct property_map<geometrycentral::surface::ManifoldSurfaceMesh, boost::vertex_index_t >
+{
+  typedef geometrycentral::surface::ManifoldSurfaceMesh Mesh;
+  typedef geometrycentral::surface::GC_index_pmap<typename boost::graph_traits<Mesh>::vertex_descriptor> type;
+  typedef geometrycentral::surface::GC_index_pmap<typename boost::graph_traits<Mesh>::vertex_descriptor> const_type;
+};
+
 } // namespace boost
+
+
+namespace geometrycentral {
+namespace surface {
+
+
+GC_index_pmap<typename boost::graph_traits<ManifoldSurfaceMesh>::vertex_descriptor>
+get(const boost::vertex_index_t&, const ManifoldSurfaceMesh&)
+{
+  typedef ManifoldSurfaceMesh Mesh;
+  return GC_index_pmap<typename boost::graph_traits<Mesh>::vertex_descriptor>();
+}
+
+}
+
+}
 
 #endif
