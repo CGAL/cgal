@@ -470,12 +470,13 @@ public Q_SLOTS:
             std::cout << "A - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
 
             Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(tm_out);
-            new_item->setName(QString("Clip_ %1").arg(sm_item->name()));
+            new_item->setName(QString("Clip_%1").arg(sm_item->name()));
             new_item->setColor(sm_item->color());
             new_item->setRenderingMode(sm_item->renderingMode());
             new_item->setVisible(sm_item->visible());
             CGAL::Three::Scene_interface::Item_id id1 = scene->addItem(new_item);
             new_item->invalidateOpenGLBuffers();
+            scene->setSelectedItem(id1);
 
             std::cout << "id1 = " << id1 << std::endl;
             std::cout << "B - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
@@ -497,7 +498,7 @@ public Q_SLOTS:
 
             std::cout << "BC - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
 
-            CGAL::Three::Scene_interface::Item_id id2 = scene->addItem(new_item);
+            CGAL::Three::Scene_interface::Item_id id2 = scene->addItem(new_selection);
 
             std::cout << "id2 = " << id2 << std::endl;
             std::cout << "BD - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
