@@ -143,7 +143,7 @@ int main()
     std::cout << v << " at distance " << distance[v] << std::endl;
   }
 
-  geometrycentral::surface::GC_point_pmap vpm(*geometry);
+  boost::property_map<SurfaceMesh, boost::vertex_point_t>::const_type vpm(*geometry);
   for(auto he : halfedges(*mesh)){
     std::cout << "edge length: " << CGAL::Polygon_mesh_processing::edge_length(he,*mesh, CGAL::parameters::vertex_point_map(vpm)) << std::endl;
   }
