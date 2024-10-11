@@ -912,6 +912,8 @@ public:
   /// @{
   /*!
    * \brief determines if a facet is constrained.
+   * \param f is a facet of the triangulation, of type
+   *        \link TriangulationDataStructure_3::Facet `Triangulation::Facet`, as defined by its triangulation data structure \endlink.
    */
   bool is_facet_constrained(typename Triangulation::Facet f) const {
     return cdt_impl.is_facet_constrained(f);
