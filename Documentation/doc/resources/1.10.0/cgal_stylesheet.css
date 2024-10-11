@@ -181,8 +181,6 @@ ol.footnotesList > li {
   padding-right: 0.25em;
 }
 
-span.footnoteContent {}
-
 span.footnoteContent > p:first-child,
 span.footnoteContent > div:first-child {
   display: inline;
@@ -264,10 +262,6 @@ dl.bug {
   margin-left: -7px;
   padding-left: 3px;
 }
-
-div.CGALAdvanced {}
-
-div.CGALDebug {}
 
 dl.deprecated {
   border-left: 4px solid;
