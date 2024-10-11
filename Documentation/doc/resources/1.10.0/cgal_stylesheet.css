@@ -458,8 +458,9 @@ div.summary {
 
 @media (prefers-color-scheme: dark) {
 
-  .PkgImage > .image > img {
-    border-radius: 10%;
+  .image > img {
+    border-radius: 1ex;
+    background: white;
   }
 
   #back-nav {
