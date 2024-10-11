@@ -8,7 +8,7 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <map>
 #include <unordered_map>
-
+#include <boost/graph/prim_minimum_spanning_tree.hpp>
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
@@ -147,6 +147,13 @@ int main()
   for(auto he : halfedges(*mesh)){
     std::cout << "edge length: " << CGAL::Polygon_mesh_processing::edge_length(he,*mesh, CGAL::parameters::vertex_point_map(vpm)) << std::endl;
   }
+
+  geometry->requireEdgeLengths();
+
+  geometrycentral::surface::VertexData<vertex_descriptor> predecessor(*mesh);
+  boost::prim_minimum_spanning_tree(*mesh,
+                                    boost::make_assoc_property_map(predecessor),
+                                    boost::root_vertex(source).weight_map(boost::make_assoc_property_map(geometry->edgeLengths)));
 
   return 0;
 }

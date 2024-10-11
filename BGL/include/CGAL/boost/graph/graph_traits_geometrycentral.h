@@ -101,7 +101,7 @@ public:
 
   operator geometrycentral::surface::Edge() const
   {
-    return gometrycentral::surface::Edge(halfedge_);
+    return halfedge_.edge();
   }
 
   bool operator<(const BGL_Edge& other) const
@@ -719,7 +719,7 @@ public:
   inline friend reference get(const GC_point_pmap& pm, key_type v)
   {
     CGAL_assertion(pm.vpg_!=nullptr);
-    typename Vector3 const& gcp = pm.vpg_->inputVertexPositions[v];
+    typename Vector3 const& gcp = pm.vpg_->vertexPositions[v];
     return value_type(gcp[0], gcp[1], gcp[2]);
   }
 
@@ -731,7 +731,7 @@ public:
     vec.x = p.x();
     vec.y = p.y();
     vec.z = p.z();
-    const_cast<VertexPositionGeometry&>(*pm.vpg_).inputVertexPositions[v] =  vec;
+    const_cast<VertexPositionGeometry&>(*pm.vpg_).vertexPositions[v] =  vec;
   }
 
   private:
