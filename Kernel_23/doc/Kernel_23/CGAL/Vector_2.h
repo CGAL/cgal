@@ -128,13 +128,13 @@ Kernel::FT y() const;
 
 
 /*!
-returns the i'th homogeneous coordinate of `v`.
+returns the i-th homogeneous coordinate of `v`.
 \pre `0 <= i <= 2`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
-returns the i'th %Cartesian coordinate of `v`.
+returns the i-th %Cartesian coordinate of `v`.
 \pre `0 <= i <= 1`.
 
 \cgalEpicExact
