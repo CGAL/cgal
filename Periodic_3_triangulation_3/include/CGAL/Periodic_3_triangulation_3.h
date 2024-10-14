@@ -2784,7 +2784,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
   /// Virtual cells, 6 per periodic instance
   Cell_handle cells[3][3][3][6];
 
-  // Initialise vertices:
+  // initialize vertices:
   vir_vertices[0][0][0] = _tds.create_vertex();
   vir_vertices[0][0][0]->set_point(p);
   virtual_vertices_reverse[vir_vertices[0][0][0]] = std::vector<Vertex_handle>();
@@ -2792,7 +2792,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
     for(int j=0; j<_cover[1]; j++) {
       for(int k=0; k<_cover[2]; k++) {
         if((i!=0)||(j!=0)||(k!=0)) {
-          // Initialise virtual vertices out of the domain for debugging
+          // initialize virtual vertices out of the domain for debugging
           vir_vertices[i][j][k] =
             _tds.create_vertex();
           vir_vertices[i][j][k]->set_point(p); //+Offset(i,j,k));
