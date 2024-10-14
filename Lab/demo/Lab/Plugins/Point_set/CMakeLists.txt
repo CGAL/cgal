@@ -65,6 +65,15 @@ if(TARGET CGAL::Eigen3_support)
     features_detection_plugin PUBLIC scene_points_with_normal_item
                                      CGAL::Eigen3_support)
 
+  qt6_wrap_ui(kinetic_surface_reconstruction_pluginUI_FILES Kinetic_surface_reconstruction_plugin.ui)
+  cgal_lab_plugin(
+    kinetic_surface_reconstruction_plugin Kinetic_surface_reconstruction_plugin
+    ${kinetic_surface_reconstruction_pluginUI_FILES} KEYWORDS PointSetProcessing)
+  target_link_libraries(
+    kinetic_surface_reconstruction_plugin PUBLIC scene_points_with_normal_item
+                                     CGAL::Eigen3_support scene_polygon_soup_item
+                                     scene_surface_mesh_item scene_points_with_normal_item)
+
   cgal_lab_plugin(point_set_smoothing_plugin Point_set_smoothing_plugin
                          KEYWORDS PointSetProcessing)
   target_link_libraries(
@@ -90,9 +99,15 @@ if(TARGET CGAL::Eigen3_support)
     point_set_shape_detection_plugin
     PUBLIC scene_surface_mesh_item scene_points_with_normal_item
            scene_polygon_soup_item scene_callback_signaler CGAL::Eigen3_support)
-
-  find_package(OpenGR QUIET)
-  include(CGAL_OpenGR_support)
+  if (NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1910)
+    find_package(OpenGR QUIET)
+    include(CGAL_OpenGR_support)
+  else()
+      message(
+        STATUS
+          "NOTICE : OpenGR does not support your compiler."
+      )
+  endif()
   find_package(libpointmatcher QUIET)
   include(CGAL_pointmatcher_support)
 

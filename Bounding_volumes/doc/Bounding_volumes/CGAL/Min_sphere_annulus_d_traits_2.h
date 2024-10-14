@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgBoundingVolumesRef
 
 The class `Min_sphere_annulus_d_traits_2` is a traits class for the \f$ d\f$-dimensional
-optimisation algorithms using the two-dimensional \cgal kernel.
+optimization algorithms using the two-dimensional \cgal kernel.
 
 \tparam K  must bea model for `Kernel`.
 \tparam ET NT are models for `RingNumberType`. Their default type is `K::RT`.

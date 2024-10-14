@@ -1410,7 +1410,7 @@ public:
   /// \cond SKIP_IN_MANUAL
   template <class K>
   void dump_box_to_polylines(const Iso_rectangle_2<K>& box, std::ostream& os) const {
-    // dump in 3D for visualisation
+    // dump in 3D for visualization
     os << "5 "
        << box.xmin() << " " << box.ymin() << " 0 "
        << box.xmin() << " " << box.ymax() << " 0 "

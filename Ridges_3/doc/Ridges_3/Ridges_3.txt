@@ -44,8 +44,8 @@ functions of the package are provided in Section \ref Ridges_3Examples.
 
 For a detailed introduction to ridges and related topics, the reader
 may consult
-\cgalCite{cgal:hgygm-ttdpf-99},cgal:p-gd-01, as well as
-the following survey article \cgalCite{cgal:cp-ssulc-05}.
+\cgalCite{cgal:hgygm-ttdpf-99},\cgalCite{cgal:p-gd-01}, as well as
+the survey article \cgalCite{cgal:cp-ssulc-05}.
 In the sequel, we just introduce the basic notions so as to explain
 our algorithms. Consider a smooth embedded surface, and denote \f$ k_1\f$
 and \f$ k_2\f$ the principal curvatures, with \f$ k_1\geq k_2\f$. Umbilics are
@@ -399,7 +399,7 @@ neighborhood.
 \subsection Ridges_3Exampleprogram Example Program
 
 The following program computes ridges and umbilics from an off
-file.\cgalFootnote{Model data may be downloaded via ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/Ridges_3_datafiles.tgz . The mechanical part model has been provided courtesy of Dassault System to produce \cgalFigureRef{figmechanical_crest_filteredintro}, due to copyright issues the available model is not the same, it is provided by the AIM\@SHAPE Shape Repository.} It uses the package \ref PkgJetFitting3 to estimate the differential
+file. It uses the package \ref PkgJetFitting3 to estimate the differential
 quantities.
 The default output file gives rough data for visualization purpose, a
 verbose output file may also be asked for. Parameters are
@@ -533,11 +533,7 @@ Ridges on the ellipsoid, normals pointing outward. Color coding :
 \subsection Ridges_3ExampleFilteringofCrestRidgesona Example: Filtering of Crest Ridges on a Mechanical Part
 
 \cgalFigureRef{figmechanical_crest_filteredintro} illustrates the filtering
-of crest ridges on a mechanical model, and has been computed as follows:
-
-\code{.cpp}
-./Compute_Ridges_Umbilics -f data/mecanic.off -d 4 -m 4 -a 4 -t 4
-\endcode
+of crest ridges on a mechanical model.
 
 \cgalFigureBegin{figmechanical_crest_filteredintro,mecanic-sub1_crest-jpg.png}
 Mechanical part (37k pts). Left: All crest lines. Middle:  crests filtered
