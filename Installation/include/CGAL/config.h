@@ -243,20 +243,6 @@
 #  define CGAL_SUNPRO_INITIALIZE(C)
 #endif
 
-//----------------------------------------------------------------------//
-// MacOSX specific.
-//----------------------------------------------------------------------//
-
-#ifdef __APPLE__
-#  if defined(__GNUG__) && (__GNUG__ == 4) && (__GNUC_MINOR__ == 0) \
-   && defined(__OPTIMIZE__) && !defined(CGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG)
-#    warning "Your configuration may exhibit run-time errors in CGAL code"
-#    warning "This appears with g++ 4.0 on MacOSX when optimizing"
-#    warning "You can disable this warning using -DCGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG"
-#    warning "For more information, see https://www.cgal.org/FAQ.html#mac_optimization_bug"
-#  endif
-#endif
-
 //-------------------------------------------------------------------//
 // When the global min and max are no longer defined (as macros)
 // because of NOMINMAX flag definition, we define our own global
