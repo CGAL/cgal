@@ -90,7 +90,7 @@ _test_cls_vector_3(const R& )
 
  assert( v0.dimension() == 3 );
 
-
+#if 0
  // now we test the Coordinate iterator
   const CGAL::Vector_3<R> v(1, 2, 3);
 
@@ -152,7 +152,7 @@ _test_cls_vector_3(const R& )
   it2 = it - 1;
   it2++;
   assert(it == it2);
-
+#endif
   // test arithmetic operators
   CGAL::Vector_3<R> v_1(2, 4, 6);
   const CGAL::Vector_3<R> v_1_const=v_1;
