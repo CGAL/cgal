@@ -592,7 +592,7 @@ void Mesh_3_plugin::mesh_3(const Mesh_type mesh_type,
   ui.protect->setChecked(features_protection_available);
 
   ui.facegraphCheckBox->setVisible(mesh_type == Mesh_type::SURFACE_ONLY);
-  ui.initializationGroup->setVisible(input_is_labeled_img);
+  ui.initializationGroup->setVisible(input_is_labeled_img || input_is_gray_img);
   ui.grayImgGroup->setVisible(input_is_gray_img);
 
   if(input_is_gray_img)
