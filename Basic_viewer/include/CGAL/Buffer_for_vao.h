@@ -145,7 +145,7 @@ namespace internal
         {
           typename CDT::Edge e(fh,i);
           auto n = fh->neighbor(i);
-          if (n->info().m_nesting_level==-1)
+          if (n!=nullptr && n->info().m_nesting_level==-1)
           {
             if (tri.is_constrained(e)) { border.push(e); }
             else { queue.push(n); }
