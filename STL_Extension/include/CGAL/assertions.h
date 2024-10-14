@@ -19,8 +19,6 @@
 #ifndef CGAL_ASSERTIONS_H
 #define CGAL_ASSERTIONS_H
 
-// this define is only for one run of the testsuite
-#define CGAL_NO_POSTCONDITIONS
 
 #include <CGAL/export/CGAL.h>
 
