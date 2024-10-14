@@ -161,7 +161,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` is model of `RandomAccessIterator`
-  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` is model of `RandomA.ccessIterator`
+  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` is model of `RandomAccessIterator`
 #else
   typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
   typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
