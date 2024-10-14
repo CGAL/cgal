@@ -116,8 +116,8 @@ void partition_dual_graph(const TriangleMesh& tm,
   delete[] eptr;
   delete[] eind;
 
-  std::free(npart);
-  std::free(epart);
+  (std::free)(npart);
+  (std::free)(epart);
 }
 
 template<typename TriangleMesh, typename NamedParameters>
