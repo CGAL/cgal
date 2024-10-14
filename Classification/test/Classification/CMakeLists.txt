@@ -10,13 +10,15 @@ find_package(CGAL REQUIRED)
 set(Classification_dependencies_met TRUE)
 
 find_package(Boost OPTIONAL_COMPONENTS serialization iostreams)
+include(CGAL_Boost_serialization_support)
+include(CGAL_Boost_iostreams_support)
 
-if(NOT TARGET Boost::serialization)
+if(NOT TARGET CGAL::Boost_serialization_support)
   message("NOTICE: This project requires Boost Serialization, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
 
-if(NOT TARGET Boost::iostreams)
+if(NOT TARGET CGAL::Boost_iostreams_support)
   message("NOTICE: This project requires Boost IO Streams, and will not be compiled.")
   set(Classification_dependencies_met FALSE)
 endif()
@@ -40,8 +42,8 @@ create_single_source_cgal_program("test_classification_io.cpp")
 
 foreach(target test_classification_point_set test_classification_io)
   target_link_libraries(${target} PRIVATE CGAL::Eigen3_support
-                                         Boost::iostreams
-                                         Boost::serialization)
+                                         CGAL::Boost_iostreams_support
+                                         CGAL::Boost_serialization_support)
   if(TARGET CGAL::TBB_support)
     target_link_libraries(${target} PRIVATE CGAL::TBB_support)
   endif()

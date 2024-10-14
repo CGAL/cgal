@@ -3,8 +3,9 @@ include(CGALlab_macros)
 if(TARGET CGAL::Eigen3_support)
 
   find_package(Boost QUIET OPTIONAL_COMPONENTS serialization iostreams)
-
-  if(NOT TARGET Boost::serialization OR NOT TARGET Boost::iostreams)
+  include(CGAL_Boost_serialization_support)
+  include(CGAL_Boost_iostreams_support)
+  if(NOT TARGET CGAL::Boost_serialization_support OR NOT TARGET CGAL::Boost_iostreams_support)
     message(STATUS "NOTICE: Boost IO Streams and/or Serialization not found, reading deprecated Classification config files won't be possible.")
   endif()
 
@@ -32,7 +33,7 @@ if(TARGET CGAL::Eigen3_support)
     Classification)
   target_link_libraries(
     classification_plugin
-    PUBLIC scene_points_with_normal_item
+    PRIVATE scene_points_with_normal_item
     scene_polylines_item
     scene_polygon_soup_item
     scene_surface_mesh_item
@@ -46,9 +47,9 @@ if(TARGET CGAL::Eigen3_support)
         PROPERTIES RESOURCE_LOCK Selection_test_resources)
     endif()
 
-  if(TARGET Boost::serialization AND TARGET Boost::iostreams)
-    target_link_libraries(classification_plugin PRIVATE Boost::serialization
-                                                        Boost::iostreams)
+  if(TARGET CGAL::Boost_serialization_support AND TARGET CGAL::Boost_iostreams_support)
+    target_link_libraries(classification_plugin PRIVATE CGAL::Boost_serialization_support
+                                                       CGAL::Boost_iostreams_support)
   endif()
 
   if(TARGET CGAL::OpenCV_support)
