@@ -16,9 +16,6 @@
 #include <boost/unordered_map.hpp>
 #include <unordered_map>
 
-#include <boost/random/random_number_generator.hpp>
-#include <boost/random/linear_congruential.hpp>
-
 typedef CGAL::Simple_cartesian<double>  Kernel;
 typedef Kernel::Point_3                 Point_3;
 typedef Kernel::Vector_3                Vector_3;
