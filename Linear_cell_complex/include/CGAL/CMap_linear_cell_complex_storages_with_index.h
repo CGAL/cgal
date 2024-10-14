@@ -189,14 +189,10 @@ namespace CGAL {
     void init_storage()
     {
       // Allocate a dart for null_dart_descriptor
-      assert(mdarts.empty()); // the compact container is empty
-      Dart_index local_null_dart_descriptor = mdarts.emplace();
-      if(local_null_dart_descriptor!=0)
-      {
-        std::cerr<<"[ERROR] fatal in CMap_linear_cell_complex_storage_with_index::init_storage"
-                 <<std::endl;
-        CGAL_assertion(false);
-      }
+      CGAL_assertion(mdarts.empty()); // the compact container is empty
+      CGAL_assertion_code( Dart_index local_null_dart_descriptor = ) mdarts.emplace();
+      CGAL_assertion_msg(local_null_dart_descriptor==0,
+                          "[ERROR] fatal in CMap_linear_cell_complex_storage_with_index::init_storage");
     }
 
     void clear_storage()
