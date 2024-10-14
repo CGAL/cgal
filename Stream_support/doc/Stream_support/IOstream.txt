@@ -94,25 +94,25 @@ bool is_pretty(std::ios& s);
 \subsection IOstreamInput Input Operator
 
 \cgal defines input operators for classes that are derived
-from the class `istream`. This allows to read from istreams
+from the class `std::istream`. This allows to read from istreams
 as `std::cin`, as well as from `std::istringstream` and `std::ifstream`.
 The input operator is defined for all classes in the \cgal `Kernel`.
 Let `is` be an input stream.
 
 \code{.cpp}
 // Extracts object `c` from the stream `is`. Returns `is`.
-istream& operator>>(istream& is, Class c);
+istream& operator>>(istream& is, Class& c);
 \endcode
 
 \code{.cpp}
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_2.h>
 
-typedef CGAL::Point_2< CGAL::Cartesian<double> > Point;
-typedef CGAL::Segment_2< CGAL::Cartesian<double> > Segment;
+typedef CGAL::Point_2< CGAL::Simple_cartesian<double> > Point;
+typedef CGAL::Segment_2< CGAL::Simple_cartesian<double> > Segment;
 
 int
 main()
@@ -123,7 +123,7 @@ main()
   CGAL::IO::set_ascii_mode(std::cin);
   std::cin >> p >> q;
 
-  std::ifstream f("data.txt");
+  std::ifstream f("data.txt", std::ios::binary);
   CGAL::IO::set_binary_mode(f);
   f >> s >> p;
 
@@ -150,11 +150,11 @@ ostream& operator<<(ostream& os, Class c);
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/Cartesian.h>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Segment_2.h>
 
-typedef CGAL::Point_2< CGAL::Cartesian<double> > Point;
-typedef CGAL::Segment_2< CGAL::Cartesian<double> > Segment;
+typedef CGAL::Point_2< CGAL::Simple_cartesian<double> > Point;
+typedef CGAL::Segment_2< CGAL::Simple_cartesian<double> > Segment;
 
 int main()
 {
