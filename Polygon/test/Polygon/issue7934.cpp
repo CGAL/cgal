@@ -16,7 +16,7 @@ int main()
   polygon.push_back(Point_2( 3.1415, 3.1415));
 
   auto ar = CGAL::polygon_area_2(polygon.vertices_begin(), polygon.vertices_end(), Kernel());
-  
+
   std::cout << "done" << std::endl;
   return 0;
 }
