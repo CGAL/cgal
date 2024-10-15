@@ -976,10 +976,10 @@ public:
 
       while ((i < (n1-1)) || (j < (n2-1))) {
         std::size_t cv1_seg_ind = (SMALLER == is_cv1_left_to_right) ?
-          i : cv1_seg_ind = n1 - 1 - i;
+          i :  n1 - 1 - i;
         auto point1 = max_vertex(cv1[cv1_seg_ind]);
         std::size_t cv2_seg_ind = (SMALLER == is_cv2_left_to_right) ?
-          j : cv2_seg_ind = n2 - 1 - j;
+          j :  n2 - 1 - j;
         auto point2 = max_vertex(cv2[cv2_seg_ind]);
         bool res = equal(point1, point2);
         // Easy case - the two points are equal
