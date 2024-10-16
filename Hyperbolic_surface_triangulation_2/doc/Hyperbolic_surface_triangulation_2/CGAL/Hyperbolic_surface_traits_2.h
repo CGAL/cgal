@@ -14,7 +14,7 @@ public:
   /// @{
   /*!
           represents a complex number, model of
-          `ComplexNumber', over the field HyperbolicSurfaceTraits_2::FT for its real and
+          `ComplexNumber`, over the field `HyperbolicSurfaceTraits_2::FT` for its real and
           imaginary parts.
   */
   typedef unspecified_type                                   Complex;
