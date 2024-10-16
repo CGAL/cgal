@@ -484,9 +484,6 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
 bool SelfIntersection::isInsideWithRayShooting(Point3SPtr point,
                                                FacetSPtr facet)
 {
-    std::cout << "\n> isInsideWithRayShooting()" << std::endl;
-    std::cout << facet->toString() << std::endl;
-
     Plane3SPtr pl = facet->plane();
     Vector3SPtr normal = KernelFactory::createVector3(pl);
 
@@ -539,11 +536,22 @@ bool SelfIntersection::isInsideWithRayShooting(Point3SPtr point,
         CGAL_assertion(pl->has_on(shooting_ray.point(0)));
         CGAL_assertion(pl->has_on(shooting_ray.point(1)));
 
+        // @todo normally we shouldn't need any of the random targets
+        // if we don't, then a shooting ray just means the source (== the target == the
+        // midpoint of an edge of the face) is on an edge, so there is an intersection
+        if (shooting_ray.is_degenerate()) {
+            continue;
+        }
+
         CGAL::FT sq_dist_to_closest = std::numeric_limits<double>::max();
         EdgeSPtr closest_edge;
 
         auto treat_edge = [&](EdgeSPtr target_edge, const auto& edge_geometry) -> void
         {
+            if (edge_geometry.is_degenerate()) {
+                return;
+            }
+
             CGAL::Object obj = CGAL::intersection(shooting_ray, edge_geometry);
             if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
                 CGAL::FT sqd = CGAL::squared_distance(*point, *ipoint);
@@ -572,7 +580,7 @@ bool SelfIntersection::isInsideWithRayShooting(Point3SPtr point,
                 if (CGAL::collinear_are_ordered_along_line(*p_src, *point, *p_dst)) {
                     return true; // on edge
                 } else {
-                    std::cout << " skipping because collinear" << std::endl;
+                    // std::cout << " skipping because collinear" << std::endl;
                 }
                 continue;
             }
@@ -643,7 +651,7 @@ bool SelfIntersection::isEdgeInsideFacet(FacetSPtr facet,
         return false;
     }
 
-    if (edge->getVertexSrc()->getPoint() == edge->getVertexDst()->getPoint()) {
+    if (*(edge->getVertexSrc()->getPoint()) == *(edge->getVertexDst()->getPoint())) {
         return false;
     }
 
