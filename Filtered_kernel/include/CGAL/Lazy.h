@@ -1377,7 +1377,7 @@ struct Ith {
   typedef T2 result_type;
 
   // We keep a Sign member object
-  // for future utilisation, in case
+  // for future utilization, in case
   // we have pairs of 2 T2 objects e.g.
   // for a numeric_point vector returned
   // from a construction of a possible

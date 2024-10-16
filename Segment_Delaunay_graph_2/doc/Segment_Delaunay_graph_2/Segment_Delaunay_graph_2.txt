@@ -450,7 +450,7 @@ class is used, the possible values are `Field_with_sqrt_tag` and
 \section secsdg2hierarchy The Segment Delaunay Graph Hierarchy
 
 The `Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2, SegmentDelaunayGraphStorageTraits_2, SSTag, SegmentDelaunayGraphDataStructure_2>`
-class is the analogue of the `Triangulation_hierarchy_2` or the
+class is the analog of the `Triangulation_hierarchy_2` or the
 `Apollonius_graph_hierarchy_2` classes, applied to the segment
 Delaunay graph. It consists of a hierarchy of
 segment Delaunay graphs constructed in a manner analogous to the

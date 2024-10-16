@@ -312,7 +312,7 @@ bool test_planes_points_with_normals() {
 
   using Neighbor_query = CGAL::Shape_detection::Point_set::K_neighbor_query<Kernel, Item, Point_map>;
   using Region_type    = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_region<Kernel, Item, Point_map, Normal_map>;
-  using Sorting_type    = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Item, Neighbor_query, Point_map>;
+  using Sorting_type    = CGAL::Shape_detection::Point_set::Least_squares_plane_fit_sorting<Kernel, Item, Neighbor_query, Point_map, Normal_map>;
   using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type>;
 
   // Create parameter classes.

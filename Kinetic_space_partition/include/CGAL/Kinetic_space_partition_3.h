@@ -566,7 +566,15 @@ public:
 
 #ifndef DOXYGEN_RUNNING
   void partition(std::size_t k, FT& partition_time, FT& finalization_time, FT& conformal_time) {
-    m_volumes.clear();
+    if (!m_volumes.empty()) {
+      for (Sub_partition& node : m_partition_nodes) {
+        node.m_data->reset_to_initialization();
+        node.face_neighbors.clear();
+        node.face2vertices.clear();
+        node.volumes.clear();
+      }
+      m_volumes.clear();
+    }
     Timer timer;
     timer.start();
     partition_time = 0;
@@ -2054,11 +2062,7 @@ private:
     return std::make_pair(-1, -1);
   }
 
-  void adapt_internal_edges(const CDTplus& cdtC, const std::vector<Index> &faces_node, std::vector<std::vector<Constraint_info> >& c) {
-    assert(faces_node.size() == c.size());
-
-    //std::size_t not_skipped = 0;
-
+  void adapt_internal_edges(const CDTplus& cdtC, std::vector<std::vector<Constraint_info> >& c) {
     for (std::size_t f = 0; f < c.size(); f++) {
       std::vector<Index> faces_of_volume;
       // The face index is probably no longer valid and the full face has been replaced by a smaller face using merged indices
@@ -2220,17 +2224,11 @@ private:
 
     adapt_faces(cdtC);
 
-    idx = 0;
-    for (auto& p : a_sets) {
-      adapt_internal_edges(cdtC, p.second, a_constraints[idx]);
-      idx++;
-    }
+    for (idx = 0; idx < a_sets.size(); idx++)
+      adapt_internal_edges(cdtC, a_constraints[idx]);
 
-    idx = 0;
-    for (auto& p : b_sets) {
-      adapt_internal_edges(cdtC, p.second, b_constraints[idx]);
-      idx++;
-    }
+    for (idx = 0; idx < b_sets.size(); idx++)
+      adapt_internal_edges(cdtC, b_constraints[idx]);
   }
 
   void make_conformal(Octree_node node)  {
@@ -2271,6 +2269,7 @@ private:
 
     m_points.clear();
     m_points.reserve(count);
+    m_polygons.clear();
     m_polygons.reserve(m_input_polygons.size());
 
     To_exact to_exact;
@@ -2313,6 +2312,7 @@ private:
       max_count = (std::max<std::size_t>)(max_count, node);
     }
 
+    m_partition_nodes.clear();
     m_partition_nodes.resize(leaf_count);
 
     m_node2partition.resize(max_count + 1, std::size_t(-1));

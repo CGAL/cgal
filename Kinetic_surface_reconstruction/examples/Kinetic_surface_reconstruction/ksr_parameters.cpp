@@ -13,19 +13,19 @@
 #include "include/Parameters.h"
 #include "include/Terminal_parser.h"
 
-using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT        = typename Kernel::FT;
-using Point_3   = typename Kernel::Point_3;
-using Vector_3  = typename Kernel::Vector_3;
+using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+using FT = typename Kernel::FT;
+using Point_3 = typename Kernel::Point_3;
+using Vector_3 = typename Kernel::Vector_3;
 using Segment_3 = typename Kernel::Segment_3;
 
-using Point_set    = CGAL::Point_set_3<Point_3>;
-using Point_map    = typename Point_set::Point_map;
-using Normal_map   = typename Point_set::Vector_map;
+using Point_set = CGAL::Point_set_3<Point_3>;
+using Point_map = typename Point_set::Point_map;
+using Normal_map = typename Point_set::Vector_map;
 
 using KSR = CGAL::Kinetic_surface_reconstruction_3<Kernel, Point_set, Point_map, Normal_map>;
 
-using Parameters      = CGAL::KSR::All_parameters<FT>;
+using Parameters = CGAL::KSR::All_parameters<FT>;
 using Terminal_parser = CGAL::KSR::Terminal_parser<FT>;
 using Timer = CGAL::Real_timer;
 
@@ -50,10 +50,10 @@ void parse_terminal(Terminal_parser& parser, Parameters& parameters) {
   parser.add_str_parameter("-data", parameters.data);
 
   // Shape detection.
-  parser.add_val_parameter("-kn"   , parameters.k_neighbors);
-  parser.add_val_parameter("-dist" , parameters.maximum_distance);
+  parser.add_val_parameter("-kn", parameters.k_neighbors);
+  parser.add_val_parameter("-dist", parameters.maximum_distance);
   parser.add_val_parameter("-angle", parameters.maximum_angle);
-  parser.add_val_parameter("-minp" , parameters.min_region_size);
+  parser.add_val_parameter("-minp", parameters.min_region_size);
 
 
   // Shape regularization.
@@ -167,9 +167,17 @@ int main(const int argc, const char** argv) {
   // Algorithm.
   KSR ksr(point_set, param);
 
+  FT max_d, max_dev;
+  std::size_t num;
+  ksr.estimate_detection_parameters(max_d, max_dev, num);
+  std::cout << "d: " << max_d << std::endl;
+  std::cout << "dev: " << max_dev << std::endl;
+  std::cout << "num: " << num << std::endl;
+
   Timer timer;
   timer.start();
   std::size_t num_shapes = ksr.detect_planar_shapes(param);
+
 
   std::cout << num_shapes << " detected planar shapes" << std::endl;
 
@@ -198,12 +206,12 @@ int main(const int argc, const char** argv) {
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+    CGAL::IO::write_polygon_soup("building_c_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
 
-  std::vector<FT> lambdas{0.3, 0.5, 0.6, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99};
+  std::vector<FT> lambdas{ 0.3, 0.5, 0.6, 0.7, 0.73, 0.75, 0.77, 0.8, 0.9, 0.95, 0.99 };
 
   bool non_empty = false;
 
@@ -214,7 +222,6 @@ int main(const int argc, const char** argv) {
     vtx.clear();
     polylist.clear();
 
-
     if (parameters.use_ground)
       ksr.reconstruct_with_ground(l, std::back_inserter(vtx), std::back_inserter(polylist));
     else
@@ -223,7 +230,7 @@ int main(const int argc, const char** argv) {
 
     if (polylist.size() > 0) {
       non_empty = true;
-      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+      CGAL::IO::write_polygon_soup("building_c_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
     }
   }
 

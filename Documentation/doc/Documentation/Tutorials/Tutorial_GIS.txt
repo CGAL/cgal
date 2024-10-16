@@ -193,7 +193,7 @@ An example of a raster image with a rainbow ramp representing height
 is given in \cgalFigureRef{TutorialGISFigRastering}.
 
 \cgalFigureBegin{TutorialGISFigRastering, raster.jpg}
-Raster visualisation of height using a rainbow ramp, ranging from
+Raster visualization of height using a rainbow ramp, ranging from
 light blue for low values to dark red for high values.
 \cgalFigureEnd
 

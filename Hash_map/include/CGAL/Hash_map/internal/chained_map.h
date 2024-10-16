@@ -17,6 +17,7 @@
 #define CGAL_HASH_MAP_INTERNAL_CHAINED_MAP_H
 
 #include <CGAL/memory.h>
+#include <CGAL/assertions.h>
 #include <iostream>
 #include <limits>
 #include <type_traits>
