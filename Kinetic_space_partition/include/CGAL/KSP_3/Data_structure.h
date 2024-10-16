@@ -563,9 +563,6 @@ public:
       m_support_planes[sp_idx].get_border(m_intersection_graph, border);
 
       for (IEdge edge : border) {
-        if (m_intersection_graph.has_crossed(edge, sp_idx))
-          continue;
-
         Face_event fe;
         IkFT t = calculate_edge_intersection_time(sp_idx, edge, fe);
         if (t > 0) {
