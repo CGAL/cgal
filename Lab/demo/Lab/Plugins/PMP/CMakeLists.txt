@@ -4,7 +4,7 @@ if(TARGET CGAL::Eigen3_support)
   cgal_lab_plugin(jet_fitting_plugin Jet_fitting_plugin)
   target_link_libraries(
     jet_fitting_plugin PRIVATE scene_surface_mesh_item scene_polylines_item
-                              CGAL::Eigen3_support)
+                               CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
 endif()
@@ -25,7 +25,7 @@ endif()
 
 cgal_lab_plugin(extrude_plugin Extrude_plugin KEYWORDS PMP)
 target_link_libraries(extrude_plugin PRIVATE scene_surface_mesh_item
-                                            scene_selection_item)
+                                             scene_selection_item)
 
 if(TARGET CGAL::Eigen3_support)
   if("${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
@@ -66,7 +66,7 @@ if(TARGET CGAL::Eigen3_support)
     qt6_wrap_ui(remeshPlanarPatchesUI_FILES Remesh_planar_patches_dialog.ui)
     cgal_lab_plugin(remesh_planar_patches_plugin Remesh_planar_patches_plugin
                            ${remeshPlanarPatchesUI_FILES} KEYWORDS PMP)
-    target_link_libraries(remesh_planar_patches_plugin PRIVATE scene_surface_mesh_item CGAL::Eigen3_support)
+    target_link_libraries(remesh_planar_patches_plugin PRIVATE scene_surface_mesh_item  CGAL::Eigen3_support)
 
     if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
@@ -90,7 +90,7 @@ cgal_lab_plugin(orient_soup_plugin Orient_soup_plugin ${soupUI_FILES}
                        KEYWORDS Classification PMP)
 target_link_libraries(
   orient_soup_plugin PRIVATE scene_polygon_soup_item scene_surface_mesh_item
-                            scene_polylines_item scene_points_with_normal_item)
+                             scene_polylines_item scene_points_with_normal_item)
 
 cgal_lab_plugin(inside_out_plugin Inside_out_plugin KEYWORDS PMP)
 
@@ -167,20 +167,20 @@ qt6_wrap_ui(randomPerturbationUI_FILES Random_perturbation_dialog.ui)
 cgal_lab_plugin(random_perturbation_plugin Random_perturbation_plugin
                        ${randomPerturbationUI_FILES} KEYWORDS PMP)
 target_link_libraries(random_perturbation_plugin PRIVATE scene_surface_mesh_item
-                                                        scene_selection_item)
+                                                         scene_selection_item)
 
 cgal_lab_plugin(degenerated_faces_plugin Degenerated_faces_plugin
                        KEYWORDS PMP)
 target_link_libraries(degenerated_faces_plugin PRIVATE scene_surface_mesh_item
-                                                      scene_selection_item)
+                                                       scene_selection_item)
 
 qt6_wrap_ui(engravUI_FILES Engrave_dock_widget.ui)
 cgal_lab_plugin(engrave_text_plugin Engrave_text_plugin
                        ${engravUI_FILES})
 target_link_libraries(
   engrave_text_plugin PRIVATE scene_surface_mesh_item scene_selection_item
-                             scene_polylines_item
-                             CGAL::Eigen3_support)
+                              scene_polylines_item
+                              CGAL::Eigen3_support)
 
 if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
   set_tests_properties(

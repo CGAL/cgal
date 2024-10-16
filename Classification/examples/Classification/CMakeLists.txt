@@ -69,8 +69,8 @@ foreach(target
     example_deprecated_conversion)
   if(TARGET ${target})
     target_link_libraries(${target} PRIVATE CGAL::Eigen3_support
-                                           CGAL::Boost_iostreams_support
-                                           CGAL::Boost_serialization_support)
+                                            CGAL::Boost_iostreams_support
+                                            CGAL::Boost_serialization_support)
     if(TARGET CGAL::TBB_support)
       target_link_libraries(${target} PRIVATE CGAL::TBB_support)
     endif()

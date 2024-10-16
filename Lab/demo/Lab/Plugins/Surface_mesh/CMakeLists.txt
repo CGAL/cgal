@@ -12,7 +12,7 @@ if(NOT CGAL_DISABLE_GMP)
                            ${parameterizationUI_FILES})
     target_link_libraries(
       parameterization_plugin PRIVATE scene_surface_mesh_item scene_textured_item
-                                     scene_selection_item CGAL::Eigen3_support)
+                                      scene_selection_item CGAL::Eigen3_support)
 
     if(CGAL_ENABLE_TESTING AND NOT CMAKE_VS_MSBUILD_COMMAND)
       set_tests_properties(
@@ -44,7 +44,7 @@ if(NOT CGAL_DISABLE_GMP)
                          ${shortestPathUI_FILES})
   target_link_libraries(
     shortest_path_plugin PRIVATE scene_surface_mesh_item scene_shortest_path_item
-                                scene_basic_objects)
+                                 scene_basic_objects)
 
   qt6_wrap_ui(basicUI_FILES Surface_mesh_approximation_dockwidget.ui)
   cgal_lab_plugin(

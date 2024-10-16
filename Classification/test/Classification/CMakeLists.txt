@@ -42,8 +42,8 @@ create_single_source_cgal_program("test_classification_io.cpp")
 
 foreach(target test_classification_point_set test_classification_io)
   target_link_libraries(${target} PRIVATE CGAL::Eigen3_support
-                                         CGAL::Boost_iostreams_support
-                                         CGAL::Boost_serialization_support)
+                                          CGAL::Boost_iostreams_support
+                                          CGAL::Boost_serialization_support)
   if(TARGET CGAL::TBB_support)
     target_link_libraries(${target} PRIVATE CGAL::TBB_support)
   endif()

@@ -5,4 +5,4 @@ cgal_lab_plugin(mesh_2_plugin Mesh_2_plugin ${mesh_2UI_FILES})
 #if the plugin uses external libraries like scene_items
 target_link_libraries(
   mesh_2_plugin PRIVATE scene_surface_mesh_item scene_polylines_item
-                       scene_points_with_normal_item)
+                        scene_points_with_normal_item)

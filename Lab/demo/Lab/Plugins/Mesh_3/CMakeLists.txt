@@ -20,12 +20,12 @@ cgal_lab_plugin(
 target_link_libraries(
   mesh_3_plugin
   PRIVATE scene_polygon_soup_item
-         scene_polylines_item
-         scene_implicit_function_item
-         scene_image_item
-         scene_surface_mesh_item
-         scene_c3t3_item
-         ${OPENGL_gl_LIBRARY})
+          scene_polylines_item
+          scene_implicit_function_item
+          scene_image_item
+          scene_surface_mesh_item
+          scene_c3t3_item
+          ${OPENGL_gl_LIBRARY})
 target_include_directories(mesh_3_plugin PRIVATE include)
 
 find_package(ITK NAMES ITK InsightToolkit
@@ -58,8 +58,7 @@ if(Boost_FILESYSTEM_FOUND)
     target_compile_definitions(io_image_plugin PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
   endif()
 
-  target_link_libraries(io_image_plugin PRIVATE Boost::filesystem
-                                               Boost::system)
+  target_link_libraries(io_image_plugin PRIVATE Boost::filesystem Boost::system)
 
 else()
   message(STATUS "NOTICE: the Io_image_plugin requires boost-filesystem, and will not be compiled")
@@ -75,7 +74,7 @@ cgal_lab_plugin(
 target_link_libraries(
   mesh_3_optimization_plugin
   PRIVATE scene_c3t3_item scene_surface_mesh_item scene_image_item
-         scene_implicit_function_item)
+          scene_implicit_function_item)
 
 # Use Eigen
 find_package(Eigen3 3.1.0 QUIET) #(3.1.0 or greater)
@@ -110,8 +109,8 @@ qt6_wrap_ui(offsetMeshingUI_FILES Offset_meshing_dialog.ui)
 cgal_lab_plugin(offset_meshing_plugin Offset_meshing_plugin
                        ${offsetMeshingUI_FILES})
 target_link_libraries(offset_meshing_plugin PRIVATE scene_surface_mesh_item
-                                                   scene_polygon_soup_item
-                                                   scene_polylines_item)
+                                                    scene_polygon_soup_item
+                                                    scene_polylines_item)
 if(TARGET CGAL::Eigen3_support)
   target_link_libraries(offset_meshing_plugin PRIVATE CGAL::Eigen3_support)
 endif()
