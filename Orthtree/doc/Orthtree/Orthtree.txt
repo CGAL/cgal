@@ -197,7 +197,7 @@ Figure \cgalFigureRef{Orthtree_traversal_fig} shows in which order
 nodes are visited depending on the traversal method used.
 
 \cgalFigureBegin{Orthtree_traversal_fig, quadtree_traversal.png}
-%Quadtree visualized as a graph. Each node is labelled according to the
+%Quadtree visualized as a graph. Each node is labeled according to the
 order in which it is visited by the traversal. When using leaves and
 level traversals, the quadtree is only partially traversed.
 \cgalFigureEnd
