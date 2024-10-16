@@ -74,75 +74,75 @@ public:
   /*!
     returns +z.
   */
-  ComplexNumber<FT> operator+(const ComplexNumber<FT>& z) const;
+  ComplexNumber operator+(const ComplexNumber& z) const;
 
   /*!
      returns -z.
   */
-  ComplexNumber<FT> operator-(const ComplexNumber<FT>& z) const;
+  ComplexNumber operator-(const ComplexNumber& z) const;
 
   /*!
     Unary complex addition.
   */
-  ComplexNumber<FT> operator+=(const ComplexNumber<FT>& other) const;
+  ComplexNumber operator+=(const ComplexNumber& other) const;
 
   /*!
     Unary complex substraction.
   */
-  ComplexNumber<FT> operator-=(const ComplexNumber<FT>& other) const;
+  ComplexNumber operator-=(const ComplexNumber& other) const;
 
   /*!
     Unary complex multiplication.
   */
-  ComplexNumber<FT> operator*=(const ComplexNumber<FT>& other) const;
+  ComplexNumber operator*=(const ComplexNumber& other) const;
 
   /*!
     Unary complex division.
   */
-  ComplexNumber<FT> operator/=(const ComplexNumber<FT>& other) const;
+  ComplexNumber operator/=(const ComplexNumber& other) const;
 
   /*!
     Copy operator.
   */
-  ComplexNumber<FT> operator=(const ComplexNumber<FT>& other) const;
+  ComplexNumber operator=(const ComplexNumber& other) const;
 
   /*!
     Equality test.
   */
-  bool operator==(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
+  bool operator==(const ComplexNumber& z1, const ComplexNumber& z2);
   /*!
     Inequality test.
   */
-  bool operator!=(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
+  bool operator!=(const ComplexNumber& z1, const ComplexNumber& z2);
 
   /*!
     Binary complex addition.
   */
-  ComplexNumber<FT> operator+(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
+  ComplexNumber operator+(const ComplexNumber& z1, const ComplexNumber& z2);
 
   /*!
     Binary complex substraction.
   */
-  ComplexNumber<FT> operator-(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
+  ComplexNumber operator-(const ComplexNumber& z1, const ComplexNumber& z2);
 
  /*!
     Binary complex multiplication.
   */
-  ComplexNumber<FT> operator*(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
+  ComplexNumber operator*(const ComplexNumber& z1, const ComplexNumber& z2);
 
   /*!
     Binary complex division.
   */
-  ComplexNumber<FT> operator/(const ComplexNumber<FT>& z1, const ComplexNumber<FT>& z2);
+  ComplexNumber operator/(const ComplexNumber& z1, const ComplexNumber& z2);
 
   /*!
     writes the complex in a stream.
   */
-  std::ostream& operator<<(std::ostream& s, const ComplexNumber<FT>& z);
+  std::ostream& operator<<(std::ostream& s, const ComplexNumber& z);
   /*!
     reads the complex from a stream.
   */
-  void operator>>(std::istream& s, ComplexNumber<FT>& z);
+  void operator>>(std::istream& s, ComplexNumber& z);
   /// @}
 
   /// \relates ComplexNumber
@@ -150,11 +150,11 @@ public:
   /*!
     returns the square of the modulus.
   */
-  FT norm(ComplexNumber<FT> z) const;
+  FT norm(ComplexNumber z) const;
 
   /*!
     returns the conjugate.
   */
-  ComplexNumber<FT> conj(ComplexNumber<FT> z) const;
+  ComplexNumber conj(ComplexNumber z) const;
   /// @}
 };

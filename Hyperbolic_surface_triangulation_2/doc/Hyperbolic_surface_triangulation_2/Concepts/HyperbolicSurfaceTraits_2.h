@@ -2,6 +2,8 @@
 \ingroup PkgHyperbolicSurfaceTriangulation2Concepts
 \cgalConcept
 
+This traits class must have a type for complex numbers.
+
 \cgalRefines{HyperbolicDelaunayTriangulationTraits_2}
 
 \cgalHasModelsBegin
@@ -9,12 +11,4 @@
 \cgalHasModelsEnd
 */
 class HyperbolicSurfaceTraits_2 {
-public:
-  /// \name Types
-  /// @{
-  /*!
-          represents a complex number over a field: must be a model of `ComplexNumber`.
-  */
-  typedef unspecified_type                                   Complex;
-  /// @}
 };
