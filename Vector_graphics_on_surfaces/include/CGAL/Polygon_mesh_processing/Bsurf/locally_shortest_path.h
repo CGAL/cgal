@@ -1491,24 +1491,30 @@ struct Locally_shortest_path_imp
       break;
       case 1:
       {
-        //TODO: handle if h is on the boundary (does not necessarily mean early exit, depends on direction)
         halfedge_descriptor h = std::get<halfedge_descriptor>(var_des);
         halfedge_descriptor href = halfedge(face(h,mesh), mesh);
         int opp_id = h==href?2:(next(href,mesh)==h?0:1);
-        Vector_2 opp = curr_flat_tid[opp_id];
+        Vector_2 h_2d = curr_flat_tid[(opp_id+2)%3] - curr_flat_tid[(opp_id+1)%3];
 
         // check if the line starts in the current face (TODO should be a predicate)
-        if ( (opp-flat_p) * dir < 0 )
+        if ( orientation(h_2d, dir) == RIGHT_TURN )
         {
+          if ( is_border(opposite(h, mesh), mesh) )
+          {
+            result.push_back(curr_p);
+            return result;
+          }
+
           // take the same point but in the opposite face
           halfedge_descriptor h_start=h;
           h=opposite(h, mesh);
           curr_tid=face(h, mesh);
           curr_p.first=curr_tid;
           href=halfedge(curr_tid, mesh);
+          CGAL_assertion(start_loc.second[opp_id]==0);
           std::array<FT, 2> bary2 = CGAL::make_array(start_loc.second[(opp_id+2)%3], start_loc.second[(opp_id+1)%3]); // swap done here
           int opp_id = h==href?2:(next(href,mesh)==h?0:1);
-          curr_p.second[0]=FT(0);
+          curr_p.second[opp_id]=FT(0);
           curr_p.second[(opp_id+1)%3]=bary2[0];
           curr_p.second[(opp_id+2)%3]=bary2[1];
 
@@ -1524,7 +1530,7 @@ struct Locally_shortest_path_imp
           Vector_2 ybase = new_flat_tid_in_curr_basis[1]-new_flat_tid_in_curr_basis[0];
           double cos_theta = ybase * dir / std::sqrt(ybase*ybase) / std::sqrt(dir*dir);
           double theta = std::acos(cos_theta);
-          dir = Vector_2(std::cos(CGAL_PI/2.-theta), std::sin(CGAL_PI/2.-theta));
+          dir = Vector_2(-std::sin(theta), std::cos(theta));
 
           curr_flat_tid=init_flat_triangle(halfedge(curr_tid,mesh),vpm,mesh);
           flat_p= curr_p.second[0]*curr_flat_tid[0]+curr_p.second[1]*curr_flat_tid[1]+curr_p.second[2]*curr_flat_tid[2];
@@ -1583,6 +1589,8 @@ struct Locally_shortest_path_imp
 #endif
       if (is_vert)
       {
+        point_on_edge.second = make_array(0.,0.,0.);
+        point_on_edge.second[kv]=1;
         vertex_descriptor vid = target(get_halfedge(kv, prev(h_ref,mesh)), mesh);
 #ifdef CGAL_DEBUG_BSURF
         std::cout<< "hit vertex "<< vid <<std::endl;
@@ -1593,9 +1601,16 @@ struct Locally_shortest_path_imp
             sqrt(squared_distance(construct_point(curr_p,mesh), get(vpm,vid)));
 
         // stop if hitting the boundary
+        bool border_reached = false;
         for (halfedge_descriptor h : halfedges_around_target(vid, mesh))
           if (is_border(h, mesh))
-            return result;
+          {
+            result.push_back(point_on_edge);
+            border_reached=true;
+            prev_p=point_on_edge; //useful if accumulated > len TODO: what about below for edges?
+            break;
+          }
+        if (border_reached) break;
 
 
   //   Point_3 vert = get(vpm,vid);
@@ -1628,7 +1643,12 @@ struct Locally_shortest_path_imp
 
         // break if hitting the boundary
         if (is_border(h_curr, mesh))
+        {
+          result.push_back(point_on_edge);
+          accumulated += sqrt(squared_distance(construct_point(point_on_edge,mesh), construct_point(curr_p,mesh)));
+          prev_p=point_on_edge; //if accumulated > len we need to be in the common face
           break;
+        }
 
         face_descriptor adj = face(h_curr,mesh);
         std::array<FT,2> curr_alpha=make_array(t1,1-t1); //reversed because will switch face
@@ -1680,15 +1700,20 @@ struct Locally_shortest_path_imp
     std::cout << "prev_pos " << prev_pos << std::endl;
     std::cout << "last_pos " << last_pos << std::endl;
 
-    std::cout << "curr_tri "<< prev_p.first << std::endl;
+    std::cout << "prev_p "<< prev_p.first << std::endl;
     std::cout << "pos " << pos << std::endl;
 
 #endif
 
     auto [inside, bary] =
-        point_in_triangle(vpm,mesh,prev_p.first,pos);
+        point_in_triangle(vpm,mesh,prev_p.first,pos); // TODO replace with function in PMP/locate.h
     if (!inside)
-      std::cout << "error!This point should be in the triangle" << std::endl;
+    {
+      std::cout << "prev_pos " << prev_pos << "\n";
+      std::cout << "last_pos " << last_pos << "\n";
+      std::cout << "pos " << pos << "\n";
+      std::cout << "error!This point should be in the triangle" << std::endl; //TODO this is a debug
+    }
 
     result.pop_back();
     prev_p.second=bary;
