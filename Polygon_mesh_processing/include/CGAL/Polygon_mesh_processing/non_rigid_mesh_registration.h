@@ -130,7 +130,7 @@ void insertSparseMatrix(const SparseMat& mat, std::vector<SparseTriplet>& coeffi
 }
 
 template<typename T, typename Visitor, typename TriangleMesh>
-void rotation(std::size_t index, Visitor &v, TriangleMesh &source, const Vertices& X, const Vertices& Z, const std::set<int>& neighbors, const std::vector<T> &weights, std::vector<Eigen::Matrix<ScalarType, 3, 3>> &rotations) {
+void rotation(std::size_t index, Visitor &v, const TriangleMesh &source, const Vertices& X, const Vertices& Z, const std::set<int>& neighbors, const std::vector<T> &weights, std::vector<Eigen::Matrix<ScalarType, 3, 3>> &rotations) {
   using Vertex_index = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
   Deformation_Eigen_closest_rotation_traits_3 cr;
 
@@ -184,7 +184,7 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *
 * @note This function requires the \ref thirdpartyEigen library.
 *
-* @tparam TriangleMesh a model of `MutableFaceGraph`.
+* @tparam TriangleMesh a const model of `FaceGraph`.
 * @tparam PointRange is a model of `ConstRange`. The value type of
 *   its iterator is the key type of the named parameter `point_map`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
@@ -208,19 +208,19 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *     \cgalParamDefault{`50`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{point_to_plane_energy}
-*     \cgalParamDescription{the weight of the point to plane distance in the registration}
+*   \cgalParamNBegin{point_to_plane_weight}
+*     \cgalParamDescription{the weight of the point to plane energy in the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`1`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{point_to_point_energy}
-*     \cgalParamDescription{the weight of the point to matching point distance in the registration}
+*   \cgalParamNBegin{point_to_point_weight}
+*     \cgalParamDescription{the weight of the point to matching point energy in the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`1`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{as_rigid_as_possible_energy}
+*   \cgalParamNBegin{as_rigid_as_possible_weight}
 *     \cgalParamDescription{defines the rigidity of the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`50`}
@@ -233,8 +233,8 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{correspondences}
-*     \cgalParamDescription{an range of matching vertex-point pairs between the `source` and the `target`.}
-*     \cgalParamType{`ConstRange` whose value type is a pair of `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and the element type of `PointRange`.}
+*     \cgalParamDescription{a range of matching vertex-point pairs between the `source` and the `target`.}
+*     \cgalParamType{`ConstRange` whose value type is a pair of `boost::graph_traits<TriangleMesh>::%vertex_descriptor` and the value type of `PointRange`.}
 *     \cgalParamDefault{empty}
 *     \cgalParamExtra{to avoid copies, this parameter can be passed using `std::cref`.}
 *   \cgalParamNEnd
@@ -279,7 +279,7 @@ template <typename TriangleMesh,
           typename VertexRotationMap,
           typename NamedParameters1 = parameters::Default_named_parameters,
           typename NamedParameters2 = parameters::Default_named_parameters>
-void non_rigid_mesh_to_points_registration(TriangleMesh& source,
+void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
   const PointRange& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
@@ -288,9 +288,9 @@ void non_rigid_mesh_to_points_registration(TriangleMesh& source,
 {
 #ifdef CGAL_EIGEN3_ENABLED
   const size_t iter = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::number_of_iterations), 50);
-  const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_energy), 2);
-  const double w1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_point_energy), 0.1);
-  const double w3 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::as_rigid_as_possible_energy), 20);
+  const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_weight), 2);
+  const double w1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_point_weight), 0.1);
+  const double w3 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::as_rigid_as_possible_weight), 20);
   const double max_matching_dist = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::maximum_matching_distance), 0);
 
   using namespace internal::registration;
@@ -720,8 +720,8 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *
 * @note This function requires the \ref thirdpartyEigen library.
 *
-* @tparam TriangleMesh1 a model of `MutableFaceGraph`.
-* @tparam TriangleMesh2 a const model of the `MutableFaceGraph`.
+* @tparam TriangleMesh1 a const model of `FaceGraph`.
+* @tparam TriangleMesh2 a const model of `FaceGraph`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
 *   as key type and a \cgal Kernel `Vector_3` as value type.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
@@ -743,19 +743,19 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *     \cgalParamDefault{`50`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{point_to_plane_energy}
-*     \cgalParamDescription{the weight of the point to plane distance in the registration}
+*   \cgalParamNBegin{point_to_plane_weight}
+*     \cgalParamDescription{the weight of the point to plane energy in the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`1`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{point_to_point_energy}
-*     \cgalParamDescription{the weight of the point to matching point distance in the registration}
+*   \cgalParamNBegin{point_to_point_weight}
+*     \cgalParamDescription{the weight of the point to matching point energy in the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`1`}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{as_rigid_as_possible_energy}
+*   \cgalParamNBegin{as_rigid_as_possible_weight}
 *     \cgalParamDescription{defines the rigidity of the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`50`}
@@ -817,7 +817,7 @@ template <typename TriangleMesh1, typename TriangleMesh2,
   typename VertexRotationMap,
   typename NamedParameters1 = parameters::Default_named_parameters,
   typename NamedParameters2 = parameters::Default_named_parameters>
-void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
+void non_rigid_mesh_to_mesh_registration(const TriangleMesh1& source,
   const TriangleMesh2& target,
   VertexTranslationMap& vtm,
   VertexRotationMap& vrm,
@@ -870,9 +870,9 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
 /*!
 * \ingroup PMP_registration_grp
 *
-* \brief applies a non-rigid transformation to the vertices of the mesh. Face and vertex normal vectors are invalid after transformation.
+* \brief applies a non-rigid transformation to the vertices of the mesh. Face and vertex normal vectors are not updated after transformation.
 *
-* @tparam TriangleMesh a model of `MutableFaceGraph`.
+* @tparam TriangleMesh a model of `FaceGraph`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
  *   as key type and a \cgal Kernel `Vector_3` as value type.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
@@ -902,21 +902,17 @@ void non_rigid_mesh_to_mesh_registration(TriangleMesh1& source,
 template <typename TriangleMesh,
   typename VertexTranslationMap,
   typename NamedParameters = parameters::Default_named_parameters>
-void apply_non_rigid_transformation(TriangleMesh& mesh,
+void apply_non_rigid_transformation(const TriangleMesh& mesh,
                                     const VertexTranslationMap& vtm,
                                     const NamedParameters& np = parameters::default_values()) {
-  using Gt =  typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+  using Gt = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
   using Vertex_point_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::type;
   using Vector_map_tag = dynamic_vertex_property_t<typename Gt::Vector_3>;
-  using Vector_map_tag = dynamic_vertex_property_t<typename Gt::Vector_3>;
   using Default_vector_map = typename boost::property_map<TriangleMesh, Vector_map_tag>::type;
-  using Vertex_normal_map = typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
-    NamedParameters,
-    Default_vector_map>::type;
+
   using Point = typename Gt::Point_3;
 
-  Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_property_map(CGAL::vertex_point, mesh));
-  Vertex_normal_map vnm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_normal_map), get(Vector_map_tag(), mesh));
+  Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
 
   for (auto v : vertices(mesh)) {
     Point p = get(vpm, v);

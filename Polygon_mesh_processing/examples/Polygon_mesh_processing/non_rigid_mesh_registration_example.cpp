@@ -20,8 +20,8 @@ using FT = K::FT;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 int main(int, char**) {
-  const std::string source_fn = CGAL::data_file_path("meshes/bear.off");
-  const std::string target_fn = CGAL::data_file_path("meshes/bear_bis.off");
+  const std::string source_fn = "data/bear_simple.off";
+  const std::string target_fn = "data/bear_bis_simple.off";
   const std::string corr_fn = "data/bear_bear_bis.corr";
 
   Mesh source, target;
@@ -67,7 +67,12 @@ int main(int, char**) {
 
   std::cout << std::endl << out.str() << std::endl;
 
-  PMP::non_rigid_mesh_to_mesh_registration(source, target, vtm, vrm, CGAL::parameters::point_to_point_energy(w1).point_to_plane_energy(w2).as_rigid_as_possible_energy(w3).correspondences(std::cref(correspondences_mesh)));
+  PMP::non_rigid_mesh_to_mesh_registration(source, target, vtm, vrm,
+    CGAL::parameters::point_to_point_weight(w1)
+    .point_to_plane_weight(w2)
+    .as_rigid_as_possible_weight(w3)
+    .correspondences(std::cref(correspondences_mesh)));
+
   PMP::apply_non_rigid_transformation(source, vtm);
   CGAL::IO::write_polygon_mesh(out.str(), source);
 
