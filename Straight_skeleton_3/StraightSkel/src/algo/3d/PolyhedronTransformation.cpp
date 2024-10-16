@@ -122,10 +122,10 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
     Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
 
     if (!point) {
-#if 1 // Temporarily allowing points to not exist for simultaneous events:
+#if 0
         std::cerr << "Warning: triplet of planes doesn't define a point!" << std::endl;
 #else
-        Point3SPtr result = PolyhedronSPtr();
+        Point3SPtr result = Point3SPtr();
         DEBUG_SPTR(result);
         return result;
 #endif
