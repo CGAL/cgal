@@ -4,12 +4,17 @@ SCRIPT_NAME="${0##*/}"
 START_TIME=$(date +%s)
 
 CUSTOMER=""
-DATA_PATH=""
+DATA_PATH=
 
-BUILD_DIR="build"
-OFFSET_DIRECTION="out" # in / out
+BUILD_DIR="build-release"
 TIMEOUT_VALUE=10
 MAX_ITEM_NUMBER=100
+OFFSET_DIRECTION="out" # in / out
+
+echo "Build DIR = ${BUILD_DIR}"
+echo "Timeout = ${TIMEOUT_VALUE}"
+echo "Max #inputs = ${MAX_ITEM_NUMBER}"
+echo "Inwards / Outwards = ${OFFSET_DIRECTION}"
 
 cd "$BUILD_DIR" || exit 1
 
