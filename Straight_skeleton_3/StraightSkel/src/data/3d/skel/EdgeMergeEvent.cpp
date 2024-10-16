@@ -17,6 +17,7 @@
 #include "data/3d/skel/EdgeMergeEvent.h"
 
 #include "debug.h"
+#include "data/3d/Vertex.h"
 #include "data/3d/Edge.h"
 #include "data/3d/Facet.h"
 #include "data/3d/skel/Node.h"
@@ -113,7 +114,12 @@ std::string EdgeMergeEvent::toString() const {
     sstr.precision(17);
     sstr << "EdgeMergeEvent\n";
     sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
-    sstr << "\t(facet=" << getFacet()->getID() << ", edge A=" << getEdge1()->getID() << ", edge B=" << getEdge2()->getID() << ")";
+    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(facet=" << getFacet()->getID() << "\n";
+    sstr << "\t(edgeA=" << getEdge1()->getID() << "\n\t\t[" << getEdge1()->getVertexSrc()->toString() << "\n\t\t "
+                                                            << getEdge1()->getVertexDst()->toString() << "])\n";
+    sstr << "\t(edgeB=" << getEdge2()->getID() << "\n\t\t[" << getEdge2()->getVertexSrc()->toString() << "\n\t\t "
+                                                            << getEdge2()->getVertexDst()->toString() << "])\n";
     return sstr.str();
 }
 

@@ -17,9 +17,14 @@
 #include "data/3d/skel/EdgeEvent.h"
 
 #include "debug.h"
+#include "data/3d/Vertex.h"
 #include "data/3d/Edge.h"
 #include "data/3d/skel/Node.h"
 #include "data/3d/skel/SkelEdgeData.h"
+#include "util/StringFactory.h"
+
+#include <sstream>
+#include <string>
 
 namespace data { namespace _3d { namespace skel {
 
@@ -68,6 +73,17 @@ void EdgeEvent::setHighlight(bool highlight) {
         SkelEdgeData::create(edge_);
     }
     edge_->getData()->setHighlight(highlight);
+}
+
+std::string EdgeEvent::toString() const {
+    std::stringstream sstr;
+    sstr.precision(17);
+    sstr << "EdgeEvent\n";
+    sstr << "\t(offset=" << util::StringFactory::fromDouble(CGAL::to_double(getOffset())) << ")\n";
+    sstr << "\t(node=" << *(getNode()->getPoint()) << ")\n";
+    sstr << "\t(edgeA=" << getEdge()->getID() << "\n\t\t[" << getEdge()->getVertexSrc()->toString() << "\n\t\t "
+                                                           << getEdge()->getVertexDst()->toString() << "])";
+    return sstr.str();
 }
 
 } } }

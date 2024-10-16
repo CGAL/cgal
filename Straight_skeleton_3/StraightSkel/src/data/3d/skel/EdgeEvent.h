@@ -21,6 +21,8 @@
 #include "data/3d/skel/ptrs.h"
 #include "data/3d/skel/AbstractEvent.h"
 
+#include <string>
+
 namespace data { namespace _3d { namespace skel {
 
 class EdgeEvent : public AbstractEvent {
@@ -33,6 +35,7 @@ public:
     EdgeSPtr getEdge() const;
     void setEdge(EdgeSPtr edge);
     void setHighlight(bool highlight);
+    std::string toString() const override;
 protected:
     EdgeEvent(PolyhedronSPtr polyhedron);
 

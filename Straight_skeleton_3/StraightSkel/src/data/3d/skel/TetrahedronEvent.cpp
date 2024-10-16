@@ -26,6 +26,7 @@
 #include "util/StringFactory.h"
 
 #include <sstream>
+#include <string>
 
 namespace data { namespace _3d { namespace skel {
 
@@ -142,7 +143,7 @@ std::string TetrahedronEvent::toString() const {
     sstr << "\t(edges";
     for(int i=0; i<6; ++i)
         sstr << " " << edges[i]->getID();
-    sstr << ")\n";
+    sstr << ")";
     return sstr.str();
 }
 

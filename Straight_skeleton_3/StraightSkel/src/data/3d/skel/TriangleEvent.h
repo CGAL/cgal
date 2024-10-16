@@ -21,6 +21,8 @@
 #include "data/3d/skel/ptrs.h"
 #include "data/3d/skel/AbstractEvent.h"
 
+#include <string>
+
 namespace data { namespace _3d { namespace skel {
 
 class TriangleEvent : public AbstractEvent {
@@ -37,6 +39,7 @@ public:
     void getVertices(VertexSPtr out[3]) const;
     void getEdges(EdgeSPtr out[3]) const;
     void setHighlight(bool highlight);
+    std::string toString() const override;
 protected:
     TriangleEvent(PolyhedronSPtr polyhedron);
     NodeSPtr node_;
