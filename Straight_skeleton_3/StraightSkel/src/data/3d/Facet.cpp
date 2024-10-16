@@ -75,30 +75,21 @@ FacetSPtr Facet::create(unsigned int num_edges, EdgeSPtr edges[]) {
 
 FacetSPtr Facet::clone() const {
     FacetSPtr result = Facet::create();
+    std::map<VertexSPtr, VertexSPtr> old_to_new;
     std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
     while (it_v != vertices_.end()) {
         VertexSPtr vertex = *it_v++;
         VertexSPtr vertex_c = vertex->clone();
+        old_to_new[vertex] = vertex_c;
         result->addVertex(vertex_c);
     }
     std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();
     while (it_e != edges_.end()) {
         EdgeSPtr edge = *it_e++;
-        Point3SPtr p_src = edge->getVertexSrc()->getPoint();
-        Point3SPtr p_dst = edge->getVertexDst()->getPoint();
-        VertexSPtr src;
-        VertexSPtr dst;
-        std::list<VertexSPtr>::const_iterator it_v = result->vertices().begin();
-        while (it_v != result->vertices().end()) {
-            VertexSPtr vertex = *it_v++;
-            if (vertex->getPoint() == p_src) {
-                src = vertex;
-            }
-            if (vertex->getPoint() == p_dst) {
-                dst = vertex;
-            }
-        }
+        VertexSPtr src = old_to_new.at(edge->getVertexSrc());
+        VertexSPtr dst = old_to_new.at(edge->getVertexDst());
         EdgeSPtr edge_c = Edge::create(src, dst);
+        CGAL_assertion(edge_c->getVertexSrc() == src && edge_c->getVertexDst() == dst);
         if (edge->getFacetL() == shared_from_this()) {
             edge_c->setFacetL(result);
         }
