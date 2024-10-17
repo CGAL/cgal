@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
   std::vector<Point_3> points;
 
   CGAL::Polygon_mesh_processing::sample_triangle_mesh(sm, std::back_inserter(points),
-		                                                  CGAL::parameters::number_of_points_on_faces(2* num_vertices(sm)).do_sample_vertices(false).do_sample_edges(false));
+                                                    CGAL::parameters::number_of_points_on_faces(2* num_vertices(sm)).do_sample_vertices(false).do_sample_edges(false));
   double x, y, z;
   std::cout << "# samples = " << points.size() << std::endl;
   double area = CGAL::Polygon_mesh_processing::area(sm);
@@ -40,11 +40,11 @@ int main(int argc, char* argv[])
   std::cout << "area = " << area << std::endl;
   {
     std::string random_points = filename+"-sampled.xyz";
-	  std::ofstream out(random_points.c_str());
-	  out.precision(17);
-	  for (auto p : points) {
-		  out << p << std::endl;
-	  }
+    std::ofstream out(random_points.c_str());
+    out.precision(17);
+    for (auto p : points) {
+        out << p << std::endl;
+    }
   }
 
   for(int i = 0; i < points.size(); ++i){
