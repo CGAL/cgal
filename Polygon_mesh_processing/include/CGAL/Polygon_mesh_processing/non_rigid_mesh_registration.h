@@ -907,8 +907,6 @@ void apply_non_rigid_transformation(const TriangleMesh& mesh,
                                     const NamedParameters& np = parameters::default_values()) {
   using Gt = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
   using Vertex_point_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::type;
-  using Vector_map_tag = dynamic_vertex_property_t<typename Gt::Vector_3>;
-  using Default_vector_map = typename boost::property_map<TriangleMesh, Vector_map_tag>::type;
 
   using Point = typename Gt::Point_3;
 

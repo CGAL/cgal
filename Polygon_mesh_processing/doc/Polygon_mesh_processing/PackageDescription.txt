@@ -261,6 +261,11 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`
 - `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
 
+\cgalCRPSection{Registration Functions}
+- `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_points_registration()`
+- `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_mesh_registration()`
+- `CGAL::Polygon_mesh_processing::apply_non_rigid_transformation()`
+
 
 \cgalCRPSection{Miscellaneous}
 - `CGAL::Polygon_mesh_slicer`

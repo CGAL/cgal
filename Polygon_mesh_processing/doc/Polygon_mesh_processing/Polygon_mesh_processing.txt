@@ -1457,7 +1457,7 @@ where:
 - \f$\mathbf{M}\f$ is the intermediate mesh (initially equal to the source mesh).
 - \f$N(\mathbf{v}_i)\f$ denotes the set of vertices adjacent to \f$\mathbf{v}_i\f$.
 
-The \f$\mathbf{E_{match}}\f$ energy penalizes the distance between point pairs \f$\mathbf{v}_i\f$ and \f$\mathbf{\tilde{v}}_i\f$. The point pairs are restablished after each iteration. In addition, the method can take fixed point pairs of correspondences between source and target. This greatly improves the quality of the registration and is generally required for non-simple meshes.
+The \f$\mathbf{E_{match}}\f$ energy penalizes the distance between point pairs \f$\mathbf{v}_i\f$ and \f$\mathbf{\tilde{v}}_i\f$. The point pairs are restablished after each iteration. In addition, the method can take fixed point pairs of correspondences between source and target. This greatly improves the quality of the registration and is generally required when the initial alignment of the source and target is poor.
 
 The \f$\mathbf{E_{point\_to\_plane}}\f$ energy is similar to \f$\mathbf{E_{match}}\f$, but instead penalizes the distance to the plane given by the target vertex and its normal. This energy compensates for different discretizations, i.e., for source and target mesh that were not created by deforming one mesh into the other.
 
@@ -1489,7 +1489,7 @@ Non-rigid registration using five correspondences on top of the head and at the 
 
 \subsection PMPNonRigidRegistrationExample Non-rigid registration Example
 
-In the following example the bear.off model is registered onto the bear_bis.off model. The resulting transformed mesh is then saved as off file with a name depending on the chosen parameters.
+In the following example the bear_simple.off model is registered onto the bear_simple_bis.off model. The resulting transformed mesh is then saved as off file with a name depending on the chosen parameters.
 
 \cgalExample{Polygon_mesh_processing/non_rigid_mesh_registration_example.cpp}
 
