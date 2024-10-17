@@ -152,3 +152,13 @@ if(TARGET CGAL::Ceres_support)
 else()
   message(STATUS "NOTICE: The example 'mesh_smoothing_example' uses the Ceres library, and will not be compiled.")
 endif()
+
+
+find_path(CY_INCLUDE "cySampleElim.h" )
+
+if(CY_INCLUDE-NOTFOUND)
+  message( STATUS "poisson_eliminate needs the CY library")
+  else()
+  create_single_source_cgal_program("poisson_eliminate.cpp")
+  target_include_directories( poisson_eliminate AFTER PRIVATE ${CY_INCLUDE} )
+endif()
