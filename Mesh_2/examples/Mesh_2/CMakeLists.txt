@@ -13,6 +13,6 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(mesh_with_seeds PUBLIC CGAL::CGAL_Basic_viewer)
-  target_link_libraries(mesh_marked_domain PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(mesh_with_seeds PRIVATE CGAL::CGAL_Basic_viewer)
+  target_link_libraries(mesh_marked_domain PRIVATE CGAL::CGAL_Basic_viewer)
 endif()

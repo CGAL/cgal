@@ -13,7 +13,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTORCC ON)
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(-DQT_NO_KEYWORDS)
 
   qt_add_executable(
     Segment_voronoi_linf_2 Segment_voronoi_linf_2.cpp
