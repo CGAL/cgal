@@ -1048,11 +1048,13 @@ private:
   /*!
   \brief Face indices of the volume.
 
+  \tparam OutputIterator output iterator accepting Index
+
   \param volume_index
    index of the query volume.
 
-  @return
-   vector of face indices.
+  \param it
+  output iterator where faces of the volume are put
 
   \pre created partition
   */
@@ -1069,8 +1071,7 @@ private:
   /*!
   \brief Mapping of a vertex index to its position.
 
-  @return
-   vector of points.
+  @return point of the vertex
 
     \pre created partition
   */
@@ -1093,11 +1094,12 @@ private:
   /*!
   \brief Vertices of a face.
 
-  \param volume_index
-   index of the query volume.
+  \tparam OutputIterator output iterator accepting `Point_3`
 
-  @return
-   vector of face indices.
+  \param face_index
+   index of the query face.
+
+  \param it output iterator where points of the face are put
 
   \pre created partition
   */
@@ -1116,11 +1118,12 @@ private:
   /*!
   \brief Vertices of a face.
 
-  \param volume_index
-   index of the query volume.
+  \tparam OutputIterator output iterator accepting `EPECK::Point_3`
 
-  @return
-   vector of face indices.
+  \param face_index
+   index of the query face.
+
+  \param it output iterator where points of the face are put
 
   \pre created partition
   */

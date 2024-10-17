@@ -877,8 +877,11 @@ private:
   \param pit
   an output iterator taking Point_3.
 
-  \param triit
+  \param polyit
   an output iterator taking std::vector<std::size_t>.
+
+  \param lambda
+  trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
 
   \pre successful reconstruction
   */
@@ -1019,7 +1022,7 @@ private:
   \param pit
   an output iterator taking `Point_3`.
 
-  \param triit
+  \param polyit
   an output iterator taking `std::vector<std::size_t>`.
 
   \pre successful reconstruction
