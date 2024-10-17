@@ -15,9 +15,11 @@
 
 #include <CGAL/license/Polygon_mesh_processing/distance.h>
 
+#ifdef CGAL_USE_CY
 
 #include <cyVector.h>
 #include <cySampleElim.h>
+
 
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
@@ -72,5 +74,7 @@ poisson_eliminate(const TriangleMesh& sm, OutputIterator out, const NamedParamet
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
+
+#endif // ifdef CGAL_USE_CY
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_POISSON_ELIMINATE_H
