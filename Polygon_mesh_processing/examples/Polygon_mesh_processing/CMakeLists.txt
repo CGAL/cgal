@@ -156,7 +156,7 @@ endif()
 
 find_path(CY_INCLUDE "cySampleElim.h" )
 
-if(CY_INCLUDE-NOTFOUND)
+if(NOT CY_INCLUDE)
   message( STATUS "poisson_eliminate needs the CY library")
   else()
   create_single_source_cgal_program("poisson_eliminate.cpp")
