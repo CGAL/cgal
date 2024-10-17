@@ -86,7 +86,7 @@ if(TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program("${target}.cpp")
     target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
-  
+
   if (TARGET CGAL::TBB_support)
     foreach(
       target
@@ -99,7 +99,7 @@ if(TARGET CGAL::Eigen3_support)
       target_link_libraries(${target} PRIVATE CGAL::TBB_support)
     endforeach()
   endif()
-    
+
   if (TARGET CGAL::Eigen3_support AND TARGET CGAL::LASLIB_support)
     create_single_source_cgal_program( "orient_scanlines_example.cpp" )
     target_link_libraries(orient_scanlines_example PRIVATE
