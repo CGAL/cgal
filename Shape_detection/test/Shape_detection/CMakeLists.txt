@@ -51,7 +51,7 @@ if(TARGET CGAL::Eigen3_support)
   set(RANSAC_PROTO_DIR CACHE PATH "")
 
   add_executable(test_validity_sampled_data "test_validity_sampled_data.cpp")
-  target_link_libraries(test_validity_sampled_data CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
+  target_link_libraries(test_validity_sampled_data PRIVATE CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
   cgal_add_test(test_validity_sampled_data)
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
