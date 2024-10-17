@@ -79,6 +79,8 @@ if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen
   foreach(
     target
+    lfs_example_tuple
+    lfs_example_pointset
     jet_smoothing_example
     normal_estimation
     clustering_example

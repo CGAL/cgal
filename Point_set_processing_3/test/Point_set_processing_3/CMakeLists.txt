@@ -71,6 +71,9 @@ if(TARGET CGAL::Eigen3_support)
 
   create_single_source_cgal_program("psp_jet_includes.cpp")
   target_link_libraries(psp_jet_includes PUBLIC CGAL::Eigen3_support)
+
+  create_single_source_cgal_program("lfs_estimation_test.cpp")
+  target_link_libraries(lfs_estimation_test PUBLIC CGAL::Eigen3_support)
 else()
   message(STATUS "NOTICE: Some tests require Eigen 3.1 (or greater), and will not be compiled.")
 endif()

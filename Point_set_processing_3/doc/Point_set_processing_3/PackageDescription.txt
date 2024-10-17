@@ -75,6 +75,7 @@ format.
 - `CGAL::vcm_estimate_normals()`
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::structure_point_set()`
+- `CGAL::estimate_local_feature_size()`
 
 \cgalCRPSection{I/O (All Formats)}
 
