@@ -1408,8 +1408,7 @@ struct Locally_shortest_path_imp
         Orientation dir_ori=orientation(v02,dir), v01_ori=orientation(v02,v01);
 
         // check if dir is  the cone centered at curr_flat_tid[src_vertex] (TODO: should be a predicate!)
-        if ( dir_ori!=v01_ori ||
-            unnorm_cos_theta_2 / std::sqrt(v01*v01) > unnorm_cos_theta_1 / std::sqrt(dir*dir)) // > because cos is decreasing from 0 -> Pi, should be < for the angle`
+        if (orientation(dir, v01)==LEFT_TURN || orientation(dir, v02)==RIGHT_TURN)
         {
           //TODO: should be made robust with snapping and predicates or something à la robust construction traits
 
@@ -1422,12 +1421,12 @@ struct Locally_shortest_path_imp
           Vector_3 n(get(vpm,target(hloop, mesh)), get(vpm,source(hloop, mesh)));
           n /= std::sqrt(n*n);
           do{
-            Vector_3 nv(get(vpm,target(hloop, mesh)), get(vpm,target(next(hloop, mesh), mesh)));
+            hloop=opposite(next(hloop, mesh), mesh);
+            Vector_3 nv(get(vpm,target(hloop, mesh)), get(vpm,source(hloop, mesh)));
             nv /= std::sqrt(nv*nv);
             angles.push_back( std::acos(n * nv) );
             acc_angle+=angles.back();
             n = nv;
-            hloop=opposite(next(hloop, mesh), mesh);
           }while(hloop!=hstart);
 
           CGAL_assertion( std::acos(unnorm_cos_theta_2 / std::sqrt((v01*v01) * (v02*v02))) == angles[0]); // will not be true because of rounding
@@ -1465,6 +1464,13 @@ struct Locally_shortest_path_imp
           double d_opp_delta =  dvloop * sin(delta) / sin(CGAL_PI-delta-theta);
 
           double alpha = d_opp_delta/dvprev;
+
+          if (is_border(hloop,mesh))
+          {
+            // border case falling outside of the mesh TODO: check with Claudio
+            result.push_back(curr_p);
+            return result;
+          }
 
           halfedge_descriptor href = halfedge(face(hloop,mesh),mesh);
           curr_flat_tid=init_flat_triangle(href,vpm,mesh);
@@ -1605,6 +1611,7 @@ struct Locally_shortest_path_imp
         for (halfedge_descriptor h : halfedges_around_target(vid, mesh))
           if (is_border(h, mesh))
           {
+            //TODO: that's not necessarily a break! depends on dir
             result.push_back(point_on_edge);
             border_reached=true;
             prev_p=point_on_edge; //useful if accumulated > len TODO: what about below for edges?

@@ -63,5 +63,46 @@ int main()
 //    ++runid;
   }
 
+  // test starting on vertices
+  //int runid=0;
+  for (Mesh::Halfedge_index h : halfedges(mesh))
+  {
+    if (is_border(h,mesh)) continue;
+
+    Mesh::Face_index f = face(h, mesh);
+    Face_location src(f, CGAL::make_array(0., 1., 0.));
+
+    // K::Point_3 src_pt = PMP::construct_point(src, mesh);
+    // std::cout << "src = " << src_pt << "\n";
+
+    double target_distance = 0.3;
+
+    //std::ofstream out("straightest_geodesic_path_"+std::to_string(runid)+".polylines.txt");
+    for (double n=0; n<8; ++n)
+    {
+      double theta = 2*CGAL_PI/16*n;
+      K::Vector_2 dir(std::cos(theta), std::sin(theta));
+      std::vector<Face_location> path = PMP::straightest_geodesic<K>(src, dir, target_distance, mesh);
+
+      //TODO: check the output is of correct length
+
+/*
+      std::vector<K::Point_3> poly;
+      poly.reserve(path.size());
+      PMP::convert_path_to_polyline(path, mesh, std::back_inserter(poly));
+
+
+      out << path.size() << " ";
+
+      for (auto p : poly)
+        out << " " << p;
+      out << "\n";
+*/
+    }
+//    ++runid;
+  }
+
+
+
   return 0;
 }
