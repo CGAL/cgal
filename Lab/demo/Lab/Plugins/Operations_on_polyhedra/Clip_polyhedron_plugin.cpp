@@ -416,7 +416,6 @@ public Q_SLOTS:
         if(sm_item)
         {
           Scene_polyhedron_selection_item* selection = nullptr;
-          CGAL::Three::Scene_interface::Item_id selection_id = -1;
           for (int id : scene->selectionIndices())
           {
             Scene_polyhedron_selection_item* tmp
@@ -424,7 +423,6 @@ public Q_SLOTS:
             if (tmp != nullptr && tmp->polyhedron_item() == sm_item)
             {
               selection = tmp;
-              selection_id = id;
               break;
             }
           }
@@ -467,8 +465,6 @@ public Q_SLOTS:
               CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
             }
 
-            std::cout << "A - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
-
             Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(tm_out);
             new_item->setName(QString("Clip_%1").arg(sm_item->name()));
             new_item->setColor(sm_item->color());
@@ -477,9 +473,6 @@ public Q_SLOTS:
             CGAL::Three::Scene_interface::Item_id id1 = scene->addItem(new_item);
             new_item->invalidateOpenGLBuffers();
             scene->setSelectedItem(id1);
-
-            std::cout << "id1 = " << id1 << std::endl;
-            std::cout << "B - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
 
             Scene_polyhedron_selection_item* new_selection = new Scene_polyhedron_selection_item(new_item, this->mw);
             CGAL_assertion(new_selection->selected_edges.empty());
@@ -490,25 +483,11 @@ public Q_SLOTS:
             }
             new_selection->setName(QString("Clip_%1_selection").arg(sm_item->name()));
             new_selection->setVisible(sm_item->visible());
-            //scene->erase(selection_id);
-
-            std::cout << "BB - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
-
             new_selection->invalidateOpenGLBuffers();
-
-            std::cout << "BC - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
-
-            CGAL::Three::Scene_interface::Item_id id2 = scene->addItem(new_selection);
-
-            std::cout << "id2 = " << id2 << std::endl;
-            std::cout << "BD - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
-
+            scene->addItem(new_selection);
 
             sm_item->setVisible(false);
             selection->setVisible(false);
-
-            std::cout << "D - Nb items in scene = " << this->scene->numberOfEntries() << std::endl;
-
           }
         }
       }
