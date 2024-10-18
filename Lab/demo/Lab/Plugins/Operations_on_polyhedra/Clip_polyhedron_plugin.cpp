@@ -6,12 +6,15 @@
 #include <QMessageBox>
 #include "Scene_surface_mesh_item.h"
 #include "Scene_plane_item.h"
+#include "Scene_polyhedron_selection_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Triangle_container.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Three/CGAL_Lab_plugin_interface.h>
+#include <CGAL/Three/CGAL_Lab_plugin_helper.h>
 #include <CGAL/Three/Three.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
+#include <CGAL/Polygon_mesh_processing/corefinement.h>
 #include "Plugins/AABB_tree/Scene_movable_sm_item.h"
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
@@ -79,22 +82,26 @@ public:
 
 class Q_DECL_EXPORT Clip_cgal_lab_plugin :
     public QObject,
-    public CGAL::Three::CGAL_Lab_plugin_interface
+    public CGAL_Lab_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::CGAL_Lab_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.CGALLab.PluginInterface/1.0")
+
 public :
   // Adds an action to the menu and configures the widget
   void init(QMainWindow* mw,
             CGAL::Three::Scene_interface* scene_interface,
-            Messages_interface* mi) {
+            Messages_interface* mi)
+  {
     //get the references
     this->scene = scene_interface;
+    this->mw = mw;
     this->messages = mi;
     plane = nullptr;
     clipper_item = nullptr;
     original_clipper = nullptr;
+
     //creates and link the actions
     actionClipPolyhedra = new QAction("Clip Polyhedra With Plane", mw);
     actionClipPolyhedra->setProperty("subMenuName","Polygon Mesh Processing/Corefinement");
@@ -254,13 +261,13 @@ public Q_SLOTS:
             if(sm_item)
             {
               CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
-                                                  plane->plane(),
-                                                  CGAL::parameters::clip_volume(
-                                                    ui_widget.close_checkBox->isChecked()).
-                                                  throw_on_self_intersection(true).
-                                                  use_compact_clipper(
-                                                    !ui_widget.coplanarCheckBox->isChecked())
-                                                  .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
+                                                plane->plane(),
+                                                CGAL::parameters::clip_volume(
+                                                  ui_widget.close_checkBox->isChecked()).
+                                                throw_on_self_intersection(true).
+                                                use_compact_clipper(
+                                                  !ui_widget.coplanarCheckBox->isChecked())
+                                                .allow_self_intersections(ui_widget.do_not_modify_CheckBox->isChecked()));
             }
           }
           catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
@@ -408,19 +415,79 @@ public Q_SLOTS:
       {
         if(sm_item)
         {
-          try {
-            CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
-                                                clipper,
-                                                CGAL::parameters::clip_volume(
-                                                  ui_widget.close_checkBox->isChecked()).
-                                                throw_on_self_intersection(true).
-                                                use_compact_clipper(
-                                                  !ui_widget.coplanarCheckBox->isChecked()),
-                                                CGAL::parameters::do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
-          }
-          catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
+          Scene_polyhedron_selection_item* selection = nullptr;
+          for (int id : scene->selectionIndices())
           {
-            CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+            Scene_polyhedron_selection_item* tmp
+              = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(id));
+            if (tmp != nullptr && tmp->polyhedron_item() == sm_item)
+            {
+              selection = tmp;
+              break;
+            }
+          }
+
+          if (selection == nullptr)
+          {
+            try {
+              CGAL::Polygon_mesh_processing::clip(*(sm_item->face_graph()),
+                                                  clipper,
+                                                  CGAL::parameters::clip_volume(
+                                                    ui_widget.close_checkBox->isChecked()).
+                                                  throw_on_self_intersection(true).
+                                                  use_compact_clipper(
+                                                    !ui_widget.coplanarCheckBox->isChecked()),
+                                                  CGAL::parameters::do_not_modify(ui_widget.do_not_modify_CheckBox->isChecked()));
+            }
+            catch(const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
+            {
+              CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+            }
+          }
+          else
+          {
+            SMesh* tm_out = new SMesh();
+            auto ecmap_out = tm_out->add_property_map<fg_edge_descriptor, bool>("ecmap", false).first;
+
+            try {
+              bool success = CGAL::Polygon_mesh_processing::corefine_and_compute_intersection(*(sm_item->face_graph()),
+                clipper,
+                *tm_out,
+                CGAL::parameters::edge_is_constrained_map(selection->constrained_edges_pmap()),
+                CGAL::parameters::default_values(),
+                CGAL::parameters::edge_is_constrained_map(ecmap_out));
+
+              if (!success)
+                CGAL::Three::Three::warning(tr("corefine_and_compute_intersection() did not fully succeed"));
+            }
+            catch (const CGAL::Polygon_mesh_processing::Corefinement::Self_intersection_exception&)
+            {
+              CGAL::Three::Three::warning(tr("The requested operation is not possible due to the presence of self-intersections in the region handled."));
+            }
+
+            Scene_surface_mesh_item* new_item = new Scene_surface_mesh_item(tm_out);
+            new_item->setName(QString("Clip_%1").arg(sm_item->name()));
+            new_item->setColor(sm_item->color());
+            new_item->setRenderingMode(sm_item->renderingMode());
+            new_item->setVisible(sm_item->visible());
+            CGAL::Three::Scene_interface::Item_id id1 = scene->addItem(new_item);
+            new_item->invalidateOpenGLBuffers();
+            scene->setSelectedItem(id1);
+
+            Scene_polyhedron_selection_item* new_selection = new Scene_polyhedron_selection_item(new_item, this->mw);
+            CGAL_assertion(new_selection->selected_edges.empty());
+            for (fg_edge_descriptor e : edges(*tm_out))
+            {
+              if(get(ecmap_out, e))
+                new_selection->selected_edges.insert(e);
+            }
+            new_selection->setName(QString("Clip_%1_selection").arg(sm_item->name()));
+            new_selection->setVisible(sm_item->visible());
+            new_selection->invalidateOpenGLBuffers();
+            scene->addItem(new_selection);
+
+            sm_item->setVisible(false);
+            selection->setVisible(false);
           }
         }
       }

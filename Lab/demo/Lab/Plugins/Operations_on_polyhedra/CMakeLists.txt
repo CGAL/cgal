@@ -4,6 +4,7 @@ cgal_lab_plugin(clip_polyhedron_plugin Clip_polyhedron_plugin
                        ${clip_polyhedronUI_FILES})
 target_link_libraries(
   clip_polyhedron_plugin PUBLIC scene_surface_mesh_item scene_basic_objects
+                                scene_selection_item
                                 scene_movable_sm_item)
 
 cgal_lab_plugin(point_set_from_vertices_plugin
