@@ -30,9 +30,6 @@
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Named_function_parameters.h>
 
-#include <boost/random/random_number_generator.hpp>
-#include <boost/random/linear_congruential.hpp>
-
 namespace CGAL {
 namespace Periodic_3_mesh_3 {
 namespace internal {
