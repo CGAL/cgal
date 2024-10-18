@@ -7,8 +7,8 @@ CUSTOMER=""
 DATA_PATH=
 
 BUILD_DIR="build-release"
-TIMEOUT_VALUE=10
-MAX_ITEM_NUMBER=100
+TIMEOUT_VALUE=60
+MAX_ITEM_NUMBER=10000
 OFFSET_DIRECTION="out" # in / out
 
 echo "Build DIR = ${BUILD_DIR}"
@@ -164,14 +164,15 @@ for FILE in $FILES; do
 
     cp ${OC_OUTPUT} ${OUTPUT_DIRECTORY}/${FULL_ID}
 
-    OUTPUT=${OUTPUT_DIRECTORY}/${FULL_ID}/result.ply
+    OUTPUT=${OUTPUT_DIRECTORY}/${FULL_ID}/result.obj
 
     # ----------------------------------------------------------------
     # If outward offset, add Bbox and invert
 
     if [ "${OFFSET_DIRECTION}" == "out" ]; then
       OUTPUT_WITH_BBOX=${OUTPUT_DIRECTORY}/${FULL_ID}/result_inverted_with_bbox.obj
-      cp offset_-1.obj ${OUTPUT_WITH_BBOX}
+      cp results/offset_-1_exact.obj ${OUTPUT_WITH_BBOX}
+      cp results/offset_-1.obj ${OUTPUT_DIRECTORY}/${FULL_ID}/offset_-1.obj
 
       CMD="./add_or_remove_bbox ${OUTPUT_WITH_BBOX} remove ${OUTPUT}"
       LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_remove_bbox.txt
@@ -189,7 +190,7 @@ for FILE in $FILES; do
         continue;
       fi
     else
-      cp offset_-1.obj ${OUTPUT}
+      cp results/offset_-1_exact.obj ${OUTPUT}
     fi
 
     # ----------------------------------------------------------------

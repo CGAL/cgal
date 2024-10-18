@@ -50,11 +50,19 @@ public:
     void initVertexSplitter();
     void initEdgeEvent();
 
+    static bool isLocked(VertexSPtr vertex);
+    static bool isLocked(EdgeSPtr edge);
+
     static bool isReflex(EdgeSPtr edge);
     static bool isReflex(VertexSPtr vertex);
     static bool isConvex(VertexSPtr vertex);
 
     static Line3SPtr line(EdgeSPtr edge);
+
+    /**
+     * Offset, don't treat the simultaneous events, and dump the polyhedron
+     */
+    bool handleSaveEventAtSimultaneity(PolyhedronSPtr polyhedron, CGAL::FT current_offset, CGAL::FT simultaneity_offset);
 
     bool run();
     ThreadSPtr startThread();
@@ -266,17 +274,27 @@ public:
     */
     static void harmonizeFacetPlanes(PolyhedronSPtr polyhedron);
 
-    PolyhedronSPtr enablePerturbedMode(PolyhedronSPtr polyhedron, const CGAL::FT simultaneousTime);
+    std::pair<PolyhedronSPtr, CGAL::FT> enablePerturbedMode(PolyhedronSPtr polyhedron,
+                                                            CGAL::FT currentOffset,
+                                                            CGAL::FT simultaneousOffset);
 
-    PolyhedronSPtr disablePerturbedMode(PolyhedronSPtr polyhedron,
-                                        CGAL::FT currentOffset,
-                                        CGAL::FT nextEventOffset);
+    std::pair<PolyhedronSPtr, CGAL::FT> disablePerturbedMode(PolyhedronSPtr polyhedron,
+                                                             CGAL::FT currentOffset,
+                                                             CGAL::FT nextEventOffset);
 
     /**
      * Appends a node of an event to the skeleton.
      * It links all adjacent arcs and sheets to this node.
      */
     void appendEventNode(NodeSPtr node);
+
+    static PolyhedronSPtr soup_to_polyhedron(const std::vector<Point3>& points,
+                                             const std::vector<std::vector<std::size_t> >& triangles,
+                                             const std::vector<Plane3SPtr>& planes,
+                                             const std::vector<CGAL::FT>& speeds);
+    std::pair<PolyhedronSPtr, CGAL::FT> handleEventWithAutoref(AbstractEventSPtr event,
+                                                               CGAL::FT currentOffset,
+                                                               PolyhedronSPtr polyhedron);
 
     void handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr polyhedron);
     void handleEdgeMergeEvent(EdgeMergeEventSPtr event, PolyhedronSPtr polyhedron);
@@ -311,6 +329,7 @@ protected:
     StraightSkeletonSPtr skel_result_;
 
     bool usingPerturbedMode_ = false;
+    CGAL::FT perturbationOffset_ = 0;
     CGAL::FT simultaneousOffset_ = 0;
 };
 

@@ -366,7 +366,7 @@ bool Polyhedron::isConsistent() const {
         }
 
         if (vne != 3) {
-            std::cerr << "Warning: Vertex with not 3 incident edges? " << vne << std::endl;
+            std::cerr << "Warning: Vertex does not have 3 incident edges: " << vne << std::endl;
             std::cerr << vertex->toString() << std::endl;
         }
 

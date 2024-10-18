@@ -55,11 +55,13 @@ public:
 
   void write_footer() const { out() << "\n# End of Wavefront obj format #" << std::endl; }
 
-  void write_vertex(const double x, const double y, const double z) {
+  template <typename T>
+  void write_vertex(const T& x, const T& y, const T& z) {
     out() << "v " << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z) << '\n';
   }
 
-  void write_vertex_normal(const double x, const double y, const double z) {
+  template <typename T>
+  void write_vertex_normal(const T& x, const T& y, const T& z) {
     out() << "vn " << IO::oformat(x) << ' ' << IO::oformat(y) << ' ' << IO::oformat(z) << '\n';
   }
 

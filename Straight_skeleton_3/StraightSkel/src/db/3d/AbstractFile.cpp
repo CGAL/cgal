@@ -21,6 +21,7 @@
 #include "data/3d/Edge.h"
 #include "data/3d/Facet.h"
 #include "data/3d/Polyhedron.h"
+#include "db/3d/OBJFile.h"
 #include "debug.h"
 #include <cmath>
 #include <list>

@@ -114,8 +114,11 @@ Point3SPtr KernelWrapper::intersection(Sphere3SPtr sphere, Line3SPtr line) {
 
 Plane3SPtr KernelWrapper::bisector(Plane3SPtr plane1, Plane3SPtr plane2) {
     Plane3SPtr result = Plane3SPtr();
+
+    // @tmp Hardcore disable the SQRT
+    return result;
+
     std::cout << "WARNING: YOU ARE CALLING A BISECTOR, THAT'S AN APPROXIMATE SQRT" << std::endl;
-    // CGAL_assertion(false);
 #ifdef USE_CGAL
     result = KernelFactory::createPlane3(CGAL::bisector(*plane1, *plane2));
 #else
@@ -369,7 +372,6 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
 
     CGAL::FT t = (-a0*b1*c2*d3 + a0*b1*c3*d2 + a0*b2*c1*d3 - a0*b2*c3*d1 - a0*b3*c1*d2 + a0*b3*c2*d1 + a1*b0*c2*d3 - a1*b0*c3*d2 - a1*b2*c0*d3 + a1*b2*c3*d0 + a1*b3*c0*d2 - a1*b3*c2*d0 - a2*b0*c1*d3 + a2*b0*c3*d1 + a2*b1*c0*d3 - a2*b1*c3*d0 - a2*b3*c0*d1 + a2*b3*c1*d0 + a3*b0*c1*d2 - a3*b0*c2*d1 - a3*b1*c0*d2 + a3*b1*c2*d0 + a3*b2*c0*d1 - a3*b2*c1*d0) / den;
 
-// #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
 #ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
     std::cout << "CHECK x|y|z " << x << " " << y << " " << z << std::endl;
     std::cout << a0*x + b0*y + c0*z + d0 - w0*t << std::endl;

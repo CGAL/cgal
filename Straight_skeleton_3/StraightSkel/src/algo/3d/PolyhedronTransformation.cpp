@@ -18,9 +18,15 @@
 
 #include "algo/3d/KernelWrapper.h"
 #include "data/3d/Vertex.h"
+#include "data/3d/Edge.h"
 #include "data/3d/Facet.h"
 #include "data/3d/Polyhedron.h"
+#include "data/3d/skel/SkelVertexData.h"
+#include "data/3d/skel/SkelEdgeData.h"
+#include "data/3d/skel/SkelFacetData.h"
+#include "db/3d/OBJFile.h"
 #include "util/StringFactory.h"
+
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
@@ -74,7 +80,7 @@ void PolyhedronTransformation::scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s)
 Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                                                 CGAL::FT offset)
 {
-    // std::cout << "shift point, " << vertex->facets().size() << " incident facets" << std::endl;
+    std::cout << "shift vertex " << vertex->toString() << "\noffset = " << offset << std::endl;
 
     Plane3SPtr planes[3];
     unsigned int i = 0;
@@ -121,6 +127,20 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
 
     Point3SPtr point = KernelWrapper::intersection(planes[0], planes[1], planes[2]);
 
+    // it_f = vertex->facets().begin();
+    // while (it_f != vertex->facets().end()) {
+    //     FacetWPtr facet_wptr = *it_f++;
+    //     if (!facet_wptr.expired()) {
+    //         FacetSPtr facet = FacetSPtr(facet_wptr);
+    //         Plane3SPtr plane = facet->plane();
+    //         if (facet->hasData()) {
+    //             std::cout << "speed = " << std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed() << std::endl;
+    //         }
+    //         std::cout << "distance = " << CGAL::sqrt(CGAL::to_double(CGAL::squared_distance(*point, *plane))) << std::endl;
+
+    //     }
+    // }
+
     if (!point) {
 #if 0
         std::cerr << "Warning: triplet of planes doesn't define a point!" << std::endl;
@@ -160,7 +180,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
         if (offset != 0 || recompute_positions) {
             point = shiftPoint(vertex, offset);
             if (!point) {
-                std::cerr << "Error: Failed to create shifted polyhedron" << std::endl;
+                std::cerr << "Warning: Failed to create shifted polyhedron" << std::endl;
                 return { };
             }
         }
@@ -236,14 +256,26 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
         EdgeSPtr edge = *it_e++;
+
         SkelVertexDataSPtr vertex_src_data = std::dynamic_pointer_cast<SkelVertexData>(
                 edge->getVertexSrc()->getData());
         SkelVertexDataSPtr vertex_dst_data = std::dynamic_pointer_cast<SkelVertexData>(
                 edge->getVertexDst()->getData());
+
         if (vertex_src_data && vertex_dst_data) {
+            VertexSPtr vertex_src = edge->getVertexSrc();
+            VertexSPtr vertex_dst = edge->getVertexDst();
             VertexSPtr offset_vertex_src = vertex_src_data->getOffsetVertex();
             VertexSPtr offset_vertex_dst = vertex_dst_data->getOffsetVertex();
             EdgeSPtr offset_edge = Edge::create(offset_vertex_src, offset_vertex_dst);
+
+            offset_edge->hasBecomeDegenerate = edge->hasBecomeDegenerate;
+            if (*(vertex_src->getPoint()) != *(vertex_dst->getPoint())) {
+                if (*(offset_vertex_src->getPoint()) != *(offset_vertex_dst->getPoint())) {
+                    offset_edge->hasBecomeDegenerate = true;
+                }
+            }
+
             SkelEdgeDataSPtr data;
             if (edge->hasData()) {
                 data = std::dynamic_pointer_cast<SkelEdgeData>(edge->getData());
@@ -253,6 +285,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                 data = SkelEdgeData::create(edge);
             }
             data->setOffsetEdge(offset_edge);
+
             result->addEdge(offset_edge);
         }
     }
@@ -274,8 +307,12 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
             data->setSpeed(speed);
         }
 
-        offset_facet->cachedPlane_ = facet->cachedPlane_;
+        // perturbation mechanisms
         offset_facet->cachedSpeed_ = facet->cachedSpeed_;
+        if (facet->cachedPlane_) {
+            std::cout << "plane of facet " << facet->getID() << " copy from [" << *(facet->cachedPlane_) << "]" << std::endl;
+            offset_facet->cachedPlane_ = KernelFactory::createPlane3(*(facet->cachedPlane_));
+        }
 
         Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
         offset_facet->setPlane(offset_plane);
@@ -289,7 +326,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                 if (offset_vertex) {
                     offset_facet->addVertex(offset_vertex);
 
-                    // @fixme only a warning because sometimes I still run perturbed, non-triangulated cases
+                    // @tmp only a warning because sometimes I still run perturbed, non-triangulated cases
                     CGAL_warning(offset_plane->has_on(*(offset_vertex->getPoint())));
 
                     if (with_sanity_checks) {
@@ -496,6 +533,7 @@ bool PolyhedronTransformation::isInsideBox(PolyhedronSPtr polyhedron,
             if (!((*p_box_min)[i] <= (*p)[i] &&
                     (*p)[i] <= (*p_box_max)[i])) {
                 result = false;
+                std::cout << *p << " is not in the box " << *p_box_min << " " << *p_box_max << std::endl;
                 break;
             }
         }

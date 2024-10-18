@@ -345,6 +345,8 @@ int main(int argc, const char* argv[]) {
             }
         }
 
+        polyhedron->initializeAllIDs();
+
         // @todo this should be a plane perturbation and not a vertex perturbation...
         if (rand_move_points_when_degenerated && !rand_move_points) {
             std::cout << "Checking if all combinations of 3 facet supporting planes intersect in a point." << std::endl;

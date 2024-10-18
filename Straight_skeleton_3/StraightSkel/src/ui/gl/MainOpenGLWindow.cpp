@@ -1094,6 +1094,7 @@ void MainOpenGLWindow::drawSphericalSkel(data::_3d::skel::SphericalSkeletonSPtr 
         std::list<data::_3d::skel::SphericalAbstractEventSPtr>::reverse_iterator it_e = sphericalskel->events().rbegin();
         while (it_e != sphericalskel->events().rend()) {
             data::_3d::skel::SphericalAbstractEventSPtr event = *it_e++;
+            setColor(c_dark_blue);
             drawSphericalPolygon(event->getPolygonResult(), false, vertices_only);
             if (toggle_poly_ == 4) {
                 vertices_only = true;
@@ -1157,11 +1158,11 @@ void MainOpenGLWindow::drawContent() {
         }
     } else if (mode_ == MODE_SPHERICAL) {
         if (sphericalskel_) {
-            setColor(c_grey);
+            setColor(c_red);
             drawSphericalSkel(sphericalskel_);
         }
         if (sphericalpolygon_ && (1 <= toggle_poly_ && toggle_poly_ <= 3)) {
-            setColor(c_white);
+            setColor(c_dark_green);
             drawSphericalPolygon(sphericalpolygon_, true, false);
         }
         if (polyhedron_ && (1 <= toggle_poly_ && toggle_poly_ <= 3)) {

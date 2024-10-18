@@ -596,7 +596,15 @@ std::string Vertex::toString() const {
         result += ", Edges:" + util::StringFactory::fromInteger(edges_.size());
     }
     if (facets_.size() > 0) {
-        result += ", Facets:" + util::StringFactory::fromInteger(facets_.size());
+        result += ", Facets:" + util::StringFactory::fromInteger(facets_.size()) + " {";
+        std::list<FacetWPtr>::const_iterator it = facets_.begin();
+        while (it != facets_.end()) {
+            FacetWPtr facet_wptr = *it++;
+            if (!facet_wptr.expired()) {
+                result += " " + std::to_string(FacetSPtr(facet_wptr)->getID());
+            }
+        }
+        result += " }";
     }
     result += ")";
     return result;

@@ -1,4 +1,8 @@
+// For now, there are issues when EPECK is embedded back into doubles,
+// so dump files with EPECK and read them again with EPECK
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/boost/graph/helpers.h>
@@ -10,7 +14,8 @@
 
 namespace PMP = ::CGAL::Polygon_mesh_processing;
 
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+using K = EPECK;
 using FT = K::FT;
 using Point = K::Point_3;
 using Vector = K::Vector_3;
@@ -18,24 +23,29 @@ using Vector = K::Vector_3;
 using Mesh = CGAL::Surface_mesh<Point>;
 using face_descriptor = boost::graph_traits<Mesh>::face_descriptor;
 
+bool check_distances(const Mesh& input,
+                     const Mesh& result)
+{
+  // Sample the faces of the result, and check that they are at the expected distance...
+  // @todo
+  return true;
+}
+
 bool compare(const Mesh& ours,
              const Mesh& theirs)
 {
-  std::cout << "Ours: " << num_vertices(ours) << " NV" << num_faces(ours) << " NF" << std::endl;
-  std::cout << "Theirs: " << num_vertices(theirs) << " NV" << num_faces(theirs) << " NF" << std::endl;
-
   const bool SI_ours = PMP::does_self_intersect(ours);
   const bool SI_theirs = PMP::does_self_intersect(theirs);
   const bool closed_ours = CGAL::is_closed(ours);
   const bool closed_theirs = CGAL::is_closed(theirs);
 
   if(SI_theirs || !closed_theirs) {
-    std::cerr << "Error: result to compare to is BAD (self-intersections / not closed)" << std::endl;
+    std::cerr << "Error: 'theirs' is BAD (self-intersections: " << SI_theirs << " / open: " << !closed_theirs << ")" << std::endl;
     return false;
   }
 
   if(SI_ours || !closed_ours) {
-    std::cerr << "Error: our result is BAD (self-intersections / not closed)" << std::endl;
+    std::cerr << "Error: 'ours' is BAD (self-intersections: " << SI_ours << " / open: " << !closed_ours << ")" << std::endl;
     return false;
   }
 

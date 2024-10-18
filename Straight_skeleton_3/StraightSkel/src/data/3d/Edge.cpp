@@ -434,12 +434,16 @@ void Edge::replaceVertexSrc(VertexSPtr vertex_src) {
     vertex_src_->removeEdge(shared_from_this());
     vertex_src_ = vertex_src;
     vertex_src->addEdge(shared_from_this());
+
+    hasBecomeDegenerate = false;
 }
 
 void Edge::replaceVertexDst(VertexSPtr vertex_dst) {
     vertex_dst_->removeEdge(shared_from_this());
     vertex_dst_ = vertex_dst;
     vertex_dst->addEdge(shared_from_this());
+
+    hasBecomeDegenerate = false;
 }
 
 void Edge::replaceFacetL(FacetSPtr facet_l) {
@@ -502,7 +506,7 @@ double Edge::angle() const {
 
 bool Edge::isReflex() const {
     bool result = false;
-    if (vertex_src_->getPoint() != vertex_dst_->getPoint() &&
+    if (*(vertex_src_->getPoint()) != *(vertex_dst_->getPoint()) &&
             !facet_l_.expired() && !facet_r_.expired()) {
         FacetSPtr facet_l = FacetSPtr(facet_l_);
         FacetSPtr facet_r = FacetSPtr(facet_r_);
@@ -512,6 +516,8 @@ bool Edge::isReflex() const {
         Vector3SPtr normal_l = KernelFactory::createVector3(plane_l);
         Point3SPtr p_src = vertex_src_->getPoint();
 #ifdef USE_CGAL
+        CGAL_assertion(*normal_l != CGAL::NULL_VECTOR);
+        CGAL_assertion(*dir != CGAL::NULL_VECTOR);
         Point3 p = (*p_src) + CGAL::cross_product(*normal_l, *dir);
         if (plane_r->oriented_side(p) == CGAL::ON_POSITIVE_SIDE) {
             result = true;

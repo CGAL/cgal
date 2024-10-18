@@ -623,7 +623,8 @@ void Facet::storePlaneCoefficients()
     if (!this->plane_) {
         this->initPlane();
     }
-    cachedPlane_ = plane_;
+    cachedPlane_ = KernelFactory::createPlane3(*(plane_));
+    std::cout << "plane of Facet " << this->id_ << " is [" << *cachedPlane_ << "] (stored)" << std::endl;
 }
 
 void Facet::perturbPlaneCoefficients()
@@ -645,19 +646,61 @@ void Facet::perturbPlaneCoefficients()
     CGAL::FT na = nudge(plane_->a());
     CGAL::FT nb = nudge(plane_->b());
     CGAL::FT nc = nudge(plane_->c());
-    CGAL::FT nd = nudge(plane_->d());
+    CGAL::FT d = plane_->d(); // pointless to nudge d
     CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(na) + CGAL::square(nb) + CGAL::square(nc));
 
     // @todo if it's zero, nudge differently
     // @todo also, it shouldn't invert the face (bounded normal change)
     CGAL_assertion(!is_zero(n));
 
-    plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, nd/n);
+    plane_ = KernelFactory::createPlane3(na/n, nb/n, nc/n, d/n);
+    std::cout << "plane of Facet " << this->id_ << " is now [" << *plane_ << "]" << std::endl;
 }
 
-void Facet::restorePlaneCoefficients()
+void Facet::restorePlaneCoefficients(CGAL::FT perturbationOffset,
+                                     CGAL::FT perturbationEndOffset)
 {
-    plane_ = cachedPlane_;
+    std::cout << "plane of Facet " << this->id_ << " is [" << *plane_ << "]" << std::endl;
+
+#if 0
+    CGAL::FT cx = 0, cy = 0, cz = 0;
+    std::list<VertexSPtr>::const_iterator it_v = vertices_.begin();
+    while (it_v != vertices_.end()) {
+        VertexSPtr vertex = *it_v++;
+        std::cout << "facet v " << *(vertex->getPoint()) << std::endl;
+        cx += vertex->getPoint()->x();
+        cy += vertex->getPoint()->y();
+        cz += vertex->getPoint()->z();
+    }
+    cx /= CGAL::FT(vertices_.size());
+    cy /= CGAL::FT(vertices_.size());
+    cz /= CGAL::FT(vertices_.size());
+
+    // we want the plane such that at time 0 we are going through the centroid
+    CGAL::FT d = 0 /*speed*time */ - (cachedPlane_->a() * cx + cachedPlane_->b() * cy + cachedPlane_->c() * cz);
+#else
+    CGAL::FT speed = 1.0;
+    if (hasData()) {
+        speed = std::dynamic_pointer_cast<data::_3d::skel::SkelFacetData>(getData())->getSpeed();
+    }
+
+    std::cout << "OLD d = " << cachedPlane_->d() << std::endl;
+    std::cout << "perturbationOffset = " << perturbationOffset << std::endl;
+    std::cout << "perturbationEndOffset = " << perturbationEndOffset << std::endl;
+
+    // The minus sign "d - ..." is because we shrink, so the plane needs to be offset
+    // by the difference of offsets, but in the direction opposite of its normal.
+    //
+    // This is similar to when we call, e.g.:
+    //   Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(plane_l, - speed_l);
+    //                                                                  ^^^
+    CGAL:: FT d = cachedPlane_->d() - speed * (perturbationEndOffset - perturbationOffset);
+#endif
+    plane_ = KernelFactory::createPlane3(cachedPlane_->a(), cachedPlane_->b(), cachedPlane_->c(), d);
+    CGAL_assertion_code(CGAL::FT sq_n = CGAL::square(plane_->a()) + CGAL::square(plane_->b()) + CGAL::square(plane_->c()));
+    CGAL_assertion((sq_n - 1) < 1e-5);
+
+    std::cout << "plane of Facet " << this->id_ << " restored to [" << *plane_ << "]" << std::endl;
 }
 
 bool Facet::makeFirstConvex() {
@@ -745,7 +788,7 @@ bool Facet::makeFirstConvex() {
     }
     if (!result) {
         DEBUG_VAL("Warning: Unable to make first 3 vertices convex.");
-        DEBUG_VAR(toString());
+        // DEBUG_VAR(toString());
     }
 
     return result;
@@ -833,11 +876,7 @@ data::_2d::PolygonSPtr Facet::toPolygon() {
 std::string Facet::toString() const {
     std::stringstream sstr;
     sstr << "Facet(";
-    if (id_ != -1) {
-        sstr << "id=" << util::StringFactory::fromInteger(id_) << ", ";
-    } else {
-        // sstr << util::StringFactory::fromPointer(this) << ", ";
-    }
+    sstr << "id=" << util::StringFactory::fromInteger(id_) << ", ";
     if (plane_) {
 #ifdef USE_CGAL
         sstr << "Plane: <" << util::StringFactory::fromDouble(CGAL::to_double(plane_->a())) << ", "

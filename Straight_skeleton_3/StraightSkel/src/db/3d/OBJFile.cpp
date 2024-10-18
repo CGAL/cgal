@@ -200,7 +200,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
 
         removeVerticesDegLt3(result);
 
-        // @tmp with the degree checking, this is false if the input is not triangulated
+        // @tmp with the degree checking in isConsistent(), this is false if the input is not triangulated
         CGAL_postcondition(result->isConsistent());
     }
 
@@ -215,12 +215,12 @@ bool OBJFile::save(const std::string& filename,
                    const bool convert_to_double)
 {
     std::cout << " -- Save OBJ " << filename << " -- " << std::endl;
-    std::cout << "options: " << std::boolalpha << do_triangulate << " " << convert_to_double << std::endl;
+    std::cout << "do_triangulate | convert to double: " << std::boolalpha << do_triangulate << " " << convert_to_double << std::endl;
 
     polyhedron->initializeAllIDs();
     // std::cout << polyhedron->toString() << std::endl;
 
-    using Itag = CGAL::No_constraint_intersection_tag;
+    using Itag = CGAL::No_constraint_intersection_requiring_constructions_tag;
     using PK = CGAL::Projection_traits_3<CGAL::K>;
     using PVbb = CGAL::Triangulation_vertex_base_with_info_2<VertexSPtr, PK>;
     using PVb = CGAL::Triangulation_vertex_base_2<PK, PVbb>;
@@ -229,6 +229,9 @@ bool OBJFile::save(const std::string& filename,
     using PCDT = CGAL::Constrained_Delaunay_triangulation_2<PK, PTDS, Itag>;
     using PCDT_VH = PCDT::Vertex_handle;
     using PCDT_FH = PCDT::Face_handle;
+
+    // Improve precision if EPECK
+    CGAL::internal::Evaluate<CGAL::FT> evaluate;
 
     bool result = false;
     std::ofstream ofs(filename.c_str());
@@ -241,6 +244,11 @@ bool OBJFile::save(const std::string& filename,
         while (it_v != polyhedron->vertices().end()) {
             VertexSPtr vertex = *it_v++;
             unsigned int id = vertex->getID();
+
+            evaluate(vertex->getX());
+            evaluate(vertex->getY());
+            evaluate(vertex->getZ());
+
             if(convert_to_double)
             {
               ofs << "v " << CGAL::to_double(vertex->getX()) << " "
@@ -249,9 +257,9 @@ bool OBJFile::save(const std::string& filename,
             }
             else
             {
-              ofs << "v " << vertex->getX() << " "
-                          << vertex->getY() << " "
-                          << vertex->getZ() << "\n";
+              ofs << "v " << vertex->getX().exact() << " "
+                          << vertex->getY().exact() << " "
+                          << vertex->getZ().exact() << "\n";
             }
 
             v_ids[vertex] = id + 1;
@@ -260,7 +268,6 @@ bool OBJFile::save(const std::string& filename,
         std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
         while (it_f != polyhedron->facets().end()) {
             FacetSPtr facet = *it_f++;
-            facet->makeFirstConvex();
             unsigned int id = facet->getID();
 
             bool do_triangulate_face = do_triangulate;
@@ -306,6 +313,7 @@ bool OBJFile::save(const std::string& filename,
                         CGAL_assertion(v0->degree() != 1); // @todo handle that...
                         VertexSPtr vm1 = edge->prev(facet)->src(facet);
 
+                        // manually create a degenerate face so that the resulting mesh is conforming
                         ofs << "f " << v_ids.at(vm1) << " "
                                     << v_ids.at(v0) << " "
                                     << v_ids.at(v1) << "\n";
@@ -322,6 +330,7 @@ bool OBJFile::save(const std::string& filename,
                         catch(const typename PCDT::Intersection_of_constraints_exception&)
                         {
                             std::cerr << "Error: Intersection of constraints" << std::endl;
+                            std::cerr << "While inserting " << *(v0->getPoint()) << " || " << *(v1->getPoint()) << std::endl;
                             DEBUG_VAR(facet->toString());
                             CGAL_warning_msg(false, "Intersections in CDT2 not allowed");
                             do_triangulate_face = false;
@@ -385,8 +394,8 @@ bool OBJFile::save(const std::string& filename,
               }
 
               if (num_edges != facet->edges().size()) {
-                  DEBUG_VAL("Warning: Facet does not consist of connected edges only (" << num_edges << " VS " << facet->edges().size() << ")");
-                  DEBUG_VAL("Warning: It is impossible for an obj file to store holes inside a facet.");
+                  DEBUG_VAL("W: Facet does not consist of connected edges only (" << num_edges << " VS " << facet->edges().size() << ")");
+                  DEBUG_VAL("W: It is impossible for an obj file to store holes inside a facet.");
                   // DEBUG_VAR(facet->toString());
               }
               ofs << "\n";
@@ -395,6 +404,9 @@ bool OBJFile::save(const std::string& filename,
         // result = (polyhedron->vertices().size() == vertex_id &&
         //           polyhedron->facets().size() == facet_id);
         ofs.close();
+    } else {
+        std::cerr << "Error: failed to open file" << std::endl;
+        CGAL_assertion(false);
     }
     std::cout << "-- Write OBJ end --" << std::endl;
     return result;

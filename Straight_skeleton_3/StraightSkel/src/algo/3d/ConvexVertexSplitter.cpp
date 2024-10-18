@@ -22,6 +22,7 @@
 #include "data/3d/Vertex.h"
 #include "data/3d/Edge.h"
 #include "data/3d/Polyhedron.h"
+#include "db/3d/OBJFile.h"
 #include "util/ptrs.h"
 #include "util/Configuration.h"
 
@@ -87,22 +88,31 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
         combi combination = *it_combi++;
-        DEBUG_VAL("-- Testing split-combination: " << combiToString(combination));
+        std::cout << "-- Testing split-combination: " << combiToString(combination) << std::endl;
+
+        // don't take it out of the loop
         PolyhedronSPtr poly_c = copyVertex(vertex);
+        CGAL_assertion(bool(poly_c));
+        CGAL_assertion(poly_c->facets().size() == vertex->facets().size());
+        poly_c->initializeAllIDs();
+
         VertexSPtr vertex_c = poly_c->vertices().front();
         CombiVertexSplitter::splitVertex(vertex_c, combination);
         PolyhedronSPtr poly_c_offset = PolyhedronTransformation::shiftFacets(poly_c, -1.0);
         if (!poly_c_offset) {
+            std::cerr << "Warning: failed to create offset of corner" << std::endl;
             continue;
         }
 
         // std::cout << "= Base Polyhedron\n" << poly_c->toString() << std::endl;
         // std::cout << "= Shifted Polyhedron\n" << poly_c_offset->toString() << std::endl;
-        db::_3d::OBJFile::save("results/last_tested_split.obj", poly_c, false);
-        db::_3d::OBJFile::save("results/last_tested_split_offset.obj", poly_c_offset, false);
+        static int test_id = -1;
+        ++test_id;
+        db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) + ".obj", poly_c, false);
+        db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) + "_offset.obj", poly_c_offset, false);
+        // poly_c->dumpEdges("results/last_convex_split_base");
+        // poly_c_offset->dumpEdges("results/last_convex_split_offset");
 
-        poly_c->dumpEdges("results/last_convex_split_base");
-        poly_c_offset->dumpEdges("results/last_convex_split_offset");
         if (!SelfIntersection::hasSelfIntersectingSurface(poly_c_offset)) {
             DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
             num_convex_edges = countConvexEdges(poly_c_offset);

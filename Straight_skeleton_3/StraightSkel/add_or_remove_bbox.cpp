@@ -1,4 +1,8 @@
+// For now, there are issues when EPECK is embedded back into doubles,
+// so dump files with EPECK and read them again with EPECK
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Bbox_3.h>
@@ -11,13 +15,17 @@
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
+#include <boost/property_map/function_property_map.hpp>
+
 #include <iostream>
 #include <fstream>
+#include <type_traits>
 #include <unordered_map>
 
 namespace PMP = ::CGAL::Polygon_mesh_processing;
 
-using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using EPECK = CGAL::Exact_predicates_exact_constructions_kernel;
+using K = EPECK;
 using FT = K::FT;
 using Point = K::Point_3;
 using Vector = K::Vector_3;
@@ -137,7 +145,7 @@ int main(int argc, char** argv)
               << std::endl;
     std::cerr << "Input format: any format readable with CGAL::IO::read_polygon_mesh()" << std::endl;
     std::cerr << "'invert' format: 'true'/'false'" << std::endl;
-    std::cerr << "Output format: PLY" << std::endl;
+    std::cerr << "Output format: PLY (adding bbox); OBJ (removing bbox)" << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -177,27 +185,67 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
 
-  const bool res = do_add ? invert_and_add_bbox(sm) : remove_bbox_and_invert(sm);
+  if(do_add) {
+    invert_and_add_bbox(sm);
 
-  std::ofstream out(output_filename);
-  if(!out) {
-    std::cerr << "Error: failed to create output file" << std::endl;
-    return EXIT_FAILURE;
-  }
+    std::ofstream out(output_filename);
+    if(!out) {
+      std::cerr << "Error: failed to create output file: " << output_filename << std::endl;
+      return EXIT_FAILURE;
+    }
 
-  if(!CGAL::IO::write_PLY(out, sm,
-                          CGAL::parameters::use_binary_mode(false)
-                                           .stream_precision(17)))
-  {
-    std::cerr << "Error: failed to write" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  if(res) {
-    std::cout << "Done!" << std::endl;
-    return EXIT_SUCCESS;
+    if(!CGAL::IO::write_PLY(out, sm,
+                            CGAL::parameters::use_binary_mode(false)
+                                             .stream_precision(17))) {
+      std::cerr << "Error: failed to write in " << output_filename << std::endl;
+      return EXIT_FAILURE;
+    }
   } else {
-    std::cerr << "Error during the process" << std::endl;
-    return EXIT_FAILURE;
+    remove_bbox_and_invert(sm);
+
+    std::ofstream out(output_filename);
+    if(!out) {
+      std::cerr << "Error: failed to create output file: " << output_filename << std::endl;
+      return EXIT_FAILURE;
+    }
+
+    if constexpr (std::is_same<K, EPECK>::value) {
+#if 0 // this writes 'doubles' so not so generic, huh...
+      auto ef = [&sm](vertex_descriptor v) { return get(CGAL::vertex_point, sm, v).exact(); };
+      auto evpm = boost::make_function_property_map<vertex_descriptor>(ef);
+      if(!CGAL::IO::write_OBJ(out, sm, CGAL::parameters::vertex_point_map(evpm))) {
+        std::cerr << "Error: failed to write in " << output_filename << std::endl;
+        return EXIT_FAILURE;
+      }
+#else
+      sm.collect_garbage();
+
+      std::ofstream out(output_filename);
+      if(!out) {
+        std::cerr << "Error: failed to create output file: " << output_filename << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      for(vertex_descriptor v : vertices(sm)) {
+        const Point& p = get(CGAL::vertex_point, sm, v);
+        out << "v " << p.x().exact() << " " << p.y().exact() << " " << p.z().exact() << std::endl;
+      }
+
+      for(face_descriptor f : faces(sm)) {
+        out << "f";
+        for(vertex_descriptor v : vertices_around_face(halfedge(f, sm), sm)) {
+          out << " " << v.id() + 1;
+        }
+        out << "\n";
+      }
+#endif
+    } else {
+      if(!CGAL::IO::write_OBJ(out, sm, CGAL::parameters::stream_precision(17))) {
+        std::cerr << "Error: failed to write in " << output_filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
   }
+
+  std::cout << "Done!" << std::endl;
 }

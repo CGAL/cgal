@@ -10,8 +10,8 @@ include_directories(test)
 # $ ccmake .
 option(BUILD_OWN_KERNEL "Build our own Kernel (double precision)" OFF)
 option(USE_CGAL "Use the CGAL Kernel" ON)
-option(BUILD_TESTS "Use Boost's Unit Test Framework to test the implementation" ON)
-option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" ON)
+option(BUILD_TESTS "Use Boost's Unit Test Framework to test the implementation" OFF)
+option(BUILD_DOCUMENTATION "Use Doxygen to create the HTML based API documentation" OFF)
 
 # it may be useful to set CGAL_DONT_OVERRIDE_CMAKE_FLAGS
 # /usr/lib/CGAL/CGAL_SetupFlags.cmake
@@ -27,14 +27,17 @@ endif()
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     set(DEBUG ON)
 endif()
+
 configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/config.h)
 
-find_package(CGAL REQUIRED Core)
+find_package(CGAL)
 
 create_single_source_cgal_program("add_or_remove_bbox.cpp")
 create_single_source_cgal_program("color_ply_inputs.cpp")
 create_single_source_cgal_program("convert_to_weighted_PLY.cpp")
 create_single_source_cgal_program("compare_outputs.cpp")
+
+create_single_source_cgal_program("arrange_and_carve.cpp")
 
 # to get help about a cmake module run:
 # $ cmake --help-module FindBoost
