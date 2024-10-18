@@ -1,4 +1,4 @@
- #include <QtCore/qglobal.h>
+#include <QtCore/qglobal.h>
 #include <QMessageBox>
 #include <QInputDialog>
 
@@ -1409,7 +1409,7 @@ void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
 
   auto locate_vertex = [&](const Point_3& p)->vertex_descriptor
     {
-      const double tol = 1e-5; //todo : make tolerance depend on bbox size
+//      const double tol = 1e-5; //todo : make tolerance depend on bbox size
 
       if (!CGAL::do_overlap(tree.bbox(), p.bbox()))
         return SMesh::null_vertex();
