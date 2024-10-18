@@ -17,7 +17,6 @@
 #include <CGAL/license/Polygon_mesh_processing/acvd.h>
 
 #include <CGAL/assertions.h>
-#include <CGAL/IO/Color.h>
 #include <CGAL/Named_function_parameters.h>
 #include <CGAL/property_map.h>
 #include <CGAL/boost/graph/named_params_helper.h>

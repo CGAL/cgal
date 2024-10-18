@@ -25,7 +25,11 @@ int main(int argc, char* argv[])
     argv[1] :
     CGAL::data_file_path("meshes/fandisk.off");
 
+  const std::string stem = std::filesystem::path(filename).stem().string();
+  const std::string extension = std::filesystem::path(filename).extension().string();
+
   const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 3000;
+  const std::string nbc = std::to_string(nb_clusters);
 
   if (!CGAL::IO::read_polygon_mesh(filename, smesh))
   {
@@ -34,28 +38,30 @@ int main(int argc, char* argv[])
   }
 
   ///// Uniform Isotropic ACVD
+#if 0
+  std::cout << "Uniform Isotropic ACVD ...." << std::endl;
+  auto acvd_mesh = PMP::acvd_isotropic_remeshing(smesh, nb_clusters);
+  CGAL::IO::write_polygon_mesh(stem+"_acvd_"+nbc+extension, acvd_mesh);
 
-  //std::cout << "Uniform Isotropic ACVD ...." << std::endl;
-  //auto acvd_mesh = PMP::acvd_isotropic_remeshing(smesh, nb_clusters);
-  //CGAL::IO::write_OFF("fandisk_acvd_3000.off", acvd_mesh);
-
-  //std::cout << "Completed" << std::endl;
+  std::cout << "Completed" << std::endl;
+#endif
 
   //// With Post-Processing QEM Optimization
+#if 0
+  std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
 
-  //std::cout << "Uniform Isotropic ACVD with QEM optimization ...." << std::endl;
+  auto acvd_mesh_qem_pp = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::post_processing_qem(true));
+  CGAL::IO::write_polygon_mesh(stem+"_acvd_qem-pp_"+nbc+extension, acvd_mesh_qem_pp);
 
-  //auto acvd_mesh_qem_pp = PMP::acvd_isotropic_remeshing(smesh, nb_clusters, CGAL::parameters::post_processing_qem(true));
-  //CGAL::IO::write_OFF("fandisk_acvd_qem-pp_3000.off", acvd_mesh_qem_pp);
-
-  //std::cout << "Completed" << std::endl;
+  std::cout << "Completed" << std::endl;
+#endif
 
   // With QEM Energy Minimization
 
   std::cout << "Uniform QEM ACVD ...." << std::endl;
 
   auto acvd_mesh_qem = PMP::acvd_qem_remeshing(smesh, nb_clusters);
-  CGAL::IO::write_polygon_mesh( std::filesystem::path(filename).stem().string()+"_acvd_qem_"+ std::to_string(nb_clusters) + std::filesystem::path(filename).extension().string(), acvd_mesh_qem);
+  CGAL::IO::write_polygon_mesh( stem +"_acvd_qem_"+ std::to_string(nb_clusters) + extension, acvd_mesh_qem);
 
   std::cout << "Completed" << std::endl;
 
