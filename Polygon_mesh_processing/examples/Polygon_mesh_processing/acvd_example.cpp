@@ -8,6 +8,7 @@
 #include <boost/graph/graph_traits.hpp>
 
 #include <iostream>
+#include <filesystem>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -21,7 +22,7 @@ int main(int argc, char* argv[])
 {
   Surface_Mesh smesh;
   const std::string filename = (argc > 1) ?
-    CGAL::data_file_path(argv[1]) :
+    argv[1] :
     CGAL::data_file_path("meshes/fandisk.off");
 
   const int nb_clusters = (argc > 2) ? atoi(argv[2]) : 3000;
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
   std::cout << "Uniform QEM ACVD ...." << std::endl;
 
   auto acvd_mesh_qem = PMP::acvd_qem_remeshing(smesh, nb_clusters);
-  CGAL::IO::write_OFF("fandisk_acvd_qem_3000.off", acvd_mesh_qem);
+  CGAL::IO::write_polygon_mesh( std::filesystem::path(filename).stem().string()+"_acvd_qem_"+ std::to_string(nb_clusters) + std::filesystem::path(filename).extension().string(), acvd_mesh_qem);
 
   std::cout << "Completed" << std::endl;
 
