@@ -234,7 +234,7 @@ void test()
   gps.oriented_side(pt);
   gps.oriented_side(pgn1);
   gps.oriented_side(pgn_with_holes1);
-  gps.oriented_side(pgn_with_holes1);
+  gps.oriented_side(pgn_with_holes2);
   gps.oriented_side(gps);
   gps.locate(pt, pgn_with_holes1);
 
