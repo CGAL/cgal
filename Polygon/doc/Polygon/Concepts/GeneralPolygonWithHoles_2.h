@@ -85,6 +85,7 @@ Hole_const_iterator holes_end() const;
 
 /*! returns the range of holes.
  */
+
 const Holes_container& holes() const;
 
 /// @}
