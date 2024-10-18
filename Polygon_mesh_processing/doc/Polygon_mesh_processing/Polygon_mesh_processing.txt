@@ -4,7 +4,7 @@ namespace CGAL {
 \anchor Chapter_PolygonMeshProcessing
 
 \cgalAutoToc
-\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, and Ilker %O. Yaz
+\authors David Coeurjolly, Jaques-Olivier Lachaud,  Konstantinos Katrioplas, Sébastien Loriot, Ivan Pađen, Mael Rouxel-Labbé, Hossam Saeed, Jane Tournois, Sébastien Valette, and Ilker %O. Yaz
 
 \image html neptun_head.jpg
 \image latex neptun_head.jpg
@@ -53,6 +53,8 @@ mesh, which includes point location and self intersection tests.
 - \ref PMPSlicer : functor able to compute the intersections of a polygon mesh with arbitrary planes (slicer).
 - \ref PMPConnectedComponents : methods to deal with connected
   components of a polygon mesh (extraction, marks, removal, ...).
+- \ref PMPACVD : methods to remesh a polygon mesh using approximated centroidal Voronoi diagrams
+  as described in \cgalCite{cgal:vcp-grtmmdvd-08} and preceeding work.
 
 \subsection PMPIO Reading and Writing Polygon Meshes
 
@@ -1311,6 +1313,46 @@ which enables to treat one or several connected components as a face graph.
 
 \cgalExample{Polygon_mesh_processing/face_filtered_graph_example.cpp}
 
+\section PMPACVD ACVD Remeshing
+
+The Approximated Centroidal Voronoi Diagram (ACVD) package is a set of vertex-clustering-based tools to
+remesh a triangle mesh. It is based on the method introduced in \cgalCite{cgal:vc-acvdupmc-04} and extended
+in \cgalCite{cgal:vkc-apmsdcvd-05} and \cgalCite{cgal:vcp-grtmmdvd-08}.
+
+\subsection ACVDBackground Brief Background
+
+WIP
+
+\subsection ACVDAPI API
+
+The implementation is generic in terms of mesh data structure. It can be used on `Surface_mesh`, `Polyhedron_3` and
+other triangle mesh structures based on the concept `FaceGraph`.
+
+The main function is `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()`. It takes as input a triangle mesh and
+a lower bound on the target number of vertices and returns a remeshed version. The number of vertices in the output mesh
+might be larger than the input parameters if the input is not closed or if the budget of points provided is too low
+to generate a manifold output mesh. Note that providing a initial low number of vertices will affect the uniformity
+of the output triangles in case some extra points are added to make the output manifold.
+
+To enable Adaptive Remeshing, the named parameter `gradation_factor` can be used. It controls the sensitivity of the
+clustering algorithm to curvature.  Moreover, the named parameter
+`vertex_principal_curvatures_and_directions_map` can be used to provide a user-defined principal curvature map.
+
+For Clustering based on QEM, the function `CGAL::Polygon_mesh_processing::acvd_qem_simplification()` and
+`CGAL::Polygon_mesh_processing::acvd_qem_simplification_polygon_soup()` can be used. THIS IS NOT 100% WORKING YET.
+
+
+\subsection ACVDResults Results
+
+WIP
+
+\subsection ACVDExample Usage Example
+
+The example below shows the usage of the `CGAL::Polygon_mesh_processing::acvd_isotropic_remeshing()` function
+and how the extra named parameters can be passed.
+
+\cgalExample{Polygon_mesh_processing/acvd_example.cpp}
+
 \section PMPDistance Hausdorff Distance
 
 This package provides methods to compute (approximate) distances between meshes and point sets.
@@ -1440,6 +1482,11 @@ supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. 
 used as a reference during the project.
 
 The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
+
+The ACVD Simplification and Remeshing methods were implemented during GSoC 2023. This was implemented by Hossam Saeed and under
+supervision of Sébastien Valette and Sébastien Loriot. The implementation is based on \cgalCite{cgal:vcp-grtmmdvd-08}. and
+preceeding work. <a href="https://www.creatis.insa-lyon.fr/~valette/public/project/acvd/">ACVD's implementation</a> was also
+used as a reference during the project.
 
 */
 } /* namespace CGAL */
