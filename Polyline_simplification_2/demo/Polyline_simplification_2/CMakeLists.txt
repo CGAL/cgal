@@ -12,7 +12,7 @@ find_package(Qt6 QUIET COMPONENTS Widgets)
 
 include_directories(BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(-DQT_NO_KEYWORDS)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTORCC ON)
