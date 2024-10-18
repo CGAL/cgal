@@ -101,6 +101,8 @@ CGAL_add_named_parameter(vertex_mean_curvature_t, vertex_mean_curvature, vertex_
 CGAL_add_named_parameter(vertex_Gaussian_curvature_t, vertex_Gaussian_curvature, vertex_Gaussian_curvature)
 CGAL_add_named_parameter(vertex_principal_curvatures_and_directions_t, vertex_principal_curvatures_and_directions, vertex_principal_curvatures_and_directions)
 CGAL_add_named_parameter(ball_radius_t, ball_radius, ball_radius)
+CGAL_add_named_parameter(gradation_factor_t, gradation_factor, gradation_factor)
+CGAL_add_named_parameter(post_processing_qem_t, post_processing_qem, post_processing_qem)
 CGAL_add_named_parameter(outward_orientation_t, outward_orientation, outward_orientation)
 CGAL_add_named_parameter(overlap_test_t, overlap_test, do_overlap_test_of_bounded_sides)
 CGAL_add_named_parameter(preserve_genus_t, preserve_genus, preserve_genus)
@@ -164,6 +166,7 @@ CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_pr
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
 CGAL_add_named_parameter(sizing_function_t, sizing_function, sizing_function)
 CGAL_add_named_parameter(bbox_scaling_t, bbox_scaling, bbox_scaling)
+
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)
