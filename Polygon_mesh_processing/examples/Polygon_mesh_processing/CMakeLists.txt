@@ -154,12 +154,12 @@ else()
 endif()
 
 
-find_path(CY_INCLUDE "cySampleElim.h" )
+find_path(CYCODEBASE_INCLUDE "cySampleElim.h" DOC "Path to the cyCodeBase directory (https://github.com/cemyuksel/cyCodeBase)")
 
-if(NOT CY_INCLUDE)
-  message( STATUS "poisson_eliminate needs the CY library")
+if(NOT CYCODEBASE_INCLUDE)
+  message( STATUS "poisson_eliminate needs the cyCodeBase library (https://github.com/cemyuksel/cyCodeBase)")
 else()
   create_single_source_cgal_program("poisson_eliminate.cpp")
   target_compile_definitions( poisson_eliminate CGAL_USE_CY )
-  target_include_directories( poisson_eliminate AFTER PRIVATE ${CY_INCLUDE} )
+  target_include_directories( poisson_eliminate AFTER PRIVATE ${CYCODEBASE_INCLUDE} )
 endif()
