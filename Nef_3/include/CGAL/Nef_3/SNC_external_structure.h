@@ -120,7 +120,6 @@ struct Plane_RT_lt {
 template <typename Items_, typename SNC_structure_>
 class SNC_external_structure_base : public SNC_decorator<SNC_structure_>
 {
-public:
   typedef SNC_structure_ SNC_structure;
 
   typedef typename SNC_structure::Infi_box                   Infi_box;
@@ -185,33 +184,46 @@ public:
   typedef CGAL::Unique_hash_map<SFace_const_handle,bool> Shell_closed_hash;
 
   using SNC_decorator::visit_shell_objects;
-  using SNC_decorator::link_as_inner_shell;
+  using SNC_decorator::store_boundary_object;
+  using SNC_decorator::set_volume;
   using SNC_decorator::link_as_outer_shell;
-  using SNC_decorator::link_as_prev_next_pair;
   using SNC_decorator::get_visible_facet;
   using SNC_decorator::adjacent_sface;
-  using SNC_decorator::make_twins;
+
+  struct Shell_entry {
+    typedef std::vector<SFace_handle> SFace_handles;
+    typedef std::vector<Halffacet_handle> Halffacet_handles;
+
+    Shell_entry(SFace_handle f) : minimal_sface(f) {}
+    SFace_handle minimal_sface;
+    SFace_handles connected_sfaces;
+    Halffacet_handles connected_halffacets;
+  };
+
+  typedef std::vector<Shell_entry> Shell_entries;
 
   struct Shell_explorer {
-    const SNC_decorator& D;
-    Sface_shell_hash&  ShellSf;
-    Face_shell_hash&   ShellF;
-    //    Shell_closed_hash& Closed;
+    Sface_shell_hash&   shell_lookup;
+    Face_shell_hash&    facet_lookup;
+    Shell_entries&      shell_entries;
     SFace_visited_hash& Done;
-    SFace_handle sf_min;
-    int n;
+    int shell_number;
 
-    Shell_explorer(const SNC_decorator& Di, Sface_shell_hash& SSf,
-                   Face_shell_hash& SF, SFace_visited_hash& Vi)
-      : D(Di), ShellSf(SSf), ShellF(SF), Done(Vi), n(0) {}
+    Shell_explorer(Sface_shell_hash& s, Face_shell_hash& f,
+                   Shell_entries& se, SFace_visited_hash& d)
+      : shell_lookup(s), facet_lookup(f),
+        shell_entries(se), Done(d), shell_number(0) {
+    }
 
     void visit(SFace_handle h) {
       CGAL_NEF_TRACEN("visit sf "<<h->center_vertex()->point());
-      ShellSf[h]=n;
-      Done[h]=true;
+      Shell_entry& se = shell_entries.back();
+      se.connected_sfaces.push_back(h);
+      shell_lookup[h] = shell_number;
+      Done[h] = true;
       if ( CGAL::lexicographically_xyz_smaller(h->center_vertex()->point(),
-                                               sf_min->center_vertex()->point()))
-        sf_min = h;
+                                               se.minimal_sface->center_vertex()->point()))
+        se.minimal_sface = h;
     }
 
     void visit(Vertex_handle h) {
@@ -226,25 +238,40 @@ public:
 
     void visit(Halffacet_handle h) {
       CGAL_NEF_TRACEN(h->plane());
-      ShellF[h]=n;
+      shell_entries.back().connected_halffacets.push_back(h);
+      facet_lookup[h] = shell_number;
     }
 
     void visit(SHalfedge_handle ) {}
     void visit(SHalfloop_handle ) {}
 
-    SFace_handle& minimal_sface() { return sf_min; }
+    void init_minimal_sface(SFace_handle minimal_sface) {
+      shell_entries.emplace_back( minimal_sface );
+    }
 
     void increment_shell_number() {
-      CGAL_NEF_TRACEN("leaving shell "<<n);
-      ++n;
+      CGAL_NEF_TRACEN("leaving shell "<<shell_number);
+      ++shell_number;
     }
   };
 
+  void set_volumes( Volume_handle c, const Shell_entry& se) const {
+    for(SFace_handle h : se.connected_sfaces)
+      set_volume(h, c);
+    for(Halffacet_handle h : se.connected_halffacets)
+      set_volume(h, c);
+  }
+
+protected:
   SNC_external_structure_base( SNC_structure& W, SNC_point_locator* spl = nullptr)
     : SNC_decorator(W), pl(spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
- public:
+  using SNC_decorator::make_twins;
+  using SNC_decorator::link_as_prev_next_pair;
+  using SNC_decorator::link_as_inner_shell;
+
+public:
   //#define CGAL_NEF_NO_HALFEDGE_KEYS
 #ifdef CGAL_NEF_NO_HALFEDGE_KEYS
   void pair_up_halfedges() const {
@@ -728,13 +755,11 @@ public:
     CGAL_NEF_TRACEN(">>>>>create_volumes");
     auto face_count = this->sncp()->number_of_halffacets();
     auto sface_count = this->sncp()->number_of_sfaces();
-    Sface_shell_hash     ShellSf(0, sface_count);
-    Face_shell_hash      ShellF(0, face_count);
+    Sface_shell_hash   shell_lookup(0, sface_count);
+    Face_shell_hash    facet_lookup(0, face_count);
+    Shell_entries      shell_entries;
     SFace_visited_hash Done(false, sface_count);
-    Shell_explorer V(*this,ShellSf,ShellF,Done);
-    std::vector<SFace_handle> MinimalSFace;
-    std::vector<SFace_handle> EntrySFace;
-    std::vector<bool> Closed;
+    Shell_explorer     V(shell_lookup, facet_lookup, shell_entries, Done);
 
     SFace_iterator f;
     // First, we classify all the Shere Faces per Shell.  For each Shell we
@@ -745,24 +770,20 @@ public:
       CGAL_NEF_TRACEN("sface in " << ShellSf[f]);
       if ( Done[f] )
         continue;
-      V.minimal_sface() = f;
+      V.init_minimal_sface(f);
       visit_shell_objects(f,V);
 
       CGAL_NEF_TRACEN("minimal vertex " << V.minimal_sface()->center_vertex()->point());
 
-      MinimalSFace.push_back(V.minimal_sface());
-      EntrySFace.push_back(f);
       V.increment_shell_number();
       CGAL_NEF_TRACEN("sface out " << ShellSf[f]);
     }
 
-    for(unsigned int i=0; i<EntrySFace.size(); ++i)
-      Closed.push_back(false);
-
+    std::vector<bool> Closed(shell_entries.size(),false);
     Halffacet_iterator hf;
     CGAL_forall_facets(hf,*this) {
-      unsigned int shf = ShellF[hf];
-      unsigned int shf_twin = ShellF[hf->twin()];
+      unsigned int shf = facet_lookup[hf];
+      unsigned int shf_twin = facet_lookup[hf->twin()];
       if(shf != shf_twin) {
         Closed[shf] = true;
         Closed[shf_twin] = true;
@@ -789,29 +810,32 @@ public:
     //   to another Shell.
 
     this->sncp()->new_volume(); // outermost volume (nirvana)
-    if(MinimalSFace.size() == 0) return;
-    Vertex_handle v_min = MinimalSFace[0]->center_vertex();
-    for( unsigned int i = 0; i < MinimalSFace.size(); ++i) {
+    if(shell_entries.empty()) return;
+
+    Vertex_handle v_min = shell_entries.front().minimal_sface->center_vertex();
+    for( unsigned int i = 0; i < shell_entries.size(); ++i) {
       //    progress2++;
-      Vertex_handle v = MinimalSFace[i]->center_vertex();
+      SFace_handle f = shell_entries[i].minimal_sface;
+      Vertex_handle v = f->center_vertex();
       if(CGAL::lexicographically_xyz_smaller(v->point(),v_min->point()))
         v_min=v;
       CGAL_NEF_TRACEN( "Shell #" << i << " minimal vertex: " << v->point());
       SM_point_locator D((Sphere_map*) &*v);
       Object_handle o = D.locate(Sphere_point(-1,0,0));
       SFace_const_handle sfc;
-      if( !CGAL::assign(sfc, o) || ShellSf[sfc] != i) {
+      if( !CGAL::assign(sfc, o) || shell_lookup[sfc] != i) {
         CGAL_NEF_TRACEN("the shell encloses a volume");
         CGAL_NEF_TRACEN("sface hit? "<<CGAL::assign(sfc,o));
+#ifdef CGAL_USE_TRACE
         if( CGAL::assign(sfc, o)) { CGAL_NEF_TRACEN("sface on another shell? "<<ShellSf[sfc]); }
-        SFace_handle f = MinimalSFace[i];
-        CGAL_assertion( ShellSf[f] == i );
+#endif
+        CGAL_assertion( shell_lookup[f] == i );
         if( Closed[i] ) {
           CGAL_NEF_TRACEN("Shell #" << i << " is closed");
-          SM_decorator SD(&*v);
           Volume_handle c = this->sncp()->new_volume();
           c->mark() = f->mark(); // TODO test if line is redundant
-          link_as_inner_shell(f, c );
+          set_volumes(c, shell_entries[i]);
+          store_boundary_object(f, c );
           CGAL_NEF_TRACE( "Shell #" << i <<" linked as inner shell");
           CGAL_NEF_TRACEN( "(sface" << (CGAL::assign(sfc,o)?"":" not") << " hit case)");
         }
@@ -827,15 +851,18 @@ public:
       if ( f->volume() != Volume_handle() )
         continue;
       CGAL_NEF_TRACEN( "Outer shell #" << ShellSf[f] << " volume?");
-      Volume_handle c = determine_volume( f, MinimalSFace, ShellSf );
+
+      Volume_handle c = determine_volume( f, shell_lookup, shell_entries);
       c->mark() = f->mark();
-      link_as_outer_shell( f, c );
+      unsigned int i = shell_lookup[f];
+      set_volumes(c, shell_entries[i]);
+      store_boundary_object( f, c );
     }
   }
 
   Halffacet_handle get_facet_below( Vertex_handle vi,
-                                    const std::vector< SFace_handle>& MinimalSFace,
-                                    const Sface_shell_hash&  Shell) const {
+                                    const Sface_shell_hash& shell_lookup,
+                                    const Shell_entries& shell_entries) const {
     // {\Mop determines the facet below a vertex |vi| via ray shooting. }
 
     Halffacet_handle f_below;
@@ -870,8 +897,8 @@ public:
       f_below = get_visible_facet(v, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(v->sfaces_begin() == v->sfaces_last());
-        f_below = get_facet_below(MinimalSFace[Shell[v->sfaces_begin()]]->center_vertex(),
-                                  MinimalSFace,Shell);
+        Vertex_handle cv = shell_entries[shell_lookup[v->sfaces_begin()]].minimal_sface->center_vertex();
+        f_below = get_facet_below(cv, shell_lookup, shell_entries);
       }
     }
     else if( CGAL::assign(e, o)) {
@@ -879,8 +906,8 @@ public:
       f_below = get_visible_facet(e, ray);
       if( f_below == Halffacet_handle()) {
         CGAL_assertion(e->source()->sfaces_begin() == e->source()->sfaces_last());
-        f_below = get_facet_below(MinimalSFace[Shell[e->source()->sfaces_begin()]]->center_vertex(),
-                                  MinimalSFace, Shell);
+        Vertex_handle cv = shell_entries[shell_lookup[e->source()->sfaces_begin()]].minimal_sface->center_vertex();
+        f_below = get_facet_below(cv, shell_lookup, shell_entries);
       }
     }
     else if( CGAL::assign(f, o)) {
@@ -893,16 +920,17 @@ public:
   }
 
   Volume_handle determine_volume( SFace_handle sf,
-                const std::vector< SFace_handle>& MinimalSFace,
-                                  const Sface_shell_hash&  Shell ) const {
+                                  const Sface_shell_hash& shell_lookup,
+                                  const Shell_entries& shell_entries) const {
     //{\Mop determines the volume |C| that a shell |S| pointed by |sf|
     //  belongs to.  \precondition |S| separates the volume |C| from an enclosed
     //  volume.}
 
     CGAL_NEF_TRACEN("determine volume");
-    Vertex_handle v_min = MinimalSFace[Shell[sf]]->center_vertex();
+    unsigned int i = shell_lookup[sf];
+    Vertex_handle v_min = shell_entries[i].minimal_sface->center_vertex();
 
-    Halffacet_handle f_below = get_facet_below(v_min, MinimalSFace, Shell);
+    Halffacet_handle f_below = get_facet_below(v_min, shell_lookup, shell_entries);
     if ( f_below == Halffacet_handle())
       return SNC_decorator(*this).volumes_begin();
     Volume_handle c = f_below->incident_volume();
@@ -914,8 +942,9 @@ public:
     SFace_handle sf_below = adjacent_sface(f_below);
     CGAL_NEF_TRACE( "Shell not assigned to a volume hit ");
     CGAL_NEF_TRACEN( "(Inner shell #" << Shell[sf_below] << ")");
-    c = determine_volume( sf_below, MinimalSFace, Shell);
-    link_as_inner_shell( sf_below, c);
+    c = determine_volume( sf_below, shell_lookup, shell_entries);
+    set_volumes(c, shell_entries[i]);
+    store_boundary_object( sf_below, c);
     return c;
   }
 
@@ -1017,7 +1046,6 @@ template <typename SNC_structure_>
 class SNC_external_structure<SNC_indexed_items, SNC_structure_>
   : public SNC_external_structure_base<int, SNC_structure_> {
 
-public:
   typedef SNC_structure_                                SNC_structure;
   typedef SNC_external_structure_base<int, SNC_structure>    Base;
 
@@ -1048,12 +1076,11 @@ public:
   using Base::link_as_prev_next_pair;
   using Base::link_as_inner_shell;
 
-
+public:
   SNC_external_structure( SNC_structure& W, SNC_point_locator* spl = nullptr)
     : Base(W, spl) {}
   /*{\Mcreate makes |\Mvar| a decorator of |W|.}*/
 
- public:
   void pair_up_halfedges() const {
     typedef Halfedge_key_lt4<Halfedge_handle>  Halfedge_key_lt;
     typedef std::list<Halfedge_handle>  Halfedge_list;
