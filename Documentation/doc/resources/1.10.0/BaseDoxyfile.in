@@ -184,6 +184,8 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR>" \
                          "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR>" \
                          "cgalPkgDescriptionEnd=" \
+                         "cgalModifBegin=<div class=\"CGALModification\"> \xrefitem Modification \"Modifications\" \"MODIFICATIONS\"" \
+                         "cgalModifEnd=</div> \latexonly END MODIFICATIONS \endlatexonly" \
                          "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../Manual/how_to_cite_cgal.html#\1-${CGAL_RELEASE_YEAR_ID}\">\1-${CGAL_RELEASE_YEAR_ID}</a><BR>" \
                          "cgalFootnote{1}=<span class=\"footnote\">\1</span>" \
                          "cgalFootnoteCode{1}=<tt style='display:inline'>\1</tt>" \
