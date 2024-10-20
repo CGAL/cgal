@@ -121,18 +121,18 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalExample{1}=<br><b>File</b> \ref \1 \include \1" \
                          "cgalFigureAnchor{1}=\anchor fig__\1" \
                          "cgalFigureRef{1}=\ref fig__\1" \
-                         "cgalFigureBegin{2}=\anchor fig__\1 ^^ \image html \2 ^^ \image latex \2 \"\" width=15cm ^^ \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{3}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=7.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=7.5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{4}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{5}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3.75cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3.75cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3.75cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3.75cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{6}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=3cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{7}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.5cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.5cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.5cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.5cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{8}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.1cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.1cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.1cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.1cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.1cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.1cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=2.1cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{9}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.9cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.9cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.9cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.9cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.9cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.9cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.9cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.9cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureBegin{10}=\anchor fig__\1 ^^ <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.6cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.6cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.6cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.6cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.6cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.6cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.6cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.6cm ^^ </TD> <TD> \image html \10 ^^ \image latex \10 \"\" width=1.6cm ^^ </TD> </TR> </TABLE> </CENTER> \htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly ^^ \ref fig__\1" \
-                         "cgalFigureEnd=\htmlonly[block] </div> \endhtmlonly <br>" \
-                         "cgalFigureCaptionBegin{1}=\htmlonly[block] <div class=\"cgal_figure_caption\"> \endhtmlonly \ref fig__\1" \
-                         "cgalFigureCaptionEnd=\htmlonly[block] </div> \endhtmlonly <br>" \
+                         "cgalFigureBegin{2}=\anchor fig__\1 ^^ \image html \2 ^^ \image latex \2 \"\" width=15cm ^^ <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureBegin{3}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=7.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=7.5cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureBegin{4}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=5cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureBegin{5}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3.75cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3.75cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3.75cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3.75cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureBegin{6}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=3cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=3cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=3cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=3cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=3cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureBegin{7}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.5cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.5cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.5cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.5cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.5cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.5cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureBegin{8}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=2.1cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=2.1cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=2.1cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=2.1cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=2.1cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=2.1cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=2.1cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureBegin{9}=\anchor fig__\1 ^^  <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.9cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.9cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.9cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.9cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.9cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.9cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.9cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.9cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureBegin{10}=\anchor fig__\1 ^^ <CENTER> <TABLE border=0> <TR> <TD> \image html \2 ^^ \image latex \2 \"\" width=1.6cm ^^ </TD> <TD> \image html \3 ^^ \image latex \3 \"\" width=1.6cm ^^ </TD> <TD> \image html \4 ^^ \image latex \4 \"\" width=1.6cm ^^ </TD> <TD> \image html \5 ^^ \image latex \5 \"\" width=1.6cm ^^ </TD> <TD> \image html \6 ^^ \image latex \6 \"\" width=1.6cm ^^ </TD> <TD> \image html \7 ^^ \image latex \7 \"\" width=1.6cm ^^ </TD> <TD> \image html \8 ^^ \image latex \8 \"\" width=1.6cm ^^ </TD> <TD> \image html \9 ^^ \image latex \9 \"\" width=1.6cm ^^ </TD> <TD> \image html \10 ^^ \image latex \10 \"\" width=1.6cm ^^ </TD> </TR> </TABLE> </CENTER> <div class=\"cgal_figure_caption\"> ^^ \ref fig__\1" \
+                         "cgalFigureEnd= </div><br>" \
+                         "cgalFigureCaptionBegin{1}=<div class=\"cgal_figure_caption\"> \ref fig__\1" \
+                         "cgalFigureCaptionEnd=</div><br>" \
                          "cgalConcept=\details <div id=\"CGALConcept\"></div>^^ \brief" \
                          "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>^^ \brief" \
                          "cgalRefines=Refines" \
@@ -159,11 +159,11 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalHasModels{1}=<dt></dt><dd>`\1`</dd>" \
                          "cgalHasModelsBare{1}=<dt></dt><dd>\1</dd>" \
                          "cgalHasModelsEnd=</dl>" \
-                         "cgalDebugBegin=\htmlonly[block] <div class=\"CGALDebug\"> <div>Debugging Support</div> \endhtmlonly ^^" \
-                         "cgalDebugEnd=\htmlonly[block] </div> \endhtmlonly" \
+                         "cgalDebugBegin=<div class=\"CGALDebug\"> <div>Debugging Support</div> ^^" \
+                         "cgalDebugEnd=</div>" \
                          "cgalDebugFunction=This is a function for debugging purpose." \
-                         "cgalAdvancedBegin=^^ \htmlonly[block] <div class=\"CGALAdvanced\"> <div>Advanced</div> \endhtmlonly ^^" \
-                         "cgalAdvancedEnd=\noop ^^ \htmlonly[block] </div> \endhtmlonly" \
+                         "cgalAdvancedBegin=^^ <div class=\"CGALAdvanced\"> <div>Advanced</div> ^^" \
+                         "cgalAdvancedEnd=\noop ^^ </div> " \
                          "cgalAdvancedFunction=This is an advanced function." \
                          "cgalAdvancedClass=This is an advanced class." \
                          "cgalAdvancedType=This is an advanced type." \
@@ -184,29 +184,27 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR>" \
                          "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR>" \
                          "cgalPkgDescriptionEnd=" \
-                         "cgalModifBegin=\htmlonly <div class=\"CGALModification\"> \endhtmlonly \xrefitem Modification \"Modifications\" \"MODIFICATIONS\"" \
-                         "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly" \
                          "cgalPkgBib{1}=<B>BibTeX:</B> <a href=\"../Manual/how_to_cite_cgal.html#\1-${CGAL_RELEASE_YEAR_ID}\">\1-${CGAL_RELEASE_YEAR_ID}</a><BR>" \
                          "cgalFootnote{1}=<span class=\"footnote\">\1</span>" \
                          "cgalFootnoteCode{1}=<tt style='display:inline'>\1</tt>" \
-                         "cgalAutoToc=\htmlonly[block] <div id=\"autotoc\" class=\"toc\"></div> \endhtmlonly" \
+                         "cgalAutoToc=<div id=\"autotoc\" class=\"toc\"></div> " \
                          "cgalTagTrue=\link CGAL::Tag_true `CGAL::Tag_true`\endlink" \
                          "cgalTagFalse=\link CGAL::Tag_false `CGAL::Tag_false`\endlink" \
                          "cgalHeading{1}= <B>\1</B><BR>" \
-                         "cgalClassifedRefPages=\htmlonly[block] <h2 class=\"groupheader\">Classified Reference Pages</h2> \endhtmlonly" \
+                         "cgalClassifedRefPages=<h2 class=\"groupheader\">Classified Reference Pages</h2> " \
                          "cgalCRPSection{1}=<h2>\1</h2>" \
                          "cgalCRPSubsection{1}=<h3>\1</h3>" \
                          "cgalCite{1}=<!-- -->\cite \1" \
-                         "cgalPackageSection{2}=\htmlonly[block] <div style=\"background-color: #EEEDF2;\">\endhtmlonly \section \1 \2 ^^ \htmlonly[block] </div>\endhtmlonly" \
+                         "cgalPackageSection{2}=<div style=\"background-color: #EEEDF2;\">\section \1 \2 ^^ </div>" \
                          "cgalNamedParamsBegin=<dl class=\"params\"><dt>Optional Named Parameters</dt><dd> <table class=\"params\">" \
                          "cgalNamedParamsBegin{1}=<dl class=\"params\"><dt>\1</dt><dd> <table class=\"params\">" \
                          "cgalNamedParamsEnd=</table> </dd> </dl>" \
-                         "cgalParamNBegin{1}=<tr><td class> \htmlonly[block] <button class=\"collapsible\">\endhtmlonly <b>\1</b> \htmlonly[block]</button> <div class=\"content\">\endhtmlonly<ul>" \
+                         "cgalParamNBegin{1}=<tr><td class> \htmlonly[block] <button class=\"collapsible\">\endhtmlonly <b>\1</b> \htmlonly[block]</button>\endhtmlonly<div class=\"content\"><ul>" \
                          "cgalParamDescription{1}=<li>\1</li>" \
                          "cgalParamType{1}=<li><b>Type: </b>\1</li>" \
                          "cgalParamDefault{1}=<li><b>%Default: </b>\1</li>" \
                          "cgalParamExtra{1}=<li><b>Extra: </b>\1</li>" \
-                         "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>" \
+                         "cgalParamNEnd=</ul></div></td><td></td></tr>" \
                          "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}" \
                          "cgalParamSectionEnd=\cgalParamNEnd" \
                          "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>" \
