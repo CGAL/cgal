@@ -1012,7 +1012,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   timer.start();
 #endif
 
-  scene.lcc->set_update_attributes(false);
+  scene.lcc->set_automatic_attributes_management(false);
 
   std::vector<Dart_descriptor> edges;
   LCC::size_type treated  = scene.lcc->get_new_mark();
@@ -1073,7 +1073,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   scene.lcc->free_mark(treated);
   scene.lcc->free_mark(treated2);
 
-  scene.lcc->set_update_attributes(true);
+  scene.lcc->set_automatic_attributes_management(true);
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
@@ -1100,7 +1100,7 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
 
   LCC::Dart_range::iterator prev;
   bool first = true;
-  scene.lcc->set_update_attributes(false);
+  scene.lcc->set_automatic_attributes_management(false);
 
   for (LCC::Dart_range::iterator it(scene.lcc->darts().begin()),
        itend=scene.lcc->darts().end(); it!=itend; )
@@ -1127,7 +1127,7 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
     }
   }
 
-  scene.lcc->set_update_attributes(true);
+  scene.lcc->set_automatic_attributes_management(true);
 
 #ifdef CGAL_PROFILE_LCC_DEMO
   timer.stop();
@@ -1751,7 +1751,7 @@ void MainWindow::onMengerInc()
 
   if (!mengerUpdateAttributes)
   {
-    scene.lcc->set_update_attributes(false);
+    scene.lcc->set_automatic_attributes_management(false);
   }
 
   std::vector<Dart_descriptor> edges;
@@ -1838,7 +1838,7 @@ void MainWindow::onMengerInc()
         update_volume_list_add(scene.lcc->attribute<3>(mengerVolumes[i]));
     }
 
-    scene.lcc->set_update_attributes(true);
+    scene.lcc->set_automatic_attributes_management(true);
   }
 
 #ifdef CGAL_PROFILE_LCC_DEMO
@@ -2780,7 +2780,7 @@ void MainWindow::sierpinski_carpet_copy_attributes_and_embed_vertex
     LCC::Helper::Foreach_enabled_attributes_except
       <CGAL::internal::Group_attribute_functor_of_dart<LCC>, 0>::
       run(*(scene.lcc),sierpinskiCarpetSurfaces[0],it);
-    // We initialise the 0-atttrib to ah
+    // We initialize the 0-atttrib to ah
     scene.lcc->set_dart_attribute<0>(it, ah);
   }
 }

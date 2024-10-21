@@ -480,8 +480,11 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 
 endif()
 
-message("== Generate version files (DONE) ==\n")
+if(CGAL_TEST_SUITE)
+  include(display-third-party-libs-versions)
+endif()
 
+message("== Generate version files (DONE) ==\n")
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= External libraries =-
@@ -934,7 +937,7 @@ if(CGAL_BRANCH_BUILD)
     find_package(Doxygen REQUIRED)
     find_package(Eigen3 REQUIRED)
     find_package(Qt6 COMPONENTS Core Widgets OpenGL Gui REQUIRED)
-    find_package(VTK COMPONENTS vtkImagingGeneral vtkIOImage NO_MODULE)
+    find_package(VTK COMPONENTS ImagingGeneral IOImage NO_MODULE)
     if(VTK_FOUND)
       get_target_property(VTK_INCLUDE_DIRS VTK::IOImage INTERFACE_INCLUDE_DIRECTORIES)
     endif()
