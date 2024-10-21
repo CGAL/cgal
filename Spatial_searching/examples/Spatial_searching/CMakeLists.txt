@@ -7,11 +7,6 @@ project(Spatial_searching_Examples)
 # CGAL and its components
 find_package(CGAL REQUIRED)
 
-if(MSVC)
-  # Turn off VC++ warning
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
-endif()
-
 create_single_source_cgal_program("circular_query.cpp")
 create_single_source_cgal_program("distance_browsing.cpp")
 create_single_source_cgal_program("iso_rectangle_2_query.cpp")

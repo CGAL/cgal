@@ -54,11 +54,11 @@ if(NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910
   if (TARGET CGAL::LASLIB_support)
     create_single_source_cgal_program("read_las_example.cpp")
     create_single_source_cgal_program("write_las_example.cpp")
-    target_link_libraries(read_las_example PRIVATE CGAL::CGAL CGAL::LASLIB_support)
-    target_link_libraries(write_las_example PRIVATE CGAL::CGAL CGAL::LASLIB_support)
+    target_link_libraries(read_las_example PRIVATE CGAL::LASLIB_support)
+    target_link_libraries(write_las_example PRIVATE CGAL::LASLIB_support)
 
-    target_compile_definitions(read_las_example  PRIVATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
-    target_compile_definitions(write_las_example  PRIVATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(read_las_example PRIVATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(write_las_example PRIVATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
 
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
@@ -71,25 +71,43 @@ endif()
 find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
+
   # Executables that require Eigen
   foreach(
     target
-    jet_smoothing_example
-    normal_estimation
+    callback_example
     clustering_example
     edges_example
-    callback_example
-    scale_estimation_example
-    scale_estimation_2d_example
     hierarchy_simplification_example
-    normals_example)
+    jet_smoothing_example
+    normal_estimation
+    normals_example
+    scale_estimation_example
+    scale_estimation_2d_example)
     create_single_source_cgal_program("${target}.cpp")
-    target_link_libraries(${target} PRIVATE CGAL::CGAL CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
+
+  if (TARGET CGAL::TBB_support)
+    foreach(
+      target
+      callback_example
+      clustering_example
+      jet_smoothing_example
+      normal_estimation
+      normals_example
+      scale_estimation_example)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
+    endforeach()
+  endif()
+
   if (TARGET CGAL::Eigen3_support AND TARGET CGAL::LASLIB_support)
     create_single_source_cgal_program( "orient_scanlines_example.cpp" )
-    target_link_libraries(orient_scanlines_example PRIVATE CGAL::CGAL
+    target_link_libraries(orient_scanlines_example PRIVATE
       CGAL::Eigen3_support CGAL::LASLIB_support)
+    if (TARGET CGAL::TBB_support)
+      target_link_libraries(orient_scanlines_example PRIVATE CGAL::TBB_support)
+    endif()
   endif()
 
   # Executables that require libpointmatcher
@@ -97,7 +115,7 @@ if(TARGET CGAL::Eigen3_support)
   include(CGAL_pointmatcher_support)
   if(TARGET CGAL::pointmatcher_support)
     create_single_source_cgal_program("registration_with_pointmatcher.cpp")
-    target_link_libraries(registration_with_pointmatcher PRIVATE CGAL::CGAL CGAL::Eigen3_support
+    target_link_libraries(registration_with_pointmatcher PRIVATE CGAL::Eigen3_support
                           CGAL::pointmatcher_support)
   else()
     message(STATUS "NOTICE: registration with pointmatcher requires libpointmatcher and will not be compiled.")
@@ -115,7 +133,7 @@ if(TARGET CGAL::Eigen3_support)
 
   if(TARGET CGAL::OpenGR_support)
     create_single_source_cgal_program("registration_with_OpenGR.cpp")
-    target_link_libraries(registration_with_OpenGR PRIVATE CGAL::CGAL CGAL::Eigen3_support
+    target_link_libraries(registration_with_OpenGR PRIVATE CGAL::Eigen3_support
                           CGAL::OpenGR_support)
   else()
     message(STATUS "NOTICE: registration_with_OpenGR requires OpenGR, and will not be compiled.")
@@ -126,7 +144,7 @@ if(TARGET CGAL::Eigen3_support)
       TARGET CGAL::OpenGR_support)
     create_single_source_cgal_program("registration_with_opengr_pointmatcher_pipeline.cpp")
     target_link_libraries(
-      registration_with_opengr_pointmatcher_pipeline PRIVATE CGAL::CGAL CGAL::Eigen3_support
+      registration_with_opengr_pointmatcher_pipeline PRIVATE CGAL::Eigen3_support
       CGAL::pointmatcher_support CGAL::OpenGR_support)
   else()
     message(STATUS "NOTICE: registration with OpenGR and pointmatcher requires both libpointmatcher and OpenGR, and will not be compiled.")
@@ -134,4 +152,16 @@ if(TARGET CGAL::Eigen3_support)
 
 else()
   message(STATUS "NOTICE: Some of the executables in this directory require Eigen 3.1 (or greater), and will not be compiled.")
+endif()
+
+if(CGAL_ACTIVATE_CONCURRENT_MESH_3 AND TARGET CGAL::TBB_support)
+  foreach(
+    target
+    average_spacing_example
+    bilateral_smooth_point_set_example
+    edge_aware_upsample_point_set_example
+    remove_outliers_example
+    wlop_simplify_and_regularize_point_set_example)
+    target_link_libraries(${target} PRIVATE CGAL::TBB_support)
+  endforeach()
 endif()
