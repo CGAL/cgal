@@ -1278,7 +1278,7 @@ std::pair<
               Vertex_descriptor v2 = target(hd, pmesh);
               int c2 = get(vertex_cluster_pmap, v2);
               if (c2 != c)
-                clusters_edges_new.push(hd);
+                clusters_edges_active.push(hd);
             }
           }
         }
