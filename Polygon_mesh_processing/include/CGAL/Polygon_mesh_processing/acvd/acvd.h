@@ -429,20 +429,11 @@ std::pair<
   }
 
   // creating needed property maps
-  VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
-  VertexVisitedMap vertex_visited_pmap = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh);
-  VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
+  VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh, -1);
+  VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh, typename GT::FT(0));
   std::vector<IsotropicClusterData<GT>> clusters(nb_clusters);
   std::queue<Halfedge_descriptor> clusters_edges_active;
   std::queue<Halfedge_descriptor> clusters_edges_new;
-
-  // initialize vertex weights and clusters
-  for (Vertex_descriptor vd : vertices(pmesh))
-  {
-    put(vertex_weight_pmap, vd, 0);
-    put(vertex_visited_pmap, vd, false);
-    put(vertex_cluster_pmap, vd, -1);
-  }
 
   // compute vertex weights (dual area)
   typename GT::FT weight_avg = 0;
@@ -630,6 +621,7 @@ std::pair<
     std::queue<Vertex_descriptor> vertex_queue;
 
     // loop over vertices to compute cluster components
+    VertexVisitedMap vertex_visited_pmap = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh, false);
     for (Vertex_descriptor vd : vertices(pmesh))
     {
       if (get(vertex_visited_pmap, vd)) continue;
@@ -951,25 +943,14 @@ std::pair<
   }
 
   // creating needed property maps
-  VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh);
-  VertexVisitedMap vertex_visited_pmap = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh);
-  VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh);
-  VertexQuadricMap vertex_quadric_pmap = get(CGAL::dynamic_vertex_property_t<Matrix4x4>(), pmesh);
+  VertexClusterMap vertex_cluster_pmap = get(CGAL::dynamic_vertex_property_t<int>(), pmesh, -1);
+  VertexWeightMap vertex_weight_pmap = get(CGAL::dynamic_vertex_property_t<typename GT::FT>(), pmesh, typename GT::FT(0));
+  Matrix4x4 zero_mat;  zero_mat.setZero();
+  VertexQuadricMap vertex_quadric_pmap = get(CGAL::dynamic_vertex_property_t<Matrix4x4>(), pmesh, zero_mat);
 
   std::vector<QEMClusterData<GT>> clusters(nb_clusters);
   std::queue<Halfedge_descriptor> clusters_edges_active;
   std::queue<Halfedge_descriptor> clusters_edges_new;
-
-  // initialize vertex weights and clusters
-  for (Vertex_descriptor vd : vertices(pmesh))
-  {
-    put(vertex_weight_pmap, vd, 0);
-    put(vertex_visited_pmap, vd, false);
-    put(vertex_cluster_pmap, vd, -1);
-
-    Matrix4x4 q;  q.setZero();
-    put(vertex_quadric_pmap, vd, q);
-  }
 
   // compute vertex weights (dual area), and quadrics
   typename GT::FT weight_avg = 0;
@@ -1213,6 +1194,7 @@ std::pair<
     std::queue<Vertex_descriptor> vertex_queue;
 
     // loop over vertices to compute cluster components
+    VertexVisitedMap vertex_visited_pmap = get(CGAL::dynamic_vertex_property_t<bool>(), pmesh, false);
     for (Vertex_descriptor vd : vertices(pmesh))
     {
       if (get(vertex_visited_pmap, vd)) continue;
