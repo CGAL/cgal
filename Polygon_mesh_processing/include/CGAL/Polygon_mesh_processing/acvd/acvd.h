@@ -87,9 +87,7 @@ void compute_qem_vertex(std::vector<std::vector<typename GT::Vector_3>> cluster_
 template <typename GT>
 typename GT::Vector_3 compute_displacement(const Eigen::Matrix<typename GT::FT, 4, 4> quadric, const typename GT::Point_3& p, int& rank_deficiency)
 {
-  typedef Eigen::Matrix<typename GT::FT, 4, 4> Matrix4d;
   typedef Eigen::Matrix<typename GT::FT, 3, 3> Matrix3d;
-
 
   int MaxNumberOfUsedSingularValues = 3;
   Matrix3d A;
@@ -538,6 +536,7 @@ std::pair<
         }
         else if (c1 == c2)
         {
+          // TODO @hoskillua This is not needed, right?
           clusters_edges_new.push(hi);
         }
         else
@@ -1032,7 +1031,7 @@ std::pair<
   int nb_qem_iters = 0;
   // Turned on once nb_modifications < nb_vertices * CGAL_TO_QEM_MODIFICATION_THRESHOLD
   bool qem_energy_minimization = false;
-  bool just_switched_to_qem = false;
+  // bool just_switched_to_qem = false;
   do
   {
     nb_disconnected = 0;
@@ -1080,6 +1079,7 @@ std::pair<
         }
         else if (c1 == c2)
         {
+          // TODO @hoskillua This is not needed, right?
           clusters_edges_new.push(hi);
         }
         else
