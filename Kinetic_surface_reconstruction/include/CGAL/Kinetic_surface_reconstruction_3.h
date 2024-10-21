@@ -586,8 +586,6 @@ private:
   typedef typename CDT::Finite_edges_iterator    Finite_edges_iterator;
   typedef typename CDT::Finite_faces_iterator    Finite_faces_iterator;
 
-  //using Visibility = KSR_3::Visibility<Kernel, Intersection_kernel, Point_map, Normal_map>;
-  using Index = typename KSP::Index;
   using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
   using Volume_attribute = typename LCC::Base::template Attribute_descriptor<3>::type;
 
@@ -1711,6 +1709,74 @@ private:
       m_face_area_lcc[i] = m_face_area_lcc[i] * 2.0 * m_total_inliers / total_area;
   }
 
+  FT area(typename LCC::Dart_descriptor face_dart, Plane_3 &pl, std::vector<typename Kernel::Triangle_3> *tris = nullptr) {
+    std::vector<Point_3> face;
+    From_exact from_exact;
+
+    Dart_descriptor n = face_dart;
+    do {
+      face.push_back(from_exact(m_lcc.point(n)));
+      n = m_lcc.beta(n, 0);
+    } while (n != face_dart);
+
+    pl = from_exact(m_lcc.template info<2>(face_dart).plane);
+
+    Delaunay_2 tri;
+    for (const Point_3& p : face)
+      tri.insert(pl.to_2d(p));
+
+    FT face_area = 0;
+
+    // Get area
+    for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+      const typename Kernel::Triangle_2 triangle(
+        fit->vertex(0)->point(),
+        fit->vertex(1)->point(),
+        fit->vertex(2)->point());
+      face_area += triangle.area();
+      if (tris)
+        tris->push_back(typename Kernel::Triangle_3(pl.to_3d(fit->vertex(0)->point()), pl.to_3d(fit->vertex(1)->point()), pl.to_3d(fit->vertex(2)->point())));
+    }
+
+    return face_area;
+  }
+
+  FT volume(typename LCC::Dart_descriptor volume_dart) {
+    FT x = 0, y = 0, z = 0;
+    std::size_t count = 0;
+    From_exact from_exact;
+
+    // Collect vertices to obtain point on the inside.
+    for (auto& fd : m_lcc.template one_dart_per_incident_cell<2, 3>(volume_dart)) {
+      typename LCC::Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
+
+      for (const auto& vd : m_lcc.template one_dart_per_incident_cell<0, 2>(fdh)) {
+        const auto &p = from_exact(m_lcc.point(m_lcc.dart_descriptor(vd)));
+        x += p.x();
+        y += p.y();
+        z += p.z();
+        count++;
+      }
+    }
+
+    Point_3 center(x / count, y / count, z / count);
+
+    FT vol = 0;
+    // Second iteration for computing the area of each face and the volume spanned with the center point.
+    for (auto& fd : m_lcc.template one_dart_per_incident_cell<2, 3>(volume_dart)) {
+      typename LCC::Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
+
+      Plane_3 plane;
+      FT a = area(fdh, plane);
+      Vector_3 n = plane.orthogonal_vector();
+
+      FT distance = CGAL::abs((plane.point() - center) * n);
+      vol += distance * a / 3.0;
+    }
+
+    return vol;
+  }
+
   void count_volume_votes_lcc() {
 //    const int debug_volume = -1;
     FT total_volume = 0;
@@ -1744,8 +1810,6 @@ private:
         const auto& point = get(m_point_map, p);
         const auto& normal = get(m_normal_map, p);
 
-//        count_points++;
-
         for (std::size_t j = 0; j < idx; j++) {
           const Vector_3 vec(point, c[j]);
           const FT dot_product = vec * normal;
@@ -1764,30 +1828,11 @@ private:
       }
     }
 
-    for (auto &d : m_lcc.template one_dart_per_cell<3>()) {
+    for (auto& d : m_lcc.template one_dart_per_cell<3>()) {
       typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
 
-      std::vector<Point_3> volume_vertices;
-
       std::size_t volume_index = m_lcc.template info<3>(dh).volume_id;
-
-      // Collect all vertices of volume to calculate volume
-      for (auto &fd : m_lcc.template one_dart_per_incident_cell<2, 3>(dh)) {
-        typename LCC::Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
-
-        for (const auto &vd : m_lcc.template one_dart_per_incident_cell<0, 2>(fdh))
-          volume_vertices.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
-      }
-
-      Delaunay_3 tri;
-      for (const Point_3& p : volume_vertices)
-        tri.insert(p);
-
-      m_volumes[volume_index] = FT(0);
-      for (auto cit = tri.finite_cells_begin(); cit != tri.finite_cells_end(); ++cit) {
-        const auto& tet = tri.tetrahedron(cit);
-        m_volumes[volume_index] += tet.volume();
-      }
+      m_volumes[volume_index] = volume(dh);
 
       total_volume += m_volumes[volume_index];
     }
@@ -1795,9 +1840,6 @@ private:
     // Normalize volumes
     for (FT& v : m_volumes)
       v /= total_volume;
-
-//     for (std::size_t i = 0; i < m_volumes.size(); i++)
-//       std::cout << i << ": " << m_cost_matrix[0][i] << " o: " << m_cost_matrix[1][i] << " v: " << m_volumes[i] << std::endl;
   }
 
   template<typename NamedParameters>
@@ -2002,8 +2044,6 @@ private:
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
-    std::vector<Index> faces;
-
     if (polygon_index >= m_kinetic_partition.input_planes().size())
       assert(false);
 
