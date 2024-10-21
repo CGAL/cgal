@@ -29,24 +29,13 @@
 
 #include <CGAL/Lazy.h> // needed for CGAL::exact(FT)/CGAL::exact(Lazy_exact_nt<T>)
 
-#include <boost/container/small_vector.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <boost/dynamic_bitset.hpp>
 
-#include <vector>
 #include <utility>
-#include <algorithm>
-#include <unordered_set>
 
 namespace CGAL {
 
-// workaround for area(face_range, tm) overload
-template<typename CGAL_NP_TEMPLATE_PARAMETERS_NO_DEFAULT, typename NP>
-class GetGeomTraits<CGAL_NP_CLASS, NP>
-{
-public:
-  struct type{};
-};
+
 
 namespace Polygon_mesh_processing {
 
