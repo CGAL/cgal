@@ -24,7 +24,6 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/KSP/debug.h>
@@ -559,8 +558,6 @@ private:
 
   using Tds = CGAL::Triangulation_data_structure_2<Vbi, Fbi>;
   using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel, Tds>;
-
-  using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
 
   typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
   using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Linear_cell_complex_min_items>;
