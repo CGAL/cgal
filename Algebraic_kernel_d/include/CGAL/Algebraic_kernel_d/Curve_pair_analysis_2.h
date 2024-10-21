@@ -875,7 +875,7 @@ private:
      * Checks intersection with symbolic methods
      */
     bool check_candidate_symbolically(Status_line_CA_1& e1,size_type ,
-                                      Status_line_CA_1& CGAL_precondition_code(e2),size_type ,
+                                      Status_line_CA_1& CGAL_assertion_code(e2),size_type ,
                                       size_type k) const {
         Polynomial_1 p = -coprincipal_subresultants(k-1);
         Polynomial_1 q = principal_subresultants(k)*Coefficient(k);
