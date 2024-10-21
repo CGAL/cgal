@@ -59,8 +59,15 @@ target_link_libraries(triangulation_3_io_plugin PRIVATE scene_triangulation_3_it
 if(VTK_FOUND AND VTK_LIBRARIES)
   message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
   cgal_lab_plugin(vtk_plugin VTK_io_plugin KEYWORDS Viewer Mesh_3)
-  target_link_libraries(vtk_plugin PRIVATE scene_surface_mesh_item scene_polylines_item scene_c3t3_item scene_points_with_normal_item
-                                    ${VTK_LIBRARIES})
+  target_link_libraries(vtk_plugin
+      PRIVATE
+      scene_surface_mesh_item
+      scene_polygon_soup_item
+      scene_polylines_item
+      scene_c3t3_item
+      scene_points_with_normal_item
+      ${VTK_LIBRARIES}
+  )
   target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
 else()
   message(STATUS "NOTICE: the vtk IO plugin needs VTK 9.0 or greater and will not be compiled.")

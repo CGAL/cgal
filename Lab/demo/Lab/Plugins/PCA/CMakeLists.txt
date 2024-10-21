@@ -9,6 +9,7 @@ qt6_wrap_ui(transformUI_FILES Transformation_widget.ui MeshOnGrid_dialog.ui)
 cgal_lab_plugin(affine_transform_plugin Affine_transform_plugin
                        ${transformUI_FILES} KEYWORDS PointSetProcessing)
 target_link_libraries(affine_transform_plugin PRIVATE scene_surface_mesh_item
+                                                      scene_polygon_soup_item
                                                       scene_points_with_normal_item
                                                       scene_aff_transformed_item
                                                       scene_aff_transformed_point_set_item

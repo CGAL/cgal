@@ -205,7 +205,8 @@ qt6_wrap_ui(alpha_shapeUI_FILES Alpha_shape_widget.ui)
 cgal_lab_plugin(alpha_shape_plugin Alpha_shape_plugin
                        ${alpha_shapeUI_FILES} KEYWORDS PointSetProcessing)
 target_link_libraries(alpha_shape_plugin PRIVATE scene_points_with_normal_item
-                                                scene_c3t3_item)
+                                                 scene_polygon_soup_item
+                                                 scene_c3t3_item)
 
 qt6_wrap_ui(distanceUI_FILES Point_set_to_mesh_distance_widget.ui)
 cgal_lab_plugin(

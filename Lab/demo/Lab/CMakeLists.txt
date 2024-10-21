@@ -12,7 +12,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 #Defines flags to emulate windows behavior for linking error generation
-if(CMAKE_CXX_COMPILER_ID EQUAL Clang
+if(CMAKE_CXX_COMPILER_ID STREQUAL Clang
    OR CMAKE_COMPILER_IS_GNUCC
    OR CMAKE_COMPILER_IS_GNUCXX)
   if(UNIX OR APPLE)
@@ -244,7 +244,10 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(
-    scene_c3t3_item PRIVATE scene_triangulation_3_item
+    scene_c3t3_item
+    PUBLIC
+    scene_triangulation_3_item
+    PRIVATE
     scene_surface_mesh_item scene_polygon_soup_item
     scene_basic_objects ${TBB_LIBRARIES})
 
@@ -289,8 +292,11 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(scene_k_ring_selection PRIVATE scene_surface_mesh_item)
 
   add_item(scene_selection_item Scene_polyhedron_selection_item.cpp)
-  target_link_libraries(scene_selection_item PRIVATE scene_item_decorator
-                                                     scene_k_ring_selection)
+  target_link_libraries(scene_selection_item
+    PUBLIC
+    scene_surface_mesh_item
+    scene_item_decorator
+    scene_k_ring_selection)
   if(TBB_FOUND)
     target_link_libraries(scene_selection_item PRIVATE CGAL::TBB_support)
   endif()

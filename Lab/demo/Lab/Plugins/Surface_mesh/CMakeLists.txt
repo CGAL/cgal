@@ -42,9 +42,12 @@ if(NOT CGAL_DISABLE_GMP)
   qt6_wrap_ui(shortestPathUI_FILES Shortest_path_widget.ui)
   cgal_lab_plugin(shortest_path_plugin Shortest_path_plugin
                          ${shortestPathUI_FILES})
-  target_link_libraries(
-    shortest_path_plugin PRIVATE scene_surface_mesh_item scene_shortest_path_item
-                                 scene_basic_objects)
+  target_link_libraries(shortest_path_plugin
+      PRIVATE
+      scene_surface_mesh_item
+      scene_selection_item
+      scene_shortest_path_item
+      scene_basic_objects)
 
   qt6_wrap_ui(basicUI_FILES Surface_mesh_approximation_dockwidget.ui)
   cgal_lab_plugin(

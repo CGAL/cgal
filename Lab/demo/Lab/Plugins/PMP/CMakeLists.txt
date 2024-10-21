@@ -112,7 +112,7 @@ target_link_libraries(polyhedron_stitching_plugin PRIVATE scene_surface_mesh_ite
 
 qt6_wrap_ui( selectionUI_FILES Selection_widget.ui)
 cgal_lab_plugin(selection_plugin Selection_plugin ${selectionUI_FILES} KEYWORDS PMP Viewer Classification Mesh_3)
-target_link_libraries(selection_plugin PRIVATE scene_selection_item scene_points_with_normal_item scene_polylines_item)
+target_link_libraries(selection_plugin PRIVATE scene_selection_item scene_surface_mesh_item scene_points_with_normal_item scene_polylines_item)
 
 #to keep it simple to compile
 add_custom_target(self_intersection_plugin)
