@@ -61,10 +61,10 @@ public:
     using Exact_point = typename Exact_kernel::Point_2;
 
     using D2D = NT_converter<distance_t,double>;
-    using F2E = Cartesian_converter<Approximate_kernel, Exact_kernel, D2D>;
+    using A2E = Cartesian_converter<Approximate_kernel, Exact_kernel, D2D>;
 
     using FT2I = NT_converter<typename Kernel::FT,distance_t>;
-    using K2F = Cartesian_converter<Kernel, Approximate_kernel, FT2I>;
+    using K2A = Cartesian_converter<Kernel, Approximate_kernel, FT2I>;
 
     /// @todo remove?
     using Polyline = std::vector<Point>;

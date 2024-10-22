@@ -37,39 +37,39 @@ using Kernel = unspecified;
 */
 using Point = unspecified_type;
 
-/*! The number type of the filtered kernel.
+/*! The number type of the approximate kernel.
 */
 using distance_t = Approximate_kernel::FT;
 
-/*! The filtered kernel
+/*! The approximate kernel
 */
 using Approximate_kernel = unspecified_type;
 
 
-/*! The point type of the filtered kernel corresponding to `dimension`.
+/*! The point type of the approximate kernel corresponding to `dimension`.
 */
 using Approximate_point = unspecified_type;
 
-/*! A functor of the filtered kernel for filtered points
+/*! A functor of the approximate kernel for filtered points
 */
 using Construct_bbox = unspecified_type;
 
-/*! A functor of the filtered kernel for two filtered points
+/*! A functor of the approximate kernel for two filtered points
 */
 using Squared_distance = unspecified_type;
 
 
-/*! A functor of the filtered kernel for two filtered points
+/*! A functor of the approximate kernel for two filtered points
 */
 using Difference_of_points = unspecified_type;
 
 
-/*! A functor of the filtered kernel the return type of `Difference_of_points`
+/*! A functor of the approximate kernel the return type of `Difference_of_points`
 */
 using Scaled_vector = unspecified_type;
 
 
-/*! A functor of the filtered kernel the return type of `Scaled_vector`
+/*! A functor of the approximate kernel the return type of `Scaled_vector`
 */
 using Translated_point = unspecified_type;
 
@@ -84,11 +84,11 @@ using Exact_point = unspecified_type;
 
 /*! A converter for points from `Kernel` to  `Approximate_kernel`
 */
-using K2F = unspecified_type;
+using K2A = unspecified_type;
 
 
 /*! A converter for points from `Approximate_kernel` to  `Exact_kernel`
 */
-using F2E = unspecified_type;
+using A2E = unspecified_type;
 /// @}
 };
