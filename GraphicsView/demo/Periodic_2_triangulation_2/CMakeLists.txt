@@ -8,7 +8,7 @@ include_directories(BEFORE ./include)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
-  add_compile_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
   set(CMAKE_AUTOMOC ON)
 

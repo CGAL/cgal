@@ -3,10 +3,10 @@ project(Surface_mesh_topology_Examples)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 
-# add_compile_definitions(-DCGAL_TRACE_PATH_TESTS)
-# add_compile_definitions(-DCGAL_TRACE_CMAP_TOOLS)
-# add_compile_definitions("-Wall -Wextra")
-# add_compile_definitions("-D_GLIBCXX_DEBUG")
+# add_compile_definitions(CGAL_TRACE_PATH_TESTS)
+# add_compile_definitions(CGAL_TRACE_CMAP_TOOLS)
+# add_definitions("-Wall -Wextra")
+# add_compile_definitions(_GLIBCXX_DEBUG)
 
 set(SOURCE_FILES
   edgewidth_lcc.cpp

@@ -20,7 +20,7 @@ if (CGAL_Qt6_FOUND AND Qt6_FOUND)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   # Arrangement package includes
-  add_compile_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
   option(COMPILE_UTILS_INCREMENTALLY
     "Compile files in Utils directory incrementally, or compile them all as a unit. \
     Incremental compilation will be better for development and consume less \

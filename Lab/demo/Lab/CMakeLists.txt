@@ -3,7 +3,7 @@ project(Lab_Demo)
 include(FeatureSummary)
 
 
-add_compile_definitions ( -DCGAL_NO_DEPRECATED_CODE )
+add_compile_definitions(CGAL_NO_DEPRECATED_CODE)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -48,7 +48,7 @@ set_package_properties(
   DESCRIPTION "To find this package, it should be sufficient to fill the Qt6_DIR variable with: <Qt_dir>/<Qt_version>/<Compilator>/lib/cmake/Qt6")
 
 if(Qt6_FOUND)
-  add_compile_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
 endif(Qt6_FOUND)
 
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
@@ -93,7 +93,7 @@ option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
 if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
-  add_compile_definitions(-DCGAL_CONCURRENT_MESH_3)
+  add_compile_definitions(CGAL_CONCURRENT_MESH_3)
   if(NOT TBB_FOUND)
     find_package(TBB REQUIRED)
     include(CGAL_TBB_support)
@@ -350,7 +350,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${lib})
   endforeach()
 
-  add_compile_definitions(-DUSE_FORWARD_DECL)
+  add_compile_definitions(USE_FORWARD_DECL)
   add_library(
     cgal_lab SHARED
     MainWindow.cpp

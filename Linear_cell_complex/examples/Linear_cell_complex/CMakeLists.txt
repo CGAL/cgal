@@ -11,7 +11,7 @@ find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
 # To use valgrind, we must disable rounding math check.
-# add_compile_definitions(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
+# add_compile_definitions(CGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 create_single_source_cgal_program("gmap_linear_cell_complex_3.cpp")
 create_single_source_cgal_program("linear_cell_complex_3.cpp")

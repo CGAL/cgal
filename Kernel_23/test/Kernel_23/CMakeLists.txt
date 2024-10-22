@@ -37,7 +37,7 @@ if(CGAL_KERNEL_23_TEST_RT_FT_PREDICATE_FLAGS)
   # - create a lot of possible combinations, which is expensive to test
   # - create issues because some combinations might be RT-sufficient whereas others will require FT
   #
-  # add_compile_definitions(-DCGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS)
+  # add_compile_definitions(CGAL_KERNEL_23_TEST_RT_FT_PREDICATES_TEST_PREDICATES_WITH_TEMPLATED_OPERATORS)
 
   create_single_source_cgal_program("atomic_compilation_test.cpp")
   target_precompile_headers(atomic_compilation_test PRIVATE [["atomic_RT_FT_predicate_headers.h"]])

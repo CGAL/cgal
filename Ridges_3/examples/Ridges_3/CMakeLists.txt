@@ -18,7 +18,7 @@ if(TARGET CGAL::Eigen3_support)
     create_single_source_cgal_program(Ridges_Umbilics_LCC.cpp)
     target_link_libraries(Ridges_Umbilics_LCC PRIVATE CGAL::Eigen3_support)
 
-    add_compile_definitions("-DCGAL_USE_BOOST_PROGRAM_OPTIONS")
+    add_compile_definitions(CGAL_USE_BOOST_PROGRAM_OPTIONS)
     target_link_libraries(Compute_Ridges_Umbilics PRIVATE Boost::program_options)
     target_link_libraries(Ridges_Umbilics_SM PRIVATE Boost::program_options)
     target_link_libraries(Ridges_Umbilics_LCC PRIVATE Boost::program_options)

@@ -8,8 +8,8 @@ project(Tetrahedral_remeshing_Tests)
 # CGAL and its components
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
 
-add_compile_definitions(-DCGAL_TETRAHEDRAL_REMESHING_VERBOSE)
-#add_compile_definitions(-DCGAL_CHECK_EXPENSIVE) #to activate expensive assertions
+add_compile_definitions(CGAL_TETRAHEDRAL_REMESHING_VERBOSE)
+#add_compile_definitions(CGAL_CHECK_EXPENSIVE) #to activate expensive assertions
 
 create_single_source_cgal_program("test_tetrahedral_remeshing.cpp")
 create_single_source_cgal_program("test_tetrahedral_remeshing_with_features.cpp")

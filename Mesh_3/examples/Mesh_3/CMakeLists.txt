@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.12...3.29)
 project(Mesh_3_Examples)
 
-add_compile_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+add_compile_definitions(CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
 if(CGAL_MESH_3_VERBOSE)
-  add_compile_definitions(-DCGAL_MESH_3_VERBOSE)
+  add_compile_definitions(CGAL_MESH_3_VERBOSE)
 endif()
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
@@ -13,7 +13,7 @@ find_package(CGAL REQUIRED COMPONENTS ImageIO)
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
 if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
-  add_compile_definitions(-DCGAL_CONCURRENT_MESH_3)
+  add_compile_definitions(CGAL_CONCURRENT_MESH_3)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
 endif()

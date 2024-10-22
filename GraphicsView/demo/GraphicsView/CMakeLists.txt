@@ -9,7 +9,7 @@ find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
-  add_compile_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
   qt_add_executable(min min.cpp)

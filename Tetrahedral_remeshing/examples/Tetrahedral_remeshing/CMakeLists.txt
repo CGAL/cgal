@@ -16,7 +16,7 @@ create_single_source_cgal_program("tetrahedral_remeshing_from_mesh.cpp")
 # Concurrent Mesh_3
 option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
-  add_compile_definitions(-DCGAL_CONCURRENT_MESH_3)
+  add_compile_definitions(CGAL_CONCURRENT_MESH_3)
   find_package(TBB REQUIRED)
   include(CGAL_TBB_support)
 else()
