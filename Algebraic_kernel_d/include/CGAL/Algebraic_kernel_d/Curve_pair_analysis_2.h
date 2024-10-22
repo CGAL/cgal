@@ -1173,7 +1173,7 @@ private:
     /*
      * \brief reduces the number of possible intersections
      *
-     * At the position given by the event lins \c e1 and \c e2 and the slice
+     * At the position given by the event lines \c e1 and \c e2 and the slice
      * info object \c slice, the points on the event lines are further refined
      * until there are only \c n possible intersection points. The method can
      * be interrupted if all possible intersection points are known to have
