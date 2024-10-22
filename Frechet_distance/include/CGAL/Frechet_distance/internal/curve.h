@@ -80,9 +80,9 @@ public:
 
     using distance_t = typename Traits::distance_t;
 
-    using iKernel = typename Traits::Filtered_kernel;
+    using iKernel = typename Traits::Approximate_kernel;
 
-    using Point = typename Traits::Filtered_point;
+    using Point = typename Traits::Approximate_point;
 
     using Bbox = typename Traits::Bbox;
 

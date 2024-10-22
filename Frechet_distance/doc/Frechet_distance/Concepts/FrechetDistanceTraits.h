@@ -39,16 +39,16 @@ using Point = unspecified_type;
 
 /*! The number type of the filtered kernel.
 */
-using distance_t = Filtered_kernel::FT;
+using distance_t = Approximate_kernel::FT;
 
 /*! The filtered kernel
 */
-using Filtered_kernel = unspecified_type;
+using Approximate_kernel = unspecified_type;
 
 
 /*! The point type of the filtered kernel corresponding to `dimension`.
 */
-using Filtered_point = unspecified_type;
+using Approximate_point = unspecified_type;
 
 /*! A functor of the filtered kernel for filtered points
 */
@@ -82,12 +82,12 @@ The  point type must have `operator[]` returning a number type which can be used
 */
 using Exact_point = unspecified_type;
 
-/*! A converter for points from `Kernel` to  `Filtered_kernel`
+/*! A converter for points from `Kernel` to  `Approximate_kernel`
 */
 using K2F = unspecified_type;
 
 
-/*! A converter for points from `Filtered_kernel` to  `Exact_kernel`
+/*! A converter for points from `Approximate_kernel` to  `Exact_kernel`
 */
 using F2E = unspecified_type;
 /// @}
