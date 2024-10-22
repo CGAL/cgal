@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# this script requires ghi: https://github.com/stephencelis/ghi
-# See the wiki for how to assign a token to connect without password:
-# https://github.com/stephencelis/ghi/wiki/FAQ
+# This script requires Github CLI to be installed and configured.
+# https://cli.github.com/
 #
 # example calls within a git repo
 # bash tag_pr_per_release.sh 4.12 4.12.1
