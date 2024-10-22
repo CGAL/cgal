@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Polygon_mesh_processing_Tests)
 
 # CGAL and its components
@@ -114,9 +114,9 @@ endif()
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
-  include(UseOpenMesh)
+  include(CGAL_OpenMesh_support)
   create_single_source_cgal_program("remeshing_test_P_SM_OM.cpp")
-  target_link_libraries(remeshing_test_P_SM_OM PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(remeshing_test_P_SM_OM PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Tests that use OpenMesh will not be compiled.")
 endif()

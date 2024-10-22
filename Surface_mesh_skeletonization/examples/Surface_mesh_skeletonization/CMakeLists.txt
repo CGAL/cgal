@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Surface_mesh_skeletonization_Examples)
 
 find_package(CGAL REQUIRED)
@@ -31,11 +31,11 @@ if(TARGET CGAL::Eigen3_support)
 
   find_package(OpenMesh QUIET)
   if(OpenMesh_FOUND)
-    include(UseOpenMesh)
+    include(CGAL_OpenMesh_support)
     message(STATUS "Found OpenMesh")
 
     create_single_source_cgal_program("MCF_Skeleton_om_example.cpp")
-    target_link_libraries(MCF_Skeleton_om_example PUBLIC CGAL::Eigen3_support PRIVATE ${OPENMESH_LIBRARIES})
+    target_link_libraries(MCF_Skeleton_om_example PUBLIC CGAL::Eigen3_support PRIVATE CGAL::OpenMesh_support)
   else()
     message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
   endif()

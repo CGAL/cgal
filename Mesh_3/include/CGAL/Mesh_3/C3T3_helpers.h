@@ -2614,7 +2614,7 @@ update_mesh_topo_change(const Vertex_handle& old_vertex,
      std::cerr << "update_mesh_topo_change: revert move to " << old_position << "\n";
 #endif
 
-    //reset caches in case cells are re-used by the compact container
+    //reset caches in case cells are reused by the compact container
     reset_circumcenter_cache(outdated_cells);
     reset_sliver_cache(outdated_cells);
     outdated_cells.clear();

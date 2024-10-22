@@ -3,7 +3,6 @@
 PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Kinetic Surface Reconstruction"
 EXTRACT_ALL                =  YES
 WARN_IF_UNDOCUMENTED       =  NO
-PREDEFINED                 +=  DOXYGEN_RUNNING
 
 INPUT += \
       ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Kinetic_surface_reconstruction_3.h \

@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Poisson_surface_reconstruction_3_Tests)
 
 # Find CGAL
@@ -22,17 +22,16 @@ find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3.1
-  create_single_source_cgal_program("poisson_reconstruction_test.cpp")
-  target_link_libraries(poisson_reconstruction_test PUBLIC CGAL::Eigen3_support)
+  create_single_source_cgal_program("poisson_reconstruction_test_surface_mesher.cpp")
+  target_link_libraries(poisson_reconstruction_test_surface_mesher PUBLIC CGAL::Eigen3_support)
 
-  find_package(TBB QUIET)
-  include(CGAL_TBB_support)
-  if (TBB_FOUND)
-    create_single_source_cgal_program( "poisson_and_parallel_mesh_3.cpp" )
-    target_link_libraries(poisson_and_parallel_mesh_3 PUBLIC CGAL::Eigen3_support CGAL::TBB_support)
-  else()
-    message(STATUS "NOTICE: The test 'poisson_and_parallel_mesh_3' requires TBB, and will not be compiled.")
-  endif()
+  create_single_source_cgal_program("poisson_reconstruction_test_mesh_3.cpp")
+  target_link_libraries(poisson_reconstruction_test_mesh_3 PUBLIC CGAL::Eigen3_support)
+
+  create_single_source_cgal_program("compare_mesh_3_vs_Poisson_implicit_surface_3.cpp")
+  target_link_libraries(compare_mesh_3_vs_Poisson_implicit_surface_3  PUBLIC CGAL::Eigen3_support)
+
 else()
   message("NOTICE: Tests in this directory require Eigen 3.1 (or greater), and will not be compiled.")
 endif()
+

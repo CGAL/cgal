@@ -1,16 +1,11 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Spatial_searching_Examples)
 
 # CGAL and its components
 find_package(CGAL REQUIRED)
-
-if(MSVC)
-  # Turn off VC++ warning
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4244")
-endif()
 
 create_single_source_cgal_program("circular_query.cpp")
 create_single_source_cgal_program("distance_browsing.cpp")

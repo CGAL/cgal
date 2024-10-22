@@ -312,8 +312,8 @@ public:
     }
 
     /*! 6. Implementation of the operator in case the left and right sides have
-     * boundary conditions (but they are nopt identified) and the bottom and top
-     * sides are identied.
+     * boundary conditions (but they are not identified) and the bottom and top
+     * sides are identified.
      */
     Comparison_result compare_y_at_x(const Point_2& p,
                                      const X_monotone_curve_2& xcv,
@@ -397,7 +397,7 @@ public:
 
    /*! 8. Implementation of the operator in case the left and right sides are
     * identified, and the bottom and top sides have boundary conditions (but
-    * they are not identied).
+    * they are not identified).
      */
     Comparison_result compare_y_at_x(const Point_2& p,
                                      const X_monotone_curve_2& xcv,
@@ -1578,7 +1578,7 @@ public:
         return res;
       }
 
-      // otherwise: both ends have asymptotic behaviour
+      // otherwise: both ends have asymptotic behavior
       if (ps_y1 == ps_y2) { // need special y-comparison
         if (ce1 == ce2) { // both ends approach asymptote from one side
           Comparison_result res = m_self->compare_x_near_boundary_2_object()(xcv1, xcv2, ce2);

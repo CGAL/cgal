@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(STL_Extension_Tests)
 
 find_package(CGAL REQUIRED)
@@ -64,10 +64,10 @@ endif()
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
   message(STATUS "Found OpenMesh")
-  include(UseOpenMesh)
+  include(CGAL_OpenMesh_support)
 
   create_single_source_cgal_program("test_hash_OpenMesh.cpp")
-  target_link_libraries(test_hash_OpenMesh PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(test_hash_OpenMesh PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Tests that use OpenMesh will not be compiled.")
 endif()

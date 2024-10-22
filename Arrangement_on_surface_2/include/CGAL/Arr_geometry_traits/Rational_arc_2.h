@@ -339,7 +339,7 @@ public:
     if (! valid)
       return;
 
-    // Analyze the behaviour of the rational function at x = -oo (the source).
+    // Analyze the behavior of the rational function at x = -oo (the source).
     Algebraic           y0;
     const Arr_parameter_space inf_s =
       _analyze_at_minus_infinity (_numer, _denom, y0);
@@ -351,7 +351,7 @@ public:
     else // if (inf_s == ARR_INTERIOR)
       _ps = Point_2 (0, y0);
 
-    // Analyze the behaviour of the rational function at x = +oo (the target).
+    // Analyze the behavior of the rational function at x = +oo (the target).
     const Arr_parameter_space inf_t =
       _analyze_at_plus_infinity (_numer, _denom, y0);
 
@@ -409,7 +409,7 @@ public:
     // and check if it lies next to a pole.
     if (CGAL::sign (nt_traits.evaluate_at (_denom, x_s)) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s) /
                      nt_traits.evaluate_at (_denom, x_s));
     }
@@ -499,7 +499,7 @@ public:
     // Set the source point and check if it lies next to a pole.
     if (CGAL::sign (nt_traits.evaluate_at (_denom, x_s)) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s) /
                           nt_traits.evaluate_at (_denom, x_s));
     }
@@ -521,7 +521,7 @@ public:
     // Set the target point and check if it lies next to a pole.
     if (CGAL::sign (nt_traits.evaluate_at (_denom, x_t)) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       _pt = Point_2 (x_t, nt_traits.evaluate_at (_numer, x_t) /
                      nt_traits.evaluate_at (_denom, x_t));
     }
@@ -735,7 +735,7 @@ public:
    */
   Self split_at_pole (const Algebraic& x0)
   {
-    // Analyze the behaviour of the function near the given pole.
+    // Analyze the behavior of the function near the given pole.
     const std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole (x0);
     const CGAL::Sign    sign_left = signs.first;
     const CGAL::Sign    sign_right = signs.second;
@@ -1026,7 +1026,7 @@ public:
    * intersection point.
    * \param cv The given arc.
    * \param p The intersection point.
-   * \param mult Output: The mutiplicity of the intersection point.
+   * \param mult Output: The multiplicity of the intersection point.
    * \return SMALLER if (*this) slope is less than cv's;
    *         EQUAL if the two slopes are equal;
    *         LARGER if (*this) slope is greater than cv's.

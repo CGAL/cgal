@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(LCC_performance_3)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)

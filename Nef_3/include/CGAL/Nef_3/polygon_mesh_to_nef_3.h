@@ -209,6 +209,7 @@ void polygon_mesh_to_nef_3(const PolygonMesh& P, SNC_structure& S, FaceIndexMap 
                  PolygonMesh, SNC_structure,HalfedgeIndexMap> index_adder(P,himap);
 
   for(vertex_descriptor pv : vertices(P) ) {
+    if (halfedge(pv, P) == boost::graph_traits<PolygonMesh>::null_halfedge()) continue; // skip isolated vertices
 
     typename boost::property_traits<PMap>::reference npv = get(pmap,pv);
     Vertex_handle nv = S.new_vertex();

@@ -364,7 +364,7 @@ public:
     }
   }
 
-  /*! Notificaion after the removal of a vertex. */
+  /*! Notification after the removal of a vertex. */
   virtual void after_remove_vertex() override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_landmark_set();
@@ -381,7 +381,7 @@ public:
     m_ignore_remove_edge = false;
   }
 
-  /*! Notificaion after the removal of an outer CCB. */
+  /*! Notification after the removal of an outer CCB. */
   virtual void after_remove_outer_ccb(Face_handle) override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_landmark_set();
@@ -389,7 +389,7 @@ public:
     }
   }
 
-  /*! Notificaion after the removal of an inner CCB. */
+  /*! Notification after the removal of an inner CCB. */
   virtual void after_remove_inner_ccb(Face_handle) override {
     if (! m_ignore_notifications && ! m_ignore_remove_edge) {
       clear_landmark_set();
