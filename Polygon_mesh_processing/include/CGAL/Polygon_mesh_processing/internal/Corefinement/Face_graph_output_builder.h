@@ -531,6 +531,8 @@ class Face_graph_output_builder
 
   // output meshes
   const std::array<std::optional<TriangleMesh*>, 4>& requested_output;
+  //bool mark intersection edges
+  bool mark_inter_edges = true;
   // input meshes closed ?
   bool is_tm1_closed;
   bool is_tm2_closed;
@@ -2230,7 +2232,8 @@ public:
         )
       CGAL_COREF_FUNCTION_CALL(operation)
       #undef CGAL_COREF_FUNCTION_CALL_DEF
-      mark_edges(out_edge_mark_maps, shared_edges, operation);
+      if (mark_inter_edges)
+        mark_edges(out_edge_mark_maps, shared_edges, operation);
     }
 
     Edge_map disconnected_patches_edge_to_tm2_edge;
@@ -2239,9 +2242,10 @@ public:
     if ( inplace_operation_tm1!=NONE )
     {
       // mark intersection edges in tm1 (using output constrained edge map)
-      mark_edges(out_edge_mark_maps,
-                 mesh_to_intersection_edges[&tm1],
-                 inplace_operation_tm1);
+      if (mark_inter_edges)
+        mark_edges(out_edge_mark_maps,
+                   mesh_to_intersection_edges[&tm1],
+                   inplace_operation_tm1);
 
       CGAL_assertion( *requested_output[inplace_operation_tm1] == &tm1 );
 
@@ -2250,9 +2254,10 @@ public:
         user_visitor.in_place_operations(inplace_operation_tm1, inplace_operation_tm2);
 
         // mark intersection edges in tm2 (using output constrained edge map)
-        mark_edges(out_edge_mark_maps,
-                   mesh_to_intersection_edges[&tm2],
-                   inplace_operation_tm2);
+        if (mark_inter_edges)
+          mark_edges(out_edge_mark_maps,
+                     mesh_to_intersection_edges[&tm2],
+                     inplace_operation_tm2);
 
         // operation in tm1 with removal (and optionally inside-out) delayed
         // First backup the border edges of patches to be used
@@ -2539,9 +2544,10 @@ public:
         user_visitor.in_place_operation(inplace_operation_tm2);
 
         // mark intersection edges in tm2 (using output constrained edge map)
-        mark_edges(out_edge_mark_maps,
-                   mesh_to_intersection_edges[&tm2],
-                   inplace_operation_tm2);
+        if (mark_inter_edges)
+          mark_edges(out_edge_mark_maps,
+                     mesh_to_intersection_edges[&tm2],
+                     inplace_operation_tm2);
 
         /// handle the operation updating only tm2
         CGAL_assertion( *requested_output[inplace_operation_tm2] == &tm2 );
@@ -2575,6 +2581,11 @@ public:
                                   ~patches_of_tm2_used[inplace_operation_tm2],
                                   patches_of_tm2);
       }
+  }
+
+  void do_not_mark_intersection_edges()
+  {
+    mark_inter_edges = false;
   }
 };
 

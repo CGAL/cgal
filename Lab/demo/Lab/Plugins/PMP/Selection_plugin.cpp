@@ -1,4 +1,4 @@
- #include <QtCore/qglobal.h>
+#include <QtCore/qglobal.h>
 #include <QMessageBox>
 #include <QInputDialog>
 
@@ -31,6 +31,11 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/locate.h>
+
+#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits_3.h>
 
 #include <Scene.h>
 typedef Scene_surface_mesh_item Scene_face_graph_item;
@@ -144,13 +149,27 @@ public:
     else if(action == actionSelection)
       return qobject_cast<Scene_face_graph_item*>(scene->item(scene->mainSelectionIndex()))
           || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
+    else if (action == actionSelectPolylines)
+    {
+      bool polylines_found = false;
+      bool facegraph_found = false;
+      for (const auto index : scene->selectionIndices())
+      {
+        if (!polylines_found && qobject_cast<Scene_polylines_item*>(scene->item(index)))
+          polylines_found = true;
+        if (!facegraph_found && qobject_cast<Scene_facegraph_item*>(scene->item(index)))
+          facegraph_found = true;
+      }
+      return polylines_found && facegraph_found;
+    }
     return false;
   }
   void print_message(QString message) { CGAL::Three::Three::information(message); }
 
   QList<QAction*> actions() const override {
     return QList<QAction*>() << actionSelection
-                             << actionSelfIntersection;
+                             << actionSelfIntersection
+                             << actionSelectPolylines;
   }
 
   using CGAL_Lab_io_plugin_interface::init;
@@ -163,6 +182,11 @@ public:
     actionSelfIntersection->setObjectName("actionSelfIntersection");
     actionSelfIntersection->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionSelfIntersection, SIGNAL(triggered()), this, SLOT(on_actionSelfIntersection_triggered()));
+
+    actionSelectPolylines = new QAction(tr("Select polylines"), mw);
+    actionSelectPolylines->setObjectName("actionSelectPolylines");
+    actionSelectPolylines->setProperty("subMenuName", "Polygon Mesh Processing");
+    connect(actionSelectPolylines, SIGNAL(triggered()), this, SLOT(on_actionSelectPolylines_triggered()));
 
     actionSelection = new QAction(
           QString("Surface Mesh Selection")
@@ -264,6 +288,7 @@ Q_SIGNALS:
 public Q_SLOTS:
 
   void on_actionSelfIntersection_triggered();
+  void on_actionSelectPolylines_triggered();
 
   void connectItem(Scene_polyhedron_selection_item* new_item)
   {
@@ -1213,7 +1238,8 @@ void filter_operations()
 private:
   Messages_interface* messages;
   QAction* actionSelection;
-  QAction *actionSelfIntersection;
+  QAction* actionSelfIntersection;
+  QAction* actionSelectPolylines;
 
   QDockWidget* dock_widget;
   Ui::Selection ui_widget;
@@ -1321,6 +1347,138 @@ void CGAL_Lab_selection_plugin::on_actionSelfIntersection_triggered()
     QMessageBox::information(mw, tr("No self intersection"),
                              tr("None of the selected surfaces self-intersect."));
 }
+
+void CGAL_Lab_selection_plugin::on_actionSelectPolylines_triggered()
+{
+  //todo : would it work with non-triangulated surfaces?
+  Scene_face_graph_item* facegraph_item = nullptr;
+  Scene_polylines_item* polylines_item = nullptr;
+
+  for (Scene_interface::Item_id index : scene->selectionIndices())
+  {
+    Scene_face_graph_item* tmp_item =
+      qobject_cast<Scene_face_graph_item*>(scene->item(index));
+    if (tmp_item)
+      facegraph_item = tmp_item;
+    else
+    {
+      Scene_polylines_item* tmp_item2 =
+        qobject_cast<Scene_polylines_item*>(scene->item(index));
+      if (tmp_item2)
+        polylines_item = tmp_item2;
+    }
+  }
+
+  const auto& tm = *facegraph_item->face_graph();
+  if (!is_triangle_mesh(tm))
+  {
+    QMessageBox::warning(mw, "Non triangle mesh", "Selection of edges works only on a triangulated surface.");
+    return;
+  }
+
+  //check for existing selection for the same polyhedral surface
+  Scene_polyhedron_selection_item* selection_item = nullptr;
+  bool should_add = true;
+  const auto selection_item_found = selection_item_map.find(facegraph_item);
+  if (selection_item_found != selection_item_map.end())
+  {
+    if (QMessageBox::question(mw, "Question", "Only one Selection Item can be associated to an item at once, "
+        "and one already exists. Would you like to keep it and add polylines ? (If not, this item will be skipped.)")
+        == QMessageBox::Yes)
+    {
+      selection_item = selection_item_found->second;
+      should_add = false;
+    }
+  }
+  if(should_add)
+  {
+    selection_item = new Scene_polyhedron_selection_item(facegraph_item, mw);
+  }
+
+  //add selection edges
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  using AABB_face_graph_primitive = CGAL::AABB_face_graph_triangle_primitive<SMesh>;
+  using AABB_face_graph_traits = CGAL::AABB_traits_3<EPICK, AABB_face_graph_primitive>;
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  const auto& features = polylines_item->polylines;
+  CGAL::AABB_tree<AABB_face_graph_traits> tree;
+
+  PMP::build_AABB_tree(tm, tree);
+
+  auto locate_vertex = [&](const Point_3& p)->vertex_descriptor
+    {
+//      const double tol = 1e-5; //todo : make tolerance depend on bbox size
+
+      if (!CGAL::do_overlap(tree.bbox(), p.bbox()))
+        return SMesh::null_vertex();
+
+      auto ploc = PMP::locate_with_AABB_tree(p, tree, tm);
+
+      const face_descriptor f = ploc.first;
+      double w0 = ploc.second[0];//source(halfedge(f, tm), tm)
+      double w1 = ploc.second[1];//target(halfedge(f, tm), tm)
+      double w2 = ploc.second[2];//target(next(halfedge(f, tm), tm), tm)
+
+      //  if(CGAL::abs(w0) < tol) w0 = 0.;
+      //  if(CGAL::abs(w1) < tol) w1 = 0.;
+      //  if(CGAL::abs(w2) < tol) w2 = 0.;
+
+      if (w0 > w1 && w0 > w2) return source(halfedge(f, tm), tm);
+      else if (w1 > w0 && w1 > w2) return target(halfedge(f, tm), tm);
+      else if (w2 > w0 && w2 > w1) return target(next(halfedge(f, tm), tm), tm);
+
+      std::cerr << "ERROR : Can't locate vertex at " << p << std::endl;
+      return SMesh::null_vertex();
+    };
+
+  unsigned int count_edges_added = 0;
+  unsigned int count_edges_not_found = 0;
+
+  // add edges to selection
+  for(const Scene_polylines_item::Polyline& polyline : features)
+  {
+    if (polyline.empty())
+      continue;
+    for(std::size_t i = 0; i < polyline.size() - 1; ++i)
+    {
+      vertex_descriptor v = locate_vertex(polyline[i]);
+      vertex_descriptor w = locate_vertex(polyline[i+1]);
+
+      if (v == SMesh::null_vertex() || w == SMesh::null_vertex())
+      {
+        ++count_edges_not_found;
+        continue;
+      }
+
+      auto he_ok = halfedge(v, w, tm);
+      if(he_ok.second)
+      {
+        auto e = edge(he_ok.first, tm);
+        selection_item->selected_edges.insert(e);
+        ++count_edges_added;
+      }
+      else
+      {
+        ++count_edges_not_found;
+        continue;
+      }
+    }
+  }
+  std::cout << "edges added to selection : " << count_edges_added << std::endl;
+  std::cout << "edges not found : " << count_edges_not_found << std::endl;
+
+  selection_item->invalidateOpenGLBuffers();
+  selection_item->setName(tr("%1 (selection) ").arg(polylines_item->name()));
+  if (should_add)
+    connectItem(selection_item);
+  scene->itemChanged(facegraph_item);
+
+  QApplication::restoreOverrideCursor();
+}
+
+
 //Q_EXPORT_PLUGIN2(CGAL_Lab_selection_plugin, CGAL_Lab_selection_plugin)
 
 #include "Selection_plugin.moc"
