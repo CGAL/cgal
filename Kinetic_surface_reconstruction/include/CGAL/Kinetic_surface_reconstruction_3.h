@@ -94,6 +94,9 @@ public:
     const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {
     m_verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
     m_debug = parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false);
+
+    m_point_map = Point_set_processing_3_np_helper<Point_range, NamedParameters, Point_map>::get_point_map(m_points, np);
+    m_normal_map = Point_set_processing_3_np_helper<Point_range, NamedParameters, Normal_map>::get_normal_map(m_points, np);
   }
 
   /*!
@@ -115,6 +118,7 @@ public:
       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
       \cgalParamDefault{`NormalMap()`}
+    \cgalParamNEnd
    \cgalParamNBegin{k_neighbors}
      \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
       \cgalParamType{`std::size_t`}
@@ -133,7 +137,7 @@ public:
     \cgalParamNBegin{minimum_region_size}
       \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
       \cgalParamType{`std::size_t`}
-      \cgalParamDefault{1% of input points}
+      \cgalParamDefault{0.5% of input points}
     \cgalParamNEnd
     \cgalParamNBegin{angle_tolerance}
       \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
@@ -188,9 +192,6 @@ public:
     m_region_map.clear();
     m_regions.clear();
     m_planar_regions.clear();
-
-    m_point_map = Point_set_processing_3_np_helper<Point_range, CGAL_NP_CLASS, Point_map>::get_point_map(m_points, np);
-    m_normal_map = Point_set_processing_3_np_helper<Point_range, CGAL_NP_CLASS, Normal_map>::get_normal_map(m_points, np);
 
     create_planar_shapes(np);
 
@@ -248,6 +249,7 @@ public:
       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
       \cgalParamDefault{`NormalMap()`}
+    \cgalParamNEnd
    \cgalParamNBegin{k_neighbors}
      \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
       \cgalParamType{`std::size_t`}
@@ -266,7 +268,7 @@ public:
     \cgalParamNBegin{minimum_region_size}
       \cgalParamDescription{Shape detection: minimum number of 3D points a region must have}
       \cgalParamType{`std::size_t`}
-      \cgalParamDefault{1% of input points}
+      \cgalParamDefault{0.5% of input points}
     \cgalParamNEnd
     \cgalParamNBegin{angle_tolerance}
       \cgalParamDescription{Shape regularization: maximum allowed angle in degrees between plane normals used for parallelism, orthogonality, and axis symmetry}
@@ -323,6 +325,31 @@ public:
     partition(k);
   }
 
+  void estimate_detection_parameters(FT& max_distance, FT& normal_dev, std::size_t& min_inliers) {
+    if (!m_neighbor_query) {
+      m_neighbor_query = std::unique_ptr<Neighbor_query>(new Neighbor_query(m_points, parameters::point_map(m_point_map).k_neighbors(12)));
+      m_sorting = std::unique_ptr<Sorting>(new Sorting(m_points, *m_neighbor_query, parameters::point_map(m_point_map)));
+      m_sorting->sort();
+    }
+
+    max_distance = 4 * m_sorting->mean_distance();
+    normal_dev = m_sorting->mean_deviation();
+    min_inliers = m_points.size() * 0.005; // difficult to estimate as it depends on the kind of data, e.g., object scan vs. large scale urban acquisition
+  }
+
+  std::size_t estimate_max_subdivision_depth() {
+    std::size_t max_depth = 1;
+    std::size_t num_shapes = m_polygon_indices.size();
+
+    if (num_shapes > 60)
+      while (num_shapes > 20) {
+        max_depth++;
+        num_shapes >>= 3;
+      }
+
+    return max_depth;
+  }
+
   /*!
   \brief initializes the kinetic partition.
 
@@ -347,8 +374,6 @@ public:
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
   void initialize_partition(const CGAL_NP_CLASS& np = parameters::default_values()) {
-    m_kinetic_partition.insert(m_polygon_pts, m_polygon_indices, np);
-
     m_kinetic_partition.initialize(np);
   }
 
@@ -408,6 +433,9 @@ public:
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstruct_with_ground(FT lambda, OutputPointIterator pit, OutputPolygonIterator polyit) {
+    if (m_kinetic_partition.number_of_volumes() == 0)
+      return;
+
     KSR_3::Graphcut<Kernel> gc(lambda);
 
     // add ground consideration here
@@ -482,6 +510,9 @@ public:
   */
   template<class OutputPointIterator, class OutputPolygonIterator>
   void reconstruct(FT lambda, std::map<typename KSP::Face_support, bool> external_nodes, OutputPointIterator pit, OutputPolygonIterator polyit) {
+    if (m_kinetic_partition.number_of_volumes() == 0)
+      return;
+
     KSR_3::Graphcut<Kernel> gc(lambda);
 
     // add node consideration here
@@ -565,6 +596,9 @@ private:
   bool m_verbose;
   bool m_debug;
 
+  std::unique_ptr<Neighbor_query> m_neighbor_query;
+  std::unique_ptr<Sorting> m_sorting;
+
   Point_range &m_points;
   Point_map m_point_map;
   Normal_map m_normal_map;
@@ -619,7 +653,9 @@ private:
     m_face_inliers.clear();
 
     auto face_range = m_lcc.template one_dart_per_cell<2>();
+    m_faces_lcc.clear();
     m_faces_lcc.reserve(face_range.size());
+    m_attrib2index_lcc.clear();
 
     for (auto& d : face_range) {
       typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
@@ -643,9 +679,13 @@ private:
     // Create value arrays for graph cut
     m_face_inliers.resize(m_faces_lcc.size());
     m_face_area.resize(m_faces_lcc.size());
+    m_face_area_lcc.clear();
     m_face_area_lcc.resize(m_faces_lcc.size());
+    m_face_neighbors_lcc.clear();
     m_face_neighbors_lcc.resize(m_faces_lcc.size(), std::pair<int, int>(-1, -1));
+    m_neighbors2index_lcc.clear();
 
+    m_cost_matrix.clear();
     m_cost_matrix.resize(2);
     m_cost_matrix[0].resize(m_kinetic_partition.number_of_volumes() + 6, 0);
     m_cost_matrix[1].resize(m_kinetic_partition.number_of_volumes() + 6, 0);
@@ -653,7 +693,7 @@ private:
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       auto n = m_lcc.template one_dart_per_incident_cell<3, 2>(m_faces_lcc[i]);
 
-      assert(n.size() == 1 || n.size() == 2);
+      CGAL_assertion(n.size() == 1 || n.size() == 2);
       auto it = n.begin();
 
 //      auto& finf = m_lcc.template info<2>(m_faces_lcc[i]);
@@ -839,8 +879,11 @@ private:
   \param pit
   an output iterator taking Point_3.
 
-  \param triit
+  \param polyit
   an output iterator taking std::vector<std::size_t>.
+
+  \param lambda
+  trades data faithfulness of the reconstruction for low complexity. Must be in the range `[0, 1)`.
 
   \pre successful reconstruction
   */
@@ -981,7 +1024,7 @@ private:
   \param pit
   an output iterator taking `Point_3`.
 
-  \param triit
+  \param polyit
   an output iterator taking `std::vector<std::size_t>`.
 
   \pre successful reconstruction
@@ -1534,7 +1577,7 @@ private:
     // Start extraction of a border from each dart (each dart is a 1/n-edge)
     // Search starting darts by searching faces
     //borders contains Attribute<0> handles casted to std::size_t
-    std::vector<bool> processed(m_lcc.number_of_darts(), false);
+    std::vector<bool> processed(m_lcc.upper_bound_on_dart_ids(), false);
 
     borders_per_region.resize(region_index.size());
 
@@ -1585,7 +1628,7 @@ private:
         other_faces.push_back(dh); // Contains faces originating from the octree decomposition as well as bbox faces
     }
 
-    assert(m_kinetic_partition.input_planes().size() == m_regions.size());
+    CGAL_assertion(m_kinetic_partition.input_planes().size() == m_regions.size());
 
     for (std::size_t i = 0; i < m_kinetic_partition.input_planes().size(); i++) {
 
@@ -1687,12 +1730,7 @@ private:
       m_volumes[i] = 0;
     }
 
-//    std::size_t count_faces = 0;
-//    std::size_t count_points = 0;
-
     From_exact from_exact;
-
-//    std::size_t idx = 0;
 
     for (std::size_t i = 0; i < m_faces_lcc.size(); i++) {
       std::size_t v[] = { std::size_t(-1), std::size_t(-1) };
@@ -1776,17 +1814,40 @@ private:
     }
     if (m_verbose) std::cout << "* getting planar shapes using region growing" << std::endl;
 
+    FT xmin, ymin, zmin, xmax, ymax, zmax;
+    auto pit = m_points.begin();
+    const Point_3& p = get(m_point_map, *pit);
+    xmin = xmax = p.x();
+    ymin = ymax = p.y();
+    zmin = zmax = p.z();
+
+    pit++;
+
+    while (pit != m_points.end()) {
+      const Point_3& p = get(m_point_map, *pit);
+      xmin = (std::min)(xmin, p.x());
+      xmax = (std::max)(xmax, p.x());
+      ymin = (std::min)(ymin, p.y());
+      ymax = (std::max)(ymax, p.y());
+      zmin = (std::min)(zmin, p.z());
+      zmax = (std::max)(zmax, p.z());
+      pit++;
+    }
+
+    FT diag = CGAL::sqrt((xmax - xmin) * (xmax - xmin) + (ymax - ymin) * (ymax - ymin) + (zmax - zmin) * (zmax - zmin));
+
     // Parameters.
     const std::size_t k = parameters::choose_parameter(parameters::get_parameter(np, internal_np::k_neighbors), 12);
-    const FT max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), FT(1));
+    const FT max_distance_to_plane = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_distance), diag * 0.02);
     const FT max_accepted_angle = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_angle), FT(15));
-    const std::size_t min_region_size = parameters::choose_parameter(parameters::get_parameter(np, internal_np::minimum_region_size), 50);
+    const std::size_t min_region_size = parameters::choose_parameter(parameters::get_parameter(np, internal_np::minimum_region_size), m_points.size() * 0.005);
 
     m_detection_distance_tolerance = max_distance_to_plane;
 
     // Region growing.
-    Neighbor_query neighbor_query = CGAL::Shape_detection::Point_set::make_k_neighbor_query(
-      m_points, CGAL::parameters::k_neighbors(k));
+    if (!m_neighbor_query) {
+        m_neighbor_query = std::unique_ptr<Neighbor_query>(new Neighbor_query(m_points, parameters::point_map(m_point_map).k_neighbors(k)));
+    }
 
     Region_type region_type = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_region(
       m_points,
@@ -1795,11 +1856,13 @@ private:
       maximum_angle(max_accepted_angle).
       minimum_region_size(min_region_size));
 
-    Sorting sorting = CGAL::Shape_detection::Point_set::make_least_squares_plane_fit_sorting(m_points, neighbor_query);
-    sorting.sort();
+    if (!m_sorting) {
+      m_sorting = std::unique_ptr<Sorting>(new Sorting(m_points, *m_neighbor_query, parameters::point_map(m_point_map)));
+      m_sorting->sort();
+    }
 
     Region_growing region_growing(
-      m_points, sorting.ordered(), neighbor_query, region_type);
+      m_points, m_sorting->ordered(), *m_neighbor_query, region_type);
     region_growing.detect(std::back_inserter(m_regions));
 
     std::size_t unassigned = 0;
@@ -1818,12 +1881,15 @@ private:
 
     std::size_t num_shapes = m_regions.size();
 
+    if (m_regions.empty())
+      return;
+
     const bool regularize_axis_symmetry = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_axis_symmetry), false);
-    const bool regularize_coplanarity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_coplanarity), false);
+    const bool regularize_coplanarity = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_coplanarity), true);
     const bool regularize_orthogonality = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_orthogonality), false);
     const bool regularize_parallelism = parameters::choose_parameter(parameters::get_parameter(np, internal_np::regularize_parallelism), false);
-    const FT angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 25);
-    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), 0.01);
+    const FT angle_tolerance = parameters::choose_parameter(parameters::get_parameter(np, internal_np::angle_tolerance), 5);
+    const FT maximum_offset = parameters::choose_parameter(parameters::get_parameter(np, internal_np::maximum_offset), max_distance_to_plane * 0.5);
 
     // Regularize detected planes.
 
@@ -1936,13 +2002,15 @@ private:
     }
 
     num_shapes = m_planar_regions.size();
+
+    m_kinetic_partition = KSP(m_polygon_pts, m_polygon_indices);
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
     std::vector<Index> faces;
 
     if (polygon_index >= m_kinetic_partition.input_planes().size())
-      assert(false);
+      CGAL_assertion(false);
 
     From_exact from_exact;
 
@@ -2041,14 +2109,14 @@ private:
     // 4 xmin
     // 5 zmax
     const double force = static_cast<double>(m_total_inliers * 3);
-    // 0 - cost for labelled as outside
+    // 0 - cost for labeled as outside
     cost_matrix[0][0] = 0;
     cost_matrix[0][1] = 0;
     cost_matrix[0][2] = 0;
     cost_matrix[0][3] = 0;
     cost_matrix[0][4] = 0;
     cost_matrix[0][5] = 0;
-    // 1 - cost for labelled as inside
+    // 1 - cost for labeled as inside
     cost_matrix[1][0] = 0;
     cost_matrix[1][1] = 0;
     cost_matrix[1][2] = 0;
