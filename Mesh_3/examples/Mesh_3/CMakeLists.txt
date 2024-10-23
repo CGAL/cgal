@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12...3.29)
 project(Mesh_3_Examples)
 
 add_compile_definitions(CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
-                -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
+                        CGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
 if(CGAL_MESH_3_VERBOSE)
   add_compile_definitions(CGAL_MESH_3_VERBOSE)
