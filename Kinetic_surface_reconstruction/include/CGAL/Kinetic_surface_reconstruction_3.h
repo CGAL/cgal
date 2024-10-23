@@ -118,6 +118,7 @@ public:
       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
       \cgalParamDefault{`NormalMap()`}
+    \cgalParamNEnd
    \cgalParamNBegin{k_neighbors}
      \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
       \cgalParamType{`std::size_t`}
@@ -248,6 +249,7 @@ public:
       \cgalParamDescription{a property map associating normals to the elements of the point set `points`}
       \cgalParamType{a model of `ReadablePropertyMap` whose key type is the value type of the iterator of `PointRange` and whose value type is `GeomTraits::Vector_3`}
       \cgalParamDefault{`NormalMap()`}
+    \cgalParamNEnd
    \cgalParamNBegin{k_neighbors}
      \cgalParamDescription{Shape detection: the number of neighbors for each point considered during region growing}
       \cgalParamType{`std::size_t`}
