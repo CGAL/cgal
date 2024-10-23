@@ -28,6 +28,10 @@
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 #include <CGAL/SMDS_3/io_signature.h>
 
+#if CGAL_MESH_3_STATS_THREADS
+#  include <thread>
+#endif
+
 #ifdef CGAL_LINKED_WITH_TBB
 # include <atomic>
 #endif
@@ -293,6 +297,10 @@ public:
   }
 
 public:
+#if CGAL_MESH_3_STATS_THREADS
+  std::array<std::thread::id, 4> thread_ids;
+#endif
+
   // Constructors
   Compact_mesh_cell_3()
   {}

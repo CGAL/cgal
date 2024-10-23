@@ -45,6 +45,9 @@
 #include <iostream>
 #include <fstream>
 
+#if CGAL_MESH_3_STATS_THREADS
+#  include <thread>
+#endif
 
 #ifdef CGAL_LINKED_WITH_TBB
 #include <atomic>
@@ -88,7 +91,7 @@ namespace CGAL {
     }
   };
 }//end namespace CGAL
-#endif
+#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 
@@ -1917,6 +1920,11 @@ add_to_complex(const Cell_handle& cell,
     Facet mirror = tr_.mirror_facet(std::make_pair(cell, i));
     set_surface_patch_index(cell, i, index);
     set_surface_patch_index(mirror.first, mirror.second, index);
+#if CGAL_MESH_3_STATS_THREADS
+    const auto id = std::this_thread::get_id();
+    cell->thread_ids[i] = id;
+    mirror.first->thread_ids[mirror.second] = id;
+#endif // CGAL_MESH_3_STATS_THREADS
     ++number_of_facets_;
     if (manifold_info_initialized_) {
       for (int j = 0; j < 3; ++j)
