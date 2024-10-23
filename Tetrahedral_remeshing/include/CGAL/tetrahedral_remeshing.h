@@ -188,6 +188,10 @@ void tetrahedral_isotropic_remeshing(
   const SizingFunction& sizing,
   const NamedParameters& np = parameters::default_values())
 {
+  CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, number_of_iterations_t, remesh_boundaries_t, facet_is_constrained_t,
+                                             edge_is_constrained_t, vertex_is_constrained_t, cell_selector_t,
+                                             smooth_constrained_edges_t);
+
   CGAL_expensive_assertion(tr.is_valid());
 
   using Tr = CGAL::Triangulation_3<Traits, TDS, SLDS>;
@@ -357,6 +361,8 @@ convert_to_triangulation_3(
   CGAL::Mesh_complex_3_in_triangulation_3<Tr, CornerIndex, CurveIndex> c3t3,
   const NamedParameters& np = parameters::default_values())
 {
+  CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, edge_is_constrained_t, vertex_is_constrained_t);
+
   using parameters::get_parameter;
   using parameters::choose_parameter;
 
