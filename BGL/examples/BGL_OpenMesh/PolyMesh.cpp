@@ -1,16 +1,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/IO/polygon_mesh_io.h>
-#include <CGAL/IO/OM.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Surface_mesh.h>
 #include <iostream>
-#include <fstream>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;

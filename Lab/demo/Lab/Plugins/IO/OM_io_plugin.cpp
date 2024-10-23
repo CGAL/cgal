@@ -8,7 +8,7 @@
 #include <CGAL/Three/Three.h>
 #include "Scene_polyhedron_selection_item.h"
 
-#include <CGAL/IO/OM.h>
+#include <CGAL/boost/graph/IO/OM.h>
 #include <CGAL/boost/graph/io.h>
 
 #include <QColor>
@@ -89,7 +89,10 @@ load(QFileInfo fileinfo, bool& ok, bool add_to_scene){
 
     // Try building a surface_mesh
     SMesh* sm = new SMesh();
-    ok = CGAL::IO::read_OM((const char*)fileinfo.filePath().toUtf8(), *sm, sm_vfeature_pmap, sm_efeature_pmap);
+    ok = CGAL::IO::read_OM((const char*)fileinfo.filePath().toUtf8(),
+                           *sm,
+                           CGAL::parameters::vertex_is_constrained_map(sm_vfeature_pmap)
+                           .edge_is_constrained_map(sm_efeature_pmap));
 
     if(!ok || !sm->is_valid() || sm->is_empty()){
       std::cerr << "Error: Invalid facegraph" << std::endl;
@@ -175,19 +178,14 @@ save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items)
   if (selection_item != nullptr)
   {
     res = CGAL::IO::write_OM((const char*)fileinfo.filePath().toUtf8()
-                            , *sm_item->face_graph()
-                            , selection_item->constrained_vertices_pmap()
-                            , selection_item->constrained_edges_pmap());
+              , *sm_item->face_graph()
+              , CGAL::parameters::vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
   }
   else
   {
-    using edge_descriptor = boost::graph_traits<SMesh>::edge_descriptor;
-    using vertex_descriptor = boost::graph_traits<SMesh>::vertex_descriptor;
-
     res = CGAL::IO::write_OM((const char*)fileinfo.filePath().toUtf8()
-                            , *sm_item->face_graph()
-                            , CGAL::Constant_property_map<vertex_descriptor, bool>(false)
-                            , CGAL::Constant_property_map<edge_descriptor, bool>(false));
+              , *sm_item->face_graph());
   }
 
   if (res)
