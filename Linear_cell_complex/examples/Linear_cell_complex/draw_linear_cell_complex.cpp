@@ -19,6 +19,7 @@ int main()
                         Point(5,5,4), Point(5,0,4),
                         Point(10,0,4), Point(10,5,4));
 
+
   lcc.sew<3>(lcc.beta(d1, 1, 1, 2), lcc.beta(d2, 2));
 
   lcc.display_characteristics(std::cout)<<", valid="
