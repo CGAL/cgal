@@ -18,7 +18,7 @@
 #ifndef CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 #define CGAL_DRAW_POLYGON_WITH_HOLES_2_H
 
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Polygon_with_holes_2.h>
@@ -31,8 +31,9 @@ namespace CGAL {
 
 opens a new window and draws a 2D polygon with holes. Parameters of the drawing are taken from the optional graphics scene options parameter.
 
-A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6` or `CGAL_GLFW` depending on which basic viewer you want to use (if you use both, the Qt viewer will be used by default), and is only available if the macro `CGAL_USE_BASIC_VIEWER`/`CGAL_USE_BASIC_VIEWER_QT` (Qt viewer) or `CGAL_USE_BASIC_VIEWER_GLFW` (GLFW viewer) is defined.
+- Linking with the cmake target `CGAL::CGAL_Basic_viewer`/`CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`/`CGAL_USE_BASIC_VIEWER_QT`.
+- Linking with the cmake target `CGAL::CGAL_Basic_viewer_GLFW` will link with `CGAL_GLFW` and add the definition `CGAL_USE_BASIC_VIEWER_GLFW`.
 
 \tparam PH which must be an instantiation of a `CGAL::Polygon_with_holes_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
@@ -212,8 +213,6 @@ void add_to_graphics_scene(const CGAL_P2_WITH_HOLES_TYPE& p2,
   add_to_graphics_scene(p2, graphics_scene, gs_options);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
-
 // Specialization of draw function.
 template<class T, class C, class GSOptions>
 void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2, const GSOptions &gs_options,
@@ -232,8 +231,6 @@ void draw(const CGAL_P2_WITH_HOLES_TYPE& ap2,
   add_to_graphics_scene(ap2, buffer);
   draw_graphics_scene(buffer, title);
 }
-
-#endif // CGAL_USE_BASIC_VIEWER
 
 #undef CGAL_P2_WITH_HOLES_TYPE
 

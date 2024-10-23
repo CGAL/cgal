@@ -14,7 +14,7 @@
 #define CGAL_DRAW_VORONOI_DIAGRAM_2_H
 
 #include <CGAL/license/Voronoi_diagram_2.h>
-#include <CGAL/Qt/Basic_viewer.h>
+#include <CGAL/Basic_viewer.h>
 #include <CGAL/Graphics_scene.h>
 #include <CGAL/Graphics_scene_options.h>
 #include <CGAL/Triangulation_utils_2.h>
@@ -371,7 +371,7 @@ void add_to_graphics_scene(const CGAL_VORONOI_TYPE& v2,
   add_to_graphics_scene(v2, graphics_scene, gs_options);
 }
 
-#ifdef CGAL_USE_BASIC_VIEWER
+#if defined(CGAL_USE_BASIC_VIEWER) || defined(CGAL_USE_BASIC_VIEWER_QT)
 
 // Specialization of draw function.
 template<class DG, class AT, class AP, class GSOptions>
@@ -449,7 +449,7 @@ void draw(const CGAL_VORONOI_TYPE& av2,
   draw(av2, gs_options, title);
 }
 
-#endif // CGAL_USE_BASIC_VIEWER
+#endif // CGAL_USE_BASIC_VIEWER || CGAL_USE_BASIC_VIEWER_QT
 
 #undef CGAL_VORONOI_TYPE
 

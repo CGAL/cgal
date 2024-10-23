@@ -5,8 +5,9 @@ namespace CGAL {
 
 opens a new window and draws a constrained triangulation. If the triangulation has constraints they are drawn. The faces inside and outside of the domain, based on the property map, are drawn in different colors.
 
-A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
-Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
+A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6` or `CGAL_GLFW` depending on which basic viewer you want to use (if you use both, the Qt viewer will be used by default), and is only available if the macro `CGAL_USE_BASIC_VIEWER`/`CGAL_USE_BASIC_VIEWER_QT` (Qt viewer) or `CGAL_USE_BASIC_VIEWER_GLFW` (GLFW viewer) is defined.
+- Linking with the cmake target `CGAL::CGAL_Basic_viewer`/`CGAL::CGAL_Basic_viewer_Qt` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`/`CGAL_USE_BASIC_VIEWER_QT`.
+- Linking with the cmake target `CGAL::CGAL_Basic_viewer_GLFW` will link with `CGAL_GLFW` and add the definition `CGAL_USE_BASIC_VIEWER_GLFW`.
 
 \tparam CT2 which must be an instantiation of a `CGAL::Constrained_triangulation_2<...>`.
 \tparam InDomainPMap a class model of `ReadablePropertyMap` with `CT2::Face_handle` as key type and `bool` as value type.
