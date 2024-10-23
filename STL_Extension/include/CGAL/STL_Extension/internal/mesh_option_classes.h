@@ -12,6 +12,13 @@
 #define CGAL_MESH_OPTION_CLASSES_H
 
 #include <CGAL/STL_Extension/internal/Has_features.h>
+#include <CGAL/Default.h>
+
+#include <boost/iterator/function_output_iterator.hpp>
+
+#include <iterator>
+#include <optional>
+#include <type_traits>
 
 namespace CGAL {
 
@@ -163,6 +170,67 @@ struct Features_options
   bool features() const { return b_; }
 private:
   bool b_;
+};
+
+// Mesh initialization
+struct Dummy_initial_points_generator
+{
+  template<typename OutputIterator>
+  OutputIterator operator()(OutputIterator oit, int n = 0) const { return oit; }
+};
+
+// Holds the two parameters `initial_points_generator` and `initial_points`,
+// without knowing their types, into a single generator.
+template <typename MeshDomain,
+          typename C3t3,
+          typename InitialPointsGenerator = CGAL::Default,
+          typename InitialPointsRange = CGAL::Default
+>
+struct Initialization_options
+{
+  using Default_generator = Dummy_initial_points_generator;
+  using Initial_points_generator
+          = typename CGAL::Default::Get<InitialPointsGenerator, Default_generator>::type;
+  using Default_initial_point_type
+          = std::tuple<typename C3t3::Triangulation::Point, int, typename MeshDomain::Index>;
+  using Initial_points_range
+          = typename CGAL::Default::Get<InitialPointsRange, std::vector<Default_initial_point_type>>::type;
+
+  using Initial_points_const_iterator = typename Initial_points_range::const_iterator;
+  using Initial_point = typename std::iterator_traits<Initial_points_const_iterator>::value_type;
+
+  Initialization_options()
+  {}
+
+  Initialization_options(const Initial_points_generator& generator,
+                         const Initial_points_range& initial_points)
+    : initial_points_generator_(generator)
+    , begin_it(initial_points.begin())
+    , end_it(initial_points.end())
+  {}
+
+  template<typename OutputIterator>
+  OutputIterator operator()(OutputIterator pts, int n = 0) const
+  {
+    // add initial_points
+    for (Initial_points_const_iterator it = begin_it; it != end_it; ++it)
+      *pts++ = *it;
+
+    return initial_points_generator_(pts, n);
+  }
+
+  bool is_default() const
+  {
+    return begin_it == end_it
+        && std::is_same_v<InitialPointsGenerator, Default_generator>;
+  }
+
+private:
+  Initial_points_generator initial_points_generator_;
+
+  // The two iterators point to the `initial_points` container
+  Initial_points_const_iterator begin_it;
+  Initial_points_const_iterator end_it;
 };
 
 // -----------------------------------

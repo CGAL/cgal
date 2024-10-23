@@ -6,6 +6,12 @@
 -   Made the implicit function thread-safe so that the parallel version of `make_mesh_3()` can be used.
 
 ## [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
+[Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
+-----------
+
+
+[Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
+-----------
 
 Release date: September 2024
 
