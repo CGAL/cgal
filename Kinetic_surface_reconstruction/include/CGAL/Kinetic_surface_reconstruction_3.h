@@ -91,7 +91,10 @@ public:
   */
   template<typename NamedParameters = parameters::Default_named_parameters>
   Kinetic_surface_reconstruction_3(Point_range& points,
-    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np) {
+    const NamedParameters& np = CGAL::parameters::default_values()) : m_points(points), m_ground_polygon_index(-1), m_kinetic_partition(np)
+  {
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t);
+
     m_verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false);
     m_debug = parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false);
 
@@ -178,7 +181,14 @@ public:
 
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  std::size_t detect_planar_shapes(const CGAL_NP_CLASS& np = parameters::default_values()) {
+  std::size_t detect_planar_shapes(const CGAL_NP_CLASS& np = parameters::default_values())
+  {
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t, normal_t, k_neighbors_t, maximum_distance_t, maximum_angle_t,
+                                               minimum_region_size_t, angle_tolerance_t, maximum_offset_t,
+                                               regularize_parallelism_t, regularize_orthogonality_t, regularize_coplanarity_t,
+                                               regularize_axis_symmetry_t, symmetry_direction_t);
+
+
     m_verbose = parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), m_verbose);
     m_debug = parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), m_debug);
 
@@ -319,7 +329,13 @@ public:
 
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void detection_and_partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values()) {
+  void detection_and_partition(std::size_t k, const CGAL_NP_CLASS& np = parameters::default_values())
+  {
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t, normal_t, k_neighbors_t, maximum_distance_t, maximum_angle_t,
+                                               minimum_region_size_t, angle_tolerance_t, maximum_offset_t, regularize_parallelism_t,
+                                               regularize_orthogonality_t, regularize_coplanarity_t, regularize_axis_symmetry_t,
+                                               symmetry_direction_t, reorient_bbox_t, bbox_dilation_ratio_t);
+
     detect_planar_shapes(np);
     initialize_partition(np);
     partition(k);
@@ -373,7 +389,10 @@ public:
     \pre shape detection performed
   */
   template<typename CGAL_NP_TEMPLATE_PARAMETERS>
-  void initialize_partition(const CGAL_NP_CLASS& np = parameters::default_values()) {
+  void initialize_partition(const CGAL_NP_CLASS& np = parameters::default_values())
+  {
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, reorient_bbox_t, bbox_dilation_ratio_t);
+
     m_kinetic_partition.initialize(np);
   }
 

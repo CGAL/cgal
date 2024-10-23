@@ -279,7 +279,10 @@ public:
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
-    m_input2regularized() {}
+    m_input2regularized()
+  {
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, verbose_t, debug_t);
+  }
 
   /*!
   \brief constructs a kinetic space partition object and initializes it.
@@ -355,7 +358,11 @@ public:
     m_parameters(
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::verbose), false),
       parameters::choose_parameter(parameters::get_parameter(np, internal_np::debug), false)), // use true here to export all steps
-    m_input2regularized() {
+    m_input2regularized()
+  {
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t, debug_t, verbose_t, reorient_bbox_t,
+                                           bbox_dilation_ratio_t, max_octree_depth_t, max_octree_node_size_t);
+
     insert(points, polygons, np);
     initialize(np);
   }
@@ -393,7 +400,9 @@ public:
   void insert(
     const PointRange& points,
     const PolygonRange& polygons,
-    const NamedParameters& np = CGAL::parameters::default_values()) {
+    const NamedParameters& np = CGAL::parameters::default_values())
+  {
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, point_t);
 
     using NP_helper = Point_set_processing_3_np_helper<PointRange, NamedParameters>;
     using PointMap = typename NP_helper::Point_map;
@@ -480,7 +489,10 @@ public:
   template<
     typename NamedParameters = parameters::Default_named_parameters>
   void initialize(
-    const NamedParameters& np = CGAL::parameters::default_values()) {
+    const NamedParameters& np = CGAL::parameters::default_values())
+  {
+    CGAL_CHECK_AUTHORIZED_NAMED_PARAMETERS(np, reorient_bbox_t, bbox_dilation_ratio_t, max_octree_depth_t, max_octree_node_size_t);
+
     Timer timer;
     m_parameters.bbox_dilation_ratio = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::bbox_dilation_ratio), FT(11) / FT(10));
