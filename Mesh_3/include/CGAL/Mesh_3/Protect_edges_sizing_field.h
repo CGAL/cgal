@@ -54,7 +54,6 @@
 #  include <boost/math/special_functions/next.hpp> // for float_prior
 #endif
 #include <optional>
-#include <boost/tuple/tuple.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
@@ -1019,29 +1018,30 @@ Protect_edges_sizing_field<C3T3, MD, Sf, Df>::
 insert_balls_on_edges()
 {
   // Get features
-  typedef std::tuple<Curve_index,
-                             std::pair<Bare_point,Index>,
-                             std::pair<Bare_point,Index> >    Feature_tuple;
-  typedef std::vector<Feature_tuple>                          Input_features;
-
-  Input_features input_features;
+  struct Feature_tuple
+  {
+    Curve_index curve_index_;
+    std::pair<Bare_point, Index> point_s_;
+    std::pair<Bare_point, Index> point_t_;
+  };
+  std::vector<Feature_tuple> input_features;
   domain_.get_curves(std::back_inserter(input_features));
 
   // Iterate on edges
   for (const Feature_tuple& ft : input_features)
   {
     if(forced_stop()) break;
-    const Curve_index& curve_index = std::get<0>(ft);
+    const Curve_index& curve_index = ft.curve_index_;
     if ( ! is_treated(curve_index) )
     {
 #if CGAL_MESH_3_PROTECTION_DEBUG & 1
       std::cerr << "\n** treat curve #" << curve_index << std::endl;
 #endif
-      const Bare_point& p = std::get<1>(ft).first;
-      const Bare_point& q = std::get<2>(ft).first;
+      const Bare_point& p = ft.point_s_.first;
+      const Bare_point& q = ft.point_t_.first;
 
-      const Index& p_index = std::get<1>(ft).second;
-      const Index& q_index = std::get<2>(ft).second;
+      const Index& p_index = ft.point_s_.second;
+      const Index& q_index = ft.point_t_.second;
 
       Vertex_handle vp,vq;
       if ( ! domain_.is_loop(curve_index) )
