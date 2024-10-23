@@ -366,7 +366,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     ${SubViewerUI_files})
   target_link_libraries(
     cgal_lab PRIVATE demo_framework point_dialog Qt6::Widgets
-             PUBLIC Qt6::Gui Qt6::OpenGLWidgets Qt6::Qml
+             PUBLIC CGAL::CGAL Qt6::Gui Qt6::OpenGLWidgets Qt6::Qml
                            )
   if(LIBSSH_FOUND)
     target_compile_definitions(cgal_lab PRIVATE -DCGAL_USE_SSH)
