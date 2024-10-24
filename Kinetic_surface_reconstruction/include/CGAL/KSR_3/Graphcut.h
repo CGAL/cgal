@@ -21,8 +21,6 @@
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #include <CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Cartesian_converter.h>
 
 // Internal includes.

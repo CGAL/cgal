@@ -167,13 +167,6 @@ int main(const int argc, const char** argv) {
   // Algorithm.
   KSR ksr(point_set, param);
 
-  FT max_d, max_dev;
-  std::size_t num;
-  ksr.estimate_detection_parameters(max_d, max_dev, num);
-  std::cout << "d: " << max_d << std::endl;
-  std::cout << "dev: " << max_dev << std::endl;
-  std::cout << "num: " << num << std::endl;
-
   Timer timer;
   timer.start();
   std::size_t num_shapes = ksr.detect_planar_shapes(param);
@@ -206,7 +199,7 @@ int main(const int argc, const char** argv) {
   FT after_reconstruction = timer.time();
 
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("building_c_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
@@ -230,7 +223,7 @@ int main(const int argc, const char** argv) {
 
     if (polylist.size() > 0) {
       non_empty = true;
-      CGAL::IO::write_polygon_soup("building_c_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
     }
   }
 
