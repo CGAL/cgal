@@ -30,8 +30,9 @@
 namespace CGAL {
 namespace IO {
 
-template <typename Graph, typename VFeaturePM, typename EFeaturePM>
-bool read_OM(const std::string& fname, Graph& g, VFeaturePM vfpm, EFeaturePM efpm)
+namespace internal {
+template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
+bool read_OM(const std::string& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
   typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
@@ -54,7 +55,8 @@ bool read_OM(const std::string& fname, Graph& g, VFeaturePM vfpm, EFeaturePM efp
 
   CGAL::copy_face_graph<OMesh,Graph>(omesh, g,
                                      CGAL::parameters::vertex_to_vertex_map(v2vpmap)
-                                    .halfedge_to_halfedge_map(h2hpmap));
+                                                      .halfedge_to_halfedge_map(h2hpmap),
+                                     CGAL::parameters::vertex_point_map(vpm));
   if(options.vertex_has_status()){
     for(auto v : vertices(omesh)){
       put(vfpm, v2v[v], omesh.status(v).feature());
@@ -70,25 +72,8 @@ bool read_OM(const std::string& fname, Graph& g, VFeaturePM vfpm, EFeaturePM efp
   return true;
 }
 
-template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
-bool read_OM(const std::string& fname,
-             Graph& g,
-             const CGAL_NP_CLASS& np = parameters::default_values())
-{
-  using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
-  using edge_descriptor = typename boost::graph_traits<Graph>::edge_descriptor;
-
-  using CGAL::parameters::get_parameter;
-  using CGAL::parameters::choose_parameter;
-  auto vfpm = choose_parameter(get_parameter(np, internal_np::vertex_is_constrained),
-                               CGAL::Constant_property_map<vertex_descriptor, bool>(false));
-  auto efpm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
-                               CGAL::Constant_property_map<edge_descriptor, bool>(false));
-  return read_OM(fname, g, vfpm, efpm);
-}
-
-template <typename Graph, typename VFeaturePM, typename EFeaturePM>
-bool write_OM(std::string fname, Graph& g, VFeaturePM vfpm, EFeaturePM efpm)
+template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
+bool write_OM(std::string fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
   typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
@@ -104,8 +89,9 @@ bool write_OM(std::string fname, Graph& g, VFeaturePM vfpm, EFeaturePM efpm)
 
   OMesh omesh;
   CGAL::copy_face_graph<Graph, OMesh>(g, omesh,
-                                      CGAL::parameters::vertex_to_vertex_map(v2vpmap)
-                                     .halfedge_to_halfedge_map(h2hpmap));
+                                      CGAL::parameters::vertex_point_map(vpm)
+                                                       .vertex_to_vertex_map(v2vpmap)
+                                                       .halfedge_to_halfedge_map(h2hpmap));
   omesh.request_edge_status();
   omesh.request_vertex_status();
 
@@ -124,7 +110,108 @@ bool write_OM(std::string fname, Graph& g, VFeaturePM vfpm, EFeaturePM efpm)
 
   return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status);
 }
+} // end of internal namespace
 
+/*!
+  \ingroup PkgBGLIoFuncsOM
+
+  \brief reads the graph `g` from the file `fname`, using the \ref IOStreamOM.
+
+  The data is expected to represent a 2-manifold (possibly with borders).
+
+  \attention The graph `g` is not cleared, and the data from the file are appended.
+
+  \note This function is only available if OpenMesh is available (`CGAL_USE_OPENMESH` is defined or CMake target is linked with `CGAL::OpenMesh_support`).
+
+  \tparam Graph a model of `MutableFaceGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the name of the input file
+  \param g the graph to be built from the input data
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `Graph`.}
+    \cgalParamNEnd
+    \cgalParamNBegin{edge_is_constrained_map}
+      \cgalParamDescription{a property map containing the feature-or-not status of each edge of `g` to be filled by the reader}
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%edge_descriptor`
+                     as key type and `bool` as value type.}
+      \cgalParamDefault{a default property map where no edge is marked as feature}
+    \cgalParamNEnd
+    \cgalParamNBegin{vertex_is_constrained_map}
+      \cgalParamDescription{a property map containing the feature-or-not status of each vertex of `g` to be filled by the reader}
+      \cgalParamType{a class model of `WritablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `bool` as value type.}
+      \cgalParamDefault{a default property map where no vertex is marked as feature}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+  \returns `true` if reading was successful and the resulting mesh is valid, `false` otherwise.
+*/
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool read_OM(const std::string& fname,
+             Graph& g,
+             const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
+  using edge_descriptor = typename boost::graph_traits<Graph>::edge_descriptor;
+
+  using CGAL::parameters::get_parameter;
+  using CGAL::parameters::choose_parameter;
+  using Default_vfmap = Static_boolean_property_map<vertex_descriptor, false>;
+  using Default_efmap = Static_boolean_property_map<edge_descriptor, false>;
+  auto vfpm = choose_parameter<Default_vfmap>(get_parameter(np, internal_np::vertex_is_constrained));
+  auto efpm = choose_parameter<Default_efmap>(get_parameter(np, internal_np::edge_is_constrained));
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_property_map(vertex_point, g));
+  return internal::read_OM(fname, g, vpm, vfpm, efpm);
+}
+
+
+/*!
+\ingroup PkgBGLIoFuncsOM
+
+  \brief writes the graph `g` into a file named `fname`, using the \ref IOStreamOM.
+
+  \note This function is only available if OpenMesh is available (`CGAL_USE_OPENMESH` is defined or CMake target is linked with `CGAL::OpenMesh_support`).
+
+  \tparam Graph a model of `FaceListGraph` and `HalfedgeListGraph`
+  \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+
+  \param fname the output file
+  \param g the graph to be written
+  \param np optional \ref bgl_namedparameters "Named Parameters" described below
+
+  \cgalNamedParamsBegin
+    \cgalParamNBegin{vertex_point_map}
+      \cgalParamDescription{a property map associating points to the vertices of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `%Point_3` as value type}
+      \cgalParamDefault{`boost::get(CGAL::vertex_point, g)`}
+      \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
+                      must be available in `Graph`.}
+    \cgalParamNEnd
+    \cgalParamNBegin{edge_is_constrained_map}
+      \cgalParamDescription{a property map containing the feature-or-not status of each edge of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%edge_descriptor`
+                     as key type and `bool` as value type.}
+    \cgalParamNEnd
+    \cgalParamNBegin{vertex_is_constrained_map}
+      \cgalParamDescription{a property map containing the feature-or-not status of each vertex of `g`}
+      \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
+                     as key type and `bool` as value type.}
+    \cgalParamNEnd
+  \cgalNamedParamsEnd
+
+  \returns `true` if writing was successful, `false` otherwise.
+*/
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OM(const std::string& fname,
               Graph& g,
@@ -139,7 +226,9 @@ bool write_OM(const std::string& fname,
                                CGAL::Constant_property_map<vertex_descriptor, bool>(false));
   auto efpm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                CGAL::Constant_property_map<edge_descriptor, bool>(false));
-  return write_OM(fname, g, vfpm, efpm);
+  auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                              get_property_map(vertex_point, g));
+  return internal::write_OM(fname, g, vpm, vfpm, efpm);
 }
 
 

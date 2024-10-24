@@ -24,25 +24,32 @@ int main(int argc, char** argv )
 {
   OMesh omesh;
 
-  const std::string filename = (argc>1)?argv[1]:CGAL::data_file_path("meshes/in.off");
-  const char* outname= (argc>2)?argv[2]:"out.om";
-  CGAL::IO::read_polygon_mesh(filename, omesh);
+  const std::string filename = (argc>1)?argv[1]:CGAL::data_file_path("meshes/cube-meshed.off");
+
+  if (!CGAL::IO::read_polygon_mesh(filename, omesh))
+  {
+    std::cerr << "Cannot read " << filename << "\n";
+    return 1;
+  }
 
   omesh.request_vertex_status();
   omesh.request_edge_status();
 
   int i = 0;
-  for(auto v : vertices(omesh)){
-        omesh.status(v).set_selected((i%2) == 0);
-        ++i;
+  for(auto v : vertices(omesh))
+  {
+    omesh.status(v).set_feature((i%2) == 0);
+    ++i;
   }
 
   i = 0;
-  for(auto eit = omesh.edges_begin(); eit != omesh.edges_end(); ++eit){
-        omesh.status(*eit).set_feature(i > 2);
-        ++i;
+  for(auto eit = omesh.edges_begin(); eit != omesh.edges_end(); ++eit)
+  {
+    omesh.status(*eit).set_feature((i%2) == 0);
+    ++i;
   }
 
+  const char* outname= (argc>2)?argv[2]:"out.om";
   OpenMesh::IO::write_mesh(omesh, outname, OpenMesh::IO::Options::Status);
 
   SM sm;
@@ -53,16 +60,26 @@ int main(int argc, char** argv )
   std::map<sm_edge_descriptor,bool> sm_feature_map;
   auto sm_feature_pmap = boost::make_assoc_property_map(sm_feature_map);
 
-  CGAL::IO::read_OM(outname, sm, sm_selected_pmap, sm_feature_pmap);
+  CGAL::IO::read_OM(outname, sm, CGAL::parameters::vertex_is_constrained_map(sm_selected_pmap)
+                                                  .edge_is_constrained_map(sm_feature_pmap));
 
-  std::cout << "vertex selection values:\n";
+
+  int nbv=0, nbfv=0;
   for(auto v : vertices(sm)){
-    std::cout << std::boolalpha << get(sm_selected_pmap, v) << std::endl;
+    ++nbv;
+    if (get(sm_selected_pmap, v)) ++nbfv;
   }
+  std::cout << nbfv << " feature vertices out of " <<  nbv << "\n";
 
-  std::cout << "edge feature values:\n";
+  int nbe=0, nbfe=0;
   for(auto e : edges(sm)){
-    std::cout  << std::boolalpha << get(sm_feature_pmap, e) << std::endl;
+    ++nbe;
+    if (get(sm_feature_pmap, e)) ++nbfe;
   }
+  std::cout << nbfe << " feature edges out of " <<  nbe << "\n";
+
+  assert(nbv>1 || nbfv!=0);
+  assert(nbe>1 || nbfe!=0);
+
   return 0;
 }
