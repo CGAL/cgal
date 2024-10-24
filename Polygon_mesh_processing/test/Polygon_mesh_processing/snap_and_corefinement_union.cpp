@@ -28,27 +28,26 @@ typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-template <class Point_3, class Iterator, class Mesh, class VPM>
+template <class Point_3, class Iterator, class MeshRange>
 struct Point_from_halfedge_map {
-  //classical typedefs
   using key_type = Iterator;
   using value_type = Point_3;
   using reference = Point_3&;
   using category = boost::readable_property_map_tag;
-  using Self = Point_from_halfedge_map<Point_3, Iterator, Mesh, VPM>;
+  using Self = Point_from_halfedge_map<Point_3, Iterator, MeshRange>;
+  using Mesh = typename boost::range_value<MeshRange>::type::type;
 
-  Point_from_halfedge_map() : vpms(nullptr), meshes(nullptr) { CGAL_assertion(false); }
+  Point_from_halfedge_map() : meshes() {}
 
-  Point_from_halfedge_map(const std::vector<VPM>* vpms, const std::vector<Mesh*>* meshes) : vpms(vpms), meshes(meshes) {}
+  Point_from_halfedge_map(MeshRange meshes) : meshes(meshes) {}
 
   inline friend reference
     get(Self s, key_type it) {
-    return get((*s.vpms)[it.first], target(it.second, *(*s.meshes)[it.first]));
+    Mesh& m = s.meshes[it.first];
+    return m.point(target(it.second, m));
   }
 
-  const std::vector<VPM>* vpms;
-  const std::vector<Mesh*>* meshes;
-  //std::vector<std::reference_wrapper<Mesh>>
+  MeshRange meshes;
 };
 
 template <class Primitive>
@@ -89,161 +88,114 @@ std::vector<K::Plane_3> unique_planes(const PrimitiveRange& prims) {
   return planes;
 }
 
-template<typename TriangleMesh1, typename TriangleMesh2, typename FT,
-  typename NamedParameters1 = CGAL::parameters::Default_named_parameters,
-  typename NamedParameters2 = CGAL::parameters::Default_named_parameters>
-void coregularize(TriangleMesh1 &mesh1, TriangleMesh2 &mesh2, FT epsilon, NamedParameters1 np1 = CGAL::parameters::default_values(), NamedParameters2 np2 = CGAL::parameters::default_values()) {
-  static_assert(std::is_same<typename CGAL::property_map_selector<TriangleMesh1, boost::vertex_point_t>::type, typename CGAL::property_map_selector<TriangleMesh2, boost::vertex_point_t>::type>::value);
-  using VPM = typename CGAL::property_map_selector<TriangleMesh1, boost::vertex_point_t>::type;
-  //using VPM2 = typename CGAL::property_map_selector<TriangleMesh2, boost::vertex_point_t>::type;
 
-  static_assert(std::is_same<TriangleMesh1, TriangleMesh2>::value);
-  using Mesh = TriangleMesh1;
-
-  using K = typename CGAL::Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
-  using Point_3 = typename K::Point_3;
+template<typename MeshRange, typename FT>
+void coregularize(MeshRange meshes, FT epsilon) {
+  using Mesh = typename boost::range_value<MeshRange>::type::type;
+  using K = typename CGAL::Kernel_traits<typename Mesh::Point>::type;
+  using Point_3 = typename Mesh::Point;
   using Vector_3 = typename K::Vector_3;
   using Plane_3 = typename K::Plane_3;
 
-  VPM vpm1 = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np1, CGAL::internal_np::vertex_point), CGAL::get_property_map(CGAL::vertex_point, mesh1));
-  VPM vpm2 = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np2, CGAL::internal_np::vertex_point), CGAL::get_property_map(CGAL::vertex_point, mesh2));
+  //using Vertex_index = typename Mesh::Vertex_index;
+  using Halfedge_index = typename Mesh::Halfedge_index;
+  using Face_index = typename Mesh::Face_index;
 
-  using Neighbor_query1 = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<TriangleMesh1>;
-  using Region_type1 = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<K, TriangleMesh1>;
-  using Sorting1 = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<K, TriangleMesh1, Neighbor_query1>;
-  using Region_growing1 = CGAL::Shape_detection::Region_growing<Neighbor_query1, Region_type1>;
+  using Region_map = typename Mesh::template Property_map<Face_index, std::size_t>;
 
-  using Neighbor_query2 = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<TriangleMesh2>;
-  using Region_type2 = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<K, TriangleMesh2>;
-  using Sorting2 = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<K, TriangleMesh2, Neighbor_query2>;
-  using Region_growing2 = CGAL::Shape_detection::Region_growing<Neighbor_query2, Region_type2>;
+  using Neighbor_query = CGAL::Shape_detection::Polygon_mesh::One_ring_neighbor_query<Mesh>;
+  using Region_type = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_region<K, Mesh>;
+  using Sorting = CGAL::Shape_detection::Polygon_mesh::Least_squares_plane_fit_sorting<K, Mesh, Neighbor_query>;
+  using Region_growing = CGAL::Shape_detection::Region_growing<Neighbor_query, Region_type, Region_map>;
 
-  static_assert(std::is_same<typename Mesh::Vertex_index, typename TriangleMesh2::Vertex_index>::value);
-  static_assert(std::is_same<typename TriangleMesh1::Halfedge_index, typename TriangleMesh2::Halfedge_index>::value);
-  static_assert(std::is_same<typename TriangleMesh1::Face_index, typename TriangleMesh2::Face_index>::value);
-  using Vertex_index = typename TriangleMesh1::Vertex_index;
-  using Halfedge_index = typename TriangleMesh1::Halfedge_index;
-  using Face_index = typename TriangleMesh1::Face_index;
-
-  std::vector<typename Region_growing1::Primitive_and_region> regions;
-  std::vector<std::vector<Vertex_index> > vertices_per_region;
-
-  std::vector<VPM> vpms = { vpm1, vpm2 };
-  std::vector<Mesh*> meshes = { &mesh1, &mesh2 };
+  using Color = CGAL::IO::Color;
+  using Color_map = typename Mesh::template Property_map<Face_index, Color>;
 
   std::vector<Plane_3> planes;
 
-  Neighbor_query1 nq1(mesh1);
-  Region_type1 rt1(mesh1, CGAL::parameters::maximum_distance(epsilon).maximum_angle(90).minimum_region_size(1));
-  Sorting1 s1(mesh1, nq1);
-  Region_growing1 rg1(CGAL::faces(mesh1), s1.ordered(), nq1, rt1);
-
-  using Color = CGAL::IO::Color;
   auto plane_less = [](const Plane_3& x, const Plane_3& y) -> bool {
-
     if (x.a() != y.a()) return x.a() < y.a();
     if (x.b() != y.b()) return x.b() < y.b();
     if (x.c() != y.c()) return x.c() < y.c();
     return x.d() < y.d();
     };
-
   std::map < Plane_3, Color, decltype(plane_less) > plane_colors(plane_less);
-
-  using Color_map = typename Mesh::template Property_map<Face_index, Color>;
-  Color_map face_color1 = mesh1.template add_property_map<Face_index, Color>("color", Color(0, 0, 0)).first;
 
   std::vector<int> plane_index_map;
   std::vector<std::pair<std::size_t, Halfedge_index> > points; // std::size_t for mesh index
+  std::vector<Region_map> region_maps(meshes.size());
 
-  // Reserve some memory
-  plane_index_map.reserve(mesh1.number_of_halfedges() * 0.75);
-  points.reserve(mesh1.number_of_halfedges() * 0.75);
+  std::size_t idx = 0;
+  std::vector<std::size_t> offset(meshes.size() - 1, 0);
+  for (Mesh& m : meshes) {
+    Neighbor_query nq(m);
+    Region_type rt(m, CGAL::parameters::maximum_distance(epsilon).maximum_angle(90).minimum_region_size(1));
+    Sorting s(m, nq);
 
-  rg1.detect(boost::make_function_output_iterator(
-    [&](const std::pair<Plane_3, typename Region_growing1::Region>& region) {
-      // Generate a random color.
-      Color color(
-        static_cast<unsigned char>(rand() % 256),
-        static_cast<unsigned char>(rand() % 256),
-        static_cast<unsigned char>(rand() % 256));
+    region_maps[idx] = m.template add_property_map<Face_index, std::size_t>("region_map", std::size_t(-1)).first;
 
-      Plane_3 pl = region.first;
+    Region_growing rg(CGAL::faces(m), s.ordered(), nq, rt, region_maps[idx]);
 
-      if (CGAL::ORIGIN + pl.orthogonal_vector() < CGAL::ORIGIN + Vector_3(CGAL::NULL_VECTOR))
-        pl = pl.opposite();
+    Color_map face_color = m.template add_property_map<Face_index, Color>("color", Color(0, 0, 0)).first;
 
-      color = plane_colors.emplace(pl, color).first->second;
+    plane_index_map.reserve(plane_index_map.size() + m.number_of_halfedges() * 0.75);
+    points.reserve(points.size() + m.number_of_halfedges() * 0.75);
 
-      for (const auto& f : region.second) {
-        put(face_color1, f, color);
-        auto h = halfedge(f, mesh1);
-        auto h2 = h;
-        do {
-          plane_index_map.push_back(static_cast<int>(planes.size()));
-          points.push_back(std::make_pair(0, h2));
-          h2 = next(h2, mesh1);
-        } while (h2 != h);
-      }
-      planes.emplace_back(pl);
-    }));
+    rg.detect(boost::make_function_output_iterator(
+      [&](const std::pair<Plane_3, typename Region_growing::Region>& region) {
+        // Generate a random color.
+        Color color(
+          static_cast<unsigned char>(rand() % 256),
+          static_cast<unsigned char>(rand() % 256),
+          static_cast<unsigned char>(rand() % 256));
 
-  std::size_t offset = planes.size();
+        Plane_3 pl = region.first;
 
-  std::cout << "m1: " << planes.size() << " primitives detected" << std::endl;
+        if (CGAL::ORIGIN + pl.orthogonal_vector() < CGAL::ORIGIN + Vector_3(CGAL::NULL_VECTOR))
+          pl = pl.opposite();
 
-  CGAL::IO::write_polygon_mesh("mesh1_segmented.ply", mesh1, CGAL::parameters::face_color_map(face_color1));
+        color = plane_colors.emplace(pl, color).first->second;
 
-  Neighbor_query2 nq2(mesh2);
-  Region_type2 rt2(mesh2, CGAL::parameters::maximum_distance(epsilon).maximum_angle(90).minimum_region_size(1));
-  Sorting2 s2(mesh2, nq2);
-  Region_growing2 rg2(CGAL::faces(mesh2), s2.ordered(), nq2, rt2);
+        for (const auto& f : region.second) {
+          put(face_color, f, color);
+          auto h = halfedge(f, m);
+          auto h2 = h;
+          do {
+            plane_index_map.push_back(static_cast<int>(planes.size()));
+            points.push_back(std::make_pair(idx, h2));
+            h2 = next(h2, m);
+          } while (h2 != h);
+        }
+        planes.emplace_back(pl);
+      }));
 
-  Color_map face_color2 = mesh2.template add_property_map<Face_index, Color>("color", Color(0, 0, 0)).first;
+    if (idx < offset.size())
+      offset[idx] = planes.size();
 
-  plane_index_map.reserve(plane_index_map.size() + mesh2.number_of_halfedges() * 0.75);
-  points.reserve(points.size() + mesh2.number_of_halfedges() * 0.75);
+    idx++;
+    if (idx > offset.size()) {
+      std::cout << (idx - 1) << ".mesh: " << (planes.size() - offset[idx - 2]) << " primitives detected" << std::endl;
+      CGAL::IO::write_polygon_mesh("mesh_" + std::to_string(idx - 1) + "_segmented.ply", m, CGAL::parameters::face_color_map(face_color).use_binary_mode(false));
+    }
+    else if (idx > 1) {
+      std::cout << (idx - 1) << ".mesh: " << (offset[idx - 1] - offset[idx - 2]) << " primitives detected" << std::endl;
+      CGAL::IO::write_polygon_mesh("mesh_" + std::to_string(idx - 1) + "_segmented.ply", m, CGAL::parameters::face_color_map(face_color).use_binary_mode(false));
+    }
+    else {
+      std::cout << "0.mesh: " << offset[0] << " primitives detected" << std::endl;
+      CGAL::IO::write_polygon_mesh("mesh_0_segmented.ply", m, CGAL::parameters::face_color_map(face_color).use_binary_mode(false));
+    }
+  }
 
-  rg2.detect(boost::make_function_output_iterator(
-    [&](const std::pair<Plane_3, typename Region_growing2::Region>& region) {
-      // Generate a random color.
-      Color color(
-        static_cast<unsigned char>(rand() % 256),
-        static_cast<unsigned char>(rand() % 256),
-        static_cast<unsigned char>(rand() % 256));
-
-      Plane_3 pl = region.first;
-
-      if (CGAL::ORIGIN + pl.orthogonal_vector() < CGAL::ORIGIN + Vector_3(CGAL::NULL_VECTOR))
-        pl = pl.opposite();
-
-      color = plane_colors.emplace(pl, color).first->second;
-
-      for (const auto& f : region.second) {
-        put(face_color2, f, color);
-        auto h = halfedge(f, mesh2);
-        auto h2 = h;
-        do {
-          plane_index_map.push_back(planes.size());
-          points.push_back(std::make_pair(1, h2));
-          h2 = next(h2, mesh2);
-        } while (h2 != h);
-      }
-      planes.emplace_back(pl);
-    }));
-
-  std::cout << "m2: " << planes.size() << " primitives detected" << std::endl;
-
-  CGAL::IO::write_polygon_mesh("mesh2_segmented.ply", mesh2, CGAL::parameters::face_color_map(face_color2));
-
-  std::cout << plane_colors.size() << " unique planes " << unique_planes(planes).size() << std::endl;
+  std::cout << plane_colors.size() << " unique planes" << std::endl;
 
   CGAL::Shape_regularization::Planes::regularize_planes(planes, points,
     CGAL::parameters::plane_index_map(CGAL::make_random_access_property_map(plane_index_map))
-    .point_map(Point_from_halfedge_map<Point_3, std::pair<std::size_t, Halfedge_index>, Mesh, VPM>(&vpms, &meshes))
+    .point_map(Point_from_halfedge_map<Point_3, std::pair<std::size_t, Halfedge_index>, MeshRange>(meshes))
     .regularize_parallelism(true)
     .regularize_coplanarity(true)
     .maximum_angle(2)
-    .maximum_offset(epsilon * 5));
+    .maximum_offset(epsilon * 2));
 
   plane_colors.clear();
   for (Plane_3& pl : planes) {
@@ -258,24 +210,21 @@ void coregularize(TriangleMesh1 &mesh1, TriangleMesh2 &mesh2, FT epsilon, NamedP
     color = plane_colors.emplace(pl, color).first->second;
   }
 
-  std::cout << plane_colors.size() << " unique planes " << unique_planes(planes).size() << std::endl;
+  std::cout << plane_colors.size() << " unique planes" << std::endl;
 
-  auto region_map = rg1.region_map();
-  for (const Face_index f : mesh1.faces()) {
-    int r = get(region_map, f);
-    if (r != -1)
-      put(face_color1, f, plane_colors[planes[r]]);
+  idx = 0;
+  for (Mesh& m : meshes) {
+    Color_map face_color = m.template add_property_map<Face_index, Color>("color", Color(0, 0, 0)).first;
+    std::size_t shift = (idx == 0) ? 0 : offset[idx - 1];
+    for (const Face_index f : m.faces()) {
+      int r = get(region_maps[idx], f);
+      if (r != -1)
+        put(face_color, f, plane_colors[planes[r + shift]]);
+    }
+
+    CGAL::IO::write_polygon_mesh("mesh_" + std::to_string(idx) + "_regularized.ply", m, CGAL::parameters::face_color_map(face_color).use_binary_mode(false));
+    idx++;
   }
-
-  CGAL::IO::write_polygon_mesh("mesh1_segmented.ply", mesh1, CGAL::parameters::face_color_map(face_color1));
-
-  region_map = rg2.region_map();
-  for (const Face_index f : mesh2.faces()) {
-    int r = get(region_map, f);
-    if (r != -1)
-      put(face_color2, f, plane_colors[planes[r + offset]]);
-  }
-  CGAL::IO::write_polygon_mesh("mesh2_segmented.ply", mesh2, CGAL::parameters::face_color_map(face_color2));
 }
 
 int main(int argc, char* argv[])
@@ -291,8 +240,8 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  //std::vector<Mesh*> meshes = { &mesh1, &mesh2 };
-  coregularize(mesh1, mesh2, epsilon);
+  std::vector<std::reference_wrapper<Mesh>> meshes = { std::ref(mesh1), std::ref(mesh2) };
+  coregularize(meshes, epsilon);
 
   PMP::experimental::surface_snapping(mesh1, mesh2, epsilon);
 
