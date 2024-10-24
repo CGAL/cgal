@@ -251,16 +251,20 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     scene_surface_mesh_item scene_polygon_soup_item
     scene_basic_objects ${TBB_LIBRARIES})
 
+  add_item(scene_tetrahedra_item Scene_tetrahedra_item.cpp)
+  target_link_libraries(scene_tetrahedra_item PRIVATE scene_c3t3_item)
+
+
   if(TARGET CGAL::TBB_support)
     target_link_libraries(scene_c3t3_item PRIVATE CGAL::TBB_support)
     target_link_libraries(scene_triangulation_3_item PRIVATE CGAL::TBB_support)
+    target_link_libraries(scene_tetrahedra_item PRIVATE CGAL::TBB_support)
   endif()
+
   if(COMMAND target_precompile_headers)
     # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
     target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]])
   endif()
-  add_item(scene_tetrahedra_item Scene_tetrahedra_item.cpp)
-  target_link_libraries(scene_tetrahedra_item PRIVATE scene_c3t3_item)
 
   add_item(scene_aff_transformed_item Plugins/PCA/Scene_aff_transformed_item.cpp)
 
