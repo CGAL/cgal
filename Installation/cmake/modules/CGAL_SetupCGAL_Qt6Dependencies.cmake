@@ -76,9 +76,9 @@ if(NOT CGAL_Qt6_MISSING_DEPS)
       POSITION_INDEPENDENT_CODE TRUE
       EXCLUDE_FROM_ALL TRUE
       AUTOMOC TRUE)
-    target_link_libraries(CGAL_Qt6_moc_and_resources PUBLIC CGAL::CGAL Qt6::Widgets Qt6::OpenGLWidgets)
+    target_link_libraries(CGAL_Qt6_moc_and_resources PRIVATE CGAL::CGAL Qt6::Widgets Qt6::OpenGLWidgets)
     if(Qt6Svg_FOUND)
-      target_link_libraries(CGAL_Qt6_moc_and_resources PUBLIC Qt6::Svg)
+      target_link_libraries(CGAL_Qt6_moc_and_resources PRIVATE Qt6::Svg)
     endif()
     add_library(CGAL::CGAL_Qt6_moc_and_resources ALIAS CGAL_Qt6_moc_and_resources)
     add_library(CGAL::Qt6_moc_and_resources ALIAS CGAL_Qt6_moc_and_resources)

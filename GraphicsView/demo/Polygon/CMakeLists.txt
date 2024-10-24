@@ -16,13 +16,13 @@ endif()
 find_package(Qt6 QUIET COMPONENTS Widgets)
 
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTORCC ON)
 
   if(CGAL_Core_FOUND)
-    add_definitions(-DCGAL_USE_CORE)
+    add_compile_definitions(CGAL_USE_CORE)
   endif()
 
   qt_add_executable(Polygon_2 Polygon_2.cpp

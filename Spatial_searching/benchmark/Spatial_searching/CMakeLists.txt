@@ -46,5 +46,5 @@ foreach(
   sizeof
   # deque # see above
   )
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()

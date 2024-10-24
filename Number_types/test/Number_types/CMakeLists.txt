@@ -83,7 +83,7 @@ if(NOT CGAL_DISABLE_GMP)
   find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
   include(CGAL_Eigen3_support)
   if (TARGET CGAL::Eigen3_support)
-    target_link_libraries(test_eigen PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(test_eigen PRIVATE CGAL::Eigen3_support)
   endif()
 else()#NOT CGAL_DISABLE_GMP
   message(STATUS "NOTICE: Some tests require the CGAL_Core library, and will not be compiled.")
