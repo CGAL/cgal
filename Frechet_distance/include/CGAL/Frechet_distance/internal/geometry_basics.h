@@ -93,7 +93,17 @@ struct Lambda {
           is_exact(true)
     {}
 
+    Lambda(const Exact& exact, const Curve&, const PointID&,
+                               const Curve&, const PointID&,
+                               const distance_t&, bool)
+        : approx(CGAL::to_interval(exact)),
+          exact(exact),
+          is_zero(CGAL::is_zero(exact)),
+          is_one(CGAL::is_one(exact)),
+          is_exact(true)
+    {}
 
+    //TODO replace with impl in high_level_predicates.h
     bool update_exact() const
     {
         if (is_exact) {
