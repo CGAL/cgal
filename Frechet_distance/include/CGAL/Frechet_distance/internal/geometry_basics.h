@@ -437,7 +437,13 @@ public:
         return stream.str();
     }
 
-    friend std::ostream& operator<<(std::ostream& out, const CPoint<C>& p);
+    friend std::ostream& operator<<(std::ostream& out, const CPoint<C>& p)
+    {
+      out << std::setprecision(15) << "(" << (size_t)p.point << " + "
+          << p.fraction << ")";
+
+      return out;
+    }
 };
 
 
@@ -559,24 +565,6 @@ struct Ellipse {
     bool is_valid() { return width >= 0 && height >= 0; }
 };
 #endif
-
-/*
-std::ostream& operator<<(std::ostream& out, const Point& p)
-{
-    out << std::setprecision(15) << "(" << p.x() << ", " << p.y() << ")";
-
-    return out;
-}
-*/
-template <typename C>
-std::ostream& operator<<(std::ostream& out, const CPoint<C>& p)
-{
-    out << std::setprecision(15) << "(" << (size_t)p.point << " + "
-        << p.fraction << ")";
-
-    return out;
-}
-
 
 //
 // Interval
