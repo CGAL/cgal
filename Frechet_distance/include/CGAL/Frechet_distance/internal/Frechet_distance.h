@@ -25,7 +25,7 @@ namespace Frechet_distance_ {
 namespace internal {
 
 template <class PointRange, class Traits>
-auto toCurve(const PointRange& point_range, const Traits& traits)
+auto toCurve(const PointRange& point_range, const Traits& /* traits */)
 {
     Curve<Traits> curve(point_range);
 
@@ -42,7 +42,7 @@ auto toDistance(NT distance)
 
 template <class Traits>
 bool lessThan(Curve<Traits> const& curve1, Curve<Traits> const& curve2,
-              const typename Curve<Traits>::distance_t& distance, const Traits& traits)
+              const typename Curve<Traits>::distance_t& distance, const Traits& /* traits */)
 {
   FrechetLight<Curve<Traits>> frechet;
   return frechet.lessThanWithFilters(distance, curve1, curve2);
