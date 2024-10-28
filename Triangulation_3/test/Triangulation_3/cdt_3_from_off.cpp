@@ -522,8 +522,70 @@ int go(Mesh mesh, CDT_options options) {
   auto finally = [&cdt, &options]() {
     CGAL_CDT_3_TASK_BEGIN(output_task_handle);
     {
-      std::ofstream dump("dump.binary.cgal");
-      CGAL::IO::save_binary_file(dump, cdt);
+      auto dump_tets_to_medit = [](std::string fname,
+                              const std::vector<K::Point_3> &points,
+                              const std::vector<std::array<std::size_t, 4>> &indexed_tetra,
+                              const std::vector<std::size_t> &cell_ids)
+      {
+        std::ofstream out(fname);
+        out.precision(17);
+        out << "MeshVersionFormatted 1\nDimension 3\nVertices\n";
+        out << points.size() << "\n";
+        for (const K::Point_3& p : points)
+          out << p << " 0\n";
+        out << "Triangles\n0\nTetrahedra\n";
+        out << indexed_tetra.size() << "\n";
+        for (std::size_t k=0;k<indexed_tetra.size(); ++k)
+          out << indexed_tetra[k][0]+1 << " "
+                    << indexed_tetra[k][1]+1 << " "
+                    << indexed_tetra[k][2]+1 << " "
+                    << indexed_tetra[k][3]+1 << " " << cell_ids[k] << "\n";
+        out <<"End\n";
+      };
+
+      auto& tr = cdt;
+
+      for (auto ch : tr.all_cell_handles())
+      {
+        ch->set_subdomain_index(1);
+      }
+
+
+      std::stack<decltype(tr.infinite_cell())> stack;
+      stack.push(tr.infinite_cell());
+      while (!stack.empty())
+      {
+        auto ch = stack.top();
+        stack.pop();
+        ch->set_subdomain_index(0);
+        for (int i = 0; i < 4; ++i)
+        {
+          if (ch->is_facet_on_surface(i))
+            continue;
+          auto n = ch->neighbor(i);
+          if (n->subdomain_index() == 1)
+          {
+            stack.push(n);
+          }
+        }
+      }
+
+      std::vector<K::Point_3> points(cdt.number_of_vertices());
+      for(auto v: cdt.finite_vertex_handles()) {
+        points.at(v->time_stamp() -1) = v->point();
+      }
+      std::vector<std::array<std::size_t, 4>> indexed_tetra;
+      indexed_tetra.reserve(cdt.number_of_cells());
+      for(auto ch: cdt.finite_cell_handles()) {
+        if(ch->subdomain_index() > 0) {
+          indexed_tetra.push_back({ch->vertex(0)->time_stamp() -1,
+                                   ch->vertex(1)->time_stamp() -1,
+                                   ch->vertex(2)->time_stamp() -1,
+                                   ch->vertex(3)->time_stamp() -1});
+        }
+      }
+      std::vector<std::size_t> cell_idsl(indexed_tetra.size(), 1);
+      dump_tets_to_medit(options.output_filename + ".mesh", points, indexed_tetra, cell_idsl);
     }
     {
       std::ofstream dump(options.output_filename);
