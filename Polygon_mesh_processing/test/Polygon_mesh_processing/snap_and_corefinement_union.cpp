@@ -22,11 +22,24 @@
 
 #include <iostream>
 #include <string>
+#include <filesystem>
+
+#include <boost/mpl/has_xxx.hpp>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef CGAL::Surface_mesh<K::Point_3>                        Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+
+template<typename T>
+struct unwrap_mesh {
+  using Mesh = T;
+};
+
+template<typename T>
+struct unwrap_mesh<std::reference_wrapper<T>> {
+  using Mesh = T;
+};
 
 template <class Point_3, class Iterator, class MeshRange>
 struct Point_from_halfedge_map {
@@ -35,7 +48,7 @@ struct Point_from_halfedge_map {
   using reference = Point_3&;
   using category = boost::readable_property_map_tag;
   using Self = Point_from_halfedge_map<Point_3, Iterator, MeshRange>;
-  using Mesh = typename boost::range_value<MeshRange>::type::type;
+  using Mesh = typename unwrap_mesh<typename boost::range_value<MeshRange>::type>::Mesh;
 
   Point_from_halfedge_map() : meshes() {}
 
@@ -88,10 +101,9 @@ std::vector<K::Plane_3> unique_planes(const PrimitiveRange& prims) {
   return planes;
 }
 
-
 template<typename MeshRange, typename FT>
 void coregularize(MeshRange meshes, FT epsilon) {
-  using Mesh = typename boost::range_value<MeshRange>::type::type;
+  using Mesh = typename unwrap_mesh<typename boost::range_value<MeshRange>::type>::Mesh;
   using K = typename CGAL::Kernel_traits<typename Mesh::Point>::type;
   using Point_3 = typename Mesh::Point;
   using Vector_3 = typename K::Vector_3;
@@ -227,23 +239,36 @@ void coregularize(MeshRange meshes, FT epsilon) {
   }
 }
 
+std::vector<Mesh> load_folder(std::string folder) {
+  std::vector<Mesh> meshes;
+  for (const auto& entry : std::filesystem::directory_iterator(folder)) {
+    std::cout << entry.path() << std::endl;
+    Mesh mesh;
+    if (PMP::IO::read_polygon_mesh(entry.path().string(), mesh))
+      meshes.emplace_back(mesh);
+  }
+
+  return meshes;
+}
+
 int main(int argc, char* argv[])
 {
   const std::string filename1 = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby.off");
   const std::string filename2 = (argc > 2) ? argv[2] : CGAL::data_file_path("meshes/eight.off");
   const double epsilon        = (argc > 3) ? atof(argv[3]) : 0.1;
 
-  Mesh mesh1, mesh2;
+  /*Mesh mesh1, mesh2;
   if(!PMP::IO::read_polygon_mesh(filename1, mesh1) || !PMP::IO::read_polygon_mesh(filename2, mesh2))
   {
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
 
-  std::vector<std::reference_wrapper<Mesh>> meshes = { std::ref(mesh1), std::ref(mesh2) };
+  std::vector<std::reference_wrapper<Mesh>> meshes = { std::ref(mesh1), std::ref(mesh2) };*/
+  std::vector<Mesh> meshes = load_folder("C:/Data/Unite");
   coregularize(meshes, epsilon);
 
-  PMP::experimental::surface_snapping(mesh1, mesh2, epsilon);
+  /*PMP::experimental::surface_snapping(mesh1, mesh2, epsilon);
 
   Mesh out;
   bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out);
@@ -253,7 +278,7 @@ int main(int argc, char* argv[])
     std::cout << "Union was successfully computed\n";
     CGAL::IO::write_polygon_mesh("snap_union.off", out, CGAL::parameters::stream_precision(17));
     return 0;
-  }
+  }*/
 
   std::cout << "Union could not be computed\n";
 
