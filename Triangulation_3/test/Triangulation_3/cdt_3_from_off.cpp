@@ -372,8 +372,6 @@ int go(Mesh mesh, CDT_options options) {
   assert(patch_id_map_ok); CGAL_USE(patch_id_map_ok);
   auto [v_selected_map, v_selected_map_ok] = mesh.add_property_map<vertex_descriptor, bool>("v:selected", false);
   assert(v_selected_map_ok); CGAL_USE(v_selected_map_ok);
-  auto [corner_id_map, corner_id_map_ok] = mesh.add_property_map<vertex_descriptor, std::size_t>("v:corner_id", -1);
-  assert(corner_id_map_ok); CGAL_USE(corner_id_map_ok);
   auto [edge_is_border_of_patch_map, edge_is_border_of_patch_map_ok] =
       mesh.add_property_map<edge_descriptor, bool>("e:is_border_of_patch", false);
   assert(edge_is_border_of_patch_map_ok);
@@ -430,15 +428,20 @@ int go(Mesh mesh, CDT_options options) {
         }
       }
       if(!options.dump_surface_mesh_after_merge_filename.empty()) {
+        auto [corner_id_map, corner_id_map_ok] = mesh.add_property_map<vertex_descriptor, std::size_t>("v:corner_id", -1);
+        assert(corner_id_map_ok);
+        CGAL_USE(corner_id_map_ok);
         const auto nb_corners = CGAL::Polygon_mesh_processing::detect_corners_of_regions(
             mesh, patch_id_map, nb_patches, corner_id_map,
             np::maximum_distance(options.coplanar_polygon_max_distance * bbox_max_width)
-                .maximum_angle(options.coplanar_polygon_max_angle).edge_is_constrained_map(edge_is_border_of_patch_map));
+                .maximum_angle(options.coplanar_polygon_max_angle)
+                .edge_is_constrained_map(edge_is_border_of_patch_map));
         Mesh merged_mesh;
         CGAL::Polygon_mesh_processing::remesh_almost_planar_patches(
             mesh, merged_mesh, nb_patches, nb_corners, patch_id_map, corner_id_map, edge_is_border_of_patch_map,
             CGAL::parameters::default_values(),
             CGAL::parameters::do_not_triangulate_faces(true));
+        mesh.remove_property_map(corner_id_map);
         std::ofstream out(options.dump_surface_mesh_after_merge_filename);
         out.precision(17);
         out << merged_mesh;
@@ -467,7 +470,7 @@ int go(Mesh mesh, CDT_options options) {
     if(!options.dump_patches_after_merge_filename.empty()) {
       CGAL_CDT_3_TASK_BEGIN(output_task_handle);
       std::ofstream out(options.dump_patches_after_merge_filename);
-      CGAL::IO::write_PLY(out, mesh);
+      CGAL::IO::write_PLY(out, mesh, CGAL::parameters::stream_precision(17));
       CGAL_CDT_3_TASK_END(output_task_handle);
     }
   }
