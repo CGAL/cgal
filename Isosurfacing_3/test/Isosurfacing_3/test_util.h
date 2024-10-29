@@ -39,6 +39,19 @@ bool is_manifold(PolygonMesh& pmesh)
 }
 
 template <typename PolygonMesh>
+bool is_self_intersecting(const PolygonMesh& pmesh) {
+  return CGAL::Polygon_mesh_processing::does_self_intersect(pmesh);
+}
+
+template <typename PolygonMesh>
+bool is_watertight(PolygonMesh& pmesh) {
+  const bool manifold = is_manifold(pmesh);
+  const bool closed = is_closed(pmesh);
+  const bool self_intersecting = is_self_intersecting(pmesh);
+  return manifold && closed && !self_intersecting;
+}
+
+template <typename PolygonMesh>
 bool has_degenerate_faces(PolygonMesh& pmesh)
 {
   std::set<typename boost::graph_traits<PolygonMesh>::face_descriptor> dfs;
