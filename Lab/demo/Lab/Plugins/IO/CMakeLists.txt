@@ -55,6 +55,9 @@ set_package_properties(
 
 cgal_lab_plugin(triangulation_3_io_plugin triangulation_3_io_plugin KEYWORDS Viewer)
 target_link_libraries(triangulation_3_io_plugin PRIVATE scene_triangulation_3_item)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(triangulation_3_io_plugin PRIVATE CGAL::TBB_support)
+endif()
 
 if(VTK_FOUND AND VTK_LIBRARIES)
   message(STATUS "VTK ${VTK_VERSION} found ${VTK_LIBRARIES}")
@@ -69,6 +72,9 @@ if(VTK_FOUND AND VTK_LIBRARIES)
       ${VTK_LIBRARIES}
   )
   target_compile_definitions(vtk_plugin  PRIVATE -DCGAL_USE_VTK -DNOMINMAX)
+  if(TARGET CGAL::TBB_support)
+    target_link_libraries(vtk_plugin PRIVATE CGAL::TBB_support)
+  endif()
 else()
   message(STATUS "NOTICE: the vtk IO plugin needs VTK 9.0 or greater and will not be compiled.")
 endif()

@@ -92,6 +92,9 @@ target_link_libraries(c3t3_io_plugin PRIVATE scene_c3t3_item)
 qt6_wrap_ui(tetraUI_FILES Tetrahedra_filter_widget.ui)
 cgal_lab_plugin(tetrahedra_filtering_plugin Tetrahedra_filtering_plugin ${tetraUI_FILES} KEYWORDS Mesh_3 Viewer)
 target_link_libraries(tetrahedra_filtering_plugin  PRIVATE scene_c3t3_item scene_tetrahedra_item)
+if(TARGET CGAL::TBB_support)
+  target_link_libraries(tetrahedra_filtering_plugin PRIVATE CGAL::TBB_support)
+endif()
 
 qt6_wrap_ui(ribUI_FILES Rib_dialog.ui)
 cgal_lab_plugin(c3t3_rib_exporter_plugin C3t3_rib_exporter_plugin
