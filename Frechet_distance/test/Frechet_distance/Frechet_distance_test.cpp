@@ -1,8 +1,6 @@
-
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Frechet_distance_traits_2.h>
 #include <CGAL/Frechet_distance_near_neighbors_ds.h>
-#include <CGAL/Root_of_traits.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -221,12 +219,12 @@ void testFrechetDistanceNearNeighborsDS()
 
 int main()
 {
-    // TODO: add actualy query data for DS
-      //  std::cout << "testFrechetDistanceNearNeighborsDS start" << std::endl;
-      testFrechetDistanceNearNeighborsDS();
-      //  std::cout << "testFrechetDistanceNearNeighborsDS done" << std::endl;
-    std::cout << "testFrechetDistance start" << std::endl;
-    testFrechetDistance();
-    std::cout << "testFrechetDistance done" << std::endl;
-    return 0;
+  // TODO: add actualy query data for DS
+  std::cout << "testFrechetDistanceNearNeighborsDS start" << std::endl;
+  testFrechetDistanceNearNeighborsDS();
+  std::cout << "testFrechetDistanceNearNeighborsDS done" << std::endl;
+  std::cout << "testFrechetDistance start" << std::endl;
+  testFrechetDistance();
+  std::cout << "testFrechetDistance done" << std::endl;
+  return 0;
 }

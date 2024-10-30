@@ -68,8 +68,6 @@ double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
 template <typename Traits, bool is_filtered=false>
 class Curve;
 
-//TODO: do we really need rational? Exact integers should be fine, right?
-
 //filtered version
 template <typename Approximate_traits, typename Rational_traits>
 class Curve<std::pair<Approximate_traits,Rational_traits>, true>
@@ -97,7 +95,7 @@ public:
     using Rational = typename Rational_traits::FT;
     using Rational_point = typename Rational_traits::Point;
 
-    // WARNING: this assumes that input interval are all tight
+    // TODO: this assumes that input interval are all tight --> need a PM!
     using I2R = Cartesian_converter< typename Kernel_traits<Point>::Kernel,
                                      typename Kernel_traits<Rational_point>::Kernel, NT_converter<distance_t,double>>;
 

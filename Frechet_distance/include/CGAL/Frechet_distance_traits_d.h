@@ -19,19 +19,14 @@
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/id.h>
 #include <CGAL/Frechet_distance/internal/Get_exact_kernel.h>
-#include <CGAL/Interval_nt.h>
-#include <CGAL/Epick_d.h>
 #include <CGAL/Bbox.h>
-
-// TODO: is it too restrictive to use vectors by default?
-#include <vector>
 
 namespace CGAL
 {
 /*!
  * \ingroup PkgFrechetDistanceRef
  *
-* \cgalModels{FrechetDistanceTraits}
+* \cgalModels{SearchTraits}
 * \tparam GT  geometric traits class
 */
 template <class GT>
