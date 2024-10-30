@@ -405,7 +405,7 @@ enum class PlaneCase {
 };
 
 template <typename FT>
-FT generate_predefined_iso_edge(const PlaneCase topology_case, std::array<FT, 8>& values) {
+FT generate_predefined_plane(const PlaneCase topology_case, std::array<FT, 8>& values) {
   FT iso;
   bool invert;
 
@@ -632,7 +632,7 @@ void test_cube()
   const FT isovalue = 0;
 
   std::cout << "\n ---- " << std::endl;
-  std::cout << "Running Dual Contouring (Implicit function) with isovalue = " << isovalue << std::endl;
+  std::cout << "Running TMC (Implicit function) with isovalue = " << isovalue << std::endl;
   std::cout << "Kernel: " << typeid(K).name() << std::endl;
 
   Grid grid { bbox, spacing };
@@ -663,7 +663,7 @@ void test_cube()
   std::cout << "Output #vertices: " << points.size() << std::endl;
   std::cout << "Output #polygons: " << polygons.size() << std::endl;
 
-  CGAL::IO::write_polygon_soup("MC.off", points, polygons, CGAL::parameters::stream_precision(17));
+  CGAL::IO::write_polygon_soup("test_cube.off", points, polygons, CGAL::parameters::stream_precision(17));
 }
 
 int main(int, char**)
@@ -698,7 +698,7 @@ int main(int, char**)
   // assert_tmc<K>(case_values, iso, 1, 1, 1);
 
   // this cetagory includes cases that are almost always non-manifold
-  iso = generate_predefined_iso_edge(PlaneCase::CROSS, case_values);
+  iso = generate_predefined_plane(PlaneCase::CROSS, case_values);
   // compare_tmc_mc_trilinear<K>(case_values, iso);
 
   // TODO: more examples still to test...
