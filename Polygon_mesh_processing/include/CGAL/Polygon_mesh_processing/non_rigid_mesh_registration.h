@@ -441,15 +441,34 @@ void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
     int a = XF(i, 0);
     int b = XF(i, 1);
     int c = XF(i, 2);
-    edge_coefficients.push_back(SparseTriplet(idx, a, 1));
-    edge_coefficients.push_back(SparseTriplet(idx, b, -1));
-    idx++;
-    edge_coefficients.push_back(SparseTriplet(idx, b, 1));
-    edge_coefficients.push_back(SparseTriplet(idx, c, -1));
-    idx++;
-    edge_coefficients.push_back(SparseTriplet(idx, c, 1));
-    edge_coefficients.push_back(SparseTriplet(idx, a, -1));
-    idx++;
+    if (new_arap) {
+      auto ha = halfedge(Vertex_index(a), Vertex_index(b), source);
+      double w_a = wc(ha.first, source, vpm);
+      auto hb = halfedge(Vertex_index(b), Vertex_index(c), source);
+      double w_b = wc(hb.first, source, vpm);
+      auto hc = halfedge(Vertex_index(c), Vertex_index(a), source);
+      double w_c = wc(hc.first, source, vpm);
+      edge_coefficients.push_back(SparseTriplet(idx, a, w_a));
+      edge_coefficients.push_back(SparseTriplet(idx, b, -w_a));
+      idx++;
+      edge_coefficients.push_back(SparseTriplet(idx, b, w_b));
+      edge_coefficients.push_back(SparseTriplet(idx, c, -w_b));
+      idx++;
+      edge_coefficients.push_back(SparseTriplet(idx, c, w_c));
+      edge_coefficients.push_back(SparseTriplet(idx, a, -w_c));
+      idx++;
+    }
+    else {
+      edge_coefficients.push_back(SparseTriplet(idx, a, 1));
+      edge_coefficients.push_back(SparseTriplet(idx, b, -1));
+      idx++;
+      edge_coefficients.push_back(SparseTriplet(idx, b, 1));
+      edge_coefficients.push_back(SparseTriplet(idx, c, -1));
+      idx++;
+      edge_coefficients.push_back(SparseTriplet(idx, c, 1));
+      edge_coefficients.push_back(SparseTriplet(idx, a, -1));
+      idx++;
+    }
   }
   SparseMat B(XF.rows() * XF.cols(), X.rows());
   B.setFromTriplets(edge_coefficients.begin(), edge_coefficients.end());

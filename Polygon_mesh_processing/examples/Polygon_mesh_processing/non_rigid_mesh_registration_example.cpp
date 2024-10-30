@@ -53,9 +53,9 @@ int main(int, char**) {
   Mesh::Property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>> vrm = source.add_property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>>("v:rotation").first;
   Mesh::Property_map<Mesh::Vertex_index, K::Vector_3> vtm = source.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:translation").first;
 
-  FT w1 = 0.2;
-  FT w2 = 0.2;
-  FT w3 = 5000;
+  FT w1 = 5;
+  FT w2 = 20;
+  FT w3 = 500;
   new_arap = true;
 
   std::ostringstream out;
