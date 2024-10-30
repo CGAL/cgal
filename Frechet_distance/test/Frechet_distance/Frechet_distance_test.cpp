@@ -24,9 +24,9 @@ namespace
 // helpers
 //
 using Test_distance_t = double;
-//using TestKernel = CGAL::Simple_cartesian<double>;
+using TestKernel = CGAL::Simple_cartesian<double>;
 //using TestKernel = CGAL::Simple_cartesian<CGAL::Exact_rational>;
-using TestKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+//using TestKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 //using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel;
 //using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
 

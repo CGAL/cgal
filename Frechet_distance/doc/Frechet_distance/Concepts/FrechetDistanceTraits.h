@@ -16,79 +16,69 @@ and `CGAL::approximate_Frechet_distance()`.
 
 class FrechetDistanceTraits {
 
-    public:
-/*!  a fixed dimension >= 2 */
-    const int dimension;
-
-/*!  must be `true` if  `Kernel` has a nested type `Has_filtered_predicates_tag`  with `value == true`
-*/
-    static constexpr bool is_filtered = unspecified;
-
-    /*!  Must be `true` if the number type of `Kernel` is a floating point number type*/
-    static constexpr bool  is_floating_point = unspecified;
 /// \name Types
 /// @{
 
-/*! The kernel type. If this type has a nested type `Has_filtered_predicates_tag`  with `value == true`,
+/*!
+Dimension type. Either `CGAL::Dimension_tag`
+or `CGAL::Dynamic_dimension_tag`.
 */
-using Kernel = unspecified;
+typedef unspecified_type Dimension;
 
-/*! The point type of `Kernel` corresponding to `dimension`
+/*!
+Point type.
 */
-using Point = unspecified_type;
+typedef unspecified_type Point_d;
 
-/*! The number type of the approximate kernel.
+/*!
+The number type of the %Cartesian coordinates of types `Point_d`
 */
-using distance_t = Approximate_kernel::FT;
+typedef unspecified_type FT;
 
-/*! The approximate kernel
+/*!
+A random access iterator type to enumerate the
+%Cartesian coordinates of a point.
 */
-using Approximate_kernel = unspecified_type;
+typedef unspecified_type Cartesian_const_iterator_d;
 
-
-/*! The point type of the approximate kernel corresponding to `dimension`.
+/*!
+Functor with operators to construct iterators on the
+first and the past-the-end iterator for the %Cartesian coordinates of a point. This functor must
+provide the type `result_type` that must be the same a `Cartesian_const_iterator_d`.
 */
-using Approximate_point = unspecified_type;
+typedef unspecified_type Construct_cartesian_const_iterator_d;
 
-/*! A functor of the approximate kernel for filtered points
+/*!
+Functor with operator to construct the bounding box of an object of type `Point_d`.
+Its result_type is either `Bbox_2`, `Bbox_3` or `Bbox` depending on `Dimension`.
 */
-using Construct_bbox = unspecified_type;
+typedef unspecified_type Construct_bbox_d;
 
-/*! A functor of the approximate kernel for two filtered points
+/*!
+Functor with operator taking two `Point_d` objects and returning the squared distance between then.
+Its result_type is either `FT`.
 */
-using Squared_distance = unspecified_type;
+typedef unspecified_type Compute_squared_distance_d;
 
+/// @}
 
-/*! A functor of the approximate kernel for two filtered points
+/// \name Operations
+/// @{
+
+/*!
+Function used to construct an object of type `Construct_cartesian_const_iterator_d`.
 */
-using Difference_of_points = unspecified_type;
+Construct_cartesian_const_iterator_d construct_construct_cartesian_const_iterator_d_object(const Point_d& p) const;
 
-
-/*! A functor of the approximate kernel the return type of `Difference_of_points`
+/*!
+Function used to construct an object of type `Construct_bbox_d`.
 */
-using Scaled_vector = unspecified_type;
+Construct_bbox_d construct_construct_construct_bbox_d_object() const;
 
-
-/*! A functor of the approximate kernel the return type of `Scaled_vector`
+/*!
+Function used to construct an object of type `Compute_squared_distance_d`.
 */
-using Translated_point = unspecified_type;
+Compute_squared_distance_d construct_compute_squared_distance_d_object() const;
 
-/*! The exact kernel
-*/
-using Exact_kernel = unspecified_type;
-
-/*! The point type of the exact kernel corresponding to `dimension`.
-The  point type must have `operator[]` returning a number type which can be used as first template parameter of `Sqrt_extension`.
-*/
-using Exact_point = unspecified_type;
-
-/*! A converter for points from `Kernel` to  `Approximate_kernel`
-*/
-using K2A = unspecified_type;
-
-
-/*! A converter for points from `Approximate_kernel` to  `Exact_kernel`
-*/
-using A2E = unspecified_type;
 /// @}
 };

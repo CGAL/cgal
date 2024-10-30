@@ -19,6 +19,7 @@
 #include <CGAL/Frechet_distance/internal/curve.h>
 #include <CGAL/Frechet_distance/internal/frechet_light.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
+#include <CGAL/Frechet_distance_traits_2.h>
 
 namespace CGAL {
 namespace Frechet_distance_ {
@@ -27,33 +28,42 @@ namespace internal {
 template <class PointRange, class Traits>
 auto toCurve(const PointRange& point_range, const Traits& /* traits */)
 {
-    Curve<Traits> curve(point_range);
+  using IPoint = typename Traits::Point;
+  constexpr bool is_from_cgal_kernel =
+    !std::is_same_v<typename Kernel_traits<IPoint>::Kernel, internal_kernel_traits::Dummy_kernel<IPoint>>;
 
-    return curve;
+  //TODO the traits should also be returned
+
+  if constexpr (is_from_cgal_kernel)
+  {
+    if constexpr (std::is_floating_point<typename Traits::FT>::type::value &&
+                  Kernel_traits<IPoint>::Kernel::Has_filtered_predicates_tag::value)
+    {
+      using AK = CGAL::Simple_cartesian<Interval_nt_advanced>;
+      using EK = CGAL::Simple_cartesian<Exact_rational>;
+
+      using Filtered_traits = std::pair<Frechet_distance_traits_2<AK>, Frechet_distance_traits_2<EK>>;
+
+      return Curve<Filtered_traits, true>(point_range);
+    }
+  }
+  return Curve<Traits, false>(point_range);
 }
 
-template <class NT>
-//distance_t
-auto toDistance(NT distance)
+template <class Traits, bool is_filtered>
+bool lessThan(Curve<Traits, is_filtered> const& curve1, Curve<Traits, is_filtered> const& curve2,
+              const typename Curve<Traits, is_filtered>::distance_t& distance /*, const Traits& traits */)
 {
-    return to_interval(distance);
-}
-
-
-template <class Traits>
-bool lessThan(Curve<Traits> const& curve1, Curve<Traits> const& curve2,
-              const typename Curve<Traits>::distance_t& distance, const Traits& /* traits */)
-{
-  FrechetLight<Curve<Traits>> frechet;
+  FrechetLight<Curve<Traits, is_filtered>> frechet;
   return frechet.lessThanWithFilters(distance, curve1, curve2);
 }
 
-template <typename Traits>
-std::pair<double,double> calcDistance(Curve<Traits> const& curve1,
-                                      Curve<Traits> const& curve2,
+template <typename Traits, bool is_filtered>
+std::pair<double,double> calcDistance(Curve<Traits, is_filtered> const& curve1,
+                                      Curve<Traits, is_filtered> const& curve2,
                                       double precision)
 {
-    FrechetLight<Curve<Traits>> frechet;
+    FrechetLight<Curve<Traits, is_filtered>> frechet;
     return frechet.calcDistance(curve1, curve2, precision);
 }
 

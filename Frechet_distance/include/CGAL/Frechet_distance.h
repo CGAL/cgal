@@ -34,7 +34,7 @@ namespace CGAL
  * \param distance the decision distance
  * \param traits the geometric traits object
  *
- * \tparam Traits a model of `FrechetDistanceTraits`
+ * \tparam Traits a model of `SearchTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  */
@@ -44,12 +44,13 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
                               const double distance,
                               const Traits& traits = Traits())
 {
-    Protect_FPU_rounding<true> p;
+    Protect_FPU_rounding<true> p; // TODO only if using filtering!
     auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
     auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
-    auto idistance = Frechet_distance_::internal::toDistance(distance);
 
-    return ! Frechet_distance_::internal::lessThan(icurve1, icurve2, idistance, traits);
+    using distance_t = const typename decltype(icurve1)::distance_t;
+
+    return ! Frechet_distance_::internal::lessThan(icurve1, icurve2, distance_t(distance)/* , traits */);
 }
 
 /**
@@ -75,7 +76,7 @@ std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline
                                                       const double precision,
                                                       const Traits& traits = Traits())
 {
-    Protect_FPU_rounding<true> p;
+    Protect_FPU_rounding<true> p; // TODO only if using filtering!
     auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
     auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
 
