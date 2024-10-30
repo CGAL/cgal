@@ -41,7 +41,7 @@ namespace internal {
 class FrechetLight
 {
     using Curve = C;
-    using K = typename Curve::K;
+//    using K = typename Curve::K;
     using Point = typename C::Point;
     using PointID = typename Curve::PointID;
     using distance_t = typename Curve::distance_t;
@@ -1329,7 +1329,7 @@ template <typename C>
 std::pair<double,double> FrechetLight<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
 {
     double min = 0;
-    double max = curve1.getUpperBoundDistance(curve2).sup();
+    double max = curve1.getUpperBoundDistance(curve2);
 
     while (max - min >= epsilon) {
         auto split = (max + min) / 2.;

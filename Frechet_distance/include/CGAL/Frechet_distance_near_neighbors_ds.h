@@ -39,10 +39,10 @@ class FrechetDistanceNearNeighborsDS
     using PT = Traits; //  Polyline_traits_2<Traits, double>;
     using FT = typename PT::FT;
     using Point = typename PT::Point;
-    using Polyline = typename PT::Polyline;
-    using Polylines = typename PT::Polylines;
-    using PolylineID = typename PT::PolylineID;
-    using PolylineIDs = typename PT::PolylineIDs;
+    using Polyline = std::vector<Point>;
+    using Polylines = std::vector<Polyline>;
+    using PolylineID = std::size_t;
+    using PolylineIDs = std::vector<PolylineID>;
 
 public:
     FrechetDistanceNearNeighborsDS() = default;

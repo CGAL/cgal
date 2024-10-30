@@ -51,8 +51,7 @@ fill_lambda(const Point& circle_center,
     b -= start_center_diff * start_end_diff;
     c += square(start_center_diff);
   }
-  CGAL_assertion(radius.is_point());
-  c -= CGAL::square(FT(radius.inf()));
+  c -= CGAL::square(radius);
 
   FT minus_b_div_a = b / a;
   FT d = CGAL::square(minus_b_div_a) - c / a;
@@ -60,6 +59,7 @@ fill_lambda(const Point& circle_center,
   {
     auto start = make_root_of_2(minus_b_div_a, -1, d);
     auto end = make_root_of_2(minus_b_div_a, 1, d);
+    // Question: can it be negative >1 even in exact?
     if (is_negative(start)) start = decltype(start)(FT(0));
     if (end > FT(1)) end =decltype(end)( FT(1));
     if (start <= FT(1) && end >= FT(0))
@@ -80,17 +80,16 @@ fill_lambda(const Point& circle_center,
 namespace HLPred
 {
 
-/*!
- * \ingroup PkgFrechetDistanceFunctions
- * computes
-*/
-template <typename C>
-Interval<C> intersection_interval(C const& curve1,
-                               typename C::PointID const& center_id,
-                               C const& curve2,
-                               typename C::PointID seg_start_id,
-                               typename C::distance_t const& radius)
+// filtered version
+template <typename T>
+Interval<Curve<T, true>>
+intersection_interval(Curve<T, true> const& curve1,
+                      typename Curve<T, true>::PointID const& center_id,
+                      Curve<T, true> const& curve2,
+                      typename Curve<T, true>::PointID seg_start_id,
+                      typename Curve<T, true>::distance_t const& radius)
 {
+  using C = Curve<T, true>;
   Interval<C> I;
 
   try {
@@ -103,15 +102,41 @@ Interval<C> intersection_interval(C const& curve1,
       I = Interval<C>(II.first, II.second);
     }
   } catch (const CGAL::Uncertain_conversion_exception& e) {
+    CGAL_assertion(radius.is_point());
     std::pair<Lambda<C>, Lambda<C>> II;
       // if not empty
     if (fill_lambda<typename Lambda<C>::Rational>(
           curve1.rpoint(center_id), curve2.rpoint(seg_start_id), curve2.rpoint(seg_start_id + 1),
-          radius, II, curve1, center_id, curve2,  seg_start_id))
+          radius.inf(), II, curve1, center_id, curve2,  seg_start_id))
     {
       I = Interval<C>(II.first, II.second);
     }
   }
+
+  return I;
+}
+
+// non-filtered version
+template <typename T>
+Interval<Curve<T, false>>
+intersection_interval(Curve<T, false> const& curve1,
+                      typename Curve<T, false>::PointID const& center_id,
+                      Curve<T, false> const& curve2,
+                      typename Curve<T, false>::PointID seg_start_id,
+                      typename Curve<T, false>::distance_t const& radius)
+{
+  using C = Curve<T, false>;
+
+  Interval<C> I;
+
+    std::pair<Lambda<C>, Lambda<C>> II;
+    // if not empty
+    if (fill_lambda<typename C::distance_t>(
+        curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
+        radius, II, curve1, center_id, curve2,  seg_start_id))
+    {
+      I = Interval<C>(II.first, II.second);
+    }
 
   return I;
 }

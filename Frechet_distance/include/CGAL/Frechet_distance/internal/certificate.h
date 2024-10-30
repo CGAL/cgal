@@ -27,7 +27,7 @@ class Certificate
 {
     using Curve = C;
     using distance_t = typename Curve::distance_t;
-    using K = typename Curve::K;
+//    using K = typename Curve::K;
     using CPositions = CGAL::Frechet_distance_::internal::CPositions<C>;
     using CPosition = CGAL::Frechet_distance_::internal::CPosition<C>;
     using CPoint = CGAL::Frechet_distance_::internal::CPoint<C>;

@@ -26,7 +26,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
-#include <CGAL/Sqrt_extension.h>
+#include <CGAL/Root_of_traits.h>
 #include <CGAL/Interval_nt.h>
 
 #include <CGAL/Frechet_distance/internal/id.h>
@@ -43,8 +43,14 @@ namespace internal {
  * A class representing a value in the interval `[0,1]`....
 */
 template<typename C>
-struct Lambda {
-    using Curve = C;
+struct Lambda;
+
+// filtered version
+template<typename FilteredTraits>
+struct Lambda<Curve<FilteredTraits,true>>
+{
+    using Curve = ::CGAL::Frechet_distance_::internal::Curve<FilteredTraits,true>;
+    using C = Curve;
     using distance_t = typename C::distance_t;
     using Approx = distance_t;
     using PointID = typename C::PointID;
@@ -70,7 +76,7 @@ struct Lambda {
     {
     }
 
-  Lambda(const Approx& approx, const Curve& curve1, const PointID& circle_center,
+    Lambda(const Approx& approx, const Curve& curve1, const PointID& circle_center,
          const Curve& curve2, const PointID& line_start, const distance_t& radius, bool is_start)
         : approx(approx),
           curve1(&curve1),
@@ -104,6 +110,7 @@ struct Lambda {
     {}
 
     //TODO replace with impl in high_level_predicates.h
+    //     fill_lambda returns a pair and we are only interested in a bound
     bool update_exact() const
     {
         if (is_exact) {
@@ -196,10 +203,90 @@ struct Lambda {
     }
 };
 
+// non-filtered version
+template<typename T>
+struct Lambda<Curve<T,false>>
+{
+    using Curve = ::CGAL::Frechet_distance_::internal::Curve<T,false>;
+    using C = Curve;
+    using FT = typename C::FT;
+    using RO2 = typename Root_of_traits<FT>::Root_of_2;
+    using Point = typename Curve::Point;
+
+    //~ using distance_t = typename C::distance_t;
+    //~ using Approx = distance_t;
+    using PointID = typename C::PointID;
+
+    RO2 value;
+    FT approx; // TODO: isn't it an issue to use that with an exact FT?
+               // TODO: we could use the interval in the RO2?
+
+    bool is_zero, is_one;
+
+    Lambda() {}
+
+    Lambda(int zero_one)
+        : value(zero_one)
+        , approx(zero_one)
+        , is_zero(zero_one == 0)
+        , is_one(zero_one == 1)
+    {}
+
+    Lambda(const RO2& v, const Curve& curve1, const PointID& circle_center,
+         const Curve& curve2, const PointID& line_start, const FT& radius, bool is_start)
+      : value(v)
+    {
+      if constexpr (!std::is_same_v<RO2, FT>)
+      {
+        //TODO this will not work with CORE::Expr
+        approx = v.a0()+v.a1()*approximate_sqrt(v.root());
+      }
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, const Lambda<C>&)
+    {
+        return os;
+    }
+
+    bool operator<=(const Lambda<C>& other) const
+    {
+        return (*this < other) || (*this == other);
+    }
+
+    bool operator>=(const Lambda<C>& other) const
+    {
+        return (other < *this) || (*this == other);
+    }
+
+    bool operator>(const Lambda<C>& other) const
+    {
+      return (other < *this);
+    }
+
+    bool operator==(const Lambda<C>& other) const
+    {
+        return (!(*this < other)) && (!(other < *this));
+    }
+
+    bool operator!=(const Lambda<C>& other) const
+    {
+      return !(*this == other);
+    }
+
+    bool operator<(const Lambda<C>& other) const
+    {
+        if ((is_zero && other.is_zero) || (is_one && other.is_one))
+            return false;
+        if ((is_zero && (!other.is_zero)) || (!is_one && other.is_one))
+            return true;
+        return value < other.value;
+    }
+};
+
 } } // namespace Frechet_distance_::internal
 
-template <typename C>
-bool is_one(const Frechet_distance_::internal::Lambda<C>& lambda)
+template <typename FilteredTraits>
+bool is_one(const Frechet_distance_::internal::Lambda<Frechet_distance_::internal::Curve<FilteredTraits,true>>& lambda)
 {
     if (lambda.is_one) return true;
     if (lambda.is_zero) return false;
@@ -211,8 +298,8 @@ bool is_one(const Frechet_distance_::internal::Lambda<C>& lambda)
     return is_one(*lambda.exact);
 }
 
-template <typename C>
-bool is_zero(const Frechet_distance_::internal::Lambda<C>& lambda)
+template <typename FilteredTraits>
+bool is_zero(const Frechet_distance_::internal::Lambda<Frechet_distance_::internal::Curve<FilteredTraits,true>>& lambda)
 {
     if (lambda.is_zero) return true;
     if (lambda.is_one) return false;
@@ -222,6 +309,22 @@ bool is_zero(const Frechet_distance_::internal::Lambda<C>& lambda)
     }
     lambda.update_exact();
     return is_zero(*lambda.exact);
+}
+
+template <typename T>
+bool is_one(const Frechet_distance_::internal::Lambda<Frechet_distance_::internal::Curve<T,false>>& lambda)
+{
+    if (lambda.is_one) return true;
+    if (lambda.is_zero) return false;
+    return is_one(lambda.value);
+}
+
+template <typename T>
+bool is_zero(const Frechet_distance_::internal::Lambda<Frechet_distance_::internal::Curve<T,false>>& lambda)
+{
+    if (lambda.is_zero) return true;
+    if (lambda.is_one) return false;
+    return is_zero(lambda.value);
 }
 
 /*
