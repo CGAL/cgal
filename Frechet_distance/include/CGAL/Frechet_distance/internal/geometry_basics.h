@@ -26,7 +26,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
-#include <CGAL/Root_of_traits.h>
+#include <CGAL/Sqrt_extension.h>
 #include <CGAL/Interval_nt.h>
 
 #include <CGAL/Frechet_distance/internal/id.h>
@@ -209,38 +209,39 @@ struct Lambda<Curve<T,false>>
 {
     using Curve = ::CGAL::Frechet_distance_::internal::Curve<T,false>;
     using C = Curve;
-    using FT = typename C::FT;
-    using RO2 = typename Root_of_traits<FT>::Root_of_2;
-    using Point = typename Curve::Point;
-
-    //~ using distance_t = typename C::distance_t;
-    //~ using Approx = distance_t;
+    using distance_t = typename C::distance_t;
+    using Approx = distance_t;
     using PointID = typename C::PointID;
 
-    RO2 value;
-    FT approx; // TODO: isn't it an issue to use that with an exact FT?
-               // TODO: we could use the interval in the RO2?
-
-    bool is_zero, is_one;
+    mutable Approx approx;
+    const Curve * curve1;
+    PointID circle_center;
+    const Curve * curve2;
+    PointID line_start;
+    distance_t radius;
+    mutable bool is_zero, is_one, is_start;
 
     Lambda() {}
 
     Lambda(int zero_one)
-        : value(zero_one)
-        , approx(zero_one)
-        , is_zero(zero_one == 0)
-        , is_one(zero_one == 1)
-    {}
-
-    Lambda(const RO2& v, const Curve& curve1, const PointID& circle_center,
-         const Curve& curve2, const PointID& line_start, const FT& radius, bool is_start)
-      : value(v)
+        : approx(zero_one),
+          is_zero(zero_one == 0),
+          is_one(zero_one == 1)
     {
-      if constexpr (!std::is_same_v<RO2, FT>)
-      {
-        //TODO this will not work with CORE::Expr
-        approx = v.a0()+v.a1()*approximate_sqrt(v.root());
-      }
+    }
+
+  Lambda(const Approx& approx, const Curve& curve1, const PointID& circle_center,
+         const Curve& curve2, const PointID& line_start, const distance_t& radius, bool is_start)
+        : approx(approx),
+          curve1(&curve1),
+          circle_center(circle_center),
+          curve2(&curve2),
+          line_start(line_start),
+          radius(radius),
+          is_zero(false),
+          is_one(false),
+          is_start(is_start)
+    {
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Lambda<C>&)
@@ -279,7 +280,7 @@ struct Lambda<Curve<T,false>>
             return false;
         if ((is_zero && (!other.is_zero)) || (!is_one && other.is_one))
             return true;
-        return value < other.value;
+        return approx < other.approx;
     }
 };
 
@@ -316,7 +317,7 @@ bool is_one(const Frechet_distance_::internal::Lambda<Frechet_distance_::interna
 {
     if (lambda.is_one) return true;
     if (lambda.is_zero) return false;
-    return is_one(lambda.value);
+    return is_one(lambda.approx);
 }
 
 template <typename T>
@@ -324,7 +325,7 @@ bool is_zero(const Frechet_distance_::internal::Lambda<Frechet_distance_::intern
 {
     if (lambda.is_zero) return true;
     if (lambda.is_one) return false;
-    return is_zero(lambda.value);
+    return is_zero(lambda.approx);
 }
 
 /*

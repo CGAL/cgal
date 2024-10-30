@@ -1328,6 +1328,7 @@ auto FrechetLight<C>::computeInitialInputs() -> Inputs
 template <typename C>
 std::pair<double,double> FrechetLight<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
 {
+  //TODO: no interval here for split?
     double min = 0;
     double max = curve1.getUpperBoundDistance(curve2);
 

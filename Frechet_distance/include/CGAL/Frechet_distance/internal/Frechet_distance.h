@@ -20,6 +20,8 @@
 #include <CGAL/Frechet_distance/internal/frechet_light.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
 #include <CGAL/Frechet_distance_traits_2.h>
+#include <CGAL/Frechet_distance_traits_3.h>
+#include <CGAL/Frechet_distance_traits_d.h>
 
 namespace CGAL {
 namespace Frechet_distance_ {
@@ -39,15 +41,42 @@ auto toCurve(const PointRange& point_range, const Traits& /* traits */)
     if constexpr (std::is_floating_point<typename Traits::FT>::type::value &&
                   Kernel_traits<IPoint>::Kernel::Has_filtered_predicates_tag::value)
     {
-      using AK = CGAL::Simple_cartesian<Interval_nt_advanced>;
-      using EK = CGAL::Simple_cartesian<Exact_rational>;
+      if constexpr (Traits::Dimension::value==2)
+      {
+        using AK = CGAL::Simple_cartesian<Interval_nt_advanced>;
+        using EK = CGAL::Simple_cartesian<Exact_rational>;
 
-      using Filtered_traits = std::pair<Frechet_distance_traits_2<AK>, Frechet_distance_traits_2<EK>>;
+        using Filtered_traits = std::pair<Frechet_distance_traits_2<AK>, Frechet_distance_traits_2<EK>>;
 
-      return Curve<Filtered_traits, true>(point_range);
+        return Curve<Filtered_traits, true>(point_range);
+      }
+      else if constexpr (Traits::Dimension::value==3)
+      {
+        using AK = CGAL::Simple_cartesian<Interval_nt_advanced>;
+        using EK = CGAL::Simple_cartesian<Exact_rational>;
+
+        using Filtered_traits = std::pair<Frechet_distance_traits_3<AK>, Frechet_distance_traits_3<EK>>;
+
+        return Curve<Filtered_traits, true>(point_range);
+      }
+      else
+        return Curve<Traits, false>(point_range);
+/*
+      else
+      {
+        using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
+        using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
+        using Filtered_traits = std::pair<Frechet_distance_traits_3<AK>, Frechet_distance_traits_3<EK>>;
+
+        return Curve<Filtered_traits, true>(point_range);
+      }
+*/
     }
+    else
+      return Curve<Traits, false>(point_range);
   }
-  return Curve<Traits, false>(point_range);
+  else
+    return Curve<Traits, false>(point_range);
 }
 
 template <class Traits, bool is_filtered>
