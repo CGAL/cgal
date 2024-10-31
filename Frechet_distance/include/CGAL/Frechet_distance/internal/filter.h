@@ -119,7 +119,7 @@ bool Filter<K>::isFree(Point const& fixed, Curve const& var_curve, PointID start
 
 template <typename K>
 bool Filter<K>::isFree(Curve const& curve1, PointID start1, PointID end1,
-                    Curve const& curve2, PointID start2, PointID end2)
+                       Curve const& curve2, PointID start2, PointID end2)
 {
     auto mid1 = (start1 + end1 + 1) / 2;
     auto mid2 = (start2 + end2 + 1) / 2;
@@ -129,7 +129,8 @@ bool Filter<K>::isFree(Curve const& curve1, PointID start1, PointID end1,
                            curve2.curve_length(mid2, end2));
     auto mid_dist_sqr = typename Curve::Squared_distance()(curve1[mid1], curve2[mid2]);
 
-    auto comp_dist = distance - max1 - max2;
+    // auto comp_dist = distance - max1 - max2;  // TODO: understand why if we use auto with gmpxx we get a use after free with the sanitizer (expression template I guess but why)
+    typename Curve::FT comp_dist = distance - max1 - max2;
     return certainly(! is_negative(comp_dist)) && certainly(mid_dist_sqr <= CGAL::square(comp_dist)); // Uncertain (A)
 }
 

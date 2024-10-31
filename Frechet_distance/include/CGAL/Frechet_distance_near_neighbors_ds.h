@@ -75,6 +75,7 @@ auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
     auto result = kd_tree.search(curve, distance);
 
     auto predicate = [&](PolylineID id) {
+      CGAL_assertion(id < curves.size());
         return  is_Frechet_distance_larger<Traits, PointRange>(
             curve, curves[id], distance);
     };
