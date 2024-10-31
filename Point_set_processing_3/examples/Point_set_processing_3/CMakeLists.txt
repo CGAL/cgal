@@ -8,9 +8,6 @@ find_package(CGAL REQUIRED)
 
 # VisualC++ optimization for applications dealing with large data
 if(MSVC)
-  # Quit warning in the lasreader
-  add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
-
   if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     # Allow Windows 32bit applications to use up to 3GB of RAM
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
@@ -47,7 +44,7 @@ foreach(
   read_ply_points_with_colors_example
   write_ply_points_example)
   create_single_source_cgal_program("${target}.cpp")
-  target_link_libraries(${target} PRIVATE ${CGAL_libs})
+  target_link_libraries(${target} PRIVATE CGAL::CGAL)
 endforeach()
 
 #disable if MSVC 2017
@@ -59,6 +56,10 @@ if(NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910
     create_single_source_cgal_program("write_las_example.cpp")
     target_link_libraries(read_las_example PRIVATE CGAL::LASLIB_support)
     target_link_libraries(write_las_example PRIVATE CGAL::LASLIB_support)
+
+    target_compile_definitions(read_las_example PRIVATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(write_las_example PRIVATE -D_CRT_SECURE_NO_DEPRECATE -D_CRT_SECURE_NO_WARNINGS)
+
   else()
     message(STATUS "NOTICE : the LAS reader test requires LASlib and will not be compiled.")
   endif()

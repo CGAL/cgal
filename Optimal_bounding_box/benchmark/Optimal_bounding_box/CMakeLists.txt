@@ -15,4 +15,4 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 create_single_source_cgal_program("bench_obb.cpp")
-target_link_libraries(bench_obb PUBLIC CGAL::Eigen3_support)
+target_link_libraries(bench_obb PRIVATE CGAL::Eigen3_support)

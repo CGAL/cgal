@@ -10,5 +10,5 @@ create_single_source_cgal_program("cc_benchmark.cpp")
 
 if(TARGET CGAL::TBB_support)
   message(STATUS "Found TBB")
-  target_link_libraries(cc_benchmark PUBLIC CGAL::TBB_support)
+  target_link_libraries(cc_benchmark PRIVATE CGAL::TBB_support)
 endif()
