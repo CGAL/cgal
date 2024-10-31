@@ -305,7 +305,7 @@ public:
 
     Bbox const& bbox() const { return extreme_points; }
 
-    FT getUpperBoundDistance(Curve const& other) const
+    double getUpperBoundDistance(Curve const& other) const
     {
       Bbox bb = this->bbox() + other.bbox();
       return length_of_diagonal(bb);
