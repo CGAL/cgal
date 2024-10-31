@@ -40,7 +40,7 @@ class FrechetKdTree
 {
     using PT = Traits; // Polyline_traits_2<Traits, double>;
     using FT = typename PT::FT;
-    using Point = typename PT::Point;
+    using Point = typename PT::Point_d;
     using Polyline = std::vector<Point>;
     using Polylines = std::vector<Polyline>;
     using PolylineID = std::size_t;

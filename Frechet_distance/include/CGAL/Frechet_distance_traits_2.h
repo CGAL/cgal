@@ -43,8 +43,24 @@ public:
 
   using Kernel = GT;
   using FT = typename Kernel::FT;
-  using Point = typename Kernel::Point_2;
-  using Squared_distance = typename Kernel::Compute_squared_distance_2;
+  using Point_d = typename Kernel::Point_2;
+  using Compute_squared_distance_d = typename Kernel::Compute_squared_distance_2;
+  using Construct_bbox_d = typename Kernel::Construct_bbox_2;
+  using Cartesian_const_iterator_d = typename Kernel::Cartesian_const_iterator_2;
+  using Construct_cartesian_const_iterator_d = typename Kernel::Construct_cartesian_const_iterator_2;
+
+  Compute_squared_distance_d compute_squared_distance_d_object() const {
+     return Construct_cartesian_const_iterator_d();
+  }
+
+  Construct_bbox_d construct_bbox_d_object() const {
+     return Construct_cartesian_const_iterator_d();
+  }
+
+  Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
+     return Construct_cartesian_const_iterator_d();
+  }
+
 
 /*
   static constexpr bool is_filtered = CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::is_filtered;

@@ -26,7 +26,7 @@ namespace CGAL
 /*!
  * \ingroup PkgFrechetDistanceRef
  *
-* \cgalModels{SearchTraits}
+* \cgalModels{FrechetDistanceTraits}
 * \tparam GT  geometric traits class
 */
 template <class GT>
@@ -37,16 +37,33 @@ public:
 
   using Kernel = GT;
   using FT = typename Kernel::FT;
-  using Point = typename Kernel::Point_d;
+  using Point_d = typename Kernel::Point_d;
+  using Compute_squared_distance_d = typename Kernel::Squared_distance_d;
+  using Construct_bbox_d = typename Kernel::Construct_bbox_d;
+  using Cartesian_const_iterator_d = typename Kernel::Cartesian_const_iterator_d;
+  using Construct_cartesian_const_iterator_d = typename Kernel::Construct_cartesian_const_iterator_d;
 
+  Compute_squared_distance_d compute_squared_distance_d_object() const {
+     return Construct_cartesian_const_iterator_d();
+  }
+
+  Construct_bbox_d construct_bbox_d_object() const {
+     return Construct_cartesian_const_iterator_d();
+  }
+
+  Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
+     return Construct_cartesian_const_iterator_d();
+  }
+
+
+/*
   static constexpr bool is_filtered = CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::is_filtered;
   static constexpr bool  is_floating_point = CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::is_floating_point;
-/*
   using distance_t = Interval_nt<false>;
   using Approximate_kernel = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
   using Approximate_point = typename Approximate_kernel::Point_d;
 */
-  using Squared_distance = typename Kernel::Squared_distance_d;
+
 /*
   using Exact_kernel = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
   using Exact_point = typename Exact_kernel::Point_d;

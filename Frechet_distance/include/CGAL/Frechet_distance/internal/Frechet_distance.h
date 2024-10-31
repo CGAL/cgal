@@ -30,7 +30,7 @@ namespace internal {
 template <class PointRange, class Traits>
 auto toCurve(const PointRange& point_range, const Traits& /* traits */)
 {
-  using IPoint = typename Traits::Point;
+  using IPoint = typename Traits::Point_d;
   constexpr bool is_from_cgal_kernel =
     !std::is_same_v<typename Kernel_traits<IPoint>::Kernel, internal_kernel_traits::Dummy_kernel<IPoint>>;
 

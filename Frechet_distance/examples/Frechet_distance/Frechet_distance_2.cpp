@@ -6,7 +6,7 @@
 
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Traits = CGAL::Frechet_distance_traits_2<Kernel>;
-using Point = Traits::Point;
+using Point = Traits::Point_d;
 
 int main(int argc, char* argv[])
 {
