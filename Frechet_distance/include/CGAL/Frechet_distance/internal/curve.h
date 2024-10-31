@@ -214,7 +214,7 @@ public:
 
     bool empty() const { return points.empty(); }
 
-    Point const& operator[](PointID const& i) const { return points[i]; }
+    Point const& operator[](PointID const& i) const { CGAL_assertion(i<points.size()); return points[i]; }
 
     Point const& point(PointID const& i) const { return points[i]; }
 
@@ -269,6 +269,9 @@ public:
 
     distance_t curve_length(PointID const& i, PointID const& j) const
     {
+      CGAL_assertion(i>=0 && i<prefix_length.size());
+      CGAL_assertion(j>=0 && j<prefix_length.size());
+
         return prefix_length[j] - prefix_length[i];
     }
 
