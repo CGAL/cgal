@@ -76,22 +76,13 @@ class Curve<std::pair<Approximate_traits,Rational_traits>, true>
 public:
     using Base = Curve<Approximate_traits, false>;
     using distance_t = typename Approximate_traits::FT;
-    using Point = typename Approximate_traits::Point;
-    using Squared_distance = typename Approximate_traits::Squared_distance;
-
+    using Point = typename Approximate_traits::Point_d;
+    using PointID = typename Base::PointID;
 //TODO: handle that
 //    using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
 
-  //TODO: we expect Dimension_tag for now.
-    using Base::dimension;
-    using Base::Bbox;
-
-
-    using PointID = ID<Point>;
-    using Points = std::vector<Point>;
-
     using Rational = typename Rational_traits::FT;
-    using Rational_point = typename Rational_traits::Point;
+    using Rational_point = typename Rational_traits::Point_d;
 
     // TODO: this assumes that input interval are all tight --> need a PM!
     using I2R = Cartesian_converter< typename Kernel_traits<Point>::Kernel,
@@ -167,59 +158,35 @@ public:
     using FT = typename Traits::FT;
     using distance_t = FT;
 
-    using Point = typename Traits::Point;
+    using Point = typename Traits::Point_d;
 
-    using Squared_distance = typename Traits::Squared_distance;
+    using Squared_distance = typename Traits::Compute_squared_distance_d;
+    using Construct_bbox = typename Traits::Construct_bbox_d;
 
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
-    using InputPoints = std::vector<typename T::Point>;
+    using InputPoints = std::vector<Point>;
 
 
     Curve() = default;
 
     void init()
     {
-        if (points.empty()) {
-            return;
-        }
+      if (points.empty()) return;
 
-        prefix_length.resize(points.size());
+      prefix_length.resize(points.size());
+      prefix_length[0] = 0;
 
-        prefix_length[0] = 0;
+      Construct_bbox bbox;
+      extreme_points = bbox(point(0));
 
-        std::array<double, dimension> min_c, max_c;
-        for (int d=0; d<dimension; ++d)
-        {
-          //TODO: use already know intervals
-          auto inter = to_interval(point(0)[d]);
-          min_c[d] = inter.first;
-          max_c[d] = inter.second;
-        }
+      for (PointID i = 1; i < points.size(); ++i)
+      {
+        auto segment_distance = distance(point(i - 1), point(i));
+        prefix_length[i] = prefix_length[i - 1] + segment_distance;
 
-        for (PointID i = 1; i < points.size(); ++i) {
-            auto segment_distance = distance(point(i - 1), point(i));
-            prefix_length[i] = prefix_length[i - 1] + segment_distance;
-            for (int d=0; d<dimension; ++d)
-            {
-              //TOOD: use already know intervals
-              auto inter = to_interval(point(i)[d]);
-              min_c[d] = (std::min)(min_c[d], inter.first);
-              max_c[d] = (std::max)(max_c[d], inter.second);
-            }
-        }
-        if constexpr (dimension==2)
-          extreme_points=Bbox_2(min_c[0], min_c[1], max_c[0], max_c[1]);
-        else if constexpr (dimension==3)
-          extreme_points=Bbox_3(min_c[0], min_c[1], min_c[2], max_c[0], max_c[1], max_c[2]);
-        else
-        {
-          for (int d=0; d<dimension; ++d)
-          {
-            extreme_points.min(d)=min_c[d];
-            extreme_points.max(d)=max_c[d];
-          }
-        }
+        extreme_points += bbox(point(i));
+      }
     }
 
 /*
@@ -318,10 +285,12 @@ public:
           prefix_length.push_back(prefix_length.back() + segment_distance);
       }
   //TODO update that code
+      Construct_bbox bbox;
+
       if (points.empty()){
-        extreme_points = point.bbox();
+        extreme_points = bbox(point);
       } else {
-        extreme_points += point.bbox();
+        extreme_points += bbox(point);
       }
       points.push_back(point);
     }

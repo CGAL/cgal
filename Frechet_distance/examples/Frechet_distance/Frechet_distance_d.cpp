@@ -7,7 +7,7 @@
 
 using Kernel = CGAL::Epick_d<CGAL::Dimension_tag<4>>;
 using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
-using Point = Traits::Point;
+using Point = Traits::Point_d;
 
 int main(int argc, char* argv[])
 {

@@ -34,7 +34,7 @@ namespace CGAL
  * \param distance the decision distance
  * \param traits the geometric traits object
  *
- * \tparam Traits a model of `SearchTraits`
+ * \tparam Traits a model of `FrechetDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  */

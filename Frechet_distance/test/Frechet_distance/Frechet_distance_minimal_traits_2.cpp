@@ -5,8 +5,8 @@ struct MinimalFrechetTraits {
   using Dimension = CGAL::Dimension_tag<2>;
   using FT = double;
 
-  struct Point {
-    Point(double, double) {}
+  struct Point_d {
+    Point_d(double, double) {}
 
     double operator[](int) const
     {
@@ -14,9 +14,17 @@ struct MinimalFrechetTraits {
     }
   };
 
-  struct Squared_distance
+  struct Compute_squared_distance_d
   {
     double operator()(Point, Point) const
+    {
+      return 0;
+    }
+  };
+
+  struct Construct_bbox_d
+  {
+    CGAL::Bbox_2 operator()(Point_d) const
     {
       return 0;
     }
