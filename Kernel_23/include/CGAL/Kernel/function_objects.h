@@ -2523,9 +2523,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Sphere_3   Sphere_3;
     typedef typename K::Circle_3   Circle_3;
     typedef typename Sphere_3::Rep Rep;
-  public:
-    typedef Sphere_3               result_type;
 
+  public:
     Rep // Sphere_3
     operator()(Return_base_tag, const Point_3& center, const FT& squared_radius,
                 Orientation orientation = COUNTERCLOCKWISE) const
@@ -2551,7 +2550,7 @@ namespace CommonKernelFunctors {
                 Orientation orientation = COUNTERCLOCKWISE) const
     {  return Rep(center, orientation); }
 
-    Rep
+    decltype(auto)
     operator() (Return_base_tag, const Circle_3 & c) const
     { return c.rep().diametral_sphere(); }
 
@@ -2580,10 +2579,9 @@ namespace CommonKernelFunctors {
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return this->operator()(Return_base_tag(), center, orientation); }
 
-    Sphere_3
+    decltype(auto)
     operator() (const Circle_3 & c) const
     { return this->operator()(Return_base_tag(), c); }
-
   };
 
   template <typename K>

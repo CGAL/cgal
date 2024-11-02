@@ -130,7 +130,7 @@ public:
     return diametral_sphere();
   }
 
-  Point_3 center() const
+  decltype(auto) center() const
   {
     return diametral_sphere().center();
   }

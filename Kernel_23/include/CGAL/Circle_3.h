@@ -101,14 +101,14 @@ public:
     return typename R::Construct_sphere_3()(*this);
   }
 
-  Point_3 center() const
+  decltype(auto) center() const
   {
-    return typename R::Construct_sphere_3()(*this).center();
+    return diametral_sphere().center();
   }
 
   FT squared_radius() const
   {
-    return typename R::Construct_sphere_3()(*this).squared_radius();
+    return diametral_sphere().squared_radius();
   }
 
   decltype(auto)
