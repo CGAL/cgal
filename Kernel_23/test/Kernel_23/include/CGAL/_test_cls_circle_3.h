@@ -17,8 +17,11 @@
 #ifndef CGAL__TEST_CLS_CIRCLE_3_H
 #define CGAL__TEST_CLS_CIRCLE_3_H
 
+#include "_approx_equal.h"
+
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Random.h>
+
 #include <cassert>
 
 // Some predicates and constructions tests related to the class Circle_3 are done here
@@ -33,9 +36,11 @@ void _test_bounding_box_construct(const K &k)
   typedef typename K::Plane_3                          Plane_3;
   typedef typename K::Sphere_3                         Sphere_3;
   typedef typename K::Circle_3                         Circle_3;
+  typedef typename K::Construct_bbox_3                 Construct_bbox_3;
   typedef typename K::Construct_circle_3               Construct_circle_3;
   typedef CGAL::Bbox_3                                 Bbox_3;
 
+  Construct_bbox_3 bbox = k.construct_bbox_3_object();
   Construct_circle_3 theConstruct_circle_3 = k.construct_circle_3_object();
 
   std::cout << "Testing the bbox of Circle_3..." << std::endl;
@@ -44,7 +49,7 @@ void _test_bounding_box_construct(const K &k)
   Circle_3 c;
 
   c = theConstruct_circle_3(Point_3(0,0,0), 1, Plane_3(1, 0, 0, 0));
-  b = c.bbox();
+  b = bbox(c);
   assert(b.xmin() <= 0.001);
   assert(b.xmax() >= -0.001);
   assert(b.ymin() <= -0.999);
@@ -53,7 +58,7 @@ void _test_bounding_box_construct(const K &k)
   assert(b.zmax() >= 0.999);
 
   c = theConstruct_circle_3(Sphere_3(Point_3(0,0,0), 1), Plane_3(1, 0, 0, -FT(1)/FT(2)));
-  b = c.bbox();
+  b = bbox(c);
   assert(b.xmin() <= 0.501);
   assert(b.xmax() >= 0.499);
   assert(b.ymin() <= (-std::sqrt(0.5)+0.001));
@@ -72,10 +77,14 @@ void _test_circle_construct(const K &k) {
   typedef typename K::Sphere_3                         Sphere_3;
   typedef typename K::Equal_3                          Equal_3;
   typedef typename K::Construct_circle_3               Construct_circle_3;
+  typedef typename K::Construct_center_3               Construct_center_3;
   typedef typename K::Compute_squared_distance_3       Compute_squared_distance_3;
+
+  const bool nonexact = std::is_floating_point<FT>::value;
 
   Equal_3 theEqual_3 = k.equal_3_object();
   Construct_circle_3 theConstruct_circle_3 = k.construct_circle_3_object();
+  Construct_center_3 center = k.construct_center_3_object();
   Compute_squared_distance_3 squared_distance = k.compute_squared_distance_3_object();
 
   CGAL::Random generatorOfgenerator;
@@ -99,66 +108,72 @@ void _test_circle_construct(const K &k) {
     do {
       r = theRandom.get_int(random_min,random_max);
    } while(r <= 0);
-    if(a != 0) {
-      x = FT(-(b*u + c*v + d))/FT(a);
-      y = FT(u);
-      z = FT(v);
-    } else if(b != 0) {
-      x = FT(u);
-      y = FT(-(a*u + c*v + d))/FT(b);
-      z = FT(v);
-    } else {
-      x = FT(u);
-      y = FT(v);
-      z = FT(-(a*u + b*v + d))/FT(c);
-    }
+   CGAL::point_on_planeC3<FT>(a, b, c, d, x, y, z);
+    // if(a != 0) {
+    //   x = FT(-(b*u + c*v + d))/FT(a);
+    //   y = FT(u);
+    //   z = FT(v);
+    // } else if(b != 0) {
+    //   x = FT(u);
+    //   y = FT(-(a*u + c*v + d))/FT(b);
+    //   z = FT(v);
+    // } else {
+    //   x = FT(u);
+    //   y = FT(v);
+    //   z = FT(-(a*u + b*v + d))/FT(c);
+    // }
     const Plane_3 plane = Plane_3(a,b,c,d);
     const Plane_3 plane2 = Plane_3(2*a,2*b,2*c,2*d);
     const FT sqr = FT(r);
     const Point_3 p = Point_3(x,y,z);
     Circle_3 circle = theConstruct_circle_3(p,sqr,plane);
-
     assert(circle.supporting_plane().a() == a);
     assert(circle.supporting_plane().b() == b);
     assert(circle.supporting_plane().c() == c);
     assert(circle.supporting_plane().d() == d);
-    assert(circle.center().x() == x);
-    assert(circle.center().y() == y);
-    assert(circle.center().z() == z);
+    const Point_3 ctr = center(circle);
+    assert(ctr.x() == x);
+    assert(ctr.y() == y);
+    assert(ctr.z() == z);
     assert(circle.squared_radius() == sqr);
     Circle_3 circle2 = theConstruct_circle_3(p,sqr,plane2);
     Circle_3 circle3 = theConstruct_circle_3(p,sqr,Vector_3(a,b,c));
     assert(theEqual_3(circle,circle2));
-    assert(theEqual_3(circle,circle3));
 
-                Plane_3 pus(circle2);
-                Sphere_3 sus(circle3);
-                assert(pus == circle2.supporting_plane());
-                assert(sus == circle3.diametral_sphere());
+    if(CGAL::is_zero(a*x+b*y*c*z+d)) { // for EPICK
+      assert(theEqual_3(circle,circle3));
+    }
+
+    Plane_3 pus(circle2);
+    Sphere_3 sus(circle3);
+    assert(pus == circle2.supporting_plane());
+    assert(sus == circle3.diametral_sphere());
   }
 
   Point_3 p1, p2, p3;
   p1 = Point_3(1,0,0);
   p2 = Point_3(0,1,0);
   p3 = Point_3(0,0,1);
-        Circle_3 c = theConstruct_circle_3(p1, p2, p3);
-        FT r1 = squared_distance(c.center(), p1);
-        FT r2 = squared_distance(c.center(), p2);
-        FT r3 = squared_distance(c.center(), p3);
-        assert(r1 == r2);
-        assert(r2 == r3);
-        assert(r3 == c.squared_radius());
+  Circle_3 c = theConstruct_circle_3(p1, p2, p3);
+  FT r1 = squared_distance(center(c), p1);
+  FT r2 = squared_distance(center(c), p2);
+  FT r3 = squared_distance(center(c), p3);
+  assert(r1 == r2);
+  assert(r2 == r3);
+  assert(r3 == c.squared_radius());
 
-        p1 = Point_3(1.3,0.2,0.1);
-  p2 = Point_3(0.57,1.23,3.0);
-  p3 = Point_3(9,1.2,1.3);
-        c = theConstruct_circle_3(p1, p2, p3);
-        r1 = squared_distance(c.center(), p1);
-        r2 = squared_distance(c.center(), p2);
-        r3 = squared_distance(c.center(), p3);
-        assert(r1 == r2);
-        assert(r2 == r3);
-        assert(r3 == c.squared_radius());
+  if (!nonexact) {
+    p1 = Point_3(1.3,0.2,0.1);
+    p2 = Point_3(0.57,1.23,3.0);
+    p3 = Point_3(9,1.2,1.3);
+    c = theConstruct_circle_3(p1, p2, p3);
+    r1 = squared_distance(center(c), p1);
+    r2 = squared_distance(center(c), p2);
+    r3 = squared_distance(center(c), p3);
+    assert(CGAL::testsuite::approx_equal<FT>(r1,r2));
+    assert(CGAL::testsuite::approx_equal<FT>(r2,r3));
+    assert(CGAL::testsuite::approx_equal<FT>(r3,c.squared_radius()));
+  }
 
   // No need to test the constructors based on intersection
   // _test_intersect_construct will test it
@@ -175,6 +190,8 @@ void _test_construct_radical_plane(const K &k) {
   typedef typename K::Intersect_3                      Intersect_3;
   typedef typename K::Construct_sphere_3               Construct_sphere_3;
   typedef typename K::Construct_radical_plane_3        Construct_radical_plane_3;
+
+  const bool nonexact = std::is_floating_point<FT>::value;
 
   Intersect_3 theIntersect_3 = k.intersect_3_object();
   Construct_sphere_3 theConstruct_sphere_3 = k.construct_sphere_3_object();
@@ -212,13 +229,18 @@ void _test_construct_radical_plane(const K &k) {
           else if((d2 == (r+1)*(r+1)) || (d2 == (r-1)*(r-1))) {
             Point_3 interp;
             assert(assign(interp, intersection_1));
-            assert(theHas_on_3(p, interp));
+
+            if(!nonexact) {
+              assert(theHas_on_3(p, interp));
+            }
           }
           // 1 Intersection Circle
           else {
             Circle_3 circle1;
             assert(assign(circle1, intersection_1));
-            assert(theHas_on_3(p, circle1));
+            if(!nonexact) {
+              assert(theHas_on_3(p, circle1));
+            }
           }
         }
       }
