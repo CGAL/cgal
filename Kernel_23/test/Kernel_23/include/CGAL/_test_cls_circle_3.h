@@ -108,20 +108,19 @@ void _test_circle_construct(const K &k) {
     do {
       r = theRandom.get_int(random_min,random_max);
    } while(r <= 0);
-   CGAL::point_on_planeC3<FT>(a, b, c, d, x, y, z);
-    // if(a != 0) {
-    //   x = FT(-(b*u + c*v + d))/FT(a);
-    //   y = FT(u);
-    //   z = FT(v);
-    // } else if(b != 0) {
-    //   x = FT(u);
-    //   y = FT(-(a*u + c*v + d))/FT(b);
-    //   z = FT(v);
-    // } else {
-    //   x = FT(u);
-    //   y = FT(v);
-    //   z = FT(-(a*u + b*v + d))/FT(c);
-    // }
+    if(a != 0) {
+      x = FT(-(b*u + c*v + d))/FT(a);
+      y = FT(u);
+      z = FT(v);
+    } else if(b != 0) {
+      x = FT(u);
+      y = FT(-(a*u + c*v + d))/FT(b);
+      z = FT(v);
+    } else {
+      x = FT(u);
+      y = FT(v);
+      z = FT(-(a*u + b*v + d))/FT(c);
+    }
     const Plane_3 plane = Plane_3(a,b,c,d);
     const Plane_3 plane2 = Plane_3(2*a,2*b,2*c,2*d);
     const FT sqr = FT(r);
