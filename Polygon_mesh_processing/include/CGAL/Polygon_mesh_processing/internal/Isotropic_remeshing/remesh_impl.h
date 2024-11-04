@@ -1050,31 +1050,8 @@ namespace internal {
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
 
-      if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
-      {
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-        std::cout << " using tangential relaxation with weights equal to 1";
-        std::cout << std::endl;
-#endif
-        tangential_relaxation(
-          vertices(mesh_),
-          mesh_,
-          CGAL::parameters::number_of_iterations(nb_iterations)
-            .vertex_point_map(vpmap_)
-            .geom_traits(gt_)
-            .edge_is_constrained_map(constrained_edges_pmap)
-            .vertex_is_constrained_map(constrained_vertices_pmap)
-            .relax_constraints(relax_constraints)
-            .allow_move_functor(shall_move)
-        );
-      }
-      else
-      {
-#ifdef CGAL_PMP_REMESHING_VERBOSE
-        std::cout << " using tangential relaxation weighted with the sizing field";
-        std::cout << std::endl;
-#endif
-        tangential_relaxation(
+      // run tangential_relaxation
+      tangential_relaxation(
           vertices(mesh_),
           mesh_,
           CGAL::parameters::number_of_iterations(nb_iterations)
@@ -1086,7 +1063,6 @@ namespace internal {
             .sizing_function(sizing)
             .allow_move_functor(shall_move)
         );
-      }
 
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
 
