@@ -20,6 +20,7 @@
 #include <cassert>
 #include <fstream>
 #include <string>
+#include <string_view>
 #include <ranges>
 #include <optional>
 #include <chrono>
@@ -109,6 +110,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   output.off: output mesh
 
   --merge-facets/--no-merge-facets: merge facets into patches (set by default)
+  --merge-facets-old: merge facets using the old method
   --use-new-cavity-algorithm/--use-old-cavity-algorithm: use new or old cavity algorithm (default: new)
   --failure-expression <expression>: expression to detect bad meshratio)
   --ratio <double>: ratio of faces to remove (default: 0.1), if --failure-expression is used
@@ -122,7 +124,9 @@ Usage: cdt_3_from_off [options] input.off output.off
   --dump-patches-borders-prefix <filenames_prefix>: dump patches borders
   --dump-after-conforming <filename.off>: dump mesh after conforming in OFF
 
-  -V/--verbose: verbose (can be used several times)
+  --no-repair: do not repair the mesh
+  --no-is-valid: do not call is_valid checks
+  --debug-input-faces: debug input faces
   --debug-missing-regions: debug missing regions
   --debug-regions: debug regions
   --debug_copy_triangulation_into_hole: debug copy_triangulation_into_hole
@@ -130,8 +134,9 @@ Usage: cdt_3_from_off [options] input.off output.off
   --debug-finite-edges-map: debug the use of a hash map for finite edges
   --use-finite-edges-map: use a hash map for finite edges (default: false)
 
+  --verbose/-V: verbose (can be used several times)
   --quiet: do not print anything
-  --help: print this help
+  --help/-h: print this help
 )";
 }
 
@@ -147,6 +152,11 @@ Usage: cdt_3_from_off [options] input.off output.off
   auto validation_task_handle = __itt_string_handle_create("CDT_3: validation");
 #endif // CGAL_USE_ITT
 
+[[noreturn]] void error(std::string_view message, std::string_view extra = "") {
+  std::cerr << "Error: " << message << extra << '\n';
+  std::exit(EXIT_FAILURE);
+}
+
 int main(int argc, char* argv[])
 {
   CDT::Conforming_Dt::with_offset.offset = -1;
@@ -158,78 +168,75 @@ int main(int argc, char* argv[])
   CDT_options options;
   int positional = 0;
 
-  for(int i = 1; i < argc; ++i) {
-    std::string arg = argv[i];
-    if(arg == "--merge-facets") {
+  const std::vector<std::string_view> args(argv + 1, argv + argc);
+
+  using namespace std::literals::string_view_literals;
+  for (auto it = args.begin(); it != args.end(); ++it) {
+    auto get_next_arg_or_error_out = [&it, &args]() -> std::string_view {
+      if(it + 1 == args.end()) {
+        error("extra argument required after "sv, *it);
+      }
+      return *++it;
+    };
+    std::string_view arg = *it;
+    if(arg == "--merge-facets"sv) {
       options.merge_facets = true;
-    } else if(arg == "--no-merge-facets") {
+    } else if(arg == "--no-merge-facets"sv) {
       options.merge_facets = false;
-    } else if(arg == "--use-new-cavity-algorithm") {
+    } else if(arg == "--use-new-cavity-algorithm"sv) {
       options.use_new_cavity_algorithm = true;
-    } else if(arg == "--use-old-cavity-algorithm") {
+    } else if(arg == "--use-old-cavity-algorithm"sv) {
       options.use_new_cavity_algorithm = false;
-    } else if(arg == "--no-repair") {
+    } else if(arg == "--no-repair"sv) {
       options.repair_mesh = false;
-    } else if(arg == "--merge-facets-old") {
+    } else if(arg == "--merge-facets-old"sv) {
       options.merge_facets = true;
       options.merge_facets_old_method = true;
-    } else if(arg == "--failure-expression") {
-      assert(i + 1 < argc);
-      options.failure_assertion_expression = argv[++i];
-    } else if(arg == "--ratio") {
-      assert(i + 1 < argc);
-      options.ratio = std::stod(argv[++i]);
-    } else if(arg == "--dump-patches-after-merge") {
-      assert(i + 1 < argc);
-      options.dump_patches_after_merge_filename = argv[++i];
-    } else if(arg == "--dump-patches-borders-prefix") {
-      assert(i + 1 < argc);
-      options.dump_patches_borders_prefix = argv[++i];
-    } else if(arg == "--dump-surface-mesh-after-merge") {
-      assert(i + 1 < argc);
-      options.dump_surface_mesh_after_merge_filename = argv[++i];
-    } else if(arg == "--dump-after-conforming") {
-      assert(i + 1 < argc);
-      options.dump_after_conforming_filename = argv[++i];
-    } else if(arg == "--vertex-vertex-epsilon") {
-      assert(i + 1 < argc);
-      options.vertex_vertex_epsilon = std::stod(argv[++i]);
-    } else if(arg == "--segment-vertex-epsilon") {
-      assert(i + 1 < argc);
-      options.segment_vertex_epsilon = std::stod(argv[++i]);
-    } else if(arg == "--coplanar-polygon-max-angle") {
-      assert(i + 1 < argc);
-      options.coplanar_polygon_max_angle = std::stod(argv[++i]);
-    } else if(arg == "--coplanar-polygon-max-distance") {
-      assert(i + 1 < argc);
-      options.coplanar_polygon_max_distance = std::stod(argv[++i]);
-    } else if(arg == "--quiet") {
+    } else if(arg == "--failure-expression"sv) {
+      options.failure_assertion_expression = get_next_arg_or_error_out();
+    } else if(arg == "--ratio"sv) {
+      options.ratio = std::stod(std::string(get_next_arg_or_error_out()));
+    } else if(arg == "--dump-patches-after-merge"sv) {
+      options.dump_patches_after_merge_filename = get_next_arg_or_error_out();
+    } else if(arg == "--dump-patches-borders-prefix"sv) {
+      options.dump_patches_borders_prefix = get_next_arg_or_error_out();
+    } else if(arg == "--dump-surface-mesh-after-merge"sv) {
+      options.dump_surface_mesh_after_merge_filename = get_next_arg_or_error_out();
+    } else if(arg == "--dump-after-conforming"sv) {
+      options.dump_after_conforming_filename = get_next_arg_or_error_out();
+    } else if(arg == "--vertex-vertex-epsilon"sv) {
+      options.vertex_vertex_epsilon = std::stod(std::string(get_next_arg_or_error_out()));
+    } else if(arg == "--segment-vertex-epsilon"sv) {
+      options.segment_vertex_epsilon = std::stod(std::string(get_next_arg_or_error_out()));
+    } else if(arg == "--coplanar-polygon-max-angle"sv) {
+      options.coplanar_polygon_max_angle = std::stod(std::string(get_next_arg_or_error_out()));
+    } else if(arg == "--coplanar-polygon-max-distance"sv) {
+      options.coplanar_polygon_max_distance = std::stod(std::string(get_next_arg_or_error_out()));
+    } else if(arg == "--quiet"sv) {
       options.quiet = true;
-    } else if(arg == "--no-is-valid") {
+    } else if(arg == "--no-is-valid"sv) {
       options.call_is_valid = false;
-    } else if(arg == "--debug-input-faces") {
+    } else if(arg == "--debug-input-faces"sv) {
       options.debug_input_faces = true;
-    } else if(arg == "--debug-missing-regions") {
+    } else if(arg == "--debug-missing-regions"sv) {
       options.debug_missing_regions = true;
-    } else if(arg == "--debug-regions") {
+    } else if(arg == "--debug-regions"sv) {
       options.debug_regions = true;
-    } else if(arg == "--debug_copy_triangulation_into_hole") {
+    } else if(arg == "--debug_copy_triangulation_into_hole"sv) {
       options.debug_copy_triangulation_into_hole = true;
-    } else if(arg == "--debug-validity") {
+    } else if(arg == "--debug-validity"sv) {
       options.debug_validity = true;
-    } else if(arg == "--debug-finite-edges-map") {
+    } else if(arg == "--debug-finite-edges-map"sv) {
       options.debug_finite_edges_map = true;
-    } else if(arg == "--use-finite-edges-map") {
+    } else if(arg == "--use-finite-edges-map"sv) {
       options.use_finite_edges_map = true;
-    } else if(arg == "-V") {
+    } else if(arg == "--verbose"sv || arg == "-V"sv) {
       ++options.verbose;
-    } else if(arg == "--help") {
+    } else if(arg == "--help"sv || arg == "-h"sv) {
       help(std::cout);
       return 0;
     } else if(arg[0] == '-') {
-      std::cerr << "Unknown option: " << arg << '\n';
-      help(std::cerr);
-      return 1;
+      error("unknown option "sv, arg);
     } else {
       switch(positional) {
         case 0:
@@ -241,9 +248,7 @@ int main(int argc, char* argv[])
           ++positional;
           break;
         default:
-          std::cerr << "Too many arguments\n";
-          help(std::cerr);
-          return 1;
+          error("too many arguments"sv);
       }
     }
   }
