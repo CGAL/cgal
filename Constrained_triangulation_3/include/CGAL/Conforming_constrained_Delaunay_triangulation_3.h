@@ -538,15 +538,12 @@ class Conforming_constrained_Delaunay_triangulation_3 {
   static_assert(std::is_base_of_v<Triangulation, DT_3>);
   static_assert(CGAL::is_nothrow_movable_v<DT_3>);
 
-  Conforming_constrained_Delaunay_triangulation_3_impl<DT_3> cdt_impl = {};
-  static_assert(CGAL::is_nothrow_movable_v<Conforming_constrained_Delaunay_triangulation_3_impl<DT_3>>);
+  using CDT_3_impl = Conforming_constrained_Delaunay_triangulation_3_impl<DT_3>;
+  static_assert(CGAL::is_nothrow_movable_v<CDT_3_impl>);
 
-  struct Is_constrained {
-    const Conforming_constrained_Delaunay_triangulation_3& cdt;
-    bool operator()(typename Triangulation::Facet f) const {
-      return cdt.is_facet_constrained(f);
-    }
-  };
+  CDT_3_impl cdt_impl = {};
+
+  using Is_constrained = typename CDT_3_impl::Is_constrained;
 public:
   /// \name Constructors
   /// @{
@@ -894,8 +891,7 @@ public:
    * The value type of this iterator is `Triangulation::Facet`.
    */
 #ifndef DOXYGEN_RUNNING
-  using Constrained_facets_iterator =
-      boost::filter_iterator<Is_constrained, typename Triangulation::All_facets_iterator>;
+  using Constrained_facets_iterator = typename CDT_3_impl::Constrained_facets_iterator;
 #else
   using Constrained_facets_iterator = unspecified_type;
 #endif
@@ -948,14 +944,14 @@ public:
    * The sequence of constrained facets is in an arbitrary order.
    */
   Constrained_facets_iterator constrained_facets_begin() const {
-    return {Is_constrained{*this}, cdt_impl.all_facets_begin(), cdt_impl.all_facets_end()};
+    return cdt_impl.constrained_facets_begin();
   }
 
   /**
    * \brief returns the past-the-end iterator of the sequence of constrained facets.
    */
   Constrained_facets_iterator constrained_facets_end() const {
-    return {Is_constrained{*this}, cdt_impl.all_facets_end(), cdt_impl.all_facets_end()};
+    return cdt_impl.constrained_facets_end();
   }
 
 /**
@@ -1000,6 +996,25 @@ public:
     return Get_io_signature<Conforming_Dt>()();
   }
 
+  struct Is_constrained {
+    const Conforming_constrained_Delaunay_triangulation_3_impl& cdt;
+    bool operator()(Facet f) const {
+      return cdt.is_facet_constrained(f);
+    }
+  };
+
+  using Constrained_facets_iterator = boost::filter_iterator<Is_constrained, typename T_3::All_facets_iterator>;
+  using Constrained_facets_range = CGAL::Iterator_range<Constrained_facets_iterator>;
+
+  Constrained_facets_iterator constrained_facets_begin() const {
+    return {Is_constrained{*this}, this->all_facets_begin(), this->all_facets_end()};
+  }
+  Constrained_facets_iterator constrained_facets_end() const {
+    return {Is_constrained{*this}, this->all_facets_end(), this->all_facets_end()};
+  }
+  Constrained_facets_range constrained_facets() const {
+    return {constrained_facets_begin(), constrained_facets_end()};
+  }
 private:
   struct CDT_2_types {
     struct Projection_traits : public Projection_traits_3<Geom_traits> {
@@ -2170,7 +2185,11 @@ private:
         CGAL_assertion(false == this->is_infinite(*facet_circ));
         const auto cell = facet_circ->first;
         const auto facet_index = facet_circ->second;
-        CGAL_assertion_msg(!cell->ccdt_3_data().is_facet_constrained(facet_index), "intersecting polygons!");
+        CGAL_assertion_msg(!cell->ccdt_3_data().is_facet_constrained(facet_index),
+                           std::invoke([&]() {
+                             this->dump_triangulation_to_off();
+                             return std::string("intersecting polygons!");
+                           }).c_str());
         if(new_cell(cell)) {
           intersecting_cells.insert(cell);
         }
@@ -3600,6 +3619,11 @@ public:
       fill_cdt_2(cdt_2, i);
       search_for_missing_subfaces(i);
     }
+    if(this->debug_input_faces()) {
+      for(int i = 0, end = face_constraint_misses_subfaces.size(); i < end; ++i) {
+        dump_face(i);
+      }
+    }
     cdt_2_are_initialized = true;
     const auto npos = face_constraint_misses_subfaces_npos;
     auto i = face_constraint_misses_subfaces_find_first();
@@ -3659,8 +3683,10 @@ public:
     }
   }
 
-  void write_3d_triangulation_to_OFF(std::ostream& out, const Conforming_constrained_Delaunay_triangulation_3_impl& tr) {
-    write_facets(out, tr, tr().finite_facets());
+  void write_3d_triangulation_to_OFF(std::ostream &out,
+                                     const Conforming_constrained_Delaunay_triangulation_3_impl &tr) const
+  {
+    write_facets(out, tr, tr.finite_facets());
   }
 
   void dump_3d_triangulation(CDT_3_face_index face_index,
@@ -3679,9 +3705,23 @@ public:
     CGAL::IO::save_binary_file(dump, *this);
   }
 
+  void dump_triangulation_to_off() const {
+    std::ofstream dump("dump_triangulation_facets.off");
+    dump.precision(17);
+    write_facets(dump, *this, this->constrained_facets());
+    write_3d_triangulation_to_OFF(dump, *this);
+  }
+
   void dump_region(CDT_3_face_index face_index, int region_index, const CDT_2& cdt_2) {
     std::ofstream dump_region(std::string("dump_region_") + std::to_string(face_index) + "_" +
                               std::to_string(region_index) + ".off");
+    dump_region.precision(17);
+    write_region_to_OFF(dump_region, cdt_2);
+  }
+
+  void dump_face(CDT_3_face_index face_index) {
+    const auto& cdt_2 = face_cdt_2[face_index];
+    std::ofstream dump_region(std::string("dump_face_") + std::to_string(face_index) + ".off");
     dump_region.precision(17);
     write_region_to_OFF(dump_region, cdt_2);
   }

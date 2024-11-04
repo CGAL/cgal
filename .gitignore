@@ -1224,3 +1224,5 @@ Data/data/meshes/*.log
 /*.xyz
 log.txt
 /r0*
+patches_after_merge.ply
+dump.off.mesh
