@@ -76,6 +76,7 @@ struct CDT_options
   bool merge_facets = true;
   bool merge_facets_old_method = false;
   bool repair_mesh = true;
+  bool debug_input_faces = false;
   bool debug_missing_regions = false;
   bool debug_regions = false;
   bool debug_copy_triangulation_into_hole = false;
@@ -206,6 +207,8 @@ int main(int argc, char* argv[])
       options.quiet = true;
     } else if(arg == "--no-is-valid") {
       options.call_is_valid = false;
+    } else if(arg == "--debug-input-faces") {
+      options.debug_input_faces = true;
     } else if(arg == "--debug-missing-regions") {
       options.debug_missing_regions = true;
     } else if(arg == "--debug-regions") {
@@ -342,6 +345,7 @@ int main(int argc, char* argv[])
 int go(Mesh mesh, CDT_options options) {
   CDT cdt;
   cdt.debug_Steiner_points(options.verbose > 0);
+  cdt.debug_input_faces(options.debug_input_faces);
   cdt.debug_missing_region(options.verbose > 1 || options.debug_missing_regions);
   cdt.debug_regions(options.debug_regions);
   cdt.debug_validity(options.debug_validity);

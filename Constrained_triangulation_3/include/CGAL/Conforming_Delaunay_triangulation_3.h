@@ -324,6 +324,14 @@ public:
     debug_flags.set(static_cast<int>(Debug_flags::Steiner_points), b);
   }
 
+  bool debug_input_faces() const {
+    return debug_flags[static_cast<int>(Debug_flags::input_faces)];
+  }
+
+  void debug_input_faces(bool b) {
+    debug_flags.set(static_cast<int>(Debug_flags::input_faces), b);
+  }
+  
   bool debug_missing_region() const {
     return debug_flags[static_cast<int>(Debug_flags::missing_region)];
   }
@@ -963,6 +971,7 @@ protected:
   enum class Debug_flags {
     Steiner_points = 0,
     conforming,
+    input_faces,
     missing_region,
     regions,
     copy_triangulation_into_hole,

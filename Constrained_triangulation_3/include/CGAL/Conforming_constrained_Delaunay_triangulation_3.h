@@ -1422,12 +1422,12 @@ public:
                                                       bool restore_Delaunay = true,
                                                       Face_index face_index = -1)
   {
-#if CGAL_DEBUG_CDT_3 & 2
-    std::cerr << "insert_constrained_face (" << std::size(vertex_handles) << " vertices):\n";
-    for(auto v: vertex_handles) {
-      std::cerr << "  - " << this->display_vert(v) << '\n';
+    if(this->debug_input_faces()) {
+      std::cerr << "insert_constrained_face (" << std::size(vertex_handles) << " vertices):\n";
+      for(auto v: vertex_handles) {
+        std::cerr << "  - " << this->display_vert(v) << '\n';
+      }
     }
-#endif // CGAL_DEBUG_CDT_3 & 2
     using std::begin;
     using std::endl;
     const auto first_it = begin(vertex_handles);
@@ -1493,9 +1493,9 @@ public:
       face_cdt_2.emplace_back(CDT_2_traits{accumulated_normal});
       face_constraint_misses_subfaces.resize(face_cdt_2.size());
     }
-#if CGAL_DEBUG_CDT_3 & 2
-    std::cerr << "insert_constrained_face return the polygon_contraint_id: " << polygon_contraint_id << '\n';
-#endif
+    if(this->debug_input_faces()) {
+      std::cerr << "insert_constrained_face return the polygon_contraint_id: " << polygon_contraint_id << '\n';
+    }
     return polygon_contraint_id;
   }
 
@@ -1540,9 +1540,9 @@ public:
 private:
   void fill_cdt_2(CDT_2& cdt_2, CDT_3_face_index polygon_contraint_id)
   {
-#if CGAL_DEBUG_CDT_3 & 4
-    std::cerr << "Polygon #" << polygon_contraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
-#endif // CGAL_DEBUG_CDT_3
+    if(this->debug_input_faces()) {
+      std::cerr << "Polygon #" << polygon_contraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
+    }
     const auto vec_of_handles = std::invoke([this, polygon_contraint_id]() {
       std::vector<std::vector<Vertex_handle>> vec_of_handles;
       for(const auto& border : this->face_borders[polygon_contraint_id]) {
@@ -1571,15 +1571,14 @@ private:
       return vec_of_handles;
     });
 
-#if CGAL_DEBUG_CDT_3 & 4
-    std::cerr << "  points\n";
-    for(const auto& handles : vec_of_handles) {
-      for(auto it = handles.begin(), end = std::prev(handles.end()); it != end; ++it) {
-        std::cerr << "     " << tr().point(*it) << '\n';
+    if(this->debug_input_faces()) {
+      std::cerr << "  points\n";
+      for(const auto& handles : vec_of_handles) {
+        for(auto it = handles.begin(), end = std::prev(handles.end()); it != end; ++it) {
+          std::cerr << "     " << tr().point(*it) << '\n';
+        }
       }
     }
-#endif
-
     // create and fill the 2D triangulation
     {
       for(const auto& handles : vec_of_handles)
@@ -1614,13 +1613,13 @@ private:
                 while(vit != v_end) {
                   auto vh_2d = cdt_2.insert(tr().point(*vit));
                   vh_2d->info().vertex_handle_3d = *vit;
-  #if CGAL_DEBUG_CDT_3 & 4
-                  std::cerr << "cdt_2.insert_constraint ("
-                            << tr().point(previous_2d->info().vertex_handle_3d)
-                            << " , "
-                            << tr().point(vh_2d->info().vertex_handle_3d)
-                            << ")\n";
-  #endif // CGAL_DEBUG_CDT_3
+                  if(this->debug_input_faces()) {
+                    std::cerr << "cdt_2.insert_constraint ("
+                              << tr().point(previous_2d->info().vertex_handle_3d)
+                              << " , "
+                              << tr().point(vh_2d->info().vertex_handle_3d)
+                              << ")\n";
+                  }
                   cdt_2.insert_constraint(previous_2d, vh_2d);
                   previous_2d = vh_2d;
                   if(constraint_c_id_is_reversed) {
@@ -1637,13 +1636,13 @@ private:
           if(it != end) {
             vh_2d->info().vertex_handle_3d = vb;
           }
-  #if CGAL_DEBUG_CDT_3 & 4
-          std::cerr << "cdt_2.insert_constraint ("
-                    << tr().point(previous_2d->info().vertex_handle_3d)
-                    << " , "
-                    << tr().point(vh_2d->info().vertex_handle_3d)
-                    << ")\n";
-  #endif // CGAL_DEBUG_CDT_3
+          if(this->debug_input_faces()) {
+            std::cerr << "cdt_2.insert_constraint ("
+                      << tr().point(previous_2d->info().vertex_handle_3d)
+                      << " , "
+                      << tr().point(vh_2d->info().vertex_handle_3d)
+                      << ")\n";
+          }
           cdt_2.insert_constraint(previous_2d, vh_2d);
           previous_2d = vh_2d;
         }
@@ -1675,13 +1674,13 @@ private:
           }
         }
       } // end of marking inside/outside
-#if CGAL_DEBUG_CDT_3 & 4
-      int counter = 0;
-      for(const auto fh: cdt_2.finite_face_handles()) {
-        if(!fh->info().is_outside_the_face) ++counter;
+      if(this->debug_input_faces()) {
+        int counter = 0;
+        for(const auto fh: cdt_2.finite_face_handles()) {
+          if(!fh->info().is_outside_the_face) ++counter;
+        }
+        std::cerr << counter << " triangles(s) in the face\n";
       }
-      std::cerr << counter << " triangles(s) in the face\n";
-#endif // CGAL_DEBUG_CDT_3
       if(Algebraic_structure_traits<typename Geom_traits::FT>::Is_exact::value &&
          !std::all_of(cdt_2.finite_face_handles().begin(), cdt_2.finite_face_handles().end(), [=](const auto fh) {
            const auto p0 = cdt_2.point(fh->vertex(0));
