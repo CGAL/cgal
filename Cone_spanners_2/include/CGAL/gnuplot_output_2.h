@@ -93,7 +93,7 @@ std::string gnuplot_vertex_list (const Graph& g);
 
 /* This struct is defined to use partial specialization to generate arrow styles differently for
  * directed and undirected graphs.
- * Note: Need to use structs because C++ before 11 doesn't allow partial specialisation
+ * Note: Need to use structs because C++ before 11 doesn't allow partial specialization
  * for functions
  */
 template <typename Graph, typename Directedness=typename Graph::directed_selector>

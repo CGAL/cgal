@@ -32,8 +32,8 @@ sub make_tempdir()
     my $dirno = 1;
     $TMPDIR = "TMP$dirno";
     while ( -f $TMPDIR or -d $TMPDIR ) {
-	++$dirno;
-	$TMPDIR = "TMP$dirno";
+        ++$dirno;
+        $TMPDIR = "TMP$dirno";
     }
     mkdir($TMPDIR,0770) or die "Cannot create temporary directory $TMPDIR\n";
 }
@@ -51,63 +51,66 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE) = ("-","-","-","-","-","-","-","-","-","-","-","-","-","no");
+    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL) = ("-","-","-","-","-","-","-","-","-","-","-","no","TPL:");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
             goto NEXT;
         }
-	if(/^-- USING CMake version: ([\w\.-]+)/) {
-	    $CMAKE = $1;
-	}
-	if (/^CGAL_VERSION\s+([\w\.-]+)/) {
-	    $CGAL_VERSION = $1;
-	}
-	if (/LEDA_VERSION = '([^']+)'/) {
-	    $LEDA_VERSION="$1";
-	}
-	if (/LEDAWIN_VERSION = '([^']+)'/) {
-	    $LEDA_VERSION="$LEDA_VERSION+win";
-	}
-	if (/COMPILER_VERSION = '([^']+)'/) {
-	    $COMPILER = $1;
-	}
-	if (/^TESTER_NAME\s+(.*)$/) {
-	    $TESTER_NAME = $1;
-	}
-	if (/^TESTER_ADDRESS\s+(.*)$/) {
-	    $TESTER_ADDRESS = $1;
-	}
-	if (/MPFR_VERSION = '([^']+)'/) {
-	    $MPFR="$1";
-	}
-	if (/ZLIB_VERSION = '([^']+)'/) {
-	    $ZLIB="$1";
-	}
-	if (/OPENGL_VERSION = '([^']+)'/) {
-	    $OPENGL="$1";
-	}
-	if (/GMP_VERSION = '([^']+)'/) {
-	    $GMP="$1";
-	}
-	if (/GMPXX_VERSION = '([^']+)'/) {
-	    $GMP="$GMP+gmpxx";
-	}
-	if (/QT_VERSION = '([^']+)'/) {
-	    $QT="$1";
-	}
-	if (/QT4_VERSION = '([^']+)'/) {
-	    $QT="$1";
-	}
-	if (/Qt5_VERSION = '([^']+)'/) {
-	    $QT="$1";
-	}
-	if (/Qt6_VERSION = '([^']+)'/) {
-	    $QT="$1";
-	}
-	if (/BOOST_VERSION = '([^']+)'/) {
-	    $BOOST="$1";
-	}
+        if(/^-- USING CMake version: ([\w\.-]+)/) {
+            $CMAKE = $1;
+        }
+        if (/^CGAL_VERSION\s+([\w\.-]+)/) {
+            $CGAL_VERSION = $1;
+        }
+        if (/LEDA_VERSION = '([^']+)'/) {
+            $LEDA_VERSION="$1";
+        }
+        if (/LEDAWIN_VERSION = '([^']+)'/) {
+            $LEDA_VERSION="$LEDA_VERSION+win";
+        }
+        if (/COMPILER_VERSION = '([^']+)'/) {
+            $COMPILER = $1;
+        }
+        if (/-- Operating system: (.*)/) {
+            $OS = $1;
+        }
+        if (/^TESTER_NAME\s+(.*)$/) {
+            $TESTER_NAME = $1;
+        }
+        if (/^TESTER_ADDRESS\s+(.*)$/) {
+            $TESTER_ADDRESS = $1;
+        }
+        if (/MPFR_VERSION = '([^']+)'/) {
+            $MPFR="$1";
+        }
+        if (/ZLIB_VERSION = '([^']+)'/) {
+            $ZLIB="$1";
+        }
+        if (/OPENGL_VERSION = '([^']+)'/) {
+            $OPENGL="$1";
+        }
+        if (/GMP_VERSION = '([^']+)'/) {
+            $GMP="$1";
+        }
+        if (/GMPXX_VERSION = '([^']+)'/) {
+            $GMP="$GMP+gmpxx";
+        }
+        if (/QT_VERSION = '([^']+)'/) {
+            $QT="$1";
+        }
+        if (/QT4_VERSION = '([^']+)'/) {
+            $QT="$1";
+        }
+        if (/Qt5_VERSION = '([^']+)'/) {
+            $QT="$1";
+        }
+        if (/Qt6_VERSION = '([^']+)'/) {
+            $QT="$1";
+        }
+        if (/BOOST_VERSION = '([^']+)'/) {
+            $BOOST="$1";
+        }
 #	if (/BOOST_THREAD_VERSION = '([^']+)'/) {
 #	    $BOOST="$BOOST+thread";
 #	}
@@ -117,12 +120,12 @@ sub reformat_results($)
 #	if (/BOOST_BIMAP_VERSION = '([^']+)'/) {
 #	    $BOOST="$BOOST+bimap";
 #	}
-	if (/USING +CXXFLAGS = '([^']*)'/) {
-	    $CXXFLAGS="$CXXFLAGS $1";
-	}
-	if (/USING +LDFLAGS = '([^']*)'/) {
-	    $LDFLAGS="$LDFLAGS $1";
-	}
+        if (/USING +CXXFLAGS = '([^']*)'/ && !$CXXFLAGS) {
+            $CXXFLAGS="$CXXFLAGS $1";
+        }
+        if (/USING +LDFLAGS = '([^']*)'/) {
+            $LDFLAGS="$LDFLAGS $1";
+        }
 #        if(/^CGAL_TEST_PLATFORM /) {
 #            # should be the last one of the header
 #            last;
@@ -132,18 +135,22 @@ sub reformat_results($)
 #            print PLATFORM_NEW_RESULTS $_;
 #            last;
 #        }
+    if (/^-- Third-party library (.+)$/) {
+        $TPL = "$TPL $1,";
+    }
 NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
             # should never happen!!
             last;
         }
     }
     while (<PLATFORM_RESULTS>) {
-	print PLATFORM_NEW_RESULTS $_;
+        print PLATFORM_NEW_RESULTS $_;
     }
     rename("${platform}.new_results","${platform}.txt") or die "cannot rename!";
     print PLATFORM_INFO <<"EOF";
 $CGAL_VERSION
 $COMPILER
+$OS
 $TESTER_NAME
 $TESTER_ADDRESS
 $CMAKE
@@ -154,6 +161,7 @@ $QT
 $LEDA_VERSION
 $CXXFLAGS
 $LDFLAGS
+$TPL
 EOF
     close(PLATFORM_INFO);
     close(PLATFORM_RESULTS);
@@ -162,7 +170,7 @@ EOF
     if ($version
         && $version ne "CGAL-$CGAL_VERSION"
         && ($version !~ /^CGAL-${CGAL_VERSION}-Ic?-[\d]+$/)) {
-	die "Wrong version in $platform: $CGAL_VERSION instead of $version.\n";
+        die "Wrong version in $platform: $CGAL_VERSION instead of $version.\n";
     }
 }
 
@@ -170,20 +178,20 @@ sub one_archive($)
 {
     my $archive = shift;
     if (! -f $archive) {
-	print STDERR "$archive is not a valid filename\n";
-	return 0;
+        print STDERR "$archive is not a valid filename\n";
+        return 0;
     }
     if ( $archive =~ m/\.gz$/ ) {
-	system("gunzip", "$archive") == 0 or return 0;
-	$archive =~ s/\.gz$//;
+        system("gunzip", "$archive") == 0 or return 0;
+        $archive =~ s/\.gz$//;
     }
     if ( $archive =~ m/.*\.tgz$/ ) {
-	system("gunzip", "$archive") == 0 or return 0;
-	$archive =~ s/\.tgz$/.tar/;
+        system("gunzip", "$archive") == 0 or return 0;
+        $archive =~ s/\.tgz$/.tar/;
     }
     if ( $archive !~ /\.tar$/) {
-	print STDERR "$0: $archive not a tar file\n";
-	return 0;
+        print STDERR "$0: $archive not a tar file\n";
+        return 0;
     }
     make_tempdir();
     rename("$archive","$TMPDIR/$archive") or die "cannot rename(\"$archive\",\"$TMPDIR/$archive\")";
@@ -203,13 +211,13 @@ sub one_archive($)
 sub all_archives() {
     my $archive;
     foreach $archive (@ARGV) {
-	if (one_archive($archive)) {
+        if (one_archive($archive)) {
             my $date=`date`;
             chop $date;
-	    print_log("$final_version : $archive successfully reformatted. [ $date ]\n");
-	} else {
-	    print_log_err("$final_version : Could not reformat $archive\n");
-	}
+            print_log("$final_version : $archive successfully reformatted. [ $date ]\n");
+        } else {
+            print_log_err("$final_version : Could not reformat $archive\n");
+        }
     }
 }
 

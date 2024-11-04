@@ -539,7 +539,7 @@ public:
     const std::vector<Point_3>& vertices,
     const std::vector<std::size_t>& tris,
     const std::string file_name) const {
-    assert((tris.size() % 3) == 0);
+    CGAL_assertion((tris.size() % 3) == 0);
 
     std::stringstream stream;
     initialize(stream);
