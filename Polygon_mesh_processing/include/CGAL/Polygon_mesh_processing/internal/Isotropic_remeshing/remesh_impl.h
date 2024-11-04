@@ -23,6 +23,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 #include <CGAL/Polygon_mesh_processing/tangential_relaxation.h>
+#include <CGAL/Polygon_mesh_processing/fair.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits_3.h>
@@ -1097,6 +1098,92 @@ namespace internal {
 #endif
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("4-relaxation.off");
+#endif
+    }
+
+    // run PMP::fair() on each vertex neighborhood
+    // relax_constraints is false here
+    template <class SizingFunction>
+    void fairing_impl(const unsigned int nb_iterations
+                    , const SizingFunction& sizing)
+    {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+      std::cout << "Fairing (" << nb_iterations << " iter.)...";
+      std::cout << std::endl;
+#endif
+
+      // property map of constrained edges for relaxation
+      auto edge_constraint = [&](const edge_descriptor e)
+        {
+          return this->is_constrained(e);
+        };
+      auto constrained_edges_pmap
+        = boost::make_function_property_map<edge_descriptor>(edge_constraint);
+
+      // property map of constrained vertices for relaxation
+      auto vertex_constraint = [&](const vertex_descriptor v)
+        {
+          for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
+          {
+            Halfedge_status s = status(h);
+            if (s == PATCH
+              || s == PATCH_BORDER
+              || status(opposite(h, mesh_)) == PATCH_BORDER)
+              return false;
+          }
+          return true;
+        };
+      auto constrained_vertices_pmap
+        = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
+
+      if constexpr (std::is_same_v<SizingFunction, Uniform_sizing_field<PM, VertexPointMap>>)
+      {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << " using tangential relaxation with weights equal to 1";
+        std::cout << std::endl;
+#endif
+        tangential_relaxation(
+          vertices(mesh_),
+          mesh_,
+          CGAL::parameters::number_of_iterations(nb_iterations)
+          .vertex_point_map(vpmap_)
+          .geom_traits(gt_)
+          .edge_is_constrained_map(constrained_edges_pmap)
+          .vertex_is_constrained_map(constrained_vertices_pmap)
+          .relax_constraints(relax_constraints)
+          .allow_move_functor(shall_move)
+        );
+      }
+      else
+      {
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << " using tangential relaxation weighted with the sizing field";
+        std::cout << std::endl;
+#endif
+        tangential_relaxation(
+          vertices(mesh_),
+          mesh_,
+          CGAL::parameters::number_of_iterations(nb_iterations)
+          .vertex_point_map(vpmap_)
+          .geom_traits(gt_)
+          .edge_is_constrained_map(constrained_edges_pmap)
+          .vertex_is_constrained_map(constrained_vertices_pmap)
+          .relax_constraints(relax_constraints)
+          .sizing_function(sizing)
+          .allow_move_functor(shall_move)
+        );
+      }
+
+      CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
+
+#ifdef CGAL_PMP_REMESHING_DEBUG
+      debug_self_intersections();
+#endif
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+      std::cout << "done." << std::endl;
+#endif
+#ifdef CGAL_DUMP_REMESHING_STEPS
+      dump("4-fairing.off");
 #endif
     }
 
