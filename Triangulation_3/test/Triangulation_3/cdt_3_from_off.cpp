@@ -740,7 +740,7 @@ int go(Mesh mesh, CDT_options options) {
         for(auto& polyline: polylines) {
           assert(polyline.front() == polyline.back());
           polyline.pop_back();
-          cdt.insert_constrained_face(
+          face_index = cdt.insert_constrained_face(
             polyline | std::views::transform([&](vertex_descriptor v) { return get(tr_vertex_pmap, v); }),
             false,
             face_index ? *face_index : -1);
