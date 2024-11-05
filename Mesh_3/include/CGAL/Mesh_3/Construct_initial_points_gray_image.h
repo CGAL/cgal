@@ -75,7 +75,7 @@ struct Construct_initial_points_gray_image
   *
   */
   template <typename OutputIterator>
-  OutputIterator operator()(OutputIterator pts, int n = 20) const
+  OutputIterator operator()(OutputIterator pts, const int n = 20) const
   {
     using CGAL::Mesh_3::internal::Create_gray_image_values_to_subdomain_indices;
     using C_i_v_t_s_i = Create_gray_image_values_to_subdomain_indices<Functor>;

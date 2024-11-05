@@ -42,7 +42,7 @@ namespace internal {
 template < typename C3T3, typename MeshDomain, typename InitialPointsGenerator >
 void
 add_points_from_generator(C3T3& c3t3,
-                          const MeshDomain& domain,
+                          const MeshDomain&,
                           const int nb_initial_points,
                           const InitialPointsGenerator& generator)
 {

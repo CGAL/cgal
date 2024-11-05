@@ -176,7 +176,7 @@ private:
 struct Dummy_initial_points_generator
 {
   template<typename OutputIterator>
-  OutputIterator operator()(OutputIterator oit, int n = 0) const { return oit; }
+  OutputIterator operator()(OutputIterator oit, const int) const { return oit; }
 };
 
 // Holds the two parameters `initial_points_generator` and `initial_points`,
@@ -210,7 +210,7 @@ struct Initialization_options
   {}
 
   template<typename OutputIterator>
-  OutputIterator operator()(OutputIterator pts, int n = 0) const
+  OutputIterator operator()(OutputIterator pts, const int n = 0) const
   {
     // add initial_points
     for (Initial_points_const_iterator it = begin_it; it != end_it; ++it)

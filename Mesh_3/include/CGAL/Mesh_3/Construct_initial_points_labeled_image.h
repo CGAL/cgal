@@ -117,7 +117,7 @@ struct Construct_initial_points_labeled_image
   * - a `MeshDomain::Index` for the corresponding subcomplex index
   */
   template <typename OutputIterator>
-  OutputIterator operator()(OutputIterator pts, int n = 20) const
+  OutputIterator operator()(OutputIterator pts, const int n = 20) const
   {
     CGAL_IMAGE_IO_CASE(image_.image(), operator()(pts, CGAL::Identity<Word>(), n));
     return pts;

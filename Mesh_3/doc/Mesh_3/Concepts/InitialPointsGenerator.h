@@ -52,7 +52,7 @@ A generator can choose to ignore this parameter.
 
 */
 template <typename OutputIterator>
-OutputIterator operator()(OutputIterator pts, int n);
+OutputIterator operator()(OutputIterator pts, const int n);
 
 /*!
 Same as above, without the `n` parameter.
