@@ -1,7 +1,8 @@
+#define CGAL_PMP_REMESHING_VERBOSE
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/Polygon_mesh_processing/fair.h>
 
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
@@ -31,13 +32,14 @@ int main(int argc, char* argv[])
   }
 
   double target_edge_length = (argc > 2) ? std::stod(std::string(argv[2])) : 0.04;
-  unsigned int nb_iter = (argc > 3) ? std::stoi(std::string(argv[3])) : 10;
+  unsigned int nb_iter = (argc > 3) ? std::stoi(std::string(argv[3])) : 1;
 
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
   PMP::isotropic_remeshing(faces(mesh), target_edge_length, mesh,
                            CGAL::parameters::number_of_iterations(nb_iter)
+                           .smoothing_algo(PMP::FAIRING)
                            .do_project(false)
                            );
 

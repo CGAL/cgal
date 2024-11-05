@@ -347,11 +347,14 @@ void isotropic_remeshing(const FaceRange& faces
     switch (smoothing_algo)
     {
     case FAIRING :
-      remesher.fairing();
+      remesher.fairing_impl();
       break;
     case TANGENTIAL_RELAXATION :
-    default:
       remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
+      break;
+    default:
+      std::cerr << "ERROR : this smoothing algorithm does not exist. It will not be applied." << std::endl;
+      break;
     };
 
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
