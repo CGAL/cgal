@@ -30,7 +30,7 @@ namespace internal {
 // <=> lambda^2 + (2 b / a) * lambda + (c / a) = 0
 // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
 //TODO: use optional!
-template <class FT, class C, class Point, class AFT>
+template <class Traits, class C, class Point, class AFT>
 bool
 fill_lambda(const Point& circle_center,
             const Point& line_start,
@@ -42,12 +42,16 @@ fill_lambda(const Point& circle_center,
             C const& curve2,
             typename C::PointID const& seg_start_id)
 {
+  using FT = typename Traits::FT;
   FT a(0), b(0), c(0);
-  for (auto i = 0; i < C::dimension; ++i)
+  auto ccci = typename Traits::Construct_cartesian_const_iterator_d();
+  auto it_cc = ccci(circle_center), it_s = ccci(line_start), it_e = ccci(line_end);
+
+  for (auto i = 0; i < C::dimension; ++i, ++it_cc, ++it_s, ++it_e)
   {
-    FT start_end_diff = line_end[i] - line_start[i];
+    FT start_end_diff = *it_e - *it_s;
     a += CGAL::square(start_end_diff);
-    FT start_center_diff = line_start[i] - circle_center[i];
+    FT start_center_diff = *it_s - *it_cc;
     b -= start_center_diff * start_end_diff;
     c += square(start_center_diff);
   }
@@ -95,7 +99,7 @@ intersection_interval(Curve<T, true> const& curve1,
   try {
     std::pair<Lambda<C>, Lambda<C>> II;
     // if not empty
-    if (fill_lambda<typename C::distance_t>(
+    if (fill_lambda<typename T::first_type>(
         curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
         radius.inf(), II, curve1, center_id, curve2,  seg_start_id))
     {
@@ -105,7 +109,7 @@ intersection_interval(Curve<T, true> const& curve1,
     CGAL_assertion(radius.is_point());
     std::pair<Lambda<C>, Lambda<C>> II;
       // if not empty
-    if (fill_lambda<typename Lambda<C>::Rational>(
+    if (fill_lambda<typename T::second_type>(
           curve1.rpoint(center_id), curve2.rpoint(seg_start_id), curve2.rpoint(seg_start_id + 1),
           radius.inf(), II, curve1, center_id, curve2,  seg_start_id))
     {
@@ -131,7 +135,7 @@ intersection_interval(Curve<T, false> const& curve1,
 
     std::pair<Lambda<C>, Lambda<C>> II;
     // if not empty
-    if (fill_lambda<typename C::distance_t>(
+    if (fill_lambda<T>(
         curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
         radius.inf(), II, curve1, center_id, curve2,  seg_start_id))
     {
