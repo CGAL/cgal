@@ -47,20 +47,14 @@ private:
     {}
 
     int label;
-    int nesting_level[2];
+    int layers;
     bool processed;
-
-    bool
-    in_domain(int i) const
-    {
-      return nesting_level[i] % 2 == 1;
-    }
 
     template <typename Fct>
     bool
     in_domain(const Fct& fct) const
     {
-      return fct(in_domain(0), in_domain(1));
+      return fct(layers);
     }
 
   };
@@ -129,7 +123,6 @@ private:
 
 
   CDTplus cdt;
-  std::set<Constraint_id> idA, idB;
 
 public:
 
@@ -143,28 +136,16 @@ default constructor.
 sets the polygons as input of the %Boolean operation.
 */
   void
-  insert(const Multipolygon_with_holes_2& pA, const Multipolygon_with_holes_2& pB)
+  insert(const Multipolygon_with_holes_2& pA)
   {
     for(const auto& pwh : pA.polygons_with_holes()){
-      Constraint_id cidA = cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
-      idA.insert(cidA);
+      cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
       for(auto const& hole : pwh.holes()){
-        cidA = cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
-        idA.insert(cidA);
+        cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
       }
     }
 
-    for(const auto& pwh : pB.polygons_with_holes()){
-      Constraint_id cidB = cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
-      idB.insert(cidB);
-      for(auto const& hole : pwh.holes()){
-        cidB = cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
-        idB.insert(cidB);
-      }
-    }
-
-    mark_domains(idA, 0);
-    mark_domains(idB, 1);
+    mark_domains();
   }
 
 private:
@@ -172,11 +153,9 @@ private:
   void
   mark_domains(Face_handle start,
                int index,
-               std::list<Edge>& border,
-               const std::set<Constraint_id>& cids,
-               int aorb)
+               std::list<Edge>& border)
   {
-    if(start->info().nesting_level[aorb] != -1){
+    if(start->info().layers != -1){
       return;
     }
     std::list<Face_handle> queue;
@@ -185,26 +164,14 @@ private:
     while(! queue.empty()){
       Face_handle fh = queue.front();
       queue.pop_front();
-      if(fh->info().nesting_level[aorb] == -1){
-        fh->info().nesting_level[aorb] = index;
+      if(fh->info().layers == -1){
+        fh->info().layers = index;
         for(int i = 0; i < 3; i++){
           Edge e(fh,i);
           Face_handle n = fh->neighbor(i);
-          if(n->info().nesting_level[aorb] == -1){
+          if(n->info().layers == -1){
             if(cdt.is_constrained(e)){
-              bool found = false;
-              for(Context c : cdt.contexts(e.first->vertex(cdt.cw(e.second)),
-                                           e.first->vertex(cdt.ccw(e.second)))){
-                if(cids.find(c.id()) != cids.end()){
-                  found = true;
-                  break;
-                }
-              }
-              if (found) {
-                border.push_back(e);
-              } else {
-                queue.push_back(n);
-              }
+              border.push_back(e);
             }else{
               queue.push_back(n);
             }
@@ -215,23 +182,37 @@ private:
   }
 
 
-  // this marks the domains for either the first or the second multipolygon
+  // this marks how many multipolygon interiors overlap a cell of the arrangement of mutipolygons
   void
-  mark_domains(const std::set<Constraint_id>& cids, int aorb)
+  mark_domains()
   {
     for(Face_handle f : cdt.all_face_handles()){
-      f->info().nesting_level[aorb] = -1;
+      f->info().layers = -1;
     }
 
+    int overlays = 0;
     std::list<Edge> border;
-    mark_domains(cdt.infinite_face(), 0, border, cids, aorb);
+    mark_domains(cdt.infinite_face(), overlays, border);
 
     while(! border.empty()){
       Edge e = border.front();
       border.pop_front();
-      Face_handle n = e.first->neighbor(e.second);
-      if(n->info().nesting_level[aorb] == -1){
-        mark_domains(n, e.first->info().nesting_level[aorb]+1, border, cids, aorb);
+      Face_handle fh = e.first;
+      int  fi = e.second;
+      Face_handle n = fh->neighbor(fi);
+      if(n->info().layers == -1){
+        Vertex_handle u = fh->vertex(cdt.cw(fi)), v = fh->vertex(cdt.ccw(fi));
+        int delta = 0;
+        for(Context c : cdt.contexts(u,v)){
+          if(*c.current() ==u && *std::next(c.current()) == v){
+            ++delta;
+          }else if(*c.current() ==v && *std::next(c.current()) == u){
+            --delta;
+          }else{
+            CGAL_assertion(false);
+          }
+        }
+        mark_domains(n, fh->info().layers+delta, border);
       }
     }
   }
@@ -336,7 +317,6 @@ performs the Boolean operation applying `fct` and returns the result as a multip
   operator()(const Fct& fct)
   {
     int number_of_polygons = label_domains(fct) - 1;
-
     Multipolygon_with_holes_2 mp;
     std::vector<Polygon_2> polygons; // outer boundaries
     std::vector<std::set<Polygon_2, Polygon_less>> holes; // holes are ordered (per polygon)
@@ -347,13 +327,6 @@ performs the Boolean operation applying `fct` and returns the result as a multip
       face->info().processed = false;
     }
 
-    /*
-    for (auto const face: cdt.all_face_handles()) {
-      std::cout << face->vertex(0)->point() << "  " << face->vertex(1)->point() << "  " << face->vertex(2)->point() << std::endl;
-      std::cout << "label = " << face->info().label << std::endl;
-      if(face->info().in_domain(fct)) std::cout << "in domain" << std::endl; else std::cout << "not in domain" << std::endl;
-    }
-    */
     for (auto const &face: cdt.finite_face_handles()) {
       if (! face->info().in_domain(fct)) continue; // exterior triangle
       if (face->info().processed) continue; // already reconstructed
@@ -401,6 +374,44 @@ access to the underlying constrained triangulation.
 
 };
 
+template <typename K>
+Multipolygon_with_holes_2<K>
+join(const Multipolygon_with_holes_2<K>& pA)
+{
+  CGAL::Polygon_repair::Boolean<K> bops;
+  bops.insert(pA);
+  struct Larger_than_zero {
+    bool operator()(int i) const
+    {
+      return i > 0;
+    }
+  };
+  Larger_than_zero ltz;
+  return bops(ltz);
+}
+
+
+
+template <typename K>
+Multipolygon_with_holes_2<K>
+intersection(const Multipolygon_with_holes_2<K>& pA)
+{
+  CGAL::Polygon_repair::Boolean<K> bops;
+  bops.insert(pA);
+  struct Equal  {
+    int val;
+    Equal(int val)
+    : val(val)
+    {}
+
+    bool operator()(int i) const
+    {
+      return i == val;
+    }
+  };
+  Equal equal(pA.number_of_polygons_with_holes());
+  return bops(equal);
+}
 
 } // namespace Polygon_repair
 } //namespace CGAL

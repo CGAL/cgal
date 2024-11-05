@@ -16,6 +16,8 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 
+
 if(CGAL_Qt6_FOUND)
   target_link_libraries(repair_non_zero_polygon_2 PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(boolean PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
