@@ -25,10 +25,13 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Polygon_repair/Even_odd_rule.h>
 #include <CGAL/Polygon_repair/Non_zero_rule.h>
+#include <CGAL/Polygon_repair/Union_rule.h>
+#include <CGAL/Polygon_repair/Intersection_rule.h>
 
 #include <CGAL/Polygon_repair/internal/Triangulation_face_base_with_repair_info_2.h>
 #include <CGAL/Polygon_repair/internal/Triangulation_with_even_odd_constraints_2.h>
 #include <CGAL/Polygon_repair/Winding.h>
+#include <CGAL/Polygon_repair/Boolean.h>
 
 namespace CGAL {
 
@@ -101,6 +104,44 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
     pr.reconstruct_multipolygon();
   } return pr.multipolygon();
 }
+
+
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Union_rule rule)
+{
+  CGAL::Polygon_repair::Boolean<Kernel> bops;
+  bops.insert(p);
+  struct Larger_than_zero {
+    bool operator()(int i) const
+    {
+      return i > 0;
+    }
+  };
+  Larger_than_zero ltz;
+  return bops(ltz);
+}
+
+
+template <class Kernel, class Container>
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Intersection_rule rule)
+{
+ CGAL::Polygon_repair::Boolean<Kernel> bops;
+  bops.insert(p);
+  struct Equal  {
+    int val;
+    Equal(int val)
+    : val(val)
+    {}
+
+    bool operator()(int i) const
+    {
+      return i == val;
+    }
+  };
+  Equal equal(p.number_of_polygons_with_holes());
+  return bops(equal);
+}
+
 /*
 template <class Kernel, class Container>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Non_zero_rule rule)

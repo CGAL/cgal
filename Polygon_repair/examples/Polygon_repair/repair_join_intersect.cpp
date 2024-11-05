@@ -4,7 +4,7 @@
 #include <CGAL/Multipolygon_with_holes_2.h>
 #include <CGAL/draw_multipolygon_with_holes_2.h>
 
-#include <CGAL/Polygon_repair/Boolean.h>
+#include <CGAL/Polygon_repair/repair.h>
 
 #include <CGAL/IO/WKT.h>
 
@@ -20,8 +20,6 @@ using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<K>;
 int
 main(int argc, char* argv[])
 {
-
-
   Multipolygon_with_holes_2 pA;
   if (argc == 2) {
       {
@@ -34,13 +32,13 @@ main(int argc, char* argv[])
           CGAL::IO::read_multi_polygon_WKT(is, pA);
   }
 
-  Multipolygon_with_holes_2 mpwh = CGAL::Polygon_repair::join(pA);
+  Multipolygon_with_holes_2 mpwh = CGAL::Polygon_repair::repair(pA, CGAL::Polygon_repair::Union_rule());
   {
     std::ofstream out("union.wkt");
     CGAL::IO::write_multi_polygon_WKT(out, mpwh);
     CGAL::draw(mpwh);
   }
-  mpwh = CGAL::Polygon_repair::intersection(pA);
+  mpwh = CGAL::Polygon_repair::repair(pA, CGAL::Polygon_repair::Intersection_rule());
   {
     std::ofstream out("intersection.wkt");
     CGAL::IO::write_multi_polygon_WKT(out, mpwh);
