@@ -163,6 +163,7 @@ public:
 
     using Squared_distance = typename Traits::Compute_squared_distance_d;
     using Construct_bbox = typename Traits::Construct_bbox_d;
+    using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
 
     using PointID = ID<Point>;
     using Points = std::vector<Point>;
@@ -230,11 +231,16 @@ public:
     static IFT squared_distance(Point const& p, Point const& q)
     {
       IFT res(0);
+      Construct_cartesian_const_iterator_d ccci;
+
+      auto itp = ccci(p), itq = ccci(q);
+
       for (int d=0;d<Traits::Dimension::value; ++d)
       {
-        std::pair<double,double> ip = to_interval(p[d]);
-        std::pair<double,double> iq = to_interval(q[d]);
+        std::pair<double,double> ip = to_interval(*itp);
+        std::pair<double,double> iq = to_interval(*itq);
         res+=square(IFT(ip)-IFT(iq));
+        ++itp; ++itq;
       }
       return res;
     }
@@ -261,10 +267,12 @@ public:
         std::array<distance_t, dimension> b_coords;
         auto fraction = pt.getFraction().approx;
         distance_t one_m_f = distance_t(1) - fraction;
+        Construct_cartesian_const_iterator_d ccci;
+        auto itp = ccci(point(pt.getPoint()));
+        auto itq = ccci(point(pt.getPoint()+1));
+
         for (int d=0; d<dimension; ++d)
-          //TODO: use Construct_cartesian_const_iterator_d
-          //TODO: use contruct point and add it in the traits concept
-          b_coords[d] = one_m_f * point(pt.getPoint())[d] +  point(pt.getPoint() + 1)[d] * fraction;
+          b_coords[d] = one_m_f * (*itp++) +  (*itq++) * fraction;
 
         if constexpr (dimension==2)
           return Point(b_coords[0], b_coords[1]);
