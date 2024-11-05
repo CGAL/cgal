@@ -15,7 +15,8 @@
 \cgalPkgAuthors{Ken Arroyo Ohori}
 \cgalPkgDesc{This package provides algorithms to repair 2D polygons, polygons with holes,
 and multipolygons with holes, by selecting faces of the arrangement of the input based on a selection rule.
-Currently, only the even-odd rule and the non-zero rule are provided. }
+The even-odd rule and the non-zero rule are provided for dealing with self intersections.
+The %union and the %intersection rule enable to combine similar polygons. }
 \cgalPkgManuals{Chapter_2D_Polygon_repair,PkgPolygonRepairRef}
 \cgalPkgSummaryEnd
 
@@ -33,7 +34,8 @@ Currently, only the even-odd rule and the non-zero rule are provided. }
 \cgalCRPSection{Functions}
 - `CGAL::Polygon_repair::repair()`
 
-\cgalCRPSection{Simplification Rules}
+\cgalCRPSection{Repair Rules}
 - `CGAL::Polygon_repair::Even_odd_rule`
-- `CGAL::Polygon_repair::Non_zero_rule`
+- `CGAL::Polygon_repair::Union_rule`
+- `CGAL::Polygon_repair::Intersection_rule`
 */
