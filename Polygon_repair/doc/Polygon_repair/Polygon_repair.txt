@@ -140,7 +140,7 @@ boundaries belong to, and using the orientation to distinguish between the outer
 inner boundaries of each polygon with holes.
 
 
-\section SectionPolygonRepair_Algorithm Non-Zero Algorithm
+\section SectionPolygonRepair_NonZeroAlgorithm Non-Zero Algorithm
 
 Tbd.
 
