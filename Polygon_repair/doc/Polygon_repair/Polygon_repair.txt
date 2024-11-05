@@ -9,7 +9,7 @@ namespace CGAL {
 
 \section SectionPolygonRepair_Introduction Introduction
 
-This package implements a polygon repair method. Starting from possibly
+This package implements polygon repair methods. Starting from possibly
 invalid input in the form of a polygon, polygon with holes or multipolygon
 with holes, the method computes an arrangement of the input edges, labels
 each face according to what it represents (exterior, polygon interior
@@ -17,13 +17,18 @@ or hole), and reconstructs the polygon(s) represented by the arrangement.
 The method returns valid output stored in a multipolygon with holes.
 
 Different arrangement and labeling heuristics are possible, but
-currently only the <em>even-odd</em> rule and <em>non-zero</em> rule are implemented in this package.
+currently the <em>even-odd</em> rule and <em>non-zero</em> rule are implemented in this package.
 The even-odd rule results in areas that are alternately assigned as polygon
 interiors and exterior/holes each time that an input edge is passed.
 It does not distinguish between edges that are part of outer boundaries
 from those of inner boundaries.
 
 The non-zero rule results in areas with a non-zero winding number.
+
+Two additional repair rules are provided that are useful when given
+several similar valid polygons with holes. They compute either their
+union or their intersection to be <em>conservative</em> by bounding
+from the interior or the exterior.
 
 \section SectionPolygonRepair_Definitions Definitions
 
