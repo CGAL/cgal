@@ -20,7 +20,7 @@ public:
 /// @{
 
 /*!
-Dimension type. Either `CGAL::Dimension_tag`
+Dimension type, being either `CGAL::Dimension_tag`
 or `CGAL::Dynamic_dimension_tag`.
 */
 typedef unspecified_type Dimension;
@@ -39,26 +39,24 @@ typedef unspecified_type FT;
 
 /*!
 A random access iterator type to enumerate the
-%Cartesian coordinates of a point.
+%Cartesian coordinates of a point, with `FT` as value type.
 */
 typedef unspecified_type Cartesian_const_iterator_d;
 
 /*!
-Functor with operators to construct iterators on the
-first and the past-the-end iterator for the %Cartesian coordinates of a point. This functor must
-provide the type `result_type` that must be the same a `Cartesian_const_iterator_d`.
+Functor model of `Kernel_d::ConstructCartesianConstIterator_d` to get
+iterators over cartesian coordinates of a point.
 */
 typedef unspecified_type Construct_cartesian_const_iterator_d;
 
 /*!
-Functor with operator to construct the bounding box of an object of type `Point_d`.
-Its result_type is either `Bbox_2`, `Bbox_3` or `Bbox` depending on `Dimension`.
+Functor with operator to construct the bounding box of an object of type `Point_d`,
+result type is either `Bbox_2`, `Bbox_3` or `Bbox` depending on `Dimension`.
 */
 typedef unspecified_type Construct_bbox_d;
 
 /*!
-Functor with operator taking two `Point_d` objects and returning the squared distance between then.
-Its result_type is either `FT`.
+Functor model of `Kernel_d::Squared_distance_d` to compute the squared distance between two points.
 */
 typedef unspecified_type Compute_squared_distance_d;
 
@@ -70,7 +68,7 @@ typedef unspecified_type Compute_squared_distance_d;
 /*!
 Function used to construct an object of type `Construct_cartesian_const_iterator_d`.
 */
-Construct_cartesian_const_iterator_d construct_construct_cartesian_const_iterator_d_object(const Point_d& p) const;
+Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const;
 
 /*!
 Function used to construct an object of type `Construct_bbox_d`.
