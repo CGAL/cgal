@@ -87,7 +87,7 @@ intersection_interval(Curve<T, true> const& curve1,
                       typename Curve<T, true>::PointID const& center_id,
                       Curve<T, true> const& curve2,
                       typename Curve<T, true>::PointID seg_start_id,
-                      typename Curve<T, true>::distance_t const& radius)
+                      typename Curve<T, true>::IFT const& radius)
 {
   using C = Curve<T, true>;
   Interval<C> I;
@@ -97,7 +97,7 @@ intersection_interval(Curve<T, true> const& curve1,
     // if not empty
     if (fill_lambda<typename C::distance_t>(
         curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
-        radius, II, curve1, center_id, curve2,  seg_start_id))
+        radius.inf(), II, curve1, center_id, curve2,  seg_start_id))
     {
       I = Interval<C>(II.first, II.second);
     }
@@ -123,7 +123,7 @@ intersection_interval(Curve<T, false> const& curve1,
                       typename Curve<T, false>::PointID const& center_id,
                       Curve<T, false> const& curve2,
                       typename Curve<T, false>::PointID seg_start_id,
-                      typename Curve<T, false>::distance_t const& radius)
+                      typename Curve<T, false>::IFT const& radius)
 {
   using C = Curve<T, false>;
 
@@ -133,7 +133,7 @@ intersection_interval(Curve<T, false> const& curve1,
     // if not empty
     if (fill_lambda<typename C::distance_t>(
         curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
-        radius, II, curve1, center_id, curve2,  seg_start_id))
+        radius.inf(), II, curve1, center_id, curve2,  seg_start_id))
     {
       I = Interval<C>(II.first, II.second);
     }

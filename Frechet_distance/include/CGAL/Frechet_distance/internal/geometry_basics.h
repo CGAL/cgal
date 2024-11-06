@@ -236,7 +236,6 @@ struct Lambda<Curve<T,false>>
     {
       if constexpr (!std::is_same_v<RO2, FT>)
       {
-        //TODO this will not work with CORE::Expr
         approx = v.a0()+v.a1()*approximate_sqrt(v.root());
       }
       else

@@ -43,11 +43,10 @@ private:
 
     Certificate cert;
     const Curve *curve1_pt, *curve2_pt;
-    distance_t distance;
-    distance_t distance_sqr;
+    typename Curve::IFT distance, distance_sqr;
 
 public:
-    Filter(const Curve& curve1, const Curve& curve2, distance_t const& distance)
+    Filter(const Curve& curve1, const Curve& curve2, typename Curve::IFT const& distance)
       : curve1_pt(&curve1), curve2_pt(&curve2), distance(distance), distance_sqr(square(distance))
     {
       cert.setCurves(&curve1, &curve2);
@@ -75,15 +74,15 @@ private:
 template <typename K>
 bool Filter<K>::isPointTooFarFromCurve(Point const& fixed, const Curve& curve)
 {
-    if (possibly(typename Curve::Squared_distance()(fixed, curve.front()) <= distance_sqr) || // Uncertain (A)
-        possibly(typename Curve::Squared_distance()(fixed, curve.back()) <= distance_sqr)) {
+    if (possibly(Curve::squared_distance(fixed, curve.front()) <= distance_sqr) || // Uncertain (A)
+        possibly(Curve::squared_distance(fixed, curve.back()) <= distance_sqr)) {
         return false;
     }
     std::size_t stepsize = 1;
     for (PointID pt = 0; pt < curve.size() - 1;) {
         stepsize = std::min<std::size_t>(stepsize, curve.size() - 1 - pt);
         auto mid = pt + (stepsize + 1) / 2;
-        auto mid_dist_sqr = typename Curve::Squared_distance()(fixed, curve[mid]);
+        auto mid_dist_sqr = Curve::squared_distance(fixed, curve[mid]);
         auto maxdist = (CGAL::max)(curve.curve_length(pt, mid),
                                   curve.curve_length(mid, pt + stepsize));
         auto comp_dist = distance + maxdist;
@@ -109,7 +108,7 @@ bool Filter<K>::isFree(Point const& fixed, Curve const& var_curve, PointID start
                           var_curve.curve_length(mid, end));
 
     if (certainly(distance > max)){
-      auto mid_dist_sqr = typename Curve::Squared_distance()(fixed, var_curve[mid]);
+      auto mid_dist_sqr = Curve::squared_distance(fixed, var_curve[mid]);
       if(certainly(mid_dist_sqr <= CGAL::square(distance - max))) { // Uncertain (A)
         return true;
       }
@@ -127,10 +126,10 @@ bool Filter<K>::isFree(Curve const& curve1, PointID start1, PointID end1,
                            curve1.curve_length(mid1, end1));
     auto max2 = (CGAL::max)(curve2.curve_length(start2 + 1, mid2),
                            curve2.curve_length(mid2, end2));
-    auto mid_dist_sqr = typename Curve::Squared_distance()(curve1[mid1], curve2[mid2]);
+    auto mid_dist_sqr = Curve::squared_distance(curve1[mid1], curve2[mid2]);
 
     // auto comp_dist = distance - max1 - max2;  // TODO: understand why if we use auto with gmpxx we get a use after free with the sanitizer (expression template I guess but why)
-    typename Curve::FT comp_dist = distance - max1 - max2;
+    typename Curve::IFT comp_dist = distance - max1 - max2;
     return certainly(! is_negative(comp_dist)) && certainly(mid_dist_sqr <= CGAL::square(comp_dist)); // Uncertain (A)
 }
 
@@ -156,10 +155,10 @@ bool Filter<K>::bichromaticFarthestDistance()
 
     // Computes the furthest pair of points in pair of bounding boxes:
     // This can be computed coordinate wise due to the symmetry of the boxes.
-    distance_t squared_max_dist = 0;
+    typename Curve::IFT squared_max_dist = 0;
     for (int i = 0; i < K::dimension; ++i) {
-        auto d1 = CGAL::square(bbox1.max(i) - bbox2.min(i));
-        auto d2 = CGAL::square(bbox2.max(i) - bbox1.min(i));
+        auto d1 = CGAL::square(typename Curve::IFT(bbox1.max(i)) - typename Curve::IFT(bbox2.min(i)));
+        auto d2 = CGAL::square(typename Curve::IFT(bbox2.max(i)) - typename Curve::IFT(bbox1.min(i)));
         squared_max_dist += CGAL::max(d1, d2);
     }
 
@@ -189,17 +188,17 @@ bool Filter<K>::greedy()
     PointID pos1 = 0;
     PointID pos2 = 0;
 
-    if (possibly(typename Curve::Squared_distance()(curve1[0], curve2[0]) > distance_sqr) ||  // Uncertain (A)
-        possibly(typename Curve::Squared_distance()(curve1.back(), curve2.back()) > distance_sqr)) {
+    if (possibly(Curve::squared_distance(curve1[0], curve2[0]) > distance_sqr) ||  // Uncertain (A)
+        possibly(Curve::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return false;
     }
 
-    auto d_sqr = typename Curve::Squared_distance()(curve1.back(), curve2.back());
+    auto d_sqr = Curve::squared_distance(curve1.back(), curve2.back());
     // Note that we only exit this loop if we reached the endpoints, which were
     // already checked to be close.
     while (pos1 + pos2 < curve1.size() + curve2.size() - 2) {
         d_sqr =
-          (CGAL::max)(d_sqr, typename Curve::Squared_distance()(curve1[pos1], curve2[pos2]));
+          (CGAL::max)(d_sqr, Curve::squared_distance(curve1[pos1], curve2[pos2]));
 
         if (possibly(d_sqr > distance_sqr)) { // Uncertain (A)
             return false;
@@ -243,8 +242,8 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
     pos2 = 0;
     cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
 
-    if (possibly(typename Curve::Squared_distance()(curve1[0], curve2[0]) > distance_sqr) ||  // Uncertain (A)
-        possibly(typename Curve::Squared_distance()(curve1.back(), curve2.back()) > distance_sqr)) {
+    if (possibly(Curve::squared_distance(curve1[0], curve2[0]) > distance_sqr) ||  // Uncertain (A)
+        possibly(Curve::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return false;
     }
 
@@ -283,10 +282,10 @@ bool Filter<K>::adaptiveGreedy(PointID& pos1, PointID& pos2)
         }
         // if we cannot reduce the step size
         else if (step == 1) {
-            auto dist1 = typename Curve::Squared_distance()(curve1[pos1 + 1], curve2[pos2]);
-            auto dist2 = typename Curve::Squared_distance()(curve1[pos1], curve2[pos2 + 1]);
+            auto dist1 = Curve::squared_distance(curve1[pos1 + 1], curve2[pos2]);
+            auto dist2 = Curve::squared_distance(curve1[pos1], curve2[pos2 + 1]);
             auto dist12 =
-                typename Curve::Squared_distance()(curve1[pos1 + 1], curve2[pos2 + 1]);
+                Curve::squared_distance(curve1[pos1 + 1], curve2[pos2 + 1]);
 
             if (certainly(dist1 <= distance_sqr) && possibly(dist1 < dist2) && possibly(dist1 < dist12)) { // Uncertain (A)
                 ++pos1;
@@ -358,8 +357,8 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
     PointID pos2 = 0;
     cert.addPoint({CPoint(pos1, 0.), CPoint(pos2, 0.)});
 
-    if (possibly(typename Curve::Squared_distance()(curve1[0], curve2[0]) > distance_sqr) || // Uncertain (A)
-        possibly(typename Curve::Squared_distance()(curve1.back(), curve2.back()) > distance_sqr)) {
+    if (possibly(Curve::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain (A)
+        possibly(Curve::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return false;
     }
 
@@ -397,10 +396,10 @@ bool Filter<K>::adaptiveSimultaneousGreedy()
         }
         // if we cannot reduce the step size
         else if (step == 1) {
-            auto dist1 = typename Curve::Squared_distance()(curve1[pos1 + 1], curve2[pos2]);
-            auto dist2 = typename Curve::Squared_distance()(curve1[pos1], curve2[pos2 + 1]);
+            auto dist1 = Curve::squared_distance(curve1[pos1 + 1], curve2[pos2]);
+            auto dist2 = Curve::squared_distance(curve1[pos1], curve2[pos2 + 1]);
             auto dist12 =
-                typename Curve::Squared_distance()(curve1[pos1 + 1], curve2[pos2 + 1]);
+                Curve::squared_distance(curve1[pos1 + 1], curve2[pos2 + 1]);
 
             if (certainly(dist1 <= distance_sqr) && possibly(dist1 < dist2) && possibly(dist1 < dist12)) { // Uncertain (A)
                 ++pos1;
@@ -457,8 +456,8 @@ bool Filter<K>::negative(PointID position1, PointID position2)
     auto& curve1 = *curve1_pt;
     auto& curve2 = *curve2_pt;
 
-    if (certainly(typename Curve::Squared_distance()(curve1[0], curve2[0]) > distance_sqr) || // Uncertain (A)
-        certainly(typename Curve::Squared_distance()(curve1.back(), curve2.back()) > distance_sqr)) {
+    if (certainly(Curve::squared_distance(curve1[0], curve2[0]) > distance_sqr) || // Uncertain (A)
+        certainly(Curve::squared_distance(curve1.back(), curve2.back()) > distance_sqr)) {
         return true;
     }
 

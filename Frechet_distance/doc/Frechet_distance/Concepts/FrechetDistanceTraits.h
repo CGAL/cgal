@@ -15,7 +15,7 @@ and `CGAL::approximate_Frechet_distance()`.
 */
 
 class FrechetDistanceTraits {
-
+public:
 /// \name Types
 /// @{
 
@@ -31,7 +31,9 @@ Point type.
 typedef unspecified_type Point_d;
 
 /*!
-The number type of the %Cartesian coordinates of types `Point_d`
+The number type of the %Cartesian coordinates of types `Point_d`.
+For a given `FT n`, `to_interval(n)` must be a valid expression and it must
+return an interval containing `n`, represented by a `std::pair<double, double>`.
 */
 typedef unspecified_type FT;
 
