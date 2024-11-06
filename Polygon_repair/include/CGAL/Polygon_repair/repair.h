@@ -78,7 +78,7 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
 
 
 template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Non_zero_rule rule)
+Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Non_zero_rule)
 {
   Winding<Kernel> winding;
   winding.insert(p);
@@ -107,7 +107,7 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
 
 
 template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Union_rule rule)
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Union_rule)
 {
   CGAL::Polygon_repair::Boolean<Kernel> bops;
   bops.insert(p);
@@ -123,7 +123,7 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
 
 
 template <class Kernel, class Container>
-Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Intersection_rule rule)
+Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Intersection_rule)
 {
  CGAL::Polygon_repair::Boolean<Kernel> bops;
   bops.insert(p);

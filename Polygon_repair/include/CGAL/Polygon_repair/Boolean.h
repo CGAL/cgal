@@ -416,4 +416,4 @@ intersection(const Multipolygon_with_holes_2<K>& pA)
 } // namespace Polygon_repair
 } //namespace CGAL
 
-#endif CGAL_POLYGON_REPAIR_BOOLEAN_H
+#endif // CGAL_POLYGON_REPAIR_BOOLEAN_H
