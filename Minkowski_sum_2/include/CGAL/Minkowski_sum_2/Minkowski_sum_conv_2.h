@@ -533,7 +533,7 @@ private:
     // list for subsequences sharing a common move_on indicator. When we
     // encounter such a subsequence that equals the size of the corresponding
     // polygon, we can safely remove it from the convolution cycle.
-    typename std::list<Labeled_segment_2>::iterator  first, curr, newins;
+    typename std::list<Labeled_segment_2>::iterator  first, curr;
     bool move_on;
     unsigned int count = 1;
     bool reduced_cycle = false;
@@ -611,7 +611,7 @@ private:
         res = f_compare_xy(curr_pt, next_pt);
 
         if (res != EQUAL) {
-          newins = cycle.insert(curr,
+          after_next = cycle.insert(curr,
                        Labeled_segment_2(Segment_2(curr_pt, next_pt),
                                          X_curve_label((res == SMALLER),
                                                        cycle_id,
@@ -621,13 +621,7 @@ private:
 
         cycle.erase(curr);
         cycle.erase(next);
-        if (res != EQUAL) {
-          //continue comparing the new combined line with the next line
-          curr = newins;
-        }
-        else {
-          curr = after_next;
-        }
+        curr = after_next;
 
         if (after_next != cycle.end()) {
           next = curr;
