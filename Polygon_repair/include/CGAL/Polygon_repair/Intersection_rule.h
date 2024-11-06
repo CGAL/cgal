@@ -22,7 +22,7 @@ namespace Polygon_repair {
 /// @{
 
 /*!
-  Tag class to select the %ntersection rule when calling `CGAL::Polygon_repair::repair()`.
+  Tag class to select the %intersection rule when calling `CGAL::Polygon_repair::repair()`.
   */
   struct Intersection_rule {};
 

@@ -194,6 +194,8 @@ to edges, which enables correct counting even on partially overlapping edges.
 
 Ken Arroyo Ohori developed this package during the Google Summer of
 Code 2023 mentored by Sébastien Loriot and Andreas Fabri.
+The GSoC project was limited to the even-odd rule. Further rules were added
+with CGAL 6.1 by Andreas Fabri.
 
 */
 } /* namespace CGAL */
