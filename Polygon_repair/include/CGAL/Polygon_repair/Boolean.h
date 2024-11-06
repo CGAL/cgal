@@ -407,7 +407,7 @@ join(const Multipolygon_with_holes_2<K>& pA)
 
 template <typename PA, typename PB, typename K = Default>
 decltype(auto) // Multipolygon_with_holes_2<K>
-join(const PA& pA, const PB& pB, const K& k = Default())
+join(const PA& pA, const PB& pB, const K& = Default())
 {
   typedef typename Default::Get<K, typename PA::Traits>::type Traits;
 
@@ -428,7 +428,7 @@ join(const PA& pA, const PB& pB, const K& k = Default())
 
 template <typename K>
 Multipolygon_with_holes_2<K>
-intersection(const Multipolygon_with_holes_2<K>& pA)
+intersect(const Multipolygon_with_holes_2<K>& pA)
 {
   struct Equal  {
     int val;
@@ -451,7 +451,7 @@ intersection(const Multipolygon_with_holes_2<K>& pA)
 
 template <typename PA, typename PB, typename K = Default>
 decltype(auto)  // Multipolygon_with_holes_2<K>
-intersection(const PA& pA, const PB& pB, const K& k = Default())
+intersect(const PA& pA, const PB& pB, const K& = Default())
 {
   typedef typename Default::Get<K, typename PA::Traits>::type Traits;
 
