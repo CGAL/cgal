@@ -1120,8 +1120,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_2         Line_2;
 
   public:
-    typedef RT               result_type;
-
     const RT&
     operator()(const Line_2& l) const
     {
@@ -1136,8 +1134,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3        Plane_3;
 
   public:
-    typedef RT               result_type;
-
     const RT&
     operator()(const Plane_3& l) const
     {
@@ -1153,8 +1149,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_2         Line_2;
 
   public:
-    typedef RT               result_type;
-
     const RT&
     operator()(const Line_2& l) const
     {
@@ -1169,8 +1163,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3        Plane_3;
 
   public:
-    typedef RT               result_type;
-
     const RT&
     operator()(const Plane_3& l) const
     {
@@ -1186,8 +1178,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_2         Line_2;
 
   public:
-    typedef RT               result_type;
-
     const RT&
     operator()(const Line_2& l) const
     {
@@ -1202,8 +1192,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3        Plane_3;
 
   public:
-    typedef RT               result_type;
-
     const RT&
     operator()(const Plane_3& l) const
     {
@@ -1218,8 +1206,6 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3        Plane_3;
 
   public:
-    typedef RT               result_type;
-
     const RT&
     operator()(const Plane_3& l) const
     {
