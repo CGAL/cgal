@@ -60,7 +60,7 @@ main(int argc, char* argv[])
     pB.push_back(Point_2(1,-1));
     pB.push_back(Point_2(1,1));
     pB.push_back(Point_2(-1,1));
-    mpwh = CGAL::Polygon_repair::join(pA,pB);
+    mpwh = CGAL::Polygon_repair::join(mpwh, pB);
     CGAL::draw(mpwh);
   }
   return 0;

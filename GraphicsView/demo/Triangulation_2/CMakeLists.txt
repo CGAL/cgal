@@ -58,20 +58,8 @@ target_link_libraries(Regular_triangulation_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
 
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Regular_triangulation_2)
 
-#--------------------------------
-# The "Boolean" demo: Boolean_2
-#--------------------------------
-
-qt_add_executable(
-  Boolean_2 Boolean_2.cpp
-  Boolean_2.ui Boolean_2.qrc)
-target_link_libraries(Boolean_2 PRIVATE CGAL::CGAL CGAL::CGAL_Qt6
-                                                      Qt6::Widgets)
-
-add_to_cached_list(CGAL_EXECUTABLE_TARGETS Boolean_2)
-
 include(${CGAL_MODULES_DIR}/CGAL_add_test.cmake)
 foreach(target Constrained_Delaunay_triangulation_2 Delaunay_triangulation_2
-               Regular_triangulation_2 Boolean_2)
+               Regular_triangulation_2)
   cgal_add_compilation_test(${target})
 endforeach()

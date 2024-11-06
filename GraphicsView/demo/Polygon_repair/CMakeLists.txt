@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.12...3.29)
-project(Triangulation_2_Demo)
+project(Polygon_repair_Demo)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)

@@ -387,6 +387,12 @@ access to the underlying constrained triangulation.
 
 };
 
+
+
+/// \ingroup PkgPolygonRepairFunctions
+/// omputes the union of all polygons with holes in `p`
+/// \tparam K parameter of the input and output polygons
+/// \pre Each polygon with hole must be non-self-intersecting
 template <typename K>
 Multipolygon_with_holes_2<K>
 join(const Multipolygon_with_holes_2<K>& pA)
@@ -405,6 +411,12 @@ join(const Multipolygon_with_holes_2<K>& pA)
   return bops(ltz);
 }
 
+/// \ingroup PkgPolygonRepairFunctions
+/// computes the union of two polygons
+/// \tparam K parameter of the output polygons
+/// \tparam PA must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \tparam PB must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \pre The polygons `pA` and `pB` must be non-self-intersecting
 template <typename PA, typename PB, typename K = Default>
 decltype(auto) // Multipolygon_with_holes_2<K>
 join(const PA& pA, const PB& pB, const K& = Default())
@@ -426,6 +438,11 @@ join(const PA& pA, const PB& pB, const K& = Default())
   return bops(ltz);
 }
 
+
+/// \ingroup PkgPolygonRepairFunctions
+/// computes the intersection of all polygons with holes in `p`
+/// \tparam K parameter of the input and output polygons
+/// \pre Each polygon with hole must be non-self-intersecting
 template <typename K>
 Multipolygon_with_holes_2<K>
 intersect(const Multipolygon_with_holes_2<K>& pA)
@@ -449,6 +466,13 @@ intersect(const Multipolygon_with_holes_2<K>& pA)
   return bops(equal);
 }
 
+
+/// \ingroup PkgPolygonRepairFunctions
+/// Computes the intersection of two polygons
+/// \tparam K parameter of the output polygon
+/// \tparam PA must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \tparam PB must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \pre The polygons `pA` and `pB` must be non-self-intersecting
 template <typename PA, typename PB, typename K = Default>
 decltype(auto)  // Multipolygon_with_holes_2<K>
 intersect(const PA& pA, const PB& pB, const K& = Default())
