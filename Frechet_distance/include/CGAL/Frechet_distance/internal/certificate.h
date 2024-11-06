@@ -26,8 +26,6 @@ template <typename C>
 class Certificate
 {
     using Curve = C;
-    using distance_t = typename Curve::distance_t;
-//    using K = typename Curve::K;
     using CPositions = CGAL::Frechet_distance_::internal::CPositions<C>;
     using CPosition = CGAL::Frechet_distance_::internal::CPosition<C>;
     using CPoint = CGAL::Frechet_distance_::internal::CPoint<C>;
@@ -52,7 +50,7 @@ public:
         curve_pair[0] = curve1;
         curve_pair[1] = curve2;
     }
-    void setDistance(distance_t distance)
+    void setDistance(typename Curve::IFT distance)
     {
         dist = distance;
         dist_sqr = CGAL::square(distance);
@@ -75,7 +73,7 @@ private:
 
     CPositions  traversal;
     std::array<const Curve*, 2> curve_pair;
-    distance_t dist, dist_sqr;
+    typename Curve::IFT dist, dist_sqr;
 
     bool lessThan;
     bool valid = false;

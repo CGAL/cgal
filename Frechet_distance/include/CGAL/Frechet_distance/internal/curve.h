@@ -156,6 +156,7 @@ public:
 
 //////
     using FT = typename Traits::FT;
+    using IFT = CGAL::Interval_nt<false>; //TODO: if not filter + double --> should be double
     using distance_t = FT;
 
     using Point = typename Traits::Point_d;
@@ -182,7 +183,7 @@ public:
 
       for (PointID i = 1; i < points.size(); ++i)
       {
-        auto segment_distance = distance(point(i - 1), point(i));
+        IFT segment_distance = distance(point(i - 1), point(i));
         prefix_length[i] = prefix_length[i - 1] + segment_distance;
 
         extreme_points += bbox(point(i));
@@ -226,13 +227,21 @@ public:
 
     bool operator!=(Curve const& other) const { return !(*this == other); }
 
-    distance_t distance(Point const& p, Point const& q) const
+    static IFT squared_distance(Point const& p, Point const& q)
     {
-      // TODO: is that an issue for robustness?
-        return CGAL::approximate_sqrt(Squared_distance()(p, q));
+      IFT res(0);
+      for (int d=0;d<Traits::Dimension::value; ++d)
+      {
+        std::pair<double,double> ip = to_interval(p[d]);
+        std::pair<double,double> iq = to_interval(q[d]);
+        res+=square(IFT(ip)-IFT(iq));
+      }
+      return res;
     }
-
-
+    static IFT distance(Point const& p, Point const& q)
+    {
+      return sqrt(squared_distance(p,q));
+    }
     template <class P>
     Point interpolate_at(P const& pt) const
     {
@@ -267,12 +276,12 @@ public:
 
     Point interpolate_at(PointID const& pt) const { return point(pt); }
 
-    distance_t curve_length(PointID const& i, PointID const& j) const
+    IFT curve_length(PointID const& i, PointID const& j) const
     {
       CGAL_assertion(i>=0 && i<prefix_length.size());
       CGAL_assertion(j>=0 && j<prefix_length.size());
 
-        return prefix_length[j] - prefix_length[i];
+      return prefix_length[j] - prefix_length[i];
     }
 
     Point const& front() const { return points.front(); }
@@ -317,7 +326,7 @@ public:
 protected:
 
     Points points;
-    std::vector<distance_t> prefix_length;
+    std::vector<IFT> prefix_length;
     Bbox extreme_points;
 };
 

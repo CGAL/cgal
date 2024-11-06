@@ -1,4 +1,5 @@
 #include <CGAL/Dimension.h>
+#include <CGAL/Bbox_2.h>
 
 struct MinimalFrechetTraits {
 
@@ -16,7 +17,7 @@ struct MinimalFrechetTraits {
 
   struct Compute_squared_distance_d
   {
-    double operator()(Point, Point) const
+    double operator()(Point_d, Point_d) const
     {
       return 0;
     }
@@ -26,7 +27,7 @@ struct MinimalFrechetTraits {
   {
     CGAL::Bbox_2 operator()(Point_d) const
     {
-      return 0;
+      return CGAL::Bbox_2();
     }
   };
 
@@ -39,7 +40,7 @@ struct MinimalFrechetTraits {
 
 int main()
 {
-  std::vector<MinimalFrechetTraits::Point> curve;
+  std::vector<MinimalFrechetTraits::Point_d> curve;
   /* bool decision = */ CGAL::is_Frechet_distance_larger<MinimalFrechetTraits>(curve, curve, 0.1);
   return 0;
 }
