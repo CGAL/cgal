@@ -33,8 +33,6 @@
 
 namespace CGAL {
 
- class Epick;
-
 // Comparison functor that compares two Vertex_handle.
 // Used as 'Compare' functor for the constraint hierarchy.
 template < class Tr >
