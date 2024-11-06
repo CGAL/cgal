@@ -176,9 +176,7 @@ MainWindow::processInput(CGAL::Object o)
     }
   }
   if((! mpwhA.is_empty()) && (! mpwhB.is_empty())){
-    Boolean boolean;
-    boolean.insert(mpwhA, mpwhB);
-    mpwhC = boolean([](bool a, bool b){ return a && b;});
+    mpwhC = CGAL::Polygon_repair::join(mpwhA, mpwhB);
   }
   Q_EMIT( changed());
 }
