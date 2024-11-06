@@ -109,14 +109,16 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
 template <class Kernel, class Container>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Union_rule)
 {
-  CGAL::Polygon_repair::Boolean<Kernel> bops;
-  bops.insert(p);
   struct Larger_than_zero {
     bool operator()(int i) const
     {
       return i > 0;
     }
   };
+
+  CGAL::Polygon_repair::Boolean<Kernel> bops;
+  bops.insert(p);
+  bops.mark_domains();
   Larger_than_zero ltz;
   return bops(ltz);
 }
@@ -125,8 +127,6 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
 template <class Kernel, class Container>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Intersection_rule)
 {
- CGAL::Polygon_repair::Boolean<Kernel> bops;
-  bops.insert(p);
   struct Equal  {
     int val;
     Equal(int val)
@@ -138,6 +138,10 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
       return i == val;
     }
   };
+
+ CGAL::Polygon_repair::Boolean<Kernel> bops;
+  bops.insert(p);
+  bops.mark_domains();
   Equal equal(p.number_of_polygons_with_holes());
   return bops(equal);
 }

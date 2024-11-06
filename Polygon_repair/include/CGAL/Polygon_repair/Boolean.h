@@ -136,6 +136,22 @@ default constructor.
 sets the polygons as input of the %Boolean operation.
 */
   void
+  insert(const Polygon_2& pA)
+  {
+    cdt.insert_constraint(pA.vertices_begin(), pA.vertices_end(), true);
+  }
+
+
+  void
+  insert(const Polygon_with_holes_2& pwh)
+  {
+    cdt.insert_constraint(pwh.outer_boundary().vertices_begin(), pwh.outer_boundary().vertices_end(), true);
+    for(auto const& hole : pwh.holes()){
+      cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
+    }
+  }
+
+  void
   insert(const Multipolygon_with_holes_2& pA)
   {
     for(const auto& pwh : pA.polygons_with_holes()){
@@ -144,10 +160,7 @@ sets the polygons as input of the %Boolean operation.
         cdt.insert_constraint(hole.vertices_begin(), hole.vertices_end(), true);
       }
     }
-
-    mark_domains();
   }
-
 private:
 
   void
@@ -181,7 +194,7 @@ private:
     }
   }
 
-
+  public:
   // this marks how many multipolygon interiors overlap a cell of the arrangement of mutipolygons
   void
   mark_domains()
@@ -217,7 +230,7 @@ private:
     }
   }
 
-
+private:
   template <typename Fct>
   void
   label_domain(Face_handle start, int label, const Fct& fct)
@@ -378,26 +391,45 @@ template <typename K>
 Multipolygon_with_holes_2<K>
 join(const Multipolygon_with_holes_2<K>& pA)
 {
-  CGAL::Polygon_repair::Boolean<K> bops;
-  bops.insert(pA);
   struct Larger_than_zero {
     bool operator()(int i) const
     {
       return i > 0;
     }
   };
+
+  CGAL::Polygon_repair::Boolean<K> bops;
+  bops.insert(pA);
+  bops.mark_domains();
   Larger_than_zero ltz;
   return bops(ltz);
 }
 
+template <typename PA, typename PB, typename K = Default>
+decltype(auto) // Multipolygon_with_holes_2<K>
+join(const PA& pA, const PB& pB, const K& k = Default())
+{
+  typedef typename Default::Get<K, typename PA::Traits>::type Traits;
 
+  struct Larger_than_zero {
+    bool operator()(int i) const
+    {
+      return i > 0;
+    }
+  };
+
+  CGAL::Polygon_repair::Boolean<Traits> bops;
+  bops.insert(pA);
+  bops.insert(pB);
+  bops.mark_domains();
+  Larger_than_zero ltz;
+  return bops(ltz);
+}
 
 template <typename K>
 Multipolygon_with_holes_2<K>
 intersection(const Multipolygon_with_holes_2<K>& pA)
 {
-  CGAL::Polygon_repair::Boolean<K> bops;
-  bops.insert(pA);
   struct Equal  {
     int val;
     Equal(int val)
@@ -409,7 +441,32 @@ intersection(const Multipolygon_with_holes_2<K>& pA)
       return i == val;
     }
   };
+
+  CGAL::Polygon_repair::Boolean<K> bops;
+  bops.insert(pA);
+  bops.mark_domains();
   Equal equal(pA.number_of_polygons_with_holes());
+  return bops(equal);
+}
+
+template <typename PA, typename PB, typename K = Default>
+decltype(auto)  // Multipolygon_with_holes_2<K>
+intersection(const PA& pA, const PB& pB, const K& k = Default())
+{
+  typedef typename Default::Get<K, typename PA::Traits>::type Traits;
+
+  struct Equal  {
+    bool operator()(int i) const
+    {
+      return i == 2;
+    }
+  };
+
+  CGAL::Polygon_repair::Boolean<Traits> bops;
+  bops.insert(pA);
+  bops.insert(pB);
+  bops.mark_domains();
+  Equal equal;
   return bops(equal);
 }
 

@@ -14,6 +14,8 @@
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 
+using Point_2 = K::Point_2;
+using Polygon_2 = CGAL::Polygon_2<K>;
 using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
 using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<K>;
 
@@ -45,6 +47,14 @@ main(int argc, char* argv[])
     CGAL::draw(mpwh);
   }
 
-
+  {
+    Polygon_2 pB;
+    pB.push_back(Point_2(-1,-1));
+    pB.push_back(Point_2(1,-1));
+    pB.push_back(Point_2(1,1));
+    pB.push_back(Point_2(-1,1));
+    mpwh = CGAL::Polygon_repair::join(pA,pB);
+    CGAL::draw(mpwh);
+  }
   return 0;
 }
