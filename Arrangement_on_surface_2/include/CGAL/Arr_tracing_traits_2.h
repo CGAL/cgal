@@ -284,13 +284,14 @@ public:
      * \return the left endpoint
      */
     using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
-    decltype(std::declval<Subcurve_ctr_minv>().
-             operator()(std::declval<X_monotone_curve_2>()))
-    operator()(const X_monotone_curve_2& xcv) const {
+    using Return_type =
+      decltype(std::declval<Subcurve_ctr_minv>().
+               operator()(std::declval<X_monotone_curve_2>()));
+    Return_type operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
       std::cout << "construct_min_vertex" << std::endl
                 << "  xcv: " << xcv << std::endl;
-      Point_2 p = m_object(xcv);
+      Return_type p = m_object(xcv);
       std::cout << "  result: " << p << std::endl;
       return p;
     }
@@ -312,19 +313,21 @@ public:
      * \return the right endpoint
      */
     using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
-    decltype(std::declval<Subcurve_ctr_maxv>().
-             operator()(std::declval<X_monotone_curve_2>()))
-    operator()(const X_monotone_curve_2& xcv) const {
+    using Return_type =
+      decltype(std::declval<Subcurve_ctr_maxv>().
+               operator()(std::declval<X_monotone_curve_2>()));
+    Return_type operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
       std::cout << "construct_max_vertex" << std::endl
                 << "  xcv: " << xcv << std::endl;
-      Point_2 p = m_object(xcv);
+      Return_type p = m_object(xcv);
       std::cout << "  result: " << p << std::endl;
       return p;
     }
   };
 
-  /*! A functor that checks whether a given \f$x\f$-monotone curve is vertical. */
+  /*! A functor that checks whether a given \f$x\f$-monotone curve is vertical.
+   */
   class Is_vertical_2 {
   private:
     typename Base::Is_vertical_2 m_object;
@@ -379,8 +382,8 @@ public:
     }
   };
 
-  /*! A functor that checks whether two points and two \f$x\f$-monotone curves are
-   * identical.
+  /*! A functor that checks whether two points and two \f$x\f$-monotone curves
+   * are identical.
    */
   class Equal_2 {
   private:
@@ -977,8 +980,8 @@ public:
 
   // bottom-top
 
-  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone arc lies
-   * on a boundary of the parameter space along the y axis.
+  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone arc
+   * lies on a boundary of the parameter space along the y axis.
    */
   class Parameter_space_in_y_2 {
   private:
