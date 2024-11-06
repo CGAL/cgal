@@ -19,5 +19,5 @@ endforeach()
 
 if(CGAL_Qt6_FOUND)
   target_link_libraries(repair_non_zero_polygon_2 PUBLIC CGAL::CGAL_Basic_viewer)
-  target_link_libraries(repair_join_intersect PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(repair_union_intersect_2 PUBLIC CGAL::CGAL_Basic_viewer)
 endif()
