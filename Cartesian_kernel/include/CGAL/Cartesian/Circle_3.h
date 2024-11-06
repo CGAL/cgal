@@ -135,7 +135,7 @@ public:
     return diametral_sphere().center();
   }
 
-  FT squared_radius() const
+  decltype(auto) squared_radius() const
   {
     return diametral_sphere().squared_radius();
   }
@@ -155,7 +155,7 @@ public:
     return CGAL_PI * CGAL_PI * 4.0 * to_double(squared_radius());
   }
 
-  FT area_divided_by_pi() const
+  decltype(auto) area_divided_by_pi() const
   {
     return squared_radius();
   }

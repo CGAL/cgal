@@ -1053,13 +1053,9 @@ namespace CartesianKernelFunctors {
   class Compute_area_divided_by_pi_3
   {
     typedef typename K::Circle_3                  Circle_3;
-    typedef typename K::FT                        FT;
 
   public:
-
-    typedef FT result_type;
-
-    result_type
+    decltype(auto) // FT or const FT&
     operator()(const Circle_3 & c) const
     { return c.rep().area_divided_by_pi(); }
 
@@ -1189,30 +1185,26 @@ namespace CartesianKernelFunctors {
     typedef typename K::FT          FT;
     typedef typename K::Point_2     Point_2;
     typedef typename K::Circle_2    Circle_2;
-  public:
-    typedef FT                      result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()( const Circle_2& c) const
     { return c.rep().squared_radius(); }
 
-    result_type
+    FT
     operator()( const Point_2& /*p*/) const
     { return FT(0); }
 
-    result_type
+    FT
     operator()( const Point_2& p, const Point_2& q) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y()); }
 
-    result_type
+    FT
     operator()( const Point_2& p, const Point_2& q, const Point_2& r) const
     { return squared_radiusC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
   };
 
 } //namespace CartesianKernelFunctors
-
-// For the non specialized template will do the right thing,
-// namely return a copy of an FT
 
 namespace CartesianKernelFunctors {
 
@@ -1223,22 +1215,21 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_3     Point_3;
     typedef typename K::Sphere_3    Sphere_3;
     typedef typename K::Circle_3    Circle_3;
-  public:
-    typedef FT               result_type;
 
-    result_type
+public:
+    decltype(auto)
     operator()( const Sphere_3& s) const
     { return s.rep().squared_radius(); }
 
-    result_type
+    decltype(auto)
     operator()( const Circle_3& c) const
     { return c.rep().squared_radius(); }
 
-    result_type
+    FT
     operator()( const Point_3& /*p*/) const
     { return FT(0); }
 
-    result_type
+    FT
     operator()( const Point_3& p, const Point_3& q) const
     {
       FT num, den;
@@ -1248,7 +1239,7 @@ namespace CartesianKernelFunctors {
       return num / den;
     }
 
-    result_type
+    FT
     operator()( const Point_3& p, const Point_3& q, const Point_3& r) const
     {
       FT num, den;
@@ -1259,7 +1250,7 @@ namespace CartesianKernelFunctors {
       return num / den;
     }
 
-    result_type
+    FT
     operator()( const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
     {

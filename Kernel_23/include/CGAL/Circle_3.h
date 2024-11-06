@@ -106,7 +106,7 @@ public:
     return diametral_sphere().center();
   }
 
-  FT squared_radius() const
+  decltype(auto) squared_radius() const
   {
     return diametral_sphere().squared_radius();
   }
@@ -122,7 +122,7 @@ public:
     return typename R::Construct_bbox_3()(*this);
   }
 
-  FT area_divided_by_pi() const
+  decltype(auto) area_divided_by_pi() const
   {
     return typename R::Compute_area_divided_by_pi_3()(*this);
   }

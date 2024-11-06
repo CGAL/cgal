@@ -1486,10 +1486,9 @@ namespace CommonKernelFunctors {
   {
     typedef typename K::Point_2   Point_2;
     typedef typename K::Circle_2  Circle_2;
-  public:
-    typedef const Point_2&         result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Circle_2& c) const
     { return c.rep().center(); }
   };
@@ -1500,14 +1499,13 @@ namespace CommonKernelFunctors {
     typedef typename K::Point_3   Point_3;
     typedef typename K::Sphere_3  Sphere_3;
     typedef typename K::Circle_3  Circle_3;
-  public:
-    typedef const Point_3&          result_type;
 
-    result_type
+  public:
+    decltype(auto)
     operator()(const Sphere_3& s) const
     { return s.rep().center(); }
 
-    result_type
+    decltype(auto)
     operator()(const Circle_3& c) const
     { return c.rep().center(); }
 
@@ -2108,9 +2106,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Plane_3      Plane_3;
     typedef typename K::Circle_3     Circle_3;
     typedef typename Plane_3::Rep    Rep;
-  public:
-    typedef Plane_3          result_type;
 
+  public:
     Rep // Plane_3
     operator()(Return_base_tag, const RT& a, const RT& b, const RT& c, const RT& d) const
     { return Rep(a, b, c, d); }
@@ -2147,7 +2144,7 @@ namespace CommonKernelFunctors {
     operator()(Return_base_tag, const Segment_3& s, const Point_3& p) const
     { return Rep(s, p); }
 
-    Rep // Plane_3
+    decltype(auto)
     operator()(Return_base_tag, const Circle_3 & c) const
     { return c.rep().supporting_plane(); }
 
@@ -2179,7 +2176,7 @@ namespace CommonKernelFunctors {
     operator()(const Segment_3& s, const Point_3& p) const
     { return this->operator()(Return_base_tag(), s, p); }
 
-    Plane_3
+    decltype(auto)
     operator()(const Circle_3 & c) const
     { return this->operator()(Return_base_tag(), c); }
 
@@ -2257,9 +2254,8 @@ namespace CommonKernelFunctors {
     typedef typename K::Line_3     Line_3;
     typedef typename K::Ray_3      Ray_3;
     typedef typename K::Plane_3    Plane_3;
-  public:
-    typedef Point_3          result_type;
 
+  public:
     const Point_3&
     operator()( const Line_3& l) const
     { return l.rep().point(); }
