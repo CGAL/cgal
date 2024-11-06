@@ -251,13 +251,13 @@ public:
     {}
 
     /*! Operate */
-    bool operator()(const X_monotone_curve_2& xc1,
-                    const X_monotone_curve_2& xc2) const
-    { ++m_counter1; return m_object(xc1, xc2); }
+    bool operator()(const Point_2& p1, const Point_2& p2) const
+    { ++m_counter1; return m_object(p1, p2); }
 
     /*! Operate */
-    bool operator()(const Point_2& p1, const Point_2& p2) const
-    { ++m_counter2; return m_object(p1, p2); }
+    bool operator()(const X_monotone_curve_2& xc1,
+                    const X_monotone_curve_2& xc2) const
+    { ++m_counter2; return m_object(xc1, xc2); }
   };
 
   /*! A functor that compares compares the y-coordinates of two \f$x\f$-monotone
@@ -526,11 +526,11 @@ public:
     {}
 
     /*! Operate */
-    Arr_parameter_space operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     { ++m_counter1; return m_object(p); }
 
     /*! Operate */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xc) const
+    bool operator()(const X_monotone_curve_2& xc) const
     { ++m_counter2; return m_object(xc); }
   };
 

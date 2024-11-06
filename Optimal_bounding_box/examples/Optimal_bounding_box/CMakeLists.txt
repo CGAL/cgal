@@ -18,5 +18,5 @@ create_single_source_cgal_program("obb_with_point_maps_example.cpp")
 create_single_source_cgal_program("rotated_aabb_tree_example.cpp")
 
 foreach(target obb_example obb_with_point_maps_example rotated_aabb_tree_example)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()
