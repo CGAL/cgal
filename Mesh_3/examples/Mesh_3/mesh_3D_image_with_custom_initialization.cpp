@@ -46,7 +46,7 @@ struct Custom_initial_points_generator
   const CGAL::Image_3& image_;
 
   template <typename OutputIterator>
-  OutputIterator operator()(OutputIterator pts, int n = 20) const
+  OutputIterator operator()(OutputIterator pts, int) const
   {
     typedef Tr::Geom_traits     Gt;
     typedef Gt::Point_3         Point_3;
