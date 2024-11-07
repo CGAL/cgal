@@ -236,7 +236,8 @@ struct Lambda<Curve<T,false>>
     {
       if constexpr (!std::is_same_v<RO2, FT>)
       {
-        approx = v.a0()+v.a1()*approximate_sqrt(v.root());
+        std::pair<double, double> iv = to_interval(v);
+        approx = FT((iv.first+iv.second)/2.);
       }
       else
         approx=v;
