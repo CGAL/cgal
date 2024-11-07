@@ -53,7 +53,6 @@ public:
     void setDistance(typename Curve::IFT distance)
     {
         dist = distance;
-        dist_sqr = CGAL::square(distance);
     }
     void validate() { valid = true; };
     void reset()
@@ -73,7 +72,7 @@ private:
 
     CPositions  traversal;
     std::array<const Curve*, 2> curve_pair;
-    typename Curve::IFT dist, dist_sqr;
+    typename Curve::IFT dist;
 
     bool lessThan;
     bool valid = false;
