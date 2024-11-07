@@ -58,11 +58,12 @@ fill_lambda(const Point& circle_center,
             C const& curve1,
             typename C::PointID const& center_id,
             C const& curve2,
-            typename C::PointID const& seg_start_id)
+            typename C::PointID const& seg_start_id,
+            const Traits& traits = Traits())
 {
   using FT = typename Traits::FT;
   FT a(0), b(0), c(0);
-  auto ccci = curve1.traits().construct_cartesian_const_iterator_d_object();
+  auto ccci = traits.construct_cartesian_const_iterator_d_object();
   auto it_cc = ccci(circle_center), it_s = ccci(line_start), it_e = ccci(line_end);
 
   for (auto i = 0; i < C::dimension; ++i, ++it_cc, ++it_s, ++it_e)
@@ -73,7 +74,7 @@ fill_lambda(const Point& circle_center,
     b -= start_center_diff * start_end_diff;
     c += square(start_center_diff);
   }
-  c -= CGAL::square(radius);
+  c -= CGAL::square(typename Traits::FT(radius));
 
   FT minus_b_div_a = b / a;
   FT d = CGAL::square(minus_b_div_a) - c / a;
@@ -167,7 +168,7 @@ intersection_interval(Curve<T, false> const& curve1,
     // if not empty
     if (fill_lambda<T>(
         curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
-        C::inf(radius), II, curve1, center_id, curve2,  seg_start_id).value())
+        C::inf(radius), II, curve1, center_id, curve2,  seg_start_id, curve1.traits()).value())
     {
       I = Interval<C>(II.first, II.second);
     }
