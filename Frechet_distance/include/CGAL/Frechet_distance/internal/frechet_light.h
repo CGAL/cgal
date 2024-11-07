@@ -1137,7 +1137,7 @@ bool FrechetLight<C>::lessThan(distance_t const& d, Curve const& curve1,
 {
     this->curve_pair[0] = &curve1;
     this->curve_pair[1] = &curve2;
-    this->distance = to_interval(d);
+    this->distance = C::to_ift(d);
 
     // curves empty or start or end are already far
     if (curve1.empty() || curve2.empty()) {
@@ -1181,7 +1181,7 @@ bool FrechetLight<C>::lessThanWithFilters(distance_t const& d, Curve const& curv
 {
     this->curve_pair[0] = &curve1;
     this->curve_pair[1] = &curve2;
-    this->distance = typename Curve::IFT(to_interval(d));
+    this->distance = Curve::to_ift(d);
 
     assert(curve1.size());
     assert(curve2.size());

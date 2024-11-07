@@ -156,7 +156,7 @@ public:
 
 //////
     using FT = typename Traits::FT;
-    using IFT = CGAL::Interval_nt<false>; //TODO: if not filter + double --> should be double
+    using IFT = std::conditional_t<std::is_floating_point_v<FT>, FT, CGAL::Interval_nt<false>>;
     using distance_t = FT;
 
     using Point = typename Traits::Point_d;
@@ -237,9 +237,7 @@ public:
 
       for (int d=0;d<Traits::Dimension::value; ++d)
       {
-        std::pair<double,double> ip = to_interval(*itp);
-        std::pair<double,double> iq = to_interval(*itq);
-        res+=square(IFT(ip)-IFT(iq));
+        res+=square(to_ift(*itp)-to_ift(*itq));
         ++itp; ++itq;
       }
       return res;
@@ -248,6 +246,30 @@ public:
     {
       return sqrt(squared_distance(p,q));
     }
+    static IFT to_ift(const FT& n)
+    {
+      if constexpr(std::is_floating_point_v<FT>)
+      {
+        return n;
+      }
+      else
+      {
+        return IFT(to_interval(n));
+      }
+    }
+    static FT inf(const IFT& n)
+    {
+      if constexpr(std::is_floating_point_v<FT>)
+      {
+        return n;
+      }
+      else
+      {
+        return n.inf();
+      }
+    }
+
+
     template <class P>
     Point interpolate_at(P const& pt) const
     {
