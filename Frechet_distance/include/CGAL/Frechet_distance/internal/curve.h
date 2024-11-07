@@ -254,7 +254,7 @@ public:
         return IFT(to_interval(n));
       }
     }
-    static FT inf(const IFT& n)
+    static auto inf(const IFT& n)
     {
       if constexpr(std::is_floating_point_v<FT>)
       {
