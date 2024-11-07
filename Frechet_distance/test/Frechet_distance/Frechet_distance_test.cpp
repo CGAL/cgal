@@ -217,36 +217,54 @@ static double testFrechetDistanceNearNeighborsDS()
 };
 
 
-int main()
+int main(int argc, char** argv)
 {
-  using SCD = CGAL::Simple_cartesian<double>;
-  double t1=Test_struct<SCD>::testFrechetDistanceNearNeighborsDS();
-  double t2=Test_struct<SCD>::testFrechetDistance();
-  std::cout <<"Simple_cartesian<double>\n";
-  std::cout << t1 << " " << t2 << "\n";
+  std::set<int> test_set;
+  for (int i=1;i<argc;++i)
+    test_set.insert(atoi(argv[i]));
 
-  t1=Test_struct<CGAL::Epick>::testFrechetDistanceNearNeighborsDS();
-  t2=Test_struct<CGAL::Epick>::testFrechetDistance();
-  std::cout <<"CGAL::Epick\n";
-  std::cout << t1 << " " << t2 << "\n";
+  if (test_set.empty() || test_set.count(0))
+  {
+    using SCD = CGAL::Simple_cartesian<double>;
+    double t1=Test_struct<SCD>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<SCD>::testFrechetDistance();
+    std::cout <<"Simple_cartesian<double>\n";
+    std::cout << t1 << " " << t2 << "\n";
+  }
 
-  t1=Test_struct<CGAL::Epeck>::testFrechetDistanceNearNeighborsDS();
-  t2=Test_struct<CGAL::Epeck>::testFrechetDistance();
-  std::cout <<"CGAL::Epeck\n";
-  std::cout << t1 << " " << t2 << "\n";
+  if (test_set.empty() || test_set.count(1))
+  {
+    double t1=Test_struct<CGAL::Epick>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<CGAL::Epick>::testFrechetDistance();
+    std::cout <<"CGAL::Epick\n";
+    std::cout << t1 << " " << t2 << "\n";
+  }
 
-  using Epeck_sqrt = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
-  t1=Test_struct<Epeck_sqrt>::testFrechetDistanceNearNeighborsDS();
-  t2=Test_struct<Epeck_sqrt>::testFrechetDistance();
-  std::cout <<"Exact_predicates_exact_constructions_kernel_with_sqrt\n";
-  std::cout << t1 << " " << t2 << "\n";
+  if (test_set.empty() || test_set.count(2))
+  {
+    double t1=Test_struct<CGAL::Epeck>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<CGAL::Epeck>::testFrechetDistance();
+    std::cout <<"CGAL::Epeck\n";
+    std::cout << t1 << " " << t2 << "\n";
+  }
 
-  using SCE = CGAL::Simple_cartesian<CGAL::Exact_rational>;
-  t1=Test_struct<SCE>::testFrechetDistanceNearNeighborsDS();
-  t2=Test_struct<SCE>::testFrechetDistance();
-  std::cout <<"Simple_cartesian<Exact_rational>\n";
-  std::cout << t1 << " " << t2 << "\n";
+  if (test_set.empty() || test_set.count(3))
+  {
+    using Epeck_sqrt = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
+    double t1=Test_struct<Epeck_sqrt>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<Epeck_sqrt>::testFrechetDistance();
+    std::cout <<"Exact_predicates_exact_constructions_kernel_with_sqrt\n";
+    std::cout << t1 << " " << t2 << "\n";
+  }
 
+  if (test_set.empty() || test_set.count(4))
+  {
+    using SCE = CGAL::Simple_cartesian<CGAL::Exact_rational>;
+    double t1=Test_struct<SCE>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<SCE>::testFrechetDistance();
+    std::cout <<"Simple_cartesian<Exact_rational>\n";
+    std::cout << t1 << " " << t2 << "\n";
+  }
 
   return 0;
 }
