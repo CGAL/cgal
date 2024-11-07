@@ -5,7 +5,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 #include <algorithm>
 #include <cassert>
@@ -15,21 +15,17 @@
 #include <string>
 #include <vector>
 
-namespace
+template <class TestKernel>
+struct Test_struct
 {
 
 //
 // helpers
 //
 using Test_distance_t = double;
-using TestKernel = CGAL::Simple_cartesian<double>;
-//using TestKernel = CGAL::Simple_cartesian<CGAL::Exact_rational>;
-//using TestKernel = CGAL::Exact_predicates_inexact_constructions_kernel;
-//using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel;
-//using TestKernel = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
 
 using TestTraits = CGAL::Frechet_distance_traits_2<TestKernel>;
-using TestPoint = TestKernel::Point_2;
+using TestPoint = typename TestKernel::Point_2;
 using TestCurve = std::vector<TestPoint>;
 using TestCurves = std::vector<TestCurve>;
 
@@ -50,7 +46,7 @@ using FrechetDistanceNearNeighborsDSQueries =
     std::vector<FrechetDistanceNearNeighborsDSQuery>;
 
 
-void readCurve(std::ifstream& curve_file, TestCurve& curve)
+static void readCurve(std::ifstream& curve_file, TestCurve& curve)
 {
     // Read everything into a stringstream.
     std::stringstream ss;
@@ -69,7 +65,7 @@ void readCurve(std::ifstream& curve_file, TestCurve& curve)
     }
 }
 
-TestCurves readCurves(std::string const& curve_directory)
+static TestCurves readCurves(std::string const& curve_directory)
 {
     TestCurves curves;
     std::vector<std::string> curve_filenames;
@@ -101,7 +97,7 @@ TestCurves readCurves(std::string const& curve_directory)
 }
 
 
-FrechetDistanceQueries readFrechetDistanceQueries(std::string const& query_file)
+static FrechetDistanceQueries readFrechetDistanceQueries(std::string const& query_file)
 {
     FrechetDistanceQueries queries;
 
@@ -120,7 +116,7 @@ FrechetDistanceQueries readFrechetDistanceQueries(std::string const& query_file)
     return queries;
 }
 
-FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQueries(
+static FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQueries(
     std::string const& query_file)
 {
         FrechetDistanceNearNeighborsDSQueries queries;
@@ -152,13 +148,13 @@ FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQueries(
 // tests
 //
 
-void testFrechetDistance()
+static double testFrechetDistance()
 {
     std::string curve_directory = "./data/curves/";
     // std::vector<std::string> datasets = {"sigspatial", "OV"};
     std::vector<std::string> datasets = { "sigspatial" };
     std::string query_directory = "./data/queries/";
-    CGAL::Timer timer;
+    CGAL::Real_timer timer;
     for (auto const& dataset : datasets) {
         auto curves = readCurves(curve_directory + dataset + "/");
         auto queries =
@@ -183,15 +179,16 @@ void testFrechetDistance()
             }
         }
     }
-    std::cout << timer.time() << "sec." << std::endl;
+    return timer.time();
 }
 
-void testFrechetDistanceNearNeighborsDS()
+static double testFrechetDistanceNearNeighborsDS()
 {
         std::string curve_directory = "./data/curves/";
         std::vector<std::string> datasets = { "sigspatial" };
         std::string query_directory = "./data/ds_queries/";
 
+        CGAL::Real_timer timer;
         for (auto const& dataset: datasets) {
                 auto curves = readCurves(curve_directory + dataset + "/");
                 auto queries =
@@ -205,26 +202,51 @@ void testFrechetDistanceNearNeighborsDS()
                         auto result = ds.get_close_curves(curves[query.id],
                         query.distance); std::sort(result.begin(), result.end());
 
+                        timer.start();
                         if (!std::equal(result.begin(), result.end(), query.expected_result.begin(), query.expected_result.end())) {
                                 std::cout << "Wrong result on query." << std::endl;
                                 exit(- 1);
                         }
+                        timer.stop();
                 }
         }
 
+        return timer.time();
 }
 
-}  // end anonymous namespace
+};
 
 
 int main()
 {
-  // TODO: add actualy query data for DS
-  std::cout << "testFrechetDistanceNearNeighborsDS start" << std::endl;
-  testFrechetDistanceNearNeighborsDS();
-  std::cout << "testFrechetDistanceNearNeighborsDS done" << std::endl;
-  std::cout << "testFrechetDistance start" << std::endl;
-  testFrechetDistance();
-  std::cout << "testFrechetDistance done" << std::endl;
+  using SCD = CGAL::Simple_cartesian<double>;
+  double t1=Test_struct<SCD>::testFrechetDistanceNearNeighborsDS();
+  double t2=Test_struct<SCD>::testFrechetDistance();
+  std::cout <<"Simple_cartesian<double>\n";
+  std::cout << t1 << " " << t2 << "\n";
+
+  t1=Test_struct<CGAL::Epick>::testFrechetDistanceNearNeighborsDS();
+  t2=Test_struct<CGAL::Epick>::testFrechetDistance();
+  std::cout <<"CGAL::Epick\n";
+  std::cout << t1 << " " << t2 << "\n";
+
+  t1=Test_struct<CGAL::Epeck>::testFrechetDistanceNearNeighborsDS();
+  t2=Test_struct<CGAL::Epeck>::testFrechetDistance();
+  std::cout <<"CGAL::Epeck\n";
+  std::cout << t1 << " " << t2 << "\n";
+
+  using Epeck_sqrt = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
+  t1=Test_struct<Epeck_sqrt>::testFrechetDistanceNearNeighborsDS();
+  t2=Test_struct<Epeck_sqrt>::testFrechetDistance();
+  std::cout <<"Exact_predicates_exact_constructions_kernel_with_sqrt\n";
+  std::cout << t1 << " " << t2 << "\n";
+
+  using SCE = CGAL::Simple_cartesian<CGAL::Exact_rational>;
+  t1=Test_struct<SCE>::testFrechetDistanceNearNeighborsDS();
+  t2=Test_struct<SCE>::testFrechetDistance();
+  std::cout <<"Simple_cartesian<Exact_rational>\n";
+  std::cout << t1 << " " << t2 << "\n";
+
+
   return 0;
 }
