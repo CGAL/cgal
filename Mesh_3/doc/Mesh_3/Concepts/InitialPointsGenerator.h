@@ -57,7 +57,7 @@ OutputIterator operator()(OutputIterator pts, const int n);
 /*!
 Same as above, without the `n` parameter.
 Since there is no `n` given like above, the functor must provide enough
-points to initialize the mesh generation process, i.e. to have a 3D triangulation
+points to initialize the mesh generation process, i.e., to have a 3D triangulation
 with at least one facet in the restricted Delaunay triangulation.
 
 If these conditions are not satisfied, then more points will be added automatically

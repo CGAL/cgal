@@ -464,7 +464,7 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * the points it provides are inserted after one dimensional features initialization.
  *
  * Initialization is considered to be complete if the triangulation is a 3D triangulation
- * with at least one facet in the restricted Delaunay triangulation (i.e. its dual intersects the
+ * with at least one facet in the restricted Delaunay triangulation (i.e., its dual intersects the
  * input surface).
  * If the generator does not generate enough points for the initialization to be complete,
  * the domain's `construct_initial_points_object()` will be called to generate enough input points.
@@ -497,7 +497,7 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * These initial points are inserted after one dimensional features initialization.
  *
  * Initialization is considered to be complete if the triangulation is a 3D triangulation
- * with at least one facet in the restricted Delaunay triangulation (i.e. its dual intersects the
+ * with at least one facet in the restricted Delaunay triangulation (i.e., its dual intersects the
  * input surface).
  *
  * If the parameter `parameters::initial_points_generator()` is set,
