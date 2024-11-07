@@ -78,8 +78,6 @@ public:
     using distance_t = typename Approximate_traits::FT;
     using Point = typename Approximate_traits::Point_d;
     using PointID = typename Base::PointID;
-//TODO: handle that
-//    using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
 
     using Rational = typename Rational_traits::FT;
     using Rational_point = typename Rational_traits::Point_d;
@@ -146,7 +144,6 @@ class Curve<T, false>
 public:
     using Traits = T;
 
-//   using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
   //TODO: we expect Dimension_tag for now.
   static constexpr int dimension =  Traits::Dimension::value;
   using Bbox = std::conditional_t<dimension==2,
@@ -161,7 +158,6 @@ public:
 
     using Point = typename Traits::Point_d;
 
-    using Squared_distance = typename Traits::Compute_squared_distance_d;
     using Construct_bbox = typename Traits::Construct_bbox_d;
     using Construct_cartesian_const_iterator_d = typename Traits::Construct_cartesian_const_iterator_d;
 
@@ -179,12 +175,12 @@ public:
       prefix_length.resize(points.size());
       prefix_length[0] = 0;
 
-      Construct_bbox bbox;
+      Construct_bbox bbox = traits_.construct_bbox_d_object();
       extreme_points = bbox(point(0));
 
       for (PointID i = 1; i < points.size(); ++i)
       {
-        IFT segment_distance = distance(point(i - 1), point(i));
+        IFT segment_distance = distance(point(i - 1), point(i), traits_);
         prefix_length[i] = prefix_length[i - 1] + segment_distance;
 
         extreme_points += bbox(point(i));
@@ -202,8 +198,9 @@ public:
     == Epeck_with_sqrt
 */
     template <class PointRange>
-    Curve(const PointRange& point_range)
+    Curve(const PointRange& point_range, const Traits& traits = Traits())
      : points(point_range.begin(), point_range.end())
+     , traits_(traits)
     {
       init();
     }
@@ -228,10 +225,10 @@ public:
 
     bool operator!=(Curve const& other) const { return !(*this == other); }
 
-    static IFT squared_distance(Point const& p, Point const& q)
+    static IFT squared_distance(Point const& p, Point const& q, const Traits& traits)
     {
       IFT res(0);
-      Construct_cartesian_const_iterator_d ccci;
+      Construct_cartesian_const_iterator_d ccci = traits.construct_cartesian_const_iterator_d_object();
 
       auto itp = ccci(p), itq = ccci(q);
 
@@ -242,9 +239,9 @@ public:
       }
       return res;
     }
-    static IFT distance(Point const& p, Point const& q)
+    static IFT distance(Point const& p, Point const& q, const Traits& traits)
     {
-      return sqrt(squared_distance(p,q));
+      return sqrt(squared_distance(p,q, traits));
     }
     static IFT to_ift(const FT& n)
     {
@@ -289,7 +286,7 @@ public:
         std::array<distance_t, dimension> b_coords;
         auto fraction = pt.getFraction().approx;
         distance_t one_m_f = distance_t(1) - fraction;
-        Construct_cartesian_const_iterator_d ccci;
+        Construct_cartesian_const_iterator_d ccci = traits_.construct_cartesian_const_iterator_d_object();
         auto itp = ccci(point(pt.getPoint()));
         auto itq = ccci(point(pt.getPoint()+1));
 
@@ -353,11 +350,17 @@ public:
       return length_of_diagonal(bb);
     }
 
+    const Traits& traits() const
+    {
+      return traits_;
+    }
+
 protected:
 
     Points points;
     std::vector<IFT> prefix_length;
     Bbox extreme_points;
+    Traits traits_;
 };
 
 template<typename K>

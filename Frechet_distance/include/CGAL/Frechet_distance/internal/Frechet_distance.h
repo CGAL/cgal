@@ -28,13 +28,11 @@ namespace Frechet_distance_ {
 namespace internal {
 
 template <class PointRange, class Traits>
-auto toCurve(const PointRange& point_range, const Traits& /* traits */)
+auto toCurve(const PointRange& point_range, const Traits& traits)
 {
   using IPoint = typename Traits::Point_d;
   constexpr bool is_from_cgal_kernel =
     !std::is_same_v<typename Kernel_traits<IPoint>::Kernel, internal_kernel_traits::Dummy_kernel<IPoint>>;
-
-  //TODO the traits should also be returned
 
   if constexpr (is_from_cgal_kernel)
   {
@@ -60,7 +58,7 @@ auto toCurve(const PointRange& point_range, const Traits& /* traits */)
         return Curve<Filtered_traits, true>(point_range);
       }
       else
-        return Curve<Traits, false>(point_range);
+        return Curve<Traits, false>(point_range, traits);
 /*
       else
       {
@@ -73,10 +71,10 @@ auto toCurve(const PointRange& point_range, const Traits& /* traits */)
 */
     }
     else
-      return Curve<Traits, false>(point_range);
+      return Curve<Traits, false>(point_range, traits);
   }
   else
-    return Curve<Traits, false>(point_range);
+    return Curve<Traits, false>(point_range, traits);
 }
 
 template <class Traits, bool is_filtered>

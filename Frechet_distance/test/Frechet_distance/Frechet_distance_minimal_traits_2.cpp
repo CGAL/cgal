@@ -9,23 +9,12 @@ struct MinimalFrechetTraits {
   struct Point_d
   {
     Point_d(double, double) {}
-
-    //~ double operator[](int) const
-    //~ {
-        //~ return 0;
-    //~ }
-  };
-
-  struct Compute_squared_distance_d
-  {
-    double operator()(Point_d, Point_d) const
-    {
-      return 0;
-    }
   };
 
   struct Construct_bbox_d
   {
+    Construct_bbox_d() = delete;
+    Construct_bbox_d(int){}
     CGAL::Bbox_2 operator()(Point_d) const
     {
       return CGAL::Bbox_2();
@@ -41,9 +30,22 @@ struct MinimalFrechetTraits {
 
   struct Construct_cartesian_const_iterator_d
   {
+    Construct_cartesian_const_iterator_d() = delete;
+    Construct_cartesian_const_iterator_d(int){}
+
     Cartesian_const_iterator_d operator()(Point_d){ return Cartesian_const_iterator_d(); }
     Cartesian_const_iterator_d operator()(Point_d, int){ return Cartesian_const_iterator_d(); }
   };
+
+  Construct_bbox_d construct_bbox_d_object() const
+  {
+    return Construct_bbox_d(0);
+  }
+
+  Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const
+  {
+    return Construct_cartesian_const_iterator_d(0);
+  }
 
 };
 
