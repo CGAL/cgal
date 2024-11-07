@@ -105,11 +105,11 @@ bool Filter<K>::isFree(Point const& fixed, Curve const& var_curve, PointID start
 {
     auto mid = (start + end + 1) / 2;
     auto max = (CGAL::max)(var_curve.curve_length(start + 1, mid),
-                          var_curve.curve_length(mid, end));
+                           var_curve.curve_length(mid, end));
 
     if (certainly(distance > max)){
       auto mid_dist = Curve::distance(fixed, var_curve[mid]);
-      if(certainly(mid_dist <= CGAL::abs(distance - max))) { // Uncertain (A) // TODO: can we remove abs?
+      if(certainly(mid_dist <= distance - max)) { // Uncertain (A)
         return true;
       }
     }
