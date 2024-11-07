@@ -44,7 +44,11 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
                               const double distance,
                               const Traits& traits = Traits())
 {
-    Protect_FPU_rounding<true> p; // TODO only if using filtering!
+    constexpr bool filtered =
+      std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve(polyline1, traits))::FT,
+                     Interval_nt<false>>;
+    Protect_FPU_rounding<filtered> p;
+
     auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
     auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
 
@@ -76,7 +80,11 @@ std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline
                                                       const double precision,
                                                       const Traits& traits = Traits())
 {
-    Protect_FPU_rounding<true> p; // TODO only if using filtering!
+    constexpr bool filtered =
+      std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve(polyline1, traits))::FT,
+                     Interval_nt<false>>;
+    Protect_FPU_rounding<filtered> p;
+
     auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
     auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
 

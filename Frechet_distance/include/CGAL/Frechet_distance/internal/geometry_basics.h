@@ -24,8 +24,6 @@
 #include <optional>
 
 #include <CGAL/number_utils.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Exact_rational.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Interval_nt.h>
 
@@ -109,7 +107,6 @@ struct Lambda<Curve<FilteredTraits,true>>
           is_exact(true)
     {}
 
-    //TODO replace with impl in high_level_predicates.h
     //     fill_lambda returns a pair and we are only interested in a bound
     bool update_exact() const
     {
@@ -117,7 +114,7 @@ struct Lambda<Curve<FilteredTraits,true>>
             return true;
         }
 
-        const typename Curve::Rational_point&  ls = curve2->rpoint(line_start);
+        const typename Curve::Rational_point& ls = curve2->rpoint(line_start);
         const typename Curve::Rational_point& le = curve2->rpoint(line_start+1);
         const typename Curve::Rational_point& cc = curve1->rpoint(circle_center);
         Rational a, b, c;

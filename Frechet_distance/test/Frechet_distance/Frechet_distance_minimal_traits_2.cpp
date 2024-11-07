@@ -2,7 +2,6 @@
 #include <CGAL/Bbox_2.h>
 
 struct MinimalFrechetTraits {
-
   using Dimension = CGAL::Dimension_tag<2>;
   using FT = double;
 
@@ -46,7 +45,6 @@ struct MinimalFrechetTraits {
   {
     return Construct_cartesian_const_iterator_d(0);
   }
-
 };
 
 

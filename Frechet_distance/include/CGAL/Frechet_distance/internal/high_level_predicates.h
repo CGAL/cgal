@@ -23,6 +23,24 @@ namespace CGAL {
 namespace Frechet_distance_ {
 namespace internal {
 
+template <class FT>
+make_positive(FT& n) { if (n<0) n=FT(0); }
+template <class FT>
+make_less_than_one(FT& n) { if (n>1) n=FT(1); }
+
+inline make_positive(Interval_nt<false>& n)
+{
+  if (n.sup() <= 0) n = 0.;
+  else if (n.inf()<0) n=Interval_nt<false>(0.,n.sup());
+}
+
+inline make_less_than_one(Interval_nt<false>& n)
+{
+  if (n.inf() >=1 ) n = 1.;
+  else if (n.sup()>1) n=Interval_nt<false>(n.inf(),1.);
+}
+
+
 // let a := v.x()^2 + v.y()^2,
 // let b := line_start.x() * v.x() + line_start.y() * v.y(),
 // let c := line_start.x()^2 + line_start.y()^2 - radius^2
@@ -31,7 +49,7 @@ namespace internal {
 // <=> lambda1/2 = - (b / a) +/- sqrt((b / a)^2 - c / a)
 //TODO: use optional!
 template <class Traits, class C, class Point, class AFT>
-bool
+std::optional<bool>
 fill_lambda(const Point& circle_center,
             const Point& line_start,
             const Point& line_end,
@@ -59,20 +77,28 @@ fill_lambda(const Point& circle_center,
 
   FT minus_b_div_a = b / a;
   FT d = CGAL::square(minus_b_div_a) - c / a;
-  if (! is_negative(d))
+
+  auto is_not_neg = !is_negative(d);
+  if (!is_certain(is_not_neg)) return std::nullopt;
+
+  if (is_not_neg)
   {
     auto start = make_root_of_2(minus_b_div_a, -1, d);
     auto end = make_root_of_2(minus_b_div_a, 1, d);
     // Question: can it be negative >1 even in exact?
-    if (is_negative(start)) start = decltype(start)(FT(0));
-    if (end > FT(1)) end =decltype(end)( FT(1));
-    if (start <= FT(1) && end >= FT(0))
+    make_positive(start);
+    make_less_than_one(end);
+
+    auto valid_interval = start <= FT(1) && end >= FT(0);
+    if (!is_certain(valid_interval)) return std::nullopt;
+
+    if (valid_interval)
     {
       I = std::make_pair(
-          (start == FT(0)) ? Lambda<C>(0)
+          (certainly(start == FT(0))) ? Lambda<C>(0)
                            : Lambda<C>(start, curve1, center_id,
                                        curve2, seg_start_id, radius, true),
-          (end == FT(1)) ? Lambda<C>(1)
+          (certainly(end == FT(1))) ? Lambda<C>(1)
                          : Lambda<C>(end, curve1, center_id,
                                      curve2, seg_start_id, radius, false));
       return true;
@@ -96,22 +122,26 @@ intersection_interval(Curve<T, true> const& curve1,
   using C = Curve<T, true>;
   Interval<C> I;
 
-  try {
-    std::pair<Lambda<C>, Lambda<C>> II;
-    // if not empty
-    if (fill_lambda<typename T::first_type>(
-        curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
-        C::inf(radius), II, curve1, center_id, curve2,  seg_start_id))
-    {
+  std::pair<Lambda<C>, Lambda<C>> II;
+  // if not empty
+
+  std::optional<bool> res =
+    fill_lambda<typename T::first_type>(
+      curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
+      C::inf(radius), II, curve1, center_id, curve2,  seg_start_id);
+
+  if (res.has_value())
+  {
+    if (res.value())
       I = Interval<C>(II.first, II.second);
-    }
-  } catch (const CGAL::Uncertain_conversion_exception& e) {
+  }
+  else{
     CGAL_assertion(radius.is_point());
     std::pair<Lambda<C>, Lambda<C>> II;
       // if not empty
     if (fill_lambda<typename T::second_type>(
           curve1.rpoint(center_id), curve2.rpoint(seg_start_id), curve2.rpoint(seg_start_id + 1),
-          C::inf(radius), II, curve1, center_id, curve2,  seg_start_id))
+          C::inf(radius), II, curve1, center_id, curve2,  seg_start_id).value())
     {
       I = Interval<C>(II.first, II.second);
     }
@@ -137,7 +167,7 @@ intersection_interval(Curve<T, false> const& curve1,
     // if not empty
     if (fill_lambda<T>(
         curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
-        C::inf(radius), II, curve1, center_id, curve2,  seg_start_id))
+        C::inf(radius), II, curve1, center_id, curve2,  seg_start_id).value())
     {
       I = Interval<C>(II.first, II.second);
     }
