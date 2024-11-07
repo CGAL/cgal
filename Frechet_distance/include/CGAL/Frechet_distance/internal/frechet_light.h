@@ -517,7 +517,7 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
             fixed_curve, fixed, curve, cur);
         Interval interval = Interval(temp_interval.begin.getPoint() == cur
                                          ? temp_interval.begin.getFraction()
-                                         : 1.,
+                                         : 1., //TODO really 1. ? pure guess, should be 0.
                                      temp_interval.end.getPoint() == cur
                                          ? temp_interval.end.getFraction()
                                          : 1.);
