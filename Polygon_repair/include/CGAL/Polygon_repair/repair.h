@@ -44,9 +44,9 @@ class Polygon_repair;
 
 /// \ingroup PkgPolygonRepairFunctions
 /// repairs polygon `p` using the given rule
-/// \tparam Kernel parameter of the input and output polygons
+/// \tparam Kernel parameter of the input and output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
 /// \tparam Container parameter of the input and output polygons
-///  \tparam Rule must be `Even_odd_rule`
+///  \tparam Rule must be `Even_odd_rule` or `Non_zero_rule`
 template <class Kernel, class Container, class Rule = Even_odd_rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Container>& p , Rule = Rule())
 {
@@ -61,9 +61,9 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_2<Kernel, Cont
 
 /// \ingroup PkgPolygonRepairFunctions
 /// repairs polygon with holes `p` using the given rule
-/// \tparam Kernel parameter of the input and output polygons
+/// \tparam Kernel parameter of the input and output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
 /// \tparam Container parameter of the input and output polygons
-///  \tparam Rule must be `Even_odd_rule`
+///  \tparam Rule must be `Even_odd_rule` or `Non_zero_rule`
 template <class Kernel, class Container, class Rule = Even_odd_rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<Kernel, Container>& p, Rule = Rule())
 {
@@ -90,9 +90,10 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Polygon_with_holes_2<K
 
 /// \ingroup PkgPolygonRepairFunctions
 /// repairs multipolygon with holes `p` using the given rule
-/// \tparam Kernel parameter of the input and output polygons
+/// \tparam Kernel parameter of the input and output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
 /// \tparam Container parameter of the input and output polygons
-///  \tparam Rule must be `Even_odd_rule` or `Non_zero_rule`
+///  \tparam Rule may be any rule
+/// \pre If the rule is the `Union_rule` or `Non_zero_rule`, each polygon with hole must be free of self-intersections
 template <class Kernel, class Container, class Rule = Even_odd_rule>
 Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_holes_2<Kernel, Container>& p, Rule = Rule())
 {
@@ -116,7 +117,7 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
     }
   };
 
-  CGAL::Polygon_repair::Boolean<Kernel> bops;
+  CGAL::Polygon_repair::Boolean<Kernel,Container> bops;
   bops.insert(p);
   bops.mark_domains();
   Larger_than_zero ltz;
@@ -139,7 +140,7 @@ Multipolygon_with_holes_2<Kernel, Container> repair(const Multipolygon_with_hole
     }
   };
 
- CGAL::Polygon_repair::Boolean<Kernel> bops;
+ CGAL::Polygon_repair::Boolean<Kernel,Container> bops;
   bops.insert(p);
   bops.mark_domains();
   Equal equal(p.number_of_polygons_with_holes());
@@ -787,12 +788,13 @@ protected:
 
 
 /// \ingroup PkgPolygonRepairFunctions
-/// omputes the union of all polygons with holes in `p`
-/// \tparam K parameter of the input and output polygons
+/// computes the union of all polygons with holes in `p`
+/// \tparam Kernel parameter of the input and output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
+/// \tparam Container parameter of the input and output polygons
 /// \pre Each polygon with hole must be free of self-intersections
-template <typename K>
-Multipolygon_with_holes_2<K>
-join(const Multipolygon_with_holes_2<K>& pA)
+template <typename Kernel, typename Container>
+Multipolygon_with_holes_2<Kernel,Container>
+join(const Multipolygon_with_holes_2<Kernel,Container>& pa)
 {
   struct Larger_than_zero {
     bool operator()(int i) const
@@ -801,8 +803,8 @@ join(const Multipolygon_with_holes_2<K>& pA)
     }
   };
 
-  CGAL::Polygon_repair::Boolean<K> bops;
-  bops.insert(pA);
+  CGAL::Polygon_repair::Boolean<Kernel> bops;
+  bops.insert(pa);
   bops.mark_domains();
   Larger_than_zero ltz;
   return bops(ltz);
@@ -810,15 +812,21 @@ join(const Multipolygon_with_holes_2<K>& pA)
 
 /// \ingroup PkgPolygonRepairFunctions
 /// computes the union of two polygons
-/// \tparam K parameter of the output polygons
-/// \tparam PA must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
-/// \tparam PB must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \tparam Kernel parameter of the output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
+/// \tparam Container parameter of the input and output polygons
+/// \tparam PA must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
+/// \tparam PB must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
 /// \pre The polygons `pA` and `pB` must be free of self-intersections
-template <typename PA, typename PB, typename K = Default>
-decltype(auto) // Multipolygon_with_holes_2<K>
-join(const PA& pa, const PB& pb, const K& = Default())
+template <typename PA, typename PB, typename Kernel = Default, typename Container = Default>
+#ifdef DOXYGEN_RUNNING
+Multipolygon_with_holes_2<Kernel,Container>
+#else
+decltype(auto)
+#endif
+join(const PA& pa, const PB& pb, const Kernel& = Default(), const Container& = Default())
 {
-  typedef typename Default::Get<K, typename PA::Traits>::type Traits;
+  typedef typename Default::Get<Kernel, typename PA::Traits>::type Traits;
+  typedef typename Default::Get<Container, typename PA::Container>::type Container;
 
   struct Larger_than_zero {
     bool operator()(int i) const
@@ -827,7 +835,7 @@ join(const PA& pa, const PB& pb, const K& = Default())
     }
   };
 
-  CGAL::Polygon_repair::Boolean<Traits> bops;
+  CGAL::Polygon_repair::Boolean<Traits,Container> bops;
   bops.insert(pa);
   bops.insert(pb);
   bops.mark_domains();
@@ -838,11 +846,12 @@ join(const PA& pa, const PB& pb, const K& = Default())
 
 /// \ingroup PkgPolygonRepairFunctions
 /// computes the intersection of all polygons with holes in `p`
-/// \tparam K parameter of the input and output polygons
+/// \tparam Kernel parameter of the input and output polygons. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
+/// \tparam Container parameter of the input and output polygons
 /// \pre Each polygon with hole must be free of self-intersections
-template <typename K>
-Multipolygon_with_holes_2<K>
-intersect(const Multipolygon_with_holes_2<K>& p)
+template <typename Kernel, typename Container>
+Multipolygon_with_holes_2<Kernel,Container>
+intersect(const Multipolygon_with_holes_2<Kernel,Container>& p)
 {
   struct Equal  {
     int val;
@@ -856,7 +865,7 @@ intersect(const Multipolygon_with_holes_2<K>& p)
     }
   };
 
-  CGAL::Polygon_repair::Boolean<K> bops;
+  CGAL::Polygon_repair::Boolean<Kernel,Container> bops;
   bops.insert(p);
   bops.mark_domains();
   Equal equal(p.number_of_polygons_with_holes());
@@ -866,15 +875,21 @@ intersect(const Multipolygon_with_holes_2<K>& p)
 
 /// \ingroup PkgPolygonRepairFunctions
 /// Computes the intersection of two polygons
-/// \tparam K parameter of the output polygon
-/// \tparam PA must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
-/// \tparam PB must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \tparam Kernel parameter of the output polygon. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
+/// \tparam Container parameter of the input and output polygons
+/// \tparam PA must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
+/// \tparam PB must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
 /// \pre The polygons `pA` and `pB` must be free of self-intersections
-template <typename PA, typename PB, typename K = Default>
-decltype(auto)  // Multipolygon_with_holes_2<K>
-intersect(const PA& pa, const PB& pb, const K& = Default())
+template <typename PA, typename PB, typename Kernel = Default, typename Container = Default>
+#ifdef DOXYGEN_RUNNING
+Multipolygon_with_holes_2<Kernel, Container>
+#else
+decltype(auto)
+#endif
+intersect(const PA& pa, const PB& pb, const Kernel& = Default(), const Container& = Default())
 {
-  typedef typename Default::Get<K, typename PA::Traits>::type Traits;
+  typedef typename Default::Get<Kernel, typename PA::Traits>::type Traits;
+  typedef typename Default::Get<Container, typename PA::Container>::type Container;
 
   struct Equal  {
     bool operator()(int i) const
@@ -883,7 +898,7 @@ intersect(const PA& pa, const PB& pb, const K& = Default())
     }
   };
 
-  CGAL::Polygon_repair::Boolean<Traits> bops;
+  CGAL::Polygon_repair::Boolean<Traits,Container> bops;
   bops.insert(pa);
   bops.insert(pb);
   bops.mark_domains();

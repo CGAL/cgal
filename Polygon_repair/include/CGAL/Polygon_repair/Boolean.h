@@ -37,7 +37,7 @@ namespace Polygon_repair {
 \tparam Kernel must be
 */
 
-template <typename Kernel>
+template <typename Kernel, typename Container_>
 class Boolean {
 
 private:
@@ -60,10 +60,11 @@ private:
   };
 
   using K = Kernel;
+  using Container = Container_;
   using Point_2 = typename K::Point_2;
-  using Polygon_2 = CGAL::Polygon_2<K>;
-  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K>;
-  using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<K>;
+  using Polygon_2 = CGAL::Polygon_2<K,Container>;
+  using Polygon_with_holes_2 = CGAL::Polygon_with_holes_2<K,Container>;
+  using Multipolygon_with_holes_2 = CGAL::Multipolygon_with_holes_2<K,Container>;
 
   using Itag = std::conditional_t<std::is_floating_point_v<typename K::FT>, Exact_predicates_tag, Exact_intersections_tag>;
   using Vb = CGAL::Triangulation_vertex_base_2<K>;

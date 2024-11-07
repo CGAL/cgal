@@ -33,6 +33,8 @@ The %union and the %intersection rule enable to combine similar polygons. }
 
 \cgalCRPSection{Functions}
 - `CGAL::Polygon_repair::repair()`
+- `CGAL::Polygon_repair::join()`
+- `CGAL::Polygon_repair::intersect()`
 
 \cgalCRPSection{Repair Rules}
 - `CGAL::Polygon_repair::Even_odd_rule`

@@ -103,7 +103,7 @@ Tbd.
 
 \section SectionPolygonRepair_UnionIntersection Union and Intersection Rule
 
-Tbd.
+Given several valid polygons this rule computes their union or intersection.
 
 \section SubsectionPolygonRepair_Notes Notes on the Output
 
