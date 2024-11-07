@@ -6,9 +6,7 @@ struct MinimalFrechetTraits {
   using FT = double;
 
   struct Point_d
-  {
-    Point_d(double, double) {}
-  };
+  {};
 
   struct Construct_bbox_d
   {

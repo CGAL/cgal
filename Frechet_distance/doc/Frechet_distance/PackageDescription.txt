@@ -5,8 +5,6 @@
 /// You can add some text here if you want a description at the group level
 /// \ingroup PkgFrechetDistanceRef
 
-/// \todo use Construct_point_d --> currently no concept in CGAL taking 2,3, or a range of coordinates
-
 /*!
 \addtogroup PkgFrechetDistanceRef
 

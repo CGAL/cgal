@@ -225,12 +225,27 @@ public:
 
     bool operator!=(Curve const& other) const { return !(*this == other); }
 
-    static IFT squared_distance(Point const& p, Point const& q, const Traits& traits)
+private:
+    // private as it will do nasty things if p is a temporary
+    static auto begin(const Point& p, const Traits& traits)
+    {
+      Construct_cartesian_const_iterator_d ccci = traits.construct_cartesian_const_iterator_d_object();
+      return ccci(p);
+    }
+
+    static auto begin(const std::array<FT,dimension>& p, const Traits&)
+    {
+      return p.begin();
+    }
+
+public:
+    template <class P1, class P2>
+    static IFT squared_distance(P1 const& p, P2 const& q, const Traits& traits)
     {
       IFT res(0);
-      Construct_cartesian_const_iterator_d ccci = traits.construct_cartesian_const_iterator_d_object();
 
-      auto itp = ccci(p), itq = ccci(q);
+      auto itp = begin(p, traits);
+      auto itq = begin(q, traits);
 
       for (int d=0;d<Traits::Dimension::value; ++d)
       {
@@ -239,7 +254,8 @@ public:
       }
       return res;
     }
-    static IFT distance(Point const& p, Point const& q, const Traits& traits)
+    template <class P1, class P2>
+    static IFT distance(P1 const& p, P2 const& q, const Traits& traits)
     {
       return sqrt(squared_distance(p,q, traits));
     }
@@ -268,8 +284,9 @@ public:
 
 
     template <class P>
-    Point interpolate_at(P const& pt) const
+    std::array<FT,dimension> interpolate_at(P const& pt) const
     {
+        std::array<distance_t, dimension> b_coords;
 //        assert(pt.getFraction() >= Lambda<Self>(0) &&
 //               pt.getFraction() <= Lambda<Self>(1));
         assert((
@@ -278,27 +295,25 @@ public:
 //            is_zero(pt.getFraction()))));
             pt.getFraction()==0)));
 
-//        if (is_zero(pt.getFraction())) {
-        if (pt.getFraction()==0) {
-            return point(pt.getPoint());
-        }
-
-        std::array<distance_t, dimension> b_coords;
-        auto fraction = pt.getFraction().approx;
-        distance_t one_m_f = distance_t(1) - fraction;
         Construct_cartesian_const_iterator_d ccci = traits_.construct_cartesian_const_iterator_d_object();
         auto itp = ccci(point(pt.getPoint()));
+
+//        if (is_zero(pt.getFraction())) {
+        if (pt.getFraction()==0) {
+          for (int d=0; d<dimension; ++d)
+            b_coords[d] = *itp++;
+          return b_coords;
+        }
+
+        auto fraction = pt.getFraction().approx;
+        distance_t one_m_f = distance_t(1) - fraction;
+
         auto itq = ccci(point(pt.getPoint()+1));
 
         for (int d=0; d<dimension; ++d)
           b_coords[d] = one_m_f * (*itp++) +  (*itq++) * fraction;
 
-        if constexpr (dimension==2)
-          return Point(b_coords[0], b_coords[1]);
-        else if constexpr (dimension==3)
-          return Point(b_coords[0], b_coords[1], b_coords[2]);
-        else
-          return Point(b_coords.begin(), b_coords.end());
+        return b_coords;
     }
 
     Point interpolate_at(PointID const& pt) const { return point(pt); }
