@@ -16,8 +16,9 @@ each face according to what it represents (exterior, polygon interior
 or hole), and reconstructs the polygon(s) represented by the arrangement.
 The method returns valid output stored in a multipolygon with holes.
 
-Different arrangement and labeling heuristics are possible, but
-currently the <em>even-odd</em> rule and <em>non-zero</em> rule are implemented in this package.
+Different labeling heuristics are possible. This package offers
+the <em>even-odd</em> rule, the <em>non-zero</em> rule, the  <em>union</em> rule,
+as well as the  <em>intersection</em> rule.
 The even-odd rule results in areas that are alternately assigned as polygon
 interiors and exterior/holes each time that an input edge is passed.
 It does not distinguish between edges that are part of outer boundaries
@@ -25,10 +26,10 @@ from those of inner boundaries.
 
 The non-zero rule results in areas with a non-zero winding number.
 
-Two additional repair rules are provided that are useful when given
-several similar valid polygons with holes. They compute either their
-union or their intersection to be <em>conservative</em> by bounding
-from the interior or the exterior.
+The union and intersection rules are useful when given
+two or more similar valid polygons with holes. They compute either their
+union or their intersection, and they are hence <em>conservative</em>
+by bounding from the interior or the exterior.
 
 \section SectionPolygonRepair_Definitions Definitions
 
@@ -87,7 +88,37 @@ order
 - The polygons with holes of a multipolygon with holes are also stored in
 lexicographic order
 
-\section SectionPolygonRepair_Algorithm Even-Odd Algorithm
+\section SectionPolygonRepair_EvenOdd Even-Odd Rule
+
+
+\cgalFigureBegin{inout, inout.svg}
+Examples of polygons with holes (a-d) and multipolygons with holes
+(e-h) before (left) and after (right) being repaired with the even-odd rule.
+\cgalFigureEnd
+
+
+\section SectionPolygonRepair_NonZero Non-Zero Rule
+
+Tbd.
+
+\section SectionPolygonRepair_UnionIntersection Union and Intersection Rule
+
+Tbd.
+
+\section SubsectionPolygonRepair_Notes Notes on the Output
+
+If the input is already valid, the method will return a valid output representing
+the same area. However, the output might be different in order to conform to the
+stricter conditions to generate deterministic output (see
+\ref SubsectionPolygonRepair_Output).
+
+Also, it is worth noting that even the repair of a single polygon without holes
+but with self-intersections can result in a multipolygon with holes. This is why
+the repair function will always return a multipolygon with holes. The user can
+then check whether it consists of a single polygon with holes, and if a polygon
+with holes has zero holes and extract these if needed.
+
+\section SectionPolygonRepair_Algorithm Implementation
 
 Broadly, the algorithm consists of three steps:
 
@@ -99,10 +130,6 @@ according to what they represent (exterior, polygon interior or hole).
 then these are assembled into individual polygons with holes and put into a
 single multipolygon with holes.
 
-\cgalFigureBegin{inout, inout.svg}
-Examples of polygons with holes (a-d) and multipolygons with holes
-(e-h) before (left) and after (right) being repaired with the even-odd rule.
-\cgalFigureEnd
 
 \subsection SubsectionPolygonRepair_Arrangement Arrangement
 
@@ -140,22 +167,6 @@ boundaries belong to, and using the orientation to distinguish between the outer
 inner boundaries of each polygon with holes.
 
 
-\section SectionPolygonRepair_NonZeroAlgorithm Non-Zero Algorithm
-
-Tbd.
-
-\section SubsectionPolygonRepair_Notes Notes on the Output
-
-If the input is already valid, the method will return a valid output representing
-the same area. However, the output might be different in order to conform to the
-stricter conditions to generate deterministic output (see
-\ref SubsectionPolygonRepair_Output).
-
-Also, it is worth noting that even the repair of a single polygon without holes
-but with self-intersections can result in a multipolygon with holes. This is why
-the repair function will always return a multipolygon with holes. The user can
-then check whether it consists of a single polygon with holes, and if a polygon
-with holes has zero holes and extract these if needed.
 
 \section SectionPolygonRepair_Examples Examples
 

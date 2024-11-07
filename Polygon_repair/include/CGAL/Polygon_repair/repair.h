@@ -784,6 +784,113 @@ protected:
 
 #endif // DOXYGEN_RUNNING
 
+
+
+/// \ingroup PkgPolygonRepairFunctions
+/// omputes the union of all polygons with holes in `p`
+/// \tparam K parameter of the input and output polygons
+/// \pre Each polygon with hole must be free of self-intersections
+template <typename K>
+Multipolygon_with_holes_2<K>
+join(const Multipolygon_with_holes_2<K>& pA)
+{
+  struct Larger_than_zero {
+    bool operator()(int i) const
+    {
+      return i > 0;
+    }
+  };
+
+  CGAL::Polygon_repair::Boolean<K> bops;
+  bops.insert(pA);
+  bops.mark_domains();
+  Larger_than_zero ltz;
+  return bops(ltz);
+}
+
+/// \ingroup PkgPolygonRepairFunctions
+/// computes the union of two polygons
+/// \tparam K parameter of the output polygons
+/// \tparam PA must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \tparam PB must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \pre The polygons `pA` and `pB` must be free of self-intersections
+template <typename PA, typename PB, typename K = Default>
+decltype(auto) // Multipolygon_with_holes_2<K>
+join(const PA& pa, const PB& pb, const K& = Default())
+{
+  typedef typename Default::Get<K, typename PA::Traits>::type Traits;
+
+  struct Larger_than_zero {
+    bool operator()(int i) const
+    {
+      return i > 0;
+    }
+  };
+
+  CGAL::Polygon_repair::Boolean<Traits> bops;
+  bops.insert(pa);
+  bops.insert(pb);
+  bops.mark_domains();
+  Larger_than_zero ltz;
+  return bops(ltz);
+}
+
+
+/// \ingroup PkgPolygonRepairFunctions
+/// computes the intersection of all polygons with holes in `p`
+/// \tparam K parameter of the input and output polygons
+/// \pre Each polygon with hole must be free of self-intersections
+template <typename K>
+Multipolygon_with_holes_2<K>
+intersect(const Multipolygon_with_holes_2<K>& p)
+{
+  struct Equal  {
+    int val;
+    Equal(int val)
+    : val(val)
+    {}
+
+    bool operator()(int i) const
+    {
+      return i == val;
+    }
+  };
+
+  CGAL::Polygon_repair::Boolean<K> bops;
+  bops.insert(p);
+  bops.mark_domains();
+  Equal equal(p.number_of_polygons_with_holes());
+  return bops(equal);
+}
+
+
+/// \ingroup PkgPolygonRepairFunctions
+/// Computes the intersection of two polygons
+/// \tparam K parameter of the output polygon
+/// \tparam PA must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \tparam PB must be `Polygon_2<K>`, or `Polygon_with_holes_2<K>`, or `Multipolygon_with_holes_2<K>`
+/// \pre The polygons `pA` and `pB` must be free of self-intersections
+template <typename PA, typename PB, typename K = Default>
+decltype(auto)  // Multipolygon_with_holes_2<K>
+intersect(const PA& pa, const PB& pb, const K& = Default())
+{
+  typedef typename Default::Get<K, typename PA::Traits>::type Traits;
+
+  struct Equal  {
+    bool operator()(int i) const
+    {
+      return i == 2;
+    }
+  };
+
+  CGAL::Polygon_repair::Boolean<Traits> bops;
+  bops.insert(pa);
+  bops.insert(pb);
+  bops.mark_domains();
+  Equal equal;
+  return bops(equal);
+}
+
 } // namespace Polygon_repair
 } // namespace CGAL
 

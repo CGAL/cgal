@@ -31,7 +31,8 @@
 namespace CGAL {
 namespace Polygon_repair {
 
-/*!
+#ifndef DOXYGEN_RUNNING
+/*
 \ingroup PkgPolygonRepairFunctions
 
 \tparam Kernel must be
@@ -343,6 +344,8 @@ sets the polygon as input of the winding number computation.
   }
 
 };
+
+#endif
 
 } // namespace Polygon_repair
 
