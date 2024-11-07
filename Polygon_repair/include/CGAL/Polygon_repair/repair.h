@@ -816,7 +816,7 @@ join(const Multipolygon_with_holes_2<Kernel,Container>& pa)
 /// \tparam Container parameter of the input and output polygons
 /// \tparam PA must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
 /// \tparam PB must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
-/// \pre The polygons `pA` and `pB` must be free of self-intersections
+/// \pre The polygons `pa` and `pb` must be free of self-intersections
 template <typename PA, typename PB, typename Kernel = Default, typename Container = Default>
 #ifdef DOXYGEN_RUNNING
 Multipolygon_with_holes_2<Kernel,Container>
@@ -879,7 +879,7 @@ intersect(const Multipolygon_with_holes_2<Kernel,Container>& p)
 /// \tparam Container parameter of the input and output polygons
 /// \tparam PA must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
 /// \tparam PB must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
-/// \pre The polygons `pA` and `pB` must be free of self-intersections
+/// \pre The polygons `pa` and `pb` must be free of self-intersections
 template <typename PA, typename PB, typename Kernel = Default, typename Container = Default>
 #ifdef DOXYGEN_RUNNING
 Multipolygon_with_holes_2<Kernel, Container>
