@@ -26,7 +26,6 @@
 
 #include <iterator>
 #include <type_traits>
-
 #include <variant>
 
 #include <CGAL/basic.h>
@@ -41,77 +40,75 @@ namespace CGAL {
 
 template <typename SubcurveTraits_2 = Arr_segment_traits_2<> >
 class Arr_polycurve_traits_2 :
-    public Arr_polycurve_basic_traits_2<SubcurveTraits_2>
-{
+    public Arr_polycurve_basic_traits_2<SubcurveTraits_2> {
 public:
-  typedef SubcurveTraits_2                                Subcurve_traits_2;
+  using Subcurve_traits_2 = SubcurveTraits_2;
 
 private:
-  typedef Arr_polycurve_basic_traits_2<Subcurve_traits_2> Base;
+  using Base = Arr_polycurve_basic_traits_2<Subcurve_traits_2>;
 
 public:
   /// \name Types inherited from the polycurve basic traits class.
   //@{
-  typedef typename Base::Has_left_category            Has_left_category;
-  typedef typename Base::Has_do_intersect_category
-    Has_do_intersect_category;
+  using Has_left_category = typename Base::Has_left_category;
+  using Has_do_intersect_category = typename Base::Has_do_intersect_category;
 
-  typedef typename Base::Left_side_category           Left_side_category;
-  typedef typename Base::Bottom_side_category         Bottom_side_category;
-  typedef typename Base::Top_side_category            Top_side_category;
-  typedef typename Base::Right_side_category          Right_side_category;
+  using Left_side_category = typename Base::Left_side_category;
+  using Bottom_side_category = typename Base::Bottom_side_category;
+  using Top_side_category = typename Base::Top_side_category;
+  using Right_side_category = typename Base::Right_side_category;
 
-  typedef typename Base::All_sides_oblivious_category
-    All_sides_oblivious_category;
+  using All_sides_oblivious_category =
+    typename Base::All_sides_oblivious_category;
 
-  typedef typename Base::X_monotone_subcurve_2        X_monotone_subcurve_2;
-  typedef typename Base::Size                         Size;
-  typedef typename Base::size_type                    size_type;
+  using X_monotone_subcurve_2 = typename Base::X_monotone_subcurve_2;
+  using Size = typename Base::Size;
+  using size_type = typename Base::size_type;
 
-  typedef typename Base::Point_2                      Point_2;
-  typedef typename Base::X_monotone_curve_2           X_monotone_curve_2;
+  using Point_2 = typename Base::Point_2;
+  using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
 
-  typedef typename Base::Compare_x_2                  Compare_x_2;
-  typedef typename Base::Compare_xy_2                 Compare_xy_2;
-  typedef typename Base::Construct_min_vertex_2       Construct_min_vertex_2;
-  typedef typename Base::Construct_max_vertex_2       Construct_max_vertex_2;
-  typedef typename Base::Is_vertical_2                Is_vertical_2;
-  typedef typename Base::Compare_y_at_x_2             Compare_y_at_x_2;
-  typedef typename Base::Compare_y_at_x_left_2        Compare_y_at_x_left_2;
-  typedef typename Base::Compare_y_at_x_right_2       Compare_y_at_x_right_2;
-  typedef typename Base::Equal_2                      Equal_2;
-  typedef typename Base::Compare_endpoints_xy_2       Compare_endpoints_xy_2;
-  typedef typename Base::Construct_opposite_2         Construct_opposite_2;
-  typedef typename Base::Approximate_2                Approximate_2;
-  typedef typename Base::Construct_x_monotone_curve_2
-    Construct_x_monotone_curve_2;
-  typedef typename Base::Parameter_space_in_x_2       Parameter_space_in_x_2;
-  typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
-  typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
-  typedef typename Base::Compare_x_near_boundary_2    Compare_x_near_boundary_2;
-  typedef typename Base::Compare_y_on_boundary_2      Compare_y_on_boundary_2;
-  typedef typename Base::Compare_y_near_boundary_2    Compare_y_near_boundary_2;
-  typedef typename Base::Is_on_y_identification_2     Is_on_y_identification_2;
-  typedef typename Base::Is_on_x_identification_2     Is_on_x_identification_2;
+  using Compare_x_2 = typename Base::Compare_x_2;
+  using Compare_xy_2 = typename Base::Compare_xy_2;
+  using Construct_min_vertex_2 = typename Base::Construct_min_vertex_2;
+  using Construct_max_vertex_2 = typename Base::Construct_max_vertex_2;
+  using Is_vertical_2 = typename Base::Is_vertical_2;
+  using Compare_y_at_x_2 = typename Base::Compare_y_at_x_2;
+  using Compare_y_at_x_left_2 = typename Base::Compare_y_at_x_left_2;
+  using Compare_y_at_x_right_2 = typename Base::Compare_y_at_x_right_2;
+  using Equal_2 = typename Base::Equal_2;
+  using Compare_endpoints_xy_2 = typename Base::Compare_endpoints_xy_2;
+  using Construct_opposite_2 = typename Base::Construct_opposite_2;
+  using Approximate_2 = typename Base::Approximate_2;
+  using Construct_x_monotone_curve_2 =
+    typename Base::Construct_x_monotone_curve_2;
+  using Parameter_space_in_x_2 = typename Base::Parameter_space_in_x_2;
+  using Parameter_space_in_y_2 = typename Base::Parameter_space_in_y_2;
+  using Compare_x_on_boundary_2 = typename Base::Compare_x_on_boundary_2;
+  using Compare_x_near_boundary_2 = typename Base::Compare_x_near_boundary_2;
+  using Compare_y_on_boundary_2 = typename Base::Compare_y_on_boundary_2;
+  using Compare_y_near_boundary_2 = typename Base::Compare_y_near_boundary_2;
+  using Is_on_y_identification_2 = typename Base::Is_on_y_identification_2;
+  using Is_on_x_identification_2 = typename Base::Is_on_x_identification_2;
 
-  typedef typename Base::Trim_2                       Trim_2;
+  using Trim_2 = typename Base::Trim_2;
 
   //@}
 
   /// \name Types and functors inherited from the subcurve geometry traits.
   //@{
 
-  typedef typename Subcurve_traits_2::Has_merge_category  Has_merge_category;
-  typedef typename Subcurve_traits_2::Multiplicity        Multiplicity;
-  typedef typename Subcurve_traits_2::Curve_2             Subcurve_2;
+  using Has_merge_category = typename Subcurve_traits_2::Has_merge_category;
+  using Multiplicity = typename Subcurve_traits_2::Multiplicity;
+  using Subcurve_2 = typename Subcurve_traits_2::Curve_2;
 
   //@}
 
   // Backward compatibility:
-  typedef Subcurve_2                                      Segment_2;
+  using Segment_2 = Subcurve_2;
 
 private:
-  typedef Arr_polycurve_traits_2<Subcurve_traits_2>       Self;
+  using Self = Arr_polycurve_traits_2<Subcurve_traits_2>;
 
 public:
   /*! Default constructor */
@@ -128,7 +125,7 @@ public:
   /*! A polycurve represents a general continuous piecewise-linear
    * curve, without degenerated subcurves.
    */
-  typedef internal::Polycurve_2<Subcurve_2, Point_2>      Curve_2;
+  using Curve_2 = internal::Polycurve_2<Subcurve_2, Point_2>;
 
   /// \name Basic predicate functors(based on the subcurve traits).
   //@{
@@ -138,8 +135,7 @@ public:
    */
   class Number_of_points_2 : public Base::Number_of_points_2 {
   public:
-    size_type operator()(const Curve_2& cv) const
-    {
+    size_type operator()(const Curve_2& cv) const {
       size_type num_seg = cv.number_of_subcurves();
       return (num_seg == 0) ? 0 : num_seg + 1;
     }
@@ -161,8 +157,9 @@ public:
   //! A functor for subdividing curves into x-monotone curves.
   class Make_x_monotone_2 {
   protected:
-    typedef Arr_polycurve_traits_2<Subcurve_traits_2>     Polycurve_traits_2;
-    /*! The traits (in case it has state) */
+    using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
+
+    //! The traits (in case it has state)
     const Polycurve_traits_2& m_poly_traits;
 
   public:
@@ -183,12 +180,10 @@ public:
   private:
     template <typename OutputIterator>
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
-                                 Arr_all_sides_oblivious_tag) const
-    {
-      typedef std::variant<Point_2, X_monotone_subcurve_2>
-        Make_x_monotone_subresult;
-      typedef std::variant<Point_2, X_monotone_curve_2>
-        Make_x_monotone_result;
+                                 Arr_all_sides_oblivious_tag) const {
+      using Make_x_monotone_subresult =
+        std::variant<Point_2, X_monotone_subcurve_2>;
+      using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
 
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
@@ -314,14 +309,13 @@ public:
       return oi;
     }
 
+    //!
     template <typename OutputIterator>
     OutputIterator operator_impl(const Curve_2& cv, OutputIterator oi,
-                                 Arr_not_all_sides_oblivious_tag) const
-    {
-      typedef std::variant<Point_2, X_monotone_subcurve_2>
-        Make_x_monotone_subresult;
-      typedef std::variant<Point_2, X_monotone_curve_2>
-        Make_x_monotone_result;
+                                 Arr_not_all_sides_oblivious_tag) const {
+      using Make_x_monotone_subresult =
+        std::variant<Point_2, X_monotone_subcurve_2>;
+      using Make_x_monotone_result = std::variant<Point_2, X_monotone_curve_2>;
 
       // If the polycurve is empty, return.
       if (cv.number_of_subcurves() == 0) return oi;
@@ -486,7 +480,7 @@ public:
    */
   class Push_back_2 : public Base::Push_back_2 {
   protected:
-    typedef Arr_polycurve_traits_2<Subcurve_traits_2>   Polycurve_traits_2;
+    using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
 
   public:
     /*! Constructor. */
@@ -522,7 +516,7 @@ public:
    */
   class Push_front_2 : public Base::Push_front_2 {
   protected:
-    typedef Arr_polycurve_traits_2<Subcurve_traits_2>     Polycurve_traits_2;
+    using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
 
   public:
     /*! Constructor. */
@@ -554,8 +548,9 @@ public:
 
   class Split_2 {
   protected:
-    typedef Arr_polycurve_traits_2<Subcurve_traits_2>       Polycurve_traits_2;
-    /*! The polycurve traits (in case it has state) */
+    using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
+
+    //! The polycurve traits (in case it has state)
     const Polycurve_traits_2& m_poly_traits;
 
   public:
@@ -571,8 +566,7 @@ public:
      * \pre p lies on cv but is not one of its end-points.
      */
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
-                    X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const
-    {
+                    X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       auto min_vertex = geom_traits->construct_min_vertex_2_object();
       auto max_vertex = geom_traits->construct_max_vertex_2_object();
@@ -670,8 +664,9 @@ public:
 
   class Intersect_2 {
   protected:
-    typedef Arr_polycurve_traits_2<Subcurve_traits_2>       Polycurve_traits_2;
-    /*! The polycurve traits (in case it has state) */
+    using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
+
+    //! The polycurve traits (in case it has state)
     const Polycurve_traits_2& m_poly_traits;
 
   public:
@@ -689,15 +684,13 @@ public:
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
-    OutputIterator
-    operator()(const X_monotone_curve_2& cv1,
-               const X_monotone_curve_2& cv2,
-               OutputIterator oi) const
-    {
-      typedef std::pair<Point_2, Multiplicity>        Intersection_point;
-      typedef std::variant<Intersection_point, X_monotone_subcurve_2>
-                                                      Intersection_base_result;
-
+    OutputIterator operator()(const X_monotone_curve_2& cv1,
+                              const X_monotone_curve_2& cv2,
+                              OutputIterator oi) const {
+      // std::cout << "intersect(" << cv1 << ", " << cv2 << ")\n";
+      using Intersection_point = std::pair<Point_2, Multiplicity>;
+      using Intersection_base_result =
+        std::variant<Intersection_point, X_monotone_subcurve_2>;
 
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       auto cmp_y_at_x = m_poly_traits.compare_y_at_x_2_object();
@@ -705,18 +698,21 @@ public:
       auto min_vertex = geom_traits->construct_min_vertex_2_object();
       auto max_vertex = geom_traits->construct_max_vertex_2_object();
       auto intersect = geom_traits->intersect_2_object();
-      auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
-      auto construct_opposite = geom_traits->construct_opposite_2_object();
+      auto cmp_endpts = geom_traits->compare_endpoints_xy_2_object();
+      auto ctr_opposite = geom_traits->construct_opposite_2_object();
+      auto cmp_xy = m_poly_traits.compare_xy_2_object();
 
-      Comparison_result dir1 = cmp_seg_endpts(cv1[0]);
-      Comparison_result dir2 = cmp_seg_endpts(cv2[0]);
+      Comparison_result dir1 = cmp_endpts(cv1[0]);
+      Comparison_result dir2 = cmp_endpts(cv2[0]);
+      // std::cout << "dir1: " << dir1 << std::endl;
+      // std::cout << "dir2: " << dir2 << std::endl;
 
-      std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
-      const bool invert_ocv = ((dir1 == LARGER) && (dir2 == LARGER));
       const bool consistent = (dir1 == dir2);
 #ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
       CGAL_assertion(consistent);
 #endif
+      std::vector<X_monotone_subcurve_2> ocv; // Used to represent overlaps.
+      const bool invert_ocv = ((dir1 == LARGER) && (dir2 == LARGER));
 
       const std::size_t n1 = cv1.number_of_subcurves();
       const std::size_t n2 = cv2.number_of_subcurves();
@@ -724,297 +720,295 @@ public:
       std::size_t i1 = (dir1 == SMALLER) ? 0 : n1-1;
       std::size_t i2 = (dir2 == SMALLER) ? 0 : n2-1;
 
-      auto compare_xy = m_poly_traits.compare_xy_2_object();
-      Comparison_result left_res =
-        compare_xy(cv1[i1], ARR_MIN_END, cv2[i2], ARR_MIN_END);
+      Point_2 saved_point;
+      X_monotone_curve_2 saved_xcv;
+      bool point_saved = false;
+      bool xcv_saved = false;
 
+      // Save a point
+      auto update_saved_point = [&](const Point_2& p) {
+        point_saved = true;
+        saved_point = p;
+      };
+
+      // Spit out the saved point
+      auto spit_saved_point = [&]() {
+        *oi++ = std::make_pair(saved_point, 0);
+        point_saved = false;
+      };
+
+      // Add a subcurve to the saved x-monotone curve
+      auto update_saved_xcv = [&](const X_monotone_subcurve_2& sxcv) {
+        xcv_saved = true;
+        // We maintain the invariant that if the input curves have opposite
+        // directions (! consistent), the overalpping curves are directed
+        // left=>right. This, however, is not guaranteed by all traits for the
+        // subcurves. (It is guaranteed by some traits, but this is
+        // insufficient.)  Therefore, we need to enforce it. That is, we make
+        // sure the subcurves are also directed left=>right in this case.
+        if (! consistent && (cmp_endpts(sxcv) == LARGER)) {
+          if (invert_ocv) {
+            saved_xcv.push_front(ctr_opposite(sxcv));
+            return;
+          }
+          saved_xcv.push_back(ctr_opposite(sxcv));
+          return;
+        }
+        if (invert_ocv) {
+          saved_xcv.push_front(sxcv);
+          return;
+        }
+        saved_xcv.push_back(sxcv);
+      };
+
+      // Spit out the saved x-monotone curve
+      auto spit_saved_xcv = [&]() {
+        *oi++ = saved_xcv;
+        saved_xcv.clear();
+        xcv_saved = false;
+      };
+
+      auto left_res = cmp_xy(cv1[i1], ARR_MIN_END, cv2[i2], ARR_MIN_END);
       if (left_res == SMALLER) {
-        // cv1's left endpoint is to the left of cv2's left endpoint:
+        // cv1's left endpoint is to the left of cv2's left endpoint.
         // Locate the index i1 of the subcurve in cv1 which contains cv2's
         // left endpoint.
         i1 = m_poly_traits.locate_impl(cv1, cv2[i2], ARR_MIN_END,
                                        All_sides_oblivious_category());
         if (i1 == Polycurve_traits_2::INVALID_INDEX) return oi;
-
-        if (equal(max_vertex(cv1[i1]), min_vertex(cv2[i2]))) {
-          if (((dir1 == SMALLER) && (i1 == n1-1)) ||
-              ((dir1 == LARGER) && (i1 == 0))){
-            // cv1's right endpoint equals cv2's left endpoint
-            // Thus we can return this single(!) intersection point
-            Intersection_point p(max_vertex(cv1[i1]), 0);
-            *oi++ = p;
-            return oi;
+        if (cmp_y_at_x(cv2[i2], ARR_MIN_END, cv1[i1]) == EQUAL) {
+          const auto& p = min_vertex(cv2[i2]);
+          update_saved_point(p);
+          if (equal(max_vertex(cv1[i1]), p)) {
+            if (dir1 == SMALLER) {
+              ++i1;
+              if (i1 == n1) {
+                spit_saved_point();
+                return oi;
+              }
+            }
+            else {
+              if (i1 != 0) --i1;
+              else {
+                spit_saved_point();
+                return oi;
+              }
+            }
           }
-          dir1 == SMALLER ?
-            ++i1 :
-            (i1 != 0) ? --i1 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
-          left_res = EQUAL;
         }
       }
       else if (left_res == LARGER) {
-        // cv1's left endpoint is to the right of cv2's left endpoint:
+        // cv1's left endpoint is to the right of cv2's left endpoint.
         // Locate the index i2 of the subcurve in cv2 which contains cv1's
         // left endpoint.
         i2 = m_poly_traits.locate_impl(cv2, cv1[i1], ARR_MIN_END,
                                        All_sides_oblivious_category());
         if (i2 == Polycurve_traits_2::INVALID_INDEX) return oi;
-
-        if (equal(max_vertex(cv2[i2]), min_vertex(cv1[i1]))) {
-          if (((dir2 == SMALLER) && (i2 == n2-1)) ||
-              ((dir2 == LARGER) && (i2 == 0))){
-            // cv2's right endpoint equals cv1's left endpoint
-            // Thus we can return this single(!) intersection point
-            Intersection_point p(max_vertex(cv2[i2]), 0);
-            *oi++ = p;
-            return oi;
-          }
-
-          dir2 == SMALLER ?
-            ++i2 :
-            (i2 != 0) ? --i2 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
-          left_res = EQUAL;
-        }
-      }
-
-      // Check if the left endpoint lies on the other polycurve.
-      bool left_coincides = (left_res == EQUAL);
-      bool left_overlap = false;
-
-      if (left_res == SMALLER)
-        left_coincides = (cmp_y_at_x(cv2[i2], ARR_MIN_END, cv1[i1]) == EQUAL);
-      else if (left_res == LARGER)
-        left_coincides = (cmp_y_at_x(cv1[i1], ARR_MIN_END, cv2[i2]) == EQUAL);
-
-      // The main loop: Go simultaneously over both polycurves.
-      Comparison_result right_res = left_res;
-      bool right_coincides = left_coincides;
-      bool right_overlap = false;
-
-      while (((dir1 == SMALLER) && (dir2 == SMALLER) &&
-              (i1 < n1) && (i2 < n2)) ||
-             ((dir1 != SMALLER) && (dir2 == SMALLER) &&
-              (i1 != Polycurve_traits_2::INVALID_INDEX) && (i2 < n2)) ||
-             ((dir1 == SMALLER) && (dir2 != SMALLER) && (i1 < n1) &&
-              (i2 != Polycurve_traits_2::INVALID_INDEX)) ||
-             ((dir1 != SMALLER) && (dir2 != SMALLER) &&
-              (i1 != Polycurve_traits_2::INVALID_INDEX) &&
-              (i2 != Polycurve_traits_2::INVALID_INDEX)))
-      {
-        right_res = compare_xy(cv1[i1], ARR_MAX_END, cv2[i2], ARR_MAX_END);
-
-        right_coincides = (right_res == EQUAL);
-        if (right_res == SMALLER)
-          right_coincides =
-            (cmp_y_at_x(cv1[i1], ARR_MAX_END, cv2[i2]) == EQUAL);
-        else if (right_res == LARGER)
-          right_coincides =
-            (cmp_y_at_x(cv2[i2], ARR_MAX_END, cv1[i1]) == EQUAL);
-
-        right_overlap = false;
-
-        //! EF: the following code is a bit suspicious. It may erroneously
-        //      assume that the subcurves cannot overlap more than once.
-        if (! right_coincides && ! left_coincides) {
-          // Non of the endpoints of the current subcurve of one polycurve
-          // coincides with the current subcurve of the other polycurve:
-          // Output the intersection if exists.
-          std::vector<Intersection_base_result> xections;
-          intersect(cv1[i1], cv2[i2], std::back_inserter(xections));
-          for (const auto& xection : xections) {
-            const X_monotone_subcurve_2* subcv_p =
-              std::get_if<X_monotone_subcurve_2>(&xection);
-            if (subcv_p != nullptr) {
-              ocv.push_back(*subcv_p);
-              oi = output_ocv (ocv, invert_ocv, oi);
-              continue;
-            }
-
-            const Intersection_point* p_p =
-              std::get_if<Intersection_point>(&xection);
-            if (p_p != nullptr) *oi++ = *p_p;
-          }
-        }
-        else if (right_coincides && left_coincides) {
-          // An overlap exists between the current subcurves of the
-          // polycurves: Output the overlapping subcurve.
-          right_overlap = true;
-
-          std::vector<Intersection_base_result> sub_xections;
-          intersect(cv1[i1], cv2[i2], std::back_inserter(sub_xections));
-
-          for (const auto& item : sub_xections) {
-            const X_monotone_subcurve_2* x_seg =
-              std::get_if<X_monotone_subcurve_2>(&item);
-            if (x_seg != nullptr) {
-              X_monotone_subcurve_2 seg = *x_seg;
-              // We maintain the variant that if the input curves have opposite
-              // directions (! consistent), the overalpping curves are directed
-              // left=>right. This, however, is not guaranteed for the
-              // subcurves. Therefore, we need to enforce it. That is, we make
-              // sure the subcurves are also directed left=>right in this case.
-              if (! consistent && (cmp_seg_endpts(seg) == LARGER))
-                seg = construct_opposite(seg);
-#ifdef CGAL_ALWAYS_LEFT_TO_RIGHT
-              CGAL_assertion(cmp_seg_endpts(seg) == SMALLER);
-#endif
-              ocv.push_back(seg);
-            }
-
-            const Intersection_point* p_ptr =
-              std::get_if<Intersection_point>(&item);
-            if (p_ptr != nullptr) {
-              // Any point that is not equal to the max_vertex of the
-              // subcurve should be inserted into oi.
-              // The max_vertex of the current subcurve (if intersecting)
-              // will be taken care of as the min_vertex of in the next
-              // iteration.
-              if (! equal(p_ptr->first, max_vertex(cv1[i1])))
-                *oi++ = *p_ptr;
-            }
-          }
-        }
-
-        else if (left_coincides && ! right_coincides) {
-          // std::cout << "Left is coinciding but right is not." << std::endl;
-          // The left point of the current subcurve of one polycurve
-          // coincides with the current subcurve of the other polycurve.
-          if (left_overlap) {
-            // An overlap occurred at the previous iteration:
-            // Output the overlapping polycurve.
-            CGAL_assertion(ocv.size() > 0);
-            oi = output_ocv (ocv, invert_ocv, oi);
-          }
-          else {
-            // The left point of the current subcurve of one
-            // polycurve coincides with the current subcurve of the
-            // other polycurve, and no overlap occurred at the
-            // previous iteration: Output the intersection
-            // point. The derivative of at least one of the
-            // polycurves is not defined at this point, so we give
-            // it multiplicity 0.
-            if (left_res == SMALLER) {
-              Intersection_point p(min_vertex(cv2[i2]), 0);
-              *oi++ = p;
+        if (cmp_y_at_x(cv1[i1], ARR_MIN_END, cv2[i2]) == EQUAL) {
+          const auto& p = min_vertex(cv1[i1]);
+          update_saved_point(p);
+          if (equal(max_vertex(cv2[i2]), p)) {
+            if (dir2 == SMALLER) {
+              ++i2;
+              if (i2 == n2) {
+                spit_saved_point();
+                return oi;
+              }
             }
             else {
-              Intersection_point p(min_vertex(cv1[i1]), 0);
-              *oi++ = p;
+              if (i2 != 0) --i2;
+              else {
+                spit_saved_point();
+                return oi;
+              }
+            }
+          }
+        }
+      }
+      else {
+        CGAL_assertion(left_res == EQUAL);
+        update_saved_point(min_vertex(cv1[i1]));
+      }
+
+      do {
+        // std::cout << "i1, i2 = " << i1 <<", " << i2 << std::endl;
+        std::vector<Intersection_base_result> xsecs;
+        intersect(cv1[i1], cv2[i2], std::back_inserter(xsecs));
+
+        // Iterate over all intersections.
+        if (! xsecs.empty()) {
+          auto it = xsecs.begin();
+          const auto& xsec = *it++;
+          if (it == xsecs.end()) {
+            // There is exactly one intersection
+            const auto* xp_p = std::get_if<Intersection_point>(&xsec);
+            if (xp_p) {
+              // The intersection is a point
+              const auto& xp = xp_p->first;
+              auto is_min_end_1 = equal(xp, min_vertex(cv1[i1]));
+              auto is_min_end_2 = equal(xp, min_vertex(cv2[i2]));
+              if ((is_min_end_1 || is_min_end_2) && (xcv_saved || point_saved)) {
+                // It is impossible to have a pending point and a pending
+                // x-monotone curve concurrently
+                CGAL_assertion((xcv_saved && ! point_saved) ||
+                               (! xcv_saved && point_saved));
+                if (xcv_saved) spit_saved_xcv();
+                else spit_saved_point();
+              }
+              else {
+                auto is_max_end_1 = equal(xp, max_vertex(cv1[i1]));
+                auto is_max_end_2 = equal(xp, max_vertex(cv2[i2]));
+                if (is_max_end_1 || is_max_end_2) update_saved_point(xp);
+                else *oi++ = *xp_p;
+              }
+            }
+            else {
+              // The intersection is an x-monotone curve
+              auto* sxcv_p = std::get_if<X_monotone_subcurve_2>(&xsec);
+              CGAL_assertion(sxcv_p != nullptr);
+              const auto& xp_min = min_vertex(*sxcv_p);
+              auto is_min_end_1 = equal(xp_min, min_vertex(cv1[i1]));
+              auto is_min_end_2 = equal(xp_min, min_vertex(cv2[i2]));
+              const auto& xp_max = max_vertex(*sxcv_p);
+              auto is_max_end_1 = equal(xp_max, max_vertex(cv1[i1]));
+              auto is_max_end_2 = equal(xp_max, max_vertex(cv2[i2]));
+              if (is_min_end_1 || is_min_end_2) {
+                update_saved_xcv(*sxcv_p);
+                if (! is_max_end_1 && ! is_max_end_2) spit_saved_xcv();
+              }
+              else {
+                if (xcv_saved) spit_saved_xcv();
+                if (is_max_end_1 || is_max_end_2) update_saved_xcv(*sxcv_p);
+                else *oi++ = *sxcv_p;
+              }
+              point_saved = false;
+            }
+          }
+          else {
+            // There is more than one intersection
+            // Handle the first intersection
+            const auto* xp_p = std::get_if<Intersection_point>(&xsec);
+            if (xp_p) {
+              const auto& xp = xp_p->first;
+              auto is_min_end_1 = equal(xp, min_vertex(cv1[i1]));
+              auto is_min_end_2 = equal(xp, min_vertex(cv2[i2]));
+              if ((is_min_end_1 || is_min_end_2) && (xcv_saved || point_saved)) {
+                // It is impossible to have a pending point and a pending
+                // x-monotone curve concurrently
+                CGAL_assertion((xcv_saved && ! point_saved) ||
+                               (! xcv_saved && point_saved));
+                if (xcv_saved) spit_saved_xcv();
+                else spit_saved_point();
+              }
+              else *oi++ = *xp_p;
+            }
+            else {
+              const auto* sxcv_p = std::get_if<X_monotone_subcurve_2>(&xsec);
+              CGAL_assertion(sxcv_p);
+              const auto& xp = min_vertex(*sxcv_p);
+              auto is_min_end_1 = equal(xp, min_vertex(cv1[i1]));
+              auto is_min_end_2 = equal(xp, min_vertex(cv2[i2]));
+              if (is_min_end_1 || is_min_end_2) {
+                update_saved_xcv(*sxcv_p);
+                spit_saved_xcv();
+              }
+              else {
+                if (xcv_saved) spit_saved_xcv();
+                else *oi++ = *sxcv_p;
+              }
+              point_saved = false;
+            }
+
+            // Handle all but the last intersection
+            for (; it != std::prev(xsecs.end()); ++it) {
+              const auto& xsec = *it;
+              xp_p = std::get_if<Intersection_point>(&xsec);
+              if (xp_p) *oi++ = *xp_p;
+              else {
+                const auto* sxcv_p = std::get_if<X_monotone_subcurve_2>(&xsec);
+                CGAL_assertion(sxcv_p);
+                *oi++ = *sxcv_p;
+              }
+            }
+
+            // Handle the last intersection
+            const auto& xsec = *it;
+            xp_p = std::get_if<Intersection_point>(&xsec);
+            if (xp_p) {
+              const auto& xp = xp_p->first;
+              auto is_max_end_1 = equal(xp, max_vertex(cv1[i1]));
+              auto is_max_end_2 = equal(xp, max_vertex(cv2[i2]));
+              if (is_max_end_1 || is_max_end_2) update_saved_point(xp);
+              else *oi++ = *xp_p;
+            }
+            else {
+              const auto* sxcv_p = std::get_if<X_monotone_subcurve_2>(&xsec);
+              CGAL_assertion(sxcv_p);
+              const auto& xp = max_vertex(*sxcv_p);
+              auto is_max_end_1 = equal(xp, max_vertex(cv1[i1]));
+              auto is_max_end_2 = equal(xp, max_vertex(cv2[i2]));
+              if (is_max_end_1 || is_max_end_2) update_saved_xcv(*sxcv_p);
+              else *oi++ = *sxcv_p;
             }
           }
         }
 
-        // Proceed forward.
-        if (right_res != SMALLER) {
-          if (dir2 == SMALLER) ++i2;
-          else {
-            if (i2 == 0) i2 = Polycurve_traits_2::INVALID_INDEX;
-            else --i2;
-          }
-        }
+        // Advance the indices
+        auto right_res = cmp_xy(cv1[i1], ARR_MAX_END, cv2[i2], ARR_MAX_END);
         if (right_res != LARGER) {
-          if (dir1 == SMALLER)
+          if (dir1 == SMALLER) {
             ++i1;
+            if (i1 == n1) break;
+          }
           else {
-            if (i1 == 0) i1 = Polycurve_traits_2::INVALID_INDEX;
-            else --i1;
+            if (i1 != 0) --i1;
+            else break;
           }
         }
-        left_res = (right_res == SMALLER) ? LARGER :
-          (right_res == LARGER) ? SMALLER : EQUAL;
+        if (right_res != SMALLER) {
+          if (dir2 == SMALLER) {
+            ++i2;
+            if (i2 == n2) break;
+          }
+          else {
+            if (i2 != 0) --i2;
+            else break;
+          }
+        }
+      } while (true);
 
-        left_coincides = right_coincides;
-        left_overlap = right_overlap;
-      } // END of while loop
-
-        // Output the remaining overlapping polycurve, if necessary.
-      if (ocv.size() > 0) {
-        oi = output_ocv (ocv, invert_ocv, oi);
-      }
-      else if (right_coincides) {
-        typedef std::pair<Point_2,Multiplicity> return_point;
-        return_point ip;
-        if (right_res == SMALLER) {
-          ip = (dir1 == SMALLER) ?
-            return_point(max_vertex(cv1[i1-1]), 0) :
-            (i1 != Polycurve_traits_2::INVALID_INDEX) ?
-            return_point(max_vertex(cv1[i1+1]), 0) :
-            return_point(max_vertex(cv1[0]), 0);
-          *oi++ = ip;
-        }
-        else if (right_res == LARGER) {
-          ip = (dir2 == SMALLER) ?
-            return_point(max_vertex(cv2[i2-1]), 0) :
-            (i2 != Polycurve_traits_2::INVALID_INDEX) ?
-            return_point(max_vertex(cv2[i2+1]), 0) :
-            return_point(max_vertex(cv2[0]), 0);
-          *oi++ = ip;
-        }
-        else if (((i1 > 0) && (dir1 == SMALLER)) ||
-                 ((i1 < n1) && (dir1 != SMALLER)) ||
-                 ((i1 == Polycurve_traits_2::INVALID_INDEX) &&
-                  (dir1 != SMALLER)))
-        {
-          ip = (dir1 == SMALLER) ?
-            return_point(max_vertex(cv1[i1-1]), 0) :
-            (i1 != Polycurve_traits_2::INVALID_INDEX) ?
-            return_point(max_vertex(cv1[i1+1]), 0) :
-            return_point(max_vertex(cv1[0]), 0);
-          *oi++ = ip;
-        }
-        else {
-          CGAL_assertion_msg((dir2 == SMALLER && i2 > 0) ||
-                             (dir2 != SMALLER && i2 < n2) ||
-                             (dir2 != SMALLER &&
-                              ((i1 == Polycurve_traits_2::INVALID_INDEX) ||
-                               (i2 == Polycurve_traits_2::INVALID_INDEX))),
-                             "Wrong index for xcv2 in Intersect_2 of "
-                             "polycurves.");
-          ip = (dir2 == SMALLER) ?
-            return_point(max_vertex(cv2[i2-1]), 0) :
-            (i2 != Polycurve_traits_2::INVALID_INDEX) ?
-            return_point(max_vertex(cv2[i2+1]), 0) :
-            return_point(max_vertex(cv2[0]), 0);
-          *oi++ = ip;
-        }
-      }
+      if (xcv_saved) spit_saved_xcv();
+      else if (point_saved) spit_saved_point();
 
       return oi;
     }
 
   private:
-
     template <typename OutputIterator>
-    inline OutputIterator output_ocv
-    (std::vector<X_monotone_subcurve_2>& ocv, bool invert_ocv, OutputIterator oi) const
-    {
+    inline OutputIterator output_ocv(std::vector<X_monotone_subcurve_2>& ocv,
+                                     bool invert_ocv, OutputIterator oi) const {
       X_monotone_curve_2 curve;
-      if (invert_ocv)
-        std::reverse (ocv.begin(), ocv.end());
-      for (X_monotone_subcurve_2& sc : ocv)
-        curve.push_back (sc);
-      *(oi ++) = curve;
-
+      if (invert_ocv) std::reverse(ocv.begin(), ocv.end());
+      for (X_monotone_subcurve_2& sc : ocv) curve.push_back(sc);
+      *oi++ = curve;
       ocv.clear();
-
       return oi;
     }
   };
 
   /*! Obtain an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object() const
-  { return Intersect_2(*this); }
+  Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
   class Are_mergeable_2 {
   protected:
-    typedef Arr_polycurve_traits_2<Subcurve_traits_2>       Polycurve_traits_2;
-    /*! The polycurve traits (in case it has state) */
+    using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
+
+    //! The polycurve traits (in case it has state)
     const Polycurve_traits_2& m_poly_traits;
 
   public:
     /*! Constructor. */
-    Are_mergeable_2(const Polycurve_traits_2& traits) :
-      m_poly_traits(traits)
-    {}
+    Are_mergeable_2(const Polycurve_traits_2& traits) : m_poly_traits(traits) {}
 
     /*! Check whether it is possible to merge two given x-monotone curves.
      * \param cv1 The first curve.
@@ -1023,25 +1017,17 @@ public:
      * common endpoint and the same orientation;(false) otherwise.
      */
     bool operator()(const X_monotone_curve_2& cv1,
-                    const X_monotone_curve_2& cv2) const
-    {
+                    const X_monotone_curve_2& cv2) const {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      Construct_min_vertex_2 min_vertex =
-        m_poly_traits.construct_min_vertex_2_object();
-      Construct_max_vertex_2 max_vertex =
-        m_poly_traits.construct_max_vertex_2_object();
-      typename Subcurve_traits_2::Equal_2 equal =
-        geom_traits->equal_2_object();
-      typename Subcurve_traits_2::Is_vertical_2 is_seg_vertical =
-        geom_traits->is_vertical_2_object();
+      auto min_vertex = m_poly_traits.construct_min_vertex_2_object();
+      auto max_vertex = m_poly_traits.construct_max_vertex_2_object();
+      auto equal = geom_traits->equal_2_object();
+      auto is_seg_vertical = geom_traits->is_vertical_2_object();
 
-      Comparison_result dir1 =
-        m_poly_traits.compare_endpoints_xy_2_object()(cv1);
-      Comparison_result dir2 =
-        m_poly_traits.compare_endpoints_xy_2_object()(cv2);
+      auto dir1 = m_poly_traits.compare_endpoints_xy_2_object()(cv1);
+      auto dir2 = m_poly_traits.compare_endpoints_xy_2_object()(cv2);
 
-      if (dir1 != dir2)
-        return false;
+      if (dir1 != dir2) return false;
 
       bool ver1 = is_seg_vertical(cv1[0]);
       bool ver2 = is_seg_vertical(cv2[0]);
@@ -1073,8 +1059,9 @@ public:
    */
   class Merge_2 {
   protected:
-    typedef Arr_polycurve_traits_2<Subcurve_traits_2>     Geometry_traits;
-    /*! The traits (in case it has state) */
+    using Geometry_traits = Arr_polycurve_traits_2<Subcurve_traits_2>;
+
+    //! The traits (in case it has state)
     const Geometry_traits& m_poly_traits;
 
   public:
@@ -1091,25 +1078,21 @@ public:
      */
     void operator()(const X_monotone_curve_2& cv1,
                     const X_monotone_curve_2& cv2,
-                    X_monotone_curve_2& c) const
-    {
+                    X_monotone_curve_2& c) const {
       CGAL_precondition(m_poly_traits.are_mergeable_2_object()(cv1, cv2));
 
-      Construct_min_vertex_2 get_min_v =
-        m_poly_traits.construct_min_vertex_2_object();
-      Construct_max_vertex_2 get_max_v =
-        m_poly_traits.construct_max_vertex_2_object();
-      Compare_endpoints_xy_2 cmp_seg_endpts =
-        m_poly_traits.compare_endpoints_xy_2_object();
+      auto min_vertex = m_poly_traits.construct_min_vertex_2_object();
+      auto max_vertex = m_poly_traits.construct_max_vertex_2_object();
+      auto cmp_endpts = m_poly_traits.compare_endpoints_xy_2_object();
       Equal_2 equal = m_poly_traits.equal_2_object();
 
       c.clear();
       if (// Either both are left-to-right and cv2 is to the right of cv1
-          ((cmp_seg_endpts(cv1)==SMALLER) &&
-           (equal(get_max_v(cv1),get_min_v(cv2)))) ||
+          ((cmp_endpts(cv1)==SMALLER) &&
+           (equal(max_vertex(cv1), min_vertex(cv2)))) ||
           // or both are right-to-left and cv2 is to the left of cv1
-          ((cmp_seg_endpts(cv1)==LARGER) &&
-           (equal(get_min_v(cv1), get_max_v(cv2)))))
+          ((cmp_endpts(cv1)==LARGER) &&
+           (equal(min_vertex(cv1), max_vertex(cv2)))))
       {
         const std::size_t n1 = cv1.number_of_subcurves();
         const std::size_t n2 = cv2.number_of_subcurves();
@@ -1148,8 +1131,9 @@ public:
    */
   class Construct_curve_2 {
   protected:
-    typedef Arr_polycurve_traits_2<Subcurve_traits_2>       Polycurve_traits_2;
-    /*! The polycurve traits (in case it has state) */
+    using Polycurve_traits_2 = Arr_polycurve_traits_2<Subcurve_traits_2>;
+
+    //! The polycurve traits (in case it has state)
     const Polycurve_traits_2& m_poly_traits;
 
   public:
@@ -1165,10 +1149,9 @@ public:
      * `SubcurveTraits::Point_2` or `SubcurveTraits::Subcurve_2`.
      */
     template <typename ForwardIterator>
-    Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
-    {
-      typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-      typedef typename std::is_same<VT, Point_2>::type Is_point;
+    Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const {
+      using VT = typename std::iterator_traits<ForwardIterator>::value_type;
+      using Is_point = typename std::is_same<VT, Point_2>::type;
       // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
@@ -1196,8 +1179,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             std::false_type) const
-    {
+                             std::false_type) const {
       // Range has to contain at least one subcurve
       CGAL_precondition(begin != end);
       return Curve_2(begin, end);
