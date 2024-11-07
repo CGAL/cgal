@@ -24,17 +24,17 @@ namespace Frechet_distance_ {
 namespace internal {
 
 template <class FT>
-make_positive(FT& n) { if (n<0) n=FT(0); }
+void make_positive(FT& n) { if (n<0) n=FT(0); }
 template <class FT>
-make_less_than_one(FT& n) { if (n>1) n=FT(1); }
+void make_less_than_one(FT& n) { if (n>1) n=FT(1); }
 
-inline make_positive(Interval_nt<false>& n)
+inline void make_positive(Interval_nt<false>& n)
 {
   if (n.sup() <= 0) n = 0.;
   else if (n.inf()<0) n=Interval_nt<false>(0.,n.sup());
 }
 
-inline make_less_than_one(Interval_nt<false>& n)
+inline void make_less_than_one(Interval_nt<false>& n)
 {
   if (n.inf() >=1 ) n = 1.;
   else if (n.sup()>1) n=Interval_nt<false>(n.inf(),1.);
