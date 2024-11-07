@@ -387,7 +387,7 @@ inline bool FrechetLight<C>::updateQSimpleInterval(QSimpleInterval& qsimple,
 
         // heuristic tests avoiding sqrts
         if (certainly(distance > maxdist)){
-          auto comp_dist1 = CGAL::abs(distance - maxdist); // TODO remove abs?
+          auto comp_dist1 = distance - maxdist;
           if (certainly(mid_dist <= comp_dist1)) { // Uncertain (A)
             qsimple.setFreeInterval(min, max);  // full
             qsimple.validate();
@@ -395,7 +395,7 @@ inline bool FrechetLight<C>::updateQSimpleInterval(QSimpleInterval& qsimple,
             return true;
           }
         }
-        auto comp_dist2 = CGAL::abs(distance + maxdist);  // TODO remove abs?
+        auto comp_dist2 = distance + maxdist;
         if (certainly(mid_dist > comp_dist2)) { // Uncertain (A)
           qsimple.setFreeInterval(max, min);  // empty
           qsimple.validate();
@@ -471,13 +471,13 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
         auto mid_dist = Curve::distance(fixed_point, curve[mid]);
 
         if (current_free && certainly(distance > maxdist) &&               // Uncertain (A)
-            certainly(mid_dist <= CGAL::abs(distance - maxdist))) {  // TODO remove abs?
+            certainly(mid_dist <= distance - maxdist)) {
             cur += stepsize;
 
             stepsize *= 2;
             continue;
         }
-        if (!current_free && certainly(mid_dist > CGAL::abs(distance + maxdist))) { // Uncertain (A)  // TODO remove abs?
+        if (!current_free && certainly(mid_dist > distance + maxdist)) { // Uncertain (A)
             cur += stepsize;
 
             stepsize *= 2;
@@ -1082,7 +1082,7 @@ CPoint<C> FrechetLight<C>::getLastReachablePoint(Curve const& curve1, PointID i,
         auto mid_dist = Curve::distance(point, curve2[mid]);
 
 
-        if(certainly(distance >  maxdist) && (certainly(mid_dist <= CGAL::abs(distance - maxdist)))) { // Uncertain (A)  // TODO remove abs?
+        if(certainly(distance >  maxdist) && (certainly(mid_dist <= distance - maxdist))) { // Uncertain (A)
             cur += stepsize;
             stepsize *= 2;
         }
