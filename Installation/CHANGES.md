@@ -7,7 +7,6 @@
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
 
-
 ### [3D Mesh Generation](https://doc.cgal.org/6.1/Manual/packages.html#PkgMesh3)
 
 -   Added two new meshing parameters that enable mesh initialization customization :
@@ -15,14 +14,12 @@
   - `initial_points` : enables the user to specify a `Range` of initial points.
 
 
-[Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
+## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
 -   Made the implicit function thread-safe so that the parallel version of `make_mesh_3()` can be used.
 
-
-[Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
------------
+## [Release 6.0](https://github.com/CGAL/cgal/releases/tag/v6.0)
 
 Release date: September 2024
 
