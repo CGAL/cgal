@@ -13,12 +13,12 @@ namespace CGAL {
 
 /*! \ingroup PkgArrangementOnSurface2TraitsClasses
  *
- * A meradata traits-class decorator for the arrangement package. It traces the
+ * A metadata traits-class decorator for the arrangement package. It traces the
  * invocations of traits-class functors. It is parameterized with another traits
  * class and inherits from it. For each traits method it prints out its input
  * parameters and its output result
  *
- * It models all the concept that the original trais models.
+ * It models all the concepts that the original traits models.
  */
 template <typename BaseTraits>
 class Arr_tracing_traits_2 : public BaseTraits {
@@ -61,8 +61,7 @@ public:
   template<typename ... Args>
   Arr_tracing_traits_2(Args ... args) : Base(std::forward<Args>(args)...) {}
 
-  /*! Disable copy constructor.
-   */
+  /*! Disable copy constructor. */
   Arr_tracing_traits_2(const Arr_tracing_traits_2&) = delete;
 
   /// @}

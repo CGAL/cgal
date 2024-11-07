@@ -33,12 +33,12 @@
 namespace CGAL {
 
 /*! \class
- * A meradata traits-class decorator for the arrangement package. It counts the
+ * A metadata traits-class decorator for the arrangement package. It counts the
  * number of invocations of traits-class functors. It is parameterized with
  * another traits class and inherits from it. For each traits method it
  * maintains a counter that counts the number of invocations into the method.
  *
- * It models all the concept that the original trais models.
+ * It models all the concepts that the original traits models.
  */
 template <typename BaseTraits>
 class Arr_counting_traits_2 : public BaseTraits {
@@ -93,14 +93,13 @@ public:
     increment();
   }
 
-  /*! Disable copy constructor.
-   */
+  /*! Disable copy constructor. */
   Arr_counting_traits_2(const Arr_counting_traits_2&) = delete;
 
   /*! Obtain the counter of the given operation */
   std::size_t count(Operation_id id) const { return m_counters[id]; }
 
-  /*! Print the compare_x counter */
+  /*! Print the counter associated with an operation. */
   template <typename OutStream>
   OutStream& print(OutStream& os, Operation_id id) const {
     if (! m_exist[id]) return os;
