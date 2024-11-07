@@ -55,11 +55,6 @@ result type is either `Bbox_2`, `Bbox_3` or `Bbox` depending on `Dimension`.
 */
 typedef unspecified_type Construct_bbox_d;
 
-/*!
-Functor model of `Kernel_d::Squared_distance_d` to compute the squared distance between two points.
-*/
-typedef unspecified_type Compute_squared_distance_d;
-
 /// @}
 
 /// \name Operations
@@ -73,12 +68,7 @@ Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object
 /*!
 Function used to construct an object of type `Construct_bbox_d`.
 */
-Construct_bbox_d construct_construct_construct_bbox_d_object() const;
-
-/*!
-Function used to construct an object of type `Compute_squared_distance_d`.
-*/
-Compute_squared_distance_d construct_compute_squared_distance_d_object() const;
+Construct_bbox_d construct_bbox_d_object() const;
 
 /// @}
 };

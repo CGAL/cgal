@@ -54,7 +54,7 @@ public:
   }
 
   Construct_bbox_d construct_bbox_d_object() const {
-     return Construct_cartesian_const_iterator_d();
+     return Construct_bbox_d();
   }
 
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {

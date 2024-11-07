@@ -50,7 +50,7 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
 
     using distance_t = const typename decltype(icurve1)::distance_t;
 
-    return ! Frechet_distance_::internal::lessThan(icurve1, icurve2, distance_t(distance)/* , traits */);
+    return ! Frechet_distance_::internal::lessThan(icurve1, icurve2, distance_t(distance));
 }
 
 /**

@@ -44,7 +44,7 @@ fill_lambda(const Point& circle_center,
 {
   using FT = typename Traits::FT;
   FT a(0), b(0), c(0);
-  auto ccci = typename Traits::Construct_cartesian_const_iterator_d();
+  auto ccci = curve1.traits().construct_cartesian_const_iterator_d_object();
   auto it_cc = ccci(circle_center), it_s = ccci(line_start), it_e = ccci(line_end);
 
   for (auto i = 0; i < C::dimension; ++i, ++it_cc, ++it_s, ++it_e)

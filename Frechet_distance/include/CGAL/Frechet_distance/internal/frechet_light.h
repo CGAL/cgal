@@ -383,7 +383,7 @@ inline bool FrechetLight<C>::updateQSimpleInterval(QSimpleInterval& qsimple,
         // TODO: return upper bound on error of fixed_point displacement to then
         // overestimate the mid_dist distance.
         auto fixed_point = fixed_curve.interpolate_at(fixed);
-        auto mid_dist = Curve::distance(fixed_point, curve[mid]);
+        auto mid_dist = Curve::distance(fixed_point, curve[mid], curve.traits());
 
         // heuristic tests avoiding sqrts
         if (certainly(distance > maxdist)){
@@ -435,7 +435,7 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
     auto fixed_point = fixed_curve.interpolate_at(fixed);
 
     // this is an Uncertain
-    auto current_free = Curve::distance(fixed_point, curve[start]) <= distance;  // Uncertain (A)
+    auto current_free = Curve::distance(fixed_point, curve[start], curve.traits()) <= distance;  // Uncertain (A)
     // If we are not certain if the current node is free, we cannot do anything
     // with interval arithmetic, so we return with an invalid interval.
     if (is_indeterminate(current_free)) {
@@ -455,7 +455,7 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
                             : CPoint{max + 1, 0};  // qsimple.free.begin;
 
     assert(first_free > max ||
-           Curve::distance(fixed_point, curve.interpolate_at(first_free)) <= distance); // Uncertain (A)
+           Curve::distance(fixed_point, curve.interpolate_at(first_free), curve.traits()) <= distance); // Uncertain (A)
 
     std::size_t stepsize = static_cast<std::size_t>(max - start) / 2;
     if (stepsize < 1 || qsimple.hasPartialInformation()) {
@@ -468,7 +468,7 @@ inline void FrechetLight<C>::continueQSimpleSearch(QSimpleInterval& qsimple,
         auto mid = cur + (stepsize + 1) / 2;
         auto maxdist = (CGAL::max)(curve.curve_length(cur, mid),
                                   curve.curve_length(mid, cur + stepsize));
-        auto mid_dist = Curve::distance(fixed_point, curve[mid]);
+        auto mid_dist = Curve::distance(fixed_point, curve[mid], curve.traits());
 
         if (current_free && certainly(distance > maxdist) &&               // Uncertain (A)
             certainly(mid_dist <= distance - maxdist)) {
@@ -1079,7 +1079,7 @@ CPoint<C> FrechetLight<C>::getLastReachablePoint(Curve const& curve1, PointID i,
         auto first_part = curve2.curve_length(cur + 1, mid);
         auto second_part = curve2.curve_length(mid, cur + stepsize);
         auto maxdist = (CGAL::max)(first_part, second_part);
-        auto mid_dist = Curve::distance(point, curve2[mid]);
+        auto mid_dist = Curve::distance(point, curve2[mid], curve2.traits());
 
 
         if(certainly(distance >  maxdist) && (certainly(mid_dist <= distance - maxdist))) { // Uncertain (A)
@@ -1143,10 +1143,10 @@ bool FrechetLight<C>::lessThan(distance_t const& d, Curve const& curve1,
     if (curve1.empty() || curve2.empty()) {
         return false;
     }
-    if (certainly(Curve::distance(curve1.front(), curve2.front()) > this->distance)) { // Uncertain (A)
+    if (certainly(Curve::distance(curve1.front(), curve2.front(), curve1.traits()) > this->distance)) { // Uncertain (A)
         return false;
     }
-    if (certainly(Curve::distance(curve1.back(), curve2.back()) > this->distance)) { // Uncertain (A)
+    if (certainly(Curve::distance(curve1.back(), curve2.back(), curve1.traits()) > this->distance)) { // Uncertain (A)
         return false;
     }
 
@@ -1186,8 +1186,8 @@ bool FrechetLight<C>::lessThanWithFilters(distance_t const& d, Curve const& curv
     assert(curve1.size());
     assert(curve2.size());
 
-    if (certainly(Curve::distance(curve1[0], curve2[0]) > this->distance) ||          // Uncertain (A)
-        certainly(Curve::distance(curve1.back(), curve2.back()) > this->distance)) {
+    if (certainly(Curve::distance(curve1[0], curve2[0], curve1.traits()) > this->distance) ||          // Uncertain (A)
+        certainly(Curve::distance(curve1.back(), curve2.back(), curve1.traits()) > this->distance)) {
         return false;
     }
     if (curve1.size() == 1 && curve2.size() == 1) {
@@ -1384,13 +1384,13 @@ Certificate<C>& FrechetLight<C>::computeCertificate()
 
     // TODO test handling of special cases!
     // special cases:
-    if (certainly(Curve::distance(curve1.front(), curve2.front()) > distance)) { // Uncertain (A)
+    if (certainly(Curve::distance(curve1.front(), curve2.front(), curve1.traits()) > distance)) { // Uncertain (A)
         cert.setAnswer(false);
         cert.addPoint({CPoint(0, 0), CPoint(0, 0)});
         cert.validate();
         return cert;
     }
-    if (certainly(Curve::distance(curve1.back(), curve2.back()) > distance)) { // Uncertain (A)
+    if (certainly(Curve::distance(curve1.back(), curve2.back(), curve1.traits()) > distance)) { // Uncertain (A)
         cert.setAnswer(false);
         cert.addPoint(
             {CPoint(curve1.size() - 1, 0), CPoint(curve2.size() - 1, 0)});
