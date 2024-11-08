@@ -357,6 +357,7 @@ using std::max;
 // Macro CGAL_ASSUME and CGAL_UNREACHABLE
 #ifdef CGAL_CXX23
 #  define CGAL_ASSUME(EX) [[ assume(EX) ]]
+#  define CGAL_UNREACHABLE() std::unreachable()
 #elif __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // Call a builtin of the compiler to pass a hint to the compiler
 // From g++ 4.5, there exists a __builtin_unreachable()
