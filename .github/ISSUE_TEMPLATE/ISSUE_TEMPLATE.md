@@ -1,5 +1,5 @@
 ---
-name: CGAL issue template
+name: Issue
 about: Use this template for reporting issues with CGAL
 title: ''
 labels: ''
