@@ -157,6 +157,10 @@
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
 #  define CGAL_CXX20 1
 #endif
+// Same for C++23
+#if __cplusplus >= 202302L || _MSVC_LANG >= 202302L
+#  define CGAL_CXX23 1
+#endif
 
 
 //----------------------------------------------------------------------//
@@ -351,8 +355,10 @@ using std::max;
 #endif
 
 // Macro CGAL_ASSUME and CGAL_UNREACHABLE
+#ifdef CGAL_CXX23
+#  define CGAL_ASSUME(EX) [[ assume(EX) ]]
+#elif __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // Call a builtin of the compiler to pass a hint to the compiler
-#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
