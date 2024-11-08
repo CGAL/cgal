@@ -71,7 +71,7 @@ namespace CGAL {
     std::vector<const Point *> P;   // input points
     int n;                          // number of input points, i.e., P.size()
 
-    // This class comes in two flavours:
+    // This class comes in two flavors:
     //
     //  (i) When Embed is false, the input points are taken to be
     //    ordinary points in R^{d_P}, where d_P is the dimension of the

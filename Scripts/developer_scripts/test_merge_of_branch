@@ -14,7 +14,7 @@ fi
 git=git
 if hub --version 2> /dev/null > /dev/null; then
     case "$(hub --version)" in
-	*hub\ version*) git=hub;;
+        *hub\ version*) git=hub;;
     esac
 fi
 
@@ -63,11 +63,11 @@ if [ -d build ] && \
     cmake_output=$(cmake build 2>&1)
     cmake_exit_code=$?
     if [ "$cmake_exit_code" -ne 0 ]; then
-	echo 'CMake error:'
-	printf '%s\n' "${cmake_output}"
-	exit 1
+        echo 'CMake error:'
+        printf '%s\n' "${cmake_output}"
+        exit 1
     else
-	echo OK
+        echo OK
     fi
 else
     echo '.. Skip the CMake test (please configure a build/ CMake binary directory,'

@@ -1225,7 +1225,7 @@ Vec Camera::pivotPoint() const { return frame()->pivotPoint(); }
 /*! Sets the Camera's position() and orientation() from an OpenGL ModelView
 matrix.
 
-This enables a Camera initialisation from an other OpenGL application. \p
+This enables a Camera initialization from an other OpenGL application. \p
 modelView is a 16 GLdouble vector representing a valid OpenGL ModelView matrix,
 such as one can get using: \code GLdouble mvm[16];
 glGetDoublev(GL_MODELVIEW_MATRIX, mvm);

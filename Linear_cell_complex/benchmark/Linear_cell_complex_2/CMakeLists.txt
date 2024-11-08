@@ -13,9 +13,9 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/cgogn/lib/Release)
 include_directories(BEFORE "/usr/include/libxml2/")
 
 # For profilling with gprof
-#add_definitions("-pg")
+#add_compile_definitions("-pg")
 #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
-# add_definitions("-g")
+# add_compile_definitions("-g")
 
 # OpenMesh
 find_package(OpenMesh REQUIRED)
@@ -47,7 +47,7 @@ find_package(Qt REQUIRED)
 set(QT_USE_QTSVG TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
+add_compile_definitions(${QT_DEFINITIONS})
 set(CGoGN_EXT_INCLUDES ${CGoGN_EXT_INCLUDES} ${QT_INCLUDE_DIR})
 set(CGoGN_EXT_LIBS ${CGoGN_EXT_LIBS} ${QT_LIBRARIES})
 
