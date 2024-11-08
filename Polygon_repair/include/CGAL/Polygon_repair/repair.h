@@ -803,7 +803,7 @@ join(const Multipolygon_with_holes_2<Kernel,Container>& pa)
     }
   };
 
-  CGAL::Polygon_repair::Boolean<Kernel> bops;
+  CGAL::Polygon_repair::Boolean<Kernel, Container> bops;
   bops.insert(pa);
   bops.mark_domains();
   Larger_than_zero ltz;
@@ -826,7 +826,7 @@ decltype(auto)
 join(const PA& pa, const PB& pb, const Kernel& = Default(), const Container& = Default())
 {
   typedef typename Default::Get<Kernel, typename PA::Traits>::type Traits;
-  typedef typename Default::Get<Container, typename PA::Container>::type Container;
+  typedef typename Default::Get<Container, typename PA::Container>::type Container_;
 
   struct Larger_than_zero {
     bool operator()(int i) const
@@ -835,7 +835,7 @@ join(const PA& pa, const PB& pb, const Kernel& = Default(), const Container& = D
     }
   };
 
-  CGAL::Polygon_repair::Boolean<Traits,Container> bops;
+  CGAL::Polygon_repair::Boolean<Traits,Container_> bops;
   bops.insert(pa);
   bops.insert(pb);
   bops.mark_domains();
@@ -889,7 +889,7 @@ decltype(auto)
 intersect(const PA& pa, const PB& pb, const Kernel& = Default(), const Container& = Default())
 {
   typedef typename Default::Get<Kernel, typename PA::Traits>::type Traits;
-  typedef typename Default::Get<Container, typename PA::Container>::type Container;
+  typedef typename Default::Get<Container, typename PA::Container>::type Container_;
 
   struct Equal  {
     bool operator()(int i) const
@@ -898,7 +898,7 @@ intersect(const PA& pa, const PB& pb, const Kernel& = Default(), const Container
     }
   };
 
-  CGAL::Polygon_repair::Boolean<Traits,Container> bops;
+  CGAL::Polygon_repair::Boolean<Traits,Container_> bops;
   bops.insert(pa);
   bops.insert(pb);
   bops.mark_domains();
