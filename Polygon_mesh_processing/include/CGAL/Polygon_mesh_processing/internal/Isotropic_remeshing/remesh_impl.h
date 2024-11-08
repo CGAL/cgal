@@ -1078,9 +1078,7 @@ namespace internal {
     }
 
     // run PMP::fair() on each vertex neighborhood
-    // todo : use relax_constraints. It is true here
-    //
-    void fairing_impl()
+    void fairing_impl(const bool relax_constraints/*1d smoothing*/)
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Fairing...";
@@ -1089,21 +1087,19 @@ namespace internal {
 
       for(const vertex_descriptor v : vertices(mesh_))
       {
-        bool do_fair = false;
-        std::vector<vertex_descriptor> neighbors;
+        if (!is_smoothable(v, relax_constraints))
+          continue;
+
+        std::vector<vertex_descriptor> neighbors(1, v);
         for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
         {
-          Halfedge_status s = status(h);
-          if ( s == PATCH
-            || s == PATCH_BORDER
-            || status(opposite(h, mesh_)) == PATCH_BORDER)
-          {
-            do_fair = true;
-            neighbors.push_back(source(h, mesh_));
-          }
+          const vertex_descriptor vs = source(h, mesh_);
+          if (is_smoothable(vs, relax_constraints))
+            neighbors.push_back(vs);
         }
-        if (do_fair)
-          PMP::fair(mesh_, neighbors, parameters::vertex_point_map(vpmap_));
+
+        CGAL::Polygon_mesh_processing::fair(mesh_, neighbors,
+                                            parameters::vertex_point_map(vpmap_));
       }
 
       CGAL_assertion(!input_mesh_is_valid_ || is_valid_polygon_mesh(mesh_));
@@ -1926,6 +1922,16 @@ public:
       CGAL_assertion_code(Halfedge_status so = status(opposite(h, mesh_)));
       CGAL_assertion(!res || so == ISOLATED_CONSTRAINT || so == MESH_BORDER);
       return res;
+    }
+
+    bool is_smoothable(const vertex_descriptor v, const bool relax_constraints) const
+    {
+      if (is_on_patch(v))
+        return true;
+      else if (is_on_patch_border(v))
+        return relax_constraints;
+      else
+        return false;
     }
 
 private:

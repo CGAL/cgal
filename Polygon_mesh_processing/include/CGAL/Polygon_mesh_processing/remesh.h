@@ -347,7 +347,7 @@ void isotropic_remeshing(const FaceRange& faces
     switch (smoothing_algo)
     {
     case FAIRING :
-      remesher.fairing_impl();
+      remesher.fairing_impl(smoothing_1d);
       break;
     case TANGENTIAL_RELAXATION :
       remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
