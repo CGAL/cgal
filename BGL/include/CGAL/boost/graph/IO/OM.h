@@ -227,7 +227,7 @@ bool write_OM(const std::string& fname,
   auto efpm = choose_parameter(get_parameter(np, internal_np::edge_is_constrained),
                                CGAL::Constant_property_map<edge_descriptor, bool>(false));
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-                              get_property_map(vertex_point, g));
+                              get_const_property_map(vertex_point, g));
   return internal::write_OM(fname, g, vpm, vfpm, efpm);
 }
 
