@@ -1025,6 +1025,9 @@ namespace internal {
       // property map of constrained vertices for relaxation
       auto vertex_constraint = [&](const vertex_descriptor v)
       {
+        if (is_constrained(v))
+          return true;
+
         for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
         {
           Halfedge_status s = status(h);
