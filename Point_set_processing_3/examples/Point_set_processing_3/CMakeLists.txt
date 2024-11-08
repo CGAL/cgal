@@ -121,14 +121,8 @@ if(TARGET CGAL::Eigen3_support)
   endif()
 
   # Executables that require OpenGR
-  if (NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1910)
-    find_package(OpenGR QUIET)
-    include(CGAL_OpenGR_support)
-      message(
-        STATUS
-          "NOTICE : OpenGR does not support your compiler, registration_with_OpenGR will not be compiled."
-      )
-  endif()
+  find_package(OpenGR QUIET)
+  include(CGAL_OpenGR_support)
 
   if(TARGET CGAL::OpenGR_support)
     create_single_source_cgal_program("registration_with_OpenGR.cpp")
