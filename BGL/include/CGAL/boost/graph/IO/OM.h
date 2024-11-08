@@ -214,7 +214,7 @@ bool read_OM(const std::string& fname,
 */
 template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OM(const std::string& fname,
-              Graph& g,
+              const Graph& g,
               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using vertex_descriptor = typename boost::graph_traits<Graph>::vertex_descriptor;
