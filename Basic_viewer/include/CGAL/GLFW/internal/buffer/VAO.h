@@ -1,5 +1,5 @@
-#ifndef CGAL_VAO_H
-#define CGAL_VAO_H
+#ifndef CGAL_GLFW_INTERNAL_BUFFER_VAO_H
+#define CGAL_GLFW_INTERNAL_BUFFER_VAO_H
 
 #include <memory>
 
@@ -112,4 +112,4 @@ void VAO::set_EBO(const std::shared_ptr<EBO>& ebo)
   m_EBO = ebo; 
 }
 
-#endif // CGAL_VAO_H
+#endif // CGAL_GLFW_INTERNAL_BUFFER_VAO_H

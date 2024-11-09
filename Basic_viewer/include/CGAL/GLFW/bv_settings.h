@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CGAL_GLFW_BV_SETTINGS_H
+#define CGAL_GLFW_BV_SETTINGS_H
 
 /*************GLFW WINDOW PARAMS*************/
 
@@ -113,4 +114,4 @@
 #define CGAL_CLIPPING_PLANE_ROTATION_SMOOTHNESS 0.35f
 #endif
 
-/***********GLFW ANIMATION PARAMS***********/
+#endif // CGAL_GLFW_BV_SETTINGS_H

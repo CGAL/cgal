@@ -11,8 +11,8 @@
 // Author(s)     : Théo Benard <benard320@gmail.com>
 //                 Théo Grillon <theogrillon6f9@gmail.com>
 
-#ifndef CGAL_BASIC_VIEWER_GLFW_H
-#define CGAL_BASIC_VIEWER_GLFW_H
+#ifndef CGAL_GLFW_BASIC_VIEWER_H
+#define CGAL_GLFW_BASIC_VIEWER_H
 
 #include <iostream>
 #include <stdlib.h>
@@ -532,4 +532,4 @@ namespace GLFW
 
 #include "Basic_viewer_impl.h"
   
-#endif // CGAL_BASIC_VIEWER_GLFW_H 
+#endif // CGAL_GLFW_BASIC_VIEWER_H 

@@ -1,5 +1,5 @@
-#ifndef CGAL_SHADER_GLFW_H
-#define CGAL_SHADER_GLFW_H
+#ifndef CGAL_GLFW_INTERNAL_SHADER_H
+#define CGAL_GLFW_INTERNAL_SHADER_H
 
 #include <unordered_map>
 #include <iostream>
@@ -146,4 +146,4 @@ void Shader::check_compile_errors(unsigned int  shader, const GLchar* type)
   }
 }
 
-#endif // CGAL_SHADER_GLFW_H
+#endif // CGAL_GLFW_INTERNAL_SHADER_H

@@ -1,5 +1,5 @@
-#ifndef CGAL_CLIPPING_PLANE_H
-#define CGAL_CLIPPING_PLANE_H
+#ifndef CGAL_GLFW_INTERNAL_CLIPPING_PLANE_H
+#define CGAL_GLFW_INTERNAL_CLIPPING_PLANE_H
 
 #include "utils.h"
 #include "Line_renderer.h"
@@ -232,4 +232,4 @@ void Clipping_plane::align_to_direction(const vec3f& direction)
   }
 }
 
-#endif // CGAL_CLIPPING_PLANE_H
+#endif // CGAL_GLFW_INTERNAL_CLIPPING_PLANE_H

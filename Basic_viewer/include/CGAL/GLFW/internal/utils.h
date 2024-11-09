@@ -1,5 +1,5 @@
-#ifndef CGAL_UTILS_EIGEN_H
-#define CGAL_UTILS_EIGEN_H
+#ifndef CGAL_GLFW_INTERNAL_UTILS_H
+#define CGAL_GLFW_INTERNAL_UTILS_H
 
 #include <cmath>
 #include <chrono>
@@ -244,4 +244,4 @@ namespace transform
   }
 }; // transform
 
-#endif // CGAL_UTILS_EIGEN_H
+#endif // CGAL_GLFW_INTERNAL_UTILS_H

@@ -1,5 +1,5 @@
-#ifndef CGAL_BASIC_VIEWER_GLFW_IMPL_H
-#define CGAL_BASIC_VIEWER_GLFW_IMPL_H
+#ifndef CGAL_GLFW_BASIC_VIEWER_IMPL_H
+#define CGAL_GLFW_BASIC_VIEWER_IMPL_H
 
 namespace CGAL 
 {
@@ -1832,4 +1832,4 @@ namespace GLFW
 } // end namespace GLFW 
 } // end namespace CGAL
 
-#endif // CGAL_BASIC_VIEWER_GLFW_IMPL_H
+#endif // CGAL_GLFW_BASIC_VIEWER_IMPL_H

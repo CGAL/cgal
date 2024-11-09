@@ -1,5 +1,5 @@
-#ifndef LINE_RENDERER_GLFW_H
-#define LINE_RENDERER_GLFW_H
+#ifndef CGAL_GLFW_INTERNAL_LINE_RENDERER_H
+#define CGAL_GLFW_INTERNAL_LINE_RENDERER_H
 
 #include <vector>
 
@@ -97,7 +97,7 @@ void Line_renderer::draw()
   glLineWidth(1.f);
 }
 
-#endif // LINE_RENDERER_GLFW_H
+#endif // CGAL_GLFW_INTERNAL_LINE_RENDERER_H
 
 
 

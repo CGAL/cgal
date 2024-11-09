@@ -1,5 +1,5 @@
-#ifndef CGAL_INPUT_GLFW_H
-#define CGAL_INPUT_GLFW_H
+#ifndef CGAL_GLFW_INTERNAL_INPUT_H
+#define CGAL_GLFW_INTERNAL_INPUT_H
 
 #include <GLFW/glfw3.h>
 #include <unordered_map>
@@ -477,4 +477,4 @@ int Input::map_to_qwerty(int key)
 }
 
 
-#endif // CGAL_INPUT_GLFW_H
+#endif // CGAL_GLFW_INTERNAL_INPUT_H

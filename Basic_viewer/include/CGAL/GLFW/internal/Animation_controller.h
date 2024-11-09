@@ -1,5 +1,5 @@
-#ifndef CGAL_ANIMATION_CONTROLLER_H
-#define CGAL_ANIMATION_CONTROLLER_H
+#ifndef CGAL_GLFW_INTERNAL_ANIMATION_CONTROLLER_H
+#define CGAL_GLFW_INTERNAL_ANIMATION_CONTROLLER_H
 
 #include <vector>
 #include <chrono>
@@ -162,4 +162,4 @@ void Animation_controller::compute_timestamp()
   m_Timestamp = static_cast<float>(m_Duration.count()) / static_cast<float>(m_KeyFrames.size() - 1); 
 }
 
-#endif // CGAL_ANIMATION_CONTROLLER_H
+#endif // CGAL_GLFW_INTERNAL_ANIMATION_CONTROLLER_H

@@ -1,5 +1,5 @@
-#ifndef CGAL_CAMERA_H
-#define CGAL_CAMERA_H
+#ifndef CGAL_GLFW_INTERNAL_CAMERA_H
+#define CGAL_GLFW_INTERNAL_CAMERA_H
 
 #include <vector>
 
@@ -706,4 +706,4 @@ std::string Camera::get_constraint_axis_str() const
   return "None"; 
 }
 
-#endif // CGAL_CAMERA_H
+#endif // CGAL_GLFW_INTERNAL_CAMERA_H

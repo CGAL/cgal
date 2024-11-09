@@ -11,8 +11,8 @@
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 
-#ifndef CGAL_BASIC_VIEWER_QT_H
-#define CGAL_BASIC_VIEWER_QT_H
+#ifndef CGAL_QT_BASIC_VIEWER_H
+#define CGAL_QT_BASIC_VIEWER_H
 
 // TODO #include <CGAL/license/GraphicsView.h>
 #include <cstring>
@@ -2009,4 +2009,4 @@ void draw_graphics_scene(const Graphics_scene& graphics_scene,
 
 } // End namespace CGAL
 
-#endif // CGAL_BASIC_VIEWER_QT_H
+#endif // CGAL_QT_BASIC_VIEWER_H
