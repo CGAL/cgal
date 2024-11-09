@@ -276,10 +276,7 @@ namespace GLFW
   void Basic_viewer::initialize_and_load_world_axis()
   {
     // World axis initialization
-    m_WorldAxisRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE"
-      {ShaderDataType::FLOAT3}, // a_Pos"
-      {ShaderDataType::FLOAT3}, // a_Color
-    });
+    m_WorldAxisRenderer.initialize_buffers();
     m_WorldAxisRenderer.set_width(3.f);
     m_WorldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
     m_WorldAxisRenderer.add_line(vec3f::Zero(), .1f*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
@@ -288,20 +285,14 @@ namespace GLFW
 
     float cameraSize = m_Camera.get_size() * 0.5;
     // XY grid axis initialization
-    m_XYAxisRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE
-      {ShaderDataType::FLOAT3}, // a_Pos
-      {ShaderDataType::FLOAT3}, // a_Color
-    });
+    m_XYAxisRenderer.initialize_buffers();
     m_XYAxisRenderer.set_width(5.f);
     m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitX(), vec3f(1, 0, 0)); // x-axis
     m_XYAxisRenderer.add_line(vec3f::Zero(), cameraSize*vec3f::UnitY(), vec3f(0, 1, 0)); // y-axis
     m_XYAxisRenderer.load_buffers();
 
     // XY grid initialization 
-    m_XYGridRenderer.initialize_buffers({ // Use VERTEX_SOURCE_LINE
-      {ShaderDataType::FLOAT3}, // a_Pos
-      {ShaderDataType::FLOAT3}, // a_Color
-    });
+    m_XYGridRenderer.initialize_buffers();
     m_XYGridRenderer.set_width(2.f);
     m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitX(), vec3f(.8f, .8f, .8f)); // -x-axis
     m_XYGridRenderer.add_line(vec3f::Zero(), -2.f*cameraSize*vec3f::UnitY(), vec3f(.8f, .8f, .8f)); // -y-axis
@@ -904,9 +895,7 @@ namespace GLFW
 
     const unsigned int NB_SUBDIVISIONS = 30;
 
-    m_ClippingPlane.initialize_buffers({ // Use VERTEX_SOURCE_CLIPPING_PLANE
-      {ShaderDataType::FLOAT3}, // a_Pos
-    });
+    m_ClippingPlane.initialize_buffers();
     m_ClippingPlane.set_width(0.2f);
     m_ClippingPlane.add_line({0.0, 0.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, 0.0});
     generate_grid(m_ClippingPlane, size, NB_SUBDIVISIONS);
@@ -1091,7 +1080,7 @@ namespace GLFW
     }
     else if (is_key_pressed(m_Window, GLFW_KEY_LEFT_CONTROL) && m_DisplayMode != DisplayMode::CLIPPING_PLANE_OFF)
     {
-        m_ClippingPlane.translation(8.f * yoffset * deltaTime);
+      m_ClippingPlane.translation(8.f * yoffset * deltaTime);
     }
     else 
     {

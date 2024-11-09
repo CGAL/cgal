@@ -6,11 +6,12 @@
 #include <glad/glad.h>
 
 #include "utils.h"
-#include "buffer/VAO.h"
 
 class Line_renderer {
 public:
-  void initialize_buffers(const BufferLayout& layout);
+  ~Line_renderer();
+
+  void initialize_buffers();
   void load_buffers();
   void add_line(const vec3f& start, const vec3f& end);
   void add_line(const vec3f& start, const vec3f& end, const vec3f& color);
@@ -26,8 +27,8 @@ private:
 
   float m_Width { 1.0f };
 
-  std::shared_ptr<VAO> m_VAO;
-  std::shared_ptr<VBO> m_VBO;
+  unsigned int m_VertexArray;
+  unsigned int m_VertexBuffer;
 
   bool m_AreBuffersLoaded { false };
   bool m_AreBuffersInitialized { false };
@@ -35,12 +36,31 @@ private:
 
 /********************METHOD IMPLEMENTATIONS********************/
 
-void Line_renderer::initialize_buffers(const BufferLayout& layout) 
+Line_renderer::~Line_renderer() 
 {
-  m_VAO = VAO::create();
-  m_VBO = VBO::create();
-  m_VBO->set_layout(layout);
-  m_VAO->set_VBO(m_VBO);
+  if (m_VertexArray != 0) glDeleteVertexArrays(1, &m_VertexArray);
+  if (m_VertexBuffer != 0) glDeleteBuffers(1, &m_VertexBuffer);
+}
+
+void Line_renderer::initialize_buffers() 
+{
+  glGenVertexArrays(1, &m_VertexArray);
+  glGenBuffers(1, &m_VertexBuffer);
+
+  glBindVertexArray(m_VertexArray);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+
+  // vertex attribute  
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+
+  // color attribute 
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (const void*)12);
+
+  glBindVertexArray(0);  
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   m_AreBuffersInitialized = true;
 }
@@ -49,38 +69,49 @@ void Line_renderer::load_buffers()
 {
   assert(are_buffers_initialized());
 
-  m_VAO->bind();
-  m_VBO->load(m_Vertices.data(), m_Vertices.size());
+  glBindVertexArray(m_VertexArray);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+  glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(float), m_Vertices.data(), GL_STATIC_DRAW);
+
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   m_AreBuffersLoaded = true;
 }
 
 void Line_renderer::add_line(const vec3f& start, const vec3f& end) 
 {
-  m_Vertices.push_back(start.x());
-  m_Vertices.push_back(start.y());
-  m_Vertices.push_back(start.z());
+  m_Vertices.emplace_back(start.x());
+  m_Vertices.emplace_back(start.y());
+  m_Vertices.emplace_back(start.z());
+  m_Vertices.emplace_back(0.);
+  m_Vertices.emplace_back(0.);
+  m_Vertices.emplace_back(0.);
 
-  m_Vertices.push_back(end.x());
-  m_Vertices.push_back(end.y());
-  m_Vertices.push_back(end.z());
+  m_Vertices.emplace_back(end.x());
+  m_Vertices.emplace_back(end.y());
+  m_Vertices.emplace_back(end.z());
+  m_Vertices.emplace_back(0.);
+  m_Vertices.emplace_back(0.);
+  m_Vertices.emplace_back(0.);
 }
 
 void Line_renderer::add_line(const vec3f& start, const vec3f& end, const vec3f& color) 
 {
-  m_Vertices.push_back(start.x());
-  m_Vertices.push_back(start.y());
-  m_Vertices.push_back(start.z());
-  m_Vertices.push_back(color.x());
-  m_Vertices.push_back(color.y());
-  m_Vertices.push_back(color.z());
+  m_Vertices.emplace_back(start.x());
+  m_Vertices.emplace_back(start.y());
+  m_Vertices.emplace_back(start.z());
+  m_Vertices.emplace_back(color.x());
+  m_Vertices.emplace_back(color.y());
+  m_Vertices.emplace_back(color.z());
 
-  m_Vertices.push_back(end.x());
-  m_Vertices.push_back(end.y());
-  m_Vertices.push_back(end.z());
-  m_Vertices.push_back(color.x());
-  m_Vertices.push_back(color.y());
-  m_Vertices.push_back(color.z());
+  m_Vertices.emplace_back(end.x());
+  m_Vertices.emplace_back(end.y());
+  m_Vertices.emplace_back(end.z());
+  m_Vertices.emplace_back(color.x());
+  m_Vertices.emplace_back(color.y());
+  m_Vertices.emplace_back(color.z());
 }
 
 void Line_renderer::draw()  
@@ -89,15 +120,15 @@ void Line_renderer::draw()
 
   if (m_Vertices.empty()) return; 
 
-  unsigned int nComponents = m_VBO->get_layout().get_stride() / sizeof(float);
+  unsigned int nComponents = 6; // 6 components per vertex (3 for position + 3 for color)
   
-  m_VAO->bind();
+  glBindVertexArray(m_VertexArray);
+
   glLineWidth(m_Width);
-  glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_Vertices.size()/nComponents)); // 6 = n components per vertex
+  glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(m_Vertices.size()/nComponents));
+
+  glBindVertexArray(0);
   glLineWidth(1.f);
 }
 
 #endif // CGAL_GLFW_INTERNAL_LINE_RENDERER_H
-
-
-
