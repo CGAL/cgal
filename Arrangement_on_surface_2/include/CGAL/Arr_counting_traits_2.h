@@ -144,7 +144,8 @@ public:
     { ++m_counter; return m_object(p1, p2); }
   };
 
-  /*! A functor that compares two points lexigoraphically: by x, then by y. */
+  /*! A functor that compares two points lexigoraphically: by \f$x\f$, then by
+   * \f$y\f$. */
   class Compare_xy_2 {
   private:
     typename Base::Compare_xy_2 m_object;
@@ -214,7 +215,7 @@ public:
     { ++m_counter; return m_object(xc); }
   };
 
-  /*! A functor that compares the y-coordinates of a point and an
+  /*! A functor that compares the \f$y\f$-coordinates of a point and an
    * \f$x\f$-monotone curve at the point \f$x\f$-coordinate.
    */
   class Compare_y_at_x_2 {
@@ -233,8 +234,8 @@ public:
     { ++m_counter; return m_object(p, xc); }
   };
 
-  /*! A functor that checks whether two points and two \f$x\f$-monotone curves are
-   * identical.
+  /*! A functor that checks whether two points and two \f$x\f$-monotone curves
+   * are identical.
    */
   class Equal_2 {
   private:
@@ -259,8 +260,9 @@ public:
     { ++m_counter2; return m_object(xc1, xc2); }
   };
 
-  /*! A functor that compares compares the y-coordinates of two \f$x\f$-monotone
-   * curves immediately to the left of their intersection point.
+  /*! A functor that compares compares the \f$y\f$-coordinates of two
+   * \f$x\f$-monotone curves immediately to the left of their intersection
+   * point.
    */
   class Compare_y_at_x_left_2 {
   private:
@@ -279,8 +281,9 @@ public:
     { ++m_counter; return m_object(xc1, xc2, p); }
   };
 
-  /*! A functor that compares compares the y-coordinates of two \f$x\f$-monotone
-   * curves immediately to the right of their intersection point.
+  /*! A functor that compares compares the \f$y\f$-coordinates of two
+   * \f$x\f$-monotone curves immediately to the right of their intersection
+   * point.
    */
   class Compare_y_at_x_right_2 {
   private:
@@ -312,11 +315,11 @@ public:
     Make_x_monotone_2(const Base& base, std::size_t& counter) :
       m_object(base.make_x_monotone_2_object()), m_counter(counter) {}
 
-    /*! Subdivide a given curve into \f$x\f$-monotone subcurves and insert them into
-     * a given output iterator.
+    /*! Subdivide a given curve into \f$x\f$-monotone subcurves and insert them
+     * into a given output iterator.
      * \param cv the curve.
      * \param oi the output iterator for the result. Its value type is a variant
-     *           that wraps Point_2 or an X_monotone_curve_2 objects.
+     *           that wraps `Point_2` or an `X_monotone_curve_2` objects.
      * \return The past-the-end iterator.
      */
     template <typename OutputIterator>
@@ -429,7 +432,8 @@ public:
     { ++m_counter; return m_object(xc); }
   };
 
-  /*! A functor that approximates coordinates, points, and \f$x\f$-monotone curves.
+  /*! A functor that approximates coordinates, points, and \f$x\f$-monotone
+   * curves.
    */
   class Approximate_2 {
   private:
@@ -455,9 +459,9 @@ public:
     /*! Obtain an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
-     * \pre i is either 0 or 1.
-     * \return An approximation of p's \f$x\f$-coordinate (if i == 0), or an
-     *         approximation of p's y-coordinate (if i == 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
     Approximate_number_type operator()(const Point_2& p, std::size_t i) const
     { ++m_counter1; return m_object(p, i); }
@@ -477,8 +481,8 @@ public:
 
   // left-right
 
-  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone curve lies
-   * on a boundary of the parameter space along the x axis.
+  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone curve
+   * lies on a boundary of the parameter space along the \f$x\f$-axis.
    */
   class Parameter_space_in_x_2 {
   private:
@@ -533,7 +537,7 @@ public:
     { ++m_counter2; return m_object(xc); }
   };
 
-  /*! A functor that compares the y-coordinate of two given points
+  /*! A functor that compares the \f$y\f$-coordinate of two given points
    * that lie on vertical boundaries.
    */
   class Compare_y_on_boundary_2 {
@@ -551,7 +555,7 @@ public:
     { ++m_counter; return m_object(p1, p2); }
   };
 
-  /*! A functor that compares the y-coordinates of curve ends near the
+  /*! A functor that compares the \f$y\f$-coordinates of curve ends near the
    * boundary of the parameter space.
    */
   class Compare_y_near_boundary_2 {
@@ -573,8 +577,8 @@ public:
 
   // bottom-top
 
-  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone arc lies
-   * on a boundary of the parameter space along the y axis.
+  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone arc
+   * lies on a boundary of the parameter space along the \f$y\f$-axis.
    */
   class Parameter_space_in_y_2 {
   private:
@@ -602,7 +606,7 @@ public:
   };
 
   /*! A functor that determines whether a point or a curve lies on an
-   * identification in x.
+   * identification in \f$x\f$.
    */
   class Is_on_y_identification_2 {
   private:
@@ -801,9 +805,9 @@ public:
 
   //@}
 
-  /*! Increment the construction counter
-   * \param doit indicates whethet to actually inceremnt the counter or not
-   * \return the counter at the end of the operation
+  /*! Increment the construction counter.
+   * \param doit indicates whethet to actually inceremnt the counter or not.
+   * \return the counter at the end of the operation.
    */
   static std::size_t increment(bool doit = true) {
 #ifdef CGAL_NO_ATOMIC

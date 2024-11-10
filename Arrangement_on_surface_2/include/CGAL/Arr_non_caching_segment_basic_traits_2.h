@@ -24,9 +24,9 @@
 #include <CGAL/disable_warnings.h>
 
 /*! \file The basic non-caching segment traits-class for the arrangement
- * package. This traits class handles x-monotone non-intersecting segments.
- * It is a model of the ArrangementBasicTraits_2 concept. The class is
- * templated by a kernel and inherits from it all the types and many of the
+ * package. This traits class handles \f$x\f$-monotone non-intersecting
+ * segments.  It is a model of the ArrangementBasicTraits_2 concept. The class
+ * is templated by a kernel and inherits from it all the types and many of the
  * functors required by the concept it models.
  */
 
@@ -41,7 +41,7 @@
 namespace CGAL {
 
 /*! \class
- * A model of the ArrangementBasicTraits_2 concept that handles x-monotone
+ * A model of the ArrangementBasicTraits_2 concept that handles \f$x\f$-monotone
  * non-intersecting line segments.
  */
 template <class T_Kernel>
@@ -85,25 +85,25 @@ public:
   typedef typename Kernel::Segment_2               X_monotone_curve_2;
   typedef unsigned int                             Multiplicity;
 
-  /*! Compare the x-coordinates of two points */
+  /*! Compare the \f$x\f$-coordinates of two points. */
   typedef typename Kernel::Compare_x_2             Compare_x_2;
 
-  /*! Compare two points lexigoraphically; by x, then by y */
+  /*! Compare two points lexigoraphically; by \f$x\f$, then by \f$y\f$. */
   typedef typename Kernel::Compare_xy_2            Compare_xy_2;
 
-  /*! Obtain the left endpoint of a given segment */
+  /*! Obtain the left endpoint of a given segment. */
   typedef typename Kernel::Construct_min_vertex_2  Construct_min_vertex_2;
 
-  /*! Obtain the right endpoint of a given segment */
+  /*! Obtain the right endpoint of a given segment. */
   typedef typename Kernel::Construct_max_vertex_2  Construct_max_vertex_2;
 
-  /*! Check whether a given segment is vertical */
+  /*! Check whether a given segment is vertical. */
   typedef typename Kernel::Is_vertical_2           Is_vertical_2;
 
-  /*! Return the location of a given point with respect to an input segment */
+  /*! Return the location of a given point with respect to an input segment. */
   typedef typename Kernel::Compare_y_at_x_2        Compare_y_at_x_2;
 
-  /*! Check if two segments or if two points are identical */
+  /*! Check if two segments or if two points are identical. */
   typedef typename Kernel::Equal_2                 Equal_2;
 
   //@}
@@ -117,16 +117,15 @@ public:
   class Compare_y_at_x_left_2 {
   public:
 
-    /*
-     * Compare the y value of two segments immediately to the left of their
-     * intersection point.
+    /* Compare the \f$y\f$-value of two segments immediately to the left of
+     * their intersection point.
      * \param cv1 The first segment.
      * \param cv2 The second segment.
      * \param p The intersection point.
-     * \pre The point p lies on both segments, and both of them must be also be
-     *      defined (lexicographically) to its left.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
-     *         the left of p: SMALLER, LARGER or EQUAL.
+     * \pre The point `p` lies on both segments, and both of them must be also
+     *      be defined (lexicographically) to its left.
+     * \return The relative position of `cv1` with respect to `cv2` immdiately
+     *         to the left of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
     Comparison_result operator()(const X_monotone_curve_2& cv1,
                                  const X_monotone_curve_2& cv2,
@@ -176,16 +175,15 @@ public:
   class Compare_y_at_x_right_2 {
   public:
 
-    /*!
-     * Compare the y value of two segments immediately to the right of their
-     * intersection point.
+    /*! Compare the \f$y\f$-value of two segments immediately to the right of
+     * their intersection point.
      * \param cv1 The first segment.
      * \param cv2 The second segment.
      * \param p The intersection point.
-     * \pre The point p lies on both segments, and both of them must be also be
-     *      defined (lexicographically) to its right.
-     * \return The relative position of cv1 with respect to cv2 immdiately to
-     *         the right of p: SMALLER, LARGER or EQUAL.
+     * \pre The point `p` lies on both segments, and both of them must be also
+     *      be defined (lexicographically) to its right.
+     * \return The relative position of `cv1` with respect to `cv2` immdiately
+     *         to the right of `p`: `SMALLER`, `LARGER`, or `EQUAL`.
      */
 
     Comparison_result operator()(const X_monotone_curve_2 & cv1,
@@ -222,7 +220,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_right_2 functor object. */
+  /*! Obtain a `Compare_y_at_x_right_2` functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   {
     return Compare_y_at_x_right_2();
@@ -253,9 +251,9 @@ public:
     /*! Return an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
-     * \pre i is either 0 or 1.
-     * \return An approximation of p's x-coordinate (if i == 0), or an
-     *         approximation of p's y-coordinate (if i == 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
     Approximate_number_type operator() (const Point_2& p, int i) const {
       CGAL_precondition (i == 0 || i == 1);
@@ -291,7 +289,7 @@ public:
 
   typedef typename Kernel::Construct_segment_2    Construct_x_monotone_curve_2;
 
-  /*! Get a Construct_x_monotone_curve_2 functor object. */
+  /*! Get a `Construct_x_monotone_curve_2` functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
   {
     return (this->construct_segment_2_object());

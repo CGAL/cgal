@@ -41,7 +41,7 @@ namespace CGAL {
 
 /*! Represent an extended 3D direction that is used in turn to represent a
  * spherical-arc endpoint. The extended data consists of two flags that
- * indicate whether the point is on the x and on a y boundaries,
+ * indicate whether the point is on the \f$x\f$- and on a \f$y\f$-boundaries,
  * respectively.
  */
 template <typename Kernel>
@@ -162,10 +162,10 @@ public:
   using Vector_2 = typename Kernel::Vector_2;
 
 protected:
-  /*! Obtain the intersection of the identification arc and the xy plane.
-   * By default, it is the vector directed along the negative x axis
-   * (x = -infinity).
-   * \return the intersection of the identification arc and the xy plane.
+  /*! Obtain the intersection of the identification arc and the \f$xy\f$-plane.
+   * By default, it is the vector directed along the negative \f$x\f$-axis
+   * (\f$x = -\infty\f$).
+   * \return the intersection of the identification arc and the \f$xy\f$-plane.
    */
   inline static const Direction_2& identification_xy() {
     static const Direction_2 d(atan_x, atan_y);
@@ -173,8 +173,8 @@ protected:
   }
 
   /*! Obtain the normal of the plane that contains the identification arc.
-   * By default, it is the vector directed along the positive y axis
-   * (y = infinity).
+   * By default, it is the vector directed along the positive \f$y\f$-axis
+   * (\f$y = \infty\f$).
    * \return the normal of the plane that contains the identification arc.
    */
   inline static const Direction_3& identification_normal() {
@@ -182,73 +182,75 @@ protected:
     return d;
   }
 
-  /*! Obtain the 2D direction directed along the negative x axis
-   * \return the direction directed at x = -infinity
+  /*! Obtain the 2D direction directed along the negative \f$x\f$-axis.
+   * \return the direction directed at \f$x = -\infty\f$.
    */
   inline static const Direction_2& neg_x_2() {
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, -1, 0);
     return d;
   }
 
-  /*! Obtain the 2D direction directed along the negative y axis
-   * \return the direction directed at y = -infinity
+  /*! Obtain the 2D direction directed along the negative \f$y\f$-axis.
+   * \return the direction directed at \f$y = -\infty\f$.
    */
   inline static const Direction_2& neg_y_2() {
     CGAL_STATIC_THREAD_LOCAL_VARIABLE_2(Direction_2, d, 0, -1);
     return d;
   }
 
-  /*! Obtain the sign of the x-coordinate of a direction in space
-   * \param d the direction in space
-   * \return the sign of the x-coordinate of d
+  /*! Obtain the sign of the \f$x\f$-coordinate of a direction in space
+   * \param d the direction in space.
+   * \return the sign of the \f$x\f$-coordinate of `d`.
    */
   inline static Sign x_sign(Direction_3 d) { return CGAL::sign(d.dx()); }
 
-  /*! Obtain the sign of the y-coordinate of a direction in space
-   * \param d the direction in space
-   * \return the sign of the y-coordinate of d
+  /*! Obtain the sign of the \f$y\f$-coordinate of a direction in space
+   * \param d the direction in space.
+   * \return the sign of the \f$y\f$-coordinate of `d`.
    */
   inline static Sign y_sign(Direction_3 d) { return CGAL::sign(d.dy()); }
 
-  /*! Obtain the sign of the z-coordinate of a direction in space
+  /*! Obtain the sign of the \f$z\f$-coordinate of a direction in space
    * \param d the direction in space
-   * \return the sign of the z-coordinate of d
+   * \return the sign of the \f$z\f$-coordinate of `d`.
    */
   inline static Sign z_sign(Direction_3 d) { return CGAL::sign(d.dz()); }
 
   typedef Direction_2 (*Project)(const Direction_3& d) ;
 
-  /*! Project a 3D direction onto the xy-plane
-   * \param d the 3D direction
-   * \return the projection onto the xy-plane
+  /*! Project a 3D direction onto the \f$xy\f$-plane
+   * \param d the 3D direction.
+   * \return the projection onto the \f$xy\f$-plane.
    */
   inline static Direction_2 project_xy(const Direction_3& d)
   { return Direction_2(d.dx(), d.dy()); }
 
-  /*! Project a 3D direction onto the yz-plane
-   * \param d the 3D direction
-   * \return the projection onto the yz-plane
+  /*! Project a 3D direction onto the \f$yz\f$-plane.
+   * \param d the 3D direction.
+   * \return the projection onto the \f$yz\f$-plane.
    */
   inline static Direction_2 project_yz(const Direction_3& d)
   { return Direction_2(d.dy(), d.dz()); }
 
-  /*! Project a 3D direction onto the zx-plane
-   * \param d the 3D direction
-   * \return the projection onto the xz-plane
+  /*! Project a 3D direction onto the \f$zx\f$-plane.
+   * \param d the 3D direction.
+   * \return the projection onto the \f$xz\f$-plane.
    */
   inline static Direction_2 project_xz(const Direction_3& d)
   { return Direction_2(d.dx(), d.dz()); }
 
-  /*! Project a 3D direction onto the yz-plane and reflect the y coordinate
-   * \param d the 3D direction
-   * \return the projection onto the yz-plane
+  /*! Project a 3D direction onto the \f$yz\f$-plane and reflect the
+   * \f$y\f$-coordinate.
+   * \param d the 3D direction.
+   * \return the projection onto the \f$yz\f$-plane.
    */
   inline static Direction_2 project_minus_yz(const Direction_3& d)
   { return Direction_2(-d.dy(), d.dz()); }
 
-  /*! Project a 3D direction onto the zx-plane and reflect the x coordinate
-   * \param d the 3D direction
-   * \return the projection onto the xz-plane
+  /*! Project a 3D direction onto the \f$zx\f$-plane and reflect the
+   * \f$x\f$- coordinate.
+   * \param d the 3D direction.
+   * \return the projection onto the \f$xz\f$-plane.
    */
   inline static Direction_2 project_minus_xz(const Direction_3& d)
   { return Direction_2(-d.dx(), d.dz()); }
@@ -267,7 +269,7 @@ protected:
   /*! Compute the orientation of two directions.
    * \param d1 the first direction.
    * \param d2 the second direction.
-   * \return the relative orientation of d1 and d2.
+   * \return the relative orientation of `d1` and `d2`.
    */
   inline Orientation orientation(const Direction_2& d1,
                                  const Direction_2& d2) const {
@@ -356,8 +358,8 @@ public:
    * \return SMALLER - u(d1) < u(d2);
    *         EQUAL   - u(d1) = u(d2);
    *         LARGER  - u(d1) > u(d2).
-   * \pre d1 does not coincide with any pole.
-   * \pre d2 does not coincide with any pole.
+   * \pre `d1` does not coincide with any pole.
+   * \pre `d2` does not coincide with any pole.
    */
   inline Comparison_result compare_x(const Direction_3& d1,
                                      const Direction_3& d2) const {
@@ -375,8 +377,8 @@ public:
    *         EQUAL   - u(d1) = u(d2) and v(d1) = v(d2);
    *         LARGER  - u(d1) = u(d2) and v(d1) > v(d2);
    *         LARGER  - u(d1) > u(d2).
-   * \pre d1 does not lie on the discontinuity arc.
-   * \pre d2 does not lie on the discontinuity arc.
+   * \pre `d1` does not lie on the discontinuity arc.
+   * \pre `d2` does not lie on the discontinuity arc.
    */
   inline Comparison_result compare_xy(const Direction_3& d1,
                                       const Direction_3& d2) const {
@@ -385,12 +387,12 @@ public:
     return res;
   }
 
-  /*! Determine whether the given point is in the x-range of the
+  /*! Determine whether the given point is in the \f$x\f$-range of the
    * spherical_arc.
    * \param point the query point direction.
-   * \return true if point is in the x-range of the (closed) spherical_arc and
-   * false otherwise.
-   * \pre point does not coincide with one of the poles
+   * \return true if point is in the \f$x\f$-range of the (closed) spherical_arc
+   * and  false otherwise.
+   * \pre point does not coincide with one of the poles.
    */
   bool is_in_x_range(const X_monotone_curve_2& xcv,
                      const Point_2& point) const {
@@ -419,7 +421,7 @@ public:
   }
 
   /*! Compute the intersection of a curve and the identification curve.
-   * \param[in] cv the curve
+   * \param[in] cv the curve.
    */
   void intersection_with_identification(const X_monotone_curve_2& xcv,
                                         Direction_3& dp,
@@ -431,7 +433,7 @@ public:
   }
 
   /*! Compute the intersection of a curve and the identification curve.
-   * \param[in] cv the curve
+   * \param[in] cv the curve.
    */
   void intersection_with_identification(const X_monotone_curve_2& xcv,
                                         Direction_3& dp,
@@ -454,7 +456,7 @@ public:
   }
 
   /*! Compute the intersection of a curve and the identification curve.
-   * \param[in] cv the curve
+   * \param[in] cv the curve.
    */
   bool overlap_with_identification(const X_monotone_curve_2& xcv,
                                    std::false_type) const {
@@ -493,9 +495,9 @@ public:
   public:
     /*! Construct a point on the sphere from three coordinates, which define
      * a (not necessarily normalized) direction.
-     * \param[in] x the x coordinate
-     * \param[in] y the y coordinate
-     * \param[in] z the z coordinate
+     * \param[in] x the \f$x\f$-coordinate.
+     * \param[in] y the \f$y\f$-coordinate.
+     * \param[in] z the \f$z\f$-coordinate.
      */
     Point_2 operator()(const FT& x, const FT& y, const FT& z) {
       Point_2 p;
@@ -507,7 +509,7 @@ public:
 
     /*! Construct a point on the sphere from a (not necessarily normalized)
      * direction.
-     * \param other the other direction
+     * \param other the other direction.
      */
     Point_2 operator()(const Direction_3& other) {
       Point_2 p;
@@ -557,12 +559,13 @@ public:
     }
   };
 
-  /*! Obtain an x-monotone geodesic arc construction functor.
+  /*! Obtain a point construction functor.
    */
   Construct_point_2 construct_point_2_object() const
   { return Construct_point_2(*this); }
 
-  /*! A functor that constructs an x-monotone geodesic arc on the sphere. */
+  /*! A functor that constructs an \f$x\f$-monotone geodesic arc on the sphere.
+   */
   class Construct_x_monotone_curve_2 {
   protected:
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
@@ -581,13 +584,13 @@ public:
     /*! Construct the minor arc from two endpoint directions. The minor arc
      *  is the one with the smaller angle among the two geodesic arcs with
      * the given endpoints.
-     * 1. Find out whether the arc is x-monotone.
-     * 2. If it is x-monotone,
+     * 1. Find out whether the arc is \f$x\f$-monotone.
+     * 2. If it is \f$x\f$-monotone,
      *    2.1 Find out whether it is vertical, and
      *    2.2 whether the target is larger than the source (directed right).
      * The arc is vertical, iff
      * 1. one of its endpoint direction pierces a pole, or
-     * 2. the projections onto the xy-plane coincide.
+     * 2. the projections onto the \f$xy\f$-plane coincide.
      * \param[in] source the source point.
      * \param[in] target the target point.
      * \pre the source and target must not coincide.
@@ -651,13 +654,13 @@ public:
     /*! Initialize a spherical_arc given that the two endpoint directions
      * have been set. It is assumed that the arc is the one with the smaller
      * angle among the two.
-     * 1. Find out whether the arc is x-monotone.
-     * 2. If it is x-monotone,
+     * 1. Find out whether the arc is \f$x\f$-monotone.
+     * 2. If it is \f$x\f$-monotone,
      *    2.1 Find out whether it is vertical, and
      *    2.2 whether the target is larger than the source (directed right).
      * The arc is vertical, iff
      * 1. one of its endpoint direction pierces a pole, or
-     * 2. the projections onto the xy-plane coincide.
+     * 2. the projections onto the \f$xy\f$-plane coincide.
      * \param source the source point.
      * \param target the target point.
      * \pre the source and target cannot be equal.
@@ -746,7 +749,7 @@ public:
     }
   };
 
-  /*! Obtain an x-monotone geodesic arc construction functor.
+  /*! Obtain an \f$x\f$-monotone geodesic arc construction functor.
    */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
@@ -769,13 +772,13 @@ public:
   public:
     /*! Construct a spherical_arc from two endpoint directions. It is assumed
      * that the arc is the one with the smaller angle among the two.
-     * 1. Find out whether the arc is x-monotone.
-     * 2. If it is x-monotone,
+     * 1. Find out whether the arc is \f$x\f$-monotone.
+     * 2. If it is \f$x\f$-monotone,
      *    2.1 Find out whether it is vertical, and
      *    2.2 whether the target is larger than the source (directed right).
      * The arc is vertical, iff
      * 1. one of its endpoint direction pierces a pole, or
-     * 2. the projections onto the xy-plane coincide.
+     * 2. the projections onto the \f$xy\f$-plane coincide.
      * \param source the source point.
      * \param target the target point.
      * \pre the source and target cannot be equal.
@@ -952,9 +955,9 @@ public:
 
         /* None of the endpoints coincide with a pole.
          * The projections of both endpoints lie on the same hemi-circle.
-         * Thus, either the arc is x-monotone, or it includes both poles.
+         * Thus, either the arc is \f$x\f$-monotone, or it includes both poles.
          * This means that it is sufficient to check whether one pole lies
-         * on the arc in order to determine x-monotonicity
+         * on the arc in order to determine \f$x\f$-monotonicity
          */
 
         typename Traits::Project project =
@@ -1006,7 +1009,8 @@ public:
   Construct_curve_2 construct_curve_2_object() const
   { return Construct_curve_2(*this); }
 
-  /*! A functor that compares the x-coordinates of two directional points */
+  /*! A functor that compares the \f$x\f$-coordinates of two directional points
+   */
   class Compare_x_2 {
   protected:
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
@@ -1022,7 +1026,7 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Compare the x-coordinates of two directional points.
+    /*! Compare the \f$x\f$-coordinates of two directional points.
      * \param p1 the first directional point.
      * \param p2 the second directional point.
      * \return SMALLER - x(p1) < x(p2);
@@ -1057,7 +1061,7 @@ protected:
   }
 
 public:
-  /*! Obtain a Compare_x_2 function object */
+  /*! Obtain a `Compare_x_2` function object. */
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(*this); }
 
   /*! A functor that compares two directional points lexigoraphically:
@@ -1097,10 +1101,10 @@ public:
     }
   };
 
-  /*! Obtain a Compare_xy_2 function object */
+  /*! Obtain a `Compare_xy_2` function object. */
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(*this); }
 
-  /*! A functor that obtain the left endpoint of an x-monotone arc */
+  /*! A functor that obtain the left endpoint of an \f$x\f$-monotone arc */
   class Construct_min_vertex_2 {
   public:
     /*! Obtain the left endpoint of and arc.
@@ -1111,11 +1115,11 @@ public:
     { return xc.left(); }
   };
 
-  /*! Obtain a Construct_min_vertex_2 function object */
+  /*! Obtain a `Construct_min_vertex_2` function object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   { return Construct_min_vertex_2(); }
 
-  /*! A functor that obtain the right endpoint of an x-monotone arc */
+  /*! A functor that obtain the right endpoint of an \f$x\f$-monotone arc */
   class Construct_max_vertex_2 {
   public:
     /*! Obtain the right endpoint of an arc.
@@ -1126,11 +1130,11 @@ public:
     { return xc.right(); }
   };
 
-  /*! Obtain a Construct_max_vertex_2 function object */
+  /*! Obtain a `Construct_max_vertex_2` function object. */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   { return Construct_max_vertex_2(); }
 
-  /*! A functor that checks whether an x-monotone arc is a vertical */
+  /*! A functor that checks whether an \f$x\f$-monotone arc is a vertical */
   class Is_vertical_2 {
   public:
     /*! Check whether a given arc is vertical.
@@ -1144,11 +1148,11 @@ public:
     }
   };
 
-  /*! Obtain an Is_vertical_2 function object */
+  /*! Obtain an `Is_vertical_2` function object. */
   Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
 
-  /*! A functor that compares the y-coordinates of a directional point and
-   * an x-monotone arc at the point x-coordinate
+  /*! A functor that compares the \f$y\f$-coordinates of a directional point and
+   * an \f$x\f$-monotone arc at the point \f$x\f$-coordinate
    */
   class Compare_y_at_x_2 {
   protected:
@@ -1172,7 +1176,7 @@ public:
      *         EQUAL   - p lies on the curve.
      *         LARGER  - y(p) > xc(x(p)), i.e. the point is above the curve;
      * \pre p is not a contraction point.
-     * \pre p is in the x-range of xc.
+     * \pre p is in the \f$x\f$-range of `xc`.
      */
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xc) const {
@@ -1202,12 +1206,12 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_2 function object */
+  /*! Obtain a `Compare_y_at_x_2` function object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(*this); }
 
-  /*! A functor that compares the y-coordinates of two x-monotone arcs
-   * immediately to the left of their intersection directional point.
+  /*! A functor that compares the \f$y\f$-coordinates of two \f$x\f$-monotone
+   * arcs immediately to the left of their intersection directional point.
    */
   class Compare_y_at_x_left_2 {
   protected:
@@ -1224,14 +1228,14 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Compare the y value of two x-monotone curves immediately to the left
-     * of their intersection point.
+    /*! Compare the \f$y\f$-value of two \f$x\f$-monotone curves immediately to
+     * the left of their intersection point.
      * \param xc1 the first curve.
      * \param xc2 the second curve.
      * \param p the intersection point.
-     * \return the relative position of xc1 with respect to xc2 immdiately to
-     *         the left of p: SMALLER, EQUAL, or LARGER.
-     * \pre the point p lies on both curves, and both of them must be also be
+     * \return the relative position of `xc1` with respect to `xc2` immdiately to
+     *         the left of `p`: `SMALLER`, `EQUAL`, or `LARGER`.
+     * \pre the point `p` lies on both curves, and both of them must be also be
      *      defined (lexicographically) to its left.
      * \pre the arcs are not degenerate
      */
@@ -1250,7 +1254,8 @@ public:
 
       // Non of the arc is verticel. Thus, non of the endpoints coincide with
       // a pole.
-      // Compare the y-coord. at the x-coord of the most right left-endpoint.
+      // Compare the \f$y\f$-coordinate at the \f$x\f$-coordinate of the most
+      // right left-endpoint.
       const Point_2& l1 = xc1.left();
       const Point_2& l2 = xc2.left();
 
@@ -1317,12 +1322,12 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_left_2 function object */
+  /*! Obtain a `Compare_y_at_x_left_2` function object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(*this); }
 
-  /*! A functor that compares the y-coordinates of two x-monotone arcs
-   * immediately to the right of their intersection directional point.
+  /*! A functor that compares the \f$y\f$-coordinates of two \f$x\f$-monotone
+   * arcs immediately to the right of their intersection directional point.
    */
   class Compare_y_at_x_right_2 {
   protected:
@@ -1339,14 +1344,14 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Compare the y value of two x-monotone curves immediately to the right
-     * of their intersection point.
+    /*! Compare the \f$y\f$-value of two \f$x\f$-monotone curves immediately to
+     * the right of their intersection point.
      * \param xc1 the first curve.
      * \param xc2 the second curve.
      * \param p the intersection point.
-     * \return the relative position of xc1 with respect to xc2 immdiately to
-     *         the right of p: SMALLER, EQUAL, or LARGER.
-     * \pre the point p lies on both curves, and both of them must also be
+     * \return the relative position of `xc1` with respect to `xc2` immdiately
+     *         to the right of `p`: `SMALLER`, `EQUAL`, or `LARGER`.
+     * \pre the point `p` lies on both curves, and both of them must also be
      *      defined to its right (lexicographically).
      * \pre the arcs are not degenerate
      */
@@ -1392,7 +1397,8 @@ public:
           SMALLER : LARGER;
       }
 
-      // Compare the y-coord. at the x-coord of the most left right-endpoint.
+      // Compare the \f$y\f$-coord. at the \f$x\f$-coordinate of the most left
+      // right-endpoint.
       if (! r1.is_no_boundary()) {
         // use r2 and xc1:
         Oriented_side os = m_traits.oriented_side(xc1.normal(), r2);
@@ -1431,12 +1437,12 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_right_2 function object */
+  /*! Obtain a `Compare_y_at_x_right_2` function object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(*this); }
 
-  /*! A functor that checks whether two directional points and two x-monotone
-   * arcs are identical.
+  /*! A functor that checks whether two directional points and two
+   * \f$x\f$-monotone arcs are identical.
    */
   class Equal_2 {
   protected:
@@ -1453,8 +1459,8 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Determines whether the two x-monotone curves are the same (have the
-     * same graph).
+    /*! Determines whether the two \f$x\f$-monotone curves are the same (have
+     * the same graph).
      * \param xc1 the first curve.
      * \param xc2 the second curve.
      * \return true if the two curves are the same; false otherwise.
@@ -1490,7 +1496,7 @@ public:
     }
   };
 
-  /*! Obtain an Equal_2 function object */
+  /*! Obtain an `Equal_2` function object. */
   Equal_2 equal_2_object() const { return Equal_2(*this); }
   //@}
 
@@ -1498,7 +1504,7 @@ public:
   //@{
 
   /*! A function object that obtains the parameter space of a geometric
-   * entity along the x-axis
+   * entity along the \f$x\f$-axis
    */
   class Parameter_space_in_x_2 {
   protected:
@@ -1515,7 +1521,7 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Obtains the parameter space at the end of an arc along the x-axis.
+    /*! Obtains the parameter space at the end of an arc along the \f$x\f$-axis.
      * Only called for arcs whose interior lie in the interior of the
      * parameter space, that is, the arc does not coincide with the
      * identification. Thus, it returns ARR_LEFT_BOUNDARY or ARR_RIGHT_BOUNDARY
@@ -1544,7 +1550,7 @@ public:
         ((xcv.right().is_no_boundary()) ? ARR_INTERIOR : ARR_RIGHT_BOUNDARY);
     }
 
-    /*! Obtains the parameter space at a point along the x-axis.
+    /*! Obtains the parameter space at a point along the \f$x\f$-axis.
      * Every non-interior point is assumed to lie on the left-right
      * identification.
      * Points at the poles additionally lie on the bottom or top boundary.
@@ -1558,16 +1564,16 @@ public:
     }
   };
 
-  /*! Obtain a Parameter_space_in_x_2 function object */
+  /*! Obtain a Parameter_space_in_x_2 function object. */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(*this); }
 
   /*! A function object that obtains the parameter space of a geometric
-   * entity along the y-axis
+   * entity along the \f$y\f$-axis.
    */
   class Parameter_space_in_y_2 {
   public:
-    /*! Obtains the parameter space at the end of an arc along the y-axis.
+    /*! Obtains the parameter space at the end of an arc along the \f$y\f$-axis.
      * Only called for arcs whose interior lie in the interior of the
      * parameter space, that is, the arc does not coincide with the
      * identification. Thus, it returns ARR_BOTTOM_BOUNDARY or ARR_TOP_BOUNDARY
@@ -1591,7 +1597,7 @@ public:
         ((xcv.right().is_max_boundary()) ? ARR_TOP_BOUNDARY : ARR_INTERIOR);
     }
 
-    /*! Obtains the parameter space of a point along the y-axis.
+    /*! Obtains the parameter space of a point along the \f$y\f$-axis.
      * That is, ARR_BOTTOM_BOUNDARY is returned if p coincides with the
      * south pole and ARR_TOP_BOUNDARY if p coincides with the north pole.
      * Otherwise ARR_INTERIOR is returned.
@@ -1605,13 +1611,13 @@ public:
     }
   };
 
-  /*! Obtain a Parameter_space_in_y_2 function object */
+  /*! Obtain a `Parameter_space_in_y_2` function object. */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
 
-  /*! A functor that compares the x-coordinate of arc ends and points on the
-   * boundary of the parameter space.
+  /*! A functor that compares the \f$x\f$-coordinate of arc ends and points on
+   * the boundary of the parameter space.
    */
   class Compare_x_on_boundary_2 {
   protected:
@@ -1628,8 +1634,8 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Compare the x-coordinate of a direction with the x-coordinate of an
-     * arc end projected onto the boundary.
+    /*! Compare the \f$x\f$-coordinate of a direction with the
+     * \f$x\f$-coordinate of an arc end projected onto the boundary.
      * \param point the point direction.
      * \param xcv the arc, the endpoint of which is compared.
      * \param ce the arc-end indicator -
@@ -1639,9 +1645,10 @@ public:
      *         SMALLER - x(p) < x(xc, ce);
      *         EQUAL   - x(p) = x(xc, ce);
      *         LARGER  - x(p) > x(xc, ce).
-     * \pre p lies in the interior of the parameter space.
-     * \pre the ce end of the arc xcv lies on a pole (implying ce is vertical).
-     * \pre xcv does not coincide with the vertical identification curve.
+     * \pre `p` lies in the interior of the parameter space.
+     * \pre The `ce` end of the arc `xcv` lies on a pole (implying ce is
+     * vertical).
+     * \pre `xcv` does not coincide with the vertical identification curve.
      */
     Comparison_result operator()(const Point_2& point,
                                  const X_monotone_curve_2& xcv,
@@ -1657,7 +1664,7 @@ public:
 
       // xcv is vertical, but does not coincide with the discontinuity arc.
       // Obtain the direction contained in the underlying plane, which is
-      // also on the xy-plane:
+      // also on the \f$xy\f$-plane:
       Direction_3 normal = xcv.normal();
       Direction_2 q = (xcv.is_directed_right()) ?
         Direction_2(-(normal.dy()), normal.dx()) :
@@ -1666,8 +1673,8 @@ public:
       return m_traits.compare_x(p, q);
     }
 
-    /*! Compare the x-coordinates of two arc ends projected onto the boundary
-     * of the parameter space.
+    /*! Compare the \f$x\f$-coordinates of two arc ends projected onto the
+     * boundary of the parameter space.
      * \param xcv1 the first arc.
      * \param ce1 the first arc end indicator -
      *            ARR_MIN_END - the minimal end of xcv1 or
@@ -1708,7 +1715,7 @@ public:
 
       // Non of the arcs coincide with the identification arc:
       // Obtain the directions contained in the underlying planes, which are
-      // also on the xy-plane:
+      // also on the \f$xy\f$-plane:
       Direction_3 normal1 = xcv1.normal();
       Direction_2 p = (xcv1.is_directed_right()) ?
         Direction_2(-(normal1.dy()), normal1.dx()) :
@@ -1730,12 +1737,12 @@ public:
     { CGAL_error(); return EQUAL; }
   };
 
-  /*! Obtain a Compare_x_on_boundary_2 function object.
+  /*! Obtain a `Compare_x_on_boundary_2` function object.
    */
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   { return Compare_x_on_boundary_2(*this); }
 
-  /*! A functor that compares the x-coordinates of arc ends near the
+  /*! A functor that compares the \f$x\f$-coordinates of arc ends near the
    * boundary of the parameter space.
    */
   class Compare_x_near_boundary_2 {
@@ -1754,7 +1761,7 @@ public:
 
   public:
 
-    /*! Compare the x-coordinates of 2 arc ends near the boundary of the
+    /*! Compare the \f$x\f$-coordinates of 2 arc ends near the boundary of the
      * parameter space.
      * \param xcv1 the first arc.
      * \param xcv2 the second arc.
@@ -1794,12 +1801,12 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_near_boundary_2 function object */
+  /*! Obtain a `Compare_x_near_boundary_2` function object. */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(*this); }
 
 
-  /*! A functor that compares the y-coordinates of arc ends near the
+  /*! A functor that compares the \f$y\f$-coordinates of arc ends near the
    * boundary of the parameter space.
    */
   class Compare_y_near_boundary_2 {
@@ -1817,15 +1824,15 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Compare the y-coordinates of 2 curves at their ends near the boundary
-     * of the parameter space.
+    /*! Compare the \f$y\f$-coordinates of 2 curves at their ends near the
+     * boundary of the parameter space.
      * \param xcv1 the first arc.
      * \param xcv2 the second arc.
      * \param ce the arc end indicator.
      * \return the second comparison result.
-     * \pre the ce ends of the arcs xcv1 and xcv2 lie either on the left
+     * \pre The `ce` ends of the arcs `xcv1` and `xcv2` lie either on the left
      *      boundary or on the right boundary of the parameter space.
-     * \pre the curves cannot reach a pole
+     * \pre the curves cannot reach a pole.
      * There is no horizontal identification curve!
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
@@ -1870,7 +1877,7 @@ public:
         if (xcv2.is_vertical()) return SMALLER;
 
         // There are 4 cases based on the sign of the z component of the normals
-        // Compute the sign of the x-component of the normal cross product.
+        // Compute the sign of the \f$x\f$-component of the normal cross product.
         // There is no point computing the intermediate cross product:
         // auto cross_prod = kernel.construct_cross_product_vector_3_object();
         // Vector_3 v = cross_prod(n1.vector(), n2.vector());
@@ -1909,7 +1916,7 @@ public:
       if (xcv2.is_vertical()) return SMALLER;
 
       // There are 4 cases based on the sign of the z component of the normals
-      // Compute the sign of the x-component of the normal cross product.
+      // Compute the sign of the \f$x\f$-component of the normal cross product.
       // There is no point computing the intermediate cross product:
       // auto cross_prod = kernel.construct_cross_product_vector_3_object();
       // Vector_3 v = cross_prod(n1.vector(), n2.vector());
@@ -1938,7 +1945,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_near_boundary_2 function object */
+  /*! Obtain a `Compare_y_near_boundary_2` function object. */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(*this); }
 
@@ -1996,11 +2003,11 @@ public:
     }
   };
 
-  /*! Obtain a Is_on_y_identification_2 function object */
+  /*! Obtain an `Is_on_y_identification_2` function object. */
   Is_on_y_identification_2 is_on_y_identification_2_object() const
   { return Is_on_y_identification_2(*this); }
 
-  /*! A functor that compares the y-coordinate of two given points
+  /*! A functor that compares the \f$y\f$-coordinate of two given points
    * that lie on the vertical identification arc.
    */
   class Compare_y_on_boundary_2 {
@@ -2018,15 +2025,15 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Compare the y-coordinate of two given points that lie on the vertical
-     * identification curve.
+    /*! Compare the \f$y\f$-coordinate of two given points that lie on the
+     * vertical identification curve.
      * \param p1 the first point.
      * \param p2 the second point.
      * \return SMALLER - p1 is smaller than p2;
      *         EQUAL   - p1 and p2 coincides;
      *         LARGER  - p1 is larger than p2;
-     * \pre p1 lies on the vertical identification arc including the poles!
-     * \pre p2 lies on the vertical identification arc including the poles!
+     * \pre `p1` lies on the vertical identification arc including the poles!
+     * \pre `p2` lies on the vertical identification arc including the poles!
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
       // first deal with the 'degenerate' case of poles!
@@ -2052,7 +2059,7 @@ public:
 
   };
 
-  /*! Obtain a Compare_y_on_boundary_2 function object */
+  /*! Obtain a `Compare_y_on_boundary_2` function object. */
   Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   { return Compare_y_on_boundary_2(*this); }
   //@}
@@ -2061,8 +2068,8 @@ public:
   //@{
 
   /*! \class Make_x_monotone_2
-   * A functor for subdividing arcs into x-monotone arcs that do not cross the
-   * identification arc.
+   * A functor for subdividing arcs into \f$x\f$-monotone arcs that do not cross
+   * the identification arc.
    */
   class Make_x_monotone_2 {
   protected:
@@ -2079,9 +2086,9 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Subdivide a given curve into x-monotone subcurves and insert them into
-     * a given output iterator. As spherical_arcs are always x_monotone, only
-     * one object will be contained in the iterator.
+    /*! Subdivide a given curve into \f$x\f$-monotone subcurves and insert them
+     * into a given output iterator. As spherical_arcs are always x_monotone,
+     * only one object will be contained in the iterator.
      * \param xc the curve.
      * \param oi the output iterator for the result. Its dereference type is a
      *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
@@ -2126,7 +2133,7 @@ public:
         const X_monotone_curve_2 xc(c.normal());
         *oi++ = Make_x_monotone_result(xc);
 #else
-        // Full x-monotone arcs are not supported!
+        // Full \f$x\f$-monotone arcs are not supported!
         // Split the arc at the intersection point with the complement of the
         // discontinuity arc:
         Direction_3 normal = c.normal();
@@ -2219,11 +2226,11 @@ public:
     }
   };
 
-  /*! Obtain a Make_x_monotone_2 function object */
+  /*! Obtain a `Make_x_monotone_2` function object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(*this); }
 
-  /*! A functor that splits an x-monotone arc at a directional point. */
+  /*! A functor that splits an \f$x\f$-monotone arc at a directional point. */
   class Split_2 {
   protected:
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
@@ -2239,15 +2246,16 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Split a given x-monotone curve at a given point into two sub-curves.
+    /*! Split a given \f$x\f$-monotone curve at a given point into two
+     * sub-curves.
      * \param xc the curve to split
      * \param p the split point.
-     * \param xc1 (output) the left resulting subcurve. p is its right
+     * \param xc1 (output) the left resulting subcurve. `p` is its right
      * endpoint.
-     * \param xc2 (output) the right resulting subcurve. p is its left
+     * \param xc2 (output) the right resulting subcurve. `p` is its left
      * endpoint.
-     * \pre p lies on xc but is not one of its endpoints.
-     * \pre xc is not degenerate
+     * \pre `p` lies on xc but is not one of its endpoints.
+     * \pre `xc` is not degenerate
      */
     void operator()(const X_monotone_curve_2& xc, const Point_2& p,
                     X_monotone_curve_2& xc1, X_monotone_curve_2& xc2) const {
@@ -2287,10 +2295,10 @@ public:
     }
   };
 
-  /*! Obtain a Split_2 function object */
+  /*! Obtain a `Split_2` function object. */
   Split_2 split_2_object() const { return Split_2(*this); }
 
-  /*! The clockwise-in-between function object */
+  /*! The clockwise-in-between function object. */
   class Clockwise_in_between_2 {
   protected:
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
@@ -2313,11 +2321,11 @@ public:
     }
   };
 
-  /*! Obtain a Clockwise_in_between function object */
+  /*! Obtain a `Clockwise_in_between_2` function object. */
   Clockwise_in_between_2 clockwise_in_between_2_object() const
   { return Clockwise_in_between_2(*this); }
 
-  /*! A functor that computes intersections between x-monotone arcs. */
+  /*! A functor that computes intersections between \f$x\f$-monotone arcs. */
   class Intersect_2 {
   private:
 
@@ -2473,7 +2481,7 @@ public:
         return oi;
       }
 
-      // Case 6 cannot occur. Two x-monotone curves cannot overlap twice.
+      // Case 6 cannot occur. Two \f$x\f$-monotone curves cannot overlap twice.
       CGAL_assertion(! in_between(l2, r2, r1));
 
       // Case 4
@@ -2507,7 +2515,7 @@ public:
       if (point.is_min_boundary()) return (left.is_min_boundary());
 
       if (xc.is_vertical()) {
-        // Compare the x coordinates. If they are not equal, return false:
+        // Compare the \f$x\f$-coordinates. If they are not equal, return false:
         Direction_3 normal = xc.normal();
         bool plane_is_positive, p_is_positive;
         CGAL::Sign xsign = Traits::x_sign(normal);
@@ -2526,14 +2534,15 @@ public:
             (!xc_is_positive && p_is_positive))
           return false;
 
-        // Compare the y-coords:
+        // Compare the \f$y\f$-coordinates:
         return (((left.is_min_boundary()) ||
                  (m_traits.compare_y(point, left) != SMALLER)) &&
                 ((right.is_max_boundary()) ||
                  (m_traits.compare_y(point, right) != LARGER)));
       }
 
-      // The arc is not vertical. Compare the projections onto the xy-plane:
+      // The arc is not vertical. Compare the projections onto the
+      // \f$xy\f$-plane:
       typename Kernel::Equal_2 equal_2 = kernel.equal_2_object();
       Direction_2 p = Traits::project_xy(point);
       Direction_2 r = Traits::project_xy(right);
@@ -2634,12 +2643,12 @@ public:
           bool p_y_is_positive = Traits::y_sign(point) == POSITIVE;
 
           if ((xz_plane && p_x_is_positive) || (!xz_plane && p_y_is_positive)) {
-            // The endpoints reside in the positive x-halfspace:
+            // The endpoints reside in the positive \f$x\f$-halfspace:
             return compute_intersection(xc1.left(), xc1.right(),
                                         xc2.left(), xc2.right(),
                                         normal, true, ccib, project, oi);
           }
-          // The endpoints reside in the negative x-halfspace:
+          // The endpoints reside in the negative \f$x\f$-halfspace:
           return compute_intersection(xc1.left(), xc1.right(),
                                       xc2.left(), xc2.right(),
                                       normal, true, cib, project, oi);
@@ -2671,10 +2680,10 @@ public:
     }
   };
 
-  /*! Obtain an Intersect_2 function object */
+  /*! Obtain an `Intersect_2` function object. */
   Intersect_2 intersect_2_object() const { return Intersect_2(*this); }
 
-  /*! A functor that tests whether two x-monotone arcs can be merged. */
+  /*! A functor that tests whether two \f$x\f$-monotone arcs can be merged. */
   class Are_mergeable_2 {
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
@@ -2689,7 +2698,7 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Check whether it is possible to merge two given x-monotone curves.
+    /*! Check whether it is possible to merge two given \f$x\f$-monotone curves.
      * \param xc1 the first curve.
      * \param xc2 the second curve.
      * \return true if the two arcs are mergeable; false otherwise.
@@ -2740,11 +2749,11 @@ public:
     }
   };
 
-  /*! Obtain an Are_mergeable_2 function object */
+  /*! Obtain an `Are_mergeable_2` function object. */
   Are_mergeable_2 are_mergeable_2_object() const
   { return Are_mergeable_2(*this); }
 
-  /*! A functor that merges two x-monotone arcs into one */
+  /*! A functor that merges two \f$x\f$-monotone arcs into one */
   class Merge_2 {
   protected:
     using Traits = Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
@@ -2760,7 +2769,8 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel, atan_x, atan_y>;
 
   public:
-    /*! Merge two given x-monotone curves into a single curve (spherical_arc).
+    /*! Merge two given \f$x\f$-monotone curves into a single curve
+     * (spherical_arc).
      * \param xc1 the first curve.
      * \param xc2 the second curve.
      * \param xc Output: the merged curve.
@@ -2841,7 +2851,7 @@ public:
     }
   };
 
-  /*! Obtain a Merge_2 function object */
+  /*! Obtain a `Merge_2` function object. */
   Merge_2 merge_2_object() const { return Merge_2(*this); }
   //@}
 
@@ -2858,9 +2868,9 @@ public:
     /*! Return an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
-     * \pre i is either 0 or 1.
-     * \return an approximation of p's x-coordinate (if i == 0), or an
-     *         approximation of p's y-coordinate (if i == 1).
+     * \pre `i` is either 0 or 1.
+     * \return an approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
     Approximate_number_type operator()(const Point_2& p, int i) const {
       CGAL_precondition((i == 0) || (i == 1) || (i == 2));
@@ -2917,7 +2927,7 @@ public:
 
       // Define the spanning vectors of the coordinate system where we are
       //   going to make the approximation:
-      auto axis_x = vs; // x-axis will coincide with the vector from the
+      auto axis_x = vs; // \f$x\f$-axis will coincide with the vector from the
                         //   origin to the normalized SOURCE-vector
       auto axis_z = vn; // this will make sure that the orientation of the
                         //   approximated curve is consistent with the curve
@@ -2925,8 +2935,9 @@ public:
       normalize(axis_y);
 
       // In this coordinate system the source has local coords (0,0), hence its
-      //   initial angle with the X-axis is 0 degrees (radians)
-      // Compute the local coordinates and the angle it makes with the X-axis
+      // initial angle with the \f$X\f$-axis is 0 degrees (radians)
+      // Compute the local coordinates and the angle it makes with the
+      // \f$X\f$-axis
       Approximate_number_type  theta;
       if (xcv.is_full()) theta = 2.0 * CGAL_PI;
       else {
@@ -2976,7 +2987,7 @@ public:
     }
   };
 
-  /*! Obtain an Approximate_2 function object */
+  /*! Obtain an `Approximate_2` function object. */
   Approximate_2 approximate_2_object() const { return Approximate_2(); }
 
   //@}
@@ -2996,13 +3007,13 @@ public:
     { return (xc.is_directed_right()) ? SMALLER : LARGER; }
   };
 
-  /*! Obtain a Compare_endpoints_xy_2 function object */
+  /*! Obtain a `Compare_endpoints_xy_2` function object. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(); }
 
   class Construct_opposite_2 {
   public:
-    /*! Construct an opposite x-monotone (with swapped source and target).
+    /*! Construct an opposite \f$x\f$-monotone (with swapped source and target).
      * \param xc the curve.
      * \return the opposite curve.
      */
@@ -3010,7 +3021,7 @@ public:
     { return xc.opposite(); }
   };
 
-  /*! Obtain a Construct_opposite_2 function object */
+  /*! Obtain a `Construct_opposite_2` function object. */
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(); }
   //@}
@@ -3043,11 +3054,12 @@ public:
 #endif
 };
 
-/*! A Representation of an x-monotone great circular arc embedded on a sphere,
- * as used by the Arr_geodesic_arc_on_sphere_traits_2 traits-class
- * An x-monotone great circular arc cannot cross the closed hemi-circle arc of
- * discontinuity, defined as the longitude that lies in the zx-plane, and is
- * contained in the open halfspace (x > 0).
+/*! A Representation of an \f$x\f$-monotone great circular arc embedded on a
+ * sphere, as used by the `Arr_geodesic_arc_on_sphere_traits_2` traits-class An
+ * x-monotone great circular arc cannot cross the closed hemi-circle arc of
+ * discontinuity, defined as the longitude that lies in the \f$zx\f$-plane, and
+ * is contained in the open halfspace (\f$x > 0\f$).
+ *
  * \todo At this point such an arc cannot have an angle of 180 degrees.
  * \todo It is always directed from its source to its target.
  */
@@ -3162,13 +3174,13 @@ public:
   /*! Initialize a spherical_arc given that the two endpoint directions
    * have been set. It is assumed that the arc is the one with the smaller
    * angle among the two.
-   * 1. Find out whether the arc is x-monotone.
-   * 2. If it is x-monotone,
+   * 1. Find out whether the arc is \f$x\f$-monotone.
+   * 2. If it is \f$x\f$-monotone,
    *    2.1 Find out whether it is vertical, and
    *    2.2 whether the target is larger than the source (directed right).
    * The arc is vertical, iff
    * 1. one of its endpoint direction pierces a pole, or
-   * 2. the projections onto the xy-plane coincide.
+   * 2. the projections onto the \f$xy\f$-plane coincide.
    * \param source the source point.
    * \param target the target point.
    * \pre the source and target cannot be equal.
@@ -3496,7 +3508,7 @@ protected:
   using Base::y_sign;
   using Base::z_sign;
 
-  //! Indicates whether the arc is x-monotone
+  //! Indicates whether the arc is \f$x\f$-monotone
   bool m_is_x_monotone;
 
 public:
@@ -3516,7 +3528,7 @@ public:
    * \param src the source point of the arc
    * \param trg the target point of the arc
    * \param normal the normal to the  plane that contains the arc
-   * \param is_x_monotone is arc  x-monotone ?
+   * \param is_x_monotone is arc  \f$x\f$-monotone ?
    * \param is_vertical is the arc vertical ?
    * \param is_directed_right is the arc directed from left to right?
    * \param is_full is the arc a full (great) circle?
@@ -3631,9 +3643,9 @@ public:
 
       /* Non of the endpoints coincide with a pole.
        * The projections of both endpoints lie on the same hemi-circle.
-       * Thus, either the arc is x-monotone, or it includes both poles.
+       * Thus, either the arc is \f$x\f$-monotone, or it includes both poles.
        * This means that it is sufficient to check whether one pole lies
-       * on the arc in order to determine x-monotonicity
+       * on the arc in order to determine \f$x\f$-monotonicity
        */
 
       typename Traits::Project project =
@@ -3676,13 +3688,13 @@ public:
     set_is_x_monotone(false);
   }
 
-  /*! Indicates whether the arc is x-monotone
-   * \return true if the arc is x-monotone; false otherwise
+  /*! Indicates whether the arc is \f$x\f$-monotone
+   * \return true if the arc is \f$x\f$-monotone; false otherwise
    */
   bool is_x_monotone() const { return m_is_x_monotone; }
 
-  /*! Set the flag that indicates whether the arc is x-monotone
-   * \param flag indicates whether the arc is x-monotone
+  /*! Set the flag that indicates whether the arc is \f$x\f$-monotone
+   * \param flag indicates whether the arc is \f$x\f$-monotone
    */
   void set_is_x_monotone(bool flag) { m_is_x_monotone = flag; }
 };

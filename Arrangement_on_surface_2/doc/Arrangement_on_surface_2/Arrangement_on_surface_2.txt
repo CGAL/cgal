@@ -5662,7 +5662,7 @@ The package provides two traits-class decorators, namely
 debugging and informative metadata to an output stream. The former is
 used to count the number of invocations of traits-class functors, and
 the latter is used to trace these invocations. Note that the
-constructors of each of these calls templates applies prefect
+constructors of each of these class templates applies perfect
 forwarding. The counting traits also exports the count of traits-class
 objects of specific types constructed during the execution of the
 program. The tracing traits supports filtering of traced

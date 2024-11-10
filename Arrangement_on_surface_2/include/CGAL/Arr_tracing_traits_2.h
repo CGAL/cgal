@@ -33,7 +33,7 @@ namespace CGAL {
  * A metadata traits-class decorator for the arrangement package. It traces the
  * invocations of traits-class functors. It is parameterized with another traits
  * class and inherits from it. For each traits method it prints out its input
- * parameters and its output result
+ * parameters and its output result.
  *
  * It models all the concepts that the original traits models.
  */
@@ -79,7 +79,7 @@ public:
 private:
   using Base = BaseTraits;
 
-  /*! A set of bits that indicate whether operations should be traced */
+  //! A set of bits that indicate whether operations should be traced.
   std::size_t m_flags;
 
   bool compare_x_op() const
@@ -165,7 +165,7 @@ private:
   { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_2_OP); }
 
 public:
-  /*! Construct default */
+  /*! Construct default. */
   template<typename ... Args>
   Arr_tracing_traits_2(Args ... args) : Base(std::forward<Args>(args)...)
   { enable_all_traces(); }
@@ -173,25 +173,25 @@ public:
   /*! Disable copy constructor. */
   Arr_tracing_traits_2(const Arr_tracing_traits_2&) = delete;
 
-  /*! Enable the trace of a traits operation
-   * \param id the operation identifier
+  /*! Enable the trace of a traits operation.
+   * \param id the operation identifier.
    */
   void enable_trace(Operation_id id) { m_flags |= 0x1 << id; }
 
-  /*! Enable the trace of all traits operations
+  /*! Enable the trace of all traits operations.
    */
   void enable_all_traces() { m_flags = 0xffffffff; }
 
-  /*! Disable the trace of a traits operation
-   * \param id the operation identifier
+  /*! Disable the trace of a traits operation.
+   * \param id the operation identifier.
    */
   void disable_trace(Operation_id id) { m_flags &= ~(0x1 << id); }
 
-  /*! Disable the trace of all traits operations
+  /*! Disable the trace of all traits operations.
    */
   void disable_all_traces() { m_flags = 0x0; }
 
-  /// \name Types and functors inherited from the base
+  /// \name Types and functors inherited from the base.
   //@{
 
   // Traits types:
@@ -213,7 +213,7 @@ public:
   using Curve_2 = typename Base::Curve_2;
   using Multiplicity = typename Base::Multiplicity;
 
-  /*! A functor that compares the \f$x\f$-coordinates of two points */
+  /*! A functor that compares the \f$x\f$-coordinates of two points. */
   class Compare_x_2 {
   private:
     typename Base::Compare_x_2 m_object;
@@ -225,9 +225,9 @@ public:
       m_object(base.compare_x_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param p1 first point
-     * \param p2 second point
-     * \return the comparison result
+     * \param p1 first point.
+     * \param p2 second point.
+     * \return the comparison result.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
       if (! m_enabled) return m_object(p1, p2);
@@ -240,7 +240,9 @@ public:
     }
   };
 
-  /*! A functor that compares two points lexigoraphically: by x, then by y. */
+  /*! A functor that compares two points lexigoraphically: by \f$x\f$, then by
+   * \f$y\f$.
+   */
   class Compare_xy_2 {
   private:
     typename Base::Compare_xy_2 m_object;
@@ -252,9 +254,9 @@ public:
       m_object(base.compare_xy_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param p1 the first point
-     * \param p2 the second point
-     * \return the comparison result
+     * \param p1 the first point.
+     * \param p2 the second point.
+     * \return the comparison result.
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const {
       if (! m_enabled) return m_object(p1, p2);
@@ -279,8 +281,8 @@ public:
       m_object(base.construct_min_vertex_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curve the left endpoint of which is obtained
-     * \return the left endpoint
+     * \param xcv the curve the left endpoint of which is obtained.
+     * \return the left endpoint.
      */
     using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
     using Return_type =
@@ -308,8 +310,8 @@ public:
       m_object(base.construct_max_vertex_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curve the right endpoint of which is obtained
-     * \return the right endpoint
+     * \param xcv the curve the right endpoint of which is obtained.
+     * \return the right endpoint.
      */
     using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
     using Return_type =
@@ -338,8 +340,8 @@ public:
       m_object(base.is_vertical_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curve
-     * \return a Boolean that indicates whether the curve is vertical or not
+     * \param xcv the curve.
+     * \return a Boolean that indicates whether the curve is vertical or not.
      */
     bool operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
@@ -351,7 +353,7 @@ public:
     }
   };
 
-  /*! A functor that compares the y-coordinates of a point and an
+  /*! A functor that compares the \f$y\f$-coordinates of a point and an
    * \f$x\f$-monotone curve at the point \f$x\f$-coordinate.
    */
   class Compare_y_at_x_2 {
@@ -365,9 +367,9 @@ public:
       m_object(base.compare_y_at_x_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param p the point
-     * \param xcv the curve
-     * \return the comparison result
+     * \param p the point.
+     * \param xcv the curve.
+     * \return the comparison result.
      */
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xcv) const {
@@ -400,9 +402,10 @@ public:
     {}
 
     /*! Operate
-     * \param xcv1 the first curve
-     * \param xcv2 the second curve
-     * \return true if the \f$x\f$-monotone curves are equal and false otherwise
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \return true if the \f$x\f$-monotone curves are equal and false
+     *         otherwise.
      */
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const {
@@ -416,9 +419,9 @@ public:
     }
 
     /*! Operate
-     * \param p1 the first point
-     * \param p2 the second point
-     * \return true if the points are equal and false otherwise
+     * \param p1 the first point.
+     * \param p2 the second point.
+     * \return true if the points are equal and false otherwise.
      */
     bool operator()(const Point_2& p1, const Point_2& p2) const {
       if (! m_enabled_point) return m_object(p1, p2);
@@ -431,8 +434,9 @@ public:
     }
   };
 
-  /*! A functor that compares compares the y-coordinates of two \f$x\f$-monotone
-   * curves immediately to the left of their intersection point.
+  /*! A functor that compares compares the \f$y\f$-coordinates of two
+   * \f$x\f$-monotone curves immediately to the left of their intersection
+   * point.
    */
   class Compare_y_at_x_left_2 {
   private:
@@ -445,10 +449,10 @@ public:
       m_object(base.compare_y_at_x_left_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv1 the first curve
-     * \param xcv2 the second curve
-     * \param p the reference point
-     * \return the comparison result
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param p the reference point.
+     * \return the comparison result.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
@@ -464,8 +468,9 @@ public:
     }
   };
 
-  /*! A functor that compares compares the y-coordinates of two \f$x\f$-monotone
-   * curves immediately to the right of their intersection point.
+  /*! A functor that compares compares the \f$y\f$-coordinates of two
+   * \f$x\f$-monotone curves immediately to the right of their intersection
+   * point.
    */
   class Compare_y_at_x_right_2 {
   private:
@@ -478,10 +483,10 @@ public:
       m_object(base.compare_y_at_x_right_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv1 the first curve
-     * \param xcv2 the second curve
-     * \param p the reference point
-     * \return the comparison result
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param p the reference point.
+     * \return the comparison result.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
@@ -513,11 +518,11 @@ public:
     Make_x_monotone_2(const Base& base, bool enabled = true) :
       m_object(base.make_x_monotone_2_object()), m_enabled(enabled) {}
 
-    /*! Subdivide a given curve into \f$x\f$-monotone subcurves and insert them into
-     * a given output iterator.
+    /*! Subdivide a given curve into \f$x\f$-monotone subcurves and insert them
+     * into a given output iterator.
      * \param cv the curve.
      * \param oi an output iterator for the result. Its value type is a variant
-     *           that wraps Point_2 or X_monotone_curve_2 objects.
+     *           that wraps `Point_2` or `X_monotone_curve_2` objects.
      * \return the output iterator.
      */
     template<typename OutputIterator>
@@ -565,10 +570,11 @@ public:
       m_object(base.split_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv
-     * \param p
-     * \param xcv1
-     * \param xcv2
+     * \param xcv the curve to split.
+     * \param p the split point.
+     * \param xcv1 the left resulting subcurve (`p` is its right endpoint)..
+     * \param xcv2 the right resulting subcurve (`p` is its left endpoint)..
+     * \pre `p` lies on `cv` but is not one of its end-points.
      */
     void operator()(const X_monotone_curve_2& xcv, const Point_2& p,
                     X_monotone_curve_2& xcv1, X_monotone_curve_2& xcv2) const {
@@ -598,11 +604,11 @@ public:
 
     /*! Compute the intersections of the two given curves and insert them into
      * a given output iterator.
-     * \param xcv1 the first curve
-     * \param xcv2 the ssecond curve
+     * \param xcv1 the first curve.
+     * \param xcv2 the ssecond curve.
      * \param oi the output iterator for the result. It value type is a variant
      *           that wraps an \f$x\f$-monotone overlapping curve or a pair that
-     *           consists of the intersection point and its multiplicity
+     *           consists of the intersection point and its multiplicity.
      * \return the past-the-end output iterator.
      */
     template <typename OutputIterator>
@@ -656,18 +662,18 @@ public:
       m_base_traits(base), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv1 the first curve
-     * \param xcv2 the second curve
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
      * \return true if the two curve are mergeable and false otherwise.
      * Two curves are mergeable if they have the same underlying theoretical
-     * curve
+     * curve.
      */
     bool operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2) const
     { return are_mergable_2_impl<Base>(xcv1, xcv2, 0); }
 
   private:
-    /*! The base does not have Are_mergable_2
+    /*! The base does not have `Are_mergable_2`.
      */
     template <typename T>
     bool are_mergable_2_impl(const X_monotone_curve_2& /* xcv1 */,
@@ -676,7 +682,7 @@ public:
       return false;
     }
 
-    /*! The base does have Are_mergable_2
+    /*! The base does have `Are_mergable_2`.
      */
     template <typename T>
     auto are_mergable_2_impl(const X_monotone_curve_2& xcv1,
@@ -705,9 +711,9 @@ public:
       m_object(base.merge_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv1 the first curve
-     * \param xcv2 the second curve
-     * \param xcv the merged curve
+     * \param xcv1 the first curve.
+     * \param xcv2 the second curve.
+     * \param xcv the merged curve.
      */
     void operator()(const X_monotone_curve_2& xcv1,
                     const X_monotone_curve_2& xcv2,
@@ -732,8 +738,8 @@ public:
       m_object(base.construct_opposite_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curve
-     * \return the opposite curve
+     * \param xcv the curve.
+     * \return the opposite curve.
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
@@ -759,8 +765,8 @@ public:
       m_object(base.compare_endpoints_xy_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curve
-     * \return the comparison result
+     * \param xcv the curve.
+     * \return the comparison result.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
@@ -772,7 +778,8 @@ public:
     }
   };
 
-  /*! A functor that approximates coordinates, points, and \f$x\f$-monotone curves.
+  /*! A functor that approximates coordinates, points, and \f$x\f$-monotone
+   * curves.
    */
   class Approximate_2 {
   private:
@@ -791,9 +798,9 @@ public:
     /*! Obtain an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
-     * \pre i is either 0 or 1.
-     * \return An approximation of p's \f$x\f$-coordinate (if i == 0), or an
-     *         approximation of p's y-coordinate (if i == 1).
+     * \pre `i` is either 0 or 1.
+     * \return An approximation of `p`'s \f$x\f$-coordinate (if `i` == 0), or an
+     *         approximation of `p`'s \f$y\f$-coordinate (if `i` == 1).
      */
     Approximate_number_type operator()(const Point_2& p, std::size_t i) const {
       if (! m_enabled) return m_object(p, i);
@@ -831,8 +838,8 @@ public:
 
   // left-right
 
-  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone curve lies
-   * on a boundary of the parameter space along the x axis.
+  /*! A functor that determines whether an endpoint of an \f$x\f$-monotone curve
+   * lies on a boundary of the parameter space along the \f$x\f$-axis.
    */
   class Parameter_space_in_x_2 {
   private:
@@ -846,9 +853,9 @@ public:
     {}
 
     /*! Operate
-     * \param xcv the curve the end of which is tested
-     * \param ce the curve-end identifier
-     * \return the boundary type
+     * \param xcv the curve the end of which is tested.
+     * \param ce the curve-end identifier.
+     * \return the boundary type.
      */
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const {
@@ -860,12 +867,12 @@ public:
       return bt;
     }
 
-    /*! A functor that obtains the parameter space at a point along the \f$x\f$-axis.
-     * Every non-interior point is assumed to lie on the left-right
-     * identification.
-     * Points at the poles additionally lie on the bottom or top boundary.
+    /*! A functor that obtains the parameter space at a point along the
+     * \f$x\f$-axis. Every non-interior point is assumed to lie on the
+     * left-right identification. Points at the poles additionally lie on the
+     * bottom or top boundary.
      * \param p the point.
-     * \return the parameter space at p.
+     * \return the parameter space at `p`.
      */
     Arr_parameter_space operator()(const Point_2& p) const {
       if (! m_enabled) return m_object(p);
@@ -902,7 +909,7 @@ public:
     }
 
     /*! Operate
-     * \param xcv1 the curve
+     * \param xcv1 the curve.
      */
     bool operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
@@ -914,7 +921,7 @@ public:
     }
   };
 
-  /*! A functor that compares the y-coordinate of two given points
+  /*! A functor that compares the \f$y\f$-coordinate of two given points
    * that lie on vertical boundaries.
    */
   class Compare_y_on_boundary_2 {
@@ -944,7 +951,7 @@ public:
     }
   };
 
-  /*! A functor that compares the y-coordinates of curve ends near the
+  /*! A functor that compares the \f$y\f$-coordinates of curve ends near the
    * boundary of the parameter space.
    */
   class Compare_y_near_boundary_2 {
@@ -958,10 +965,10 @@ public:
       m_object(base.compare_y_near_boundary_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv1 the first curve the end point of which is tested
-     * \param xcv2 the second curve the end point of which is tested
-     * \param ce the curve-end identifier
-     * \return the comparison result
+     * \param xcv1 the first curve the end point of which is tested.
+     * \param xcv2 the second curve the end point of which is tested.
+     * \param ce the curve-end identifier.
+     * \return the comparison result.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
@@ -980,7 +987,7 @@ public:
   // bottom-top
 
   /*! A functor that determines whether an endpoint of an \f$x\f$-monotone arc
-   * lies on a boundary of the parameter space along the y axis.
+   * lies on a boundary of the parameter space along the \f$y\f$-axis.
    */
   class Parameter_space_in_y_2 {
   private:
@@ -993,9 +1000,9 @@ public:
       m_object(base.parameter_space_in_y_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv the curve the end of which is tested
-     * \param ce the curve-end identifier
-     * \return the boundary type
+     * \param xcv the curve the end of which is tested.
+     * \param ce the curve-end identifier.
+     * \return the boundary type.
      */
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                              Arr_curve_end ce) const {
@@ -1008,8 +1015,8 @@ public:
     }
 
     /*! Operate
-     * \param p the point
-     * \return the boundary type
+     * \param p the point.
+     * \return the boundary type.
      */
     Arr_parameter_space operator()(const Point_2& p) const {
       if (! m_enabled) return m_object(p);
@@ -1022,7 +1029,7 @@ public:
   };
 
   /*! A functor that determines whether a point or curve is on
-   * y-identification.
+   * \f$y\f$-identification.
    */
   class Is_on_y_identification_2 {
   private:
@@ -1046,7 +1053,7 @@ public:
     }
 
     /*! Operate
-     * \param xcv1 the curve
+     * \param xcv1 the curve.
      */
     bool operator()(const X_monotone_curve_2& xcv) const {
       if (! m_enabled) return m_object(xcv);
@@ -1087,7 +1094,7 @@ public:
     /*! Operate
      * \param pt the point.
      * \param xcv the curve.
-     * \param ce the curve-end
+     * \param ce the curve-end.
      */
     Comparison_result operator()(const Point_2& pt,
                                  const X_monotone_curve_2& xcv,
@@ -1104,9 +1111,9 @@ public:
 
     /*! Operate
      * \param xcv1 the first curve.
-     * \param ce1 the first curve-end
+     * \param ce1 the first curve-end.
      * \param xcv2 the second curve.
-     * \param ce2 the second curve-end
+     * \param ce2 the second curve-end.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  Arr_curve_end ce1,
@@ -1138,11 +1145,11 @@ public:
       m_object(base.compare_x_near_boundary_2_object()), m_enabled(enabled) {}
 
     /*! Operate
-     * \param xcv1 the first curve the end of which is to be compared
-     * \param ce1 the identifier of the end of the first curve
-     * \param xcv2 the second curve the end of which is to be compared
-     * \param ce2 the identifier of the end of the second curve
-     * \return the comparison result
+     * \param xcv1 the first curve the end of which is to be compared.
+     * \param ce1 the identifier of the end of the first curve.
+     * \param xcv2 the second curve the end of which is to be compared.
+     * \param ce2 the identifier of the end of the second curve.
+     * \return the comparison result.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  const X_monotone_curve_2& xcv2,
