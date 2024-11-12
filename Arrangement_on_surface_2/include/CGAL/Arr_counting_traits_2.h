@@ -107,7 +107,7 @@ public:
     return os;
   }
 
-  /// \name Types and functors inherited from the base
+  /// \name Types and functors inherited from `BaseTraits`
   //@{
 
   // Traits types:

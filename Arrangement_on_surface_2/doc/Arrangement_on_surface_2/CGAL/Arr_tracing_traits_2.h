@@ -84,7 +84,7 @@ public:
    */
   void disable_all_traces();
 
-  /// \name Types and functors inherited from the base
+  /// \name Types and functors inherited from `BaseTraits`
   /// @{
 
   using Has_left_category = typename Base::Has_left_category;

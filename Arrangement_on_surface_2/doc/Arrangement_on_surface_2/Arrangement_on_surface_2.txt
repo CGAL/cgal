@@ -5665,18 +5665,17 @@ the latter is used to trace these invocations. Note that the
 constructors of each of these class templates applies perfect
 forwarding. The counting traits also exports the count of traits-class
 objects of specific types constructed during the execution of the
-program. The tracing traits supports filtering of traced
-functors. The calls `traits.enable_trace(id)` and
-`traits.disable_trace(id)` enables and disables the tracing of a
-functor identified by `id`, respectively. A functor is identified by
-an enumeration. For example, the functor \link
-ArrangementTraits_2::Make_x_monotone_2 `Make_x_monotone_2`\endlink is
-identified by the enumeration
+program. The tracing traits supports filtering of traced functors. The
+calls `traits.enable_trace(id)` and `traits.disable_trace(id)` enables
+and disables the tracing of a functor identified by `id`,
+respectively. A functor is identified by an enumeration. For example,
+the functor \link ArrangementTraits_2::Make_x_monotone_2
+`Make_x_monotone_2`\endlink is identified by the enumeration
 `Arr_tracing_traits_2::MAKE_X_MONOTONE_OP`. The calls
 `traits.enable_all_traces()` and `traits.disable_all_traces()` enables
 and disables the traces of all functors, respectively. The example
-program listed below and coded in the file `count_and_trace.cpp`
-demonstrates the use of both of these metadata decorators.
+program listed below demonstrates the use of both of these metadata
+decorators.
 
 \cgalExample{Arrangement_on_surface_2/count_and_trace.cpp}
 

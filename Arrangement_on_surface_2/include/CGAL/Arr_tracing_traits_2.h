@@ -191,7 +191,7 @@ public:
    */
   void disable_all_traces() { m_flags = 0x0; }
 
-  /// \name Types and functors inherited from the base.
+  /// \name Types and functors inherited from `BaseTraits`
   //@{
 
   // Traits types:

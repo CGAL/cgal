@@ -82,7 +82,7 @@ public:
   template <typename OutStream>
   OutStream& print(OutStream& os, Operation_id id) const;
 
-  /// \name Types and functors inherited from the base
+  /// \name Types and functors inherited from `BaseTraits`
   /// @{
 
   using Has_left_category = typename Base::Has_left_category;
