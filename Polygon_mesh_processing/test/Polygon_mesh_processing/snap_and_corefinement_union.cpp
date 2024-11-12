@@ -303,17 +303,13 @@ void coregularize(MeshRange meshes, FT epsilon, FT angle, FT reg_epsilon, FT reg
           const EPlane_3& second = to_exact(*it++);
           const EPlane_3& third = to_exact(*it++);
 
-          const auto inter = CGAL::intersection(first, second);
-          CGAL_assertion(bool(inter));
-          ELine_3 l;
-          if (!CGAL::assign(l, inter))
-            continue;
-          const auto inter2 = CGAL::intersection(l, third);
+          const auto inter = CGAL::intersection(first, second, third);
           EPoint_3 p;
+          ELine_3 l;
 
-          if (CGAL::assign(p, inter2))
+          if (CGAL::assign(p, inter))
             m.point(v) = from_exact(p);
-          else if (CGAL::assign(l, inter2))
+          else if (CGAL::assign(l, inter))
             m.point(v) = from_exact(l.projection(to_exact(m.point(v))));
         }
         else {
@@ -370,7 +366,10 @@ int main(int argc, char* argv[])
   //std::vector<Mesh> meshes = load_folder("C:/Data/Unite");
   coregularize(meshes, epsilon, 90.0, epsilon, 0.1, true, true, CGAL::Epick());
 
-  /*PMP::experimental::surface_snapping(mesh1, mesh2, epsilon);
+  // PMP::experimental::surface_snapping(mesh1, mesh2, epsilon);
+
+  std::ofstream("reg_m1.off") << std::setprecision(17) << mesh1;
+  std::ofstream("reg_m2.off") << std::setprecision(17) << mesh2;
 
   Mesh out;
   bool valid_union = PMP::corefine_and_compute_union(mesh1,mesh2, out);
@@ -380,7 +379,7 @@ int main(int argc, char* argv[])
     std::cout << "Union was successfully computed\n";
     CGAL::IO::write_polygon_mesh("snap_union.off", out, CGAL::parameters::stream_precision(17));
     return 0;
-  }*/
+  }
 
   std::cout << "Union could not be computed\n";
 
