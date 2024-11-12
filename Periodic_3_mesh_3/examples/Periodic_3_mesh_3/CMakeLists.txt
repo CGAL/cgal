@@ -30,5 +30,5 @@ foreach(
   mesh_implicit_shape_with_optimizers
   mesh_implicit_shape_with_features
   mesh_periodic_polyhedral_domain)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()

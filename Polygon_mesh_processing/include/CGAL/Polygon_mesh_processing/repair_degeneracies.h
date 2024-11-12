@@ -582,7 +582,7 @@ struct Filter_wrapper_for_cap_needle_removal<TriangleMesh, VPM, Traits, Identity
 ///   \cgalParamNBegin{filter}
 ///     \cgalParamDescription{A function object providing `bool operator()(geom_traits::Point_3,geom_traits::Point_3,geom_traits::Point_3)`.}
 ///     \cgalParamType{The function object is queried each time a new triangle is about to be created by a flip or a collapse operation.
-///                    If `false` is returned, the operation is cancelled.}
+///                    If `false` is returned, the operation is canceled.}
 ///     \cgalParamDefault{a functor always returning `true`.}
 ///   \cgalParamNEnd
 /// \cgalNamedParamsEnd

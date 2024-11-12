@@ -3,7 +3,7 @@ project(Lab_Demo)
 include(FeatureSummary)
 
 
-add_definitions ( -DCGAL_NO_DEPRECATED_CODE )
+add_compile_definitions(CGAL_NO_DEPRECATED_CODE)
 
 # Find includes in corresponding build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -12,7 +12,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 #Defines flags to emulate windows behavior for linking error generation
-if(CMAKE_CXX_COMPILER_ID EQUAL Clang
+if(CMAKE_CXX_COMPILER_ID STREQUAL Clang
    OR CMAKE_COMPILER_IS_GNUCC
    OR CMAKE_COMPILER_IS_GNUCXX)
   if(UNIX OR APPLE)
@@ -48,8 +48,7 @@ set_package_properties(
   DESCRIPTION "To find this package, it should be sufficient to fill the Qt6_DIR variable with: <Qt_dir>/<Qt_version>/<Compilator>/lib/cmake/Qt6")
 
 if(Qt6_FOUND)
-  add_definitions(-DQT_NO_KEYWORDS)
-  add_definitions(-DSCENE_IMAGE_GL_BUFFERS_AVAILABLE)
+  add_compile_definitions(QT_NO_KEYWORDS)
 endif(Qt6_FOUND)
 
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
@@ -94,7 +93,7 @@ option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
 
 # And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
 if(CGAL_ACTIVATE_CONCURRENT_MESH_3 OR "$ENV{CGAL_ACTIVATE_CONCURRENT_MESH_3}")
-  add_definitions(-DCGAL_CONCURRENT_MESH_3)
+  add_compile_definitions(CGAL_CONCURRENT_MESH_3)
   if(NOT TBB_FOUND)
     find_package(TBB REQUIRED)
     include(CGAL_TBB_support)
@@ -186,10 +185,10 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     Primitive_container.cpp
     CGALlab_plugin_helper.cpp
     CGAL_double_edit.cpp)
-  target_link_libraries(demo_framework PUBLIC Qt6::OpenGLWidgets Qt6::Widgets Qt6::Gui Qt6::Qml
-                                              CGAL::CGAL_Qt6)
+  target_link_libraries(demo_framework PRIVATE Qt6::OpenGLWidgets Qt6::Widgets Qt6::Gui
+                                       PUBLIC CGAL::CGAL_Qt6)
   if(TARGET Qt6::WebSockets)
-    target_link_libraries(demo_framework PUBLIC Qt6::WebSockets)
+    target_link_libraries(demo_framework PRIVATE Qt6::WebSockets)
     message(STATUS "Qt6WebSockets was found. Using WebSockets is therefore possible.")
   endif()
 
@@ -216,8 +215,8 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_library(scene_basic_objects SHARED Scene_plane_item.cpp
                                          Scene_spheres_item.cpp)
   target_link_libraries(
-    scene_basic_objects PUBLIC demo_framework CGAL::CGAL_Qt6 Qt6::OpenGLWidgets
-                               Qt6::Gui Qt6::Widgets)
+    scene_basic_objects PRIVATE demo_framework CGAL::CGAL_Qt6 Qt6::OpenGLWidgets
+                                Qt6::Gui Qt6::Widgets)
   add_library(scene_color_ramp SHARED Color_ramp.cpp)
   target_link_libraries(scene_color_ramp PRIVATE Qt6::Core)
 
@@ -226,51 +225,58 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui
                                   ${Show_point_dialogUI_FILES})
-  target_link_libraries(point_dialog PUBLIC Qt6::OpenGLWidgets Qt6::Gui
+  target_link_libraries(point_dialog PRIVATE Qt6::OpenGLWidgets Qt6::Gui
                                             Qt6::Widgets)
   cgal_add_compilation_test(point_dialog)
 
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     target_link_libraries(
-      ${item_name} PUBLIC demo_framework CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::Gui
-                          Qt6::Widgets)
+      ${item_name} PRIVATE demo_framework CGAL::CGAL_Qt6 Qt6::OpenGLWidgets Qt6::Gui
+                           Qt6::Widgets)
     cgal_add_compilation_test(${item_name})
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${item_name})
     CGAL_install_hooks()
   endmacro(add_item)
 
   add_item(scene_triangulation_3_item Scene_triangulation_3_item.cpp)
-  target_link_libraries(scene_triangulation_3_item PUBLIC scene_basic_objects scene_edit_box_item)
+  target_link_libraries(scene_triangulation_3_item PRIVATE scene_basic_objects scene_edit_box_item)
 
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(
-    scene_c3t3_item PUBLIC scene_triangulation_3_item
+    scene_c3t3_item
+    PUBLIC
+    scene_triangulation_3_item
+    PRIVATE
     scene_surface_mesh_item scene_polygon_soup_item
     scene_basic_objects ${TBB_LIBRARIES})
 
+  add_item(scene_tetrahedra_item Scene_tetrahedra_item.cpp)
+  target_link_libraries(scene_tetrahedra_item PRIVATE scene_c3t3_item)
+
+
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(scene_c3t3_item PUBLIC CGAL::TBB_support)
-    target_link_libraries(scene_triangulation_3_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_c3t3_item PRIVATE CGAL::TBB_support)
+    target_link_libraries(scene_triangulation_3_item PRIVATE CGAL::TBB_support)
+    target_link_libraries(scene_tetrahedra_item PRIVATE CGAL::TBB_support)
   endif()
+
   if(COMMAND target_precompile_headers)
     # Support for precompiled headers, for Mesh_3 (since CMake 3.16)
     target_precompile_headers(scene_c3t3_item PUBLIC [["C3t3_type.h"]])
   endif()
-  add_item(scene_tetrahedra_item Scene_tetrahedra_item.cpp)
-  target_link_libraries(scene_tetrahedra_item PUBLIC scene_c3t3_item)
 
   add_item(scene_aff_transformed_item Plugins/PCA/Scene_aff_transformed_item.cpp)
 
   add_item(scene_aff_transformed_point_set_item Plugins/PCA/Scene_aff_transformed_point_set_item.cpp)
-  target_link_libraries(scene_aff_transformed_point_set_item PUBLIC scene_points_with_normal_item
-                                                                    scene_aff_transformed_item)
+  target_link_libraries(scene_aff_transformed_point_set_item PRIVATE scene_points_with_normal_item
+                                                                     scene_aff_transformed_item)
   add_item(scene_aff_transformed_polygon_soup_item Plugins/PCA/Scene_aff_transformed_polygon_soup_item.cpp)
-  target_link_libraries(scene_aff_transformed_polygon_soup_item PUBLIC scene_polygon_soup_item
-                                                                       scene_aff_transformed_item)
+  target_link_libraries(scene_aff_transformed_polygon_soup_item PRIVATE scene_polygon_soup_item
+                                                                        scene_aff_transformed_item)
   add_item(scene_aff_transformed_surface_mesh_item Plugins/PCA/Scene_aff_transformed_surface_mesh_item.cpp)
-  target_link_libraries(scene_aff_transformed_surface_mesh_item PUBLIC scene_surface_mesh_item
-                                                                       scene_aff_transformed_item)
+  target_link_libraries(scene_aff_transformed_surface_mesh_item PRIVATE scene_surface_mesh_item
+                                                                        scene_aff_transformed_item)
 
   add_item(scene_edit_box_item Plugins/PCA/Scene_edit_box_item.cpp)
 
@@ -278,65 +284,68 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   add_item(scene_surface_mesh_item Scene_surface_mesh_item.cpp)
 
   if(TBB_FOUND)
-    target_link_libraries(scene_surface_mesh_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_surface_mesh_item PRIVATE CGAL::TBB_support)
   endif()
   # special
 
   add_item(scene_item_decorator Scene_polyhedron_item_decorator.cpp)
-  target_link_libraries(scene_item_decorator PUBLIC scene_surface_mesh_item)
+  target_link_libraries(scene_item_decorator PRIVATE scene_surface_mesh_item)
 
   add_item(scene_k_ring_selection
            Plugins/PMP/Scene_facegraph_item_k_ring_selection.cpp)
-  target_link_libraries(scene_k_ring_selection PUBLIC scene_surface_mesh_item)
+  target_link_libraries(scene_k_ring_selection PRIVATE scene_surface_mesh_item)
 
   add_item(scene_selection_item Scene_polyhedron_selection_item.cpp)
-  target_link_libraries(scene_selection_item PUBLIC scene_item_decorator
-                                                    scene_k_ring_selection)
+  target_link_libraries(scene_selection_item
+    PUBLIC
+    scene_surface_mesh_item
+    scene_item_decorator
+    scene_k_ring_selection)
   if(TBB_FOUND)
-    target_link_libraries(scene_selection_item PUBLIC CGAL::TBB_support)
+    target_link_libraries(scene_selection_item PRIVATE CGAL::TBB_support)
   endif()
 
   add_item(scene_shortest_path_item
            Plugins/Surface_mesh/Scene_polyhedron_shortest_path_item.cpp)
   target_link_libraries(
     scene_shortest_path_item
-    PUBLIC scene_item_decorator scene_surface_mesh_item scene_polylines_item)
+    PRIVATE scene_item_decorator scene_surface_mesh_item scene_polylines_item)
 
   add_item(scene_movable_sm_item Plugins/AABB_tree/Scene_movable_sm_item.cpp)
 
   if(TARGET CGAL::Eigen3_support)
     add_item(scene_textured_item Scene_textured_surface_mesh_item.cpp
              texture.cpp)
-    target_link_libraries(scene_textured_item PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(scene_textured_item PRIVATE CGAL::Eigen3_support)
     add_item(scene_mcf_item Plugins/PMP/Scene_mcf_item.cpp)
-    target_link_libraries(scene_mcf_item PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(scene_mcf_item PRIVATE CGAL::Eigen3_support)
   endif()
 
   add_item(scene_implicit_function_item Scene_implicit_function_item.cpp)
-  target_link_libraries(scene_implicit_function_item PUBLIC scene_color_ramp)
+  target_link_libraries(scene_implicit_function_item PRIVATE scene_color_ramp)
 
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
-  target_link_libraries(scene_polygon_soup_item PUBLIC scene_surface_mesh_item)
+  target_link_libraries(scene_polygon_soup_item PRIVATE scene_surface_mesh_item)
 
   add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   target_link_libraries(scene_nef_polyhedron_item
-                        PUBLIC scene_surface_mesh_item)
+                        PRIVATE scene_surface_mesh_item)
 
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   if(TARGET CGAL::Eigen3_support)
     target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::Eigen3_support)
+                          PRIVATE CGAL::Eigen3_support)
   endif()
 
   if(TBB_FOUND)
     target_link_libraries(scene_points_with_normal_item
-                          PUBLIC CGAL::TBB_support)
+                          PRIVATE CGAL::TBB_support)
   endif()
 
   add_item(scene_polylines_item Scene_polylines_item.cpp)
   target_link_libraries(
-    scene_polylines_item PUBLIC scene_basic_objects
-                                scene_points_with_normal_item)
+    scene_polylines_item PRIVATE scene_basic_objects
+                                 scene_points_with_normal_item)
 
   add_item(scene_lcc_item Scene_lcc_item.cpp)
 
@@ -345,7 +354,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${lib})
   endforeach()
 
-  add_definitions(-DUSE_FORWARD_DECL)
+  add_compile_definitions(USE_FORWARD_DECL)
   add_library(
     cgal_lab SHARED
     MainWindow.cpp
@@ -360,8 +369,9 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
     ${statisticsUI_FILES}
     ${SubViewerUI_files})
   target_link_libraries(
-    cgal_lab PUBLIC demo_framework point_dialog Qt6::Gui Qt6::OpenGLWidgets
-                           Qt6::Widgets )
+    cgal_lab PRIVATE demo_framework point_dialog Qt6::Widgets
+             PUBLIC CGAL::CGAL Qt6::Gui Qt6::OpenGLWidgets Qt6::Qml
+                           )
   if(LIBSSH_FOUND)
     target_compile_definitions(cgal_lab PRIVATE -DCGAL_USE_SSH)
     target_link_libraries(cgal_lab PRIVATE ${LIBSSH_LIBRARIES})
@@ -381,7 +391,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   target_link_libraries(CGALlab PRIVATE demo_framework)
 
   # Link with CGAL
-  target_link_libraries(CGALlab PUBLIC CGAL::CGAL_Qt6)
+  target_link_libraries(CGALlab PRIVATE CGAL::CGAL_Qt6)
 
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS CGALlab)
 
@@ -425,7 +435,7 @@ if(CGAL_Qt6_FOUND AND Qt6_FOUND)
   #WS Server
   if(TARGET Qt6::WebSockets AND TARGET Qt6::Network)
     add_executable(WS_server Server_ws.cpp)
-    target_link_libraries(WS_server PUBLIC Qt6::WebSockets Qt6::Widgets Qt6::Network)
+    target_link_libraries(WS_server PRIVATE Qt6::WebSockets Qt6::Widgets Qt6::Network)
     message(STATUS "Qt6WebSockets was found. Using WebSockets is therefore possible.")
   endif()
   #

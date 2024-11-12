@@ -37,6 +37,13 @@
 #endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+// Include support for memory leak detection
+// This is only available in debug mode and when _CRTDBG_MAP_ALLOC is defined.
+// It will include <crtdbg.h> which will redefine `malloc` and `free`.
+#  define _CRTDBG_MAP_ALLOC 1
+#endif
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
 #include <windows.h>
@@ -241,20 +248,6 @@
 #  define CGAL_SUNPRO_INITIALIZE(C) C
 #else
 #  define CGAL_SUNPRO_INITIALIZE(C)
-#endif
-
-//----------------------------------------------------------------------//
-// MacOSX specific.
-//----------------------------------------------------------------------//
-
-#ifdef __APPLE__
-#  if defined(__GNUG__) && (__GNUG__ == 4) && (__GNUC_MINOR__ == 0) \
-   && defined(__OPTIMIZE__) && !defined(CGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG)
-#    warning "Your configuration may exhibit run-time errors in CGAL code"
-#    warning "This appears with g++ 4.0 on MacOSX when optimizing"
-#    warning "You can disable this warning using -DCGAL_NO_WARNING_FOR_MACOSX_GCC_4_0_BUG"
-#    warning "For more information, see https://www.cgal.org/FAQ.html#mac_optimization_bug"
-#  endif
 #endif
 
 //-------------------------------------------------------------------//

@@ -28,7 +28,7 @@ if(TARGET CGAL::Eigen3_support)
     k_ring_roi_translate_rotate_example
     k_ring_roi_translate_rotate_Surface_mesh
     deform_mesh_for_botsch08_format_sre_arap)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
 
   find_package(OpenMesh QUIET)
