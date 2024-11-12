@@ -73,7 +73,7 @@ bool read_OM(const std::string& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
 }
 
 template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
-bool write_OM(std::string fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
+bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
   typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
