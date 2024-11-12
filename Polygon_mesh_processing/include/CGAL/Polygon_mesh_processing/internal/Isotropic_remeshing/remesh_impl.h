@@ -1361,7 +1361,6 @@ private:
       if (is_constrained(v))
         return false;
 
-      std::vector<halfedge_descriptor> border_halfedges;
       for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
       {
         if (is_on_patch(h))
