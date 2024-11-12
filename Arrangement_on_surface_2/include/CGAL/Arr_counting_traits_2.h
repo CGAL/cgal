@@ -870,8 +870,8 @@ private:
     has_construct_max_vertex_2<Base>::value,
     has_is_vertical_2<Base>::value,
     has_compare_y_at_x_2<Base>::value,
-    has_equal_2<Base>::value,			// points
-    has_equal_2<Base>::value,			// curves
+    has_equal_2<Base>::value, // points
+    has_equal_2<Base>::value, // curves
     has_compare_y_at_x_left_2<Base>::value,
     has_compare_y_at_x_right_2<Base>::value,
     has_make_x_monotone_2<Base>::value,
@@ -881,22 +881,22 @@ private:
     has_merge_2<Base>::value,
     has_construct_opposite_2<Base>::value,
     has_compare_endpoints_xy_2<Base>::value,
-    has_approximate_2<Base>::value,		// coordinate
-    has_approximate_2<Base>::value,		// point
-    has_approximate_2<Base>::value,		// curve
-    has_parameter_space_in_x_2<Base>::value,	// curve end
-    has_parameter_space_in_x_2<Base>::value,	// point
-    has_is_on_x_identification_2<Base>::value,	// point
-    has_is_on_x_identification_2<Base>::value,	// curve
+    has_approximate_2<Base>::value, // coordinate
+    has_approximate_2<Base>::value, // point
+    has_approximate_2<Base>::value, // curve
+    has_parameter_space_in_x_2<Base>::value, // curve end
+    has_parameter_space_in_x_2<Base>::value, // point
+    has_is_on_x_identification_2<Base>::value, // point
+    has_is_on_x_identification_2<Base>::value, // curve
     has_compare_y_on_boundary_2<Base>::value,
     has_compare_y_near_boundary_2<Base>::value,
-    has_parameter_space_in_y_2<Base>::value,	// curve end
-    has_parameter_space_in_y_2<Base>::value,	// point
-    has_is_on_y_identification_2<Base>::value,	// point
-    has_is_on_y_identification_2<Base>::value,	// curve
-    has_compare_x_on_boundary_2<Base>::value,	// points
-    has_compare_x_on_boundary_2<Base>::value,	// point, curve end
-    has_compare_x_on_boundary_2<Base>::value,	// curve ends
+    has_parameter_space_in_y_2<Base>::value, // curve end
+    has_parameter_space_in_y_2<Base>::value, // point
+    has_is_on_y_identification_2<Base>::value, // point
+    has_is_on_y_identification_2<Base>::value, // curve
+    has_compare_x_on_boundary_2<Base>::value, // points
+    has_compare_x_on_boundary_2<Base>::value, // point, curve end
+    has_compare_x_on_boundary_2<Base>::value, // curve ends
     has_compare_x_near_boundary_2<Base>::value
   };
 };
