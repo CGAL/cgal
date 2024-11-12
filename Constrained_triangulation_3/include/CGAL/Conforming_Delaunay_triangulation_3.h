@@ -331,7 +331,7 @@ public:
   void debug_input_faces(bool b) {
     debug_flags.set(static_cast<int>(Debug_flags::input_faces), b);
   }
-  
+
   bool debug_missing_region() const {
     return debug_flags[static_cast<int>(Debug_flags::missing_region)];
   }
