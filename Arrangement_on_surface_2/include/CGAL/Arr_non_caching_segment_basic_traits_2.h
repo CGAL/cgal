@@ -73,9 +73,8 @@ public:
   typedef Arr_oblivious_side_tag                Top_side_category;
   typedef Arr_oblivious_side_tag                Right_side_category;
 
-  /*! Default Constructor */
-  Arr_non_caching_segment_basic_traits_2()
-  {}
+  /*! constructs default */
+  Arr_non_caching_segment_basic_traits_2() {}
 
   /// \name Types and functor inherited from the kernel
   //@{
@@ -116,8 +115,7 @@ public:
    */
   class Compare_y_at_x_left_2 {
   public:
-
-    /* Compare the \f$y\f$-value of two segments immediately to the left of
+    /* compares the \f$y\f$-value of two segments immediately to the left of
      * their intersection point.
      * \param cv1 The first segment.
      * \param cv2 The second segment.
@@ -163,19 +161,16 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_left_2 functor object. */
+  /*! obtains a `Compare_y_at_x_left_2` functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
-  {
-    return Compare_y_at_x_left_2();
-  }
+  { return Compare_y_at_x_left_2(); }
 
   /*! \class
    * A functor for comparing two segments to the right of a point.
    */
   class Compare_y_at_x_right_2 {
   public:
-
-    /*! Compare the \f$y\f$-value of two segments immediately to the right of
+    /*! compares the \f$y\f$-value of two segments immediately to the right of
      * their intersection point.
      * \param cv1 The first segment.
      * \param cv2 The second segment.
@@ -220,11 +215,9 @@ public:
     }
   };
 
-  /*! Obtain a `Compare_y_at_x_right_2` functor object. */
+  /*! obtains a `Compare_y_at_x_right_2` functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
-  {
-    return Compare_y_at_x_right_2();
-  }
+  { return Compare_y_at_x_right_2(); }
   //@}
 
   /// \name Functor definitions for the landmarks point-location strategy.
@@ -240,7 +233,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits.
      */
     Approximate_2(const Traits& traits) : m_traits(traits) {}
@@ -248,7 +241,7 @@ public:
     friend class Arr_non_caching_segment_basic_traits_2<Kernel>;
 
   public:
-    /*! Return an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre `i` is either 0 or 1.
@@ -260,12 +253,12 @@ public:
       return (i == 0) ? (CGAL::to_double(p.x())) : (CGAL::to_double(p.y()));
     }
 
-    /*! Obtain an approximation of a point.
+    /*! obtains an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const
     { return Approximate_point_2(operator()(p, 0), operator()(p, 1)); }
 
-    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
@@ -284,20 +277,18 @@ public:
     }
   };
 
-  /*! Get an Approximate_2 functor object. */
+  /*! obtains an Approximate_2 functor object. */
   Approximate_2 approximate_2_object () const { return Approximate_2(*this); }
 
   typedef typename Kernel::Construct_segment_2    Construct_x_monotone_curve_2;
 
-  /*! Get a `Construct_x_monotone_curve_2` functor object. */
+  /*! obtains a `Construct_x_monotone_curve_2` functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () const
-  {
-    return (this->construct_segment_2_object());
-  }
+  { return (this->construct_segment_2_object()); }
   //@}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

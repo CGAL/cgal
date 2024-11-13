@@ -70,8 +70,7 @@ public:
   typedef CGAL::Segment_assertions<Arr_linear_traits_2<Kernel> >
                                           Segment_assertions;
 
-  /*!
-   * \class Representation of a linear with cached data.
+  /*! \class Representation of a linear with cached data.
    */
   class _Linear_object_cached_2 {
   public:
@@ -100,7 +99,7 @@ public:
 
   public:
 
-    /*! Default constructor.
+    /*! constructs default.
      */
     _Linear_object_cached_2() :
       has_source(true),
@@ -111,7 +110,7 @@ public:
       is_degen(true)
     {}
 
-    /*! Constructor for segment from two points.
+    /*! constructs from two points.
      * \param p1 source point.
      * \param p2 target point.
      * \pre The two points must not be equal.
@@ -137,7 +136,7 @@ public:
       has_pos_slope = _has_positive_slope();
     }
 
-    /*! Constructor from a segment.
+    /*! constructs from a segment.
      * \param seg The segment.
      * \pre The segment is not degenerate.
      */
@@ -165,7 +164,7 @@ public:
       has_pos_slope = _has_positive_slope();
     }
 
-    /*! Constructor from a ray.
+    /*! constructs from a ray.
      * \param ray The ray.
      * \pre The ray is not degenerate.
      */
@@ -193,7 +192,7 @@ public:
       has_pos_slope = _has_positive_slope();
     }
 
-    /*! Constructor from a line.
+    /*! constructs from a line.
      * \param ln The line.
      * \pre The line is not degenerate.
      */
@@ -221,7 +220,7 @@ public:
       has_pos_slope = _has_positive_slope();
     }
 
-    /*! Check whether the \f$x\f$-coordinate of the left point is infinite.
+    /*! checks whether the \f$x\f$-coordinate of the left point is infinite.
      * \return `ARR_LEFT_BOUNDARY` if the left point is near the boundary;
      *         `ARR_INTERIOR` if the \f$x\f$-coordinate is finite.
      */
@@ -234,7 +233,7 @@ public:
         (has_target ? ARR_INTERIOR : ARR_LEFT_BOUNDARY);
     }
 
-    /*! Check whether the \f$y\f$-coordinate of the left point is infinite.
+    /*! checks whether the \f$y\f$-coordinate of the left point is infinite.
      * \return `ARR_BOTTOM_BOUNDARY` if the left point is at \f$y = -\infty\f$;
      *         `ARR_INTERIOR` if the \f$y\f$-coordinate is finite.
      *         `ARR_TOP_BOUNDARY` if the left point is at \f$y = +\infty\f$;
@@ -255,11 +254,11 @@ public:
       return (has_pos_slope ? ARR_BOTTOM_BOUNDARY : ARR_TOP_BOUNDARY);
     }
 
-    /*! Check whether the left point is finite.
+    /*! checks whether the left point is finite.
      */
     bool has_left() const { return (is_right ? has_source : has_target); }
 
-    /*! Obtain the (lexicographically) left endpoint.
+    /*! obtains the (lexicographically) left endpoint.
      * \pre The left point is finite.
      */
     const Point_2& left() const
@@ -268,7 +267,7 @@ public:
       return (is_right ? ps : pt);
     }
 
-    /*! Set the (lexicographically) left endpoint.
+    /*! sets the (lexicographically) left endpoint.
      * \param p The point to set.
      * \pre p lies on the supporting line to the left of the right endpoint.
      */
@@ -293,7 +292,7 @@ public:
       }
     }
 
-    /*! Set the (lexicographically) left endpoint as infinite.
+    /*! sets the (lexicographically) left endpoint as infinite.
      */
     void set_left()
     {
@@ -303,7 +302,7 @@ public:
       else has_target = false;
     }
 
-    /*! Check whether the \f$x\f$-coordinate of the right point is infinite.
+    /*! checks whether the \f$x\f$-coordinate of the right point is infinite.
      * \return `ARR_RIGHT_BOUNDARY` if the right point is near the boundary;
      *         `ARR_INTERIOR` if the \f$x\f$-coordinate is finite.
      */
@@ -316,7 +315,7 @@ public:
         (has_source ? ARR_INTERIOR : ARR_RIGHT_BOUNDARY);
     }
 
-    /*! Check whether the \f$y\f$-coordinate of the right point is infinite.
+    /*! checks whether the \f$y\f$-coordinate of the right point is infinite.
      * \return `ARR_BOTTOM_BOUNDARY` if the right point is at \f$y = -\infty\f$;
      *         `ARR_INTERIOR` if the \f$y\f$-coordinate is finite.
      *         `ARR_TOP_BOUNDARY` if the right point is at \f$y = +\infty\f$;
@@ -337,11 +336,11 @@ public:
       return (has_pos_slope ? ARR_TOP_BOUNDARY : ARR_BOTTOM_BOUNDARY);
     }
 
-    /*! Check whether the right point is finite.
+    /*! checks whether the right point is finite.
      */
     bool has_right() const { return (is_right ? has_target : has_source); }
 
-    /*! Obtain the (lexicographically) right endpoint.
+    /*! obtains the (lexicographically) right endpoint.
      * \pre The right endpoint is finite.
      */
     const Point_2& right() const
@@ -350,7 +349,7 @@ public:
       return (is_right ? pt : ps);
     }
 
-    /*! Set the (lexicographically) right endpoint.
+    /*! sets the (lexicographically) right endpoint.
      * \param p The point to set.
      * \pre p lies on the supporting line to the right of the left endpoint.
      */
@@ -374,7 +373,7 @@ public:
       }
     }
 
-    /*! Set the (lexicographically) right endpoint as infinite.
+    /*! sets the (lexicographically) right endpoint as infinite.
      */
     void set_right()
     {
@@ -384,7 +383,7 @@ public:
       else has_source = false;
     }
 
-    /*! Obtain the supporting line.
+    /*! obtains the supporting line.
      */
     const Line_2& supp_line() const
     {
@@ -392,7 +391,7 @@ public:
       return (l);
     }
 
-    /*! Check whether the curve is vertical.
+    /*! checks whether the curve is vertical.
      */
     bool is_vertical() const
     {
@@ -400,15 +399,15 @@ public:
       return (is_vert);
     }
 
-    /*! Check whether the curve is degenerate.
+    /*! checks whether the curve is degenerate.
      */
     bool is_degenerate() const { return (is_degen); }
 
-    /*! Check whether the curve is directed lexicographic from left to right
+    /*! checks whether the curve is directed lexicographic from left to right
      */
     bool is_directed_right() const { return (is_right); }
 
-    /*! Check whether the given point is in the \f$x\f$-range of the object.
+    /*! checks whether the given point is in the \f$x\f$-range of the object.
      * \param p The query point.
      * \return (true) is in the \f$x\f$-range of the segment; (false) if it is
      * not.
@@ -447,7 +446,7 @@ public:
       return (res2 != LARGER);
     }
 
-    /*! Check whether the given point is in the \f$y\f$-range of the object.
+    /*! checks whether the given point is in the \f$y\f$-range of the object.
      * \param p The query point.
      * \pre The object is vertical.
      * \return (true) is in the \f$y\f$-range of the segment; (false) if it is
@@ -480,7 +479,7 @@ public:
     }
 
   private:
-    /*! Determine if the supporting line has a positive slope.
+    /*! determines if the supporting line has a positive slope.
      */
     bool _has_positive_slope() const
     {
@@ -503,7 +502,7 @@ public:
   typedef unsigned int                          Multiplicity;
 
 public:
-  /*! Default constructor.
+  /*! constructs default.
    */
   Arr_linear_traits_2() {}
 
@@ -518,7 +517,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -530,7 +529,7 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    /*! Compare the \f$x\f$-coordinates of two points.
+    /*! compares the \f$x\f$-coordinates of two points.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2);
@@ -544,13 +543,13 @@ public:
     }
   };
 
-  /*! Obtain a `Compare_x_2` functor. */
+  /*! obtains a `Compare_x_2` functor. */
   Compare_x_2 compare_x_2_object() const { return Compare_x_2(*this); }
 
   /*! A functor that compares the he endpoints of an $x$-monotone curve. */
   class Compare_endpoints_xy_2{
   public:
-    /*! Compare the endpoints of an $x$-monotone curve lexicographically.
+    /*! compares the endpoints of an $x$-monotone curve lexicographically.
      * (assuming the curve has a designated source and target points).
      * \param cv The curve.
      * \return SMALLER if the curve is directed right;
@@ -560,7 +559,7 @@ public:
     { return (xcv.is_directed_right()) ? (SMALLER) : (LARGER); }
   };
 
-  /*! Obtain a `Compare_endpoints_xy_2` functor. */
+  /*! obtains a `Compare_endpoints_xy_2` functor. */
   Compare_endpoints_xy_2 compare_endpoints_xy_2_object() const
   { return Compare_endpoints_xy_2(); }
 
@@ -571,7 +570,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -613,7 +612,7 @@ public:
     }
   };
 
-  /*! Obtain a `Trim_2` functor object. */
+  /*! obtains a `Trim_2` functor object. */
   Trim_2 trim_2_object() const { return Trim_2(*this); }
 
   class Construct_opposite_2{
@@ -623,7 +622,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -652,14 +651,14 @@ public:
     }
   };
 
-  /*! Get a Construct_opposite_2 functor object. */
+  /*! obtains a Construct_opposite_2 functor object. */
   Construct_opposite_2 construct_opposite_2_object() const
   { return Construct_opposite_2(*this); }
 
   /*! A functor that compares the \f$x\f$-coordinates of two points */
   class Compare_xy_2 {
   public:
-    /*! Compare two points lexigoraphically: by \f$x\f$, then by \f$y\f$.
+    /*! compares two points lexigoraphically: by \f$x\f$, then by \f$y\f$.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return LARGER if x(p1) > x(p2), or if x(p1) = x(p2) and y(p1) > y(p2);
@@ -673,13 +672,13 @@ public:
     }
   };
 
-  /*! Obtain a `Compare_xy_2` functor object. */
+  /*! obtains a `Compare_xy_2` functor object. */
   Compare_xy_2 compare_xy_2_object() const { return Compare_xy_2(); }
 
   /*! A functor that obtains the left endpoint of a segment or a ray. */
   class Construct_min_vertex_2 {
   public:
-    /*! Obtain the left endpoint of the \f$x\f$-monotone curve (segment).
+    /*! obtains the left endpoint of the \f$x\f$-monotone curve (segment).
      * \param cv The curve.
      * \pre The left end of cv is a valid (bounded) point.
      * \return The left endpoint.
@@ -693,14 +692,14 @@ public:
     }
   };
 
-  /*! Obtain a `Construct_min_vertex_2` functor object. */
+  /*! obtains a `Construct_min_vertex_2` functor object. */
   Construct_min_vertex_2 construct_min_vertex_2_object() const
   { return Construct_min_vertex_2(); }
 
   /*! A functor that obtains the right endpoint of a segment or a ray. */
   class Construct_max_vertex_2 {
   public:
-    /*! Obtain the right endpoint of the \f$x\f$-monotone curve (segment).
+    /*! obtains the right endpoint of the \f$x\f$-monotone curve (segment).
      * \param cv The curve.
      * \pre The right end of cv is a valid (bounded) point.
      * \return The right endpoint.
@@ -714,14 +713,14 @@ public:
     }
   };
 
-  /*! Obtain a `Construct_max_vertex_2` functor object. */
+  /*! obtains a `Construct_max_vertex_2` functor object. */
   Construct_max_vertex_2 construct_max_vertex_2_object() const
   { return Construct_max_vertex_2(); }
 
   /*! A functor that checks whether a given linear curve is vertical. */
   class Is_vertical_2 {
   public:
-    /*! Check whether the given \f$x\f$-monotone curve is a vertical segment.
+    /*! checks whether the given \f$x\f$-monotone curve is a vertical segment.
      * \param cv The curve.
      * \return (true) if the curve is a vertical segment; (false) otherwise.
      */
@@ -732,7 +731,7 @@ public:
     }
   };
 
-  /*! Obtain an `Is_vertical_2` functor object. */
+  /*! obtains an `Is_vertical_2` functor object. */
   Is_vertical_2 is_vertical_2_object() const { return Is_vertical_2(); }
 
   /*! A functor that compares the \f$y\f$-coordinates of a point and a line at
@@ -745,7 +744,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -757,7 +756,7 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    /*! Obtain the location of the given point with respect to the input curve.
+    /*! obtains the location of the given point with respect to the input curve.
      * \param cv The curve.
      * \param p The point.
      * \pre p is in the \f$x\f$-range of cv.
@@ -787,7 +786,7 @@ public:
     }
   };
 
-  /*! Obtain a `Compare_y_at_x_2` functor object. */
+  /*! obtains a `Compare_y_at_x_2` functor object. */
   Compare_y_at_x_2 compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(*this); }
 
@@ -796,7 +795,7 @@ public:
    */
   class Compare_y_at_x_left_2 {
   public:
-    /*! Compare the \f$y\f$-value of two \f$x\f$-monotone curves immediately to
+    /*! compares the \f$y\f$-value of two \f$x\f$-monotone curves immediately to
      * the left of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -839,7 +838,7 @@ public:
     }
   };
 
-  /*! Obtain a Compare_y_at_x_left_2 functor object. */
+  /*! obtains a Compare_y_at_x_left_2 functor object. */
   Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const
   { return Compare_y_at_x_left_2(); }
 
@@ -848,7 +847,7 @@ public:
    */
   class Compare_y_at_x_right_2 {
   public:
-    /*! Compare the \f$y\f$-value of two \f$x\f$-monotone curves immediately to
+    /*! compares the \f$y\f$-value of two \f$x\f$-monotone curves immediately to
      * the right of their intersection point.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -889,7 +888,7 @@ public:
     }
   };
 
-  /*! Obtain a `Compare_y_at_x_right_2` functor object. */
+  /*! obtains a `Compare_y_at_x_right_2` functor object. */
   Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const
   { return Compare_y_at_x_right_2(); }
 
@@ -898,7 +897,7 @@ public:
    */
   class Equal_2 {
   public:
-    /*! Check whether the two \f$x\f$-monotone curves are the same (have the
+    /*! checks whether the two \f$x\f$-monotone curves are the same (have the
      * same graph).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
@@ -935,7 +934,7 @@ public:
               (! cv1.has_right() || equal (cv1.right(), cv2.right())));
     }
 
-    /*! Check whether the two points are the same.
+    /*! checks whether the two points are the same.
      * \param p1 The first point.
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
@@ -947,7 +946,7 @@ public:
     }
   };
 
-  /*! Obtain an `Equal_2` functor object. */
+  /*! obtains an `Equal_2` functor object. */
   Equal_2 equal_2_object() const { return Equal_2(); }
   //@}
 
@@ -959,7 +958,7 @@ public:
    */
   class Parameter_space_in_x_2 {
   public:
-    /*! Obtains the parameter space at the end of a line along the \f$x\f$-axis.
+    /*! obtains the parameter space at the end of a line along the \f$x\f$-axis.
      * \param xcv the line
      * \param ce the line end indicator:
      *     ARR_MIN_END - the minimal end of xc or
@@ -979,7 +978,7 @@ public:
         xcv.left_infinite_in_x() : xcv.right_infinite_in_x();
     }
 
-    /*! Obtains the parameter space at a point along the \f$x\f$-axis.
+    /*! obtains the parameter space at a point along the \f$x\f$-axis.
      * \param p the point.
      * \return the parameter space at `p`.
      */
@@ -987,7 +986,7 @@ public:
     { return ARR_INTERIOR; }
   };
 
-  /*! Obtain a `Parameter_space_in_x_2` function object. */
+  /*! obtains a `Parameter_space_in_x_2` function object. */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(); }
 
@@ -996,7 +995,7 @@ public:
    */
   class Parameter_space_in_y_2 {
   public:
-    /*! Obtains the parameter space at the end of a line along the \f$y\f$-axis.
+    /*! obtains the parameter space at the end of a line along the \f$y\f$-axis.
      * Note that if the line end coincides with a pole, then unless the line
      * coincides with the identification arc, the line end is considered to
      * be approaching the boundary, but not on the boundary.
@@ -1022,7 +1021,7 @@ public:
         xcv.left_infinite_in_y() : xcv.right_infinite_in_y();
     }
 
-    /*! Obtains the parameter space at a point along the \f$y\f$-axis.
+    /*! obtains the parameter space at a point along the \f$y\f$-axis.
      * \param p the point.
      * \return the parameter space at `p`.
      */
@@ -1030,7 +1029,7 @@ public:
     { return ARR_INTERIOR; }
   };
 
-  /*! Obtain a `Parameter_space_in_y_2` function object. */
+  /*! obtains a `Parameter_space_in_y_2` function object. */
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
@@ -1044,7 +1043,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -1056,7 +1055,7 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    /*! Compare the \f$x\f$-limit of a vertical line at a point with the
+    /*! compares the \f$x\f$-limit of a vertical line at a point with the
      * \f$x\f$-limit of a line end on the boundary at \f$y = +/- \infty\f$.
      * \param p the point direction.
      * \param xcv the line, the endpoint of which is compared.
@@ -1082,7 +1081,7 @@ public:
       return (kernel.compare_x_at_y_2_object()(p, xcv.supp_line()));
     }
 
-    /*! Compare the \f$x\f$-limits of 2 arcs ends on the boundary of the
+    /*! compares the \f$x\f$-limits of 2 arcs ends on the boundary of the
      * parameter space at \f$y = +/- \infty\f$.
      * \param xcv1 the first arc.
      * \param ce1 the first arc end indicator -
@@ -1104,7 +1103,7 @@ public:
     Comparison_result operator()(const X_monotone_curve_2 & xcv1,
                                  Arr_curve_end /* ce1 */,
                                  const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end /*! ce2 */) const
+                                 Arr_curve_end /* ce2 */) const
     {
       CGAL_precondition(! xcv1.is_degenerate());
       CGAL_precondition(! xcv2.is_degenerate());
@@ -1118,7 +1117,7 @@ public:
     }
   };
 
-  /*! Obtain a `Compare_x_on_boundary_2` function object. */
+  /*! obtains a `Compare_x_on_boundary_2` function object. */
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   { return Compare_x_on_boundary_2(*this); }
 
@@ -1127,7 +1126,7 @@ public:
    */
   class Compare_x_near_boundary_2 {
   public:
-    /*! Compare the \f$x\f$-coordinates of 2 arcs ends near the boundary of the
+    /*! compares the \f$x\f$-coordinates of 2 arcs ends near the boundary of the
      * parameter space at y\f$ = +/- \infty\f$.
      * \param xcv1 the first arc.
      * \param ce1 the first arc end indicator -
@@ -1151,7 +1150,7 @@ public:
     Comparison_result
     operator()(const X_monotone_curve_2& CGAL_precondition_code(xcv1),
                const X_monotone_curve_2& CGAL_precondition_code(xcv2),
-               Arr_curve_end /*! ce2 */) const
+               Arr_curve_end /* ce2 */) const
     {
       CGAL_precondition(! xcv1.is_degenerate());
       CGAL_precondition(! xcv2.is_degenerate());
@@ -1161,7 +1160,7 @@ public:
     }
   };
 
-  /*! Obtain a `Compare_x_near_boundary_2` function object. */
+  /*! obtains a `Compare_x_near_boundary_2` function object. */
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(); }
 
@@ -1175,7 +1174,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -1187,7 +1186,7 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    /*! Compare the \f$y\f$-limits of 2 lines at their ends on the boundary
+    /*! compares the \f$y\f$-limits of 2 lines at their ends on the boundary
      * of the parameter space at \f$x = +/- \infty\f$.
      * \param xcv1 the first arc.
      * \param xcv2 the second arc.
@@ -1230,7 +1229,7 @@ public:
     }
   };
 
-  /*! Obtain a `Compare_y_near_boundary_2` function object. */
+  /*! obtains a `Compare_y_near_boundary_2` function object. */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(*this); }
 
@@ -1241,9 +1240,9 @@ public:
 
   class Make_x_monotone_2 {
   public:
-    /*! Cut the given curve into \f$x\f$-monotone subcurves and insert them into
-     * the given output iterator. As segments are always x_monotone, only one
-     * object will be contained in the iterator.
+    /*! cuts the given curve into \f$x\f$-monotone subcurves and insert them
+     * into the given output iterator. As segments are always x_monotone, only
+     * one object will be contained in the iterator.
      * \param cv The curve.
      * \param oi an output iterator for the result. Its dereference type is a
      *           variant that wraps a \c Point_2 or an \c X_monotone_curve_2
@@ -1261,13 +1260,13 @@ public:
     }
   };
 
-  /*! Obtain a `Make_x_monotone_2` functor object. */
+  /*! obtains a `Make_x_monotone_2` functor object. */
   Make_x_monotone_2 make_x_monotone_2_object() const
   { return Make_x_monotone_2(); }
 
   class Split_2 {
   public:
-    /*! Split a given \f$x\f$-monotone curve at a given point into two
+    /*! splits a given \f$x\f$-monotone curve at a given point into two
      * sub-curves.
      * \param cv The curve to split
      * \param p The split point.
@@ -1300,7 +1299,7 @@ public:
     }
   };
 
-  /*! Obtain a `Split_2` functor object. */
+  /*! obtains a `Split_2` functor object. */
   Split_2 split_2_object() const { return Split_2(); }
 
   class Intersect_2 {
@@ -1310,7 +1309,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Intersect_2(const Traits& traits) : m_traits(traits) {}
@@ -1318,7 +1317,7 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    /*! Find the intersections of the two given curves and insert them into the
+    /*! finds the intersections of the two given curves and insert them into the
      * given output iterator. As two segments may itersect only once, only a
      * single intersection will be contained in the iterator.
      * \param cv1 The first curve.
@@ -1416,12 +1415,12 @@ public:
     }
   };
 
-  /*! Obtain an Intersect_2 functor object. */
+  /*! obtains an Intersect_2 functor object. */
   Intersect_2 intersect_2_object () const { return Intersect_2(*this); }
 
   class Are_mergeable_2 {
   public:
-    /*! Check whether it is possible to merge two given \f$x\f$-monotone curves.
+    /*! checks whether it is possible to merge two given \f$x\f$-monotone curves.
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \return (true) if the two curves are mergeable - if they are supported
@@ -1451,7 +1450,7 @@ public:
     }
   };
 
-  /*! Obtain an Are_mergeable_2 functor object. */
+  /*! obtains an Are_mergeable_2 functor object. */
   Are_mergeable_2 are_mergeable_2_object () const { return Are_mergeable_2(); }
 
   /*! \class Merge_2
@@ -1464,7 +1463,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits& m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits& traits) : m_traits(traits) {}
@@ -1472,7 +1471,7 @@ public:
     friend class Arr_linear_traits_2<Kernel>;
 
   public:
-    /*! Merge two given \f$x\f$-monotone curves into a single curve (segment).
+    /*! merges two given \f$x\f$-monotone curves into a single curve (segment).
      * \param cv1 The first curve.
      * \param cv2 The second curve.
      * \param c Output: The merged curve.
@@ -1512,7 +1511,7 @@ public:
     }
   };
 
-  /*! Obtain a `Merge_2` functor object. */
+  /*! obtains a `Merge_2` functor object. */
   Merge_2 merge_2_object() const { return Merge_2(*this); }
   //@}
 
@@ -1522,7 +1521,7 @@ public:
 
   class Approximate_2 {
   public:
-    /*! Obtain an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p The exact point.
      * \param i The coordinate index (either 0 or 1).
      * \pre `i` is either 0 or 1.
@@ -1536,13 +1535,13 @@ public:
     }
   };
 
-  /*! Obtain an `Approximate_2` functor object. */
+  /*! obtains an `Approximate_2` functor object. */
   Approximate_2 approximate_2_object() const { return Approximate_2(); }
 
   //! Functor
   class Construct_x_monotone_curve_2 {
   public:
-    /*! Obtain an \f$x\f$-monotone curve connecting the two given endpoints.
+    /*! obtains an \f$x\f$-monotone curve connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
      * \pre p and q must not be the same.
@@ -1557,7 +1556,7 @@ public:
     }
   };
 
-  /*! Obtain a `Construct_x_monotone_curve_2` functor object. */
+  /*! obtains a `Construct_x_monotone_curve_2` functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(); }
   //@}
@@ -1568,14 +1567,13 @@ public:
   //! Functor
   typedef Construct_x_monotone_curve_2  Construct_curve_2;
 
-  /*! Obtain a `Construct_curve_2` functor object. */
+  /*! obtains a `Construct_curve_2` functor object. */
   Construct_curve_2 construct_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
   //@}
 };
 
-/*!
- * \class A representation of a segment, as used by the Arr_segment_traits_2
+/*! \class A representation of a segment, as used by the Arr_segment_traits_2
  * traits-class.
  */
 template <typename Kernel_>
@@ -1594,41 +1592,41 @@ public:
   typedef typename Kernel::Line_2                           Line_2;
 
 public:
-  /*! Default constructor.
+  /*! constructs default.
    */
   Arr_linear_object_2() : Base() {}
 
-  /*! Constructor from two points.
+  /*! constructs from two points.
    * \param s The source point.
    * \param t The target point.
    * \pre The two points must not be the same.
    */
   Arr_linear_object_2(const Point_2& s, const Point_2& t) : Base(s, t) {}
 
-  /*! Constructor from a segment.
+  /*! constructs from a segment.
    * \param seg The segment.
    * \pre The segment is not degenerate.
    */
   Arr_linear_object_2(const Segment_2& seg) : Base(seg) {}
 
-  /*! Constructor from a ray.
+  /*! constructs from a ray.
    * \param ray The segment.
    * \pre The ray is not degenerate.
    */
   Arr_linear_object_2(const Ray_2& ray) : Base(ray) {}
 
-  /*! Constructor from a line.
+  /*! constructs from a line.
    * \param line The line.
    * \pre The line is not degenerate.
    */
   Arr_linear_object_2(const Line_2& line) : Base(line) {}
 
-  /*! Check whether the object is actually a segment.
+  /*! checks whether the object is actually a segment.
    */
   bool is_segment() const
   { return (! this->is_degen && this->has_source && this->has_target); }
 
-  /*! Cast to a segment.
+  /*! casts to a segment.
    * \pre The linear object is really a segment.
    */
   Segment_2 segment() const
@@ -1640,12 +1638,12 @@ public:
     return seg;
   }
 
-  /*! Check whether the object is actually a ray.
+  /*! checks whether the object is actually a ray.
    */
   bool is_ray() const
   { return (! this->is_degen && (this->has_source != this->has_target)); }
 
-  /*! Cast to a ray.
+  /*! casts to a ray.
    * \pre The linear object is really a ray.
    */
   Ray_2 ray() const
@@ -1660,12 +1658,12 @@ public:
     return ray;
   }
 
-  /*! Check whether the object is actually a line.
+  /*! checks whether the object is actually a line.
    */
   bool is_line() const
   { return (! this->is_degen && ! this->has_source && ! this->has_target); }
 
-  /*! Cast to a line.
+  /*! casts to a line.
    * \pre The linear object is really a line.
    */
   Line_2 line() const
@@ -1674,7 +1672,7 @@ public:
     return (this->l);
   }
 
-  /*! Get the supporting line.
+  /*! obtains the supporting line.
    * \pre The object is not a point.
    */
   const Line_2& supporting_line() const
@@ -1683,7 +1681,7 @@ public:
     return (this->l);
   }
 
-  /*! Get the source point.
+  /*! obtains the source point.
    * \pre The object is a point, a segment or a ray.
    */
   const Point_2& source() const
@@ -1695,7 +1693,7 @@ public:
     else return (this->pt);                     // For a "flipped" ray.
   }
 
-  /*! Get the target point.
+  /*! obtains the target point.
    * \pre The object is a point or a segment.
    */
   const Point_2& target() const
@@ -1704,7 +1702,7 @@ public:
     return (this->pt);
   }
 
-  /*! Create a bounding box for the linear object.
+  /*! creates a bounding box for the linear object.
    */
   Bbox_2 bbox() const
   {
