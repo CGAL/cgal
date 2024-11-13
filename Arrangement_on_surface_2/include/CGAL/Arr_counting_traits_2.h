@@ -86,20 +86,20 @@ public:
 
   using Base = BaseTraits;
 
-  /*! Construct default */
+  /*! constructs default */
   template <typename ... Args>
   Arr_counting_traits_2(Args ... args) : Base(std::forward<Args>(args)...) {
     clear_counters();
     increment();
   }
 
-  /*! Disable copy constructor. */
+  /*! disables copy constructor. */
   Arr_counting_traits_2(const Arr_counting_traits_2&) = delete;
 
-  /*! Obtain the counter of the given operation */
+  /*! obtains the counter of the given operation */
   std::size_t count(Operation_id id) const { return m_counters[id]; }
 
-  /*! Print the counter associated with an operation. */
+  /*! prints the counter associated with an operation. */
   template <typename OutStream>
   OutStream& print(OutStream& os, Operation_id id) const {
     if (! m_exist[id]) return os;
@@ -135,11 +135,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_x_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_x_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { ++m_counter; return m_object(p1, p2); }
   };
@@ -152,11 +152,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_xy_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_xy_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { ++m_counter; return m_object(p1, p2); }
   };
@@ -168,11 +168,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Construct_min_vertex_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_min_vertex_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     using Subcurve_ctr_minv = typename Base::Construct_min_vertex_2;
     decltype(std::declval<Subcurve_ctr_minv>().
              operator()(std::declval<X_monotone_curve_2>()))
@@ -187,11 +187,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Construct_max_vertex_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_max_vertex_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     using Subcurve_ctr_maxv = typename Base::Construct_max_vertex_2;
     decltype(std::declval<Subcurve_ctr_maxv>().
              operator()(std::declval<X_monotone_curve_2>()))
@@ -199,18 +199,19 @@ public:
     { ++m_counter; return m_object(xcv); }
   };
 
-  /*! A functor that checks whether a given \f$x\f$-monotone curve is vertical. */
+  /*! A functor that checks whether a given \f$x\f$-monotone curve is vertical.
+   */
   class Is_vertical_2 {
   private:
     typename Base::Is_vertical_2 m_object;
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Is_vertical_2(const Base& base, std::size_t& counter) :
       m_object(base.is_vertical_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     bool operator()(const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(xc); }
   };
@@ -224,11 +225,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_at_x_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_at_x_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xc) const
     { ++m_counter; return m_object(p, xc); }
@@ -244,17 +245,17 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Equal_2(const Base& base, std::size_t& counter1, std::size_t& counter2) :
       m_object(base.equal_2_object()),
       m_counter1(counter1), m_counter2(counter2)
     {}
 
-    /*! Operate */
+    /*! operates */
     bool operator()(const Point_2& p1, const Point_2& p2) const
     { ++m_counter1; return m_object(p1, p2); }
 
-    /*! Operate */
+    /*! operates */
     bool operator()(const X_monotone_curve_2& xc1,
                     const X_monotone_curve_2& xc2) const
     { ++m_counter2; return m_object(xc1, xc2); }
@@ -270,11 +271,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_at_x_left_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_at_x_left_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
                                  const Point_2& p) const
@@ -291,11 +292,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_at_x_right_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_at_x_right_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
                                  const Point_2& p) const
@@ -311,7 +312,7 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Make_x_monotone_2(const Base& base, std::size_t& counter) :
       m_object(base.make_x_monotone_2_object()), m_counter(counter) {}
 
@@ -334,11 +335,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Split_2(const Base& base, std::size_t& counter) :
       m_object(base.split_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     void operator()(const X_monotone_curve_2& xc, const Point_2& p,
                     X_monotone_curve_2& xc1, X_monotone_curve_2& xc2) const
     { ++m_counter; m_object(xc, p, xc1, xc2); }
@@ -351,11 +352,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Intersect_2(const Base& base, std::size_t& counter) :
       m_object(base.intersect_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xc1,
                               const X_monotone_curve_2& xc2,
@@ -370,11 +371,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Are_mergeable_2(const Base& base, std::size_t& counter) :
       m_object(base.are_mergeable_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     bool operator()(const X_monotone_curve_2& xc1,
                     const X_monotone_curve_2& xc2) const
     { ++m_counter; return m_object(xc1, xc2); }
@@ -387,11 +388,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Merge_2(const Base& base, std::size_t& counter) :
       m_object(base.merge_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     void operator()(const X_monotone_curve_2& xc1,
                     const X_monotone_curve_2& xc2,
                     X_monotone_curve_2& xc) const
@@ -405,11 +406,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Construct_opposite_2(const Base& base, std::size_t& counter) :
       m_object(base.construct_opposite_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xc)
     { ++m_counter; return m_object(xc); }
   };
@@ -423,11 +424,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_endpoints_xy_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_endpoints_xy_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const X_monotone_curve_2& xc)
     { ++m_counter; return m_object(xc); }
   };
@@ -446,7 +447,7 @@ public:
     std::size_t& m_counter3;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Approximate_2(const Base& base, std::size_t& counter1,
                   std::size_t& counter2, std::size_t& counter3) :
       m_object(base.approximate_2_object()),
@@ -455,8 +456,7 @@ public:
       m_counter3(counter3)
     {}
 
-    /*! Operate */
-    /*! Obtain an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
      * \pre `i` is either 0 or 1.
@@ -466,12 +466,12 @@ public:
     Approximate_number_type operator()(const Point_2& p, std::size_t i) const
     { ++m_counter1; return m_object(p, i); }
 
-    /*! Obtain an approximation of a point.
+    /*! obtains an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const
     { ++m_counter2; return m_object(p); }
 
-    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
@@ -491,7 +491,7 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Parameter_space_in_x_2(const Base& base,
                            std::size_t& counter1, std::size_t& counter2) :
       m_object(base.parameter_space_in_x_2_object()),
@@ -499,13 +499,13 @@ public:
       m_counter2(counter2)
     {}
 
-    /*! Operate */
+    /*! operates */
     Arr_parameter_space operator()(const X_monotone_curve_2& xc,
                                    Arr_curve_end ce) const
     { ++m_counter1; return m_object(xc, ce); }
 
 
-    /*! Operate */
+    /*! operates */
     Arr_parameter_space operator()(const Point_2& p) const
     { ++m_counter2; return m_object(p); }
   };
@@ -520,7 +520,7 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Is_on_x_identification_2(const Base& base,
                              std::size_t& counter1, std::size_t& counter2) :
       m_object(base.is_on_x_identification_2_object()),
@@ -528,11 +528,11 @@ public:
       m_counter2(counter2)
     {}
 
-    /*! Operate */
+    /*! operates */
     bool operator()(const Point_2& p) const
     { ++m_counter1; return m_object(p); }
 
-    /*! Operate */
+    /*! operates */
     bool operator()(const X_monotone_curve_2& xc) const
     { ++m_counter2; return m_object(xc); }
   };
@@ -546,11 +546,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_on_boundary_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_on_boundary_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { ++m_counter; return m_object(p1, p2); }
   };
@@ -564,11 +564,11 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_near_boundary_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_y_near_boundary_2_object()), m_counter(counter) {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
                                  Arr_curve_end ce) const
@@ -587,7 +587,7 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Parameter_space_in_y_2(const Base& base,
                            std::size_t& counter1, std::size_t& counter2) :
       m_object(base.parameter_space_in_y_2_object()),
@@ -595,12 +595,12 @@ public:
       m_counter2(counter2)
     {}
 
-    /*! Operate */
+    /*! operates */
     Arr_parameter_space operator()(const X_monotone_curve_2& xc,
                                    Arr_curve_end ce) const
     { ++m_counter1; return m_object(xc, ce); }
 
-    /*! Operate */
+    /*! operates */
     Arr_parameter_space operator()(const Point_2& p) const
     { ++m_counter2; return m_object(p); }
   };
@@ -615,7 +615,7 @@ public:
     std::size_t& m_counter2;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Is_on_y_identification_2(const Base& base,
                              std::size_t& counter1, std::size_t& counter2) :
       m_object(base.is_on_y_identification_2_object()),
@@ -623,12 +623,12 @@ public:
       m_counter2(counter2)
     {}
 
-    /*! Operate */
+    /*! operates */
     bool operator()(const Point_2& p) const
     { ++m_counter1; return m_object(p); }
 
 
-    /*! Operate */
+    /*! operates */
     bool operator()(const X_monotone_curve_2& xc) const
     { ++m_counter2; return m_object(xc); }
   };
@@ -644,7 +644,7 @@ public:
     std::size_t& m_counter3;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_x_on_boundary_2(const Base& base,  std::size_t& counter1,
                             std::size_t& counter2, std::size_t& counter3 ) :
       m_object(base.compare_x_on_boundary_2_object()),
@@ -653,17 +653,17 @@ public:
       m_counter3(counter3)
     {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     { ++m_counter1; return m_object(p1, p2); }
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const Point_2& pt,
                                  const X_monotone_curve_2& xcv,
                                  Arr_curve_end ce) const
     { ++m_counter2; return m_object(pt, xcv, ce); }
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  Arr_curve_end ce1,
                                  const X_monotone_curve_2& xcv2,
@@ -680,13 +680,13 @@ public:
     std::size_t& m_counter;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_x_near_boundary_2(const Base& base, std::size_t& counter) :
       m_object(base.compare_x_near_boundary_2_object()),
       m_counter(counter)
     {}
 
-    /*! Operate */
+    /*! operates */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
                                  Arr_curve_end ce) const
@@ -805,7 +805,7 @@ public:
 
   //@}
 
-  /*! Increment the construction counter.
+  /*! increments the construction counter.
    * \param doit indicates whethet to actually inceremnt the counter or not.
    * \return the counter at the end of the operation.
    */
@@ -819,11 +819,11 @@ public:
     return counter;
   }
 
-  /*! Clean all operation counters */
+  /*! cleans all operation counters */
   void clear_counters() { m_counters = {}; }
 
 private:
-  /*! The operation counters */
+  //! The operation counters
   mutable std::array<std::size_t, NUMBER_OF_OPERATIONS> m_counters;
   const std::array<std::string, NUMBER_OF_OPERATIONS> m_names = {
     "COMPARE_X_2_OP",
@@ -916,7 +916,7 @@ inline OutStream& operator<<(OutStream& os,
   return os;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

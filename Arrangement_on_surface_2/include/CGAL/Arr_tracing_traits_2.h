@@ -165,29 +165,29 @@ private:
   { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_2_OP); }
 
 public:
-  /*! Construct default. */
+  /*! constructs default. */
   template<typename ... Args>
   Arr_tracing_traits_2(Args ... args) : Base(std::forward<Args>(args)...)
   { enable_all_traces(); }
 
-  /*! Disable copy constructor. */
+  /*! disables copy constructor. */
   Arr_tracing_traits_2(const Arr_tracing_traits_2&) = delete;
 
-  /*! Enable the trace of a traits operation.
+  /*! enables the trace of a traits operation.
    * \param id the operation identifier.
    */
   void enable_trace(Operation_id id) { m_flags |= 0x1 << id; }
 
-  /*! Enable the trace of all traits operations.
+  /*! enables the trace of all traits operations.
    */
   void enable_all_traces() { m_flags = 0xffffffff; }
 
-  /*! Disable the trace of a traits operation.
+  /*! disables the trace of a traits operation.
    * \param id the operation identifier.
    */
   void disable_trace(Operation_id id) { m_flags &= ~(0x1 << id); }
 
-  /*! Disable the trace of all traits operations.
+  /*! disables the trace of all traits operations.
    */
   void disable_all_traces() { m_flags = 0x0; }
 
@@ -220,11 +220,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_x_2(const Base& base, bool enabled = true) :
       m_object(base.compare_x_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param p1 first point.
      * \param p2 second point.
      * \return the comparison result.
@@ -249,11 +249,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_xy_2(const Base& base, bool enabled = true) :
       m_object(base.compare_xy_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param p1 the first point.
      * \param p2 the second point.
      * \return the comparison result.
@@ -276,11 +276,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Construct_min_vertex_2(const Base& base, bool enabled = true) :
       m_object(base.construct_min_vertex_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv the curve the left endpoint of which is obtained.
      * \return the left endpoint.
      */
@@ -305,11 +305,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Construct_max_vertex_2(const Base& base, bool enabled = true) :
       m_object(base.construct_max_vertex_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv the curve the right endpoint of which is obtained.
      * \return the right endpoint.
      */
@@ -335,11 +335,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Is_vertical_2(const Base& base, bool enabled = true) :
       m_object(base.is_vertical_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv the curve.
      * \return a Boolean that indicates whether the curve is vertical or not.
      */
@@ -362,11 +362,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_at_x_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_at_x_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param p the point.
      * \param xcv the curve.
      * \return the comparison result.
@@ -393,7 +393,7 @@ public:
     bool m_enabled_curve;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Equal_2(const Base& base,
             bool enabled_point = true, bool enabled_curve = true) :
       m_object(base.equal_2_object()),
@@ -401,7 +401,7 @@ public:
       m_enabled_curve(enabled_curve)
     {}
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
      * \return true if the \f$x\f$-monotone curves are equal and false
@@ -418,7 +418,7 @@ public:
       return equal;
     }
 
-    /*! Operate
+    /*! operates
      * \param p1 the first point.
      * \param p2 the second point.
      * \return true if the points are equal and false otherwise.
@@ -444,11 +444,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_at_x_left_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_at_x_left_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
      * \param p the reference point.
@@ -478,11 +478,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_at_x_right_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_at_x_right_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
      * \param p the reference point.
@@ -514,11 +514,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Make_x_monotone_2(const Base& base, bool enabled = true) :
       m_object(base.make_x_monotone_2_object()), m_enabled(enabled) {}
 
-    /*! Subdivide a given curve into \f$x\f$-monotone subcurves and insert them
+    /*! subdivides a given curve into \f$x\f$-monotone subcurves and insert them
      * into a given output iterator.
      * \param cv the curve.
      * \param oi an output iterator for the result. Its value type is a variant
@@ -565,11 +565,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Split_2(const Base& base, bool enabled = true) :
       m_object(base.split_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv the curve to split.
      * \param p the split point.
      * \param xcv1 the left resulting subcurve (`p` is its right endpoint)..
@@ -591,18 +591,19 @@ public:
     }
   };
 
-  /*! A functor that computes intersections between two \f$x\f$-monotone curves. */
+  /*! A functor that computes intersections between two \f$x\f$-monotone curves.
+   */
   class Intersect_2 {
   private:
     typename Base::Intersect_2 m_object;
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Intersect_2(const Base& base, bool enabled = true) :
       m_object(base.intersect_2_object()), m_enabled(enabled) {}
 
-    /*! Compute the intersections of the two given curves and insert them into
+    /*! computes the intersections of the two given curves and insert them into
      * a given output iterator.
      * \param xcv1 the first curve.
      * \param xcv2 the ssecond curve.
@@ -657,11 +658,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Are_mergeable_2(const Base& base, bool enabled = true) :
       m_base_traits(base), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
      * \return true if the two curve are mergeable and false otherwise.
@@ -706,11 +707,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Merge_2(const Base& base, bool enabled = true) :
       m_object(base.merge_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the first curve.
      * \param xcv2 the second curve.
      * \param xcv the merged curve.
@@ -733,11 +734,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Construct_opposite_2(const Base& base, bool enabled = true) :
       m_object(base.construct_opposite_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv the curve.
      * \return the opposite curve.
      */
@@ -760,11 +761,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_endpoints_xy_2(const Base& base, bool enabled = true) :
       m_object(base.compare_endpoints_xy_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv the curve.
      * \return the comparison result.
      */
@@ -790,12 +791,12 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Approximate_2(const Base& base, bool enabled = true) :
       m_object(base.approximate_2_object()), m_enabled(enabled)
     {}
 
-    /*! Obtain an approximation of a point coordinate.
+    /*! obtains an approximation of a point coordinate.
      * \param p the exact point.
      * \param i the coordinate index (either 0 or 1).
      * \pre `i` is either 0 or 1.
@@ -811,7 +812,7 @@ public:
       return res;
     }
 
-    /*! Obtain an approximation of a point.
+    /*! obtains an approximation of a point.
      */
     Approximate_point_2 operator()(const Point_2& p) const {
       if (! m_enabled) return m_object(p);
@@ -822,14 +823,15 @@ public:
       return res;
     }
 
-    /*! Obtain an approximation of an \f$x\f$-monotone curve.
+    /*! obtains an approximation of an \f$x\f$-monotone curve.
      */
     template <typename OutputIterator>
     OutputIterator operator()(const X_monotone_curve_2& xcv, double error,
                               OutputIterator oi, bool l2r = true) const {
       if (! m_enabled) return m_object(xcv, error, oi, l2r);
       std::cout << "approximate_2" << std::endl
-                << "  xcv: " << xcv << ", error: " << error << ", l2r: " << l2r << std::endl;
+                << "  xcv: " << xcv << ", error: " << error
+                << ", l2r: " << l2r << std::endl;
       auto res = m_object(xcv, error, oi, l2r);
       std::cout << "  result: " << res << std::endl;
       return res;
@@ -847,12 +849,12 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Parameter_space_in_x_2(const Base& base, bool enabled = true) :
       m_object(base.parameter_space_in_x_2_object()), m_enabled(enabled)
     {}
 
-    /*! Operate
+    /*! operates
      * \param xcv the curve the end of which is tested.
      * \param ce the curve-end identifier.
      * \return the boundary type.
@@ -893,10 +895,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Is_on_x_identification_2(const Base& base, bool enabled = true) :
       m_object(base.is_on_x_identification_2_object()), m_enabled(enabled) {}
-    /*! Operate
+
+    /*! operates
      * \param p1 the point.
      */
     bool operator()(const Point_2& p) const {
@@ -908,7 +911,7 @@ public:
       return cr;
     }
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the curve.
      */
     bool operator()(const X_monotone_curve_2& xcv) const {
@@ -930,13 +933,13 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_on_boundary_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_on_boundary_2_object()),
       m_enabled(enabled)
     {}
 
-    /*! Operate
+    /*! operates
      * \param p1 the first point.
      * \param p2 the second point.
      */
@@ -960,11 +963,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_y_near_boundary_2(const Base& base, bool enabled = true) :
       m_object(base.compare_y_near_boundary_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the first curve the end point of which is tested.
      * \param xcv2 the second curve the end point of which is tested.
      * \param ce the curve-end identifier.
@@ -995,11 +998,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Parameter_space_in_y_2(const Base& base, bool enabled = true) :
       m_object(base.parameter_space_in_y_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv the curve the end of which is tested.
      * \param ce the curve-end identifier.
      * \return the boundary type.
@@ -1014,7 +1017,7 @@ public:
       return bt;
     }
 
-    /*! Operate
+    /*! operates
      * \param p the point.
      * \return the boundary type.
      */
@@ -1037,10 +1040,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Is_on_y_identification_2(const Base& base, bool enabled = true) :
       m_object(base.is_on_y_identification_2_object()), m_enabled(enabled) {}
-    /*! Operate
+
+    /*! operates
      * \param p1 the point.
      */
     bool operator()(const Point_2& p) const {
@@ -1052,7 +1056,7 @@ public:
       return cr;
     }
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the curve.
      */
     bool operator()(const X_monotone_curve_2& xcv) const {
@@ -1074,10 +1078,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_x_on_boundary_2(const Base& base, bool enabled = true) :
       m_object(base.compare_x_on_boundary_2_object()), m_enabled(enabled) {}
-    /*! Operate
+
+    /*! operates
      * \param p1 the first point.
      * \param p2 the second point.
      */
@@ -1091,7 +1096,7 @@ public:
       return cr;
     }
 
-    /*! Operate
+    /*! operates
      * \param pt the point.
      * \param xcv the curve.
      * \param ce the curve-end.
@@ -1109,7 +1114,7 @@ public:
       return cr;
     }
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the first curve.
      * \param ce1 the first curve-end.
      * \param xcv2 the second curve.
@@ -1140,11 +1145,11 @@ public:
     bool m_enabled;
 
   public:
-    /*! Construct */
+    /*! constructs */
     Compare_x_near_boundary_2(const Base& base, bool enabled = true) :
       m_object(base.compare_x_near_boundary_2_object()), m_enabled(enabled) {}
 
-    /*! Operate
+    /*! operates
      * \param xcv1 the first curve the end of which is to be compared.
      * \param ce1 the identifier of the end of the first curve.
      * \param xcv2 the second curve the end of which is to be compared.
@@ -1258,7 +1263,7 @@ OutputStream& operator<<(OutputStream& os, Comparison_result cr) {
   return os;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

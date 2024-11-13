@@ -66,19 +66,19 @@ public:
   /// \name Creation
   /// @{
 
-  /*! Construct default */
+  /*! constructs default */
   template <typename ... Args>
   Arr_counting_traits_2(Args ... args) : Base(std::forward<Args>(args)...) {}
 
-  /*! Disable copy constructor. */
+  /*! disables copy constructor. */
   Arr_counting_traits_2(const Arr_counting_traits_2&) = delete;
 
   /// @}
 
-  /*! Obtain the counter of the given operation */
+  /*! obtains the counter of the given operation */
   std::size_t count(Operation_id id) const;
 
-  /*! Print the counter associated with an operation. */
+  /*! prints the counter associated with an operation. */
   template <typename OutStream>
   OutStream& print(OutStream& os, Operation_id id) const;
 
@@ -135,11 +135,11 @@ public:
 
   /// @}
 
-  /*! Clean all operation counters */
+  /*! cleans all operation counters */
   void clear_counters();
 };
 
 template <typename OutStream, class BaseTraits>
 inline OutStream& operator<<(OutStream& os,
                              const Arr_counting_traits_2<BaseTraits>& traits);
-} //namespace CGAL
+} // namespace CGAL

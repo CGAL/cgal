@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2009,2010,2011 Tel-Aviv University (Israel).
+/// Copyright (c) 2007,2009,2010,2011 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -57,30 +57,30 @@ public:
   /// \name Creation
   /// @{
 
-  /*! Construct default */
+  /*! constructs default */
   template<typename ... Args>
   Arr_tracing_traits_2(Args ... args) : Base(std::forward<Args>(args)...) {}
 
-  /*! Disable copy constructor. */
+  /*! disables copy constructor. */
   Arr_tracing_traits_2(const Arr_tracing_traits_2&) = delete;
 
   /// @}
 
-  /*! Enable the trace of a traits operation
+  /*! enables the trace of a traits operation
    * \param id the operation identifier
    */
   void enable_trace(Operation_id id);
 
-  /*! Enable the trace of all traits operations
+  /*! enables the trace of all traits operations
    */
   void enable_all_traces();
 
-  /*! Disable the trace of a traits operation
+  /*! disables the trace of a traits operation
    * \param id the operation identifier
    */
   void disable_trace(Operation_id id);
 
-  /*! Disable the trace of all traits operations
+  /*! disables the trace of all traits operations
    */
   void disable_all_traces();
 
@@ -142,4 +142,4 @@ public:
 template <typename OutputStream>
 OutputStream& operator<<(OutputStream& os, Comparison_result cr);
 
-} //namespace CGAL
+} // namespace CGAL
