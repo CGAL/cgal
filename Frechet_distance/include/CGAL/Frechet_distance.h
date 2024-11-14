@@ -35,22 +35,23 @@ namespace CGAL
  * \param traits the geometric traits object
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
+ * \tparam force_filtering if `true` interval arithmetic will be used as a filter
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  */
-template < class Traits, class PointRange>
+template < class Traits, bool force_filtering = false, class PointRange>
 bool is_Frechet_distance_larger(const PointRange& polyline1,
-                              const PointRange& polyline2,
-                              const double distance,
-                              const Traits& traits = Traits())
+                                const PointRange& polyline2,
+                                const double distance,
+                                const Traits& traits = Traits())
 {
-    constexpr bool filtered =
-      std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve(polyline1, traits))::FT,
+    constexpr bool filtered = force_filtering ||
+      std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits))::FT,
                      Interval_nt<false>>;
     Protect_FPU_rounding<filtered> p;
 
-    auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
-    auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
+    auto icurve1 = Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits);
+    auto icurve2 = Frechet_distance_::internal::toCurve<force_filtering>(polyline2, traits);
 
     using distance_t = const typename decltype(icurve1)::distance_t;
 
@@ -68,25 +69,26 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  *  \param traits the geometric traits object
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
+ * \tparam force_filtering if `true` interval arithmetic will be used as a filter
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  *
  * @return an interval enclosing the exact result, the difference between the upper and
  * the lower bound being less than `precision`.
  */
-template <class Traits,class PointRange>
+template <class Traits, bool force_filtering = false, class PointRange>
 std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline1,
                                                       const PointRange& polyline2,
                                                       const double precision,
                                                       const Traits& traits = Traits())
 {
-    constexpr bool filtered =
+    constexpr bool filtered = force_filtering ||
       std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve(polyline1, traits))::FT,
                      Interval_nt<false>>;
     Protect_FPU_rounding<filtered> p;
 
-    auto icurve1 = Frechet_distance_::internal::toCurve(polyline1, traits);
-    auto icurve2 = Frechet_distance_::internal::toCurve(polyline2, traits);
+    auto icurve1 = Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits);
+    auto icurve2 = Frechet_distance_::internal::toCurve<force_filtering>(polyline2, traits);
 
     return Frechet_distance_::internal::calcDistance(icurve1, icurve2, precision);
 }

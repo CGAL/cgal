@@ -147,7 +147,7 @@ static FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQ
 //
 // tests
 //
-
+template<bool force_filtering=false>
 static double testFrechetDistance()
 {
     std::string curve_directory = "./data/curves/";
@@ -170,7 +170,7 @@ static double testFrechetDistance()
           */
             timer.start();
             auto decision =
-                ! CGAL::is_Frechet_distance_larger<TestTraits>(
+                ! CGAL::is_Frechet_distance_larger<TestTraits, force_filtering>(
                     curves[query.id1], curves[query.id2], query.distance);
             timer.stop();
             if (decision != query.decision) {
@@ -251,18 +251,18 @@ int main(int argc, char** argv)
   if (test_set.empty() || test_set.count(3))
   {
     using Epeck_sqrt = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
-    std::cout <<"Exact_predicates_exact_constructions_kernel_with_sqrt\n";
+    std::cout <<"Exact_predicates_exact_constructions_kernel_with_sqrt (force filtering)\n";
     double t1=Test_struct<Epeck_sqrt>::testFrechetDistanceNearNeighborsDS();
-    double t2=Test_struct<Epeck_sqrt>::testFrechetDistance();
+    double t2=Test_struct<Epeck_sqrt>::testFrechetDistance<true>();
     std::cout << t1 << " " << t2 << "\n";
   }
 
   if (test_set.empty() || test_set.count(4))
   {
     using SCE = CGAL::Simple_cartesian<CGAL::Exact_rational>;
-    std::cout <<"Simple_cartesian<Exact_rational>\n";
+    std::cout <<"Simple_cartesian<Exact_rational> (force filtering)\n";
     double t1=Test_struct<SCE>::testFrechetDistanceNearNeighborsDS();
-    double t2=Test_struct<SCE>::testFrechetDistance();
+    double t2=Test_struct<SCE>::testFrechetDistance<true>();
     std::cout << t1 << " " << t2 << "\n";
   }
 

@@ -27,6 +27,7 @@
 // #include <CGAL/Epick_d.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
+#include <CGAL/Lazy.h>
 
 namespace CGAL {
 namespace Frechet_distance_ {
@@ -44,14 +45,14 @@ struct Is_filtered_kernel<K,false>
   static constexpr bool value = false;
 };
 
-template <class PointRange, class Traits>
+template <bool force_filtering, class PointRange, class Traits>
 auto toCurve(const PointRange& point_range, const Traits& traits)
 {
   using IPoint = typename Traits::Point_d;
 
   if constexpr (Is_filtered_kernel<typename Kernel_traits<IPoint>::Kernel>::value)
   {
-    if constexpr (std::is_floating_point<typename Traits::FT>::type::value)
+    if constexpr (std::is_floating_point_v<typename Traits::FT>)
     {
       if constexpr (Traits::Dimension::value==2)
       {
@@ -113,7 +114,73 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
     }
   }
   else
-    return Curve<Traits, false>(point_range, traits);
+  {
+    if constexpr (force_filtering)
+    {
+      if constexpr (std::is_floating_point_v<typename Traits::FT>)
+      {
+        if constexpr (Traits::Dimension::value==2)
+        {
+          using AT = Frechet_distance_traits_2<Simple_cartesian<Interval_nt_advanced>>;
+          using ET = Frechet_distance_traits_2<Simple_cartesian<Exact_rational>>;
+
+          using Filtered_traits = std::pair<AT,ET>;
+
+          return Curve<Filtered_traits, true>(point_range);
+        }
+        else if constexpr (Traits::Dimension::value==3)
+        {
+          using AT = Frechet_distance_traits_3<Simple_cartesian<Interval_nt_advanced>>;
+          using ET = Frechet_distance_traits_3<Simple_cartesian<Exact_rational>>;
+
+          using Filtered_traits = std::pair<AT,ET>;
+
+          return Curve<Filtered_traits, true>(point_range);
+        }
+        else
+        {
+          // using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
+          // using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
+          // using Filtered_traits = std::pair<Frechet_distance_traits_d<AK>, Frechet_distance_traits_d<EK>>;
+
+          // return Curve<Filtered_traits, true>(point_range);
+          return Curve<Traits, false>(point_range, traits);
+        }
+      }
+      else
+      {
+        if constexpr (Traits::Dimension::value==2)
+        {
+          using AT = Frechet_distance_traits_2<Simple_cartesian<Interval_nt_advanced>>;
+          using ET = Traits;
+
+          using Filtered_traits = std::tuple<typename ET::Point_d,AT,ET>;
+
+          return Curve<Filtered_traits, true>(point_range);
+        }
+        else if constexpr (Traits::Dimension::value==3)
+        {
+          using AT = Frechet_distance_traits_3<Simple_cartesian<Interval_nt_advanced>>;
+          using ET = Traits;
+
+          using Filtered_traits = std::tuple<typename ET::Point_d,AT,ET>;
+
+          return Curve<Filtered_traits, true>(point_range);
+        }
+        else
+        {
+          // using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
+          // using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
+          // using Filtered_traits = std::pair<Frechet_distance_traits_d<AK>, Frechet_distance_traits_d<EK>>;
+
+          // return Curve<Filtered_traits, true>(point_range);
+          return Curve<Traits, false>(point_range, traits);
+        }
+      }
+    }
+    else
+      return Curve<Traits, false>(point_range, traits);
+  }
 }
 
 template <class Traits, bool is_filtered>
