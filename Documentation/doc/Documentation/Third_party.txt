@@ -289,6 +289,8 @@ requires solving complex non-linear least squares problems.
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
 for more information.
 
+\attention \ceres requires to be compiled with the exact same version of \eigen that is used for \cgal.
+
 \attention \ceres indicates that `glog` is a recommended dependency. `glog` has `libunwind` as a recommended dependency.
 On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
 If you experience such an issue, we recommend to compile \ceres without `glog` support.
@@ -315,7 +317,7 @@ The \scip web site is <A HREF="https://www.scipopt.org/">`https://www.scipopt.or
 
 \osqp (Operator Splitting Quadratic Program) is currently one of the fastest open source solvers for convex Quadratic Programs (QP).
 
-In \cgal, \osqp provides an optional solver for the QP problems often arising in various computational geometry algorithms.
+In \cgal, \osqp provides an optional solver for the quadratic programming used in the \ref PkgShapeRegularization package.
 In order to use \osqp in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OSQP_support` provided in `CGAL_OSQP_support.cmake`.
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.
