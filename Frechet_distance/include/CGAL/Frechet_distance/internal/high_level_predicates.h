@@ -90,7 +90,7 @@ fill_lambda(const Point& circle_center,
     make_positive(start);
     make_less_than_one(end);
 
-    auto valid_interval = start <= FT(1) && end >= FT(0);
+    auto valid_interval = CGAL_AND(start <= FT(1), end >= FT(0));
     if (!is_certain(valid_interval)) return std::nullopt;
 
     if (valid_interval)
@@ -127,7 +127,7 @@ intersection_interval(Curve<T, true> const& curve1,
   // if not empty
 
   std::optional<bool> res =
-    fill_lambda<typename T::first_type>(
+    fill_lambda<typename C::AT>(
       curve1[center_id], curve2[seg_start_id], curve2[seg_start_id + 1],
       C::inf(radius), II, curve1, center_id, curve2,  seg_start_id);
 
@@ -140,7 +140,7 @@ intersection_interval(Curve<T, true> const& curve1,
     CGAL_assertion(radius.is_point());
     std::pair<Lambda<C>, Lambda<C>> II;
       // if not empty
-    if (fill_lambda<typename T::second_type>(
+    if (fill_lambda<typename C::ET>(
           curve1.rpoint(center_id), curve2.rpoint(seg_start_id), curve2.rpoint(seg_start_id + 1),
           C::inf(radius), II, curve1, center_id, curve2,  seg_start_id).value())
     {

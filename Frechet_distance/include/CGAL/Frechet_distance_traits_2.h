@@ -17,15 +17,6 @@
 #define CGAL_Frechet_distance_TRAITS_2_H
 
 #include <CGAL/license/Frechet_distance.h>
-#include <CGAL/Frechet_distance/internal/id.h>
-#include <CGAL/Frechet_distance/internal/Get_exact_kernel.h>
-#include <CGAL/Bbox_2.h>
-#include <CGAL/Interval_nt.h>
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Cartesian_converter.h>
-
-// TODO: is it too restrictive to use vectors by default?
-#include <vector>
 
 namespace CGAL
 {
@@ -44,14 +35,9 @@ public:
   using Kernel = GT;
   using FT = typename Kernel::FT;
   using Point_d = typename Kernel::Point_2;
-  using Compute_squared_distance_d = typename Kernel::Compute_squared_distance_2;
   using Construct_bbox_d = typename Kernel::Construct_bbox_2;
   using Cartesian_const_iterator_d = typename Kernel::Cartesian_const_iterator_2;
   using Construct_cartesian_const_iterator_d = typename Kernel::Construct_cartesian_const_iterator_2;
-
-  Compute_squared_distance_d compute_squared_distance_d_object() const {
-     return Construct_cartesian_const_iterator_d();
-  }
 
   Construct_bbox_d construct_bbox_d_object() const {
      return Construct_bbox_d();
@@ -60,26 +46,6 @@ public:
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
      return Construct_cartesian_const_iterator_d();
   }
-
-
-/*
-  static constexpr bool is_filtered = CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::is_filtered;
-  static constexpr bool  is_floating_point = CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::is_floating_point;
-
-  using distance_t = CGAL::Interval_nt<false>;
-  using Approximate_kernel = CGAL::Simple_cartesian<distance_t>;
-  using Approximate_point = typename Approximate_kernel::Point_2;
-
-
-  using Exact_kernel = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
-  using Exact_point = typename Exact_kernel::Point_2;
-
-  using D2D = NT_converter<distance_t,double>;
-  using A2E = Cartesian_converter<Approximate_kernel, Exact_kernel, D2D>;
-
-  using FT2I = NT_converter<typename Kernel::FT,distance_t>;
-  using K2A = Cartesian_converter<Kernel, Approximate_kernel, FT2I>;
-*/
 };
 
 }  // end of namespace CGAL
