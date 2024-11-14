@@ -69,6 +69,8 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
 
   const halfedge_descriptor null_h = boost::graph_traits<TriangleMesh>::null_halfedge();
 
+  std::array<halfedge_descriptor,2> retval = make_array(null_h, null_h);
+
   halfedge_descriptor res = PMP::is_needle_triangle_face(f, tmesh, needle_threshold,
                                                          parameters::vertex_point_map(vpm)
                                                                     .geom_traits(gt));
@@ -78,7 +80,7 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
     if(collapse_length_threshold == 0 ||
        edge_length(res, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt)) <= collapse_length_threshold)
     {
-      return make_array(res, null_h);
+      retval[0]=res;
     }
   }
 
@@ -89,10 +91,10 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
                                                      typename Traits::Line_3(get(vpm, source(res,tmesh)), get(vpm, target(res,tmesh))),
                                                      flip_triangle_height_threshold_squared) != LARGER ))
   {
-    return make_array(null_h, res);
+    retval[1]=res;
   }
 
-  return make_array(null_h, null_h);
+  return retval;
 }
 
 template <typename TriangleMesh, typename HalfedgeContainer,
@@ -119,7 +121,10 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
   if(res[0] != boost::graph_traits<TriangleMesh>::null_halfedge())
   {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-    std::cout << "add new needle: " << edge(res[0], tmesh) << std::endl;
+    if (res[1] == boost::graph_traits<TriangleMesh>::null_halfedge())
+      std::cout << "add new needle: " << edge(res[0], tmesh) << std::endl;
+    else
+      std::cout << "add new needle (also a cap): " << edge(res[0], tmesh) << std::endl;
 #endif
     CGAL_assertion(!is_border(res[0], tmesh));
     CGAL_assertion(!get(ecm, edge(res[0], tmesh)));
@@ -738,13 +743,13 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                 << " (" << source(e, tmesh) << " " << tmesh.point(source(h, tmesh))
                 << " --- " << source(e, tmesh) << " " << tmesh.point(target(h, tmesh)) << ")" << std::endl;
 #endif
+
+      // Verify that the element is still badly shaped
+      const std::array<halfedge_descriptor, 2> nc =
+        internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
+                                  cap_threshold, needle_threshold, collapse_length_threshold, flip_triangle_height_threshold_squared);
       if(CGAL::Euler::does_satisfy_link_condition(e, tmesh))
       {
-        // Verify that the element is still badly shaped
-        const std::array<halfedge_descriptor, 2> nc =
-          internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                    cap_threshold, needle_threshold, collapse_length_threshold, flip_triangle_height_threshold_squared);
-
         if(nc[0] != h)
         {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
@@ -862,7 +867,15 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
         std::cout << "\t Uncollapsable edge!" << std::endl;
 #endif
-        next_edges_to_collapse.insert(h);
+        if (nc[1]==boost::graph_traits<TriangleMesh>::null_halfedge())
+          next_edges_to_collapse.insert(h);
+        else
+        {
+#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
+          std::cout << "\t Uncollapsable edge --> register it as cap!" << std::endl;
+#endif
+          edges_to_flip.insert(nc[1]);
+        }
       }
     }
 
