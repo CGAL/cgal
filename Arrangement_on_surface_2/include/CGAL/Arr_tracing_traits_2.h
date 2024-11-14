@@ -80,89 +80,89 @@ private:
   using Base = BaseTraits;
 
   //! A set of bits that indicate whether operations should be traced.
-  std::size_t m_flags;
+  unsigned long long m_flags;
 
   bool compare_x_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_X_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_X_2_OP))); }
 
   bool compare_xy_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_XY_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_XY_2_OP))); }
 
   bool construct_min_vertex_op() const
-  { return (0 != (m_flags & (0x1 << CONSTRUCT_MIN_VERTEX_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << CONSTRUCT_MIN_VERTEX_2_OP))); }
 
   bool construct_max_vertex_op() const
-  { return (0 != (m_flags & (0x1 << CONSTRUCT_MAX_VERTEX_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << CONSTRUCT_MAX_VERTEX_2_OP))); }
 
   bool is_vertical_op() const
-  { return (0 != (m_flags & (0x1 << IS_VERTICAL_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << IS_VERTICAL_2_OP))); }
 
   bool compare_y_at_x_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_2_OP))); }
 
   bool equal_points_op() const
-  { return (0 != (m_flags & (0x1 << EQUAL_POINTS_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << EQUAL_POINTS_2_OP))); }
 
   bool equal_curves_op() const
-  { return (0 != (m_flags & (0x1 << EQUAL_CURVES_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << EQUAL_CURVES_2_OP))); }
 
   bool compare_y_at_x_left_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_LEFT_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_LEFT_2_OP))); }
 
   bool compare_y_at_x_right_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_RIGHT_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_Y_AT_X_RIGHT_2_OP))); }
 
   bool make_x_monotone_op() const
-  { return (0 != (m_flags & (0x1 << MAKE_X_MONOTONE_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << MAKE_X_MONOTONE_2_OP))); }
 
   bool split_op() const
-  { return (0 != (m_flags & (0x1 << SPLIT_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << SPLIT_2_OP))); }
 
   bool intersect_op() const
-  { return (0 != (m_flags & (0x1 << INTERSECT_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << INTERSECT_2_OP))); }
 
   bool are_mergeable_op() const
-  { return (0 != (m_flags & (0x1 << ARE_MERGEABLE_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << ARE_MERGEABLE_2_OP))); }
 
   bool merge_op() const
-  { return (0 != (m_flags & (0x1 << MERGE_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << MERGE_2_OP))); }
 
   bool construct_opposite_op() const
-  { return (0 != (m_flags & (0x1 << CONSTRUCT_2_OPPOSITE_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << CONSTRUCT_2_OPPOSITE_2_OP))); }
 
   bool compare_endpoints_xy_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_ENDPOINTS_XY_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_ENDPOINTS_XY_2_OP))); }
 
   bool approximate_op() const
-  { return (0 != (m_flags & (0x1 << APPROXIMATE_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << APPROXIMATE_2_OP))); }
 
   // left-right
 
   bool parameter_space_in_x_op() const
-  { return (0 != (m_flags & (0x1 << PARAMETER_SPACE_IN_X_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << PARAMETER_SPACE_IN_X_2_OP))); }
 
   bool is_on_x_identification_op() const
-  { return m_flags & (0x1 << IS_ON_X_IDENTIFICATION_2_OP); }
+  { return (0 != (m_flags & (0x1ull << IS_ON_X_IDENTIFICATION_2_OP))); }
 
   bool compare_y_on_boundary_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_Y_ON_BOUNDARY_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_Y_ON_BOUNDARY_2_OP))); }
 
   bool compare_y_near_boundary_op() const
-  { return m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_2_OP); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_Y_NEAR_BOUNDARY_2_OP))); }
 
   // bottom-top
 
   bool parameter_space_in_y_op() const
-  { return (0 != (m_flags & (0x1 << PARAMETER_SPACE_IN_Y_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << PARAMETER_SPACE_IN_Y_2_OP))); }
 
   bool is_on_y_identification_op() const
-  { return m_flags & (0x1 << IS_ON_Y_IDENTIFICATION_2_OP); }
+  { return (0 != (m_flags & (0x1ull << IS_ON_Y_IDENTIFICATION_2_OP))); }
 
   bool compare_x_on_boundary_op() const
-  { return (0 != (m_flags & (0x1 << COMPARE_X_ON_BOUNDARY_2_OP))); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_X_ON_BOUNDARY_2_OP))); }
 
   bool compare_x_near_boundary_op() const
-  { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_2_OP); }
+  { return (0 != (m_flags & (0x1ull << COMPARE_X_NEAR_BOUNDARY_2_OP))); }
 
 public:
   /*! constructs default. */
@@ -176,7 +176,7 @@ public:
   /*! enables the trace of a traits operation.
    * \param id the operation identifier.
    */
-  void enable_trace(Operation_id id) { m_flags |= 0x1 << id; }
+  void enable_trace(Operation_id id) { m_flags |= 0x1ull << id; }
 
   /*! enables the trace of all traits operations.
    */
@@ -185,7 +185,7 @@ public:
   /*! disables the trace of a traits operation.
    * \param id the operation identifier.
    */
-  void disable_trace(Operation_id id) { m_flags &= ~(0x1 << id); }
+  void disable_trace(Operation_id id) { m_flags &= ~(0x1ull << id); }
 
   /*! disables the trace of all traits operations.
    */
