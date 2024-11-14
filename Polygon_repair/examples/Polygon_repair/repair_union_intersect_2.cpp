@@ -61,7 +61,12 @@ main(int argc, char* argv[])
     pB.push_back(Point_2(1,1));
     pB.push_back(Point_2(-1,1));
     mpwh = CGAL::Polygon_repair::join(mpwh, pB);
+
+    std::ofstream out("joinn.wkt");
+    CGAL::IO::write_multi_polygon_WKT(out, mpwh);
+#ifdef CGAL_USE_BASIC_VIEWER
     CGAL::draw(mpwh);
+#endif
   }
   return 0;
 }
