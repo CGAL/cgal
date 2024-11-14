@@ -1,9 +1,10 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Bbox_2.h>
 
+template <class FT_>
 struct MinimalFrechetTraits {
   using Dimension = CGAL::Dimension_tag<2>;
-  using FT = double;
+  using FT = FT_;
 
   struct Point_d
   {};
@@ -52,7 +53,19 @@ struct MinimalFrechetTraits {
 
 int main()
 {
-  std::vector<MinimalFrechetTraits::Point_d> curve;
-  /* bool decision = */ CGAL::is_Frechet_distance_larger<MinimalFrechetTraits>(curve, curve, 0.1);
+  {
+    using Traits = MinimalFrechetTraits<double>;
+    std::vector<Traits::Point_d> curve;
+    /* bool decision = */ CGAL::is_Frechet_distance_larger<Traits, true>(curve, curve, 0.1);
+  }
+
+  {
+    using Traits = MinimalFrechetTraits<CGAL::Exact_rational>;
+    std::vector<Traits::Point_d> curve;
+    /* bool decision = */ CGAL::is_Frechet_distance_larger<Traits, true>(curve, curve, 0.1);
+  }
+
+
+
   return 0;
 }

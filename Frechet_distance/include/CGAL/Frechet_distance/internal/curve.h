@@ -100,17 +100,27 @@ public:
     Curve() = default;
 
 
-    template <class PointRange>
-    Curve(const PointRange& point_range)
+    template <class PointRange, class Input_traits>
+    Curve(const PointRange& point_range, const Input_traits& in_traits, const Rational_traits& rt = Rational_traits())
+      : rational_traits_(rt)
     {
-        using IPoint = typename std::iterator_traits<typename PointRange::const_iterator>::value_type;
-        using K2I = Cartesian_converter< typename Kernel_traits<IPoint>::Kernel,
-                                         typename Kernel_traits<Point>::Kernel>;
+        static constexpr int dim = Approximate_traits::Dimension::value;
 
         this->points.reserve(point_range.size());
-        K2I convert;
+        std::array<distance_t, dim> coords;
+        auto ccci = in_traits.construct_cartesian_const_iterator_d_object();
         for (auto const& p : point_range)
-          this->points.push_back(convert(p));
+        {
+          auto itp = ccci(p);
+          for (int i=0;i<dim; ++i)
+            coords[i]=distance_t(to_interval(*itp++));
+          if constexpr (dim==2)
+            this->points.emplace_back(coords[0], coords[1]);
+          else if constexpr (dim==3)
+            this->points.emplace_back(coords[0], coords[1], coords[2]);
+          else
+            this->points.emplace_back(coords.begin(), coords.end());
+        }
 
         this->init();
     }
@@ -120,6 +130,10 @@ public:
       I2R convert;
       return convert(this->point(i));
     }
+
+    const Rational_traits& rational_traits() const { return rational_traits_; }
+
+    Rational_traits rational_traits_;
 };
 
 //Exact rational based filtered version
@@ -141,8 +155,9 @@ public:
 
     Curve() = default;
 
-    template <class PointRange>
-    Curve(const PointRange& point_range)
+    template <class PointRange, class Input_traits>
+    Curve(const PointRange& point_range, const Input_traits& in_traits, const Rational_traits& rt = Rational_traits())
+      : rational_traits_(rt)
     {
         this->points.reserve(point_range.size());
         rational_points.reserve(point_range.size());
@@ -151,9 +166,23 @@ public:
         {
           if constexpr(std::is_same_v<Input_point, Rational_point>)
           {
-            Cartesian_converter<typename Kernel_traits<Input_point>::Kernel,
-                                typename Kernel_traits<typename Approximate_traits::Point_d>::Kernel> convert;
-            this->points.push_back(convert(p));
+            static constexpr int dim = Approximate_traits::Dimension::value;
+
+            this->points.reserve(point_range.size());
+            std::array<distance_t, dim> coords;
+            auto ccci = in_traits.construct_cartesian_const_iterator_d_object();
+            for (auto const& p : point_range)
+            {
+              auto itp = ccci(p);
+              for (int i=0;i<dim; ++i)
+                coords[i]=distance_t(to_interval(*itp++));
+              if constexpr (dim==2)
+                this->points.emplace_back(coords[0], coords[1]);
+              else if constexpr (dim==3)
+                this->points.emplace_back(coords[0], coords[1], coords[2]);
+              else
+                this->points.emplace_back(coords.begin(), coords.end());
+            }
           }
           else
           {
@@ -173,6 +202,9 @@ public:
         return exact(rational_points[i]);
     }
 
+    const Rational_traits& rational_traits() const { return rational_traits_; }
+
+    Rational_traits rational_traits_;
     std::vector<Input_point> rational_points;
 };
 

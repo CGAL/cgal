@@ -117,13 +117,19 @@ struct Lambda<Curve<FilteredTraits,true>>
         const typename Curve::Rational_point& ls = curve2->rpoint(line_start);
         const typename Curve::Rational_point& le = curve2->rpoint(line_start+1);
         const typename Curve::Rational_point& cc = curve1->rpoint(circle_center);
+
+        auto ccci = curve1->rational_traits().construct_cartesian_const_iterator_d_object();
         Rational a, b, c;
+
+        auto it_le=ccci(le), it_ls=ccci(ls), it_cc=ccci(cc);
+
         for (auto i = 0; i < Curve::dimension; ++i) {
-            Rational start_end_diff = le[i] - ls[i];
+            Rational start_end_diff = *it_le - *it_ls;
             a += CGAL::square(start_end_diff);
-            Rational start_center_diff = ls[i] - cc[i];
+            Rational start_center_diff = *it_ls - *it_cc;
             b -= start_center_diff * start_end_diff;
             c += CGAL::square(start_center_diff);
+            ++it_le; ++it_ls; ++it_cc;
         }
         CGAL_assertion(radius.is_point());
         c -= CGAL::square(Rational(to_double(radius)));

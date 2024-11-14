@@ -61,7 +61,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
 
         using Filtered_traits = std::pair<Frechet_distance_traits_2<AK>, Frechet_distance_traits_2<EK>>;
 
-        return Curve<Filtered_traits, true>(point_range);
+        return Curve<Filtered_traits, true>(point_range, traits);
       }
       else if constexpr (Traits::Dimension::value==3)
       {
@@ -70,7 +70,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
 
         using Filtered_traits = std::pair<Frechet_distance_traits_3<AK>, Frechet_distance_traits_3<EK>>;
 
-        return Curve<Filtered_traits, true>(point_range);
+        return Curve<Filtered_traits, true>(point_range, traits);
       }
       else
       {
@@ -91,7 +91,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
 
         using Filtered_traits = std::tuple<typename Traits::Point_d, Frechet_distance_traits_2<AK>, Frechet_distance_traits_2<EK>>;
 
-        return Curve<Filtered_traits, true>(point_range);
+        return Curve<Filtered_traits, true>(point_range, traits);
       }
       else if constexpr (Traits::Dimension::value==3)
       {
@@ -100,7 +100,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
 
         using Filtered_traits = std::tuple<typename Traits::Point_d, Frechet_distance_traits_3<AK>, Frechet_distance_traits_3<EK>>;
 
-        return Curve<Filtered_traits, true>(point_range);
+        return Curve<Filtered_traits, true>(point_range, traits);
       }
       else
       {
@@ -126,7 +126,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
 
           using Filtered_traits = std::pair<AT,ET>;
 
-          return Curve<Filtered_traits, true>(point_range);
+          return Curve<Filtered_traits, true>(point_range, traits);
         }
         else if constexpr (Traits::Dimension::value==3)
         {
@@ -135,7 +135,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
 
           using Filtered_traits = std::pair<AT,ET>;
 
-          return Curve<Filtered_traits, true>(point_range);
+          return Curve<Filtered_traits, true>(point_range, traits);
         }
         else
         {
@@ -156,7 +156,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
 
           using Filtered_traits = std::tuple<typename ET::Point_d,AT,ET>;
 
-          return Curve<Filtered_traits, true>(point_range);
+          return Curve<Filtered_traits, true>(point_range, traits, traits);
         }
         else if constexpr (Traits::Dimension::value==3)
         {
@@ -165,7 +165,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
 
           using Filtered_traits = std::tuple<typename ET::Point_d,AT,ET>;
 
-          return Curve<Filtered_traits, true>(point_range);
+          return Curve<Filtered_traits, true>(point_range, traits, traits);
         }
         else
         {

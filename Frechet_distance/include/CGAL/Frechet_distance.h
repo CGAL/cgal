@@ -35,7 +35,7 @@ namespace CGAL
  * \param traits the geometric traits object
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
- * \tparam force_filtering if `true` interval arithmetic will be used as a filter
+ * \tparam force_filtering if `true` interval arithmetic combined with exact rational will be used internally
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  */
@@ -69,7 +69,7 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  *  \param traits the geometric traits object
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
- * \tparam force_filtering if `true` interval arithmetic will be used as a filter
+ * \tparam force_filtering if `true` interval arithmetic combined with exact rational will be used internally
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
  * with `Traits::Point` as value type.
  *
@@ -83,7 +83,7 @@ std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline
                                                       const Traits& traits = Traits())
 {
     constexpr bool filtered = force_filtering ||
-      std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve(polyline1, traits))::FT,
+      std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits))::FT,
                      Interval_nt<false>>;
     Protect_FPU_rounding<filtered> p;
 
