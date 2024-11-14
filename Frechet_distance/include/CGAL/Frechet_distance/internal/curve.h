@@ -17,7 +17,6 @@
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/id.h>
 
-#include <CGAL/Interval_nt.h>
 #include <CGAL/Kernel/Type_mapper.h>
 #include <CGAL/Bbox.h>
 #include <CGAL/Bbox_2.h>
@@ -74,7 +73,7 @@ class Curve;
     SC<Rational>          N                             N                   Y as we later need exact
     SC<Interval_nt>       N                             N                   Y  to simplify life
     SC<Expr>              N                             N                   Y as we later need exact
-    == Epeck_with_sqrt
+    Epeck_with_sqrt       N                             N                   Y as we later need exact
 */
 
 //floating-point based filtered version
@@ -145,15 +144,22 @@ public:
     template <class PointRange>
     Curve(const PointRange& point_range)
     {
-        using IPoint = typename std::iterator_traits<typename PointRange::const_iterator>::value_type;
-
         this->points.reserve(point_range.size());
         rational_points.reserve(point_range.size());
 
-        typename Kernel_traits<Input_point>::Kernel::C2F convert;
         for (auto const& p : point_range)
         {
-          this->points.push_back(convert(p));
+          if constexpr(std::is_same_v<Input_point, Rational_point>)
+          {
+            Cartesian_converter<typename Kernel_traits<Input_point>::Kernel,
+                                typename Kernel_traits<typename Approximate_traits::Point_d>::Kernel> convert;
+            this->points.push_back(convert(p));
+          }
+          else
+          {
+            typename Kernel_traits<Input_point>::Kernel::C2F convert;
+            this->points.push_back(convert(p));
+          }
           rational_points.push_back(p);
         }
         this->init();
@@ -161,7 +167,10 @@ public:
 
     Rational_point rpoint(PointID const& i) const
     {
-      return exact(rational_points[i]);
+      if constexpr (std::is_same_v<Input_point, Rational_point>)
+        return rational_points[i];
+      else
+        return exact(rational_points[i]);
     }
 
     std::vector<Input_point> rational_points;
