@@ -19,25 +19,39 @@
 #include <CGAL/Frechet_distance/internal/curve.h>
 #include <CGAL/Frechet_distance/internal/frechet_light.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
+#include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
 #include <CGAL/Frechet_distance_traits_2.h>
 #include <CGAL/Frechet_distance_traits_3.h>
 #include <CGAL/Frechet_distance_traits_d.h>
+#include <CGAL/Simple_cartesian.h>
+// #include <CGAL/Epick_d.h>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Interval_nt.h>
 
 namespace CGAL {
 namespace Frechet_distance_ {
 namespace internal {
 
+template <class K, bool hfp = ::CGAL::internal::Has_nested_type_Has_filtered_predicates_tag<K>::value>
+struct Is_filtered_kernel
+{
+  static constexpr bool value = K::Has_filtered_predicates_tag::value;
+};
+
+template <class K>
+struct Is_filtered_kernel<K,false>
+{
+  static constexpr bool value = false;
+};
+
 template <class PointRange, class Traits>
 auto toCurve(const PointRange& point_range, const Traits& traits)
 {
   using IPoint = typename Traits::Point_d;
-  constexpr bool is_from_cgal_kernel =
-    !std::is_same_v<typename Kernel_traits<IPoint>::Kernel, internal_kernel_traits::Dummy_kernel<IPoint>>;
 
-  if constexpr (is_from_cgal_kernel)
+  if constexpr (Is_filtered_kernel<typename Kernel_traits<IPoint>::Kernel>::value)
   {
-    if constexpr (std::is_floating_point<typename Traits::FT>::type::value &&
-                  Kernel_traits<IPoint>::Kernel::Has_filtered_predicates_tag::value)
+    if constexpr (std::is_floating_point<typename Traits::FT>::type::value)
     {
       if constexpr (Traits::Dimension::value==2)
       {
@@ -58,20 +72,45 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
         return Curve<Filtered_traits, true>(point_range);
       }
       else
-        return Curve<Traits, false>(point_range, traits);
-/*
-      else
       {
-        using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
-        using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
-        using Filtered_traits = std::pair<Frechet_distance_traits_3<AK>, Frechet_distance_traits_3<EK>>;
+        // using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
+        // using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
+        // using Filtered_traits = std::pair<Frechet_distance_traits_d<AK>, Frechet_distance_traits_d<EK>>;
+
+        // return Curve<Filtered_traits, true>(point_range);
+        return Curve<Traits, false>(point_range, traits);
+      }
+    }
+    else
+    {
+      if constexpr (Traits::Dimension::value==2)
+      {
+        using AK = CGAL::Simple_cartesian<Interval_nt_advanced>;
+        using EK = typename Kernel_traits<typename Traits::Point_d>::Kernel::Exact_kernel;
+
+        using Filtered_traits = std::tuple<typename Traits::Point_d, Frechet_distance_traits_2<AK>, Frechet_distance_traits_2<EK>>;
 
         return Curve<Filtered_traits, true>(point_range);
       }
-*/
+      else if constexpr (Traits::Dimension::value==3)
+      {
+        using AK = CGAL::Simple_cartesian<Interval_nt_advanced>;
+        using EK = typename Kernel_traits<typename Traits::Point_d>::Kernel::Exact_kernel;
+
+        using Filtered_traits = std::tuple<typename Traits::Point_d, Frechet_distance_traits_3<AK>, Frechet_distance_traits_3<EK>>;
+
+        return Curve<Filtered_traits, true>(point_range);
+      }
+      else
+      {
+        // using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
+        // using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
+        // using Filtered_traits = std::pair<Frechet_distance_traits_d<AK>, Frechet_distance_traits_d<EK>>;
+
+        // return Curve<Filtered_traits, true>(point_range);
+        return Curve<Traits, false>(point_range, traits);
+      }
     }
-    else
-      return Curve<Traits, false>(point_range, traits);
   }
   else
     return Curve<Traits, false>(point_range, traits);

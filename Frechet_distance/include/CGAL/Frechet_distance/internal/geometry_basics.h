@@ -53,7 +53,7 @@ struct Lambda<Curve<FilteredTraits,true>>
     using Approx = distance_t;
     using PointID = typename C::PointID;
     using Rational = typename Curve::Rational;
-    using Exact = CGAL::Sqrt_extension<Rational, Rational, CGAL::Tag_true, CGAL::Tag_false>;
+    using Exact = typename Root_of_traits<Rational>::Root_of_2;
 
     mutable Approx approx;
     mutable std::optional<Exact> exact;
@@ -128,11 +128,12 @@ struct Lambda<Curve<FilteredTraits,true>>
         CGAL_assertion(radius.is_point());
         c -= CGAL::square(Rational(to_double(radius)));
 
+        CGAL_assertion(a!=0);
         Rational minus_b_div_a = b / a;
         Rational d = CGAL::square(minus_b_div_a) - c / a;
         if (! is_negative(d)) {
             if (is_start) {
-                Exact start(minus_b_div_a, -1, d);
+                Exact start = make_root_of_2(minus_b_div_a, -1, d);
                 if (is_negative(start)) start = Exact(0);
                 if (start <= Exact(1)) {
                     exact = std::make_optional(start);
@@ -141,7 +142,7 @@ struct Lambda<Curve<FilteredTraits,true>>
                     return true;
                 }
             } else {
-                Exact end(minus_b_div_a, 1, d);
+                Exact end = make_root_of_2(minus_b_div_a, 1, d);
                 if (end > Exact(1)) end = Exact(1);
                 if (! is_negative(end)) {
                     exact = std::make_optional(end);

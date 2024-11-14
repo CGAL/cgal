@@ -58,8 +58,6 @@ double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
     return sqrt(d).sup();
 }
 
-// TODO: Clean up Curve + factorize filtered vs non-filtered version with a base class
-
 /*!
  * \ingroup PkgFrechetDistanceFunctions
  * A class representing a trajectory. Additionally to the points given in the
@@ -68,7 +66,18 @@ double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
 template <typename Traits, bool is_filtered=false>
 class Curve;
 
-//filtered version
+/*
+      K           Has_filtered_predicates     is_floating_point(K::FT)      store input
+    Epick                 Y                             Y                   N as we can  do to_double of interval
+    Epeck                 Y                             N                   Y as we later need exact
+    SC<double>            N                             Y                   N as we can  do to_double of interval
+    SC<Rational>          N                             N                   Y as we later need exact
+    SC<Interval_nt>       N                             N                   Y  to simplify life
+    SC<Expr>              N                             N                   Y as we later need exact
+    == Epeck_with_sqrt
+*/
+
+//floating-point based filtered version
 template <typename Approximate_traits, typename Rational_traits>
 class Curve<std::pair<Approximate_traits,Rational_traits>, true>
   : public Curve<Approximate_traits, false>
@@ -82,36 +91,22 @@ public:
     using Rational = typename Rational_traits::FT;
     using Rational_point = typename Rational_traits::Point_d;
 
+    using AT = Approximate_traits;
+    using ET = Rational_traits;
+
     // TODO: this assumes that input interval are all tight --> need a PM!
     using I2R = Cartesian_converter< typename Kernel_traits<Point>::Kernel,
                                      typename Kernel_traits<Rational_point>::Kernel, NT_converter<distance_t,double>>;
 
     Curve() = default;
 
-/*
-      K           Has_filtered_predicates     is_floating_point(K::FT)      store input
-    Epick                 Y                             Y                   N as we can  do to_double of interval
-    Epeck                 Y                             N                   Y as we later need exact
-    SC<double>            N                             Y                   N as we can  do to_double of interval
-    SC<Rational>          N                             N                   Y as we later need exact
-    SC<Interval_nt>       N                             N                   Y  to simplify life
-    SC<Expr>              N                             N                   Y as we later need exact
-    == Epeck_with_sqrt
-*/
+
     template <class PointRange>
     Curve(const PointRange& point_range)
     {
         using IPoint = typename std::iterator_traits<typename PointRange::const_iterator>::value_type;
         using K2I = Cartesian_converter< typename Kernel_traits<IPoint>::Kernel,
                                          typename Kernel_traits<Point>::Kernel>;
-
-        //TODO: not working for now with EPECK or SC<Rational>
-        //~ if constexpr ( ! is_floating_point) {
-            //~ input.reserve(point_range.size());
-            //~ for (auto const& p : point_range) {
-                //~ input.push_back(p);
-            //~ }
-        //~ }
 
         this->points.reserve(point_range.size());
         K2I convert;
@@ -123,19 +118,53 @@ public:
 
     Rational_point rpoint(PointID const& i) const
     {
-        //~ if constexpr (is_floating_point) {
-            I2R convert;
-            return convert(this->point(i));
-        //~ }else{
-          //~ if constexpr (is_filtered) {
-              //~ return typename K::C2E()(input[i]);
-          //~ }else{
-              //~ return input[i];
-          //~ }
-        //~ }
-        //~ CGAL_assertion(false);
-        //~ return Rational_point();
+      I2R convert;
+      return convert(this->point(i));
     }
+};
+
+//Exact rational based filtered version
+template <typename Input_point, typename Approximate_traits, typename Rational_traits>
+class Curve<std::tuple<Input_point, Approximate_traits,Rational_traits>, true>
+  : public Curve<Approximate_traits, false>
+{
+public:
+    using Base = Curve<Approximate_traits, false>;
+    using distance_t = typename Approximate_traits::FT;
+    using Point = typename Approximate_traits::Point_d;
+    using PointID = typename Base::PointID;
+
+    using Rational = typename Rational_traits::FT;
+    using Rational_point = typename Rational_traits::Point_d;
+
+    using AT = Approximate_traits;
+    using ET = Rational_traits;
+
+    Curve() = default;
+
+    template <class PointRange>
+    Curve(const PointRange& point_range)
+    {
+        using IPoint = typename std::iterator_traits<typename PointRange::const_iterator>::value_type;
+
+        this->points.reserve(point_range.size());
+        rational_points.reserve(point_range.size());
+
+        typename Kernel_traits<Input_point>::Kernel::C2F convert;
+        for (auto const& p : point_range)
+        {
+          this->points.push_back(convert(p));
+          rational_points.push_back(p);
+        }
+        this->init();
+    }
+
+    Rational_point rpoint(PointID const& i) const
+    {
+      return exact(rational_points[i]);
+    }
+
+    std::vector<Input_point> rational_points;
 };
 
 template <typename T>

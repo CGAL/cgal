@@ -17,9 +17,6 @@
 #define CGAL_Frechet_distance_TRAITS_D_H
 
 #include <CGAL/license/Frechet_distance.h>
-#include <CGAL/Frechet_distance/internal/id.h>
-#include <CGAL/Frechet_distance/internal/Get_exact_kernel.h>
-#include <CGAL/Bbox.h>
 
 namespace CGAL
 {
@@ -38,14 +35,9 @@ public:
   using Kernel = GT;
   using FT = typename Kernel::FT;
   using Point_d = typename Kernel::Point_d;
-  using Compute_squared_distance_d = typename Kernel::Squared_distance_d;
   using Construct_bbox_d = typename Kernel::Construct_bbox_d;
   using Cartesian_const_iterator_d = typename Kernel::Cartesian_const_iterator_d;
   using Construct_cartesian_const_iterator_d = typename Kernel::Construct_cartesian_const_iterator_d;
-
-  Compute_squared_distance_d compute_squared_distance_d_object() const {
-     return Construct_cartesian_const_iterator_d();
-  }
 
   Construct_bbox_d construct_bbox_d_object() const {
      return Construct_bbox_d();
