@@ -93,12 +93,7 @@ public:
     using AT = Approximate_traits;
     using ET = Rational_traits;
 
-    // TODO: this assumes that input interval are all tight --> need a PM!
-    using I2R = Cartesian_converter< typename Kernel_traits<Point>::Kernel,
-                                     typename Kernel_traits<Rational_point>::Kernel, NT_converter<distance_t,double>>;
-
     Curve() = default;
-
 
     template <class PointRange, class Input_traits>
     Curve(const PointRange& point_range, const Input_traits& in_traits, const Rational_traits& rt = Rational_traits())
@@ -119,7 +114,7 @@ public:
           else if constexpr (dim==3)
             this->points.emplace_back(coords[0], coords[1], coords[2]);
           else
-            this->points.emplace_back(coords.begin(), coords.end());
+            this->points.emplace_back(coords);
         }
 
         this->init();
@@ -127,8 +122,24 @@ public:
 
     Rational_point rpoint(PointID const& i) const
     {
-      I2R convert;
-      return convert(this->point(i));
+      if constexpr (Approximate_traits::Dimension::value<=3)
+      {
+        // TODO: this assumes that input interval are all tight --> need a PM!
+        using I2R = Cartesian_converter< typename Kernel_traits<Point>::Kernel,
+                                         typename Kernel_traits<Rational_point>::Kernel, NT_converter<distance_t,double>>;
+        I2R convert;
+        return convert(this->point(i));
+      }
+      else
+      {
+        Rational_point rp;
+        for(int d=0; d<Approximate_traits::Dimension::value; ++d)
+        {
+          CGAL_assertion(this->point(i)[d].inf()==this->point(i)[d].sup());
+          rp[d]=Rational(this->point(i)[d].inf());
+        }
+        return rp;
+      }
     }
 
     const Rational_traits& rational_traits() const { return rational_traits_; }
@@ -214,14 +225,11 @@ class Curve<T, false>
 public:
     using Traits = T;
 
-  //TODO: we expect Dimension_tag for now.
-  static constexpr int dimension =  Traits::Dimension::value;
-  using Bbox = std::conditional_t<dimension==2,
-                                  Bbox_2, std::conditional_t<dimension==3,
-                                                             Bbox_3, ::CGAL::Bbox<typename Traits::Dimension, double>>>;
+    static constexpr int dimension =  Traits::Dimension::value;
+    using Bbox = std::conditional_t<dimension==2,
+                                    Bbox_2, std::conditional_t<dimension==3,
+                                                               Bbox_3, ::CGAL::Bbox<typename Traits::Dimension, double>>>;
 
-
-//////
     using FT = typename Traits::FT;
     using IFT = std::conditional_t<std::is_floating_point_v<FT>, FT, CGAL::Interval_nt<false>>;
     using distance_t = FT;
@@ -297,7 +305,9 @@ public:
 
 private:
     // private as it will do nasty things if p is a temporary
-    static auto begin(const Point& p, const Traits& traits)
+    template <class P>
+    static auto begin(const P& p, const Traits& traits,
+                      std::enable_if_t<!std::is_same_v<P,std::array<FT,dimension>>>)
     {
       Construct_cartesian_const_iterator_d ccci = traits.construct_cartesian_const_iterator_d_object();
       return ccci(p);
