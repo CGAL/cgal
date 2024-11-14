@@ -714,7 +714,7 @@ private:
   {
     Vector_3 bmin, bmax;
 
-    Orientation ori = ON_ORIENTED_BOUNDARY; // to avoid maybe uninitialzed warning
+    Orientation ori = ON_ORIENTED_BOUNDARY; // to avoid maybe uninitialized warning
 
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
