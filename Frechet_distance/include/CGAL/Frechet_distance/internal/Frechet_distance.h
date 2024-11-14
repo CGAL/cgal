@@ -22,9 +22,8 @@
 #include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
 #include <CGAL/Frechet_distance_traits_2.h>
 #include <CGAL/Frechet_distance_traits_3.h>
-#include <CGAL/Frechet_distance_traits_d.h>
+#include <CGAL/Frechet_distance_traits.h>
 #include <CGAL/Simple_cartesian.h>
-// #include <CGAL/Epick_d.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Lazy.h>
@@ -74,12 +73,19 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
       }
       else
       {
-        // using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
-        // using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
-        // using Filtered_traits = std::pair<Frechet_distance_traits_d<AK>, Frechet_distance_traits_d<EK>>;
+#if 0
+        using Base_kernel = typename Kernel_traits<typename Traits::Point_d>::Kernel;
 
-        // return Curve<Filtered_traits, true>(point_range);
-        return Curve<Traits, false>(point_range, traits);
+        using AK = Kernel_d_interface<typename Base_kernel::AK>;
+        using EK = Kernel_d_interface<typename Base_kernel::EK>;
+        //using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
+#endif
+        using AT = Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
+        using ET = Frechet_distance_traits<CGAL::Exact_rational, Traits::Dimension::value>;
+        using Filtered_traits = std::pair<AT,ET>;
+
+        return Curve<Filtered_traits, true>(point_range, traits);
+        //return Curve<Traits, false>(point_range, traits);
       }
     }
     else
@@ -104,11 +110,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
       }
       else
       {
-        // using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
-        // using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
-        // using Filtered_traits = std::pair<Frechet_distance_traits_d<AK>, Frechet_distance_traits_d<EK>>;
-
-        // return Curve<Filtered_traits, true>(point_range);
+        //TODO: not implemented
         return Curve<Traits, false>(point_range, traits);
       }
     }
@@ -139,11 +141,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
         }
         else
         {
-          // using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
-          // using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
-          // using Filtered_traits = std::pair<Frechet_distance_traits_d<AK>, Frechet_distance_traits_d<EK>>;
-
-          // return Curve<Filtered_traits, true>(point_range);
+          //TODO: not implemented
           return Curve<Traits, false>(point_range, traits);
         }
       }
@@ -169,11 +167,7 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
         }
         else
         {
-          // using AK = Kernel_d_interface<Cartesian_base_d<distance_t,Dimension_tag<dimension>>>;
-          // using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
-          // using Filtered_traits = std::pair<Frechet_distance_traits_d<AK>, Frechet_distance_traits_d<EK>>;
-
-          // return Curve<Filtered_traits, true>(point_range);
+          //TODO: not implemented
           return Curve<Traits, false>(point_range, traits);
         }
       }
