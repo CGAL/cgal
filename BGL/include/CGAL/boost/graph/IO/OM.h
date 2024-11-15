@@ -15,6 +15,7 @@
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <OpenMesh/Core/Mesh/Traits.hh>
 
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
@@ -34,7 +35,7 @@ namespace internal {
 template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
 bool read_OM(const std::string& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
 {
-  typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraitsDouble> OMesh;
   typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
@@ -75,7 +76,7 @@ bool read_OM(const std::string& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
 template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
 bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
 {
-  typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraitsDouble> OMesh;
   typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
@@ -108,7 +109,7 @@ bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
     omesh.status(omv).set_feature(isfeature);
   }
 
-  return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status);
+  return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status, 18);
 }
 } // end of internal namespace
 
