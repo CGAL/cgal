@@ -618,9 +618,7 @@ inline double IA_sqrt_toward_zero(double d) {
 #ifdef CGAL_ALWAYS_ROUND_TO_NEAREST
   return (d > 0.0) ? nextafter(std::sqrt(d), 0.) : 0.0;
 #else
-  FPU_set_cw(CGAL_FE_DOWNWARD);
   double i = (d > 0.0) ? CGAL_IA_FORCE_TO_DOUBLE(CGAL_BUG_SQRT(CGAL_IA_STOP_CPROP(d))) : 0.0;
-  FPU_set_cw(CGAL_FE_UPWARD);
   return i;
 #endif
 }
