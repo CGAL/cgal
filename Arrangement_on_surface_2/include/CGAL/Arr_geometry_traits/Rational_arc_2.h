@@ -339,7 +339,7 @@ public:
     if (! valid)
       return;
 
-    // Analyze the behaviour of the rational function at x = -oo (the source).
+    // Analyze the behavior of the rational function at x = -oo (the source).
     Algebraic           y0;
     const Arr_parameter_space inf_s =
       _analyze_at_minus_infinity (_numer, _denom, y0);
@@ -351,7 +351,7 @@ public:
     else // if (inf_s == ARR_INTERIOR)
       _ps = Point_2 (0, y0);
 
-    // Analyze the behaviour of the rational function at x = +oo (the target).
+    // Analyze the behavior of the rational function at x = +oo (the target).
     const Arr_parameter_space inf_t =
       _analyze_at_plus_infinity (_numer, _denom, y0);
 
@@ -735,7 +735,7 @@ public:
    */
   Self split_at_pole (const Algebraic& x0)
   {
-    // Analyze the behaviour of the function near the given pole.
+    // Analyze the behavior of the function near the given pole.
     const std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole (x0);
     const CGAL::Sign    sign_left = signs.first;
     const CGAL::Sign    sign_right = signs.second;

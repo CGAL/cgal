@@ -1190,7 +1190,7 @@ Protect_edges_sizing_field<C3T3, MD, Sf>::
 try_to_move_dummy_vertex(const Vertex_handle dummy_vertex,
                          const Weighted_point& new_position)
 {
-  // Insert first to maximise likeliness of success
+  // Insert first to maximize likeliness of success
   Vertex_handle new_dummy = insert_dummy_point(new_position);
 
   if(!try_to_remove_dummy_vertex(dummy_vertex))

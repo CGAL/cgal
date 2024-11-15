@@ -1,8 +1,8 @@
 #define CGAL_CDT_2_DEBUG_INTERSECTIONS 1
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Base_with_time_stamp.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;

@@ -24,10 +24,9 @@
 #include <CGAL/Triangulation_2/internal/CTP2_subconstraint_graph.h>
 #include <boost/tuple/tuple.hpp>
 
-#include <CGAL/Default.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
+
 #include <boost/container/flat_set.hpp>
 
 #include <type_traits>
@@ -55,27 +54,11 @@ public:
 // Tr the base triangulation class
 // Tr has to be Constrained or Constrained_Delaunay with Constrained_triangulation_plus_vertex_base
 
-template < class Tr_ = Default >
+template < class Tr_>
 class Constrained_triangulation_plus_2
-  : public
-Default::Get< Tr_, Constrained_Delaunay_triangulation_2<
-                      Exact_predicates_inexact_constructions_kernel
-                      , Triangulation_data_structure_2<
-                            Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
-                          , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
-                          >
-                      , CGAL::Exact_predicates_tag
-                      > >::type
+  : public Tr_
 {
-  typedef typename
-  Default::Get< Tr_, Constrained_Delaunay_triangulation_2<
-                  Exact_predicates_inexact_constructions_kernel
-                  , Triangulation_data_structure_2<
-                        Triangulation_vertex_base_2<Exact_predicates_inexact_constructions_kernel>
-                      , Constrained_triangulation_face_base_2<Exact_predicates_inexact_constructions_kernel>
-                      >
-                  , CGAL::Exact_predicates_tag
-                  > >::type Tr;
+  typedef Tr_ Tr;
 
 
   template<class CDT>

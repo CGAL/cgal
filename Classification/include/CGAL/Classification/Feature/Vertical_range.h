@@ -102,7 +102,7 @@ public:
         std::size_t J = grid.y(i);
         values[i] = dtm(I,J);
       }
-      dtm.free();
+      (dtm.free)();
     }
 
   }

@@ -185,8 +185,11 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("far", static_cast<float>(viewer->camera()->zFar()));
       getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
-      if( fbo)
+      if(fbo) {
         viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
+        getVao(viewer)->program->setUniformValue("width", fbo->width() * 1.0f);
+        getVao(viewer)->program->setUniformValue("height", fbo->height() * 1.0f);
+      }
     }
     if(getVao(viewer)->program->property("drawLinesAdjacency").toBool())
     {
@@ -225,8 +228,11 @@ void Triangle_container::draw(Viewer_interface* viewer,
       getVao(viewer)->program->setUniformValue("far", static_cast<float>(viewer->camera()->zFar()));
       getVao(viewer)->program->setUniformValue("writing", viewer->isDepthWriting());
       getVao(viewer)->program->setUniformValue("alpha", d->alpha);
-      if( fbo)
+      if(fbo) {
         viewer->glBindTexture(GL_TEXTURE_2D, fbo->texture());
+        getVao(viewer)->program->setUniformValue("width", fbo->width() * 1.0f);
+        getVao(viewer)->program->setUniformValue("height", fbo->height() * 1.0f);
+      }
     }
     if(getVao(viewer)->program->property("isInstanced").toBool())
     {

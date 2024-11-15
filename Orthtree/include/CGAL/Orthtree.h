@@ -1410,7 +1410,7 @@ public:
   }
 
   void dump_box_to_polylines(const Bbox_2& box, std::ostream& os) const {
-    // dump in 3D for visualisation
+    // dump in 3D for visualization
     os << "5 "
        << box.xmin() << " " << box.ymin() << " 0 "
        << box.xmin() << " " << box.ymax() << " 0 "

@@ -30,7 +30,7 @@ using Normal_map  = typename Input_range::Vector_map;
 using Neighbor_query = SD::Point_set::K_neighbor_query<Kernel, Input_range::Index, Point_map>;
 
 using Plane_region = SD::Point_set::Least_squares_plane_fit_region<Kernel, Input_range::Index, Point_map, Normal_map>;
-using Plane_sorting = SD::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range::Index, Neighbor_query, Point_map>;
+using Plane_sorting = SD::Point_set::Least_squares_plane_fit_sorting<Kernel, Input_range::Index, Neighbor_query, Point_map, Normal_map>;
 using Sphere_region = SD::Point_set::Least_squares_sphere_fit_region<Kernel, Input_range::Index, Point_map, Normal_map>;
 using Sphere_sorting = SD::Point_set::Least_squares_sphere_fit_sorting<Kernel, Input_range::Index, Neighbor_query, Point_map>;
 using Cylinder_region = SD::Point_set::Least_squares_cylinder_fit_region<Kernel, Input_range::Index, Point_map, Normal_map>;

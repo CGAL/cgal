@@ -71,7 +71,7 @@ public:
   {
   }
 
-  void free()
+  void free BOOST_PREVENT_MACRO_SUBSTITUTION ()
   {
     m_raw.reset();
     m_sparse.reset();

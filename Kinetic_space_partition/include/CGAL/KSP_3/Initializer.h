@@ -17,14 +17,14 @@
 
 // CGAL includes.
 #include <CGAL/Timer.h>
-#include <CGAL/optimal_bounding_box.h>
-#include <CGAL/Boolean_set_operations_2.h>
+//#include <CGAL/optimal_bounding_box.h>
+//#include <CGAL/Boolean_set_operations_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/intersections.h>
 #include <CGAL/min_quadrilateral_2.h>
-#include <CGAL/Aff_transformation_2.h>
-#include <boost/optional/optional_io.hpp>
+//#include <CGAL/Aff_transformation_2.h>
+//#include <boost/optional/optional_io.hpp>
 
 // Internal includes.
 #include <CGAL/KSP/utils.h>
@@ -74,7 +74,7 @@ private:
   using From_exact = CGAL::Cartesian_converter<Intersection_kernel, Kernel>;
 
   using Bbox_3 = CGAL::Bbox_3;
-  using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
+  //using OBB_traits = CGAL::Oriented_bounding_box_traits_3<Kernel>;
 
   using Parameters = KSP::internal::Parameters_3<FT>;
 
@@ -440,7 +440,7 @@ private:
                 minp = from_exact(intersection);
                 //min = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
-                assert(p != 0);
+                CGAL_assertion(p != 0);
                 min_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
               }
               if (emax < eproj) {
@@ -449,7 +449,7 @@ private:
                 maxp = from_exact(intersection);
                 //max = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
-                assert(p != 0);
+                CGAL_assertion(p != 0);
                 max_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
               }
             }

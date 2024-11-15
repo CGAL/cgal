@@ -185,7 +185,7 @@ protected:
         std::vector<typename Graph_::vertex_descriptor> S(vit, ve);
         std::sort(S.begin (), S.end (), orderD1);
 
-        // Step 2: Initialise an empty set to store vertices sorted by orderD2
+        // Step 2: initialize an empty set to store vertices sorted by orderD2
         Point_set pst(orderD2);
 
         // Step 3: visit S in orderD1

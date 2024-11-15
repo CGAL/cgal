@@ -45,7 +45,6 @@ path = [
         "Installation/auxiliary/cgal_create_cmake_script.1",
         "Installation/auxiliary/gmp/README",
         "Installation/include/CGAL/license/gpl_package_list.txt",
-        "MacOSX/auxiliary/cgal_app.icns",
         "copyright",
 ]
 precedence = "aggregate"

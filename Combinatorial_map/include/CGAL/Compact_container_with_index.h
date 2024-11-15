@@ -106,7 +106,7 @@ public:
   void init()
   {
     m_free_list=std::stack<size_type>();
-    assert(m_free_list.empty());
+    CGAL_assertion(m_free_list.empty());
     if(m_cc_with_index->capacity()>0)
     { m_used.assign(m_cc_with_index->capacity(), false); }
     else { m_used.clear(); }
