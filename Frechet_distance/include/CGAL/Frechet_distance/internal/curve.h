@@ -179,21 +179,17 @@ public:
           {
             static constexpr int dim = Approximate_traits::Dimension::value;
 
-            this->points.reserve(point_range.size());
             std::array<distance_t, dim> coords;
             auto ccci = in_traits.construct_cartesian_const_iterator_d_object();
-            for (auto const& p : point_range)
-            {
-              auto itp = ccci(p);
-              for (int i=0;i<dim; ++i)
-                coords[i]=distance_t(to_interval(*itp++));
-              if constexpr (dim==2)
-                this->points.emplace_back(coords[0], coords[1]);
-              else if constexpr (dim==3)
-                this->points.emplace_back(coords[0], coords[1], coords[2]);
-              else
-                this->points.emplace_back(coords.begin(), coords.end());
-            }
+            auto itp = ccci(p);
+            for (int i=0;i<dim; ++i)
+              coords[i]=distance_t(to_interval(*itp++));
+            if constexpr (dim==2)
+              this->points.emplace_back(coords[0], coords[1]);
+            else if constexpr (dim==3)
+              this->points.emplace_back(coords[0], coords[1], coords[2]);
+            else
+              this->points.emplace_back(coords.begin(), coords.end());
           }
           else
           {
@@ -208,7 +204,10 @@ public:
     Rational_point rpoint(PointID const& i) const
     {
       if constexpr (std::is_same_v<Input_point, Rational_point>)
+      {
+        CGAL_assertion(rational_points.size() > i);
         return rational_points[i];
+      }
       else
         return exact(rational_points[i]);
     }
@@ -307,7 +306,7 @@ private:
     // private as it will do nasty things if p is a temporary
     template <class P>
     static auto begin(const P& p, const Traits& traits,
-                      std::enable_if_t<!std::is_same_v<P,std::array<FT,dimension>>>)
+                      std::enable_if_t<!std::is_same_v<P,std::array<FT,dimension>>>* = nullptr)
     {
       Construct_cartesian_const_iterator_d ccci = traits.construct_cartesian_const_iterator_d_object();
       return ccci(p);
