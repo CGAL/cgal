@@ -1704,29 +1704,28 @@ private:
         return true;
 
       bool done = false;
+
       while(!degenerate_faces.empty())
       {
         halfedge_descriptor h = *(degenerate_faces.begin());
         degenerate_faces.erase(degenerate_faces.begin());
 
-        if (!is_degenerate_triangle_face(face(h, mesh_), mesh_,
-                                         parameters::vertex_point_map(vpmap_)
-                                                    .geom_traits(gt_)))
-          //this can happen when flipping h has consequences further in the mesh
+        if(is_border(opposite(h, mesh_), mesh_))
+        {
+          CGAL::Euler::remove_face(h, mesh_);
           continue;
-
-        //check that opposite is not also degenerate
-        degenerate_faces.erase(opposite(h, mesh_));
-
-        if(is_border(h, mesh_))
-          continue;
+        }
 
         for(halfedge_descriptor hf :
             halfedges_around_face(h, mesh_))
         {
-          if(face(opposite(hf, mesh_), mesh_) == boost::graph_traits<PM>::null_face())
-            continue;
+          halfedge_descriptor hfo = opposite(hf, mesh_);
 
+          if(is_border(hfo, mesh_))
+          {
+            CGAL::Euler::remove_face(h, mesh_);
+            break;
+          }
           vertex_descriptor vc = target(hf, mesh_);
           vertex_descriptor va = target(next(hf, mesh_), mesh_);
           vertex_descriptor vb = target(next(next(hf, mesh_), mesh_), mesh_);
@@ -1734,7 +1733,6 @@ private:
           Vector_3 ac(get(vpmap_,va), get(vpmap_,vc));
           if (ab * ac < 0)
           {
-            halfedge_descriptor hfo = opposite(hf, mesh_);
             halfedge_descriptor h_ab = prev(hf, mesh_);
             halfedge_descriptor h_ca = next(hf, mesh_);
 
@@ -1745,6 +1743,16 @@ private:
 
             if (!is_flip_topologically_allowed(edge(hf, mesh_)))
               continue;
+
+            // geometric condition for flip --> do not create new degenerate face
+            vertex_descriptor vd = target(next(hfo, mesh_), mesh_);
+            if ( collinear( get(vpmap_, va), get(vpmap_, vb), get(vpmap_, vd) ) ||
+                 collinear( get(vpmap_, va), get(vpmap_, vc), get(vpmap_, vd) ) )  continue;
+
+            // remove opposite face from the queue (if degenerate)
+            degenerate_faces.erase(hfo);
+            degenerate_faces.erase(next(hfo, mesh_));
+            degenerate_faces.erase(prev(hfo, mesh_));
 
             CGAL::Euler::flip_edge(hf, mesh_);
             done = true;
@@ -1768,17 +1776,6 @@ private:
               if (sqlen != std::nullopt)
                 short_edges.insert(typename Bimap::value_type(hf, sqlen.value()));
             }
-
-            if(!is_border(hf, mesh_) &&
-               is_degenerate_triangle_face(face(hf, mesh_), mesh_,
-                                           parameters::vertex_point_map(vpmap_)
-                                                      .geom_traits(gt_)))
-              degenerate_faces.insert(hf);
-            if(!is_border(hfo, mesh_) &&
-               is_degenerate_triangle_face(face(hfo, mesh_), mesh_,
-                                           parameters::vertex_point_map(vpmap_)
-                                                      .geom_traits(gt_)))
-              degenerate_faces.insert(hfo);
 
             break;
           }

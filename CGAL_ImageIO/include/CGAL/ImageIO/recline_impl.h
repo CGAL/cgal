@@ -283,7 +283,7 @@ RFcoefficientType * InitRecursiveCoefficients( double x,
     b0 /= x;
     b1 /= x;
 
-    /*--- normalisation ---*/
+    /*--- normalization ---*/
     switch ( derivative ) {
     default :
       CGAL_FALLTHROUGH;

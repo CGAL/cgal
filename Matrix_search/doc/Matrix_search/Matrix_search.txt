@@ -10,7 +10,7 @@ namespace CGAL {
 `monotone_matrix_search()` and `sorted_matrix_search()`
 are techniques that deal with the problem of efficiently finding
 largest entries in matrices with certain structural properties. Many
-concrete problems can be modelled as matrix search problems, and for
+concrete problems can be modeled as matrix search problems, and for
 some of them we provide explicit solutions that allow you to solve
 them without knowing about the matrix search technique. Examples are,
 the computation of all furthest neighbors for the vertices of a convex

@@ -59,9 +59,9 @@ bool write_3MF(const std::string& filename,
                const GraphRange& gs,
                const std::vector<std::string>& names
 #ifndef DOXYGEN_RUNNING
-               , std::enable_if_t<!
-                   internal::is_Point_set_or_Range_or_Iterator<
-                     typename boost::range_value<GraphRange>::type>::value>* = nullptr
+               , std::enable_if_t<
+                   ! internal::is_Point_set_or_Range_or_Iterator<
+                       typename boost::range_value<GraphRange>::type>::value>* = nullptr
 #endif
                )
 {

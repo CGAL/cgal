@@ -94,7 +94,7 @@ struct Orthtree_traits_polygons : public Orthtree_traits_base<GeomTraits, 3>
 
   Point_d interpolate(FT a, FT b, FT l, const Point_d pa, const Point_d pb) const {
     FT f = CGAL::abs((a - l) / (a - b));
-    assert(f <= 1.0);
+    CGAL_assertion(f <= 1.0);
     return Point_d((1 - f) * pa.x() + f * pb.x(), (1 - f) * pa.y() + f * pb.y(), (1 - f) * pa.z() + f * pb.z());
   }
 

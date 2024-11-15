@@ -62,7 +62,7 @@ public:
     const double& size() const { return second; }
     const double& sine() const { return first; }
 
-    // q1<q2 means q1 is prioritised over q2
+    // q1<q2 means q1 is prioritized over q2
     // ( q1 == *this, q2 == q )
     bool operator<(const Quality& q) const
     {
