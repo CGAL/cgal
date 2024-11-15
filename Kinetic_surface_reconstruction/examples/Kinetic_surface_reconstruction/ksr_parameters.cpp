@@ -198,6 +198,8 @@ int main(const int argc, const char** argv) {
 
   FT after_reconstruction = timer.time();
 
+  std::cout << polylist.size() << " polygons, " << vtx.size() << " vertices" << std::endl;
+
   if (polylist.size() > 0)
     CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
