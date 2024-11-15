@@ -73,13 +73,6 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
       }
       else
       {
-#if 0
-        using Base_kernel = typename Kernel_traits<typename Traits::Point_d>::Kernel;
-
-        using AK = Kernel_d_interface<typename Base_kernel::AK>;
-        using EK = Kernel_d_interface<typename Base_kernel::EK>;
-        //using EK = typename CGAL::Frechet_distance_::internal::Get_exact_kernel<Kernel>::type;
-#endif
         using AT = Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
         using ET = Frechet_distance_traits<CGAL::Exact_rational, Traits::Dimension::value>;
         using Filtered_traits = std::pair<AT,ET>;
