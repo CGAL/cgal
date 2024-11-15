@@ -180,12 +180,14 @@ save(QFileInfo fileinfo, QList<CGAL::Three::Scene_item*>& items)
     res = CGAL::IO::write_OM((const char*)fileinfo.filePath().toUtf8()
               , *sm_item->face_graph()
               , CGAL::parameters::vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-              .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+              .stream_precision(18));
   }
   else
   {
     res = CGAL::IO::write_OM((const char*)fileinfo.filePath().toUtf8()
-              , *sm_item->face_graph());
+              , *sm_item->face_graph()
+              , CGAL::parameters::stream_precision(18));
   }
 
   if (res)
