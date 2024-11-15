@@ -284,7 +284,7 @@ private:
   reconstruct_ring(std::list<Point_2>& ring,
                    Face_handle face_adjacent_to_boundary,
                    int opposite_vertex,
-                   const Fct& fct)
+                   const Fct& CGAL_assertion_code(fct))
   {
     // Create ring
     Face_handle current_face = face_adjacent_to_boundary;
