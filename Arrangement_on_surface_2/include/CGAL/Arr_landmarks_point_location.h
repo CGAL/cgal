@@ -27,6 +27,7 @@
 #include <CGAL/Arr_point_location_result.h>
 #include <CGAL/Arrangement_2/Arr_traits_adaptor_2.h>
 #include <CGAL/Arr_point_location/Arr_lm_vertices_generator.h>
+#include <CGAL/Arr_tags.h>
 
 #include <set>
 
@@ -77,6 +78,16 @@ public:
 
   // Support cpp11::result_of
   using result_type = Result_type;
+
+private:
+  using Gt2 = Geometry_traits_2;
+  using Left_side_category =
+    typename internal::Arr_complete_left_side_category<Gt2>::Category;
+  using Right_side_category =
+    typename internal::Arr_complete_right_side_category<Gt2>::Category;
+  using Left_or_right_sides_category =
+    typename Arr_two_sides_category<Left_side_category,
+                                    Right_side_category>::result;
 
 protected:
   using Traits_adaptor_2 = Arr_traits_basic_adaptor_2<Geometry_traits_2>;
@@ -299,6 +310,59 @@ protected:
                                 bool& p_on_curve,
                                 bool& cv_and_seg_overlap,
                                 bool& cv_is_contained_in_seg) const;
+
+  //!
+  template <typename T>
+  std::pair<X_monotone_curve_2, Comparison_result>
+  construct_segment(const Point_2& p, const Point_2& q, T const& traits,
+                    ...) const {
+    X_monotone_curve_2 seg = traits.construct_x_monotone_curve_2_object()(p, q);
+    Comparison_result res = traits.compare_xy_2_object()(p, q);
+    return std::make_pair(seg, res);
+  }
+
+  //*!
+  template <typename T, typename = typename T::Compare_endpoints_xy_2>
+  std::pair<X_monotone_curve_2, Comparison_result>
+  construct_segment(const Point_2& p, const Point_2& q, T const& traits,
+                    int) const {
+    X_monotone_curve_2 seg = traits.construct_x_monotone_curve_2_object()(p, q);
+    Comparison_result res = traits.compare_endpoints_xy_2_object()(seg);
+    return std::make_pair(seg, res);
+  }
+
+  /*! Determines whether the $x$-coordinates of two points are equal.
+   */
+  bool equal_x_2(const Point_2& p, const Point_2& q,
+                 Arr_all_sides_oblivious_tag) const
+  { return (m_traits->compare_x_2_object()(p, q) == EQUAL); }
+
+  /*! Determines whether the $x$-coordinates of two points are equal.
+   */
+  bool equal_x_2(const Point_2& p, const Point_2& q,
+                 Arr_has_identified_side_tag) const {
+    auto is_on_y_identification = m_traits->is_on_y_identification_2_object();
+    if (is_on_y_identification(p)) {
+      return is_on_y_identification(q);
+    }
+    if (is_on_y_identification(q)) return false;
+    return (m_traits->compare_x_2_object()(p, q) == EQUAL);
+  }
+
+  /*! Determines whether the $x$-coordinates of two points are equal.
+   */
+  bool equal_x_2(const Point_2& p, const Point_2& q,
+                 Arr_boundary_cond_tag) const {
+    auto param_space_in_x = m_traits->parameter_space_in_x_2_object();
+    switch (param_space_in_x(p)) {
+     case ARR_LEFT_BOUNDARY: return (param_space_in_x(q) == ARR_LEFT_BOUNDARY);
+     case ARR_RIGHT_BOUNDARY: return (param_space_in_x(q) == ARR_LEFT_BOUNDARY);
+     case ARR_INTERIOR: return (m_traits->compare_x_2_object()(p, q) == EQUAL);
+     default: CGAL_error();
+    }
+    CGAL_error();
+    return false;
+  }
 };
 
 } // namespace CGAL

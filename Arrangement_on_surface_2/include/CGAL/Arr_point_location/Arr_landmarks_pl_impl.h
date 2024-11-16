@@ -111,17 +111,16 @@ _walk_from_vertex(Vertex_const_handle nearest_vertex, const Point_2& p,
   // Create an x-monotone curve connecting the point associated with the
   // vertex vp and the query point p.
   const Point_2& vp = vh->point();
-  X_monotone_curve_2 seg =
-    m_traits->construct_x_monotone_curve_2_object()(vp, p);
-  const bool seg_dir_right =
-    (m_traits->compare_xy_2_object()(vp, p) == SMALLER);
+  X_monotone_curve_2 seg;
+  Comparison_result res;
+  std::tie(seg, res) = construct_segment(vp, p, *m_traits, 0);
+  bool seg_dir_right = (res == SMALLER);
   Halfedge_around_vertex_const_circulator curr_iter = first;
   Halfedge_around_vertex_const_circulator next_iter = curr_iter;
   ++next_iter;
   auto is_between_cw = m_traits->is_between_cw_2_object();
   // Traverse the halfedges around vp until we find the pair of adjacent
   // halfedges such as seg is located clockwise in between them.
-
   do {
     bool eq_curr_iter, eq_next_iter;
     if (is_between_cw(seg, seg_dir_right, curr_iter->curve(),
@@ -188,11 +187,10 @@ _find_face_around_vertex(Vertex_const_handle vh, const Point_2& p,
   // Create an x-monotone curve connecting the point associated with the
   // vertex vp and the query point p.
   const Point_2& vp = vh->point();
-  X_monotone_curve_2 seg =
-    m_traits->construct_x_monotone_curve_2_object()(vp, p);
-  const bool seg_dir_right =
-    (m_traits->compare_xy_2_object()(vp, p) == SMALLER);
-
+  X_monotone_curve_2 seg;
+  Comparison_result res;
+  std::tie(seg, res) = construct_segment(vp, p, *m_traits, 0);
+  bool seg_dir_right = (res == SMALLER);
   // Get the first incident halfedge around v and the next halfedge.
   Halfedge_around_vertex_const_circulator first = vh->incident_halfedges();
   Halfedge_around_vertex_const_circulator curr, next;
@@ -443,9 +441,10 @@ _walk_from_face(Face_const_handle face, const Point_2& np, const Point_2& p,
                 Halfedge_set& crossed_edges) const {
   // Construct an x-monotone curve connecting the nearest landmark point np
   // to the query point p and check which CCB intersects this segment.
-  X_monotone_curve_2 seg =
-    m_traits->construct_x_monotone_curve_2_object()(np, p);
-  const bool p_is_left = (m_traits->compare_xy_2_object()(np, p) == LARGER);
+  X_monotone_curve_2 seg;
+  Comparison_result res;
+  std::tie(seg, res) = construct_segment(np, p, *m_traits, 0);
+  const bool p_is_left = (res == LARGER);
 
   const Halfedge_const_handle invalid_he;
   const Vertex_const_handle invalid_vertex;
@@ -679,12 +678,12 @@ _in_case_p_is_on_edge(Halfedge_const_handle he,
   crossed_edges.insert(he->twin());
   // Check if p equals one of the edge end-vertices.
   if (! he->target()->is_at_open_boundary() &&
-      m_traits->compare_xy_2_object()(he->target()->point(), p) == EQUAL) {
+      m_traits->equal_2_object()(he->target()->point(), p)) {
     // p is the target of the current halfedge.
     is_target = true;
   }
   else if (! he->source()->is_at_open_boundary() &&
-    m_traits->compare_xy_2_object()(he->source()->point(), p) == EQUAL) {
+           m_traits->equal_2_object()(he->source()->point(), p)) {
     // Take the twin halfedge, so p equals its target.
     he = he->twin();
     is_target = true;
@@ -736,11 +735,9 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
   if (cv_left_is_closed) {
     // Check if the left endpoint of cv has the same x-coordinate as the
     // right endpoint of seg.
-    if (m_traits->compare_x_2_object()
-        (m_traits->construct_min_vertex_2_object()(cv), seg_right) == EQUAL) {
-      if (! p_is_left &&
-          m_traits->compare_xy_2_object()
-          (m_traits->construct_min_vertex_2_object()(cv), seg_right) == EQUAL) {
+    auto min_p = m_traits->construct_min_vertex_2_object()(cv);
+    if (equal_x_2(min_p, seg_right, Left_or_right_sides_category())) {
+      if (! p_is_left && m_traits->equal_2_object()(min_p, seg_right)) {
         p_on_curve = true;
         return true;
       }
@@ -761,11 +758,9 @@ _have_odd_intersections(const X_monotone_curve_2& cv,
   if (cv_right_is_closed) {
     // Check if the right endpoint of cv has the same x-coordinate as the
     // left endpoint of seg.
-    if (m_traits->compare_x_2_object()
-        (m_traits->construct_max_vertex_2_object()(cv), seg_left) == EQUAL) {
-      if (p_is_left &&
-          m_traits->compare_xy_2_object()
-          (m_traits->construct_max_vertex_2_object()(cv), seg_left) == EQUAL) {
+    auto max_p = m_traits->construct_max_vertex_2_object()(cv);
+    if (equal_x_2(max_p, seg_left, Left_or_right_sides_category())) {
+      if (p_is_left && m_traits->equal_2_object()(max_p, seg_left)) {
         p_on_curve = true;
         return true;
       }
