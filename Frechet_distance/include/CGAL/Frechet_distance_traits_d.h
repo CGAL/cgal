@@ -18,6 +18,8 @@
 
 #include <CGAL/license/Frechet_distance.h>
 
+#include <CGAL/Dimension.h>
+
 namespace CGAL
 {
 /*!
