@@ -209,21 +209,24 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{point_to_plane_weight}
-*     \cgalParamDescription{the weight of the point to plane energy in the registration}
+*     \cgalParamDescription{the weight \f$w_2\f$ of the point to plane energy in the registration. }
 *     \cgalParamType{double}
 *     \cgalParamDefault{`1`}
+*     \cgalParamExtra{\f$w_2\f$ needs to be 0 or positive. See \ref PMPNonRigidRegistrationParameters.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{point_to_point_weight}
-*     \cgalParamDescription{the weight of the point to matching point energy in the registration}
+*     \cgalParamDescription{the weight \f$w_1\f$ of the point to matching point energy in the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`1`}
+*     \cgalParamExtra{\f$w_1\f$ needs to be 0 or positive. See \ref PMPNonRigidRegistrationParameters.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{as_rigid_as_possible_weight}
 *     \cgalParamDescription{defines the rigidity of the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`50`}
+*     \cgalParamExtra{The weight \f$w_3\f$ needs to be 0 or positive. See \ref PMPNonRigidRegistrationParameters.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{maximum_matching_distance}
@@ -763,21 +766,24 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{point_to_plane_weight}
-*     \cgalParamDescription{the weight of the point to plane energy in the registration}
+*     \cgalParamDescription{the weight \f$w_2\f$ of the point to plane energy in the registration. }
 *     \cgalParamType{double}
 *     \cgalParamDefault{`1`}
+*     \cgalParamExtra{\f$w_2\f$ needs to be 0 or positive. See \ref PMPNonRigidRegistrationParameters.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{point_to_point_weight}
-*     \cgalParamDescription{the weight of the point to matching point energy in the registration}
+*     \cgalParamDescription{the weight \f$w_1\f$ of the point to matching point energy in the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`1`}
+*     \cgalParamExtra{\f$w_1\f$ needs to be 0 or positive. See \ref PMPNonRigidRegistrationParameters.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{as_rigid_as_possible_weight}
 *     \cgalParamDescription{defines the rigidity of the registration}
 *     \cgalParamType{double}
 *     \cgalParamDefault{`50`}
+*     \cgalParamExtra{The weight \f$w_3\f$ needs to be 0 or positive. See \ref PMPNonRigidRegistrationParameters.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{maximum_matching_distance}
@@ -795,7 +801,7 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `source`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`get_const_property_map(CGAL::vertex_point, source)`}
 *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -815,13 +821,12 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *     \cgalParamDescription{a property map associating normals to the vertices of `target`}
 *     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                    as key type and `%Vector_3` as value type}
-*     \cgalParamDefault{`get_const_property_map(dynamic_vertex_property_t<Vector_3>(), target)`}
-*     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_normal_map_t`
-*                     must be available in `TriangleMesh2`.}
+*     \cgalParamDefault{`get(dynamic_vertex_property_t<Vector_3>(), target)`}
+*     \cgalParamExtra{If this parameter is omitted, vertex normals will be computed using `compute_vertex_normals()`.}
 *   \cgalParamNEnd
 *   \cgalParamNBegin{vertex_point_map}
 *     \cgalParamDescription{a property map associating points to the vertices of `target`}
-*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh2>::%vertex_descriptor`
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`get_const_property_map(CGAL::vertex_point, target)`}
 *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
@@ -856,8 +861,8 @@ void non_rigid_mesh_to_mesh_registration(const TriangleMesh1& source,
   Vertex_normal_map vnm = parameters::choose_parameter(parameters::get_parameter(np2, internal_np::vertex_normal_map), get(Vector_map_tag(), target));
 
   // if the normal map is not provided, compute it
-   if (parameters::is_default_parameter<NamedParameters2, internal_np::vertex_normal_map_t>::value)
-     compute_vertex_normals(target, vnm, np2);
+  if (parameters::is_default_parameter<NamedParameters2, internal_np::vertex_normal_map_t>::value)
+    compute_vertex_normals(target, vnm, np2);
 
   typedef typename CGAL::internal_np::Lookup_named_param_def<internal_np::correspondences_t, NamedParameters1, std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>>::reference Correspondences_type;
   Correspondences_type correspondences = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter_reference(np1, CGAL::internal_np::correspondences), std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, typename boost::graph_traits<TriangleMesh2>::vertex_descriptor>>());

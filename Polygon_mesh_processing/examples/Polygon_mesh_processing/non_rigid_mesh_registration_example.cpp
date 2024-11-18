@@ -46,10 +46,6 @@ int main(int, char**) {
     }
   }
 
-  auto vnm = target.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:normal");
-  if (vnm.second)
-    PMP::compute_vertex_normals(target, vnm.first);
-
   Mesh::Property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>> vrm = source.add_property_map<Mesh::Vertex_index, CGAL::Aff_transformation_3<K>>("v:rotation").first;
   Mesh::Property_map<Mesh::Vertex_index, K::Vector_3> vtm = source.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:translation").first;
 
