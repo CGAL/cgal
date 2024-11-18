@@ -1025,7 +1025,7 @@ namespace internal {
       // property map of constrained vertices for relaxation
       auto vertex_constraint = [&](const vertex_descriptor v)
       {
-        return is_move_allowed(v, relax_constraints);
+        return !is_move_allowed(v, relax_constraints);
       };
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
