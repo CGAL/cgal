@@ -171,7 +171,7 @@ int main(const int argc, const char** argv) {
   timer.start();
   std::size_t num_shapes = ksr.detect_planar_shapes(param);
 
-  std::cout << num_shapes << " detected planar shapes" << std::endl;
+  std::cout << num_shapes << " regularized detected planar shapes" << std::endl;
 
   FT after_shape_detection = timer.time();
 
