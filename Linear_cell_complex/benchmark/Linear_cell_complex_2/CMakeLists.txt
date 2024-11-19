@@ -13,15 +13,13 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/cgogn/lib/Release)
 include_directories(BEFORE "/usr/include/libxml2/")
 
 # For profilling with gprof
-#add_definitions("-pg")
+#add_compile_definitions("-pg")
 #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
-# add_definitions("-g")
+# add_compile_definitions("-g")
 
 # OpenMesh
-set(OPENMESH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/openmesh")
 find_package(OpenMesh REQUIRED)
-include_directories(${OPENMESH_INCLUDE_DIR})
-link_directories(${OPENMESH_LIBRARY_DIR})
+include(CGAL_OpenMesh_support)
 
 # Polyhedron
 add_executable(polyhedron_performance performance_2.h polyhedron_performance.h
@@ -42,14 +40,14 @@ target_link_libraries(surface_mesh_performance surface_mesh)
 # Open_mesh
 add_executable(openmesh_performance performance_2.h openmesh_performance.h
                                     openmesh_performance.cpp)
-target_link_libraries(openmesh_performance ${OPENMESH_LIBRARIES})
+target_link_libraries(openmesh_performance CGAL::OpenMesh_support)
 
 # CGoGN
 find_package(Qt REQUIRED)
 set(QT_USE_QTSVG TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
+add_compile_definitions(${QT_DEFINITIONS})
 set(CGoGN_EXT_INCLUDES ${CGoGN_EXT_INCLUDES} ${QT_INCLUDE_DIR})
 set(CGoGN_EXT_LIBS ${CGoGN_EXT_LIBS} ${QT_LIBRARIES})
 
@@ -91,4 +89,4 @@ target_link_libraries(
   Zinri
   z
   ${QT_LIBRARIES}
-  ${OPENMESH_LIBRARIES})
+  CGAL::OpenMesh_support)

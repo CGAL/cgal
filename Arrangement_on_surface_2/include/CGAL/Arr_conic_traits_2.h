@@ -4260,7 +4260,7 @@ public:
     // Compute the radi of the hyperbola:
     ts = std::asinh(ys_t/b);
     tt = std::asinh(yt_t/b);
-    assert(std::signbit(xs_t) == std::signbit(xt_t));
+    CGAL_assertion(std::signbit(xs_t) == std::signbit(xt_t));
 
     if (std::signbit(xs_t)) a = -a;
   }

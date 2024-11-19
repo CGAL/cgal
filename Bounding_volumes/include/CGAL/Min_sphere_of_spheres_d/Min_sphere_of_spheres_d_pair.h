@@ -33,7 +33,7 @@ namespace CGAL_MINIBALL_NAMESPACE {
     // they are convertible to double.
     // This is indeed the least invasive fix dropint the function that were
     // defined here and cause linkage bug.
-    // You can still have a behaviour of instantiating only if a type
+    // You can still have a behavior of instantiating only if a type
     // is convertibale to double (by using type_traits together with _if)
     // but until "the whole design should be overhauled at some point"
     // this is fine.

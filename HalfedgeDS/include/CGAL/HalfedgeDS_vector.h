@@ -604,7 +604,7 @@ public:
 
             // This guard is needed here because, rr==ll==begin, might be true
             // at this point, causing the decrement to result in undefined
-            // behaviour.
+            // behavior.
             // [Fernando Cacciola]
             if ( ll < rr )
             {

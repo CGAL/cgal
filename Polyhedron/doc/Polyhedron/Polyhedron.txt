@@ -385,20 +385,20 @@ polyhedral surface gives alias names renaming face to facet.
 
 class Polyhedron_items_3 {
 public:
-template < class Refs, class Traits>
-struct Vertex_wrapper {
-typedef typename Traits::Point_3 Point;
-typedef CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point> Vertex;
-};
-template < class Refs, class Traits>
-struct Halfedge_wrapper {
-typedef CGAL::HalfedgeDS_halfedge_base<Refs> Halfedge;
-};
-template < class Refs, class Traits>
-struct Face_wrapper {
-typedef typename Traits::Plane_3 Plane;
-typedef CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Plane> Face;
-};
+  template < class Refs, class Traits>
+  struct Vertex_wrapper {
+    typedef typename Traits::Point_3 Point;
+    typedef CGAL::HalfedgeDS_vertex_base<Refs, CGAL::Tag_true, Point> Vertex;
+  };
+  template < class Refs, class Traits>
+  struct Halfedge_wrapper {
+    typedef CGAL::HalfedgeDS_halfedge_base<Refs> Halfedge;
+  };
+  template < class Refs, class Traits>
+  struct Face_wrapper {
+    typedef typename Traits::Plane_3 Plane;
+    typedef CGAL::HalfedgeDS_face_base<Refs, CGAL::Tag_true, Plane> Face;
+  };
 };
 
 \endcode
@@ -426,7 +426,7 @@ faces but would be for vertices - and add the color attribute.
 
 template <class Refs>
 struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-CGAL::IO::Color color;
+  CGAL::IO::Color color;
 };
 
 \endcode
@@ -440,10 +440,10 @@ used.
 \code{.cpp}
 
 struct My_items : public CGAL::Polyhedron_items_3 {
-template <class Refs, class Traits>
-struct Face_wrapper {
-typedef My_face<Refs> Face;
-};
+  template <class Refs, class Traits>
+  struct Face_wrapper {
+    typedef My_face<Refs> Face;
+  };
 };
 
 \endcode
@@ -479,8 +479,8 @@ works as illustrated above.
 
 template <class Refs>
 struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
-typedef typename Refs::Vertex_handle Vertex_handle;
-Vertex_handle vertex_ref;
+  typedef typename Refs::Vertex_handle Vertex_handle;
+  Vertex_handle vertex_ref;
 };
 
 \endcode

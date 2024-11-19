@@ -497,7 +497,6 @@ average_edge_length_around(const Vertex_handle v, const Tr& tr,
     break;
   }
 
-  CGAL_assertion(!edges.empty());
   if (edges.empty())
     return 0;
 

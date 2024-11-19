@@ -465,7 +465,6 @@ struct Scene_image_item_priv
   void draw_Bbox(Scene_item::Bbox bbox, std::vector<float> *vertices);
 
   bool m_initialized;
-//#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   int m_voxel_scale;
   std::vector<float> v_box;
   std::size_t idx_size, box_size;
@@ -476,7 +475,6 @@ struct Scene_image_item_priv
   Image m_image_weights;
   float m_sigma_weights;
 
-//#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 };
 // -----------------------------------
 // Scene_image_item

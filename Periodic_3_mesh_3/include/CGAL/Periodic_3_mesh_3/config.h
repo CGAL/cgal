@@ -35,7 +35,7 @@
 // memory boolean in the vertex base
 #define CGAL_PERIODIC_TRIANGULATION_USE_VISITED_VERTEX_BOOLEAN
 
-// Avoid optimisations of Mesh_3
+// Avoid optimizations of Mesh_3
 #define CGAL_NO_STRUCTURAL_FILTERING
 #ifdef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE
   #undef CGAL_MESH_3_SIZING_FIELD_INEXACT_LOCATE

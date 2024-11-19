@@ -62,13 +62,15 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
   const tm_face_descriptor tm_null_face = boost::graph_traits<TargetMesh>::null_face();
   const tm_vertex_descriptor tm_null_vertex = boost::graph_traits<TargetMesh>::null_vertex();
 
-  reserve(tm, static_cast<typename boost::graph_traits<TargetMesh>::vertices_size_type>(vertices(tm).size()+vertices(sm).size()),
-              static_cast<typename boost::graph_traits<TargetMesh>::edges_size_type>(edges(tm).size()+edges(sm).size()),
-              static_cast<typename boost::graph_traits<TargetMesh>::faces_size_type>(faces(tm).size()+faces(sm).size()) );
+  reserve(tm, static_cast<typename boost::graph_traits<TargetMesh>::vertices_size_type>(internal::exact_num_vertices(tm)+internal::exact_num_vertices(sm)),
+              static_cast<typename boost::graph_traits<TargetMesh>::edges_size_type>(internal::exact_num_edges(tm)+internal::exact_num_edges(sm)),
+              static_cast<typename boost::graph_traits<TargetMesh>::faces_size_type>(internal::exact_num_faces(tm)+internal::exact_num_faces(sm)) );
 
   //insert halfedges and create each vertex when encountering its halfedge
   std::vector<tm_edge_descriptor> new_edges;
-  new_edges.reserve(edges(sm).size());
+  std::vector<tm_halfedge_descriptor> new_vertices;
+  new_edges.reserve(internal::exact_num_edges(sm));
+  new_vertices.reserve(internal::exact_num_vertices(sm));
   for(sm_edge_descriptor sm_e : edges(sm))
   {
     tm_edge_descriptor tm_e = add_edge(tm);
@@ -106,6 +108,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
       tm_vertex_descriptor tm_h_tgt = add_vertex(tm);
       *v2v++=std::make_pair(sm_h_tgt, tm_h_tgt);
       set_halfedge(tm_h_tgt, tm_h, tm);
+      new_vertices.push_back(tm_h);
       set_target(tm_h, tm_h_tgt, tm);
       put(tm_vpm, tm_h_tgt, conv(get(sm_vpm, sm_h_tgt)));
     }
@@ -116,6 +119,7 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
       tm_vertex_descriptor tm_h_src = add_vertex(tm);
       *v2v++=std::make_pair(sm_h_src, tm_h_src);
       set_halfedge(tm_h_src, tm_h_opp, tm);
+      new_vertices.push_back(tm_h_opp);
       set_target(tm_h_opp, tm_h_src, tm);
       put(tm_vpm, tm_h_src, conv(get(sm_vpm, sm_h_src)));
     }
@@ -163,11 +167,9 @@ void copy_face_graph_impl(const SourceMesh& sm, TargetMesh& tm,
     }
   }
   // update halfedge vertex of all but the vertex halfedge
-  for(tm_vertex_descriptor v : vertices(tm))
+  for(tm_halfedge_descriptor h : new_vertices)
   {
-    tm_halfedge_descriptor h = halfedge(v, tm);
-    if (h==boost::graph_traits<TargetMesh>::null_halfedge())
-      continue;
+    tm_vertex_descriptor v = target(h, tm);
     tm_halfedge_descriptor next_around_vertex=h;
     do{
       next_around_vertex=opposite(next(next_around_vertex, tm), tm);

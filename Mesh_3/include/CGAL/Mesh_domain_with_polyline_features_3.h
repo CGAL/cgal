@@ -252,8 +252,8 @@ public:
         : (- negative_distance);
     } else {
       return (pit <= qit)
-        ?     curve_segment_length(p, q, CGAL::POSITIVE)
-        : ( - curve_segment_length(p, q, CGAL::NEGATIVE) );
+        ?     curve_segment_length(p, q, CGAL::POSITIVE, pit, qit)
+        : ( - curve_segment_length(p, q, CGAL::NEGATIVE, pit, qit) );
     }
   }
 
@@ -961,9 +961,9 @@ get_curves(OutputIterator out) const
       q_index = p_index;
     }
 
-    *out++ = std::make_tuple(eit->first,
-                                     std::make_pair(p,p_index),
-                                     std::make_pair(q,q_index));
+    *out++ = {eit->first,
+              std::make_pair(p,p_index),
+              std::make_pair(q,q_index)};
   }
 
   return out;

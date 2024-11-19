@@ -9,7 +9,6 @@
 //
 // Author(s)     : Andreas Fabri, Philipp Moeller
 
-// include this to avoid a VC15 warning
 #include <CGAL/Named_function_parameters.h>
 
 #include <boost/graph/graph_traits.hpp>
@@ -21,7 +20,6 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/io.h>
 #include <CGAL/assertions.h>
 #include <CGAL/hash_openmesh.h>
 

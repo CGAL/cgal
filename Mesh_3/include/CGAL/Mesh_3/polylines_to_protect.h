@@ -20,7 +20,6 @@
 #include <utility> // std::swap
 #include <algorithm> // std::min
 
-#include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_3.h>
@@ -515,11 +514,7 @@ polylines_to_protect
       for(int j = 0; j < ydim; j+= (axis == 1 ? (std::max)(1, ydim-1) : 1 ) )
         for(int k = 0; k < zdim; k+= (axis == 2 ? (std::max)(1, zdim-1) : 1 ) )
         {
-
           using std::array;
-          using std::tuple;
-          using std::get;
-
           typedef array<int, 3> Pixel;
 
 #ifdef CGAL_MESH_3_DEBUG_POLYLINES_TO_PROTECT

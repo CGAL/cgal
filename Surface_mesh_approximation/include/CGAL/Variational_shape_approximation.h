@@ -1528,6 +1528,7 @@ private:
 
   /*!
    * @brief finds and approximates the chord connecting the anchors.
+   * @param boundary_subdivision_ratio the chord subdivision ratio threshold to the chord length or average edge length for boundary edges
    * @param subdivision_ratio boundary chord approximation recursive split criterion
    * @param relative_to_chord set `true` if the subdivision_ratio is relative to the chord length (relative sense),
    * otherwise it's relative to the average edge length (absolute sense).
@@ -1853,6 +1854,7 @@ private:
    * @param chord_begin begin iterator of the chord
    * @param chord_end end iterator of the chord
    * @param subdivision_ratio the chord recursive split error threshold
+   * @param boundary_subdivision_ratio the chord subdivision ratio threshold to the chord length or average edge length for boundary edges
    * @param relative_to_chord set `true` if the `subdivision_ratio` is relative to the chord length (relative sense),
    * otherwise it is relative to the average edge length (absolute sense).
    * @param with_dihedral_angle if set to `true` add dihedral angle weight to the distance.

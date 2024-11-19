@@ -228,7 +228,7 @@ struct Call_functor_if_both_attributes_have_point
        const Pointconverter&)
   { return Map2::null_descriptor; }
 };
-// Specialisation with i==0 and both attributes have points.
+// Specialization with i==0 and both attributes have points.
 template< typename Map1, typename Map2, typename Pointconverter >
 struct Call_functor_if_both_attributes_have_point<Map1, Map2, 0,
     Pointconverter, true, true>
@@ -285,7 +285,7 @@ struct Copy_attribute_functor_if_nonvoid
       cmap2.template set_attribute<i>(dh2, res);
   }
 };
-// Specialisation when attr1 is void, and attr2 is non void i==0. Nothing to
+// Specialization when attr1 is void, and attr2 is non void i==0. Nothing to
 // copy, but if 0-attributes has point and i==0, we need to create
 // vertex attributes.
 template<typename Map1, typename Map2, typename Converters,
@@ -310,7 +310,7 @@ struct Copy_attribute_functor_if_nonvoid<Map1, Map2, Converters,
           set_attribute<0>(dh2, cmap2.template create_attribute<0>());
   }
 };
-// Specialisation when attr1 is void, and attr2 is non void i!=0.
+// Specialization when attr1 is void, and attr2 is non void i!=0.
 // Nothing to do.
 template<typename Map1, typename Map2, typename Converters, unsigned int i,
          typename Pointconverter, typename Attr2>
@@ -360,7 +360,7 @@ struct Copy_dart_info_functor_if_nonvoid
                    const DartInfoConverter& converter)
   { converter(map1, map2, dh1, dh2); }
 };
-// Specialisation when Info1 is void.
+// Specialization when Info1 is void.
 template<typename Map1, typename Map2, typename DartInfoConverter,
          typename Info2>
 struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
@@ -373,7 +373,7 @@ struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
                    const DartInfoConverter&)
   {}
 };
-// Specialisation when Info2 is void.
+// Specialization when Info2 is void.
 template<typename Map1, typename Map2, typename DartInfoConverter,
          typename Info1>
 struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
@@ -386,7 +386,7 @@ struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
                    const DartInfoConverter&)
   {}
 };
-// Specialisation when both Info1 and Info2 are void.
+// Specialization when both Info1 and Info2 are void.
 template<typename Map1, typename Map2, typename DartInfoConverter>
 struct Copy_dart_info_functor_if_nonvoid<Map1, Map2, DartInfoConverter,
     CGAL::Void, CGAL::Void>

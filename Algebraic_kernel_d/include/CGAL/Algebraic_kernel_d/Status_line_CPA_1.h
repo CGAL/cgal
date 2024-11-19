@@ -331,7 +331,7 @@ public:
                              const typename Curve_pair_analysis_2
                                  ::Curve_analysis_2& c1,
                              const typename Curve_pair_analysis_2
-                                 ::Curve_analysis_2& CGAL_precondition_code(c2)) const
+                                 ::Curve_analysis_2& CGAL_assertion_code(c2)) const
     {
 
         CGAL_precondition(0 <= j && j < number_of_events());

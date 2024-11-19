@@ -732,92 +732,130 @@ void Basic_generator_plugin::generateLines()
 {
   QString text = dock_widget->line_textEdit->toPlainText();
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
-  polylines.resize(polylines.size()+1);
-  std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
-  QStringList polylines_metadata;
 
-  QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
-  int counter = 0;
-  double coord[3];
+  auto read_polyline = [&polylines](const QStringList& list, bool is_2d, bool is_closed)
+  {
+    int counter = -1;
+    double coord[3];
+    bool ok = true;
+
+    if(!is_2d && list.size()%3!=0){
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Input should consists of triplets.");
+      msgBox->exec();
+      return false;
+    }
+    else if(is_2d && list.size()%2!=0){
+      QMessageBox *msgBox = new QMessageBox;
+      msgBox->setWindowTitle("Error");
+      msgBox->setText("ERROR : Input should consists of pairs.");
+      msgBox->exec();
+      return false;
+    }
+
+    polylines.back().reserve(list.size()+(is_closed?1:0));
+
+    for(QString s : list)
+    {
+      if(!s.isEmpty())
+      {
+        double res = s.toDouble(&ok);
+        if(!ok)
+        {
+          QMessageBox *msgBox = new QMessageBox;
+          msgBox->setWindowTitle("Error");
+          msgBox->setText("ERROR : Coordinates are invalid.");
+          msgBox->exec();
+          return false;
+        }
+        else
+        {
+          coord[++counter] = res;
+        }
+      }
+      if(!is_2d && counter == 2)
+      {
+        Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
+        polylines.back().push_back(p);
+        counter=-1;
+      }
+      else if(is_2d && counter == 1)
+      {
+        Scene_polylines_item::Point_3 p(coord[0], coord[1], 0);
+        polylines.back().push_back(p);
+        counter=-1;
+      }
+    }
+    if(is_closed)
+    {
+      if (polylines.back().back()!=polylines.back().front())
+        polylines.back().push_back(polylines.back().front()); //close if not already closed
+    }
+
+    return true;
+  };
+
+  const bool is_2d = dock_widget->dim2_checkBox->isChecked();
+  const bool is_closed = dock_widget->polygon_checkBox->isChecked();
+  const bool shall_fill = is_closed && dock_widget->fill_checkBox->isChecked();
+  const bool oneperline = dock_widget->oneperline_checkBox->isChecked();
+
   bool ok = true;
-  if (list.isEmpty()) return;
-  if(!dock_widget->polygon_checkBox->isChecked() && list.size()%3!=0){
-    QMessageBox *msgBox = new QMessageBox;
-    msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of triplets.");
-    msgBox->exec();
-    return;
-  }
-  else if(dock_widget->polygon_checkBox->isChecked()&& list.size()%2!=0){
-    QMessageBox *msgBox = new QMessageBox;
-    msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of pairs.");
-    msgBox->exec();
-    return;
-  }
-  for(QString s : list)
+  if (oneperline)
   {
-    if(!s.isEmpty())
+    QStringList poly_list = text.split(QRegularExpression("\\n"), CGAL_QT_SKIP_EMPTY_PARTS);
+    if (poly_list.empty()) return;
+
+    for(const QString& qs : poly_list)
     {
-      double res = s.toDouble(&ok);
-      if(!ok)
-      {
-        QMessageBox *msgBox = new QMessageBox;
-        msgBox->setWindowTitle("Error");
-        msgBox->setText("ERROR : Coordinates are invalid.");
-        msgBox->exec();
-        break;
-      }
-      else
-      {
-        coord[counter] = res;
-        counter++;
-      }
-    }
-    if(!dock_widget->polygon_checkBox->isChecked() && counter == 3)
-    {
-      Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
-      polyline.push_back(p);
-      counter =0;
-    }
-    else if(dock_widget->polygon_checkBox->isChecked() && counter == 2)
-    {
-      Scene_polylines_item::Point_3 p(coord[0], coord[1], 0);
-      polyline.push_back(p);
-      counter = 0;
+      QStringList list = qs.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+      if (list.isEmpty()) continue;
+      polylines.emplace_back();
+      ok = read_polyline(list, is_2d, is_closed);
+      if (!ok) return;
     }
   }
-  if(dock_widget->polygon_checkBox->isChecked())
+  else
   {
-    polyline.push_back(polyline.front()); //polygon_2 are not closed.
+    QStringList list = text.split(QRegularExpression("\\s+"), CGAL_QT_SKIP_EMPTY_PARTS);
+    if (list.isEmpty()) return;
+    polylines.emplace_back();
+    ok = read_polyline(list, is_2d, is_closed);
+    if (!ok) return;
   }
+
   if(ok)
   {
     dock_widget->line_textEdit->clear();
-    if(dock_widget->fill_checkBox->isChecked())
+    if(shall_fill)
     {
       CGAL::Three::Three::CursorScopeGuard guard(Qt::WaitCursor);
       QApplication::processEvents();
-      if(polyline.front() != polyline.back()) {
-        polyline.push_back(polyline.front());
-      }
-      if(polyline.size() < 4) { // no triangle, skip it (needs at least 3 + 1 repeat)
-        QMessageBox::warning(mw, "Warning", "Needs at least 3 points to triangulate. Aborting.");
-        return;
-      }
-      std::vector<Face> patch;
-      CGAL::Polygon_mesh_processing::triangulate_hole_polyline(polyline,
-                                                               std::back_inserter(patch),
-                                                               CGAL::parameters::use_delaunay_triangulation(true));
 
-      if(patch.empty()) {
-          QMessageBox::warning(mw, "Warning", "Triangulation failed.");
-          return;
-      }
       SMesh* poly = new SMesh;
-      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(polyline,
-                                                                  patch,
-                                                                  *poly);
+      for (const auto& polyline : polylines)
+      {
+        if(polyline.size() < 4) { // no triangle, skip it (needs at least 3 + 1 repeat)
+          QMessageBox::warning(mw, "Warning", "Needs at least 3 points to triangulate. Aborting.");
+          delete poly;
+          return;
+        }
+
+        std::vector<Face> patch;
+        CGAL::Polygon_mesh_processing::triangulate_hole_polyline(polyline,
+                                                                 std::back_inserter(patch),
+                                                                 CGAL::parameters::use_delaunay_triangulation(true));
+
+        if(patch.empty()) {
+            QMessageBox::warning(mw, "Warning", "Triangulation failed.");
+            return;
+        }
+
+        CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(polyline,
+                                                                    patch,
+                                                                    *poly);
+      }
 
       Scene_surface_mesh_item* poly_item = new Scene_surface_mesh_item(poly);
       poly_item->setName(dock_widget->name_lineEdit->text());
@@ -831,6 +869,7 @@ void Basic_generator_plugin::generateLines()
       item->invalidateOpenGLBuffers();
       item->setName(dock_widget->name_lineEdit->text());
       item->setColor(Qt::black);
+      QStringList polylines_metadata;
       item->setProperty("polylines metadata", polylines_metadata);
       Scene_interface::Item_id id = scene->addItem(item);
       scene->setSelectedItem(id);

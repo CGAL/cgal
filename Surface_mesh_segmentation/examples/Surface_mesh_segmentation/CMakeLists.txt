@@ -17,11 +17,11 @@ create_single_source_cgal_program("extract_segmentation_into_mesh_example.cpp")
 
 find_package(OpenMesh QUIET)
 if(OpenMesh_FOUND)
-  include(UseOpenMesh)
+  include(CGAL_OpenMesh_support)
   message(STATUS "Found OpenMesh")
 
   create_single_source_cgal_program("segmentation_from_sdf_values_OpenMesh_example.cpp")
-  target_link_libraries(segmentation_from_sdf_values_OpenMesh_example PRIVATE ${OPENMESH_LIBRARIES})
+  target_link_libraries(segmentation_from_sdf_values_OpenMesh_example PRIVATE CGAL::OpenMesh_support)
 else()
   message(STATUS "NOTICE: Examples that use OpenMesh will not be compiled.")
 endif()

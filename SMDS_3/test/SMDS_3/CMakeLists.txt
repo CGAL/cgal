@@ -26,7 +26,7 @@ if(TARGET CGAL::Eigen3_support)
       test_c3t3_extract_subdomains_boundaries
       test_c3t3_io_MEDIT)
     if(TARGET ${target})
-      target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+      target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
     endif()
   endforeach()
 else()

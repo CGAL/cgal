@@ -161,7 +161,7 @@ public:
 
 #ifdef DOXYGEN_RUNNING
   typedef unspecified_type iterator; ///< Iterator type of the point set with value type `Index` is model of `RandomAccessIterator`
-  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` is model of `RandomA.ccessIterator`
+  typedef unspecified_type const_iterator; ///< Constant iterator type of the point set with value type `Index` is model of `RandomAccessIterator`
 #else
   typedef typename Index_map::iterator iterator; ///< Iterator type of the point set
   typedef typename Index_map::const_iterator const_iterator; ///< Constant iterator type of the point set
@@ -245,8 +245,8 @@ public:
     m_base = ps.m_base;
     m_indices = this->property_map<Index> ("index").value();
     m_points = this->property_map<Point> ("point").value();
-    m_normals = this->property_map<Vector> ("normal").value();
     m_nb_removed = ps.m_nb_removed;
+    copy_properties(ps);
     return *this;
   }
 
@@ -257,7 +257,7 @@ public:
     m_base = ps.m_base;
     m_indices = this->property_map<Index> ("index").value();
     m_points = this->property_map<Point> ("point").value();
-    m_normals = this->property_map<Vector> ("normal").value();
+    copy_properties(ps);
     m_nb_removed = ps.m_nb_removed;
   }
   /// \endcond

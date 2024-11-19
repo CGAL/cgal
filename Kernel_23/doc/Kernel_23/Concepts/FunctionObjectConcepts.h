@@ -777,7 +777,7 @@ public:
                                const K::Point_3& c1,
                                const K::Point_3& a2,
                                const K::Point_3& b2,
-                               const K::Point_3& c2,);
+                               const K::Point_3& c2);
 
   /*!
   compares the angles \f$ \theta_1\f$ and \f$ \theta_2\f$, where

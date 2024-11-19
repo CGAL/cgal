@@ -31,6 +31,8 @@ namespace CGAL {
 
 namespace METIS {
 
+#ifndef DOXYGEN_RUNNING
+
 struct Output_vertex_partition_ids
 {
   template<typename TriangleMesh, typename Indices>
@@ -67,6 +69,8 @@ struct Output_face_partition_ids
       put(face_partition_id_map, *fit, epart[i]);
   }
 };
+
+
 
 template<typename TriangleMesh, typename METIS_options, typename NamedParameters>
 void partition_graph(const TriangleMesh& tm,
@@ -147,8 +151,8 @@ void partition_graph(const TriangleMesh& tm,
   delete[] eptr;
   delete[] eind;
 
-  std::free(npart);
-  std::free(epart);
+  (std::free)(npart);
+  (std::free)(epart);
 }
 
 template<typename TriangleMesh, typename NamedParameters>
@@ -160,6 +164,9 @@ void partition_graph(const TriangleMesh& tm, int nparts,
   METIS_SetDefaultOptions(options);
   return partition_graph(tm, nparts, &options, np);
 }
+
+#endif
+
 
 /// \ingroup PkgBGLPartition
 ///

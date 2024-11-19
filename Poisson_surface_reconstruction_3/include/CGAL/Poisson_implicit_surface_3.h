@@ -56,7 +56,7 @@ namespace CGAL {
         gt.compute_squared_radius_3_object()(bounding_sphere);
     }
 
-    FT operator()(Point p) const
+    FT operator()(const Point& p) const
     {
       return func(p);
     }
@@ -120,7 +120,7 @@ namespace CGAL {
   public:
     Poisson_implicit_function_wrapper(Poisson_implicit_function f) : function(f) {}
 
-    FT operator()(Point p) const
+    FT operator()(const Point& p) const
     {
       return function(p.x(), p.y(), p.z());
     }

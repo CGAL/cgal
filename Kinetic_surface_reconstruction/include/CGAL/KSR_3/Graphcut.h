@@ -21,8 +21,6 @@
 #include <CGAL/boost/graph/alpha_expansion_graphcut.h>
 #include <CGAL/boost/graph/Alpha_expansion_MaxFlow_tag.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Cartesian_converter.h>
 
 // Internal includes.
@@ -46,12 +44,12 @@ namespace KSR_3 {
       const FT beta) : m_beta(beta) { }
 
     void solve(const std::vector<std::pair<std::size_t, std::size_t> >& edges, const std::vector<FT>& edge_weights, const std::vector<std::vector<double> > &cost_matrix, std::vector<std::size_t> &labels) {
-      assert(edges.size() == edge_weights.size());
-      assert(!cost_matrix.empty());
+      CGAL_assertion(edges.size() == edge_weights.size());
+      CGAL_assertion(!cost_matrix.empty());
       labels.resize(cost_matrix[0].size());
       for (std::size_t i = 0; i < cost_matrix[0].size(); i++) {
         // Verify quadratic size
-        assert(cost_matrix[0].size() == cost_matrix[1].size());
+        CGAL_assertion(cost_matrix[0].size() == cost_matrix[1].size());
         labels[i] = (cost_matrix[0][i] > cost_matrix[1][0]) ? 1 : 0;
       }
       compute_graphcut(edges, edge_weights, cost_matrix, labels);

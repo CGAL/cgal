@@ -13,7 +13,7 @@
 //
 // file          : test/test_width_simplex.C
 // package       : Width_3 (1.6)
-// chapter       : Geometric Optimisation
+// chapter       : Geometric Optimization
 //
 // revision      : $Id$
 // revision_date : $Date$

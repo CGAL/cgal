@@ -287,6 +287,7 @@ void CGAL_Lab_point_set_normal_estimation_plugin::on_actionNormalEstimation_trig
     // Updates scene
     item->invalidateOpenGLBuffers();
     scene->itemChanged(index);
+    item->itemChanged();
 
     QApplication::restoreOverrideCursor();
   }

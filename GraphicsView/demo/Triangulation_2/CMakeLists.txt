@@ -17,7 +17,7 @@ if(NOT CGAL_Qt6_FOUND OR NOT Qt6_FOUND)
   return()
 endif()
 
-add_definitions(-DQT_NO_KEYWORDS)
+add_compile_definitions(QT_NO_KEYWORDS)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #--------------------------------

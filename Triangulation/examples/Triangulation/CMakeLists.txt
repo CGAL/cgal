@@ -31,7 +31,7 @@ if(TARGET CGAL::Eigen3_support)
     triangulation
     triangulation_data_structure_dynamic
     triangulation_data_structure_static)
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endforeach()
 else()
   message("NOTICE: Examples in this directory require Eigen 3.1 (or greater), and will not be compiled.")

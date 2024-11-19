@@ -17,7 +17,7 @@ configuration.
 create <B>a single executable</B> for 'source' linked with
 compilations of all other source files
 (`*.cc`, `*.cp`, `*.cxx`, `*.cpp`, `*.CPP`, `*.c++`, or `*.C`).
-This behaviour is usually needed for (graphical) demos.
+This behavior is usually needed for (graphical) demos.
 
 If the parameter is not given, the script creates <B>one executable for each given
 source file</B>.

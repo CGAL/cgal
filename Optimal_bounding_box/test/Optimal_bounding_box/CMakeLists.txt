@@ -18,5 +18,5 @@ create_single_source_cgal_program("test_nelder_mead.cpp")
 create_single_source_cgal_program("test_optimization_algorithms.cpp")
 
 foreach(target test_OBB_traits test_nelder_mead test_optimization_algorithms)
-  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
 endforeach()

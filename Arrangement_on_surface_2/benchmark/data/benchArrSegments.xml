@@ -24,18 +24,18 @@
   <class name="cls241" key="increment walk Segments Lazy Simple Cartesian Cgal Gmpq"/>
   <class name="cls242" key="aggregate Segments Lazy Simple Cartesian Cgal Gmpq"/>
   <class name="cls251" key="increment walk Segments Exact Cgal Gmpq"/>
-  <class name="cls252" key="aggregate Segments Exact Cgal Gmpq"/>  
+  <class name="cls252" key="aggregate Segments Exact Cgal Gmpq"/>
   <class name="cls261" key=""/>
   <class name="cls262" key=""/>
   <class name="cls271" key=""/>
-  <class name="cls272" key=""/>  
+  <class name="cls272" key=""/>
 
-  <clo name="verbose" string="--verbose"/> 
-  <clo name="samples" string="--samples"/> 
-  <clo name="print_header" string="--print-header"/> 
-  <clo name="name_length" string="--name-length"/> 
-  <clo name="type_mask" string="--type-mask"/> 
-  <clo name="strategy_mask" string="--strategy-mask"/> 
+  <clo name="verbose" string="--verbose"/>
+  <clo name="samples" string="--samples"/>
+  <clo name="print_header" string="--print-header"/>
+  <clo name="name_length" string="--name-length"/>
+  <clo name="type_mask" string="--type-mask"/>
+  <clo name="strategy_mask" string="--strategy-mask"/>
 
   <file name="eurcut.bff" format="rat" curves="3099"
     vertices="3078" halfedges="6198" faces="39"></file>
@@ -150,7 +150,7 @@
       <benchArrCgalGmpqCartesianSegment print_header="1"/>
       <benchArrCgalGmpqCartesianSegment/>
       <benchArrCgalGmpqLazyCartesianSegment/>
-      <benchArrCgalGmpqLazyCartesianSegment/>
+      <benchArrCgalGmpqLazySimpleCartesianSegment/>
       <benchArrCgalGmpqExactSegment/>
       <benchArrDoubleCartesianSegment enable="false"/>
       <benchArrLazyCgalGmpqCartesianSegment/>

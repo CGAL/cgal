@@ -39,7 +39,7 @@ endif()
 
 
 
-add_definitions(-DQT_NO_VERSION_TAGGING)
+add_compile_definitions(QT_NO_VERSION_TAGGING)
 
 # AOS
 file(GLOB source_files_aos Aos.h Aos.cpp Aos_defs.h

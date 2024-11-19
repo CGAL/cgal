@@ -58,7 +58,6 @@ Scripts/developer_scripts/check_svn_keywords text eol=lf
 Scripts/developer_scripts/create_cgal_test text eol=lf
 Scripts/developer_scripts/create_cgal_test_with_cmake text eol=lf
 Scripts/developer_scripts/create_internal_release text eol=lf
-Scripts/developer_scripts/create_macosx_installer text eol=lf
 Scripts/developer_scripts/create_new_release text eol=lf
 Scripts/developer_scripts/detect_files_with_mixed_eol_styles text eol=lf
 Scripts/developer_scripts/detect_packages_licenses text eol=lf

@@ -1578,7 +1578,7 @@ public:
         return res;
       }
 
-      // otherwise: both ends have asymptotic behaviour
+      // otherwise: both ends have asymptotic behavior
       if (ps_y1 == ps_y2) { // need special y-comparison
         if (ce1 == ce2) { // both ends approach asymptote from one side
           Comparison_result res = m_self->compare_x_near_boundary_2_object()(xcv1, xcv2, ce2);

@@ -1,0 +1,47 @@
+version = 1
+SPDX-PackageName = "CGAL"
+SPDX-PackageSupplier = "CGAL Editorial Board <info@cgal.org>"
+SPDX-PackageDownloadLocation = "https://github.com/CGAL/cgal"
+
+[[annotations]]
+path = [
+        "**.cmake",
+        "**.md",
+        "doc/**",
+        "doc_html/**",
+        "scripts/**",
+        "developer_scripts/**",
+        "package_info/**",
+        "demo/**",
+        "examples/**",
+        "src/**",
+        "test/**",
+        "benchmarks/**",
+        "benchmark/**",
+        "data/**",
+        "cmake/**",
+        "**/*.natvis",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "1995-2024 The CGAL Project"
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = [
+        "REUSE.toml",
+        "lib/cmake/CGAL/CGALConfig-installation-dirs.cmake.in",
+        "include/CGAL/Qt/ImageInterface.ui",
+        "include/CGAL/Qt/resources/qglviewer-icon.xpm",
+        "AUTHORS",
+        "CMakeLists.txt",
+        "README",
+        "auxiliary/cgal_create_cmake_script.1",
+        "auxiliary/gmp/README",
+        "include/CGAL/license/gpl_package_list.txt",
+        "auxiliary/cgal_app.icns",
+        "copyright",
+        "VERSION",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "1995-2024 The CGAL Project"
+SPDX-License-Identifier = "CC0-1.0"

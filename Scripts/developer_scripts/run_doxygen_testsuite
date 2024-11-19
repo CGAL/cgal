@@ -6,12 +6,20 @@ cd /home/cgal-testsuite
 
 # Rotate log files on one month: the logfile name contains the number of
 # the day
-LOGFILE=$PWD/doxygen_testsuite-`date '+%d'`.log
+LOGFILE=$PWD/doxygen_testsuite-$(date '+%d').log
 
 exec > "$LOGFILE"
 
 # Display commands as if using `set -o xtrace`, but to the stdout
 trap 'echo "[$BASH_SOURCE:$LINENO] $BASH_COMMAND" >&1' DEBUG
+
+# Report errxit errors on cerr (&2)
+report_errexit() {
+    echo "errexit on line $(caller)" >&1
+    echo "errexit on line $(caller)" >&2
+}
+
+trap report_errexit ERR
 
 # A helper error function that outputs both to stderr and stdout before
 # aborting the script.
@@ -31,8 +39,8 @@ if [ -r "${CGAL_DOC_BUILD}" ]; then
     rm -rf "${CGAL_DOC_BUILD}"
 fi
 
-mkdir ${CGAL_DOC_BUILD}
-cd ${CGAL_DOC_BUILD}
+mkdir "${CGAL_DOC_BUILD}"
+cd "${CGAL_DOC_BUILD}"
 
 if [ -r "LATEST" ]; then
     rm -rf LATEST
@@ -44,12 +52,12 @@ if [ ! -f "LATEST" ]; then
     error "COULD NOT DOWNLOAD LATEST!"
 fi
 
-for i in `cat LATEST`
+for i in $(cat LATEST)
 do
     CGAL_LOCATION="${CGAL_URL}/${i}";
     CGAL_ZIPFILE="${i}";
 done
-CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
+CGAL_RELEASE_ID=$(echo "$CGAL_ZIPFILE" | sed "s/.tar.gz//")
 
 curl ${CURL_OPTS} "${CGAL_LOCATION}"
 tar xvzf "${CGAL_ZIPFILE}" && rm "${CGAL_ZIPFILE}"
@@ -60,10 +68,15 @@ cd "${CGAL_RELEASE_ID}"
 
 PATH=/home/cgal-testsuite/local/bin:$PATH
 export PATH
-cd "$PWD/doc/scripts"
+cd "${PWD}/doc/scripts"
 bash -$- ./process_doc.sh /home/cgal-testsuite/bin/doxygen_1_8_13 /home/cgal-testsuite/bin/doxygen_1_9_6 /srv/CGAL/www/Members/Manual_doxygen_test
 if head -2 ../../.scm-branch | grep -q cgal/master; then
     rsync -a --delete "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}/output2/" /srv/CGAL/www/doc/master/
+fi
+if sestatus &>/dev/null && [ -d "/srv/CGAL/www/doc/master/" ] && [ -d "/srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID}" ]; then
+    restorecon -R /srv/CGAL/www/doc/master/ /srv/CGAL/www/Members/Manual_doxygen_test/${CGAL_RELEASE_ID} || error "restorecon command failed"
+else
+    error "SELinux is not enabled or the paths do not exist"
 fi
 rm -rf "${CGAL_DOC_BUILD}"
 # Then gzip the log file, to save space

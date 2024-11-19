@@ -46,7 +46,7 @@
 #include <optional>
 #include <boost/optional/optional_io.hpp>
 #include <boost/mpl/has_xxx.hpp>
-#include <CGAL/tuple.h>
+
 #include <sstream>
 #include <atomic>
 
@@ -54,30 +54,40 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
+  template<typename Facet>
+  struct Facets_erase_counters
+  {
+    const Facet f1_;
+    const unsigned int f1_erase_counter_;
+    const Facet f2_;
+    const unsigned int f2_erase_counter_;
+  };
+
   // Predicate to know if a facet in a refinement queue is a zombie
   // A facet is a pair <cell, index of the opposite vertex>.
   // A facet is a "zombie" if at least one of its two adjacent cells
   // has been erased. We test it thanks to the "erase counter" which
   // is inside each cell (incremented by the compact container).
-  // In the refinement queue, we store a tuple
+  // In the refinement queue, we store a struct
   // <facet1, facet1_erase counter, facet2, facet2_erase_counter>
   // where facet2 = mirror_facet(facet1) and facetx_erase_counter is
   // the erase_counter of facetx's cell when added to the queue>
   template<typename Facet>
   class Facet_to_refine_is_not_zombie
   {
+    typedef Facets_erase_counters<Facet> Facets_ec;
+
   public:
     Facet_to_refine_is_not_zombie() {}
 
-    bool operator()(const std::tuple<
-      Facet, unsigned int, Facet, unsigned int> &f) const
+    bool operator()(const Facets_ec& f) const
     {
 #ifdef _DEBUG
       /*
-      int f1_current_erase_counter = std::get<0>(f).first->erase_counter();
-      int f1_saved_erase_counter = std::get<1>(f);
-      int f2_current_erase_counter = std::get<2>(f).first->erase_counter();
-      int f2_saved_erase_counter = std::get<3>(f);
+      int f1_current_erase_counter = f.f1_.first->erase_counter();
+      int f1_saved_erase_counter = f.f1_erase_counter_;
+      int f2_current_erase_counter = f.f2_.first->erase_counter();
+      int f2_saved_erase_counter = f.f2_erase_counter_;
       */
       //f1_current_erase_counter - f1_saved_erase_counter + f2_current_erase_counter - f2_saved_erase_counter == 1
 
@@ -89,7 +99,7 @@ namespace Mesh_3 {
 #endif
 
         std::stringstream sstr;
-        Facet facet = std::get<0>(f);
+        Facet facet = f.f1_;
         sstr << "Facet 1 { " << std::endl
         << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
         << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
@@ -97,7 +107,7 @@ namespace Mesh_3 {
         << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
         << "}" << std::endl;
 
-        facet = std::get<2>(f);
+        facet = f.f2_;
         sstr << "Facet 2 { " << std::endl
         << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
         << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
@@ -109,8 +119,8 @@ namespace Mesh_3 {
         std::cerr << s << std::endl;
       }*/
 #endif
-      return (std::get<0>(f).first->erase_counter() == std::get<1>(f)
-        && std::get<2>(f).first->erase_counter() == std::get<3>(f) );
+      return (f.f1_.first->erase_counter() == f.f1_erase_counter_
+           && f.f2_.first->erase_counter() == f.f2_erase_counter_ );
     }
   };
 
@@ -123,6 +133,8 @@ namespace Mesh_3 {
 template <typename Index, typename Facet, typename Concurrency_tag>
 class Refine_facets_3_handle_queue_base
 {
+  typedef Facets_erase_counters<Facet> Facets_counters;
+
 protected:
   Refine_facets_3_handle_queue_base() : m_last_vertex_index() {}
 
@@ -139,21 +151,20 @@ protected:
 #if defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE) \
  || defined(CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE)
 
-  std::tuple<Facet, unsigned int, Facet, unsigned int>
+  Facets_counters
   from_facet_to_refinement_queue_element(const Facet &facet,
                                          const Facet &mirror) const
   {
-    return std::make_tuple(
-      facet, facet.first->erase_counter(),
-      mirror, mirror.first->erase_counter());
+    return Facets_counters{facet, facet.first->erase_counter(),
+                           mirror, mirror.first->erase_counter()};
   }
 
 public:
   template<typename Container_element>
   Facet extract_element_from_container_value(const Container_element &e) const
   {
-    // We get the first Facet inside the tuple
-    return std::get<0>(e);
+    // We get the first Facet inside the struct
+    return e.f1_;
   }
 
 #else
@@ -198,21 +209,20 @@ protected:
     m_last_vertex_index.local() = i;
   }
 
-  std::tuple<Facet, unsigned int, Facet, unsigned int>
+  Facets_erase_counters<Facet>
   from_facet_to_refinement_queue_element(const Facet &facet,
                                          const Facet &mirror) const
   {
-    return std::make_tuple(
-      facet, facet.first->erase_counter(),
-      mirror, mirror.first->erase_counter());
+    return Facets_erase_counters<Facet>{facet, facet.first->erase_counter(),
+                                        mirror, mirror.first->erase_counter()};
   }
 
 public:
   template<typename Container_element>
   Facet extract_element_from_container_value(const Container_element &e) const
   {
-    // We get the first Facet inside the tuple
-    return std::get<0>(e);
+    // We get the first Facet inside the struct
+    return e.f1_;
   }
 
 protected:
@@ -246,6 +256,8 @@ class Refine_facets_3_base
   typedef typename GT::Segment_3 Segment_3;
   typedef typename GT::Ray_3 Ray_3;
   typedef typename GT::Line_3 Line_3;
+
+  typedef typename MeshDomain::Intersection Intersection;
 
 public:
   Refine_facets_3_base(Tr& tr, Complex3InTriangulation3& c3t3,
@@ -356,6 +368,19 @@ public:
     return sstr.str();
   }
 
+  int dimension(const Intersection& intersection) const
+  {
+    return std::get<2>(intersection);
+  }
+  const typename MeshDomain::Index& index(const Intersection& intersection) const
+  {
+    return std::get<1>(intersection);
+  }
+  const typename MeshDomain::Point_3& point(const Intersection& intersection) const
+  {
+    return std::get<0>(intersection);
+  }
+
 protected:
 
   // Functor for scan_triangulation_impl function
@@ -395,9 +420,13 @@ protected:
   typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
 
-  typedef typename std::optional<
-    std::tuple<Surface_patch_index, Index, Bare_point> >
-                                                      Facet_properties;
+  struct Facet_prop
+  {
+    Surface_patch_index surface_patch_index;
+    Index index;
+    Bare_point point;
+  };
+  typedef typename std::optional<Facet_prop> Facet_properties;
 
 
   /// Returns canonical facet of facet
@@ -648,8 +677,7 @@ template<class Tr,
           Meshes::Filtered_multimap_container
 # endif
           <
-            std::tuple<typename Tr::Facet, unsigned int,
-                               typename Tr::Facet, unsigned int>,
+            Facets_erase_counters<typename Tr::Facet>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -658,8 +686,7 @@ template<class Tr,
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
           <
-            std::tuple<typename Tr::Facet, unsigned int,
-                               typename Tr::Facet, unsigned int>,
+            Facets_erase_counters<typename Tr::Facet>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -667,8 +694,7 @@ template<class Tr,
 # elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
           Meshes::Filtered_multimap_container
           <
-            std::tuple<typename Tr::Facet, unsigned int,
-                               typename Tr::Facet, unsigned int>,
+            Facets_erase_counters<typename Tr::Facet>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -686,8 +712,7 @@ template<class Tr,
 # ifdef CGAL_MESH_3_USE_LAZY_UNSORTED_REFINEMENT_QUEUE
           Meshes::Filtered_deque_container
           <
-            std::tuple<typename Tr::Facet, unsigned int,
-                               typename Tr::Facet, unsigned int>,
+            Facets_erase_counters<typename Tr::Facet>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -695,8 +720,7 @@ template<class Tr,
 # elif defined(CGAL_MESH_3_USE_LAZY_SORTED_REFINEMENT_QUEUE)
           Meshes::Filtered_multimap_container
           <
-            std::tuple<typename Tr::Facet, unsigned int,
-                               typename Tr::Facet, unsigned int>,
+            Facets_erase_counters<typename Tr::Facet>,
             typename Criteria::Facet_quality,
             Facet_to_refine_is_not_zombie<typename Tr::Facet>,
             Concurrency_tag
@@ -1351,9 +1375,7 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const Surface_patch_index& surface_index = std::get<0>(*properties);
-        const Index& surface_center_index = std::get<1>(*properties);
-        const Bare_point& surface_center = std::get<2>(*properties);
+        const auto& [surface_index, surface_center_index, surface_center] = *properties;
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1413,9 +1435,7 @@ conflicts_zone_impl(const Weighted_point& point
       this->compute_facet_properties(facet, properties, /*force_exact=*/true);
       if ( properties )
       {
-        const Surface_patch_index& surface_index = std::get<0>(*properties);
-        const Index& surface_center_index = std::get<1>(*properties);
-        const Bare_point& surface_center = std::get<2>(*properties);
+        const auto& [surface_index, surface_center_index, surface_center] = *properties;
 
         // Facet is on surface: set facet properties
         this->set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1581,9 +1601,7 @@ treat_new_facet(Facet& facet)
   compute_facet_properties(facet, properties);
   if ( properties )
   {
-    const Surface_patch_index& surface_index = std::get<0>(*properties);
-    const Index& surface_center_index = std::get<1>(*properties);
-    const Bare_point& surface_center = std::get<2>(*properties);
+    const auto& [surface_index, surface_center_index, surface_center] = *properties;
 
     // Facet is on surface: set facet properties
     set_facet_surface_center(facet, surface_center, surface_center_index);
@@ -1681,16 +1699,12 @@ compute_facet_properties(const Facet& facet,
       // test "intersect == Intersection()" (aka empty intersection), but
       // the later does not work.
       Surface_patch surface =
-        (std::get<2>(intersect) == 0) ? Surface_patch() :
+        (dimension(intersect) == 0) ? Surface_patch() :
         Surface_patch(
-          r_oracle_.surface_patch_index(std::get<1>(intersect)));
+          r_oracle_.surface_patch_index(index(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      {
-        fp =  Facet_properties(std::make_tuple(*surface,
-                                      std::get<1>(intersect),
-                                      std::get<0>(intersect)));
-      }
+      fp =  Facet_prop{*surface, index(intersect), point(intersect)};
     }
   }
   // If the dual is a ray
@@ -1721,15 +1735,13 @@ compute_facet_properties(const Facet& facet,
       Intersection intersect = construct_intersection(ray);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       Surface_patch surface =
-        (std::get<2>(intersect) == 0) ? Surface_patch() :
+        (dimension(intersect) == 0) ? Surface_patch() :
         Surface_patch(
-          r_oracle_.surface_patch_index(std::get<1>(intersect)));
+          r_oracle_.surface_patch_index(index(intersect)));
       if(surface)
 #endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       {
-        fp = Facet_properties(std::make_tuple(*surface,
-                                      std::get<1>(intersect),
-                                      std::get<0>(intersect)));
+        fp = Facet_prop{*surface, index(intersect), point(intersect)};
       }
     }
   }

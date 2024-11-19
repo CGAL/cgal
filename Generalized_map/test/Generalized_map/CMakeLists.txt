@@ -15,8 +15,8 @@ set(hfiles Generalized_map_2_test.h
 create_single_source_cgal_program("Generalized_map_test.cpp" ${hfiles})
 
 add_executable(Generalized_map_test_index  Generalized_map_test.cpp ${hfiles})
-target_compile_definitions(Generalized_map_test_index PUBLIC USE_COMPACT_CONTAINER_WITH_INDEX)
-target_link_libraries(Generalized_map_test_index PUBLIC CGAL CGAL::Data)
+target_compile_definitions(Generalized_map_test_index PRIVATE USE_COMPACT_CONTAINER_WITH_INDEX)
+target_link_libraries(Generalized_map_test_index PRIVATE CGAL CGAL::Data)
 cgal_add_compilation_test(Generalized_map_test_index)
 
 create_single_source_cgal_program("gmap_test_split_attribute.cpp")

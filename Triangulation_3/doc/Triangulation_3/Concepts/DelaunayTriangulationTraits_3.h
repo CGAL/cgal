@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `DelaunayTriangulationTraits_3` is the first template parameter of the class
-`Delaunay_triangulation_3`. It defines the geometric objects (points,
+`CGAL::Delaunay_triangulation_3`. It defines the geometric objects (points,
 segments...) forming the triangulation together with a few geometric
 predicates and constructions on these objects.
 
@@ -221,4 +221,3 @@ Construct_ray_3 construct_ray_3_object();
 /// @}
 
 }; /* end DelaunayTriangulationTraits_3 */
-

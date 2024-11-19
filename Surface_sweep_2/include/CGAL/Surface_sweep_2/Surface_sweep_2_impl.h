@@ -762,7 +762,7 @@ void Surface_sweep_2<Vis>::_intersect(Subcurve* c1, Subcurve* c2,
     Multiplicity multiplicity = 0;
     const Intersection_point* xp_point = std::get_if<Intersection_point>(&(*vi));
     if (xp_point != nullptr) {
-      Point_2 xp = xp_point->first;
+      auto xp = xp_point->first;
       multiplicity = xp_point->second;
       CGAL_SS_PRINT_TEXT("Found an intersection point");
       CGAL_SS_PRINT_EOL();
@@ -919,7 +919,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
       left_event = c1->left_event();
     }
     else {
-      Point_2 left_end =
+      auto left_end =
         this->m_traits->construct_min_vertex_2_object()(overlap_cv);
       left_event = this->_push_event(left_end, Event::DEFAULT, ARR_INTERIOR,
                                      ARR_INTERIOR).first;
@@ -940,7 +940,7 @@ _create_overlapping_curve(const X_monotone_curve_2& overlap_cv,
   }
   else {
     auto max_vertex = this->m_traits->construct_max_vertex_2_object();
-    Point_2 right_end = max_vertex(overlap_cv);
+    auto right_end = max_vertex(overlap_cv);
     right_event = this->_push_event(right_end, Event::DEFAULT, ARR_INTERIOR,
                                     ARR_INTERIOR).first;
   }

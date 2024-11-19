@@ -38,7 +38,6 @@ namespace Qt
 {
 class Callback;
 class ArrangementGraphicsItemBase;
-class ArrangementGraphicsItemBase;
 class GraphicsViewCurveInputBase;
 class GraphicsViewNavigation;
 enum class CurveType;

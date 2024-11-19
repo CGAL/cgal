@@ -178,7 +178,7 @@ public:
       man.backend().negate();
     }
 #ifdef CGAL_DEBUG_CPPF
-    assert(rat.sign() == man.sign());
+    CGAL_assertion(rat.sign() == man.sign());
 #endif
     // std::cout << "m = " << m << " * 2^" << exp  << std::endl;
     // fmt(m);
@@ -353,7 +353,7 @@ public:
 #endif
     cpp_float d = b-a;
 #ifdef CGAL_DEBUG_CPPF
-    assert(qres == d.is_positive());
+    CGAL_assertion(qres == d.is_positive());
 #endif
     return d.is_positive();
   }
@@ -379,18 +379,18 @@ public:
     if(shift > 0){
       Mantissa ac = a.man << shift;
 #ifdef CGAL_DEBUG_CPPF
-      assert( qres == (ac == b.man));
+      CGAL_assertion( qres == (ac == b.man));
 #endif
       return ac == b.man;
     }else if(shift < 0){
       Mantissa  bc = b.man << -shift;
 #ifdef CGAL_DEBUG_CPPF
-      assert(qres == (a.man == bc));
+      CGAL_assertion(qres == (a.man == bc));
 #endif
       return a.man == bc;
     }
 #ifdef CGAL_DEBUG_CPPF
-    assert(qres == (a.man == b.man));
+    CGAL_assertion(qres == (a.man == b.man));
 #endif
     return a.man==b.man;
   }
@@ -489,7 +489,7 @@ public:
           Type operator()(
               const Type& /* x */,
               const Type& /* y */ ) const {
-            assert(false);
+            CGAL_assertion(false);
             return Type(); // cpp_float_gcd(x, y);
           }
         };
@@ -506,7 +506,7 @@ public:
           Type operator()(
               const Type& /* x */,
               const Type& /* y */ ) const {
-            assert(false);
+            CGAL_assertion(false);
             return Type(); // x / y;
           }
         };
@@ -514,7 +514,7 @@ public:
       struct Sqrt
         : public CGAL::cpp98::unary_function< Type, Type > {
           Type operator()( const Type& /* x */) const {
-            assert(false);
+            CGAL_assertion(false);
             return Type(); // cpp_float_sqrt(x);
           }
         };
@@ -523,11 +523,11 @@ public:
         : public CGAL::cpp98::binary_function< Type, Type&, bool > {
           bool operator()( const Type& /* x */, Type& /* y */ ) const {
             // TODO: avoid doing 2 calls.
-            assert(false);
+            CGAL_assertion(false);
             return true;
           }
           bool operator()( const Type& /* x */) const {
-            assert(false);
+            CGAL_assertion(false);
             return true;
           }
         };

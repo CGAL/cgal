@@ -733,7 +733,7 @@ struct Graph_with_descriptor_with_graph_property_map {
   }
 }; // class Graph_with_descriptor_with_graph_property_map
 
-//specialisation for lvaluepropertymaps
+//specialization for lvaluepropertymaps
 template <typename Graph, typename PM>
 struct Graph_with_descriptor_with_graph_property_map<Graph, PM, boost::lvalue_property_map_tag> {
 

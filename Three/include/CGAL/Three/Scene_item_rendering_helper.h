@@ -110,7 +110,7 @@ public:
   //! \brief setTriangleContainer sets the `id`th `Triangle_container` to `tc`.
   //!
   //! If `id` is bigger than the current size of the container vector, this vector is
-  //! resized accordingly. This means that for optimisation reasons, containers should be created
+  //! resized accordingly. This means that for optimization reasons, containers should be created
   //! decreasingly.
   //!
   void setTriangleContainer(std::size_t id,
@@ -120,7 +120,7 @@ public:
   //! \brief setEdgeContainer sets the `id`th `Edge_container` to `tc`.
   //!
   //! If `id` is bigger than the current size of the container vector, this vector is
-  //! resized accordingly. This means that for optimisation reasons, containers should be created
+  //! resized accordingly. This means that for optimization reasons, containers should be created
   //! decreasingly.
   //!
   void setEdgeContainer(std::size_t id,
@@ -130,7 +130,7 @@ public:
   //! \brief setPointContainer sets the `id`th `Point_container` to `tc`.
   //!
   //! If `id` is bigger than the current size of the container vector, this vector is
-  //! resized accordingly. This means that for optimisation reasons, containers should be created
+  //! resized accordingly. This means that for optimization reasons, containers should be created
   //! decreasingly.
   //!
   void setPointContainer(std::size_t id,

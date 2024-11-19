@@ -29,7 +29,6 @@
 #include <functional>
 #include <utility>
 #include <vector>
-#include <vector>
 #include <set>
 
 namespace CGAL {

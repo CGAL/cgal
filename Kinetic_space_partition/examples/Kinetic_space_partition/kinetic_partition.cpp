@@ -40,7 +40,7 @@ int main(int argc, char** argv)
   // Initialization of Kinetic_space_partition_3 object.
   // 'debug' set to true exports intermediate results into files in the working directory.
   // The resulting volumes are exported into a volumes folder, if the folder already exists.
-  KSP ksp(CGAL::parameters::verbose(true).debug(true));
+  KSP ksp(CGAL::parameters::verbose(true).debug(false));
 
   // Providing input polygons.
   ksp.insert(input_vertices, input_faces);

@@ -342,13 +342,13 @@ public:
     {}
 
     /*! Operate */
-    bool operator()(const X_monotone_curve_2& xc1,
-                    const X_monotone_curve_2& xc2) const
-    { ++m_counter1; return m_object(xc1, xc2); }
+    bool operator()(const Point_2& p1, const Point_2& p2) const
+    { ++m_counter1; return m_object(p1, p2); }
 
     /*! Operate */
-    bool operator()(const Point_2& p1, const Point_2& p2) const
-    { ++m_counter2; return m_object(p1, p2); }
+    bool operator()(const X_monotone_curve_2& xc1,
+                    const X_monotone_curve_2& xc2) const
+    { ++m_counter2; return m_object(xc1, xc2); }
   };
 
   /*! A functor that compares compares the y-coordinates of two x-monotone
@@ -563,7 +563,7 @@ public:
    */
   class Is_on_x_identification_2 {
   private:
-    typename Base::Is_on_x_identificiation_2 m_object;
+    typename Base::Is_on_x_identification_2 m_object;
     size_t& m_counter1;
     size_t& m_counter2;
 
@@ -571,17 +571,17 @@ public:
     /*! Construct */
     Is_on_x_identification_2(const Base* base,
                              size_t& counter1, size_t& counter2) :
-      m_object(base->is_on_x_identificiation_2_object()),
+      m_object(base->is_on_x_identification_2_object()),
       m_counter1(counter1),
       m_counter2(counter2)
     {}
 
     /*! Operate */
-    Arr_parameter_space operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     { ++m_counter1; return m_object(p); }
 
     /*! Operate */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xc) const
+    bool operator()(const X_monotone_curve_2& xc) const
     { ++m_counter2; return m_object(xc); }
   };
 
@@ -666,7 +666,7 @@ public:
    */
   class Is_on_y_identification_2 {
   private:
-    typename Base::Is_on_y_identificiation_2 m_object;
+    typename Base::Is_on_y_identification_2 m_object;
     size_t& m_counter1;
     size_t& m_counter2;
 
@@ -674,18 +674,18 @@ public:
     /*! Construct */
     Is_on_y_identification_2(const Base* base,
                              size_t& counter1, size_t& counter2) :
-      m_object(base->is_on_y_identificiation_2_object()),
+      m_object(base->is_on_y_identification_2_object()),
       m_counter1(counter1),
       m_counter2(counter2)
     {}
 
     /*! Operate */
-    Arr_parameter_space operator()(const Point_2& p) const
+    bool operator()(const Point_2& p) const
     { ++m_counter1; return m_object(p); }
 
 
     /*! Operate */
-    Arr_parameter_space operator()(const X_monotone_curve_2& xc) const
+    bool operator()(const X_monotone_curve_2& xc) const
     { ++m_counter2; return m_object(xc); }
   };
 
@@ -824,10 +824,10 @@ public:
                                     m_counters[IS_ON_X_IDENTIFICATION_CURVE_OP]);
   }
 
-  Compare_y_on_boundary_2 compare_on_boundary_2_object() const
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object() const
   { return Compare_y_on_boundary_2(this, m_counters[COMPARE_Y_ON_BOUNDARY_OP]); }
 
-  Compare_y_near_boundary_2 compare_near_boundary_2_object() const
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   {
     return Compare_y_near_boundary_2(this,
                                      m_counters[COMPARE_Y_NEAR_BOUNDARY_OP]);
@@ -943,7 +943,7 @@ Out_stream& operator<<(Out_stream& os,
      << traits.count_parameter_space_in_x_point() << std::endl
      << "# of PARAMETER_SPACE_IN_X curve operation = "
      << traits.count_parameter_space_in_x_curve() << std::endl
-     << "# of IS_ON_X_IDENTIFICIATION point operation = "
+     << "# of IS_ON_X_IDENTIFICATION point operation = "
      << traits.count_is_on_x_identification_point() << std::endl
      << "# of IS_ON_X_IDENTIFICATION curve operation = "
      << traits.count_is_on_x_identification_curve() << std::endl
@@ -958,7 +958,7 @@ Out_stream& operator<<(Out_stream& os,
      << traits.count_parameter_space_in_y_point() << std::endl
      << "# of PARAMETER_SPACE_IN_Y curve operation = "
      << traits.count_parameter_space_in_y_curve() << std::endl
-     << "# of IS_ON_Y_IDENTIFICIATION point operation = "
+     << "# of IS_ON_Y_IDENTIFICATION point operation = "
      << traits.count_is_on_y_identification_point() << std::endl
      << "# of IS_ON_Y_IDENTIFICATION curve operation = "
      << traits.count_is_on_y_identification_curve() << std::endl

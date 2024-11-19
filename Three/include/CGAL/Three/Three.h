@@ -31,11 +31,7 @@
 #  define THREE_EXPORT Q_DECL_IMPORT
 #endif
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-#define CGAL_QT_SKIP_EMPTY_PARTS QString::SkipEmptyParts
-#else
 #define CGAL_QT_SKIP_EMPTY_PARTS ::Qt::SkipEmptyParts
-#endif
 
 namespace CGAL{
 namespace Three{

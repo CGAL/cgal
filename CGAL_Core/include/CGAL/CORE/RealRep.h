@@ -154,7 +154,7 @@ void * Realbase_for<T>::operator new( size_t size)
 
 template <class T>
 void Realbase_for<T>::operator delete( void *p, size_t )
-{ MemoryPool<Realbase_for<T> >::global_allocator().free(p); }
+{ (MemoryPool<Realbase_for<T> >::global_allocator().free)(p); }
 
 typedef Realbase_for<long> RealLong;
 typedef Realbase_for<double> RealDouble;

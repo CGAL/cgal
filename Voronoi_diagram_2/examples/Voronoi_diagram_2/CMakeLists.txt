@@ -16,7 +16,7 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(draw_voronoi_diagram_2 PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_voronoi_diagram_2 PRIVATE CGAL::CGAL_Basic_viewer)
 else()
   message(STATUS "NOTICE: The Qt6 library was not found. The example 'draw_voronoi_diagram_2' will not be compiled.")
 endif()

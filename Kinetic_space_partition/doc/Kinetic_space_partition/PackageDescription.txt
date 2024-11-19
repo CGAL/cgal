@@ -17,7 +17,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{6.0}
 \cgalPkgDependsOn{\ref PkgSurfaceMesh, \ref PkgLinearCellComplex}
-\cgalPkgBib{cgal:ol-kinetic}
+\cgalPkgBib{cgal:ol-kinetic-partition}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 

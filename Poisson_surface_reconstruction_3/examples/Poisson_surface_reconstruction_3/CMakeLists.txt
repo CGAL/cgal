@@ -18,19 +18,34 @@ if(MSVC)
   message(STATUS "USING RELEASE EXEFLAGS = '${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_EXE_LINKER_FLAGS_RELEASE}'")
 endif()
 
+# Activate Parallelism in Mesh_3
+option(CGAL_ACTIVATE_CONCURRENT_MESH_3 "Activate parallelism in Mesh_3" OFF)
+
 # Find Eigen3 (requires 3.1.0 or greater)
 find_package(Eigen3 3.1.0 QUIET)
 include(CGAL_Eigen3_support)
 if(TARGET CGAL::Eigen3_support)
   # Executables that require Eigen 3
   create_single_source_cgal_program("poisson_reconstruction_example.cpp")
-  target_link_libraries(poisson_reconstruction_example PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(poisson_reconstruction_example PRIVATE CGAL::Eigen3_support)
+  create_single_source_cgal_program("poisson_and_parallel_mesh_3.cpp")
+  target_link_libraries(poisson_and_parallel_mesh_3 PRIVATE CGAL::Eigen3_support)
   create_single_source_cgal_program("poisson_reconstruction.cpp")
-  target_link_libraries(poisson_reconstruction PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(poisson_reconstruction PRIVATE CGAL::Eigen3_support)
   create_single_source_cgal_program("poisson_reconstruction_function.cpp")
-  target_link_libraries(poisson_reconstruction_function PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(poisson_reconstruction_function PRIVATE CGAL::Eigen3_support)
   create_single_source_cgal_program("tutorial_example.cpp")
-  target_link_libraries(tutorial_example PUBLIC CGAL::Eigen3_support)
+  target_link_libraries(tutorial_example PRIVATE CGAL::Eigen3_support)
 else()
   message("NOTICE: The examples require Eigen 3.1 (or greater) will not be compiled.")
 endif()
+
+# Use TBB for parallelism
+if(CGAL_ACTIVATE_CONCURRENT_MESH_3)
+  find_package(TBB REQUIRED)
+  include(CGAL_TBB_support)
+  if(TARGET CGAL::TBB_support)
+    add_definitions(-DCGAL_CONCURRENT_MESH_3)
+    target_link_libraries(poisson_and_parallel_mesh_3 PRIVATE CGAL::TBB_support)
+  endif()#Find TBB
+endif()#Parallelism in Mesh_3

@@ -340,7 +340,7 @@ operator<<(std::ostream &os, const Triangulation_ds_face_base_2<TDS> &)
   return os;
 }
 
-// Specialisation for void.
+// Specialization for void.
 template <>
 class Triangulation_ds_face_base_2<void>
 {

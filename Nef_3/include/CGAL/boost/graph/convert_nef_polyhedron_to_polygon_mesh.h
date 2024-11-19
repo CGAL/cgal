@@ -25,6 +25,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Nef_S2/Generic_handle_map.h>
 
 #include <unordered_map>
 
@@ -81,6 +82,7 @@ struct Shell_polygons_visitor
   Vertex_index_map& vertex_indices;
   PolygonRange& polygons;
   bool triangulate_all_faces;
+  CGAL::Generic_handle_map<bool> Done;
 
   Shell_polygons_visitor(Vertex_index_map& vertex_indices,
                          PolygonRange& polygons,
@@ -88,6 +90,7 @@ struct Shell_polygons_visitor
     : vertex_indices( vertex_indices )
     , polygons(polygons)
     , triangulate_all_faces(triangulate_all_faces)
+    , Done(false)
   {}
 
   std::size_t get_cycle_length( typename Nef_polyhedron::Halffacet_cycle_const_iterator hfc) const
@@ -103,6 +106,14 @@ struct Shell_polygons_visitor
 
   void visit(typename Nef_polyhedron::Halffacet_const_handle opposite_facet)
   {
+    typename Nef_polyhedron::Halffacet_const_handle twin_facet = opposite_facet->twin();
+
+    // skip when we have to do with the unbounded volume and a surface with boundaries
+    if ((twin_facet->incident_volume() == opposite_facet->incident_volume()) && Done[twin_facet])
+        return;
+
+    Done[opposite_facet] = true;
+
     bool is_marked=opposite_facet->incident_volume()->mark();
 
     CGAL_assertion(Nef_polyhedron::Infi_box::is_standard(opposite_facet->plane()));
@@ -351,18 +362,50 @@ void convert_nef_polyhedron_to_polygon_soup(const Nef_polyhedron& nef,
   typedef Cartesian_converter<Nef_Kernel, Output_kernel> Converter;
   typename Nef_polyhedron::Volume_const_iterator vol_it = nef.volumes_begin(),
                                                  vol_end = nef.volumes_end();
-  if ( Nef_polyhedron::Infi_box::extended_kernel() ) ++vol_it; // skip Infi_box
-  CGAL_assertion ( vol_it != vol_end );
-  ++vol_it; // skip unbounded volume
+
+  if (Nef_polyhedron::Infi_box::extended_kernel()) ++vol_it; // skip Infi_box
+
+  if ( vol_it == vol_end ) return;
 
   Converter to_output;
+  bool handling_unbounded_volume = true;
+
+  auto shell_is_closed = [](typename Nef_polyhedron::Shell_entry_const_iterator sfh)
+  {
+    typename Nef_polyhedron::SFace_const_handle sf = sfh;
+
+    typename Nef_polyhedron::SFace_cycle_const_iterator fc;
+    for(fc = sf->sface_cycles_begin(); fc != sf->sface_cycles_end(); ++fc)
+    {
+      if (fc.is_shalfedge() ) {
+        typename Nef_polyhedron::SHalfedge_const_handle e(fc);
+        typename Nef_polyhedron::SHalfedge_around_sface_const_circulator ec(e),ee(e);
+        CGAL_For_all(ec,ee)
+        {
+          typename Nef_polyhedron::Halffacet_const_handle f = ec->twin()->facet();
+          if (f->incident_volume()==f->twin()->incident_volume())
+            return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
   for (;vol_it!=vol_end;++vol_it)
-    nef_to_pm::collect_polygon_mesh_info(points,
-                                         polygons,
-                                         nef,
-                                         vol_it->shells_begin(),
-                                         to_output,
-                                         triangulate_all_faces);
+  {
+    for(auto sit = vol_it->shells_begin(); sit != vol_it->shells_end(); ++sit)
+    {
+      if ( (handling_unbounded_volume || sit!=vol_it->shells_begin()) && shell_is_closed(sit)) continue;
+      nef_to_pm::collect_polygon_mesh_info(points,
+                                           polygons,
+                                           nef,
+                                           sit,
+                                           to_output,
+                                           triangulate_all_faces);
+    }
+    handling_unbounded_volume = false;
+  }
 }
 
 template <class Nef_polyhedron, class Polygon_mesh>

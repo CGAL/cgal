@@ -249,7 +249,7 @@ namespace CGAL {
   class GMap_dart_iterator_basic_of_two_alpha;
   /* Class CMap_dart_iterator_basic_of_two_alpha<Ai,1>: to iterate
    * on the darts of the orbit <Ai,Ai+1>: Ai<Ai+1<=dimension.
-   * specialisation because here Aio(Ai+1) is not an involution.
+   * specialization because here Aio(Ai+1) is not an involution.
    * Basic classes do not guaranty correct marks (i.e. do not unmark darts in
    * the destructor, possible problem with the rewind). If you are not sure,
    * use CMap_dart_iterator_basic_of_two_alpha.

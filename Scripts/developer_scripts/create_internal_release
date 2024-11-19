@@ -30,7 +30,7 @@ usage:
   $0 (-h|-r)
              [-n version number]
              [-d releasedir] [-a allpackagesdir]
-	     [-c candidatesdir]
+             [-c candidatesdir]
              [-l lockfile]
 
 Exactly one of the options -h or -r must be present.
@@ -63,7 +63,7 @@ EOF
 my $TEMPFILE="TEMPFILE.$$";
 
 #----------------------------------------------------#
-#                Initialisation                      #
+#                initialization                      #
 #----------------------------------------------------#
 
 my (
@@ -96,11 +96,11 @@ sub termination_signal_handler {
 sub lock()
 {
     if (system("$LOCKCMD", "-r", '10', "$LOCKFILE") != 0) {
-	print STDERR <<"TOTHIER";
+        print STDERR <<"TOTHIER";
 The script could not proceed because
 it could not acquire the needed lock on file $LOCKFILE.
 TOTHIER
-	exit 1;
+        exit 1;
     }
     $SIG{QUIT} = \&termination_signal_handler;
     $SIG{HUP} = \&termination_signal_handler;
@@ -153,12 +153,12 @@ sub install_packages() {
     # option instead of --exclude=.svn
     # -- Laurent Rineau, 2009/12/04 (idea by Sylvain Pion)
     if( -f $dont_submit ) {
-	@command = (@command, "--exclude-from=$dont_submit");
+      @command = (@command, "--exclude-from=$dont_submit");
     }
     @command = (@command, @global_dont_submit_tar_options);
     @command = (@command, "-C", "$package_name", ".");
     foreach( @command ) {
-	print "$_ ";
+      print "$_ ";
     }
     print "\n";
     system(@command);
@@ -186,15 +186,15 @@ sub install_packages() {
       my $filename = $_->name();
       if( ! $_->is_dir() )
       {
-	if(exists($files{$_->name()}))
+        if(exists($files{$_->name()}))
         {
-	    print LOG_CONFLICTS "File ", $_->name(), " from package ", $package_name;
-	    print LOG_CONFLICTS " conflicts with one from package ", $files{$_->name()}. "\n";
-	}
-	else
-	{
-	    $files{$_->name()} = $package_name;
-	}
+          print LOG_CONFLICTS "File ", $_->name(), " from package ", $package_name;
+          print LOG_CONFLICTS " conflicts with one from package ", $files{$_->name()}. "\n";
+        }
+        else
+        {
+          $files{$_->name()} = $package_name;
+        }
       }
       else { # is_dir() returned true
         next if ($filename !~ /^\.\/?$/) and ($filename =~ /^\.\.?\/?$/);
@@ -323,10 +323,10 @@ sub CreateExampleTestDirs()
     chdir 'examples' or return;
     print "Creating $VERSION/test/example directories ...\n";
     foreach $DIR (glob("*")) {
-	if ( -d $DIR ) {
-	    print "Creating test/${DIR}_Examples ...\n";
-	    dircopy("$DIR", "../test/${DIR}_Examples");
-	}
+        if ( -d $DIR ) {
+            print "Creating test/${DIR}_Examples ...\n";
+            dircopy("$DIR", "../test/${DIR}_Examples");
+        }
     }
     chdir '..';
 }
@@ -343,16 +343,16 @@ sub CreateDemoTestDirs()
     chdir 'demo' or return;
     print "Creating $VERSION/test/demo directories ...\n";
     foreach $DIR (glob("*")) {
-	if ( -d $DIR) {
-	    if( ("$DIR" ne "icons") && ("$DIR" ne "resources") ) {
-		print "Creating test/${DIR}_Demo ...\n";
-		dircopy("$DIR", "../test/${DIR}_Demo");
-	    }
-	    else {
-		print "Creating test/${DIR}...\n";
-		dircopy("$DIR", "../test/${DIR}");
-	    }
-	}
+        if ( -d $DIR) {
+            if( ("$DIR" ne "icons") && ("$DIR" ne "resources") ) {
+                print "Creating test/${DIR}_Demo ...\n";
+                dircopy("$DIR", "../test/${DIR}_Demo");
+            }
+            else {
+                print "Creating test/${DIR}...\n";
+                dircopy("$DIR", "../test/${DIR}");
+            }
+        }
     }
     chdir '..';
 }
@@ -371,38 +371,38 @@ sub make_testscripts()
 
     chdir 'test';
     foreach $DIR (glob("*")) {
-	if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) {
-	    chdir $DIR;
-	    if ( -f 'Makefile') {
-		rename 'Makefile', 'makefile';
-	    }
-	    if ( -f 'makefile' ) {
+        if ( (-d $DIR) && ("$DIR" ne "icons") && ("$DIR" ne "resources") ) {
+            chdir $DIR;
+            if ( -f 'Makefile') {
+                rename 'Makefile', 'makefile';
+            }
+            if ( -f 'makefile' ) {
                 open MAKEFILE, "makefile";
                 open NEW_MAKEFILE, ">makefile.new";
-		while (<MAKEFILE>) {
-		   s/\.o\b/\$(OBJ_EXT)/g;
-		   s/-g\b/\$(DEBUG_OPT)/g;
-		   print NEW_MAKEFILE $_;
-		}
-		close NEW_MAKEFILE;
-		close MAKEFILE;
-		rename("makefile.new","makefile");
-	    } else {
+                while (<MAKEFILE>) {
+                   s/\.o\b/\$(OBJ_EXT)/g;
+                   s/-g\b/\$(DEBUG_OPT)/g;
+                   print NEW_MAKEFILE $_;
+                }
+                close NEW_MAKEFILE;
+                close MAKEFILE;
+                rename("makefile.new","makefile");
+            } else {
                 my $options = '-t';
-		if ( -f 'cgal_create_makefile_options') {
-		    if (open(OPTIONS, "<cgal_create_makefile_options")) {
-		        $_ = <OPTIONS>;
-			chomp;
-			if (/^[\w\s-]+$/) { $options = $_;
-			} else {
-			    print STDERR "Rejected cgal_create_makefile_options in $DIR\n";
-			}
-			close OPTIONS;
-		    }
-		}
-		system("$SCRIPTSDIR/cgal_create_makefile", $options) == 0 or die "Execution of $SCRIPTSDIR/cgal_create_makefile failed";
-	    }
-	    if ( ! -f 'cgal_test' ) {
+                if ( -f 'cgal_create_makefile_options') {
+                    if (open(OPTIONS, "<cgal_create_makefile_options")) {
+                        $_ = <OPTIONS>;
+                        chomp;
+                        if (/^[\w\s-]+$/) { $options = $_;
+                        } else {
+                            print STDERR "Rejected cgal_create_makefile_options in $DIR\n";
+                        }
+                        close OPTIONS;
+                    }
+                }
+                system("$SCRIPTSDIR/cgal_create_makefile", $options) == 0 or die "Execution of $SCRIPTSDIR/cgal_create_makefile failed";
+            }
+            if ( ! -f 'cgal_test' ) {
                 $_ = $DIR;
                 # chomp;
                 if (/_Demo$/) {
@@ -410,48 +410,48 @@ sub make_testscripts()
                 } else {
                     system("$DEVELSCRIPTSDIR/create_cgal_test") == 0 or die "Execution of $DEVELSCRIPTSDIR/create_cgal_test failed";
                 }
-	    }
-	    chdir '..';
-	}
+            }
+            chdir '..';
+        }
     }
     chdir $BASEDIR;
     chdir 'examples';
 
     print "Creating makefiles in examples\n";
     foreach $DIR (glob("*")) {
-	if ( -d $DIR ) {
-	    chdir $DIR;
-	    if ( -f 'Makefile') {
-		rename 'Makefile', 'makefile';
-	    }
-	    if ( -f 'makefile' ) {
+        if ( -d $DIR ) {
+            chdir $DIR;
+            if ( -f 'Makefile') {
+                rename 'Makefile', 'makefile';
+            }
+            if ( -f 'makefile' ) {
                 open MAKEFILE, "makefile";
                 open NEW_MAKEFILE, ">makefile.new";
-		while (<MAKEFILE>) {
-		   s/\.o\b/\$(OBJ_EXT)/g;
-		   s/-g\b/\$(DEBUG_OPT)/g;
-		   print NEW_MAKEFILE $_;
-		}
-		close NEW_MAKEFILE;
-		close MAKEFILE;
-		rename("makefile.new","makefile");
-	    } else {
+                while (<MAKEFILE>) {
+                   s/\.o\b/\$(OBJ_EXT)/g;
+                   s/-g\b/\$(DEBUG_OPT)/g;
+                   print NEW_MAKEFILE $_;
+                }
+                close NEW_MAKEFILE;
+                close MAKEFILE;
+                rename("makefile.new","makefile");
+            } else {
                 my $options = '-d';
-		if ( -f 'cgal_create_makefile_options') {
-		    if (open(OPTIONS, "<cgal_create_makefile_options")) {
-		        $_ = <OPTIONS>;
-			chomp;
-			if (/^[\w\s-]+$/) { $options = $_;
-			} else {
-			    print STDERR "Rejected cgal_create_makefile_options in $DIR\n";
-			}
-			close OPTIONS;
-		    }
-		}
-		system("$SCRIPTSDIR/cgal_create_makefile", $options) == 0 or die "Execution of $SCRIPTSDIR/cgal_create_makefile failed";
-	    }
-	    chdir '..';
-	}
+                if ( -f 'cgal_create_makefile_options') {
+                    if (open(OPTIONS, "<cgal_create_makefile_options")) {
+                        $_ = <OPTIONS>;
+                        chomp;
+                        if (/^[\w\s-]+$/) { $options = $_;
+                        } else {
+                            print STDERR "Rejected cgal_create_makefile_options in $DIR\n";
+                        }
+                        close OPTIONS;
+                    }
+                }
+                system("$SCRIPTSDIR/cgal_create_makefile", $options) == 0 or die "Execution of $SCRIPTSDIR/cgal_create_makefile failed";
+            }
+            chdir '..';
+        }
     }
     chdir $BASEDIR;
 }

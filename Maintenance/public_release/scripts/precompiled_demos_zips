@@ -76,6 +76,7 @@ pushd Triangulation_on_sphere_2_Demo_with_dlls; zip -r ../triangulation_on_spher
 
 # CGAL-6.0
 pushd Lab_Demo_with_dlls; zip -r ../CGALlab.zip *; popd
+pushd Arrangement_on_surface_2_earth_Demo_with_dlls; zip -r ../arrangements_2_earth.zip *; popd
 
 # check
 echo CHECK now. The following lines should be empty.

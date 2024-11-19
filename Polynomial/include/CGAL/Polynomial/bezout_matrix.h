@@ -172,7 +172,7 @@ symmetric_bezout_matrix
 
     Matrix B(d);
 
-    // 1st step: Initialisation
+    // 1st step: initialization
     for(i=0;i<d;i++) {
       for(j=i;j<d;j++) {
         sum1 = ((j+sub)+1>m) ? NT(0) : -coeff(f,i+sub)*coeff(g,(j+sub)+1);

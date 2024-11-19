@@ -264,7 +264,7 @@ test_filtration(AS &A, bool verbose)
     typename AS::NT alpha;
     if(verbose) {
       std::cerr << std::endl;
-      std::cerr << "Analyse filtration " << std::endl;
+      std::cerr << "Analyze filtration " << std::endl;
     }
     for (; filtre_it != filtration.end(); filtre_it++) {
       if(assign(vertex, *filtre_it)) {

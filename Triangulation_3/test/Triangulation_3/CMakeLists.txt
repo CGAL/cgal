@@ -38,7 +38,7 @@ if(TARGET CGAL::TBB_support)
 
   foreach(target test_delaunay_3 test_regular_3
                  test_regular_insert_range_with_info)
-    target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+    target_link_libraries(${target} PRIVATE CGAL::TBB_support)
   endforeach()
 
   if(CGAL_ENABLE_TESTING)

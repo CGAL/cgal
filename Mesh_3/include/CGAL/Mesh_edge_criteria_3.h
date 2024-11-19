@@ -177,7 +177,13 @@ public:
 
   /// Returns size of tuple (p,dim,index)
   FT sizing_field(const Point_3& p, const int dim, const Index& index) const
-  { return (*p_size_)(p,dim,index); }
+  {
+    const FT s = (*p_size_)(p, dim, index);
+    if (min_length_bound_ == FT(0))
+      return s;
+    else
+      return (std::max)(s, min_length_bound_);
+  }
 
   FT distance_field(const Point_3& p, const int dim, const Index& index) const
   {

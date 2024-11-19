@@ -130,7 +130,7 @@ public:
           std::nth_element (z.begin(), z.begin() + (z.size() / 10), z.end());
           dtm_x(i,j) = z[z.size() / 10];
         }
-    dem.free();
+    (dem.free)();
 
     if (grid.width() * grid.height() > input.size())
       values.resize (input.size(), compressed_float(0));
@@ -162,7 +162,7 @@ public:
               values[*it] = v;
           }
         }
-    dtm_x.free();
+    (dtm_x.free)();
 
   }
 

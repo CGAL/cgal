@@ -38,7 +38,7 @@ other contexts can be done by obtaining a commercial license from
 [GeometryFactory](https://www.geometryfactory.com). For more details
 see the \ref license "License" page.
 
-<h2>Acknowledgement</h2>
+<h2>Acknowledgment</h2>
 
 We provide bibtex entries for each package so that you can cite \cgal correctly in your publications,
 see the page \ref how_to_cite_cgal.

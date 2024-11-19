@@ -48,5 +48,5 @@
 \example Polygon_mesh_processing/remesh_almost_planar_patches.cpp
 \example Polygon_mesh_processing/sample_example.cpp
 \example Polygon_mesh_processing/soup_autorefinement.cpp
-*/
+\example Polygon_mesh_processing/isotropic_remeshing_with_allow_move.cpp
 */

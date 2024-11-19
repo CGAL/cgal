@@ -133,8 +133,8 @@ normalized_border_is_valid( bool verb) const {
 
     Halfedge_const_iterator e = hds->halfedges_begin();
     size_type count = 0;
-    while( e != hds->halfedges_end() && ! e->is_border() && !
-           e->opposite()->is_border()) {
+    while( e != hds->halfedges_end() && ! e->is_border() &&
+           ! e->opposite()->is_border()) {
         ++e;
         ++e;
         ++count;

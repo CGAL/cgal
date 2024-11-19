@@ -33,7 +33,7 @@ find_package(TBB QUIET)
 include(CGAL_TBB_support)
 create_single_source_cgal_program("test_TBB.cpp")
 if(TARGET CGAL::TBB_support)
-  target_link_libraries(test_TBB PUBLIC CGAL::TBB_support)
+  target_link_libraries(test_TBB PRIVATE CGAL::TBB_support)
 endif()
 
 create_link_to_program(CGAL)

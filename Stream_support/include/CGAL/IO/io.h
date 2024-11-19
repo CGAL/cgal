@@ -152,7 +152,7 @@ typedef IO_rep_is_not_specialized_aux<void> IO_rep_is_not_specialized;
 
 The purpose of `Output_rep` is to provide a way to control output formatting that works independently of the object's stream output operator.
 
-If you dont specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behaviour for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behaviour*.
+If you dont specialize `Output_rep` for `T`, `T`'s stream output operator is called from within `Output_rep`, by default. If you want another behavior for your type `T`, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to `Null_tag` and means *default behavior*.
 
 Specializations of `Output_rep` should provide the following features:
 

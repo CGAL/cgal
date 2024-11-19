@@ -8,6 +8,11 @@ for solving and handling bivariate polynomial systems of general degree \f$ d\f$
 
 \cgalRefines{AlgebraicKernel_d_1,CopyConstructible,Assignable}
 
+
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Algebraic_kernel_d_2}
+\cgalHasModelsEnd
+
 \sa `AlgebraicKernel_d_1`
 
 */
@@ -176,4 +181,3 @@ AlgebraicKernel_d_2::Bound_between_x_2 bound_between_x_2_object() const;
 /// @}
 
 }; /* end AlgebraicKernel_d_2 */
-

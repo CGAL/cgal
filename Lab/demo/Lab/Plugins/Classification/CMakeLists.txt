@@ -33,7 +33,7 @@ if(TARGET CGAL::Eigen3_support)
     Classification)
   target_link_libraries(
     classification_plugin
-    PUBLIC scene_points_with_normal_item
+    PRIVATE scene_points_with_normal_item
     scene_polylines_item
     scene_polygon_soup_item
     scene_surface_mesh_item
@@ -48,16 +48,16 @@ if(TARGET CGAL::Eigen3_support)
     endif()
 
   if(TARGET CGAL::Boost_serialization_support AND TARGET CGAL::Boost_iostreams_support)
-    target_link_libraries(classification_plugin PUBLIC CGAL::Boost_serialization_support
-                                                       CGAL::Boost_iostreams_support)
+    target_link_libraries(classification_plugin PRIVATE CGAL::Boost_serialization_support
+                                                        CGAL::Boost_iostreams_support)
   endif()
 
   if(TARGET CGAL::OpenCV_support)
-    target_link_libraries(classification_plugin PUBLIC CGAL::OpenCV_support)
+    target_link_libraries(classification_plugin PRIVATE CGAL::OpenCV_support)
   endif()
 
   if(TARGET CGAL::TBB_support)
-    target_link_libraries(classification_plugin PUBLIC CGAL::TBB_support)
+    target_link_libraries(classification_plugin PRIVATE CGAL::TBB_support)
   endif()
 
   add_dependencies(classification_plugin point_set_selection_plugin selection_plugin)

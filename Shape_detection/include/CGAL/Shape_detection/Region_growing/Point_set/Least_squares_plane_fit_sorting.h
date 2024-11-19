@@ -44,12 +44,17 @@ namespace Point_set {
     \tparam PointMap
     a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `Kernel::Point_3`
+
+    \tparam NormalMap
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `Kernel::Vector_3`
   */
   template<
   typename GeomTraits,
   typename Item_,
   typename NeighborQuery,
-  typename PointMap>
+  typename PointMap,
+  typename NormalMap>
   class Least_squares_plane_fit_sorting {
 
   public:
@@ -60,6 +65,7 @@ namespace Point_set {
     using Traits = GeomTraits;
     using Neighbor_query = NeighborQuery;
     using Point_map = PointMap;
+    using Normal_map = NormalMap;
     /// \endcond
 
     /// Item type.
@@ -108,6 +114,10 @@ namespace Point_set {
           \cgalParamDescription{an instance of `PointMap` that maps an item to `Kernel::Point_3`}
           \cgalParamDefault{`PointMap()`}
         \cgalParamNEnd
+        \cgalParamNBegin{normal_map}
+          \cgalParamDescription{an instance of `NormalMap` that maps an item to `Kernel::Vector_3`}
+          \cgalParamDefault{`NormalMap()`}
+        \cgalParamNEnd
         \cgalParamNBegin{geom_traits}
           \cgalParamDescription{an instance of `GeomTraits`}
           \cgalParamDefault{`GeomTraits()`}
@@ -123,6 +133,7 @@ namespace Point_set {
       const CGAL_NP_CLASS& np = parameters::default_values()) :
       m_neighbor_query(neighbor_query),
       m_point_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap>::get_const_point_map(input_range, np)),
+      m_normal_map(Point_set_processing_3_np_helper<InputRange, CGAL_NP_CLASS, PointMap, NormalMap>::get_normal_map(input_range, np)),
       m_traits(parameters::choose_parameter<GeomTraits>(parameters::get_parameter(np, internal_np::geom_traits)))
     {
       CGAL_precondition(input_range.size() > 0);
@@ -174,28 +185,76 @@ namespace Point_set {
     const Seed_range &ordered() {
       return m_ordered;
     }
+
+    /*!
+      \brief the average of the maximal point to fitted plane distance in each neighborhood.
+    */
+
+    double mean_distance() {
+      return mean_d;
+    }
+
+    /*!
+      \brief the average of the maximal normal deviation to fitted plane in each neighborhood.
+    */
+    double mean_deviation() {
+      return mean_dev;
+    }
     /// @}
 
   private:
     Neighbor_query& m_neighbor_query;
     const Point_map m_point_map;
+    const Normal_map m_normal_map;
     const Traits m_traits;
 
     Seed_range m_ordered;
     std::vector<FT> m_scores;
 
+    double mean_d;
+    double mean_dev;
+
     void compute_scores() {
 
       std::vector<Item> neighbors;
       std::size_t idx = 0;
+
+      mean_d = 0;
+      mean_dev = 0;
+
       for (const Item& item : m_ordered) {
         neighbors.clear();
         m_neighbor_query(item, neighbors);
         neighbors.push_back(item);
 
-        m_scores[idx++] = internal::create_plane(
-          neighbors, m_point_map, m_traits).second;
+        auto p = internal::create_plane(
+          neighbors, m_point_map, m_traits);
+
+        auto plane = p.first;
+
+        double max_dist = 0;
+        double max_dev = 0;
+
+        for (const Item &n : neighbors) {
+          double d = CGAL::to_double((get(m_point_map, n) - plane.point()) * plane.orthogonal_vector());
+          double dev = acos(CGAL::to_double(CGAL::abs(get(m_normal_map, n) * plane.orthogonal_vector())));
+
+          if (d > max_dist)
+            max_dist = d;
+
+          if (dev > max_dev)
+            max_dev = dev;
+        }
+
+        mean_d += max_dist;
+        mean_dev += max_dev;
+
+        m_scores[idx++] = p.second;
       }
+
+      mean_d /= m_scores.size();
+      mean_dev /= m_scores.size();
+      mean_dev *= 180 / CGAL_PI;
     }
   };
 
@@ -210,7 +269,8 @@ using Least_squares_plane_fit_sorting_for_point_set =
   Least_squares_plane_fit_sorting<typename Kernel_traits<typename PointSet3::Point_3>::Kernel,
                                   typename PointSet3::Index,
                                   NeighborQuery,
-                                  typename PointSet3::Point_map>;
+                                  typename PointSet3::Point_map,
+                                  typename PointSet3::Vector_map>;
 
 /*!
   \ingroup PkgShapeDetectionRGOnPointSet3

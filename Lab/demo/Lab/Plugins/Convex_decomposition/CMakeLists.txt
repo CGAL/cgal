@@ -1,4 +1,5 @@
 include(CGALlab_macros)
 
 cgal_lab_plugin(nef_plugin Nef_plugin)
-target_link_libraries(nef_plugin PUBLIC scene_nef_polyhedron_item)
+target_link_libraries(nef_plugin PRIVATE scene_nef_polyhedron_item scene_surface_mesh_item)
+

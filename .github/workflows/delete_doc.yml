@@ -1,27 +1,33 @@
 name: Documentation Removal
 
 on:
+  workflow_dispatch:
+    inputs:
+      PR_NUMBER:
+        description: 'Pull request number for which the documentation should be removed'
+        type: number
+        required: true
   pull_request_target:
-    types: [closed, removed, workflow_dispatch]
+    types: [closed]
 permissions:
   contents: read
 
 jobs:
-  build:
-
+  delete_doc:
     permissions:
       contents: write  # for Git to git push
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: delete directory
+    - name: delete directory ${{ github.event.inputs.PR_NUMBER || github.event.pull_request.number }}/ in cgal.github.io
+      env:
+        PR_NUMBER: ${{ github.event.inputs.PR_NUMBER || github.event.pull_request.number }}
       run: |
          set -x
          git config --global user.email "cgal@geometryfactory.com"
          git config --global user.name "cgaltest"
          git clone https://CGAL:${{ secrets.PUSH_TO_CGAL_GITHUB_IO_TOKEN }}@github.com/CGAL/cgal.github.io.git
-         PR_NUMBER=$(python -c "import json; import os; y = json.load(open(os.environ['GITHUB_EVENT_PATH'])); print(y[\"number\"])")
          cd cgal.github.io/
          egrep -v " ${PR_NUMBER}\." index.html > tmp.html || true
          if [ -n "$(diff -q ./index.html ./tmp.html)" ]; then

@@ -140,7 +140,7 @@ public:
     virtual ~LRU_hashed_map()
     {  }
 
-    /*! \brief implements cache-like behaviour of the map
+    /*! \brief implements cache-like behavior of the map
     *
     *  If the object is not in the map, it is constructed using \c Creator
     *  and added to the map
@@ -312,7 +312,7 @@ public:
     ~LRU_hashed_map_with_kernel()
     {  }
 
-    /*! \brief implements cache-like behaviour of the map
+    /*! \brief implements cache-like behavior of the map
     *
     *  If the object is not in the map, it is constructed using \c Creator
     *  and added to the map

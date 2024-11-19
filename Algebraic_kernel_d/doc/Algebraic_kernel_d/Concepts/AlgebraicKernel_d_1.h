@@ -9,8 +9,7 @@ algebraic functionalities on univariate polynomials of general degree \f$ d\f$.
 \cgalRefines{CopyConstructible,Assignable}
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Algebraic_kernel_rs_gmpz_d_1}
-\cgalHasModels{CGAL::Algebraic_kernel_rs_gmpq_d_1}
+\cgalHasModels{CGAL::Algebraic_kernel_d_1}
 \cgalHasModelsEnd
 
 \sa `AlgebraicKernel_d_2`
@@ -172,4 +171,3 @@ AlgebraicKernel_d_1::Bound_between_1 bound_between_1_object() const;
 /// @}
 
 }; /* end AlgebraicKernel_d_1 */
-

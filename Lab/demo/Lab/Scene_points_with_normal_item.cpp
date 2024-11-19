@@ -850,6 +850,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         container->menuAction()->setProperty("is_groupable", true);
         container->addAction(sliderAction);
         menu->addMenu(container);
+        d->normal_Slider->show();
       }
         QMenu *container = new QMenu(tr("Points Size"));
         QWidgetAction *sliderAction = new QWidgetAction(nullptr);
@@ -861,6 +862,7 @@ QMenu* Scene_points_with_normal_item::contextMenu()
         container->menuAction()->setProperty("is_groupable", true);
         container->addAction(sliderAction);
         menu->addMenu(container);
+        d->point_Slider->show();
 
         d->actionDeleteSelection = menu->addAction(tr("Delete Selection"));
         d->actionDeleteSelection->setObjectName("actionDeleteSelection");

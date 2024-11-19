@@ -115,7 +115,7 @@ public:
 
 #if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 /*
- The specialised functor for computing the directions of cone boundaries exactly
+ The specialized functor for computing the directions of cone boundaries exactly
  with a given cone number and a given initial direction.
 */
 template <>

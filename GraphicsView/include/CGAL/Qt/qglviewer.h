@@ -478,7 +478,6 @@ public:
   qreal bufferTextureMaxU() const { return bufferTextureMaxU_; }
   /*! Same as bufferTextureMaxU(), but for the v texture coordinate. */
   qreal bufferTextureMaxV() const { return bufferTextureMaxV_; }
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
   // These methods are part of the QGLWidget public API.
   // As of version 2.7.0, the use of QOpenGLWidget instead means that they have
   // to be provided for backward compatibility.
@@ -486,7 +485,6 @@ public:
                   const QFont &font = QFont());
   void renderText(double x, double y, double z, const QString &str,
                   const QFont &font = QFont());
-#endif
 
 public Q_SLOTS:
   void copyBufferToTexture(GLint, GLenum = GL_NONE);

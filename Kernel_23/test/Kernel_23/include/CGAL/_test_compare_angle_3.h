@@ -14,8 +14,10 @@ template <class R>
 bool
 _test_compare_angle_3(const R& rep)
 {
-  typedef typename R::Point_3 Point_3;
   typedef typename R::FT FT;
+  typedef typename R::Point_3 Point_3;
+  typedef typename R::Vector_3 Vector_3;
+
   typename R::Compare_angle_3 compare_angle
     = rep.compare_angle_3_object();
 
@@ -32,6 +34,18 @@ _test_compare_angle_3(const R& rep)
       if ( CGAL::compare(abs(theta1), abs(theta2)) != CGAL::compare_angle(a, b, c, FT(std::cos(angle2))) )
         return false;
       if ( CGAL::compare(abs(theta1), abs(theta2)) != compare_angle(a, b, c, FT(std::cos(angle2))) )
+        return false;
+
+     Point_3 d((int)(std::cos(angle2)*1000), (int)(std::sin(angle2)*1000), 0);
+      if ( CGAL::compare(abs(theta1), abs(theta2)) != CGAL::compare_angle(a, b, c, a, b, d ) )
+        return false;
+      if ( CGAL::compare(abs(theta1), abs(theta2)) != compare_angle(a, b, c, a, b, d ) )
+        return false;
+
+      Vector_3 u1(b, a), v1(b, c), v2(b, d);
+      if ( CGAL::compare(abs(theta1), abs(theta2)) != CGAL::compare_angle(u1, v1, u1, v2) )
+        return false;
+      if ( CGAL::compare(abs(theta1), abs(theta2)) != compare_angle(u1, v1, u1, v2) )
         return false;
     } // end loop on theta2
   } // end loop and theta1

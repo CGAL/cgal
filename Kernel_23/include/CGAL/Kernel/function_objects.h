@@ -242,10 +242,12 @@ namespace CommonKernelFunctors {
     operator()(const Point_3& a1, const Point_3& b1, const Point_3& c1,
                const Point_3& a2, const Point_3& b2, const Point_3& c2) const
     {
-      const Vector_3 ba1 = a1 - b1;
-      const Vector_3 bc1 = c1 - b1;
-      const Vector_3 ba2 = a2 - b2;
-      const Vector_3 bc2 = c2 - b2;
+      typename K::Construct_vector_3 vector = K().construct_vector_3_object();
+
+      const Vector_3 ba1 = vector(b1, a1);
+      const Vector_3 bc1 = vector(b1, c1);
+      const Vector_3 ba2 = vector(b2, a2);
+      const Vector_3 bc2 = vector(b2, c2);
 
       return this->operator()(ba1, bc1, ba2, bc2);
     }
@@ -1091,7 +1093,7 @@ namespace CommonKernelFunctors {
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const
@@ -1106,7 +1108,7 @@ namespace CommonKernelFunctors {
   public:
     typedef FT               result_type;
 
-    // There are 25 combinaisons, we use a template.
+    // There are 25 combinations, we use a template.
     template <class T1, class T2>
     FT
     operator()( const T1& t1, const T2& t2) const

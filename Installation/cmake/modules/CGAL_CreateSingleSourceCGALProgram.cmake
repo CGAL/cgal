@@ -23,10 +23,6 @@ function(create_single_source_cgal_program firstfile )
 
   if(EXISTS "${firstfile}")
 
-    if(CXX_FEATURES AND NOT COMMAND target_compile_features)
-      message(STATUS "NOTICE: ${exe_name}.cpp requires a CMake version >= 3.1 to detect C++ features, and will not be compiled.")
-      return()
-    endif()
     if(CXX_FEATURES)
       set(MISSING_CXX_FEATURES ${CXX_FEATURES})
       if(CMAKE_CXX_COMPILE_FEATURES)

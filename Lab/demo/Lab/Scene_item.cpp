@@ -15,6 +15,7 @@ CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
     are_buffers_filled(false),
     rendering_mode(FlatPlusEdges),
     defaultContextMenu(nullptr),
+    context_menu_outdated(false),
     buffersSize(buffers_size),
     vaosSize(vaos_size),
     vaos(vaos_size)
@@ -94,6 +95,11 @@ QString CGAL::Three::Scene_item::renderingModeName() const
 }
 QMenu* CGAL::Three::Scene_item::contextMenu()
 {
+    if (context_menu_outdated && defaultContextMenu) {
+      delete defaultContextMenu;
+      defaultContextMenu = nullptr;
+    }
+
     if(defaultContextMenu) {
         defaultContextMenu->setTitle(name());
         return defaultContextMenu;
@@ -111,14 +117,17 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
                                       slotName(RenderingMode(mode)));
         defaultContextMenu->actions().last()->setProperty("is_groupable", true);
     }
+
+    context_menu_outdated = false;
+
     return defaultContextMenu;
 }
 
 void CGAL::Three::Scene_item::resetMenu()
 {
-  delete defaultContextMenu;
-  defaultContextMenu = nullptr;
+  context_menu_outdated = true;
 }
+
 CGAL::Three::Scene_group_item* CGAL::Three::Scene_item::parentGroup() const {
   return parent_group;
 }

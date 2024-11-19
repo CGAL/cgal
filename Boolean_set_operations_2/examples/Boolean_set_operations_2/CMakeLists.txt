@@ -16,7 +16,7 @@ foreach(cppfile ${cppfiles})
 endforeach()
 
 if(CGAL_Qt6_FOUND)
-  target_link_libraries(draw_polygon_set PUBLIC CGAL::CGAL_Basic_viewer)
+  target_link_libraries(draw_polygon_set PRIVATE CGAL::CGAL_Basic_viewer)
 else()
   message(STATUS "NOTICE: The example 'draw_polygon_set' requires Qt and drawing will be disabled.")
 endif()

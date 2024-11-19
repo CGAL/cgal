@@ -25,23 +25,23 @@ int main() {
   auto param = CGAL::parameters::maximum_distance(0.5)
     .maximum_angle(10)
     .k_neighbors(12)
-    .minimum_region_size(50);
+    .minimum_region_size(250);
 
   // Algorithm.
   KSR ksr(point_set, param);
 
   ksr.detection_and_partition(1, param);
 
-  std::cout << ksr.detect_planar_shapes() << " planar shapes detected" << std::endl;
+  std::cout << ksr.detected_planar_shapes().size() << " planar shapes detected" << std::endl;
 
   std::vector<Point_3> vtx;
   std::vector<std::vector<std::size_t> > polylist;
 
-  ksr.reconstruct_with_ground(0.5, std::back_inserter(vtx), std::back_inserter(polylist));
+  ksr.reconstruct_with_ground(0.7, std::back_inserter(vtx), std::back_inserter(polylist));
 
   if (polylist.size() > 0) {
     std::cout << polylist.size() << " faces in reconstruction" << std::endl;
-    CGAL::IO::write_polygon_soup("building_0.5.ply", vtx, polylist);
+    CGAL::IO::write_polygon_soup("building_0.7.ply", vtx, polylist);
     return EXIT_SUCCESS;
   }
   else {

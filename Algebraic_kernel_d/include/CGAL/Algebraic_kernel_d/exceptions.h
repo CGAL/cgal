@@ -25,7 +25,7 @@ namespace CGAL {
     /*!
      * \brief Exception class for not sufficiently generic positions.
      *
-     * Must be thrown whenever a curve cannot be analysed because its position
+     * Must be thrown whenever a curve cannot be analyzed because its position
      * is not "good enough".
      */
     class Non_generic_position_exception {
@@ -40,7 +40,7 @@ namespace CGAL {
     /*!
      * \brief Exception class for not sufficiently generic positions.
      *
-     * Must be thrown whenever a curve cannot be analysed because its position
+     * Must be thrown whenever a curve cannot be analyzed because its position
      * is not "good enough".
      */
     template<typename Polynomial>

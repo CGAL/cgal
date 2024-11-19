@@ -5,7 +5,7 @@ namespace CGAL {
 \ingroup PkgPolytopeDistanceDRef
 
 The class `Polytope_distance_d_traits_3` is a traits class for the \f$ d\f$-dimensional
-optimisation algorithms using the three-dimensional \cgal kernel.
+optimization algorithms using the three-dimensional \cgal kernel.
 
 
 \tparam K must be a model for `Kernel`.
