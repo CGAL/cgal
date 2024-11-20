@@ -15,6 +15,7 @@
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <OpenMesh/Core/Mesh/Traits.hh>
 
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
@@ -34,7 +35,7 @@ namespace internal {
 template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
 bool read_OM(const std::string& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
 {
-  typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraitsDouble> OMesh;
   typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
@@ -73,9 +74,10 @@ bool read_OM(const std::string& fname, Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
 }
 
 template <typename Graph, typename VPM, typename VFeaturePM, typename EFeaturePM>
-bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm)
+bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeaturePM efpm,
+              const std::streamsize precision)
 {
-  typedef OpenMesh::PolyMesh_ArrayKernelT<> OMesh;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMesh::DefaultTraitsDouble> OMesh;
   typedef typename boost::graph_traits<OMesh>::vertex_descriptor om_vertex_descriptor;
   typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<OMesh>::halfedge_descriptor om_halfedge_descriptor;
@@ -108,7 +110,7 @@ bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
     omesh.status(omv).set_feature(isfeature);
   }
 
-  return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status);
+  return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status, precision);
 }
 } // end of internal namespace
 
@@ -208,6 +210,11 @@ bool read_OM(const std::string& fname,
       \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<Graph>::%vertex_descriptor`
                      as key type and `bool` as value type.}
     \cgalParamNEnd
+    \cgalParamNBegin{stream_precision}
+      \cgalParamDescription{a parameter used to set the precision (i.e. how many digits are generated) of the output stream}
+      \cgalParamType{int}
+      \cgalParamDefault{the precision of the stream `os`}
+    \cgalParamNEnd
   \cgalNamedParamsEnd
 
   \returns `true` if writing was successful, `false` otherwise.
@@ -228,7 +235,9 @@ bool write_OM(const std::string& fname,
                                CGAL::Constant_property_map<edge_descriptor, bool>(false));
   auto vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                               get_const_property_map(vertex_point, g));
-  return internal::write_OM(fname, g, vpm, vfpm, efpm);
+  std::streamsize precision = choose_parameter(get_parameter(np, internal_np::stream_precision),
+                                               18);
+  return internal::write_OM(fname, g, vpm, vfpm, efpm, precision);
 }
 
 
