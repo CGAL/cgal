@@ -51,25 +51,19 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 template <typename TriangleMesh, typename VPM, typename VCM, typename ECM, typename Traits>
-std::array<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor, 2>
-is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
-                TriangleMesh& tmesh,
-                const VPM& vpm,
-                const VCM& vcm,
-                const ECM& ecm,
-                const Traits& gt,
-                const double cap_threshold, // angle over 160° ==> cap
-                const double needle_threshold, // longest edge / shortest edge over this ratio ==> needle
-                const double collapse_length_threshold, // max length of edges allowed to be collapsed
-                const double flip_triangle_height_threshold_squared) // max height of triangles allowed to be flipped
+typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+is_it_a_needle(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+               TriangleMesh& tmesh,
+               const VPM& vpm,
+               const VCM& vcm,
+               const ECM& /* ecm */, //not used because vcm is filled with end points of edges in ecm
+               const Traits& gt,
+               const double needle_threshold, // longest edge / shortest edge over this ratio ==> needle
+               const double collapse_length_threshold) // max length of edges allowed to be collapsed
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
-
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
-
   const halfedge_descriptor null_h = boost::graph_traits<TriangleMesh>::null_halfedge();
-
-  std::array<halfedge_descriptor,2> retval = make_array(null_h, null_h);
 
   halfedge_descriptor res = PMP::is_needle_triangle_face(f, tmesh, needle_threshold,
                                                          parameters::vertex_point_map(vpm)
@@ -80,19 +74,62 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
     if(collapse_length_threshold == 0 ||
        edge_length(res, tmesh, parameters::vertex_point_map(vpm).geom_traits(gt)) <= collapse_length_threshold)
     {
-      retval[0]=res;
+      return res;
     }
   }
 
-  res = PMP::is_cap_triangle_face(f, tmesh, cap_threshold, parameters::vertex_point_map(vpm).geom_traits(gt));
+  return null_h;
+}
+
+template <typename TriangleMesh, typename VPM, typename VCM, typename ECM, typename Traits>
+typename boost::graph_traits<TriangleMesh>::halfedge_descriptor
+is_it_a_cap(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+            TriangleMesh& tmesh,
+            const VPM& vpm,
+            const VCM& /* vcm */,
+            const ECM& ecm,
+            const Traits& gt,
+            const double cap_threshold, // angle over 160° ==> cap
+            const double flip_triangle_height_threshold_squared) // max height of triangles allowed to be flipped
+{
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
+  const halfedge_descriptor null_h = boost::graph_traits<TriangleMesh>::null_halfedge();
+
+  halfedge_descriptor res =
+    PMP::is_cap_triangle_face(f, tmesh, cap_threshold, parameters::vertex_point_map(vpm).geom_traits(gt));
   if( res != null_h && !get(ecm, edge(res, tmesh) ) &&
      (flip_triangle_height_threshold_squared == 0 ||
       typename Traits::Compare_squared_distance_3()( get(vpm, target(next(res,tmesh), tmesh)),
                                                      typename Traits::Line_3(get(vpm, source(res,tmesh)), get(vpm, target(res,tmesh))),
                                                      flip_triangle_height_threshold_squared) != LARGER ))
   {
-    retval[1]=res;
+    return res;
   }
+
+  return null_h;
+}
+
+template <typename TriangleMesh, typename VPM, typename VCM, typename ECM, typename Traits>
+std::array<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor, 2>
+is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
+                TriangleMesh& tmesh,
+                const VPM& vpm,
+                const VCM& vcm,
+                const ECM& ecm,
+                const Traits& gt,
+                const double needle_threshold, // longest edge / shortest edge over this ratio ==> needle
+                const double cap_threshold, // angle over 160° ==> cap
+                const double collapse_length_threshold, // max length of edges allowed to be collapsed
+                const double flip_triangle_height_threshold_squared) // max height of triangles allowed to be flipped
+{
+
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
+  const halfedge_descriptor null_h = boost::graph_traits<TriangleMesh>::null_halfedge();
+  std::array<halfedge_descriptor,2> retval = make_array(null_h, null_h);
+
+  retval[0] = is_it_a_needle(f, tmesh, vpm, vcm, ecm, gt, needle_threshold, collapse_length_threshold);
+  retval[1] = is_it_a_cap(f, tmesh, vpm, vcm, ecm, gt, cap_threshold, flip_triangle_height_threshold_squared);
 
   return retval;
 }
@@ -114,8 +151,8 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
 
-  std::array<halfedge_descriptor, 2> res = is_badly_shaped(f, tmesh, vpm, vcm, ecm, gt, cap_threshold,
-                                                           needle_threshold,
+  std::array<halfedge_descriptor, 2> res = is_badly_shaped(f, tmesh, vpm, vcm, ecm, gt,
+                                                           needle_threshold, cap_threshold,
                                                            collapse_length_threshold, flip_triangle_height_threshold_squared);
 
   if(res[0] != boost::graph_traits<TriangleMesh>::null_halfedge())
@@ -744,12 +781,13 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                 << " --- " << source(e, tmesh) << " " << tmesh.point(target(h, tmesh)) << ")" << std::endl;
 #endif
 
-      // Verify that the element is still badly shaped
-      const std::array<halfedge_descriptor, 2> nc =
-        internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                  cap_threshold, needle_threshold, collapse_length_threshold, flip_triangle_height_threshold_squared);
       if(CGAL::Euler::does_satisfy_link_condition(e, tmesh))
       {
+        // Verify that the element is still badly shaped
+        const std::array<halfedge_descriptor, 2> nc =
+          internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
+                                    needle_threshold, cap_threshold, collapse_length_threshold, flip_triangle_height_threshold_squared);
+
         if(nc[0] != h)
         {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
@@ -875,14 +913,19 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
         std::cout << "\t Uncollapsable edge!" << std::endl;
 #endif
-        if (nc[1]==boost::graph_traits<TriangleMesh>::null_halfedge())
+
+        halfedge_descriptor nc =
+          internal::is_it_a_cap(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
+                                cap_threshold, flip_triangle_height_threshold_squared);
+
+        if (nc==boost::graph_traits<TriangleMesh>::null_halfedge())
           next_edges_to_collapse.insert(h);
         else
         {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
           std::cout << "\t Uncollapsable edge --> register it as cap!" << std::endl;
 #endif
-          edges_to_flip.insert(nc[1]);
+          edges_to_flip.insert(nc);
         }
       }
     }
@@ -910,11 +953,11 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
                 << " --- " << target(e, tmesh) << " " << tmesh.point(target(h, tmesh)) << ")" << std::endl;
 #endif
 
-      std::array<halfedge_descriptor,2> nc = internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                                                       cap_threshold, needle_threshold,
-                                                                       collapse_length_threshold, flip_triangle_height_threshold_squared);
+      halfedge_descriptor nc =
+        internal::is_it_a_cap(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
+                              cap_threshold, flip_triangle_height_threshold_squared);
       // Check the triangle is still a cap
-      if(nc[1] != h)
+      if(nc != h)
       {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
         std::cout << "\t Cap criteria no longer verified" << std::endl;
@@ -986,7 +1029,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           CGAL_assertion(!is_border(h, tmesh));
           std::array<halfedge_descriptor, 2> nc =
             internal::is_badly_shaped(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                      cap_threshold, needle_threshold,
+                                      needle_threshold, cap_threshold,
                                       collapse_length_threshold, flip_triangle_height_threshold_squared);
 
           if(nc[1] != boost::graph_traits<TriangleMesh>::null_halfedge() && nc[1] != h)
