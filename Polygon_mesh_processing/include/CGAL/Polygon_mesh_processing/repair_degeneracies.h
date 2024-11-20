@@ -755,8 +755,10 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
           std::cout << "\t Needle criteria no longer verified" << std::endl;
 #endif
+          if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge()) edges_to_flip.insert(nc[1]);
           continue;
         }
+
 
         // pick the orientation of edge to keep the vertex minimizing the volume variation
         const halfedge_descriptor best_h = internal::get_best_edge_orientation(e, tmesh, vpm, vcm, gt);
@@ -765,7 +767,10 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
             std::cout << "\t Geometrically invalid edge collapse!" << std::endl;
 #endif
-          next_edges_to_collapse.insert(h);
+          if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge())
+            edges_to_flip.insert(nc[1]);
+          else
+            next_edges_to_collapse.insert(h);
           continue;
         }
 
@@ -774,7 +779,10 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
             std::cout << "\t edge collapse prevented by the user functor" << std::endl;
 #endif
-          next_edges_to_collapse.insert(h);
+          if (nc[1]!=boost::graph_traits<TriangleMesh>::null_halfedge())
+            edges_to_flip.insert(nc[1]);
+          else
+            next_edges_to_collapse.insert(h);
           continue;
         }
 
