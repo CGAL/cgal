@@ -275,9 +275,9 @@ int main(int argc, char* argv[])
     std::cout << "  Number of duplicated points: " << result.nb_of_duplicated_points << '\n';
     std::cout << "  Number of simplified polygons: " << result.nb_of_simplified_polygons << '\n';
     std::cout << "  Number of new polygons: " << result.nb_of_new_polygons << '\n';
-    std::cout << "  Number of removed invalid polygons: " << result.nb_of_removed_invalid_polygonss << '\n';
+    std::cout << "  Number of removed invalid polygons: " << result.nb_of_removed_invalid_polygons << '\n';
     std::cout << "  Number of removed duplicated polygons: " << result.nb_of_removed_duplicated_polygons << '\n';
-    std::cout << "  Number of removed isolated points: " << result.nb_of_removed_isolated_poiints << '\n';
+    std::cout << "  Number of removed isolated points: " << result.nb_of_removed_isolated_points << '\n';
     std::cout << "  Polygon soup self-intersects: " << (result.polygon_soup_self_intersects ? "YES" : "no") << '\n';
     std::cout << "  Polygon mesh is manifold: " << (result.polygon_mesh_is_manifold ? "yes" : "NO") << '\n';
     std::cout << std::endl;

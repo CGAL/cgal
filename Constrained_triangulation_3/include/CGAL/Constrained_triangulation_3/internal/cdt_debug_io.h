@@ -69,9 +69,9 @@ namespace CGAL {
     std::size_t nb_of_duplicated_points = 0;
     std::size_t nb_of_simplified_polygons = 0;
     std::size_t nb_of_new_polygons = 0;
-    std::size_t nb_of_removed_invalid_polygonss = 0;
+    std::size_t nb_of_removed_invalid_polygons = 0;
     std::size_t nb_of_removed_duplicated_polygons = 0;
-    std::size_t nb_of_removed_isolated_poiints = 0;
+    std::size_t nb_of_removed_isolated_points = 0;
 
     bool polygon_soup_self_intersects = false;
     bool polygon_mesh_is_manifold = true;
@@ -127,9 +127,9 @@ namespace CGAL {
       result.nb_of_duplicated_points = PMP::merge_duplicate_points_in_polygon_soup(points, faces, np);
       result.nb_of_simplified_polygons = PMP_internal::simplify_polygons_in_polygon_soup(points, faces, traits);
       result.nb_of_new_polygons = PMP_internal::split_pinched_polygons_in_polygon_soup(points, faces, traits);
-      result.nb_of_removed_invalid_polygonss = PMP_internal::remove_invalid_polygons_in_polygon_soup(points, faces);
+      result.nb_of_removed_invalid_polygons = PMP_internal::remove_invalid_polygons_in_polygon_soup(points, faces);
       result.nb_of_removed_duplicated_polygons = PMP::merge_duplicate_polygons_in_polygon_soup(points, faces, np);
-      result.nb_of_removed_isolated_poiints = PMP::remove_isolated_points_in_polygon_soup(points, faces);
+      result.nb_of_removed_isolated_points = PMP::remove_isolated_points_in_polygon_soup(points, faces);
     }
 
     // check if the polygon soup is pure triangles, and create a triangulated copy otherwise
