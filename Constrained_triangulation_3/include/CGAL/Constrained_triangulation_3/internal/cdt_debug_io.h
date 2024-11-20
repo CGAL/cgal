@@ -14,13 +14,18 @@
 
 #include <CGAL/license/Constrained_triangulation_3.h>
 
-#include <CGAL/boost/graph/IO/OFF.h>
+#include <CGAL/IO/polygon_soup_io.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <ostream>
+#include <sstream>
+
+#include <tl/expected.hpp>
 
 namespace CGAL {
 
@@ -55,6 +60,110 @@ namespace CGAL {
   void write_facets(std::ostream& out, const Tr& tr, Facets&& facets_range) {
     const auto mesh = export_facets_to_surface_mesh(tr, std::forward<Facets>(facets_range));
     CGAL::IO::write_OFF(out, mesh);
+  }
+
+  template <typename PolygonMesh>
+  struct CDT_3_read_polygon_mesh_output {
+    tl::expected<PolygonMesh, std::string> polygon_mesh;
+
+    std::size_t nb_of_duplicated_points = 0;
+    std::size_t nb_of_simplified_polygons = 0;
+    std::size_t nb_of_new_polygons = 0;
+    std::size_t nb_of_removed_invalid_polygonss = 0;
+    std::size_t nb_of_removed_duplicated_polygons = 0;
+    std::size_t nb_of_removed_isolated_poiints = 0;
+
+    bool polygon_soup_self_intersects = false;
+    bool polygon_mesh_is_manifold = true;
+  };
+
+  template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
+  CDT_3_read_polygon_mesh_output<PolygonMesh>
+  read_polygon_mesh_for_cdt_3(const std::string &fname,
+                              const NamedParameters &np = parameters::default_values())
+  {
+    CDT_3_read_polygon_mesh_output<PolygonMesh> result;
+
+    namespace PMP = CGAL::Polygon_mesh_processing;
+    namespace PMP_internal = PMP::internal;
+
+    using VPM = typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::type;
+    using Point = typename boost::property_traits<VPM>::value_type;
+
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    auto verbose = choose_parameter(get_parameter(np, internal_np::verbose), false);
+
+    std::ostringstream local_verbose_output;
+    auto *cerr_buff = std::cerr.rdbuf();
+    std::cerr.rdbuf(local_verbose_output.rdbuf());
+    auto restore_cerr = make_scope_exit([&]
+                                        { std::cerr.rdbuf(cerr_buff); });
+
+    auto return_error = [&]() {
+      result.polygon_mesh = tl::unexpected(std::move(local_verbose_output).str());
+      return result;
+    };
+
+    using Points = std::vector<Point>;
+    using Face = std::vector<std::size_t>;
+    using Faces = std::vector<Face>;
+    Points points;
+    Faces faces;
+    if (!CGAL::IO::read_polygon_soup(fname, points, faces, CGAL::parameters::verbose(true)))
+    {
+      if (verbose)
+        std::cerr << "Warning: cannot read polygon soup" << std::endl;
+      return return_error();
+    }
+    using Traits = typename PMP_internal::GetPolygonGeomTraits<Points, Faces, NamedParameters>::type;
+
+    auto traits = choose_parameter<Traits>(get_parameter(np, internal_np::geom_traits));
+
+    bool do_repair = choose_parameter(get_parameter(np, internal_np::repair_polygon_soup), true);
+    if (do_repair)
+    {
+      result.nb_of_duplicated_points = PMP::merge_duplicate_points_in_polygon_soup(points, faces, np);
+      result.nb_of_simplified_polygons = PMP_internal::simplify_polygons_in_polygon_soup(points, faces, traits);
+      result.nb_of_new_polygons = PMP_internal::split_pinched_polygons_in_polygon_soup(points, faces, traits);
+      result.nb_of_removed_invalid_polygonss = PMP_internal::remove_invalid_polygons_in_polygon_soup(points, faces);
+      result.nb_of_removed_duplicated_polygons = PMP::merge_duplicate_polygons_in_polygon_soup(points, faces, np);
+      result.nb_of_removed_isolated_poiints = PMP::remove_isolated_points_in_polygon_soup(points, faces);
+    }
+
+    // check if the polygon soup is pure triangles, and create a triangulated copy otherwise
+    bool is_pure_triangles = std::all_of(faces.begin(), faces.end(), [](const Face &f) { return f.size() == 3; });
+
+     // create a non-deleting pointer to `faces` (with a null deleter)
+    using Deleter_function = void(Faces*);
+    using Deleter = Deleter_function*;
+    using Ptr = std::unique_ptr<Faces, Deleter>;
+    Ptr triangle_faces_ptr{&faces, +[](Faces *) {}};
+    if (!is_pure_triangles)
+    {
+      triangle_faces_ptr = Ptr(new Faces(faces), +[](Faces* vector){ delete vector; }); // copy `faces`
+      PMP::triangulate_polygons(points, *triangle_faces_ptr, np);
+    }
+
+    result.polygon_soup_self_intersects = PMP::does_triangle_soup_self_intersect(points, *triangle_faces_ptr, np);
+
+    if (!PMP::orient_polygon_soup(points, faces))
+    {
+      result.polygon_mesh_is_manifold = false;
+      if (verbose)
+        std::cerr << "Some duplication happened during polygon soup orientation" << std::endl;
+    }
+
+    if (!PMP::is_polygon_soup_a_polygon_mesh(faces))
+    {
+      if (verbose)
+        std::cerr << "Warning: polygon soup does not describe a polygon mesh" << std::endl;
+      return return_error();
+    }
+    PMP::polygon_soup_to_polygon_mesh(points, faces, *result.polygon_mesh, parameters::default_values(), np);
+
+    return result;
   }
 
 } // end namespace CGAL

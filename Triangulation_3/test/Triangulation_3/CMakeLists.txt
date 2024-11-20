@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.12...3.29)
+cmake_minimum_required(VERSION 3.24...3.30)
 project(Triangulation_3_Tests)
 
 find_package(CGAL REQUIRED)
@@ -12,6 +12,19 @@ include(CGAL_Eigen3_support)
 include(CGAL_TBB_support)
 
 include_directories(BEFORE "include")
+
+include(FetchContent)
+
+FetchContent_Declare(
+  tl-expected
+  GIT_REPOSITORY https://github.com/TartanLlama/expected.git
+  GIT_TAG        292eff8bd8ee230a7df1d6a1c00c4ea0eb2f0362 # https://github.com/TartanLlama/expected/releases/tag/v1.1.0
+  FIND_PACKAGE_ARGS CONFIG REQUIRED
+)
+
+set(EXPECTED_ENABLE_TESTS FALSE CACHE BOOL "Disable tests for tl::expected")
+
+FetchContent_MakeAvailable(tl-expected)
 
 create_single_source_cgal_program("test_delaunay_3.cpp")
 create_single_source_cgal_program("test_delaunay_hierarchy_3.cpp")

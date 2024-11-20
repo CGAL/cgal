@@ -254,21 +254,33 @@ int main(int argc, char* argv[])
   }
   CGAL_CDT_3_TASK_BEGIN(read_input_task_handle);
   auto start_time = std::chrono::high_resolution_clock::now();
-
-  Mesh mesh;
-  const bool ok = options.repair_mesh
-                      ? CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(options.input_filename, mesh)
-                      : CGAL::IO::read_polygon_mesh(options.input_filename, mesh);
-  if(!ok) {
+  auto read_options = CGAL::parameters::repair_polygon_soup(options.repair_mesh).verbose(options.verbose);
+  auto result = CGAL::read_polygon_mesh_for_cdt_3<Mesh>(options.input_filename, read_options);
+  
+  if (!result.polygon_mesh)
+  {
     std::cerr << "Not a valid input file." << std::endl;
+    std::cerr << "Details:\n" << result.polygon_mesh.error() << std::endl;
     return 1;
   }
+  Mesh mesh = std::move(*result.polygon_mesh);
   if(!options.quiet) {
     std::cout << "[timings] read mesh in " << std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
     std::cout << "Number of vertices: " << mesh.number_of_vertices() << '\n';
     std::cout << "Number of edges: " << mesh.number_of_edges() << '\n';
     std::cout << "Number of faces: " << mesh.number_of_faces() << "\n\n";
+
+    std::cout << "Processing was successful.\n";
+    std::cout << "  Number of duplicated points: " << result.nb_of_duplicated_points << '\n';
+    std::cout << "  Number of simplified polygons: " << result.nb_of_simplified_polygons << '\n';
+    std::cout << "  Number of new polygons: " << result.nb_of_new_polygons << '\n';
+    std::cout << "  Number of removed invalid polygons: " << result.nb_of_removed_invalid_polygonss << '\n';
+    std::cout << "  Number of removed duplicated polygons: " << result.nb_of_removed_duplicated_polygons << '\n';
+    std::cout << "  Number of removed isolated points: " << result.nb_of_removed_isolated_poiints << '\n';
+    std::cout << "  Polygon soup self-intersects: " << (result.polygon_soup_self_intersects ? "YES" : "no") << '\n';
+    std::cout << "  Polygon mesh is manifold: " << (result.polygon_mesh_is_manifold ? "yes" : "NO") << '\n';
+    std::cout << std::endl;
   }
   CGAL_CDT_3_TASK_END(read_input_task_handle);
 
