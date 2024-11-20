@@ -19,7 +19,7 @@ FetchContent_Declare(
   tl-expected
   GIT_REPOSITORY https://github.com/TartanLlama/expected.git
   GIT_TAG        292eff8bd8ee230a7df1d6a1c00c4ea0eb2f0362 # https://github.com/TartanLlama/expected/releases/tag/v1.1.0
-  FIND_PACKAGE_ARGS CONFIG REQUIRED
+  FIND_PACKAGE_ARGS CONFIG
 )
 
 set(EXPECTED_ENABLE_TESTS FALSE CACHE BOOL "Disable tests for tl::expected")
@@ -54,8 +54,8 @@ create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_EDG_fi
 create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_OFF_file.cpp" CXX_FEATURES cxx_std_20)
 create_single_source_cgal_program( "cdt_3_from_off.cpp" CXX_FEATURES cxx_std_20)
 create_single_source_cgal_program( "cdt_3_from_off_with_Epeck.cpp" CXX_FEATURES cxx_std_20)
-target_link_libraries(cdt_3_from_off PUBLIC CGAL::Eigen3_support)
-target_link_libraries(cdt_3_from_off_with_Epeck PUBLIC CGAL::Eigen3_support)
+target_link_libraries(cdt_3_from_off PUBLIC CGAL::Eigen3_support tl::expected)
+target_link_libraries(cdt_3_from_off_with_Epeck PUBLIC CGAL::Eigen3_support tl::expected)
 add_executable(cdt_3_from_off_CGAL_DEBUG_CDT_3 cdt_3_from_off)
 target_compile_definitions(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE CGAL_DEBUG_CDT_3=255)
 target_compile_features(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE cxx_std_20)
