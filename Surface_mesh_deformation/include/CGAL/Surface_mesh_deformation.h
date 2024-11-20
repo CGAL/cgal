@@ -44,6 +44,18 @@
 
 namespace CGAL {
 
+#ifdef DOXYGEN_RUNNING
+  /// \ingroup PkgWeightsRefARAPWeights
+  ///@brief Deformation algorithm type
+  enum Deformation_algorithm_tag
+  {
+    ORIGINAL_ARAP,   /**< use original as-rigid-as possible algorithm */
+    SPOKES_AND_RIMS, /**< use spokes and rims version of as-rigid-as possible algorithm */
+    SRE_ARAP         /**< use smooth rotation enhanced As-rigid-as-possible */
+  };
+  // The implementation uses the enum declared in CGAL/Weights/arap_weights.h
+#endif
+
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal {
 

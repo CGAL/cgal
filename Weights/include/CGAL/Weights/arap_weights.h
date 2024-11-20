@@ -12,18 +12,18 @@
 #ifndef CGAL_ARAP_WEIGHTS_H
 #define CGAL_ARAP_WEIGHTS_H
 
-#include "cotangent_weights.h"
+#include <CGAL/Weights/cotangent_weights.h>
 
 namespace CGAL {
 
-/// \ingroup PkgWeightsRefARAPWeights
-///@brief Deformation algorithm type
+#ifndef DOXYGEN_RUNNING
 enum Deformation_algorithm_tag
 {
   ORIGINAL_ARAP,   /**< use original as-rigid-as possible algorithm */
   SPOKES_AND_RIMS, /**< use spokes and rims version of as-rigid-as possible algorithm */
   SRE_ARAP         /**< use smooth rotation enhanced As-rigid-as-possible */
 };
+#endif
 
 namespace internal {
 

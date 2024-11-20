@@ -28,8 +28,8 @@
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Surface_mesh_deformation.h>
 #include <CGAL/Deformation_Eigen_closest_rotation_traits_3.h>
+#include <CGAL/Weights/arap_weights.h>
 #include <CGAL/Weights/cotangent_weights.h>
 
 #include <CGAL/Simple_cartesian.h>
@@ -169,6 +169,27 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 }
 
 #endif
+
+template<typename Mesh, typename VertexRotationMap, typename VertexNormalMap, bool has_default>
+struct Rotate_vertex_normals {
+  Rotate_vertex_normals() { std::cout << "empty" << std::endl; }
+  void update(const Mesh& mesh, const VertexRotationMap& vrm, const VertexNormalMap& vnm) const {
+  }
+};
+
+template<typename Mesh, typename VertexRotationMap, typename VertexNormalMap>
+struct Rotate_vertex_normals<Mesh, VertexRotationMap, VertexNormalMap, false> {
+  Rotate_vertex_normals() { std::cout << "vertex" << std::endl; }
+  void update(const Mesh& mesh, const VertexRotationMap &vrm, const VertexNormalMap& vnm) const {
+    using Vector_3 = typename VertexNormalMap::value_type;
+    for (auto v : vertices(mesh)) {
+      Vector_3 n = get(vnm, v);
+      auto rotation = get(vrm, v);
+      put(vnm, v, rotation.inverse().transform(n));
+    }
+  }
+};
+
 } // namespace registration
 } // namespace internal
 
@@ -898,37 +919,49 @@ void non_rigid_mesh_to_mesh_registration(const TriangleMesh1& source,
 *
 * @tparam TriangleMesh a model of `FaceGraph`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
- *   as key type and a \cgal Kernel `Vector_3` as value type.
+*   as key type and a \cgal Kernel `Vector_3` as value type.
+* @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
+*   as key type and a \cgal Kernel `Aff_transformation_3` as value type. Only the rotational part of the transformations is considered.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param mesh the triangle mesh to be transformed.
-* @param vtm a readable vertex property map of `mesh` to store the translation vector of the registration.
+* @param vtm a readable vertex property map of `mesh` that contains the translation vector of the registration.
+* @param vrm a readable vertex property map of `mesh` that contains the rotational part of the registration.
 * @param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
 *
 * \cgalNamedParamsBegin
-*   \cgalParamNBegin{geom_traits}
-*     \cgalParamDescription{an instance of a geometric traits class}
-*     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
-*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
-*   \cgalParamNEnd
-*
 *   \cgalParamNBegin{vertex_point_map}
-*     \cgalParamDescription{a property map associating points to the vertices of `source`}
+*     \cgalParamDescription{a property map associating points to the vertices of `mesh`}
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                    as key type and `%Point_3` as value type}
 *     \cgalParamDefault{`get_const_property_map(CGAL::vertex_point, source)`}
 *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
 *                     must be available in `TriangleMesh`.}
 *   \cgalParamNEnd
+*
+*   \cgalParamNBegin{vertex_normal_map}
+*     \cgalParamDescription{a property map associating normals to the vertices of `mesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Vector_3` as value type}
+*     \cgalParamExtra{If this parameter is provided, the contained normals will be updated.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{face_normal_map}
+*     \cgalParamDescription{a property map associating normals to the faces of `mesh`}
+*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*                    as key type and `%Vector_3` as value type}
+*     \cgalParamExtra{If this parameter is provided, the contained normals will be updated.}
+*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
 template <typename TriangleMesh,
   typename VertexTranslationMap,
+  typename VertexRotationMap,
   typename NamedParameters = parameters::Default_named_parameters>
 void apply_non_rigid_transformation(const TriangleMesh& mesh,
-                                    const VertexTranslationMap& vtm,
-                                    const NamedParameters& np = parameters::default_values()) {
+  const VertexTranslationMap& vtm,
+  const VertexRotationMap& vrm,
+  const NamedParameters& np = parameters::default_values()) {
   using Gt = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
   using Vertex_point_map = typename GetVertexPointMap<TriangleMesh, NamedParameters>::type;
 
@@ -936,11 +969,19 @@ void apply_non_rigid_transformation(const TriangleMesh& mesh,
 
   Vertex_point_map vpm = parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_point), get_const_property_map(CGAL::vertex_point, mesh));
 
+  using Vector_map_tag = dynamic_vertex_property_t<typename Gt::Vector_3>;
+  using Default_vector_map = typename boost::property_map<TriangleMesh, Vector_map_tag>::const_type;
+  using Vertex_normal_map = typename internal_np::Lookup_named_param_def<internal_np::vertex_normal_map_t,
+    NamedParameters, Default_vector_map>::type;
+
   for (auto v : vertices(mesh)) {
     Point p = get(vpm, v);
     p += get(vtm, v);
     put(vpm, v, p);
   }
+
+  internal::registration::Rotate_vertex_normals<TriangleMesh, VertexRotationMap, Vertex_normal_map, parameters::is_default_parameter<NamedParameters, internal_np::vertex_normal_map_t>::value> rvn;
+  rvn.update(mesh, vrm, parameters::choose_parameter(parameters::get_parameter(np, internal_np::vertex_normal_map), get(Vector_map_tag(), mesh)));
 }
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
