@@ -731,7 +731,7 @@ public:
     }
 
     if (m_parameters.verbose)
-    std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
+      std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
 
     return;
   }
