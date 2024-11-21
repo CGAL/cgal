@@ -769,7 +769,21 @@ sub create_summary_page {
     foreach $platform (@platforms_to_do) {
         my $third_party_libraries = "";
         my @tpl_list = ();
+        my ($operating_system, $compiler, $tester_name, $tester_address, $build_type);
         if (open(PLATFORM_INFO, "results_${platform}.info")) {
+            $_ = <PLATFORM_INFO>;
+            $_ = <PLATFORM_INFO>;
+            chomp;
+            $compiler = $_;
+            $_ = <PLATFORM_INFO>;
+            chomp;
+            $operating_system = $_;
+            $_ = <PLATFORM_INFO>;
+            chomp;
+            $tester_name = $_;
+            $_ = <PLATFORM_INFO>;
+            chomp;
+            $tester_address = $_;
             my $line = "";
             while (<PLATFORM_INFO>) {
                 $line = $_;
@@ -798,9 +812,14 @@ sub create_summary_page {
                 }
             }
             close PLATFORM_INFO;
+            $build_type = $platform_is_optimized{$platform} ? " - " : "YES";
         }
         my $platform_info = {
             name => $platform,
+            os => $operating_system,
+            compiler => $compiler,
+            tester => $tester_name,
+            debug => $build_type,
             tpl => \@tpl_list,
             test_directories => [],
         };
