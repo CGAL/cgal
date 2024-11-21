@@ -19,6 +19,7 @@ use Date::Format;
 use JSON;
 use File::Copy;
 use FindBin;
+use IO::Compress::Gzip qw(gzip $GzipError) ;
 
 my $server_url="https://cgal.geometryfactory.com/";
 my $cgal_members="${server_url}CGAL/Members/";
@@ -827,7 +828,8 @@ sub create_summary_page {
     };
     my $json = JSON->new->allow_nonref;
     my $json_text = $json->encode($final_data);
-    open my $fh, '>', "$testresult_dir/$release_name/search_index.json" or die "Could not open file: $!";
+    my $fh = new IO::Compress::Gzip "$testresult_dir/$release_name/search_index.json.gz"
+        or die "IO::Compress::Gzip failed: $GzipError\n";
     print $fh $json_text;
     close $fh;
 
