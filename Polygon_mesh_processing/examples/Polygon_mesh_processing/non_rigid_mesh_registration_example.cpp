@@ -69,10 +69,11 @@ int main(int, char**) {
     .as_rigid_as_possible_weight(w3)
     .correspondences(std::cref(correspondences_mesh)));
 
-  //auto vnm4 = source.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:normal");
-  auto vnm4 = source.property_map<Mesh::Vertex_index, K::Vector_3>("v:normal");
+  auto vnm = source.add_property_map<Mesh::Vertex_index, K::Vector_3>("v:normal");
+  if (vnm.second)
+    PMP::compute_vertex_normals(source, vnm.first);
 
-  PMP::apply_non_rigid_transformation(source, vtm, vrm);
+  PMP::apply_non_rigid_transformation(source, vtm, vrm, CGAL::parameters::vertex_normal_map(vnm.first));
   CGAL::IO::write_polygon_mesh(out.str(), source);
 
   return EXIT_SUCCESS;

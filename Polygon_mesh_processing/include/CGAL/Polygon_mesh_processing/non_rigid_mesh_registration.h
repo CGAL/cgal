@@ -172,21 +172,14 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 
 template<typename Mesh, typename VertexRotationMap, typename VertexNormalMap, bool has_default>
 struct Rotate_vertex_normals {
-  Rotate_vertex_normals() { std::cout << "empty" << std::endl; }
-  void update(const Mesh& mesh, const VertexRotationMap& vrm, const VertexNormalMap& vnm) const {
-  }
+  void update(const Mesh& mesh, const VertexRotationMap& vrm, const VertexNormalMap& vnm) const {}
 };
 
 template<typename Mesh, typename VertexRotationMap, typename VertexNormalMap>
 struct Rotate_vertex_normals<Mesh, VertexRotationMap, VertexNormalMap, false> {
-  Rotate_vertex_normals() { std::cout << "vertex" << std::endl; }
   void update(const Mesh& mesh, const VertexRotationMap &vrm, const VertexNormalMap& vnm) const {
-    using Vector_3 = typename VertexNormalMap::value_type;
-    for (auto v : vertices(mesh)) {
-      Vector_3 n = get(vnm, v);
-      auto rotation = get(vrm, v);
-      put(vnm, v, rotation.inverse().transform(n));
-    }
+    for (auto v : vertices(mesh))
+      put(vnm, v, get(vrm, v).inverse().transform(get(vnm, v)));
   }
 };
 
@@ -382,12 +375,14 @@ void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
 
   idx = 0;
   for (auto p : target) {
-    Y(idx, 0) = get(point_map, p).x();
-    Y(idx, 1) = get(point_map, p).y();
-    Y(idx, 2) = get(point_map, p).z();
-    NY(idx, 0) = get(normal_map, p).x();
-    NY(idx, 1) = get(normal_map, p).y();
-    NY(idx, 2) = get(normal_map, p).z();
+    const Point& pt = get(point_map, p);
+    Y(idx, 0) = pt.x();
+    Y(idx, 1) = pt.y();
+    Y(idx, 2) = pt.z();
+    const typename Gt::Vector_3& v = get(normal_map, p);
+    NY(idx, 0) = v.x();
+    NY(idx, 1) = v.y();
+    NY(idx, 2) = v.z();
     idx++;
   }
   std::cout << std::endl;
@@ -915,7 +910,8 @@ void non_rigid_mesh_to_mesh_registration(const TriangleMesh1& source,
 /*!
 * \ingroup PMP_registration_grp
 *
-* \brief applies a non-rigid transformation to the vertices of the mesh. Face and vertex normal vectors are not updated after transformation.
+* \brief applies a non-rigid transformation to the vertices of the mesh. Vertex normal vectors are updated when the vertex normal property map is provided in the named parameters.
+*  Potential face normal vectors are not updated.
 *
 * @tparam TriangleMesh a model of `FaceGraph`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
@@ -946,12 +942,6 @@ void non_rigid_mesh_to_mesh_registration(const TriangleMesh1& source,
 *     \cgalParamExtra{If this parameter is provided, the contained normals will be updated.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{face_normal_map}
-*     \cgalParamDescription{a property map associating normals to the faces of `mesh`}
-*     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
-*                    as key type and `%Vector_3` as value type}
-*     \cgalParamExtra{If this parameter is provided, the contained normals will be updated.}
-*   \cgalParamNEnd
 * \cgalNamedParamsEnd
 */
 template <typename TriangleMesh,
