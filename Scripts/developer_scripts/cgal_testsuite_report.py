@@ -1,10 +1,14 @@
 import json
-import sys
 from typing import Dict, List
 from dataclasses import dataclass
 from datetime import datetime
 import re
 import requests
+
+LATEST_VERSION_URL = "https://cgal.geometryfactory.com/CGAL/Releases/LATEST"
+JSON_DATA_URL_TEMPLATE = "https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-{version}/search_index.json"
+TESTSUITE_URL_TEMPLATE = "https://cgal.geometryfactory.com/CGAL/testsuite/results-{version}.shtml"
+TIMEOUT_DURATION = 10
 
 @dataclass
 class TPLInfo:
@@ -21,23 +25,28 @@ class PlatformInfo:
     compiler: str
     tpl_info: List[TPLInfo]
 
-def get_latest_version() -> str:
-    url = "https://cgal.geometryfactory.com/CGAL/Releases/LATEST"
-    response = requests.get(url)
+def fetch_data_from_url(url: str) -> str:
+    """Fetch data from a given URL."""
+    response = requests.get(url, timeout=TIMEOUT_DURATION)
     response.raise_for_status()
-    version_text = response.text.strip()
-    match = re.match(r'CGAL-([^.]+\.[^-]+-[^-]+-\d+)', version_text)
+    return response.text.strip()
+
+def get_latest_version() -> str:
+    """Return latest CGAL version from LATEST (CGAL-<version>.tar.gz)"""
+    tarball_name = fetch_data_from_url(LATEST_VERSION_URL)
+    match = re.match(r'CGAL-([^.]+\.[^-]+-[^-]+-\d+)', tarball_name)
     if not match:
-        raise ValueError(f"Unexpected version format: {version_text}")
+        raise ValueError(f"Unexpected tarball name format: {tarball_name}")
     return match.group(1)
 
 def fetch_json_data(version: str) -> Dict:
-    url = f"https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-{version}/search_index.json"
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()
+    """Fetch JSON data for the given CGAL testsuite."""
+    url = JSON_DATA_URL_TEMPLATE.format(version=version)
+    json_data = fetch_data_from_url(url)
+    return json.loads(json_data)
 
 def analyze_tpl_data(json_data: Dict) -> List[PlatformInfo]:
+    """Analyze TPL data from JSON and return a list of PlatformInfo."""
     platforms_info = []
     for platform in json_data.get('platforms', []):
         tpl_list = [
@@ -59,37 +68,42 @@ def analyze_tpl_data(json_data: Dict) -> List[PlatformInfo]:
         platforms_info.append(platform_info)
     return platforms_info
 
+def fragment_name(platform: PlatformInfo) -> str:
+    """Return a fragment name from a given platform."""
+    return f"platform-{platform.name.lower().replace(' ', '-')}"
+
 def generate_markdown_report(platforms_info: List[PlatformInfo], version: str) -> str:
+    """Generate a markdown report from the platforms information."""
     report = []
     report.append("# TestSuite Report")
-    report.append(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-    report.append(f"CGAL Version: {version}\n")
-    report.append("## Platforms Summary")
-    report.append("\n| Platform | Debug | OS | Tester | Compiler |")
-    report.append("|----------|--------|----|---------| ---------|")
+    report.append(f"\nGenerated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    url = TESTSUITE_URL_TEMPLATE.format(version=version)
+    report.append(f"\nCGAL Version: [{version}]({url})\n")
+    report.append("## Platforms Summary\n")
+    report.append("| Platform | Debug | OS | Tester | Compiler |")
+    report.append("|----------|-------|----|--------|----------|")
     for platform in platforms_info:
         report.append(
-            f"| [{platform.name}](#platform-{platform.name.lower().replace(' ', '-')}) | {platform.debug} | {platform.os} | "
+            f"| [{platform.name}](#{fragment_name(platform)}) | {platform.debug} | {platform.os} | "
             f"{platform.tester} | {platform.compiler} |"
         )
-    report.append("\n")
-    report.append("## Detailed TPL\n")
+    report.append("\n## Detailed Third-party Libraries\n")
     for platform in platforms_info:
-        report.append(f"### Platform: {platform.name} <a name='{platform.name.lower().replace(' ', '-')}'></a>")
+        report.append(f"### Platform: {platform.name}")
         tpl_list = sorted(platform.tpl_info, key=lambda x: x.name)
-        report.append("\n| TPL Name | Version | Status |")
+        report.append("\n| Library Name | Version | Status |")
         report.append("|----------|----------|---------|")
         for tpl in tpl_list:
             version_str = str(tpl.version) if tpl.version else "N/A"
             status_str = "✅" if tpl.status == "found" else "❌"
             report.append(f"| {tpl.name} | {version_str} | {status_str} |")
-        report.append("\n")
         found_tpls = sum(1 for tpl in tpl_list if tpl.status == "found")
         total_tpls = len(tpl_list)
-        report.append(f"**Summary**: {found_tpls}/{total_tpls} TPLs found")
+        report.append(f"**Summary**: found {found_tpls} third-party libraries out of {total_tpls}")
     return "\n".join(report)
 
 def main():
+    """Main function to generate the testsuite report."""
     try:
         version = get_latest_version()
         json_data = fetch_json_data(version)
@@ -97,14 +111,15 @@ def main():
         markdown_report = generate_markdown_report(platforms_info, version)
         print(markdown_report)
     except requests.RequestException as e:
-        print(f"Error fetching data: {str(e)}", file=sys.stderr)
-        sys.exit(1)
-    except json.JSONDecodeError:
-        print("Error: Invalid JSON data", file=sys.stderr)
-        sys.exit(1)
+        print(f"**Error fetching data:**\n\n```\n{str(e)}\n```\n")
+        raise
+    except json.JSONDecodeError as e:
+        print(f"**Error: Invalid JSON data**\n\n```\n{str(e)}\n```")
+        print(f"\nFile:\n\n```json\n{e.doc}\n```")
+        raise
     except Exception as e:
-        print(f"Error processing data: {str(e)}", file=sys.stderr)
-        sys.exit(1)
+        print(f"**Error processing data:**\n\n```\n{str(e)}\n```\n")
+        raise
 
 if __name__ == "__main__":
     main()
