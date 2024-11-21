@@ -10,11 +10,13 @@ JSON_DATA_URL_TEMPLATE = "https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-{
 TESTSUITE_URL_TEMPLATE = "https://cgal.geometryfactory.com/CGAL/testsuite/results-{version}.shtml"
 TIMEOUT_DURATION = 10
 
+
 @dataclass
 class TPLInfo:
     name: str
     version: str
     status: str
+
 
 @dataclass
 class PlatformInfo:
@@ -25,11 +27,13 @@ class PlatformInfo:
     compiler: str
     tpl_info: List[TPLInfo]
 
+
 def fetch_data_from_url(url: str) -> str:
     """Fetch data from a given URL."""
     response = requests.get(url, timeout=TIMEOUT_DURATION)
     response.raise_for_status()
     return response.text.strip()
+
 
 def get_latest_version() -> str:
     """Return latest CGAL version from LATEST (CGAL-<version>.tar.gz)"""
@@ -39,11 +43,13 @@ def get_latest_version() -> str:
         raise ValueError(f"Unexpected tarball name format: {tarball_name}")
     return match.group(1)
 
+
 def fetch_json_data(version: str) -> Dict:
     """Fetch JSON data for the given CGAL testsuite."""
     url = JSON_DATA_URL_TEMPLATE.format(version=version)
     json_data = fetch_data_from_url(url)
     return json.loads(json_data)
+
 
 def analyze_tpl_data(json_data: Dict) -> List[PlatformInfo]:
     """Analyze TPL data from JSON and return a list of PlatformInfo."""
@@ -68,15 +74,18 @@ def analyze_tpl_data(json_data: Dict) -> List[PlatformInfo]:
         platforms_info.append(platform_info)
     return platforms_info
 
+
 def fragment_name(platform: PlatformInfo) -> str:
     """Return a fragment name from a given platform."""
-    return f"platform-{platform.name.lower().replace(' ', '-')}"
+    return f"platform-{platform.name.lower().replace(' ', '-').replace('.', '')}"
+
 
 def generate_markdown_report(platforms_info: List[PlatformInfo], version: str) -> str:
     """Generate a markdown report from the platforms information."""
     report = []
     report.append("# TestSuite Report")
-    report.append(f"\nGenerated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    report.append(f"\nGenerated on: {
+                  datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     url = TESTSUITE_URL_TEMPLATE.format(version=version)
     report.append(f"\nCGAL Version: [{version}]({url})\n")
     report.append("## Platforms Summary\n")
@@ -84,23 +93,26 @@ def generate_markdown_report(platforms_info: List[PlatformInfo], version: str) -
     report.append("|----------|-------|----|--------|----------|")
     for platform in platforms_info:
         report.append(
-            f"| [{platform.name}](#{fragment_name(platform)}) | {platform.debug} | {platform.os} | "
+            f"| [{platform.name}](#{fragment_name(platform)}) | {
+                platform.debug} | {platform.os} | "
             f"{platform.tester} | {platform.compiler} |"
         )
-    report.append("\n## Detailed Third-party Libraries\n")
+    report.append("\n## Detailed Third-party Libraries")
     for platform in platforms_info:
-        report.append(f"### Platform: {platform.name}")
+        report.append(f"\n### Platform: {platform.name}\n")
         tpl_list = sorted(platform.tpl_info, key=lambda x: x.name)
-        report.append("\n| Library Name | Version | Status |")
-        report.append("|----------|----------|---------|")
+        report.append("| Library Name | Version | Status |")
+        report.append("|--------------|---------|--------|")
         for tpl in tpl_list:
             version_str = str(tpl.version) if tpl.version else "N/A"
             status_str = "✅" if tpl.status == "found" else "❌"
             report.append(f"| {tpl.name} | {version_str} | {status_str} |")
         found_tpls = sum(1 for tpl in tpl_list if tpl.status == "found")
         total_tpls = len(tpl_list)
-        report.append(f"**Summary**: found {found_tpls} third-party libraries out of {total_tpls}")
+        report.append(
+            f"\n**Summary**: found {found_tpls} third-party libraries out of {total_tpls}")
     return "\n".join(report)
+
 
 def main():
     """Main function to generate the testsuite report."""
@@ -120,6 +132,7 @@ def main():
     except Exception as e:
         print(f"**Error processing data:**\n\n```\n{str(e)}\n```\n")
         raise
+
 
 if __name__ == "__main__":
     main()
