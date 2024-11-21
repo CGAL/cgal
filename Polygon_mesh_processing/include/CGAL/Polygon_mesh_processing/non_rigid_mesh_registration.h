@@ -202,9 +202,9 @@ struct Rotate_vertex_normals<Mesh, VertexRotationMap, VertexNormalMap, false> {
 * @tparam PointRange is a model of `ConstRange`. The value type of
 *   its iterator is the key type of the named parameter `point_map`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
-*   as key type and a \cgal Kernel `Vector_3` as value type.
+*   as key type and `GeomTraits::Vector_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
-*   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
+*   as key type and `CGAL::Aff_transformation_3<GeomTraits>` as value type, `GeomTraits` being the type of the parameter `geom_traits`.
 * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters".
 * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters".
 *
@@ -268,7 +268,7 @@ struct Rotate_vertex_normals<Mesh, VertexRotationMap, VertexNormalMap, false> {
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal Kernel deduced from `TriangleMesh`, using `CGAL::GetGeomTraits`}
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
@@ -761,9 +761,9 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 * @tparam TriangleMesh1 a const model of `FaceGraph`.
 * @tparam TriangleMesh2 a const model of `FaceGraph`.
 * @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
-*   as key type and a \cgal Kernel `Vector_3` as value type.
+*   as key type and `GeomTraits::Vector_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`.
 * @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
-*   as key type and a \cgal Kernel `Aff_transformation_3` as value type.
+*   as key type and `CGAL::Aff_transformation_3<GeomTraits>` as value type, `GeomTraits` being the type of the parameter `geom_traits`.
 * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters1".
 * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters2".
 *
@@ -827,7 +827,7 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *   \cgalParamNBegin{geom_traits}
 *     \cgalParamDescription{an instance of a geometric traits class}
 *     \cgalParamType{a class model of `Kernel`}
-*     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+*     \cgalParamDefault{a \cgal Kernel deduced from `TriangleMesh`, using `CGAL::GetGeomTraits`}
 *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 * \cgalNamedParamsEnd
@@ -914,10 +914,10 @@ void non_rigid_mesh_to_mesh_registration(const TriangleMesh1& source,
 *  Potential face normal vectors are not updated.
 *
 * @tparam TriangleMesh a model of `FaceGraph`.
-* @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
-*   as key type and a \cgal Kernel `Vector_3` as value type.
-* @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh1>::%vertex_descriptor`
-*   as key type and a \cgal Kernel `Aff_transformation_3` as value type. Only the rotational part of the transformations is considered.
+* @tparam VertexTranslationMap is a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*   as key type and `GeomTraits::Vector_3` as value type, `GeomTraits` being the type of the parameter `geom_traits`.
+* @tparam VertexRotationMap is a property map with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+*   as key type and `CGAL::Aff_transformation_3<GeomTraits>` as value type, `GeomTraits` being the type of the parameter `geom_traits`. Only the rotational part of the transformations is considered.
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
 *
 * @param mesh the triangle mesh to be transformed.
@@ -940,6 +940,13 @@ void non_rigid_mesh_to_mesh_registration(const TriangleMesh1& source,
 *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
 *                    as key type and `%Vector_3` as value type}
 *     \cgalParamExtra{If this parameter is provided, the contained normals will be updated.}
+*   \cgalParamNEnd
+*
+*   \cgalParamNBegin{geom_traits}
+*     \cgalParamDescription{an instance of a geometric traits class}
+*     \cgalParamType{a class model of `Kernel`}
+*     \cgalParamDefault{a \cgal Kernel deduced from `TriangleMesh`, using `CGAL::GetGeomTraits`}
+*     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
 *   \cgalParamNEnd
 *
 * \cgalNamedParamsEnd
