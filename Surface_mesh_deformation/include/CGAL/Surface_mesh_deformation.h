@@ -45,7 +45,7 @@
 namespace CGAL {
 
 #ifdef DOXYGEN_RUNNING
-  /// \ingroup PkgWeightsRefARAPWeights
+  /// \ingroup PkgSurfaceMeshDeformationRef
   ///@brief Deformation algorithm type
   enum Deformation_algorithm_tag
   {
