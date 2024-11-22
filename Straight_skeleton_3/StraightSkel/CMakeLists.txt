@@ -74,7 +74,7 @@ if(BUILD_OWN_KERNEL)
             src/kernel/bisector.cpp
             src/kernel/projection.cpp)
     add_library(skelkernel SHARED ${kernel_SOURCES})
-    target_link_libraries(skelkernel m)
+    target_link_libraries(skelkernel PUBLIC m)
 endif()
 
 
@@ -161,11 +161,11 @@ set(data_3d_SOURCES
 add_library(skeldata2d SHARED ${data_2d_SOURCES})
 add_library(skeldata3d SHARED ${data_3d_SOURCES})
 if(BUILD_OWN_KERNEL)
-    target_link_libraries(skeldata2d skelutil skelkernel CGAL::CGAL)
-    target_link_libraries(skeldata3d skeldata2d skelutil skelkernel CGAL::CGAL)
+    target_link_libraries(skeldata2d PUBLIC skelutil skelkernel CGAL::CGAL)
+    target_link_libraries(skeldata3d PUBLIC skeldata2d skelutil skelkernel CGAL::CGAL)
 else()
-    target_link_libraries(skeldata2d skelutil CGAL::CGAL)
-    target_link_libraries(skeldata3d skeldata2d skelutil CGAL::CGAL)
+    target_link_libraries(skeldata2d PUBLIC skelutil CGAL::CGAL)
+    target_link_libraries(skeldata3d PUBLIC skeldata2d skelutil CGAL::CGAL)
 endif()
 
 # build database connector
@@ -203,7 +203,7 @@ set(db_3d_SOURCES
         src/db/3d/PLYFile.cpp
         src/db/3d/FLMAFile.cpp)
 add_library(skeldb SHARED ${db_SOURCES} ${db_2d_SOURCES} ${db_3d_SOURCES})
-target_link_libraries(skeldb skeldata2d skeldata3d skelutil sqlite3 dl CGAL::CGAL)
+target_link_libraries(skeldb PUBLIC skeldata2d skeldata3d skelutil sqlite3 dl CGAL::CGAL)
 
 
 # build algorithm
@@ -239,8 +239,8 @@ set(algo_3d_SOURCES
         src/algo/3d/GraphChecker.cpp)
 add_library(skelalgo2d SHARED ${algo_SOURCES} ${algo_2d_SOURCES})
 add_library(skelalgo3d SHARED ${algo_3d_SOURCES})
-target_link_libraries(skelalgo2d skeldata2d CGAL::CGAL)
-target_link_libraries(skelalgo3d skelalgo2d skeldata3d skeldb CGAL::CGAL)
+target_link_libraries(skelalgo2d PUBLIC skeldata2d CGAL::CGAL)
+target_link_libraries(skelalgo3d PUBLIC skelalgo2d skeldata3d skeldb CGAL::CGAL)
 
 
 # build user interface
@@ -260,9 +260,9 @@ set(ui_ps_SOURCES
 add_library(skelui SHARED ${ui_SOURCES} ${ui_gl_SOURCES} ${ui_ps_SOURCES})
 
 if(BUILD_OWN_KERNEL)
-    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES} skelkernel CGAL::CGAL)
+    target_link_libraries(skelui PUBLIC skelutil m GL GLU glut ${Boost_LIBRARIES} skelkernel CGAL::CGAL)
 else()
-    target_link_libraries(skelui skelutil m GL GLU glut ${Boost_LIBRARIES} CGAL::CGAL)
+    target_link_libraries(skelui PUBLIC skelutil m GL GLU glut ${Boost_LIBRARIES} CGAL::CGAL)
 endif()
 
 
@@ -270,7 +270,7 @@ endif()
 # build executable
 set(StraightSkel_SOURCES src/main.cpp)
 add_executable(StraightSkel ${StraightSkel_SOURCES})
-target_link_libraries(StraightSkel skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
+target_link_libraries(StraightSkel PUBLIC skeldata2d skelalgo2d skeldata3d skelalgo3d skeldb skelui CGAL::CGAL)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StraightSkel.ini
     ${CMAKE_CURRENT_BINARY_DIR}/StraightSkel.ini COPYONLY)
 
@@ -285,7 +285,7 @@ if(BUILD_TESTS)
                 test/util/UtilTestRunner.cpp
                 test/util/StringFuncsTest.cpp)
         add_executable(UtilTestRunner ${UtilTest_SOURCES})
-        target_link_libraries(UtilTestRunner skelutil ${Boost_LIBRARIES})
+        target_link_libraries(UtilTestRunner PUBLIC skelutil ${Boost_LIBRARIES})
         add_test(UtilTestRunner UtilTestRunner)
         if(BUILD_OWN_KERNEL)
             set(KernelTest_SOURCES
@@ -303,7 +303,7 @@ if(BUILD_TESTS)
                     test/kernel/DistanceTest.cpp
                     test/kernel/BisectorTest.cpp)
             add_executable(KernelTestRunner ${KernelTest_SOURCES})
-            target_link_libraries(KernelTestRunner skelkernel ${Boost_LIBRARIES})
+            target_link_libraries(KernelTestRunner PUBLIC skelkernel ${Boost_LIBRARIES})
             add_test(KernelTestRunner KernelTestRunner)
         endif()
         set(Data2DTest_SOURCES
@@ -313,7 +313,7 @@ if(BUILD_TESTS)
                 test/data/2d/EdgeTest.cpp
                 test/data/2d/PolygonTest.cpp)
         add_executable(Data2DTestRunner ${Data2DTest_SOURCES})
-        target_link_libraries(Data2DTestRunner skeldata2d ${Boost_LIBRARIES})
+        target_link_libraries(Data2DTestRunner PUBLIC skeldata2d ${Boost_LIBRARIES})
         add_test(Data2DTestRunner Data2DTestRunner)
         set(Data3DTest_SOURCES
                 test/data/3d/Data3DTestRunner.cpp
@@ -321,7 +321,7 @@ if(BUILD_TESTS)
                 test/data/3d/FacetTest.cpp
                 test/data/3d/PolyhedronTest.cpp)
         add_executable(Data3DTestRunner ${Data3DTest_SOURCES})
-        target_link_libraries(Data3DTestRunner skeldata3d ${Boost_LIBRARIES})
+        target_link_libraries(Data3DTestRunner PUBLIC skeldata3d ${Boost_LIBRARIES})
         add_test(Data3DTestRunner Data3DTestRunner)
         set(DBTest_SOURCES
                 test/db/DBTestRunner.cpp
@@ -330,13 +330,13 @@ if(BUILD_TESTS)
                 test/db/2d/PolygonDAOTest.cpp
                 test/db/3d/PolyhedronDAOTest.cpp)
         add_executable(DBTestRunner ${DBTest_SOURCES})
-        target_link_libraries(DBTestRunner skeldb ${Boost_LIBRARIES})
+        target_link_libraries(DBTestRunner PUBLIC skeldb ${Boost_LIBRARIES})
         add_test(DBTestRunner DBTestRunner)
         set(Algo2DTest_SOURCES
                 test/algo/2d/Algo2DTestRunner.cpp
                 test/algo/2d/KernelWrapperTest.cpp)
         add_executable(Algo2DTestRunner ${Algo2DTest_SOURCES})
-        target_link_libraries(Algo2DTestRunner skelalgo2d ${Boost_LIBRARIES})
+        target_link_libraries(Algo2DTestRunner PUBLIC skelalgo2d ${Boost_LIBRARIES})
         add_test(Algo2DTestRunner Algo2DTestRunner)
         set(Algo3DTest_SOURCES
                 test/algo/3d/Algo3DTestRunner.cpp
@@ -346,7 +346,7 @@ if(BUILD_TESTS)
                 test/algo/3d/CombiVertexSplitterTest.cpp
                 test/algo/3d/VolumeVertexSplitterTest.cpp)
         add_executable(Algo3DTestRunner ${Algo3DTest_SOURCES})
-        target_link_libraries(Algo3DTestRunner skelalgo3d ${Boost_LIBRARIES})
+        target_link_libraries(Algo3DTestRunner PUBLIC skelalgo3d ${Boost_LIBRARIES})
         add_test(Algo3DTestRunner Algo3DTestRunner)
     endif()
 endif()
