@@ -369,10 +369,10 @@ bool Polyhedron::isConsistent() const {
             }
         }
 
-        if (vne != 3) {
-            std::cerr << "Warning: Vertex does not have 3 incident edges: " << vne << std::endl;
-            std::cerr << vertex->toString() << std::endl;
-        }
+        // if (vne != 3) {
+        //     std::cerr << "Warning: Vertex does not have 3 incident edges: " << vne << std::endl;
+        //     std::cerr << vertex->toString() << std::endl;
+        // }
 
         std::list<FacetWPtr>::const_iterator it_f = vertex->facets().begin();
         unsigned int vnf = 0;
@@ -392,10 +392,10 @@ bool Polyhedron::isConsistent() const {
             }
         }
 
-        if (vnf != 3) {
-            std::cerr << "Warning: Vertex with not 3 incident faces? " << vnf << std::endl;
-            std::cerr << vertex->toString() << std::endl;
-        }
+        // if (vnf != 3) {
+        //     std::cerr << "Warning: Vertex with not 3 incident faces? " << vnf << std::endl;
+        //     std::cerr << vertex->toString() << std::endl;
+        // }
     }
 
     std::list<EdgeSPtr>::const_iterator it_e = edges_.begin();

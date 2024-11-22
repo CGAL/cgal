@@ -1446,7 +1446,7 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
     it_v = vertices_tosplit.begin();
     while (it_v != vertices_tosplit.end()) {
         VertexSPtr vertex = *it_v++;
-        std::cout << "Split... " << v2s_i++ << " pos: " << *(vertex->getPoint()) << std::endl;
+        std::cout << "Split #" << v2s_i++ << ": " << vertex->toString() << std::endl;
 
         bool equal_speeds = true;
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
@@ -2061,6 +2061,7 @@ SimpleStraightSkel::check_bisector(EdgeSPtr edge,
 }
 
 // this one does an early exit if the result is irrelevant (in the past or too far in the)
+// @speed, should be able to not solve the system but just exit early if the 4 planes are clearly not intersecting (diametral spheres around the edges of size something?)
 std::pair<Point3SPtr, CGAL::FT>
 SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
                             const std::optional<CGAL::FT> offset_max)
