@@ -1832,7 +1832,23 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
         CGAL_assertion(facetP && facetP != facetL && facetP != facetR);
         CGAL_assertion(facetN && facetN != facetL && facetN != facetR && facetN != facetP);
 
-        Quadplane_parallelism parallelism = quadplane_parallelism(facetL, facetP, facetR, facetN);
+        util::ConfigurationSPtr config = util::Configuration::getInstance();
+        bool usePerturbations = false;
+        if (config->isLoaded()) {
+            if ((config->contains("main", "rand_move_points") &&
+                config->getBool("main", "rand_move_points")) ||
+                (config->contains("main", "rand_move_points_when_degenerated") &&
+                config->getBool("main", "rand_move_points_when_degenerated"))) {
+                usePerturbations = true;
+            }
+        }
+
+        Quadplane_parallelism parallelism;
+        if (usePerturbations) {
+            parallelism = PLANES_PARALLELISM_NONE;
+        } else {
+            parallelism = quadplane_parallelism(facetL, facetP, facetR, facetN);
+        }
 
         if(parallelism != PLANES_PARALLELISM_NONE)
           std::cout << "parallelism = " << parallelism << std::endl;
@@ -2000,7 +2016,23 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
     CGAL::FT speed_r2 = std::dynamic_pointer_cast<SkelFacetData>(facet_r2->getData())->getSpeed();
 
-    Quadplane_parallelism parallelism = quadplane_parallelism(facet_l1, facet_r1, facet_l2, facet_r2);
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    bool usePerturbations = false;
+    if (config->isLoaded()) {
+        if ((config->contains("main", "rand_move_points") &&
+             config->getBool("main", "rand_move_points")) ||
+            (config->contains("main", "rand_move_points_when_degenerated") &&
+             config->getBool("main", "rand_move_points_when_degenerated"))) {
+            usePerturbations = true;
+        }
+    }
+
+    Quadplane_parallelism parallelism;
+    if (usePerturbations) {
+        parallelism = PLANES_PARALLELISM_NONE;
+    } else {
+        parallelism = quadplane_parallelism(facet_l1, facet_r1, facet_l2, facet_r2);
+    }
 
 // #define CGAL_SS3_DEBUG_CRASH_AT
 #ifdef CGAL_SS3_DEBUG_CRASH_AT

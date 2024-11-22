@@ -16,6 +16,8 @@
 
 #include "algo/3d/KernelWrapper.h"
 
+#include "util/Configuration.h"
+
 namespace algo { namespace _3d {
 
 KernelWrapper::KernelWrapper() {
@@ -301,10 +303,24 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    if(CGAL::is_zero(den))
-    {
-        std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
-        return { };
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    bool usePerturbations = false;
+    if (config->isLoaded()) {
+        if ((config->contains("main", "rand_move_points") &&
+            config->getBool("main", "rand_move_points")) ||
+            (config->contains("main", "rand_move_points_when_degenerated") &&
+            config->getBool("main", "rand_move_points_when_degenerated"))) {
+            usePerturbations = true;
+        }
+    }
+
+    if (!usePerturbations) {
+        std::exit(1); // @tmp
+        if(CGAL::is_zero(den))
+        {
+            std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
+            return { };
+        }
     }
 
     // warning: only valid for normalized coefficients!!
@@ -356,9 +372,24 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
 
     CGAL::FT den = (-a0*b1*c2*w3 + a0*b1*c3*w2 + a0*b2*c1*w3 - a0*b2*c3*w1 - a0*b3*c1*w2 + a0*b3*c2*w1 + a1*b0*c2*w3 - a1*b0*c3*w2 - a1*b2*c0*w3 + a1*b2*c3*w0 + a1*b3*c0*w2 - a1*b3*c2*w0 - a2*b0*c1*w3 + a2*b0*c3*w1 + a2*b1*c0*w3 - a2*b1*c3*w0 - a2*b3*c0*w1 + a2*b3*c1*w0 + a3*b0*c1*w2 - a3*b0*c2*w1 - a3*b1*c0*w2 + a3*b1*c2*w0 + a3*b2*c0*w1 - a3*b2*c1*w0);
 
-    if (CGAL::is_zero(den)) {
-        std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
-        return { };
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    bool usePerturbations = false;
+    if (config->isLoaded()) {
+        if ((config->contains("main", "rand_move_points") &&
+            config->getBool("main", "rand_move_points")) ||
+            (config->contains("main", "rand_move_points_when_degenerated") &&
+            config->getBool("main", "rand_move_points_when_degenerated"))) {
+            usePerturbations = true;
+        }
+    }
+
+    if (!usePerturbations) {
+        std::exit(1); // @tmp
+        if(CGAL::is_zero(den))
+        {
+            std::cerr << "Warning: no solution in 4 shifted plane system" << std::endl;
+            return { };
+        }
     }
 
     // warning: only valid for normalized coefficients!!

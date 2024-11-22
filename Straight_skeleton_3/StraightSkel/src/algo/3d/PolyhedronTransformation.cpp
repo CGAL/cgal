@@ -25,7 +25,9 @@
 #include "data/3d/skel/SkelEdgeData.h"
 #include "data/3d/skel/SkelFacetData.h"
 #include "db/3d/OBJFile.h"
+
 #include "util/StringFactory.h"
+#include "util/Configuration.h"
 
 #include <cstdlib>
 #include <cmath>
