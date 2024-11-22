@@ -158,9 +158,6 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
             } else if (edge_src->getVertexSrc() == vertex) {
                 edge_src->replaceVertexSrc(vertex_dst);
             }
-        } else {
-            // there should be no vertices of degree = 1
-            CGAL_assertion_msg(false, "Degree 1 vertex?!");
         }
         polyhedron->removeVertex(vertex);
         result++;
