@@ -891,8 +891,8 @@ sub create_summary_page {
         </select>
         <br>
         <div>
-            <button id="open-all" class="toggle-button">Open All</button>
-            <button id="close-all" class="toggle-button">Close All</button>
+            <button id="open-all">Open All</button>
+            <button id="close-all">Close All</button>
         </div>
         <div id="main_container">
             <div id="platform_container"></div>
