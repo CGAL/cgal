@@ -45,6 +45,7 @@
 
 #include <CGAL/Isosurfacing_3/internal/marching_cubes_functors.h>
 #include <CGAL/Isosurfacing_3/internal/tables.h>
+#include <CGAL/number_utils.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
 # include <tbb/concurrent_vector.h>
