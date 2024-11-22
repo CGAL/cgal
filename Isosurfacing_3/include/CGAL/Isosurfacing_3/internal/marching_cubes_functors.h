@@ -117,7 +117,14 @@ std::size_t get_cell_corners(const Domain& domain,
   std::bitset<Domain::VERTICES_PER_CELL> index = 0;
   for(const vertex_descriptor& v : vertices)
   {
-    values[v_id] = domain.value(v);
+    auto val = domain.value(v);
+    // Avoiding singular cases.
+
+    if (val == isovalue) {
+      typename Domain::FT shift = (isovalue == 0) ? 0.00000001 : isovalue * 0.0000001;
+      val -= abs(shift);
+    }
+    values[v_id] = val;
     if(values[v_id] >= isovalue)
       index.set(v_id);
 
