@@ -78,9 +78,9 @@ PolyhedronSPtr Polyhedron::clone() const {
         FacetSPtr facet_c = Facet::create();
         facet_c->setPlane(facet->getPlane());
         if (facet->hasData()) {
-          skel::SkelFacetDataSPtr data = std::dynamic_pointer_cast<skel::SkelFacetData>(facet->getData());
-          skel::SkelFacetDataSPtr data_c = skel::SkelFacetData::create(facet_c);
-          data_c->setSpeed(data->getSpeed());
+            skel::SkelFacetDataSPtr data = std::dynamic_pointer_cast<skel::SkelFacetData>(facet->getData());
+            skel::SkelFacetDataSPtr data_c = skel::SkelFacetData::create(facet_c);
+            data_c->setSpeed(data->getSpeed());
         }
         // @todo copy the two below too?
         facet_c->setID(facet->getID());

@@ -531,7 +531,6 @@ void Facet::setID(int id) {
 }
 
 Plane3SPtr Facet::getPlane() const {
-    DEBUG_SPTR(this->plane_);
     return this->plane_;
 }
 
@@ -623,8 +622,10 @@ void Facet::storePlaneCoefficients()
     if (!this->plane_) {
         this->initPlane();
     }
+
+    // need a different shared ptr here because plane_ will change with the perturbation
     cachedPlane_ = KernelFactory::createPlane3(*(plane_));
-    std::cout << "plane of Facet " << this->id_ << " is [" << *cachedPlane_ << "] (stored)" << std::endl;
+    std::cout << "plane of Facet " << this->id_ << " was [" << *cachedPlane_ << "] (cached)" << std::endl;
 }
 
 void Facet::perturbPlaneCoefficients()
@@ -661,6 +662,11 @@ void Facet::restorePlaneCoefficients(CGAL::FT perturbationOffset,
                                      CGAL::FT perturbationEndOffset)
 {
     std::cout << "plane of Facet " << this->id_ << " is [" << *plane_ << "]" << std::endl;
+
+    if (!cachedPlane_) {
+        std::cerr << "Warning: no plane coefficients to restore" << std::endl;
+        return;
+    }
 
 #if 0
     CGAL::FT cx = 0, cy = 0, cz = 0;

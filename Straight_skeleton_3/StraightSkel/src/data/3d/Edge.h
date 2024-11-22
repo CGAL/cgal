@@ -125,17 +125,6 @@ protected:
     EdgeDataSPtr data_;
 
     int id_;
-
-public:
-    // this is a flag (that maybe ought to be in data) to indicate whether
-    // the edge was created as degenerate (and in that case, it will grow when the offset
-    // increases), or if it a non-degenerate edge that has become degenerate
-    //
-    // The purpose is that when we want to know if the edge is convex or reflex, we use
-    // offset to translate and check, but if the edge has become degenerate, we want to look
-    // into the past (positive offsets) whereas if it is born degenerate, we want to look
-    // into the future (negative offsets).
-    bool hasBecomeDegenerate = false;
 };
 
 } }

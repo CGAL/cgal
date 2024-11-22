@@ -224,12 +224,12 @@ std::list<combi> CombiVertexSplitter::generateAllCombinations(unsigned int degre
     combi history;
     std::vector<int> labels = initLabels(degree);
     std::list<combi> result = generateCombinationsRec(history, labels);
-    DEBUG_VAR(degree);
-    std::list<combi>::iterator it_combis = result.begin();
-    while (it_combis != result.end()) {
-        combi combination = *it_combis++;
-        DEBUG_VAL(combiToString(combination));
-    }
+    // DEBUG_VAR(degree);
+    // std::list<combi>::iterator it_combis = result.begin();
+    // while (it_combis != result.end()) {
+    //     combi combination = *it_combis++;
+    //     DEBUG_VAL(combiToString(combination));
+    // }
     return result;
 }
 

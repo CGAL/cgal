@@ -80,7 +80,7 @@ void PolyhedronTransformation::scale(PolyhedronSPtr polyhedron, Vector3SPtr v_s)
 Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
                                                 CGAL::FT offset)
 {
-    std::cout << "shift vertex " << vertex->toString() << "\noffset = " << offset << std::endl;
+    // std::cout << "shift vertex " << vertex->toString() << "\noffset = " << offset << std::endl;
 
     Plane3SPtr planes[3];
     unsigned int i = 0;
@@ -157,8 +157,7 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
 // @todo plenty of needless recomputations
 PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                                                      CGAL::FT offset,
-                                                     const bool recompute_positions,
-                                                     const bool with_sanity_checks)
+                                                     const bool recompute_positions)
 {
     std::cout << "~~~~ Shift by " << offset << std::endl;
 
@@ -246,7 +245,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
             data->setOffsetVertex(offset_vertex);
             result->addVertex(offset_vertex);
 
-            std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
+            // std::cout << *(vertex->getPoint()) << " to " << *point << std::endl;
             shift_out << "2 " << *(vertex->getPoint()) << " " << *point << std::endl;
         } else {
             CGAL_assertion_msg(i != 0, "no edge on degree 1 vertex?");
@@ -268,13 +267,6 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
             VertexSPtr offset_vertex_src = vertex_src_data->getOffsetVertex();
             VertexSPtr offset_vertex_dst = vertex_dst_data->getOffsetVertex();
             EdgeSPtr offset_edge = Edge::create(offset_vertex_src, offset_vertex_dst);
-
-            offset_edge->hasBecomeDegenerate = edge->hasBecomeDegenerate;
-            if (*(vertex_src->getPoint()) != *(vertex_dst->getPoint())) {
-                if (*(offset_vertex_src->getPoint()) != *(offset_vertex_dst->getPoint())) {
-                    offset_edge->hasBecomeDegenerate = true;
-                }
-            }
 
             SkelEdgeDataSPtr data;
             if (edge->hasData()) {
@@ -328,16 +320,6 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
 
                     // @tmp only a warning because sometimes I still run perturbed, non-triangulated cases
                     CGAL_warning(offset_plane->has_on(*(offset_vertex->getPoint())));
-
-                    if (with_sanity_checks) {
-                        std::cout << KernelWrapper::squared_distance(facet->getPlane(),
-                                                                     offset_vertex->getPoint())
-                                  << " VS1 " << CGAL::square(offset*speed) << std::endl;
-                        CGAL_assertion(CGAL::abs(KernelWrapper::squared_distance(
-                                           facet->getPlane(), offset_vertex->getPoint()) - CGAL::square(offset*speed)) < 1e-5);
-                        CGAL_assertion(KernelWrapper::squared_distance(
-                                           facet->getPlane(), offset_vertex->getPoint()) == CGAL::square(offset*speed));
-                    }
                 }
             }
         }
@@ -362,6 +344,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
 
     result->initializeAllIDs();
 
+    CGAL_postcondition(polyhedron->vertices().size() == result->vertices().size());
     CGAL_postcondition(polyhedron->edges().size() == result->edges().size());
     CGAL_postcondition(polyhedron->facets().size() == result->facets().size());
 

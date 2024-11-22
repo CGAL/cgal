@@ -43,8 +43,7 @@ public:
      */
     static PolyhedronSPtr shiftFacets(PolyhedronSPtr polyhedron,
                                       CGAL::FT offset,
-                                      const bool recompute_positions = true,
-                                      const bool with_sanity_checks = false);
+                                      const bool recompute_positions = true);
 
     /**
      * To check for parallel planes is not enough.

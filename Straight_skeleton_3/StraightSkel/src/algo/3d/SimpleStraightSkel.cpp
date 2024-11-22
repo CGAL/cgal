@@ -14,6 +14,20 @@
  * @date   2012-03-08
  */
 
+#define CGAL_SS3_NO_SKELETON_DS
+// #define CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
+#define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
+// #define CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS
+#define CGAL_SS3_USE_AUTOREF_FOR_SIMULTANEOUS_EVENTS
+#define CGAL_SS3_FILTER_VOLUMES_WITH_ONLY_REACHABLE_FACES
+// #define CGAL_SS3_DO_NOT_ADD_UNREACHED_TRIANGLES_TO_CONTRIBUTIONS
+
+#if defined(CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS) || defined(CGAL_SS3_USE_AUTOREF_FOR_SIMULTANEOUS_EVENTS)
+# ifndef CGAL_SS3_NO_SKELETON_DS
+#  error "You must disable Skeleton DS" // can't maintain sheets and arcs in that mode for now
+# endif
+#endif
+
 #include "algo/3d/SimpleStraightSkel.h"
 
 #include "debug.h"
@@ -61,7 +75,6 @@
 #include "util/Timer.h"
 #include "util/StringFactory.h"
 
-
 #include <CGAL/assertions.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Projection_traits_3.h>
@@ -80,20 +93,6 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
-
-#define CGAL_SS3_NO_SKELETON_DS
-// #define CGAL_SS3_DO_NOT_FILTER_FUTURE_EVENTS
-#define CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
-// #define CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS
-// #define CGAL_SS3_USE_AUTOREF_FOR_SIMULTANEOUS_EVENTS
-#define CGAL_SS3_FILTER_VOLUMES_WITH_ONLY_REACHABLE_FACES
-// #define CGAL_SS3_DO_NOT_ADD_UNREACHED_TRIANGLES_TO_CONTRIBUTIONS
-
-#if defined(CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS) || defined(CGAL_SS3_USE_AUTOREF_FOR_SIMULTANEOUS_EVENTS)
-# ifndef CGAL_SS3_NO_SKELETON_DS
-#  error // can't maintain sheets and arcs in that mode for now
-# endif
-#endif
 
 namespace algo { namespace _3d {
 
@@ -306,11 +305,10 @@ bool SimpleStraightSkel::isReflex(EdgeSPtr edge) {
                     facet_dst->getData())->getSpeed();
         }
 
-        CGAL::FT od = edge->hasBecomeDegenerate ? 1 : -1; // offset direction
-        Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->plane(), od * speed_l);
-        Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->plane(), od * speed_r);
-        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->plane(), od * speed_src);
-        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->plane(), od * speed_dst);
+        Plane3SPtr offset_plane_l = KernelWrapper::offsetPlane(facet_l->plane(), - speed_l);
+        Plane3SPtr offset_plane_r = KernelWrapper::offsetPlane(facet_r->plane(), - speed_r);
+        Plane3SPtr offset_plane_src = KernelWrapper::offsetPlane(facet_src->plane(), - speed_src);
+        Plane3SPtr offset_plane_dst = KernelWrapper::offsetPlane(facet_dst->plane(), - speed_dst);
 
         Point3SPtr p_src = KernelWrapper::intersection(offset_plane_src, offset_plane_l, offset_plane_r);
         Point3SPtr p_dst = KernelWrapper::intersection(offset_plane_dst, offset_plane_l, offset_plane_r);
@@ -501,13 +499,13 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::enablePerturbedMode(Poly
 #endif
     }
 
-    polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0, true /*force recomputation of positions*/);
+    polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
     db::_3d::OBJFile::save("results/pertubation_post_enable.obj", polyhedron, false /*do not triangulate*/);
     db::_3d::OBJFile::save("results/pertubation_post_enable_triangulated.obj", polyhedron, true /*do not triangulate*/);
     CGAL_assertion(bool(polyhedron));
     CGAL_assertion(polyhedron->isConsistent());
 
-    usingPerturbedMode_ = true;
+    usingTemporaryPerturbedMode_ = true;
     simultaneousOffset_ = simultaneousOffset;
 
     return { polyhedron, perturbationOffset_ };
@@ -519,7 +517,7 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::disablePerturbedMode(Pol
     std::cout << "Disabling perturbed mode..." << std::endl;
     std::cout << "  Current offset: " << currentOffset << std::endl;
     std::cout << "  Next offset: " << nextEventOffset << std::endl;
-    CGAL_precondition(usingPerturbedMode_);
+    CGAL_precondition(usingTemporaryPerturbedMode_);
 
     // shift a little more to get some waylay
     CGAL::FT shift = (currentOffset + nextEventOffset) / 2 - currentOffset; // @fixme complete hack for now
@@ -552,11 +550,11 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::disablePerturbedMode(Pol
     //
     // In this case, need to handle the case of the next offset event being the desired save offset
 
-    polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0, true /*recompute positions*/);
+    polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
     db::_3d::OBJFile::save("results/pertubation_post_disable.obj", polyhedron, false /*do not triangulate*/);
     CGAL_assertion(bool(polyhedron));
 
-    usingPerturbedMode_ = false;
+    usingTemporaryPerturbedMode_ = false;
     simultaneousOffset_ = 0;
 
     return { polyhedron, perturbationEndOffset };
@@ -829,29 +827,31 @@ bool SimpleStraightSkel::run() {
 
             std::cout << " =========== ITERATION #" << event_id << " AT OFFSET " << offset << std::endl;
 
-            db::_3d::OBJFile::save("results/input_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
-            db::_3d::OBJFile::save("results/input_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
+            // db::_3d::OBJFile::save("results/input_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
+            // db::_3d::OBJFile::save("results/input_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
 
             PQ queue;
             collectEvents(polyhedron, offset, queue);
 
             // print the queue
-            std::cout << "------------------------------" << std::endl;
-            std::cout << "--- Event queue (" << event_id << ") ---" << std::endl;
-            std::cout << "------------------------------" << std::endl;
-            PQ duplicate_queue = queue;
-            while (!duplicate_queue.empty()) {
-                AbstractEventSPtr event = duplicate_queue.top();
-                std::cout << event->toString() << std::endl;
-                duplicate_queue.pop();
+            {
+                std::cout << "------------------------------" << std::endl;
+                std::cout << "--- Event queue (" << event_id << ") ---" << std::endl;
+                std::cout << "------------------------------" << std::endl;
+                PQ duplicate_queue = queue;
+                while (!duplicate_queue.empty()) {
+                    AbstractEventSPtr event = duplicate_queue.top();
+                    std::cout << event->toString() << std::endl;
+                    duplicate_queue.pop();
+                }
+                std::cout << "Saves:";
+                for (CGAL::FT save_offset : save_offsets_) {
+                    std::cout << " " << save_offset;
+                }
+                std::cout << std::endl;
+                std::cout << "-------------------" << std::endl;
+                std::cout << "-------------------" << std::endl;
             }
-            std::cout << "Saves:";
-            for (CGAL::FT save_offset : save_offsets_) {
-                std::cout << " " << save_offset;
-            }
-            std::cout << std::endl;
-            std::cout << "-------------------" << std::endl;
-            std::cout << "-------------------" << std::endl;
 
             if (queue.empty()) {
                 break; // we are done
@@ -883,8 +883,9 @@ bool SimpleStraightSkel::run() {
                       << " next offset: " << offset_next << " (type " << event->getType() << ")\n"
                       << " simultaneous? " << simultaneousEvents << "\n"
                       << " save? " << doSave << "\n"
-                      << " already simultaneous? " << usingPerturbedMode_
+                      << " in perturbed mode? " << usingTemporaryPerturbedMode_
                       << " @ " << simultaneousOffset_ << std::endl;
+            std::cout << "current elapsed time: " << util::Timer::now() - t_start << std::endl;
 
 #ifdef CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS
             std::cout << "============== USING AUTOREF APPROACH =============" << std::endl;
@@ -904,7 +905,7 @@ bool SimpleStraightSkel::run() {
                     std::exit(1);
                 }
 
-                if (usingPerturbedMode_) {
+                if (usingTemporaryPerturbedMode_) {
                     std::cerr << "Error: met a simultaneous event in perturbed mode!" << std::endl;
                     std::exit(1); // nuke it
                 } else {
@@ -917,7 +918,7 @@ bool SimpleStraightSkel::run() {
             }
 
             // switch OFF perturbation if needed
-            if (usingPerturbedMode_) {
+            if (usingTemporaryPerturbedMode_) {
                 CGAL::FT delta = 1e-5; // @fixme don't hardcode this value
                 // if the next event is far and we are in perturbed mode, disable perturbation
                 if (simultaneousOffset_ - delta > offset_next) { // offsets are negative
@@ -964,7 +965,7 @@ bool SimpleStraightSkel::run() {
                 offset_prev = offset;
                 offset = event->getOffset();
                 const CGAL::FT shift = offset - offset_prev;
-                CGAL_warning(!usingPerturbedMode_ || !is_zero(shift));
+                CGAL_warning(!usingTemporaryPerturbedMode_ || !is_zero(shift));
                 const bool recompute_positions = (shift != 0);
                 polyhedron = PolyhedronTransformation::shiftFacets(polyhedron, shift, recompute_positions);
 
@@ -1010,27 +1011,10 @@ bool SimpleStraightSkel::run() {
             }
 #endif // CGAL_SS3_USE_AUTOREF_FOR_ALL_EVENTS
 
-            if (doSave) {
-                std::stringstream ss_filename;
-                ss_filename << "results/offset_" << offset << ".obj";
-                db::_3d::OBJFile::save(ss_filename.str(), polyhedron);
-
-                std::stringstream ss_filename_exact;
-                ss_filename_exact << "results/offset_" << offset << "_exact.obj";
-                db::_3d::OBJFile::save(ss_filename_exact.str(), polyhedron,
-                                       true /*triangulate*/, false /*do not convert to double*/);
-
-                save_offsets_.pop_front();
-                if (save_offsets_.empty()) { // @todo ought to be a config flag
-                    break;
-                }
-            }
-
             DEBUG_PRINT("-- Finished handling Event --");
 
             db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + ".obj", polyhedron, false /*do triangulate*/);
             db::_3d::OBJFile::save("results/iter_" + std::to_string(event_id) + "_triangulated.obj", polyhedron);
-
 
             DEBUG_PRINT("-- Degen count --");
 
@@ -1060,6 +1044,18 @@ bool SimpleStraightSkel::run() {
 
             if (controller_) {
                 controller_->wait();
+            }
+
+            if (doSave) {
+                savePolyhedron(polyhedron, offset,
+                               true /*triangulate*/,
+                               true /*convert to double*/,
+                               false /*attempt untilting*/);
+
+                save_offsets_.pop_front();
+                if (save_offsets_.empty()) {
+                    break; // @todo ought to be a config flag
+                }
             }
 
             // Can't perturb to treat simultaneous events AND get a meaningful "SAVE" result
@@ -1740,10 +1736,10 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
     std::cout << "vanishesAt " << edge->toString() << std::endl;
 #endif
 
-    // @fixme this seemingly assumes that extremities of 'edge' have degree 3?
-    // what happens if it's not the case, shouldn't we consider both fL fR fLP fLN,
-    // but also fL fR fRP fRN? OR even fL fR & (2 out of all faces incident to any
-    // extremity of 'edge')?
+  // @fixme this seemingly assumes that extremities of 'edge' have degree 3?
+  // what happens if it's not the case, shouldn't we consider both fL fR fLP fLN,
+  // but also fL fR fRP fRN? OR even fL fR & (2 out of all faces incident to any
+  // extremity of 'edge')?
 
 // #define CGAL_SS3_OLD_CODE_VANISH_AT
 #ifdef CGAL_SS3_OLD_CODE_VANISH_AT
@@ -2172,7 +2168,6 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     //   (within the face) vertex to know if the clipping bisector is inverted
 
     // @todo lots of duplicate computations
-    // @todo exit as soon as there is a single rejection (to be done once the old code is safe to remove)
 
     if (!(facet_1_src == facet_l2 || // @fixme are these facet checks required?
             facet_1_src == facet_r2)) {
@@ -6099,6 +6094,8 @@ void SimpleStraightSkel::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
 {
     std::cout << "\n> harmonizeFacetPlanes()" << std::endl;
 
+    // @todo is it still useful to keep the parallel check?
+
     // @todo this needs to be rewritten to use kernel predicates to sort the planes
     // Order all the supporting planes in a global order
     // The order is completely arbitrary, the only thing that we care about
@@ -6275,7 +6272,7 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::handleEventWithAutoref(A
 
     std::cout << "handleEventWithAutoref()" << std::endl;
 
-    CGAL_precondition(!usingPerturbedMode_);
+    CGAL_precondition(!usingTemporaryPerturbedMode_);
 
     // appendEventNode(event->getNode()); // @todo, if there is a point
 
@@ -6291,11 +6288,10 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::handleEventWithAutoref(A
     static int autoref_event_id = -1;
     ++autoref_event_id;
 
-    // @tmp debug
-    {
-        PolyhedronSPtr polyhedron_tmp = PolyhedronTransformation::shiftFacets(polyhedron, nudged_shift);
-        db::_3d::OBJFile::save("results/autoref_event-shifted.obj", polyhedron_tmp, false /*do not triangulate*/);
-    }
+    // {
+    //     PolyhedronSPtr polyhedron_tmp = PolyhedronTransformation::shiftFacets(polyhedron, nudged_shift);
+    //     db::_3d::OBJFile::save("results/autoref_event-shifted.obj", polyhedron_tmp, false /*do not triangulate*/);
+    // }
 
     auto triangulate_quad_with_CDT2 = [](VertexSPtr vertex, VertexSPtr vertex_offset,
                                          VertexSPtr next_vertex, VertexSPtr next_vertex_offset,
@@ -7519,7 +7515,7 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::handleEventWithAutoref(A
     // @fixme this is very dangerous because now we will get a different normalization for the planes.
     // It would be better to re-use the planes
     harmonizeFacetPlanes(polyhedron);
-    polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0, true /*recompute pos*/);
+    polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
     CGAL_postcondition(polyhedron && polyhedron->isConsistent());
 
     polyhedron->initializeAllIDs();
@@ -8955,6 +8951,7 @@ void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, Polyhedr
         edges[i]->getFacetR()->addEdge(edges[i]);
     }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
     SkelEdgeDataSPtr edge_data_1 = std::dynamic_pointer_cast<SkelEdgeData>(edge_1->getData());
     SkelEdgeDataSPtr edge_data_12 = SkelEdgeData::create(edge_12);
     edge_data_12->setSheet(edge_data_1->getSheet());
@@ -8972,6 +8969,7 @@ void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, Polyhedr
         SheetSPtr sheet = createSheet(edges[i]);
         skel_result_->addSheet(sheet);
     }
+#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
@@ -9133,6 +9131,7 @@ void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr
         polyhedron->addEdge(edges[i]);
     }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
     for (unsigned int i = 0; i < 3; i++) {
         SkelVertexDataSPtr vertex_data = SkelVertexData::create(vertices[i]);
         vertex_data->setNode(event->getNode());
@@ -9144,6 +9143,7 @@ void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr
         SheetSPtr sheet = createSheet(edges[i]);
         skel_result_->addSheet(sheet);
     }
+#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);

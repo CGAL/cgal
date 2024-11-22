@@ -69,7 +69,7 @@ int ConvexVertexSplitter::countConvexEdges(PolyhedronSPtr polyhedron) {
 }
 
 PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
-    std::cout << "\n> Splitting vertex " << vertex->toString() << std::endl;
+    std::cout << "\n> Splitting " << vertex->toString() << std::endl;
 
     PolyhedronSPtr polyhedron = vertex->getPolyhedron();
     if (vertex->degree() <= 3) {
@@ -88,7 +88,7 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
     std::list<combi>::iterator it_combi = combinations.begin();
     while (it_combi != combinations.end()) {
         combi combination = *it_combi++;
-        std::cout << "-- Testing split-combination: " << combiToString(combination) << std::endl;
+        // std::cout << "-- Testing split-combination: " << combiToString(combination) << std::endl;
 
         // don't take it out of the loop
         PolyhedronSPtr poly_c = copyVertex(vertex);
@@ -108,8 +108,8 @@ PolyhedronSPtr ConvexVertexSplitter::splitVertex(VertexSPtr vertex) {
         // std::cout << "= Shifted Polyhedron\n" << poly_c_offset->toString() << std::endl;
         static int test_id = -1;
         ++test_id;
-        db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) + ".obj", poly_c, false);
-        db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) + "_offset.obj", poly_c_offset, false);
+        // db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) + ".obj", poly_c, false);
+        // db::_3d::OBJFile::save("results/split_" + std::to_string(test_id) + "_offset.obj", poly_c_offset, false);
         // poly_c->dumpEdges("results/last_convex_split_base");
         // poly_c_offset->dumpEdges("results/last_convex_split_offset");
 

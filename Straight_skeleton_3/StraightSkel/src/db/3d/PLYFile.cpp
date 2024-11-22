@@ -78,7 +78,7 @@ PolyhedronSPtr PLYFile::load(const std::string& filename) {
         for(auto fi : faces(sm)) {
             facet_id_new++;
             unsigned int num_vertices = sm.degree(fi);
-            std::cout << "new face of size " << num_vertices << std::endl;
+            // std::cout << "new face of size " << num_vertices << std::endl;
             CGAL_assertion(num_vertices > 2);
 
             VertexSPtr poly_vertices[num_vertices];
@@ -104,9 +104,9 @@ PolyhedronSPtr PLYFile::load(const std::string& filename) {
             FacetSPtr facet = Facet::create(num_vertices, poly_vertices);
             facet->setID(facet_id_new);
 
-            std::cout << "Final edges:" << std::endl;
-            for(auto e : facet->edges())
-                std::cout << e->toString() << std::endl;
+            // std::cout << "Final edges:" << std::endl;
+            // for(auto e : facet->edges())
+            //     std::cout << e->toString() << std::endl;
 
             if (num_vertices == 3) {
                 Triangle::create(facet, poly_vertices);
@@ -174,10 +174,9 @@ PolyhedronSPtr PLYFile::load(const std::string& filename) {
             }
         }
 
-        std::cout << "Loaded PLY: " << result->toString() << std::endl;
-
         util::ConfigurationSPtr config = util::Configuration::getInstance();
-        if (config->contains("main", "merge_coplanar_faces") &&
+        if (config->isLoaded() &&
+            config->contains("main", "merge_coplanar_faces") &&
             config->getBool("main", "merge_coplanar_faces")) {
             double epsilon = 0.;
             std::string section("db_3d_PLYFile");
@@ -191,8 +190,6 @@ PolyhedronSPtr PLYFile::load(const std::string& filename) {
         removeVerticesDegLt3(result);
         assert(result->isConsistent());
     }
-
-    std::cout << "Final load: " << result->toString() << std::endl;
 
     return result;
 }

@@ -55,7 +55,7 @@ bool assign_weights(Mesh& sm,
     std::cout << "bottom & top info is present" << std::endl;
   } else {
     if(vx2 != vy2) {
-      std::cerr << "Error: unknown z speeds, and x-speed and y-speed differ..." << std::endl;
+      std::cerr << "Error: unknown z-speeds, and x-speed and y-speed differ..." << std::endl;
       return false;
     }
 

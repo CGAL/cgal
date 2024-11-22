@@ -28,6 +28,8 @@ class Facet : public std::enable_shared_from_this<Facet> {
 public:
     virtual ~Facet();
 
+    Facet();
+
     static FacetSPtr create();
 
     static FacetSPtr create(unsigned int num_vertices, VertexSPtr vertices[]);
@@ -132,7 +134,6 @@ public:
     std::string toString() const;
 
 public:
-    Facet();
     std::list<VertexSPtr> vertices_;
     std::list<EdgeSPtr> edges_;
     std::list<TriangleSPtr> triangles_;

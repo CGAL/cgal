@@ -25,8 +25,6 @@
 #include "config.h"
 #include "util/StackTrace.h"
 
-
-#define DEBUG
 #ifdef DEBUG
 
 #define DBGOUT std::cout

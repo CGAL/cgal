@@ -210,10 +210,10 @@ bool SelfIntersection::isSelfIntersectingFacet(FacetSPtr facet) {
                 continue;
             }
             if (intersectEdges(facet, edge1, edge2, true)) {
-                std::cout << "edges intersect within the face:" << std::endl;
-                std::cout << facet->toString() << std::endl;
-                std::cout << edge1->toString() << std::endl;
-                std::cout << edge2->toString() << std::endl;
+                // std::cout << "edges intersect within the face:" << std::endl;
+                // std::cout << facet->toString() << std::endl;
+                // std::cout << edge1->toString() << std::endl;
+                // std::cout << edge2->toString() << std::endl;
 #ifdef CGAL_SS3_EXIT_ASAP
                 return true;
 #else
@@ -423,8 +423,8 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
 
             CGAL_assertion_code(
                 auto sob_res = SideOfBisector(facet, vertex_src, point);
-                std::cout << "SideOfBisector(facet, vertex_src, point) = " << sob_res << std::endl;
-                std::cout << "point_inside_bounds = " << point_inside_bounds << std::endl;
+                // std::cout << "SideOfBisector(facet, vertex_src, point) = " << sob_res << std::endl;
+                // std::cout << "point_inside_bounds = " << point_inside_bounds << std::endl;
             )
             if(point_inside_bounds) {
                CGAL_assertion(sob_res != CGAL::ON_NEGATIVE_SIDE);
@@ -451,8 +451,8 @@ EdgeSPtr SelfIntersection::findNearestEdge(FacetSPtr facet, Point3SPtr point) {
 
                 CGAL_assertion_code(
                     auto sob_res = SideOfBisector(facet, vertex_dst, point);
-                    std::cout << "point_inside_bounds = " << point_inside_bounds << std::endl;
-                    std::cout << "SideOfBisector(facet, vertex_dst, point) = " << sob_res << std::endl;
+                    // std::cout << "point_inside_bounds = " << point_inside_bounds << std::endl;
+                    // std::cout << "SideOfBisector(facet, vertex_dst, point) = " << sob_res << std::endl;
                 )
                 if(point_inside_bounds) {
                    CGAL_assertion(sob_res != CGAL::ON_POSITIVE_SIDE);

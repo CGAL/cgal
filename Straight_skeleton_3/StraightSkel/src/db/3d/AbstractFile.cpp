@@ -16,13 +16,16 @@
 
 #include "db/3d/AbstractFile.h"
 
+#include "util/Configuration.h"
+#include "debug.h"
+
 #include "data/3d/KernelFactory.h"
 #include "data/3d/Vertex.h"
 #include "data/3d/Edge.h"
 #include "data/3d/Facet.h"
 #include "data/3d/Polyhedron.h"
 #include "db/3d/OBJFile.h"
-#include "debug.h"
+
 #include <cmath>
 #include <list>
 
@@ -52,7 +55,7 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
             length_l += (*normal_l)[i] * (*normal_l)[i];
             length_r += (*normal_r)[i] * (*normal_r)[i];
         }
-        // @fixme tolerate this sqrt for now because it doesn't matter for robustness
+        // @todo tolerate this sqrt for now because it does not matter for robustness
         length_l = CGAL::sqrt_with_warning(length_l);
         length_r = CGAL::sqrt_with_warning(length_r);
         CGAL::FT diff = 0.0;
@@ -66,7 +69,9 @@ bool AbstractFile::hasCoplanarFacets(EdgeSPtr edge, double epsilon) {
     return result;
 }
 
-int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron, double epsilon) {
+int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron,
+                                      double epsilon)
+{
     std::cout << "\n> Merging coplanar faces with epsilon = " << epsilon << std::endl;
     std::cout << "  initial face count: " << polyhedron->facets().size() << std::endl;
 
@@ -116,6 +121,7 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
+        std::cout << "Considering " << vertex->toString() << std::endl;
         if (vertex->degree() < 3) {
             vertices_toremove.push_back(vertex);
         }
@@ -123,7 +129,7 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
     it_v = vertices_toremove.begin();
     while (it_v != vertices_toremove.end()) {
         VertexSPtr vertex = *it_v++;
-        DEBUG_VAR(vertex->toString());
+        std::cout << "Removing " << vertex->toString() << std::endl;
         std::list<FacetWPtr>::iterator it_f = vertex->facets().begin();
         while (it_f != vertex->facets().end()) {
             FacetWPtr facet_wptr = *it_f++;
@@ -132,7 +138,7 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
                 facet->removeVertex(vertex);
             }
         }
-        // there should be no vertices of degree = 1
+
         if (vertex->degree() == 2) {
             EdgeSPtr edge_src = vertex->firstEdge();
             EdgeSPtr edge_dst = edge_src->next(vertex);
@@ -152,6 +158,9 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
             } else if (edge_src->getVertexSrc() == vertex) {
                 edge_src->replaceVertexSrc(vertex_dst);
             }
+        } else {
+            // there should be no vertices of degree = 1
+            CGAL_assertion_msg(false, "Degree 1 vertex?!");
         }
         polyhedron->removeVertex(vertex);
         result++;

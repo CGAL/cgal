@@ -328,7 +328,7 @@ protected:
     int edge_event_;
     StraightSkeletonSPtr skel_result_;
 
-    bool usingPerturbedMode_ = false;
+    bool usingTemporaryPerturbedMode_ = false;
     CGAL::FT perturbationOffset_ = 0;
     CGAL::FT simultaneousOffset_ = 0;
 };

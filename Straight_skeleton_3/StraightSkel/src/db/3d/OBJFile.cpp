@@ -83,7 +83,7 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                 std::vector<std::string> strs = util::StringFuncs::split(line, " \t", false);
                 if (strs.size() >= 4) {
                     unsigned int num_vertices = strs.size() - 1;
-                    std::cout << "new face of size " << num_vertices << std::endl;
+                    // std::cout << "new face of size " << num_vertices << std::endl;
                     CGAL_assertion(num_vertices > 2);
 
                     VertexSPtr poly_vertices[num_vertices];
@@ -122,9 +122,9 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
                     FacetSPtr facet = Facet::create(num_vertices, poly_vertices);
                     facet->setID(facet_id_new++);
 
-                    std::cout << "Final edges:" << std::endl;
-                    for(auto e : facet->edges())
-                      std::cout << e->toString() << std::endl;
+                    // std::cout << "Final edges:" << std::endl;
+                    // for(auto e : facet->edges())
+                    //   std::cout << e->toString() << std::endl;
 
                     if (num_vertices == 3) {
                         Triangle::create(facet, poly_vertices);
@@ -187,7 +187,8 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
         std::cout << "Loaded OBJ: " << result->toString() << std::endl;
 
         util::ConfigurationSPtr config = util::Configuration::getInstance();
-        if (config->contains("main", "merge_coplanar_faces") &&
+        if (config->isLoaded() &&
+            config->contains("main", "merge_coplanar_faces") &&
             config->getBool("main", "merge_coplanar_faces")) {
             double epsilon = 0.;
             std::string section("db_3d_OBJFile");
@@ -203,8 +204,6 @@ PolyhedronSPtr OBJFile::load(const std::string& filename) {
         // @tmp with the degree checking in isConsistent(), this is false if the input is not triangulated
         CGAL_postcondition(result->isConsistent());
     }
-
-    std::cout << "Final load: " << result->toString() << std::endl;
 
     return result;
 }
@@ -233,7 +232,7 @@ bool OBJFile::save(const std::string& filename,
     // Improve precision if EPECK
     CGAL::internal::Evaluate<CGAL::FT> evaluate;
 
-    bool result = false;
+    bool result = true;
     std::ofstream ofs(filename.c_str());
     ofs.precision(17);
     if (ofs.is_open()) {

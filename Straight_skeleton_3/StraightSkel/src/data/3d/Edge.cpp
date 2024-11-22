@@ -434,16 +434,12 @@ void Edge::replaceVertexSrc(VertexSPtr vertex_src) {
     vertex_src_->removeEdge(shared_from_this());
     vertex_src_ = vertex_src;
     vertex_src->addEdge(shared_from_this());
-
-    hasBecomeDegenerate = false;
 }
 
 void Edge::replaceVertexDst(VertexSPtr vertex_dst) {
     vertex_dst_->removeEdge(shared_from_this());
     vertex_dst_ = vertex_dst;
     vertex_dst->addEdge(shared_from_this());
-
-    hasBecomeDegenerate = false;
 }
 
 void Edge::replaceFacetL(FacetSPtr facet_l) {
