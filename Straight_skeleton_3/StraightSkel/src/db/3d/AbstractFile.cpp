@@ -168,4 +168,19 @@ int AbstractFile::removeVerticesDegLt3(PolyhedronSPtr polyhedron) {
     return result;
 }
 
+int AbstractFile::mergeCoplanarFacets(PolyhedronSPtr polyhedron)
+{
+    double epsilon = 0.0;
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    if (config->isLoaded()) {
+        std::string section("main");
+        std::string key("epsilon_coplanarity");
+        if (config->contains(section, key)) {
+            epsilon = config->getDouble(section, key);
+        }
+    }
+
+    return mergeCoplanarFacets(polyhedron, epsilon);
+}
+
 } }

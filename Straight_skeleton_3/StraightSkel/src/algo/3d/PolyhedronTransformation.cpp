@@ -545,9 +545,30 @@ Vector3SPtr PolyhedronTransformation::randVec(double min, double max) {
     return result;
 }
 
-void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron, double range) {
+void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron) {
+    std::cout << "Points will be moved randomly..." << std::endl;
+
+    double range = 0.001;
+    util::ConfigurationSPtr config = util::Configuration::getInstance();
+    if (config->isLoaded()) {
+        double value = config->getDouble("main", "rand_move_points_range");
+        if (value != 0.0) {
+            range = value;
+        }
+    }
+
+    std::cout << "rand_move_points_range=" << range << std::endl;
+
+    // Store coefficients for possible un-tilting post-offset
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        facet->storePlaneCoefficients();
+    }
+
     // srand(time(NULL));
-    srand(0);   // set seed to a const value to reproduce errors
+    srand(0); // set seed to a const value to reproduce errors
+
     std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -556,11 +577,76 @@ void PolyhedronTransformation::randMovePoints(PolyhedronSPtr polyhedron, double 
         Point3SPtr p_t = KernelFactory::createPoint3(*p + *v_r);
         vertex->setPoint(p_t);
     }
-    polyhedron->initPlanes();
+    polyhedron->initPlanes(); // recompute planes
 
     polyhedron->appendDescription("rand_move_points_range=" +
             util::StringFactory::fromDouble(range) + "; ");
+
+    CGAL_postcondition(polyhedron && polyhedron->isConsistent());
 }
+
+PolyhedronSPtr PolyhedronTransformation::perturb(PolyhedronSPtr polyhedron) {
+    db::_3d::OBJFile::save("results/randomized_input_pre.obj", polyhedron, false /*triangulate*/);
+
+    // check if we can just tilt plane coefficients directly without having
+    // to keep a triangulated input
+    bool canUsePlaneTilts = true;
+
+    // copy because we will merge (almost) coplanar faces and check if the result is a mesh
+    // with degree 3 only vertices, which can be perturb in a manner that does not require
+    // a triangulated input
+    PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
+
+    db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron_cpy);
+    db::_3d::OBJFile::save("results/pre-tilt_merged.obj", polyhedron_cpy,
+                            false /*do_triangulate*/,
+                            true /*convert_to_double*/);
+
+    db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron_cpy);
+    CGAL_assertion(polyhedron_cpy && polyhedron_cpy->isConsistent());
+
+    std::list<VertexSPtr>::iterator it_v = polyhedron_cpy->vertices().begin();
+    while (it_v != polyhedron_cpy->vertices().end()) {
+        VertexSPtr vertex = *it_v++;
+        if (vertex->degree() != 3) {
+            std::cerr << "Can't use plane tilts because of " << vertex->toString() << std::endl;
+            canUsePlaneTilts = false;
+            break;
+        }
+    }
+
+    if (!canUsePlaneTilts) {
+        // this is not 'polyhedron_cpy' because the polyhedron must be triangulated
+        // for vertices to remain on their incident planes
+        randMovePoints(polyhedron);
+    } else {
+        std::cout << "All vertices are degree 3, tilt the polyhedron's faces" << std::endl;
+
+        // @todo not necessary if we do not try to un-tilt at the end
+        harmonizeFacetPlanes(polyhedron_cpy);
+
+        std::list<FacetSPtr>::iterator it_f = polyhedron_cpy->facets().begin();
+        while (it_f != polyhedron_cpy->facets().end()) {
+            FacetSPtr facet = *it_f++;
+            facet->storePlaneCoefficients();
+            facet->perturbPlaneCoefficients();
+        }
+
+        // recompute vertex positions with the perturbed planes
+        polyhedron_cpy = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron_cpy, 0.0);
+
+        if (polyhedron_cpy && polyhedron_cpy->isConsistent()) {
+            // @todo try again with another perturbation, or smarter (iterative) perturbation
+            std::cerr << "Warning: perturbed polyhedron is no longer valid" << std::endl;
+            polyhedron = polyhedron_cpy;
+        }
+    }
+
+    db::_3d::OBJFile::save("results/randomized_input_post.obj", polyhedron, false /*triangulate*/);
+
+    return polyhedron;
+}
+
 
 Point3SPtr PolyhedronTransformation::boundingBoxMin(PolyhedronSPtr polyhedron) {
     CGAL::FT p_min[3];

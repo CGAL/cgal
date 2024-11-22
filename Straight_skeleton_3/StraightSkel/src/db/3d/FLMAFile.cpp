@@ -104,7 +104,7 @@ PolyhedronSPtr FLMAFile::load(const std::string& filename) {
         }
         ifs.close();
         result->setDescription("filename='"+filename+"'; ");
-        double epsilon = 0.0001;
+        double epsilon = 0.0;
         util::ConfigurationSPtr config = util::Configuration::getInstance();
         std::string section("db_3d_FLMAFile");
         std::string key("epsilon_coplanarity");

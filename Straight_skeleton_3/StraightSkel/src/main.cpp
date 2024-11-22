@@ -388,26 +388,24 @@ int main(int argc, const char* argv[]) {
             algo::_3d::PolyhedronTransformation::translateNscale(
                     polyhedron, p_box_min, p_box_max);
         }
+
         if (rand_move_points) {
-            std::cout << "Points will be moved randomly. "
-                 << "(rand_move_points_range=" << rand_move_points_range << ")" << std::endl;
-            db::_3d::OBJFile::save("results/randomized_input_pre.obj", polyhedron);
-            algo::_3d::PolyhedronTransformation::randMovePoints(polyhedron, rand_move_points_range);
-            db::_3d::OBJFile::save("results/randomized_input_mid.obj", polyhedron);
+            polyhedron = algo::_3d::PolyhedronTransformation::perturb(polyhedron);
         }
 
-        std::cout << "Normalize plane coefficients..." << std::endl;
-        algo::_3d::SimpleStraightSkel::harmonizeFacetPlanes(polyhedron);
+        // we need to harmonize, whether we have perturbed or not
+        algo::_3d::PolyhedronTransformation::harmonizeFacetPlanes(polyhedron);
 
-        // since we have modified plane coeffiecients, ensure that points are on the facets
-        std::cout << "Sanitize..." << std::endl;
+        // since we have modified plane coefficients, ensure that points are on the facets
+        // @fixme, what if that shiftFacets fail?
         std::string description = polyhedron->getDescription();
         polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
-        // polyhedron->clearData(); // @fixme: as to not clear facet speeds, but what side effects?
+        // polyhedron->clearData(); // @fixme: as to not clear facet speeds,
+        // but what are the side effects?
         polyhedron->setDescription(description);
 
-        if (rand_move_points) {
-            db::_3d::OBJFile::save("results/randomized_input_post.obj", polyhedron);
+        if (!polyhedron->isConsistent()) {
+            std::cout << "Warning: Polyhedron is not consistent." << std::endl;
         }
 
         if (translate_and_scale_view) {
@@ -425,11 +423,6 @@ int main(int argc, const char* argv[]) {
                 scale = scale_min;
             }
         }
-        if (!polyhedron->isConsistent()) {
-            std::cout << "Warning: Polyhedron with PolyhedronID=" << id
-                 << " is not consistent." << std::endl;
-        }
-        DEBUG_VAR(polyhedron->toString());
     }
 
     // create OpenGL window

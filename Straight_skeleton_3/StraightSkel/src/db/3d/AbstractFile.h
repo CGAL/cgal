@@ -29,6 +29,7 @@ public:
 
     static bool hasCoplanarFacets(EdgeSPtr edge, double epsilon);
     static int mergeCoplanarFacets(PolyhedronSPtr polyhedron, double epsilon);
+    static int mergeCoplanarFacets(PolyhedronSPtr polyhedron);
     static int removeVerticesDegLt3(PolyhedronSPtr polyhedron);
 protected:
     AbstractFile();

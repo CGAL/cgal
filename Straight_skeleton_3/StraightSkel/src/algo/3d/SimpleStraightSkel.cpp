@@ -7408,18 +7408,7 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::handleEventWithAutoref(A
     polyhedron = soup_to_polyhedron(points, triangles, supporting_planes, speeds);
     CGAL_assertion(polyhedron && polyhedron->isConsistent());
 
-    util::ConfigurationSPtr config = util::Configuration::getInstance();
-    if (config->contains("main", "merge_coplanar_faces") &&
-        config->getBool("main", "merge_coplanar_faces")) {
-        double epsilon = 0.;
-        std::string section("db_3d_OBJFile");
-        std::string key("epsilon_coplanarity");
-        if (config->contains(section, key)) {
-            epsilon = config->getDouble(section, key);
-        }
-        db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron, epsilon);
-    }
-
+    db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron);
     db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron);
     CGAL_postcondition(polyhedron && polyhedron->isConsistent());
 
@@ -7427,7 +7416,7 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::handleEventWithAutoref(A
 
     // @fixme this is very dangerous because now we will get a different normalization for the planes.
     // It would be better to re-use the planes
-    harmonizeFacetPlanes(polyhedron);
+    PolyhedronTransformation::harmonizeFacetPlanes(polyhedron);
     polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
     CGAL_postcondition(polyhedron && polyhedron->isConsistent());
 

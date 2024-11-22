@@ -61,7 +61,8 @@ public:
      */
     static bool hasParallelPlanes(PolyhedronSPtr polyhedron);
     static bool doAll3PlanesIntersect(PolyhedronSPtr polyhedron);
-    static void randMovePoints(PolyhedronSPtr polyhedron, double range);
+    static void randMovePoints(PolyhedronSPtr polyhedron);
+    static PolyhedronSPtr perturb(PolyhedronSPtr polyhedron);
 
     static Point3SPtr boundingBoxMin(PolyhedronSPtr polyhedron);
     static Point3SPtr boundingBoxMax(PolyhedronSPtr polyhedron);
