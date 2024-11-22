@@ -2175,7 +2175,11 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         // src is the target of the edge when in the right face
         if (!check_bisector(edge_1, facet_r1, rt1, facet_1_src, point)) {
             // std::cout << "reject #2b" << std::endl;
+#ifdef CGAL_SS3_EXIT_ASAP
+            return { };
+#else
             reject_2b = true;
+#endif
         }
     }
 
@@ -2184,7 +2188,11 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         // std::cout << "-- check 1_dst" << std::endl;
         if (!check_bisector(edge_1, facet_l1, lt1, facet_1_dst, point)) {
             // std::cout << "reject #3b" << std::endl;
+#ifdef CGAL_SS3_EXIT_ASAP
+            return { };
+#else
             reject_3b = true;
+#endif
         }
     }
 
@@ -2193,7 +2201,11 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         // std::cout << "-- check 2_src" << std::endl;
         if (!check_bisector(edge_2, facet_r2, rt2, facet_2_src, point)) {
             // std::cout << "reject #5b" << std::endl;
+#ifdef CGAL_SS3_EXIT_ASAP
+            return { };
+#else
             reject_5b = true;
+#endif
         }
     }
 
@@ -2202,7 +2214,11 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
           // std::cout << "-- check 2_dst" << std::endl;
           if (!check_bisector(edge_2, facet_l2, lt2, facet_2_dst, point)) {
               // std::cout << "reject #6b" << std::endl;
+#ifdef CGAL_SS3_EXIT_ASAP
+              return { };
+#else
               reject_6b = true;
+#endif
         }
     }
 
@@ -2211,6 +2227,9 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 #endif
 
 #ifdef CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
+# ifdef CGAL_SS3_EXIT_ASAP
+#  error // can't use ASAP-exits if we want to compare
+# endif
     CGAL_assertion(reject_2 == reject_2b);
     CGAL_assertion(reject_3 == reject_3b);
     CGAL_assertion(reject_5 == reject_5b);
