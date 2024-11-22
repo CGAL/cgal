@@ -155,8 +155,15 @@ sub collect_results_of_platform($)
 # Create an anonymous hash that hashes packages to their result.
     my $platform_results = {};
     my $test_result="results_${platform}.txt";
+    my $display_name = $platform;
     my ($yeahs, $nays, $warnings,$third_party_warnings,$timeout,$reqs) = (0,0,0,0,0,0);
     my $resulttext;
+    if (open(PLATFORM_INFO, "results_${platform}.info")) {
+        my @info = <PLATFORM_INFO>;
+        chomp(@info);
+        $display_name = $info[-1] if ($info[-1] ne "-");
+        close(PLATFORM_INFO);
+    }
     open(TESTRESULT, $test_result) or return $platform_results;
     while (<TESTRESULT>) {
         if (/^\s*(.*?)\s+(\w)\s*$/) {
@@ -192,6 +199,7 @@ sub collect_results_of_platform($)
     $platform_results->{"t"} = $third_party_warnings;
     $platform_results->{"o"} = $timeout;
     $platform_results->{"r"} = $reqs;
+    $platform_results->{"display_name"} = $display_name;
     return $platform_results;
 }
 
@@ -490,6 +498,7 @@ sub print_platform_descriptions()
 EOF
     my ($platform_num)=(0);
     foreach $pf (@platforms_to_do) {
+        my $display_name = $testresults[$platform_num]->{"display_name"} || $pf;
         my $pf_num_plus_one = $platform_num + 1;
         print OUTPUT "<tr>\n<td><a name=\"platform$pf_num_plus_one\">$pf_no</a>\n";
         $pf_no++;
@@ -504,7 +513,7 @@ EOF
             $_ = <PLATFORM_INFO>; # COMPILER
             chomp;
             my $compiler = $_;
-            print OUTPUT " title=\"$compiler\">$pf_short</a>";
+            print OUTPUT " title=\"$compiler\">$display_name</a>";
             $_ = <PLATFORM_INFO>; # OPERATING_SYSTEM
             chomp;
             my $operating_system = $_;

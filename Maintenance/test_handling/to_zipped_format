@@ -51,7 +51,7 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL) = ("-","-","-","-","-","-","-","-","-","-","-","-","no","TPL:");
+    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL,$PLATFORM_NAME) = ("-","-","-","-","-","-","-","-","-","-","-","-","no","TPL:","-");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -138,6 +138,12 @@ sub reformat_results($)
     if (/^-- Third-party library (.+)$/) {
         $TPL = "$TPL $1,";
     }
+    if (/^CGAL_TEST_PLATFORM\s+(.*)$/) {
+        $PLATFORM_NAME = $1 if ($PLATFORM_NAME eq "-");
+    }
+    if (/^CGAL_SUMMARY_NAME\s+(.*)$/) {
+        $PLATFORM_NAME = $1;
+    }
 NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
             # should never happen!!
             last;
@@ -162,6 +168,7 @@ $LEDA_VERSION
 $CXXFLAGS
 $LDFLAGS
 $TPL
+$PLATFORM_NAME
 EOF
     close(PLATFORM_INFO);
     close(PLATFORM_RESULTS);
