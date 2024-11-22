@@ -172,7 +172,7 @@ Eigen::Matrix<T, 3, 3> rot(T a, T b, T c) {
 
 template<typename Mesh, typename VertexRotationMap, typename VertexNormalMap, bool has_default>
 struct Rotate_vertex_normals {
-  void update(const Mesh& mesh, const VertexRotationMap& vrm, const VertexNormalMap& vnm) const {}
+  void update(const Mesh&, const VertexRotationMap&, const VertexNormalMap&) const {}
 };
 
 template<typename Mesh, typename VertexRotationMap, typename VertexNormalMap>
