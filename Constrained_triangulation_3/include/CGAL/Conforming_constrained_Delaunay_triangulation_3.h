@@ -1555,9 +1555,6 @@ public:
 private:
   void fill_cdt_2(CDT_2& cdt_2, CDT_3_face_index polygon_contraint_id)
   {
-    if(this->debug_input_faces()) {
-      std::cerr << "Polygon #" << polygon_contraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
-    }
     const auto vec_of_handles = std::invoke([this, polygon_contraint_id]() {
       std::vector<std::vector<Vertex_handle>> vec_of_handles;
       for(const auto& border : this->face_borders[polygon_contraint_id]) {
@@ -1587,11 +1584,17 @@ private:
     });
 
     if(this->debug_input_faces()) {
-      std::cerr << "  points\n";
+      std::cerr << "Polygon #" << polygon_contraint_id << " normal is: " << cdt_2.geom_traits().normal() << '\n';
+      auto filename = "dump_cdt_2_polygons_" + std::to_string(polygon_contraint_id) + ".polylines.txt";
+      std::cerr << "  dumping it to \"" << filename << "\".\n";
+      std::ofstream out(filename);
+      out.precision(17);
       for(const auto& handles : vec_of_handles) {
-        for(auto it = handles.begin(), end = std::prev(handles.end()); it != end; ++it) {
-          std::cerr << "     " << tr().point(*it) << '\n';
+        out << handles.size() << "      ";
+        for(auto it = handles.begin(), end = handles.end(); it != end; ++it) {
+          out << "   " << tr().point(*it);
         }
+        out << "   " << tr().point(handles.front()) << '\n';
       }
     }
     // create and fill the 2D triangulation
