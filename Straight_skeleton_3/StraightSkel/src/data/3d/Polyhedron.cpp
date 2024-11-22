@@ -77,14 +77,18 @@ PolyhedronSPtr Polyhedron::clone() const {
         FacetSPtr facet = *it_f++;
         FacetSPtr facet_c = Facet::create();
         facet_c->setPlane(facet->getPlane());
+        facet_c->setBasePlane(facet->getBasePlane());
         if (facet->hasData()) {
             skel::SkelFacetDataSPtr data = std::dynamic_pointer_cast<skel::SkelFacetData>(facet->getData());
             skel::SkelFacetDataSPtr data_c = skel::SkelFacetData::create(facet_c);
             data_c->setSpeed(data->getSpeed());
         }
-        // @todo copy the two below too?
-        facet_c->setID(facet->getID());
-        facet_c->setPlane(facet->getPlane());
+        if (facet->getID() != -1) { // @todo remove this? Anyway the other IDs are not copied...
+          facet_c->setID(facet->getID());
+        }
+        facet_c->cachedPlane_ = facet->cachedPlane_;
+        facet_c->cachedSpeed_ = facet->cachedSpeed_;
+
         std::list<VertexSPtr>::const_iterator it_v = facet->vertices().begin();
         while (it_v != facet->vertices().end()) {
             VertexSPtr vertex = *it_v++;

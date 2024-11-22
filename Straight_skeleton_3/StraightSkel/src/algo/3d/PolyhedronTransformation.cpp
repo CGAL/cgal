@@ -301,15 +301,14 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
             data->setSpeed(speed);
         }
 
-        // perturbation mechanisms
-        offset_facet->cachedSpeed_ = facet->cachedSpeed_;
-        if (facet->cachedPlane_) {
-            std::cout << "plane of facet " << facet->getID() << " copy from [" << *(facet->cachedPlane_) << "]" << std::endl;
-            offset_facet->cachedPlane_ = KernelFactory::createPlane3(*(facet->cachedPlane_));
-        }
-
         Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
         offset_facet->setPlane(offset_plane);
+        offset_facet->setBasePlane(facet->getBasePlane());
+
+        // perturbation mechanisms
+        offset_facet->cachedSpeed_ = facet->cachedSpeed_;
+        offset_facet->cachedPlane_ = facet->cachedPlane_;
+
         std::list<VertexSPtr>::iterator it_v = facet->vertices().begin();
         while (it_v != facet->vertices().end()) {
             VertexSPtr vertex = *it_v++;

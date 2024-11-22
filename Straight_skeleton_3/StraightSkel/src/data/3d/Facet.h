@@ -99,6 +99,9 @@ public:
     int getID() const;
     void setID(int id);
 
+    Plane3SPtr getBasePlane() const;
+    void setBasePlane(Plane3SPtr plane);
+
     /**
      * The direction of the normal points to the outside.
      */
@@ -141,6 +144,8 @@ public:
     std::list<FacetSPtr>::iterator polyhedron_list_it_;
     FacetDataSPtr data_;
     int id_;
+
+    Plane3SPtr basePlane_;
     Plane3SPtr plane_;
 
     Plane3SPtr cachedPlane_;

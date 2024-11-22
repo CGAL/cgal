@@ -764,6 +764,13 @@ bool SimpleStraightSkel::run() {
 
     PolyhedronSPtr polyhedron = polyhedron_->clone();
 
+    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    while (it_f != polyhedron->facets().end()) {
+        FacetSPtr facet = *it_f++;
+        CGAL_assertion(bool(facet->getPlane()));
+        facet->setBasePlane(facet->getPlane());
+    }
+
     db::_3d::OBJFile::save("results/init_pre.obj", polyhedron, false /*do not triangulate*/);
 
 // #define CGAL_SSE_ACUTE_WEIGHTS
@@ -7564,6 +7571,8 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
         for (unsigned int i = 0; i < 4; i++) {
             facets_clone[i] = Facet::create();
             facets_clone[i]->setPlane(facets[i]->getPlane());
+            facets_clone[i]->setBasePlane(facets[i]->getBasePlane());
+            facets_clone[i]->cachedPlane_ = facets[i]->cachedPlane_;
             if (facets[i]->hasData()) {
                 SkelFacetDataSPtr data_clone = SkelFacetData::create(facets_clone[i]);
                 data_clone->setSpeed(std::dynamic_pointer_cast<SkelFacetData>(
@@ -7634,6 +7643,8 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
         for (unsigned int i = 0; i < 4; i++) {
             facets_clone[i] = Facet::create();
             facets_clone[i]->setPlane(facets[i]->getPlane());
+            facets_clone[i]->setBasePlane(facets[i]->getBasePlane());
+            facets_clone[i]->cachedPlane_ = facets[i]->cachedPlane_; // @todo there should be a constructor/function "Facet::copyPropertiesAndData(otherFacet)"
             if (facets[i]->hasData()) {
                 SkelFacetDataSPtr data_clone = SkelFacetData::create(facets_clone[i]);
                 data_clone->setSpeed(std::dynamic_pointer_cast<SkelFacetData>(
@@ -7716,6 +7727,9 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
             for (unsigned int i = 0; i < 4; i++) {
                 facets_c[i] = Facet::create();
                 facets_c[i]->setPlane(facets[i]->getPlane());
+                facets_c[i]->setBasePlane(facets[i]->getBasePlane());
+                facets_c[i]->cachedPlane_ = facets[i]->cachedPlane_;
+
             }
             for (unsigned int i = 0; i < 4; i++) {
                 edges[i]->setFacetR(facets_c[(i+3)%4]);
