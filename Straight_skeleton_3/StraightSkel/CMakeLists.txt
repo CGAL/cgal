@@ -22,10 +22,9 @@ if (CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 endif()
 
-
 # create config.h
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    set(DEBUG ON)
+  add_compile_definitions(DEBUG)
 endif()
 
 configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/config.h)
