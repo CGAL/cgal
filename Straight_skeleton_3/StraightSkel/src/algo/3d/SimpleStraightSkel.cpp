@@ -146,6 +146,7 @@ private:
 
 SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron) {
     polyhedron_ = polyhedron;
+    save_path_ = std::filesystem::current_path();
     skel_result_ = StraightSkeleton::create();
     skel_result_->setPolyhedron(polyhedron);
     initVertexSplitter();
@@ -155,16 +156,21 @@ SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron) {
 SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller) {
     polyhedron_ = polyhedron;
     controller_ = controller;
+    save_path_ = std::filesystem::current_path();
     skel_result_ = StraightSkeleton::create();
     skel_result_->setPolyhedron(polyhedron);
     initVertexSplitter();
     initEdgeEvent();
 }
 
-SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller, const std::list<CGAL::FT>& save_offsets) {
+SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron,
+                                       ControllerSPtr controller,
+                                       const std::list<CGAL::FT>& save_offsets,
+                                       const std::filesystem::path& save_path) {
     polyhedron_ = polyhedron;
     controller_ = controller;
     save_offsets_ = save_offsets;
+    save_path_ = save_path;
     skel_result_ = StraightSkeleton::create();
     skel_result_->setPolyhedron(polyhedron);
     initVertexSplitter();
@@ -186,8 +192,11 @@ SimpleStraightSkelSPtr SimpleStraightSkel::create(PolyhedronSPtr polyhedron, Con
     return SimpleStraightSkelSPtr(new SimpleStraightSkel(polyhedron, controller));
 }
 
-SimpleStraightSkelSPtr SimpleStraightSkel::create(PolyhedronSPtr polyhedron, ControllerSPtr controller, const std::list<CGAL::FT>& save_offsets) {
-    return SimpleStraightSkelSPtr(new SimpleStraightSkel(polyhedron, controller, save_offsets));
+SimpleStraightSkelSPtr SimpleStraightSkel::create(PolyhedronSPtr polyhedron,
+                                                  ControllerSPtr controller,
+                                                  const std::list<CGAL::FT>& save_offsets,
+                                                  const std::filesystem::path& save_path) {
+    return SimpleStraightSkelSPtr(new SimpleStraightSkel(polyhedron, controller, save_offsets, save_path));
 }
 
 void SimpleStraightSkel::initVertexSplitter() {
@@ -719,6 +728,27 @@ bool SimpleStraightSkel::handleSaveEventAtSimultaneity(PolyhedronSPtr polyhedron
     }
 
     return true;
+}
+
+bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
+                                        CGAL::FT current_offset,
+                                        const bool do_triangulate,
+                                        const bool dump_exact,
+                                        const bool attempt_untilting)
+{
+    bool result = true;
+
+    std::stringstream ss_filename, ss_filename_exact;
+    ss_filename << save_path_.string() << "/offset_" << current_offset << ".obj";
+    ss_filename_exact << save_path_.string() << "/offset_" << current_offset << "_exact.obj";
+
+    result = (db::_3d::OBJFile::save(ss_filename.str(), polyhedron,
+                                     false /*do_triangulate*/,
+                                     true /*convert_to_double*/) && result);
+    result = (db::_3d::OBJFile::save(ss_filename_exact.str(), polyhedron,
+                                     do_triangulate, false /*convert_to_double*/) && result);
+
+    return result;
 }
 
 bool SimpleStraightSkel::run() {

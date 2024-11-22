@@ -25,6 +25,7 @@
 #include "data/3d/skel/AbstractEvent.h"
 #include "data/3d/skel/ptrs.h"
 
+#include <filesystem>
 #include <list>
 #include <optional>
 #include <queue>
@@ -45,7 +46,9 @@ public:
 
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron);
     static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller);
-    static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller, const std::list<CGAL::FT>& save_offsets);
+    static SimpleStraightSkelSPtr create(PolyhedronSPtr polyhedron, ControllerSPtr controller,
+                                         const std::list<CGAL::FT>& save_offsets,
+                                         const std::filesystem::path& save_path);
 
     void initVertexSplitter();
     void initEdgeEvent();
@@ -63,6 +66,15 @@ public:
      * Offset, don't treat the simultaneous events, and dump the polyhedron
      */
     bool handleSaveEventAtSimultaneity(PolyhedronSPtr polyhedron, CGAL::FT current_offset, CGAL::FT simultaneity_offset);
+
+    /**
+     * Save offset, attempt to un-tilt if there is a tilt
+     */
+    bool savePolyhedron(PolyhedronSPtr polyhedron,
+                        CGAL::FT current_offset,
+                        const bool do_triangulate = true,
+                        const bool dump_exact = true,
+                        const bool attempt_untilting = false);
 
     bool run();
     ThreadSPtr startThread();
@@ -305,7 +317,9 @@ public:
 protected:
     SimpleStraightSkel(PolyhedronSPtr polyhedron);
     SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller);
-    SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller, const std::list<CGAL::FT>& save_offsets);
+    SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr controller,
+                       const std::list<CGAL::FT>& save_offsets,
+                       const std::filesystem::path& save_path);
 
     static FacetSPtr getFacetSrc(EdgeSPtr edge);
     static FacetSPtr getFacetDst(EdgeSPtr edge);
@@ -313,6 +327,7 @@ protected:
     PolyhedronSPtr polyhedron_;
     ControllerSPtr controller_;
     std::list<CGAL::FT> save_offsets_;
+    std::filesystem::path save_path_;
     bool use_fast_vertex_splitter_;
     AbstractVertexSplitterSPtr vertex_splitter_;
     int edge_event_;

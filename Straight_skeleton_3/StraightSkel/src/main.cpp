@@ -62,6 +62,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <list>
 #include <string>
@@ -85,6 +86,7 @@ void printUsage(const char* argv0) {
     std::cout << "    --no-window" << std::endl;
     std::cout << "    --save" << std::endl;
     std::cout << "    --save-offsets -1.0,-1.5" << std::endl;
+    std::cout << "    --save-path /home/user/results" << std::endl;
     std::cout << "    --config StraightSkel.ini" << std::endl;
     std::cout << std::endl;
     std::cout << "Example: " << argv0 << " 3d load anything.obj" << std::endl;
@@ -129,6 +131,24 @@ std::list<CGAL::FT> parseCSV(const char* csv) {
     }
     values.sort(std::greater<CGAL::FT>());
     return values;
+}
+
+// Function to validate the save path and return a filesystem path object
+std::filesystem::path parseSavePath(const char* chr_save_path) {
+    std::filesystem::path savePath = (chr_save_path == nullptr) ? std::filesystem::current_path()
+                                                                : std::filesystem::path(chr_save_path);
+
+    // Check if the provided path exists
+    if (!std::filesystem::exists(savePath)) {
+        throw std::invalid_argument("Error: The path '" + savePath.string() + "' does not exist.");
+    }
+
+    // Check if it is a directory
+    if (!std::filesystem::is_directory(savePath)) {
+        throw std::invalid_argument("Error: The path '" + savePath.string() + "' is not a directory.");
+    }
+
+    return savePath;
 }
 
 
@@ -436,6 +456,10 @@ int main(int argc, const char* argv[]) {
         save_offsets = parseCSV(chr_save_offsets);
     }
 
+    std::filesystem::path save_path;
+    const char* chr_save_path = getOption("--save-path", argc, argv);
+    save_path = parseSavePath(chr_save_path);
+
     // run algorithm
     // has to be in this scope otherwise the algorithm will be destroyed
     ThreadSPtr thread_algo;
@@ -456,7 +480,7 @@ int main(int argc, const char* argv[]) {
         }
     } else if (num_dims == 3) {
         algoskel3d = algo::_3d::SimpleStraightSkel::create(
-                polyhedron, controller, save_offsets);
+                polyhedron, controller, save_offsets, save_path);
         if (window) {
             window->setPolyhedron(polyhedron);
             if (skel3d) {
