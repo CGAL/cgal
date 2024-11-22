@@ -7,59 +7,59 @@ CUSTOMER=""
 DATA_PATH=
 
 BUILD_DIR="build-release"
-TIMEOUT_VALUE=60
-MAX_ITEM_NUMBER=10000
+TIMEOUT_VALUE=10
+MAX_ITEM_NUMBER=10
+NUMBER_OF_THREADS=4
 OFFSET_DIRECTION="out" # in / out
-
-echo "Build DIR = ${BUILD_DIR}"
-echo "Timeout = ${TIMEOUT_VALUE}"
-echo "Max #inputs = ${MAX_ITEM_NUMBER}"
-echo "Inwards / Outwards = ${OFFSET_DIRECTION}"
 
 cd "$BUILD_DIR" || exit 1
 
-SUCCESS=()
-OFFSET_FAILURE=()
-PREPROCESS_FAILURE=()
-POSTPROCESS_FAILURE=()
-OTHER_FAILURE=()
-TIMEOUT=()
-BAD_OUTPUT=()
+PREPROCESS_FAILURES=()
+OFFSET_FAILURES=()
+POSTPROCESS_FAILURES=()
+OTHER_FAILURES=()
+TIMEOUTS=()
+BAD_OUTPUTS=()
+SUCCESSES=()
 
-FILES=$(\
-  find ${DATA_PATH}/input_* -type f -name '*.ply' | sort \
-)
+FILES=$(find ${DATA_PATH}/input_* -type f -name '*.ply' | sort | head -n "$MAX_ITEM_NUMBER")
 
 CURRENT_DATE=$(date +%Y-%m-%d)
 CURRENT_TIME=$(date +%H:%M)
-OUTPUT_DIRECTORY=compare_results_${CURRENT_DATE}_${CURRENT_TIME}
+OUTPUT_DIRECTORY=compare_results-${CURRENT_DATE}_${CURRENT_TIME}-${MAX_ITEM_NUMBER}i_${TIMEOUT_VALUE}s
 mkdir -p $OUTPUT_DIRECTORY
 
 GLOBAL_LOG=${OUTPUT_DIRECTORY}/log.txt # /dev/stdout
 exec > ${GLOBAL_LOG} 2>&1
 
-COUNTER=0
+echo "Build DIR = ${BUILD_DIR}"
+echo "Timeout = ${TIMEOUT_VALUE}"
+echo "Max #inputs = ${MAX_ITEM_NUMBER}"
+echo "Number of threads = ${NUMBER_OF_THREADS}"
+echo "Inwards / Outwards = ${OFFSET_DIRECTION}"
+echo ""
 
-for FILE in $FILES; do
-  if [ $COUNTER -ge ${MAX_ITEM_NUMBER} ]; then
-    echo "Breaking the loop as the counter has reached ${MAX_ITEM_NUMBER}."
-    break
-  fi
-
-  ((COUNTER++))
-
-  echo "FILE: $FILE" | tee -a "${GLOBAL_LOG}"
-
+function process_file {
+  FILE=$1
   BASE_NAME=$(basename "$FILE" | sed 's/\.[^.]*$//')
-  echo "BASE_NAME: ${BASE_NAME}"
 
   # Extract the number between "input_" and the next underscore
   FULL_ID=$(echo ${BASE_NAME} | sed -E 's/^[^_]*_(.*\..*|.*)/\1/') # input_nnnnnn_n.ply to nnnnnn_n
   ID=$(echo "${BASE_NAME}" | sed 's/^[^_]*_\([^_]*\)_.*$/\1/') # input_nnnnnn_n.ply to nnnnnn, for the offset file
-  echo "Extracted FULL_ID: $FULL_ID"
-  echo "Extracted ID: $ID"
 
   mkdir -p $OUTPUT_DIRECTORY/${FULL_ID}
+
+  # to write the result, concatenated later into the arrays
+  RESULT_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/result.txt
+
+  LOCAL_LOG=${OUTPUT_DIRECTORY}/${FULL_ID}/local_log.txt
+  exec > ${LOCAL_LOG} 2>&1
+
+  echo "FILE: $FILE" | tee -a "${LOCAL_LOG}"
+
+  echo "BASE_NAME: ${BASE_NAME}"
+  echo "Extracted FULL_ID: $FULL_ID"
+  echo "Extracted ID: $ID"
 
   # ----------------------------------------------------------------
   # Convert to weighted PLY
@@ -67,16 +67,18 @@ for FILE in $FILES; do
   WEIGHT_FILE="${DATA_PATH}/offsets_${ID}.txt"
   echo "WEIGHT_FILE: ${WEIGHT_FILE}"
 
-  if [ ! -f $WEIGHT_FILE ]; then
-    echo "Missing offset file?!"
-    continue
-  fi
-
   WEIGHTED_INPUT="$OUTPUT_DIRECTORY/${FULL_ID}/input.ply"
   echo "WEIGHTED_INPUT: ${WEIGHTED_INPUT}"
 
   CMD="./convert_to_weighted_PLY ${FILE} ${WEIGHTED_INPUT} ${WEIGHT_FILE}"
   LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_conversion.txt
+
+  if [ ! -f $WEIGHT_FILE ]; then
+    echo "====== [ERROR]: missing offset file?! ======"
+    echo "$CMD" > $RESULT_FILE
+    echo "PREPROCESS FAILURE" >> $RESULT_FILE
+    return
+  fi
 
   echo "---- Calling:"
   echo "  $CMD"
@@ -87,8 +89,9 @@ for FILE in $FILES; do
   RES=$?
   if [ ! "$RES" -eq 0 ]; then
     echo "====== [ERROR]: failed to create weighted PLY?! ======"
-    PREPROCESS_FAILURE+=("$CMD")
-    continue;
+    echo "$CMD" > $RESULT_FILE
+    echo "PREPROCESS FAILURE" >> $RESULT_FILE
+    return
   fi
 
   # ----------------------------------------------------------------
@@ -109,8 +112,9 @@ for FILE in $FILES; do
     RES=$?
     if [ ! "$RES" -eq 0 ]; then
       echo "====== [ERROR]: failed to invert and add bbox?! ======"
-      PREPROCESS_FAILURE+=("$CMD")
-      continue;
+      echo "$CMD" > $RESULT_FILE
+      echo "PREPROCESS FAILURE" >> $RESULT_FILE
+      return
     fi
 
     WEIGHTED_INPUT=${WEIGHTED_INPUT_WITH_BBOX}
@@ -119,7 +123,8 @@ for FILE in $FILES; do
   # ----------------------------------------------------------------
   # Run skeleton and compare results
 
-  CMD="./StraightSkel 3d load ${WEIGHTED_INPUT} --no-window --save-offsets -1"
+  # below will write offset_-1.obj and offset_-1_exact.obj into the item's folder
+  CMD="./StraightSkel 3d load ${WEIGHTED_INPUT} --no-window --save-offsets -1 --save-path ${OUTPUT_DIRECTORY}/${FULL_ID}"
   LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_offset.txt
 
   echo "---- Calling:"
@@ -130,8 +135,8 @@ for FILE in $FILES; do
   echo "$TIMING_FILE"
 
   # Run offset code
-  RES_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/res.txt
-  time ( timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1; echo $? > "$RES_FILE" ) 2> "$TIMING_FILE"
+  RES_CODE_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/res_code.txt
+  time ( timeout --preserve-status $TIMEOUT_VALUE $CMD > "$LOG_FILE" 2>&1; echo $? > "$RES_CODE_FILE" ) 2> "$TIMING_FILE"
 
   # Extract runtime from the output of timeout
   runtime=$(cat "$TIMING_FILE" | grep "real" | awk '{print $2}')
@@ -148,7 +153,7 @@ for FILE in $FILES; do
   RUNTIME_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/runtime.txt
   echo $runtime > ${RUNTIME_FILE}
 
-  RES=$(cat "$RES_FILE")
+  RES=$(cat "$RES_CODE_FILE")
   if [ "$RES" -eq 0 ]; then
     # ----------------------------------------------------------------
     # Got a result, compare it
@@ -158,8 +163,9 @@ for FILE in $FILES; do
 
     if [ ! -f $OC_OUTPUT ]; then
       echo "[ERROR]: missing OC output file?!"
-      OTHER_FAILURE+=("$CMD")
-      continue
+      echo "$CMD" > $RESULT_FILE
+      echo "OTHER FAILURE" >> $RESULT_FILE
+      return
     fi
 
     cp ${OC_OUTPUT} ${OUTPUT_DIRECTORY}/${FULL_ID}
@@ -170,9 +176,7 @@ for FILE in $FILES; do
     # If outward offset, add Bbox and invert
 
     if [ "${OFFSET_DIRECTION}" == "out" ]; then
-      OUTPUT_WITH_BBOX=${OUTPUT_DIRECTORY}/${FULL_ID}/result_inverted_with_bbox.obj
-      cp results/offset_-1_exact.obj ${OUTPUT_WITH_BBOX}
-      cp results/offset_-1.obj ${OUTPUT_DIRECTORY}/${FULL_ID}/offset_-1.obj
+      OUTPUT_WITH_BBOX=${OUTPUT_DIRECTORY}/${FULL_ID}/offset_-1_exact.obj
 
       CMD="./add_or_remove_bbox ${OUTPUT_WITH_BBOX} remove ${OUTPUT}"
       LOG_FILE=${OUTPUT_DIRECTORY}/${FULL_ID}/log_remove_bbox.txt
@@ -186,11 +190,10 @@ for FILE in $FILES; do
       RES=$?
       if [ ! "$RES" -eq 0 ]; then
         echo "====== [ERROR]: failed to remove bbox and invert?! ======"
-        POSTPROCESS_FAILURE+=("$CMD")
-        continue;
+        echo "$CMD" > $RESULT_FILE
+        echo "POSTPROCESS FAILURE" >> $RESULT_FILE
+        return
       fi
-    else
-      cp results/offset_-1_exact.obj ${OUTPUT}
     fi
 
     # ----------------------------------------------------------------
@@ -207,71 +210,124 @@ for FILE in $FILES; do
     RES=$?
     if [ "$RES" -eq 0 ]; then
       echo "====== [SUCCESS] ======"
-      SUCCESS+=("$CMD")
+      echo "$CMD" > $RESULT_FILE
+      echo "SUCCESS" >> $RESULT_FILE
     else
       echo "====== [ERROR]: outputs differ ======"
-      BAD_OUTPUT+=("$CMD")
+      echo "$CMD" > $RESULT_FILE
+      echo "BAD OUTPUT" >> $RESULT_FILE
     fi
   elif [ "$RES" -eq 143 ]; then
     echo "====== [ERROR]: offset time out! ======"
-    TIMEOUT+=("$CMD")
+    echo "$CMD" > $RESULT_FILE
+    echo "TIMEOUT" >> $RESULT_FILE
   else
     echo "====== [ERROR]: offset failure! ======"
-    OFFSET_FAILURE+=("$CMD")
+    echo "$CMD" > $RESULT_FILE
+    echo "OFFSET FAILURE" >> $RESULT_FILE
   fi
   echo ""
+}
+
+export DATA_PATH
+export TIMEOUT_VALUE
+export OFFSET_DIRECTION
+export OUTPUT_DIRECTORY
+export -f process_file
+
+# main call
+echo "$FILES" | parallel --wd $PWD --jobs "$NUMBER_OF_THREADS" --env DATA_PATH --env TIMEOUT_VALUE --env OFFSET_DIRECTION --env OUTPUT_DIRECTORY process_file '{}'
+
+exec >> ${GLOBAL_LOG} 2>&1
+
+# concatenate all local logs into the single global log
+find "$OUTPUT_DIRECTORY" -type f -name "local_log.txt" -exec sh -c 'for file do cat "$file"; echo ""; done' sh {} + >> "$GLOBAL_LOG"
+
+# extract individual info into the arrays
+while IFS= read -r FILE; do
+  {
+    read -r FIRST_LINE
+    read -r SECOND_LINE
+  } < "$FILE"
+
+  case "$SECOND_LINE" in
+    "PREPROCESS FAILURE")
+      PREPROCESS_FAILURES+=("$FIRST_LINE")
+      ;;
+    "OFFSET FAILURE")
+      OFFSET_FAILURES+=("$FIRST_LINE")
+      ;;
+    "POSTPROCESS FAILURE")
+      POSTPROCESS_FAILURES+=("$FIRST_LINE")
+      ;;
+    "TIMEOUT")
+      TIMEOUTS+=("$FIRST_LINE")
+      ;;
+    "BAD OUTPUT")
+      BAD_OUTPUTS+=("$FIRST_LINE")
+      ;;
+    "OTHER FAILURE")
+      OTHER_FAILURES+=("$FIRST_LINE")
+      ;;
+    "SUCCESS")
+      SUCCESSES+=("$FIRST_LINE")
+      ;;
+    *)
+      echo "Unknown category: $SECOND_LINE in file $FILE"
+      ;;
+  esac
+done < <(find "$OUTPUT_DIRECTORY" -type f -name "result.txt")
+
+echo ""
+echo "${#SUCCESSES[@]} SUCCESSES:"
+for BASE_NAME in "${SUCCESSES[@]}"; do
+  echo "$BASE_NAME"
+done
+echo ""
+echo "${#OFFSET_FAILURES[@]} OFFSET FAILURES:"
+for BASE_NAME in "${OFFSET_FAILURES[@]}"; do
+  echo "$BASE_NAME"
+done
+echo ""
+echo "${#PREPROCESS_FAILURES[@]} PREPROCESS FAILURES:"
+for BASE_NAME in "${PREPROCESS_FAILURES[@]}"; do
+  echo "$BASE_NAME"
+done
+echo ""
+echo "${#POSTPROCESS_FAILURES[@]} POSTPROCESS FAILURES:"
+for BASE_NAME in "${POSTPROCESS_FAILURES[@]}"; do
+  echo "$BASE_NAME"
+done
+echo ""
+echo "${#OTHER_FAILURES[@]} OTHER FAILURES:"
+for BASE_NAME in "${OTHER_FAILURES[@]}"; do
+  echo "$BASE_NAME"
+done
+echo ""
+echo "${#TIMEOUTS[@]} TIMEOUTS:"
+for BASE_NAME in "${TIMEOUTS[@]}"; do
+  echo "$BASE_NAME"
+done
+echo ""
+echo "${#BAD_OUTPUTS[@]} OUTPUTS DIFFER:"
+for BASE_NAME in "${BAD_OUTPUTS[@]}"; do
+  echo "$BASE_NAME"
 done
 
 echo ""
-echo "${#SUCCESS[@]} SUCCESSES:"
-for BASE_NAME in "${SUCCESS[@]}"; do
-  echo "$BASE_NAME"
-done
-echo ""
-echo "${#OFFSET_FAILURE[@]} OFFSET FAILURES:"
-for BASE_NAME in "${OFFSET_FAILURE[@]}"; do
-  echo "$BASE_NAME"
-done
-echo ""
-echo "${#PREPROCESS_FAILURE[@]} PREPROCESS FAILURES:"
-for BASE_NAME in "${PREPROCESS_FAILURE[@]}"; do
-  echo "$BASE_NAME"
-done
-echo ""
-echo "${#POSTPROCESS_FAILURE[@]} POSTPROCESS FAILURES:"
-for BASE_NAME in "${POSTPROCESS_FAILURE[@]}"; do
-  echo "$BASE_NAME"
-done
-echo ""
-echo "${#OTHER_FAILURE[@]} OTHER FAILURES:"
-for BASE_NAME in "${OTHER_FAILURE[@]}"; do
-  echo "$BASE_NAME"
-done
-echo ""
-echo "${#TIMEOUT[@]} TIMEOUTS:"
-for BASE_NAME in "${TIMEOUT[@]}"; do
-  echo "$BASE_NAME"
-done
-echo ""
-echo "${#BAD_OUTPUT[@]} OUTPUTS DIFFER:"
-for BASE_NAME in "${BAD_OUTPUT[@]}"; do
-  echo "$BASE_NAME"
-done
+echo "${#SUCCESSES[@]} SUCCESSES"
+echo "${#OFFSET_FAILURES[@]} OFFSET FAILURES"
+echo "${#PREPROCESS_FAILURES[@]} PREPROCESS FAILURES"
+echo "${#POSTPROCESS_FAILURES[@]} POSTPROCESS FAILURES"
+echo "${#OTHER_FAILURES[@]} OTHER FAILURES"
+echo "${#TIMEOUTS[@]} TIMEOUTS"
+echo "${#BAD_OUTPUTS[@]} OUTPUTS DIFFER"
 
-echo ""
-echo "${#SUCCESS[@]} SUCCESSES"
-echo "${#OFFSET_FAILURE[@]} OFFSET FAILURES"
-echo "${#PREPROCESS_FAILURE[@]} PREPROCESS FAILURES"
-echo "${#POSTPROCESS_FAILURE[@]} POSTPROCESS FAILURES"
-echo "${#OTHER_FAILURE[@]} OTHER FAILURES"
-echo "${#TIMEOUT[@]} TIMEOUTS"
-echo "${#BAD_OUTPUT[@]} OUTPUTS DIFFER"
-
-SUCCESSES_COUNT=${#SUCCESS[@]}
-FAILURES_COUNT=$((${#OFFSET_FAILURE[@]} + ${#PREPROCESS_FAILURE[@]} + ${#POSTPROCESS_FAILURE[@]} + ${#OTHER_FAILURE[@]} +${#TIMEOUT[@]}))
-TOTAL_COUNT=$((${SUCCESSES_COUNT} + ${FAILURES_COUNT} + ${#BAD_OUTPUT[@]}))
+SUCCESSES_COUNT=${#SUCCESSES[@]}
+FAILURES_COUNT=$((${#OFFSET_FAILURES[@]} + ${#PREPROCESS_FAILURES[@]} + ${#POSTPROCESS_FAILURES[@]} + ${#OTHER_FAILURES[@]} +${#TIMEOUTS[@]}))
+TOTAL_COUNT=$((${SUCCESSES_COUNT} + ${FAILURES_COUNT} + ${#BAD_OUTPUTS[@]}))
 echo "TOTAL: ${TOTAL_COUNT}"
-echo "Success %: $((${#SUCCESS[@]} * 100 / ${TOTAL_COUNT}))"
+echo "Success %: $((${#SUCCESSES[@]} * 100 / ${TOTAL_COUNT}))"
 
 ELAPSED=$(($(date +%s) - START_TIME))
 printf "elapsed: %s\n\n" "$(date -d@$ELAPSED -u +%H\ hours\ %M\ min\ %S\ sec)"
