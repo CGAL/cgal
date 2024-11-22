@@ -964,6 +964,11 @@ bool SimpleStraightSkel::run() {
                 doSave = false;
             }
 
+            if (simultaneousEvents) {
+              std::cerr << "Error: you should not be encountering simultaneous events these days" << std::endl;
+              std::exit(1);
+            }
+
             offset_next = event->getOffset();
 
             std::cout << " current offset: " << offset << "\n"
