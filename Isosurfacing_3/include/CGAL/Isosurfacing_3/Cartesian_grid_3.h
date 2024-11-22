@@ -82,9 +82,9 @@ struct Cartesian_grid_location
     typename GeomTraits::Construct_vertex_3 vertex = g.geom_traits().construct_vertex_3_object();
 
     const Point_3& min_p = vertex(g.span(), 0);
-    return point(x_coord(min_p) + i * g.spacing()[0],
-                 y_coord(min_p) + j * g.spacing()[1],
-                 z_coord(min_p) + k * g.spacing()[2]);
+    return point(x_coord(min_p) + typename GeomTraits::FT(i) * g.spacing()[0],
+                 y_coord(min_p) + typename GeomTraits::FT(j) * g.spacing()[1],
+                 z_coord(min_p) + typename GeomTraits::FT(k) * g.spacing()[2]);
   }
 };
 
@@ -179,9 +179,9 @@ private:
     const FT y_span = y_coord(max_p) - y_coord(min_p);
     const FT z_span = z_coord(max_p) - z_coord(min_p);
 
-    const FT d_x = x_span / (m_dims[0] - 1);
-    const FT d_y = y_span / (m_dims[1] - 1);
-    const FT d_z = z_span / (m_dims[2] - 1);
+    const FT d_x = x_span / FT(m_dims[0] - 1);
+    const FT d_y = y_span / FT(m_dims[1] - 1);
+    const FT d_z = z_span / FT(m_dims[2] - 1);
 
     m_spacing = vector(d_x, d_y, d_z);
 

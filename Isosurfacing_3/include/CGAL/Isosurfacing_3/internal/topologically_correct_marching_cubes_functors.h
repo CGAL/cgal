@@ -246,7 +246,6 @@ private:
 
   Point_index add_point(const Point_3& p, const Edge_index& e)
   {
-
 #ifdef CGAL_LINKED_WITH_TBB
     typename Edge_point_map::accessor acc;
     if (!m_edges.insert(acc, e))
@@ -704,7 +703,7 @@ private:
     FT d = b * b - FT(4) * a * c;
     if(d > 0)
     {
-      d = sqrt(d);
+      d = sqrt(CGAL::to_double(d));
 
       // compute u-coord of solutions
       ui[0] = (-b - d) / (FT(2) * a);
@@ -714,24 +713,24 @@ private:
       FT g1 = values[0] * (FT(1) - ui[0]) + values[1] * ui[0];
       FT g2 = values[2] * (FT(1) - ui[0]) + values[3] * ui[0];
       vi[0] = (i0 - g1) / (g2 - g1);
-      if(std::isnan(vi[0]) || std::isinf(vi[0]))
+      if(std::isnan(CGAL::to_double(vi[0])) || std::isinf(CGAL::to_double(vi[0])))
         vi[0] = FT(-1);
 
       g1 = values[0] * (FT(1) - ui[1]) + values[1] * ui[1];
       g2 = values[2] * (FT(1) - ui[1]) + values[3] * ui[1];
       vi[1] = (i0 - g1) / (g2 - g1);
-      if(std::isnan(vi[1]) || std::isinf(vi[1]))
+      if(std::isnan(CGAL::to_double(vi[1])) || std::isinf(CGAL::to_double(vi[1])))
         vi[1] = FT(-1);
 
       // compute w-coordinates of solutions
       g1 = values[0] * (FT(1) - ui[0]) + values[1] * ui[0];
       g2 = values[4] * (FT(1) - ui[0]) + values[5] * ui[0];
       wi[0] = (i0 - g1) / (g2 - g1);
-      if (std::isnan(wi[0]) || std::isinf(wi[0])) wi[0] = FT(-1);
+      if (std::isnan(CGAL::to_double(wi[0])) || std::isinf(CGAL::to_double(wi[0]))) wi[0] = FT(-1);
       g1 = values[0] * (FT(1) - ui[1]) + values[1] * ui[1];
       g2 = values[4] * (FT(1) - ui[1]) + values[5] * ui[1];
       wi[1] = (i0 - g1) / (g2 - g1);
-      if(std::isnan(wi[1]) || std::isinf(wi[1]))
+      if(std::isnan(CGAL::to_double(wi[1])) || std::isinf(CGAL::to_double(wi[1])))
         wi[1] = FT(-1);
 
       // correct values for roots of quadratic equations
@@ -835,7 +834,7 @@ private:
     // if all bits are set, then there are three pairs of nontrivial solutions
     // to the quadratic equations. In this case, there is a tunnel or a contour
     // with 12 vertices. If there are three contours, then there is a tunnel and
-    // one of the contorus with only three vertices is not part of it.
+    // one of the contours with only three vertices is not part of it.
     if(numberOfSetBits(q_sol) == 6)
     {
       // there are at most three contours
@@ -1200,6 +1199,10 @@ private:
           }
           break;
         } // switch(c_faces)
+
+        ucoord = ucoord < 0.05 ? 0.05 : (ucoord > 0.95 ? 0.95 : ucoord);
+        vcoord = vcoord < 0.05 ? 0.05 : (vcoord > 0.95 ? 0.95 : vcoord);
+        wcoord = wcoord < 0.05 ? 0.05 : (wcoord > 0.95 ? 0.95 : wcoord);
 
         // create inner vertex
         const FT px = (FT(1) - wcoord) * ((FT(1) - vcoord) * (x_coord(corners[0]) + ucoord * (x_coord(corners[1]) - x_coord(corners[0]))) +

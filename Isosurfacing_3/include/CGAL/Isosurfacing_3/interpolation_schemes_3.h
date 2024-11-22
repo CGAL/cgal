@@ -67,9 +67,9 @@ public:
 
     // calculate min index including border case
     const Point_3& min_p = vertex(span, 0);
-    std::size_t i = std::size_t((x_coord(p) - x_coord(min_p)) / x_coord(spacing));
-    std::size_t j = std::size_t((y_coord(p) - y_coord(min_p)) / y_coord(spacing));
-    std::size_t k = std::size_t((z_coord(p) - z_coord(min_p)) / z_coord(spacing));
+    std::size_t i = std::size_t(CGAL::to_double((x_coord(p) - x_coord(min_p)) / x_coord(spacing)));
+    std::size_t j = std::size_t(CGAL::to_double((y_coord(p) - y_coord(min_p)) / y_coord(spacing)));
+    std::size_t k = std::size_t(CGAL::to_double((z_coord(p) - z_coord(min_p)) / z_coord(spacing)));
 
     if(i == g.xdim() - 1)
       --i;
@@ -79,9 +79,9 @@ public:
       --k;
 
     // calculate coordinates of min index
-    const FT min_x = x_coord(min_p) + i * spacing[0];
-    const FT min_y = y_coord(min_p) + j * spacing[1];
-    const FT min_z = z_coord(min_p) + k * spacing[2];
+    const FT min_x = x_coord(min_p) + FT(i) * spacing[0];
+    const FT min_y = y_coord(min_p) + FT(j) * spacing[1];
+    const FT min_z = z_coord(min_p) + FT(k) * spacing[2];
 
     // interpolation factors between 0 and 1
     const FT f_i = std::clamp<FT>((x_coord(p) - min_x) / spacing[0], 0, 1);
