@@ -740,7 +740,7 @@ int go(Mesh mesh, CDT_options options) {
     }
 
     if(!options.quiet) {
-      std::cerr << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
+      std::cout << "Number of vertices after conforming: " << cdt.number_of_vertices() << "\n\n";
     }
     CGAL_CDT_3_TASK_BEGIN(validation_task_handle);
     CGAL_assertion(!options.call_is_valid || cdt.Base_triantulation::is_valid(true));
@@ -912,6 +912,7 @@ int main(int argc, char* argv[]) {
   if(!options.quiet) {
     std::cout << "[timings] total time: " << std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - start_time).count() << " ms\n";
+    if(exit_code != 0) std::cout << "ERROR with exit code " << exit_code << '\n';
   }
   return exit_code;
 }
