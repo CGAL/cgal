@@ -186,7 +186,9 @@ int main(int argc, char** argv)
   }
 
   if(do_add) {
-    invert_and_add_bbox(sm);
+    if(!invert_and_add_bbox(sm)) {
+        return EXIT_FAILURE;
+    }
 
     std::ofstream out(output_filename);
     if(!out) {
@@ -201,7 +203,9 @@ int main(int argc, char** argv)
       return EXIT_FAILURE;
     }
   } else {
-    remove_bbox_and_invert(sm);
+    if (!remove_bbox_and_invert(sm)) {
+      return EXIT_FAILURE;
+    }
 
     std::ofstream out(output_filename);
     if(!out) {

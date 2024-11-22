@@ -38,6 +38,15 @@ create_single_source_cgal_program("compare_outputs.cpp")
 
 create_single_source_cgal_program("arrange_and_carve.cpp")
 
+find_package(Eigen3 3.1.0)
+if(Eigen3_FOUND)
+  message(STATUS "Found Eigen")
+  include(CGAL_Eigen3_support)
+
+  create_single_source_cgal_program("tilt_faces.cpp")
+  target_link_libraries(tilt_faces PRIVATE CGAL::Eigen3_support)
+endif()
+
 # to get help about a cmake module run:
 # $ cmake --help-module FindBoost
 if(BUILD_TESTS)
