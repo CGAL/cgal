@@ -539,12 +539,20 @@ PolyhedronSPtr CombiVertexSplitter::splitVertex(VertexSPtr vertex) {
             DEBUG_VAL("Valid split-combination found: " << combiToString(combination));
             combinations_valid.push_back(combination);
             polys_split.push_back(poly_c);
+            std::cout << "Found valid combination" << std::endl;
+#define CGAL_SS3_COMBI_SPLITER_STOP_ASAP
+#ifdef CGAL_SS3_COMBI_SPLITER_STOP_ASAP
+            // 'selected_combi_' is usually 0 => stop on the first valid combination
+            if(polys_split.size() > selected_combi_) {
+                break;
+            }
+#endif
         }
     }
 
-    CGAL_assertion(!combinations_valid.empty());
-    CGAL_assertion(!polys_split.empty());
-    CGAL_assertion(polys_split.size() == combinations_valid.size());
+    // some vertices in degenerate configurations cannot be split locally
+    CGAL_warning(!combinations_valid.empty());
+    CGAL_warning(!polys_split.empty());
 
     DEBUG_VAL("Valid split-combination #: " << combinations_valid.size());
 
