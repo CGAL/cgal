@@ -45,6 +45,17 @@ public:
                                       CGAL::FT offset,
                                       const bool recompute_positions = true);
 
+
+    /**
+     * Normalize facet planes
+    */
+    static void normalizeFacetPlanes(PolyhedronSPtr polyhedron);
+
+    /**
+     * Normalize facet planes, ensuring parallel facets receive the same plane coefficients.
+    */
+    static void harmonizeFacetPlanes(PolyhedronSPtr polyhedron);
+
     /**
      * To check for parallel planes is not enough.
      */

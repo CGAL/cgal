@@ -264,16 +264,6 @@ public:
      */
     std::pair<AbstractEventSPtr, bool> nextEvent(PQ& queue);
 
-    /**
-     * Normalize facet planes
-    */
-    static void normalizeFacetPlanes(PolyhedronSPtr polyhedron);
-
-    /**
-     * Normalize facet planes, ensuring parallel facets receive the same plane coefficients.
-    */
-    static void harmonizeFacetPlanes(PolyhedronSPtr polyhedron);
-
     std::pair<PolyhedronSPtr, CGAL::FT> enablePerturbedMode(PolyhedronSPtr polyhedron,
                                                             CGAL::FT currentOffset,
                                                             CGAL::FT simultaneousOffset);
