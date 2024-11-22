@@ -736,7 +736,57 @@ bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
                                         const bool dump_exact,
                                         const bool attempt_untilting)
 {
-    bool result = true;
+    bool result;
+
+    // attempt naive un-tilting
+    if (attempt_untilting) {
+        std::cout << "Attempting to un-tilt polyhedron..." << std::endl;
+
+        db::_3d::OBJFile::save("results/pre-untilt_attempt.obj", polyhedron,
+                               false /*do_triangulate*/,
+                               true /*convert_to_double*/);
+
+        PolyhedronSPtr polyhedron_cpy = polyhedron->clone();
+
+        std::list<FacetSPtr>::iterator it_f = polyhedron_cpy->facets().begin();
+        while (it_f != polyhedron_cpy->facets().end()) {
+            FacetSPtr facet = *it_f++;
+
+            // this assumes we have perturbed at the start ('0')
+            facet->restorePlaneCoefficients(0, current_offset);
+        }
+
+        // As to avoid having a vertex not be defined by e.g. 3 planes with 2 being equal post un-tilt
+        // That vertex is then useless, so just remove it
+        // Do it here, before we recompute point positions
+        db::_3d::AbstractFile::mergeCoplanarFacets(polyhedron_cpy, 0.0);
+
+        db::_3d::OBJFile::save("results/restored_merged.obj", polyhedron_cpy,
+                               false /*do_triangulate*/,
+                               true /*convert_to_double*/);
+
+        CGAL_assertion(polyhedron_cpy->isConsistent());
+
+        db::_3d::AbstractFile::removeVerticesDegLt3(polyhedron_cpy);
+
+        db::_3d::OBJFile::save("results/restored_final.obj", polyhedron_cpy,
+                               false /*do_triangulate*/,
+                               true /*convert_to_double*/);
+
+        polyhedron_cpy = PolyhedronTransformation::shiftFacets(polyhedron_cpy, 0.0);
+        if(!polyhedron_cpy || !polyhedron_cpy->isConsistent()) {
+            std::cerr << "Warning: failed to un-tilt polyhedron" << std::endl;
+            result = false;
+        } else {
+            polyhedron = polyhedron_cpy;
+            if (SelfIntersection::hasSelfIntersectingSurface(polyhedron)) {
+                std::cerr << "Warning: self-intersections after un-tilting" << std::endl;
+            } else {
+                std::cerr << "Successfully un-tilted polyhedron" << std::endl;
+            }
+            result = true;
+        }
+    }
 
     std::stringstream ss_filename, ss_filename_exact;
     ss_filename << save_path_.string() << "/offset_" << current_offset << ".obj";
