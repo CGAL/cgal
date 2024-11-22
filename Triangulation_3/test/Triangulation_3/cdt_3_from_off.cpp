@@ -73,6 +73,7 @@ Usage: cdt_3_from_off [options] input.off output.off
   --dump-after-conforming <filename.off>: dump mesh after conforming in OFF
 
   --no-repair: do not repair the mesh
+  --reject-self-intersections: reject self-intersecting polygon soups
   --no-is-valid: do not call is_valid checks
   --debug-input-faces: debug input faces
   --debug-missing-regions: debug missing regions
@@ -100,6 +101,7 @@ struct CDT_options
   bool        quiet                               = false;
   bool        merge_facets                        = true;
   bool        merge_facets_old_method             = false;
+  bool        reject_self_intersections           = false;
   bool        repair_mesh                         = true;
   bool        debug_input_faces                   = false;
   bool        debug_missing_regions               = false;
@@ -147,6 +149,8 @@ CDT_options::CDT_options(int argc, char* argv[]) {
       use_new_cavity_algorithm            = true;
     } else if(arg == "--use-old-cavity-algorithm"sv) {
       use_new_cavity_algorithm            = false;
+    } else if(arg == "--reject-self-intersections"sv) {
+      reject_self_intersections           = true;
     } else if(arg == "--no-repair"sv) {
       repair_mesh                         = false;
     } else if(arg == "--merge-facets-old"sv) {
@@ -894,6 +898,11 @@ int main(int argc, char* argv[]) {
     std::cout << std::endl;
   }
   CGAL_CDT_3_TASK_END(read_input_task_handle);
+
+  if(options.reject_self_intersections && result.polygon_soup_self_intersects) {
+    std::cerr << "ERROR: input mesh self-intersects\n";
+    return EXIT_FAILURE;
+  }
 
   if(!options.failure_assertion_expression.empty()) {
     return bissect_errors(std::move(mesh), options);
