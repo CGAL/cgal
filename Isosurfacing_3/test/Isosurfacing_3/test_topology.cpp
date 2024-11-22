@@ -50,9 +50,9 @@ std::size_t boundary_components(const PolygonMesh& mesh)
 {
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   std::vector<halfedge_descriptor> border_cycles;
- 
+
   CGAL::Polygon_mesh_processing::extract_boundary_cycles(mesh, std::back_inserter(border_cycles));
- 
+
   return border_cycles.size();
 }
 
@@ -551,7 +551,7 @@ void assert_tmc(const std::array<typename KERNEL::FT, 8>& case_values, typename 
     Point_range points;
     Triangle_range triangles;
     IS::marching_cubes<CGAL::Sequential_tag>(domain, iso, points, triangles, CGAL::parameters::use_topologically_correct_marching_cubes(true));
-    
+
     assert(points.size() && triangles.size());
     assert(!has_duplicate_points(points, triangles));
     assert(!has_duplicate_polygons(points, triangles));
@@ -576,7 +576,7 @@ void assert_tmc(const std::array<typename KERNEL::FT, 8>& case_values, typename 
     Point_range points;
     Triangle_range triangles;
     IS::marching_cubes<CGAL::Sequential_tag>(domain_closed, iso, points, triangles, CGAL::parameters::use_topologically_correct_marching_cubes(true));
-    
+
     assert(points.size() && triangles.size());
     assert(!has_duplicate_points(points, triangles));
     assert(!has_duplicate_polygons(points, triangles));
