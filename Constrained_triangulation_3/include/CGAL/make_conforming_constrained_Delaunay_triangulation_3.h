@@ -48,7 +48,7 @@ namespace CGAL {
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * If `Triangulation` is `CGAL::Default`, the geometric traits `Traits` is deduced from the polygon mesh type
- * `PolygonMesh` and the named parameters `NamedParameters`. And then the default conforming constrained Delaunay
+ * `PolygonMesh` and the named parameters `NamedParameters`. Then, the default conforming constrained Delaunay
  * triangulation is `CGAL::Conforming_constrained_Delaunay_triangulation_3<Traits>`.
  *
  * \param mesh The polygon mesh representing the constraints.
@@ -133,7 +133,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh& mes
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * If `Triangulation` is `CGAL::Default`, the geometric traits `Traits` is deduced from the point type
- * in `PointRange` and the named parameters `NamedParameters`. And then the default conforming constrained
+ * in `PointRange` and the named parameters `NamedParameters`. Then, the default conforming constrained
  * Delaunay triangulation is `CGAL::Conforming_constrained_Delaunay_triangulation_3<Traits>`.
  *
  * \param points a range of points representing the vertices of the polygon soup

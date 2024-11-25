@@ -517,7 +517,7 @@ class Conforming_constrained_Delaunay_triangulation_3;
 
 /*!
  * \ingroup PkgCT_3Classes
- * \brief This class template represents a 3D constrained Delaunay triangulation.
+ * \brief This class template represents a 3D conforming constrained Delaunay triangulation.
  *
  * It contains a data member of type `Triangulation` and provides additional functionality for handling
  * polygonal constraints during the triangulation process.
@@ -907,7 +907,7 @@ public:
   /// \name Accessors for Constrained Facets
   /// @{
   /*!
-   * \brief determines if a facet is constrained.
+   * \brief returns if a facet is constrained.
    * \param f is a facet of the triangulation, of type
    *        \link TriangulationDataStructure_3::Facet `Triangulation::Facet`, as defined by its triangulation data structure \endlink.
    */
@@ -916,7 +916,7 @@ public:
   }
 
   /*!
-   * \brief determines if a facet is constrained.
+   * \brief returns if a facet is constrained.
    *
    * The facet is identified by a cell handle and an index.
    *
