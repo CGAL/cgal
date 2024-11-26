@@ -2391,6 +2391,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         // src is the target of the edge when in the right face
         if (!check_bisector(edge_1, facet_r1, rt1, facet_1_src, point)) {
             // std::cout << "reject #2b" << std::endl;
+// #define CGAL_SS3_EXIT_ASAP
 #ifdef CGAL_SS3_EXIT_ASAP
             return { };
 #else
