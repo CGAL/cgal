@@ -1711,30 +1711,73 @@ Quadplane_parallelism quadplane_parallelism(FacetSPtr facet_0,
     }
 }
 
+std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::intersectionAndTimeOffsetPlanesWithCache(FacetSPtr facet_0,
+                                                                                             FacetSPtr facet_1,
+                                                                                             FacetSPtr facet_2,
+                                                                                             FacetSPtr facet_3)
+{
+// #define CGAL_SS3_NO_CACHING
+#ifdef CGAL_SS3_NO_CACHING
+      Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID());
+      Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
+      Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
+      Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
+      CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
+      CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
+      CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
+      CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+      return KernelWrapper::intersectionAndTimeOffsetPlanes(plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
+#endif
+
+    std::size_t ids[] = {facet_0->getBasePlaneID(), facet_1->getBasePlaneID(), facet_2->getBasePlaneID(), facet_3->getBasePlaneID()};
+    std::sort(std::begin(ids), std::end(ids));
+    auto canonical_ids = CGAL::make_array(ids[0], ids[1], ids[2], ids[3]);
+    std::pair<Point3SPtr, CGAL::FT> dummy_intersection;
+    auto res = intersectionCache_.emplace(canonical_ids, dummy_intersection);
+    if (res.second) {
+      // successful insertion, first time seeing it so actual computation is required
+      std::pair<Point3SPtr, CGAL::FT>& point_and_time = res.first->second;
+
+      Plane3SPtr plane_0 = basePlanes_.at(facet_0->getBasePlaneID()); // canonical order doesn't matter
+      Plane3SPtr plane_1 = basePlanes_.at(facet_1->getBasePlaneID());
+      Plane3SPtr plane_2 = basePlanes_.at(facet_2->getBasePlaneID());
+      Plane3SPtr plane_3 = basePlanes_.at(facet_3->getBasePlaneID());
+
+      // @fixme in theory, one would need to check if the data exists etc. etc.
+      // for now, it's a good to check if speeds are properly set
+      CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
+      CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
+      CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
+      CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
+
+      std::tie(point_and_time.first, point_and_time.second) = KernelWrapper::intersectionAndTimeOffsetPlanes(
+        plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
+
+      CGAL_assertion(*(point_and_time.first) == *(KernelWrapper::intersectionOffsetPlanes(
+          facet_0->getPlane(), speed_0, facet_1->getPlane(), speed_1,
+          facet_2->getPlane(), speed_2, facet_3->getPlane(), speed_3)));
+
+      // std::cout << "recompute needed: " << canonical_ids[0] << " " << canonical_ids[1] << " " << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
+    } else {
+      // std::cout << "used cache value: " << canonical_ids[0] << " " << canonical_ids[1] << " " << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
+    }
+
+    return res.first->second;
+}
+
 std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtGeneric(FacetSPtr facet_0,
                                                                       FacetSPtr facet_1,
                                                                       FacetSPtr facet_2,
-                                                                      FacetSPtr facet_3)
+                                                                      FacetSPtr facet_3,
+                                                                      CGAL::FT current_offset)
 {
-    Plane3SPtr plane_0 = facet_0->plane();
-    Plane3SPtr plane_1 = facet_1->plane();
-    Plane3SPtr plane_2 = facet_2->plane();
-    Plane3SPtr plane_3 = facet_3->plane();
-
-    // @fixme in theory, one would need to check if the data exists etc. etc.
-    // for now, it's a good to check if speeds are properly set
-    CGAL::FT speed_0 = std::dynamic_pointer_cast<SkelFacetData>(facet_0->getData())->getSpeed();
-    CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(facet_1->getData())->getSpeed();
-    CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
-    CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
-
     Point3SPtr point = Point3SPtr();
     CGAL::FT event_offset;
-    std::tie(point, event_offset) = KernelWrapper::intersectionAndTimeOffsetPlanes(
-      plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
+    std::tie(point, event_offset) = intersectionAndTimeOffsetPlanesWithCache(facet_0, facet_1, facet_2, facet_3);
 
-    if(point && event_offset <= 0) {
-        return { point, event_offset };
+    if(point && event_offset <= current_offset) {
+        // filtering with 'current_event' is done within the functions calling vanishesAt
+        return { point, event_offset - current_offset };
     } else {
         return { };
     }
@@ -1852,7 +1895,8 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtTwoPairs(FacetSPtr
     return {};
 }
 
-std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
+std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
+                                                               CGAL::FT current_offset)
 {
     Point3SPtr point = Point3SPtr();
     CGAL::FT offset_event;
@@ -1951,7 +1995,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge)
 
         if (parallelism == PLANES_PARALLELISM_NONE) {
             // generic case
-            std::tie(point, offset_event) = vanishesAtGeneric(facetL, facetP, facetR, facetN);
+            std::tie(point, offset_event) = vanishesAtGeneric(facetL, facetP, facetR, facetN, current_offset);
         } else if (parallelism == PLANES_PARALLEL_01) {
             CGAL_assertion(false);
             // std::tie(point, offset_event) = vanishesAtOnePairContiguous();
@@ -2098,16 +2142,17 @@ SimpleStraightSkel::check_bisector(EdgeSPtr edge,
 // @speed, should be able to not solve the system but just exit early if the 4 planes are clearly not intersecting (diametral spheres around the edges of size something?)
 std::pair<Point3SPtr, CGAL::FT>
 SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
-                            const std::optional<CGAL::FT> offset_max)
+                            const CGAL::FT current_offset,
+                            const CGAL::FT offset_to_farthest_event)
 {
     FacetSPtr facet_l1 = edge_1->getFacetL();
     FacetSPtr facet_r1 = edge_1->getFacetR();
     FacetSPtr facet_l2 = edge_2->getFacetL();
     FacetSPtr facet_r2 = edge_2->getFacetR();
-    Plane3SPtr plane_l1 = facet_l1->plane();
-    Plane3SPtr plane_r1 = facet_r1->plane();
-    Plane3SPtr plane_l2 = facet_l2->plane();
-    Plane3SPtr plane_r2 = facet_r2->plane();
+    Plane3SPtr plane_l1 = facet_l1->getPlane();
+    Plane3SPtr plane_r1 = facet_r1->getPlane();
+    Plane3SPtr plane_l2 = facet_l2->getPlane();
+    Plane3SPtr plane_r2 = facet_r2->getPlane();
     CGAL::FT speed_l1 = std::dynamic_pointer_cast<SkelFacetData>(facet_l1->getData())->getSpeed();
     CGAL::FT speed_r1 = std::dynamic_pointer_cast<SkelFacetData>(facet_r1->getData())->getSpeed();
     CGAL::FT speed_l2 = std::dynamic_pointer_cast<SkelFacetData>(facet_l2->getData())->getSpeed();
@@ -2160,8 +2205,12 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 
     Point3SPtr point;
     CGAL::FT offset_event;
-    std::tie(point, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
-        plane_l1, speed_l1, plane_r1, speed_r1, plane_l2, speed_l2, plane_r2, speed_r2);
+    std::tie(point, offset_event) = intersectionAndTimeOffsetPlanesWithCache(facet_l1, facet_r1, facet_l2, facet_r2);
+
+    // @todo modify the rest of the code so that it uses 'offset_event' directly without
+    // having to intermediary incremental offsets
+    // Be careful about shifts, for example (shift_point(p, offset_event))
+    offset_event = offset_event - current_offset;
 
     if (!point) {
         std::cerr << "Warning: no crashing?" << std::endl;
@@ -2188,7 +2237,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     }
 
     // Ignore the event if it happens further the future compared to the soonest top event.
-    if(offset_max && offset_max.value() > offset_event) {
+    if(offset_event <= offset_to_farthest_event) {
 #ifdef CGAL_SS3_DEBUG_CRASH_AT
         std::cout << "event is too far in the future" << std::endl;
 #endif
@@ -2458,7 +2507,7 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
 
         Point3SPtr point = Point3SPtr();
         CGAL::FT offset_event;
-        std::tie(point, offset_event) = vanishesAt(edge);
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
         if (!point) {
             continue;
         }
@@ -2730,7 +2779,7 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
 
         Point3SPtr point = Point3SPtr();
         CGAL::FT offset_event;
-        std::tie(point, offset_event) = vanishesAt(edge);
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
         if (!point) {
             continue;
         }
@@ -2833,7 +2882,7 @@ void SimpleStraightSkel::collectTriangleEvents(PolyhedronSPtr polyhedron,
 
         Point3SPtr point = Point3SPtr();
         CGAL::FT offset_event;
-        std::tie(point, offset_event) = vanishesAt(edge);
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
         if (!point) {
             continue;
         }
@@ -2958,7 +3007,7 @@ void SimpleStraightSkel::collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
 
         Point3SPtr point = Point3SPtr();
         CGAL::FT offset_event;
-        std::tie(point, offset_event) = vanishesAt(edge);
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
         if (!point) {
             continue;
         }
@@ -3031,7 +3080,7 @@ void SimpleStraightSkel::collectDblTriangleEvents(PolyhedronSPtr polyhedron,
 
         Point3SPtr point = Point3SPtr();
         CGAL::FT offset_event;
-        std::tie(point, offset_event) = vanishesAt(edge);
+        std::tie(point, offset_event) = vanishesAt(edge, current_offset);
         if (!point) {
             continue;
         }
@@ -3107,7 +3156,7 @@ void SimpleStraightSkel::collectTetrahedronEvents(PolyhedronSPtr polyhedron,
 
             Point3SPtr point = Point3SPtr();
             CGAL::FT offset_event;
-            std::tie(point, offset_event) = vanishesAt(edge);
+            std::tie(point, offset_event) = vanishesAt(edge, current_offset);
             if (!point) {
                 continue;
             }
@@ -3297,7 +3346,7 @@ void SimpleStraightSkel::collectVertexEvents(PolyhedronSPtr polyhedron,
 
             Point3SPtr point;
             CGAL::FT offset_event;
-            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset_to_nearest_event);
+            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, current_offset_to_nearest_event);
             if (!point)
                 continue;
 
@@ -3479,7 +3528,7 @@ void SimpleStraightSkel::collectFlipVertexEvents(PolyhedronSPtr polyhedron,
 
             Point3SPtr point;
             CGAL::FT offset_event;
-            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset_to_nearest_event);
+            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, current_offset_to_nearest_event);
             if (!point)
                 continue;
 
@@ -3630,7 +3679,7 @@ void SimpleStraightSkel::collectSurfaceEvents(PolyhedronSPtr polyhedron,
             // calculate intersection point
             Point3SPtr point;
             CGAL::FT offset_event;
-            std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset_to_nearest_event);
+            std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset, current_offset_to_nearest_event);
             if (!point)
                 continue;
 
@@ -3724,7 +3773,7 @@ void SimpleStraightSkel::collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
             // calculate intersection point
             Point3SPtr point;
             CGAL::FT offset_event;
-            std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset_to_nearest_event);
+            std::tie(point, offset_event) = crashAt(edge_1, edge_2, current_offset, current_offset_to_nearest_event);
             if (!point)
                 continue;
 
@@ -3920,7 +3969,7 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
 
             Point3SPtr point;
             CGAL::FT offset_event;
-            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset_to_nearest_event);
+            std::tie(point, offset_event) = crashAt(edge_11, edge_22, current_offset, current_offset_to_nearest_event);
             if (!point)
                 continue;
 
@@ -4347,9 +4396,8 @@ void SimpleStraightSkel::collectPierceEvents(PolyhedronSPtr polyhedron,
                 CGAL::FT speed_1 = std::dynamic_pointer_cast<SkelFacetData>(f1->getData())->getSpeed();
                 CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(f2->getData())->getSpeed();
 
-                std::tie(point, offset_event) = KernelWrapper::intersectionAndTimeOffsetPlanes(
-                    plane, speed, plane_0, speed_0, plane_1, speed_1, plane_2, speed_2);
-
+                // @todo ugly squatting of unrelated function 'vanishesAtGeneric'
+                std::tie(point, offset_event) = vanishesAtGeneric(facet, f0, f1, f2, current_offset);
                 if (!point) {
                     continue;
                 }

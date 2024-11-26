@@ -25,11 +25,26 @@
 #include "data/3d/skel/AbstractEvent.h"
 #include "data/3d/skel/ptrs.h"
 
+#include <boost/functional/hash.hpp>
+
 #include <filesystem>
 #include <list>
 #include <optional>
 #include <queue>
 #include <utility>
+
+namespace std {
+template <>
+struct hash<std::array<std::size_t, 4>> {
+    size_t operator()(const std::array<std::size_t, 4>& arr) const {
+        size_t seed = 0;
+        for (std::size_t value : arr) {
+            boost::hash_combine(seed, value); // Use boost::hash_combine
+        }
+        return seed;
+    }
+};
+}
 
 namespace algo { namespace _3d {
 
@@ -136,37 +151,49 @@ public:
                                FacetSPtr f_third,
                                Point3SPtr point);
 
-    static std::pair<Point3SPtr, CGAL::FT> vanishesAtGeneric(FacetSPtr facet_0,
-                                                             FacetSPtr facet_1,
-                                                             FacetSPtr facet_2,
-                                                             FacetSPtr facet_3);
-    static std::pair<Point3SPtr, CGAL::FT> vanishesAtOnePairOpposite(FacetSPtr facet_0,
-                                                                     FacetSPtr facet_1,
-                                                                     FacetSPtr facet_2,
-                                                                     FacetSPtr facet_3);
-    static std::pair<Point3SPtr, CGAL::FT> vanishesAtOnePairContiguous(FacetSPtr facet_0,
-                                                                       FacetSPtr facet_1,
-                                                                       FacetSPtr facet_2,
-                                                                       FacetSPtr facet_3);
-    static std::pair<Point3SPtr, CGAL::FT> vanishesAtTwoPairs(FacetSPtr facet_0,
+    /**
+     * @todo hamornize time and offset nomenclature
+     * Return the intersection point and time of the 4 shifting planes.
+     * Query the cache first, and fill it if it was not.
+     */
+    std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanesWithCache(FacetSPtr facet_0,
+                                                                             FacetSPtr facet_1,
+                                                                             FacetSPtr facet_2,
+                                                                             FacetSPtr facet_3);
+
+    std::pair<Point3SPtr, CGAL::FT> vanishesAtGeneric(FacetSPtr facet_0,
+                                                      FacetSPtr facet_1,
+                                                      FacetSPtr facet_2,
+                                                      FacetSPtr facet_3,
+                                                      CGAL::FT current_offset);
+    std::pair<Point3SPtr, CGAL::FT> vanishesAtOnePairOpposite(FacetSPtr facet_0,
                                                               FacetSPtr facet_1,
                                                               FacetSPtr facet_2,
                                                               FacetSPtr facet_3);
+    std::pair<Point3SPtr, CGAL::FT> vanishesAtOnePairContiguous(FacetSPtr facet_0,
+                                                                FacetSPtr facet_1,
+                                                                FacetSPtr facet_2,
+                                                                FacetSPtr facet_3);
+    std::pair<Point3SPtr, CGAL::FT> vanishesAtTwoPairs(FacetSPtr facet_0,
+                                                       FacetSPtr facet_1,
+                                                       FacetSPtr facet_2,
+                                                       FacetSPtr facet_3);
 
     /**
      * Returns the point where the edge will vanish.
      */
     // static Point3SPtr vanishesAt(EdgeSPtr edge);
-    static std::pair<Point3SPtr, CGAL::FT> vanishesAt(EdgeSPtr edge);
+    std::pair<Point3SPtr, CGAL::FT> vanishesAt(EdgeSPtr edge,
+                                               CGAL::FT current_offset);
 
     /**
      * Returns the point where 2 edges will crash into each other.
      *
      * If `offset_max` is passed, ignore the crash if it happens in the future.
      */
-    static std::pair<Point3SPtr, CGAL::FT> crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
-                                                   const std::optional<CGAL::FT> offset_max = std::nullopt);
-
+    std::pair<Point3SPtr, CGAL::FT> crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
+                                            const CGAL::FT current_events,
+                                            const CGAL::FT offset_of_farthest_event);
     /**
      * Returns the offset (time) when the facet will reach the given point.
      */
@@ -175,94 +202,94 @@ public:
     /**
      * Edge flip event.
      */
-    static void collectEdgeEvents(PolyhedronSPtr polyhedron,
-                                  const CGAL::FT current_offset,
-                                  CGAL::FT& curr_time_to_next_event,
-                                  PQ& queue);
+    void collectEdgeEvents(PolyhedronSPtr polyhedron,
+                           const CGAL::FT current_offset,
+                           CGAL::FT& curr_time_to_next_event,
+                           PQ& queue);
 
-    static void collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
-                                       const CGAL::FT current_offset,
-                                       CGAL::FT& curr_time_to_next_event,
-                                       PQ& queue);
+    void collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
+                                const CGAL::FT current_offset,
+                                CGAL::FT& curr_time_to_next_event,
+                                PQ& queue);
 
     /**
      * The triangle on the surface vanishes.
      */
-    static void collectTriangleEvents(PolyhedronSPtr polyhedron,
-                                      const CGAL::FT current_offset,
-                                      CGAL::FT& curr_time_to_next_event,
-                                      PQ& queue);
+    void collectTriangleEvents(PolyhedronSPtr polyhedron,
+                               const CGAL::FT current_offset,
+                               CGAL::FT& curr_time_to_next_event,
+                               PQ& queue);
 
-    static void collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
-                                          const CGAL::FT current_offset,
-                                          CGAL::FT& curr_time_to_next_event,
-                                          PQ& queue);
+    void collectDblEdgeMergeEvents(PolyhedronSPtr polyhedron,
+                                   const CGAL::FT current_offset,
+                                   CGAL::FT& curr_time_to_next_event,
+                                   PQ& queue);
 
-    static void collectDblTriangleEvents(PolyhedronSPtr polyhedron,
-                                         const CGAL::FT current_offset,
-                                         CGAL::FT& curr_time_to_next_event,
-                                         PQ& queue);
+    void collectDblTriangleEvents(PolyhedronSPtr polyhedron,
+                                  const CGAL::FT current_offset,
+                                  CGAL::FT& curr_time_to_next_event,
+                                  PQ& queue);
 
     /**
      * A tetrahedron causes one final event only.
      */
-    static void collectTetrahedronEvents(PolyhedronSPtr polyhedron,
-                                         const CGAL::FT current_offset,
-                                         CGAL::FT& curr_time_to_next_event,
-                                         PQ& queue);
+    void collectTetrahedronEvents(PolyhedronSPtr polyhedron,
+                                  const CGAL::FT current_offset,
+                                  CGAL::FT& curr_time_to_next_event,
+                                  PQ& queue);
 
     /**
      * Two vertices crash into each other.
      */
-    static void collectVertexEvents(PolyhedronSPtr polyhedron,
-                                    const CGAL::FT current_offset,
-                                    CGAL::FT& curr_time_to_next_event,
-                                    PQ& queue);
+    void collectVertexEvents(PolyhedronSPtr polyhedron,
+                             const CGAL::FT current_offset,
+                             CGAL::FT& curr_time_to_next_event,
+                             PQ& queue);
 
-    static void collectFlipVertexEvents(PolyhedronSPtr polyhedron,
-                                        const CGAL::FT current_offset,
-                                        CGAL::FT& curr_time_to_next_event,
-                                        PQ& queue);
+    void collectFlipVertexEvents(PolyhedronSPtr polyhedron,
+                                 const CGAL::FT current_offset,
+                                 CGAL::FT& curr_time_to_next_event,
+                                 PQ& queue);
 
     /**
      * Split event on the surface.
      * Edges do not need to be reflex.
      */
-    static void collectSurfaceEvents(PolyhedronSPtr polyhedron,
-                                     const CGAL::FT current_offset,
-                                     CGAL::FT& curr_time_to_next_event,
-                                     PQ& queue);
+    void collectSurfaceEvents(PolyhedronSPtr polyhedron,
+                              const CGAL::FT current_offset,
+                              CGAL::FT& curr_time_to_next_event,
+                              PQ& queue);
 
     /**
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
-    static void collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
-                                             const CGAL::FT current_offset,
-                                             CGAL::FT& curr_time_to_next_event,
-                                             PQ& queue);
+    void collectPolyhedronSplitEvents(PolyhedronSPtr polyhedron,
+                                      const CGAL::FT current_offset,
+                                      CGAL::FT& curr_time_to_next_event,
+                                      PQ& queue);
 
-    static void collectSplitMergeEvents(PolyhedronSPtr polyhedron,
-                                        const CGAL::FT current_offset,
-                                        CGAL::FT& curr_time_to_next_event,
-                                        PQ& queue);
+    void collectSplitMergeEvents(PolyhedronSPtr polyhedron,
+                                 const CGAL::FT current_offset,
+                                 CGAL::FT& curr_time_to_next_event,
+                                 PQ& queue);
 
     /**
      * This event occurs when two edges collide.
      * The first edge is always reflex.
      */
-    static void collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
-                                       const CGAL::FT current_offset,
-                                       CGAL::FT& curr_time_to_next_event,
-                                       PQ& queue);
+    void collectEdgeSplitEvents(PolyhedronSPtr polyhedron,
+                                const CGAL::FT current_offset,
+                                CGAL::FT& curr_time_to_next_event,
+                                PQ& queue);
 
     /**
      * A reflex vertex reaches a facet.
      */
-    static void collectPierceEvents(PolyhedronSPtr polyhedron,
-                                    const CGAL::FT current_offset,
-                                    CGAL::FT& curr_time_to_next_event,
-                                    PQ& queue);
+    void collectPierceEvents(PolyhedronSPtr polyhedron,
+                             const CGAL::FT current_offset,
+                             CGAL::FT& curr_time_to_next_event,
+                             PQ& queue);
 
     /**
      * Collect all events for the polyhedron
@@ -339,6 +366,8 @@ protected:
     CGAL::FT simultaneousOffset_ = 0;
 
     std::vector<Plane3SPtr> basePlanes_;
+    std::unordered_map<std::array<std::size_t, 4>,
+                       std::pair<Point3SPtr, CGAL::FT> > intersectionCache_;
 };
 
 } }
