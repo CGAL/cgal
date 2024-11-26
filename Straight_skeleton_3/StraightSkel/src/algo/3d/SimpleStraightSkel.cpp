@@ -155,7 +155,9 @@ SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron) {
     polyhedron_ = polyhedron;
     save_path_ = std::filesystem::current_path();
     skel_result_ = StraightSkeleton::create();
+#ifndef CGAL_SS3_NO_SKELETON_DS
     skel_result_->setPolyhedron(polyhedron);
+#endif
     initVertexSplitter();
     initEdgeEvent();
 }
@@ -165,7 +167,9 @@ SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron, ControllerSPtr
     controller_ = controller;
     save_path_ = std::filesystem::current_path();
     skel_result_ = StraightSkeleton::create();
+#ifndef CGAL_SS3_NO_SKELETON_DS
     skel_result_->setPolyhedron(polyhedron);
+#endif
     initVertexSplitter();
     initEdgeEvent();
 }
@@ -179,7 +183,9 @@ SimpleStraightSkel::SimpleStraightSkel(PolyhedronSPtr polyhedron,
     save_offsets_ = save_offsets;
     save_path_ = save_path;
     skel_result_ = StraightSkeleton::create();
+#ifndef CGAL_SS3_NO_SKELETON_DS
     skel_result_->setPolyhedron(polyhedron);
+#endif
     initVertexSplitter();
     initEdgeEvent();
 }
@@ -1075,8 +1081,10 @@ bool SimpleStraightSkel::run() {
                 db::_3d::OBJFile::save("results/shift_" + std::to_string(event_id) + ".obj", polyhedron, false /*do not triangulate*/);
 
                 if (event->getType() == AbstractEvent::CONST_OFFSET_EVENT) {
+#ifndef CGAL_SS3_NO_SKELETON_DS
                     event->setPolyhedronResult(polyhedron);
                     skel_result_->addEvent(event);
+#endif
                     bool screenshot_on_const_offset_event =
                             util::Configuration::getInstance()->getBool(
                             "algo_3d_SimpleStraightSkel", "screenshot_on_const_offset_event");
@@ -1404,7 +1412,9 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
     WriteLock l(polyhedron->mutex());
     bool result = true;
 
-    std::list<VertexSPtr>::iterator it_v = polyhedron->vertices().begin();
+    std::list<VertexSPtr>::iterator it_v;
+
+    it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
         if (vertex->degree() < 3) {
@@ -1413,12 +1423,14 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         if (!vertex->hasData()) {
             SkelVertexData::create(vertex);
         }
+#ifndef CGAL_SS3_NO_SKELETON_DS
         NodeSPtr node = createNode(vertex);
         if (node) {
             skel_result_->addNode(node);
         } else {
             result = false;
         }
+#endif
     }
 
     std::list<VertexSPtr> vertices_tosplit;
@@ -1427,6 +1439,7 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         VertexSPtr vertex = *it_v++;
         if (vertex->degree() > 3) {
             vertices_tosplit.push_back(vertex);
+#ifndef CGAL_SS3_NO_SKELETON_DS
             SkelVertexDataSPtr data;
             if (vertex->hasData()) {
                 data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
@@ -1434,6 +1447,7 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
                 data = SkelVertexData::create(vertex);
             }
             data->setHighlight(true);
+#endif
         }
     }
 
@@ -1495,6 +1509,7 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         }
     }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
     it_v = polyhedron->vertices().begin();
     while (it_v != polyhedron->vertices().end()) {
         VertexSPtr vertex = *it_v++;
@@ -1508,6 +1523,7 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
             result = false;
         }
     }
+
     std::list<EdgeSPtr>::iterator it_e = polyhedron->edges().begin();
     while (it_e != polyhedron->edges().end()) {
         EdgeSPtr edge = *it_e++;
@@ -1521,6 +1537,8 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
             result = false;
         }
     }
+#endif
+
     std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
@@ -7543,8 +7561,10 @@ std::pair<PolyhedronSPtr, CGAL::FT> SimpleStraightSkel::handleEventWithAutoref(A
 
     db::_3d::OBJFile::save("results/autoref_event-final.obj", polyhedron, false /*do not triangulate*/);
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 
     return { polyhedron, event->getOffset() + delta };
 }
@@ -7883,10 +7903,10 @@ void SimpleStraightSkel::handleEdgeEvent(EdgeEventSPtr event, PolyhedronSPtr pol
     skel_result_->addArc(arc_dst);
     SheetSPtr sheet = createSheet(edge_offset);
     skel_result_->addSheet(sheet);
-#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handleEdgeMergeEvent(EdgeMergeEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -7977,9 +7997,9 @@ void SimpleStraightSkel::handleEdgeMergeEvent(EdgeMergeEventSPtr event, Polyhedr
     vertex_data->setNode(event->getNode());
     ArcSPtr arc = createArc(vertex);
     skel_result_->addArc(arc);
-#endif
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 
 #if 0 // using EPECK for now so we are exact
     if (crashAt(edge_1, edge_b).first || crashAt(edge_b, edge_1).first) {
@@ -8061,12 +8081,14 @@ void SimpleStraightSkel::handleTriangleEvent(TriangleEventSPtr event, Polyhedron
     }
     polyhedron->addVertex(vertex_offset);
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
     SkelVertexDataSPtr data_offset = SkelVertexData::create(vertex_offset);
     data_offset->setNode(event->getNode());
     ArcSPtr arc = createArc(vertex_offset);
     skel_result_->addArc(arc);
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -8157,8 +8179,10 @@ void SimpleStraightSkel::handleDblEdgeMergeEvent(DblEdgeMergeEventSPtr event, Po
         polyhedron->removeVertex(vertex);
     }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -8265,8 +8289,10 @@ void SimpleStraightSkel::handleDblTriangleEvent(DblTriangleEventSPtr event, Poly
         polyhedron->removeVertex(vertex);
     }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handleTetrahedronEvent(TetrahedronEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -8330,8 +8356,10 @@ void SimpleStraightSkel::handleTetrahedronEvent(TetrahedronEventSPtr event, Poly
         polyhedron->removeVertex(vertex);
     }
 
+#ifndef CGAL_SS3_NO_SKELETON_DS
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handleVertexEvent(VertexEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -8455,10 +8483,10 @@ void SimpleStraightSkel::handleVertexEvent(VertexEventSPtr event, PolyhedronSPtr
     skel_result_->addArc(arc_2);
     SheetSPtr sheet = createSheet(edge_tomerge_2);
     skel_result_->addSheet(sheet);
-#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handleFlipVertexEvent(FlipVertexEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -8532,10 +8560,10 @@ void SimpleStraightSkel::handleFlipVertexEvent(FlipVertexEventSPtr event, Polyhe
     skel_result_->addArc(arc_1);
     ArcSPtr arc_2 = createArc(vertex_2);
     skel_result_->addArc(arc_2);
-#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -8655,10 +8683,10 @@ void SimpleStraightSkel::handleSurfaceEvent(SurfaceEventSPtr event, PolyhedronSP
     SkelEdgeData::create(edge_22);
     sheet = createSheet(edge_22);
     skel_result_->addSheet(sheet);
-#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -8766,10 +8794,10 @@ void SimpleStraightSkel::handlePolyhedronSplitEvent(PolyhedronSplitEventSPtr eve
     ArcSPtr arc_r = createArc(vertex_r);
     skel_result_->addArc(arc_l);
     skel_result_->addArc(arc_r);
-#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handleSplitMergeEvent(SplitMergeEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -8913,9 +8941,10 @@ void SimpleStraightSkel::handleSplitMergeEvent(SplitMergeEventSPtr event, Polyhe
     skel_result_->addArc(arc_1);
     ArcSPtr arc_2 = createArc(vertex_2);
     skel_result_->addArc(arc_2);
-#endif
+
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 
     std::cout << "########################################" << std::endl;
     std::cout << "###  Handle Split Merge Event (END)  ###" << std::endl;
@@ -8997,10 +9026,10 @@ void SimpleStraightSkel::handleEdgeSplitEvent(EdgeSplitEventSPtr event, Polyhedr
         SheetSPtr sheet = createSheet(edges[i]);
         skel_result_->addSheet(sheet);
     }
-#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr polyhedron) {
@@ -9111,7 +9140,7 @@ void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr
         // skel_result_->addEvent(event);
         return;
     }
-#endif
+#endif // CGAL_SS3_FILTER_PIERCE_EVENTS_AT_POP_TIME
 
     std::cout << "Pierce accepted" << std::endl;
 
@@ -9171,14 +9200,18 @@ void SimpleStraightSkel::handlePierceEvent(PierceEventSPtr event, PolyhedronSPtr
         SheetSPtr sheet = createSheet(edges[i]);
         skel_result_->addSheet(sheet);
     }
-#endif
 
     event->setPolyhedronResult(polyhedron);
     skel_result_->addEvent(event);
+#endif
 }
 
 
 StraightSkeletonSPtr SimpleStraightSkel::getResult() const {
+#ifndef CGAL_SS3_NO_SKELETON_DS
+    std::cerr << "No skeleton to return, it was not built" << std::endl;
+    std::exit(1);
+#endif
     return this->skel_result_;
 }
 
