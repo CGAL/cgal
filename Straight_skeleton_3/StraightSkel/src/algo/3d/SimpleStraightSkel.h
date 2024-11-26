@@ -294,6 +294,7 @@ public:
                                              const std::vector<std::vector<std::size_t> >& triangles,
                                              const std::vector<Plane3SPtr>& planes,
                                              const std::vector<CGAL::FT>& speeds);
+
     std::pair<PolyhedronSPtr, CGAL::FT> handleEventWithAutoref(AbstractEventSPtr event,
                                                                CGAL::FT currentOffset,
                                                                PolyhedronSPtr polyhedron);

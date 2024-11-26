@@ -213,7 +213,7 @@ bool OBJFile::save(const std::string& filename,
                    const bool do_triangulate,
                    const bool convert_to_double)
 {
-    std::cout << " -- Save OBJ " << filename << " -- " << std::endl;
+    std::cout << " -- Save OBJ " << filename << " --" << std::endl;
     std::cout << "do_triangulate | convert to double: " << std::boolalpha << do_triangulate << " " << convert_to_double << std::endl;
 
     polyhedron->initializeAllIDs();

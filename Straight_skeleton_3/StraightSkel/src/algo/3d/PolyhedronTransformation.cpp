@@ -144,13 +144,10 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
     // }
 
     if (!point) {
-#if 0
-        std::cerr << "Warning: triplet of planes doesn't define a point!" << std::endl;
-#else
+        std::cerr << "Error: triplet of planes doesn't define a point!" << std::endl;
         Point3SPtr result = Point3SPtr();
         DEBUG_SPTR(result);
         return result;
-#endif
     }
 
     return point;

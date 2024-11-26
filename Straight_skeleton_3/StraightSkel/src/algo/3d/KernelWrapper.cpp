@@ -239,6 +239,7 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset)
     const double d = plane->getD();
 # endif
     CGAL_assertion_code(CGAL::FT sq_n = a*a + b*b + c*c;)
+    // std::cout << "Shifting plane by " << offset << std::endl;
     // std::cout << "normalization check (post offset): " << sq_n
     //           << " (" << CGAL::to_interval(sq_n).first << "; "
     //           << CGAL::to_interval(sq_n).second << ")" << std::endl;
@@ -251,6 +252,9 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset)
     CGAL_assertion((sq_n - 1) < 1e-5);
 
     result = KernelFactory::createPlane3(a, b, c, d - offset);
+
+    // std::cout << "Now, " << *result << std::endl;
+
 #else // CGAL_SS3_OLD_CODE_OFFSET_PLANE
     const Point3& p = plane->point();
 # ifdef USE_CGAL

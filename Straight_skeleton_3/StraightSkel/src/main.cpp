@@ -397,7 +397,7 @@ int main(int argc, const char* argv[]) {
         algo::_3d::PolyhedronTransformation::harmonizeFacetPlanes(polyhedron);
 
         // since we have modified plane coefficients, ensure that points are on the facets
-        // @fixme, what if that shiftFacets fail?
+        // @fixme, what if 'shiftFacets()' fails?
         std::string description = polyhedron->getDescription();
         polyhedron = algo::_3d::PolyhedronTransformation::shiftFacets(polyhedron, 0.0);
         // polyhedron->clearData(); // @fixme: as to not clear facet speeds,
