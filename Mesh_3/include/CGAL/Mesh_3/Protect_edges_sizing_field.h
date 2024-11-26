@@ -455,33 +455,16 @@ private:
     // negative value (marker for special balls).
     if(dim < 0)
       dim = -1 - dim;
-
-    const FT s = field(p, dim, index);
-    if(s < minimal_size_)
-    {
-      std::stringstream msg;
-      msg.precision(17);
-      msg << "Error: the field is smaller than minimal size ("
-        << minimal_size_ << ") at ";
-      if(dim == 0) msg << "corner (";
-      else msg << "point (";
-      msg << p << ")";
-#if CGAL_MESH_3_PROTECTION_DEBUG & 4
-      CGAL_error_msg(([this, str = msg.str()](){
-        dump_c3t3(this->c3t3_, "dump-bug");
-        return str.c_str();
-      }()));
-#else // not CGAL_MESH_3_PROTECTION_DEBUG & 4
-      CGAL_error_msg(msg.str().c_str());
-#endif
-    }
-    return s;
+    else
+      return field(p, dim, index);
   }
 
   /// Query the sizing field and return its value at the point `p`
   FT query_size(const Bare_point& p, int dim, const Index& index) const
   {
     FT s = query_field(p, dim, index, size_);
+    if (use_minimal_size() && s < minimal_size_)
+      return minimal_size_;
     return s;
   }
 
