@@ -153,6 +153,17 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
     return point;
 }
 
+Plane3SPtr PolyhedronTransformation::shiftPlane(FacetSPtr facet,
+                                                CGAL::FT offset)
+{
+    CGAL::FT facet_speed = 1.0;
+    if (facet->hasData()) {
+        facet_speed = std::dynamic_pointer_cast<SkelFacetData>(facet->getData())->getSpeed();
+    }
+
+    return KernelWrapper::offsetPlane(facet->plane(), facet_speed*offset);
+}
+
 // @todo plenty of needless recomputations
 PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
                                                      CGAL::FT offset,

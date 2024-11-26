@@ -38,6 +38,11 @@ public:
     static Point3SPtr shiftPoint(VertexSPtr vertex, CGAL::FT offset);
 
     /**
+     * returns the shifted position of the facet of a polyhedron
+     */
+    static Plane3SPtr shiftPlane(FacetSPtr vertex, CGAL::FT offset);
+
+    /**
      * Creates an offset polyhedron.
      * Negative offset points to the interior of the polyhedron.
      */
