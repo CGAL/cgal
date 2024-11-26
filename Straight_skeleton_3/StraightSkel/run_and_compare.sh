@@ -164,7 +164,7 @@ function process_file {
     if [ ! -f $OC_OUTPUT ]; then
       echo "[ERROR]: missing OC output file?!"
       echo "$CMD" > $RESULT_FILE
-      echo "OTHER FAILURE" >> $RESULT_FILE
+      echo "PREPROCESS FAILURE" >> $RESULT_FILE
       return
     fi
 
@@ -218,9 +218,13 @@ function process_file {
       echo "BAD OUTPUT" >> $RESULT_FILE
     fi
   elif [ "$RES" -eq 143 ]; then
-    echo "====== [ERROR]: offset time out! ======"
+    echo "====== [ERROR]: time out! ======"
     echo "$CMD" > $RESULT_FILE
     echo "TIMEOUT" >> $RESULT_FILE
+  elif [ "$RES" -eq 137 ]; then
+    echo "====== [ERROR]: process killed! ======"
+    echo "$CMD" > $RESULT_FILE
+    echo "OTHER FAILURE" >> $RESULT_FILE
   else
     echo "====== [ERROR]: offset failure! ======"
     echo "$CMD" > $RESULT_FILE
