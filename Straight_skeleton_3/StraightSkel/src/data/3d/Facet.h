@@ -99,8 +99,8 @@ public:
     int getID() const;
     void setID(int id);
 
-    Plane3SPtr getBasePlane() const;
-    void setBasePlane(Plane3SPtr plane);
+    std::size_t getBasePlaneID() const;
+    void setBasePlaneID(std::size_t plane);
 
     /**
      * The direction of the normal points to the outside.
@@ -145,7 +145,7 @@ public:
     FacetDataSPtr data_;
     int id_;
 
-    Plane3SPtr basePlane_;
+    std::size_t basePlane_;
     Plane3SPtr plane_;
 
     Plane3SPtr cachedPlane_;

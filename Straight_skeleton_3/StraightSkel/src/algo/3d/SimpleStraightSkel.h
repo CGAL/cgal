@@ -337,6 +337,8 @@ protected:
     bool usingTemporaryPerturbedMode_ = false;
     CGAL::FT perturbationOffset_ = 0;
     CGAL::FT simultaneousOffset_ = 0;
+
+    std::vector<Plane3SPtr> basePlanes_;
 };
 
 } }

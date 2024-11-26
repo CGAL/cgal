@@ -100,7 +100,7 @@ FacetSPtr Facet::clone() const {
     }
 
     result->setPlane(this->getPlane());
-    result->setBasePlane(this->getBasePlane());
+    result->setBasePlaneID(this->getBasePlaneID());
 
     result->cachedSpeed_ = this->cachedSpeed_;
     result->cachedPlane_ = this->cachedPlane_;
@@ -537,11 +537,12 @@ void Facet::setID(int id) {
     this->id_ = id;
 }
 
-Plane3SPtr Facet::getBasePlane() const {
+std::size_t Facet::getBasePlaneID() const {
     return this->basePlane_;
 }
 
-void Facet::setBasePlane(Plane3SPtr plane) {
+// @todo proper names (with 'id')
+void Facet::setBasePlaneID(std::size_t plane) {
     this->basePlane_ = plane;
 }
 

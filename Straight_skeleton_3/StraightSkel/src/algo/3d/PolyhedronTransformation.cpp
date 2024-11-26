@@ -311,7 +311,7 @@ PolyhedronSPtr PolyhedronTransformation::shiftFacets(PolyhedronSPtr polyhedron,
 
         Plane3SPtr offset_plane = KernelWrapper::offsetPlane(facet->plane(), offset*speed);
         offset_facet->setPlane(offset_plane);
-        offset_facet->setBasePlane(facet->getBasePlane());
+        offset_facet->setBasePlaneID(facet->getBasePlaneID());
 
         // perturbation mechanisms
         offset_facet->cachedSpeed_ = facet->cachedSpeed_;
