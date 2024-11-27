@@ -242,7 +242,7 @@ class Intersection_of_triangle_meshes
   CGAL_assertion_code(bool doing_autorefinement;)
 
 // member functions
-  template <class VPMF, class VPME>
+  template <class VPMF, class VPME, class ISM>
   void filter_intersections(const TriangleMesh& tm_f,
                             const TriangleMesh& tm_e,
                             const VPMF& vpm_f,
@@ -251,8 +251,9 @@ class Intersection_of_triangle_meshes
                             bool throw_on_self_intersection,
                             std::set<face_descriptor>& tm_f_faces,
                             std::set<face_descriptor>& tm_e_faces,
-                            Bbox_3 tm_f_bb,
-                            Bbox_3 tm_e_bb,
+                            Bbox_3 g_bb,
+                            ISM is_shared_map_f,
+                            ISM is_shared_map_e,
                             bool run_check)
   {
     std::vector<Box> face_boxes, edge_boxes;
@@ -266,7 +267,13 @@ class Intersection_of_triangle_meshes
       Bbox_3 bb = get(vpm_f,source(h,tm_f)).bbox() +
                   get(vpm_f,target(h,tm_f)).bbox() +
                   get(vpm_f,target(next(h,tm_f),tm_f)).bbox();
-      if (do_overlap(bb, tm_e_bb))
+      if (get(is_shared_map_f,source(h,tm_f)) &&
+          get(is_shared_map_f,target(h,tm_f)) &&
+          get(is_shared_map_f,target(next(h,tm_f),tm_f)))
+      {
+        continue;
+      }
+      if (do_overlap(bb, g_bb))
       {
         face_boxes.emplace_back(bb, h);
         face_boxes_ptr.push_back( &face_boxes.back() );
@@ -282,8 +289,13 @@ class Intersection_of_triangle_meshes
         halfedge_descriptor h=halfedge(ed,tm_e);
         Bbox_3 bb = get(vpm_e,source(h,tm_e)).bbox() +
                     get(vpm_e,target(h,tm_e)).bbox();
+        if (get(is_shared_map_e,source(h,tm_e)) &&
+            get(is_shared_map_e,target(h,tm_e)))
+        {
+          continue;
+        }
 
-        if (do_overlap(bb, tm_f_bb))
+        if (do_overlap(bb, g_bb))
         {
           edge_boxes.emplace_back(bb,h);
           edge_boxes_ptr.push_back( &edge_boxes.back() );
@@ -306,8 +318,12 @@ class Intersection_of_triangle_meshes
         }
         Bbox_3 bb = get(vpm_e,source(h,tm_e)).bbox() +
                     get(vpm_e,target(h,tm_e)).bbox();
-
-        if (do_overlap(bb, tm_f_bb))
+        if (get(is_shared_map_e,source(h,tm_e)) &&
+            get(is_shared_map_e,target(h,tm_e)))
+        {
+          continue;
+        }
+        if (do_overlap(bb, g_bb))
         {
           edge_boxes.emplace_back(bb,h);
           edge_boxes_ptr.push_back( &edge_boxes.back() );
@@ -1732,13 +1748,84 @@ public:
            tm2_bb=bbox(tm2, parameters::vertex_point_map(vpm2));
 
 
+    if (!do_overlap(tm1_bb, tm2_bb))
+    {
+      visitor.finalize(nodes,tm1,tm2,vpm1,vpm2);
+      return output;
+    }
+
+    Bbox_3 bb12((std::max)(tm1_bb.xmin(),tm2_bb.xmin()), (std::max)(tm1_bb.ymin(),tm2_bb.ymin()), (std::max)(tm1_bb.zmin(),tm2_bb.zmin()),
+                (std::min)(tm1_bb.xmax(),tm2_bb.xmax()), (std::min)(tm1_bb.ymax(),tm2_bb.ymax()), (std::min)(tm1_bb.zmax(),tm2_bb.zmax()));
+
+    //~ if (true)
+    //~ {
+      std::vector<vertex_descriptor> tm1_verts, tm2_verts;
+      for (vertex_descriptor v : vertices(tm1))
+      {
+        const auto& p = get(vpm1, v);
+        if (p.x()<=bb12.xmax() && p.x()>=bb12.xmin() &&
+            p.y()<=bb12.ymax() && p.y()>=bb12.ymin() &&
+            p.z()<=bb12.zmax() && p.z()>=bb12.zmin())
+        {
+          tm1_verts.push_back(v);
+        }
+      }
+      for (vertex_descriptor v : vertices(tm2))
+      {
+        const auto& p = get(vpm2, v);
+        if (p.x()<=bb12.xmax() && p.x()>=bb12.xmin() &&
+            p.y()<=bb12.ymax() && p.y()>=bb12.ymin() &&
+            p.z()<=bb12.zmax() && p.z()>=bb12.zmin())
+        {
+          tm2_verts.push_back(v);
+        }
+      }
+
+      std::sort(tm1_verts.begin(), tm1_verts.end(),
+                [&vpm1](vertex_descriptor v1, vertex_descriptor v2)
+                { return get(vpm1, v1) < get(vpm1, v2);});
+      std::sort(tm2_verts.begin(), tm2_verts.end(),
+                [&vpm2](vertex_descriptor v1, vertex_descriptor v2)
+                { return get(vpm2, v1) < get(vpm2, v2);});
+
+      std::vector<std::pair<vertex_descriptor, vertex_descriptor> > common_vertices;
+
+      auto itv1=tm1_verts.begin(), itv1_end=tm1_verts.end(),
+           itv2=tm2_verts.begin(), itv2_end=tm2_verts.end();
+      while (itv1!=itv1_end && itv2!=itv2_end)
+      {
+        if (get(vpm1, *itv1) < get(vpm2, *itv2))
+          ++itv1;
+        else
+        {
+          if (!(get(vpm2, *itv2) < get(vpm1, *itv1)))
+          {
+            common_vertices.emplace_back(*itv1, *itv2);
+            ++itv1;
+          }
+          ++itv2;
+        }
+      }
+
+      auto is_shared_map1 = get(CGAL::dynamic_vertex_property_t<bool>(), tm1, false);
+      auto is_shared_map2 = get(CGAL::dynamic_vertex_property_t<bool>(), tm2, false);
+
+      for (const std::pair<vertex_descriptor, vertex_descriptor>& vp : common_vertices)
+      {
+        put(is_shared_map1, vp.first, true);
+        put(is_shared_map2, vp.second, true);
+      }
+      std::cout << "# common_vertices " << common_vertices.size() << "\n";
+    //~ }
+
+
     // used only if throw_on_self_intersection == true
     std::set<face_descriptor> tm1_faces;
     std::set<face_descriptor> tm2_faces;
 
     visitor.start_filtering_intersections();
-    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, tm1_bb, tm2_bb, false);
-    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, tm2_bb, tm1_bb, true);
+    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12, is_shared_map1, is_shared_map2, false);
+    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, bb12, is_shared_map2, is_shared_map1, true);
     visitor.end_filtering_intersections();
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());
