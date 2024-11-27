@@ -242,7 +242,7 @@ class Intersection_of_triangle_meshes
   CGAL_assertion_code(bool doing_autorefinement;)
 
 // member functions
-  template <class VPMF, class VPME, class ISM>
+  template <class VPMF, class VPME, class IFSM, class IESM>
   void filter_intersections(const TriangleMesh& tm_f,
                             const TriangleMesh& tm_e,
                             const VPMF& vpm_f,
@@ -252,8 +252,8 @@ class Intersection_of_triangle_meshes
                             std::set<face_descriptor>& tm_f_faces,
                             std::set<face_descriptor>& tm_e_faces,
                             Bbox_3 g_bb,
-                            ISM is_shared_map_f,
-                            ISM is_shared_map_e,
+                            IFSM is_shared_map_f,
+                            IESM is_shared_map_e,
                             bool run_check)
   {
     std::vector<Box> face_boxes, edge_boxes;
@@ -263,16 +263,11 @@ class Intersection_of_triangle_meshes
     face_boxes_ptr.reserve(num_faces(tm_f));
     for(face_descriptor fd : faces(tm_f))
     {
+      if (get(is_shared_map_f,fd)) continue;
       halfedge_descriptor h=halfedge(fd,tm_f);
       Bbox_3 bb = get(vpm_f,source(h,tm_f)).bbox() +
                   get(vpm_f,target(h,tm_f)).bbox() +
                   get(vpm_f,target(next(h,tm_f),tm_f)).bbox();
-      if (get(is_shared_map_f,source(h,tm_f)) &&
-          get(is_shared_map_f,target(h,tm_f)) &&
-          get(is_shared_map_f,target(next(h,tm_f),tm_f)))
-      {
-        continue;
-      }
       if (do_overlap(bb, g_bb))
       {
         face_boxes.emplace_back(bb, h);
@@ -286,14 +281,10 @@ class Intersection_of_triangle_meshes
       // general manifold case
       for(edge_descriptor ed : edges(tm_e))
       {
+        if (get(is_shared_map_e,ed)) continue;
         halfedge_descriptor h=halfedge(ed,tm_e);
         Bbox_3 bb = get(vpm_e,source(h,tm_e)).bbox() +
                     get(vpm_e,target(h,tm_e)).bbox();
-        if (get(is_shared_map_e,source(h,tm_e)) &&
-            get(is_shared_map_e,target(h,tm_e)))
-        {
-          continue;
-        }
 
         if (do_overlap(bb, g_bb))
         {
@@ -316,13 +307,10 @@ class Intersection_of_triangle_meshes
             // make sure the halfedge used is consistent with stored one
             h = halfedge(non_manifold_feature_map.non_manifold_edges[eid].front(), tm_e);
         }
+        if (get(is_shared_map_e,edge(h,tm_e))) continue;
         Bbox_3 bb = get(vpm_e,source(h,tm_e)).bbox() +
                     get(vpm_e,target(h,tm_e)).bbox();
-        if (get(is_shared_map_e,source(h,tm_e)) &&
-            get(is_shared_map_e,target(h,tm_e)))
-        {
-          continue;
-        }
+
         if (do_overlap(bb, g_bb))
         {
           edge_boxes.emplace_back(bb,h);
@@ -1757,76 +1745,158 @@ public:
     Bbox_3 bb12((std::max)(tm1_bb.xmin(),tm2_bb.xmin()), (std::max)(tm1_bb.ymin(),tm2_bb.ymin()), (std::max)(tm1_bb.zmin(),tm2_bb.zmin()),
                 (std::min)(tm1_bb.xmax(),tm2_bb.xmax()), (std::min)(tm1_bb.ymax(),tm2_bb.ymax()), (std::min)(tm1_bb.zmax(),tm2_bb.zmax()));
 
-    //~ if (true)
-    //~ {
-      std::vector<vertex_descriptor> tm1_verts, tm2_verts;
-      for (vertex_descriptor v : vertices(tm1))
-      {
-        const auto& p = get(vpm1, v);
-        if (p.x()<=bb12.xmax() && p.x()>=bb12.xmin() &&
-            p.y()<=bb12.ymax() && p.y()>=bb12.ymin() &&
-            p.z()<=bb12.zmax() && p.z()>=bb12.zmin())
-        {
-          tm1_verts.push_back(v);
-        }
-      }
-      for (vertex_descriptor v : vertices(tm2))
-      {
-        const auto& p = get(vpm2, v);
-        if (p.x()<=bb12.xmax() && p.x()>=bb12.xmin() &&
-            p.y()<=bb12.ymax() && p.y()>=bb12.ymin() &&
-            p.z()<=bb12.zmax() && p.z()>=bb12.zmin())
-        {
-          tm2_verts.push_back(v);
-        }
-      }
-
-      std::sort(tm1_verts.begin(), tm1_verts.end(),
-                [&vpm1](vertex_descriptor v1, vertex_descriptor v2)
-                { return get(vpm1, v1) < get(vpm1, v2);});
-      std::sort(tm2_verts.begin(), tm2_verts.end(),
-                [&vpm2](vertex_descriptor v1, vertex_descriptor v2)
-                { return get(vpm2, v1) < get(vpm2, v2);});
-
-      std::vector<std::pair<vertex_descriptor, vertex_descriptor> > common_vertices;
-
-      auto itv1=tm1_verts.begin(), itv1_end=tm1_verts.end(),
-           itv2=tm2_verts.begin(), itv2_end=tm2_verts.end();
-      while (itv1!=itv1_end && itv2!=itv2_end)
-      {
-        if (get(vpm1, *itv1) < get(vpm2, *itv2))
-          ++itv1;
-        else
-        {
-          if (!(get(vpm2, *itv2) < get(vpm1, *itv1)))
-          {
-            common_vertices.emplace_back(*itv1, *itv2);
-            ++itv1;
-          }
-          ++itv2;
-        }
-      }
-
-      auto is_shared_map1 = get(CGAL::dynamic_vertex_property_t<bool>(), tm1, false);
-      auto is_shared_map2 = get(CGAL::dynamic_vertex_property_t<bool>(), tm2, false);
-
-      for (const std::pair<vertex_descriptor, vertex_descriptor>& vp : common_vertices)
-      {
-        put(is_shared_map1, vp.first, true);
-        put(is_shared_map2, vp.second, true);
-      }
-      std::cout << "# common_vertices " << common_vertices.size() << "\n";
-    //~ }
-
-
     // used only if throw_on_self_intersection == true
+    // TODO: use a hashmap or dynamic_property?
     std::set<face_descriptor> tm1_faces;
     std::set<face_descriptor> tm2_faces;
 
-    visitor.start_filtering_intersections();
-    filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12, is_shared_map1, is_shared_map2, false);
-    filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, bb12, is_shared_map2, is_shared_map1, true);
-    visitor.end_filtering_intersections();
+    // preprocessing to detect identical faces/edges and
+    // ignore them in the intersection tests
+    std::vector<vertex_descriptor> tm1_verts, tm2_verts;
+    for (vertex_descriptor v : vertices(tm1))
+    {
+      const auto& p = get(vpm1, v);
+      if (p.x()<=bb12.xmax() && p.x()>=bb12.xmin() &&
+          p.y()<=bb12.ymax() && p.y()>=bb12.ymin() &&
+          p.z()<=bb12.zmax() && p.z()>=bb12.zmin())
+      {
+        tm1_verts.push_back(v);
+      }
+    }
+    for (vertex_descriptor v : vertices(tm2))
+    {
+      const auto& p = get(vpm2, v);
+      if (p.x()<=bb12.xmax() && p.x()>=bb12.xmin() &&
+          p.y()<=bb12.ymax() && p.y()>=bb12.ymin() &&
+          p.z()<=bb12.zmax() && p.z()>=bb12.zmin())
+      {
+        tm2_verts.push_back(v);
+      }
+    }
+
+    std::sort(tm1_verts.begin(), tm1_verts.end(),
+              [&vpm1](vertex_descriptor v1, vertex_descriptor v2)
+              { return get(vpm1, v1) < get(vpm1, v2);});
+    std::sort(tm2_verts.begin(), tm2_verts.end(),
+              [&vpm2](vertex_descriptor v1, vertex_descriptor v2)
+              { return get(vpm2, v1) < get(vpm2, v2);});
+
+
+    static constexpr std::size_t NOT_SHARED = std::size_t(-1);
+    auto is_vshared_map1 = get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm1, NOT_SHARED);
+    auto is_vshared_map2 = get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm2, NOT_SHARED);
+    std::vector<std::pair<vertex_descriptor, vertex_descriptor> > common_vertices;
+
+    auto itv1=tm1_verts.begin(), itv1_end=tm1_verts.end(),
+         itv2=tm2_verts.begin(), itv2_end=tm2_verts.end();
+    while (itv1!=itv1_end && itv2!=itv2_end)
+    {
+      if (get(vpm1, *itv1) < get(vpm2, *itv2))
+        ++itv1;
+      else
+      {
+        if (!(get(vpm2, *itv2) < get(vpm1, *itv1)))
+        {
+          put(is_vshared_map1, *itv1, common_vertices.size());
+          put(is_vshared_map2, *itv2, common_vertices.size());
+          common_vertices.emplace_back(*itv1, *itv2);
+          ++itv1;
+        }
+        ++itv2;
+      }
+    }
+
+    if (common_vertices.size()>=3)
+    {
+      auto is_fshared_map1 = get(CGAL::dynamic_face_property_t<bool>(), tm1, false);
+      auto is_fshared_map2 = get(CGAL::dynamic_face_property_t<bool>(), tm2, false);
+      auto is_eshared_map1 = get(CGAL::dynamic_edge_property_t<bool>(), tm1, false);
+      auto is_eshared_map2 = get(CGAL::dynamic_edge_property_t<bool>(), tm2, false);
+
+      auto array_less = [](const std::array<std::size_t,3>& a1,
+                           const std::array<std::size_t,3>& a2)
+      {
+        if (a1[0]!=a2[0]) return a1[0] < a2[0];
+        return a1[1] < a2[1];
+      };
+
+
+      for (const std::pair<vertex_descriptor, vertex_descriptor>& vp : common_vertices)
+      {
+        std::vector<face_descriptor> tm1_faces;
+        std::vector<std::array<std::size_t,3>> face_set; // [2] = id of face in tm1_faces
+
+        for (halfedge_descriptor h : halfedges_around_target(vp.first, tm1))
+        {
+          face_descriptor f1 = face(h, tm1);
+          if (f1 == graph_traits::null_face()) continue;
+          std::size_t k1 = get(is_vshared_map1, source(h,tm1));
+          h = next(h, tm1);
+          std::size_t k2 = get(is_vshared_map1, target(h,tm1));
+          if (k1!=NOT_SHARED && k2!=NOT_SHARED)
+          {
+            if (k2<k1) std::swap(k1,k2);
+            face_set.push_back(CGAL::make_array(k1,k2,tm1_faces.size()));
+            tm1_faces.push_back(f1);
+          }
+        }
+        if (face_set.empty()) continue;
+        std::sort(face_set.begin(), face_set.end(), array_less);
+
+        for (halfedge_descriptor h : halfedges_around_target(vp.second, tm2))
+        {
+          face_descriptor f2 = face(h, tm2);
+          if (f2 == graph_traits::null_face()) continue;
+          std::size_t k1 = get(is_vshared_map2, source(h,tm2));
+          h = next(h, tm2);
+          std::size_t k2 = get(is_vshared_map2, target(h,tm2));
+          if (k1!=NOT_SHARED && k2!=NOT_SHARED)
+          {
+            if (k2<k1) std::swap(k1,k2);
+
+            auto it = std::lower_bound(face_set.begin(), face_set.end(), CGAL::make_array(k1,k2,NOT_SHARED), array_less);
+            if ( (it != face_set.end()) && (*it)[0]==k1 && (*it)[1]==k2 )
+            {
+              put(is_fshared_map1, tm1_faces[(*it)[2]], true);
+              put(is_fshared_map2, f2, true);
+
+              halfedge_descriptor h=halfedge(tm1_faces[(*it)[2]], tm1);
+              for (int i=0;i<3;++i)
+              {
+                put(is_eshared_map1, edge(h, tm1), true);
+                h=next(h,tm1);
+              }
+              h=halfedge(f2, tm2);
+              for (int i=0;i<3;++i)
+              {
+                put(is_eshared_map2, edge(h, tm2), true);
+                h=next(h,tm2);
+              }
+            }
+          }
+        }
+      }
+
+      // TODO: is_eshared_map1 and is_eshared_map2 should be also put in ecm
+
+      visitor.start_filtering_intersections();
+      filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12,
+                           is_fshared_map1, is_eshared_map2, false);
+      filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, bb12,
+                           is_fshared_map2, is_eshared_map1, true);
+      visitor.end_filtering_intersections();
+    }
+    else
+    {
+      Static_boolean_property_map<face_descriptor,false> is_fshared_map;
+      Static_boolean_property_map<edge_descriptor,false> is_eshared_map;
+      visitor.start_filtering_intersections();
+      filter_intersections(tm1, tm2, vpm1, vpm2, non_manifold_feature_map_2, throw_on_self_intersection, tm1_faces, tm2_faces, bb12,
+                           is_fshared_map, is_eshared_map, false);
+      filter_intersections(tm2, tm1, vpm2, vpm1, non_manifold_feature_map_1, throw_on_self_intersection, tm2_faces, tm1_faces, bb12,
+                           is_fshared_map, is_eshared_map, true);
+      visitor.end_filtering_intersections();
+    }
 
     Node_id current_node((std::numeric_limits<Node_id>::max)());
     CGAL_assertion(current_node+1==0);
