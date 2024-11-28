@@ -51,7 +51,7 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL,$PLATFORM_NAME) = ("-","-","-","-","-","-","-","-","-","-","-","-","no","TPL:","-");
+    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL,$PLATFORM_NAME) = ("-","-","-","OS:","-","-","-","-","-","-","-","-","no","TPL:","-");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -73,7 +73,7 @@ sub reformat_results($)
             $COMPILER = $1;
         }
         if (/-- Operating system: (.*)/) {
-            $OS = $1;
+            $OS = "$OS $1";
         }
         if (/^TESTER_NAME\s+(.*)$/) {
             $TESTER_NAME = $1;

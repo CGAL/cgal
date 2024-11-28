@@ -330,56 +330,37 @@ EOF
     }
 }
 
-sub sort_pf
-{
-    # MSVS first
-    if($a =~ m/^MS/) {
-        if($b =~ m/^MS/) {
-            return $a cmp $b;
-        }
-        else
-        {
-            return -1;
+
+sub get_platform_operating_system($) {
+    my ($platform) = @_;
+    my $long_name = "";
+    foreach (@available_platforms) {
+        if (short_pfname($_) eq $platform) {
+            $long_name = $_;
+            last;
         }
     }
-    if($b =~ m/^MS/) { return 1; }
-
-    # g++/gcc second
-    if($a =~ m/^g[c+][c+]/) {
-        if($b =~ m/^g[c+][c+]/) {
-            return $a cmp $b;
+    if (open(PLATFORM_INFO, "results_${long_name}.info")) {
+        while (my $line = <PLATFORM_INFO>) {
+            chomp($line);
+            if ($line =~ /OS:\s*(.*?)$/) {
+                my $os = $1;
+                $os =~ s/"//g;
+                close(PLATFORM_INFO);
+                return $os;
+            }
         }
-        else
-        {
-            return -1;
-        }
+        close(PLATFORM_INFO);
     }
-    if($b =~ m/^g[c+][c+]/) { return 1; }
+    return "";
+}
 
-    # Intel third
-    if($a =~ m/^[iI]/) {
-        if($b =~ m/^[iI]/) {
-            return $a cmp $b;
-        }
-        else
-        {
-            return -1;
-        }
+sub sort_pf {
+    my $os_a = get_platform_operating_system($a);
+    my $os_b = get_platform_operating_system($b);
+    if ($os_a ne $os_b) {
+        return $os_a cmp $os_b;
     }
-    if($b =~ m/^[iI]/) { return 1; }
-
-    # SunPro last
-    if($a =~ m/^[Ss][uU[Nn]/) {
-        if($b =~ m/^[Ss][uU[Nn]/) {
-            return $a cmp $b;
-        }
-        else
-        {
-            return 1;
-        }
-    }
-    if($b =~ m/^[Ss][uU[Nn]/) { return -1; }
-
     return $a cmp $b;
 }
 
@@ -517,6 +498,9 @@ EOF
             $_ = <PLATFORM_INFO>; # OPERATING_SYSTEM
             chomp;
             my $operating_system = $_;
+            if ($_ =~ /^OS:\s*(.+)$/) {
+                $operating_system = $1;
+            }
             $_ = <PLATFORM_INFO>; # TESTER_NAME
             chomp;
             my $tester_name = $_;
