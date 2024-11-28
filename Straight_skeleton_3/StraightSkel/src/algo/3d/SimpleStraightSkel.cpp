@@ -3903,12 +3903,11 @@ void SimpleStraightSkel::collectSplitMergeEvents(PolyhedronSPtr polyhedron,
             if (vertex_1->getPoint() == vertex_2->getPoint()) {
                 continue;
             }
-            if (isConvex(vertex_2)) {
-                continue;
-            }
-
             if (vertex_1->findEdge(vertex_2)) {
                 // edge event
+                continue;
+            }
+            if (isConvex(vertex_2)) {
                 continue;
             }
 
