@@ -493,7 +493,7 @@ private:
 
                 typename Intersection_graph::Kinetic_interval& kinetic_interval = m_data.igraph().kinetic_interval(e, sp_idx);
                 crossing_iedges.push_back(e);
-                if (emin > s || (min_speed != min_speed)) {
+                if (emin > s || std::isnan(min_speed)) {
                   typename Intersection_kernel::FT bary_edge_exact = (emin - s) / (t - s);
                   FT bary_edge = from_exact((emin - s) / (t - s));
                   CGAL_assertion(bary_edge_exact >= 0);
@@ -505,7 +505,7 @@ private:
                   kinetic_interval.push_back(std::pair<FT, FT>(0, 0));
                 }
 
-                if (t > emax || (max_speed != max_speed)) {
+                if (t > emax || std::isnan(max_speed)) {
                   typename Intersection_kernel::FT bary_edge_exact = (emax - s) / (t - s);
                   FT bary_edge = from_exact((emax - s) / (t - s));
                   CGAL_assertion(0 <= bary_edge_exact && bary_edge_exact <= 1);
