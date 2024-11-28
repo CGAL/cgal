@@ -606,7 +606,7 @@ public:
 
       // Propagation.
       Propagation propagation(*partition.m_data, m_parameters);
-      std::size_t m_num_events = propagation.propagate(k);
+      propagation.propagate(k);
 
       partition_time += timer.time();
 
