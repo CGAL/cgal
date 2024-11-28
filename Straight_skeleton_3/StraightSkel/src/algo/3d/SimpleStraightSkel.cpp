@@ -1432,14 +1432,13 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         if (!vertex->hasData()) {
             SkelVertexData::create(vertex);
         }
-#ifndef CGAL_SS3_NO_SKELETON_DS
+        // leaving this regardless of the SKELETON_DS macro because of splitters
         NodeSPtr node = createNode(vertex);
         if (node) {
             skel_result_->addNode(node);
         } else {
             result = false;
         }
-#endif
     }
 
     std::list<VertexSPtr> vertices_tosplit;
@@ -1448,7 +1447,6 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
         VertexSPtr vertex = *it_v++;
         if (vertex->degree() > 3) {
             vertices_tosplit.push_back(vertex);
-#ifndef CGAL_SS3_NO_SKELETON_DS
             SkelVertexDataSPtr data;
             if (vertex->hasData()) {
                 data = std::dynamic_pointer_cast<SkelVertexData>(vertex->getData());
@@ -1456,7 +1454,6 @@ bool SimpleStraightSkel::init(PolyhedronSPtr polyhedron) {
                 data = SkelVertexData::create(vertex);
             }
             data->setHighlight(true);
-#endif
         }
     }
 
