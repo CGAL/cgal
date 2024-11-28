@@ -95,7 +95,7 @@ function process_file {
   fi
 
   # ----------------------------------------------------------------
-  # If outward offset, add Bbox and invert
+  # If outward offset, add bbox and invert
   if [ "${OFFSET_DIRECTION}" == "out" ]; then
     WEIGHTED_INPUT_WITH_BBOX="$OUTPUT_DIRECTORY/${FULL_ID}/input_inverted_with_bbox.ply"
     echo "WEIGHTED_INPUT_WITH_BBOX: ${WEIGHTED_INPUT_WITH_BBOX}"

@@ -367,13 +367,6 @@ bool SimpleStraightSkel::isReflex(VertexSPtr vertex) {
         EdgeWPtr edge_wptr = *it_e++;
         if (!edge_wptr.expired()) {
             EdgeSPtr edge = EdgeSPtr(edge_wptr);
-            if (isLocked(edge)) {
-                // @fixme I have no idea what effects this 'continue' has...
-                //
-                // Even if the edge is degen and locked, it still has geometry
-                // and could be convex or reflex?
-                continue;
-            }
             if (!isReflex(edge)) {
                 result = false;
                 break;
@@ -393,9 +386,6 @@ bool SimpleStraightSkel::isConvex(VertexSPtr vertex) {
         EdgeWPtr edge_wptr = *it_e++;
         if (!edge_wptr.expired()) {
             EdgeSPtr edge = EdgeSPtr(edge_wptr);
-            if (isLocked(edge)) {
-                continue; // I have no idea what effects this has; see isReflex()
-            }
             if (isReflex(edge)) {
                 result = false;
                 break;
@@ -2407,7 +2397,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 
     // @todo lots of duplicate computations
 
-    if (!(facet_1_src == facet_l2 || // @fixme are these facet checks required?
+    if (!(facet_1_src == facet_l2 ||
             facet_1_src == facet_r2)) {
         // std::cout << "-- check 1_src" << std::endl;
         // src is the target of the edge when in the right face
@@ -2540,18 +2530,13 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
 
         // This does not work when there is more than one edge between both facets.
         // EdgeSPtr edge_2 = facet_src->findEdge(facet_dst);
-        std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst);
+        std::list<EdgeSPtr> edges_2 = facet_src->findEdges(facet_dst); // @todo shouldn't this check with findEdges happen in other events?...
 
         bool split_event = false;
         std::list<EdgeSPtr>::iterator it_e2 = edges_2.begin();
         while (it_e2 != edges_2.end()) {
             EdgeSPtr edge_2 = *it_e2++;
 
-            if (isLocked(edge_2)) {
-                continue;
-            }
-
-            // @todo exit as soon as there is a single rejection (to be done once the old code is safe to remove)
 #if defined(CGAL_SS3_OLD_CODE_BOUND_CHECKS) || defined(CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS)
             bool split_event_current_1 = true;
             bool split_event_current_2 = true;
@@ -2783,7 +2768,7 @@ void SimpleStraightSkel::collectEdgeMergeEvents(PolyhedronSPtr polyhedron,
 #ifndef CGAL_SS3_ENFORCE_UNIQUE_EVENT_REPRESENTATIONS
         // @fixme not sure about that macro:
         // this is essentially the same as above but if 'edge' were 'edge->prev(facet_l)'
-        // so when we pass by again wit this edge, then we will meet it in the check just above.
+        // so when we pass by again with this edge, then we will meet it in the check just above.
         // BUT: the dbl edge merge event filter above applies only to 'edge' so we might filter
         // for edge->prev(facet_l) which we wouldn't have filtered when seeing it from 'edge'?
 
