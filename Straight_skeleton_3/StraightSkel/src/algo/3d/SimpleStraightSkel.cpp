@@ -803,15 +803,20 @@ bool SimpleStraightSkel::savePolyhedron(PolyhedronSPtr polyhedron,
         }
     }
 
-    std::stringstream ss_filename, ss_filename_exact;
+    std::stringstream ss_filename, ss_filename_triangulated, ss_filename_exact;
     ss_filename << save_path_.string() << "/offset_" << current_offset << ".obj";
+    ss_filename_triangulated << save_path_.string() << "/offset_" << current_offset << "_triangulated.obj";
     ss_filename_exact << save_path_.string() << "/offset_" << current_offset << "_exact.obj";
 
     result = (db::_3d::OBJFile::save(ss_filename.str(), polyhedron,
                                      false /*do_triangulate*/,
                                      true /*convert_to_double*/) && result);
+    result = (db::_3d::OBJFile::save(ss_filename_triangulated.str(), polyhedron,
+                                     true /*do_triangulate*/,
+                                     true /*convert_to_double*/) && result);
     result = (db::_3d::OBJFile::save(ss_filename_exact.str(), polyhedron,
-                                     do_triangulate, false /*convert_to_double*/) && result);
+                                     do_triangulate,
+                                     false /*convert_to_double*/) && result);
 
     return result;
 }
