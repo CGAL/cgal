@@ -281,6 +281,10 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
                                                    Plane3SPtr plane_3,
                                                    CGAL::FT w3)
 {
+    if(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)) {
+        return { };
+    }
+
     CGAL::FT a0 = plane_0->a(); CGAL::FT b0 = plane_0->b(); CGAL::FT c0 = plane_0->c(); CGAL::FT d0 = plane_0->d();
     CGAL::FT a1 = plane_1->a(); CGAL::FT b1 = plane_1->b(); CGAL::FT c1 = plane_1->c(); CGAL::FT d1 = plane_1->d();
     CGAL::FT a2 = plane_2->a(); CGAL::FT b2 = plane_2->b(); CGAL::FT c2 = plane_2->c(); CGAL::FT d2 = plane_2->d();
@@ -352,6 +356,10 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
                                                                                Plane3SPtr plane_3,
                                                                                CGAL::FT w3)
 {
+    if(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)) {
+        return { };
+    }
+
     CGAL::FT a0 = plane_0->a(); CGAL::FT b0 = plane_0->b(); CGAL::FT c0 = plane_0->c(); CGAL::FT d0 = plane_0->d();
     CGAL::FT a1 = plane_1->a(); CGAL::FT b1 = plane_1->b(); CGAL::FT c1 = plane_1->c(); CGAL::FT d1 = plane_1->d();
     CGAL::FT a2 = plane_2->a(); CGAL::FT b2 = plane_2->b(); CGAL::FT c2 = plane_2->c(); CGAL::FT d2 = plane_2->d();

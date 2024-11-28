@@ -35,6 +35,8 @@
 # endif
 #endif
 
+// debug
+// #define CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
 #define CGAL_SS3_PROFILE_FILTERING_MECHANISMS
 
 #include "algo/3d/SimpleStraightSkel.h"
@@ -1752,12 +1754,27 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::intersectionAndTimeOffsetPla
       CGAL::FT speed_2 = std::dynamic_pointer_cast<SkelFacetData>(facet_2->getData())->getSpeed();
       CGAL::FT speed_3 = std::dynamic_pointer_cast<SkelFacetData>(facet_3->getData())->getSpeed();
 
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
+    std::cout << "plane #0 = " << *plane_0 << std::endl;
+    std::cout << "plane #1 = " << *plane_1 << std::endl;
+    std::cout << "plane #2 = " << *plane_2 << std::endl;
+    std::cout << "plane #3 = " << *plane_3 << std::endl;
+    std::cout << "speed #0 = " << speed_0 << std::endl;
+    std::cout << "speed #1 = " << speed_1 << std::endl;
+    std::cout << "speed #2 = " << speed_2 << std::endl;
+    std::cout << "speed #3 = " << speed_3 << std::endl;
+#endif
+
       std::tie(point_and_time.first, point_and_time.second) = KernelWrapper::intersectionAndTimeOffsetPlanes(
         plane_0, speed_0, plane_1, speed_1, plane_2, speed_2, plane_3, speed_3);
 
-      CGAL_assertion(*(point_and_time.first) == *(KernelWrapper::intersectionOffsetPlanes(
-          facet_0->getPlane(), speed_0, facet_1->getPlane(), speed_1,
-          facet_2->getPlane(), speed_2, facet_3->getPlane(), speed_3)));
+      // @debug +
+      if (point_and_time.first) {
+        CGAL_assertion(*(point_and_time.first) == *(KernelWrapper::intersectionOffsetPlanes(
+            facet_0->getPlane(), speed_0, facet_1->getPlane(), speed_1,
+            facet_2->getPlane(), speed_2, facet_3->getPlane(), speed_3)));
+      }
+      // @debug -
 
       // std::cout << "recompute needed: " << canonical_ids[0] << " " << canonical_ids[1] << " " << canonical_ids[2] << " " << canonical_ids[3] << std::endl;
     } else {
@@ -1815,7 +1832,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtOnePairOpposite(Fa
     Point3 seed_1 = plane_1->point();
     Line3 orth_line (seed_1, *n_1);
 
-#ifdef CGAL_SS3_DEBUG_VANISH_AT
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
     std::cout << "facet1 = " << facet_1->getID() << std::endl;
     std::cout << "facet3 = " << facet_3->getID() << std::endl;
     std::cout << "plane1 = " << *plane_1 << std::endl;
@@ -1829,7 +1846,7 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAtOnePairOpposite(Fa
 
     CGAL::Object obj = CGAL::intersection(orth_line, *plane_3);
     if (const CGAL::Point3* seed_3_ptr = CGAL::object_cast<CGAL::Point3>(&obj)) {
-#ifdef CGAL_SS3_DEBUG_VANISH_AT
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
         std::cout << "seed_3 = " << *seed_3_ptr << std::endl;
 #endif
 
@@ -1903,15 +1920,9 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
     Point3SPtr point = Point3SPtr();
     CGAL::FT offset_event;
 
-// #define CGAL_SS3_DEBUG_VANISH_AT
-#ifdef CGAL_SS3_DEBUG_VANISH_AT
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
     std::cout << "vanishesAt " << edge->toString() << std::endl;
 #endif
-
-  // @fixme this seemingly assumes that extremities of 'edge' have degree 3?
-  // what happens if it's not the case, shouldn't we consider both fL fR fLP fLN,
-  // but also fL fR fRP fRN? OR even fL fR & (2 out of all faces incident to any
-  // extremity of 'edge')?
 
 // #define CGAL_SS3_OLD_CODE_VANISH_AT
 #ifdef CGAL_SS3_OLD_CODE_VANISH_AT
@@ -1956,14 +1967,15 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
     {
         FacetSPtr facetL = edge->getFacetL();
         FacetSPtr facetR = edge->getFacetR();
-        CGAL_assertion(facetL && facetR && facetL != facetR);
-# ifdef CGAL_SS3_DEBUG_VANISH_AT
+# ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
         std::cout << "facetL: " << facetL->getID() << std::endl;
         std::cout << "facetR: " << facetR->getID() << std::endl;
 # endif
+        CGAL_assertion(facetL && facetR && facetL != facetR);
+
         FacetSPtr facetP = edge->prev(facetL)->other(facetL);
         FacetSPtr facetN = edge->next(facetL)->other(facetL);
-# ifdef CGAL_SS3_DEBUG_VANISH_AT
+# ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
         if (facetP) {
             std::cout << "facetP: " << facetP->getID() << std::endl;
         }
@@ -2040,53 +2052,36 @@ std::pair<Point3SPtr, CGAL::FT> SimpleStraightSkel::vanishesAt(EdgeSPtr edge,
     return { point, offset_event };
 }
 
+// returns 'true' if the point is on f's side of the bisector between f and f third
 // edge: edge that is vanishing or crashing into another edge
 // f: one of the faces incident to the edge
 // t: the time of vanishing or the time of crash
-// f_third:
-bool
-SimpleStraightSkel::check_bisector(EdgeSPtr edge,
-                                   FacetSPtr f,
-                                   CGAL::FT t,
-                                   FacetSPtr f_third,
-                                   Point3SPtr point)
+// f_third: edge shared between 'f' and either the dst of the edge seen in f
+bool SimpleStraightSkel::check_bisector(EdgeSPtr edge,
+                                        FacetSPtr f,
+                                        CGAL::FT t,
+                                        FacetSPtr f_third,
+                                        Point3SPtr point)
 {
+    // @todo for speeds 0, when this function is called from crashAt, the t
+    // is the event time, but maybe if f or f_third have speed 0, we could quickly
+    // check like below?
+
     Plane3SPtr plane_third = f_third->plane();
-    CGAL::FT a_third = plane_third->a();
-    CGAL::FT b_third = plane_third->b();
-    CGAL::FT c_third = plane_third->c();
-    CGAL::FT d_third = plane_third->d();
     CGAL::FT speed_third = std::dynamic_pointer_cast<SkelFacetData>(f_third->getData())->getSpeed();
-    CGAL::FT t_third = (a_third * point->x() + b_third * point->y() + c_third * point->z() + d_third) / speed_third;
+    if (is_zero(speed_third)) {
+        return (KernelWrapper::side(plane_third, point) <= 0);
+    }
 
     EdgeSPtr edge_f_f_third = edge->next(f);
 
-    // std::cout << "edge = " << edge->toString() << std::endl;
-    // std::cout << "edge_f_f_third = " << edge_f_f_third->toString() << std::endl;
-    // std::cout << "time from third = " << t_third << std::endl;
-    CGAL_assertion(edge_f_f_third != edge);
-
-    // we want SMALLER to mean "on F1 side of the bisector"
-    // and     LARGER  to mean "on third side of the bisector"
-    CGAL::Comparison_result f_third_point_side;
-    if (isReflex(edge_f_f_third)) {
-        // std::cout << "F1O: reflex edge " << std::endl;
-        f_third_point_side = CGAL::compare(t, t_third);
-    } else {
-        // std::cout << "F1O: convex edge " << std::endl;
-        f_third_point_side = CGAL::compare(t_third, t);
-    }
-
-    // std::cout << "f_third_point_side = " << f_third_point_side << std::endl;
-
-    // Now, we have to determine which side of f-third is legal
-    // and that is determined by the angle that the face makes at the vertex
-    // common
+    // Determine which side of f-third is legal; that is determined by the angle
+    // that the face makes at the common vertex.
     //
     // We can't use the actual geometry of the edges because they might be degenerate,
-    // so everything must be done with planes
+    // so everything must be done with planes.
     //
-    // @todo construction-less
+    // @todo predicates
 
     FacetSPtr f_other = edge->other(f);
     Plane3SPtr plane_f = f->plane();
@@ -2123,6 +2118,32 @@ SimpleStraightSkel::check_bisector(EdgeSPtr edge,
     // because no 2 faces are coplanar, so below should be always true!
     CGAL_assertion(sp != 0);
 
+    // now, check on which side of the bisector we are
+    CGAL::FT a_third = plane_third->a();
+    CGAL::FT b_third = plane_third->b();
+    CGAL::FT c_third = plane_third->c();
+    CGAL::FT d_third = plane_third->d();
+    CGAL::FT t_third = (a_third * point->x() + b_third * point->y() + c_third * point->z() + d_third) / speed_third;
+
+    // std::cout << "edge = " << edge->toString() << std::endl;
+    // std::cout << "edge_f_f_third = " << edge_f_f_third->toString() << std::endl;
+    // std::cout << "time from third = " << t_third << std::endl;
+    CGAL_assertion(edge_f_f_third != edge);
+
+    // we want SMALLER to mean "on F1 side of the bisector"
+    // and     LARGER  to mean "on third side of the bisector"
+    CGAL::Comparison_result f_third_point_side;
+    if (isReflex(edge_f_f_third)) {
+        // std::cout << "F1O: reflex edge " << std::endl;
+        f_third_point_side = CGAL::compare(t, t_third);
+    } else {
+        // std::cout << "F1O: convex edge " << std::endl;
+        f_third_point_side = CGAL::compare(t_third, t);
+    }
+
+    // std::cout << "f_third_point_side = " << f_third_point_side << std::endl;
+
+    // Finally, combine both info to know on which side we are
     if (sp < 0) {
         // std::cout << "SP: right turn" << std::endl;
         if (f_third_point_side == CGAL::SMALLER) {
@@ -2178,8 +2199,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         parallelism = quadplane_parallelism(facet_l1, facet_r1, facet_l2, facet_r2);
     }
 
-// #define CGAL_SS3_DEBUG_CRASH_AT
-#ifdef CGAL_SS3_DEBUG_CRASH_AT
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
     std::cout << "-- Crash At\n    " << edge_1->toString() << "\n    " << edge_2->toString() << std::endl;
 
     std::cout << "Facet L1 = " << facet_l1->getID() << std::endl;
@@ -2219,7 +2239,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         return { };
     }
 
-#ifdef CGAL_SS3_DEBUG_CRASH_AT
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
     std::cout << "Intersection: " << *point << " @ " << offset_event << std::endl;
 #endif
 
@@ -2232,7 +2252,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     //
     // @fixme fix the == behavior... assuming no simultaneous events means we don't care for ==
     if (!(offset_event < 0)) { // written that way so that it matches when using CTRL+F
-#ifdef CGAL_SS3_DEBUG_CRASH_AT
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
         std::cout << "event is strictly in the past" << std::endl;
 #endif
       return { };
@@ -2240,7 +2260,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
 
     // Ignore the event if it happens further the future compared to the soonest top event.
     if(offset_event <= offset_to_farthest_event) {
-#ifdef CGAL_SS3_DEBUG_CRASH_AT
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
         std::cout << "event is too far in the future" << std::endl;
 #endif
         return { };
@@ -2252,7 +2272,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
     FacetSPtr facet_2_src = getFacetSrc(edge_2);
     FacetSPtr facet_2_dst = getFacetDst(edge_2);
 
-#ifdef CGAL_SS3_DEBUG_CRASH_AT
+#ifdef CGAL_SS3_DEBUG_QUAD_PLANE_INTERSECTIONS
     std::cout << "Facet 1 SRC = " << facet_1_src->getID() << std::endl;
     std::cout << "Facet 1 DST = " << facet_1_dst->getID() << std::endl;
     std::cout << "Facet 2 SRC = " << facet_2_src->getID() << std::endl;
