@@ -32,6 +32,7 @@ configure_file(${CMAKE_SOURCE_DIR}/src/config.h.in ${CMAKE_SOURCE_DIR}/src/confi
 find_package(CGAL)
 
 create_single_source_cgal_program("add_or_remove_bbox.cpp")
+create_single_source_cgal_program("analyze_input.cpp")
 create_single_source_cgal_program("color_ply_inputs.cpp")
 create_single_source_cgal_program("convert_to_weighted_PLY.cpp")
 create_single_source_cgal_program("compare_outputs.cpp")
