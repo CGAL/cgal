@@ -56,7 +56,13 @@ bool compare(const Mesh& ours,
   std::cout << "vol_theirs = " << vol_theirs << std::endl;
 
   if(CGAL::abs(vol_ours - vol_theirs) > 0.001 * vol_ours) {
-    std::cerr << "Error: significant difference in volume" << std::endl;
+    std::cerr << "Error: difference in volume" << std::endl;
+    if(CGAL::abs(vol_ours - vol_theirs) > 0.01 * vol_ours) {
+      std::cerr << "Error: significant difference in volume" << std::endl;
+      if(CGAL::abs(vol_ours - vol_theirs) > 0.1 * vol_ours) {
+        std::cerr << "Error: REALLY significant difference in volume" << std::endl;
+      }
+    }
     return false;
   }
 
