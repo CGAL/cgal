@@ -1267,12 +1267,12 @@ private:
 
       if (pos && neg) {
         std::cout << "face is not convex" << std::endl;
-        exit(1);
+        CGAL_assertion(false);
       }
 
       if (!pos && !neg) {
         std::cout << "face is degenerated" << std::endl;
-        exit(1);
+        CGAL_assertion(false);
       }
 
       if (neg) {
