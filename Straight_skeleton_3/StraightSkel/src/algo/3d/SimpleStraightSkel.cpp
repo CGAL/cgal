@@ -2413,7 +2413,7 @@ SimpleStraightSkel::crashAt(EdgeSPtr edge_1, EdgeSPtr edge_2,
         // src is the target of the edge when in the right face
         if (!check_bisector(edge_1, facet_r1, rt1, facet_1_src, point)) {
             // std::cout << "reject #2b" << std::endl;
-// #define CGAL_SS3_EXIT_ASAP
+#define CGAL_SS3_EXIT_ASAP
 #ifdef CGAL_SS3_EXIT_ASAP
             return { };
 #else
@@ -2613,15 +2613,29 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
             CGAL_assertion(lt2 == rt2);
 
             if ((lt2 > 0) || (rt2 > 0)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+                // can 'break' directly because it's the same value for all 'edge_2's
+                // @todo take it out of the loop
+                break;
+#else
                 split_event_current_1_b = false;
+#endif
             }
 
             if (!check_bisector(edge_2, facet_r2, rt2, facet_2_src, point)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+                continue;
+#else
                 split_event_current_2_b = false;
+#endif
             }
 
             if (!check_bisector(edge_2, facet_l2, lt2, facet_2_dst, point)) {
+#ifdef CGAL_SS3_EXIT_ASAP
+                continue;
+#else
                 split_event_current_3_b = false;
+#endif
             }
 
             const bool split_event_current_b = (split_event_current_1_b &&
@@ -2630,6 +2644,9 @@ void SimpleStraightSkel::collectEdgeEvents(PolyhedronSPtr polyhedron,
 #endif
 
 #ifdef CGAL_SS3_COMPARE_BOTH_BOUND_CHECKS
+# ifdef CGAL_SS3_EXIT_ASAP
+#  error "Cannot compare if doing early exits"
+# endif
             CGAL_assertion(split_event_current_1 == split_event_current_1_b);
             CGAL_assertion(split_event_current_2 == split_event_current_2_b);
             CGAL_assertion(split_event_current_3 == split_event_current_3_b);
