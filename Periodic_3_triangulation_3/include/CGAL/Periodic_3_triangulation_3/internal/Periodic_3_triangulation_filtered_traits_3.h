@@ -81,7 +81,7 @@ public:
   typedef typename Kernel::Iso_cuboid_3                         Iso_cuboid_3;
 
   virtual ~Periodic_3_triangulation_filtered_traits_base_3() { }
-
+  Periodic_3_triangulation_filtered_traits_base_3(const& Periodic_3_triangulation_filtered_traits_base_3) = delete;
   Periodic_3_triangulation_filtered_traits_base_3(const Iso_cuboid_3& domain,
                                                   const Kernel& k)
     :
@@ -165,6 +165,8 @@ public:
   typedef K_                                                        Kernel;
   typedef typename Kernel::Iso_cuboid_3                             Iso_cuboid_3;
 
+  Periodic_3_triangulation_filtered_traits_3& operator=(const Periodic_3_triangulation_filtered_traits_3&) = delete;
+  Periodic_3_triangulation_filtered_traits_3(const& Periodic_3_triangulation_filtered_traits_3) = delete;
   Periodic_3_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
                                              const Kernel& k)
     : Base(domain, k)
@@ -181,6 +183,11 @@ public:
   typedef K_                                                              Kernel;
   typedef typename Kernel::Iso_cuboid_3                                   Iso_cuboid_3;
 
+  Periodic_3_triangulation_filtered_traits_3& operator=(const Periodic_3_triangulation_filtered_traits_3& other)
+  { static_cast<Base&>(*this) = other;
+    std::cout << "here" << std::endl;
+    return *this; }
+  Periodic_3_triangulation_filtered_traits_3(const& Periodic_3_triangulation_filtered_traits_3) = delete;
   Periodic_3_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
                                              const Kernel& k)
     : Base(domain, k)

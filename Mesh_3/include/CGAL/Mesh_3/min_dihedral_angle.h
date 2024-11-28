@@ -34,7 +34,7 @@ minimum_dihedral_angle(
      const typename K::Point_3& p1,
      const typename K::Point_3& p2,
      const typename K::Point_3& p3,
-     K k = K())
+     const K& k = K())
 {
   typedef typename K::FT FT;
 
@@ -84,7 +84,7 @@ minimum_dihedral_angle(
      const typename K::Point_3& p1,
      const typename K::Point_3& p2,
      const typename K::Point_3& p3,
-     K k = K())
+     const K& k)
 {
   typedef typename K::FT FT;
 
@@ -148,6 +148,7 @@ template <typename Tetrahedron_3>
 typename Kernel_traits<Tetrahedron_3>::Kernel::FT
 minimum_dihedral_angle(const Tetrahedron_3& t )
 {
+  std::cout << "A" << std::endl;
   return minimum_dihedral_angle(t, typename Kernel_traits<Tetrahedron_3>::Kernel() );
 }
 
@@ -155,6 +156,8 @@ template<typename C3T3>
 typename C3T3::Triangulation::Geom_traits::FT
 minimum_dihedral_angle_in_c3t3(const C3T3& c3t3)
 {
+
+  std::cout << "B" << std::endl;
   typedef typename C3T3::Triangulation::Geom_traits K;
   typename K::FT min_angle = (typename K::FT)(90.);
 

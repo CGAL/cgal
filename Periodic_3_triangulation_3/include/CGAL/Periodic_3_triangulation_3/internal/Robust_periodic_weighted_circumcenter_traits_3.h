@@ -279,7 +279,7 @@ public:
   { return Construct_weighted_circumcenter_3(static_cast<const Base_traits&>(*this)); }
 
   Robust_periodic_weighted_circumcenter_traits_3(const Iso_cuboid_3& domain = Iso_cuboid_3(0,0,0,1,1,1),
-                                                 const Base_traits& t = Base_traits())
+                                                 const Base_traits& t = Base_traits() ) // AF
     : Base_traits(domain, t)
   { }
 };
