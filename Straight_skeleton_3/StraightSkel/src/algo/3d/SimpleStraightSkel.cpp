@@ -870,7 +870,7 @@ bool SimpleStraightSkel::run() {
 # endif
 
     std::size_t fi = 0;
-    std::list<FacetSPtr>::iterator it_f = polyhedron->facets().begin();
+    it_f = polyhedron->facets().begin();
     while (it_f != polyhedron->facets().end()) {
         FacetSPtr facet = *it_f++;
         CGAL::FT speed = other_speed;
