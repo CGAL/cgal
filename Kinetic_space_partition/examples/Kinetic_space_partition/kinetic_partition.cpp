@@ -18,7 +18,7 @@ using Timer        = CGAL::Real_timer;
 int main(int argc, char** argv)
 {
   // Reading polygons from file
-  std::string input_filename = (argc > 1 ? argv[1] : "data/test-4-rnd-polygons-4-6.off");
+  std::string input_filename = (argc > 1 ? argv[1] : "data/issue_8624 - Copy.off");
   std::ifstream input_file(input_filename);
 
   std::vector<Point_3> input_vertices;
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
   std::cout << "--- INPUT STATS: \n* number of polygons: " << input_faces.size() << std::endl;
 
   // Parameters.
-  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 1);
+  const unsigned int k = (argc > 2 ? std::atoi(argv[2]) : 2);
 
   // Initialization of Kinetic_space_partition_3 object.
   // 'debug' set to true exports intermediate results into files in the working directory.
@@ -44,6 +44,7 @@ int main(int argc, char** argv)
 
   // Providing input polygons.
   ksp.insert(input_vertices, input_faces);
+
 
   Timer timer;
   timer.start();
