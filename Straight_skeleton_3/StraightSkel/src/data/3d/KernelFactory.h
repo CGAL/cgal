@@ -25,7 +25,7 @@ class KernelFactory {
 public:
     virtual ~KernelFactory();
 
-    static Point3SPtr createPoint3(CGAL::FT x, CGAL::FT y, CGAL::FT z);
+    static Point3SPtr createPoint3(const CGAL::FT& x, const CGAL::FT& y, const CGAL::FT& z);
     static Point3SPtr createPoint3(const Point3& point);
     static Point3SPtr createPoint3(Vector3SPtr vector);
 
@@ -41,15 +41,15 @@ public:
     static Line3SPtr createLine3(const Line3& line);
     static Line3SPtr createLine3(Point3SPtr p, Vector3SPtr direction);
 
-    static Plane3SPtr createPlane3(CGAL::FT a, CGAL::FT b, CGAL::FT c, CGAL::FT d);
+    static Plane3SPtr createPlane3(const CGAL::FT& a, const CGAL::FT& b, const CGAL::FT& c, const CGAL::FT& d);
     static Plane3SPtr createPlane3(Point3SPtr p, Point3SPtr q, Point3SPtr r);
     static Plane3SPtr createPlane3(Point3SPtr p, Vector3SPtr normal);
     static Plane3SPtr createPlane3(const Plane3& plane);
 
-    static Sphere3SPtr createSphere3(Point3SPtr center, CGAL::FT radius);
+    static Sphere3SPtr createSphere3(Point3SPtr center, const CGAL::FT& radius);
     static Sphere3SPtr createSphere3(const Sphere3& sphere);
 
-    static Vector3SPtr createVector3(CGAL::FT x, CGAL::FT y, CGAL::FT z);
+    static Vector3SPtr createVector3(const CGAL::FT& x, const CGAL::FT& y, const CGAL::FT& z);
     static Vector3SPtr createVector3(const Vector3& vector);
     static Vector3SPtr createVector3(Point3SPtr point);
 

@@ -73,16 +73,16 @@ public:
 
     static Vector3SPtr normalize(Vector3SPtr v);
 
-    static Plane3SPtr offsetPlane(Plane3SPtr plane, CGAL::FT offset);
-    static Point3SPtr intersectionOffsetPlanes(Plane3SPtr plane_0, CGAL::FT w0,
-                                               Plane3SPtr plane_1, CGAL::FT w1,
-                                               Plane3SPtr plane_2, CGAL::FT w2,
-                                               Plane3SPtr plane_3, CGAL::FT w3);
-    static std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0, CGAL::FT w0,
-                                                                           Plane3SPtr plane_1, CGAL::FT w1,
-                                                                           Plane3SPtr plane_2, CGAL::FT w2,
-                                                                           Plane3SPtr plane_3, CGAL::FT w3);
-    static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::FT offset);
+    static Plane3SPtr offsetPlane(Plane3SPtr plane, const CGAL::FT& offset);
+    static Point3SPtr intersectionOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                               Plane3SPtr plane_1, const CGAL::FT& w1,
+                                               Plane3SPtr plane_2, const CGAL::FT& w2,
+                                               Plane3SPtr plane_3, const CGAL::FT& w3);
+    static std::pair<Point3SPtr, CGAL::FT> intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0, const CGAL::FT& w0,
+                                                                           Plane3SPtr plane_1, const CGAL::FT& w1,
+                                                                           Plane3SPtr plane_2, const CGAL::FT& w2,
+                                                                           Plane3SPtr plane_3, const CGAL::FT& w3);
+    static Point3SPtr offsetPoint(Point3SPtr point, Vector3SPtr dir, const CGAL::FT& offset);
 
     /**
      * http://de.wikipedia.org/wiki/Drehmatrix
@@ -91,8 +91,8 @@ public:
      * R_n(alpha) = [ n_y n_x (1 - cos(alpha)) + n_z sin(alpha)   n_y^2 (1 - cos(alpha)) + cos(alpha)         n_y n_z (1 - cos(alpha)) - n_x sin(alpha) ]
      *              [ n_z n_x (1 - cos(alpha)) - n_y sin(alpha)   n_z n_y (1 - cos(alpha)) + n_x sin(alpha)   n_z^2 (1 - cos(alpha)) + cos(alpha)       ]
      */
-    static Vector3SPtr rotateVector(Vector3SPtr vector, Vector3SPtr axis, CGAL::FT angle);
-    static Plane3SPtr rotatePlane(Plane3SPtr plane, Line3SPtr line, CGAL::FT angle);
+    static Vector3SPtr rotateVector(Vector3SPtr vector, Vector3SPtr axis, const CGAL::FT& angle);
+    static Plane3SPtr rotatePlane(Plane3SPtr plane, Line3SPtr line, const CGAL::FT& angle);
 
     static int side(Plane3SPtr plane, Point3SPtr point);
     static int orientation(Line3SPtr line1, Line3SPtr line2);

@@ -222,7 +222,7 @@ Vector3SPtr KernelWrapper::normalize(Vector3SPtr v) {
     return result;
 }
 
-Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset)
+Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, const CGAL::FT& offset)
 {
     Plane3SPtr result = Plane3SPtr();
 // #define CGAL_SS3_OLD_CODE_OFFSET_PLANE
@@ -273,22 +273,34 @@ Plane3SPtr KernelWrapper::offsetPlane(Plane3SPtr plane, CGAL::FT offset)
 }
 
 Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
-                                                   CGAL::FT w0,
+                                                   const CGAL::FT& w0,
                                                    Plane3SPtr plane_1,
-                                                   CGAL::FT w1,
+                                                   const CGAL::FT& w1,
                                                    Plane3SPtr plane_2,
-                                                   CGAL::FT w2,
+                                                   const CGAL::FT& w2,
                                                    Plane3SPtr plane_3,
-                                                   CGAL::FT w3)
+                                                   const CGAL::FT& w3)
 {
     if(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)) {
         return { };
     }
 
-    CGAL::FT a0 = plane_0->a(); CGAL::FT b0 = plane_0->b(); CGAL::FT c0 = plane_0->c(); CGAL::FT d0 = plane_0->d();
-    CGAL::FT a1 = plane_1->a(); CGAL::FT b1 = plane_1->b(); CGAL::FT c1 = plane_1->c(); CGAL::FT d1 = plane_1->d();
-    CGAL::FT a2 = plane_2->a(); CGAL::FT b2 = plane_2->b(); CGAL::FT c2 = plane_2->c(); CGAL::FT d2 = plane_2->d();
-    CGAL::FT a3 = plane_3->a(); CGAL::FT b3 = plane_3->b(); CGAL::FT c3 = plane_3->c(); CGAL::FT d3 = plane_3->d();
+    const CGAL::FT& a0 = plane_0->a();
+    const CGAL::FT& b0 = plane_0->b();
+    const CGAL::FT& c0 = plane_0->c();
+    const CGAL::FT& d0 = plane_0->d();
+    const CGAL::FT& a1 = plane_1->a();
+    const CGAL::FT& b1 = plane_1->b();
+    const CGAL::FT& c1 = plane_1->c();
+    const CGAL::FT& d1 = plane_1->d();
+    const CGAL::FT& a2 = plane_2->a();
+    const CGAL::FT& b2 = plane_2->b();
+    const CGAL::FT& c2 = plane_2->c();
+    const CGAL::FT& d2 = plane_2->d();
+    const CGAL::FT& a3 = plane_3->a();
+    const CGAL::FT& b3 = plane_3->b();
+    const CGAL::FT& c3 = plane_3->c();
+    const CGAL::FT& d3 = plane_3->d();
 
 // #define CGAL_SS3_DEBUG_PLANES_INTERSECTION
 #ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
@@ -348,22 +360,34 @@ Point3SPtr KernelWrapper::intersectionOffsetPlanes(Plane3SPtr plane_0,
 
 // @todo avoid the duplication (need to avoid recomputing the denominator)
 std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(Plane3SPtr plane_0,
-                                                                               CGAL::FT w0,
+                                                                               const CGAL::FT& w0,
                                                                                Plane3SPtr plane_1,
-                                                                               CGAL::FT w1,
+                                                                               const CGAL::FT& w1,
                                                                                Plane3SPtr plane_2,
-                                                                               CGAL::FT w2,
+                                                                               const CGAL::FT& w2,
                                                                                Plane3SPtr plane_3,
-                                                                               CGAL::FT w3)
+                                                                               const CGAL::FT& w3)
 {
     if(is_zero(w0) && is_zero(w1) && is_zero(w2) && is_zero(w3)) {
         return { };
     }
 
-    CGAL::FT a0 = plane_0->a(); CGAL::FT b0 = plane_0->b(); CGAL::FT c0 = plane_0->c(); CGAL::FT d0 = plane_0->d();
-    CGAL::FT a1 = plane_1->a(); CGAL::FT b1 = plane_1->b(); CGAL::FT c1 = plane_1->c(); CGAL::FT d1 = plane_1->d();
-    CGAL::FT a2 = plane_2->a(); CGAL::FT b2 = plane_2->b(); CGAL::FT c2 = plane_2->c(); CGAL::FT d2 = plane_2->d();
-    CGAL::FT a3 = plane_3->a(); CGAL::FT b3 = plane_3->b(); CGAL::FT c3 = plane_3->c(); CGAL::FT d3 = plane_3->d();
+    const CGAL::FT& a0 = plane_0->a();
+    const CGAL::FT& b0 = plane_0->b();
+    const CGAL::FT& c0 = plane_0->c();
+    const CGAL::FT& d0 = plane_0->d();
+    const CGAL::FT& a1 = plane_1->a();
+    const CGAL::FT& b1 = plane_1->b();
+    const CGAL::FT& c1 = plane_1->c();
+    const CGAL::FT& d1 = plane_1->d();
+    const CGAL::FT& a2 = plane_2->a();
+    const CGAL::FT& b2 = plane_2->b();
+    const CGAL::FT& c2 = plane_2->c();
+    const CGAL::FT& d2 = plane_2->d();
+    const CGAL::FT& a3 = plane_3->a();
+    const CGAL::FT& b3 = plane_3->b();
+    const CGAL::FT& c3 = plane_3->c();
+    const CGAL::FT& d3 = plane_3->d();
 
 #ifdef CGAL_SS3_DEBUG_PLANES_INTERSECTION
     std::cout << "Coefficients\n" << a0 << " " << b0 << " " << c0 << " " << d0 << "\n"
@@ -431,7 +455,7 @@ std::pair<Point3SPtr, CGAL::FT> KernelWrapper::intersectionAndTimeOffsetPlanes(P
     return { result, t };
 }
 
-Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::FT offset) {
+Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, const CGAL::FT& offset) {
     Point3SPtr result;
 #ifdef USE_CGAL
     Vector3 dir_normalized = *dir / CGAL::disallowed_sqrt(dir->squared_length());
@@ -444,7 +468,7 @@ Point3SPtr KernelWrapper::offsetPoint(Point3SPtr point, Vector3SPtr dir, CGAL::F
     return result;
 }
 
-Vector3SPtr KernelWrapper::rotateVector(Vector3SPtr vector, Vector3SPtr axis, CGAL::FT angle) {
+Vector3SPtr KernelWrapper::rotateVector(Vector3SPtr vector, Vector3SPtr axis, const CGAL::FT& angle) {
     Vector3SPtr result;
     Vector3SPtr v_n = KernelWrapper::normalize(axis);
     CGAL::FT n[3];
@@ -478,7 +502,7 @@ Vector3SPtr KernelWrapper::rotateVector(Vector3SPtr vector, Vector3SPtr axis, CG
     return result;
 }
 
-Plane3SPtr KernelWrapper::rotatePlane(Plane3SPtr plane, Line3SPtr line, CGAL::FT angle) {
+Plane3SPtr KernelWrapper::rotatePlane(Plane3SPtr plane, Line3SPtr line, const CGAL::FT& angle) {
     Plane3SPtr result;
     Point3SPtr point;
 #ifdef USE_CGAL
