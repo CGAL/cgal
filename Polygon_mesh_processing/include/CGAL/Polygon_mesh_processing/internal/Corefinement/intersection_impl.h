@@ -1781,7 +1781,7 @@ public:
               [&vpm2](vertex_descriptor v1, vertex_descriptor v2)
               { return get(vpm2, v1) < get(vpm2, v2);});
 
-
+    // TODO: can we get rid of is_vshared_map1 and is_vshared_map2 when done?
     static constexpr std::size_t NOT_SHARED = std::size_t(-1);
     auto is_vshared_map1 = get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm1, NOT_SHARED);
     auto is_vshared_map2 = get(CGAL::dynamic_vertex_property_t<std::size_t>(), tm2, NOT_SHARED);
@@ -1806,7 +1806,7 @@ public:
       }
     }
 
-    if (common_vertices.size()>=3)
+    if (common_vertices.size()>=4) // one triangle is useless
     {
       auto is_fshared_map1 = get(CGAL::dynamic_face_property_t<bool>(), tm1, false);
       auto is_fshared_map2 = get(CGAL::dynamic_face_property_t<bool>(), tm2, false);
@@ -1877,6 +1877,7 @@ public:
         }
       }
 
+      // TODO: we should also be able to fill coplanar_patches_of_tm[1/2] as we might exclude entirely some components
       // TODO: is_eshared_map1 and is_eshared_map2 should be also put in ecm
 
       visitor.start_filtering_intersections();

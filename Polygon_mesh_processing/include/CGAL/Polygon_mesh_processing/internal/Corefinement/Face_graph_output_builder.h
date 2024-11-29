@@ -899,6 +899,7 @@ public:
     typename An_edge_per_polyline_map::iterator
       epp_it=input_have_coplanar_faces ? an_edge_per_polyline.begin()
                                        : epp_it_end;
+    //TODO: check why not unconstraining directly in the loop
     std::unordered_set<edge_descriptor> inter_edges_to_remove1,
                                         inter_edges_to_remove2;
 
@@ -908,7 +909,6 @@ public:
     // edges and some coplanar faces might not be seen as they are
     // the result of the retriangulation.
     std::vector<face_descriptor> tm1_coplanar_faces, tm2_coplanar_faces;
-
 
     user_visitor.filter_coplanar_edges();
 
@@ -932,13 +932,21 @@ public:
       Node_id index_q1 = get_node_id(q1, vertex_to_node_id2);
       Node_id index_q2 = get_node_id(q2, vertex_to_node_id2);
 
+//TODO: we are somehow changing the logic of the lazy test, we should check if we can do better
+
       // set boolean for the position of p1 wrt to q1 and q2
       bool p1_eq_q1 = false, p1_eq_q2 = false;
-      if (!is_border(h1_opp, tm1) && index_p1!=NID)
+      if (!is_border(h1_opp, tm1))
       {
         if (!is_border(h2_opp, tm2))
         {
-          p1_eq_q1 = index_p1 == index_q1;
+          if ( (index_p1!=NID) == (index_q1!=NID))
+          {
+            if (index_p1!=NID)
+              p1_eq_q1 = index_p1 == index_q1;
+            else
+              p1_eq_q1 = get(vpm1,p1) == get(vpm2,q1);
+          }
           if (p1_eq_q1)
           {
             //mark coplanar facets if any
@@ -948,7 +956,13 @@ public:
         }
         if (!is_border(h2, tm2))
         {
-          p1_eq_q2 = index_p1 == index_q2;
+          if ( (index_p1!=NID) == (index_q2!=NID))
+          {
+            if (index_p1!=NID)
+              p1_eq_q2 = index_p1 == index_q2;
+            else
+              p1_eq_q2 = get(vpm1,p1) == get(vpm2,q2);
+          }
           if (p1_eq_q2)
           {
             //mark coplanar facets if any
@@ -960,11 +974,17 @@ public:
 
       // set boolean for the position of p2 wrt to q1 and q2
       bool p2_eq_q1 = false, p2_eq_q2 = false;
-      if (!is_border(h1, tm1) && index_p2!=NID)
+      if (!is_border(h1, tm1))
       {
         if (!is_border(h2_opp, tm2))
         {
-          p2_eq_q1 = index_p2 == index_q1;
+          if ( (index_p2!=NID) == (index_q1!=NID))
+          {
+            if (index_p2!=NID)
+              p2_eq_q1 = index_p2 == index_q1;
+            else
+              p2_eq_q1 = get(vpm1,p2) == get(vpm2,q1);
+          }
           if (p2_eq_q1){
             //mark coplanar facets if any
             tm1_coplanar_faces.push_back(face(h1, tm1));
@@ -973,7 +993,13 @@ public:
         }
         if (!is_border(h2, tm2))
         {
-          p2_eq_q2 = index_p2 == index_q2;
+          if ( (index_p2!=NID) == (index_q2!=NID))
+          {
+            if (index_p2!=NID)
+              p2_eq_q2 = index_p2 == index_q2;
+            else
+              p2_eq_q2 = get(vpm1,p2) == get(vpm2,q2);
+          }
           if (p2_eq_q2){
             //mark coplanar facets if any
             tm1_coplanar_faces.push_back(face(h1, tm1));
@@ -1077,6 +1103,10 @@ public:
       if(i!=NID)
         ++tm2_patch_sizes[i];
 
+#ifdef CGAL_COREFINEMENT_DEBUG
+    std::cout << "nb_patches_tm1 = " << nb_patches_tm1 << "\n";
+    std::cout << "nb_patches_tm2 = " << nb_patches_tm2 << "\n";
+#endif
 
     user_visitor.classify_patches();
 
@@ -1091,6 +1121,7 @@ public:
     boost::dynamic_bitset<> coplanar_patches_of_tm2_for_union_and_intersection(nb_patches_tm2,false);
     patch_status_not_set_tm1.set();
     patch_status_not_set_tm2.set();
+
 
     // first set coplanar status of patches using the coplanar faces collected during the
     // extra intersection edges collected. This is important in the case of full connected components
@@ -1121,7 +1152,7 @@ public:
       halfedge_descriptor h2 = it->second.first[&tm2];
 
 #ifdef CGAL_COREFINEMENT_DEBUG
-      std::cout << "Looking at triangles around edge " << tm1.point(source(h1, tm1)) << " " << tm1.point(target(h1, tm1)) << "\n";
+      std::cout << "Looking at triangles around edge " << get(vpm1,source(h1, tm1)) << " " << get(vpm1,target(h1, tm1)) << "\n";
 #endif
 
       CGAL_assertion(ids.first==vertex_to_node_id1[source(h1,tm1)]);
