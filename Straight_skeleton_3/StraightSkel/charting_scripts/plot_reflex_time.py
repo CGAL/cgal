@@ -40,7 +40,7 @@ def plot_data_from_directories(root_dir):
          scatter = ax.scatter(x_values, y_values, c=y_values, cmap=cmap, norm=norm, marker='o', zorder = 2)
 
          ax.set_xlabel('Reflex Edge Count')
-         ax.set_ylabel('Runtime')
+         ax.set_ylabel('Runtime (seconds)')
          ax.set_title(f'Runtime vs. Reflex Edge Count (Data Points: {len(x_values)})')  # Add the number of data points to the title
          ax.grid(True, zorder=0)
 
@@ -59,7 +59,7 @@ def plot_data_from_directories(root_dir):
          zoom_scatter = zoom_ax.scatter(zoom_x_values, zoom_y_values, c=zoom_y_values, cmap=cmap, norm=norm, marker='o', zorder=2)
 
          zoom_ax.set_xlabel('Reflex Edge Count')
-         zoom_ax.set_ylabel('Runtime')
+         zoom_ax.set_ylabel('Runtime (seconds)')
          zoom_ax.set_title(f'Zoomed-in Plot (X < 100) (Data Points: {len(zoom_x_values)})')  # Add the number of data points to the subplot title
          zoom_ax.grid(True, zorder=0)
 

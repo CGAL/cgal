@@ -42,7 +42,7 @@ def plot_data_from_directories(root_dir):
         scatter = ax.scatter(x_indices, y_values, c=y_values, cmap=cmap, norm=norm, marker='o', zorder=2)
 
         ax.set_xlabel('Subdirectories (in order)')
-        ax.set_ylabel('Runtime')
+        ax.set_ylabel('Runtime (seconds)')
         ax.set_title('Runtimes')
         ax.grid(True, zorder=0)
         ax.set_xticks(x_indices)
