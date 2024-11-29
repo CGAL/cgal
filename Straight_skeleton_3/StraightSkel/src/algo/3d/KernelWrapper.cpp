@@ -31,14 +31,14 @@ KernelWrapper::~KernelWrapper() {
 Point3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2, Plane3SPtr plane3) {
     Point3SPtr result = Point3SPtr();
 #ifdef USE_CGAL
-    CGAL::Object obj = CGAL::intersection(*plane1, *plane2, *plane3);
-    if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
+    auto res = CGAL::intersection(*plane1, *plane2, *plane3);
+    if (const CGAL::Point3* ipoint = std::get_if<CGAL::Point3>(&*res)) {
         result = KernelFactory::createPoint3(*ipoint);
     } else {
         // Let's investigate...
-        if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj))
+        if (const CGAL::Line3* iline = std::get_if<CGAL::Line3>(&*res))
             std::cerr << "Intersection of 3 planes is a line" << std::endl;
-        else if(const CGAL::Plane3 *iplane = CGAL::object_cast<CGAL::Plane3>(&obj))
+        else if(const CGAL::Plane3* iplane = std::get_if<CGAL::Plane3>(&*res))
             std::cerr << "Intersection of 3 planes is a plane" << std::endl;
         else
             std::cerr << "Intersection of 3 planes is... not?" << std::endl;
@@ -55,8 +55,8 @@ Point3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2, Pla
 Line3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2) {
     Line3SPtr result = Line3SPtr();
 #ifdef USE_CGAL
-    CGAL::Object obj = CGAL::intersection(*plane1, *plane2);
-    if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj)) {
+    auto res = CGAL::intersection(*plane1, *plane2);
+    if (const CGAL::Line3 *iline = std::get_if<CGAL::Line3>(&*res)) {
         result = KernelFactory::createLine3(*iline);
     } else {
         std::cerr << "Intersection is... not?" << std::endl;
@@ -72,12 +72,12 @@ Line3SPtr KernelWrapper::intersection(Plane3SPtr plane1, Plane3SPtr plane2) {
 Point3SPtr KernelWrapper::intersection(Plane3SPtr plane, Line3SPtr line) {
     Point3SPtr result = Point3SPtr();
 #ifdef USE_CGAL
-    CGAL::Object obj = CGAL::intersection(*plane, *line);
-    if (const CGAL::Point3 *ipoint = CGAL::object_cast<CGAL::Point3>(&obj)) {
+    auto res = CGAL::intersection(*plane, *line);
+    if (const CGAL::Point3 *ipoint = std::get_if<CGAL::Point3>(&*res)) {
         result = KernelFactory::createPoint3(*ipoint);
     } else {
         // Let's investigate
-        if (const CGAL::Line3 *iline = CGAL::object_cast<CGAL::Line3>(&obj))
+        if (const CGAL::Line3 *iline = std::get_if<CGAL::Line3>(&*res))
             std::cerr << "Intersection of plane and line is the line itself" << std::endl;
         else
             std::cerr << "Intersection of plane and line is... not?" << std::endl;
