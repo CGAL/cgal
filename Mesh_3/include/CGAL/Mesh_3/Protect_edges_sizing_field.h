@@ -455,8 +455,8 @@ private:
     // negative value (marker for special balls).
     if(dim < 0)
       dim = -1 - dim;
-    else
-      return field(p, dim, index);
+
+    return field(p, dim, index);
   }
 
   /// Query the sizing field and return its value at the point `p`
