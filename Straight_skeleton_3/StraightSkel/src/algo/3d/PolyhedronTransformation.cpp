@@ -396,6 +396,9 @@ void PolyhedronTransformation::normalizeFacetPlanes(PolyhedronSPtr polyhedron)
 }
 
 // normalize coefficients and make sure that coplanar facets have the same coefficients (@todo for the second part)
+//
+// @todo no point doing this with EPECK since we have SQRT errors
+// and if the planes were singletons, we would benefit from static filters
 void PolyhedronTransformation::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
 {
     std::cout << "\n> harmonizeFacetPlanes()" << std::endl;
@@ -439,12 +442,23 @@ void PolyhedronTransformation::harmonizeFacetPlanes(PolyhedronSPtr polyhedron)
             Plane3SPtr plane = facet->plane(); // calls initPlane() if needed
 
 #ifdef USE_CGAL
+# define CGAL_SS3_SINGLETON_PLANE_COEFFICIENTS
+# ifdef CGAL_SS3_SINGLETON_PLANE_COEFFICIENTS
+            const CGAL::FT a = CGAL::to_double(exact(plane->a()));
+            const CGAL::FT b = CGAL::to_double(exact(plane->b()));
+            const CGAL::FT c = CGAL::to_double(exact(plane->c()));
+            const CGAL::FT d = CGAL::to_double(exact(plane->d()));
+            // this should be the only place with unavoidable SQRTs
+            const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
+# else
             const CGAL::FT a = plane->a();
             const CGAL::FT b = plane->b();
             const CGAL::FT c = plane->c();
             const CGAL::FT d = plane->d();
             // this should be the only place with unavoidable SQRTs
             const CGAL::FT n = CGAL::approximate_sqrt(CGAL::square(a) + CGAL::square(b) + CGAL::square(c));
+# endif
+
 #else
             const double a = plane->getA();
             const double b = plane->getB();
