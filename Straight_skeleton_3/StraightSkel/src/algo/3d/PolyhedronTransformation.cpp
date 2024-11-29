@@ -94,19 +94,22 @@ Point3SPtr PolyhedronTransformation::shiftPoint(VertexSPtr vertex,
             Plane3SPtr plane = facet->plane();
             // std::cout << "Facet #" << facet->toString() << std::endl;
 
-            // planes are _offset_ planes, but it doesn't matter for the tests
-            bool independent = true;
-            if (i == 1) {
-                independent = !(CGAL::parallel(*(planes[0]), *plane));
-            } else if (i == 2) {
-                // @todo a little redundant to compute the intersection from scratch later
-                independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
-                                                         planes[1]->a(), planes[1]->b(), planes[1]->c(),
-                                                         plane->a(), plane->b(), plane->c()));
-            }
+            // @fixme only valid if we are doing perturbations
+            if (vertex->degree() != 3) {
+                // planes are _offset_ planes, but it doesn't matter for the tests
+                bool independent = true;
+                if (i == 1) {
+                    independent = !(CGAL::parallel(*(planes[0]), *plane));
+                } else if (i == 2) {
+                    // @todo a little redundant to compute the intersection from scratch later
+                    independent = !is_zero(CGAL::determinant(planes[0]->a(), planes[0]->b(), planes[0]->c(),
+                                                            planes[1]->a(), planes[1]->b(), planes[1]->c(),
+                                                            plane->a(), plane->b(), plane->c()));
+                }
 
-            if (!independent) {
-                continue;
+                if (!independent) {
+                    continue;
+                }
             }
 
             CGAL::FT speed = 1.0;
