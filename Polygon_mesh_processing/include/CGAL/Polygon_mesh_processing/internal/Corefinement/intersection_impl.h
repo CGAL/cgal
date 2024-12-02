@@ -1857,6 +1857,7 @@ public:
             auto it = std::lower_bound(face_set.begin(), face_set.end(), CGAL::make_array(k1,k2,NOT_SHARED), array_less);
             if ( (it != face_set.end()) && (*it)[0]==k1 && (*it)[1]==k2 )
             {
+              visitor.input_have_coplanar_faces();
               put(is_fshared_map1, tm1_faces[(*it)[2]], true);
               put(is_fshared_map2, f2, true);
 
