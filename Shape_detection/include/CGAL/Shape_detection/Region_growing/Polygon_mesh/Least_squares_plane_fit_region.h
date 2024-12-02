@@ -137,6 +137,13 @@ namespace Polygon_mesh {
           vertex to `Kernel::Point_3`}
           \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`}
         \cgalParamNEnd
+        \cgalParamNBegin{face_normal_map}
+          \cgalParamDescription{a property map associating normal vectors to the faces of `pmesh`.}
+          \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%face_descriptor`
+                         as key type and `GT::Vector_3` as value type, `GT` being the type of the parameter `geom_traits`.}
+          \cgalParamDefault{If this parameter is omitted, face normals will be estimated using crossproducts of vectors created
+                            from consecutive vertices of the face.}
+        \cgalParamNEnd
         \cgalParamNBegin{geom_traits}
           \cgalParamDescription{an instance of `GeomTraits`}
           \cgalParamDefault{`GeomTraits()`}
@@ -161,9 +168,12 @@ namespace Polygon_mesh {
     m_squared_distance_3(m_traits.compute_squared_distance_3_object()),
     m_scalar_product_3(m_traits.compute_scalar_product_3_object()),
     m_cross_product_3(m_traits.construct_cross_product_vector_3_object()),
-    m_face_normals( get(CGAL::dynamic_face_property_t<Vector_3>(), pmesh) ),
+    m_face_normals(get(CGAL::dynamic_face_property_t<Vector_3>(), pmesh)),
     m_face_triangulations( get(CGAL::dynamic_face_property_t<std::vector<Triangle_3>>(), pmesh) )
     {
+
+      static constexpr bool use_input_face_normal =
+        parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_normal_t>::value;
 
 #ifdef CGAL_SD_RG_USE_PMP
     auto get_face_normal = [this](Item face, const PolygonMesh& pmesh)
@@ -193,8 +203,19 @@ namespace Polygon_mesh {
     };
 #endif
 
+      if constexpr (use_input_face_normal)
+      {
+        for (const Item &i : faces(pmesh))
+          put(m_face_normals, i, get_face_normal(i, pmesh));
+      }
+      else
+      {
+        auto fnm = parameters::get_parameter(np, internal_np::face_normal);
+        for (const Item &i : faces(pmesh))
+          put(m_face_normals, i, get(fnm, i));
+      }
+
       for (const Item &i : faces(pmesh)) {
-        put(m_face_normals, i, get_face_normal(i, pmesh));
         std::vector<Point_3> pts;
         auto h = halfedge(i, pmesh);
         auto s = h;
