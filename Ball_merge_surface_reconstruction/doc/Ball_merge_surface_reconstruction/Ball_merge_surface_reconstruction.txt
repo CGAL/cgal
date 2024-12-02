@@ -7,69 +7,41 @@ namespace CGAL {
 \cgalAutoToc
 \author Amal Dev Parakkat, Stefan Ohrhallinger, Elmar Eisemann, Pooran Memari
 
-Reconstructing high-quality 3D meshes from unstructured point sets is a classic problem in Computer Graphics and Computational
-Geometry with applications in many domains, such as CAD, medical imaging, or visualization. Yet, the problem is ill-posed as multiple
-shapes can explain the same point sets - especially in the presence of outliers, noise, missing parts, or density variations.
 
-The main idea behind \f$ BallMerge \f$ is to introduce an intuitive geometric criterion
-to reconstruct a piece-wise linear approximation of a sampled surface. Although \f$ BallMerge \f$ does not provide topological guarantees
-on the reconstruction other than watertightness, it achieves competitive quality to state-of-the-art methods in practice, as shown
-via various challenging examples. Further, the solution is easy to implement, uses less memory, and is an order of magnitude
-faster than competing work, which makes it very practical. \f$ BallMerge \f$ has two variants to address closed and open surfaces, respectively,
-since they pose differing challenges: \f$ Global BallMerge \f$ which can be made automatic, guarantees a watertight surface and robustness
-regarding sampling density, outliers, and a reasonable noise level, and is thus ideally suited to reconstruct entire scans (closed surfaces
-that can contain holes). The second variant, called \f$ Local BallMerge \f$, reconstructs non-watertight surfaces well with the default parameter value,
-which is easily tunable to handle imperfections and handles even scans from various sensor types with strong noise and missing parts, so it targets open
-surfaces from scans of, e.g., outdoor scenes.
-
-\section secBMSRdefinitions Definitions
+This CGAL component implements a surface reconstruction method that takes an unoriented set of 3D points as input and computes a piece-wise linear approximation of the sampled surface. In simple words, the method tries to classify the medial balls (computed from the 3D Delaunay triangulation of the input points) into interior and exterior and returns the interface between them.
 
 The detailed description of the algorithm can be seen in \cgalCite{parakkat2024ballmerge}.
 
-The basic idea is built upon the fact that whenever a discrete set of sample points approximates a continuous surface, the Voronoi balls (interior/exterior) intersect along the boundary with a ratio inversely
-proportional to the sampling density (similar to the observation of Amenta et al. \cgalCite{ack-pcubm-01}). Based on this, we define an "intersection ratio" between adjacent Voronoi balls as follows:
+
+\section secBMSRdefinitions Definitions
+
+The method is built upon the fact that whenever a discrete set of sample points approximates a continuous surface, the Voronoi balls (interior/exterior) intersect along the boundary with a ratio inversely proportional to the sampling density (similar to the observation of Amenta et al. \cgalCite{ack-pcubm-01}). Based on this, we define an "intersection ratio" between adjacent Voronoi balls as follows:
 
 \f$ ir(B_0,B_1) = max((r_0+r_1-d)/r_0,(r_0+r_1-d)/r_1) \f$
 
 Where \f$ B_0 \f$ and \f$ B_1 \f$ are two adjacent Voronoi balls with radius \f$ r_0 \f$ and \f$ r_1 \f$ respectively, and \f$ d \f$ is the distance between it's circumcenters.
 
-Using this ratio, we can say that, if the intersection ratio between two adjacent Voronoi balls is small, they likely correspond to a pair of interior and exterior balls sharing a thin overlapping region along the
-underlying surface (a 2D case is illustrated in Figure \cgalFigureRef{figBMSRillus}). In other words, given a threshold \f$ \delta \f$, a triangle is said to belong to a set \f$ BallMerge(\delta) \f$ if its corresponding adjacent Voronoi balls have an intersection ratio less than
-\f$ \delta \f$. By definition, \f$ BallMerge(\delta) \f$ is a subcomplex of the Delaunay Triangulation of the sample points. It is easy to see that \f$ BallMerge(0) \f$ is empty, while \f$ BallMerge(\delta) \f$, for
-any \f$ \delta \gt 2 \f$ contains all the triangles of the Delaunay Triangulation.
+Using this ratio, we can say that if the intersection ratio between two adjacent Voronoi balls is small, they likely correspond to a pair of interior and exterior balls sharing a thin overlapping region along the underlying surface (a 2D case is illustrated in Figure \cgalFigureRef{figBMSRillus}). In other words, given a threshold \f$ \delta \f$, a triangle is said to belong to a set \f$ BallMerge(\delta) \f$ if its corresponding adjacent Voronoi balls have an intersection ratio less than \f$ \delta \f$. By definition, \f$ BallMerge(\delta) \f$ is a subcomplex of the Delaunay Triangulation of the sample points. It is easy to see that \f$ BallMerge(0) \f$ is empty, while \f$ BallMerge(\delta) \f$, for any \f$ \delta \gt 2 \f$ contains all the triangles of the Delaunay Triangulation.
 
 \cgalFigureBegin{figBMSRillus,BMSRIllustration.png}
 Top: The interior (red) and exterior (green) medial balls of a point set with decreasing point density from l.t.r. Bottom: Corresponding \f$ \delta \f$-merged components on Delaunay triangulation.
 \cgalFigureEnd
 
-\subsection secGlobalBMSR Global BallMerge
+CGAL provides two variants of BallMerge:
 
-Given a threshold \f$ \delta \f$, two Delaunay simplices are called \f$ \delta\f$-merged either if their corresponding Voronoi balls are adjacent with an intersection ratio \f$ > \delta \f$ or if there exists another
-Delaunay simplex, which is \f$ \delta\f$-merged with both of them. Following a procedure similar to classical connected component computation, the algorithm starts by visiting \f$ \delta\f$-merged simplices from an
-arbitrary seed simplex (the procedure is order independent) and tag them with the current component label until no more \f$ \delta\f$-merged simplices remain. The procedure is then restarted with any yet unvisited
-simplex until all have been visited, and output the simplices with the most frequent label. The reconstructed surface is then computed from the boundary of this output.
+Global BallMerge (`ball_merge_surface_reconstruction_global()`): Given a threshold \f$ \delta \f$, two Delaunay simplices are called \f$ \delta\f$-merged either if their corresponding Voronoi balls are adjacent with an intersection ratio \f$ > \delta \f$ or if there exists another Delaunay simplex, which is \f$ \delta\f$-merged with both of them. Following a procedure similar to classical connected component computation, the algorithm starts by visiting \f$ \delta\f$-merged simplices from an arbitrary seed simplex (the procedure is order independent) and tag them with the current component label until no more \f$ \delta\f$-merged simplices remain. The procedure is then restarted with any yet unvisited simplex until all have been visited, and output the simplices with the most frequent label. The reconstructed surface is then computed from the boundary of this output.
+Local BallMerge (`ball_merge_surface_reconstruction_local()`): In this variant, for any two adjacent \f$d\f$-simplices, which are not \f$ \delta\f$-mergeable, the shared \f$(d − 1)\f$-simplex is retained. As outliers and open surfaces typically result in large simplices, we keep an additional constraint that makes two elements  \f$ \delta\f$-mergeable only if the longest edge of the simplex is smaller than \f$ \frac{1}{\eta}*\beta \f$ (\f$ \eta \f$ is a scaling factor, \f$ \beta \f$ is the length of the bounding box diagonal) aiming at removing large simplices.
 
-It is worth noting that \f$ Global BallMerge \f$ always results in a watertight surface (by definition) since it bounds a solid - even if it is not necessarily manifold. The effect of \f$ \delta \f$ is shown in Figure
-\cgalFigureRef{figBMSRpartuning}. As it can be seen, a larger value of \f$ \delta \f$ removes necessary parts from the shape, while a smaller value of \f$ \delta \f$ adds unnecessary parts to the shape.
+\subsection secBMSRChoose Choosing between Global and Local Variants
 
-\cgalFigureBegin{figBMSRpartuning,BMSRParTuning.png}
-\f$ \delta\f$-values and corresponding results of \f$ Global BallMerge \f$  (original mesh taken from - The Standard 3D Scanning Repository).
-\cgalFigureEnd
+The Global variant, by definition, results in a watertight surface (not always manifold) and, hence, is optimal for reconstructing closed surfaces. As the algorithm tries to close the surface, it can withstand missing data up to an extent and can handle little outliers and noise.
 
-\subsection secLocalBMSR Local BallMerge
+The Local variant, however, is designed for handling open surfaces. As it is lightweight and requires only a single pass over the Delaunay simplices, it is optimal for reconstruction from an extremely huge point cloud.
 
-\cgalFigureBegin{figBMSRlocalillus,BMSRLocalIllustration.png}
-L.t.r.: Global view with colored Voronoi balls, closeup (blue), reconstruction - global (pink)/local (orange).
-\cgalFigureEnd
+\subsection secBMSRPar Parameter Settings
 
-Although \f$ Global BallMerge\f$ algorithm is well suited for reconstructing watertight surfaces, many real-world scans represent non-watertight models due to extensive missing data and open surfaces - for example,
-in 2D (please note that the core idea of \f$ BallMerge \f$ works in both 2D and 3D), a set of points representing a shape with open curves and junctions is shown in Figure \cgalFigureRef{figBMSRlocalillus}. Though our method could successfully partition the Voronoi balls based on the intersection ratio,
-we do not get the expected result using \f$ Global BallMerge\f$ as it outputs only a single connected component. Therefore, in this local variant of the \f$ BallMerge \f$ algorithm, for any two adjacent \f$d\f$-simplices,
-which are not \f$ \delta\f$-mergeable, the shared \f$(d − 1)\f$-simplex is retained. As expected and can be observed in our experiments, outliers and open surfaces result in very large simplices. Thus, we consider
-elements \f$ \delta\f$-mergeable only if the longest edge of the simplex is smaller than \f$ \frac{1}{\eta}*\beta \f$ (\f$ \eta \f$ is a scaling factor, \f$ \beta \f$ is the length of the bounding box diagonal)
-to remove large simplices (typical for open meshes).
-
-In practice, the threshold \f$ \eta = 200\f$ was observed to perform well and can be adjusted - Figure \cgalFigureRef{figBMSRetatuning} shows the effect of varying \f$ \eta \f$.
+The main parameter used in BallMerge is the intersection ratio \f$ > \delta \f$. By definition, the \f$ > \delta \f$ ranges from 0 to 2 - with  \f$ BallMerge(0) \f being empty and  \f$ BallMerge(2) \f containing all the triangles of the Delaunay Triangulation. Experiments show that the \f$ > \delta \f$ value usually lies between 1.5 and 1.95 (with 1.8 or 1.85 giving the best results in most cases). Thanks to the nice property of this intersection ratio, it is quite easy to tune this parameter based on a simple rule: if the reconstructed surface has missing parts, the threshold should be lowered, or if the reconstructed surface has additional parts, the threshold should be increased. 
+The objective of the other parameter \f$ \eta\f$ is to remove unnecessarily long triangles from the result of Local BallMerge. In practice, the threshold \f$ \eta = 200\f$ was observed to perform well and can be adjusted - Figure \cgalFigureRef{figBMSRetatuning} shows the effect of varying \f$ \eta \f$.
 
 \cgalFigureBegin{figBMSRetatuning,BMSREtaTuning.png}
 Effect of \f$ \eta \f$ (\f$ \delta \f$ = 1.8); l.t.r.: \f$ \eta \f$ = 5,50,100,150,200,250,300 (original mesh taken from EPFL Statue Repository).
@@ -79,26 +51,21 @@ Effect of \f$ \eta \f$ (\f$ \delta \f$ = 1.8); l.t.r.: \f$ \eta \f$ = 5,50,100,1
 
 Two functions `ball_merge_surface_reconstruction_global()` and `ball_merge_surface_reconstruction_local()` are provided to use \f$ GlobalBallMerge \f$ and \f$ LocalBallMerge \f$ functionalities.
 
-`ball_merge_surface_reconstruction_global()` has the following arguments: The set of input points, two output parameters where the resulting meshes will be stored, and the parameter \f$ \delta \f$. The function
-returns two meshes - the largest and second-largest components as sometimes the expected shape will be the second-largest component after merging. A sample program showing how to use this function is given below:
+`ball_merge_surface_reconstruction_global()` has the following arguments: The set of input points, two output parameters where the resulting meshes will be stored, and the parameter \f$ \delta \f$. The function returns two meshes - the largest and second-largest components as sometimes the expected shape will be the second-largest component after merging. A sample program showing how to use this function is given below:
 
 \cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction_global.cpp}
 
-`ball_merge_surface_reconstruction_local()` has the following arguments: The set of input points, an output parameter where the resulting mesh will be stored, the parameter \f$ \delta \f$, and the parameter \f$ \eta
-\f$ (to prune unnecessary long triangles). A sample program showing how to use this function is given below:
+`ball_merge_surface_reconstruction_local()` has the following arguments: The set of input points, an output parameter where the resulting mesh will be stored, the parameter \f$ \delta \f$, and the parameter \f$ \eta \f$ (to prune unnecessary long triangles). A sample program showing how to use this function is given below:
 
 \cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction_local.cpp}
 
-Alternatively, these functions can be combined as in the following program where argv[1] is the filename, argv[2] is the parameter \f$ \delta \f$, argv[3] decides whether to use local (0) or global variant (1), and arg[4]
-is an optional parameter \f$ \eta \f$ in case the user opts for the local variant.
+Alternatively, these functions can be combined as in the following program where argv[1] is the filename, argv[2] is the parameter \f$ \delta \f$, argv[3] decides whether to use local (0) or global variant (1), and arg[4] is an optional parameter \f$ \eta \f$ in case the user opts for the local variant.
 
 \cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction.cpp}
 
-Ideally, the current implementation takes a dense point cloud as input (plain x,y,z coordinates without any additional information like normal and texture) sampled over a smooth surface. Thanks to the "intersection
-ratio", the algorithm can also handle a few challenging cases with mild noise, outliers or missing data up to an extent. It is worth noting that, while using \f$ GlobalBallMerge \f$, outliers sometimes create deep
-cavities over the surface and increased amount of noise shrinks and sometimes miss important features.
+Ideally, the current implementation takes a dense point cloud as input (plain x,y,z coordinates without any additional information like normal and texture) sampled over a smooth surface. Thanks to the "intersection ratio", the algorithm can also handle a few challenging cases with mild noise, outliers or missing data up to an extent. It is worth noting that, while using \f$ GlobalBallMerge \f$, outliers sometimes create deep cavities over the surface, and an increased amount of noise shrinks and sometimes misses important features.
 
-Finally, the algorithm is lightweight and requires only a little computation in terms of input size as it performs only two quick linear-time passes on the Delaunay complex (global), or just a single pass (local).
+Finally, the algorithm is lightweight and requires only a little computation in terms of input size as it performs only two quick linear-time passes on the Delaunay complex (global) or just a single pass (local).
 
 
 \section secBMSRhistory  Implementation History
@@ -107,3 +74,4 @@ This package is based on a prototype code .....
 
 */
 } /* namespace CGAL */
+
