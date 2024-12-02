@@ -1,0 +1,5 @@
+\cgalParamNBegin{geom_traits}
+  \cgalParamDescription{an instance of a geometric traits class}
+  \cgalParamType{`Traits` as defined above in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type}
+  \cgalParamDefault{the default constructed traits object `Traits{}`}
+\cgalParamNEnd
