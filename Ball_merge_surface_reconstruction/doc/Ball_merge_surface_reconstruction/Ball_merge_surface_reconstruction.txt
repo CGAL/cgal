@@ -8,7 +8,7 @@ namespace CGAL {
 \author Amal Dev Parakkat, Stefan Ohrhallinger, Elmar Eisemann, Pooran Memari
 
 
-This CGAL component implements a surface reconstruction method that takes an unoriented set of 3D points as input and computes a piece-wise linear approximation of the sampled surface. In simple words, the method tries to classify the medial balls (computed from the 3D Delaunay triangulation of the input points) into interior and exterior and returns the interface between them.
+This \cgal component implements a surface reconstruction method that takes an unoriented set of 3D points as input and computes a piece-wise linear approximation of the sampled surface. In simple words, the method tries to classify the medial balls (computed from the 3D Delaunay triangulation of the input points) into interior and exterior and returns the interface between them.
 
 The detailed description of the algorithm can be seen in \cgalCite{parakkat2024ballmerge}.
 
