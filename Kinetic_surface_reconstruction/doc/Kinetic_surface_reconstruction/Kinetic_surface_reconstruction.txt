@@ -20,7 +20,7 @@ The reconstruction is posed as an energy minimization labeling the convex volume
 <center>
 <table class="center-table" border="0">
 <tr><td>
-\f$\DeclareMathOperator*{\argmin}{arg\,min} \argmin\limits_{l \in {\{0, 1\}}^n} E(l) = (1 - \lambda) D(l) + \lambda U(l)\f$
+\f$\operatorname*{arg\,min}\limits_{l \in {\{0, 1\}}^n} E(l) = (1 - \lambda) D(l) + \lambda U(l)\f$
 
 \f$D(l) = \sum\limits_{i \in C}\sum\limits_{p \in I_i}d_i(p, l_i)\f$
 
