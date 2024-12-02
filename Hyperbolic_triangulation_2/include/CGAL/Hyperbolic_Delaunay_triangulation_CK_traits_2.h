@@ -78,12 +78,14 @@ namespace internal {
           intersection(*c_pq, *c_qr, std::back_inserter(inters));
 
           CGAL_assertion(assign(pair, inters[0]));
+	  assign(pair, inters[0]);
           if(pair.second == 1)
           {
             if(_gt.has_on_bounded_side_2_object()(l_inf, pair.first))
               return pair.first;
 
             CGAL_assertion(assign(pair, inters[1]));
+	    assign(pair, inters[1]);
             return pair.first;
           }
           return pair.first;
@@ -105,12 +107,14 @@ namespace internal {
       intersection(*l, *c, std::back_inserter(inters));
 
       CGAL_assertion(assign(pair,inters[0]));
+      assign(pair,inters[0]);
       if(pair.second == 1)
       {
         if(_gt.has_on_bounded_side_2_object()(l_inf, pair.first))
           return pair.first;
 
         CGAL_assertion(assign(pair, inters[1]));
+	assign(pair, inters[1]);
         return pair.first;
       }
       return pair.first;
@@ -241,11 +245,13 @@ namespace internal {
         std::pair<Circular_arc_point_2, unsigned> pair;
 
         CGAL_assertion(assign(pair,inters[0]));
+	assign(pair,inters[0]);
         CGAL_assertion(pair.second == 1);
         if(_gt.less_y_2_object()(p, q))
           return Line_arc_2(bis_pq,a,pair.first);
 
         CGAL_assertion(assign(pair,inters[1]));
+	assign(pair,inters[1]);
         CGAL_assertion(pair.second == 1);
         return Line_arc_2(bis_pq,a,pair.first);
       }
@@ -262,6 +268,7 @@ namespace internal {
       std::pair<Circular_arc_point_2, unsigned> pair;
 
       CGAL_assertion(assign(pair,inters[0]));
+      assign(pair,inters[0]);
       CGAL_assertion(pair.second == 1);
 
       Hyperbolic_point_2 approx_pinf(to_double(pair.first.x()), to_double(pair.first.y()));
@@ -276,6 +283,7 @@ namespace internal {
       }
 
       CGAL_assertion(assign(pair,inters[1]));
+      assign(pair,inters[1]);
       if(_gt.orientation_2_object()(approx_c,approx_a,approx_pinf) == POSITIVE)
         return Circular_arc_2(*c_pq, pair.first, a);
 
