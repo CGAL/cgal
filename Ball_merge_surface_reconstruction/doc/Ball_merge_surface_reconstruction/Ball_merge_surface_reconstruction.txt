@@ -59,7 +59,7 @@ Two functions `ball_merge_surface_reconstruction_global()` and `ball_merge_surfa
 
 \cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction_local.cpp}
 
-Alternatively, these functions can be combined as in the following program where argv[1] is the filename, argv[2] is the parameter \f$ \delta \f$, argv[3] decides whether to use local (0) or global variant (1), and arg[4] is an optional parameter \f$ \eta \f$ in case the user opts for the local variant.
+Alternatively, these functions can be combined as in the following program where `argv[1]` is the filename, `argv[2]` is the parameter \f$ \delta \f$, `argv[3]` decides whether to use local (0) or global variant (1), and `arg[4]` is an optional parameter \f$ \eta \f$ in case the user opts for the local variant.
 
 \cgalExample{Ball_merge_surface_reconstruction/ball_merge_reconstruction.cpp}
 
