@@ -249,15 +249,15 @@ namespace internal {
         std::pair<Circular_arc_point_2, unsigned> pair;
 
         CGAL_assertion_code(bool ok=)
-	  assign(pair,inters[0]);
+        assign(pair,inters[0]);
         CGAL_assertion(ok);
-	CGAL_assertion(pair.second == 1);
+        CGAL_assertion(pair.second == 1);
         if(_gt.less_y_2_object()(p, q))
           return Line_arc_2(bis_pq,a,pair.first);
 
-	CGAL_assertion_code(bool ok=)
-	  assign(pair,inters[1]);
-	CGAL_assertion(ok);
+        CGAL_assertion_code(ok=)
+        assign(pair,inters[1]);
+        CGAL_assertion(ok);
         CGAL_assertion(pair.second == 1);
         return Line_arc_2(bis_pq,a,pair.first);
       }
@@ -274,7 +274,7 @@ namespace internal {
       std::pair<Circular_arc_point_2, unsigned> pair;
 
       CGAL_assertion_code(bool ok=)
-	assign(pair,inters[0]);
+      assign(pair,inters[0]);
       CGAL_assertion(ok);
       CGAL_assertion(pair.second == 1);
 
@@ -289,8 +289,8 @@ namespace internal {
         return Circular_arc_2(*c_pq, pair.first, a);
       }
 
-      CGAL_assertion_code(bool ok=)
-	assign(pair,inters[1]);
+      CGAL_assertion_code(ok=)
+      assign(pair,inters[1]);
       CGAL_assertion(ok);
       if(_gt.orientation_2_object()(approx_c,approx_a,approx_pinf) == POSITIVE)
         return Circular_arc_2(*c_pq, pair.first, a);
