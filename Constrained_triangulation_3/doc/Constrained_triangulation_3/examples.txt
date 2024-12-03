@@ -1,8 +1,18 @@
 /*!
 \example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3.cpp
-\brief A simple example of the use of the Constrained_triangulation_3 package.
+Simple example demonstrating the usage of the Constrained_triangulation_3 package.
+
+It constructs a 3D constrained Delaunay triangulation from a polygon mesh.
+*/
+
+/*!
 \example Constrained_triangulation_3/conforming_constrained_Delaunay_triangulation_3_from_soup.cpp
-\brief A simple example of the use of the Constrained_triangulation_3 package.
+Simple example demonstrating the usage of the Constrained_triangulation_3 package.
+
+It constructs a constrained Delaunay triangulation from a polygon soup.
+*/
+
+/*!
 \example Constrained_triangulation_3/remesh_constrained_Delaunay_triangulation_3.cpp
-\brief How to use `CGAL::tetrahedral_isotropic_remeshing` with a constrained Delaunay triangulation.
+How to use `CGAL::tetrahedral_isotropic_remeshing` with a constrained Delaunay triangulation.
 */
