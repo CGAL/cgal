@@ -237,10 +237,10 @@ C3t3 make_mesh(const Labeling_function& labeling_function, const Iso_cuboid& can
   Periodic_mesh_domain domain(labeling_function, canonical_cube);
 
   Periodic_mesh_criteria criteria(facet_angle = 30.,
-                                  facet_size = 0.03 * 2 /*domain's edge length*/,
-                                  facet_distance = 0.03 * 2 /*domain's edge length*/,
+                                  facet_size = 0.1 * 2 /*domain's edge length*/,
+                                  facet_distance = 0.1 * 2 /*domain's edge length*/,
                                   cell_radius_edge_ratio = 2.,
-                                  cell_size = 0.05);
+                                  cell_size = 0.5);
 
   return CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 }
