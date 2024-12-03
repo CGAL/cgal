@@ -252,7 +252,7 @@ int main(int, char**)
   Iso_cuboid canonical_cube(1, 1, 1, 3, 3, 3);
 
   std::map<std::string, Periodic_function> functions;
-#if 0 // def CGAL_NDEBUG
+#ifdef CGAL_NDEBUG
   // Only test those when not in debug (otherwise it takes too long)
   functions["D_prime"] = Periodic_function(D_prime, canonical_cube);
   functions["G_prime"] = Periodic_function(G_prime, canonical_cube);
