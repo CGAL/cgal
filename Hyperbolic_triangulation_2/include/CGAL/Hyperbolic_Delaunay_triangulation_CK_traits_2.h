@@ -78,17 +78,17 @@ namespace internal {
           intersection(*c_pq, *c_qr, std::back_inserter(inters));
 
           CGAL_assertion_code(bool ok=)
-	    assign(pair, inters[0]);
-	  CGAL_assertion(ok);
-	  if(pair.second == 1)
+          assign(pair, inters[0]);
+          CGAL_assertion(ok);
+          if(pair.second == 1)
           {
             if(_gt.has_on_bounded_side_2_object()(l_inf, pair.first))
               return pair.first;
 
             CGAL_assertion_code(bool ok=)
-	      assign(pair, inters[1]);
+            assign(pair, inters[1]);
             CGAL_assertion(ok);
-	    return pair.first;
+            return pair.first;
           }
           return pair.first;
         }
@@ -109,7 +109,7 @@ namespace internal {
       intersection(*l, *c, std::back_inserter(inters));
 
       CGAL_assertion_code(bool ok=)
-	  assign(pair,inters[0]);
+      assign(pair,inters[0]);
       CGAL_assertion(ok);
       if(pair.second == 1)
       {
@@ -117,9 +117,9 @@ namespace internal {
           return pair.first;
 
         CGAL_assertion_code(bool ok=)
-	  assign(pair, inters[1]);
-	CGAL_assertion(ok);
-	return pair.first;
+        assign(pair, inters[1]);
+        CGAL_assertion(ok);
+        return pair.first;
       }
       return pair.first;
     }
