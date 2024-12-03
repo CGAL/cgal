@@ -2,7 +2,6 @@ import json
 from typing import Dict, List
 from dataclasses import dataclass
 from datetime import datetime
-from collections import defaultdict
 import subprocess
 import re
 import requests
@@ -77,29 +76,71 @@ def analyze_tpl_data(json_data: Dict) -> List[PlatformInfo]:
     return platforms_info
 
 
-def fragment_name(platform: PlatformInfo) -> str:
-    """Return a fragment name from a given platform."""
-    return f"platform-{platform.name.lower().replace(' ', '-').replace('.', '')}"
+def get_docker_images() -> Dict[str, List[str]]:
+    """
+    Get Docker image information by calling `list_test_runner_machines`.
+    Returns a dictionary with machine names as keys and lists of images as values.
+    """
+    try:
+        result = subprocess.run(
+            ['./list_test_runner_machines', '--plain'],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        output = result.stdout.strip()
+
+        machines_info = {}
+        current_machine = None
+        parsing_images = False
+
+        for line in output.splitlines():
+            if line.startswith("## "):
+                current_machine = line.strip("# ").strip()
+                machines_info[current_machine] = []
+                parsing_images = False
+
+            elif line.startswith("Tested images:"):
+                parsing_images = True
+
+            elif parsing_images and line.startswith("cgal/testsuite-docker:"):
+                machines_info[current_machine].append(line.strip())
+
+        return machines_info
+
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"Error running `list_test_runner_machines`: {e}") from e
+    except Exception as e:
+        raise RuntimeError(f"Error parsing Docker information: {e}") from e
+
+
+def add_docker_summary(report: List[str], machines_info: Dict[str, List[str]]):
+    """Add a summary of Docker images used on each machine to the report."""
+    report.append("\n## Docker Test Summary\n")
+    for machine, images in machines_info.items():
+        report.append(f"\n### Machine: {machine} ({len(images)} images)")
+        report.append("\n#### Tested Images:")
+        for image in images:
+            report.append(f"- {image}")
+        report.append("")
 
 
 def generate_markdown_report(platforms_info: List[PlatformInfo], version: str) -> str:
     """Generate a markdown report from the platforms information."""
-    machines_info = get_docker_info()
-    update_machines_platforms(machines_info, platforms_info)
+    machines_info = get_docker_images()
     report = []
     report.append("# TestSuite Report")
     report.append(f"\nGenerated on: {
                   datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     url = TESTSUITE_URL_TEMPLATE.format(version=version)
     report.append(f"\nCGAL Version: [{version}]({url})\n")
-    add_machines_summary(report, machines_info)
-    report.append("## Platforms Summary\n")
+    add_docker_summary(report, machines_info)
+    report.append("\n## Platforms Summary\n")
     report.append("| Platform | Debug | OS | Tester | Compiler |")
     report.append("|----------|-------|----|--------|----------|")
     for platform in platforms_info:
         report.append(
-            f"| [{platform.name}](#{fragment_name(platform)}) | {
-                platform.debug} | {platform.os} | "
+            f"| {platform.name} | {platform.debug} | {platform.os} | "
             f"{platform.tester} | {platform.compiler} |"
         )
     report.append("\n## Detailed Third-party Libraries")
@@ -118,46 +159,6 @@ def generate_markdown_report(platforms_info: List[PlatformInfo], version: str) -
             f"\n**Summary**: found {found_tpls} third-party libraries out of {total_tpls}")
     return "\n".join(report)
 
-def get_docker_info() -> Dict[str, Dict[str, List[str]]]:
-    """Get Docker container information from test machines."""
-    result = subprocess.run(['./list_test_runner_machines', '--table'],
-                            capture_output=True, text=True, check=True)
-    machines_info = defaultdict(lambda: {'containers': [], 'platforms': set()})
-    current_machine = ""
-    for line in result.stdout.split('\n'):
-        if line.startswith('## '):
-            current_machine = line.lstrip('# ').strip()
-        elif line.startswith('| CGAL-') and current_machine:
-            container = line.split('|')[1].strip()
-            machines_info[current_machine]['containers'].append(container)
-    return dict(machines_info)
-
-def update_machines_platforms(machines_info: Dict[str, Dict[str, List[str]]], platforms_info: List[PlatformInfo]):
-    """Update machines info with platform names."""
-    machine_mapping = {
-        'Friedrich': 'cgaltest@friedrich',
-        'friedrich': 'cgaltest@friedrich',
-        'cgal': 'lrineau@cgal',
-        'cgal (GF)': 'lrineau@cgal',
-        'Rubens': 'lrineau@rubens',
-        'rubens': 'lrineau@rubens',
-        'bonnard': 'lrineau@bonnard'
-    }
-    for platform in platforms_info:
-        if platform.tester in machine_mapping:
-            machine = machine_mapping[platform.tester]
-            if machine in machines_info:
-                machines_info[machine]['platforms'].add(platform.name)
-
-def add_machines_summary(report: List[str], machines_info: Dict[str, Dict[str, List[str]]]):
-    """Add machines summary to the report."""
-    report.append("\n## Test Machines Summary\n")
-    report.append("| Machine | Containers Count | Platforms |")
-    report.append("|---------|-----------------|-----------|")
-    for machine, info in machines_info.items():
-        containers_count = len(info['containers'])
-        platforms = ', '.join(sorted(info['platforms'])) or '-'
-        report.append(f"| {machine} | {containers_count} | {platforms} |")
 
 def main():
     """Main function to generate the testsuite report."""
