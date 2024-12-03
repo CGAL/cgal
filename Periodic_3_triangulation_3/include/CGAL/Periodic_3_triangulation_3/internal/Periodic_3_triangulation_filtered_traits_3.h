@@ -82,8 +82,6 @@ public:
 
   virtual ~Periodic_3_triangulation_filtered_traits_base_3() { }
 
-  Periodic_3_triangulation_filtered_traits_base_3(const& Periodic_3_triangulation_filtered_traits_base_3) = delete;
-
   Periodic_3_triangulation_filtered_traits_base_3(const Iso_cuboid_3& domain,
                                                   const Kernel& k)
     :
@@ -162,15 +160,10 @@ class Periodic_3_triangulation_filtered_traits_3<K_, Off_, false>
   : public Periodic_3_triangulation_filtered_traits_base_3<K_, Off_>
 {
   typedef Periodic_3_triangulation_filtered_traits_base_3<K_, Off_> Base;
-  typedef Periodic_3_triangulation_filtered_traits_3<K_, Off_, false> Self;
 
 public:
   typedef K_                                                        Kernel;
   typedef typename Kernel::Iso_cuboid_3                             Iso_cuboid_3;
-
-  Periodic_3_triangulation_filtered_traits_3& operator=(const Self&) = delete;
-
-  Periodic_3_triangulation_filtered_traits_3(const& Self) = delete;
 
   Periodic_3_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
                                              const Kernel& k)
@@ -187,7 +180,6 @@ class Periodic_3_triangulation_filtered_traits_3<K_, Off_, true>
 public:
   typedef K_                                                              Kernel;
   typedef typename Kernel::Iso_cuboid_3                                   Iso_cuboid_3;
-
 
   Periodic_3_triangulation_filtered_traits_3(const Iso_cuboid_3& domain,
                                              const Kernel& k)
