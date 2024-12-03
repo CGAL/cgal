@@ -24,8 +24,7 @@ namespace CGAL {
 
 /**
  * @ingroup PkgCT_3Classes
- * @brief The Conforming_constrained_Delaunay_triangulation_vertex_base_3 class is a vertex base class for the
- *        conforming constrained Delaunay triangulation in 3D.
+ * @brief Vertex base class for the 3D conforming constrained Delaunay triangulation.
  *
  * This class is derived from the `Triangulation_vertex_base_3` class and provides additional functionality
  * required by `make_conforming_constrained_Delaunay_triangulation_3()`.
@@ -61,7 +60,7 @@ public:
   using Base::Base;
 
   // model of SimplicialMeshVertexBase_3
-  using Index = CDT_3_face_index;
+  using Index = int;
   int in_dimension() const { return dim_; }
   void set_dimension(int d) { dim_ = d; }
   Index index() const { return index_; }

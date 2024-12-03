@@ -47,7 +47,7 @@ class Conforming_constrained_Delaunay_triangulation_cell_base_3
   Conforming_constrained_Delaunay_triangulation_cell_data_3 ccdt_3_data_;
 
   mutable bool sliver_cache_validity_ = false;
-  CDT_3_face_index subdomain_index_ = -1;
+  Subdomain_index subdomain_index_ = -1;
   double sliver_value_ = 0.;
 public:
   // To get correct cell type in TDS
@@ -70,7 +70,7 @@ public:
 
   // model of SimplicialMeshCellBase_3
   using Surface_patch_index = CDT_3_face_index;
-  using Subdomain_index = CDT_3_face_index;
+  using Subdomain_index = int;
   bool is_facet_on_surface(int i) const { return ccdt_3_data().is_facet_constrained(i); }
   Surface_patch_index surface_patch_index(int i) const { return ccdt_3_data().face_constraint_index(i) + 1; }
   void set_surface_patch_index(int i, Surface_patch_index index)

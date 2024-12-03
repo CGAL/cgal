@@ -7,7 +7,7 @@
 \defgroup PkgCT_3Functions Function Templates
 \ingroup PkgCT_3Ref
 
-\defgroup PkgCT_3Classes Class Templates
+\defgroup PkgCT_3Classes Classes and Class Templates
 \ingroup PkgCT_3Ref
 
 \addtogroup PkgCT_3Ref
