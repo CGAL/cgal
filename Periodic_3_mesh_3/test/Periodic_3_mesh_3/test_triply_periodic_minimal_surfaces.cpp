@@ -237,10 +237,10 @@ C3t3 make_mesh(const Labeling_function& labeling_function, const Iso_cuboid& can
   Periodic_mesh_domain domain(labeling_function, canonical_cube);
 
   Periodic_mesh_criteria criteria(facet_angle = 30.,
-                                  facet_size = 0.1 * 2 /*domain's edge length*/,
-                                  facet_distance = 0.1 * 2 /*domain's edge length*/,
+                                  facet_size = 0.03 * 2 /*domain's edge length*/,
+                                  facet_distance = 0.03 * 2 /*domain's edge length*/,
                                   cell_radius_edge_ratio = 2.,
-                                  cell_size = 0.5);
+                                  cell_size = 0.05);
 
   return CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
 }
@@ -252,7 +252,7 @@ int main(int, char**)
   Iso_cuboid canonical_cube(1, 1, 1, 3, 3, 3);
 
   std::map<std::string, Periodic_function> functions;
-#ifdef CGAL_NDEBUG
+#if 0 // def CGAL_NDEBUG
   // Only test those when not in debug (otherwise it takes too long)
   functions["D_prime"] = Periodic_function(D_prime, canonical_cube);
   functions["G_prime"] = Periodic_function(G_prime, canonical_cube);
