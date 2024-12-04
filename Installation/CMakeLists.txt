@@ -429,12 +429,12 @@ if("${CMAKE_CXX_COMPILER}" MATCHES "icl" OR "${CMAKE_CXX_COMPILER}" MATCHES
     )
   else()
     message(
-      STATUS "Using Intel Compiler version 11 or later. Adding -fp-model strict"
+      STATUS "Using Intel Compiler version 11 or later. Adding -fp-model=strict"
     )
     if(WIN32)
       uniquely_add_flags(CGAL_CXX_FLAGS "/fp:strict")
     else()
-      uniquely_add_flags(CGAL_CXX_FLAGS "-fp-model strict")
+      uniquely_add_flags(CGAL_CXX_FLAGS "-fp-model=strict")
     endif()
   endif()
 endif()
