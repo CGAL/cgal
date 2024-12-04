@@ -173,7 +173,7 @@ namespace Polygon_mesh {
     {
 
       static constexpr bool use_input_face_normal =
-        parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_normal_t>::value;
+        !parameters::is_default_parameter<CGAL_NP_CLASS, internal_np::face_normal_t>::value;
 
 #ifdef CGAL_SD_RG_USE_PMP
     auto get_face_normal = [this](Item face, const PolygonMesh& pmesh)
@@ -203,7 +203,7 @@ namespace Polygon_mesh {
     };
 #endif
 
-      if constexpr (use_input_face_normal)
+      if constexpr (!use_input_face_normal)
       {
         for (const Item &i : faces(pmesh))
           put(m_face_normals, i, get_face_normal(i, pmesh));
