@@ -35,18 +35,7 @@ namespace CGAL {
   Input Data        {#make_conforming_constrained_Delaunay_triangulation_3_input_data}
   ----------
 
-  The input data (polygon mesh or polygon soup) represents the polygonal constraints enforced
-  during the triangulation process.
- 
-  By default, each face of the input is considered a polygonal constraint for the triangulation. The
-  named parameter `face_patch_map` can be used to describe larger polygonal constraints, possibly with holes. If
-  used, this parameter must be a property map that associates each face of the input with a patch
-  identifier. Faces with the same patch identifier are considered part of the same surface patch. Each of these
-  surface patches (defined as the union of the input faces with a given patch identifier) is expected to be a polygon or a
-  polygon with holes, with coplanar vertices (or nearly coplanar up to the precision of the number type used).
-
-  The generated triangulation will conform to the faces of the input or to the surface patches
-  described by the `face_patch_map` property map if provided.
+  \include{doc} doc_fragments/CDT_3_description_of_input.dox
 
   Template Parameters        {#make_conforming_constrained_Delaunay_triangulation_3_template_parameters}
   -------------------

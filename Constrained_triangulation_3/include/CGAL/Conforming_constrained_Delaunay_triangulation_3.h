@@ -545,8 +545,15 @@ class Conforming_constrained_Delaunay_triangulation_3 {
 
   using Is_constrained = typename CDT_3_impl::Is_constrained;
 public:
-  /// \name Constructors
-  /// @{
+  /** \name Constructors
+  @{
+
+  \c Conforming_constrained_Delaunay_triangulation_3 can be constructed from either 
+  a polygon soup or a polygon mesh.
+
+  \include{doc} doc_fragments/CDT_3_description_of_input.dox
+
+  */
   /*!
     * \brief %default constructor.
     *
@@ -559,18 +566,6 @@ public:
 #endif
   /*!
     * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon mesh.
-    *
-    * The polygon mesh represents the polygonal constraints that will be enforced during the triangulation process.
-    *
-    * By default, each face of the polygon mesh is considered a polygonal constraint for the triangulation. The
-    * named parameter `face_patch_map` can be used to define larger polygonal constraints, possibly with holes. If
-    * used, the argument for this parameter must be a property map that associates each face of the polygon mesh with a patch
-    * identifier. Faces sharing the same patch identifier are considered part of the same surface patch. Each of these
-    * surface patches (defined as the union of the mesh faces with a given patch ID) is expected to be a polygon or a
-    * polygon with holes, having coplanar vertices (or nearly coplanar, up to the precision of the number type used).
-    *
-    * The generated triangulation will be constrained to conform to the faces of the polygon mesh or to the surface patches
-    * described by the `face_patch_map` property map, if provided.
     *
     * \tparam PolygonMesh a model of `FaceListGraph`
     * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -729,19 +724,8 @@ public:
   /*!
     * \brief creates a 3D constrained Delaunay triangulation conforming to the faces of a polygon soup.
     *
-    * The polygon soup represents the polygonal constraints that will be enforced during the triangulation process.
-    *
-    * By default, each face of the polygon soup is considered a polygonal constraint for the triangulation. The
-    * named parameter `face_patch_map` can be used to define larger polygonal constraints, possibly with holes. If
-    * used, the argument for this parameter must be a property map that associates each face of the polygon soup with a patch
-    * identifier. Faces with the same patch identifier are considered part of the same surface patch. Each of these
-    * surface patches (defined as the union of the faces with a given patch ID) is expected to be a polygon or a
-    * polygon with holes, having coplanar vertices (or nearly coplanar, up to the precision of the number type used).
-    *
-    * The triangulation will be constrained to conform to the faces of the polygon soup or to the surface patches
-    * described by the `face_patch_map` property map, if provided.
-    *
-    * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type.
+    * \tparam PointRange a model of the concept `RandomAccessContainer` whose value type is the point type
+          of the polygon soup.
     * \tparam PolygonRange a model of the concept `RandomAccessContainer` whose value type is a model of the concept
     *    `RandomAccessContainer` whose value type is `std::size_t`.
     * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters".
@@ -754,7 +738,7 @@ public:
     *
     *   \cgalParamNBegin{point_map}
     *     \cgalParamDescription{a property map associating points with the elements of the range `points`.}
-    *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is a point type convertible to the point type.}
+    *     \cgalParamType{a model of `ReadablePropertyMap` whose value type is convertible to the point type of the traits class}
     *     \cgalParamDefault{`CGAL::Identity_property_map`.}
     *   \cgalParamNEnd
     *
@@ -916,12 +900,7 @@ public:
   }
 
   /*!
-   * \brief returns if a facet is constrained.
-   *
-   * The facet is identified by a cell handle and an index.
-   *
-   * \param ch The cell handle of the facet.
-   * \param index The index of the facet in the cell.
+   * \brief same as `is_facet_constrained(f)` with `f` being `Triangulation::Facet(ch, index)`.
    */
   bool is_facet_constrained(typename Triangulation::Cell_handle ch, int index) const {
     return cdt_impl.is_facet_constrained(typename Triangulation::Facet(ch, index));
