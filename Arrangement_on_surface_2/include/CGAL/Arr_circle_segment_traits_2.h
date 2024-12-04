@@ -140,7 +140,7 @@ public:
     }
   };
 
-  /*! ontains a Compare_xy_2 functor object. */
+  /*! obtains a Compare_xy_2 functor object. */
   Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2();
