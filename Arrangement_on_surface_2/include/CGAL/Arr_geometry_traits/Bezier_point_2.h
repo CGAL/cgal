@@ -95,7 +95,7 @@ private:
 
   public:
 
-    /*! Constructor, given an exact algebraic representation. */
+    /*! constructs, given an exact algebraic representation. */
     Originator (const Curve_2& c, const Algebraic& t) :
       _curve (c),
       _xid (0),
@@ -104,7 +104,7 @@ private:
       set_parameter (t);
     }
 
-    /*! Constructor, given an exact algebraic representation. */
+    /*! constructs, given an exact algebraic representation. */
     Originator (const Curve_2& c, unsigned int xid,
                 const Algebraic& t) :
       _curve (c),
@@ -114,7 +114,7 @@ private:
       set_parameter (t);
     }
 
-    /*! Constructor with bounding information and no exact representation. */
+    /*! constructs with bounding information and no exact representation. */
     Originator (const Curve_2& c, const Bez_point_bound& bpb) :
       _curve (c),
       _xid (0),
@@ -122,7 +122,7 @@ private:
       p_t (nullptr)
     {}
 
-    /*! Constructor with bounding information and no exact representation. */
+    /*! constructs with bounding information and no exact representation. */
     Originator (const Curve_2& c, unsigned int xid,
                 const Bez_point_bound& bpb) :
       _curve (c),
@@ -174,19 +174,19 @@ private:
       return (*this);
     }
 
-    /*! Get the originating curve. */
+    /*! obtains the originating curve. */
     const Curve_2& curve () const
     {
       return (_curve);
     }
 
-    /*! Get the serial number of the originating x-monotone curve. */
+    /*! obtains the serial number of the originating x-monotone curve. */
     unsigned int xid () const
     {
       return (_xid);
     }
 
-    /*! Get the bounding information. */
+    /*! obtains the bounding information. */
     const Bez_point_bound& point_bound () const
     {
       return (_bpb);
@@ -264,7 +264,7 @@ private:
     BoundNT          t_min;     /*!< Minimal parameter value. */
     BoundNT          t_max;     /*!< Maximal parameter value. */
 
-    /*! Constructor given control points an a t-range. */
+    /*! constructs given control points an a t-range. */
     Subcurve (const Control_points& _ctrl,
               const BoundNT& _tmin,
               const BoundNT& _tmax) :
@@ -273,7 +273,7 @@ private:
       t_max (_tmax)
     {}
 
-    /*! Constructor given a t-range. */
+    /*! constructs given a t-range. */
     Subcurve (const BoundNT& _tmin,
               const BoundNT& _tmax) :
       t_min (_tmin),
@@ -924,7 +924,7 @@ public:
     _rep()._bbox = bbox;
   }
 
-  /*! Get the bounding box of the point. */
+  /*! obtains the bounding box of the point. */
   void get_bbox (typename Bounding_traits::NT& min_x,
                  typename Bounding_traits::NT& min_y,
                  typename Bounding_traits::NT& max_x,
@@ -938,13 +938,13 @@ public:
 
 private:
 
-  /*! Get the representation (const version). */
+  /*! obtains the representation (const version). */
   inline const Bpt_rep& _rep () const
   {
     return (*(this->ptr()));
   }
 
-  /*! Get the representation (non-const version). */
+  /*! obtains the representation (non-const version). */
   inline Bpt_rep& _rep ()
   {
     return (*(this->ptr()));
@@ -1701,6 +1701,6 @@ void _Bezier_point_2_rep<RatKer, AlgKer, NtTrt, BndTrt>::_make_exact
   CGAL_error();
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif
