@@ -71,8 +71,6 @@ public:
 
   using Point_3 = typename Kernel::Point_3;
 
-  using Index = std::pair<std::size_t, std::size_t>;
-
    /*!
    identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a non-negative number, a side of the bounding box in the rotated coordinate system or a face of the octree used to partition the scene.
    */
@@ -125,6 +123,8 @@ private:
   using Line_2 = typename Kernel::Line_2;
   using Triangle_2 = typename Kernel::Triangle_2;
   using Transform_3 = CGAL::Aff_transformation_3<Kernel>;
+
+  using Index = std::pair<std::size_t, std::size_t>;
 
   using Data_structure = KSP_3::internal::Data_structure<Kernel, Intersection_kernel>;
 
@@ -730,7 +730,8 @@ public:
       m_partition_nodes[i].m_data->face_to_volumes().clear();
     }
 
-    std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
+    if (m_parameters.verbose)
+      std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
 
     return;
   }

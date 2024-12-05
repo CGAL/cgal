@@ -24,7 +24,6 @@
 #include <CGAL/Shape_detection/Region_growing/Region_growing.h>
 #include <CGAL/Shape_detection/Region_growing/Point_set.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/KSP/debug.h>
@@ -562,8 +561,6 @@ private:
   using Tds = CGAL::Triangulation_data_structure_2<Vbi, Fbi>;
   using Delaunay_2 = CGAL::Delaunay_triangulation_2<Kernel, Tds>;
 
-  using Delaunay_3 = CGAL::Delaunay_triangulation_3<Kernel>;
-
   typedef CGAL::Linear_cell_complex_traits<3, CGAL::Exact_predicates_exact_constructions_kernel> Traits;
   using LCC = CGAL::Linear_cell_complex_for_combinatorial_map<3, 3, Traits, typename KSP::Linear_cell_complex_min_items>;
   using Dart_descriptor = typename LCC::Dart_descriptor;
@@ -588,8 +585,6 @@ private:
   typedef typename CDT::Finite_edges_iterator    Finite_edges_iterator;
   typedef typename CDT::Finite_faces_iterator    Finite_faces_iterator;
 
-  //using Visibility = KSR_3::Visibility<Kernel, Intersection_kernel, Point_map, Normal_map>;
-  using Index = typename KSP::Index;
   using Face_attribute = typename LCC::Base::template Attribute_descriptor<2>::type;
   using Volume_attribute = typename LCC::Base::template Attribute_descriptor<3>::type;
 
@@ -632,7 +627,6 @@ private:
   std::vector<std::pair<std::size_t, std::size_t> > m_volume_votes; // pair<inside, outside> votes
   std::vector<bool> m_volume_below_ground;
   std::vector<std::vector<double> > m_cost_matrix;
-  std::vector<FT> m_volumes; // normalized volume of each kinetic volume
   std::vector<std::size_t> m_labels;
 
   std::size_t m_total_inliers;
@@ -752,9 +746,9 @@ private:
       std::cout << "* computing data term ... ";
 
     std::size_t max_inside = 0, max_outside = 0;
-    for (std::size_t i = 0; i < m_volumes.size(); i++) {
-      max_inside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[0][i + 6]), max_inside);
-      max_outside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[1][i + 6]), max_outside);
+    for (std::size_t i = 6; i < m_cost_matrix[0].size(); i++) {
+      max_inside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[0][i]), max_inside);
+      max_outside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[1][i]), max_outside);
     }
 
     // Dump volumes colored by votes
@@ -1716,19 +1710,46 @@ private:
       m_face_area_lcc[i] = m_face_area_lcc[i] * 2.0 * m_total_inliers / total_area;
   }
 
+  FT area(typename LCC::Dart_descriptor face_dart, Plane_3 &pl, std::vector<typename Kernel::Triangle_3> *tris = nullptr) {
+    std::vector<Point_3> face;
+    From_exact from_exact;
+
+    Dart_descriptor n = face_dart;
+    do {
+      face.push_back(from_exact(m_lcc.point(n)));
+      n = m_lcc.beta(n, 0);
+    } while (n != face_dart);
+
+    pl = from_exact(m_lcc.template info<2>(face_dart).plane);
+
+    Delaunay_2 tri;
+    for (const Point_3& p : face)
+      tri.insert(pl.to_2d(p));
+
+    FT face_area = 0;
+
+    // Get area
+    for (auto fit = tri.finite_faces_begin(); fit != tri.finite_faces_end(); ++fit) {
+      const typename Kernel::Triangle_2 triangle(
+        fit->vertex(0)->point(),
+        fit->vertex(1)->point(),
+        fit->vertex(2)->point());
+      face_area += triangle.area();
+      if (tris)
+        tris->push_back(typename Kernel::Triangle_3(pl.to_3d(fit->vertex(0)->point()), pl.to_3d(fit->vertex(1)->point()), pl.to_3d(fit->vertex(2)->point())));
+    }
+
+    return face_area;
+  }
+
   void count_volume_votes_lcc() {
 //    const int debug_volume = -1;
-    FT total_volume = 0;
     std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
     m_volume_votes.clear();
     m_volume_votes.resize(num_volumes, std::make_pair(0, 0));
 
-    m_volumes.resize(num_volumes, 0);
-
-    for (std::size_t i = 6; i < num_volumes; i++) {
+    for (std::size_t i = 6; i < num_volumes; i++)
       m_cost_matrix[0][i] = m_cost_matrix[1][i] = 0;
-      m_volumes[i] = 0;
-    }
 
     From_exact from_exact;
 
@@ -1749,8 +1770,6 @@ private:
         const auto& point = get(m_point_map, p);
         const auto& normal = get(m_normal_map, p);
 
-//        count_points++;
-
         for (std::size_t j = 0; j < idx; j++) {
           const Vector_3 vec(point, c[j]);
           const FT dot_product = vec * normal;
@@ -1768,50 +1787,15 @@ private:
         m_cost_matrix[1][v[j] + 6] += static_cast<double>(out[j]);
       }
     }
-
-    for (auto &d : m_lcc.template one_dart_per_cell<3>()) {
-      typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
-
-      std::vector<Point_3> volume_vertices;
-
-      std::size_t volume_index = m_lcc.template info<3>(dh).volume_id;
-
-      // Collect all vertices of volume to calculate volume
-      for (auto &fd : m_lcc.template one_dart_per_incident_cell<2, 3>(dh)) {
-        typename LCC::Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
-
-        for (const auto &vd : m_lcc.template one_dart_per_incident_cell<0, 2>(fdh))
-          volume_vertices.push_back(from_exact(m_lcc.point(m_lcc.dart_descriptor(vd))));
-      }
-
-      Delaunay_3 tri;
-      for (const Point_3& p : volume_vertices)
-        tri.insert(p);
-
-      m_volumes[volume_index] = FT(0);
-      for (auto cit = tri.finite_cells_begin(); cit != tri.finite_cells_end(); ++cit) {
-        const auto& tet = tri.tetrahedron(cit);
-        m_volumes[volume_index] += tet.volume();
-      }
-
-      total_volume += m_volumes[volume_index];
-    }
-
-    // Normalize volumes
-    for (FT& v : m_volumes)
-      v /= total_volume;
-
-//     for (std::size_t i = 0; i < m_volumes.size(); i++)
-//       std::cout << i << ": " << m_cost_matrix[0][i] << " o: " << m_cost_matrix[1][i] << " v: " << m_volumes[i] << std::endl;
   }
 
   template<typename NamedParameters>
   void create_planar_shapes(const NamedParameters& np) {
-
     if (m_points.size() < 3) {
       if (m_verbose) std::cout << "* no points found, skipping" << std::endl;
       return;
     }
+
     if (m_verbose) std::cout << "* getting planar shapes using region growing" << std::endl;
 
     FT xmin, ymin, zmin, xmax, ymax, zmax;
@@ -2007,8 +1991,6 @@ private:
   }
 
   void map_points_to_faces(const std::size_t polygon_index, const std::vector<Point_3>& pts, std::vector<std::pair<typename LCC::Dart_descriptor, std::vector<std::size_t> > >& face_to_points) {
-    std::vector<Index> faces;
-
     if (polygon_index >= m_kinetic_partition.input_planes().size())
       CGAL_assertion(false);
 
