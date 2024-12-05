@@ -147,7 +147,7 @@ function packageContainer(platforms) {
 
                 if (content.length > 0) {
                     const $toggleButton = $('<button>', {
-                        class: 'toggle-button',
+                        class: 'content-toggle-button',
                         text: 'Show More',
                         click: function() {
                             if ($contentSpan.is(':hidden')) {
@@ -174,7 +174,7 @@ function platformContainer(platforms) {
         const tplArray = platform.tpl;
         const $toggleButton = $('<button>', {
             text: 'Third Party Libraries',
-            class: 'tpl-toggle-button toggle-button',
+            class: 'tpl-toggle-button',
             click: function() {
                 $tplTable.toggle();
             }
@@ -220,7 +220,7 @@ function platformContainer(platforms) {
                 }).appendTo($letterContainer);
                 if (directory.content.length > 0) {
                     const $toggleButton = $('<button>', {
-                        class: 'toggle-button',
+                        class: 'content-toggle-button',
                         text: 'Show More',
                         click: function() {
                             if ($contentSpan.is(':hidden')) {
@@ -244,12 +244,12 @@ function platformContainer(platforms) {
 
 function openAll() {
     $('.summary-content').show().css('background-color', '#D0D0E0');
-    $('.toggle-button').text('Show Less');
+    $('.content-toggle-button').text('Show Less');
 }
 
 function closeAll() {
     $('.summary-content').hide().css('background-color', 'transparent');
-    $('.toggle-button').text('Show More');
+    $('.content-toggle-button').text('Show More');
 }
 
 function showVersionsForTPL(tplName) {
