@@ -29,6 +29,7 @@ enum class CDT_3_cell_marker {
 };
 
 /*!
+ * @ingroup PkgCT_3Classes
  * @brief Internal per-cell data for \cgal 3D conforming constrained Delaunay triangulations
  *
  * This class is an internal detail of the implementation of \cgal 3D conforming constrained Delaunay triangulations.
@@ -41,7 +42,7 @@ class Conforming_constrained_Delaunay_triangulation_cell_data_3 {
   template <typename Tr> friend class Conforming_constrained_Delaunay_triangulation_3_impl;
   /// @endcond
 
-  std::array<CDT_3_face_index, 4> face_id = { -1, -1, -1, -1 };
+  std::array<CDT_3_signed_index, 4> face_id = { -1, -1, -1, -1 };
   std::array<void*, 4> facet_2d = {nullptr, nullptr, nullptr, nullptr};
   std::bitset<static_cast<unsigned>(CDT_3_cell_marker::nb_of_markers)> markers;
 
@@ -52,7 +53,7 @@ class Conforming_constrained_Delaunay_triangulation_cell_data_3 {
   void clear_marks() { markers.reset(); }
 
   template <typename Facet_handle>
-  void set_facet_constraint(int i, CDT_3_face_index face_id,
+  void set_facet_constraint(int i, CDT_3_signed_index face_id,
                             Facet_handle facet_2d)
   {
     this->face_id[unsigned(i)] = face_id;
@@ -72,11 +73,11 @@ public:
   /// @brief Returns the index of the constraint that constrains the
   /// i-th facet of the cell.
   /// @pre `is_facet_constrained(i)`
-  CDT_3_face_index face_constraint_index(int i) const {
+  CDT_3_signed_index face_constraint_index(int i) const {
     return face_id[unsigned(i)];
   }
   /// @brief Set the index of the constraint that constrains the i-th facet of the cell.
-  void set_face_constraint_index(int i, CDT_3_face_index index) {
+  void set_face_constraint_index(int i, CDT_3_signed_index index) {
     face_id[unsigned(i)] = index;
   }
 };

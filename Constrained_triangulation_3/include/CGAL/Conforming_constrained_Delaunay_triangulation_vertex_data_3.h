@@ -23,6 +23,7 @@ namespace CGAL {
 
 #ifdef DOXYGEN_RUNNING
 /*!
+ * @ingroup PkgCT_3Classes
  * @brief Internal per-vertex data for \cgal 3D conforming constrained Delaunay triangulations
  *
  * This class is an internal detail of the implementation of \cgal 3D conforming constrained Delaunay triangulations.
@@ -45,7 +46,7 @@ enum class CDT_3_vertex_marker {
   nb_of_markers
 };
 
-struct Conforming_constrained_Delaunay_triangulation_vertex_data_3 {
+class Conforming_constrained_Delaunay_triangulation_vertex_data_3 {
 protected:
   // TODO: check and improve the compactness of this class
   CDT_3_vertex_type m_vertex_type = CDT_3_vertex_type::FREE;
@@ -56,7 +57,7 @@ protected:
       void* c_id = nullptr;
     } on_edge;
     struct On_face{
-      CDT_3_face_index face_index = 0;
+      CDT_3_signed_index face_index = 0;
     } on_face;
   } u {U::On_edge{}};
 
@@ -113,12 +114,12 @@ public:
     return C_id(static_cast<Vertex_list_ptr>(u.on_edge.c_id));
   }
 
-  void set_Steiner_vertex_in_face(CDT_3_face_index face_index) {
+  void set_Steiner_vertex_in_face(CDT_3_signed_index face_index) {
     m_vertex_type = CDT_3_vertex_type::STEINER_IN_FACE;
     u.on_face = typename U::On_face{face_index};
   }
 
-  CDT_3_face_index face_index() const {
+  CDT_3_signed_index face_index() const {
     CGAL_assertion(m_vertex_type == CDT_3_vertex_type::STEINER_IN_FACE);
     return u.on_face.face_index;
   }

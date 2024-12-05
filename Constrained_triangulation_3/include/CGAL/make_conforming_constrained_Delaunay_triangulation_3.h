@@ -35,7 +35,7 @@ namespace CGAL {
   Input Data        {#make_conforming_constrained_Delaunay_triangulation_3_input_data}
   ----------
 
-  \include{doc} doc_fragments/CDT_3_description_of_input.dox
+  \include{doc} CDT_3_description_of_input.dox-frag
 
   Template Parameters        {#make_conforming_constrained_Delaunay_triangulation_3_template_parameters}
   -------------------
@@ -75,7 +75,7 @@ namespace CGAL {
  * \relates CGAL::Conforming_constrained_Delaunay_triangulation_3
  * 
  * \tparam PolygonMesh a model of `FaceListGraph`
- * \include{doc} doc_fragments/CDT_3_common_template_parameters.dox
+ * \include{doc} CDT_3_common_template_parameters.dox-frag
  *
  * \param mesh the polygon mesh representing the constraints
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
@@ -99,7 +99,7 @@ namespace CGAL {
  *   \cgalParamExtra{Otherwise, faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  * 
- *   \include{doc} doc_fragments/CDT_3_common_named_parameters.dox
+ *   \include{doc} CDT_3_common_named_parameters.dox-frag
  * \cgalNamedParamsEnd
  *
  * \pre `mesh` must not have self-intersections:
@@ -131,7 +131,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *         of the polygon soup
  * \tparam PolygonRange a model of the concept `RandomAccessContainer` whose value type is a model of the concept
  *    `RandomAccessContainer` whose value type is `std::size_t`
- * \include{doc} doc_fragments/CDT_3_common_template_parameters.dox
+ * \include{doc} CDT_3_common_template_parameters.dox-frag
  *
  * \param points a range of points representing the vertices of the polygon soup
  * \param polygons a range of ranges of indices representing the faces of the polygon soup
@@ -153,7 +153,7 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *   \cgalParamExtra{Otherwise faces with the same patch identifier are considered part of the same surface patch.}
  *   \cgalParamNEnd
  * 
- *   \include{doc} doc_fragments/CDT_3_common_named_parameters.dox
+ *   \include{doc} CDT_3_common_named_parameters.dox-frag
  *
  * \cgalNamedParamsEnd
  *

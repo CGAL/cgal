@@ -551,7 +551,9 @@ public:
   \c Conforming_constrained_Delaunay_triangulation_3 can be constructed from either 
   a polygon soup or a polygon mesh.
 
-  \include{doc} doc_fragments/CDT_3_description_of_input.dox
+  ## Input Data
+
+  \include{doc} CDT_3_description_of_input.dox-frag
 
   */
   /*!
@@ -967,7 +969,7 @@ public:
   using Vertex_marker = CDT_3_vertex_marker;
   using Cell_marker = CDT_3_cell_marker;
 
-  using Face_index = CDT_3_face_index;
+  using Face_index = CDT_3_signed_index;
 
   using Conforming_Dt::Conforming_Dt;
 
@@ -1371,7 +1373,7 @@ public:
     return (f_vertices == fh_vertices);
   }
 
-  void set_facet_constrained(Facet f, CDT_3_face_index polygon_contraint_id,
+  void set_facet_constrained(Facet f, CDT_3_signed_index polygon_contraint_id,
                              CDT_2_face_handle fh)
   {
     CGAL_assertion(fh == CDT_2_face_handle{} || same_triangle(f, fh));
@@ -1437,7 +1439,7 @@ public:
     auto& borders = face_index < 0 ? this->face_borders.emplace_back() : this->face_borders[face_index];
     auto& border = borders.emplace_back();
     const auto polygon_contraint_id =
-        face_index < 0 ? static_cast<CDT_3_face_index>(this->face_borders.size() - 1) : face_index;
+        face_index < 0 ? static_cast<CDT_3_signed_index>(this->face_borders.size() - 1) : face_index;
     do {
       const auto va = *circ;
       ++circ;
@@ -1532,7 +1534,7 @@ public:
   }
 
 private:
-  void fill_cdt_2(CDT_2& cdt_2, CDT_3_face_index polygon_contraint_id)
+  void fill_cdt_2(CDT_2& cdt_2, CDT_3_signed_index polygon_contraint_id)
   {
     const auto vec_of_handles = std::invoke([this, polygon_contraint_id]() {
       std::vector<std::vector<Vertex_handle>> vec_of_handles;
@@ -1715,7 +1717,7 @@ private:
     }
   }
 
-  void search_for_missing_subfaces(CDT_3_face_index polygon_contraint_id)
+  void search_for_missing_subfaces(CDT_3_signed_index polygon_contraint_id)
   {
     const CDT_2& cdt_2 = face_cdt_2[polygon_contraint_id];
 
@@ -1764,7 +1766,7 @@ private:
     return fh_region;
   }
 
-  auto brute_force_border_3_of_region([[maybe_unused]] CDT_3_face_index face_index,
+  auto brute_force_border_3_of_region([[maybe_unused]] CDT_3_signed_index face_index,
                                       [[maybe_unused]] int region_index,
                                       [[maybe_unused]] const CDT_2& cdt_2,
                                       const std::vector<CDT_2_face_handle>& fh_region)
@@ -1848,7 +1850,7 @@ private:
   // The returned edge has its first vertex above the region.
   template <typename Fh_region, typename Edges_container>
   std::optional<Search_first_intersection_result_type>
-  search_first_intersection(CDT_3_face_index /*face_index*/,
+  search_first_intersection(CDT_3_signed_index /*face_index*/,
                             const CDT_2& cdt_2,
                             const Fh_region& fh_region,
                             const Edges_container& border_edges)
@@ -1895,7 +1897,7 @@ private:
   };
 
   template <typename Fh_region, typename Vertices_container, typename Edges_container>
-  auto construct_cavities(CDT_3_face_index face_index,
+  auto construct_cavities(CDT_3_signed_index face_index,
                           int region_index,
                           const CDT_2& cdt_2,
                           const Fh_region& fh_region,
@@ -2484,7 +2486,7 @@ private:
   using Conforming_Dt::with_point_and_info;
 
   template <typename Fh_region>
-  void restore_subface_region(CDT_3_face_index face_index, int region_index,
+  void restore_subface_region(CDT_3_signed_index face_index, int region_index,
                               CDT_2& non_const_cdt_2, Fh_region& non_const_fh_region)
   {
     if(this->debug_regions()) {
@@ -2791,7 +2793,7 @@ private:
         std::for_each(fh_region.begin(), fh_region.end(), [](auto fh) { fh->info().is_in_region = 3; });
         // dump_3d_triangulation(face_index, region_index, "lower", lower_cavity_triangulation);
         // dump_3d_triangulation(face_index, region_index, "upper", upper_cavity_triangulation);
-        auto dump_facets_of_cavity_border = [&](CDT_3_face_index face_index, int region_index, std::string type,
+        auto dump_facets_of_cavity_border = [&](CDT_3_signed_index face_index, int region_index, std::string type,
                                                 const auto& cavity_triangulation) {
           std::ofstream out(std::string("dump_plane_facets_of_region_") + std::to_string(face_index) + "_" +
                             std::to_string(region_index) + "_" + type + ".off");
@@ -3197,7 +3199,7 @@ private:
   }
 
   std::optional<std::pair<Vertex_handle, Vertex_handle>>
-  return_encroached_constrained_edge([[maybe_unused]] CDT_3_face_index face_index,
+  return_encroached_constrained_edge([[maybe_unused]] CDT_3_signed_index face_index,
                                       const CDT_2& cdt_2,
                                       Point_3 steiner_pt) const
   {
@@ -3221,7 +3223,7 @@ private:
   }
 
   std::optional<std::pair<Vertex_handle, Vertex_handle>>
-  try_to_insert_circumcenter_in_face_or_return_encroached_edge(CDT_3_face_index face_index,
+  try_to_insert_circumcenter_in_face_or_return_encroached_edge(CDT_3_signed_index face_index,
                                                                CDT_2& non_const_cdt_2,
                                                                CDT_2_face_handle fh_2d)
   {
@@ -3369,7 +3371,7 @@ private:
     // assert(is_valid(true));
   }
 
-  bool restore_face(CDT_3_face_index face_index) {
+  bool restore_face(CDT_3_signed_index face_index) {
     CDT_2& non_const_cdt_2 = face_cdt_2[face_index];
     const CDT_2& cdt_2 = non_const_cdt_2;
 #if CGAL_CDT_3_CAN_USE_CXX20_FORMAT
@@ -3671,7 +3673,7 @@ public:
     write_facets(out, tr, tr.finite_facets());
   }
 
-  void dump_3d_triangulation(CDT_3_face_index face_index,
+  void dump_3d_triangulation(CDT_3_signed_index face_index,
                              int region_index,
                              std::string type,
                              const Conforming_constrained_Delaunay_triangulation_3_impl& tr)
@@ -3694,21 +3696,21 @@ public:
     write_3d_triangulation_to_OFF(dump, *this);
   }
 
-  void dump_region(CDT_3_face_index face_index, int region_index, const CDT_2& cdt_2) {
+  void dump_region(CDT_3_signed_index face_index, int region_index, const CDT_2& cdt_2) {
     std::ofstream dump_region(std::string("dump_region_") + std::to_string(face_index) + "_" +
                               std::to_string(region_index) + ".off");
     dump_region.precision(17);
     write_region_to_OFF(dump_region, cdt_2);
   }
 
-  void dump_face(CDT_3_face_index face_index) {
+  void dump_face(CDT_3_signed_index face_index) {
     const auto& cdt_2 = face_cdt_2[face_index];
     std::ofstream dump_region(std::string("dump_face_") + std::to_string(face_index) + ".off");
     dump_region.precision(17);
     write_region_to_OFF(dump_region, cdt_2);
   }
 
-  void dump_region(CDT_3_face_index face_index, int region_index) {
+  void dump_region(CDT_3_signed_index face_index, int region_index) {
     const auto& cdt_2 = face_cdt_2[face_index];
     dump_region(face_index, region_index, cdt_2);
   }
@@ -3780,7 +3782,7 @@ public:
   }
 
   template <typename Facets_range>
-  void dump_facets_of_cavity(CDT_3_face_index face_index, int region_index, std::string type,
+  void dump_facets_of_cavity(CDT_3_signed_index face_index, int region_index, std::string type,
                              const Facets_range& facets_range)
   {
     std::ofstream out(std::string("dump_facets_of_region_") + std::to_string(face_index) + "_" +
@@ -3830,7 +3832,7 @@ protected:
     bool is_reverse = false;
   };
   std::vector<std::vector<std::vector<Face_edge>>> face_borders;
-  std::multimap<Constraint_id, CDT_3_face_index> constraint_to_faces;
+  std::multimap<Constraint_id, CDT_3_signed_index> constraint_to_faces;
 
   // boost::dynamic_bitset<> face_constraint_misses_subfaces;
   // std::size_t face_constraint_misses_subfaces_find_first() const {

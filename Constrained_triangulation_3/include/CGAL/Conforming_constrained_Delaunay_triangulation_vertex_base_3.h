@@ -42,7 +42,7 @@ class Conforming_constrained_Delaunay_triangulation_vertex_base_3 : public Base_
 {
   Conforming_constrained_Delaunay_triangulation_vertex_data_3 ccdt_3_data_;
   bool cache_validity_ = false;
-  CDT_3_face_index index_ = 0;
+  CDT_3_signed_index index_ = 0;
   int dim_ = -1;
   std::size_t number_of_incident_facets_ = 0;
   std::size_t number_of_components_ = 0;

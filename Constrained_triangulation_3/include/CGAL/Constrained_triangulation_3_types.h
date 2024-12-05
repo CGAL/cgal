@@ -20,12 +20,12 @@ namespace CGAL {
 
 /**
  * @ingroup PkgCT_3Classes
- * \brief Integral type to store the index of constraints.
+ * \brief Signed integral type to store the index of constraints.
  * @see `Conforming_constrained_Delaunay_triangulation_cell_data_3`
  * @see `Conforming_constrained_Delaunay_triangulation_vertex_base_3`
  *
  */
-using CDT_3_face_index = int; // must be signed
+using CDT_3_signed_index = int; // must be signed
 
 } // namespace CGAL
 
