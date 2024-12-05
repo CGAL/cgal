@@ -29,7 +29,7 @@ namespace CGAL {
   Free Functions for Creating Conforming Constrained Delaunay Triangulations  {#PkgCT_3Functions}
   ==========================================================================
 
-  These functions create a 3D conforming constrained Delaunay triangulation
+  Each of the following functions create a 3D conforming constrained Delaunay triangulation
   from either a polygon soup or a polygon mesh.
 
   Input Data        {#make_conforming_constrained_Delaunay_triangulation_3_input_data}
