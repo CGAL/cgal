@@ -37,6 +37,7 @@ my @platforms_to_do;
 my @known_platforms;
 my %platform_short_names;
 my %platform_is_optimized;
+my %platform_third_party_libs;
 my %platform_is_64bits;
 my @available_platforms;
 my %test_directories = ();
@@ -490,80 +491,100 @@ sub print_platform_descriptions()
 EOF
     my ($platform_num)=(0);
     foreach $pf (@platforms_to_do) {
-        my $pf_num_plus_one = $platform_num + 1;
-        print OUTPUT "<tr>\n<td><a name=\"platform$pf_num_plus_one\">$pf_no</a>\n";
-        $pf_no++;
-        # my $pf_short = join('_',parse_platform_2($pf));
-        (my $pf_short) = ($pf =~ m/_(.*)/);
-        print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\"";
-
-        ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
-
-        if (open (PLATFORM_INFO, "results_${pf}.info")) {
+        my $compiler = "?";
+        my $operating_system = "?";
+        my $tester_name = "?";
+        my $tester_address = "?";
+        my @versions_and_flags = ();
+        if (open (PLATFORM_JSON, "<results_${pf}.json")) {
+            local $/;
+            my $json_text = <PLATFORM_JSON>;
+            close PLATFORM_JSON;
+            my $platform_info = decode_json($json_text);
+            $compiler = $platform_info->{compiler} // $compiler;
+            $operating_system = $platform_info->{operating_system} // $operating_system;
+            $tester_name = $platform_info->{tester_name} // $tester_name;
+            $tester_address = $platform_info->{tester_address} // $tester_address;
+            @versions_and_flags = ( 
+                $platform_info->{CMake_version} // "?",
+                $platform_info->{Boost_version} // "?",
+                $platform_info->{MPFR_version} // "?",
+                $platform_info->{GMP_version} // "?",
+                $platform_info->{Qt_version} // "?",
+                $platform_info->{LEDA_version} // "?",
+                $platform_info->{CXXFLAGS} // "?",
+                $platform_info->{LDFLAGS} // "?",
+            );
+            @versions_and_flags = reverse @versions_and_flags;
+            $platform_is_optimized{$pf} = $platform_info->{is_optimized} if defined $platform_info->{is_optimized};
+            $platform_third_party_libs{$pf} = $platform_info->{third_party_libs} if defined $platform_info->{third_party_libs};
+        }
+        elsif (open (PLATFORM_INFO, "<results_${pf}.info")) {
             $_ = <PLATFORM_INFO>; # CGAL_VERSION
             $_ = <PLATFORM_INFO>; # COMPILER
             chomp;
-            my $compiler = $_;
-            print OUTPUT " title=\"$compiler\">$pf_short</a>";
+            $compiler = $_;
             $_ = <PLATFORM_INFO>; # OPERATING_SYSTEM
             chomp;
-            my $operating_system = $_;
+            $operating_system = $_;
             $_ = <PLATFORM_INFO>; # TESTER_NAME
             chomp;
-            my $tester_name = $_;
+            $tester_name = $_;
             $_ = <PLATFORM_INFO>; # TESTER_ADDRESS
             chomp;
-            my $tester_address = $_;
-
-            my $county = $testresults[$platform_num]->{"y"};
-            my $countt = $testresults[$platform_num]->{"t"};
-            my $countw = $testresults[$platform_num]->{"w"};
-            my $counto = $testresults[$platform_num]->{"o"};
-            my $countn = $testresults[$platform_num]->{"n"};
-            my $countr = $testresults[$platform_num]->{"r"};
+            $tester_address = $_;
 
             my $index = 8;
-            my @tmp;
             while ($index) {
                 $index--;
                 $_ = <PLATFORM_INFO>;
                 chomp;
-                $tmp[$index] = $_;
+                $versions_and_flags[$index] = $_;
             }
-            ($platform_is_optimized{$pf}) = ($tmp[1] =~ m|([-/]x?O[1-9])|);
-            $_ = <PLATFORM_INFO>;
+            $_ = <PLATFORM_INFO>; # TPL:
             chomp;
-            my $build_type = $platform_is_optimized{$pf} ? " - " : "YES";
-            print OUTPUT "</td>\n";
-            print OUTPUT "<td>$compiler</td>\n"; # Compiler
-            print OUTPUT "<td>$operating_system</td>\n"; # Operating System
-            print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
-            print OUTPUT "<td>$county</td>\n";
-            print OUTPUT "<td>$countt</td>\n";
-            print OUTPUT "<td>$countw</td>\n";
-            print OUTPUT "<td>$counto</td>\n";
-            print OUTPUT "<td>$countn</td>\n";
-            print OUTPUT "<td>$countr</td>\n";
-            print OUTPUT "<td align=\"center\">$build_type</td>\n";
-            $index = 8;
-            while ($index) {
-                $index--;
-                $_ = $tmp[$index];
-                if($index > 2) {
-                    print OUTPUT "<td align=\"center\">$_</td>\n";
-                } else {
-                    print OUTPUT "<td>$_</td>\n";
-                }
-            }
-        } else {
-            print OUTPUT ">$pf_short</a>";
-            my $index = 12;
-            while ($index) {
-        $index--;
-                print OUTPUT "<td>?</td>\n";
+            $platform_third_party_libs{$pf} = $_;
+        }
+        my $pf_num_plus_one = $platform_num + 1;
+        $pf_no++;
+        # my $pf_short = join('_',parse_platform_2($pf));
+        (my $pf_short) = ($pf =~ m/_(.*)/);
+        ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
+        ($platform_is_optimized{$pf}) = ($versions_and_flags[1] =~ m|([-/]x?O[1-9])|);
+        my $county = $testresults[$platform_num]->{"y"};
+        my $countt = $testresults[$platform_num]->{"t"};
+        my $countw = $testresults[$platform_num]->{"w"};
+        my $counto = $testresults[$platform_num]->{"o"};
+        my $countn = $testresults[$platform_num]->{"n"};
+        my $countr = $testresults[$platform_num]->{"r"};
+        my $build_type = $platform_is_optimized{$pf} ? " - " : "YES";
+        print OUTPUT <<EOF;
+        <tr>
+          <td><a name="platform$pf_num_plus_one">$pf_num_plus_one</a></td>
+          <td><a href="$release_name/Installation/TestReport_$pf.gz">$pf_short</a></td>
+          <td>$compiler</td>
+          <td>$operating_system</td>
+          <td><a href="mailto:$tester_address">$tester_name</a></td>
+          <td>$county</td>
+          <td>$countt</td>
+          <td>$countw</td>
+          <td>$counto</td>
+          <td>$countn</td>
+          <td>$countr</td>
+          <td align="center">$build_type</td>
+EOF
+        my $index = 8;
+        while ($index) {
+            $index--;
+            $_ = $versions_and_flags[$index];
+            if($index > 2) {
+                print OUTPUT "          <td align=\"center\">$_</td>\n";
+            } else {
+                print OUTPUT "          <td>$_</td>\n";
             }
         }
         ++$platform_num;
+        print OUTPUT "        </tr>\n";
     }
     print OUTPUT "</table>\n<p>\n";
 }
@@ -768,37 +789,27 @@ sub create_summary_page {
     my @platforms_data;
     my ($platform_num, $platform) = (0, "");
     foreach $platform (@platforms_to_do) {
-        my $third_party_libraries = "";
         my @tpl_list = ();
-        if (open(PLATFORM_INFO, "results_${platform}.info")) {
-            my $line = "";
-            while (<PLATFORM_INFO>) {
-                $line = $_;
-                if ($line =~ /^TPL:/) {
-                    $third_party_libraries = $line;
-                    if ($third_party_libraries =~ /^TPL:\s*(.*)/) {
-                        my $tpl_data = $1;
-                        my @tpls = split /,\s*/, $tpl_data;
-                        foreach my $tpl (@tpls) {
-                            if ($tpl =~ /(.+)\s+not found/i) {
-                                push @tpl_list, {
-                                    name => $1,
-                                    version => undef,
-                                    status => "not found"
-                                };
-                            }
-                            elsif ($tpl =~ /(.+)\s+(\S+)/) {
-                                push @tpl_list, {
-                                    name => $1,
-                                    version => $2,
-                                    status => "found"
-                                };
-                            }
-                        }
-                    }
+        my $third_party_libraries = $platform_third_party_libs{$platform};
+        if ($third_party_libraries =~ /^TPL:\s*(.*)/) {
+            my $tpl_data = $1;
+            my @tpls = split /,\s*/, $tpl_data;
+            foreach my $tpl (@tpls) {
+                if ($tpl =~ /(.+)\s+not found/i) {
+                    push @tpl_list, {
+                        name => $1,
+                        version => undef,
+                        status => "not found"
+                    };
+                }
+                elsif ($tpl =~ /(.+)\s+(\S+)/) {
+                    push @tpl_list, {
+                        name => $1,
+                        version => $2,
+                        status => "found"
+                    };
                 }
             }
-            close PLATFORM_INFO;
         }
         my $platform_info = {
             name => $platform,
