@@ -52,7 +52,21 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL) = ("-","-","-","-","-","-","-","-","-","-","-","-","no","TPL:");
+    my $CGAL_VERSION = "-";
+    my $LEDA_VERSION = "-";
+    my $COMPILER = "-";
+    my $OS = "-";
+    my $TESTER_NAME = "-";
+    my $TESTER_ADDRESS = "-";
+    my $GMP = "-";
+    my $MPFR = "-";
+    my $ZLIB = "-";
+    my $OPENGL = "-";
+    my $BOOST = "-";
+    my $QT = "-";
+    my $CMAKE = "no";
+    my $TPL = "TPL:";
+    my @third_party_libs = ();
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -136,8 +150,9 @@ sub reformat_results($)
 #            print PLATFORM_NEW_RESULTS $_;
 #            last;
 #        }
-    if (/^-- Third-party library (.+)$/) {
-        $TPL = "$TPL $1,";
+    if (/^-- Third-party library ([^[:space:]]+) (.+)$/) {
+        $TPL = "$TPL $1 $2,";
+        push @third_party_libs, { name => $1, version => $2 };
     }
 NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
             # should never happen!!
@@ -162,7 +177,7 @@ NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
         "LEDA_version" => $LEDA_VERSION,
         "CXXFLAGS" => $CXXFLAGS,
         "LDFLAGS" => $LDFLAGS,
-        "third_party_libs" => $TPL
+        "third_party_libs" => \@third_party_libs
     };
     open PLATFORM_JSON , ">${platform}.json" or die "cannot open ${platform}.json";
     print PLATFORM_JSON  JSON->new->utf8->pretty->encode($platform_info);
