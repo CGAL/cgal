@@ -53,6 +53,7 @@ sub reformat_results($)
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
     my $CGAL_VERSION = "-";
+    my $PLATFORM_NAME = "-";
     my $LEDA_VERSION = "-";
     my $COMPILER = "-";
     my $OS = "-";
@@ -155,10 +156,10 @@ sub reformat_results($)
         push @third_party_libs, { name => $1, version => $2 };
     }
     if (/^CGAL_TEST_PLATFORM\s+(.*)$/) {
-        $PLATFORM_NAME = "$PLATFORM_NAME $1" if ($PLATFORM_NAME eq "Platform_name:");
+        $PLATFORM_NAME = "$1" if ($PLATFORM_NAME eq "-");
     }
     if (/^CGAL_SUMMARY_NAME\s+(.*)$/) {
-        $PLATFORM_NAME = "$PLATFORM_NAME $1";
+        $PLATFORM_NAME = "$1";
     }
 NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
             # should never happen!!
@@ -169,8 +170,9 @@ NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
         print PLATFORM_NEW_RESULTS $_;
     }
     rename("${platform}.new_results","${platform}.txt") or die "cannot rename!";
-    my $platform_info = { 
+    my $platform_info = {
         "cgal_version" => $CGAL_VERSION,
+        "platform_name" => $PLATFORM_NAME,
         "compiler" => $COMPILER,
         "operating_system" => $OS,
         "tester_name" => $TESTER_NAME,
@@ -190,6 +192,7 @@ NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
     close PLATFORM_JSON;
     print PLATFORM_INFO <<"EOF";
 $CGAL_VERSION
+$PLATFORM_NAME
 $COMPILER
 $OS
 $TESTER_NAME
