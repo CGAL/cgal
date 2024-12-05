@@ -2,6 +2,7 @@
 
 use Cwd;
 use strict;
+use JSON;
 
 my $TMPDIR;
 my $version = "";
@@ -51,7 +52,21 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL,$PLATFORM_NAME) = ("-","-","-","OS:","-","-","-","-","-","-","-","-","no","TPL:","Platform_name:");
+    my $CGAL_VERSION = "-";
+    my $LEDA_VERSION = "-";
+    my $COMPILER = "-";
+    my $OS = "-";
+    my $TESTER_NAME = "-";
+    my $TESTER_ADDRESS = "-";
+    my $GMP = "-";
+    my $MPFR = "-";
+    my $ZLIB = "-";
+    my $OPENGL = "-";
+    my $BOOST = "-";
+    my $QT = "-";
+    my $CMAKE = "no";
+    my $TPL = "TPL:";
+    my @third_party_libs = ();
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -135,8 +150,9 @@ sub reformat_results($)
 #            print PLATFORM_NEW_RESULTS $_;
 #            last;
 #        }
-    if (/^-- Third-party library (.+)$/) {
-        $TPL = "$TPL $1,";
+    if (/^-- Third-party library ([^[:space:]]+) (.+)$/) {
+        $TPL = "$TPL $1 $2,";
+        push @third_party_libs, { name => $1, version => $2 };
     }
     if (/^CGAL_TEST_PLATFORM\s+(.*)$/) {
         $PLATFORM_NAME = "$PLATFORM_NAME $1" if ($PLATFORM_NAME eq "Platform_name:");
@@ -153,6 +169,25 @@ NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
         print PLATFORM_NEW_RESULTS $_;
     }
     rename("${platform}.new_results","${platform}.txt") or die "cannot rename!";
+    my $platform_info = { 
+        "cgal_version" => $CGAL_VERSION,
+        "compiler" => $COMPILER,
+        "operating_system" => $OS,
+        "tester_name" => $TESTER_NAME,
+        "tester_address" => $TESTER_ADDRESS,
+        "CMake_version" => $CMAKE,
+        "Boost_version" => $BOOST,
+        "MPFR_version" => $MPFR,
+        "GMP_version" => $GMP,
+        "Qt_version" => $QT,
+        "LEDA_version" => $LEDA_VERSION,
+        "CXXFLAGS" => $CXXFLAGS,
+        "LDFLAGS" => $LDFLAGS,
+        "third_party_libs" => \@third_party_libs
+    };
+    open PLATFORM_JSON , ">${platform}.json" or die "cannot open ${platform}.json";
+    print PLATFORM_JSON  JSON->new->utf8->pretty->encode($platform_info);
+    close PLATFORM_JSON;
     print PLATFORM_INFO <<"EOF";
 $CGAL_VERSION
 $COMPILER
