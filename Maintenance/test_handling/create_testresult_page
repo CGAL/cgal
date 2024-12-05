@@ -161,7 +161,12 @@ sub collect_results_of_platform($)
     if (open(PLATFORM_INFO, "results_${platform}.info")) {
         my @info = <PLATFORM_INFO>;
         chomp(@info);
-        $display_name = $info[-1] if ($info[-1] ne "-");
+        foreach my $line (@info) {
+            if ($line =~ /Platform_name:\s*(.*)/) {
+            $display_name = $1;
+            last;
+            }
+        }
         close(PLATFORM_INFO);
     }
     open(TESTRESULT, $test_result) or return $platform_results;

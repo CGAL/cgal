@@ -51,7 +51,7 @@ sub reformat_results($)
     $_ = $line;
     open (PLATFORM_INFO,">${platform}.info") or return;
     open (PLATFORM_NEW_RESULTS,">${platform}.new_results") or return;
-    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL,$PLATFORM_NAME) = ("-","-","-","OS:","-","-","-","-","-","-","-","-","no","TPL:","-");
+    my ($CGAL_VERSION,$LEDA_VERSION,$COMPILER,$OS,$TESTER_NAME,$TESTER_ADDRESS,$GMP,$MPFR,$ZLIB,$OPENGL,$BOOST,$QT,$CMAKE,$TPL,$PLATFORM_NAME) = ("-","-","-","OS:","-","-","-","-","-","-","-","-","no","TPL:","Platform_name:");
     my ($LDFLAGS,$CXXFLAGS) = ("", "");
     while (! /^------/) {
         if(/^\s*$/) {
@@ -139,10 +139,10 @@ sub reformat_results($)
         $TPL = "$TPL $1,";
     }
     if (/^CGAL_TEST_PLATFORM\s+(.*)$/) {
-        $PLATFORM_NAME = $1 if ($PLATFORM_NAME eq "-");
+        $PLATFORM_NAME = "$PLATFORM_NAME $1" if ($PLATFORM_NAME eq "Platform_name:");
     }
     if (/^CGAL_SUMMARY_NAME\s+(.*)$/) {
-        $PLATFORM_NAME = $1;
+        $PLATFORM_NAME = "$PLATFORM_NAME $1";
     }
 NEXT:	if(! ($_= <PLATFORM_RESULTS>)) {
             # should never happen!!
