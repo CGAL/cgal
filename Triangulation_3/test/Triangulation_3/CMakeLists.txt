@@ -17,6 +17,7 @@ include(FetchContent)
 
 FetchContent_Declare(
   tl-expected
+  DOWNLOAD_EXTRACT_TIMESTAMP NO
   GIT_REPOSITORY https://github.com/TartanLlama/expected.git
   GIT_TAG        292eff8bd8ee230a7df1d6a1c00c4ea0eb2f0362 # https://github.com/TartanLlama/expected/releases/tag/v1.1.0
   FIND_PACKAGE_ARGS CONFIG
@@ -50,27 +51,32 @@ create_single_source_cgal_program("test_Triangulation_with_zip_iterator.cpp")
 create_single_source_cgal_program("debug_segment_traverser_in_2D.cpp")
 
  # CDT_3: C++20 for structured bindings
-create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_EDG_file.cpp" CXX_FEATURES cxx_std_20)
-create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_OFF_file.cpp" CXX_FEATURES cxx_std_20)
-create_single_source_cgal_program( "cdt_3_from_off.cpp" CXX_FEATURES cxx_std_20)
-create_single_source_cgal_program( "cdt_3_from_off_with_Epeck.cpp" CXX_FEATURES cxx_std_20)
-target_link_libraries(cdt_3_from_off PUBLIC CGAL::Eigen3_support tl::expected)
-target_link_libraries(cdt_3_from_off_with_Epeck PUBLIC CGAL::Eigen3_support tl::expected)
+
+add_library(CDT_3_dependencies INTERFACE)
+target_compile_features(CDT_3_dependencies INTERFACE cxx_std_20)
+target_link_libraries(CDT_3_dependencies INTERFACE CGAL::CGAL CGAL::Data CGAL::Eigen3_support tl::expected)
+
+create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_EDG_file.cpp")
+target_link_libraries(cdt_test_insert_constrained_edge_from_EDG_file PRIVATE CDT_3_dependencies)
+create_single_source_cgal_program( "cdt_test_insert_constrained_edge_from_OFF_file.cpp")
+target_link_libraries(cdt_test_insert_constrained_edge_from_OFF_file PRIVATE CDT_3_dependencies)
+create_single_source_cgal_program( "cdt_3_from_off.cpp")
+target_link_libraries(cdt_3_from_off PRIVATE CDT_3_dependencies)
+create_single_source_cgal_program( "cdt_3_from_off_with_Epeck.cpp")
+target_link_libraries(cdt_3_from_off_with_Epeck PRIVATE CDT_3_dependencies)
+
 add_executable(cdt_3_from_off_CGAL_DEBUG_CDT_3 cdt_3_from_off)
 target_compile_definitions(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE CGAL_DEBUG_CDT_3=255)
-target_compile_features(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE cxx_std_20)
-target_link_libraries(cdt_3_from_off_CGAL_DEBUG_CDT_3 PUBLIC CGAL::CGAL CGAL::Data CGAL::Eigen3_support)
+target_link_libraries(cdt_3_from_off_CGAL_DEBUG_CDT_3 PRIVATE CDT_3_dependencies)
 cgal_add_test(cdt_3_from_off_CGAL_DEBUG_CDT_3)
 
 add_executable(test_CDT_3_insert_constrained_edge_from_EDG_file cdt_test_insert_constrained_edge_from_EDG_file.cpp)
-target_link_libraries(test_CDT_3_insert_constrained_edge_from_EDG_file PUBLIC CGAL::CGAL CGAL::Data)
-target_compile_features(test_CDT_3_insert_constrained_edge_from_EDG_file PUBLIC cxx_std_20)
+target_link_libraries(test_CDT_3_insert_constrained_edge_from_EDG_file PRIVATE CDT_3_dependencies)
 target_compile_definitions(test_CDT_3_insert_constrained_edge_from_EDG_file PUBLIC CGAL_TEST_CDT_3_USE_CDT)
 cgal_add_test(test_CDT_3_insert_constrained_edge_from_EDG_file)
 
 add_executable(test_CDT_3_insert_constrained_edge_from_OFF_file cdt_test_insert_constrained_edge_from_OFF_file.cpp)
-target_link_libraries(test_CDT_3_insert_constrained_edge_from_OFF_file PUBLIC CGAL::CGAL CGAL::Data)
-target_compile_features(test_CDT_3_insert_constrained_edge_from_OFF_file PUBLIC cxx_std_20)
+target_link_libraries(test_CDT_3_insert_constrained_edge_from_OFF_file PRIVATE CDT_3_dependencies)
 target_compile_definitions(test_CDT_3_insert_constrained_edge_from_OFF_file PUBLIC CGAL_TEST_CDT_3_USE_CDT)
 cgal_add_test(test_CDT_3_insert_constrained_edge_from_OFF_file)
 
