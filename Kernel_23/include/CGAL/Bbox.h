@@ -175,6 +175,13 @@ std::istream& operator>>(std::istream& in, Impl::Bbox<Container, Derived>& bbox)
     return in;
 }
 
+template<int N, typename T>
+Bbox<Dimension_tag<N>, T> operator+(Bbox<Dimension_tag<N>, T> bbox, const Bbox<Dimension_tag<N>, T>& other)
+{
+    bbox += other;
+    return bbox;
+}
+
 
 } // namespace CGAL
 
