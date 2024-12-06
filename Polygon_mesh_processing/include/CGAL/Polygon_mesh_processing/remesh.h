@@ -34,7 +34,8 @@ namespace Polygon_mesh_processing {
   enum Smoothing_algorithms
   {
     TANGENTIAL_RELAXATION = 1,
-    FAIRING
+    FAIR,
+    SMOOTH_SHAPE
   };
 
 /*!
@@ -346,19 +347,25 @@ void isotropic_remeshing(const FaceRange& faces
 
     switch (smoothing_algo)
     {
-    case FAIRING :
-      remesher.fairing_impl(smoothing_1d);
+    case FAIR :
+      remesher.fairing_impl();
+      break;
+    case SMOOTH_SHAPE :
+      remesher.smooth_shape_impl(nb_laplacian);
       break;
     case TANGENTIAL_RELAXATION :
       remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
       break;
     default:
-      std::cerr << "ERROR : this smoothing algorithm does not exist. It will not be applied." << std::endl;
+      std::cerr << "ERROR : this smoothing algorithm does not exist.\n"
+                << "        Tangential Relaxation will be used." << std::endl;
+      remesher.tangential_relaxation_impl(smoothing_1d, nb_laplacian, sizing, shall_move);
       break;
     };
 
     if ( choose_parameter(get_parameter(np, internal_np::do_project), true) )
       remesher.project_to_surface(get_parameter(np, internal_np::projection_functor));
+
 #ifdef CGAL_PMP_REMESHING_VERBOSE
     std::cout << std::endl;
 #endif
