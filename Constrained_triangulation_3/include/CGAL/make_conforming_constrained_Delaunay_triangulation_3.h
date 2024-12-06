@@ -157,7 +157,10 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *
  * \cgalNamedParamsEnd
  *
- * \pre The polygon soup must not have self-intersections.
+ * \pre The polygon soup must not have self-intersections. If the polygon soup is a triangle soup, this is equivalent to:
+ *      \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect
+ *     `CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect(points, polygons, np) == false`
+ *     \endlink.
  */
 template <typename Triangulation = CGAL::Default,
           typename PointRange,
