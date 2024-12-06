@@ -46,7 +46,7 @@ double length_of_diagonal(const Bbox_3& bb)
     return sqrt(d).sup();
 }
 
-template<unsigned int N, typename T>
+template<int N, typename T>
 double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
 {
     using I = Interval_nt<false>;
