@@ -141,8 +141,7 @@ public:
       m_point_counter(0)
   { }
 
-  void operator()(const cell_descriptor& cell)
-  {
+  void operator()(const cell_descriptor& cell) {
     std::array<FT, 8> values;
     std::array<Point_3, 8> corners;
     const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
@@ -293,10 +292,174 @@ private:
     m_triangles.push_back({p0, p1, p2});
   }
 
+  void face_intersections(const std::array<FT, 8>& values, const std::size_t idx, const FT i0, FT& a, FT& b, FT& c, FT& d) {
+    const int *remap = internal::Cube_table::asymptotic_remap[idx];
+//     a = (values[remap[0]] - values[remap[1]]) * (-values[remap[6]] + values[remap[7]] + values[remap[4]] - values[remap[5]]) -
+//       (values[remap[4]] - values[remap[5]]) * (-values[remap[2]] + values[remap[3]] + values[remap[0]] - values[remap[1]]);
+
+    a = (values[remap[1]] - values[remap[0]]) * (values[remap[6]] - values[remap[7]]) + (values[remap[2]] - values[remap[3]]) * (values[remap[4]] - values[remap[5]]);
+    b = (i0 - values[remap[0]]) * (-values[remap[6]] + values[remap[7]] + values[remap[4]] - values[remap[5]]) +
+      (values[remap[0]] - values[remap[1]]) * (values[remap[6]] - values[remap[4]]) -
+      (i0 - values[remap[4]]) * (-values[remap[2]] + values[remap[3]] + values[remap[0]] - values[remap[1]]) -
+      (values[remap[4]] - values[remap[5]]) * (values[remap[2]] - values[remap[0]]);
+    c = (i0 - values[remap[0]]) * (values[remap[6]] - values[remap[4]]) - (i0 - values[remap[4]]) * (values[remap[2]] - values[remap[0]]);
+
+    d = b * b - FT(4) * a * c;
+  }
+
+  void calc_coordinates(const std::array<FT, 8>& values, const std::size_t idx, const FT i0, const FT a, const FT b, const FT c, const FT d, const std::vector<bool> &f_flag, unsigned char &q_sol, FT ui[2], FT vi[2], FT wi[2]) {
+    const int* remap = internal::Cube_table::asymptotic_remap[idx];
+
+    if (values[remap[0]] == values[remap[2]] && values[remap[1]] == values[remap[3]]) {
+      ui[0] = FT(1) / FT(0);
+      return;
+    }
+    if (values[remap[0]] == values[remap[4]] && values[remap[1]] == values[remap[5]]) {
+      ui[0] = FT(1) / FT(0);
+      return;
+    }
+
+    FT d2 = sqrt(CGAL::to_double(d));
+
+    // compute u-coord of solutions
+    ui[0] = (-b - d2) / (FT(2) * a);
+    ui[1] = (-b + d2) / (FT(2) * a);
+
+    // compute v-coord of solutions
+    FT g1 = values[remap[0]] * (FT(1) - ui[0]) + values[remap[1]] * ui[0];
+    FT g2 = values[remap[2]] * (FT(1) - ui[0]) + values[remap[3]] * ui[0];
+    vi[0] = (i0 - g1) / (g2 - g1);
+
+    g1 = values[remap[0]] * (FT(1) - ui[1]) + values[remap[1]] * ui[1];
+    g2 = values[remap[2]] * (FT(1) - ui[1]) + values[remap[3]] * ui[1];
+    vi[1] = (i0 - g1) / (g2 - g1);
+
+    // compute w-coordinates of solutions
+    g1 = values[remap[0]] * (FT(1) - ui[0]) + values[remap[1]] * ui[0];
+    g2 = values[remap[4]] * (FT(1) - ui[0]) + values[remap[5]] * ui[0];
+    wi[0] = (i0 - g1) / (g2 - g1);
+
+    g1 = values[remap[0]] * (FT(1) - ui[1]) + values[remap[1]] * ui[1];
+    g2 = values[remap[4]] * (FT(1) - ui[1]) + values[remap[5]] * ui[1];
+    wi[1] = (i0 - g1) / (g2 - g1);
+
+    if (((remap[8] & 0b0011) != 0b0000) || ((remap[9] & 0b0011) != 0b0001) || ((remap[10] & 0b0011) != 0b0010)) {
+      FT tmp[3][2] = { { ui[0], ui[1] }, { vi[0], vi[1] }, { wi[0], wi[1] } };
+
+      int uidx = remap[8] & 0b0011;
+      int vidx = remap[9] & 0b0011;
+      int widx = remap[10] & 0b0011;
+
+      ui[0] = tmp[remap[8] & 0b0011][0];
+      ui[1] = tmp[remap[8] & 0b0011][1];
+      vi[0] = tmp[remap[9] & 0b0011][0];
+      vi[1] = tmp[remap[9] & 0b0011][1];
+      wi[0] = tmp[remap[10] & 0b0011][0];
+      wi[1] = tmp[remap[10] & 0b0011][1];
+    }
+
+    if (remap[8] & 0b1000) {
+      ui[0] = 1 - ui[0];
+      ui[1] = 1 - ui[1];
+    }
+
+    if (remap[8] & 0b0100)
+      std::swap(ui[0], ui[1]);
+
+    if (remap[9] & 0b1000) {
+      vi[0] = 1 - vi[0];
+      vi[1] = 1 - vi[1];
+    }
+
+    if (remap[9] & 0b0100)
+      std::swap(vi[0], vi[1]);
+
+    if (remap[10] & 0b1000) {
+      wi[0] = 1 - wi[0];
+      wi[1] = 1 - wi[1];
+    }
+
+    if (remap[10] & 0b0100)
+      std::swap(wi[0], wi[1]);
+
+    if (std::isnan(CGAL::to_double(vi[0])) || std::isinf(CGAL::to_double(vi[0])))
+      vi[0] = FT(-1);
+    if (std::isnan(CGAL::to_double(vi[1])) || std::isinf(CGAL::to_double(vi[1])))
+      vi[1] = FT(-1);
+
+    if (std::isnan(CGAL::to_double(wi[0])) || std::isinf(CGAL::to_double(wi[0])))
+      wi[0] = FT(-1);
+    if (std::isnan(CGAL::to_double(wi[1])) || std::isinf(CGAL::to_double(wi[1])))
+      wi[1] = FT(-1);
+
+    // correct values for roots of quadratic equations
+    // in case the asymptotic decider has failed
+    if (f_flag[0]) {  // face 1, w = 0;
+      if (wi[0] < wi[1])
+        wi[0] = FT(0);
+      else
+        wi[1] = FT(0);
+    }
+
+    if (f_flag[1]) {  // face 2, w = 1
+      if (wi[0] > wi[1])
+        wi[1] = FT(1);
+      else
+        wi[1] = FT(1);
+    }
+
+    if (f_flag[2]) {  // face 3, v = 0
+      if (vi[0] < vi[1])
+        vi[0] = FT(0);
+      else
+        vi[1] = FT(0);
+    }
+
+    if (f_flag[3]) {  // face 4, v = 1
+      if (vi[0] > vi[1])
+        vi[0] = FT(1);
+      else
+        vi[1] = FT(1);
+    }
+
+    if (f_flag[4]) {  // face 5, u = 0
+      if (ui[0] < ui[1])
+        ui[0] = FT(0);
+      else
+        ui[1] = FT(0);
+    }
+
+    if (f_flag[5]) {  // face 6, u = 1
+      if (ui[0] > ui[1])
+        ui[0] = FT(1);
+      else
+        ui[1] = FT(1);
+    }
+
+    // check solution intervals
+    if (FT(0) < ui[0] && ui[0] < FT(1))
+      q_sol |= 1;
+
+    if (0 < ui[1] && ui[1] < 1)
+      q_sol |= 2;
+
+    if (0 < vi[0] && vi[0] < 1)
+      q_sol |= 4;
+
+    if (0 < vi[1] && vi[1] < 1)
+      q_sol |= 8;
+
+    if (0 < wi[0] && wi[0] < 1)
+      q_sol |= 16;
+
+    if (0 < wi[1] && wi[1] < 1)
+      q_sol |= 32;
+  }
+
   bool p_slice(const cell_descriptor& cell,
                const FT i0,
                const std::array<Point_3, 8>& corners,
-               const std::array<FT, 8>& values,
+               std::array<FT, 8>& values,
                const std::size_t i_case)
   {
     typename Geom_traits::Compute_x_3 x_coord = m_domain.geom_traits().compute_x_3_object();
@@ -689,114 +852,29 @@ private:
     // It is sufficient to compute a pair of solutions for one face
     // The other solutions are obtained by evaluating the equations
     // for the common variable
+
     FT ui[2]{};
     FT vi[2]{};
     FT wi[2]{};
     unsigned char q_sol = 0;
-    const FT a = (values[0] - values[1]) * (-values[6] + values[7] + values[4] - values[5]) -
-                 (values[4] - values[5]) * (-values[2] + values[3] + values[0] - values[1]);
-    const FT b = (i0 - values[0]) * (-values[6] + values[7] + values[4] - values[5]) +
-                   (values[0] - values[1]) * (values[6] - values[4]) -
-                 (i0 - values[4]) * (-values[2] + values[3] + values[0] - values[1]) -
-                   (values[4] - values[5]) * (values[2] - values[0]);
-    const FT c = (i0 - values[0]) * (values[6] - values[4]) - (i0 - values[4]) * (values[2] - values[0]);
 
-    FT d = b * b - FT(4) * a * c;
-    if(d > 0)
-    {
-      d = sqrt(CGAL::to_double(d));
+    FT a, b, c, d;
+    std::size_t idx = 0;
+    for (idx = 0; idx < 6; idx++) {
+      face_intersections(values, idx, i0, a, b, c, d);
 
-      // compute u-coord of solutions
-      ui[0] = (-b - d) / (FT(2) * a);
-      ui[1] = (-b + d) / (FT(2) * a);
+      if (a == 0 || d < 0)
+        continue;
 
-      // compute v-coord of solutions
-      FT g1 = values[0] * (FT(1) - ui[0]) + values[1] * ui[0];
-      FT g2 = values[2] * (FT(1) - ui[0]) + values[3] * ui[0];
-      vi[0] = (i0 - g1) / (g2 - g1);
-      if(std::isnan(CGAL::to_double(vi[0])) || std::isinf(CGAL::to_double(vi[0])))
-        vi[0] = FT(-1);
+      calc_coordinates(values, idx, i0, a, b, c, d, f_flag, q_sol, ui, vi, wi);
 
-      g1 = values[0] * (FT(1) - ui[1]) + values[1] * ui[1];
-      g2 = values[2] * (FT(1) - ui[1]) + values[3] * ui[1];
-      vi[1] = (i0 - g1) / (g2 - g1);
-      if(std::isnan(CGAL::to_double(vi[1])) || std::isinf(CGAL::to_double(vi[1])))
-        vi[1] = FT(-1);
+      if (!std::isfinite(ui[0]) || !std::isfinite(ui[1]))
+        continue;
 
-      // compute w-coordinates of solutions
-      g1 = values[0] * (FT(1) - ui[0]) + values[1] * ui[0];
-      g2 = values[4] * (FT(1) - ui[0]) + values[5] * ui[0];
-      wi[0] = (i0 - g1) / (g2 - g1);
-      if (std::isnan(CGAL::to_double(wi[0])) || std::isinf(CGAL::to_double(wi[0]))) wi[0] = FT(-1);
-      g1 = values[0] * (FT(1) - ui[1]) + values[1] * ui[1];
-      g2 = values[4] * (FT(1) - ui[1]) + values[5] * ui[1];
-      wi[1] = (i0 - g1) / (g2 - g1);
-      if(std::isnan(CGAL::to_double(wi[1])) || std::isinf(CGAL::to_double(wi[1])))
-        wi[1] = FT(-1);
-
-      // correct values for roots of quadratic equations
-      // in case the asymptotic decider has failed
-      if(f_flag[0]) {  // face 1, w = 0;
-        if(wi[0] < wi[1])
-          wi[0] = FT(0);
-        else
-          wi[1] = FT(0);
-      }
-
-      if(f_flag[1]) {  // face 2, w = 1
-        if(wi[0] > wi[1])
-          wi[1] = FT(1);
-        else
-          wi[1] = FT(1);
-      }
-
-      if(f_flag[2]) {  // face 3, v = 0
-        if(vi[0] < vi[1])
-          vi[0] = FT(0);
-        else
-          vi[1] = FT(0);
-      }
-
-      if(f_flag[3]) {  // face 4, v = 1
-        if(vi[0] > vi[1])
-          vi[0] = FT(1);
-        else
-          vi[1] = FT(1);
-      }
-
-      if(f_flag[4]) {  // face 5, u = 0
-        if(ui[0] < ui[1])
-          ui[0] = FT(0);
-        else
-          ui[1] = FT(0);
-      }
-
-      if(f_flag[5]) {  // face 6, u = 1
-        if(ui[0] > ui[1])
-          ui[0] = FT(1);
-        else
-          ui[1] = FT(1);
-      }
-
-      // check solution intervals
-      if(FT(0) < ui[0] && ui[0] < FT(1))
-        q_sol |= 1;
-
-      if(0 < ui[1] && ui[1] < 1)
-        q_sol |= 2;
-
-      if(0 < vi[0] && vi[0] < 1)
-        q_sol |= 4;
-
-      if(0 < vi[1] && vi[1] < 1)
-        q_sol |= 8;
-
-      if(0 < wi[0] && wi[0] < 1)
-        q_sol |= 16;
-
-      if(0 < wi[1] && wi[1] < 1)
-        q_sol |= 32;
+      break;
     }
+
+    CGAL_assertion(idx < 6);
 
     // counts the number of set bits
     auto numberOfSetBits = [](const unsigned char n)
