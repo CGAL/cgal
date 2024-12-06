@@ -679,6 +679,18 @@ constexpr int t_ambig[256] =
   255   // quitte: 255 <-> mc: 255, class representative: 0
 };
 
+/* The asymptotic decider can be unstable if certain corner points have similar function values.
+*
+*/
+constexpr int asymptotic_remap[][11] = {
+  {0, 1, 2, 3, 4, 5, 6, 7, 0b0000, 0b0001, 0b0010}, // regular, 4th bit invert coordinates, 3th bit swap coordinates, first two bits axis of coordinates
+  {7, 6, 5, 4, 3, 2, 1, 0, 0b1100, 0b1101, 0b1110}, // mirrored regular
+  {1, 5, 3, 7, 0, 4, 2, 6, 0b1010, 0b0101, 0b0000}, // y rotated
+  {6, 2, 4, 0, 7, 3, 5, 1, 0b0000, 0b0001, 0b0010}, // mirrored y rotated
+  {1, 3, 0, 2, 5, 7, 4, 6, 0b1001, 0b0000, 0b0110}, // z rotated
+  {6, 4, 7, 5, 2, 0, 3, 1, 0b0101, 0b1100, 0b1010}  // mirrored z rotated
+};
+
 } // namespace Cube_table
 } // namespace internal
 } // namespace Isosurfacing

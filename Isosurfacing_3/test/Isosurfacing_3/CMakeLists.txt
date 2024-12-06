@@ -12,6 +12,7 @@ include(CGAL_TBB_support)
 
 create_single_source_cgal_program("test_marching_cubes.cpp")
 create_single_source_cgal_program("test_topology.cpp")
+create_single_source_cgal_program("test_tmc_csg.cpp")
 
 if(TARGET CGAL::Eigen3_support)
   create_single_source_cgal_program("test_isosurfacing_concepts.cpp")
