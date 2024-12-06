@@ -631,6 +631,8 @@ class Intersection_of_triangle_meshes
   {
     if(is_new_node)
       visitor.new_node_added(node_id,ON_FACE,v_1,f_2,tm1,tm2,true,false);
+    else
+      return;
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 <= &tm2
                                          ? stm_edge_to_ltm_faces
@@ -666,6 +668,8 @@ class Intersection_of_triangle_meshes
   {
     if(is_new_node)
       visitor.new_node_added(node_id,ON_VERTEX,h_2,v_1,tm2,tm1,false,false);
+    else
+      return;
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 <= &tm2
                                          ? stm_edge_to_ltm_faces
@@ -713,6 +717,8 @@ class Intersection_of_triangle_meshes
   {
     if(is_new_node)
       visitor.new_node_added(node_id,ON_VERTEX,v_2,v_1,tm2,tm1,true,false);
+    else
+      return;
 
     Edge_to_faces& tm1_edge_to_tm2_faces = &tm1 <= &tm2
                                          ? stm_edge_to_ltm_faces
