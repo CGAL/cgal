@@ -101,6 +101,9 @@ namespace CGAL {
  * 
  *   \include{doc} CDT_3_common_named_parameters.dox-frag
  * \cgalNamedParamsEnd
+ * 
+ * \return a 3D constrained Delaunay triangulation conforming to the faces of the polygon mesh, of a type
+ *   described in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type above.
  *
  * \pre `mesh` must not have self-intersections:
  *      \link CGAL::Polygon_mesh_processing::does_self_intersect
@@ -156,6 +159,9 @@ auto make_conforming_constrained_Delaunay_triangulation_3(const PolygonMesh &mes
  *   \include{doc} CDT_3_common_named_parameters.dox-frag
  *
  * \cgalNamedParamsEnd
+ * 
+ * \return a 3D constrained Delaunay triangulation conforming to the faces of the polygon soup, of a type
+ *   described in the section \ref make_conforming_constrained_Delaunay_triangulation_3_returned_type above.
  *
  * \pre The polygon soup must not have self-intersections. If the polygon soup is a triangle soup, this is equivalent to:
  *      \link CGAL::Polygon_mesh_processing::does_triangle_soup_self_intersect
