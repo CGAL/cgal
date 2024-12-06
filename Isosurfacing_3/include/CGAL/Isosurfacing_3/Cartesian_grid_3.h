@@ -201,9 +201,9 @@ private:
     const FT y_span = y_coord(max_p) - y_coord(min_p);
     const FT z_span = z_coord(max_p) - z_coord(min_p);
 
-    m_dims[0] = static_cast<std::size_t>(std::ceil(x_span / m_spacing[0])) + 1;
-    m_dims[1] = static_cast<std::size_t>(std::ceil(y_span / m_spacing[1])) + 1;
-    m_dims[2] = static_cast<std::size_t>(std::ceil(z_span / m_spacing[2])) + 1;
+    m_dims[0] = static_cast<std::size_t>(std::ceil(CGAL::to_double(x_span / m_spacing[0]))) + 1;
+    m_dims[1] = static_cast<std::size_t>(std::ceil(CGAL::to_double(y_span / m_spacing[1]))) + 1;
+    m_dims[2] = static_cast<std::size_t>(std::ceil(CGAL::to_double(z_span / m_spacing[2]))) + 1;
 
     m_positioner = Positioner { m_span, m_dims, m_spacing };
   }
