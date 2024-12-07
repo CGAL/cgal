@@ -151,33 +151,30 @@ void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleM
 {
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
 
+  const halfedge_descriptor null_h = boost::graph_traits<TriangleMesh>::null_halfedge();
+
   std::array<halfedge_descriptor, 2> res = is_badly_shaped(f, tmesh, vpm, vcm, ecm, gt,
                                                            needle_threshold, cap_threshold,
                                                            collapse_length_threshold, flip_triangle_height_threshold_squared);
 
-  if(res[0] != boost::graph_traits<TriangleMesh>::null_halfedge())
+  if(res[0] != null_h)
   {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-    if (res[1] == boost::graph_traits<TriangleMesh>::null_halfedge())
-      std::cout << "add new needle: " << edge(res[0], tmesh) << std::endl;
-    else
-      std::cout << "add new needle (also a cap): " << edge(res[0], tmesh) << std::endl;
+    std::cout << "add new needle: " << edge(res[0], tmesh) << std::endl;
 #endif
     CGAL_assertion(!is_border(res[0], tmesh));
     CGAL_assertion(!get(ecm, edge(res[0], tmesh)));
     edges_to_collapse.insert(res[0]);
   }
-  else // let's not make it possible to have a face be both a cap and a needle (for now)
+
+  if(res[1] != null_h)
   {
-    if(res[1] != boost::graph_traits<TriangleMesh>::null_halfedge())
-    {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-      std::cout << "add new cap: " << edge(res[1],tmesh) << std::endl;
+    std::cout << "add new cap: " << edge(res[1],tmesh) << std::endl;
 #endif
-      CGAL_assertion(!is_border(res[1], tmesh));
-      CGAL_assertion(!get(ecm, edge(res[1], tmesh)));
-      edges_to_flip.insert(res[1]);
-    }
+    CGAL_assertion(!is_border(res[1], tmesh));
+    CGAL_assertion(!get(ecm, edge(res[1], tmesh)));
+    edges_to_flip.insert(res[1]);
   }
 }
 
