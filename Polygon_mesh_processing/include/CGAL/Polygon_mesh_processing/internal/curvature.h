@@ -29,14 +29,15 @@ vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::v
                                    const TriangleMesh& tm,
                                    const NamedParameters& np)
 {
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Vector_3 Vector_3;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  using GeomTraits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+  using tyFT = typename GeomTraits::FT;
+  using Vector_3 = typename GeomTraits::Vector_3;
+
+  using VertexPointMap = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
 
   GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
   VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -95,7 +96,7 @@ void discrete_Gaussian_curvatures(const TriangleMesh& tm,
                                   VertexCurvatureMap vcm,
                                   const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   for(vertex_descriptor v : vertices(tm))
     put(vcm, v, vertex_discrete_Gaussian_curvature(v, tm, np));
@@ -114,14 +115,15 @@ vertex_discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::verte
                                const TriangleMesh& tm,
                                const NamedParameters& np)
 {
-  typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point_3;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  using GeomTraits = typename GetGeomTraits<TriangleMesh, NamedParameters>::type;
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+
+  using VertexPointMap = typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type;
+  using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
 
   GeomTraits gt = choose_parameter<GeomTraits>(get_parameter(np, internal_np::geom_traits));
   VertexPointMap vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
@@ -159,7 +161,7 @@ void discrete_mean_curvature(const TriangleMesh& tm,
                              VertexCurvatureMap vcm,
                              const NamedParameters& np)
 {
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
+  using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   for(vertex_descriptor v : vertices(tm))
     put(vcm, v, vertex_discrete_mean_curvature(v, tm, np));
