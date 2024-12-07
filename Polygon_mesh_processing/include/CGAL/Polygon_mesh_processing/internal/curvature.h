@@ -80,9 +80,9 @@ vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::v
 }
 
 template <typename TriangleMesh, typename VertexCurvatureMap, typename NamedParameters>
-void discrete_Gaussian_curvature(const TriangleMesh& tm,
-                                 VertexCurvatureMap vcm,
-                                 const NamedParameters& np)
+void discrete_Gaussian_curvatures(const TriangleMesh& tm,
+                                  VertexCurvatureMap vcm,
+                                  const NamedParameters& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
 
@@ -159,10 +159,10 @@ vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::v
 }
 
 template <typename TriangleMesh, typename VertexCurvatureMap>
-void discrete_Gaussian_curvature(const TriangleMesh& tm,
+void discrete_Gaussian_curvatures(const TriangleMesh& tm,
                                  VertexCurvatureMap vcm)
 {
-  discrete_Gaussian_curvature(tm, vcm, parameters::all_default());
+  discrete_Gaussian_curvatures(tm, vcm, parameters::all_default());
 }
 
 template <class TriangleMesh>
