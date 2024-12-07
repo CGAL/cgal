@@ -25,9 +25,9 @@ namespace exprimental {
 
 template <class TriangleMesh, class NamedParameters>
 typename GetGeomTraits<TriangleMesh, NamedParameters>::type::FT
-vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
-                                    const TriangleMesh& tm,
-                                    const NamedParameters& np)
+vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
+                                   const TriangleMesh& tm,
+                                   const NamedParameters& np)
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
@@ -50,27 +50,30 @@ vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::v
   const FT two_pi = 2 * CGAL_PI;
 
   FT ki = 0;
-  for(halfedge_descriptor h : CGAL::halfedges_around_target(vd, tm))
+  for(halfedge_descriptor h : CGAL::halfedges_around_target(v, tm))
   {
     if(is_border(h, tm))
       continue;
 
-    const Vector_3 v0 = vector(get(vpm, vd), get(vpm, target(next(h, tm), tm))); // p1p2
-    const Vector_3 v1 = vector(get(vpm, vd), get(vpm, source(h, tm))); // p1p0
+    const Vector_3 v0 = vector(get(vpm, v), get(vpm, target(next(h, tm), tm))); // p1p2
+    const Vector_3 v1 = vector(get(vpm, v), get(vpm, source(h, tm))); // p1p0
 
     const FT dot = scalar_product(v0, v1);
     const Vector_3 cross = cross_product(v0, v1);
     const FT sqcn = squared_length(cross);
     if(dot == FT(0))
+    {
       ki += CGAL_PI/FT(2);
+    }
     else
     {
-      if (sqcn == FT(0))
+      if(sqcn == FT(0))
       {
-        if (dot < 0)
+        if(dot < 0)
           ki += CGAL_PI;
       }
-      else{
+      else
+      {
         ki += std::atan2(CGAL::approximate_sqrt(sqcn), dot);
       }
     }
@@ -81,10 +84,10 @@ vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::v
 
 template <class TriangleMesh>
 auto
-vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
+vertex_discrete_Gaussian_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
                                     const TriangleMesh& tm)
 {
-  return vertex_discrete_Gaussian_curvature(vd, tm, parameters::all_default());
+  return vertex_discrete_Gaussian_curvature(v, tm, parameters::all_default());
 }
 
 template <typename TriangleMesh, typename VertexCurvatureMap, typename NamedParameters>
@@ -107,9 +110,9 @@ void discrete_Gaussian_curvatures(const TriangleMesh& tm,
 
 template <class TriangleMesh, class NamedParameters>
 typename GetGeomTraits<TriangleMesh, NamedParameters>::type::FT
-vertex_discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
-                                    const TriangleMesh& tm,
-                                    const NamedParameters& np)
+vertex_discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descriptor v,
+                               const TriangleMesh& tm,
+                               const NamedParameters& np)
 {
   typedef typename GetGeomTraits<TriangleMesh, NamedParameters>::type GeomTraits;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VertexPointMap;
@@ -130,7 +133,7 @@ vertex_discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::verte
   const FT two_pi = 2 * CGAL_PI;
 
   FT hi = 0;
-  for(halfedge_descriptor h : CGAL::halfedges_around_target(vd, tm))
+  for(halfedge_descriptor h : CGAL::halfedges_around_target(v, tm))
   {
     const Point_3& p = get(vpm, source(h, tm));
     const Point_3& q = get(vpm, target(h, tm));
@@ -153,8 +156,8 @@ vertex_discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::verte
 
 template <typename TriangleMesh, typename VertexCurvatureMap, typename NamedParameters>
 void discrete_mean_curvature(const TriangleMesh& tm,
-                                 VertexCurvatureMap vcm,
-                                 const NamedParameters& np)
+                             VertexCurvatureMap vcm,
+                             const NamedParameters& np)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor         vertex_descriptor;
 
@@ -165,14 +168,14 @@ void discrete_mean_curvature(const TriangleMesh& tm,
 template <class TriangleMesh>
 auto
 vertex_discrete_mean_curvature(typename boost::graph_traits<TriangleMesh>::vertex_descriptor vd,
-                                    const TriangleMesh& tm)
+                               const TriangleMesh& tm)
 {
   return vertex_discrete_mean_curvature(vd, tm, parameters::all_default());
 }
 
 template <typename TriangleMesh, typename VertexCurvatureMap>
 void discrete_mean_curvature(const TriangleMesh& tm,
-                                 VertexCurvatureMap vcm)
+                             VertexCurvatureMap vcm)
 {
   discrete_mean_curvature(tm, vcm, parameters::all_default());
 }
