@@ -1006,11 +1006,12 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
           continue;
         }
 
-        if (!accept_change.flip(h))
+        if(!accept_change.flip(h))
         {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
           std::cout << "\t Flipping prevented: rejected by user functor" << std::endl;
 #endif
+          next_edges_to_flip.insert(h);
           continue;
         }
 
