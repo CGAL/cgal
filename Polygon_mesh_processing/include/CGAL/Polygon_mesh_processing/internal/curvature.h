@@ -21,6 +21,7 @@
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
+namespace exprimental {
 
 template <class TriangleMesh, class NamedParameters>
 typename GetGeomTraits<TriangleMesh, NamedParameters>::type::FT
@@ -179,6 +180,8 @@ void discrete_mean_curvature(const TriangleMesh& tm,
   discrete_mean_curvature(tm, vcm, parameters::all_default());
 }
 
-} } // CGAL::Polygon_mesh_processing::experimental
+} // namespace experimental
+} // namespace Polygon_mesh_processing
+} // namespace CGAL
 
 #endif //CGAL_PMP_INTERNAL_CURVATURE_H
