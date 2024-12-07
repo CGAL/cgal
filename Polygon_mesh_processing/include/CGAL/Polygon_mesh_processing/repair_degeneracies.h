@@ -62,7 +62,9 @@ is_it_a_needle(const typename boost::graph_traits<TriangleMesh>::face_descriptor
                const double collapse_length_threshold) // max length of edges allowed to be collapsed
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
+
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
+
   const halfedge_descriptor null_h = boost::graph_traits<TriangleMesh>::null_halfedge();
 
   halfedge_descriptor res = PMP::is_needle_triangle_face(f, tmesh, needle_threshold,
@@ -93,7 +95,9 @@ is_it_a_cap(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
             const double flip_triangle_height_threshold_squared) // max height of triangles allowed to be flipped
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
+
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
+
   const halfedge_descriptor null_h = boost::graph_traits<TriangleMesh>::null_halfedge();
 
   halfedge_descriptor res =
@@ -110,6 +114,7 @@ is_it_a_cap(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
   return null_h;
 }
 
+// This function tests both needle-ness and cap-ness
 template <typename TriangleMesh, typename VPM, typename VCM, typename ECM, typename Traits>
 std::array<typename boost::graph_traits<TriangleMesh>::halfedge_descriptor, 2>
 is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
@@ -123,8 +128,8 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
                 const double collapse_length_threshold, // max length of edges allowed to be collapsed
                 const double flip_triangle_height_threshold_squared) // max height of triangles allowed to be flipped
 {
-
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor       halfedge_descriptor;
+
   const halfedge_descriptor null_h = boost::graph_traits<TriangleMesh>::null_halfedge();
   std::array<halfedge_descriptor,2> retval = make_array(null_h, null_h);
 
@@ -134,6 +139,7 @@ is_badly_shaped(const typename boost::graph_traits<TriangleMesh>::face_descripto
   return retval;
 }
 
+// This function tests both needle-ness and cap-ness and fills both ranges
 template <typename TriangleMesh, typename HalfedgeContainer,
           typename VPM, typename VCM, typename ECM, typename Traits>
 void collect_badly_shaped_triangles(const typename boost::graph_traits<TriangleMesh>::face_descriptor f,
@@ -695,6 +701,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   CGAL_precondition(is_valid_polygon_mesh(tmesh));
   CGAL_precondition(is_triangle_mesh(tmesh));
 
+  // constrain extremities of constrained edges
   for(face_descriptor f : face_range)
   {
     if(f == boost::graph_traits<TriangleMesh>::null_face())
@@ -899,7 +906,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         else
           v = Euler::collapse_edge(edge(best_h, tmesh), tmesh);
 
-        // moving to the midpoint is not a good idea. On a circle for example you might endpoint with
+        // moving to the midpoint is not a good idea. On a circle for example you might end with
         // a bad geometry because you iteratively move one point
         // auto mp = midpoint(tmesh.point(source(h, tmesh)), tmesh.point(target(h, tmesh)));
         // tmesh.point(v) = mp;
@@ -951,6 +958,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     kk=0;
     std::ofstream(std::string("tmp/c-000.off")) << tmesh;
 #endif
+
     while(!edges_to_flip.empty())
     {
       halfedge_descriptor h = *edges_to_flip.begin();
