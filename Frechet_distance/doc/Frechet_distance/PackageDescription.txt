@@ -1,4 +1,4 @@
-/// \defgroup PkgFrechetDistanceRef dD Frechet Distance Reference
+/// \defgroup PkgFrechetDistanceRef dD Fréchet Distance Reference
 /// \defgroup PkgFrechetDistanceConcepts Concepts
 /// \ingroup PkgFrechetDistanceRef
 /// \defgroup PkgFrechetDistanceFunctions Functions
@@ -8,7 +8,7 @@
 /*!
 \addtogroup PkgFrechetDistanceRef
 
-\cgalPkgDescriptionBegin{dD Frechet Distance,PkgFrechetDistance}
+\cgalPkgDescriptionBegin{dD Fréchet Distance,PkgFrechetDistance}
 \cgalPkgPicture{pdist-pkg-small.png}
 
 \cgalPkgSummaryBegin
