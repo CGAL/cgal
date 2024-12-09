@@ -2,7 +2,6 @@
 /// \defgroup PkgFrechetDistanceConcepts Concepts
 /// \ingroup PkgFrechetDistanceRef
 /// \defgroup PkgFrechetDistanceFunctions Functions
-/// You can add some text here if you want a description at the group level
 /// \ingroup PkgFrechetDistanceRef
 
 /*!
