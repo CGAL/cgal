@@ -59,7 +59,7 @@ public:
 
   //My_facet(): ring_index(-1) {}
   //void setNormal(Vector_3  n) { normal = n; }
-//   //this is for collecting i-th ring neighbours
+//   //this is for collecting i-th ring neighbors
 //   void setRingIndex(int i) { ring_index = i; }
 //   int getRingIndex() { return ring_index; }
 //   void resetRingIndex() { ring_index = -1; }
@@ -68,12 +68,12 @@ public:
 
 template <class TPoly>
 class Facet_PM :
-  public boost::put_get_helper<typename TPoly::Traits::Vector_3, Facet_PM<TPoly> >
+  public boost::put_get_helper<typename TPoly::Traits::Vector_3&, Facet_PM<TPoly> >
 {
 public:
 
   //read_write
-  typedef boost::read_write_property_map_tag category;
+  typedef boost::lvalue_property_map_tag category;
   typedef typename TPoly::Facet key_type;
   typedef typename TPoly::Traits::Vector_3 value_type;
   typedef typename TPoly::Traits::Vector_3& reference;
@@ -121,8 +121,6 @@ class HEdge_PM :
   public boost::put_get_helper<typename TPoly::Traits::FT&, HEdge_PM<TPoly> >//double
 {
 public:
-  //read_write or lvalue
-  //typedef boost::read_write_property_map_tag category;
   typedef boost::lvalue_property_map_tag category;
   typedef typename TPoly::Halfedge key_type;
   typedef typename TPoly::Traits::FT value_type;

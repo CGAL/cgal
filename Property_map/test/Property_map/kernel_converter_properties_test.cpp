@@ -5,6 +5,9 @@
 #include <CGAL/MP_Float.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/property_map.h>
+#include <CGAL/boost/graph/generators.h>
+
+#include <cassert>
 
 typedef CGAL::Simple_cartesian<double> K1;
 typedef CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >  K2;
@@ -21,9 +24,9 @@ test()
   VPMap vmap = get(CGAL::vertex_point, m);
 
   CGAL::Cartesian_converter_property_map<K2::Point_3, VPMap> kcmap =CGAL::make_cartesian_converter_property_map<K2::Point_3>(vmap);
-  CGAL_assertion(get(kcmap, *vertices(m).begin()) == CGAL::Point_3<K2>(2,0,0));
+  assert(get(kcmap, *vertices(m).begin()) == CGAL::Point_3<K2>(2,0,0));
   put(kcmap, *vertices(m).begin(), CGAL::Point_3<K2>(0,2,3));
-  CGAL_assertion(get(kcmap, *vertices(m).begin()) == CGAL::Point_3<K2>(0,2,3));
+  assert(get(kcmap, *vertices(m).begin()) == CGAL::Point_3<K2>(0,2,3));
 
 }
 
@@ -34,4 +37,3 @@ int main()
   test<SM>();
   return 0;
 }
-

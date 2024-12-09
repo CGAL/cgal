@@ -1,11 +1,11 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Bbox_3.h>
 
@@ -99,7 +99,7 @@ void test_pmesh(const Mesh& pmesh)
   assert(mesh_area >= patch_area);
 
   FT mesh_area_np = PMP::area(pmesh,
-    PMP::parameters::geom_traits(K()));
+    CGAL::parameters::geom_traits(K()));
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
   assert(mesh_area_np > 0);
 
@@ -243,7 +243,7 @@ void test_compare()
     return;
   }
   input.close();
-  PMP::match_faces(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  PMP::match_faces(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::default_values(), CGAL::parameters::default_values());
   assert(common.size() == 7);
   assert(m1_only.size() == 11);
   assert(m2_only.size() == 11);
@@ -283,7 +283,7 @@ void test_compare()
   {
     fim2.insert(std::make_pair(f, id++));
   }
-  PMP::match_faces(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  PMP::match_faces(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::default_values(), CGAL::parameters::default_values());
   assert(common.size() == 3);
   assert(m1_only.size() == 3);
   assert(fim1[m1_only[0]] == 0);
@@ -317,7 +317,7 @@ void test_compare()
     return;
   }
   input.close();
-  PMP::match_faces(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::all_default(), CGAL::parameters::all_default());
+  PMP::match_faces(mesh1, mesh2, std::back_inserter(common), std::back_inserter(m1_only), std::back_inserter(m2_only), CGAL::parameters::default_values(), CGAL::parameters::default_values());
   assert(common.size() == 17);
   assert(m1_only.size() == 1);
   assert(m2_only.size() == 0);
@@ -376,4 +376,3 @@ int main(int argc, char* argv[])
   std::cerr << "All done." << std::endl;
   return 0;
 }
-

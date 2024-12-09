@@ -8,12 +8,12 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <unordered_set>
+#include <unordered_map>
 
 using LCC_3            =CGAL::Linear_cell_complex_for_generalized_map<2, 3>;
-using Dart_handle      =LCC_3::Dart_handle;
-using Dart_const_handle=LCC_3::Dart_const_handle;
-using Dart_container   =std::vector<Dart_handle>;
+using Dart_descriptor      =LCC_3::Dart_descriptor;
+using Dart_const_descriptor=LCC_3::Dart_const_descriptor;
+using Dart_container   =std::vector<Dart_descriptor>;
 using Point            =LCC_3::Point;
 using Path_on_surface  =CGAL::Surface_mesh_topology::Path_on_surface<LCC_3>;
 using CST              =CGAL::Surface_mesh_topology::Curves_on_surface_topology<LCC_3>;
@@ -22,10 +22,10 @@ struct Weight_functor
 {
   Weight_functor(const LCC_3& lcc) : m_lcc(lcc) {}
   using Weight_t=double;
-  Weight_t operator()(Dart_const_handle dh) const
+  Weight_t operator()(Dart_const_descriptor d) const
   {
-    const Point& x=m_lcc.point(dh);
-    const Point& y=m_lcc.point(m_lcc.template alpha<0>(dh));
+    const Point& x=m_lcc.point(d);
+    const Point& y=m_lcc.point(m_lcc.template alpha<0>(d));
     return CGAL::sqrt(CGAL::squared_distance(x, y));
   }
 private:
@@ -34,42 +34,30 @@ private:
 
 #ifdef CGAL_USE_BASIC_VIEWER
 
-struct Draw_functor : public CGAL::DefaultDrawingFunctorLCC
+struct Draw_functor: public CGAL::Graphics_scene_options<LCC_3,
+                                      typename LCC_3::Dart_const_handle,
+                                      typename LCC_3::Dart_const_handle,
+                                      typename LCC_3::Dart_const_handle,
+                                      typename LCC_3::Dart_const_handle>
 {
   Draw_functor(LCC_3::size_type am1, LCC_3::size_type am2) : is_root(am1),
                                                              belong_to_cycle(am2)
-  {}
+  {
+    this->colored_vertex=[this](const LCC_3& alcc, typename LCC_3::Dart_const_handle dh)->bool
+    { return alcc.is_marked(dh, is_root); };
+    this->vertex_color=[](const LCC_3&, typename LCC_3::Dart_const_handle)->CGAL::IO::Color
+    { return CGAL::IO::Color(0, 255, 0); };
 
-  template<typename LCC>
-  bool colored_vertex(const LCC& alcc, typename LCC::Dart_const_handle dh) const
-  { return alcc.is_marked(dh, is_root); }
+    this->colored_edge=[this](const LCC_3& alcc, typename LCC_3::Dart_const_handle dh)->bool
+    { return alcc.is_marked(dh, belong_to_cycle); };
+    this->edge_color=[](const LCC_3&, typename LCC_3::Dart_const_handle)->CGAL::IO::Color
+    { return CGAL::IO::Color(0, 0, 255); };
 
-  template<typename LCC>
-  CGAL::IO::Color vertex_color(const LCC& /* alcc */,
-                           typename LCC::Dart_const_handle /* dh */) const
-  { return CGAL::IO::Color(0,255,0); }
-
-  template<typename LCC>
-  bool colored_edge(const LCC& alcc, typename LCC::Dart_const_handle dh) const
-  { return alcc.is_marked(dh, belong_to_cycle); }
-
-  template<typename LCC>
-  CGAL::IO::Color edge_color(const LCC& /* alcc*/,
-                         typename LCC::Dart_const_handle /* dh */) const
-  { return CGAL::IO::Color(0, 0, 255); }
-
-  template<typename LCC>
-  bool colored_face(const LCC& /* alcc */,
-                    typename LCC::Dart_const_handle /* dh */) const {return true;}
-
-  template<typename LCC>
-  CGAL::IO::Color face_color(const LCC& /* alcc */,
-                         typename LCC::Dart_const_handle /* dh */) const
-  {return CGAL::IO::Color(211, 211, 211);}
-
-  template<typename LCC>
-  bool colored_volume(const LCC& /* alcc */,
-                      typename LCC::Dart_const_handle /* dh */) const { return false; }
+    this->colored_face=[](const LCC_3&, typename LCC_3::Dart_const_handle)->bool
+    { return true; };
+    this->face_color=[](const LCC_3&, typename LCC_3::Dart_const_handle)->CGAL::IO::Color
+    { return CGAL::IO::Color(211, 211, 211); };
+  }
 
   LCC_3::size_type is_root;
   LCC_3::size_type belong_to_cycle;
@@ -97,7 +85,7 @@ int main(int argc, char* argv[])
   CGAL::load_off(lccoriginal, inp);
   std::cout<<"File '"<<filename<<"' loaded. Running the main program..."<<std::endl;
 
-  boost::unordered_map<Dart_handle, Dart_handle> origin_to_copy;
+  std::unordered_map<Dart_descriptor, Dart_descriptor> origin_to_copy;
   lcccopy.copy(lccoriginal, &origin_to_copy, nullptr);
 
   LCC_3::size_type is_root=lccoriginal.get_new_mark();
@@ -130,18 +118,18 @@ int main(int argc, char* argv[])
         { lcccopy.mark_cell<1>(cycle[i], belong_to_cycle_copy); }
       }
 
-      for (auto dh=lccoriginal.darts().begin(), dhend=lccoriginal.darts().end();
-           dh!=dhend; ++dh)
+      for (auto d=lccoriginal.darts().begin(), dend=lccoriginal.darts().end();
+           d!=dend; ++d)
       {
-        if (lcccopy.is_marked(origin_to_copy[dh], is_root_copy) &&
-            !lccoriginal.is_marked(dh, is_root))
-        { lccoriginal.mark(dh, is_root); }
-        if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) &&
-            !lccoriginal.is_marked(dh, belong_to_cycle))
-        { lccoriginal.mark(dh, belong_to_cycle); }
-        if (lcccopy.is_marked(origin_to_copy[dh], belong_to_cycle_copy) &&
-            !lcccopy.is_free<2>(origin_to_copy[dh]))
-        { lcccopy.unsew<2>(origin_to_copy[dh]); }
+        if (lcccopy.is_marked(origin_to_copy[d], is_root_copy) &&
+            !lccoriginal.is_marked(d, is_root))
+        { lccoriginal.mark(d, is_root); }
+        if (lcccopy.is_marked(origin_to_copy[d], belong_to_cycle_copy) &&
+            !lccoriginal.is_marked(d, belong_to_cycle))
+        { lccoriginal.mark(d, belong_to_cycle); }
+        if (lcccopy.is_marked(origin_to_copy[d], belong_to_cycle_copy) &&
+            !lcccopy.is_free<2>(origin_to_copy[d]))
+        { lcccopy.unsew<2>(origin_to_copy[d]); }
       }
       lcccopy.close<2>();
 
@@ -159,7 +147,7 @@ int main(int argc, char* argv[])
   if (draw)
   {
     Draw_functor df(is_root, belong_to_cycle);
-    CGAL::draw(lccoriginal, "Unsew edge width repeatdly", false, df);
+    CGAL::draw(lccoriginal, df, "Unsew edge width repeatdly");
   }
 #endif // CGAL_USE_BASIC_VIEWER
 

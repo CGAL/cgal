@@ -38,13 +38,13 @@ protected:
   /** \name INITIALIZED */
 
   enum Initialization {
-    NONE,     /**< \c this is not initialized. */
-    CLUSTERS, /**< \c this clusters are initialized. */
-    DELAUNAY, /**< \c this has been \e Delaunay-initialized. */
-    GABRIEL   /**< \c this has been \e Gabriel-initialized. */
+    NONE,     /**< `this` is not initialized. */
+    CLUSTERS, /**< `this` clusters are initialized. */
+    DELAUNAY, /**< `this` has been \e Delaunay-initialized. */
+    GABRIEL   /**< `this` has been \e Gabriel-initialized. */
   };
 
-// --- PROTECTED DATAS ---
+// --- PROTECTED DATA ---
   Initialization initialized;
   Tr& tr;
   Null_mesher_level null_level;

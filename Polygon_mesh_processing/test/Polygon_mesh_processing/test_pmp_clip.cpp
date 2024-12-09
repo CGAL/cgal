@@ -1,10 +1,11 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Polygon_mesh_processing/clip.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
-#include <CGAL/boost/graph/Face_filtered_graph.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <boost/property_map/property_map.hpp>
 
 #include <iostream>
@@ -12,7 +13,7 @@
 #include <sstream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Surface_mesh;
@@ -63,7 +64,7 @@ void test()
               params::throw_on_self_intersection(true),
               params::do_not_modify(true));
     std::vector<TriangleMesh> meshes;
-    PMP::split_connected_components(tm1, meshes, params::all_default());
+    PMP::split_connected_components(tm1, meshes, params::default_values());
     assert(meshes.size() == 2);
     //if the order is not deterministc, put the num_vertices in a list and check
     //if the list does contain all those numbers.
@@ -386,38 +387,38 @@ void test()
     assert(vertices(tm1).size() == 0);
   }
 
-  // test combinaison of use_compact_clipper and clip_volume
+  // test combinations of use_compact_clipper and clip_volume
   {
     TriangleMesh tm1;
     std::ifstream("data-coref/cube.off") >> tm1;
 
     //  -> closed mesh, true/true
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(true));
-    assert(faces(tm1).size() == 12);
+    assert(faces(tm1).size() == 14);
     assert(CGAL::is_closed(tm1));
 
     //  -> closed mesh, false/true
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(false).clip_volume(true));
-    assert(faces(tm1).size() == 12);
+    assert(faces(tm1).size() == 14);
     assert(CGAL::is_closed(tm1));
 
     //  -> closed mesh, true/false
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(false));
-    assert(faces(tm1).size() == 12);
+    assert(faces(tm1).size() == 14);
     assert(CGAL::is_closed(tm1));
 
     //  -> closed mesh, false/false
     PMP::clip(tm1, K::Plane_3(1,0,0,-1), params::use_compact_clipper(false).clip_volume(false));
-    assert(faces(tm1).size() == 10);
+    assert(faces(tm1).size() == 12);
     assert(!CGAL::is_closed(tm1));
 
     // -> open mesh true/true
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(true));
-    assert(faces(tm1).size() == 10);
+    assert(faces(tm1).size() == 12);
 
     // -> open mesh true/false
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(true).clip_volume(false));
-    assert(faces(tm1).size() == 10);
+    assert(faces(tm1).size() == 12);
 
     // -> open mesh false/false
     PMP::clip(tm1, K::Plane_3(-1,0,0,0), params::use_compact_clipper(false).clip_volume(false));
@@ -539,7 +540,7 @@ void test()
     TriangleMesh tm1;
     std::ifstream("data-coref/open_large_cube.off") >> tm1;
     PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true));
-    assert(vertices(tm1).size()==176);
+    assert(vertices(tm1).size()==178);
   }
 
   {
@@ -553,7 +554,7 @@ void test()
     TriangleMesh tm1;
     std::ifstream("data-coref/open_large_cube.off") >> tm1;
     PMP::clip(tm1, K::Plane_3(0,0,-1,1), CGAL::parameters::use_compact_clipper(true).allow_self_intersections(true));
-    assert(vertices(tm1).size()==176);
+    assert(vertices(tm1).size()==178);
   }
 }
 
@@ -576,7 +577,7 @@ void test_split_plane()
   PMP::split(tm1,K::Plane_3(0,0,1,0));
 
   std::vector<Mesh> meshes;
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -600,7 +601,7 @@ void test_split_plane()
   input.close();
 
   PMP::split(tm1,K::Plane_3(0,0,1,-1));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 281);
 
   CGAL::clear(tm1);
@@ -619,7 +620,7 @@ void test_split_plane()
   input.close();
 
   PMP::split(tm1,K::Plane_3(0,-1,0,0.3));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 2);
 
   CGAL::clear(tm1);
@@ -637,7 +638,7 @@ void test_split_plane()
   PMP::split(tm1, K::Plane_3(0,0,1,-0.5),
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -687,7 +688,7 @@ void test_split()
   TriangleMesh, CGAL::dynamic_face_property_t<faces_size_type> >::type
       pidmap = get(CGAL::dynamic_face_property_t<faces_size_type>(), tm1);
   CGAL::Polygon_mesh_processing::connected_components(
-        tm1, pidmap, CGAL::parameters::all_default());
+        tm1, pidmap, CGAL::parameters::default_values());
   PMP::split_connected_components(tm1,
                                   meshes,
                                   params::face_patch_map(pidmap));
@@ -734,7 +735,7 @@ void test_split()
   PMP::split(tm1, tm2);
   PMP::split_connected_components(tm1,
                                   meshes,
-                                  params::all_default());
+                                  params::default_values());
 
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
@@ -761,7 +762,7 @@ void test_split()
   PMP::split(tm1, tm2,
              params::throw_on_self_intersection(true),
              params::do_not_modify(true));
-  PMP::split_connected_components(tm1, meshes, params::all_default());
+  PMP::split_connected_components(tm1, meshes, params::default_values());
   assert(meshes.size() == 3);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
@@ -802,11 +803,11 @@ void test_isocuboid()
   assert(meshes.size() == 10);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  assert(num_vertices(meshes[0]) == 2657);
+  assert(num_vertices(meshes[0]) == 2663);
   assert(num_vertices(meshes[1]) == 131 );
   assert(num_vertices(meshes[2]) == 32  );
-  assert(num_vertices(meshes[3]) == 123 );
-  assert(num_vertices(meshes[4]) == 220 );
+  assert(num_vertices(meshes[3]) == 125 );
+  assert(num_vertices(meshes[4]) == 224 );
   assert(num_vertices(meshes[5]) == 107 );
   assert(num_vertices(meshes[6]) == 121 );
   assert(num_vertices(meshes[7]) == 56  );
@@ -829,15 +830,15 @@ void test_isocuboid()
   PMP::split(tm, splitter,
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm, meshes, params::all_default());
+  PMP::split_connected_components(tm, meshes, params::default_values());
   assert(meshes.size() == 4);
 
   std::set<std::size_t> sizes;
   for (int i=0; i<4; ++i)
     sizes.insert(vertices(meshes[i]).size());
 
-  assert(sizes.count(22)==1);
-  assert(sizes.count(23)==1);
+  assert(sizes.count(20)==1);
+  assert(sizes.count(21)==1);
   assert(sizes.count(7)==1);
   assert(sizes.count(4)==1);
 
@@ -848,11 +849,11 @@ void test_isocuboid()
   PMP::clip(tm, splitter,
              params::throw_on_self_intersection(true)
              .allow_self_intersections(true));
-  PMP::split_connected_components(tm, meshes, params::all_default());
+  PMP::split_connected_components(tm, meshes, params::default_values());
   assert(meshes.size() == 2);
   //if the order is not deterministc, put the num_vertices in a list and check
   //if the list does contain all those numbers.
-  assert(vertices(meshes[0]).size() == 22);
+  assert(vertices(meshes[0]).size() == 20);
   assert(vertices(meshes[1]).size() == 4);
 }
 int main()
@@ -879,5 +880,3 @@ int main()
   std::cout << "Done!" << std::endl;
   return EXIT_SUCCESS;
 }
-
-

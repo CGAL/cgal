@@ -179,7 +179,9 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
+#if QT_SVG_LIB
   this->setupExportSVG(actionExport_SVG, graphicsView);
+#endif
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
@@ -412,7 +414,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGAL (QT5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

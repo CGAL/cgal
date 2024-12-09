@@ -18,30 +18,6 @@
 #include <algorithm>
 #include <iostream>
 
-//
-// INTRINSIC UNIT TESTING macros.
-//
-// These are OFF by default and should only be turn on by the testsuite.
-//
-
-//
-// These are assertions that may not be true unless certain external conditions are met, such as the kernel
-// beigng exact or the input being specifically designed to be non-degenerate, avoid significant round-off, etc.
-//
-#ifdef CGAL_STRAIGHT_SKELETON_ENABLE_INTRINSIC_TESTING
-#  define CGAL_stskel_intrinsic_test_assertion(EX)          ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, 0))
-#  define CGAL_stskel_intrinsic_test_assertion_msg(EX,MSG)  ((EX)?(static_cast<void>(0)): ::CGAL::assertion_fail( # EX , __FILE__, __LINE__, MSG))
-#  define CGAL_stskel_intrinsic_test_assertion_code(CODE)   CODE
-#  define CGAL_stskel_intrinsic_test_trace(m)               std::cerr << m << std::endl
-#  define CGAL_stskel_intrinsic_test_trace_if(EX,m)         if ( (EX) ) { std::cerr << m << std::endl ; }
-#else
-#  define CGAL_stskel_intrinsic_test_assertion(EX)         (static_cast<void>(0))
-#  define CGAL_stskel_intrinsic_test_assertion_msg(EX,MSG) (static_cast<void>(0))
-#  define CGAL_stskel_intrinsic_test_assertion_code(CODE)
-#  define CGAL_stskel_intrinsic_test_trace(m)
-#  define CGAL_stskel_intrinsic_test_trace_if(EX,m)
-#endif
-
 namespace CGAL {
 
 namespace CGAL_SS_i {

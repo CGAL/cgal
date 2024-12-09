@@ -55,9 +55,14 @@ void polar_eigen(const Mat& A, Mat& R, bool& SVD)
   if(fetestexcept(FE_UNDERFLOW) || eig.eigenvalues()(0)/eig.eigenvalues()(2)/100.0<th)
   {
     // The computation of the eigenvalues might have diverged.
-    // Fallback to an accurate SVD based decomposiiton method.
-    Eigen::JacobiSVD<Mat> svd;
-    svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV );
+    // Fallback to an accurate SVD based decomposition method.
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+    Eigen::JacobiSVD<Eigen::Matrix3d, Eigen::ComputeFullU | Eigen::ComputeFullV> svd;
+    svd.compute(A);
+#else
+    Eigen::JacobiSVD<Eigen::Matrix3d> svd;
+    svd.compute(A, Eigen::ComputeFullU | Eigen::ComputeFullV);
+#endif
     const Mat& u = svd.matrixU(); const Mat& v = svd.matrixV(); const Vec& w = svd.singularValues();
     R = u*v.transpose();
     SVD = true;

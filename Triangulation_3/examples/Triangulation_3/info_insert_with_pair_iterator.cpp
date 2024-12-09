@@ -26,8 +26,6 @@ int main()
 
   Delaunay T( points.begin(),points.end() );
 
-  CGAL_assertion( T.number_of_vertices() == 6 );
-
   // check that the info was correctly set.
   for (Delaunay::Vertex_handle v : T.finite_vertex_handles())
     if( points[ v->info() ].first != v->point() ){

@@ -47,7 +47,7 @@ namespace Scale_space_reconstruction_3
  *  component of the surface where connected facets are locally oriented
  *  towards the same side of the surface.
  *
- *  \cgalModels CGAL::Scale_space_reconstruction_3::Mesher
+ *  \cgalModels{CGAL::Scale_space_reconstruction_3::Mesher}
  *
  *  \tparam Geom_traits is the geometric traits class. It must be a
  *  model of `DelaunayTriangulationTraits_3`. It must have a
@@ -123,7 +123,7 @@ private:
   // The shape must be a pointer, because the alpha of a Fixed_alpha_shape_3
   // can only be set at construction and its assignment operator is private.
   // We want to be able to set the alpha after constructing the scale-space
-  // reconstructer object.
+  // reconstructor object.
   Shape*          _shape;
 
   // The surface. If the surface is collected per shell, the triples of the
@@ -559,9 +559,6 @@ private:
   {
     std::set<Cell_handle> done;
 
-    unsigned int nb_facets_removed = 0;
-
-    unsigned int nb_skipped = 0;
     for (Cell_iterator cit = _shape->cells_begin (); cit != _shape->cells_end (); ++ cit)
     {
       if (_shape->is_infinite (cit))
@@ -702,7 +699,6 @@ private:
               }
               else
               {
-                nb_facets_removed ++;
                 mark_handled (f);
                 _garbage.push_back (ordered_facet_indices (f));
               }
@@ -716,7 +712,6 @@ private:
               }
               else
               {
-                nb_facets_removed ++;
                 mark_handled (_shape->mirror_facet (f));
                 _garbage.push_back (ordered_facet_indices (_shape->mirror_facet (f)));
               }
@@ -782,7 +777,6 @@ private:
       // If number of layers is != 2, ignore volume and discard bubble
       if (layer != 1)
       {
-        nb_skipped ++;
         for (unsigned int i = 0; i < 2; ++ i)
           for (typename std::set<SFacet>::iterator fit = _bubbles.back()[i].begin ();
                fit != _bubbles.back()[i].end (); ++ fit)
@@ -790,7 +784,6 @@ private:
             mark_handled (*fit);
             _map_f2b.erase (*fit);
             _garbage.push_back (ordered_facet_indices (*fit));
-            nb_facets_removed ++;
           }
         _bubbles.pop_back ();
       }
@@ -804,10 +797,6 @@ private:
 
     typedef std::map<std::pair<VEdge, unsigned int>, std::set<Facet> > Edge_shell_map_triples;
     typedef typename Edge_shell_map_triples::iterator Edge_shell_map_triples_iterator;
-
-    unsigned int nb_facets_removed = 0;
-
-    unsigned int nb_nm_edges = 0;
 
     // Store for each pair edge/shell the incident facets
     Edge_shell_map_triples eshell_triples;
@@ -841,8 +830,6 @@ private:
       if (eit->second.size () < 3)
         continue;
 
-      ++ nb_nm_edges;
-
       Facet_iterator tit = _shells[eit->first.second];
       Facet_iterator end = (eit->first.second == _shells.size () - 1)
         ? _surface.end () : _shells[eit->first.second + 1];
@@ -863,7 +850,6 @@ private:
           _map_f2s.erase (map_t2f[*current]);
           _surface.erase (current);
 
-          ++ nb_facets_removed;
           eit->second.erase (search);
         }
 
@@ -931,14 +917,12 @@ private:
       _surface.splice(end, tmp, tmp.begin(), tmp.end());
     }
 
-    unsigned int nb_facets_removed = 0;
     unsigned int nb_nm_vertices = 0;
     // Removing facets to fix non-manifold vertices might make some other vertices
     // become non-manifold, therefore we iterate until no facet needs to be removed.
     do
     {
       nb_nm_vertices = 0;
-      nb_facets_removed = 0;
 
       // Store for each pair vertex/shell the incident facets
       Vertex_shell_map_facets vshell_facets;
@@ -1052,7 +1036,6 @@ private:
               _garbage.push_back (*current);
               _surface.erase (current);
 
-              ++ nb_facets_removed;
               ++ tindex;
             }
 

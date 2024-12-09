@@ -71,6 +71,21 @@ private:
 
 } // namespace Mesh_3
 
+/*!
+\ingroup PkgMesh3Functions
+
+The concurrent version of the tetrahedral mesh generation algorithm implemented in
+`CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()` inserts a small set of
+auxiliary vertices that belong to the triangulation but are isolated from the complex
+at the end of the meshing process.
+
+This function removes these so called "far points" from `c3t3.triangulation()`,
+without modifying the mesh complex.
+
+\tparam C3T3 is required to be a model of the concept `MeshComplex_3InTriangulation_3`.
+The argument `c3t3` is passed by
+reference as its underlying triangulation is modified by the function.
+*/
 template <typename C3T3>
 void
 remove_far_points_in_mesh_3(C3T3& c3t3)

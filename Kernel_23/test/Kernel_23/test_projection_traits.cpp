@@ -1,3 +1,4 @@
+#define CGAL_NO_MPZF_DIVISION_OPERATOR 1
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Projection_traits_xy_3.h>
 

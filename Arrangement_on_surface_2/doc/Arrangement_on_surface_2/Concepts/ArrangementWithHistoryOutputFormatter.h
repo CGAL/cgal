@@ -7,9 +7,11 @@ A model for the `ArrangementWithHistoryOutputFormatter` concept supports a set o
 writing an arrangement-with-history instance to an output stream using a
 specific format.
 
-\cgalRefines `ArrangementOutputFormatter`
+\cgalRefines{ArrangementOutputFormatter}
 
-\cgalHasModel `CGAL::Arr_with_history_text_formatter<ArrFormatter>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Arr_with_history_text_formatter<ArrFormatter>}
+\cgalHasModelsEnd
 
 */
 

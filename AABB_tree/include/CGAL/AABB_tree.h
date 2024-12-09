@@ -26,8 +26,7 @@
 #include <CGAL/AABB_tree/internal/AABB_search_tree.h>
 #include <CGAL/AABB_tree/internal/Has_nested_type_Shared_data.h>
 #include <CGAL/AABB_tree/internal/Primitive_helper.h>
-#include <boost/optional.hpp>
-#include <boost/lambda/lambda.hpp>
+#include <optional>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -42,9 +41,9 @@ namespace CGAL {
 
   /**
    * Static data structure for efficient
-   * intersection and distance computations in 3D. It builds a
+   * intersection and distance computations in 2D and 3D. It builds a
    * hierarchy of axis-aligned bounding boxes (an AABB tree) from a set
-   * of 3D geometric objects, and can receive intersection and distance
+   * of geometric objects, and can receive intersection and distance
    * queries, provided that the corresponding predicates are
    * implemented in the traits class AABBTraits.
    * An instance of the class `AABBTraits` is internally stored.
@@ -75,9 +74,8 @@ namespace CGAL {
     /// Number type returned by the distance queries.
     typedef typename AABBTraits::FT FT;
 
-
-    /// Type of 3D point.
-    typedef typename AABBTraits::Point_3 Point;
+    /// Type of point.
+    typedef typename AABBTraits::Point Point;
 
     /// Type of input primitive.
     typedef typename AABBTraits::Primitive Primitive;
@@ -87,7 +85,7 @@ namespace CGAL {
     typedef typename Primitives::size_type size_type;
     /// Type of bounding box.
     typedef typename AABBTraits::Bounding_box Bounding_box;
-    /// 3D Point and Primitive Id type
+    /// Point and Primitive Id type
     typedef typename AABBTraits::Point_and_primitive_id Point_and_primitive_id;
     /// \deprecated
     typedef typename AABBTraits::Object_and_primitive_id Object_and_primitive_id;
@@ -126,7 +124,7 @@ namespace CGAL {
     Self& operator=(const Self&) = delete;
 
     /**
-     * @brief Builds the data structure from a sequence of primitives.
+     * @brief builds the data structure from a sequence of primitives.
      * @param first iterator over first primitive to insert
      * @param beyond past-the-end iterator
      *
@@ -143,7 +141,7 @@ namespace CGAL {
     /// An explicit call to `build()` must be made to ensure that the next call to
     /// a query function will not trigger the construction of the data structure.
     /// A call to `AABBTraits::set_shared_data(t...)` is made using the internally stored traits.
-    /// This procedure has a complexity of \f$O(n log(n))\f$, where \f$n\f$ is the number of
+    /// This procedure has a complexity of \cgalBigO{n log(n)}, where \f$n\f$ is the number of
     /// primitives of the tree.
     template<typename ... T>
     void build(T&& ...);
@@ -271,7 +269,7 @@ public:
     /// \tparam Query must be a type for which `Do_intersect` operators are
     ///               defined in the traits class `AABBTraits`.
     template <typename Query>
-    boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
+    std::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
     ///@}
 
     /// \name Intersections
@@ -294,14 +292,14 @@ public:
     /// \tparam Query must be a type for which `Do_intersect` and `Intersection` operators are
     ///               defined in the traits class `AABBTraits`.
     template <typename Query>
-    boost::optional< typename Intersection_and_primitive_id<Query>::Type >
+    std::optional< typename Intersection_and_primitive_id<Query>::Type >
     any_intersection(const Query& query) const;
 
 
 
     /// returns the intersection and  primitive id closest to the source point of the ray
     /// query.
-    /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    /// \tparam Ray must be the same as `AABBTraits::Ray` and
     /// `do_intersect` predicates and intersections for it must be
     /// defined.
     /// \tparam Skip a functor with an operator
@@ -318,21 +316,21 @@ public:
     /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     /// call this member function.
     template<typename Ray, typename SkipFunctor>
-    boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
+    std::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection(const Ray& query, const SkipFunctor& skip) const;
 
     /// \cond
     template<typename Ray>
-    boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
+    std::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection(const Ray& query) const
     {
-      return first_intersection(query, boost::lambda::constant(false));
+      return first_intersection(query, [](Primitive_id){ return false; });
     }
     /// \endcond
 
     /// returns the primitive id closest to the source point of the ray
     /// query.
-    /// \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    /// \tparam Ray must be the same as `AABBTraits::Ray` and
     /// `do_intersect` predicates and intersections for it must be
     /// defined.
     /// \tparam Skip a functor with an operator
@@ -343,15 +341,15 @@ public:
     /// `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     /// call this member function.
     template<typename Ray, typename SkipFunctor>
-    boost::optional<Primitive_id>
+    std::optional<Primitive_id>
     first_intersected_primitive(const Ray& query, const SkipFunctor& skip) const;
 
     /// \cond
     template<typename Ray>
-    boost::optional<Primitive_id>
+    std::optional<Primitive_id>
     first_intersected_primitive(const Ray& query) const
     {
-      return first_intersected_primitive(query, boost::lambda::constant(false));
+      return first_intersected_primitive(query, [](Primitive_id){ return false; });
     }
     /// \endcond
     ///@}
@@ -553,7 +551,7 @@ public:
         traits.intersection(query, singleton_data());
         break;
       default: // if(size() >= 2)
-        root_node()->template traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
+        root_node()->traversal_with_priority_and_group_traversal(m_primitives, query, traits, m_primitives.size(), 0, group_traversal_bound);
       }
     }
 
@@ -562,11 +560,14 @@ public:
 
     /**
      * @brief Builds the tree by recursive expansion.
+     * @param node the root node of the subtree to generate
      * @param first the first primitive to insert
-     * @param last the last primitive to insert
+     * @param beyond the last primitive to insert
      * @param range the number of primitive of the range
+     * @param compute_bbox a functor
+     * @param split_primitives a functor
      *
-     * [first,last[ is the range of primitives to be added to the tree.
+     * [first,beyond[ is the range of primitives to be added to the tree.
      */
     template<typename ConstPrimitiveIterator, typename ComputeBbox, typename SplitPrimitives>
     void expand(Node& node,
@@ -574,8 +575,7 @@ public:
                 ConstPrimitiveIterator beyond,
                 const std::size_t range,
                 const ComputeBbox& compute_bbox,
-                const SplitPrimitives& split_primitives,
-                const AABBTraits&);
+                const SplitPrimitives& split_primitives);
 
   public:
     // returns a point which must be on one primitive
@@ -791,8 +791,7 @@ public:
                         ConstPrimitiveIterator beyond,
                         const std::size_t range,
                         const ComputeBbox& compute_bbox,
-                        const SplitPrimitives& split_primitives,
-                        const Tr& traits)
+                        const SplitPrimitives& split_primitives)
   {
     node.set_bbox(compute_bbox(first, beyond));
 
@@ -806,13 +805,13 @@ public:
       break;
     case 3:
       node.set_children(*first, new_node());
-      expand(node.right_child(), first+1, beyond, 2, compute_bbox, split_primitives, traits);
+      expand(node.right_child(), first+1, beyond, 2, compute_bbox, split_primitives);
       break;
     default:
       const std::size_t new_range = range/2;
       node.set_children(new_node(), new_node());
-      expand(node.left_child(), first, first + new_range, new_range, compute_bbox, split_primitives, traits);
-      expand(node.right_child(), first + new_range, beyond, range - new_range, compute_bbox, split_primitives, traits);
+      expand(node.left_child(), first, first + new_range, new_range, compute_bbox, split_primitives);
+      expand(node.right_child(), first + new_range, beyond, range - new_range, compute_bbox, split_primitives);
     }
   }
 
@@ -844,8 +843,7 @@ public:
              m_primitives.begin(), m_primitives.end(),
              m_primitives.size(),
              compute_bbox,
-             split_primitives,
-             m_traits);
+             split_primitives);
     }
 #ifdef CGAL_HAS_THREADS
     m_atomic_need_build.store(false, std::memory_order_release); // in case build() is triggered by a call to root_node()
@@ -964,7 +962,7 @@ public:
 
   template <typename Tr>
   template <typename Query>
-  boost::optional< typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type >
+  std::optional< typename AABB_tree<Tr>::template Intersection_and_primitive_id<Query>::Type >
     AABB_tree<Tr>::any_intersection(const Query& query) const
   {
     using namespace CGAL::internal::AABB_tree;
@@ -976,7 +974,7 @@ public:
 
   template <typename Tr>
   template <typename Query>
-  boost::optional<typename AABB_tree<Tr>::Primitive_id>
+  std::optional<typename AABB_tree<Tr>::Primitive_id>
     AABB_tree<Tr>::any_intersected_primitive(const Query& query) const
   {
     using namespace CGAL::internal::AABB_tree;

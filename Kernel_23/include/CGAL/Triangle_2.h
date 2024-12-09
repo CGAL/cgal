@@ -18,11 +18,12 @@
 #define CGAL_TRIANGLE_2_H
 
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/IO/io.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -34,7 +35,7 @@ class Triangle_2 : public R_::Kernel_base::Triangle_2
   typedef typename R_::Kernel_base::Triangle_2  RTriangle_2;
 
   typedef Triangle_2                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Triangle_2>::value));
+  static_assert(std::is_same<Self, typename R_::Triangle_2>::value);
 
 public:
 

@@ -16,8 +16,8 @@
 
 #include <CGAL/license/Polygon_mesh_processing/Compute_normal.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/properties.h>
@@ -89,6 +89,8 @@ void sum_normals(const PM& pmesh,
 
   typedef typename boost::property_traits<VertexPointMap>::reference    Point_ref;
 
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
+
   halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
   vertex_descriptor the = target(he,pmesh);
@@ -121,7 +123,9 @@ void sum_normals(const PM& pmesh,
 
 /**
 * \ingroup PMP_normal_grp
+*
 * computes the outward unit vector normal to face `f`.
+*
 * @tparam PolygonMesh a model of `FaceGraph`
 * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
 *
@@ -149,14 +153,15 @@ void sum_normals(const PM& pmesh,
 *
 * @return the computed normal. The return type is a 3D vector type. It is
 * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-* or from the geometric traits class deduced from the point property map
-* of `pmesh`.
+* or from the geometric traits class deduced from the point property map of `pmesh`.
 *
 * \warning This function involves a square root computation.
 * If the field type (`FT`) of the traits does not support the `sqrt()` operation,
 * the square root computation will be performed approximately.
+*
+* @see `compute_face_normals()`
 */
-template <typename PolygonMesh, typename NamedParameters>
+template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Vector_3
 #else
@@ -164,10 +169,12 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
                     const PolygonMesh& pmesh,
-                    const NamedParameters& np)
+                    const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_face_descriptor(f, pmesh));
 
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type               GT;
   GT traits = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
@@ -188,17 +195,11 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   return normal;
 }
 
-template <typename PolygonMesh>
-typename GetGeomTraits<PolygonMesh>::type::Vector_3
-compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
-                    const PolygonMesh& pmesh)
-{
-  return compute_face_normal(f, pmesh, CGAL::parameters::all_default());
-}
-
 /**
 * \ingroup PMP_normal_grp
+*
 * computes the outward unit vector normal for all faces of the polygon mesh.
+*
 * @tparam PolygonMesh a model of `FaceGraph`
 * @tparam Face_normal_map a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
@@ -229,11 +230,13 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 * \warning This function involves a square root computation.
 * If the field type (`FT`) of the traits does not support the `sqrt()` operation,
 * the square root computation will be performed approximately.
+*
+* @see `compute_face_normal()`
 */
-template <typename PolygonMesh, typename Face_normal_map, typename NamedParameters>
+template <typename PolygonMesh, typename Face_normal_map, typename NamedParameters = parameters::Default_named_parameters>
 void compute_face_normals(const PolygonMesh& pmesh,
                           Face_normal_map face_normals,
-                          const NamedParameters& np)
+                          const NamedParameters& np = parameters::default_values())
 {
   typedef typename GetGeomTraits<PolygonMesh,NamedParameters>::type Kernel;
 
@@ -245,12 +248,6 @@ void compute_face_normals(const PolygonMesh& pmesh,
     std::cout << "normal at face " << f << " is " << get(face_normals, f) << std::endl;
 #endif
   }
-}
-
-template <typename PolygonMesh, typename Face_normal_map>
-void compute_face_normals(const PolygonMesh& pmesh, Face_normal_map face_normals)
-{
-  compute_face_normals(pmesh, face_normals, CGAL::parameters::all_default());
 }
 
 namespace internal {
@@ -618,7 +615,17 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 
 /**
 * \ingroup PMP_normal_grp
-* computes the unit normal at vertex `v` as the average of the normals of incident faces.
+*
+* \brief computes the unit normal at vertex `v` as a function of the normals of incident faces.
+*
+* The implementation is inspired by Aubry et al. "On the most 'normal' normal" \cgalCite{cgal:al-otmnn-08},
+* which aims to compute a normal that maximizes the visibility to the incident faces.
+* If such normal does not exist or if the optimization process fails to find it, a fallback normal is computed
+* as a sine-weighted sum of the normals of the incident faces.
+*
+* @note The function `compute_vertex_normals()` should be preferred if normals are intended to be
+*       computed at all vertices of the graph.
+*
 * @tparam PolygonMesh a model of `FaceGraph`
 *
 * @param v the vertex whose normal is computed
@@ -645,14 +652,15 @@ compute_vertex_normal_as_sum_of_weighted_normals(typename boost::graph_traits<Po
 *
 * @return the computed normal. The return type is a 3D vector type. It is
 * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
-* or the geometric traits class deduced from the point property map
-* of `pmesh`.
+* or the geometric traits class deduced from the point property map of `pmesh`.
 *
 * \warning This function involves a square root computation.
 * If the field type (`FT`) of the traits does not support the `sqrt()` operation,
 * the square root computation will be performed approximately.
+*
+* @see `compute_vertex_normals()`
 */
-template<typename PolygonMesh, typename NamedParameters>
+template<typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 #ifdef DOXYGEN_RUNNING
 Vector_3
 #else
@@ -660,11 +668,13 @@ typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3
 #endif
 compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
                       const PolygonMesh& pmesh,
-                      const NamedParameters& np)
+                      const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
   using parameters::get_parameter;
+
+  CGAL_precondition(is_valid_vertex_descriptor(v, pmesh));
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor      halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor          face_descriptor;
@@ -686,7 +696,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   Face_vector_map default_fvmap;
   Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
                                                   Default_map(default_fvmap));
-  const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
+  const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>::value;
 
 #ifdef CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
   std::cout << "<----- compute vertex normal at " << get(vpmap, v)
@@ -734,16 +744,10 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   return normal;
 }
 
-template <typename PolygonMesh>
-typename GetGeomTraits<PolygonMesh>::type::Vector_3
-compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descriptor v,
-                      const PolygonMesh& pmesh)
-{
-  return compute_vertex_normal(v, pmesh, CGAL::parameters::all_default());
-}
 
 /**
 * \ingroup PMP_normal_grp
+*
 * computes the outward unit vector normal for all vertices of the polygon mesh.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
@@ -776,11 +780,13 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 * \warning This function involves a square root computation.
 * If the field type (`FT`) of the traits does not support the `sqrt()` operation,
 * the square root computation will be performed approximately.
+*
+* @see `compute_vertex_normal()`
 */
-template <typename PolygonMesh, typename VertexNormalMap, typename NamedParameters>
+template <typename PolygonMesh, typename VertexNormalMap, typename NamedParameters = parameters::Default_named_parameters>
 void compute_vertex_normals(const PolygonMesh& pmesh,
                             VertexNormalMap vertex_normals,
-                            const NamedParameters& np)
+                            const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::is_default_parameter;
@@ -807,7 +813,7 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
                                                        Face_normal_dmap>::type   Face_normal_map;
   Face_normal_map face_normals = choose_parameter(get_parameter(np, internal_np::face_normal),
                                                   get(Face_normal_tag(), pmesh));
-  const bool must_compute_face_normals = is_default_parameter(get_parameter(np, internal_np::face_normal));
+  const bool must_compute_face_normals = is_default_parameter<NamedParameters, internal_np::face_normal_t>::value;
 
   if(must_compute_face_normals)
     compute_face_normals(pmesh, face_normals, np);
@@ -832,14 +838,9 @@ void compute_vertex_normals(const PolygonMesh& pmesh,
   }
 }
 
-template <typename PolygonMesh, typename VertexNormalMap>
-void compute_vertex_normals(const PolygonMesh& pmesh, VertexNormalMap vertex_normals)
-{
-  compute_vertex_normals(pmesh, vertex_normals, CGAL::parameters::all_default());
-}
-
 /**
 * \ingroup PMP_normal_grp
+*
 * computes the outward unit vector normal for all vertices and faces of the polygon mesh.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
@@ -876,26 +877,22 @@ void compute_vertex_normals(const PolygonMesh& pmesh, VertexNormalMap vertex_nor
 * \warning This function involves a square root computation.
 * If the field type (`FT`) of the traits does not support the `sqrt()` operation,
 * the square root computation will be performed approximately.
+*
+* @see `compute_vertex_normals()`
+* @see `compute_face_normals()`
 */
 template <typename PolygonMesh,
           typename VertexNormalMap, typename FaceNormalMap,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 void compute_normals(const PolygonMesh& pmesh,
                      VertexNormalMap vertex_normals,
                      FaceNormalMap face_normals,
-                     const NamedParameters& np)
+                     const NamedParameters& np = parameters::default_values())
 {
   compute_face_normals(pmesh, face_normals, np);
   compute_vertex_normals(pmesh, vertex_normals, np.face_normal_map(face_normals));
 }
 
-template <typename PolygonMesh, typename VertexNormalMap, typename FaceNormalMap>
-void compute_normals(const PolygonMesh& pmesh,
-                     VertexNormalMap vertex_normals,
-                     FaceNormalMap face_normals)
-{
-  compute_normals(pmesh, vertex_normals, face_normals, CGAL::parameters::all_default());
-}
 
 } // namespace Polygon_mesh_processing
 } // namespace CGAL

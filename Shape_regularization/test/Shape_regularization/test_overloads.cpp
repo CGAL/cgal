@@ -52,7 +52,7 @@ void test_overloads() {
   CD odirections(points, false);
 
   SR::Segments::regularize_segments(
-    segments, neighbor_query, angle_regularization, quadratic_program, CGAL::parameters::all_default());
+    segments, neighbor_query, angle_regularization, quadratic_program, CGAL::parameters::default_values());
   SR::Segments::regularize_segments(
     segments, neighbor_query, angle_regularization, quadratic_program);
   SR::Segments::regularize_segments(
@@ -66,34 +66,34 @@ void test_overloads() {
     segments);
 
   SR::Segments::parallel_groups(
-    segments, std::back_inserter(indices), CGAL::parameters::all_default());
+    segments, std::back_inserter(indices), CGAL::parameters::default_values());
   SR::Segments::parallel_groups(
     segments, std::back_inserter(indices));
 
   SR::Segments::collinear_groups(
-    segments, std::back_inserter(indices), CGAL::parameters::all_default());
+    segments, std::back_inserter(indices), CGAL::parameters::default_values());
   SR::Segments::collinear_groups(
     segments, std::back_inserter(indices));
 
   SR::Segments::orthogonal_groups(
-    segments, std::back_inserter(indices), CGAL::parameters::all_default());
+    segments, std::back_inserter(indices), CGAL::parameters::default_values());
   SR::Segments::orthogonal_groups(
     segments, std::back_inserter(indices));
 
   SR::Segments::unique_segments(
-    segments, std::back_inserter(unique), CGAL::parameters::all_default());
+    segments, std::back_inserter(unique), CGAL::parameters::default_values());
   SR::Segments::unique_segments(
     segments, std::back_inserter(unique));
 
   SR::Contours::regularize_closed_contour(
-    points, cdirections, std::back_inserter(contour), CGAL::parameters::all_default());
+    points, cdirections, std::back_inserter(contour), CGAL::parameters::default_values());
   SR::Contours::regularize_closed_contour(
     points, cdirections, std::back_inserter(contour));
   SR::Contours::regularize_closed_contour(
     points, std::back_inserter(contour));
 
   SR::Contours::regularize_open_contour(
-    points, odirections, std::back_inserter(contour), CGAL::parameters::all_default());
+    points, odirections, std::back_inserter(contour), CGAL::parameters::default_values());
   SR::Contours::regularize_open_contour(
     points, odirections, std::back_inserter(contour));
   SR::Contours::regularize_open_contour(

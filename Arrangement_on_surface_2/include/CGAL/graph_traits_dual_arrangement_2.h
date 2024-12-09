@@ -25,7 +25,7 @@
  */
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arrangement_2/graph_traits_dual.h>

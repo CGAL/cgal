@@ -15,6 +15,11 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Surface_mesher/Sphere_oracle_3.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesher/Null_oracle_visitor.h>
@@ -298,7 +303,7 @@ namespace CGAL {
           const Point original_a = a;
           const Vector ab = vector(a, b);
           a = translated_point(original_a, scaled_vector(ab, root_1));
-          if( root_2 <= FT(1) ) /// move b iif root_2 <=1
+          if( root_2 <= FT(1) ) /// move b if root_2 <=1
           {
             b = translated_point(original_a, scaled_vector(ab, root_2));
           }

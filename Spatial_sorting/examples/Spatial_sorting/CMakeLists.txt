@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Spatial_sorting_Examples)
 
 find_package(CGAL REQUIRED)
@@ -17,5 +17,6 @@ endforeach()
 find_package(TBB QUIET)
 include(CGAL_TBB_support)
 if(TARGET CGAL::TBB_support)
-  target_link_libraries(parallel_spatial_sort_3 PUBLIC CGAL::TBB_support)
+  message(STATUS "Found TBB")
+  target_link_libraries(parallel_spatial_sort_3 PRIVATE CGAL::TBB_support)
 endif()

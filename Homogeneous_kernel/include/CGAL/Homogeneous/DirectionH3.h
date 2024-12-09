@@ -49,16 +49,16 @@ public:
     //: base(p) {}
 
   DirectionH3(const Vector_3 & v )
-  { *this = v.direction(); }
+  { *this = v.rep().direction(); }
 
   DirectionH3(const Line_3 & l )
   { *this = l.rep().direction(); }
 
   DirectionH3(const Ray_3 & r )
-  { *this = r.direction(); }
+  { *this = r.rep().direction(); }
 
   DirectionH3(const Segment_3 & s )
-  { *this = s.direction(); }
+  { *this = s.rep().direction(); }
 
   // the fourth argument is not documented.  Should go away ?
   DirectionH3(const RT& x, const RT& y,

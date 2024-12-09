@@ -7,7 +7,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <iostream>
-#include <fstream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Point_3                                            Point;

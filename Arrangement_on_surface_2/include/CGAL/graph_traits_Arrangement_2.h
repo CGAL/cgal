@@ -24,9 +24,10 @@
  */
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/graph/graph_concepts.hpp>
+#include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -36,7 +37,7 @@ namespace boost {
 
 /*! \class
  * Specialization of the BGL graph-traits template, which serves as a (primal)
- * adapter for Arrangment_on_surface_2, where the valid arrangement vertices
+ * adapter for Arrangement_on_surface_2, where the valid arrangement vertices
  * correspond to graph verices and arrangement halfedges correspond to
  * arrangement edges.
  * Note that non-fictitious vertices at infinity are also considered as graph
@@ -75,13 +76,14 @@ private:
     public virtual boost::bidirectional_graph_tag,   // This tag refines the
                                                      // incidence_graph_tag.
     public virtual boost::vertex_list_graph_tag,  // Can iterate over vertices.
-    public virtual boost::edge_list_graph_tag     // Can iterate over edges.
+    public virtual boost::edge_list_graph_tag,     // Can iterate over edges.
+    public virtual boost::adjacency_graph_tag
   {};
 
   /*! \class
    * Iteratator over all outgoing halfedges around a given vertex., skipping
    * fictitious halfedges.
-   * This is by adapting the Halfegde_around_vertex_circulator type to an
+   * This is by adapting the Halfedge_around_vertex_circulator type to an
    * iterator. Moreover, as the circulator goes over all ingoing halfedges
    * of the vertex, the iterator adapter may return their twin halfedges, if
    * we need the outgoing halfedges.
@@ -109,15 +111,14 @@ private:
 
 public:
 
-    /*! Default constructor. */
+    /*! constructs default. */
     Halfedge_around_vertex_iterator () :
       _counter(-1),
       _cend(-1)
     {}
 
-    /*!
-     * Constructor.
-     * \param circ A ciruclator for the halfedges around a vertex.
+    /*! constructs.
+     * \param circ A circulator for the halfedges around a vertex.
      * \param out_edges Do we need the outgoing or the ingoing halfedges.
      * \param counter A counter associated with the iterator.
      * \param cend The past-the-end counter value.
@@ -232,18 +233,18 @@ public:
   typedef typename Arrangement_on_surface_2::Size       edges_size_type;
 
   // Types not required by any of these concepts:
-  typedef void                                          adjacency_iterator;
+  typedef  CGAL::Vertex_around_target_iterator<Arrangement_on_surface_2> adjacency_iterator;
 
-  /*! Constructor. */
+  /*! constructs. */
   graph_traits (const Arrangement_on_surface_2& arr) :
     p_arr (const_cast<Arrangement_on_surface_2 *> (&arr)),
     arr_access (const_cast<Arrangement_on_surface_2&> (arr))
   {}
 
-  /*! Nulls */
+  /*! nulls */
   static vertex_descriptor null_vertex() { return vertex_descriptor(); }
 
-  /*! Traverse the vertices. */
+  /*! traverses the vertices. */
   vertices_size_type number_of_vertices()
   {
     return arr_access.number_of_valid_vertices();
@@ -259,7 +260,7 @@ public:
     return arr_access.valid_vertices_end();
   }
 
-  /*! Traverse the edges. */
+  /*! traverses the edges. */
   edge_iterator edges_begin()
   {
     return p_arr->halfedges_begin();
@@ -270,7 +271,7 @@ public:
     return p_arr->halfedges_end();
   }
 
-  /*! Get the vertex degree (in degree or out degree). */
+  /*! obtains the vertex degree (in degree or out degree). */
   degree_size_type degree (vertex_descriptor v)
   {
     if (v->is_isolated())
@@ -291,7 +292,7 @@ public:
     return deg;
   }
 
-  /*! Traverse the outgoing halfedges of a given vertex. */
+  /*! traverses the outgoing halfedges of a given vertex. */
   out_edge_iterator out_edges_begin (vertex_descriptor v)
   {
     if (v->is_isolated())
@@ -309,7 +310,7 @@ public:
     return out_edge_iterator (v->incident_halfedges(), true, deg, deg);
   }
 
-  /*! Traverse the ingoing halfedges of a given vertex. */
+  /*! traverses the ingoing halfedges of a given vertex. */
   in_edge_iterator in_edges_begin (vertex_descriptor v)
   {
     if (v->is_isolated())
@@ -331,7 +332,7 @@ public:
 
 /*! \class
  * Specialization of the BGL graph-traits template, which serves as a (primal)
- * adapter for Arrangment_2, where the arrangement vertices correspond to graph
+ * adapter for Arrangement_2, where the arrangement vertices correspond to graph
  * verices and arrangement halfedges correspond to arrangement edges.
  */
 template <class Traits_, class Dcel_>
@@ -348,7 +349,7 @@ class graph_traits<CGAL::Arrangement_2<Traits_, Dcel_> > :
 
 public:
 
-  /*! Constructor. */
+  /*! constructs. */
   graph_traits (const CGAL::Arrangement_2<Traits_2, Dcel>& arr) :
     Base (arr)
   {}
@@ -361,8 +362,7 @@ namespace CGAL {
 // Functions required by the IncidenceGraph concept:
 // -------------------------------------------------
 
-/*!
- * Get the out-degree of a vertex in a given arrangement.
+/*! obtains the out-degree of a vertex in a given arrangement.
  * \param v The vertex.
  * \param arr The arrangement.
  * \param Number of outgoing halfedges from v.
@@ -383,8 +383,7 @@ out_degree (typename
   return gt_arr.degree (v);
 }
 
-/*!
- * Return a range of the out-edges of a vertex given by its descriptor and the
+/*! returns a range of the out-edges of a vertex given by its descriptor and the
  * arrangement it belongs to.
  * \param v The vertex.
  * \param arr The arrangement.
@@ -411,8 +410,21 @@ out_edges (typename
   return std::make_pair (gt_arr.out_edges_begin (v), gt_arr.out_edges_end (v));
 }
 
-/*!
- * Get the source vertex of an arrangement edge.
+template <class GeomTraits, class TopTraits>
+Iterator_range< typename
+          boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                             TopTraits> >::
+                                                         adjacency_iterator>
+adjacent_vertices(typename
+           boost::graph_traits<CGAL::Arrangement_on_surface_2<GeomTraits,
+                                                              TopTraits> >::
+                                                          vertex_descriptor v,
+           const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
+{
+  return CGAL::vertices_around_target(v,arr);
+}
+
+/*! obtains the source vertex of an arrangement edge.
  * \param e The edge.
  * \param arr The arrangement.
  * \return The source vertex of e.
@@ -430,8 +442,7 @@ source (typename
   return e->source();
 }
 
-/*!
- * Get the target vertex of an arrangement edge.
+/*! obtains the target vertex of an arrangement edge.
  * \param e The edge.
  * \param arr The arrangement.
  * \return The source vertex of e.
@@ -452,8 +463,7 @@ target (typename
 // Functions required by the BidirectionalGraph concept:
 // -----------------------------------------------------
 
-/*!
- * Get the in-degree of a vertex in a given arrangement.
+/*! obtains the in-degree of a vertex in a given arrangement.
  * \param v The vertex.
  * \param arr The arrangement.
  * \param Number of ingoing halfedges to v.
@@ -474,8 +484,7 @@ in_degree (typename
   return gt_arr.degree (v);
 }
 
-/*!
- * Return a range of the in-edges of a vertex given by its descriptor and the
+/*! returns a range of the in-edges of a vertex given by its descriptor and the
  * arrangement it belongs to.
  * \param v The vertex.
  * \param arr The arrangement.
@@ -502,8 +511,7 @@ in_edges (typename
   return std::make_pair (gt_arr.in_edges_begin (v), gt_arr.in_edges_end (v));
 }
 
-/*!
- * Get the degree of a vertex in a given arrangement.
+/*! obtains the degree of a vertex in a given arrangement.
  * \param v The vertex.
  * \param arr The arrangement.
  * \param Number of ingoing and outgoing halfedges incident to v.
@@ -527,8 +535,7 @@ degree (typename
 // Functions required by the VertexListGraph concept:
 // --------------------------------------------------
 
-/*!
- * Get the number of vertices in the given arrangement.
+/*! obtains the number of vertices in the given arrangement.
  * \param arr The arrangement.
  * \return Number of vertices.
  */
@@ -544,8 +551,7 @@ num_vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   return gt_arr.number_of_vertices();
 }
 
-/*!
- * Get the range of vertices of the given arrangement.
+/*! obtains the range of vertices of the given arrangement.
  * \param arr The arrangement.
  * \return A pair of vertex iterators.
  */
@@ -569,8 +575,7 @@ vertices (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
 // Functions required by the EdgeListGraph concept:
 // ------------------------------------------------
 
-/*!
- * Get the number of halfedges in the given arrangement.
+/*! obtains the number of halfedges in the given arrangement.
  * \param arr The arrangement.
  * \return Number of halfedges (graph edges).
  */
@@ -583,8 +588,7 @@ num_edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   return arr.number_of_halfedges();
 }
 
-/*!
- * Get the range of halfedges of the given arrangement.
+/*! obtains the range of halfedges of the given arrangement.
  * \param arr The arrangement.
  * \return A pair of halfedge iterators.
  */
@@ -605,7 +609,7 @@ edges (const CGAL::Arrangement_on_surface_2<GeomTraits, TopTraits>& arr)
   return std::make_pair (gt_arr.edges_begin(), gt_arr.edges_end());
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

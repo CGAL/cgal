@@ -24,7 +24,7 @@ The named parameters in the snippet use the tags `predecessor_map` and `distance
 and they are concatenated using the dot operator.<BR>
 
 A similar mechanism was introduced in \cgal, with the small difference that the named parameters
-tag live in the `CGAL::parameters::` namespace and `CGAL::parameters::all_default()` can be used to indicate
+tag live in the `CGAL::parameters::` namespace and `CGAL::parameters::default_values()` can be used to indicate
 that default values of optional named parameters must be used.
 As in the \bgl, named parameters in \cgal are also concatenated using
 the dot operator, and a typical usage is thus:
@@ -40,7 +40,9 @@ CGAL::copy_face_graph(g1, g2);
 CGAL::copy_face_graph(g1, g2,
                       CGAL::parameters::vertex_point_map(vpm)  //parameter for g1
                       .vertex_to_vertex_map(v2v),              //other parameter for g1
-                      CGAL::parameters::all_default());        //parameter for g2
+                      CGAL::parameters::default_values());        //parameter for g2
 \endcode
 */
+
+
 ˛

@@ -177,14 +177,14 @@ bool is_unbounded() const;
 /*!
 returns the status of the solution;
 this is one of the values `QP_OPTIMAL`, `QP_INFEASIBLE`, and
-`QP_UNBOUNDED`, depending on whether the program asociated
+`QP_UNBOUNDED`, depending on whether the program associated
 to `sol` has an optimal solution, is infeasible, or is unbounded.
 */
 Quadratic_program_status status() const;
 
 /*!
 returns the number of iterations that it took to solve the
-program asociated to `sol`.
+program associated to `sol`.
 */
 int number_of_iterations() const;
 
@@ -518,7 +518,7 @@ Infeasibility_certificate_iterator
 infeasibility_certificate_end() const;
 
 /*!
-returns a random acess iterator over the unbounded direction \f$ \qpw\f$
+returns a random access iterator over the unbounded direction \f$ \qpw\f$
 as given in Lemma 3,with respect to the solution \f$ \qpx^*\f$
 obtained from `sol``.variable_values_begin()`. The value type
 is `ET`, and the valid iterator range has length \f$ n\f$.

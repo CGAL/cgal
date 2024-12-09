@@ -91,12 +91,12 @@ or external angle approaches `0`, numerical overflow may prevent some of the pol
 If that happens, the failed contour just won't be added into the resulting sequence.
 
 \tparam OutputIterator must be a model of the <I>OutputIterator</I> category whose `value_type`
-                       is a `boost::shared_ptr` holding the dynamically allocated instances of type `Container`.
+                       is a `std::shared_ptr` holding the dynamically allocated instances of type `Container`.
 
 \param t the offset value
 \param out an output iterator. For each resulting offset contour, a default constructed instance
            of `Container` type, is dynamically allocated and each offset vertex is added to it.
-           A `boost::shared_ptr` holding onto the dynamically allocated container is inserted
+           A `std::shared_ptr` holding onto the dynamically allocated container is inserted
            into the output sequence via the OutputIterator `out`.
 
 \returns an `OutputIterator` past-the-end of the resulting sequence, which contains each offset contour generated.

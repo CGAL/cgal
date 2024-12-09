@@ -11,8 +11,7 @@
 
 #include <CGAL/Timer.h>
 
-#include <boost/unordered_map.hpp>
-
+#include <unordered_map>
 #include <fstream>
 #include <iostream>
 #include <list>
@@ -89,7 +88,7 @@ int main(int argc, char** argv)
   std::cout << mesh.number_of_seam_edges() << " seam edges in input" << std::endl;
 
   // Index map of the seam mesh (assuming a single connected component so far)
-  typedef boost::unordered_map<vertex_descriptor, int> Indices;
+  typedef std::unordered_map<vertex_descriptor, int> Indices;
   Indices indices;
   boost::associative_property_map<Indices> vimap(indices);
   int counter = 0;
@@ -98,7 +97,7 @@ int main(int argc, char** argv)
   }
 
   // Mark the cones in the seam mesh
-  boost::unordered_map<vertex_descriptor, SMP::Cone_type> cmap;
+  std::unordered_map<vertex_descriptor, SMP::Cone_type> cmap;
   SMP::locate_cones(mesh, cone_sm_vds.begin(), cone_sm_vds.end(), cmap);
 
   // The 2D points of the uv parametrisation will be written into this map
@@ -112,8 +111,7 @@ int main(int argc, char** argv)
 
   // a halfedge on the (possibly virtual) border
   // only used in output (will also be used to handle multiple connected components in the future)
-  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh,
-                CGAL::Polygon_mesh_processing::parameters::all_default()).first;
+  halfedge_descriptor bhd = CGAL::Polygon_mesh_processing::longest_border(mesh).first;
 
   parameterizer.parameterize(mesh, bhd, cmap, uvmap, vimap);
 

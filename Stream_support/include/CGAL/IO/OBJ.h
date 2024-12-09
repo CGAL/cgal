@@ -22,19 +22,15 @@
 #include <CGAL/Container_helper.h>
 
 #include <boost/range/value_type.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
+#include <type_traits>
 
 namespace CGAL {
 
@@ -72,12 +68,30 @@ bool read_OBJ(std::istream& is,
   bool tex_found(false), norm_found(false);
   while(getline(is, line))
   {
-    if(line.empty())
-      continue;
+    // get last non-whitespace, non-null character
+    auto last = std::find_if(line.rbegin(), line.rend(), [](char c) { return c != '\0' && !std::isspace(c); });
+    if(last == line.rend())
+      continue; // line is empty or only whitespace
+
+    // keep reading lines as long as the last non-whitespace, non-null character is a backslash
+    while(last != line.rend() && *last == '\\')
+    {
+      // remove everything from the backslash (included)
+      line = line.substr(0, line.size() - (last - line.rbegin()) - 1);
+
+      std::string next_line;
+      if(!getline(is, next_line))
+        break;
+
+      line += next_line;
+      last = std::find_if(line.rbegin(), line.rend(), [](char c) { return c != '\0' && !std::isspace(c); });
+    }
+
+    CGAL_assertion(!line.empty());
 
     std::istringstream iss(line);
     if(!(iss >> s))
-      continue; // can't read anything on the line, whitespace only?
+      continue;
 
     if(s == "v")
     {
@@ -122,12 +136,19 @@ bool read_OBJ(std::istream& is,
         }
 
         // the format can be "f v1/vt1/vn1 v2/vt2/vn2 v3/vt3/vn3 ..." and we only read vertex ids for now,
-        // so skip to the next vertex
-        iss.ignore(256, ' ');
+        // so skip to the next vertex, but be tolerant about which whitespace is used
+        if (!std::isspace(iss.peek())) {
+          std::string ignoreme;
+          iss >> ignoreme;
+        }
       }
 
       if(iss.bad())
+      {
+        if(verbose)
+          std::cerr << "error while reading OBJ face." << std::endl;
         return false;
+      }
     }
     else if(s.front() == '#')
     {
@@ -145,7 +166,7 @@ bool read_OBJ(std::istream& is,
             s == "scrv" || s == "sp" || s == "end" ||
             s == "con" || s == "surf_1" || s == "q0_1" || s == "q1_1" || s == "curv2d_1" ||
             s == "surf_2" || s == "q0_2" || s == "q1_2" || s == "curv2d_2" ||
-            // supersed statements
+            // superseded statements
             s == "bsp" || s == "bzp" || s == "cdc" || s == "cdp" || s == "res")
     {
       // valid, but unsupported
@@ -153,15 +174,15 @@ bool read_OBJ(std::istream& is,
     else
     {
       if(verbose)
-        std::cerr << "error: unrecognized line: " << s << std::endl;
+        std::cerr << "Error: unrecognized line: " << s << std::endl;
       return false;
     }
   }
 
   if(norm_found && verbose)
-    std::cout<<"NOTE: normals were found in this file, but were discarded."<<std::endl;
+    std::cout << "NOTE: normals were found in this file, but were discarded." << std::endl;
   if(tex_found && verbose)
-    std::cout<<"NOTE: textures were found in this file, but were discarded."<<std::endl;
+    std::cout << "NOTE: textures were found in this file, but were discarded." << std::endl;
 
   if(points.empty() || polygons.empty())
   {
@@ -211,13 +232,13 @@ bool read_OBJ(std::istream& is,
 /// \cgalNamedParamsEnd
 ///
 /// \returns `true` if the reading was successful, `false` otherwise.
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(std::istream& is,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+              , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
               )
 {
@@ -227,17 +248,6 @@ bool read_OBJ(std::istream& is,
                             CGAL::Emptyset_iterator(), CGAL::Emptyset_iterator(),
                             verbose);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OBJ(is, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 /// \ingroup PkgStreamSupportIoFuncsOBJ
 ///
@@ -267,13 +277,13 @@ bool read_OBJ(std::istream& is, PointRange& points, PolygonRange& polygons,
 /// \cgalNamedParamsEnd
 ///
 /// \returns `true` if the reading was successful, `false` otherwise.
-template <typename PointRange, typename PolygonRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename PolygonRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_OBJ(const std::string& fname,
               PointRange& points,
               PolygonRange& polygons,
-              const CGAL_BGL_NP_CLASS& np
+              const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-              , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+              , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
               )
 {
@@ -281,17 +291,6 @@ bool read_OBJ(const std::string& fname,
   CGAL::IO::set_mode(is, CGAL::IO::ASCII);
   return read_OBJ(is, points, polygons, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygons,
-              typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return read_OBJ(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,13 +325,13 @@ bool read_OBJ(const std::string& fname, PointRange& points, PolygonRange& polygo
  */
 template <typename PointRange,
           typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(std::ostream& os,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
                )
 {
@@ -340,17 +339,6 @@ bool write_OBJ(std::ostream& os,
   Generic_writer<std::ostream, File_writer_wavefront> writer(os);
   return writer(points, polygons, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_OBJ(os, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
  * \ingroup PkgStreamSupportIoFuncsOBJ
@@ -381,13 +369,13 @@ bool write_OBJ(std::ostream& os, const PointRange& points, const PolygonRange& p
  */
 template <typename PointRange,
           typename PolygonRange,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_OBJ(const std::string& fname,
                const PointRange& points,
                const PolygonRange& polygons,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PolygonRange>::value>* = nullptr
 #endif
                )
 {
@@ -396,17 +384,6 @@ bool write_OBJ(const std::string& fname,
 
   return write_OBJ(os, points, polygons, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PointRange, typename PolygonRange>
-bool write_OBJ(const std::string& fname, const PointRange& points, const PolygonRange& polygons,
-               typename boost::enable_if<internal::is_Range<PolygonRange> >::type* = nullptr)
-{
-  return write_OBJ(fname, points, polygons, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 

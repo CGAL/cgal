@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgAlgebraicFoundationsConcepts
+\ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
 A model of the concept `FromDoubleConstructible` is required
@@ -27,4 +27,3 @@ FromDoubleConstructible(const double& d);
 /// @}
 
 }; /* end FromDoubleConstructible */
-

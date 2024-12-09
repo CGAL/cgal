@@ -324,8 +324,8 @@ private:
 
     CGAL_precondition( (! (face(edge,mesh)==boost::graph_traits<Polyhedron>::null_face()))
                        && (! (face(opposite(edge,mesh),mesh)==boost::graph_traits<Polyhedron>::null_face())) );
-    const Point a = get(vertex_point_pmap,target(edge,mesh));
-    const Point b = get(vertex_point_pmap,target(prev(edge,mesh),mesh));
+    const Point a = get(vertex_point_pmap,source(edge,mesh));
+    const Point b = get(vertex_point_pmap,target(edge,mesh));
     const Point c = get(vertex_point_pmap,target(next(edge,mesh),mesh));
     const Point d = get(vertex_point_pmap,target(next(opposite(edge,mesh),mesh),mesh));
     // As far as I check: if, say, dihedral angle is 5, this returns 175,

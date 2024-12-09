@@ -14,13 +14,19 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_INTERNAL_REPAIR_EXTRA_H
 #define CGAL_POLYGON_MESH_PROCESSING_INTERNAL_REPAIR_EXTRA_H
 
-#include <CGAL/license/Polygon_mesh_processing/repair.h>
+#include <CGAL/license/Polygon_mesh_processing/geometric_repair.h>
 
-#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/box_intersection_d.h>
+#include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 #include <CGAL/Union_find.h>
 
-#include <boost/unordered_map.hpp>
+#include <unordered_map>
+
+#include <array>
+#include <utility>
+#include <vector>
 
 #ifndef DOXYGEN_RUNNING
 
@@ -32,11 +38,14 @@ namespace internal {
 
 
 template <class PM, class Vpm, class Halfedge_multiplicity>
-struct Edges_proximity_report{
+struct Edges_proximity_report
+{
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > Halfedge_pairs;
 
-  double m_epsilon;
+  typedef typename GetGeomTraits<PM>::type::FT FT;
+
+  FT m_sq_epsilon;
   Vpm m_vpm;
   PM& m_pm;
   Halfedge_multiplicity& m_multiplicity;
@@ -46,7 +55,7 @@ struct Edges_proximity_report{
   Edges_proximity_report(double epsilon, Vpm vpm, PM& pm,
                          Halfedge_multiplicity& multiplicity,
                          Halfedge_pairs& matching_hedges)
-    : m_epsilon( epsilon )
+    : m_sq_epsilon(square(epsilon))
     , m_vpm(vpm)
     , m_pm(pm)
     , m_multiplicity(multiplicity)
@@ -72,12 +81,12 @@ struct Edges_proximity_report{
     Point_ref src2 = get(m_vpm, source(h2, m_pm));
     Point_ref tgt2 = get(m_vpm, target(h2, m_pm));
 
-    if ( squared_distance(src1,tgt2) < m_epsilon * m_epsilon &&
-         squared_distance(tgt1,src2) < m_epsilon * m_epsilon &&
+    if ( compare_squared_distance(src1, tgt2, m_sq_epsilon) == SMALLER &&
+         compare_squared_distance(tgt1, src2, m_sq_epsilon) == SMALLER &&
          angle(src1, tgt1, tgt2, src2) == ACUTE )
     {
       // candidate for stitching
-      m_matching_hedges.push_back( std::make_pair(h1,h2) );
+      m_matching_hedges.emplace_back(h1,h2);
       ++(m_multiplicity.insert(std::make_pair(h1,0)).first->second);
       ++(m_multiplicity.insert(std::make_pair(h2,0)).first->second);
     }
@@ -107,7 +116,7 @@ void collect_close_stitchable_boundary_edges(PM& pm,
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
 
-  typedef boost::unordered_map<halfedge_descriptor, int> Halfedge_multiplicity;
+  typedef std::unordered_map<halfedge_descriptor, int> Halfedge_multiplicity;
   typedef std::vector<std::pair<halfedge_descriptor, halfedge_descriptor> > Halfedge_pairs;
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
@@ -118,6 +127,8 @@ void collect_close_stitchable_boundary_edges(PM& pm,
 
   typedef typename boost::property_traits<Vpm>::reference Point_ref;
 
+  const double half_eps = 0.5 * epsilon;
+
   std::vector<Box> boxes;
   for(edge_descriptor ed : edges(pm))
   {
@@ -126,14 +137,18 @@ void collect_close_stitchable_boundary_edges(PM& pm,
       Point_ref src = get(vpm, source(ed, pm));
       Point_ref tgt = get(vpm, target(ed, pm));
 
-      boxes.push_back( Box(
-        Bbox_3( src.x()-epsilon/2, src.y()-epsilon/2, src.z()-epsilon/2,
-                      src.x()+epsilon/2, src.y()+epsilon/2, src.z()+epsilon/2 )
-          +
-        Bbox_3( tgt.x()-epsilon/2, tgt.y()-epsilon/2, tgt.z()-epsilon/2,
-                      tgt.x()+epsilon/2, tgt.y()+epsilon/2, tgt.z()+epsilon/2 ),
-        ed )
-      );
+      const double sx = to_double(src.x());
+      const double sy = to_double(src.y());
+      const double sz = to_double(src.z());
+      const double tx = to_double(tgt.x());
+      const double ty = to_double(tgt.y());
+      const double tz = to_double(tgt.z());
+
+      boxes.emplace_back(Bbox_3(sx - half_eps, sy - half_eps, sz - half_eps,
+                                sx + half_eps, sy + half_eps, sz + half_eps) +
+                         Bbox_3(tx - half_eps, ty - half_eps, tz - half_eps,
+                                tx + half_eps, ty + half_eps, tz + half_eps),
+                         ed);
     }
   }
 

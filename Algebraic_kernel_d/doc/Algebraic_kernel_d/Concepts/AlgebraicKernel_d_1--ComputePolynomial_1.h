@@ -6,7 +6,7 @@
 Computes a square free univariate polynomial \f$ p\f$, such that the given
 `AlgebraicKernel_d_1::Algebraic_real_1` is a root of \f$ p\f$.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicKernel_d_1::Isolate_1`
 

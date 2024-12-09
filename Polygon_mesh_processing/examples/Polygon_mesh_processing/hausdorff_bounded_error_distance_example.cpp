@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Aff_transformation_3.h>
 #include <CGAL/IO/OFF.h>
 
 #include <CGAL/Surface_mesh.h>
@@ -8,15 +7,15 @@
 #include <CGAL/Polygon_mesh_processing/distance.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
 
-using Kernel   = CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT       = typename Kernel::FT;
-using Point_3  = typename Kernel::Point_3;
-using Vector_3 = typename Kernel::Vector_3;
-
+using Kernel                  = CGAL::Exact_predicates_inexact_constructions_kernel;
+using FT                      = typename Kernel::FT;
+using Point_3                 = typename Kernel::Point_3;
+using Vector_3                = typename Kernel::Vector_3;
+using Affine_transformation_3 = typename Kernel::Aff_transformation_3;
 using TAG                     = CGAL::Sequential_tag;
 using Surface_mesh            = CGAL::Surface_mesh<Point_3>;
 using Polyhedron              = CGAL::Polyhedron_3<Kernel>;
-using Affine_transformation_3 = CGAL::Aff_transformation_3<Kernel>;
+
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -42,7 +41,7 @@ int main(int argc, char** argv) {
   const double target_edge_length = 0.05;
   PMP::isotropic_remeshing(
     mesh2.faces(), target_edge_length, mesh2,
-    PMP::parameters::edge_is_constrained_map(is_constrained_map));
+    CGAL::parameters::edge_is_constrained_map(is_constrained_map));
 
   std::cout << "* one-sided bounded-error Hausdorff distance: " <<
     PMP::bounded_error_Hausdorff_distance<TAG>(mesh1, mesh2, error_bound) << std::endl;

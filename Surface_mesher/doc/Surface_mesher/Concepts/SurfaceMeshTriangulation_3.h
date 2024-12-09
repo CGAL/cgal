@@ -17,7 +17,9 @@ the requirements for the triangulation type
 plugged in the class
 `CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr>`.
 
-\cgalHasModel Any 3D Delaunay triangulation class of \cgal
+\cgalHasModelsBegin
+\cgalHasModelsBare{Any 3D Delaunay triangulation class of \cgal}
+\cgalHasModelsEnd
 
 \sa `CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>`
 \sa `CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>`

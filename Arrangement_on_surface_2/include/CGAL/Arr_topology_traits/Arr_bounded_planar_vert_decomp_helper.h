@@ -47,9 +47,9 @@ public:
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
 
-  typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
+  typedef std::variant<Vertex_const_handle, Halfedge_const_handle,
                          Face_const_handle>             Cell_type;
-  typedef boost::optional<Cell_type>                    Vert_type;
+  typedef std::optional<Cell_type>                    Vert_type;
 
 protected:
   // Data members:
@@ -57,7 +57,7 @@ protected:
   Face_const_handle m_unb_face;         // The unbounded arrangement face.
 
 public:
-  /*! Constructor.
+  /*! constructs.
    * \param arr The arrangement.
    */
   Arr_bounded_planar_vert_decomp_helper(const Arrangement_2* arr) :
@@ -80,10 +80,10 @@ public:
   void after_handle_event(Event* /* event */) { return; }
   //@}
 
-  /*! Get the current top object. */
+  /*! obtains the current top object. */
   Vert_type top_object() const { return Vert_type(m_unb_face); }
 
-  /*! Get the current bottom object. */
+  /*! obtains the current bottom object. */
   Vert_type bottom_object() const { return Vert_type(m_unb_face); }
 };
 

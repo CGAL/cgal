@@ -168,7 +168,7 @@ Section \ref bso_secbso_gen.
 
 The basic components of our package are the free (global) functions
 `complement()` that accepts a single `Polygon_2` object, and
-`intersection()`, `join()`,\cgalFootnote{The function that computes the union of two polygons is called `join()`, since the word `union` is reserved in \cpp.} `difference()`,
+`intersection()`, `join()`,\cgalFootnote{The function that computes the union of two polygons is called \cgalFootnoteCode{join()}, since the word \cgalFootnoteCode{union} is reserved in \cpp.} `difference()`,
 `symmetric_difference()` and the predicate `do_intersect()`
 that accept two `Polygon_2` objects as their input. We explain how
 these functions should be used through several examples in the
@@ -407,7 +407,7 @@ aforementioned free functions is actually realized by a set overriding
 member function.
 
 member functions of the `Polygon_set_2`
-(resp. `General_polygon_set_2`) that perform Boolean set-operations
+(respectively `General_polygon_set_2`) that perform Boolean set-operations
 come in two flavors: for example, `S.join(P, Q)` computes the union of
 \f$ P\f$ and \f$ Q\f$ and assigned the result to \f$ S\f$, while
 `S.join(P)` performs the operation \f$ S \longleftarrow S \cup P\f$.
@@ -530,7 +530,7 @@ All the free function-templates that apply Boolean set operations
 accept an optional traits argument; see next Section for more
 information. If a traits class is not provided, a default one that can
 handle the type of the curves that comprise the boundaries of the
-input polygons is selected. You somwhow can influence this selection
+input polygons is selected. You somehow can influence this selection
 using a template parameter as described below.
 
 The set of free function-templates that handle (linear) polygons
@@ -542,13 +542,13 @@ boundary of each input (linear) polygon as a cyclic sequence of single
 (\f$x\f$-monotone) polylines. By default, `UsePolylines` is set to
 `CGAL::Tag_true`, which implies that the boundary of the each input
 (linear) polygon is treated as a cyclic sequence of (\f$x\f$-monotone)
-polylines. In most cases this behaviour is superior (that is, less
+polylines. In most cases this behavior is superior (that is, less
 time-consuming) because the number of events handled as part of the
 execution of the plane-sweep algorithm is reduced. In cases where the
 boundaries of the input polygons frequently intersect, treating them
 as polylines may become less efficient. In these cases substitute the
 `UsePolylines` template parameter with `CGAL::Tag_false` to restore
-the original behaviour (where the boundary of each input linear
+the original behavior (where the boundary of each input linear
 polygon is treated as a cyclic sequence of single \f$x\f$-monotone
 segments).
 
@@ -575,13 +575,13 @@ If the `UsePolylines` template parameter is substitited with
 
 <li>Instead of using an instance of the `Polygon_set_2` class
 template, as described above, an instance of the
-`General_polygon_set_2` class template is used, which utilzes the
+`General_polygon_set_2` class template is used, which utilizes the
 `Arr_polyline_traits_2` class template; see Section \ref
 arr_ssectr_polylines in the 2D Arrangements package.
 
-<li>Each input linear polygon (resp. linear polygon with holes) is
-converted into a general polygon (resp. general polygon with holes)
-bounded by \f$x\f$-monotone polylines. Then, the resulting generl
+<li>Each input linear polygon (respectively linear polygon with holes) is
+converted into a general polygon (respectively general polygon with holes)
+bounded by \f$x\f$-monotone polylines. Then, the resulting general
 polygons, which are also bounded by \f$x\f$-monotone polylines, are
 converted back to standard polygons.
 
@@ -702,7 +702,7 @@ The traits classes `Arr_segment_traits_2`,
 `Arr_conic_traits_2` and `Arr_rational_function_traits_2`, which are
 bundled in the `Arrangement_2` package and distributed with \cgal,
 are all models of the refined concept
-`ArrangementDirectionalXMonotoneTraits_2`.\cgalFootnote{The `Arr_polyline_traits_2` class is <I>not</I> a model of the, `ArrangementDirectionalXMonotoneTraits_2` concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}
+`ArrangementDirectionalXMonotoneTraits_2`.\cgalFootnote{The \cgalFootnoteCode{Arr_polyline_traits_2} class is <I>not</I> a model of the, \cgalFootnoteCode{ArrangementDirectionalXMonotoneTraits_2} concept, as the \f$ x\f$-monotone curve it defines is always directed from left to right. Thus, an opposite curve cannot be constructed. However, it is not very useful to construct a polygon whose edges are polylines, as an ordinary polygon with linear edges can represent the same entity.}
 
 Just as with the case of computations using models of the
 `ArrangementXMonotoneTraits_2` concept, operations are robust only

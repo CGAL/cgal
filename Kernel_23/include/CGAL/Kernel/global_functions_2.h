@@ -1117,6 +1117,22 @@ side_of_oriented_circle(const Point_2<K> &p,
 template < class K >
 inline
 typename K::FT
+squared_length(const Vector_2<K> &v)
+{
+  return internal::squared_length(v, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_length(const Segment_2<K> &s)
+{
+  return internal::squared_length(s, K());
+}
+
+template < class K >
+inline
+typename K::FT
 squared_radius(const Point_2<K> &p)
 {
   return internal::squared_radius(p, K());

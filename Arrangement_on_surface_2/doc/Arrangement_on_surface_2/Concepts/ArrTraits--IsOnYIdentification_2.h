@@ -3,9 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableUnaryFunction
+ * \cgalRefines{AdaptableUnaryFunction}
  *
- * \cgalHasModel ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementIdentifiedVerticalTraits_2::Is_on_y_identification_2}
+ * \cgalHasModelsEnd
  */
 class IsOnYIdentification_2 {
 public:

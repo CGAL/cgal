@@ -8,7 +8,7 @@ The class `Range_segment_tree_set_traits_2` is a range and segment tree traits c
 2-dimensional point class from the \cgal kernel. The class is
 parameterized with a representation class `R`.
 
-\cgalModels `RangeSegmentTreeTraits_k`
+\cgalModels{RangeSegmentTreeTraits_k}
 
 */
 template< typename R >
@@ -42,7 +42,7 @@ The class `Range_segment_tree_set_traits_3` is a range and segment tree traits c
 point class from the \cgal kernel.
 The class is parameterized with a representation class `R`.
 
-\cgalModels `RangeSegmentTreeTraits_k`
+\cgalModels{RangeSegmentTreeTraits_k}
 
 */
 template< typename R >
@@ -78,7 +78,7 @@ type `T` is associated to each key. The class is
 parameterized with a representation class `R` and the type of
 the associated data `T`.
 
-\cgalModels `RangeSegmentTreeTraits_k`
+\cgalModels{RangeSegmentTreeTraits_k}
 
 */
 template< typename R, typename T >
@@ -114,7 +114,7 @@ type `T` is associated to each key.
 The class is parameterized with a representation class `R` and the type of
 the associated data `T`.
 
-\cgalModels `RangeSegmentTreeTraits_k`
+\cgalModels{RangeSegmentTreeTraits_k}
 
 */
 template< typename R, typename T >
@@ -150,7 +150,7 @@ type `T` is associated to each interval. The class is
 parameterized with a representation class `R` and the type of
 the associated data `T`.
 
-\cgalModels `RangeSegmentTreeTraits_k`
+\cgalModels{RangeSegmentTreeTraits_k}
 
 */
 template< typename R, typename T >
@@ -186,7 +186,7 @@ type `T` is associated to each interval.
 The class is parameterized with a representation class `R` and the type of
 the associated data `T`.
 
-\cgalModels `RangeSegmentTreeTraits_k`
+\cgalModels{RangeSegmentTreeTraits_k}
 
 */
 template< typename R, typename T >

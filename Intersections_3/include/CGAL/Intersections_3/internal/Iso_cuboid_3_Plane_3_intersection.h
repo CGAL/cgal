@@ -62,7 +62,7 @@ intersection(const typename K::Iso_cuboid_3& cub,
     } };
 
   // description of faces of the bbox
-  constexpr std::array<int, 24> face_indices
+  static constexpr std::array<int, 24> face_indices
     { { 0, 1, 2, 3,
         2, 1, 5, 6,
         3, 2, 6, 7,
@@ -70,7 +70,7 @@ intersection(const typename K::Iso_cuboid_3& cub,
         4, 0, 3, 7,
         6, 5, 4, 7 } };
 
-  constexpr std::array<int, 24> edge_indices
+  static constexpr std::array<int, 24> edge_indices
     { { 0,  1,  2, 3,
         1,  4,  5, 6,
         2,  6,  7, 8,
@@ -180,7 +180,7 @@ intersection(const typename K::Iso_cuboid_3& cub,
   }
 
   if (all_in || all_out)
-    return boost::none;
+    return std::nullopt;
   if (start_id == -1)
     return { result_type(corners[solo_id]) };
 

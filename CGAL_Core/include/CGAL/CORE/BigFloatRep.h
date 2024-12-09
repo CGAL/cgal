@@ -14,7 +14,7 @@
  *       Chen Li <chenli@cs.nyu.edu>
  *       Zilin Du <zilin@cs.nyu.edu>
  *
- * WWW URL: http://cs.nyu.edu/exact/
+ * WWW URL: https://cs.nyu.edu/exact/
  * Email: exact@cs.nyu.edu
  *
  * $URL$
@@ -91,7 +91,7 @@ public:
   void normal();
   void bigNormal(BigInt&);
 
-  //  arithmetics
+  //  arithmetic
 public:
   void add(const BigFloatRep&, const BigFloatRep&);
   void sub(const BigFloatRep&, const BigFloatRep&);
@@ -314,10 +314,10 @@ inline void BigFloatRep::eliminateTrailingZeroes() {
   }
 }
 
-//  bultin functions
+//  builtin functions
 inline extLong BigFloatRep::lMSB() const {
   if (!isZeroIn())
-    return extLong(floorLg(abs(m) - err)) + bits(exp);
+    return extLong(floorLg(BigInt(abs(m) - err))) + bits(exp);
   else
     return extLong(CORE_negInfty);
 }
@@ -327,7 +327,7 @@ inline extLong BigFloatRep::lMSB() const {
  * Not well-defined if zero is in the interval.
  */
 inline extLong BigFloatRep::uMSB() const {
-  return extLong(floorLg(abs(m) + err)) + bits(exp);
+  return extLong(floorLg(BigInt(abs(m) + err))) + bits(exp);
 }
 
 inline extLong BigFloatRep::MSB() const {
@@ -423,7 +423,7 @@ inline std::string BigFloatRep::toString(long prec, bool sci) const {
     else
       return r.rep;
   }
-  return nullptr;
+  return std::string();
 }
 
 inline void BigFloatRep::dump() const {

@@ -4,7 +4,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Philipp Moeller
@@ -17,7 +17,7 @@
 #include <CGAL/license/Surface_mesh.h>
 
 // include this to avoid a VC15 warning
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
@@ -41,7 +41,8 @@ private:
 
   struct SM_graph_traversal_category : public virtual boost::bidirectional_graph_tag,
                                        public virtual boost::vertex_list_graph_tag,
-                                       public virtual boost::edge_list_graph_tag
+                                       public virtual boost::edge_list_graph_tag,
+                                       public virtual boost::adjacency_graph_tag
   {};
 
 public:
@@ -77,14 +78,18 @@ public:
   typedef typename SM::size_type              degree_size_type;
 
 
+
+
   typedef CGAL::In_edge_iterator<SM> in_edge_iterator;
 
   typedef CGAL::Out_edge_iterator<SM> out_edge_iterator;
 
+  typedef CGAL::Vertex_around_target_iterator<SM> adjacency_iterator;
+
   // nulls
   static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
   static face_descriptor     null_face()   { return face_descriptor(); }
-  static halfedge_descriptor     null_halfedge()   { return halfedge_descriptor(); }
+  static halfedge_descriptor null_halfedge()   { return halfedge_descriptor(); }
 };
 
 template<typename P>
@@ -217,6 +222,13 @@ out_edges(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descripto
   return make_range(Iter(halfedge(v,sm),sm), Iter(halfedge(v,sm),sm,1));
 }
 
+template <typename P>
+Iterator_range<typename boost::graph_traits<CGAL::Surface_mesh<P> >::adjacency_iterator>
+adjacent_vertices(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v,
+                  const CGAL::Surface_mesh<P>& sm)
+{
+  return CGAL::vertices_around_target(v,sm);
+}
 
 template<typename P>
 std::pair<typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_descriptor,
@@ -460,7 +472,6 @@ remove_vertex(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descr
   sm.remove_vertex(v);
 }
 
-
 template <typename P>
 void
 remove_edge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor u,
@@ -479,7 +490,6 @@ remove_edge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_descripto
   sm.remove_edge(e);
 }
 
-
 template <typename P>
 void
 remove_edge(typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_iterator eiter,
@@ -494,6 +504,13 @@ remove_face(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descripto
             CGAL::Surface_mesh<P>& sm)
 {
   sm.remove_face(f);
+}
+
+template<typename P>
+void
+remove_all_elements(CGAL::Surface_mesh<P>& sm)
+{
+  sm.clear_without_removing_property_maps();
 }
 
 template<typename P>
@@ -515,6 +532,51 @@ add_face(InputIterator begin, InputIterator end, CGAL::Surface_mesh<P>& sm)
 template<typename P>
 void normalize_border(const CGAL::Surface_mesh<P>&)
 {}
+
+
+template <typename P>
+bool is_valid_vertex_descriptor(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor v,
+                                const CGAL::Surface_mesh<P>& g,
+                                const bool verbose = false)
+{
+  if(!g.is_valid(v, verbose))
+    return false;
+
+  return BGL::is_valid_vertex_descriptor(v, g, verbose);
+}
+
+template <typename P>
+bool is_valid_halfedge_descriptor(typename boost::graph_traits<CGAL::Surface_mesh<P> >::halfedge_descriptor h,
+                                  const CGAL::Surface_mesh<P>& g,
+                                  const bool verbose = false)
+{
+  if(!g.is_valid(h, verbose))
+    return false;
+
+  return BGL::is_valid_halfedge_descriptor(h, g, verbose);
+}
+
+template <typename P>
+bool is_valid_edge_descriptor(typename boost::graph_traits<CGAL::Surface_mesh<P> >::edge_descriptor e,
+                              const CGAL::Surface_mesh<P>& g,
+                              const bool verbose = false)
+{
+  if(!g.is_valid(e, verbose))
+    return false;
+
+  return BGL::is_valid_edge_descriptor(e, g, verbose);
+}
+
+template <typename P>
+bool is_valid_face_descriptor(typename boost::graph_traits<CGAL::Surface_mesh<P> >::face_descriptor f,
+                              const CGAL::Surface_mesh<P>& g,
+                              const bool verbose = false)
+{
+  if(!g.is_valid(f, verbose))
+    return false;
+
+  return BGL::is_valid_face_descriptor(f, g, verbose);
+}
 
 } // namespace CGAL
 

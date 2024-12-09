@@ -31,7 +31,7 @@
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 // Internal includes.
 #include <CGAL/Weights/internal/polygon_utils_2.h>
@@ -222,7 +222,7 @@ namespace internal {
   typename VertexRange,
   typename GeomTraits,
   typename PointMap>
-  boost::optional< std::pair<Query_point_location, std::size_t> >
+  std::optional< std::pair<Query_point_location, std::size_t> >
   get_edge_index_approximate(
     const VertexRange& polygon,
     const typename GeomTraits::Point_2& query,
@@ -264,7 +264,7 @@ namespace internal {
         return std::make_pair(Query_point_location::ON_EDGE, i);
       }
     }
-    return boost::none;
+    return std::nullopt;
   }
 
   // Why this one does not work for harmonic coordinates? - Due to the imprecisions in the Mesh_2 class.
@@ -273,7 +273,7 @@ namespace internal {
   typename VertexRange,
   typename GeomTraits,
   typename PointMap>
-  boost::optional< std::pair<Query_point_location, std::size_t> >
+  std::optional< std::pair<Query_point_location, std::size_t> >
   get_edge_index_exact(
     const VertexRange& polygon,
     const typename GeomTraits::Point_2& query,
@@ -303,10 +303,10 @@ namespace internal {
         return std::make_pair(Query_point_location::ON_EDGE, i);
       }
     }
-    return boost::none;
+    return std::nullopt;
   }
 
-  // Check wether a query point belongs to the last polygon edge.
+  // Check whether a query point belongs to the last polygon edge.
   template<
   typename VertexRange,
   typename OutputIterator,
@@ -409,7 +409,7 @@ namespace internal {
   typename VertexRange,
   typename GeomTraits,
   typename PointMap>
-  boost::optional< std::pair<Query_point_location, std::size_t> >
+  std::optional< std::pair<Query_point_location, std::size_t> >
   locate_wrt_polygon_2(
     const VertexRange& polygon,
     const typename GeomTraits::Point_2& query,
@@ -430,7 +430,7 @@ namespace internal {
       default:
         return std::make_pair(Query_point_location::UNSPECIFIED, std::size_t(-1));
     }
-    return boost::none;
+    return std::nullopt;
   }
 
 } // namespace internal

@@ -152,7 +152,7 @@ Polynomial<NT> modular_gcd_utcf_dfai(
     while(!solved){
         do{
             //---------------------------------------
-            //choose prime not deviding f1 or f2
+            //choose prime not dividing f1 or f2
             MScalar tmp1, tmp2;
             do{
                 prime_index++;

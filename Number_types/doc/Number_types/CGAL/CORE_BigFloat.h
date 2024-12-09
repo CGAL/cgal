@@ -14,9 +14,7 @@ This number type is provided by the \core library \cgalCite{klpy-clp-99}.
 \cgal defines the necessary functions so that this class complies to the
 requirements on number types.
 
-\cgalModels `FieldWithKthRoot`
-\cgalModels `RealEmbeddable`
-\cgalModels `FromDoubleConstructible`
+\cgalModels{FieldWithKthRoot,RealEmbeddable,FromDoubleConstructible}
 
 */
 

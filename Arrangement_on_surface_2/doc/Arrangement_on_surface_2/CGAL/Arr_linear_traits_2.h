@@ -21,11 +21,9 @@ namespace CGAL {
  * we can find out its actual type and convert it to the respective kernel
  * object (say, to a `Kernel::Ray_2`).
  *
- * \cgalModels `ArrangementTraits_2`
- * \cgalModels `ArrangementLandmarkTraits_2`
- * \cgalModels `ArrangementOpenBoundaryTraits_2`
+ * \cgalModels{ArrangementTraits_2,ArrangementLandmarkTraits_2,ArrangementOpenBoundaryTraits_2}
  */
-template< typename Kernel >
+template <typename Kernel>
 class Arr_linear_traits_2 {
 public:
 
@@ -149,7 +147,7 @@ public:
     /// \name Creation
     /// @{
 
-    /*! Trims the given x-monotone curve to an from src to tgt.
+    /*! trims the given x-monotone curve to an from src to tgt.
      * \ pre `src` and `tgt` lies on the curve
      */
     X_monotone_curve_2 operator()(const X_monotone_curve_2& xcv,

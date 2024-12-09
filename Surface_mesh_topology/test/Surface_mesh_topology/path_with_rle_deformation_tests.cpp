@@ -6,6 +6,7 @@
 #include <vector>
 #include <sstream>
 #include <tuple>
+#include <cassert>
 
 #include "Creation_of_test_cases_for_paths.h"
 
@@ -56,7 +57,7 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
                     draw
 #endif
                     =false,
-                    std::size_t repeat=0) // If 0, repeat as long as there is one modifcation;
+                    std::size_t repeat=0) // If 0, repeat as long as there is one modification;
                                            // otherwise repeat the given number of times
 {
 #ifdef CGAL_USE_BASIC_VIEWER
@@ -120,7 +121,7 @@ void transform_path(Path_on_surface<LCC_3_cmap>& path, Transformation t,
 #endif // CGAL_USE_BASIC_VIEWER
 
   path.swap(prevp);
-  CGAL_assertion(path.is_valid(true));
+  assert(path.is_valid(true));
 }
 ///////////////////////////////////////////////////////////////////////////////
 bool unit_test(Path_on_surface<LCC_3_cmap>& path, Transformation t,

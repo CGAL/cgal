@@ -33,7 +33,7 @@ The default values follow:
 
 </TABLE>
 
-\cgalModels `ArrangementDcelWithRebind`
+\cgalModels{ArrangementDcelWithRebind}
 
 \sa `Arr_dcel_base<V,H,F>`
 
@@ -57,7 +57,7 @@ The `Arr_extended_face` class-template extends the face topological-features of 
 \dcel. It is parameterized by a face base-type `FaceBase` and a data type
 `FData` used to extend the face base-type.
 
-\cgalModels `ArrangementDcelFace`
+\cgalModels{ArrangementDcelFace}
 
 \sa `Arr_dcel_base<V,H,F>`
 
@@ -109,7 +109,7 @@ The `Arr_extended_halfedge` class-template extends the halfedge topological-feat
 the \dcel. It is parameterized by a halfedge base-type `HalfedgeBase`
 and a data type `HData` used to extend the halfedge base-type.
 
-\cgalModels `ArrangementDcelHalfedge`
+\cgalModels{ArrangementDcelHalfedge}
 
 \sa `Arr_dcel_base<V,H,F>`
 
@@ -162,7 +162,7 @@ topological-features of the \dcel. It is parameterized by a
 vertex base-type `VertexBase` and a data type `VData` used to extend
 the vertex base-type.
 
-\cgalModels `ArrangementDcelVertex`
+\cgalModels{ArrangementDcelVertex}
 
 \sa `Arr_dcel_base<V,H,F>`
 
@@ -235,7 +235,7 @@ as follows:
 
 </TABLE>
 
-\cgalModels `ArrangementDcelWithRebind`
+\cgalModels{ArrangementDcelWithRebind}
 
 \sa `Arr_dcel_base<V,H,F>`
 

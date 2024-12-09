@@ -37,7 +37,7 @@ The default values for the template parameters are as follows:
 `FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >`,
 `FM = CM`.
 
-\cgalModels `ApolloniusGraphTraits_2`
+\cgalModels{ApolloniusGraphTraits_2}
 
 \sa `Kernel`
 \sa `ApolloniusGraphTraits_2`

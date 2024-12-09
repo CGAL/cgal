@@ -53,26 +53,26 @@ public:
     */
   enum OpenGL_program_IDs
   {
-   PROGRAM_WITH_LIGHT = 0,      //! Used to render a surface or an edge affected by the light. It uses a per fragment lighting model, and renders the selected item brighter.
-   PROGRAM_WITHOUT_LIGHT,       //! Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention It renders the selected item in black.
-   PROGRAM_NO_SELECTION,        //! Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.
-   PROGRAM_WITH_TEXTURE,        //! Used to render a textured polyhedron. Affected by light.
-   PROGRAM_PLANE_TWO_FACES,     //! Used to render a two-faced plane. The two faces have a different color. Not affected by light.
-   PROGRAM_WITH_TEXTURED_EDGES, //! Used to render the edges of a textured polyhedron. Not affected by light.
-   PROGRAM_INSTANCED,           //! Used to display instanced rendered spheres.Affected by light.
-   PROGRAM_INSTANCED_WIRE,      //! Used to display instanced rendered wired spheres. Not affected by light.
-   PROGRAM_C3T3,                //! Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.
-   PROGRAM_C3T3_EDGES,          //! Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
-   PROGRAM_CUTPLANE_SPHERES,    //! Used to render the spheres of an item with a cut plane.
-   PROGRAM_SPHERES,             //! Used to render one or several spheres.
-   PROGRAM_DARK_SPHERES,        //! Used to render one or several spheres without light (for picking for example).
-   PROGRAM_FLAT,                /** Used to render flat shading without pre computing normals*/
-   PROGRAM_OLD_FLAT,            /** Used to render flat shading without pre computing normals without geometry shader*/
-   PROGRAM_SOLID_WIREFRAME,     //! Used to render edges with width superior to 1.
-   PROGRAM_NO_INTERPOLATION,   //! Used to render faces without interpolating their color.
-   PROGRAM_HEAT_INTENSITY,      //! Used to render special item in Display_property_plugin
-   PROGRAM_TETRA_FILTERING,     //! Used in Scene_tetrahedra_item with Tetrahedra_filtering_plugin
-   NB_OF_PROGRAMS               //! Holds the number of different programs in this enum.
+   PROGRAM_WITH_LIGHT = 0,      //!< Used to render a surface or an edge affected by the light. It uses a per fragment lighting model, and renders the selected item brighter.
+   PROGRAM_WITHOUT_LIGHT,       //!< Used to render a polyhedron edge or points. It renders in a uniform color and is not affected by light. \attention It renders the selected item in black.
+   PROGRAM_NO_SELECTION,        //!< Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.
+   PROGRAM_WITH_TEXTURE,        //!< Used to render a textured polyhedron. Affected by light.
+   PROGRAM_PLANE_TWO_FACES,     //!< Used to render a two-faced plane. The two faces have a different color. Not affected by light.
+   PROGRAM_WITH_TEXTURED_EDGES, //!< Used to render the edges of a textured polyhedron. Not affected by light.
+   PROGRAM_INSTANCED,           //!< Used to display instanced rendered spheres.Affected by light.
+   PROGRAM_INSTANCED_WIRE,      //!< Used to display instanced rendered wired spheres. Not affected by light.
+   PROGRAM_C3T3,                //!< Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.
+   PROGRAM_C3T3_EDGES,          //!< Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
+   PROGRAM_CUTPLANE_SPHERES,    //!< Used to render the spheres of an item with a cut plane.
+   PROGRAM_SPHERES,             //!< Used to render one or several spheres.
+   PROGRAM_DARK_SPHERES,        //!< Used to render one or several spheres without light (for picking for example).
+   PROGRAM_FLAT,                //!< Used to render flat shading without pre computing normals
+   PROGRAM_OLD_FLAT,            //!< Used to render flat shading without pre computing normals without geometry shader
+   PROGRAM_SOLID_WIREFRAME,     //!< Used to render edges with width superior to 1.
+   PROGRAM_NO_INTERPOLATION,    //!< Used to render faces without interpolating their color.
+   PROGRAM_HEAT_INTENSITY,      //!< Used to render special item in Heat_method_plugin
+   PROGRAM_TETRA_FILTERING,     //!< Used in Scene_tetrahedra_item with Tetrahedra_filtering_plugin
+   NB_OF_PROGRAMS               //!< Holds the number of different programs in this enum.
   };
 
  //! \brief The viewer's QPainter
@@ -239,7 +239,7 @@ public Q_SLOTS:
   //! If b is true, faces will be ligted from both internal and external side.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   virtual void setTwoSides(bool b) = 0;
-  //! If b is true, then a special color mask is applied to points and meshes to differenciate
+  //! If b is true, then a special color mask is applied to points and meshes to differentiate
   //! front-faced and back-faced elements.
   virtual void setBackFrontShading(bool b) =0;
   //! \brief sets the fast drawing mode
@@ -266,7 +266,7 @@ public Q_SLOTS:
   virtual void SetOrthoProjection( bool b) =0;
 public:
 
-  //! Gives acces to recent openGL(4.3) features, allowing use of things like
+  //! Gives access to recent openGL(4.3) features, allowing use of things like
   //! Geometry Shaders or Depth Textures.
   //! @returns a pointer to an initialized  QOpenGLFunctions_4_3_Core if `isOpenGL_4_3()` is `true`
   //! @returns nullptr if `isOpenGL_4_3()` is `false`

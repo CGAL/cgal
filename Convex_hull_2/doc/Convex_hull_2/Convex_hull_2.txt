@@ -52,17 +52,17 @@ class need not be specified and defaults to types and operations defined
 in the kernel in which the input point type is defined.
 
 Given a sequence of \f$ n\f$ input points with \f$ h\f$ extreme points,
-the function `convex_hull_2()` uses either the output-sensitive \f$ O(n h)\f$ algorithm of Bykat \cgalCite{b-chfsp-78}
-(a non-recursive version of the quickhull \cgalCite{bdh-qach-96} algorithm) or the algorithm of Akl and Toussaint, which requires \f$ O(n \log n)\f$ time
+the function `convex_hull_2()` uses either the output-sensitive \cgalBigO{n h} algorithm of Bykat \cgalCite{b-chfsp-78}
+(a non-recursive version of the quickhull \cgalCite{bdh-qach-96} algorithm) or the algorithm of Akl and Toussaint, which requires \cgalBigO{n \log n} time
 in the worst case. The algorithm chosen depends on the kind of
 iterator used to specify the input points. These two algorithms are
 also available via the functions `ch_bykat()` and `ch_akl_toussaint()`,
 respectively. Also available are
-the \f$ O(n \log n)\f$ Graham-Andrew scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}
+the \cgalBigO{n \log n} Graham-Andrew scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}
 (`ch_graham_andrew()`),
-the \f$ O(n h)\f$ Jarvis march algorithm \cgalCite{j-ichfs-73}
+the \cgalBigO{n h} Jarvis march algorithm \cgalCite{j-ichfs-73}
 (`ch_jarvis()`),
-and Eddy's \f$ O(n h)\f$ algorithm \cgalCite{e-nchap-77}
+and Eddy's \cgalBigO{n h} algorithm \cgalCite{e-nchap-77}
 (`ch_eddy()`), which corresponds to the
 two-dimensional version of the quickhull algorithm.
 The linear-time algorithm of Melkman for producing the convex hull of
@@ -105,7 +105,7 @@ provide the computation of the counterclockwise
 sequence of extreme points on the lower hull and upper hull,
 respectively. The algorithm used in these functions is
 Andrew's variant of Graham's scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84},
-which has worst-case running time of \f$ O(n \log n)\f$.
+which has worst-case running time of \cgalBigO{n \log n}.
 
 There are also functions available for computing certain subsequences
 of the sequence of extreme points on the convex hull. The function
@@ -143,6 +143,10 @@ check whether a given sequence of 2D points forms a (counter)clockwise strongly
 convex polygon. These are used in postcondition
 testing of the two-dimensional convex hull functions.
 
+In case you want to keep collinear points you can use the 2D Delaunay triangulation as
+in the following example. This sequence is then <em>not</em> strongly convex.
+
+\cgalExample{Convex_hull_2/ch_delaunay_2.cpp}
+
 */
 } /* namespace CGAL */
-

@@ -88,12 +88,12 @@ protected:
     // Wrapper
     struct Coaffine_orientation_d
     {
-      boost::optional<Flat_orientation_d>* fop;
+      std::optional<Flat_orientation_d>* fop;
       Construct_flat_orientation_d cfo;
       In_flat_orientation_d ifo;
 
       Coaffine_orientation_d(
-        boost::optional<Flat_orientation_d>& x,
+        std::optional<Flat_orientation_d>& x,
         Construct_flat_orientation_d const&y,
         In_flat_orientation_d const&z)
       : fop(&x), cfo(y), ifo(z) {}
@@ -102,9 +102,9 @@ protected:
       CGAL::Orientation operator()(Iter a, Iter b) const
       {
         if (*fop)
-          return ifo(fop->get(),a,b);
+          return ifo(fop->value(),a,b);
         *fop = cfo(a,b);
-        CGAL_assertion(ifo(fop->get(),a,b) == CGAL::POSITIVE);
+        CGAL_assertion(ifo(fop->value(),a,b) == CGAL::POSITIVE);
         return CGAL::POSITIVE;
       }
     };
@@ -117,7 +117,7 @@ protected:
         flat_orientation_ = *preset_flat_orientation_.second;
       }
       else
-        flat_orientation_ = boost::none;
+        flat_orientation_ = std::nullopt;
     }
 
     typedef typename TriangulationTraits::Orientation_d
@@ -188,7 +188,7 @@ protected: // DATA MEMBERS
     Triangulation_ds                            tds_;
     const Geom_traits                           kernel_;
     Vertex_handle                               infinity_;
-    mutable boost::optional<Flat_orientation_d> flat_orientation_;
+    mutable std::optional<Flat_orientation_d> flat_orientation_;
     // The user can specify a Flat_orientation_d object to be used for
     // orienting simplices of a specific dimension
     // (= preset_flat_orientation_.first)
@@ -843,7 +843,6 @@ Triangulation<TT, TDS>
             return insert_in_face(p, f);
             break;
         case ON_VERTEX:
-            s->vertex(f.index(0))->set_point(p);
             return s->vertex(f.index(0));
             break;
     }
@@ -993,7 +992,7 @@ Triangulation<TT, TDS>
             // Otherwise, let's find the right infinite cell
             else
             {
-                inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) % 2);
+                inf_v_cell = inf_v_cell->neighbor((inf_v_index + 1) & 1);
                 inf_v_index = inf_v_cell->index(infinite_vertex());
                 // Is "inf_v_cell" the right infinite cell?
                 // Then inf_v_index should be 1
@@ -1096,9 +1095,14 @@ Triangulation<TT, TDS>
         // For the remembering stochastic walk, we need to start trying
         // with a random index:
         int j, i = rng_.get_int(0, cur_dim);
-        // we check |p| against all the full_cell's hyperplanes in turn
 
-        for(j = 0; j <= cur_dim; ++j, i = (i + 1) % (cur_dim + 1) )
+        // i = (i + 1) % m where 0 <= i < m
+        auto incr_mod = [] (int&i, int m) {
+          if( ++i >= m ) i = 0; // >= or ==
+        };
+
+        // we check |p| against all the full_cell's hyperplanes in turn
+        for(j = 0; j <= cur_dim; ++j, incr_mod(i, cur_dim + 1))
         {
             Full_cell_handle next = s->neighbor(i);
             if( previous == next )
@@ -1127,6 +1131,9 @@ Triangulation<TT, TDS>
             // full_cell because orientation_[i] == NEGATIVE
             previous = s;
             s = next;
+            // We only need to test is_infinite(next->vertex(next->index(previous)))
+            // or equivalently is_infinite(next->vertex(previous->mirror_index(i)))
+            // but it does not seem to help, even when storing mirror indices.
             if( is_infinite(next) )
             {   // we have arrived OUTSIDE the convex hull of the triangulation,
                 // so we stop the search

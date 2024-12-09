@@ -18,11 +18,11 @@
 
 
 /*! \file
- * Defintion of the Td_X_trapezoid<Td_traits> class.
+ * Definition of the Td_X_trapezoid<Td_traits> class.
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
-#include <boost/variant.hpp>
+#include <variant>
 #include <memory>
 
 
@@ -45,7 +45,7 @@ namespace CGAL {
  * when one of the four sides is on the parameter space boundary.
  * Trapezoids are created as active and become inactive when Remove() member
  * function called.
- * Each trapezoid has at most four neighbouring trapezoids.
+ * Each trapezoid has at most four neighboring trapezoids.
  * X_trapezoid structure can represent a real trapezoid, a Td-edge or an
  * edge-end (end point).
  */
@@ -92,9 +92,9 @@ public:
   //  type flag + on boundaries flags,
   //  left-bottom neighbor trapezoid, left-top neighbor trapezoid,
   //  right-bottom neighbor trapezoid, right-top neighbor trapezoid
-  typedef Td_ninetuple<boost::variant<Vertex_const_handle,Point>,
-                       boost::variant<Vertex_const_handle,unsigned char>,
-                       boost::variant<Halfedge_const_handle,
+  typedef Td_ninetuple<std::variant<Vertex_const_handle,Point>,
+                       std::variant<Vertex_const_handle,unsigned char>,
+                       std::variant<Halfedge_const_handle,
                                       std::shared_ptr<X_monotone_curve_2> >,
                        Halfedge_const_handle,
                        unsigned char,
@@ -152,15 +152,20 @@ public:
 
   Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
-  /*! Initialize the trapezoid's neighbours. */
-  CGAL_TD_INLINE void init_neighbours(Self* lb_ = 0, Self* lt_ = 0,
-                                      Self* rb_ = 0, Self* rt_ = 0)
+  /*! Initialize the trapezoid's neighbors. */
+  CGAL_TD_INLINE void init_neighbors(Self* lb_ = 0, Self* lt_ = 0,
+                                     Self* rb_ = 0, Self* rt_ = 0)
   {
     set_lb(lb_);
     set_lt(lt_);
     set_rb(rb_);
     set_rt(rt_);
   }
+  /*! \copydoc init_neighbors
+   *  \deprecated please use #init_neighbors */
+  CGAL_DEPRECATED CGAL_TD_INLINE void init_neighbours(Self* lb_ = 0, Self* lt_ = 0,
+                                                      Self* rb_ = 0, Self* rt_ = 0)
+  { init_neighbors(lb_, lt_, rb_, rt_); }
 
   /*! Set the DAG node. */
   CGAL_TD_INLINE void set_dag_node(Dag_node* p)
@@ -234,12 +239,12 @@ public:
 
     Curve_end v_ce(left()->curve_end());
     ptr()->e2 = (std::shared_ptr<X_monotone_curve_2>)(new X_monotone_curve_2(v_ce.cv()));
-    //CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != nullptr);
+    //CGAL_assertion(std::get<std::shared_ptr<X_monotone_curve_2>>( &(ptr()->e2)) != nullptr);
 
     ptr()->e1 = (v_ce.ce() == ARR_MIN_END ) ? CGAL_TD_CV_MIN_END : CGAL_TD_CV_MAX_END;
 
     if (!is_on_boundaries())
-    { //if the trapezoid respresents an inner vertex
+    { //if the trapezoid represents an inner vertex
       ptr()->e0 = left()->point();
     }
   }
@@ -296,16 +301,16 @@ public:
       ptr()->e4 &= ~CGAL_TD_ON_TOP_BOUNDARY;
   }
 
-  /*! Set left bottom neighbour. */
+  /*! Set left bottom neighbor. */
   CGAL_TD_INLINE void set_lb(Self* lb) { ptr()->e5 = lb; }
 
-  /*! Set left top neighbour. */
+  /*! Set left top neighbor. */
   CGAL_TD_INLINE void set_lt(Self* lt) { ptr()->e6 = lt; }
 
-  /*! Set right bottom neighbour. */
+  /*! Set right bottom neighbor. */
   CGAL_TD_INLINE void set_rb(Self* rb) { ptr()->e7 = rb; }
 
-  /*! Set right top neighbour. */
+  /*! Set right top neighbor. */
   CGAL_TD_INLINE void set_rt(Self* rt) { ptr()->e8 = rt; }
 
  public:
@@ -317,7 +322,7 @@ public:
   Td_X_trapezoid()
   {
     //define the initial trapezoid: left, right, btm, top are at infinity.
-    // its type is TD_TRAPEZOID ,it is on all boundaries, and has no neighbours
+    // its type is TD_TRAPEZOID ,it is on all boundaries, and has no neighbors
     PTR = new Trpz_parameter_space
       (Traits::vtx_at_left_infinity(),
        Traits::vtx_at_right_infinity(),
@@ -438,8 +443,8 @@ public:
   CGAL_TD_INLINE Vertex_const_handle left_unsafe() const
     {
     CGAL_precondition(is_active());
-    CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e0)) != nullptr);
-    return boost::get<Vertex_const_handle>(ptr()->e0);
+    CGAL_assertion(std::get<Vertex_const_handle>(&(ptr()->e0)) != nullptr);
+    return std::get<Vertex_const_handle>(ptr()->e0);
     }
 
   /*! Access trapezoid left.
@@ -461,8 +466,8 @@ public:
   CGAL_TD_INLINE Vertex_const_handle right_unsafe() const
     {
     CGAL_precondition(is_active());
-    CGAL_assertion(boost::get<Vertex_const_handle>(&(ptr()->e1)) != nullptr);
-    return boost::get<Vertex_const_handle>(ptr()->e1);
+    CGAL_assertion(std::get<Vertex_const_handle>(&(ptr()->e1)) != nullptr);
+    return std::get<Vertex_const_handle>(ptr()->e1);
     }
 
   /*! Access trapezoid right.
@@ -484,8 +489,8 @@ public:
   CGAL_TD_INLINE Halfedge_const_handle bottom_unsafe () const
   {
     CGAL_precondition(is_active());
-    CGAL_assertion(boost::get<Halfedge_const_handle>(&(ptr()->e2)) != nullptr);
-    return boost::get<Halfedge_const_handle>(ptr()->e2);
+    CGAL_assertion(std::get<Halfedge_const_handle>(&(ptr()->e2)) != nullptr);
+    return std::get<Halfedge_const_handle>(ptr()->e2);
     }
 
   /*! Access trapezoid bottom.
@@ -521,8 +526,8 @@ public:
     CGAL_precondition(type() == TD_VERTEX);
     CGAL_precondition(!is_on_boundaries());
 
-    CGAL_assertion(boost::get<Point>( &(ptr()->e0)) != nullptr);
-    return boost::get<Point>( ptr()->e0 );
+    CGAL_assertion(std::get<Point>( &(ptr()->e0)) != nullptr);
+    return std::get<Point>( ptr()->e0 );
     }
 
   CGAL_TD_INLINE std::pair<X_monotone_curve_2*,Arr_curve_end> curve_end_pair_for_boundary_rem_vtx() const
@@ -531,13 +536,13 @@ public:
     CGAL_precondition(type() == TD_VERTEX);
     CGAL_precondition(is_on_boundaries());
 
-    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
-    CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
-    X_monotone_curve_2* cv_ptr = (boost::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(std::get<unsigned char>( &(ptr()->e1)) != nullptr);
+    CGAL_assertion(std::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
+    X_monotone_curve_2* cv_ptr = (std::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
     CGAL_assertion(cv_ptr != nullptr);
 
     Arr_curve_end ce =
-      (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
+      (std::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
         ARR_MIN_END : ARR_MAX_END;
 
     return std::make_pair(cv_ptr, ce);
@@ -549,13 +554,13 @@ public:
     CGAL_precondition(type() == TD_VERTEX);
     CGAL_precondition(is_on_boundaries());
 
-    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
-    CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
-    X_monotone_curve_2* cv_ptr = (boost::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(std::get<unsigned char>( &(ptr()->e1)) != nullptr);
+    CGAL_assertion(std::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
+    X_monotone_curve_2* cv_ptr = (std::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
     CGAL_assertion(cv_ptr != nullptr);
 
     Arr_curve_end ce =
-      (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
+      (std::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
         ARR_MIN_END : ARR_MAX_END;
 
     return Curve_end(*cv_ptr, ce);
@@ -566,13 +571,13 @@ public:
     CGAL_precondition(!is_active());
     CGAL_precondition(type() == TD_VERTEX);
 
-    CGAL_assertion(boost::get<unsigned char>( &(ptr()->e1)) != nullptr);
-    CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
-    X_monotone_curve_2* cv_ptr = (boost::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(std::get<unsigned char>( &(ptr()->e1)) != nullptr);
+    CGAL_assertion(std::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
+    X_monotone_curve_2* cv_ptr = (std::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
     CGAL_assertion(cv_ptr != nullptr);
 
     Arr_curve_end ce =
-      (boost::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
+      (std::get<unsigned char>(ptr()->e1) == CGAL_TD_CV_MIN_END) ?
         ARR_MIN_END : ARR_MAX_END;
 
     return Curve_end(*cv_ptr, ce);
@@ -582,8 +587,8 @@ public:
   {
     CGAL_precondition(!is_active() && type() == TD_EDGE);
 
-    CGAL_assertion(boost::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
-    X_monotone_curve_2* cv_ptr = (boost::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
+    CGAL_assertion(std::get<std::shared_ptr<X_monotone_curve_2> >(&(ptr()->e2)) != nullptr);
+    X_monotone_curve_2* cv_ptr = (std::get<std::shared_ptr<X_monotone_curve_2> >(ptr()->e2)).get();
     CGAL_assertion(cv_ptr != nullptr);
     return *cv_ptr;
   }
@@ -647,16 +652,16 @@ public:
     return (ptr()->e4 & CGAL_TD_ON_ALL_BOUNDARIES) != 0;
   }
 
-  /*! Access left bottom neighbour. */
+  /*! Access left bottom neighbor. */
   Self* lb() const    { return ptr()->e5; }
 
-  /*! Access left top neighbour. */
+  /*! Access left top neighbor. */
   Self* lt() const    { return ptr()->e6; }
 
-  /*! Access right bottom neighbour. */
+  /*! Access right bottom neighbor. */
   Self* rb() const    { return ptr()->e7; }
 
-  /*! Access right top neighbour. */
+  /*! Access right top neighbor. */
   Self* rt() const    { return ptr()->e8; }
 
   /*! Access DAG node. */

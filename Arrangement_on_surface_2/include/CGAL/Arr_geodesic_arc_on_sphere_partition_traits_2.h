@@ -22,7 +22,7 @@
  * The partition traits class for geodesic arcs on the sphere enables
  * the partition of geodesic polygons to convex polygons. It models the
  * concept YMonotonePartitionTraits_2.
- * This partition of geodesic polygons is garenteed to work only for polygons
+ * This partition of geodesic polygons is guaranteed to work only for polygons
  * that are contained in a hemisphere and that do not intersect one of the
  * boundaries.
  * For larger polygons there is a chance that at least one steiner point may
@@ -80,14 +80,14 @@ public:
     const Self * m_traits;
 
   public:
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Less_xy_2(const Self * traits) : m_traits(traits) {}
 
-    /*! Compare two points lexigoraphically: by x, then by y.
+    /*! compares two points lexigoraphically: by x, then by y.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return true - y(p1) < y(p2);
      *         true - y(p1) = y(p2) and x(p1) < x(p2);
@@ -120,16 +120,14 @@ public:
     const Self * m_traits;
 
   public:
-
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Less_yx_2(const Self * traits) : m_traits(traits) {}
 
-
-    /*! Compare two points lexigoraphically: by y, then by x.
+    /*! compares two points lexigoraphically: by y, then by x.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return true - x(p1) < x(p2);
      *         true - x(p1) = x(p2) and y(p1) < y(p2);
@@ -160,12 +158,12 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Orientation_2 (const Self * traits) : m_traits(traits) {}
 
-    /*! Checks the orientation between three points.
+    /*! checks the orientation between three points.
      *  We actually reversing the order, so x <--> y.
      * \param p
      * \param q
@@ -231,7 +229,6 @@ public:
 
   Compare_y_2 compare_y_2_object() const {return Base::compare_x_2_object(); }
 
-
   /*! A functor that compares two points by x coordinate.
    */
   class Compare_x_2
@@ -241,16 +238,14 @@ public:
     const Self * m_traits;
 
   public:
-
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Compare_x_2(const Self * traits) : m_traits(traits) {}
 
-
-    /*! Compare two points by y coordinate.
+    /*! compares two points by y coordinate.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         EQUAL   - x(p1) = x(p2);
@@ -329,7 +324,7 @@ public:
  * The partition traits class for geodesic arcs on the sphere enables
  * the partition of geodesic polygons to convex polygons. It models the
  * concept YMonotonePartitionTraits_2.
- * This partition of geodesic polygons is garenteed to work only for polygons
+ * This partition of geodesic polygons is guaranteed to work only for polygons
  * that are contained in a hemisphere and that do not intersect one of the
  * boundaries.
  * For larger polygons there is a chance that at least one steiner point may
@@ -388,14 +383,14 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Less_xy_2(const Self * traits) : m_traits(traits) {}
 
     /*! Compare two points lexigoraphically: by x, then by y.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return true - y(p1) < y(p2);
      *         true - y(p1) = y(p2) and x(p1) < x(p2);
@@ -429,14 +424,14 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Less_yx_2(const Self * traits) : m_traits(traits) {}
 
     /*! Compare two points lexigoraphically: by y, then by x.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return true - x(p1) < x(p2);
      *         true - x(p1) = x(p2) and y(p1) < y(p2);
@@ -467,7 +462,7 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Orientation_2 (const Self * traits) : m_traits(traits) {}
@@ -549,14 +544,14 @@ public:
 
   public:
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      */
     Compare_x_2(const Self * traits) : m_traits(traits) {}
 
     /*! Compare two points by y coordinate.
      *  We actually reversing the order, so x <--> y.
-     * \param p1 the first enpoint directional point.
+     * \param p1 the first endpoint directional point.
      * \param p2 the second endpoint directional point.
      * \return SMALLER - x(p1) < x(p2);
      *         EQUAL   - x(p1) = x(p2);

@@ -20,7 +20,7 @@ support the following functions:
 This class supports a few convenient operations in addition to the
 requirements that the concept `GeneralPolygon_2` lists.
 
-\cgalModels `GeneralPolygon_2`
+\cgalModels{GeneralPolygon_2}
 
 */
 template< typename ArrTraits >

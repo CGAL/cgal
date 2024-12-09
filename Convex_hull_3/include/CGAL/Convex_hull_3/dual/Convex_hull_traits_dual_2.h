@@ -114,7 +114,7 @@ namespace CGAL
                     }
                 };
 
-                struct Less_signed_distance_to_line_2 {
+                struct Compare_signed_distance_to_line_2 {
                     typedef typename R::RT        RT;
                     typedef bool result_type;
 
@@ -181,8 +181,8 @@ namespace CGAL
                     return Less_yx_2();
                 }
 
-                Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object () const {
-                    return Less_signed_distance_to_line_2();
+                Compare_signed_distance_to_line_2 compare_signed_distance_to_line_2_object () const {
+                    return Compare_signed_distance_to_line_2();
                 }
 
                 Orientation_2 orientation_2_object () const {
@@ -276,7 +276,7 @@ namespace CGAL
                     }
                 };
 
-                struct Less_signed_distance_to_line_2 {
+                struct Compare_signed_distance_to_line_2 {
                     typedef typename R::RT        RT;
                     typedef bool result_type;
 
@@ -343,8 +343,8 @@ namespace CGAL
                     return Less_yx_2();
                 }
 
-                Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object () const {
-                    return Less_signed_distance_to_line_2();
+                Compare_signed_distance_to_line_2 compare_signed_distance_to_line_2_object () const {
+                    return Compare_signed_distance_to_line_2();
                 }
 
                 Orientation_2 orientation_2_object () const {
@@ -438,7 +438,7 @@ namespace CGAL
                     }
                 };
 
-                struct Less_signed_distance_to_line_2 {
+                struct Compare_signed_distance_to_line_2 {
                     typedef typename R::RT        RT;
                     typedef bool result_type;
 
@@ -504,8 +504,8 @@ namespace CGAL
                     return Less_yx_2();
                 }
 
-                Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object () const {
-                    return Less_signed_distance_to_line_2();
+                Compare_signed_distance_to_line_2 compare_signed_distance_to_line_2_object () const {
+                    return Compare_signed_distance_to_line_2();
                 }
 
                 Orientation_2 orientation_2_object () const {

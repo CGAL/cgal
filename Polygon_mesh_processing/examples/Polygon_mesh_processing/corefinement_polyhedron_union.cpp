@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     K;
 typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3> Mesh;

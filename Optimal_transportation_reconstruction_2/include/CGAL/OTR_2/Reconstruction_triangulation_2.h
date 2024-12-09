@@ -35,7 +35,7 @@
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/container/deque.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 // STL
 #include <map>
@@ -110,7 +110,7 @@ public:
 
   typedef OTR_2::Cost<FT> Cost_;
   typedef OTR_2::Sample<Traits_> Sample_;
-  typedef std::vector<Sample_*> Sample_vector;
+  typedef std::vector<int> Sample_vector;
   typedef typename Sample_vector::const_iterator Sample_vector_const_iterator;
 
   typedef OTR_2::Sample_with_priority<Sample_> PSample;
@@ -135,12 +135,13 @@ public:
   >
   > MultiIndex;
 
+  std::vector<Sample_>& m_samples;
   FT m_factor; // ghost vs solid
   mutable Random rng;
 
 public:
-  Reconstruction_triangulation_2(Traits_ traits = Traits_())
-  : Base(traits), m_factor(1.)
+  Reconstruction_triangulation_2(std::vector<Sample_>& samples, Traits_ traits = Traits_())
+  : Base(traits), m_samples(samples), m_factor(1.)
   {
   }
 
@@ -360,11 +361,11 @@ public:
       if (cleanup)
         face->clean_all_samples();
     }
-    Sample_* sample = vertex->sample();
-    if (sample)
+    int sample = vertex->sample();
+    if (sample != -1)
       samples.push_back(sample);
     if (cleanup)
-      vertex->set_sample(nullptr);
+      vertex->set_sample(-1);
   }
 
   void collect_all_samples(Sample_vector& samples) const {
@@ -391,7 +392,7 @@ public:
     }
     for (Finite_vertices_iterator vi = Base::finite_vertices_begin();
         vi != Base::finite_vertices_end(); ++vi) {
-      vi->set_sample(nullptr);
+      vi->set_sample(-1);
     }
   }
 
@@ -465,15 +466,15 @@ public:
     typename Sample_vector::const_iterator it;
     const Sample_vector& samples0 = edge.first->samples(edge.second);
     for (it = samples0.begin(); it != samples0.end(); ++it) {
-      Sample_* sample = *it;
-      mass += sample->mass();
+      const Sample_ & sample = m_samples[* it];
+      mass += sample.mass();
     }
 
     Edge twin = twin_edge(edge);
     const Sample_vector& samples1 = twin.first->samples(twin.second);
     for (it = samples1.begin(); it != samples1.end(); ++it) {
-      Sample_* sample = *it;
-      mass += sample->mass();
+      const Sample_& sample = m_samples[* it];
+      mass += sample.mass();
     }
 
     set_mass(edge, mass);
@@ -511,15 +512,15 @@ public:
     typename Sample_vector::const_iterator it;
     const Sample_vector& samples0 = edge.first->samples(edge.second);
     for (it = samples0.begin(); it != samples0.end(); ++it) {
-      Sample_* sample = *it;
-      squeue.push(PSample(sample, sample->coordinate()));
+      const Sample_& sample = m_samples[* it];
+      squeue.push(PSample(*it, sample.coordinate()));
     }
 
     Edge twin = twin_edge(edge);
     const Sample_vector& samples1 = twin.first->samples(twin.second);
     for (it = samples1.begin(); it != samples1.end(); ++it) {
-      Sample_* sample = *it;
-      squeue.push(PSample(sample, 1.0 - sample->coordinate()));
+      const Sample_& sample = m_samples[* it];
+      squeue.push(PSample(*it, 1.0 - sample.coordinate()));
     }
   }
 
@@ -537,13 +538,13 @@ public:
       PSample psample = squeue.top();
       squeue.pop();
 
-      FT mass = psample.sample()->mass();
+      FT mass = m_samples[psample.sample()].mass();
       FT coord = psample.priority() * L;
       FT bin = mass * coef;
       FT center = start + FT(0.5) * bin;
       FT pos = coord - center;
 
-      FT norm2 = psample.sample()->distance2();
+      FT norm2 = m_samples[psample.sample()].distance2();
       FT tang2 = bin * bin / 12 + pos * pos;
 
       sum.add(Cost_(norm2, tang2), mass);
@@ -566,15 +567,15 @@ public:
     Cost_ sum;
     for (Sample_vector_const_iterator it = samples.begin();
         it != samples.end(); ++it) {
-      Sample_* sample = *it;
-      FT mass = sample->mass();
-      const Point& query = sample->point();
+      const Sample_& sample =  m_samples[* it];
+      FT mass = sample.mass();
+      const Point& query = sample.point();
 
       FT Ds = geom_traits().compute_squared_distance_2_object()(query, ps);
       FT Dt = geom_traits().compute_squared_distance_2_object()(query, pt);
       FT dist2 = ((std::min))(Ds, Dt);
 
-      FT norm2 = sample->distance2();
+      FT norm2 = sample.distance2();
       FT tang2 = dist2 - norm2;
 
       sum.add(Cost_(norm2, tang2), mass);
@@ -589,7 +590,7 @@ public:
   template<class Iterator> // value_type = Sample_*
   void assign_samples(Iterator begin, Iterator end) {
     for (Iterator it = begin; it != end; ++it) {
-      Sample_* sample = *it;
+      int sample = *it;
       assign_sample(sample);
     }
   }
@@ -597,13 +598,13 @@ public:
   template<class Iterator> // value_type = Sample_*
   void assign_samples_brute_force(Iterator begin, Iterator end) {
     for (Iterator it = begin; it != end; ++it) {
-      Sample_* sample = *it;
+      int sample = *it;
       assign_sample_brute_force(sample);
     }
   }
 
-  bool assign_sample(Sample_* sample) {
-    const Point& point = sample->point();
+  bool assign_sample(int sample) {
+    const Point& point = m_samples[sample].point();
     Face_handle face = Base::locate(point);
 
     if (face == Face_handle() || Base::is_infinite(face)) {
@@ -622,8 +623,9 @@ public:
     return true;
   }
 
-  bool assign_sample_brute_force(Sample_* sample) {
-    const Point& point = sample->point();
+  bool assign_sample_brute_force(int sample_index) {
+    const Sample_& sample = m_samples[sample_index];
+    const Point& point = sample.point();
     Face_handle nearest_face = Face_handle();
     for (Finite_faces_iterator fi = Base::finite_faces_begin();
         fi != Base::finite_faces_end(); ++fi) {
@@ -641,12 +643,12 @@ public:
 
     Vertex_handle vertex = find_nearest_vertex(point, nearest_face);
     if (vertex != Vertex_handle()) {
-      assign_sample_to_vertex(sample, vertex);
+      assign_sample_to_vertex(sample_index, vertex);
       return true;
     }
 
     Edge edge = find_nearest_edge(point, nearest_face);
-    assign_sample_to_edge(sample, edge);
+    assign_sample_to_edge(sample_index, edge);
     return true;
   }
 
@@ -688,23 +690,24 @@ public:
     return nearest;
   }
 
-  void assign_sample_to_vertex(Sample_* sample, Vertex_handle vertex) const {
+  void assign_sample_to_vertex(int sample_index, Vertex_handle vertex) const {
     /*if (vertex->sample()) {
       std::cout << "assign to vertex: vertex already has sample"
           << std::endl;
     }*/
-
-    sample->distance2() = FT(0);
-    sample->coordinate() = FT(0);
-    vertex->set_sample(sample);
+    Sample_& sample = m_samples[sample_index];
+    sample.distance2() = FT(0);
+    sample.coordinate() = FT(0);
+    vertex->set_sample(sample_index);
   }
 
-  void assign_sample_to_edge(Sample_* sample, const Edge& edge) const {
+  void assign_sample_to_edge(int sample_index, const Edge& edge) const {
+    Sample_& sample = m_samples[sample_index];
     Segment segment = get_segment(edge);
-    const Point& query = sample->point();
-    sample->distance2() = compute_distance2(query, segment);
-    sample->coordinate() = compute_coordinate(query, segment);
-    edge.first->add_sample(edge.second, sample);
+    const Point& query = sample.point();
+    sample.distance2() = compute_distance2(query, segment);
+    sample.coordinate() = compute_coordinate(query, segment);
+    edge.first->add_sample(edge.second, sample_index);
   }
 
   FT compute_distance2(const Point& query, const Segment& segment) const {
@@ -761,7 +764,7 @@ public:
 
   // signed distance from t to the intersection of line(a,b) and line(t,s)
   // the pair::first is false if sign==-1 and true otherwise
-  std::pair<bool,boost::optional<FT> >
+  std::pair<bool,std::optional<FT> >
   signed_distance_from_intersection(Vertex_handle a, Vertex_handle b,
       Vertex_handle t, Vertex_handle s) const {
     const Point& pa = a->point();
@@ -773,24 +776,24 @@ public:
 
   // signed distance from t to the intersection of line(a,b) and line(t,s)
   // the pair::first is false if sign==-1 and true otherwise
-  std::pair<bool,boost::optional<FT> >
+  std::pair<bool,std::optional<FT> >
   compute_signed_distance_from_intersection(
     const Point& pa, const Point& pb, const Point& pt, const Point& ps) const
   {
     FT Dabt = compute_signed_distance(pa, pb, pt);
     if (Dabt == FT(0))
-      return std::make_pair(true,boost::make_optional(FT(0)));
+      return std::make_pair(true,std::make_optional(FT(0)));
 
     Line lab = geom_traits().construct_line_2_object()(
       pa, geom_traits().construct_vector_2_object()(pa, pb));
     Line lts = geom_traits().construct_line_2_object()(
       pt, geom_traits().construct_vector_2_object()(pt, ps));
 
-    boost::optional<FT> Dqt;
+    std::optional<FT> Dqt;
     const auto result = intersection(lab, lts);
     if (result)
     {
-      const Point* iq = boost::get<Point>(&(*result));
+      const Point* iq = std::get_if<Point>(&(*result));
       if (iq)
         Dqt = CGAL::approximate_sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
     }
@@ -993,24 +996,24 @@ public:
     std::cout <<"( " << (edge).priority()  <<  ") ( " << a << " , " << b << " )" << std::endl;
   }
 
-  bool is_p_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  bool is_p_infinity(const std::pair<bool,std::optional<FT> >& p) const
   {
-    return p.first && p.second==boost::none;
+    return p.first && p.second==std::nullopt;
   }
 
-  bool is_m_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  bool is_m_infinity(const std::pair<bool,std::optional<FT> >& p) const
   {
-    return !p.first && p.second==boost::none;
+    return !p.first && p.second==std::nullopt;
   }
 
-  bool is_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  bool is_infinity(const std::pair<bool,std::optional<FT> >& p) const
   {
-    return p.second==boost::none;
+    return p.second==std::nullopt;
   }
 
-  std::pair<bool,boost::optional<FT> > m_infinity() const
+  std::pair<bool,std::optional<FT> > m_infinity() const
   {
-    return std::pair<bool,boost::optional<FT> >(false,boost::optional<FT>());
+    return std::pair<bool,std::optional<FT> >(false,std::optional<FT>());
   }
 
   template <class Iterator> // value_type = Edge
@@ -1025,9 +1028,9 @@ public:
       Edge ab = twin_edge(*it);
       Vertex_handle a = source_vertex(ab);
       Vertex_handle b = target_vertex(ab);
-      std::pair<bool,boost::optional<FT> > D = signed_distance_from_intersection(a, b, target, source);
+      std::pair<bool,std::optional<FT> > D = signed_distance_from_intersection(a, b, target, source);
       if (!D.first ) {
-        CGAL_assertion(D.second!=boost::none);
+        CGAL_assertion(D.second!=std::nullopt);
         multi_ind.insert(Rec_edge_2(ab, *D.second));
       }
     }
@@ -1050,11 +1053,11 @@ public:
       Vertex_handle c = target_vertex(bc);
       Vertex_handle d = target_vertex(cd);
 
-      std::pair<bool,boost::optional<FT> > Dac=m_infinity();
+      std::pair<bool,std::optional<FT> > Dac=m_infinity();
       if (a != c && is_triangle_ccw(a, b, c))
         Dac = signed_distance_from_intersection(a, c, target, source);
 
-      std::pair<bool,boost::optional<FT> > Dbd=m_infinity();
+      std::pair<bool,std::optional<FT> > Dbd=m_infinity();
       if (b != d && is_triangle_ccw(b, c, d))
         Dbd = signed_distance_from_intersection(b, d, target, source);
 

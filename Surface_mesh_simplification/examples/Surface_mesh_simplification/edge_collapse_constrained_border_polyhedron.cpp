@@ -11,7 +11,7 @@
 #include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Constrained_placement.h>
 
 // Stop-condition policy
-#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Edge_count_stop_predicate.h>
 
 #include <iostream>
 #include <fstream>
@@ -34,7 +34,7 @@ struct Border_is_constrained_edge_map
 
   Border_is_constrained_edge_map(const Surface_mesh& sm) : sm_ptr(&sm) {}
 
-  friend bool get(Border_is_constrained_edge_map m, const key_type& edge) {
+  friend value_type get(const Border_is_constrained_edge_map& m, const key_type& edge) {
     return CGAL::is_border(edge, *m.sm_ptr);
   }
 };
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
   }
 
   // Contract the surface mesh as much as possible
-  SMS::Count_stop_predicate<Surface_mesh> stop(0);
+  SMS::Edge_count_stop_predicate<Surface_mesh> stop(0);
   Border_is_constrained_edge_map bem(surface_mesh);
 
   // This the actual call to the simplification algorithm.

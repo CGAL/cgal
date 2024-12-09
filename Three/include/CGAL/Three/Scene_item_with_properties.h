@@ -13,7 +13,7 @@
 #define SCENE_ITEM_WITH_PROPERTIES_H
 
 #include <CGAL/license/Three.h>
-
+#include <QtGlobal>
 #ifdef demo_framework_EXPORTS
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_EXPORT
 #else
@@ -26,11 +26,11 @@ namespace Three {
   class Scene_item;
 
 //! Base class to allow an item to copy properties from another.
-//! Properties reprensent the current state of an item : its color,
+//! Properties represent the current state of an item : its color,
 //! the position of its manipulated frame, ...
 class DEMO_FRAMEWORK_EXPORT Scene_item_with_properties {
 public:
-  virtual ~Scene_item_with_properties(){}
+  virtual ~Scene_item_with_properties();
  //!\brief Copies properties from another Scene_item.
  //!
  //! Override this function to specify what must be copied.

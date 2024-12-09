@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
@@ -22,7 +22,10 @@
  */
 
 #ifndef CGAL_CKVA_CURVE_RENDERER_INTERNALS_H
-#define CGAL_CKVA_CURVE_RENDERER_INTERNALS_H 1
+#define CGAL_CKVA_CURVE_RENDERER_INTERNALS_H
+
+#include <CGAL/license/Arrangement_on_surface_2.h>
+
 
 #include <vector>
 #include <stack>
@@ -62,7 +65,7 @@ namespace internal {
 // derivative range analysis
 #define CGAL_RECURSIVE_DER_MAX_DEGREE  7
 
-// 8-pixel neighbouthood directions
+// 8-pixel neighborhood directions
 static const struct { int x; int y; } directions[] = {
     { 1, 0}, { 1, 1}, { 0, 1}, {-1, 1},
     {-1, 0}, {-1,-1}, { 0,-1}, { 1,-1}};
@@ -87,8 +90,6 @@ struct Pixel_2_
 
     Integer sub_x, sub_y; // subpixel coordinates relative to pixel's boundary
                           // (always 0 for pixels)
-
-    Pixel_2_& operator =(const Pixel_2_& pix) = default;
 
     bool operator ==(const Pixel_2_& pix) const {
         return (
@@ -277,7 +278,7 @@ public:
         return (low*up < 0); //(low < 0&&up > 0);
     }
 
-    //! \brief evalutates a certain polynomial derivative at x
+    //! \brief evaluates a certain polynomial derivative at x
     //!
     //! \c der_coeffs is a set of derivative coefficients,
     //! \c poly - polynomial coefficients
@@ -295,7 +296,7 @@ public:
         return y;
     }
 
-    //! \brief evalutates a polynomial at certain x-coordinate
+    //! \brief evaluates a polynomial at certain x-coordinate
     static NT evaluate(const Poly_1& poly, const NT& x,
         bool *error_bounds_ = nullptr)
     {
@@ -694,7 +695,7 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
             while(der_it != der_begin) {
                 --der_it;
 
-                e1 = xsum_abs * e1 + CGAL_ABS(x1 * z1);
+                e1 = xsum_abs * e1 + CGAL_ABS(NT(x1 * z1));
                 z1 = x0*z1 + x1*y1;
                 y1 = y1*x0 + x1*y0;
                 y0 = x0*y0 + extract(*cache_it)*(*der_it);
@@ -725,7 +726,7 @@ bool get_range_QF_1(int var, const NT& l_, const NT& r_, const NT& key,
         NT y0 = extract(*cache_it), y1(0), z1(0), e1(0);
         while(cache_it != begin) {
             --cache_it;
-            e1 = xsum_abs * e1 + CGAL_ABS(x1*z1);
+            e1 = xsum_abs * e1 + CGAL_ABS(NT(x1*z1));
             z1 = x0*z1 + x1*y1;
             y1 = y1*x0 + x1*y0;
             y0 = x0*y0 + extract(*cache_it);
@@ -754,7 +755,7 @@ bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key,
     const Poly_1& poly, int check = 1)
 {
     Derivative_2 *der = (var == CGAL_X_RANGE) ? der_x : der_y;
-    // stores precomputed polynomial derivatives and binominal coeffs
+    // stores precomputed polynomial derivatives and binomial coeffs
     Derivative_1 der_cache
         //(der->size()+1, NT(0))
         , binom;//(der->size()+1, NT(0));
@@ -824,7 +825,7 @@ bool get_range_MAA_1(int var, const NT& l_, const NT& r_, const NT& key,
     }
     // assume we have an array of derivatives:
     // der_cache: {f^(0); f^(1); f^(2); ...}
-    // and binominal coefficients: [h; h^2/2; h^3/6; ... h^d/d!]
+    // and binomial coefficients: [h; h^2/2; h^3/6; ... h^d/d!]
     der_iterator_1 eval_it = der_cache.end()-1, local_it, binom_it,
                    eval_end = der_cache.end();
     d = poly.degree();

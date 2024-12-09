@@ -7,7 +7,7 @@ namespace AlgebraicStructureTraits_{
 
 `AdaptableBinaryFunction` providing the k-th root.
 
-\cgalRefines `AdaptableBinaryFunction`
+\cgalRefines{AdaptableBinaryFunction}
 
 \sa `FieldWithRootOf`
 \sa `AlgebraicStructureTraits`

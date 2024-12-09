@@ -25,9 +25,11 @@
 
 #include <boost/cstdint.hpp>
 
+#include <vector>
 #include <cstddef>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 namespace CGAL {
 
@@ -37,6 +39,7 @@ class File_scanner_OFF
   std::vector<double> entries;
   std::size_t color_entries;
   std::size_t first_color_index;
+  std::string line;
   std::istream& m_in;
   bool normals_read;
 
@@ -78,7 +81,7 @@ public:
     else
     {
       skip_comment();
-      std::string line;
+      line.clear();
       std::getline(m_in, line);
       // First remove the comment if there is one
       std::size_t pos = line.find('#');
@@ -653,7 +656,7 @@ public:
 
       if(has_colors())
       {
-        boost::int32_t k;
+        std::int32_t k;
         I_Binary_read_big_endian_integer32(m_in, k);
         if(k<0 || k>4)
         {
@@ -685,14 +688,14 @@ public:
     CGAL_assertion(current_facet < size_of_facets());
     if(binary())
     {
-      boost::int32_t i32;
+      std::int32_t i32;
       I_Binary_read_big_endian_integer32(m_in, i32);
       size = i32;
     }
     else
     {
       skip_comment();
-      std::string line;
+      line.clear();
       std::getline(m_in, line);
       // First remove the comment if there is one
       std::size_t pos = line.find('#');
@@ -710,6 +713,7 @@ public:
       if(entries.empty())
       {
         m_in.clear(std::ios::badbit);
+        size = 0;
         return;
       }
       size = static_cast<std::size_t>(entries[0]);
@@ -731,7 +735,7 @@ public:
                                std::size_t current_facet)
   {
     if(binary()){
-      boost::int32_t i32;
+      std::int32_t i32;
       I_Binary_read_big_endian_integer32(m_in, i32);
       index = i32;
     }
@@ -742,6 +746,7 @@ public:
         m_in.clear(std::ios::badbit);
         if(verbose())
           std::cerr<<"error while reading facet. Missing index."<<std::endl;
+        index=0;
         return;
       }
       index = static_cast<std::size_t>(entries[current_entry]);
@@ -757,7 +762,7 @@ public:
                      "cannot read OFF file beyond facet "
                   << current_facet << "." << std::endl;
       }
-
+      index=0;
       set_off_header(false);
       return;
     }
@@ -777,7 +782,7 @@ public:
                   << index + index_offset() << ": is out of range."
                   << std::endl;
       }
-
+      index = 0;
       set_off_header(false);
       return;
     }
@@ -785,10 +790,10 @@ public:
 
   void skip_to_next_facet(std::size_t current_facet)
   {
-    // Take care of trailing informations like color triples.
+    // Take care of trailing information like color triples.
     if(binary())
     {
-      boost::int32_t k;
+      std::int32_t k;
       I_Binary_read_big_endian_integer32(m_in, k);
       if(k<0 || k>4)
       {

@@ -1,7 +1,7 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Regular_triangulation.h>
-#include <CGAL/assertions.h>
+#include <cassert>
 
 #include <iostream>
 #include <iterator>
@@ -27,11 +27,11 @@ int main()
     points.push_back(Weighted_point(*rand_it++, rng.get_double(0., 10.)));
 
   T t(D);
-  CGAL_assertion(t.empty());
+  assert(t.empty());
 
   // Insert the points in the triangulation
   t.insert(points.begin(), points.end());
-  CGAL_assertion( t.is_valid() );
+  assert( t.is_valid() );
   std::cout << "Regular triangulation successfully computed: "
     << t.number_of_vertices() << " vertices, "
     << t.number_of_finite_full_cells() << " finite cells."

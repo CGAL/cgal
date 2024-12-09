@@ -10,9 +10,7 @@ one position while \f$ x_i\f$ is moved to the former position of \f$ x_j\f$.
 
 This function may be used to make a certain variable the outer most variable.
 
-\cgalRefines `AdaptableFunctor`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableFunctor,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

@@ -63,17 +63,18 @@ int main(int argc, char*argv[])
   ///////////////////////////////////////////////////////////////////
   //! [Outlier removal]
 
-  CGAL::remove_outliers<CGAL::Sequential_tag>
+  typename Point_set::iterator rout_it = CGAL::remove_outliers<CGAL::Sequential_tag>
     (points,
      24, // Number of neighbors considered for evaluation
      points.parameters().threshold_percent (5.0)); // Percentage of points to remove
+  points.remove(rout_it, points.end());
 
   std::cout << points.number_of_removed_points()
             << " point(s) are outliers." << std::endl;
 
   // Applying point set processing algorithm to a CGAL::Point_set_3
   // object does not erase the points from memory but place them in
-  // the garbage of the object: memory can be freeed by the user.
+  // the garbage of the object: memory can be freed by the user.
   points.collect_garbage();
 
   //! [Outlier removal]
@@ -86,7 +87,8 @@ int main(int argc, char*argv[])
   double spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag> (points, 6);
 
   // Simplify using a grid of size 2 * average spacing
-  CGAL::grid_simplify_point_set (points, 2. * spacing);
+  typename Point_set::iterator gsim_it = CGAL::grid_simplify_point_set (points, 2. * spacing);
+  points.remove(gsim_it, points.end());
 
   std::cout << points.number_of_removed_points()
             << " point(s) removed after simplification." << std::endl;
@@ -208,7 +210,7 @@ int main(int argc, char*argv[])
     for (Point_set::Index idx : points)
       f << points.point (idx) << std::endl;
     for (const auto& facet : CGAL::make_range (reconstruct.facets_begin(), reconstruct.facets_end()))
-      f << "3 "<< facet << std::endl;
+      f << "3 "<< facet[0] << " " << facet[1] << " " << facet[2] << std::endl;
     f.close ();
 
     //! [Output scale space]

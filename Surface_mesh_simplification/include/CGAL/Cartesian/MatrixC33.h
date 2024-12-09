@@ -18,7 +18,7 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/Vector_3.h>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -131,6 +131,13 @@ public:
     return Vector_3(v*m.r0(), v*m.r1(), v*m.r2());
   }
 
+  friend std::ostream& operator<<(std::ostream & os, const MatrixC33& m)
+{
+  return os << m.r0() << std::endl
+            << m.r1() << std::endl
+            << m.r2() << std::endl;
+}
+
   RT determinant() const
   {
     return CGAL::determinant(r0().x(), r0().y(), r0().z(),
@@ -200,11 +207,11 @@ MatrixC33<R> adjoint_matrix(const MatrixC33<R>& m)
 }
 
 template<class R>
-boost::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
+std::optional< MatrixC33<R> > inverse_matrix(const MatrixC33<R>& m)
 {
   typedef typename R::RT                                        RT;
   typedef MatrixC33<R>                                          Matrix;
-  typedef boost::optional<Matrix>                               result_type;
+  typedef std::optional<Matrix>                               result_type;
 
   result_type rInverse;
 

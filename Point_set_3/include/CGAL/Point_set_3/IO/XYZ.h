@@ -13,19 +13,13 @@
 
 #include <CGAL/license/Point_set_3.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 
 #include <fstream>
 #include <string>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
 
 namespace CGAL {
 
@@ -41,7 +35,7 @@ namespace IO {
 /*!
   \ingroup PkgPointSet3IOXYZ
 
-  \brief reads the content of an intput stream in the \ref IOStreamXYZ into a point set.
+  \brief reads the content of an input stream in the \ref IOStreamXYZ into a point set.
 
   If normals are present in the input stream, a normal map will be created and filled.
 
@@ -99,12 +93,6 @@ bool read_XYZ(const std::string& fname, CGAL::Point_set_3<Point, Vector>& point_
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::read_XYZ()` \endlink  should be used instead.
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool read_xyz_point_set(std::istream& is, CGAL::Point_set_3<Point, Vector>& point_set)
 {
@@ -144,10 +132,10 @@ namespace IO {
 
   \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_XYZ(std::ostream& os,
                const CGAL::Point_set_3<Point, Vector>& point_set,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   if(point_set.has_normal_map())
     return Point_set_processing_3::internal::write_XYZ_PSP(os, point_set,
@@ -156,16 +144,6 @@ bool write_XYZ(std::ostream& os,
 
   return Point_set_processing_3::internal::write_XYZ_PSP(os, point_set, np.point_map(point_set.point_map()));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  return write_XYZ(os, point_set, parameters::all_default());
-}
-
-/// \endcond
 
 /*!
   \ingroup PkgPointSet3IOXYZ
@@ -192,34 +170,17 @@ bool write_XYZ(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_s
 
   \return `true` if the writing was successful, `false` otherwise.
  */
-template <typename Point, typename Vector, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_BGL_NP_CLASS& np)
+template <typename Point, typename Vector, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   std::ofstream os(fname);
   return write_XYZ(os, point_set, np);
 }
 
-/// \cond SKIP_IN_MANUAL
-
-template <typename Point, typename Vector>
-bool write_XYZ(const std::string& fname, const CGAL::Point_set_3<Point, Vector>& point_set)
-{
-  std::ofstream os(fname);
-  return write_XYZ(os, point_set, parameters::all_default());
-}
-
-/// \endcond
-
 } // namespace IO
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 
-/*!
-  \ingroup PkgPointSet3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3,
-              \link PkgPointSet3IO `CGAL::IO::write_XYZ()` \endlink  should be used instead.
- */
 template <typename Point, typename Vector>
 CGAL_DEPRECATED bool write_xyz_point_set(std::ostream& os, const CGAL::Point_set_3<Point, Vector>& point_set)
 {

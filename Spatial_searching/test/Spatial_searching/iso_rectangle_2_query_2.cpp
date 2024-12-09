@@ -59,7 +59,7 @@ main() {
 
   result.clear();
   // Searching a fuzzy range
-  // using value 0.1 for fuzziness paramater
+  // using value 0.1 for fuzziness parameter
   Fuzzy_iso_box approximate_range(p, q, 0.1);
   tree.search(std::back_inserter( result ), approximate_range);
   std::cout << "The points in the fuzzy box [<0.1-0.3>,<0.6-0.9>]x[<0.1-0.3>,<0.6-0.9>] are: "

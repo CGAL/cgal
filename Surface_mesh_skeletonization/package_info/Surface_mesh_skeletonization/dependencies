@@ -2,6 +2,7 @@ AABB_tree
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Distance_2
@@ -17,11 +18,9 @@ Intersections_3
 Interval_support
 Kernel_23
 Kernel_d
-Modifier
 Modular_arithmetic
 Number_types
 Polygon_mesh_processing
-Polyhedron
 Profiling_tools
 Property_map
 Random_numbers

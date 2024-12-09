@@ -72,8 +72,6 @@ void MainWindow::connectActions()
   // Help menu actions
   QObject::connect(this->actionDemo_Help, SIGNAL(triggered()),
            this->viewer, SLOT(help()));
-  QObject::connect(this->actionAbout_T3_demo, SIGNAL(triggered()),
-       this, SLOT(popupAboutDemo()));
 
   // Quit
   QObject::connect(this->actionQuit, SIGNAL(triggered()),
@@ -139,6 +137,7 @@ void MainWindow::on_actionLoad_Points_triggered()
 
   // update viewer
   Q_EMIT( sceneChanged() );
+  viewer->changed();
 }
 
 void MainWindow::on_actionSave_Points_triggered()
@@ -214,7 +213,7 @@ void MainWindow::on_actionClear_Scene_triggered()
 void MainWindow::popupAboutCGAL()
 {
   // read contents from .html file
-  QFile about_CGAL(":/documentation/documentation/about.html");
+  QFile about_CGAL(":/documentation/documentation/about_CGAL.html");
   about_CGAL.open(QIODevice::ReadOnly|QIODevice::Text);
   QString about_CGAL_txt = QTextStream(&about_CGAL).readAll();
 

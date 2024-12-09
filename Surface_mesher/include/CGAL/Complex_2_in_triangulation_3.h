@@ -15,6 +15,11 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Complex_2_in_triangulation_3.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/disable_warnings.h>
 
 // TODO: add the iterators
@@ -767,7 +772,7 @@ operator>> (std::istream& is, Complex_2_in_triangulation_3<Tr, Edge_info>& c2t3)
   c2t3.clear();
   is >> c2t3.triangulation();
 
-  // restore datas of c2t3
+  // restore data of c2t3
   for(typename Tr::Finite_facets_iterator fit =
         c2t3.triangulation().finite_facets_begin();
       fit != c2t3.triangulation().finite_facets_end();

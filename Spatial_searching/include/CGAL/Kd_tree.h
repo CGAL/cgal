@@ -21,6 +21,9 @@
 #include <CGAL/basic.h>
 #include <CGAL/assertions.h>
 #include <vector>
+#include <string>
+#include <unordered_map>
+#include <ostream>
 
 #include <CGAL/algorithm.h>
 #include <CGAL/Kd_tree_node.h>
@@ -28,7 +31,7 @@
 #include <CGAL/Spatial_searching/internal/Get_dimension_tag.h>
 
 #include <boost/container/deque.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 #ifdef CGAL_HAS_THREADS
 #include <CGAL/mutex.h>
@@ -134,7 +137,7 @@ private:
   mutable CGAL_MUTEX building_mutex;//mutex used to protect const calls inducing build()
   #endif
   bool built_;
-  bool removed_;
+  std::size_t removed_=0;
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
@@ -172,7 +175,7 @@ private:
 #endif
   }
 
-  // TODO: Similiar to the leaf_init function above, a part of the code should be
+  // TODO: Similar to the leaf_init function above, a part of the code should be
   //       moved to a the class Kd_tree_node.
   //       It is not proper yet, but the goal was to see if there is
   //       a potential performance gain through the Compact_container
@@ -275,13 +278,22 @@ private:
 public:
 
   Kd_tree(Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false), removed_(false)
+    : traits_(traits),split(s), built_(false)
   {}
 
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
           Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits), split(s), pts(first, beyond), built_(false), removed_(false)
+    : traits_(traits), split(s), pts(first, beyond), built_(false)
+  { }
+
+  template <class PointRange>
+  Kd_tree(const PointRange& points,
+          Splitter s = Splitter(), const SearchTraits traits = SearchTraits())
+    : traits_(traits),
+      split(s),
+      pts(std::begin(points), std::end(points)),
+      built_(false)
   { }
 
   bool empty() const {
@@ -321,18 +333,18 @@ public:
     // must call invalidate_build() first.
     CGAL_assertion(!is_built());
     CGAL_assertion(!pts.empty());
-    CGAL_assertion(!removed_);
+    CGAL_assertion(removed_==0);
     const Point_d& p = *pts.begin();
     typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     dim_ = static_cast<int>(std::distance(ccci(p), ccci(p,0)));
 
     data.reserve(pts.size());
-    for(unsigned int i = 0; i < pts.size(); i++){
+    for(std::size_t i = 0; i < pts.size(); i++){
       data.push_back(&pts[i]);
     }
 
 #ifndef CGAL_TBB_STRUCTURE_IN_KD_TREE
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #endif
 
@@ -367,6 +379,7 @@ public:
     pts.swap(ptstmp);
 
     data.clear();
+    data.shrink_to_fit();
 
     built_ = true;
   }
@@ -375,6 +388,39 @@ public:
   int dim() const
   {
     return dim_;
+  }
+
+  std::ostream&
+  write_graphviz(std::ostream& s) const
+  {
+    int counter = -1;
+    std::unordered_map<const Node*, int> node_to_index;
+    tree_root->get_indices(counter, node_to_index);
+
+    const auto node_name = [&](const Node* node) {
+      const int index = node_to_index.at(node);
+      std::string node_name = "default_name";
+      if (node->is_leaf()) { // leaf node
+        node_name = "L" + std::to_string(index);
+      } else {
+        if (index == 0) { // root node
+          node_name = "R" + std::to_string(index);
+        } else { // internal node
+          node_name = "N" + std::to_string(index);
+        }
+      }
+      CGAL_assertion(node_name != "default_name");
+      return node_name;
+    };
+
+    s << "graph G" << std::endl;
+    s << "{" << std::endl << std::endl;
+    s << "label=\"Graph G. Num leaves: " << tree_root->num_nodes() << ". ";
+    s << "Num items: " << tree_root->num_items() << ".\"" << std::endl;
+    s << node_name(tree_root) + " ;";
+    tree_root->print(s, node_name);
+    s << std::endl << "}" << std::endl << std::endl;
+    return s;
   }
 
 private:
@@ -396,14 +442,14 @@ public:
 
   void invalidate_build()
   {
-    if(removed_){
+    if(removed_!=0){
       // Walk the tree to collect the remaining points.
       // Writing directly to pts would likely work, but better be safe.
       std::vector<Point_d> ptstmp;
       //ptstmp.resize(root()->num_items());
       root()->tree_items(std::back_inserter(ptstmp));
       pts.swap(ptstmp);
-      removed_=false;
+      removed_=0;
       CGAL_assertion(is_built()); // the rest of the cleanup must happen
     }
     if(is_built()){
@@ -419,7 +465,7 @@ public:
   {
     invalidate_build();
     pts.clear();
-    removed_ = false;
+    removed_ = 0;
   }
 
   void
@@ -476,8 +522,8 @@ public:
     CGAL_assertion(success);
 
     // Do not set the flag is the tree has been cleared.
-    if(is_built())
-      removed_ |= success;
+    if(is_built() && success)
+      ++removed_;
   }
 private:
   template<class Equal>
@@ -558,7 +604,7 @@ public:
 
 
   template <class FuzzyQueryItem>
-  boost::optional<Point_d>
+  std::optional<Point_d>
   search_any_point(const FuzzyQueryItem& q) const
   {
     if(! pts.empty()){
@@ -569,7 +615,7 @@ public:
       Kd_tree_rectangle<FT,D> b(*bbox);
       return tree_root->search_any_point(q,b,begin(),cache_begin(),dim_);
     }
-    return boost::none;
+    return std::nullopt;
   }
 
 
@@ -648,7 +694,7 @@ public:
   size_type
   size() const
   {
-    return pts.size();
+    return pts.size()-removed_;
   }
 
   // Print statistics of the tree.

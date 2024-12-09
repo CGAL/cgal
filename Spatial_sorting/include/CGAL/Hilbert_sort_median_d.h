@@ -32,7 +32,7 @@ struct Hilbert_cmp_d
   K k;
   int axe;
   bool orient;
-  Hilbert_cmp_d (int a, bool o, const K &_k = K()) : k(_k), axe(a),  orient(o) {}
+  Hilbert_cmp_d (int a, bool o, const K &_k) : k(_k), axe(a),  orient(o) {}
 
   bool operator() (const Point &p, const Point &q) const
   {
@@ -64,7 +64,7 @@ private:
   };
 
 public:
-  Hilbert_sort_median_d(const Kernel &k = Kernel(), std::ptrdiff_t limit = 1)
+  Hilbert_sort_median_d(const Kernel &k, std::ptrdiff_t limit = 1)
     : _k(k), _limit (limit)
   {}
 

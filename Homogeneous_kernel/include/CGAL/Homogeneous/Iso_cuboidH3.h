@@ -43,7 +43,7 @@ public:
   Iso_cuboidH3() {}
 
   Iso_cuboidH3(const Point_3& p, const Point_3& q, int)
-    : base(CGAL::make_array(p, q))
+    : base{p, q}
   {
     CGAL_kernel_assertion(p.x()<=q.x());
     CGAL_kernel_assertion(p.y()<=q.y());
@@ -173,8 +173,8 @@ CGAL_KERNEL_LARGE_INLINE
 Iso_cuboidH3<R>::
 Iso_cuboidH3(const RT& min_hx, const RT& min_hy, const RT& min_hz,
              const RT& max_hx, const RT& max_hy, const RT& max_hz)
-  : base(CGAL::make_array(Point_3(min_hx, min_hy, min_hz, RT(1)),
-                           Point_3(max_hx, max_hy, max_hz, RT(1))))
+  : base{Point_3(min_hx, min_hy, min_hz, RT(1)),
+         Point_3(max_hx, max_hy, max_hz, RT(1))}
 {}
 
 template < class R >

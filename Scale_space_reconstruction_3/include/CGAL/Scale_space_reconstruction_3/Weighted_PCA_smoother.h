@@ -41,7 +41,7 @@ namespace Scale_space_reconstruction_3
  *  %Smoother for scale space reconstruction based on a principal
  *  component analysis weighted by the local density of points.
  *
- *  \cgalModels CGAL::Scale_space_reconstruction_3::Smoother
+ *  \cgalModels{CGAL::Scale_space_reconstruction_3::Smoother}
  *
  *  \tparam Geom_traits geometric traits class. It must be a
  *  model of `DelaunayTriangulationTraits_3`. It must have a
@@ -70,8 +70,8 @@ template <typename Geom_traits,
 class Weighted_PCA_smoother
 {
 public:
-  typedef typename Geom_traits::FT FT; ///< defines the point type.
-  typedef typename Geom_traits::Point_3 Point; ///< defines the point typ.e
+  typedef typename Geom_traits::FT FT; ///< defines the field number type.
+  typedef typename Geom_traits::Point_3 Point; ///< defines the point type.
   typedef typename Geom_traits::Vector_3 Vector; ///< defines the vector type.
 private:
 
@@ -198,10 +198,10 @@ private:
   void try_parallel (const F& func, std::size_t begin, std::size_t end)
   {
 #ifndef CGAL_LINKED_WITH_TBB
-    CGAL_static_assertion_msg (!(boost::is_convertible<ConcurrencyTag, Parallel_tag>::value),
+    static_assert (!(std::is_convertible<ConcurrencyTag, Parallel_tag>::value),
                                "Parallel_tag is enabled but TBB is unavailable.");
 #else
-    if (boost::is_convertible<ConcurrencyTag,Parallel_tag>::value)
+    if (std::is_convertible<ConcurrencyTag,Parallel_tag>::value)
       tbb::parallel_for(tbb::blocked_range<std::size_t>(begin, end), func);
     else
 #endif

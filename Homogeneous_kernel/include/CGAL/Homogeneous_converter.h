@@ -28,6 +28,9 @@
 #include <CGAL/Enum_converter.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
+#include <CGAL/Origin.h>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -47,13 +50,25 @@ public:
 
     using Base::operator();
 
-    Bbox_2
+    Origin
+    operator()(Origin o) const
+    {
+        return o;
+    }
+
+    Null_vector
+    operator()(Null_vector n) const
+    {
+        return n;
+    }
+
+    const Bbox_2&
     operator()(const Bbox_2& b)
     {
         return b;
     }
 
-    Bbox_3
+    const Bbox_3&
     operator()(const Bbox_3& b)
     {
         return b;
@@ -62,13 +77,21 @@ public:
     typename K2::RT
     operator()(const typename K1::RT &a) const
     {
-        return c(a);
+        return rc(a);
     }
 
     typename K2::FT
     operator()(const typename K1::FT &a) const
     {
-        return c(a);
+        return fc(a);
+    }
+
+    template <typename T>
+    T
+    operator()(const T t,
+               std::enable_if_t<std::is_fundamental<T>::value>* = nullptr) const
+    {
+        return t;
     }
 
     typename K2::Point_2

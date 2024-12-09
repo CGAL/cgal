@@ -121,7 +121,7 @@ public:
 
   /// Free function to access the map elements.
   friend inline
-  reference get(const Index_property_map& map, key_type p)
+  value_type get(const Index_property_map& map, key_type p)
   {
     return std::distance(map.m_first, p);
   }

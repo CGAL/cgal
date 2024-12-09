@@ -4,3 +4,5 @@ STL_Extension
 Algebraic_foundations
 Circulator
 Stream_support
+Matrix_search
+Polytope_distance_d

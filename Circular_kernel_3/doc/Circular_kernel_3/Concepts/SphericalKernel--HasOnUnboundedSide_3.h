@@ -5,7 +5,7 @@
 
 \brief
 
-\cgalRefines `Kernel::HasOnUnboundedSide_3`
+\cgalRefines{Kernel::HasOnUnboundedSide_3}
 
 \sa `SphericalKernel::BoundedSide_3`
 \sa `SphericalKernel::HasOnBoundedSide_3`

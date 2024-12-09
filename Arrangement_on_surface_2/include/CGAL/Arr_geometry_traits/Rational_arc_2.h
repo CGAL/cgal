@@ -95,18 +95,16 @@ protected:
 
 public:
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
-  /*!
-   * Default constructor.
+  /*! constructs default.
    */
   _Base_rational_arc_2 () :
     _info (0)
   {}
 
-  /*!
-   * Constructor of a whole polynomial curve.
+  /*! constructs a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
   _Base_rational_arc_2 (const Rat_vector& pcoeffs) :
@@ -178,8 +176,7 @@ public:
     _info = (_info | IS_VALID);
   }
 
-  /*!
-   * Constructor of a polynomial ray, defined by y = p(x), for x_s <= x if the
+  /*! constructs a polynomial ray, defined by y = p(x), for x_s <= x if the
    * ray is directed to the right, or for x_s >= x if it is directed to the
    * left.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
@@ -266,8 +263,7 @@ public:
     _info = (_info | IS_VALID);
   }
 
-  /*!
-   * Constructor of a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
+  /*! constructs a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param x_s The x-coordinate of the source point.
    * \param x_t The x-coordinate of the target point.
@@ -313,8 +309,7 @@ public:
     _info = (_info | IS_VALID);
   }
 
-  /*!
-   * Constructor of a polynomial function, defined by y = p(x)/q(x) for any x.
+  /*! constructs a polynomial function, defined by y = p(x)/q(x) for any x.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
    */
@@ -339,7 +334,7 @@ public:
     if (! valid)
       return;
 
-    // Analyze the bahaviour of the rational function at x = -oo (the source).
+    // Analyze the behavior of the rational function at x = -oo (the source).
     Algebraic           y0;
     const Arr_parameter_space inf_s =
       _analyze_at_minus_infinity (_numer, _denom, y0);
@@ -351,7 +346,7 @@ public:
     else // if (inf_s == ARR_INTERIOR)
       _ps = Point_2 (0, y0);
 
-    // Analyze the bahaviour of the rational function at x = +oo (the target).
+    // Analyze the behavior of the rational function at x = +oo (the target).
     const Arr_parameter_space inf_t =
       _analyze_at_plus_infinity (_numer, _denom, y0);
 
@@ -368,8 +363,7 @@ public:
                       (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
   }
 
-  /*!
-   * Constructor of a ray of a rational function, defined by y = p(x)/q(x),
+  /*! constructs a ray of a rational function, defined by y = p(x)/q(x),
    * for x_s <= x if the ray is directed to the right, or for x_s >= x if it
    * is directed to the left.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
@@ -409,7 +403,7 @@ public:
     // and check if it lies next to a pole.
     if (CGAL::sign (nt_traits.evaluate_at (_denom, x_s)) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s) /
                      nt_traits.evaluate_at (_denom, x_s));
     }
@@ -461,8 +455,7 @@ public:
                       (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
   }
 
-  /*!
-   * Constructor of a bounded rational arc, defined by y = p(x)/q(x),
+  /*! constructs a bounded rational arc, defined by y = p(x)/q(x),
    * where: x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
@@ -499,7 +492,7 @@ public:
     // Set the source point and check if it lies next to a pole.
     if (CGAL::sign (nt_traits.evaluate_at (_denom, x_s)) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       _ps = Point_2 (x_s, nt_traits.evaluate_at (_numer, x_s) /
                           nt_traits.evaluate_at (_denom, x_s));
     }
@@ -521,7 +514,7 @@ public:
     // Set the target point and check if it lies next to a pole.
     if (CGAL::sign (nt_traits.evaluate_at (_denom, x_t)) != CGAL::ZERO)
     {
-      // We have a nomral endpoint.
+      // We have a normal endpoint.
       _pt = Point_2 (x_t, nt_traits.evaluate_at (_numer, x_t) /
                      nt_traits.evaluate_at (_denom, x_t));
     }
@@ -550,19 +543,19 @@ public:
   /// \name Accessing the arc properties.
   //@{
 
-  /*! Get the numerator polynomial of the underlying rational function. */
+  /*! obtains the numerator polynomial of the underlying rational function. */
   const Polynomial& numerator () const
   {
     return (_numer);
   }
 
-  /*! Get the denominator polynomial of the underlying rational function. */
+  /*! obtains the denominator polynomial of the underlying rational function. */
   const Polynomial& denominator () const
   {
     return (_denom);
   }
 
-  /*! Check if the x-coordinate of the source point is infinite. */
+  /*! checks if the x-coordinate of the source point is infinite. */
   Arr_parameter_space source_infinite_in_x () const
   {
     return
@@ -571,7 +564,7 @@ public:
       ARR_INTERIOR;
   }
 
-  /*! Check if the y-coordinate of the source point is infinite. */
+  /*! checks if the y-coordinate of the source point is infinite. */
   Arr_parameter_space source_infinite_in_y () const
   {
     return
@@ -580,7 +573,7 @@ public:
       ARR_INTERIOR;
   }
 
-  /*! Check if the x-coordinate of the target point is infinite. */
+  /*! checks if the x-coordinate of the target point is infinite. */
   Arr_parameter_space target_infinite_in_x () const
   {
     return
@@ -589,7 +582,7 @@ public:
       ARR_INTERIOR;
   }
 
-  /*! Check if the y-coordinate of the target point is infinite. */
+  /*! checks if the y-coordinate of the target point is infinite. */
   Arr_parameter_space target_infinite_in_y () const
   {
     return
@@ -598,7 +591,7 @@ public:
       ARR_INTERIOR;
   }
 
-  /*! Get the source point. */
+  /*! obtains the source point. */
   const Point_2& source () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
@@ -607,7 +600,7 @@ public:
     return (_ps);
   }
 
-  /*! Get the x-coordinate of the source point. */
+  /*! obtains the x-coordinate of the source point. */
   Algebraic source_x () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
@@ -615,7 +608,7 @@ public:
     return (_ps.x());
   }
 
-  /*! Get the y-coordinate of the source point. */
+  /*! obtains the y-coordinate of the source point. */
   Algebraic source_y () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
@@ -623,7 +616,7 @@ public:
     return (_ps.y());
   }
 
-  /*! Get the target point. */
+  /*! obtains the target point. */
   const Point_2& target () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
@@ -632,7 +625,7 @@ public:
     return (_pt);
   }
 
-  /*! Get the x-coordinate of the target point. */
+  /*! obtains the x-coordinate of the target point. */
   Algebraic target_x () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
@@ -640,7 +633,7 @@ public:
     return (_pt.x());
   }
 
-  /*! Get the y-coordinate of the target point. */
+  /*! obtains the y-coordinate of the target point. */
   Algebraic target_y () const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
@@ -648,35 +641,35 @@ public:
     return (_pt.y());
   }
 
-  /*! Check if the x-coordinate of the left point is infinite. */
+  /*! checks if the x-coordinate of the left point is infinite. */
   Arr_parameter_space left_infinite_in_x () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
       source_infinite_in_x() : target_infinite_in_x();
   }
 
-  /*! Check if the y-coordinate of the left point is infinite. */
+  /*! checks if the y-coordinate of the left point is infinite. */
   Arr_parameter_space left_infinite_in_y () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
       source_infinite_in_y() : target_infinite_in_y();
   }
 
-  /*! Check if the x-coordinate of the right point is infinite. */
+  /*! checks if the x-coordinate of the right point is infinite. */
   Arr_parameter_space right_infinite_in_x () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
       target_infinite_in_x() : source_infinite_in_x();
   }
 
-  /*! Check if the y-coordinate of the right point is infinite. */
+  /*! checks if the y-coordinate of the right point is infinite. */
   Arr_parameter_space right_infinite_in_y () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
       target_infinite_in_y() : source_infinite_in_y();
   }
 
-  /*! Get the left endpoint. */
+  /*! obtains the left endpoint. */
   const Point_2& left () const
   {
     CGAL_precondition (left_infinite_in_x() == ARR_INTERIOR &&
@@ -684,7 +677,7 @@ public:
     return ((_info & IS_DIRECTED_RIGHT) ? _ps : _pt);
   }
 
-  /*! Get the right endpoint. */
+  /*! obtains the right endpoint. */
   const Point_2& right () const
   {
     CGAL_precondition (right_infinite_in_x() == ARR_INTERIOR &&
@@ -692,19 +685,19 @@ public:
     return ((_info & IS_DIRECTED_RIGHT) ? _pt : _ps);
   }
 
-  /*! Check if the arc is valid. */
+  /*! checks if the arc is valid. */
   bool is_valid () const
   {
     return ((_info & IS_VALID) != 0);
   }
 
-  /*! Check if the arc is continuous. */
+  /*! checks if the arc is continuous. */
   bool is_continuous () const
   {
     return ((_info & IS_CONTINUOUS) != 0);
   }
 
-  /*! Check if the arc is directed right. */
+  /*! checks if the arc is directed right. */
   bool is_directed_right () const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0);
@@ -714,20 +707,19 @@ public:
   /// \name Modifiers.
   //@{
 
-  /*! Mark the arc as being continuous. */
+  /*! marks the arc as being continuous. */
   void set_continuous ()
   {
     _info = (_info | IS_CONTINUOUS);
   }
 
-  /*! Mark the arc as being invalid. */
+  /*! marks the arc as being invalid. */
   void set_invalid ()
   {
     _info = (_info & ~IS_VALID);
   }
 
-  /*!
-   * Split the arc into two at a given pole. The function returns the sub-arc
+  /*! splits the arc into two at a given pole. The function returns the sub-arc
    * to the left of the pole and sets (*this) to be the right sub-arc.
    * \param x0 The x-coordinate of the pole.
    * \pre x0 lies in the interior of the arc.
@@ -735,7 +727,7 @@ public:
    */
   Self split_at_pole (const Algebraic& x0)
   {
-    // Analyze the behaviour of the function near the given pole.
+    // Analyze the behavior of the function near the given pole.
     const std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole (x0);
     const CGAL::Sign    sign_left = signs.first;
     const CGAL::Sign    sign_right = signs.second;
@@ -791,8 +783,7 @@ public:
   /// \name Predicates.
   //@{
 
-  /*!
-   * Get the relative position of the point with respect to the rational arc.
+  /*! obtains the relative position of the point with respect to the rational arc.
    * \param p The query point.
    * \pre p is in the x-range of the arc.
    * \return SMALLER if the point is below the arc;
@@ -816,8 +807,7 @@ public:
     return (CGAL::compare (p.y(), y));
   }
 
-  /*!
-   * Compare the x-coordinate of a vertical asymptote of the arc (one of its
+  /*! compares the x-coordinate of a vertical asymptote of the arc (one of its
    * ends) and the given point.
    */
   Comparison_result compare_end (const Point_2& p,
@@ -852,8 +842,7 @@ public:
     return ((ce == ARR_MIN_END) ? SMALLER : LARGER);
   }
 
-  /*!
-   * Compare the x-coordinate of a vertical asymptotes of the two arcs.
+  /*! compares the x-coordinate of a vertical asymptotes of the two arcs.
    */
   Comparison_result compare_ends (Arr_curve_end ind1,
                                   const Self& arc, Arr_curve_end ind2) const
@@ -989,7 +978,7 @@ public:
 
     // Both arcs are defined to the same side (left or right) of the vertical
     // asymptote. If one is defined at y = -oo and the other at y = +oo, we
-    // preform a "lexicographic" comparison.
+    // perform a "lexicographic" comparison.
     const Arr_parameter_space  inf_y1 =
       (ind1 == ARR_MIN_END ? left_infinite_in_y() : right_infinite_in_y());
     const Arr_parameter_space  inf_y2 = (ind2 == ARR_MIN_END) ?
@@ -1021,12 +1010,11 @@ public:
     return (val_res);
   }
 
-  /*!
-   * Compare the slopes of the arc with another given arc at their given
+  /*! compares the slopes of the arc with another given arc at their given
    * intersection point.
    * \param cv The given arc.
    * \param p The intersection point.
-   * \param mult Output: The mutiplicity of the intersection point.
+   * \param mult Output: The multiplicity of the intersection point.
    * \return SMALLER if (*this) slope is less than cv's;
    *         EQUAL if the two slopes are equal;
    *         LARGER if (*this) slope is greater than cv's.
@@ -1106,8 +1094,7 @@ public:
     return (EQUAL);
   }
 
-  /*!
-   * Compare the two arcs at x = -oo.
+  /*! compares the two arcs at x = -oo.
    * \param arc The given arc.
    * \pre Both arcs have a left end which is unbounded in x.
    * \return SMALLER if (*this) lies below the other arc;
@@ -1162,8 +1149,7 @@ public:
       return (flip_res ? SMALLER : LARGER);
   }
 
-  /*!
-   * Compare the two arcs at x = +oo.
+  /*! compares the two arcs at x = +oo.
    * \param arc The given arc.
    * \pre Both arcs are have a right end which is unbounded in x.
    * \return SMALLER if (*this) lies below the other arc;
@@ -1218,8 +1204,7 @@ public:
       return (flip_res ? SMALLER : LARGER);
   }
 
-  /*!
-   * Check whether the two arcs are equal (have the same graph).
+  /*! checks whether the two arcs are equal (have the same graph).
    * \param arc The compared arc.
    * \return (true) if the two arcs have the same graph; (false) otherwise.
    */
@@ -1276,8 +1261,7 @@ public:
     return (true);
   }
 
-  /*!
-   * Check whether it is possible to merge the arc with the given arc.
+  /*! checks whether it is possible to merge the arc with the given arc.
    * \param arc The query arc.
    * \return (true) if it is possible to merge the two arcs;
    *         (false) otherwise.
@@ -1311,8 +1295,7 @@ public:
   /// \name Constructions of points and curves.
   //@{
 
-  /*!
-   * Flip the arc (swap its source and target).
+  /*! flips the arc (swap its source and target).
    * \return The flipped arc.
    */
   Self flip () const
@@ -1341,8 +1324,7 @@ public:
     return (arc);
   }
 
-  /*!
-   * Print the rational arc.
+  /*! prints the rational arc.
    */
   std::ostream& print (std::ostream& os) const
   {
@@ -1386,8 +1368,7 @@ protected:
   /// \name Auxiliary (protected) functions.
   //@{
 
-  /*!
-   * Check if the given x-value is in the x-range of the arc.
+  /*! checks if the given x-value is in the x-range of the arc.
    * \param x The x-value.
    * \param eq_src Output: Is this value equal to the x-coordinate of the
    *                       source point.
@@ -1470,8 +1451,7 @@ protected:
     return (true);
   }
 
-  /*!
-   * Check if the given x-value is in the x-range of the arc, excluding its
+  /*! checks if the given x-value is in the x-range of the arc, excluding its
    * open ends.
    */
   bool _is_in_true_x_range (const Algebraic& x) const
@@ -1494,8 +1474,7 @@ protected:
     return (true);
   }
 
-  /*!
-   * Check if the underlying rational function is the same in the given arc.
+  /*! checks if the underlying rational function is the same in the given arc.
    * \param arc The given arc.
    * \return (true) if arc's underlying rational function is the same
    *         as of *this; (false) otherwise.
@@ -1506,8 +1485,7 @@ protected:
     return (_numer * arc._denom == _denom * arc._numer);
   }
 
-  /*!
-   * Compute the sign of the given polynomial at x = -oo.
+  /*! computes the sign of the given polynomial at x = -oo.
    */
   CGAL::Sign _sign_at_minus_infinity (const Polynomial& poly) const
   {
@@ -1531,8 +1509,7 @@ protected:
       return ((lead_sign == CGAL::POSITIVE) ? CGAL::NEGATIVE : CGAL::POSITIVE);
   }
 
-  /*!
-   * Compute the sign of the given polynomial at x = +oo.
+  /*! computes the sign of the given polynomial at x = +oo.
    */
   CGAL::Sign _sign_at_plus_infinity (const Polynomial& poly) const
   {
@@ -1548,8 +1525,7 @@ protected:
     return (CGAL::sign (nt_traits.get_coefficient (poly, degree)));
   }
 
-  /*!
-   * Compute infinity type of the rational function P(x)/Q(x) at x = -oo.
+  /*! computes infinity type of the rational function P(x)/Q(x) at x = -oo.
    * \param y Output: The value of the horizontal asymptote (if exists).
    * \return The infinity type for the y-coordinate at x = -oo.
    */
@@ -1588,8 +1564,7 @@ protected:
       ((def_diff % 2 == 0) ? ARR_BOTTOM_BOUNDARY : ARR_TOP_BOUNDARY);
   }
 
-  /*!
-   * Compute infinity type of the rational function P(x)/Q(x) at x = +oo.
+  /*! computes infinity type of the rational function P(x)/Q(x) at x = +oo.
    * \param y Output: The value of the horizontal asymptote (if exists).
    * \return The infinity type for the y-coordinate at x = +oo.
    */
@@ -1625,8 +1600,7 @@ protected:
       ARR_TOP_BOUNDARY : ARR_BOTTOM_BOUNDARY;
   }
 
-  /*!
-   * Compute all zeros of the denominator polynomial that lie within the
+  /*! computes all zeros of the denominator polynomial that lie within the
    * x-range of the arc.
    */
   template <class OutputIterator>
@@ -1673,7 +1647,7 @@ protected:
     return (oi);
   }
 
-  /*! Check whether the arc is continuous. */
+  /*! checks whether the arc is continuous. */
   bool _is_continuous ()
   {
     // Compute the roots of the denominator polynomial, and make sure
@@ -1687,8 +1661,7 @@ protected:
     return (q_roots.empty());
   }
 
-  /*!
-   * Determine the signs of the rational functions infinitisimally to the left
+  /*! determines the signs of the rational functions infinitisimally to the left
    * and to the right of the given pole.
    * \param x0 The x-coordinate of the pole.
    * \pre x0 lies in the interior of the arc.
@@ -1754,8 +1727,7 @@ protected:
     return (std::make_pair (sign_left, sign_right));
   }
 
-  /*!
-   * Print a polynomial nicely.
+  /*! prints a polynomial nicely.
    */
   std::ostream& _print_polynomial (std::ostream& os,
                                    const Polynomial& poly,
@@ -1797,8 +1769,7 @@ protected:
   //@}
 };
 
-/*!
- * Exporter for rational arcs.
+/*! exports a rational arc.
  */
 template <class Alg_kernel, class Nt_traits>
 std::ostream&
@@ -1833,18 +1804,16 @@ public:
   typedef std::pair<Point_2,Multiplicity>        Intersection_point;
 
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
-  /*!
-   * Default constructor.
+  /*! constructs default.
    */
   _Continuous_rational_arc_2 () :
     Base()
   {}
 
-  /*!
-   * Constrcutor from a base arc.
+  /*! constructors from a base arc.
    */
   _Continuous_rational_arc_2 (const Base& arc) :
     Base (arc)
@@ -1852,16 +1821,14 @@ public:
     CGAL_precondition (arc.is_continuous());
   }
 
-  /*!
-   * Constructor of a whole polynomial curve.
+  /*! constructs a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
   _Continuous_rational_arc_2 (const Rat_vector& pcoeffs) :
     Base (pcoeffs)
   {}
 
-  /*!
-   * Constructor of a polynomial ray, defined by y = p(x), for x_s <= x if the
+  /*! constructs a polynomial ray, defined by y = p(x), for x_s <= x if the
    * ray is directed to the right, or for x_s >= x if it is directed to the
    * left.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
@@ -1874,8 +1841,7 @@ public:
     Base (pcoeffs, x_s, dir_right)
   {}
 
-  /*!
-   * Constructor of a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
+  /*! constructors a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param x_s The x-coordinate of the source point.
    * \param x_t The x-coordinate of the target point.
@@ -1886,8 +1852,7 @@ public:
     Base (pcoeffs, x_s, x_t)
   {}
 
-  /*!
-   * Constructor of a polynomial function, defined by y = p(x)/q(x) for any x.
+  /*! constructs a polynomial function, defined by y = p(x)/q(x) for any x.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
    * \pre The denominator polynomial q(x) does not have any roots.
@@ -1903,8 +1868,7 @@ public:
     }
   }
 
-  /*!
-   * Constructor of a ray of a rational function, defined by y = p(x)/q(x),
+  /*! constructs a ray of a rational function, defined by y = p(x)/q(x),
    * for x_s <= x if the ray is directed to the right, or for x_s >= x if it
    * is directed to the left.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
@@ -1927,8 +1891,7 @@ public:
     }
   }
 
-  /*!
-   * Constructor of a bounded rational arc, defined by y = p(x)/q(x),
+  /*! constructs a bounded rational arc, defined by y = p(x)/q(x),
    * where: x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
@@ -1954,8 +1917,7 @@ public:
   /// \name Constructions of points and curves.
   //@{
 
-  /*!
-   * Compute the intersections with the given arc.
+  /*! computes the intersections with the given arc.
    * \param arc The given intersecting arc.
    * \param oi The output iterator.
    * \return The past-the-end iterator.
@@ -2148,8 +2110,7 @@ public:
     return oi;
   }
 
-  /*!
-   * Split the arc into two at a given split point.
+  /*! splits the arc into two at a given split point.
    * \param p The split point.
    * \param c1 Output: The first resulting arc, lying to the left of p.
    * \param c2 Output: The first resulting arc, lying to the right of p.
@@ -2195,8 +2156,7 @@ public:
     return;
   }
 
-  /*!
-   * Merge the current arc with the given arc.
+  /*! merges the current arc with the given arc.
    * \param arc The arc to merge with.
    * \pre The two arcs are mergeable.
    */
@@ -2346,26 +2306,23 @@ public:
   typedef typename Base::Rat_vector                     Rat_vector;
   typedef typename Base::Polynomial                     Polynomial;
 
-  /// \name Constrcution methods.
+  /// \name Construction methods.
   //@{
 
-  /*!
-   * Default constructor.
+  /*! constructs default.
    */
   _Rational_arc_2 () :
     Base()
   {}
 
-  /*!
-   * Constructor of a whole polynomial curve.
+  /*! constructs a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
   _Rational_arc_2 (const Rat_vector& pcoeffs) :
     Base (pcoeffs)
   {}
 
-  /*!
-   * Constructor of a polynomial ray, defined by y = p(x), for x_s <= x if the
+  /*! constructs a polynomial ray, defined by y = p(x), for x_s <= x if the
    * ray is directed to the right, or for x_s >= x if it is directed to the
    * left.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
@@ -2378,8 +2335,7 @@ public:
     Base (pcoeffs, x_s, dir_right)
   {}
 
-  /*!
-   * Constructor of a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
+  /*! constructs a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param x_s The x-coordinate of the source point.
    * \param x_t The x-coordinate of the target point.
@@ -2390,8 +2346,7 @@ public:
     Base (pcoeffs, x_s, x_t)
   {}
 
-  /*!
-   * Constructor of a polynomial function, defined by y = p(x)/q(x) for any x.
+  /*! constructs a polynomial function, defined by y = p(x)/q(x) for any x.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
    */
@@ -2399,8 +2354,7 @@ public:
     Base (pcoeffs, qcoeffs)
   {}
 
-  /*!
-   * Constructor of a ray of a rational function, defined by y = p(x)/q(x),
+  /*! constructs a ray of a rational function, defined by y = p(x)/q(x),
    * for x_s <= x if the ray is directed to the right, or for x_s >= x if it
    * is directed to the left.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
@@ -2414,8 +2368,7 @@ public:
     Base (pcoeffs, qcoeffs, x_s, dir_right)
   {}
 
-  /*!
-   * Constructor of a bounded rational arc, defined by y = p(x)/q(x),
+  /*! constructs a bounded rational arc, defined by y = p(x)/q(x),
    * where: x_min <= x <= x_max.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
@@ -2429,8 +2382,7 @@ public:
   {}
   //@}
 
-  /*!
-   * Subdivide the given portion of a rational function into continuous
+  /*! subdivides the given portion of a rational function into continuous
    * sub-arcs, splitting it at the roots of the denominator polynomial.
    * \param oi An output iterator of _Continuous_rational_arc_2 objects.
    */
@@ -2475,7 +2427,7 @@ public:
 
 protected:
 
-  /*! Check whether the arc is continuous. */
+  /*! checks whether the arc is continuous. */
   void _check_continuity ()
   {
     if (this->_is_continuous())
@@ -2489,6 +2441,6 @@ protected:
   }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

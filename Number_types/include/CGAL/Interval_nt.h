@@ -49,7 +49,7 @@
 // gcc's __builtin_constant_p does not like arguments with side effects. Be
 // careful not to use this macro for something that the compiler will have
 // trouble eliminating as dead code.
-# define CGAL_CST_TRUE(X) ({ bool _ugly_ = (X); __builtin_constant_p(_ugly_) && _ugly_; })
+# define CGAL_CST_TRUE(X) __extension__ ({ bool _ugly_ = (X); __builtin_constant_p(_ugly_) && _ugly_; })
 #else
 # define CGAL_CST_TRUE(X) false
 #endif
@@ -110,6 +110,8 @@ public:
     bool exact = ((unsigned long long)d == i) || (i <= safe);
     if (!CGAL_CST_TRUE(exact))
 #endif
+      // This requires a suitable rounding mode, which we always set for
+      // arithmetic, but not always for a conversion...
       *this += smallest();
   }
 
@@ -146,12 +148,21 @@ public:
   explicit Interval_nt(__m128d v) : val(v) {}
 #endif
 
-  Interval_nt(double i, double s)
+  // Unchecked version for Lazy_rep in Lazy.h.
+  struct no_check_t {};
+  Interval_nt(double i, double s, no_check_t)
 #ifdef CGAL_USE_SSE2
     : val(_mm_setr_pd(-i, s))
 #else
     : _inf(-i), _sup(s)
 #endif
+  {
+#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
+    CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.
+#endif
+  }
+
+  Interval_nt(double i, double s) : Interval_nt(i, s, no_check_t())
   {
     // Previously it was:
     //    CGAL_assertion_msg(!(i>s);
@@ -159,9 +170,6 @@ public:
     // /fp:strict. If 'i' or 's' is a NaN, that makes a difference.
     CGAL_assertion_msg( (!is_valid(i)) || (!is_valid(s)) || (!(i>s)),
               " Variable used before being initialized (or CGAL bug)");
-#ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
-    CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.
-#endif
   }
 
   Interval_nt(const Pair & p)
@@ -277,9 +285,9 @@ private:
       // the 2 negations and we get wrong rounding.
       typename Interval_nt<>::Internal_protector P;
       CGAL_assertion_msg(-CGAL_IA_MUL(-1.1, 10.1) != CGAL_IA_MUL(1.1, 10.1),
-                         "Wrong rounding: did you forget the  -frounding-math  option if you use GCC (or  -fp-model strict  for Intel)?");
+                         "Wrong rounding: did you forget the  -frounding-math  option if you use GCC (or  -fp-model=strict  for Intel)?");
       CGAL_assertion_msg(-CGAL_IA_DIV(-1., 10) != CGAL_IA_DIV(1., 10),
-                         "Wrong rounding: did you forget the  -frounding-math  option if you use GCC (or  -fp-model strict  for Intel)?");
+                         "Wrong rounding: did you forget the  -frounding-math  option if you use GCC (or  -fp-model=strict  for Intel)?");
     }
   };
 
@@ -1455,6 +1463,7 @@ public:
   typedef double Bound;
   typedef CGAL::Tag_false With_empty_interval;
   typedef CGAL::Tag_true  Is_interval;
+  static constexpr bool is_interval_v = true;
 
  struct Construct :public CGAL::cpp98::binary_function<Bound,Bound,Interval>{
     Interval operator()( const Bound& l,const Bound& r) const {

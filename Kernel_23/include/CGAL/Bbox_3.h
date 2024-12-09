@@ -76,7 +76,8 @@ public:
   Bbox_3  operator+(const Bbox_3& b) const;
   Bbox_3& operator+=(const Bbox_3& b);
 
-  void dilate(int dist);
+  inline void dilate(int dist);
+  inline void scale(double factor);
 };
 
 inline
@@ -200,6 +201,28 @@ Bbox_3::dilate(int dist)
   rep[5] = float_advance(rep[5],dist);
 }
 
+inline
+void
+Bbox_3::scale(double factor)
+{
+  CGAL_precondition(factor > 0);
+
+  if (factor == 1.)
+    return;
+
+  std::array<double, 3> half_width = { (xmax() - xmin()) * 0.5,
+                                       (ymax() - ymin()) * 0.5,
+                                       (zmax() - zmin()) * 0.5 };
+  std::array<double, 3> center = { xmin() + half_width[0],
+                                   ymin() + half_width[1],
+                                   zmin() + half_width[2] };
+  rep[0] = center[0] - factor * half_width[0];
+  rep[1] = center[1] - factor * half_width[1];
+  rep[2] = center[2] - factor * half_width[2];
+  rep[3] = center[0] + factor * half_width[0];
+  rep[4] = center[1] + factor * half_width[1];
+  rep[5] = center[2] + factor * half_width[2];
+}
 
 inline
 bool

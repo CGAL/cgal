@@ -84,10 +84,11 @@ namespace CGAL {
                                                      const Point &b,
                                                      const Point &c)
                             {
-                                internal::covariance_matrix_tetrahedron (a[0], a[1], a[2],
-                                                                         b[0], b[1], b[2],
-                                                                         c[0], c[1], c[2],
-                                                                         _result);
+                                internal::covariance_matrix_tetrahedron(
+                                  FT(a[0]), FT(a[1]), FT(a[2]),
+                                  FT(b[0]), FT(b[1]), FT(b[2]),
+                                  FT(c[0]), FT(c[1]), FT(c[2]),
+                                  _result);
                             }
 
                         const Result_type &result() const
@@ -166,7 +167,7 @@ namespace CGAL {
                       (planes.begin(),
                        planes.end(),
                        P,
-                       boost::make_optional(Point(CGAL::ORIGIN)));
+                       std::make_optional(Point(CGAL::ORIGIN)));
 
                     // apply f to the triangles on the boundary of P
                     for(typename boost::graph_traits<Polyhedron>::face_descriptor fd : faces(P))
@@ -192,31 +193,29 @@ namespace CGAL {
                                   const Sphere &sphere,
                                   FT covariance[6])
             {
-                typename internal::Covariance_accumulator_3<FT> ca;
+                typename internal::Covariance_accumulator_3<double> ca;
                 internal::tessellate_and_intersect(dt, v, sphere, ca);
                 std::copy (ca.result().begin(), ca.result().end(), covariance);
             }
 
         template <class DT, class Sphere>
-            std::array<typename DT::Geom_traits::FT, 6>
+            std::array<double, 6>
             voronoi_covariance_3 (const DT &dt,
                                   typename DT::Vertex_handle v,
                                   const Sphere &sphere)
             {
-                typedef typename DT::Geom_traits::FT FT;
-                typename internal::Covariance_accumulator_3<FT> ca;
+                typename internal::Covariance_accumulator_3<double> ca;
 
                 return internal::tessellate_and_intersect(dt, v, sphere, ca).result();
             }
 
         template <class DT, class Sphere>
-            typename DT::Geom_traits::FT
+            double
             voronoi_volume_3 (const DT &dt,
                               typename DT::Vertex_handle v,
                               const Sphere &sphere)
             {
-                typedef typename DT::Geom_traits::FT FT;
-                typename internal::Volume_accumulator_3<FT> va;
+                typename internal::Volume_accumulator_3<double> va;
 
                 return internal::tessellate_and_intersect(dt, v, sphere, va).result();
             }

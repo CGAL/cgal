@@ -21,8 +21,8 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/repair_polygon_soup.h>
 
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/IO/polygon_mesh_io.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/IO/polygon_soup_io.h>
 
@@ -37,7 +37,8 @@ namespace IO {
 /*!
   \ingroup PMP_IO_grp
 
- * \brief reads the file as a polygon soup, repairs, and orients it as to obtain a polygon mesh.
+ * \brief reads the file as a polygon soup, repairs (using `repair_polygon_soup()`),
+ * and orients it (using `orient_polygon_soup()`) as to obtain a polygon mesh.
  *
  * Supported file formats are the following:
  * - \ref IOStreamOFF (`.off`)
@@ -48,6 +49,9 @@ namespace IO {
  * - \ref IOStreamVTK (`.vtp`)
  *
  * The format is detected from the filename extension (letter case is not important).
+ *
+ * If repairing and orientation are known to not be required, one can use
+ * \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink directly.
  *
  * \tparam PolygonMesh a model of `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -82,12 +86,12 @@ namespace IO {
  *
  * \return `true` if the reading, repairing, and orientation operations were successful, `false` otherwise.
  *
- * \sa \link PkgBGLIOFct `CGAL::IO::write_polygon_mesh()` \endlink
+ * \sa \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink
  */
-template <typename PolygonMesh, typename NamedParameters>
+template <typename PolygonMesh, typename NamedParameters = parameters::Default_named_parameters>
 bool read_polygon_mesh(const std::string& fname,
                        PolygonMesh& g,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -101,7 +105,7 @@ bool read_polygon_mesh(const std::string& fname,
 
   std::vector<Point> points;
   std::vector<std::vector<std::size_t> > faces;
-  if(!CGAL::IO::read_polygon_soup(fname, points, faces))
+  if(!CGAL::IO::read_polygon_soup(fname, points, faces, CGAL::parameters::verbose(verbose)))
   {
     if(verbose)
       std::cerr << "Warning: cannot read polygon soup" << std::endl;
@@ -125,20 +129,10 @@ bool read_polygon_mesh(const std::string& fname,
     return false;
   }
 
-  PMP::polygon_soup_to_polygon_mesh(points, faces, g, parameters::all_default(), np);
+  PMP::polygon_soup_to_polygon_mesh(points, faces, g, parameters::default_values(), np);
 
   return true;
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename PolygonMesh>
-bool read_polygon_mesh(const std::string& fname, PolygonMesh& g)
-{
-  return CGAL::Polygon_mesh_processing::IO::read_polygon_mesh(fname, g, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 } // namespace Polygon_mesh_processing

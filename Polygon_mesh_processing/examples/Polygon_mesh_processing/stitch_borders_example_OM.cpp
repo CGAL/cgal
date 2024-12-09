@@ -7,11 +7,11 @@
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 
 #include <iostream>
-#include <fstream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-
 typedef OpenMesh::PolyMesh_ArrayKernelT< > Mesh;
+
 int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/quads_to_stitch.off");

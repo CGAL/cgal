@@ -10,6 +10,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -18,7 +19,7 @@ void test(const int d, const string & type, const int N)
 {
     // we must write 'typename' below, because we are in a template-function,
     // so the parser has no way to know that DC contains sub-types, before
-    // instanciating the function.
+    // instantiating the function.
     typedef typename DC::Full_cell_handle Full_cell_handle;
     typedef typename DC::Face Face;
     typedef typename DC::Point Point;
@@ -58,7 +59,7 @@ void test(const int d, const string & type, const int N)
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << dt.number_of_full_cells();
     cerr << "\nThe triangulation has current dimension " << dt.current_dimension();
-    CGAL_assertion( dt.number_of_full_cells() == nbis+nbfs);
+    assert( dt.number_of_full_cells() == nbis+nbfs);
 
     cerr << "\nTraversing finite vertices... ";
     size_t nbfv(0);

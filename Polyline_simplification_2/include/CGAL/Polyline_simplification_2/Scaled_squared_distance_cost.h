@@ -27,7 +27,7 @@ namespace Polyline_simplification_2
 
 /// This class is a cost function which calculates the cost as a scaled variant of the square of the distance between the original and simplified polylines.
 ///
-/// \cgalModels  `PolylineSimplificationCostFunction`
+/// \cgalModels{ PolylineSimplificationCostFunction}
 class Scaled_squared_distance_cost
 {
 
@@ -44,7 +44,7 @@ public:
   /// \tparam CDT  must be `CGAL::Constrained_Delaunay_triangulation_2` with a vertex type that
   /// is model of  `PolylineSimplificationVertexBase_2`.
     template<class CDT>
-    boost::optional<typename CDT::Geom_traits::FT>
+    std::optional<typename CDT::Geom_traits::FT>
     operator()(const Constrained_triangulation_plus_2<CDT>& pct
                , typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator vicq) const
   {
@@ -61,8 +61,8 @@ public:
     Construct_segment        construct_segment        = pct.geom_traits().construct_segment_2_object() ;
     typedef typename Constrained_triangulation_plus_2<CDT>::Vertices_in_constraint_iterator Vertices_in_constraint_iterator;
 
-    Vertices_in_constraint_iterator vicp = boost::prior(vicq);
-    Vertices_in_constraint_iterator vicr = boost::next(vicq);
+    Vertices_in_constraint_iterator vicp = std::prev(vicq);
+    Vertices_in_constraint_iterator vicr = std::next(vicq);
 
     Point const& lP = (*vicp)->point();
     Point const& lR = (*vicr)->point();
@@ -94,8 +94,8 @@ public:
     }while(vc != done);
 
     return d2_uninitialized ?
-      boost::optional<FT>(boost::none) :
-      boost::optional<FT>(d1 / d2);
+      std::optional<FT>(std::nullopt) :
+      std::optional<FT>(d1 / d2);
   }
 
 };

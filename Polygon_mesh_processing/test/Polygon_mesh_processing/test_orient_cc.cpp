@@ -1,10 +1,12 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Timer.h>
+
 #include <iostream>
 #include <fstream>
 
@@ -43,8 +45,8 @@ bool test_orientation(const TriangleMesh& tm, bool is_positive, const NamedParam
 
   // set the connected component id of each face
   std::size_t nb_cc = PMP::connected_components(tm,
-                                           CGAL::bind_property_maps(fid_map,CGAL::make_property_map(face_cc)),
-                                           PMP::parameters::face_index_map(fid_map));
+                                           CGAL::make_compose_property_map(fid_map,CGAL::make_property_map(face_cc)),
+                                           CGAL::parameters::face_index_map(fid_map));
 
   // extract a vertex with max z coordinate for each connected component
   std::vector<vertex_descriptor> xtrm_vertices(nb_cc, Graph_traits::null_vertex());
@@ -95,24 +97,24 @@ int main()
   volume = sm1;
   volume_copy = volume;
   PMP::orient(sm1);
-  if(!test_orientation(sm1, true, PMP::parameters::all_default()))
+  if(!test_orientation(sm1, true, CGAL::parameters::default_values()))
     return 1;
   typedef boost::property_map<SMesh, CGAL::vertex_point_t>::type Ppmap;
   typedef boost::property_map<SMesh, CGAL::face_index_t>::type Fidmap;
   Ppmap vpmap2 = get(CGAL::vertex_point, sm2);
   Fidmap fidmap2 = get(CGAL::face_index, sm2);
 
-  PMP::orient(sm2, PMP::parameters::vertex_point_map(vpmap2)
-                                   .face_index_map(fidmap2));
-  if(!test_orientation(sm2, true, PMP::parameters::vertex_point_map(vpmap2)
-                       .face_index_map(fidmap2)))
+  PMP::orient(sm2, CGAL::parameters::vertex_point_map(vpmap2)
+                                    .face_index_map(fidmap2));
+  if(!test_orientation(sm2, true, CGAL::parameters::vertex_point_map(vpmap2)
+                                                   .face_index_map(fidmap2)))
   {
     std::cerr << "ERROR for test1\n";
     return 1;
   }
 
-  PMP::orient(sm3, PMP::parameters::outward_orientation(false));
-  if(!test_orientation(sm3, false, PMP::parameters::all_default()))
+  PMP::orient(sm3, CGAL::parameters::outward_orientation(false));
+  if(!test_orientation(sm3, false, CGAL::parameters::default_values()))
   {
     std::cerr << "ERROR for test2\n";
     return 1;
@@ -121,11 +123,11 @@ int main()
   Ppmap vpmap4 = get(CGAL::vertex_point, sm4);
   Fidmap fidmap4 = get(CGAL::face_index, sm4);
 
-  PMP::orient(sm4, PMP::parameters::vertex_point_map(vpmap4)
-                                   .face_index_map(fidmap4)
-                                   .outward_orientation(false));
-  if(!test_orientation(sm4, false, PMP::parameters::vertex_point_map(vpmap4)
-                       .face_index_map(fidmap4)))
+  PMP::orient(sm4, CGAL::parameters::vertex_point_map(vpmap4)
+                                    .face_index_map(fidmap4)
+                                    .outward_orientation(false));
+  if(!test_orientation(sm4, false, CGAL::parameters::vertex_point_map(vpmap4)
+                                        .face_index_map(fidmap4)))
   {
     std::cerr << "ERROR for test3\n";
     return 1;

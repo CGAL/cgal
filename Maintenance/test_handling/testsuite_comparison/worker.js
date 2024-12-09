@@ -34,7 +34,7 @@ onmessage=function(e){
   }
 
   for(i=1; i<myArray.length; i++){
-    postMessage(["namesTable","<tr><td>"+i+": </td><td>"+ myArray[i][0]+"</td></tr>"]);
+    postMessage(["namesTable","<tr><td>"+i+"</td><td>"+ myArray[i][0]+"</td></tr>"]);
   }
   postMessage(["namesTable", "</table>"]);
 
@@ -45,7 +45,8 @@ onmessage=function(e){
   }
   postMessage(["testTable", "</tr>"]);
   for (var j=2; j<myArray[0].length; j++) {
-    postMessage(["testTable", "<tr><td style='width: 25px;'>"+ myArray[0][j]+":  </td>"]);
+    var p =  myArray[0][j];
+    postMessage(["testTable", "<tr><td style='width: 25px;'><a class=\"package_name\" href=\"#"+p+"\" name=\"" + p + "\">" + p + "</a></td>"]);
     for(i=1; i<myArray.length; i++)
     {
       var sp = myArray[i][j].split("||");

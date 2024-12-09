@@ -27,13 +27,13 @@ namespace Mesh_2 {
 /**
  * This class is the base for the first level of Mesh_2: the edge
  * conforming level. It \e does handle clusters.
- * To handle clusters, an helping \c Clusters object is used.
+ * To handle clusters, an helping `Clusters` object is used.
  *
  * \param Tr is the type of triangulation on which the level acts.
  * \param Is_locally_conform defines the locally conform criterion: Gabriel
  *        or Delaunay. It defaults to the Garbriel criterion.
  * \param Container is the type of container. It defaults to a filtered
- *        queue of \c Vertex_handle pair (see \c Filtered_queue_container).
+ *        queue of `Vertex_handle` pair (see `Filtered_queue_container`).
  */
 template <
   class Tr,
@@ -82,7 +82,7 @@ public:
   }
 
 
-  /** \name FUNCTIONS NEEDED BY Mesher_level OVERIDDEN BY THIS CLASS. */
+  /** \name FUNCTIONS NEEDED BY Mesher_level OVERRIDDEN BY THIS CLASS. */
 
   Point refinement_point_impl(const Edge& edge)
   {
@@ -104,7 +104,7 @@ public:
     vb_has_a_cluster = false;
     cluster_splitted = false;
 
-    // true bellow to remove ca and cb because they will
+    // true below to remove ca and cb because they will
     // be restored by update_cluster(...).
     if( clusters.get_cluster(this->va,this->vb,ca,ca_it) ) {
       if( clusters.get_cluster(this->vb,this->va,cb,cb_it) )

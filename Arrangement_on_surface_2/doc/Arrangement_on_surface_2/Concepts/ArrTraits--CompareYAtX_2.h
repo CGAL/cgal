@@ -3,9 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableBinaryFunction
+ * \cgalRefines{AdaptableBinaryFunction}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Compare_y_at_x_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::Compare_y_at_x_2}
+ * \cgalHasModelsEnd
  */
 class CompareYAtX_2 {
 public:

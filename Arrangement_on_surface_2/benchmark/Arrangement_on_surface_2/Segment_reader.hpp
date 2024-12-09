@@ -24,7 +24,7 @@ public:
   typedef typename Traits::Point_2              Point_2;
   typedef typename Traits::Curve_2              Curve_2;
 
-  /*! A visitor of the parser that reads segements */
+  /*! A visitor of the parser that reads segments */
   template <class OutputIterator>
   class Segment_parser_visitor :
     public Point_parser_visitor<Kernel, Point_2, Number_type> {
@@ -71,7 +71,7 @@ public:
   /*! Read the segments from the input file
    * \param filename the name of the input file
    * \param curves_out the iterator of the container of the read curves
-   * \param bbox the counding box of the read curves
+   * \param bbox the bounding box of the read curves
    */
   template<class OutputIterator>
   int read_data(const char * filename, OutputIterator curves_out,

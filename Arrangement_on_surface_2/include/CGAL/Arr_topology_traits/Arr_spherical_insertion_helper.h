@@ -78,10 +78,10 @@ protected:
   Halfedge_handle m_spherical_halfedge;
 
 public:
-  /*! Constructor */
+  /*! constructs */
   Arr_spherical_insertion_helper(Arrangement_2 *arr) : Base(arr) {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_spherical_insertion_helper() {}
 
   /// \name Notification functions.
@@ -104,7 +104,7 @@ public:
   /*! A notification invoked when a new subcurve is created. */
   virtual void add_subcurve(Halfedge_handle he, Subcurve* sc);
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   virtual Face_handle top_face() const;
 
 private:
@@ -143,7 +143,7 @@ before_handle_event(Event* event)
  */
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 void Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::
-before_handle_event_imp(Event* event, Arr_all_sides_oblivious_tag)
+before_handle_event_imp(Event* /* event */, Arr_all_sides_oblivious_tag)
 { return; }
 
 /* A notification invoked before the surface-sweep starts handling a given
@@ -163,7 +163,7 @@ before_handle_event_imp(Event* event, Arr_not_all_sides_oblivious_tag)
   if (event->is_isolated()) return;
 
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
-    // Process bootom contraction boundary:
+    // Process bottom contraction boundary:
     // The event has only one right curve, as there is exactly one curve
     // incident to an event with boundary conditions.
     CGAL_assertion((event->number_of_left_curves() == 0) &&
@@ -256,7 +256,7 @@ add_subcurve(Halfedge_handle he, Subcurve* /* sc */)
   }
 }
 
-/*! Get the current top face. */
+/*! obtains the current top face. */
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 typename Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::Face_handle
 Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::top_face() const

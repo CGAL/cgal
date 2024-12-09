@@ -19,6 +19,8 @@
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_item_rendering_helper.h>
 
+#include <memory> // for std::unique_ptr
+
 using namespace CGAL::Three;
 
 #ifdef demo_framework_EXPORTS
@@ -248,7 +250,7 @@ public:
   //!
 private:
   friend struct D;
-  mutable D* d;
+  std::unique_ptr<D> d;
 }; //end of class Triangle_container
 
 }

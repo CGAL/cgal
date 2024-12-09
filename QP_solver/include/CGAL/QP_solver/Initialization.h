@@ -13,6 +13,11 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
+#ifndef CGAL_QP_SOLVER_INITIALIZATION_H
+#define CGAL_QP_SOLVER_INITIALIZATION_H
+
+#include <CGAL/license/QP_solver.h>
+
 #include<CGAL/QP_functions.h>
 #include<CGAL/NT_converter.h>
 
@@ -182,7 +187,7 @@ init_x_O_v_i()
   x_O_v_i.reserve(qp_n);
   x_O_v_i.resize (qp_n);
 
-  // constants for comparisions:
+  // constants for comparisons:
   const L_entry l0(0);
   const U_entry u0(0);
 
@@ -372,7 +377,7 @@ init_basis()
     // Note: we maintain the information about the special artificial column in
     // the variable art_s_i and the vector s_art; in addition, however, we also
     // add a special "fake" column to art_A. This "fake" column has (in
-    // constrast to the special artificial column) only one nonzero entry,
+    // contrast to the special artificial column) only one nonzero entry,
     // namely a +-1 for the most infeasible row (see (C1) above).
 
     // add "fake" column to art_A:
@@ -578,7 +583,7 @@ init_solution()
   if (art_s_i > 0)
     minus_c_B[art_A.size()-1] *= ET(qp_n+qp_m); // Note: the idea here is to
                                                 // give more weight to the
-                                                // special artifical variable
+                                                // special artificial variable
                                                 // so that it gets removed very
                                                 // early, - todo kf: why?
 
@@ -664,3 +669,5 @@ init_additional_data_members()
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_QP_SOLVER_INITIALIZATION_H

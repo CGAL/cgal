@@ -35,7 +35,7 @@ degenerate hull may also be possible.
 \cgalPkgDependsOn{The dynamic algorithms depend on \ref PkgTriangulation3 "3D Triangulations".}
 \cgalPkgBib{cgal:hs-ch3}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
@@ -52,13 +52,11 @@ points in is strongly convex or not.  This chapter describes the functions
 available for three dimensions.
 
 \cgalCRPSection{Assertions}
-The assertion flags for the convex hull and extreme point algorithms
-use `CH` in their names (<I>e.g.</I>, `CGAL_CH_NO_POSTCONDITIONS`).
 For the convex hull algorithms, the postcondition
 check tests only convexity (if not disabled), but not containment of the
 input points in the polygon or polyhedron defined by the output points.
 The latter is considered an expensive checking and can be enabled by
-defining `CGAL_CH_CHECK_EXPENSIVE`.
+defining `CGAL_CHECK_EXPENSIVE`.
 
 \cgalClassifedRefPages
 

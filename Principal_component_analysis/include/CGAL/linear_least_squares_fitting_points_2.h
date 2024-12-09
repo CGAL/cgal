@@ -69,9 +69,9 @@ linear_least_squares_fitting_2(InputIterator first,
   {
     const Point& p = *it;
     Vector d = p - c; // centered data point
-    covariance[0] += d.x() * d.x();
+    covariance[0] += CGAL::square(d.x());
     covariance[1] += d.x() * d.y();
-    covariance[2] += d.y() * d.y();
+    covariance[2] += CGAL::square(d.y());
   }
 
   // solve for eigenvalues and eigenvectors.

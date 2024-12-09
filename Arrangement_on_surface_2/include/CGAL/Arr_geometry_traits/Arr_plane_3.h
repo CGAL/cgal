@@ -55,13 +55,13 @@ private:
   FT m_c;
 
 public:
-  /*! Default Constructor */
+  /*! constructs default */
   Arr_plane_3() : m_a(0), m_b(0), m_c(0) {}
 
-  /*! Constructor */
+  /*! constructs */
   Arr_plane_3(int a, int b, int c) : m_a(a), m_b(b), m_c(c) {}
 
-  /*! Constructor */
+  /*! constructs */
   Arr_plane_3(typename Kernel::Plane_3 p)
   {
     CGAL_precondition_code(Kernel kernel;);
@@ -71,7 +71,7 @@ public:
     m_a = p.a(); m_b = p.b(); m_c = p.c() ;
   }
 
-  /*! Constructor */
+  /*! constructs */
   Arr_plane_3(const Point_3 & p, const Point_3 & r)
   {
     FT prx = r.x() - p.x();
@@ -82,16 +82,16 @@ public:
     m_c = r.x() * pry - prx * r.y();
   }
 
-  /*! Obtain the x coefficient */
+  /*! obtains the x coefficient */
   const FT & a() const { return m_a; }
 
-  /*! Obtain the y coefficient */
+  /*! obtains the y coefficient */
   const FT & b() const { return m_b; }
 
-  /*! Obtain the z coefficient */
+  /*! obtains the z coefficient */
   const FT & c() const { return m_c; }
 
-  /*! Obtain the i-th coefficient of the plane
+  /*! obtains the i-th coefficient of the plane
    * \param i the index of the coefficient
    * \return the i-th coefficient
    */
@@ -108,14 +108,14 @@ public:
             (c() == plane.c()));
   }
 
-  /*! Convert to kernel's plane */
+  /*! converts to kernel's plane */
   operator typename Kernel::Plane_3 () const
   {
     Kernel kernel;
     return kernel.construct_plane_3_object() (m_a, m_b, m_c, 0);
   }
 
-  /*! Compute the image point of the projection of p under an affine
+  /*! computes the image point of the projection of p under an affine
    * transformation, which maps the plane onto the xy-plane, with the
    * z-coordinate removed.
    * \param p the point
@@ -139,7 +139,7 @@ public:
     return Point_2(x, y);
   }
 
-  /*! Compute a 3d point p_3 coincident to the plane, such that the image point
+  /*! computes a 3d point p_3 coincident to the plane, such that the image point
    * of the projection of p_3 under an affine transformation, which maps the
    * plane onto the a given axis-parallel plane is a given 2d point.
    * \param p_2 the image point
@@ -183,7 +183,7 @@ public:
     return p_3;
   }
 
-  /*! Determine the relative position of a point and the plane
+  /*! determines the relative position of a point and the plane
    * \param p the point
    * \return ON_ORIENTED_BOUNDARY, ON_POSITIVE_SIDE, or ON_NEGATIVE_SIDE,
    * determined by the position of p relative to the oriented plane.
@@ -194,14 +194,14 @@ public:
   }
 };
 
-/*! Intersect 2 planes
+/*! intersects 2 planes
  * \param plane1 the first plane
  * \param plane2 the second plane
  * \return a variant that represents the intersection. It wraps a line of
  * intersection or a plane in case plane1 and plane2 coincide.
  */
 template <typname Kernel>
-boost::variant<typename Kernel::Line_3, Arr_plane_3<Kernel> >
+std::variant<typename Kernel::Line_3, Arr_plane_3<Kernel> >
 intersect(const Arr_plane_3<Kernel> & plane1,
                        const Arr_plane_3<Kernel> & plane2)
 {
@@ -209,9 +209,9 @@ intersect(const Arr_plane_3<Kernel> & plane1,
   typedef typename Kernel::Direction_3  Direction_3;
   typedef typename Kernel::Line_3       Line_3;
   typedef typename Kernel::FT           FT;
-  typedef boost::variant<Line_3, Arr_plane_3<Kernel> >  Intersection_result;
+  typedef std::variant<Line_3, Arr_plane_3<Kernel> >  Intersection_result;
 
-  // We know that the plane goes throgh the origin
+  // We know that the plane goes through the origin
   const FT& a1 = plane1.a();
   const FT& b1 = plane1.b();
   const FT& c1 = plane1.c();
@@ -244,7 +244,7 @@ intersect(const Arr_plane_3<Kernel> & plane1,
   return Intersection_result(plane1);
 }
 
-/*! Compute the image point of the projection of p under an affine
+/*! computes the image point of the projection of p under an affine
  * transformation, which maps the plane onto the xy-plane, with the
  * z-coordinate removed.
  * \param plane the plane
@@ -259,7 +259,7 @@ construct_projected_xy_point(const Arr_plane_3<Kernel> & plane,
   return plane.to_2d(p);
 }
 
-/*! Export a plane to an output stream
+/*! exports a plane to an output stream
  * \param os the output stream
  * \param plane the plane
  * \return the output stream
@@ -272,6 +272,6 @@ inline std::ostream & operator<<(std::ostream & os,
   return os;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

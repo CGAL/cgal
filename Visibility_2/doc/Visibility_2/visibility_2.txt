@@ -74,9 +74,9 @@ The following models of the `Visibility_2` concept are provided:
 <CENTER>
 Class                                 |        Function                                     |  Preprocessing                |  Query                            |Algorithm
 -------------------------------|-----------------------------------------------------|-------------------------------|-----------------------------------|-------------------------------
- `Simple_polygon_visibility_2`       | simple polygons                  |       No        |\f$ O(n) \f$ time and \f$ O(n) \f$ space  | B. Joe and R. B. Simpson \cite bjrb-clvpa-87
- `Rotational_sweep_visibility_2`        |  polygons with holes | No                     | \f$ O(n\log n) \f$ time and \f$ O(n) \f$ space |  T. Asano \cite ta-aeafvpprh-85
-`Triangular_expansion_visibility_2`     |  polygons with  holes |  \f$ O(n) \f$ time and \f$ O(n) \f$ space | \f$ O(nh) \f$ time and \f$ O(n) \f$ space.   | Bungiu et al.  \cite ecvp-bhhhk-14
+ `Simple_polygon_visibility_2`       | simple polygons                  |       No        |\cgalBigO{n}$ time and \cgalBigO{n}$ space  | B. Joe and R. B. Simpson \cite bjrb-clvpa-87
+ `Rotational_sweep_visibility_2`        |  polygons with holes | No                     | \cgalBigO{n\log n}$ time and \cgalBigO{n}$ space |  T. Asano \cite ta-aeafvpprh-85
+`Triangular_expansion_visibility_2`     |  polygons with  holes |  \cgalBigO{n}$ time and \cgalBigO{n}$ space | \cgalBigO{nh}$ time and \cgalBigO{n}$ space.   | Bungiu et al.  \cite ecvp-bhhhk-14
 </CENTER>
 
 Where \f$ n \f$ denotes the number of vertices of \f$ f \f$ and \f$ h \f$ the number of holes+1.
@@ -158,4 +158,4 @@ During Google Summer of Code 2014 Ning Xu fixed a bug in `CGAL::Simple_polygon_v
 
 }
 
-// `Preprocessed_rotational_sweep_visibility_2` | polygons with holes    | \f$ O(n^2) \f$ time and \f$ O(n^2) \f$ space | \f$ O(n) \f$ time and \f$ O(n) \f$ space   | Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85
+// `Preprocessed_rotational_sweep_visibility_2` | polygons with holes    | \cgalBigO{n^2}$ time and \cgalBigO{n^2}$ space | \cgalBigO{n}$ time and \cgalBigO{n}$ space   | Takao Asano, Tetsuo Asano  etc \cite aaghi-vpsesp-85

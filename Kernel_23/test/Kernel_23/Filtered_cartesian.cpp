@@ -14,6 +14,9 @@
 //
 // Author(s)     : Sylvain Pion
 
+// This defines removes the operator/ from CGAL::Mpzf to check that functors not using
+// the tag `Needs_FT<>` really only need a RT (ring type) without division.
+#define CGAL_NO_MPZF_DIVISION_OPERATOR 1
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/Filtered_kernel.h>
@@ -71,8 +74,18 @@ main()
 
   std::cout << "Testing with Epeck:\n";
   test<Cls>();
-  std::cout << "Testing with Epick:\n";
-  test<CGAL::Epick>();
+  std::cout << "Testing with Double_precision_epick:\n";
+  test<CGAL::Double_precision_epick>();
+
+#  if defined(BOOST_MSVC)
+#    pragma warning(push)
+#    pragma warning(disable: 4244)
+#  endif
+  std::cout << "Testing with Simple_precision_epick:\n";
+  test<CGAL::Single_precision_epick>();
+#  if defined(BOOST_MSVC)
+#    pragma warning(pop)
+#  endif
 
   return 0;
 }

@@ -1,14 +1,17 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
-#include <fstream>
-#include <map>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>
-#include <CGAL/Polygon_mesh_processing/remesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <fstream>
+#include <map>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -45,7 +48,7 @@ int main()
     PMP::isotropic_remeshing(faces(p),
                              0.02,
                              p,
-                             PMP::parameters::face_index_map(boost::make_assoc_property_map(fim)));
+                             CGAL::parameters::face_index_map(boost::make_assoc_property_map(fim)));
     std::ofstream out("p.off");
     out << p << std::endl;
   }

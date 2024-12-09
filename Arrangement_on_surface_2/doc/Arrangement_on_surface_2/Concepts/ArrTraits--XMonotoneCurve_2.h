@@ -4,11 +4,11 @@ namespace ArrTraits {
  *
  * Represents a planar (weakly) \f$x\f$-monotone curve.
  *
- * \cgalRefines DefaultConstructible
- * \cgalRefines CopyConstructible
- * \cgalRefines Assignable
+ * \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
  *
- * \cgalHasModel ArrangementBasicTraits_2::X_monotone_curve_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::X_monotone_curve_2}
+ * \cgalHasModelsEnd
  */
 class XMonotoneCurve_2 {
 public:

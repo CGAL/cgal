@@ -3,8 +3,6 @@
 #include <CGAL/Delaunay_triangulation_on_sphere_2.h>
 #include <CGAL/Projection_on_sphere_traits_3.h>
 
-#include <boost/iterator/transform_iterator.hpp>
-
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          K;
 
 typedef CGAL::Projection_on_sphere_traits_3<K>                       Traits;
@@ -36,7 +34,7 @@ int main(int, char**)
     std::cout << "The triangulation now has dimension: " << dtos.dimension() << " and\n";
     std::cout << dtos.number_of_vertices() << " vertices" << std::endl;
     std::cout << dtos.number_of_edges() << " edges" << std::endl;
-    std::cout << dtos.number_of_faces() << " solid faces" << std::endl;
+    std::cout << dtos.number_of_solid_faces() << " solid faces" << std::endl;
     std::cout << dtos.number_of_ghost_faces() << " ghost faces" << std::endl;
   }
 

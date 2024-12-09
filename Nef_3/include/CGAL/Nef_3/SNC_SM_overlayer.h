@@ -23,7 +23,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #include <CGAL/Nef_S2/Sphere_geometry.h>
 #include <CGAL/Nef_S2/SM_decorator.h>

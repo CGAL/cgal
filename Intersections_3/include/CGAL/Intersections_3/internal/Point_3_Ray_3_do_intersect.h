@@ -19,7 +19,7 @@ namespace internal {
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Point_3& pt,
              const typename K::Ray_3& ray,
              const K& k)
@@ -29,7 +29,7 @@ do_intersect(const typename K::Point_3& pt,
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Ray_3& ray,
              const typename K::Point_3& pt,
              const K& k)
@@ -39,7 +39,7 @@ do_intersect(const typename K::Ray_3& ray,
 
 
 template <class K>
-bool
+typename K::Boolean
 Ray_3_has_on_collinear_Point_3(const typename K::Ray_3& r,
                                const typename K::Point_3& p,
                                const K& k)

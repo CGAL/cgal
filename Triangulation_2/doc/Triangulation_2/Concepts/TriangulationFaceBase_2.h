@@ -14,9 +14,11 @@ currently the triangulations do not store any geometric information in the faces
 and, thus this concept is just equal to `TriangulationDSFaceBase_2`
 and only provided for symmetry with the vertex case.
 
-\cgalRefines `TriangulationDSFaceBase_2`
+\cgalRefines{TriangulationDSFaceBase_2}
 
-\cgalHasModel `CGAL::Triangulation_face_base_2<Traits>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_face_base_2<Traits>}
+\cgalHasModelsEnd
 
 \sa `TriangulationVertexBase_2`
 \sa `CGAL::Triangulation_face_base_2<Traits>`

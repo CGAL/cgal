@@ -19,11 +19,11 @@
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/compute_average_spacing.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/algorithm.h>
 #include <iterator>
@@ -105,7 +105,7 @@ compute_update_sample_point(
   const std::vector<typename Kernel::FT>& sample_densities ///<
 )
 {
-  CGAL_point_set_processing_precondition(radius > 0);
+  CGAL_precondition(radius > 0);
   bool is_original_densities_empty = original_densities.empty();
   bool is_sample_densities_empty = sample_densities.empty();
 
@@ -231,7 +231,7 @@ compute_density_weight_for_original_point(
   const typename Kernel::FT radius       ///< neighbor radius square
 )
 {
-  CGAL_point_set_processing_precondition(radius > 0);
+  CGAL_precondition(radius > 0);
 
   // basic geometric types
   typedef typename Kernel::Point_3                         Point;
@@ -398,8 +398,7 @@ compute_density_weight_for_sample_point(
        \cgalParamDescription{If `true`, an optional preprocessing is applied, which will give
                              better results if the distribution of the input points is highly non-uniform.}
        \cgalParamType{Boolean}
-       \cgalParamDefault{`35`}
-       \cgalParamExtra{More iterations give a more regular result but increase the runtime}
+       \cgalParamDefault{`false`}
      \cgalParamNEnd
 
      \cgalParamNBegin{callback}
@@ -429,22 +428,23 @@ compute_density_weight_for_sample_point(
 template <typename ConcurrencyTag,
           typename PointRange,
           typename OutputIterator,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 OutputIterator
 wlop_simplify_and_regularize_point_set(
   PointRange& points,
   OutputIterator output,
-  const NamedParameters& np
+  const NamedParameters& np = parameters::default_values()
 )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // basic geometric types
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef CGAL::Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
 
-  PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
+  PointMap point_map = NP_helper::get_point_map(points, np);
   double select_percentage = choose_parameter(get_parameter(np, internal_np::select_percentage), 5.);
   double radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius), -1);
   unsigned int iter_number = choose_parameter(get_parameter(np, internal_np::number_of_iterations), 35);
@@ -464,9 +464,9 @@ wlop_simplify_and_regularize_point_set(
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
-  CGAL_point_set_processing_precondition(select_percentage >= 0
-                                         && select_percentage <= 100);
+  CGAL_precondition(points.begin() != points.end());
+  CGAL_precondition(select_percentage >= 0
+                    && select_percentage <= 100);
 
   // Random shuffle
   CGAL::cpp98::random_shuffle (points.begin(), points.end());
@@ -506,7 +506,7 @@ wlop_simplify_and_regularize_point_set(
 #endif
   }
 
-  CGAL_point_set_processing_precondition(radius > 0);
+  CGAL_precondition(radius > 0);
 
   // Initiate a KD-tree search for original points
   std::vector<Kd_tree_element> original_treeElements;
@@ -524,6 +524,7 @@ wlop_simplify_and_regularize_point_set(
 
   if (require_uniform_sampling)//default value is false
   {
+    original_density_weights.reserve(number_of_original);
     //todo: this part could also be parallelized if needed
     for (it = first_original_iter, i = 0; it != points.end() ; ++it, ++i)
     {
@@ -551,6 +552,7 @@ wlop_simplify_and_regularize_point_set(
 
     // Compute sample density weight for sample points
     std::vector<FT> sample_density_weights;
+    sample_density_weights.reserve(number_of_sample);
 
     for (sample_iter = sample_points.begin();
          sample_iter != sample_points.end(); ++sample_iter)
@@ -601,9 +603,7 @@ wlop_simplify_and_regularize_point_set(
     if (interrupted)
       return output;
 
-    sample_iter = sample_points.begin();
-    for (std::size_t i = 0; i < sample_points.size(); ++ i)
-      sample_points[i] = update_sample_points[i];
+    sample_points.swap(update_sample_points);
   }
 
   // final output
@@ -611,22 +611,6 @@ wlop_simplify_and_regularize_point_set(
 
   return output;
 }
-
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename ConcurrencyTag,
-          typename PointRange,
-          typename OutputIterator>
-OutputIterator
-wlop_simplify_and_regularize_point_set(
-  PointRange& points,
-  OutputIterator output)       ///< output iterator where output points are put.
-{
-  return wlop_simplify_and_regularize_point_set<ConcurrencyTag>
-    (points, output, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
 
 } //namespace CGAL
 

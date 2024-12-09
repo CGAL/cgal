@@ -1,18 +1,10 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Convex_hull_3_Tests)
 
 find_package(CGAL REQUIRED)
-
-find_package(OpenMesh QUIET)
-
-if(OpenMesh_FOUND)
-  include(UseOpenMesh)
-else()
-  message(STATUS "Examples that use OpenMesh will not be compiled.")
-endif()
 
 include_directories(BEFORE "include")
 

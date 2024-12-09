@@ -52,13 +52,13 @@ intersection(const typename K::Tetrahedron_3& tet,
     } };
 
   // description of faces of the bbox
-  constexpr std::array<int, 12> face_indices
+  static constexpr std::array<int, 12> face_indices
     { { 0, 1, 2,
         0, 1, 3,
         1, 2, 3,
         2, 0, 3 } };
 
-  constexpr std::array<int, 12> edge_indices
+  static constexpr std::array<int, 12> edge_indices
     { { 0,  1,  2,
         0,  3,  5,
         1,  4,  3,
@@ -164,7 +164,7 @@ intersection(const typename K::Tetrahedron_3& tet,
   }
 
   if (all_in || all_out)
-    return boost::none;
+    return std::nullopt;
   if (start_id == -1)
     return { result_type(corners[solo_id]) };
 

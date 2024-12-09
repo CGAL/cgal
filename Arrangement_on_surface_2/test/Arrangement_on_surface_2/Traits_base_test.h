@@ -34,7 +34,7 @@
  * that throws a special exceptions, which indicates whether the violation was
  * expected or not unexpected. Depending on abort_on_error the right exceptions
  * is thrown. the exceptions are caught in perform function.
- * so basiclly we have 4 cases:
+ * so basically we have 4 cases:
  *
  *                          | violation occurred       | violation did
  *                          |                          |  not occurred
@@ -136,8 +136,8 @@ protected:
     typename Traits::Equal_2 equal = this->m_geom_traits.equal_2_object();
     if (equal(exp_answer, real_answer)) return true;
 
-    std::string exp_answer_str = boost::lexical_cast<std::string>(exp_answer);
-    std::string real_answer_str = boost::lexical_cast<std::string>(real_answer);
+    std::string exp_answer_str  = boost::lexical_cast<std::string>( CGAL::IO::oformat(exp_answer) );
+    std::string real_answer_str = boost::lexical_cast<std::string>( CGAL::IO::oformat(real_answer) );
     this->print_answer(exp_answer_str, real_answer_str, "x-monotone curve");
     return false;
   }
@@ -228,7 +228,7 @@ void Traits_base_test<Geom_traits_T>::clear()
 }
 
 /*!
- * Command dispatcher. Retrieves a line from the input file and performes
+ * Command dispatcher. Retrieves a line from the input file and performs
  * some action. See comments for suitable function in order to know specific
  * command arguments.
  */

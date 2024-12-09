@@ -4,11 +4,9 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <boost/config.hpp>
-#include <boost/version.hpp>
-
 #include <fstream>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel           Kernel;
 
@@ -30,42 +28,42 @@ bool test_read_WKT()
     std::ifstream in("data/point.wkt");
     if(!CGAL::IO::read_point_WKT(in, p))
       return false;
-    CGAL_assertion(p == Point(2,3));
+    assert(p == Point(2,3));
   }
   {
     std::ifstream in("data/linestring.wkt");
     Linestring ls;
     if(!CGAL::IO::read_linestring_WKT(in, ls))
       return false;
-    CGAL_assertion(ls.size() == 3);
+    assert(ls.size() == 3);
   }
   {
     Poly poly;
     std::ifstream in("data/polygon.wkt");
     if(!CGAL::IO::read_polygon_WKT(in, poly))
       return false;
-    CGAL_assertion(poly.outer_boundary().size() == 3);
+    assert(poly.outer_boundary().size() == 3);
   }
   {
     MultiPoint pees;
     std::ifstream in("data/multipoint.wkt");
     if(!CGAL::IO::read_multi_point_WKT(in, pees))
       return false;
-    CGAL_assertion(pees.size() == 4);
+    assert(pees.size() == 4);
   }
   {
     std::ifstream in("data/multilinestring.wkt");
     MultiLinestring mls;
     if(!CGAL::IO::read_multi_linestring_WKT(in, mls))
       return false;
-    CGAL_assertion(mls.size() == 2);
+    assert(mls.size() == 2);
   }
   {
     MultiPolygon polies;
     std::ifstream in("data/multipolygon.wkt");
     if(!CGAL::IO::read_multi_polygon_WKT(in, polies))
       return false;
-    CGAL_assertion(polies.size() == 2);
+    assert(polies.size() == 2);
   }
 
   std::cout << "WKT reading test passed." << std::endl;
@@ -184,7 +182,7 @@ bool test_write_WKT()
     CGAL::IO::read_point_WKT(is, test_p);
     is.close();
   }
-  CGAL_assertion(p == test_p);
+  assert(p == test_p);
 
   Linestring ls = generate_linestring();
   {
@@ -199,7 +197,7 @@ bool test_write_WKT()
     CGAL::IO::read_linestring_WKT(is, test_ls);
     is.close();
   }
-  CGAL_assertion(ls == test_ls);
+  assert(ls == test_ls);
 
   Poly poly = generate_polygon();
   {
@@ -215,7 +213,7 @@ bool test_write_WKT()
     is.close();
   }
 
-  CGAL_assertion(poly == test_poly);
+  assert(poly == test_poly);
 
   MultiPoint pees = generate_multipoint();
   {
@@ -230,7 +228,7 @@ bool test_write_WKT()
     CGAL::IO::read_multi_point_WKT(is, test_pees);
     is.close();
   }
-  CGAL_assertion(pees== test_pees);
+  assert(pees== test_pees);
 
   MultiLinestring mls = generate_multilinestring();
   {
@@ -248,7 +246,7 @@ bool test_write_WKT()
   bool ok = true;
   for(size_t i=0; i<mls.size(); ++i)
     ok &= mls[i] == test_mls[i];
-  CGAL_assertion(ok);
+  assert(ok);
 
   MultiPolygon polies = generate_multipolygon();
   {
@@ -263,7 +261,7 @@ bool test_write_WKT()
     CGAL::IO::read_multi_polygon_WKT(is, test_polies);
     is.close();
   }
-  CGAL_assertion(polies == test_polies);
+  assert(polies == test_polies);
 
   std::cout << "WKT writing test passed." << std::endl;
   return true;
@@ -278,4 +276,3 @@ int main()
 
   return EXIT_SUCCESS;
 }
-

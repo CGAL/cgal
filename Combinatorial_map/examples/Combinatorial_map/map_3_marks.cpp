@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef CMap_3::Dart_handle Dart_handle;
+typedef CMap_3::Dart_descriptor Dart_descriptor;
 typedef CMap_3::size_type size_type;
 
 int main()
@@ -23,21 +23,21 @@ int main()
   }
 
   // 2) Create two tetrahedra.
-  Dart_handle dh1 = cm.make_combinatorial_tetrahedron();
-  Dart_handle dh2 = cm.make_combinatorial_tetrahedron();
+  Dart_descriptor d1 = cm.make_combinatorial_tetrahedron();
+  Dart_descriptor d2 = cm.make_combinatorial_tetrahedron();
 
   // 3) 3-sew them.
-  cm.sew<3>(dh1, dh2);
+  cm.sew<3>(d1, d2);
 
   // 4) Mark the darts belonging to the first tetrahedron.
   for  (CMap_3::Dart_of_cell_range<3>::iterator
-          it(cm.darts_of_cell<3>(dh1).begin()),
-          itend(cm.darts_of_cell<3>(dh1).end()); it!=itend; ++it)
+          it(cm.darts_of_cell<3>(d1).begin()),
+          itend(cm.darts_of_cell<3>(d1).end()); it!=itend; ++it)
     cm.mark(it, amark);
 
   // 4) Remove the common 2-cell between the two cubes:
   //    the two tetrahedra are merged.
-  cm.remove_cell<2>(dh1);
+  cm.remove_cell<2>(d1);
 
   // 5) Thanks to the mark, we know which darts come from the first tetrahedron.
   unsigned int res=0;

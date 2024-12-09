@@ -9,7 +9,7 @@
 #  * or alternatively curl
 #
 # Furthermore you have to edit .autocgalrc in order to
-# cutomize it for your environment.
+# customize it for your environment.
 # In particular you have to change the BUILHOSTS
 # variable to contain the names of your hosts and
 # set the COMPILERS_<hostname> variables to the
@@ -80,7 +80,6 @@ REFERENCE_PLATFORMS_DIR="must_be_set_in_.autocgalrc"
 ACTUAL_DIR=`pwd`
 RSH="rsh"
 NICE_OPTIONS="-19"
-CMAKE_GENERATOR=""
 USE_TARGZ="n"
 USE_TARBZ="n"
 PLATFORMS=""
@@ -430,6 +429,13 @@ setup_dirs()
 
   for PLATFORM in ${PLATFORMS}; do
 
+    # MSVC2015 does not support C++17
+    if [ "$CGAL_RELEASE_ID" \> "CGAL-6.0" ]; then
+      if [ "$PLATFORMS" = "MSVC2015-Release-64bits" ]; then
+        continue
+      fi
+    fi
+
     CGAL_BINARY_DIR=${CGAL_BINARY_DIR_BASE}/${PLATFORM}
 
     if [ ! -d "${CGAL_BINARY_DIR}" ]; then
@@ -506,16 +512,12 @@ build_cgal_on_host()
 
         cat >> "${CGAL_BINARY_DIR}/localbuildscript" <<EOF
 CGAL_BINARY_DIR='${CGAL_BINARY_DIR}';
-if [ -z "\$CMAKE_GENERATOR" ]; then
-  CMAKE_GENERATOR='${CMAKE_GENERATOR}';
-fi
 MAKE_CMD='${MAKE_CMD}';
 
-export CMAKE_GENERATOR;
 export MAKE_CMD;
 export CGAL_BINARY_DIR;
 cd '${CGAL_BINARY_DIR}';
-cmake \${INIT_FILE:+"-C\${INIT_FILE}"} '${CMAKE_GENERATOR}' -DRUNNING_CGAL_AUTO_TEST=TRUE \\
+cmake \${INIT_FILE:+"-C\${INIT_FILE}"} -DRUNNING_CGAL_AUTO_TEST=TRUE \\
                            VERBOSE=1 \\
                            ../../..;
 ${MAKE_CMD} VERBOSE=ON -k -fMakefile  ;
@@ -604,14 +606,10 @@ else
 fi
 CGAL_TEST_HOST='${HOST}';
 CGAL_TEST_PLATFORM='${PLATFORM}';
-if [ -z "\$CMAKE_GENERATOR" ]; then
-  CMAKE_GENERATOR='${CMAKE_GENERATOR}';
-fi
 MAKE_CMD='${MAKE_CMD}'
 export CGAL_TESTER CGAL_TESTER_NAME CGAL_TESTER_ADDRESS;
 export CGAL_DIR;
 export CGAL_TEST_HOST CGAL_TEST_PLATFORM;
-export CMAKE_GENERATOR;
 export MAKE_CMD;
 
 EOF
@@ -632,7 +630,7 @@ if [ -f '${LIST_TEST_PACKAGES}' ]; then
   # copy it, else prepare for the special "skipped" case in the table.
   for PACKAGE in \$(ls "${CGAL_TEST_DIR}"); do
     if [ -d "${CGAL_TEST_DIR}/\$PACKAGE" ]; then
-      if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | egrep -q \$PACKAGE; then
+      if source '${LIST_TEST_PACKAGES}' '${CGAL_ROOT}' | grep -E -q \$PACKAGE; then
         mkdir "${CGAL_BINARY_DIR}/test/\${PACKAGE}"
         cp -r "${CGAL_TEST_DIR}/\${PACKAGE}" '${CGAL_BINARY_DIR}/test'
       elif [ "\$PACKAGE" = "resources" ]; then
@@ -884,43 +882,6 @@ else
   done
 fi
 
-# Detects cygwin
-if uname | grep -q "CYGWIN"; then
-  JOM="`which jom`"
-  if [ -e "$JOM" ]; then
-    CMAKE_GENERATOR='-GNMake Makefiles JOM'
-    MAKE_CMD='jom'
-    log "${ACTUAL_LOGFILE}" "Cygwin detected, jom detected, using jom"
-  else
-    CMAKE_GENERATOR='-GNMake Makefiles'
-    MAKE_CMD='nmake'
-    log "${ACTUAL_LOGFILE}" "Cygwin detected, using nmake"
-  fi
-  IS_CYGWIN='y'
-else
-  log "${ACTUAL_LOGFILE}" "Non-cygwin linux detected, using system make."
-  MAKE_CMD='make'
-fi
-
-if [ -z "$IS_CYGWIN" ]; then
-
-# Acquire lock
-lockfile -r 1 "$LOCK_FILE";
-if [ ${?} != 0 ]; then
-  PID=`cat "$LOCK_FILE"`
-  if kill -0 "$PID"; then
-    log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK! LOCKING PROCESS PID=$PID";
-    exit 1;
-  else
-    # The locking process has died without erasing the lock file
-    rm -f "$LOCK_FILE"
-    lockfile -r 1 "$LOCK_FILE";
-    if [ ${?} != 0 ]; then
-      log "${ACTUAL_LOGFILE}" "COULD NOT ACQUIRE LOCK!";
-      exit 1
-    fi
-  fi
-fi
 # Make that file writable (lockfile create read-only files
 chmod u+w "$LOCK_FILE"
 # Put the PID of current process in the lock file

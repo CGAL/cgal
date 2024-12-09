@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(LCC_performance_3)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -7,13 +7,6 @@ if(NOT POLICY CMP0070 AND POLICY CMP0053)
 endif()
 
 find_package(CGAL REQUIRED)
-
-find_package(Boost 1.43.0)
-if(Boost_FOUND)
-  include_directories(${Boost_INCLUDE_DIRS})
-else()
-  set(USE_IN_SOURCE_TREE_BOOST true)
-endif()
 
 add_subdirectory(openvolumemesh)
 
@@ -28,9 +21,9 @@ find_package(Qt REQUIRED)
 set(QT_USE_QTSVG TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
+add_compile_definitions(${QT_DEFINITIONS})
 
-add_definitions(-DINCLUDE_TEMPLATES)
+add_compile_definitions(INCLUDE_TEMPLATES)
 
 # Performance_3
 add_executable(performance_3 performance_3.cpp)
@@ -40,7 +33,7 @@ target_link_libraries(
   OpenVolumeMesh
   boost_timer
   boost_system
-  ${CGAL_LIBRARIES}
+  CGAL::CGAL
   algo
   assimp
   container
@@ -72,7 +65,7 @@ target_link_libraries(
 # LCC_3
 add_executable(lcc_performance_3 performance_3.h lcc_performance_3.h
                                  lcc_performance_3.cpp)
-target_link_libraries(lcc_performance_3 ${CGAL_LIBRARIES}
+target_link_libraries(lcc_performance_3 CGAL::CGAL
                       ${MAP_VIEWER_LIBRARIES})
 
 # OpenVolumeMesh

@@ -6,7 +6,7 @@
 \cgalPkgDescriptionBegin{Three,PkgThree}
 \cgalPkgPicture{pkg-small.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno}
+\cgalPkgAuthors{Laurent Rineau, Sebastien Loriot, Andreas Fabri, and Maxime Gimeno}
 \cgalPkgDesc{This package provides base classes for building a plugin. }
 \cgalPkgManuals{Chapter_Three,PkgThreeRef}
 \cgalPkgSummaryEnd
@@ -20,8 +20,8 @@
 \cgalCRPSection{Interfaces}
 - `CGAL::Three::Viewer_interface`
 - `CGAL::Three::Scene_interface`
-- `CGAL::Three::Polyhedron_demo_plugin_interface`
-- `CGAL::Three::Polyhedron_demo_io_plugin_interface`
+- `CGAL::Three::CGAL_Lab_plugin_interface`
+- `CGAL::Three::CGAL_Lab_io_plugin_interface`
 
 \cgalCRPSection{Classes}
 -  `TextRenderer`

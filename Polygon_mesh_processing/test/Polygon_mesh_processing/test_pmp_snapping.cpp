@@ -1,17 +1,17 @@
 // #define CGAL_PMP_SNAP_DEBUG_PP
 
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
+#include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/Polygon_mesh_processing/internal/Snapping/helper.h>
-#include <CGAL/Polygon_mesh_processing/internal/Snapping/snap.h>
-
 #include <CGAL/property_map.h>
+
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <iostream>
 #include <fstream>
@@ -116,7 +116,7 @@ void test_1()
   CGAL::Constant_property_map<vertex_descriptor, FT> tol_map_good(0.001);
   res = PMP::experimental::snap_vertices(border_vertices, fg_source_cpy, tol_map_good,
                                          target_halfedge_range, fg_target, tol_map_good,
-                                         params::all_default(), params::do_lock_mesh(true));
+                                         params::default_values(), params::do_lock_mesh(true));
   std::cout << "res: " << res << " vertices" << std::endl;
   assert(res == 76);
 
@@ -129,7 +129,7 @@ void test_1()
 
   res = PMP::experimental::snap_vertices(border_vertices, fg_source_cpy,
                                          target_halfedge_range, fg_target,
-                                         params::all_default(), params::do_lock_mesh(true));
+                                         params::default_values(), params::do_lock_mesh(true));
   std::cout << "res: " << res << " vertices" << std::endl;
   assert(res == 77);
 

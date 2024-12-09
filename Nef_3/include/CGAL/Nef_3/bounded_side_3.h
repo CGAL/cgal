@@ -38,8 +38,8 @@ Bounded_side bounded_side_3(IteratorForward first,
 
   CGAL_assertion(!plane.is_degenerate());
 
-  typename R::Non_zero_dimension_3 non_zero_dimension_3;
-  int dir = non_zero_dimension_3(plane.orthogonal_vector());
+  typename R::Non_zero_coordinate_index_3 non_zero_coordinate_index_3;
+  int dir = non_zero_coordinate_index_3(plane.orthogonal_vector());
 
   if(dir == 0) {
     return bounded_side_2(first, last, point, YZ());

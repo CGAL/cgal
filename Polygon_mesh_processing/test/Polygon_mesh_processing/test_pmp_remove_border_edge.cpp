@@ -1,9 +1,12 @@
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+
+#include <CGAL/Simple_cartesian.h>
+
 #include <fstream>
+#include <cassert>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point;
@@ -30,11 +33,11 @@ void test_middle_edge()
       break;
     }
   }
-  CGAL_assertion( h!=GT::null_halfedge() );
+  assert( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
 
-  CGAL_assertion(is_valid_polygon_mesh(tm));
-  CGAL_assertion(is_triangle_mesh(tm));
+  assert(is_valid_polygon_mesh(tm));
+  assert(is_triangle_mesh(tm));
   std::ofstream out("edge_middle_out.off");
   out << tm;
 }
@@ -59,11 +62,11 @@ void test_edge_border_case1()
       break;
     }
   }
-  CGAL_assertion( h!=GT::null_halfedge() );
+  assert( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
 
-  CGAL_assertion(is_valid_polygon_mesh(tm));
-  CGAL_assertion(is_triangle_mesh(tm));
+  assert(is_valid_polygon_mesh(tm));
+  assert(is_triangle_mesh(tm));
   std::ofstream out("edge_border_case1_out.off");
   out << tm;
 }
@@ -88,11 +91,11 @@ void test_edge_border_case2()
       break;
     }
   }
-  CGAL_assertion( h!=GT::null_halfedge() );
+  assert( h!=GT::null_halfedge() );
   CGAL::Polygon_mesh_processing::remove_a_border_edge(edge(h,tm), tm);
 
-  CGAL_assertion(is_valid_polygon_mesh(tm));
-  CGAL_assertion(is_triangle_mesh(tm));
+  assert(is_valid_polygon_mesh(tm));
+  assert(is_triangle_mesh(tm));
   std::ofstream out("edge_border_case2_out.off");
   out << tm;
 }

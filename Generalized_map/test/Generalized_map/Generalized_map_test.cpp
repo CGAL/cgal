@@ -21,8 +21,18 @@ struct Divide_by_two_functor
   }
 };
 
+struct Min_items: public CGAL::Generic_map_min_items
+{
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+};
+
 struct Myitems_2
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template <class GMAP>
   struct Dart_wrapper
   {
@@ -37,6 +47,9 @@ struct Myitems_2
 
 struct Myitems_2c
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template <class GMAP>
   struct Dart_wrapper
   {
@@ -50,6 +63,9 @@ struct Myitems_2c
 };
 struct Myitems_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template <class GMAP>
   struct Dart_wrapper
   {
@@ -64,6 +80,9 @@ struct Myitems_3
 
 struct Myitems_3c
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template <class GMAP>
   struct Dart_wrapper
   {
@@ -78,6 +97,9 @@ struct Myitems_3c
 
 struct Myitems_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template <class GMAP>
   struct Dart_wrapper
   {
@@ -92,6 +114,9 @@ struct Myitems_4
 
 struct Myitems_4c
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template <class GMAP>
   struct Dart_wrapper
   {
@@ -109,7 +134,7 @@ int main()
   std::cout<<"Generalized_map start test (v1)."<<std::flush;
 
   trace_display_msg("\ntest_GMAP_2<GMAP2>");
-  typedef CGAL::Generalized_map<2> GMAP2;
+  typedef CGAL::Generalized_map<2, Min_items> GMAP2;
   if ( !test_GMAP_2<GMAP2>() )
   {
     std::cout<<" Error during Test_GMAP_2<GMAP2>."<<std::endl;
@@ -117,7 +142,7 @@ int main()
   }
 
   trace_display_msg("test_GMAP_3<GMAP3>");
-  typedef CGAL::Generalized_map<3> GMAP3;
+  typedef CGAL::Generalized_map<3, Min_items> GMAP3;
   if ( !test_GMAP_3<GMAP3>() )
   {
     std::cout<<" Error during Test_GMAP_3<GMAP3>."<<std::endl;
@@ -125,7 +150,7 @@ int main()
   }
 
   trace_display_msg("test_GMAP_4<GMAP4>");
-  typedef CGAL::Generalized_map<4> GMAP4;
+  typedef CGAL::Generalized_map<4, Min_items> GMAP4;
   if ( !test_GMAP_4<GMAP4>() )
   {
     std::cout<<" Error during Test_GMAP_4<GMAP4>."<<std::endl;

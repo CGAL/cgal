@@ -1,12 +1,11 @@
 #include <fstream>
 #include <iterator>
-
-#include <CGAL/assertions.h>
+#include <cassert>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 #include <CGAL/AABB_halfedge_graph_segment_primitive.h>
@@ -25,8 +24,8 @@ CGAL::Tag_false> S_Primitive;
 typedef CGAL::AABB_face_graph_triangle_primitive<Mesh,
 CGAL::Default,
 CGAL::Tag_false> T_Primitive;
-typedef CGAL::AABB_traits<K, T_Primitive> T_Traits;
-typedef CGAL::AABB_traits<K, S_Primitive> S_Traits;
+typedef CGAL::AABB_traits_3<K, T_Primitive> T_Traits;
+typedef CGAL::AABB_traits_3<K, S_Primitive> S_Traits;
 typedef CGAL::AABB_tree<T_Traits> T_Tree;
 typedef CGAL::AABB_tree<S_Traits> S_Tree;
 typedef T_Tree::Primitive_id T_Primitive_id;
@@ -59,11 +58,11 @@ int main()
   std::list<T_Tree::Primitive::Id> t_primitives;
   std::list<S_Tree::Primitive::Id> s_primitives;
   cube_tree.all_intersected_primitives(tet_tree,std::back_inserter(t_primitives));
-  CGAL_assertion(t_primitives.size() == 6);
+  assert(t_primitives.size() == 6);
   tet_tree.all_intersected_primitives(cube_tree,std::back_inserter(s_primitives));
-  CGAL_assertion(s_primitives.size() == 6);
-  CGAL_assertion(tet_tree.do_intersect(cube_tree));
-  CGAL_assertion(cube_tree.do_intersect(tet_tree));
+  assert(s_primitives.size() == 6);
+  assert(tet_tree.do_intersect(cube_tree));
+  assert(cube_tree.do_intersect(tet_tree));
 
   std::vector<T_Tree::Primitive::Id> all_primitives;
   cube_tree.all_intersected_primitives(tet_tree, std::back_inserter(all_primitives));
@@ -73,7 +72,7 @@ int main()
     if((int)prim.first == 5)
       found_f5 = true;
   }
-  CGAL_assertion(found_f5);
-  CGAL_USE(found_f5);
+  assert(found_f5);
+
   return 0;
 }

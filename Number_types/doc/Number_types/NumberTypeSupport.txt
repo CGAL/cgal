@@ -23,7 +23,7 @@ structure concepts see Section \ref PkgAlgebraicFoundationsRef.
 The built-in number types `float`, `double` and `long double` have
 the required arithmetic and comparison operators. They lack some required
 routines though which are automatically included by \cgal.
-\cgalFootnote{The functions can be found in the header files <TT>CGAL/int.h</TT>, <TT>CGAL/float.h</TT>, <TT>CGAL/double.h</TT> and <TT>CGAL/long_long.h</TT>.}
+\cgalFootnote{The functions can be found in the header files \cgalFootnoteCode{CGAL/int.h}, \cgalFootnoteCode{CGAL/float.h}, \cgalFootnoteCode{CGAL/double.h} and \cgalFootnoteCode{CGAL/long_long.h}.}
 
 All built-in number types of \cpp can represent a discrete (bounded)
 subset of the rational numbers only. We assume that the
@@ -120,7 +120,7 @@ To use these classes, \gmp and \mpfr must be installed.
 \anchor ledant
 
 \leda provides number types that can be used for exact computation
-with both Cartesian and homogeneous representations. If you are using
+with both %Cartesian and homogeneous representations. If you are using
 homogeneous representation with the built-in integer types
 `short`, `int`, and `long` as ring type, exactness of
 computations can be guaranteed only if your input data come from a
@@ -130,7 +130,7 @@ integers of arbitrary length. (Of course the length is
 somehow bounded by the resources of your computer.) It can be used as
 ring type in homogeneous kernels and leads to exact
 computation as long as all intermediate results are rational. For the
-same kind of problems, Cartesian representation with number type
+same kind of problems, %Cartesian representation with number type
 `leda_rational` leads to exact computation as well.
 The number type `leda_bigfloat` in \leda is a variable precision
 floating-point type. Rounding mode and precision (i.e.\ mantissa length) of
@@ -210,6 +210,7 @@ This package was naturally one of the first packages implemented in \cgal.
 It initially contained the `Quotient`, `Gmpz` and `Gmpq` classes,
 together with the interfaces to the number types provided by \leda, which were
 implemented by Stefan Schirra and Andreas Fabri.
+\leda's class `rational` has been the basis for `Quotient`.
 
 Later, around 1998-2002, Sylvain Pion implemented `Interval_nt`,
 `MP_Float` and `Lazy_exact_nt`, together with the interfaces to
@@ -231,4 +232,3 @@ Luis Pe&ntilde;aranda and Sylvain Lazard contributed the `Gmpfi` and
 
 */
 } /* namespace CGAL */
-

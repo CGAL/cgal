@@ -2,6 +2,7 @@
 // Constructing an arrangement of algebraic segments.
 
 #include <iostream>
+#include <cassert>
 #include <CGAL/config.h>
 
 #if (!CGAL_USE_CORE) && (!CGAL_USE_LEDA) && (!(CGAL_USE_GMP && CGAL_USE_MPFI))
@@ -20,15 +21,15 @@ int main ()
 #include "integer_type.h"
 #include "arr_print.h"
 
-typedef CGAL::Arr_algebraic_segment_traits_2<Integer> Traits;
-typedef CGAL::Arrangement_2<Traits>                   Arrangement;
-typedef Traits::Curve_2                               Curve;
-typedef Traits::Polynomial_2                          Polynomial;
-typedef Traits::Algebraic_real_1                      Algebraic_real;
-typedef Traits::X_monotone_curve_2                    X_monotone_curve;
-typedef Traits::Point_2                               Point;
+using Traits = CGAL::Arr_algebraic_segment_traits_2<Integer>;
+using Arrangement = CGAL::Arrangement_2<Traits>;
+using Curve = Traits::Curve_2;
+using Polynomial = Traits::Polynomial_2;
+using Algebraic_real = Traits::Algebraic_real_1;
+using X_monotone_curve = Traits::X_monotone_curve_2;
+using Point = Traits::Point_2;
 
-typedef boost::variant<Point, X_monotone_curve>       Make_x_monotone_result;
+using Make_x_monotone_result = std::variant<Point, X_monotone_curve>;
 
 int main() {
   Traits traits;
@@ -51,8 +52,8 @@ int main() {
   // but not in this case).
   std::vector<X_monotone_curve> segs;
   for(size_t i = 0; i < pre_segs.size(); ++i) {
-    auto* curr_p = boost::get<X_monotone_curve>(&pre_segs[i]);
-    CGAL_assertion(curr_p);
+    auto* curr_p = std::get_if<X_monotone_curve>(&pre_segs[i]);
+    assert(curr_p);
     segs.push_back(*curr_p);
   }
   // Construct an ellipse (C2) with the equation 2*x^2+5*y^2-7=0.

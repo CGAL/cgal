@@ -8,7 +8,7 @@
 #include <CGAL/graph_traits_Arrangement_2.h>
 #include <CGAL/Arr_vertex_index_map.h>
 
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <CGAL/property_map.h>
 
@@ -42,7 +42,7 @@ public:
   }
 };
 
-double get(Edge_length_func edge_length, Arrangement_2::Halfedge_handle e)
+double get(const Edge_length_func& edge_length, Arrangement_2::Halfedge_handle e)
 {
   return edge_length(e);
 }

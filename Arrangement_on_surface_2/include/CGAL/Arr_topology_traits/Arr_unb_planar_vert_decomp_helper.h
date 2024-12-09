@@ -46,9 +46,9 @@ public:
   typedef typename Arrangement_2::Halfedge_const_handle Halfedge_const_handle;
   typedef typename Arrangement_2::Face_const_handle     Face_const_handle;
 
-  typedef boost::variant<Vertex_const_handle, Halfedge_const_handle,
+  typedef std::variant<Vertex_const_handle, Halfedge_const_handle,
                          Face_const_handle>             Cell_type;
-  typedef boost::optional<Cell_type>                    Vert_type;
+  typedef std::optional<Cell_type>                    Vert_type;
 
 protected:
   typedef typename Arrangement_2::Topology_traits       Topology_traits;
@@ -60,7 +60,7 @@ protected:
                                         // halfedge.
 
 public:
-  /*! Constructor.
+  /*! constructs.
    * \param arr The arrangement.
    */
   Arr_unb_planar_vert_decomp_helper(const Arrangement_2* arr) :
@@ -79,10 +79,10 @@ public:
   void after_handle_event(Event* event);
   //@}
 
-  /*! Get the current top object. */
+  /*! obtains the current top object. */
   Vert_type top_object() const { return Vert_type(m_top_fict); }
 
-  /*! Get the current bottom object. */
+  /*! obtains the current bottom object. */
   Vert_type bottom_object() const { return Vert_type(m_bottom_fict); }
 };
 

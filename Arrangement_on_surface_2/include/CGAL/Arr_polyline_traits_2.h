@@ -29,8 +29,7 @@
 
 #include <list>
 #include <iterator>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -99,7 +98,6 @@ public:
   typedef typename Base::Equal_2                      Equal_2;
   typedef typename Base::Compare_endpoints_xy_2       Compare_endpoints_xy_2;
   typedef typename Base::Construct_opposite_2         Construct_opposite_2;
-  typedef typename Base::Approximate_2                Approximate_2;
   typedef typename Base::Parameter_space_in_x_2       Parameter_space_in_x_2;
   typedef typename Base::Parameter_space_in_y_2       Parameter_space_in_y_2;
   typedef typename Base::Compare_x_on_boundary_2      Compare_x_on_boundary_2;
@@ -120,10 +118,10 @@ public:
   //@}
 
 public:
-  /*! Construct default. */
+  /*! constructs default. */
   Arr_polyline_traits_2() : Base() {}
 
-  /*! Construct from a segment traits
+  /*! constructs from a segment traits
    * \param geom_traits an already existing segment tarits which is passed will
    *        be used by the class.
    */
@@ -141,7 +139,7 @@ public:
     typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Push_back_2(const Polyline_traits_2& traits) :
       Base::Push_back_2(traits)
     {}
@@ -153,18 +151,17 @@ public:
     // code below.
     using Base::Push_back_2::operator();
 
-    // /*! Append a segment `seg` to an existing polyline `cv` at the back. */
+    // /*! appends a segment `seg` to an existing polyline `cv` at the back. */
     // void operator()(Curve_2& cv, const Segment_2& seg) const
     // { Base::Push_back_2::operator() (cv, seg); }
 
-    // /* Append a segment `seg` to an existing polyline `xcv` at the back. */
+    // /* appends a segment `seg` to an existing polyline `xcv` at the back. */
     // void operator()(X_monotone_curve_2& xcv,
     //                 const X_monotone_subcurve_2& seg) const
     // { Base::Push_back_2::operator()(xcv, seg); }
 
-    /* Append a point `p` to an existing polyline `cv` at the back. */
-    void operator()(Curve_2& cv, const Point_2& p) const
-    {
+    /* appends a point `p` to an existing polyline `cv` at the back. */
+    void operator()(Curve_2& cv, const Point_2& p) const {
       typedef typename Curve_2::size_type size_type;
       size_type num_seg = cv.number_of_subcurves();
       CGAL_precondition(num_seg > 0);
@@ -172,8 +169,8 @@ public:
 
       const Segment_traits_2* seg_traits =
         this->m_poly_traits.subcurve_traits_2();
-      typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        seg_traits->compare_endpoints_xy_2_object();
+      auto cmp_seg_endpts = seg_traits->compare_endpoints_xy_2_object();
+      auto ctr = seg_traits->construct_curve_2_object();
 
       /* Since it is desired to maintain `cv` well-oriented, we have
        * to append the segment [cv[last_seg].target(),p]. The
@@ -181,18 +178,16 @@ public:
        * the target, i.e. the actual end of `cv`.
        */
       if (cmp_seg_endpts(cv[last_seg]) == SMALLER) {
-        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-          seg_traits->construct_max_vertex_2_object();
-        cv.push_back(Subcurve_2(get_max_v(cv[last_seg]), p));
+        auto get_max_v = seg_traits->construct_max_vertex_2_object();
+        cv.push_back(ctr(get_max_v(cv[last_seg]), p));
       }
       else {
-        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-          seg_traits->construct_min_vertex_2_object();
-        cv.push_back(Subcurve_2(get_min_v(cv[last_seg]), p));
+        auto get_min_v = seg_traits->construct_min_vertex_2_object();
+        cv.push_back(ctr(get_min_v(cv[last_seg]), p));
       }
     }
 
-    /* Append a point `p` to an existing polyline `xcv` at the back. */
+    /* appends a point `p` to an existing polyline `xcv` at the back. */
     void operator()(X_monotone_curve_2& xcv, const Point_2& p) const
     {
       typedef typename X_monotone_curve_2::size_type size_type;
@@ -242,7 +237,7 @@ public:
     }
   };
 
-  /*! Obtain a Push_back_2 functor object. */
+  /*! obtains a Push_back_2 functor object. */
   Push_back_2 push_back_2_object() const { return Push_back_2(*this); }
 
   /* Functor to augment a polyline by either adding a vertex or a segment
@@ -254,7 +249,7 @@ public:
     typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
 
   public:
-    /*! Constructor. */
+    /*! constructs. */
     Push_front_2(const Polyline_traits_2& traits) :
       Base::Push_front_2(traits)
     {}
@@ -266,18 +261,17 @@ public:
     // code below.
     using Base::Push_front_2::operator();
 
-    // /*! Append a segment `seg` to an existing polyline `cv` at the front. */
+    // /*! appends a segment `seg` to an existing polyline `cv` at the front. */
     // void operator()(Curve_2& cv, const Subcurve_2& seg) const
     // { Base::Push_front_2::operator()(cv, seg); }
 
-    // /*! Append a segment `seg` to an existing polyline `xcv` at the front. */
+    // /*! appends a segment `seg` to an existing polyline `xcv` at the front. */
     // void operator()(X_monotone_curve_2& xcv,
     //                 const X_monotone_subcurve_2& seg) const
     // { Base::Push_front_2::operator()(xcv, seg); }
 
     /* Append a point `p` to an existing polyline `cv` at the front. */
-    void operator()(Curve_2& cv, const Point_2& p) const
-    {
+    void operator()(Curve_2& cv, const Point_2& p) const {
       CGAL_precondition_code
         (
          typedef typename Curve_2::size_type size_type;
@@ -287,22 +281,20 @@ public:
 
       const Segment_traits_2* geom_traits =
         this->m_poly_traits.subcurve_traits_2();
-      typename Segment_traits_2::Compare_endpoints_xy_2 cmp_seg_endpts =
-        geom_traits->compare_endpoints_xy_2_object();
+      auto cmp_seg_endpts = geom_traits->compare_endpoints_xy_2_object();
+      auto ctr = geom_traits->construct_curve_2_object();
 
       if (cmp_seg_endpts(cv[0]) == SMALLER) {
-        typename Segment_traits_2::Construct_min_vertex_2 get_min_v =
-          geom_traits->construct_min_vertex_2_object();
-        cv.push_front(Subcurve_2(p, get_min_v(cv[0])));
+        auto get_min_v = geom_traits->construct_min_vertex_2_object();
+        cv.push_front(ctr(p, get_min_v(cv[0])));
       }
       else {
-        typename Segment_traits_2::Construct_max_vertex_2 get_max_v =
-          geom_traits->construct_max_vertex_2_object();
-        cv.push_front(Subcurve_2(p, get_max_v(cv[0])));
+        auto get_max_v = geom_traits->construct_max_vertex_2_object();
+        cv.push_front(ctr(p, get_max_v(cv[0])));
       }
     }
 
-    /*! Append a point `p` to an existing polyline `xcv` at the front. */
+    /*! appends a point `p` to an existing polyline `xcv` at the front. */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const
     {
       const auto* geom_traits = this->m_poly_traits.subcurve_traits_2();
@@ -347,10 +339,10 @@ public:
     }
   };
 
-  /*! Obtain a Push_front_2 functor object. */
+  /*! obtains a Push_front_2 functor object. */
   Push_front_2 push_front_2_object() const { return Push_front_2(*this); }
 
-  /*! Construct a general curve from :
+  /*! constructs a general curve from :
    * 1. two points,
    * 2. a sub curve,
    * 3. a range of points, or
@@ -361,7 +353,7 @@ public:
     typedef Arr_polyline_traits_2<Segment_traits_2>         Polyline_traits_2;
 
   public:
-    /*! Constructor.
+    /*! constructs.
      */
     Construct_curve_2(const Polyline_traits_2& traits) :
       Base::Construct_curve_2(traits)
@@ -369,8 +361,11 @@ public:
 
     /* Obtain an polyline connecting two given endpoints.
      */
-    Curve_2 operator()(const Point_2& p, const Point_2& q) const
-    { return Curve_2(Subcurve_2(p, q)); }
+    Curve_2 operator()(const Point_2& p, const Point_2& q) const {
+      const Segment_traits_2* seg_traits =
+        this->m_poly_traits.subcurve_traits_2();
+      return seg_traits->construct_curve_2_object()(p, q);
+    }
 
     /* Obtain a polyline consists of one given segment.
      */
@@ -384,7 +379,7 @@ public:
     Curve_2 operator()(ForwardIterator begin, ForwardIterator end) const
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-      typedef typename boost::is_same<VT, Point_2>::type Is_point;
+      typedef typename std::is_same<VT, Point_2>::type Is_point;
       // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
@@ -404,10 +399,10 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::false_type) const
+                             std::false_type) const
     { return Base::Construct_curve_2::operator()(begin, end); }
 
-    /*! Construction of a polyline from a range of points.
+    /*! constructs a polyline from a range of points.
      * \pre The range contains at least two points
      * \pre Consecutive points are disjoint.
      * \return Well-oriented polyline connecting the given points. The order
@@ -417,7 +412,7 @@ public:
      */
     template <typename ForwardIterator>
     Curve_2 constructor_impl(ForwardIterator begin, ForwardIterator end,
-                             boost::true_type) const
+                             std::true_type) const
     {
       // The range must not contain a single point.
       CGAL_precondition_msg(std::distance(begin, end) != 1,
@@ -433,7 +428,9 @@ public:
       auto point_pair_to_segment = [&](const Zip_iterator_ref& t)->Subcurve_2 {
         CGAL_precondition_msg(! equal(boost::get<0>(t), boost::get<1>(t)),
                               "Cannot construct a degenerated segment");
-        return Subcurve_2(boost::get<0>(t), boost::get<1>(t));
+        const Segment_traits_2* seg_traits =
+          this->m_poly_traits.subcurve_traits_2();
+        return seg_traits->construct_curve_2_object()(boost::get<0>(t), boost::get<1>(t));
       };
       auto begin_next = std::next(begin);
       auto end_prev = std::prev(end);
@@ -446,11 +443,11 @@ public:
     }
   };
 
-  /*! Obtain a Construct_curve_2 functor object. */
+  /*! obtains a Construct_curve_2 functor object. */
   Construct_curve_2 construct_curve_2_object() const
   { return Construct_curve_2(*this); }
 
-  /*! Construct an x-monotone curve. */
+  /*! constructs an x-monotone curve. */
   class Construct_x_monotone_curve_2 :
     public Base::Construct_x_monotone_curve_2
   {
@@ -458,13 +455,13 @@ public:
     typedef Arr_polyline_traits_2<Segment_traits_2>     Polyline_traits_2;
 
   public:
-    /*! Constructor.
+    /*! constructs.
      */
     Construct_x_monotone_curve_2(const Polyline_traits_2& traits) :
       Base::Construct_x_monotone_curve_2(traits)
     {}
 
-    /*! Obtain an x-monotone polyline connecting two given endpoints.
+    /*! obtains an x-monotone polyline connecting two given endpoints.
      * \param p The first point.
      * \param q The second point.
      * \pre p and q must not be the same.
@@ -488,7 +485,7 @@ public:
       return X_monotone_curve_2(seg);
     }
 
-    /*! Obtain an x-monotone polyline that consists of one given segment.
+    /*! obtains an x-monotone polyline that consists of one given segment.
      * \param seg input segment.
      * \pre seg is not degenerated.
      * \return An x-monotone polyline with one segment.
@@ -496,7 +493,7 @@ public:
     X_monotone_curve_2 operator()(const X_monotone_subcurve_2& seg) const
     { return Base::Construct_x_monotone_curve_2::operator()(seg); }
 
-    /*! Construct an x-monotone polyline from a range of elements.
+    /*! constructs an x-monotone polyline from a range of elements.
      * \pre Range should from a continuous well-oriented x-monotone polyline.
      */
     template <typename ForwardIterator>
@@ -504,7 +501,7 @@ public:
       const
     {
       typedef typename std::iterator_traits<ForwardIterator>::value_type VT;
-      typedef typename boost::is_same<VT, Point_2>::type Is_point;
+      typedef typename std::is_same<VT, Point_2>::type Is_point;
       // Dispatch the range to the appropriate implementation.
       return constructor_impl(begin, end, Is_point());
     }
@@ -527,7 +524,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
-                                        boost::false_type) const
+                                        std::false_type) const
     { return Base::Construct_x_monotone_curve_2::operator()(begin, end); }
 
     /*! Construction of an x-monotone polyline from a range of points.
@@ -542,7 +539,7 @@ public:
     template <typename ForwardIterator>
     X_monotone_curve_2 constructor_impl(ForwardIterator begin,
                                         ForwardIterator end,
-                                        boost::true_type) const
+                                        std::true_type) const
     {
       // The range must not contain a single point.
       CGAL_precondition_msg(std::distance(begin, end) != 1,
@@ -593,12 +590,66 @@ public:
     }
   };
 
-  /*! Obtain a Construct_x_monotone_curve_2 functor object. */
+  /*! obtains a Construct_x_monotone_curve_2 functor object. */
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   { return Construct_x_monotone_curve_2(*this); }
 
-  /*! Deprecated!
-   * Obtain the segment traits.
+  //
+  using Approximate_number_type = typename Base::Approximate_number_type;
+  using Approximate_point_2 = typename Base::Approximate_point_2;
+
+  class Approximate_2 : public Base::Approximate_2 {
+  protected:
+    using Traits = Arr_polyline_traits_2<Segment_traits_2>;
+
+    /*! The traits (in case it has state) */
+    const Traits& m_traits;
+
+    /*! constructs
+     * \param traits the traits.
+     */
+    Approximate_2(const Traits& traits) :
+      Base::Approximate_2(*(traits.subcurve_traits_2())),
+      m_traits(traits)
+    {}
+
+    friend class Arr_polyline_traits_2<Segment_traits_2>;
+
+  public:
+    Approximate_number_type operator()(const Point_2& p, int i) const
+    { return Base::Approximate_2::operator()(p, i); }
+
+    Approximate_point_2 operator()(const Point_2& p) const
+    { return Base::Approximate_2::operator()(p); }
+
+    /*! obtains an approximation of an \f$x\f$-monotone curve. */
+    template <typename OutputIterator>
+    OutputIterator operator()(const X_monotone_curve_2& xcv, double /* error */,
+                              OutputIterator oi, bool l2r = true) const {
+      if (l2r) {
+        for (auto it = xcv.points_begin(); it != xcv.points_end(); ++it) {
+          const auto& p = *it;
+          auto x = CGAL::to_double(p.x());
+          auto y = CGAL::to_double(p.y());
+          *oi++ = Approximate_point_2(x, y);
+        }
+        return oi;
+      }
+
+      for (auto it = xcv.points_rbegin(); it != xcv.points_rend(); ++it) {
+        const auto& p = *it;
+        auto x = CGAL::to_double(p.x());
+        auto y = CGAL::to_double(p.y());
+        *oi++ = Approximate_point_2(x, y);
+      }
+      return oi;
+    }
+  };
+
+  /*! obtains an Approximate_2 functor object. */
+  Approximate_2 approximate_2_object() const { return Approximate_2(*this); }
+
+  /*! obtains the segment traits.
    * \return the segment traits.
    */
   CGAL_DEPRECATED const Segment_traits_2* segment_traits_2() const

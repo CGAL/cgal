@@ -7,13 +7,12 @@
 
 #include <CGAL/Polygon_mesh_processing/corefinement.h>
 
-#include <fstream>
 #include <iostream>
+#include <string>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K; // default kernel for OpenMesh point type
 typedef CGAL::Exact_predicates_exact_constructions_kernel     EK; // alternatice kernel we want to use
 typedef OpenMesh::PolyMesh_ArrayKernelT< >                    Mesh;
-
 
 typedef boost::property_map<Mesh, CGAL::dynamic_vertex_property_t<EK::Point_3> >::type Exact_point_map;
 
@@ -22,8 +21,8 @@ struct Exact_vertex_point_map
   // typedef for the property map
   typedef boost::property_traits<Exact_point_map>::value_type value_type;
   typedef boost::property_traits<Exact_point_map>::reference reference;
-  typedef boost::property_traits<Exact_point_map>::category category;
   typedef boost::property_traits<Exact_point_map>::key_type key_type;
+  typedef boost::read_write_property_map_tag category;
 
   // exterior references
   Exact_point_map exact_point_map;

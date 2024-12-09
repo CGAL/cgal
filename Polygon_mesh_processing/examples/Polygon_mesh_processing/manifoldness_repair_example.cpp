@@ -6,9 +6,9 @@
 
 #include <CGAL/boost/graph/iterator.h>
 
-#include <fstream>
 #include <iostream>
 #include <iterator>
+#include <string>
 #include <vector>
 
 namespace PMP = CGAL::Polygon_mesh_processing;

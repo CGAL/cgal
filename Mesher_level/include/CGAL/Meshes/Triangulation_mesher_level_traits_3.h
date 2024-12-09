@@ -76,7 +76,7 @@ struct Triangulation_mesher_level_traits_3 :
       internal_facets.reserve(64);
     }
 
-    Locate_type locate_type;
+    Locate_type locate_type = Tr::OUTSIDE_AFFINE_HULL;
     Cell_handle cell;
     int i, j;
 

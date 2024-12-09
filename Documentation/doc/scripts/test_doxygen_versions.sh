@@ -20,8 +20,8 @@ BUILD_DIR_1="$3"
 BUILD_DIR_2="$4"
 NB_CORES="$(grep -c ^processor /proc/cpuinfo)"
 
-if [ -z $PATH_TO_1 ] || [ $(basename $PATH_TO_1) != "doxygen" ] || [ ! -e $PATH_TO_1 ]; then
-  echo "Please specify a valid path to a doxygen executable."
+if [ -z $PATH_TO_1 ] || [ ! -e $PATH_TO_1 ]; then
+  echo "Please specify a valid path to a doxygen executable: $PATH_TO_1 is not valid."
   echo "$0 --help for more information."
   exit 0
 fi
@@ -117,7 +117,7 @@ if [ "$HAS_REF" -ne "1" ]; then
   if [ $IS_RELEASE = 0 ]; then
     cd $ROOT
     mkdir -p ./build && cd ./build
-    cmake -DWITH_CGAL_Core=false -DWITH_CGAL_ImageIO=false -DWITH_CGAL_Qt5=false .. 1>> ./build_logs
+    cmake -DWITH_CGAL_Core=false -DWITH_CGAL_ImageIO=false -DWITH_CGAL_Qt6=false .. 1>> ./build_logs
     CGAL_NAME="$(cat $PWD/VERSION)"
     cd $ROOT
     rm -rf ./build

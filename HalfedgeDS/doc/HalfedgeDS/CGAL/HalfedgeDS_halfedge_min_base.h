@@ -10,7 +10,7 @@ CGAL::Tag_false, CGAL::Tag_false, CGAL::Tag_false>`.
 The class contains support for the next and the opposite pointer and
 the required type definitions. It can be used for deriving own halfedges.
 
-\cgalModels `HalfedgeDSHalfedge`
+\cgalModels{HalfedgeDSHalfedge}
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`
 \sa `HalfedgeDSItems`

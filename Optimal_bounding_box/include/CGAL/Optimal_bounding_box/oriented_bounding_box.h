@@ -22,10 +22,12 @@
 #include <CGAL/Aff_transformation_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/helpers.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/generators.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Convex_hull_traits_3.h>
+#include <CGAL/Default.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Random.h>
@@ -36,18 +38,12 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/range/value_type.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #include <array>
 #include <iostream>
 #include <iterator>
 #include <type_traits>
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 namespace Optimal_bounding_box {
@@ -97,7 +93,7 @@ void construct_oriented_bounding_box(const PointRange& points,
   obb_points[6] = cp(xmax, ymin, zmax);
   obb_points[7] = cp(xmax, ymax, zmax);
 
-  // Apply the inverse rotation to the rotated axis aligned bounding box
+  // Apply the inverse rotation to the rotated axis-aligned bounding box
   for(std::size_t i=0; i<8; ++i)
   {
     obb_points[i] = inverse_transformation.transform(obb_points[i]);
@@ -146,13 +142,13 @@ void compute_best_transformation(const PointRange& points,
                                         rot(1, 0), rot(1, 1), rot(1, 2),
                                         rot(2, 0), rot(2, 1), rot(2, 2));
 
-  // inverse transformation is simply the transposed since the matrix is unitary
+  // the inverse transformation is simply the transposed matrix since the matrix is unitary
   inverse_transformation = Aff_transformation_3(rot(0, 0), rot(1, 0), rot(2, 0),
                                                 rot(0, 1), rot(1, 1), rot(2, 1),
                                                 rot(0, 2), rot(1, 2), rot(2, 2));
 }
 
-// Following two functions are overloads to dispatch depending on return type
+// The following two functions are overloads to dispatch depending on the return type
 template <typename PointRange, typename K, typename Traits>
 void construct_oriented_bounding_box(const PointRange& points,
                                      CGAL::Aff_transformation_3<K>& transformation,
@@ -168,9 +164,9 @@ void construct_oriented_bounding_box(const PointRange& points,
                                      Array& obb_points,
                                      CGAL::Random& rng,
                                      const Traits& traits,
-                                     typename boost::enable_if<
-                                       typename boost::has_range_iterator<Array>
-                                     >::type* = 0)
+                                     std::enable_if_t<
+                                       boost::has_range_iterator<Array>::value
+                                     >* = 0)
 {
   typename Traits::Aff_transformation_3 transformation, inverse_transformation;
   compute_best_transformation(points, transformation, inverse_transformation, rng, traits);
@@ -183,9 +179,9 @@ void construct_oriented_bounding_box(const PointRange& points,
                                      PolygonMesh& pm,
                                      CGAL::Random& rng,
                                      const Traits& traits,
-                                     typename boost::disable_if<
-                                       typename boost::has_range_iterator<PolygonMesh>
-                                     >::type* = 0)
+                                     std::enable_if_t<
+                                       !boost::has_range_iterator<PolygonMesh>::value
+                                     >* = 0)
 {
   typename Traits::Aff_transformation_3 transformation, inverse_transformation;
   compute_best_transformation(points, transformation, inverse_transformation, rng, traits);
@@ -207,7 +203,7 @@ void construct_oriented_bounding_box(const PointRange& points,
 {
   typedef typename Traits::Point_3                                   Point;
 
-  CGAL_static_assertion((std::is_same<typename boost::range_value<PointRange>::type, Point>::value));
+  static_assert(std::is_same<typename boost::range_value<PointRange>::type, Point>::value);
 
   if(use_ch) // construct the convex hull to reduce the number of points
   {
@@ -317,35 +313,36 @@ void construct_oriented_bounding_box(const PointRange& points,
 ///
 template <typename PointRange,
           typename Output,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename NamedParameters = parameters::Default_named_parameters>
 void oriented_bounding_box(const PointRange& points,
                            Output& out,
-                           const CGAL_BGL_NP_CLASS& np
+                           const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                           , typename boost::enable_if<
-                               typename boost::has_range_iterator<PointRange>
-                           >::type* = 0
+                           , std::enable_if_t<
+                               boost::has_range_iterator<PointRange>::value
+                           >* = 0
 #endif
                            )
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
+  using CGAL::parameters::is_default_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type               PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type               PointMap;
 
 #if defined(CGAL_EIGEN3_ENABLED)
   typedef typename boost::property_traits<PointMap>::value_type                         Point;
   typedef typename CGAL::Kernel_traits<Point>::type                                     K;
   typedef Oriented_bounding_box_traits_3<K>                                             Default_traits;
 #else
-  typedef void                                                                          Default_traits;
+  typedef CGAL::Default                                                                 Default_traits;
 #endif
 
   typedef typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
-                                                       CGAL_BGL_NP_CLASS,
+                                                       NamedParameters,
                                                        Default_traits>::type            Geom_traits;
 
-  CGAL_static_assertion_msg(!(std::is_same<Geom_traits, void>::value),
+  static_assert(!(std::is_same<Geom_traits, CGAL::Default>::value),
                             "You must provide a traits class or have Eigen enabled!");
 
   Geom_traits traits = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
@@ -355,7 +352,8 @@ void oriented_bounding_box(const PointRange& points,
   const unsigned int seed = choose_parameter(get_parameter(np, internal_np::random_seed), -1); // undocumented
 
   CGAL::Random fixed_seed_rng(seed);
-  CGAL::Random& rng = (seed == unsigned(-1)) ? CGAL::get_default_random() : fixed_seed_rng;
+  CGAL::Random& rng = is_default_parameter<NamedParameters, internal_np::random_seed_t>::value ?
+                        CGAL::get_default_random() : fixed_seed_rng;
 
 #ifdef CGAL_OPTIMAL_BOUNDING_BOX_DEBUG
   std::cout << "Random seed: " << rng.get_seed() << std::endl;
@@ -364,7 +362,7 @@ void oriented_bounding_box(const PointRange& points,
   // @todo handle those cases (or call min_rectangle_2 with a projection)
   if(points.size() <= 3)
   {
-    std::cerr << "The oriented bounding box cannot (yet) be computed for a mesh with fewer than 4 vertices!\n";
+    std::cerr << "The oriented bounding box cannot be computed with fewer than 4 vertices!\n";
     return;
   }
 
@@ -418,41 +416,27 @@ void oriented_bounding_box(const PointRange& points,
 ///
 template <typename PolygonMesh,
           typename Output,
-          typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+          typename NamedParameters = parameters::Default_named_parameters>
 void oriented_bounding_box(const PolygonMesh& pmesh,
                            Output& out,
-                           const CGAL_BGL_NP_CLASS& np
+                           const NamedParameters& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                           , typename boost::disable_if<
-                              typename boost::has_range_iterator<PolygonMesh>
-                           >::type* = 0
+                           , std::enable_if_t<
+                              !boost::has_range_iterator<PolygonMesh>::value
+                           >* = 0
 #endif
                            )
 {
   using CGAL::parameters::choose_parameter;
   using CGAL::parameters::get_parameter;
 
-  typedef typename CGAL::GetVertexPointMap<PolygonMesh, CGAL_BGL_NP_CLASS>::const_type  VPM;
+  typedef typename CGAL::GetVertexPointMap<PolygonMesh, NamedParameters>::const_type  VPM;
 
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(vertex_point, pmesh));
 
   oriented_bounding_box(vertices(pmesh), out, np.point_map(vpm));
 }
-
-/// \cond SKIP_IN_MANUAL
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-/// Convenience overloads
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-template <typename Input /*range or mesh*/, typename Output /*transformation, array, or mesh*/>
-void oriented_bounding_box(const Input& in, Output& out)
-{
-  return oriented_bounding_box(in, out, CGAL::parameters::all_default());
-}
-
-/// \endcond
 
 } // end namespace CGAL
 

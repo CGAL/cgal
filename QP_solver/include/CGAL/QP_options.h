@@ -86,7 +86,7 @@ private:
   // verbosity
   // ---------
   //    0: silent
-  //    1: short iteration summary (recommened for the user)
+  //    1: short iteration summary (recommended for the user)
   // >= 2: output of internal details (not recommend for the user)
   int verbosity_;
 

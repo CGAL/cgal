@@ -1,17 +1,20 @@
+#define CGAL_NO_CDT_2_WARNING
+
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
+
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Polyhedron_3.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 #include <set>
 #include <vector>
 #include <fstream>
 #include <cassert>
 #include <string>
 
-#define CGAL_NO_CDT_2_WARNING
-
-#include <CGAL/Surface_mesh.h>
-#include <CGAL/Polyhedron_3.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
-#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 template<
 class PolygonMesh,
@@ -86,9 +89,9 @@ void test_triangulate_hole_with_cdt_2(
     CGAL::Polygon_mesh_processing::triangulate_hole(
       pmesh,
       h,
-      std::back_inserter(patch_faces),
-      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(
-        get(CGAL::vertex_point, pmesh)).
+      CGAL::parameters::
+        face_output_iterator(std::back_inserter(patch_faces)).
+        vertex_point_map(get(CGAL::vertex_point, pmesh)).
         use_2d_constrained_delaunay_triangulation(true).
         geom_traits(GeomTraits()));
 
@@ -99,8 +102,7 @@ void test_triangulate_hole_with_cdt_2(
     assert(patch_faces.size() == num_patch_faces);
   }
   assert(pmesh.is_valid() && is_closed(pmesh));
-  assert(CGAL::Polygon_mesh_processing::is_outward_oriented(pmesh,
-    CGAL::parameters::all_default()));
+  assert(CGAL::Polygon_mesh_processing::is_outward_oriented(pmesh));
 
   // Writing the file.
   if (verbose) {

@@ -15,8 +15,6 @@
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 
-#include <boost/intrusive_ptr.hpp>
-
 #include <ostream>
 
 namespace CGAL {
@@ -24,16 +22,13 @@ namespace CGAL {
 namespace CGAL_SS_i {
 
 template<class SSkel_, class Traits_>
-class Event_2 : public Ref_counted_base
+class Event_2
 {
   typedef SSkel_  SSkel ;
   typedef Traits_ Traits ;
 
 public:
-
   typedef Event_2<SSkel,Traits> Self ;
-
-  typedef boost::intrusive_ptr<Self> SelfPtr ;
 
   typedef typename Traits::Point_2          Point_2 ;
   typedef typename Traits::FT               FT ;
@@ -46,7 +41,7 @@ public:
 
   typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge ;
 
-  enum Type { cEdgeEvent, cSplitEvent, cPseudoSplitEvent } ;
+  enum Type { cEdgeEvent, cSplitEvent, cPseudoSplitEvent, cArficialEvent } ;
 
 public:
 
@@ -178,7 +173,7 @@ private :
   virtual void dump ( std::ostream& ss ) const
   {
     this->Base::dump(ss);
-    ss << " (Split Event, Seed=" << mSeed->id() << " (" << mSeed->point() << ") OppBorder=" << this->triedge().e2()->id() << ')' ;
+    ss << " (Split Event, Seed=" << mSeed->id() << " pos=(" << mSeed->point() << ") OppBorder=" << this->triedge().e2()->id() << ')' ;
   }
 
 private :
@@ -246,6 +241,48 @@ private :
   Vertex_handle mSeed1 ;
   bool          mOppositeIs0 ;
 } ;
+
+
+template<class SSkel_, class Traits_>
+class Artificial_event_2 : public Event_2<SSkel_,Traits_>
+{
+  typedef SSkel_  SSkel ;
+  typedef Traits_ Traits ;
+
+  typedef Event_2<SSkel,Traits> Base ;
+
+  typedef typename SSkel::Halfedge_handle Halfedge_handle ;
+  typedef typename SSkel::Vertex_handle   Vertex_handle ;
+
+  typedef typename Base::Type             Type ;
+  typedef typename Base::Triedge          Triedge ;
+  typedef typename Base::Trisegment_2_ptr Trisegment_2_ptr ;
+
+public:
+  Artificial_event_2 ( Triedge const&          aTriedge,
+                       Trisegment_2_ptr const& aTrisegment,
+                       Vertex_handle           aSeed )
+    :
+      Base(aTriedge,aTrisegment)
+    , mSeed(aSeed)
+  {}
+
+  virtual Type type() const { return this->cArficialEvent ; }
+
+  virtual Vertex_handle seed0() const { return mSeed ; }
+  virtual Vertex_handle seed1() const { return mSeed ; }
+
+private :
+  virtual void dump ( std::ostream& ss ) const
+  {
+    this->Base::dump(ss);
+
+    ss << " (Artificial Event, Seed=" << mSeed->id() << ")" ;
+  }
+
+private :
+  Vertex_handle mSeed ;
+};
 
 }
 

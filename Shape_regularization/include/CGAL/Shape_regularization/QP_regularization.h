@@ -139,13 +139,13 @@ namespace Shape_regularization {
 
       \pre input_range.size() >= 2
     */
-    template<typename NamedParameters>
+    template<typename NamedParameters = parameters::Default_named_parameters>
     QP_regularization(
       const InputRange& input_range,
       NeighQuery& neighbor_query,
       RegType& regularization_type,
       QPSolver& quadratic_program,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_regularization_type(regularization_type),
@@ -156,18 +156,6 @@ namespace Shape_regularization {
 
       clear();
     }
-
-    /// \cond SKIP_IN_MANUAL
-    QP_regularization(
-      const InputRange& input_range,
-      NeighQuery& neighbor_query,
-      RegType& regularization_type,
-      QPSolver& quadratic_program) :
-    QP_regularization(
-      input_range, neighbor_query, regularization_type, quadratic_program,
-      CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /// @}
 

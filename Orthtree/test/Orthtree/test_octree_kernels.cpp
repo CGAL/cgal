@@ -1,16 +1,16 @@
 #include <CGAL/Octree.h>
+#include <CGAL/Point_set_3.h>
+#include <CGAL/point_generators_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Point_set_3.h>
-#include <CGAL/point_generators_3.h>
 
 template <typename Kernel>
 void test()
 {
-  typedef typename Kernel::Point_3 Point;
-  typedef CGAL::Point_set_3<Point> Point_set;
-  typedef CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map> Octree;
+  using Point = typename Kernel::Point_3;
+  using Point_set = CGAL::Point_set_3<Point>;
+  using Octree = CGAL::Octree<Kernel, Point_set, typename Point_set::Point_map>;
 
   Point_set points;
   CGAL::Random_points_in_cube_3<Point> generator;

@@ -31,11 +31,11 @@ namespace CGAL {
   {
   public:
     typedef GMap_cell_iterator<Map_,i,dim,true> Base;
-    typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::Dart_const_descriptor Dart_const_descriptor;
 
     /// Main constructor.
     GMap_cell_const_iterator(const Map_& amap,
-                             Dart_const_handle adart):
+                             Dart_const_descriptor adart):
       Base(amap,adart)
     {}
     /// Constructor from non const version.
@@ -53,11 +53,11 @@ namespace CGAL {
   {
   public:
     typedef GMap_one_dart_per_incident_cell_iterator<Map_,i,j,dim,true> Base;
-    typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::Dart_const_descriptor Dart_const_descriptor;
 
     /// Main constructor.
     GMap_one_dart_per_incident_cell_const_iterator(const Map_& amap,
-                                                   Dart_const_handle adart):
+                                                   Dart_const_descriptor adart):
       Base(amap, adart)
     {}
     /// Constructor from non const version.
@@ -74,14 +74,14 @@ namespace CGAL {
   {
   public:
     typedef GMap_one_dart_per_cell_iterator<Map_,i,dim,true> Base;
-    typedef typename Map_::Dart_const_handle Dart_const_handle;
+    typedef typename Map_::Dart_const_descriptor Dart_const_descriptor;
 
     /// Main constructor.
     GMap_one_dart_per_cell_const_iterator(const Map_& amap): Base(amap)
     {}
     /// Constructor with a dart in parameter (for end iterator).
     GMap_one_dart_per_cell_const_iterator(const Map_& amap,
-                                          Dart_const_handle adart):
+                                          Dart_const_descriptor adart):
       Base(amap)
     { this->set_current_dart(adart); }
     /// Constructor from non const version.

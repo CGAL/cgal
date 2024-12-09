@@ -234,8 +234,8 @@ public:
 
   void pop_back()
   {
-    all_.pop_back();
     skip_.pop_back();
+    all_.pop_back_and_dispose(Node_disposer());
   }
 
   /// Insert \c t before \c pos in the all_view. \t will not be inserted into the skip view.

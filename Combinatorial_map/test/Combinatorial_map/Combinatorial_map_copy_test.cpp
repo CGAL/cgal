@@ -12,11 +12,22 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <cassert>
 
 using namespace std;
 
+struct Min_items: public CGAL::Generic_map_min_items
+{
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
+};
+
 struct Map_2_dart_items
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -30,6 +41,9 @@ struct Map_2_dart_items
 
 struct Map_2_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -39,13 +53,15 @@ struct Map_2_dart_max_items_3
     typedef CGAL::Cell_attribute< Refs, int, CGAL::Tag_true > Int_attrib;
     typedef CGAL::Cell_attribute< Refs, double, CGAL::Tag_true > Double_attrib;
 
-    typedef std::tuple<Int_attrib, Int_attrib,
-          Double_attrib> Attributes;
+    typedef std::tuple<Int_attrib, Int_attrib, Double_attrib> Attributes;
   };
 };
 
 struct Map_3_dart_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -60,6 +76,9 @@ struct Map_3_dart_items_3
 
 struct Map_3_dart_max_items_3
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -87,9 +106,11 @@ struct MonInfo
   { return mnb==info.mnb && s==info.s && ptr==info.ptr; }
 };
 
-class Another_map_3_dart_items_3
+struct Another_map_3_dart_items_3
 {
-public:
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   /// Dart_wrapper defines the type of darts used.
   template < class Refs >
   struct Dart_wrapper
@@ -104,6 +125,9 @@ public:
 
 struct Map_dart_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template < class Refs >
   struct Dart_wrapper
   {
@@ -118,6 +142,9 @@ struct Map_dart_items_4
 
 struct Map_dart_max_items_4
 {
+#ifdef USE_COMPACT_CONTAINER_WITH_INDEX
+  typedef CGAL::Tag_true Use_index;
+#endif
   template < class Refs >
   struct Dart_wrapper
   {
@@ -133,16 +160,16 @@ struct Map_dart_max_items_4
 };
 
 // noinfo, void, void, void
-typedef CGAL::Combinatorial_map<2, CGAL::Generic_map_min_items > Map1;
+typedef CGAL::Combinatorial_map<2, Min_items> Map1;
 
 // noinfo, double, void, double
-typedef CGAL::Combinatorial_map<2, Map_2_dart_items > Map2;
+typedef CGAL::Combinatorial_map<2, Map_2_dart_items> Map2;
 
 // info=int, int, int, double
 typedef CGAL::Combinatorial_map<2, Map_2_dart_max_items_3> Map3;
 
 // noinfo, void, void, void, void
-typedef CGAL::Combinatorial_map<3, CGAL::Generic_map_min_items > Map4;
+typedef CGAL::Combinatorial_map<3, Min_items> Map4;
 
 // noinfo, double, void, int, double
 typedef CGAL::Combinatorial_map<3, Map_3_dart_items_3> Map5;
@@ -173,7 +200,7 @@ struct CreateAttributes
     for(typename Map::Dart_range::iterator it=map.darts().begin(),
         itend=map.darts().end(); it!=itend; ++it)
     {
-      if ( map.template attribute<i>(it)==map.null_handle )
+      if ( map.template attribute<i>(it)==map.null_descriptor )
       {
         map.template set_attribute<i>
           (it, map.template create_attribute<i>
@@ -291,7 +318,7 @@ void create2Dmap(Map& map)
   CreateAttributes<Map,0>::run(map);
   CreateAttributes<Map,1>::run(map);
   CreateAttributes<Map,2>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 template<typename Map>
 void create3Dmap(Map& map)
@@ -301,9 +328,9 @@ void create3Dmap(Map& map)
 
   for ( int i=0; i<20; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<3>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
   }
@@ -321,18 +348,18 @@ void create4Dmap(Map& map)
 
   for ( int i=0; i<40; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<3>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
   }
 
   for ( int i=0; i<20; ++i )
   {
-    typename Map::Dart_handle d1=map.darts().begin();
+    typename Map::Dart_descriptor d1=map.darts().begin();
     while ( !map.template is_free<4>(d1) ) ++d1;
-    typename Map::Dart_handle d2=map.darts().begin();
+    typename Map::Dart_descriptor d2=map.darts().begin();
     while ( !map.template is_sewable<4>(d1, d2) ) ++d2;
     map.template sew<4>(d1,d2);
   }
@@ -342,7 +369,7 @@ void create4Dmap(Map& map)
   CreateAttributes<Map,2>::run(map);
   CreateAttributes<Map,3>::run(map);
   CreateAttributes<Map,4>::run(map);
-  CGAL_assertion ( map.is_valid() );
+  assert( map.is_valid() );
 }
 
 bool testCopy()

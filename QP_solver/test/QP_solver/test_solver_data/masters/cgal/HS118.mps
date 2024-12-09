@@ -1,5 +1,5 @@
-* Description: from the benchmarks at http://www.doc.ic.ac.uk/~im/
-NAME          HS118     
+* Description: from the benchmarks at https://www.doc.ic.ac.uk/~im/
+NAME          HS118
 ROWS
   N OBJ.FUNC
   G R------1

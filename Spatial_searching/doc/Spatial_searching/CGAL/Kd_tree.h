@@ -99,13 +99,19 @@ Constructs an empty `k-d` tree.
 Kd_tree(Splitter s=Splitter(),Traits t=Traits());
 
 /*!
-
 Constructs a `k-d` tree on the elements from the sequence
 `[first, beyond)` using the splitting rule implemented by `s`.
 The value type of the `InputIterator` must be `Point_d`.
-
 */
 template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond, Splitter s=Splitter(),Traits t=Traits());
+
+/*!
+Constructs a `k-d` tree on the elements from the range `points`
+using the splitting rule implemented by `s`.
+The value type of elements in `PointRange` must be `Point_d`.
+*/
+template <class PointRange>
+Kd_tree(const PointRange& points, Splitter s = Splitter(), const Traits t = Traits());
 
 /*!
 The constructor does not build the internal data structure, and it
@@ -188,7 +194,7 @@ The types `FuzzyQueryItem::Point_d` and `Point_d` must be equivalent.
 To use this function `Traits` must be a model of the concept `RangeSearchTraits`.
 */
 template <class FuzzyQueryItem>
-boost::optional<Point_d> search_any_point(FuzzyQueryItem q) const;
+std::optional<Point_d> search_any_point(FuzzyQueryItem q) const;
 
 /*!
 Reports the points that are approximately contained by `q`.
@@ -203,7 +209,7 @@ OutputIterator search(OutputIterator it, FuzzyQueryItem q) const;
 Returns a const iterator to the first point in the tree.
 \note Starting with \cgal 4.6, the order of the points in the iterator range
 `[begin() , end())` is not the order of  insertion of the points into the tree.
-This was not guaranteed before but might have beeen observed and exploited.
+This was not guaranteed before but might have been observed and exploited.
 */
 iterator begin() const;
 
@@ -223,7 +229,7 @@ Returns the number of points that are stored in the tree.
 size_type size() const;
 
 /*!
-return the instance of the traits used to construct the tree.
+Returns the instance of the traits used to construct the tree.
 */
 Traits traits() const;
 
@@ -247,6 +253,12 @@ const Kd_tree_rectangle<FT,D>& bounding_box() const;
 Inserts statistics of the tree into the output stream `s`.
 */
 std::ostream& statistics(std::ostream& s) const;
+
+/*!
+Inserts the tree in the <a href="https://graphviz.org/">`Graphviz`</a> format
+into the output stream `s`.
+*/
+std::ostream& write_graphviz(std::ostream& s) const;
 
 /// @}
 

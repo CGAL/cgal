@@ -64,20 +64,20 @@ struct test_emptiness : public Surface_fixture
     assert(m.is_isolated(iv));
 
     Sm::Vertex_around_target_range vr = m.vertices_around_target(m.halfedge(iv));
-    assert(is_empty_range(boost::begin(vr), boost::end(vr)));
+    assert(is_empty_range(std::begin(vr), std::end(vr)));
 
     Sm::Face_around_target_range fr = m.faces_around_target(m.halfedge(iv));
-    assert(is_empty_range(boost::begin(fr), boost::end(fr)));
+    assert(is_empty_range(std::begin(fr), std::end(fr)));
 
     Sm::Halfedge_around_target_range hr = m.halfedges_around_target(m.halfedge(iv));
-    assert(is_empty_range(boost::begin(hr), boost::end(hr)));
+    assert(is_empty_range(std::begin(hr), std::end(hr)));
     // not true for everything else
     m.remove_vertex(iv);
     assert(m.is_removed(iv));
     Sm::Vertex_iterator vb, ve;
     for(boost::tie(vb, ve) = m.vertices(); vb != ve; ++vb) {
       Sm::Vertex_around_target_range vr = m.vertices_around_target(m.halfedge(*vb));
-      assert(!is_empty_range(boost::begin(vr), boost::end(vr)));
+      assert(!is_empty_range(std::begin(vr), std::end(vr)));
     }
   }
 };

@@ -10,10 +10,15 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
+#ifndef CGAL_APPROX_MIN_ELLIPSOID_KHACHIYAN_APPROX_IMPL_H
+#define CGAL_APPROX_MIN_ELLIPSOID_KHACHIYAN_APPROX_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 // Note: whenever a comment refers to "Khachiyan's paper" then the
 // paper "Rounding of polytopes in the real number model of
-// computation" is ment (Mathematics of Operations Research, Vol. 21,
-// No. 2, May 1996).  Nontheless, most comments refer to the
+// computation" is meant (Mathematics of Operations Research, Vol. 21,
+// No. 2, May 1996).  Nonetheless, most comments refer to the
 // accompanying documentation sheet (and not to the above paper), see
 // the file(s) in documentation/.
 
@@ -298,7 +303,7 @@ namespace CGAL {
     CGAL_APPEL_LOG("appel","  Largest excess after initialization is " <<
               to_double(ex[ex_max]) << "." << "\n");
 
-    // Accoding to Khachiyam (Lemma 3, eq. (2.20) in "Rounding of
+    // According to Khachiyam (Lemma 3, eq. (2.20) in "Rounding of
     // polytopes in the real number model of computation"), the
     // following eps makes (*) hold:
     eps = n-1;
@@ -343,7 +348,7 @@ namespace CGAL {
     max_error_m_all = (std::max)(max_error,max_error_m_all);
     max_error_m = max_error;
     #endif
-    CGAL_APPEL_LOG("appel","  The represenation error in m is: " <<
+    CGAL_APPEL_LOG("appel","  The representation error in m is: " <<
               to_double(max_error) << (max_error == FT(0)?
               " (zero)" : "") << "." << "\n");
 
@@ -482,10 +487,16 @@ namespace CGAL {
     // check whether eps is negative (which under exact arithmetic is
     // not possible, and which we will take as a sign that the input
     // points are degenerate):
-    if (CGAL::is_negative(eps_e)) {
-      CGAL_APPEL_LOG("appel", "Negative Exact epsilon -> degenerate!" << "\n");
-      is_deg = true;
-    }
+    // BG: the following check is wrong and has been commented out.
+    // If the ellipsoid happens to be optimal (valid with eps=0),
+    // a slightly negative eps_e is a legit outcome due to roundoff:
+    // while eps_e is computed with exact arithmetic, it is based on
+    // the inexact inverse M(x)^{-1}.
+    //
+    // if (CGAL::is_negative(eps_e)) {
+    //   CGAL_APPEL_LOG("appel", "Negative Exact epsilon -> degenerate!" << "\n");
+    //  is_deg = true;
+    // }
 
     is_exact_eps_uptodate = true;
     return eps_exact;
@@ -657,3 +668,5 @@ namespace CGAL {
   }
 
 }
+
+#endif // CGAL_APPROX_MIN_ELLIPSOID_KHACHIYAN_APPROX_IMPL_H

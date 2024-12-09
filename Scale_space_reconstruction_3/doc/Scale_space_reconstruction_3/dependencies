@@ -7,3 +7,5 @@ Spatial_searching
 Solver_interface
 Advancing_front_surface_reconstruction
 Point_set_processing_3
+Polygon_mesh_processing
+Algebraic_foundations

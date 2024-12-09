@@ -52,7 +52,7 @@ namespace Segments {
     and value type is `GeomTraits::Segment_2`. The default is
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
-    \cgalModels `NeighborQuery`
+    \cgalModels{NeighborQuery}
   */
   template<
     typename GeomTraits,
@@ -105,10 +105,10 @@ namespace Segments {
 
       \pre input_range.size() >= 2
     */
-    template<typename NamedParameters>
+    template<typename NamedParameters = parameters::Default_named_parameters>
     Delaunay_neighbor_query_2(
       const InputRange& input_range,
-      const NamedParameters& np) :
+      const NamedParameters& np = parameters::default_values()) :
     m_input_range(input_range),
     m_segment_map(parameters::choose_parameter(parameters::get_parameter(
       np, internal_np::segment_map), SegmentMap())) {
@@ -116,14 +116,6 @@ namespace Segments {
       clear();
       create_unique_group();
     }
-
-    /// \cond SKIP_IN_MANUAL
-    Delaunay_neighbor_query_2(
-      InputRange& input_range) :
-    Delaunay_neighbor_query_2(
-      input_range, CGAL::parameters::all_default())
-    { }
-    /// \endcond
 
     /*!
       \brief inserts a group of segments from `input_range` and finds their

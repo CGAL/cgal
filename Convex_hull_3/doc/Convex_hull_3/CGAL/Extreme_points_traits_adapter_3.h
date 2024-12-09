@@ -15,8 +15,7 @@ namespace CGAL {
  * (in practice we check `R::Has_filtered_predicates_tag` is `Tag_true` and `R::FT` is a floating point type),
  * then the default traits class used is `Convex_hull_traits_3<R>`, and `R` otherwise.
  *
- * \cgalModels `ConvexHullTraits_3`
- * \cgalModels `IsStronglyConvexTraits_3`
+ * \cgalModels{ConvexHullTraits_3,IsStronglyConvexTraits_3}
  */
 template<class PointPropertyMap, class Base_traits=Default>
 class Extreme_points_traits_adapter_3

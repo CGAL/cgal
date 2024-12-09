@@ -13,7 +13,7 @@ if any triangle in the profile changes the normal by more than 90 degree, in thi
 \tparam Filter must be a model of the concept `PlacementFilter`. It defaults to a class that does
 not filter any placement.
 
-\cgalModels `PlacementFilter`
+\cgalModels{PlacementFilter}
 
 */
 template <typename Filter>
@@ -44,8 +44,8 @@ public:
   returns the placement, if it does not get filtered by the wrapped filter
   and if no triangle in the profile has its normal changed by more than 90 degrees.
   */
-  boost::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile,
-                                                           boost::optional<typename Profile::Point> op) const;
+  std::optional<typename Edge_profile::Point> operator()(const Edge_profile& profile,
+                                                           std::optional<typename Profile::Point> op) const;
 
   /// @}
 

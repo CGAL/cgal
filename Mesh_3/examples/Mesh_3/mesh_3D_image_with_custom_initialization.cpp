@@ -11,7 +11,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 
-#include <CGAL/Mesh_3/Dump_c3t3.h>
+#include <CGAL/SMDS_3/Dump_c3t3.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -31,8 +31,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 // Criteria
 typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 
-// To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 int main()
 {
@@ -44,8 +43,8 @@ int main()
   Mesh_domain domain = Mesh_domain::create_labeled_image_mesh_domain(image);
 
   // Mesh criteria
-  Mesh_criteria criteria(facet_angle=30, facet_size=3, facet_distance=1,
-                         cell_radius_edge_ratio=3, cell_size=3);
+  Mesh_criteria criteria(params::facet_angle(30).facet_size(3).facet_distance(1).
+                         cell_radius_edge_ratio(3).cell_size(3));
 
   /// [Meshing]
   C3t3 c3t3;

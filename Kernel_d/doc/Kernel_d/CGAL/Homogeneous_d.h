@@ -14,7 +14,7 @@ type provided as a model for `RingNumberType` is only an approximation of a
 ring (such as the built-in type `double`), then the geometry provided by
 the kernel is only an approximation of Euclidean geometry.
 
-\cgalModels `KernelWithLifting_d`
+\cgalModels{KernelWithLifting_d}
 
 \sa `CGAL::Cartesian_d<FieldNumberType>`
 

@@ -40,9 +40,9 @@ static const char* strategy_names[] = {
   "small-side angle-bisector decomposition",
   "optimal convex decomposition",
   "Hertel-Mehlhorn decomposition",
-  "Greene decomosition",
+  "Greene decomposition",
   "Triangulation",
-  "Vertical decomosition"
+  "Vertical decomposition"
 };
 
 Polygon_with_holes_2 compute_minkowski_sum_2(Polygon_2& p, Polygon_2& q,

@@ -12,9 +12,7 @@ coefficients with respect to one variable.
 This functor is well defined if `PolynomialTraits_d::Coefficient_type` is
 a `Field` or a `UniqueFactorizationDomain`.
 
-\cgalRefines `AdaptableUnaryFunction`
-\cgalRefines `CopyConstructible`
-\cgalRefines `DefaultConstructible`
+\cgalRefines{AdaptableUnaryFunction,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

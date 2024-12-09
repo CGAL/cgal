@@ -112,7 +112,7 @@ void enveloppeIpelet::protected_run(int fn)
         return;
       }
 
-      Apollonius::Vertex_circulator Cvert = apo.incident_vertices(apo.infinite_vertex()); //take points incident to infinte vertex
+      Apollonius::Vertex_circulator Cvert = apo.incident_vertices(apo.infinite_vertex()); //take points incident to infinite vertex
       Apollonius::Vertex_circulator Cvert0 = Cvert;
       std::vector<ASite> Vsite0;
       do{

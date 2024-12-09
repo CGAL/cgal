@@ -1,836 +1,755 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
-"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: fig2dev Version 3.2.6 -->
-<!-- CreationDate: Mon Nov 21 08:43:35 2016 -->
-<!-- Magnification: 1.050 -->
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: fig2dev Version 3.2.8 -->
+<!-- CreationDate: 2022-05-05 19:05:07 -->
+<!-- Magnification: 1.05 -->
 <svg	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
-	width="8.5in" height="4.7in"
-	viewBox="-2 -296 10209 5681">
-<g style="stroke-width:.025in; fill:none">
-<!-- Line -->
-<polyline points="7575,2682
-9748,2892
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 7575 2682 - 9779 2895-->
-<polyline points="9523 2988
-9770 2894
-9546 2753
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="995,2648
-3174,2858
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 995 2648 - 3206 2861-->
-<polyline points="2950 2955
-3196 2860
-2973 2720
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="2045,3044
-2081,2753
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="8690,3025
-8657,2787
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="3158,3153
-969,2937
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 3158 3153 - 937 2934-->
-<polyline points="1192 2840
-946 2935
-1169 3075
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="9803,3135
-7614,2919
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9803 3135 - 7583 2916-->
-<polyline points="7838 2823
-7592 2917
-7815 3057
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="7512,666
-7574,2665
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 7512 666 - 7575 2697-->
-<polyline points="7449 2455
-7575 2687
-7686 2448
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="937,622
-994,2597
-" style="stroke:#000000;stroke-width:32;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 937 622 - 996 2695-->
-<polyline points="871 2452
-996 2685
-1106 2446
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="704,1751
-965,1669
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="7350,1732
-7544,1709
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="741,2734
-665,713
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 741 2734 - 664 682-->
-<polyline points="790 922
-664 691
-555 931
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="7386,2717
-7311,696
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 7386 2717 - 7310 664-->
-<polyline points="7436 904
-7310 674
-7201 913
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="8809,1690
-8664,1807
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="3191,2860
-3283,855
-" style="stroke:#000000;stroke-width:32;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 3191 2860 - 3288 758-->
-<polyline points="3394 1007
-3288 767
-3159 997
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="9911,2787
-10012,740
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9911 2787 - 10013 708-->
-<polyline points="10119 958
-10013 718
-9883 946
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="3435,1991
-3238,1868
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="685,3544
-460,3334
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="9961,1790
-10081,1973
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="7332,3525
-7106,3316
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="953,2936
-438,4099
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 953 2936 - 425 4129-->
-<polyline points="416 3857
-429 4120
-632 3952
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="7598,2918
-7037,4191
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 7598 2918 - 7023 4220-->
-<polyline points="7015 3948
-7027 4212
-7230 4044
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="143,4007
-733,2749
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 143 4007 - 747 2720-->
-<polyline points="749 2991
-743 2728
-536 2891
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="3492,920
-3383,2977
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 3492 920 - 3382 3008-->
-<polyline points="3276 2756
-3382 2999
-3511 2769
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="6790,3989
-7379,2731
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 6790 3989 - 7393 2702-->
-<polyline points="7395 2973
-7388 2710
-7182 2873
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="10139,902
-10029,2959
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 10139 902 - 10028 2991-->
-<polyline points="9922 2739
-10028 2981
-10158 2751
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="3286,805
-953,622
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 3286 805 - 921 620-->
-<polyline points="1174 521
-931 621
-1156 756
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="10013,724
-7670,540
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 10013 724 - 7638 538-->
-<polyline points="7891 439
-7648 539
-7874 675
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="2882,4371
-3153,3169
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 2882 4371 - 3161 3138-->
-<polyline points="3222 3402
-3159 3147
-2992 3351
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="9500,4483
-9799,3151
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9500 4483 - 9806 3120-->
-<polyline points="9867 3384
-9804 3129
-9637 3333
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="2060,596
-2099,713
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="3252,3623
-3016,3790
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="9662,3772
-9898,3604
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="8819,629
-8706,577
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="3383,2994
-3107,4318
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 3383 2994 - 3101 4349-->
-<polyline points="3035 4085
-3103 4340
-3266 4133
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="10029,2976
-9754,4300
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 10029 2976 - 9748 4331-->
-<polyline points="9681 4067
-9750 4322
-9912 4115
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="877,507
-3253,686
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 877 507 - 3285 688-->
-<polyline points="3030 787
-3275 687
-3048 552
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="7523,489
-9900,668
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 7523 489 - 9931 670-->
-<polyline points="9677 769
-9922 669
-9695 534
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="7030,4206
-9483,4481
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 7030 4206 - 9514 4485-->
-<polyline points="9257 4574
-9505 4483
-9283 4340
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="443,4094
-2895,4369
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 443 4094 - 2927 4372-->
-<polyline points="2669 4461
-2917 4371
-2696 4227
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="8122,4348
-8250,4345
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="7311,680
-6666,1764
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 7311 680 - 6650 1792-->
-<polyline points="6675 1520
-6656 1783
-6877 1640
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="7230,996
-7004,1195
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="665,698
-19,1783
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 665 698 - 4 1811-->
-<polyline points="28 1539
-9 1802
-230 1659
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="583,1015
-359,1213
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="1558,4308
-1704,4254
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="9563,4513
-6902,4209
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9563 4513 - 6871 4206-->
-<polyline points="7127 4116
-6880 4207
-7101 4350
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="6894,1572
-7514,502
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 6894 1572 - 7530 475-->
-<polyline points="7509 746
-7526 483
-7306 627
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="248,1591
-869,520
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 248 1591 - 885 493-->
-<polyline points="864 764
-880 501
-660 645
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="2830,4452
-329,4171
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 2830 4452 - 298 4167-->
-<polyline points="554 4077
-307 4169
-528 4311
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="6659,1779
-6789,3972
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 6659 1779 - 6790 4004-->
-<polyline points="6657 3765
-6789 3994
-6892 3752
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="12,1798
-142,3990
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 12 1798 - 143 4022-->
-<polyline points="10 3783
-142 4012
-245 3770
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="10006,1446
-9770,1203
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="6824,3143
-6727,2925
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="3359,1465
-3124,1222
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="9854,2067
-10135,918
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9854 2067 - 10142 887-->
-<polyline points="10198 1152
-10140 896
-9969 1097
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="3207,2086
-3488,936
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 3207 2086 - 3496 904-->
-<polyline points="3551 1170
-3493 914
-3322 1114
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="256,3099
-80,2944
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="9917,669
-9603,1794
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9917 669 - 9594 1825-->
-<polyline points="9546 1556
-9596 1816
-9773 1619
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="6887,4208
-6759,2007
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 6887 4208 - 6758 1975-->
-<polyline points="6890 2213
-6759 1985
-6654 2226
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="3270,687
-2957,1812
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 3270 687 - 2949 1843-->
-<polyline points="2899 1574
-2951 1834
-3127 1637
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="313,4170
-191,1958
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 313 4170 - 190 1926-->
-<polyline points="320 2163
-190 1935
-85 2177
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="9764,2894
-7548,702
-" style="stroke:#000000;stroke-width:32;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9764 2894 - 7479 633-->
-<polyline points="7706 724
-7505 659
-7572 858
-" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="7654,540
-9887,2763
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 7654 540 - 9933 2809-->
-<polyline points="9718 2728
-9920 2795
-9851 2595
-" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="8343,3484
-8455,3329
-6955,1889
-" style="stroke:#000000;stroke-width:32;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 8455 3329 - 6883 1821-->
-<polyline points="7112 1909
-6911 1847
-6981 2046
-" style="stroke:#000000;stroke-width:32;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="6759,1991
-8330,3481
-" style="stroke:#000000;stroke-width:16;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 6759 1991 - 8377 3526-->
-<polyline points="8161 3451
-8364 3513
-8291 3314
-" style="stroke:#000000;stroke-width:16;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="7575,2780
-7740,2654
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="9752,4317
-9853,2082
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9752 4317 - 9854 2051-->
-<polyline points="9961 2301
-9854 2060
-9724 2290
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="3105,4334
-3206,2101
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 3105 4334 - 3207 2070-->
-<polyline points="3314 2320
-3207 2079
-3078 2309
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="9801,3235
-9602,3282
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="3155,3253
-2870,3363
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="2912,2187
-2830,4435
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 2912 2187 - 2829 4467-->
-<polyline points="2720 4217
-2829 4457
-2955 4225
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="9649,2101
-9563,4509
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9649 2101 - 9562 4540-->
-<polyline points="9451 4290
-9562 4531
-9688 4299
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="9600,1811
-6910,1572
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 9600 1811 - 6878 1570-->
-<polyline points="7132 1474
-6888 1571
-7111 1709
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="2954,1828
-264,1591
-" style="stroke:#535353;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 2954 1828 - 233 1589-->
-<polyline points="487 1492
-242 1590
-466 1728
-" style="stroke:#535353;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="8266,1975
-8229,1690
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="1534,2061
-1584,1709
-" style="stroke:#9f9f9f;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Line -->
-<polyline points="191,1942
-2860,2183
-" style="stroke:#000000;stroke-width:32;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 191 1942 - 2958 2192-->
-<polyline points="2703 2286
-2949 2191
-2724 2052
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
-<!-- Line -->
-<polyline points="6918,1855
-9632,2100
-" style="stroke:#000000;stroke-width:8;
-stroke-linejoin:round; stroke-linecap:butt;
-"/>
-<!-- Arrowhead on XXXpoint 6918 1855 - 9664 2102-->
-<polyline points="9408 2197
-9654 2101
-9429 1963
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-"/>
+	width="613pt" height="341pt"
+	viewBox="-1 -282 9724 5412">
+<g fill="none">
+<!-- Line -->
+<defs>
+<clipPath id="cp0">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9080,2623 9292,2756 9058,2846 9307,2764 9308,2751z"/>
+</clipPath>
+</defs>
+<polyline points=" 7216,2555 9301,2757" clip-path="url(#cp0)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9301,2757 -->
+<polyline points=" 9080,2623 9292,2756 9058,2846"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp1">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 2819,2591 3031,2724 2797,2814 3046,2732 3047,2719z"/>
+</clipPath>
+</defs>
+<polyline points=" 948,2523 3040,2725" clip-path="url(#cp1)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 3040,2725 -->
+<polyline points=" 2819,2591 3031,2724 2797,2814"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 1948,2900 1983,2623"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 8278,2882 8246,2655"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp2">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 1129,2932 917,2798 1151,2708 902,2790 901,2803z"/>
+</clipPath>
+</defs>
+<polyline points=" 3008,3004 908,2797" clip-path="url(#cp2)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 908,2797 -->
+<polyline points=" 1129,2932 917,2798 1151,2708"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp3">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 7459,2915 7247,2781 7481,2691 7232,2773 7231,2786z"/>
+</clipPath>
+</defs>
+<polyline points=" 9338,2987 7238,2780" clip-path="url(#cp3)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 7238,2780 -->
+<polyline points=" 7459,2915 7247,2781 7481,2691"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp4">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 7321,2318 7216,2546 7097,2325 7209,2562 7223,2562z"/>
+</clipPath>
+</defs>
+<polyline points=" 7156,635 7216,2555" clip-path="url(#cp4)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 7216,2555 -->
+<polyline points=" 7321,2318 7216,2546 7097,2325"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp5">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 1054,2287 948,2514 829,2293 931,2542 967,2540z"/>
+</clipPath>
+</defs>
+<polyline points=" 893,593 948,2523" clip-path="url(#cp5)"
+	stroke="#000000" stroke-width="30px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 948,2523 -->
+<polyline points=" 1054,2287 948,2514 829,2293"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 671,1668 920,1590"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 7001,1650 7186,1628"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp6">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 530,902 634,674 755,894 640,658 627,659z"/>
+</clipPath>
+</defs>
+<polyline points=" 706,2605 634,665" clip-path="url(#cp6)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 634,665 -->
+<polyline points=" 530,902 634,674 755,894"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp7">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6860,885 6964,657 7085,877 6970,641 6957,642z"/>
+</clipPath>
+</defs>
+<polyline points=" 7036,2588 6964,648" clip-path="url(#cp7)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 6964,648 -->
+<polyline points=" 6860,885 6964,657 7085,877"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 8391,1610 8253,1722"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp8">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 3007,995 3130,776 3231,1005 3149,750 3113,748z"/>
+</clipPath>
+</defs>
+<polyline points=" 3040,2725 3130,767" clip-path="url(#cp8)"
+	stroke="#000000" stroke-width="30px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 3130,767 -->
+<polyline points=" 3007,995 3130,776 3231,1005"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp9">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9414,918 9538,699 9639,929 9545,684 9532,683z"/>
+</clipPath>
+</defs>
+<polyline points=" 9441,2655 9538,690" clip-path="url(#cp9)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9538,690 -->
+<polyline points=" 9414,918 9538,699 9639,929"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 3272,1897 3085,1780"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 653,3376 439,3176"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 9488,1705 9603,1880"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 6984,3358 6769,3159"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp10">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 609,3752 416,3912 404,3661 403,3923 415,3929z"/>
+</clipPath>
+</defs>
+<polyline points=" 908,2797 412,3920" clip-path="url(#cp10)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 412,3920 -->
+<polyline points=" 609,3752 416,3912 404,3661"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp11">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6894,3839 6701,3999 6688,3748 6688,4010 6700,4016z"/>
+</clipPath>
+</defs>
+<polyline points=" 7238,2780 6697,4007" clip-path="url(#cp11)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 6697,4007 -->
+<polyline points=" 6894,3839 6701,3999 6688,3748"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp12">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 505,2769 702,2613 708,2864 715,2602 703,2596z"/>
+</clipPath>
+</defs>
+<polyline points=" 137,3817 706,2605" clip-path="url(#cp12)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 706,2605 -->
+<polyline points=" 505,2769 702,2613 708,2864"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp13">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 3347,2625 3223,2843 3123,2613 3216,2858 3229,2859z"/>
+</clipPath>
+</defs>
+<polyline points=" 3327,877 3223,2852" clip-path="url(#cp13)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 3223,2852 -->
+<polyline points=" 3347,2625 3223,2843 3123,2613"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp14">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6835,2752 7032,2596 7039,2847 7045,2585 7033,2579z"/>
+</clipPath>
+</defs>
+<polyline points=" 6468,3800 7036,2588" clip-path="url(#cp14)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 7036,2588 -->
+<polyline points=" 6835,2752 7032,2596 7039,2847"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp15">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9677,2608 9553,2826 9453,2596 9546,2841 9559,2842z"/>
+</clipPath>
+</defs>
+<polyline points=" 9658,860 9553,2835" clip-path="url(#cp15)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9553,2835 -->
+<polyline points=" 9677,2608 9553,2826 9453,2596"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp16">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 1117,723 902,594 1134,499 887,586 886,599z"/>
+</clipPath>
+</defs>
+<polyline points=" 3130,767 893,593" clip-path="url(#cp16)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 893,593 -->
+<polyline points=" 1117,723 902,594 1134,499"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp17">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 7515,645 7300,516 7532,421 7285,508 7284,521z"/>
+</clipPath>
+</defs>
+<polyline points=" 9538,690 7291,515" clip-path="url(#cp17)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 7291,515 -->
+<polyline points=" 7515,645 7300,516 7532,421"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp18">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 2847,3207 3006,3013 3066,3256 3016,2999 3003,2996z"/>
+</clipPath>
+</defs>
+<polyline points=" 2746,4164 3008,3004" clip-path="url(#cp18)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 3008,3004 -->
+<polyline points=" 2847,3207 3006,3013 3066,3256"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp19">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9177,3190 9336,2996 9396,3239 9346,2982 9333,2979z"/>
+</clipPath>
+</defs>
+<polyline points=" 9049,4271 9338,2987" clip-path="url(#cp19)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9338,2987 -->
+<polyline points=" 9177,3190 9336,2996 9396,3239"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 1963,568 2000,680"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 3098,3451 2873,3610"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 9204,3593 9428,3433"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 8401,600 8293,550"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp20">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 3115,3923 2960,4120 2896,3878 2950,4134 2963,4137z"/>
+</clipPath>
+</defs>
+<polyline points=" 3223,2852 2958,4129" clip-path="url(#cp20)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 2958,4129 -->
+<polyline points=" 3115,3923 2960,4120 2896,3878"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp21">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9446,3906 9291,4103 9226,3861 9281,4117 9294,4120z"/>
+</clipPath>
+</defs>
+<polyline points=" 9553,2835 9289,4112" clip-path="url(#cp21)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9289,4112 -->
+<polyline points=" 9446,3906 9291,4103 9226,3861"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp22">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9222,509 9437,637 9205,732 9452,645 9453,632z"/>
+</clipPath>
+</defs>
+<polyline points=" 7166,466 9446,638" clip-path="url(#cp22)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9446,638 -->
+<polyline points=" 9222,509 9437,637 9205,732"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp23">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 2891,526 3106,654 2874,749 3121,662 3122,649z"/>
+</clipPath>
+</defs>
+<polyline points=" 836,483 3115,655" clip-path="url(#cp23)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 3115,655 -->
+<polyline points=" 2891,526 3106,654 2874,749"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp24">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 8830,4133 9040,4270 8805,4357 9055,4278 9056,4265z"/>
+</clipPath>
+</defs>
+<polyline points=" 6697,4007 9049,4271" clip-path="url(#cp24)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9049,4271 -->
+<polyline points=" 8830,4133 9040,4270 8805,4357"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp25">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 2555,4026 2765,4163 2530,4250 2780,4171 2781,4158z"/>
+</clipPath>
+</defs>
+<polyline points=" 422,3900 2774,4164" clip-path="url(#cp25)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 2774,4164 -->
+<polyline points=" 2555,4026 2765,4163 2530,4250"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 7737,4142 7859,4139"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp26">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6559,1552 6348,1687 6366,1437 6334,1697 6345,1704z"/>
+</clipPath>
+</defs>
+<polyline points=" 6964,648 6343,1695" clip-path="url(#cp26)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 6343,1695 -->
+<polyline points=" 6559,1552 6348,1687 6366,1437"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 6887,949 6672,1139"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp27">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 228,1570 17,1705 35,1455 3,1715 14,1722z"/>
+</clipPath>
+</defs>
+<polyline points=" 634,665 12,1713" clip-path="url(#cp27)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 12,1713 -->
+<polyline points=" 228,1570 17,1705 35,1455"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 556,967 342,1156"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 1484,4104 1624,4052"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp28">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6779,4147 6569,4010 6805,3924 6554,4002 6553,4015z"/>
+</clipPath>
+</defs>
+<polyline points=" 9109,4299 6560,4009" clip-path="url(#cp28)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 6560,4009 -->
+<polyline points=" 6779,4147 6569,4010 6805,3924"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp29">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6952,611 7162,474 7146,724 7175,464 7164,457z"/>
+</clipPath>
+</defs>
+<polyline points=" 6567,1498 7166,466" clip-path="url(#cp29)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 7166,466 -->
+<polyline points=" 6952,611 7162,474 7146,724"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp30">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 622,629 832,491 816,741 845,481 834,474z"/>
+</clipPath>
+</defs>
+<polyline points=" 237,1516 836,483" clip-path="url(#cp30)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 836,483 -->
+<polyline points=" 622,629 832,491 816,741"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp31">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 518,4110 308,3973 543,3886 293,3965 292,3978z"/>
+</clipPath>
+</defs>
+<polyline points=" 2696,4241 299,3972" clip-path="url(#cp31)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 299,3972 -->
+<polyline points=" 518,4110 308,3973 543,3886"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp32">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6566,3560 6467,3791 6342,3574 6462,3807 6475,3806z"/>
+</clipPath>
+</defs>
+<polyline points=" 6343,1695 6468,3800" clip-path="url(#cp32)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 6468,3800 -->
+<polyline points=" 6566,3560 6467,3791 6342,3574"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp33">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 235,3577 136,3808 11,3591 131,3824 144,3823z"/>
+</clipPath>
+</defs>
+<polyline points=" 12,1713 137,3817" clip-path="url(#cp33)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 137,3817 -->
+<polyline points=" 235,3577 136,3808 11,3591"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 9531,1378 9306,1146"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 6500,2994 6408,2787"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 3200,1396 2976,1164"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp34">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9493,1060 9656,869 9711,1113 9666,855 9653,852z"/>
+</clipPath>
+</defs>
+<polyline points=" 9386,1969 9658,860" clip-path="url(#cp34)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9658,860 -->
+<polyline points=" 9493,1060 9656,869 9711,1113"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp35">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 3162,1077 3325,886 3380,1130 3335,872 3322,869z"/>
+</clipPath>
+</defs>
+<polyline points=" 3055,1987 3327,877" clip-path="url(#cp35)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 3327,877 -->
+<polyline points=" 3162,1077 3325,886 3380,1130"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 244,2952 77,2805"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp36">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9315,1530 9146,1716 9098,1470 9136,1730 9149,1733z"/>
+</clipPath>
+</defs>
+<polyline points=" 9446,638 9144,1725" clip-path="url(#cp36)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9144,1725 -->
+<polyline points=" 9315,1530 9146,1716 9098,1470"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp37">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6339,2136 6439,1906 6564,2124 6444,1890 6431,1891z"/>
+</clipPath>
+</defs>
+<polyline points=" 6560,4009 6438,1897" clip-path="url(#cp37)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 6438,1897 -->
+<polyline points=" 6339,2136 6439,1906 6564,2124"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp38">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 2984,1547 2816,1733 2768,1487 2806,1747 2819,1750z"/>
+</clipPath>
+</defs>
+<polyline points=" 3115,655 2814,1742" clip-path="url(#cp38)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 2814,1742 -->
+<polyline points=" 2984,1547 2816,1733 2768,1487"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp39">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 83,2089 182,1859 307,2077 188,1843 175,1844z"/>
+</clipPath>
+</defs>
+<polyline points=" 299,3972 182,1850" clip-path="url(#cp39)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 182,1850 -->
+<polyline points=" 83,2089 182,1859 307,2077"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp40">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 7246,851 7181,660 7373,723 7156,610 7131,635z"/>
+</clipPath>
+</defs>
+<polyline points=" 9301,2757 7156,635" clip-path="url(#cp40)"
+	stroke="#000000" stroke-width="30px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 7156,635 -->
+<polyline points=" 7246,851 7181,660 7373,723"
+	stroke="#000000" stroke-width="30px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp41">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9364,2452 9428,2642 9237,2579 9441,2670 9456,2655z"/>
+</clipPath>
+</defs>
+<polyline points=" 7291,515 9441,2655" clip-path="url(#cp41)"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9441,2655 -->
+<polyline points=" 9364,2452 9428,2642 9237,2579"
+	stroke="#000000" stroke-width="15px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp42">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6683,1981 6616,1792 6808,1851 6589,1742 6565,1768z"/>
+</clipPath>
+</defs>
+<polyline points=" 7947,3319 8054,3171 6590,1767" clip-path="url(#cp42)"
+	stroke="#000000" stroke-width="30px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 6590,1767 -->
+<polyline points=" 6683,1981 6616,1792 6808,1851"
+	stroke="#000000" stroke-width="30px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp43">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 7877,3138 7946,3327 7754,3268 7959,3354 7974,3339z"/>
+</clipPath>
+</defs>
+<polyline points=" 6438,1897 7959,3339" clip-path="url(#cp43)"
+	stroke="#000000" stroke-width="15px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 7959,3339 -->
+<polyline points=" 7877,3138 7946,3327 7754,3268"
+	stroke="#000000" stroke-width="15px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 7216,2648 7373,2528"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp44">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9263,2197 9386,1978 9488,2207 9393,1963 9380,1962z"/>
+</clipPath>
+</defs>
+<polyline points=" 9289,4112 9386,1969" clip-path="url(#cp44)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9386,1969 -->
+<polyline points=" 9263,2197 9386,1978 9488,2207"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp45">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 2932,2215 3055,1996 3157,2225 3062,1981 3049,1980z"/>
+</clipPath>
+</defs>
+<polyline points=" 2958,4129 3055,1987" clip-path="url(#cp45)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 3055,1987 -->
+<polyline points=" 2932,2215 3055,1996 3157,2225"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 9336,3082 9146,3127"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 3006,3099 2734,3204"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp46">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 2817,4012 2696,4232 2592,4004 2689,4248 2703,4248z"/>
+</clipPath>
+</defs>
+<polyline points=" 2774,2084 2696,4241" clip-path="url(#cp46)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 2696,4241 -->
+<polyline points=" 2817,4012 2696,4232 2592,4004"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp47">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 9229,4082 9109,4302 9005,4074 9102,4318 9116,4318z"/>
+</clipPath>
+</defs>
+<polyline points=" 9191,2002 9109,4311" clip-path="url(#cp47)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9109,4311 -->
+<polyline points=" 9229,4082 9109,4302 9005,4074"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp48">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6790,1630 6576,1499 6809,1407 6561,1491 6560,1504z"/>
+</clipPath>
+</defs>
+<polyline points=" 9144,1725 6567,1498" clip-path="url(#cp48)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 6567,1498 -->
+<polyline points=" 6790,1630 6576,1499 6809,1407"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp49">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 460,1648 246,1517 479,1425 231,1509 230,1522z"/>
+</clipPath>
+</defs>
+<polyline points=" 2814,1742 237,1516" clip-path="url(#cp49)"
+	stroke="#535353" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 237,1516 -->
+<polyline points=" 460,1648 246,1517 479,1425"
+	stroke="#535353" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<polyline points=" 7874,1882 7839,1610"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<polyline points=" 1462,1964 1509,1628"
+	stroke="#9f9f9f" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp50">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 2552,1951 2765,2083 2531,2175 2790,2104 2794,2068z"/>
+</clipPath>
+</defs>
+<polyline points=" 182,1850 2774,2084" clip-path="url(#cp50)"
+	stroke="#000000" stroke-width="30px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 2774,2084 -->
+<polyline points=" 2552,1951 2765,2083 2531,2175"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
+<!-- Line -->
+<defs>
+<clipPath id="cp51">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 8969,1869 9182,2001 8948,2093 9197,2009 9198,1996z"/>
+</clipPath>
+</defs>
+<polyline points=" 6590,1767 9191,2002" clip-path="url(#cp51)"
+	stroke="#000000" stroke-width="8px" stroke-linejoin="round"/>
+<!-- Forward arrow to point 9191,2002 -->
+<polyline points=" 8969,1869 9182,2001 8948,2093"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
 <!-- Arc -->
-<path style="stroke:#000000;stroke-width:16;stroke-linecap:butt;"
-d="M 3715,839 A 5907 5907  0  0  1  7023  659 " />
-<!-- Arrowhead on XXXpoint 6707 594 - 7023 659-->
-<polygon points="6596 731
-7013 657
-6659 423
-6704 593
-6596 731
-
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-fill:white;"/>
+<defs>
+<clipPath id="cp52">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 6344,404 6387,566 6283,697 6698,640 6702,620z"/>
+</clipPath>
+</defs>
+<path d="M 3539,800 A 5627 5627 0 0 1 6690 628" clip-path="url(#cp52)"
+	stroke="#000000" stroke-width="15px"/>
+<!-- Forward arrow to point 6690,628 -->
+<polygon points=" 6283,697 6680,626 6344,404 6387,566 6283,697"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
 <!-- Arc -->
-<path style="stroke:#000000;stroke-width:16;stroke-linecap:butt;"
-d="M 6690,4078 A 3284 3284  0  0  1  3412  4191 " />
-<!-- Arrowhead on XXXpoint 3703 4328 - 3412 4191-->
-<polygon points="3843 4220
-3421 4195
-3709 4503
-3704 4328
-3843 4220
-
-" style="stroke:#000000;stroke-width:8;stroke-miterlimit:8;
-fill:white;"/>
+<defs>
+<clipPath id="cp53">
+	<path clip-rule="evenodd" d="M -1,-282 H 9723 V 5130 H -1 z
+		M 3534,4291 3530,4124 3662,4021 3245,3978 3236,3997z"/>
+</clipPath>
+</defs>
+<path d="M 6373,3885 A 3129 3129 0 0 1 3250 3992" clip-path="url(#cp53)"
+	stroke="#000000" stroke-width="15px"/>
+<!-- Forward arrow to point 3250,3992 -->
+<polygon points=" 3662,4021 3259,3996 3534,4291 3530,4124 3662,4021"
+	stroke="#000000" stroke-width="8px" stroke-miterlimit="8"/>
 <!-- Text -->
-<text xml:space="preserve" x="4179" y="4923" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">cm.remove_cell&#60;1&#62;(dh4)</text>
+<text xml:space="preserve" x="3981" y="4690" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="216" text-anchor="start">cm.remove_cell&lt;1&gt;(d4)</text>
 <!-- Text -->
-<text xml:space="preserve" x="4383" y="5285" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">cm.remove_cell&#60;1&#62;(dh5)</text>
+<text xml:space="preserve" x="4175" y="5034" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="216" text-anchor="start">cm.remove_cell&lt;1&gt;(d5)</text>
 <!-- Text -->
-<text xml:space="preserve" x="2726" y="316" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">dh5=cm.insert_cell_1_in_cell_2(dh2,dh3)</text>
+<text xml:space="preserve" x="2597" y="301" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="216" text-anchor="start">d5=cm.insert_cell_1_in_cell_2(d2,d3)</text>
 <!-- Text -->
-<text xml:space="preserve" x="2374" y="-53" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="227" text-anchor="start">dh4=cm.insert_dangling_cell_1_in_cell_2(dh1)</text>
+<text xml:space="preserve" x="2262" y="-51" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="216" text-anchor="start">d4=cm.insert_dangling_cell_1_in_cell_2(d1)</text>
 <!-- Text -->
-<text xml:space="preserve" x="995" y="1339" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="252" text-anchor="start">dh2</text>
+<text xml:space="preserve" x="7380" y="2475" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="240" text-anchor="start">d4</text>
 <!-- Text -->
-<text xml:space="preserve" x="2663" y="1208" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="252" text-anchor="start">dh3</text>
+<text xml:space="preserve" x="948" y="1276" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="240" text-anchor="start">d2</text>
 <!-- Text -->
-<text xml:space="preserve" x="1716" y="2409" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="252" text-anchor="start">dh1</text>
+<text xml:space="preserve" x="1635" y="2295" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="240" text-anchor="start">d1</text>
 <!-- Text -->
-<text xml:space="preserve" x="7748" y="2598" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="252" text-anchor="start">dh4</text>
+<text xml:space="preserve" x="2655" y="1260" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="240" text-anchor="start">d3</text>
 <!-- Text -->
-<text xml:space="preserve" x="7606" y="1511" fill="#000000"  font-family="Times" font-style="normal" font-weight="normal" font-size="252" text-anchor="start">dh5</text>
+<text xml:space="preserve" x="7335" y="1395" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="240" text-anchor="start">d5</text>
 </g>
 </svg>

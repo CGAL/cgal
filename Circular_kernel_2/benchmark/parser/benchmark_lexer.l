@@ -108,7 +108,7 @@ static int  comment_nesting = 0; // counts nesting depth of () in Comments
     Parsing Modes:
       --  INITIAL:      main mode for sequence of tokens
       --  IncludeMode:  parses lciInclude filename,
-      --  CommentMode:  Comment(...) parsing of nested parantheses
+      --  CommentMode:  Comment(...) parsing of nested parentheses
                         # comments and strings are correctly ignored
 -------------------------------------------------------------------- */
 %}

@@ -32,7 +32,7 @@ namespace Classification
   \brief Property map that constructs the center of mass of the face
   of a mesh on-the-fly.
 
-  \cgalModels `ReadablePropertyMap`
+  \cgalModels{ReadablePropertyMap}
 
   \tparam FaceGraph model of `FaceGraph`.
 
@@ -67,7 +67,7 @@ public:
     : m_mesh (mesh), m_vpm (vpm) { }
 
   /// \cond SKIP_IN_MANUAL
-  inline friend reference get (const Face_descriptor_to_center_of_mass_map& map, key_type f)
+  inline friend value_type get (const Face_descriptor_to_center_of_mass_map& map, key_type f)
   {
     std::vector<Point_3> points;
 
@@ -85,7 +85,7 @@ public:
   \brief Property map that constructs a face descriptor with a
   `bbox()` method from a face descriptor.
 
-  \cgalModels `ReadablePropertyMap`
+  \cgalModels{ReadablePropertyMap}
 
   \tparam FaceGraph model of `FaceGraph`.
 
@@ -139,7 +139,7 @@ public:
     : m_mesh (mesh), m_vpm (vpm) { }
 
   /// \cond SKIP_IN_MANUAL
-  inline friend reference get (const Face_descriptor_to_face_descriptor_with_bbox_map& map, key_type f)
+  inline friend value_type get (const Face_descriptor_to_face_descriptor_with_bbox_map& map, key_type f)
   {
     CGAL::Bbox_3 bbox;
 

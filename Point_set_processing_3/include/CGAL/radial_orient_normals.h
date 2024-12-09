@@ -19,7 +19,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/IO/trace.h>
 #include <CGAL/property_map.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <deque>
 #include <math.h>
@@ -72,7 +72,7 @@ radial_orient_normals(
     typedef typename Kernel::FT FT;
 
     // Precondition: at least one element in the container.
-    CGAL_point_set_processing_precondition(first != beyond);
+    CGAL_precondition(first != beyond);
 
     // Find points barycenter.
     // Note: We should use CGAL::centroid() from PCA component.

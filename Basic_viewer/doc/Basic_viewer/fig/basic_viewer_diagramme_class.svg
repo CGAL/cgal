@@ -1,0 +1,530 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: fig2dev Version 3.2.8 -->
+
+<!-- CreationDate: 2022-05-05 19:05:07 -->
+
+<!-- Magnification: 1.05 -->
+
+<svg
+   width="541.81927pt"
+   height="360.14355pt"
+   viewBox="3588 5001 8596.4836 5695.9546"
+   version="1.1"
+   id="svg58"
+   sodipodi:docname="basic_viewer_diagramme_class.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs62" />
+  <sodipodi:namedview
+     id="namedview60"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="pt"
+     showgrid="false"
+     inkscape:zoom="0.62947469"
+     inkscape:cx="453.55278"
+     inkscape:cy="92.934633"
+     inkscape:window-width="1920"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g56"
+     fit-margin-top="2"
+     fit-margin-left="2"
+     fit-margin-right="2"
+     fit-margin-bottom="2" />
+  <g
+     fill="none"
+     id="g56"
+     transform="translate(-78.839594,-95.293061)">
+    <!-- Line -->
+    <polyline
+       points=" 8767,8032 11121,8032"
+       stroke="#000000"
+       stroke-width="8px"
+       id="polyline2"
+       transform="matrix(1.2650893,0,0,1,-7207.9957,-2499.9188)" />
+    <!-- Line -->
+    <polyline
+       points=" 8767,8442 11121,8442"
+       stroke="#000000"
+       stroke-width="8px"
+       id="polyline4"
+       transform="matrix(1.2650893,0,0,1,-7207.9957,-2833.1034)" />
+    <!-- Line -->
+    <rect
+       x="3884.8591"
+       y="5124.895"
+       width="2985.0176"
+       height="1619.5436"
+       stroke="#000000"
+       stroke-width="11.6285px"
+       id="rect6" />
+    <!-- Line -->
+    <!-- Line -->
+    <!-- Line -->
+    <!-- Line -->
+    <polyline
+       points=" 3600,7623 7539,7623"
+       stroke="#000000"
+       stroke-width="8px"
+       id="polyline14"
+       transform="matrix(0.85616562,0,0,1,620.19716,800.9418)" />
+    <!-- Line -->
+    <polyline
+       points=" 3600,8288 7539,8288"
+       stroke="#000000"
+       stroke-width="8px"
+       id="polyline16"
+       transform="matrix(0.85616562,0,0,1,620.19716,205.96854)" />
+    <!-- Line -->
+    <rect
+       x="3703.8889"
+       y="8016.6836"
+       width="3369.4456"
+       height="2747.6394"
+       stroke="#000000"
+       stroke-width="10.6348px"
+       id="rect18" />
+    <!-- Line -->
+    <!-- Line -->
+    <!-- Line -->
+    <!-- Line -->
+    <!-- Text -->
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="4156.0391"
+       y="5409.6846"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="216px"
+       text-anchor="start"
+       id="text30">Basic_viewer</text>
+    <!-- Text -->
+    <!-- Text -->
+    <!-- Text -->
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="4009.3933"
+       y="8321.9365"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="216px"
+       text-anchor="start"
+       id="text38"
+       style="font-style:normal;font-weight:bold;font-size:216px;font-family:Times;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan2148"
+         x="4009.3933"
+         y="8321.9365">Graphics_scene</tspan></text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="3768.7371"
+       y="8751.333"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text40"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7344"
+         x="3768.7371"
+         y="8751.333">+ void add_point(apoint)</tspan></text>
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="3768.7371"
+       y="8989.0332"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324"
+         x="3768.7371"
+         y="8989.0332">+ void add_point(apoint, acolor)</tspan></text>
+    <!-- Text -->
+    <!-- Text -->
+    <!-- Line -->
+    <!-- Line -->
+    <!-- Text -->
+    <!-- Text -->
+    <text
+       xml:space="preserve"
+       x="3768.7371"
+       y="9464.3486"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-5"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-2"
+         x="3768.7371"
+         y="9464.3486">+ void add_segment(apoint1, apoint2, acolor)</tspan></text>
+    <text
+       xml:space="preserve"
+       x="3768.7371"
+       y="9226.6484"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text9538-6"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan9536-5"
+         x="3768.7371"
+         y="9226.6484">+ void add_segment(apoint1, apoint2)</tspan></text>
+    <text
+       xml:space="preserve"
+       x="3768.7371"
+       y="9939.749"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-8"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-7"
+         x="3768.7371"
+         y="9939.749">+ void face_begin(acolor)</tspan></text>
+    <text
+       xml:space="preserve"
+       x="3768.7371"
+       y="10177.532"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text9538-9"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan9536-6"
+         x="3768.7371"
+         y="10177.532">+ void add_point_in_face(apoint)</tspan></text>
+    <text
+       xml:space="preserve"
+       x="3768.7371"
+       y="9702.0488"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-8-0"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-7-4"
+         x="3768.7371"
+         y="9702.0488">+ void face_begin()</tspan></text>
+    <text
+       xml:space="preserve"
+       x="3768.7371"
+       y="10418.341"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-8-0-1"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-7-4-0"
+         x="3768.7371"
+         y="10418.341">+ void face_end()</tspan></text>
+    <text
+       xml:space="preserve"
+       x="3767.3931"
+       y="10623.868"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-8-0-1-4"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-7-4-0-8"
+         x="3767.3931"
+         y="10623.868">...</tspan></text>
+    <text
+       xml:space="preserve"
+       x="3956.3384"
+       y="5791.0234"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text40-5"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         x="3956.3384"
+         y="5791.0234"
+         id="tspan47993">+ Basic_viewer (QWidget *parent, </tspan><tspan
+         sodipodi:role="line"
+         x="3956.3384"
+         y="6001.0234"
+         id="tspan52579">                 const Graphics_scene &amp;scene)</tspan><tspan
+         sodipodi:role="line"
+         x="3956.3384"
+         y="6211.0234"
+         id="tspan47991">+ void draw()</tspan><tspan
+         sodipodi:role="line"
+         x="3956.3384"
+         y="6421.0234"
+         id="tspan57880">+ void redraw()</tspan><tspan
+         sodipodi:role="line"
+         x="3956.3384"
+         y="6631.0234"
+         id="tspan33081">...</tspan><tspan
+         sodipodi:role="line"
+         x="3956.3384"
+         y="6841.0234"
+         id="tspan57882" /></text>
+    <polyline
+       points=" 7949,8186 8767,8186"
+       stroke="#000000"
+       stroke-width="15px"
+       id="polyline22-9"
+       transform="rotate(90,7123.8213,6350.0005)" />
+    <polyline
+       points=" 7538,8183 7770,8083 7962,8175 7759,8283"
+       fill="#000000"
+       stroke="#000000"
+       stroke-width="8px"
+       id="polyline24-2"
+       transform="rotate(90,7124.8213,6338.0005)" />
+    <text
+       xml:space="preserve"
+       x="5433.3027"
+       y="7344.6426"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="168px"
+       text-anchor="start"
+       id="text44-9">1</text>
+    <polyline
+       points=" 8767,8032 11121,8032"
+       stroke="#000000"
+       stroke-width="8px"
+       id="polyline2-8"
+       transform="matrix(1.3689538,0,0,1,-3024.9589,-2462.3583)" />
+    <polyline
+       points=" 8767,8442 11121,8442"
+       stroke="#000000"
+       stroke-width="8px"
+       id="polyline4-3"
+       transform="matrix(1.3689538,0,0,1,-3024.9589,-2795.5429)" />
+    <rect
+       x="8978.1094"
+       y="5161.9849"
+       width="3231.1121"
+       height="1366.4115"
+       stroke="#000000"
+       stroke-width="11.1127px"
+       id="rect6-8" />
+    <text
+       xml:space="preserve"
+       x="9106.8584"
+       y="5447.2471"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="216px"
+       text-anchor="start"
+       id="text30-0">QApplication_and_basic_viewer</text>
+    <text
+       xml:space="preserve"
+       x="9049.9512"
+       y="5828.5859"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text40-5-4"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         x="9049.9512"
+         y="5828.5859"
+         id="tspan47993-0">+ QApplication_and_basic_viewer </tspan><tspan
+         sodipodi:role="line"
+         x="9049.9512"
+         y="6038.5859"
+         id="tspan52579-9">                 (const Graphics_scene &amp;scene)</tspan><tspan
+         sodipodi:role="line"
+         x="9049.9512"
+         y="6248.5859"
+         id="tspan47991-1">+ void run()</tspan><tspan
+         sodipodi:role="line"
+         x="9049.9512"
+         y="6458.5859"
+         id="tspan57880-9">+ Basic_viewer &amp; 	basic_viewer ()</tspan><tspan
+         sodipodi:role="line"
+         x="9049.9512"
+         y="6668.5859"
+         id="tspan57882-6" /></text>
+    <polyline
+       points=" 7538,8183 7770,8083 7962,8175 7759,8283"
+       fill="#000000"
+       stroke="#000000"
+       stroke-width="8px"
+       id="polyline24-5"
+       transform="translate(1014.6591,-2528.5429)" />
+    <polyline
+       points=" 7949,8186 8767,8186"
+       stroke="#000000"
+       stroke-width="15px"
+       id="polyline22-2"
+       transform="matrix(2.0441703,0,0,1,-9368.5817,-2531.5429)" />
+    <text
+       xml:space="preserve"
+       x="8708.2236"
+       y="5420.084"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="normal"
+       font-size="168px"
+       text-anchor="start"
+       id="text44-9-9">1</text>
+    <text
+       xml:space="preserve"
+       x="7613.1177"
+       y="8591.8506"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-7"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-4"
+         x="7613.1177"
+         y="8591.8506">void draw_graphics_scene(const Graphics_scene&amp; gs)</tspan></text>
+    <text
+       xml:space="preserve"
+       x="7613.1177"
+       y="7146.8569"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-3"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-1"
+         x="7613.1177"
+         y="7146.8569">void draw(const DS&amp; ds)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:475.979px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:11.8995px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="9215.251"
+       y="8059.1812"
+       id="text63405"><tspan
+         sodipodi:role="line"
+         id="tspan63403"
+         style="stroke-width:11.8995px"
+         x="9215.251"
+         y="8059.1812"></tspan></text>
+    <text
+       xml:space="preserve"
+       x="7613.1177"
+       y="7505.7114"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-3-2"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-1-6"
+         x="7613.1177"
+         y="7505.7114">void draw(const DS&amp; ds, const Graphics_scene_option&amp; gso)</tspan></text>
+    <text
+       xml:space="preserve"
+       x="7613.1177"
+       y="7867.7578"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-3-1"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-1-2"
+         x="7613.1177"
+         y="7867.7578">void add_to_graphics_scene(const DS&amp; ds, Graphics_scene&amp; gs)</tspan></text>
+    <text
+       xml:space="preserve"
+       x="7616.6455"
+       y="8124.8047"
+       fill="#000000"
+       font-family="Times"
+       font-style="normal"
+       font-weight="bold"
+       font-size="168px"
+       text-anchor="start"
+       id="text42-3-1-8"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:168px;font-family:Times;-inkscape-font-specification:'Times, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-anchor:start;fill:#000000"><tspan
+         sodipodi:role="line"
+         id="tspan7324-1-2-8"
+         x="7616.6455"
+         y="8124.8047">void add_to_graphics_scene(const DS&amp; ds, Graphics_scene&amp; gs, </tspan><tspan
+         sodipodi:role="line"
+         x="7616.6455"
+         y="8334.8047"
+         id="tspan92018">                                                 const Graphics_scene_option&amp; gso)</tspan></text>
+  </g>
+</svg>

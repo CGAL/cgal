@@ -1,6 +1,7 @@
 #include <CGAL/HalfedgeDS_min_items.h>
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/HalfedgeDS_decorator.h>
+#include <cassert>
 
 // An items type using a halfedge with previous-pointer.
 struct My_items : public CGAL::HalfedgeDS_min_items {
@@ -22,6 +23,6 @@ int main() {
     HDS hds;
     Decorator decorator(hds);
     decorator.create_loop();
-    CGAL_assertion( decorator.is_valid());
+    assert( decorator.is_valid());
     return 0;
 }

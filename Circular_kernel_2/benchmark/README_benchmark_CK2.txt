@@ -56,7 +56,7 @@ The output:
 
 In std::cout :
 The number of elements to compute the arrangement
-The number of circles and polygons (wich the side may be circular arcs)
+The number of circles and polygons (which the side may be circular arcs)
 The time needed to compute it,
 The number of Vertices, Edges and Faces of the arrangement
 

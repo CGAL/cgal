@@ -128,7 +128,7 @@ _test_cls_tds_2( const Tds &)
   assert(tds3.is_valid());
   v3 = tds3.insert_dim_up(w3,true);
   assert(tds3.is_valid());
-  // test insert_in_egde dim==1
+  // test insert_in_edge dim==1
   tds3.insert_in_edge(v3->face(), 2);
   assert(tds3.dimension()== 1);
   assert(tds3.number_of_vertices() == 4);
@@ -174,7 +174,7 @@ _test_cls_tds_2( const Tds &)
   assert(tds4.is_valid() );
   v4_3 = tds4.insert_dim_up(w4,true);
   assert(tds4.is_valid() );
-  // test insert-in-face, insert_in_egde dim==2
+  // test insert-in-face, insert_in_edge dim==2
   // Find the face  v4_1 v4_2 v4_3 for insertion
   Face_circulator fc= tds4.incident_faces(v4_1);
   while( ! (fc->has_vertex(v4_2) && fc->has_vertex(v4_3)) ) fc++;

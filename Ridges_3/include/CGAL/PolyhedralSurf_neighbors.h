@@ -100,7 +100,7 @@ public:
   // vertex_neigh stores the vertex v and its 1Ring neighbors contour
   // stores halfedges, oriented CW, following the 1Ring disk border
   // OneRingSize is the max distance from v to its OneRing
-  // neighbors. (the tag is_visited is not mofified)
+  // neighbors. (the tag is_visited is not modified)
   void compute_one_ring(const vertex_descriptor v,
                         std::vector<vertex_descriptor> &vertex_neigh,
                         std::list<halfedge_descriptor> &contour,

@@ -24,8 +24,6 @@ int main()
   Delaunay T;
   T.insert( points.begin(),points.end() );
 
-  CGAL_assertion( T.number_of_vertices() == 6 );
-
   // check that the info was correctly set.
   Delaunay::Finite_vertices_iterator vit;
   for (Vertex_handle v : T.finite_vertex_handles())

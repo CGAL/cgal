@@ -1,158 +1,71 @@
-Subject: CGAL 5.3 Released, Computational Geometry Algorithms Library
+Subject: CGAL 5.5.5, 5.6.2, 6.0, and 6.0.1 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body:
 
-The CGAL Open Source Project is pleased to announce the release 5.3
-of CGAL, the Computational Geometry Algorithms Library.
+The CGAL Open Source Project is pleased to announce the recent releases
+of CGAL versions 5.5.5, 5.6.2, 6.0, and 6.0.1.
 
+## CGAL version 6.0
 
-Besides fixes and general enhancement to existing packages, the following
-has changed since CGAL 5.2:
+CGAL version 6.0 was released on September 27, 2024. Following the
+discovery of early issues, version 6.0.1 was subsequently released on
+October 22, 2024.
+
+This version is a major release, with many new features and
+improvements.
 
 General changes
 
--   The support for the compiled version of CGAL is dropped. Only the
-    header-only version is supported.
+-   C++17 Requirement: CGAL 6.0 requires a C++17 compatible compiler.
+-   GMP/MPFR Optional: GMP/MPFR are no longer mandatory;
+    Boost.Multiprecision can be used.
+-   Qt6 Demos: All demos are now based on Qt6.
+-   Polyhedral Surface: The demo has been renamed to “CGAL Lab” and
+    moved to its own directory in demo/Lab/.
 
--   On Windows, the type used for Exact_rational, in Epick and
-    indirectly (through Lazy_exact_nt) Epeck may now be
-    boost::multiprecision::mpq_rational, as has been the case on other
-    platforms for several releases. This depends on various options and
-    is added to a list that includes mpq_class, CGAL::Gmpq,
-    leda_rational and CGAL::Quotient<CGAL::MP_Float>.
+New Packages
 
+-   Kinetic Space Partition: Partition of the space from planar input
+    shapes.
+-   Kinetic Surface Reconstruction: Reconstructs surfaces from point
+    clouds.
+-   Basic Viewer: Interactive visualization for various CGAL packages.
+-   Polygon Repair: Algorithms to repair 2D polygons and multipolygons.
 
-Quadtrees, Octrees, and Orthtrees (new package)
+Breaking Changes
 
--   This package implements a tree data structure in which each node
-    encloses a hypercubic section of space and each non-leave node has
-    hypercubic children whose edge lengths are half its edge length.
-    Such a data structure is known as a quadtree in 2D, an octree in 3D,
-    and is generalized as an “orthtree” in higher dimensions.
+-   CMake Changes: UseCGAL.cmake removed; use CGAL::CGAL target instead.
+-   Kernel: Replaced boost::variant with std::variant and
+    boost::optional with std::optional in the intersection functions.
 
-      https://www.cgal.org/2021/04/27/Orthtree/
+Enhancements
 
-      https://doc.cgal.org/5.3/Manual/packages.html#PkgOrthtree
+-   AABB Tree: Now supports 2D and 3D primitives.
 
+See the announcement of CGAL version 6.0.1 for more details:
 
-Triangulations on the Sphere (new package)
-
--   This package enables the construction and manipulation of Delaunay
-    triangulations on the 2-sphere. Triangulations are built
-    incrementally and can be modified by insertion or removal of
-    vertices. Point location querying and primitives to build the dual
-    Voronoi diagram are provided.
-
-      https://doc.cgal.org/5.3/Manual/packages.html#PkgTriangulationOnSphere2
+  https://www.cgal.org/2024/10/22/cgal601/
 
 
-File Input / Output
 
--   Point set, polygon soup, and polygon mesh file I/O functions have
-    been harmonized and documented:
-    -   Point set I/O functions can be found in the packages
-        Point_set_processing_3, and Point_set_3.
-    -   Polygon mesh I/O functions can be found in the package BGL.
-    -   Polygon soup I/O can be found in the package Stream_support.
+## Bug-fix releases
 
-A comprehensive list of the supported file formats is available in the
-Stream_support package:
+-   CGAL version 5.5.5 has been published. This is the last bug-fix
+    release for CGAL-5.5.
+-   CGAL version 5.6.2 has been published. This is the second bug-fix
+    release for CGAL-5.6.
 
-    https://doc.cgal.org/5.3/Stream_support/index.html#IOstreamSupportedFormats
+These releases include various bug fixes and enhancements. For more details,
+please visit:
 
-Inversely, the following page can be used to find out which CGAL data
-structures can be used given a specific file format.
-
-    https://doc.cgal.org/5.3/Stream_support/IOStreamSupportedFileFormats.html
+  https://www.cgal.org/2024/10/22/cgal555/
+  https://www.cgal.org/2024/10/22/cgal562/
 
 
-Requirements
 
--   The CMake minimal version is now 3.14.
-
--   The GNU compiler g++ versions 6 and 7 are no longer tested. Only
-    version 8.3 or later are supported
-
-
-2D and 3D Linear Geometry Kernel
-
--   Added is_translation(), is_scaling(), is_reflection(), and
-    is_rotation() to the classes Aff_transformation_2 and
-    Aff_transformation_3, which enable determining if the
-    transformations use a specialized representation internally.
-
-
-2D Regularized Boolean Set-Operations
-
--   Added documentation for the free functions
-    oriented_side(const Point_2& p, ....) that accept a point and a
-    polygon.
--   Documentation has been improved across the whole package.
-
-
-Polygon Mesh Processing
-
--   Added the class CGAL::Polyhedral_envelope, providing a way to
-    quickly check if a primitive (point, segment, or triangle) is within
-    a polyhedral envelope around a set of triangles. It is based on the
-    work of Bolun Wang, Teseo Schneider, Yixin Hu, Marco Attene, and
-    Daniele Panozzo. “Exact and efficient polyhedral envelope
-    containment check.” (ACM Trans. Graph., 39-4, July 2020).
--   Added more functions in the visitor of the corefinement based
-    methods to track all edge creations.
-
-
-Surface Mesh Topology
-
--   Added the function
-    CGAL::Surface_mesh_topology::Curves_on_surface_topology::is_homotopic_to_simple_cycle(),
-    which can be used to determine whehter a closed path on a surface
-    mesh can be continously transformed to a cycle without self
-    intersection.
-
-
-Surface Mesh Simplification
-
--   Added a filtering mechanism so that costly tests get only applied to
-    the next candidate for the edge collapse.
--   Added the class Polyhedral_envelope_filter, which enables to perform
-    mesh simplification inside a polyhedral envelope of the input mesh.
-
-
-2D Polyline Simplification
-
--   When polylines have common subsequences of vertices, these
-    subsequences may now be simplifified simultaneously.
-
-
-dD Triangulations
-
--   Added the function insert_if_in_star() to the class
-    CGAL::Regular_triangulation, which enables users to insert a point p
-    in a regular triangulation on the condition that p appears
-    post-insertion in the star of a user-specified, existing vertex.
-
-
-2D and 3D Alpha Shapes
-
--   Breaking change: The following deprecated classes have been removed:
-    Alpha_shape_euclidean_traits_2,
-    Weighted_alpha_shape_euclidean_traits_2,
-    Alpha_shape_euclidean_traits_3, and
-    Weighted_alpha_shape_euclidean_traits_3. All CGAL kernel can be used
-    directly as models of the concepts of the 2D and 3D Alpha Shape
-    packages.
-
-
-Classification
-
--   Breaking change: the support for TensorFlow has been dropped; the
-    classifier CGAL::TensorFlow::Neural_network_classifier has been
-    removed.
-
-
-See https://www.cgal.org/2021/07/06/cgal53/ for a
-complete list of changes.
+The development of CGAL will now focus on the upcoming CGAL-6.1 release,
+planned for late 2025. Bug fixes will continue to be backported to the
+CGAL-5.6.x and CGAL-6.0.x branches.
 
 
 The CGAL project is a collaborative effort to develop a robust,
@@ -187,7 +100,7 @@ Most modules are distributed under the terms of the GPL Open Source
 license (GNU General Public License v3 or later versions).
 If your intended usage does not meet the criteria of the
 aforementioned licenses, a commercial license can be purchased from
-GeometryFactory (http://www.geometryfactory.com/).
+GeometryFactory (https://www.geometryfactory.com/).
 
 
 For further information and for downloading the library and its

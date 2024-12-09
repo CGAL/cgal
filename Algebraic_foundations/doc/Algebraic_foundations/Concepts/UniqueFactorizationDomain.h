@@ -23,7 +23,7 @@ is a model of `AlgebraicStructureTraits` providing:
 derived from `CGAL::Unique_factorization_domain_tag`
 - \link AlgebraicStructureTraits::Gcd `CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Gcd` \endlink  which is a model of `AlgebraicStructureTraits_::Gcd`
 
-\cgalRefines `IntegralDomain`
+\cgalRefines{IntegralDomain}
 
 \sa `IntegralDomainWithoutDivision`
 \sa `IntegralDomain`

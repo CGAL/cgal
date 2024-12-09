@@ -1,4 +1,4 @@
-#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
+//#define CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -37,7 +38,7 @@ void generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulatio
     else
       c->set_subdomain_index(2);
   }
-  CGAL_assertion(tr.is_valid(true));
+  assert(tr.is_valid(true));
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_GENERATE_INPUT_FILES
   std::ofstream os("data/triangulation_two_subdomains.binary.cgal",
@@ -47,20 +48,33 @@ void generate_input_two_subdomains(const std::size_t nbv, Remeshing_triangulatio
 #endif
 }
 
-struct Cells_of_subdomain
+template<typename Tr>
+struct Cells_of_subdomain_pmap
 {
 private:
+  using Cell_handle = typename Tr::Cell_handle;
+
   const int m_subdomain;
 
 public:
-  Cells_of_subdomain(const int& subdomain)
+  using key_type = Cell_handle;
+  using value_type = bool;
+  using reference = bool;
+  using category = boost::read_write_property_map_tag;
+
+  Cells_of_subdomain_pmap(const int& subdomain)
     : m_subdomain(subdomain)
   {}
 
-  bool operator()(Remeshing_triangulation::Cell_handle c) const
+  friend value_type get(
+    const Cells_of_subdomain_pmap& map, const key_type& c)
   {
-    return m_subdomain == c->subdomain_index();
+    return (map.m_subdomain == c->subdomain_index());
   }
+  friend void put(
+    Cells_of_subdomain_pmap&, const key_type&, const value_type)
+  {} //nothing to do : subdomain indices are updated in remeshing
+
 };
 
 int main(int argc, char* argv[])
@@ -74,8 +88,8 @@ int main(int argc, char* argv[])
   generate_input_two_subdomains(1000, tr);
 
   CGAL::tetrahedral_isotropic_remeshing(tr, target_edge_length,
-      CGAL::parameters::cell_selector(Cells_of_subdomain(2)));
+      CGAL::parameters::cell_is_selected_map(
+        Cells_of_subdomain_pmap<Remeshing_triangulation>(2)));
 
   return EXIT_SUCCESS;
 }
-

@@ -2,8 +2,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Heat_method_3/Surface_mesh_geodesic_distances_3.h>
 
-#include <boost/unordered_map.hpp>
-
+#include <unordered_map>
 #include <fstream>
 #include <iostream>
 
@@ -23,7 +22,7 @@ int main(int argc, char* argv[])
     return 1;
   }
   // map for the distance values to the source set
-  boost::unordered_map<vertex_descriptor, double> vertex_distance;
+  std::unordered_map<vertex_descriptor, double> vertex_distance;
 
   vertex_descriptor source = *(vertices(tm).first);
 

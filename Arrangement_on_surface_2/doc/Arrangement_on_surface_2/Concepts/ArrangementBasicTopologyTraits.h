@@ -9,7 +9,9 @@
  * represent the arrangement cells (i.e., vertices, edges, and facets) and the
  * incident relations between them.
  *
- * \cgalHasModel `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2, Dcel>`
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2, Dcel>}
+ * \cgalHasModelsEnd
  */
 
 class ArrangementBasicTopologyTraits {
@@ -36,10 +38,10 @@ public:
   /// \name Access Functions
   /// @{
 
-  /*! Obtain the DCEL (const version). */
+  /*! obtains the DCEL (const version). */
   const Dcel& dcel() const;
 
-  /*! Obtain the DCEL (non-const version). */
+  /*! obtains the DCEL (non-const version). */
   Dcel& dcel();
 
   /// @}

@@ -50,14 +50,17 @@ public:
   VectorC2() {}
 
   VectorC2(const FT &x, const FT &y)
-    : base(CGAL::make_array(x, y)) {}
+    : base{x, y} {}
+
+  VectorC2(FT&& x, FT&& y)
+    : base{std::move(x), std::move(y)} {}
 
   VectorC2(const FT &hx, const FT &hy, const FT &hw)
     : base( hw != FT(1) ? CGAL::make_array<FT>(hx/hw, hy/hw)
                         : CGAL::make_array(hx, hy) ) {}
 
   friend void swap(Self& a, Self& b)
-#ifdef __cpp_lib_is_swappable
+#if !defined(__INTEL_COMPILER) && defined(__cpp_lib_is_swappable)
     noexcept(std::is_nothrow_swappable_v<Base>)
 #endif
   {

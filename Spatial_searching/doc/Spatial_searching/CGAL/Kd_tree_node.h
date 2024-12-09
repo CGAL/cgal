@@ -45,7 +45,7 @@ OutputIterator search(OutputIterator it, FuzzyQueryItem q) const;
 Reports any point from the subtree of the node, that is approximately contained by `q`.
 */
 template <class FuzzyQueryItem>
-boost::optional<Point_d> search_any_point(OutputIterator it, FuzzyQueryItem q) const;
+std::optional<Point_d> search_any_point(OutputIterator it, FuzzyQueryItem q) const;
 
 /*!
 Reports all the points contained by the subtree of the node.

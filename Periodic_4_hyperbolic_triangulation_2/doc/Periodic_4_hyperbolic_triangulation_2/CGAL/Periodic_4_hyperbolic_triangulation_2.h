@@ -109,7 +109,7 @@ public:
                 typedef typename Triangulation_data_structure::Vertex_circulator    Vertex_circulator;
         /// @}
 
-        /// \name
+        /// \name Enums
         /// The following enumeration type indicates where a point is located in the triangulation.
         /// @{
         enum Locate_type {
@@ -150,20 +150,6 @@ public:
                         Deletes all faces and vertices of the triangulation.
                 */
                 void clear();
-
-                /*!
-                        Equality operator.
-                        \todo implement
-                */
-                bool operator==(const Periodic_4_hyperbolic_triangulation_2<GT, TDS>& tr1,
-                                                const Periodic_4_hyperbolic_triangulation_2<GT, TDS>& tr2);
-
-                /*!
-                        Inequality operator.
-                        \todo implement
-                */
-                bool operator!=(const Periodic_4_hyperbolic_triangulation_2<GT, TDS>& tr1,
-                                                const Periodic_4_hyperbolic_triangulation_2<GT, TDS>& tr2);
         /// @}
 
 

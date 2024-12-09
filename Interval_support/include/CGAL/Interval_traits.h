@@ -45,8 +45,8 @@
 
 #include <CGAL/config.h>
 #include <CGAL/tags.h>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/utility/enable_if.hpp>
+
+#include <type_traits>
 
 namespace CGAL {
 
@@ -75,6 +75,7 @@ public:
   typedef CGAL::Null_functor Proper_Subset;
   typedef CGAL::Null_functor Intersection;
   typedef CGAL::Null_functor Hull;
+  static constexpr bool is_interval_v = false;
 };
 }
 
@@ -186,15 +187,15 @@ proper_subset(Interval interval1, Interval interval2) {
 }
 
 
-// Set operations, functions returing Interval
+// Set operations, functions returning Interval
 //the enable_if is need for MSVC as it is not able to eliminate
 //the function if Interval_traits<Interval>::Intersection has no result_type
 //(like Null_functor)
 template<typename Interval> inline
 typename Interval_traits<Interval>::Intersection::result_type
-intersection(Interval interval1, Interval interval2, typename boost::enable_if<
-             typename Interval_traits<Interval>::Is_interval
-             >::type* = nullptr
+intersection(Interval interval1, Interval interval2, std::enable_if_t<
+             Interval_traits<Interval>::is_interval_v
+             >* = nullptr
 ) {
     typename Interval_traits<Interval>::Intersection intersection;
     return intersection(interval1, interval2);
@@ -202,10 +203,10 @@ intersection(Interval interval1, Interval interval2, typename boost::enable_if<
 
 template<typename Interval> inline
 typename Interval_traits<Interval>::Hull::result_type
-hull(Interval interval1, Interval interval2, typename boost::enable_if<
-                                                       boost::is_same<
+hull(Interval interval1, Interval interval2, std::enable_if_t<
+                                                       std::is_same<
                                                           typename Interval_traits<Interval>::Is_interval,
-                                                          Tag_true > >::type* = nullptr)
+                                                          Tag_true >::value >* = nullptr)
 {
     typename Interval_traits<Interval>::Hull hull;
     return hull(interval1, interval2);

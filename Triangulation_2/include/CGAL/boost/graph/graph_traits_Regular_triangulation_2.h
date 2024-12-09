@@ -4,13 +4,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Andreas Fabri, Fernando Cacciola
 
 #ifndef CGAL_GRAPH_TRAITS_REGULAR_TRIANGULATION_2_H
 #define CGAL_GRAPH_TRAITS_REGULAR_TRIANGULATION_2_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/Regular_triangulation_2.h>
 #include <CGAL/boost/graph/properties_Regular_triangulation_2.h>

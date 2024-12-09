@@ -7,7 +7,7 @@ namespace RealEmbeddableTraits_ {
 
 `AdaptableUnaryFunction`, returns true in case the argument is 0.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `RealEmbeddableTraits`
 \sa `AlgebraicStructureTraits_::IsZero`

@@ -46,14 +46,27 @@ int main()
     boost::counting_iterator<Vect_ppmap::key_type>(points.size()),
     std::back_inserter(indices) );
 
+  std::cout << "Order using default policy (median)\n";
   CGAL::spatial_sort(
     indices.begin(),
     indices.end(),
-    Search_traits_d(Vect_ppmap(points)) );
+    Search_traits_d(Vect_ppmap(points))
+   );
 
-  std::vector<Vect_ppmap::key_type>::iterator it=indices.begin();
-  for (;it!=indices.end();++it)
-    std::cout << points[*it].second << " ";
+  for (auto i : indices)
+    std::cout << points[i].second << " ";
+  std::cout << std::endl;
+
+  std::cout << "Order using middle policy\n";
+  CGAL::spatial_sort(
+    indices.begin(),
+    indices.end(),
+    Search_traits_d(Vect_ppmap(points)),
+    CGAL::Hilbert_sort_middle_policy()
+   );
+
+  for (auto i : indices)
+    std::cout << points[i].second << " ";
   std::cout << std::endl;
 
   std::cout << "done" << std::endl;

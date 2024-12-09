@@ -12,45 +12,19 @@
 
 #include <CGAL/Random.h>
 
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
+#include <boost/functional/hash.hpp>
 #include <utility>
+#include <cassert>
 
 namespace CGAL
 {
 namespace Tetrahedral_remeshing
 {
   template<typename Tr>
-  void generate_input_two_subdomains(const std::size_t& nbv, Tr& tr)
+  void insert_random_points_in_cube(const std::size_t& nbv, Tr& tr)
   {
     CGAL::Random rng;
-
-    typedef typename Tr::Point Point;
-    typedef typename Tr::Cell_handle Cell_handle;
-
-    while (tr.number_of_vertices() < nbv)
-      tr.insert(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
-
-    const typename Tr::Geom_traits::Plane_3
-      plane(Point(0, 0, 0), Point(0, 1, 0), Point(0, 0, 1));
-
-    for (Cell_handle c : tr.finite_cell_handles())
-    {
-      if (plane.has_on_positive_side(
-        CGAL::centroid(c->vertex(0)->point(), c->vertex(1)->point(),
-                       c->vertex(2)->point(), c->vertex(3)->point())))
-        c->set_subdomain_index(1);
-      else
-        c->set_subdomain_index(2);
-    }
-    CGAL_assertion(tr.is_valid(true));
-  }
-
-
-  template<typename Tr>
-  void generate_input_one_subdomain(const std::size_t nbv, Tr& tr)
-  {
-    CGAL::Random rng;
-
     typedef typename Tr::Point Point;
     std::vector<Point> pts;
     while (pts.size() < nbv)
@@ -62,31 +36,51 @@ namespace Tetrahedral_remeshing
       pts.push_back(Point(x, y, z));
     }
     tr.insert(pts.begin(), pts.end());
+  }
 
-    for (typename Tr::Cell_handle c : tr.finite_cell_handles())
-      c->set_subdomain_index(1);
+  template<typename Plane, typename Tr>
+  void insert_points_on_plane(const Plane& plane, const std::size_t& nbv, Tr& tr)
+  {
+    CGAL::Random rng;
+    typedef typename Tr::Point Point;
+    std::vector<Point> pts;
+    while (pts.size() < nbv)
+    {
+      const double x = rng.get_double(-1., 1.);
+      const double y = rng.get_double(-1., 1.);
+      const double z = rng.get_double(-1., 1.);
 
-    CGAL_assertion(tr.is_valid(true));
+      pts.push_back(plane.projection(Point(x, y, z)));
+    }
+    tr.insert(pts.begin(), pts.end());
   }
 
   template<typename Tr>
   void add_edge(typename Tr::Vertex_handle v1,
     typename Tr::Vertex_handle v2,
     const Tr& tr,
-    boost::unordered_set<std::pair<typename Tr::Vertex_handle,
-                                   typename Tr::Vertex_handle> >& constraints)
+    std::unordered_set<std::pair<typename Tr::Vertex_handle,
+                                 typename Tr::Vertex_handle>,
+                       boost::hash<std::pair<typename Tr::Vertex_handle,
+                                 typename Tr::Vertex_handle>>>& constraints)
   {
     typename Tr::Cell_handle c;
     int i, j;
     if (tr.is_edge(v1, v2, c, i, j))
-      constraints.insert(std::make_pair(v1, v2));
+    {
+      if(v1 < v2) constraints.insert(std::make_pair(v1, v2));
+      else        constraints.insert(std::make_pair(v2, v1));
+    }
   }
 
   template<typename Tr>
   void make_constraints_from_cube_edges(
     Tr& tr,
-    boost::unordered_set<std::pair<typename Tr::Vertex_handle,
-                                   typename Tr::Vertex_handle> >& constraints)
+    std::unordered_set<std::pair<typename Tr::Vertex_handle,
+                                 typename Tr::Vertex_handle>,
+                       boost::hash<std::pair<typename Tr::Vertex_handle,
+                                             typename Tr::Vertex_handle>>
+  >& constraints)
   {
     typedef typename Tr::Point Point;
     typedef typename Tr::Vertex_handle Vertex_handle;
@@ -143,8 +137,10 @@ namespace Tetrahedral_remeshing
   template<typename Tr>
   void generate_input_cube(const std::size_t& n,
     Tr& tr,
-    boost::unordered_set<std::pair<typename Tr::Vertex_handle,
-                                   typename Tr::Vertex_handle> >& constraints)
+    std::unordered_set<std::pair<typename Tr::Vertex_handle,
+                                 typename Tr::Vertex_handle>,
+                       boost::hash<std::pair<typename Tr::Vertex_handle,
+                                             typename Tr::Vertex_handle>>   >& constraints)
   {
     typedef typename Tr::Vertex_handle Vertex_handle;
     typedef typename Tr::Point Point;
@@ -156,36 +152,60 @@ namespace Tetrahedral_remeshing
       pts.push_back(Point(rng.get_double(-1., 1.), rng.get_double(-1., 1.), rng.get_double(-1., 1.)));
     tr.insert(pts.begin(), pts.end());
 
+    for (auto v : tr.finite_vertex_handles())
+      v->set_dimension(3);
+
     // vertices of a larger cube
-    Vertex_handle v0 = tr.insert(Point(-2., -2., -2.));
-    Vertex_handle v1 = tr.insert(Point(-2., -2., 2.));
+    const std::array<Point, 8> pc = { Point(-2., -2., -2.),
+                                      Point(-2., -2., 2.),
+                                      Point(2., -2., -2.),
+                                      Point(2., -2., 2.),
+                                      Point(-2., 2., -2.),
+                                      Point(-2., 2., 2.),
+                                      Point(2., 2., -2.),
+                                      Point(2., 2., 2.) };
 
-    Vertex_handle v2 = tr.insert(Point(2., -2., -2.));
-    Vertex_handle v3 = tr.insert(Point(2., -2., 2.));
-
-    Vertex_handle v4 = tr.insert(Point(-2., 2., -2.));
-    Vertex_handle v5 = tr.insert(Point(-2., 2., 2.));
-
-    Vertex_handle v6 = tr.insert(Point(2., 2., -2.));
-    Vertex_handle v7 = tr.insert(Point(2., 2., 2.));
+    std::array<Vertex_handle, 8> vpc;
+    std::size_t i = 0;
+    for (const Point& p : pc)
+    {
+      vpc[i] = tr.insert(p);
+      vpc[i]->set_dimension(0);
+      ++i;
+    }
 
     // constrain cube edges
-    add_edge(v0, v1, tr, constraints);
-    add_edge(v1, v2, tr, constraints);
-    add_edge(v2, v3, tr, constraints);
-    add_edge(v3, v0, tr, constraints);
+    add_edge(vpc[0], vpc[1], tr, constraints);
+    add_edge(vpc[1], vpc[5], tr, constraints);
+    add_edge(vpc[5], vpc[4], tr, constraints);
+    add_edge(vpc[4], vpc[0], tr, constraints);
 
-    add_edge(v4, v5, tr, constraints);
-    add_edge(v5, v6, tr, constraints);
-    add_edge(v6, v7, tr, constraints);
-    add_edge(v7, v4, tr, constraints);
+    add_edge(vpc[2], vpc[3], tr, constraints);
+    add_edge(vpc[3], vpc[7], tr, constraints);
+    add_edge(vpc[7], vpc[6], tr, constraints);
+    add_edge(vpc[6], vpc[2], tr, constraints);
 
-    add_edge(v0, v4, tr, constraints);
-    add_edge(v1, v5, tr, constraints);
-    add_edge(v2, v6, tr, constraints);
-    add_edge(v3, v7, tr, constraints);
+    add_edge(vpc[0], vpc[2], tr, constraints);
+    add_edge(vpc[1], vpc[3], tr, constraints);
+    add_edge(vpc[4], vpc[6], tr, constraints);
+    add_edge(vpc[5], vpc[7], tr, constraints);
 
-    CGAL_assertion(tr.is_valid(true));
+    assert(tr.is_valid(true));
+
+    // set subdomain indices
+    for (auto c : tr.finite_cell_handles())
+      c->set_subdomain_index(1);
+
+    // set surface patches
+    for (typename Tr::Facet f : tr.finite_facets())
+    {
+      typename Tr::Facet mf = tr.mirror_facet(f);
+      if(tr.is_infinite(f.first) || tr.is_infinite(mf.first))
+      {
+        f.first->set_surface_patch_index(f.second, 2);
+        mf.first->set_surface_patch_index(mf.second, 2);
+      }
+    }
   }
 }
 }

@@ -115,9 +115,7 @@ All internal properties of the underlying graph are forwarded.
 Property maps can be wrapped with `Graph_with_descriptor_with_graph_property_map`.
 \tparam Graph must be a model of a `FaceListGraph` and `HalfedgeListGraph`.
 
-\cgalModels `FaceListGraph`
-\cgalModels `HalfedgeListGraph`
-\cgalModels `MutableFaceGraph` if `Graph` is a model of `MutableFaceGraph`
+\cgalModels{FaceListGraph,HalfedgeListGraph,MutableFaceGraph if `Graph` is a model of `MutableFaceGraph`}
 */
 
 template<typename Graph_>
@@ -689,7 +687,7 @@ is_valid(const Graph_with_descriptor_with_graph<Graph> & w, bool verbose = false
   \ingroup PkgBGLAdaptors
     `Graph_with_descriptor_with_graph_property_map` enables to forward properties from a
      `Graph` to a `Graph_with_descriptor_with_graph`.
-    \cgalModels `Graph_with_descriptor_with_graph_property_map` the same property map concept as `PM`
+    \cgalModels{Graph_with_descriptor_with_graph_property_map the same property map concept as `PM`}
     @tparam Graph a model of the `FaceListGraph` and `HalfedgeListGraph` concepts.
     @tparam PM a property_map of a `Graph`.
 
@@ -727,7 +725,7 @@ struct Graph_with_descriptor_with_graph_property_map {
   template <typename Descriptor>
   friend
   void
-  put(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d,   const value_type& v)
+  put(const Graph_with_descriptor_with_graph_property_map<Graph,PM>& gpm, const Descriptor& d, const value_type& v)
   {
     CGAL_assertion(gpm.graph!=nullptr);
     CGAL_assertion(d.graph == gpm.graph);
@@ -735,7 +733,7 @@ struct Graph_with_descriptor_with_graph_property_map {
   }
 }; // class Graph_with_descriptor_with_graph_property_map
 
-//specialisation for lvaluepropertymaps
+//specialization for lvaluepropertymaps
 template <typename Graph, typename PM>
 struct Graph_with_descriptor_with_graph_property_map<Graph, PM, boost::lvalue_property_map_tag> {
 
@@ -747,9 +745,9 @@ struct Graph_with_descriptor_with_graph_property_map<Graph, PM, boost::lvalue_pr
   Graph* graph;
   PM pm;
 
-  value_type& operator[](key_type& k) const
+  reference operator[](key_type& k) const
   {
-      return get(*this, k);
+    return get(*this, k);
   }
 
   Graph_with_descriptor_with_graph_property_map()

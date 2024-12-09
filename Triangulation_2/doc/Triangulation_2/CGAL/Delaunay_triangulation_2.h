@@ -54,20 +54,20 @@ All the types defined in `Triangulation_2<Traits,Tds>` are inherited.
 \cgalHeading{Implementation}
 
 Insertion is implemented by inserting in the triangulation, then
-performing a sequence of Delaunay flips. The number of flips is \f$ O(d)\f$
+performing a sequence of Delaunay flips. The number of flips is \cgalBigO{d}
 if the new vertex is of degree \f$ d\f$ in the new triangulation. For
-points distributed uniformly at random, insertion takes time \f$ O(1)\f$ on
+points distributed uniformly at random, insertion takes time \cgalBigO{1} on
 average.
 
 Removal calls the removal in the triangulation and then re-triangulates
 the hole in such a way that the Delaunay criterion is satisfied. Removal of a
-vertex of degree \f$ d\f$ takes time \f$ O(d^2)\f$.
-The degree \f$ d\f$ is \f$ O(1)\f$ for a random
+vertex of degree \f$ d\f$ takes time \cgalBigO{d^2}.
+The degree \f$ d\f$ is \cgalBigO{1} for a random
 vertex in the triangulation.
 
 After a point location step, the nearest neighbor
-is found in time \f$ O(n)\f$ in the
-worst case, but in time \f$ O(1)\f$
+is found in time \cgalBigO{n} in the
+worst case, but in time \cgalBigO{1}
 for vertices distributed uniformly at random and any query point.
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
@@ -236,7 +236,7 @@ std::pair<OutputItFaces,OutputItBoundaryEdges>
 get_conflicts_and_boundary(const Point &p,
 OutputItFaces fit,
 OutputItBoundaryEdges eit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /*!
 outputs the faces of the conflict zone of point `p` into an output iterator.
@@ -248,7 +248,7 @@ template <class OutputItFaces>
 OutputItFaces
 get_conflicts (const Point &p,
 OutputItFaces fit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /*!
 outputs the boundary edges of the conflict zone of point `p` into an output iterator.
@@ -266,7 +266,7 @@ template <class OutputItBoundaryEdges>
 OutputItBoundaryEdges
 get_boundary_of_conflicts(const Point &p,
 OutputItBoundaryEdges eit,
-Face_handle start) const;
+Face_handle start = Face_handle()) const;
 
 /// @}
 

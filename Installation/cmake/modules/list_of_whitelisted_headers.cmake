@@ -11,9 +11,9 @@ set(list_of_whitelisted_headers_txt [=[
   CGAL/Three/Edge_container.h
   CGAL/Three/exceptions.h
   CGAL/Three/Point_container.h
-  CGAL/Three/Polyhedron_demo_io_plugin_interface.h
-  CGAL/Three/Polyhedron_demo_plugin_helper.h
-  CGAL/Three/Polyhedron_demo_plugin_interface.h
+  CGAL/Three/CGAL_Lab_io_plugin_interface.h
+  CGAL/Three/CGAL_Lab_plugin_helper.h
+  CGAL/Three/CGAL_Lab_plugin_interface.h
   CGAL/Three/Primitive_container.h
   CGAL/Three/Scene_draw_interface.h
   CGAL/Three/Scene_group_item.h
@@ -41,7 +41,7 @@ set(list_of_whitelisted_headers_txt [=[
   CGAL/IO/Triangulation_geomview_ostream_3.h
   CGAL/IO/Triangulation_geomview_ostream_2.h
   CGAL/IO/Polyhedron_geomview_ostream.h
-
+  CGAL/Mesh_3/generate_label_weights.h
 ]=])
 
 separate_arguments(list_of_whitelisted_headers UNIX_COMMAND ${list_of_whitelisted_headers_txt})

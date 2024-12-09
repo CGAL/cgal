@@ -19,13 +19,31 @@
 // STL includes.
 #include <queue>
 #include <vector>
+#include <unordered_set>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
+#include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/property_map.h>
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/Shape_detection/Region_growing/internal/utils.h>
+#include <CGAL/Shape_detection/Region_growing/internal/property_map.h>
 
 namespace CGAL {
 namespace Shape_detection {
+
+namespace internal {
+  template <typename RegionType, typename RegionMap,
+            bool b=std::is_same<RegionMap, typename RegionType::Region_index_map>::value>
+  struct RM_creator{
+    static RegionMap create(RegionType) { return RegionMap(); }
+  };
+
+  template <typename RegionType, typename RegionMap>
+  struct RM_creator<RegionType, RegionMap, true>{
+    static RegionMap create(RegionType& r ) { return r.region_index_map(); }
+  };
+}
 
   /*!
     \ingroup PkgShapeDetectionRG
@@ -36,46 +54,116 @@ namespace Shape_detection {
     of user-defined items
     - given a way to access neighbors of each item via the `NeighborQuery` parameter class and
     - control if items form a valid region type via the `RegionType` parameter class,
-    - the `SeedMap` property map enables to define the seeding order of items and skip unnecessary items.
-
-    \tparam InputRange
-    must be a model of `ConstRange`.
+    - optional `SeedRange` defining the seeding order of items and skipping unnecessary items.
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`
 
     \tparam RegionType
-    must be a model of `RegionType`.
+    a model of `RegionType`
 
-    \tparam SeedMap
-    must be an `LvaluePropertyMap` whose key and value types are `std::size_t`.
-    %Default is `CGAL::Identity_property_map`.
+    \tparam RegionMap a model of `ReadWritePropertyMap` whose key type is `Item`
+    and value type is `std::size_t`.
   */
   template<
-  typename InputRange,
-  typename NeighborQuery,
-  typename RegionType,
-  typename SeedMap = CGAL::Identity_property_map<std::size_t> >
+    typename NeighborQuery,
+    typename RegionType,
+    typename RegionMap = typename RegionType::Region_index_map>
   class Region_growing {
 
   public:
-
+    /// \name Types
     /// \cond SKIP_IN_MANUAL
-    using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Region_type = RegionType;
-    using Seed_map = SeedMap;
-
-    using Visited_items = std::vector<bool>;
-    using Running_queue = std::queue<std::size_t>;
-    using Indices       = std::vector<std::size_t>;
     /// \endcond
 
-    /// \name Initialization
+    /// Item type.
+    using Item = typename RegionType::Item;
+    using Region = std::vector<Item>;
+
+    /// Primitive and region type
+    using Primitive_and_region = std::pair<typename Region_type::Primitive, Region>;
+
+    /// Item to region property map.
+    using Region_map = RegionMap;
+
+  private:
+    using Running_queue = std::queue<Item>;
+
+  public:
+    /// \name Initialization (RegionMap is the default type)
     /// @{
 
     /*!
       \brief initializes the region growing algorithm.
+
+      \tparam InputRange
+        a model of `ConstRange`
+
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
+
+      \param input_range
+      a range of input items for region growing.
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access item's neighbors
+
+      \param region_type
+      an instance of `RegionType` that is used internally to
+      control if items form a valid region type
+
+      \param item_map
+        an instance of the property map to retrieve items from input values
+
+      \pre `input_range.size() > 0`
+    */
+    template<typename InputRange, typename ItemMap = Default>
+    Region_growing(
+      const InputRange& input_range,
+      NeighborQuery& neighbor_query,
+      RegionType& region_type,
+      ItemMap item_map = ItemMap()
+#ifndef DOXYGEN_RUNNING
+      , std::enable_if_t<!std::is_same<ItemMap, RegionMap>::value>* = 0
+#endif
+      ) :
+      m_neighbor_query(neighbor_query),
+      m_region_type(region_type),
+      m_region_map(internal::RM_creator<Region_type, RegionMap>::create(region_type)),
+      m_visited(m_visited_map)
+    {
+      CGAL_precondition(input_range.size() > 0);
+      m_seed_range.resize(input_range.size());
+
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
+      std::size_t idx = 0;
+      for (auto it = input_range.begin(); it != input_range.end(); it++)
+        m_seed_range[idx++] = get(item_map_, it);
+
+      clear(input_range, item_map_);
+    }
+
+    /*!
+      \brief initializes the region growing algorithm.
+
+      \tparam InputRange
+        a model of `ConstRange`
+
+      \tparam SeedRange
+        a model of `ConstRange` with `Item` as value type
+
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
 
       \param input_range
       a range of input items for region growing
@@ -88,25 +176,167 @@ namespace Shape_detection {
       an instance of `RegionType` that is used internally to
       control if items form a valid region type
 
-      \param seed_map
-      an instance of `SeedMap` property map that is used internally to
-      set the order of items in the region growing processing queue. If it maps
-      to `std::size_t(-1)`, the corresponding item is skipped.
+      \param seed_range
+      a vector of `Item` that is used as seeds for the region growing.
+      Defaults to the full input_range.
+
+      \param item_map
+        an instance of the property map to retrieve items from input values
 
       \pre `input_range.size() > 0`
     */
+    template<typename InputRange, typename SeedRange, typename ItemMap = Default>
+    Region_growing(
+      const InputRange& input_range,
+      SeedRange& seed_range,
+      NeighborQuery& neighbor_query,
+      RegionType& region_type,
+      ItemMap item_map = ItemMap()
+#ifndef DOXYGEN_RUNNING
+      , std::enable_if_t<!std::is_same<ItemMap, RegionMap>::value>* = 0
+#endif
+      ) :
+      m_neighbor_query(neighbor_query),
+      m_region_type(region_type),
+      m_region_map(internal::RM_creator<Region_type, RegionMap>::create(region_type)),
+      m_visited(m_visited_map) {
+
+      CGAL_precondition(input_range.size() > 0);
+      CGAL_precondition(seed_range.size() > 0);
+      m_seed_range.resize(seed_range.size());
+
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
+      std::size_t idx = 0;
+      for (auto it = seed_range.begin(); it != seed_range.end(); it++)
+        m_seed_range[idx++] = *it;
+
+      clear(input_range, item_map_);
+    }
+    /// @}
+
+    /// \name Initialization (RegionMap is a user provided type)
+    /// @{
+
+    /*!
+      \brief initializes the region growing algorithm.
+
+      \tparam InputRange
+        a model of `ConstRange`
+
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
+
+      \param input_range
+      a range of input items for region growing.
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access item's neighbors
+
+      \param region_type
+      an instance of `RegionType` that is used internally to
+      control if items form a valid region type
+
+      \param item_map
+        an instance of the property map to retrieve items from input values
+
+      \param rm external property map that will be filled when calling `detect()`
+
+      \pre `input_range.size() > 0`
+    */
+    template<typename InputRange, typename ItemMap = Default>
     Region_growing(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       RegionType& region_type,
-      const SeedMap seed_map = SeedMap()) :
-    m_input_range(input_range),
-    m_neighbor_query(neighbor_query),
-    m_region_type(region_type),
-    m_seed_map(seed_map) {
+      Region_map rm,
+      ItemMap item_map = ItemMap()) :
+      m_neighbor_query(neighbor_query),
+      m_region_type(region_type),
+      m_region_map(rm),
+      m_visited(m_visited_map)
+    {
+      CGAL_precondition(input_range.size() > 0);
+      m_seed_range.resize(input_range.size());
+
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
+      std::size_t idx = 0;
+      for (auto it = input_range.begin(); it != input_range.end(); it++)
+        m_seed_range[idx++] = get(item_map_, it);
+
+      clear(input_range, item_map_);
+    }
+
+    /*!
+      \brief initializes the region growing algorithm.
+
+      \tparam InputRange
+        a model of `ConstRange`
+
+      \tparam SeedRange
+        a model of `ConstRange` with `Item` as value type
+
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
+
+      \param input_range
+      a range of input items for region growing
+
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
+      access item's neighbors
+
+      \param region_type
+      an instance of `RegionType` that is used internally to
+      control if items form a valid region type
+
+      \param seed_range
+      a vector of `Item` that is used as seeds for the region growing.
+      Defaults to the full input_range.
+
+      \param item_map
+        an instance of the property map to retrieve items from input values
+
+      \param rm external property map that will be filled when calling `detect()`
+
+      \pre `input_range.size() > 0`
+    */
+    template<typename InputRange, typename SeedRange, typename ItemMap = Default>
+    Region_growing(
+      const InputRange& input_range,
+      SeedRange& seed_range,
+      NeighborQuery& neighbor_query,
+      RegionType& region_type,
+      Region_map rm,
+      ItemMap item_map = ItemMap()) :
+      m_neighbor_query(neighbor_query),
+      m_region_type(region_type),
+      m_region_map(rm),
+      m_visited(m_visited_map) {
 
       CGAL_precondition(input_range.size() > 0);
-      clear();
+      CGAL_precondition(seed_range.size() > 0);
+      m_seed_range.resize(seed_range.size());
+
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
+
+      std::size_t idx = 0;
+      for (auto it = seed_range.begin(); it != seed_range.end(); it++)
+        m_seed_range[idx++] = *it;
+
+      clear(input_range, item_map_);
     }
 
     /// @}
@@ -116,46 +346,54 @@ namespace Shape_detection {
 
     /*!
       \brief runs the region growing algorithm and fills an output iterator
-      with the found regions.
+      with the fitted primitive and their region.
 
-      \tparam OutputIterator
-      must be an output iterator whose value type is `std::vector<std::size_t>`.
+      \tparam PrimitiveAndRegionOutputIterator
+      a model of `OutputIterator` whose value type is `Primitive_and_region`
 
-      \param regions
-      an output iterator that stores regions, where each region is returned
-      as a vector of indices of the items, which belong to this region
+      \param region_out
+      an output iterator of type `PrimitiveAndRegionOutputIterator`.
 
       \return past-the-end position in the output sequence
     */
-    template<typename OutputIterator>
-    OutputIterator detect(OutputIterator regions) {
+    template<typename PrimitiveAndRegionOutputIterator = Emptyset_iterator>
+    PrimitiveAndRegionOutputIterator detect(PrimitiveAndRegionOutputIterator region_out = PrimitiveAndRegionOutputIterator()) {
+      //      clear(); TODO: this is not valid to comment this clear()
+      m_visited_map.clear(); // tmp replacement for the line above
 
-      clear();
-      Indices region;
+      Region region;
+      m_nb_regions = 0;
 
       // Grow regions.
-      for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        const std::size_t seed_index = get(m_seed_map, i);
-
-        // Skip items that user does not want to use.
-        if (seed_index == std::size_t(-1))
-          continue;
-
-        CGAL_precondition(
-          seed_index < m_input_range.size());
+      for (auto it = m_seed_range.begin(); it != m_seed_range.end(); it++) {
+        const Item seed = *it;
 
         // Try to grow a new region from the index of the seed item.
-        if (!m_visited[seed_index]) {
-          propagate(seed_index, region);
+        if (!get(m_visited, seed)) {
+          const bool is_success = propagate(seed, region);
 
           // Check global conditions.
-          if (!m_region_type.is_valid_region(region))
+          if (!is_success || !m_region_type.is_valid_region(region)) {
             revert(region);
-          else
-            *(regions++) = region;
+          }
+          else {
+            fill_region_map(m_nb_regions++, region);
+            if (!std::is_same<PrimitiveAndRegionOutputIterator, Emptyset_iterator>::value)
+              *region_out++ = std::make_pair(m_region_type.primitive(), std::move(region));
+          }
         }
       }
-      return regions;
+
+      return region_out;
+    }
+
+    /*!
+      \brief provides a property map that provides the region index (or std::size_t(-1)) for each input element.
+
+      \return Property map that maps each iterator of the input range to a region index.
+    */
+    const Region_map& region_map() {
+      return m_region_map;
     }
 
     /// @}
@@ -164,33 +402,41 @@ namespace Shape_detection {
     /// @{
 
     /*!
-      \brief fills an output iterator with indices of all unassigned items.
+      \brief fills an output iterator with all unassigned items.
 
-      \tparam OutputIterator
-      must be an output iterator whose value type is `std::size_t`.
+      \tparam ItemOutputIterator
+      a model of `OutputIterator` whose value type is `Item`
+
+      \tparam InputRange
+        a model of `ConstRange`
+
+      \tparam ItemMap
+        a model of `ReadablePropertyMap` with `InputRange::const_iterator` as key type and `Item` as value type.
+        A default can be deduced using the value type of `InputRange` and `Item` to be
+        either `CGAL::Dereference_property_map` or `CGAL::Identity_property_map`.
+
+      \param input_range
+      a range of input items for region growing
 
       \param output
-      an output iterator that stores indices of all items, which are not assigned
-      to any region
+      an iterator of type `PrimitiveAndRegionOutputIterator`.
+
+      \param item_map
+        an instance of the property map to retrieve items from input values
 
       \return past-the-end position in the output sequence
     */
-    template<typename OutputIterator>
-    OutputIterator unassigned_items(OutputIterator output) const {
+    template<typename InputRange, typename ItemOutputIterator, typename ItemMap = Default>
+    ItemOutputIterator unassigned_items(const InputRange& input_range, ItemOutputIterator output, ItemMap item_map = ItemMap()) const
+    {
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
 
-      // Return indices of all unassigned items.
-      for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        const std::size_t seed_index = get(m_seed_map, i);
-
-        // Skip items that user does not want to use.
-        if (seed_index == std::size_t(-1))
-          continue;
-
-        CGAL_precondition(
-          seed_index < m_input_range.size());
-
-        if (!m_visited[seed_index])
-          *(output++) = seed_index;
+      for (auto it = input_range.begin(); it != input_range.end(); it++) {
+        Item i = get(item_map_,it);
+        if (!get(m_visited, i))
+          *(output++) = i;
       }
       return output;
     }
@@ -198,22 +444,49 @@ namespace Shape_detection {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
-    void clear() {
+    template <class InputRange, class ItemMap = Default>
+    void clear(const InputRange& input_range, ItemMap item_map = ItemMap()) {
+      using Item_helper = internal::Item_map_helper<ItemMap, Item, typename InputRange::const_iterator>;
+      using Item_map = typename Item_helper::type;
+      Item_map item_map_ = Item_helper::get(item_map);
 
-      m_visited.clear();
-      m_visited.resize(m_input_range.size(), false);
+      m_nb_regions = 0;
+      typename boost::property_traits<Region_map>::value_type init_value(-1);
+      for (auto it = input_range.begin(); it != input_range.end(); it++) {
+        Item item = get(item_map_, it);
+        put(m_region_map, item, init_value);
+      }
+      // TODO if we want to allow subranges while NeighborQuery operates on the full range
+      // (like for faces in a PolygonMesh) we should fill a non-visited map rather than a visited map
+      m_visited_map.clear();
     }
 
-    void release_memory() {
-
-      m_visited.clear();
-      m_visited.shrink_to_fit();
+    std::size_t number_of_regions_detected() const
+    {
+      return m_nb_regions;
     }
     /// \endcond
 
   private:
+    Neighbor_query& m_neighbor_query;
+    Region_type& m_region_type;
+    Region_map m_region_map;
 
-    void propagate(const std::size_t seed_index, Indices& region) {
+    std::vector<Item> m_seed_range;
+    std::size_t m_nb_regions = 0;
+
+    using VisitedMap = std::unordered_set<typename Region_type::Item, internal::hash_item<typename Region_type::Item> >;
+    VisitedMap m_visited_map;
+    Boolean_property_map<VisitedMap> m_visited;
+
+    void fill_region_map(std::size_t idx, const Region& region) {
+      typedef typename boost::property_traits<Region_map>::value_type Id;
+      for (auto item : region) {
+        put(m_region_map, item, static_cast<Id>(idx));
+      }
+    }
+
+    bool propagate(const Item &seed, Region& region) {
       region.clear();
 
       // Use two queues, while running on this queue, push to the other queue;
@@ -223,67 +496,107 @@ namespace Shape_detection {
       bool depth_index = 0;
 
       // Once the index of an item is pushed to the queue, it is pushed to the region too.
-      m_visited[seed_index] = true;
-      running_queue[depth_index].push(seed_index);
-      region.push_back(seed_index);
+      put(m_visited, seed, true);
+      running_queue[depth_index].push(seed);
+      region.push_back(seed);
 
       // Update internal properties of the region.
-      m_region_type.update(region);
+      const bool is_well_created = m_region_type.update(region);
+      if (!is_well_created) return false;
 
-      Indices neighbors;
-      while (
-        !running_queue[depth_index].empty() ||
-        !running_queue[!depth_index].empty()) {
+      bool grown = true;
+      std::vector<std::pair<const Item, const Item> > rejected, rejected_swap;
+      while (grown) {
+        grown = false;
 
-        // Call the next item index of the queue and remove it from the queue.
-        const std::size_t item_index = running_queue[depth_index].front();
-        running_queue[depth_index].pop();
+        Region neighbors;
+        while (
+          !running_queue[depth_index].empty() ||
+          !running_queue[!depth_index].empty()) {
 
-        // Get neighbors of the current item.
-        neighbors.clear();
-        m_neighbor_query(item_index, neighbors);
+          while (!running_queue[depth_index].empty()) {
 
-        // Visit all found neighbors.
-        for (const std::size_t neighbor_index : neighbors) {
+            // Call the next item index of the queue and remove it from the queue.
+            const Item item = running_queue[depth_index].front();
+            running_queue[depth_index].pop();
 
-          // Skip items that user does not want to use.
-          if (neighbor_index == std::size_t(-1))
-            continue;
+            // Get neighbors of the current item.
+            neighbors.clear();
+            m_neighbor_query(item, neighbors);
 
-          CGAL_precondition(
-            neighbor_index < m_input_range.size());
+            // Visit all found neighbors.
+            for (Item neighbor : neighbors) {
 
-          if (!m_visited[neighbor_index] &&
-            m_region_type.is_part_of_region(item_index, neighbor_index, region)) {
+              if (!get(m_visited, neighbor)) {
+                if (m_region_type.is_part_of_region(neighbor, region)) {
 
-            // Add this neighbor to the other queue so that we can visit it later.
-            m_visited[neighbor_index] = true;
-            running_queue[!depth_index].push(neighbor_index);
-            region.push_back(neighbor_index);
+                  // Add this neighbor to the other queue so that we can visit it later.
+                  put(m_visited, neighbor, true);
+                  running_queue[!depth_index].push(neighbor);
+                  region.push_back(neighbor);
+                  grown = true;
+                }
+                else {
+                  // Add this neighbor to the rejected queue so I won't be checked again before refitting the primitive.
+                  put(m_visited, neighbor, true);
+                  rejected.push_back(std::pair<const Item, const Item>(item, neighbor));
+                }
+              }
+            }
           }
+          depth_index = !depth_index;
         }
 
         // Update internal properties of the region.
-        if (running_queue[depth_index].empty()) {
-
+        // The region expanded with the current primitive to its largest extent.
+        // After refitting the growing may continue, but it is only continued if the refitted primitive still fits all elements of the region.
+        if (grown) {
           m_region_type.update(region);
-          depth_index = !depth_index;
+
+          // Verify that associated elements are still within the tolerance.
+          bool fits = true;
+          for (Item item : region) {
+            if (!m_region_type.is_part_of_region(item, region)) {
+              fits = false;
+              break;
+            }
+          }
+
+          // The refitted primitive does not fit all elements of the region, so the growing stops here.
+          if (!fits) {
+            // Reset visited flags for items that were rejected
+            for (const std::pair<const Item, const Item>& p : rejected)
+              put(m_visited, p.second, false);
+            return true;
+          }
+
+          // Try to continue growing the region by considering formerly rejected elements.
+          for (const std::pair<const Item, const Item>& p : rejected) {
+            if (m_region_type.is_part_of_region(p.second, region)) {
+
+              // Add this neighbor to the other queue so that we can visit it later.
+              put(m_visited, p.second, true);
+              running_queue[depth_index].push(p.second);
+              region.push_back(p.second);
+            }
+            else rejected_swap.push_back(p);
+          }
+          rejected.clear();
+          rejected.swap(rejected_swap);
         }
       }
+
+      // Reset visited flags for items that were rejected
+      for (const std::pair<const Item, const Item>& p : rejected)
+        put(m_visited, p.second, false);
+
+      return true;
     }
 
-    void revert(const Indices& region) {
-      for (const std::size_t item_index : region)
-        m_visited[item_index] = false;
+    void revert(const Region& region) {
+      for (Item item : region)
+        put(m_visited, item, false);
     }
-
-    // Fields.
-    const Input_range& m_input_range;
-    Neighbor_query& m_neighbor_query;
-    Region_type& m_region_type;
-    const Seed_map m_seed_map;
-
-    Visited_items m_visited;
   };
 
 } // namespace Shape_detection

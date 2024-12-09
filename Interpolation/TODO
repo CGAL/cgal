@@ -110,7 +110,7 @@ background presented to get into the subject without problems.
 Thus, I like the overall structure, and most of my remarks are
 minor comments, typos and suggestions.
 
-- p. 1, maybe add that a sample point is a natural neigbor iff its
+- p. 1, maybe add that a sample point is a natural neighbor iff its
     lambda is nonzero.
 - p. 2, end of paragraph "The interpolation package": I cannot find
     natural_neighbo_coordinates_3 in the manual/reference

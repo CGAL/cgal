@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -20,9 +21,10 @@ typedef Remeshing_triangulation::Cell_handle    Cell_handle;
 
 int main(int argc, char* argv[])
 {
+
   const unsigned int nbv = (argc > 1) ? atoi(argv[1]) : 100;
 
-  CGAL::Random rng;
+  CGAL::Random rng = CGAL::get_default_random();
   std::cout << "CGAL Random seed = " << CGAL::get_default_random().get_seed() << std::endl;
 
   std::vector<Point> points;

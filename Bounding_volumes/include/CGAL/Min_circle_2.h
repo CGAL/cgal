@@ -191,7 +191,7 @@ class Min_circle_2 {
     const Point&
     support_point( std::size_t i) const
     {
-        CGAL_optimisation_precondition(i <  number_of_support_points());
+        CGAL_precondition(i <  number_of_support_points());
         return( support_points[ i]);
     }
     // circle
@@ -256,7 +256,7 @@ class Min_circle_2 {
             tco.circle.set( );
             break;
           default:
-            CGAL_optimisation_assertion( n_support_points <= 3 ); }
+            CGAL_assertion( n_support_points <= 3 ); }
     }
 
     void
@@ -334,7 +334,7 @@ class Min_circle_2 {
         // initialize circle
         tco.circle.set();
 
-        CGAL_optimisation_postcondition( is_empty());
+        CGAL_postcondition( is_empty());
     }
 
     // constructor for one point
@@ -349,7 +349,7 @@ class Min_circle_2 {
         support_points[ 0] = p;
         tco.circle.set( p);
 
-        CGAL_optimisation_postcondition( is_degenerate());
+        CGAL_postcondition( is_degenerate());
     }
 
     // constructor for two points

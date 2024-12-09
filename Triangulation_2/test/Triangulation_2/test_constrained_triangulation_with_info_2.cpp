@@ -1,7 +1,9 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <vector>
+#include <cassert>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -27,7 +29,7 @@ int main()
     CDT T;
     T.insert( points.begin(),points.end() );
 
-    CGAL_assertion( T.number_of_vertices() == 6 );
+    assert( T.number_of_vertices() == 6 );
 
     // check that the info was correctly set.
     CDT::Finite_vertices_iterator vit;
@@ -63,7 +65,7 @@ int main()
     T.insert( boost::make_zip_iterator(boost::make_tuple( points.begin(),indices.begin() )),
               boost::make_zip_iterator(boost::make_tuple( points.end(),indices.end() ) )  );
 
-    CGAL_assertion( T.number_of_vertices() == 6 );
+    assert( T.number_of_vertices() == 6 );
 
 
     // check that the info was correctly set.

@@ -20,17 +20,26 @@
 #endif
 #include <CGAL/IO/trace.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <boost/version.hpp>
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/compressed_sparse_row_graph.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4172) // Address boost_1_67_0\boost\graph\named_function_params.hpp(240): warning C4172: returning address of local variable or temporary
+#endif
+
 #include <boost/graph/boykov_kolmogorov_max_flow.hpp>
 
-#include <vector>
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
+#include <vector>
 
 
 
@@ -68,7 +77,7 @@ struct Alpha_expansion_old_API_wrapper_graph
       : cost_matrix (cost_matrix)
     { }
 
-    friend reference get (const Vertex_label_cost_map& pmap, key_type idx)
+    friend value_type get (const Vertex_label_cost_map& pmap, key_type idx)
     {
       std::vector<double> out;
       out.reserve (pmap.cost_matrix->size());
@@ -76,7 +85,6 @@ struct Alpha_expansion_old_API_wrapper_graph
         out.push_back ((*pmap.cost_matrix)[i][idx]);
       return out;
     }
-
   };
 
   typedef CGAL::Pointer_property_map<double>::const_type Edge_cost_map;
@@ -509,12 +517,12 @@ template <typename InputGraph,
           typename EdgeCostMap,
           typename VertexLabelCostMap,
           typename VertexLabelMap,
-          typename NamedParameters>
+          typename NamedParameters = parameters::Default_named_parameters>
 double alpha_expansion_graphcut (const InputGraph& input_graph,
                                  EdgeCostMap edge_cost_map,
                                  VertexLabelCostMap vertex_label_cost_map,
                                  VertexLabelMap vertex_label_map,
-                                 const NamedParameters& np)
+                                 const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -558,6 +566,7 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
   std::size_t number_of_labels = get(vertex_label_cost_map, *(vertices(input_graph).first)).size();
 
   bool success;
+  bool full_loop = false;
   do {
     success = false;
 
@@ -636,6 +645,8 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
       cut_time += timer.time();
 #endif
+      if (full_loop && flow >= min_cut)
+        continue;
 
       if(min_cut - flow <= flow * tolerance) {
         continue;
@@ -648,35 +659,160 @@ double alpha_expansion_graphcut (const InputGraph& input_graph,
         std::size_t vertex_i = get (vertex_index_map, vd);
         alpha_expansion.update(vertex_label_map, inserted_vertices, vd, vertex_i, alpha);
       }
-    }
-  } while(success);
+      }
+    full_loop = true;
+    } while (success);
 
 #ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
-  CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
-    std::endl;
-  CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
-  CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
+    CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
+      std::endl;
+    CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
+    CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
 #endif
 
-  return min_cut;
-}
+    return min_cut;
+  }
 
+
+  template <typename InputGraph,
+  typename EdgeCostMap,
+    typename VertexLabelCostMap,
+    typename VertexLabelMap,
+    typename NamedParameters>
+    double min_cut(const InputGraph& input_graph,
+      EdgeCostMap edge_cost_map,
+      VertexLabelCostMap vertex_label_cost_map,
+      VertexLabelMap vertex_label_map,
+      const NamedParameters& np)
+  {
+    using parameters::choose_parameter;
+    using parameters::get_parameter;
+
+    typedef boost::graph_traits<InputGraph> GT;
+    typedef typename GT::edge_descriptor input_edge_descriptor;
+    typedef typename GT::vertex_descriptor input_vertex_descriptor;
+
+    typedef typename GetInitializedVertexIndexMap<InputGraph, NamedParameters>::type VertexIndexMap;
+    VertexIndexMap vertex_index_map = CGAL::get_initialized_vertex_index_map(input_graph, np);
+
+    typedef typename GetImplementationTag<NamedParameters>::type Impl_tag;
+
+    // select implementation
+    typedef typename std::conditional
+      <std::is_same<Impl_tag, Alpha_expansion_boost_adjacency_list_tag>::value,
+      Alpha_expansion_boost_adjacency_list_impl,
+      typename std::conditional
+      <std::is_same<Impl_tag, Alpha_expansion_boost_compressed_sparse_row_tag>::value,
+      Alpha_expansion_boost_compressed_sparse_row_impl,
+      Alpha_expansion_MaxFlow_impl>::type>::type
+      Alpha_expansion;
+
+    typedef typename Alpha_expansion::Vertex_descriptor Vertex_descriptor;
+
+    Alpha_expansion graph;
+
+    double min_cut = (std::numeric_limits<double>::max)();
+
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
+    double vertex_creation_time, edge_creation_time, cut_time;
+    vertex_creation_time = edge_creation_time = cut_time = 0.0;
+#endif
+
+    std::vector<Vertex_descriptor> inserted_vertices;
+    inserted_vertices.resize(num_vertices(input_graph));
+
+    graph.clear_graph();
+
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
+    Timer timer;
+    timer.start();
+#endif
+
+    // For E-Data
+    // add every input vertex as a vertex to the graph, put edges to source & sink vertices
+    for (input_vertex_descriptor vd : CGAL::make_range(vertices(input_graph)))
+    {
+      std::size_t vertex_i = get(vertex_index_map, vd);
+      Vertex_descriptor new_vertex = graph.add_vertex();
+      inserted_vertices[vertex_i] = new_vertex;
+
+      double source_weight = get(vertex_label_cost_map, vd)[0];
+      double sink_weight = get(vertex_label_cost_map, vd)[0];
+
+      graph.add_tweight(new_vertex, source_weight, sink_weight);
+    }
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
+    vertex_creation_time += timer.time();
+    timer.reset();
+#endif
+
+    // For E-Smooth
+    // add edge between every vertex,
+    for (input_edge_descriptor ed : CGAL::make_range(edges(input_graph)))
+    {
+      input_vertex_descriptor vd1 = source(ed, input_graph);
+      input_vertex_descriptor vd2 = target(ed, input_graph);
+      std::size_t idx1 = get(vertex_index_map, vd1);
+      std::size_t idx2 = get(vertex_index_map, vd2);
+
+      double weight = get(edge_cost_map, ed);
+
+      Vertex_descriptor v1 = inserted_vertices[idx1],
+        v2 = inserted_vertices[idx2];
+
+      graph.add_edge(v1, v2, weight, weight);
+    }
+
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
+    edge_creation_time += timer.time();
+#endif
+
+    graph.init_vertices();
+
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
+    timer.reset();
+#endif
+
+    min_cut = graph.max_flow();
+
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
+    cut_time += timer.time();
+#endif
+
+/*
+    //update labeling
+    for (input_vertex_descriptor vd : CGAL::make_range(vertices(input_graph)))
+    {
+      std::size_t vertex_i = get(vertex_index_map, vd);
+      alpha_expansion.update(vertex_label_map, inserted_vertices, vd, vertex_i, alpha);
+    }*/
+
+    graph.get_labels(vertex_index_map, vertex_label_map, inserted_vertices, CGAL::make_range(vertices(input_graph)));
+/*
+    //update labeling
+    for (auto vd : vertices(input_graph)) {
+      std::size_t idx = get(vertex_index_map, vd);
+      int label = graph.get_label(inserted_vertices[idx]);
+      put(vertex_label_map, vd, label);
+    }
+
+    for (input_vertex_descriptor vd : CGAL::make_range(vertices(input_graph)))
+    {
+      std::size_t vertex_i = get(vertex_index_map, vd);
+      graph.update(vertex_label_map, inserted_vertices, vd, vertex_i, alpha);
+    }*/
+
+#ifdef CGAL_SEGMENTATION_BENCH_GRAPHCUT
+    CGAL_TRACE_STREAM << "vertex creation time: " << vertex_creation_time <<
+      std::endl;
+    CGAL_TRACE_STREAM << "edge creation time: " << edge_creation_time << std::endl;
+    CGAL_TRACE_STREAM << "max flow algorithm time: " << cut_time << std::endl;
+#endif
+
+    return min_cut;
+  }
 
 /// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename InputGraph,
-          typename EdgeCostMap,
-          typename VertexLabelCostMap,
-          typename VertexLabelMap>
-double alpha_expansion_graphcut (const InputGraph& input_graph,
-                                 EdgeCostMap edge_cost_map,
-                                 VertexLabelCostMap vertex_label_cost_map,
-                                 VertexLabelMap vertex_label_map)
-{
-  return alpha_expansion_graphcut (input_graph, edge_cost_map,
-                                   vertex_label_cost_map, vertex_label_map,
-                                   CGAL::parameters::all_default());
-}
 
 // Old API
 inline double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::size_t> >& edges,
@@ -707,6 +843,23 @@ double alpha_expansion_graphcut (const std::vector<std::pair<std::size_t, std::s
                                   graph.vertex_label_map(),
                                   CGAL::parameters::vertex_index_map (graph.vertex_index_map()).
                                   implementation_tag (AlphaExpansionImplementationTag()));
+}
+
+template <typename AlphaExpansionImplementationTag>
+double min_cut(const std::vector<std::pair<std::size_t, std::size_t> >& edges,
+  const std::vector<double>& edge_costs,
+  const std::vector<std::vector<double> >& cost_matrix,
+  std::vector<std::size_t>& labels,
+  const AlphaExpansionImplementationTag&)
+{
+  internal::Alpha_expansion_old_API_wrapper_graph graph(edges, edge_costs, cost_matrix, labels);
+
+  return min_cut(graph,
+    graph.edge_cost_map(),
+    graph.vertex_label_cost_map(),
+    graph.vertex_label_map(),
+    CGAL::parameters::vertex_index_map(graph.vertex_index_map()).
+    implementation_tag(AlphaExpansionImplementationTag()));
 }
 /// \endcond
 

@@ -42,7 +42,7 @@ class Optimisation_sphere_d<Cartesian_tag, FT, RT, PT, Traits>;
 
     #include <CGAL/Optimisation/basic.h>
 
-    #include <CGAL/Optimisation/assertions.h>
+    #include <CGAL/assertions.h>
 
 
     namespace CGAL {
@@ -188,7 +188,7 @@ class Optimisation_sphere_d<Cartesian_tag, FT, RT, PT, Traits>;
 
                 // compute z
                 FT z = FT_(2)*v_basis[m+1] - prod(v,x,m+1);
-                CGAL_optimisation_assertion (!CGAL_NTS is_zero (z));
+                CGAL_assertion (!CGAL_NTS is_zero (z));
                 FT inv_z = FT_(1)/z;
 
                 // set up A^{-1}_{B^m}
@@ -461,7 +461,7 @@ class Optimisation_sphere_d<Cartesian_tag, FT, RT, PT, Traits>;
                 // compute \tilde{z}
                 RT old_denom = denom[m-1];
                 RT z = old_denom*RT_(2)*sqr_q_m - prod(v,x,m+1);
-                CGAL_optimisation_assertion (!CGAL_NTS is_zero (z));
+                CGAL_assertion (!CGAL_NTS is_zero (z));
 
                 // set up \tilde{A}^{-1}_{B^m}
                 RT** M = inv[m-1];          // \tilde{A}^{-1}_B, old matrix
@@ -503,7 +503,7 @@ class Optimisation_sphere_d<Cartesian_tag, FT, RT, PT, Traits>;
 
                 // get h_p
                 RT h_p = *(i++);
-                CGAL_optimisation_precondition (!CGAL_NTS is_zero (h_p));
+                CGAL_precondition (!CGAL_NTS is_zero (h_p));
 
                 // compute (h_p h D)^2 (c-p)^2
                 RT sqr_dist(RT(0));

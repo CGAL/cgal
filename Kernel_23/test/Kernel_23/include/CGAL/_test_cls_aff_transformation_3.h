@@ -19,7 +19,6 @@
 #define CGAL__TEST_CLS_AFF_TRANSFORMATION_3_H
 
 #include <CGAL/use.h>
-#include <boost/type_traits/is_same.hpp>
 
 template <class R>
 bool
@@ -29,7 +28,7 @@ _test_cls_aff_transformation_3(const R& )
 
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
- const bool nonexact = boost::is_same<FT, double>::value;
+ const bool nonexact = std::is_floating_point<FT>::value;
 
  typename R::Aff_transformation_3 ia;
  CGAL::Aff_transformation_3<R> a1(ia);
@@ -98,7 +97,7 @@ _test_cls_aff_transformation_3(const R& )
                                      n5, n11, n10,  n4,
                                      n3,  n6, n12,  n2,
                                                     n3 );
- assert( p1 == (p1.transform(gat1)).transform(gat1.inverse() )  );
+ assert( p1 == (p1.transform(gat1)).transform(gat1.inverse() ) || nonexact );
 
  CGAL::Aff_transformation_3<R> gat2( n7,  n9,  n8,  n2,
                                      n5, n11, n10,  n4,

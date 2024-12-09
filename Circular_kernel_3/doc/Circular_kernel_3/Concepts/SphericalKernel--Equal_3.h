@@ -5,7 +5,7 @@
 
 Testing equality between objects.
 
-\cgalRefines `Kernel::Equal_3`
+\cgalRefines{Kernel::Equal_3}
 
 \sa `SphericalKernel::CompareX_3`
 \sa `SphericalKernel::CompareY_3`

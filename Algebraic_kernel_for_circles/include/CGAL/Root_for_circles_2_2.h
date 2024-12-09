@@ -22,10 +22,10 @@
 
 
 #include <iostream>
+#include <type_traits>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Handle_for.h>
-#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 

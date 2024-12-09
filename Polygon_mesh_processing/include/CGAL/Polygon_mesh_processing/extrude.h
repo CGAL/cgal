@@ -19,16 +19,11 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/boost/graph/named_params_helper.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <vector>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_PMP_NP_CLASS NamedParameters
-#endif
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -150,12 +145,12 @@ struct Identity_functor
  *
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{vertex_point_map}
- *     \cgalParamDescription{a property map associating points to the vertices of `ouput`}
+ *     \cgalParamDescription{a property map associating points to the vertices of `output`}
  *     \cgalParamType{a class model of `ReadWritePropertyMap` with `boost::graph_traits<OutputMesh>::%vertex_descriptor`
  *                    as key type and `%Point_3` as value type}
- *     \cgalParamDefault{`boost::get(CGAL::vertex_point, ouput)`}
+ *     \cgalParamDefault{`boost::get(CGAL::vertex_point, output)`}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for `CGAL::vertex_point_t`
- *                     should be available for the vertices of `ouput`.}
+ *                     should be available for the vertices of `output`.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  */
@@ -163,15 +158,15 @@ template <class InputMesh,
           class OutputMesh,
           class BottomFunctor,
           class TopFunctor,
-          class NamedParameters1,
-          class NamedParameters2
+          class CGAL_NP_TEMPLATE_PARAMETERS_1,
+          class CGAL_NP_TEMPLATE_PARAMETERS_2
           >
 void extrude_mesh(const InputMesh& input,
                   OutputMesh& output,
                   const BottomFunctor& bot,
                   const TopFunctor& top,
-                  const NamedParameters1& np_in,
-                  const NamedParameters2& np_out)
+                  const CGAL_NP_CLASS_1& np_in = parameters::default_values(),
+                  const CGAL_NP_CLASS_2& np_out = parameters::default_values())
 {
   typedef typename boost::graph_traits<InputMesh>::vertex_descriptor input_vertex_descriptor;
   typedef typename boost::graph_traits<InputMesh>::halfedge_descriptor input_halfedge_descriptor;
@@ -180,8 +175,8 @@ void extrude_mesh(const InputMesh& input,
   typedef typename boost::graph_traits<OutputMesh>::halfedge_descriptor output_halfedge_descriptor;
 
   CGAL_assertion(!CGAL::is_closed(input));
-  typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
-  typedef typename GetVertexPointMap < InputMesh, NamedParameters1>::const_type IVPMap;
+  typedef typename GetVertexPointMap < OutputMesh, CGAL_NP_CLASS_2>::type VPMap;
+  typedef typename GetVertexPointMap < InputMesh, CGAL_NP_CLASS_1>::const_type IVPMap;
 
   using parameters::get_parameter;
   using parameters::choose_parameter;
@@ -250,8 +245,8 @@ void extrude_mesh(const InputMesh& input,
  * @tparam NamedParameters1 a sequence of \ref bgl_namedparameters "Named Parameters" for `InputMesh`
  * @tparam NamedParameters2 a sequence of \ref bgl_namedparameters "Named Parameters" for `OutputMesh`
  *
- * @param input an open surface mesh to extrude.
- * @param output a surface mesh that will contain the result of the extrusion.
+ * @param input an open surface mesh to extrude
+ * @param output a surface mesh that will contain the result of the extrusion
  * @param v the vector defining the direction of the extrusion
  * @param np_in an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
  *
@@ -281,67 +276,27 @@ void extrude_mesh(const InputMesh& input,
  */
 template <class InputMesh,
           class OutputMesh,
-          class NamedParameters1,
-          class NamedParameters2>
+          class CGAL_NP_TEMPLATE_PARAMETERS_1,
+          class CGAL_NP_TEMPLATE_PARAMETERS_2>
 void extrude_mesh(const InputMesh& input,
                   OutputMesh& output,
-                  #ifdef DOXYGEN_RUNNING
+#ifdef DOXYGEN_RUNNING
                   Vector_3 v,
-                  #else
-                  typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3 v,
-                  #endif
-                  const NamedParameters1& np_in,
-                  const NamedParameters2& np_out)
+#else
+                  typename GetGeomTraits<OutputMesh, CGAL_NP_CLASS_2>::type::Vector_3 v,
+#endif
+                  const CGAL_NP_CLASS_1& np_in = parameters::default_values(),
+                  const CGAL_NP_CLASS_2& np_out = parameters::default_values())
 {
-  typedef typename GetVertexPointMap < OutputMesh, NamedParameters2>::type VPMap;
+  typedef typename GetVertexPointMap < OutputMesh, CGAL_NP_CLASS_2>::type VPMap;
   VPMap output_vpm = parameters::choose_parameter(parameters::get_parameter(np_out, internal_np::vertex_point),
                                   get_property_map(vertex_point, output));
 
   extrude_impl::Const_dist_translation<
-      typename GetVertexPointMap<OutputMesh, NamedParameters2>::type,
-      typename GetGeomTraits<OutputMesh, NamedParameters2>::type::Vector_3> bot(output_vpm,
-                                                                                v);
+      typename GetVertexPointMap<OutputMesh, CGAL_NP_CLASS_2>::type,
+      typename GetGeomTraits<OutputMesh, CGAL_NP_CLASS_2>::type::Vector_3> bot(output_vpm, v);
   extrude_impl::Identity_functor top;
   extrude_mesh(input, output, bot,top, np_in, np_out);
-}
-//convenience overload
-template <class InputMesh,
-          class OutputMesh,
-          typename Vector>
-void extrude_mesh(const InputMesh& input,
-                  OutputMesh& output,
-                  Vector dir)
-{
-  extrude_mesh(input, output, dir,
-               parameters::all_default(),
-               parameters::all_default());
-}
-
-template <class InputMesh,
-          class OutputMesh,
-          typename Vector,
-          typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-void extrude_mesh(const InputMesh& input,
-                  OutputMesh& output,
-                  Vector dir,
-                  const CGAL_PMP_NP_CLASS& np)
-{
-  extrude_mesh(input, output, dir,
-               np,
-               parameters::all_default());
-}
-
-template <class InputMesh,
-          class OutputMesh,
-          class BottomFunctor,
-          class TopFunctor>
-void extrude_mesh(const InputMesh& input,
-                  OutputMesh& output,
-                  const BottomFunctor& bot,
-                  const TopFunctor& top)
-{
-  extrude_mesh(input, output, bot, top,
-               parameters::all_default(), parameters::all_default());
 }
 
 }} //end CGAL::PMP

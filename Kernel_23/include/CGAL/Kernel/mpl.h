@@ -24,7 +24,7 @@
 
 namespace CGAL {
 
-// The additionnal int parameter is to obtain different types.
+// The additional int parameter is to obtain different types.
 template < typename A, typename B, int = 0 >
 struct First_if_different {
   typedef A Type;

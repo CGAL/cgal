@@ -23,7 +23,7 @@
 #include <CGAL/config.h>
 #include <CGAL/memory.h>
 #include <CGAL/Handle_hash_function.h>
-#include <CGAL/Tools/chained_map.h>
+#include <CGAL/Hash_map/internal/chained_map.h>
 #include <cstddef>
 
 namespace CGAL {
@@ -47,36 +47,49 @@ public:
 
 private:
     typedef internal::chained_map<Data, Allocator>   Map;
-    typedef typename Map::item                       Item;
+    typedef typename Map::Item                       Item;
 
 private:
     Hash_function  m_hash_function;
     Map            m_map;
 
+    template <class It, class Iterator_category>
+    void reserve_impl(It, It, Iterator_category)
+    {}
+
+    template <class It>
+    void reserve_impl(It b, It e, std::forward_iterator_tag)
+    {
+      m_map.reserve(std::distance(b,e));
+    }
+
 public:
 
-    Unique_hash_map() { m_map.xdef() = Data(); }
+    Unique_hash_map() = default;
 
-    Unique_hash_map( const Data& deflt, std::size_t table_size = 1)
-        : m_map( table_size) { m_map.xdef() = deflt; }
+    Unique_hash_map( const Data& deflt, std::size_t table_size = Map::default_size)
+        : m_map(table_size, deflt)
+    {}
 
     Unique_hash_map( const Data& deflt,
                      std::size_t table_size,
                      const Hash_function& fct)
-        : m_hash_function(fct), m_map( table_size) { m_map.xdef() = deflt; }
+        : m_hash_function(fct), m_map( table_size, deflt)
+    {}
 
     Unique_hash_map( Key first1, Key beyond1, Data first2) {
-        m_map.xdef() = Data();
         insert( first1, beyond1, first2);
     }
     Unique_hash_map( Key first1, Key beyond1, Data first2,
                      const Data& deflt,
                      std::size_t table_size   = 1,
                      const Hash_function& fct = Hash_function())
-    : m_hash_function(fct), m_map( table_size) {
-        m_map.xdef() = deflt;
+    : m_hash_function(fct), m_map(table_size, deflt) {
         insert( first1, beyond1, first2);
     }
+
+    void reserve(std::size_t n)
+    { m_map.reserve(n); }
 
     Data default_value() const { return m_map.cxdef(); }
 
@@ -104,6 +117,7 @@ public:
     }
 
     Data insert( Key first1, Key beyond1, Data first2) {
+        reserve_impl(first1, beyond1, typename std::iterator_traits<Key>::iterator_category());
         for ( ; first1 != beyond1; (++first1, ++first2)) {
             operator[]( first1) = first2;
         }
@@ -133,27 +147,29 @@ namespace boost {
   public:
     typedef KeyType key_type;
     typedef ValueType value_type;
-    typedef const value_type& reference;
+    typedef value_type& reference;
     typedef lvalue_property_map_tag category;
+
     associative_property_map() : m_c(0) { }
     associative_property_map(C& c) : m_c(&c) { }
-    value_type& operator[](const key_type& k) const {
+
+    reference operator[](const key_type& k) const {
       return (*m_c)[k];
     }
 
-  friend
-  const value_type&
-  get(const associative_property_map<C>& uhm, const key_type& key)
-  {
-    return uhm[key];
-  }
+    friend
+    reference
+    get(const associative_property_map<C>& uhm, const key_type& key)
+    {
+      return uhm[key];
+    }
 
-  friend
-  void
-  put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
-  {
-    uhm[key] = val;
-  }
+    friend
+    void
+    put(associative_property_map<C>& uhm, const key_type& key, const value_type& val)
+    {
+      uhm[key] = val;
+    }
 
   private:
     C* m_c;

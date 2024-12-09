@@ -21,10 +21,10 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Index_property_map.h>
 #include <CGAL/Memory_sizer.h>
-#include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/use.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <iterator>
@@ -32,10 +32,19 @@
 #include <climits>
 #include <math.h>
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4172) // Address warning inside boost named parameters
+#endif
+
 #include <CGAL/property_map.h>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h> // work around a bug in boost 1.54
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/prim_minimum_spanning_tree.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
 
 namespace CGAL {
 
@@ -133,7 +142,7 @@ public:
 
   /// Free function to access the map elements.
   friend inline
-  reference get(const Default_constrained_map& map, key_type p)
+  value_type get(const Default_constrained_map& map, const key_type& p)
   {
     return (p == *map.m_source_point);
   }
@@ -143,7 +152,7 @@ public:
 /// Helper class: Propagate_normal_orientation
 ///
 /// This class is used internally by mst_orient_normals()
-/// to propage the normal orientation, starting from a source point
+/// to propagate the normal orientation, starting from a source point
 /// and following the adjacency relations of vertices in a Minimum Spanning Tree.
 /// It does not orient normals that are already oriented.
 /// It does not propagate the orientation if the angle between 2 normals > angle_max.
@@ -171,7 +180,7 @@ struct Propagate_normal_orientation
       : m_source(source), m_angle_max(angle_max)
     {
         // Precondition: 0 < angle_max <= PI/2
-        CGAL_point_set_processing_precondition(0 < angle_max && angle_max <= CGAL_PI/2.);
+        CGAL_precondition(0 < angle_max && angle_max <= CGAL_PI/2.);
     }
 
     template <class Edge>
@@ -252,7 +261,7 @@ mst_find_source(
     typedef typename boost::property_traits<NormalMap>::reference Vector_ref;
 
     // Precondition: at least one element in the container
-    CGAL_point_set_processing_precondition(first != beyond);
+    CGAL_precondition(first != beyond);
 
     // Find top point
     ForwardIterator top_point = first;
@@ -324,7 +333,7 @@ create_riemannian_graph(
     typedef typename boost::property_map<Riemannian_graph, boost::edge_weight_t>::type Riemannian_graph_weight_map;
 
     // Precondition: at least 2 nearest neighbors
-    CGAL_point_set_processing_precondition(k >= 2);
+    CGAL_precondition(k >= 2);
 
     // Number of input points
     const std::size_t num_input_points = points.size();
@@ -350,7 +359,7 @@ create_riemannian_graph(
     for (ForwardIterator it = points.begin(); it != points.end(); it++)
     {
         typename Riemannian_graph::vertex_descriptor v = add_vertex(riemannian_graph);
-        CGAL_point_set_processing_assertion(v == get(index_map,it));
+        CGAL_assertion(v == get(index_map,it));
         riemannian_graph[v].input_point = it;
     }
 
@@ -382,7 +391,7 @@ create_riemannian_graph(
                 boost::tie(e, inserted) = add_edge(vertex(it_index, riemannian_graph),
                                                    vertex(neighbor_index, riemannian_graph),
                                                    riemannian_graph);
-                CGAL_point_set_processing_assertion(inserted);
+                CGAL_assertion(inserted);
 
                 //                               ->        ->
                 // Computes edge weight = 1 - | normal1 * normal2 |
@@ -404,7 +413,7 @@ create_riemannian_graph(
           boost::tie(e, inserted) = add_edge(vertex(it_index, riemannian_graph),
                                              vertex(source_point_index, riemannian_graph),
                                              riemannian_graph);
-          CGAL_point_set_processing_assertion(inserted);
+          CGAL_assertion(inserted);
 
           riemannian_graph_weight_map[e] = 0.;
         }
@@ -462,7 +471,7 @@ create_mst_graph(
     typedef internal::MST_graph<ForwardIterator, NormalMap, Kernel> MST_graph;
 
     // Precondition: at least one element in the container.
-    CGAL_point_set_processing_precondition(first != beyond);
+    CGAL_precondition(first != beyond);
 
     // Number of input points
     const std::size_t num_input_points = num_vertices(riemannian_graph) - 1;
@@ -498,13 +507,13 @@ create_mst_graph(
         // 1.56 and 1.57:
         //   https://svn.boost.org/trac/boost/ticket/10382
         typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
-        CGAL_point_set_processing_assertion(v == get(index_map,it));
+        CGAL_assertion(v == get(index_map,it));
         mst_graph[v].input_point = it;
         mst_graph[v].is_oriented = false;
     }
 
     typename MST_graph::vertex_descriptor v = add_vertex(mst_graph);
-    CGAL_point_set_processing_assertion(v == source_point_index);
+    CGAL_assertion(v == source_point_index);
     mst_graph[v].is_oriented = true;
 
     // add edges
@@ -513,7 +522,7 @@ create_mst_graph(
         if (i != predecessor[i])
         {
             // check that bi-directed graph is useless
-            CGAL_point_set_processing_assertion(predecessor[predecessor[i]] != i);
+            CGAL_assertion(predecessor[predecessor[i]] != i);
 
             add_edge(vertex(predecessor[i], mst_graph),
                      vertex(i,     mst_graph),
@@ -535,13 +544,10 @@ create_mst_graph(
    \ingroup PkgPointSetProcessing3Algorithms
    Orients the normals of the range of `points` using the propagation
    of a seed orientation through a minimum spanning tree of the Riemannian graph.
-   This method modifies the order of input points so as to pack all sucessfully oriented points first,
+   This method modifies the order of input points so as to pack all successfully oriented points first,
    and returns an iterator over the first point with an unoriented normal (see erase-remove idiom).
    For this reason it should not be called on sorted containers.
    It is based on \cgalCite{cgal:hddms-srup-92}.
-
-   \warning This function may fail when Boost version 1.54 is used,
-   because of the following bug: https://svn.boost.org/trac/boost/ticket/9012
 
    \pre Normals must be unit vectors
    \pre `k >= 2`
@@ -598,30 +604,30 @@ create_mst_graph(
    \return iterator over the first point with an unoriented normal.
 */
 template <typename PointRange,
-          typename NamedParameters
+          typename NamedParameters = parameters::Default_named_parameters
 >
 typename PointRange::iterator
 mst_orient_normals(
   PointRange& points,
   unsigned int k,
-  const NamedParameters& np)
+  const NamedParameters& np = parameters::default_values())
 {
     using parameters::choose_parameter;
     using parameters::get_parameter;
+    using parameters::is_default_parameter;
 
     CGAL_TRACE_STREAM << "Calls mst_orient_normals()\n";
 
-    typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-    typedef typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::type NormalMap;
-    typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+    typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+    typedef typename NP_helper::Point_map PointMap;
+    typedef typename NP_helper::Normal_map NormalMap;
+    typedef typename NP_helper::Geom_traits Kernel;
     typedef typename Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::type ConstrainedMap;
 
-    CGAL_static_assertion_msg(!(boost::is_same<NormalMap,
-                                typename Point_set_processing_3::GetNormalMap<PointRange, NamedParameters>::NoMap>::value),
-                              "Error: no normal map");
+    CGAL_assertion_msg(NP_helper::has_normal_map(points, np), "Error: no normal map");
 
-    PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
-    NormalMap normal_map = choose_parameter<NormalMap>(get_parameter(np, internal_np::normal_map));
+    PointMap point_map = NP_helper::get_point_map(points, np);
+    NormalMap normal_map = NP_helper::get_normal_map(points, np);
     typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                            typename Kernel::FT(0));
     ConstrainedMap constrained_map = choose_parameter<ConstrainedMap>(get_parameter(np, internal_np::point_is_constrained));
@@ -642,10 +648,10 @@ mst_orient_normals(
     typedef MST_graph<typename PointRange::iterator, NormalMap, Kernel> MST_graph;
 
     // Precondition: at least one element in the container.
-    CGAL_point_set_processing_precondition(points.begin() != points.end());
+    CGAL_precondition(points.begin() != points.end());
 
     // Precondition: at least 2 nearest neighbors
-    CGAL_point_set_processing_precondition(k >= 2);
+    CGAL_precondition(k >= 2);
 
     std::size_t memory = CGAL::Memory_sizer().virtual_size();
     CGAL_TRACE_STREAM << (memory >> 20) << " Mb allocated\n";
@@ -665,8 +671,7 @@ mst_orient_normals(
     //   or vertex j is in the k-neighborhood of vertex i.
     Riemannian_graph riemannian_graph;
 
-    if (boost::is_same<ConstrainedMap,
-        typename CGAL::Point_set_processing_3::GetIsConstrainedMap<PointRange, NamedParameters>::NoMap>::value)
+    if (is_default_parameter<NamedParameters, internal_np::point_is_constrained_t>::value)
       riemannian_graph = create_riemannian_graph(points,
                                                  point_map, normal_map, index_map,
                                                  Default_constrained_map<typename PointRange::iterator>
@@ -731,20 +736,6 @@ mst_orient_normals(
 
     return first_unoriented_point;
 }
-
-/// \cond SKIP_IN_MANUAL
-// variant with default NP
-template <typename PointRange>
-typename PointRange::iterator
-mst_orient_normals(
-  PointRange& points,
-  unsigned int k) ///< number of neighbors
-
-{
-  return mst_orient_normals (points, k, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
-
 
 } //namespace CGAL
 

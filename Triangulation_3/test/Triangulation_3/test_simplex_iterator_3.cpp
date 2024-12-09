@@ -1,5 +1,7 @@
+// #define CGAL_DEBUG_TRIANGULATION_SEGMENT_TRAVERSER_3 1
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Base_with_time_stamp.h>
 
 #include <assert.h>
 #include <iostream>
@@ -17,13 +19,19 @@ typedef Kernel::Vector_3                                      Vector_3;
 typedef Kernel::Segment_3                                     Segment_3;
 
 // Define the structure.
-typedef CGAL::Delaunay_triangulation_3< Kernel >    DT;
+typedef CGAL::Base_with_time_stamp<CGAL::Triangulation_vertex_base_3<Kernel>> Vb;
+typedef CGAL::Delaunay_triangulation_cell_base_3<Kernel> Cb;
+typedef CGAL::Triangulation_data_structure_3<Vb, Cb>     Tds;
+typedef CGAL::Delaunay_triangulation_3< Kernel, Tds >    DT;
 
 typedef DT::Vertex_handle                           Vertex_handle;
 typedef DT::Cell_handle                             Cell_handle;
 typedef DT::Edge                                    Edge;
 typedef DT::Facet                                   Facet;
+typedef DT::Simplex                                 Simplex;
 typedef DT::Segment_simplex_iterator                Segment_simplex_iterator;
+
+#include "test_triangulation_simplex_3_debug.h"
 
 void test_vertex_edge_vertex(const DT& dt, const std::size_t& nb_tests)
 {
@@ -299,8 +307,8 @@ void test_triangulation_on_a_grid()
     unsigned int nb_facets = 0, nb_edges = 0, nb_vertex = 0;
     for (; st != st.end(); ++st)
     {
-      std::cout << st->dimension() << " ";
-      std::cout.flush();
+      std::cerr << st->dimension() << " ";
+      std::cerr << debug_simplex(*st) <<'\n';
       if (st->dimension() == 3)
       {
         if (dt.is_infinite(Cell_handle(*st))) ++inf;

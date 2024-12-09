@@ -296,8 +296,8 @@ are_equal(const Vertex *v,
 // represent the curve end along the face boundary.
 //
 template <typename GeomTraits, typename Dcel_>
-boost::optional
-  <boost::variant
+std::optional
+  <std::variant
     <typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Vertex*,
      typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*> >
 Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
@@ -305,8 +305,8 @@ place_boundary_vertex(Face* f,
                       const X_monotone_curve_2& cv, Arr_curve_end ind,
                       Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  typedef boost::variant<Vertex*, Halfedge*>    Non_optional_result;
-  typedef boost::optional<Non_optional_result>  Result;
+  typedef std::variant<Vertex*, Halfedge*>    Non_optional_result;
+  typedef std::optional<Non_optional_result>  Result;
 
   // Get a halfedge on the outer CCB of f and start traversing the CCB.
   Halfedge* first = *(f->outer_ccbs_begin());
@@ -323,22 +323,22 @@ place_boundary_vertex(Face* f,
       return Result(curr);
     }
 
-    // Move to the next halfegde along the CCB.
+    // Move to the next halfedge along the CCB.
     curr = curr->next();
 
   } while (curr != first);
 
-  // If we reached here, we did not find a suitable halfegde, which should
+  // If we reached here, we did not find a suitable halfedge, which should
   // never happen.
   CGAL_error();
-  return boost::none;
+  return std::nullopt;
 }
 
 //-----------------------------------------------------------------------------
 // Locate a DCEL feature that contains the given unbounded curve end.
 //
 template <typename GeomTraits, typename Dcel_>
-boost::variant
+std::variant
 <typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Vertex*,
  typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Halfedge*,
  typename Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::Face*>
@@ -346,7 +346,7 @@ Arr_unb_planar_topology_traits_2<GeomTraits, Dcel_>::
 locate_curve_end (const X_monotone_curve_2& cv, Arr_curve_end ind,
                   Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  typedef boost::variant<Vertex*, Halfedge*, Face*>     Result;
+  typedef std::variant<Vertex*, Halfedge*, Face*>     Result;
 
   // Start traversing the inner CCB of the fictitious face and try to locate
   // a feature that contains the curve end.
@@ -809,7 +809,7 @@ _is_on_fictitious_edge(const X_monotone_curve_2& cv, Arr_curve_end ind,
     }
   }
   else {
-    // If we reched here, we have a "horizontal" fictitious halfedge.
+    // If we reached here, we have a "horizontal" fictitious halfedge.
     Arr_parameter_space he_ps_y = v1->parameter_space_in_y();
 
     CGAL_assertion((he_ps_y == ARR_BOTTOM_BOUNDARY ||

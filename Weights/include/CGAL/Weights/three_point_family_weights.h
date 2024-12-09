@@ -5,7 +5,7 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Dmitry Anisimov
@@ -14,157 +14,122 @@
 #ifndef CGAL_THREE_POINT_FAMILY_WEIGHTS_H
 #define CGAL_THREE_POINT_FAMILY_WEIGHTS_H
 
-#include <CGAL/license/Weights.h>
-
-// Internal includes.
 #include <CGAL/Weights/internal/utils.h>
+
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
 
 namespace CGAL {
 namespace Weights {
 
-  /// \cond SKIP_IN_MANUAL
-  namespace three_point_family_ns {
+/// \cond SKIP_IN_MANUAL
+namespace three_point_family_ns {
 
-    template<typename GeomTraits>
-    typename GeomTraits::FT weight(
-      const GeomTraits& traits,
-      const typename GeomTraits::FT d1,
-      const typename GeomTraits::FT d2,
-      const typename GeomTraits::FT d3,
-      const typename GeomTraits::FT A1,
-      const typename GeomTraits::FT A2,
-      const typename GeomTraits::FT B,
-      const typename GeomTraits::FT p) {
+template<typename FT>
+FT weight(const FT d0, const FT d2, const FT d,
+          const FT A0, const FT A2, const FT B,
+          const FT p)
+{
+  FT w = FT(0);
+  CGAL_precondition(!is_zero(A0) && !is_zero(A2));
+  const FT prod = A0 * A2;
+  if (!is_zero(prod))
+  {
+    const FT r0 = internal::power(d0, p);
+    const FT r = internal::power(d , p);
+    const FT r2 = internal::power(d2, p);
 
-      using FT = typename GeomTraits::FT;
-      FT w = FT(0);
-      CGAL_precondition(A1 != FT(0) && A2 != FT(0));
-      const FT prod = A1 * A2;
-      if (prod != FT(0)) {
-        const FT inv = FT(1) / prod;
-        FT r1 = d1;
-        FT r2 = d2;
-        FT r3 = d3;
-        if (p != FT(1)) {
-          r1 = internal::power(traits, d1, p);
-          r2 = internal::power(traits, d2, p);
-          r3 = internal::power(traits, d3, p);
-        }
-        w = (r3 * A1 - r2 * B + r1 * A2) * inv;
-      }
-      return w;
-    }
+    w = (r2 * A0 - r * B + r0 * A2) / prod;
   }
-  /// \endcond
+  return w;
+}
 
-  #if defined(DOXYGEN_RUNNING)
+} // namespace three_point_family_ns
 
-  /*!
-    \ingroup PkgWeightsRefThreePointFamilyWeights
+/// \endcond
 
-    \brief computes the three-point family weight in 2D at `q` using the points `p0`, `p1`,
-    and `p2` and the power parameter `a`, given a traits class `traits` with geometric objects,
-    predicates, and constructions.
-  */
-  template<typename GeomTraits>
-  typename GeomTraits::FT three_point_family_weight(
-    const typename GeomTraits::Point_2& p0,
-    const typename GeomTraits::Point_2& p1,
-    const typename GeomTraits::Point_2& p2,
-    const typename GeomTraits::Point_2& q,
-    const typename GeomTraits::FT a,
-    const GeomTraits& traits) { }
+// 2D ==============================================================================================
 
-  /*!
-    \ingroup PkgWeightsRefThreePointFamilyWeights
+/*!
+  \ingroup PkgWeightsRefThreePointFamilyWeights
+  \brief computes the three-point family weight in 2D at `q` using the points `p0`, `p1` and `p2`,
+         and the power parameter `a`.
+  \tparam GeomTraits a model of `AnalyticWeightTraits_2`
+*/
+template<typename GeomTraits>
+typename GeomTraits::FT three_point_family_weight(const typename GeomTraits::Point_2& p0,
+                                                  const typename GeomTraits::Point_2& p1,
+                                                  const typename GeomTraits::Point_2& p2,
+                                                  const typename GeomTraits::Point_2& q,
+                                                  const typename GeomTraits::FT a,
+                                                  const GeomTraits& traits)
+{
+  using FT = typename GeomTraits::FT;
 
-    \brief computes the three-point family weight in 2D at `q` using the points `p0`, `p1`,
-    and `p2` which are parameterized by a `Kernel` K, and the power parameter `a` which
-    can be omitted.
-  */
-  template<typename K>
-  typename K::FT three_point_family_weight(
-    const CGAL::Point_2<K>& p0,
-    const CGAL::Point_2<K>& p1,
-    const CGAL::Point_2<K>& p2,
-    const CGAL::Point_2<K>& q,
-    const typename K::FT a = typename K::FT(1)) { }
+  auto area_2 = traits.compute_area_2_object();
 
-  #endif // DOXYGEN_RUNNING
+  const FT d0 = internal::distance_2(q, p0, traits);
+  const FT d = internal::distance_2(q, p1, traits);
+  const FT d2 = internal::distance_2(q, p2, traits);
 
-  /// \cond SKIP_IN_MANUAL
-  template<typename GeomTraits>
-  typename GeomTraits::FT three_point_family_weight(
-    const typename GeomTraits::Point_2& t,
-    const typename GeomTraits::Point_2& r,
-    const typename GeomTraits::Point_2& p,
-    const typename GeomTraits::Point_2& q,
-    const typename GeomTraits::FT a,
-    const GeomTraits& traits) {
+  const FT A0 = area_2(p1, q, p0);
+  const FT A2 = area_2(p2, q, p1);
+  const FT B = area_2(p2, q, p0);
 
-    using FT = typename GeomTraits::FT;
-    const FT d1 = internal::distance_2(traits, q, t);
-    const FT d2 = internal::distance_2(traits, q, r);
-    const FT d3 = internal::distance_2(traits, q, p);
+  return three_point_family_ns::weight(d0, d2, d, A0, A2, B, a);
+}
 
-    const FT A1 = internal::area_2(traits, r, q, t);
-    const FT A2 = internal::area_2(traits, p, q, r);
-    const FT B  = internal::area_2(traits, p, q, t);
+/*!
+  \ingroup PkgWeightsRefThreePointFamilyWeights
+  \brief computes the three-point family weight in 2D at `q` using the points `p0`, `p1` and `p2`,
+         and the power parameter `a`.
+  \tparam Kernel a model of `Kernel`
+*/
+template<typename Kernel>
+typename Kernel::FT three_point_family_weight(const CGAL::Point_2<Kernel>& p0,
+                                              const CGAL::Point_2<Kernel>& p1,
+                                              const CGAL::Point_2<Kernel>& p2,
+                                              const CGAL::Point_2<Kernel>& q,
+                                              const typename Kernel::FT a = {1})
+{
+  const Kernel traits;
+  return three_point_family_weight(p0, p1, p2, q, a, traits);
+}
 
-    return three_point_family_ns::weight(
-      traits, d1, d2, d3, A1, A2, B, a);
-  }
+// 3D ==============================================================================================
 
-  template<typename GeomTraits>
-  typename GeomTraits::FT three_point_family_weight(
-    const CGAL::Point_2<GeomTraits>& t,
-    const CGAL::Point_2<GeomTraits>& r,
-    const CGAL::Point_2<GeomTraits>& p,
-    const CGAL::Point_2<GeomTraits>& q,
-    const typename GeomTraits::FT a =
-    typename GeomTraits::FT(1)) {
+/// \cond SKIP_IN_MANUAL
 
-    const GeomTraits traits;
-    return three_point_family_weight(t, r, p, q, a, traits);
-  }
+template<typename GeomTraits>
+typename GeomTraits::FT three_point_family_weight(const typename GeomTraits::Point_3& p0,
+                                                  const typename GeomTraits::Point_3& p1,
+                                                  const typename GeomTraits::Point_3& p2,
+                                                  const typename GeomTraits::Point_3& q,
+                                                  const typename GeomTraits::FT a,
+                                                  const GeomTraits& traits)
+{
+  using Point_2 = typename GeomTraits::Point_2;
 
-  namespace internal {
+  Point_2 p0f, p1f, p2f, qf;
+  internal::flatten(p0, p1, p2 , q,
+                    p0f, p1f, p2f, qf,
+                    traits);
 
-  template<typename GeomTraits>
-  typename GeomTraits::FT three_point_family_weight(
-    const typename GeomTraits::Point_3& t,
-    const typename GeomTraits::Point_3& r,
-    const typename GeomTraits::Point_3& p,
-    const typename GeomTraits::Point_3& q,
-    const typename GeomTraits::FT a,
-    const GeomTraits& traits) {
+  return CGAL::Weights::three_point_family_weight(p0f, p1f, p2f, qf, a, traits);
+}
 
-    using Point_2 = typename GeomTraits::Point_2;
-    Point_2 tf, rf, pf, qf;
-    internal::flatten(
-      traits,
-      t,  r,  p,  q,
-      tf, rf, pf, qf);
-    return CGAL::Weights::
-      three_point_family_weight(tf, rf, pf, qf, a, traits);
-  }
+template<typename Kernel>
+typename Kernel::FT three_point_family_weight(const CGAL::Point_3<Kernel>& p0,
+                                              const CGAL::Point_3<Kernel>& p1,
+                                              const CGAL::Point_3<Kernel>& p2,
+                                              const CGAL::Point_3<Kernel>& q,
+                                              const typename Kernel::FT a = {1})
+{
+  const Kernel traits;
+  return three_point_family_weight(p0, p1, p2, q, a, traits);
+}
 
-  template<typename GeomTraits>
-  typename GeomTraits::FT three_point_family_weight(
-    const CGAL::Point_3<GeomTraits>& t,
-    const CGAL::Point_3<GeomTraits>& r,
-    const CGAL::Point_3<GeomTraits>& p,
-    const CGAL::Point_3<GeomTraits>& q,
-    const typename GeomTraits::FT a =
-    typename GeomTraits::FT(1)) {
-
-    const GeomTraits traits;
-    return three_point_family_weight(t, r, p, q, a, traits);
-  }
-
-  } // namespace internal
-
-  /// \endcond
+/// \endcond
 
 } // namespace Weights
 } // namespace CGAL

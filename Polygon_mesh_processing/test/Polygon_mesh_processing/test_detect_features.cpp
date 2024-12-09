@@ -1,7 +1,7 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Real_timer.h>
 
 #include <fstream>
@@ -48,8 +48,8 @@ void test_cube()
   CGAL_USE(number_of_patches);
 
   number_of_patches = PMP::sharp_edges_segmentation(mesh, 90, eif, pid,
-                                                    PMP::parameters::first_index(1)
-                                                                    .vertex_incident_patches_map(vip));
+                                                    CGAL::parameters::first_index(1)
+                                                                     .vertex_incident_patches_map(vip));
 
   assert(number_of_patches == 6);
 
@@ -73,7 +73,7 @@ void test_cube()
     = mesh.add_property_map<vertex_descriptor,std::set<std::pair<int, int> > >("f:vip",std::set<std::pair<int, int> >()).first;
   PMP::detect_sharp_edges(mesh, 90, eif);
   number_of_patches = PMP::internal::detect_surface_patches(mesh, patch_id_map, eif,
-                                                            PMP::parameters::first_index(1));
+                                                            CGAL::parameters::first_index(1));
   PMP::detect_vertex_incident_patches(mesh, patch_id_map, vertex_incident_patch_map, eif);
 
   nb_sharp_edges =0;

@@ -51,7 +51,7 @@ namespace Barycentric_coordinates {
     a model of `ReadablePropertyMap` whose key type is `VertexRange::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
-    \cgalModels `DiscretizedDomain_2`
+    \cgalModels{DiscretizedDomain_2}
   */
   template<
   typename VertexRange,

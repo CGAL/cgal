@@ -1,7 +1,6 @@
 Alpha_shapes_3
 Arrangement_on_surface_2
 BGL
-Geomview
 Kernel_23
 Manual
 Mesh_2
@@ -14,6 +13,6 @@ Point_set_3
 Point_set_processing_3
 STL_Extension
 Surface_mesh
-Surface_mesher
+SMDS_3
 Triangulation
 Triangulation_2

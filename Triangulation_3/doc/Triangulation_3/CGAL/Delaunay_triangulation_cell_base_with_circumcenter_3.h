@@ -20,7 +20,7 @@ circumcenter.
 be a model of `DelaunayTriangulationCellBase_3`.
 It has the default value `Delaunay_triangulation_cell_base_3<Traits>`.
 
-\cgalModels `DelaunayTriangulationCellBase_3`
+\cgalModels{DelaunayTriangulationCellBase_3}
 
 \sa `CGAL::Delaunay_triangulation_cell_base_3`
 
@@ -38,7 +38,7 @@ typedef Traits::Point_3 Point;
 
 As a model of the concept `DelaunayTriangulationCellBase_3`,
 `Delaunay_triangulation_cell_base_3`
-provides a `circumcenter()` member fonction.
+provides a `circumcenter()` member function.
 
 If it has already been computed in the past, the cached value is returned.
 */

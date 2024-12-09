@@ -288,7 +288,7 @@ MainWindow::MainWindow()
   // Setup input handlers. They get events before the scene gets them
   // and the input they generate is passed to the triangulation with
   // the signal/slot mechanism
-  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are not closed
+  pi = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &scene, 0, true); // inputs polylines which are closed
   QObject::connect(pi, SIGNAL(generate(CGAL::Object)),
                    this, SLOT(processInput(CGAL::Object)));
 
@@ -339,7 +339,9 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Constrained_Delaunay_triangulation_2.html");
   this->addAboutCGAL();
+#if QT_SVG_LIB
   this->setupExportSVG(this->actionExport_SVG, this->graphicsView);
+#endif
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)),
@@ -553,89 +555,33 @@ MainWindow::on_actionLoadConstraints_triggered()
 void
 MainWindow::loadWKT(QString filename)
 {
-  //Polygons todo : make it multipolygons
   std::ifstream ifs(qPrintable(filename));
-  do
-  {
-    typedef CGAL::Polygon_with_holes_2<K> Polygon;
-    typedef CGAL::Point_2<K> Point;
-    std::vector<Polygon> mps;
-    CGAL::IO::read_multi_polygon_WKT(ifs, mps);
-    for(const Polygon& p : mps)
-    {
-      if(p.outer_boundary().is_empty())
-        continue;
 
-      for(Point point : p.outer_boundary().container())
-          cdt.insert(point);
-      for(Polygon::General_polygon_2::Edge_const_iterator
-          e_it=p.outer_boundary().edges_begin(); e_it != p.outer_boundary().edges_end(); ++e_it)
-        cdt.insert_constraint(e_it->source(), e_it->target());
+  typedef CGAL::Polygon_with_holes_2<K> Polygon;
+  typedef CGAL::Point_2<K> Point;
 
-      for(Polygon::Hole_const_iterator h_it =
-          p.holes_begin(); h_it != p.holes_end(); ++h_it)
-      {
-        for(Point point : h_it->container())
-            cdt.insert(point);
-        for(Polygon::General_polygon_2::Edge_const_iterator
-            e_it=h_it->edges_begin(); e_it != h_it->edges_end(); ++e_it)
-        {
-          cdt.insert_constraint(e_it->source(), e_it->target());
-        }
-      }
-    }
-  }while(ifs.good() && !ifs.eof());
-  //Edges
-  ifs.clear();
-  ifs.seekg(0, ifs.beg);
-  do
-  {
-    typedef std::vector<K::Point_2> LineString;
-    std::vector<LineString> mls;
-    CGAL::IO::read_multi_linestring_WKT(ifs, mls);
-    for(const LineString& ls : mls)
-    {
-      if(ls.empty())
-        continue;
-      K::Point_2 p,q, qold(0,0); // initialize to avoid maybe-uninitialized warning from GCC6
-      bool first = true;
-      CDT::Vertex_handle vp, vq, vqold;
-      LineString::const_iterator it =
-          ls.begin();
-      for(; it != ls.end(); ++it) {
-        p = *it++;
-        q = *it;
-        if(p == q){
-          continue;
-        }
-        if((!first) && (p == qold)){
-          vp = vqold;
-        } else {
-          vp = cdt.insert(p);
-        }
-        vq = cdt.insert(q, vp->face());
-        if(vp != vq) {
-          cdt.insert_constraint(vp,vq);
-        }
-        qold = q;
-        vqold = vq;
-        first = false;
-      }
-    }
-  }while(ifs.good() && !ifs.eof());
+  std::deque<Point> points;
+  std::deque<std::vector<Point>> linestrings;
+  std::deque<Polygon> polygons;
 
-  //Points
-  ifs.clear();
-  ifs.seekg(0, ifs.beg);
-  do
-  {
-    std::vector<K::Point_2> mpts;
-    CGAL::IO::read_multi_point_WKT(ifs, mpts);
-    for(const K::Point_2& p : mpts)
-    {
-      cdt.insert(p);
+  CGAL::IO::read_WKT(ifs, points, linestrings, polygons);
+
+  cdt.insert(points.begin(),points.end());
+
+  for(const std::vector<Point>& line : linestrings){
+    cdt.insert_constraint(line.begin(), line.end());
+  }
+
+  for(const Polygon& p : polygons){
+    if(p.outer_boundary().is_empty())
+      continue;
+
+    cdt.insert_constraint(p.outer_boundary().vertices_begin(), p.outer_boundary().vertices_end(),true);
+
+    for(Polygon::Hole_const_iterator h_it = p.holes_begin(); h_it != p.holes_end(); ++h_it){
+      cdt.insert_constraint(h_it->vertices_begin(), h_it->vertices_end(),true);
     }
-  }while(ifs.good() && !ifs.eof());
+  }
 
   discoverComponents(cdt, m_seeds);
   Q_EMIT( changed());
@@ -838,9 +784,9 @@ MainWindow::on_actionMakeDelaunayMesh_triggered()
   timer.start();
 
   CGAL::refine_Delaunay_mesh_2(cdt,
-      m_seeds.begin(), m_seeds.end(),
-      Criteria(shape, edge_len),
-      false);//mesh the subdomains including NO seed
+                               CGAL::parameters::seeds(m_seeds)
+                               .criteria(Criteria(shape, edge_len))
+                               .seeds_are_in_domain(false));//mesh the subdomains including NO seed
 
   timer.stop();
   nv = cdt.number_of_vertices() - nv;
@@ -961,9 +907,7 @@ MainWindow::on_actionLloyd_optimization_triggered()
   }
 
   CGAL::lloyd_optimize_mesh_2(cdt,
-      max_iteration_number = nb,
-      seeds_begin = m_seeds.begin(),
-      seeds_end = m_seeds.end());
+      CGAL::parameters::number_of_iterations(nb).seeds(m_seeds));
 
   // default cursor
   QApplication::restoreOverrideCursor();
@@ -981,7 +925,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Constrained_Delaunay_triangulation_2 demo");
 
-  // Import resources from libCGAL (Qt5).
+  // Import resources from libCGAL (Qt6).
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

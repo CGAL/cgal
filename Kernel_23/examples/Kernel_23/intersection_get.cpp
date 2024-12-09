@@ -14,10 +14,10 @@ int main()
 
   const auto result = intersection(seg, lin);
   if (result) {
-    if (const Segment_2* s = boost::get<Segment_2>(&*result)) {
+    if (const Segment_2* s = std::get_if<Segment_2>(&*result)) {
       std::cout << *s << std::endl;
     } else {
-      const Point_2* p = boost::get<Point_2 >(&*result);
+      const Point_2* p = std::get_if<Point_2 >(&*result);
       std::cout << *p << std::endl;
     }
   }

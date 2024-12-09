@@ -18,6 +18,7 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/kernel_assertions.h>
+#include <iterator>
 
 namespace CGAL {
 namespace Intersections {
@@ -141,7 +142,7 @@ intersection(const typename K::Plane_3& plane,
   CGAL_kernel_assertion(pts.size() == 2);
 
   return intersection_return<typename K::Intersect_3, typename K::Plane_3, typename K::Triangle_3>(
-           k.construct_segment_3_object()(*pts.begin(), *boost::prior(pts.end())));
+           k.construct_segment_3_object()(*pts.begin(), *std::prev(pts.end())));
 }
 
 template <class K>

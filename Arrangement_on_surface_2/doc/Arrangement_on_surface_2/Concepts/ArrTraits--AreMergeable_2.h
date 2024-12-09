@@ -3,9 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines Functor
+ * \cgalRefines{Functor}
  *
- * \cgalHasModel ArrangementXMonotoneTraits_2::Are_mergeable_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementXMonotoneTraits_2::Are_mergeable_2}
+ * \cgalHasModelsEnd
  */
 class AreMergeable_2 {
 public:

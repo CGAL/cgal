@@ -18,7 +18,7 @@
 #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
 #include <CGAL/Nef_2/geninfo.h>
 #else
-#include <boost/any.hpp>
+#include <any>
 #endif
 #include <CGAL/Nef_2/Segment_overlay_traits.h>
 #include <CGAL/Nef_3/SNC_decorator.h>
@@ -110,14 +110,14 @@ struct Sort_sedges2 {
 template <typename P, typename V, typename E, typename I>
 struct Halffacet_output {
 
-Halffacet_output(CGAL::Unique_hash_map<I,E>& F, std::vector<E>& S)
+Halffacet_output(const CGAL::Unique_hash_map<I,E>& F, std::vector<E>& S)
   : From(F), Support(S) { edge_number=0; Support[0]=E(); }
 
 typedef P         Point;
 typedef V         Vertex_handle;
 typedef unsigned  Halfedge_handle;
 
-CGAL::Unique_hash_map<I,E>& From;
+const CGAL::Unique_hash_map<I,E>& From;
 std::vector<E>& Support;
 unsigned edge_number;
 
@@ -413,7 +413,7 @@ protected:
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       Edge_of[geninfo<unsigned>::access(info(e_min->twin()->source()->twin()->source()))];
     #else
-      Edge_of[ boost::any_cast<unsigned>(info(e_min->twin()->source()->twin()->source())) ];
+      Edge_of[ std::any_cast<unsigned>(info(e_min->twin()->source()->twin()->source())) ];
     #endif
     CGAL_assertion( e_below != SHalfedge_handle() );
     CGAL_NEF_TRACEN("  edge below " << debug(e_below));
@@ -467,12 +467,11 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   Object_list_iterator start, Object_list_iterator end) const
 { CGAL_NEF_TRACEN(">>>>>create_facet_objects "
                   << normalized(plane_supporting_facet));
-  CGAL::Unique_hash_map<SHalfedge_handle,int> FacetCycle(-1);
+
   std::vector<SHalfedge_handle> MinimalEdge;
   std::list<SHalfedge_handle> SHalfedges;
   std::list<SHalfloop_handle> SHalfloops;
 
-  CGAL::Unique_hash_map<Segment_iterator,SHalfedge_handle>  From;
 
   Segment_list Segments;
   SHalfedge_handle e; SHalfloop_handle l;
@@ -503,6 +502,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
       CGAL_error_msg("Damn wrong handle.");
   }
 
+  CGAL::Unique_hash_map<SHalfedge_handle,int> FacetCycle(-1, SHalfedges.size());
   /* We iterate all shalfedges and assign a number for each facet
      cycle.  After that iteration for an edge |e| the number of its
      facet cycle is |FacetCycle[e]| and for a facet cycle |c| we know
@@ -606,6 +606,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
   //  Insertion of SHalfedges into Segments is shifted below in order
   //  to guarantee that there are no gaps in the overlay.
 
+  CGAL::Unique_hash_map<Segment_iterator,SHalfedge_handle> From(SHalfedge_handle(), SHalfedges.size());
 
   //  SHalfedges.sort(Sort_sedges2<Point_3,SHalfedge_handle>());
   SHalfedges.sort(Sort_sedges<Vertex_handle,SHalfedge_handle>());
@@ -651,7 +652,7 @@ create_facet_objects(const Plane_3& plane_supporting_facet,
     #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
       Edge_of[geninfo<unsigned>::access(info(l->incident_sface()->center_vertex()))];
     #else
-      Edge_of[ boost::any_cast<unsigned>(info(l->incident_sface()->center_vertex())) ];
+      Edge_of[ std::any_cast<unsigned>(info(l->incident_sface()->center_vertex())) ];
     #endif
 
     CGAL_assertion( e_below != SHalfedge_handle() );

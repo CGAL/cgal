@@ -111,7 +111,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
           if ( SD.is_closed_at_source( u->twin()) )
              SD.set_face( tgt, fu);
           /* TO VERIFY: does is_closed_at_source(u) imply is_isolated(src)?
-             if it is true, the svertex face update is not necesary. */
+             if it is true, the svertex face update is not necessary. */
 
           SHalfedge_around_facet_circulator next = u;
           ++next;
@@ -127,7 +127,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
       }
       else if(fc.is_shalfloop()) {
         SHalfloop_handle l(fc);
-        // this code is currenlty not used, but it is potentially need
+        // this code is currently not used, but it is potentially need
         // in the future, e.g for complex marks or a relative interior
         // function
         SFace_handle fu = l->incident_sface(), ftu = l->twin()->incident_sface();
@@ -144,7 +144,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   bool is_part_of_volume(Vertex_handle v)
-    /* determines if a vertex v is part of a volume, cheking if its local
+    /* determines if a vertex v is part of a volume, checking if its local
        graph is trivial (only one sface with no boundary). */  {
     SM_decorator SD(&*v);
     CGAL_assertion( !is_empty_range( SD.sfaces_begin(), SD.sfaces_end()));
@@ -169,7 +169,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   }
 
   bool is_part_of_edge(Vertex_handle v) {
-    /* determines if a vertex v is part of a edge, checking at its local
+    /* determines if a vertex v is part of an edge, checking at its local
        graph for exactly two antipodal vertices  */
 
     SM_decorator SD(&*v);
@@ -316,9 +316,9 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
     CGAL_NEF_TRACEN(">>> simplifying");
     SNC_decorator D(*this->sncp());
 
-    Unique_hash_map< Volume_handle, UFH_volume> hash_volume;
-    Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet;
-    Unique_hash_map< SFace_handle, UFH_sface> hash_sface;
+    Unique_hash_map< Volume_handle, UFH_volume> hash_volume(UFH_volume(), this->sncp()->number_of_volumes());
+    Unique_hash_map< Halffacet_handle, UFH_facet> hash_facet(UFH_facet(), this->sncp()->number_of_halffacets());
+    Unique_hash_map< SFace_handle, UFH_sface> hash_sface(UFH_sface(), this->sncp()->number_of_sfaces());
     Union_find< Volume_handle> uf_volume;
     Union_find< Halffacet_handle> uf_facet;
     Union_find< SFace_handle> uf_sface;
@@ -544,7 +544,8 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   void create_boundary_links_forall_sfaces(
       Unique_hash_map< SFace_handle, UFH_sface>& hash,
       Union_find< SFace_handle>& uf ) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    Unique_hash_map< SHalfedge_handle, bool> linked(false, this->sncp()->number_of_shalfedges());
+
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator e;
     CGAL_forall_shalfedges(e, *this->sncp()) {
@@ -597,7 +598,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
   void create_boundary_links_forall_facets(
       Unique_hash_map< Halffacet_handle, UFH_facet>& hash,
       Union_find< Halffacet_handle>& uf) {
-    Unique_hash_map< SHalfedge_handle, bool> linked(false);
+    Unique_hash_map< SHalfedge_handle, bool> linked(false, this->sncp()->number_of_shalfedges());
     SNC_decorator D(*this->sncp());
     SHalfedge_iterator u;
     CGAL_forall_shalfedges(u, *this->sncp()) {
@@ -651,6 +652,7 @@ class SNC_simplify_base : public SNC_decorator<SNC_structure> {
 
     SNC_decorator D(*this->sncp());
     Volume_setter setter(D);
+    setter.reserve(this->sncp()->number_of_sfaces());
 
     SFace_iterator sf;
     Volume_handle c;

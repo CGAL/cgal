@@ -28,22 +28,24 @@ arbitrary curves, which may be not \f$ x\f$-monotone must define the
 different types to allow proper dispatching of the free functions
 that accept such curves, such as `intsert()`.
 
-\cgalRefines `ArrangementXMonotoneTraits_2`
+\cgalRefines{ArrangementXMonotoneTraits_2}
 
-\cgalHasModel `CGAL::Arr_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Arr_non_caching_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
-\cgalHasModel `CGAL::Arr_polyline_traits_2<SegmentTraits>`
-\cgalHasModel `CGAL::Arr_circle_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Arr_line_arc_traits_2<CircularKernel>`
-\cgalHasModel `CGAL::Arr_circular_arc_traits_2<CircularKernel>`
-\cgalHasModel `CGAL::Arr_circular_line_arc_traits_2<CircularKernel>`
-\cgalHasModel `CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>`
-\cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
-\cgalHasModel `CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>`
-\cgalHasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
-\cgalHasModel `CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>`
-\cgalHasModel `CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Arr_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Arr_non_caching_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Arr_linear_traits_2<Kernel>}
+\cgalHasModels{CGAL::Arr_polyline_traits_2<SegmentTraits>}
+\cgalHasModels{CGAL::Arr_circle_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Arr_line_arc_traits_2<CircularKernel>}
+\cgalHasModels{CGAL::Arr_circular_arc_traits_2<CircularKernel>}
+\cgalHasModels{CGAL::Arr_circular_line_arc_traits_2<CircularKernel>}
+\cgalHasModels{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
+\cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
+\cgalHasModels{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}
+\cgalHasModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
+\cgalHasModels{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}
+\cgalHasModels{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
+\cgalHasModelsEnd
 
 \sa `ArrangementBasicTraits_2`
 \sa `ArrangementXMonotoneTraits_2`

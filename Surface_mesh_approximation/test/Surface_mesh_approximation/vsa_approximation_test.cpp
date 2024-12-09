@@ -35,7 +35,7 @@ int main()
     faces(mesh),
     target_edge_length,
     mesh,
-    PMP::parameters::number_of_iterations(nb_iter));
+    CGAL::parameters::number_of_iterations(nb_iter));
   std::cout << "Remeshing done. ("
     << std::distance(faces(mesh).first, faces(mesh).second) << " faces)..." << std::endl;
 

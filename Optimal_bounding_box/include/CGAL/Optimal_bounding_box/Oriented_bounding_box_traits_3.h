@@ -36,7 +36,7 @@ namespace CGAL {
 ///
 /// \tparam K must be a model of `Kernel`
 ///
-/// \cgalModels `OrientedBoundingBoxTraits_3`
+/// \cgalModels{OrientedBoundingBoxTraits_3}
 ///
 template <typename K>
 class Oriented_bounding_box_traits_3

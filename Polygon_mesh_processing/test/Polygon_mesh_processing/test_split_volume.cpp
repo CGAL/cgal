@@ -1,8 +1,11 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/Polygon_mesh_processing/transform.h>
+
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <boost/core/ref.hpp>
 
 #include <iostream>
@@ -14,7 +17,8 @@ typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 typedef Kernel::Aff_transformation_3 Trsfrm;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-namespace params = PMP::parameters;
+namespace params = CGAL::parameters;
+
 int main()
 {
   Surface_mesh base_cube;

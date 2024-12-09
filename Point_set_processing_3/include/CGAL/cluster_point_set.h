@@ -20,7 +20,7 @@
 #include <CGAL/Point_set_processing_3/internal/bbox_diagonal.h>
 #include <CGAL/for_each.h>
 
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 
 #include <queue>
@@ -128,10 +128,10 @@ CGAL::Emptyset_iterator get_adjacencies (const NamedParameters&, CGAL::Emptyset_
 
    \return the number of clusters identified.
 */
-template <typename PointRange, typename ClusterMap, typename NamedParameters>
+template <typename PointRange, typename ClusterMap, typename NamedParameters = parameters::Default_named_parameters>
 std::size_t cluster_point_set (PointRange& points,
                                ClusterMap cluster_map,
-                               const NamedParameters& np)
+                               const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -140,15 +140,16 @@ std::size_t cluster_point_set (PointRange& points,
   typedef typename PointRange::iterator iterator;
   typedef typename iterator::value_type value_type;
   typedef typename boost::property_traits<ClusterMap>::value_type Cluster_index_t;
-  typedef typename CGAL::GetPointMap<PointRange, NamedParameters>::type PointMap;
-  typedef typename Point_set_processing_3::GetK<PointRange, NamedParameters>::Kernel Kernel;
+  typedef Point_set_processing_3_np_helper<PointRange, NamedParameters> NP_helper;
+  typedef typename NP_helper::Point_map PointMap;
+  typedef typename NP_helper::Geom_traits Kernel;
   typedef typename Point_set_processing_3::GetAdjacencies<PointRange, NamedParameters>::type Adjacencies;
 
-  CGAL_static_assertion_msg(!(boost::is_same<typename GetSvdTraits<NamedParameters>::type,
-                                             typename GetSvdTraits<NamedParameters>::NoTraits>::value),
+  static_assert(!(std::is_same<typename GetSvdTraits<NamedParameters>::type,
+                                           typename GetSvdTraits<NamedParameters>::NoTraits>::value),
                             "Error: no SVD traits");
 
-  PointMap point_map = choose_parameter(get_parameter(np, internal_np::point_map), PointMap());
+  PointMap point_map = NP_helper::get_point_map(points, np);
   typename Kernel::FT neighbor_radius = choose_parameter(get_parameter(np, internal_np::neighbor_radius),
                                                          typename Kernel::FT(-1));
   typename Kernel::FT factor = choose_parameter(get_parameter(np, internal_np::attraction_factor),
@@ -168,7 +169,7 @@ std::size_t cluster_point_set (PointRange& points,
   // precondition: at least one element in the container.
   // to fix: should have at least three distinct points
   // but this is costly to check
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   // If no radius is given, init with 1% of bbox diagonal
   if (neighbor_radius < 0)
@@ -258,18 +259,6 @@ std::size_t cluster_point_set (PointRange& points,
 
   return nb_clusters;
 }
-
-/// \cond SKIP_IN_MANUAL
-// overload with default NP
-template <typename PointRange, typename ClusterMap>
-std::size_t cluster_point_set (PointRange& points,
-                               ClusterMap cluster_map,
-                               unsigned int k)
-{
-  return cluster_point_set (points, cluster_map, k,
-                            CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-/// \endcond
 
 } // namespace CGAL
 

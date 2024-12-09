@@ -105,14 +105,15 @@ struct Index_accessor
 
 template<typename Handle>
 struct Edge_index_accessor
-  : boost::put_get_helper< std::size_t, Edge_index_accessor<Handle> >
 {
   typedef boost::readable_property_map_tag category;
   typedef std::size_t                      reference;
   typedef std::size_t                      value_type;
   typedef Handle                           key_type;
 
-  reference operator[](Handle h) const { return h.id(); }
+  value_type operator[](Handle h) const { return h.id(); }
+
+  friend inline value_type get(const Edge_index_accessor& m, const key_type k) { return m[k]; }
 };
 
 template<typename Handle, typename ValueType, typename Reference,
@@ -135,13 +136,13 @@ struct Point_accessor<Handle, ValueType, ConstReference, true>
   : boost::put_get_helper< ConstReference, Point_accessor<Handle, ValueType, ConstReference, true> >
 {
   typedef boost::lvalue_property_map_tag category;
-  typedef ConstReference                      reference;
+  typedef ConstReference                 reference;
   typedef ValueType                      value_type;
   typedef Handle                         key_type;
 
-  typedef typename boost::mpl::if_< boost::is_reference<ConstReference>,
-                                    ValueType&,
-                                    ValueType >::type Reference;
+  typedef std::conditional_t< std::is_reference_v<ConstReference>,
+                              ValueType&,
+                              ValueType > Reference;
 
   Point_accessor() {}
   Point_accessor(Point_accessor<Handle, ValueType, Reference, false>) {}
@@ -160,19 +161,20 @@ struct Is_writable_property_map<PropertyMap, boost::writable_property_map_tag> :
 template <typename PropertyMap>
 struct Is_writable_property_map<PropertyMap, boost::read_write_property_map_tag> : CGAL::Tag_true { };
 
-// 'lvalue_pmap_tag' is annoying, because the property map is allowed to be non-mutable,
-// but boost::lvalue_property_map_tag is defined as:
+// 'lvalue_property_map_tag' is annoying, because the property map is allowed to be non-mutable,
+// but boost::lvalue_property_map_tag is always defined as:
 //   struct lvalue_property_map_tag : public read_write_property_map_tag
-// so we can't just check that 'writable_property_map_tag' is a base of the lvalue tag.
+// whereas it should sometimes only be
+//   struct lvalue_property_map_tag : public readable_property_map_tag.
 //
 // This checks if the reference is non-const, which is not completely correct: map[key] returning
 // a non-const reference doesn't mean that 'put(map, key, val)' exists, which is what a writable
 // property map must define.
 template <typename PropertyMap>
 struct Is_writable_property_map<PropertyMap, boost::lvalue_property_map_tag>
-  : boost::mpl::if_c<std::is_const<typename std::remove_reference<
+  : std::conditional_t<std::is_const<typename std::remove_reference<
                        typename boost::property_traits<PropertyMap>::reference>::type>::value,
-                     CGAL::Tag_false, CGAL::Tag_true>::type
+                       CGAL::Tag_false, CGAL::Tag_true>
 { };
 
 } // namespace internal

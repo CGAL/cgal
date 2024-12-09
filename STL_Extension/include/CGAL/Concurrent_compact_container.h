@@ -27,6 +27,7 @@
 
 #include <CGAL/Compact_container.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
@@ -34,8 +35,6 @@
 
 #include <tbb/enumerable_thread_specific.h>
 #include <tbb/queuing_mutex.h>
-
-#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
@@ -313,10 +312,10 @@ public:
     a.swap(b);
   }
 
-  iterator begin() { return iterator(m_first_item, 0, 0); }
+  iterator begin() { return empty()?end():iterator(m_first_item, 0, 0); }
   iterator end()   { return iterator(m_last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(m_first_item, 0, 0); }
+  const_iterator begin() const { return empty()?end():const_iterator(m_first_item, 0, 0); }
   const_iterator end()   const { return const_iterator(m_last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -481,7 +480,7 @@ public:
     // We use the block structure to provide an efficient version :
     // we check if the address is in the range of each block.
 
-    assert(cit != end());
+    CGAL_assertion(cit != end());
 
     const_pointer c = &*cit;
     size_type res=0;
@@ -541,9 +540,14 @@ public:
     return false;
   }
 
-  bool owns_dereferencable(const_iterator cit) const
+  bool owns_dereferenceable(const_iterator cit) const
   {
     return cit != end() && owns(cit);
+  }
+
+  CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
+  {
+    return owns_dereferenceable(cit);
   }
 
   /** Reserve method to ensure that the capacity of the Concurrent_compact_container be
@@ -748,7 +752,7 @@ void Concurrent_compact_container<T, Allocator>::merge(Self &d)
 #else // not  CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
   m_capacity += d.m_capacity;
 #endif // not  CGAL_CONCURRENT_COMPACT_CONTAINER_APPROXIMATE_SIZE
-  // It seems reasonnable to take the max of the block sizes.
+  // It seems reasonable to take the max of the block sizes.
   m_block_size = (std::max)(m_block_size, d.m_block_size);
   // Clear d.
   d.init();

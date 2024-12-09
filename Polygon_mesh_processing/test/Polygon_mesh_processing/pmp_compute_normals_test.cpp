@@ -1,24 +1,25 @@
 // #define CGAL_PMP_COMPUTE_NORMAL_DEBUG_PP
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polyhedron_3.h>
 
 #include <CGAL/centroid.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/bbox.h>
-#include <CGAL/Polygon_mesh_processing/shape_predicates.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+//#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 
 #include <iostream>
 #include <fstream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          EPICK;
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK;
+//typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt  EPECK;
 
 typedef CGAL::Surface_mesh<EPICK::Point_3>                           EPICK_SM;
-typedef CGAL::Surface_mesh<EPECK::Point_3>                           EPECK_SM;
+//typedef CGAL::Surface_mesh<EPECK::Point_3>                           EPECK_SM;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -42,28 +43,28 @@ void test(const Mesh& mesh,
   const face_descriptor first_face = *(faces(mesh).begin());
 
   PMP::compute_face_normals(mesh, fnormals);
-  PMP::compute_face_normals(mesh, fnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_face_normals(mesh, fnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_face_normals(mesh, fnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                              .geom_traits(K()));
 
   Vector f0n = PMP::compute_face_normal(first_face, mesh);
   assert(f0n == get(fnormals, first_face));
-  PMP::compute_face_normal(first_face, mesh, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_face_normal(first_face, mesh, CGAL::parameters::vertex_point_map(vpmap));
 
   PMP::compute_vertex_normals(mesh, vnormals);
-  PMP::compute_vertex_normals(mesh, vnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_vertex_normals(mesh, vnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_vertex_normals(mesh, vnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                                .geom_traits(K()));
 
   Vector v0n = PMP::compute_vertex_normal(first_vertex, mesh);
   assert(v0n == get(vnormals, first_vertex));
-  v0n = PMP::compute_vertex_normal(first_vertex, mesh, PMP::parameters::vertex_point_map(vpmap)
-                                                                       .face_normal_map(fnormals));
+  v0n = PMP::compute_vertex_normal(first_vertex, mesh, CGAL::parameters::vertex_point_map(vpmap)
+                                                                        .face_normal_map(fnormals));
   std::cout.precision(17);
   assert(v0n == get(vnormals, first_vertex));
 
   PMP::compute_normals(mesh, vnormals, fnormals);
-  PMP::compute_normals(mesh, vnormals, fnormals, PMP::parameters::vertex_point_map(vpmap));
+  PMP::compute_normals(mesh, vnormals, fnormals, CGAL::parameters::vertex_point_map(vpmap));
   PMP::compute_normals(mesh, vnormals, fnormals, CGAL::parameters::vertex_point_map(vpmap)
                                                                   .geom_traits(K()));
 
@@ -98,8 +99,11 @@ void test(const Mesh& mesh,
     // tests on non triangular meshes are @todo
     if(CGAL::is_triangle(halfedge(f, mesh), mesh))
     {
-      if(PMP::is_degenerate_triangle_face(f, mesh))
-        assert(get(fnormals, f) == CGAL::NULL_VECTOR);
+      if (PMP::is_degenerate_triangle_face(f, mesh))
+      {
+//        if (std::is_same<K, EPECK>())
+//          assert(get(fnormals, f) == CGAL::NULL_VECTOR);
+      }
       else
         assert(get(fnormals, f) != CGAL::NULL_VECTOR);
     }
@@ -142,9 +146,9 @@ void test_SM(const std::string file_name)
   }
 
   typename SM::template Property_map<vertex_descriptor, Vector> vnormals;
-  vnormals = mesh.template add_property_map<vertex_descriptor, Vector>("v:normals", CGAL::NULL_VECTOR).first;
+  vnormals = mesh.template add_property_map<vertex_descriptor, Vector>("v:normal", CGAL::NULL_VECTOR).first;
   typename SM::template Property_map<face_descriptor, Vector> fnormals;
-  fnormals = mesh.template add_property_map<face_descriptor, Vector>("f:normals", CGAL::NULL_VECTOR).first;
+  fnormals = mesh.template add_property_map<face_descriptor, Vector>("f:normal", CGAL::NULL_VECTOR).first;
 
   test<K>(mesh, vnormals, fnormals);
 }

@@ -50,7 +50,7 @@ the number of edges effectively removed.
   \cgalParamNEnd
 
   \cgalParamNBegin{get_placement}
-    \cgalParamDescription{a policy which returns the placement (position of the replacemet vertex) for an edge}
+    \cgalParamDescription{a policy which returns the placement (position of the replacement vertex) for an edge}
     \cgalParamType{a model of the concept `GetPlacement`}
     \cgalParamDefault{`CGAL::Surface_mesh_simplification::LindstromTurk_placement<TriangleMesh>`}
   \cgalParamNEnd
@@ -87,6 +87,15 @@ the number of edges effectively removed.
                      in case of non-constant complexity for index access.}
      \cgalParamExtra{This parameter is only used by debug functions and is usually not needed for users.}
    \cgalParamNEnd
+
+  \cgalParamNBegin{use_relaxed_order}
+     \cgalParamDescription{a Boolean tag indicating if the ordering of elements to be collapsed in the priority queue can be relaxed}
+     \cgalParamType{Either `CGAL::Tag_true` or `CGAL::Tag_false`}
+     \cgalParamDefault{`CGAL::Tag_false()`}
+     \cgalParamExtra{Using a relaxed order will allow the algorithm to use a faster priority queue.
+                     However, the ordering of the priority queue is no longer strict and there is a possibility
+                     that some elements that ought to have been collapsed are not actually collapsed.}
+   \cgalParamNEnd
 \cgalNamedParamsEnd
 
 \cgalHeading{Semantics}
@@ -101,10 +110,10 @@ and the remaining vertex is re-positioned.
 `visitor` is used to keep track of the simplification process. It has several member functions which
 are called at certain points in the simplification code.
 */
-template<class TriangleMesh, class StopPolicy, class NamedParameters>
+template<class TriangleMesh, class StopPolicy, class NamedParameters = parameters::Default_named_parameters>
 int edge_collapse(TriangleMesh& tmesh,
                   const StopPolicy& should_stop,
-                  const NamedParameters& np);
+                  const NamedParameters& np = parameters::default_values());
 
 } // namespace Surface_mesh_simplification
 } /* namespace CGAL */

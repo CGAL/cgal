@@ -31,6 +31,7 @@
 \cgalPackageSection{PartPolygons,Polygons}
 
 \package_listing{Polygon}
+\package_listing{Polygon_repair}
 \package_listing{Boolean_set_operations_2}
 \package_listing{Nef_2}
 \package_listing{Nef_S2}
@@ -90,9 +91,11 @@
 \package_listing{Mesh_2}
 \package_listing{Surface_mesher}
 \package_listing{Skin_surface_3}
+\package_listing{SMDS_3}
 \package_listing{Mesh_3}
 \package_listing{Tetrahedral_remeshing}
 \package_listing{Periodic_3_mesh_3}
+\package_listing{Alpha_wrap_3}
 
 \cgalPackageSection{PartReconstruction,Shape Reconstruction}
 
@@ -100,6 +103,8 @@
 \package_listing{Scale_space_reconstruction_3}
 \package_listing{Advancing_front_surface_reconstruction}
 \package_listing{Polygonal_surface_reconstruction}
+\package_listing{Kinetic_space_partition}
+\package_listing{Kinetic_surface_reconstruction}
 \package_listing{Optimal_transportation_reconstruction_2}
 
 \cgalPackageSection{PartGeometryProcessing,Geometry Processing}
@@ -163,8 +168,8 @@
 
 \cgalPackageSection{PartVisualization,Visualization}
 
-\package_listing{Geomview}
 \package_listing{GraphicsView}
 \package_listing{CGAL_ipelets}
+\package_listing{Basic_viewer}
 
 */

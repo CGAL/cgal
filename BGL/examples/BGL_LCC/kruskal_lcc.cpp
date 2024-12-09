@@ -4,7 +4,7 @@
 #include <iostream>
 #include <list>
 
-#include <boost/graph/kruskal_min_spanning_tree.hpp>
+#include <CGAL/boost/graph/kruskal_min_spanning_tree.h>
 
 typedef CGAL::Simple_cartesian<double>              Kernel;
 typedef Kernel::Point_3                             Point;
@@ -25,7 +25,7 @@ void kruskal(const LCC& lcc)
   // This property map is defined in graph_traits_Linear_cell_complex_for_combinatorial_map.h
 
   // This function call requires a vertex_index_map named parameter which
-  // when  ommitted defaults to "get(vertex_index,graph)".
+  // when  omitted defaults to "get(vertex_index,graph)".
   // That default works here because the vertex type has an "id()" method
   // field which is used by the vertex_index internal property.
   std::list<edge_descriptor> mst;

@@ -8,7 +8,7 @@ The class `Constrained_triangulation_face_base_2` is the default model for the c
 `ConstrainedTriangulationFaceBase_2` to be used as base face class
 of constrained triangulations.
 
-\cgalModels `ConstrainedTriangulationFaceBase_2`
+\cgalModels{ConstrainedTriangulationFaceBase_2}
 
 
 \tparam Traits must be a geometric traits.

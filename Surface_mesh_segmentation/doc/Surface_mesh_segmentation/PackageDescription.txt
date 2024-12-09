@@ -11,7 +11,7 @@
 \cgalPkgPicture{segmentation_ico.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Ilker %O. Yaz and Sébastien Loriot}
+\cgalPkgAuthors{Ilker %O. Yaz and Sébastien Loriot}
 \cgalPkgDesc{This package provides a method to generate a segmentation of
               a triangulated surface mesh. The algorithm first computes the
               <em>Shape Diameter Function</em> (SDF) for all facets and applies a
@@ -25,7 +25,7 @@
 \cgalPkgDependsOn{\ref PkgAABBTree}
 \cgalPkgBib{cgal:y-smsimpl}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

@@ -27,13 +27,14 @@
 #include <functional>
 #include <atomic>
 
+#include <CGAL/use.h>
 #include <CGAL/memory.h>
 #include <CGAL/iterator.h>
 #include <CGAL/CC_safe_handle.h>
 #include <CGAL/Time_stamper.h>
 #include <CGAL/Has_member.h>
-
-#include <boost/mpl/if.hpp>
+#include <CGAL/assertions.h>
+#include <CGAL/IO/io.h>
 
 // An STL like container with the following properties :
 // - to achieve compactness, it requires access to a pointer stored in T,
@@ -271,7 +272,7 @@ public:
   {
     init();
     block_size = c.block_size;
-    time_stamp = c.time_stamp.load();
+    time_stamp = 0;
     std::copy(c.begin(), c.end(), CGAL::inserter(*this));
   }
 
@@ -300,6 +301,20 @@ public:
   ~Compact_container()
   {
     clear();
+  }
+
+  bool check_timestamps_are_valid() const {
+    if constexpr (Time_stamper::has_timestamp) {
+      for(size_type i = 0, end = capacity(); i < end; ++i) {
+        if(!is_used(i)) {
+          continue;
+        }
+        if(Time_stamper::time_stamp(&operator[](i)) != i) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   bool is_used(const_iterator ptr) const
@@ -343,10 +358,10 @@ public:
     a.swap(b);
   }
 
-  iterator begin() { return iterator(first_item, 0, 0); }
+  iterator begin() { return empty()?end():iterator(first_item, 0, 0); }
   iterator end()   { return iterator(last_item, 0); }
 
-  const_iterator begin() const { return const_iterator(first_item, 0, 0); }
+  const_iterator begin() const { return empty()?end():const_iterator(first_item, 0, 0); }
   const_iterator end()   const { return const_iterator(last_item, 0); }
 
   reverse_iterator rbegin() { return reverse_iterator(end()); }
@@ -382,10 +397,18 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    std::size_t ts;
+    CGAL_USE(ts);
+    if constexpr (Time_stamper::has_timestamp) {
+      ts = ret->time_stamp();
+    }
     new (ret) value_type(args...);
+    if constexpr (Time_stamper::has_timestamp) {
+      ret->set_time_stamp(ts);
+    }
+    Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    Time_stamper::set_time_stamp(ret, time_stamp);
     return iterator(ret, 0);
   }
 
@@ -396,10 +419,18 @@ public:
 
     pointer ret = free_list;
     free_list = clean_pointee(ret);
+    std::size_t ts;
+    CGAL_USE(ts);
+    if constexpr (Time_stamper::has_timestamp) {
+      ts = ret->time_stamp();
+    }
     std::allocator_traits<allocator_type>::construct(alloc, ret, t);
+    if constexpr (Time_stamper::has_timestamp) {
+      ret->set_time_stamp(ts);
+    }
+    Time_stamper::set_time_stamp(ret, time_stamp);
     CGAL_assertion(type(ret) == USED);
     ++size_;
-    Time_stamper::set_time_stamp(ret, time_stamp);
     return iterator(ret, 0);
   }
 
@@ -424,7 +455,15 @@ public:
 
     CGAL_precondition(type(&*x) == USED);
     EraseCounterStrategy::increment_erase_counter(*x);
+    std::size_t ts;
+    CGAL_USE(ts);
+    if constexpr (Time_stamper::has_timestamp) {
+      ts = x->time_stamp();
+    }
     std::allocator_traits<allocator_type>::destroy(alloc, &*x);
+    if constexpr (Time_stamper::has_timestamp) {
+      x->set_time_stamp(ts);
+    }
 
     put_on_free_list(&*x);
     --size_;
@@ -480,7 +519,7 @@ public:
     // We use the block structure to provide an efficient version :
     // we check if the address is in the range of each block.
 
-    assert(cit != end());
+    CGAL_assertion(cit != end());
 
     const_pointer c = &*cit;
     size_type res=0;
@@ -536,9 +575,15 @@ public:
     return false;
   }
 
-  bool owns_dereferencable(const_iterator cit) const
+  bool owns_dereferenceable(const_iterator cit) const
   {
     return cit != end() && owns(cit);
+  }
+
+
+  CGAL_DEPRECATED bool owns_dereferencable(const_iterator cit) const
+  {
+    return owns_dereferenceable(cit);
   }
 
   /** Reserve method to ensure that the capacity of the Compact_container be
@@ -732,7 +777,7 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::merge(Self 
   size_ += d.size_;
   // Add the capacities.
   capacity_ += d.capacity_;
-  // It seems reasonnable to take the max of the block sizes.
+  // It seems reasonable to take the max of the block sizes.
   block_size = (std::max)(block_size, d.block_size);
   // Clear d.
   d.init();
@@ -858,10 +903,10 @@ namespace internal {
     typedef typename DSC::value_type                  value_type;
     typedef typename DSC::size_type                   size_type;
     typedef typename DSC::difference_type             difference_type;
-    typedef typename boost::mpl::if_c< Const, const value_type*,
-                                       value_type*>::type pointer;
-    typedef typename boost::mpl::if_c< Const, const value_type&,
-                                       value_type&>::type reference;
+    typedef std::conditional_t< Const, const value_type*,
+                                       value_type*>   pointer;
+    typedef std::conditional_t< Const, const value_type&,
+                                        value_type&>  reference;
     typedef std::bidirectional_iterator_tag           iterator_category;
 
     // the initialization with nullptr is required by our Handle concept.
@@ -878,7 +923,7 @@ namespace internal {
     // Converting constructor from mutable to constant iterator
     template <bool OtherConst>
     CC_iterator(const CC_iterator<
-                typename std::enable_if<(!OtherConst && Const), DSC>::type,
+                std::enable_if_t<(!OtherConst && Const), DSC>,
                 OtherConst> &const_it)
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
         : ts(Time_stamper::time_stamp(const_it.operator->()))
@@ -890,7 +935,7 @@ namespace internal {
     // Assignment operator from mutable to constant iterator
     template <bool OtherConst>
     CC_iterator & operator= (const CC_iterator<
-                typename std::enable_if<(!OtherConst && Const), DSC>::type,
+                std::enable_if_t<(!OtherConst && Const), DSC>,
                 OtherConst> &const_it)
     {
       m_ptr = const_it.operator->();
@@ -1050,7 +1095,7 @@ namespace internal {
     bool operator<(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(m_ptr, other.m_ptr);
     }
@@ -1058,7 +1103,7 @@ namespace internal {
     bool operator>(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(other.m_ptr, m_ptr);
     }
@@ -1066,7 +1111,7 @@ namespace internal {
     bool operator<=(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(m_ptr, other.m_ptr)
           || (*this == other);
@@ -1075,7 +1120,7 @@ namespace internal {
     bool operator>=(const CC_iterator& other) const
     {
 #ifdef CGAL_COMPACT_CONTAINER_DEBUG_TIME_STAMP
-      assert( is_time_stamp_valid() );
+      CGAL_assertion( is_time_stamp_valid() );
 #endif
       return Time_stamper::less(other.m_ptr, m_ptr)
           || (*this == other);
@@ -1146,6 +1191,75 @@ namespace handle {
 
 } // namespace internal
 
+template <class DSC, bool Const >
+class Output_rep<CGAL::internal::CC_iterator<DSC, Const> > {
+protected:
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Compact_container = typename CC_iterator::CC;
+  using Time_stamper = typename Compact_container::Time_stamper;
+  CC_iterator it;
+public:
+  Output_rep( const CC_iterator it) : it(it) {}
+  std::ostream& operator()( std::ostream& out) const {
+    return (out << Time_stamper::display_id(it.operator->()));
+  }
+};
+
+struct With_offset_tag {
+  int offset = 0;
+};
+
+struct With_point_tag : public With_offset_tag {
+};
+
+struct With_point_and_info_tag : public With_point_tag {};
+
+template <class DSC, bool Const>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>
+  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>>
+{
+  int offset = 0;
+
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Compact_container = typename CC_iterator::CC;
+  using Time_stamper = typename Compact_container::Time_stamper;
+  using Base = Output_rep<CC_iterator>;
+  using Base::Base;
+
+  Output_rep(const CC_iterator it, With_offset_tag tag = {})
+    : Base(it), offset(tag.offset) {}
+
+  std::ostream& operator()(std::ostream& out) const {
+    out << Time_stamper::display_id(this->it.operator->(), offset);
+    return out;
+  }
+};
+
+template <class DSC, bool Const>
+struct Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_point_tag>
+  : public Output_rep<CGAL::internal::CC_iterator<DSC, Const>, With_offset_tag>
+{
+  using CC_iterator = CGAL::internal::CC_iterator<DSC, Const>;
+  using Base = Output_rep<CC_iterator, With_offset_tag>;
+  using Time_stamper = typename Base::Time_stamper;
+
+  using Base::Base;
+
+  Output_rep(const CC_iterator it, With_point_tag tag = {})
+    : Base(it, tag) {}
+
+  std::ostream& operator()(std::ostream& out) const {
+    this->Base::operator()(out);
+    if(this->it.operator->() != nullptr) {
+      if(Time_stamper::time_stamp(this->it.operator->()) == 0)
+        return out << "= infinite_vertex()";
+      return out << "= " << this->it->point();
+    }
+    else
+      return out;
+  }
+};
+
 } //namespace CGAL
 
 namespace std {
@@ -1162,7 +1276,6 @@ namespace std {
     }
   };
 #endif // CGAL_CFG_NO_STD_HASH
-
 
 } // namespace std
 

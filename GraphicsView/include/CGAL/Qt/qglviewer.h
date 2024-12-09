@@ -30,10 +30,9 @@
 #include <QVector>
 #include <QElapsedTimer>
 #include <QTimer>
-#include <QGLContext>
 #include <QOpenGLWidget>
 #include <QMouseEvent>
-
+#include <QKeyCombination>
 
 class QTabWidget;
 class QImage;
@@ -71,9 +70,6 @@ class CGAL_QT_EXPORT QGLViewer : public QOpenGLWidget, public QOpenGLFunctions {
   Q_OBJECT
 
 public:
-  //todo check if this is used. If not remove it
-  explicit QGLViewer(QGLContext* context, QWidget *parent = nullptr,
-                     ::Qt::WindowFlags flags = ::Qt::WindowType(0));
   explicit QGLViewer(QOpenGLContext* context, QWidget *parent = nullptr,
                      ::Qt::WindowFlags flags = ::Qt::WindowType(0));
   explicit QGLViewer(QWidget *parent = nullptr,
@@ -138,8 +134,8 @@ public Q_SLOTS:
   void setGridIsDrawn(bool draw = true) {
     if(!draw)
     {
-      grid_size=0;
-      g_axis_size=0;
+      grid_size = 0;
+      grid_axis_size = 0;
     }
     gridIsDrawn_ = draw;
     Q_EMIT gridIsDrawnChanged(draw);
@@ -385,7 +381,7 @@ public:
    * of the world and the origin of the scene. It is relevant when the whole scene is translated
    * of a big number, because there is a useless loss of precision when drawing.
    *
-   * The offset must be added to the drawn coordinates, and substracted from the computation
+   * The offset must be added to the drawn coordinates, and subtracted from the computation
    * \attention  the result of pointUnderPixel is the real item translated by the offset.
    *
    */
@@ -395,7 +391,7 @@ public:
    * returns the offset of the scene.
    * \see `setOffset()`
    */
-  qglviewer::Vec offset()const;
+  const qglviewer::Vec& offset() const;
 
 public Q_SLOTS:
   void setFullScreen(bool fullScreen = true);
@@ -411,7 +407,8 @@ protected:
   //@{
 public:
   void drawArrow(double r, double R, int prec,
-                        qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, std::vector<float> &data);
+                 const qglviewer::Vec& from, const qglviewer::Vec& to,
+                 std::vector<float> &data);
   void drawAxis(qreal l = 1.0);
   void drawGrid(qreal size= 1.0, int nbSubdivisions = 10);
 
@@ -481,7 +478,6 @@ public:
   qreal bufferTextureMaxU() const { return bufferTextureMaxU_; }
   /*! Same as bufferTextureMaxU(), but for the v texture coordinate. */
   qreal bufferTextureMaxV() const { return bufferTextureMaxV_; }
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 4, 0))
   // These methods are part of the QGLWidget public API.
   // As of version 2.7.0, the use of QOpenGLWidget instead means that they have
   // to be provided for backward compatibility.
@@ -489,7 +485,6 @@ public:
                   const QFont &font = QFont());
   void renderText(double x, double y, double z, const QString &str,
                   const QFont &font = QFont());
-#endif
 
 public Q_SLOTS:
   void copyBufferToTexture(GLint, GLenum = GL_NONE);
@@ -562,6 +557,21 @@ public:
    * Prompt a configuration dialog and takes a snapshot.
    */
   void saveSnapshot();
+
+  /*!
+   * Takes a snapshot without any dialog
+   */
+  void saveSnapshot(const QString& fileName,
+                    const qreal finalWidth,
+                    const qreal finalHeight,
+                    const bool expand = false,
+                    const double oversampling = 1.,
+                    qglviewer::SnapShotBackground background_color = qglviewer::CURRENT_BACKGROUND);
+
+  void saveSnapshot(const QString& fileName)
+  {
+    return saveSnapshot(fileName, this->width(), this->height());
+  }
 
 public:
 Q_SIGNALS:
@@ -825,33 +835,27 @@ compatible with raster mode): use \c glRasterPos3fv() instead. */
   /*! @name Keyboard customization */
   //@{
 public:
-  unsigned int shortcut(qglviewer::KeyboardAction action) const;
+  QKeyCombination shortcut(qglviewer::KeyboardAction action) const;
 
   ::Qt::Key pathKey(unsigned int index) const;
   ::Qt::KeyboardModifiers addKeyFrameKeyboardModifiers() const;
   ::Qt::KeyboardModifiers playPathKeyboardModifiers() const;
 
 public Q_SLOTS:
-  void setShortcut(qglviewer::KeyboardAction action, unsigned int key);
+  void setShortcut(qglviewer::KeyboardAction action, QKeyCombination key);
   void setShortcut(qglviewer::KeyboardAction action, ::Qt::Modifier modifier, ::Qt::Key key)
   {
-    setShortcut(action,
-                static_cast<unsigned int>(modifier)+
-                static_cast<unsigned int>(key));
+    setShortcut(action, QKeyCombination{modifier, key});
   }
 
-  void setKeyDescription(unsigned int key, QString description);
+  void setKeyDescription(QKeyCombination key, QString description);
   void setKeyDescription(::Qt::KeyboardModifier modifier, ::Qt::Key key, QString description)
   {
-    setKeyDescription(static_cast<unsigned int>(modifier) +
-                      static_cast<unsigned int>(key),
-                      description);
+    setKeyDescription(QKeyCombination{modifier, key}, description);
   }
   void setKeyDescription(::Qt::Modifier modifier, ::Qt::Key key, QString description)
   {
-    setKeyDescription(static_cast<unsigned int>(modifier) +
-                      static_cast<unsigned int>(key),
-                      description);
+    setKeyDescription(QKeyCombination{modifier, key}, description);
   }
   void clearShortcuts();
 
@@ -1061,8 +1065,8 @@ protected:
   void setDefaultShortcuts();
   QString cameraPathKeysString() const;
   QMap<qglviewer::KeyboardAction, QString> keyboardActionDescription_;
-  QMap<qglviewer::KeyboardAction, unsigned int> keyboardBinding_;
-  QMap<unsigned int, QString> keyDescription_;
+  QMap<qglviewer::KeyboardAction, QKeyCombination> keyboardBinding_;
+  QHash<QKeyCombination, QString> keyDescription_;
 
   // K e y   F r a m e s   s h o r t c u t s
   QMap< ::Qt::Key, unsigned int> pathIndex_;
@@ -1142,7 +1146,7 @@ protected:
         return modifiers < cbp.modifiers;
       if (button != cbp.button)
         return button < cbp.button;
-      return doubleClick != cbp.doubleClick;
+      return doubleClick < cbp.doubleClick;
     }
   };
 #endif
@@ -1165,27 +1169,31 @@ protected:
   enum VBO
   {
     Grid = 0,
-    Grid_axis,
-    Axis,
+    Grid_axis_x, Grid_axis_y,
+    Axis_x, Axis_y, Axis_z,
     Pivot_point,
     VBO_size
   };
+
   enum VAO
   {
     GRID = 0,
-    GRID_AXIS,
-    AXIS,
+    GRID_AXIS_X, GRID_AXIS_Y,
+    AXIS_X, AXIS_Y, AXIS_Z,
     PIVOT_POINT,
     VAO_size
   };
+
   QOpenGLShaderProgram rendering_program;
-  QOpenGLShaderProgram rendering_program_light;
   QOpenGLVertexArrayObject vaos[VAO_size];
   QVector<QOpenGLBuffer> vbos;
+
   std::size_t grid_size;
-  std::size_t g_axis_size;
+  std::size_t grid_axis_size;
   std::size_t axis_size;
+
   QOpenGLFramebufferObject* stored_fbo;
+
   //S n a p s h o t
   QImage* takeSnapshot(qglviewer::SnapShotBackground  background_color,
                        QSize finalSize, double oversampling, bool expand);

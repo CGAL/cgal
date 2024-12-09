@@ -18,7 +18,7 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Line_3& l1,
              const typename K::Line_3& l2,
              const K& k)

@@ -5,7 +5,7 @@
 
 \brief
 
-\cgalRefines `Kernel::CompareX_3`
+\cgalRefines{Kernel::CompareX_3}
 
 \sa `SphericalKernel::CompareY_3`
 \sa `SphericalKernel::CompareZ_3`

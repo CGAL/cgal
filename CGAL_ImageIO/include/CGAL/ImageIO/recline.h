@@ -23,7 +23,7 @@
  *
  * AUTHOR:
  * Gregoire Malandain (greg@sophia.inria.fr)
- * http://www.inria.fr/epidaure/personnel/malandain/
+ * https://www-sop.inria.fr/members/Gregoire.Malandain/
  *
  * CREATION DATE:
  * June, 9 1998
@@ -47,7 +47,7 @@
  *
  * DESCRIPTION:
  *
- * - ALPHA_DERICHE is the first recurvise filter designed
+ * - ALPHA_DERICHE is the first recursive filter designed
  *   by R. Deriche. See REFERENCES.
  *
  * - with ALPHA_DERICHE's filters, one can either compute

@@ -14,7 +14,7 @@ and FLTK adds `fl`. \leda uses prefix `leda_`
 
 to some extent,
 but you have to tell \leda not to make the corresponding unprefixed names
-available as well.\cgalFootnote{\cgal's makefile does this by setting `-DLEDA_PREFIX`.} Initially, \cgal used
+available as well.\cgalFootnote{\cgal's makefile does this by setting \cgalFootnoteCode{-DLEDA_PREFIX}.} Initially, \cgal used
 prefix `CGAL_`.
 At the beginning of 1999, it was decided to drop prefix `CGAL_` and to
 introduce namespace `CGAL`.
@@ -63,14 +63,14 @@ class Some_further_class_local_to_Package;
 
 According to the resolutions of the following issues in the forthcoming
 \cpp-standard (
-    <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#225">225</a>,
-    <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#226">226</a>
-    <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#229">229</a>.
+    <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#225">225</a>,
+    <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#226">226</a> and
+    <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#229">229</a>
 ):
-<TT>Unless otherwise specified, no global or non-member function in the standard library
+<blockquote>Unless otherwise specified, no global or non-member function in the standard library
 shall use a function from another namespace which is found through argument-dependent
-name lookup
-</TT>, the namespace `CGAL::NTS` does not need to be used anymore
+name lookup</blockquote>
+the namespace `CGAL::NTS` does not need to be used anymore
 (currently `CGAL_NTS` macro boils down to `CGAL::`).
 
 \section Developer_manualRequirementsandrecommendations_1 Requirements and recommendations

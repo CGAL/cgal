@@ -31,9 +31,9 @@ std::istream& operator>>(std::istream& is, Color& color) {
   return is;
 }
 
-typedef CGAL::Arr_extended_dcel<Traits, Color, bool, int>       Ext_dcel;
-typedef CGAL::Arrangement_2<Traits, Ext_dcel>                   Ext_arrangement;
-typedef CGAL::Arr_extended_dcel_text_formatter<Ext_arrangement> Formatter;
+using Ext_dcel = CGAL::Arr_extended_dcel<Traits, Color, bool, int>;
+using Ext_arrangement = CGAL::Arrangement_2<Traits, Ext_dcel>;
+using Formatter = CGAL::Arr_extended_dcel_text_formatter<Ext_arrangement>;
 
 int main() {
   // Construct the arrangement containing two intersecting triangles.

@@ -9,7 +9,7 @@
 //
 // Author(s) : Andreas Fabri
 //
-// Warning: this file is generated, see include/CGAL/licence/README.md
+// Warning: this file is generated, see include/CGAL/license/README.md
 
 #ifndef CGAL_LICENSE_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_H
 #define CGAL_LICENSE_ADVANCING_FRONT_SURFACE_RECONSTRUCTION_H

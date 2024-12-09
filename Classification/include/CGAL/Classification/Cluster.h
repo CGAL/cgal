@@ -66,7 +66,6 @@ public:
   public:
     using argument_type = std::size_t;
     using result_type = typename boost::property_traits<ItemMap>::reference;
-    using category = boost::readable_property_map_tag;
 
     const ItemRange* m_range;
     ItemMap m_item_map;

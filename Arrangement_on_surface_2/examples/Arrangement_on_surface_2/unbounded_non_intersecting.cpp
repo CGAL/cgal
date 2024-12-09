@@ -2,6 +2,8 @@
 // Constructing an arrangement of unbounded linear objects using the insertion
 // function for non-intersecting curves.
 
+#include <cassert>
+
 #include "arr_linear.h"
 #include "arr_print.h"
 
@@ -13,7 +15,7 @@ int main() {
   X_monotone_curve c1 = Line(Point(-1, 0), Point(1, 0));
   arr.insert_in_face_interior(c1, arr.unbounded_face());
   Vertex_handle v = insert_point(arr, Point(0,0));
-  CGAL_assertion(! v->is_at_open_boundary());
+  assert(! v->is_at_open_boundary());
 
   // Add two more rays using the specialized insertion functions.
   arr.insert_from_right_vertex(Ray(Point(0, 0), Point(-1, 1)), v); // c2

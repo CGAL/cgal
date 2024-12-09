@@ -22,32 +22,35 @@
 #  endif
 #endif
 
-#include <vector>
-#include <deque>
-#include <algorithm>
-#include <cmath>
-#include <iterator>
-
 #include <CGAL/IO/trace.h>
 #include <CGAL/Reconstruction_triangulation_3.h>
 #include <CGAL/spatial_sort.h>
+
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_solver_traits.h>
-#else
+ #include <CGAL/Eigen_solver_traits.h>
 #endif
+
 #include <CGAL/centroid.h>
 #include <CGAL/property_map.h>
-#include <CGAL/surface_reconstruction_points_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/poisson_refine_triangulation.h>
-#include <CGAL/Robust_circumcenter_filtered_traits_3.h>
+#include <CGAL/Robust_weighted_circumcenter_filtered_traits_3.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 
-#include <memory>
-#include <boost/array.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/utility/enable_if.hpp>
+#ifdef CGAL_LINKED_WITH_TBB
+ #include <tbb/enumerable_thread_specific.h>
+#endif
+
 #include <boost/iterator/indirect_iterator.hpp>
+
+#include <algorithm>
+#include <cmath>
+#include <deque>
+#include <iterator>
+#include <memory>
+#include <type_traits>
+#include <vector>
 
 /*!
   \file Poisson_reconstruction_function.h
@@ -147,7 +150,7 @@ Delaunay triangulation instead of an adaptive octree.
 
 \tparam Gt Geometric traits class.
 
-\cgalModels `ImplicitFunction`
+\cgalModels{ImplicitFunction}
 
 */
 template <class Gt>
@@ -262,7 +265,10 @@ private:
 
     Cell_handle get() const
     {
-      return Triangulation_data_structure::Cell_range::s_iterator_to(*m_cell);
+      if(m_cell == nullptr)
+        return {};
+      else
+        return Triangulation_data_structure::Cell_range::s_iterator_to(*m_cell);
     }
     void set (Cell_handle ch) { m_cell = ch.operator->(); }
   };
@@ -281,10 +287,16 @@ private:
 
   // contouring and meshing
   Point m_sink; // Point with the minimum value of operator()
-  mutable Cell_hint m_hint; // last cell found = hint for next search
+
+#ifdef CGAL_LINKED_WITH_TBB
+  mutable tbb::enumerable_thread_specific<Cell_handle> m_hint;
+  Cell_handle& get_hint() const { return m_hint.local(); }
+#else
+  mutable Cell_handle m_hint;
+  Cell_handle& get_hint() const { return m_hint; }
+#endif
 
   FT average_spacing;
-
 
   /// function to be used for the different constructors available that are
   /// doing the same thing but with default template parameters
@@ -380,9 +392,9 @@ public:
     InputIterator first,  ///< iterator over the first input point.
     InputIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
-    typename boost::enable_if<
-      boost::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>
-    >::type* = 0
+    std::enable_if_t<
+      std::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>::value
+    >* = 0
   )
     : m_tr(new Triangulation), m_bary(new std::vector<Cached_bary_coord>)
   , average_spacing(CGAL::compute_average_spacing<CGAL::Sequential_tag>(CGAL::make_range(first, beyond), 6))
@@ -588,9 +600,8 @@ public:
 
   boost::tuple<FT, Cell_handle, bool> special_func(const Point& p) const
   {
-    Cell_handle hint = m_hint.get();
-    hint = m_tr->locate(p, hint); // no hint when we use hierarchy
-    m_hint.set(hint);
+    Cell_handle& hint = get_hint();
+    hint = m_tr->locate(p, hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());
@@ -615,9 +626,8 @@ public:
   */
   FT operator()(const Point& p) const
   {
-    Cell_handle hint = m_hint.get();
+    Cell_handle& hint = get_hint();
     hint = m_tr->locate(p, hint);
-    m_hint.set(hint);
 
     if(m_tr->is_infinite(hint)) {
       int i = hint->index(m_tr->infinite_vertex());
@@ -763,8 +773,7 @@ private:
   /// Poisson reconstruction.
   /// Returns false on error.
   ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  /// @tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   template <class SparseLinearAlgebraTraits_d>
   bool solve_poisson(
     SparseLinearAlgebraTraits_d solver, ///< sparse linear solver
@@ -824,7 +833,7 @@ private:
     double D;
     if(!solver.linear_solver(A, B, X, D))
       return false;
-    CGAL_surface_reconstruction_points_assertion(D == 1.0);
+    CGAL_assertion(D == 1.0);
     duration_solve = (clock() - time_init)/CLOCKS_PER_SEC;
 
     CGAL_TRACE_STREAM << "  Solve sparse linear system: done (" << duration_solve << "sec.)\n";
@@ -1130,7 +1139,7 @@ private:
 
     if(voronoi_points.size() < 3)
     {
-      CGAL_surface_reconstruction_points_assertion(false);
+      CGAL_assertion(false);
       return 0.0;
     }
 
@@ -1203,8 +1212,7 @@ private:
 
   /// Assemble vi's row of the linear system A*X=B
   ///
-  /// @commentheading Template parameters:
-  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  /// @tparam SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
   template <class SparseLinearAlgebraTraits_d>
   void assemble_poisson_row(typename SparseLinearAlgebraTraits_d::Matrix& A,
                             Vertex_handle vi,

@@ -40,28 +40,53 @@ void mesh_with_id(const std::string argv1, const bool save_output)
     boost::property_map<Mesh_with_id, CGAL::face_index_t>::type>
       fccmap(static_cast<unsigned>(num_faces(sm)), get(CGAL::face_index,sm));
 
-  std::size_t num = PMP::connected_components(sm, fccmap);
-  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  const std::size_t num = PMP::connected_components(sm, fccmap);
+
+  if(argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
     assert(num == 3);
+  }
 
   std::cerr << "The graph has " << num << " connected components (face connectivity)" << std::endl;
-  std::size_t nb_faces = num_faces(sm);
-  std::vector<face_descriptor> faces_to_remove; // faces that would be removed but are not because we're doing a dry run
-  std::size_t nb_to_remove =   PMP::keep_large_connected_components(sm, 1000,
-                                                                      CGAL::parameters::face_size_map(
-                                                                        CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
-                                                                                       .dry_run(true)
-                                                                                       .output_iterator(std::back_inserter(faces_to_remove)));
-  assert(!faces_to_remove.empty());
+  const std::size_t nb_faces = num_faces(sm);
+
+  std::vector<face_descriptor> faces_to_remove;
+  std::size_t nb_to_remove = PMP::keep_large_connected_components(
+                               sm, 1000,
+                               CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
+                                                .dry_run(true)
+                                                .output_iterator(std::back_inserter(faces_to_remove)));
+
   if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
   {
     assert(nb_to_remove == 1);
+    assert(faces_to_remove.size() == 680);
     assert(num_faces(sm) == nb_faces);
   }
 
-  PMP::keep_largest_connected_components(sm, 2,
-                                         CGAL::parameters::face_size_map(
-                                           CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
+  faces_to_remove.clear();
+  nb_to_remove = PMP::keep_largest_connected_components(
+                   sm, 2,
+                   CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1))
+                                    .dry_run(true)
+                                    .output_iterator(std::back_inserter(faces_to_remove)));
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
+    assert(nb_to_remove == 1);
+    assert(faces_to_remove.size() == 680);
+    assert(num_faces(sm) == nb_faces);
+  }
+
+  nb_to_remove = PMP::keep_largest_connected_components(
+                   sm, 2,
+                   CGAL::parameters::face_size_map(CGAL::Constant_property_map<face_descriptor, std::size_t>(1)));
+
+  if (argv1 == CGAL::data_file_path("meshes/blobby_3cc.off"))
+  {
+    assert(nb_to_remove == 1);
+    assert(faces(sm).size() == 2737);
+  }
 
   if (!save_output)
     return;
@@ -104,7 +129,7 @@ void mesh_no_id(const std::string argv1, const bool save_output)
   //  std::cout  << &*f << " in connected component " << fccmap[f] << std::endl;
   //}
 
-  PMP::keep_largest_connected_components(sm, 2, PMP::parameters::vertex_index_map(vim));
+  PMP::keep_largest_connected_components(sm, 2, CGAL::parameters::vertex_index_map(vim));
   if (save_output)
     return;
 
@@ -188,7 +213,7 @@ void keep_nothing(const std::string argv1)
 int main(int argc, char* argv[])
 {
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/blobby_3cc.off");
-  const bool save_output = (argc > 2) ? true : false;
+  const bool save_output = (argc > 2);
 
   mesh_with_id(filename, save_output);
   mesh_no_id(filename, save_output);

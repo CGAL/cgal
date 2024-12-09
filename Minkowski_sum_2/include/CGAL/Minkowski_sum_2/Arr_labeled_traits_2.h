@@ -21,7 +21,7 @@
 namespace CGAL {
 
 /*! \class
- * A meta-traits class that adds lables to points and to x-monotone curves,
+ * A meta-traits class that adds labels to points and to x-monotone curves,
  * such that the comparison of two points, as well as the computation of the
  * intersections between two segments can be easily filtered.
  */
@@ -115,7 +115,7 @@ public:
                                                         Compare_y_at_x_right_2;
   typedef typename Base_traits_2::Equal_2               Equal_2;
 
-  /// \name Overriden functors.
+  /// \name Overridden functors.
   //@{
   class Compare_x_2 {
   private:
@@ -297,11 +297,8 @@ public:
                               OutputIterator oi) const
     {
       typedef std::pair<Base_point_2, Multiplicity>     Intersection_base_point;
-      typedef boost::variant<Intersection_base_point, Base_x_monotone_curve_2>
+      typedef std::variant<Intersection_base_point, Base_x_monotone_curve_2>
                                                         Intersection_base_result;
-      typedef std::pair<Point_2, Multiplicity>     Intersection_point;
-      typedef boost::variant<Intersection_point, X_monotone_curve_2>
-                                                        Intersection_result;
 
       // In case the curves are adjacent in their curve sequence, we do
       // not have to compute their intersection (we already know that they
@@ -317,24 +314,22 @@ public:
       // Attach labels to the intersection objects.
       for (const auto& xection : xections) {
         const Intersection_base_point* base_pt =
-          boost::get<Intersection_base_point>(&xection);
+          std::get_if<Intersection_base_point>(&xection);
 
         if (base_pt != nullptr) {
           // Attach an invalid label to an itersection point.
-          *oi++ = Intersection_result(std::make_pair(Point_2(base_pt->first),
-                                                     base_pt->second));
+          *oi++ = std::make_pair(Point_2(base_pt->first), base_pt->second);
           continue;
         }
 
         const Base_x_monotone_curve_2* base_xcv =
-          boost::get<Base_x_monotone_curve_2>(&xection);
+          std::get_if<Base_x_monotone_curve_2>(&xection);
         CGAL_assertion(base_xcv != nullptr);
 
         // Attach a merged label to the overlapping curve.
-        *oi++ =
-          Intersection_result(X_monotone_curve_2(*base_xcv,
-                                                 X_curve_label(cv1.label(),
-                                                               cv2.label())));
+        *oi++ = X_monotone_curve_2(*base_xcv,
+                                   X_curve_label(cv1.label(),
+                                   cv2.label()));
       }
 
       return oi;

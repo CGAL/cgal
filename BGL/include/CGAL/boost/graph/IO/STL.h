@@ -23,11 +23,6 @@
 #include <iostream>
 #include <string>
 
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#endif
-
 namespace CGAL {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,12 +98,12 @@ public:
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(std::istream& is,
               Graph& g,
-              const CGAL_BGL_NP_CLASS& np)
+              const CGAL_NP_CLASS& np)
 {
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::type      VPM;
   typedef typename boost::property_traits<VPM>::value_type                      Point;
   if(!is.good())
     return false;
@@ -160,10 +155,10 @@ bool read_STL(std::istream& is,
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool read_STL(const std::string& fname,
               Graph& g, const
-              CGAL_BGL_NP_CLASS& np)
+              CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -177,12 +172,12 @@ bool read_STL(const std::string& fname,
     {
       return true;
     }
-    g.clear();
+    clear(g);
   }
   std::ifstream is(fname);
   CGAL::IO::set_mode(is, CGAL::IO::ASCII);
 
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::type      VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::type      VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_property_map(CGAL::vertex_point, g));
   bool v = choose_parameter(get_parameter(np, internal_np::verbose),
@@ -193,9 +188,7 @@ bool read_STL(const std::string& fname,
 /// \cond SKIP_IN_MANUAL
 
 template <typename Graph>
-bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::all_default()); }
-template <typename Graph>
-bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, parameters::all_default()); }
+bool read_STL(std::istream& is, Graph& g) { return read_STL(is, g, parameters::default_values()); }
 
 /// \endcond
 
@@ -241,24 +234,27 @@ bool read_STL(const std::string& fname, Graph& g) { return read_STL(fname, g, pa
 
   \returns `true` if writing was successful, `false` otherwise.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_STL(std::ostream& os,
                const Graph& g,
-               const CGAL_BGL_NP_CLASS& np)
+               const CGAL_NP_CLASS& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<Graph>::halfedge_descriptor                  halfedge_descriptor;
   typedef typename boost::graph_traits<Graph>::face_descriptor                      face_descriptor;
 
-  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_BGL_NP_CLASS>::const_type    VPM;
+  typedef typename CGAL::GetVertexPointMap<Graph, CGAL_NP_CLASS>::const_type        VPM;
   typedef typename boost::property_traits<VPM>::reference                           Point_ref;
-  typedef typename boost::property_traits<VPM>::value_type                          Point;
-  typedef typename Kernel_traits<Point>::Kernel::Vector_3                           Vector;
+
+  typedef typename GetGeomTraits<Graph, CGAL_NP_CLASS>::type                        Kernel;
+  typedef typename Kernel::Vector_3                                                 Vector;
 
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, g));
+
+  Kernel k = choose_parameter<Kernel>(get_parameter(np, internal_np::geom_traits));
 
   if(!os.good())
     return false;
@@ -268,7 +264,7 @@ bool write_STL(std::ostream& os,
   if(get_mode(os) == BINARY)
   {
     os << "FileType: Binary                                                                ";
-    const boost::uint32_t N32 = static_cast<boost::uint32_t>(faces(g).size());
+    const std::uint32_t N32 = static_cast<std::uint32_t>(faces(g).size());
     os.write(reinterpret_cast<const char *>(&N32), sizeof(N32));
 
     for(const face_descriptor f : faces(g))
@@ -278,7 +274,7 @@ bool write_STL(std::ostream& os,
       Point_ref q = get(vpm, target(next(h, g), g));
       Point_ref r = get(vpm, source(h, g));
 
-      Vector n = collinear(p, q, r) ? Vector(1, 0, 0) : unit_normal(p, q, r);
+      const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       const float coords[12] =
       {
@@ -298,11 +294,11 @@ bool write_STL(std::ostream& os,
     os << "solid" << std::endl;
     for(const face_descriptor f : faces(g))
     {
-      halfedge_descriptor h = halfedge(f, g);
+      const halfedge_descriptor h = halfedge(f, g);
       Point_ref p = get(vpm, target(h, g));
       Point_ref q = get(vpm, target(next(h, g), g));
       Point_ref r = get(vpm, source(h, g));
-      Vector n = collinear(p, q, r) ? Vector(1, 0, 0) : unit_normal(p, q, r);
+      const Vector n = internal::construct_normal_of_STL_face(p, q, r, k);
 
       os << "facet normal " << n << "\nouter loop"<< "\n";
       os << "vertex " << p << "\n";
@@ -358,8 +354,8 @@ bool write_STL(std::ostream& os,
 
   \sa Overloads of this function for specific models of the concept `FaceGraph`.
 */
-template <typename Graph, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS& np)
+template <typename Graph, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_STL(const std::string& fname, const Graph& g, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   const bool binary = CGAL::parameters::choose_parameter(CGAL::parameters::get_parameter(np, internal_np::use_binary_mode), true);
   if(binary)
@@ -376,15 +372,6 @@ bool write_STL(const std::string& fname, const Graph& g, const CGAL_BGL_NP_CLASS
     return write_STL(os, g, np);
   }
 }
-
-/// \cond SKIP_IN_MANUAL
-
-template <typename Graph>
-bool write_STL(std::ostream& os, const Graph& g) { return write_STL(os, g, parameters::all_default()); }
-template <typename Graph>
-bool write_STL(const std::string& fname, const Graph& g) { return write_STL(fname, g, parameters::all_default()); }
-
-/// \endcond
 
 }} // namespace CGAL::IO
 

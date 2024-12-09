@@ -14,7 +14,7 @@ several disconnected components. The result is therefore represented as a
 sequence of generalized polygons, whose edges are either line segments or
 circular arcs.
 The output sequence is returned via the output iterator `oi`, whose
-value-type must be `Gps_circle_segment_traits_2::Polygon_2`.
+value-type must be `Gps_circle_segment_traits_2<Kernel>::%Polygon_2`.
 \pre `P` is a simple polygon.
 */
 template<class Kernel, class Container, class OutputIterator>

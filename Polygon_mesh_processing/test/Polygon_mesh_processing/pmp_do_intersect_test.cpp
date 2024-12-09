@@ -1,16 +1,16 @@
+#include <CGAL/Polygon_mesh_processing/intersection.h>
+
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+#include <CGAL/Timer.h>
 
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/intersection.h>
-
-#include <CGAL/Surface_mesh.h>
-
-#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel     Epic;
 typedef CGAL::Exact_predicates_exact_constructions_kernel       Epec;
@@ -39,10 +39,8 @@ template<class Point>
 int load_polylines(std::ifstream& input,
                    std::vector<std::vector<Point> >& points)
 {
-  int counter = 0;
   std::size_t n;
   while(input >> n) {
-    ++counter;
     std::vector<Point> new_polyline;
     points.push_back(new_polyline);
     std::vector<Point>&polyline = points.back();
@@ -92,8 +90,8 @@ test_faces_intersections(const std::string filename1,
   CGAL::Polygon_mesh_processing::internal::compute_face_face_intersection(
         m1, m2,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default(),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::parameters::default_values(),
+        CGAL::parameters::default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 
@@ -150,7 +148,7 @@ test_faces_polyline_intersections(const std::string filename1,
   CGAL::Polygon_mesh_processing::internal::compute_face_polyline_intersection(
         m, points,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::parameters::default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 
@@ -211,7 +209,7 @@ test_faces_polylines_intersections(const std::string filename1,
         points,
         m,
         std::back_inserter(intersected_tris),
-        CGAL::Polygon_mesh_processing::parameters::all_default());
+        CGAL::parameters::default_values());
 
   bool intersecting_1 = !intersected_tris.empty();
 
@@ -373,7 +371,7 @@ int test_inter_in_range(const std::vector<std::string>& filenames, std::size_t e
   }
   std::vector<std::pair<std::size_t, std::size_t> > output;
   CGAL::Polygon_mesh_processing::intersecting_meshes(meshes, std::back_inserter(output),
-    CGAL::Polygon_mesh_processing::parameters::do_overlap_test_of_bounded_sides(volume));
+    CGAL::parameters::do_overlap_test_of_bounded_sides(volume));
   std::cout << output.size() <<" pairs."<<std::endl;
   if(output.size() != expected)
     return 1;

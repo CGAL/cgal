@@ -1,6 +1,7 @@
 Algebraic_foundations
 Arithmetic_kernel
 BGL
+CGAL_Core
 Cartesian_kernel
 Circulator
 Convex_hull_2
@@ -24,5 +25,4 @@ Random_numbers
 STL_Extension
 Stream_support
 TDS_2
-Triangulation_2
 Triangulation_3

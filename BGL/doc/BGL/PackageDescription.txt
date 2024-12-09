@@ -449,6 +449,9 @@ the requirement for traversal of all faces in a graph.
 /// \defgroup PkgBGLHelperFct Helper Functions
 /// \ingroup PkgBGLRef
 
+/// \defgroup PkgBGLGeneratorFct Generator Functions
+/// \ingroup PkgBGLRef
+
 /// \defgroup PkgBGLIterators Iterators and Circulators
 /// \ingroup PkgBGLRef
 
@@ -477,6 +480,10 @@ the requirement for traversal of all faces in a graph.
 
 /// \defgroup PkgBGLIoFuncsOBJ OBJ I/O Functions
 /// I/O Functions for the \ref IOStreamOBJ
+/// \ingroup PkgBGLIOFct
+
+/// \defgroup PkgBGLIoFuncsOM OM I/O Functions
+/// I/O Functions for the \ref IOStreamOM
 /// \ingroup PkgBGLIOFct
 
 /// \defgroup PkgBGLIoFuncsOFF OFF I/O Functions
@@ -520,7 +527,14 @@ by attaching and initializing external IDs to the elements of the graph.
 Generic convenience functions for testing if an edge is a border edge, if a mesh is triangular,
 for conversion between models of different `FaceGraph` concepts, etc.
 
-Most functions are in the header file `<CGAL/boost/graph/helpers.h>`
+All functions are in the header file `<CGAL/boost/graph/helpers.h>`
+*/
+
+/*!
+\addtogroup PkgBGLGeneratorrFct
+Generic convenience functions for generating meshes such as a triangle, a quad, or a grid.
+
+All functions are in the header file `<CGAL/boost/graph/generators.h>`
 */
 
 /*!
@@ -667,6 +681,7 @@ user might encounter.
 - `CGAL::is_valid_face_graph()`
 - `CGAL::is_valid_polygon_mesh()`
 
+\cgalCRPSection{Generator Functions}
 - `CGAL::is_tetrahedron()`
 - `CGAL::is_hexahedron()`
 - `CGAL::make_triangle()`
@@ -679,9 +694,12 @@ user might encounter.
 - `CGAL::make_grid()`
 
 - `CGAL::clear()`
+- `CGAL::remove_all_elements()`
 - `CGAL::copy_face_graph()`
 
 - `CGAL::set_triangulation_ids()`
+
+- `CGAL::parameters::default_values()`
 
 \cgalCRPSection{Iterators}
 - `CGAL::Halfedge_around_source_iterator`
@@ -704,6 +722,7 @@ user might encounter.
 - `CGAL::Halfedge_around_target_circulator`
 - `CGAL::Halfedge_around_face_circulator`
 - `CGAL::Vertex_around_target_circulator`
+- `CGAL::Vertex_around_face_circulator`
 - `CGAL::Face_around_target_circulator`
 - `CGAL::Face_around_face_circulator`
 
@@ -756,7 +775,7 @@ user might encounter.
 - `CGAL::alpha_expansion_graphcut()`
 
 \cgalCRPSection{I/O Functions}
-- `CGAL::IO::read_polygon_mesh()`
+- \link PkgBGLIOFct `CGAL::IO::read_polygon_mesh()` \endlink
 - `CGAL::IO::write_polygon_mesh()`
 - \link PkgBGLIoFuncsSTL I/O for STL files \endlink
 - \link PkgBGLIoFuncsPLY I/O for PLY files \endlink

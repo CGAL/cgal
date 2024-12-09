@@ -15,9 +15,7 @@ The pairs \f$ (g_i,m_i)\f$ are written into the given output iterator.
 This functor is well defined if `PolynomialTraits_d::Polynomial_d` is a
 `UniqueFactorizationDomain`.
 
-\cgalRefines Assignable
-\cgalRefines CopyConstructible
-\cgalRefines DefaultConstructible
+\cgalRefines{Assignable,CopyConstructible,DefaultConstructible}
 
 \sa `Polynomial_d`
 \sa `PolynomialTraits_d`

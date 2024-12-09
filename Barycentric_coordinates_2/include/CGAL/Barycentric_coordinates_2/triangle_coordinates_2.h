@@ -197,9 +197,6 @@ namespace Barycentric_coordinates {
   */
   template<class Traits>
   class
-  #ifndef DOXYGEN_RUNNING
-  CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
-  #endif
   Triangle_coordinates_2
   {
 
@@ -230,6 +227,10 @@ namespace Barycentric_coordinates {
     /// Creates the class `Triangle_coordinates_2` that implements triangle coordinates with respect to an arbitrary non-degenerate triangle in the plane.
     /// The triangle is given by its three vertices.
     /// \pre Triangle is not degenerate.
+
+    #ifndef DOXYGEN_RUNNING
+      CGAL_DEPRECATED_MSG("This part of the package is deprecated since the version 5.4 of CGAL!")
+    #endif
     Triangle_coordinates_2(
       const Point_2 &first_vertex,
       const Point_2 &second_vertex,
@@ -256,7 +257,7 @@ namespace Barycentric_coordinates {
     /// Computes triangle barycentric coordinates for a chosen query point with respect to all three vertices of the triangle.
     /// Computed coordinates are stored in the output iterator `output`.
     template<class OutputIterator>
-    inline boost::optional<OutputIterator> operator()(
+    inline std::optional<OutputIterator> operator()(
       const Point_2 &query_point, OutputIterator output)
     {
       return triangle_coordinates_2(query_point, output);
@@ -297,7 +298,7 @@ namespace Barycentric_coordinates {
     // This function accepts a container of the type <a href="https://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>
     // and returns an iterator of the type <a href="https://en.cppreference.com/w/cpp/iterator/back_insert_iterator">`std::back_insert_iterator`</a>
     // that is placed past-the-end of the resulting sequence of coordinate values.
-    inline boost::optional<std::back_insert_iterator<std::vector<FT> > > operator()(
+    inline std::optional<std::back_insert_iterator<std::vector<FT> > > operator()(
       const Point_2 &query_point, std::vector<FT> &output_vector)
     {
       output_vector.reserve(output_vector.size() + 3);
@@ -346,7 +347,7 @@ namespace Barycentric_coordinates {
 
     // Compute triangle coordinates.
     template<class OutputIterator>
-    boost::optional<OutputIterator> triangle_coordinates_2(
+    std::optional<OutputIterator> triangle_coordinates_2(
       const Point_2 &query_point, OutputIterator &output) {
 
       // Compute some related sub-areas.
@@ -368,9 +369,10 @@ namespace Barycentric_coordinates {
 
       // Compute the last = third coordinate, using the partition of unity property.
       *output = FT(1) - b_first - b_second;
+      ++output;
 
       // Output all coordinates.
-      return boost::optional<OutputIterator>(output);
+      return std::optional<OutputIterator>(output);
     }
   };
 
@@ -397,22 +399,19 @@ namespace Barycentric_coordinates {
     // Some predefined functions.
     typename Traits::Compute_area_2 area_2 = barycentric_traits.compute_area_2_object();
 
-    // Number type.
-    typedef typename Traits::FT FT;
-
     // Compute some related sub-areas.
-    const FT area_second = area_2(second_vertex, third_vertex, query_point);
-    const FT area_third  = area_2(third_vertex , first_vertex, query_point);
+    const typename Traits::FT area_second = area_2(second_vertex, third_vertex, query_point);
+    const typename Traits::FT area_third  = area_2(third_vertex , first_vertex, query_point);
 
     // Compute the total inverted area of the triangle.
-    const FT inverted_total_area = FT(1) / area_2(first_vertex, second_vertex, third_vertex);
+    const typename Traits::FT inverted_total_area = typename Traits::FT(1) / area_2(first_vertex, second_vertex, third_vertex);
 
     // Compute the first and second coordinate functions.
-    const FT b_first  = area_second * inverted_total_area;
-    const FT b_second = area_third  * inverted_total_area;
+    const typename Traits::FT b_first  = area_second * inverted_total_area;
+    const typename Traits::FT b_second = area_third  * inverted_total_area;
 
     // Return the std::array<FT,3> type of coordinates.
-    return CGAL::make_array(b_first, b_second, FT(1) - b_first - b_second);
+    return CGAL::make_array(b_first, b_second, typename Traits::FT(1) - b_first - b_second);
   }
 
 #endif // CGAL_NO_DEPRECATED_CODE

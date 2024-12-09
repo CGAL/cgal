@@ -3,9 +3,11 @@ namespace ArrTraits {
 /*! \ingroup PkgArrangementOnSurface2ConceptsFunctionObjects
  * \cgalConcept
  *
- * \cgalRefines AdaptableUnaryFunction
+ * \cgalRefines{AdaptableUnaryFunction}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Construct_max_vertex_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::Construct_max_vertex_2}
+ * \cgalHasModelsEnd
  */
 class ConstructMaxVertex_2 {
 public:

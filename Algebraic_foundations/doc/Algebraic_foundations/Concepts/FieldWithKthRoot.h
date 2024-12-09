@@ -10,7 +10,7 @@ Moreover, `CGAL::Algebraic_structure_traits< FieldWithKthRoot >` is a model of `
 - \link AlgebraicStructureTraits::Algebraic_category `CGAL::Algebraic_structure_traits< FieldWithKthRoot >::Algebraic_category` \endlink derived from `CGAL::Field_with_kth_root_tag`
 - \link AlgebraicStructureTraits::Kth_root `CGAL::Algebraic_structure_traits< FieldWithKthRoot >::Kth_root` \endlink which is a model of `AlgebraicStructureTraits_::KthRoot`
 
-\cgalRefines `FieldWithSqrt`
+\cgalRefines{FieldWithSqrt}
 
 \sa `IntegralDomainWithoutDivision`
 \sa `IntegralDomain`

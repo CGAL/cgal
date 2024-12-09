@@ -36,4 +36,5 @@ data/test_construction/geodesic_arcs_on_sphere/test35.txt
 data/test_construction/geodesic_arcs_on_sphere/test36.txt
 data/test_construction/geodesic_arcs_on_sphere/test37.txt
 data/test_construction/geodesic_arcs_on_sphere/test38.txt
-
+data/test_construction/geodesic_arcs_on_sphere/test39.txt
+data/test_construction/geodesic_arcs_on_sphere/test40.txt

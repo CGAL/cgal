@@ -45,7 +45,7 @@ enum Cone_type
 
 /// \ingroup PkgSurfaceMeshParameterizationEnums
 ///
-/// The four Orbifold types available in the Orbifold Tutte parameterization.
+/// The four orbifold types available in the Orbifold Tutte parameterization.
 /// The different shapes result from the number of cones and the angle constraints
 /// at the cones.
 enum Orbifold_type
@@ -59,7 +59,7 @@ enum Orbifold_type
 /// \ingroup PkgSurfaceMeshParameterizationEnums
 /// \brief Convert the orbifold type to a literal message.
 /// \param orb_type the integer value in the enum
-/// \return the string describing the Orbifold type.
+/// \return the string describing the orbifold type.
 const char* get_orbifold_type(int orb_type)
 {
   // Messages corresponding to the different orbifold types.

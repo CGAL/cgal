@@ -17,7 +17,12 @@ typedef K::Point_3                                              Point_3;
 typedef CGAL::Surface_mesh<Point_3>                             Mesh;
 
 typedef std::array<FT, 3>                                       Custom_point;
+//#define CGAL_USE_ARRAY_POLYGONS_IN_EXAMPLE
+#ifdef CGAL_USE_ARRAY_POLYGONS_IN_EXAMPLE
+typedef std::array<std::size_t, 3>                              CGAL_Polygon;
+#else
 typedef std::vector<std::size_t>                                CGAL_Polygon;
+#endif
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -47,54 +52,41 @@ int main(int, char**)
   std::vector<std::array<FT, 3> > points;
   std::vector<CGAL_Polygon> polygons;
 
-  points.push_back(CGAL::make_array<FT>(0,0,0));
-  points.push_back(CGAL::make_array<FT>(1,0,0));
-  points.push_back(CGAL::make_array<FT>(0,1,0));
-  points.push_back(CGAL::make_array<FT>(-1,0,0));
-  points.push_back(CGAL::make_array<FT>(0,-1,0));
-  points.push_back(CGAL::make_array<FT>(0,1,0)); // duplicate point
-  points.push_back(CGAL::make_array<FT>(0,-2,0)); // unused point
+  points.push_back(CGAL::make_array<FT>( 0,  0, 0)); // 0
+  points.push_back(CGAL::make_array<FT>( 1,  0, 0)); // 1
+  points.push_back(CGAL::make_array<FT>( 0,  1, 0)); // 2
+  points.push_back(CGAL::make_array<FT>(-1,  0, 0)); // 3
+  points.push_back(CGAL::make_array<FT>( 0, -1, 0)); // 4
+  points.push_back(CGAL::make_array<FT>( 0,  1, 0)); // 5 -- duplicate point with 2
+  points.push_back(CGAL::make_array<FT>( 0, -2, 0)); // 6 -- unused point
 
-  CGAL_Polygon p;
-  p.push_back(0); p.push_back(1); p.push_back(2);
-  polygons.push_back(p);
-
-  // degenerate face
-  p.clear();
-  p.push_back(0); p.push_back(0); p.push_back(0);
-  polygons.push_back(p);
-
-  p.clear();
-  p.push_back(0); p.push_back(1); p.push_back(4);
-  polygons.push_back(p);
-
-  // duplicate face with different orientation
-  p.clear();
-  p.push_back(0); p.push_back(4); p.push_back(1);
-  polygons.push_back(p);
-
-  p.clear();
-  p.push_back(0); p.push_back(3); p.push_back(5);
-  polygons.push_back(p);
+  // normal face
+  polygons.push_back({0,1,2});
 
   // degenerate face
-  p.clear();
-  p.push_back(0); p.push_back(3); p.push_back(0);
-  polygons.push_back(p);
+  polygons.push_back({0,0,0});
 
-  p.clear();
-  p.push_back(0); p.push_back(3); p.push_back(4);
-  polygons.push_back(p);
+  // duplicate faces with different orientations
+  polygons.push_back({0,1,4});
+  polygons.push_back({0,4,1});
 
+  // normal face
+  polygons.push_back({0,3,5});
+
+  // degenerate face
+  polygons.push_back({0,3,0});
+
+  // normal face
+  polygons.push_back({0,3,4});
+
+#ifndef CGAL_USE_ARRAY_POLYGONS_IN_EXAMPLE
   // pinched and degenerate face
-  p.clear();
-  p.push_back(0); p.push_back(1); p.push_back(2); p.push_back(3);
-  p.push_back(4); p.push_back(3); p.push_back(2); p.push_back(1);
-  polygons.push_back(p);
+  polygons.push_back({0,1,2,3,4,3,2,1});
+#endif
 
-  std::cout << "Before reparation, the soup has " << points.size() << " vertices and " << polygons.size() << " faces" << std::endl;
+  std::cout << "Before repairing, the soup has " << points.size() << " vertices and " << polygons.size() << " faces" << std::endl;
   PMP::repair_polygon_soup(points, polygons, CGAL::parameters::geom_traits(Array_traits()));
-  std::cout << "After reparation, the soup has " << points.size() << " vertices and " << polygons.size() << " faces" << std::endl;
+  std::cout << "After repairing, the soup has " << points.size() << " vertices and " << polygons.size() << " faces" << std::endl;
 
   Mesh mesh;
   PMP::orient_polygon_soup(points, polygons);

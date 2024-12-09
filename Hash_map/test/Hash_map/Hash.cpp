@@ -11,9 +11,9 @@
 #include <CGAL/Linear_cell_complex_for_generalized_map.h>
 #include <CGAL/boost/graph/graph_traits_Arrangement_2.h>
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
+#include <CGAL/boost/graph/generators.h>
 #include <map>
 #include <boost/unordered_map.hpp>
-#include <CGAL/boost/graph/helpers.h>
 
 
 typedef CGAL::Simple_cartesian<double> Kernel;
@@ -129,7 +129,7 @@ int main()
   fct<Arrangement_2, boost::graph_traits<Arrangement_2>::vertex_descriptor>(A);
   fct<Arrangement_2, boost::graph_traits<Arrangement_2>::edge_descriptor>(A);
 
-  Kernel::Point_3 p3;
+  Kernel::Point_3 p3(CGAL::ORIGIN);
   Polyhedron P;
   CGAL::make_triangle(p3,p3,p3,P);
   fct4(P);
@@ -155,5 +155,3 @@ int main()
 
   return 0;
 }
-
-

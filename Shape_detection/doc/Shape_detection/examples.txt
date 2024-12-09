@@ -5,12 +5,12 @@
 \example Shape_detection/efficient_RANSAC_with_point_access.cpp
 \example Shape_detection/include/efficient_RANSAC_with_custom_shape.h
 \example Shape_detection/efficient_RANSAC_with_custom_shape.cpp
+\example Shape_detection/region_growing_with_custom_classes.cpp
 \example Shape_detection/region_growing_lines_on_point_set_2.cpp
 \example Shape_detection/region_growing_circles_on_point_set_2.cpp
 \example Shape_detection/region_growing_planes_on_point_set_3.cpp
 \example Shape_detection/region_growing_spheres_on_point_set_3.cpp
 \example Shape_detection/region_growing_cylinders_on_point_set_3.cpp
 \example Shape_detection/region_growing_planes_on_polygon_mesh.cpp
-\example Shape_detection/region_growing_with_custom_classes.cpp
-\example Shape_detection/shape_detection_basic_deprecated.cpp
+\example Shape_detection/region_growing_lines_on_segment_set.cpp
 */

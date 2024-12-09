@@ -16,7 +16,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Triangulation_utils_2.h>
 #include <CGAL/Triangulation_face_base_2.h>
 #include <CGAL/Dummy_tds_2.h>
@@ -64,7 +64,7 @@ public:
   /// Periodic functions
   int offset(int i) const
   {
-    CGAL_triangulation_precondition( i >= 0 && i < 3 );
+    CGAL_precondition( i >= 0 && i < 3 );
     return ((_off >> 2 * i) & 3);
   }
   bool has_zero_offsets() const

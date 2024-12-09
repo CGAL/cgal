@@ -5,7 +5,7 @@
 
 Returns a square free part of a bivariate polynomial.
 
-\cgalRefines `AdaptableUnaryFunction`
+\cgalRefines{AdaptableUnaryFunction}
 
 \sa `AlgebraicKernel_d_2::IsSquareFree_2`
 \sa `AlgebraicKernel_d_2::SquareFreeFactorize_2`

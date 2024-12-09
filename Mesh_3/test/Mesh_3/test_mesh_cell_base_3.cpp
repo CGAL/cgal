@@ -4,7 +4,7 @@
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
-#include <CGAL/Mesh_3/tet_soup_to_c3t3.h>
+#include <CGAL/SMDS_3/tet_soup_to_c3t3.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
 #include <CGAL/Mesh_cell_base_3.h>
@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cassert>
 
 int main (int argc, char** argv){
   typedef CGAL::Exact_predicates_inexact_constructions_kernel                 K;
@@ -48,14 +49,14 @@ int main (int argc, char** argv){
     return 1;
   }
   C3t3 c3t3;
-  if(CGAL::build_triangulation_from_file<C3t3::Triangulation, true>(in, c3t3.triangulation()))
+  if(CGAL::SMDS_3::build_triangulation_from_file(in, c3t3.triangulation()))
   {
     for( C3t3::Triangulation::Finite_cells_iterator
          cit = c3t3.triangulation().finite_cells_begin();
          cit != c3t3.triangulation().finite_cells_end();
          ++cit)
     {
-      CGAL_assertion(cit->subdomain_index() >= 0);
+      assert(cit->subdomain_index() >= 0);
       c3t3.add_to_complex(cit, cit->subdomain_index());
       for(int i=0; i < 4; ++i)
       {
@@ -95,6 +96,6 @@ int main (int argc, char** argv){
   std::ofstream out("graph.off");
   out << poly;
 
-  CGAL_assertion(is_valid(poly));
+  assert(is_valid(poly));
   return EXIT_SUCCESS;
 }

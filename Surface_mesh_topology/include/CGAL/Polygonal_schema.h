@@ -52,83 +52,83 @@ namespace Surface_mesh_topology {
     template<class CMap>
     struct Polygonal_schema_tools<CMap, Combinatorial_map_tag>
     {
-      typedef typename CMap::Dart_handle Dart_handle;
+      typedef typename CMap::Dart_descriptor Dart_descriptor;
 
-      static Dart_handle
+      static Dart_descriptor
       add_edge_to_face(CMap& cmap, const std::string& s,
-                       Dart_handle prev_dart,
-                       Dart_handle dart_same_label,
-                       Dart_handle dart_opposite_label,
-                       std::unordered_map<std::string, Dart_handle>&
+                       Dart_descriptor prev_dart,
+                       Dart_descriptor dart_same_label,
+                       Dart_descriptor dart_opposite_label,
+                       std::unordered_map<std::string, Dart_descriptor>&
                        edge_label_to_dart)
       {
-        if (dart_same_label!=CMap::null_handle && dart_opposite_label!=CMap::null_handle)
+        if (dart_same_label!=CMap::null_descriptor && dart_opposite_label!=CMap::null_descriptor)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
                    <<" and "<<internal::opposite_label(s)
                    <<" are already added in the surface."
                    <<" This label can not be use anymore."<<std::endl;
-          return CMap::null_handle;
+          return CMap::null_descriptor;
         }
 
-        if (dart_same_label!=CMap::null_handle)
+        if (dart_same_label!=CMap::null_descriptor)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"label "<<s
                    <<" is already added in the surface."
                    <<" Since the surface is orientable, this label can "
                    <<"not be use anymore."<<std::endl;
-          return CMap::null_handle;
+          return CMap::null_descriptor;
         }
 
-        Dart_handle res=cmap.create_dart();
+        Dart_descriptor res=cmap.create_dart();
         edge_label_to_dart[s]=res;
         cmap.info(res).m_label=s;
 
-        if (prev_dart!=cmap.null_handle)
+        if (prev_dart!=cmap.null_descriptor)
         { cmap.template link_beta<1>(prev_dart, res); }
 
-        if (dart_opposite_label!=CMap::null_handle)
+        if (dart_opposite_label!=CMap::null_descriptor)
         { cmap.template link_beta<2>(res, dart_opposite_label); }
 
         return res;
       }
 
-      const std::string& get_label(CMap& cmap, Dart_handle dh) const
+      const std::string& get_label(CMap& cmap, Dart_descriptor dh) const
       { return cmap.info(dh).m_label; }
     };
     template<class GMap>
     struct Polygonal_schema_tools<GMap, Generalized_map_tag>
     {
-      typedef typename GMap::Dart_handle Dart_handle;
+      typedef typename GMap::Dart_descriptor Dart_descriptor;
 
       // In a GMap, if an edge is 2-free, only one of its two dart has one label.
       // Otherwise, d has one label and alpha<0,2>(d) the opposite label.
-      static Dart_handle
+      static Dart_descriptor
       add_edge_to_face(GMap& gmap, const std::string& s,
-                       Dart_handle prev_dart,
-                       Dart_handle dart_same_label,
-                       Dart_handle dart_opposite_label,
-                       std::unordered_map<std::string, Dart_handle>&
+                       Dart_descriptor prev_dart,
+                       Dart_descriptor dart_same_label,
+                       Dart_descriptor dart_opposite_label,
+                       std::unordered_map<std::string, Dart_descriptor>&
                        edge_label_to_dart)
       {
-        if (dart_same_label!=GMap::null_handle && dart_opposite_label!=GMap::null_handle)
+        if (dart_same_label!=GMap::null_descriptor && dart_opposite_label!=GMap::null_descriptor)
         {
           std::cerr<<"Polygonal_schema ERROR: "<<"both labels "<<s
                    <<" and "<<internal::opposite_label(s)
                    <<" are already added in the surface."
                    <<" This label can not be use anymore."<<std::endl;
-          return GMap::null_handle;
+          return GMap::null_descriptor;
         }
 
-        Dart_handle res=gmap.create_dart();
-        Dart_handle dh2=gmap.create_dart();
+        Dart_descriptor res=gmap.create_dart();
+        Dart_descriptor dh2=gmap.create_dart();
 
         gmap.template link_alpha<0>(res, dh2);
-        if (prev_dart!=gmap.null_handle)
+        if (prev_dart!=gmap.null_descriptor)
         { gmap.template link_alpha<1>(res, gmap.template alpha<0>(prev_dart)); }
 
-        if (dart_same_label!=GMap::null_handle)
-        { // Here dart_same_label!=GMap::null_handle
+        if (dart_same_label!=GMap::null_descriptor)
+        { // Here dart_same_label!=GMap::null_descriptor
           std::string s2=internal::opposite_label(s);
           edge_label_to_dart[s2]=dh2;
           gmap.info(dh2).m_label=s2;
@@ -136,11 +136,11 @@ namespace Surface_mesh_topology {
           gmap.template sew<2>(res, dart_same_label);
         }
         else
-        { // Here either dart_opposite_label!=GMap::null_handle, or both are GMap::null_handle
+        { // Here either dart_opposite_label!=GMap::null_descriptor, or both are GMap::null_descriptor
           edge_label_to_dart[s]=res;
           gmap.info(res).m_label=s;
 
-          if (dart_opposite_label!=GMap::null_handle)
+          if (dart_opposite_label!=GMap::null_descriptor)
           {
             std::string s2=internal::opposite_label(s);
             edge_label_to_dart[s2]=res;
@@ -153,7 +153,7 @@ namespace Surface_mesh_topology {
         return res;
       }
 
-      std::string get_label(GMap& gmap, Dart_handle dh) const
+      std::string get_label(GMap& gmap, Dart_descriptor dh) const
       {
         if (gmap.info(dh).m_label.empty())
         {
@@ -181,14 +181,14 @@ namespace Surface_mesh_topology {
     typedef BaseModel                       Base;
     typedef Polygonal_schema_base           Self;
     typedef BaseModel                       Map; // Either a GMap or a CMap
-    typedef typename Map::Dart_handle       Dart_handle;
-    typedef typename Map::Dart_const_handle Dart_const_handle;
+    typedef typename Map::Dart_descriptor       Dart_descriptor;
+    typedef typename Map::Dart_const_descriptor Dart_const_descriptor;
     typedef typename Map::size_type         size_type;
 
     Polygonal_schema_base() : Base(),
       mark_perforated(this->get_new_mark()),
-      first_dart(this->null_handle),
-      prev_dart(this->null_handle),
+      first_dart(this->null_descriptor),
+      prev_dart(this->null_descriptor),
       facet_started(false)
     {}
 
@@ -203,8 +203,8 @@ namespace Surface_mesh_topology {
         return;
       }
 
-      first_dart = this->null_handle;
-      prev_dart  = this->null_handle;
+      first_dart = this->null_descriptor;
+      prev_dart  = this->null_descriptor;
       facet_started=true;
     }
 
@@ -220,15 +220,15 @@ namespace Surface_mesh_topology {
         return;
       }
 
-      Dart_handle dart_same_label=get_dart_labeled(s);
-      Dart_handle dart_opposite_label=get_dart_labeled
+      Dart_descriptor dart_same_label=get_dart_labeled(s);
+      Dart_descriptor dart_opposite_label=get_dart_labeled
                                       (internal::opposite_label(s));
 
-      Dart_handle cur=internal::Polygonal_schema_tools<Map>::
+      Dart_descriptor cur=internal::Polygonal_schema_tools<Map>::
         add_edge_to_face(*this, s, prev_dart, dart_same_label,
                          dart_opposite_label, edge_label_to_dart);
 
-      if (prev_dart==this->null_handle)
+      if (prev_dart==this->null_descriptor)
       { first_dart=cur; }
 
       prev_dart=cur;
@@ -297,39 +297,39 @@ namespace Surface_mesh_topology {
     }
 
     /// End of the facet. Return the first dart of this facet.
-    Dart_handle finish_facet()
+    Dart_descriptor finish_facet()
     {
       if (!facet_started)
       {
         std::cerr<<"Polygonal_schema ERROR: "
                  <<"you try to end a facet"
                  <<" but the facet is not yet started."<<std::endl;
-        return Map::null_handle;
+        return Map::null_descriptor;
       }
-      CGAL_assertion( first_dart!=this->null_handle &&
-                                  prev_dart!=this->null_handle );
+      CGAL_assertion( first_dart!=this->null_descriptor &&
+                                  prev_dart!=this->null_descriptor );
       this->set_next(prev_dart, first_dart);
 
       facet_started=false;
       return first_dart;
     }
 
-    /// @return dart with the given label, Map::null_handle if this dart does not exist.
-    Dart_handle get_dart_labeled(const std::string& s) const
+    /// @return dart with the given label, Map::null_descriptor if this dart does not exist.
+    Dart_descriptor get_dart_labeled(const std::string& s) const
     {
       auto ite=edge_label_to_dart.find(s);
       if (ite==edge_label_to_dart.end())
-      { return Map::null_handle; }
+      { return Map::null_descriptor; }
 
       return ite->second;
     }
 
-    std::string get_label(Dart_handle dh) const
+    std::string get_label(Dart_descriptor dh) const
     { return internal::Polygonal_schema_tools<Map>::get_label(dh); }
 
     /// marks the whole facet containing dh as perforated
     /// @return the number of darts of the marked face
-    size_type perforate_facet(Dart_handle dh)
+    size_type perforate_facet(Dart_descriptor dh)
     {
       if (this->is_marked(dh, mark_perforated))
       { return 0; }
@@ -354,7 +354,7 @@ namespace Surface_mesh_topology {
 
     /// unmark the facet as being perforated, now the facet is filled
     /// @return the number of darts of the unmarked face
-    size_type fill_facet(Dart_handle dh)
+    size_type fill_facet(Dart_descriptor dh)
     {
       if (!this->is_marked(dh, mark_perforated))
       { return 0; }
@@ -378,7 +378,7 @@ namespace Surface_mesh_topology {
     }
 
     /// @return true iff dh is on a perforated facet
-    bool is_perforated(Dart_const_handle dh) const
+    bool is_perforated(Dart_const_descriptor dh) const
     { return this->is_marked(dh, mark_perforated); }
 
     /// same thing but using a label instead of a dart
@@ -413,12 +413,12 @@ namespace Surface_mesh_topology {
   protected:
     // For each edge label, its corresponding dart. Stores both association
     // a -a, to allow users to start to add either a or -a.
-    std::unordered_map<std::string, Dart_handle> edge_label_to_dart;
+    std::unordered_map<std::string, Dart_descriptor> edge_label_to_dart;
     std::size_t mark_perforated; // mark for perforated facets.
 
     // Data members used when we create a facet.
-    Dart_handle first_dart;
-    Dart_handle prev_dart;
+    Dart_descriptor first_dart;
+    Dart_descriptor prev_dart;
     bool        facet_started;
   };
 
@@ -435,8 +435,8 @@ namespace Surface_mesh_topology {
     typedef Combinatorial_map_base<2, Self, Items_, Alloc_, Storage_>         CMap_base;
     typedef Polygonal_schema_base<CMap_base>                                  Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
-    typedef typename Base::Dart_const_handle Dart_const_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
+    typedef typename Base::Dart_const_descriptor Dart_const_descriptor;
 
     Polygonal_schema_with_combinatorial_map() : Base()
     {}
@@ -494,8 +494,8 @@ namespace Surface_mesh_topology {
     typedef Generalized_map_base<2, Self, Items_, Alloc_, Storage_>         GMap_base;
     typedef Polygonal_schema_base<GMap_base>                                Base;
 
-    typedef typename Base::Dart_handle Dart_handle;
-    typedef typename Base::Dart_const_handle Dart_const_handle;
+    typedef typename Base::Dart_descriptor Dart_descriptor;
+    typedef typename Base::Dart_const_descriptor Dart_const_descriptor;
 
     Polygonal_schema_with_generalized_map() : Base()
     {}
@@ -578,7 +578,7 @@ namespace Surface_mesh_topology {
            (random.get_int(1, static_cast<int>(max_dart_per_face)));
            i<endlabel && j<nb; ++i, ++j)
       { ps.add_edges_to_facet(all_labels[i]); }
-      typename PS::Dart_handle dh=ps.finish_facet();
+      typename PS::Dart_descriptor dh=ps.finish_facet();
 
       if (static_cast<std::size_t>(rand()%100)<percentage_of_perforated)
       { ps.perforate_facet(dh); }

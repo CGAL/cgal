@@ -15,8 +15,10 @@ inscribed into a given convex polygon.
 precondition checking only. Therefore, they need not to be
 specified, in case that precondition checking is disabled.
 
-\cgalHasModel `CGAL::Extremal_polygon_area_traits_2<K>`
-\cgalHasModel `CGAL::Extremal_polygon_perimeter_traits_2<K>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Extremal_polygon_area_traits_2<K>}
+\cgalHasModels{CGAL::Extremal_polygon_perimeter_traits_2<K>}
+\cgalHasModelsEnd
 
 \sa `CGAL::maximum_area_inscribed_k_gon_2()`
 \sa `CGAL::maximum_perimeter_inscribed_k_gon_2()`

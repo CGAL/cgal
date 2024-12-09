@@ -17,6 +17,11 @@
 * the free functions of this package.
 */
 
+#ifndef CGAL_POLYGON_MESH_PROCESSING_H
+#define CGAL_POLYGON_MESH_PROCESSING_H
+
+#include <CGAL/license/Polygon_mesh_processing/core.h>
+
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
@@ -49,20 +54,6 @@
 #include <CGAL/Polygon_mesh_processing/smooth_mesh.h>
 #include <CGAL/Polygon_mesh_processing/smooth_shape.h>
 #include <CGAL/Polygon_mesh_processing/manifoldness.h>
+#include <CGAL/Polygon_mesh_processing/autorefinement.h>
 
-// the named parameter header being not documented the doc is put here for now
-#ifdef DOXYGEN_RUNNING
-namespace CGAL {
-namespace Polygon_mesh_processing {
-namespace parameters {
-
-/*! \ingroup namedparameters
-This function can be used to indicate that all optional named parameters
-to be used are the default ones. This is particularly useful when a function
-requires more than one sequence of named parameters and default values is
-fine only for some of them.
-*/
-unspecified_type all_default();
-
-} } } // end of namespace CGAL::Polygon_mesh_processing::parameters
-#endif
+#endif //CGAL_POLYGON_MESH_PROCESSING_H

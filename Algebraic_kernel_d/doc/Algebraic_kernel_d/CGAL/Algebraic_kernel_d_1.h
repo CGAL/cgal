@@ -10,12 +10,10 @@ The template argument `Coeff` determines the coefficient type of the
 kernel, which is also the coefficient type of the supported polynomials.
 
 Currently, the following coefficient types are supported:
-
 - `Gmpz`, `Gmpq`, (requires configuration with external libraries GMP, MPFR and MPFI)
-
 - `CORE::BigInt`, `CORE::BigRat`, (requires configuration with external library GMP)
-
 - `leda_integer`, `leda_rational`. (requires configuration with external library LEDA)
+.
 
 \cgalAdvancedBegin
 The template argument type can also be set to `Sqrt_extension<NT,ROOT>`, where `NT` is
@@ -29,7 +27,7 @@ approximation of an algebraic real root is a slightly modified
 (filtered) version of the one presented in \cgalCite{abbott-qir-06}. The
 method has quadratic convergence.
 
-\cgalModels `AlgebraicKernel_d_1`
+\cgalModels{AlgebraicKernel_d_1}
 
 \sa `AlgebraicKernel_d_1`
 \sa `Polynomial_d`

@@ -31,7 +31,7 @@ The class `Eigen_svd` provides an algorithm to solve in the least
 square sense a linear system with a singular value decomposition using
 \ref thirdpartyEigen.
 
-\cgalModels `SvdTraits`
+\cgalModels{SvdTraits}
 
 */
 class Eigen_svd
@@ -51,7 +51,11 @@ public:
   /// \return the condition number of \f$ M\f$
   static FT solve(const Matrix& M, Vector& B)
   {
-    Eigen::JacobiSVD<Matrix::EigenType> jacobiSvd(M.eigen_object(),::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+#if EIGEN_VERSION_AT_LEAST(3,4,90)
+    Eigen::JacobiSVD<Matrix::EigenType, Eigen::ComputeThinU | Eigen::ComputeThinV> jacobiSvd(M.eigen_object());
+#else
+    Eigen::JacobiSVD<Matrix::EigenType> jacobiSvd(M.eigen_object(), ::Eigen::ComputeThinU | ::Eigen::ComputeThinV);
+#endif
     B.eigen_object()=jacobiSvd.solve(Vector::EigenType(B.eigen_object()));
     return jacobiSvd.singularValues().array().abs().maxCoeff() /
            jacobiSvd.singularValues().array().abs().minCoeff();

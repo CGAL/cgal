@@ -34,7 +34,7 @@ typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr>                       C3t3;
 typedef CGAL::Mesh_criteria_3<Tr>                           Periodic_mesh_criteria;
 
 // To avoid verbose function and named parameters call
-using namespace CGAL::parameters;
+namespace params = CGAL::parameters;
 
 // Implicit function
 FT schwarz_p(const Point& p)
@@ -47,24 +47,31 @@ FT schwarz_p(const Point& p)
 
 int main(int argc, char** argv)
 {
-  // 'int' because the 'schwarz_p' function is periodic over the domain only if
-  // the length of the side of the domain is an integer.
-  int domain_size = (argc > 1) ? atoi(argv[1]) : 1;
-  int number_of_copies_in_output = (argc > 2) ? atoi(argv[2]) : 4; // can be 1, 2, 4, or 8
+  // 'atoi' because the 'schwarz_p' function is periodic over the domain
+  // only if the length of the side of the domain is an integer.
+  const int x_span = (argc > 1) ? atoi(argv[1]) : 1;
+  const int y_span = (argc > 2) ? atoi(argv[2]) : x_span;
+  const int z_span = (argc > 3) ? atoi(argv[3]) : x_span;
+  const int min_span = (std::min)({x_span, y_span, z_span});
 
-  Iso_cuboid canonical_cube(0, 0, 0, domain_size, domain_size, domain_size);
+  const int number_of_copies_in_output = (argc > 4) ? atoi(argv[4]) : 4; // can be 1, 2, 4, or 8
 
-  Periodic_mesh_domain domain =
+  const Iso_cuboid canonical_cube(0, 0, 0, x_span, y_span, z_span);
+
+  const Periodic_mesh_domain domain =
     Periodic_mesh_domain::create_implicit_mesh_domain(schwarz_p, canonical_cube);
 
-  Periodic_mesh_criteria criteria(facet_angle = 30,
-                                  facet_size = 0.035 * domain_size,
-                                  facet_distance = 0.025 * domain_size,
-                                  cell_radius_edge_ratio = 2.,
-                                  cell_size = 0.05);
+  Periodic_mesh_criteria criteria(params::facet_angle(30)
+                                         .facet_size(0.035 * min_span)
+                                         .facet_distance(0.025 * min_span)
+                                         .cell_radius_edge_ratio(2.)
+                                         .cell_size(0.05 * min_span));
 
   // Mesh generation
   C3t3 c3t3 = CGAL::make_periodic_3_mesh_3<C3t3>(domain, criteria);
+
+  std::cout << "Created mesh with " << c3t3.number_of_vertices_in_complex() << " vertices"
+                        << " and " <<  c3t3.number_of_cells_in_complex() << " cells" << std::endl;
 
   std::ofstream medit_file("output_implicit_shape.mesh");
   CGAL::IO::output_periodic_mesh_to_medit(medit_file, c3t3, number_of_copies_in_output);

@@ -4,15 +4,29 @@
 
 /// \defgroup PkgStraightSkeleton2Classes Classes
 /// \ingroup PkgStraightSkeleton2Ref
+///
+/// The following classes are the main classes of this package.
 
 /// \defgroup PkgStraightSkeleton2Auxiliary Auxiliary Classes
 /// \ingroup PkgStraightSkeleton2Ref
+
+/// \defgroup PkgStraightSkeleton2Extrusion Skeleton Extrusion
+/// \ingroup PkgStraightSkeleton2Ref
+///
+/// The following functions are used to construct the skeleton extrusion of a polygon.
 
 /// \defgroup PkgStraightSkeleton2Functions Functions
 /// \ingroup PkgStraightSkeleton2Ref
 
 /// \defgroup PkgStraightSkeleton2SkeletonFunctions Straight Skeleton Construction Functions
 /// \ingroup PkgStraightSkeleton2Functions
+///
+/// The following functions are used to construct the inward or outward straight skeleton of a polygon.
+
+/// \defgroup PkgStraightSkeleton2WeightedSkeletonFunctions Weighted Straight Skeleton Construction Functions
+/// \ingroup PkgStraightSkeleton2Functions
+///
+/// The following functions are used to construct the inward or outward weighted straight skeleton of a polygon.
 
 /// \defgroup PkgStraightSkeleton2OffsetFunctions Offset Construction Functions
 /// \ingroup PkgStraightSkeleton2Functions
@@ -90,13 +104,20 @@
 ///   </li>
 /// </ul>
 
+/// \defgroup PkgStraightSkeleton2WeightedOffsetFunctions Weighted Offset Construction Functions
+/// \ingroup PkgStraightSkeleton2Functions
+///
+/// The following functions are used to construct the inward or outward weighted offsets of a polygon.
+
 /*!
 \addtogroup PkgStraightSkeleton2Ref
 \cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2}
 \cgalPkgPicture{Straight_skeleton_2/fig/StraightSkeletonTeaser.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthor{Fernando Cacciola}
-\cgalPkgDesc{This package implements an algorithm to construct a halfedge data structure representing the straight skeleton in the interior of 2D polygons with holes and an algorithm to construct inward offset polygons at any offset distance given a straight skeleton.}
+\cgalPkgAuthors{Fernando Cacciola, Sébastien Loriot, and Mael Rouxel-Labbé}
+\cgalPkgDesc{This package implements an algorithm to construct a halfedge data structure representing
+             the weighted straight skeleton in the interior of 2D polygons with holes and an algorithm
+             to construct inward offset polygons at any offset distance given a straight skeleton.}
 \cgalPkgManuals{Chapter_2D_Straight_Skeleton_and_Polygon_Offsetting,PkgStraightSkeleton2Ref}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -133,14 +154,27 @@
 - `CGAL::Dummy_straight_skeleton_builder_2_visitor`
 - `CGAL::Trisegment_2`
 
-\cgalCRPSection{Functions}
-- `CGAL::create_exterior_straight_skeleton_2()`
+\cgalCRPSection{Straight Skeleton Functions}
 - `CGAL::create_interior_straight_skeleton_2()`
-- `CGAL::create_offset_polygons_2()`
-- `CGAL::create_exterior_skeleton_and_offset_polygons_2()`
-- `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`
+- `CGAL::create_interior_weighted_straight_skeleton_2()`
+- `CGAL::create_exterior_straight_skeleton_2()`
+- `CGAL::create_exterior_weighted_straight_skeleton_2()`
+
+\cgalCRPSection{Polygon Offsetting}
 - `CGAL::create_interior_skeleton_and_offset_polygons_2()`
 - `CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()`
+- `CGAL::create_interior_weighted_skeleton_and_offset_polygons_2()`
+- `CGAL::create_interior_weighted_skeleton_and_offset_polygons_with_holes_2()`
+- `CGAL::create_exterior_skeleton_and_offset_polygons_2()`
+- `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`
+- `CGAL::create_exterior_weighted_skeleton_and_offset_polygons_2()`
+- `CGAL::create_exterior_weighted_skeleton_and_offset_polygons_with_holes_2()`
+- `CGAL::create_offset_polygons_2()`
+
+\cgalCRPSection{Skeleton Extrusion}
+- `CGAL::extrude_skeleton()`
+
+\cgalCRPSection{Lower Level API}
 - `CGAL::arrange_offset_polygons_2()`
 - `CGAL::compute_outer_frame_margin()`
 - `CGAL::convert_straight_skeleton_2()`

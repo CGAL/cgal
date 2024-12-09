@@ -106,26 +106,26 @@ public:
   typedef Mesh_                          Mesh;
 
   typedef typename Get_map<Mesh, Mesh>::type       Original_map; // Mesh seen as a 2-map
-  typedef typename Original_map::Dart_const_handle Original_dart_const_handle;
+  typedef typename Original_map::Dart_const_descriptor Original_dart_const_descriptor;
   typedef typename Original_map::size_type         Original_size_type;
 
   typedef CGAL::Combinatorial_map<2, Minimal_quadrangulation_local_map_items> Local_map;
-  typedef typename Local_map::Dart_handle             Dart_handle;
-  typedef typename Local_map::Dart_const_handle       Dart_const_handle;
+  typedef typename Local_map::Dart_descriptor             Dart_descriptor;
+  typedef typename Local_map::Dart_const_descriptor       Dart_const_descriptor;
   typedef typename Local_map::size_type               size_type;
 
   // Associate each dart of the original map, not removed, a pair of darts in
   // the reduced map.
-  typedef std::unordered_map<Original_dart_const_handle,
-  std::pair<Dart_handle, Dart_handle> > TPaths;
+  typedef std::unordered_map<Original_dart_const_descriptor,
+  std::pair<Dart_descriptor, Dart_descriptor> > TPaths;
 
   // Associations between original darts and their copy.
   // Use only locally during the construction of the minimal quadrangulation.
-  typedef std::unordered_map<Original_dart_const_handle, Dart_handle> Origin_to_copy;
-  typedef std::unordered_map<Dart_handle, Original_dart_const_handle> Copy_to_origin;
+  typedef std::unordered_map<Original_dart_const_descriptor, Dart_descriptor> Origin_to_copy;
+  typedef std::unordered_map<Dart_descriptor, Original_dart_const_descriptor> Copy_to_origin;
 
 #ifdef CGAL_PWRLE_TURN_V2
-  typedef std::unordered_map<Original_dart_const_handle, std::size_t> TDartIds;
+  typedef std::unordered_map<Original_dart_const_descriptor, std::size_t> TDartIds;
 #endif //CGAL_PWRLE_TURN_V2
 
   /// @return the original map
@@ -241,7 +241,7 @@ public:
     std::cout<<"Paths are all valid ? "<<(are_paths_valid()?"YES":"NO")
              <<std::endl;
     auto marktemp=get_local_map().get_new_mark();
-    Dart_handle dh2=nullptr;
+    Dart_descriptor dh2=nullptr;
     for (auto it=get_local_map().darts().begin();
          it!=get_local_map().darts().end(); ++it)
     {
@@ -453,8 +453,8 @@ public:
   /// @return the positive turn between the two given darts.
   /// i.e. turning right if the face bounded by a dart lays on its right
   /// and left otherwise
-  std::size_t positive_turn(Dart_const_handle dh1,
-                            Dart_const_handle dh2) const
+  std::size_t positive_turn(Dart_const_descriptor dh1,
+                            Dart_const_descriptor dh2) const
   {
 #if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
     return compute_positive_turn_given_ids
@@ -471,7 +471,7 @@ public:
     if (get_local_map().is_marked(dh1, m_mark_hole))
     { return (std::numeric_limits<std::size_t>::max)(); }
 
-    Dart_const_handle ddh1=dh1;
+    Dart_const_descriptor ddh1=dh1;
     std::size_t res=1;
     while (get_local_map().template beta<1>(ddh1)!=dh2)
     {
@@ -493,8 +493,8 @@ public:
   /// @return the negative turn between the two given darts.
   /// i.e. turning right if the face bounded by a dart lays on its left
   /// and left otherwise
-  std::size_t negative_turn(Dart_const_handle dh1,
-                            Dart_const_handle dh2) const
+  std::size_t negative_turn(Dart_const_descriptor dh1,
+                            Dart_const_descriptor dh2) const
   {
 #if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
     return compute_negative_turn_given_ids
@@ -514,7 +514,7 @@ public:
 
     dh1=get_local_map().template beta<2>(dh1);
     dh2=get_local_map().template beta<2>(dh2);
-    Dart_const_handle ddh1=dh1;
+    Dart_const_descriptor ddh1=dh1;
     std::size_t res=1;
     while (get_local_map().template beta<0>(ddh1)!=dh2)
     {
@@ -613,7 +613,7 @@ public:
 protected:
 
   /// @return true iff the dart dh is contracted, i.e. if it belongs to T
-  bool is_contracted(Original_dart_const_handle dh) const
+  bool is_contracted(Original_dart_const_descriptor dh) const
   { return get_original_map().is_marked(dh, m_mark_T); }
 
   void count_edges_of_path_on_torus
@@ -622,8 +622,8 @@ protected:
   {
     CGAL_assertion(local_map_is_a_torus());
 
-    Dart_const_handle dha=get_local_map().darts().begin();
-    Dart_const_handle dhb=get_local_map().template beta<1>(dha);
+    Dart_const_descriptor dha=get_local_map().darts().begin();
+    Dart_const_descriptor dhb=get_local_map().template beta<1>(dha);
 
     a=0; b=0;
     for (std::size_t i=0; i<path.length(); ++i)
@@ -654,7 +654,7 @@ protected:
     Path_on_surface<Local_map> res(get_local_map());
     if (path.is_empty()) return res;
 
-    Dart_const_handle cur;
+    Dart_const_descriptor cur;
     for (std::size_t i=0; i<path.length(); ++i)
     {
       if (!is_contracted(path[i]))// here flip doesn't matter
@@ -670,7 +670,7 @@ protected:
     }
     res.update_is_closed();
     CGAL_assertion(res.is_empty() || res.is_closed());
-    CGAL_assertion(res.is_valid());
+    CGAL_expensive_assertion(res.is_valid());
     return res;
   }
 
@@ -702,12 +702,12 @@ protected:
     if (!res.is_empty())
     { res.merge_last_flat_with_next_if_possible(); }
     CGAL_assertion(res.is_closed() || res.is_empty());
-    CGAL_assertion(res.is_valid());
+    CGAL_expensive_assertion(res.is_valid());
     return res;
   }
 
   /// Mark the edge containing adart in the original map.
-  void mark_original_edge(Original_dart_const_handle adart,
+  void mark_original_edge(Original_dart_const_descriptor adart,
                           Original_size_type amark)
   {
     get_original_map().mark(adart, amark);
@@ -717,7 +717,7 @@ protected:
   }
 
   /// Mark the edge containing adart in the reduced map (which is 2-closed)
-  void mark_reduced_edge(Dart_const_handle adart, size_type amark)
+  void mark_reduced_edge(Dart_const_descriptor adart, size_type amark)
   {
     get_local_map().mark(adart, amark);
     get_local_map().mark(get_local_map().template beta<2>(adart), amark);
@@ -727,7 +727,7 @@ protected:
   /// copy) from the associative array copy_to_origin, and erase the
   /// corresponding edge (which belongs to the map get_original_map()) from the
   /// array origin_to_copy
-  void erase_edge_from_associative_arrays(Dart_handle adart,
+  void erase_edge_from_associative_arrays(Dart_descriptor adart,
                                           Origin_to_copy& origin_to_copy,
                                           Copy_to_origin & copy_to_origin)
   {
@@ -742,10 +742,10 @@ protected:
     copy_to_origin.erase(adart);
   }
 
-  Original_dart_const_handle prev_in_boundary(Original_dart_const_handle d)
+  Original_dart_const_descriptor prev_in_boundary(Original_dart_const_descriptor d)
   {
     CGAL_assertion(get_original_map().template is_free<2>(d));
-    Original_dart_const_handle res=get_original_map().template beta<0>(d);
+    Original_dart_const_descriptor res=get_original_map().template beta<0>(d);
     while(!get_original_map().template is_free<2>(res))
     { res=get_original_map().template beta<2, 0>(res); }
     return res;
@@ -758,9 +758,9 @@ protected:
   /// Marks all darts belonging to T using a BFS
   void compute_T()
   {
-    Original_dart_const_handle dh;
+    Original_dart_const_descriptor dh;
     auto grey=get_original_map().get_new_mark();
-    std::queue<Original_dart_const_handle> queue;
+    std::queue<Original_dart_const_descriptor> queue;
     get_original_map().template mark_cell<0>
         (get_original_map().darts().begin(), grey);
     queue.push(get_original_map().darts().begin());
@@ -798,7 +798,7 @@ protected:
     m_paths.clear();
     compute_T();
 
-    Dart_handle d1, d2;
+    Dart_descriptor d1, d2;
     for (typename Original_map::Dart_range::const_iterator
          it=get_original_map().darts().begin(),
          itend=get_original_map().darts().end(); it!=itend; ++it)
@@ -819,7 +819,7 @@ protected:
 
           m_paths[it]=std::make_pair(d1, nullptr); // Initialize m_paths
         }
-        else if (Original_dart_const_handle(it)<
+        else if (Original_dart_const_descriptor(it)<
                  get_original_map().template beta<2>(it))
         {
           d1=get_local_map().create_dart();
@@ -843,7 +843,7 @@ protected:
     }
 
     /// Now we only need to do the basic_link_beta_1
-    Original_dart_const_handle dd1;
+    Original_dart_const_descriptor dd1;
     for (typename Original_map::Dart_range::const_iterator
          it=get_original_map().darts().begin(),
          itend=get_original_map().darts().end(); it!=itend; ++it)
@@ -876,10 +876,10 @@ protected:
   /// Marks all darts belonging to L using a BFS
   void compute_L(size_type toremove, Copy_to_origin& copy_to_origin)
   {
-    Dart_handle dh;
-    Dart_handle ddh;
+    Dart_descriptor dh;
+    Dart_descriptor ddh;
     auto grey=get_local_map().get_new_mark();
-    std::queue<Dart_handle> queue;
+    std::queue<Dart_descriptor> queue;
 
     for (auto it=get_local_map().darts().begin(),
          itend=get_local_map().darts().end(); it!=itend; ++it)
@@ -929,8 +929,8 @@ protected:
                                                     Copy_to_origin& copy_to_origin)
   {
     // std::cout<<"************************************************"<<std::endl;
-    Dart_handle initdart, curdart;
-    Original_dart_const_handle d1, d2;
+    Dart_descriptor initdart, curdart;
+    Original_dart_const_descriptor d1, d2;
     for (typename Local_map::Dart_range::iterator
          it=get_local_map().darts().begin();
          it!=get_local_map().darts().end(); ++it)
@@ -975,7 +975,7 @@ protected:
   {
     get_local_map().set_automatic_attributes_management(false);
 
-    Original_dart_const_handle origin_dart;
+    Original_dart_const_descriptor origin_dart;
     for (typename Local_map::Dart_range::iterator
          it=get_local_map().darts().begin(),
          itend=get_local_map().darts().end(); it!=itend; ++it)
@@ -1117,7 +1117,7 @@ protected:
     for (typename TPaths::iterator itp=m_paths.begin(), itpend=m_paths.end();
          itp!=itpend; ++itp)
     {
-      std::pair<Dart_handle, Dart_handle>& p=itp->second;
+      std::pair<Dart_descriptor, Dart_descriptor>& p=itp->second;
       if (p.second!=nullptr)
       { // Edge between two real faces, removed during the quadrangulation
         CGAL_assertion(!get_local_map().is_marked(p.first, m_mark_perforated));
@@ -1216,7 +1216,7 @@ protected:
   {
     int deg;
     bool hole_detected;
-    Dart_handle dh;
+    Dart_descriptor dh;
     for (auto it=get_local_map().darts().begin(),
          itend=get_local_map().darts().end(); it!=itend; ++it)
     {
@@ -1250,7 +1250,7 @@ protected:
   void initialize_ids()
   {
     std::size_t id;
-    Dart_handle dh, ddh;
+    Dart_descriptor dh, ddh;
     auto treated=get_local_map().get_new_mark();
 
     for (auto it=get_local_map().darts().begin(),
@@ -1311,7 +1311,7 @@ protected:
     get_local_map().free_mark(treated);
   }
 
-  std::size_t get_dart_id(Dart_const_handle dh) const
+  std::size_t get_dart_id(Dart_const_descriptor dh) const
   {
 #ifdef CGAL_PWRLE_TURN_V2
     return m_dart_ids.at(dh);
@@ -1323,9 +1323,9 @@ protected:
     return (std::numeric_limits<std::size_t>::max)();
   }
 
-  /// @return the positive turn given two darts using their ids (unsed for CGAL_PWRLE_TURN_V2 and V3)
-  std::size_t compute_positive_turn_given_ids(Dart_const_handle dh1,
-                                              Dart_const_handle dh2) const
+  /// @return the positive turn given two darts using their ids (unused for CGAL_PWRLE_TURN_V2 and V3)
+  std::size_t compute_positive_turn_given_ids(Dart_const_descriptor dh1,
+                                              Dart_const_descriptor dh2) const
   {
     if (get_local_map().template info<0>(dh1)<0)
     {// there is no hole around dh1 and dh2
@@ -1333,7 +1333,7 @@ protected:
       {
         return get_dart_id(dh2)-get_dart_id(dh1);
       }
-      // here we have to add the degree (i.e. substract the vertex info)
+      // here we have to add the degree (i.e. subtract the vertex info)
       return get_dart_id(dh2)-get_local_map().template info<0>(dh1)-get_dart_id(dh1);
     }
     // here we know there is a hole just before the dart 0 (plus maybe other ones)
@@ -1346,9 +1346,9 @@ protected:
     return get_dart_id(dh2)-get_dart_id(dh1);
   }
 
-  /// @return the negative turn given two darts using their ids (unsed for CGAL_PWRLE_TURN_V2 and V3)
-  std::size_t compute_negative_turn_given_ids(Dart_const_handle dh1,
-                                              Dart_const_handle dh2) const
+  /// @return the negative turn given two darts using their ids (unused for CGAL_PWRLE_TURN_V2 and V3)
+  std::size_t compute_negative_turn_given_ids(Dart_const_descriptor dh1,
+                                              Dart_const_descriptor dh2) const
   {
     if (get_local_map().template info<0>(dh1)<0)
     {// there is no hole around dh1 and dh2
@@ -1356,7 +1356,7 @@ protected:
       {
         return get_dart_id(dh1)-get_dart_id(dh2);
       }
-      // here we have to add the degree (i.e. substract the vertex info)
+      // here we have to add the degree (i.e. subtract the vertex info)
       return get_dart_id(dh1)-get_local_map().template info<0>(dh1)-get_dart_id(dh2);
     }
     // here we know there is a hole just before the dart 0 (plus maybe other ones)
@@ -1373,7 +1373,7 @@ protected:
   /// @return true iff the edge containing adart is associated with a path.
   ///         (used for debug purpose because we are suppose to be able to
   ///          test this by using directly the mark m_mark_T).
-  bool is_edge_has_path(Original_dart_const_handle adart) const
+  bool is_edge_has_path(Original_dart_const_descriptor adart) const
   {
     if (get_original_map().template is_free<2>(adart) ||
         adart<get_original_map().template beta<2>(adart))
@@ -1382,8 +1382,8 @@ protected:
   }
 
   /// @return true iff the edge containing adart is associated with a path
-  ///         of only 1 dart (case of an edge bewteen two perforated faces)
-  bool edge_path_has_only_one_dart(Original_dart_const_handle adart) const
+  ///         of only 1 dart (case of an edge between two perforated faces)
+  bool edge_path_has_only_one_dart(Original_dart_const_descriptor adart) const
   {
     return
         (get_original_map().is_perforated(adart) &&
@@ -1395,8 +1395,8 @@ protected:
   /// @return the pair of darts associated with the edge containing adart
   ///         in get_original_map().
   /// @pre the edge containing adart must not belong to T.
-  std::pair<Dart_handle, Dart_handle>& get_pair_of_darts
-  (Original_dart_const_handle adart)
+  std::pair<Dart_descriptor, Dart_descriptor>& get_pair_of_darts
+  (Original_dart_const_descriptor adart)
   {
     CGAL_assertion(!is_contracted(adart));
     CGAL_assertion(is_edge_has_path(adart));
@@ -1414,7 +1414,7 @@ protected:
    *  There is a special case for an edge between two perforated faces. In this
    *  case there is only one dart in the path.
    */
-  Dart_const_handle get_first_dart_of_the_path(Original_dart_const_handle adart,
+  Dart_const_descriptor get_first_dart_of_the_path(Original_dart_const_descriptor adart,
                                                bool flip=false,
                                                bool isquadrangulation=true) const
   {
@@ -1428,13 +1428,13 @@ protected:
       if (get_original_map().template is_free<2>(adart) ||
           adart<get_original_map().template beta<2>(adart))
       {
-        const std::pair<Dart_handle, Dart_handle>&
+        const std::pair<Dart_descriptor, Dart_descriptor>&
           p=m_paths.find(adart)->second;
         return flip?get_local_map().template beta<2>(p.first):p.first;
       }
       else
       {
-        const std::pair<Dart_handle, Dart_handle>&
+        const std::pair<Dart_descriptor, Dart_descriptor>&
             p=m_paths.find(get_original_map().template beta<2>(adart))->second;
         return flip?p.first:get_local_map().template beta<2>(p.first);
       }
@@ -1448,14 +1448,14 @@ protected:
     if (get_original_map().template is_free<2>(adart) ||
         adart<get_original_map().template beta<2>(adart))
     {
-      const std::pair<Dart_handle, Dart_handle>&
+      const std::pair<Dart_descriptor, Dart_descriptor>&
         p=m_paths.find(adart)->second;
       return flip?
             (isquadrangulation?get_local_map().template beta<2>(p.second):p.second):
             p.first;
     }
 
-    const std::pair<Dart_handle, Dart_handle>&
+    const std::pair<Dart_descriptor, Dart_descriptor>&
         p=m_paths.find(get_original_map().template beta<2>(adart))->second;
 
     return flip?
@@ -1471,7 +1471,7 @@ protected:
    *  @pre edge containing adart should be incident to at least one non
    *       perforated face.
    */
-  Dart_const_handle get_second_dart_of_the_path(Original_dart_const_handle adart,
+  Dart_const_descriptor get_second_dart_of_the_path(Original_dart_const_descriptor adart,
                                                 bool flip=false,
                                                 bool isquadrangulation=true) const
   {
@@ -1484,14 +1484,14 @@ protected:
     if (get_original_map().template is_free<2>(adart) ||
         adart<get_original_map().template beta<2>(adart))
     {
-      const std::pair<Dart_handle, Dart_handle>&
+      const std::pair<Dart_descriptor, Dart_descriptor>&
           p=m_paths.find(adart)->second;
       return flip?
             (isquadrangulation?get_local_map().template beta<2>(p.first):p.first):
             p.second;
     }
 
-    const std::pair<Dart_handle, Dart_handle>&
+    const std::pair<Dart_descriptor, Dart_descriptor>&
         p=m_paths.find(get_original_map().template beta<2>(adart))->second;
     return flip?
           p.second:
@@ -1500,7 +1500,7 @@ protected:
 
   /// @return the first dart of the path, direct version without taking into
   /// account possible flip and the two case of torus/quadrangulation.
-  Dart_handle get_first_dart_of_the_path_direct(Original_dart_const_handle adart) const
+  Dart_descriptor get_first_dart_of_the_path_direct(Original_dart_const_descriptor adart) const
   {
     CGAL_assertion(is_edge_has_path(adart));
 
@@ -1510,8 +1510,8 @@ protected:
     return m_paths.find(get_original_map().template beta<2>(adart))->second.second;
   }
 
-  void set_first_dart_of_the_path(Original_dart_const_handle adart,
-                                  Dart_handle d)
+  void set_first_dart_of_the_path(Original_dart_const_descriptor adart,
+                                  Dart_descriptor d)
   {
     CGAL_assertion(is_edge_has_path(adart));
 
@@ -1522,8 +1522,8 @@ protected:
     { m_paths.find(get_original_map().template beta<2>(adart))->second.second=d; }
   }
 
-  void set_second_dart_of_the_path(Original_dart_const_handle adart,
-                                   Dart_handle d)
+  void set_second_dart_of_the_path(Original_dart_const_descriptor adart,
+                                   Dart_descriptor d)
   {
     CGAL_assertion(is_edge_has_path(adart));
 
@@ -1675,7 +1675,7 @@ protected:
     {
       if (!is_contracted(it))
       {
-        Dart_const_handle d1=get_first_dart_of_the_path(it);
+        Dart_const_descriptor d1=get_first_dart_of_the_path(it);
         if (d1==nullptr)
         {
           std::cout<<"ERROR: an edge is associated with a null dart in m_paths"
@@ -1684,7 +1684,7 @@ protected:
         }
         else if (!edge_path_has_only_one_dart(it))
         {
-          Dart_const_handle d2=get_second_dart_of_the_path(it);
+          Dart_const_descriptor d2=get_second_dart_of_the_path(it);
           if (d2==nullptr)
           {
             std::cout<<"ERROR: an edge is associated with a null dart in m_paths"
@@ -1693,7 +1693,7 @@ protected:
           }
           else
           {
-            Dart_const_handle dd1=get_local_map().other_extremity(d1);
+            Dart_const_descriptor dd1=get_local_map().other_extremity(d1);
             CGAL_assertion(dd1!=NULL);
             if (!CGAL::belong_to_same_cell<Local_map,0>
                 (get_local_map(), dd1, d2))
@@ -1715,7 +1715,7 @@ protected:
   /// @return A pair of final path and correspondent ordering
   std::pair<Path_on_surface<Local_map>, std::unordered_map<size_type, std::vector<std::size_t>>> compute_perturbation(const Path_on_surface<Local_map>& p) const
   {
-    std::vector<Dart_const_handle> pr;
+    std::vector<Dart_const_descriptor> pr;
     pr.reserve(p.length());
     for(std::size_t i = 0; i < p.length(); ++i)
     {
@@ -1734,7 +1734,7 @@ protected:
 
     for (std::size_t i = 0; i < pr.size(); ++i)
     {
-      Dart_const_handle dh = pr[i];
+      Dart_const_descriptor dh = pr[i];
       auto dart_id = get_absolute_idx(dh);
       rb_nodes.emplace_back(i);
       auto& node = rb_nodes.back();
@@ -1743,12 +1743,12 @@ protected:
       if (i > 0 && switchable[i])
       {
         // Look at the t-1 turn of [i-1, i, i + 1]
-        Dart_const_handle dleft = get_local_map().template beta<0, 2>(dh);
+        Dart_const_descriptor dleft = get_local_map().template beta<0, 2>(dh);
         size_type dleft_id = get_absolute_idx(dleft);
         if(trees[dleft_id].size() > 0)
         {
           std::size_t max_turn_idx = is_absolutely_directed(dleft) ? trees[dleft_id].begin()->m_idx : trees[dleft_id].rbegin()->m_idx;
-          Dart_const_handle dprev = get_previous_relative_to(pr, max_turn_idx, dleft);
+          Dart_const_descriptor dprev = get_previous_relative_to(pr, max_turn_idx, dleft);
           // If there exists a crossing that can be avoided, switch
           if(get_order_relative_to(pr[i - 1], dleft) > get_order_relative_to(dprev, dleft))
           {
@@ -1815,7 +1815,7 @@ protected:
               {
                 current_dividing_idx -= p.length();
               }
-              Dart_const_handle dbase = p[last_same_idx],
+              Dart_const_descriptor dbase = p[last_same_idx],
                                 dcur = p[current_dividing_idx],
                                 d0 = p[path_end_dividing_idx];
 
@@ -1826,7 +1826,7 @@ protected:
             else
             {
               std::size_t key_prev_order = this->get_order_relative_to(pr[key - 1], pr[key]);
-              Dart_const_handle bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
+              Dart_const_descriptor bprev = this->get_previous_relative_to(pr, b.m_idx, pr[key]);
               std::size_t b_prev_order = this->get_order_relative_to(bprev, pr[key]);
               return less_than_in_tree(key_prev_order, b_prev_order);
             }
@@ -1866,7 +1866,7 @@ protected:
       if (!get_local_map().is_marked(it, marktemp))
       {
         std::stack<std::pair<std::size_t, bool>> parenthesis_pairing;
-        Dart_const_handle dh2=it;
+        Dart_const_descriptor dh2=it;
         do
         {
           get_local_map().mark(dh2, marktemp);
@@ -1983,7 +1983,7 @@ protected:
   }
 
   /// Actually switch the dart in a vector of darts
-  void switch_dart(std::vector<Dart_const_handle>& p, std::size_t i, std::vector<bool>& switchable) const
+  void switch_dart(std::vector<Dart_const_descriptor>& p, std::size_t i, std::vector<bool>& switchable) const
   {
     CGAL_assertion(static_cast<bool>(switchable[i]));
     p[i] = get_local_map().template beta<0, 2>(p[i]);
@@ -2006,7 +2006,7 @@ protected:
 
   /// Essentially compute the positive turn between ref and x
   /// Requires x and ref outgoing at the same vertex
-  size_type get_order_relative_to(Dart_const_handle x, Dart_const_handle ref) const
+  size_type get_order_relative_to(Dart_const_descriptor x, Dart_const_descriptor ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<0>(get_local_map().opposite2(x), ref));
 #if defined(CGAL_PWRLE_TURN_V2) || defined(CGAL_PWRLE_TURN_V3)
@@ -2022,7 +2022,7 @@ protected:
   /// Extend p[i] towards the reverse direction of ref
   /// Requires p[i] and ref on the same 1-cell
   /// @return the index
-  int get_previous_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  int get_previous_idx_relative_to(const std::vector<Dart_const_descriptor>& p, std::size_t i, Dart_const_descriptor ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     return p[i] == ref ? (static_cast<int>(i) - 1) : (static_cast<int>(i) + 1);
@@ -2031,7 +2031,7 @@ protected:
   /// Extend p[i] towards the reverse direction of ref
   /// Requires p[i] and ref on the same 1-cell
   /// @return whether the extension is viable without crossing the first and the last dart
-  bool has_previous_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  bool has_previous_relative_to(const std::vector<Dart_const_descriptor>& p, std::size_t i, Dart_const_descriptor ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     int j = get_previous_idx_relative_to(p, i, ref);
@@ -2041,7 +2041,7 @@ protected:
   /// Extend p[i] towards the reverse direction of ref
   /// Requires p[i] and ref on the same 1-cell
   /// @return the actual dart, wrap around if reaching boundary
-  Dart_const_handle get_previous_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  Dart_const_descriptor get_previous_relative_to(const std::vector<Dart_const_descriptor>& p, std::size_t i, Dart_const_descriptor ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     if (p[i] == ref)
@@ -2057,7 +2057,7 @@ protected:
   /// Extend p[i] towards the direction of ref
   /// Requires p[i] and ref on the same 1-cell
   /// @return the index
-  int get_next_idx_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  int get_next_idx_relative_to(const std::vector<Dart_const_descriptor>& p, std::size_t i, Dart_const_descriptor ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     return p[i] == ref ? (static_cast<int>(i) + 1) : (static_cast<int>(i) - 1);
@@ -2066,7 +2066,7 @@ protected:
   /// Extend p[i] towards the direction of ref
   /// Requires p[i] and ref on the same 1-cell
   /// @return whether the extension is viable without crossing the first and the last dart
-  bool has_next_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  bool has_next_relative_to(const std::vector<Dart_const_descriptor>& p, std::size_t i, Dart_const_descriptor ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     int j = get_next_idx_relative_to(p, i, ref);
@@ -2076,7 +2076,7 @@ protected:
   /// Extend p[i] towards the direction of ref
   /// Requires p[i] and ref on the same 1-cell
   /// @return the actual dart, wrap around if reaching boundary
-  Dart_const_handle get_next_relative_to(const std::vector<Dart_const_handle>& p, std::size_t i, Dart_const_handle ref) const
+  Dart_const_descriptor get_next_relative_to(const std::vector<Dart_const_descriptor>& p, std::size_t i, Dart_const_descriptor ref) const
   {
     CGAL_assertion(get_local_map().template belong_to_same_cell<1>(p[i], ref));
     if (p[i] == ref)
@@ -2090,20 +2090,20 @@ protected:
   }
 
   /// @return a unique 1-cell id for the dart
-  size_type get_absolute_idx(Dart_const_handle dh) const
+  size_type get_absolute_idx(Dart_const_descriptor dh) const
   {
     return (std::min)(get_local_map().darts().index(dh), get_local_map().darts().index(get_local_map().opposite(dh)));
   }
 
   /// @return true if the dart is the representative for the unique 1-cell id
-  bool is_absolutely_directed(Dart_const_handle dh) const
+  bool is_absolutely_directed(Dart_const_descriptor dh) const
   {
     return get_local_map().darts().index(dh) < get_local_map().darts().index(get_local_map().opposite(dh));
   }
 
   /// @return true if p[ref] -> p[ref + 1] forms the same corner as p[j]
   /// Requires p[j] and p[ref] on the same 1-cell
-  bool is_same_corner(const std::vector<Dart_const_handle>& p, std::size_t j, std::size_t ref) const
+  bool is_same_corner(const std::vector<Dart_const_descriptor>& p, std::size_t j, std::size_t ref) const
   {
     if (!has_next_relative_to(p, j, p[ref]))
     {

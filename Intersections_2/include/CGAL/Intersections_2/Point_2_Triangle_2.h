@@ -50,9 +50,11 @@ protected:
 };
 
 template <class K>
-inline bool do_intersect(const typename K::Point_2 &p1,
-                         const typename K::Triangle_2 &p2,
-                         const K&)
+inline
+typename K::Boolean
+do_intersect(const typename K::Point_2& p1,
+             const typename K::Triangle_2& p2,
+             const K&)
 {
   typedef Point_2_Triangle_2_pair<K> pair_t;
   pair_t pair(&p1, &p2);
@@ -60,9 +62,11 @@ inline bool do_intersect(const typename K::Point_2 &p1,
 }
 
 template <class K>
-inline bool do_intersect(const typename K::Triangle_2 &p2,
-                         const typename K::Point_2 &p1,
-                         const K& k)
+inline
+typename K::Boolean
+do_intersect(const typename K::Triangle_2& p2,
+             const typename K::Point_2& p1,
+             const K& k)
 {
   return internal::do_intersect(p1, p2, k);
 }
@@ -133,6 +137,6 @@ intersection(const typename K::Triangle_2 &tr,
 CGAL_INTERSECTION_FUNCTION(Point_2, Triangle_2, 2)
 CGAL_DO_INTERSECT_FUNCTION(Point_2, Triangle_2, 2)
 
-} //namespace CGAL
+} // namespace CGAL
 
-#endif
+#endif // CGAL_INTERSECTIONS_2_POINT_2_TRIANGLE_2_H

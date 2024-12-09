@@ -53,9 +53,10 @@ public:
  * The two property maps which are template parameters of the class enable to get the datum and the reference point of
  * the primitive from the identifier. The last template parameter controls whether the primitive class holds a copy of the datum.
  *
- * \cgalModels `AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`,
- *    and `AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`.
- *
+ * \cgalModelsBareBegin
+ * \cgalModelsBare{`AABBPrimitive` if `ExternalPropertyMaps` is `CGAL::Tag_false`}
+ * \cgalModelsBare{`AABBPrimitiveWithSharedData` if `ExternalPropertyMaps` is `CGAL::Tag_true`}
+ * \cgalModelsBareEnd
  *
  * \tparam ObjectPropertyMap is a model of `ReadablePropertyMap` with `Id` as
  *           `key_type`. It must be a model of `CopyConstructible`, `DefaultConstructible`, and `CopyAssignable`.
@@ -70,11 +71,12 @@ public:
  *           it is constructed on the fly to reduce the memory footprint.
  *           The default is `CGAL::Tag_false` (datum is not stored).
  *
- * \sa `AABBPrimitive`
- * \sa `AABB_segment_primitive<Iterator,CacheDatum>`
- * \sa `AABB_triangle_primitive<Iterator,CacheDatum>`
- * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,OneHalfedgeGraphPerTree,CacheDatum>`
- * \sa `AABB_face_graph_triangle_primitive<FaceGraph,OneFaceGraphPerTree,CacheDatum>`
+ * \sa `AABB_segment_primitive_2<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_segment_primitive_3<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive_2<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_triangle_primitive_3<GeomTraits,Iterator,CacheDatum>`
+ * \sa `AABB_halfedge_graph_segment_primitive<HalfedgeGraph,VertexPointPMap,OneHalfedgeGraphPerTree,CacheDatum>`
+ * \sa `AABB_face_graph_triangle_primitive<FaceGraph,VertexPointPMap,OneFaceGraphPerTree,CacheDatum>`
  */
 template <  class Id,
             class ObjectPropertyMap,
@@ -251,4 +253,3 @@ public:
 #include <CGAL/enable_warnings.h>
 
 #endif // CGAL_AABB_PRIMITIVE_H
-

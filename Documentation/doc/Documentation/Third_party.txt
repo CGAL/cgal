@@ -6,24 +6,24 @@
 \section seccompilers Supported Compilers
 
 In order to build a program using \cgal, you need a \cpp compiler
-supporting <a href="https://isocpp.org/wiki/faq/cpp14">C++14</a> or later.
+supporting C++17 or later.
 \cgal \cgalReleaseNumber is supported (continuously tested) for the following compilers/operating systems:
 
 | Operating System | Compiler |
 | :----------      | :--------------- |
-| Linux            | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                  | `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 11.1.0 |
-| \ms Windows      | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                  | \ms Visual `C++` 14.0, 15.9, 16.10 (\visualstudio 2015, 2017, and 2019)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">`https://visualstudio.microsoft.com/`</A>} |
-| MacOS X          | \gnu `g++` 8.3 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} |
-|                  | Apple `Clang` compiler versions 10.0.1 and 12.0.0 |
+| Linux            | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | `Clang` \cgalFootnote{<A HREF="https://clang.llvm.org/">\cgalFootnoteCode{https://clang.llvm.org/}</A>} compiler version 15.0.7 |
+| \ms Windows      | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | \ms Visual `C++` 15.9, 16.10, 17.0 (\visualstudio 2017, 2019, and 2022)\cgalFootnote{<A HREF="https://visualstudio.microsoft.com/">\cgalFootnoteCode{https://visualstudio.microsoft.com/}</A>} |
+| macOS            | \gnu `g++` 11.4.0 or later\cgalFootnote{<A HREF="https://gcc.gnu.org/">\cgalFootnoteCode{https://gcc.gnu.org/}</A>} |
+|                  | Apple `Clang` compiler versions 10.0.1, 12.0.5, and 15.0.0 |
 
 <!-- Windows supported version are also listed on windows.html (must change both) -->
 
 Older versions of the above listed compilers might work, but no guarantee is provided.
 
 \section seccmake CMake
-<b>Version 3.14 or later</b>
+<b>Version 3.22 or later</b>
 
 In order to configure and build the \cgal examples, demos, or libraries,
 you need <a href="https://cmake.org/">CMake</a>, a cross-platform "makefile generator".
@@ -33,9 +33,7 @@ Please refer to the <a href="https://cmake.org/documentation/">CMake documentati
 for further details.
 
 \attention Recent versions of CMake are needed for the most recent versions of MS Visual C++.
-Please refer to CMake's documentation for further information, for example
-<a href="https://cmake.org/cmake/help/latest/generator/Visual%20Studio%2016%202019.html">here</a>
-for Visual Studio 16 2019.
+Please refer to CMake's documentation for further information.
 
 \section secessential3rdpartysoftware Essential Third Party Libraries
 
@@ -56,7 +54,7 @@ or <A HREF="https://msdn.microsoft.com/en-us/library/1fe2x6kt(v=vs.140).aspx">`h
 The \stl comes with the compiler, and as such no installation is required.
 
 \subsection thirdpartyBoost Boost
-<b>Version 1.66 or later</b>
+<b>Version 1.72 or later</b>
 
 The \boost libraries are a set of portable C++ source libraries.
 Most of \boost libraries are header-only, but a few of them need to be compiled or
@@ -72,25 +70,34 @@ from <A HREF="https://sourceforge.net/projects/boost/files/boost-binaries/">`htt
 
 As there is no canonical directory for where to find \boost on Windows,
 we recommend that you define the environment variable
-`BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_69_0`.
+`BOOST_ROOT` and set it to where you have installed \boost, e.g., `C:\boost\boost_1_70_0`.
 
-\subsection thirdpartyMPFR GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
-<b>GMP Version 4.2 or later, MPFR Version 2.2.1 or later</b>
+\subsection thirdpartyMP Multi Precision Number Type Library
 
-The components `libCGAL`, `libCGAL_Core`, and `libCGAL_Qt5` require
-\gmp and \mpfr which are libraries for multi precision integers and rational numbers,
-and for multi precision floating point numbers.
-
-\cgal combines floating point arithmetic with exact arithmetic
-in order to be efficient and reliable. \cgal has a built-in
-number type for that, but \gmp and \mpfr provide a faster
-solution, and we recommend using them.
+GNU Multiple Precision Arithmetic (GMP) and GNU Multiple Precision Floating-Point Reliably (MPFR) Libraries
+are libraries for multi precision integers and rational numbers, and for multi precision floating point numbers.
 
 These libraries can be obtained from <A HREF="https://gmplib.org/">`https://gmplib.org/`</A>
 and <A HREF="https://www.mpfr.org/">`https://www.mpfr.org/`</A>.
 Since Visual \cpp is not properly supported by the \gmp and \mpfr projects,
 we provide precompiled versions of \gmp and \mpfr, which can be downloaded
 from the <a href="https://github.com/CGAL/cgal/releases">assets of a release</a>.
+Version supported are <b>GMP Version 5.0.1 or later, MPFR Version 3.0.0 or later</b>.
+
+The \boost library also provides a module for multi precision integers and rational numbers:
+<A HREF="https://www.boost.org/doc/libs/release/libs/multiprecision/doc/html/index.html">\boost multiprecision</A>.
+Versions supported are <b>\boost Version 1.72 or later</b>.
+
+The components \cgal, and `CGAL_Qt6` require either \gmp and \mpfr, or \boost multiprecision
+for multi precision numbers. `CGAL_Core` requires \boost multiprecision.
+
+\cgal combines floating point arithmetic with exact arithmetic
+in order to be efficient and reliable. \cgal has a built-in
+number type for that, but previous alternatives are faster
+solutions, and we recommend using one of them.
+
+The CMake variable `CGAL_CMAKE_EXACT_NT_BACKEND` can be used to select
+the library that will be used internally for multi precision number types.
 
 \section secoptional3rdpartysoftware Optional Third Party Libraries
 
@@ -102,22 +109,22 @@ version shipped with \cgal.
 The page \ref configurationvariables lists CMake and environment variables which can be used to specify
 the location of third-party software during configuration.
 
-\subsection thirdpartyQt Qt5
-<b>Version 5.9.0 or later</b>
+\subsection thirdpartyQt Qt6
+<b>Version 6.4 or later</b>
 
 Qt is a cross-platform application and UI framework.
 
-The component libCGAL_Qt5 is essential to run the \cgal demos and basic viewers.
-It requires \qt5 installed on your system.
+The component `CGAL_Qt6` is essential to run the \cgal demos and basic viewers.
+It requires \qt6 installed on your system.
 In case \qt is not yet installed on your system, you can download
 it from <A HREF="https://www.qt-project.org/">`https://www.qt-project.org/`</A>.
 
-The exhaustive list of \qt5 components used in demos is:
-`Core`, `Gui`, `Help`, `OpenGL`, `Script`, `ScriptTools`, `Svg`, `Widgets`,
-`qcollectiongenerator` (with `sqlite` driver plugin), and `Xml`.
+The exhaustive list of \qt6 components used in demos is:
+`Core`, `Gui`, `Help`, `OpenGL`, `OpenGLWidgets`, `Qml`, `Svg`, `Widgets`,
+`WebSockets`,  `Network`, and `qcollectiongenerator` (with `sqlite` driver plugin).
 
 \subsection thirdpartyEigen Eigen
-<b>Version 3.1 or later</b>
+<b>Version 3.3.7 or later</b>
 
 \eigen is a `C++` template library for linear algebra. \eigen supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
@@ -131,11 +138,11 @@ Overview</a> page. In order to use Eigen in \cgal programs, the
 executables should be linked with the CMake imported target
 `CGAL::Eigen3_support` provided in `CGAL_Eigen3_support.cmake`.
 
-The \eigen web site is <A HREF="http://eigen.tuxfamily.org/index.php?title=Main_Page">`http://eigen.tuxfamily.org`</A>.
+The \eigen web site is <A HREF="https://eigen.tuxfamily.org/index.php?title=Main_Page">`https://eigen.tuxfamily.org`</A>.
 
 \subsection thirdpartyOpenGR OpenGR
 
-\opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 licence.
+\opengr is a set C++ libraries for 3D Global Registration released under the terms of the APACHE V2 license.
 
 \cgal provides wrappers for the Super4PCS algorithm of \opengr in the \ref PkgPointSetProcessing3Ref
 packages. In order to use \opengr in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OpenGR_support` provided in `CGAL_OpenGR_support.cmake`.
@@ -155,7 +162,7 @@ executables should be linked with the CMake imported target
 The \libpointmatcher web site is <A
 HREF="https://github.com/ethz-asl/libpointmatcher">`https://github.com/ethz-asl/libpointmatcher`</A>.
 \attention On Windows, we only support version 1.3.1 of PointMatcher with version 3.3.7 of Eigen, with some changes to the recipe at
-`https://github.com/ethz-asl/libpointmatcher/blob/master/doc/CompilationWindows.md`:`NABO_INCLUDE_DIR` becomes `libnabo_INCLUDE_DIRS`
+`https://github.com/ethz-asl/libpointmatcher/blob/master/doc/Compilation.md`:`NABO_INCLUDE_DIR` becomes `libnabo_INCLUDE_DIRS`
 and `NABO_LIBRARY` becomes `libnabo_LIBRARIES` in the "Build libpointmatcher" section.
 
 
@@ -180,21 +187,8 @@ In the setting of \cgal, this library is
 optional: it is used by some models of the
 \ref PkgAlgebraicKernelD "Algebraic Kernel".
 
-\mpfi can be downloaded from <A HREF="https://mpfi.gforge.inria.fr/">`https://mpfi.gforge.inria.fr/`</A>.
+\mpfi can be downloaded from <A HREF="https://gitlab.inria.fr/mpfi/mpfi">`https://gitlab.inria.fr/mpfi/mpfi`</A>.
 
-\subsection thirdpartyRS3 RS and RS3
-
-\rs (Real Solutions) is devoted to the study of the real roots of
-polynomial systems with a finite number of complex roots (including
-univariate polynomials). In \cgal, \rs is used by one model of the
-\ref PkgAlgebraicKernelD "Algebraic Kernel".
-
-\rs is freely distributable for non-commercial use. You can download it
-from <a href="http://vegas.loria.fr/rs/">`http://vegas.loria.fr/rs/`</a>. Actually, the \rs package also includes \rs3, the
-successor of \rs, which is used in conjunction with it.
-
-The libraries \rs and \rs3 need \mpfi, which can be downloaded from
-<A HREF="https://mpfi.gforge.inria.fr/">`https://mpfi.gforge.inria.fr/`</A>.
 
 \subsection thirdpartyNTL NTL
 <b>Version 5.1 or later</b>
@@ -213,7 +207,7 @@ the handling of \pdb data.
 
 In \cgal, the \esbtl is used in an example of the \ref PkgSkinSurface3 package.
 
-It can be downloaded from <A HREF="http://esbtl.sourceforge.net/">`http://esbtl.sourceforge.net/`</A>.
+It can be downloaded from <A HREF="https://esbtl.sourceforge.net/">`https://esbtl.sourceforge.net/`</A>.
 
 \subsection thirdpartyTBB Intel TBB
 
@@ -238,11 +232,11 @@ in \cgal programs, the executables should be linked with the CMake
 imported target `CGAL::LASLIB_support` provided in
 `CGAL_LASLIB_support.cmake`.
 
-The \laslib web site is <a
-href="https://rapidlasso.com/lastools/">`https://rapidlasso.com/lastools/`</a>. \laslib
-is usually distributed along with LAStools: for simplicity, \cgal
-provides <a href="https://github.com/CGAL/LAStools">a fork with a
-CMake based install procedure</a>.
+\laslib information can be obtained from
+<a href="https://lastools.github.io/">https://lastools.github.io/</a> and
+<a href="https://rapidlasso.de/product-overview/">https://rapidlasso.de/product-overview/</a>.
+\laslib is usually distributed along with LAStools. Current versions of \laslib provide CMake support.
+BUILD_SHARED_LIBS needs to be set to true on windows to create a dynamic linked library.
 
 \subsection thirdpartyOpenCV OpenCV
 
@@ -289,9 +283,11 @@ requires solving complex non-linear least squares problems.
 Visit the official website of the library at <A HREF="http://ceres-solver.org/index.html">`ceres-solver.org`</A>
 for more information.
 
+\attention \ceres requires to be compiled with the exact same version of \eigen that is used for \cgal.
+
 \attention \ceres indicates that `glog` is a recommended dependency. `glog` has `libunwind` as a recommended dependency.
 On some platforms, linking with `libunwind` was responsible for an increase of the runtime of the final application.
-If you experience such an issue, we recommand to compile \ceres without `glog` support.
+If you experience such an issue, we recommend to compile \ceres without `glog` support.
 
 \subsection thirdpartyGLPK GLPK
 
@@ -309,13 +305,13 @@ The \glpk web site is <A HREF="https://www.gnu.org/software/glpk/">`https://www.
 In \cgal, \scip provides an optional linear integer program solver in the \ref PkgPolygonalSurfaceReconstruction package.
 In order to use \scip in \cgal programs, the executables should be linked with the CMake imported target `CGAL::SCIP_support` provided in `CGAL_SCIP_support.cmake`.
 
-The \scip web site is <A HREF="http://scip.zib.de/">`http://scip.zib.de/`</A>.
+The \scip web site is <A HREF="https://www.scipopt.org/">`https://www.scipopt.org/`</A>.
 
 \subsection thirdpartyOSQP OSQP
 
 \osqp (Operator Splitting Quadratic Program) is currently one of the fastest open source solvers for convex Quadratic Programs (QP).
 
-In \cgal, \osqp provides an optional solver for the QP problems often arising in various computational geometry algorithms.
+In \cgal, \osqp provides an optional solver for the quadratic programming used in the \ref PkgShapeRegularization package.
 In order to use \osqp in \cgal programs, the executables should be linked with the CMake imported target `CGAL::OSQP_support` provided in `CGAL_OSQP_support.cmake`.
 
 The \osqp web site is <A HREF="https://osqp.org">`https://osqp.org`</A>.

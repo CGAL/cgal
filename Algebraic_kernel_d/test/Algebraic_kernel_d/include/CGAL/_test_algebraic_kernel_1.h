@@ -109,8 +109,8 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     typedef typename Name::result_type   RT_;                     \
     CGAL_USE_TYPE(AT_);                                           \
     CGAL_USE_TYPE(RT_);                                           \
-    {CGAL_static_assertion(( ::boost::is_same<AT,AT_>::value));}  \
-    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}  \
+    {static_assert(::std::is_same<AT,AT_>::value);}  \
+    {static_assert(::std::is_same<RT,RT_>::value);}  \
   }
 #define CGAL_CHECK_BFUNCTION(Name,AT1,AT2,RT)                           \
   {                                                                     \
@@ -120,9 +120,9 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
     CGAL_USE_TYPE(AT1_);                                                \
     CGAL_USE_TYPE(AT2_);                                                \
     CGAL_USE_TYPE(RT_);                                                 \
-    {CGAL_static_assertion(( ::boost::is_same<AT1,AT1_>::value));}      \
-    {CGAL_static_assertion(( ::boost::is_same<AT2,AT2_>::value));}      \
-    {CGAL_static_assertion(( ::boost::is_same<RT,RT_>::value));}        \
+    {static_assert(::std::is_same<AT1,AT1_>::value);}      \
+    {static_assert(::std::is_same<AT2,AT2_>::value);}      \
+    {static_assert(::std::is_same<RT,RT_>::value);}        \
   }
 
   // TODO: missing check for Construct_algebraic_real_1
@@ -409,9 +409,9 @@ void test_algebraic_kernel_1(const AlgebraicKernel_d_1& ak_1){
 #define CGAL_TEST_ALGEBRAIC_REAL_IO(_f)         \
     alg1=_f;                                    \
     ss<<CGAL::IO::oformat(alg1);                \
-    CGAL_assertion(ss.good());                  \
-    ss>>CGAL::IO::iformat(alg2);                    \
-    CGAL_assertion(!ss.fail());                 \
+    assert(ss.good());                          \
+    ss>>CGAL::IO::iformat(alg2);                \
+    assert(!ss.fail());                         \
     ss.clear();                                 \
     assert(alg1==alg2)
     // Note: after the reading ss>>CGAL::IO::iformat(alg2) the state of ss can

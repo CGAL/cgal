@@ -1,6 +1,8 @@
 //#define POLY
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
+
+
 #ifdef POLY
 #include <CGAL/Polyhedron_3.h>
 #else
@@ -10,8 +12,9 @@
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/Euler_operations.h>
-#include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Weights/uniform_weights.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <cassert>
 #include <vector>
@@ -107,8 +110,9 @@ void test_triangulate_hole_weight(const std::string file_name, bool use_DT, std:
 
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
+    CGAL::Polygon_mesh_processing::Hole_filling::Default_visitor visitor;
     Weight w_algo = CGAL::Polygon_mesh_processing::internal::triangulate_hole_polygon_mesh(
-      poly, *it, back_inserter(patch), get(CGAL::vertex_point, poly), use_DT, Kernel(), false, 0).second;
+      poly, *it, back_inserter(patch), get(CGAL::vertex_point, poly), use_DT, Kernel(), false/*use_cdt*/, false/*skip_cubic*/, visitor, 0).second;
     if(patch.empty()) { continue; }
     Weight w_test = calculate_weight_for_patch(poly, patch.begin(), patch.end());
 
@@ -137,8 +141,10 @@ void test_triangulate_hole(const std::string file_name, bool use_cdt) {
 
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-                                                    CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it,
+                                                    CGAL::parameters::
+                                                      face_output_iterator(std::back_inserter(patch)).
+                                                      use_2d_constrained_delaunay_triangulation(use_cdt));
     if(patch.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
       assert(false);
@@ -162,16 +168,17 @@ void test_triangulate_hole_should_be_no_output(const std::string file_name, bool
 
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch;
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-      CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(false)
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it,
+      CGAL::parameters::use_delaunay_triangulation(false)
+        .face_output_iterator(back_inserter(patch))
         .use_2d_constrained_delaunay_triangulation(use_cdt));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
       assert(false);
     }
 
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-      CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(true));
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it,
+      CGAL::parameters::use_delaunay_triangulation(true).face_output_iterator(back_inserter(patch)));
     if(!patch.empty()) {
       std::cerr << "  Error: patch should be empty" << std::endl;
       assert(false);
@@ -192,8 +199,10 @@ void test_triangulate_and_refine_hole(const std::string file_name, bool use_cdt)
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
     CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly, *it,
-      back_inserter(patch_facets), back_inserter(patch_vertices),
-                                                               CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
+      CGAL::parameters::
+        face_output_iterator(std::back_inserter(patch_facets)).
+        vertex_output_iterator(std::back_inserter(patch_vertices)).
+        use_2d_constrained_delaunay_triangulation(use_cdt));
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
@@ -219,9 +228,11 @@ void test_triangulate_refine_and_fair_hole(const std::string file_name, bool use
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
-    CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly,
-      *it, back_inserter(patch_facets), back_inserter(patch_vertices),
-      CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
+    CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole(poly, *it,
+      CGAL::parameters::
+        face_output_iterator(std::back_inserter(patch_facets)).
+        vertex_output_iterator(std::back_inserter(patch_vertices)).
+        use_2d_constrained_delaunay_triangulation(use_cdt));
 
     if(patch_facets.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
@@ -250,12 +261,14 @@ void test_ouput_iterators_triangulate_hole(const std::string file_name, bool use
   std::vector<Halfedge_handle>::iterator it_2 = border_reps_2.begin();
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++it_2) {
     std::vector<Facet_handle> patch;
-    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch),
-              CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
+    CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it,
+      CGAL::parameters::
+        face_output_iterator(std::back_inserter(patch)).
+        use_2d_constrained_delaunay_triangulation(use_cdt));
 
     std::vector<Facet_handle> patch_2 = patch;
     Facet_handle* output_it =
-      CGAL::Polygon_mesh_processing::triangulate_hole(poly_2, *it_2, &*patch_2.begin());
+      CGAL::Polygon_mesh_processing::triangulate_hole(poly_2, *it_2, CGAL::parameters::face_output_iterator(& *patch_2.begin()));
 
     if(patch.size() != (std::size_t)(output_it - &*patch_2.begin())) {
       std::cerr << "  Error: returned facet output iterator is not valid!" << std::endl;
@@ -281,18 +294,22 @@ void test_ouput_iterators_triangulate_and_refine_hole(const std::string file_nam
   for(std::vector<Halfedge_handle>::iterator it = border_reps.begin(); it != border_reps.end(); ++it, ++it_2) {
     std::vector<Facet_handle> patch_facets;
     std::vector<Vertex_handle> patch_vertices;
-    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly,
-      *it, back_inserter(patch_facets), back_inserter(patch_vertices),
-      CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
+    CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly, *it,
+      CGAL::parameters::
+        face_output_iterator(std::back_inserter(patch_facets)).
+        vertex_output_iterator(std::back_inserter(patch_vertices)).
+        use_2d_constrained_delaunay_triangulation(use_cdt));
     // create enough space to hold outputs
     std::vector<Facet_handle> patch_facets_2 = patch_facets;
     std::vector<Vertex_handle> patch_vertices_2 = patch_vertices;
     if(patch_vertices_2.empty()) { patch_vertices_2.push_back(Vertex_handle()); } //just allocate space for dereferencing
 
     std::pair<Facet_handle*, Vertex_handle*> output_its =
-      CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly_2,
-        *it_2, &*patch_facets_2.begin(), &*patch_vertices_2.begin(),
-        CGAL::parameters::use_2d_constrained_delaunay_triangulation(use_cdt));
+      CGAL::Polygon_mesh_processing::triangulate_and_refine_hole(poly_2, *it_2,
+        CGAL::parameters::
+          face_output_iterator(&*patch_facets_2.begin()).
+          vertex_output_iterator(&*patch_vertices_2.begin()).
+          use_2d_constrained_delaunay_triangulation(use_cdt));
 
     if(patch_facets.size() != (std::size_t) (output_its.first - &*patch_facets_2.begin())) {
       std::cout << "  Error: returned facet output iterator is not valid!" << std::endl;
@@ -326,23 +343,30 @@ void test_triangulate_refine_and_fair_hole_compile() {
   // use all param
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
-  (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-  CGAL::Polygon_mesh_processing::parameters::
-    weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()).
-    sparse_linear_solver(Default_solver()).
-    use_2d_constrained_delaunay_triangulation(false));
+  (poly, border_reps[0],
+   CGAL::parameters::
+     face_output_iterator(back_inserter(patch_facets)).
+     vertex_output_iterator(back_inserter(patch_vertices)).
+     weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()).
+     sparse_linear_solver(Default_solver()).
+     use_2d_constrained_delaunay_triangulation(false));
 
   // default solver
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
-    (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
-    CGAL::Polygon_mesh_processing::parameters::
-      weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()));
+    (poly, border_reps[0],
+     CGAL::parameters::
+       face_output_iterator(back_inserter(patch_facets)).
+       vertex_output_iterator(back_inserter(patch_vertices)).
+       weight_calculator(CGAL::Weights::Uniform_weight<Polyhedron>()));
 
   // default solver and weight
   read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
-    (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices));
+    (poly, border_reps[0],
+     CGAL::parameters::
+       face_output_iterator(back_inserter(patch_facets)).
+       vertex_output_iterator(back_inserter(patch_vertices)));
 }
 
 void generate_elephant_with_hole()

@@ -11,11 +11,13 @@ a type that represents a general polygon and another one that represents
 general polygon with holes. It also requires operations that operate on these
 types.
 
-\cgalRefines `ArrangementDirectionalXMonotoneTraits_2`
+\cgalRefines{ArrangementDirectionalXMonotoneTraits_2}
 
-\cgalHasModel `CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>`
-\cgalHasModel `CGAL::Gps_circle_segment_traits_2<Kernel>`
-\cgalHasModel `CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>}
+\cgalHasModels{CGAL::Gps_circle_segment_traits_2<Kernel>}
+\cgalHasModels{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>}
+\cgalHasModelsEnd
 
 \sa `ArrangementDirectionalXMonotoneTraits_2`
 
@@ -61,30 +63,30 @@ typedef unspecified_type Construct_polygon_2;
 /*!
 a functor that constructs a general polygon with holes from a general polygon and, optionally, a range of holes. It uses the operator
 
-`void operator() (const General_polygon_2& pgn_boundary)` or
+`void operator() (const Polygon_2& pgn_boundary)` or
 
-`void operator() (const General_polygon_2& pgn_boundary, HolesInputIterator h_begin, HolesInputIterator h_end)` parameterized by the `HolesInputIterator` type.
+`void operator() (const Polygon_2& pgn_boundary, HolesInputIterator h_begin, HolesInputIterator h_end)` parameterized by the `HolesInputIterator` type.
 */
-typedef unspecified_type Construct_general_polygon_with_holes_2;
+typedef unspecified_type Construct_polygon_with_holes_2;
 
 /*!
 A functor for constructing the outer boundary of a polygon with holes. It uses the operator
 
-`General_polygon_2 operator()(const General_polygon_with_holes_2& pol_wh)`.
+`Polygon_2 operator()(const Polygon_with_holes_2& pol_wh)`.
 */
 typedef unspecified_type Construct_outer_boundary;
 
 /*!
 A functor for constructing the container of holes of a polygon with holes. It returns the begin/end iterators for the holes It uses the operator
 
-`std::pair<Hole_const_iterator, Hole_const_iterator> operator()(const General_polygon_with_holes_2& pol_wh)`.
+`std::pair<Hole_const_iterator, Hole_const_iterator> operator()(const Polygon_with_holes_2& pol_wh)`.
 */
 typedef unspecified_type Construct_holes;
 
 /*!
 A functor for checking if polygon with holes has no outer boundary. It uses the operator
 
-`bool operator()(const General_polygon_with_holes_2& pol_wh)`.
+`bool operator()(const Polygon_with_holes_2& pol_wh)`.
 */
 typedef unspecified_type Is_unbounded;
 
@@ -126,7 +128,7 @@ Construct_curves_2 construct_curves_2_object();
 /*!
 returns a functor that constructs a polygon with holes.
 */
-Construct_general_polygon_with_holes_2 construct_polygon_with_holes_2_object() const;
+Construct_polygon_with_holes_2 construct_polygon_with_holes_2_object() const;
 
 /*!
 returns a functor that obtains the outer boundary of a polygon with holes.
@@ -141,9 +143,8 @@ Construct_holes construct_holes_object() const;
 /*!
 returns a functor that determines if the polygon with holes is unbounded
 */
-Is_unbounded construct_is_unbounded_object();
+Is_unbounded is_unbounded_object();
 
 /// @}
 
 }; /* end GeneralPolygonSetTraits_2 */
-

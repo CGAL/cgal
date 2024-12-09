@@ -12,8 +12,9 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <fstream>
 #include <iostream>
+#include <string>
+#include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
 typedef K::Point_3                                            Point_3;

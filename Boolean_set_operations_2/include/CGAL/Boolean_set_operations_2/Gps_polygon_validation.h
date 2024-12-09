@@ -631,7 +631,7 @@ bool are_holes_and_boundary_pairwise_disjoint
   typedef std::pair<Curve_const_iterator, Curve_const_iterator>
                                                         Cci_pair;
   typedef typename Traits_2::Construct_curves_2         Construct_curves_2;
-  typedef typename Traits_2::Construct_general_polygon_with_holes_2
+  typedef typename Traits_2::Construct_polygon_with_holes_2
     Construct_polygon_with_holes_2;
 
   typedef Gps_polygon_validation_visitor<Traits_2>      Visitor;
@@ -644,7 +644,7 @@ bool are_holes_and_boundary_pairwise_disjoint
    *
    * Use sweep to find intersections on the interior of curves (not on vertices)
    * and overlapping edges which are not allowed (note that 0/1 dimension
-   * intersections are not detectes by do_intersect() which only returns the
+   * intersections are not detects by do_intersect() which only returns the
    * 2D intersection polygon if exists)
    * Note that using this sweep alone allows for a hole and an edge to share
    * a vertex and intersect (like illegal input pgn_w_overlap_hole.dat in
@@ -686,19 +686,19 @@ bool are_holes_and_boundary_pairwise_disjoint
     Polygon_2 hole(*hoit);
     hole.reverse_orientation();
     /* gps.join() and gps.insert()requires that the polyon insrted is valid,
-     * and therfore hole orientation must be reversed
+     * and therefore the hole orientation must be reversed
      */
     bool intersect = gps.do_intersect(hole);
     if (intersect) return false;
     else {
-      /* to use gps.insert(hole) it is required that the set coponents and the
+      /* to use gps.insert(hole) it is required that the set components and the
        * new holes  do not intersect.
        * because the sweep detects shared edges and the do_intersect query
        * detects 2D intersections we can safely use the insert(pwh) function
        * whose performance is better than the join(pgn)
        */
       Polygon_with_holes_2 empty_pwh = construct_pwh_functor(hole);
-      // traits.Construct_general_polygon_with_holes_2 (hole);
+      // traits.Construct_polygon_with_holes_2 (hole);
       // Polygon_with_holes_2 empty_pwh(hole);
       gps.insert(empty_pwh);
       num_of_holes++;
@@ -760,7 +760,7 @@ bool are_holes_and_boundary_pairwise_disjoint
  * 2 - The PWH is relatively simple polygon (holes are simple...)
  * 3 - Has it's boundary oriented counterclockwise and the holes oriented
  *     clockwise
- * 4 - All the segments (boundry and holes) do not cross or intersect in their
+ * 4 - All the segments (boundary and holes) do not cross or intersect in their
  *     relative interior
  * 5 - The holes are on the interior of the boundary polygon if the boundary
  *     is not empty

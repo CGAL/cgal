@@ -49,7 +49,7 @@ int main() {
   assert(N_data_points==N_query_points);
   N=N_data_points;
 
-  std::cout << "nearest neighbour number = " << NN_number << std::endl;
+  std::cout << "nearest neighbor number = " << NN_number << std::endl;
   std::cout << "approximation factor = " << Eps << std::endl;
   std::cout << "dimension = " << N << std::endl;
   std::cout << "query point number = " << query_point_number << std::endl;

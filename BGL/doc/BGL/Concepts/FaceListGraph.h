@@ -14,9 +14,11 @@ face iterator must be the same as the face descriptor of the graph.
 
 \cgalAssociatedTypesEnd
 
-\cgalRefines `FaceGraph`
+\cgalRefines{FaceGraph}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
+\cgalHasModelsEnd
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */

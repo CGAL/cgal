@@ -16,7 +16,6 @@
 
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Linear_cell_complex_for_combinatorial_map.h>
-#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Dynamic_property_map.h>
 
 
@@ -42,7 +41,6 @@ namespace CGAL {
 
 template<typename LCC, typename FT>
 struct Wrap_squared_lcc
-  : boost::put_get_helper< double, Wrap_squared_lcc<LCC, FT> >
 {
   typedef typename boost::graph_traits<LCC>::edge_descriptor Handle;
   typedef FT value_type;
@@ -54,12 +52,19 @@ struct Wrap_squared_lcc
   {}
 
   template<typename E>
-  FT operator[](const E& e) const
+  value_type operator[](const E& e) const
   {
     return approximate_sqrt(CGAL::squared_distance
                             (m_lcc.point(e.first_halfedge()),
                              m_lcc.point(e.second_halfedge())));
   }
+
+  friend inline
+  value_type get(const Wrap_squared_lcc& m, const key_type& k)
+  {
+    return m[k];
+  }
+
 private:
   const LCC& m_lcc;
 };
@@ -438,11 +443,11 @@ template <unsigned int d_, unsigned int ambient_dim,        \
 typename boost::property_map< \
   Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>, \
   TAG<T> >::const_type \
-get(TAG<T>, const Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>&) \
+get(TAG<T>, const Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>&, const T& default_value = T()) \
 { \
   typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_> LCC;\
   typedef typename boost::graph_traits<LCC>::DESC DESC; \
-  return internal::Dynamic_property_map<DESC,T>();\
+  return internal::Dynamic_property_map<DESC,T>(default_value);\
 } \
 \
 template <unsigned int d_, unsigned int ambient_dim,        \
@@ -456,11 +461,11 @@ template <unsigned int d_, unsigned int ambient_dim,        \
 typename boost::property_map< \
   Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>, \
   TAG<T> >::type \
-get(TAG<T>, Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>&) \
+get(TAG<T>, Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_>&, const T& default_value = T()) \
 { \
   typedef Linear_cell_complex_for_combinatorial_map<d_, ambient_dim, Traits_, Items_, Alloc_, CMap , Storage_> LCC;\
   typedef typename boost::graph_traits<LCC>::DESC DESC; \
-  return internal::Dynamic_property_map<DESC,T>();\
+  return internal::Dynamic_property_map<DESC,T>(default_value);\
 } \
 }
 

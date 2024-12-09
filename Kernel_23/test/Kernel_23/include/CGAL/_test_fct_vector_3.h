@@ -27,7 +27,7 @@ _test_fct_vector_3(const R& )
  typedef typename  R::RT    RT;
  typedef typename  R::FT    FT;
 
- typedef typename R::Non_zero_dimension_3 Non_zero_dimension_3;
+ typedef typename R::Non_zero_coordinate_index_3 Non_zero_coordinate_index_3;
 
  RT  n0(  0 );
  RT  n1( 12 );
@@ -57,7 +57,7 @@ _test_fct_vector_3(const R& )
  CGAL::Vector_3<R>  v11(-n6, n11,-n12, n8);// ( 6, 8, -18)
  CGAL::Vector_3<R>  v12(n1, n2, -n3, n4);  // ( 6,-2, -3)
 
- Non_zero_dimension_3 nzd;
+ Non_zero_coordinate_index_3 nzd;
  assert( nzd(v0) == -1 );
  assert( nzd(v001) == 2 );
  assert( nzd(v011) == 1 );
@@ -101,6 +101,7 @@ _test_fct_vector_3(const R& )
 
  std::cout << '.';
 
+ assert( v1.squared_length() == CGAL::squared_length(v1) );
  assert( v1.squared_length() == FT(49) );
  assert( v1 * v2 == FT(66) );
  assert( v1 * v0 == FT(0) );

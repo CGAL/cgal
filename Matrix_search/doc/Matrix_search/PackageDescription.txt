@@ -23,24 +23,17 @@
 This chapter describes concepts, classes, and functions for
 monotone and sorted matrix search.
 
-\cgalCRPSection{Assertions}
-
-The optimization code uses infix `OPTIMISATION` in the assertions,
-e.g. defining the compiler flag
-`CGAL_OPTIMISATION_NO_PRECONDITIONS` switches precondition
-checking off, cf. Section \ref secchecks "Checks" in the chapter on STL extensions.
 
 \cgalClassifedRefPages
 
-- `CGAL::monotone_matrix_search`
+- `CGAL::monotone_matrix_search()`
 - `CGAL::Dynamic_matrix<M>`
 - `MonotoneMatrixSearchTraits`
 - `BasicMatrix`
 
-- `CGAL::sorted_matrix_search`
+- `CGAL::sorted_matrix_search()`
 - `CGAL::Sorted_matrix_search_traits_adaptor<F,M>`
 - `SortedMatrixSearchTraits`
 
 
 */
-

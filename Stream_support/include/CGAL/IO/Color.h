@@ -19,11 +19,12 @@
 
 #include <CGAL/config.h>
 #include <CGAL/array.h>
+
+#include <boost/functional/hash.hpp>
+
 #include <algorithm>
 #include <cstdlib>
 #include <cmath>
-
-
 
 namespace CGAL {
 
@@ -40,8 +41,6 @@ namespace IO {
   The alpha parameter (representing transparency) is often ignored and
   left to its default value (255 = no transparency), which is why we
   often refer to the <I>rgb-value</I> of the color.
-
-  \sa `CGAL::Geomview_stream`
 
 */
 
@@ -134,6 +133,11 @@ public:
     return !( (*this) == c);
   }
 
+  bool operator<(const Color& c) const
+  {
+      return m_data < c.to_rgba();
+  }
+
   unsigned char r() const { return red(); }
   unsigned char g() const { return green(); }
   unsigned char b() const { return blue(); }
@@ -147,13 +151,13 @@ public:
 
   /*!
     returns the \f$i^{th}\f$ component of the rgb color (the
-    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is blue, etc.).
+    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is green, the \f$2^{nd}\f$ is blue and the \f$3^{rd}\f$ is alpha).
   */
   unsigned char operator[] (std::size_t i) const { return m_data[i]; }
 
   /*!
-    returns a reference on the \f$i^{th}\f$ component of `c` (the
-    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is blue, etc.).
+    returns a reference on the \f$i^{th}\f$ component of the rgb color (the
+    \f$0^{th}\f$ is red, the \f$1^{st}\f$ is green, the \f$2^{nd}\f$ is blue and the \f$3^{rd}\f$ is alpha).
   */
   unsigned char& operator[] (std::size_t i)  { return m_data[i]; }
 
@@ -208,7 +212,7 @@ public:
   /*!
     replaces the rgb values of the colors by the one given as parameters.
   */
-  void set_rgb (unsigned char red,
+  Color& set_rgb (unsigned char red,
                 unsigned char green,
                 unsigned char blue,
                 unsigned char alpha = 255)
@@ -217,13 +221,15 @@ public:
     m_data[1] = green;
     m_data[2] = blue;
     m_data[3] = alpha;
+
+    return *this;
   }
 
   /*!
     replaces the rgb values of the colors by the conversion to rgb of
     the hsv values given as parameters.
   */
-  void set_hsv (double hue,
+  Color& set_hsv (double hue,
                 double saturation,
                 double value,
                 unsigned char alpha = 255)
@@ -277,10 +283,11 @@ public:
     m_data[1] = (unsigned char)g;
     m_data[2] = (unsigned char)b;
     m_data[3] = alpha;
+
+    return *this;
   }
 
   /// @}
-
 };
 
 
@@ -368,6 +375,22 @@ using IO::white;
 using IO::yellow;
 #endif
 
-} //namespace CGAL
+} // namespace CGAL
+
+namespace std {
+
+template <>
+struct hash<CGAL::IO::Color>
+{
+  std::size_t operator()(const CGAL::IO::Color& c) const
+  {
+    std::size_t result = boost::hash_value(c[0]);
+    for(std::size_t i=1; i<4; ++i)
+      boost::hash_combine(result, c[i]);
+    return result;
+  }
+};
+
+} // namespace std
 
 #endif  // CGAL_COLOR_H

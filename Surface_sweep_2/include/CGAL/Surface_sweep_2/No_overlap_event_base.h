@@ -19,7 +19,7 @@
 
 /*! \file
  *
- * Defintion of the No_overlap_event_base class.
+ * Definition of the No_overlap_event_base class.
  */
 
 #include <list>
@@ -84,7 +84,7 @@ public:
 /*! \class No_overlap_event_base
  *
  * A class associated with an event in a surface-sweep algorithm.
- * An intersection point in the sweep line algorithm is refered to as an event.
+ * An intersection point in the sweep line algorithm is referred to as an event.
  * This class contains the information that is associated with any given
  * event point. This information contains the following:
  * - the actual point
@@ -485,7 +485,7 @@ public:
   }
 
   /*! Check if the two curves are negihbors to the left of the event. */
-  bool are_left_neighbours(Subcurve* c1, Subcurve* c2)
+  bool are_left_neighbors(Subcurve* c1, Subcurve* c2)
   {
     Subcurve_iterator left_iter = m_left_curves.begin();
     for (; left_iter != m_left_curves.end(); ++left_iter) {
@@ -506,6 +506,10 @@ public:
 
     return false;
   }
+  /*! \copydoc are_left_neighbors
+   *  \deprecated please use #are_left_neighbors */
+  CGAL_DEPRECATED bool are_left_neighbours(Subcurve* c1, Subcurve* c2)
+  { return are_left_neighbors(c1, c2); }
 
 #ifdef CGAL_SS_VERBOSE
   void Print() const;

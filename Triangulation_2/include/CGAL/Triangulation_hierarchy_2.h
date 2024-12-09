@@ -21,12 +21,11 @@
 #include <CGAL/basic.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Bare_point.h>
 #include <CGAL/Triangulation_hierarchy_vertex_base_2.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 
 #include <boost/mpl/identity.hpp>
-#include <boost/mpl/if.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/random/linear_congruential.hpp>
 #include <boost/random/geometric_distribution.hpp>
@@ -252,7 +251,7 @@ private:
   Vertex_handle
   nearest_vertex_dispatch(const Point&, Face_handle, Tag_true) const
   {
-    CGAL_triangulation_assertion(false);
+    CGAL_assertion(false);
     return Vertex_handle();
   }
 
@@ -267,7 +266,7 @@ private:
 
   // helping function to copy_triangulation
   // the version to be used with Tag_true is templated to avoid
-  // systematique instanciation
+  // systematic instantiation
   template <class Tag>
   void add_hidden_vertices_into_map(Tag,
                                     std::map<Vertex_handle,Vertex_handle >& V)
@@ -309,7 +308,7 @@ Triangulation_hierarchy_2(const Triangulation_hierarchy_2<Tr_> &tr)
 }
 
 
-//Assignement
+//Assignment
 template <class Tr_>
 Triangulation_hierarchy_2<Tr_> &
 Triangulation_hierarchy_2<Tr_>::
@@ -582,7 +581,7 @@ template <class Tr_>
 typename Triangulation_hierarchy_2<Tr_>::Vertex_handle
 Triangulation_hierarchy_2<Tr_>::
 move(Vertex_handle v, const Point &p) {
-  CGAL_triangulation_precondition(!is_infinite(v));
+  CGAL_precondition(!is_infinite(v));
   Vertex_handle w = move_if_no_collision(v,p);
   if(w != v) {
     remove(v);

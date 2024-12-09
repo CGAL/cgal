@@ -1,6 +1,7 @@
 #include <CGAL/HalfedgeDS_items_2.h>
 #include <CGAL/HalfedgeDS_default.h>
 #include <CGAL/IO/Color.h>
+#include <cassert>
 
 // A face type with a color member variable.
 template <class Refs>
@@ -30,6 +31,6 @@ int main() {
     HDS hds;
     Face_handle f = hds.faces_push_back( Face( CGAL::IO::red()));
     f->color = CGAL::IO::blue();
-    CGAL_assertion( f->color == CGAL::IO::blue());
+    assert( f->color == CGAL::IO::blue());
     return 0;
 }

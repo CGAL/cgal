@@ -17,16 +17,15 @@
 #include <CGAL/IO/helpers.h>
 
 #include <CGAL/Bbox_3.h>
-#include <CGAL/boost/graph/Named_function_parameters.h>
+#include <CGAL/Named_function_parameters.h>
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
-#include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/assertions.h>
 
 #include <boost/cstdint.hpp>
 #include <boost/version.hpp>
-#include <boost/utility/enable_if.hpp>
 
 #ifdef BOOST_MSVC
 #  pragma warning(push)
@@ -38,7 +37,7 @@
 #  pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
-#define USE_AS_DLL
+#define USE_AS_DLL 1
 #include <lasdefinitions.hpp>
 #include <lasreader_las.hpp>
 #include <laswriter_las.hpp>
@@ -57,12 +56,7 @@
 #include <sstream>
 #include <string>
 #include <tuple>
-
-#ifdef DOXYGEN_RUNNING
-#define CGAL_BGL_NP_TEMPLATE_PARAMETERS NamedParameters
-#define CGAL_BGL_NP_CLASS NamedParameters
-#define CGAL_DEPRECATED
-#endif
+#include <type_traits>
 
 namespace CGAL {
 
@@ -90,41 +84,41 @@ make_las_point_writer(PointMap point_map)
 namespace internal {
 namespace LAS {
 
-  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::Intensity&)
+  inline void output_value(LASpoint& r, const unsigned short& v, const LAS_property::Intensity&)
   { r.set_intensity(v); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Return_number&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Return_number&)
   { r.set_return_number(v); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Number_of_returns&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Number_of_returns&)
   { r.set_number_of_returns(v); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Scan_direction_flag&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Scan_direction_flag&)
   { r.set_scan_direction_flag(v); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Edge_of_flight_line&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Edge_of_flight_line&)
   { r.set_edge_of_flight_line(v); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Classification&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Classification&)
   { r.set_classification(v); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Synthetic_flag&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Synthetic_flag&)
   { r.set_synthetic_flag(v); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Keypoint_flag&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Keypoint_flag&)
   { r.set_keypoint_flag(v); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::Withheld_flag&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::Withheld_flag&)
   { r.set_withheld_flag(v); }
-  inline void output_value(LASpoint& r, const float& v, LAS_property::Scan_angle&)
+  inline void output_value(LASpoint& r, const float& v, const LAS_property::Scan_angle&)
   { r.set_scan_angle_rank(char(v)); }
-  inline void output_value(LASpoint& r, const unsigned char& v, LAS_property::User_data&)
+  inline void output_value(LASpoint& r, const unsigned char& v, const LAS_property::User_data&)
   { r.set_user_data(v); }
-  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::Point_source_ID&)
+  inline void output_value(LASpoint& r, const unsigned short& v, const LAS_property::Point_source_ID&)
   { r.set_point_source_ID(v); }
-  inline void output_value(LASpoint& r, const unsigned int& v, LAS_property::Deleted_flag&)
+  inline void output_value(LASpoint& r, const unsigned int& v, const LAS_property::Deleted_flag&)
   { r.set_deleted_flag(v); }
-  inline void output_value(LASpoint& r, const double& v, LAS_property::GPS_time&)
+  inline void output_value(LASpoint& r, const double& v, const LAS_property::GPS_time&)
   { r.set_gps_time(v); }
-  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::R&)
+  inline void output_value(LASpoint& r, const unsigned short& v, const LAS_property::R&)
   { r.set_R(v); }
-  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::G&)
+  inline void output_value(LASpoint& r, const unsigned short& v, const LAS_property::G&)
   { r.set_G(v); }
-  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::B&)
+  inline void output_value(LASpoint& r, const unsigned short& v, const LAS_property::B&)
   { r.set_B(v); }
-  inline void output_value(LASpoint& r, const unsigned short& v, LAS_property::I&)
+  inline void output_value(LASpoint& r, const unsigned short& v, const LAS_property::I&)
   { r.set_I(v); }
 
   template <typename ForwardIterator>
@@ -138,6 +132,21 @@ namespace LAS {
                          std::pair<PropertyMap, T>&& current)
   {
     output_value (point, get(current.first, *it), current.second);
+  }
+
+  template<typename Value, typename Tuple, std::size_t... Is>
+  void output_tuple(LASpoint& point, const Value& v, const Tuple& t, std::index_sequence<Is...>) {
+    (output_value(point, std::get<Is>(v), std::get<Is>(t)), ...);
+  }
+
+  template <typename ForwardIterator,
+            typename PropertyMap,
+            typename ... T>
+  void output_properties(LASpoint& point,
+                         ForwardIterator it,
+                         std::tuple<PropertyMap, T ...>&& current)
+  {
+    output_tuple(point, get(std::get<0>(current), *it), std::tuple<T ...>(), std::index_sequence_for<T ...>{});
   }
 
   template <typename ForwardIterator,
@@ -156,6 +165,22 @@ namespace LAS {
                        std::forward<PropertyHandler>(properties)...);
   }
 
+  template <typename ForwardIterator,
+            typename PropertyMap,
+            typename ... T,
+            typename NextPropertyHandler,
+            typename ... PropertyHandler>
+  void output_properties(LASpoint& point,
+                         ForwardIterator it,
+                         std::tuple<PropertyMap, T ...>&& current,
+                         NextPropertyHandler&& next,
+                         PropertyHandler&& ... properties)
+  {
+    output_tuple(point, get(std::get<0>(current), *it), std::tuple<T ...>(), std::index_sequence_for<T ...>{});
+    output_properties(point, it, std::forward<NextPropertyHandler>(next),
+                      std::forward<PropertyHandler>(properties)...);
+  }
+
 } // namespace LAS
 } // namespace internal
 
@@ -170,7 +195,7 @@ namespace LAS {
    handlers. A `PropertyHandle` is a `std::pair<PropertyMap,
    LAS_property::Tag >` used to write a scalar value
    `LAS_property::Tag::type` as a %LAS property (for example,
-   writing an `int` vairable as an `int` %LAS property). An exception
+   writing an `int` variable as an `int` %LAS property). An exception
    is used for points that are written using a `std::tuple` object.
 
    See documentation of `read_LAS_with_properties()` for the
@@ -199,7 +224,7 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
                                LAS_property::Z> point_property, ///< property handler for points
                                PropertyHandler&& ... properties) ///< parameter pack of property handlers
 {
-  CGAL_point_set_processing_precondition(points.begin() != points.end());
+  CGAL_precondition(points.begin() != points.end());
 
   if(!os)
   {
@@ -283,19 +308,19 @@ bool write_LAS_with_properties(std::ostream& os, ///< output stream.
    \sa \ref IOStreamLAS
    \sa `write_LAS_with_properties()`
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(std::ostream& os,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  typedef typename CGAL::GetPointMap<PointRange, CGAL_BGL_NP_CLASS>::type PointMap;
+  typedef typename CGAL::GetPointMap<PointRange, CGAL_NP_CLASS>::type PointMap;
   PointMap point_map = choose_parameter<PointMap>(get_parameter(np, internal_np::point_map));
 
   if(!os)
@@ -310,7 +335,7 @@ bool write_LAS(std::ostream& os,
 /**
    \ingroup PkgPointSetProcessing3IOLas
 
-   Saves the range of `points` (positions only), using the \ref IOStreamLAS.
+   writes the range of `points` (positions only), using the \ref IOStreamLAS.
 
    \tparam PointRange is a model of `ConstRange`. The value type of
    its iterator is the key type of the named parameter `point_map`.
@@ -338,12 +363,12 @@ bool write_LAS(std::ostream& os,
 
    \sa `write_LAS_with_properties()`
 */
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
 bool write_LAS(const std::string& filename,
                const PointRange& points,
-               const CGAL_BGL_NP_CLASS& np
+               const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-               , typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr
+               , std::enable_if_t<internal::is_Range<PointRange>::value>* = nullptr
 #endif
                )
 {
@@ -351,27 +376,6 @@ bool write_LAS(const std::string& filename,
   CGAL::IO::set_mode(os, CGAL::IO::BINARY);
   return write_LAS(os, points, np);
 }
-
-/// \cond SKIP_IN_MANUAL
-
-// variant with default NP
-template <typename PointRange>
-bool write_LAS(std::ostream& os, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  return write_LAS(os, points, CGAL::Point_set_processing_3::parameters::all_default(points));
-}
-
-template <typename PointRange>
-bool write_LAS(const std::string& filename, const PointRange& points,
-               typename boost::enable_if<internal::is_Range<PointRange> >::type* = nullptr)
-{
-  std::ofstream os(filename, std::ios::binary);
-  CGAL::IO::set_mode(os, CGAL::IO::BINARY);
-  return write_LAS(os, points, parameters::all_default());
-}
-
-/// \endcond
 
 } // namespace IO
 
@@ -405,11 +409,6 @@ bool write_las_points(std::ostream& os, ///< output stream.
 
 /// \endcond
 
-/**
-  \ingroup PkgPointSetProcessing3IODeprecated
-
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_LAS_with_properties()` should be used instead.
-*/
 template <typename PointRange,
           typename PointMap,
           typename ... PropertyHandler>
@@ -424,13 +423,9 @@ CGAL_DEPRECATED bool write_las_points_with_properties(std::ostream& os,
   return IO::write_LAS_with_properties(os, points, point_property, std::forward<PropertyHandler>(properties)...);
 }
 
-/**
-   \ingroup PkgPointSetProcessing3IODeprecated
 
-  \deprecated This function is deprecated since \cgal 5.3, `CGAL::IO::write_LAS()` should be used instead.
-*/
-template <typename PointRange, typename CGAL_BGL_NP_TEMPLATE_PARAMETERS>
-bool write_las_points(std::ostream& os, const PointRange& points, const CGAL_BGL_NP_CLASS& np)
+template <typename PointRange, typename CGAL_NP_TEMPLATE_PARAMETERS>
+bool write_las_points(std::ostream& os, const PointRange& points, const CGAL_NP_CLASS& np = parameters::default_values())
 {
   return IO::write_LAS(os, points, np);
 }

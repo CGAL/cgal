@@ -53,19 +53,19 @@ print_testresult()
       # 'QMessageBox::warning'.
       if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i -E -q '(^|[^a-zA-Z_,:-])warning'
       then
-        if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i -E '(^|[^a-zA-Z_,:-])warning' | grep -i -q "include[/\]CGAL\|cmake"
+        if grep -v -F 'CMake Warning at /usr/share/cmake/Modules/FindBoost' CompilerOutput_$1 ProgramOutput.*.$1 | grep -i -E '(^|[^a-zA-Z_,:-])warning' | grep -i -q "include[/\]CGAL\|cmake\|CGAL warning"
         then
           RESULT="w"
         else
           RESULT="t"
         fi
       else
-  if grep -E -q 'NOTICE: .*(need|require|incompatible).*and.*will not be' CompilerOutput_$1
-  then
-    RESULT="r"
+        if grep -E -q 'NOTICE: .*(need|require|incompatible|not found).*will not be' CompilerOutput_$1
+        then
+          RESULT="r"
         else
           RESULT="y"
-  fi
+        fi
       fi
     fi
     TIMING=`awk '/^      # Running time: / {print $4}' < ErrorOutput_$1`

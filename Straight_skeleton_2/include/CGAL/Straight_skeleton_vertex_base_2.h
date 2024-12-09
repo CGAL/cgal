@@ -15,6 +15,8 @@
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
+#include <CGAL/Trisegment_2.h>
+
 #include <CGAL/circulator.h>
 #include <CGAL/Origin.h>
 #include <CGAL/use.h>
@@ -155,6 +157,12 @@ public:
 
   typedef CGAL_SS_i::Triedge<Halfedge_handle> Triedge ;
 
+  typedef typename CGAL::Kernel_traits<P>::type K ;
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2 ;
+  typedef CGAL_SS_i::Segment_2_with_ID<K> Segment_2_with_ID ; // for BOOST_MPL_HAS_XXX_TRAIT_DEF
+  typedef CGAL::Trisegment_2<K, Segment_2_with_ID> Trisegment_2 ;
+  typedef CGAL::Trisegment_2_ptr<Trisegment_2> Trisegment_2_ptr;
+
 public:
 
   Straight_skeleton_vertex_base_base_2() : mID(-1), mTime(0.0), mFlags(0) {}
@@ -197,8 +205,6 @@ public:
 
   bool has_infinite_time() const { return ( mFlags & HasInfiniteTimeBit ) == HasInfiniteTimeBit ; }
 
-  bool has_null_point() const { return has_infinite_time(); }
-
   bool is_split() const { return ( mFlags & IsSplitBit ) == IsSplitBit ; }
 
   Halfedge_const_handle primary_bisector() const { return halfedge()->next(); }
@@ -225,9 +231,6 @@ public:
     return Defining_contour_halfedges_circulator(halfedge());
   }
 
-
-  std::size_t degree() const { return CGAL::circulator_size(halfedge_around_vertex_begin()); }
-
   bool is_skeleton() const { return  halfedge()->is_bisector() ; }
   bool is_contour () const { return !halfedge()->is_bisector() ; }
 
@@ -238,10 +241,18 @@ public:
 
   void set_halfedge( Halfedge_handle aHE)  { mHE = aHE; }
 
-  Triedge const& event_triedge() const { return mEventTriedge ; }
-
-  void set_event_triedge( Triedge const& aTriedge ) { mEventTriedge = aTriedge ; }
-
+  // Store a pointer to the trisegment, which also includes its potential children.
+  // This is done to keep in memory the history of each node as to be able to
+  // recompute its geometric position and time during offset polygon construction.
+  //
+  // Note: the trisegment stored was constructed in the straight skeleton builder.
+  // When FinishUp() is called, multinodes are processed but as nodes are merged,
+  // the trisegments of these nodes are *not* updated. Thus, the combinatorial trees
+  // of these trisegments will become incoherent with the straight skeleton, but
+  // that's OK because it is still valid to compute purely geometrical information
+  // such as the node position and its time, which is all that is required for offset tracing.
+  Trisegment_2_ptr const& trisegment() const { return mTrisegment ; }
+  void set_trisegment( Trisegment_2_ptr const& aTrisegment ) { mTrisegment = aTrisegment ; }
 
 public :
 
@@ -250,12 +261,12 @@ public :
 
 private:
 
-  int             mID ;
-  Halfedge_handle mHE;
-  Triedge         mEventTriedge ;
-  Point_2         mP;
-  FT              mTime ;
-  unsigned char   mFlags ;
+  int              mID ;
+  Halfedge_handle  mHE ;
+  Point_2          mP;
+  FT               mTime ;
+  unsigned char    mFlags ;
+  Trisegment_2_ptr mTrisegment ;
 };
 
 template < class Refs, class P, class N >
@@ -277,7 +288,8 @@ public:
 
   typedef Straight_skeleton_vertex_base_base_2<Refs,P,N> Base ;
 
-  typedef typename Base::Triedge Triedge ;
+  typedef typename Base::Triedge               Triedge ;
+  typedef typename Base::Trisegment_2_ptr      Trisegment_2_ptr ;
 
   Straight_skeleton_vertex_base_2() {}
 
@@ -285,18 +297,11 @@ public:
 
   Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP ) : Base(aID,aP) {}
 
-  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit, bool aHasInfiniteTime ) : Base(aID,aP,aTime,aIsSplit,aHasInfiniteTime) {}
-
-private:
-
-  void set_halfedge     ( Halfedge_handle aHE )     { Base::set_halfedge(aHE) ; }
-  void set_event_triedge( Triedge const& aTriedge ) { Base::set_event_triedge( aTriedge); }
-  void reset_id         ( int aID )                 { Base::reset_id(aID) ; }
-
+  Straight_skeleton_vertex_base_2 ( int aID, Point_2 const& aP, FT aTime, bool aIsSplit, bool aHasInfiniteTime )
+    : Base(aID, aP, aTime, aIsSplit, aHasInfiniteTime)
+  {}
 } ;
 
-} // end namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H //
-// EOF //
-

@@ -61,7 +61,7 @@ _test_cls_triangulation_simplex_3(const Triangulation &)
   //########################################################################
   Cls t;
 
-  // Initialise to a 3D triangulation:
+  // initialize to a 3D triangulation:
   t.insert(Point(0,0,0));
   t.insert(Point(1,0,0));
   t.insert(Point(0,1,0));

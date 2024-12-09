@@ -16,7 +16,6 @@
 #include <CGAL/license/Matrix_search.h>
 
 
-#include <CGAL/Optimisation/assertions.h>
 #include <CGAL/circulator_bases.h>
 #include <iterator>
 

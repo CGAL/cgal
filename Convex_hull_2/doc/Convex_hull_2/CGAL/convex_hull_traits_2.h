@@ -7,7 +7,7 @@ The class `Convex_hull_traits_2` serves as a traits class for all the two-dimens
 convex hull and extreme point calculation function. This class corresponds
 to the default traits class for these functions.
 
-\cgalModels `ConvexHullTraits_2`
+\cgalModels{ConvexHullTraits_2}
 
 \sa `CGAL::Convex_hull_constructive_traits_2<R>`
 \sa `CGAL::Convex_hull_traits_adapter_2<R,P>`
@@ -41,8 +41,8 @@ typedef R::Less_yx Less_yx_2;
 /*!
 
 */
-typedef R::Less_signed_distance_to_line_2
-Less_signed_distance_to_line_2;
+typedef R::Compare_signed_distance_to_line_2
+Compare_signed_distance_to_line_2;
 
 /*!
 
@@ -92,8 +92,8 @@ Less_yx_2 less_yx_2_object();
 /*!
 
 */
-Less_signed_distance_to_line_2
-less_signed_distance_to_line_2_object();
+Compare_signed_distance_to_line_2
+compare_signed_distance_to_line_2_object();
 
 /*!
 

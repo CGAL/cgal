@@ -19,7 +19,7 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/Triangulation_utils_2.h>
-#include <CGAL/triangulation_assertions.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -92,7 +92,7 @@ public:
   bool  operator==(const Face_handle& fh) const { return fh == pos; }
   bool  operator!=(const Face_handle& fh) const { return fh != pos; }
 
-  bool  operator==(std::nullptr_t  CGAL_triangulation_assertion_code(n)) const;
+  bool  operator==(std::nullptr_t  CGAL_assertion_code(n)) const;
   bool  operator!=(std::nullptr_t n) const;
   bool  is_empty() const;
   bool  collinear_outside() const;
@@ -139,7 +139,7 @@ Triangulation_line_face_circulator_2(const Face_handle& face,
     : pos(face), _tr(t), s(state), i(index),
       p(pp), q(qq)
 {
-  CGAL_triangulation_precondition(! t->xy_equal(p, q));
+  CGAL_precondition(! t->xy_equal(p, q));
 }
 
 
@@ -153,7 +153,7 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
   // dir
   // or null iterator
 {
-  CGAL_triangulation_precondition((!_tr->is_infinite(v)) &&
+  CGAL_precondition((!_tr->is_infinite(v)) &&
                                (_tr->dimension() == 2)  &&
                                (! _tr->xy_equal(v->point(),dir)));
   p=v->point();
@@ -188,7 +188,7 @@ Triangulation_line_face_circulator_2(Vertex_handle v,
   // reset vt and conclude.  vt is still finite and [pqt] still LEFT_TURN
   ic = fc->index(v);
   vt= fc->vertex(cw(ic));
-  CGAL_triangulation_assertion (_tr->orientation(p,q, vt->point())==
+  CGAL_assertion (_tr->orientation(p,q, vt->point())==
                                 LEFT_TURN );
   if (_tr->is_infinite(vr)) {
     --fc;
@@ -318,7 +318,7 @@ Triangulation_line_face_circulator_2(const Point& pp,
   // incident to p
   // if ff is infinite, the walk begin at the first finite face traversed
 {
-  CGAL_triangulation_precondition(_tr->is_infinite(ff) ||
+  CGAL_precondition(_tr->is_infinite(ff) ||
                               _tr->oriented_side(ff,p) != ON_NEGATIVE_SIDE);
   int j;
   if(_tr->is_infinite(pos)){
@@ -416,7 +416,7 @@ void
 Triangulation_line_face_circulator_2<Triangulation>::
 increment()
 {
-  CGAL_triangulation_precondition(pos != Face_handle());
+  CGAL_precondition(pos != Face_handle());
   if(s == vertex_vertex || s == edge_vertex) {
     Orientation o;
     do{
@@ -469,7 +469,7 @@ void
 Triangulation_line_face_circulator_2<Triangulation>::
 decrement()
 {
-  CGAL_triangulation_precondition(pos != Face_handle());
+  CGAL_precondition(pos != Face_handle());
   if(s == vertex_vertex || s == vertex_edge) {
     if(s == vertex_vertex){
       i = cw(i);
@@ -538,7 +538,7 @@ locate(const Point& t, Locate_type &lt,  int &li)
   case vertex_vertex:
     {
       if(_tr->is_infinite(pos->vertex(i))){
-        CGAL_triangulation_assertion(
+        CGAL_assertion(
                _tr->orientation( pos->vertex(cw(i))->point(),
                                  pos->vertex(ccw(i))->point(),
                                  t) != LEFT_TURN);
@@ -589,7 +589,7 @@ Triangulation_line_face_circulator_2<Triangulation>&
 Triangulation_line_face_circulator_2<Triangulation>::
 operator++()
 {
-  CGAL_triangulation_precondition( pos != Face_handle()) ;
+  CGAL_precondition( pos != Face_handle()) ;
   increment();
   return *this;
 }
@@ -600,7 +600,7 @@ Triangulation_line_face_circulator_2<Triangulation>&
 Triangulation_line_face_circulator_2<Triangulation>::
 operator--()
 {
-  CGAL_triangulation_precondition(pos != Face_handle()) ;
+  CGAL_precondition(pos != Face_handle()) ;
   decrement();
   return *this;
 }
@@ -632,7 +632,7 @@ inline bool
 Triangulation_line_face_circulator_2<Triangulation>::
 operator==(const Line_face_circulator& lfc) const
 {
-  CGAL_triangulation_precondition( pos != Face_handle() &&
+  CGAL_precondition( pos != Face_handle() &&
                                lfc.pos != Face_handle());
   return ( _tr == lfc._tr && ( _tr==nullptr ||
             (pos == lfc.pos  && s== lfc.s && p==lfc.p && q==lfc.q) ) );
@@ -657,9 +657,9 @@ is_empty() const
 template < class Triangulation >
 inline bool
 Triangulation_line_face_circulator_2<Triangulation>::
-operator==(std::nullptr_t CGAL_triangulation_assertion_code(n)) const
+operator==(std::nullptr_t CGAL_assertion_code(n)) const
 {
-  CGAL_triangulation_assertion( n == nullptr);
+  CGAL_assertion( n == nullptr);
   return pos == Face_handle();
 }
 
@@ -668,7 +668,7 @@ inline bool
 Triangulation_line_face_circulator_2<Triangulation>::
 operator!=(std::nullptr_t n) const
 {
-  CGAL_triangulation_assertion( n == nullptr);
+  CGAL_assertion( n == nullptr);
   return !(*this == n);
 }
 

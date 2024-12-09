@@ -22,11 +22,7 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Search_traits_adapter.h>
 
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/remove_cv.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/utility/enable_if.hpp>
+#include <type_traits>
 
 
 namespace CGAL {
@@ -34,13 +30,15 @@ namespace CGAL {
   namespace internal{
     template <class SearchTraits,class Point>
     struct Is_from_point_from_adapter_traits{
-      typedef boost::false_type type;
+      typedef std::false_type type;
+      static const bool value = false;
     };
 
 
     template <class K,class PM,class Base,class Point>
     struct Is_from_point_from_adapter_traits<Search_traits_adapter<K,PM,Base>,Point>{
-      typedef typename boost::is_same<Point,typename Base::Point_d> type;
+      typedef typename std::is_same<Point,typename Base::Point_d> type;
+      static const bool value = type::value;
     };
   } //namespace internal
 
@@ -61,9 +59,9 @@ namespace CGAL {
 
     private:
 
-    typename boost::remove_cv<
-      typename boost::remove_reference< typename Construct_min_vertex_d::result_type >::type
-      >::type min, max;
+    std::remove_cv_t<
+      std::remove_reference_t< typename Construct_min_vertex_d::result_type >
+      > min, max;
     Cartesian_const_iterator_d min_begin, max_begin;
     FT eps;
     unsigned int dim;
@@ -102,7 +100,7 @@ namespace CGAL {
   //additional constructor if SearchTraits = Search_traits_adapter
   template <class Point>
   Fuzzy_iso_box(const Point& p,const Point&q,FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits(),
-                typename boost::enable_if<typename internal::Is_from_point_from_adapter_traits<SearchTraits,Point>::type>::type* = 0)
+                std::enable_if_t<internal::Is_from_point_from_adapter_traits<SearchTraits,Point>::value>* = 0)
     : traits(traits_), eps(epsilon)
   {
     CGAL_precondition(epsilon >= 0);

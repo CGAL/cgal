@@ -76,7 +76,7 @@
 
 /**
  * If set, the curve and curve pair analysis are using specialized code
- * to analyse conic curves, i.e. curves of degree 2
+ * to analyze conic curves, i.e. curves of degree 2
  */
 #ifndef CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX
 #define CGAL_ACK_USE_SPECIAL_TREATMENT_FOR_CONIX 0
@@ -87,10 +87,10 @@
  * (i.e., vertical cusps, isolated points on arcs), and usual regular points.
  * The candidate point on each status line can be checked for being singular
  * using this flag. This gives additional information but increases
- * compuation time
+ * computation time
  *
  * WARNING: Currently, the status line does not store the additional
- * information whether a point is singluar or not.
+ * information whether a point is singular or not.
  * Therefore, there is currently no reasons to set this flag. It is still
  * contained for possible further extension of the status line.
  */
@@ -171,7 +171,7 @@
 /**
  * The algorithm can also handle non-y-regular curves without shearing,
  * in case that the resultant multiplicity at vertical asymptotes is one.
- * This special treatement can be switched off by setting this flag.
+ * This special treatment can be switched off by setting this flag.
  * It is not recommended to do this because of efficiency
  */
 #ifndef CGAL_ACK_SHEAR_ALL_NOT_Y_REGULAR_CURVES

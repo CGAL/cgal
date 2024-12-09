@@ -294,9 +294,7 @@ void test_bool()
           bool_assert(indet.is_same(CGAL_OR(indet, ufalse)));
 
         } catch (CGAL::Uncertain_conversion_exception&) {
-#ifndef CGAL_CFG_NO_STATEMENT_EXPRESSIONS
          std::abort();
-#endif
         }
 
         // Test exceptions

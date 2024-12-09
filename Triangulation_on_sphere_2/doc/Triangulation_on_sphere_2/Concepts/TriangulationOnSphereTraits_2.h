@@ -2,7 +2,7 @@
 \ingroup PkgTriangulationOnSphere2Concepts
 \cgalConcept
 
-\cgalRefines SpatialSortingTraits_3
+\cgalRefines{SpatialSortingTraits_3}
 
 The concept `TriangulationOnSphereTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template
@@ -13,8 +13,10 @@ triangulation and the function object types for the required predicates on those
 In particular, the traits class is expected to contain information about the sphere (center and radius)
 on which the points of the triangulation lie, as well as to provide means to change this information.
 
-\cgalHasModel `CGAL::Delaunay_triangulation_on_sphere_traits_2`
-\cgalHasModel `CGAL::Projection_on_sphere_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Delaunay_triangulation_on_sphere_traits_2}
+\cgalHasModels{CGAL::Projection_on_sphere_traits_3}
+\cgalHasModelsEnd
 
 \sa `DelaunayTriangulationOnSphereTraits_2`
 */

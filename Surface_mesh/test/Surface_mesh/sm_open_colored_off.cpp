@@ -3,6 +3,8 @@
 #include <cstring>
 #include <iostream>
 #include <fstream>
+#include <cassert>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3 Point;
 typedef CGAL::Surface_mesh<Point> SMesh;
@@ -28,23 +30,24 @@ void OpenOFF(int i)
   std::ifstream in(path.c_str());
   SMesh surface_mesh;
   in >> surface_mesh;
-  CGAL_assertion(in && !surface_mesh.is_empty());
+  assert(in && !surface_mesh.is_empty());
 
 
   SMesh::Property_map<face_descriptor, CGAL::IO::Color> fcolors =
-      surface_mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").first;
+      surface_mesh.property_map<face_descriptor, CGAL::IO::Color >("f:color").value();
 
   SMesh::Property_map<vertex_descriptor, CGAL::IO::Color> vcolors =
-    surface_mesh.property_map<vertex_descriptor, CGAL::IO::Color >("v:color").first;
+    surface_mesh.property_map<vertex_descriptor, CGAL::IO::Color >("v:color").value();
+
   CGAL::IO::Color c = fcolors[*(surface_mesh.faces().begin())];
-  CGAL_assertion(c== CGAL::IO::Color(229,0,0));
+  assert(c== CGAL::IO::Color(229,0,0));
   c = fcolors[*(--surface_mesh.faces().end())];
-  CGAL_assertion(c== CGAL::IO::Color(0,0,229));
+  assert(c== CGAL::IO::Color(0,0,229));
 
   c = vcolors[*(surface_mesh.vertices().begin())];
-  CGAL_assertion((c== CGAL::IO::Color(229,0,0)));
+  assert((c== CGAL::IO::Color(229,0,0)));
   c = vcolors[*(--surface_mesh.vertices().end())];
-  CGAL_assertion((c== CGAL::IO::Color(0,0,229)));
+  assert((c== CGAL::IO::Color(0,0,229)));
 }
 
 

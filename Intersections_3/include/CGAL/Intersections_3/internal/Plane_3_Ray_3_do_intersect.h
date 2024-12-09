@@ -25,7 +25,7 @@ namespace Intersections {
 namespace internal {
 
 template <class K>
-bool
+typename K::Boolean
 do_intersect(const typename K::Plane_3& plane,
              const typename K::Ray_3& ray,
              const K& k)
@@ -40,7 +40,7 @@ do_intersect(const typename K::Plane_3& plane,
 
 template <class K>
 inline
-bool
+typename K::Boolean
 do_intersect(const typename K::Ray_3& ray,
              const typename K::Plane_3& plane,
              const K& k)

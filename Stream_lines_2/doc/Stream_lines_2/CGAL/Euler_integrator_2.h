@@ -7,7 +7,7 @@ This class implements the first order Euler integrator.
 
 \tparam VectorField_2 has to be instantiated by a model of the concept `VectorField_2`.
 
-\cgalModels `Integrator_2`
+\cgalModels{Integrator_2}
 
 \sa `Runge_kutta_integrator_2<VectorField_2>`
 

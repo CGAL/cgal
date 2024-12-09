@@ -82,7 +82,7 @@ public:
 
       \param k     Number of cones to divide space into
       \param initial_direction  A direction denoting one of the rays dividing the
-                   cones. This allows arbitary rotations of the rays that divide
+                   cones. This allows arbitrary rotations of the rays that divide
                    the plane.  (default: positive x-axis)
       \param cones_selected  Indicates whether even, odd or all cones are
                    selected to construct graph.
@@ -185,7 +185,7 @@ protected:
         std::vector<typename Graph_::vertex_descriptor> S(vit, ve);
         std::sort(S.begin (), S.end (), orderD1);
 
-        // Step 2: Initialise an empty set to store vertices sorted by orderD2
+        // Step 2: initialize an empty set to store vertices sorted by orderD2
         Point_set pst(orderD2);
 
         // Step 3: visit S in orderD1

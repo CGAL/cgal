@@ -36,7 +36,7 @@ int main(int, char**)
     std::cout << "It has:\n";
     std::cout << dtos.number_of_vertices() << " vertices\n";
     std::cout << dtos.number_of_edges() << " edges\n";
-    std::cout << dtos.number_of_faces() << " solid faces\n";
+    std::cout << dtos.number_of_solid_faces() << " solid faces\n";
     std::cout << dtos.number_of_ghost_faces() << " ghost faces\n" << std::endl;
   }
 

@@ -47,7 +47,7 @@ namespace Surface_mesh_parameterization {
 /// `TriangleMesh` class and does not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
@@ -143,13 +143,13 @@ public:
     for(vertex_descriptor vd : vertices) {
       const Point_3& position = get(ppmap,vd);
 
-      xmin = (std::min)(position.x(), xmin);
-      ymin = (std::min)(position.y(), ymin);
-      zmin = (std::min)(position.z(), zmin);
+      xmin = (std::min)(CGAL::to_double(position.x()), xmin);
+      ymin = (std::min)(CGAL::to_double(position.y()), ymin);
+      zmin = (std::min)(CGAL::to_double(position.z()), zmin);
 
-      xmax = (std::max)(position.x(), xmax);
-      ymax = (std::max)(position.y(), ymax);
-      zmax = (std::max)(position.z(), zmax);
+      xmax = (std::max)(CGAL::to_double(position.x()), xmax);
+      ymax = (std::max)(CGAL::to_double(position.y()), ymax);
+      zmax = (std::max)(CGAL::to_double(position.z()), zmax);
     }
 
     // Find longest bounding box axes
@@ -288,9 +288,9 @@ public:
   ///
   /// \param mesh a triangulated surface.
   /// \param bhd a halfedge descriptor on the boundary of `mesh`.
-  /// \param uvmap an instanciation of the class `VertexUVmap`.
-  /// \param vimap an instanciation of the class `VertexIndexMap`.
-  /// \param vpmap an instanciation of the class `VertexParameterizedMap`.
+  /// \param uvmap an instantiation of the class `VertexUVmap`.
+  /// \param vimap an instantiation of the class `VertexIndexMap`.
+  /// \param vpmap an instantiation of the class `VertexParameterizedMap`.
   ///
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The vertices must be indexed (vimap must be initialized).
@@ -305,7 +305,7 @@ public:
                           VertexParameterizedMap vpmap)
   {
     // Fill containers
-    boost::unordered_set<vertex_descriptor> vertices;
+    std::unordered_set<vertex_descriptor> vertices;
     internal::Containers_filler<Triangle_mesh> fc(mesh, vertices);
     Polygon_mesh_processing::connected_component(
                                       face(opposite(bhd, mesh), mesh),

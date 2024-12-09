@@ -76,7 +76,7 @@ We implement two algorithms, the LP-algorithm and a
 heuristic \cgalCite{msw-sblp-92}. As described in the documentation of
 concept `MinSphereOfSpheresTraits`, each has its advantages and
 disadvantages: Our implementation of the LP-algorithm has maximal
-expected running time \f$ O(2^d n)\f$, while the heuristic comes without
+expected running time \cgalBigO{2^d n}, while the heuristic comes without
 any complexity guarantee. In particular, the LP-algorithm runs in
 linear time for fixed dimension \f$ d\f$. (These running times hold for the
 arithmetic model, so they count the number of operations on
@@ -90,7 +90,7 @@ be used in such a case. (For exact number types
 Currently, we require `Traits::FT` to be either an exact number
 type or `double` or `float`; other inexact number types are
 not supported at this time. Also, the current implementation only
-handles spheres with Cartesian coordinates; homogenous representation
+handles spheres with %Cartesian coordinates; homogeneous representation
 is not supported yet.
 
 \cgalHeading{Example}

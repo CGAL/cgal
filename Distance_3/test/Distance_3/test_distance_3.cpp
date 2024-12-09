@@ -86,7 +86,7 @@ private:
 
   P random_point() const
   {
-    return P(r.get_double(m, M), r.get_double(m, M), r.get_double(m, M));
+    return P(FT(r.get_double(m, M)), FT(r.get_double(m, M)), FT(r.get_double(m, M)));
   }
 
   Pl pl(int a, int b, int c, int d)
@@ -160,7 +160,6 @@ private:
     assert(are_equal(res_o2o1, expected_result));
 
     do_intersect_check(o1, o2);
-    do_intersect_check(o1, o2);
   }
 
   template <typename O1, typename O2>
@@ -169,7 +168,6 @@ private:
     const FT res_o1o2 = CGAL::squared_distance(o1, o2);
     const FT res_o2o1 = CGAL::squared_distance(o2, o1);
 
-    do_intersect_check(o1, o2);
     do_intersect_check(o1, o2);
 
     assert(res_o1o2 <= ubound);
@@ -208,6 +206,36 @@ private:
     check_squared_distance (p(1, 1, 1), t, 1);
     check_squared_distance (p(1, 0, 1), t, 1);
     check_squared_distance (p(0, 0, 1), t, 1);
+
+    // Degenerate
+    check_squared_distance (p(1, 2, 3), T(p(4,3,2), p(4,3,2), p(4,3,2)), squared_distance(p(1, 2, 3), p(4,3,2)));
+    check_squared_distance (p(1, 2, 3), T(p(4,3,2), p(10,12,3), p(4,3,2)), squared_distance(p(1, 2, 3), p(4,3,2)));
+    check_squared_distance (p(0, 0, 0), T(p(4,3,2), p(4,-3,-2), p(4,3,2)), squared_distance(p(0, 0, 0), p(4,0,0)));
+
+    // On the triangle
+    check_squared_distance (p(7, 1, -5), T(p(2,9,8), p(-4,-3,-5), p(7, 1, -5)), 0); // vertex
+    check_squared_distance (p(7, 1, -5), T(p(14,2,-10), p(-7,-1,5), p(8, 3, -1)), 0); // edge
+    check_squared_distance (p(1, 4, -3), T(p(0,-8,-3), p(-5,14,-3), p(10, 1, -3)), 0); // face
+
+    // General
+    check_squared_distance (p(-15, 1, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 25);
+    check_squared_distance (p(-5, 0, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(-5, 0, 0), S(p(-10, 1, 0), p(0,0,0))));
+    check_squared_distance (p(0, -3, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 9);
+    check_squared_distance (p(3, -3, 0), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(3, -3, 0), S(p(0,0,0), p(10,0,0))));
+    check_squared_distance (p(16, 1, 1), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), 38);
+    check_squared_distance (p(5, 5, 2), T(p(-10, 1, 0), p(0,0,0), p(10,0,0)), squared_distance(p(5, 5, 2), S(p(10,0,0), p(-10,1,0))));
+
+    for(int i=0; i<N; ++i)
+    {
+      P p0 = random_point();
+      P p1 = random_point();
+      P p2 = random_point();
+      P q = random_point();
+
+      check_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p0, p1)));
+      check_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p1, p2)));
+      check_squared_distance_with_bound(q, T(p0, p1, p2), squared_distance(q, S(p2, p0)));
+    }
   }
 
   void P_Tet()
@@ -224,7 +252,7 @@ private:
     std::cout << "Segment - Segment" << std::endl;
 
     // coplanar segments (hardcoded)
-    double z = std::sqrt(2.);
+    FT z(std::sqrt(2.));
     P p0{-1, 0, z};
     P p1{ 1, 0, z};
 
@@ -294,7 +322,7 @@ private:
       check_squared_distance(S{p2, p3}, S{p4, p5}, 0);
       check_squared_distance(S{p2, p3}, S{p5, p4}, 0);
       check_squared_distance(S{p3, p2}, S{p4, p5}, 0);
-      check_squared_distance(S{p3, p2}, S{p4, p5}, 0);
+      check_squared_distance(S{p3, p2}, S{p5, p4}, 0);
 
       const double lambda_6 = r.get_double(0, 1);
       const P p6 = p3 + FT(lambda_6) * V{p3 - p2};
@@ -302,7 +330,7 @@ private:
       check_squared_distance(S{p2, p3}, S{p6, p5}, 0);
       check_squared_distance(S{p2, p3}, S{p5, p6}, 0);
       check_squared_distance(S{p3, p2}, S{p6, p5}, 0);
-      check_squared_distance(S{p3, p2}, S{p6, p5}, 0);
+      check_squared_distance(S{p3, p2}, S{p5, p6}, 0);
 
       const double lambda_7 = r.get_double(1, 2);
       const P p7 = p3 + FT(lambda_7) * V{p3 - p2};
@@ -498,9 +526,9 @@ private:
     check_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(0,0,2), p(-1,0,2), p(0,-1,2)}, 4);
     check_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(-1,0,2), p(0,0,2), p(0,-1,2)}, 4);
 
-    check_squared_distance(T{p(1,2,3), P{4.2,5.3,-6}, p(7,-8,9)},
-                           T{P{10.1, 12, -10}, p(15, 14, -12), p(19, 45, -20)},
-                           CGAL::squared_distance(P{4.2,5.3,-6}, P{10.1, 12, -10}));
+    check_squared_distance(T{p(1,2,3), P{FT(4.2),FT(5.3),-6}, p(7,-8,9)},
+                           T{P{FT(10.1), 12, -10}, p(15, 14, -12), p(19, 45, -20)},
+                           CGAL::squared_distance(P{FT(4.2),FT(5.3),-6}, P{FT(10.1), 12, -10}));
 
     // min vertex-edge (hardcoded)
     check_squared_distance(T{p(0,0,0), p(1,0,0), p(0,1,0)}, T{p(1,1,0), p(2,1,0), p(1,2,0)}, 0.5);

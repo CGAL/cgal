@@ -12,8 +12,7 @@ from \f$ p_1\f$ to \f$ p_2\f$.
 will explicitly state where you can pass this constant as an argument
 instead of a vector initialized with zeros.
 
-\cgalModels `Kernel::Vector_3`
-\cgalModels `Hashable` if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`
+\cgalModels{Kernel::Vector_3,Hashable if `Kernel` is a cartesian kernel and if `Kernel::FT` is `Hashable`}
 
 \sa `cross_product_grp`
 \sa `determinant_grp`
@@ -59,6 +58,7 @@ Vector_3(const Line_3<Kernel> &l);
 
 /*!
 introduces a null vector `v`.
+\cgalEpicExact
 */
 Vector_3(const Null_vector &NULL_VECTOR);
 
@@ -69,6 +69,7 @@ Vector_3(int x, int y, int z);
 
 /*!
 introduces a vector `v` initialized to `(x, y, z)`.
+\cgalEpicExact
 */
 Vector_3(double x, double y, double z);
 
@@ -79,6 +80,7 @@ Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const
 
 /*!
 introduces a vector `v` initialized to `(x, y, z)`.
+\cgalEpicExact
 */
 Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);
 
@@ -114,16 +116,19 @@ Kernel::RT hw() const;
 
 /*!
 returns the `x`-coordinate of `v`, that is `hx()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT x() const;
 
 /*!
 returns the `y`-coordinate of `v`, that is `hy()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT y() const;
 
 /*!
 returns the `z` coordinate of `v`, that is `hz()`/`hw()`.
+\cgalEpicExact
 */
 Kernel::FT z() const;
 
@@ -137,19 +142,23 @@ Kernel::FT z() const;
 
 /*!
 returns the i'th homogeneous coordinate of `v`.
-\pre \f$ 0\leq i \leq3\f$.
+\pre `0 <= i <= 3`.
 */
 Kernel::RT homogeneous(int i) const;
 
 /*!
 returns the i'th %Cartesian coordinate of `v`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre  `0 <= i <= 2`
+
+\cgalEpicExact
 */
 Kernel::FT cartesian(int i) const;
 
 /*!
 returns `cartesian(i)`.
-\pre \f$ 0\leq i \leq2\f$.
+\pre  `0 <= i <= 2`
+
+\cgalEpicExact
 */
 Kernel::FT operator[](int i) const;
 
@@ -177,6 +186,8 @@ Vector_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const;
 
 /*!
 returns the direction of `v`.
+
+\cgalEpicExact
 */
 Direction_3<Kernel> direction() const;
 
@@ -220,6 +231,7 @@ Vector_3<Kernel>& operator-=(const Vector_3<Kernel> &w);
 
 /*!
 Returns the opposite vector.
+\cgalEpicExact
 */
 Vector_3<Kernel> operator-() const;
 

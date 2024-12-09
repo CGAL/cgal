@@ -20,7 +20,6 @@
 #include <CGAL/Origin.h>
 #include <CGAL/representation_tags.h>
 #include <CGAL/assertions.h>
-#include <boost/type_traits/is_same.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Bbox_3.h>
 #include <CGAL/Dimension.h>
@@ -35,7 +34,7 @@ class Weighted_point_3 : public R_::Kernel_base::Weighted_point_3
   typedef typename R_::FT                    FT;
 
   typedef Weighted_point_3                            Self;
-  CGAL_static_assertion((boost::is_same<Self, typename R_::Weighted_point_3>::value));
+  static_assert(std::is_same<Self, typename R_::Weighted_point_3>::value);
 
 public:
 

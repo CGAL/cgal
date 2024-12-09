@@ -18,13 +18,19 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/set_of.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/unordered_map.hpp>
 #include <boost/container/small_vector.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <CGAL/Tetrahedral_remeshing/internal/tetrahedral_remeshing_helpers.h>
 
+#include <unordered_map>
 #include <functional>
 #include <utility>
+#include <optional>
+
+#ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
+#include <CGAL/Real_timer.h>
+#endif
 
 namespace CGAL
 {
@@ -32,13 +38,15 @@ namespace Tetrahedral_remeshing
 {
 namespace internal
 {
-template<typename C3t3>
+template<typename C3t3, typename CellSelector>
 typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
+                                        CellSelector cell_selector,
                                         C3t3& c3t3)
 {
   typedef typename C3t3::Triangulation       Tr;
   typedef typename C3t3::Subdomain_index     Subdomain_index;
   typedef typename C3t3::Surface_patch_index Surface_patch_index;
+  typedef typename C3t3::Curve_index         Curve_index;
   typedef typename Tr::Geom_traits::Point_3 Point;
   typedef typename Tr::Facet                Facet;
   typedef typename Tr::Vertex_handle        Vertex_handle;
@@ -68,8 +76,21 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
   }
   CGAL_assertion(dimension > 0);
 
-  boost::unordered_map<Facet, Subdomain_index> cells_info;
-  boost::unordered_map<Facet, std::pair<Vertex_handle, Surface_patch_index> > facets_info;
+  // remove complex edge before splitting
+  const Curve_index curve_index = (dimension == 1) ? c3t3.curve_index(e) : Curve_index();
+  if (dimension == 1)
+    c3t3.remove_from_complex(e);
+
+  struct Cell_info {
+    Subdomain_index subdomain_index_;
+    bool selected_;
+  };
+  struct Facet_info {
+    Vertex_handle opp_vertex_;
+    Surface_patch_index patch_index_;
+  };
+  boost::unordered_map<Facet, Cell_info, boost::hash<Facet>> cells_info;
+  boost::unordered_map<Facet, Facet_info, boost::hash<Facet>> facets_info;
 
   // check orientation and collect incident cells to avoid circulating twice
   boost::container::small_vector<Cell_handle, 30> inc_cells;
@@ -113,23 +134,21 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     //keys are the opposite facets to the ones not containing e,
     //because they will not be modified
     const Subdomain_index subdomain = c3t3.subdomain_index(c);
+    const bool selected = get(cell_selector, c);
     const Facet opp_facet1 = tr.mirror_facet(Facet(c, index_v1));
     const Facet opp_facet2 = tr.mirror_facet(Facet(c, index_v2));
 
     // volume data
-    cells_info.insert(std::make_pair(opp_facet1, subdomain));
-    cells_info.insert(std::make_pair(opp_facet2, subdomain));
-    if (c3t3.is_in_complex(c))
-      c3t3.remove_from_complex(c);
+    cells_info.insert(std::make_pair(opp_facet1, Cell_info{subdomain, selected}));
+    cells_info.insert(std::make_pair(opp_facet2, Cell_info{subdomain, selected}));
+    treat_before_delete(c, cell_selector, c3t3);
 
     // surface data for facets of the cells to be split
     const int findex = CGAL::Triangulation_utils_3::next_around_edge(index_v1, index_v2);
     Surface_patch_index patch = c3t3.surface_patch_index(c, findex);
     Vertex_handle opp_vertex = c->vertex(findex);
-    facets_info.insert(std::make_pair(opp_facet1,
-                                      std::make_pair(opp_vertex, patch)));
-    facets_info.insert(std::make_pair(opp_facet2,
-                                      std::make_pair(opp_vertex, patch)));
+    facets_info.insert(std::make_pair(opp_facet1, Facet_info{opp_vertex, patch}));
+    facets_info.insert(std::make_pair(opp_facet2, Facet_info{opp_vertex, patch}));
 
     if(c3t3.is_in_complex(c, findex))
       c3t3.remove_from_complex(c, findex);
@@ -150,28 +169,26 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
 
     //get subdomain info back
     CGAL_assertion(cells_info.find(mfi) != cells_info.end());
-    Subdomain_index n_index = cells_info.at(mfi);
-    if (Subdomain_index() != n_index)
-      c3t3.add_to_complex(new_cell, n_index);
-    else
-      new_cell->set_subdomain_index(Subdomain_index());
+    Cell_info c_info = cells_info.at(mfi);
+    treat_new_cell(new_cell, c_info.subdomain_index_,
+                   cell_selector, c_info.selected_, c3t3);
 
     // get surface info back
     CGAL_assertion(facets_info.find(mfi) != facets_info.end());
-    const std::pair<Vertex_handle, Surface_patch_index> v_and_opp_patch = facets_info.at(mfi);
+    const Facet_info v_and_opp_patch = facets_info.at(mfi);
 
     // facet opposite to new_v (status wrt c3t3 is unchanged)
     new_cell->set_surface_patch_index(new_cell->index(new_v),
                                       mfi.first->surface_patch_index(mfi.second));
 
     // new half-facet (added or not to c3t3 depending on the stored surface patch index)
-    if (Surface_patch_index() == v_and_opp_patch.second)
-      new_cell->set_surface_patch_index(new_cell->index(v_and_opp_patch.first),
+    if (Surface_patch_index() == v_and_opp_patch.patch_index_)
+      new_cell->set_surface_patch_index(new_cell->index(v_and_opp_patch.opp_vertex_),
                                         Surface_patch_index());
     else
       c3t3.add_to_complex(new_cell,
-                          new_cell->index(v_and_opp_patch.first),
-                          v_and_opp_patch.second);
+                          new_cell->index(v_and_opp_patch.opp_vertex_),
+                          v_and_opp_patch.patch_index_);
 
     // newly created internal facet
     for (int i = 0; i < 4; ++i)
@@ -188,26 +205,43 @@ typename C3t3::Vertex_handle split_edge(const typename C3t3::Edge& e,
     // will have its patch tagged from the other side, if needed
   }
 
+  // re-insert complex sub-edges
+  if (dimension == 1)
+  {
+    c3t3.add_to_complex(new_v, v1, curve_index);
+    c3t3.add_to_complex(new_v, v2, curve_index);
+  }
+
   set_index(new_v, c3t3);
 
   return new_v;
 }
 
+/**
+* returns [can_be_split, is_on_boundary]
+*/
 template<typename C3T3, typename CellSelector>
-bool can_be_split(const typename C3T3::Edge& e,
+auto can_be_split(const typename C3T3::Edge& e,
                   const C3T3& c3t3,
                   const bool protect_boundaries,
-                  CellSelector cell_selector)
+                  const CellSelector& cell_selector)
 {
+  struct Splittable
+  {
+    bool can_be_split;
+    bool on_boundary;
+  };
+
   if (is_outside(e, c3t3, cell_selector))
-    return false;
+    return Splittable{false, false};
+
+  const bool boundary = c3t3.is_in_complex(e)
+                     || is_boundary(c3t3, e, cell_selector);
 
   if (protect_boundaries)
   {
-    if (c3t3.is_in_complex(e))
-      return false;
-    else if (is_boundary(c3t3, e, cell_selector))
-      return false;
+    if (boundary)
+      return Splittable{false, boundary};
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
     if (!is_internal(e, c3t3, cell_selector))
@@ -220,17 +254,22 @@ bool can_be_split(const typename C3T3::Edge& e,
 #endif
 
     CGAL_assertion(is_internal(e, c3t3, cell_selector));
-    return true;
+    return Splittable{true, boundary};
   }
   else
   {
-    return is_selected(e, c3t3, cell_selector);
+    return Splittable{is_selected(e, c3t3.triangulation(), cell_selector), boundary};
   }
 }
 
-template<typename C3T3, typename CellSelector, typename Visitor>
+
+
+template<typename C3T3,
+         typename Sizing,
+         typename CellSelector,
+         typename Visitor>
 void split_long_edges(C3T3& c3t3,
-                      const typename C3T3::Triangulation::Geom_traits::FT& high,
+                      const Sizing& sizing,
                       const bool protect_boundaries,
                       CellSelector cell_selector,
                       Visitor& visitor)
@@ -238,39 +277,35 @@ void split_long_edges(C3T3& c3t3,
   typedef typename C3T3::Triangulation       T3;
   typedef typename T3::Cell_handle           Cell_handle;
   typedef typename T3::Edge                  Edge;
-  typedef typename T3::Finite_edges_iterator Finite_edges_iterator;
   typedef typename T3::Vertex_handle         Vertex_handle;
   typedef typename std::pair<Vertex_handle, Vertex_handle> Edge_vv;
 
-  typedef typename T3::Geom_traits     Gt;
   typedef typename T3::Geom_traits::FT FT;
   typedef boost::bimap<
-  boost::bimaps::set_of<Edge_vv>,
+        boost::bimaps::set_of<Edge_vv>,
         boost::bimaps::multiset_of<FT, std::greater<FT> > >  Boost_bimap;
   typedef typename Boost_bimap::value_type               long_edge;
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << "Split long edges (" << high << ")...";
+  std::cout << "Split long edges...";
   std::cout.flush();
   std::size_t nb_splits = 0;
+  CGAL::Real_timer timer;
+  timer.start();
 #endif
-  const FT sq_high = high*high;
 
   //collect long edges
   T3& tr = c3t3.triangulation();
   Boost_bimap long_edges;
-  for (Finite_edges_iterator eit = tr.finite_edges_begin();
-       eit != tr.finite_edges_end(); ++eit)
+  for (Edge e : tr.finite_edges())
   {
-    Edge e = *eit;
-    if (!can_be_split(e, c3t3, protect_boundaries, cell_selector))
+    auto [splittable, boundary] = can_be_split(e, c3t3, protect_boundaries, cell_selector);
+    if (!splittable)
       continue;
 
-    typename Gt::Compute_squared_length_3 sql
-      = tr.geom_traits().compute_squared_length_3_object();
-    FT sqlen = sql(tr.segment(e));
-    if (sqlen > sq_high)
-      long_edges.insert(long_edge(make_vertex_pair<T3>(e), sqlen));
+    const std::optional<FT> sqlen = is_too_long(e, boundary, sizing, c3t3, cell_selector);
+    if(sqlen != std::nullopt)
+      long_edges.insert(long_edge(make_vertex_pair(e), sqlen.value()));
   }
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_DEBUG
@@ -297,11 +332,12 @@ void split_long_edges(C3T3& c3t3,
       Edge edge(cell, i1, i2);
 
       //check that splittability has not changed
-      if (!can_be_split(edge, c3t3, protect_boundaries, cell_selector))
+      auto [splittable, _] = can_be_split(edge, c3t3, protect_boundaries, cell_selector);
+      if (!splittable)
         continue;
 
       visitor.before_split(tr, edge);
-      Vertex_handle vh = split_edge(edge, c3t3);
+      Vertex_handle vh = split_edge(edge, cell_selector, c3t3);
 
       if(vh != Vertex_handle())
         visitor.after_split(tr, vh);
@@ -318,7 +354,7 @@ void split_long_edges(C3T3& c3t3,
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE_PROGRESS
-      std::cout << "\rSplit (" << high << ")... ("
+      std::cout << "\rSplit... ("
                 << long_edges.left.size() << " long edges, "
                 << "length  = " << std::sqrt(sqlen) << ", "
                 << nb_splits << " splits)";
@@ -333,7 +369,9 @@ void split_long_edges(C3T3& c3t3,
 #endif
 
 #ifdef CGAL_TETRAHEDRAL_REMESHING_VERBOSE
-  std::cout << " done (" << nb_splits << " splits)." << std::endl;
+  timer.stop();
+  std::cout << " done (" << nb_splits << " splits, in "
+            << timer.time() << " sec)." << std::endl;
 #endif
 }
 

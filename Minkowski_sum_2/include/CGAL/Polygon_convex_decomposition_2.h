@@ -22,7 +22,7 @@ namespace CGAL {
 
 /*!
  * \class
- * The O(n^4) optimal strategy for decomposing a polygon into convex
+ * The \cgalBigO{n^4} optimal strategy for decomposing a polygon into convex
  * sub-polygons.
  */
 template <typename Kernel_,
@@ -39,7 +39,7 @@ public:
 
 /*!
  * \class
- * Hertel and Mehlhorn's O(n) approximation strategy for decomposing a
+ * Hertel and Mehlhorn's \cgalBigO{n} approximation strategy for decomposing a
  * polygon into convex sub-polygons.
  */
 template <typename Kernel_,
@@ -56,7 +56,7 @@ public:
 
 /*!
  * \class
- * Greene's O(n log(n)) approximation strategy for decomposing a polygon into
+ * Greene's \cgalBigO{n log(n)} approximation strategy for decomposing a polygon into
  * convex sub-polygons.
  */
 template <typename Kernel_,

@@ -28,7 +28,7 @@ struct AABB_drawing_traits
   double offset[3];
 
   typedef CGAL::Bbox_3 Bbox;
-  bool go_further() { return true; }
+  constexpr bool go_further() const { return true; }
 
   bool intersection(const int&, const Primitive&)
   {

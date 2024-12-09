@@ -239,14 +239,15 @@ bool read_orientation_and_end_points(InputStream_& is,
 }
 
 /*! */
-template <typename InputStream_, typename Curve>
-bool read_general_arc(InputStream_& is, Curve& cv)
+template <typename InputStream_, typename Traits>
+bool read_general_arc(InputStream_& is, typename Traits::Curve_2& cv,
+                      const Traits& traits)
 {
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   Rational r, s, t, u, v, w;                // The conic coefficients.
   is >> r >> s >> t >> u >> v >> w;
     // Read the orientation.
-  int i_orient = 0;
+  int i_orient(0);
   is >> i_orient;
   CGAL::Orientation orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
     (i_orient < 0) ? CGAL::CLOCKWISE : CGAL::COLLINEAR;
@@ -255,7 +256,7 @@ bool read_general_arc(InputStream_& is, Curve& cv)
   // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
   // defines the source.
   Point_2 app_source;
-  if (!read_app_point(is, app_source)) return false;
+  if (! read_app_point(is, app_source)) return false;
   Rational r1, s1, t1, u1, v1, w1;
   is >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
 
@@ -263,44 +264,47 @@ bool read_general_arc(InputStream_& is, Curve& cv)
   // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
   // defines the target.
   Point_2 app_target;
-  if (!read_app_point(is, app_target)) return false;
+  if (! read_app_point(is, app_target)) return false;
 
   Rational r2, s2, t2, u2, v2, w2;
   is >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
 
   // Create the conic arc.
-  cv = Curve(r, s, t, u, v, w, orient,
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w, orient,
               app_source, r1, s1, t1, u1, v1, w1,
               app_target, r2, s2, t2, u2, v2, w2);
   return true;
 }
 
 /*! */
-template <typename InputStream_, typename Curve>
-bool read_general_conic(InputStream_& is, Curve& cv)
-{
+template <typename InputStream_, typename Traits>
+bool read_general_conic(InputStream_& is, typename Traits::Curve_2& cv,
+                        const Traits& traits) {
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   Rational r, s, t, u, v, w;
   is >> r >> s >> t >> u >> v >> w;
   // Create a full conic (should work only for ellipses).
-  cv = Curve(r, s, t, u, v, w);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w);
   return true;
 }
 
 /*! */
-template <typename InputStream_, typename Curve>
-bool read_general_curve(InputStream_& is, Curve& cv)
-{
+template <typename InputStream_, typename Traits>
+bool read_general_curve(InputStream_& is, typename Traits::Curve_2& cv,
+                        const Traits& traits) {
   Rational r, s, t, u, v, w;                // The conic coefficients.
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   is >> r >> s >> t >> u >> v >> w;
   CGAL::Orientation orient;
   Point_2 source, target;
-  if (!read_orientation_and_end_points(is, orient, source, target))
+  if (! read_orientation_and_end_points(is, orient, source, target))
     return false;
 
   // Create the conic (or circular) arc.
-  cv = Curve(r, s, t, u, v, w, orient, source, target);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w, orient, source, target);
   return true;
 }
 
@@ -308,8 +312,7 @@ bool read_general_curve(InputStream_& is, Curve& cv)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
-                                                 X_monotone_curve_2& xcv)
-{
+                                                 X_monotone_curve_2& xcv) {
   // since we are dealing with polycurve, we will make more than 1 conic curves
   // (polycurve compatible) and return the x-monotone-constructed polycurve.
 
@@ -324,24 +327,24 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   is >> type;
 
   //get number of x-monotone conic-arcs.
-  unsigned int number_of_curves;
+  size_t number_of_curves;
   is >> number_of_curves;
+
+  const auto& sub_traits = *(m_geom_traits.subcurve_traits_2());
+  auto ctr_xcv = sub_traits.construct_x_monotone_curve_2_object();
 
   for (unsigned int i=0; i<number_of_curves; ++i) {
     if ((type == 'a') || (type == 'A')) {
-      if (!read_general_curve(is, tmp_cv)) return false;
-      X_monotone_subcurve_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back(tmp_xcv);
+      if (! read_general_curve(is, tmp_cv, sub_traits)) return false;
+      conic_x_monotone_segments.push_back(ctr_xcv(tmp_cv));
     }
     else if ((type == 'c') || (type == 'C')) {
-      if (!read_general_conic(is, tmp_cv)) return false;
-      X_monotone_subcurve_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back(tmp_xcv);
+      if (! read_general_conic(is, tmp_cv, sub_traits)) return false;
+      conic_x_monotone_segments.push_back(ctr_xcv(tmp_cv));
     }
     else if ((type == 'i') || (type == 'I')) {
-      if (!read_general_arc(is, tmp_cv)) return false;
-      X_monotone_subcurve_2 tmp_xcv(tmp_cv);
-      conic_x_monotone_segments.push_back(tmp_xcv);
+      if (! read_general_arc(is, tmp_cv, sub_traits)) return false;
+      conic_x_monotone_segments.push_back(ctr_xcv(tmp_cv));
     }
     else {
       std::cerr << "Illegal conic type specification: " << type << "."
@@ -361,8 +364,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
 /*! Read a conic poly-curve */
 template <>
 template <typename InputStream_>
-bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
-{
+bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv) {
   // since we are dealing with polycurve, we will make more than 1 conic curves
   // (polycurve compatible) and return the constructed polycurve.
 
@@ -376,20 +378,21 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   is >> type;
 
   //get number of xmonotone-conic arcs.
-  unsigned int number_of_curves;
+  size_t number_of_curves;
   is >> number_of_curves;
 
+  const auto& sub_traits = *(m_geom_traits.subcurve_traits_2());
   for (unsigned int i = 0; i < number_of_curves; ++i) {
     if ((type == 'a') || (type == 'A')) {
-      if (!read_general_curve(is, tmp_cv)) return false;
+      if (! read_general_curve(is, tmp_cv, sub_traits)) return false;
       conic_segments.push_back(tmp_cv);
     }
     else if ((type == 'c') || (type == 'C')) {
-      if (!read_general_conic(is, tmp_cv)) return false;
+      if (! read_general_conic(is, tmp_cv, sub_traits)) return false;
       conic_segments.push_back(tmp_cv);
     }
     else if ((type == 'i') || (type == 'I')) {
-      if (!read_general_arc(is, tmp_cv)) return false;
+      if (! read_general_arc(is, tmp_cv, sub_traits)) return false;
       conic_segments.push_back(tmp_cv);
     }
 
@@ -422,12 +425,11 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_segment(InputStream_& is,
                                                   Subcurve_2& seg)
 {
-  Subcurve_2 tmp_seg;
   char type;
   is >> type;
-  if (!read_general_curve(is, tmp_seg)) return false;
-  seg = tmp_seg;
-   return true;
+  const auto& sub_traits = *(m_geom_traits.subcurve_traits_2());
+  if (! read_general_curve(is, seg, sub_traits)) return false;
+  return true;
 }
 
 template <>
@@ -438,8 +440,10 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   char type;
   is >> type;
   Subcurve_2 tmp_seg;
-  if (!read_general_curve(is, tmp_seg)) return false;
-  xseg = X_monotone_subcurve_2(tmp_seg);
+  const auto& sub_traits = *(m_geom_traits.subcurve_traits_2());
+  if (! read_general_curve(is, tmp_seg, sub_traits)) return false;
+  auto ctr_xcv = sub_traits.construct_x_monotone_curve_2_object();
+  xseg = ctr_xcv(tmp_seg);
   return true;
 }
 
@@ -693,11 +697,11 @@ bool IO_base_test<Base_geom_traits>::read_xsegment(InputStream_& is,
   Subcurve_2 seg(point_vector.begin(), point_vector.end());
 
   //convert it into x-monotone bezier segment.
-  typedef boost::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
   std::vector<Make_x_monotone_result> objs;
   bezier_traits.make_x_monotone_2_object()(seg, std::back_inserter(objs));
   assert(! objs.empty());
-  const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(objs[0]));
+  const auto* x_seg_p = std::get_if<X_monotone_subcurve_2>(&(objs[0]));
   assert(x_seg_p);
   xseg = *x_seg_p;
 
@@ -720,7 +724,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   unsigned int number_of_segments;
   is >> number_of_segments;
 
-  typedef boost::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_subcurve_2> Make_x_monotone_result;
   auto make_x_monotone = bezier_traits.make_x_monotone_2_object();
   if ((type == 'x') || (type == 'X')) {
     for (unsigned int i=0; i<number_of_segments; ++i) {
@@ -741,7 +745,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
       std::vector<Make_x_monotone_result> objs;
       make_x_monotone(seg, std::back_inserter(objs));
       assert(! objs.empty());
-      const auto* x_seg_p = boost::get<X_monotone_subcurve_2>(&(objs[0]));
+      const auto* x_seg_p = std::get_if<X_monotone_subcurve_2>(&(objs[0]));
       assert(x_seg_p);
       x_segments.push_back(*x_seg_p);
 
@@ -1037,9 +1041,9 @@ bool read_ellipse(InputStream_& is, bool& is_circle, Rat_circle& circle,
 }
 
 /*! */
-template <typename InputStream_, typename Curve>
-bool read_partial_ellipse(InputStream_& is, Curve& cv)
-{
+template <typename InputStream_, typename Traits>
+bool read_partial_ellipse(InputStream_& is, typename Traits::Curve_2& cv,
+                          const Traits& traits) {
   bool is_circle;               // Is this a circle.
   Rat_circle circle;
   Rational r, s, t, u, v, w;
@@ -1050,15 +1054,16 @@ bool read_partial_ellipse(InputStream_& is, Curve& cv)
     return false;
 
   // Create the conic (or circular) arc.
-  cv = (is_circle) ? Curve(circle, orient, source, target) :
-    Curve(r, s, t, u, v, w, orient, source, target);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = (is_circle) ? ctr_cv(circle, orient, source, target) :
+    ctr_cv(r, s, t, u, v, w, orient, source, target);
   return true;
 }
 
 /*! */
-template <typename InputStream_, typename Curve>
-bool read_full_ellipse(InputStream_& is, Curve& cv)
-{
+template <typename InputStream_, typename Traits>
+bool read_full_ellipse(InputStream_& is, typename Traits::Curve_2& cv,
+                       const Traits& traits) {
   bool is_circle;               // Is this a circle.
   Rat_circle circle;
   Rational r, s, t, u, v, w;
@@ -1066,14 +1071,14 @@ bool read_full_ellipse(InputStream_& is, Curve& cv)
     return false;
 
   // Create a full ellipse (or circle).
-  cv = (is_circle) ? Curve(circle) : Curve(r, s, t, u, v, w);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = (is_circle) ? ctr_cv(circle) : ctr_cv(r, s, t, u, v, w);
   return true;
 }
 
 /*! Read a hyperbola */
-template <typename InputStream_, typename Curve>
-bool read_hyperbola(InputStream_& is, Curve& cv)
-{
+template <typename InputStream_, typename Curve, typename Traits>
+bool read_hyperbola(InputStream_& is, Curve& cv, const Traits& traits) {
   // Read the hyperbola (using the format "a b x0 y0"):
   //              2              2
   //    ( x - x0 )     ( y - y0 )
@@ -1096,14 +1101,15 @@ bool read_hyperbola(InputStream_& is, Curve& cv)
     return false;
 
   // Create the conic (or circular) arc.
-  cv = Curve(r, s, t, u, v, w, orient, source, target);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w, orient, source, target);
   return true;
 }
 
 /*! Read a hyperbola */
-template <typename InputStream_, typename Curve>
-bool read_parabola(InputStream_& is, Curve& cv)
-{
+template <typename InputStream_, typename Traits>
+bool read_parabola(InputStream_& is, typename Traits::Curve_2& cv,
+                   const Traits& traits) {
   // Read the parabola (using the format "c x0 y0"):
   //
   //          2
@@ -1125,15 +1131,15 @@ bool read_parabola(InputStream_& is, Curve& cv)
     return false;
 
   // Create the conic (or circular) arc.
-  cv = Curve(r, s, t, u, v, w, orient, source, target);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w, orient, source, target);
   return true;
 }
 
 /*! */
-template <typename InputStream_, typename Curve>
-bool read_segment(InputStream_& is, Curve& cv)
-{
-
+template <typename InputStream_, typename Traits>
+bool read_segment(InputStream_& is, typename Traits::Curve_2& cv,
+                  const Traits& traits) {
   // Read a segment, given by its endpoints (x1,y1) and (x2,y2);
   Rational x1, y1, x2, y2;
   is >> x1 >> y1 >> x2 >> y2;
@@ -1143,19 +1149,20 @@ bool read_segment(InputStream_& is, Curve& cv)
   Rat_segment segment(source, target);
 
   // Create the segment.
-  cv = Curve(segment);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(segment);
   return true;
 }
 
 /*! */
-template <typename InputStream_, typename Curve>
-bool read_general_arc(InputStream_& is, Curve& cv)
-{
+template <typename InputStream_, typename Traits>
+bool read_general_arc(InputStream_& is, typename Traits::Curve_2& cv,
+                      const Traits& traits) {
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   Rational r, s, t, u, v, w;                // The conic coefficients.
   is >> r >> s >> t >> u >> v >> w;
     // Read the orientation.
-  int i_orient = 0;
+  int i_orient(0);
   is >> i_orient;
   CGAL::Orientation orient = (i_orient > 0) ? CGAL::COUNTERCLOCKWISE :
     (i_orient < 0) ? CGAL::CLOCKWISE : CGAL::COLLINEAR;
@@ -1164,7 +1171,7 @@ bool read_general_arc(InputStream_& is, Curve& cv)
   // <r_1,s_1,t_1,u_1,v_1,w_1> whose intersection with <r,s,t,u,v,w>
   // defines the source.
   Point_2 app_source;
-  if (!read_app_point(is, app_source)) return false;
+  if (! read_app_point(is, app_source)) return false;
   Rational r1, s1, t1, u1, v1, w1;
   is >> r1 >> s1 >> t1 >> u1 >> v1 >> w1;
 
@@ -1172,32 +1179,34 @@ bool read_general_arc(InputStream_& is, Curve& cv)
   // <r_2,s_2,t_2,u_2,v_2,w_2> whose intersection with <r,s,t,u,v,w>
   // defines the target.
   Point_2 app_target;
-  if (!read_app_point(is, app_target)) return false;
+  if (! read_app_point(is, app_target)) return false;
 
   Rational r2, s2, t2, u2, v2, w2;
   is >> r2 >> s2 >> t2 >> u2 >> v2 >> w2;
 
   // Create the conic arc.
-  cv = Curve(r, s, t, u, v, w, orient,
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w, orient,
               app_source, r1, s1, t1, u1, v1, w1,
               app_target, r2, s2, t2, u2, v2, w2);
   return true;
 }
 
 /*! */
-template <typename InputStream_, typename Curve>
-bool read_general_curve(InputStream_& is, Curve& cv)
-{
+template <typename InputStream_, typename Traits>
+bool read_general_curve(InputStream_& is, typename Traits::Curve_2& cv,
+                        const Traits& traits) {
   Rational r, s, t, u, v, w;                // The conic coefficients.
   // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
   is >> r >> s >> t >> u >> v >> w;
   CGAL::Orientation orient;
   Point_2 source, target;
-  if (!read_orientation_and_end_points(is, orient, source, target))
+  if (! read_orientation_and_end_points(is, orient, source, target))
     return false;
 
   // Create the conic (or circular) arc.
-  cv = Curve(r, s, t, u, v, w, orient, source, target);
+  auto ctr_cv = traits.construct_curve_2_object();
+  cv = ctr_cv(r, s, t, u, v, w, orient, source, target);
   return true;
 }
 
@@ -1205,11 +1214,11 @@ bool read_general_curve(InputStream_& is, Curve& cv)
 template <>
 template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
-                                                 X_monotone_curve_2& xcv)
-{
+                                                 X_monotone_curve_2& xcv) {
   Curve_2 tmp_cv;
-  if (!read_curve(is, tmp_cv)) return false;
-  xcv = X_monotone_curve_2(tmp_cv);
+  if (! read_curve(is, tmp_cv)) return false;
+  auto ctr_xcv = m_geom_traits.construct_x_monotone_curve_2_object();
+  xcv = ctr_xcv(tmp_cv);
   return true;
 }
 
@@ -1221,25 +1230,37 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   // Get the arc type:
   char type;
   is >> type;
-  if ((type == 'f') || (type == 'F')) return read_full_ellipse(is, cv);
-  else if ((type == 's') || (type == 'S')) return read_segment(is, cv);
-  else if ((type == 'i') || (type == 'I')) return read_general_arc(is, cv);
-  else if ((type == 'c') || (type == 'C')) {
-    // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
-    Rational r, s, t, u, v, w;
-    is >> r >> s >> t >> u >> v >> w;
-    // Create a full conic (should work only for ellipses).
-    cv = Curve_2(r, s, t, u, v, w);
-    return true;
+  switch (type) {
+   case 'f':
+   case 'F': return read_full_ellipse(is, cv, m_geom_traits);
+   case 's':
+   case 'S': return read_segment(is, cv, m_geom_traits);
+   case 'i':
+   case 'I': return read_general_arc(is, cv, m_geom_traits);
+   case 'c':
+   case 'C':
+    {
+     // Read a general conic, given by its coefficients <r,s,t,u,v,w>.
+     Rational r, s, t, u, v, w;
+     is >> r >> s >> t >> u >> v >> w;
+     // Create a full conic (should work only for ellipses).
+     auto ctr_cv = m_geom_traits.construct_curve_2_object();
+     cv = ctr_cv(r, s, t, u, v, w);
+     return true;
+    }
+   case 'e':
+   case 'E': return read_partial_ellipse(is, cv, m_geom_traits);
+   case 'h':
+   case 'H': return read_hyperbola(is, cv, m_geom_traits);
+   case 'p':
+   case 'P': return read_parabola(is, cv, m_geom_traits);
+   case 'a':
+   case 'A': return read_general_curve(is, cv, m_geom_traits);
+   default:
+    // If we reached here, we have an unknown conic type:
+    std::cerr << "Illegal conic type specification: " << type << "."
+              << std::endl;
   }
-  else if ((type == 'e') || (type == 'E')) return read_partial_ellipse(is, cv);
-  else if ((type == 'h') || (type == 'H')) return read_hyperbola(is, cv);
-  else if ((type == 'p') || (type == 'P')) return read_parabola(is, cv);
-  else if ((type == 'a') || (type == 'A')) return read_general_curve(is, cv);
-
-  // If we reached here, we have an unknown conic type:
-  std::cerr << "Illegal conic type specification: " << type << "."
-            << std::endl;
   return false;
 }
 
@@ -1446,7 +1467,7 @@ bool IO_base_test<Base_geom_traits>::read_curve(InputStream_& is, Curve_2& cv)
   // If we reached here, we have an unknown rational arc type:
   std::cerr << "Illegal rational arc type specification: " << type << "."
             << std::endl;
-  return (false);
+  return false;
 }
 
 // Bezier
@@ -1470,7 +1491,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
   std::cout << std::endl;
-  typedef boost::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_curve_2> Make_x_monotone_result;
   std::list<Make_x_monotone_result> x_objs;
   Curve_2 tmp_cv;
   is >> tmp_cv;
@@ -1488,7 +1509,7 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
   size_t id(0);
   if (! is.eof()) is >> id;
   std::advance(xoit, id);
-  const auto* xcv_p = boost::get<X_monotone_curve_2>(&*xoit);
+  const auto* xcv_p = std::get_if<X_monotone_curve_2>(&*xoit);
   assert(xcv_p);
   xcv = *xcv_p;
   return false;

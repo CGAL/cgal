@@ -51,9 +51,9 @@ struct Restricted_FT<float> { typedef float type; };
 /// \tparam FT Number type
 /// \tparam dim Dimension of the matrices and vectors
 ///
-/// \cgalModels `DiagonalizeTraits`
+/// \cgalModels{DiagonalizeTraits}
 ///
-/// \sa http://eigen.tuxfamily.org/index.php?title=Main_Page
+/// \sa https://eigen.tuxfamily.org/index.php?title=Main_Page
 template <typename FT, unsigned int dim = 3>
 class Eigen_diagonalize_traits
 {

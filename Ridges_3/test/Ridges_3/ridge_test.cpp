@@ -11,7 +11,7 @@
 
 // Functions declared in PolyhedralSurf.h
 // They were previously defined in a separate file PolyhedralSurf.cpp,
-// but I prefere to avoid custom CMakeLists.txt files in the testsuite.
+// but I prefer to avoid custom CMakeLists.txt files in the testsuite.
 // -- Laurent Rineau, 2008/11/10
 
 typedef PolyhedralSurf::Traits          Kernel;

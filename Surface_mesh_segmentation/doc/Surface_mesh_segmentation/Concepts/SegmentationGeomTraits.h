@@ -5,9 +5,11 @@
 The concept `SegmentationGeomTraits` describes the set of requirements
 of the geometric traits needed by the segmentation functions.
 
-\cgalHasModel All the \cgal Kernels
+\cgalHasModelsBegin
+\cgalHasModelsBare{All models of the \cgal concept `Kernel`}
+\cgalHasModelsEnd
 
-\cgalRefines AABBGeomTraits
+\cgalRefines{AABBGeomTraits_3}
 
 */
 
@@ -128,4 +130,3 @@ collinear_3_object()const
 
 /// @}
 }; /* end SegmentationGeomTraits */
-

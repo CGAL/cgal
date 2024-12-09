@@ -18,7 +18,7 @@
 
 
 #include <CGAL/basic.h>
-#include <CGAL/Optimisation/assertions.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Direction_2.h>
 #include <CGAL/Polygon_2.h>
@@ -303,36 +303,36 @@ public:
     if (assign(tmp, tmpo)) {
       *o++ = tmp;
     } else {
-      CGAL_optimisation_assertion_code(bool test1 =)
+      CGAL_assertion_code(bool test1 =)
       assign(tmpl, tmpo);
-      CGAL_optimisation_assertion(test1);
+      CGAL_assertion(test1);
       *o++ = r.p1;
     }
     tmpo = isec(line(r.p3, r.d1), line(r.p2, r.d2));
     if (assign(tmp, tmpo)) {
       *o++ = tmp;
     } else {
-      CGAL_optimisation_assertion_code(bool test1 =)
+      CGAL_assertion_code(bool test1 =)
       assign(tmpl, tmpo);
-      CGAL_optimisation_assertion(test1);
+      CGAL_assertion(test1);
       *o++ = r.p2;
     }
     tmpo = isec(line(r.p3, r.d1), line(r.p4, r.d2));
     if (assign(tmp, tmpo)) {
       *o++ = tmp;
     } else {
-      CGAL_optimisation_assertion_code(bool test1 =)
+      CGAL_assertion_code(bool test1 =)
       assign(tmpl, tmpo);
-      CGAL_optimisation_assertion(test1);
+      CGAL_assertion(test1);
       *o++ = r.p3;
     }
     tmpo = isec(line(r.p1, r.d1), line(r.p4, r.d2));
     if (assign(tmp, tmpo)) {
       *o++ = tmp;
     } else {
-      CGAL_optimisation_assertion_code(bool test1 =)
+      CGAL_assertion_code(bool test1 =)
       assign(tmpl, tmpo);
-      CGAL_optimisation_assertion(test1);
+      CGAL_assertion(test1);
       *o++ = r.p3;
     }
     return o;

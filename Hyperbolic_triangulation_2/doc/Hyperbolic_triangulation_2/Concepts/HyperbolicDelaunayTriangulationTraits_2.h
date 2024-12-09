@@ -5,7 +5,7 @@
 \ingroup PkgHyperbolicTriangulation2Concepts
 \cgalConcept
 
-\cgalRefines DelaunayTriangulationTraits_2
+\cgalRefines{DelaunayTriangulationTraits_2}
 
 The concept `HyperbolicDelaunayTriangulationTraits_2` describes the set of requirements
 to be fulfilled by any class used to instantiate the first template parameter of the class
@@ -16,8 +16,10 @@ constructions on these objects.
 This concept refines `DelaunayTriangulationTraits_2` because the class `CGAL::Hyperbolic_Delaunay_triangulation_2`
 internally relies on the class `CGAL::Delaunay_triangulation_2`.
 
-\cgalHasModel `CGAL::Hyperbolic_Delaunay_triangulation_traits_2`
-\cgalHasModel `CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Hyperbolic_Delaunay_triangulation_traits_2}
+\cgalHasModels{CGAL::Hyperbolic_Delaunay_triangulation_CK_traits_2}
+\cgalHasModelsEnd
 */
 
 

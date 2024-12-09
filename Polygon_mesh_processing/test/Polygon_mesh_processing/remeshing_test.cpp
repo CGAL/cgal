@@ -7,21 +7,23 @@
 //#define CGAL_PMP_REMESHING_VERY_VERBOSE
 //#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/detect_features.h>
 
+#include <CGAL/Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Timer.h>
+
 #include <fstream>
 #include <vector>
 #include <cstdlib>
 #include <cstring>
+#include <cassert>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -95,13 +97,13 @@ void test_precondition(const char* filename,
   try
   {
     PMP::isotropic_remeshing(patch, 0.079, m,
-      PMP::parameters::protect_constraints(true));
+      CGAL::parameters::protect_constraints(true));
   }
   catch (const std::exception &)
   {
     exception_caught = true;
   }
-  CGAL_assertion(exception_caught);
+  assert(exception_caught);
 #endif
 }
 
@@ -124,7 +126,7 @@ struct Constraints_pmap
 
   typedef edge_descriptor                     key_type;
   typedef bool                                value_type;
-  typedef value_type&                         reference;
+  typedef value_type                          reference;
   typedef boost::read_write_property_map_tag  category;
 
 public:
@@ -137,14 +139,13 @@ public:
 
   friend value_type get(const Constraints_pmap& map, const key_type& e)
   {
-    CGAL_assertion(map.set_ptr_ != nullptr);
+    assert(map.set_ptr_ != nullptr);
     return !map.set_ptr_->empty()
          && map.set_ptr_->count(e);
   }
-  friend void put(Constraints_pmap& map
-                , const key_type& e, const value_type is)
+  friend void put(Constraints_pmap& map, const key_type& e, const value_type is)
   {
-    CGAL_assertion(map.set_ptr_ != nullptr);
+    assert(map.set_ptr_ != nullptr);
     if (is)                map.set_ptr_->insert(e);
     else if(get(map, e))   map.set_ptr_->erase(e);
   }
@@ -204,7 +205,7 @@ Main(int argc, const char* argv[])
       m,
       boost::make_function_output_iterator(halfedge2edge(m, border)));
     PMP::split_long_edges(border, target_edge_length, m
-      , PMP::parameters::edge_is_constrained_map(ecmap));
+      , CGAL::parameters::edge_is_constrained_map(ecmap));
     std::cout << "done." << std::endl;
 
     std::cout << "Collect patch...";
@@ -213,7 +214,7 @@ Main(int argc, const char* argv[])
     if (is_border(halfedge(*border.begin(), m), m))
       seed = face(opposite(halfedge(*border.begin(), m), m), m);
     PMP::connected_component(seed, m, std::back_inserter(patch),
-      PMP::parameters::edge_is_constrained_map(ecmap));
+      CGAL::parameters::edge_is_constrained_map(ecmap));
     std::cout << " done." << std::endl;
 
     std::cout << "Start remeshing of " << selection_file
@@ -225,7 +226,7 @@ Main(int argc, const char* argv[])
       patch,
       target_edge_length,
       m,
-      PMP::parameters::number_of_iterations(nb_iter)
+      CGAL::parameters::number_of_iterations(nb_iter)
       .protect_constraints(false)
     );
     t.stop();
@@ -236,7 +237,7 @@ Main(int argc, const char* argv[])
     PMP::isotropic_remeshing(faces(m),
       2.*target_edge_length,
       m,
-      PMP::parameters::number_of_iterations(nb_iter)
+      CGAL::parameters::number_of_iterations(nb_iter)
       .protect_constraints(true) //only borders. they have been refined by previous remeshing
       .edge_is_constrained_map(ecmap)
       .relax_constraints(true)
@@ -258,7 +259,7 @@ Main(int argc, const char* argv[])
 
     if (sharp_angle > 0)
       PMP::sharp_edges_segmentation(m, sharp_angle, eif, pid,
-        PMP::parameters::vertex_incident_patches_map(vip));
+        CGAL::parameters::vertex_incident_patches_map(vip));
 
     std::vector<edge_descriptor> sharp_edges;
     for (edge_descriptor e : edges(m))
@@ -276,13 +277,13 @@ Main(int argc, const char* argv[])
       sharp_edges,
       target_edge_length,
       m,
-      PMP::parameters::edge_is_constrained_map(eif));
+      CGAL::parameters::edge_is_constrained_map(eif));
 
     PMP::isotropic_remeshing(
       faces(m),
       target_edge_length,
       m,
-      PMP::parameters::edge_is_constrained_map(eif)
+      CGAL::parameters::edge_is_constrained_map(eif)
       .number_of_iterations(nb_iter)
       .number_of_relaxation_steps(3)
       .protect_constraints(true)//i.e. protect border, here

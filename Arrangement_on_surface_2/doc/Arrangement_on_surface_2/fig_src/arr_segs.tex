@@ -2,98 +2,95 @@
 \input{header}
 \pagestyle{empty}
 \begin{document}
-\psscalebox{1.8}{\arrset{0.8}
-  \pspicture[](-0.2,-0.2)(12.2,12.2)
-  %\psgrid(0,0)(12,12)
-  \arrMainVertex( 1, 3){a}
-  \arrMainVertex( 2, 4){b}
-  \arrMainVertex( 0, 6){c}
-  \arrv[90](5,11){1}
-  \arrMainVertex(9,11){f}
-  \arrMainVertex(12, 8){g}
-  \arrv[-60](8,8){2}
-  \arrMainVertex( 8, 4){i}
-  \arrMainVertex( 6, 4){j}
-  \arrMainVertex( 6, 2){k}
-  \arrMainVertex( 4, 0){m}
-  \arrMainVertex( 9, 0){n}
-  \arrMainVertex(11, 2){o}
-  \arrMainVertex(12, 4){p}
-  \arrMainVertex(12, 0){q}
-  \arrMainVertex( 4, 2){r}
-  \arrMainVertex( 3, 3){s}
-  \arrMainVertex( 5, 3){t}
+\begin{tikzpicture}[scale=1.0,thick]
+  \node[point] at ( 1, 3) (a) {};
+  \node[point] at ( 2, 4) (b) {};
+  \node[point] at ( 0, 6) (c) {};
+  \node [point,label={[label distance=0pt]90:{$v_1$}}] at ( 5,11) (1) {};
+  \node[point] at ( 9,11) (f) {};
+  \node[point] at (12, 8) (g) {};
+  \node [point,label={[label distance=0pt]-45:{$v_2$}}] at ( 8, 8) (2) {};
+  \node[point] at ( 8, 4) (i) {};
+  \node[point] at ( 6, 4) (j) {};
+  \node[point] at ( 6, 2) (k) {};
+  \node[point] at ( 4, 0) (m) {};
+  \node[point] at ( 9, 0) (n) {};
+  \node[point] at (11, 2) (o) {};
+  \node[point] at (12, 4) (p) {};
+  \node[point] at (12, 0) (q) {};
+  \node[point] at ( 4, 2) (r) {};
+  \node[point] at ( 3, 3) (s) {};
+  \node[point] at ( 5, 3) (t) {};
   %
-  \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
-  \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
-  \ncline[linewidth=0.5pt,linecolor=blue]{c}{1}
-  \ncline[linewidth=0.5pt,linecolor=blue]{1}{f}
-  \ncline[linewidth=0.5pt,offset=3pt,nodesepB=6pt]{->}{f}{1}\Aput[1pt]{$e_{\mathrm{prev}}$}
-  \ncline[linewidth=0.5pt,linecolor=blue]{f}{g}
-  \ncline[linewidth=0.5pt,linecolor=blue]{g}{2}
-  \ncline[linewidth=0.5pt,linecolor=blue]{g}{2}
-  \ncline[linewidth=0.5pt,offset=3pt,nodesepB=4pt]{->}{2}{g}\Aput[1pt]{$e_{\mathrm{next}}$}
-  \ncline[linewidth=0.5pt,linecolor=blue]{2}{i}
-  \ncline[linewidth=0.5pt,linecolor=blue]{i}{j}
-  \ncline[linewidth=0.5pt,linecolor=blue]{j}{k}
-  \ncline[linewidth=0.5pt,linecolor=blue]{k}{m}
-  \ncline[linewidth=0.5pt,linecolor=blue]{m}{a}
-  \ncline[linewidth=0.5pt,linecolor=blue]{1}{2}
-  \ncline[linewidth=0.5pt,linecolor=blue]{g}{i}
-  \ncline[linewidth=0.5pt,linecolor=blue]{m}{n}
-  \ncline[linewidth=0.5pt,linecolor=blue]{n}{i}
-  \ncline[linewidth=0.5pt,linecolor=blue]{g}{n}
-  \ncline[linewidth=0.5pt,linecolor=blue]{n}{o}
-  \ncline[linewidth=0.5pt,linecolor=blue]{o}{p}
-  \ncline[linewidth=0.5pt,linecolor=blue]{p}{q}
-  \ncline[linewidth=0.5pt,linecolor=blue]{q}{o}
-  \ncline[linewidth=0.5pt,linecolor=blue]{r}{s}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{r}{s}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{s}{r}
-  \ncline[linewidth=0.5pt,linecolor=blue]{r}{t}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{r}{t}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{t}{r}
+  \draw[blue] (a)--(b);
+  \draw[blue] (b)--(c);
+  \draw[blue] (c)--(1);
+  \draw[blue] (1)--(f);
+  \draw [halfedge,shorten >=4pt] (f) to node[sloped,below]{$e_{\mathrm{prev}}$} (1);
+  \draw[blue] (f)--(g);
+  \draw[blue] (g)--(2);
+  \draw [halfedge,shorten >=4pt] (2) to node[sloped,above]{$e_{\mathrm{next}}$} (g);
+  \draw[blue] (2)--(i);
+  \draw[blue] (i)--(j);
+  \draw[blue] (j)--(k);
+  \draw[blue] (k)--(m);
+  \draw[blue] (m)--(a);
+  \draw[blue] (1)--(2);
+  \draw[blue] (g)--(i);
+  \draw[blue] (m)--(n);
+  \draw[blue] (n)--(i);
+  \draw[blue] (g)--(n);
+  \draw[blue] (n)--(o);
+  \draw[blue] (o)--(p);
+  \draw[blue] (p)--(q);
+  \draw[blue] (q)--(o);
+  \draw[blue] (r)--(s);
   %
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{b}{a}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{c}{b}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{1}{c}
-  \ncline[linewidth=0.5pt,offset=3pt,nodesepA=4pt]{->}{g}{f}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{i}{2}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{j}{i}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{k}{j}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{m}{k}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{a}{m}
-  \ncline[linewidth=0.5pt,offset=3pt,nodesepA=6pt]{->}{1}{2}\Aput[1pt]{$e$}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{2}{1}\Aput[1pt]{$e'$}
+  \path [halfedge] (r) edge (s);
+  \path [halfedge] (s) edge (r);
+  \draw [blue] (r)--(t);
+  \path [halfedge] (r) edge (t);
+  \path [halfedge] (t) edge (r);
   %
-  \rput(2,10){$f_0$}
-  \rput(3,4){$f_1$}
-  \rput(8.5,9.5){$f_2$}
-  \rput(5,7){$f_3$}
-  \rput(4.5,5.6){$f_4$}
+  \path [halfedge] (b) edge (a);
+  \path [halfedge] (c) edge (b);
+  \path [halfedge] (1) edge (c);
+  \path [halfedge,shorten <=4pt] (g) edge (f);
+  \path [halfedge] (i) edge (2);
+  \path [halfedge] (j) edge (i);
+  \path [halfedge] (k) edge (j);
+  \path [halfedge] (m) edge (k);
+  \path [halfedge] (a) edge (m);
+  \draw [halfedge,shorten <=4pt] (1) to node[sloped,above=-1pt]{$e$} (2);
+  \draw [halfedge] (2) to node[sloped,below=-1pt]{$e'$} (1);
   %
-  \arru[90](2,6){1}
-  \arru[90](5,9){2}
+  \node at (2,10){$f_0$};
+  \node at (3,4){$f_1$};
+  \node at (8.5,9.5){$f_2$};
+  \node at (5,7){$f_3$};
+  \node at (4.5,5.6){$f_4$};
   %
-  \arrMainVertex(4,5){a}
-  \arrMainVertex(4,7){b}
-  \arrMainVertex(5,8){c}
-  \arrMainVertex(5,4){f}
-  \arrMainVertex(5,6){e}
-  \arrMainVertex(6,7){d}
-  \ncline[linewidth=0.5pt,linecolor=blue]{a}{b}
-  \ncline[linewidth=0.5pt,linecolor=blue]{b}{c}
-  \ncline[linewidth=0.5pt,linecolor=blue]{c}{d}
-  \ncline[linewidth=0.5pt,linecolor=blue]{d}{e}
-  \ncline[linewidth=0.5pt,linecolor=blue]{e}{f}
-  \ncline[linewidth=0.5pt,linecolor=blue]{f}{a}
-  \ncline[linewidth=0.5pt,linecolor=blue]{b}{e}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{a}{b}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{b}{c}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{c}{d}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{d}{e}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{e}{f}
-  \ncline[linewidth=0.5pt,offset=3pt]{->}{f}{a}
-  \endpspicture
-}
+  \node [point,label={[label distance=0pt]90:{$u_1$}}] at (2,6) (1) {};
+  \node [point,label={[label distance=0pt]90:{$u_2$}}] at (5,9) (1) {};
+  %
+  \node[point] at (4,5) (a) {};
+  \node[point] at (4,7) (b) {};
+  \node[point] at (5,8) (c) {};
+  \node[point] at (5,4) (f) {};
+  \node[point] at (5,6) (e) {};
+  \node[point] at (6,7) (d) {};
+  \draw[blue] (a)--(b);
+  \draw[blue] (b)--(c);
+  \draw[blue] (c)--(d);
+  \draw[blue] (d)--(e);
+  \draw[blue] (e)--(f);
+  \draw[blue] (f)--(a);
+  \draw[blue] (b)--(e);
+  \path [halfedge] (a) edge (b);
+  \path [halfedge] (b) edge (c);
+  \path [halfedge] (c) edge (d);
+  \path [halfedge] (d) edge (e);
+  \path [halfedge] (e) edge (f);
+  \path [halfedge] (f) edge (a);
+\end{tikzpicture}%
 \end{document}

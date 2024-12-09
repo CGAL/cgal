@@ -49,8 +49,8 @@ struct Tester
   typedef typename Tr::Bare_point       Bare_point;
   typedef typename Tr::Weighted_point   Weighted_point;
 
-  typedef typename Tr::Geom_traits      Gt;
-  typedef typename Gt::FT               FT;
+  typedef typename Tr::Geom_traits      GT;
+  typedef typename GT::FT               FT;
 
   C3t3 c3t3_;
   // Cells & facets

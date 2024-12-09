@@ -16,6 +16,10 @@
 use Cwd;
 use strict;
 use Date::Format;
+use JSON;
+use File::Copy;
+use FindBin;
+use IO::Compress::Gzip qw(gzip $GzipError) ;
 
 my $server_url="https://cgal.geometryfactory.com/";
 my $cgal_members="${server_url}CGAL/Members/";
@@ -33,14 +37,27 @@ my @platforms_to_do;
 my @known_platforms;
 my %platform_short_names;
 my %platform_is_optimized;
+my %platforms_info;
 my %platform_is_64bits;
 my @available_platforms;
 my %test_directories = ();
 my @testresults;
 my $testresult_dir=cwd()."/TESTRESULTS";
 
+use constant CLASS_MAP => {
+    'y' => 'ok',
+    'w' => 'warning',
+    't' => 'third_party_warning',
+    'o' => 'timeout',
+    'n' => 'error',
+    'r' => 'requirements',
+    ' ' => 'na'
+};
+
+
+
 # Inspired from
-# http://cpansearch.perl.org/src/EDAVIS/Sort-Versions-1.5/Versions.pm
+# https://metacpan.org/pod/Sort::Versions
 sub sort_releases($$)
 {
     # Take arguments in revert order: one wants to sort from the recent to
@@ -102,13 +119,13 @@ sub write_select()
   print OUTPUTV '<option disabled selected value="">(select a release)', "</option>\n";
   my %results;
   foreach $_ (glob("results-*.shtml")) {
-      my $ctime = (stat($_))[10];
-      $results{$_} = $ctime;
+      my $mtime = (stat($_))[9];
+      $results{$_} = $mtime;
   }
   foreach $_ (sort { $results{$b} <=> $results{$a} } keys %results) {
       $_ =~ /results-${pattern}(\.\d+)?(-.*|)\.shtml/ || next;
-      my $ctime = (stat($_))[10];
-      my $date = time2str('%a %Y/%m/%d', $ctime);
+      my $mtime = (stat($_))[9];
+      my $date = time2str('%a %Y/%m/%d', $mtime);
      print OUTPUTV '<option value="', $_, '">';
      ($filename) = m/results-(.*?)\.shtml\s*/;
 #     printf OUTPUTV "%-20s (last modified: %s)</option>\n", $filename, $date;
@@ -122,8 +139,8 @@ sub list_platforms()
 {
     my ($filename, @result);
     foreach $_ (glob("results_*.txt")) {
-	($filename) =  m/results_(.*?)\.txt\s*/;
-	push(@result, $filename) if $filename;
+        ($filename) =  m/results_(.*?)\.txt\s*/;
+        push(@result, $filename) if $filename;
     }
     return @result;
 }
@@ -137,9 +154,9 @@ sub list_packages($)
     my $test_result="results_${platform}.txt";
     open(TESTRESULT, $test_result) or return 0;
     while (<TESTRESULT>) {
-	if (/^\s*(.*?)\s+(\w)\s*$/) {
-	    $test_directories{$1} = '';
-	}
+        if (/^\s*(.*?)\s+(\w)\s*$/) {
+            $test_directories{$1} = '';
+        }
     }
     close TESTRESULT or return 0;
     return 1;
@@ -151,39 +168,15 @@ sub collect_results_of_platform($)
 # Create an anonymous hash that hashes packages to their result.
     my $platform_results = {};
     my $test_result="results_${platform}.txt";
-    my ($yeahs, $nays, $warnings,$third_party_warnings,$reqs) = (0,0,0,0,0);
-    my $resulttext;
     open(TESTRESULT, $test_result) or return $platform_results;
     while (<TESTRESULT>) {
-	if (/^\s*(.*?)\s+(\w)\s*$/) {
-	    #($package,$succes) = ($1,$2);
-	    if ($2 eq 'y' or $2 eq 'Y') {
-		$resulttext = 'y';
-		++$yeahs;
-	    } elsif ($2 eq 'w' or $2 eq 'W') {
-		$resulttext = 'w';
-		++$warnings;
-	    } elsif ($2 eq 't' or $2 eq 'T') {
-		$resulttext = 't';
-		++$third_party_warnings;
-	    } elsif ($2 eq 'n' or $2 eq 'N') {
-		$resulttext = 'n';
-		++$nays;
-	    } elsif ($2 eq 'r') {
-		$resulttext = 'r';
-		++$reqs;
-	    } else {
-		$resulttext = ' ';
-	    }
-	    $platform_results->{$1} = $resulttext;
-	}
+        if (my ($package, $result_letter) = /^\s*(.*?)\s+(\w)\s*$/) {
+            $result_letter = lc($result_letter); # to lower case 
+            $platform_results->{$package} = $result_letter;
+            $platform_results->{$result_letter} = ($platform_results->{$result_letter} // 0) + 1;
+        }
     }
     close TESTRESULT;
-    $platform_results->{"y"} = $yeahs;
-    $platform_results->{"n"} = $nays;
-    $platform_results->{"w"} = $warnings;
-    $platform_results->{"t"} = $third_party_warnings;
-    $platform_results->{"r"} = $reqs;
     return $platform_results;
 }
 
@@ -191,17 +184,17 @@ sub collect_results()
 {
     my $platform;
     foreach $platform (@platforms_to_do) {
-	list_packages($platform);
+        list_packages($platform);
     }
     foreach $platform (@platforms_to_do) {
-	push(@testresults, collect_results_of_platform($platform));
+        push(@testresults, collect_results_of_platform($platform));
     }
 }
 
 sub print_result_table()
 {
     my $platform_count = scalar(@platforms_to_do);
-
+    my $release_version = substr($release_name, 5);
     print OUTPUT <<"EOF";
 <table class="result" border="1" cellspacing="2" cellpadding="5">
 <tr align="CENTER">
@@ -218,63 +211,58 @@ EOF
     my $test_directory;
     my $test_num = 0;
     foreach $test_directory (sort keys %test_directories) {
-    	if ($PLATFORMS_REF_BETWEEN_RESULTS) {
-	    $test_num++;
-	    if ($test_num == 15) {
-	    	$test_num = 0;
-	    	print OUTPUT "\n<tr>  <td align=\"center\">\n";
-	    	print OUTPUT '<a href="#platforms">Platform Description</a>';
-	    	print OUTPUT "\n";
-		print_platforms_numbers();
-	    	print OUTPUT "\n</tr>\n";
-	    }
-	}
-	# my $version;
-	# if ( -r "$test_directory/version" ) {
-	#     open(VERSION, "$test_directory/version");
-	#     while(<VERSION>) {
-	# 	($version) = /^\s*([^\s]*)\s/;
-	# 	last if $version;
-	#     }
-	#     close VERSION;
-	# }
-	print OUTPUT "\n<tr>\n";
-	print OUTPUT "<td><a class=\"package_name\" href=\"\#$test_directory\" name=\"$test_directory\">$test_directory</a></td>\n";
-	# if ( $version ) {
-	#     print OUTPUT "<TD ALIGN=CENTER>$version</TD>\n";
-	# } else {
-	#     print OUTPUT "<TD ALIGN=CENTER>?.?</TD>\n";
-	# }
-	my ($platform_num,$platform)=(0,"");
-	$platform_num=0;
-	foreach $platform (@platforms_to_do) {
-	    my ($result,$resulttext);
-	    $resulttext = $testresults[$platform_num]->{$test_directory};
-	    if (! defined($resulttext)) {
-		$resulttext = ' ';
-	    }
-	    print OUTPUT '<td align=center';
-	    if ($resulttext eq 'y') {
-		print OUTPUT ' class="ok"';
-	    } elsif ($resulttext eq 'w') {
-		print OUTPUT ' class="warning"';
-	    } elsif ($resulttext eq 't') {
-		print OUTPUT ' class="third_party_warning"';
-	    } elsif ($resulttext eq 'n') {
-		print OUTPUT ' class="error"';
-	    } elsif ($resulttext eq 'r') {
-		print OUTPUT ' class="requirements"';
-	    }
-	    else {
-		print OUTPUT ' class="na"';
-	    }
-	    print OUTPUT '> <a href="',
-	    "$release_name/$test_directory/TestReport_$platform.gz\"";
-	    print OUTPUT '>', "$resulttext</a></td>\n";
-	    ++$platform_num;
+        if ($PLATFORMS_REF_BETWEEN_RESULTS) {
+            $test_num++;
+            if ($test_num == 15) {
+                    $test_num = 0;
+                    print OUTPUT <<~EOF;
+                    <tr>
+                      <td align="center">
+                        <a href="summary-$release_version.html?platform=all">Platform Description</a>
+                    EOF
+                    print_platforms_numbers();
+                    print OUTPUT <<~EOF;
+                      </td>
+                    </tr>
+                    EOF
+            }
+        }
+        # my $version;
+        # if ( -r "$test_directory/version" ) {
+        #     open(VERSION, "$test_directory/version");
+        #     while(<VERSION>) {
+        # 	($version) = /^\s*([^\s]*)\s/;
+        # 	last if $version;
+        #     }
+        #     close VERSION;
+        # }
+        print OUTPUT <<~EOF;
+        <tr>
+          <td><a class="package_name" href="summary-$release_version.html?package=$test_directory" name="$test_directory">$test_directory</a></td>
+        EOF
+        # if ( $version ) {
+        #     print OUTPUT "<TD ALIGN=CENTER>$version</TD>\n";
+        # } else {
+        #     print OUTPUT "<TD ALIGN=CENTER>?.?</TD>\n";
+        # }
+        my ($platform_num,$platform)=(0,"");
+        $platform_num=0;
+        foreach $platform (@platforms_to_do) {
+            my ($result,$result_letter);
+            $result_letter = $testresults[$platform_num]->{$test_directory};
+            if (! defined($result_letter)) {
+                $result_letter = ' ';
+            }
+            my $class = CLASS_MAP->{$result_letter} // 'na';
+            print OUTPUT <<~EOF;
+              <td align=center class="$class">
+                  <a href="$release_name/$test_directory/TestReport_$platform.gz">$result_letter</a>
+              </td>
+            EOF
+            ++$platform_num;
 
-	}
-	print OUTPUT "</tr>\n";
+        }
+        print OUTPUT "</tr>\n";
     }
     print OUTPUT "</table>\n";
 }
@@ -287,7 +275,7 @@ sub print_resultpage()
     print OUTPUT '<p>In the table below, each column is numbered, and corresponds to a platform. ';
     print OUTPUT 'Each column number is a link to the platform description table.</p> ', "\n";
     if ($PLATFORMS_BESIDE_RESULTS) {
-    	print OUTPUT <<"EOF";
+            print OUTPUT <<"EOF";
 <table border="0" cellspacing="5" cellpadding="0">
 <tr align="center">
 <td>
@@ -297,17 +285,17 @@ EOF
     print_result_table();
 
     if ($PLATFORMS_BESIDE_RESULTS) {
-    	print OUTPUT "<td>\n<table class=\"beside\" border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n";
-    	if ($platform_count > 0) {
-    	    my $repeat_count = (1 + 1.1/16.5)*scalar(keys %test_directories)/($platform_count+0.25);
-	    while ($repeat_count >= 1) {
-	    	$repeat_count--;
-	    	print OUTPUT "<tr><td>\n";
+            print OUTPUT "<td>\n<table class=\"beside\" border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n";
+            if ($platform_count > 0) {
+                my $repeat_count = (1 + 1.1/16.5)*scalar(keys %test_directories)/($platform_count+0.25);
+            while ($repeat_count >= 1) {
+                    $repeat_count--;
+                    print OUTPUT "<tr><td>\n";
                 print_platforms();
                 print OUTPUT "</tr>\n";
-	    }
-	}
-	print OUTPUT "</table>\n</tr>\n</table>\n";
+            }
+        }
+        print OUTPUT "</table>\n</tr>\n</table>\n";
     }
 }
 
@@ -380,7 +368,7 @@ sub parse_platform_2($)
 #        splice(@list,0,@list-3);
 #    }
     while (@list < 3) {
-    	push(@list,'?');
+            push(@list,'?');
     }
     return @list;
 }
@@ -390,19 +378,19 @@ sub short_pfname($)
     my @pflist = parse_platform_2($_[0]);
     my $shortpf;
     if(@pflist < 4) {
-	$shortpf = join('_', $pflist[1], $pflist[2]);
+        $shortpf = join('_', $pflist[1], $pflist[2]);
     }
     elsif($pflist[2] !~ /Linux/i) {
-	$shortpf = join('_', $pflist[3], $pflist[2]);
-	if(@pflist >= 5) {
-	    $shortpf = join('_', $shortpf, $pflist[4]);
-	}
+        $shortpf = join('_', $pflist[3], $pflist[2]);
+        if(@pflist >= 5) {
+            $shortpf = join('_', $shortpf, $pflist[4]);
+        }
     }
     else {
-	$shortpf = $pflist[3];
-	if(@pflist >= 5) {
-	    $shortpf = join('_', $shortpf, $pflist[4]);
-	}
+        $shortpf = $pflist[3];
+        if(@pflist >= 5) {
+            $shortpf = join('_', $shortpf, $pflist[4]);
+        }
     }
     return $shortpf;
 }
@@ -415,22 +403,22 @@ sub choose_platforms()
     my $index = 0;
 # Put all known platforms in a hash table.
     for ($index=0; $index < @known_platforms; $index += 1) {
-	$pf = $known_platforms[$index];
-	$platform_index{$pf} = 1;
+        $pf = $known_platforms[$index];
+        $platform_index{$pf} = 1;
     }
 # Check if there are platforms listed that are not known. Warn about this
 # and add those platforms at the end of the list of known platforms.
     foreach (@available_platforms) {
-	$pf = $_;
-	my $shortpf = short_pfname($pf);
-	$pf =~ s/^[^_]*_//;
-	$pf =~ s/_LEDA$//;
-	if (!exists $platform_index{$shortpf}) {
-	    # print STDERR "Warning: Platform $_ is unknown!\n";
-	    $platform_index{$shortpf} = 1;
-	    push(@known_platforms,$shortpf); # ???
-    	    $platform_short_names{$shortpf} = $shortpf;
-	}
+        $pf = $_;
+        my $shortpf = short_pfname($pf);
+        $pf =~ s/^[^_]*_//;
+        $pf =~ s/_LEDA$//;
+        if (!exists $platform_index{$shortpf}) {
+            # print STDERR "Warning: Platform $_ is unknown!\n";
+            $platform_index{$shortpf} = 1;
+            push(@known_platforms,$shortpf); # ???
+                $platform_short_names{$shortpf} = $shortpf;
+        }
     }
 
 # Make a list of all the platforms that are to be treated, in the order they
@@ -438,107 +426,148 @@ sub choose_platforms()
     @platforms_to_do = ();
     @known_platforms = sort sort_pf @known_platforms;
     for ($index=0; $index < @known_platforms; $index += 1) {
-	$pf = $known_platforms[$index];
-	my $ind2 = 0;
-	foreach (@available_platforms) {
-	    my $apf = short_pfname($_);
-	    if ($apf eq $pf) {
-	    	push(@platforms_to_do, $_);
-	    }
-	}
+        $pf = $known_platforms[$index];
+        my $ind2 = 0;
+        foreach (@available_platforms) {
+            my $apf = short_pfname($_);
+            if ($apf eq $pf) {
+                    push(@platforms_to_do, $_);
+            }
+        }
     }
 }
 
 sub print_platform_descriptions()
 {
-    my ($i,$pf_no,$pf) = (0,1);
     print OUTPUT <<'EOF';
+
 <h2><a name="platforms">Platform Description and Summary</a></h2>
+
 <table border="1" cellspacing="2" cellpadding="5" class="summary">
 <tr align="center">
-<th colspan="2">OS and compiler</th>
-<th>Tester</th>
-<th class="ok">y</th>
-<th class="third_party_warning">t</th>
-<th class="warning">w</th>
-<th class="error">n</th>
-<th class="requirements">r</th>
-<th>CMake</th>
-<th>BOOST</th>
-<th>MPFR</th>
-<th>GMP</th>
-<th>QT5</th>
-<th>LEDA</th>
-<th>CXXFLAGS</th>
-<th>LDFLAGS</th>
+  <th colspan="2">Platform Name</th>
+  <th>Compiler</th>
+  <th>Operating System</th>
+  <th>Tester</th>
+  <th class="ok">y</th>
+  <th class="third_party_warning">t</th>
+  <th class="warning">w</th>
+  <th class="timeout">o</th>
+  <th class="error">n</th>
+  <th class="requirements">r</th>
+  <th>DEBUG?</th>
+  <th>CMake</th>
+  <th>BOOST</th>
+  <th>MPFR</th>
+  <th>GMP</th>
+  <th>QT</th>
+  <th>LEDA</th>
+  <th>CXXFLAGS</th>
+  <th>LDFLAGS</th>
 </tr>
 EOF
-    my ($platform_num)=(0);
+    my ($platform_num, $pf)=(0);
     foreach $pf (@platforms_to_do) {
-	my $pf_num_plus_one = $platform_num + 1;
-	print OUTPUT "<tr>\n<td><a name=\"platform$pf_num_plus_one\">$pf_no</a>\n";
-	$pf_no++;
-	# my $pf_short = join('_',parse_platform_2($pf));
-	(my $pf_short) = ($pf =~ m/_(.*)/);
-	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\"";
+        my $platform_info;
+        if (open (PLATFORM_JSON, "<results_${pf}.json")) { ## read the json file of the platform
+            local $/;
+            my $json_text = <PLATFORM_JSON>;
+            close PLATFORM_JSON;
+            $platform_info = decode_json($json_text);
+            $platform_info->{name} = $pf;
+            $platforms_info{$pf} = $platform_info;
+        }
+        elsif (open (PLATFORM_INFO, "<results_${pf}.info")) { ## if the json file does not exist, read the old .info file
+            $_ = <PLATFORM_INFO>; # CGAL_VERSION
+            chomp(my $compiler = <PLATFORM_INFO>);
+            chomp(my $operating_system = <PLATFORM_INFO>);
+            chomp(my $tester_name = <PLATFORM_INFO>);
+            chomp(my $tester_address = <PLATFORM_INFO>);
 
-        ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
-
-        if (open (PLATFORM_INFO, "results_${pf}.info")) {
-	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
-	    $_ = <PLATFORM_INFO>; # COMPILER
-            chomp;
-            my $compiler = $_;
-            print OUTPUT " title=\"$compiler\">$pf_short</a>";
-	    $_ = <PLATFORM_INFO>; # TESTER_NAME
-	    chomp;
-	    my $tester_name = $_;
-	    $_ = <PLATFORM_INFO>; # TESTER_ADDRESS
-	    chomp;
-	    my $tester_address = $_;
-
-	    my $county = $testresults[$platform_num]->{"y"};
-	    my $countt = $testresults[$platform_num]->{"t"};
-	    my $countw = $testresults[$platform_num]->{"w"};
-	    my $countn = $testresults[$platform_num]->{"n"};
-	    my $countr = $testresults[$platform_num]->{"r"};
-
-	    my $index = 8;
-	    my @tmp;
-	    while ($index) {
-	        $index--;
-		$_ = <PLATFORM_INFO>;
-		chomp;
-		$tmp[$index] = $_;
-	    }
-	    ($platform_is_optimized{$pf}) = ($tmp[1] =~ m|([-/]x?O[1-9])|);
-	    $_ = <PLATFORM_INFO>;
-	    chomp;
-	    print OUTPUT "</td>\n";
-	    print OUTPUT "<td><a href=\"mailto:$tester_address\">$tester_name</a></td>\n";
-	    print OUTPUT "<td>$county</td>\n";
-	    print OUTPUT "<td>$countt</td>\n";
-	    print OUTPUT "<td>$countw</td>\n";
- 	    print OUTPUT "<td>$countn</td>\n";
- 	    print OUTPUT "<td>$countr</td>\n";
-	    $index = 8;
-	    while ($index) {
-	        $index--;
-		$_ = $tmp[$index];
-                if($index > 2) {
-                    print OUTPUT "<td align=\"center\">$_</td>\n";
-                } else {
-                    print OUTPUT "<td>$_</td>\n";
+            my @versions_and_flags = ();
+            my $index = 8;
+            while ($index) {
+                $index--;
+                chomp($versions_and_flags[$index] = <PLATFORM_INFO>);
+            }
+            $platform_info = {
+                name => $pf,
+                compiler => $compiler,
+                operating_system => $operating_system,
+                tester_name => $tester_name,
+                tester_address => $tester_address,
+                CMake_version => $versions_and_flags[7],
+                Boost_version => $versions_and_flags[6],
+                MPFR_version => $versions_and_flags[5],
+                GMP_version => $versions_and_flags[4],
+                Qt_version => $versions_and_flags[3],
+                LEDA_version => $versions_and_flags[2],
+                CXXFLAGS => $versions_and_flags[1],
+                LDFLAGS => $versions_and_flags[0],
+            };
+            chomp(my $tpl = <PLATFORM_INFO>); # TPL:
+            close PLATFORM_INFO;
+            my @tpl_list = ();
+            if ($tpl =~ /^TPL:\s*(.*)/) {
+                my $tpl_data = $1;
+                my @tpls = split /,\s*/, $tpl_data;
+                foreach my $tpl (@tpls) {
+                    if ($tpl =~ /(.+)\s+not found/i) {
+                        push @tpl_list, {
+                            name => $1,
+                            version => undef,
+                            status => "not found"
+                        };
+                    }
+                    elsif ($tpl =~ /(.+)\s+(\S+)/) {
+                        push @tpl_list, {
+                            name => $1,
+                            version => $2,
+                            status => "found"
+                        };
+                    }
                 }
-	    }
-	} else {
-            print OUTPUT ">$pf_short</a>";
-	    my $index = 12;
-	    while ($index) {
-		print OUTPUT "<td>?</td>\n";
-	    }
-	}
-	++$platform_num;
+            }
+            $platform_info->{third_party_libs} = \@tpl_list;
+            $platforms_info{$pf} = $platform_info;
+        }
+        my $pf_num_plus_one = $platform_num + 1;
+        # my $pf_short = join('_',parse_platform_2($pf));
+        (my $pf_short) = ($pf =~ m/_(.*)/);
+        ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
+        ($platform_is_optimized{$pf}) = ($platform_info->{CXXFLAGS} =~ m|([-/]x?O[1-9])|);
+        my $county = $testresults[$platform_num]->{"y"};
+        my $countt = $testresults[$platform_num]->{"t"};
+        my $countw = $testresults[$platform_num]->{"w"};
+        my $counto = $testresults[$platform_num]->{"o"};
+        my $countn = $testresults[$platform_num]->{"n"};
+        my $countr = $testresults[$platform_num]->{"r"};
+        my $build_type = $platform_is_optimized{$pf} ? " - " : "YES";
+        print OUTPUT <<~EOF;
+        <tr>
+          <td><a name="platform$pf_num_plus_one">$pf_num_plus_one</a></td>
+          <td><a href="$release_name/Installation/TestReport_$pf.gz">$pf_short</a></td>
+          <td>$platform_info->{compiler}</td>
+          <td>$platform_info->{operating_system}</td>
+          <td><a href="mailto:$platform_info->{tester_address}">$platform_info->{tester_name}</a></td>
+          <td>$county</td>
+          <td>$countt</td>
+          <td>$countw</td>
+          <td>$counto</td>
+          <td>$countn</td>
+          <td>$countr</td>
+          <td align="center">$build_type</td>
+          <td align="center">$platform_info->{CMake_version}</td>
+          <td align="center">$platform_info->{Boost_version}</td>
+          <td align="center">$platform_info->{MPFR_version}</td>
+          <td align="center">$platform_info->{GMP_version}</td>
+          <td align="center">$platform_info->{Qt_version}</td>
+          <td align="center">$platform_info->{LEDA_version}</td>
+          <td>$platform_info->{CXXFLAGS}</td>
+          <td>$platform_info->{LDFLAGS}</td>
+        </tr>
+        EOF
+        ++$platform_num;
     }
     print OUTPUT "</table>\n<p>\n";
 }
@@ -546,15 +575,17 @@ EOF
 sub print_platforms_numbers()
 {
     my ($platform_num,$platform)=(0,"");
+    my $release_version = substr($release_name, 5);
     foreach $platform (@platforms_to_do) {
-	++$platform_num;
-	my $pf_short = short_pfname($platform);
-	my $class = "";
-	my $tag = "";
-	if($platform_is_optimized{$platform} || $platform_is_64bits{$platform})
-	{
-	    $class = " class=\"";
-	    $tag = " ( ";
+        ++$platform_num;
+        my $pf_short = short_pfname($platform);
+        my $class = "";
+        my $tag = "";
+    my $platformlink = $platform;
+        if($platform_is_optimized{$platform} || $platform_is_64bits{$platform})
+        {
+            $class = " class=\"";
+            $tag = " ( ";
             if($platform_is_64bits{$platform}) {
                 $class = "$class os64bits";
                 $tag = $tag . "64 bits ";
@@ -565,8 +596,8 @@ sub print_platforms_numbers()
             }
             $class = $class . "\"";
             $tag = $tag . " )";
-	}
-	print OUTPUT "<td$class><a href=\"#platform$platform_num\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
+        }
+        print OUTPUT "<td$class><a href=\"summary-$release_version.html?platform=$platformlink\" title=\"$pf_short$tag\"><b>$platform_num</b></a>\n";
     }
 }
 
@@ -575,11 +606,11 @@ sub print_platforms()
     my ($pf_no,$pf) = (1,"");
     print OUTPUT '<table border="1" cellspacing="2" cellpadding="5" >',"\n";
     foreach $pf (@platforms_to_do) {
-	print OUTPUT "<tr>\n<td>$pf_no\n";
-	$pf_no++;
-	my $pf_short = short_pfname($pf);
-	print OUTPUT "<td>$platform_short_names{$pf_short}";
-	print OUTPUT "\n</td></tr>\n";
+        print OUTPUT "<tr>\n<td>$pf_no\n";
+        $pf_no++;
+        my $pf_short = short_pfname($pf);
+        print OUTPUT "<td>$platform_short_names{$pf_short}";
+        print OUTPUT "\n</td></tr>\n";
     }
     print OUTPUT "</table>\n";
 }
@@ -596,48 +627,44 @@ sub print_little_header(){
     my $release_version = substr($release_name, 5);
     print OUTPUT<<"EOF";
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-        "http://www.w3.org/TR/html4/strict.dtd">
+        "https://www.w3.org/TR/html4/strict.dtd">
 <html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>${release_name} Test Results</title>
-  <link rel="shortcut icon" href="cgal.ico">
-  <link rel="stylesheet" type="text/css" href="testresult.css">
-<!-- This file is generated by a program. Do not edit manually!! -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>${release_name} Test Results</title>
+    <link rel="shortcut icon" href="cgal.ico">
+    <link rel="stylesheet" type="text/css" href="testresult.css">
+    <!-- This file is generated by a program. Do not edit manually!! -->
 </head>
 <body>
-<h1>Test Results of ${release_name}
-<a id="permalink" href="results-${release_version}.shtml">permalink</a>
-<a id="jump_to_results" href="#testresults">jump to results</a></h1>
-<!--#include virtual="versions.inc"-->
-<p>The results of the tests are presented in a table
-('y' = success, 'w' = warning, 't' = third party warning 'n' = failure, 'r' = a requirement is not found),
-and the error + compiler output from each test can be retrieved by clicking
-on it.</p>
-<p><b>N.B. The detection of warnings is not exact.
-Look at the output to be sure!</b></p>
-<ol>
-<li><a href="${releases_url}">
-Downloading internal releases</a></li>
-<li><a href="${doxygen_manual_test_url}${release_name}/" style="color: red">
-The doxygen documentation testpage</a>
-(and the <a href="${doxygen_manual_test_url}">overview page</a>)</li>
+    <h1>Test Results of ${release_name}
+    <a id="permalink" href="results-${release_version}.shtml">permalink</a>
+    <a id="jump_to_results" href="#testresults">jump to results</a>
+    <a id="compare" href="comparison/diff_testsuites.html?newTest=${release_name}">compare results...</a></h1>
+    <!--#include virtual="versions.inc"-->
+    <p>The results of the tests are presented in a table
+    ('y' = success, 'w' = warning, 't' = third party warning, 'o' = timeout, 'n' = failure, 'r' = a requirement is not found),
+    and the error + compiler output from each test can be retrieved by clicking
+    on it.</p>
+    <p><b>N.B. The detection of warnings is not exact.
+    Look at the output to be sure!</b></p>
+    <ol>
+        <li><a href="${releases_url}">Downloading internal releases</a></li>
+        <li><a href="${doxygen_manual_test_url}${release_name}/" style="color: red">The doxygen documentation testpage</a>
+        (and the <a href="${doxygen_manual_test_url}">overview page</a>)</li>
+        <li><a href="https://cgal.geometryfactory.com/~cgaltest/testsuite_comparison/diff_testsuites.html">Diff of testsuites results</a></li>
+        <li><a href="summary-$release_version.html">
+        Summary Page</a></li>
+    </ol>
 EOF
-    if ( -r "announce.html" ) {
-	print OUTPUT<<"EOF";
-<li><a href="$release_name/announce.html">Announcement of this release</a></li>
-EOF
-    }
-
-    print OUTPUT "</ol>\n";
 }
 
 
 sub main()
 {
     if (scalar(@ARGV)  != 1 ) {
-	print STDERR "usage: $0 directory\n";
-	exit 1;
+        print STDERR "usage: $0 directory\n";
+        exit 1;
     }
 
     $release_name =shift(@ARGV);
@@ -646,8 +673,8 @@ sub main()
     $release_name =~ s<(/)$><>;
     chdir $testresult_dir or die;
     if ( ! -d $release_name ) {
-	print STDERR "$release_name is not a valid directory\n";
-	exit 1;
+        print STDERR "$release_name is not a valid directory\n";
+        exit 1;
     }
 
 #    init_known_platforms();
@@ -667,6 +694,7 @@ sub main()
     print_little_header();
     print_platform_descriptions();
     print_resultpage();
+    create_summary_page();
 
     print OUTPUT << 'EOF';
  <p style="width: 100%">This page has been created by the test results
@@ -675,7 +703,7 @@ sub main()
      <a href="test_results.log">See the log here</a>.</p>
 
  <p>
-    <a href="http://validator.w3.org/check?uri=https://cgal.geometryfactory.com<!--#echo var="DOCUMENT_URI" -->"><img
+    <a href="https://validator.w3.org/check?uri=https://cgal.geometryfactory.com<!--#echo var="DOCUMENT_URI" -->"><img
         src="valid-html401-blue"
         alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
  </p>
@@ -705,11 +733,151 @@ sub init_known_platforms()
     @known_platforms = ();
     while(<PLATFORMS>) {
         ($short_name, $full_name) =split;
-	$full_name = short_pfname($full_name);
-	push(@known_platforms,$full_name);
-    	$platform_short_names{$full_name} = $full_name;
+        $full_name = short_pfname($full_name);
+        push(@known_platforms,$full_name);
+            $platform_short_names{$full_name} = $full_name;
     }
     close(PLATFORMS);
 }
 
+sub get_warnings_and_errors {
+    my ($result_file) = @_;
+    my $warnings_and_errors = "";
+    my %seen;
+    if (-e $result_file) {
+        my $result = `zcat $result_file`;
+        my @lines = split("\n", $result);
+        foreach my $line (@lines) {
+            if ($line =~ /(warning|error):/i && !$seen{$line}++ || $line =~ /(warning|error) [CJ]\d+:/i && !$seen{$line}++) {
+
+                $warnings_and_errors .= $line . "\n";
+            }
+        }
+    } else {
+        print "File $result_file does not exist.\n";
+    }
+
+    return $warnings_and_errors;
+}
+
+sub create_summary_page {
+    my $platform_options = join("\n", map { "<option value=\"$_\">$_</option>" } @platforms_to_do);
+    my $test_directory;
+    my @letters = ('r', 'n', 'w', 'o');
+    my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);
+    my $package_options = join("\n", map { "<option value=\"$_\">$_</option>" } sort keys %test_directories);
+    my $summary_script_src = $FindBin::RealBin . "/Summary_Script.js";
+    my $summary_script_dest = "$testresult_dir/$release_name/Summary_Script.js";
+    my $summary_page_path = "$testresult_dir/summary".substr($release_name,4).".html";
+    my @platforms_data;
+    my ($platform_num, $platform) = (0, "");
+    foreach $platform (@platforms_to_do) {
+        my $platform_info = $platforms_info{$platform};
+        foreach my $test_directory (sort keys %test_directories) {
+            my $result_letter = $testresults[$platform_num]->{$test_directory};
+            if (defined($result_letter) && grep { $_ eq $result_letter } @letters) {
+                my $warnings_and_errors = get_warnings_and_errors("$testresult_dir/$release_name/$test_directory/TestReport_$platform.gz");
+                push @{$platform_info->{test_directories}}, {
+                    test_directory => $test_directory,
+                    content => $warnings_and_errors,
+                    letters => $result_letter,
+                };
+            }
+        }
+        push @platforms_data, $platform_info;
+        $platform_num++;
+    }
+
+    my $final_data = {
+        release => $release_name,
+        platforms => \@platforms_data,
+    };
+    my $json = JSON->new->allow_nonref;
+    my $json_text = $json->encode($final_data);
+    my $fh = new IO::Compress::Gzip "$testresult_dir/$release_name/search_index.json.gz"
+        or die "IO::Compress::Gzip failed: $GzipError\n";
+    print $fh $json_text;
+    close $fh;
+
+    my @all_releases = grep {-d $_ } glob("../*");
+    my %urls_for_js = (
+        current => ["$release_name/search_index.json"],
+        all     => [map { "TESTRESULTS/$_/search_index.json" } @all_releases],
+    );
+    my $json_urls = encode_json(\%urls_for_js);
+    my $Summary_output = <<"EOF";
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "https://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Summary</title>
+        <link rel="shortcut icon" href="cgal.ico">
+        <link rel="stylesheet" type="text/css" href="testresult.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.default.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            var searchURLs = $json_urls;
+        </script>
+        <!-- This file is generated by a program. Do not edit manually!! -->
+    </head>
+    <body>
+        <div id="tplModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="tplModalTitle">Versions of TPL</h2>
+                <table class="tablesorter">
+                    <thead>
+                        <tr>
+                            <th>Platform</th>
+                            <th>Version</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <input type="text" id="searchInput" placeholder="Search ..." autocomplete="off" onkeypress="if(event.keyCode==13) search()">
+        <select id="releaseSelector">
+            <option value="current" selected>This release</option>
+            <option value="all">All releases</option>
+        </select>
+        <button onclick="search()">Search</button>
+        <div id="searchResults"></div>
+        <h1>Summary Results of ${release_name}</h1>
+        <select id="platformSelector" onchange="filterByPlatform(this.value)">
+            <option value="all" selected>Select a platform</option>
+            $platform_options
+        </select>
+        <select id="letterSelector" onchange="filterByLetter(this.value)">
+            <option value="all" selected>All</option>
+            $letters_options
+        </select>
+        <select id="packagesSelector" onchange="filterByPackage(this.value)">
+            <option value="all" selected>Select a package</option>
+            $package_options
+        </select>
+        <br>
+        <div>
+            <button id="open-all">Open All</button>
+            <button id="close-all">Close All</button>
+        </div>
+        <div id="main_container">
+            <div id="platform_container"></div>
+            <div id="package_container"></div>
+        </div>
+        <script src="$release_name/Summary_Script.js" type="application/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.32.0/js/jquery.tablesorter.min.js"></script>
+EOF
+    if (-e $summary_script_src) {
+        copy($summary_script_src, $summary_script_dest) or die "Copy failed: $!";
+    } else {
+        die "Source file $summary_script_src does not exist.";
+    }
+    open(my $out, '>', $summary_page_path) or die "Could not open file '$summary_page_path' $!";
+    print $out $Summary_output;
+
+    print $out "</body>\n</html>\n";
+    close $out;
+}
 main();

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.20)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Surface_mesh_Tests)
 
 find_package(CGAL REQUIRED)
@@ -25,5 +25,5 @@ if(3MF_LIBRARIES AND 3MF_INCLUDE_DIR  AND EXISTS "${3MF_INCLUDE_DIR}/Model/COM/N
   target_link_libraries(test_deprecated_io_sm PRIVATE ${3MF_LIBRARIES})
   target_compile_definitions(test_deprecated_io_sm PRIVATE -DCGAL_LINKED_WITH_3MF)
 else()
-  message(STATUS "NOTICE : read_3mf requires the lib3MF library, and will not be tested.")
+  message(STATUS "NOTICE: read_3mf requires the lib3MF library, and will not be tested.")
 endif()

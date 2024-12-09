@@ -18,7 +18,7 @@
 
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
@@ -57,6 +57,8 @@ is_sharp(const typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h,
 
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor       halfedge_descriptor;
 
+  CGAL_precondition(is_valid_halfedge_descriptor(h, pmesh));
+
   if(is_border_edge(h, pmesh))
     return false;
 
@@ -86,7 +88,7 @@ template<typename PatchIdMap,
          typename ValueType = typename boost::property_traits<PatchIdMap>::value_type>
 struct PatchIdMapWrapper
 {
-  typedef typename boost::property_traits<PatchIdMap>::category category;
+  typedef typename boost::read_write_property_map_tag category;
   typedef ValueType value_type;
   typedef typename boost::property_traits<PatchIdMap>::reference reference;
   typedef typename boost::property_traits<PatchIdMap>::key_type key_type;
@@ -118,7 +120,7 @@ void put(PatchIdMapWrapper<PatchIdMap, Int>& map, Handle_type h,
 template<typename PatchIdMap, typename Int>
 struct PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >
 {
-  typedef typename boost::property_traits<PatchIdMap>::category category;
+  typedef typename boost::read_write_property_map_tag category;
   typedef Int value_type;
   typedef typename boost::property_traits<PatchIdMap>::reference reference;
   typedef typename boost::property_traits<PatchIdMap>::key_type key_type;
@@ -144,12 +146,12 @@ void put(PatchIdMapWrapper<PatchIdMap, std::pair<Int, Int> >& map, Handle_type h
 }
 
 template <typename PolygonMesh, typename PatchIdMap,
-          typename EdgeIsFeatureMap, typename NamedParameters>
+          typename EdgeIsFeatureMap, typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 detect_surface_patches(const PolygonMesh& p,
                        PatchIdMap patch_id_map,
                        EdgeIsFeatureMap eif,
-                       const NamedParameters& np)
+                       const NamedParameters& np = parameters::default_values())
 {
   int offset = static_cast<int>(
           parameters::choose_parameter(parameters::get_parameter(np, internal_np::first_index), 1));
@@ -162,16 +164,6 @@ detect_surface_patches(const PolygonMesh& p,
                               parameters::edge_is_constrained_map(eif)
                                          .face_index_map(CGAL::get_initialized_face_index_map(p, np)));
 }
-
-template <typename PolygonMesh, typename EdgeIsFeatureMap, typename PatchIdMap>
-typename boost::graph_traits<PolygonMesh>::faces_size_type
-detect_surface_patches(const PolygonMesh& p,
-                       PatchIdMap patch_id_map,
-                       EdgeIsFeatureMap eif)
-{
-  return detect_surface_patches(p, patch_id_map, eif, parameters::all_default());
-}
-
 
 template <typename FT, typename PolygonMesh, typename VPM, typename GT, typename EIFMap, typename VNFEMap>
 void sharp_call(const FT angle_in_deg,
@@ -235,7 +227,8 @@ void sharp_call(const FT angle_in_deg,
 /*!
  * \ingroup PMP_detect_features_grp
  *
- * detects and marks the edges that are considered to be sharp with respect to the given angle bound.
+ * \brief detects and marks the edges that are considered to be sharp with respect to the given angle bound.
+ *
  * `angle_in_deg` gives the maximum angle (in degrees) between the two normal vectors of adjacent triangles.
  * For an edge of the input polygon mesh, if the angle between the two normal vectors of its incident facets is bigger
  * than the given bound, then the edge is marked as being a feature edge.
@@ -271,12 +264,13 @@ void sharp_call(const FT angle_in_deg,
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
+ * \see `sharp_edges_segmentation()`
  */
 #ifdef DOXYGEN_RUNNING
 template <typename PolygonMesh, typename FT,
           typename EdgeIsFeatureMap, typename NamedParameters>
 #else
-template <typename PolygonMesh, typename EdgeIsFeatureMap, typename NamedParameters>
+template <typename PolygonMesh, typename EdgeIsFeatureMap, typename NamedParameters = parameters::Default_named_parameters>
 #endif
 void detect_sharp_edges(const PolygonMesh& pmesh,
 #ifdef DOXYGEN_RUNNING
@@ -285,7 +279,7 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
                         typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT angle_in_deg,
 #endif
                         EdgeIsFeatureMap edge_is_feature_map,
-                        const NamedParameters& np)
+                        const NamedParameters& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
@@ -309,13 +303,13 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
  * \tparam PatchIdMap a model of `ReadablePropertyMap` with
-   `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
-   and the desired patch id, model of `CopyConstructible` as value type.
+ *  `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
+ *  and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam VertexIncidentPatchesMap a model of mutable `LvaluePropertyMap` with
-   `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type. Its value type
-   must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
-   A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
-   inserted several times.
+ *  `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type. Its value type
+ *  must be a container of `boost::property_traits<PatchIdMap>::%value_type` and have a function `insert()`.
+ *  A `std::set` or a `boost::unordered_set` are recommended, as a patch index may be
+ *  inserted several times.
  * \tparam EdgeIsFeatureMap a model of `ReadablePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  *  as key type and `bool` as value type.
  *
@@ -324,7 +318,7 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
  * \param vertex_incident_patches_map a property map that will contain the patch ids of all the faces incident to each vertex of `pmesh`.
  * \param edge_is_feature_map a filled property map that will contain the sharp-or-not status of each edge of `pmesh`
  *
- * @see `CGAL::Polygon_mesh_processing::sharp_edges_segmentation()`
+ * \see `sharp_edges_segmentation()`
  */
 
 template <typename PolygonMesh, typename PatchIdMap,
@@ -379,12 +373,11 @@ void vip_call(const PolygonMesh&, PIDMap, const internal_np::Param_not_found&, E
  * \ingroup PMP_detect_features_grp
  *
  * This function calls successively `CGAL::Polygon_mesh_processing::detect_sharp_edges()`,
- * `CGAL::Polygon_mesh_processing::connected_components()` and
+ * `CGAL::Polygon_mesh_processing::connected_components()`, and
  * `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
  *
  * It detects and marks the sharp edges of `pmesh` according to `angle_in_deg`.
- * The sharp edges define a segmentation of `pmesh`, that is done by
- * computing a
+ * The sharp edges define a segmentation of `pmesh`, that is done by computing a
  * surface patch id for each face.
  *
  * \tparam PolygonMesh a model of `FaceGraph`
@@ -394,8 +387,8 @@ void vip_call(const PolygonMesh&, PIDMap, const internal_np::Param_not_found&, E
  * of `PolygonMesh`.
  * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
  * \tparam PatchIdMap a model of `ReadWritePropertyMap` with
-   `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
-   and the desired patch id, model of `CopyConstructible` as value type.
+ *  `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type
+ *  and the desired patch id, model of `CopyConstructible` as value type.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
@@ -452,7 +445,7 @@ template <typename PolygonMesh, typename FT,
           typename EdgeIsFeatureMap, typename PatchIdMap, typename NamedParameters>
 #else
 template <typename PolygonMesh,
-          typename EdgeIsFeatureMap, typename PatchIdMap, typename NamedParameters>
+          typename EdgeIsFeatureMap, typename PatchIdMap, typename NamedParameters = parameters::Default_named_parameters>
 #endif
 typename boost::graph_traits<PolygonMesh>::faces_size_type
 sharp_edges_segmentation(const PolygonMesh& pmesh,
@@ -463,7 +456,7 @@ sharp_edges_segmentation(const PolygonMesh& pmesh,
 #endif
                          EdgeIsFeatureMap edge_is_feature_map,
                          PatchIdMap patch_id_map,
-                         const NamedParameters& np)
+                         const NamedParameters& np = parameters::default_values())
 {
   detect_sharp_edges(pmesh, angle_in_deg, edge_is_feature_map, np);
 
@@ -474,28 +467,6 @@ sharp_edges_segmentation(const PolygonMesh& pmesh,
     parameters::get_parameter(np, internal_np::vertex_incident_patches), edge_is_feature_map);
 
   return result;
-}
-
-//Convenient overrides
-template <typename PolygonMesh, typename EdgeIsFeatureMap, typename FT>
-void detect_sharp_edges(const PolygonMesh& p,
-                        FT angle_in_deg,
-                        EdgeIsFeatureMap edge_is_feature_map)
-{
-  detect_sharp_edges(p, angle_in_deg, edge_is_feature_map,
-                     parameters::all_default());
-}
-
-template <typename PolygonMesh, typename FT,
-          typename EdgeIsFeatureMap, typename PatchIdMap>
-typename boost::graph_traits<PolygonMesh>::faces_size_type
-sharp_edges_segmentation(const PolygonMesh& p,
-                         FT angle_in_deg,
-                         EdgeIsFeatureMap edge_is_feature_map,
-                         PatchIdMap patch_id_map)
-{
-  return sharp_edges_segmentation(p, angle_in_deg, edge_is_feature_map, patch_id_map,
-                                  parameters::all_default());
 }
 
 } // end namespace PMP

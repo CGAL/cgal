@@ -5,5 +5,4 @@
 /// type `long long int` is an `RealEmbeddable` `EuclideanRing`. Due
 /// to overflow `long long int` is considered as not exact.
 ///
-/// \cgalModels `EuclideanRing`
-/// \cgalModels `RealEmbeddable`
+/// \cgalModels{EuclideanRing,RealEmbeddable}

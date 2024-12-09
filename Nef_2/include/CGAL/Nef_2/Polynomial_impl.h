@@ -5,11 +5,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 //
 // Author(s)     : Michael Seel
 //                 Andreas Fabri
+
+#ifndef CGAL_NEF_2_POLYNOMIAL_IMPL_H
+#define CGAL_NEF_2_POLYNOMIAL_IMPL_H
+
+#include <CGAL/license/Nef_2.h>
 
 
 namespace CGAL{
@@ -87,15 +92,23 @@ Polynomial<int> Polynomial<int>::gcd(
   int f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
   int F = CGAL::gcd(f1c,f2c);
-  Polynomial<int> q,r; int M=1,D;
+  Polynomial<int> q,r;
+  int D;
+#ifdef CGAL_USE_TRACE
+  int M=1;
   bool first = true;
+#endif
   while ( ! f2.is_zero() ) {
     Polynomial<int>::pseudo_div(f1,f2,q,r,D);
+#ifdef CGAL_USE_TRACE
     if (!first) M*=D;
+#endif
     CGAL_NEF_TRACEV(f1);CGAL_NEF_TRACEV(f2);CGAL_NEF_TRACEV(q);CGAL_NEF_TRACEV(r);CGAL_NEF_TRACEV(M);
     r /= r.content();
     f1=f2; f2=r;
+#ifdef CGAL_USE_TRACE
     first=false;
+#endif
   }
   CGAL_NEF_TRACEV(f1.content());
   return Polynomial<int>(F)*f1.abs();
@@ -172,15 +185,20 @@ Polynomial<double> Polynomial<double>::gcd(
   Polynomial<double> f2 = p2.abs();
   double f1c = f1.content(), f2c = f2.content();
   f1 /= f1c; f2 /= f2c;
-  Polynomial<double> q,r; double M=1,D;
+  Polynomial<double> q,r; double D;
+#ifdef CGAL_USE_TRACE
+  double M=1;
   bool first = true;
+#endif
   while ( ! f2.is_zero() ) {
     Polynomial<double>::pseudo_div(f1,f2,q,r,D);
+#ifdef CGAL_USE_TRACE
     if (!first) M*=D;
+    first=false;
+#endif
     CGAL_NEF_TRACEV(f1);CGAL_NEF_TRACEV(f2);CGAL_NEF_TRACEV(q);CGAL_NEF_TRACEV(r);CGAL_NEF_TRACEV(M);
     r /= r.content();
     f1=f2; f2=r;
-    first=false;
   }
   CGAL_NEF_TRACEV(f1.content());
   return Polynomial<double>(1)*f1.abs();
@@ -189,3 +207,5 @@ Polynomial<double> Polynomial<double>::gcd(
 
 } // end namespace Nef
 }//end namespace CGAL
+
+#endif //CGAL_NEF_2_POLYNOMIAL_IMPL_H

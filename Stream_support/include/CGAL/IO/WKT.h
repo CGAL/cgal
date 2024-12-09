@@ -19,6 +19,7 @@
 #include <CGAL/Point_3.h>
 #include <CGAL/Polygon_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
+#include <CGAL/Multipolygon_with_holes_2.h>
 
 #include <CGAL/IO/WKT/traits_point.h>
 #include <CGAL/IO/WKT/traits_point_3.h>
@@ -67,7 +68,7 @@ void pop_back_if_equal_to_front(CGAL::Polygon_with_holes_2<K>& pwh)
 //!
 //! \tparam Point can be a `CGAL::Point_2` or `CGAL::Point_3`.
 //!
-//! \attention Only Cartesian Kernels with double or float as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
 //! \see `CGAL::Point_3`
@@ -112,10 +113,10 @@ bool read_point_WKT(std::istream& in,
 //! and have:
 //! - a function `push_back()` that takes the same point type,
 //! - a function `clear()`,
-//! - a function `resize()` that takes an `size_type`
+//! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
 //! \see `CGAL::Point_3`
@@ -159,10 +160,10 @@ bool read_multi_point_WKT(std::istream& in,
 //! and have:
 //! - a function `push_back()` that takes a `CGAL::Point_2`.
 //! - a function `clear()`,
-//! - a function `resize()` that takes an `size_type`
+//! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
 template<typename LineString>
@@ -203,10 +204,10 @@ bool read_linestring_WKT(std::istream& in,
 //! and have:
 //! - a function `push_back()` that takes a `Linestring`,
 //! - a function `clear()`,
-//! - a function `resize()` that takes an `size_type`
+//! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
 template<typename MultiLineString>
@@ -258,7 +259,7 @@ bool read_multi_linestring_WKT(std::istream& in,
 //!
 //! \tparam Polygon is a `CGAL::General_polygon_with_holes_2`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename Polygon>
@@ -302,10 +303,10 @@ bool read_polygon_WKT(std::istream& in,
 //! and have:
 //! - a function `push_back()` that takes a `CGAL::General_polygon_with_holes_2`,
 //! - a function `clear()`,
-//! - a function `resize()` that takes an `size_type`
+//! - a function `resize()` that takes a `size_type`
 //! - an `operator[]()` that takes a `size_type`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename MultiPolygon>
@@ -345,13 +346,22 @@ bool read_multi_polygon_WKT(std::istream& in,
   return !in.fail();
 }
 
+
+template<typename Kernel, typename Container>
+bool read_multi_polygon_WKT(std::istream& in,
+                            Multipolygon_with_holes_2<Kernel,Container>& mp)
+{
+  return read_multi_polygon_WKT(in, mp.polygons_with_holes());
+}
+
+
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
 //! \brief writes `point` into a WKT stream.
 //!
 //! \tparam Point is a `CGAL::Point_2`
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::Point_2`
 template<typename Point>
@@ -371,7 +381,7 @@ std::ostream& write_point_WKT(std::ostream& out,
 //!
 //! \tparam Polygon must be a `CGAL::General_polygon_with_holes_2`
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::General_polygon_with_holes_2`
 template<typename Polygon>
@@ -391,7 +401,7 @@ std::ostream& write_polygon_WKT(std::ostream& out,
 //!
 //! \tparam LineString must be a `RandomAccessRange` of `CGAL::Point_2`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //!\see `CGAL::Point_2`
 template<typename LineString>
@@ -412,7 +422,7 @@ std::ostream& write_linestring_WKT(std::ostream& out,
 //!
 //! \tparam MultiPoint must be a `RandomAccessRange` of `CGAL::Point_2`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //!\see `CGAL::Point_2`
 template<typename MultiPoint>
@@ -433,7 +443,7 @@ std::ostream& write_multi_point_WKT(std::ostream& out,
 //!
 //! \tparam MultiPolygon must be a `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //!\see `CGAL::General_polygon_with_holes_2`
 template<typename MultiPolygon>
@@ -448,13 +458,20 @@ std::ostream& write_multi_polygon_WKT(std::ostream& out,
   return out;
 }
 
+template<typename Kernel, typename Container>
+std::ostream& write_multi_polygon_WKT(std::ostream& out,
+                                      Multipolygon_with_holes_2<Kernel,Container>& mp)
+{
+  return write_multi_polygon_WKT(out, mp.polygons_with_holes());
+}
+
 //! \ingroup PkgStreamSupportIoFuncsWKT
 //!
 //! \brief writes the content of `mls` into a WKT stream.
 //!
 //! \tparam MultiLineString must be a `RandomAccessRange` of `LineString`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::IO::write_linestring_WKT()`
 template<typename MultiLineString>
@@ -489,7 +506,7 @@ std::ostream& write_multi_linestring_WKT(std::ostream& out,
 //! \tparam MultiLineString must be a `RandomAccessRange` of `Linestring`.
 //! \tparam MultiPolygon must be a model of `RandomAccessRange` of `CGAL::General_polygon_with_holes_2`.
 //!
-//! \attention Only Cartesian Kernels with double or float  as `FT` are supported.
+//! \attention Only %Cartesian Kernels with double or float  as `FT` are supported.
 //!
 //! \see `CGAL::IO::read_linestring_WKT()`
 template<typename MultiPoint,
@@ -503,72 +520,74 @@ bool read_WKT(std::istream& is,
   if(!is.good())
     return false;
 
-  do
+  while(is.good() && !is.eof())
   {
     typedef typename MultiPoint::value_type Point;
     typedef typename MultiLineString::value_type LineString;
     typedef typename MultiPolygon::value_type Polygon;
 
     std::string line;
-    std::streampos input_pos = is.tellg();
     std::getline(is, line);
-    std::istringstream iss(line);
-    std::string t;
-    std::string type="";
-    iss >> t;
-
-    for(std::size_t pos=0; pos < t.length(); ++pos)
-    {
-      char c = t[pos];
-      if(c == '(')
-        break;
-
-      type.push_back(c);
+    std::string::size_type header_end = line.find("("); // }
+    if(header_end == std::string::npos){
+      continue;
     }
+    std::string type="";
+    const std::string header = line.substr(0,header_end);
+    const std::string types[6] = { "MULTIPOLYGON", "MULTILINESTRING", "MULTIPOINT", "POLYGON", "LINESTRING", "POINT"};
+    for(int i= 0; i < 6; ++i){
+      if(header.find(types[i]) != std::string::npos){
+        type = types[i];
+        break;
+      }
+    }
+    if(type == ""){
+      continue;
+    }
+    std::istringstream iss(line);
 
-    is.seekg(input_pos);
     if(type == "POINT")
     {
       Point p;
-      CGAL::IO::read_point_WKT(is, p);
+      CGAL::IO::read_point_WKT(iss, p);
       points.push_back(p);
     }
     else if(type == "LINESTRING")
     {
       LineString l;
-      CGAL::IO::read_linestring_WKT(is, l);
+      CGAL::IO::read_linestring_WKT(iss, l);
       polylines.push_back(l);
     }
     else if(type == "POLYGON")
     {
       Polygon p;
-      CGAL::IO::read_polygon_WKT(is, p);
+      CGAL::IO::read_polygon_WKT(iss, p);
       if(!p.outer_boundary().is_empty())
         polygons.push_back(p);
     }
     else if(type == "MULTIPOINT")
     {
       MultiPoint mp;
-      CGAL::IO::read_multi_point_WKT(is, mp);
+      CGAL::IO::read_multi_point_WKT(iss, mp);
       for(const Point& point : mp)
         points.push_back(point);
     }
     else if(type == "MULTILINESTRING")
     {
       MultiLineString mls;
-      CGAL::IO::read_multi_linestring_WKT(is, mls);
+      CGAL::IO::read_multi_linestring_WKT(iss, mls);
       for(const LineString& ls : mls)
         polylines.push_back(ls);
     }
     else if(type == "MULTIPOLYGON")
     {
       MultiPolygon mp;
-      CGAL::IO::read_multi_polygon_WKT(is, mp);
+      CGAL::IO::read_multi_polygon_WKT(iss, mp);
       for(const Polygon& poly : mp)
         polygons.push_back(poly);
     }
   }
-  while(is.good() && !is.eof());
+
 
   return !is.fail();
 }

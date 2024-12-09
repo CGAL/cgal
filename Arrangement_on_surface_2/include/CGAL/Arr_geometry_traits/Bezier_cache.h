@@ -63,7 +63,7 @@ public:
     Algebraic          x;      // The x-coordinate.
     Algebraic          y;      // The y-coordinate.
 
-    /*! Constructor. */
+    /*! constructs. */
     Intersection_point (const Algebraic& _s, const Algebraic& _t,
                           const Algebraic& _x, const Algebraic& _y) :
       s(_s), t(_t),
@@ -124,7 +124,7 @@ private:
       app_y (0)
     {}
 
-    /*! Constructor. */
+    /*! constructs. */
     My_point_2 (typename Parameter_list::const_iterator it,
                 const Algebraic& _x, const Algebraic& _y) :
       prm_it (it),
@@ -134,7 +134,7 @@ private:
       app_y (CGAL::to_double(_y))
     {}
 
-    /*! Get the parameter value. */
+    /*! obtains the parameter value. */
     const Algebraic& parameter () const
     {
       return (*prm_it);
@@ -177,7 +177,7 @@ private:
 
 public:
 
-  /*! Constructor. */
+  /*! constructs. */
   _Bezier_cache ()
   {}
 
@@ -588,7 +588,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   Integer                  coeff;
   int                      k;
 
-  // Consruct the bivariate polynomial that corresponds to Equation I.
+  // Construct the bivariate polynomial that corresponds to Equation I.
   // Note that we represent a bivariate polynomial as a vector of univariate
   // polynomials, whose i'th entry corresponds to the coefficient of t^i,
   // which is in turn a polynomial it s.
@@ -602,7 +602,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   }
   coeffsX_st[0] = coeffsX_st[0] - nt_traits.scale (polyX_1, normX_2);
 
-  // Consruct the bivariate polynomial that corresponds to Equation II.
+  // Construct the bivariate polynomial that corresponds to Equation II.
   const int                degY_2 = nt_traits.degree (polyY_2);
   std::vector<Polynomial>  coeffsY_st (degY_2 < 0 ? 1 : (degY_2 + 1));
 
@@ -655,7 +655,7 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   Integer                 *coeffs;
   int                      i;
 
-  // Consruct the bivariate polynomial that corresponds to Equation I.
+  // Construct the bivariate polynomial that corresponds to Equation I.
   // Note that we represent a bivariate polynomial as a vector of univariate
   // polynomials, whose i'th entry corresponds to the coefficient of t^i,
   // which is in turn a polynomial it s.
@@ -675,7 +675,7 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
 
   delete[] coeffs;
 
-  // Consruct the bivariate polynomial that corresponds to Equation II.
+  // Construct the bivariate polynomial that corresponds to Equation II.
   const int                degY = nt_traits.degree (polyY);
   CGAL_assertion(degY > 0);
   if (degY <= 0) return; //no self intersection if Y is constant
@@ -822,7 +822,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
         }
 
         // We multiplied the current row by the i'th diagonal entry, thus
-        // multipling the determinant value by it. We therefore increment
+        // multiplying the determinant value by it. We therefore increment
         // the exponent of mat[i][i] in the normalization factor.
         exp_fact[i] = exp_fact[i] + 1;
       }
@@ -869,6 +869,6 @@ _Bezier_cache<NtTraits>::_compute_resultant
   return (det);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

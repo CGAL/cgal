@@ -156,9 +156,9 @@ public:
         Pl pl(pl0, pl1, pl2);
         P pl3 = pl0 + FT(this->r.get_double()) * V(pl1 - pl0) + FT(this->r.get_double()) * V(pl1 - pl0);
         if(pl.has_on(l1))
-          Base::template check_intersection(L(pl3, l1), pl, L(pl3, l1)); // both points on the plane
+          Base::check_intersection(L(pl3, l1), pl, L(pl3, l1)); // both points on the plane
         else
-          Base::template check_intersection(L(pl3, l1), pl, pl3); // single point on the plane
+          Base::check_intersection(L(pl3, l1), pl, pl3); // single point on the plane
 
         if(pl.oriented_side(l0) != pl.oriented_side(l1)) // l0 xor l1 on pl is fine
         {
@@ -232,6 +232,10 @@ public:
     check_no_intersection(L(p(0,0,0),p(1,0,0)), R(p(3,0,1),p(6,0,1)));
     check_no_intersection(L(p(0,0,0),p(1,0,0)), R(p(0,2,0),p(0,4,0)));
     check_no_intersection(L(p(0,0,0),p(1,0,0)), R(p(6,2,0),p(5,4,0)));
+    check_no_intersection(L(p(0,0,0),p(0,1,0)), R(p(1,-1,0),p(1,0,0)));
+    check_no_intersection(L(p(0,-10,0),p(0,-9,0)), R(p(1,-1,0),p(2,0,0)));
+    check_no_intersection(L(p(0,-10,0),p(0,0,0)), R(p(1,-1,0),p(2,0,0)));
+    check_no_intersection(L(p(0,0,0),p(0,1,0)), R(p(1,-1,0),p(2,0,0)));
 
     // Point intersection
     check_intersection   (L(p(0,0,0),p(1,0,0)), R(p(3,0,0),p(6,4,0)),
@@ -339,12 +343,15 @@ public:
     {
       P tet0 = random_point(), tet1 = random_point(), tet2 = random_point(), tet3 = random_point();
 
-      const Tet tet(tet0, tet1, tet2, tet3);
+      Tet tet(tet0, tet1, tet2, tet3);
       if(tet.is_degenerate())
         continue;
 
-      P l0 = tet0 + CGAL::cross_product(V(tet0, tet1), V(tet0, tet2));
-      P l1 = tet2 + CGAL::cross_product(V(tet2, tet1), V(tet2, tet0));
+      if(tet.orientation() == CGAL::NEGATIVE)
+        tet = Tet(tet1, tet0, tet2, tet3);
+
+      P l0 = tet[0] - CGAL::cross_product(V(tet[0], tet[1]), V(tet[0], tet[2]));
+      P l1 = tet[3] + CGAL::cross_product(V(tet[3], tet[1]), V(tet[3], tet[2]));
 
       assert(tet.has_on_unbounded_side(l0) && tet.has_on_unbounded_side(l1));
 
@@ -363,6 +370,7 @@ public:
 
     // No intersection
     Tr tr(p(0,0,0), p(1,0,1), p(1,1,0));
+
     check_no_intersection(L(p(5,0,0), p(5,1,0)), tr);
 
     // on edge

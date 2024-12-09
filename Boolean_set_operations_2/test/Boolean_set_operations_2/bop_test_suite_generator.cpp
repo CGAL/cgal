@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
     return (0);
   }
 
-  std::cout << "unkown polygon type" << std::endl;
+  std::cout << "unknown polygon type" << std::endl;
 
   return (0);
 }

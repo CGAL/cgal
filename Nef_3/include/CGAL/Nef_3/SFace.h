@@ -29,7 +29,7 @@
 #include <CGAL/Nef_2/debug.h>
 
 #ifndef CGAL_I_DO_WANT_TO_USE_GENINFO
-#include <boost/any.hpp>
+#include <any>
 #endif
 
 namespace CGAL {
@@ -39,7 +39,7 @@ class SFace_base {
   #ifdef CGAL_I_DO_WANT_TO_USE_GENINFO
   typedef void* GenPtr;
   #else
-  typedef boost::any GenPtr;
+  typedef std::any GenPtr;
   #endif
   typedef typename Refs::Mark  Mark;
   typedef typename Refs::Vertex_handle        Vertex_handle;
@@ -54,13 +54,12 @@ class SFace_base {
     SFace_cycle_const_iterator;
   Vertex_handle  center_vertex_;
   Volume_handle  volume_;
-  //    Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
+  Object_list    boundary_entry_objects_; // SEdges, SLoops, SVertices
   GenPtr         info_;
   // temporary needed:
   Mark           mark_;
 
  public:
-  Object_list   boundary_entry_objects_; // SEdges, SLoops, SVertices
 
   SFace_base() : center_vertex_(), volume_(), info_(), mark_() {}
 

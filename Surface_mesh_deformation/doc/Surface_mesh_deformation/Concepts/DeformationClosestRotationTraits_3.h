@@ -7,10 +7,12 @@ The definition of close depends on the model.
 The fact that some basic operations are hidden behind a function is to allow to benefit from optimizations like expression template from libraries used
 to implement models of this concept.
 
-\cgalRefines `DefaultConstructible`
+\cgalRefines{DefaultConstructible}
 
-\cgalHasModel `CGAL::Deformation_Eigen_closest_rotation_traits_3`
-\cgalHasModel `CGAL::Deformation_Eigen_polar_closest_rotation_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Deformation_Eigen_closest_rotation_traits_3}
+\cgalHasModels{CGAL::Deformation_Eigen_polar_closest_rotation_traits_3}
+\cgalHasModelsEnd
 
 */
 class DeformationClosestRotationTraits_3{
