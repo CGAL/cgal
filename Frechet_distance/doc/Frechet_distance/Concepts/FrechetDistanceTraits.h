@@ -50,7 +50,7 @@ typedef unspecified_type Construct_cartesian_const_iterator_d;
 
 /*!
 Functor with operator to construct the bounding box of an object of type `Point_d`,
-result type is either `Bbox_2`, `Bbox_3` or `Bbox` depending on `Dimension`.
+result type is either `CGAL::Bbox_2`, `CGAL::Bbox_3` or `CGAL::Bbox` depending on `Dimension`.
 */
 typedef unspecified_type Construct_bbox_d;
 
