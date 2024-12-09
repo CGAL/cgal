@@ -22,37 +22,37 @@ public:
 /*!
 Dimension type, being an instance of `CGAL::Dimension_tag`.
 */
-typedef unspecified_type Dimension;
+using Dimension = unspecified_type;
 
 /*!
 Point type.
 */
-typedef unspecified_type Point_d;
+using Point_d = unspecified_type;
 
 /*!
 The number type of the %Cartesian coordinates of types `Point_d`.
 For a given `FT n`, `to_interval(n)` must be a valid expression and it must
 return an interval containing `n`, represented by a `std::pair<double, double>`.
 */
-typedef unspecified_type FT;
+using FT = unspecified_type;
 
 /*!
 A random access iterator type to enumerate the
 %Cartesian coordinates of a point, with `FT` as value type.
 */
-typedef unspecified_type Cartesian_const_iterator_d;
+using Cartesian_const_iterator_d = unspecified_type;
 
 /*!
 Functor model of `Kernel_d::ConstructCartesianConstIterator_d` to get
 iterators over %Cartesian coordinates of a point.
 */
-typedef unspecified_type Construct_cartesian_const_iterator_d;
+using Construct_cartesian_const_iterator_d = unspecified_type;
 
 /*!
 Functor with operator to construct the bounding box of an object of type `Point_d`,
 result type is either `CGAL::Bbox_2`, `CGAL::Bbox_3` or `CGAL::Bbox` depending on `Dimension`.
 */
-typedef unspecified_type Construct_bbox_d;
+using Construct_bbox_d = unspecified_type;
 
 /// @}
 
