@@ -284,9 +284,9 @@ Building_C
 <TD class="math" ALIGN=RIGHT NOWRAP>
 3.432
 <TD class="math" ALIGN=RIGHT NOWRAP>
-370
+369
 <TD class="math" ALIGN=RIGHT NOWRAP>
-1.466
+1.457
 <TD class="math" ALIGN=RIGHT NOWRAP>
 40,1
 <TD class="math" ALIGN=RIGHT NOWRAP>
@@ -376,9 +376,9 @@ Meeting Room
 <TD class="math" ALIGN=RIGHT NOWRAP>
 15
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,03
-<TD class="math" ALIGN=RIGHT NOWRAP>
 10
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,03
 <TD class="math" ALIGN=RIGHT NOWRAP>
 3
 <TD class="math" ALIGN=RIGHT NOWRAP>
@@ -396,9 +396,9 @@ Full Thing
 <TD class="math" ALIGN=RIGHT NOWRAP>
 12
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,05
-<TD class="math" ALIGN=RIGHT NOWRAP>
 3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,05
 <TD class="math" ALIGN=RIGHT NOWRAP>
 1
 <TD class="math" ALIGN=RIGHT NOWRAP>
@@ -416,9 +416,9 @@ Hilbert cube
 <TD class="math" ALIGN=RIGHT NOWRAP>
 12
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,03
-<TD class="math" ALIGN=RIGHT NOWRAP>
 5
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,03
 <TD class="math" ALIGN=RIGHT NOWRAP>
 4
 <TD class="math" ALIGN=RIGHT NOWRAP>
@@ -456,9 +456,9 @@ Building_C
 <TD class="math" ALIGN=RIGHT NOWRAP>
 15
 <TD class="math" ALIGN=RIGHT NOWRAP>
-0,5
-<TD class="math" ALIGN=RIGHT NOWRAP>
 3
+<TD class="math" ALIGN=RIGHT NOWRAP>
+0,5
 <TD class="math" ALIGN=RIGHT NOWRAP>
 2
 <TD class="math" ALIGN=RIGHT NOWRAP>

@@ -289,9 +289,8 @@ public:
     m_initial_intervals.resize(e.size());
 
     std::size_t idx = 0;
-    for (const auto& edge : e) {
+    for (const auto& edge : e)
       m_initial_intervals[idx++] = m_graph[edge].intervals;
-    }
 
     m_initial_part_of_partition.resize(m_ifaces.size());
     for (idx = 0; idx < m_ifaces.size(); idx++)
@@ -303,9 +302,8 @@ public:
     CGAL_assertion(e.size() == m_initial_intervals.size());
     std::size_t idx = 0;
 
-    for (auto edge : e) {
-      m_graph[edge].intervals = m_initial_intervals[idx];
-    }
+    for (auto edge : e)
+      m_graph[edge].intervals = m_initial_intervals[idx++];
 
     CGAL_assertion(m_ifaces.size() == m_initial_part_of_partition.size());
     for (idx = 0; idx < m_ifaces.size(); idx++)

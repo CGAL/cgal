@@ -171,7 +171,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits* m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -352,7 +352,7 @@ public:
 
   };
 
-  /*! Obtain a Compare_curve_end_x_2 functor object. */
+  /*! obtains a Compare_curve_end_x_2 functor object. */
   Compare_curve_end_x_2 compare_curve_end_x_2_object () const
   {
     return Compare_curve_end_x_2(this);
@@ -371,7 +371,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits* m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -481,7 +481,7 @@ public:
 
   };
 
-  /*! Obtain a Compare_y_at_x_2 functor object. */
+  /*! obtains a Compare_y_at_x_2 functor object. */
   Compare_curve_end_y_at_x_2 compare_curve_end_y_at_x_2_object () const
   {
     return Compare_curve_end_y_at_x_2(this);
@@ -498,7 +498,7 @@ public:
     const Traits* m_traits;
     const Traits_base* m_traits_base; //MICHAL: rational-upd
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -586,7 +586,7 @@ public:
 
   };
 
-  /*! Obtain an Equal_curve_end_2 functor object. */
+  /*! obtains an Equal_curve_end_2 functor object. */
   Equal_curve_end_2 equal_curve_end_2_object () const
   {
     return Equal_curve_end_2(this);
@@ -601,7 +601,7 @@ public:
     /*! The traits (in case it has state) */
     const Traits* m_traits;
 
-    /*! Constructor
+    /*! constructs
      * \param traits the traits (in case it has state)
      * The constructor is declared private to allow only the functor
      * obtaining function, which is a member of the nesting class,
@@ -613,8 +613,7 @@ public:
     friend class Td_traits<Traits_base, Arrangement_on_surface_2>;
 
   public:
-    /*!
-     * Compare two edge ends lexigoraphically: by x, then by y.
+    /*! compares two edge ends lexigoraphically: by x, then by y.
      * \param cv1, cv1_end The first cv end.
      * \param cv2, cv2_end The second cv end.
      * \return LARGER if x(cv1-end) > x(cv2-end),
@@ -860,14 +859,11 @@ public:
     }
   };
 
-  /*! Obtain a Compare_curve_end_xy_2 functor object. */
+  /*! obtains a Compare_curve_end_xy_2 functor object. */
   Compare_curve_end_xy_2 compare_curve_end_xy_2_object () const
   {
     return Compare_curve_end_xy_2(this);
   }
-
-
-
 
   // Td_traits class ctors and dtor
 

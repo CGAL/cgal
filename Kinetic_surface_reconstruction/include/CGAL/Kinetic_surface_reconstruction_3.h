@@ -627,7 +627,6 @@ private:
   std::vector<std::pair<std::size_t, std::size_t> > m_volume_votes; // pair<inside, outside> votes
   std::vector<bool> m_volume_below_ground;
   std::vector<std::vector<double> > m_cost_matrix;
-  std::vector<FT> m_volumes; // normalized volume of each kinetic volume
   std::vector<std::size_t> m_labels;
 
   std::size_t m_total_inliers;
@@ -747,9 +746,9 @@ private:
       std::cout << "* computing data term ... ";
 
     std::size_t max_inside = 0, max_outside = 0;
-    for (std::size_t i = 0; i < m_volumes.size(); i++) {
-      max_inside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[0][i + 6]), max_inside);
-      max_outside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[1][i + 6]), max_outside);
+    for (std::size_t i = 6; i < m_cost_matrix[0].size(); i++) {
+      max_inside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[0][i]), max_inside);
+      max_outside = (std::max<std::size_t>)(static_cast<std::size_t>(m_cost_matrix[1][i]), max_outside);
     }
 
     // Dump volumes colored by votes
@@ -1743,55 +1742,14 @@ private:
     return face_area;
   }
 
-  FT volume(typename LCC::Dart_descriptor volume_dart) {
-    FT x = 0, y = 0, z = 0;
-    std::size_t count = 0;
-    From_exact from_exact;
-
-    // Collect vertices to obtain point on the inside.
-    for (auto& fd : m_lcc.template one_dart_per_incident_cell<2, 3>(volume_dart)) {
-      typename LCC::Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
-
-      for (const auto& vd : m_lcc.template one_dart_per_incident_cell<0, 2>(fdh)) {
-        const auto &p = from_exact(m_lcc.point(m_lcc.dart_descriptor(vd)));
-        x += p.x();
-        y += p.y();
-        z += p.z();
-        count++;
-      }
-    }
-
-    Point_3 center(x / count, y / count, z / count);
-
-    FT vol = 0;
-    // Second iteration for computing the area of each face and the volume spanned with the center point.
-    for (auto& fd : m_lcc.template one_dart_per_incident_cell<2, 3>(volume_dart)) {
-      typename LCC::Dart_descriptor fdh = m_lcc.dart_descriptor(fd);
-
-      Plane_3 plane;
-      FT a = area(fdh, plane);
-      Vector_3 n = plane.orthogonal_vector();
-
-      FT distance = CGAL::abs((plane.point() - center) * n);
-      vol += distance * a / 3.0;
-    }
-
-    return vol;
-  }
-
   void count_volume_votes_lcc() {
 //    const int debug_volume = -1;
-    FT total_volume = 0;
     std::size_t num_volumes = m_kinetic_partition.number_of_volumes();
     m_volume_votes.clear();
     m_volume_votes.resize(num_volumes, std::make_pair(0, 0));
 
-    m_volumes.resize(num_volumes, 0);
-
-    for (std::size_t i = 6; i < num_volumes; i++) {
+    for (std::size_t i = 6; i < num_volumes; i++)
       m_cost_matrix[0][i] = m_cost_matrix[1][i] = 0;
-      m_volumes[i] = 0;
-    }
 
     From_exact from_exact;
 
@@ -1829,28 +1787,15 @@ private:
         m_cost_matrix[1][v[j] + 6] += static_cast<double>(out[j]);
       }
     }
-
-    for (auto& d : m_lcc.template one_dart_per_cell<3>()) {
-      typename LCC::Dart_descriptor dh = m_lcc.dart_descriptor(d);
-
-      std::size_t volume_index = m_lcc.template info<3>(dh).volume_id;
-      m_volumes[volume_index] = volume(dh);
-
-      total_volume += m_volumes[volume_index];
-    }
-
-    // Normalize volumes
-    for (FT& v : m_volumes)
-      v /= total_volume;
   }
 
   template<typename NamedParameters>
   void create_planar_shapes(const NamedParameters& np) {
-
     if (m_points.size() < 3) {
       if (m_verbose) std::cout << "* no points found, skipping" << std::endl;
       return;
     }
+
     if (m_verbose) std::cout << "* getting planar shapes using region growing" << std::endl;
 
     FT xmin, ymin, zmin, xmax, ymax, zmax;
