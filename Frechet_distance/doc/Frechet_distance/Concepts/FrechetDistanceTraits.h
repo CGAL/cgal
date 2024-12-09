@@ -20,8 +20,7 @@ public:
 /// @{
 
 /*!
-Dimension type, being either `CGAL::Dimension_tag`
-or `CGAL::Dynamic_dimension_tag`.
+Dimension type, being an instance of `CGAL::Dimension_tag`.
 */
 typedef unspecified_type Dimension;
 
@@ -45,7 +44,7 @@ typedef unspecified_type Cartesian_const_iterator_d;
 
 /*!
 Functor model of `Kernel_d::ConstructCartesianConstIterator_d` to get
-iterators over cartesian coordinates of a point.
+iterators over %Cartesian coordinates of a point.
 */
 typedef unspecified_type Construct_cartesian_const_iterator_d;
 
