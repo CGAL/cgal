@@ -13,7 +13,7 @@ using Point = Traits::Point_d;
 int main(int , char*)
 {
     std::array<Point,4> A = { Point(0,0,0,0), Point(1,0,0,0), Point(1,1,0,1),Point(1,1,1,0)};
-    std::array<Point,4> B = { Point(0,0,0,0), Point(1,0,0,0), Point(1,1,0,0),Point(1,1,1,1)};
+    std::array<Point,4> B = { Point(0,0,0,0), Point(1,0,0,0), Point(1,1,0,0),Point(1,1,1,0)};
 
     std::pair<double, double> res = CGAL::approximate_Frechet_distance<Traits>(A, B, 0.000001);
     std::cout << "The Frechet distance between the polylines is between " <<  res.first << " and " << res.second << std::endl;
