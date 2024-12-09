@@ -37,7 +37,9 @@ class Axis_parallel_plane_traits
   const FT m_value; // indicates the value of the constant coordinate
 
 public:
+  typedef typename Traits::Segment_3 Segment_3;
   typedef typename Traits::Plane_3 Plane_3;
+  typedef typename Traits::Point_3 Point_3;
 
   Axis_parallel_plane_traits(int cst_coord, FT value, const Traits& traits)
     : m_traits(traits)
