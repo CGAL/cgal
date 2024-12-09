@@ -31,7 +31,7 @@ namespace internal {
 //TODO: move that in Kernel_23/Kernel_d?
 double length_of_diagonal(const Bbox_2& bb)
 {
-    using I = Interval_nt<false>;
+    using I = Interval_nt<true>;
     I d = square(I(bb.xmax()) - I(bb.xmin()));
     d +=  square(I(bb.ymax()) - I(bb.ymin()));
     return sqrt(d).sup();
@@ -39,7 +39,7 @@ double length_of_diagonal(const Bbox_2& bb)
 
 double length_of_diagonal(const Bbox_3& bb)
 {
-    using I = Interval_nt<false>;
+    using I = Interval_nt<true>;
     I d = square(I(bb.xmax()) - I(bb.xmin()));
     d +=  square(I(bb.ymax()) - I(bb.ymin()));
     d +=  square(I(bb.zmax()) - I(bb.zmin()));
@@ -49,7 +49,7 @@ double length_of_diagonal(const Bbox_3& bb)
 template<int N, typename T>
 double length_of_diagonal(const Bbox<Dimension_tag<N>,T>& bb)
 {
-    using I = Interval_nt<false>;
+    using I = Interval_nt<true>;
     I d = square(I((bb.max)(0)) - I((bb.min)(0)));
     for(int i = 1; i < bb.dimension(); ++i){
       d += square(I((bb.max)(i)) - I((bb.min)(i)));
