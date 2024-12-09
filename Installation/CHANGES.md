@@ -3,6 +3,10 @@
 
 ## [Release 6.1](https://github.com/CGAL/cgal/releases/tag/v6.1)
 
+### [dD Frechet Distance](https://doc.cgal.org/6.1/Manual/packages.html#FrechetDistance) (new package)
+- This package provides functions for computing the Fréchet distance of polylines in any dimension under the Euclidean metric.
+
+
 ### [Algebraic Kernel](https://doc.cgal.org/6.1/Manual/packages.html#PkgAlgebraicKernelD)
 
 -   **Breaking change**: Classes based on the RS Library are no longer provided.
