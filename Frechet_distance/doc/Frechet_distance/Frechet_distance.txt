@@ -70,7 +70,7 @@ The following example shows how we can compute the Fréchet distance up to a giv
 
 
 
-\subsection subsecFrechetDistanceSecondExample Distance Computation for dD Polylines
+\subsection subsecFrechetDistanceThirdExample Distance Computation for dD Polylines
 
 The following example shows how we can compute the Fréchet distance up to a given precision on two polylines in 4-dimensional Euclidean space using `approximate_Frechet_distance()`.
 
