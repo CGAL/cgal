@@ -22,6 +22,7 @@
 #include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
 #include <CGAL/Frechet_distance_traits_2.h>
 #include <CGAL/Frechet_distance_traits_3.h>
+#include <CGAL/Frechet_distance_traits_d.h>
 #include <CGAL/Frechet_distance_traits.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
