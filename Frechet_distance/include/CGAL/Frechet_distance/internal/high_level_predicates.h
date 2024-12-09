@@ -76,6 +76,11 @@ fill_lambda(const Point& circle_center,
   }
   c -= CGAL::square(typename Traits::FT(radius));
 
+  if(is_zero(a)){
+    I = std::make_pair(Lambda<C>(0), Lambda<C>(1));
+    return true;
+  }
+
   FT minus_b_div_a = b / a;
   FT d = CGAL::square(minus_b_div_a) - c / a;
 
