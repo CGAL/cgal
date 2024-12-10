@@ -1492,7 +1492,7 @@ educational purposes, and thus we do not elaborate on this strategy.
 The data structure needed by the landmark and the trapezoidal map RIC
 strategies can be constructed in \cgalBigO{N \log N} time, where \f$N\f$
 is the overall number of edges in the arrangement, but the constant
-hidden in the \cgalBigO{&nbsp;} notation for the trapezoidal map RIC strategy
+hidden in the \cgalBigO{~} notation for the trapezoidal map RIC strategy
 is much larger. Thus, construction needed by the landmark algorithm is
 in practice significantly faster than the construction needed by the
 trapezoidal map RIC strategy. In addition, although both resulting
@@ -2039,8 +2039,8 @@ so it must be construct from scratch.
 
 In the first case, we sweep over the input curves, compute their
 intersection points, and construct the \dcel that represents their
-arrangement. This process is performed in \cgalBigO{left((n + k)\log
-n\right} time, where \f$k\f$ is the total number of intersection
+arrangement. This process is performed in \cgalBigO{(n + k)\log
+n} time, where \f$k\f$ is the total number of intersection
 points. The running time is asymptotically better than the time needed
 for incremental insertion if the arrangement is relatively sparse
 (when \f$k\f$ is \cgalBigO{\frac{n^2}{\log n}}), but it is recommended
