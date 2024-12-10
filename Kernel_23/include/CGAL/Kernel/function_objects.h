@@ -972,15 +972,7 @@ namespace CommonKernelFunctors {
 
      // cosine
      double dot = to_double(scalar_product(u,v));
-     double cosine = dot / product;
-
-     if(cosine > 1.){
-       cosine = 1.;
-     }
-     if(cosine < -1.){
-       cosine = -1.;
-     }
-
+     double cosine = std::clamp(dot / product, -1., 1.);
      return std::acos(cosine) * 180./CGAL_PI;
    }
 
