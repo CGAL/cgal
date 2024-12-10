@@ -751,7 +751,6 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       return true;
 
     std::unordered_set<halfedge_descriptor> next_edges_to_collapse;
-    std::unordered_set<halfedge_descriptor> next_edges_to_flip;
 
     // Treat needles ===============================================================================
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
@@ -771,7 +770,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       if(needle_h == null_h)
       {
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-        std::cout << "\t Needle criterion no longer verified" << std::endl;
+        std::cout << "\t Needle criterion not verified" << std::endl;
 #endif
         halfedge_descriptor cap_h = internal::is_it_a_cap(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
                                                           cap_threshold, flip_triangle_height_threshold_squared);
@@ -1010,9 +1009,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 
         for(halfedge_descriptor hh : CGAL::halfedges_around_face(h, tmesh))
         {
-          // Remove from 'next_edges_to_flip' because it might have been re-added from a flip
           edges_to_flip.erase(hh);
-          next_edges_to_flip.erase(hh);
           next_edges_to_collapse.erase(hh);
         }
 
@@ -1033,7 +1030,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
           std::cout << "\t Flipping prevented: not the best diagonal" << std::endl;
 #endif
-          next_edges_to_flip.insert(h);
+          next_edges_to_collapse.insert(h);
           continue;
         }
 
@@ -1042,7 +1039,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
           std::cout << "\t Flipping prevented: rejected by user functor" << std::endl;
 #endif
-          next_edges_to_flip.insert(h);
+          next_edges_to_collapse.insert(h);
           continue;
         }
 
@@ -1068,7 +1065,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
         std::cout << "\t Unflippable edge!" << std::endl;
 #endif
         CGAL_assertion(!is_border(h, tmesh));
-        next_edges_to_flip.insert(h);
+        next_edges_to_collapse.insert(h);
       }
 
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
@@ -1085,7 +1082,6 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
       return false;
 
     std::swap(edges_to_collapse, next_edges_to_collapse);
-    std::swap(edges_to_flip, next_edges_to_flip);
   }
 
   return false;
