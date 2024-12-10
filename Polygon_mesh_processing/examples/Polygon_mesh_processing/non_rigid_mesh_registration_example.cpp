@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/non_rigid_mesh_registration.h>
@@ -7,8 +6,6 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 
 #include <CGAL/Point_set_3.h>
-
-#include <CGAL/Timer.h>
 #include <sstream>
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -52,14 +49,10 @@ int main(int, char**) {
   FT w1 = 5;
   FT w2 = 20;
   FT w3 = 500;
-  new_arap = true;
 
   std::ostringstream out;
   out.precision(2);
-  if (new_arap)
-    out << "bear_" << std::fixed << w1 << "_" << w2 << "_" << w3 << "_new.off";
-  else
-    out << "bear_" << std::fixed << w1 << "_" << w2 << "_" << w3 << "_old.off";
+  out << "bear_" << std::fixed << w1 << "_" << w2 << "_" << w3 << "_new.off";
 
   std::cout << std::endl << out.str() << std::endl;
 

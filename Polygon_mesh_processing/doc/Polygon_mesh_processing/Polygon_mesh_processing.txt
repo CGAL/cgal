@@ -1472,11 +1472,11 @@ Sets the weight `w1` of the \f$\mathbf{E_{match}}\f$. Penalizes the distance bet
 Sets the weight `w2` of the \f$\mathbf{E_{point\_to\_plane}}\f$. Also penalizes the distances between the meshes, but is more forgiving towards different discretization.
 - `as_rigid_as_possible_energy`:
 Controls the rigidity weight `w3` of the \f$\mathbf{E_{arap}}\f$. Penalizes the deformation of the source and may thus prefer rigidity over a tight fit.
-- maximum_matching_distance:
+- `maximal_matching_distance`:
 The maximal distance for finding vertex/point pairs between the intermediate and target. A pair is ignored during an iteration if the specified distance is exceeded.
-- number_of_iterations:
+- `number_of_iterations`:
 The number of ICP iterations. The default value is 50.
-- correspondences:
+- `correspondences`:
 Optional fixed vertex/point pairs can be provided to guide the registration. These are especially helpful when source and target are not roughly aligned initially.
 
 \cgalFigureAnchor{registration_results}
@@ -1487,7 +1487,7 @@ Optional fixed vertex/point pairs can be provided to guide the registration. The
 Non-rigid registration using five correspondences on top of the head and at the tips of hand and feet. A low rigidity leads to a distortion and a self-intersection of the transformed mesh. The topology of the mesh as well as the number of vertices and faces remain unchanged. The lack of correspondences also causes self-intersection and leads to a flattening of the left arm.
 \cgalFigureCaptionEnd
 
-\subsection PMPNonRigidRegistrationExample Non-rigid registration Example
+\subsection PMPNonRigidRegistrationExample Non-Rigid Registration Example
 
 In the following example the bear_simple.off model is registered onto the bear_simple_bis.off model. The resulting transformed mesh is then saved as off file with a name depending on the chosen parameters.
 

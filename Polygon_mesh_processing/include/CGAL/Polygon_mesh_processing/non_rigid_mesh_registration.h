@@ -9,8 +9,8 @@
 //
 // Author(s)     : Roberto Dyke, Sven Oesau
 //
-#ifndef CGAL_POLYGON_MESH_PROCESSING_REGISTER_MESH_H
-#define CGAL_POLYGON_MESH_PROCESSING_REGISTER_MESH_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_NON_RIGID_MESH_REGISTRATION_H
+#define CGAL_POLYGON_MESH_PROCESSING_NON_RIGID_MESH_REGISTRATION_H
 
 #include <CGAL/license/Polygon_mesh_processing/registration.h>
 
@@ -40,8 +40,6 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 
 #include <CGAL/Aff_transformation_3.h>
-
-bool new_arap = true;
 
 namespace CGAL {
 namespace Polygon_mesh_processing {
@@ -76,6 +74,10 @@ Eigen_matrix_to_point_map::reference get(const Eigen_matrix_to_point_map& ppmap,
   return ppmap[i];
 }
 
+using Search_traits = CGAL::Search_traits_adapter<std::size_t, Eigen_matrix_to_point_map, CGAL::Search_traits_3<Simple_cartesian<double>>>;
+using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<Search_traits>;
+using KDTree = typename Neighbor_search::Tree;
+
 template<typename Matrix>
 void dump(const Matrix& m, const std::string &filename) {
   std::ofstream file(filename);
@@ -92,16 +94,7 @@ void dump(const Matrix& m, const std::string &filename) {
   file.close();
 }
 
-std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nearest_neighbor(Vertices& points, Vertices& query, const Index k = 1) {
-  using Search_traits = CGAL::Search_traits_adapter<std::size_t, Eigen_matrix_to_point_map, CGAL::Search_traits_3<Simple_cartesian<double>>>;
-  using Neighbor_search = CGAL::Orthogonal_k_neighbor_search<Search_traits>;
-  using KDTree = typename Neighbor_search::Tree;
-
-  Eigen_matrix_to_point_map a(points);
-
-  KDTree kdtree(boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(points.rows()), KDTree::Splitter(), Search_traits(Eigen_matrix_to_point_map(points)));
-  kdtree.build();
-
+std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nearest_neighbor(Vertices& points, Vertices& query, KDTree &kdtree, const Index k = 1) {
   Eigen::MatrixXi idz(query.rows(), k);
   Eigen::MatrixXf dist(query.rows(), k);
 
@@ -116,11 +109,6 @@ std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nearest_neighbor(Vertices& points, V
   }
 
   return std::make_pair(idz, dist);
-}
-
-template <typename T>
-int sign(T val) {
-  return (T(0) < val) - (val < T(0));
 }
 
 void insertSparseMatrix(const SparseMat& mat, std::vector<SparseTriplet>& coefficients, size_t start_i = 0, size_t start_j = 0) {
@@ -243,10 +231,10 @@ struct Rotate_vertex_normals<Mesh, VertexRotationMap, VertexNormalMap, false> {
 *     \cgalParamExtra{The weight \f$w_3\f$ needs to be 0 or positive. See \ref PMPNonRigidRegistrationParameters.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{maximum_matching_distance}
-*     \cgalParamDescription{the maximum distance for a vertex in `source` to match with a point in `target`. The default value 0 means no maximum matching distance.}
+*   \cgalParamNBegin{maximal_matching_distance}
+*     \cgalParamDescription{the maximal distance for a vertex in `source` to match with a point in `target`. The value 0 means no maximal matching distance.}
 *     \cgalParamType{double}
-*     \cgalParamDefault{`0`}
+*     \cgalParamDefault{average point spacing in the target}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{correspondences}
@@ -308,7 +296,7 @@ void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
   const double w2 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_plane_weight), 2);
   const double w1 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::point_to_point_weight), 0.1);
   const double w3 = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::as_rigid_as_possible_weight), 20);
-  const double max_matching_dist = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::maximum_matching_distance), 0);
+  double max_matching_dist = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::maximal_matching_distance), -1);
 
   using namespace internal::registration;
   Vertices X(num_vertices(source), 3), Y(target.size(), 3);
@@ -460,34 +448,23 @@ void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
     int a = XF(i, 0);
     int b = XF(i, 1);
     int c = XF(i, 2);
-    if (new_arap) {
-      auto ha = halfedge(Vertex_index(a), Vertex_index(b), source);
-      double w_a = wc(ha.first, source, vpm);
-      auto hb = halfedge(Vertex_index(b), Vertex_index(c), source);
-      double w_b = wc(hb.first, source, vpm);
-      auto hc = halfedge(Vertex_index(c), Vertex_index(a), source);
-      double w_c = wc(hc.first, source, vpm);
-      edge_coefficients.push_back(SparseTriplet(idx, a, w_a));
-      edge_coefficients.push_back(SparseTriplet(idx, b, -w_a));
-      idx++;
-      edge_coefficients.push_back(SparseTriplet(idx, b, w_b));
-      edge_coefficients.push_back(SparseTriplet(idx, c, -w_b));
-      idx++;
-      edge_coefficients.push_back(SparseTriplet(idx, c, w_c));
-      edge_coefficients.push_back(SparseTriplet(idx, a, -w_c));
-      idx++;
-    }
-    else {
-      edge_coefficients.push_back(SparseTriplet(idx, a, 1));
-      edge_coefficients.push_back(SparseTriplet(idx, b, -1));
-      idx++;
-      edge_coefficients.push_back(SparseTriplet(idx, b, 1));
-      edge_coefficients.push_back(SparseTriplet(idx, c, -1));
-      idx++;
-      edge_coefficients.push_back(SparseTriplet(idx, c, 1));
-      edge_coefficients.push_back(SparseTriplet(idx, a, -1));
-      idx++;
-    }
+
+    auto ha = halfedge(Vertex_index(a), Vertex_index(b), source);
+    double w_a = wc(ha.first, source, vpm);
+    auto hb = halfedge(Vertex_index(b), Vertex_index(c), source);
+    double w_b = wc(hb.first, source, vpm);
+    auto hc = halfedge(Vertex_index(c), Vertex_index(a), source);
+    double w_c = wc(hc.first, source, vpm);
+    edge_coefficients.push_back(SparseTriplet(idx, a, w_a));
+    edge_coefficients.push_back(SparseTriplet(idx, b, -w_a));
+    idx++;
+    edge_coefficients.push_back(SparseTriplet(idx, b, w_b));
+    edge_coefficients.push_back(SparseTriplet(idx, c, -w_b));
+    idx++;
+    edge_coefficients.push_back(SparseTriplet(idx, c, w_c));
+    edge_coefficients.push_back(SparseTriplet(idx, a, -w_c));
+    idx++;
+
   }
   SparseMat B(XF.rows() * XF.cols(), X.rows());
   B.setFromTriplets(edge_coefficients.begin(), edge_coefficients.end());
@@ -553,6 +530,22 @@ void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
 
   size_t coefficients_size = coefficients.size();
 
+  KDTree kdtree(boost::counting_iterator<std::size_t>(0), boost::counting_iterator<std::size_t>(Y.rows()), KDTree::Splitter(), Search_traits(Eigen_matrix_to_point_map(Y)));
+  kdtree.build();
+
+  if (max_matching_dist < 0) {
+    FT sum = 0;
+    for (Index i = 0; i < Y.rows(); ++i) {
+      Point_3 query_pt = { Y(i, 0), Y(i, 1), Y(i, 2) };
+      Neighbor_search search(kdtree, query_pt, 2, 0, true, Neighbor_search::Distance(Eigen_matrix_to_point_map(Y)));
+      auto it = search.begin();
+      it++; // The first entry is the query point itself.
+
+      sum += it->second;
+    }
+    max_matching_dist = sum / Y.rows();
+  }
+
   for (size_t it = 0; it < iter; ++it) {
     std::cout << "." << std::flush;
     // Reset coefficients (removes point pairs, e.g.)
@@ -562,7 +555,7 @@ void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
 
     // Compute correspondence
     //Eigen::VectorXi idz = nearest_neighbor(V1, Z).first.col(0);
-    std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nn_result = nearest_neighbor(Y, Z);
+    std::pair<Eigen::MatrixXi, Eigen::MatrixXf> nn_result = nearest_neighbor(Y, Z, kdtree);
     Eigen::VectorXi idz = nn_result.first.col(0);
     Eigen::VectorXf dist = nn_result.second.col(0);
 
@@ -660,78 +653,27 @@ void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
 
     // Update edge neighborhoods by new local rotation
     if (it == (iter - 1)) {
-      if (new_arap) {
-        for (Index i = 0; i < Z.rows(); ++i)
-          rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
+      for (Index i = 0; i < Z.rows(); ++i)
+        rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
 
-        for (Index i = 0; i < edim; ++i) {
-          BX.row(i) = BX_original.row(i) * rotations[Ni(i)].transpose();
-        }
-      }
-      else {
-        for (Index i = 0; i < Z.rows(); ++i) {
-#if EIGEN_VERSION_AT_LEAST(3,4,0)
-          std::vector<int> nbrs(neighbors[i].begin(), neighbors[i].end());
-          Matrix A = X(nbrs, Eigen::indexing::all).rowwise() - X.row(i);
-          Matrix B_ = Z(nbrs, Eigen::indexing::all).rowwise() - Z.row(i);
-#else
-          Matrix A(neighbors[i].size(), 3);
-          Matrix B_(neighbors[i].size(), 3);
-          auto xi = X.row(i);
-          auto zi = Z.row(i);
-          auto nit = neighbors[i].begin();
-          for (std::size_t j = 0; j < neighbors[i].size(); j++, nit++) {
-            A.row(j) = X.row(*nit) - xi;
-            B_.row(j) = Z.row(*nit) - zi;
-          }
-#endif
-
-#if EIGEN_VERSION_AT_LEAST(3,4,90)
-          svd.compute(A.transpose() * B_);
-#else
-          svd.compute(A.transpose() * B_, Eigen::ComputeFullU | Eigen::ComputeFullV);
-#endif
-
-          rotations[i] = svd.matrixV() * svd.matrixU().transpose();
-          if (rotations[i].determinant() < 0) {
-            Eigen::Matrix<ScalarType, 3, 3> M = Eigen::Matrix3d::Identity();
-            M(2, 2) = -1;
-            rotations[i] = svd.matrixV() * M * svd.matrixU().transpose();
-          }
-        }
-        for (Index i = 0; i < edim; ++i) {
-          Matrix R = rotations[Ni(i)];
-          BX.row(i) = BX.row(i) * R.transpose();
-        }
+      for (Index i = 0; i < edim; ++i) {
+        BX.row(i) = BX_original.row(i) * rotations[Ni(i)].transpose();
       }
     }
-    else
-      if (new_arap) {
-        for (Index i = 0; i < Z.rows(); ++i)
-          rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
+    else {
+      for (Index i = 0; i < Z.rows(); ++i)
+        rotation(std::size_t(i), visitor, source, X, Z, neighbors[i], he_weights[i], rotations);
 
-        for (Index i = 0; i < edim; ++i)
-          BX.row(i) = BX_original.row(i) * rotations[Ni(i)].transpose();
-      }
-      else {
-        // Regular matrix update is happening here (taking linearized coefficients, recreating matrix and rotating edges)
-        for (Index i = 0; i < edim; ++i) {
-          int ni = Ni(i);
-          Matrix R = rot(x(dim + 2 * Z.rows() + ni),
-            x(dim + Z.rows() + ni),
-            x(dim + ni));
-          BX.row(i) = BX.row(i) * R.transpose();
-        }
-      }
+      for (Index i = 0; i < edim; ++i)
+        BX.row(i) = BX_original.row(i) * rotations[Ni(i)].transpose();
+    }
   }
 
   idx = 0;
   for (auto v : vertices(source)) {
     Point z(Z(idx, 0), Z(idx, 1), Z(idx, 2));
     Point x(X(idx, 0), X(idx, 1), X(idx, 2));
-/*
-    Aff_transformation_3<Gt> t1(CGAL::TRANSLATION, CGAL::ORIGIN - x);
-    Aff_transformation_3<Gt> t2(CGAL::TRANSLATION, -(CGAL::ORIGIN - z));*/
+
     const auto& r = rotations[idx];
     Aff_transformation_3<Gt> rota(r(0, 0), r(0, 1), r(0, 2), 0,
       r(1, 0), r(1, 1), r(1, 2), 0,
@@ -802,10 +744,10 @@ static_assert(false, "Eigen library is required for non-rigid mesh registration"
 *     \cgalParamExtra{The weight \f$w_3\f$ needs to be 0 or positive. See \ref PMPNonRigidRegistrationParameters.}
 *   \cgalParamNEnd
 *
-*   \cgalParamNBegin{maximum_matching_distance}
-*     \cgalParamDescription{the maximum distance for a vertex in `source` to match with a point in `target`. The default value 0 means no maximum matching distance.}
+*   \cgalParamNBegin{maximal_matching_distance}
+*     \cgalParamDescription{the maximal distance for a vertex in `source` to match with a point in `target`. The value 0 means no maximal matching distance.}
 *     \cgalParamType{double}
-*     \cgalParamDefault{`0`}
+*     \cgalParamDefault{average edge length in the target mesh.}
 *   \cgalParamNEnd
 *
 *   \cgalParamNBegin{correspondences}
@@ -892,13 +834,25 @@ void non_rigid_mesh_to_mesh_registration(const TriangleMesh1& source,
   Pwn_vector points;
   points.reserve(target.num_vertices());
 
-  for (auto v : target.vertices())
+  for (auto v : vertices(target))
     points.push_back(std::make_pair(get(vpm, v), get(vnm, v)));
 
   std::vector<std::pair<typename boost::graph_traits<TriangleMesh1>::vertex_descriptor, std::size_t>> correspondences_pts;
   correspondences_pts.reserve(correspondences.size());
   for (auto p : correspondences)
     correspondences_pts.push_back(std::make_pair(p.first, static_cast<std::size_t>(p.second)));
+
+  double max_matching_dist = parameters::choose_parameter(parameters::get_parameter(np1, internal_np::maximal_matching_distance), -1);
+
+  if (max_matching_dist < 0) {
+    typename Gt2::FT sum = 0;
+    std::size_t count = 0;
+    for (auto e : edges(target)) {
+      sum += CGAL::sqrt((get(vpm, CGAL::target(e, target)) - get(vpm, CGAL::source(e, target))).squared_length());
+      count++;
+    }
+    max_matching_dist = sum / count;
+  }
 
   non_rigid_mesh_to_points_registration(source, points, vtm, vrm, np1.combine(parameters::correspondences(correspondences_pts)), parameters::point_map(Point_map()).normal_map(Normal_map()));
 
@@ -983,4 +937,4 @@ void apply_non_rigid_transformation(const TriangleMesh& mesh,
 } // namespace Polygon_mesh_processing
 } // namespace CGAL
 
-#endif
+#endif // CGAL_POLYGON_MESH_PROCESSING_NON_RIGID_MESH_REGISTRATION_H
