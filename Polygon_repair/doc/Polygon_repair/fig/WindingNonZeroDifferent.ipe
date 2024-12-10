@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70218" creator="Ipe 7.2.29">
-<info created="D:20241210110915" modified="D:20241210130554"/>
+<info created="D:20241210110915" modified="D:20241210134851"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -313,19 +313,7 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<path layer="alpha" matrix="1 0 0 1 384 0" stroke="black" fill="lightgreen">
-64 528 m
-64 464 l
-192 464 l
-192 528 l
-h
-96 512 m
-96 480 l
-160 480 l
-160 512 l
-h
-</path>
-<path stroke="lightgreen" fill="lightgreen">
+<path layer="alpha" stroke="lightgreen" fill="lightgreen">
 304 576 m
 384 576 l
 384 640 l
@@ -657,107 +645,6 @@ h
 <path stroke="black" arrow="normal/normal">
 304 592 m
 304 576 l
-</path>
-<path stroke="black">
-64 528 m
-64 464 l
-192 464 l
-192 528 l
-h
-</path>
-<path stroke="black">
-96 512 m
-96 480 l
-160 480 l
-160 512 l
-h
-</path>
-<path stroke="black" arrow="normal/normal">
-64 464 m
-192 464 l
-</path>
-<path stroke="black" arrow="normal/normal">
-192 464 m
-192 528 l
-</path>
-<path stroke="black" arrow="normal/normal">
-192 528 m
-64 528 l
-</path>
-<path stroke="black" arrow="normal/normal">
-64 528 m
-64 464 l
-</path>
-<path stroke="black" arrow="normal/normal">
-96 480 m
-160 480 l
-</path>
-<path stroke="black" arrow="normal/normal">
-160 480 m
-160 512 l
-</path>
-<path stroke="black" arrow="normal/normal">
-160 512 m
-96 512 l
-</path>
-<path stroke="black" arrow="normal/normal">
-96 512 m
-96 480 l
-</path>
-<path matrix="1 0 0 1 192 0" stroke="black" fill="lightgreen">
-64 528 m
-64 464 l
-192 464 l
-192 528 l
-h
-</path>
-<path matrix="1 0 0 1 192 0" stroke="black" arrow="normal/normal">
-192 464 m
-192 528 l
-</path>
-<path matrix="1 0 0 1 192 0" stroke="black" arrow="normal/normal">
-192 528 m
-64 528 l
-</path>
-<path matrix="1 0 0 1 192 0" stroke="black" arrow="normal/normal">
-64 528 m
-64 464 l
-</path>
-<path matrix="1 0 0 1 384 0" stroke="black" arrow="normal/normal">
-64 464 m
-192 464 l
-</path>
-<path matrix="1 0 0 1 384 0" stroke="black" arrow="normal/normal">
-192 464 m
-192 528 l
-</path>
-<path matrix="1 0 0 1 384 0" stroke="black" arrow="normal/normal">
-192 528 m
-64 528 l
-</path>
-<path stroke="black" arrow="normal/normal">
-480 512 m
-544 512 l
-</path>
-<path stroke="black" arrow="normal/normal">
-544 512 m
-544 480 l
-</path>
-<path stroke="black" arrow="normal/normal">
-544 480 m
-480 480 l
-</path>
-<path stroke="black" arrow="normal/normal">
-448 528 m
-448 464 l
-</path>
-<path stroke="black" fill="0.502 1 0.502" arrow="normal/normal">
-480 480 m
-480 512 l
-</path>
-<path stroke="black" arrow="normal/normal">
-256 464 m
-384 464 l
 </path>
 </page>
 </ipe>
