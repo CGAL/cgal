@@ -344,7 +344,6 @@ public:
     return cotangent_weight_calculator(he);
   }
 
-private:
   FT voronoi(const vertex_descriptor v0) const
   {
     auto squared_length_3 = m_traits.compute_squared_length_3_object();
