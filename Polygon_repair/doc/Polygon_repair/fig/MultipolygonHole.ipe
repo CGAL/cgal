@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70218" creator="Ipe 7.2.29">
-<info created="D:20241210110915" modified="D:20241210134753"/>
+<info created="D:20241210110915" modified="D:20241210153226"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -472,7 +472,7 @@ h
 160 656 m
 96 656 l
 </path>
-<path matrix="1 0 0 1 288 304" stroke="black" fill="lightgreen">
+<path matrix="1 0 0 1 192 288" stroke="black" fill="lightgreen">
 64 528 m
 64 464 l
 192 464 l
@@ -484,35 +484,79 @@ h
 160 512 l
 h
 </path>
-<path matrix="1 0 0 1 288 304" stroke="black" arrow="normal/normal">
+<path matrix="1 0 0 1 192 288" stroke="black" arrow="normal/normal">
 64 464 m
 192 464 l
 </path>
-<path matrix="1 0 0 1 288 304" stroke="black" arrow="normal/normal">
+<path matrix="1 0 0 1 192 288" stroke="black" arrow="normal/normal">
 192 464 m
 192 528 l
 </path>
-<path matrix="1 0 0 1 288 304" stroke="black" arrow="normal/normal">
+<path matrix="1 0 0 1 192 288" stroke="black" arrow="normal/normal">
 192 528 m
 64 528 l
 </path>
-<path matrix="1 0 0 1 -96 304" stroke="black" arrow="normal/normal">
+<path matrix="1 0 0 1 -192 288" stroke="black" arrow="normal/normal">
 480 512 m
 544 512 l
 </path>
-<path matrix="1 0 0 1 -96 304" stroke="black" arrow="normal/normal">
+<path matrix="1 0 0 1 -192 288" stroke="black" arrow="normal/normal">
 544 512 m
 544 480 l
 </path>
-<path matrix="1 0 0 1 -96 304" stroke="black" arrow="normal/normal">
+<path matrix="1 0 0 1 -192 288" stroke="black" arrow="normal/normal">
 544 480 m
 480 480 l
 </path>
-<path matrix="1 0 0 1 -96 304" stroke="black" arrow="normal/normal">
+<path matrix="1 0 0 1 -192 288" stroke="black" arrow="normal/normal">
 448 528 m
 448 464 l
 </path>
-<path matrix="1 0 0 1 -96 304" stroke="black" fill="0.502 1 0.502" arrow="normal/normal">
+<path matrix="1 0 0 1 -192 288" stroke="black" fill="0.502 1 0.502" arrow="normal/normal">
+480 480 m
+480 512 l
+</path>
+<path matrix="1 0 0 1 384 288" stroke="black" fill="lightgreen">
+64 528 m
+64 464 l
+192 464 l
+192 528 l
+h
+96 512 m
+96 480 l
+160 480 l
+160 512 l
+h
+</path>
+<path matrix="1 0 0 1 384 288" stroke="black" arrow="normal/normal">
+64 464 m
+192 464 l
+</path>
+<path matrix="1 0 0 1 384 288" stroke="black" arrow="normal/normal">
+192 464 m
+192 528 l
+</path>
+<path matrix="1 0 0 1 384 288" stroke="black" arrow="normal/normal">
+192 528 m
+64 528 l
+</path>
+<path matrix="1 0 0 1 0 288" stroke="black" arrow="normal/normal">
+480 512 m
+544 512 l
+</path>
+<path matrix="1 0 0 1 0 288" stroke="black" arrow="normal/normal">
+544 512 m
+544 480 l
+</path>
+<path matrix="1 0 0 1 0 288" stroke="black" arrow="normal/normal">
+544 480 m
+480 480 l
+</path>
+<path matrix="1 0 0 1 0 288" stroke="black" arrow="normal/normal">
+448 528 m
+448 464 l
+</path>
+<path matrix="1 0 0 1 0 288" stroke="black" fill="0.502 1 0.502" arrow="normal/normal">
 480 480 m
 480 512 l
 </path>
