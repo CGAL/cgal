@@ -77,7 +77,7 @@ While the even-odd rule switches between inside/outside at each edge only taking
 into account multiplicity, the non-zero rule takes also into account
 the orientation of the edge.
 
-This leads to different results as can be seen in the figure below.
+For some configurations this leads to different results, as can be seen in the figure below.
 
 \cgalFigureBegin{WindingNonZeroDifferent, WindingNonZeroDifferent.svg}
 Input (left), non-zero (middle) even-odd (right).
@@ -91,7 +91,8 @@ Input (left), non-zero and even-odd (right).
 
 A valid polygon with holes, obviously has the same result with both rules applied
 as it is just the identity. However an invalid multipolygon with one polygon
-enclosing the other one results in a polygon with hole.
+enclosing the other one results in the union of the two, that is the enclosing one
+for the non-zero rule, while it results in a polygon with hole for the even-odd rule.
 
 \cgalFigureBegin{MultipolygonHole, MultipolygonHole.svg}
 Input (left), non-zero (middle) even-odd (right).
@@ -100,6 +101,7 @@ Input (left), non-zero (middle) even-odd (right).
 \section SectionPolygonRepair_UnionIntersection Union and Intersection Rule
 
 Given several valid polygons this rule computes their union or intersection.
+This approaches from outside and from inside, respectively.
 
 \cgalFigureBegin{UnionIntersection, UnionIntersection.svg}
 Union (top) and Intersection (bottom).
@@ -107,7 +109,7 @@ Union (top) and Intersection (bottom).
 
 
 
-\subsection SubsectionPolygonRepair_Output Notes on the Output
+\section SubsectionPolygonRepair_Output Notes on the Output
 
 The conditions listed above are sufficient to define valid polygons, polygons
 with holes and multipolygons with holes for most applications. However, in
