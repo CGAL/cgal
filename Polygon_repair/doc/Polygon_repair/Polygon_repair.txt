@@ -99,7 +99,7 @@ Input (left), non-zero (middle) even-odd (right).
 \section SectionPolygonRepair_UnionIntersection Union and Intersection Rule
 
 Given several valid polygons this rule computes their union or intersection.
-This approaches from outside and from inside, respectively.
+This approximates from outside and from inside, respectively.
 
 \cgalFigureBegin{UnionIntersection, UnionIntersection.svg}
 Union (top) and Intersection (bottom).
