@@ -71,8 +71,6 @@ public:
 
   using Point_3 = typename Kernel::Point_3;
 
-  using Index = std::pair<std::size_t, std::size_t>;
-
    /*!
    identifies the support of a face in the exported linear cell complex, which is either an input polygon, identified by a non-negative number, a side of the bounding box in the rotated coordinate system or a face of the octree used to partition the scene.
    */
@@ -125,6 +123,8 @@ private:
   using Line_2 = typename Kernel::Line_2;
   using Triangle_2 = typename Kernel::Triangle_2;
   using Transform_3 = CGAL::Aff_transformation_3<Kernel>;
+
+  using Index = std::pair<std::size_t, std::size_t>;
 
   using Data_structure = KSP_3::internal::Data_structure<Kernel, Intersection_kernel>;
 
@@ -501,8 +501,8 @@ public:
     for (auto p : m_input2regularized)
       n.insert(p);
 
-    assert(m_regularized2input.size() == m_input_polygons.size());
-    assert(m_regularized2input.size() == n.size());
+    CGAL_assertion(m_regularized2input.size() == m_input_polygons.size());
+    CGAL_assertion(m_regularized2input.size() == n.size());
 
     if (m_parameters.bbox_dilation_ratio < FT(1)) {
       CGAL_warning_msg(m_parameters.bbox_dilation_ratio >= FT(1),
@@ -730,7 +730,8 @@ public:
       m_partition_nodes[i].m_data->face_to_volumes().clear();
     }
 
-    std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
+    if (m_parameters.verbose)
+      std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
 
     return;
   }
@@ -971,7 +972,7 @@ public:
           lcc.template info<2>(face_dart).plane = m_partition_nodes[faces_of_volume[j].first].m_data->support_plane(m_partition_nodes[faces_of_volume[j].first].m_data->face_to_support_plane()[faces_of_volume[j].second]).exact_plane();
         }
         else {
-          assert(lcc.template info<2>(face_dart).part_of_initial_polygon == m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second]);
+          CGAL_assertion(lcc.template info<2>(face_dart).part_of_initial_polygon == m_partition_nodes[faces_of_volume[j].first].m_data->face_is_part_of_input_polygon()[faces_of_volume[j].second]);
         }
 
         vtx_of_face.clear();
@@ -1039,7 +1040,7 @@ private:
   };
 
   const Point_3& volume_centroid(std::size_t volume_index) const {
-    assert(volume_index < m_volumes.size());
+    CGAL_assertion(volume_index < m_volumes.size());
     auto p = m_volumes[volume_index];
     return m_partition_nodes[p.first].m_data->volumes()[p.second].centroid;
   }
@@ -1048,11 +1049,13 @@ private:
   /*!
   \brief Face indices of the volume.
 
+  \tparam OutputIterator output iterator accepting Index
+
   \param volume_index
    index of the query volume.
 
-  @return
-   vector of face indices.
+  \param it
+  output iterator where faces of the volume are put
 
   \pre created partition
   */
@@ -1069,8 +1072,7 @@ private:
   /*!
   \brief Mapping of a vertex index to its position.
 
-  @return
-   vector of points.
+  @return point of the vertex
 
     \pre created partition
   */
@@ -1093,11 +1095,12 @@ private:
   /*!
   \brief Vertices of a face.
 
-  \param volume_index
-   index of the query volume.
+  \tparam OutputIterator output iterator accepting `Point_3`
 
-  @return
-   vector of face indices.
+  \param face_index
+   index of the query face.
+
+  \param it output iterator where points of the face are put
 
   \pre created partition
   */
@@ -1116,11 +1119,12 @@ private:
   /*!
   \brief Vertices of a face.
 
-  \param volume_index
-   index of the query volume.
+  \tparam OutputIterator output iterator accepting `EPECK::Point_3`
 
-  @return
-   vector of face indices.
+  \param face_index
+   index of the query face.
+
+  \param it output iterator where points of the face are put
 
   \pre created partition
   */
@@ -1143,7 +1147,7 @@ private:
   template<class OutputIterator>
   void faces_of_input_polygon(const std::size_t polygon_index, OutputIterator it) const {
     if (polygon_index >= m_input_planes.size()) {
-      assert(false);
+      CGAL_assertion(false);
     }
 
     for (std::size_t idx : m_partitions) {
@@ -1198,14 +1202,14 @@ private:
     const auto &p = m_partition_nodes[face_index.first].face_neighbors[face_index.second];
     if (p.second.second >= std::size_t(-6)) { // Faces on the boundary box are neighbors with an infinite outside volume
       auto it = m_index2volume.find(p.first);
-      assert(it != m_index2volume.end());
+      CGAL_assertion(it != m_index2volume.end());
       return std::pair<int, int>(static_cast<int>(it->second), static_cast<int>(p.second.second));
     }
     else {
       auto it1 = m_index2volume.find(p.first);
-      assert(it1 != m_index2volume.end());
+      CGAL_assertion(it1 != m_index2volume.end());
       auto it2 = m_index2volume.find(p.second);
-      assert(it2 != m_index2volume.end());
+      CGAL_assertion(it2 != m_index2volume.end());
       return std::pair<int, int>(static_cast<int>(it1->second), static_cast<int>(it2->second));
     }
   }
@@ -1296,8 +1300,8 @@ private:
         }
 
         vertices.back()->info().idA2 = pts_idx[f][v];
-        assert(pts_idx[f][v].first != static_cast<std::size_t>(-1));
-        assert(pts_idx[f][v].second != static_cast<std::size_t>(-1));
+        CGAL_assertion(pts_idx[f][v].first != static_cast<std::size_t>(-1));
+        CGAL_assertion(pts_idx[f][v].second != static_cast<std::size_t>(-1));
         vertices.back()->info().adjacent.insert(faces[f]);
         vertices.back()->info().set_point(pts[f][v]);
         face2vtx[pts_idx[f][v]] = vertices.size() - 1;
@@ -1813,7 +1817,7 @@ private:
 
       for (std::size_t j = 0; j < vtx.size(); j++) {
         auto it = vtx2index.find(vtx[j]);
-        assert(it != vtx2index.end());
+        CGAL_assertion(it != vtx2index.end());
         if (vertices_of_volume.find(vtx[j]) == vertices_of_volume.end() && added_vertices[it->second])
           return false;
       }
@@ -1880,7 +1884,7 @@ private:
     From_exact from_exact;
     auto pair = replaced.insert(f);
     std::size_t idx;
-    assert(m_partition_nodes[f.first].face_neighbors[f.second].first.first == f.first);
+    CGAL_assertion(m_partition_nodes[f.first].face_neighbors[f.second].first.first == f.first);
     std::size_t vol_idx = m_partition_nodes[f.first].face_neighbors[f.second].first.second;
 
     if (!pair.second) {
@@ -1898,11 +1902,11 @@ private:
     else {
       idx = f.second;
       // All boundary faces should have a negative second neighbor.
-      assert(m_partition_nodes[f.first].face_neighbors[idx].second.second >= std::size_t(-6));
+      CGAL_assertion(m_partition_nodes[f.first].face_neighbors[idx].second.second >= std::size_t(-6));
     }
     std::vector<Index>& vertices = m_partition_nodes[f.first].face2vertices[idx];
     // First neighbor of other face should point to the inside volume in the other partition and thus cannot be negative
-    assert(m_partition_nodes[other.first].face_neighbors[other.second].first.second < std::size_t(-6));
+    CGAL_assertion(m_partition_nodes[other.first].face_neighbors[other.second].first.second < std::size_t(-6));
     m_partition_nodes[f.first].face_neighbors[idx].second = m_partition_nodes[other.first].face_neighbors[other.second].first;
     vertices.resize(polygon.size());
     for (std::size_t i = 0; i < polygon.size(); i++) {
@@ -1969,7 +1973,7 @@ private:
           auto eit = cdt.incident_edges(face.back(), last);
           auto first = eit;
 
-          assert(!cdt.is_infinite(eit->first));
+          CGAL_assertion(!cdt.is_infinite(eit->first));
           do {
             // Export tri
 
@@ -1992,7 +1996,7 @@ private:
               break;
             }
             eit++;
-            assert(eit != first);
+            CGAL_assertion(eit != first);
           } while (eit != first);
           // If last vertex is equal to first vertex, stop
           // Take last vertex and face
@@ -2000,7 +2004,7 @@ private:
           // Check if opposite face of next edge, if not same, add next vertex and reloop
           // if not, check next face
 
-          assert(face.size() < 100);
+          CGAL_assertion(face.size() < 100);
         }
 
         // The last vertex is equal to the first one, so it should be removed.
@@ -2096,7 +2100,7 @@ private:
 
         // Check length of constraint
         // size 2 means it has not been split, thus there are no t-junctions.
-        assert (vertices_of_edge.size() >= 2);
+        CGAL_assertion(vertices_of_edge.size() >= 2);
 
         faces_of_volume.clear();
         faces(volume, std::back_inserter(faces_of_volume));

@@ -440,7 +440,7 @@ private:
                 minp = from_exact(intersection);
                 //min = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
-                assert(p != 0);
+                CGAL_assertion(p != 0);
                 min_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
               }
               if (emax < eproj) {
@@ -449,7 +449,7 @@ private:
                 maxp = from_exact(intersection);
                 //max = proj;
                 typename Intersection_kernel::FT p = dir * edge_dir;
-                assert(p != 0);
+                CGAL_assertion(p != 0);
                 max_speed = CGAL::approximate_sqrt(edge_dir * edge_dir) / from_exact(p);
               }
             }

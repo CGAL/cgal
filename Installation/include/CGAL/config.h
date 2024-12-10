@@ -37,6 +37,13 @@
 #endif
 
 #ifdef CGAL_INCLUDE_WINDOWS_DOT_H
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+// Include support for memory leak detection
+// This is only available in debug mode and when _CRTDBG_MAP_ALLOC is defined.
+// It will include <crtdbg.h> which will redefine `malloc` and `free`.
+#  define _CRTDBG_MAP_ALLOC 1
+#endif
 // Mimic users including this file which defines min max macros
 // and other names leading to name clashes
 #include <windows.h>
@@ -142,13 +149,17 @@
 #define CGAL_USE_SSE2_FABS
 #endif
 
-// Same for C++17
 #if !(__cplusplus >= 201703L || _MSVC_LANG >= 201703L)
 #error "CGAL requires C++ 17"
 #endif
-// Same for C++20
+
+// Macro to detect C++20
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
 #  define CGAL_CXX20 1
+#endif
+// Same for C++23
+#if __cplusplus >= 202302L || _MSVC_LANG >= 202302L
+#  define CGAL_CXX23 1
 #endif
 
 
@@ -344,8 +355,11 @@ using std::max;
 #endif
 
 // Macro CGAL_ASSUME and CGAL_UNREACHABLE
+#ifdef CGAL_CXX23
+#  define CGAL_ASSUME(EX) [[ assume(EX) ]]
+#  define CGAL_UNREACHABLE() std::unreachable()
+#elif __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // Call a builtin of the compiler to pass a hint to the compiler
-#if __has_builtin(__builtin_unreachable) || (CGAL_GCC_VERSION > 0 && !__STRICT_ANSI__)
 // From g++ 4.5, there exists a __builtin_unreachable()
 // Also in LLVM/clang
 #  define CGAL_ASSUME(EX) if(!(EX)) { __builtin_unreachable(); }
