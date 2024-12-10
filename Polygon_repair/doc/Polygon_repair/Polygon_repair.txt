@@ -70,7 +70,44 @@ Invalid: (a) self-intersecting polygon self-intersection, (b) self-touching poly
 with overlapping polygons, and (h) multipolygon with polygons that touch at an edge.
 \cgalFigureEnd
 
-\subsection SubsectionPolygonRepair_Output Stricter Conditions for Output
+
+\section SectionPolygonRepair_EvenOdd Even-Odd and Non-Zero Rule
+
+While the even-odd rule switches between inside/outside at each edge only taking
+into account multiplicity, the non-zero rule takes also into account
+the orientation of the edge.
+
+This leads to different results as can be seen in the figure below.
+
+\cgalFigureBegin{WindingNonZeroDifferent, WindingNonZeroDifferent.svg}
+Input (left), non-zero (middle) even-odd (right).
+\cgalFigureEnd
+
+And there are other configurations where the two rules lead to the same result.
+
+\cgalFigureBegin{WindingNonZero, WindingNonZero.svg}
+Input (left), non-zero and even-odd (right).
+\cgalFigureEnd
+
+A valid polygon with holes, obviously has the same result with both rules applied
+as it is just the identity. However an invalid multipolygon with one polygon
+enclosing the other one results in a polygon with hole.
+
+\cgalFigureBegin{MultipolygonHole, MultipolygonHole.svg}
+Input (left), non-zero (middle) even-odd (right).
+\cgalFigureEnd
+
+\section SectionPolygonRepair_UnionIntersection Union and Intersection Rule
+
+Given several valid polygons this rule computes their union or intersection.
+
+\cgalFigureBegin{UnionIntersection, UnionIntersection.svg}
+Union (top) and Intersection (bottom).
+\cgalFigureEnd
+
+
+
+\subsection SubsectionPolygonRepair_Output Notes on the Output
 
 The conditions listed above are sufficient to define valid polygons, polygons
 with holes and multipolygons with holes for most applications. However, in
@@ -88,24 +125,6 @@ order
 - The polygons with holes of a multipolygon with holes are also stored in
 lexicographic order
 
-\section SectionPolygonRepair_EvenOdd Even-Odd Rule
-
-
-\cgalFigureBegin{inout, inout.svg}
-Examples of polygons with holes (a-d) and multipolygons with holes
-(e-h) before (left) and after (right) being repaired with the even-odd rule.
-\cgalFigureEnd
-
-
-\section SectionPolygonRepair_NonZero Non-Zero Rule
-
-Tbd.
-
-\section SectionPolygonRepair_UnionIntersection Union and Intersection Rule
-
-Given several valid polygons this rule computes their union or intersection.
-
-\section SubsectionPolygonRepair_Notes Notes on the Output
 
 If the input is already valid, the method will return a valid output representing
 the same area. However, the output might be different in order to conform to the
@@ -117,54 +136,6 @@ but with self-intersections can result in a multipolygon with holes. This is why
 the repair function will always return a multipolygon with holes. The user can
 then check whether it consists of a single polygon with holes, and if a polygon
 with holes has zero holes and extract these if needed.
-
-\section SectionPolygonRepair_Algorithm Implementation
-
-Broadly, the algorithm consists of three steps:
-
--# <em>Arrangement</em>: the edges in the polygon, polygon with
-holes or multipolygon with holes are added as edges in the arrangement.
--# <em>Labeling of the faces</em>: the resulting faces are labeled with ids
-according to what they represent (exterior, polygon interior or hole).
--# <em>Reconstruction of the multipolygon</em>: each boundary is reconstructed,
-then these are assembled into individual polygons with holes and put into a
-single multipolygon with holes.
-
-
-\subsection SubsectionPolygonRepair_Arrangement Arrangement
-
-For the purposes of the repair operation, the input polygon, polygon with holes
-or multipolygon is merely used as a container of input line segments. These line
-segments are added to the arrangement as edges. Internally, this is done using
-a constrained triangulation where they are added as constraints.
-
-With the even-odd rule, only the edges that are present an odd number of
-times in the input will be edges in the final arrangement.
-When these edges are only partially overlapping, only the parts that overlap
-an odd number of times will be edges in the final arrangement.
-
-This procedure is done in two steps: 1. preprocessing to eliminate identical
-edges that are present an even number of times, and 2. adding edges incrementally
-while applying an even-odd counting mechanism, which erases existing (parts of)
-edges when new overlapping ones are added.
-
-\subsection SubsectionPolygonRepair_Labeling Labeling
-
-First, the polygon exterior is labeled. For this, all of the faces that can be
-accessed from the exterior without passing through an edge are labeled as exterior
-faces.
-
-Then, all other faces are labeled. For the even-odd rule, the label applied
-alternates between polygon interior and hole every time that an edge is passed.
-
-\subsection SubsectionPolygonRepair_Reconstruction Reconstruction of the Multipolygon
-
-The algorithm reconstructs the multipolygon boundary by boundary, obtaining
-counter-clockwise cycles for outer boundaries and clockwise cycles for inner
-boundaries. Once all boundaries have been reconstructed, the boundaries are assembled
-into multipolygons using the face labels to know which polygon with holes inner/outer
-boundaries belong to, and using the orientation to distinguish between the outer and
-inner boundaries of each polygon with holes.
 
 
 
