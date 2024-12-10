@@ -725,10 +725,21 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
   std::unordered_set<halfedge_descriptor> edges_to_collapse;
   std::unordered_set<halfedge_descriptor> edges_to_flip;
 
-  // Needless-ness and cap-ness is verified at pop time, so we might as well just
-  // fill the set fully, it's equivalent to saying "check everything"
+  // initial needless-ness and cap-ness checks
   for(face_descriptor f : face_range)
-    edges_to_collapse.insert(halfedge(f, tmesh));
+  {
+    halfedge_descriptor needle_h = internal::is_it_a_needle(f, tmesh, vpm, vcm, ecm, gt,
+                                                            needle_threshold, collapse_length_threshold);
+    if(needle_h != null_h)
+      edges_to_collapse.insert(needle_h);
+    else
+    {
+      halfedge_descriptor cap_h = internal::is_it_a_cap(f, tmesh, vpm, vcm, ecm, gt,
+                                                        cap_threshold, flip_triangle_height_threshold_squared);
+      if(cap_h != null_h)
+        edges_to_flip.insert(cap_h);
+    }
+  }
 
   // Start the process of removing bad elements
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES
