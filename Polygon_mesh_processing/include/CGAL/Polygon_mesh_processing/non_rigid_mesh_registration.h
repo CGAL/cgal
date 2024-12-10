@@ -534,7 +534,7 @@ void non_rigid_mesh_to_points_registration(const TriangleMesh& source,
   kdtree.build();
 
   if (max_matching_dist < 0) {
-    FT sum = 0;
+    double sum = 0;
     for (Index i = 0; i < Y.rows(); ++i) {
       Point_3 query_pt = { Y(i, 0), Y(i, 1), Y(i, 2) };
       Neighbor_search search(kdtree, query_pt, 2, 0, true, Neighbor_search::Distance(Eigen_matrix_to_point_map(Y)));
