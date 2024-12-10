@@ -1025,15 +1025,7 @@ namespace internal {
       // property map of constrained vertices for relaxation
       auto vertex_constraint = [&](const vertex_descriptor v)
       {
-        for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
-        {
-          Halfedge_status s = status(h);
-          if ( s == PATCH
-            || s == PATCH_BORDER
-            || status(opposite(h, mesh_)) == PATCH_BORDER)
-            return false;
-        }
-        return true;
+        return !is_move_allowed(v, relax_constraints);
       };
       auto constrained_vertices_pmap
         = boost::make_function_property_map<vertex_descriptor>(vertex_constraint);
@@ -1361,6 +1353,23 @@ private:
       if ( is_on_patch_border(next(h, mesh_))
         && is_on_patch_border(prev(opposite(h, mesh_), mesh_)))
         return false;
+      return true;
+    }
+
+    bool is_move_allowed(const vertex_descriptor v, const bool relax_constraints) const
+    {
+      if (is_constrained(v))
+        return false;
+
+      for (halfedge_descriptor h : halfedges_around_target(v, mesh_))
+      {
+        if (is_on_patch(h))
+          continue;
+        else if (is_on_patch_border(h) && relax_constraints)
+          continue;
+        else
+          return false;
+      }
       return true;
     }
 
