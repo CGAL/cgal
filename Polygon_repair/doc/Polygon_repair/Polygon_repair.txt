@@ -23,9 +23,7 @@ The even-odd rule results in areas that are alternately assigned as polygon
 interiors and exterior/holes each time that an input edge is passed.
 It does not distinguish between edges that are part of outer boundaries
 from those of inner boundaries.
-
 The non-zero rule results in areas with a non-zero winding number.
-
 The union and intersection rules are useful when given
 two or more similar valid polygons with holes. They compute either their
 union or their intersection, and they are hence <em>conservative</em>
