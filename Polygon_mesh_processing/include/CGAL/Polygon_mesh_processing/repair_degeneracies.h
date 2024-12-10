@@ -757,6 +757,24 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
     int kk=0;
     std::ofstream(std::string("tmp/n-00000.off")) << tmesh;
 #endif
+
+    auto run_cap_check = [&](halfedge_descriptor h, bool consider_for_collapse=true)
+    {
+      halfedge_descriptor cap_h = internal::is_it_a_cap(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
+                                                        cap_threshold, flip_triangle_height_threshold_squared);
+      if(cap_h != null_h)
+      {
+#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
+        std::cout << "\t\t But the face is a cap" << std::endl;
+#endif
+        edges_to_flip.insert(cap_h);
+      }
+      else
+      {
+        if (consider_for_collapse) next_edges_to_collapse.insert(h);
+      }
+    };
+
     while(!edges_to_collapse.empty())
     {
       // note that on the first iteration, 'h' does not indicate a known needle
@@ -772,15 +790,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
         std::cout << "\t Needle criterion not verified" << std::endl;
 #endif
-        halfedge_descriptor cap_h = internal::is_it_a_cap(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                                          cap_threshold, flip_triangle_height_threshold_squared);
-        if(cap_h != null_h)
-        {
-#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-          std::cout << "\t\t But the face is a cap" << std::endl;
-#endif
-          edges_to_flip.insert(cap_h);
-        }
+        run_cap_check(h, false);
         continue;
       }
       else
@@ -809,20 +819,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
             std::cout << "\t Geometrically invalid edge collapse!" << std::endl;
 #endif
-          halfedge_descriptor cap_h = internal::is_it_a_cap(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                                            cap_threshold, flip_triangle_height_threshold_squared);
-          if(cap_h != null_h)
-          {
-#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-            std::cout << "\t\t But the face is a cap" << std::endl;
-#endif
-            edges_to_flip.insert(cap_h);
-          }
-          else
-          {
-            next_edges_to_collapse.insert(h);
-          }
-
+          run_cap_check(h);
           continue;
         }
 
@@ -831,20 +828,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
             std::cout << "\t edge collapse prevented by the user functor" << std::endl;
 #endif
-          halfedge_descriptor cap_h = internal::is_it_a_cap(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                                            cap_threshold, flip_triangle_height_threshold_squared);
-          if(cap_h != null_h)
-          {
-#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-            std::cout << "\t\t But the face is a cap" << std::endl;
-#endif
-            edges_to_flip.insert(cap_h);
-          }
-          else
-          {
-            next_edges_to_collapse.insert(h);
-          }
-
+          run_cap_check(h);
           continue;
         }
 
@@ -934,20 +918,7 @@ bool remove_almost_degenerate_faces(const FaceRange& face_range,
 #ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
         std::cout << "\t Uncollapsable edge!" << std::endl;
 #endif
-
-        halfedge_descriptor cap_h = internal::is_it_a_cap(face(h, tmesh), tmesh, vpm, vcm, ecm, gt,
-                                                          cap_threshold, flip_triangle_height_threshold_squared);
-        if(cap_h != null_h)
-        {
-#ifdef CGAL_PMP_DEBUG_REMOVE_DEGENERACIES_EXTRA
-            std::cout << "\t\t But the face is a cap" << std::endl;
-#endif
-          edges_to_flip.insert(cap_h);
-        }
-        else
-        {
-          next_edges_to_collapse.insert(h);
-        }
+        run_cap_check(h);
       }
     }
 
