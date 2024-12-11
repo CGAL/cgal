@@ -120,10 +120,9 @@ std::size_t get_cell_corners(const Domain& domain,
     auto val = domain.value(v);
     // Avoiding singular cases.
 
-    if (val == isovalue) {
-      typename Domain::FT shift = (isovalue == 0) ? 0.00000001 : isovalue * 0.0000001;
-      val -= abs(shift);
-    }
+    if (abs(val - isovalue) < 0.00000001)
+      val = isovalue - 0.00000001;
+
     values[v_id] = val;
     if(values[v_id] >= isovalue)
       index.set(v_id);
