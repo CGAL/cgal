@@ -78,72 +78,72 @@ bool FrechetNaive<C>::lessThan(distance_t const& distance, Curve const& curve1,
 {
     using OptLambda = std::optional<Lambda>;
 
-	assert(curve1.size() >= 2);
-	assert(curve2.size() >= 2);
-	distance_t dist_sqr = distance * distance;
+        assert(curve1.size() >= 2);
+        assert(curve2.size() >= 2);
+        distance_t dist_sqr = distance * distance;
 
-	if (CGAL::squared_distance(curve1[0],curve2[0]) > dist_sqr || CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr) { return false; }
+        if (CGAL::squared_distance(curve1[0],curve2[0]) > dist_sqr || CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr) { return false; }
 
-	std::vector<std::vector<OptLambda>> reachable1(curve1.size()-1, std::vector<OptLambda>(curve2.size(), std::nullopt));
-	std::vector<std::vector<OptLambda>> reachable2(curve1.size(), std::vector<OptLambda>(curve2.size()-1, std::nullopt));
-	for (size_t i = 0; i < curve1.size() - 1; ++i) {
-		reachable1[i][0] = 0.;
-		if (CGAL::squared_distance(curve2[0], curve1[i+1]) > dist_sqr) { break; }
-	}
-	for (size_t j = 0; j < curve2.size() - 1; ++j) {
-		reachable2[0][j] = 0.;
-		if (CGAL::squared_distance(curve1[0], curve2[j+1]) > dist_sqr) { break; }
-	}
+        std::vector<std::vector<OptLambda>> reachable1(curve1.size()-1, std::vector<OptLambda>(curve2.size(), std::nullopt));
+        std::vector<std::vector<OptLambda>> reachable2(curve1.size(), std::vector<OptLambda>(curve2.size()-1, std::nullopt));
+        for (size_t i = 0; i < curve1.size() - 1; ++i) {
+                reachable1[i][0] = 0.;
+                if (CGAL::squared_distance(curve2[0], curve1[i+1]) > dist_sqr) { break; }
+        }
+        for (size_t j = 0; j < curve2.size() - 1; ++j) {
+                reachable2[0][j] = 0.;
+                if (CGAL::squared_distance(curve1[0], curve2[j+1]) > dist_sqr) { break; }
+        }
 
-	for (size_t i = 0; i < curve1.size(); ++i) {
-		for (size_t j = 0; j < curve2.size(); ++j) {
-			if (i < curve1.size() - 1 && j > 0) {
-				Interval free_int = HLPred::intersection_interval(curve2, j, curve1, i, distance);
-				if (!free_int.is_empty()) {
+        for (size_t i = 0; i < curve1.size(); ++i) {
+                for (size_t j = 0; j < curve2.size(); ++j) {
+                        if (i < curve1.size() - 1 && j > 0) {
+                                Interval free_int = HLPred::intersection_interval(curve2, j, curve1, i, distance);
+                                if (!free_int.is_empty()) {
                     if (reachable2[i][j-1]) {
                         reachable1[i][j] = free_int.begin;
                     }
                     else if (reachable1[i][j-1] && reachable1[i][j-1] <= free_int.end) {
                         reachable1[i][j] = CGAL::max(free_int.begin, reachable1[i][j-1].value());
                     }
-				}
-			}
-			if (j < curve2.size() - 1 && i > 0) {
-				Interval free_int = HLPred::intersection_interval(curve1, i, curve2, j, distance);
-				if (!free_int.is_empty()) {
+                                }
+                        }
+                        if (j < curve2.size() - 1 && i > 0) {
+                                Interval free_int = HLPred::intersection_interval(curve1, i, curve2, j, distance);
+                                if (!free_int.is_empty()) {
                     if (reachable1[i-1][j]) {
                         reachable2[i][j] = free_int.begin;
                     }
                     else if (reachable2[i-1][j] && reachable2[i-1][j] <= free_int.end) {
-					    reachable2[i][j] = CGAL::max(free_int.begin, reachable2[i-1][j].value());
+                                            reachable2[i][j] = CGAL::max(free_int.begin, reachable2[i-1][j].value());
                     }
-				}
-			}
-		}
-	}
+                                }
+                        }
+                }
+        }
 
-	assert((bool)reachable1.back().back() == (bool)reachable2.back().back());
+        assert((bool)reachable1.back().back() == (bool)reachable2.back().back());
 
-	return (bool)reachable1.back().back();
+        return (bool)reachable1.back().back();
 }
 
 template <typename C>
 std::pair<double,double> FrechetNaive<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
 {
-	double min = 0.;
-	double max = curve1.getUpperBoundDistance(curve2).sup();
+        double min = 0.;
+        double max = curve1.getUpperBoundDistance(curve2).sup();
 
-	while (max - min >= epsilon) {
-		auto split = (max + min)/2.;
-		if (lessThan(split, curve1, curve2)) {
-			max = split;
-		}
-		else {
-			min = split;
-		}
-	}
+        while (max - min >= epsilon) {
+                auto split = (max + min)/2.;
+                if (lessThan(split, curve1, curve2)) {
+                        max = split;
+                }
+                else {
+                        min = split;
+                }
+        }
 
-	return std::make_pair(min, max);
+        return std::make_pair(min, max);
 }
 
 } // namespace internal
