@@ -868,7 +868,7 @@ private:
 
       calc_coordinates(values, idx, i0, a, b, c, d, f_flag, q_sol, ui, vi, wi);
 
-      if (!std::isfinite(ui[0]) || !std::isfinite(ui[1]))
+      if (!std::isfinite(CGAL::to_double(ui[0])) || !std::isfinite(CGAL::to_double(ui[1])))
         continue;
 
       break;
@@ -998,9 +998,10 @@ private:
       Point_index tg_idx[6];
       for(int i=0; i<6; ++i)
       {
-        const FT u = hvt[i][0];
-        const FT v = hvt[i][1];
-        const FT w = hvt[i][2];
+        const FT u = hvt[i][0] < 0.05 ? 0.05 : (hvt[i][0] > 0.95 ? 0.95 : hvt[i][0]);
+        const FT v = hvt[i][1] < 0.05 ? 0.05 : (hvt[i][1] > 0.95 ? 0.95 : hvt[i][1]);
+        const FT w = hvt[i][2] < 0.05 ? 0.05 : (hvt[i][2] > 0.95 ? 0.95 : hvt[i][2]);
+
         const FT px = (FT(1) - w) * ((FT(1) - v) * (x_coord(corners[0]) + u * (x_coord(corners[1]) - x_coord(corners[0]))) +
                                                v * (x_coord(corners[2]) + u * (x_coord(corners[3]) - x_coord(corners[2])))) +
                                 w * ((FT(1) - v) * (x_coord(corners[4]) + u * (x_coord(corners[5]) - x_coord(corners[4]))) +
