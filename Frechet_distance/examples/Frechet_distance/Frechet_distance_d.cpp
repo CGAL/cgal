@@ -9,7 +9,7 @@ using Kernel = CGAL::Epick_d<CGAL::Dimension_tag<4>>;
 using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
 using Point = Traits::Point_d;
 
-int main(int , char*)
+int main()
 {
     std::array<Point,4> A = { Point(0,0,0,0), Point(1,0,0,0), Point(1,1,0,1),Point(1,1,1,0)};
     std::array<Point,4> B = { Point(0,0,0,0), Point(1,0,0,0), Point(1,1,0,0),Point(1,1,1,0)};
