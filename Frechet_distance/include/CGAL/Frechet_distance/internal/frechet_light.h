@@ -1095,8 +1095,8 @@ CPoint<C> FrechetLight<C>::getLastReachablePoint(Curve const& curve1, PointID i,
             auto interval = getInterval(curve1, i, curve2, cur);
 
             // interval is full, so continue
-            if (interval.end == 1) {
-                assert(interval.begin == 0);
+            if (is_one(interval.end.getFraction())) {
+                assert(is_zero(interval.begin.getFraction()));
                 ++cur;
                 stepsize *= 2;
             }
