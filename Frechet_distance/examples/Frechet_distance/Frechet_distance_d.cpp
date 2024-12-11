@@ -2,7 +2,6 @@
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Frechet_distance_traits_d.h>
 
-
 #include <iostream>
 #include <vector>
 
