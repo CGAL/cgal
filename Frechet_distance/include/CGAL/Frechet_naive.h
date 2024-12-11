@@ -13,6 +13,7 @@
 //                 Andreas Fabri
 // =============================================================================
 
+
 #pragma once
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/certificate.h>
@@ -22,6 +23,7 @@
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
 #include <CGAL/Frechet_distance/internal/id.h>
 #include <CGAL/Frechet_distance/internal/high_level_predicates.h>
+#include <CGAL/squared_distance_3.h>
 
 #include <optional>
 #include <vector>
@@ -40,7 +42,6 @@ class FrechetNaive
 {
     // TODO: clean up
     using Curve = C;
-    using K = typename Curve::K;
     using Point = typename C::Point;
     using PointID = typename Curve::PointID;
     using distance_t = typename Curve::distance_t;
@@ -76,13 +77,13 @@ template <typename C>
 bool FrechetNaive<C>::lessThan(distance_t const& distance, Curve const& curve1,
                                Curve const& curve2)
 {
-    using OptLambda = std::optional<Lambda>;
+        using OptLambda = std::optional<Lambda>;
 
         assert(curve1.size() >= 2);
         assert(curve2.size() >= 2);
         distance_t dist_sqr = distance * distance;
 
-        if (CGAL::squared_distance(curve1[0],curve2[0]) > dist_sqr || CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr) { return false; }
+        if (CGAL::squared_distance(curve1[0], curve2[0]) > dist_sqr || CGAL::squared_distance(curve1.back(), curve2.back()) > dist_sqr) { return false; }
 
         std::vector<std::vector<OptLambda>> reachable1(curve1.size()-1, std::vector<OptLambda>(curve2.size(), std::nullopt));
         std::vector<std::vector<OptLambda>> reachable2(curve1.size(), std::vector<OptLambda>(curve2.size()-1, std::nullopt));
@@ -131,7 +132,7 @@ template <typename C>
 std::pair<double,double> FrechetNaive<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
 {
         double min = 0.;
-        double max = curve1.getUpperBoundDistance(curve2).sup();
+        double max = curve1.getUpperBoundDistance(curve2);
 
         while (max - min >= epsilon) {
                 auto split = (max + min)/2.;
