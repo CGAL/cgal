@@ -1,0 +1,2 @@
+copy Compute_naive_Frechet_distance_3.cpp to Compute_naive_Frechet_distance_100.cpp
+move Frechet_naive into internal directory and adapt everything for it to compile
