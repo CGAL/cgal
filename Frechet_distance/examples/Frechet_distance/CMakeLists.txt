@@ -12,7 +12,6 @@ include(CGAL_Eigen3_support)
 
 create_single_source_cgal_program( "Frechet_distance_2.cpp" )
 create_single_source_cgal_program( "Frechet_distance_3.cpp" )
-create_single_source_cgal_program( "Has_filtered_predicates.cpp" )
 
 if(TARGET CGAL::Eigen3_support)
 create_single_source_cgal_program( "Frechet_distance_d.cpp" )
