@@ -9,7 +9,7 @@
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using Traits = CGAL::Frechet_distance_traits_3<Kernel>;
-using Point = Traits::Point;
+using Point = Traits::Point_d;
 using Points = std::vector<Point>;
 using Curve = CGAL::Frechet_distance_::internal::Curve<Traits>;
 
@@ -42,6 +42,9 @@ int main(int argc, char* argv[])
 
     std::ifstream file1(argv[1]);
     std::ifstream file2(argv[2]);
+    if (!file1 || !file2) {
+        std::cout << "One file does not exist." << std::endl;
+    }
 
     Points points1, points2;
     readCurve(file1, points1);
