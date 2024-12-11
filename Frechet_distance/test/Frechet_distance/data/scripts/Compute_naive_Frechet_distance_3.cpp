@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
     std::ifstream file2(argv[2]);
     if (!file1 || !file2) {
         std::cout << "One file does not exist." << std::endl;
+        return 1;
     }
 
     Points points1, points2;
@@ -55,5 +56,5 @@ int main(int argc, char* argv[])
     CGAL::Frechet_distance_::internal::FrechetNaive<Curve> frechet_naive;
     auto dist = frechet_naive.calcDistance(curve1, curve2, epsilon);
     std::cout.precision(17);
-    std::cout << (dist.second - dist.first)/2. << std::endl;
+    std::cout << (dist.second + dist.first)/2. << std::endl;
 }
