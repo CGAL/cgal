@@ -87,6 +87,7 @@ bool FrechetNaive<C>::lessThan(distance_t const& distance, Curve const& curve1,
 
         std::vector<std::vector<OptLambda>> reachable1(curve1.size()-1, std::vector<OptLambda>(curve2.size(), std::nullopt));
         std::vector<std::vector<OptLambda>> reachable2(curve1.size(), std::vector<OptLambda>(curve2.size()-1, std::nullopt));
+
         for (size_t i = 0; i < curve1.size() - 1; ++i) {
                 reachable1[i][0] = 0.;
                 if (CGAL::squared_distance(curve2[0], curve1[i+1]) > dist_sqr) { break; }
@@ -123,9 +124,10 @@ bool FrechetNaive<C>::lessThan(distance_t const& distance, Curve const& curve1,
                 }
         }
 
-        assert((bool)reachable1.back().back() == (bool)reachable2.back().back());
+        assert(reachable1.back().back().has_value()
+               == reachable2.back().back().has_value());
 
-        return (bool)reachable1.back().back();
+        return reachable1.back().back().has_value();
 }
 
 template <typename C>
