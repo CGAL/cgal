@@ -9,6 +9,7 @@ each specific format.
 
 - \ref IOStreamOFF
 - \ref IOStreamOBJ
+- \ref IOStreamOM
 - \ref IOStreamSTL
 - \ref IOStreamPLY
 - \ref IOStreamXYZ
@@ -141,6 +142,29 @@ If the data of a polygon mesh cannot be read in a `FaceGraph` due to bad orienta
 manifoldness issues, consider using \link PMP_IO_grp `CGAL::Polygon_mesh_processing::IO::read_polygon_mesh()` \endlink,
 which offers combinatorial repairing while reading bad inputs.
 
+\section IOStreamOM OpenMesh (OM) File format
+The OpenMesh proprietary format, using the file extension `.om`, can be used to represent collections of planar polygons with possibly shared vertices.
+Additionally, it allows to store and restore custom properties along with the standard properties.
+
+More information are provided <a href="https://www.graphics.rwth-aachen.de/media/openmesh_static/Documentations/OpenMesh-Doc-Latest/a06338.html">here</a>.
+
+<table class="iotable">
+  <tr>
+    <th colspan="4">OpenMesh Format (OM)</th>
+  </tr>
+  <tr>
+    <td width="75">Input</td>
+    <td width="175">Polygon Mesh</td>
+    <td width="250">Any model of `MutableFaceGraph`</td>
+    <td width="500">\link PkgBGLIoFuncsOM CGAL::IO::read_OM(const std::string&, Graph&)\endlink</td>
+  </tr>
+  <tr>
+    <td>Output</td>
+    <td>Polygon Mesh</td>
+    <td>Any model of `FaceGraph`</td>
+    <td>\link PkgBGLIoFuncsOM CGAL::IO::write_OM(const std::string&, const Graph&)\endlink</td>
+  </tr>
+</table>
 
 \section IOStreamSTL STereoLithography (STL) File Format
 

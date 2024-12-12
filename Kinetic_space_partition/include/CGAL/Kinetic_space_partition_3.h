@@ -432,7 +432,7 @@ public:
       m_input2regularized.push_back(m_input_planes.size());
       m_regularized2input.push_back(std::vector<std::size_t>());
       m_regularized2input.back().push_back(p);
-      m_input_planes.push_back(to_exact(pl));
+      m_input_planes.push_back(exact_pl);
       m_input_centroids.push_back(c);
       m_input_polygons.push_back(std::vector<Point_3>(ch.size()));
 
@@ -491,7 +491,7 @@ public:
     m_parameters.max_octree_node_size = parameters::choose_parameter(
       parameters::get_parameter(np, internal_np::max_octree_node_size), 40);
 
-    std::cout.precision(20);
+    std::cout.precision(17);
     if (m_input_polygons.size() == 0) {
       std::cout << "Warning: Your input is empty!";
       return;
@@ -581,12 +581,6 @@ public:
     finalization_time = 0;
     conformal_time = 0;
 
-    /*
-        if (m_parameters.debug)
-          if (boost::filesystem::is_directory("volumes/"))
-            for (boost::filesystem::directory_iterator end_dir_it, it("volumes/"); it != end_dir_it; ++it)
-              boost::filesystem::remove_all(it->path());*/
-
     for (std::size_t idx : m_partitions) {
       Sub_partition& partition = m_partition_nodes[idx];
       timer.reset();
@@ -612,13 +606,12 @@ public:
 
       // Propagation.
       Propagation propagation(*partition.m_data, m_parameters);
-      std::size_t m_num_events = propagation.propagate(k);
+      propagation.propagate(k);
 
       partition_time += timer.time();
 
       if (m_parameters.verbose) {
         std::cout << "* propagation finished" << std::endl;
-        std::cout << "* number of events handled: " << m_num_events << std::endl;
       }
 
       if (m_parameters.verbose) {
@@ -731,7 +724,7 @@ public:
     }
 
     if (m_parameters.verbose)
-    std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
+      std::cout << "ksp v: " << m_partition_nodes[0].m_data->vertices().size() << " f: " << m_partition_nodes[0].face2vertices.size() << " vol: " << m_volumes.size() << std::endl;
 
     return;
   }
@@ -1274,12 +1267,12 @@ private:
 
       if (pos && neg) {
         std::cout << "face is not convex" << std::endl;
-        exit(1);
+        CGAL_assertion(false);
       }
 
       if (!pos && !neg) {
         std::cout << "face is degenerated" << std::endl;
-        exit(1);
+        CGAL_assertion(false);
       }
 
       if (neg) {

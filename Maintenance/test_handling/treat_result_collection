@@ -162,7 +162,7 @@ while( $i=readdir($dir_h)){
   if ( $is_good == 1 ){
     if ( -s "$ftp_results_dir/$i" &&
          exist_in_file($i) == 1 &&
-         system("fuser", "$ftp_results_dir/$i") != 0 ){
+         system("lsof", "-w", "$ftp_results_dir/$i") != 1 ){
       system "cp $ftp_results_dir/$i $i";
       system "chmod 644 $i";
       $res = system "gunzip -t $i";
