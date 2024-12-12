@@ -93,6 +93,11 @@ int main()
 
   BBox3 bb3b(3,coord.begin(), coord.end());
 
+  bb3b = bb3b + bb3b;
+  bb3b += bb3;
+  bb3b.dilate(15);
+  assert(CGAL::do_overlap(bb3, bb3b));
+
   std::cout <<  bb3b << std::endl;
   }
 }

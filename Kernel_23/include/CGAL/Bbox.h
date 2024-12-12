@@ -20,6 +20,7 @@
 #include <iterator>
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
+#include <boost/math/special_functions/next.hpp>
 
 namespace CGAL {
 namespace Impl {
@@ -91,6 +92,36 @@ public:
         }
         return result;
     }
+
+    inline
+    void
+    scale(double factor)
+    {
+      CGAL_precondition(factor > 0);
+
+      if (factor == 1.)
+        return;
+
+      int d = bbox.dimension();
+      for(int i=0; i<d; ++i){
+        auto half_width = ((max)(i) - (min)(i)) * 0.5;
+        auto center = (min)(i) + half_width;
+        min_values[i] = center - factor * half_width;
+        max_values[i] = center + factor * half_width;
+      }
+    }
+
+    dilate(int dist)
+    {
+      using boost::math::float_advance;
+      int d = dimension();
+      for(int i=0; i<d; ++i){
+        min_values[i] = float_advance(min_values[i],-dist);
+        max_values[i] = float_advance(max_values[i], dist);
+      }
+    }
+
+
 
     bool operator==(const Bbox& bbox) const {
         for(int i=0; i<dimension(); ++i)
@@ -181,6 +212,21 @@ Bbox<Dimension_tag<N>, T> operator+(Bbox<Dimension_tag<N>, T> bbox, const Bbox<D
     bbox += other;
     return bbox;
 }
+
+template<typename Di, typename T>
+inline
+bool
+do_overlap(const Bbox<Di,T>& bb1, const Bbox<Di,T>& bb2)
+{
+    // check for emptiness ??
+    int d = bb1.dimension();
+    for(int i=0; i<d; ++i){
+    if ((bb1.max)(i) < (bb2.min)(i) || (bb2.max)(i) < (bb1.min)(i))
+        return false;
+    }
+    return true;
+}
+
 
 
 } // namespace CGAL
