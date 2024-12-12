@@ -9,12 +9,6 @@ lrineau@rubens
 HEREDOC
 )
 
-cat <<HEREDOC
-# Test runner machines #
-
-The following machines are used to run the tests:
-HEREDOC
-
 machine_title() {
         printf '\n## %s ##\n' $1
 }
@@ -58,7 +52,7 @@ declare -xf container_human_readable_status_cmd
 
 simplify_date_cmd() {
         date=$1
-        pattern=' \+[0-9]{4} [A-Z]{3,}$'
+        pattern=' \+[0-9]{4} [+]?[A-Z0-9]{3,}$'
         if [[ $date =~ $pattern ]]; then
                 date=${date% *}
         fi
@@ -117,28 +111,50 @@ machine_list_cgal_test_container() {
         printf '\n```tsv\n'
         remote_script=$(
                 display_all_exported_cmd_functions
+                printf "export PS4='+ %s >> %s'\n" "$1" "$PS4"
                 echo list_cgal_test_container_cmd
         )
-        ssh $1 bash -s <<<"$remote_script"
+        ssh $1 bash -$- -s <<<"$remote_script"
         printf '```\n'
 }
 
-command -v sed >/dev/null || {
-        echo 'sed is required'
+help() {
+        cat <<HEREDOC
+Usage: $0 [OPTION]
+
+List the test runner machines and the containers running on them.
+
+Options:
+  --table   output in markdown table format
+  --column  output in column format
+  --bat     output with bat
+  --plain   output in plain text
+
+If no option is given, the script will try to use bat, then column, and finally
+plain text.
+HEREDOC
+}
+
+error_out() {
+        echo "ERROR: $1"
+        echo
+        help
         exit 1
 }
 
+command -v sed >/dev/null || {
+        error_out 'sed is required'
+}
+
+
 if [[ $1 == --table ]] && ! command -v pandoc >/dev/null; then
-        echo 'pandoc is required for the option --table'
-        exit 1
+        error_out 'pandoc is required for the option --table'
 fi
 if [[ $1 == --column ]] && ! command -v column >/dev/null; then
-        echo 'column is required for the option --column'
-        exit 1
+        error_out 'column is required for the option --column'
 fi
 if [[ $1 == --bat ]] && ! command -v bat >/dev/null; then
-        echo 'bat is required for the option --bat'
-        exit 1
+        error_out 'bat is required for the option --bat'
 fi
 
 set_pretty_csv_to_md_table() {
@@ -177,21 +193,47 @@ case "$1" in
                 set_pretty_csv_to_bat
         elif command -v column >/dev/null; then
                 set_pretty_csv_to_column
+        elif command -v pandoc >/dev/null; then
+                set_pretty_csv_to_md_table
         else
                 set_pretty_csv_to_cat
         fi
         ;;
 *)
-        echo "Unknown option $1"
-        exit 1
+        error_out "Unknown option $1"
         ;;
 esac
+
+ERROR_MACHINES=""
+for machine in $TEST_MACHINES; do
+        USER=${machine%@*}
+        HOST=${machine#*@}
+        ssh "$HOST" test -f /home/$USER/.config/CGAL/test_cgal_docker_images || {
+                ERROR_MACHINES="$ERROR_MACHINES $machine"
+        }
+done
+if [ -n "$ERROR_MACHINES" ]; then
+        for machine in $ERROR_MACHINES; do
+                USER=${machine%@*}
+                HOST=${machine#*@}
+                printf 'ERROR: cannot read file `/home/%s/.config/CGAL/test_cgal_docker_images` on ssh host `%s`\n' $USER $HOST
+        done
+        exit 1
+fi
+cat <<HEREDOC
+# Test runner machines #
+
+The following machines are used to run the tests:
+HEREDOC
 
 for machine in $TEST_MACHINES; do
         USER=${machine%@*}
         HOST=${machine#*@}
         machine_title $machine
-        printf '\nusing `%s`\n' "$(ssh $HOST docker --version)"
+        ssh $HOST bash -$- -s <<'EOF'
+source /etc/os-release
+printf '\n- OS: `%s`\n- container implementation: `%s`\n' "$PRETTY_NAME" "$(docker --version)"
+EOF
         printf '\nTested images:\n'
         machine_tested_images $HOST $USER
         printf '\nCGAL test containers:\n'
