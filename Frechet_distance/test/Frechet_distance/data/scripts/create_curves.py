@@ -53,9 +53,10 @@ def write_to_file(curves, prefix = "curve"):
     for i in range(len(curves)):
         f = open(prefix + str(i) + ".txt", "w")
         for p in curves[i]:
-            for x in p:
-                f.write(str(x))
-                f.write(" ")
+            for i in range(len(p)):
+                f.write(str(p[i]))
+                if i < len(p)-1:
+                    f.write(" ")
             f.write("\n")
 
 starts = []
