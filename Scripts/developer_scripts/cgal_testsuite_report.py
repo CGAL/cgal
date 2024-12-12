@@ -8,9 +8,12 @@ import subprocess
 import re
 import requests
 
-LATEST_VERSION_URL = "https://cgal.geometryfactory.com/CGAL/Releases/LATEST"
-JSON_DATA_URL_TEMPLATE = "https://cgal.geometryfactory.com/CGAL/testsuite/CGAL-{version}/search_index.json"
-TESTSUITE_URL_TEMPLATE = "https://cgal.geometryfactory.com/CGAL/testsuite/results-{version}.shtml"
+CGAL_SERVER_URL = "https://cgal.geometryfactory.com/CGAL"
+LATEST_VERSION_URL = f"{CGAL_SERVER_URL}/Releases/LATEST"
+JSON_DATA_URL_TEMPLATE = f"{
+    CGAL_SERVER_URL}/testsuite/CGAL-{{version}}/search_index.json"
+TESTSUITE_URL_TEMPLATE = f"{
+    CGAL_SERVER_URL}/testsuite/results-{{version}}.shtml"
 TIMEOUT_DURATION = 10
 
 
@@ -112,7 +115,8 @@ def get_docker_images() -> Dict[str, List[str]]:
         return machines_info
 
     except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"Error running `list_test_runner_machines`: {e}") from e
+        raise RuntimeError(
+            f"Error running `list_test_runner_machines`: {e}") from e
     except Exception as e:
         raise RuntimeError(f"Error parsing Docker information: {e}") from e
 
