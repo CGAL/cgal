@@ -1378,50 +1378,6 @@ CGAL_Kernel_obj(Point_3)
   return Object();
 }
 
-
-// This functor selects the i'th element in a vector of Object's
-// and casts it to what is in the Object
-
-template <typename T2>
-struct Ith {
-  typedef T2 result_type;
-
-  // We keep a Sign member object
-  // for future utilisation, in case
-  // we have pairs of 2 T2 objects e.g.
-  // for a numeric_point vector returned
-  // from a construction of a possible
-  // lazy algebraic kernel
-
-  int i;
-  Sign sgn;
-
-  Ith(int i_)
-    : i(i_)
-  {sgn=NEGATIVE;}
-
-  Ith(int i_, bool b_)
-    : i(i_)
-  { sgn= (b_) ? POSITIVE : ZERO;}
-
-  const T2&
-  operator()(const std::vector<Object>& v) const
-  {
-    if(sgn==NEGATIVE)
-    return *object_cast<T2>(&v[i]);
-
-    typedef std::pair<T2,unsigned int >         Pair_type_1;
-    typedef std::pair<T2,std::pair<bool,bool> > Pair_type_2;
-
-    if(const Pair_type_1 *p1 = object_cast<Pair_type_1>(&v[i]))
-            return p1->first;
-    else if(const Pair_type_2 *p2 = object_cast<Pair_type_2>(&v[i]))
-        return p2->first;
-
-    CGAL_error_msg( " Unexpected encapsulated type ");
-  }
-};
-
 // This functor selects the i'th element in a vector of T2's
 template <typename T2>
 struct Ith_for_intersection {
