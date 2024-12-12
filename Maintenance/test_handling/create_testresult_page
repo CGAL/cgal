@@ -320,8 +320,6 @@ sub sort_pf {
     $platform_b = $platform;
     my $os_a = $platforms_info{$platform_a}->{operating_system} // '';
     my $os_b = $platforms_info{$platform_b}->{operating_system} // '';
-    $os_a =~ s/"//g;
-    $os_b =~ s/"//g;
     return $os_a cmp $os_b;
 }
 
@@ -740,7 +738,7 @@ sub get_warnings_and_errors {
 }
 
 sub create_summary_page {
-    my $platform_options = join("\n", map { "<option value=\"$_\">$_</option>" } @platforms_to_do);
+    my $platform_options = join("\n", map { "<option value=\"$_\">$platforms_info{$_}->{platform_name}</option>" } @platforms_to_do);
     my $test_directory;
     my @letters = ('r', 'n', 'w', 'o');
     my $letters_options = join("\n", map { "<option value=\"$_\">$_</option>" } @letters);

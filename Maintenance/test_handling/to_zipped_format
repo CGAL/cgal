@@ -89,7 +89,8 @@ sub reformat_results($)
             $COMPILER = $1;
         }
         if (/-- Operating system: (.*)/) {
-            $OS = "$OS $1";
+            $OS = $1;
+            $OS =~ s/"//g;
         }
         if (/^TESTER_NAME\s+(.*)$/) {
             $TESTER_NAME = $1;
