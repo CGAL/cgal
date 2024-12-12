@@ -1,13 +1,13 @@
 #include <CGAL/Frechet_distance/internal/Frechet_classical.h>
 #include <CGAL/Frechet_distance_traits_d.h>
-#include <CGAL/Cartesian_d.h>
-#include <CGAL/FPU.h>
+#include <CGAL/Epick_d.h>
 
 #include <iostream>
 #include <sstream>
 #include <fstream>
 
-using Kernel = CGAL::Cartesian_d<double>;
+
+using Kernel = CGAL::Epick_d<CGAL::Dimension_tag<100>>;
 using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
 using Point = Traits::Point_d;
 using Points = std::vector<Point>;
@@ -34,8 +34,6 @@ void readCurve(std::ifstream& curve_file, Points& points)
 
 int main(int argc, char* argv[])
 {
-    // TODO AF: why do we need this here?
-    CGAL::Protect_FPU_rounding<true> p;
 
     double epsilon = 10e-10;
 
