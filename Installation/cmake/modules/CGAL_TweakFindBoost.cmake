@@ -1,25 +1,25 @@
 # - Defines Boost_USE_STATIC_LIBS and Boost_ADDITIONAL_VERSIONS
-# 
+#
 # This module sets the CMake variables:
-# 
+#
 # == Boost_USE_STATIC_LIBS ==
-# 
+#
 # The option CGAL_Boost_USE_STATIC_LIBS is created in the cache, as
 # advanced option. If CGALConfig.cmake has been loaded, the default value
 # of that option is the value loaded from CGALConfig.cmake (this file was
 # created during the configuration of CGAL libraries). Otherwise, the
 # default value of that option is OFF.
-# 
+#
 # The variable Boost_USE_STATIC_LIBS is set to the value of the option
 # CGAL_Boost_USE_STATIC_LIBS.
-# 
+#
 # Additionally, if Boost_USE_STATIC_LIBS is OFF, and the auto-linking is
 # enabled, the definition BOOST_ALL_DYN_LINK is added to
 # CGAL_3RD_PARTY_DEFINITIONS, so that the auto-linking feature on Windows
 # knows that it must search for dynamic libraries.
-# 
+#
 # == Boost_ADDITIONAL_VERSIONS ==
-# 
+#
 # The variable Boost_ADDITIONAL_VERSIONS is filled with a long list of
 # Boost versions. That allows the module FindBoost to find more recent
 # Boost versions, even if the file FindBoost.cmake is old.
@@ -27,6 +27,9 @@
 if( NOT CGAL_TweakFindBoost )
   if(POLICY CMP0077)
     cmake_policy(SET CMP0077 NEW)
+  endif()
+  if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 NEW)
   endif()
   if(DEFINED CGAL_Boost_USE_STATIC_LIBS)
     # If the option is loaded from CGALConfig.cmake, use its value as default
@@ -50,7 +53,7 @@ if( NOT CGAL_TweakFindBoost )
   option(CGAL_Boost_USE_STATIC_LIBS "Link with static Boost libraries" ${CGAL_Boost_USE_STATIC_LIBS_DEFAULT})
   mark_as_advanced(CGAL_Boost_USE_STATIC_LIBS)
 
-  if(CGAL_Boost_USE_STATIC_LIBS) 
+  if(CGAL_Boost_USE_STATIC_LIBS)
     set(Boost_USE_STATIC_LIBS ON)
   else()
     set(Boost_USE_STATIC_LIBS OFF)
