@@ -13,7 +13,6 @@
 //                 Andreas Fabri
 // =============================================================================
 
-
 #pragma once
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance/internal/curve.h>
@@ -28,23 +27,22 @@ namespace Frechet_distance_ {
 namespace internal {
 
 template <typename C>
-class FrechetNaive
+class FrechetClassical
 {
     using Curve = C;
     using distance_t = typename Curve::distance_t;
     using Lambda = CGAL::Frechet_distance_::internal::Lambda<C>;
 
 public:
-    FrechetNaive() = default;
+    FrechetClassical() = default;
 
-    bool lessThan(distance_t const& distance, Curve const& curve1,
-                  Curve const& curve2);
+    bool lessThan(distance_t const& distance, Curve const& curve1, Curve const& curve2);
     std::pair<double,double> calcDistance(Curve const& curve1, Curve const& curve2, double epsilon);
 };
 
 
 template <typename C>
-bool FrechetNaive<C>::lessThan(distance_t const& distance, Curve const& curve1,
+bool FrechetClassical<C>::lessThan(distance_t const& distance, Curve const& curve1,
                                Curve const& curve2)
 {
     using OptLambda = std::optional<Lambda>;
@@ -53,7 +51,10 @@ bool FrechetNaive<C>::lessThan(distance_t const& distance, Curve const& curve1,
     assert(curve2.size() >= 2);
     distance_t dist_sqr = distance * distance;
 
-    if (Curve::squared_distance(curve1[0], curve2[0], curve1.traits()) > dist_sqr || Curve::squared_distance(curve1.back(), curve2.back(), curve1.traits()) > dist_sqr) { return false; }
+    if (Curve::squared_distance(curve1[0], curve2[0], curve1.traits()) > dist_sqr ||
+        Curve::squared_distance(curve1.back(), curve2.back(), curve1.traits()) > dist_sqr) {
+        return false;
+    }
 
     std::vector<std::vector<OptLambda>> reachable1(curve1.size()-1, std::vector<OptLambda>(curve2.size(), std::nullopt));
     std::vector<std::vector<OptLambda>> reachable2(curve1.size(), std::vector<OptLambda>(curve2.size()-1, std::nullopt));
@@ -100,7 +101,7 @@ bool FrechetNaive<C>::lessThan(distance_t const& distance, Curve const& curve1,
 }
 
 template <typename C>
-std::pair<double,double> FrechetNaive<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
+std::pair<double,double> FrechetClassical<C>::calcDistance(Curve const& curve1, Curve const& curve2, double epsilon)
 {
     double min = 0.;
     double max = curve1.getUpperBoundDistance(curve2);
