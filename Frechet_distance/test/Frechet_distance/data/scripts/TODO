@@ -1,6 +1,7 @@
 x clean up Compute_naive_Frechet_distance_3.cpp
 x move Frechet_naive into internal directory and adapt everything for it to compile
-- create small set of 3d test curves
+x create small set of 3d test curves
+x create small set of 100d test curves
 - create 3d queries
 - add them to the test suite
 - run tests
