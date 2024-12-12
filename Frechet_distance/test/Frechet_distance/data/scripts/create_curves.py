@@ -22,7 +22,7 @@ end_mean = np.array(D*[20.])
 # random seed
 seed = 42
 # curve directory
-curve_name_prefix = "../curves/generated_100d/"
+curve_name_prefix = f'../curves/generated_{D}d/'
 
 rng = np.random.default_rng(seed)
 
@@ -44,8 +44,8 @@ def create_curve(start, end):
 def create_curves(starts=None, ends=None, num_curves=1):
     curves = []
     for i in range(num_curves):
-        start = random.choice(starts)
-        end = random.choice(ends)
+        start = rng.choice(starts)
+        end = rng.choice(ends)
         curves.append(create_curve(start, end))
     return curves
 
@@ -53,10 +53,12 @@ def write_to_file(curves, prefix = "curve"):
     for i in range(len(curves)):
         f = open(prefix + str(i) + ".txt", "w")
         for p in curves[i]:
+            if D > 3:
+                f.write(f'{D}') # only Point_d has the dimension of the point at the beginning
             for i in range(len(p)):
-                f.write(str(p[i]))
-                if i < len(p)-1:
+                if i > 0 or D > 3:
                     f.write(" ")
+                f.write(str(p[i]))
             f.write("\n")
 
 starts = []
