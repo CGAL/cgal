@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
       CGAL::IO::read_linestring_WKT(in, A);
     }
     {
-      std::ifstream in((argc > 1) ? argv[1] : CGAL::data_file_path("wkt/LetterAbis.wkt"));
+      std::ifstream in((argc > 1) ? argv[2] : CGAL::data_file_path("wkt/LetterAbis.wkt"));
       CGAL::IO::read_linestring_WKT(in, B);
     }
     bool res = CGAL::is_Frechet_distance_larger<Traits>(A, B, 0.001);
