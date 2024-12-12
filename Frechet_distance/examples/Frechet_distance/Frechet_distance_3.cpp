@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
       CGAL::IO::read_linestring_WKT(in, A);
     }
     {
-      std::ifstream in((argc > 2) ? argv[1] : CGAL::data_file_path("wkt/moebius2.wkt"));
+      std::ifstream in((argc > 2) ? argv[2] : CGAL::data_file_path("wkt/moebius2.wkt"));
       CGAL::IO::read_linestring_WKT(in, B);
     }
 
