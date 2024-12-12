@@ -1,2 +1,11 @@
-copy Compute_naive_Frechet_distance_3.cpp to Compute_naive_Frechet_distance_100.cpp
-move Frechet_naive into internal directory and adapt everything for it to compile
+x clean up Compute_naive_Frechet_distance_3.cpp
+x move Frechet_naive into internal directory and adapt everything for it to compile
+- create small set of 3d test curves
+- create 3d queries
+- add them to the test suite
+- run tests
+
+- copy Compute_naive_Frechet_distance_3.cpp to Compute_naive_Frechet_distance_100.cpp
+- then do the same as for 3d tests
+
+- also use compute distance in the tests if it wasn't done yet
