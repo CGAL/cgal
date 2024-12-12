@@ -5,7 +5,10 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#include <CGAL/Epeck_d.h>
+#include <CGAL/Epick_d.h>
 #include <CGAL/Real_timer.h>
+#include <CGAL/Dimension.h>
 
 #include <algorithm>
 #include <cassert>
@@ -15,7 +18,7 @@
 #include <string>
 #include <vector>
 
-template <class TestKernel>
+template <class TestKernel, class TestTraits, class TestPoint>
 struct Test_struct
 {
 
@@ -23,12 +26,8 @@ struct Test_struct
 // helpers
 //
 using Test_distance_t = double;
-
-using TestTraits = CGAL::Frechet_distance_traits_2<TestKernel>;
-using TestPoint = typename TestKernel::Point_2;
 using TestCurve = std::vector<TestPoint>;
 using TestCurves = std::vector<TestCurve>;
-
 
 struct FrechetDistanceQuery {
     std::size_t id1, id2;
@@ -151,9 +150,21 @@ template<bool force_filtering=false>
 static double testFrechetDistance()
 {
     std::string curve_directory = "./data/curves/";
-    // std::vector<std::string> datasets = {"sigspatial", "OV"};
-    std::vector<std::string> datasets = { "sigspatial" };
     std::string query_directory = "./data/queries/";
+    std::vector<std::string> datasets;
+
+    auto const dimension = CGAL::Ambient_dimension<TestPoint, TestKernel>::value;
+    if (dimension == 2) {
+        // datasets = {"sigspatial", "OV"};
+        datasets = { "sigspatial" };
+    }
+    else if (dimension == 3) {
+        datasets = { "generated_3d" };
+    }
+    else if (dimension == 100) {
+        datasets = { "generated_100d" };
+    }
+
     CGAL::Real_timer timer;
     for (auto const& dataset : datasets) {
         auto curves = readCurves(curve_directory + dataset + "/");
@@ -173,6 +184,7 @@ static double testFrechetDistance()
                 ! CGAL::is_Frechet_distance_larger<TestTraits, force_filtering>(
                     curves[query.id1], curves[query.id2], query.distance);
             timer.stop();
+
             if (decision != query.decision) {
                 std::cout << "Wrong decision on query." << std::endl;
                 exit(- 1);
@@ -216,7 +228,6 @@ static double testFrechetDistanceNearNeighborsDS()
 
 };
 
-
 int main(int argc, char** argv)
 {
   std::set<int> test_set;
@@ -225,46 +236,91 @@ int main(int argc, char** argv)
 
   if (test_set.empty() || test_set.count(0))
   {
-    using SCD = CGAL::Simple_cartesian<double>;
+    using Kernel = CGAL::Simple_cartesian<double>;
+    using Traits = CGAL::Frechet_distance_traits_2<Kernel>;
+    using Point = Kernel::Point_2;
     std::cout <<"Simple_cartesian<double>\n";
-    double t1=Test_struct<SCD>::testFrechetDistanceNearNeighborsDS();
-    double t2=Test_struct<SCD>::testFrechetDistance();
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
     std::cout << t1 << " " << t2 << "\n";
   }
 
   if (test_set.empty() || test_set.count(1))
   {
+    using Kernel = CGAL::Epick;
+    using Traits = CGAL::Frechet_distance_traits_2<Kernel>;
+    using Point = Kernel::Point_2;
     std::cout <<"CGAL::Epick\n";
-    double t1=Test_struct<CGAL::Epick>::testFrechetDistanceNearNeighborsDS();
-    double t2=Test_struct<CGAL::Epick>::testFrechetDistance();
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
     std::cout << t1 << " " << t2 << "\n";
   }
 
   if (test_set.empty() || test_set.count(2))
   {
+    using Kernel = CGAL::Epeck;
+    using Traits = CGAL::Frechet_distance_traits_2<Kernel>;
+    using Point = Kernel::Point_2;
     std::cout <<"CGAL::Epeck\n";
-    double t1=Test_struct<CGAL::Epeck>::testFrechetDistanceNearNeighborsDS();
-    double t2=Test_struct<CGAL::Epeck>::testFrechetDistance();
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
     std::cout << t1 << " " << t2 << "\n";
   }
 
   if (test_set.empty() || test_set.count(3))
   {
-    using Epeck_sqrt = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
+    using Kernel = CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt;
+    using Traits = CGAL::Frechet_distance_traits_2<Kernel>;
+    using Point = Kernel::Point_2;
     std::cout <<"Exact_predicates_exact_constructions_kernel_with_sqrt (force filtering)\n";
-    double t1=Test_struct<Epeck_sqrt>::testFrechetDistanceNearNeighborsDS();
-    double t2=Test_struct<Epeck_sqrt>::testFrechetDistance<true>();
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<Kernel, Traits, Point>::testFrechetDistance<true>();
     std::cout << t1 << " " << t2 << "\n";
   }
 
   if (test_set.empty() || test_set.count(4))
   {
-    using SCE = CGAL::Simple_cartesian<CGAL::Exact_rational>;
+    using Kernel = CGAL::Simple_cartesian<CGAL::Exact_rational>;
+    using Traits = CGAL::Frechet_distance_traits_2<Kernel>;
+    using Point = Kernel::Point_2;
     std::cout <<"Simple_cartesian<Exact_rational> (force filtering)\n";
-    double t1=Test_struct<SCE>::testFrechetDistanceNearNeighborsDS();
-    double t2=Test_struct<SCE>::testFrechetDistance<true>();
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<Kernel, Traits, Point>::testFrechetDistance<true>();
     std::cout << t1 << " " << t2 << "\n";
   }
+
+  if (test_set.empty() || test_set.count(5))
+  {
+    using Kernel = CGAL::Simple_cartesian<double>;
+    using Traits = CGAL::Frechet_distance_traits_3<Kernel>;
+    using Point = Kernel::Point_3;
+    std::cout <<"Simple_cartesian<double> in 3D\n";
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
+    std::cout << t1 << "\n";
+  }
+
+  // FIXME: CGAL::Ambient_dimension<TestPoint, TestKernel>::value not defined for Epick_d and Epeck_d
+  //        How do I get the dimension for any kernel?
+
+  // if (test_set.empty() || test_set.count(6))
+  // {
+  //   using Kernel = CGAL::Epick_d<CGAL::Dimension_tag<100>>;
+  //   using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
+  //   using Point = Kernel::Point_d;
+  //   std::cout <<"CGAL::Epick_d\n";
+  //   double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
+  //   std::cout << t1 << "\n";
+  // }
+  // 
+  // if (test_set.empty() || test_set.count(7))
+  // {
+  //   using Kernel = CGAL::Epeck_d<CGAL::Dimension_tag<100>>;
+  //   using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
+  //   using Point = Kernel::Point_d;
+  //   std::cout <<"CGAL::Epeck_d\n";
+  //   double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
+  //   std::cout << t1 << "\n";
+  // }
 
   return 0;
 }
