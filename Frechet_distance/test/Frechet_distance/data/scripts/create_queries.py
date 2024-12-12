@@ -30,7 +30,7 @@ def write_queries(queries, d):
         file.write(f'{q[1]} {q[0]} {q[2]-2*eps} 0\n')
 
 def frechet_distance(curve1, curve2):
-    args = ('build/Compute_classical_Frechet_distance_{d}', curve1, curve2)
+    args = (f'build/Compute_classical_Frechet_distance_{d}', curve1, curve2)
     popen = subprocess.Popen(args, stdout=subprocess.PIPE)
     popen.wait()
     output = popen.stdout.read()
