@@ -311,7 +311,7 @@ int main(int argc, char** argv)
   //   double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
   //   std::cout << t1 << "\n";
   // }
-  // 
+  //
   // if (test_set.empty() || test_set.count(7))
   // {
   //   using Kernel = CGAL::Epeck_d<CGAL::Dimension_tag<100>>;
