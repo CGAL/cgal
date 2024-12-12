@@ -405,7 +405,7 @@ sub choose_platforms()
 # Make a list of all the platforms that are to be treated, in the order they
 # appear in the list of known_platforms.
     @platforms_to_do = ();
-    @known_platforms = sort sort_pf @known_platforms;
+    #@known_platforms = sort sort_pf @known_platforms;
     for ($index=0; $index < @known_platforms; $index += 1) {
         $pf = $known_platforms[$index];
         my $ind2 = 0;
@@ -460,6 +460,7 @@ EOF
         }
         elsif (open (PLATFORM_INFO, "<results_${pf}.info")) { ## if the json file does not exist, read the old .info file
             $_ = <PLATFORM_INFO>; # CGAL_VERSION
+            chomp(my $platform_name = <PLATFORM_INFO>);
             chomp(my $compiler = <PLATFORM_INFO>);
             chomp(my $operating_system = <PLATFORM_INFO>);
             chomp(my $tester_name = <PLATFORM_INFO>);
@@ -472,7 +473,7 @@ EOF
                 chomp($versions_and_flags[$index] = <PLATFORM_INFO>);
             }
             $platform_info = {
-                name => $pf,
+                platform_name => $platform_name,
                 compiler => $compiler,
                 operating_system => $operating_system,
                 tester_name => $tester_name,
@@ -527,7 +528,7 @@ EOF
         print OUTPUT <<~EOF;
         <tr>
           <td><a name="platform$pf_num_plus_one">$pf_num_plus_one</a></td>
-          <td><a href="$release_name/Installation/TestReport_$pf.gz">$pf_short</a></td>
+          <td><a href="$release_name/Installation/TestReport_$pf.gz">$platform_info->{platform_name}</a></td>
           <td>$platform_info->{compiler}</td>
           <td>$platform_info->{operating_system}</td>
           <td><a href="mailto:$platform_info->{tester_address}">$platform_info->{tester_name}</a></td>
