@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+import os
 import json
 from typing import Dict, List
 from dataclasses import dataclass
@@ -82,8 +84,9 @@ def get_docker_images() -> Dict[str, List[str]]:
     Returns a dictionary with machine names as keys and lists of images as values.
     """
     try:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
         result = subprocess.run(
-            ['./list_test_runner_machines', '--plain'],
+            [os.path.join(script_dir, 'list_test_runner_machines'), '--plain'],
             capture_output=True,
             text=True,
             check=True
