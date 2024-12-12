@@ -7,4 +7,4 @@ project( classical_Frechet_distance )
 find_package(CGAL REQUIRED)
 
 create_single_source_cgal_program("Compute_classical_Frechet_distance_3.cpp")
-
+create_single_source_cgal_program("Compute_classical_Frechet_distance_100.cpp")
