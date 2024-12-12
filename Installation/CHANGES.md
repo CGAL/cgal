@@ -11,6 +11,10 @@
 
 -   Introduces two traits decorators, namely `Arr_tracing_traits_2` and `Arr_counting_traits_2`, which can be used to extract debugging and informative metadata about the traits in use while a program is being executed.
 
+### [Polygon Repair](https://doc.cgal.org/6.1/Manual/packages.html#PkgPolygonRepair)
+
+-   Add a the non-zero rule, as well as functions to compute the conservative inner and outer hull of similar polygons.
+
 ## [Release 6.0.1](https://github.com/CGAL/cgal/releases/tag/v6.0.1)
 
 ### [Poisson Surface Reconstruction](https://doc.cgal.org/6.0.1/Manual/packages.html#PkgPoissonSurfaceReconstruction3)
