@@ -75,7 +75,7 @@ namespace CGAL {
     struct Container_for_attributes : public
         Compact_container_with_index<T,
         typename Allocator_traits::template rebind_alloc<T>,
-        Multiply_by_two_policy_for_cc_with_size<64>, size_type >
+        Multiply_by_two_policy_for_cc_with_size<64>, Index_type >
     {};
     /// Typedef for attributes
     typedef typename internal::template Get_attributes_tuple<Dart_wrapper>::type
@@ -168,7 +168,7 @@ namespace CGAL {
     void init_storage()
     {
       // Allocate a dart for null_dart_descriptor
-      assert(mdarts.empty()); // the compact container is empty
+      CGAL_assertion(mdarts.empty()); // the compact container is empty
       Dart_index local_null_dart_descriptor = mdarts.emplace();
       if(local_null_dart_descriptor!=0)
       {

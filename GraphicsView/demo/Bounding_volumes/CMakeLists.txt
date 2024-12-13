@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Bounding_volumes_Demo)
 
 find_package(CGAL REQUIRED OPTIONAL_COMPONENTS Qt6)
@@ -19,7 +19,7 @@ endif()
 if(CGAL_Qt6_FOUND AND Qt6_FOUND)
 
   set(CMAKE_INCLUDE_CURRENT_DIR ON)
-  add_definitions(-DQT_NO_KEYWORDS)
+  add_compile_definitions(QT_NO_KEYWORDS)
   set(CMAKE_AUTOMOC ON)
   set(CMAKE_AUTOUIC ON)
   set(CMAKE_AUTORCC ON)

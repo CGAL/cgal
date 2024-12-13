@@ -1,6 +1,6 @@
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Arrangement_on_surface_2_earth_Demo)
 
 if(NOT POLICY CMP0070 AND POLICY CMP0053)
@@ -39,7 +39,7 @@ endif()
 
 
 
-add_definitions(-DQT_NO_VERSION_TAGGING)
+add_compile_definitions(QT_NO_VERSION_TAGGING)
 
 # AOS
 file(GLOB source_files_aos Aos.h Aos.cpp Aos_defs.h

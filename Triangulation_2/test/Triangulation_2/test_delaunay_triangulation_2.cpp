@@ -32,9 +32,10 @@
 #include <iostream>
 
 #include <CGAL/_test_types.h>
-#include <CGAL/Cartesian.h>
+
 #include <CGAL/Triangulation_data_structure_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Cartesian.h>
 
 #include <CGAL/_test_traits.h>
 #include <CGAL/_test_cls_delaunay_triangulation_2.h>

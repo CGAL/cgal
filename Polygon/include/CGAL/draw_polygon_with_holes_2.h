@@ -34,7 +34,7 @@ opens a new window and draws a 2D polygon with holes. Parameters of the drawing 
 A call to this function blocks the execution of the program until the drawing window is closed. This function requires `CGAL_Qt6`, and is only available if the macro `CGAL_USE_BASIC_VIEWER` is defined.
 Linking with the cmake target `CGAL::CGAL_Basic_viewer` will link with `CGAL_Qt6` and add the definition `CGAL_USE_BASIC_VIEWER`.
 
-\tparam PH which must be an instanciation of a `CGAL::Polygon_with_holes_2<...>`.
+\tparam PH which must be an instantiation of a `CGAL::Polygon_with_holes_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param ph the polygon with holes to draw.
@@ -66,7 +66,7 @@ A shortcut to `CGAL::draw(ph, Graphics_scene_options{})`.
 
 adds the vertices, edges and faces of `ph` into the given graphic scene `gs`. Parameters of the cells are taken from the optional graphics scene options parameter `gso`. Note that `gs` is not cleared before being filled (to enable to draw several data structures in the same basic viewer).
 
-\tparam PH which must be an instanciation of a `CGAL::Polygon_with_holes_2<...>`.
+\tparam PH which must be an instantiation of a `CGAL::Polygon_with_holes_2<...>`.
 \tparam GSOptions a model of `GraphicsSceneOptions` concept.
 
 \param ph the polygon with holes to draw.

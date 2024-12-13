@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project( Mesh_3_Tests )
 
 find_package(CGAL REQUIRED COMPONENTS ImageIO)
@@ -89,7 +89,7 @@ foreach(target
     test_meshing_polyhedral_complex_with_manifold_and_min_size
     )
   if(TARGET ${target})
-    target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+    target_link_libraries(${target} PRIVATE CGAL::Eigen3_support)
   endif()
 endforeach()
 
@@ -115,7 +115,7 @@ if(TARGET CGAL::TBB_support)
       test_min_size_criteria
       )
     if(TARGET ${target})
-      target_link_libraries(${target} PUBLIC CGAL::TBB_support)
+      target_link_libraries(${target} PRIVATE CGAL::TBB_support)
     endif()
   endforeach()
 

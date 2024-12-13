@@ -62,12 +62,12 @@ protected:
 
 namespace draw_function_for_lcc
 {
-  // We need to re-use the namespace draw_function_for_lcc because we want to specialize
+  // We need to reuse the namespace draw_function_for_lcc because we want to specialize
   // the previous struct LCC_geom_utils
 //   template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
 // struct LCC_geom_utils;
 
-// Specialisation for face graph; otherwise use the LCC_geom_utils of LCC.
+// Specialization for face graph; otherwise use the LCC_geom_utils of LCC.
 template<class Mesh, class Local_kernel>
 struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 {

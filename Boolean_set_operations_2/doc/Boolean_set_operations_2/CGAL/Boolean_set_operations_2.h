@@ -1104,7 +1104,7 @@ do_intersect(const General_polygon_with_holes_2<General_polygon_2<ArrTraits>>& p
  * \param traits a traits object.
  * \return `true` if `pgn1` and `pgn2` intersect in their interior and `false`
  *         otherwise.
- * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
+ *
  * \pre `GpsTraits` must be a model of the concept `GeneralPolygonSetTraits_2`.
  */
 template <typename Polygon, typename GpsTraits>

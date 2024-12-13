@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Polygon_mesh_processing)
 
 # CGAL and its components
@@ -29,8 +29,8 @@ if (FAST_ENVELOPE_BUILD_DIR)
   endif()
 
   create_single_source_cgal_program("fastE.cpp")
-  target_link_libraries( fastE PUBLIC CGAL::Eigen3_support)
-  target_link_libraries( fastE PUBLIC FastEnvelope IndirectPredicates geogram)
+  target_link_libraries( fastE PRIVATE CGAL::Eigen3_support)
+  target_link_libraries( fastE PRIVATE FastEnvelope IndirectPredicates geogram)
 
 else()
   message(STATUS "CMake variable FAST_ENVELOPE_BUILD_DIR is not defined; benchmark 'fastE' will not be built")
@@ -39,5 +39,5 @@ endif()
 create_single_source_cgal_program("fast.cpp")
 
 create_single_source_cgal_program("polygon_mesh_slicer.cpp")
-target_link_libraries(polygon_mesh_slicer PUBLIC CGAL::Eigen3_support)
+target_link_libraries(polygon_mesh_slicer PRIVATE CGAL::Eigen3_support)
 

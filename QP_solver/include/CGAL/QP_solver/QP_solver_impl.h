@@ -1053,7 +1053,7 @@ ratio_test_2( Tag_false)
     // optimal BEFORE a variable drops to zero.  As delta = mu_j - mu_j(t_1),
     // the latter is precisely the case if delta_min >= -mu_j(t_1).
     //
-    // (Note: please forget the crap identitiy between (2.11) and (2.12); the
+    // (Note: please forget the crap identity between (2.11) and (2.12); the
     // notation is misleading.)
     //
     // Now to the nonstandard-form case.

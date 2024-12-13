@@ -149,7 +149,7 @@ public:
     //! obtains the past-the-end reverse iterator for the polyline points.
     Segment_const_reverse_iterator rend_segments() const;
 
-    /*! Obtain the number of subcurves that comprise the poyline.
+    /*! obtains the number of subcurves that comprise the poyline.
      * \return The number of subcurves.
      */
     Segments_size_type number_of_segments() const;
@@ -169,13 +169,13 @@ public:
     typedef std::reverse_iterator<Segment_const_iterator>
       Segment_const_reverse_iterator;
 
-    /*! Construct default. */
+    /*! constructs default. */
     X_monotone_curve_2();
 
-    /*! Construct from a subcurve. */
+    /*! constructs from a subcurve. */
     X_monotone_curve_2(X_monotone_segment_2 seg);
 
-    /*! Construct from a range.  Similar to the constructor of a general
+    /*! constructs from a range.  Similar to the constructor of a general
      * polycurve.  Like in the case of general polycurve, for the sake of
      * backwards compatibility we have to keep an implementation of construction
      * from a range of points. DO NOT USE THIS CONSTRUCTION.
@@ -183,23 +183,23 @@ public:
     template <typename InputIterator>
     X_monotone_curve_2(InputIterator begin, InputIterator end);
 
-    /*! Obtain the first iterator of the polyline subcurves.
+    /*! obtains the first iterator of the polyline subcurves.
      */
     Segment_const_iterator begin_segments() const;
 
-    /*! Obtain the past-the-end iterator of the polyline subcurves.
+    /*! obtains the past-the-end iterator of the polyline subcurves.
      */
     Segment_const_iterator end_segments() const;
 
-    /*! Obtain the first reverse iterator of the polyline subcurves.
+    /*! obtains the first reverse iterator of the polyline subcurves.
      */
     Segment_const_reverse_iterator rbegin_segments() const;
 
-    /*! Obtain the past-the-end reverse iterator for the polyline points.
+    /*! obtains the past-the-end reverse iterator for the polyline points.
      */
     Segment_const_reverse_iterator rend_segments() const;
 
-    /*! Obtain the number of subcurves that comprise the poyline.
+    /*! obtains the number of subcurves that comprise the poyline.
      * \return The number of subcurves.
      */
     Segments_size_type number_of_segments() const;
@@ -209,7 +209,7 @@ public:
    * polyline.
    *
    * This functor constructs general polylines. Its `operator()` is
-   * oveloaded to support various input types.
+   * overloaded to support various input types.
    *
    * Note that the composing segments, depending on the `SegmentTraits_2`,
    * might not be \f$x\f$-monotone.
@@ -219,7 +219,7 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Obtain a polyline connecting the two given endpoints.
+    /*! obtains a polyline connecting the two given endpoints.
      * \param p The first point.
      * \param q The second point.
      * \pre `p` and `q` are distinct.
@@ -227,14 +227,14 @@ public:
      */
     Curve_2 operator()(const Point_2& p, const Point_2& q) const;
 
-    /*! Obtain a polyline that comprises of one given segment.
+    /*! obtains a polyline that comprises of one given segment.
      * \param seg input segment
      * \pre `seg` is not degenerated (not tested)
      * \return A polyline with one segment, namely `seg`.
      */
     Curve_2 operator()(const Segment_2& seg) const;
 
-    /*! Construct a well-oriented polyline from a range of either
+    /*! constructs a well-oriented polyline from a range of either
      * `SegmentTraits_2::Point_2` or `SegmentTraits_2::Segment_2`.
      *
      * \param begin iterator pointing to the first element in the range.
@@ -270,7 +270,7 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Append a point `p` to an existing polyline `cv` at the back.
+    /*! appends a point `p` to an existing polyline `cv` at the back.
      * \param cv a polyline. Note, `cv` is not (necessarily)
      *        \f$ x\f$-monotone.
      * \param p a point to be appended to `cv` at the back.
@@ -278,7 +278,7 @@ public:
      */
     void operator()(Curve_2& cv, const Point_2& p) const;
 
-    /*! Append a segment `seg` to an existing polyline `cv` at the back.
+    /*! appends a segment `seg` to an existing polyline `cv` at the back.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
      * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
@@ -286,7 +286,7 @@ public:
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! Append a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
+    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
      * the back.
      * \param xcv the existing \f$x\f$-monotone polyline
      * \param p the point to be pushed back.
@@ -297,7 +297,7 @@ public:
      */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
-    /*! Append a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
+    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
      * at the back. If `xcv` is empty, `seg` will be its first segment.
      * \param xcv existing \f$x\f$-monotone polyline
      * \param seg the segment to be added
@@ -320,7 +320,7 @@ public:
     /// \name Operations
     /// @{
 
-    /*! Append a point `p` to an existing polyline `cv` at the front.
+    /*! appends a point `p` to an existing polyline `cv` at the front.
      * \param cv a polyline. Note, `cv` is not (necessarily)
      *        \f$ x\f$-monotone.
      * \param p a point to be appended to `cv` at the back.
@@ -328,7 +328,7 @@ public:
      */
     void operator()(Curve_2& cv, const Point_2& p) const;
 
-    /*! Append a segment `seg` to an existing polyline `cv` at the front.
+    /*! appends a segment `seg` to an existing polyline `cv` at the front.
      * If `cv` is empty, `seg` will be its first segment.
      * \param cv a polyline. Note, `cv` is (not necessarily) \f$x\f$-monotone.
      * \param seg a segment (not necessarily \f$x\f$-monotone) to be appended
@@ -336,7 +336,7 @@ public:
      */
     void operator()(Curve_2& cv, const Segment_2& seg) const;
 
-    /*! Append a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
+    /*! appends a point `p` to an existing \f$x\f$-monotone polyline `xcv` at
      * the front.
      * \param xcv the existing \f$x\f$-monotone polyline
      * \param p the point to be pushed back.
@@ -347,7 +347,7 @@ public:
      */
     void operator()(const X_monotone_curve_2& xcv, Point_2& p) const;
 
-    /*! Append a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
+    /*! appends a segment `seg` to an existing \f$x\f$-monotone polyline `xcv`
      * at the front. If `xcv` is empty, `seg` will be its first segment.
      * \param xcv existing \f$x\f$-monotone polyline
      * \param seg the segment to be added
