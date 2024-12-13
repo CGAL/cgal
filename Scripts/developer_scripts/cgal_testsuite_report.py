@@ -67,13 +67,13 @@ def analyze_tpl_data(json_data: Dict) -> List[PlatformInfo]:
                 version=item.get('version', 'N/A'),
                 status=item.get('status', 'unknown')
             )
-            for item in platform.get('tpl', [])
+            for item in platform.get('third_party_libs', [])
         ]
         platform_info = PlatformInfo(
-            name=platform.get('name', 'Unknown Platform'),
+            name=platform.get('platform_name', 'Unknown Platform'),
             debug=platform.get('debug', '-'),
-            os=platform.get('os', '-'),
-            tester=platform.get('tester', '-'),
+            os=platform.get('operating_system', '-'),
+            tester=platform.get('tester_name', '-'),
             compiler=platform.get('compiler', '-'),
             tpl_info=tpl_list
         )
@@ -109,7 +109,7 @@ def get_docker_images() -> Dict[str, List[str]]:
             elif line.startswith("Tested images:"):
                 parsing_images = True
 
-            elif parsing_images and line.startswith("cgal/testsuite-docker:"):
+            elif parsing_images and (line.startswith("cgal/testsuite-docker:") or line.startswith("docker.io/cgal/testsuite-docker:")):
                 machines_info[current_machine].append(line.strip())
 
         return machines_info
@@ -158,9 +158,9 @@ def generate_markdown_report(platforms_info: List[PlatformInfo], version: str) -
         report.append("|--------------|---------|--------|")
         for tpl in tpl_list:
             version_str = str(tpl.version) if tpl.version else "N/A"
-            status_str = "✅" if tpl.status == "found" else "❌"
+            status_str = "❌" if tpl.version == "not found" else "✅"
             report.append(f"| {tpl.name} | {version_str} | {status_str} |")
-        found_tpls = sum(1 for tpl in tpl_list if tpl.status == "found")
+        found_tpls = sum(1 for tpl in tpl_list if tpl.version != "not found")
         total_tpls = len(tpl_list)
         report.append(
             f"\n**Summary**: found {found_tpls} third-party libraries out of {total_tpls}")
