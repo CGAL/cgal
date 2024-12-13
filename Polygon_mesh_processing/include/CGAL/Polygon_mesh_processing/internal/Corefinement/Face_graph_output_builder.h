@@ -759,6 +759,71 @@ public:
       coplanar_patches_of_tm2.set(tm2_patch_ids[ fid2 ]);
     }
 
+
+    //we have the correspondance between cpln patches thanks to faces in tm1_coplanar_faces and tm2_coplanar_faces
+    CGAL_assertion(tm1_coplanar_faces.size()==tm2_coplanar_faces.size());
+    // TODO: move it to do it lazily
+    std::vector<std::size_t> coplanar_tm1_to_coplanar_tm2;
+    std::vector<bool> is_oo_tm1(nb_patches_tm1, false);
+    std::vector<bool> is_oo_tm2(nb_patches_tm2, false);
+    if (!tm1_coplanar_faces.empty())
+    {
+      coplanar_tm1_to_coplanar_tm2.resize(nb_patches_tm1, NID);
+      for (std::size_t i=0; i<tm1_coplanar_faces.size(); ++i)
+      {
+        std::size_t pid1 = tm1_patch_ids[get(fids1, tm1_coplanar_faces[i])];
+        std::size_t pid2 = tm2_patch_ids[get(fids2, tm2_coplanar_faces[i])];
+        coplanar_tm1_to_coplanar_tm2[pid1]=pid2;
+      }
+
+      std::vector<std::optional<vertex_descriptor>> max_pts_1(nb_patches_tm1);
+      for (face_descriptor fd : faces(tm1))
+      {
+        std::size_t patch_id = tm1_patch_ids[get(fids1, fd)];
+        if (!coplanar_patches_of_tm1.test(patch_id)) continue;
+        halfedge_descriptor hd=halfedge(fd, tm1);
+        for (halfedge_descriptor h : CGAL::halfedges_around_face(hd, tm1))
+        {
+          vertex_descriptor vd = target(h, tm1);
+          if (!max_pts_1[patch_id].has_value() || get(vpm1,max_pts_1[patch_id].value())<get(vpm1,vd))
+            max_pts_1[patch_id]=vd;
+        }
+      }
+
+      for (std::size_t pid=0;pid<nb_patches_tm1; ++pid)
+      {
+        if (coplanar_patches_of_tm1.test(pid)) // TODO restrict more!
+        {
+          is_oo_tm1[pid] = ::CGAL::Polygon_mesh_processing::internal::is_outward_oriented(max_pts_1[pid].value(), tm1, parameters::vertex_point_map(vpm1));
+        }
+      }
+
+
+      std::vector<std::optional<vertex_descriptor>> max_pts_2(nb_patches_tm2);
+      for (face_descriptor fd : faces(tm2))
+      {
+        std::size_t patch_id = tm2_patch_ids[get(fids2, fd)];
+        if (!coplanar_patches_of_tm2.test(patch_id)) continue;
+        halfedge_descriptor hd=halfedge(fd, tm2);
+        for (halfedge_descriptor h : CGAL::halfedges_around_face(hd, tm2))
+        {
+          vertex_descriptor vd = target(h, tm2);
+          if (!max_pts_2[patch_id].has_value() || get(vpm2,max_pts_2[patch_id].value())<get(vpm2,vd))
+            max_pts_2[patch_id]=vd;
+        }
+      }
+
+      for (std::size_t pid=0;pid<nb_patches_tm2; ++pid)
+      {
+        if (coplanar_patches_of_tm2.test(pid))
+        {
+          is_oo_tm2[pid] = ::CGAL::Polygon_mesh_processing::internal::is_outward_oriented(max_pts_2[pid].value(), tm2, parameters::vertex_point_map(vpm2));
+        }
+      }
+    }
+
+
+
     for (typename An_edge_per_polyline_map::iterator
             it=an_edge_per_polyline.begin(),
             it_end=an_edge_per_polyline.end(); it!=it_end;++it)
@@ -1499,8 +1564,15 @@ public:
           {
             if (coplanar_patches_of_tm1.test(patch_id))
             {
-              if (is_tm1_inside_out == is_tm2_inside_out)
+              const std::size_t patch_id2=coplanar_tm1_to_coplanar_tm2[patch_id];
+              CGAL_assertion(patch_id2!=NID);
+
+              if (is_oo_tm1[patch_id]==is_oo_tm2[patch_id2])
+              {
                 coplanar_patches_of_tm1_for_union_and_intersection.set(patch_id);
+                coplanar_patches_of_tm2_for_union_and_intersection.set(patch_id2);
+                patch_status_not_set_tm2.reset( patch_id2 );
+              }
             }
             else
             {
