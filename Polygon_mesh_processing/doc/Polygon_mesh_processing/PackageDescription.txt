@@ -48,6 +48,10 @@
 /// Functions to compute the distance between meshes, between a mesh and a point set and between a point set and a mesh.
 /// \ingroup PkgPolygonMeshProcessingRef
 
+/// \defgroup PMP_registration_grp Registration Functions
+/// Functions to compute the transformation for mapping one mesh onto another or onto a set of points.
+/// \ingroup PkgPolygonMeshProcessingRef
+
 /// \defgroup PMP_corefinement_grp Corefinement and Boolean Operations
 /// Functions to corefine triangulated surface meshes and compute triangulated
 /// surface meshes of the union, difference and intersection
@@ -256,6 +260,11 @@ The page \ref bgl_namedparameters "Named Parameters" describes their usage.
 - `CGAL::Polygon_mesh_processing::detect_vertex_incident_patches()`
 - `CGAL::Polygon_mesh_processing::region_growing_of_planes_on_faces()`
 - `CGAL::Polygon_mesh_processing::detect_corners_of_regions()`
+
+\cgalCRPSection{Registration Functions}
+- `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_points_registration()`
+- `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_mesh_registration()`
+- `CGAL::Polygon_mesh_processing::apply_non_rigid_transformation()`
 
 
 \cgalCRPSection{Miscellaneous}

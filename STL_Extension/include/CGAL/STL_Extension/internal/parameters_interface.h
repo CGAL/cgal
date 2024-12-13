@@ -164,6 +164,11 @@ CGAL_add_named_parameter(region_primitive_map_t, region_primitive_map, region_pr
 CGAL_add_named_parameter(postprocess_regions_t, postprocess_regions, postprocess_regions)
 CGAL_add_named_parameter(sizing_function_t, sizing_function, sizing_function)
 CGAL_add_named_parameter(bbox_scaling_t, bbox_scaling, bbox_scaling)
+CGAL_add_named_parameter(correspondences_t, correspondences, correspondences)
+CGAL_add_named_parameter(point_to_plane_weight_t, point_to_plane_weight, point_to_plane_weight)
+CGAL_add_named_parameter(point_to_point_weight_t, point_to_point_weight, point_to_point_weight)
+CGAL_add_named_parameter(as_rigid_as_possible_weight_t, as_rigid_as_possible_weight, as_rigid_as_possible_weight)
+CGAL_add_named_parameter(maximal_matching_distance_t, maximal_matching_distance, maximal_matching_distance)
 
 // List of named parameters that we use in the package 'Surface Mesh Simplification'
 CGAL_add_named_parameter(get_cost_policy_t, get_cost_policy, get_cost)

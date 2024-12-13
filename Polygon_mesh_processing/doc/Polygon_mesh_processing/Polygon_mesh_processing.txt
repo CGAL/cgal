@@ -261,7 +261,7 @@ mesh relaxation function can be used.
 - Shape smoothing: `CGAL::Polygon_mesh_processing::smooth_shape()`
 moves vertices towards a weighted barycenter of their neighbors along the mean curvature flow.
 The curvature flow algorithm for shape smoothing is based on Desbrun et al. \cgalCite{cgal:dmsb-ifamdcf-99} and on Kazhdan et al. \cgalCite{kazhdan2012can}.
-The algorithm uses the mean curvature flow to calculate the translation of vertices along the surface normal with a speed equal
+The algorithm uses the mean curvature flow to compute the translation of vertices along the surface normal with a speed equal
 to the mean curvature of the area that is being smoothed. This means that vertices on sharp corners slide faster.
 If the region around a vertex is flat, this vertex does not move (zero curvature). To avoid the formation
 of undesirable neck pinches (cylindrical surface areas that form singularities) the algorithm slows
@@ -1414,6 +1414,84 @@ and the number of surface patches that are separated by these edges.
 
 \cgalExample{Polygon_mesh_processing/detect_features_example.cpp}
 
+\section PMPNonRigidRegistration Non-Rigid Mesh Registration
+
+Registration of one mesh onto another is often required to map between multiple acquisitions of an object or between an acquisition and a CAD model, e.g., in quality assurance. A simple linear transformation is only sufficient in the case of rigid objects.
+
+The functions `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_mesh_registration()` and `CGAL::Polygon_mesh_processing::non_rigid_mesh_to_points_registration()` compute a non-rigid registration from a source mesh onto a target mesh or a target oriented point cloud. For each vertex in the source mesh a translation vector and a rotation matrix is returned.
+The registration is formulated as an energy to minimize the distance between source and target. The energy is iteratively minimized by solving sparse linear systems and finding closest rotation matrices.
+The core algorithm is ICP, iterative closest point. In each iteration, the method identifies vertex or point pairs between the intermediate, initially a copy of the source, and the target and subsequently computes the transformations which minimize the distance between them. The intermediate is updated after each iteration and converges towards the target.
+
+\f{equation}{
+\mathbf{E_{reg}} = w_1\mathbf{E_{match}} + w_2\mathbf{E_{point\_to\_plane}} + w_3\mathbf{E_{arap}},
+  \label{eq:e_reg}
+\f}
+
+with the single energy terms:
+
+\f{equation}{
+\mathbf{E_{match}} = \sum_{\mathbf{v}_i, \mathbf{\tilde{v}}_i \in P} \left\|\mathbf{\tilde{v}}_i  - (\mathbf{R}_i\mathbf{v}_i + \mathbf{t_i})\right\|^2_2,
+  \label{eq:e_match}
+\f}
+
+\f{equation}{
+\mathbf{E_{point\_to\_plane}} = \sum_{\mathbf{v}_i, \mathbf{\tilde{v}}_i \in P} \left\|(\mathbf{\tilde{v}}_i  - (\mathbf{R}_i\mathbf{v}_i + \mathbf{t_i}))\mathbf{\tilde{n}}_i\right\|^2_2,
+  \label{eq:e_plane}
+\f}
+
+\f{equation}{
+\mathbf{E_{arap}} =
+\sum_{\mathbf{v}_i \in M}
+\sum_{\mathbf{v}_j \in N(\mathbf{v}_i)}
+\left\| (\mathbf{R}_i\mathbf{v}_i + \mathbf{t}_i - \mathbf{R}_j\mathbf{v}_j + \mathbf{t}_j) - \mathbf{R}_i(\mathbf{v}_i - \mathbf{v}_j) \right\|^2_2,
+  \label{eq:e_arap}
+\f}
+
+where:
+- \f$w_1, w_2\f$ and \f$w_3\f$ denote the weights for the energy terms.
+- \f$\mathbf{P}\f$ is the set of vertex/point pairs with \f$\mathbf{v}_i \in\f$ intermediate and \f$\mathbf{\tilde{v}}_i \in\f$ target. It is recreated in each iteration.
+- \f$\mathbf{R}_i\f$ is a \f$ 3 \times 3 \f$ rotation matrix for source vertex \f$\mathbf{v}_i\f$.
+- \f$\mathbf{t}_i\f$ is the translation vector for source vertex \f$\mathbf{v}_i\f$.
+- \f$\mathbf{M}\f$ is the intermediate mesh (initially equal to the source mesh).
+- \f$N(\mathbf{v}_i)\f$ denotes the set of vertices adjacent to \f$\mathbf{v}_i\f$.
+
+The \f$\mathbf{E_{match}}\f$ energy penalizes the distance between point pairs \f$\mathbf{v}_i\f$ and \f$\mathbf{\tilde{v}}_i\f$. The point pairs are restablished after each iteration. In addition, the method can take fixed point pairs of correspondences between source and target. This greatly improves the quality of the registration and is generally required when the initial alignment of the source and target is poor.
+
+The \f$\mathbf{E_{point\_to\_plane}}\f$ energy is similar to \f$\mathbf{E_{match}}\f$, but instead penalizes the distance to the plane given by the target vertex and its normal. This energy compensates for different discretizations, i.e., for source and target mesh that were not created by deforming one mesh into the other.
+
+The \f$\mathbf{E_{arap}}\f$ energy, as-rigid-as-possible, controls the rigidity of the transformation. It measures the deformation of the edges connected to each vertex that results from applying an individual transformation to each vertex of the source mesh.
+
+\subsection PMPNonRigidRegistrationParameters Parameters
+
+The algorithm has six parameters:
+- `point_to_point_energy`:
+Sets the weight `w1` of the \f$\mathbf{E_{match}}\f$. Penalizes the distance between vertices of intermediate and target. A higher value promotes a tighter fit.
+- `point_to_plane_energy`:
+Sets the weight `w2` of the \f$\mathbf{E_{point\_to\_plane}}\f$. Also penalizes the distances between the meshes, but is more forgiving towards different discretization.
+- `as_rigid_as_possible_energy`:
+Controls the rigidity weight `w3` of the \f$\mathbf{E_{arap}}\f$. Penalizes the deformation of the source and may thus prefer rigidity over a tight fit.
+- `maximal_matching_distance`:
+The maximal distance for finding vertex/point pairs between the intermediate and target. A pair is ignored during an iteration if the specified distance is exceeded.
+- `number_of_iterations`:
+The number of ICP iterations. The default value is 50.
+- `correspondences`:
+Optional fixed vertex/point pairs can be provided to guide the registration. These are especially helpful when source and target are not roughly aligned initially.
+
+\cgalFigureAnchor{registration_results}
+<center>
+<img src="non-rigid_registration.png" style="max-width:80%;"/>
+</center>
+\cgalFigureCaptionBegin{registration_results}
+Non-rigid registration using five correspondences on top of the head and at the tips of hand and feet. A low rigidity leads to a distortion and a self-intersection of the transformed mesh. The topology of the mesh as well as the number of vertices and faces remain unchanged. The lack of correspondences also causes self-intersection and leads to a flattening of the left arm.
+\cgalFigureCaptionEnd
+
+\subsection PMPNonRigidRegistrationExample Non-Rigid Registration Example
+
+In the following example the bear_simple.off model is registered onto the bear_simple_bis.off model. The resulting transformed mesh is then saved as off file with a name depending on the chosen parameters.
+
+\cgalExample{Polygon_mesh_processing/non_rigid_mesh_registration_example.cpp}
+
+
 \section PMPHistory Implementation History
 
 A first version of this package was started by Ilker %O. Yaz and Sébastien Loriot.
@@ -1438,6 +1516,8 @@ supervision of David Coeurjolly, Jaques-Olivier Lachaud, and Sébastien Loriot. 
 used as a reference during the project.
 
 The curvature-based sizing field version of isotropic remeshing was added by Ivan Pađen during GSoC 2023, under the supervision of Sébastien Loriot and Jane Tournois.
+
+The non-rigid mesh registration was developed by Roberto M. Dyke. Sven Oesau integrated the method into \cgal.
 
 */
 } /* namespace CGAL */
