@@ -1192,6 +1192,18 @@ Segment
 segment(const Edge_iterator& ei) const;
 
 /*!
+Returns the point given by vertex `i` of face `f`.
+\pre `t.dimension()` \f$ \geq0\f$ and f$ i \in\{0,1,2\}\f$ in dimension 2, \f$ i \in\{0,1\}\f$ in dimension 1, \f$ i = 0\f$ in dimension 0, and the vertex is finite.
+*/
+const Point& point(Face_handle f, int i) const;
+
+/*!
+Same as the previous method for vertex `v`.
+\pre `t.dimension()` \f$ \geq0\f$ and the vertex is finite.
+*/
+const Point& point(Vertex_handle v) const;
+
+/*!
 Compute the circumcenter of the face pointed to by f. This function
 is available only if the corresponding function is provided in the
 geometric traits.
