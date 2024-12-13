@@ -11,6 +11,7 @@ find_package(Eigen3 3.1.0 QUIET) #(requires 3.1.0 or greater)
 include(CGAL_Eigen3_support)
 
 create_single_source_cgal_program("Compute_classical_Frechet_distance_3.cpp")
+create_single_source_cgal_program("txt2wkt_3.cpp")
 
 if(TARGET CGAL::Eigen3_support)
 create_single_source_cgal_program( "Compute_classical_Frechet_distance_100.cpp" )
