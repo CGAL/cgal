@@ -579,7 +579,7 @@ public:
 
   /*!
   Converts the `Periodic_point` `pp` (point-offset pair) to the
-  corresponding `Point` in \f$ \mathbb R^3\f$.
+  corresponding `Point` in \f$ \mathbb R^2\f$.
   */
   Point point(const Periodic_point & pp ) const;
 
