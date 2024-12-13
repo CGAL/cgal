@@ -1193,7 +1193,7 @@ segment(const Edge_iterator& ei) const;
 
 /*!
 Returns the point given by vertex `i` of face `f`.
-\pre `t.dimension()` \f$ \geq0\f$ and f$ i \in\{0,1,2\}\f$ in dimension 2, \f$ i \in\{0,1\}\f$ in dimension 1, \f$ i = 0\f$ in dimension 0, and the vertex is finite.
+\pre `t.dimension()` \f$ \geq0\f$ and \f$ i \in\{0,1,2\}\f$ in dimension 2, \f$ i \in\{0,1\}\f$ in dimension 1, \f$ i = 0\f$ in dimension 0, and the vertex is finite.
 */
 const Point& point(Face_handle f, int i) const;
 
