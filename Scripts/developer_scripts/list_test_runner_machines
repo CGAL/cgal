@@ -1,22 +1,34 @@
 #!/bin/bash
 
-TEST_MACHINES=$(
-        cat <<'HEREDOC'
-lrineau@bonnard
-lrineau@cgal
-cgaltest@friedrich
-lrineau@rubens
-HEREDOC
+# Declare an associative array to store the images used on each machine
+declare -A MACHINE_CONTAINER_IMAGES
+
+TEST_MACHINES=(
+        "lrineau@bonnard"
+        "lrineau@cgal"
+        "cgaltest@friedrich"
+        "lrineau@rubens"
 )
 
 machine_title() {
-        printf '\n## %s ##\n' $1
+        printf '\n## %s ##\n' "$1"
+}
+
+machine_info() {
+        HOST=$1
+        remote_script=$(printf "export PS4='+ %s >> %s'\n" "$HOST" "$PS4")$'\n'$(
+                cat <<'EOF'
+source /etc/os-release
+printf '\n- OS: `%s`\n- container implementation: `%s`\n' "$PRETTY_NAME" "$(docker --version)"
+EOF
+        )
+        ssh "$HOST" bash -$- -s <<<"$remote_script"
 }
 
 machine_tested_images() {
         echo
         echo '```plain'
-        ssh $1 cat /home/$2/.config/CGAL/test_cgal_docker_images
+        printf '%s\n' "${MACHINE_CONTAINER_IMAGES["$1"]}"
         echo '```'
 }
 
@@ -28,9 +40,9 @@ declare -xf docker_is_active_cmd
 
 docker_cmd() {
         if docker_is_active_cmd; then
-                docker $@
+                docker "$@"
         else
-                podman --url unix:/var/run/podman/podman.sock $@
+                podman --url unix:/var/run/podman/podman.sock "$@"
         fi
 }
 declare -xf docker_cmd
@@ -41,12 +53,12 @@ list_of_containers_cmd() {
 declare -xf list_of_containers_cmd
 
 container_status_cmd() {
-        docker_cmd inspect --format '{{.State.Status}}' $1
+        docker_cmd inspect --format '{{.State.Status}}' "$1"
 }
 declare -xf container_status_cmd
 
 container_human_readable_status_cmd() {
-        docker_cmd ps --all --filter name=$1 --format '{{.Status}}'
+        docker_cmd ps --all --filter name="$1" --format '{{.Status}}'
 }
 declare -xf container_human_readable_status_cmd
 
@@ -61,19 +73,19 @@ simplify_date_cmd() {
 declare -xf simplify_date_cmd
 
 container_start_time_cmd() {
-        simplify_date_cmd "$(docker_cmd inspect --format '{{.State.StartedAt}}' $1)"
+        simplify_date_cmd "$(docker_cmd inspect --format '{{.State.StartedAt}}' "$1")"
 }
 declare -xf container_start_time_cmd
 
 container_end_time_cmd() {
-        simplify_date_cmd "$(docker_cmd inspect --format '{{.State.FinishedAt}}' $1)"
+        simplify_date_cmd "$(docker_cmd inspect --format '{{.State.FinishedAt}}' "$1")"
 }
 declare -xf container_end_time_cmd
 
 container_running_time_cmd() {
-        start_time=$(container_start_time_cmd $1)
-        end_time=$(container_end_time_cmd $1)
-        status=$(container_status_cmd $1)
+        start_time=$(container_start_time_cmd "$1")
+        end_time=$(container_end_time_cmd "$1")
+        status=$(container_status_cmd "$1")
         if [ "$status" = "running" ]; then
                 end_time=$(date -u '+%Y-%m-%dT%H:%M:%S.%NZ')
         fi
@@ -91,19 +103,19 @@ list_cgal_test_container_cmd() {
         # docker_cmd ps -a --filter name=CGAL-
         display_one_container_line_cmd "CONTAINER" "START TIME" "END TIME" "RUNNING TIME" "STATUS"
         for container in $(list_of_containers_cmd); do
-                start_time="$(container_start_time_cmd $container)"
-                end_time="$(container_end_time_cmd $container)"
-                dur=$(container_running_time_cmd $container)
-                status="$(container_status_cmd $container) - $(container_human_readable_status_cmd $container)"
+                start_time="$(container_start_time_cmd "$container")"
+                end_time="$(container_end_time_cmd "$container")"
+                dur=$(container_running_time_cmd "$container")
+                status="$(container_status_cmd "$container") - $(container_human_readable_status_cmd "$container")"
                 display_one_container_line_cmd "$container" "$start_time" "$end_time" "$dur" "$status"
         done
 }
 declare -xf list_cgal_test_container_cmd
 
 display_all_exported_cmd_functions() {
-        funcs=$(declare -F | awk '/ -fx .*_cmd$/ {print $3}')
-        for func in $funcs; do
-                declare -f $func
+        functions=$(declare -F | awk '/ -fx .*_cmd$/ {print $3}')
+        for func in $functions; do
+                declare -f "$func"
         done
 }
 
@@ -114,7 +126,7 @@ machine_list_cgal_test_container() {
                 printf "export PS4='+ %s >> %s'\n" "$1" "$PS4"
                 echo list_cgal_test_container_cmd
         )
-        ssh $1 bash -$- -s <<<"$remote_script"
+        ssh "$1" bash -$- -s <<<"$remote_script"
         printf '```\n'
 }
 
@@ -124,18 +136,26 @@ Usage: $0 [OPTION]
 
 List the test runner machines and the containers running on them.
 
-Options:
-  --table   output in markdown table format
-  --column  output in column format
-  --bat     output with bat
-  --plain   output in plain text
+Output Format Options:
+  --table       output in markdown table format
+  --column      output in column format
+  --bat         output with bat
+  --plain       output in plain text
 
 If no option is given, the script will try to use bat, then column, and finally
 plain text.
+
+Information Options:
+  --images      list the images used on each machine
+  --containers  list the containers running on each machine
+  --info        list the OS and the container implementation on each machine
+
+If no information option is given, the script will list all the information.
 HEREDOC
 }
 
 error_out() {
+        exec >&2
         echo "ERROR: $1"
         echo
         help
@@ -145,7 +165,6 @@ error_out() {
 command -v sed >/dev/null || {
         error_out 'sed is required'
 }
-
 
 if [[ $1 == --table ]] && ! command -v pandoc >/dev/null; then
         error_out 'pandoc is required for the option --table'
@@ -171,6 +190,13 @@ set_pretty_csv_to_column() {
         }
 }
 
+set_pretty_csv_to_column_and_bat() {
+        pretty_csv() {
+                echo
+                column -t -s $'\t' -o $'\t' | sed 's/^\(```[^ ]*\) *\t.*/\1/' | bat --paging=never --plain -l csv
+        }
+}
+
 set_pretty_csv_to_bat() {
         pretty_csv() {
                 bat --tabs=50 --paging=never --plain -l csv
@@ -183,40 +209,90 @@ set_pretty_csv_to_cat() {
         }
 }
 
-case "$1" in
---table) set_pretty_csv_to_md_table ;;
---column) set_pretty_csv_to_column ;;
---bat) set_pretty_csv_to_bat ;;
---plain) set_pretty_csv_to_cat ;;
-'')
-        if command -v bat >/dev/null; then
-                set_pretty_csv_to_bat
-        elif command -v column >/dev/null; then
-                set_pretty_csv_to_column
-        elif command -v pandoc >/dev/null; then
+WHAT=()
+
+add_to_what() {
+        for i in "$@"; do
+                WHAT+=("$i")
+        done
+}
+
+what_contains() {
+        local item=$1
+        for i in "${WHAT[@]}"; do
+                if [[ "$i" == "$item" ]]; then
+                        return 0
+                fi
+        done
+        return 1
+}
+
+for arg in "$@"; do
+        case "$arg" in
+        --table) set_pretty_csv_to_md_table ;;
+        --column) set_pretty_csv_to_column ;;
+        --bat) set_pretty_csv_to_bat ;;
+        --plain) set_pretty_csv_to_cat ;;
+        --images) add_to_what images ;;
+        --containers) add_to_what containers ;;
+        --info) add_to_what info ;;
+        -h | --help)
+                help >&2
+                exit 0
+                ;;
+        *)
+                error_out "Unknown option $arg"
+                ;;
+        esac
+done
+
+if [ ${#WHAT[@]} -eq 0 ]; then
+        add_to_what info images containers
+fi
+
+STDOUT_IS_A_TTY=
+if <&1 tty -s; then
+        STDOUT_IS_A_TTY=1
+fi
+
+BAT=
+[ -n "$STDOUT_IS_A_TTY" ] && BAT=$(command -v bat)
+
+COLUMN=$(command -v column)
+
+PANDOC=$(command -v pandoc)
+if ! declare -f pretty_csv >/dev/null; then
+        if [ -n "$BAT" ]; then
+                if [ -n "$COLUMN" ]; then
+                        set_pretty_csv_to_column_and_bat
+                else
+                        set_pretty_csv_to_bat
+                fi
+        elif [ -n "$PANDOC" ]; then
                 set_pretty_csv_to_md_table
+        elif [ -n "$COLUMN" ]; then
+                set_pretty_csv_to_column
         else
                 set_pretty_csv_to_cat
         fi
-        ;;
-*)
-        error_out "Unknown option $1"
-        ;;
-esac
+fi
 
 ERROR_MACHINES=""
-for machine in $TEST_MACHINES; do
+for machine in "${TEST_MACHINES[@]}"; do
         USER=${machine%@*}
         HOST=${machine#*@}
-        ssh "$HOST" test -f /home/$USER/.config/CGAL/test_cgal_docker_images || {
+        # shellcheck disable=SC2029
+        MACHINE_CONTAINER_IMAGES[$machine]=$(ssh "$HOST" cat "/home/$USER/.config/CGAL/test_cgal_docker_images") || {
                 ERROR_MACHINES="$ERROR_MACHINES $machine"
         }
 done
 if [ -n "$ERROR_MACHINES" ]; then
+        printf '\n> %s\n> %s\n' '[!CAUTION]' 'ERROR:'
         for machine in $ERROR_MACHINES; do
                 USER=${machine%@*}
                 HOST=${machine#*@}
-                printf 'ERROR: cannot read file `/home/%s/.config/CGAL/test_cgal_docker_images` on ssh host `%s`\n' $USER $HOST
+                # shellcheck disable=SC2016
+                printf '> - ERROR: cannot read file `/home/%s/.config/CGAL/test_cgal_docker_images` on ssh host `%s`\n' "$USER" "$HOST"
         done
         exit 1
 fi
@@ -226,16 +302,19 @@ cat <<HEREDOC
 The following machines are used to run the tests:
 HEREDOC
 
-for machine in $TEST_MACHINES; do
+for machine in "${TEST_MACHINES[@]}"; do
         USER=${machine%@*}
         HOST=${machine#*@}
-        machine_title $machine
-        ssh $HOST bash -$- -s <<'EOF'
-source /etc/os-release
-printf '\n- OS: `%s`\n- container implementation: `%s`\n' "$PRETTY_NAME" "$(docker --version)"
-EOF
-        printf '\nTested images:\n'
-        machine_tested_images $HOST $USER
-        printf '\nCGAL test containers:\n'
-        machine_list_cgal_test_container $HOST $USER | pretty_csv
+        machine_title "$machine"
+        if what_contains info; then
+                machine_info "$HOST"
+        fi
+        if what_contains images; then
+                printf '\nTested images:\n'
+                machine_tested_images "$machine"
+        fi
+        if what_contains containers; then
+                printf '\nCGAL test containers:\n'
+                machine_list_cgal_test_container "$HOST" "$USER" | pretty_csv
+        fi
 done
