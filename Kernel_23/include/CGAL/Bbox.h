@@ -111,7 +111,7 @@ public:
       }
     }
 
-    dilate(int dist)
+    void dilate(int dist)
     {
       using boost::math::float_advance;
       int d = dimension();
