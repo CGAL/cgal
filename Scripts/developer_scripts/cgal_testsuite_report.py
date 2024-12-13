@@ -123,13 +123,12 @@ def get_docker_images() -> Dict[str, List[str]]:
 
 def add_docker_summary(report: List[str], machines_info: Dict[str, List[str]]):
     """Add a summary of Docker images used on each machine to the report."""
-    report.append("\n## Docker Test Summary\n")
+    report.append("\n## Docker Test Summary")
     for machine, images in machines_info.items():
         report.append(f"\n### Machine: {machine} ({len(images)} images)")
-        report.append("\n#### Tested Images:")
+        report.append("\n#### Tested Images\n")
         for image in images:
             report.append(f"- {image}")
-        report.append("")
 
 
 def generate_markdown_report(platforms_info: List[PlatformInfo], version: str) -> str:
@@ -140,7 +139,7 @@ def generate_markdown_report(platforms_info: List[PlatformInfo], version: str) -
     report.append(f"\nGenerated on: {
                   datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     url = TESTSUITE_URL_TEMPLATE.format(version=version)
-    report.append(f"\nCGAL Version: [{version}]({url})\n")
+    report.append(f"\nCGAL Version: [{version}]({url})")
     add_docker_summary(report, machines_info)
     report.append("\n## Platforms Summary\n")
     report.append("| Platform | Debug | OS | Tester | Compiler |")
