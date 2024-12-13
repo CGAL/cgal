@@ -595,6 +595,18 @@ public:
 
   /*!
   Equivalent to
+  the call `t.point(t.periodic_point(fh,i));`
+  */
+  Point point(Face_handle fh, int i) const;
+
+  /*!
+  Equivalent to
+  the call `t.point(t.periodic_point(v));`
+  */
+  Point point(Vertex_handle v) const;
+
+  /*!
+  Equivalent to
   the call `t.segment(t.periodic_segment(f,i));`
   */
   Segment segment(Face_handle f, int i) const;
