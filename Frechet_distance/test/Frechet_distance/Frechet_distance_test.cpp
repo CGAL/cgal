@@ -212,7 +212,8 @@ static double testFrechetDistanceNearNeighborsDS()
 
                 for (auto const& query: queries) {
                         auto result = ds.get_close_curves(curves[query.id],
-                        query.distance); std::sort(result.begin(), result.end());
+                                                        query.distance);
+                         std::sort(result.begin(), result.end());
 
                         timer.start();
                         if (!std::equal(result.begin(), result.end(), query.expected_result.begin(), query.expected_result.end())) {
@@ -299,6 +300,15 @@ int main(int argc, char** argv)
     std::cout << t1 << "\n";
   }
 
+  if (test_set.empty() || test_set.count(6))
+  {
+    using Kernel = CGAL::Simple_cartesian<double>;
+    using Traits = CGAL::Frechet_distance_traits_3<Kernel>;
+    using Point = Kernel::Point_3;
+    std::cout <<"Simple_cartesian<double> in 3D (force filtering)\n";
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance<true>();
+    std::cout << t1 << "\n";
+  }
   // FIXME: CGAL::Ambient_dimension<TestPoint, TestKernel>::value not defined for Epick_d and Epeck_d
   //        How do I get the dimension for any kernel?
 
