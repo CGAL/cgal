@@ -102,7 +102,7 @@ public:
       if (factor == 1.)
         return;
 
-      int d = bbox.dimension();
+      int d = dimension();
       for(int i=0; i<d; ++i){
         auto half_width = ((max)(i) - (min)(i)) * 0.5;
         auto center = (min)(i) + half_width;
