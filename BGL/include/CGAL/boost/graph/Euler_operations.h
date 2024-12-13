@@ -1869,7 +1869,6 @@ bool satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descript
 
 /// removes the target vertex of `h`, merging its incident edges into a single edge.
 /// \pre `degree(target(h, g), g) == 2`.
-/// \pre there is no pre-existing edge between source(h, g) and target(next(h, g), g)
 template <typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 remove_degree_2_vertex(const typename boost::graph_traits<Graph>::halfedge_descriptor h,
@@ -1895,28 +1894,34 @@ remove_degree_2_vertex(const typename boost::graph_traits<Graph>::halfedge_descr
   bool exists;
   halfedge_descriptor huv;
   std::tie(huv, exists) = halfedge(v1, v2, g);
-  if(exists)
-    return boost::graph_traits<Graph>::null_halfedge();
 
   if(is_border(h2, g))
   {
     CGAL_assertion(!is_border(h1, g));
 
-    halfedge_descriptor oh1 = opposite(h1, g);
-    halfedge_descriptor nnh1 = next(next(h1, g), g);
-    halfedge_descriptor ph2 = prev(h2, g);
-    face_descriptor f1 = face(h1, g);
+    if(exists)
+    {
+      Euler::remove_face(h1, g);
+      return huv;
+    }
+    else
+    {
+      halfedge_descriptor oh1 = opposite(h1, g);
+      halfedge_descriptor nnh1 = next(next(h1, g), g);
+      halfedge_descriptor ph2 = prev(h2, g);
+      face_descriptor f1 = face(h1, g);
 
-    set_target(h1, v2, g);
-    set_halfedge(v2, ph2, g);
-    set_next(h1, nnh1, g);
-    set_next(ph2, oh1, g);
-    set_halfedge(f1, h1, g); // in case it was nh1
+      set_target(h1, v2, g);
+      set_halfedge(v2, ph2, g);
+      set_next(h1, nnh1, g);
+      set_next(ph2, oh1, g);
+      set_halfedge(f1, h1, g); // in case it was nh1
 
-    remove_edge(edge(h2, g), g);
-    remove_vertex(v, g);
+      remove_edge(edge(h2, g), g);
+      remove_vertex(v, g);
 
-    return h1;
+      return h1;
+    }
   }
   else
   {
@@ -1925,7 +1930,11 @@ remove_degree_2_vertex(const typename boost::graph_traits<Graph>::halfedge_descr
     halfedge_descriptor ph1 = prev(h1, g);
     halfedge_descriptor ph2 = prev(h2, g);
     Euler::remove_center_vertex(h, g);
-    return Euler::split_face(ph1, ph2, g);
+
+    if(exists)
+      return huv;
+    else
+      return Euler::split_face(ph1, ph2, g);
   }
 }
 
