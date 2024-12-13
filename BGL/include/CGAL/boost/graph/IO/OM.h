@@ -110,6 +110,11 @@ bool write_OM(std::string fname, const Graph& g, VPM vpm, VFeaturePM vfpm, EFeat
     omesh.status(omv).set_feature(isfeature);
   }
 
+  for (auto v : vertices(omesh))
+  {
+    adjust_border_halfedge(v, omesh);
+  }
+
   return OpenMesh::IO::write_mesh(omesh, fname, OpenMesh::IO::Options::Status, precision);
 }
 } // end of internal namespace
