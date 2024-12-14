@@ -52,7 +52,7 @@ if(IPE_FOUND AND IPE_VERSION)
                    )
   endif()
 
-  set(CGAL_IPELETS ${CGAL_IPELETS})
+  set(CGAL_IPELETS ${CGAL_IPELETS} simple_triangulation) 
   set(CGAL_IPELETS ${CGAL_IPELETS} alpha_shapes)
   set(CGAL_IPELETS ${CGAL_IPELETS} arrangement)
   set(CGAL_IPELETS ${CGAL_IPELETS} bbox_restriction)
