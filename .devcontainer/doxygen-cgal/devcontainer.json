@@ -1,0 +1,14 @@
+{
+    "name": "CGAL Doxygen Dev Container",
+    "image": "docker.io/cgal/doxygen:1.12.0",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1.3.2": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.cmake-tools"
+            ]
+        }
+    },
+}
