@@ -258,7 +258,10 @@ average_edge_length(const PolygonMesh& pmesh,
   *
   *   \cgalParamNBegin{geom_traits}
   *     \cgalParamDescription{an instance of a geometric traits class}
-  *     \cgalParamType{a class model of `Kernel`}
+  *     \cgalParamType{The traits class must provide the nested functor `Compare_squared_distance_3`
+  *                    to compare the lengths of two edges given by their end points:
+  *                    `CGAL::Comparison_result operator()(%Point_3 src1, %Point_3 tgt1, %Point_3 src2, %Point_3 tgt2)`,
+  *                    and a function `Compare_squared_distance_3 compare_squared_distance_3_object()`.}
   *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
   *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
   *   \cgalParamNEnd
