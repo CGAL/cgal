@@ -51,6 +51,23 @@ namespace Isosurfacing {
  *     \cgalParamType{Boolean}
  *     \cgalParamDefault{`true`}
  *   \cgalParamNEnd
+ *
+ * \cond SKIP_IN_MANUAL
+ *   \cgalParamNBegin{isovalue_nudging}
+ *     \cgalParamDescription{snapping of function value at corner points to an epsilon below the isovalue if the function value is within an epsilon range around the isovalue}
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *     \cgalParamExtra{Snapping the function value at corner points prevents singular cases. The geometry is changed only in case of the function value being within a small epsilon range. The potential change is small. }
+ *   \cgalParamNEnd
+ *
+ *   \cgalParamNBegin{constrain_to_cell}
+ *     \cgalParamDescription{whether to exclude the cell boundary from the interior vertex placement. }
+ *     \cgalParamType{Boolean}
+ *     \cgalParamDefault{`true`}
+ *     \cgalParamExtra{Prevents degenerate or duplicate triangles.}
+ *   \cgalParamNEnd
+ * \endcond
+ *
  * \cgalNamedParamsEnd
  *
  * \sa `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
@@ -70,17 +87,19 @@ void marching_cubes(const Domain& domain,
   using parameters::get_parameter;
 
   const bool use_tmc = choose_parameter(get_parameter(np, internal_np::use_topologically_correct_marching_cubes), true);
+  const bool isovalue_nudging = choose_parameter(get_parameter(np, internal_np::isovalue_nudging), true);
+  const bool constrain_to_cell = choose_parameter(get_parameter(np, internal_np::constrain_to_cell), true);
 
   if(use_tmc)
   {
-    internal::TMC_functor<Domain, PointRange, TriangleRange> functor(domain, isovalue);
+    internal::TMC_functor<Domain, PointRange, TriangleRange> functor(domain, isovalue, isovalue_nudging, constrain_to_cell);
     domain.template for_each_cell<ConcurrencyTag>(functor);
     functor.to_triangle_soup(points, triangles);
   }
   else
   {
     // run marching cubes
-    internal::Marching_cubes_3<Domain> functor(domain, isovalue);
+    internal::Marching_cubes_3<Domain> functor(domain, isovalue, isovalue_nudging);
     domain.template for_each_cell<ConcurrencyTag>(functor);
 
     // copy the result to points and triangles

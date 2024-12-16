@@ -115,6 +115,8 @@ private:
 private:
   const Domain& m_domain;
   FT m_isovalue;
+  bool m_isovalue_nudging;
+  bool m_constrain_to_cell;
 
 #ifdef CGAL_LINKED_WITH_TBB
   std::atomic<Point_index> m_point_counter;
@@ -135,16 +137,20 @@ private:
 
 public:
   TMC_functor(const Domain& domain,
-              const FT isovalue)
+              const FT isovalue,
+              const bool isovalue_nudging = true,
+              const bool constrain_to_cell = true)
     : m_domain(domain),
       m_isovalue(isovalue),
-      m_point_counter(0)
+      m_point_counter(0),
+      m_isovalue_nudging(isovalue_nudging),
+      m_constrain_to_cell(constrain_to_cell)
   { }
 
   void operator()(const cell_descriptor& cell) {
     std::array<FT, 8> values;
     std::array<Point_3, 8> corners;
-    const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
+    const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values, m_isovalue_nudging);
 
     // skip empty / full cells
     constexpr std::size_t ones = (1 << 8) - 1;
@@ -799,7 +805,7 @@ private:
       c_ |= (size << 4 * cnt);
     };
 
-    // set corresponging edge
+    // set corresponding edge
     auto set_c = [](const int cnt, const int pos, const int val, unsigned long long& c_)
     {
       const unsigned int mask[4] = {0x0, 0xF, 0xFF, 0xFFF};
@@ -871,6 +877,7 @@ private:
       if (!std::isfinite(CGAL::to_double(ui[0])) || !std::isfinite(CGAL::to_double(ui[1])))
         continue;
 
+      // In practice, there does not seem to be a difference in choosing the first working over the best one.
       break;
     }
 
@@ -998,9 +1005,15 @@ private:
       Point_index tg_idx[6];
       for(int i=0; i<6; ++i)
       {
-        const FT u = hvt[i][0] < 0.05 ? 0.05 : (hvt[i][0] > 0.95 ? 0.95 : hvt[i][0]);
-        const FT v = hvt[i][1] < 0.05 ? 0.05 : (hvt[i][1] > 0.95 ? 0.95 : hvt[i][1]);
-        const FT w = hvt[i][2] < 0.05 ? 0.05 : (hvt[i][2] > 0.95 ? 0.95 : hvt[i][2]);
+        FT u = hvt[i][0];
+        FT v = hvt[i][1];
+        FT w = hvt[i][2];
+
+        if (m_constrain_to_cell) {
+          u = u < 0.05 ? 0.05 : (u > 0.95 ? 0.95 : u);
+          v = v < 0.05 ? 0.05 : (v > 0.95 ? 0.95 : v);
+          w = w < 0.05 ? 0.05 : (w > 0.95 ? 0.95 : w);
+        }
 
         const FT px = (FT(1) - w) * ((FT(1) - v) * (x_coord(corners[0]) + u * (x_coord(corners[1]) - x_coord(corners[0]))) +
                                                v * (x_coord(corners[2]) + u * (x_coord(corners[3]) - x_coord(corners[2])))) +
@@ -1280,9 +1293,11 @@ private:
           break;
         } // switch(c_faces)
 
-        ucoord = ucoord < 0.05 ? 0.05 : (ucoord > 0.95 ? 0.95 : ucoord);
-        vcoord = vcoord < 0.05 ? 0.05 : (vcoord > 0.95 ? 0.95 : vcoord);
-        wcoord = wcoord < 0.05 ? 0.05 : (wcoord > 0.95 ? 0.95 : wcoord);
+        if (m_constrain_to_cell) {
+          ucoord = ucoord < 0.05 ? 0.05 : (ucoord > 0.95 ? 0.95 : ucoord);
+          vcoord = vcoord < 0.05 ? 0.05 : (vcoord > 0.95 ? 0.95 : vcoord);
+          wcoord = wcoord < 0.05 ? 0.05 : (wcoord > 0.95 ? 0.95 : wcoord);
+        }
 
         // create inner vertex
         const FT px = (FT(1) - wcoord) * ((FT(1) - vcoord) * (x_coord(corners[0]) + ucoord * (x_coord(corners[1]) - x_coord(corners[0]))) +

@@ -106,7 +106,8 @@ std::size_t get_cell_corners(const Domain& domain,
                              const typename Domain::cell_descriptor& cell,
                              const typename Domain::Geom_traits::FT isovalue,
                              Corners& corners,
-                             Values& values)
+                             Values& values,
+                             bool isovalue_nudging)
 {
   using vertex_descriptor = typename Domain::vertex_descriptor;
 
@@ -118,10 +119,10 @@ std::size_t get_cell_corners(const Domain& domain,
   for(const vertex_descriptor& v : vertices)
   {
     auto val = domain.value(v);
-    // Avoiding singular cases.
 
-    if (abs(val - isovalue) < 0.00000001)
-      val = isovalue - 0.00000001;
+    // Avoiding singular cases.
+    if (isovalue_nudging && abs(val - isovalue) < 0.00000001)
+        val = isovalue - 0.00000001;
 
     values[v_id] = val;
     if(values[v_id] >= isovalue)
@@ -130,7 +131,7 @@ std::size_t get_cell_corners(const Domain& domain,
     ++v_id;
   }
 
-  if(index.all() || index.none()) // nothing's happening in this cell
+  if(index.all() || index.none()) // nothing is happening in this cell
     return static_cast<std::size_t>(index.to_ullong());
 
   v_id = 0;
@@ -270,15 +271,18 @@ public:
 private:
   const Domain& m_domain;
   const FT m_isovalue;
+  const bool m_isovalue_nudging;
 
   Triangles m_triangles;
 
 public:
   // creates a Marching Cubes functor for a domain and isovalue
   Marching_cubes_3(const Domain& domain,
-                   const FT isovalue)
+                   const FT isovalue,
+                   const bool isovalue_nudging = true)
     : m_domain(domain),
-      m_isovalue(isovalue)
+      m_isovalue(isovalue),
+      m_isovalue_nudging(isovalue_nudging)
   { }
 
   // returns the created triangle list
@@ -300,7 +304,7 @@ public:
 
     std::array<FT, vpc> values;
     std::array<Point_3, vpc> corners;
-    const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values);
+    const std::size_t i_case = get_cell_corners(m_domain, cell, m_isovalue, corners, values, m_isovalue_nudging);
 
     // skip empty / full cells
     constexpr std::size_t ones = (1 << vpc) - 1;
