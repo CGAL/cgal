@@ -74,14 +74,17 @@ struct Graphics_scene_options<DS, VertexDescriptor, EdgeDescriptor, FaceDescript
   void disable_vertices() { m_enabled_vertices=false; }
   void enable_vertices() { m_enabled_vertices=true; }
   bool are_vertices_enabled() const { return m_enabled_vertices; }
+  void ignore_all_vertices(bool b) { m_enabled_vertices=!b; }
 
   void disable_edges() { m_enabled_edges=false; }
   void enable_edges() { m_enabled_edges=true; }
   bool are_edges_enabled() const { return m_enabled_edges; }
+  void ignore_all_edges(bool b) { m_enabled_edges=!b; }
 
   void disable_faces() { m_enabled_faces=false; }
   void enable_faces() { m_enabled_faces=true; }
   bool are_faces_enabled() const { return m_enabled_faces; }
+  void ignore_all_faces(bool b) { m_enabled_faces=!b; }
 
 protected:
   bool m_enabled_vertices, m_enabled_edges, m_enabled_faces;
@@ -117,6 +120,7 @@ struct Graphics_scene_options:
   void disable_volumes() { m_enabled_volumes=false; }
   void enable_volumes() { m_enabled_volumes=true; }
   bool are_volumes_enabled() const { return m_enabled_volumes; }
+  void ignore_all_volumes(bool b) { m_enabled_volumes=!b; }
 
 protected:
   bool m_enabled_volumes;

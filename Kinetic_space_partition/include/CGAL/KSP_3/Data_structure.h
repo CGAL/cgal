@@ -409,11 +409,11 @@ public:
     else
       event.face = faces.first;
 
-    for (std::size_t i = 0; i < sp.data().original_directions.size(); i++) {
-      if (source_idx == uninitialized && sp.data().original_directions[i] > to_source)
+    for (std::size_t i = 0; i < sp.data().exact_directions.size(); i++) {
+      if (source_idx == uninitialized && sp.data().exact_directions[i] > to_source2)
         source_idx = i;
 
-      if (target_idx == uninitialized && sp.data().original_directions[i] > to_target)
+      if (target_idx == uninitialized && sp.data().exact_directions[i] > to_target2)
         target_idx = i;
     }
 
@@ -452,7 +452,7 @@ public:
 
     // Shooting rays to find intersection with line of IEdge
     typename Intersection_kernel::Line_3 l3 = m_intersection_graph.line_3(edge);
-    const typename Intersection_kernel::Line_2 l = sp.to_2d(l3);
+    const typename Intersection_kernel::Line_2 l = typename Intersection_kernel::Line_2(s2, t2);
     for (std::size_t i = 0; i < num; i++) {
       std::size_t idx = (i + source_idx) % sp.data().original_directions.size();
       const auto result = CGAL::intersection(l, sp.data().original_rays[idx]);
@@ -464,8 +464,6 @@ public:
 
       if (CGAL::assign(p, result)) {
         IkFT l = CGAL::approximate_sqrt(sp.data().original_vectors[idx].squared_length());
-
-        IkFT l2 = from_exact(CGAL::approximate_sqrt((p - sp.data().original_rays[idx].point(0)).squared_length()));
 
         IkFT l3 = (p - sp.data().original_rays[idx].point(0)) * sp.data().original_rays[idx].to_vector();
         time[i] = l3;
@@ -483,39 +481,39 @@ public:
 
     // Source edge time
     std::size_t adjacent = (source_idx + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size();
-    Vector_2 dir = sp.data().original_vertices[source_idx] - sp.data().original_vertices[adjacent];
+    IkVector_2 dir = sp.data().exact_vertices[source_idx] - sp.data().exact_vertices[adjacent];
     dir = dir / CGAL::approximate_sqrt(dir * dir);
 
     // Orthogonal direction matching the direction of the adjacent vertices
-    dir = Vector_2(dir.y(), -dir.x());
+    dir = IkVector_2(dir.y(), -dir.x());
 
     // Moving speed matches the speed of adjacent vertices
-    FT speed = (dir * sp.data().original_vectors[source_idx]);
+    IkFT speed = (dir * sp.data().original_rays[source_idx].to_vector());
 
     if (speed < 0)
       speed = -speed;
 
     // Distance from edge to endpoint of iedge
-    FT dist = (s - sp.data().original_vertices[source_idx]) * dir;
+    IkFT dist = (s2 - sp.data().exact_vertices[source_idx]) * dir;
 
     edge_time[0] = dist / speed;
 
     // Target edge time
-    adjacent = (target_idx + sp.data().original_vertices.size() - 1) % sp.data().original_vertices.size();
-    dir = sp.data().original_vertices[target_idx] - sp.data().original_vertices[adjacent];
+    adjacent = (target_idx + sp.data().exact_vertices.size() - 1) % sp.data().exact_vertices.size();
+    dir = sp.data().exact_vertices[target_idx] - sp.data().exact_vertices[adjacent];
     dir = dir / CGAL::approximate_sqrt(dir * dir);
 
     // Orthogonal direction matching the direction of the adjacent vertices
-    dir = Vector_2(dir.y(), -dir.x());
+    dir = IkVector_2(dir.y(), -dir.x());
 
     // Moving speed matches the speed of adjacent vertices
-    speed = (dir * sp.data().original_vectors[target_idx]);
+    speed = (dir * sp.data().original_rays[target_idx].to_vector());
 
     if (speed < 0)
       speed = -speed;
 
     // Distance from edge to endpoint of iedge
-    dist = (t - sp.data().original_vertices[target_idx]) * dir;
+    dist = (t2 - sp.data().exact_vertices[target_idx]) * dir;
 
     edge_time[1] = dist / speed;
 
@@ -563,11 +561,9 @@ public:
       m_support_planes[sp_idx].get_border(m_intersection_graph, border);
 
       for (IEdge edge : border) {
-        if (m_intersection_graph.has_crossed(edge, sp_idx))
-          continue;
-
         Face_event fe;
         IkFT t = calculate_edge_intersection_time(sp_idx, edge, fe);
+
         if (t > 0) {
           queue.push(fe);
         }
@@ -915,8 +911,8 @@ public:
     }
   }
 
-  void add_input_polygon( const std::size_t support_plane_idx, const std::vector<std::size_t>& input_indices, const std::vector<Point_2>& polygon) {
-    std::vector< std::pair<Point_2, bool> > points;
+  void add_input_polygon( const std::size_t support_plane_idx, const std::vector<std::size_t>& input_indices, const std::vector<typename Intersection_kernel::Point_2>& polygon) {
+    std::vector< std::pair<typename Intersection_kernel::Point_2, bool> > points;
     points.reserve(polygon.size());
     for (const auto& point : polygon) {
       points.push_back(std::make_pair(point, true));
@@ -924,9 +920,10 @@ public:
     CGAL_assertion(points.size() == polygon.size());
 
     preprocess(points);
+
     sort_points_by_direction(points);
     support_plane(support_plane_idx).
-      add_input_polygon(points, input_indices);
+    add_input_polygon(points, input_indices);
     for (const std::size_t input_index : input_indices) {
       m_input_polygon_map[input_index] = support_plane_idx;
       m_sp2input_polygon[support_plane_idx].insert(input_index);
@@ -979,14 +976,17 @@ public:
       const auto& q = points[i].first;
       const auto& r = points[ip].first;
 
-      Vector_2 vec1(q, r);
-      Vector_2 vec2(q, p);
+      using Vector = typename CGAL::Kernel_traits<typename Pair::first_type>::type::Vector_2;
+      using Direction = typename CGAL::Kernel_traits<typename Pair::first_type>::type::Direction_2;
+
+      Vector vec1(q, r);
+      Vector vec2(q, p);
       vec1 = KSP::internal::normalize(vec1);
       vec2 = KSP::internal::normalize(vec2);
 
-      const Direction_2 dir1(vec1);
-      const Direction_2 dir2(vec2);
-      const FT angle = KSP::internal::angle_2(dir1, dir2);
+      const Direction dir1(vec1);
+      const Direction dir2(vec2);
+      const auto angle = KSP::internal::angle_2(dir1, dir2);
 
       if (angle > min_angle) polygon.push_back(points[i]);
     }
@@ -996,9 +996,10 @@ public:
 
   template<typename Pair>
   void sort_points_by_direction(std::vector<Pair>& points) const {
+    From_exact from_exact;
     FT x = FT(0), y = FT(0); FT num = 0;
     for (const auto& pair : points) {
-      const auto& point = pair.first;
+      const auto& point = from_exact(pair.first);
       x += point.x();
       y += point.y();
       num += 1;
@@ -1009,8 +1010,8 @@ public:
 
     std::sort(points.begin(), points.end(),
     [&](const Pair& a, const Pair& b) -> bool {
-      const Segment_2 sega(mid, a.first);
-      const Segment_2 segb(mid, b.first);
+      const Segment_2 sega(mid, from_exact(a.first));
+      const Segment_2 segb(mid, from_exact(b.first));
       return ( Direction_2(sega) < Direction_2(segb) );
     });
   }
@@ -1398,10 +1399,9 @@ public:
     return support_plane(support_plane_idx).to_2d(point_3);
   }
 
-/*
   IkPoint_2 to_2d(const std::size_t support_plane_idx, const IkPoint_3& point_3) const {
     return support_plane(support_plane_idx).to_2d(point_3);
-  }*/
+  }
 
   Point_2 point_2(const PVertex& pvertex) const {
     return support_plane(pvertex).point_2(pvertex.second);
