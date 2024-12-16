@@ -243,6 +243,7 @@ CGAL_add_named_parameter(pca_plane_t, pca_plane, pca_plane)
 // List of named parameters used in Isosurfacing_3
 CGAL_add_named_parameter(use_topologically_correct_marching_cubes_t, use_topologically_correct_marching_cubes, use_topologically_correct_marching_cubes)
 CGAL_add_named_parameter(constrain_to_cell_t, constrain_to_cell, constrain_to_cell)
+CGAL_add_named_parameter(isovalue_nudging_t, isovalue_nudging, isovalue_nudging)
 
 // tetrahedral remeshing parameters
 CGAL_add_named_parameter(remesh_boundaries_t, remesh_boundaries, remesh_boundaries)
