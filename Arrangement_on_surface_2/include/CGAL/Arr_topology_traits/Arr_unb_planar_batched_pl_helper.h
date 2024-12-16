@@ -56,8 +56,7 @@ protected:
   Halfedge_const_handle m_top_fict;     // The current top fictitious halfedge.
 
 public:
-  /*!
-   * Constructor.
+  /*! constructs.
    * \param arr The arrangement.
    */
   Arr_unb_planar_batched_pl_helper(const Arrangement_2* arr) :
@@ -76,7 +75,7 @@ public:
   void after_handle_event(Event* event);
   //@}
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   Face_const_handle top_face() const { return (m_top_fict->face()); }
 };
 

@@ -25,7 +25,7 @@ namespace CGAL {
 template <class Point_2>
 class Arr_polyhedral_sgm_arr_vertex : public CGAL::Arr_vertex_base<Point_2> {
 public:
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_arr_vertex() {}
 };
 
@@ -44,10 +44,10 @@ private:
   unsigned int m_arr_mask;
 
 public:
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_arr_halfedge() : m_arr_mask(0x0) {}
 
-  /*! Add a arrangement to the mask of the original arrangements in the
+  /*! adds a arrangement to the mask of the original arrangements in the
    * minkowski sum.
    * \param arr_id the id of the added arrangement
    */
@@ -58,12 +58,12 @@ public:
    */
   bool is_arr(unsigned int id) const { return m_arr_mask & (0x1 << id); }
 
-  /*! Obtain the mask of the ids of the original arrangements that contributed
+  /*! obtains the mask of the ids of the original arrangements that contributed
    * the halfedge while performing the minkowski sum
    */
   unsigned int arr_mask() const { return m_arr_mask; }
 
-  /*! Set the arr of an edge with a value.
+  /*! sets the arr of an edge with a value.
   * \param arr_id the id to set to.
   */
   void set_arr(unsigned int id) { m_arr_mask  = id; }
@@ -80,23 +80,23 @@ private:
   bool m_is_set;
 
 public:
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_arr_face() : m_is_set(false) { }
 
-  /*! Set the 3D point of the original polyhedron */
+  /*! sets the 3D point of the original polyhedron */
   void set_point(const Point_3 & point)
   {
     m_point = point;
     m_is_set = true;
   }
 
-  /*! Obtain the 3D point of the original polyhedron */
+  /*! obtains the 3D point of the original polyhedron */
   const Point_3 & point() const { return m_point; }
 
-  /*! \brief returns true iff the point has been set already */
+  /*! returns true iff the point has been set already */
   bool is_set() const { return m_is_set; }
 
-  /*! \brief resets the flag  */
+  /*! resets the flag  */
   void set_is_set(bool flag) { m_is_set = flag; }
 };
 
@@ -108,10 +108,10 @@ class Arr_polyhedral_sgm_arr_dcel :
                              Arr_polyhedral_sgm_arr_face<typename Traits::Point_3> >
 {
 public:
-  /*! Constructor */
+  /*! constructs */
   Arr_polyhedral_sgm_arr_dcel() {}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

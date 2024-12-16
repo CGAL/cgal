@@ -42,19 +42,19 @@ private:
 
 public:
 
-  /*! Default constructor. */
+  /*! constructs default. */
   _Unique_list () :
     m_list()
   {}
 
-  /*! Construct a singleton list. */
+  /*! constructs a singleton list. */
   _Unique_list (const Data& data) :
     m_list ()
   {
     m_list.push_back (data);
   }
 
-  /*! Go over the data objects in list. */
+  /*! traverses the data objects in list. */
   const_iterator begin () const
   {
     return (m_list.begin());
@@ -65,13 +65,13 @@ public:
     return (m_list.end());
   }
 
-  /*! Get the list size. */
+  /*! obtains the list size. */
   std::size_t size () const
   {
     return (m_list.size());
   }
 
-  /*! Get the first (or last) data object. */
+  /*! obtains the first (or last) data object. */
   const Data& front () const
   {
     return (m_list.front());
@@ -105,8 +105,7 @@ public:
     return (true);
   }
 
-  /*!
-   * Find the given data object is contained in the list.
+  /*! finds the given data object is contained in the list.
    * \param data The data object.
    * \return An iterator for the data object, or end() if it is not found.
    */
@@ -123,8 +122,7 @@ public:
     return (iter);
   }
 
-  /*!
-   * Insert an object into the list.
+  /*! inserts an object into the list.
    * \param data The data object.
    * \return (true) if the data object has been successfully inserted;
    *         (false) otherwise (if it already exists).
@@ -138,8 +136,7 @@ public:
     return (true);
   }
 
-  /*!
-   * Erase an object from the list.
+  /*! erases an object from the list.
    * \param data The data object.
    * \return (true) if the data object has been successfully erased;
    *         (false) otherwise (if it is not in the list).
@@ -163,7 +160,7 @@ public:
     return (false);
   }
 
-  /*! Clear the list. */
+  /*! clears the list. */
   void clear ()
   {
     m_list.clear();

@@ -63,7 +63,7 @@ public:
     Algebraic          x;      // The x-coordinate.
     Algebraic          y;      // The y-coordinate.
 
-    /*! Constructor. */
+    /*! constructs. */
     Intersection_point (const Algebraic& _s, const Algebraic& _t,
                           const Algebraic& _x, const Algebraic& _y) :
       s(_s), t(_t),
@@ -124,7 +124,7 @@ private:
       app_y (0)
     {}
 
-    /*! Constructor. */
+    /*! constructs. */
     My_point_2 (typename Parameter_list::const_iterator it,
                 const Algebraic& _x, const Algebraic& _y) :
       prm_it (it),
@@ -134,7 +134,7 @@ private:
       app_y (CGAL::to_double(_y))
     {}
 
-    /*! Get the parameter value. */
+    /*! obtains the parameter value. */
     const Algebraic& parameter () const
     {
       return (*prm_it);
@@ -177,7 +177,7 @@ private:
 
 public:
 
-  /*! Constructor. */
+  /*! constructs. */
   _Bezier_cache ()
   {}
 
@@ -869,6 +869,6 @@ _Bezier_cache<NtTraits>::_compute_resultant
   return (det);
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

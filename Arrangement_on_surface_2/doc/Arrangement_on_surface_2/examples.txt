@@ -12,6 +12,7 @@
 \example Arrangement_on_surface_2/conics.cpp
 \example Arrangement_on_surface_2/conic_multiplicities.cpp
 \example Arrangement_on_surface_2/consolidated_curve_data.cpp
+\example Arrangement_on_surface_2/count_and_trace.cpp
 \example Arrangement_on_surface_2/curve_history.cpp
 \example Arrangement_on_surface_2/dcel_extension.cpp
 \example Arrangement_on_surface_2/dcel_extension_io.cpp

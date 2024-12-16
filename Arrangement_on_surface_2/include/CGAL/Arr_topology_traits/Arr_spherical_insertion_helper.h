@@ -78,10 +78,10 @@ protected:
   Halfedge_handle m_spherical_halfedge;
 
 public:
-  /*! Constructor */
+  /*! constructs */
   Arr_spherical_insertion_helper(Arrangement_2 *arr) : Base(arr) {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_spherical_insertion_helper() {}
 
   /// \name Notification functions.
@@ -104,7 +104,7 @@ public:
   /*! A notification invoked when a new subcurve is created. */
   virtual void add_subcurve(Halfedge_handle he, Subcurve* sc);
 
-  /*! Get the current top face. */
+  /*! obtains the current top face. */
   virtual Face_handle top_face() const;
 
 private:
@@ -256,7 +256,7 @@ add_subcurve(Halfedge_handle he, Subcurve* /* sc */)
   }
 }
 
-/*! Get the current top face. */
+/*! obtains the current top face. */
 template <typename Tr, typename Arr, typename Evnt, typename Sbcv>
 typename Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::Face_handle
 Arr_spherical_insertion_helper<Tr, Arr, Evnt, Sbcv>::top_face() const

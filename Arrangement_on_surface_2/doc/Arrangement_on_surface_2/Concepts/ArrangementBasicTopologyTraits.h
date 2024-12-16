@@ -38,10 +38,10 @@ public:
   /// \name Access Functions
   /// @{
 
-  /*! Obtain the DCEL (const version). */
+  /*! obtains the DCEL (const version). */
   const Dcel& dcel() const;
 
-  /*! Obtain the DCEL (non-const version). */
+  /*! obtains the DCEL (non-const version). */
   Dcel& dcel();
 
   /// @}

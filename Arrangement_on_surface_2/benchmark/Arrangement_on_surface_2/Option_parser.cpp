@@ -54,7 +54,7 @@ void validate(std::any & v, const std::vector<std::string> & values,
   Option_parser::my_validate<Option_parser::Strategy_id>(v, values);
 }
 
-/*! Constructor */
+/*! constructs */
 Option_parser::Option_parser() :
   m_generic_opts("Generic options"),
   m_config_opts("Configuration options"),
@@ -136,7 +136,7 @@ Option_parser::Option_parser() :
   m_positional_opts.add("input-file", -1);
 }
 
-/*! Parse the options */
+/*! parses the options */
 void Option_parser::operator()(int argc, char * argv[])
 {
   po::store(po::command_line_parser(argc, argv).
@@ -225,20 +225,20 @@ void Option_parser::operator()(int argc, char * argv[])
   }
 }
 
-/*! Obtain the base file-name */
+/*! obtains the base file-name */
 const std::string & Option_parser::get_file_name(unsigned int i) const
 {
   return m_variable_map["input-file"].as<Input_path>()[i];
 }
 
-/*! Obtain the full file-name */
+/*! obtains the full file-name */
 const std::string & Option_parser::get_full_name(unsigned int i) const
 { return m_full_names[i]; }
 
-/*! Obtain number of type options */
+/*! obtains number of type options */
 unsigned int Option_parser::get_number_opts(Type_id &)
 { return sizeof(s_type_opts) / sizeof(char *); }
 
-/*! Obtain number of strategy options */
+/*! obtains number of strategy options */
 unsigned int Option_parser::get_number_opts(Strategy_id &)
 { return sizeof(s_strategy_opts) / sizeof(char *); }

@@ -128,17 +128,17 @@ public:
   /// \name Constructors.
   //@{
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arrangement_with_history_2 () :
     Base ()
   {}
 
-  /*! Copy constructor (from a base arrangement). */
+  /*! constructs copy (from a base arrangement). */
   Arrangement_with_history_2 (const Base & base) :
     Base (base)
   {}
 
-  /*! Constructor given a traits object. */
+  /*! constructs from a traits object. */
   Arrangement_with_history_2 (const Traits_2 * tr) :
     Base (tr)
   {}
@@ -147,14 +147,14 @@ public:
   /// \name Assignment functions.
   //@{
 
-  /*! Assignment operator (from a base arrangement). */
+  /*! assigns (from a base arrangement). */
   Self& operator= (const Base & base)
   {
     Base::assign (base);
     return (*this);
   }
 
-  /*! Assign an arrangement. */
+  /*! assigns an arrangement. */
   void assign (const Base & base)
   {
     Base::assign (base);
@@ -165,13 +165,13 @@ public:
   ///! \name Specialized access methods.
   //@{
 
-  /*! Get the geometry-traits class (for backward compatibility). */
+  /*! obtains the geometry-traits class (for backward compatibility). */
   const Traits_2 * traits () const
   {
     return (this->geometry_traits());
   }
 
-  /*! Get the number of vertices at infinity. */
+  /*! obtains the number of vertices at infinity. */
   Size number_of_vertices_at_infinity () const
   {
     // The vertices at infinity are valid, but not concrete:
@@ -179,7 +179,7 @@ public:
             this->topology_traits()->number_of_concrete_vertices());
   }
 
-  /*! Get the number of unbounded faces. */
+  /*! obtains the number of unbounded faces. */
   Size number_of_unbounded_faces () const
   {
     typename Base::Face_const_iterator  fit = this->faces_begin();
@@ -196,7 +196,7 @@ public:
     return (n_unb);
   }
 
-  /*! Get the unbounded face (non-const version). */
+  /*! obtains the unbounded face (non-const version). */
   Face_handle unbounded_face ()
   {
     // The fictitious un_face contains all other valid faces in a single
@@ -216,7 +216,7 @@ public:
     return (Face_handle (p_oc->face()));
   }
 
-  /*! Get the unbounded face (const version). */
+  /*! obtains the unbounded face (const version). */
   Face_const_handle unbounded_face () const
   {
     // The fictitious un_face contains all other valid faces in a single

@@ -53,10 +53,10 @@ public:
   typedef typename Subcurves_container::size_type       Size;
   typedef typename Subcurves_container::size_type       size_type;
 
-  /*! Construct default. */
+  /*! constructs default. */
   Polycurve_2() : m_subcurves() {}
 
-  /*! Construct from a subcurve. */
+  /*! constructs from a subcurve. */
   Polycurve_2(const Subcurve_type_2& seg) : m_subcurves()
   { m_subcurves.push_back(seg); }
 
@@ -70,7 +70,7 @@ public:
    *   this class.
    */
 
-  /*! Construct from a range. The range can be either:
+  /*! constructs from a range. The range can be either:
    *
    * For the sake of backwards compatibility we have to keep the possibility
    * of construction from a range of points. Therefore, we have to test the
@@ -100,7 +100,7 @@ public:
     construct_polycurve(begin, end, Is_point());
   }
 
-  /*! Construct a polycurve from a range of subcurves.
+  /*! constructs a polycurve from a range of subcurves.
    * \param begin An iterator pointing to the first subcurve in the range.
    * \param end An iterator pointing after the past-the-end subcurve
    *        in the range.
@@ -111,7 +111,7 @@ public:
                           std::false_type)
   { m_subcurves.assign(begin, end); }
 
-  /*! Construct a polycurve from a range of points.
+  /*! constructs a polycurve from a range of points.
    * \param begin An iterator pointing to the first point in the range.
    * \param end An iterator pointing after the last point in the range.
    * \pre There are at least 2 points in the range.
@@ -150,7 +150,7 @@ public:
    *          becomes friendly...)
    */
 
-  /*! Append a subcurve to the (x-monotone) polycurve.
+  /*! appends a subcurve to the (x-monotone) polycurve.
    * Warning: This is a risky function! Don't use it! Prefer the
    *          provided implementation in the traits class.
    * \param seg The new subcurve to be appended to the polycurve.
@@ -160,7 +160,7 @@ public:
   inline void push_back(const Subcurve_type_2& seg)
   { this->m_subcurves.push_back(seg); }
 
-  /*! Append a subcurve to the (x-monotone) polycurve.
+  /*! appends a subcurve to the (x-monotone) polycurve.
    * Warning: This is a risky function! Don't use it! Prefer the
    *          provided implementation in the traits class.
    * \param seg The new subcurve to be appended to the polycurve.
@@ -170,7 +170,7 @@ public:
   inline void push_front(const Subcurve_type_2& seg)
   { this->m_subcurves.insert(this->m_subcurves.begin(), seg); }
 
-  /*! Append a point to the polycurve.
+  /*! appends a point to the polycurve.
    * To properly implemented this function the traits class is needed,
    * thus it is deprecated.
    */
@@ -182,7 +182,7 @@ public:
     m_subcurves.push_back(Subcurve_type_2(ps, pt));
   }
 
-  /*! Compute the bounding box of the polycurve.
+  /*! computes the bounding box of the polycurve.
    * \return The bounding-box.
    */
   Bbox_2 bbox() const
@@ -235,14 +235,14 @@ public:
     { return m_index != std::numeric_limits<size_type>::max BOOST_PREVENT_MACRO_SUBSTITUTION (); }
 
   public:
-    /*! Default constructor. */
+    /*! constructs default. */
     Point_const_iterator() :
       m_cvP(nullptr),
       m_num_pts(0),
       m_index(std::numeric_limits<size_type>::max BOOST_PREVENT_MACRO_SUBSTITUTION ())
     {}
 
-    /*! Dereference operator.
+    /*! dereferences.
      * \return The current point.
      */
     const Point_type_2& operator*() const
@@ -275,7 +275,7 @@ public:
       return temp;
     }
 
-    /*! Decrement operators. */
+    /*! decrements. */
     Point_const_iterator& operator--()
     {
       if ((m_cvP != nullptr) && (is_index_valid())) --m_index;
@@ -303,39 +303,39 @@ public:
   typedef Point_const_iterator                  const_iterator;
   typedef Point_const_reverse_iterator          const_reverse_iterator;
 
-  /*! Obtain an iterator for the polycurve points.*/
+  /*! obtains an iterator for the polycurve points.*/
   Point_const_iterator points_begin() const
   {
     if (number_of_subcurves() == 0) return (Point_const_iterator());
     else return (Point_const_iterator(this, 0));
   }
 
-  /*! Obtain an iterator for the polycurve points.*/
+  /*! obtains an iterator for the polycurve points.*/
   CGAL_DEPRECATED Point_const_iterator begin() const { return points_begin(); }
 
-  /*! Obtain a past-the-end iterator for the polycurve points.*/
+  /*! obtains a past-the-end iterator for the polycurve points.*/
   Point_const_iterator points_end() const
   {
     if (number_of_subcurves() == 0) return (Point_const_iterator());
     else return (Point_const_iterator(this, number_of_subcurves() + 1));
   }
 
-  /*! Obtain a past-the-end iterator for the polycurve points.*/
+  /*! obtains a past-the-end iterator for the polycurve points.*/
   CGAL_DEPRECATED Point_const_iterator end() const { return points_end(); }
 
-  /*! Obtain a reverse iterator for the polycurve points. */
+  /*! obtains a reverse iterator for the polycurve points. */
   Point_const_reverse_iterator points_rbegin() const
   { return Point_const_reverse_iterator(points_end()); }
 
-  /*! Obtain a reverse iterator for the polycurve points. */
+  /*! obtains a reverse iterator for the polycurve points. */
   CGAL_DEPRECATED Point_const_reverse_iterator rbegin() const
   { return points_rbegin(); }
 
-  /*! Obtain a reverse past-the-end iterator for the polycurve points. */
+  /*! obtains a reverse past-the-end iterator for the polycurve points. */
   Point_const_reverse_iterator points_rend() const
   { return Point_const_reverse_iterator(points_begin()); }
 
-  /*! Obtain a reverse past-the-end iterator for the polycurve points. */
+  /*! obtains a reverse past-the-end iterator for the polycurve points. */
   CGAL_DEPRECATED Point_const_reverse_iterator rend() const
   { return points_rend(); }
 
@@ -345,7 +345,7 @@ public:
   typedef typename std::reverse_iterator<Subcurve_const_iterator>
                                                  Subcurve_const_reverse_iterator;
 
-  /*! Obtain an iterator for the polycurve subcurves. */
+  /*! obtains an iterator for the polycurve subcurves. */
   Subcurve_const_iterator subcurves_begin() const
   { return m_subcurves.begin(); }
 
@@ -353,7 +353,7 @@ public:
   CGAL_DEPRECATED Subcurve_const_iterator begin_subcurves() const
   { return subcurves_begin(); }
 
-  /*! Obtain a past-the-end iterator for the polycurve subcurves. */
+  /*! obtains a past-the-end iterator for the polycurve subcurves. */
   Subcurve_const_iterator subcurves_end() const
   { return m_subcurves.end(); }
 
@@ -361,11 +361,11 @@ public:
   CGAL_DEPRECATED Subcurve_const_iterator end_subcurves() const
   { return subcurves_end(); }
 
-  /*! Obtain a reverse iterator for the polycurve subcurves. */
+  /*! obtains a reverse iterator for the polycurve subcurves. */
   Subcurve_const_reverse_iterator subcurves_rbegin() const
   { return (Subcurve_const_reverse_iterator(subcurves_end())); }
 
-  /*! Obtain a reverse past-the-end iterator for the polycurve points. */
+  /*! obtains a reverse past-the-end iterator for the polycurve points. */
   Subcurve_const_reverse_iterator subcurves_rend() const
   { return (Subcurve_const_reverse_iterator(subcurves_begin())); }
 
@@ -379,7 +379,7 @@ public:
   CGAL_DEPRECATED std::size_t points() const
   { return (number_of_subcurves() == 0) ? 0 : number_of_subcurves() + 1; }
 
-  /*! Obtain the number of subcurves that comprise the poyline.
+  /*! obtains the number of subcurves that comprise the poyline.
    * \return The number of subcurves.
    */
   size_type number_of_subcurves() const
@@ -388,7 +388,7 @@ public:
   /*! Deprecated! Replaced by number_of_subcurves(). */
   CGAL_DEPRECATED size_type size() const { return number_of_subcurves(); }
 
-  /*! Obtain the ith subcurve of the polycurve.
+  /*! obtains the ith subcurve of the polycurve.
    * \param[in] i The subcurve index(from 0 to size()-1).
    * \return A const reference to the subcurve.
    */
@@ -398,7 +398,7 @@ public:
     return (m_subcurves[i]);
   }
 
-  /*! Clear the polycurve. */
+  /*! clears the polycurve. */
   inline void clear() { m_subcurves.clear(); }
 };
 
@@ -416,13 +416,13 @@ public:
 
   typedef Polycurve_2<Subcurve_type_2, Point_type_2> Base;
 
-  /*! Construct default. */
+  /*! constructs default. */
   X_monotone_polycurve_2() : Base() {}
 
-  /*! Construct from a subcurve. */
+  /*! constructs from a subcurve. */
   X_monotone_polycurve_2(Subcurve_type_2 seg) : Base(seg) {}
 
-  /*! Construct from a range.
+  /*! constructs from a range.
    * Similar to the constructor of a general polycurve.
    * Like in the case of general polycurve, for the sake of backwards
    * compatibility we have to keep an implementation of construction
@@ -437,7 +437,7 @@ public:
     construct_x_monotone_polycurve(begin, end, Is_point());
   }
 
-  /*! Construct from a range of subcurves.
+  /*! constructs from a range of subcurves.
    * This constructor is expected to be called only from the
    * traits class, after the input was verified there.
    * \pre The range of subcurves form an x-monotone polycurve.
@@ -447,7 +447,7 @@ public:
                                       std::false_type)
   {}
 
-  /*! Construct from a range of points, defining the endpoints of the
+  /*! constructs from a range of points, defining the endpoints of the
    * polycurve subcurves.
    */
   template <typename InputIterator>
@@ -458,6 +458,7 @@ public:
 };
 
 } // namespace polycurve
+
 } //namespace CGAL
 
 #endif

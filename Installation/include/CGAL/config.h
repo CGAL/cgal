@@ -149,11 +149,11 @@
 #define CGAL_USE_SSE2_FABS
 #endif
 
-// Same for C++17
 #if !(__cplusplus >= 201703L || _MSVC_LANG >= 201703L)
 #error "CGAL requires C++ 17"
 #endif
-// Same for C++20
+
+// Macro to detect C++20
 #if __cplusplus >= 202002L || _MSVC_LANG >= 202002L
 #  define CGAL_CXX20 1
 #endif
