@@ -153,7 +153,7 @@ static double testFrechetDistance()
     std::string query_directory = "./data/queries/";
     std::vector<std::string> datasets;
 
-    auto const dimension = CGAL::Ambient_dimension<TestPoint, TestKernel>::value;
+    auto const dimension = TestTraits::Dimension::value;
     if (dimension == 2) {
         // datasets = {"sigspatial", "OV"};
         datasets = { "sigspatial" };
@@ -309,28 +309,26 @@ int main(int argc, char** argv)
     double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance<true>();
     std::cout << t1 << "\n";
   }
-  // FIXME: CGAL::Ambient_dimension<TestPoint, TestKernel>::value not defined for Epick_d and Epeck_d
-  //        How do I get the dimension for any kernel?
 
-  // if (test_set.empty() || test_set.count(6))
-  // {
-  //   using Kernel = CGAL::Epick_d<CGAL::Dimension_tag<100>>;
-  //   using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
-  //   using Point = Kernel::Point_d;
-  //   std::cout <<"CGAL::Epick_d\n";
-  //   double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
-  //   std::cout << t1 << "\n";
-  // }
-  //
-  // if (test_set.empty() || test_set.count(7))
-  // {
-  //   using Kernel = CGAL::Epeck_d<CGAL::Dimension_tag<100>>;
-  //   using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
-  //   using Point = Kernel::Point_d;
-  //   std::cout <<"CGAL::Epeck_d\n";
-  //   double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
-  //   std::cout << t1 << "\n";
-  // }
+  if (test_set.empty() || test_set.count(7))
+  {
+    using Kernel = CGAL::Epick_d<CGAL::Dimension_tag<100>>;
+    using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
+    using Point = Kernel::Point_d;
+    std::cout <<"CGAL::Epick_d\n";
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
+    std::cout << t1 << "\n";
+  }
+
+  if (test_set.empty() || test_set.count(8))
+  {
+    using Kernel = CGAL::Epeck_d<CGAL::Dimension_tag<100>>;
+    using Traits = CGAL::Frechet_distance_traits_d<Kernel>;
+    using Point = Kernel::Point_d;
+    std::cout <<"CGAL::Epeck_d\n";
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistance();
+    std::cout << t1 << "\n";
+  }
 
   return 0;
 }
