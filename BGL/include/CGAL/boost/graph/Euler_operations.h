@@ -1867,8 +1867,22 @@ bool satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descript
 /// \endcond
 #endif
 
-/// removes the target vertex of `h`, merging its incident edges into a single edge.
-/// \pre `degree(target(h, g), g) == 2`.
+/**
+ * removes the target vertex of `h`, merging its incident edges into a single edge linking
+ * the two vertices adjacent to the vertex being removed.
+ *
+ * \tparam Graph must be a model of `MutableFaceGraph`
+ *
+ * \param h halfedge descriptor
+ * \param g the graph
+ *
+ * \returns an halfedge linking the two vertices adjacent to the vertex being removed.
+ *
+ * \pre `degree(target(h, g), g) == 2`.
+ *
+ * \sa `remove_center_vertex()`
+ */
+
 template <typename Graph>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 remove_degree_2_vertex(const typename boost::graph_traits<Graph>::halfedge_descriptor h,
