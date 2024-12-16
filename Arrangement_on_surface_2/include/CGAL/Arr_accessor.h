@@ -69,30 +69,29 @@ private:
 
 public:
 
-  /*! Constructor with an associated arrangement. */
+  /*! constructs from an associated arrangement. */
   Arr_accessor(Arrangement_2& arr) : p_arr(&arr) {}
 
-  /* Get the arrangement. */
+  /*! obtains the arrangement. */
   Arrangement_2& arrangement() { return (*p_arr); }
 
-  /* Get the arrangement (const version). */
+  /*! obtains the arrangement (const version). */
   const Arrangement_2& arrangement() const { return (*p_arr); }
 
   /// \name Accessing the notification functions (for the global functions).
   //@{
 
-  /*! Notify that a global operation is about to take place. */
+  /*! notifies that a global operation is about to take place. */
   void notify_before_global_change() { p_arr->_notify_before_global_change(); }
 
-  /*! Notify that a global operation was completed. */
+  /*! notifies that a global operation was completed. */
   void notify_after_global_change() { p_arr->_notify_after_global_change(); }
   //@}
 
   /// \name Local operations and predicates for the arrangement.
   //@{
 
-  /*!
-   * Locate the arrangement feature that contains the given curve-end.
+  /*! locates the arrangement feature that contains the given curve-end.
    * \param cv The curve.
    * \param ind ARR_MIN_END if we refer to cv's minimal end;
    *            ARR_MAX_END if we refer to its maximal end.
@@ -114,13 +113,13 @@ public:
     auto obj = p_arr->topology_traits()->locate_curve_end(cv, ind, ps_x, ps_y);
 
     // Return a handle to the DCEL feature.
-    DFace** f_p = boost::get<DFace*>(&obj);
+    DFace** f_p = std::get_if<DFace*>(&obj);
     if (f_p) return (Pl_result::make_result(p_arr->_const_handle_for(*f_p)));
 
-    DHalfedge** he_p = boost::get<DHalfedge*>(&obj);
+    DHalfedge** he_p = std::get_if<DHalfedge*>(&obj);
     if (he_p) return (Pl_result::make_result(p_arr->_const_handle_for(*he_p)));
 
-    DVertex** v_p = boost::get<DVertex*>(&obj);
+    DVertex** v_p = std::get_if<DVertex*>(&obj);
     if (v_p) return (Pl_result::make_result(p_arr->_const_handle_for(*v_p)));
 
     // We should never reach here:
@@ -128,8 +127,7 @@ public:
     return Pl_result::make_result(Vertex_const_handle());
   }
 
-  /*!
-   * Locate the place for the given curve around the given vertex.
+  /*! locates the place for the given curve around the given vertex.
    * \param vh A handle for the arrangement vertex.
    * \param cv The given x-monotone curve.
    * \pre v is one of cv's endpoints.
@@ -162,8 +160,7 @@ public:
     return (p_arr->_handle_for (he));
   }
 
-  /*!
-   * Locate the place for the given curve-end around the given vertex,
+  /*! locates the place for the given curve-end around the given vertex,
    * which lies on the boundary.
    * \param vh A handle for the arrangement vertex.
    * \param cv The curve.
@@ -177,11 +174,11 @@ public:
    *         vertex (in a clockwise order).
    */
   Halfedge_handle
-      locate_around_boundary_vertex(Vertex_handle vh,
-                                    const X_monotone_curve_2& cv,
-                                    Arr_curve_end ind,
-                                    Arr_parameter_space ps_x,
-                                    Arr_parameter_space ps_y) const
+  locate_around_boundary_vertex(Vertex_handle vh,
+                                const X_monotone_curve_2& cv,
+                                Arr_curve_end ind,
+                                Arr_parameter_space ps_x,
+                                Arr_parameter_space ps_y) const
   {
     CGAL_precondition((ps_x != ARR_INTERIOR) || (ps_y != ARR_INTERIOR));
 
@@ -193,8 +190,7 @@ public:
     return (p_arr->_handle_for (he));
   }
 
-  /*!
-   * Compute the distance (in halfedges) between two halfedges.
+  /*! computes the distance (in halfedges) between two halfedges.
    * \param e1 A handle for the source halfedge.
    * \param e2 A handle for the destination halfedge.
    * \return In case e1 and e2 belong to the same connected component, the
@@ -222,8 +218,7 @@ public:
     return (static_cast<int>(dist));
   }
 
-  /*!
-   * Determine whether a given query halfedge lies in the interior of a new
+  /*! determines whether a given query halfedge lies in the interior of a new
    * face we are about to create, by connecting it with another halfedge
    * using a given x-monotone curve.
    * \param prev1 A handle for the query halfedge.
@@ -244,8 +239,7 @@ public:
                                                   cv));
   }
 
-  /*!
-   * Check if the given vertex represents one of the ends of a given curve.
+  /*! checks if the given vertex represents one of the ends of a given curve.
    * \param v The vertex.
    * \param cv The curve.
    * \param ind ARR_MIN_END if we refer to cv's minimal end;
@@ -262,8 +256,7 @@ public:
                                                 cv, ind, ps_x, ps_y));
   }
 
-  /*!
-   * Check whether the given halfedge lies on the outer boundary of its
+  /*! checks whether the given halfedge lies on the outer boundary of its
    * incident face.
    * \param he The given halfedge.
    * \return (true) in case he lies on the outer boundary of its incident face;
@@ -275,8 +268,7 @@ public:
     return (! p_he->is_on_inner_ccb());
   }
 
-  /*!
-   * Check whether the given halfedge lies on the inner boundary of its
+  /*! checks whether the given halfedge lies on the inner boundary of its
    * incident face.
    * \param he The given halfedge.
    * \return (true) in case he lies on a hole inside its incident face;
@@ -288,8 +280,7 @@ public:
     return (p_he->is_on_inner_ccb());
   }
 
-  /*!
-   * Create a new vertex and associate it with the given point.
+  /*! creates a new vertex and associate it with the given point.
    * \param p The point.
    * \return A handle for the newly created vertex.
    */
@@ -300,8 +291,7 @@ public:
     return (p_arr->_handle_for (v));
   }
 
-  /*!
-   * Create a new boundary vertex.
+  /*! creates a new boundary vertex.
    * \param pt the point
    * \param ps_x The parameter space in x.
    * \param ps_y The parameter space in y.
@@ -328,8 +318,7 @@ public:
     return (p_arr->_handle_for(v));
   }
 
-  /*!
-   * Create a new boundary vertex.
+  /*! creates a new boundary vertex.
    * \param cv The curve incident to the boundary.
    * \param ind The relevant curve-end.
    * \param ps_x The parameter space in x.
@@ -358,8 +347,7 @@ public:
     return (p_arr->_handle_for(v));
   }
 
-  /*!
-   * Locate the arrangement features that will be used for inserting the
+  /*! locates the arrangement features that will be used for inserting the
    * given curve end, which has a boundary condition, and set a proper vertex
    * there.
    * \param f The face that contains the curve end.
@@ -388,8 +376,7 @@ public:
     return (std::make_pair(p_arr->_handle_for(v), p_arr->_handle_for(pred)));
   }
 
-  /*!
-   * Insert an x-monotone curve into the arrangement, where the end vertices
+  /*! inserts an x-monotone curve into the arrangement, where the end vertices
    * are given by the target points of two given halfedges.
    * The two halfedges should be given such that in case a new face is formed,
    * it will be the incident face of the halfedge directed from the first
@@ -426,8 +413,7 @@ public:
     return (p_arr->_handle_for(he));
   }
 
-  /*!
-   * Insert an x-monotone curve into the arrangement, such that one of its
+  /*! inserts an x-monotone curve into the arrangement, such that one of its
    * endpoints corresponds to a given arrangement vertex, given the exact
    * place for the curve in the circular list around this vertex. The other
    * endpoint corresponds to a free vertex (a newly created vertex or an
@@ -463,8 +449,7 @@ public:
     return (p_arr->_handle_for (he));
   }
 
-  /*!
-   * Insert an x-monotone curve into the arrangement, such that both its
+  /*! inserts an x-monotone curve into the arrangement, such that both its
    * endpoints correspond to free arrangement vertices (newly created vertices
    * or existing isolated vertices), so a new hole is formed in the face
    * that contains the two vertices.
@@ -511,16 +496,14 @@ public:
 
   }
 
-  /*!
-   * Insert the given vertex as an isolated vertex inside the given face.
+  /*! inserts the given vertex as an isolated vertex inside the given face.
    * \param f The face that should contain the isolated vertex.
    * \param v The isolated vertex.
    */
   void insert_isolated_vertex(Face_handle f, Vertex_handle v)
   { p_arr->_insert_isolated_vertex(p_arr->_face (f), p_arr->_vertex(v)); }
 
-  /*!
-   * Relocate all holes and isolated vertices to their proper position,
+  /*! relocates all holes and isolated vertices to their proper position,
    * immediately after a face has split due to the insertion of a new halfedge.
    * In case insert_at_vertices_ex() was invoked and indicated that a new face
    * has been created, this function should be called with the halfedge
@@ -539,8 +522,7 @@ public:
   void relocate_holes_in_new_face(Halfedge_handle new_he)
   { p_arr->_relocate_holes_in_new_face(p_arr->_halfedge(new_he)); }
 
-  /*!
-   * Move an outer CCB from one face to another.
+  /*! moves an outer CCB from one face to another.
    * \param from_face The source face.
    * \param to_face The destination face.
    * \param ccb A CCB circulator that corresponds to component to move.
@@ -552,8 +534,7 @@ public:
                            p_arr->_halfedge (ccb));
   }
 
-  /*!
-   * Move an inner CCB from one face to another.
+  /*! moves an inner CCB from one face to another.
    * \param from_face The source face.
    * \param to_face The destination face.
    * \param ccb A CCB circulator that corresponds to component to move.
@@ -565,8 +546,7 @@ public:
                            p_arr->_halfedge(ccb));
   }
 
-  /*!
-   * Move an isolated vertex from one face to another.
+  /*! moves an isolated vertex from one face to another.
    * \param from_face The source face.
    * \param to_face The destination face.
    * \param v The isolated vertex to move.
@@ -578,8 +558,7 @@ public:
                                  p_arr->_face(to_face), p_arr->_vertex(v));
   }
 
-  /*!
-   * Remove an isolated vertex from its face.
+  /*! removes an isolated vertex from its face.
    * \param v The isolated vertex to remove.
    */
   void remove_isolated_vertex_ex (Vertex_handle v)
@@ -589,8 +568,7 @@ public:
     p_arr->_remove_isolated_vertex(iso_v);
   }
 
-  /*!
-   * Modify the point associated with a given vertex. The point may be
+  /*! modifies the point associated with a given vertex. The point may be
    * geometrically different than the one currently associated with the vertex.
    * \param v The vertex to modify.
    * \param p The new point to associate with v.
@@ -602,9 +580,8 @@ public:
     return v;
   }
 
-  /*!
-   * Modify the x-monotone curve associated with a given edge. The curve may be
-   * geometrically different than the one currently associated with the edge.
+  /*! modifies the x-monotone curve associated with a given edge. The curve may
+   * be geometrically different than the one currently associated with the edge.
    * \param e The edge to modify.
    * \param cv The new x-monotone curve to associate with e.
    * \return A handle for the modified edge (same as e).
@@ -616,8 +593,7 @@ public:
     return e;
   }
 
-  /*!
-   * Split a given edge into two at a given point, and associate the given
+  /*! splits a given edge into two at a given point, and associate the given
    * x-monotone curves with the split edges.
    * \param e The edge to split (one of the pair of twin halfedges).
    * \param p The split point.
@@ -638,8 +614,7 @@ public:
     return (p_arr->_handle_for(he));
   }
 
-  /*!
-   * Split a given edge into two at the given vertex, and associate the given
+  /*! splits a given edge into two at the given vertex, and associate the given
    * x-monotone curves with the split edges.
    * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
@@ -661,8 +636,7 @@ public:
     return (p_arr->_handle_for(he));
   }
 
-  /*!
-   * Split a fictitious edge at the given vertex.
+  /*! splits a fictitious edge at the given vertex.
    * \param e The edge to split (one of the pair of twin halfedges).
    * \param v The split vertex.
    * \return A handle for the first split halfedge, whose source equals the
@@ -677,8 +651,7 @@ public:
     return (p_arr->_handle_for(he));
   }
 
-  /*!
-   * Remove a pair of twin halfedges from the arrangement.
+  /*! removes a pair of twin halfedges from the arrangement.
    * \param e A handle for one of the halfedges to be removed.
    * \param remove_source Should the source vertex of e be removed if it
    *                      becomes isolated (true by default).
@@ -698,8 +671,7 @@ public:
     return (p_arr->_handle_for(f));
   }
 
-  /*!
-   * Check if the two given halfedges lie on the same inner component.
+  /*! checks if the two given halfedges lie on the same inner component.
    * \param e1 A handle for the first halfedge.
    * \param e2 A handle for the second halfedge.
    * \return Whether e1 and e2 lie on the same inner component.
@@ -714,8 +686,7 @@ public:
     return (ic1 == ic2);
   }
 
-  /*!
-   * Check if the two given halfedges lie on the same outer component.
+  /*! checks if the two given halfedges lie on the same outer component.
    * \param e1 A handle for the first halfedge.
    * \param e2 A handle for the second halfedge.
    * \return Whether e1 and e2 lie on the same outer component.
@@ -741,7 +712,7 @@ public:
   typedef typename Arrangement_2::_Is_valid_vertex       Is_valid_vertex;
   typedef typename Arrangement_2::_Valid_vertex_iterator Valid_vertex_iterator;
 
-  /*! Get an iterator for the first valid arrangement vertex. */
+  /*! obtains an iterator for the first valid arrangement vertex. */
   Valid_vertex_iterator valid_vertices_begin()
   {
     return (Valid_vertex_iterator
@@ -750,7 +721,7 @@ public:
              Is_valid_vertex (p_arr->topology_traits())));
   }
 
-  /*! Get a past-the-end iterator for the valid arrangement vertices. */
+  /*! obtains a past-the-end iterator for the valid arrangement vertices. */
   Valid_vertex_iterator valid_vertices_end()
   {
     return (Valid_vertex_iterator
@@ -759,7 +730,7 @@ public:
              Is_valid_vertex (p_arr->topology_traits())));
   }
 
-  /*! Get the number of valid arrangement vertices. */
+  /*! obtains the number of valid arrangement vertices. */
   Size number_of_valid_vertices() const
   {
     return (p_arr->topology_traits()->number_of_valid_vertices());
@@ -786,13 +757,11 @@ public:
   typedef DInner_ccb                                  Dcel_inner_ccb;
   typedef DIso_vertex                                 Dcel_isolated_vertex;
 
-  /*!
-   * Get the arrangement DCEL.
+  /*! obtains the arrangement DCEL.
    */
   const Dcel& dcel() const { return (p_arr->_dcel()); }
 
-  /*!
-   * Clear the entire arrangement.
+  /*! clears the entire arrangement.
    */
   void clear_all()
   {
@@ -800,8 +769,7 @@ public:
     p_arr->_dcel().delete_all();
   }
 
-   /*!
-   * Set the boundary of a vertex
+   /*! sets the boundary of a vertex
    * \param p A vertex
    * \param ps_x The boundary condition at x.
    * \param ps_y The boundary condition at y.
@@ -816,8 +784,7 @@ public:
     return (v_to_set);
   }
 
-  /*!
-   * Create a new vertex.
+  /*! creates a new vertex.
    * \param p A pointer to the point (may be nullptr in case of a vertex at
    *          infinity).
    * \param ps_x The boundary condition at x.
@@ -842,8 +809,7 @@ public:
     return (new_v);
   }
 
-  /*!
-   * Create a new edge (halfedge pair), associated with the given curve.
+  /*! creates a new edge (halfedge pair), associated with the given curve.
    * \param cv A pointer to the x-monotone curve (may be nullptr in case of
    *           a fictitious edge).
    * \return A pointer to one of the created DCEL halfedge.
@@ -860,34 +826,29 @@ public:
     return new_he;
   }
 
-  /*!
-   * Create a new face.
+  /*! creates a new face.
    * \return A pointer to the created DCEL face.
    */
   Dcel_face* new_face() { return (p_arr->_dcel().new_face()); }
 
-  /*!
-   * Create a new outer CCB.
+  /*! creates a new outer CCB.
    * \return A pointer to the created DCEL outer CCB.
    */
   Dcel_outer_ccb* new_outer_ccb() { return (p_arr->_dcel().new_outer_ccb()); }
 
-  /*!
-   * Create a new inner CCB.
+  /*! creates a new inner CCB.
    * \return A pointer to the created DCEL inner CCB.
    */
   Dcel_inner_ccb* new_inner_ccb()
   {  return (p_arr->_dcel().new_inner_ccb()); }
 
-  /*!
-   * Create a new isolated vertex.
+  /*! creates a new isolated vertex.
    * \return A pointer to the created DCEL isolated vertex.
    */
   Dcel_isolated_vertex* new_isolated_vertex()
   { return (p_arr->_dcel().new_isolated_vertex()); }
 
-  /*!
-   * Remove a range of vertices
+  /*! removes a range of vertices
    */
   template <typename VertexRange>
   void delete_vertices(const VertexRange& range)
@@ -902,8 +863,7 @@ public:
     }
   }
 
-  /*!
-   * Remove a range of edges
+  /*! removes a range of edges
    */
   template <typename EdgeRange>
   void delete_edges(const EdgeRange& range)
@@ -918,8 +878,7 @@ public:
     }
   }
 
-  /*!
-   * Remove a range of faces
+  /*! removes a range of faces
    */
   template <typename FaceRange>
   void delete_faces(const FaceRange& range)
@@ -932,8 +891,7 @@ public:
     }
   }
 
-  /*!
-   * Remove a range of outer ccbs
+  /*! removes a range of outer ccbs
    */
   template <typename CcbRange>
   void delete_outer_ccbs(const CcbRange& range)
@@ -946,8 +904,7 @@ public:
     }
   }
 
-  /*!
-   * Remove a range of inner ccbs
+  /*! removes a range of inner ccbs
    */
   template <typename CcbRange>
   void delete_inner_ccbs(const CcbRange& range)
@@ -960,14 +917,13 @@ public:
     }
   }
 
-  /*!
-   * Update the topology traits after the DCEL has been updated.
+  /*! updates the topology traits after the DCEL has been updated.
    */
   void dcel_updated() { p_arr->topology_traits()->dcel_updated(); }
   //@}
 
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

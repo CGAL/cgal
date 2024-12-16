@@ -1,11 +1,11 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Bbox_3.h>
 
@@ -388,4 +388,3 @@ int main(int argc, char* argv[])
   std::cerr << "All done." << std::endl;
   return 0;
 }
-

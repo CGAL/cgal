@@ -9,8 +9,10 @@ convex sub-polygons \f$ P_1, \ldots, P_k\f$, such that
 
 \cgalRefines{PolygonConvexDecomposition_2}
 
-\cgalHasModel `CGAL::Polygon_vertical_decomposition_2<Kernel,Container>`
-\cgalHasModel `CGAL::Polygon_triangulation_decomposition_2<Kernel,Container>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polygon_vertical_decomposition_2<Kernel,Container>}
+\cgalHasModels{CGAL::Polygon_triangulation_decomposition_2<Kernel,Container>}
+\cgalHasModelsEnd
 
 */
 

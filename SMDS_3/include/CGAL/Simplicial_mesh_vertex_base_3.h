@@ -26,25 +26,72 @@
 
 #include <CGAL/SMDS_3/internal/indices_management.h>
 #include <CGAL/SMDS_3/io_signature.h>
+#include <CGAL/variant.h>
 #include <CGAL/Has_timestamp.h>
 
-#include <boost/variant.hpp>
+
 #include <tuple>
 
 namespace CGAL {
 
-//Class Simplicial_mesh_vertex_3
-//Adds information to Vb about the localization of the vertex in regards
-//to the 3D input complex.
-//\cgalModels `SimplicialMeshVertexBase_3`
-template<class GT,
-         typename Subdomain_index,
-         typename Surface_patch_index,
-         typename Curve_index,
-         typename Corner_index,
-         class Vb>
-class Simplicial_mesh_vertex_3
-: public Vb
+// Adds information to Vb about the localization of the vertex in regards to the 3D input complex.
+
+/*!
+\ingroup PkgSMDS3Classes
+
+The class `Simplicial_mesh_vertex_base_3` is a model of the concept
+`SimplicialMeshVertexBase_3`.
+It is designed to serve as vertex base class for 3D simplicial mesh data structures.
+It stores and gives access to data about the complex the vertex belongs to, such as the
+index of the subcomplex it belongs to.
+
+\tparam Gt is the geometric traits class.
+It must be a model of the concept `TriangulationTraits_3`
+
+\tparam SubdomainIndex Type of indices for subdomains of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must match the label
+of the exterior of the domain (which contains at least the unbounded component).
+It must match `MeshDomain_3::Subdomain_index` when used for mesh generation.
+
+\tparam SurfacePatchIndex Type of indices for surface patches (boundaries and interfaces)
+of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
+and `EqualityComparable`. The default constructed value must be the index value
+assigned to a non surface facet.
+It must match `MeshDomain_3::Surface_patch_index` when used for mesh generation.
+
+\tparam CurveIndex Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
+of the discretized geometric domain.
+Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
+`LessThanComparable`. The default constructed value must be the value for an edge which
+does not approximate a 1-dimensional feature of the geometric domain.
+It must match `MeshDomainWithFeatures_3::Curve_index` when used for mesh generation.
+
+\tparam CornerIndex Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
+of the discretized geometric domain.
+It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
+`LessThanComparable`.
+It must match `MeshDomainWithFeatures_3::Corner_index` when used for mesh generation.
+
+\tparam Vb is the vertex base class from which `Simplicial_mesh_vertex_base_3` derives.
+It must be a model of the concept `TriangulationVertexBase_3`.
+
+\cgalModels{SimplicialMeshVertexBase_3}
+
+\sa `CGAL::Mesh_complex_3_in_triangulation_3`
+\sa \link Mesh_vertex_base_3 `CGAL::Mesh_vertex_base_3`\endlink
+\sa `MeshDomain_3`
+\sa `MeshDomainWithFeatures_3`
+*/
+template<typename Gt,
+         typename SubdomainIndex,
+         typename SurfacePatchIndex,
+         typename CurveIndex,
+         typename CornerIndex,
+         typename Vb = CGAL::Triangulation_vertex_base_3<Gt> >
+class Simplicial_mesh_vertex_base_3
+  : public Vb
 {
 private :
   using Cmvb3_base = Vb;
@@ -53,11 +100,30 @@ public:
   using Vertex_handle = typename Vb::Vertex_handle;
 
   // Types
-  using Index = boost::variant<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
-  using FT = typename GT::FT;
+  using Subdomain_index = SubdomainIndex;
+  using Surface_patch_index = SurfacePatchIndex;
+  using Curve_index = CurveIndex;
+  using Corner_index = CornerIndex;
 
-  // Constructor
-  Simplicial_mesh_vertex_3()
+  using Index = Variant_with_no_duplicate_t<Subdomain_index, Surface_patch_index, Curve_index, Corner_index>;
+
+  using FT = typename Gt::FT;
+
+public:
+  template <typename TDS2>
+  struct Rebind_TDS
+  {
+    using Vb2 = typename Vb::template Rebind_TDS<TDS2>::Other;
+    using Other = Simplicial_mesh_vertex_base_3<Gt,
+                                                SubdomainIndex,
+                                                SurfacePatchIndex,
+                                                CurveIndex,
+                                                CornerIndex,
+                                                Vb2>;
+  };
+
+public:
+  Simplicial_mesh_vertex_base_3()
     : Vb()
     , number_of_incident_facets_(0)
     , number_of_components_(0)
@@ -155,8 +221,8 @@ private:
   std::size_t time_stamp_;
 
 public:
-
-  friend std::istream& operator>>(std::istream &is, Simplicial_mesh_vertex_3& v)
+  friend std::istream& operator>>(std::istream& is,
+                                  Simplicial_mesh_vertex_base_3& v)
   {
     is >> static_cast<Cmvb3_base&>(v);
     int dimension;
@@ -181,7 +247,8 @@ public:
     return is;
   }
 
-  friend std::ostream& operator<<(std::ostream &os, const Simplicial_mesh_vertex_3& v)
+  friend std::ostream& operator<<(std::ostream& os,
+                                  const Simplicial_mesh_vertex_base_3& v)
   {
     os << static_cast<const Cmvb3_base&>(v);
     if(IO::is_ascii(os)) {
@@ -200,89 +267,8 @@ public:
                                                 v.index());
     return os;
   }
-};  // end class Simplicial_mesh_vertex_3
-
-
-/*!
-\ingroup PkgSMDS3Classes
-
-The class `Simplicial_mesh_vertex_base_3` is a model of the concept
-`SimplicialMeshVertexBase_3`.
-It is designed to serve as vertex base class for 3D simplicial mesh data structures.
-It stores and gives access to data about the complex the vertex belongs to, such as the
-index of the subcomplex it belongs to.
-
-\tparam Gt is the geometric traits class.
-It must be a model of the concept `TriangulationTraits_3`
-
-\tparam Subdomain_index Type of indices for subdomains of the discretized geometric domain.
-Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
-and `EqualityComparable`. The default constructed value must match the label
-of the exterior of the domain (which contains at least the unbounded component).
- It must match the `Subdomain_index` of the model
-  of the `MeshDomain_3` concept when used for mesh generation.
-
-\tparam Surface_patch_index Type of indices for surface patches (boundaries and interfaces)
-of the discretized geometric domain.
-Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible`
-and `EqualityComparable`. The default constructed value must be the index value
-assigned to a non surface facet.
- It must match the `Surface_patch_index` of the model
-  of the `MeshDomain_3` concept when used for mesh generation.
-
-\tparam Curve_index Type of indices for curves (i.e. \f$ 1\f$-dimensional features)
-of the discretized geometric domain.
-Must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
-`LessThanComparable`. The default constructed value must be the value for an edge which
-does not approximate a 1-dimensional feature of the geometric domain.
- It must match the `Curve_index` types of the model
-  of the `MeshDomainWithFeatures_3` concept when used for mesh generation.
-
-\tparam  Corner_index Type of indices for corners (i.e.\f$ 0\f$--dimensional features)
-of the discretized geometric domain.
-It must be a model of `CopyConstructible`, `Assignable`, `DefaultConstructible` and
-`LessThanComparable`.
- It must match the `Corner_index` of the model
-  of the `MeshDomainWithFeatures_3` concept when used for mesh generation.
-
-\tparam Vb is the vertex base class. It has to be a model
-of the concept `TriangulationVertexBase_3` and defaults to
-`Triangulation_vertex_base_3<Gt>`.
-
-\cgalModels `SimplicialMeshVertexBase_3`
-
-\sa `CGAL::Mesh_complex_3_in_triangulation_3`
-\sa \link Mesh_vertex_base_3 `CGAL::Mesh_vertex_base_3`\endlink
-\sa `MeshDomain_3`
-\sa `MeshDomainWithFeatures_3`
-*/
-template<class Gt,
-         typename Subdomain_index,
-         typename Surface_patch_index,
-         typename Curve_index,
-         typename Corner_index,
-         class Vb = Triangulation_vertex_base_3<Gt> >
-struct Simplicial_mesh_vertex_base_3
-{
-  using Triangulation_data_structure = internal::Dummy_tds_3;
-  using Vertex_handle = typename Triangulation_data_structure::Vertex_handle;
-  using Cell_handle = typename Triangulation_data_structure::Cell_handle;
-
-  template < class TDS3 >
-  struct Rebind_TDS {
-    using Vb3 = typename Vb::template Rebind_TDS<TDS3>::Other;
-    using Other = Simplicial_mesh_vertex_3 <Gt,
-      Subdomain_index,
-      Surface_patch_index,
-      Curve_index,
-      Corner_index,
-      Vb3>;
-  };
 };
 
-
-}  // end namespace CGAL
-
-
+} // namespace CGAL
 
 #endif // CGAL_SIMPLICIAL_MESH_VERTEX_BASE_3_H

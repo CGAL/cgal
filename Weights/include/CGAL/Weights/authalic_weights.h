@@ -59,7 +59,7 @@ FT weight(const FT cot_gamma, const FT cot_beta, const FT r2)
 
   This function computes the half of the authalic weight using the precomputed
   cotangent and squared distance values. The returned value is
-  \f$\frac{2\textbf{cot}}{\textbf{sq_d}}\f$.
+  \f$\frac{2\textbf{cot}}{\textbf{sq\_d}}\f$.
 
   \tparam FT a model of `FieldNumberType`
 

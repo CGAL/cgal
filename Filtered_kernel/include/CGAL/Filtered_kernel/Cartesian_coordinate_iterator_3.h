@@ -15,14 +15,14 @@
 
 #include <cstddef>
 #include <iterator>
-#include <boost/variant.hpp>
+#include <variant>
 
 namespace CGAL {
 
 // This class should go away.
 // It is now only used by the Filtered_kernel.
 // It allows to iterate over the coordinates of both a Point_3 and a Vector_3,
-// using a boost::variant, as the iterator types are the same at the kernel level.
+// using a std::variant, as the iterator types are the same at the kernel level.
 
 template <class K>
 class Cartesian_coordinate_iterator_3
@@ -31,7 +31,7 @@ class Cartesian_coordinate_iterator_3
 protected:
   typedef typename K::Point_3 P;
   typedef typename K::Vector_3 V;
-  boost::variant<const P*, const V*> var;
+  std::variant<const P*, const V*> var;
   int index;
   typedef Cartesian_coordinate_iterator_3<K> Self;
 
@@ -57,9 +57,9 @@ public:
 
   reference
   operator*() const {
-    if (const P* const* p = boost::get<const P*>(&var))
+    if (const P* const* p = std::get_if<const P*>(&var))
       return (*p)->cartesian(index);
-    const V* const* v = boost::get<const V*>(&var);
+    const V* const* v = std::get_if<const V*>(&var);
     CGAL_assertion(v != 0);
     return (*v)->cartesian(index);
   }

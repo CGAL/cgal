@@ -46,7 +46,7 @@ type the property map must provide an index between 0 and the number of simplice
 the class `CGAL::Surface_mesh` as model of `FaceListGraph`.
 If you use the class `CGAL::Polyhedron_3`, you should use it with the item class `CGAL::Polyhedron_items_with_id_3`,
 for which default property maps are provided.
-This item class associates to each simplex an index that provides a \f$O(1)\f$ time access to the indices.
+This item class associates to each simplex an index that provides a \cgalBigO{1} time access to the indices.
 Note that the initialization of the property maps requires a call to `set_halfedgeds_items_id()`.
 
 The access to the embedding of each vertex is done using a point vertex property map associating to each vertex a 3D point.
@@ -111,7 +111,7 @@ the kernel's number type to `double`, using the `std::sqrt`, and converting it b
 with directly supports square roots to get the most precision of the shortest path computations.
 
 Using a kernel such as `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` with this package will indeed provide the exact shortest paths,
-but it will be extremely slow. Indeed, in order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `SurfaceMeshShortestPathTraits::Construct_triangle_3_to_triangle_2_projection` provides an initial layout of the first face in a sequence, by rotating a given face into the `xy`-plane.  `SurfaceMeshShortestPathTraits::Construct_triangle_3_along_segment_2_flattening` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, the exact representation types used with this kernel (either `CORE::Expr` or `leda_real`) will process extremely slow, even on very simple inputs.  This is because the exact representations will effectively add an \f$O(n)\f$ factor to every computation.
+but it will be extremely slow. Indeed, in order to compute the distance along the surface, it is necessary to unfold sequences of faces, edge-to-edge, out into a common plane.  The functor `SurfaceMeshShortestPathTraits::Construct_triangle_3_to_triangle_2_projection` provides an initial layout of the first face in a sequence, by rotating a given face into the `xy`-plane.  `SurfaceMeshShortestPathTraits::Construct_triangle_3_along_segment_2_flattening` unfolds a triangle into the plane, using a specified segment as a base.  Since this results in a chain of constructed triangles in the plane, the exact representation types used with this kernel (either `CORE::Expr` or `leda_real`) will process extremely slow, even on very simple inputs.  This is because the exact representations will effectively add an \cgalBigO{n} factor to every computation.
 
 \section Surface_mesh_shortest_pathExamples Examples
 

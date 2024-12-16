@@ -5,16 +5,16 @@
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::FT                                          Number_type;
+using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Number_type = Kernel::FT;
 
-typedef CGAL::Arr_non_caching_segment_traits_2<Kernel>      Traits;
-typedef Traits::Point_2                                     Point;
-typedef Traits::X_monotone_curve_2                          Segment;
+using Traits = CGAL::Arr_non_caching_segment_traits_2<Kernel>;
+using Point = Traits::Point_2;
+using Segment = Traits::X_monotone_curve_2;
 
-typedef CGAL::Arrangement_2<Traits>                         Arrangement;
-typedef Arrangement::Vertex_handle                          Vertex_handle;
-typedef Arrangement::Halfedge_handle                        Halfedge_handle;
-typedef Arrangement::Face_handle                            Face_handle;
+using Arrangement = CGAL::Arrangement_2<Traits>;
+using Vertex_handle = Arrangement::Vertex_handle;
+using Halfedge_handle = Arrangement::Halfedge_handle;
+using Face_handle = Arrangement::Face_handle;
 
 #endif

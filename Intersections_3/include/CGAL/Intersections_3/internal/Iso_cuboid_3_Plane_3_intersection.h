@@ -180,7 +180,7 @@ intersection(const typename K::Iso_cuboid_3& cub,
   }
 
   if (all_in || all_out)
-    return boost::none;
+    return std::nullopt;
   if (start_id == -1)
     return { result_type(corners[solo_id]) };
 

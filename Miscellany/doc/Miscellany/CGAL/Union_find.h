@@ -13,7 +13,7 @@ in the C++ standard. It has a default argument `CGAL_ALLOCATOR(T)`.
 
 `Union_find<T,A>` is implemented with union by rank and path
 compression. The running time for \f$ m\f$ set operations on \f$ n\f$ elements
-is \f$ O(n \alpha(m,n))\f$ where \f$ \alpha(m,n)\f$ is the extremely slow growing
+is \cgalBigO{n \alpha(m,n)} where \f$ \alpha(m,n)\f$ is the extremely slow growing
 inverse of Ackermann's function.
 
 */

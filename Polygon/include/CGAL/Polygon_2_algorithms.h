@@ -25,6 +25,7 @@
 #include <CGAL/enum.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/assertions.h>
+#include <CGAL/utils_classes.h>
 
 ///
 namespace CGAL {
@@ -142,6 +143,7 @@ area_2( ForwardIterator first, ForwardIterator last,
         const PolygonTraits& traits)
 {
   typedef typename PolygonTraits::FT FT;
+  internal::Evaluate<FT> evaluate;
    result = FT(0);
    // check if the polygon is empty
    if (first == last) return;
@@ -153,6 +155,7 @@ area_2( ForwardIterator first, ForwardIterator last,
    ForwardIterator third = second;
    while (++third != last) {
         result = result + compute_area_2(*first, *second, *third);
+        evaluate(result);
         second = third;
    }
 }
@@ -179,6 +182,7 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
                 const PolygonTraits& traits)
 {
    typedef typename PolygonTraits::FT FT;
+   internal::Evaluate<FT> evaluate;
    FT result = FT(0);
    // check if the polygon is empty
    if (first == last) return result;
@@ -190,6 +194,7 @@ polygon_area_2( ForwardIterator first, ForwardIterator last,
    ForwardIterator third = second;
    while (++third != last) {
         result = result + compute_area_2(*first, *second, *third);
+        evaluate(result);
         second = third;
    }
    return result;
@@ -231,7 +236,7 @@ bool is_convex_2(ForwardIterator first,
 ///
 /// The simplicity test is implemented by means of a plane sweep algorithm.
 /// The algorithm is quite robust when used with inexact number types.
-/// The running time is `O(n log n)`, where n is the number of vertices of the
+/// The running time is \cgalBigO{n log n}, where n is the number of vertices of the
 /// polygon.
 ///
 /// \sa `PolygonTraits_2`

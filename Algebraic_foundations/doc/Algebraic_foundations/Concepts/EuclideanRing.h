@@ -3,7 +3,7 @@
 \ingroup PkgAlgebraicFoundationsAlgebraicStructuresConcepts
 \cgalConcept
 
-A model of `EuclideanRing` represents an euclidean ring (or Euclidean domain).
+A model of `EuclideanRing` represents a Euclidean ring (or Euclidean domain).
 It is an `UniqueFactorizationDomain` that affords a suitable notion of minimality of remainders
 such that given \f$ x\f$ and \f$ y \neq 0\f$ we obtain an (almost) unique solution to
 \f$ x = qy + r \f$ by demanding that a solution \f$ (q,r)\f$ is chosen to minimize \f$ r\f$.

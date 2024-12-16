@@ -4,7 +4,7 @@
 # Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland),
 # INRIA Sophia-Antipolis (France),
-# Max-Planck-Institute for Informatics Saarbruecken (Germany), 
+# Max-Planck-Institute for Informatics Saarbruecken (Germany),
 # and Tel-Aviv University (Israel).  All rights reserved.
 #
 # This file is part of CGAL (www.cgal.org)
@@ -28,7 +28,6 @@
 #RS
 #BLAS
 #LAPACK
-#OPENNL
 #ESBTL
 #NTL
 
@@ -67,7 +66,7 @@ create_cmake_script_with_options()
         next_boost_component=`echo $LINE | grep -v "#" | grep BOOST_COMPONENT`
         if [ ! -z "$next_boost_component" ]; then
           next_boost_component=${next_boost_component/BOOST_COMPONENT /}
-          if [ -z "$BOOST_COMPONENTS" ]; then 
+          if [ -z "$BOOST_COMPONENTS" ]; then
             BOOST_COMPONENTS=$next_boost_component
           else
             BOOST_COMPONENTS=$BOOST_COMPONENTS":"$next_boost_component
@@ -86,13 +85,13 @@ create_cmake_script_with_options()
 # Created by the script cgal_create_CMakeLists
 # This is the CMake script for compiling a set of CGAL applications.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 
 EOF
   #---------------------------------------------------------------------------
   if [ "$SINGLE_SOURCE" = "n" ]; then
     echo "project( ${PROJECT} )"
-  else 
+  else
     echo "project( ${SOURCE} )"
   fi
 
@@ -124,7 +123,6 @@ fi
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[m|M][p|P][f|F][i|I]/MPFI}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[r|R][s|S]/RS}
 
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[o|O][p|P][e|E][n|N][n|N][l|L]/OpenNL}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[b|B][l|L][a|A][s|S]/BLAS}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[l|L][a|A][p|P][a|A][c|C][k|K]/LAPACK}
 
@@ -161,7 +159,7 @@ fi
 if ( NOT CGAL_FOUND )
 
   message(STATUS "This project requires the CGAL library, and will not be compiled.")
-  return()  
+  return()
 
 endif()
 
@@ -192,7 +190,7 @@ if ( NOT Boost_FOUND )
 
   message(STATUS "This project requires the Boost library, and will not be compiled.")
 
-  return()  
+  return()
 
 endif()
 EOF
@@ -208,7 +206,7 @@ EOF
 
   if [ -d include ] ; then
     echo 'include_directories( BEFORE include )'
-  fi		
+  fi
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
@@ -304,9 +302,9 @@ EOF
         fi
       fi
       #add a new line
-      echo 
+      echo
     done
-    
+
   else #======================================================================
 
     #################

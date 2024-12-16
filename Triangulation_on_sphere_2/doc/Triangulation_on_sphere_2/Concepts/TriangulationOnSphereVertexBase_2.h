@@ -9,7 +9,9 @@ of a triangulation data structure to be plugged in a triangulation on the sphere
 It refines the concept `TriangulationDSVertexBase_2`, adding geometric information:
 the vertex base of a triangulation stores a point.
 
-\cgalHasModel `CGAL::Triangulation_on_sphere_vertex_base_2<Traits,Vb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_on_sphere_vertex_base_2<Traits,Vb>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationOnSphereFaceBase_2`

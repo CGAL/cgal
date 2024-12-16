@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/boost/graph/graph_traits_Triangulation_2.h>
-#include <CGAL/boost/graph/dijkstra_shortest_paths.h>
+#include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <fstream>
 
@@ -60,9 +60,9 @@ int main(int argc,char* argv[])
   for(vertex_descriptor vd : vertices(tr))
   {
     std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "] ";
-    std::cout << " has distance = " << boost::get(distance_pmap,vd)
+    std::cout << " has distance = " << get(distance_pmap,vd)
               << " and predecessor ";
-    vd = boost::get(predecessor_pmap,vd);
+    vd = get(predecessor_pmap,vd);
     std::cout << vd->point() << " [" <<  vertex_id_map[vd] << "]\n ";
   }
 

@@ -16,7 +16,7 @@
 #include "ArrangementTypesUtils.h"
 #include "PointSnapper.h"
 
-#include <boost/optional.hpp>
+#include <optional>
 
 template <typename Arr_>
 class PointSnapper : public PointSnapperBase
@@ -26,7 +26,7 @@ class PointSnapper : public PointSnapperBase
 
 public:
   PointSnapper(QGraphicsScene*, GridGraphicsItem*, Arrangement*);
-  boost::optional<Point_2> snapToArrangement(const QPointF& qpt) override;
+  std::optional<Point_2> snapToArrangement(const QPointF& qpt) override;
 
 private:
   Arrangement* arr;
@@ -170,7 +170,7 @@ PointSnapper<Arr_>::PointSnapper(
 }
 
 template <typename Arrangement>
-inline boost::optional<PointSnapperBase::Point_2> snapToArrangement(
+inline std::optional<PointSnapperBase::Point_2> snapToArrangement(
   const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
 {
   using Point_2 = PointSnapperBase::Point_2;
@@ -215,7 +215,7 @@ struct SnapToArrangement
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2>
+  std::optional<Point_2>
   operator()(const QPointF& qpt, const QTransform&, Arrangement*)
   {
     return Point_2{qpt.x(), qpt.y()};
@@ -226,7 +226,7 @@ struct SnapToArrangement<CGAL::Arr_linear_traits_2<Kernel>>
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2> operator()(
+  std::optional<Point_2> operator()(
     const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
   {
     return snapToArrangement(qpt, worldTransform, arr);
@@ -237,7 +237,7 @@ struct SnapToArrangement<CGAL::Arr_segment_traits_2<Kernel>>
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2> operator()(
+  std::optional<Point_2> operator()(
     const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
   {
     return snapToArrangement(qpt, worldTransform, arr);
@@ -248,7 +248,7 @@ struct SnapToArrangement<CGAL::Arr_polyline_traits_2<Kernel>>
 {
   using Point_2 = PointSnapperBase::Point_2;
   template <typename Arrangement>
-  boost::optional<Point_2> operator()(
+  std::optional<Point_2> operator()(
     const QPointF& qpt, const QTransform& worldTransform, Arrangement* arr)
   {
     return snapToArrangement(qpt, worldTransform, arr);
@@ -257,7 +257,7 @@ struct SnapToArrangement<CGAL::Arr_polyline_traits_2<Kernel>>
 
 template <typename Arr_>
 auto PointSnapper<Arr_>::snapToArrangement(const QPointF& qpt)
-  -> boost::optional<Point_2>
+  -> std::optional<Point_2>
 {
   using Traits = typename Arrangement::Geometry_traits_2;
   auto view = getView();

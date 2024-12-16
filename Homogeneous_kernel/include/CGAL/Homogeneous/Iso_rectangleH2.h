@@ -42,7 +42,7 @@ public:
   Iso_rectangleH2() {}
 
   Iso_rectangleH2(const Point_2& p, const Point_2& q, int)
-    : base(CGAL::make_array(p, q))
+    : base{p, q}
   {
     // I have to remove the assertions, because of Homogeneous_converter.
     // CGAL_kernel_assertion(p.x()<=q.x());

@@ -36,7 +36,7 @@ namespace CGAL
   {
     static bool run(const CMap& amap, typename CMap::Dart_const_descriptor adart)
     {
-      // TODO? Optimisation for dim-2, and to not test all the darts of the cell?
+      // TODO? Optimization for dim-2, and to not test all the darts of the cell?
       bool res = true;
       for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
             res && it.cont(); ++it )
@@ -107,8 +107,10 @@ namespace CGAL
       {
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
+        {
           CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
-              run(amap, dg1, dg2);
+              run(amap, dg1, dg2, true); // true because dg1 will be removed
+        }
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -148,6 +150,9 @@ namespace CGAL
 
           if ( d1!=amap.null_dart_descriptor )
           {
+            internal::Set_dart_of_attribute_if_marked<CMap, i+1>::
+                run(amap, d1, mark);
+
             if ( d2!=amap.null_dart_descriptor && d1!=d2 )
             {
               amap.template basic_link_beta<i>(d1, d2);
@@ -353,7 +358,7 @@ namespace CGAL
         // We group the two edges incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::Group_attribute_functor_run<CMap, 1>::
-              run(amap, dg1, dg2);
+              run(amap, dg1, dg2, true); // true because dg1 will be removed
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -369,6 +374,9 @@ namespace CGAL
       {
         if ( !amap.template is_free<0>(*it) )
         {
+          internal::Set_dart_of_attribute_if_marked<CMap, 1>::
+              run(amap, amap.template beta<0>(*it), mark);
+
           if ( !amap.template is_free<1>(*it) &&
                amap.template beta<0>(*it)!=(*it) )
           {
@@ -454,7 +462,7 @@ namespace CGAL
   {
     static bool run(const CMap& amap, typename CMap::Dart_const_descriptor adart)
     {
-      // TODO ? Optimisation possible to not test all the darts of the cell ?
+      // TODO ? Optimization possible to not test all the darts of the cell ?
       bool res = true;
       for ( CGAL::CMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
             res && it.cont(); ++it )
@@ -523,7 +531,7 @@ namespace CGAL
         // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::Group_attribute_functor_run<CMap,i-1>::
-            run(amap, dg1, dg2);
+            run(amap, dg1, dg2, true); // true because dg1 will be removed
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -677,7 +685,7 @@ namespace CGAL
         // We group the two vertices incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::Group_attribute_functor_run<CMap, 0, 1>::
-            run(amap, dg1, dg2);
+            run(amap, dg1, dg2, true); // true because dg1 will be removed
       }
 
       // During the operation, we store in modified_darts the darts modified

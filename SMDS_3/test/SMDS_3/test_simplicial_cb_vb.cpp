@@ -19,7 +19,7 @@ using Surface_patch_index = std::pair<int, int>;
 using Curve_index = char;
 using Corner_index = short;
 
-using Cb = CGAL::Simplicial_mesh_cell_base_3<Subdomain_index, Surface_patch_index>;
+using Cb = CGAL::Simplicial_mesh_cell_base_3<K, Subdomain_index, Surface_patch_index>;
 using Vb = CGAL::Simplicial_mesh_vertex_base_3<K, Subdomain_index, Surface_patch_index,
                                                   Curve_index, Corner_index>;
 

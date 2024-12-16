@@ -5,13 +5,16 @@
 //
 // $URL$
 // $Id$
-// SPDX-License-Identifier: LGPL-3.0-or-later OR LicenseRef-Commercial
+// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 
 #ifndef CGAL_TRIANGULATION_2_TO_LCC_H
 #define CGAL_TRIANGULATION_2_TO_LCC_H
+
+#include <CGAL/license/Triangulation_2.h>
+
 
 #include <CGAL/assertions.h>
 #include <map>

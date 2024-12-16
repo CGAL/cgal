@@ -20,9 +20,11 @@
  *
  * At this point we do not expose all the requirements of this concept.
  *
- * \cgalHasModel `CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>`
- * \cgalHasModel `CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>`
- * \cgalHasModel `CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>`
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arr_bounded_planar_topology_traits_2<GeometryTraits_2,Dcel>}
+ * \cgalHasModels{CGAL::Arr_unb_planar_topology_traits_2<GeometryTraits_2,Dcel>}
+ * \cgalHasModels{CGAL::Arr_spherical_topology_traits_2<GeometryTraits_2,Dcel>}
+ * \cgalHasModelsEnd
  *
  * \sa `Arrangement_on_surface_2<GeometryTraits_2,TopologyTraits>`
  */

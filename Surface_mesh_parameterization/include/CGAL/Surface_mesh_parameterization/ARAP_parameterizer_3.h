@@ -134,7 +134,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// A one-to-one mapping is *not* guaranteed.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///
@@ -458,7 +458,7 @@ private:
                                       const Faces_vector& faces,
                                       Cot_map ctmap) const
   {
-    // Since we loop faces, we are implicitely defining the weight of border halfedges as 0...
+    // Since we loop faces, we are implicitly defining the weight of border halfedges as 0...
     for(face_descriptor fd : faces) {
       halfedge_descriptor hd = halfedge(fd, mesh), hdb = hd;
 

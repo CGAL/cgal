@@ -15,7 +15,9 @@ functor the version without offsets.
 
 \cgalRefines{Periodic_3TriangulationTraits_3,DelaunayTriangulationTraits_3}
 
-\cgalHasModel `CGAL::Periodic_3_Delaunay_triangulation_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_3_Delaunay_triangulation_traits_3}
+\cgalHasModelsEnd
 
 In addition to the requirements described by the concepts
 `Periodic_3TriangulationTraits_3` and `DelaunayTriangulationTraits_3`,

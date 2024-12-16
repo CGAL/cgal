@@ -30,7 +30,9 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_type_config.h>    // CGAL_PI is defined there
 #include <CGAL/enum.h>
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
+#endif
 #include <CGAL/Aff_transformation_2.h>
 
 namespace CGAL {
@@ -111,9 +113,9 @@ public:
 
 };
 
-
+#if defined(CGAL_USE_LEDA) || defined(CGAL_USE_CORE)
 /*
- The specialised functor for computing the directions of cone boundaries exactly
+ The specialized functor for computing the directions of cone boundaries exactly
  with a given cone number and a given initial direction.
 */
 template <>
@@ -209,6 +211,7 @@ public:
 
     }   // end of operator()
 };      // end of functor specialization: Compute_cone_..._2
+#endif
 
 }  // namespace CGAL
 

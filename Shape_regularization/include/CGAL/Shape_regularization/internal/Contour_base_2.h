@@ -755,10 +755,10 @@ namespace internal {
       typename CGAL::cpp11::result_of<Intersect_2(Line_2, Line_2)>::type result
       = CGAL::intersection(line_1, line_2);
       if (result) {
-        if (const Line_2* line = boost::get<Line_2>(&*result)) {
+        if (const Line_2* line = std::get_if<Line_2>(&*result)) {
           return false;
         } else {
-          const Point_2* point = boost::get<Point_2>(&*result);
+          const Point_2* point = std::get_if<Point_2>(&*result);
           in_point = *point; return true;
         }
       }

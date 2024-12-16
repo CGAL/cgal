@@ -72,10 +72,9 @@ namespace CGAL {
    * set the macro `CGAL_ALWAYS_LEFT_TO_RIGHT` to 1 before any \cgal header is
    * included.
    *
-   * \cgalModels `ArrangementTraits_2`
-   * \cgalModels `ArrangementDirectionalXMonotoneTraits_2`
-   * \cgalModels `ArrangementApproximateTraits_2` (if the type that substitutes
-   *   the template parameter `SubcurveTraits_2` models the concept as well)
+   * \cgalModels{ArrangementTraits_2,ArrangementDirectionalXMonotoneTraits_2,
+   *             ArrangementApproximateTraits_2 (if the type that substitutes
+   *   the template parameter `SubcurveTraits_2` models the concept as well)}
    *
    * \sa `Arr_algebraic_segment_traits_2<Coefficient>`
    * \sa `Arr_Bezier_curve_traits_2<RatKernel, AlgKernel, NtTraits>`
@@ -94,6 +93,7 @@ namespace CGAL {
 
     /// \name Types
     /// @{
+
     /*!
      */
     // TODO: Have to turn these into links, so whenever I mention Point_2 it
@@ -110,7 +110,7 @@ namespace CGAL {
      * polycurve.
      *
      * This functor constructs general polycurve. Its `operator()` is
-     * oveloaded to support various input types.
+     * overloaded to support various input types.
      *
      * Note that the composing subcurves, depending on the `SubcurveTraits_2`,
      * might not be \f$x\f$-monotone.
@@ -120,14 +120,14 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-      /*! Obtain a polycurve that comprises of one given subcurve.
+      /*! obtains a polycurve that comprises of one given subcurve.
        * \param subcurve input subcurve.
        * \pre `subcurve` is not degenerated (not tested).
        * \return A polycurve with one subcurve, namely `subcurve`.
        */
       Curve_2 operator()(const Subcurve_2& subcurve) const;
 
-      /*! Construct a well-oriented polycurve from a range of either
+      /*! constructs a well-oriented polycurve from a range of either
        * `SubcurveTraits_2::Point_2` or `SubcurveTraits_2::Curve_2`.
        *
        * \param begin iterator pointing to the first element in the
@@ -170,17 +170,17 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-      /*! Append a subcurve `subcurve` to an existing polycurve `cv` at the back.
-       * If `cv` is empty, `subcurve` will be its first subcurve.
+      /*! appends a subcurve `subcurve` to an existing polycurve `cv` at the
+       * back. If `cv` is empty, `subcurve` will be its first subcurve.
        * \param cv a polycurve. Note, `cv` is (not necessarily) \f$x\f$-monotone.
        * \param subcurve a subcurve (not necessarily \f$x\f$-monotone) to be
        *        appended to `cv`
        */
       void operator()(Curve_2& cv, const Subcurve_2& subcurve) const;
 
-      /*! Append a subcurve `subcurve` to an existing \f$x\f$-monotone polycurve
-       * `xcv` at the back. If `xcv` is empty, `subcurve` will be its first
-       * subcurve.
+      /*! appends a subcurve `subcurve` to an existing \f$x\f$-monotone
+       * polycurve `xcv` at the back. If `xcv` is empty, `subcurve` will be its
+       * first subcurve.
        * \param xcv existing \f$x\f$-monotone polycurve
        * \param subcurve the subcurve to be added
        * \pre If `xcv` is not empty then `subcurve` extends `xcv` to the right
@@ -202,7 +202,7 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-      /*! Append a subcurve `subcurve` to an existing polycurve `cv` at the
+      /*! appends a subcurve `subcurve` to an existing polycurve `cv` at the
        * front. If `cv` is empty, `subcurve` will be its first subcurve.
        * \param cv a polycurve. Note, `cv` is (not necessarily) \f$x\f$-monotone.
        * \param subcurve a subcurve (not necessarily \f$x\f$-monotone) to be
@@ -210,9 +210,9 @@ namespace CGAL {
        */
       void operator()(Curve_2& cv, const Subcurve_2& subcurve) const;
 
-      /*! Append a subcurve `subcurve` to an existing \f$x\f$-monotone polycurve
-       * `xcv` at the front. If `xcv` is empty, `subcurve` will be its first
-       * subcurve.
+      /*! appends a subcurve `subcurve` to an existing \f$x\f$-monotone
+       * polycurve `xcv` at the front. If `xcv` is empty, `subcurve` will be its
+       * first subcurve.
        * \param xcv existing \f$x\f$-monotone polycurve
        * \param subcurve the subcurve to be added
        * \pre If `xcv` is not empty then `subcurve` extends `xcv` to the left if
@@ -229,7 +229,7 @@ namespace CGAL {
 
     class Trim_2 {
     public:
-      /*! Obtain a trimmed version of the polycurve with src and tgt as end
+      /*! obtains a trimmed version of the polycurve with src and tgt as end
         * vertices.
         * Src and tgt will be swapped if they do not conform to the direction of
         * the polycurve.
@@ -239,17 +239,22 @@ namespace CGAL {
                                     const Point_2& tgt) const;
     };
 
-    /*! Subdivide a given subcurve into x-monotone subcurves and insert them
-     * into a given output iterator.
+    /*! subdivides a given subcurve into \f$x\f$-monotone subcurves and
+     * isolated points, and insert them into an output container. An object in
+     * the output container is represented by a discriminated union container
+     * that holds either a point or an \f$x\f$-monotone curve.
      */
     class Make_x_monotone_2 {
     public:
-      /*!
-      * \pre if `cv` is not empty then it must be continuous and well-oriented.
+      /*! performs the subdivision.
+       *
       * \param cv the subcurve.
-      * \param oi an output iterator for the result. Its value type is a variant
-      *           that wraps Point_2 or an X_monotone_curve_2 objects.
-      * \return the past-the-end iterator.
+      * \param oi The output iterator that points at the output container.
+      * \return the past-the-end iterator of the output container.
+      *
+      * \pre if `cv` is not empty, then it must be continuous and well-oriented.
+      * \pre Dereferencing `oi` must yield a polymorphic object of type
+      * `std::variant<`\link Arr_polycurve_traits_2::Point_2 `Point_2` \endlink, `X_monotone_curve_2>`.
       */
       template <typename OutputIterator>
       OutputIterator operator()(const Curve_2& cv, OutputIterator oi) const;
@@ -269,10 +274,10 @@ namespace CGAL {
      *
      * The copy and default constructor as well as the assignment operator are
      * provided for polycurve subcurves. In addition, an \link
-     * PkgArrangementOnSurface2op_left_shift `operator<<` \endlink for the subcurves is
-     * defined for standard output streams, and an \link
-     * PkgArrangementOnSurface2op_right_shift `operator>>` \endlink for the subcurves is
-     * defined for standard input streams.
+     * PkgArrangementOnSurface2op_left_shift `operator<<` \endlink for the
+     * subcurves is defined for standard output streams, and an \link
+     * PkgArrangementOnSurface2op_right_shift `operator>>` \endlink for the
+     * subcurves is defined for standard input streams.
      */
     template <typename SubcurveType_2, typename PointType_2>
     class Curve_2 {
@@ -319,15 +324,15 @@ namespace CGAL {
       /// \name Creation
       /// @{
 
-      /*! Default constructor that constructs an empty polycurve.
+      /*! constructs Default; constructs an empty polycurve.
        */
       Curve_2();
 
-      /*! Construct a polycurve from one subcurve.
+      /*! constructs a polycurve from one subcurve.
        */
       Curve_2(const Subcurve_2 subcurve);
 
-      /*! Construct a polycurve defined by the given range of subcurves
+      /*! constructs a polycurve defined by the given range of subcurves
        * `[first, last)` (the value-type of `InputIterator` must be
        * `SubcurveTraits_2::Curve_2`. In general, the subcurves might not
        * be \f$x\f$-monotone, furthermore, they might not form a
@@ -353,7 +358,7 @@ namespace CGAL {
       /// @{
 
       /*! \deprecated
-       * Obtain the number of subcurve end-points that comprise the polycurve.
+       * obtains the number of subcurve end-points that comprise the polycurve.
        * Note that for a bounded polycurve, if there are \f$ n\f$ points in the
        * polycurve, it comprises \f$ (n - 1)\f$ subcurves.
        * Currently, only bounded polycurves are supported.
@@ -361,20 +366,21 @@ namespace CGAL {
       unsigned_int points() const;
 
       /*! \deprecated
-       * Obtain an iterator pointing at the source point of the polycurve.
+       * obtains an iterator pointing at the source point of the polycurve.
        */
       const_iterator begin() const;
 
-      /*! Obtain an iterator pointing at the first subcurve of the polycurve.
+      /*! obtains an iterator pointing at the first subcurve of the polycurve.
        */
       Subcurve_const_iterator begin_subcurves() const;
 
       /*! \deprecated
-       * Obtain an iterator pointing after the end of the polycurve.
+       * obtains an iterator pointing after the end of the polycurve.
        */
       const_iterator end() const;
 
-      /*! Get an iterator pointing at the past-the-end subcurve of the polycurve.
+      /*! obtains an iterator pointing at the past-the-end subcurve of the
+       * polycurve.
        */
       Subcurve_const_iterator end_subcurves() const;
 
@@ -383,38 +389,38 @@ namespace CGAL {
        */
       const_iterator rbegin() const;
 
-      /*! Obtain an iterator pointing at the last subcurve of the polycurve.
+      /*! obtains an iterator pointing at the last subcurve of the polycurve.
        */
       Subcurve_const_reverse_iterator rbegin_subcurves() const;
 
       /*! \deprecated
-       * Obtain an iterator pointing before the beginning of the polycurve.
+       * obtains an iterator pointing before the beginning of the polycurve.
        */
       const_iterator rend() const;
 
-      /*! Obtain an iterator pointing at the past-the-end subcurve of
+      /*! obtains an iterator pointing at the past-the-end subcurve of
        * the polycurve in reverse order.
        */
       Subcurve_const_reverse_iterator rend_subcurves() const;
 
       /*! \deprecated
-       * Obtain the number of subcurves composing the polycurve
+       * obtains the number of subcurves composing the polycurve
        * (equivalent to `pi.points() - 1`). Was replaced by number_of_subcurves()
        */
       size_type size() const;
 
-      /*! Obtain the number of subcurves that comprise the polycurve.
+      /*! obtains the number of subcurves that comprise the polycurve.
        */
       size_type number_of_subcurves() const;
 
-      /*! Obtain the \f$ k\f$th subcurve of the polycurve.
+      /*! obtains the \f$ k\f$th subcurve of the polycurve.
        * \pre \f$k\f$ is not greater than or equal to \f$n-1\f$, where
        *      \f$n\f$ is the number of subcurves.
        */
       typename SubcurveTraits_2::X_monotone_curve_2
       operator[](size_t k) const;
 
-      /*! Obtain the bounding box of the polycurve.
+      /*! obtains the bounding box of the polycurve.
        */
       Bbox_2 bbox() const;
 
@@ -423,7 +429,7 @@ namespace CGAL {
       /// \name Operations
       /// @{
 
-      /*! Append a subcurve to the polycurve at the back.
+      /*! appends a subcurve to the polycurve at the back.
        * \a Warning: This function does not perform the precondition test
        *             that the `Push_back_2` functor does. Thus, it is
        *             recommended to use the latter.
@@ -434,7 +440,7 @@ namespace CGAL {
        */
       inline void push_back(const Subcurve_2& subcurve);
 
-      /*! Append a subcurve to the polycurve at the front.
+      /*! appends a subcurve to the polycurve at the front.
        * \a Warning: This is a risky function! Don't use it! Prefer the
        *             corresponding functor which is provided in the traits
        *             class.
@@ -446,19 +452,18 @@ namespace CGAL {
       inline void push_front(const Subcurve_2& subcurve);
 
       /*! \deprecated
-       * Add a new point to the polycurvs, which becomes the new target point
+       * adds a new point to the polycurvs, which becomes the new target point
        * of `pi`.
        */
       void push_back(const Point_2 & p);
 
-      /*! Reset the polycurve.
+      /*! resets the polycurve.
        */
       void clear();
 
       /// @} /* End of Operations */
 
     }; /* end Arr_polycurve_traits_2::Curve_2 */
-
 
     /*! The `X_monotone_curve_2` class nested within the polycurve
      * traits is used to represent \f$ x\f$-monotone piecewise linear subcurves.
@@ -514,4 +519,5 @@ namespace CGAL {
     /// @} /* End Accessing Functor Objects */
 
   }; /* end Arr_polycurve_traits_2 */
+
 } /* end namespace CGAL */

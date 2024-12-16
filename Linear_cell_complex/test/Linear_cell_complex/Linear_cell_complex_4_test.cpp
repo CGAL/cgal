@@ -35,7 +35,8 @@ struct Myattrib : public  CGAL::Cell_attribute_with_point
 
 struct MonInfo
 {
-  MonInfo(int i=0) : mnb(i==0?rand():i), ptr(reinterpret_cast<char*>(this))
+  MonInfo(long long int i=0) : mnb(i==0?rand():static_cast<int>(i)),
+                               ptr(reinterpret_cast<char*>(this))
   {}
 
   bool operator==(const MonInfo& info) const
@@ -57,6 +58,7 @@ struct Myitems_4b
 {
 #ifdef USE_COMPACT_CONTAINER_WITH_INDEX
   typedef CGAL::Tag_true Use_index;
+  using Index_type=std::uint64_t;
 #endif
   template <class LCC>
   struct Dart_wrapper

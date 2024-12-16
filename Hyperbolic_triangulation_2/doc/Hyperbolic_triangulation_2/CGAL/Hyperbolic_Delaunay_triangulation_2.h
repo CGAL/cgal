@@ -208,7 +208,7 @@ public:
   /// @{
     /*!
       Inserts the point `p` in the triangulation.
-      If the point `p` coincides with a existing vertex, then the vertex is returned
+      If the point `p` coincides with an existing vertex, then the vertex is returned
       and the triangulation is not modified. The optional parameter `start` is used
       to initialize the location of `p`.
     */
@@ -236,7 +236,7 @@ public:
     void remove(Vertex_handle v);
 
     /*!
-      Removes the vertices in the iterator range `[firs, last)` from the triangulation.
+      Removes the vertices in the iterator range `[first, last)` from the triangulation.
       \pre all vertices in `[first, last)` are vertices of the triangulation.
     */
     template <class VertexRemoveIterator>

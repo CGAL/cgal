@@ -161,11 +161,13 @@ public:
   }
 
 
-  Point_2 source(ISegment is) const
+  Point_2 source(const ISegment& is) const
   { return K.source(is->first()); }
-  Point_2 target(ISegment is) const
+
+  Point_2 target(const ISegment& is) const
   { return K.target(is->first()); }
-  ITERATOR original(ISegment s) const
+
+  ITERATOR original(const ISegment& s) const
   { return s->second(); }
 
   int orientation(ST_item sit, const Point_2& p) const
@@ -474,7 +476,7 @@ public:
 
   public:
     compare_segs_at_sweepline(const Point_2& pi,
-                         ISegment s1, ISegment s2,
+                              ISegment s1, ISegment s2,
                               const GEOMETRY& k)
      : p(pi), s_bottom(s1), s_top(s2), K(k)
     {}
@@ -673,6 +675,7 @@ public:
 
   Point_2 source(ISegment is) const
   { return K.source(is->first); }
+
   Point_2 target(ISegment is) const
   { return K.target(is->first); }
 
@@ -687,7 +690,8 @@ public:
         *sit1 == &sh ||
         *sit2 == &sl ||
         *sit2 == &sh) return false;
-    Point_2 ps = source(*sit2), pt = target(*sit2);
+    const Point_2& ps = source(*sit2);
+    const Point_2& pt = target(*sit2);
     return ( orientation(sit1,ps)==0 &&
              orientation(sit1,pt)==0 );
   }
@@ -758,8 +762,8 @@ public:
         continue;  // ignore zero-length segments regarding YS
       }
 
-      Point_2 p = *it1;
-      Point_2 q = *it2;
+      const Point_2& p = *it1;
+      const Point_2& q = *it2;
 
       Segment_2 s1;
       if ( K.compare_xy(p,q) < 0 )

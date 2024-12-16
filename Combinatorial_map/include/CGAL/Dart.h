@@ -141,7 +141,7 @@ namespace CGAL {
 
     Dart_descriptor get_f(unsigned int i) const
     {
-      assert(i<=dimension);
+      CGAL_assertion(i<=dimension);
       return mf[i];
     }
 
@@ -156,7 +156,7 @@ namespace CGAL {
     }
 
   protected:
-    /** Default constructor: no real initialisation,
+    /** Default constructor: no real initialization,
      *  because this is done in the combinatorial map class.
      */
     Dart_without_info()
@@ -300,7 +300,7 @@ namespace CGAL {
     { return Base::operator==(other) && minfo==other.minfo; }
 
   protected:
-    /** Default constructor: no real initialisation,
+    /** Default constructor: no real initialization,
      *  because this is done in the combinatorial or generalized map class.
      */
     Dart()=default; //  default => zero-initializing built-in types

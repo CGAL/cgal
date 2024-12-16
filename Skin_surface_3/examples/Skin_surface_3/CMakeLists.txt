@@ -1,7 +1,7 @@
 # Created by the script cgal_create_cmake_script
 # This is the CMake script for compiling a CGAL application.
 
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Skin_surface_3_Examples)
 
 find_package(CGAL REQUIRED)
@@ -19,6 +19,7 @@ create_single_source_cgal_program("skin_surface_subdiv.cpp")
 create_single_source_cgal_program("skin_surface_subdiv_with_normals.cpp")
 create_single_source_cgal_program("union_of_balls_simple.cpp")
 create_single_source_cgal_program("union_of_balls_subdiv.cpp")
+create_single_source_cgal_program("skin_surface_retrieve_defining_weighted_points.cpp")
 
 find_package(ESBTL QUIET)
 if(ESBTL_FOUND)

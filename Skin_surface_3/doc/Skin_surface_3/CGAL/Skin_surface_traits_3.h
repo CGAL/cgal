@@ -10,7 +10,7 @@ the `SkinSurfaceTraits_3`.
 
 \tparam K must be a model of the `Kernel` concept.
 
-\cgalModels `SkinSurfaceTraits_3`
+\cgalModels{SkinSurfaceTraits_3}
 
 */
 template< typename K >

@@ -22,7 +22,7 @@
 
 #include <Eigen/Dense>
 
-#include <boost/optional/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 namespace Surface_mesh_simplification {
@@ -199,14 +199,14 @@ public:
 public:
   // Cost
   template <typename Profile>
-  boost::optional<typename Profile::FT>
+  std::optional<typename Profile::FT>
   operator()(const Profile& profile,
-             const boost::optional<typename Profile::Point>& placement) const
+             const std::optional<typename Profile::Point>& placement) const
   {
-    typedef boost::optional<typename Profile::FT>                              Optional_FT;
+    typedef std::optional<typename Profile::FT>                              Optional_FT;
 
     if(!placement)
-      return boost::optional<typename Profile::FT>();
+      return std::optional<typename Profile::FT>();
 
     CGAL_precondition(!get(vcm(), profile.v0()).isZero(0));
     CGAL_precondition(!get(vcm(), profile.v1()).isZero(0));
@@ -222,7 +222,7 @@ public:
 public:
   // Placement
   template <typename Profile>
-  boost::optional<typename Profile::Point> operator()(const Profile& profile) const
+  std::optional<typename Profile::Point> operator()(const Profile& profile) const
   {
     CGAL_precondition(!get(vcm(), profile.v0()).isZero(0));
     CGAL_precondition(!get(vcm(), profile.v1()).isZero(0));
@@ -236,7 +236,7 @@ public:
 
     const Col_4 opt = construct_optimum(combined_matrix, p0, p1);
 
-    boost::optional<typename Profile::Point> pt = typename Profile::Point(opt(0) / opt(3),
+    std::optional<typename Profile::Point> pt = typename Profile::Point(opt(0) / opt(3),
                                                                           opt(1) / opt(3),
                                                                           opt(2) / opt(3));
 

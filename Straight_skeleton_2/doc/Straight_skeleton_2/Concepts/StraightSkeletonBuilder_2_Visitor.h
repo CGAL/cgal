@@ -5,7 +5,9 @@
 The concept `StraightSkeletonBuilder_2_Visitor` describes the requirements of the visitor class
 required by the algorithm class `CGAL::Straight_skeleton_builder_2` in its third template parameter.
 
-\cgalHasModel `CGAL::Dummy_straight_skeleton_builder_2_visitor`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Dummy_straight_skeleton_builder_2_visitor}
+\cgalHasModelsEnd
 
 \sa `CGAL::Straight_skeleton_builder_2`
 */

@@ -18,7 +18,7 @@ additional template parameters.
 
 \tparam FaceBase  must be a model of `TriangulationDSFaceBase_2`. The default is `Triangulation_ds_face_base_2<TDS>`.
 
-\cgalModels `TriangulationDataStructure_2`
+\cgalModels{TriangulationDataStructure_2}
 
 \cgalHeading{Modifiers}
 

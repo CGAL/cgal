@@ -2,6 +2,7 @@
 #include "test_Prefix.h"
 #include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
+#include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/IO/OFF.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
@@ -16,6 +17,7 @@ test_copy_face_graph_nm_umbrella()
   T g;
   Kernel::Point_3 p(0,0,0);
 
+  // make two connected components
   CGAL::make_tetrahedron(p, p, p, p, g);
   CGAL::make_tetrahedron(p, p, p, p, g);
 
@@ -270,8 +272,8 @@ join_vertex_interior_test()
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
   assert(CGAL::internal::exact_num_vertices(f.m) == 5);
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
-  assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 3);
-  assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
+  assert(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m).size() == 3);
+  assert(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m).size() == 3);
   assert(degree(f.x, f.m) == 4);
   assert(CGAL::is_valid_polygon_mesh(f.m));
 }
@@ -295,8 +297,8 @@ join_vertex_exterior_test()
     assert(CGAL::internal::exact_num_faces(f.m) == 2);
     assert(CGAL::internal::exact_num_vertices(f.m) == 5);
     assert(CGAL::internal::exact_num_edges(f.m) == 6);
-    assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
-    assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
+    assert(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m).size() == 4);
+    assert(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m).size() == 3);
     assert(degree(f.y, f.m) == 3);
     assert(CGAL::is_valid_polygon_mesh(f.m));
   }
@@ -314,8 +316,8 @@ join_vertex_exterior_test()
     assert(CGAL::internal::exact_num_faces(f.m) == 2);
     assert(CGAL::internal::exact_num_vertices(f.m) == 5);
     assert(CGAL::internal::exact_num_edges(f.m) == 6);
-    assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
-    assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
+    assert(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m).size() == 4);
+    assert(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m).size() == 3);
 
     assert(CGAL::is_valid_polygon_mesh(f.m));
     assert(degree(f.w, f.m) == 3);
@@ -344,8 +346,8 @@ split_vertex()
   assert(CGAL::is_valid_polygon_mesh(f.m));
   assert(CGAL::internal::exact_num_vertices(f.m) == 7);
   assert(CGAL::internal::exact_num_edges(f.m) == 8);
-  assert(boost::distance(CGAL::halfedges_around_face(h1, f.m)) == 5);
-  assert(boost::distance(CGAL::halfedges_around_face(h2, f.m)) == 7);
+  assert(CGAL::halfedges_around_face(h1, f.m).size() == 5);
+  assert(CGAL::halfedges_around_face(h2, f.m).size() == 7);
 }
 
 template <typename T>
@@ -371,8 +373,8 @@ split_join_vertex_inverse()
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
   assert(CGAL::internal::exact_num_halfedges(f.m) == 12);
-  assert(boost::distance(CGAL::halfedges_around_face(h1, f.m)) == 3);
-  assert(boost::distance(CGAL::halfedges_around_face(h2, f.m)) == 3);
+  assert(CGAL::halfedges_around_face(h1, f.m).size() == 3);
+  assert(CGAL::halfedges_around_face(h2, f.m).size() == 3);
 }
 
 
@@ -476,8 +478,8 @@ test_swap_edges()
     {
       Graph g;
       CGAL::make_tetrahedron(pt,pt,pt,pt,g);
-      halfedge_descriptor h1 = *std::next(boost::begin(halfedges(g)), i);
-      halfedge_descriptor h2 = *std::next(boost::begin(halfedges(g)), j);
+      halfedge_descriptor h1 = *std::next(std::begin(halfedges(g)), i);
+      halfedge_descriptor h2 = *std::next(std::begin(halfedges(g)), j);
       CGAL::internal::swap_edges(h1, h2, g);
       assert(CGAL::is_valid_polygon_mesh(g));
     }
@@ -530,7 +532,7 @@ add_faces()
   typedef typename boost::graph_traits<T>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<T>::halfedge_descriptor halfedge_descriptor;
 
-  // read a mesh with bord + test append
+  // read a mesh with border + test append
   {
   T m;
 

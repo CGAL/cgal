@@ -20,7 +20,7 @@ circumcenter.
 be a model of `RegularTriangulationCellBase_3`.
 It has the default value `Regular_triangulation_cell_base_3<RT>`.
 
-\cgalModels `RegularTriangulationCellBaseWithWeightedCircumcenter_3`
+\cgalModels{RegularTriangulationCellBaseWithWeightedCircumcenter_3}
 
 \sa `CGAL::Triangulation_cell_base_3`
 \sa `CGAL::Triangulation_cell_base_with_info_3`

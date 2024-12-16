@@ -117,7 +117,7 @@ if [ "$HAS_REF" -ne "1" ]; then
   if [ $IS_RELEASE = 0 ]; then
     cd $ROOT
     mkdir -p ./build && cd ./build
-    cmake -DWITH_CGAL_Core=false -DWITH_CGAL_ImageIO=false -DWITH_CGAL_Qt5=false .. 1>> ./build_logs
+    cmake -DWITH_CGAL_Core=false -DWITH_CGAL_ImageIO=false -DWITH_CGAL_Qt6=false .. 1>> ./build_logs
     CGAL_NAME="$(cat $PWD/VERSION)"
     cd $ROOT
     rm -rf ./build

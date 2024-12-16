@@ -18,6 +18,7 @@
 #include <CGAL/number_utils_classes.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/constructions/kernel_ftC3.h>
 
 namespace CGAL {
@@ -530,6 +531,13 @@ public:
 
   Robust_circumcenter_filtered_traits_3(const Kernel& k = Kernel()) : Kernel(k) { }
 };
+
+
+template < class BaseGt >
+struct Triangulation_structural_filtering_traits<Robust_circumcenter_filtered_traits_3<BaseGt> > {
+    typedef typename Triangulation_structural_filtering_traits<BaseGt>::Use_structural_filtering_tag  Use_structural_filtering_tag;
+};
+
 
 template<class K_>
 class Robust_weighted_circumcenter_filtered_traits_3

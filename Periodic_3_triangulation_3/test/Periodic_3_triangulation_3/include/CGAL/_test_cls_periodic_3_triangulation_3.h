@@ -479,10 +479,10 @@ _test_cls_periodic_3_triangulation_3(const PeriodicTriangulation &,
   _test_vertex_iterator(PT3_deg);
   _test_vertex_iterator(PT1_deg);
 
-  _test_unique_vertex_iterator(PT3);
-  _test_unique_vertex_iterator(PT1);
-  _test_unique_vertex_iterator(PT3_deg);
-  _test_unique_vertex_iterator(PT1_deg);
+  _test_triangulation_unique_iterator(PT3);
+  _test_triangulation_unique_iterator(PT1);
+  _test_triangulation_unique_iterator(PT3_deg);
+  _test_triangulation_unique_iterator(PT1_deg);
 
   _test_triangulation_iterator(PT3);
   _test_triangulation_iterator(PT1);

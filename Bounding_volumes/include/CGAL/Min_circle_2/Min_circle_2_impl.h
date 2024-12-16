@@ -10,6 +10,11 @@
 //
 // Author(s)     : Sven Schoenherr <sven@inf.ethz.ch>, Bernd Gaertner
 
+#ifndef CGAL_MIN_CIRCLE_2_MIN_CIRCLE_2_IMPL_H
+#define CGAL_MIN_CIRCLE_2_MIN_CIRCLE_2_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 #include <iterator>
 
 namespace CGAL {
@@ -98,3 +103,5 @@ operator >> ( std::istream& is, CGAL::Min_circle_2<Traits_>& min_circle)
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif // CGAL_MIN_CIRCLE_2_MIN_CIRCLE_2_IMPL_H

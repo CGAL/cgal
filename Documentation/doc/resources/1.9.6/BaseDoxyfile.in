@@ -87,7 +87,7 @@ ALIASES                = "cgal=%CGAL" \
                          "gnu=GNU" \
                          "ms=MS" \
                          "qt=Qt" \
-                         "qt5=Qt5" \
+                         "qt6=Qt6" \
                          "eigen=Eigen" \
                          "opengr=OpenGR" \
                          "libpointmatcher=libpointmatcher" \
@@ -115,7 +115,6 @@ ALIASES                = "cgal=%CGAL" \
                          "taucs=TAUCS" \
                          "lapack=LAPACK" \
                          "blas=BLAS" \
-                         "opennl=OpenNL" \
                          "cpp=C++" \
                          "cpp11=C++11" \
                          "CC=C++" \
@@ -144,9 +143,22 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalRefines{5}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
                          "cgalRefinesBare{1}=<dl><dt>@cgalRefines</dt><dd>\1</dd></dl>" \
                          "cgalRefinesBare{2}=<dl><dt>@cgalRefines</dt><dd>@c \1</dd><dt></dt><dd>\2</dd></dl>" \
-                         "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\"" \
+                         "cgalModelsHeader=Is model of" \
+                         "cgalModels{1}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd></dl>" \
+                         "cgalModels{2}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd></dl>" \
+                         "cgalModels{3}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd></dl>" \
+                         "cgalModels{4}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd></dl>" \
+                         "cgalModels{5}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd></dl>" \
+                         "cgalModels{6}=<dl><dt>@cgalModelsHeader</dt><dd>@c \1</dd><dt></dt><dd>@c \2</dd><dt></dt><dd>@c \3</dd><dt></dt><dd>@c \4</dd><dt></dt><dd>@c \5</dd><dt></dt><dd>@c \6</dd></dl>" \
+                         "cgalModelsBareBegin=<dl><dt>@cgalModelsHeader</dt><dd></dd>" \
+                         "cgalModelsBareEnd=</dl>" \
+                         "cgalModelsBare{1}=<dt></dt><dd>\1</dd>" \
                          "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\"" \
-                         "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\"" \
+                         "cgalHasModelsHeader=Has models" \
+                         "cgalHasModelsBegin=<dl><dt>@cgalHasModelsHeader</dt><dd></dd>" \
+                         "cgalHasModels{1}=<dt></dt><dd>`\1`</dd>" \
+                         "cgalHasModelsBare{1}=<dt></dt><dd>\1</dd>" \
+                         "cgalHasModelsEnd=</dl>" \
                          "cgalDebugBegin=\htmlonly[block] <div class=\"CGALDebug\"> <div>Debugging Support</div> \endhtmlonly ^^" \
                          "cgalDebugEnd=\htmlonly[block] </div> \endhtmlonly" \
                          "cgalDebugFunction=This is a function for debugging purpose." \
@@ -168,9 +180,9 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalPkgSince{1}=<B>Introduced in:</B> \cgal \1<BR>" \
                          "cgalPkgDependsOn{1}=<B>Depends on:</B> \1 <BR>" \
                          "cgalPkgLicense{1}=<B>License:</B> \1 <BR>" \
-                         "cgalPkgDemo{2}=<B>Windows Demo:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
-                         "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
-                         "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR><B>Common Demo Dlls:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/CGAL-demoDLLs.zip\">dlls</a><BR>" \
+                         "cgalPkgDemo{2}=<B>Windows Demo:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a><BR>" \
+                         "cgalPkgDemo{4}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a><BR>" \
+                         "cgalPkgDemo{6}=<B>Windows Demos:</B> <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\2\">\1</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\4\">\3</a>, <a href=\"https://www.cgal.org/demo/${CGAL_CREATED_VERSION_NUM}/\6\">\5</a><BR>" \
                          "cgalPkgDescriptionEnd=" \
                          "cgalModifBegin=\htmlonly <div class=\"CGALModification\"> \endhtmlonly \xrefitem Modification \"Modifications\" \"MODIFICATIONS\"" \
                          "cgalModifEnd=\htmlonly </div> \endhtmlonly \latexonly END MODIFICATIONS \endlatexonly" \
@@ -197,7 +209,11 @@ ALIASES                = "cgal=%CGAL" \
                          "cgalParamNEnd=</ul> \htmlonly[block] </div> \endhtmlonly </td><td></td></tr>" \
                          "cgalParamSectionBegin{1}=\cgalParamNBegin{\1}" \
                          "cgalParamSectionEnd=\cgalParamNEnd" \
-                         "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>"
+                         "cgalParamPrecondition{1}=<li><b>Precondition: </b>\1</li>" \
+                         "cgalBigO{1}=\f$O(\1)\f$" \
+                         "cgalBigOLarge{1}=\f$O\left(\1\right)\f$" \
+                         "cgalInclude{1}=`#include<\1>`" \
+                         "cgalEpicExact=<dl class=\"section note\"><dt>Exactness</dt><dd>This construction is trivial and therefore always exact in `Exact_predicates_inexact_constructions_kernel`.</dd></dl>"
 
 # Doxygen selects the parser to use depending on the extension of the files it
 # parses. With this tag you can assign which parser to use for a given
@@ -470,6 +486,24 @@ HTML_HEADER            = ${CGAL_DOC_HEADER_PACKAGE}
 
 HTML_FOOTER            = ${CGAL_DOC_RESOURCE_DIR}/footer.html
 
+# The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
+# cascading style sheets that are included after the standard style sheets
+# created by doxygen. Using this option one can overrule certain style aspects.
+# This is preferred over using HTML_STYLESHEET since it does not replace the
+# standard style sheet and is therefore more robust against future updates.
+# Doxygen will copy the style sheet files to the output directory.
+# Note: The order of the extra style sheet files is of importance (e.g. the last
+# style sheet in the list overrules the setting of the previous ones in the
+# list).
+# Note: Since the styling of scrollbars can currently not be overruled in
+# Webkit/Chromium, the styling will be left out of the default doxygen.css if
+# one or more extra stylesheets have been specified. So if scrollbar
+# customization is desired it has to be added explicitly. For an example see the
+# documentation.
+# This tag requires that the tag GENERATE_HTML is set to YES.
+
+HTML_EXTRA_STYLESHEET  = ${CGAL_DOC_RESOURCE_DIR}/cgal_stylesheet.css
+
 # If you want full control over the layout of the generated HTML pages it might
 # be necessary to disable the index and replace it with your own. The
 # DISABLE_INDEX tag can be used to turn on/off the condensed index (tabs) at top
@@ -643,7 +677,9 @@ PREDEFINED             = DOXYGEN_RUNNING \
                          "CGAL_NP_CLASS_1=NamedParameters1" \
                          "CGAL_NP_TEMPLATE_PARAMETERS_2=NamedParameters2 = CGAL::parameters::Default_named_parameter" \
                          "CGAL_NP_CLASS_2=NamedParameters2" \
-                         CGAL_DEPRECATED
+                         CGAL_DEPRECATED  \
+                         CGAL_DEPRECATED_MSG(name)=
+
 
 #---------------------------------------------------------------------------
 # Configuration options related to external references
@@ -791,5 +827,5 @@ GENERATE_LEGEND        = NO
 # NO_ADDITIONAL_DETAILS tag is set to YES. This tag has no effect if
 # the EXTRACT_ALL tag is set to NO.
 # The default value is: NO.
-NO_ADDITIONAL_DETAILS = YES
+${CGAL_OPT_NO_ADDITIONAL_DETAILS}
 

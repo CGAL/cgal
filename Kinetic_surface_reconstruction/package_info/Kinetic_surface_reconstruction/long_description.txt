@@ -1,0 +1,5 @@
+Kinetic Surface Reconstruction
+
+This CGAL package reconstructs a piece-wise planar 3D surface from a point cloud.
+Planar shapes, detected in the input point cloud, partition the bounding box of the input data via Kinetic Shape Partition.
+The reconstruction is formulated as an energy minimization trading data faithfulness for simplicity which labels the cells in the partition and solved by graph-cut.

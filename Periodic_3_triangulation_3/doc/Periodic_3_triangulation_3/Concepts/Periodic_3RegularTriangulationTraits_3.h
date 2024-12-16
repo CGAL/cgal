@@ -15,10 +15,12 @@ functor the version without offsets.
 
 \cgalRefines{Periodic_3TriangulationTraits_3,RegularTriangulationTraits_3}
 
-\cgalHasModel `CGAL::Periodic_3_regular_triangulation_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_3_regular_triangulation_traits_3}
+\cgalHasModelsEnd
 
 In addition to the requirements described for the traits class
-RegularTriangulationTraits_3, the geometric traits class of a
+`RegularTriangulationTraits_3`, the geometric traits class of a
 periodic regular triangulation must fulfill the following
 requirements.
 
@@ -248,4 +250,3 @@ Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object();
 /// @}
 
 }; /* end Periodic_3RegularTriangulationTraits_3 */
-

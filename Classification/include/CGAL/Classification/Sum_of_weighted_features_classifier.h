@@ -48,7 +48,7 @@ namespace Classification {
   \brief %Classifier based on the sum of weighted features with
   user-defined effects on labels.
 
-  \cgalModels `CGAL::Classification::Classifier`
+  \cgalModels{CGAL::Classification::Classifier}
 */
 class Sum_of_weighted_features_classifier
 {

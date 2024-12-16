@@ -25,10 +25,11 @@
 #include <CGAL/circulator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/tuple.h>
+#include <CGAL/type_traits.h>
 #include <CGAL/use.h>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 #include <boost/config.hpp>
 
 #include <vector>
@@ -37,28 +38,34 @@
 
 namespace CGAL {
 
-template<typename I>
+template<typename I, typename Reference_type = const I&>
 class Prevent_deref
   : public boost::iterator_adaptor<
-  Prevent_deref<I>
+    Prevent_deref<I, Reference_type>
   , I // base
-  , I // value
+  , CGAL::cpp20::remove_cvref_t<Reference_type> // value
+  , boost::use_default // category
+  , Reference_type // ref
   >
 {
 public:
-  typedef boost::iterator_adaptor<
-  Prevent_deref<I>
+  using Value_type = CGAL::cpp20::remove_cvref_t<Reference_type>;
+  using Base = boost::iterator_adaptor<
+    Prevent_deref<I, Reference_type>
   , I // base
-  , I // value
-  > Base;
-  typedef typename Base::reference reference;
+  , Value_type // value
+  , boost::use_default // category
+  , Reference_type // ref
+  >;
   typedef typename std::pair<I, I> range;
 
-  Prevent_deref() : Base() {}
+  Prevent_deref() = default;
   Prevent_deref(const I& i) : Base(i) {}
 private:
   friend class boost::iterator_core_access;
-  reference dereference() const { return const_cast<typename boost::remove_reference<reference>::type&>(this->base_reference()); }
+  Reference_type dereference() const {
+    return this->base_reference();
+  }
 };
 
 template<typename I>
@@ -608,7 +615,7 @@ public:
   reference operator*() const { return *c_;  }
   pointer operator->() const  { return &*c_; }
   const Predicate& predicate() const { return p_; }
-  Iterator base() const { return c_; }
+  const Iterator& base() const { return c_; }
 
   Iterator end() const { return e_; }
   bool is_end() const { return (c_ == e_); }
@@ -1262,7 +1269,7 @@ filter_output_iterator(I e, const P& p)
 namespace internal {
 
 template<typename OutputIterator>
-struct Output_visitor : boost::static_visitor<OutputIterator&> {
+struct Output_visitor {
   Output_visitor(OutputIterator* it) : out(it) {}
   OutputIterator* out;
 
@@ -1380,17 +1387,17 @@ public:
     return *this;
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& t) {
+  template<typename ... T>
+  Self& operator=(const std::variant< T ... >& t) {
     internal::Output_visitor<Self> visitor(this);
-    t.apply_visitor(visitor);
+    std::visit(visitor, t);
     return *this;
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-  Self& operator=(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t) {
+  template<typename ... T>
+  Self& operator=(const std::optional< std::variant< T ... > >& t) {
     internal::Output_visitor<Self> visitor(this);
-    if(t)  boost::apply_visitor(visitor, *t);
+    if(t)  std::visit(visitor, *t);
     return *this;
   }
 
@@ -1457,6 +1464,19 @@ public:
   template <class T>
   Self& operator=(const T&) { return *this; }
 
+  template<typename ... T>
+  Self& operator=(const std::variant< T ... >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    std::visit(visitor, t);
+    return *this;
+  }
+
+  template<typename ... T>
+  Self& operator=(const std::optional< std::variant< T ... > >& t) {
+    internal::Output_visitor<Self> visitor(this);
+    if(t)  std::visit(visitor, *t);
+    return *this;
+  }
 };
 
 

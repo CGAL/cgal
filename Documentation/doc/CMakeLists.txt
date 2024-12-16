@@ -1,7 +1,5 @@
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 project(Documentation NONE)
-
-# Minimal version of CMake:
 
 # Check whether this cmake script is the top level one
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
@@ -28,6 +26,18 @@ endif()
 
 find_package(Doxygen REQUIRED)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
+
+if (NOT Python3_EXECUTABLE)
+  message(FATAL_ERROR "Cannot build the documentation without Python3!")
+  return()
+endif()
+
+message(STATUS  ${Python3_EXECUTABLE})
+
+if(NOT DOXYGEN_FOUND)
+  message(WARNING "Cannot build the documentation without Doxygen!")
+  return()
+endif()
 
 #starting from cmake 3.9 the usage of DOXYGEN_EXECUTABLE is deprecated
 if(TARGET Doxygen::doxygen)
@@ -67,6 +77,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
   if(NOT EXISTS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
     return()
   endif()
+  set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
 
   set(CGAL_DOC_PACKAGE_DEFAULTS
       ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
@@ -154,6 +165,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     endforeach()
   else()
     if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
+      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
       file(STRINGS ${CGAL_PACKAGE_DOC_DIR}/dependencies DEPENDENCIES)
     endif()
   endif()
@@ -241,6 +253,18 @@ else()
       "#EXTRACT_ALL_NO_DETAILED_IF_EMPTY = NO")
 endif()
 
+option(CGAL_NO_ADDITIONAL_DETAILS
+       "Use CGAL special doxygen setting NO_ADDITIONAL_DETAILS." ON)
+if(CGAL_NO_ADDITIONAL_DETAILS)
+  set(CGAL_OPT_NO_ADDITIONAL_DETAILS
+      "NO_ADDITIONAL_DETAILS = YES")
+else()
+  # The default is NO, so we could leave it out, but it is better to have a commented out placeholder
+  # this will work for versions with and without the setting.
+  set(CGAL_OPT_NO_ADDITIONAL_DETAILS
+      "#NO_ADDITIONAL_DETAILS = NO")
+endif()
+
 #we use two directories for the generation/reading of tag files to prevent issues
 #if the targets are built in parallel
 set(CGAL_DOC_TAG_GEN_DIR "${CMAKE_BINARY_DIR}/doc_gen_tags")
@@ -251,7 +275,7 @@ set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
 #Setting the resource directory depending on the version of doxygen
-set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.9.6")
+set(CGAL_DOC_RESOURCE_DIR_DEFAULT "${CMAKE_CURRENT_LIST_DIR}/resources/1.10.0")
 
 #  first look if resources for the specific doxygen version is available, fallback
 #  on the default otherwise
@@ -342,6 +366,10 @@ configure_file(${CGAL_DOC_RESOURCE_DIR}/BaseDoxyfile.in
 
 set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
 
+if (BE_QUIET)
+  file(APPEND ${CGAL_DOC_DOXY_DEFAULT} "WARN_LOGFILE=doxygen.log\n")
+endif()
+
 # pkglist_filter gets the path to the pkglist_filter of this source
 # directory.
 if(WIN32)
@@ -401,6 +429,15 @@ else()
     set(CGAL_${pkg}_DEMO_DIR "${CGAL_ROOT}/demo")
   endforeach()
 endif()
+
+#special cases
+foreach(pkg "Mesher_level")
+  if(CGAL_BRANCH_BUILD)
+    set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/${pkg}/include")
+  else()
+    set(CGAL_${pkg}_INCLUDE_DIR "${CGAL_ROOT}/include")
+  endif()
+endforeach()
 
 option(CGAL_BUILD_THREE_DOC "Build the documentation of the Three package" OFF)
 

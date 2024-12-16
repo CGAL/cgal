@@ -54,7 +54,6 @@
 #include <CGAL/point_generators_3.h>
 #endif
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/utility/result_of.hpp>
@@ -356,7 +355,7 @@ public:
   template < class InputIterator >
   std::ptrdiff_t insert(InputIterator first, InputIterator last,
                         std::enable_if_t<
-                          boost::is_convertible<
+                          std::is_convertible<
                           typename std::iterator_traits<InputIterator>::value_type,
                           Weighted_point>::value >* = nullptr)
 #else
@@ -595,7 +594,7 @@ public:
   std::ptrdiff_t insert(InputIterator first,
                         InputIterator last,
                         std::enable_if_t<
-                        boost::is_convertible<
+                        std::is_convertible<
                         typename std::iterator_traits<InputIterator>::value_type,
                         std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
                         >::value
@@ -613,10 +612,9 @@ public:
   insert(boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
          std::enable_if_t<
-           boost::mpl::and_<
-           typename boost::is_convertible< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
-           typename boost::is_convertible< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
-         >::value >* =nullptr)
+           std::is_convertible_v< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point > &&
+           std::is_convertible_v< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+         >* =nullptr)
   {
     return insert_with_info<
              boost::tuple<Weighted_point,
@@ -1003,10 +1001,9 @@ public:
 
   void dual_segment(Cell_handle c, int i, Bare_point& p, Bare_point&q) const;
   void dual_segment(const Facet& facet, Bare_point& p, Bare_point&q) const;
+  void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const;
   void dual_ray(Cell_handle c, int i, Ray& ray) const;
   void dual_ray(const Facet& facet, Ray& ray) const;
-  void dual_exact(const Facet& facet, const Weighted_point& p, Bare_point&q) const;
-  void dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const;
   void dual_ray_exact(const Facet& facet, Ray& ray) const;
 
   template < class Stream>
@@ -1826,42 +1823,14 @@ dual_ray(const Facet& facet, Ray& ray) const
   return dual_ray(facet.first, facet.second, ray);
 }
 
-// Exact versions of dual(), dual_segment(), and dual_ray() for Mesh_3.
+// Exact versions of dual_segment() and dual_ray() for Mesh_3.
 // These functions are really dirty: they assume that the point type is nice enough
 // such that EPECK can manipulate it (e.g. convert it to EPECK::Point_3) AND
 // that the result of these manipulations will make sense.
 template < class Gt, class Tds, class Lds >
 void
 Regular_triangulation_3<Gt,Tds,Lds>::
-dual_exact(const Facet& f, const Weighted_point& s, Bare_point& cc) const
-{
-  typedef typename Kernel_traits<Bare_point>::Kernel           K;
-  typedef Exact_predicates_exact_constructions_kernel          EK;
-  typedef Cartesian_converter<K, EK>                           To_exact;
-  typedef Cartesian_converter<EK,K>                            Back_from_exact;
-
-  typedef EK                                                   Exact_Rt;
-
-  To_exact to_exact;
-  Back_from_exact back_from_exact;
-  Exact_Rt::Construct_weighted_circumcenter_3 exact_weighted_circumcenter =
-      Exact_Rt().construct_weighted_circumcenter_3_object();
-
-  const Cell_handle c = f.first;
-  const int i = f.second;
-
-  const typename Exact_Rt::Weighted_point_3& cp = to_exact(c->vertex((i+1)%4)->point());
-  const typename Exact_Rt::Weighted_point_3& cq = to_exact(c->vertex((i+2)%4)->point());
-  const typename Exact_Rt::Weighted_point_3& cr = to_exact(c->vertex((i+3)%4)->point());
-  const typename Exact_Rt::Weighted_point_3& cs = to_exact(s);
-
-  cc = back_from_exact(exact_weighted_circumcenter(cp, cq, cr, cs));
-}
-
-template < class Gt, class Tds, class Lds >
-void
-Regular_triangulation_3<Gt,Tds,Lds>::
-dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point& q) const
+dual_segment_exact(const Facet& facet, Bare_point& p, Bare_point&q) const
 {
   typedef typename Kernel_traits<Bare_point>::Kernel           K;
   typedef Exact_predicates_exact_constructions_kernel          EK;
@@ -2066,7 +2035,7 @@ Regular_triangulation_3<Gt,Tds,Lds>::
 side_of_power_sphere(Cell_handle c, const Weighted_point& p, bool perturb) const
 {
   CGAL_precondition(dimension() == 3);
-  int i3;
+  int i3=3;
   if(! c->has_vertex(infinite_vertex(), i3))
   {
     return Bounded_side(side_of_oriented_power_sphere(c->vertex(0)->point(),
@@ -2175,7 +2144,7 @@ side_of_power_circle(Cell_handle c, int i, const Weighted_point& p,
                      bool perturb) const
 {
   CGAL_precondition(dimension() >= 2);
-  int i3 = 5;
+  int i3 = 3;
   if(dimension() == 2)
   {
     CGAL_precondition(i == 3);

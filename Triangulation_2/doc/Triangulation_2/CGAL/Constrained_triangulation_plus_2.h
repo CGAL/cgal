@@ -516,6 +516,7 @@ constraints based on a cost and stop function.
 \pre The vertex referred by vicq is not contained in any other constraint.
 \pre Let `vip` and `vir` be defined as `vip = std::prev(vicq)` and `vir = std::next(vicr)`.
 \pre The line segment between `*vicp->point()` and `*vicr->point()` must not intersect any constraint.
+
 \cgalAdvancedEnd
  */
 void

@@ -462,7 +462,7 @@ private:
 
 
   // We use our own Strict Weak Ordering predicate in order to avoid
-  // problems when calling sort for a Exponents_coeff_pair where the
+  // problems when calling sort for an `Exponents_coeff_pair` where the
   // coeff type has no comparison operators available.
 private:
   struct Compare_exponents_coeff_pair
@@ -999,7 +999,7 @@ public:
 
   // Sign_at, Sign_at_homogeneous, Compare
   // define XXX_ even though ICoeff may not be Real_embeddable
-  // select propoer XXX among XXX_ or Null_functor using ::boost::mpl::if_
+  // select proper XXX among XXX_ or Null_functor using ::std::conditional_t
 private:
   struct Sign_at_ {
   private:
@@ -1036,8 +1036,8 @@ private:
   typedef Real_embeddable_traits<Innermost_coefficient_type> RET_IC;
   typedef typename RET_IC::Is_real_embeddable IC_is_real_embeddable;
 public:
-  typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Sign_at_,Null_functor>::type Sign_at;
-  typedef typename ::boost::mpl::if_<IC_is_real_embeddable,Sign_at_homogeneous_,Null_functor>::type Sign_at_homogeneous;
+  typedef std::conditional_t<IC_is_real_embeddable::value,Sign_at_,Null_functor> Sign_at;
+  typedef std::conditional_t<IC_is_real_embeddable::value,Sign_at_homogeneous_,Null_functor> Sign_at_homogeneous;
   typedef typename Real_embeddable_traits<Polynomial_d>::Compare Compare;
 
 

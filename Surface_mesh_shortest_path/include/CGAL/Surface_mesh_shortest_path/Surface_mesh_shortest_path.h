@@ -45,7 +45,7 @@ namespace CGAL {
 
 \brief Computes shortest surface paths from one or more source points on a surface mesh.
 
-\details Uses an optimized variation of Chen and Han's \f$ O(n^2) \f$ algorithm by Xin and Wang.
+\details Uses an optimized variation of Chen and Han's \cgalBigO{n^2} algorithm by Xin and Wang.
 Refer to those respective papers for the details of the implementation.
 
 \tparam Traits a model of `SurfaceMeshShortestPathTraits`.
@@ -1082,7 +1082,7 @@ private:
     {
       const auto cgalIntersection = i2(cl2(segment), cl2(leftBoundary));
 
-      if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
+      if (!cgalIntersection || !std::get_if<Point_2>(&*cgalIntersection))
       {
         if (m_debugOutput)
         {
@@ -1092,7 +1092,7 @@ private:
       }
       else
       {
-        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 >= FT(1))
@@ -1140,7 +1140,7 @@ private:
     {
       const auto cgalIntersection = i2(cl2(segment), cl2(rightBoundary));
 
-      if (!cgalIntersection || !boost::get<Point_2>(&*cgalIntersection))
+      if (!cgalIntersection || !std::get_if<Point_2>(&*cgalIntersection))
       {
         if (m_debugOutput)
         {
@@ -1150,7 +1150,7 @@ private:
       }
       else
       {
-        const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+        const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
         FT t0 = pdas2(cs2(segment), ct2(segment), *result);
 
         if (t0 <= FT(0))
@@ -1778,7 +1778,7 @@ private:
 
           CGAL_assertion(bool(cgalIntersection));
 
-          const Point_2* result = boost::get<Point_2>(&*cgalIntersection);
+          const Point_2* result = std::get_if<Point_2>(&*cgalIntersection);
           if (!result)
             result = &currentSourceImage;
 
@@ -2134,7 +2134,7 @@ private:
 
           std::cout << "event type: " << event->m_type << " "
                     << " time: " << event->m_distanceEstimate << " ";
-          std::cout << "cancelled? " << event->m_cancelled << " " ;
+          std::cout << "canceled? " << event->m_cancelled << " " ;
 
           if (!event->m_cancelled)
           {
@@ -2200,7 +2200,7 @@ private:
       }
       else if (m_debugOutput)
       {
-        std::cout << "Found cancelled event for node: " << event->m_parent << std::endl;
+        std::cout << "Found canceled event for node: " << event->m_parent << std::endl;
       }
 
       delete event;
@@ -2416,7 +2416,7 @@ public:
   \details No change to the internal shortest paths data structure occurs
   until either `Surface_mesh_shortest_path::build_sequence_tree()` or
   the first shortest path query is done.
-  Behaviour is undefined if the source point `it` was already removed.
+  Behavior is undefined if the source point `it` was already removed.
 
   \param it iterator to the source point to be removed
   */
@@ -3049,7 +3049,7 @@ public:
     typename Traits::Construct_barycentric_coordinates cbc(traits.construct_barycentric_coordinates_object());
     typename Traits::Compute_squared_distance_3 csd3(traits.compute_squared_distance_3_object());
     typedef typename AABB_face_graph_tree::template Intersection_and_primitive_id<Ray_3>::Type Intersection_type;
-    typedef boost::optional<Intersection_type> Ray_intersection;
+    typedef std::optional<Intersection_type> Ray_intersection;
 
     std::vector<Ray_intersection> intersections;
 
@@ -3064,7 +3064,7 @@ public:
     {
       if (intersections[i])
       {
-        Point_3* intersectionPoint = boost::get<Point_3>(&(intersections[i]->first));
+        Point_3* intersectionPoint = std::get_if<Point_3>(&(intersections[i]->first));
 
         if (intersectionPoint)
         {

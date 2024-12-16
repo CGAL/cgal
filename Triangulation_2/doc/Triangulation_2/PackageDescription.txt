@@ -14,11 +14,15 @@
 /// \ingroup PkgTriangulation2Ref
 
 /*!
-  \code
-   #include <CGAL/draw_triangulation_2.h>
-  \endcode
+\cgalInclude{CGAL/draw_triangulation_2.h}
 */
 /// \defgroup PkgDrawTriangulation2 Draw a Triangulation 2
+/// \ingroup PkgTriangulation2Ref
+
+/*!
+\cgalInclude{CGAL/draw_constrained_triangulation_2.h}
+*/
+/// \defgroup PkgDrawConstrainedTriangulation2 Draw a Constrained Triangulation 2
 /// \ingroup PkgTriangulation2Ref
 
 /*!

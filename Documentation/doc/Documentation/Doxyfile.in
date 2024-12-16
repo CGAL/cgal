@@ -19,7 +19,6 @@ FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
 HTML_EXTRA_FILES += ${CGAL_DOC_RESOURCE_DIR}/hacks.js \
                     ${CGAL_DOC_RESOURCE_DIR}/menu_version.js \
-                    ${CGAL_DOC_RESOURCE_DIR}/cgal_stylesheet.css \
                     ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib \
                     ${CMAKE_BINARY_DIR}/how_to_cite.html \
                     ${CGAL_PACKAGE_DOC_DIR}/fig/g-196x196-doc.png
@@ -34,4 +33,4 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
-ALIASES                 += "cgalReleaseNumber =${CGAL_DOC_VERSION}"
+ALIASES                 += "cgalReleaseNumber=${CGAL_DOC_VERSION}"

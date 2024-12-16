@@ -95,20 +95,23 @@ void test_all_intersection_query_types(Tree& tree)
     tree.all_intersected_primitives(segment,std::back_inserter(primitives));
 
     // any_intersection
-    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > r = tree.any_intersection(ray);
-    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);
-    boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > s = tree.any_intersection(segment);
+    std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > r = tree.any_intersection(ray);
+    std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > l = tree.any_intersection(line);
+    std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > s = tree.any_intersection(segment);
+    CGAL_USE(r);
+    CGAL_USE(l);
+    CGAL_USE(s);
 
     // any_intersected_primitive
-    boost::optional<typename Primitive::Id> optional_primitive;
+    std::optional<typename Primitive::Id> optional_primitive;
     optional_primitive = tree.any_intersected_primitive(ray);
     optional_primitive = tree.any_intersected_primitive(line);
     optional_primitive = tree.any_intersected_primitive(segment);
 
     // all_intersections
-    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > > intersections_r;
-    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > > intersections_l;
-    std::list< boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > > intersections_s;
+    std::list< std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Ray>::Type > > intersections_r;
+    std::list< std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Line>::Type > > intersections_l;
+    std::list< std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Segment>::Type > > intersections_s;
     tree.all_intersections(ray,std::back_inserter(intersections_r));
     tree.all_intersections(line,std::back_inserter(intersections_l));
     tree.all_intersections(segment,std::back_inserter(intersections_s));
@@ -243,7 +246,7 @@ void test(const std::string filename,
     typedef CGAL::Polyhedron_3<K> Polyhedron;
     typedef Primitive_generator<Primitive,K,Polyhedron> Pr_generator;
     typedef typename Pr_generator::Primitive Pr;
-    typedef CGAL::AABB_traits<K, Pr> Traits;
+    typedef CGAL::AABB_traits_3<K, Pr> Traits;
     typedef CGAL::AABB_tree<Traits> Tree;
 
     Polyhedron polyhedron;
@@ -313,16 +316,16 @@ class Naive_implementations
 {
   typedef Primitive_generator<Primitive,K,Polyhedron> Pr_generator;
   typedef typename Pr_generator::Primitive Pr;
-  typedef CGAL::AABB_traits<K, Pr> Traits;
+  typedef CGAL::AABB_traits_3<K, Pr> Traits;
   typedef typename Pr_generator::iterator Polyhedron_primitive_iterator;
   typedef unsigned int size_type;
   typedef typename Traits::Object_and_primitive_id Object_and_primitive_id;
   typedef typename Pr::Id Primitive_id;
   typedef typename Traits::FT FT;
-  typedef typename Traits::Point_3 Point;
+  typedef typename Traits::Point Point;
   typedef typename Traits::Point_and_primitive_id Point_and_primitive_id;
 
-  typedef boost::optional<Object_and_primitive_id> Intersection_result;
+  typedef std::optional<Object_and_primitive_id> Intersection_result;
 
   const Traits& m_traits;
 public:
@@ -380,7 +383,7 @@ public:
     Polyhedron_primitive_iterator it = Pr_generator().begin(p);
     for ( ; it != Pr_generator().end(p) ; ++it )
     {
-      boost::optional< typename Traits::template Intersection_and_primitive_id<Query>::Type >
+      std::optional< typename Traits::template Intersection_and_primitive_id<Query>::Type >
         intersection  = m_traits.intersection_object()(query, Pr(it,p));
       if ( intersection )
         *out++ = *intersection;
@@ -653,7 +656,7 @@ private:
       }
 
       // any_intersected_primitive test (do not count time here)
-      typedef boost::optional<typename Primitive::Id> Any_primitive;
+      typedef std::optional<typename Primitive::Id> Any_primitive;
       Any_primitive primitive = tree.any_intersected_primitive(query);
 
       // Check: verify we do get the result by naive method
@@ -723,7 +726,7 @@ private:
       }
 
       // Any intersection test (do not count time here)
-      boost::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::Type >
+      std::optional< typename Tree::AABB_traits::template Intersection_and_primitive_id<Query>::Type >
         intersection = tree.any_intersection(query);
 
       // Check: verify we do get the result by naive method

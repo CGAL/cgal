@@ -8,7 +8,9 @@ and provides an additional information storage.
 
 \cgalRefines{TriangulationCellBase_3}
 
-\cgalHasModel `CGAL::Triangulation_cell_base_with_info_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_cell_base_with_info_3}
+\cgalHasModelsEnd
 
 */
 

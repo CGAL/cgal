@@ -317,7 +317,7 @@ inline void BigFloatRep::eliminateTrailingZeroes() {
 //  builtin functions
 inline extLong BigFloatRep::lMSB() const {
   if (!isZeroIn())
-    return extLong(floorLg(abs(m) - err)) + bits(exp);
+    return extLong(floorLg(BigInt(abs(m) - err))) + bits(exp);
   else
     return extLong(CORE_negInfty);
 }
@@ -327,7 +327,7 @@ inline extLong BigFloatRep::lMSB() const {
  * Not well-defined if zero is in the interval.
  */
 inline extLong BigFloatRep::uMSB() const {
-  return extLong(floorLg(abs(m) + err)) + bits(exp);
+  return extLong(floorLg(BigInt(abs(m) + err))) + bits(exp);
 }
 
 inline extLong BigFloatRep::MSB() const {

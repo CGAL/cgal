@@ -79,7 +79,9 @@ protected:
   void setupOptionsMenu(QMenu* menu  = nullptr);
   void addAboutCGAL(QMenu* menu  = nullptr);
   void addAboutDemo(QString htmlResourceName, QMenu* menu  = nullptr);
+#if QT_SVG_LIB
   void setupExportSVG(QAction*, QGraphicsView*);
+#endif
 
   void addRecentFiles(QMenu* menu, QAction* insertBefore = nullptr);
 
@@ -89,7 +91,6 @@ protected:
 
 protected Q_SLOTS:
   void setUseAntialiasing(bool checked);
-  void setUseOpenGL(bool checked);
   void popupAboutCGAL();
   void popupAboutDemo();
 
@@ -108,7 +109,6 @@ protected:
   GraphicsViewNavigation* navigation;
   QLabel* xycoord ;
 
-  QAction *actionUse_OpenGL;
   QAction *actionUse_Antialiasing;
   QAction *actionAbout;
   QAction *actionAboutCGAL;

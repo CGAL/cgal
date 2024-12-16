@@ -2,7 +2,6 @@
 
 #include <CGAL/use.h>
 
-#include <boost/numeric/conversion/cast.hpp>
 #include <unordered_set>
 
 typedef std::unordered_set<std::size_t>                        id_map;
@@ -34,7 +33,7 @@ void test_halfedge_around_vertex_iterator(const Graph& g)
       assert(target(*havit, g) == *vit);
 
       // check if we are really moving clockwise
-      halfedge_around_target_iterator step = boost::next(havit);
+      halfedge_around_target_iterator step = std::next(havit);
       if(step != havend) {
         halfedge_descriptor stepd = *step;
         assert(stepd == opposite(next(*havit, g), g));
@@ -68,7 +67,7 @@ void test_halfedge_iterators(const G& g)
   // do we iterate as many as that?
   halfedge_iterator hb, he;
   boost::tie(hb, he) = halfedges(g);
-  assert(boost::numeric_cast<halfedges_size_type>(std::distance(hb, he)) == num_halfedges(g));
+  assert(static_cast<halfedges_size_type>(std::distance(hb, he)) == num_halfedges(g));
 
   id_map ids;
   unsigned int count = 0;
@@ -94,7 +93,7 @@ void test_edge_iterators(const G& g)
   // do we iterate as many as that?
   edge_iterator eb, ee;
   boost::tie(eb, ee) = edges(g);
-  assert(boost::numeric_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
+  assert(static_cast<edges_size_type>(std::distance(eb, ee)) == num_edges(g));
 
   id_map ids;
   unsigned int count = 0;

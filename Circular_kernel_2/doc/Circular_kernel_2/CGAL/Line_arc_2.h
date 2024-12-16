@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgCircularKernel2GeometricClasses
 
-\cgalModels `CircularKernel::LineArc_2`
+\cgalModels{CircularKernel::LineArc_2}
 
 \cgalHeading{I/O}
 

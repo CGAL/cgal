@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Auxiliary
 
-\cgalModels `StraightSkeletonVertex_2`
+\cgalModels{StraightSkeletonVertex_2}
 
 The class `Straight_skeleton_vertex_base_2` provides a model for the `StraightSkeletonVertex_2` concept
 which is the vertex type required by the `StraightSkeleton_2` concept.

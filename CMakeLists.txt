@@ -1,7 +1,7 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 3.1...3.23)
+cmake_minimum_required(VERSION 3.12...3.29)
 
 message("== CMake setup ==")
 project(CGAL CXX C)
@@ -46,14 +46,17 @@ option(
 
 message("== CMake setup (DONE) ==\n")
 
-# Enable testing with BUILD_TESTING
-option(BUILD_TESTING "Build the testing tree." OFF)
-if(BUILD_TESTING AND NOT POLICY CMP0064)
+# Enable testing with CGAL_ENABLE_TESTING. Before CGAL-6.0, users would enable
+# the tests by specifying BUILD_TESTING. For compatibility, If BUILD_TESTING is
+# set, that is the default value for CGAL_ENABLE_TESTING. Otherwise, the default
+# value is OFF.
+option(CGAL_ENABLE_TESTING "Build the testing tree." ${BUILD_TESTING})
+if(CGAL_ENABLE_TESTING AND NOT POLICY CMP0064)
   message(
     FATAL_ERROR "CGAL support of CTest requires CMake version 3.4 or later.
-The variable BUILD_TESTING must be set of OFF.")
+The variable CGAL_ENABLE_TESTING must be set of OFF.")
 endif()
-if(BUILD_TESTING)
+if(CGAL_ENABLE_TESTING)
   enable_testing()
 endif()
 

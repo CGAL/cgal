@@ -18,7 +18,7 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/boost/iterator/counting_iterator.hpp>
 #include <CGAL/box_intersection_d.h>
@@ -29,7 +29,6 @@
 #include <CGAL/Side_of_triangle_mesh.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
-#include <boost/mpl/if.hpp>
 
 #include <exception>
 #include <iterator>
@@ -415,8 +414,8 @@ compute_face_face_intersection(const FaceRange& face_range1,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(boost::begin(face_range1), boost::end(face_range1)));
-  boxes2.reserve(std::distance(boost::begin(face_range2), boost::end(face_range2)));
+  boxes1.reserve(std::distance(std::begin(face_range1), std::end(face_range1)));
+  boxes2.reserve(std::distance(std::begin(face_range2), std::end(face_range2)));
 
   typedef typename GetVertexPointMap<TM, NamedParameters1>::const_type VertexPointMap1;
   typedef typename GetVertexPointMap<TM, NamedParameters2>::const_type VertexPointMap2;
@@ -548,7 +547,7 @@ compute_face_polyline_intersection(const FaceRange& face_range,
         typename boost::range_value<Polyline>::type>::value));
 
   std::vector<face_descriptor> faces;
-  faces.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
+  faces.reserve(std::distance(std::begin(face_range), std::end(face_range)));
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::size_t, Box_policy> Box;
@@ -556,8 +555,8 @@ compute_face_polyline_intersection(const FaceRange& face_range,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
-  boxes2.reserve(std::distance(boost::begin(polyline), boost::end(polyline)) - 1);
+  boxes1.reserve(std::distance(std::begin(face_range), std::end(face_range)));
+  boxes2.reserve(std::distance(std::begin(polyline), std::end(polyline)) - 1);
 
   for(face_descriptor f : face_range)
   {
@@ -684,7 +683,7 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   static_assert(std::is_same<Point, typename boost::range_value<Polyline>::type>::value);
 
   std::vector<face_descriptor> faces;
-  faces.reserve(std::distance( boost::begin(face_range), boost::end(face_range) ));
+  faces.reserve(std::distance( std::begin(face_range), std::end(face_range) ));
 
   typedef CGAL::Box_intersection_d::ID_FROM_BOX_ADDRESS Box_policy;
   typedef CGAL::Box_intersection_d::Box_with_info_d<double, 3, std::pair<std::size_t, std::size_t>, Box_policy> Box;
@@ -692,12 +691,12 @@ compute_face_polylines_intersection(const FaceRange& face_range,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
+  boxes1.reserve(std::distance(std::begin(face_range), std::end(face_range)));
 
   std::size_t polylines_size = 0;
   for(Polyline poly : polyline_range)
   {
-    polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
   }
   boxes2.reserve(polylines_size);
 
@@ -707,11 +706,11 @@ compute_face_polylines_intersection(const FaceRange& face_range,
     boxes1.push_back(Box(Polygon_mesh_processing::face_bbox(f, tm), std::make_pair(0, faces.size()-1)));
   }
 
-  std::size_t range_size = std::distance( boost::begin(polyline_range), boost::end(polyline_range) );
+  std::size_t range_size = std::distance( std::begin(polyline_range), std::end(polyline_range) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polyline_range[j];
-    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
     for(std::size_t i =0; i< size - 1; ++i)
     {
       Point p1 = poly[i];
@@ -785,8 +784,8 @@ compute_polyline_polyline_intersection(const Polyline& polyline1,
   // make one box per facet
   std::vector<Box> boxes1;
   std::vector<Box> boxes2;
-  boxes1.reserve(std::distance(boost::begin(polyline1), boost::end(polyline1)) - 1);
-  boxes2.reserve(std::distance(boost::begin(polyline2), boost::end(polyline2)) - 1);
+  boxes1.reserve(std::distance(std::begin(polyline1), std::end(polyline1)) - 1);
+  boxes2.reserve(std::distance(std::begin(polyline2), std::end(polyline2)) - 1);
 
   for(std::size_t i =0; i< polyline1.size()-1; ++i)
   {
@@ -870,7 +869,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   CGAL::Bbox_3 b1, b2;
   for(Polyline poly : polylines1)
   {
-    polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
     b1 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes1.reserve( polylines_size );
@@ -878,7 +877,7 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   polylines_size = 0;
   for(Polyline poly : polylines2)
   {
-    polylines_size += std::distance( boost::begin(poly), boost::end(poly) ) -1;
+    polylines_size += std::distance( std::begin(poly), std::end(poly) ) -1;
     b2 += CGAL::bbox_3(poly.begin(), poly.end());
   }
   boxes2.reserve(polylines_size);
@@ -886,11 +885,11 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
   if(!CGAL::do_overlap(b1,b2))
     return out;
 
-  std::size_t range_size = std::distance( boost::begin(polylines1), boost::end(polylines1) );
+  std::size_t range_size = std::distance( std::begin(polylines1), std::end(polylines1) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polylines1[j];
-    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
     for(std::size_t i =0; i< size - 1; ++i)
     {
       const Point& p1 = poly[i];
@@ -899,11 +898,11 @@ compute_polylines_polylines_intersection(const PolylineRange& polylines1,
     }
   }
 
-  range_size = std::distance( boost::begin(polylines2), boost::end(polylines2) );
+  range_size = std::distance( std::begin(polylines2), std::end(polylines2) );
   for(std::size_t j = 0; j < range_size; ++j)
   {
     Polyline poly = polylines2[j];
-    std::size_t size = std::distance( boost::begin(poly), boost::end(poly) );
+    std::size_t size = std::distance( std::begin(poly), std::end(poly) );
     for(std::size_t i =0; i< size - 1; ++i)
     {
       const Point& p1 = poly[i];
@@ -1110,7 +1109,7 @@ bool is_mesh2_in_mesh1(const TriangleMesh& tm1,
                        const GT& gt)
 {
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM1> Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
 
   AABBTree tree1(faces(tm1).begin(), faces(tm1).end(), tm1, vpm1);
@@ -1147,7 +1146,7 @@ bool do_intersect(const PolylineRange& polylines1,
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<PolylineRange>,
                         boost::range_value<PolylineRange>,
-                        boost::false_type >::type
+                        std::false_type >::type
                     >::value
                    >* = 0//end enable_if
 #endif
@@ -1194,7 +1193,7 @@ bool do_intersect(const Polyline& polyline1,
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<Polyline>,
                         boost::range_value<Polyline>,
-                        boost::false_type
+                        std::false_type
                       >::type
                     >::value
                   >* = 0//end enable_if
@@ -1365,7 +1364,7 @@ bool do_intersect(const TriangleMesh& tm,
                       typename boost::mpl::eval_if<
                         boost::has_range_iterator<PolylineRange>,
                         boost::range_value<PolylineRange>,
-                        boost::false_type
+                        std::false_type
                       >::type
                     >::value
                   >* = 0//end enable_if
@@ -1427,18 +1426,16 @@ bool do_intersect(const TriangleMesh& tm,
                   const Polyline& polyline,
                   const CGAL_NP_CLASS& np = parameters::default_values()
 #ifndef DOXYGEN_RUNNING
-                , const std::enable_if_t<
-                    ! boost::mpl::or_<
-                      typename std::is_same<TriangleMesh, Polyline>::type, // Added to please MSVC 2015
-                      typename boost::mpl::not_<typename boost::has_range_iterator<Polyline>::type>::type, // not a range
-                      typename boost::has_range_iterator<
+                , const std::enable_if_t<!(
+                      std::is_same_v<TriangleMesh, Polyline> || // Added to please MSVC 2015
+                      !boost::has_range_iterator<Polyline>::value || // not a range
+                      boost::has_range_iterator<
                         typename boost::mpl::eval_if<
                           boost::has_range_iterator<Polyline>,
                           boost::range_value<Polyline>,
-                          boost::false_type
-                        >::type
-                      >::type // not a range of a range
-                    >::value
+                          std::false_type>::type
+                        >::value
+                    )
                   >* = 0
 #endif
                  )
@@ -1467,7 +1464,7 @@ struct Mesh_callback
   typedef typename boost::range_value<NamedParametersRange>::type NamedParameters;
   typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type VPM;
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<GT, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<GT, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> AABBTree;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
@@ -1714,7 +1711,7 @@ OutputIterator intersecting_meshes(const TriangleMeshRange& range,
  *   \cgalParamNEnd
  *
  *   \cgalParamNBegin{throw_on_self_intersection}
- *     \cgalParamDescription{If `true`, the set of triangles closed to the intersection of `tm1` and `tm2` will be
+ *     \cgalParamDescription{If `true`, the set of triangles close to the intersection of `tm1` and `tm2` will be
  *                           checked for self-intersections and `Corefinement::Self_intersection_exception`
  *                           will be thrown if at least one self-intersection is found.}
  *     \cgalParamType{Boolean}

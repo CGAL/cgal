@@ -1,18 +1,22 @@
 \documentclass[12pt]{standalone}
 \input{header}
+\usepackage[edges]{forest}
+\usetikzlibrary{shadows.blur,arrows.meta}
 \pagestyle{empty}
+\def\name#1{\textsf{\it #1}}
+\tikzset{concept/.style={rectangle split,rectangle split parts=1,draw,
+    fill=white,blur shadow,rounded corners,align=center}}
 \begin{document}
-  \psset{treevshift=0,unit=1em,xunit=2em,yunit=1em,everytree={},
-         etcratio=.75,triratio=.5}
-  \jtree[everylabel=\sl,xunit=70pt,arrows=->]
-  \! = {\psframebox{\concept{ArrangementBasicTraits\_2}}}
-     <left>[scaleby=1.2 1.6]{\psframebox{\concept{ArrangementApproximateTraits\_2}}}@aat !aat
-     ^<right>[scaleby=1.8 1.6]{\psframebox{\concept{ArrangementConstructXMonotoneCurveTraits\_2}}}@acxmct !acxmct
-     .
-  \!aat = <right>[scaleby=1.2 1.6]{\psframebox{\concept{ArrangementLandmarkTraits\_2}}}@alt !alt
-     .
-  \ncline{acxmct:b}{alt:t}
-  \endjtree
-  \psset{treevshift=0,unit=1cm,xunit=1cm,yunit=1cm,everytree={},
-         etcratio=.75,triratio=.5}
+\begin{forest}
+  [\name{ArrangementBasicTraits\_2},name=abt,
+    % forked edges,
+    for tree={concept,edge={-latex}}
+    [\name{ArrangementApproximateTraits\_2}
+      [,phantom]
+      [\name{ArrangementLandmarkTraits\_2},name=alt,before drawing tree={x=0}]
+    ]
+    [\name{ArrangementConstructXMonotoneCurveTraits\_2},name=acxmt]
+  ]
+  \draw[-latex] (acxmt) to (alt);
+\end{forest}
 \end{document}

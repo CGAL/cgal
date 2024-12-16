@@ -24,7 +24,7 @@ source vertices.}
 \cgalPkgDependsOn{ \ref PkgSolverInterface}
 \cgalPkgBib{cgal:cvf-hm3}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{Polyhedron demo,polyhedron_3.zip}
+\cgalPkgDemo{CGAL Lab,CGALlab.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd

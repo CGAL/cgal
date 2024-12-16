@@ -17,6 +17,7 @@
 #include <CGAL/Weights/utils.h>
 
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
@@ -304,7 +305,7 @@ public:
 // This class is using a special clamped version of the cotangent weights.
 // This version is currently used in:
 // Polygon_mesh_processing -> fair.h
-// Polyhedron demo -> Hole_filling_plugin.cpp
+// CGAL Lab -> Hole_filling_plugin.cpp
 template<typename PolygonMesh,
          typename VertexPointMap,
          typename GeomTraits>

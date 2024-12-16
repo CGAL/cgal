@@ -21,6 +21,7 @@
 #include <memory>
 #include <CGAL/boost/graph/internal/Has_member_id.h>
 #include <CGAL/Distance_3/Point_3_Point_3.h>
+#include <CGAL/Dynamic_property_map.h>
 
 namespace CGAL {
 
@@ -126,11 +127,20 @@ typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::type
 get(PropertyTag,CGAL_HDS_CLASS&)
 { return typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::type(); }
 
+
 // generalized 3-ary get functions
-template<class CGAL_HDS_TMPLT, class PropertyTag, class Key>
+template<class CGAL_HDS_TMPLT, class PropertyTag, class Key,
+         class F = std::enable_if_t<!std::is_same_v<PropertyTag, dynamic_vertex_property_t<Key>> &&
+                                    !std::is_same_v<PropertyTag, dynamic_halfedge_property_t<Key>> &&
+                                    !std::is_same_v<PropertyTag, dynamic_edge_property_t<Key>> &&
+                                    !std::is_same_v<PropertyTag, dynamic_face_property_t<Key>>
+                                   >
+>
 typename boost::property_traits< typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::type >::reference
 get(PropertyTag p,CGAL_HDS_CLASS& g, const Key& key)
-{ return get(get(p, g), key); }
+{
+  return get(get(p, g), key);
+}
 
 template<class CGAL_HDS_TMPLT, class PropertyTag, class Key>
 typename boost::property_traits< typename boost::property_map<CGAL_HDS_CLASS, PropertyTag >::const_type >::reference
@@ -139,13 +149,13 @@ get(PropertyTag p,CGAL_HDS_CLASS const& g, const Key& key)
 
 
 
-#define DECLARE_HDS_DYNAMIC_PM(TAG, DESCRIPTOR)                             \
+#define DECLARE_HDS_DYNAMIC_PM(TAG, DESCRIPTOR)                                  \
 template <typename CGAL_HDS_TMPLT, class T>                                      \
 typename boost::property_map<CGAL_HDS_CLASS, TAG >::const_type                   \
-get(const TAG&, const CGAL_HDS_CLASS&)                                           \
-{                                                                           \
+get(const TAG&, const CGAL_HDS_CLASS&, const T& dv = T())                        \
+{                                                                                \
   typedef typename boost::graph_traits< CGAL_HDS_CLASS >::DESCRIPTOR descriptor; \
-  return internal::Dynamic_property_map<descriptor,T>();                    \
+  return internal::Dynamic_property_map<descriptor,T>(dv);                       \
 }
 
 DECLARE_HDS_DYNAMIC_PM(dynamic_vertex_property_t<T>, vertex_descriptor)

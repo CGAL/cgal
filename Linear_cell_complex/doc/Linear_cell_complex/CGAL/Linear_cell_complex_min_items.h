@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Linear_cell_complex_min_items` defines `void` as the information associated with darts, and the attributes used. In this class, 0-attributes are enabled and associated with `Cell_attribute_with_point`.
 
-\cgalModels `LinearCellComplexItems`
+\cgalModels{LinearCellComplexItems}
 
 \cgalHeading{Example}
 

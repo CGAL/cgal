@@ -47,7 +47,7 @@ above. `ROOT` should be one of the integer types.  See also the
 documentation of `Sqrt_extension<NT,ROOT>`.
 \cgalAdvancedEnd
 
-\cgalModels `AlgebraicKernel_d_2`
+\cgalModels{AlgebraicKernel_d_2}
 
 \sa `AlgebraicKernel_d_1`
 \sa `AlgebraicKernel_d_2`

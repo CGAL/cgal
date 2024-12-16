@@ -524,14 +524,14 @@ int writePgmImage(char *name,_image *im  )
   }
 
   if ( im->dataMode == DM_ASCII )
-    sprintf( string, "%s\n", PGM_ASCII_MAGIC );
+    snprintf( string, 256, "%s\n", PGM_ASCII_MAGIC );
   else
-    sprintf( string, "%s\n", PGM_MAGIC );
+    snprintf( string, 256, "%s\n", PGM_MAGIC );
 
   ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "# CREATOR: pnm.c $Revision$ $Date$\n" );
+  snprintf( string, 256, "# CREATOR: pnm.c $Revision$ $Date$\n" );
   ImageIO_write( im, string, strlen( string ) );
-  sprintf( string, "%zu %zu\n", im->xdim, im->ydim );
+  snprintf( string, 256, "%zu %zu\n", im->xdim, im->ydim );
   ImageIO_write( im, string, strlen( string ) );
   max = 0;
   switch ( im->wdim ) {
@@ -552,7 +552,7 @@ int writePgmImage(char *name,_image *im  )
   }
   /* max == 0 causes problems for xv */
   if ( max == 0 ) max = 1;
-  sprintf( string, "%d\n", max );
+  snprintf( string, 256, "%d\n", max );
   ImageIO_write( im, string, strlen( string ) );
 
   if ( im->dataMode == DM_ASCII ) {
@@ -574,10 +574,10 @@ int writePgmImage(char *name,_image *im  )
         do {
           memset( str, 0, _LGTH_STRING_ );
           for ( j=0; j<n && i<size; j++, i++ ) {
-            sprintf( str+strlen(str), "%d", theBuf[i] );
-            if ( j<n && i<size ) sprintf( str+strlen(str), " " );
+            snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "%d", theBuf[i] );
+            if ( j<n && i<size ) snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), " " );
           }
-          sprintf( str+strlen(str), "\n" );
+          snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "\n" );
           if ( ImageIO_write( im, str, strlen( str ) ) <= 0 ) {
             fprintf(stderr, "writePgmImage: error when writing data in \'%s\'\n", name );
             return( -3 );
@@ -591,10 +591,10 @@ int writePgmImage(char *name,_image *im  )
         do {
           memset( str, 0, _LGTH_STRING_ );
           for ( j=0; j<n && i<size; j++, i++ ) {
-            sprintf( str+strlen(str), "%d", theBuf[i] );
-            if ( j<n && i<size ) sprintf( str+strlen(str), " " );
+            snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "%d", theBuf[i] );
+            if ( j<n && i<size ) snprintf( str+strlen(str), 2, " " );
           }
-          sprintf( str+strlen(str), "\n" );
+          snprintf( str+strlen(str), _LGTH_STRING_ - strlen(str), "\n" );
           if ( ImageIO_write( im, str, strlen( str ) ) <= 0 ) {
             fprintf(stderr, "writePgmImage: error when writing data in \'%s\'\n", name );
             return( -3 );
@@ -629,6 +629,3 @@ int writePgmImage(char *name,_image *im  )
   im->openMode = OM_CLOSE;
   return 1;
 }
-
-
-

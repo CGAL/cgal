@@ -9,7 +9,9 @@ coefficients are of a type that is a model of the concept
 
 \cgalRefines{CopyConstructible,Assignable,DefaultConstructible}
 
-\cgalHasModel CGAL::Polynomial_1_2
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Polynomial_1_2}
+\cgalHasModelsEnd
 
 \sa `AlgebraicKernelForCircles`
 

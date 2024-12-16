@@ -1,12 +1,13 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Surface_mesh.h>
-
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
-#include <fstream>
 #include <CGAL/Polygon_mesh_processing/repair_degeneracies.h>
+
 #include <CGAL/Polyhedral_envelope.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
+#include <fstream>
 #include <iostream>
 #include <vector>
 

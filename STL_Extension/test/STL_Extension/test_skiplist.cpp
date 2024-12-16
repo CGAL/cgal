@@ -50,8 +50,8 @@ BOOST_FIXTURE_TEST_CASE( test_insert, Fixture )
 
   // clear and try again
   l.clear();
-  BOOST_CHECK_EQUAL(l.all_size(), 0);
-  BOOST_CHECK_EQUAL(l.skip_size(), 0);
+  BOOST_CHECK_EQUAL(l.all_size(), std::size_t(0));
+  BOOST_CHECK_EQUAL(l.skip_size(), std::size_t(0));
   l.insert(l.all_begin(), all.begin(), all.end());
   skips += 8, 9;
   BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(),
@@ -60,10 +60,9 @@ BOOST_FIXTURE_TEST_CASE( test_insert, Fixture )
                                 skips.begin(), skips.end());
 
   // the same goes for inserting at an arbitrary position
-  skip::all_iterator pos = boost::next(l.all_begin(), 3);
-  l.insert(boost::next(l.all_begin(), 3)
+  l.insert(std::next(l.all_begin(), 3)
            , 20);
-  all.insert(boost::next(all.begin(), 3)
+  all.insert(std::next(all.begin(), 3)
              , 20);
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
@@ -79,15 +78,15 @@ BOOST_FIXTURE_TEST_CASE( test_single_skip, Fixture )
 
   // skip somewhere in between and at the end
   // skip 2 and 7
-  l.skip(boost::next(l.all_begin()));
-  BOOST_CHECK(l.is_skipped(boost::next(l.all_begin())));
+  l.skip(std::next(l.all_begin()));
+  BOOST_CHECK(l.is_skipped(std::next(l.all_begin())));
   skips.erase(std::remove(skips.begin(), skips.end(), 2), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(),
                                 all.begin(), all.end());
-  l.skip(boost::prior(l.all_end()));
-  BOOST_CHECK(l.is_skipped(boost::prior(l.all_end())));
+  l.skip(std::prev(l.all_end()));
+  BOOST_CHECK(l.is_skipped(std::prev(l.all_end())));
   skips.erase(std::remove(skips.begin(), skips.end(), 7), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
@@ -106,13 +105,13 @@ BOOST_FIXTURE_TEST_CASE( test_single_skip, Fixture )
 BOOST_FIXTURE_TEST_CASE( test_range_skip, Fixture )
 {
   // drop all from 2 up to 4
-  l.skip(boost::next(l.all_begin()), boost::next(l.all_begin(), 3));
+  l.skip(std::next(l.all_begin()), std::next(l.all_begin(), 3));
   skips.erase(std::remove(skips.begin(), skips.end(), 2), skips.end());
   skips.erase(std::remove(skips.begin(), skips.end(), 3), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
   // drop 6 and 7
-  l.skip(boost::prior(l.all_end(), 2), l.all_end());
+  l.skip(std::prev(l.all_end(), 2), l.all_end());
   skips.erase(std::remove(skips.begin(), skips.end(), 6), skips.end());
   skips.erase(std::remove(skips.begin(), skips.end(), 7), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
@@ -124,7 +123,7 @@ BOOST_FIXTURE_TEST_CASE( skip_all_case, Fixture )
   l.skip(l.all_begin(), l.all_end());
   skips.clear();
   BOOST_CHECK_EQUAL(l.all_size(), all.size());
-  BOOST_CHECK_EQUAL(l.skip_size(), 0);
+  BOOST_CHECK_EQUAL(l.skip_size(), std::size_t(0));
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
 }
@@ -137,20 +136,20 @@ BOOST_AUTO_TEST_CASE( test_continous_insert )
 BOOST_FIXTURE_TEST_CASE( test_unskip, Fixture )
 {
   // skip 2 and 3
-  l.skip(boost::next(l.all_begin()), boost::next(l.all_begin(), 3));
+  l.skip(std::next(l.all_begin()), std::next(l.all_begin(), 3));
   skips.erase(std::remove(skips.begin(), skips.end(), 2), skips.end());
   skips.erase(std::remove(skips.begin(), skips.end(), 3), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
 
   // unskip 2
-  l.unskip(boost::next(l.skip_begin()), boost::next(l.all_begin()));
-  skips.insert(boost::next(skips.begin()), 2);
+  l.unskip(std::next(l.skip_begin()), std::next(l.all_begin()));
+  skips.insert(std::next(skips.begin()), 2);
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
   // unskip 3
-  l.unskip(boost::next(l.skip_begin(), 2), boost::next(l.all_begin(), 2));
-  skips.insert(boost::next(skips.begin(), 2), 3);
+  l.unskip(std::next(l.skip_begin(), 2), std::next(l.all_begin(), 2));
+  skips.insert(std::next(skips.begin(), 2), 3);
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
 
@@ -181,8 +180,8 @@ BOOST_FIXTURE_TEST_CASE( test_push, Fixture )
                                 all.begin(), all.end());
 
   // check how it works with skipped elements
-  l.skip(l.all_begin(), boost::next(l.all_begin(), 4));
-  skips.erase(skips.begin(), boost::next(skips.begin(), 4));
+  l.skip(l.all_begin(), std::next(l.all_begin(), 4));
+  skips.erase(skips.begin(), std::next(skips.begin(), 4));
   l.push_front(20);
   l.push_front(21);
   skips.insert(skips.begin(), 20);
@@ -206,7 +205,7 @@ BOOST_FIXTURE_TEST_CASE( test_implicit_conversion, Fixture )
 BOOST_FIXTURE_TEST_CASE( test_erase, Fixture )
 {
   // erase 3
-  l.erase(boost::next(l.all_begin(), 2));
+  l.erase(std::next(l.all_begin(), 2));
   skips.erase(std::remove(skips.begin(), skips.end(), 3), skips.end());
   all.erase(std::remove(all.begin(), all.end(), 3), all.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
@@ -215,10 +214,10 @@ BOOST_FIXTURE_TEST_CASE( test_erase, Fixture )
                                 all.begin(), all.end());
 
   // skip 2 first and then erase it
-  l.skip(boost::next(l.all_begin()));
+  l.skip(std::next(l.all_begin()));
   skips.erase(std::remove(skips.begin(), skips.end(), 2), skips.end());
   all.erase(std::remove(all.begin(), all.end(), 2), all.end());
-  l.erase(boost::next(l.all_begin()));
+  l.erase(std::next(l.all_begin()));
   BOOST_CHECK_EQUAL_COLLECTIONS(l.skip_begin(), l.skip_end(),
                                 skips.begin(), skips.end());
   BOOST_CHECK_EQUAL_COLLECTIONS(l.all_begin(), l.all_end(),
@@ -229,7 +228,7 @@ BOOST_AUTO_TEST_CASE( test_swap )
 {
   using std::swap;
   Fixture a, b;
-  all_iterator it = boost::prior(b.l.all_end());
+  all_iterator it = std::prev(b.l.all_end());
   b.l.push_back(8); b.l.push_back(9); b.l.push_back(10);
   swap(a.l, b.l);
 
@@ -244,16 +243,16 @@ BOOST_AUTO_TEST_CASE( test_swap )
                                 a.all.begin(), a.all.end());
   // this iterator should still be valid and now point into a
   BOOST_CHECK_EQUAL_COLLECTIONS(it, a.l.all_end(),
-                                boost::prior(a.all.end(), 4), a.all.end());
+                                std::prev(a.all.end(), 4), a.all.end());
 }
 
 BOOST_AUTO_TEST_CASE( test_splice )
 {
   Fixture a, b;
-  a.all.insert(boost::next(a.all.begin()), b.all.begin(), b.all.end());
-  a.skips.insert(boost::next(a.skips.begin()), b.skips.begin(), b.skips.end());
+  a.all.insert(std::next(a.all.begin()), b.all.begin(), b.all.end());
+  a.skips.insert(std::next(a.skips.begin()), b.skips.begin(), b.skips.end());
 
-  a.l.splice(boost::next(a.l.skip_begin()), b.l, b.l.skip_begin(), b.l.skip_end());
+  a.l.splice(std::next(a.l.skip_begin()), b.l, b.l.skip_begin(), b.l.skip_end());
   BOOST_CHECK_EQUAL_COLLECTIONS(a.l.all_begin(), a.l.all_end(),
                                 a.all.begin(), a.all.end());
 

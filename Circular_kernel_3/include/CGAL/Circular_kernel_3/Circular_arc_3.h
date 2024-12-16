@@ -167,11 +167,11 @@ namespace CGAL {
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
-            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+            *std::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols1[(sols1.size()==1)?(0):(less_xyz_s1?0:1)]
             );
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
-            *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+            *std::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols2[(sols2.size()==1)?(0):(less_xyz_s2?0:1)]
             );
          // the source and target must be different
@@ -194,11 +194,11 @@ namespace CGAL {
          CGAL_kernel_precondition(sols1.size() > 0);
          CGAL_kernel_precondition(sols2.size() > 0);
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair1=
-           *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+           *std::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols1[(sols1.size()==1)?(0):(less_xyz_p1?0:1)]
             );
          const std::pair<typename SK::Circular_arc_point_3, unsigned>& pair2=
-           *boost::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
+           *std::get<std::pair<typename SK::Circular_arc_point_3, unsigned> >(
               &sols2[(sols2.size()==1)?(0):(less_xyz_p2?0:1)]
             );
          // the source and target must be different

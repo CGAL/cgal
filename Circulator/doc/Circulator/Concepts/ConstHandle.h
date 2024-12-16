@@ -7,7 +7,9 @@ A constant handle. Refer to the `Handle` concept for more details.
 
 \cgalRefines{Descriptor}
 
-\cgalHasModel const T* (const pointers)
+\cgalHasModelsBegin
+\cgalHasModels{const T* (const pointers)}
+\cgalHasModelsEnd
 
 \sa `Handle`
 

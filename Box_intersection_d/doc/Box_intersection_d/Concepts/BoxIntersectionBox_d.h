@@ -10,8 +10,10 @@ the dimension, the `id`-number, and the boundaries of the box.
 
 \cgalRefines{Assignable}
 
-\cgalHasModel CGAL::Box_intersection_d::Box_d
-\cgalHasModel CGAL::Box_intersection_d::Box_with_handle_d
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Box_intersection_d::Box_d}
+\cgalHasModels{CGAL::Box_intersection_d::Box_with_handle_d}
+\cgalHasModelsEnd
 
 \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
 \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink

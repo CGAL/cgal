@@ -31,7 +31,6 @@
 #include <CGAL/spatial_sort.h>
 #include <CGAL/utility.h>
 
-#include <boost/mpl/if.hpp>
 #include <boost/mpl/identity.hpp>
 #include <boost/property_map/function_property_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -545,7 +544,7 @@ public:
     typedef CGAL::Periodic_3_regular_triangulation_remove_traits_3< Gt > P3removeT;
     typedef CGAL::Regular_triangulation_3< P3removeT > Euclidean_triangulation;
     typedef Vertex_remover< Euclidean_triangulation > Remover;
-    P3removeT remove_traits(domain());
+    P3removeT remove_traits(geom_traits());
     Euclidean_triangulation tmp(remove_traits);
     Remover remover(this, tmp);
     Conflict_tester ct(this);
@@ -577,7 +576,7 @@ public:
     typedef CGAL::Regular_triangulation_3< P3removeT > Euclidean_triangulation;
     typedef Vertex_remover< Euclidean_triangulation > Remover;
 
-    P3removeT remove_traits(domain());
+    P3removeT remove_traits(geom_traits());
     Euclidean_triangulation tmp(remove_traits);
     Remover remover(this, tmp);
     Cover_manager cover_manager(*this);
@@ -909,7 +908,7 @@ public:
       std::cout << "four offsets: " << std::endl;
 #endif
 
-      boost::array<int, 4> offsets;
+      std::array<int, 4> offsets;
       for(int i=0; i<4; ++i)
       {
 #ifdef CGAL_PERIODIC_SET_POINT_VERBOSE
@@ -932,7 +931,7 @@ public:
 
         CGAL_assertion(this->int_to_off(offsets[i])[0] == 0 || this->int_to_off(offsets[i])[0] == 1);
         CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
-        CGAL_assertion(this->int_to_off(offsets[i])[1] == 0 || this->int_to_off(offsets[i])[1] == 1);
+        CGAL_assertion(this->int_to_off(offsets[i])[2] == 0 || this->int_to_off(offsets[i])[2] == 1);
       }
 
       c->set_offsets(offsets[0], offsets[1], offsets[2], offsets[3]);

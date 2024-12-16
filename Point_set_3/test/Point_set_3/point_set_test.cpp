@@ -28,6 +28,26 @@ void test (bool expr, const char* msg)
     ++ nb_success;
 }
 
+bool copy_and_assignement()
+{
+  Point_set ps1;
+  ps1.add_property_map("prop", int(3));
+  ps1.add_normal_map();
+  Point_set ps2 = ps1;
+  if (!ps2.has_property_map<int>("prop")) return false;
+  if (!ps2.has_normal_map()) return false;
+  Point_set ps3(ps1);
+  if (!ps3.has_property_map<int>("prop")) return false;
+  if (!ps3.has_normal_map()) return false;
+  ps1=Point_set();
+  Point_set ps4 = ps1;
+  if (ps4.has_property_map<int>("prop")) return false;
+  if (ps4.has_normal_map()) return false;
+  Point_set ps5(ps1);
+  if (ps5.has_property_map<int>("prop")) return false;
+  if (ps5.has_normal_map()) return false;
+  return true;
+}
 
 int main (int, char**)
 {
@@ -95,9 +115,8 @@ int main (int, char**)
       test ((get (color_prop, *it) == c), "recovered color is incorrect.");
     }
 
-  Point_set::Property_map<Color> color_prop_2;
-  boost::tie (color_prop_2, garbage) = point_set.property_map<Color>("color");
-  test ((color_prop_2 == color_prop), "color property not recovered correctly.");
+  std::optional<Point_set::Property_map<Color>> color_prop_2 = point_set.property_map<Color>("color");
+  test ((color_prop_2.value() == color_prop), "color property not recovered correctly.");
 
   point_set.remove_normal_map ();
   test (!(point_set.has_normal_map()), "point set shouldn't have normals.");
@@ -131,7 +150,9 @@ int main (int, char**)
   std::unordered_set<Point_set::Index> std_hash;
   boost::unordered_set<Point_set::Index> boost_hash;
 
+  test(copy_and_assignement(), "copy and assignement");
+
   std::cerr << nb_success << "/" << nb_test << " test(s) succeeded." << std::endl;
 
-  return EXIT_SUCCESS;
+  return nb_success==nb_test ? EXIT_SUCCESS : EXIT_FAILURE;
 }

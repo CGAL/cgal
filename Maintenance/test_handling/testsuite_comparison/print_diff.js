@@ -31,6 +31,11 @@ function print_diff(base, newtext){
        && change != "equal"){
         res[0]=base.charAt(base.length-1);
         res[1]=newtext.charAt(newtext.length-1);
+        if (res[0]=="w" && res[1]=="t")
+        {
+          res[0]="";
+          res[1]="";
+        }
       }
       //else if(change == "insert") {
       //  res=newtext.charAt(newtext.length-1);

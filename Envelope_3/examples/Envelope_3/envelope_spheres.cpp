@@ -5,47 +5,44 @@
 
 #ifndef CGAL_USE_CORE
 #include <iostream>
-int main()
-{
+int main() {
   std::cout << "Sorry, this example needs CORE ..." << std::endl;
   return 0;
 }
 #else
+
+#include <iostream>
+#include <list>
+#include <chrono>
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/CORE_algebraic_number_traits.h>
 #include <CGAL/Arr_conic_traits_2.h>
 #include <CGAL/Env_sphere_traits_3.h>
 #include <CGAL/envelope_3.h>
-#include <CGAL/Timer.h>
-#include <iostream>
-#include <list>
 
-typedef CGAL::CORE_algebraic_number_traits            Nt_traits;
-typedef Nt_traits::Rational                           Rational;
-typedef Nt_traits::Algebraic                          Algebraic;
-typedef CGAL::Cartesian<Rational>                     Rat_kernel;
-typedef Rat_kernel::Point_3                           Rat_point_3;
-typedef CGAL::Cartesian<Algebraic>                    Alg_kernel;
+using Nt_traits = CGAL::CORE_algebraic_number_traits;
+using Rational = Nt_traits::Rational;
+using Algebraic = Nt_traits::Algebraic;
+using Rat_kernel = CGAL::Cartesian<Rational>;
+using Rat_point_3 = Rat_kernel::Point_3;
+using Alg_kernel = CGAL::Cartesian<Algebraic>;
 
-typedef CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>
-                                                      Conic_traits_2;
+using Conic_traits_2 =
+  CGAL::Arr_conic_traits_2<Rat_kernel, Alg_kernel, Nt_traits>;
 
-typedef CGAL::Env_sphere_traits_3<Conic_traits_2>     Traits_3;
-typedef Traits_3::Surface_3                           Sphere_3;
-typedef CGAL::Envelope_diagram_2<Traits_3>            Envelope_diagram_2;
+using Traits_3 = CGAL::Env_sphere_traits_3<Conic_traits_2>;
+using Sphere_3 = Traits_3::Surface_3;
+using Envelope_diagram_2 = CGAL::Envelope_diagram_2<Traits_3>;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char* argv[]) {
   // Get the name of the input file from the command line, or use the default
   // fan_grids.dat file if no command-line parameters are given.
-  const char * filename = (argc > 1) ? argv[1] : "spheres.dat";
+  const char* filename = (argc > 1) ? argv[1] : "spheres.dat";
 
   // Open the input file.
-  std::ifstream     in_file(filename);
-
-  if (! in_file.is_open())
-  {
+  std::ifstream in_file(filename);
+  if (! in_file.is_open()) {
     std::cerr << "Failed to open " << filename << " ..." << std::endl;
     return 1;
   }
@@ -57,37 +54,28 @@ int main(int argc, char **argv)
   // <x_2> <y_2> <x_2> <R_2>       // center and squared radious of sphere #2.
   //   :     :     :     :
   // <x_n> <y_n> <x_n> <R_n>       // center and squared radious of sphere #n.
-  int                   n = 0;
-  std::list<Sphere_3>   spheres;
-  int                   x = 0, y = 0, z = 0, sqr_r = 0;
-  int                   i;
-
+  int n = 0;
+  std::list<Sphere_3> spheres;
+  int x = 0, y = 0, z = 0, sqr_r = 0;
   in_file >> n;
-  for (i = 0; i < n; ++i)
-  {
+  for (int i = 0; i < n; ++i) {
     in_file >> x >> y >> z >> sqr_r;
     spheres.push_back(Sphere_3(Rat_point_3(x, y, z), Rational(sqr_r)));
   }
   in_file.close();
+  std::cout << "Constructing the lower envelope of " << n << " spheres.\n";
 
   // Compute the lower envelope.
-  Envelope_diagram_2    min_diag;
-  CGAL::Timer           timer;
-
-  std::cout << "Constructing the lower envelope of "
-            << n << " spheres." << std::endl;
-
-  timer.start();
+  Envelope_diagram_2 min_diag;
+  auto start = std::chrono::system_clock::now();
   CGAL::lower_envelope_3(spheres.begin(), spheres.end(), min_diag);
-  timer.stop();
+  std::chrono::duration<double> secs = std::chrono::system_clock::now() - start;
 
   // Print the dimensions of the minimization diagram.
   std::cout << "V = " << min_diag.number_of_vertices()
-            << ",  E = " << min_diag.number_of_edges()
-            << ",  F = " << min_diag.number_of_faces() << std::endl;
-
-  std::cout << "Construction took " << timer.time()
-            << " seconds." << std::endl;
+            << ", E = " << min_diag.number_of_edges()
+            << ", F = " << min_diag.number_of_faces() << std::endl;
+  std::cout << "Construction took " << secs.count() << " seconds.\n";
 
   return 0;
 }

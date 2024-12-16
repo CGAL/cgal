@@ -132,7 +132,8 @@ struct GMap_group_attribute_functor_run
 {
   static void run(GMap& amap,
                   typename GMap::Dart_descriptor adart1,
-                  typename GMap::Dart_descriptor adart2)
+                  typename GMap::Dart_descriptor adart2,
+                  bool dart1_deleted=true)
   {
     static_assert( i<=GMap::dimension );
     static_assert( i!=j );
@@ -145,7 +146,13 @@ struct GMap_group_attribute_functor_run
         a2=amap.template attribute<i>(adart2);
 
     // If the two attributes are equal, nothing to do.
-    if ( a1 == a2 ) return;
+    if ( a1 == a2 )
+    {
+      if(a1!=GMap::null_descriptor && dart1_deleted &&
+         amap.template dart_of_attribute<i>(a1)==adart1)
+      { amap.template set_dart_of_attribute<i>(a1, adart2); }
+      return;
+    }
 
     typename GMap::Dart_descriptor toSet = amap.null_descriptor;
 
@@ -162,15 +169,18 @@ struct GMap_group_attribute_functor_run
       }
     }
     amap.template set_attribute<i>(toSet, a1);
+    if(dart1_deleted && toSet==adart1)
+    { amap.template set_dart_of_attribute<i>(a1, adart2); }
   }
 };
 // Specialization for void attributes.
 template<typename GMap, unsigned int i, unsigned int j>
 struct GMap_group_attribute_functor_run<GMap, i, j, CGAL::Void>
 {
-  static void run( GMap&,
-                   typename GMap::Dart_descriptor,
-                   typename GMap::Dart_descriptor )
+  static void run(GMap&,
+                  typename GMap::Dart_descriptor,
+                  typename GMap::Dart_descriptor,
+                  bool=true)
   {}
 };
 // Specialization for i=j. Do nothing as j is the dimension to not consider.
@@ -179,7 +189,8 @@ struct GMap_group_attribute_functor_run<GMap,i,i,T>
 {
   static void run(GMap&,
                   typename GMap::Dart_descriptor,
-                  typename GMap::Dart_descriptor)
+                  typename GMap::Dart_descriptor,
+                  bool=true)
   {}
 };
 // ************************************************************************

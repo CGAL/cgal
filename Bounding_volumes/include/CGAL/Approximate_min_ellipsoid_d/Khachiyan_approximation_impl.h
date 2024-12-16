@@ -10,6 +10,11 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
+#ifndef CGAL_APPROX_MIN_ELLIPSOID_KHACHIYAN_APPROX_IMPL_H
+#define CGAL_APPROX_MIN_ELLIPSOID_KHACHIYAN_APPROX_IMPL_H
+
+#include <CGAL/license/Bounding_volumes.h>
+
 // Note: whenever a comment refers to "Khachiyan's paper" then the
 // paper "Rounding of polytopes in the real number model of
 // computation" is meant (Mathematics of Operations Research, Vol. 21,
@@ -663,3 +668,5 @@ namespace CGAL {
   }
 
 }
+
+#endif // CGAL_APPROX_MIN_ELLIPSOID_KHACHIYAN_APPROX_IMPL_H

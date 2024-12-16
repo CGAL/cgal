@@ -13,6 +13,11 @@
 //                 Franz Wessendorp
 //                 Kaspar Fischer
 
+#ifndef CGAL_QP_SOLVER_INITIALIZATION_H
+#define CGAL_QP_SOLVER_INITIALIZATION_H
+
+#include <CGAL/license/QP_solver.h>
+
 #include<CGAL/QP_functions.h>
 #include<CGAL/NT_converter.h>
 
@@ -664,3 +669,5 @@ init_additional_data_members()
 } //namespace CGAL
 
 // ===== EOF ==================================================================
+
+#endif //CGAL_QP_SOLVER_INITIALIZATION_H

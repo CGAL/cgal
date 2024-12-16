@@ -11,7 +11,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
-typedef CGAL::Surface_mesh<Point>                           Surface_mesh;
+typedef CGAL::Surface_mesh<Point>                           Mesh;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/P.off");
   const char* outfilename = (argc > 2) ? argv[2] : "P_tri.off";
 
-  Surface_mesh mesh;
+  Mesh mesh;
   if(!PMP::IO::read_polygon_mesh(filename, mesh))
   {
     std::cerr << "Error: Invalid input." << std::endl;
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
   PMP::triangulate_faces(mesh);
 
   // Confirm that all faces are triangles.
-  for(boost::graph_traits<Surface_mesh>::face_descriptor f : faces(mesh))
+  for(boost::graph_traits<Mesh>::face_descriptor f : faces(mesh))
   {
     if(!CGAL::is_triangle(halfedge(f, mesh), mesh))
       std::cerr << "Error: non-triangular face left in mesh." << std::endl;

@@ -661,7 +661,7 @@ private:
   DBlock<nodeptr>                *nodeptr_block;
 
   void        (*error_function)(const char
-                          *);        /* this function is called if a error occurs,
+                          *);        /* this function is called if an error occurs,
                                                                                    with a corresponding error message
                                                                                    (or exit(1) is called if it's nullptr) */
 

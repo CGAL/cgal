@@ -148,7 +148,7 @@ intersection(const typename K::Tetrahedron_3& tet,
     supporting_planes.swap(current_sp);
 
     if (res.empty())
-      return boost::none;
+      return std::nullopt;
   }
 
   switch(res.size())

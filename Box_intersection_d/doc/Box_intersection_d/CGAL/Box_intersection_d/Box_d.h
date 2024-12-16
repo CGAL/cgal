@@ -40,7 +40,7 @@ creates copies of the boxes that would not have identical
 `id`-numbers.
 </UL>
 
-\cgalModels `BoxIntersectionBox_d`
+\cgalModels{BoxIntersectionBox_d}
 
 \sa \link PkgBoxIntersectionD_box_intersection_d `CGAL::box_intersection_d()` \endlink
 \sa \link PkgBoxIntersectionD_box_self_intersection_d `CGAL::box_self_intersection_d()` \endlink

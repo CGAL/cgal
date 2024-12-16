@@ -65,7 +65,7 @@
 #include <CGAL/Polygon_mesh_processing/shape_predicates.h>
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_primitive.h>
 
 #include <CGAL/Dynamic_property_map.h>
@@ -283,7 +283,7 @@ private:
   };
 
   typedef AABB_primitive<unsigned int, Datum_map<GeomTraits>, Point_map<GeomTraits>, Tag_true /*UseSharedData*/, Tag_false /*CacheDatum*/> Primitive;
-  typedef AABB_traits<GeomTraits, Primitive> Tree_traits;
+  typedef AABB_traits_3<GeomTraits, Primitive> Tree_traits;
   typedef AABB_tree<Tree_traits> Tree;
 
 // Data members
@@ -714,7 +714,7 @@ private:
   {
     Vector_3 bmin, bmax;
 
-    Orientation ori;
+    Orientation ori = ON_ORIENTED_BOUNDARY; // to avoid maybe uninitialized warning
 
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -825,7 +825,7 @@ private:
     for (unsigned int i = 0; i < cutp.size(); i++){
       const Plane& plane_i = prism[cutp[i]];
 
-      boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line, plane_i.eplane);
+      std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line, plane_i.eplane);
       if(! op){
         std::cout <<  "there must be an intersection 2" << std::endl;
       }
@@ -950,7 +950,7 @@ private:
       }
 
       for (unsigned int j = 0; j < cidl.size(); j++) {
-        boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line,
+        std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(line,
                                                                                   halfspace[prismindex[queue[i]]][cidl[j]].eplane);
         const ePoint_3& ip = *op;
         inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id
@@ -1142,7 +1142,7 @@ private:
           const Plane& plane_i = prism[cutp[i]];
           const eLine_3& eline = *(seg[k]);
 
-          boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline, plane_i.eplane);
+          std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline, plane_i.eplane);
           if(! op){
 #ifdef CGAL_ENVELOPE_DEBUG
             std::cout <<  "there must be an intersection 6" << std::endl;
@@ -1227,7 +1227,7 @@ private:
 
             }
 
-            boost::optional<ePoint_3>  ipp = intersection_point_for_polyhedral_envelope(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
+            std::optional<ePoint_3>  ipp = intersection_point_for_polyhedral_envelope(tri_eplane, prism[cutp[i]].eplane, prism[cutp[j]].eplane);
             if(ipp){
                 inter = is_3_triangle_cut_float_fast(etri0, etri1, etri2,
                                                      n,
@@ -1667,7 +1667,7 @@ private:
           if (!cut) continue;
 
           for (unsigned int j = 0; j < cidl.size(); j++) {
-            boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
+            std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
                                                                                       halfspace[prismindex[queue[i]]][cidl[j]].eplane);
             const ePoint_3& ip = *op;
             inter = Implicit_Seg_Facet_interpoint_Out_Prism_return_local_id(ip, idlist, jump1, check_id);
@@ -1749,9 +1749,9 @@ private:
           if (tti != CUT_FACE){
             continue;
           }
-          // now we know that there exists an intesection point
+          // now we know that there exists an intersection point
 
-          boost::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
+          std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
                                                                                     halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);
           const ePoint_3& ip = *op;
 
@@ -1834,7 +1834,7 @@ private:
 
             // We moved the intersection here
             // In case there is no intersection point we continue
-            boost::optional<ePoint_3>
+            std::optional<ePoint_3>
               op = intersection_point_for_polyhedral_envelope(etriangle_eplane,
                                                               halfspace[jump1][intersect_face[queue[i]][k]].eplane,
                                                               halfspace[jump2][intersect_face[queue[j]][h]].eplane);
@@ -2113,7 +2113,7 @@ private:
     }
     ePoint_3 origin(env_vertices[env_faces[i][0]].x(), env_vertices[env_faces[i][0]].y(),env_vertices[env_faces[i][0]].z());
     Surface_mesh<ePoint_3> esm;
-    halfspace_intersection_3(eplanes.begin(),eplanes.end(),esm , boost::make_optional(origin));
+    halfspace_intersection_3(eplanes.begin(),eplanes.end(),esm , std::make_optional(origin));
 
     copy_face_graph(esm,sm);
   }

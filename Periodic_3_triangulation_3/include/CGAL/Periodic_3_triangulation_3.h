@@ -169,6 +169,13 @@ public:
   typedef Facet_iterator                       All_facets_iterator;
   typedef Edge_iterator                        All_edges_iterator;
   typedef Vertex_iterator                      All_vertices_iterator;
+
+  typedef Periodic_3_triangulation_unique_cell_iterator_3<Self>
+                                               Unique_cell_iterator;
+  typedef Periodic_3_triangulation_unique_facet_iterator_3<Self>
+                                               Unique_facet_iterator;
+  typedef Periodic_3_triangulation_unique_edge_iterator_3<Self>
+                                               Unique_edge_iterator;
   typedef Periodic_3_triangulation_unique_vertex_iterator_3<Self>
                                                Unique_vertex_iterator;
 
@@ -397,26 +404,14 @@ public:
   }
 
   const Covering_sheets& number_of_sheets() const { return _cover; }
-  const std::pair<Vertex_handle, Offset> original_vertex(const Vertex_handle v) const
-  {
-    return (virtual_vertices.find(v) == virtual_vertices.end()) ?
-      std::make_pair(v,Offset()) : virtual_vertices.find(v)->second;
-  }
-  const std::vector<Vertex_handle>& periodic_copies(const Vertex_handle v) const
-  {
-    CGAL_precondition(number_of_sheets() != CGAL::make_array(1,1,1));
-    CGAL_precondition(virtual_vertices.find(v) == virtual_vertices.end());
-    CGAL_assertion(
-        virtual_vertices_reverse.find(v) != virtual_vertices_reverse.end());
-    return virtual_vertices_reverse.find(v)->second;
-  }
 
   bool is_triangulation_in_1_sheet() const;
-
   void convert_to_1_sheeted_covering();
+
   virtual void update_cover_data_after_converting_to_27_sheeted_covering() { }
   void convert_to_27_sheeted_covering();
 
+public:
   size_type number_of_cells() const {
     if(is_1_cover()) return _tds.number_of_cells();
     else return _tds.number_of_cells()/27;
@@ -458,14 +453,6 @@ public:
   void set_cover(const Covering_sheets& cover)
   {
     _cover = cover;
-  }
-
-public:
-  bool is_virtual(Vertex_handle v)
-  {
-    if(is_1_cover())
-      return false;
-    return (virtual_vertices.find(v) != virtual_vertices.end());
   }
 
 public:
@@ -547,6 +534,232 @@ public:
     int o2i = ((off2[0]&1)<<2)+((off2[1]&1)<<1)+(off2[2]&1);
     int o3i = ((off3[0]&1)<<2)+((off3[1]&1)<<1)+(off3[2]&1);
     c->set_offsets(o0i,o1i,o2i,o3i);
+  }
+
+public:
+  // undocumented access functions
+  Offset get_offset(Cell_handle ch, int i) const
+  {
+    if(is_1_cover())
+      return int_to_off(ch->offset(i));
+
+    Virtual_vertex_map_it it = virtual_vertices.find(ch->vertex(i));
+    if(it != virtual_vertices.end())
+      return combine_offsets(it->second.second, int_to_off(ch->offset(i)));
+    else
+      return combine_offsets(Offset(), int_to_off(ch->offset(i)));
+  }
+
+  Offset get_offset(Vertex_handle vh) const
+  {
+    if(is_1_cover())
+      return Offset();
+
+    Virtual_vertex_map_it it = virtual_vertices.find(vh);
+    if(it != virtual_vertices.end())
+      return it->second.second;
+    else
+      return Offset();
+  }
+
+    // Get the canonicalized offsets of a cell.
+  void get_offsets(Cell_handle ch,
+                   Offset& off0, Offset& off1, Offset& off2, Offset& off3) const
+  {
+    Offset cell_off0 = int_to_off(ch->offset(0));
+    Offset cell_off1 = int_to_off(ch->offset(1));
+    Offset cell_off2 = int_to_off(ch->offset(2));
+    Offset cell_off3 = int_to_off(ch->offset(3));
+    Offset diff_off((cell_off0.x() == 1 && cell_off1.x() == 1 &&
+                     cell_off2.x() == 1 && cell_off3.x() == 1) ? -1 : 0,
+                    (cell_off0.y() == 1 && cell_off1.y() == 1 &&
+                     cell_off2.y() == 1 && cell_off3.y() == 1) ? -1 : 0,
+                    (cell_off0.z() == 1 && cell_off1.z() == 1 &&
+                     cell_off2.z() == 1 && cell_off3.z() == 1) ? -1 : 0);
+    off0 = combine_offsets(get_offset(ch,0), diff_off);
+    off1 = combine_offsets(get_offset(ch,1), diff_off);
+    off2 = combine_offsets(get_offset(ch,2), diff_off);
+    off3 = combine_offsets(get_offset(ch,3), diff_off);
+  }
+
+  // Gets the canonicalized offsets of a face.
+  void get_offsets(const Facet& f,
+                   Offset& off0, Offset& off1, Offset& off2) const
+  {
+    Offset cell_off0 = int_to_off(f.first->offset((f.second+1)&3));
+    Offset cell_off1 = int_to_off(f.first->offset((f.second+2)&3));
+    Offset cell_off2 = int_to_off(f.first->offset((f.second+3)&3));
+    Offset diff_off((cell_off0.x() == 1 && cell_off1.x() == 1 && cell_off2.x() == 1) ? -1 : 0,
+                    (cell_off0.y() == 1 && cell_off1.y() == 1 && cell_off2.y() == 1) ? -1 : 0,
+                    (cell_off0.z() == 1 && cell_off1.z() == 1 && cell_off2.z() == 1) ? -1 : 0);
+    off0 = combine_offsets(get_offset(f.first, (f.second+1)&3), diff_off);
+    off1 = combine_offsets(get_offset(f.first, (f.second+2)&3), diff_off);
+    off2 = combine_offsets(get_offset(f.first, (f.second+3)&3), diff_off);
+  }
+
+  // Gets the canonicalized offsets of an edge.
+  void get_offsets(const Edge& e,
+                   Offset& off0, Offset& off1) const
+  {
+    Offset cell_off0 = int_to_off(e.first->offset(e.second));
+    Offset cell_off1 = int_to_off(e.first->offset(e.third));
+    Offset diff_off((cell_off0.x()==1 && cell_off1.x()==1) ? -1 : 0,
+                    (cell_off0.y()==1 && cell_off1.y()==1) ? -1 : 0,
+                    (cell_off0.z()==1 && cell_off1.z()==1) ? -1 : 0);
+    off0 = combine_offsets(get_offset(e.first, e.second), diff_off);
+    off1 = combine_offsets(get_offset(e.first, e.third), diff_off);
+  }
+
+public:
+  Offset combine_offsets(const Offset& o_c, const Offset& o_t) const
+  {
+    Offset o_ct(_cover[0]*o_t.x(), _cover[1]*o_t.y(), _cover[2]*o_t.z());
+    return o_c + o_ct;
+  }
+
+public:
+  Offset neighbor_offset(Cell_handle ch, int i, Cell_handle nb) const;
+
+  Offset neighbor_offset(Cell_handle ch, int i) const
+  {
+    return neighbor_offset(ch, i, ch->neighbor(i));
+  }
+
+public:
+  /// Tests whether a vertex is a periodic copy of a vertex in the 3-cover.
+  bool is_virtual(Vertex_handle vh) const
+  {
+    if(is_1_cover())
+      return false;
+    return (virtual_vertices.find(vh) != virtual_vertices.end());
+  }
+
+  /// Returns the non-virtual (i.e. canonical) copy of the vertex.
+  Vertex_handle get_original_vertex(Vertex_handle vh) const
+  {
+    if(is_1_cover())
+      return vh;
+
+    Virtual_vertex_map_it it = virtual_vertices.find(vh);
+    if(it != virtual_vertices.end())
+      return it->second.first;
+    else
+      return vh;
+  }
+
+  const std::pair<Vertex_handle, Offset> original_vertex(const Vertex_handle v) const
+  {
+    return (virtual_vertices.find(v) == virtual_vertices.end()) ?
+      std::make_pair(v,Offset()) : virtual_vertices.find(v)->second;
+  }
+
+  const std::vector<Vertex_handle>& periodic_copies(const Vertex_handle v) const
+  {
+    CGAL_precondition(number_of_sheets() != CGAL::make_array(1,1,1));
+    CGAL_precondition(virtual_vertices.find(v) == virtual_vertices.end());
+    CGAL_assertion(
+        virtual_vertices_reverse.find(v) != virtual_vertices_reverse.end());
+    return virtual_vertices_reverse.find(v)->second;
+  }
+
+public:
+  bool is_canonical(Cell_handle ch) const
+  {
+    if(is_1_cover())
+      return true;
+
+    Offset off0, off1, off2, off3;
+    get_offsets(ch, off0, off1, off2, off3);
+
+    // If there is one offset with entries larger than 1 then we are
+    // talking about a vertex that is too far away from the original
+    // domain to belong to a canonical triangle.
+    if (off0.x() > 1) return false;
+    if (off0.y() > 1) return false;
+    if (off0.z() > 1) return false;
+    if (off1.x() > 1) return false;
+    if (off1.y() > 1) return false;
+    if (off1.z() > 1) return false;
+    if (off2.x() > 1) return false;
+    if (off2.y() > 1) return false;
+    if (off2.z() > 1) return false;
+    if (off3.x() > 1) return false;
+    if (off3.y() > 1) return false;
+    if (off3.z() > 1) return false;
+
+    // If there is one direction of space for which all offsets are
+    // non-zero then the edge is not canonical because we can
+    // take the copy closer towards the origin in that direction.
+    int offx = off0.x() & off1.x() & off2.x() & off3.x();
+    int offy = off0.y() & off1.y() & off2.y() & off3.y();
+    int offz = off0.z() & off1.z() & off2.z() & off3.z();
+
+    return (offx == 0 && offy == 0 && offz == 0);
+  }
+
+  bool is_canonical(const Edge& e) const
+  {
+    if(is_1_cover())
+      return true;
+
+    Offset off0, off1;
+    get_offsets(e, off0, off1);
+
+    // If there is one offset with entries larger than 1 then we are
+    // talking about a vertex that is too far away from the original
+    // domain to belong to a canonical edge.
+    if (off0.x() > 1) return false;
+    if (off0.y() > 1) return false;
+    if (off0.z() > 1) return false;
+    if (off1.x() > 1) return false;
+    if (off1.y() > 1) return false;
+    if (off1.z() > 1) return false;
+
+    // If there is one direction of space for which all offsets are
+    // non-zero then the edge is not canonical because we can
+    // take the copy closer towards the origin in that direction.
+    int offx = off0.x() & off1.x();
+    int offy = off0.y() & off1.y();
+    int offz = off0.z() & off1.z();
+
+    return (offx == 0 && offy == 0 && offz == 0);
+  }
+
+  bool is_canonical(const Facet& f) const
+  {
+    if(is_1_cover())
+      return true;
+
+    Offset off0, off1, off2;
+    get_offsets(f, off0, off1, off2);
+
+    // If there is one offset with entries larger than 1 then we are
+    // talking about a vertex that is too far away from the original
+    // domain to belong to a canonical triangle.
+    if(off0.x() > 1) return false;
+    if(off0.y() > 1) return false;
+    if(off0.z() > 1) return false;
+    if(off1.x() > 1) return false;
+    if(off1.y() > 1) return false;
+    if(off1.z() > 1) return false;
+    if(off2.x() > 1) return false;
+    if(off2.y() > 1) return false;
+    if(off2.z() > 1) return false;
+
+    // If there is one direction of space for which all offsets are
+    // non-zero then the facet is not canonical because we can
+    // take the copy closer towards the origin in that direction.
+    int offx = off0.x() & off1.x() & off2.x();
+    int offy = off0.y() & off1.y() & off2.y();
+    int offz = off0.z() & off1.z() & off2.z();
+
+    return (offx == 0 && offy == 0 && offz == 0);
+  }
+
+  /// Tests whether a vertex belongs to the original (canonical) domain.
+  bool is_canonical(Vertex_handle vh) const
+  {
+    return !is_virtual(vh);
   }
 
 public:
@@ -988,6 +1201,14 @@ public:
   // end of geometric functions
 
 public:
+  // These functions give the pair (vertex, offset) that corresponds to the
+  // i-th vertex of cell ch or vertex vh, respectively.
+  void get_vertex(Cell_handle ch, int i, Vertex_handle& vh, Offset& off) const;
+  void get_vertex(Vertex_handle vh_i, Vertex_handle& vh, Offset& off) const;
+
+  // Auxiliary functions
+  Cell_handle get_cell(const Vertex_handle* vh) const;
+
   /** @name Queries */
   bool is_vertex(const Point& p, Vertex_handle& v) const;
 
@@ -1305,6 +1526,14 @@ public:
   std::vector<Vertex_handle> insert_generic_dummy_points();
 
 protected:
+  template<class Conflict_tester>
+  Offset get_location_offset(const Conflict_tester& tester,
+                             Cell_handle c) const;
+
+  template<class Conflict_tester>
+  Offset get_location_offset(const Conflict_tester& tester,
+                             Cell_handle c, bool& found) const;
+
   // this is needed for compatibility reasons
   template <class Conflict_test, class OutputIteratorBoundaryFacets,
             class OutputIteratorCells, class OutputIteratorInternalFacets>
@@ -1474,6 +1703,8 @@ public:
     return _tds.facets_end();
   }
 
+  // Finite iterators (= all iterators, for periodic triangulations)
+
   Cell_iterator finite_cells_begin() const {
     return _tds.cells_begin();
   }
@@ -1501,6 +1732,8 @@ public:
   Facet_iterator finite_facets_end() const {
     return _tds.facets_end();
   }
+
+  // All iterators (= finite, for periodic triangulations)
 
   All_cells_iterator all_cells_begin() const {
     return _tds.cells_begin();
@@ -1530,12 +1763,38 @@ public:
     return _tds.facets_end();
   }
 
+  // Unique iterators
+
+  Unique_cell_iterator unique_cells_begin() const {
+    return CGAL::filter_iterator(cells_end(), Domain_tester<Self>(this),
+                                 cells_begin());
+  }
+  Unique_cell_iterator unique_cells_end() const {
+    return CGAL::filter_iterator(cells_end(), Domain_tester<Self>(this));
+  }
+
   Unique_vertex_iterator unique_vertices_begin() const {
     return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this),
                                  vertices_begin());
   }
   Unique_vertex_iterator unique_vertices_end() const {
     return CGAL::filter_iterator(vertices_end(), Domain_tester<Self>(this));
+  }
+
+  Unique_edge_iterator unique_edges_begin() const {
+    return CGAL::filter_iterator(edges_end(), Domain_tester<Self>(this),
+                                 edges_begin());
+  }
+  Unique_edge_iterator unique_edges_end() const {
+    return CGAL::filter_iterator(edges_end(), Domain_tester<Self>(this));
+  }
+
+  Unique_facet_iterator unique_facets_begin() const {
+    return CGAL::filter_iterator(facets_end(), Domain_tester<Self>(this),
+                                 facets_begin());
+  }
+  Unique_facet_iterator unique_facets_end() const {
+    return CGAL::filter_iterator(facets_end(), Domain_tester<Self>(this));
   }
 
   // Geometric iterators
@@ -1576,6 +1835,7 @@ public:
   }
 
   // Circulators
+
   Cell_circulator incident_cells(const Edge& e) const {
     return _tds.incident_cells(e);
   }
@@ -1695,75 +1955,6 @@ public:
     }
   };
 
-public:
-  // undocumented access functions
-  Offset get_offset(Cell_handle ch, int i) const
-  {
-    if(is_1_cover())
-      return int_to_off(ch->offset(i));
-
-    Virtual_vertex_map_it it = virtual_vertices.find(ch->vertex(i));
-    if(it != virtual_vertices.end())
-      return combine_offsets(it->second.second, int_to_off(ch->offset(i)));
-    else
-      return combine_offsets(Offset(), int_to_off(ch->offset(i)));
-  }
-
-  Offset get_offset(Vertex_handle vh) const
-  {
-    if(is_1_cover())
-      return Offset();
-
-    Virtual_vertex_map_it it = virtual_vertices.find(vh);
-    if(it != virtual_vertices.end())
-      return it->second.second;
-    else
-      return Offset();
-  }
-
-  Vertex_handle get_original_vertex(Vertex_handle vh) const
-  {
-    if(is_1_cover())
-      return vh;
-
-    Virtual_vertex_map_it it = virtual_vertices.find(vh);
-    if(it != virtual_vertices.end())
-      return it->second.first;
-    else
-      return vh;
-  }
-
-  Offset combine_offsets(const Offset& o_c, const Offset& o_t) const
-  {
-    Offset o_ct(_cover[0]*o_t.x(), _cover[1]*o_t.y(), _cover[2]*o_t.z());
-    return o_c + o_ct;
-  }
-
-  // These functions give the pair (vertex, offset) that corresponds to the
-  // i-th vertex of cell ch or vertex vh, respectively.
-  void get_vertex(Cell_handle ch, int i, Vertex_handle& vh, Offset& off) const;
-  void get_vertex(Vertex_handle vh_i, Vertex_handle& vh, Offset& off) const;
-
-protected:
-  // Auxiliary functions
-  Cell_handle get_cell(const Vertex_handle* vh) const;
-
-  template<class Conflict_tester>
-  Offset get_location_offset(const Conflict_tester& tester,
-                             Cell_handle c) const;
-
-  template<class Conflict_tester>
-  Offset get_location_offset(const Conflict_tester& tester,
-                             Cell_handle c, bool& found) const;
-
-  Offset neighbor_offset(Cell_handle ch, int i, Cell_handle nb) const;
-
-public:
-  Offset neighbor_offset(Cell_handle ch, int i) const
-  {
-    return neighbor_offset(ch, i, ch->neighbor(i));
-  }
-
 protected:
   /** @name Friends */
   friend std::istream& operator>> <>
@@ -1786,51 +1977,6 @@ protected:
                                        get_offset(c, 2), get_offset(c, 3));
 
     return construct_periodic_point(p);
-  }
-
-public:
-  bool is_canonical(const Facet& f) const
-  {
-    if(number_of_sheets() == CGAL::make_array(1,1,1))
-      return true;
-
-    Offset cell_off0 = int_to_off(f.first->offset((f.second+1)&3));
-    Offset cell_off1 = int_to_off(f.first->offset((f.second+2)&3));
-    Offset cell_off2 = int_to_off(f.first->offset((f.second+3)&3));
-    Offset diff_off((cell_off0.x() == 1
-                     && cell_off1.x() == 1
-                     && cell_off2.x() == 1) ? -1 : 0,
-                    (cell_off0.y() == 1
-                     && cell_off1.y() == 1
-                     && cell_off2.y() == 1) ? -1 : 0,
-                    (cell_off0.z() == 1
-                     && cell_off1.z() == 1
-                     && cell_off2.z() == 1) ? -1 : 0);
-    Offset off0 = combine_offsets(get_offset(f.first, (f.second+1)&3), diff_off);
-    Offset off1 = combine_offsets(get_offset(f.first, (f.second+2)&3), diff_off);
-    Offset off2 = combine_offsets(get_offset(f.first, (f.second+3)&3), diff_off);
-
-    // If there is one offset with entries larger than 1 then we are
-    // talking about a vertex that is too far away from the original
-    // domain to belong to a canonical triangle.
-    if(off0.x() > 1) return false;
-    if(off0.y() > 1) return false;
-    if(off0.z() > 1) return false;
-    if(off1.x() > 1) return false;
-    if(off1.y() > 1) return false;
-    if(off1.z() > 1) return false;
-    if(off2.x() > 1) return false;
-    if(off2.y() > 1) return false;
-    if(off2.z() > 1) return false;
-
-    // If there is one direction of space for which all offsets are
-    // non-zero then the edge is not canonical because we can
-    // take the copy closer towards the origin in that direction.
-    int offx = off0.x() & off1.x() & off2.x();
-    int offy = off0.y() & off1.y() & off2.y();
-    int offz = off0.z() & off1.z() & off2.z();
-
-    return (offx == 0 && offy == 0 && offz == 0);
   }
 
 protected:
@@ -2638,7 +2784,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
   /// Virtual cells, 6 per periodic instance
   Cell_handle cells[3][3][3][6];
 
-  // Initialise vertices:
+  // initialize vertices:
   vir_vertices[0][0][0] = _tds.create_vertex();
   vir_vertices[0][0][0]->set_point(p);
   virtual_vertices_reverse[vir_vertices[0][0][0]] = std::vector<Vertex_handle>();
@@ -2646,7 +2792,7 @@ Periodic_3_triangulation_3<GT,TDS>::create_initial_triangulation(const Point& p)
     for(int j=0; j<_cover[1]; j++) {
       for(int k=0; k<_cover[2]; k++) {
         if((i!=0)||(j!=0)||(k!=0)) {
-          // Initialise virtual vertices out of the domain for debugging
+          // initialize virtual vertices out of the domain for debugging
           vir_vertices[i][j][k] =
             _tds.create_vertex();
           vir_vertices[i][j][k]->set_point(p); //+Offset(i,j,k));
@@ -3310,7 +3456,7 @@ periodic_remove(Vertex_handle v,
     nr_vec.push_back(boost::make_tuple(o_ch,o_i,new_ch));
     nr_vec.push_back(boost::make_tuple(new_ch,i_i,o_ch));
 
-    // for the other faces check, if they can also be glued
+    // for the other facets check, if they can also be glued
     for(unsigned int i = 0; i < 4; i++) {
       if(i != i_i) {
         Facet f = std::pair<Cell_handle,int>(new_ch,i);
@@ -3322,7 +3468,7 @@ periodic_remove(Vertex_handle v,
           std::swap(vt.second,vt.third);
           outer_map[vt]= f;
         } else {
-        // glue the faces
+        // glue the facets
           typename Vertex_triple_Facet_map::value_type o_vt_f_pair2 = *oit2;
           Cell_handle o_ch2 = o_vt_f_pair2.second.first;
           int o_i2 = o_vt_f_pair2.second.second;

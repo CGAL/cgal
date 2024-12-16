@@ -45,7 +45,7 @@ public:
   DirectionC3() {}
 
   explicit DirectionC3(const Vector_3 &v)
-    : base(CGAL::make_array(v.x(), v.y(), v.z())) {}
+    : base{v.x(), v.y(), v.z()} {}
   // { *this = v.direction(); }
 
   explicit DirectionC3(const Line_3 &l)
@@ -58,7 +58,7 @@ public:
   { *this = s.rep().direction(); }
 
   DirectionC3(const FT &x, const FT &y, const FT &z)
-    : base(CGAL::make_array(x, y, z)) {}
+    : base{x, y, z} {}
 
   typename R::Boolean   operator==(const DirectionC3 &d) const;
   typename R::Boolean   operator!=(const DirectionC3 &d) const;

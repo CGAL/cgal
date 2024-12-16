@@ -107,7 +107,7 @@ void check_equal() {
    typedef typename Traits::Point_2                     Point_2;
    typedef typename Traits::X_monotone_curve_2          X_monotone_curve_2;
    typedef std::pair<Multiplicity, Point_2>             Intersection_point;
-   typedef boost::variant<Intersection_point, X_monotone_curve_2>
+   typedef std::variant<Intersection_point, X_monotone_curve_2>
      Intersection_result;
 
    std::vector<Intersection_result> intersection_points;
@@ -623,7 +623,7 @@ template <typename GeometryTraits>
 void check_make_x_monotne_curve(const typename GeometryTraits::Curve_2& c1) {
   typename GeometryTraits::Point_2                      Point_2;
   typename GeometryTraits::X_monotone_curve_2           X_monotone_curve_2;
-  typedef boost::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
+  typedef std::variant<Point_2, X_monotone_curve_2>   Make_x_monotone_result;
   Polycurve_conic_traits_2 traits;
   std::vector<Make_x_monotone_result> objs;
   traits.make_x_monotone_2_object()(c1, std::back_inserter(objs));

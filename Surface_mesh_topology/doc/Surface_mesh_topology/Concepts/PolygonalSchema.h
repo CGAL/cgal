@@ -9,8 +9,10 @@
 
   \cgalRefines{GenericMap}
 
-  \cgalHasModel \link CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map `CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<Items,Alloc>`\endlink
-  \cgalHasModel \link CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map `CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map<Items,Alloc>`\endlink
+  \cgalHasModelsBegin
+  \cgalHasModelsBare{\link CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map `CGAL::Surface_mesh_topology::Polygonal_schema_with_combinatorial_map<Items,Alloc>`\endlink}
+  \cgalHasModelsBare{\link CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map `CGAL::Surface_mesh_topology::Polygonal_schema_with_generalized_map<Items,Alloc>`\endlink}
+  \cgalHasModelsEnd
   */
 
 class PolygonalSchema

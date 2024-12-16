@@ -120,7 +120,7 @@ To use these classes, \gmp and \mpfr must be installed.
 \anchor ledant
 
 \leda provides number types that can be used for exact computation
-with both Cartesian and homogeneous representations. If you are using
+with both %Cartesian and homogeneous representations. If you are using
 homogeneous representation with the built-in integer types
 `short`, `int`, and `long` as ring type, exactness of
 computations can be guaranteed only if your input data come from a
@@ -130,7 +130,7 @@ integers of arbitrary length. (Of course the length is
 somehow bounded by the resources of your computer.) It can be used as
 ring type in homogeneous kernels and leads to exact
 computation as long as all intermediate results are rational. For the
-same kind of problems, Cartesian representation with number type
+same kind of problems, %Cartesian representation with number type
 `leda_rational` leads to exact computation as well.
 The number type `leda_bigfloat` in \leda is a variable precision
 floating-point type. Rounding mode and precision (i.e.\ mantissa length) of

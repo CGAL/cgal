@@ -18,7 +18,6 @@
 #define CGAL_HOMOGENEOUS_POINT_2_H
 
 #include <CGAL/Origin.h>
-#include <boost/type_traits/is_convertible.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/logical.hpp>
 
@@ -54,8 +53,8 @@ public:
 
     template < typename Tx, typename Ty >
     PointH2(const Tx & x, const Ty & y,
-            std::enable_if_t< boost::mpl::and_<boost::is_convertible<Tx, RT>,
-                                               boost::is_convertible<Ty, RT> >::value >* = 0)
+            std::enable_if_t< std::is_convertible_v<Tx, RT> &&
+                              std::is_convertible_v<Ty, RT> >* = 0)
       : base(x, y) {}
 
     PointH2(const FT& x, const FT& y)

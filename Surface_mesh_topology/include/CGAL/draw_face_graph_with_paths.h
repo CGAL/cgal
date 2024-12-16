@@ -8,26 +8,66 @@
 // SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
 //
 // Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//                 Mostafa Ashraf <mostaphaashraf1996@gmail.com>
 //
 #ifndef CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
 #define CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H
 
 #include <CGAL/license/Surface_mesh_topology.h>
 
+#include <CGAL/Graphics_scene.h>
+#include <CGAL/Graphics_scene_options.h>
+
 #include <iostream>
 #include <initializer_list>
+#include <functional>
+
 #include <CGAL/draw_linear_cell_complex.h>
 #include <CGAL/Path_on_surface.h>
 #include <CGAL/assertions.h>
-
-#ifdef CGAL_USE_BASIC_VIEWER
-
-#include <CGAL/Qt/init_ogl_context.h>
 #include <CGAL/Random.h>
 
 namespace CGAL {
 
-// Specialisation for face graph; otherwise use the LCC_geom_utils of LCC.
+// Specific graphics scene options
+template <typename DS,
+          typename vertex_handle,
+          typename edge_handle,
+          typename face_handle>
+struct Graphics_scene_options_face_graph_with_paths :
+    public CGAL::Graphics_scene_options<DS, vertex_handle, edge_handle, face_handle>
+{
+  Graphics_scene_options_face_graph_with_paths()
+  {
+    color_of_path=[](std::size_t i)->CGAL::IO::Color
+    {
+      CGAL::Random random(static_cast<unsigned int>(i));
+      return get_random_color(random);
+    };
+
+    draw_path=[](std::size_t)->bool
+    { return true; };
+  }
+
+  const CGAL::IO::Color& color_of_marked_edges() const
+  { return m_color_of_marked_edges; }
+  void color_of_marked_edges(const CGAL::IO::Color& c)
+  { m_color_of_marked_edges=c; }
+
+  std::function<CGAL::IO::Color(std::size_t)> color_of_path;
+  std::function<bool(std::size_t)> draw_path;
+protected:
+  CGAL::IO::Color m_color_of_marked_edges=CGAL::IO::Color(0, 0, 255);
+};
+
+namespace draw_function_for_lcc
+{
+  // We need to reuse the namespace draw_function_for_lcc because we want to specialize
+  // the previous struct LCC_geom_utils
+//   template <class LCC, class Local_kernel, int dim = LCC::ambient_dimension>
+// struct LCC_geom_utils;
+
+// Specialization for face graph; otherwise use the LCC_geom_utils of LCC.
 template<class Mesh, class Local_kernel>
 struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
 {
@@ -84,401 +124,320 @@ struct LCC_geom_utils<CGAL::Face_graph_wrapper<Mesh>, Local_kernel, 3>
   }
 };
 
-// Viewer class for Face_graph with paths.
-template<class Mesh, class DrawingFunctorLCC>
-class Face_graph_with_path_viewer : public Basic_viewer_qt
+} // namespace draw_function_for_lcc
+
+namespace draw_function_for_face_graph_with_paths
 {
-  typedef Basic_viewer_qt                         Base;
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
+typedef Local_kernel::Point_3 Local_point;
+typedef Local_kernel::Vector_3 Local_vector;
+
+template <typename Mesh>
+const typename CGAL::Get_traits<Mesh>::Point& get_point
+(const Mesh &mesh, typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh)
+{ return CGAL::Get_traits<Mesh>::get_point(mesh, dh); }
+
+template <typename Mesh, class GSOptions>
+void compute_face(const Mesh& mesh,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
+                  CGAL::Graphics_scene& graphics_scene,
+                  GSOptions& gso)
+{
+  if(!gso.are_faces_enabled() || !gso.draw_face(mesh, dh))
+  { return; }
+
+  typedef typename Get_map<Mesh, Mesh>::type  LCC;
+  typedef typename LCC::Dart_const_descriptor Dart_const_descriptor;
+
+  // We fill only closed faces.
+  Dart_const_descriptor cur=dh;
+  Dart_const_descriptor min=dh;
+  do
+  {
+    if (!lcc.is_next_exist(cur)) return; // open face=>not filled
+    if (cur<min) min=cur;
+    cur=lcc.next(cur);
+  }
+  while(cur!=dh);
+
+  if(gso.colored_face(mesh, dh))
+  { graphics_scene.face_begin(gso.face_color(mesh, dh)); }
+  else
+  { graphics_scene.face_begin(); }
+
+  cur=dh;
+  do
+  {
+    graphics_scene.add_point_in_face(draw_function_for_face_graph_with_paths::get_point(mesh, cur),
+                                     draw_function_for_lcc::LCC_geom_utils<LCC, Local_kernel>::
+                                     get_vertex_normal(lcc, cur));
+    cur=lcc.next(cur);
+  }
+  while(cur!=dh);
+
+  graphics_scene.face_end();
+}
+
+template <typename Mesh, class GSOptions>
+void compute_edge(const Mesh &mesh,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
+                  CGAL::Graphics_scene& graphics_scene,
+                  GSOptions& gso,
+                  bool colored=false,
+                  const CGAL::IO::Color& color=CGAL::IO::black())
+{
+  if(!gso.are_edges_enabled() || !gso.draw_edge(mesh, dh))
+  { return; }
+
   typedef typename Get_map<Mesh, Mesh>::type      LCC;
-  typedef typename LCC::Dart_const_descriptor         Dart_const_descriptor;
-  typedef typename LCC::size_type                 size_type;
-  typedef typename CGAL::Get_traits<Mesh>::Kernel Kernel;
+  typedef typename LCC::Dart_const_descriptor     Dart_const_descriptor;
   typedef typename CGAL::Get_traits<Mesh>::Point  Point;
-  typedef typename CGAL::Get_traits<Mesh>::Vector Vector;
 
-public:
-  /// Construct the viewer.
-  /// @param alcc the lcc to view
-  /// @param title the title of the window
-  /// @param anofaces if true, do not draw faces (faces are not computed;
-  ///     this can be useful for very big object where this time could be long)
-  Face_graph_with_path_viewer(QWidget* parent,
-                              const Mesh& amesh,
-                              const std::vector
-                              <Surface_mesh_topology::Path_on_surface<Mesh> >
-                              *paths=nullptr,
-                              size_type amark=LCC::INVALID_MARK,
-                              const char* title="", bool anofaces=false,
-                              const DrawingFunctorLCC&
-                              drawing_functor=DrawingFunctorLCC()) :
-    Base(parent, title, true, true, true, false, true),
-    mesh(amesh),
-    lcc(amesh),
-    m_oriented_mark(lcc.get_new_mark()),
-    m_nofaces(anofaces),
-    m_drawing_functor(drawing_functor),
-    m_paths(paths),
-    m_current_path(m_paths->size()),
-    m_current_dart(lcc.darts().end()),
-    m_draw_marked_darts(true),
-    m_amark(amark==(std::numeric_limits<size_type>::max)()?
-            LCC::INVALID_MARK:amark)
+  Point p1=get_point(mesh, dh);
+  Dart_const_descriptor d2=lcc.other_extremity(dh);
+  if (d2!=LCC::null_descriptor)
   {
-    lcc.orient(m_oriented_mark);
-    compute_elements();
-  }
-
-  ~Face_graph_with_path_viewer()
-  {
-    lcc.free_mark(m_oriented_mark);
-  }
-
-protected:
-
-  const Point& get_point(Dart_const_descriptor dh) const
-  { return CGAL::Get_traits<Mesh>::get_point(mesh, dh); }
-
-  void compute_elements()
-  {
-    clear();
-
-    typename LCC::size_type markfaces    = lcc.get_new_mark();
-    typename LCC::size_type markedges    = lcc.get_new_mark();
-    typename LCC::size_type markvertices = lcc.get_new_mark();
-
-    if (m_current_dart!=lcc.darts().end())
-    { // We want to draw only one dart
-      Dart_const_descriptor selected_dart=m_current_dart; //lcc.dart_descriptor(m_current_dart);
-      compute_edge(selected_dart, CGAL::IO::Color(255,0,0));
-      lcc.template mark_cell<1>(selected_dart, markedges);
-      compute_vertex(selected_dart);
-
-      if ( !m_nofaces )
-      { compute_face(selected_dart); }
-
-      for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
-           itend=lcc.darts().end(); it!=itend; ++it )
-      {
-        if ( !lcc.is_marked(it, markedges) )
-        {
-          compute_edge(it);
-          lcc.template mark_cell<1>(it, markedges);
-        }
-      }
-    }
+    if(colored)
+    { graphics_scene.add_segment(p1, get_point(mesh, d2), color); }
     else
-    {
-      if (m_current_path==m_paths->size())
-      {
-        for (std::size_t i=0; i<m_paths->size(); ++i)
-        { compute_path(i, markedges); }
-      }
-      else if (m_current_path!=m_paths->size()+1)
-      { compute_path(m_current_path, markedges); }
-
-      for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
-           itend=lcc.darts().end(); it!=itend; ++it )
-      {
-        if (!m_nofaces && !lcc.is_marked(it, markfaces) &&
-            !lcc.is_perforated(it) && lcc.is_marked(it, m_oriented_mark))
-        {
-          compute_face(it);
-          lcc.template mark_cell<2>(it, markfaces);
-        }
-
-        if ( !lcc.is_marked(it, markedges) )
-        {
-          compute_edge(it);
-          lcc.template mark_cell<1>(it, markedges);
-        }
-
-        if ( !lcc.is_marked(it, markvertices) )
-        {
-          compute_vertex(it);
-          lcc.template mark_cell<0>(it, markvertices);
-        }
-      }
-    }
-
-    lcc.free_mark(markfaces);
-    lcc.free_mark(markedges);
-    lcc.free_mark(markvertices);
-  }
-
-  void compute_face(Dart_const_descriptor dh)
-  {
-    // We fill only closed faces.
-    Dart_const_descriptor cur=dh;
-    Dart_const_descriptor min=dh;
-    do
-    {
-      if (!lcc.is_next_exist(cur)) return; // open face=>not filled
-      if (cur<min) min=cur;
-      cur=lcc.next(cur);
-    }
-    while(cur!=dh);
-
-    // CGAL::IO::Color c=m_fcolor.run(*lcc, dh);
-    face_begin(); //c);
-
-    cur=dh;
-    do
-    {
-      add_point_in_face(get_point(cur),
-                        LCC_geom_utils<LCC, Local_kernel>::
-                        get_vertex_normal(lcc, cur));
-      cur=lcc.next(cur);
-    }
-    while(cur!=dh);
-
-    face_end();
-  }
-
-  void compute_edge(Dart_const_descriptor dh)
-  {
-    Point p1 = get_point(dh);
-    Dart_const_descriptor d2 = lcc.other_extremity(dh);
-    if (d2!=LCC::null_descriptor)
-    {
-      if (m_draw_marked_darts && m_amark!=LCC::INVALID_MARK &&
-          (lcc.is_marked(dh, m_amark) || lcc.is_marked(lcc.opposite2(dh), m_amark)))
-      { add_segment(p1, get_point(d2), CGAL::IO::Color(0, 0, 255)); }
-      else
-      { add_segment(p1, get_point(d2)); }
-    }
-  }
-
-  void compute_edge(Dart_const_descriptor dh, const CGAL::IO::Color& color)
-  {
-    Point p1 = get_point(dh);
-    Dart_const_descriptor d2 = lcc.other_extremity(dh);
-    if (d2!=LCC::null_descriptor)
-    { add_segment(p1, get_point(d2), color); }
-  }
-
-  void compute_vertex(Dart_const_descriptor dh)
-  { add_point(get_point(dh)); }
-
-  virtual void init()
-  {
-    Base::init();
-    setKeyDescription(::Qt::Key_D, "Increase current dart drawing");
-    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_D, "Decrease current dart drawing");
-    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_D, "Draw all darts");
-
-    setKeyDescription(::Qt::Key_X, "Toggles marked darts display");
-
-    setKeyDescription(::Qt::Key_P, "Increase current path drawing");
-    setKeyDescription(::Qt::ControlModifier, ::Qt::Key_P, "Decrease current path drawing");
-    setKeyDescription(::Qt::ShiftModifier, ::Qt::Key_P, "Draw all paths");
-  }
-
-  virtual void keyPressEvent(QKeyEvent *e)
-  {
-    const ::Qt::KeyboardModifiers modifiers = e->modifiers();
-
-    if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::NoButton))
-    {
-      if (m_current_dart==lcc.darts().end())
-      { m_current_dart=lcc.darts().begin(); }
-      else
-      { ++m_current_dart; }
-      if (m_current_dart==lcc.darts().end())
-      { displayMessage(QString("Draw all darts.")); }
-      else
-      { displayMessage(QString("Draw dart=%1.").arg(lcc.darts().index(m_current_dart))); }
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ControlModifier))
-    {
-      if (m_current_dart==lcc.darts().begin())
-      { m_current_dart=lcc.darts().end(); }
-      else
-      { --m_current_dart; }
-      if (m_current_dart==lcc.darts().end())
-      { displayMessage(QString("Draw all darts.")); }
-      else
-      { displayMessage(QString("Draw dart=%1.").arg(lcc.darts().index(m_current_dart))); }
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_D) && (modifiers==::Qt::ShiftModifier))
-    {
-      m_current_dart=lcc.darts().end();
-      displayMessage(QString("Draw all darts."));
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::NoButton))
-    {
-      m_current_path=(m_current_path+1)%(m_paths->size()+2);
-      if (m_current_path==m_paths->size())
-      { displayMessage(QString("Draw all paths.")); }
-      else if (m_current_path==m_paths->size()+1)
-      { displayMessage(QString("Do not draw paths.")); }
-      else
-      { displayMessage(QString("Draw path=%1, nb_darts=%2.").
-                       arg(m_current_path).
-                       arg((*m_paths)[m_current_path].length())); }
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ControlModifier))
-    {
-      m_current_path=(m_current_path==0?m_paths->size()+1:m_current_path-1);
-      if (m_current_path==m_paths->size())
-      { displayMessage(QString("Draw all paths.")); }
-      else if (m_current_path==m_paths->size()+1)
-      { displayMessage(QString("Do not draw paths.")); }
-      else
-      { displayMessage(QString("Draw path=%1, nb_darts=%2.").
-                       arg(m_current_path).
-                       arg((*m_paths)[m_current_path].length())); }
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_P) && (modifiers==::Qt::ShiftModifier))
-    {
-      m_current_path=m_paths->size();
-      displayMessage(QString("Draw all paths."));
-      compute_elements();
-      redraw();
-    }
-    else if ((e->key()==::Qt::Key_X) && (modifiers==::Qt::NoButton))
-    {
-      m_draw_marked_darts=!m_draw_marked_darts;
-
-      if (m_draw_marked_darts)
-      { displayMessage(QString("Draw marked darts in blue.")); }
-      else
-      {
-        displayMessage(QString("Do not draw marked darts in different color."));
-      }
-      compute_elements();
-      redraw();
-    }
-    else
-    { Base::keyPressEvent(e); }
-  }
-
-  void compute_path(std::size_t i, typename LCC::size_type amark)
-  {
-    if ((*m_paths)[i].is_empty())
-    { return; }
-
-    CGAL::Random random(static_cast<unsigned int>(i));
-    CGAL::IO::Color color=get_random_color(random);
-
-    add_point(get_point((*m_paths)[i].get_ith_dart(0)), color);
-    for (std::size_t j=0; j<(*m_paths)[i].length(); ++j)
-    {
-      if ( !lcc.is_marked( (*m_paths)[i].get_ith_dart(j), amark) )
-      {
-        compute_edge((*m_paths)[i].get_ith_dart(j), color);
-        lcc.template mark_cell<1>((*m_paths)[i].get_ith_dart(j), amark);
-      }
-    }
-  }
-
-protected:
-  const Mesh& mesh;
-  const typename Get_map<Mesh, Mesh>::storage_type lcc;
-  typename LCC::size_type m_oriented_mark;
-  bool m_nofaces;
-  const DrawingFunctorLCC& m_drawing_functor;
-  const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >* m_paths;
-  std::size_t m_current_path;
-  typename LCC::Dart_range::const_iterator m_current_dart;
-  bool m_draw_marked_darts;
-  typename LCC::size_type m_amark; // If !=INVALID_MARK, show darts marked with this mark
-};
-
-template<class Mesh, class DrawingFunctor>
-void draw(const Mesh& alcc,
-          const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
-          const char* title="Mesh Viewer With Path",
-          typename Get_map<Mesh, Mesh>::type::size_type amark=
-          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
-          bool nofill=false,
-          const DrawingFunctor& drawing_functor=DrawingFunctor())
-{
-#if defined(CGAL_TEST_SUITE)
-  bool cgal_test_suite=true;
-#else
-  bool cgal_test_suite=qEnvironmentVariableIsSet("CGAL_TEST_SUITE");
-#endif
-
-  if (!cgal_test_suite)
-  {
-    CGAL::Qt::init_ogl_context(4,3);
-    int argc=1;
-    const char* argv[1]={"lccviewer"};
-    QApplication app(argc,const_cast<char**>(argv));
-    Face_graph_with_path_viewer<Mesh, DrawingFunctor> mainwindow(app.activeWindow(),
-                                                                 alcc, &paths, amark,
-                                                                 title, nofill,
-                                                                 drawing_functor);
-    mainwindow.show();
-    app.exec();
+    { graphics_scene.add_segment(p1, get_point(mesh, d2)); }
   }
 }
 
-template<class Mesh>
-void draw(const Mesh& alcc,
+template <typename Mesh, class GSOptions>
+void compute_edge(const Mesh &mesh,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
+                  CGAL::Graphics_scene& graphics_scene,
+                  GSOptions& gso,
+                  typename Get_map<Mesh, Mesh>::type::size_type amark)
+{
+  if(!gso.are_edges_enabled() || !gso.draw_edge(mesh, dh))
+  { return; }
+
+  if (amark!=Get_map<Mesh, Mesh>::type::INVALID_MARK &&
+      (lcc.is_marked(dh, amark) || lcc.is_marked(lcc.opposite2(dh), amark)))
+  { compute_edge(mesh, lcc, dh, graphics_scene, gso, true, gso.color_of_marked_edges()); }
+  else
+  {
+    if(gso.colored_edge(mesh, dh))
+    { compute_edge(mesh, lcc, dh, graphics_scene, gso, true,
+                   gso.edge_color(mesh, dh)); }
+    else
+    { compute_edge(mesh, lcc, dh, graphics_scene, gso, false); }
+  }
+}
+
+template <typename Mesh, class GSOptions>
+void compute_vertex(const Mesh &mesh,
+                    typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor dh,
+                    CGAL::Graphics_scene& graphics_scene,
+                    GSOptions& gso)
+{
+  if(gso.are_vertices_enabled() && gso.draw_vertex(mesh, dh))
+  {
+    if (gso.colored_vertex(mesh, dh))
+    {
+      graphics_scene.add_point(get_point(mesh, dh),
+                               gso.vertex_color(mesh, dh));
+    }
+    else
+    { graphics_scene.add_point(get_point(mesh, dh)); }
+  }
+}
+
+template <typename Mesh, class GSOptions>
+void compute_path(const Mesh &mesh,
+                  const typename Get_map<Mesh, Mesh>::storage_type& lcc,
+                  CGAL::Graphics_scene &graphics_scene,
+                  const GSOptions &gso,
+                  const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>& paths,
+                  std::size_t i,
+                  typename Get_map<Mesh, Mesh>::type::size_type amark)
+{
+
+  if (paths[i].is_empty() || !gso.draw_path(i))
+  { return; }
+
+  CGAL::IO::Color color=gso.color_of_path(i);
+  graphics_scene.add_point(get_point(mesh, paths[i].get_ith_dart(0)), color);
+  for (std::size_t j=0; j<paths[i].length(); ++j)
+  {
+    if (!lcc.is_marked(paths[i].get_ith_dart(j), amark))
+    {
+      compute_edge(mesh, lcc, paths[i].get_ith_dart(j), graphics_scene, gso, true, color);
+      lcc.template mark_cell<1>(paths[i].get_ith_dart(j), amark);
+    }
+  }
+}
+
+template <class Mesh, class GSOptions>
+void compute_elements(const Mesh &mesh,
+                      CGAL::Graphics_scene &graphics_scene,
+                      const GSOptions &gso,
+                      const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>& paths,
+                      typename Get_map<Mesh, Mesh>::type::size_type mark)
+{
+  typedef typename Get_map<Mesh, Mesh>::type      LCC;
+  typedef typename LCC::size_type                 size_type;
+
+  typename Get_map<Mesh, Mesh>::storage_type lcc(mesh);
+  size_type oriented_mark = lcc.get_new_mark();
+  std::size_t current_path = paths.size();
+  typename LCC::size_type amark=mark==(std::numeric_limits<size_type>::max)()?
+            LCC::INVALID_MARK:mark; // If !=INVALID_MARK, show darts marked with this mark
+
+  lcc.orient(oriented_mark);
+
+  size_type markfaces    = lcc.get_new_mark();
+  size_type markedges    = lcc.get_new_mark();
+  size_type markvertices = lcc.get_new_mark();
+
+  if (current_path==paths.size())
+  {
+    for (std::size_t i=0; i<paths.size(); ++i)
+    { compute_path(mesh, lcc, graphics_scene, gso, paths, i, markedges); }
+  }
+  else if (current_path!=paths.size()+1)
+  { compute_path(mesh, lcc, graphics_scene, gso, paths, current_path, markedges); }
+
+  for (typename LCC::Dart_range::const_iterator it=lcc.darts().begin(),
+         itend=lcc.darts().end(); it!=itend; ++it )
+  {
+    if (gso.are_faces_enabled() && !lcc.is_marked(it, markfaces) &&
+        !lcc.is_perforated(it) && lcc.is_marked(it, oriented_mark))
+    {
+      compute_face(mesh, lcc, it, graphics_scene, gso);
+      lcc.template mark_cell<2>(it, markfaces);
+    }
+
+    if ( !lcc.is_marked(it, markedges) )
+    {
+      compute_edge(mesh, lcc, it, graphics_scene, gso, amark);
+      lcc.template mark_cell<1>(it, markedges);
+    }
+
+    if ( !lcc.is_marked(it, markvertices) )
+    {
+      compute_vertex(mesh, it, graphics_scene, gso);
+      lcc.template mark_cell<0>(it, markvertices);
+    }
+  }
+
+  lcc.free_mark(markfaces);
+  lcc.free_mark(markedges);
+  lcc.free_mark(markvertices);
+}
+
+} // namespace draw_function_for_face_graph_with_paths
+
+template <class Mesh, class GSOptions>
+void add_to_graphics_scene(const Mesh& mesh,
+                           CGAL::Graphics_scene& graphics_scene,
+                           const GSOptions& gso,
+                           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>& paths,
+                           typename Get_map<Mesh, Mesh>::type::size_type amark=
+                           Get_map<Mesh, Mesh>::type::INVALID_MARK)
+{
+  draw_function_for_face_graph_with_paths::compute_elements(mesh, graphics_scene,
+                                                            gso, paths, amark);
+}
+
+template <class Mesh>
+void add_to_graphics_scene(const Mesh& mesh,
+                           CGAL::Graphics_scene& graphics_scene,
+                           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh>>& paths,
+                           typename Get_map<Mesh, Mesh>::type::size_type amark=
+                           Get_map<Mesh, Mesh>::type::INVALID_MARK)
+{
+  // Default graphics view options.
+  Graphics_scene_options_face_graph_with_paths<Mesh,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor /*vh*/,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor /*eh*/,
+                  typename Get_map<Mesh, Mesh>::type::Dart_const_descriptor /*fh*/>
+      gso;
+
+  add_to_graphics_scene(mesh, graphics_scene, gso, paths, amark);
+}
+
+template <class Mesh, class GSOptions>
+void add_to_graphics_scene(const Mesh& mesh,
+                           CGAL::Graphics_scene& graphics_scene,
+                           const GSOptions& gso,
+                           std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
+                           typename Get_map<Mesh, Mesh>::type::size_type amark=
+                           Get_map<Mesh, Mesh>::type::INVALID_MARK)
+{
+  std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
+  add_to_graphics_scene(mesh, graphics_scene, gso, paths, amark);
+}
+
+template <class Mesh>
+void add_to_graphics_scene(const Mesh& mesh,
+                           CGAL::Graphics_scene& graphics_scene,
+                           std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
+                           typename Get_map<Mesh, Mesh>::type::size_type amark=
+                           Get_map<Mesh, Mesh>::type::INVALID_MARK)
+{
+  std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
+  add_to_graphics_scene(mesh, graphics_scene, paths, amark);
+}
+
+#ifdef CGAL_USE_BASIC_VIEWER
+
+template<typename Mesh, typename GSOptions>
+void draw(const Mesh& mesh,
+          const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
+          const GSOptions& gso,
+          const char* title="Mesh Viewer With Path",
+          typename Get_map<Mesh, Mesh>::type::size_type amark=
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)())
+{
+  CGAL::Graphics_scene graphics_scene;
+  add_to_graphics_scene(mesh, graphics_scene, paths, gso, amark);
+  draw_graphics_scene(graphics_scene, title);
+}
+
+template<typename Mesh>
+void draw(const Mesh& mesh,
           const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& paths,
           const char* title="Mesh Viewer With Path",
           typename Get_map<Mesh, Mesh>::type::size_type amark=
-          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
-          bool nofill=false)
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)())
 {
-  DefaultDrawingFunctorLCC f;
-  draw<Mesh, DefaultDrawingFunctorLCC>(alcc, paths, title, amark, nofill, f);
+  CGAL::Graphics_scene graphics_scene;
+  add_to_graphics_scene(mesh, graphics_scene, paths, amark);
+  draw_graphics_scene(graphics_scene, title);
+}
+
+template<class Mesh, typename GSOptions>
+void draw(const Mesh& mesh,
+          std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
+          const GSOptions& gso,
+          const char* title="Mesh Viewer With Path",
+          typename Get_map<Mesh, Mesh>::type::size_type amark=
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)())
+{
+  std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
+  draw(mesh, paths, gso, title, amark);
 }
 
 template<class Mesh>
-void draw(const Mesh& alcc,
+void draw(const Mesh& mesh,
           std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>> l,
           const char* title="Mesh Viewer With Path",
           typename Get_map<Mesh, Mesh>::type::size_type amark=
-          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
-          bool nofill=false)
+          (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)())
 {
-  std::vector<Surface_mesh_topology::Path_on_surface<Mesh> > paths=l;
-  draw(alcc, paths, title, amark, nofill);
+  std::vector<Surface_mesh_topology::Path_on_surface<Mesh>> paths=l;
+  draw(mesh, paths, title, amark);
 }
 
-} // End namespace CGAL
-
-#else  // CGAL_USE_BASIC_VIEWER
-
-namespace CGAL
-{
-
-  template<class Mesh>
-  void draw(const Mesh&,
-            const std::vector<Surface_mesh_topology::Path_on_surface<Mesh> >& ,
-            const char* ="",
-            typename Get_map<Mesh, Mesh>::type::size_type=
-            (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
-            bool=false)
-  {
-    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
-  }
-
-  template<class Mesh>
-  void draw(const Mesh&,
-            std::initializer_list<Surface_mesh_topology::Path_on_surface<Mesh>>,
-            const char* ="",
-            typename Get_map<Mesh, Mesh>::type::size_type=
-            (std::numeric_limits<typename Get_map<Mesh, Mesh>::type::size_type>::max)(),
-            bool=false)
-  {
-    std::cerr<<"Impossible to draw, CGAL_USE_BASIC_VIEWER is not defined."<<std::endl;
-  }
-
-} // End namespace CGAL
-
 #endif // CGAL_USE_BASIC_VIEWER
+
+} // End namespace CGAL
 
 #endif // CGAL_DRAW_FACE_GRAPH_WITH_PATHS_H

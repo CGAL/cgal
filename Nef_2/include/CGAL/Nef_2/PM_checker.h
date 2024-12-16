@@ -203,7 +203,7 @@ check_boundary_is_clockwise_weakly_polygon() const
   for (vit = v_min = this->vertices_begin() ; vit != this->vertices_end(); ++vit)
     if ( K.compare_xy(point(vit), point(v_min))<0 ) v_min = vit;
   CGAL_assertion_msg(!is_isolated(v_min),"Minimal vertex not connected.");
-  Point p_min = point(v_min);
+  const Point& p_min = point(v_min);
   // determine boundary edge incident to v_min:
   Halfedge_const_handle e_boundary_at_v_min = first_out_edge(v_min);
   // all out edges are forward oriented due to minimality
@@ -211,8 +211,8 @@ check_boundary_is_clockwise_weakly_polygon() const
     hvit(e_boundary_at_v_min), hend(hvit);
   do {
     --hvit;
-    Point p1 = point(target(e_boundary_at_v_min));
-    Point p2 = point(target(hvit));
+    const Point& p1 = point(target(e_boundary_at_v_min));
+    const Point& p2 = point(target(hvit));
     if ( K.orientation(p_min,p1,p2) > 0 ) { // left_turn
       e_boundary_at_v_min = hvit;
       break;

@@ -64,7 +64,7 @@ namespace Surface_mesh_parameterization {
 // from the linear systems in order to have a symmetric positive definite
 // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
 ///
-/// \cgalModels `Parameterizer_3`
+/// \cgalModels{Parameterizer_3}
 ///
 /// \tparam TriangleMesh_ must be a model of `FaceGraph`.
 ///

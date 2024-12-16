@@ -76,22 +76,22 @@ public:
 
   template <typename F>
   struct result<F(Line_d, Line_d)>
-  { typedef boost::optional< boost::variant< Point_d, Line_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Line_d > > type; };
 
   template <typename F>
   struct result<F(Segment_d, Line_d)>
-  { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Segment_d > > type; };
   template <typename F>
   struct result<F(Line_d, Segment_d)> : result<F(Segment_d, Line_d)>
   { };
 
   template <typename F>
   struct result<F(Segment_d, Segment_d)>
-  { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Segment_d > > type; };
 
   template <typename F>
   struct result<F(Ray_d, Line_d)>
-  { typedef boost::optional< boost::variant< Point_d, Ray_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Ray_d > > type; };
 
   template <typename F>
   struct result<F(Line_d, Ray_d)> : result<F(Ray_d, Line_d)>
@@ -99,7 +99,7 @@ public:
 
   template <typename F>
   struct result<F(Ray_d, Segment_d)>
-  { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Segment_d > > type; };
 
   template <typename F>
   struct result<F(Segment_d, Ray_d)> : result<F(Ray_d, Segment_d)>
@@ -107,25 +107,25 @@ public:
 
   template <typename F>
   struct result<F(Ray_d, Ray_d)>
-  { typedef boost::optional< boost::variant< Point_d, Segment_d, Ray_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Segment_d, Ray_d > > type; };
 
   template <typename F>
   struct result<F(Hyperplane_d, Line_d)>
-  { typedef boost::optional< boost::variant< Point_d, Line_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Line_d > > type; };
   template <typename F>
   struct result<F(Line_d, Hyperplane_d)> : result<F(Hyperplane_d, Line_d)>
   { };
 
   template <typename F>
   struct result<F(Hyperplane_d, Ray_d)>
-  { typedef boost::optional< boost::variant< Point_d, Ray_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Ray_d > > type; };
   template <typename F>
   struct result<F(Ray_d, Hyperplane_d)> : result<F(Hyperplane_d, Ray_d)>
   { };
 
   template <typename F>
   struct result<F(Hyperplane_d, Segment_d)>
-  { typedef boost::optional< boost::variant< Point_d, Segment_d > > type; };
+  { typedef std::optional< std::variant< Point_d, Segment_d > > type; };
   template <typename F>
   struct result<F(Segment_d, Hyperplane_d)> : result<F(Hyperplane_d, Segment_d)>
   { };

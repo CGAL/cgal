@@ -9,7 +9,7 @@ The class `Segment_Delaunay_graph_storage_site_2` is a model for the concept
 
 \tparam Gt must be a model of the `SegmentDelaunayGraphStorageTraits_2` concept.
 
-\cgalModels `SegmentDelaunayGraphStorageSite_2`
+\cgalModels{SegmentDelaunayGraphStorageSite_2}
 
 \sa `CGAL::Segment_Delaunay_graph_site_2<K>`
 */

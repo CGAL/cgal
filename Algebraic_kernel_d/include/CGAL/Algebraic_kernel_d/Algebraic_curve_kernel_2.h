@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <CGAL/iterator.h>
 #include <CGAL/assertions.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 #include <CGAL/basic.h>
 #include <CGAL/config.h>
@@ -359,7 +359,7 @@ public:
        Unary_compose(const Unary_compose& other) = default;
        Unary_compose& operator=(const Unary_compose& other) = default;
 
-       Unary_compose() : _inner(::boost::none),_outer(::boost::none) {}
+       Unary_compose() : _inner(::std::nullopt),_outer(::std::nullopt) {}
 
        typedef typename InnerFunctor::argument_type argument_type;
        typedef typename OuterFunctor::result_type result_type;
@@ -368,11 +368,11 @@ public:
        result_type operator() (const argument_type& arg) const {
          CGAL_assertion(bool(_inner));
          CGAL_assertion(bool(_outer));
-         return _outer.get()(_inner.get()(arg));
+         return _outer.value()(_inner.value()(arg));
        }
     private:
-       ::boost::optional<InnerFunctor> _inner;
-       ::boost::optional<OuterFunctor> _outer;
+       ::std::optional<InnerFunctor> _inner;
+       ::std::optional<OuterFunctor> _outer;
     };
 
     template<typename InnerFunctor,typename OuterFunctor>
@@ -1811,7 +1811,7 @@ public:
      * An x-critical point (x,y) of \c f (or its induced curve)
      * satisfies f(x,y) = f_y(x,y) = 0,
      * where f_y means the derivative w.r.t. y.
-     * In pariticular, each singular point is x-critical.
+     * In particular, each singular point is x-critical.
      */
     class X_critical_points_2 :
         public CGAL::cpp98::binary_function< Curve_analysis_2,
@@ -1890,7 +1890,7 @@ public:
      * An y-critical point (x,y) of \c f (or its induced curve)
      * satisfies f(x,y) = f_x(x,y) = 0,
      * where f_x means the derivative w.r.t. x.
-     * In pariticular, each singular point is y-critical.
+     * In particular, each singular point is y-critical.
      */
     class Y_critical_points_2 :
         public CGAL::cpp98::binary_function< Curve_analysis_2,

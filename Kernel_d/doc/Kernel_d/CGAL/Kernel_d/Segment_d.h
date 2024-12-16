@@ -14,11 +14,11 @@ called the target point of \f$ s\f$, both points are called endpoints of
 Segments are implemented by a pair of points as an item type. All
 operations like creation, initialization, tests, the calculation of
 the direction and source - target vector, input and output on a
-segment \f$ s\f$ take time \f$ O(s.dimension())\f$. `dimension()`,
+segment \f$ s\f$ take time \cgalBigO{s.dimension()}. `dimension()`,
 coordinate and end point access, and identity test take constant time.
 The operations for intersection calculation also take time
-\f$ O(s.dimension())\f$. The space requirement is
-\f$ O(s.dimension())\f$.
+\cgalBigO{s.dimension()}. The space requirement is
+\cgalBigO{s.dimension()}.
 
 */
 template< typename Kernel >

@@ -2,7 +2,6 @@
 #include <CGAL/Surface_mesh.h>
 
 #include <CGAL/Surface_mesh_parameterization/IO/File_off.h>
-#include <CGAL/Surface_mesh_parameterization/Square_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Iterative_authalic_parameterizer_3.h>
 
@@ -45,7 +44,7 @@ int main(int argc, char** argv)
   UV_pmap uv_map(uv_uhm);
 
   typedef SMP::Circular_border_arc_length_parameterizer_3<Surface_mesh> Border_parameterizer;
-  Border_parameterizer border_parameterizer; // the border parameterizer will automatically compute the corner vertices
+  Border_parameterizer border_parameterizer;
 
   typedef SMP::Iterative_authalic_parameterizer_3<Surface_mesh, Border_parameterizer> Parameterizer;
   Parameterizer parameterizer(border_parameterizer);

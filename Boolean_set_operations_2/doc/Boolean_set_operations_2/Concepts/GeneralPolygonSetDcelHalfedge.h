@@ -8,7 +8,9 @@ to represent the underlying internal `Arrangement_2` data structure.
 
 \cgalRefines{ArrangementDcelHalfedge}
 
-\cgalHasModel `CGAL::Gps_face_halfedge`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Gps_face_halfedge}
+\cgalHasModelsEnd
 
 \sa `ArrangementDcel`
 \sa `ArrangementDcelVertex`

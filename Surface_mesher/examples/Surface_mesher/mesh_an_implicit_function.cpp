@@ -1,3 +1,5 @@
+#include <CGAL/Installation/internal/disable_deprecation_warnings_and_errors.h>
+
 #include <CGAL/Surface_mesh_default_triangulation_3.h>
 #include <CGAL/Complex_2_in_triangulation_3.h>
 #include <CGAL/make_surface_mesh.h>

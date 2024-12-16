@@ -10,7 +10,6 @@
 #include <CGAL/Delaunay_mesher_2.h>
 #include <CGAL/Delaunay_mesh_face_base_2.h>
 #include <CGAL/Delaunay_mesh_size_criteria_2.h>
-#include <CGAL/Delaunay_mesh_size_criteria_2.h>
 #include <CGAL/Delaunay_mesher_no_edge_refinement_2.h>
 
 #include <CGAL/IO/File_poly.h>
@@ -115,7 +114,7 @@ struct Tester2 {
     std::cerr << "Triangulation restored.\n";
     std::cerr << "Number of vertices: " << cdt.number_of_vertices() << "\n\n";
 
-    std::cerr << "2/ Comparaison between refine_Delaunay_mesh_2() and other"
+    std::cerr << "2/ Comparison between refine_Delaunay_mesh_2() and other"
               << " possibilities:\n\n";
 
     std::cerr << "Meshing the triangulation with size 0.1, with "

@@ -14,8 +14,7 @@ normalized finite floating point number represents exactly that number.
 This number type offers functionality very
 similar to `MP_Float` and `Gmpzf` but is faster.
 
-\cgalModels `IntegralDomainWithoutDivision`
-\cgalModels `RealEmbeddable`
+\cgalModels{IntegralDomainWithoutDivision,RealEmbeddable}
 
 \cgalHeading{Implementation}
 

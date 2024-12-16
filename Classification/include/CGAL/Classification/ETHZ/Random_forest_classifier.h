@@ -63,7 +63,7 @@ namespace ETHZ {
 
   \note This classifier is distributed under the MIT license.
 
-  \cgalModels `CGAL::Classification::Classifier`
+  \cgalModels{CGAL::Classification::Classifier}
 */
 class Random_forest_classifier
 {

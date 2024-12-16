@@ -248,6 +248,9 @@ The Minkowski sum of the polygons with the circle is computed and drawn.
 The input selection must be a set of points. The Euclidean minimum spanning
 tree of the points is computed and drawn.
 
+\subsection nng_ipelet Nearest-neighbor graph
+The input selection must be a set of points. The nearest-neighbor graph of the points is computed and drawn.
+
 \subsection multi_delaunay_ipelet k Order Delaunay
 The input selection must be a set of points.
 The order k Voronoi diagram or its dual the order k Delaunay is drawn.

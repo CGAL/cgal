@@ -75,7 +75,7 @@ public:
 
     // represents x-coordinate of event of rational value over interval
     // computed only by demand
-    mutable boost::optional<Algebraic_real_1> _m_x;
+    mutable std::optional<Algebraic_real_1> _m_x;
 
     // for each event point stores a pair of arcnos of the 1st and 2nd curve
     // or -1 if respective curve is not involved
@@ -331,7 +331,7 @@ public:
                              const typename Curve_pair_analysis_2
                                  ::Curve_analysis_2& c1,
                              const typename Curve_pair_analysis_2
-                                 ::Curve_analysis_2& CGAL_precondition_code(c2)) const
+                                 ::Curve_analysis_2& CGAL_assertion_code(c2)) const
     {
 
         CGAL_precondition(0 <= j && j < number_of_events());

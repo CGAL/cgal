@@ -7,8 +7,7 @@ namespace CGAL {
 The class `Linear_cell_complex_for_generalized_map` represents a linear cell complex in dimension `d`, in an ambient space of dimension `d2`, using a generalized map as underlying combinatorial data-structure.
 Like for `GeneralizedMap`, two versions exist: one where Darts and non void attributes are stored in memory using `Compact_container`, using `Alloc` as allocator, and use handles as descriptors; a second one where Darts and non void attributes are stored in an internal std::vector like data-structure, and use indices as descriptors. The choice between the two versions is done through the item class.
 
-\cgalModels `LinearCellComplex`
-\cgalModels `GeneralizedMap`
+\cgalModels{LinearCellComplex,GeneralizedMap}
 
 \tparam d the dimension of the generalized map.
 \tparam d2 the dimension of the ambient space. Equal to  `d` by default.

@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <fstream>
 #include "Input_data.h"
-#include <boost/variant.hpp>
+#include <variant>
 
 class Bench
 {
@@ -210,11 +210,11 @@ class Bench
   Pmwx _pm;
   Point_location _pl(_pm);
 
-  std::cout << "Construction complited"<<std::endl;
+  std::cout << "Construction completed"<<std::endl;
   try{
     this->start();
 
-      insert(_pm,ac.begin(),ac.end(),boost::false_type());
+      insert(_pm,ac.begin(),ac.end(),std::false_type());
 
     this->stop();
   }

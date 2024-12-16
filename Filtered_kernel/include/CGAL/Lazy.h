@@ -30,8 +30,8 @@
 #include <CGAL/type_traits/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 
-#include <boost/optional.hpp>
-#include <boost/variant.hpp>
+#include <optional>
+#include <variant>
 #ifdef CGAL_LAZY_KERNEL_DEBUG
 #  include <boost/optional/optional_io.hpp>
 #endif
@@ -101,10 +101,35 @@ template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_e
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, T> exact (T d){return d;}
 template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value||std::is_enum<T>::value, int> depth(T){return -1;}
 
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, Quotient<T>> approx(Quotient<T> d){return d;}
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, Quotient<T>> exact (Quotient<T> d){return d;}
+template<class T>inline std::enable_if_t<std::is_arithmetic<T>::value, int> depth(Quotient<T>){return -1;}
+
 // For tag classes: Return_base_tag, Homogeneous_tag, Null_vector, Origin
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> exact(T){return {};}
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> approx(T){return {};}
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, int> depth(T){return -1;}
+
+namespace internal{
+
+  template <typename AT, typename ET, typename E2A>
+  struct Evaluate<Lazy<AT, ET, E2A>>
+  {
+      void operator()(const Lazy<AT, ET, E2A>& l)
+      {
+          exact(l);
+      }
+};
+
+  template <typename ET>
+  struct Evaluate<Lazy_exact_nt<ET>>
+  {
+      void operator()(const Lazy_exact_nt<ET>& l)
+      {
+          exact(l);
+      }
+  };
+} // internal namespace
 
 // For an iterator, exact/approx applies to the objects it points to
 template <class T, class=std::enable_if_t<is_iterator_type<T,std::input_iterator_tag>::value>>
@@ -1196,7 +1221,7 @@ struct Lazy_construction_optional_for_polygonal_envelope
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
   typedef typename LK::E2A E2A;
-  typedef boost::optional<typename LK::Point_3> result_type;
+  typedef std::optional<typename LK::Point_3> result_type;
 
   CGAL_NO_UNIQUE_ADDRESS AC ac;
   CGAL_NO_UNIQUE_ADDRESS EC ec;
@@ -1209,9 +1234,9 @@ struct Lazy_construction_optional_for_polygonal_envelope
     {
       Protect_FPU_rounding<Protection> P;
       try {
-        boost::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2),CGAL::approx(l3));
-        if(oap == boost::none){
-          return boost::none;
+        std::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2),CGAL::approx(l3));
+        if(oap == std::nullopt){
+          return std::nullopt;
         }
         // Now we have to construct a rep for a lazy point with the three lazy planes.
         typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L1, L1> LazyPointRep;
@@ -1221,21 +1246,21 @@ struct Lazy_construction_optional_for_polygonal_envelope
         // rep = LazyPointRep(2,ap, ec, l1, l2, l3);
         rep.~LazyPointRep(); new (&rep) LazyPointRep(2, ap, ec, l1, l2, l3);
         typename LK::Point_3 lp(&rep);
-        return boost::make_optional(lp);
+        return std::make_optional(lp);
 
       } catch (Uncertain_conversion_exception&) {}
     }
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
-    if(oep == boost::none){
-      return boost::none;
+    std::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
+    if(oep == std::nullopt){
+      return std::nullopt;
     }
     typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3, E2A> LazyPointRep;
     const typename EK::Point_3 ep = *oep;
     LazyPointRep *rep = new LazyPointRep(ep);
     typename LK::Point_3 lp(rep);
-    return boost::make_optional(lp);
+    return std::make_optional(lp);
   }
 
   // for Intersect_point_3 with  Plane_3  Line_3
@@ -1246,9 +1271,9 @@ struct Lazy_construction_optional_for_polygonal_envelope
     {
       Protect_FPU_rounding<Protection> P;
       try {
-        boost::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2));
-        if(oap == boost::none){
-          return boost::none;
+        std::optional<typename AK::Point_3> oap = ac(CGAL::approx(l1),CGAL::approx(l2));
+        if(oap == std::nullopt){
+          return std::nullopt;
         }
         // Now we have to construct a rep for a lazy point with the line and the plane.
         typedef Lazy_rep_optional_n<typename AK::Point_3, typename EK::Point_3, AC, EC, E2A, L1, L2> LazyPointRep;
@@ -1258,21 +1283,21 @@ struct Lazy_construction_optional_for_polygonal_envelope
         // rep = LazyPointRep(2, ap, ec, l1, l2);
         rep.~LazyPointRep(); new (&rep) LazyPointRep(2, ap, ec, l1, l2);
         typename LK::Point_3 lp(&rep);
-        return boost::make_optional(lp);
+        return std::make_optional(lp);
 
       } catch (Uncertain_conversion_exception&) {}
     }
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    boost::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2));
-    if(oep == boost::none){
-      return boost::none;
+    std::optional<typename EK::Point_3> oep = ec(CGAL::exact(l1), CGAL::exact(l2));
+    if(oep == std::nullopt){
+      return std::nullopt;
     }
     typedef Lazy_rep_0<typename AK::Point_3, typename EK::Point_3, E2A> LazyPointRep;
     const typename EK::Point_3 ep = *oep;
     LazyPointRep *rep = new LazyPointRep(ep);
     typename LK::Point_3 lp(rep);
-    return boost::make_optional(lp);
+    return std::make_optional(lp);
   }
 };
 
@@ -1362,7 +1387,7 @@ struct Ith {
   typedef T2 result_type;
 
   // We keep a Sign member object
-  // for future utilisation, in case
+  // for future utilization, in case
   // we have pairs of 2 T2 objects e.g.
   // for a numeric_point vector returned
   // from a construction of a possible
@@ -1425,19 +1450,19 @@ struct Ith_for_intersection_with_variant {
     : i(i_)
   {}
 
-  template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
+  template< typename ... U >
   const T2&
-  operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const
+  operator()(const std::optional< std::variant< U ... > >& o) const
   {
-    const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&(*o)));
+    const std::vector<T2>* ptr = (std::get_if<std::vector<T2> >(&(*o)));
     return (*ptr)[i];
   }
 
-  template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
+  template< typename ... U >
   const T2&
-  operator()(const boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >& o) const
+  operator()(const std::variant< U ... >& o) const
   {
-    const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&o));
+    const std::vector<T2>* ptr = (std::get_if<std::vector<T2> >(&o));
     return (*ptr)[i];
   }
 };
@@ -1856,26 +1881,26 @@ template<typename T>
 struct Variant_cast {
   typedef T result_type;
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
+  template<typename ... U>
   const T&
-  operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+  operator()(const std::optional< std::variant< U ... > >& o) const {
     // can throw but should never because we always build it inside
     // a static visitor with the right type
-    return boost::get<T>(*o);
+    return std::get<T>(*o);
   }
 
-  template<BOOST_VARIANT_ENUM_PARAMS(typename U)>
+  template<typename ... U>
   T&
-  operator()(boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const {
+  operator()(std::optional< std::variant< U ... > >& o) const {
     // can throw but should never because we always build it inside
     // a static visitor with the right type, if it throws bad_get
-    return boost::get<T>(*o);
+    return std::get<T>(*o);
   }
 };
 
 
 template<typename Result, typename AK, typename LK, typename EK, typename Origin>
-struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
+struct Fill_lazy_variant_visitor_2 {
   Fill_lazy_variant_visitor_2(Result& r, Origin& o) : r(&r), o(&o) {}
   Result* r;
   Origin* o;
@@ -1912,7 +1937,7 @@ struct Fill_lazy_variant_visitor_2 : boost::static_visitor<> {
 };
 
 template<typename Result, typename AK, typename LK, typename EK>
-struct Fill_lazy_variant_visitor_0 : boost::static_visitor<> {
+struct Fill_lazy_variant_visitor_0 {
   Fill_lazy_variant_visitor_0(Result& r) : r(&r) {}
   Result* r;
 
@@ -1998,7 +2023,7 @@ struct Lazy_construction_variant {
 
         // the static visitor fills the result_type with the correct unwrapped type
         internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
-        boost::apply_visitor(visitor, *approx_v);
+        std::visit(visitor, *approx_v);
 
         return res;
       } catch (Uncertain_conversion_exception&) {}
@@ -2014,7 +2039,7 @@ struct Lazy_construction_variant {
     }
 
     internal::Fill_lazy_variant_visitor_0<result_type, AK, LK, EK> visitor(res);
-    boost::apply_visitor(visitor, *exact_v);
+    std::visit(visitor, *exact_v);
     return res;
   }
 
@@ -2052,7 +2077,7 @@ struct Lazy_construction_variant {
 
         // the static visitor fills the result_type with the correct unwrapped type
         internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
-        boost::apply_visitor(visitor, *approx_v);
+        std::visit(visitor, *approx_v);
 
         return res;
       } catch (Uncertain_conversion_exception&) {}
@@ -2068,7 +2093,7 @@ struct Lazy_construction_variant {
     }
 
     internal::Fill_lazy_variant_visitor_0< result_type, AK, LK, EK> visitor(res);
-    boost::apply_visitor(visitor, *exact_v);
+    std::visit(visitor, *exact_v);
     return res;
   }
 };
@@ -2088,10 +2113,10 @@ struct Lazy_construction<LK, AC, EC, E2A_, true> {
 
   typedef typename LK::Approximate_kernel AK;
   typedef typename LK::Exact_kernel EK;
-  typedef typename boost::remove_cv<
-    typename boost::remove_reference < typename AC::result_type >::type >::type AT;
-  typedef typename boost::remove_cv<
-    typename boost::remove_reference < typename EC::result_type >::type >::type ET;
+  typedef std::remove_cv_t<
+    std::remove_reference_t < typename AC::result_type > > AT;
+  typedef std::remove_cv_t<
+    std::remove_reference_t < typename EC::result_type > > ET;
 
   typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
 

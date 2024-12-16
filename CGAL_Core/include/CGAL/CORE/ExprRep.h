@@ -564,9 +564,7 @@ public:
     I = ss.isolateRoot(n);
     // check whether n-th root exists
     if (I.first == 1 && I.second == 0) {
-      core_error("CORE ERROR! root index out of bound",
-                      __FILE__, __LINE__, true);
-      abort();
+      CGAL_error_msg("CORE ERROR! root index out of bound");
     }
     // test if the root isolated in I is 0:
     if ((I.first == 0)&&(I.second == 0))
@@ -583,9 +581,7 @@ public:
     ss.isolateRoots(I.first, I.second, v);
     I = v.front();
     if (v.size() != 1) {
-      core_error("CORE ERROR! non-isolating interval",
-                      __FILE__, __LINE__, true);
-      abort();
+      CGAL_error_msg("CORE ERROR! non-isolating interval");
     }
     ffVal = computeFilteredValue(); // Chee: this line seems unnecessary
   }
@@ -599,7 +595,7 @@ public:
   }
 
   void operator delete( void *p, size_t ){
-    MemoryPool<ConstPolyRep>::global_allocator().free(p);
+    (MemoryPool<ConstPolyRep>::global_allocator().free)(p);
   }
 
 private:
@@ -1092,8 +1088,7 @@ void AddSubRep<Operator>::computeExactFlags() {
           uMSB() = newValue.uMSB();   // chen: to get tighers value.
           sign() = newValue.sign();
         } else if (lowBound.isInfty()) {//check if rootbound is too big
-          core_error("AddSubRep:root bound has exceeded the maximum size\n \
-            but we still cannot decide zero.\n", __FILE__, __LINE__, false);
+          CGAL_CORE_warning_msg(false, "AddSubRep:root bound has exceeded the maximum size but we still cannot decide zero.");
         } else {               // Op(first, second) == 0
           lMSB() = CORE_negInfty;
           sign() = 0;
@@ -1186,8 +1181,7 @@ void AddSubRep<Operator>::computeExactFlags() {
           //8/9/01, Chee: implement escape precision here:
           if (i> get_static_EscapePrec()) {
             get_static_EscapePrecFlag() = -i.asLong();//negative means EscapePrec is used
-            core_error("Escape precision triggered at",
-                             __FILE__, __LINE__, false);
+            CGAL_CORE_warning_msg(false, "Escape precision triggered");
             if (get_static_EscapePrecWarning())
               std::cout<< "Escape Precision triggered at "
                       << get_static_EscapePrec() << " bits" << std::endl;
@@ -1204,8 +1198,7 @@ void AddSubRep<Operator>::computeExactFlags() {
 #endif
 
         if (sign() == 0 && ua .isInfty()) {
-          core_error("AddSubRep: root bound has exceeded the maximum size\n \
-            but we still cannot decide zero.\n", __FILE__, __LINE__, true);
+          CGAL_error_msg("AddSubRep: root bound has exceeded the maximum size but we still cannot decide zero.");
         } // if (sign == 0 && ua .isInfty())
       }// else do progressive
     }
@@ -1236,8 +1229,7 @@ void AddSubRep<Operator>::computeApproxValue(const extLong& relPrec,
   {
     std::ostringstream oss;
     oss << "CORE WARNING: a huge lMSB in AddSubRep: " << lMSB();
-    core_error(oss.str(),
-                 __FILE__, __LINE__, false);
+    CGAL_CORE_warning_msg(false, oss.str().c_str());
   }
 
   extLong rf = first->uMSB()-lMSB()+relPrec+EXTLONG_FOUR;  // 2 better
@@ -1256,7 +1248,7 @@ void * AddSubRep<O>::operator new( size_t size)
 
 template <typename O>
 void AddSubRep<O>::operator delete( void *p, size_t )
-{ MemoryPool<AddSubRep<O> >::global_allocator().free(p); }
+{ (MemoryPool<AddSubRep<O> >::global_allocator().free)(p); }
 
 
 /// \typedef AddRep

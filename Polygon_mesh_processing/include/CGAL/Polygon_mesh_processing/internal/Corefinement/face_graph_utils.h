@@ -18,9 +18,6 @@
 
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/property_map.h>
-#include <boost/type_traits/is_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/mpl/if.hpp>
 #include <fstream>
 #include <sstream>
 #include <set>
@@ -258,7 +255,7 @@ struct Side_of_helper
   typedef Node_vector_exact_vertex_point_map<Node_id_map, VertexPointMap, NodeVector> VPM;
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<typename NodeVector::Exact_kernel, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<typename NodeVector::Exact_kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree_type;
 
   static
@@ -334,7 +331,7 @@ struct Side_of_helper<TriangleMesh, Node_id_map, VertexPointMap, NodeVector, typ
   }
 
   typedef CGAL::AABB_face_graph_triangle_primitive<TriangleMesh, VPM> Primitive;
-  typedef CGAL::AABB_traits<typename NodeVector::Exact_kernel, Primitive> Traits;
+  typedef CGAL::AABB_traits_3<typename NodeVector::Exact_kernel, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree_type;
 
 
@@ -390,29 +387,29 @@ struct TweakedGetVertexPointMap
   typedef typename std::is_same<Point_3,
     typename boost::property_traits<Default_map>::value_type>::type Use_default_tag;
 
-  typedef typename boost::mpl::if_<
-    Use_default_tag,
+  typedef std::conditional_t<
+    Use_default_tag::value,
     Default_map,
     Dummy_default_vertex_point_map<Point_3,
       typename boost::graph_traits<PolygonMesh>::vertex_descriptor >
-  >::type type;
+  > type;
 };
 
 template <class PT, class NP, class PM>
-boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP& np, boost::optional<PM*> opm, std::true_type)
+std::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
+get_vpm(const NP& np, std::optional<PM*> opm, std::true_type)
 {
-  if (boost::none == opm) return boost::none;
+  if (std::nullopt == opm) return std::nullopt;
   return parameters::choose_parameter(
            parameters::get_parameter(np, internal_np::vertex_point),
            get_property_map(boost::vertex_point, *(*opm)) );
 }
 
 template <class PT, class NP, class PM>
-boost::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
-get_vpm(const NP&, boost::optional<PM*> opm, std::false_type)
+std::optional< typename TweakedGetVertexPointMap<PT, NP, PM>::type >
+get_vpm(const NP&, std::optional<PM*> opm, std::false_type)
 {
-  if (boost::none == opm) return boost::none;
+  if (std::nullopt == opm) return std::nullopt;
   return typename TweakedGetVertexPointMap<PT, NP, PM>::type();
 }
 //

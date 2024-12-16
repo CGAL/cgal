@@ -4,7 +4,9 @@
 
 The concept `GenericMapItems` allows to customize a <I>d</I>D generic map by choosing the information associated with darts, by enabling and disabling some attributes, and by choosing to use indices or handles. For that, it defines an inner class template named \link GenericMapItems::Dart_wrapper `Dart_wrapper`\endlink, with one template parameter, `Map`, a model of the `GenericMap` concept. This inner class can define the two types `%Dart_info` and `%Attributes`.
 
-\cgalHasModel \link CGAL::Generic_map_min_items `CGAL::Generic_map_min_items`\endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{\link CGAL::Generic_map_min_items `CGAL::Generic_map_min_items`\endlink}
+\cgalHasModelsEnd
 
 \sa `GenericMap`
 

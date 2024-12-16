@@ -63,7 +63,7 @@ public:
                                                   Iterator_type it = T::STORED)
     : _t(t), pos(_t->cells_begin()), _it(it), _off(0) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
-      while (pos != _t->cells_end() && !is_canonical() )
+      while (pos != _t->cells_end() && !_t->is_canonical(pos) )
         ++pos;
     }
   }
@@ -79,7 +79,7 @@ public:
       ++pos;
       break;
     case T::UNIQUE:
-      do { ++pos; } while (pos != _t->cells_end() && !is_canonical());
+      do { ++pos; } while (pos != _t->cells_end() && !_t->is_canonical(pos));
       break;
     case T::STORED_COVER_DOMAIN:
     case T::UNIQUE_COVER_DOMAIN:
@@ -97,7 +97,7 @@ public:
       --pos;
       break;
     case T::UNIQUE:
-      do { --pos; } while (pos != _t->cells_begin() && !is_canonical());
+      do { --pos; } while (pos != _t->cells_begin() && !_t->is_canonical(pos));
       break;
     case T::STORED_COVER_DOMAIN:
     case T::UNIQUE_COVER_DOMAIN:
@@ -156,42 +156,6 @@ private:
   mutable Periodic_tetrahedron periodic_tetrahedron; // current tetrahedron.
 
 private:
-  // check whether pos points onto a unique edge or not.
-  // If we are computing in 1-sheeted covering this should
-  // always be true.
-  bool is_canonical() {
-    // fetch all offsets
-    Offset off0, off1, off2, off3;
-    get_edge_offsets(off0, off1, off2, off3);
-
-    if (_t->number_of_sheets() != make_array(1,1,1)) {
-      // If there is one offset with entries larger than 1 then we are
-      // talking about a vertex that is too far away from the original
-      // domain to belong to a canonical triangle.
-      if (off0.x() > 1) return false;
-      if (off0.y() > 1) return false;
-      if (off0.z() > 1) return false;
-      if (off1.x() > 1) return false;
-      if (off1.y() > 1) return false;
-      if (off1.z() > 1) return false;
-      if (off2.x() > 1) return false;
-      if (off2.y() > 1) return false;
-      if (off2.z() > 1) return false;
-      if (off3.x() > 1) return false;
-      if (off3.y() > 1) return false;
-      if (off3.z() > 1) return false;
-    }
-
-    // If there is one direction of space for which all offsets are
-    // non-zero then the edge is not canonical because we can
-    // take the copy closer towards the origin in that direction.
-    int offx = off0.x() & off1.x() & off2.x() & off3.x();
-    int offy = off0.y() & off1.y() & off2.y() & off3.y();
-    int offz = off0.z() & off1.z() & off2.z() & off3.z();
-
-    return (offx == 0 && offy == 0 && offz == 0);
-  }
-
   // Artificial incrementation function that takes periodic
   // copies into account.
   void increment_domain() {
@@ -200,7 +164,7 @@ private:
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
-                           && pos != _t->cells_end() && !is_canonical());
+                           && pos != _t->cells_end() && !_t->is_canonical(pos));
     } else {
       do {
         ++_off;
@@ -214,7 +178,7 @@ private:
   void decrement_domain() {
     if (_off == 0) {
       if (pos == _t->cells_begin()) return;
-      do { --pos; } while (_it == T::UNIQUE_COVER_DOMAIN && !is_canonical());
+      do { --pos; } while (_it == T::UNIQUE_COVER_DOMAIN && !_t->is_canonical(pos));
       _off = get_drawing_offsets();
     } else {
       int off = get_drawing_offsets();
@@ -223,32 +187,6 @@ private:
       } while ((((~_off)|off)&7)!=7); // Decrement until a valid
                                       // offset has been found
     }
-  }
-
-  // Get the canonicalized offsets of an edge.
-  // This works in any cover that is encoded in _t->combine_offsets
-  void get_edge_offsets(Offset &off0, Offset &off1,
-                        Offset &off2, Offset &off3) const {
-    Offset cell_off0 = _t->int_to_off(pos->offset(0));
-    Offset cell_off1 = _t->int_to_off(pos->offset(1));
-    Offset cell_off2 = _t->int_to_off(pos->offset(2));
-    Offset cell_off3 = _t->int_to_off(pos->offset(3));
-    Offset diff_off((cell_off0.x() == 1
-                     && cell_off1.x() == 1
-                     && cell_off2.x() == 1
-                     && cell_off3.x() == 1)?-1:0,
-                    (cell_off0.y() == 1
-                     && cell_off1.y() == 1
-                     && cell_off2.y() == 1
-                     && cell_off3.y() == 1)?-1:0,
-                    (cell_off0.z() == 1
-                     && cell_off1.z() == 1
-                     && cell_off2.z() == 1
-                     && cell_off3.z() == 1)?-1:0);
-    off0 = _t->combine_offsets(_t->get_offset(pos,0), diff_off);
-    off1 = _t->combine_offsets(_t->get_offset(pos,1), diff_off);
-    off2 = _t->combine_offsets(_t->get_offset(pos,2), diff_off);
-    off3 = _t->combine_offsets(_t->get_offset(pos,3), diff_off);
   }
 
   // return an integer that encodes the translations which have to be
@@ -262,7 +200,7 @@ private:
     // internally stored inside the cell telling us that this cell
     // wraps around the domain.
     if (_it == T::UNIQUE_COVER_DOMAIN)
-      get_edge_offsets(off0,off1,off2,off3);
+      _t->get_offsets(pos, off0, off1, off2, off3);
     else {
       CGAL_assertion(_it == T::STORED_COVER_DOMAIN);
       off0 = _t->int_to_off(pos->offset(0));
@@ -303,7 +241,7 @@ private:
   Periodic_tetrahedron construct_periodic_tetrahedron() const {
     CGAL_assertion(pos != typename T::Cell_handle());
     Offset off0, off1, off2, off3;
-    get_edge_offsets(off0, off1, off2, off3);
+    _t->get_offsets(pos, off0, off1, off2, off3);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
                                (((_off>>1)&1)==1 ? -1:0),
                                (( _off    &1)==1 ? -1:0));
@@ -369,7 +307,7 @@ public:
                                                Iterator_type it = T::STORED)
     : _t(t), pos(_t->facets_begin()), _it(it), _off(0) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
-      while (pos != _t->facets_end() && !is_canonical() )
+      while (pos != _t->facets_end() && !_t->is_canonical(*pos) )
         ++pos;
     }
   }
@@ -385,7 +323,7 @@ public:
       ++pos;
       break;
     case T::UNIQUE:
-      do { ++pos; } while (pos != _t->facets_end() && !is_canonical());
+      do { ++pos; } while (pos != _t->facets_end() && !_t->is_canonical(*pos));
       break;
     case T::STORED_COVER_DOMAIN:
     case T::UNIQUE_COVER_DOMAIN:
@@ -403,7 +341,7 @@ public:
       --pos;
       break;
     case T::UNIQUE:
-      do { --pos; } while (pos != _t->facets_begin() && !is_canonical());
+      do { --pos; } while (pos != _t->facets_begin() && !_t->is_canonical(*pos));
       break;
     case T::STORED_COVER_DOMAIN:
     case T::UNIQUE_COVER_DOMAIN:
@@ -462,39 +400,6 @@ private:
   mutable Periodic_triangle periodic_triangle; // current segment.
 
 private:
-  // check whether pos points onto a unique edge or not.
-  // If we are computing in 1-sheeted covering this should
-  // always be true.
-  bool is_canonical() {
-    // fetch all offsets
-    Offset off0, off1, off2;
-    get_edge_offsets(off0, off1, off2);
-
-    if (_t->number_of_sheets() != make_array(1,1,1)) {
-      // If there is one offset with entries larger than 1 then we are
-      // talking about a vertex that is too far away from the original
-      // domain to belong to a canonical triangle.
-      if (off0.x() > 1) return false;
-      if (off0.y() > 1) return false;
-      if (off0.z() > 1) return false;
-      if (off1.x() > 1) return false;
-      if (off1.y() > 1) return false;
-      if (off1.z() > 1) return false;
-      if (off2.x() > 1) return false;
-      if (off2.y() > 1) return false;
-      if (off2.z() > 1) return false;
-    }
-
-    // If there is one direction of space for which all offsets are
-    // non-zero then the edge is not canonical because we can
-    // take the copy closer towards the origin in that direction.
-    int offx = off0.x() & off1.x() & off2.x();
-    int offy = off0.y() & off1.y() & off2.y();
-    int offz = off0.z() & off1.z() & off2.z();
-
-    return (offx == 0 && offy == 0 && offz == 0);
-  }
-
   // Artificial incrementation function that takes periodic
   // copies into account.
   void increment_domain() {
@@ -503,7 +408,7 @@ private:
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
-                           && pos != _t->facets_end() && !is_canonical());
+                           && pos != _t->facets_end() && !_t->is_canonical(*pos));
     } else {
       do {
         ++_off;
@@ -517,7 +422,7 @@ private:
   void decrement_domain() {
     if (_off == 0) {
       if (pos == _t->facets_begin()) return;
-      do { --pos; } while (_it == T::UNIQUE_COVER_DOMAIN && !is_canonical());
+      do { --pos; } while (_it == T::UNIQUE_COVER_DOMAIN && !_t->is_canonical(*pos));
       _off = get_drawing_offsets();
     } else {
       int off = get_drawing_offsets();
@@ -526,32 +431,6 @@ private:
       } while ((((~_off)|off)&7)!=7); // Decrement until a valid
                                       // offset has been found
     }
-  }
-
-  // Get the canonicalized offsets of an edge.
-  // This works in any cover that is encoded in _t->combine_offsets
-  void get_edge_offsets(Offset &off0, Offset &off1, Offset &off2) const {
-    Offset cell_off0 = _t->int_to_off(pos->first->offset((pos->second+1)&3));
-    Offset cell_off1 = _t->int_to_off(pos->first->offset((pos->second+2)&3));
-    Offset cell_off2 = _t->int_to_off(pos->first->offset((pos->second+3)&3));
-    Offset diff_off((cell_off0.x() == 1
-                     && cell_off1.x() == 1
-                     && cell_off2.x() == 1)?-1:0,
-                    (cell_off0.y() == 1
-                     && cell_off1.y() == 1
-                     && cell_off2.y() == 1)?-1:0,
-                    (cell_off0.z() == 1
-                     && cell_off1.z() == 1
-                     && cell_off2.z() == 1)?-1:0);
-    off0 = _t->combine_offsets(_t->get_offset(pos->first,
-                                              (pos->second+1)&3),
-                               diff_off);
-    off1 = _t->combine_offsets(_t->get_offset(pos->first,
-                                              (pos->second+2)&3),
-                               diff_off);
-    off2 = _t->combine_offsets(_t->get_offset(pos->first,
-                                              (pos->second+3)&3),
-                               diff_off);
   }
 
   // return an integer that encodes the translations which have to be
@@ -565,7 +444,7 @@ private:
     // internally stored inside the cell telling us that this cell
     // wraps around the domain.
     if (_it == T::UNIQUE_COVER_DOMAIN)
-      get_edge_offsets(off0,off1,off2);
+      _t->get_offsets(*pos, off0, off1, off2);
     else {
       CGAL_assertion(_it == T::STORED_COVER_DOMAIN);
       off0 = _t->int_to_off(pos->first->offset((pos->second+1)&3));
@@ -596,7 +475,7 @@ private:
   Periodic_triangle construct_periodic_triangle() const {
     CGAL_assertion(pos->first != typename T::Cell_handle());
     Offset off0, off1, off2;
-    get_edge_offsets(off0, off1, off2);
+    _t->get_offsets(*pos, off0, off1, off2);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
                                (((_off>>1)&1)==1 ? -1:0),
                                (( _off    &1)==1 ? -1:0));
@@ -659,7 +538,7 @@ public:
                                               Iterator_type it = T::STORED)
     : _t(t), pos(_t->edges_begin()), _it(it), _off(0) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
-      while (pos != _t->edges_end() && !is_canonical() )
+      while (pos != _t->edges_end() && !_t->is_canonical(*pos) )
         ++pos;
     }
   }
@@ -675,7 +554,7 @@ public:
       ++pos;
       break;
     case T::UNIQUE:
-      do { ++pos; } while (pos != _t->edges_end() && !is_canonical());
+      do { ++pos; } while (pos != _t->edges_end() && !_t->is_canonical(*pos));
       break;
     case T::STORED_COVER_DOMAIN:
     case T::UNIQUE_COVER_DOMAIN:
@@ -693,7 +572,7 @@ public:
       --pos;
       break;
     case T::UNIQUE:
-      do { --pos; } while (pos != _t->edges_begin() && !is_canonical());
+      do { --pos; } while (pos != _t->edges_begin() && !_t->is_canonical(*pos));
       break;
     case T::STORED_COVER_DOMAIN:
     case T::UNIQUE_COVER_DOMAIN:
@@ -751,36 +630,6 @@ private:
   mutable Periodic_segment periodic_segment; // current segment.
 
 private:
-  // check whether pos points onto a unique edge or not.
-  // If we are computing in 1-sheeted covering this should
-  // always be true.
-  bool is_canonical() {
-    // fetch all offsets
-    Offset off0, off1;
-    get_edge_offsets(off0, off1);
-
-    if (_t->number_of_sheets() != make_array(1,1,1)) {
-      // If there is one offset with entries larger than 1 then we are
-      // talking about a vertex that is too far away from the original
-      // domain to belong to a canonical triangle.
-      if (off0.x() > 1) return false;
-      if (off0.y() > 1) return false;
-      if (off0.z() > 1) return false;
-      if (off1.x() > 1) return false;
-      if (off1.y() > 1) return false;
-      if (off1.z() > 1) return false;
-    }
-
-    // If there is one direction of space for which all offsets are
-    // non-zero then the edge is not canonical because we can
-    // take the copy closer towards the origin in that direction.
-    int offx = off0.x() & off1.x();
-    int offy = off0.y() & off1.y();
-    int offz = off0.z() & off1.z();
-
-    return (offx == 0 && offy == 0 && offz == 0);
-  }
-
   // Artificial incrementation function that takes periodic
   // copies into account.
   void increment_domain() {
@@ -789,7 +638,7 @@ private:
     if (_off == off) {
       _off = 0;
       do { ++pos; } while (_it == T::UNIQUE_COVER_DOMAIN
-                           && pos != _t->edges_end() && !is_canonical());
+                           && pos != _t->edges_end() && !_t->is_canonical(*pos));
     } else {
       do {
         ++_off;
@@ -803,7 +652,7 @@ private:
   void decrement_domain() {
     if (_off == 0) {
       if (pos == _t->edges_begin()) return;
-      do { --pos; } while (_it == T::UNIQUE_COVER_DOMAIN && !is_canonical());
+      do { --pos; } while (_it == T::UNIQUE_COVER_DOMAIN && !_t->is_canonical(*pos));
       _off = get_drawing_offsets();
     } else {
       int off = get_drawing_offsets();
@@ -812,20 +661,6 @@ private:
       } while ((((~_off)|off)&7)!=7); // Decrement until a valid
                                       // offset has been found
     }
-  }
-
-  // Get the canonicalized offsets of an edge.
-  // This works in any cover that is encoded in _t->combine_offsets
-  void get_edge_offsets(Offset &off0, Offset &off1) const {
-    Offset cell_off0 = _t->int_to_off(pos->first->offset(pos->second));
-    Offset cell_off1 = _t->int_to_off(pos->first->offset(pos->third));
-    Offset diff_off((cell_off0.x()==1 && cell_off1.x()==1)?-1:0,
-                    (cell_off0.y()==1 && cell_off1.y()==1)?-1:0,
-                    (cell_off0.z()==1 && cell_off1.z()==1)?-1:0);
-    off0 = _t->combine_offsets(_t->get_offset(pos->first,pos->second),
-                               diff_off);
-    off1 = _t->combine_offsets(_t->get_offset(pos->first,pos->third),
-                               diff_off);
   }
 
   // return an integer that encodes the translations which have to be
@@ -839,7 +674,7 @@ private:
     // internally stored inside the cell telling us that this cell
     // wraps around the domain.
     if (_it == T::UNIQUE_COVER_DOMAIN)
-      get_edge_offsets(off0,off1);
+      _t->get_offsets(*pos, off0, off1);
     else {
       CGAL_assertion(_it == T::STORED_COVER_DOMAIN);
       off0 = _t->int_to_off(pos->first->offset(pos->second));
@@ -859,7 +694,7 @@ private:
   Periodic_segment construct_periodic_segment() const {
     CGAL_assertion(pos->first != typename T::Cell_handle());
     Offset off0, off1;
-    get_edge_offsets(off0, off1);
+    _t->get_offsets(*pos, off0, off1);
     Offset transl_off = Offset((((_off>>2)&1)==1 ? -1:0),
                                (((_off>>1)&1)==1 ? -1:0),
                                (( _off    &1)==1 ? -1:0));
@@ -918,7 +753,7 @@ public:
                                             Iterator_type it = T::STORED)
     : _t(t), pos(_t->vertices_begin()), _it(it) {
     if (_it == T::UNIQUE || _it == T::UNIQUE_COVER_DOMAIN) {
-      while (pos != _t->vertices_end() && !is_canonical() )
+      while (pos != _t->vertices_end() && !_t->is_canonical(pos) )
         ++pos;
     }
   }
@@ -936,7 +771,7 @@ public:
       break;
     case T::UNIQUE:
     case T::UNIQUE_COVER_DOMAIN:
-      do { ++pos; } while (pos != _t->vertices_end() && !is_canonical());
+      do { ++pos; } while (pos != _t->vertices_end() && !_t->is_canonical(pos));
       break;
     default:
       CGAL_assertion(false);
@@ -952,7 +787,7 @@ public:
       break;
     case T::UNIQUE:
     case T::UNIQUE_COVER_DOMAIN:
-      do { --pos; } while (pos != _t->vertices_begin() && !is_canonical());
+      do { --pos; } while (pos != _t->vertices_begin() && !_t->is_canonical(pos));
       break;
     default:
       CGAL_assertion(false);
@@ -1009,13 +844,6 @@ private:
   mutable Periodic_point periodic_point; // current point.
 
 private:
-  // check whether pos points onto a vertex inside the original
-  // domain. If we are computing in 1-sheeted covering this should
-  // always be true.
-  bool is_canonical() {
-    return (_t->get_offset(pos) == Offset(0,0,0));
-  }
-
   Periodic_point construct_periodic_point() const {
     CGAL_assertion(pos != typename T::Vertex_handle());
     Offset off = _t->get_offset(pos);
@@ -1031,9 +859,54 @@ public:
   Domain_tester() {}
   Domain_tester(const T *tr) : t(tr) {}
 
-  bool operator()(const typename T::Vertex_iterator & v) const {
-    return (t->get_offset(v) != typename T::Offset(0,0,0));
+  bool operator()(const typename T::Cell_iterator c) const
+  {
+    return !t->is_canonical(c);
   }
+
+  bool operator()(const typename T::Facet_iterator f) const
+  {
+    return !t->is_canonical(*f);
+  }
+
+  bool operator()(const typename T::Edge_iterator e) const
+  {
+    return !t->is_canonical(*e);
+  }
+
+  bool operator()(const typename T::Vertex_iterator v) const
+  {
+    return !t->is_canonical(v);
+  }
+
+};
+
+// Iterates over the canonical cells in a periodic triangulation.
+// Derives from Filter_iterator in order to add a conversion to handle
+//
+// Comments:
+// When computing in 1-sheeted covering, there will be no difference
+// between a normal Cell_iterator and this iterator
+template <class T>
+class Periodic_3_triangulation_unique_cell_iterator_3
+  : public Filter_iterator<typename T::Cell_iterator, Domain_tester<T> >
+{
+  typedef typename T::Cell_handle Cell_handle;
+  typedef typename T::Cell_iterator Cell_iterator;
+
+  typedef Filter_iterator<Cell_iterator, Domain_tester<T> > Base;
+  typedef Periodic_3_triangulation_unique_cell_iterator_3 Self;
+
+public:
+  Periodic_3_triangulation_unique_cell_iterator_3() : Base() {}
+  Periodic_3_triangulation_unique_cell_iterator_3(const Base &b) : Base(b) {}
+
+  Self & operator++() { Base::operator++(); return *this; }
+  Self & operator--() { Base::operator--(); return *this; }
+  Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+  Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+  operator Cell_handle() const { return Base::base(); }
 };
 
 // Iterates over the vertices in a periodic triangulation that are
@@ -1045,15 +918,15 @@ public:
 // between a normal Vertex_iterator and this iterator
 template <class T>
 class Periodic_3_triangulation_unique_vertex_iterator_3
-  : public Filter_iterator<typename T::Vertex_iterator, Domain_tester<T> > {
-
+  : public Filter_iterator<typename T::Vertex_iterator, Domain_tester<T> >
+{
   typedef typename T::Vertex_handle Vertex_handle;
   typedef typename T::Vertex_iterator Vertex_iterator;
 
   typedef Filter_iterator<Vertex_iterator, Domain_tester<T> > Base;
   typedef Periodic_3_triangulation_unique_vertex_iterator_3 Self;
-public:
 
+public:
   Periodic_3_triangulation_unique_vertex_iterator_3() : Base() {}
   Periodic_3_triangulation_unique_vertex_iterator_3(const Base &b) : Base(b) {}
 
@@ -1065,6 +938,62 @@ public:
   operator Vertex_handle() const { return Base::base(); }
 };
 
-} //namespace CGAL
+// Iterates over the canonical edges in a periodic triangulation.
+// Derives from Filter_iterator in order to add a conversion to handle
+//
+// Comments:
+// When computing in 1-sheeted covering, there will be no difference
+// between a normal Edge_iterator and this iterator
+template <class T>
+class Periodic_3_triangulation_unique_edge_iterator_3
+  : public Filter_iterator<typename T::Edge_iterator, Domain_tester<T> >
+{
+  typedef typename T::Edge Edge;
+  typedef typename T::Edge_iterator Edge_iterator;
+
+  typedef Filter_iterator<Edge_iterator, Domain_tester<T> > Base;
+  typedef Periodic_3_triangulation_unique_edge_iterator_3 Self;
+
+public:
+  Periodic_3_triangulation_unique_edge_iterator_3() : Base() {}
+  Periodic_3_triangulation_unique_edge_iterator_3(const Base &b) : Base(b) {}
+
+  Self & operator++() { Base::operator++(); return *this; }
+  Self & operator--() { Base::operator--(); return *this; }
+  Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+  Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+  operator Edge() const { return Base::base(); }
+};
+
+// Iterates over the canonical facets in a periodic triangulation.
+// Derives from Filter_iterator in order to add a conversion to handle
+//
+// Comments:
+// When computing in 1-sheeted covering, there will be no difference
+// between a normal Facet_iterator and this iterator
+template <class T>
+class Periodic_3_triangulation_unique_facet_iterator_3
+  : public Filter_iterator<typename T::Facet_iterator, Domain_tester<T> >
+{
+  typedef typename T::Facet Facet;
+  typedef typename T::Facet_iterator Facet_iterator;
+
+  typedef Filter_iterator<Facet_iterator, Domain_tester<T> > Base;
+  typedef Periodic_3_triangulation_unique_facet_iterator_3 Self;
+public:
+
+  Periodic_3_triangulation_unique_facet_iterator_3() : Base() {}
+  Periodic_3_triangulation_unique_facet_iterator_3(const Base &b) : Base(b) {}
+
+  Self & operator++() { Base::operator++(); return *this; }
+  Self & operator--() { Base::operator--(); return *this; }
+  Self operator++(int) { Self tmp(*this); ++(*this); return tmp; }
+  Self operator--(int) { Self tmp(*this); --(*this); return tmp; }
+
+  operator Facet() const { return Base::base(); }
+};
+
+} // namespace CGAL
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_ITERATORS_3_H

@@ -3,7 +3,7 @@
 
 #include <CGAL/boost/graph/Face_filtered_graph.h>
 #include <CGAL/boost/graph/partition.h>
-#include <CGAL/boost/graph/IO/polygon_mesh_io.h>
+#include <CGAL/IO/polygon_mesh_io.h>
 
 #include <fstream>
 #include <iostream>

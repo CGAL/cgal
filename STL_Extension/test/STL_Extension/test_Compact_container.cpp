@@ -12,8 +12,6 @@
 #include <CGAL/use.h>
 #include <CGAL/assertions.h>
 
-#include <boost/type_traits/is_base_of.hpp>
-
 #include <CGAL/disable_warnings.h>
 
 template <typename Has_timestamp_ = CGAL::Tag_true>
@@ -307,10 +305,10 @@ int main()
   typedef Node_1<CGAL::Tag_false> T2;
   typedef CGAL::Compact_container<T2> C2; // without timestamps
 
-  typedef CGAL::Compact_container<T2,
+  typedef CGAL::Compact_container<T1,
                                   CGAL::Default,
                                   CGAL::Default,
-                                  CGAL::Time_stamper<T2> > C4;
+                                  CGAL::Time_stamper<T1> > C4;
                                           //    with timestamps
 
   typedef Node_2 T3;
@@ -324,22 +322,22 @@ int main()
   test_time_stamps<C4>();
 
   // Check the time stamper policies
-  if(! boost::is_base_of<CGAL::Time_stamper<T1>,
+  if(! std::is_base_of<CGAL::Time_stamper<T1>,
      C1::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C1\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::No_time_stamp<T2>,
+  if(! std::is_base_of<CGAL::No_time_stamp<T2>,
      C2::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C2\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::No_time_stamp<T3>,
+  if(! std::is_base_of<CGAL::No_time_stamp<T3>,
      C3::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C3\n"; return 1;
   }
-  if(! boost::is_base_of<CGAL::Time_stamper<T2>,
+  if(! std::is_base_of<CGAL::Time_stamper<T1>,
      C4::Time_stamper>::value)
   {
     std::cerr << "Error timestamper of C4\n"; return 1;

@@ -321,6 +321,24 @@ compare_angle(const Point_3<K>& a, const Point_3<K>& b, const Point_3<K>& c,
 template < class K >
 inline
 typename K::Comparison_result
+compare_angle(const Point_3<K>& a1, const Point_3<K>& b1, const Point_3<K>& c1,
+              const Point_3<K>& a2, const Point_3<K>& b2, const Point_3<K>& c2)
+{
+  return internal::compare_angle(a1, b1, c1, a2, b2, c2, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
+compare_angle(const Vector_3<K>& u1, const Vector_3<K>& v1,
+              const Vector_3<K>& u2, const Vector_3<K>& v2)
+{
+  return internal::compare_angle(u1, v1, u2, v2, K());
+}
+
+template < class K >
+inline
+typename K::Comparison_result
 compare_dihedral_angle(const Point_3<K>& a1, const Point_3<K>& b1,
                        const Point_3<K>& c1, const Point_3<K>& d1,
                        const Point_3<K>& a2, const Point_3<K>& b2,
@@ -1274,6 +1292,22 @@ typename K::FT
 squared_area(const Point_3<K> &p, const Point_3<K> &q, const Point_3<K> &r)
 {
   return internal::squared_area(p, q, r, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_length(const Vector_3<K> &v)
+{
+  return internal::squared_length(v, K());
+}
+
+template < class K >
+inline
+typename K::FT
+squared_length(const Segment_3<K> &s)
+{
+  return internal::squared_length(s, K());
 }
 
 template < class K >

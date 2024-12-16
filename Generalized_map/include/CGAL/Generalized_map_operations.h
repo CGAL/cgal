@@ -35,7 +35,7 @@ namespace CGAL
   {
     static bool run(const GMap& amap, typename GMap::Dart_const_descriptor adart)
     {
-      // TODO? Optimisation for dim-2, and to not test all the darts of the cell?
+      // TODO? Optimization for dim-2, and to not test all the darts of the cell?
       bool res = true;
       for ( CGAL::GMap_dart_const_iterator_of_cell<GMap,i> it(amap, adart);
             res && it.cont(); ++it )
@@ -91,8 +91,9 @@ namespace CGAL
             it.cont(); ++it )
       {
         to_erase.push_back(it);
-        if ( !amap.template is_free<i+1>(it) && dg1==amap.null_descriptor )
-        { dg1=it; dg2=amap.template alpha<i+1>(it); }
+        if (dg1==amap.null_descriptor && !amap.template is_free<i+1>(it) &&
+            !amap.template is_free<i>(amap.template alpha<i+1>(it)))
+        { dg1=it; dg2=amap.template alpha<i+1, i>(it); }
         amap.mark(it, mark);
         ++res;
       }
@@ -102,7 +103,7 @@ namespace CGAL
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
           CGAL::internal::GMap_group_attribute_functor_run<GMap, i+1>::
-              run(amap, dg1, dg2);
+            run(amap, dg1, dg2, true); // true because dg1 will be deleted
       }
 
       // During the operation, we store in modified_darts the darts modified
@@ -136,6 +137,9 @@ namespace CGAL
               modified_darts.push_back(d2);
               amap.mark(d2, mark_modified_darts);
             }
+
+            internal::Set_dart_of_attribute_if_marked<GMap, i+1>::
+                run(amap, d1, mark);
           }
         }
       }
@@ -254,7 +258,7 @@ namespace CGAL
   {
     static bool run(const GMap& amap, typename GMap::Dart_const_descriptor adart)
     {
-      // TODO ? Optimisation possible to not test all the darts of the cell ?
+      // TODO ? Optimization possible to not test all the darts of the cell ?
       bool res = true;
       for ( CGAL::GMap_dart_const_iterator_of_cell<GMap,i> it(amap, adart);
             res && it.cont(); ++it )
@@ -320,7 +324,7 @@ namespace CGAL
          // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_descriptor )
            CGAL::internal::GMap_group_attribute_functor_run<GMap,i-1>::
-               run(amap, dg1, dg2);
+               run(amap, dg1, dg2, true); // true because dg1 will be deleted
       }
 
       // During the operation, we store in modified_darts the darts modified

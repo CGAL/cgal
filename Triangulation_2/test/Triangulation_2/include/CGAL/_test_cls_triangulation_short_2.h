@@ -24,7 +24,8 @@
 
 #include <iostream>
 #include <fstream>
-
+#include <sstream>
+#include <string>
 #include <utility>
 #include <list>
 
@@ -475,23 +476,31 @@ _test_cls_triangulation_short_2( const Triangul &)
 
   /********************/
   /******** I/O *******/
+  std::string T15fname, T23fname;
+  std::stringstream ss15;
+  ss15 << "T15" << &T1_5 << ".triangulation";
+  ss15 >> T15fname;
+  std::stringstream ss23;
+  ss23 << "T23" << &T2_3 << ".triangulation";
+  ss23 >> T23fname;
+
   std::cout << "    output to a file" << std::endl;
-  std::ofstream of1_5("T15.triangulation");
+  std::ofstream of1_5(T15fname.c_str());
   CGAL::IO::set_ascii_mode(of1_5);
   of1_5 << T1_5; of1_5.close();
-  std::ofstream of2_3("T23.triangulation");
+  std::ofstream of2_3(T23fname.c_str());
   CGAL::IO::set_ascii_mode(of2_3);
   of2_3 << T2_3; of2_3.close();
 
 
   std::cout << "    input from a file" << std::endl;
 
-  std::ifstream if1_5("T15.triangulation"); CGAL::IO::set_ascii_mode(if1_5);
+  std::ifstream if1_5(T15fname.c_str()); CGAL::IO::set_ascii_mode(if1_5);
   Triangul T1_5_copy; if1_5 >> T1_5_copy;
   assert( T1_5_copy.is_valid() &&
           T1_5_copy.number_of_vertices() == T1_5.number_of_vertices() );
 
-  std::ifstream if2_3("T23.triangulation"); CGAL::IO::set_ascii_mode(if2_3);
+  std::ifstream if2_3(T23fname.c_str()); CGAL::IO::set_ascii_mode(if2_3);
   Triangul T2_3_copy; if2_3 >> T2_3_copy;
   assert( T2_3_copy.is_valid() &&
           T2_3_copy.number_of_vertices() == T2_3.number_of_vertices() );

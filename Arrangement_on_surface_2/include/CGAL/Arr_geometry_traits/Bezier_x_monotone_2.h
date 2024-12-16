@@ -130,7 +130,7 @@ private:
     Rational t_min;
     Rational t_max;
 
-    /*! Get the rational bounding box of the subcurve. */
+    /*! obtains the rational bounding box of the subcurve. */
     void bbox(Rational& x_min, Rational& y_min,
               Rational& x_max, Rational& y_max) const
     {
@@ -318,13 +318,11 @@ public:
                            Bezier_cache& cache,
                            OutputIterator oi) const
   {
-    typedef boost::variant<Intersection_point, Self>    Intersection_result;
-
     // In case we have two x-monotone subcurves of the same Bezier curve,
     // check if they have a common left endpoint.
     if (_curve.is_same(cv._curve)) {
       if (left().is_same(cv.left()) || left().is_same(cv.right()))
-        *oi++ = Intersection_result(Intersection_point(left(), 0));
+        *oi++ = Intersection_point(left(), 0);
     }
 
     // Compute the intersections of the two sucurves. Note that for caching
@@ -341,7 +339,7 @@ public:
 
     // In case of overlap, just report the overlapping subcurve.
     if (do_ovlp) {
-      *oi++ = Intersection_result(ovlp_cv);
+      *oi++ = ovlp_cv;
       return oi;
     }
 
@@ -349,14 +347,14 @@ public:
     // xy-lexicorgraphical order, and insert them to the output iterator.
     std::sort(ipts.begin(), ipts.end(), Less_intersection_point(cache));
     for (auto ip_it = ipts.begin(); ip_it != ipts.end(); ++ip_it) {
-      *oi++ = Intersection_result(*ip_it);
+      *oi++ = *ip_it;
     }
 
     // In case we have two x-monotone subcurves of the same Bezier curve,
     // check if they have a common right endpoint.
     if (_curve.is_same(cv._curve)) {
       if (right().is_same(cv.left()) || right().is_same(cv.right())) {
-        *oi++ = Intersection_result(Intersection_point(right(), 0));
+        *oi++ = Intersection_point(right(), 0);
       }
     }
 
@@ -466,7 +464,7 @@ private:
                                     const Point_2& p,
                                     Bezier_cache& cache) const;
 
-  /*! Get the range of t-value over which the subcurve is defined.
+  /*! obtains the range of t-value over which the subcurve is defined.
    * \param cache Caches the vertical tangency points and intersection points.
    * \return A pair comprised of the t-value for the source point and the
    *         t-value for the target point.
@@ -2140,7 +2138,7 @@ _intersect(const Self& cv,
   else {
     // Approximate the intersection points and store them in the map.
     // Note that we do not store approximated self-intersections in the map,
-    // as they realte only to the pecific x-monotone curves, and not to the
+    // as they relate only to the specific x-monotone curves, and not to the
     // entire curve.
     app_ok = _approximate_intersection_points(cv, inter_pts);
 
@@ -2587,6 +2585,6 @@ _exact_vertical_position(const Point_2& p,
   return EQUAL;
 }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif

@@ -21,7 +21,7 @@
  */
 
 #include <CGAL/Arr_point_location/Trapezoidal_decomposition_2.h>
-#include <boost/variant.hpp>
+#include <variant>
 #include <memory>
 
 
@@ -145,13 +145,13 @@ public:
   //Dag_node* m_dag_node; //pointer to the search structure (DAG) node
 
   /*! Initialize the trapezoid's neighbors. */
-  inline void init_neighbors(boost::optional<Td_map_item&> next)
+  inline void init_neighbors(std::optional<std::reference_wrapper<Td_map_item>> next)
   {
-    set_next((next) ? *next : Td_map_item(0));
+    set_next((next) ? next->get() : Td_map_item(0));
   }
   /*! \copydoc init_neighbors
    *  \deprecated please use #init_neighbors */
-  CGAL_DEPRECATED inline void init_neighbours(boost::optional<Td_map_item&> next)
+  CGAL_DEPRECATED inline void init_neighbours(std::optional<std::reference_wrapper<Td_map_item>> next)
   { init_neighbors(next); }
 
   /*! Set the DAG node. */
@@ -199,10 +199,10 @@ public:
    /*! Constructor given Vertex & Halfedge handles. */
   Td_active_edge (Halfedge_const_handle he ,
                   Dag_node* node = 0,
-                  boost::optional<Td_map_item&> next = boost::none)
+                  std::optional<std::reference_wrapper<Td_map_item>> next = std::nullopt)
   {
 
-    PTR = new Data(he, (next) ? *next : Td_map_item(0), node);
+    PTR = new Data(he, (next) ? next->get() : Td_map_item(0), node);
     //m_dag_node = node;
   }
 

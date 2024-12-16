@@ -20,8 +20,6 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <boost/shared_ptr.hpp>
-
 #include <type_traits>
 
 namespace CGAL {
@@ -29,7 +27,7 @@ namespace CGAL {
 template <typename Polygon,
           typename Weights,
           typename K>
-boost::shared_ptr< Straight_skeleton_2<K> >
+std::shared_ptr< Straight_skeleton_2<K> >
 inline
 create_interior_weighted_straight_skeleton_2(const Polygon& poly_with_holes,
                                              const Weights& weights,

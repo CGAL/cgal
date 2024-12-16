@@ -9,8 +9,10 @@ for the triangulation data structure.
 
 \cgalRefines{TriangulationDSVertexBase_3}
 
-\cgalHasModel `CGAL::Triangulation_vertex_base_3`
-\cgalHasModel `CGAL::Triangulation_vertex_base_with_info_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_vertex_base_3}
+\cgalHasModels{CGAL::Triangulation_vertex_base_with_info_3}
+\cgalHasModelsEnd
 
 \sa `TriangulationCellBase_3`
 

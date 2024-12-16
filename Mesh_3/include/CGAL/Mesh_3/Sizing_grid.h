@@ -31,12 +31,12 @@ namespace CGAL {
 
 namespace Mesh_3 {
 
-template <class Gt>
+template <class GT>
 class Sizing_grid_node
 {
 public:
-  typedef typename Gt::Point_3 Point;
-  typedef typename Gt::FT FT;
+  typedef typename GT::Point_3 Point;
+  typedef typename GT::FT FT;
 
   FT m_init_size;
   FT m_size;
@@ -108,14 +108,14 @@ template <class Tr>
 class Sizing_grid
 {
 public:
-  typedef typename Tr::Geom_traits Gt;
-  typedef typename Gt::FT FT;
+  typedef typename Tr::Geom_traits GT;
+  typedef typename GT::FT FT;
 
   typedef typename Tr::Weighted_point Weighted_point;
   typedef typename Tr::Bare_point Bare_point;
 
-  typedef typename Gt::Vector_3 Vector;
-  typedef Sizing_grid_node<Gt> Node;
+  typedef typename GT::Vector_3 Vector;
+  typedef Sizing_grid_node<GT> Node;
   typedef typename std::pair<Bare_point, FT> Constraint;
 
 private:

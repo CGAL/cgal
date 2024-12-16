@@ -16,7 +16,9 @@ The storage of the offset is only needed when a triangulation is copied.
 
 \cgalRefines{TriangulationVertexBase_2}
 
-\cgalHasModel` CGAL::Periodic_2_triangulation_vertex_base_2`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_2_triangulation_vertex_base_2}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationVertexBase_2`

@@ -19,23 +19,15 @@
 #include <CGAL/Random.h>
 #include <CGAL/function_objects.h>
 
+#include <CGAL/Named_function_parameters.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+
 #include <array>
 #include <iterator>
 #include <vector>
 
 namespace CGAL {
-namespace Euler {
-
-// Some forward declaration to break the helpers.h > generators.h > Euler_operations.h cycle
-template< typename Graph>
-void fill_hole(typename boost::graph_traits<Graph>::halfedge_descriptor h,
-               Graph& g);
-
-template<typename Graph , typename VertexRange >
-typename boost::graph_traits<Graph>::face_descriptor add_face(const VertexRange& vr,
-                                                              Graph& g);
-
-} // namespace Euler
 
 namespace internal {
 
@@ -126,7 +118,7 @@ random_face_in_mesh(const Graph& g, CGAL::Random& rnd = get_default_random())
 } // namespace internal
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates an isolated triangle
  * with its vertices initialized to `p0`, `p1` and `p2`, and adds it to the graph `g`.
@@ -256,7 +248,7 @@ struct Default_grid_maker
 } // namespace internal
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates an isolated quad with
  * its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
@@ -287,17 +279,35 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  * \brief creates an isolated hexahedron
  * with its vertices initialized to `p0`, `p1`, ...\ , and `p7`, and adds it to the graph `g`.
  * \image html hexahedron.png
  * \image latex hexahedron.png
- * \returns the halfedge that has the target vertex associated with `p0`, in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`.
+ * \returns the halfedge that has the target vertex associated with `p0`,
+ * in the face with the vertices with the points `p0`, `p1`, `p2`, and `p3`
+ * (or `p0`, `p2` and `p3` when `do_not_triangulate` is set to `false`).
+ *
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
+ *           among the ones listed below
+ *   \cgalNamedParamsBegin
+ *     \cgalParamNBegin{do_not_triangulate_faces}
+ *       \cgalParamDescription{a Boolean used to specify whether the hexadron's faces
+ *         should be triangulated or not.
+ *         The default value is `true`, and faces are not triangulated.}
+ *       \cgalParamDefault{true}
+ *     \cgalParamNEnd
+ *   \cgalNamedParamsEnd
  **/
-template<typename Graph, typename P>
+template<typename Graph,
+         typename P,
+         typename NamedParameters = parameters::Default_named_parameters>
 typename boost::graph_traits<Graph>::halfedge_descriptor
 make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
-                const P& p4, const P& p5, const P& p6, const P& p7, Graph& g)
+                const P& p4, const P& p5, const P& p6, const P& p7,
+                Graph& g,
+                const NamedParameters& np = parameters::default_values())
 {
   typedef typename boost::graph_traits<Graph>              Traits;
   typedef typename Traits::halfedge_descriptor             halfedge_descriptor;
@@ -305,6 +315,9 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 
   typedef typename boost::property_map<Graph,vertex_point_t>::type Point_property_map;
   Point_property_map ppmap = get(CGAL::vertex_point, g);
+
+  const bool triangulate = !parameters::choose_parameter(
+    parameters::get_parameter(np, internal_np::do_not_triangulate_faces), true);
 
   vertex_descriptor v0, v1, v2, v3, v4, v5, v6, v7;
   v0 = add_vertex(g);
@@ -326,6 +339,14 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
 
   halfedge_descriptor ht = internal::make_quad(v4, v5, v6, v7, g);
   halfedge_descriptor hb = prev(internal::make_quad(v0, v3, v2, v1, g), g);
+
+  std::array<halfedge_descriptor, 6> he_faces;
+  if(triangulate)
+  {
+    he_faces[0] = hb;
+    he_faces[1] = ht;
+  }
+
   for(int i=0; i <4; ++i)
   {
     halfedge_descriptor h = halfedge(add_edge(g), g);
@@ -342,14 +363,72 @@ make_hexahedron(const P& p0, const P& p1, const P& p2, const P& p3,
   for(int i=0; i <4; ++i)
   {
     Euler::fill_hole(opposite(hb, g), g);
+    if(triangulate)
+      he_faces[i+2] = opposite(hb, g);
     hb = next(hb, g);
+  }
+
+  if(triangulate)
+  {
+    for (halfedge_descriptor hi : he_faces)
+    {
+      halfedge_descriptor nnhi = next(next(hi, g), g);
+      Euler::split_face(hi, nnhi, g);
+    }
   }
 
   return next(next(hb, g), g);
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
+ * \brief creates an isolated hexahedron
+ * equivalent to `c`, and adds it to the graph `g`.
+ * \returns the halfedge that has the target vertex associated with `c.min()`,
+ * aligned with x-axis,
+ * in the bottom face of the cuboid.
+ *
+ * \tparam IsoCuboid a model of `IsoCuboid_3`
+ * \tparam Graph a model of `MutableFaceGraph`
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param c the iso-cuboid describing the geometry of the hexahedron
+ * \param g the graph to which the hexahedron will be appended
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters"
+ *           among the ones listed below
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{do_not_triangulate_faces}
+ *     \cgalParamDescription{a Boolean used to specify whether the hexadron's faces
+ *       should be triangulated or not.
+ *       The default value is `true`, and faces are not triangulated.}
+ *     \cgalParamDefault{true}
+ *   \cgalParamNEnd
+ *  \cgalParamNBegin{geom_traits}
+ *    \cgalParamDescription{an instance of a geometric traits class model of `Kernel`.}
+ *  \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ **/
+template<typename IsoCuboid,
+         typename Graph,
+         typename NamedParameters = parameters::Default_named_parameters>
+typename boost::graph_traits<Graph>::halfedge_descriptor
+make_hexahedron(const IsoCuboid& c,
+                Graph& g,
+                const NamedParameters& np = parameters::default_values())
+{
+  using GT = typename GetGeomTraits<Graph, NamedParameters>::type;
+  GT gt = parameters::choose_parameter<GT>(
+            parameters::get_parameter(np, internal_np::geom_traits));
+  typename GT::Construct_vertex_3 v = gt.construct_vertex_3_object();
+
+  return CGAL::make_hexahedron(v(c, 0), v(c, 1), v(c, 2), v(c, 3),
+                               v(c, 4), v(c, 5), v(c, 6), v(c, 7),
+                               g,
+                               np);
+}
+
+/**
+ * \ingroup PkgBGLGeneratorFct
  * \brief creates an isolated tetrahedron
  * with its vertices initialized to `p0`, `p1`, `p2`, and `p3`, and adds it to the graph `g`.
  * \image html tetrahedron.png
@@ -447,7 +526,7 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates a triangulated regular prism, outward oriented,
  * having `nb_vertices` vertices in each of its bases and adds it to the graph `g`.
@@ -547,7 +626,7 @@ make_regular_prism(typename boost::graph_traits<Graph>::vertices_size_type nb_ve
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  * \brief creates a pyramid, outward oriented, having `nb_vertices` vertices in its base and adds it to the graph `g`.
  *
  * If `center` is `(0, 0, 0)`, then the first point of the base is `(radius, 0, 0)`
@@ -635,7 +714,7 @@ make_pyramid(typename boost::graph_traits<Graph>::vertices_size_type nb_vertices
 }
 
 /**
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates an icosahedron, outward oriented, centered in `center` and adds it to the graph `g`.
  *
@@ -730,7 +809,7 @@ make_icosahedron(Graph& g,
 }
 
 /*!
- * \ingroup PkgBGLHelperFct
+ * \ingroup PkgBGLGeneratorFct
  *
  * \brief creates a row major ordered grid with `i` cells along the width and `j` cells
  * along the height and adds it to the graph `g`.

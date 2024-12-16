@@ -47,9 +47,9 @@ functions that return instances of these types:
 One of two algorithms is used,
 depending on the type of iterator used to specify the input points. For
 input iterators, the algorithm used is that of Bykat \cgalCite{b-chfsp-78}, which
-has a worst-case running time of \f$ O(n h)\f$, where \f$ n\f$ is the number of input
+has a worst-case running time of \cgalBigO{n h}, where \f$ n\f$ is the number of input
 points and \f$ h\f$ is the number of extreme points. For all other types of
-iterators, the \f$ O(n \log n)\f$ algorithm of of Akl and Toussaint
+iterators, the \cgalBigO{n \log n} algorithm of of Akl and Toussaint
 \cgalCite{at-fcha-78} is used.
 
 
@@ -128,7 +128,7 @@ functions that return instances of these types:
 
 This function uses Andrew's variant of Graham's scan algorithm
 \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}. The algorithm has worst-case running time
-of \f$ O(n \log n)\f$ for \f$ n\f$ input points.
+of \cgalBigO{n \log n} for \f$ n\f$ input points.
 
 
 */
@@ -192,7 +192,7 @@ functions that return instances of these types:
 
 This function uses Andrew's
 variant of Graham's scan algorithm \cgalCite{a-aeach-79}, \cgalCite{m-mdscg-84}. The algorithm
-has worst-case running time of \f$ O(n \log n)\f$ for \f$ n\f$ input points.
+has worst-case running time of \cgalBigO{n \log n} for \f$ n\f$ input points.
 
 */
 template <class InputIterator, class OutputIterator>

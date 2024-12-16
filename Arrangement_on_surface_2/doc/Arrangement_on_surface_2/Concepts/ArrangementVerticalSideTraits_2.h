@@ -11,10 +11,12 @@
  *
  * \cgalRefines{ArrangementBasicTraits_2}
  *
- * \cgalHasModel `CGAL::Arr_linear_traits_2<Kernel>`
- * \cgalHasModel `CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>`
- * \cgalHasModel `CGAL::Arr_algebraic_segment_traits_2<Coefficient>`
- * \cgalHasModel `CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>`
+ * \cgalHasModelsBegin
+ * \cgalHasModels{CGAL::Arr_linear_traits_2<Kernel>}
+ * \cgalHasModels{CGAL::Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
+ * \cgalHasModels{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}
+ * \cgalHasModels{CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel, X, Y>}
+ * \cgalHasModelsEnd
  *
  * \sa `ArrangementVerticalSideTraits_2`
  */

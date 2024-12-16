@@ -190,7 +190,7 @@ struct Boundary_cycle_rep_maintainer
   Boundary_cycle_rep_maintainer(PolygonMesh& pmesh)
     : m_pmesh(pmesh)
   {
-    m_candidate_halfedges = get(Candidate_tag(), pmesh);
+    m_candidate_halfedges = get(Candidate_tag(), pmesh, false);
   }
 
 public:

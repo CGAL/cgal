@@ -182,7 +182,7 @@ struct Opposite_face {
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_source_iterator` `havi` with `h = *havi;`
  * the following holds: Either `++havi` is the past the end iterator, or `next(opposite(h,g),g) == *++havi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Halfedge_around_source_iterator {
@@ -213,11 +213,6 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-
-  explicit operator bool() const
-  {
-    return (! (this->base() == nullptr));
-  }
 
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);
@@ -274,7 +269,7 @@ public:
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_target_iterator` `havi` with `h = *havi;`
  * the following holds: Either `++havi` is the past the end iterator, or `opposite(next(h,g),g) == *++havi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 
 template <typename Graph>
@@ -307,11 +302,6 @@ public:
   {}
 
 #ifndef DOXYGEN_RUNNING
-
-  explicit operator bool() const
-  {
-    return (! (this->base() == nullptr));
-  }
 
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);
@@ -369,7 +359,7 @@ public:
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_iterator` `hafi` with  `h = *hafi`
  * the following holds: Either `++hafi` is the past the end iterator, or `next(h,g) == *++hafi`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 
 template <typename Graph>
@@ -399,11 +389,6 @@ public:
   const value_type& operator *  ( ) const { return  pos; }
   pointer           operator -> ( )       { return &pos; }
   const value_type* operator -> ( ) const { return &pos; }
-
-  explicit operator bool() const
-  {
-    return (! (this->base() == nullptr));
-  }
 
   bool operator==( const Self& i) const {
     CGAL_assertion( anchor == anchor);
@@ -465,7 +450,7 @@ class Halfedge_around_target_circulator;
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_source_circulator` `havc` with `h = *havc;`
  * the following holds: `next(opposite(h,g),g) == *++havc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 template <typename Graph>
 class Halfedge_around_source_circulator
@@ -531,7 +516,7 @@ private:
  * It circulates over the same halfedges as the `Halfedge_around_target_circulator`.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 
 template <typename Graph>
@@ -590,7 +575,7 @@ private:
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_target_circulator` `havc` with `h = *havc;`
  * the following holds: `opposite(next(h,g),g) == *++havc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 
 
@@ -692,7 +677,7 @@ private:
  * Let `h` be a halfedge of graph `g`. For a `Halfedge_around_face_circulator` `hafc` with  `h = *hafc`
  * the following holds:  `next(h,g) == *++hafc`.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 
 template <typename Graph>
@@ -844,7 +829,7 @@ halfedges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h
  * may be the null face, and it may be several times the same face descriptor.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 template <typename Graph>
 class Face_around_face_iterator
@@ -882,7 +867,7 @@ private:
  * may be the null face, and it may be several times the same face descriptor.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 template <typename Graph>
 class Face_around_face_circulator
@@ -896,7 +881,7 @@ class Face_around_face_circulator
  * may be the null face, and it may be several times the same face descriptor.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Face_around_target_iterator
@@ -956,7 +941,7 @@ faces_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, co
  * \ingroup PkgBGLIterators
  * A bidirectional circulator with value type `boost::graph_traits<Graph>::%vertex_descriptor` over all vertices incident to the same face or border.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Vertex_around_face_circulator
@@ -1013,7 +998,7 @@ private:
  * A bidirectional iterator  with value type `boost::graph_traits<Graph>::%vertex_descriptor`
  *  over all vertices incident to the same face or border.
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Vertex_around_face_iterator
@@ -1135,7 +1120,7 @@ edges_around_face(typename boost::graph_traits<Graph>::halfedge_descriptor h, co
  * It circulates over the same halfedges as the `Halfedge_around_target_circulator`.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalCirculator`
+ * \cgalModels{BidirectionalCirculator}
  */
 template <typename Graph>
 class Vertex_around_target_circulator
@@ -1194,7 +1179,7 @@ private:
  * It iterates over the same halfedges as the `Halfedge_around_target_iterator`.
  *
  * \tparam Graph must be a model of the concept `HalfedgeGraph`
- * \cgalModels `BidirectionalIterator`
+ * \cgalModels{BidirectionalIterator}
  */
 template <typename Graph>
 class Vertex_around_target_iterator

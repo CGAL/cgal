@@ -1012,6 +1012,17 @@ bool test3D()
   map.insert_cell_1_in_cell_2(d1, map.beta(d1,1,1));
   map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
   map.clear();
+
+  d1 = map.make_combinatorial_polygon(4);
+  d2 = map.make_combinatorial_polygon(4);
+  map.insert_cell_1_between_two_cells_2(d1, d2);
+  if(!map.is_valid())
+  {
+    map.display_characteristics(cout) << ", valid=" << map.is_valid() << endl;
+    std::cout<<"ERROR after map.insert_cell_1_between_two_cells_2(d1, d2);"<<std::endl;
+    assert(false);
+    return false;
+  }
   map.clear();
 
   cout << "***************************** TEST INSERT EDGE 3D DONE."

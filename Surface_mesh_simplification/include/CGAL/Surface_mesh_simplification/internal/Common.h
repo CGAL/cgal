@@ -19,7 +19,7 @@
 
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
-#include <boost/optional/optional.hpp>
+#include <optional>
 #include <boost/tuple/tuple.hpp>
 #include <boost/format.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -28,7 +28,6 @@
 
 #include <functional>
 #include <utility>
-#include <vector>
 #include <vector>
 #include <set>
 
@@ -40,8 +39,8 @@ namespace internal {
   struct Dummy_filter {
   template <typename Profile>
   inline
-  const boost::optional<typename Profile::Point>
-  operator()(const Profile&, const boost::optional<typename Profile::Point>& op) const
+  const std::optional<typename Profile::Point>
+  operator()(const Profile&, const std::optional<typename Profile::Point>& op) const
   {
     return op;
   }
@@ -94,7 +93,7 @@ inline std::string matrix_to_string(const Matrix& m) {
 }
 
 template<class T>
-inline std::string optional_to_string(const boost::optional<T>& o) {
+inline std::string optional_to_string(const std::optional<T>& o) {
   if(o)
     return boost::str(boost::format("%1%") % *o);
   else return std::string("NONE");

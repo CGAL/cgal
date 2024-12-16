@@ -24,7 +24,7 @@ The class `Eigen_sparse_matrix` is a wrapper around `Eigen` matrix type
 <a href="https://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix`</a>
 that represents general matrices, be they symmetric or not.
 
-\cgalModels `SparseLinearAlgebraTraits_d::Matrix`
+\cgalModels{SparseLinearAlgebraTraits_d::Matrix}
 
 \tparam T Number type.
 
@@ -202,8 +202,8 @@ public:
   /// Read access to a matrix coefficient.
   ///
   /// \warning Complexity:
-  /// - O(log(n)) if the matrix is already built.
-  /// - O(n) if the matrix is not built.
+  /// - \cgalBigO{log(n)} if the matrix is already built.
+  /// - \cgalBigO{n} if the matrix is not built.
   /// `n` being the number of entries in the matrix.
   ///
   /// \pre 0 <= i < row_dimension().
@@ -298,14 +298,14 @@ private:
 
 
 /*!
-\ingroup PkgSolverInterfaceRefLS
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_sparse_symmetric_matrix` is a wrapper around `Eigen` matrix type
 <a href="https://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
 
 Since the matrix is symmetric, only the lower triangle part is stored.
 
-\cgalModels `SparseLinearAlgebraTraits_d::Matrix`
+\cgalModels{SparseLinearAlgebraTraits_d::Matrix}
 
 \tparam T Number type.
 

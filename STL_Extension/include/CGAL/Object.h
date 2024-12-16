@@ -27,8 +27,8 @@
 #include <iterator>
 #include <typeinfo>
 
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
+#include <variant>
+#include <optional>
 #include <boost/any.hpp>
 #include <memory>
 
@@ -39,7 +39,7 @@ class Object
     std::shared_ptr<boost::any> obj;
 
     // returns an any pointer from a variant
-    struct Any_from_variant : public boost::static_visitor<boost::any*> {
+    struct Any_from_variant {
       template<typename T>
       boost::any* operator()(const T& t) const {
         return new boost::any(t);
@@ -62,14 +62,14 @@ class Object
     Object(T && t, private_tag) : obj(new boost::any(std::forward<T>(t))) { }
 
     // implicit constructor from optionals containing variants
-    template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-    Object(const boost::optional< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) > >& t)
-      : obj( t ? boost::apply_visitor(Any_from_variant(), *t) : nullptr) { }
+    template<typename ... T>
+    Object(const std::optional< std::variant<T...> >& t)
+      : obj( t ? std::visit(Any_from_variant(), *t) : nullptr) { }
 
     // implicit constructor from  variants
-    template<BOOST_VARIANT_ENUM_PARAMS(typename T)>
-    Object(const boost::variant<BOOST_VARIANT_ENUM_PARAMS(T) >& v)
-      : obj(boost::apply_visitor(Any_from_variant(), v)) { }
+    template<typename ... T>
+    Object(const std::variant<T...>& v)
+      : obj(std::visit(Any_from_variant(), v)) { }
 
     template <class T>
     bool assign(T &t) const

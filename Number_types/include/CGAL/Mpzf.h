@@ -23,6 +23,7 @@
 #include <vector>
 #include <math.h>
 #include <cmath>
+#include <cstdint>
 #include <iostream>
 #include <stdexcept>
 #ifdef CGAL_USE_GMPXX
@@ -167,7 +168,7 @@ template <class T, class = void> struct pool3 {
     T data_ = 0;
     ~cleaner(){
       // Deallocate everything. As an alternative, we could store it in a
-      // global location, for re-use by a later thread.
+      // global location, for reuse by a later thread.
       while (!empty())
         delete[] (pop() - (extra + 1));
     }
@@ -188,7 +189,7 @@ template <class T, class = void> struct no_pool {
 };
 
 // Only used with an argument known not to be 0.
-inline int ctz (boost::uint64_t x) {
+inline int ctz (std::uint64_t x) {
 #if defined(_MSC_VER)
   unsigned long ret;
   _BitScanForward64(&ret, x);
@@ -200,7 +201,7 @@ inline int ctz (boost::uint64_t x) {
   return __builtin_ctzll (x);
 #endif
 }
-inline int clz (boost::uint64_t x) {
+inline int clz (std::uint64_t x) {
 #if defined(_MSC_VER)
   unsigned long ret;
   _BitScanReverse64(&ret, x);
@@ -430,7 +431,7 @@ struct Mpzf {
   }
   Mpzf(double d){
     init();
-    using boost::uint64_t;
+    using std::uint64_t;
     union {
 #ifdef CGAL_LITTLE_ENDIAN
       struct { uint64_t man:52; uint64_t exp:11; uint64_t sig:1; } s;

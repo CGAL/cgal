@@ -6,7 +6,7 @@ namespace CGAL {
 
 The class `Cell_attribute_with_point_and_id` represents an attribute containing a point, containing an information when `Info_` is different from `void`, and having an id. This class can typically be used to associate a point with id to each 0-cell of a combinatorial or a generalized map.
 
-\cgalModels `CellAttributeWithPoint`
+\cgalModels{CellAttributeWithPoint}
 
 \tparam LCC a model of the `LinearCellComplex` concept.
 \tparam Info_ the type of the information contained in the attribute, `void` for no information. Equal to `void` by default.

@@ -35,7 +35,7 @@
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/container/deque.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 
 // STL
 #include <map>
@@ -764,7 +764,7 @@ public:
 
   // signed distance from t to the intersection of line(a,b) and line(t,s)
   // the pair::first is false if sign==-1 and true otherwise
-  std::pair<bool,boost::optional<FT> >
+  std::pair<bool,std::optional<FT> >
   signed_distance_from_intersection(Vertex_handle a, Vertex_handle b,
       Vertex_handle t, Vertex_handle s) const {
     const Point& pa = a->point();
@@ -776,24 +776,24 @@ public:
 
   // signed distance from t to the intersection of line(a,b) and line(t,s)
   // the pair::first is false if sign==-1 and true otherwise
-  std::pair<bool,boost::optional<FT> >
+  std::pair<bool,std::optional<FT> >
   compute_signed_distance_from_intersection(
     const Point& pa, const Point& pb, const Point& pt, const Point& ps) const
   {
     FT Dabt = compute_signed_distance(pa, pb, pt);
     if (Dabt == FT(0))
-      return std::make_pair(true,boost::make_optional(FT(0)));
+      return std::make_pair(true,std::make_optional(FT(0)));
 
     Line lab = geom_traits().construct_line_2_object()(
       pa, geom_traits().construct_vector_2_object()(pa, pb));
     Line lts = geom_traits().construct_line_2_object()(
       pt, geom_traits().construct_vector_2_object()(pt, ps));
 
-    boost::optional<FT> Dqt;
+    std::optional<FT> Dqt;
     const auto result = intersection(lab, lts);
     if (result)
     {
-      const Point* iq = boost::get<Point>(&(*result));
+      const Point* iq = std::get_if<Point>(&(*result));
       if (iq)
         Dqt = CGAL::approximate_sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
     }
@@ -996,24 +996,24 @@ public:
     std::cout <<"( " << (edge).priority()  <<  ") ( " << a << " , " << b << " )" << std::endl;
   }
 
-  bool is_p_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  bool is_p_infinity(const std::pair<bool,std::optional<FT> >& p) const
   {
-    return p.first && p.second==boost::none;
+    return p.first && p.second==std::nullopt;
   }
 
-  bool is_m_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  bool is_m_infinity(const std::pair<bool,std::optional<FT> >& p) const
   {
-    return !p.first && p.second==boost::none;
+    return !p.first && p.second==std::nullopt;
   }
 
-  bool is_infinity(const std::pair<bool,boost::optional<FT> >& p) const
+  bool is_infinity(const std::pair<bool,std::optional<FT> >& p) const
   {
-    return p.second==boost::none;
+    return p.second==std::nullopt;
   }
 
-  std::pair<bool,boost::optional<FT> > m_infinity() const
+  std::pair<bool,std::optional<FT> > m_infinity() const
   {
-    return std::pair<bool,boost::optional<FT> >(false,boost::optional<FT>());
+    return std::pair<bool,std::optional<FT> >(false,std::optional<FT>());
   }
 
   template <class Iterator> // value_type = Edge
@@ -1028,9 +1028,9 @@ public:
       Edge ab = twin_edge(*it);
       Vertex_handle a = source_vertex(ab);
       Vertex_handle b = target_vertex(ab);
-      std::pair<bool,boost::optional<FT> > D = signed_distance_from_intersection(a, b, target, source);
+      std::pair<bool,std::optional<FT> > D = signed_distance_from_intersection(a, b, target, source);
       if (!D.first ) {
-        CGAL_assertion(D.second!=boost::none);
+        CGAL_assertion(D.second!=std::nullopt);
         multi_ind.insert(Rec_edge_2(ab, *D.second));
       }
     }
@@ -1053,11 +1053,11 @@ public:
       Vertex_handle c = target_vertex(bc);
       Vertex_handle d = target_vertex(cd);
 
-      std::pair<bool,boost::optional<FT> > Dac=m_infinity();
+      std::pair<bool,std::optional<FT> > Dac=m_infinity();
       if (a != c && is_triangle_ccw(a, b, c))
         Dac = signed_distance_from_intersection(a, c, target, source);
 
-      std::pair<bool,boost::optional<FT> > Dbd=m_infinity();
+      std::pair<bool,std::optional<FT> > Dbd=m_infinity();
       if (b != d && is_triangle_ccw(b, c, d))
         Dbd = signed_distance_from_intersection(b, d, target, source);
 

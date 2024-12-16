@@ -68,7 +68,7 @@ public:
 
   \brief %Handle to a `Feature_base`.
 
-  \cgalModels Handle
+  \cgalModels{Handle}
 */
 class Feature_handle { };
 #else

@@ -66,21 +66,21 @@ void test_normal_circle_monotonicity(const typename SK::Circle_3& circle,
                                      const typename SK::Sphere_3& ref_sphere)
 {
   typename SK::Is_theta_monotone_3 is_t_mon=SK().is_theta_monotone_3_object(ref_sphere);
-  std::vector<CGAL::Object> vect_obj;
+  std::vector<std::variant<typename SK::Circle_3, std::pair<typename SK::Circular_arc_point_3, unsigned>>> vect_obj;
   typename SK::FT zcoord = CGAL::SphericalFunctors::extremal_points_z_coordinate<SK>(circle,ref_sphere);
   //create extremal points of circle
   SK().intersect_3_object()(circle,typename SK::Plane_3(0,0,1,-zcoord),std::back_inserter(vect_obj));
   assert(vect_obj.size()==2);
   typename SK::Circular_arc_point_3 extrems[2];
-  extrems[0]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
-  extrems[1]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
+  extrems[0]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
+  extrems[1]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
   //create non extremal points on circle
   vect_obj.clear();
   SK().intersect_3_object()(circle,typename SK::Plane_3(0,0,1,-zcoord-typename SK::FT(0.1)),std::back_inserter(vect_obj));
   assert(vect_obj.size()==2);
   typename SK::Circular_arc_point_3 other_pts[2];
-  other_pts[0]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
-  other_pts[1]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
+  other_pts[0]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
+  other_pts[1]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
 
   //Test Make_theta_monotone+[Ii]s_theta_monotone(_3) on monotone arcs
   test_make_monotone_an_already_monotone_arc<SK>(typename SK::Circular_arc_3(circle,extrems[0],extrems[1]),ref_sphere);
@@ -122,18 +122,18 @@ void test_threaded_circle_monotonicity(const typename SK::Circle_3& circle,
                                        const typename SK::Sphere_3& ref_sphere)
 {
   typename SK::Is_theta_monotone_3 is_t_mon=SK().is_theta_monotone_3_object(ref_sphere);
-  std::vector<CGAL::Object> vect_obj;
+  std::vector<std::variant<typename SK::Circle_3, std::pair<typename SK::Circular_arc_point_3,unsigned>>> vect_obj;
   SK().intersect_3_object()(circle,typename SK::Plane_3(1,0,0,-ref_sphere.center().x()),std::back_inserter(vect_obj));
   assert(vect_obj.size()==2);
   typename SK::Circular_arc_point_3 pts1[2];
-  pts1[0]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
-  pts1[1]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
+  pts1[0]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
+  pts1[1]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
   vect_obj.clear();
   SK().intersect_3_object()(circle,typename SK::Plane_3(1,1,0,-ref_sphere.center().x()-ref_sphere.center().y()),std::back_inserter(vect_obj));
   assert(vect_obj.size()==2);
   typename SK::Circular_arc_point_3 pts2[2];
-  pts2[0]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
-  pts2[1]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
+  pts2[0]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
+  pts2[1]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
   //assertions
   test_make_monotone_an_already_monotone_arc<SK>(typename SK::Circular_arc_3(circle,pts1[0],pts1[1]),ref_sphere);
   test_make_monotone_an_already_monotone_arc<SK>(typename SK::Circular_arc_3(circle,pts2[0],pts2[1]),ref_sphere);
@@ -154,12 +154,12 @@ void test_polar_circle_monotonicity(const typename SK::Circle_3& circle,
                                     const typename SK::Sphere_3& ref_sphere)
 {
   typename SK::Is_theta_monotone_3 is_t_mon=SK().is_theta_monotone_3_object(ref_sphere);
-  std::vector<CGAL::Object> vect_obj;
+  std::vector<std::variant<typename SK::Circle_3, std::pair<typename SK::Circular_arc_point_3,unsigned>>> vect_obj;
   SK().intersect_3_object()(circle,typename SK::Plane_3(0,0,1,-circle.center().z()),std::back_inserter(vect_obj));
   assert(vect_obj.size()==2);
   typename SK::Circular_arc_point_3 pts[2];
-  pts[0]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
-  pts[1]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
+  pts[0]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[0])->first;
+  pts[1]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&vect_obj[1])->first;
 
 
 
@@ -262,11 +262,11 @@ void fill_intersections(const typename SK::Circle_3& circle,
                         typename SK::Circular_arc_point_3* inters,unsigned i)
 {
   typename SK::Plane_3 meridians=get_meridians<SK>(i,ref.center());
-  std::vector<CGAL::Object> objs;
+  std::vector<std::variant<typename SK::Circle_3, std::pair<typename SK::Circular_arc_point_3,unsigned>>> objs;
   SK().intersect_3_object()(circle,meridians,std::back_inserter(objs));
   assert(objs.size()==2);
-  inters[get_num(i,0)]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
-  inters[get_num(i,1)]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+  inters[get_num(i,0)]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
+  inters[get_num(i,1)]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
 }
 
 
@@ -316,7 +316,7 @@ void test_extremal_points(const typename SK::Circle_3& circle,
   const typename SK::Circular_arc_point_3& inter2=cut_by_M0?xtrms[0]:xtrms[1];
 
   typename SK::Intersect_3 func=SK().intersect_3_object();
-  std::vector<CGAL::Object> intersections;
+  std::vector<std::variant<typename SK::Circle_3, std::pair<typename SK::Circular_arc_point_3,unsigned>>> intersections;
 
   std::pair<typename SK::Vector_3,typename SK::Vector_3> vect_pair=get_bounding_vectors<SK>(inter1,ref_sphere);
   func(circle,typename SK::Plane_3(ref_sphere.center(),ref_sphere.center()+typename SK::Vector_3(0,0,1),ref_sphere.center()+vect_pair.first),std::back_inserter(intersections));
@@ -391,11 +391,11 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     assert( cmp_theta(y_xtrems[0],y_xtrems[1])==CGAL::LARGER );
 
     typename SK::FT zcoord=CGAL::SphericalFunctors::extremal_points_z_coordinate<SK>(normal_cut_M0,ref_sphere);
-    CGAL::Object objs[2];
+    std::variant<typename SK::Circle_3, std::pair<typename SK::Circular_arc_point_3,unsigned>> objs[2];
     SK().intersect_3_object()(normal_cut_M0,typename SK::Plane_3(0,0,1,-zcoord),objs);
     typename SK::Circular_arc_point_3 xtrms[2];
-    xtrms[0]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
-    xtrms[1]=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    xtrms[0]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
+    xtrms[1]=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
 
     assert( cmp_theta(xtrms[0],xtrms[1])==CGAL::LARGER );
     assert( cmp_theta(xtrms[0],y_xtrems[0])==CGAL::SMALLER );
@@ -440,11 +440,11 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     //polar circle
     typename SK::Line_3 line_n(ref_sphere_center,north_polar.center()-ref_sphere_center);
     typename SK::Line_3 line_s(ref_sphere_center,south_polar.center()-ref_sphere_center);
-    CGAL::Object objs[2];
+    std::variant<typename SK::Circle_3, std::pair<typename SK::Circular_arc_point_3,unsigned>> objs[2];
     SK().intersect_3_object()(line_n,ref_sphere,objs);
-    typename SK::Circular_arc_point_3 cn=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    typename SK::Circular_arc_point_3 cn=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
     SK().intersect_3_object()(line_s,ref_sphere,objs);
-    typename SK::Circular_arc_point_3 cs=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    typename SK::Circular_arc_point_3 cs=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
 
     assert (cmp_z_at_theta(cn,typename SK::Circular_arc_3(north_polar,north_pole))==CGAL::LARGER );
     assert (cmp_z_at_theta(cs,typename SK::Circular_arc_3(north_polar,north_pole))==CGAL::SMALLER );
@@ -472,9 +472,9 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     typename SK::Line_3 line_1(ref_sphere_center,normal1.center()-ref_sphere_center);
     typename SK::Line_3 line_2(ref_sphere_center,normal2.center()-ref_sphere_center);
     SK().intersect_3_object()(line_1,ref_sphere,objs);
-    typename SK::Circular_arc_point_3 c1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    typename SK::Circular_arc_point_3 c1=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
     SK().intersect_3_object()(line_2,ref_sphere,objs);
-    typename SK::Circular_arc_point_3 c2=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    typename SK::Circular_arc_point_3 c2=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
 
     typename SK::Circular_arc_point_3 xtrms1[2];
     typename SK::Circular_arc_point_3 xtrms2[2];
@@ -541,10 +541,10 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     //normal vs normal
     typename SK::Circle_3 normal3 (ref_sphere,typename SK::Plane_3(0.08,1.1,0.9  ,-1-FT(0.08)*ref_sphere_center.x() -FT(1.1)*ref_sphere_center.y()-FT(0.9)*ref_sphere_center.z()));
     typename SK::Circle_3 normal4 (ref_sphere,typename SK::Plane_3(0.05,1.1,-0.9 ,-1-FT(0.05)*ref_sphere_center.x() -FT(1.1)*ref_sphere_center.y()+FT(0.9)*ref_sphere_center.z()));
-    std::vector<CGAL::Object> objs;
+    std::vector<std::variant<typename SK::Circle_3, std::pair<typename SK::Circular_arc_point_3,unsigned>>> objs;
     SK().intersect_3_object()(normal3,normal4,std::back_inserter(objs));
-    typename SK::Circular_arc_point_3 int1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
-    typename SK::Circular_arc_point_3 int2=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
+    typename SK::Circular_arc_point_3 int1=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    typename SK::Circular_arc_point_3 int2=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
     typename SK::Circular_arc_point_3 xtrms3[2];
     typename SK::Circular_arc_point_3 xtrms4[2];
     CGAL::theta_extremal_points(normal3,ref_sphere,xtrms3);
@@ -554,8 +554,8 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     //normal vs threaded
     objs.clear();
     SK().intersect_3_object()(threaded,normal4,std::back_inserter(objs));
-    int1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
-    int2=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
+    int1=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    int2=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
     assert ( cmp_right(typename SK::Circular_arc_3(threaded),typename SK::Circular_arc_3(normal4,xtrms4[1],xtrms4[0]),int1)==CGAL::SMALLER );
     assert ( cmp_right(typename SK::Circular_arc_3(threaded),typename SK::Circular_arc_3(normal4,xtrms4[1],xtrms4[0]),int2)==CGAL::LARGER );
     //normal vs polar
@@ -563,8 +563,8 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     typename SK::Circular_arc_point_3 xtrms2[2];
     CGAL::theta_extremal_points(normal2,ref_sphere,xtrms2);
     SK().intersect_3_object()(south_polar,normal2,std::back_inserter(objs));
-    int1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
-    int2=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
+    int1=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    int2=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
     assert ( cmp_right(typename SK::Circular_arc_3(south_polar,south_pole),typename SK::Circular_arc_3(normal2,xtrms2[0],xtrms2[1]),int1)==CGAL::LARGER );
     assert ( cmp_right(typename SK::Circular_arc_3(south_polar,south_pole),typename SK::Circular_arc_3(normal2,xtrms2[0],xtrms2[1]),int2)==CGAL::SMALLER );
     //polar vs polar
@@ -574,15 +574,15 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     assert(CGAL::classify(spolar,ref_sphere)==CGAL::POLAR);
     objs.clear();
     SK().intersect_3_object()(npolar,spolar,std::back_inserter(objs));
-    int1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
-    int2=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
+    int1=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    int2=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
     assert ( cmp_right(typename SK::Circular_arc_3(npolar,north_pole),typename SK::Circular_arc_3(spolar,south_pole),int1)==CGAL::SMALLER );
     assert ( cmp_right(typename SK::Circular_arc_3(npolar,north_pole),typename SK::Circular_arc_3(spolar,south_pole),int2)==CGAL::LARGER );
     //polar vs threaded
     objs.clear();
     SK().intersect_3_object()(south_polar,threaded,std::back_inserter(objs));
-    int1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
-    int2=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
+    int1=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    int2=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
     assert ( cmp_right(typename SK::Circular_arc_3(south_polar,south_pole),typename SK::Circular_arc_3(threaded),int1)==CGAL::LARGER );
     assert ( cmp_right(typename SK::Circular_arc_3(south_polar,south_pole),typename SK::Circular_arc_3(threaded),int2)==CGAL::SMALLER );
     //threaded vs threaded
@@ -590,8 +590,8 @@ test_functionalities_on_a_reference_sphere(const typename SK::Point_3& ref_spher
     typename SK::Circle_3 threaded2 (ref_sphere,typename SK::Plane_3(0,1.1,-0.9,-FT(1.1)*ref_sphere_center.y()+FT(0.9)*ref_sphere_center.z()));
     objs.clear();
     SK().intersect_3_object()(threaded1,threaded2,std::back_inserter(objs));
-    int1=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
-    int2=CGAL::object_cast<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
+    int1=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[1])->first;
+    int2=std::get_if<std::pair<typename SK::Circular_arc_point_3,unsigned> >(&objs[0])->first;
     assert ( cmp_right(typename SK::Circular_arc_3(threaded1),typename SK::Circular_arc_3(threaded2),int1)==CGAL::SMALLER );
     assert ( cmp_right(typename SK::Circular_arc_3(threaded1),typename SK::Circular_arc_3(threaded2),int2)==CGAL::LARGER );
   //tangency tests global

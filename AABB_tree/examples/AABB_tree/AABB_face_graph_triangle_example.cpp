@@ -4,7 +4,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_traits_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
@@ -14,7 +14,7 @@ typedef K::Point_3 Point;
 typedef K::Segment_3 Segment;
 typedef CGAL::Polyhedron_3<K> Polyhedron;
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
-typedef CGAL::AABB_traits<K, Primitive> Traits;
+typedef CGAL::AABB_traits_3<K, Primitive> Traits;
 typedef CGAL::AABB_tree<Traits> Tree;
 
 template <class Kernel, class FaceGraph>

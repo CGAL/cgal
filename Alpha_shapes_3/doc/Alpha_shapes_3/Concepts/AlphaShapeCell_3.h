@@ -9,7 +9,9 @@ The concept `AlphaShapeCell_3` describes the requirements for the base cell of a
   RegularTriangulationCellBase_3 if the underlying triangulation of the alpha shape is a regular triangulation,
   Periodic_3TriangulationDSCellBase_3 if the underlying triangulation of the alpha shape is a periodic triangulation}
 
-\cgalHasModel `CGAL::Alpha_shape_cell_base_3` (templated with the appropriate triangulation cell base class).
+\cgalHasModelsBegin
+\cgalHasModelsBare{`CGAL::Alpha_shape_cell_base_3` (templated with the appropriate triangulation cell base class)}
+\cgalHasModelsEnd
 
 \sa `CGAL::Alpha_status`
 

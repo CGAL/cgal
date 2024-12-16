@@ -20,11 +20,13 @@ Convex_hull_d dD Convex Hulls and Delaunay Triangulations
 Envelope_2 2D Envelopes
 Envelope_3 3D Envelopes
 GraphicsView CGAL and the Qt Graphics View Framework
+Heat_method_3 The Heat Method
 Hyperbolic_triangulation_2 2D Hyperbolic Delaunay Triangulations
 Inscribed_areas Inscribed Areas
 Interpolation 2D and Surface Function Interpolation
 Interval_skip_list Interval Skip List
 Jet_fitting_3 Estimation of Local Differential Properties of Point-Sampled Surfaces
+Kinetic_surface_reconstruction Kinetic Surface Reconstruction
 Matrix_search Monotone and Sorted Matrix Search
 Mesh_2 2D Conforming Triangulations and Meshes
 Mesh_3 3D Mesh Generation
@@ -33,9 +35,9 @@ Minkowski_sum_3 3D Minkowski Sum of Polyhedra
 Nef_2 2D Boolean Operations on Nef Polygons
 Nef_3 3D Boolean Operations on Nef Polyhedra
 Nef_S2 2D Boolean Operations on Nef Polygons Embedded on the Sphere
-Orthtree Quadtrees, Octrees, and Orthtrees
 Optimal_bounding_box Optimal Bounding Box
 Optimal_transportation_reconstruction_2 Optimal Transportation Curve Reconstruction
+Orthtree Quadtrees, Octrees, and Orthtrees
 Partition_2 2D Polygon Partitioning
 Periodic_2_triangulation_2 2D Periodic Triangulations
 Periodic_3_mesh_3 3D Periodic Mesh Generation
@@ -45,21 +47,26 @@ Point_set_2 2D Range and Neighbor Search
 Point_set_3 3D Point Set
 Point_set_processing_3 Point Set Processing
 Poisson_surface_reconstruction_3 Poisson Surface Reconstruction
+Polygonal_surface_reconstruction Polygonal Surface Reconstruction
 Polygon_mesh_processing Polygon Mesh Processing
 Polygon_mesh_processing/Compute_normal Polygon Mesh Processing - Normal Computation
 Polygon_mesh_processing/connected_components Polygon Mesh Processing - Connected Components
 Polygon_mesh_processing/corefinement Polygon Mesh Processing - Corefinement
 Polygon_mesh_processing/core Polygon Mesh Processing - Core
 Polygon_mesh_processing/distance Polygon Mesh Processing - Distance
+Polygon_mesh_processing/interpolated_corrected_curvatures Polygon Mesh Processing - Interpolated Corrected Curvatures
+Polygon_mesh_processing/locate Polygon Mesh Processing - Locate
 Polygon_mesh_processing/measure Polygon Mesh Processing - Geometric Measure
 Polygon_mesh_processing/meshing_hole_filling Polygon Mesh Processing - Meshing and Hole Filling
 Polygon_mesh_processing/orientation Polygon Mesh Processing - Orientation
+Polygon_mesh_processing/Polyhedral_envelope Polygon Mesh Processing - Polyhedral Envelope
 Polygon_mesh_processing/predicate Polygon Mesh Processing - Predicate
 Polygon_mesh_processing/combinatorial_repair Polygon Mesh Processing - Combinatorial Repair
 Polygon_mesh_processing/geometric_repair Polygon Mesh Processing - Geometric Repair
 Polygon_mesh_processing/miscellaneous Polygon Mesh Processing - Miscellaneous
 Polygon_mesh_processing/detect_features Polygon Mesh Processing - Feature Detection
 Polygon_mesh_processing/collision_detection Polygon Mesh Processing - Collision Detection
+Polygon_mesh_processing/autorefinement Polygon Mesh Processing - Autorefinement
 Polyhedron 3D Polyhedral Surface
 Polyline_simplification_2 2D Polyline Simplification
 Polytope_distance_d Optimal Distances
@@ -74,15 +81,16 @@ Set_movable_separability_2 2D Movable Separability of Sets
 Shape_detection Shape Detection
 Shape_regularization Shape Regularization
 Skin_surface_3 3D Skin Surface Meshing
+SMDS_3 3D Simplicial Mesh Data Structure
 Snap_rounding_2 2D Snap Rounding
 Spatial_searching dD Spatial Searching
 Straight_skeleton_2 2D Straight Skeleton and Polygon Offsetting
 Straight_skeleton_extrusion_2 2D Straight Skeleton Extrusion
 Stream_lines_2 2D Placement of Streamlines
+Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_deformation Triangulated Surface Mesh Deformation
 Surface_mesher 3D Surface Mesh Generation
 Surface_mesh Surface Mesh
-Surface_mesh_approximation Triangulated Surface Mesh Approximation
 Surface_mesh_parameterization Triangulated Surface Mesh Parameterization
 Surface_mesh_segmentation Triangulated Surface Mesh Segmentation
 Surface_mesh_shortest_path Triangulated Surface Mesh Shortest Paths
@@ -92,12 +100,11 @@ Surface_mesh_topology Surface Mesh Topology
 Surface_sweep_2 2D Intersection of Curves
 TDS_2 2D Triangulation Data Structure
 TDS_3 3D Triangulation Data Structure
+Tetrahedral_remeshing Tetrahedral Remeshing
 Three Three
-SMDS_3 3D Simplicial Mesh Data Structure
 Triangulation_2 2D Triangulation
-Triangulation_on_sphere_2 2D Triangulation on Sphere
 Triangulation_3 3D Triangulations
 Triangulation dD Triangulations
+Triangulation_on_sphere_2 2D Triangulation on Sphere
 Visibility_2 2D Visibility Computation
 Voronoi_diagram_2 2D Voronoi Diagram Adaptor
-Tetrahedral_remeshing Tetrahedral Remeshing

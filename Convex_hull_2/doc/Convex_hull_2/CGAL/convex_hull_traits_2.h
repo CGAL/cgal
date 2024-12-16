@@ -7,7 +7,7 @@ The class `Convex_hull_traits_2` serves as a traits class for all the two-dimens
 convex hull and extreme point calculation function. This class corresponds
 to the default traits class for these functions.
 
-\cgalModels `ConvexHullTraits_2`
+\cgalModels{ConvexHullTraits_2}
 
 \sa `CGAL::Convex_hull_constructive_traits_2<R>`
 \sa `CGAL::Convex_hull_traits_adapter_2<R,P>`

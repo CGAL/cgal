@@ -32,7 +32,7 @@
 #include <boost/operators.hpp>
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Sqrt_extension_fwd.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <CGAL/NT_converter.h>
 
 #include <type_traits>
@@ -92,7 +92,7 @@ template <>
 class Interval_optional_caching< ::CGAL::Tag_true >
 {
 protected:
-  typedef boost::optional< std::pair<double,double> > Cached_interval;
+  typedef std::optional< std::pair<double,double> > Cached_interval;
   mutable Cached_interval interval_;
   void invalidate_interval() {interval_=Cached_interval();}
   bool is_cached() const {return (interval_?true:false);}
@@ -178,10 +178,10 @@ public:
      */
   template <class NTX>
   explicit Sqrt_extension(const NTX& a, const NTX& b, const NTX& c, const bool is_smaller,
-    std::enable_if_t< boost::mpl::and_<
-      std::is_same< typename Fraction_traits<NT>::Numerator_type,NTX >,
-      std::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
-    >::value >* = 0  )
+    std::enable_if_t<
+      std::is_same_v< typename Fraction_traits<NT>::Numerator_type,NTX > &&
+      std::is_same_v< typename Fraction_traits<ROOT>::Numerator_type,NTX >
+    >* = 0  )
   {
     typename Fraction_traits<NT>::Compose compose_nt;
     typename Fraction_traits<ROOT>::Compose compose_root;

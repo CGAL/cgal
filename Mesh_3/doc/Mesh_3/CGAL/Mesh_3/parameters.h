@@ -60,9 +60,9 @@ unspecified_type manifold_with_boundary();
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::exude()` allows the user to trigger a call to `exude_mesh_3()` in the
+ * The function `parameters::exude()` enables the user to trigger a call to `exude_mesh_3()` in the
  * `make_mesh_3()` and `refine_mesh_3()` mesh generation functions.
- * It also allows the user to pass parameters
+ * It also enables the user to pass parameters
  * to the optimization function `exude_mesh_3()` through these mesh generation functions.
  *
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -131,9 +131,9 @@ unspecified_type features();
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::lloyd()` allows the user to trigger a call of
+ * The function `parameters::lloyd()` enables the user to trigger a call of
  * `lloyd_optimize_mesh_3()` in the mesh generation functions
- * `make_mesh_3()` and `refine_mesh_3()`. It also allows the user to pass
+ * `make_mesh_3()` and `refine_mesh_3()`. It also enables the user to pass
  * parameters to the optimization function
  * `lloyd_optimize_mesh_3()` through these mesh generation functions.
  *
@@ -210,7 +210,7 @@ unspecified_type lloyd(const Named_function_parameters& np = parameters::default
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::no_exude()` allows the user to tell the mesh generation functions
+ * The function `parameters::no_exude()` enables the user to tell the mesh generation functions
  * `make_mesh_3()` and `refine_mesh_3()` that no exudation must be done.
  *
  * \cgalHeading{Example}
@@ -246,7 +246,7 @@ unspecified_type no_features();
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::no_lloyd()` allows the user to tell the mesh generation functions
+ * The function `parameters::no_lloyd()` enables the user to tell the mesh generation functions
  * `make_mesh_3()` and `refine_mesh_3()` that no lloyd optimization must be done.
  *
  * \cgalHeading{Example}
@@ -269,7 +269,7 @@ unspecified_type no_lloyd();
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::no_odt()` allows the user to tell the mesh generation functions
+ * The function `parameters::no_odt()` enables the user to tell the mesh generation functions
  * `make_mesh_3()` and `refine_mesh_3()` that no ODT optimization must be done.
  *
  * \cgalHeading{Example}
@@ -292,7 +292,7 @@ unspecified_type no_odt();
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::no_perturb()` allows the user to tell mesh generation global functions
+ * The function `parameters::no_perturb()` enables the user to tell mesh generation global functions
  * `make_mesh_3()` and `refine_mesh_3()` that no perturbation must be done.
  *
  * \cgalHeading{Example}
@@ -315,10 +315,10 @@ unspecified_type no_perturb();
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::odt()` allows the user to trigger a call to
+ * The function `parameters::odt()` enables the user to trigger a call to
  * `CGAL::odt_optimize_mesh_3()` in
  * `CGAL::make_mesh_3()` and `CGAL::refine_mesh_3()` mesh optimization functions. It also
- * allows the user to pass parameters to the optimization function
+ * enables the user to pass parameters to the optimization function
  * `odt_optimize_mesh_3()` through these mesh generation functions.
  *
  * @tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
@@ -395,10 +395,10 @@ unspecified_type odt(const Named_function_parameters& np = parameters::default_v
 /*!
  * \ingroup PkgMesh3Parameters
  *
- * The function `parameters::perturb()` allows the user to trigger a call to
+ * The function `parameters::perturb()` enables the user to trigger a call to
  * `perturb_mesh_3()` in
  * `make_mesh_3()` and `refine_mesh_3()` mesh generation functions. It also
- * allows the user to pass parameters
+ * enables the user to pass parameters
  * to the optimization function `perturb_mesh_3()` through these mesh generation functions.
  *
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"

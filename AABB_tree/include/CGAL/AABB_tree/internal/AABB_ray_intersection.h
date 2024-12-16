@@ -19,8 +19,7 @@
 
 #include <functional>
 #include <type_traits>
-#include <boost/optional.hpp>
-#include <boost/variant/apply_visitor.hpp>
+#include <optional>
 #  if defined(BOOST_MSVC)
 #    pragma warning(push)
 #    pragma warning(disable: 4996)
@@ -37,20 +36,23 @@ namespace CGAL {
 template<typename AABBTree, typename SkipFunctor>
 class AABB_ray_intersection {
   typedef typename AABBTree::AABB_traits AABB_traits;
-  typedef typename AABB_traits::Ray_3 Ray;
+  static const int dimension = AABB_traits::Point::Ambient_dimension::value;
+  typedef typename AABB_traits::Ray Ray;
+  typedef typename AABB_traits::Vector Vector;
+
   typedef typename AABBTree::template Intersection_and_primitive_id<Ray>::Type Ray_intersection_and_primitive_id;
   typedef typename Ray_intersection_and_primitive_id::first_type Ray_intersection;
+
 public:
   AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 
-  boost::optional< Ray_intersection_and_primitive_id >
+  std::optional< Ray_intersection_and_primitive_id >
   ray_intersection(const Ray& query, SkipFunctor skip) const {
     // We hit the root, now continue on the children. Keep track of
     // nb_primitives through a variable in each Node on the stack. In
     // BVH_node::traversal this is done through the function parameter
     // nb_primitives in the recursion.
-        typedef
-          boost::heap::priority_queue< Node_ptr_with_ft, boost::heap::compare< std::greater<Node_ptr_with_ft> > >
+    typedef boost::heap::priority_queue< Node_ptr_with_ft, boost::heap::compare< std::greater<Node_ptr_with_ft> > >
           Heap_type;
 
     typename AABB_traits::Intersection
@@ -63,7 +65,7 @@ public:
 
     Heap_type pq;
     // pq.reserve(tree_.size() / 2);
-    boost::optional< Ray_intersection_and_primitive_id >
+    std::optional< Ray_intersection_and_primitive_id >
       intersection, /* the temporary for calculating the result */
       p; /* the current best intersection */
 
@@ -84,7 +86,7 @@ public:
         if(!skip(current.node->left_data().id()) /* && do_intersect_obj(query, current.node->left_data()) */) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;
@@ -96,7 +98,7 @@ public:
         if(!skip(current.node->right_data().id()) /* && do_intersect_obj(query, current.node->right_data()) */) {
           intersection = intersection_obj(query, current.node->right_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;
@@ -111,7 +113,7 @@ public:
         if(!skip(current.node->left_data().id()) /* && do_intersect_obj(query, current.node->left_data()) */) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
-            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            FT ray_distance = std::visit(param_visitor, intersection->first);
             if(ray_distance < t) {
               t = ray_distance;
               p = intersection;
@@ -121,7 +123,7 @@ public:
 
         // right child
         const Node* child = &(current.node->right_child());
-        boost::optional< FT > dist = intersection_distance_obj(query, child->bbox());
+        std::optional< FT > dist = intersection_distance_obj(query, child->bbox());
         if(dist)
           pq.push(Node_ptr_with_ft(child, *dist, 2));
 
@@ -130,7 +132,7 @@ public:
       default: // Children both inner nodes
       {
         const Node* child = &(current.node->left_child());
-        boost::optional<FT> dist = intersection_distance_obj(query, child->bbox());
+        std::optional<FT> dist = intersection_distance_obj(query, child->bbox());
         if(dist)
           pq.push(Node_ptr_with_ft(child, *dist, current.nb_primitives/2));
 
@@ -168,8 +170,8 @@ private:
     as_ray_param_visitor(const Ray* ray)
      : ray(ray), max_i(0)
     {
-      typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
-      for (int i=1; i<3; ++i)
+      Vector v = AABB_traits().construct_vector_object()(*ray);
+      for (int i=1; i<dimension; ++i)
         if( CGAL::abs(v[i]) > CGAL::abs(v[max_i]) )
           max_i = i;
     }
@@ -185,8 +187,8 @@ private:
     }
 
     FT operator()(const Point& point) {
-      typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
-      typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
+      Vector x = Vector(AABB_traits().construct_source_object()(*ray), point);
+      Vector v = AABB_traits().construct_vector_object()(*ray);
 
       return x[max_i] / v[max_i];
     }
@@ -198,11 +200,11 @@ private:
 
 template<typename AABBTraits>
 template<typename Ray, typename SkipFunctor>
-boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
+std::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
 AABB_tree<AABBTraits>::first_intersection(const Ray& query,
                                           const SkipFunctor& skip) const {
-  static_assert(std::is_same<Ray, typename AABBTraits::Ray_3>::value,
-                            "Ray and Ray_3 must be the same type");
+  static_assert(std::is_same<Ray, typename AABBTraits::Ray>::value,
+                            "Ray and AABBTraits::Ray must be the same type");
 
   switch(size()) // copy-paste from AABB_tree::traversal
   {
@@ -219,22 +221,22 @@ AABB_tree<AABBTraits>::first_intersection(const Ray& query,
       break;
     }
   }
-  return boost::none;
+  return std::nullopt;
 }
 
 template<typename AABBTraits>
 template<typename Ray, typename SkipFunctor>
-boost::optional<typename AABB_tree<AABBTraits>::Primitive_id>
+std::optional<typename AABB_tree<AABBTraits>::Primitive_id>
 AABB_tree<AABBTraits>::first_intersected_primitive(const Ray& query,
                             const SkipFunctor& skip) const
 {
-  boost::optional<
+  std::optional<
     typename AABB_tree<AABBTraits>::
       template Intersection_and_primitive_id<Ray>::Type > res =
         first_intersection(query, skip);
   if ( (bool) res )
-    return boost::make_optional( res->second );
-  return boost::none;
+    return std::make_optional( res->second );
+  return std::nullopt;
 }
 
 }

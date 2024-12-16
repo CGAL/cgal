@@ -11,10 +11,10 @@ An instance of data type `Line_d` is an oriented line in
 Lines are implemented by a pair of points as an item type. All
 operations like creation, initialization, tests, direction
 calculation, input and output on a line \f$ l\f$ take time
-\f$ O(l.dimension())\f$. `dimension()`, coordinate and point
+\cgalBigO{l.dimension()}. `dimension()`, coordinate and point
 access, and identity test take constant time. The operations for
-intersection calculation also take time \f$ O(l.dimension())\f$. The
-space requirement is \f$ O(l.dimension())\f$.
+intersection calculation also take time \cgalBigO{l.dimension()}. The
+space requirement is \cgalBigO{l.dimension()}.
 
 */
 template< typename Kernel >

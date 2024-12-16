@@ -201,7 +201,9 @@ MainWindow::MainWindow()
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Polyline_simplification_2.html");
   this->addAboutCGAL();
+#if QT_SVG_LIB
   this->setupExportSVG(action_Export_SVG, graphicsView);
+#endif
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
   connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
@@ -503,7 +505,7 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Polyline_simplification_2 demo");
 
-  // Import resources from libCGALQt5.
+  // Import resources from libCGALQt6.
   CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;

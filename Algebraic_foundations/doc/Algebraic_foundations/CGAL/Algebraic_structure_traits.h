@@ -5,7 +5,7 @@ namespace CGAL {
 
 An instance of `Algebraic_structure_traits` is a model of `AlgebraicStructureTraits`, where <span class="textsc">T</span> is the associated type.
 
-\cgalModels `AlgebraicStructureTraits`
+\cgalModels{AlgebraicStructureTraits}
 
 */
 template< typename T >
@@ -22,7 +22,7 @@ namespace CGAL {
 Tag indicating that a type is a model of the
 `EuclideanRing` concept.
 
-\cgalModels `DefaultConstructible`
+\cgalModels{DefaultConstructible}
 
 \sa `EuclideanRing`
 \sa `AlgebraicStructureTraits`
@@ -38,7 +38,7 @@ struct Euclidean_ring_tag : public Unique_factorization_domain_tag {
 
 Tag indicating that a type is a model of the `Field` concept.
 
-\cgalModels `DefaultConstructible`
+\cgalModels{DefaultConstructible}
 
 \sa `Field`
 \sa `AlgebraicStructureTraits`
@@ -54,7 +54,7 @@ struct Field_tag : public Integral_domain_tag {
 
 Tag indicating that a type is a model of the `FieldWithKthRoot` concept.
 
-\cgalModels `DefaultConstructible`
+\cgalModels{DefaultConstructible}
 
 \sa `FieldWithKthRoot`
 \sa `AlgebraicStructureTraits`
@@ -70,7 +70,7 @@ struct Field_with_kth_root_tag : public Field_with_sqrt_tag {
 
 Tag indicating that a type is a model of the `FieldWithRootOf` concept.
 
-\cgalModels `DefaultConstructible`
+\cgalModels{DefaultConstructible}
 
 \sa `FieldWithRootOf`
 \sa `AlgebraicStructureTraits`
@@ -86,7 +86,7 @@ struct Field_with_root_of_tag : public Field_with_kth_root_tag {
 
 Tag indicating that a type is a model of the `FieldWithSqrt` concept.
 
-\cgalModels `DefaultConstructible`
+\cgalModels{DefaultConstructible}
 
 \sa `FieldWithSqrt`
 \sa `AlgebraicStructureTraits`
@@ -102,7 +102,7 @@ struct Field_with_sqrt_tag : public Field_tag {
 
 Tag indicating that a type is a model of the `IntegralDomain` concept.
 
-\cgalModels `DefaultConstructible`
+\cgalModels{DefaultConstructible}
 
 \sa `IntegralDomain`
 \sa `AlgebraicStructureTraits`
@@ -118,7 +118,7 @@ struct Integral_domain_tag : public Integral_domain_without_division_tag {
 
 Tag indicating that a type is a model of the `IntegralDomainWithoutDivision` concept.
 
-\cgalModels `DefaultConstructible`
+\cgalModels{DefaultConstructible}
 
 \sa `IntegralDomainWithoutDivision`
 
@@ -133,7 +133,7 @@ struct Integral_domain_without_division_tag {
 
 Tag indicating that a type is a model of the `UniqueFactorizationDomain` concept.
 
-\cgalModels `DefaultConstructible`
+\cgalModels{DefaultConstructible}
 
 \sa `UniqueFactorizationDomain`
 \sa `AlgebraicStructureTraits`

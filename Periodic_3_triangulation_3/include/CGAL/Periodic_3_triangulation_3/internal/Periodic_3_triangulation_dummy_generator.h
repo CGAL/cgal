@@ -10,6 +10,8 @@
 //
 // Author(s)     : Mael Rouxel-Labbé
 
+#include <CGAL/license/Periodic_3_triangulation_3.h>
+
 #ifdef CGAL_INCLUDE_FROM_PERIODIC_3_TRIANGULATION_3_H
 
 template < class GT, class TDS >
@@ -129,7 +131,7 @@ insert_generic_dummy_points()
     return goff;
   };
 
-  // This should be prefered from building points from the lattice offset
+  // This should be preferred from building points from the lattice offset
   // because the grid offset (by construction) aligns with the canonical domain,
   // and there is thus fewer numerical errors.
   auto construct_point_from_grid_offset = [&](const Offset& goff) -> Point_3

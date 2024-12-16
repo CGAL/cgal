@@ -116,9 +116,9 @@ public:
   {
     return static_cast<return_type>(transform(
       r_im_.template labellized_trilinear_interpolation<Image_word_type>(
-          CGAL::to_double(p.x()),
-          CGAL::to_double(p.y()),
-          CGAL::to_double(p.z()),
+          CGAL::to_double(p.x() - r_im_.image()->tx),
+          CGAL::to_double(p.y() - r_im_.image()->ty),
+          CGAL::to_double(p.z() - r_im_.image()->tz),
           value_outside,
           indicator_factory)));
   }

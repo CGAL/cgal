@@ -426,7 +426,7 @@ void test_algebraic_structure_intern(
     //commutative
     assert(a+b+c==c+b+a);
     assert(a*b*c==c*b*a);
-    //distributiv
+    //distributive
     assert((a-b)*c==a*c-b*c);
     assert((a+b)*c==a*c+b*c);
     //binom
@@ -612,10 +612,8 @@ class Test_is_square {
         CGAL_USE_TYPE(First_argument_type);
         CGAL_USE_TYPE(Second_argument_type);
 
-        static_assert(
-                ( ::std::is_same< AS , First_argument_type>::value));
-        static_assert(
-                ( ::std::is_same< AS& , Second_argument_type>::value));
+        static_assert(::std::is_same< AS , First_argument_type>::value);
+        static_assert(::std::is_same< AS& , Second_argument_type>::value);
         //static_assert(::std::is_same< bool , Result_type>::value);
         bool b = Result_type(true); CGAL_USE(b);
 
@@ -674,12 +672,9 @@ public:
         CGAL_USE_TYPE(First_argument_type);
         CGAL_USE_TYPE(Second_argument_type);
         CGAL_USE_TYPE(Result_type);
-        static_assert(
-                ( ::std::is_same<int, First_argument_type>::value));
-        static_assert(
-                ( ::std::is_same< AS , Second_argument_type>::value));
-        static_assert(
-                ( ::std::is_same< AS , Result_type>::value));
+        static_assert(::std::is_same<int, First_argument_type>::value);
+        static_assert(::std::is_same< AS , Second_argument_type>::value);
+        static_assert(::std::is_same< AS , Result_type>::value);
          AS  epsilon(1);
         assert( test_equality_epsilon(  AS (2),
                                 root( 4,  AS (16) ), epsilon ) );
@@ -821,6 +816,7 @@ void test_algebraic_structure(){
     static_assert(::std::is_same< Tag, Algebraic_category>::value);
     static_assert(!::std::is_same< Simplify, Null_functor>::value);
     static_assert(!::std::is_same< Unit_part, Null_functor>::value);
+
     const Simplify   simplify=Simplify();;
     const Unit_part  unit_part= Unit_part();
 
@@ -940,8 +936,7 @@ void test_algebraic_structure( const  AS & a, const  AS & b, const  AS & c) {
 
     typedef CGAL::Algebraic_structure_traits<AS> AST;
     typedef typename AST::Is_numerical_sensitive Is_numerical_sensitive;
-    static_assert(
-            !(::std::is_same<Is_numerical_sensitive, CGAL::Null_tag>::value));
+    static_assert(!::std::is_same<Is_numerical_sensitive, CGAL::Null_tag>::value);
     CGAL_USE_TYPE(Is_numerical_sensitive);
 }
 

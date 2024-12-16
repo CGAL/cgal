@@ -38,10 +38,8 @@ void resize(Container& c, std::size_t size,
 // Container without a resize() function, but with a size() function (e.g. an array)
 template <class Container>
 void resize(Container& CGAL_assertion_code(array), std::size_t CGAL_assertion_code(size),
-            std::enable_if_t<
-              boost::mpl::and_<
-                boost::mpl::not_<has_resize<Container> >,
-                                 has_size<Container> >::value >* = nullptr)
+            std::enable_if_t<!has_resize<Container>::value &&
+                              has_size<Container>::value >* = nullptr)
 {
   CGAL_assertion(array.size() == size);
 }
@@ -50,8 +48,8 @@ void resize(Container& CGAL_assertion_code(array), std::size_t CGAL_assertion_co
 template <class Container>
 void resize(Container&, std::size_t,
             std::enable_if_t<
-              !boost::mpl::or_<has_resize<Container>,
-                               has_size<Container> >::value >* = nullptr)
+              !(has_resize<Container>::value ||
+                has_size<Container>::value)>* = nullptr)
 {
 }
 

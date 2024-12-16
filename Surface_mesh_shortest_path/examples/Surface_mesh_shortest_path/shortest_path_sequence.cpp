@@ -4,7 +4,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh_shortest_path.h>
 
-#include <boost/variant.hpp>
+#include <variant>
 #include <boost/lexical_cast.hpp>
 
 #include <cstdlib>
@@ -26,10 +26,10 @@ typedef Graph_traits::face_descriptor face_descriptor;
 typedef Graph_traits::halfedge_descriptor halfedge_descriptor;
 
 // A model of SurfacemeshShortestPathVisitor storing simplicies
-// using boost::variant
+// using std::variant
 struct Sequence_collector
 {
-  typedef boost::variant< vertex_descriptor,
+  typedef std::variant< vertex_descriptor,
                          std::pair<halfedge_descriptor,double>,
                          std::pair<face_descriptor, Barycentric_coordinates> > Simplex;
   std::vector< Simplex > sequence;
@@ -50,9 +50,8 @@ struct Sequence_collector
   }
 };
 
-// A visitor to print what a variant contains using boost::apply_visitor
+// A visitor to print what a variant contains using std::visit
 struct Print_visitor
-  : public boost::static_visitor<>
 {
   int i;
   Triangle_mesh& g;
@@ -123,7 +122,7 @@ int main(int argc, char** argv)
   // print the sequence using the visitor pattern
   Print_visitor print_visitor(tmesh);
   for (size_t i = 0; i < sequence_collector.sequence.size(); ++i)
-    boost::apply_visitor(print_visitor, sequence_collector.sequence[i]);
+    std::visit(print_visitor, sequence_collector.sequence[i]);
 
   return 0;
 }

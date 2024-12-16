@@ -15,7 +15,7 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel          K;
-typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3>      Polyhedron;
+typedef CGAL::Polyhedron_3<K, CGAL::Polyhedron_items_with_id_3>      Mesh;
 
 // Optional visitor for orientating a polygon soup to demonstrate usage for some functions.
 // inherits from the default class as some functions are not overloaded
@@ -59,12 +59,12 @@ int main(int argc, char* argv[])
   Visitor visitor;
   CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons, CGAL::parameters::visitor(visitor));
 
-  Polyhedron mesh;
+  Mesh mesh;
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, mesh);
 
   // Number the faces because 'orient_to_bound_a_volume' needs a face <--> index map
   int index = 0;
-  for(Polyhedron::Face_iterator fb=mesh.facets_begin(), fe=mesh.facets_end(); fb!=fe; ++fb)
+  for(Mesh::Face_iterator fb=mesh.facets_begin(), fe=mesh.facets_end(); fb!=fe; ++fb)
     fb->id() = index++;
 
   if(CGAL::is_closed(mesh))

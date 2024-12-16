@@ -21,7 +21,7 @@
 
 class QGraphicsScene;
 
-// Genereic `Arr_compute_y_at_x_2`
+// Generic `Arr_compute_y_at_x_2`
 template <typename Traits_>
 class Arr_compute_y_at_x_2 : public GraphicsSceneMixin {
 public:
@@ -479,8 +479,8 @@ public:
    * projection.
    */
   X_monotone_curve_2 operator()(const X_monotone_curve_2& curve,
-                                const boost::optional<Point_2>& pLeft,
-                                const boost::optional<Point_2>& pRight);
+                                const std::optional<Point_2>& pLeft,
+                                const std::optional<Point_2>& pRight);
 
 protected:
   const ArrTraits* traits;
@@ -524,8 +524,8 @@ public:
   /* Return the subcurve of curve bracketed by pLeft and pRight.
    */
   X_monotone_curve_2 operator()(const X_monotone_curve_2& curve,
-                                const boost::optional<Point_2>& pLeft,
-                                const boost::optional<Point_2>& pRight );
+                                const std::optional<Point_2>& pLeft,
+                                const std::optional<Point_2>& pRight );
 
 private:
   const Traits& m_traits;
@@ -558,8 +558,8 @@ public:
     Return the subcurve of curve bracketed by pLeft and pRight.
   */
   X_monotone_curve_2 operator()(const X_monotone_curve_2& curve,
-                                const boost::optional<Point_2>& pLeft,
-                                const boost::optional<Point_2>& pRight);
+                                const std::optional<Point_2>& pLeft,
+                                const std::optional<Point_2>& pRight);
 
 protected:
   const ArrTraits* traits;
@@ -600,8 +600,8 @@ public:
    * projection.
    */
   X_monotone_curve_2 operator()(const X_monotone_curve_2& curve,
-                                const boost::optional<Point_2>& pLeft,
-                                const boost::optional<Point_2>& pRight);
+                                const std::optional<Point_2>& pLeft,
+                                const std::optional<Point_2>& pRight);
 
 protected:
   const Traits* traits;

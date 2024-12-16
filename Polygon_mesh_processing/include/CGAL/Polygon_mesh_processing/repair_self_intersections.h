@@ -29,8 +29,8 @@
 #endif
 
 #include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
+#include <CGAL/AABB_traits_3.h>
+#include <CGAL/AABB_triangle_primitive_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/boost/graph/Face_filtered_graph.h>
@@ -1070,8 +1070,8 @@ struct Mesh_projection_functor
   typedef typename GeomTraits::Triangle_3 Triangle_3;
 
   typedef std::vector<Triangle_3> Triangle_container;
-  typedef CGAL::AABB_triangle_primitive<GeomTraits, typename Triangle_container::const_iterator> Primitive;
-  typedef CGAL::AABB_traits<GeomTraits, Primitive> Traits;
+  typedef CGAL::AABB_triangle_primitive_3<GeomTraits, typename Triangle_container::const_iterator> Primitive;
+  typedef CGAL::AABB_traits_3<GeomTraits, Primitive> Traits;
   typedef CGAL::AABB_tree<Traits> Tree;
 
   template <typename TriangleMesh, typename VPM>
@@ -1150,6 +1150,9 @@ bool adapt_patch(std::vector<std::vector<Point> >& point_patch,
     put(local_vpm, v, projector(get(local_vpm, v)));
 
   // The projector can create degenerate faces
+  for (halfedge_descriptor h : border_hedges)
+    if (is_degenerate_triangle_face(face(opposite(h, local_mesh), local_mesh), local_mesh))
+      return !has_SI;
   if(!remove_degenerate_faces(local_mesh))
     return !has_SI;
 
@@ -2031,7 +2034,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
 
 #ifdef CGAL_PMP_REMOVE_SELF_INTERSECTION_OUTPUT_INTERMEDIATE_FULL_MESH
     fname = "results/mesh_at_step_"+std::to_string(step)+"_CC_"+std::to_string(cc_id)+".off";
-    CGAL::IO::write_polygon_mesh(fname, tmesh, CGAL::parameters::stream_precision);
+    CGAL::IO::write_polygon_mesh(fname, tmesh, CGAL::parameters::stream_precision(17));
 #endif
 
     // expand the region to be filled
@@ -2182,7 +2185,7 @@ remove_self_intersections_one_step(std::set<typename boost::graph_traits<Triangl
     // If smoothing fails, the face patch is restored to its pre-smoothing state.
     //
     // There is no need to update the working range because smoothing doesn`t change
-    // the number of faces (and old faces are re-used).
+    // the number of faces (and old faces are reused).
     //
     // Do not smooth if there are no self-intersections within the patch: this means the intersection
     // is with another CC and smoothing is unlikely to move the surface sufficiently

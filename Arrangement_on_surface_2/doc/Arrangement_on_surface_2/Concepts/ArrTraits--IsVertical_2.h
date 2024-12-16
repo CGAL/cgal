@@ -5,7 +5,9 @@ namespace ArrTraits {
  *
  * \cgalRefines{AdaptableUnaryFunction}
  *
- * \cgalHasModel ArrangementBasicTraits_2::Is_vertical_2
+ * \cgalHasModelsBegin
+ * \cgalHasModels{ArrangementBasicTraits_2::Is_vertical_2}
+ * \cgalHasModelsEnd
  */
 class IsVertical_2 {
 public:

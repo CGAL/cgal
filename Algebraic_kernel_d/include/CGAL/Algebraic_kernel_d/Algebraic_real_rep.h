@@ -23,7 +23,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/Polynomial_traits_d.h>
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace CGAL {
 
@@ -56,7 +56,7 @@ private:
 
     typedef Algebraic_real_rep <Coefficient,Rational>     Self;
 public:
-    typedef boost::optional< std::pair<double, double> >                  Interval_option;
+    typedef std::optional< std::pair<double, double> >                  Interval_option;
 
     mutable Poly polynomial_;                //!< square free polynomial
     mutable Rational low_;                      //!< lower endpoint of interval

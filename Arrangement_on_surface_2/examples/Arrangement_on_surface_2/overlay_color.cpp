@@ -11,9 +11,9 @@
 #include "arr_exact_construction_segments.h"
 #include "Overlay_color_traits.h"
 
-typedef unsigned int                                         Color;
-typedef CGAL::Arr_extended_dcel<Traits, Color, Color, Color> Dcel;
-typedef CGAL::Arrangement_2<Traits, Dcel>                    Ex_arrangement;
+using Color = unsigned int;
+using Dcel = CGAL::Arr_extended_dcel<Traits, Color, Color, Color>;
+using Ex_arrangement = CGAL::Arrangement_2<Traits, Dcel>;
 
 int main() {
   const Color vcol1(0x00000080), hcol1(0x000000ff), fcol1(0x00ccccff);

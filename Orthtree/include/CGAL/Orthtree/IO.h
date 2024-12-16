@@ -22,46 +22,39 @@ namespace CGAL
 namespace internal
 {
 
-template<typename Node>
-std::ostream& print_orthtree_node(std::ostream& os, const Node& node)
+template<typename Node_index, typename Tree>
+std::ostream& print_orthtree_node(std::ostream& os, const Node_index& node, const Tree &tree)
 {
-  // Show the depth of the node
-//  for (int i = 0; i < node.depth(); ++i)
-//    os << ". ";
 
   // Wrap information in brackets
   os << "{ ";
 
   // Index identifies which child this is
   os << "(";
-  for (std::size_t i = 0; i < node.local_coordinates().size(); ++ i)
-    os << node.local_coordinates()[i];
+  for (std::size_t i = 0; i < tree.local_coordinates(node).size(); ++ i)
+    os << tree.local_coordinates(node)[i];
   os << ") ";
 
   // Location
   os << "( ";
-  for (const auto& b : node.global_coordinates())
+  for (const auto& b : tree.global_coordinates(node))
     os << b << " ";
   os << ") ";
 
   // Depth
   os << "("
-     << +node.depth() // The + forces printing as an int instead of a char
+     << +tree.depth(node) // The + forces printing as an int instead of a char
      << ") ";
 
   os << "("
-     << node.size()
+     << tree.data(node).size()
      << ") ";
 
-//  // If a node has points, indicate how many
-//  if (!node.is_empty())
-//    os << "[" << node.num_points() << " points] ";
-
   // If a node is a leaf, mark it
-  os << (node.is_leaf() ? "[leaf] " : "");
+  os << (tree.is_leaf(node) ? "[leaf] " : "");
 
   // If a node is root, mark it
-  os << (node.is_root() ? "[root] " : "");
+  os << (tree.is_root(node) ? "[root] " : "");
 
   // Wrap information in brackets
   os << "}";

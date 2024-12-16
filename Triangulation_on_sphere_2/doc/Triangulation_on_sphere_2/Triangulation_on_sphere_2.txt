@@ -143,7 +143,7 @@ Two traits classes are offered with this package as models of the concept `Delau
       for points on the sphere: given a point `p` in 3D space, this traits class manipulates directly
       its projection on the sphere (that is, the intersection of the sphere and the segment with endpoints
       `p` and the center of the sphere). Consequently, all points to be inserted are on the sphere.
-      This traits enable manipulating points that are not on the sphere, but whose triangulation
+      This traits class enables manipulating points that are not on the sphere, but whose triangulation
       on the sphere is still interesting, such as geographical coordinates with altitude.
   </li>
 </ul>

@@ -15,7 +15,9 @@ the vertex base of a triangulation stores a point.
 
 \cgalRefines{TriangulationDSVertexBase_2}
 
-\cgalHasModel `CGAL::Triangulation_vertex_base_2<Traits,Vb>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Triangulation_vertex_base_2<Traits,Vb>}
+\cgalHasModelsEnd
 
 \sa `TriangulationDataStructure_2`
 \sa `TriangulationDataStructure_2::Vertex`

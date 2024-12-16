@@ -9,8 +9,10 @@ to implement models of this concept.
 
 \cgalRefines{DefaultConstructible}
 
-\cgalHasModel `CGAL::Deformation_Eigen_closest_rotation_traits_3`
-\cgalHasModel `CGAL::Deformation_Eigen_polar_closest_rotation_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Deformation_Eigen_closest_rotation_traits_3}
+\cgalHasModels{CGAL::Deformation_Eigen_polar_closest_rotation_traits_3}
+\cgalHasModelsEnd
 
 */
 class DeformationClosestRotationTraits_3{

@@ -77,7 +77,7 @@ extLong& extLong::operator+= (const extLong& y) {
   if (flag == 2 || y.flag == 2 || (flag * y.flag < 0)) {
 #ifdef CORE_DEBUG
     if (flag * y.flag < 0) //want a message at the first creation of NaN
-      core_error("extLong NaN Error in addition.", __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error in addition.");
 #endif
 
     *this = CORE_NaNLong;
@@ -96,7 +96,7 @@ extLong& extLong::operator-= (const extLong& y) {
   if (flag == 2 || y.flag == 2 || (flag * y.flag > 0)) {
 #ifdef CORE_DEBUG
     if (flag * y.flag > 0) //want a message at the first creation of NaN
-      core_error("extLong NaN Error in subtraction.", __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error in subtraction.");
 #endif
 
     *this = CORE_NaNLong;
@@ -131,7 +131,7 @@ extLong& extLong::operator*= (const extLong& y) {
       *this = CORE_negInfty;
     } else {
 #ifdef CORE_DEBUG
-      core_error("extLong NaN Error in multiplication.",__FILE__,__LINE__,false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error in multiplication.");
 #endif
       *this = CORE_NaNLong;
     }
@@ -144,9 +144,9 @@ extLong& extLong::operator/= (const extLong& y) {
   if (flag==2 || y.flag==2 || ((flag != 0) && (y.flag != 0)) || (y.val == 0)) {
 #ifdef CORE_DEBUG
     if (y.val == 0)
-      core_error("extLong NaN Error, Divide by Zero.", __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error, Divide by Zero.");
     else if ((flag !=0) && (y.flag !=0))
-      core_error("extLong NaN Error, +/-Inf/Inf.", __FILE__, __LINE__, false);
+      CGAL_CORE_warning_msg(false, "extLong NaN Error, +/-Inf/Inf.");
 #endif
 
     *this = CORE_NaNLong;
@@ -180,8 +180,7 @@ extLong extLong::operator- () const {
 //    you cannot interpret the returned value!
 CGAL_INLINE_FUNCTION
 int extLong::sign() const {
-  if (flag == 2)
-    core_error("NaN Sign can not be determined!", __FILE__, __LINE__, false);
+  CGAL_CORE_warning_msg(flag != 2, "NaN Sign can not be determined!");
   return ((val == 0) ? 0 : ((val > 0) ? 1 : -1));
 }
 

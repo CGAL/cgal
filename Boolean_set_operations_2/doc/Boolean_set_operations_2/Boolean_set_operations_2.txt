@@ -407,7 +407,7 @@ aforementioned free functions is actually realized by a set overriding
 member function.
 
 member functions of the `Polygon_set_2`
-(resp. `General_polygon_set_2`) that perform Boolean set-operations
+(respectively `General_polygon_set_2`) that perform Boolean set-operations
 come in two flavors: for example, `S.join(P, Q)` computes the union of
 \f$ P\f$ and \f$ Q\f$ and assigned the result to \f$ S\f$, while
 `S.join(P)` performs the operation \f$ S \longleftarrow S \cup P\f$.
@@ -542,13 +542,13 @@ boundary of each input (linear) polygon as a cyclic sequence of single
 (\f$x\f$-monotone) polylines. By default, `UsePolylines` is set to
 `CGAL::Tag_true`, which implies that the boundary of the each input
 (linear) polygon is treated as a cyclic sequence of (\f$x\f$-monotone)
-polylines. In most cases this behaviour is superior (that is, less
+polylines. In most cases this behavior is superior (that is, less
 time-consuming) because the number of events handled as part of the
 execution of the plane-sweep algorithm is reduced. In cases where the
 boundaries of the input polygons frequently intersect, treating them
 as polylines may become less efficient. In these cases substitute the
 `UsePolylines` template parameter with `CGAL::Tag_false` to restore
-the original behaviour (where the boundary of each input linear
+the original behavior (where the boundary of each input linear
 polygon is treated as a cyclic sequence of single \f$x\f$-monotone
 segments).
 
@@ -575,13 +575,13 @@ If the `UsePolylines` template parameter is substitited with
 
 <li>Instead of using an instance of the `Polygon_set_2` class
 template, as described above, an instance of the
-`General_polygon_set_2` class template is used, which utilzes the
+`General_polygon_set_2` class template is used, which utilizes the
 `Arr_polyline_traits_2` class template; see Section \ref
 arr_ssectr_polylines in the 2D Arrangements package.
 
-<li>Each input linear polygon (resp. linear polygon with holes) is
-converted into a general polygon (resp. general polygon with holes)
-bounded by \f$x\f$-monotone polylines. Then, the resulting generl
+<li>Each input linear polygon (respectively linear polygon with holes) is
+converted into a general polygon (respectively general polygon with holes)
+bounded by \f$x\f$-monotone polylines. Then, the resulting general
 polygons, which are also bounded by \f$x\f$-monotone polylines, are
 converted back to standard polygons.
 

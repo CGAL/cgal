@@ -8,7 +8,9 @@ needed to compute the smallest entry in a set of sorted matrices
 that fulfills a certain feasibility criterion using the function
 `CGAL::sorted_matrix_search`.
 
-\cgalHasModel `CGAL::Sorted_matrix_search_traits_adaptor<F,M>`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Sorted_matrix_search_traits_adaptor<F,M>}
+\cgalHasModelsEnd
 
 \sa `CGAL::sorted_matrix_search()`
 \sa `BasicMatrix`

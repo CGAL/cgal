@@ -25,7 +25,6 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Iterator_range.h>
-#include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/copy_face_graph.h>
 #include <CGAL/Heat_method_3/internal/V2V.h>
@@ -146,7 +145,7 @@ struct Intrinsic_Delaunay_triangulation_3_vertex_iterator_functor
  * \tparam TriangleMesh a triangulated surface mesh, model of `FaceListGraph` and `HalfedgeListGraph`
  * \tparam Traits a model of `HeatMethodTraits_3`
  *
- * \cgalModels `FaceListGraph`
+ * \cgalModels{FaceListGraph}
  */
 
 template <typename TriangleMesh,

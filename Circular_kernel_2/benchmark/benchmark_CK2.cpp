@@ -38,7 +38,7 @@ typedef std::vector<CircularKArc> CircularKArcContainer;
 typedef CircularKernel::Circular_arc_2 Circular_arc_2;
 typedef CircularKernel::Line_arc_2 Line_arc_2;
 typedef CGAL::Arr_circular_line_arc_traits_2<CircularKernel>   CircularK_Variant_Traits;
-typedef boost::variant< Circular_arc_2, Line_arc_2 > CircularKVarArc;
+typedef std::variant< Circular_arc_2, Line_arc_2 > CircularKVarArc;
 typedef std::vector<CircularKVarArc> CircularKVarArcContainer;
 
 
@@ -55,7 +55,7 @@ typedef BBCircularKernel::Circular_arc_2
   Circular_arc_6;
 typedef BBCircularKernel::Line_arc_2
   Line_arc_6;
-typedef boost::variant<Circular_arc_6,Line_arc_6 >
+typedef std::variant<Circular_arc_6,Line_arc_6 >
   BBCircVarArc;
 typedef std::vector<BBCircVarArc>
   BBCircVarContainer;
@@ -87,7 +87,7 @@ void do_main(const char *s) {
   struct rusage before, after;
   struct timeval utime, stime;
   getrusage(RUSAGE_SELF,&before);
-  insert(_pm,ac.begin(),ac.end(),boost::false_type());
+  insert(_pm,ac.begin(),ac.end(),std::false_type());
   getrusage(RUSAGE_SELF,&after);
   timersub(&(after.ru_utime),&(before.ru_utime),&utime);
   timersub(&(after.ru_stime),&(before.ru_stime),&stime);
@@ -177,7 +177,7 @@ void do_main(int k) {
   struct rusage before, after;
   struct timeval utime, stime;
   getrusage(RUSAGE_SELF,&before);
-  insert(_pm,ac.begin(),ac.end(),boost::false_type());
+  insert(_pm,ac.begin(),ac.end(),std::false_type());
   getrusage(RUSAGE_SELF,&after);
   timersub(&(after.ru_utime),&(before.ru_utime),&utime);
   timersub(&(after.ru_stime),&(before.ru_stime),&stime);

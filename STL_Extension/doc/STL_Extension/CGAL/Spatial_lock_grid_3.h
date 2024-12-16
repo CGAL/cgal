@@ -26,7 +26,7 @@ block (spin) if the thread owning the lock has a lower \"ID\" (each thread is
 given an arbitrary ID) or return immediately otherwise. It uses atomics to
 perform lock operations.
 
-\cgalModels `SurjectiveLockDataStructure`
+\cgalModels{SurjectiveLockDataStructure}
 */
 
 template <typename Grid_lock_tag>

@@ -11,7 +11,9 @@ and adds the requirement for traversal of all vertices in a graph.
 
 \cgalRefines{<a href="https://www.boost.org/libs/graph/doc/Graph.html">Graph</a>}
 
-\cgalHasModel See \link PkgBGLTraits Boost Graph Traits Specializations \endlink
+\cgalHasModelsBegin
+\cgalHasModelsBare{See \link PkgBGLTraits Boost Graph Traits Specializations \endlink}
+\cgalHasModelsEnd
 
 \sa \link PkgBGLConcepts Graph Concepts \endlink
 */

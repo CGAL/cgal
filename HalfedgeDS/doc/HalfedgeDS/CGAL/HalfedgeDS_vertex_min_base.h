@@ -9,7 +9,7 @@ equivalent to `HalfedgeDS_vertex_base< Refs, CGAL::Tag_false>`.
 It is empty besides the required type definitions. It can be used for deriving
 own vertices.
 
-\cgalModels `HalfedgeDSVertex`
+\cgalModels{HalfedgeDSVertex}
 
 \sa `HalfedgeDS<Traits,Items,Alloc>`
 \sa `HalfedgeDSItems`

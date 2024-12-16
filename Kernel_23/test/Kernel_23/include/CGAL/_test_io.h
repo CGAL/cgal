@@ -17,26 +17,19 @@
 #ifndef CGAL__TEST_IO_H
 #define CGAL__TEST_IO_H
 
-#include <fstream>
+#include <sstream>
 #include <cassert>
-
-#ifndef TEST_FILENAME
-#  define TEST_FILENAME "Test_IO.out"
-#endif
 
 template <class T>
 void
 _test_io_for(const T& t)
 {
-    {
-        std::ofstream oFile(TEST_FILENAME, std::ios::out);
-        oFile << t << std::endl;
-    }
+    std::stringstream ss;
+    ss << t << std::endl;
 
-    std::ifstream iFile(TEST_FILENAME, std::ios::in);
     T u = t;
-    iFile >> u;
-    assert(!iFile.fail());
+    ss >> u;
+    assert(! ss.fail() );
     assert(u == t);
 }
 

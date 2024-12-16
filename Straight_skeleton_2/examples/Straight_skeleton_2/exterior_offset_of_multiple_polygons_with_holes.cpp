@@ -3,9 +3,9 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/create_offset_polygons_from_polygon_with_holes_2.h>
 
-#include <CGAL/draw_polygon_with_holes_2.h>
+#include <memory>
 
-#include <boost/shared_ptr.hpp>
+#include <CGAL/draw_polygon_with_holes_2.h>
 
 #include <vector>
 #include <cassert>
@@ -16,8 +16,8 @@ typedef K::Point_2                    Point ;
 typedef CGAL::Polygon_2<K>            Polygon_2 ;
 typedef CGAL::Polygon_with_holes_2<K> PolygonWithHoles ;
 
-typedef boost::shared_ptr<PolygonWithHoles> PolygonWithHolesPtr ;
-typedef boost::shared_ptr<Polygon_2> PolygonPtr ;
+typedef std::shared_ptr<PolygonWithHoles> PolygonWithHolesPtr ;
+typedef std::shared_ptr<Polygon_2> PolygonPtr ;
 
 typedef std::vector<PolygonWithHolesPtr> PolygonWithHolesPtrVector;
 typedef std::vector<PolygonPtr> PolygonPtrVector;
@@ -30,7 +30,7 @@ exterior_offset_of_disjoint_polygons_with_holes(double lOffset, const std::vecto
     outer_vertices.insert(outer_vertices.end(),
                           pwh.outer_boundary().container().begin(),
                           pwh.outer_boundary().container().end());
-  boost::optional<double> margin = compute_outer_frame_margin(outer_vertices.begin(),
+  std::optional<double> margin = compute_outer_frame_margin(outer_vertices.begin(),
                                                               outer_vertices.end(),
                                                               lOffset);
 

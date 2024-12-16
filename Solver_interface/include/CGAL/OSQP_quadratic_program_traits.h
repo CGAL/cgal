@@ -48,7 +48,7 @@ namespace CGAL {
   type is used. After the optimization is complete, the `OSQPFloat` type is converted back to `FT`.
   See more about `OSQPFloat` <a href="https://osqp.org/docs/interfaces/C.html#data-types">here</a>.
 
-  \cgalModels `QuadraticProgramTraits`
+  \cgalModels{QuadraticProgramTraits}
 */
 template<typename FT>
 class OSQP_quadratic_program_traits

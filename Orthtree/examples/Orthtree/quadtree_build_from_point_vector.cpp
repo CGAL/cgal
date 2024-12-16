@@ -5,11 +5,10 @@
 #include <CGAL/Random.h>
 
 // Type Declarations
-typedef CGAL::Simple_cartesian<double> Kernel;
-typedef Kernel::Point_2 Point_2;
-typedef std::vector<Point_2> Point_vector;
-
-typedef CGAL::Quadtree<Kernel, Point_vector> Quadtree;
+using Kernel = CGAL::Simple_cartesian<double>;
+using Point_2 = Kernel::Point_2;
+using Point_vector = std::vector<Point_2>;
+using Quadtree = CGAL::Quadtree<Kernel, Point_vector>;
 
 int main()
 {

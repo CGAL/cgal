@@ -57,7 +57,7 @@ public:
         t = t->next;
       }
     //);
-    //CGAL_warning_msg(count ==  nObjects * blocks.size(),
+    //CGAL_CORE_warning_msg(count ==  nObjects * blocks.size(),
     //                 "Cannot delete memory as there are cyclic references");
 
     if(count ==  nObjects * blocks.size()){
@@ -73,7 +73,7 @@ public:
 
 
    void* allocate(std::size_t size);
-   void free(void* p);
+   void free BOOST_PREVENT_MACRO_SUBSTITUTION (void* p);
 
   // Access the corresponding static global allocator.
   static MemoryPool<T,nObjects>& global_allocator() {
@@ -116,7 +116,7 @@ void* MemoryPool< T, nObjects >::allocate(std::size_t) {
 }
 
 template< class T, int nObjects >
-void MemoryPool< T, nObjects >::free(void* t) {
+void MemoryPool< T, nObjects >::free BOOST_PREVENT_MACRO_SUBSTITUTION (void* t) {
    CGAL_assertion(t != 0);
    if (t == 0) return; // for safety
    if(blocks.empty()){

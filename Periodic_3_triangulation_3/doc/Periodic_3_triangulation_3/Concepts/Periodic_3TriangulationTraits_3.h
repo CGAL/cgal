@@ -4,7 +4,7 @@
 \cgalConcept
 
 The concept `Periodic_3TriangulationTraits_3` is the first template parameter of the class
-`Periodic_3_triangulation_3`. It refines the concept
+`CGAL::Periodic_3_triangulation_3`. It refines the concept
 `TriangulationTraits_3` from the \cgal 3D Triangulations.
 It redefines the geometric objects, predicates and constructions to
 work with point-offset pairs. In most cases the offsets will be
@@ -14,7 +14,9 @@ functor the version without offsets.
 
 \cgalRefines{TriangulationTraits_3}
 
-\cgalHasModel `CGAL::Periodic_3_triangulation_traits_3`
+\cgalHasModelsBegin
+\cgalHasModels{CGAL::Periodic_3_triangulation_traits_3}
+\cgalHasModelsEnd
 
 \sa `Periodic_3DelaunayTriangulationTraits_3`
 \sa `Periodic_3RegularTriangulationTraits_3`
@@ -256,4 +258,3 @@ Construct_tetrahedron_3 construct_tetrahedron_3_object();
 /// @}
 
 }; /* end Periodic_3TriangulationTraits_3 */
-
