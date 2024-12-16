@@ -268,42 +268,44 @@ average_edge_length(const PolygonMesh& pmesh,
   *
   * @sa `squared_edge_length()`
   */
-
 template<typename PolygonMesh,
          typename NamedParameters = parameters::Default_named_parameters>
 inline typename boost::graph_traits<PolygonMesh>::edge_descriptor
-longest_edge(const PolygonMesh& pmesh, const NamedParameters& np = parameters::default_values()) {
-typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Geom_traits;
+longest_edge(const PolygonMesh& pmesh,
+             const NamedParameters& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
 
-    using parameters::choose_parameter;
-    using parameters::get_parameter;
+  using Geom_traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
 
-    typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
-        vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
-            get_const_property_map(CGAL::vertex_point, pmesh));
+  Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
-    Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
+  typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+      vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(CGAL::vertex_point, pmesh));
 
-    auto edge_range = edges(pmesh);
+  auto edge_range = edges(pmesh);
 
-    // if mesh has no edges
-    if (edge_range.begin() == edge_range.end())
-        return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
+  // if mesh has no edges
+  if(edge_range.begin() == edge_range.end())
+    return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
 
-    auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, pmesh](auto l, auto r) {
-        auto res = gt.compare_squared_distance_3_object()(
-            get(vpm, source((l), pmesh)),
-            get(vpm, target((l), pmesh)),
-            get(vpm, source((r), pmesh)),
-            get(vpm, target((r), pmesh)));
-        return res == SMALLER;
-    });
+  auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, pmesh](auto l, auto r)
+{
+    auto res = gt.compare_squared_distance_3_object()(
+        get(vpm, source((l), pmesh)),
+        get(vpm, target((l), pmesh)),
+        get(vpm, source((r), pmesh)),
+        get(vpm, target((r), pmesh)));
+    return res == SMALLER;
+  });
 
-    // if edge_reference is not derefrenceble
-    if (edge_reference == edge_range.end())
-        return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
+  // if edge_reference is not derefrenceble
+  if(edge_reference == edge_range.end())
+    return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
 
-    return *edge_reference;
+  return *edge_reference;
 }
 
 /**
