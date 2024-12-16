@@ -280,35 +280,34 @@ longest_edge(const PolygonMesh& pmesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  using Geom_traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
+  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
 
+  using Geom_traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
 
   typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
       vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(CGAL::vertex_point, pmesh));
 
-  auto edge_range = edges(pmesh);
+  const auto& edge_range = edges(pmesh);
 
   // if mesh has no edges
-  if(edge_range.begin() == edge_range.end())
+  if(std::cbegin(edge_range) == std::cend(edge_range))
     return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
 
-  auto edge_reference = std::max_element(edge_range.begin(), edge_range.end(), [&, vpm, pmesh](auto l, auto r)
-{
-    auto res = gt.compare_squared_distance_3_object()(
-        get(vpm, source((l), pmesh)),
-        get(vpm, target((l), pmesh)),
-        get(vpm, source((r), pmesh)),
-        get(vpm, target((r), pmesh)));
-    return res == SMALLER;
-  });
+  auto le_pos = std::max_element(std::cbegin(edge_range), std::cend(edge_range),
+                                 [&pmesh, vpm, gt](const edge_descriptor l, const edge_descriptor r)
+                                 {
+                                   return (gt.compare_squared_distance_3_object()(
+                                             get(vpm, source(l, pmesh)),
+                                             get(vpm, target(l, pmesh)),
+                                             get(vpm, source(r, pmesh)),
+                                             get(vpm, target(r, pmesh))) == SMALLER);
+                                 });
 
-  // if edge_reference is not derefrenceble
-  if(edge_reference == edge_range.end())
-    return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
+  CGAL_assertion(le_pos != std::cend(edge_range));
 
-  return *edge_reference;
+  return *le_pos;
 }
 
 /**
