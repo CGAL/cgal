@@ -1,3 +1,11 @@
+---
+name: Issue
+about: Use this template for reporting issues with CGAL
+title: ''
+labels: ''
+assignees: ''
+---
+
 _Please use the following template to help us solving your issue._
 
 ## Issue Details

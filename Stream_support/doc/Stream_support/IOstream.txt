@@ -421,6 +421,7 @@ The table above only lists the functions that work with any polygon mesh.
       <th colspan="1">\ref IOStreamOBJ "OBJ"</th>
       <th colspan="1">\ref IOStreamGocad "GOCAD"</th>
       <th colspan="1">\ref IOStreamWRL "WRL"</th>
+      <th colspan="1">\ref IOStreamOM "OpenMesh (OM)"</th>
     </tr>
     <tr>
       <td>Input</td>
@@ -430,6 +431,7 @@ The table above only lists the functions that work with any polygon mesh.
       <td>`CGAL::IO::read_VTP()`</td>
       <td>`CGAL::IO::read_OBJ()`</td>
       <td>`CGAL::IO::read_GOCAD()`</td>
+      <td>`CGAL::IO::read_OM()`</td>
       <td><center> - </center></td>
     </tr>
     <tr>
@@ -441,6 +443,7 @@ The table above only lists the functions that work with any polygon mesh.
       <td>`CGAL::IO::write_OBJ()`</td>
       <td>`CGAL::IO::write_GOCAD()`</td>
       <td>`CGAL::IO::write_WRL()`</td>
+      <td>`CGAL::IO::write_OM()`</td>
     </tr>
 </table>
 

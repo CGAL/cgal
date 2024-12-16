@@ -490,7 +490,7 @@ test_new_2(const R& rep)
 
   typename R::Compare_squared_distance_2 compare_sq_dist
         = rep.compare_squared_distance_2_object();
-  tmp34ab = compare_sq_dist(p1,p2,FT(1));
+  tmp34ab = compare_sq_dist(p1, p2, FT(1));
   tmp34ab = compare_sq_dist(p1, l2, FT(1));
   tmp34ab = compare_sq_dist(p2, p1, FT(1));
   tmp34ab = compare_sq_dist(l1, l2, FT(1));
@@ -500,7 +500,7 @@ test_new_2(const R& rep)
   tmp34ab = compare_sq_dist(t2, l1, FT(1));
 
   tmp34ab = CGAL::compare_distance(t2, l1, s1, p1);
-  tmp34ab = CGAL::compare_distance(t2, l1, s1, p1);
+  tmp34ab = CGAL::compare_distance(t2, l1, p1, s1);
   tmp34ab = CGAL::compare_distance(t2, l1, s1);
 
   typename R::Compare_power_distance_2 compare_power_dist

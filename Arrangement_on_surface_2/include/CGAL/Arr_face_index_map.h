@@ -62,24 +62,24 @@ private:
   enum {MIN_REV_MAP_SIZE = 32};
 
 public:
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_face_index_map() :
     Base(),
     n_faces(0),
     rev_map(MIN_REV_MAP_SIZE)
   {}
 
-  /*! Constructor with an associated arrangement. */
+  /*! constructs from an associated arrangement. */
   Arr_face_index_map(const Base_aos& arr) :
     Base(const_cast<Base_aos&>(arr))
   { _init(); }
 
-  /*! Copy constructor. */
+  /*! constructs copy. */
   Arr_face_index_map(const Self& other) :
     Base(const_cast<Base_aos&>(*(other.arrangement())))
   { _init(); }
 
-  /*! Assignment operator. */
+  /*! assigns. */
   Self& operator= (const Self& other) {
     if (this == &other) return (*this);
 
@@ -89,13 +89,13 @@ public:
     return (*this);
   }
 
-  /*! Get the index of a given face.
+  /*! obtains the index of a given face.
    * \param f A handle to the face.
    * \pre f is a valid face in the arrangement.
    */
   unsigned int operator[](Face_handle f) const { return (index_map[f]); }
 
-  /*! Get the face given its index.
+  /*! obtains the face given its index.
    * \param i The index of the face.
    * \pre i is less than the number of faces in the arrangement.
    */
@@ -107,27 +107,27 @@ public:
   /// \name Notification functions, to keep the mapping up-to-date.
   //@{
 
-  /*! Update the mapping after the arrangement has been assigned with another
+  /*! updates the mapping after the arrangement has been assigned with another
    * arrangement.
    */
   virtual void after_assign() override { _init(); }
 
-  /*! Update the mapping after the arrangement is cleared.
+  /*! updates the mapping after the arrangement is cleared.
    */
   virtual void after_clear() override { _init(); }
 
-  /*! Update the mapping after attaching to a new arrangement.
+  /*! updates the mapping after attaching to a new arrangement.
    */
   virtual void after_attach() override { _init(); }
 
-  /*! Update the mapping after detaching the arrangement.
+  /*! updates the mapping after detaching the arrangement.
    */
   virtual void after_detach() override {
     n_faces = 0;
     index_map.clear();
   }
 
-  /*! Update the mapping after the creation of a new face is split from another
+  /*! updates the mapping after the creation of a new face is split from another
    * face.
    * \param f A handle to the existing face.
    * \param new_f A handle to the newly created face.
@@ -147,7 +147,7 @@ public:
     rev_map[n_faces - 1] = new_f;
   }
 
-  /*! Update the mapping before the merge of two faces.
+  /*! updates the mapping before the merge of two faces.
    * \param f1 A handle to the face that is going to remain.
    * \param f2 A handle to the face that is about to be removed.
    */
@@ -181,7 +181,7 @@ public:
   //@}
 
 private:
-  /*! Initialize the map for the given arrangement. */
+  /*! initializes the map for the given arrangement. */
   void _init() {
     // Get the number of faces and allocate the reverse map accordingly.
     n_faces = static_cast<unsigned int>(this->arrangement()->number_of_faces());
@@ -206,7 +206,7 @@ private:
   }
 };
 
-/*! Get the index property-map function. Provided so that boost is able to
+/*! obtains the index property-map function. Provided so that boost is able to
  * access the Arr_face_index_map above.
  * \param index_map The index map.
  * \param f A face handle.
@@ -217,7 +217,7 @@ unsigned int get(const CGAL::Arr_face_index_map<Arrangement>& index_map,
                  typename Arrangement::Face_handle f)
 { return (index_map[f]); }
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

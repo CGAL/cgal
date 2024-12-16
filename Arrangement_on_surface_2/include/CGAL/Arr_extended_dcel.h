@@ -43,16 +43,16 @@ private:
   Data m_data;       // The auxiliary data field.
 
 public:
-  /*! Get the auxiliary data (const version). */
+  /*! obtains the auxiliary data (const version). */
   const Data& data() const { return m_data; }
 
-  /*! Get the auxiliary data (non-const version). */
+  /*! obtains the auxiliary data (non-const version). */
   Data& data() { return m_data; }
 
-  /*! Set the auxiliary data. */
+  /*! sets the auxiliary data. */
   void set_data(const Data& data) { m_data = data; }
 
-  /*! Assign from another vertex. */
+  /*! assigns from another vertex. */
   virtual void assign(const Vertex_base& v) {
     Vertex_base::assign(v);
     const Self& ex_v = static_cast<const Self&>(v);
@@ -83,16 +83,16 @@ private:
   Data m_data;       // The auxiliary data field.
 
 public:
-  /*! Get the auxiliary data (const version). */
+  /*! obtains the auxiliary data (const version). */
   const Data& data() const { return m_data; }
 
-  /*! Get the auxiliary data (non-const version). */
+  /*! obtains the auxiliary data (non-const version). */
   Data& data() { return m_data; }
 
-  /*! Set the auxiliary data. */
+  /*! sets the auxiliary data. */
   void set_data(const Data& data) { m_data = data; }
 
-  /*! Assign from another halfedge. */
+  /*! assigns from another halfedge. */
   virtual void assign(const Halfedge_base& he) {
     Halfedge_base::assign(he);
     const Self& ex_he = static_cast<const Self&>(he);
@@ -123,16 +123,16 @@ private:
   Data m_data;       // The auxiliary data field.
 
 public:
-  /*! Get the auxiliary data (const version). */
+  /*! obtains the auxiliary data (const version). */
   const Data& data() const { return m_data; }
 
-  /*! Get the auxiliary data (non-const version). */
+  /*! obtains the auxiliary data (non-const version). */
   Data& data() { return m_data; }
 
-  /*! Set the auxiliary data. */
+  /*! sets the auxiliary data. */
   void set_data(const Data& data) { m_data = data; }
 
-  /*! Assign from another face. */
+  /*! assigns from another face. */
   virtual void assign(const Face_base& f) {
     Face_base::assign(f);
     const Self&  ex_f = static_cast<const Self&>(f);
@@ -176,10 +176,10 @@ public:
                                          Halfedge_other, Face_base>;
   };
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_face_extended_dcel() {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_face_extended_dcel() {}
 };
 
@@ -227,14 +227,14 @@ public:
                                     Vertex_other, Halfedge_other, Face_base>;
   };
 
-  /*! Default constructor. */
+  /*! constructs default. */
   Arr_extended_dcel() {}
 
-  /*! Destructor. */
+  /*! destructs. */
   virtual ~Arr_extended_dcel() {}
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #include <CGAL/enable_warnings.h>
 

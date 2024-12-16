@@ -111,14 +111,24 @@ template<class T>inline std::enable_if_t<std::is_empty<T>::value, T> approx(T){r
 template<class T>inline std::enable_if_t<std::is_empty<T>::value, int> depth(T){return -1;}
 
 namespace internal{
-template <typename AT, typename ET, typename E2A>
-struct Evaluate<Lazy<AT,ET,E2A>>
-{
-  void operator()(const Lazy<AT,ET,E2A>& l)
+
+  template <typename AT, typename ET, typename E2A>
+  struct Evaluate<Lazy<AT, ET, E2A>>
   {
-    exact(l);
-  }
+      void operator()(const Lazy<AT, ET, E2A>& l)
+      {
+          exact(l);
+      }
 };
+
+  template <typename ET>
+  struct Evaluate<Lazy_exact_nt<ET>>
+  {
+      void operator()(const Lazy_exact_nt<ET>& l)
+      {
+          exact(l);
+      }
+  };
 } // internal namespace
 
 // For an iterator, exact/approx applies to the objects it points to

@@ -167,25 +167,13 @@ int main(const int argc, const char** argv) {
   // Algorithm.
   KSR ksr(point_set, param);
 
-  FT max_d, max_dev;
-  std::size_t num;
-  ksr.estimate_detection_parameters(max_d, max_dev, num);
-  std::cout << "d: " << max_d << std::endl;
-  std::cout << "dev: " << max_dev << std::endl;
-  std::cout << "num: " << num << std::endl;
-
   Timer timer;
   timer.start();
   std::size_t num_shapes = ksr.detect_planar_shapes(param);
 
-
-  std::cout << num_shapes << " detected planar shapes" << std::endl;
+  std::cout << num_shapes << " regularized detected planar shapes" << std::endl;
 
   FT after_shape_detection = timer.time();
-
-  ksr.initialize_partition(param);
-
-  FT after_init = timer.time();
 
   ksr.partition(parameters.k_intersections);
 
@@ -205,8 +193,10 @@ int main(const int argc, const char** argv) {
 
   FT after_reconstruction = timer.time();
 
+  std::cout << polylist.size() << " polygons, " << vtx.size() << " vertices" << std::endl;
+
   if (polylist.size() > 0)
-    CGAL::IO::write_polygon_soup("building_c_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+    CGAL::IO::write_polygon_soup("polylist_" + std::to_string(parameters.graphcut_lambda) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
 
   timer.stop();
   const FT time = static_cast<FT>(timer.time());
@@ -227,19 +217,16 @@ int main(const int argc, const char** argv) {
     else
       ksr.reconstruct(l, external_nodes, std::back_inserter(vtx), std::back_inserter(polylist));
 
-
     if (polylist.size() > 0) {
       non_empty = true;
-      CGAL::IO::write_polygon_soup("building_c_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
+      CGAL::IO::write_polygon_soup("polylist_" + std::to_string(l) + (parameters.use_ground ? "_g" : "_") + ".off", vtx, polylist);
     }
   }
 
-  std::cout << "Shape detection:        " << after_shape_detection << " seconds!" << std::endl;
-  std::cout << "Kinetic partition:      " << (after_partition - after_shape_detection) << " seconds!" << std::endl;
-  std::cout << " initialization:        " << (after_init - after_shape_detection) << " seconds!" << std::endl;
-  std::cout << " partition:             " << (after_partition - after_init) << " seconds!" << std::endl;
-  std::cout << "Kinetic reconstruction: " << (after_reconstruction - after_partition) << " seconds!" << std::endl;
-  std::cout << "Total time:             " << time << " seconds!" << std::endl << std::endl;
+  std::cout << "Shape detection and initialization\nof kinetic partition:     " << after_shape_detection << " seconds!" << std::endl;
+  std::cout << "Kinetic partition:        " << (after_partition - after_shape_detection) << " seconds!" << std::endl;
+  std::cout << "Kinetic reconstruction:   " << (after_reconstruction - after_partition) << " seconds!" << std::endl;
+  std::cout << "Total time:               " << time << " seconds!" << std::endl << std::endl;
 
   return (non_empty) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -18,7 +18,7 @@ if(NOT MSVC_VERSION OR MSVC_VERSION GREATER_EQUAL 1919 OR MSVC_VERSION LESS 1910
   find_package(LASLIB QUIET)
   include(CGAL_LASLIB_support)
   if (TARGET CGAL::LASLIB_support)
-    target_link_libraries(test_deprecated_io_ps PUBLIC CGAL::LASLIB_support)
+    target_link_libraries(test_deprecated_io_ps PRIVATE CGAL::LASLIB_support)
   else()
     message(STATUS "NOTICE: the LAS reader test requires LASlib, and will not be compiled.")
   endif()

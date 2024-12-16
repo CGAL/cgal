@@ -20,9 +20,9 @@ function(compile name source_file point_location traits)
   add_executable(${name} ${source_file})
   add_to_cached_list(CGAL_EXECUTABLE_TARGETS ${name})
   if(TARGET CGAL::CGAL_Core)
-    target_link_libraries(${name} CGAL::CGAL CGAL::CGAL_Core)
+    target_link_libraries(${name} PRIVATE CGAL::CGAL CGAL::CGAL_Core)
   else()
-    target_link_libraries(${name} CGAL::CGAL)
+    target_link_libraries(${name} PRIVATE CGAL::CGAL)
   endif()
   target_compile_definitions(
     ${name} PRIVATE -DCGAL_ARR_TEST_POINT_LOCATION=${point_location}
