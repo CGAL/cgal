@@ -100,12 +100,14 @@ private:
                 // AF: In case Point stays the input point type we have
                 // to robustify with interval arithmetic
                 // here: certainly
+                // AN: yes, here we need certainly!
                 if (compare_squared_distance(a, b, distance_sqr) == LARGER) {
                     return false;
                 }
             }
             for (size_t i = 4; i < 8; ++i) {
                 // AF: certainly
+                // AN: yes, here we need certainly!
                 if (CGAL::abs(p[i] - q[i]) > distance) {
                     return false;
                 }
@@ -118,12 +120,16 @@ private:
             for (int d = 0; d < D::value; ++d) {
                 if (rect.min_coord(d) > p[d] + distance &&
                     rect.max_coord(d) + distance < p[d]) {
-                        // AF: certainly
+                    // AF: certainly
+                    // AN: yes, here is really certainly!
                     return false;
                 }
             }
             return true;
         }
+
+        // AN: here we cannot really do anything wrong; if we return false, we continue searching;
+        // if we return true, we return all points inside which is also fine as we check them later.
         bool outer_range_contains(const Kd_tree_rectangle<FT, D>& rect) const
         {
             // check if rect[0:2] is contained in circle of start point AND
@@ -138,7 +144,6 @@ private:
                          {rect.min_coord(i + 1), rect.max_coord(i + 1)}) {
                         if (compare_squared_distance(Point(x, y), point,
                                                      distance_sqr) == LARGER) {
-                                                        // AF: certainly
                             return false;
                         }
                     }
@@ -151,11 +156,11 @@ private:
             for (std::size_t i = 4; i < 8; ++i) {
                 if (p[i] - distance > rect.min_coord(i) ||
                     p[i] + distance < rect.max_coord(i)) {
-                        // AF: certainly
                     return false;
                 }
             }
 
+            // AN: This has to be certainly!!
             return true;
         }
     };
