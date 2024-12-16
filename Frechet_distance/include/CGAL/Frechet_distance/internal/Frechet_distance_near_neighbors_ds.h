@@ -46,7 +46,7 @@ class FrechetKdTree
     using PolylineID = std::size_t;
     using PolylineIDs = std::vector<PolylineID>;
 
-    using D = Dimension_tag<8>;  // must be 4 x  Traits::dimension
+    using D = Dimension_tag<4*Traits::Dimension::value>;
     // FIXME: is fixing Cartesian_d too non-general here?
     using Traits_d = Cartesian_d<typename Traits::FT>;
     using Tree_traits_base = Search_traits_d<Traits_d, D>;
