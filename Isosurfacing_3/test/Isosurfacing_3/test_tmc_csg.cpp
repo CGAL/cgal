@@ -32,15 +32,12 @@ void test_cube()
   using Point = typename K::Point_3;
   using Vector = typename K::Vector_3;
 
-  using Mesh = CGAL::Surface_mesh<Point>;
   using Grid = IS::Cartesian_grid_3<K>;
   using Values = IS::Value_function_3<Grid>;
   using Domain = IS::Marching_cubes_domain_3<Grid, Values>;
 
   using Point_range = std::vector<Point>;
   using Polygon_range = std::vector<std::vector<std::size_t> >;
-
-  using Mesh = CGAL::Surface_mesh<Point>;
 
   auto implicit_function = [](const Point& q) -> FT
   {

@@ -32,7 +32,7 @@ template <typename PolygonMesh>
 std::size_t connected_components(PolygonMesh& mesh)
 {
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
-  using FCCmap = typename PolygonMesh::Property_map<face_descriptor, std::size_t>;
+  using FCCmap = typename PolygonMesh::template Property_map<face_descriptor, std::size_t>;
 
   FCCmap fccmap = mesh.template add_property_map<face_descriptor, std::size_t>("f:CC").first;
 
@@ -473,7 +473,6 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
   using Grid = IS::Cartesian_grid_3<K>;
   using Values = IS::Interpolated_discrete_values_3<Grid>;
   using Domain = IS::Marching_cubes_domain_3<Grid, Values>;
-  using FT = typename K::FT;
   using Point = typename K::Point_3;
   using Mesh = CGAL::Surface_mesh<Point>;
   using Point_range = std::vector<Point>;
@@ -529,13 +528,12 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
 }
 
 template<typename KERNEL>
-void assert_tmc(const std::array<typename KERNEL::FT, 8>& case_values, typename KERNEL::FT iso, int components, int euler, int boundaries)
+void assert_tmc(const std::array<typename KERNEL::FT, 8>& case_values, typename KERNEL::FT iso, std::size_t components, std::size_t euler, std::size_t boundaries)
 {
   using K = KERNEL;
   using Grid = IS::Cartesian_grid_3<K>;
   using Values = IS::Interpolated_discrete_values_3<Grid>;
   using Domain = IS::Marching_cubes_domain_3<Grid, Values>;
-  using FT = typename K::FT;
   using Point = typename K::Point_3;
   using Mesh = CGAL::Surface_mesh<Point>;
   using Point_range = std::vector<Point>;
