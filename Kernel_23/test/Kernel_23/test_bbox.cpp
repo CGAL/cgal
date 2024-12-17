@@ -99,5 +99,12 @@ int main()
   assert(CGAL::do_overlap(bb3, bb3b));
 
   std::cout <<  bb3b << std::endl;
+
+  BBox3::Cartesian_const_iterator beg = bb3b.cartesian_begin();
+  BBox3::Cartesian_const_iterator end =  bb3b.cartesian_end();
+  for(; beg != end; ++beg){
+    std::cout << *beg << std::endl;
+  }
+
   }
 }
