@@ -6,8 +6,8 @@ The function object concept `InitialPointsGenerator` is designed to construct
 a set of initial points on the surface of the domain.
 
 \cgalHasModelsBegin
-\cgalHasModels{CGAL::Construct_initial_points_labeled_image}
-\cgalHasModels{CGAL::Construct_initial_points_gray_image}
+\cgalHasModels{CGAL::Construct_initial_points_labeled_image<C3t3, Mesh_domain>}
+\cgalHasModels{CGAL::Construct_initial_points_gray_image<C3t3, Mesh_domain>}
 \cgalHasModelsEnd
 
 */
@@ -39,7 +39,7 @@ output iterator `pts`.
 If, after insertion of these points, the triangulation is still not 3D,
 or does not have any facets
 in the restricted Delaunay triangulation, then more points will be added automatically
-by the mesher.
+by the mesh generator.
 
 @tparam OutputIterator model of `OutputIterator` whose value type is a tuple-like object made of 3 elements:
   - a `C3t3::Triangulation::Point` : the point `p`,
@@ -61,7 +61,7 @@ points to initialize the mesh generation process, i.e., to have a 3D triangulati
 with at least one facet in the restricted Delaunay triangulation.
 
 If these conditions are not satisfied, then more points will be added automatically
-by the mesher.
+by the mesh generator.
 
 @tparam OutputIterator model of `OutputIterator` whose value type is a tuple-like object made of 3 elements :
   - a `C3t3::Triangulation::Point` : the point `p`,
