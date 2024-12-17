@@ -1284,9 +1284,6 @@ struct Object_cast
 // The following functor returns an Object with a Lazy<Something> inside
 // As the nested kernels return Objects of AK::Something and EK::Something
 // we have to unwrap them from the Object, and wrap them in a Lazy<Something>
-//
-// TODO: write operators for other than two arguments. For the current kernel we only need two for Intersect_2
-
 template <typename LK, typename AC, typename EC>
 struct Lazy_construction_object
 {
@@ -1305,16 +1302,15 @@ struct Lazy_construction_object
   CGAL_NO_UNIQUE_ADDRESS EC ec;
 
 public:
-
-  template <typename L1>
+  template <class... L>
   decltype(auto)
-  operator()(const L1& l1) const
+  operator()(const L&... l) const
   {
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> P;
       try {
-        Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, false, L1>(ac, ec, l1));
+        Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, false, L...>(ac, ec, l...));
 
         if(lo.approx().is_empty())
           return Object();
@@ -1328,111 +1324,39 @@ public:
 
 #include <CGAL/Kernel/interface_macros.h>
 
-        std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
-        std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
-
-        return Object();
-      } catch (Uncertain_conversion_exception&) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    ET eto = ec(CGAL::exact(l1));
-    return make_lazy<LK>(eto);
-  }
-
-  template <typename L1, typename L2>
-  decltype(auto)
-  operator()(const L1& l1, const L2& l2) const
-  {
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> P;
-      try {
-        Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, false, L1, L2>(ac, ec, l1, l2));
-
-        if(lo.approx().is_empty())
-          return Object();
-
-  #define CGAL_Kernel_obj(X) \
-        if (object_cast<typename AK::X>(& (lo.approx()))) { \
-          typedef Lazy_rep_n<typename AK::X, typename EK::X, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, false, Lazy_object> Lcr; \
-          Lcr * lcr = new Lcr(Object_cast<typename AK::X>(), Object_cast<typename EK::X>(), lo); \
-          return make_object(typename LK::X(lcr)); \
-        }
-
-  #include <CGAL/Kernel/interface_macros.h>
-
       // We now check vector<X>
-
-  #define CGAL_Kernel_obj(X) \
-        {  \
-          const std::vector<typename AK::X>* v_ptr;\
+#define CGAL_Kernel_obj(X) \
+        { \
+          const std::vector<typename AK::X>* v_ptr; \
           if ( (v_ptr = object_cast<std::vector<typename AK::X> >(& (lo.approx()))) ) { \
-            std::vector<typename LK::X> V;\
-            V.resize(v_ptr->size());                           \
-            for (unsigned int i = 0; i < v_ptr->size(); i++) {               \
+            std::vector<typename LK::X> V; \
+            V.resize(v_ptr->size()); \
+            for (unsigned int i = 0; i < v_ptr->size(); i++) { \
               V[i] = typename LK::X(new Lazy_rep_n<typename AK::X, typename EK::X, Ith_for_intersection<typename AK::X>, \
                                                    Ith_for_intersection<typename EK::X>, E2A, false, Lazy_object> \
                                     (Ith_for_intersection<typename AK::X>(i), Ith_for_intersection<typename EK::X>(i), lo)); \
-            }                                                           \
-            return make_object(V);                                      \
+            } \
+            return make_object(V); \
           }\
         }
 
-  CGAL_Kernel_obj(Point_2)
-  CGAL_Kernel_obj(Point_3)
-  #undef CGAL_Kernel_obj
+CGAL_Kernel_obj(Point_2)
+CGAL_Kernel_obj(Point_3)
+#undef CGAL_Kernel_obj
 
         std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
         std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
 
-      } catch (Uncertain_conversion_exception&) {}
-      return Object();
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    ET eto = ec(CGAL::exact(l1), CGAL::exact(l2));
-    return make_lazy<LK>(eto);
-  }
-
-  template <typename L1, typename L2, typename L3>
-  decltype(auto)
-  operator()(const L1& l1, const L2& l2, const L3& l3) const
-  {
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> P;
-      try {
-        Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, false, L1, L2, L3>(ac, ec, l1, l2, l3));
-
-        if(lo.approx().is_empty())
-          return Object();
-
-  #define CGAL_Kernel_obj(X) \
-        if (object_cast<typename AK::X>(& (lo.approx()))) { \
-          typedef Lazy_rep_n<typename AK::X, typename EK::X, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, false, Lazy_object> Lcr; \
-          Lcr * lcr = new Lcr(Object_cast<typename AK::X>(), Object_cast<typename EK::X>(), lo); \
-          return make_object(typename LK::X(lcr)); \
-        }
-
-  #include <CGAL/Kernel/interface_macros.h>
-
-        std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
-        std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
         return Object();
       } catch (Uncertain_conversion_exception&) {}
     }
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    ET eto = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
+    ET eto = ec(CGAL::exact(l)...);
     return make_lazy<LK>(eto);
   }
 };
-
-
 
 //____________________________________________________________
 // The magic functor that has Lazy<Something> as result type.
