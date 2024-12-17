@@ -18,6 +18,7 @@
 #include <array>
 #include <iostream>
 #include <iterator>
+#include <CGAL/use.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
 #include <boost/math/special_functions/next.hpp>
@@ -143,6 +144,7 @@ protected:
 
     template <typename I>
     void init(int d, I b, I e) {
+        CGAL_USE(e);
         CGAL_assertion(d == std::distance(b,e));
         for(int i=0; i<d; ++i,++b)
         {
