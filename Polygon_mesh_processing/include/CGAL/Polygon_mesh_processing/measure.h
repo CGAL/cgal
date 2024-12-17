@@ -280,7 +280,7 @@ longest_edge(const PolygonMesh& pmesh,
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
-  using edge_descriptor = typename boost::graph_traits<PolygonMesh>::edge_descriptor;
+  using edge_iterator = typename boost::graph_traits<PolygonMesh>::edge_iterator;
 
   using Geom_traits = typename GetGeomTraits<PolygonMesh, NamedParameters>::type;
   Geom_traits gt = choose_parameter<Geom_traits>(get_parameter(np, internal_np::geom_traits));
@@ -292,20 +292,23 @@ longest_edge(const PolygonMesh& pmesh,
   const auto& edge_range = edges(pmesh);
 
   // if mesh has no edges
-  if(std::cbegin(edge_range) == std::cend(edge_range))
-    return typename boost::graph_traits<PolygonMesh>::edge_descriptor();
+  edge_iterator first = std::cbegin(edge_range), beyond = std::cend(edge_range);
+  if(first == beyond)
+    return { };
 
-  auto le_pos = std::max_element(std::cbegin(edge_range), std::cend(edge_range),
-                                 [&pmesh, vpm, gt](const edge_descriptor l, const edge_descriptor r)
-                                 {
-                                   return (gt.compare_squared_distance_3_object()(
-                                             get(vpm, source(l, pmesh)),
-                                             get(vpm, target(l, pmesh)),
-                                             get(vpm, source(r, pmesh)),
-                                             get(vpm, target(r, pmesh))) == SMALLER);
-                                 });
+  edge_iterator le_pos = first, eit = first;
+  while(++eit != beyond)
+  {
+    if(gt.compare_squared_distance_3_object()(get(vpm, source(*eit, pmesh)),
+                                              get(vpm, target(*eit, pmesh)),
+                                              get(vpm, source(*le_pos, pmesh)),
+                                              get(vpm, target(*le_pos, pmesh))) == LARGER)
+    {
+      le_pos = eit;
+    }
+  }
 
-  CGAL_assertion(le_pos != std::cend(edge_range));
+  CGAL_assertion(le_pos != beyond);
 
   return *le_pos;
 }
