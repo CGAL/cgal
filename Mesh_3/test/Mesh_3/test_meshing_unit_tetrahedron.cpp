@@ -66,6 +66,18 @@ struct Polyhedron_tester : public Tester<K>
     // Mesh generation
     C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
 
+    // test initial_points with a tuple-like object
+    using Weighted_point = typename K::Weighted_point_3;
+    using Index = typename Mesh_domain::Index;
+    struct Initial_point
+    {
+      Weighted_point weighted_point;
+      int dimension;
+      Index index;
+    };
+    std::vector<Initial_point> initial_points = { Initial_point{ Weighted_point(.5, .5, .5), 3, Index{}} };
+    c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, CGAL::parameters::initial_points(initial_points));
+
     CGAL::remove_far_points_in_mesh_3(c3t3);
 
     double vol = 1/6.;

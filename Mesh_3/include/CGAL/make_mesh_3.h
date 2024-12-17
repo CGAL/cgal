@@ -25,6 +25,7 @@
 #include <CGAL/Mesh_3/Protect_edges_sizing_field.h>
 #include <CGAL/STL_Extension/internal/Has_features.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
+#include <CGAL/type_traits.h>
 
 #include <boost/mpl/has_xxx.hpp>
 #include <type_traits>
@@ -38,6 +39,18 @@ namespace CGAL {
 // -----------------------------------
 namespace Mesh_3 {
 namespace internal {
+
+template <typename, typename = void>
+constexpr bool has_tuple_size_v = false;
+
+template <typename T>
+constexpr bool has_tuple_size_v<T, std::void_t<decltype(std::tuple_size<const T>::value)>> = true;
+
+template <typename T, bool = has_tuple_size_v<T>>
+constexpr bool tuple_like_of_size_2 = false;
+
+template <typename T>
+constexpr bool tuple_like_of_size_2<T, true> = (std::tuple_size_v<T> == 2);
 
 template < typename C3T3, typename MeshDomain, typename InitialPointsGenerator >
 void
@@ -62,16 +75,16 @@ add_points_from_generator(C3T3& c3t3,
   std::vector<PointDimIndex> initial_points;
   auto push_initial_point = [&](const auto& initial_pt)->void
     {
-      using T = std::remove_cv_t < std::remove_reference_t<decltype(initial_pt)>>;
-      if constexpr (std::tuple_size_v<T> == 3)
+      using T = CGAL::cpp20::remove_cvref_t<decltype(initial_pt)>;
+      if constexpr (tuple_like_of_size_2<T>)
       {
-        const auto& [weighted_pt, dim, index] = initial_pt;
-        initial_points.push_back(PointDimIndex{ weighted_pt, dim, index });
+        const auto& [pt, index] = initial_pt;
+        initial_points.push_back(PointDimIndex{cwp(pt), 2, index});
       }
       else
       {
-        const auto& [pt, index] = initial_pt;
-        initial_points.push_back(PointDimIndex{ cwp(pt), 2, index });
+        const auto& [weighted_pt, dim, index] = initial_pt;
+        initial_points.push_back(PointDimIndex{weighted_pt, dim, index});
       }
     };
 
