@@ -1185,33 +1185,6 @@ struct Ith_for_intersection {
   }
 };
 
-// This functor selects the i'th element in a vector of T2's
-template <typename T2>
-struct Ith_for_intersection_with_variant {
-  typedef T2 result_type;
-  int i;
-
-  Ith_for_intersection_with_variant(int i_)
-    : i(i_)
-  {}
-
-  template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
-  const T2&
-  operator()(const boost::optional< boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) > >& o) const
-  {
-    const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&(*o)));
-    return (*ptr)[i];
-  }
-
-  template< BOOST_VARIANT_ENUM_PARAMS(typename U) >
-  const T2&
-  operator()(const boost::variant< BOOST_VARIANT_ENUM_PARAMS(U) >& o) const
-  {
-    const std::vector<T2>* ptr = (boost::get<std::vector<T2> >(&o));
-    return (*ptr)[i];
-  }
-};
-
 template <typename LK, typename AC, typename EC>
 struct Lazy_cartesian_const_iterator_2
 {
