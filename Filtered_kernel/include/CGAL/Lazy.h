@@ -1484,26 +1484,27 @@ struct Lazy_construction_variant {
     typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<T,LK,AK>::type>()...)),AK,LK>::type type;
   };
 
-  template <typename L1, typename L2>
+  template <class... L>
   decltype(auto)
-  operator()(const L1& l1, const L2& l2) const {
+  operator()(const L&... l) const
+  {
+    typedef typename result<Lazy_construction_variant(L...)>::type result_type;
 
-    typedef typename result<Lazy_construction_variant(L1, L2)>::type result_type;
 
     // typedef decltype(std::declval<AC>()(std::declval<typename Type_mapper<L1, LK, AK>::type>(),
     //                                     std::declval<typename Type_mapper<L2, LK, AK>::type>())) AT;
     // typedef decltype(std::declval<EC>()(std::declval<typename Type_mapper<L1, LK, EK>::type>(),
     //                                     std::declval<typename Type_mapper<L2, LK, EK>::type>())) ET;
 
-    typedef decltype(std::declval<AC const&>()(CGAL::approx(l1), CGAL::approx(l2))) AT;
-    typedef decltype(std::declval<EC const&>()( CGAL::exact(l1),  CGAL::exact(l2))) ET;
+    typedef decltype(std::declval<AC const&>()(CGAL::approx(l)...)) AT;
+    typedef decltype(std::declval<EC const&>()( CGAL::exact(l)...)) ET;
 
     CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
     {
       Protect_FPU_rounding<Protection> P;
 
       try {
-        Lazy<AT, ET, E2A> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, false, L1, L2>(AC(), EC(), l1, l2));
+        Lazy<AT, ET, E2A> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, false, L...>(AC(), EC(), l...));
 
         // the approximate result requires the trait with types from the AK
         AT approx_v = lazy.approx();
@@ -1525,7 +1526,7 @@ struct Lazy_construction_variant {
     CGAL_BRANCH_PROFILER_BRANCH(tmp);
     Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
     CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    ET exact_v = EC()(CGAL::exact(l1), CGAL::exact(l2));
+    ET exact_v = EC()(CGAL::exact(l)...);
     result_type res;
 
     if(!exact_v) {
@@ -1533,60 +1534,6 @@ struct Lazy_construction_variant {
     }
 
     internal::Fill_lazy_variant_visitor_0<result_type, AK, LK, EK> visitor(res);
-    boost::apply_visitor(visitor, *exact_v);
-    return res;
-  }
-
-  template <typename L1, typename L2, typename L3>
-  decltype(auto)
-  operator()(const L1& l1, const L2& l2, const L3& l3) const {
-    typedef typename result<Lazy_construction_variant(L1, L2, L3)>::type result_type;
-
-    // typedef decltype(std::declval<AC>()(std::declval<typename Type_mapper<L1, LK, AK>::type>(),
-    //                                     std::declval<typename Type_mapper<L2, LK, AK>::type>(),
-    //                                     std::declval<typename Type_mapper<L3, LK, AK>::type>())) AT;
-    // typedef decltype(std::declval<EC>()(std::declval<typename Type_mapper<L1, LK, EK>::type>(),
-    //                                     std::declval<typename Type_mapper<L2, LK, EK>::type>(),
-    //                                     std::declval<typename Type_mapper<L3, LK, EK>::type>())) ET;
-
-    typedef decltype(std::declval<AC const&>()(CGAL::approx(l1), CGAL::approx(l2), CGAL::approx(l3))) AT;
-    typedef decltype(std::declval<EC const&>()( CGAL::exact(l1),  CGAL::exact(l2),  CGAL::exact(l3))) ET;
-
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> P;
-
-      try {
-        Lazy<AT, ET, E2A> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, false, L1, L2, L3>(AC(), EC(), l1, l2, l3));
-
-        // the approximate result requires the trait with types from the AK
-        AT approx_v = lazy.approx();
-        // the result we build
-        result_type res;
-
-        if(!approx_v) {
-          // empty
-          return res;
-        }
-
-        // the static visitor fills the result_type with the correct unwrapped type
-        internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
-        boost::apply_visitor(visitor, *approx_v);
-
-        return res;
-      } catch (Uncertain_conversion_exception&) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    ET exact_v = EC()(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
-    result_type res;
-
-    if(!exact_v) {
-      return res;
-    }
-
-    internal::Fill_lazy_variant_visitor_0< result_type, AK, LK, EK> visitor(res);
     boost::apply_visitor(visitor, *exact_v);
     return res;
   }
