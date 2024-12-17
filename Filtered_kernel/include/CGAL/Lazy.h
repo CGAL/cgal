@@ -1004,7 +1004,7 @@ struct Lazy_construction_bbox
 
 
 template <typename LK, typename AC, typename EC>
-struct Lazy_construction_optional_for_polygonal_envelope
+struct Lazy_construction_optional_for_polyhedral_envelope
 {
   static const bool Protection = true;
   typedef typename LK::Approximate_kernel AK;

@@ -258,7 +258,7 @@ private:
   template <typename Construction>
   struct Select_wrapper_impl<Construction, OPTIONAL_> {
     template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_optional_for_polygonal_envelope<Kernel, AKC, EKC> type; };
+    struct apply { typedef Lazy_construction_optional_for_polyhedral_envelope<Kernel, AKC, EKC> type; };
   };
 
   template <typename Construction>
