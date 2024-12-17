@@ -1,12 +1,15 @@
 
 #include "test_Prefix.h"
-#include <boost/range/distance.hpp>
+
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/generators.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <CGAL/IO/OFF.h>
-#include <CGAL/Polygon_mesh_processing/border.h>
-#include <CGAL/boost/graph/copy_face_graph.h>
+
+#include <boost/range/distance.hpp>
 
 template <typename T>
 void
@@ -474,7 +477,7 @@ remove_degree_2_vertex_test()
     assert(ok);
     assert(CGAL::is_valid_polygon_mesh(m));
 
-    auto vim = get_initialized_vertex_index_map(m);
+    auto vim = CGAL::get_initialized_vertex_index_map(m);
 
     const halfedge_descriptor h = *(std::next(halfedges(m).begin(), hi));
     const vertex_descriptor v = target(h,  m);
