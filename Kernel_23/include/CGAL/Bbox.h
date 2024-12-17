@@ -21,6 +21,7 @@
 #include <CGAL/use.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
+#include <CGAL/Concatenate_iterator.h>
 #include <boost/math/special_functions/next.hpp>
 
 namespace CGAL {
@@ -164,12 +165,25 @@ template<int N, typename T>
 class Bbox<Dimension_tag<N>, T> : public Impl::Bbox<std::array<T, N>, Bbox<Dimension_tag<N>,T>>
 {
     enum { D = N };
+    using array_const_iterator = typename std::array<T, N>::const_iterator;
 public:
+    using Cartesian_const_iterator = Concatenate_iterator<array_const_iterator,array_const_iterator>;
+
     inline constexpr int dimension() const { return D; }
     Bbox(int d = 0          ) { CGAL_assertion(d==N || d==0); this->init(d       ); }
     Bbox(int d, const T& range) { CGAL_assertion(d==N || d==0); this->init(d, range); }
     template <typename I>
     Bbox(int d, I b, I e) { CGAL_assertion(d==N || d==0); this->init(d, b, e); }
+
+    Cartesian_const_iterator cartesian_begin() const
+    {
+        return Cartesian_const_iterator(min_values.end(), max_values.begin(), min_values.begin());
+    }
+
+    Cartesian_const_iterator cartesian_end() const
+    {
+        return Cartesian_const_iterator(min_values.end(), max_values.begin(), max_values.end(),0);
+    }
 };
 
 // A dynamic D-dimensional axis aligned box
