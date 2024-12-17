@@ -363,7 +363,7 @@ private Q_SLOTS:
   void onVisibilityChanged(bool) {
     if (!dock_widget->isVisible())
       return;
-    std::cout << "in visibility changed" << std::endl;
+    onItemIndexSelected(scene->mainSelectionIndex());
   }
 
 private:
