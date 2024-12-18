@@ -16,15 +16,14 @@
 #ifndef CGAL_INTERNAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 #define CGAL_INTERNAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
 #include <CGAL/license/Frechet_distance.h>
-#include <CGAL/Cartesian_d.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Kernel_d/Point_d.h>
 #include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Search_traits_d.h>
-#include <CGAL/basic.h>
+#include <CGAL/Search_traits.h>
 #include <CGAL/number_utils.h>
-
+#include <CGAL/Bbox.h>
 #include <array>
 #include <iterator>
 #include <tuple>
@@ -38,19 +37,57 @@ namespace internal {
 template <class Traits>
 class FrechetKdTree
 {
-    using PT = Traits; // Polyline_traits_2<Traits, double>;
+    using PT = Traits; // model of FrechetDistanceTraits
     using FT = typename PT::FT;
     using Point = typename PT::Point_d;
+    using Construct_cartesian_const_iterator = typename PT::Construct_cartesian_const_iterator_d;
+    using Compare_squared_distance = typename PT::Compare_squared_distance_d;
+    using Construct_bbox = typename PT::Construct_bbox_d;
     using Polyline = std::vector<Point>;
     using Polylines = std::vector<Polyline>;
     using PolylineID = std::size_t;
     using PolylineIDs = std::vector<PolylineID>;
 
-    using D = Dimension_tag<4*Traits::Dimension::value>;
-    // FIXME: is fixing Cartesian_d too non-general here?
-    using Traits_d = Cartesian_d<typename Traits::FT>;
-    using Tree_traits_base = Search_traits_d<Traits_d, D>;
-    using Point_d = typename Tree_traits_base::Point_d;
+    static constexpr int dim = Traits::Dimension::value;
+
+    using D = Dimension_tag<4*dim>;
+
+
+    struct Point_d {
+        using BB = Bbox<Dimension_tag<dim>,FT>;
+        Point ends[2];
+        BB bbox;
+        using PP = Concatenate_iterator<typename Point::Cartesian_const_iterator, typename Point::Cartesian_const_iterator>;
+        using Cartesian_const_iterator_d = Concatenate_iterator<PP, typename BB::Cartesian_const_iterator>;
+
+        Cartesian_const_iterator_d cartesian_begin() const
+        {
+            Construct_cartesian_const_iterator ccc;
+            PP ppb(ccc(ends[0],0), ccc(ends[1]), ccc(ends[0]));
+            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0));
+          return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), ppb);
+        }
+
+        Cartesian_const_iterator_d cartesian_end() const
+        {
+            Construct_cartesian_const_iterator ccc;
+            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0));
+            return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), bbox.cartesian_end(), 0);
+        }
+
+        struct Construct_cartesian_const_iterator_d {
+          Cartesian_const_iterator_d operator()(const Point_d& p) const
+          {
+            return p.cartesian_begin();
+          }
+          Cartesian_const_iterator_d operator()(const Point_d& p, int) const
+          {
+            return p.cartesian_end();
+          }
+        };
+    };
+
+    using Tree_traits_base = Search_traits<FT, Point_d, typename Point_d::Cartesian_const_iterator_d, typename Point_d::Construct_cartesian_const_iterator_d, D>;
     using Point_and_id = std::tuple<Point_d, std::size_t>;
     using Tree_traits = CGAL::Search_traits_adapter<
         Point_and_id, CGAL::Nth_of_tuple_property_map<0, Point_and_id>,
@@ -93,22 +130,23 @@ private:
         {
             auto const& q = std::get<0>(point);
 
-            for (size_t i = 0; i < 4; i += 2) {
-                // AF deal with dimension
-                auto a = Point(p[i], p[i + 1]);
-                auto b = Point(q[i], q[i + 1]);
+            for (size_t i = 0; i < 2; ++i) {
+                const Point& a = p.ends[i];
+                const Point& b = q.ends[i];
                 // AF: In case Point stays the input point type we have
                 // to robustify with interval arithmetic
                 // here: certainly
                 // AN: yes, here we need certainly!
-                if (compare_squared_distance(a, b, distance_sqr) == LARGER) {
+                if (Compare_squared_distance()(a, b, distance_sqr) == LARGER) {
                     return false;
                 }
             }
-            for (size_t i = 4; i < 8; ++i) {
+            typename Point_d::BB::Cartesian_const_iterator pb = p.bbox.cartesian_begin();
+            typename Point_d::BB::Cartesian_const_iterator qb = q.bbox.cartesian_begin();
+            for (size_t i = 0; i < 2*dim; ++i, ++pb, ++qb) {
                 // AF: certainly
                 // AN: yes, here we need certainly!
-                if (CGAL::abs(p[i] - q[i]) > distance) {
+                if (CGAL::abs(*pb - *qb) > distance) {
                     return false;
                 }
             }
@@ -117,9 +155,10 @@ private:
         }
         bool inner_range_intersects(const Kd_tree_rectangle<FT, D>& rect) const
         {
-            for (int d = 0; d < D::value; ++d) {
-                if (rect.min_coord(d) > p[d] + distance &&
-                    rect.max_coord(d) + distance < p[d]) {
+            typename Point_d::Cartesian_const_iterator_d pb = p.cartesian_begin();
+            for (int d = 0; d < D::value; ++d, ++pb) {
+                if (rect.min_coord(d) > *pb + distance &&
+                    rect.max_coord(d) + distance < *pb) {
                     // AF: certainly
                     // AN: yes, here is really certainly!
                     return false;
@@ -138,12 +177,12 @@ private:
                 // TODO: this is a manual test if a rectangle is contained in a
                 // circle. Does CGAL offer anything handy for that?
                 // AF: deal with dimension
-                auto point = Point(p[i], p[i + 1]);
+                const Point& point = p.ends[i/2];
                 for (auto x : {rect.min_coord(i), rect.max_coord(i)}) {
-                    for (auto y :
-                         {rect.min_coord(i + 1), rect.max_coord(i + 1)}) {
-                        if (compare_squared_distance(Point(x, y), point,
-                                                     distance_sqr) == LARGER) {
+                    for (auto y : {rect.min_coord(i + 1), rect.max_coord(i + 1)}) {
+                        Point corner(x,y,0);
+                        if (Compare_squared_distance()(corner, point,
+                                                       distance_sqr) == LARGER) {
                             return false;
                         }
                     }
@@ -153,9 +192,10 @@ private:
             // rect[4:8] is contained in intersection rect (see notebook)
             // TODO: this is a manual test if a rectangle is contained in
             // another rectangle. Does CGAL offer anything handy for that?
-            for (std::size_t i = 4; i < 8; ++i) {
-                if (p[i] - distance > rect.min_coord(i) ||
-                    p[i] + distance < rect.max_coord(i)) {
+            typename Point_d::BB::Cartesian_const_iterator pb = p.bbox.cartesian_begin();
+            for (std::size_t i = 4; i < 8; ++i, ++pb) {
+                if (*pb - distance > rect.min_coord(i) ||
+                    *pb + distance < rect.max_coord(i)) {
                     return false;
                 }
             }
@@ -171,26 +211,16 @@ auto FrechetKdTree<Traits>::to_kd_tree_point(const Polyline& curve) -> Point_d
 {
     CGAL_precondition(!curve.empty());
 
-    // TODO: remove this when curves are preprocessed first
-    FT x_min, y_min, x_max, y_max;
-    x_min = y_min = (std::numeric_limits<FT>::max)();
-    x_max = y_max = (std::numeric_limits<FT>::min)();
-    for (auto const& point : curve) {
-      x_min = (std::min)(x_min, point.x());
-      y_min = (std::min)(y_min, point.y());
-      x_max = (std::max)(x_max, point.x());
-      y_max = (std::max)(y_max, point.y());
-    }
+    Construct_bbox bbox = Traits().construct_bbox_d_object(); //  AF Do we have to pass a Traits object?
+    Point_d res;
 
-    std::array<FT, D::value> values = {curve.front().x(),
-                                       curve.front().y(),
-                                       curve.back().x(),
-                                       curve.back().y(),
-                                       x_min,
-                                       y_min,
-                                       x_max,
-                                       y_max};
-    return Point_d(D::value, values.begin(), values.end());
+    res.ends[0] = curve.front();
+    res.ends[1] = curve.back();
+    for (auto const& point : curve) {
+        Bbox<Dimension_tag<dim>,FT> bb = bbox(point);
+        res.bbox +=  bb;
+    }
+    return res;
 }
 
 template <class Traits>
