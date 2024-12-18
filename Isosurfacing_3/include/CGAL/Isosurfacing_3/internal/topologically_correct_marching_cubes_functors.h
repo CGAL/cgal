@@ -313,17 +313,14 @@ private:
     d = b * b - FT(4) * a * c;
   }
 
-  void calc_coordinates(const std::array<FT, 8>& values, const std::size_t idx, const FT i0, const FT a, const FT b, const FT c, const FT d, const std::vector<bool> &f_flag, unsigned char &q_sol, FT ui[2], FT vi[2], FT wi[2]) {
+  bool calc_coordinates(const std::array<FT, 8>& values, const std::size_t idx, const FT i0, const FT a, const FT b, const FT c, const FT d, const std::vector<bool> &f_flag, unsigned char &q_sol, FT ui[2], FT vi[2], FT wi[2]) {
     const int* remap = internal::Cube_table::asymptotic_remap[idx];
 
-    if (values[remap[0]] == values[remap[2]] && values[remap[1]] == values[remap[3]]) {
-      ui[0] = FT(1) / FT(0);
-      return;
-    }
-    if (values[remap[0]] == values[remap[4]] && values[remap[1]] == values[remap[5]]) {
-      ui[0] = FT(1) / FT(0);
-      return;
-    }
+    if (values[remap[0]] == values[remap[2]] && values[remap[1]] == values[remap[3]])
+      return false;
+
+    if (values[remap[0]] == values[remap[4]] && values[remap[1]] == values[remap[5]])
+      return false;
 
     FT d2 = sqrt(CGAL::to_double(d));
 
@@ -460,6 +457,8 @@ private:
 
     if (0 < wi[1] && wi[1] < 1)
       q_sol |= 32;
+
+    return true;
   }
 
   bool p_slice(const cell_descriptor& cell,
@@ -872,7 +871,8 @@ private:
       if (a == 0 || d < 0)
         continue;
 
-      calc_coordinates(values, idx, i0, a, b, c, d, f_flag, q_sol, ui, vi, wi);
+      if (!calc_coordinates(values, idx, i0, a, b, c, d, f_flag, q_sol, ui, vi, wi))
+        continue;
 
       if (!std::isfinite(CGAL::to_double(ui[0])) || !std::isfinite(CGAL::to_double(ui[1])))
         continue;
