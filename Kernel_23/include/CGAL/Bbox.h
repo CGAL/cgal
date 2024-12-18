@@ -19,6 +19,8 @@
 #include <iostream>
 #include <iterator>
 #include <CGAL/use.h>
+#include <CGAL/Bbox_2.h>
+#include <CGAL/Bbox_3.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Concatenate_iterator.h>
@@ -153,6 +155,22 @@ protected:
             max_values[i] = (*b).second;
         }
     }
+
+    void init(const Bbox_2& bb){
+        min_values[0] = bb.xmin();
+        min_values[1] = bb.ymin();
+        max_values[0] = bb.xmax();
+        max_values[1] = bb.ymax();
+    }
+
+    void init(const Bbox_3& bb){
+        min_values[0] = bb.xmin();
+        min_values[1] = bb.ymin();
+        min_values[2] = bb.zmin();
+        max_values[0] = bb.xmax();
+        max_values[1] = bb.ymax();
+        max_values[2] = bb.zmax();
+    }
 };
 
 }
@@ -174,6 +192,9 @@ public:
     Bbox(int d, const T& range) { CGAL_assertion(d==N || d==0); this->init(d, range); }
     template <typename I>
     Bbox(int d, I b, I e) { CGAL_assertion(d==N || d==0); this->init(d, b, e); }
+
+    Bbox(const Bbox_2& bb2){ this->init(bb2);}
+    Bbox(const Bbox_3& bb3){ this->init(bb3);}
 
     Cartesian_const_iterator cartesian_begin() const
     {
