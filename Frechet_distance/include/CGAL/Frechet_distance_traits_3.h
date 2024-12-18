@@ -38,7 +38,7 @@ public:
   using FT = typename Kernel::FT;
   using Point_d = typename Kernel::Point_3;
   using Construct_bbox_d = typename Kernel::Construct_bbox_3;
-  using Cartesian_const_iterator_d = typename Kernel::Cartesian_const_iterator_2;
+  using Cartesian_const_iterator_d = typename Kernel::Cartesian_const_iterator_3;
   using Construct_cartesian_const_iterator_d = typename Kernel::Construct_cartesian_const_iterator_3;
   using Compare_squared_distance_d = typename Kernel::Compare_squared_distance_3;
 

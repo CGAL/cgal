@@ -171,8 +171,8 @@ private:
         // if we return true, we return all points inside which is also fine as we check them later.
         bool outer_range_contains(const Kd_tree_rectangle<FT, D>& rect) const
         {
-            // check if rect[0:2] is contained in circle of start point AND
-            // check if rect[2:4] is contained in circle of end point
+            // check if rect[0 : dim/2] is contained in circle of start point AND
+            // check if rect[dim/2 : dim] is contained in circle of end point
             for (size_t i = 0; i < 4; i += 2) {
                 // TODO: this is a manual test if a rectangle is contained in a
                 // circle. Does CGAL offer anything handy for that?
@@ -193,7 +193,7 @@ private:
             // TODO: this is a manual test if a rectangle is contained in
             // another rectangle. Does CGAL offer anything handy for that?
             typename Point_d::BB::Cartesian_const_iterator pb = p.bbox.cartesian_begin();
-            for (std::size_t i = 4; i < 8; ++i, ++pb) {
+            for (std::size_t i = dim/2; i < dim; ++i, ++pb) {
                 if (*pb - distance > rect.min_coord(i) ||
                     *pb + distance < rect.max_coord(i)) {
                     return false;
