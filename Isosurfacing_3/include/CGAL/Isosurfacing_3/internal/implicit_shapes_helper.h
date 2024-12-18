@@ -153,28 +153,28 @@ template <typename K, typename S1, typename S2>
 typename K::FT
 shape_union(const S1& s1, const S2& s2, const typename K::Point_3& q)
 {
-  return std::min(s1(q), s2(q));
+  return (std::min)(s1(q), s2(q));
 }
 
 template <typename K, typename S1, typename S2>
 typename K::FT
 shape_difference(const S1& s1, const S2& s2, const typename K::Point_3& q)
 {
-  return std::max(s1(q), -s2(q));
+  return (std::max)(s1(q), -s2(q));
 }
 
 template <typename K, typename S1, typename S2>
 typename K::FT
 shape_intersection(const S1& s1, const S2& s2, const typename K::Point_3& q)
 {
-  return std::max(s1(q), s2(q));
+  return (std::max)(s1(q), s2(q));
 }
 
 template <typename K, typename S1, typename S2>
 typename K::FT
 shape_symmetric_difference(const S1& s1, const S2& s2, const typename K::Point_3& q)
 {
-  return std::max(-std::min(s1(q), s2(q)), std::max(s1(q), s2(q)));
+  return (std::max)(-(std::min)(s1(q), s2(q)), (std::max)(s1(q), s2(q)));
 }
 
 

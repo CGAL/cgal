@@ -24,7 +24,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#define CGAL_TESTUISTE_ISOSURFACING_OUTPUT
+#define CGAL_TESTSUITE_ISOSURFACING_OUTPUT
 
 namespace IS = CGAL::Isosurfacing;
 
@@ -68,9 +68,9 @@ bool check_closed_not_empty(const Grid& grid, const IS::Interpolated_discrete_va
     for(std::size_t y=0; y<grid.ydim(); ++y) {
       for(std::size_t z=0; z<grid.zdim(); ++z)
       {
-        total_min = std::min(total_min, values(x, y, z));
+        total_min = (std::min)(total_min, values(x, y, z));
         if (x == 0 || y == 0 || z == 0 || x == grid.xdim() - 1 || y == grid.ydim() - 1 || z == grid.zdim() - 1)
-          boundary_min = std::min(boundary_min, values(x, y, z));
+          boundary_min = (std::min)(boundary_min, values(x, y, z));
       }
     }
   }
@@ -155,12 +155,12 @@ void embed_in_positive_grid(const Grid& grid, IS::Interpolated_discrete_values_3
 
   CGAL::Random rand;
 
-  FT min = std::numeric_limits<FT>::max();
+  FT min = (std::numeric_limits<FT>::max)();
   FT max = std::numeric_limits<FT>::lowest();
   for (const FT v : center_values)
   {
-    min = std::min(min, v);
-    max = std::max(max, v);
+    min = (std::min)(min, v);
+    max = (std::max)(max, v);
   }
   max += 1e-3;
 
@@ -495,7 +495,7 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
     Triangle_range triangles_high_res;
     IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain_high_res, iso, points_high_res, triangles_high_res, CGAL::parameters::use_topologically_correct_marching_cubes(true));
 
-    #ifdef CGAL_TESTUISTE_ISOSURFACING_OUTPUT
+    #ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
     CGAL::IO::write_polygon_soup("trilinear.off", points_high_res, triangles_high_res);
     #endif
 
@@ -513,7 +513,7 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
     Triangle_range triangles_mc;
     IS::marching_cubes<CGAL::Parallel_if_available_tag>(domain, iso, points_mc, triangles_mc, CGAL::parameters::use_topologically_correct_marching_cubes(false));
 
-    #ifdef CGAL_TESTUISTE_ISOSURFACING_OUTPUT
+    #ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
     CGAL::IO::write_polygon_soup("mc.off", points_mc, triangles_mc);
     #endif
   }
@@ -522,7 +522,7 @@ void compare_tmc_mc_trilinear(const std::array<typename KERNEL::FT, 8>& case_val
   Triangle_range triangles;
   IS::marching_cubes<CGAL::Sequential_tag>(domain, iso, points, triangles, CGAL::parameters::use_topologically_correct_marching_cubes(true));
 
-  #ifdef CGAL_TESTUISTE_ISOSURFACING_OUTPUT
+  #ifdef CGAL_TESTSUITE_ISOSURFACING_OUTPUT
   CGAL::IO::write_polygon_soup("tmc.off", points, triangles);
   #endif
 }

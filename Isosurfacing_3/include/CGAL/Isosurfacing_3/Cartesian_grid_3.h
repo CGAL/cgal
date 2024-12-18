@@ -107,7 +107,7 @@ struct Cartesian_grid_location<GeomTraits, Cache_vertex_locations>
     for(std::size_t k=0; k<dims[2]; ++k)
       for(std::size_t j=0; j<dims[1]; ++j)
         for(std::size_t i=0; i<dims[0]; ++i)
-          m_points.emplace_back(span.min() + Vector_3(i * spacing[0], j * spacing[1], k * spacing[2]));
+          m_points.emplace_back((span.min)() + Vector_3(i * spacing[0], j * spacing[1], k * spacing[2]));
   }
 
   template <typename Grid>
