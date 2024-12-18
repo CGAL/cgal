@@ -167,33 +167,49 @@ private:
             return true;
         }
 
+        // AF: should that go in the traits class?
+        Point construct(const std::array<FT,dim>& coords) const
+        {
+          if constexpr (dim==2){ return Point(coords[0], coords[1]);}
+          else if constexpr (dim==3){ return Point(coords[0], coords[1], coords[2]);}
+          else { return Point(coords);}
+        }
+
         // AN: here we cannot really do anything wrong; if we return false, we continue searching;
         // if we return true, we return all points inside which is also fine as we check them later.
         bool outer_range_contains(const Kd_tree_rectangle<FT, D>& rect) const
         {
-            // check if rect[0 : dim/2] is contained in circle of start point AND
-            // check if rect[dim/2 : dim] is contained in circle of end point
-            for (size_t i = 0; i < 4; i += 2) {
-                // TODO: this is a manual test if a rectangle is contained in a
-                // circle. Does CGAL offer anything handy for that?
-                // AF: deal with dimension
-                const Point& point = p.ends[i/2];
-                for (auto x : {rect.min_coord(i), rect.max_coord(i)}) {
-                    for (auto y : {rect.min_coord(i + 1), rect.max_coord(i + 1)}) {
-                        Point corner(x,y,0);
-                        if (Compare_squared_distance()(corner, point,
-                                                       distance_sqr) == LARGER) {
-                            return false;
-                        }
-                    }
-                }
+            typename Point_d::Cartesian_const_iterator_d pb = p.cartesian_begin();
+            std::array<FT,dim> cornercoords;
+            {
+              const Point& point = p.ends[0];
+              for(size_t i = 0; i < dim; ++i, ++pb){
+                  cornercoords[i] = ((rect.min_coord(i) + rect.max_coord(i))/2 > *pb) ?
+                                      rect.max_coord(i) : rect.min_coord(i);
+              }
+              Point corner = construct(cornercoords);
+              if (Compare_squared_distance()(corner, point,
+                                             distance_sqr) == LARGER) {
+                return false;
+              }
+            }
+            {
+              const Point& point = p.ends[1];
+              for(size_t i = 0; i < dim; ++i, ++pb){
+                  cornercoords[i] = ((rect.min_coord(i+dim) + rect.max_coord(i+dim))/2 > *pb) ?
+                                      rect.max_coord(i+dim) : rect.min_coord(i+dim);
+              }
+              Point corner = construct(cornercoords);
+              if (Compare_squared_distance()(corner, point,
+                                             distance_sqr) == LARGER) {
+                return false;
+              }
             }
 
-            // rect[4:8] is contained in intersection rect (see notebook)
+            // rect[2*dim : 4*dim] is contained in intersection rect (see notebook)
             // TODO: this is a manual test if a rectangle is contained in
             // another rectangle. Does CGAL offer anything handy for that?
-            typename Point_d::BB::Cartesian_const_iterator pb = p.bbox.cartesian_begin();
-            for (std::size_t i = dim/2; i < dim; ++i, ++pb) {
+            for (std::size_t i = 2*dim; i < 4*dim; ++i, ++pb) {
                 if (*pb - distance > rect.min_coord(i) ||
                     *pb + distance < rect.max_coord(i)) {
                     return false;
