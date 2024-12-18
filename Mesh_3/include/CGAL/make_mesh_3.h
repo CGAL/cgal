@@ -669,12 +669,10 @@ void make_mesh_3_impl(C3T3& c3t3,
                       const parameters::internal::Odt_options& odt,
                       const parameters::internal::Lloyd_options& lloyd,
                       const bool with_features,
-                      const parameters::internal::Mesh_3_options&
-                        mesh_options = parameters::internal::Mesh_3_options(),
-                      const parameters::internal::Manifold_options&
-                        manifold_options = parameters::internal::Manifold_options(),
+                      const parameters::internal::Mesh_3_options& mesh_options = {},
+                      const parameters::internal::Manifold_options& manifold_options = {},
                       const parameters::internal::Initialization_options<MeshDomain, C3T3, InitPtsVec>&
-                        initialization_options = parameters::internal::Initialization_options<MeshDomain, C3T3, InitPtsVec>())
+                        initialization_options = {})
 {
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::get_default_random() = CGAL::Random(0);
