@@ -182,7 +182,7 @@ public:
 
     Cartesian_const_iterator cartesian_end() const
     {
-        return Cartesian_const_iterator(min_values.end(), this->max_values.begin(), this->max_values.end(),0);
+        return Cartesian_const_iterator(this->min_values.end(), this->max_values.begin(), this->max_values.end(),0);
     }
 };
 
