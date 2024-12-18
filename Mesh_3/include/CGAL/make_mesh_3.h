@@ -88,11 +88,11 @@ add_points_from_generator(C3T3& c3t3,
       }
     };
 
+  auto output_it = boost::make_function_output_iterator(push_initial_point);
   if (nb_initial_points > 0)
-    generator(boost::make_function_output_iterator(push_initial_point), nb_initial_points);
+    generator(output_it, nb_initial_points);
   else
-    generator(boost::make_function_output_iterator(push_initial_point));
-
+    generator(output_it);
 
   // Insert points and set their index and dimension
   for (const auto& [wpoint, dimension, index] : initial_points)

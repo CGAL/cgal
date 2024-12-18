@@ -196,8 +196,16 @@ struct Initialization_options
   using Initial_points_range
           = typename CGAL::Default::Get<InitialPointsRange, std::vector<Default_initial_point_type>>::type;
 
-  using Initial_points_const_iterator = typename Initial_points_range::const_iterator;
-  using Initial_point = typename std::iterator_traits<Initial_points_const_iterator>::value_type;
+  template <typename Range>
+  static auto cbegin(Range&& range) {
+    return std::cbegin(std::forward<Range>(range));
+  }
+
+  template <typename Range>
+  static auto cend(Range&& range) {
+    return std::cend(std::forward<Range>(range));
+  }
+  using Initial_points_const_iterator = decltype(cbegin(std::declval<Initial_points_range>()));
 
   Initialization_options()
   {}
@@ -205,8 +213,8 @@ struct Initialization_options
   Initialization_options(const Initial_points_generator& generator,
                          const Initial_points_range& initial_points)
     : initial_points_generator_(generator)
-    , begin_it(initial_points.begin())
-    , end_it(initial_points.end())
+    , begin_it(cbegin(initial_points))
+    , end_it(cend(initial_points))
   {}
 
   template<typename OutputIterator>
