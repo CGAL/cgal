@@ -15,7 +15,6 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <boost/property_map/property_map.hpp>
 
 #include <CGAL/Random.h>
 
@@ -32,9 +31,8 @@ template <typename PolygonMesh>
 std::size_t connected_components(PolygonMesh& mesh)
 {
   using face_descriptor = typename boost::graph_traits<PolygonMesh>::face_descriptor;
-  using FCCmap = typename PolygonMesh::template Property_map<face_descriptor, std::size_t>;
 
-  FCCmap fccmap = mesh.template add_property_map<face_descriptor, std::size_t>("f:CC").first;
+  auto fccmap = mesh.template add_property_map<face_descriptor, std::size_t>("f:CC").first;
 
   return CGAL::Polygon_mesh_processing::connected_components(mesh, fccmap);
 }
