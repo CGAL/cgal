@@ -15,8 +15,9 @@ a set of initial points on the surface of the domain.
 class InitialPointsGenerator {
 public:
 
-/// \name Types
+/// \name Types (exposition only)
 /// @{
+/// These types are used in the concept's description but are not part of the concept itself.
 
 /*!
 * Mesh domain type to be meshed, model of `MeshDomain_3`

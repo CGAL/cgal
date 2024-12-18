@@ -15,64 +15,24 @@
 #include <CGAL/Mesh_3/Detect_features_on_image_bbox.h>
 
 // Domain
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Labeled_mesh_domain_3<K> Image_domain;
-typedef CGAL::Mesh_domain_with_polyline_features_3<Image_domain> Mesh_domain;
+using K = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Image_domain = CGAL::Labeled_mesh_domain_3<K>;
+using Mesh_domain = CGAL::Mesh_domain_with_polyline_features_3<Image_domain>;
 
 #ifdef CGAL_CONCURRENT_MESH_3
-typedef CGAL::Parallel_tag Concurrency_tag;
+using Concurrency_tag = CGAL::Parallel_tag;
 #else
-typedef CGAL::Sequential_tag Concurrency_tag;
+using Concurrency_tag = CGAL::Sequential_tag;
 #endif
 
 // Triangulation
-typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
-
-typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
+using Tr = CGAL::Mesh_triangulation_3<Mesh_domain, CGAL::Default, Concurrency_tag>::type;
+using C3t3 = CGAL::Mesh_complex_3_in_triangulation_3<Tr>;
 
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
+using Mesh_criteria = CGAL::Mesh_criteria_3<Tr>;
 
 namespace params = CGAL::parameters;
-
-// Custom_initial_points_generator will put points on the mesh for initialisation.
-// Those points are objects of type std::tuple<Weighted_point_3, int, Index>.
-//   Weighted_point_3 is the point's position and weight,
-//   int is the dimension of the minimal dimension subcomplex on which the point lies,
-//   Index is the underlying subcomplex index.
-
-struct Custom_initial_points_generator
-{
-  const CGAL::Image_3& image_;
-
-  template <typename OutputIterator>
-  OutputIterator operator()(OutputIterator pts, int) const
-  {
-    typedef Tr::Geom_traits     Gt;
-    typedef Gt::Point_3         Point_3;
-    typedef Gt::Vector_3        Vector_3;
-    typedef Gt::Segment_3       Segment_3;
-    typedef Mesh_domain::Index  Index;
-
-    Gt::Construct_weighted_point_3 cwp = Gt().construct_weighted_point_3_object();
-
-    // Add points along the segment
-    Segment_3 segment(Point_3(  0.0, 50.0, 66.66),
-                      Point_3(100.0, 50.0, 66.66));
-
-    Point_3 source = segment.source();
-    Vector_3 vector = segment.to_vector();
-    double edge_size = 5;
-    std::size_t nb = static_cast<int>(CGAL::sqrt(segment.squared_length()) / edge_size);
-    const double frac = 1. / (double)nb;
-
-    for (std::size_t i = 1; i < nb; i++)
-    {
-      *pts++ = std::make_tuple( cwp(source + (i * frac) * vector), 1, Index(1) );
-    }
-    return pts;
-  }
-};
 
 int main()
 {
@@ -89,12 +49,41 @@ int main()
       , params::features_detector(CGAL::Mesh_3::Detect_features_on_image_bbox()));
 
   // Mesh criteria
-  Mesh_criteria criteria(params::facet_angle(30).facet_size(3).facet_distance(1).edge_size(3)
+  const double edge_size = 3;
+  Mesh_criteria criteria(params::edge_size(edge_size)
+                         .facet_angle(30).facet_size(3).facet_distance(1)
                          .cell_radius_edge_ratio(3).cell_size(3));
 
+  // custom_initial_points_generator will put points on the mesh for initialisation.
+  // Those points are objects of type std::tuple<Weighted_point_3, int, Index>.
+  //   Weighted_point_3 is the point's position and weight,
+  //   int is the dimension of the minimal dimension subcomplex on which the point lies,
+  //   Index is the underlying subcomplex index.
+  auto custom_initial_points_generator = [&](auto pts_out_iterator, int) {
+    using Point_3 = K::Point_3;
+    using Weighted_point_3 = K::Weighted_point_3;
+    using Index = Mesh_domain::Index;
+    using Point_dim_index = std::tuple<Weighted_point_3, int, Index>;
+
+    Point_3 a{0.0, 50.0, 66.66};
+    Point_3 b{100.0, 50.0, 66.66};
+
+    // Add points along the segment [a, b]
+    double dist_ab = CGAL::sqrt(CGAL::squared_distance(a, b));
+    int nb = static_cast<int>(std::floor(dist_ab / edge_size));
+    auto vector = (b - a) / static_cast<double>(nb);
+
+    Point_3 p = a;
+    for(int i = 0; i < nb; ++i) {
+      *pts_out_iterator++ = Point_dim_index{Weighted_point_3{p}, 1, Index(1)};
+      p += vector;
+    }
+    return pts_out_iterator;
+  };
+
   /// [Meshing]
-  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria
-    , params::initial_points_generator(Custom_initial_points_generator{ image }));
+  C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
+      params::initial_points_generator(custom_initial_points_generator));
   /// [Meshing]
 
   // Output
