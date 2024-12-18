@@ -93,6 +93,25 @@ public:
     return tmp;
   }
 
+  Self operator+(std::size_t offset) const
+  {
+    // todo: make this a O(1) time operation
+    Self res(*this);
+    for(int i=0;i<offset;++i){
+      ++res;
+    }
+    return res;
+  }
+
+  std::size_t operator-(Self other) const
+  {
+    // todo: make this a O(1) time operation
+    std::size_t res = 0;
+    while(other != *this){
+      ++res;
+    }
+    return res;
+  }
 
   reference  operator*()  const
   {
