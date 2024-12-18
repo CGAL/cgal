@@ -23,14 +23,6 @@
 
 namespace CGAL {
 
-// Helper trait to check for the presence of nested Is_on_x_identification_2
-template <typename, typename = std::void_t<>>
-struct has_is_on_x_identification_2 : std::false_type {};
-
-// Specialization if the nested type Is_on_x_identification_2 exists
-template <typename T>
-struct has_is_on_x_identification_2<T, std::void_t<typename T::Is_on_x_identification_2>> : std::true_type {};
-
 /*! locates the arrangement feature containing the given point.
  */
 template <typename Arr, typename Gen>
