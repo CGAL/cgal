@@ -90,8 +90,8 @@ struct Polyhedron_tester : public Tester<K>
     Non_copyable_range_view initial_points_view{ initial_points };
     c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria, CGAL::parameters::initial_points(initial_points_view));
 
-    // test initial_points_generator with a generator generating tuple-like object
-    auto initial_points_generator = [](auto oit, const int) {
+    // test initial_points_generator with a non-const generator generating tuple-like object
+    auto initial_points_generator = [](auto oit, const int) mutable {
       *oit++ = Initial_point{ Weighted_point(.5, .5, .5), 3, Index{} };
       return oit;
     };

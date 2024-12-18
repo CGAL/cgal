@@ -26,6 +26,7 @@
 #include <CGAL/STL_Extension/internal/Has_features.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/type_traits.h>
+#include <CGAL/Mesh_3/internal/tuple_like_helpers.h>
 
 #include <boost/mpl/has_xxx.hpp>
 #include <type_traits>
@@ -40,17 +41,33 @@ namespace CGAL {
 namespace Mesh_3 {
 namespace internal {
 
-template <typename, typename = void>
-constexpr bool has_tuple_size_v = false;
+template <typename C3T3, typename PointDimIndex>
+struct Push_to_initial_point {
+  // This struct cannot be a lambda-expression before C++20, because we need it to be copyable/assignable.
+  std::vector<PointDimIndex>* points_vector_ptr;
+  C3T3* c3t3_ptr;
 
-template <typename T>
-constexpr bool has_tuple_size_v<T, std::void_t<decltype(std::tuple_size<const T>::value)>> = true;
+  Push_to_initial_point(std::vector<PointDimIndex>* points_vector_ptr, C3T3* c3t3_ptr)
+    : points_vector_ptr(points_vector_ptr)
+    , c3t3_ptr(c3t3_ptr)
+  {}
 
-template <typename T, bool = has_tuple_size_v<T>>
-constexpr bool tuple_like_of_size_2 = false;
-
-template <typename T>
-constexpr bool tuple_like_of_size_2<T, true> = (std::tuple_size_v<T> == 2);
+  template <typename Initial_point_and_info>
+  void operator()(const Initial_point_and_info& initial_pt) const {
+    using T = CGAL::cpp20::remove_cvref_t<decltype(initial_pt)>;
+    if constexpr (tuple_like_of_size_2<T>)
+    {
+      const auto& [pt, index] = initial_pt;
+      const auto& cwp = c3t3_ptr->triangulation().geom_traits().construct_weighted_point_3_object();
+      points_vector_ptr->push_back(PointDimIndex{cwp(pt), 2, index});
+    }
+    else
+    {
+      const auto& [weighted_pt, dim, index] = initial_pt;
+      points_vector_ptr->push_back(PointDimIndex{weighted_pt, dim, index});
+    }
+  };
+};
 
 template < typename C3T3, typename MeshDomain, typename InitialPointsGenerator >
 void
@@ -70,24 +87,9 @@ add_points_from_generator(C3T3& c3t3,
     typename MeshDomain::Index m_index;
   };
 
-  const auto& cwp = c3t3.triangulation().geom_traits().construct_weighted_point_3_object();
 
   std::vector<PointDimIndex> initial_points;
-  auto push_initial_point = [&](const auto& initial_pt)->void
-    {
-      using T = CGAL::cpp20::remove_cvref_t<decltype(initial_pt)>;
-      if constexpr (tuple_like_of_size_2<T>)
-      {
-        const auto& [pt, index] = initial_pt;
-        initial_points.push_back(PointDimIndex{cwp(pt), 2, index});
-      }
-      else
-      {
-        const auto& [weighted_pt, dim, index] = initial_pt;
-        initial_points.push_back(PointDimIndex{weighted_pt, dim, index});
-      }
-    };
-
+  Push_to_initial_point<C3T3, PointDimIndex> push_initial_point{&initial_points, &c3t3};
   auto output_it = boost::make_function_output_iterator(push_initial_point);
   if (nb_initial_points > 0)
     generator(output_it, nb_initial_points);
@@ -621,7 +623,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria, const C
     auto default_generator = domain.construct_initial_points_object();
     Initial_points_generator initial_points_generator = choose_parameter(get_parameter(np, internal_np::initial_points_generator_param),
                                                                          default_generator);
-    const parameters::internal::Initialization_options<MeshDomain, C3T3, Initial_points_generator, Initial_points_range>
+    const parameters::internal::Initialization_options<MeshDomain, C3T3, Initial_points_range>
       initial_points_gen_param(initial_points_generator, initial_points);
 
     C3T3 c3t3;
@@ -658,7 +660,7 @@ C3T3 make_mesh_3(const MeshDomain& domain, const MeshCriteria& criteria,
  *
  * @return The mesh as a C3T3 object
  */
-template<class C3T3, class MeshDomain, class MeshCriteria, class InitPtsGenerator, class InitPtsVec>
+template<class C3T3, class MeshDomain, class MeshCriteria, class InitPtsVec>
 void make_mesh_3_impl(C3T3& c3t3,
                       const MeshDomain&   domain,
                       const MeshCriteria& criteria,
@@ -671,8 +673,8 @@ void make_mesh_3_impl(C3T3& c3t3,
                         mesh_options = parameters::internal::Mesh_3_options(),
                       const parameters::internal::Manifold_options&
                         manifold_options = parameters::internal::Manifold_options(),
-                      const parameters::internal::Initialization_options<MeshDomain, C3T3, InitPtsGenerator, InitPtsVec>&
-                        initialization_options = parameters::internal::Initialization_options<MeshDomain, C3T3, InitPtsGenerator, InitPtsVec>())
+                      const parameters::internal::Initialization_options<MeshDomain, C3T3, InitPtsVec>&
+                        initialization_options = parameters::internal::Initialization_options<MeshDomain, C3T3, InitPtsVec>())
 {
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
   CGAL::get_default_random() = CGAL::Random(0);
