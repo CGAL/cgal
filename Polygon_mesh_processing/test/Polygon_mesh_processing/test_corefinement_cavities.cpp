@@ -43,6 +43,9 @@ void test_operations(Mesh A, Mesh B,
                      std::string round,
                      std::size_t union_v, std::size_t inter_v, std::size_t diff1_v, std::size_t diff2_v)
 {
+#ifndef VERBOSE
+  CGAL_USE(round);
+#endif
   if (reverse_A) PMP::reverse_face_orientations(A);
   if (reverse_B) PMP::reverse_face_orientations(B);
 
