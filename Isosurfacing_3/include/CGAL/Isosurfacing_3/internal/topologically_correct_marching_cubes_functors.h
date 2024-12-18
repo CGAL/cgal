@@ -142,9 +142,9 @@ public:
               const bool constrain_to_cell = true)
     : m_domain(domain),
       m_isovalue(isovalue),
-      m_point_counter(0),
       m_isovalue_nudging(isovalue_nudging),
-      m_constrain_to_cell(constrain_to_cell)
+      m_constrain_to_cell(constrain_to_cell),
+      m_point_counter(0)
   { }
 
   void operator()(const cell_descriptor& cell) {
@@ -313,7 +313,7 @@ private:
     d = b * b - FT(4) * a * c;
   }
 
-  bool calc_coordinates(const std::array<FT, 8>& values, const std::size_t idx, const FT i0, const FT a, const FT b, const FT c, const FT d, const std::vector<bool> &f_flag, unsigned char &q_sol, FT ui[2], FT vi[2], FT wi[2]) {
+  bool calc_coordinates(const std::array<FT, 8>& values, const std::size_t idx, const FT i0, const FT a, const FT b, const FT d, const std::vector<bool> &f_flag, unsigned char &q_sol, FT ui[2], FT vi[2], FT wi[2]) {
     const int* remap = internal::Cube_table::asymptotic_remap[idx];
 
     if (values[remap[0]] == values[remap[2]] && values[remap[1]] == values[remap[3]])
@@ -348,10 +348,6 @@ private:
 
     if (((remap[8] & 0b0011) != 0b0000) || ((remap[9] & 0b0011) != 0b0001) || ((remap[10] & 0b0011) != 0b0010)) {
       FT tmp[3][2] = { { ui[0], ui[1] }, { vi[0], vi[1] }, { wi[0], wi[1] } };
-
-      int uidx = remap[8] & 0b0011;
-      int vidx = remap[9] & 0b0011;
-      int widx = remap[10] & 0b0011;
 
       ui[0] = tmp[remap[8] & 0b0011][0];
       ui[1] = tmp[remap[8] & 0b0011][1];
@@ -871,7 +867,7 @@ private:
       if (a == 0 || d < 0)
         continue;
 
-      if (!calc_coordinates(values, idx, i0, a, b, c, d, f_flag, q_sol, ui, vi, wi))
+      if (!calc_coordinates(values, idx, i0, a, b, d, f_flag, q_sol, ui, vi, wi))
         continue;
 
       if (!std::isfinite(CGAL::to_double(ui[0])) || !std::isfinite(CGAL::to_double(ui[1])))
