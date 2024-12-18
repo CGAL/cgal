@@ -278,7 +278,7 @@ public:
 #endif
 
 #define CGAL_Kernel_cons(C, Cf) \
-  typedef typename Select_wrapper<typename Approximate_kernel::C>::template apply<Kernel, typename Approximate_kernel::C, typename Exact_kernel::C>::type C; \
+  typedef Lazy_construction<Kernel, typename Approximate_kernel::C, typename Exact_kernel::C> C; \
   C Cf() const { return C(); }
 
 #include <CGAL/Kernel/interface_macros.h>
@@ -304,13 +304,16 @@ public:
 
   typedef CommonKernelFunctors::Assign_2<Kernel>        Assign_2;
   typedef CommonKernelFunctors::Assign_3<Kernel>        Assign_3;
-  typedef Lazy_construction_bbox<Kernel, typename Approximate_kernel::Construct_bbox_2, typename Exact_kernel::Construct_bbox_2>             Construct_bbox_2;
-  typedef Lazy_construction_bbox<Kernel, typename Approximate_kernel::Construct_bbox_3, typename Exact_kernel::Construct_bbox_3>             Construct_bbox_3;
   typedef Lazy_cartesian_const_iterator_2<Kernel, typename Approximate_kernel::Construct_cartesian_const_iterator_2, typename Exact_kernel::Construct_cartesian_const_iterator_2>   Construct_cartesian_const_iterator_2;
   typedef Lazy_cartesian_const_iterator_3<Kernel, typename Approximate_kernel::Construct_cartesian_const_iterator_3, typename Exact_kernel::Construct_cartesian_const_iterator_3>   Construct_cartesian_const_iterator_3;
 
   typedef CGAL::CartesianKernelFunctors::Compute_approximate_squared_length_3<Kernel>  Compute_approximate_squared_length_3;
   typedef CGAL::CartesianKernelFunctors::Compute_approximate_area_3<Kernel>  Compute_approximate_area_3;
+
+  typedef CGAL::Lazy_construction_optional_for_polyhedral_envelope<
+            Kernel,
+            typename Approximate_kernel::Intersect_point_3_for_polyhedral_envelope,
+            typename Exact_kernel::Intersect_point_3_for_polyhedral_envelope> Intersect_point_3_for_polyhedral_envelope;
 
   // typedef void Compute_z_3; // to detect where .z() is called
   // typedef void Construct_point_3; // to detect where the ctor is called
@@ -589,14 +592,6 @@ public:
   assign_3_object() const
   { return Assign_3(); }
 
-  Construct_bbox_2
-  construct_bbox_2_object() const
-  { return Construct_bbox_2(); }
-
-  Construct_bbox_3
-  construct_bbox_3_object() const
-  { return Construct_bbox_3(); }
-
   Construct_cartesian_const_iterator_2
   construct_cartesian_const_iterator_2_object() const
   { return Construct_cartesian_const_iterator_2(); }
@@ -612,6 +607,10 @@ public:
   Compute_approximate_area_3
   compute_approximate_area_3_object() const
   { return Compute_approximate_area_3(); }
+
+  Intersect_point_3_for_polyhedral_envelope
+  intersect_point_3_for_polyhedral_envelope_object() const
+  { return Intersect_point_3_for_polyhedral_envelope(); }
 
   Less_xyz_3
   less_xyz_3_object() const

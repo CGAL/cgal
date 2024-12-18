@@ -1333,8 +1333,6 @@ CGAL_Kernel_obj(Point_3)
 
 //____________________________________________________________
 // The magic functor that has Lazy<Something> as result type.
-// Two versions are distinguished: one that needs to fiddle
-// with decltype and another that can forward the result types.
 
 namespace internal {
 BOOST_MPL_HAS_XXX_TRAIT_DEF(result_type)
@@ -1436,142 +1434,24 @@ struct Fill_lazy_variant_visitor_0 : boost::static_visitor<> {
 
 } // internal
 
-template <typename LK, typename AC, typename EC>
-struct Lazy_construction_variant {
-  static const bool Protection = true;
-
-  typedef typename LK::Approximate_kernel AK;
-  typedef typename LK::Exact_kernel EK;
-  typedef typename LK::E2A E2A;
-
-
-  template<typename>
-  struct result {
-    // this does not default, if you want to make a lazy lazy-kernel,
-    // you are on your own
-  };
-
-  template <typename F, class... T>
-  struct result<F(T...)>
-  {
-    typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<T,LK,AK>::type>()...)),AK,LK>::type type;
-  };
-
-  template <class... L>
-  decltype(auto)
-  operator()(const L&... l) const
-  {
-    typedef typename result<Lazy_construction_variant(L...)>::type result_type;
-
-
-    // typedef decltype(std::declval<AC>()(std::declval<typename Type_mapper<L1, LK, AK>::type>(),
-    //                                     std::declval<typename Type_mapper<L2, LK, AK>::type>())) AT;
-    // typedef decltype(std::declval<EC>()(std::declval<typename Type_mapper<L1, LK, EK>::type>(),
-    //                                     std::declval<typename Type_mapper<L2, LK, EK>::type>())) ET;
-
-    typedef decltype(std::declval<AC const&>()(CGAL::approx(l)...)) AT;
-    typedef decltype(std::declval<EC const&>()( CGAL::exact(l)...)) ET;
-
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> P;
-
-      try {
-        Lazy<AT, ET, E2A> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, false, L...>(AC(), EC(), l...));
-
-        // the approximate result requires the trait with types from the AK
-        AT approx_v = lazy.approx();
-        // the result we build
-        result_type res;
-
-        if(!approx_v) {
-          // empty
-          return res;
-        }
-
-        // the static visitor fills the result_type with the correct unwrapped type
-        internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
-        boost::apply_visitor(visitor, *approx_v);
-
-        return res;
-      } catch (Uncertain_conversion_exception&) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    ET exact_v = EC()(CGAL::exact(l)...);
-    result_type res;
-
-    if(!exact_v) {
-      return res;
-    }
-
-    internal::Fill_lazy_variant_visitor_0<result_type, AK, LK, EK> visitor(res);
-    boost::apply_visitor(visitor, *exact_v);
-    return res;
-  }
+template<class AK, class AC>
+struct Disable_lazy_pruning
+{
+  static const bool value = false;
+};
+template<class AK>
+struct Disable_lazy_pruning<AK, typename AK::Construct_weighted_point_2>
+{
+  static const bool value = true;
+};
+template<class AK>
+struct Disable_lazy_pruning<AK, typename AK::Construct_weighted_point_3>
+{
+  static const bool value = true;
 };
 
-template<typename LK, typename AC, typename EC, typename E2A = Default,
-         bool has_result_type = internal::has_result_type<AC>::value && internal::has_result_type<EC>::value >
-struct Lazy_construction;
-
-template<class AK, class AC> struct Disable_lazy_pruning { static const bool value = false; };
-template<class AK> struct Disable_lazy_pruning<AK, typename AK::Construct_weighted_point_2> { static const bool value = true; };
-template<class AK> struct Disable_lazy_pruning<AK, typename AK::Construct_weighted_point_3> { static const bool value = true; };
-
-// we have a result type, low effort
-template<typename LK, typename AC, typename EC, typename E2A_>
-struct Lazy_construction<LK, AC, EC, E2A_, true> {
-  static const bool Protection = true;
-
-  typedef typename LK::Approximate_kernel AK;
-  typedef typename LK::Exact_kernel EK;
-  typedef typename boost::remove_cv<
-    typename boost::remove_reference < typename AC::result_type >::type >::type AT;
-  typedef typename boost::remove_cv<
-    typename boost::remove_reference < typename EC::result_type >::type >::type ET;
-
-  typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
-
-  typedef typename Type_mapper<AT, AK, LK>::type result_type;
-
-  static const bool noprune = Disable_lazy_pruning<AK, AC>::value;
-
-  CGAL_NO_UNIQUE_ADDRESS AC ac;
-  CGAL_NO_UNIQUE_ADDRESS EC ec;
-
-  template <class... L>
-  decltype(auto)
-  operator()(const L&... l) const {
-    typedef Lazy < AT, ET, E2A > Handle;
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      Protect_FPU_rounding<Protection> P;
-      try {
-        return result_type(Handle(new Lazy_rep_n< AT, ET, AC, EC, E2A, noprune, L...>(ac, ec, l...)));
-      } catch (Uncertain_conversion_exception&) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    return result_type(Handle(new Lazy_rep_0< AT, ET, E2A >(ec(CGAL::exact(l)...))));
-  }
-
-
-  // nullary
-  decltype(auto)
-  operator()() const
-  {
-    typedef Lazy<AT, ET, E2A> Handle;
-    return result_type( Handle() );
-  }
-
-};
-
-
-template <typename LK, typename AC, typename EC, typename E2A_>
-struct Lazy_construction<LK, AC, EC, E2A_, false>
+template <typename LK, typename AC, typename EC, typename E2A_ = Default>
+struct Lazy_construction
 {
   static const bool Protection = true;
 
@@ -1579,41 +1459,194 @@ struct Lazy_construction<LK, AC, EC, E2A_, false>
   typedef typename LK::Exact_kernel EK;
   typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
 
+  CGAL_NO_UNIQUE_ADDRESS AC ac;
+  CGAL_NO_UNIQUE_ADDRESS EC ec;
+
+  // to detect the return type of Intersection_[23]'s functors
+  template <typename T>
+  struct is_optional_variant : std::false_type { };
+
+  template <typename ...Args>
+  struct is_optional_variant<boost::optional<boost::variant<Args...> > > : std::true_type { };
+
   template<typename>
   struct result {
     // this does not default, if you want to make a lazy lazy-kernel,
     // you are on your own
   };
 
-  static const bool noprune = Disable_lazy_pruning<AK, AC>::value;
-
-  CGAL_NO_UNIQUE_ADDRESS AC ac;
-  CGAL_NO_UNIQUE_ADDRESS EC ec;
-
   template <typename F, class... T>
   struct result<F(T...)>
   {
+    // @todo why the Type_mapper, just for a std::decay?
     typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<T,LK,AK>::type>()...)),AK,LK>::type type;
   };
 
   template <class... L>
   decltype(auto)
   operator()(const L&... l) const {
+    // @todo why the Type_mapper, just for a std::decay?
     typedef typename Type_mapper<decltype(std::declval<EC>()(std::declval<typename Type_mapper<L, LK, EK>::type>()...)),EK,EK>::type ET;
     typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<L, LK, AK>::type>()...)),AK,AK>::type AT;
     typedef Lazy<AT, ET, E2A> Handle;
-    typedef typename result<Lazy_construction(L...)>::type result_type;
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+
+    // ----------------------- FT -----------------------
+    if constexpr (std::is_same_v<AT, typename AK::FT>)
     {
-      Protect_FPU_rounding<Protection> P;
-      try {
-        return result_type(Handle(new Lazy_rep_n<AT, ET, AC, EC, E2A, noprune, L...> (ac, ec, l...)));
-      } catch (Uncertain_conversion_exception&) {}
+      typedef Lazy_exact_nt<std::remove_cv_t<std::remove_reference_t<decltype(ec(CGAL::exact(l)...))>>> result_type;
+
+      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      {
+        Protect_FPU_rounding<Protection> P;
+        try {
+          return result_type(new Lazy_rep_n<AT, ET, AC, EC, To_interval<ET>, false, L... >(ac, ec, l...));
+        } catch (Uncertain_conversion_exception&) {}
+      }
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+      return result_type(new Lazy_rep_0<AT,ET,To_interval<ET> >(ec( CGAL::exact(l)... )));
     }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    return result_type(Handle(new Lazy_rep_0<AT, ET, E2A> (ec(CGAL::exact(l)...))));
+    // ----------------------- Bounding boxes -----------------------
+    else if constexpr (std::disjunction_v<std::is_same<AT, CGAL::Bbox_2>,
+                                          std::is_same<AT, CGAL::Bbox_3> >)
+    {
+      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      {
+        // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
+        Protect_FPU_rounding<Protection> P;
+        try {
+          return ac(CGAL::approx(l...));
+        } catch (Uncertain_conversion_exception&) {}
+      }
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+      return ec(CGAL::exact(l...));
+    }
+    // ----------------------- CGAL::Object -----------------------
+    else if constexpr (std::is_same_v<AT, CGAL::Object>)
+    {
+      typedef CGAL::Object result_type;
+      typedef Lazy<Object, Object, E2A> Lazy_object;
+
+      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      {
+        Protect_FPU_rounding<Protection> P;
+        try {
+          Lazy_object lo(new Lazy_rep_n<result_type, result_type, AC, EC, E2A, false, L...>(ac, ec, l...));
+
+          if(lo.approx().is_empty())
+            return Object();
+
+#         define CGAL_Kernel_obj(X) \
+          if (object_cast<typename AK::X>(& (lo.approx()))) { \
+            typedef Lazy_rep_n< typename AK::X, typename EK::X, Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, false, Lazy_object> Lcr; \
+            Lcr * lcr = new Lcr(Object_cast<typename AK::X>(), Object_cast<typename EK::X>(), lo); \
+            return make_object(typename LK::X(lcr)); \
+          }
+
+#         include <CGAL/Kernel/interface_macros.h>
+
+          // We now check vector<X>
+#         define CGAL_Kernel_obj(X) \
+          { \
+            const std::vector<typename AK::X>* v_ptr; \
+            if ( (v_ptr = object_cast<std::vector<typename AK::X> >(& (lo.approx()))) ) { \
+              std::vector<typename LK::X> V; \
+              V.resize(v_ptr->size()); \
+              for (unsigned int i = 0; i < v_ptr->size(); i++) { \
+                V[i] = typename LK::X(new Lazy_rep_n<typename AK::X, typename EK::X, Ith_for_intersection<typename AK::X>, \
+                                                    Ith_for_intersection<typename EK::X>, E2A, false, Lazy_object> \
+                                      (Ith_for_intersection<typename AK::X>(i), Ith_for_intersection<typename EK::X>(i), lo)); \
+              } \
+              return make_object(V); \
+            }\
+          }
+
+          CGAL_Kernel_obj(Point_2)
+          CGAL_Kernel_obj(Point_3)
+#         undef CGAL_Kernel_obj
+
+          std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
+          std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
+
+          return Object();
+        } catch (Uncertain_conversion_exception&) {}
+      }
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+      ET eto = ec(CGAL::exact(l)...);
+      return make_lazy<LK>(eto);
+    }
+    // boost::optional<boost::variant< > > (Intersection_23 result types)
+    else if constexpr (is_optional_variant<AT>::value)
+    {
+      typedef typename result<Lazy_construction(L...)>::type result_type;
+
+      // typedef decltype(std::declval<AC>()(std::declval<typename Type_mapper<L1, LK, AK>::type>(),
+      //                                     std::declval<typename Type_mapper<L2, LK, AK>::type>())) AT;
+      // typedef decltype(std::declval<EC>()(std::declval<typename Type_mapper<L1, LK, EK>::type>(),
+      //                                     std::declval<typename Type_mapper<L2, LK, EK>::type>())) ET;
+
+      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      {
+        Protect_FPU_rounding<Protection> P;
+
+        try {
+          Lazy<AT, ET, E2A> lazy(new Lazy_rep_n<AT, ET, AC, EC, E2A, false, L...>(AC(), EC(), l...));
+
+          // the approximate result requires the trait with types from the AK
+          AT approx_v = lazy.approx();
+          // the result we build
+          result_type res;
+
+          if(!approx_v) {
+            // empty
+            return res;
+          }
+
+          // the static visitor fills the result_type with the correct unwrapped type
+          internal::Fill_lazy_variant_visitor_2< result_type, AK, LK, EK, Lazy<AT, ET, E2A> > visitor(res, lazy);
+          boost::apply_visitor(visitor, *approx_v);
+
+          return res;
+        } catch (Uncertain_conversion_exception&) {}
+      }
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+      ET exact_v = EC()(CGAL::exact(l)...);
+      result_type res;
+
+      if(!exact_v) {
+        return res;
+      }
+
+      internal::Fill_lazy_variant_visitor_0<result_type, AK, LK, EK> visitor(res);
+      boost::apply_visitor(visitor, *exact_v);
+      return res;
+    }
+    // ----------------------- GENERIC -----------------------
+    else
+    {
+      typedef typename result<Lazy_construction(L...)>::type result_type;
+
+      static const bool noprune = Disable_lazy_pruning<AK, AC>::value;
+
+      CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+      {
+        Protect_FPU_rounding<Protection> P;
+        try {
+          return result_type(Handle(new Lazy_rep_n<AT, ET, AC, EC, E2A, noprune, L...>(ac, ec, l...)));
+        } catch (Uncertain_conversion_exception&) {}
+      }
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
+      return result_type(Handle(new Lazy_rep_0<AT, ET, E2A> (ec(CGAL::exact(l)...))));
+    }
   }
 
   // nullary
