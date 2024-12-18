@@ -39,60 +39,13 @@
 
 namespace CGAL {
 
-namespace internal {
-
-// SFINAE way to detect result_type typedefs.
-template<typename T>
-class Has_result_type_helper
-{
-  typedef char one;
-  typedef struct { char arr[2]; } two;
-
-  template<typename _Up>
-  struct Wrapper {};
-
-  template<typename U>
-  static one test(Wrapper<typename U::result_type>*);
-
-  template<typename U>
-  static two test(...);
-
-public:
-  static const bool value = sizeof(test<T>(0)) == 1;
-};
-
-template<typename T>
-struct Has_result_type
-  : boost::integral_constant< bool,
-                              Has_result_type_helper< typename boost::remove_cv<T>::type>::value>
-{};
-
-template <typename T>
-struct Get_result_type {
-  typedef typename T::result_type type;
-};
-
-template <typename T>
-struct Lazy_result_type
-  : boost::mpl::eval_if< Has_result_type<T>,
-                         Get_result_type<T>,
-                         boost::mpl::identity<void> >
-{};
-
-class Enum_holder {
-protected:
-  enum { NONE, NT, VARIANT, OBJECT, BBOX, OPTIONAL_ };
-};
-
-} // internal
-
 // Exact_kernel = exact kernel that will be made lazy
 // Kernel = lazy kernel
 
 // the Generic base simply applies the generic magic functor stupidly.
 // then the real base fixes up a few special cases.
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
-class Lazy_kernel_generic_base : protected internal::Enum_holder
+class Lazy_kernel_generic_base
   // : public Filtered_kernel_base<EK_>
     // TODO : Static_filters_base too ?  Check performance
 {
@@ -170,103 +123,7 @@ public:
   typedef CGAL::Aff_transformationC2<Kernel>              Aff_transformation_2;
   typedef CGAL::Aff_transformationC3<Kernel>              Aff_transformation_3;
 
-private:
-  // We use a combination of partial and logic to extract the right
-  // construction. Constructions without a result_type always have to
-  // be done through specializations.
-  //
-  // The case distinction goes as follows:
-  // result_type == FT                              => NT
-  // result_type == Object                          => Object
-  // result_type == boost::optional                 => OPTIONAL_    Only for Intersect_point_3_for_polyhedral_envelope which returns a handle for a singleton
-  // result_type == Bbox_2 || result_type == Bbox_3 => BBOX
-  // default                                        => NONE
-  // no result_type                                 => NONE
-  //
-  //
-  // we require a Dummy because we cannot have complete
-  // specializations inside a non-namespace scope.
-  // The default implementation does some default handling,
-  // the special cases are filtered by partial specializations.
-  template <typename Construction, typename Dummy = boost::none_t>
-  struct Lazy_wrapper_traits :
-    boost::mpl::eval_if< internal::Has_result_type<Construction>,
-                         boost::mpl::eval_if< std::is_same< typename boost::remove_cv<
-                                                            typename boost::remove_reference<
-                                                              typename internal::Lazy_result_type<Construction>::type
-                                                                  >::type >::type,
-                                                            typename Approximate_kernel::FT>,
-                                              boost::mpl::int_<NT>,
-                                              boost::mpl::eval_if< std::is_same< typename internal::Lazy_result_type<Construction>::type,
-                                                                                   CGAL::Object >,
-                                                                   boost::mpl::int_<OBJECT>,
-                                                                   boost::mpl::eval_if< boost::mpl::or_<
-                                                                                          std::is_same< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_2 >,
-                                                                                          std::is_same< typename internal::Lazy_result_type<Construction>::type, CGAL::Bbox_3 > >,
-                                                                                        boost::mpl::int_<BBOX>,
-                                                                                        boost::mpl::int_<NONE> > > >,
-                         boost::mpl::int_<NONE> >::type {};
-
-#define CGAL_WRAPPER_TRAIT(NAME, WRAPPER)                               \
-  template<typename Dummy>                                              \
-  struct Lazy_wrapper_traits<typename Approximate_kernel::NAME, Dummy>  \
-    : boost::mpl::int_<WRAPPER> {};
-
-  CGAL_WRAPPER_TRAIT(Intersect_2, VARIANT)
-  CGAL_WRAPPER_TRAIT(Intersect_3, VARIANT)
-  CGAL_WRAPPER_TRAIT(Intersect_point_3_for_polyhedral_envelope, OPTIONAL_)
-  CGAL_WRAPPER_TRAIT(Compute_squared_radius_2, NT)
-  CGAL_WRAPPER_TRAIT(Compute_x_3, NT)
-  CGAL_WRAPPER_TRAIT(Compute_y_3, NT)
-  CGAL_WRAPPER_TRAIT(Compute_z_3, NT)
-
-#undef CGAL_WRAPPER_TRAIT
-
-  template <typename Construction, int Type = Lazy_wrapper_traits<Construction>::value>
-  struct Select_wrapper_impl;
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, NONE> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, NT> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_nt<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, VARIANT> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_variant<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, OBJECT> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_object<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, BBOX> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_bbox<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper_impl<Construction, OPTIONAL_> {
-    template<typename Kernel, typename AKC, typename EKC>
-    struct apply { typedef Lazy_construction_optional_for_polyhedral_envelope<Kernel, AKC, EKC> type; };
-  };
-
-  template <typename Construction>
-  struct Select_wrapper : Select_wrapper_impl<Construction> {};
-
 public:
-
-
 #ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
 #define CGAL_Kernel_pred(P, Pf)                                         \
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
@@ -283,10 +140,6 @@ public:
 
 #include <CGAL/Kernel/interface_macros.h>
 };
-
-
-
-
 
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
 class Lazy_kernel_base

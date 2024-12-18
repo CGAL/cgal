@@ -970,39 +970,6 @@ public :
   Self_rep * ptr() const { return (Self_rep*) PTR; }
 };
 
-// The magic functor for Construct_bbox_[2,3], as there is no Lazy<Bbox>
-
-template <typename LK, typename AC, typename EC>
-struct Lazy_construction_bbox
-{
-  static const bool Protection = true;
-  typedef typename LK::Approximate_kernel AK;
-  typedef typename LK::Exact_kernel EK;
-  typedef typename AC::result_type result_type;
-
-  CGAL_NO_UNIQUE_ADDRESS AC ac;
-  CGAL_NO_UNIQUE_ADDRESS EC ec;
-
-  template <typename L1>
-  decltype(auto)
-  operator()(const L1& l1) const
-  {
-    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
-    {
-      // Protection is outside the try block as VC8 has the CGAL_CFG_FPU_ROUNDING_MODE_UNWINDING_VC_BUG
-      Protect_FPU_rounding<Protection> P;
-      try {
-        return ac(CGAL::approx(l1));
-      } catch (Uncertain_conversion_exception&) {}
-    }
-    CGAL_BRANCH_PROFILER_BRANCH(tmp);
-    Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
-    CGAL_expensive_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-    return ec(CGAL::exact(l1));
-  }
-};
-
-
 template <typename LK, typename AC, typename EC>
 struct Lazy_construction_optional_for_polyhedral_envelope
 {
