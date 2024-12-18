@@ -133,6 +133,7 @@ The following functors are available for mesh initialization:
 
 - `CGAL::parameters::features()`
 - `CGAL::parameters::no_features()`
+- `CGAL::parameters::initial_points()`
 - `CGAL::parameters::initial_points_generator()`
 - `CGAL::parameters::exude()`
 - `CGAL::parameters::no_exude()`
