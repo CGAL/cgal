@@ -26,7 +26,7 @@
 #include <CGAL/STL_Extension/internal/Has_features.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/type_traits.h>
-#include <CGAL/Mesh_3/internal/tuple_like_helpers.h>
+#include <CGAL/STL_Extension/internal/tuple_like_helpers.h>
 
 #include <boost/mpl/has_xxx.hpp>
 #include <type_traits>
@@ -55,7 +55,7 @@ struct Push_to_initial_point {
   template <typename Initial_point_and_info>
   void operator()(const Initial_point_and_info& initial_pt) const {
     using T = CGAL::cpp20::remove_cvref_t<decltype(initial_pt)>;
-    if constexpr (tuple_like_of_size_2<T>)
+    if constexpr (CGAL::STL_Extension::internal::tuple_like_of_size_2<T>)
     {
       const auto& [pt, index] = initial_pt;
       const auto& cwp = c3t3_ptr->triangulation().geom_traits().construct_weighted_point_3_object();

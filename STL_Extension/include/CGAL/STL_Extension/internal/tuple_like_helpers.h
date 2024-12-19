@@ -8,15 +8,13 @@
 //
 // Author(s)     : Laurent Rineau
 
-#ifndef CGAL_MESH_3_INTERNAL_TUPLE_LIKE_HELPERS_H
-#define CGAL_MESH_3_INTERNAL_TUPLE_LIKE_HELPERS_H
-
-#include <CGAL/license/Mesh_3.h>
+#ifndef CGAL_STL_EXTENSION_INTERNAL_TUPLE_LIKE_HELPERS_H
+#define CGAL_STL_EXTENSION_INTERNAL_TUPLE_LIKE_HELPERS_H
 
 #include <type_traits>
 #include <utility>
 
-namespace CGAL::Mesh_3::internal {
+namespace CGAL::STL_Extension::internal {
 
   template <typename, typename = void>
   constexpr bool has_tuple_size_v = false;
@@ -30,6 +28,6 @@ namespace CGAL::Mesh_3::internal {
   template <typename T>
   constexpr bool tuple_like_of_size_2<T, true> = (std::tuple_size_v<T> == 2);
 
-} // end namespace CGAL::Mesh_3::internal
+} // end namespace CGAL::STL_Extension::internal
 
-#endif // CGAL_MESH_3_INTERNAL_TUPLE_LIKE_HELPERS_H
+#endif // CGAL_STL_EXTENSION_INTERNAL_TUPLE_LIKE_HELPERS_H
