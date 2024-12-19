@@ -861,7 +861,7 @@ private:
 
     FT a, b, c, d;
     std::size_t idx = 0;
-    for (idx = 0; idx < 6; idx++) {
+    for (; idx < 10; idx++) {
       face_intersections(values, idx, i0, a, b, c, d);
 
       if (a == 0 || d < 0)
@@ -877,7 +877,8 @@ private:
       break;
     }
 
-    CGAL_assertion(idx < 6);
+    if (idx >= 10)
+      return false;
 
     // counts the number of set bits
     auto numberOfSetBits = [](const unsigned char n)
