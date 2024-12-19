@@ -74,7 +74,7 @@ struct Get_point
  * \ingroup PkgMesh3Initializers
  *
  * Functor for generating initial points in labeled images.
- * This functor is a model of the `InitialPointsGenerator` concept,
+ * This functor is a model of the `InitialPointsGenerator_3` concept,
  * and can be passed as a parameter to `CGAL::make_mesh_3` using the
  * `CGAL::parameters::initial_points_generator()` parameter function.
  *
@@ -85,7 +85,7 @@ struct Get_point
  * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
  * @tparam MeshDomain model of `MeshDomain_3`
  *
- * \cgalModels{InitialPointsGenerator}
+ * \cgalModels{InitialPointsGenerator_3}
  *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`

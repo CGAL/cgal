@@ -748,7 +748,7 @@ the triangulation for each connected component.
 
 The parameter `CGAL::parameters::initial_points_generator` is used.
 It expects a functor that returns a set of points for the mesh
-initialization (following the concept `InitialPointsGenerator`). The functor
+initialization (following the concept `InitialPointsGenerator_3`). The functor
 `Construct_initial_points_labeled_image` is used in this example.
 It constructs points using the API of the mesh domain, as follows.
 First, the functor `construct_intersection` is created:

@@ -2,7 +2,7 @@
 \ingroup PkgMesh3SecondaryConcepts
 \cgalConcept
 
-The function object concept `InitialPointsGenerator` is designed to construct
+The function object concept `InitialPointsGenerator_3` is designed to construct
 a set of initial points on the surface of the domain.
 
 \cgalHasModelsBegin
@@ -12,7 +12,7 @@ a set of initial points on the surface of the domain.
 
 */
 
-class InitialPointsGenerator {
+class InitialPointsGenerator_3 {
 public:
 
 /// \name Types (exposition only)
@@ -61,4 +61,4 @@ OutputIterator operator()(OutputIterator pts, const int n = 0);
 
 /// @}
 
-}; /* end InitialPointsGenerator */
+}; /* end InitialPointsGenerator_3 */

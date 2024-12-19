@@ -80,7 +80,7 @@ related to the template parameters of some models of the main concepts:
 
 - `BisectionGeometricTraits_3`
 - `IntersectionGeometricTraits_3`
-- `InitialPointsGenerator`
+- `InitialPointsGenerator_3`
 - `MeshCellBase_3`
 - `MeshVertexBase_3`
 - `MeshDomainField_3`

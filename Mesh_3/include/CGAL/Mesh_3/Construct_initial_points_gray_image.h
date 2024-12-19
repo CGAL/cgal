@@ -27,7 +27,7 @@ namespace CGAL
  * \ingroup PkgMesh3Initializers
  *
  * Functor for generating initial points in gray images.
- * This functor is a model of the `InitialPointsGenerator` concept,
+ * This functor is a model of the `InitialPointsGenerator_3` concept,
  * and can be passed as a parameter to `CGAL::make_mesh_3` using the
  * `CGAL::parameters::initial_points_generator()` parameter function.
  *
@@ -37,7 +37,7 @@ namespace CGAL
  * to initialize them all. Each connected component is guaranteed to be
  * represented by at least one cell of the triangulation.
  *
- * \cgalModels{InitialPointsGenerator}
+ * \cgalModels{InitialPointsGenerator_3}
  *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
