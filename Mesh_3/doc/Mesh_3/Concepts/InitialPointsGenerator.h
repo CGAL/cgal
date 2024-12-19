@@ -32,10 +32,11 @@ typedef unspecified_type C3t3;
 
 /// \name Operations
 /// @{
+/// Initial points generators are designed to output, via their operators `operator(OutputIterator)`,
+/// a set of surface points for mesh initialization to an output iterator.
 
 /*!
-outputs a set of surface points for mesh initialization to the
-output iterator `pts`.
+outputs a set of surface points for mesh initialization.
 
 If, after insertion of these points, the triangulation is still not 3D,
 or does not have any facets
@@ -49,28 +50,14 @@ by the mesh generator.
 
 @param pts an output iterator for the points
 @param n a lower bound on the number of points to construct for initialization.
-A generator can choose to ignore this parameter.
-
+  When `n` is set to its default value `0`, the functor must provide enough
+  points to initialize the mesh generation process, i.e., to have a 3D triangulation
+  with at least one facet in the restricted Delaunay triangulation.
+  If these conditions are not satisfied, then more points will be added automatically
+  by the mesh generator.
 */
 template <typename OutputIterator>
-OutputIterator operator()(OutputIterator pts, const int n);
-
-/*!
-Same as above, without the `n` parameter.
-Since there is no `n` given like above, the functor must provide enough
-points to initialize the mesh generation process, i.e., to have a 3D triangulation
-with at least one facet in the restricted Delaunay triangulation.
-
-If these conditions are not satisfied, then more points will be added automatically
-by the mesh generator.
-
-@tparam OutputIterator model of `OutputIterator` whose value type is a tuple-like object made of 3 elements :
-  - a `C3t3::Triangulation::Point` : the point `p`,
-  - an `int` : the minimal dimension of the subcomplexes to which `p` belongs,
-  - a `MeshDomain_3::Index` : the index of the corresponding subcomplex.
-*/
-template <typename OutputIterator>
-OutputIterator operator()(OutputIterator pts);
+OutputIterator operator()(OutputIterator pts, const int n = 0);
 
 /// @}
 

@@ -31,9 +31,11 @@ namespace CGAL
  * and can be passed as a parameter to `CGAL::make_mesh_3` using the
  * `CGAL::parameters::initial_points_generator()` parameter function.
  *
- * On images that contain multiple non-connected components,
+ * On images that contain multiple connected components,
  * this functor will scan the full image and
- * output points on every component.
+ * output enough points on the surface of each component
+ * to initialize them all. Each connected component is guaranteed to be
+ * represented by at least one cell of the triangulation.
  *
  * \cgalModels{InitialPointsGenerator}
  *
@@ -60,9 +62,9 @@ struct Construct_initial_points_gray_image
   { }
 
   /*!
-  * \brief constructs at least `n` points by collecting them on the surface of all objects
-  * in the image,
-  * even if they are non-connected components.
+  * \brief constructs at least `n` points by collecting them on the surface of all
+  * subdomains in the image,
+  * even if they are not connected components.
   * Using this functor guarantees to initialize each connected component.
   *
   * @tparam OutputIterator model of `OutputIterator` for

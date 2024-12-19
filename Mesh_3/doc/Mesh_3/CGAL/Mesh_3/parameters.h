@@ -460,12 +460,14 @@ unspecified_type perturb(const Named_function_parameters& np = parameters::defau
  * If this parameter is specified without arguments, the default behavior
  * is executed, which calls the domain's `construct_initial_points_object()` for the initialization of the meshing process.
  *
- * If the parameter `parameters::initial_points()` is used,
- * the points it provides are inserted after one dimensional features initialization.
- *
  * Initialization is considered to be complete if the triangulation is a 3D triangulation
  * with at least one facet in the restricted Delaunay triangulation (i.e., its dual intersects the
  * input surface).
+ *
+ * If one dimensional features are requested, their initialization is performed first.
+ * If provided, the points of `parameters::initial_points()` are inserted next.
+ * Then, `parameters::initial_points_generator()` is used to generate more initial points
+ * and complete the initialization.
  * If the generator does not generate enough points for the initialization to be complete,
  * the domain's `construct_initial_points_object()` will be called to generate enough input points.
  *
