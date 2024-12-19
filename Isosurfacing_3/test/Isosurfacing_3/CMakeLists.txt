@@ -12,6 +12,7 @@ include(CGAL_TBB_support)
 
 create_single_source_cgal_program("test_marching_cubes.cpp")
 create_single_source_cgal_program("test_topology.cpp")
+create_single_source_cgal_program("verifier.cpp")
 create_single_source_cgal_program("test_tmc_csg.cpp")
 
 if(TARGET CGAL::Eigen3_support)
@@ -45,4 +46,5 @@ endif()
 if(TARGET CGAL::TBB_support)
   target_link_libraries(test_marching_cubes PRIVATE CGAL::TBB_support)
   target_link_libraries(test_topology PRIVATE CGAL::TBB_support)
+  target_link_libraries(verifier PRIVATE CGAL::TBB_support)
 endif()
