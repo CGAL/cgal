@@ -18,7 +18,9 @@ This package provides functions for computing the Fréchet distance of polylines
 
 The Fréchet distance is a classical dissimilarity measure between polylines.
 Its advantages over other measures is that it both considers the polylines as continuous objects and takes into account the ordering of the points.
-Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline, they are connected by a leash, and they are only allowed to walk forward. The Fréchet distance is the shortest leash length that allows the human and the dog to jointly walk from start to end on their respective trajectories.
+Intuitively, the Fréchet distance is commonly explained as follows: Imagine a human walking on one polyline while a dog walks on the other polyline,
+they are connected by a leash, and they are only allowed to walk forward. The Fréchet distance is the shortest leash length that allows the human
+and the dog to jointly walk from start to end on their respective trajectories.
 
 
 <!--
@@ -33,7 +35,8 @@ The Fréchet distance is a metric. This implies that two polylines have distance
 
 The package provides one function to approximate the Fréchet distance and one function to decide whether the Fréchet distance is at most a given value.
 
-The function `approximate_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error. It returns an interval that contains the true distance.
+The function `approximate_Frechet_distance()` computes an approximation of the Fréchet distance between two polylines, up to a given approximation error.
+It returns an interval that contains the true distance.
 The function `is_Frechet_distance_larger()` decides if the Fréchet distance
 between two polylines is larger than a given bound.
 
@@ -45,11 +48,14 @@ In both cases the result is guaranteed to be correct.
 
 \section secFrechetDistanceImplementation Implementation
 
+The algorithms in this package are an adaption of the implementation of \cgalCite{cgal:bkn-wdfp-19}
+and \cgalCite{cgal:bkn-wdfp-21}. In particular, the implementation can decide non-difficult cases very
+fast while for difficult cases it still has the quadratic running time guarantee of the classical Fréchet
+distance algorithm by Alt and Godau cgalCite{ag-cfdbt-95}. This is achieved by using fast filtering methods
+and a divide and conquer algorithm with pruning rules on the free-space diagram.
+
 Internally all computations are done using interval arithmetic. In case of filter failures
 the algorithm switches to the usage of square root extensions.
-
-The algorithms in this package are an adaption of the implementation of \cgalCite{cgal:bkn-wdfp-19} and \cgalCite{cgal:bkn-wdfp-21}. In particular, the implementation can decide non-difficult cases very fast while for difficult cases it still has the quadratic running time guarantee of the classical Fréchet distance algorithm by Alt and Godau. This is achieved by using fast filtering methods and a divide and conquer algorithm with pruning rules on the free-space diagram.
-
 
 \section secFrechetDistanceExamples Examples
 
@@ -58,13 +64,15 @@ work as well for inexact or exact kernels.
 
 \subsection subsecFrechetDistanceFirstExample Decision for 2D Polylines
 
-The following example shows how we can use `is_Frechet_distance_larger()` to decide whether the Fréchet distance between two polylines in the Euclidean plane is at most a given value.
+The following example shows how we can use `is_Frechet_distance_larger()` to decide whether the Fréchet
+distance between two polylines in the Euclidean plane is at most a given value.
 
 \cgalExample{Frechet_distance/Frechet_distance_2.cpp}
 
 \subsection subsecFrechetDistanceSecondExample Distance Computation for 3D Polylines
 
-The following example shows how we can compute the Fréchet distance up to a given precision on two polylines in 3-dimensional Euclidean space using `approximate_Frechet_distance()`.
+The following example shows how we can compute the Fréchet distance up to a given precision on two
+polylines in 3-dimensional Euclidean space using `approximate_Frechet_distance()`.
 
 \cgalExample{Frechet_distance/Frechet_distance_3.cpp}
 
@@ -72,7 +80,8 @@ The following example shows how we can compute the Fréchet distance up to a giv
 
 \subsection subsecFrechetDistanceThirdExample Distance Computation for dD Polylines
 
-The following example shows how we can compute the Fréchet distance up to a given precision on two polylines in 4-dimensional Euclidean space using `approximate_Frechet_distance()`.
+The following example shows how we can compute the Fréchet distance up to a given precision on two
+polylines in 4-dimensional Euclidean space using `approximate_Frechet_distance()`.
 
 \cgalExample{Frechet_distance/Frechet_distance_d.cpp}
 
