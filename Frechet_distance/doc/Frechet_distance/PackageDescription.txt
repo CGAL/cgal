@@ -4,6 +4,8 @@
 /// \defgroup PkgFrechetDistanceFunctions Functions
 /// \ingroup PkgFrechetDistanceRef
 
+/// \defgroup PkgFrechetDistanceTraits Traits Classes
+/// \ingroup PkgFrechetDistanceRef
 /*!
 \addtogroup PkgFrechetDistanceRef
 
