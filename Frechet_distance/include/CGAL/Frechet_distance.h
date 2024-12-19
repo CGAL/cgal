@@ -27,17 +27,19 @@ namespace CGAL
 
 /**
  * \ingroup PkgFrechetDistanceFunctions
- * decides if the Frechet distance between two polylines is larger than a given distance.
+ * determines if the Frechet distance between two polylines is larger than a given distance.
  *
- * \param polyline1 the first polyline defined by the sequence of consecutive points
- * \param polyline2 the second polyline defined by the sequence of consecutive points
- * \param distance the decision distance
+ * \param polyline1 the first polyline defined by a sequence of consecutive points
+ * \param polyline2 the second polyline defined by a sequence of consecutive points
+ * \param distance the distance to compare against
  * \param traits the geometric traits object
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
- * \tparam force_filtering if `true` interval arithmetic combined with exact rational will be used internally
+ * \tparam force_filtering if `true`, interval arithmetic combined with exact rational will be used internally
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
- * with `Traits::Point` as value type.
+ * with `Traits::Point_d` as value type.
+ *
+ *  \pre the polylines must not be empty
  */
 template < class Traits, bool force_filtering = false, class PointRange>
 bool is_Frechet_distance_larger(const PointRange& polyline1,
@@ -63,15 +65,17 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  * approximates the Fréchet distance between two polylines up to an additive error
  * of `precision`.
  *
- * \param polyline1 the first polyline defined by the sequence of consecutive points
- * \param polyline2 the second polyline defined by the sequence of consecutive points
+ * \param polyline1 the first polyline defined by a sequence of consecutive points
+ * \param polyline2 the second polyline defined by a sequence of consecutive points
  * \param precision the precision of the approximation
  *  \param traits the geometric traits object
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
- * \tparam force_filtering if `true` interval arithmetic combined with exact rational will be used internally
+ * \tparam force_filtering if `true`, interval arithmetic combined with exact rational will be used internally
  * \tparam PointRange  a model of the concept `RandomAccessContainer`
- * with `Traits::Point` as value type.
+ * with `Traits::Point_d` as value type.
+ *
+ *  \pre the polylines must not be empty
  *
  * @return an interval enclosing the exact result, the difference between the upper and
  * the lower bound being less than `precision`.
