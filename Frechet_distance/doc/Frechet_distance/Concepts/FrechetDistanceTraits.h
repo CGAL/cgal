@@ -20,9 +20,9 @@ public:
 /// @{
 
 /*!
-Dimension type, being an instance of `CGAL::Dimension_tag`.
+Dimension type with the ambient dimension `d`.
 */
-using Dimension = unspecified_type;
+using Dimension = CGAL::Dimension_tag<d>;
 
 /*!
 Point type.
@@ -30,7 +30,7 @@ Point type.
 using Point_d = unspecified_type;
 
 /*!
-The number type of the %Cartesian coordinates of types `Point_d`.
+The number type of the %Cartesian coordinates of type `Point_d`.
 For a given `FT n`, `to_interval(n)` must be a valid expression and it must
 return an interval containing `n`, represented by a `std::pair<double, double>`.
 */

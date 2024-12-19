@@ -26,15 +26,15 @@ namespace CGAL
  * \ingroup PkgFrechetDistanceTraits
  *
 * \cgalModels{FrechetDistanceTraits}
-* \tparam GT  geometric traits class
+* \tparam K  geometric traits class
 */
-template <class GT>
+template <class K>
 class Frechet_distance_traits_2
 {
 public:
   using Dimension = Dimension_tag<2>;
 
-  using Kernel = GT;
+  using Kernel = K;
   using FT = typename Kernel::FT;
   using Point_d = typename Kernel::Point_2;
   using Construct_bbox_d = typename Kernel::Construct_bbox_2;
