@@ -14,7 +14,7 @@
 #include <CGAL/STL_Extension/internal/Has_features.h>
 #include <CGAL/Default.h>
 #include <CGAL/type_traits.h>
-#include <CGAL/Mesh_3/internal/tuple_like_helpers.h>
+#include <CGAL/STL_Extension/internal/tuple_like_helpers.h>
 
 #include <boost/iterator/function_output_iterator.hpp>
 
@@ -233,7 +233,7 @@ struct Initialization_options
     void operator()(Tuple_like&& p) const
     {
       using Tuple_like_no_cvref = CGAL::cpp20::remove_cvref_t<Tuple_like>;
-      if constexpr (CGAL::Mesh_3::internal::tuple_like_of_size_2<Tuple_like_no_cvref>) {
+      if constexpr (CGAL::STL_Extension::internal::tuple_like_of_size_2<Tuple_like_no_cvref>) {
         const auto& [pt, index] = p;
         call_(f_, Default_initial_point_type(pt, 2, index));
       } else if constexpr (std::is_same_v<Tuple_like_no_cvref, Default_initial_point_type>) {
