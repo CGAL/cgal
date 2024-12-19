@@ -491,7 +491,8 @@ unspecified_type initial_points_generator(const InitialPointsGenerator& generato
  * \ingroup PkgMesh3Parameters
  *
  * The function `parameters::initial_points()` enables the user to specify a container, model of `Range`, that contains
- * initial points to be used in the `make_mesh_3()` function for mesh generation. Items in the container are
+ * initial points constructed on surfaces,
+ * to be used in the `make_mesh_3()` function for mesh generation. Items in the container are
  * tuple-like objects containing a `Weighted_point_3`, an `int`, and a `MeshDomain::Index`,
  * where `Weighted_point_3` represents the position and the weight of the point,
  * `int` the dimension of the minimal subcomplex on which the point lies,

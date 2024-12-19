@@ -11,7 +11,7 @@
 #include <CGAL/make_mesh_3.h>
 #include <CGAL/Image_3.h>
 
-#include <CGAL/SMDS_3/Dump_c3t3.h>
+#include <CGAL/IO/File_medit.h>
 
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
@@ -56,7 +56,9 @@ int main()
   /// [Meshing]
 
   // Output
-  CGAL::dump_c3t3(c3t3, "out");
+  std::ofstream medit_file("out.mesh");
+  CGAL::IO::write_MEDIT(medit_file, c3t3);
+  medit_file.close();
 
   return 0;
 }

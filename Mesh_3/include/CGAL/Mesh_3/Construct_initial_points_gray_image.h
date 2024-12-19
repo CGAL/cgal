@@ -51,6 +51,9 @@ struct Construct_initial_points_gray_image
   const typename MeshDomain::R::FT iso_value_;
   Functor image_values_to_subdomain_indices_;
 
+  /*!
+  * @todo
+  */
   Construct_initial_points_gray_image(const CGAL::Image_3 & image,
          const MeshDomain& domain,
          const double iso_value,

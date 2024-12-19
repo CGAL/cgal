@@ -100,6 +100,9 @@ struct Construct_initial_points_labeled_image
   const CGAL::Image_3& image_;
   const MeshDomain& domain_;
 
+  /*!
+  * @todo
+  */
   Construct_initial_points_labeled_image(const CGAL::Image_3& image,
                                          const MeshDomain& domain)
     : image_(image)
@@ -122,7 +125,7 @@ struct Construct_initial_points_labeled_image
     return pts;
   }
 
-  /*!
+  /* //internal undocumented
    * \brief Same as above, but a `TransformOperator` that transforms values of the image is used.
    *
    * @tparam OutputIterator model of `OutputIterator` for
@@ -306,9 +309,6 @@ struct Construct_initial_points_labeled_image
             continue;
 
           // insert point in temporary triangulation
-
-          /// The following lines show how to insert initial points in the
-          /// `c3t3` object. [insert initial points]
           Vertex_handle v = tr.insert(pi);
 
           // `v` could be null if `pi` is hidden by other vertices of `tr`.
@@ -316,7 +316,6 @@ struct Construct_initial_points_labeled_image
 
           c3t3.set_dimension(v, 2); // by construction, points are on surface
           c3t3.set_index(v, intersect_index);
-          /// [insert initial points]
 
           *pts++ = std::make_pair(pi, intersect_index); // dimension 2 by construction, points are on surface
         }
