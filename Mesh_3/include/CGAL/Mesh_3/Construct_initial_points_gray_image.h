@@ -39,6 +39,12 @@ namespace CGAL
  *
  * \cgalModels{InitialPointsGenerator_3}
  *
+ * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+ * @tparam MeshDomain model of `MeshDomain_3`
+ * @tparam Functor a function object that takes the number type in which the image is encoded,
+ *         and returns the `MeshDomain::Index` of the corresponding subcomplex index.
+ *         The default type is `CGAL::Null_functor`.
+ *
  * \sa `CGAL::parameters::initial_points_generator()`
  * \sa `CGAL::make_mesh_3()`
  * \sa `CGAL::Construct_initial_points_labeled_image`
@@ -52,7 +58,16 @@ struct Construct_initial_points_gray_image
   Functor image_values_to_subdomain_indices_;
 
   /*!
-  * @todo
+  * Constructs a functor for generating initial points in gray images.
+  * @param image the gray image that defines the mesh domain
+  * @param domain the mesh domain
+  * @param iso_value the iso value corresponding to the surface of the domain
+  * @param image_values_to_subdomain_indices a function object that takes
+  *          the number type in which `image` is encoded,
+  *          and returns the corresponding `MeshDomain::Index`.
+  *          The default functor is `CGAL::Null_functor`
+  *          and corresponds to meshing the areas where the image values are
+  *          greater than `iso_value`.
   */
   Construct_initial_points_gray_image(const CGAL::Image_3 & image,
          const MeshDomain& domain,
@@ -75,8 +90,8 @@ struct Construct_initial_points_gray_image
   * - a `Weighted_point_3` for the point
   * - an `int` for the minimal dimension of the subcomplexes on which the point lies
   * - a `MeshDomain::Index` for the corresponding subcomplex index
-  * \tparam MeshDomain model of `MeshDomain_3`
-  * \tparam C3t3 model of `MeshComplex_3InTriangulation_3`
+  * @tparam MeshDomain model of `MeshDomain_3`
+  * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
   *
   */
   template <typename OutputIterator>

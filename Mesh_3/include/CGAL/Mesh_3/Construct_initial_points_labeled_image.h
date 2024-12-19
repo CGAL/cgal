@@ -101,7 +101,9 @@ struct Construct_initial_points_labeled_image
   const MeshDomain& domain_;
 
   /*!
-  * @todo
+  * Constructs a functor for generating initial points in labeled images.
+  * @param image the labeled image that defines the mesh domain
+  * @param domain the mesh domain
   */
   Construct_initial_points_labeled_image(const CGAL::Image_3& image,
                                          const MeshDomain& domain)
