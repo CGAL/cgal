@@ -78,9 +78,12 @@ struct Get_point
  * and can be passed as a parameter to `CGAL::make_mesh_3` using the
  * `CGAL::parameters::initial_points_generator()` parameter function.
  *
- * On images that contain multiple non-connected components,
- * this functor scans the complete image and
- * outputs points to initialize each component.
+ * This functor scans the complete image to detect all its connected components,
+ * and constructs points on the surface of each of them.
+ * Its goal is to initialize each component, each of them corresponding
+ * to a subdomain.
+ * It ensures that each component will be initialized, i.e. represented
+ * by at least one cell of the triangulation.
  *
  * @tparam C3t3 model of `MeshComplex_3InTriangulation_3`
  * @tparam MeshDomain model of `MeshDomain_3`
@@ -104,11 +107,7 @@ struct Construct_initial_points_labeled_image
   { }
 
   /*!
-  * \brief constructs at least `n` initial points,
-  * by scanning the image and
-  * collecting points in each object in the image,
-  * even if they are non-connected components.
-  * This ensures that each component will be initialized.
+  * \brief constructs at least `n` initial points.
   *
   * @tparam OutputIterator model of `OutputIterator` for
   * tuple-like objects containing
@@ -131,7 +130,6 @@ struct Construct_initial_points_labeled_image
    * - a `Weighted_point_3` for the point
    * - an `int` for the minimal dimension of the subcomplexes on which the point lies
    * - a `MeshDomain::Index` for the corresponding subcomplex index
-   * @tparam MeshDomain model of `MeshDomain_3`
    * @tparam TransformOperator functor that transforms values of the image.
    *   It must provide the following type:<br>
    *   `result_type`: a type that supports the '==' operator<br>

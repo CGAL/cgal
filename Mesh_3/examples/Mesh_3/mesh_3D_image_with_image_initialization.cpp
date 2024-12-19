@@ -47,7 +47,8 @@ int main()
                          .cell_radius_edge_ratio(3).cell_size(3));
 
   /// [Meshing]
-  // Mesh generation with a custom initialization that places points in each of the image components.
+  // Mesh generation with a custom initialization that places points
+  // on the surface of each connected component of the image.
   CGAL::Construct_initial_points_labeled_image<C3t3, Mesh_domain> img_pts_generator(image, domain);
 
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria,
