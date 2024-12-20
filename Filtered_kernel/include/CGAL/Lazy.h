@@ -1057,7 +1057,7 @@ struct Lazy_construction_optional_for_polyhedral_envelope
   }
 };
 
-
+// used in Newkernel_d
 template <typename LK, typename AC, typename EC>
 struct Lazy_construction_nt {
   Lazy_construction_nt(){}

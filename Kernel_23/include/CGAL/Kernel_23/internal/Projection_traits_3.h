@@ -90,9 +90,11 @@ template <class R,int dim>
 class Construct_bbox_projected_2 {
 public:
   typedef typename R::Point_3     Point;
-  typedef Bbox_2 result_type;
 
-  Bbox_2 operator()(const Point& p) const { typename R::Construct_bbox_3 bb;  return Projector<R, dim>::bbox(bb(p)); }
+  Bbox_2 operator()(const Point& p) const {
+    typename R::Construct_bbox_3 bb;
+    return Projector<R, dim>::bbox(bb(p));
+  }
 };
 
 template <class R,int dim>
@@ -315,6 +317,7 @@ public:
   typedef typename R::Segment_3 Segment_3;
   typedef typename R::Segment_2 Segment_2;
   typedef typename R::FT        RT;
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
 
