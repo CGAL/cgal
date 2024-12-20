@@ -97,10 +97,16 @@ public:
   {
     // todo: make this a O(1) time operation
     Self res(*this);
-    for(int i=0;i<offset;++i){
+    for(std::size_t i=0;i<offset;++i){
       ++res;
     }
     return res;
+  }
+
+  Self& operator+=(std::size_t offset)
+  {
+    *this=this->operator+(offset);
+    return *this;
   }
 
   std::size_t operator-(Self other) const
