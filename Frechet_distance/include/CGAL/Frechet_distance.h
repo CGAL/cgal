@@ -19,6 +19,7 @@
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/basic.h>
 #include <CGAL/Frechet_distance/internal/Frechet_distance.h>
+#include <CGAL/Dimension.h>
 
 #include <CGAL/Named_function_parameters.h>
 
@@ -26,6 +27,61 @@
 
 namespace CGAL
 {
+
+#ifdef CGAL_EIGEN3_ENABLED
+template<class Dim> struct Epick_d;
+template<class Dim> struct Epeck_d;
+
+template < typename P, int D>
+struct Ambient_dimension<P, Epick_d<Dimension_tag<D>>>
+{
+  static constexpr int value = D;
+};
+
+template < typename P, int D>
+struct Ambient_dimension<P, Epeck_d<Dimension_tag<D>>>
+{
+  static constexpr int value = D;
+};
+#endif
+
+namespace internal
+{
+  template <typename P,
+            int Dimension = ::CGAL::Ambient_dimension<P>::value >
+  struct Get_default_traits_base
+  #ifdef CGAL_EIGEN3_ENABLED
+  {
+    using type = Frechet_distance_traits_d<typename Kernel_traits<P>::Kernel>;
+  };
+  #else
+  ;
+  #endif
+
+  template <typename P>
+  struct Get_default_traits_base<P, 2>
+  {
+    using type = Frechet_distance_traits_2<typename Kernel_traits<P>::Kernel>;
+  };
+
+  template <typename P>
+  struct Get_default_traits_base<P, 3>
+  {
+    using type = Frechet_distance_traits_3<typename Kernel_traits<P>::Kernel>;
+  };
+
+  template <class P, class K=typename Kernel_traits<P>::Kernel>
+  struct Get_default_traits
+  {
+    using type = typename Get_default_traits_base<P>::type;
+  };
+
+  template <class P>
+  struct Get_default_traits<P, ::CGAL::internal_kernel_traits::Dummy_kernel<P>>
+  {
+    using type = ::CGAL::internal_kernel_traits::Dummy_kernel<P>;
+  };
+} // end of internal namespace
 
 /**
  * \ingroup PkgFrechetDistanceFunctions
@@ -43,14 +99,14 @@ namespace CGAL
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{Traits}
- *     \cgalParamDefault{`Traits()`}
+ *     \cgalParamType{a model of `FrechetDistanceTraits`}
+ *     \cgalParamDefault{`Frechet_distance_traits_2`, `Frechet_distance_traits_3`, or`Frechet_distance_traits_d`, depending on the dimension of the point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
  * \pre the polylines must not be empty
  */
-template <class Traits, class PointRange, class NamedParameters =  parameters::Default_named_parameters>
+template <class PointRange, class NamedParameters =  parameters::Default_named_parameters>
 bool is_Frechet_distance_larger(const PointRange& polyline1,
                                 const PointRange& polyline2,
                                 const double distance_bound,
@@ -59,6 +115,11 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
     constexpr bool force_filtering =
       internal_np::Lookup_named_param_def<internal_np::force_filtering_t, NamedParameters, std::false_type>::type::value;
 
+    using Point_d = std::remove_cv_t<std::remove_reference_t<decltype(*polyline1.begin())>>;
+    using Default_traits = typename internal::Get_default_traits<Point_d>::type;
+    using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                                NamedParameters,
+                                                                Default_traits>::type;
     Traits traits =  parameters::choose_parameter<Traits>(
         parameters::get_parameter(np, internal_np::geom_traits));
 
@@ -92,8 +153,8 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  * \cgalNamedParamsBegin
  *   \cgalParamNBegin{geom_traits}
  *     \cgalParamDescription{an instance of a geometric traits class}
- *     \cgalParamType{Traits}
- *     \cgalParamDefault{`Traits()`}
+ *     \cgalParamType{a model of `FrechetDistanceTraits`}
+ *     \cgalParamDefault{`Frechet_distance_traits_2`, `Frechet_distance_traits_3`, or`Frechet_distance_traits_d`, depending on the dimension of the point type.}
  *   \cgalParamNEnd
  * \cgalNamedParamsEnd
  *
@@ -102,7 +163,7 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  * @return an interval enclosing the exact result, the difference between the upper and
  * the lower bound being less than `precision`.
  */
-template <class Traits, class PointRange, class NamedParameters =  parameters::Default_named_parameters>
+template <class PointRange, class NamedParameters =  parameters::Default_named_parameters>
 std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline1,
                                                       const PointRange& polyline2,
                                                       const double precision,
@@ -111,9 +172,14 @@ std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline
     constexpr bool force_filtering =
       internal_np::Lookup_named_param_def<internal_np::force_filtering_t, NamedParameters, std::false_type>::type::value;
 
-    Traits traits =  parameters::choose_parameter<Traits>(
-        parameters::get_parameter(np, internal_np::geom_traits));
+    using Point_d = std::remove_cv_t<std::remove_reference_t<decltype(*polyline1.begin())>>;
+    using Default_traits = typename internal::Get_default_traits<Point_d>::type;
+    using Traits = typename internal_np::Lookup_named_param_def<internal_np::geom_traits_t,
+                                                                NamedParameters,
+                                                                Default_traits>::type;
 
+    Traits traits =  parameters::choose_parameter<Traits>(
+      parameters::get_parameter(np, internal_np::geom_traits));
 
     constexpr bool filtered = force_filtering ||
       std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits))::IFT,
