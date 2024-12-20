@@ -72,13 +72,10 @@ template < class SK > \
   class Compute_circular_x_3
   {
     typedef typename SK::Circular_arc_point_3   Circular_arc_point_3;
-    typedef typename SK::Root_of_2              Root_of_2;
 
   public:
-
-    typedef const Root_of_2&                    result_type;
-
-    result_type operator() (const Circular_arc_point_3 & a) const
+    // SK::Root_of_2
+    decltype(auto) operator() (const Circular_arc_point_3 & a) const
     { return (a.rep().x()); }
   };
 
@@ -86,13 +83,10 @@ template < class SK > \
   class Compute_circular_y_3
   {
     typedef typename SK::Circular_arc_point_3   Circular_arc_point_3;
-    typedef typename SK::Root_of_2                 Root_of_2;
 
   public:
-
-    typedef  const Root_of_2&  result_type;
-
-    result_type operator() (const Circular_arc_point_3 & a) const
+    // SK::Root_of_2
+    decltype(auto) operator() (const Circular_arc_point_3 & a) const
     { return (a.rep().y()); }
   };
 
@@ -100,13 +94,10 @@ template < class SK > \
   class Compute_circular_z_3
   {
     typedef typename SK::Circular_arc_point_3   Circular_arc_point_3;
-    typedef typename SK::Root_of_2                 Root_of_2;
 
   public:
-
-    typedef const Root_of_2&  result_type;
-
-    result_type operator() (const Circular_arc_point_3 & a) const
+    // SK::Root_of_2
+    decltype(auto) operator() (const Circular_arc_point_3 & a) const
     { return (a.rep().z()); }
   };
 
@@ -309,83 +300,78 @@ template < class SK > \
   class Construct_sphere_3
   {
     typedef typename SK::Circular_arc_3 Circular_arc_3;
-    typedef typename SK::Linear_kernel LK;
-    typedef typename LK::Point_3 Point_3;
-    typedef typename LK::Circle_3 Circle_3;
-    typedef typename LK::Sphere_3 Sphere_3;
+    typedef typename SK::Sphere_3       Sphere_3;
+    typedef typename SK::Point_3        Point_3;
+    typedef typename SK::Circle_3       Circle_3;
+    typedef typename SK::FT             FT;
+
+    typedef typename SK::Linear_kernel  LK;
     typedef typename LK::Construct_sphere_3 LK_Construct_sphere_3;
-    typedef typename LK::FT FT;
 
   public:
-
-    typedef typename SK::Linear_kernel::Construct_sphere_3::result_type result_type;
-
-    result_type
+    Sphere_3
     operator()( Return_base_tag tag, const Point_3& center, const FT& squared_radius,
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(tag, center, squared_radius, orientation); }
 
-    result_type
+    Sphere_3
     operator()( Return_base_tag tag, const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
     { return LK_Construct_sphere_3()(tag, p, q, r, s); }
 
-    result_type
+    Sphere_3
     operator()( Return_base_tag tag, const Point_3& p, const Point_3& q, const Point_3& r,
                 Orientation orientation  = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(tag, p, q, r, orientation); }
 
-    result_type
+    Sphere_3
     operator()( Return_base_tag tag, const Point_3& p, const Point_3& q,
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(tag, p, q, orientation); }
 
-    result_type
+    Sphere_3
     operator()( Return_base_tag tag, const Point_3& center,
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(tag, center, orientation); }
 
-    result_type
+    decltype(auto)
     operator() (Return_base_tag tag, const Circle_3 & c) const
     { return LK_Construct_sphere_3()(tag, c); }
 
-
-
-
-    result_type
+    Sphere_3
     operator()( const Point_3& center, const FT& squared_radius,
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(center, squared_radius, orientation); }
 
-    result_type
+    Sphere_3
     operator()( const Point_3& p, const Point_3& q,
                 const Point_3& r, const Point_3& s) const
     { return LK_Construct_sphere_3()(p, q, r, s); }
 
-    result_type
+    Sphere_3
     operator()( const Point_3& p, const Point_3& q, const Point_3& r,
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(p, q, r, orientation); }
 
-    result_type
+    Sphere_3
     operator()( const Point_3& p, const Point_3& q,
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(p, q, orientation); }
 
-    result_type
+    Sphere_3
     operator()( const Point_3& center,
                 Orientation orientation = COUNTERCLOCKWISE) const
     { return LK_Construct_sphere_3()(center, orientation); }
 
-    result_type
+    decltype(auto)
     operator() (const Circle_3 & c) const
     { return LK_Construct_sphere_3()(c); }
 
-    result_type
+    Sphere_3
     operator() ( const typename SK::Polynomial_for_spheres_2_3 &eq )
     { return SphericalFunctors::construct_sphere_3<SK>(eq); }
 
-    result_type operator() (const Circular_arc_3 & c) const
+    decltype(auto) operator() (const Circular_arc_3 & c) const
     { return c.rep().diametral_sphere(); }
 
   };
@@ -394,93 +380,89 @@ template < class SK > \
   class Construct_plane_3
   {
     typedef typename SK::Circular_arc_3 Circular_arc_3;
+    typedef typename SK::RT             RT;
+    typedef typename SK::Point_3        Point_3;
+    typedef typename SK::Vector_3       Vector_3;
+    typedef typename SK::Direction_3    Direction_3;
+    typedef typename SK::Line_3         Line_3;
+    typedef typename SK::Ray_3          Ray_3;
+    typedef typename SK::Segment_3      Segment_3;
+    typedef typename SK::Plane_3        Plane_3;
+    typedef typename SK::Circle_3       Circle_3;
+
     typedef typename SK::Linear_kernel LK;
     typedef typename LK::Construct_plane_3 LK_Construct_plane_3;
-    typedef typename LK::RT           RT;
-    typedef typename LK::Point_3      Point_3;
-    typedef typename LK::Vector_3     Vector_3;
-    typedef typename LK::Direction_3  Direction_3;
-    typedef typename LK::Line_3       Line_3;
-    typedef typename LK::Ray_3        Ray_3;
-    typedef typename LK::Segment_3    Segment_3;
-    typedef typename LK::Plane_3      Plane_3;
-    typedef typename LK::Circle_3     Circle_3;
 
   public:
-
-    typedef typename SK::Linear_kernel::Construct_plane_3::result_type result_type;
-
-  public:
-
-    result_type
+    Plane_3
     operator()(Return_base_tag tag, const RT& a, const RT& b, const RT& c, const RT& d) const
     { return LK_Construct_plane_3()(tag, a, b, c, d); }
 
-    result_type
+    Plane_3
     operator()(Return_base_tag tag, const Point_3& p, const Point_3& q, const Point_3& r) const
     { return LK_Construct_plane_3()(tag, p, q, r); }
 
-    result_type
+    Plane_3
     operator()(Return_base_tag tag, const Point_3& p, const Direction_3& d) const
     { return LK_Construct_plane_3()(tag, p, d); }
 
-    result_type
+    Plane_3
     operator()(Return_base_tag tag, const Point_3& p, const Vector_3& v) const
     { return LK_Construct_plane_3()(tag, p, v); }
 
-    result_type
+    Plane_3
     operator()(Return_base_tag tag, const Line_3& l, const Point_3& p) const
     { return LK_Construct_plane_3()(tag, l, p); }
 
-    result_type
+    Plane_3
     operator()(Return_base_tag tag, const Ray_3& r, const Point_3& p) const
     { return LK_Construct_plane_3()(tag, r, p); }
 
-    result_type
+    Plane_3
     operator()(Return_base_tag tag, const Segment_3& s, const Point_3& p) const
     { return LK_Construct_plane_3()(tag, s, p); }
 
-    result_type
+    decltype(auto)
     operator()(Return_base_tag tag, const Circle_3 & c) const
     { return LK_Construct_plane_3()(tag, c); }
 
-    result_type
+    Plane_3
     operator()(const RT& a, const RT& b, const RT& c, const RT& d) const
     { return this->operator()(Return_base_tag(), a, b, c, d); }
 
-    result_type
+    Plane_3
     operator()(const Point_3& p, const Point_3& q, const Point_3& r) const
     { return this->operator()(Return_base_tag(), p, q, r); }
 
-    result_type
+    Plane_3
     operator()(const Point_3& p, const Direction_3& d) const
     { return this->operator()(Return_base_tag(), p, d); }
 
-    result_type
+    Plane_3
     operator()(const Point_3& p, const Vector_3& v) const
     { return this->operator()(Return_base_tag(), p, v); }
 
-    result_type
+    Plane_3
     operator()(const Line_3& l, const Point_3& p) const
     { return this->operator()(Return_base_tag(), l, p); }
 
-    result_type
+    Plane_3
     operator()(const Ray_3& r, const Point_3& p) const
     { return this->operator()(Return_base_tag(), r, p); }
 
-    result_type
+    Plane_3
     operator()(const Segment_3& s, const Point_3& p) const
     { return this->operator()(Return_base_tag(), s, p); }
 
-    result_type
+    decltype(auto)
     operator()(const Circle_3 & c) const
     { return this->operator()(Return_base_tag(), c); }
 
-    result_type
+    Plane_3
     operator() ( const typename SK::Polynomial_1_3 &eq )
     { return SphericalFunctors::construct_plane_3<SK>(eq); }
 
-    result_type operator() (const Circular_arc_3 & c) const
+    decltype(auto) operator() (const Circular_arc_3 & c) const
     { return c.rep().supporting_plane(); }
   };
 
@@ -498,54 +480,53 @@ template < class SK > \
     typedef typename SK::Ray_3 Ray_3;
   public:
     typedef typename SK::Linear_kernel::Construct_line_3 LK_Construct_line_3;
-    typedef typename LK_Construct_line_3::result_type result_type;
 
-    result_type
+    Line_3
     operator()(Return_base_tag, const Point_3& p, const Point_3& q) const
     { return LK_Construct_line_3()(p, Vector_3(p, q)); }
 
-    result_type
+    Line_3
     operator()(Return_base_tag, const Point_3& p, const Direction_3& d) const
     { return operator()(Return_base_tag(), p, Vector_3(d.dx(), d.dy(), d.dz())); }
 
-    result_type
+    Line_3
     operator()(Return_base_tag, const Point_3& p, const Vector_3& v) const
     { return LK_Construct_line_3()(p, v); }
 
-    result_type
+    Line_3
     operator()(Return_base_tag, const Segment_3& s) const
     { return LK_Construct_line_3()(s.source(), Vector_3(s.source(), s.target())); }
 
-    result_type
+    Line_3
     operator()(Return_base_tag, const Ray_3& r) const
     { return LK_Construct_line_3()(r.source(), Vector_3(r.source(), r.second_point())); }
 
 
-    result_type
+    Line_3
     operator()(const Point_3& p, const Point_3& q) const
     { return this->operator()(Return_base_tag(), p, q); }
 
-    result_type
+    Line_3
     operator()(const Point_3& p, const Direction_3& d) const
     { return this->operator()(Return_base_tag(), p, d); }
 
-    result_type
+    Line_3
     operator()(const Point_3& p, const Vector_3& v) const
     { return this->operator()(Return_base_tag(), p, v); }
 
-    result_type
+    Line_3
     operator()(const Segment_3& s) const
     { return this->operator()(Return_base_tag(), s); }
 
-    result_type
+    Line_3
     operator()(const Ray_3& r) const
     { return this->operator()(Return_base_tag(), r); }
 
-    const result_type&
+    decltype(auto)
     operator() (const Line_arc_3 & a) const
     { return (a.rep().supporting_line()); }
 
-    result_type
+    Line_3
     operator() ( const typename SK::Polynomials_for_line_3 &eq )
     { return SphericalFunctors::construct_line_3<SK>(eq); }
 
@@ -554,8 +535,6 @@ template < class SK > \
   template < class SK >
   class Construct_circle_3
   {
-    typedef typename SK::Linear_kernel::Construct_circle_3 Extended;
-    typedef typename Extended::result_type forwarded_result_type;
     typedef typename SK::FT FT;
     typedef typename SK::Point_3 Point_3;
     typedef typename SK::Plane_3 Plane_3;
@@ -564,57 +543,57 @@ template < class SK > \
     typedef typename SK::Vector_3    Vector_3;
     typedef typename SK::Direction_3 Direction_3;
     typedef typename SK::Circular_arc_3            Circular_arc_3;
-    typedef typename SK::Kernel_base::Circle_3  RCircle_3;
     typedef typename Circle_3::Rep              Rep;
-  public:
 
-    forwarded_result_type
+    typedef typename SK::Linear_kernel::Construct_circle_3 LK_Construct_circle_3;
+
+  public:
+    Circle_3
     operator()(const Point_3& p, const FT& sr,
                const Plane_3& plane) const
-    { return Extended()(p, sr, plane); }
+    { return LK_Construct_circle_3()(p, sr, plane); }
 
-    forwarded_result_type
+    Circle_3
     operator() (const Point_3& p, const FT& sr,
                 const Vector_3& v) const
-    { return Extended()(p, sr, v); }
+    { return LK_Construct_circle_3()(p, sr, v); }
 
-    forwarded_result_type
+    Circle_3
     operator() (const Point_3& p, const FT& sr,
                 const Direction_3& d) const
-    { return Extended()(p, sr, d); }
+    { return LK_Construct_circle_3()(p, sr, d); }
 
-    forwarded_result_type
+    Circle_3
     operator() (const Sphere_3& s1, const Sphere_3& s2) const
-    { return Extended()(s1, s2); }
+    { return LK_Construct_circle_3()(s1, s2); }
 
-    forwarded_result_type
+    Circle_3
     operator() (const Plane_3& p, const Sphere_3& s) const
-    { return Extended()(p, s); }
+    { return LK_Construct_circle_3()(p, s); }
 
-    forwarded_result_type
+    Circle_3
     operator() (const Sphere_3& s, const Plane_3& p) const
-    { return Extended()(p, s); }
+    { return LK_Construct_circle_3()(p, s); }
 
-    forwarded_result_type
+    Circle_3
     operator() (const Plane_3& p, const Sphere_3& s, int a) const
-    { return Extended()(p, s, a); }
+    { return LK_Construct_circle_3()(p, s, a); }
 
-    forwarded_result_type
+    Circle_3
     operator() (const Sphere_3& s, const Plane_3& p, int a) const
-    { return Extended()(p, s, a); }
+    { return LK_Construct_circle_3()(p, s, a); }
 
-    forwarded_result_type
+    Circle_3
     operator()(        const Point_3& p1, const Point_3& p2, const Point_3& p3) const
-    { return Extended()(p1, p2, p3); }
+    { return LK_Construct_circle_3()(p1, p2, p3); }
 
-    forwarded_result_type
+    Circle_3
     operator() ( const typename SK::Polynomials_for_circle_3 &eq )
-    { return Rep(construct_circle_3<SK>(eq)); }
+    { return construct_circle_3<SK>(eq); }
 
-    const forwarded_result_type&
+    decltype(auto)
     operator() (const Circular_arc_3 & a) const
     { return (a.rep().supporting_circle()); }
-
   };
 
   template < class SK >
@@ -1297,18 +1276,15 @@ template < class SK > \
     typedef typename SK::Line_arc_3                Line_arc_3;
 
   public:
-
-    typedef typename SK::Linear_kernel::Construct_bbox_3::result_type result_type;
-
     using SK::Linear_kernel::Construct_bbox_3::operator();
 
-    result_type operator() (const Circular_arc_point_3 & c) const
+    decltype(auto) operator() (const Circular_arc_point_3 & c) const
     { return c.rep().bbox(); }
 
-    result_type operator() (const Line_arc_3 & l) const
+    decltype(auto) operator() (const Line_arc_3 & l) const
     { return l.rep().bbox(); }
 
-    result_type operator() (const Circular_arc_3 & c) const
+    decltype(auto) operator() (const Circular_arc_3 & c) const
     { return c.rep().bbox(); }
 
   };
@@ -1322,8 +1298,8 @@ template < class SK > \
     typedef typename SK::FT                        FT;
 
   public:
-
     typedef double result_type;
+
     using SK::Linear_kernel::Compute_approximate_squared_length_3::operator();
 
     result_type operator() (const Circular_arc_3 & c) const
@@ -1341,7 +1317,6 @@ template < class SK > \
     typedef typename SK::FT                        FT;
 
   public:
-
     typedef double result_type;
 
     using SK::Linear_kernel::Compute_approximate_angle_3::operator();

@@ -254,22 +254,23 @@ template <class R, int dim>
 class Compare_signed_distance_to_line_projected_3
 {
 public:
+  typedef typename R::Comparison_result Comparison_result;
   typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
   typedef typename R::FT        RT;
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  typedef typename R::Comparison_result result_type;
 
   Point_2 project(const Point_3& p) const
   {
     return Point_2(x(p),y(p));
   }
 
-  result_type operator()(const Point_3& p,
-                         const Point_3& q,
-                         const Point_3& r,
-                         const Point_3& s) const
+  Comparison_result operator()(const Point_3& p,
+                               const Point_3& q,
+                               const Point_3& r,
+                               const Point_3& s) const
   {
     return typename R::Compare_signed_distance_to_line_2()
       (  project(p), project(q), project(r), project(s) );
@@ -280,22 +281,23 @@ template <class R, int dim>
 class Less_signed_distance_to_line_projected_3
 {
 public:
+  typedef typename R::Boolean   Boolean;
   typedef typename R::Point_3   Point_3;
   typedef typename R::Point_2   Point_2;
   typedef typename R::FT        RT;
+
   typename R::FT x(const Point_3 &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point_3 &p) const { return Projector<R,dim>::y(p); }
-  typedef typename R::Boolean result_type;
 
   Point_2 project(const Point_3& p) const
   {
     return Point_2(x(p),y(p));
   }
 
-  result_type operator()(const Point_3& p,
-                         const Point_3& q,
-                         const Point_3& r,
-                         const Point_3& s) const
+  Boolean operator()(const Point_3& p,
+                     const Point_3& q,
+                     const Point_3& r,
+                     const Point_3& s) const
   {
     return typename R::Less_signed_distance_to_line_2()
       (  project(p), project(q), project(r), project(s) );
@@ -596,8 +598,6 @@ class Compute_squared_length_projected_3
 {
   typedef typename R::Vector_3    Vector_3;
   typedef typename R::FT          FT;
-
-  typedef FT result_type;
 
   FT x(const Vector_3 &v) const { return Projector<R,dim>::x(v); }
   FT y(const Vector_3 &v) const { return Projector<R,dim>::y(v); }
@@ -972,8 +972,8 @@ public:
 
 
   struct Less_xy_2 {
-    typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q) const
+    typedef typename R::Boolean Boolean;
+    Boolean operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_x_2 cx;
       Comparison_result crx = cx(p,q);
@@ -986,8 +986,8 @@ public:
 
 
   struct Less_yx_2 {
-    typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q) const
+    typedef typename R::Boolean Boolean;
+    Boolean operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_y_2 cy;
       Comparison_result cry = cy(p,q);
@@ -999,8 +999,8 @@ public:
   };
 
   struct Equal_2 {
-    typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q) const
+    typedef typename R::Boolean Boolean;
+    Boolean operator()(const Point_2& p, const Point_2& q) const
     {
 
       Equal_x_2 eqx;
@@ -1010,8 +1010,8 @@ public:
   };
 
   struct Left_turn_2 {
-    typedef typename R::Boolean result_type;
-    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    typedef typename R::Boolean Boolean;
+    Boolean operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
 
       Orientation_2 ori;
@@ -1020,7 +1020,7 @@ public:
   };
 
   struct Collinear_2 {
-    typedef typename R::Boolean result_type;
+    typedef typename R::Boolean Boolean;
     bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     {
       Orientation_2 ori;
