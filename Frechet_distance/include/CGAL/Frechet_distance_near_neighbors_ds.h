@@ -76,7 +76,7 @@ auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
 
     auto predicate = [&](PolylineID id) {
       CGAL_assertion(id < curves.size());
-        return  is_Frechet_distance_larger<Traits, false, PointRange>(
+        return  is_Frechet_distance_larger<Traits>(
             curve, curves[id], distance);
     };
     auto new_end = std::remove_if(result.begin(), result.end(), predicate);

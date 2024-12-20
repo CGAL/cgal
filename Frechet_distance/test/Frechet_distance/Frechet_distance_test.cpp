@@ -149,6 +149,7 @@ static FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQ
 template<bool force_filtering=false>
 static double testFrechetDistance()
 {
+    namespace params = CGAL::parameters;
     std::string curve_directory = "./data/curves/";
     std::string query_directory = "./data/queries/";
     std::vector<std::string> datasets;
@@ -181,8 +182,9 @@ static double testFrechetDistance()
           */
             timer.start();
             auto decision =
-                ! CGAL::is_Frechet_distance_larger<TestTraits, force_filtering>(
-                    curves[query.id1], curves[query.id2], query.distance);
+                ! CGAL::is_Frechet_distance_larger<TestTraits>(
+                    curves[query.id1], curves[query.id2], query.distance,
+                    params::force_filtering(std::bool_constant<force_filtering>()));
             timer.stop();
 
             if (decision != query.decision) {

@@ -178,6 +178,7 @@ CGAL_add_named_parameter(do_lock_mesh_t, do_lock_mesh, do_lock_mesh)
 CGAL_add_named_parameter(do_simplify_border_t, do_simplify_border, do_simplify_border)
 CGAL_add_named_parameter(algorithm_t, algorithm, algorithm)
 CGAL_add_named_parameter(use_smoothing_t, use_smoothing, use_smoothing)
+CGAL_add_named_parameter(force_filtering_t, force_filtering, force_filtering)
 
 //internal
 CGAL_add_named_parameter(weight_calculator_t, weight_calculator, weight_calculator)

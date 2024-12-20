@@ -53,16 +53,18 @@ struct MinimalFrechetTraits {
 
 int main()
 {
+  namespace params = CGAL::parameters;
+
   {
     using Traits = MinimalFrechetTraits<double>;
     std::vector<Traits::Point_d> curve;
-    /* bool decision = */ CGAL::is_Frechet_distance_larger<Traits, true>(curve, curve, 0.1);
+    /* bool decision = */ CGAL::is_Frechet_distance_larger<Traits>(curve, curve, 0.1, params::force_filtering(std::true_type()));
   }
 
   {
     using Traits = MinimalFrechetTraits<CGAL::Exact_rational>;
     std::vector<Traits::Point_d> curve;
-    /* bool decision = */ CGAL::is_Frechet_distance_larger<Traits, true>(curve, curve, 0.1);
+    /* bool decision = */ CGAL::is_Frechet_distance_larger<Traits>(curve, curve, 0.1, params::force_filtering(std::true_type()));
   }
 
 
