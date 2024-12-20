@@ -246,6 +246,17 @@ int main(int argc, char** argv)
     std::cout << t1 << " " << t2 << "\n";
   }
 
+  if (test_set.empty() || test_set.count(0))
+  {
+    using Kernel = CGAL::Simple_cartesian<double>;
+    using Traits = CGAL::Frechet_distance_traits_2<Kernel>;
+    using Point = Kernel::Point_2;
+    std::cout <<"Simple_cartesian<double> (force_filtering)\n";
+    double t1=Test_struct<Kernel, Traits, Point>::testFrechetDistanceNearNeighborsDS();
+    double t2=Test_struct<Kernel, Traits, Point>::testFrechetDistance<true>();
+    std::cout << t1 << " " << t2 << "\n";
+  }
+
   if (test_set.empty() || test_set.count(1))
   {
     using Kernel = CGAL::Epick;
