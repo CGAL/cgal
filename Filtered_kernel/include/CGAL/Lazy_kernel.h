@@ -86,7 +86,7 @@ public:
 #ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
   enum { Has_static_filters = false };
 #else
-  // @fixme, this should be 'true' but it's broken because Conditional_EPIC_predicate
+  // @fixme, this should be 'true' but it's broken because EPIC_predicate_if_convertible
   // assumes the static filtered predicate and the (non-static) filtered predicate
   // have the same signature, which is not always the case, for example in
   //   Do_intersect_3(Sphere_3, Bbox_3, *bool*)
@@ -137,8 +137,15 @@ public:
     typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
     P Pf() const { return P(); }
 #else
-#define CGAL_Kernel_pred(P, Pf)  \
-  typedef Static_filtered_predicate<Approximate_kernel, Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F>, Exact_predicates_inexact_constructions_kernel::P> P; \
+// - the first template parameter is because either it fits in a double, or not, so
+//   we might as well use the approximate kernel directly rather than the complete lazy kernel
+// - the second is the predicate to be called if EPICK is not usable
+// - the third is the equivalent predicate in EPICK
+#define CGAL_Kernel_pred(P, Pf) \
+  typedef EPIC_predicate_if_convertible<Approximate_kernel, \
+                                        Filtered_predicate<typename Exact_kernel::P, \
+                                                           typename Approximate_kernel::P, C2E, C2F>, \
+                                        Exact_predicates_inexact_constructions_kernel::P> P; \
     P Pf() const { return P(); }
 #endif
 

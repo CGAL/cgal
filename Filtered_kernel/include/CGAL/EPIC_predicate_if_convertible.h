@@ -9,15 +9,15 @@
 //
 // Author(s)     : Andreas Fabri, Laurent Rineau
 
-#ifndef CGAL_STATIC_FILTERED_PREDICATE_H
-#define CGAL_STATIC_FILTERED_PREDICATE_H
+#ifndef CGAL_EPIC_PREDICATE_IF_CONVERTIBLE_H
+#define CGAL_EPIC_PREDICATE_IF_CONVERTIBLE_H
 
 #include <CGAL/Epic_converter.h>
 
 namespace CGAL {
 
 template <typename AK, typename FP, typename EpicP>
-class Static_filtered_predicate {
+class EPIC_predicate_if_convertible {
 public:
   FP fp;
   EpicP epicp;
@@ -54,4 +54,4 @@ public:
 
 } // CGAL
 
-#endif // CGAL_STATIC_FILTERED_PREDICATE_H
+#endif // CGAL_EPIC_PREDICATE_IF_CONVERTIBLE_H
