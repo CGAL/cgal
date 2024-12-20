@@ -102,7 +102,8 @@ public:
     return R().compute_squared_radius_2_object()(*this);
   }
 
-  Orientation orientation() const
+  typename R::Orientation
+  orientation() const
   {
     // This make_certain(), the uncertain orientation of circles, the orientation
     // of circles, are all yucky.

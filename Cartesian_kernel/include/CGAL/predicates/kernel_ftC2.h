@@ -630,7 +630,7 @@ side_of_oriented_lineC2(const FT &a, const FT &b, const FT &c,
 }
 
 template <class FT>
-Comparison_result
+typename Compare<FT>::result_type
 compare_power_distanceC2(const FT& px, const FT& py, const FT& pwt,
                          const FT& qx, const FT& qy, const FT& qwt,
                          const FT& rx, const FT& ry)
@@ -643,7 +643,7 @@ compare_power_distanceC2(const FT& px, const FT& py, const FT& pwt,
 
 template <class FT>
 CGAL_KERNEL_MEDIUM_INLINE
-Bounded_side
+typename Same_uncertainty_nt<Bounded_side, FT>::type
 power_side_of_bounded_power_circleC2(const FT &px, const FT &py, const FT &pw,
                                      const FT &qx, const FT &qy, const FT &qw,
                                      const FT &tx, const FT &ty, const FT &tw)
@@ -660,7 +660,7 @@ power_side_of_bounded_power_circleC2(const FT &px, const FT &py, const FT &pw,
 }
 
 template <class FT>
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, FT>::type
 power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
                                       const FT &qx, const FT &qy, const FT &qwt,
                                       const FT &rx, const FT &ry, const FT &rwt,
@@ -685,7 +685,7 @@ power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
 }
 
 template <class FT>
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, FT>::type
 power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
                                       const FT &qx, const FT &qy, const FT &qwt,
                                       const FT &tx, const FT &ty, const FT &twt)
@@ -709,7 +709,7 @@ power_side_of_oriented_power_circleC2(const FT &px, const FT &py, const FT &pwt,
 }
 
 template <class FT>
-Oriented_side
+typename Same_uncertainty_nt<Oriented_side, FT>::type
 circumcenter_oriented_side_of_oriented_segmentC2(const FT& ax,  const FT& ay,
                                                  const FT& bx,  const FT& by,
                                                  const FT& p0x, const FT& p0y,

@@ -44,7 +44,7 @@ operator!=(const Point_2<K> &p, const Origin& o)
 
 template < class K >
 inline
-Angle
+typename K::Angle
 angle(const Vector_2<K> &u,
       const Vector_2<K> &v)
 {
@@ -53,7 +53,7 @@ angle(const Vector_2<K> &u,
 
 template < class K >
 inline
-Angle
+typename K::Angle
 angle(const Point_2<K> &p,
       const Point_2<K> &q,
       const Point_2<K> &r)
@@ -63,7 +63,7 @@ angle(const Point_2<K> &p,
 
 template < class K >
 inline
-Angle
+typename K::Angle
 angle(const Point_2<K> &p,
       const Point_2<K> &q,
       const Point_2<K> &r,
@@ -764,7 +764,9 @@ midpoint(const Point_2<K> &p, const Point_2<K> &q)
 }
 
 template < class K >
-inline typename K::Point_2 midpoint(const Segment_2<K> &s)
+inline
+typename K::Point_2
+midpoint(const Segment_2<K> &s)
 {
   return internal::midpoint(s, K());
 }
