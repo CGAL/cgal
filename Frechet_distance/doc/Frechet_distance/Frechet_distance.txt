@@ -60,7 +60,7 @@ the algorithm switches to the usage of square root extensions.
 \section secFrechetDistanceExamples Examples
 
 In the examples we use different kernels to illustrate that the functions
-work as well for inexact or exact kernels.
+can be used with either inexact or exact kernels.
 
 \subsection subsecFrechetDistanceFirstExample Decision for 2D Polylines
 
