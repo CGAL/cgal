@@ -43,8 +43,8 @@ A random access iterator type to enumerate the
 using Cartesian_const_iterator_d = unspecified_type;
 
 /*!
-Functor model of `Kernel_d::ConstructCartesianConstIterator_d` to get
-iterators over %Cartesian coordinates of a point.
+Functor with `operator()(const Point_d&)` and `operator()(const Point_d&, int)` for constructing
+a begin and past-the-end `Cartesian_const_iterator_d`, respectively.
 */
 using Construct_cartesian_const_iterator_d = unspecified_type;
 

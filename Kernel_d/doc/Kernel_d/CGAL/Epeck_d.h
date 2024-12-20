@@ -52,6 +52,11 @@ concepts for the rest.
 */
 template< typename DimensionTag >
 struct Epeck_d {
+
+/*! the dimension
+*/
+typedef DimensionTag Dimension;
+
 /*!
 represents a point in the Euclidean space
 \cgalModels{DefaultConstructible,Assignable}
