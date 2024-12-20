@@ -26,7 +26,7 @@ namespace CGAL
  * \ingroup PkgFrechetDistanceTraits
  *
 * \cgalModels{FrechetDistanceTraits}
-* \tparam K geometric traits class
+* \tparam K geometric traits class. Must be either `Epick_d` or `Epeck_d` with a fixed dimension.
 */
 template <class K>
 class Frechet_distance_traits_d

@@ -26,7 +26,7 @@ namespace CGAL
  * \ingroup PkgFrechetDistanceTraits
  *
 * \cgalModels{FrechetDistanceTraits}
-* \tparam K  geometric traits class
+* \tparam K  geometric traits class. Must be a model of `Kernel`
 */
 template <class K>
 class Frechet_distance_traits_3

@@ -41,7 +41,11 @@ concepts for the rest.
 */
 template< typename DimensionTag >
 struct Epick_d {
-/*!
+
+/*! the dimension
+*/
+typedef DimensionTag Dimension;
+
 represents a point in the Euclidean space
 \cgalModels{DefaultConstructible,Assignable}
 */
