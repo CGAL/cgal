@@ -29,7 +29,7 @@ namespace CGAL
 
 /**
  * \ingroup PkgFrechetDistanceFunctions
- * determines if the Frechet distance between two polylines is larger than a given distance.
+ * determines if the Frechet distance between two polylines is larger than a given distance bound.
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type.
@@ -37,7 +37,7 @@ namespace CGAL
  *
  * \param polyline1 the first polyline defined by a sequence of consecutive points
  * \param polyline2 the second polyline defined by a sequence of consecutive points
- * \param distance the distance to compare against
+ * \param distance_bound the distance to compare against
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  * \cgalNamedParamsBegin
@@ -53,7 +53,7 @@ namespace CGAL
 template <class Traits, class PointRange, class NamedParameters =  parameters::Default_named_parameters>
 bool is_Frechet_distance_larger(const PointRange& polyline1,
                                 const PointRange& polyline2,
-                                const double distance,
+                                const double distance_bound,
                                 const NamedParameters& np = parameters::default_values())
 {
     constexpr bool force_filtering =
@@ -72,7 +72,7 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
 
     using distance_t = const typename decltype(icurve1)::distance_t;
 
-    return ! Frechet_distance_::internal::lessThan(icurve1, icurve2, distance_t(distance));
+    return ! Frechet_distance_::internal::lessThan(icurve1, icurve2, distance_t(distance_bound));
 }
 
 /**
