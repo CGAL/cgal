@@ -182,9 +182,10 @@ static double testFrechetDistance()
           */
             timer.start();
             auto decision =
-                ! CGAL::is_Frechet_distance_larger<TestTraits>(
+                ! CGAL::is_Frechet_distance_larger(
                     curves[query.id1], curves[query.id2], query.distance,
-                    params::force_filtering(std::bool_constant<force_filtering>()));
+                    params::force_filtering(std::bool_constant<force_filtering>())
+                           .geom_traits(TestTraits()));
             timer.stop();
 
             if (decision != query.decision) {
