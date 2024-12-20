@@ -1436,23 +1436,10 @@ struct Lazy_construction
   template <typename ...Args>
   struct is_optional_variant<boost::optional<boost::variant<Args...> > > : std::true_type { };
 
-  template<typename>
-  struct result {
-    // this does not default, if you want to make a lazy lazy-kernel,
-    // you are on your own
-  };
-
-  template <typename F, class... T>
-  struct result<F(T...)>
-  {
-    // @todo why the Type_mapper, just for a std::decay?
-    typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<T,LK,AK>::type>()...)),AK,LK>::type type;
-  };
-
   template <class... L>
   decltype(auto)
-  operator()(const L&... l) const {
-    // @todo why the Type_mapper, just for a std::decay?
+  operator()(const L&... l) const
+  {
     typedef typename Type_mapper<decltype(std::declval<EC>()(std::declval<typename Type_mapper<L, LK, EK>::type>()...)),EK,EK>::type ET;
     typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<L, LK, AK>::type>()...)),AK,AK>::type AT;
     typedef Lazy<AT, ET, E2A> Handle;
@@ -1460,7 +1447,7 @@ struct Lazy_construction
     // ----------------------- FT -----------------------
     if constexpr (std::is_same_v<AT, typename AK::FT>)
     {
-      typedef Lazy_exact_nt<std::remove_cv_t<std::remove_reference_t<decltype(ec(CGAL::exact(l)...))>>> result_type;
+      typedef Lazy_exact_nt<CGAL::cpp20::remove_cvref_t<decltype(ec(CGAL::exact(l)...))>> result_type;
 
       CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
@@ -1550,12 +1537,7 @@ struct Lazy_construction
     // boost::optional<boost::variant< > > (Intersection_23 result types)
     else if constexpr (is_optional_variant<AT>::value)
     {
-      typedef typename result<Lazy_construction(L...)>::type result_type;
-
-      // typedef decltype(std::declval<AC>()(std::declval<typename Type_mapper<L1, LK, AK>::type>(),
-      //                                     std::declval<typename Type_mapper<L2, LK, AK>::type>())) AT;
-      // typedef decltype(std::declval<EC>()(std::declval<typename Type_mapper<L1, LK, EK>::type>(),
-      //                                     std::declval<typename Type_mapper<L2, LK, EK>::type>())) ET;
+      typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<L, LK, AK>::type>()...)),AK,LK>::type result_type;
 
       CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
       {
@@ -1598,7 +1580,7 @@ struct Lazy_construction
     // ----------------------- GENERIC -----------------------
     else
     {
-      typedef typename result<Lazy_construction(L...)>::type result_type;
+      typedef typename Type_mapper<decltype(std::declval<AC>()(std::declval<typename Type_mapper<L, LK, AK>::type>()...)),AK,LK>::type result_type;
 
       static const bool noprune = Disable_lazy_pruning<AK, AC>::value;
 
