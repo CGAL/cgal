@@ -82,8 +82,17 @@ public:
   typedef typename Exact_kernel::Rep_tag                          Rep_tag;
 
   enum { Has_filtered_predicates = true };
-  enum { Has_static_filters = false };
   typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
+
+#ifdef CGAL_NO_STATIC_FILTERS_FOR_LAZY_KERNEL
+  enum { Has_static_filters = false };
+#else
+  // @fixme, this should be 'true' but it's broken because Conditional_EPIC_predicate
+  // assumes the static filtered predicate and the (non-static) filtered predicate
+  // have the same signature, which is not always the case, for example in
+  //   Do_intersect_3(Sphere_3, Bbox_3, *bool*)
+  enum { Has_static_filters = false };
+#endif
 
   // Types
   typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;
