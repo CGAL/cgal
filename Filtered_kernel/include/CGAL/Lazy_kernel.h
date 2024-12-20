@@ -42,12 +42,11 @@ namespace CGAL {
 // Exact_kernel = exact kernel that will be made lazy
 // Kernel = lazy kernel
 
-// the Generic base simply applies the generic magic functor stupidly.
-// then the real base fixes up a few special cases.
+// `Lazy_kernel_generic_base` applies the generic magic functor stupidly.
+// `Lazy_kernel_base` fixes up a few special cases.
 template < typename EK_, typename AK_, typename E2A_, typename Kernel_ >
 class Lazy_kernel_generic_base
   // : public Filtered_kernel_base<EK_>
-    // TODO : Static_filters_base too ?  Check performance
 {
 public:
 
@@ -176,11 +175,6 @@ public:
             Kernel,
             typename Approximate_kernel::Intersect_point_3_for_polyhedral_envelope,
             typename Exact_kernel::Intersect_point_3_for_polyhedral_envelope> Intersect_point_3_for_polyhedral_envelope;
-
-  // typedef void Compute_z_3; // to detect where .z() is called
-  // typedef void Construct_point_3; // to detect where the ctor is called
-
-
 
   struct Compute_weight_2 : public BaseClass::Compute_weight_2
   {
@@ -412,7 +406,6 @@ public:
     }
 
   };
-
 
   struct Less_xyz_3 : public BaseClass::Less_xyz_3
   {
