@@ -1,4 +1,3 @@
-
 #include "test_util.h"
 
 #include <CGAL/Simple_cartesian.h>

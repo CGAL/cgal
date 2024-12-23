@@ -1,4 +1,3 @@
-
 #include "test_util.h"
 
 #include <CGAL/Simple_cartesian.h>
@@ -14,7 +13,7 @@
 /*
 Verifier for topological correctness
 Based on: Topology Verification for Isosurface Extraction, Tiago Etiene
-Data sets: [Marching Cubes cases] [Randomly generated grids] from http://liscustodio.github.io/C_MC33/ 
+Data sets: [Marching Cubes cases] [Randomly generated grids] from http://liscustodio.github.io/C_MC33/
 */
 
 namespace IS = CGAL::Isosurfacing;
@@ -26,7 +25,7 @@ void read_iso_volume(const std::string& filename, Grid& grid, Values& values) {
   using Iso_cuboid_3 = typename Geom_traits::Iso_cuboid_3;
   typename Geom_traits::Construct_point_3 point = grid.geom_traits().construct_point_3_object();
   typename Geom_traits::Construct_iso_cuboid_3 iso_cuboid = grid.geom_traits().construct_iso_cuboid_3_object();
-  
+
   std::ifstream file(filename, std::ios::binary);
   if (!file.is_open()) {
       throw std::runtime_error("Cannot open file: " + filename);
