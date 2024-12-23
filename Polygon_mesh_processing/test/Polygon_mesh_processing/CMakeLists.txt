@@ -65,6 +65,7 @@ create_single_source_cgal_program("triangulate_hole_with_cdt_2_test.cpp")
 create_single_source_cgal_program("test_pmp_polyhedral_envelope.cpp")
 create_single_source_cgal_program("test_pmp_np_function.cpp")
 create_single_source_cgal_program("test_degenerate_pmp_clip_split_corefine.cpp")
+create_single_source_cgal_program("test_corefinement_cavities.cpp")
 #  create_single_source_cgal_program("test_pmp_repair_self_intersections.cpp")
 
 find_package(Eigen3 3.2.0 QUIET) #(requires 3.2.0 or greater)
