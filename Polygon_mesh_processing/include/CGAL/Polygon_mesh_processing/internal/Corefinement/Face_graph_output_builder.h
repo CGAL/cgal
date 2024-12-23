@@ -1852,7 +1852,7 @@ public:
             if (coplanar_patches_of_tm1.test(patch_id))
             {
               // Two "identical" coplanar patches that are entire connected components
-              //we have the correspondance between cpln patches thanks to faces in tm1_coplanar_faces and tm2_coplanar_faces
+              // we have the correspondence between cpln patches thanks to faces in tm1_coplanar_faces and tm2_coplanar_faces
               CGAL_assertion(tm1_coplanar_faces.size()==tm2_coplanar_faces.size());
               if (coplanar_tm1_to_coplanar_tm2.empty()) // fill container only once
               {
