@@ -871,14 +871,14 @@ namespace internal {
         std::array<halfedge_descriptor, 2> r1 = internal::is_badly_shaped(
             face(he, mesh_),
             mesh_, vpmap_, vcmap_, ecmap_, gt_,
-            cap_threshold, // bound on the angle: above 160 deg => cap
             4, // bound on shortest/longest edge above 4 => needle
+            cap_threshold, // bound on the angle: above 160 deg => cap
             0,// collapse length threshold : not needed here
             0); // flip triangle height threshold
 
         std::array<halfedge_descriptor, 2> r2 = internal::is_badly_shaped(
             face(opposite(he, mesh_), mesh_),
-            mesh_, vpmap_, vcmap_, ecmap_, gt_, cap_threshold, 4, 0, 0);
+            mesh_, vpmap_, vcmap_, ecmap_, gt_, 4, cap_threshold, 0, 0);
 
         const bool badly_shaped = (r1[0] != boost::graph_traits<PolygonMesh>::null_halfedge()//needle
                                 || r1[1] != boost::graph_traits<PolygonMesh>::null_halfedge()//cap
