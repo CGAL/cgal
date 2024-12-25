@@ -212,6 +212,7 @@ public:
   using X_monotone_curve_2 = typename Base::X_monotone_curve_2;
   using Curve_2 = typename Base::Curve_2;
   using Multiplicity = typename Base::Multiplicity;
+  //@}
 
   /*! A functor that compares the \f$x\f$-coordinates of two points. */
   class Compare_x_2 {
