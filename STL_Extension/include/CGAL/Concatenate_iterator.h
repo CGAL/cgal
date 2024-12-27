@@ -54,7 +54,7 @@ public:
 
 public:
   Concatenate_iterator() : e1_(), i1_(), b2_(), i2_() {}
-  
+
   Concatenate_iterator(It1 e1, It2 b2, It1 i1)
     : e1_(e1), i1_(i1), b2_(b2), i2_(b2) {}
 
