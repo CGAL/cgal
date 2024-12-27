@@ -32,9 +32,13 @@ int main(int argc, char* argv[])
   CGAL::FrechetDistanceNearNeighborsDS<Curve, Traits> ds;
   ds.insert(curves);
 
-  double distance = 10;
+  for(const Curve& c : curves){
+    std::pair<double, double> res = CGAL::approximate_Frechet_distance(c, query, 0.000001);
+    std::cout << "The Frechet distance between the polylines is between " <<  res.first << " and " << res.second << std::endl;
+  }
+  double distance = 16;
   std::vector<std::size_t> result = ds.get_close_curves(query, distance);
 
-  std::cout << result.size() << "curves at Frechet distance closer than " << distance << std::endl;
+  std::cout << result.size() << " curves at Frechet distance closer than " << distance << std::endl;
   return 0;
 }
