@@ -34,6 +34,7 @@ This package provides functions for computing the Fréchet distance of polylines
 - `FrechetDistanceTraits`
 
 \cgalCRPSection{Classes}
+- `CGAL::Frechet_distance::Neighbor_search`
 - `CGAL::Frechet_distance_traits_2`
 - `CGAL::Frechet_distance_traits_3`
 - `CGAL::Frechet_distance_traits_d`
