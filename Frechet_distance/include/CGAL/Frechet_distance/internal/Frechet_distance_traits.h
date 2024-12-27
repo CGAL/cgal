@@ -13,16 +13,16 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#ifndef CGAL_FRECHET_DISTANCE_TRAITS_H
-#define CGAL_FRECHET_DISTANCE_TRAITS_H
+#pragma once
 
 #include <CGAL/license/Frechet_distance.h>
 
 #include <CGAL/Bbox.h>
 #include <array>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace Frechet_distance_ {
+namespace internal {
 
 template <class NT, int dimension>
 class Frechet_distance_traits
@@ -69,6 +69,6 @@ public:
   }
 };
 
+}
+}
 }  // end of namespace CGAL
-
-#endif  // CGAL_FRECHET_DISTANCE_TRAITS_H
