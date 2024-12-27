@@ -19,11 +19,11 @@
 #include <CGAL/Frechet_distance/internal/curve.h>
 #include <CGAL/Frechet_distance/internal/frechet_light.h>
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
+#include <CGAL/Frechet_distance/internal/Frechet_distance_traits.h>
 #include <CGAL/STL_Extension/internal/Has_nested_type_Has_filtered_predicates_tag.h>
 #include <CGAL/Frechet_distance_traits_2.h>
 #include <CGAL/Frechet_distance_traits_3.h>
 #include <CGAL/Frechet_distance_traits_d.h>
-#include <CGAL/Frechet_distance_traits.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Interval_nt.h>
@@ -74,8 +74,8 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
       }
       else
       {
-        using AT = Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
-        using ET = Frechet_distance_traits<CGAL::Exact_rational, Traits::Dimension::value>;
+        using AT = Frechet_distance_::internal::Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
+        using ET = Frechet_distance_::internal::Frechet_distance_traits<CGAL::Exact_rational, Traits::Dimension::value>;
         using Filtered_traits = std::pair<AT,ET>;
 
         return Curve<Filtered_traits, true>(point_range, traits);
