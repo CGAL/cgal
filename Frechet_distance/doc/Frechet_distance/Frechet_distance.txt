@@ -71,7 +71,7 @@ distance between two polylines in the Euclidean plane is at most a given value.
 
 \subsection subsecFrechetDistanceSecondExample Distance Computation for 3D Polylines
 
-The following example shows how we can compute the Fréchet distance up to a given precision on two
+The following example shows how we can compute the Fréchet distance up to a given error bound on two
 polylines in 3-dimensional Euclidean space using `approximate_Frechet_distance()`.
 
 \cgalExample{Frechet_distance/Frechet_distance_3.cpp}
@@ -80,7 +80,7 @@ polylines in 3-dimensional Euclidean space using `approximate_Frechet_distance()
 
 \subsection subsecFrechetDistanceThirdExample Distance Computation for dD Polylines
 
-The following example shows how we can compute the Fréchet distance up to a given precision on two
+The following example shows how we can compute the Fréchet distance up to a given error bound on two
 polylines in 4-dimensional Euclidean space using `approximate_Frechet_distance()`.
 
 \cgalExample{Frechet_distance/Frechet_distance_d.cpp}
