@@ -20,7 +20,7 @@
 #include <CGAL/Root_of_traits.h>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 template <class FT>

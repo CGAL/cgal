@@ -30,7 +30,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 

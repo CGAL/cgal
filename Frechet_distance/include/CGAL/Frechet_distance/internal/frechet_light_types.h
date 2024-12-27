@@ -22,7 +22,7 @@
 #include <CGAL/Frechet_distance/internal/id.h>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 //
@@ -117,8 +117,8 @@ struct Outputs {
 template <typename K>
 struct QSimpleInterval {
     using PointID = typename K::PointID;
-    using CPoint = CGAL::Frechet_distance_::internal::CPoint<K>;
-    using CInterval = CGAL::Frechet_distance_::internal::CInterval<K>;
+    using CPoint = CGAL::Frechet_distance::internal::CPoint<K>;
+    using CInterval = CGAL::Frechet_distance::internal::CInterval<K>;
 
     QSimpleInterval() : valid(false) {}
     QSimpleInterval(CPoint const& begin, CPoint const& end)

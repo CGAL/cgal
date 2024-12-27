@@ -25,7 +25,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 //TODO: move that in Kernel_23/Kernel_d?
@@ -469,4 +469,4 @@ std::ostream& operator<<(std::ostream& out, const Curve<K>& curve)
     return out;
 }
 
-} } } // namespace CGAL::Frechet_distance_::internal
+} } } // namespace CGAL::Frechet_distance::internal

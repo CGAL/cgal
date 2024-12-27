@@ -31,7 +31,7 @@
 #include <CGAL/Frechet_distance/internal/curve.h>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 
@@ -47,7 +47,7 @@ struct Lambda;
 template<typename FilteredTraits>
 struct Lambda<Curve<FilteredTraits,true>>
 {
-    using Curve = ::CGAL::Frechet_distance_::internal::Curve<FilteredTraits,true>;
+    using Curve = ::CGAL::Frechet_distance::internal::Curve<FilteredTraits,true>;
     using C = Curve;
     using distance_t = typename C::distance_t;
     using Approx = distance_t;
@@ -211,7 +211,7 @@ struct Lambda<Curve<FilteredTraits,true>>
 template<typename T>
 struct Lambda<Curve<T,false>>
 {
-    using Curve = ::CGAL::Frechet_distance_::internal::Curve<T,false>;
+    using Curve = ::CGAL::Frechet_distance::internal::Curve<T,false>;
     using C = Curve;
     using FT = typename C::FT;
     using RO2 = typename Root_of_traits<FT>::Root_of_2;
@@ -287,10 +287,10 @@ struct Lambda<Curve<T,false>>
     }
 };
 
-} } // namespace Frechet_distance_::internal
+} } // namespace Frechet_distance::internal
 
 template <typename FilteredTraits>
-bool is_one(const Frechet_distance_::internal::Lambda<Frechet_distance_::internal::Curve<FilteredTraits,true>>& lambda)
+bool is_one(const Frechet_distance::internal::Lambda<Frechet_distance::internal::Curve<FilteredTraits,true>>& lambda)
 {
     if (lambda.is_one) return true;
     if (lambda.is_zero) return false;
@@ -303,7 +303,7 @@ bool is_one(const Frechet_distance_::internal::Lambda<Frechet_distance_::interna
 }
 
 template <typename FilteredTraits>
-bool is_zero(const Frechet_distance_::internal::Lambda<Frechet_distance_::internal::Curve<FilteredTraits,true>>& lambda)
+bool is_zero(const Frechet_distance::internal::Lambda<Frechet_distance::internal::Curve<FilteredTraits,true>>& lambda)
 {
     if (lambda.is_zero) return true;
     if (lambda.is_one) return false;
@@ -316,7 +316,7 @@ bool is_zero(const Frechet_distance_::internal::Lambda<Frechet_distance_::intern
 }
 
 template <typename T>
-bool is_one(const Frechet_distance_::internal::Lambda<Frechet_distance_::internal::Curve<T,false>>& lambda)
+bool is_one(const Frechet_distance::internal::Lambda<Frechet_distance::internal::Curve<T,false>>& lambda)
 {
     if (lambda.is_one) return true;
     if (lambda.is_zero) return false;
@@ -324,7 +324,7 @@ bool is_one(const Frechet_distance_::internal::Lambda<Frechet_distance_::interna
 }
 
 template <typename T>
-bool is_zero(const Frechet_distance_::internal::Lambda<Frechet_distance_::internal::Curve<T,false>>& lambda)
+bool is_zero(const Frechet_distance::internal::Lambda<Frechet_distance::internal::Curve<T,false>>& lambda)
 {
     if (lambda.is_zero) return true;
     if (lambda.is_one) return false;
@@ -333,14 +333,14 @@ bool is_zero(const Frechet_distance_::internal::Lambda<Frechet_distance_::intern
 
 /*
 template <typename K>
-CGAL::Interval_nt<false> to_interval(const Frechet_distance_::internal::Lambda<K>& lambda)
+CGAL::Interval_nt<false> to_interval(const Frechet_distance::internal::Lambda<K>& lambda)
 {
   return lambda.approx;
 }
 */
 
 
-namespace Frechet_distance_
+namespace Frechet_distance
 {
 namespace internal {
 
@@ -704,5 +704,5 @@ std::ostream& operator<<(std::ostream& out, const CInterval<C>& interval)
 }
 
 } // namespace internal
-} // namespace Frechet_distance_
+} // namespace Frechet_distance
 } // namespace CGAL

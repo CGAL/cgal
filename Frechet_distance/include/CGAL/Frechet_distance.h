@@ -124,16 +124,16 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
         parameters::get_parameter(np, internal_np::geom_traits));
 
     constexpr bool filtered = force_filtering ||
-      std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits))::IFT,
+      std::is_same_v<typename decltype(Frechet_distance::internal::toCurve<force_filtering>(polyline1, traits))::IFT,
                      Interval_nt<false>>;
     Protect_FPU_rounding<filtered> p;
 
-    auto icurve1 = Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits);
-    auto icurve2 = Frechet_distance_::internal::toCurve<force_filtering>(polyline2, traits);
+    auto icurve1 = Frechet_distance::internal::toCurve<force_filtering>(polyline1, traits);
+    auto icurve2 = Frechet_distance::internal::toCurve<force_filtering>(polyline2, traits);
 
     using distance_t = const typename decltype(icurve1)::distance_t;
 
-    return ! Frechet_distance_::internal::lessThan(icurve1, icurve2, distance_t(distance_bound));
+    return ! Frechet_distance::internal::lessThan(icurve1, icurve2, distance_t(distance_bound));
 }
 
 /**
@@ -182,14 +182,14 @@ std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline
       parameters::get_parameter(np, internal_np::geom_traits));
 
     constexpr bool filtered = force_filtering ||
-      std::is_same_v<typename decltype(Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits))::IFT,
+      std::is_same_v<typename decltype(Frechet_distance::internal::toCurve<force_filtering>(polyline1, traits))::IFT,
                      Interval_nt<false>>;
     Protect_FPU_rounding<filtered> p;
 
-    auto icurve1 = Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits);
-    auto icurve2 = Frechet_distance_::internal::toCurve<force_filtering>(polyline2, traits);
+    auto icurve1 = Frechet_distance::internal::toCurve<force_filtering>(polyline1, traits);
+    auto icurve2 = Frechet_distance::internal::toCurve<force_filtering>(polyline2, traits);
 
-    return Frechet_distance_::internal::calcDistance(icurve1, icurve2, error_bound);
+    return Frechet_distance::internal::calcDistance(icurve1, icurve2, error_bound);
 }
 
 }  // end of namespace CGAL
