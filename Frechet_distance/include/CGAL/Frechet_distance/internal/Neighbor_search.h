@@ -13,8 +13,7 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#ifndef CGAL_INTERNAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
-#define CGAL_INTERNAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
+#pragma once
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Kd_tree.h>
@@ -287,7 +286,7 @@ auto FrechetKdTree<Traits>::search(Polyline const& curve, FT distance)
 }
 
 } // namespace internal
-} // namespace Frechet_distance_
+} // namespace Frechet_distance
 }  // end of namespace CGAL
 
-#endif  // CGAL_INTERNAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
+

@@ -1,6 +1,6 @@
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Frechet_distance_traits_3.h>
-#include <CGAL/Frechet_distance_near_neighbors_ds.h>
+#include <CGAL/Frechet_distance/Neighbor_search.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/IO/WKT.h>
 
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
   Curve query = curves.back();
   curves.pop_back();
 
-  CGAL::FrechetDistanceNearNeighborsDS<Curve, Traits> ds;
+  CGAL::Frechet_distance::Neighbor_search<Curve, Traits> ds;
   ds.insert(curves);
 
   for(const Curve& c : curves){
