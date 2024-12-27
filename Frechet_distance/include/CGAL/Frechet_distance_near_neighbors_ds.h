@@ -48,13 +48,13 @@ public:
     FrechetDistanceNearNeighborsDS() = default;
 
     void insert(const Polyline& curve);
-    void insert(const Polylines& curve);
+    void insert(const Polylines& curves);
 
     PolylineIDs get_close_curves(const Polyline& curve, double distance);
 
 private:
     Polylines curves;
-    Frechet_distance_::internal::FrechetKdTree<Traits> kd_tree;
+    Frechet_distance::internal::FrechetKdTree<Traits> kd_tree;
 };
 
 // TODO: store preprocessed curves after CGALization
@@ -79,6 +79,7 @@ auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
         return  is_Frechet_distance_larger(
             curve, curves[id], distance, parameters::geom_traits(Traits()));
     };
+    std::cout << result.size() << " curves returned from tree" << std::endl;
     auto new_end = std::remove_if(result.begin(), result.end(), predicate);
     result.erase(new_end, result.end());
 

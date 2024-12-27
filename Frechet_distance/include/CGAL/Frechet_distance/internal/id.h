@@ -21,7 +21,7 @@
 
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance{
 namespace internal {
 // Typesafe ID class such that there are compiler errors if different IDs are
 // mixed. The template parameter T is just there to assure this behavior.
@@ -67,9 +67,9 @@ namespace std
 {
 
 template <typename T>
-struct hash<CGAL::Frechet_distance_::internal::ID<T>> {
-    using IDType = typename CGAL::Frechet_distance_::internal::ID<T>::IDType;
-    std::size_t operator()(CGAL::Frechet_distance_::internal::ID<T> const& id) const noexcept
+struct hash<CGAL::Frechet_distance::internal::ID<T>> {
+    using IDType = typename CGAL::Frechet_distance::internal::ID<T>::IDType;
+    std::size_t operator()(CGAL::Frechet_distance::internal::ID<T> const& id) const noexcept
     {
         return std::hash<IDType>()(id);
     }

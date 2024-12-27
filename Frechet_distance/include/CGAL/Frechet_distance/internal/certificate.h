@@ -19,16 +19,16 @@
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 template <typename C>
 class Certificate
 {
     using Curve = C;
-    using CPositions = CGAL::Frechet_distance_::internal::CPositions<C>;
-    using CPosition = CGAL::Frechet_distance_::internal::CPosition<C>;
-    using CPoint = CGAL::Frechet_distance_::internal::CPoint<C>;
+    using CPositions = CGAL::Frechet_distance::internal::CPositions<C>;
+    using CPosition = CGAL::Frechet_distance::internal::CPosition<C>;
+    using CPoint = CGAL::Frechet_distance::internal::CPoint<C>;
 public:
     Certificate() = default;
 

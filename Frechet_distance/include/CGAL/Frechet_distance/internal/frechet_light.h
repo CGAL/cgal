@@ -29,7 +29,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 
@@ -45,20 +45,20 @@ class FrechetLight
     using Point = typename C::Point;
     using PointID = typename Curve::PointID;
     using distance_t = typename Curve::distance_t;
-    using CPoint = CGAL::Frechet_distance_::internal::CPoint<C>;
-    using CInterval = CGAL::Frechet_distance_::internal::CInterval<C>;
-    using CIntervals = CGAL::Frechet_distance_::internal::CIntervals<C>;
-    using CIntervalsID = CGAL::Frechet_distance_::internal::CIntervalsID<C>;
-    using CPosition = CGAL::Frechet_distance_::internal::CPosition<C>;
-    using QSimpleInterval = CGAL::Frechet_distance_::internal::QSimpleInterval<C>;
-    using QSimpleIntervals = CGAL::Frechet_distance_::internal::QSimpleIntervals<C>;
-    using QSimpleOutputs = CGAL::Frechet_distance_::internal::QSimpleOutputs<C>;
-    using Certificate = CGAL::Frechet_distance_::internal::Certificate<C>;
-    using Filter = CGAL::Frechet_distance_::internal::Filter<C>;
-    using Inputs = CGAL::Frechet_distance_::internal::Inputs<C>;
-    using Outputs = CGAL::Frechet_distance_::internal::Outputs<C>;
-    using BoxData = CGAL::Frechet_distance_::internal::BoxData<C>;
-    using Lambda = CGAL::Frechet_distance_::internal::Lambda<C>;
+    using CPoint = CGAL::Frechet_distance::internal::CPoint<C>;
+    using CInterval = CGAL::Frechet_distance::internal::CInterval<C>;
+    using CIntervals = CGAL::Frechet_distance::internal::CIntervals<C>;
+    using CIntervalsID = CGAL::Frechet_distance::internal::CIntervalsID<C>;
+    using CPosition = CGAL::Frechet_distance::internal::CPosition<C>;
+    using QSimpleInterval = CGAL::Frechet_distance::internal::QSimpleInterval<C>;
+    using QSimpleIntervals = CGAL::Frechet_distance::internal::QSimpleIntervals<C>;
+    using QSimpleOutputs = CGAL::Frechet_distance::internal::QSimpleOutputs<C>;
+    using Certificate = CGAL::Frechet_distance::internal::Certificate<C>;
+    using Filter = CGAL::Frechet_distance::internal::Filter<C>;
+    using Inputs = CGAL::Frechet_distance::internal::Inputs<C>;
+    using Outputs = CGAL::Frechet_distance::internal::Outputs<C>;
+    using BoxData = CGAL::Frechet_distance::internal::BoxData<C>;
+    using Lambda = CGAL::Frechet_distance::internal::Lambda<C>;
     using CurvePair = std::array<Curve const*, 2>;
 
 public:
@@ -1532,5 +1532,5 @@ template <typename C>
 std::size_t FrechetLight<C>::getNumberOfBoxes() const { return num_boxes; }
 
 } // namespace internal
-} // namespace Frechet_distance_
+} // namespace Frechet_distance
 } // namespace CGAL

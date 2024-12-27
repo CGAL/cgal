@@ -30,7 +30,7 @@
 #include <CGAL/Lazy.h>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 template <class K, bool hfp = ::CGAL::internal::Has_nested_type_Has_filtered_predicates_tag<K>::value>
@@ -74,8 +74,8 @@ auto toCurve(const PointRange& point_range, const Traits& traits)
       }
       else
       {
-        using AT = Frechet_distance_::internal::Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
-        using ET = Frechet_distance_::internal::Frechet_distance_traits<CGAL::Exact_rational, Traits::Dimension::value>;
+        using AT = Frechet_distance::internal::Frechet_distance_traits<CGAL::Interval_nt_advanced, Traits::Dimension::value>;
+        using ET = Frechet_distance::internal::Frechet_distance_traits<CGAL::Exact_rational, Traits::Dimension::value>;
         using Filtered_traits = std::pair<AT,ET>;
 
         return Curve<Filtered_traits, true>(point_range, traits);
@@ -188,6 +188,6 @@ std::pair<double,double> calcDistance(Curve<Traits, is_filtered> const& curve1,
     return frechet.calcDistance(curve1, curve2, precision);
 }
 
-} } }  // end of namespace CGAL::Frechet_distance_::internal
+} } }  // end of namespace CGAL::Frechet_distance::internal
 
 #endif  // CGAL_INTERNAL_Frechet_distance_FRECHET_DISTANCE_H

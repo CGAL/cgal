@@ -21,7 +21,7 @@
 #include <array>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 template <class NT, int dimension>

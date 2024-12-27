@@ -23,7 +23,7 @@
 #include <vector>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 template <typename C>
@@ -31,7 +31,7 @@ class FrechetClassical
 {
     using Curve = C;
     using distance_t = typename Curve::distance_t;
-    using Lambda = CGAL::Frechet_distance_::internal::Lambda<C>;
+    using Lambda = CGAL::Frechet_distance::internal::Lambda<C>;
 
 public:
     FrechetClassical() = default;

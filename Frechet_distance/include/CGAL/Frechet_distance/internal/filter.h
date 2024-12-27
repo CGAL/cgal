@@ -20,7 +20,7 @@
 #include <CGAL/Frechet_distance/internal/geometry_basics.h>
 
 namespace CGAL {
-namespace Frechet_distance_ {
+namespace Frechet_distance {
 namespace internal {
 
 // TODO: we can use Cartesian_converter here when we have one-sided approximate
@@ -37,9 +37,9 @@ private:
     using distance_t = typename K::distance_t;
     using PointID = typename K::PointID;
     using Point = typename K::Point;
-    using Certificate = CGAL::Frechet_distance_::internal::Certificate<K>;
+    using Certificate = CGAL::Frechet_distance::internal::Certificate<K>;
     using Curve = K;
-    using CPoint = CGAL::Frechet_distance_::internal::CPoint<K>;
+    using CPoint = CGAL::Frechet_distance::internal::CPoint<K>;
 
     Certificate cert;
     const Curve *curve1_pt, *curve2_pt;
