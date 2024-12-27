@@ -64,14 +64,14 @@ class FrechetKdTree
         {
             Construct_cartesian_const_iterator ccc;
             PP ppb(ccc(ends[0],0), ccc(ends[1]), ccc(ends[0]));
-            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0));
+            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0),0);
           return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), ppb);
         }
 
         Cartesian_const_iterator_d cartesian_end() const
         {
             Construct_cartesian_const_iterator ccc;
-            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0));
+            PP ppe(ccc(ends[0],0), ccc(ends[1]), ccc(ends[1],0),0);
             return Cartesian_const_iterator_d(ppe, bbox.cartesian_begin(), bbox.cartesian_end(), 0);
         }
 
