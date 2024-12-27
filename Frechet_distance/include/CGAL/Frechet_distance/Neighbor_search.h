@@ -19,13 +19,13 @@
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/basic.h>
-#include <CGAL/Frechet_distance/internal/Frechet_distance_near_neighbors_ds.h>
+#include <CGAL/Frechet_distance/internal/Neighbor_search.h>
 
 #include <iterator>
 #include <vector>
 
-namespace CGAL
-{
+namespace CGAL {
+namespace Frechet_distance {
 
 // TODO: hide away in Frechet_distance_::internal (different naming but nvm)
 template <typename PointRange>
@@ -34,7 +34,7 @@ using PointRangeKernel = typename CGAL::Kernel_traits<
     Kernel;  // TODO: replace by CORE type for initial testing
 
 template <class PointRange, class Traits = PointRangeKernel<PointRange>>
-class FrechetDistanceNearNeighborsDS
+class Neighbor_search
 {
     using PT = Traits; //  Polyline_traits_2<Traits, double>;
     using FT = typename PT::FT;
@@ -45,7 +45,7 @@ class FrechetDistanceNearNeighborsDS
     using PolylineIDs = std::vector<PolylineID>;
 
 public:
-    FrechetDistanceNearNeighborsDS() = default;
+    Neighbor_search() = default;
 
     void insert(const Polyline& curve);
     void insert(const Polylines& curves);
@@ -59,7 +59,7 @@ private:
 
 // TODO: store preprocessed curves after CGALization
 template <class PointRange, class Traits>
-void FrechetDistanceNearNeighborsDS<PointRange, Traits>::insert(
+void Neighbor_search<PointRange, Traits>::insert(
     const Polylines& curves)
 {
     this->curves = curves;  // FIXME: copies all the curves...
@@ -69,7 +69,7 @@ void FrechetDistanceNearNeighborsDS<PointRange, Traits>::insert(
 }
 
 template <class PointRange, class Traits>
-auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
+auto Neighbor_search<PointRange, Traits>::get_close_curves(
     const Polyline& curve, double distance) -> PolylineIDs
 {
     auto result = kd_tree.search(curve, distance);
@@ -86,6 +86,7 @@ auto FrechetDistanceNearNeighborsDS<PointRange, Traits>::get_close_curves(
     return result;
 }
 
+}
 }  // end of namespace CGAL
 
 #endif  // CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
