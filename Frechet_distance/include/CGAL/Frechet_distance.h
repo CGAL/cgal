@@ -138,8 +138,8 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
 
 /**
  * \ingroup PkgFrechetDistanceFunctions
- * approximates the Fréchet distance between two polylines up to an additive error
- * of `precision`.
+ * returns an estimate of the Fréchet distance between the two polylines that is at most `error_bound`.
+ * away from the actual Fréchet distance between the two polylines.
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
  * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type.
@@ -147,7 +147,7 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  *
  * \param polyline1 the first polyline defined by a sequence of consecutive points
  * \param polyline2 the second polyline defined by a sequence of consecutive points
- * \param precision the precision of the approximation
+ * \param error_bound a maximum bound by which the Fréchet distance estimate is allowed to deviate from the actual Fréchet distance.
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  * \cgalNamedParamsBegin
@@ -161,12 +161,12 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  * \pre the polylines must not be empty
  *
  * @return an interval enclosing the exact result, the difference between the upper and
- * the lower bound being less than `precision`.
+ * the lower bound being less than `error_bound`.
  */
 template <class PointRange, class NamedParameters =  parameters::Default_named_parameters>
 std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline1,
                                                       const PointRange& polyline2,
-                                                      const double precision,
+                                                      const double error_bound,
                                                       const NamedParameters& np = parameters::default_values())
 {
     constexpr bool force_filtering =
@@ -189,7 +189,7 @@ std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline
     auto icurve1 = Frechet_distance_::internal::toCurve<force_filtering>(polyline1, traits);
     auto icurve2 = Frechet_distance_::internal::toCurve<force_filtering>(polyline2, traits);
 
-    return Frechet_distance_::internal::calcDistance(icurve1, icurve2, precision);
+    return Frechet_distance_::internal::calcDistance(icurve1, icurve2, error_bound);
 }
 
 }  // end of namespace CGAL
