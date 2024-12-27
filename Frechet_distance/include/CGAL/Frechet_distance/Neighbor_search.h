@@ -13,8 +13,8 @@
 //                 Andreas Fabri
 // =============================================================================
 
-#ifndef CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
-#define CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
+#ifndef CGAL_FRECHET_DISTANCE_NEIGHBOR_SEARCH_H
+#define CGAL_FRECHET_DISTANCE_NEIGHBOR_SEARCH_H
 
 #include <CGAL/license/Frechet_distance.h>
 #include <CGAL/Frechet_distance.h>
@@ -27,13 +27,13 @@
 namespace CGAL {
 namespace Frechet_distance {
 
-// TODO: hide away in Frechet_distance_::internal (different naming but nvm)
-template <typename PointRange>
-using PointRangeKernel = typename CGAL::Kernel_traits<
-    typename std::iterator_traits<typename PointRange::iterator>::value_type>::
-    Kernel;  // TODO: replace by CORE type for initial testing
-
-template <class PointRange, class Traits = PointRangeKernel<PointRange>>
+/*!
+ * A data structure to store curves with a function that enables to find those curves which are close to a query curve.
+ *
+ * \tparam Traits a model of `FrechetDistanceTraits`
+ * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type.
+*/
+template <class PointRange, class Traits>
 class Neighbor_search
 {
     using PT = Traits; //  Polyline_traits_2<Traits, double>;
@@ -47,10 +47,13 @@ class Neighbor_search
 public:
     Neighbor_search() = default;
 
-    void insert(const Polyline& curve);
+    /*! inserts curves
+    */
     void insert(const Polylines& curves);
 
-    PolylineIDs get_close_curves(const Polyline& curve, double distance);
+     /*!  returns the indices of the inserted curves that are closer than `distance` to `curve`.
+     */
+    std::vector<std::size_t> get_close_curves(const Polyline& curve, double distance);
 
 private:
     Polylines curves;
@@ -89,4 +92,4 @@ auto Neighbor_search<PointRange, Traits>::get_close_curves(
 }
 }  // end of namespace CGAL
 
-#endif  // CGAL_FRECHET_DISTANCE_NEAR_NEIGHBORS_DS_H
+#endif  // CGAL_FRECHET_DISTANCE_NEIGHBOR_SEARCH_H
