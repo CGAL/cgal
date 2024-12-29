@@ -174,11 +174,8 @@ static double testFrechetDistance()
 
         for (auto const& query : queries) {
           /*
-                        std::cout
-                            << CGAL::approximate_Frechet_distance<TestCurve,
-                                                              TestTraits>(
-                                   curves[query.id1], curves[query.id2], 0.001)
-                            << std::endl;
+            std::cout << CGAL::bounded_error_Frechet_distance(curves[query.id1], curves[query.id2], 0.001)
+                      << std::endl;
           */
             timer.start();
             auto decision =

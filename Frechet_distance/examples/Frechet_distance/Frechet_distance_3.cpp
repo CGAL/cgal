@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
       CGAL::IO::read_linestring_WKT(in, B);
     }
 
-    std::pair<double, double> res = CGAL::approximate_Frechet_distance(A, B, 0.000001);
+    std::pair<double, double> res = CGAL::bounded_error_Frechet_distance(A, B, 0.000001);
     std::cout << "The Frechet distance between the polylines is between " <<  res.first << " and " << res.second << std::endl;
     return 0;
 }
