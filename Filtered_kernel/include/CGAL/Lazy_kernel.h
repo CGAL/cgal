@@ -15,7 +15,7 @@
 
 #include <CGAL/basic.h>
 //#include <CGAL/Filtered_predicate.h>
-#include <CGAL/Static_filtered_predicate.h>
+#include <CGAL/EPIC_predicate_if_convertible.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Simple_cartesian.h>
