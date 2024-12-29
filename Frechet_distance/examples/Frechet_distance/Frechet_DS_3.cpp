@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
   ds.insert(curves);
 
   for(const Curve& c : curves){
-    std::pair<double, double> res = CGAL::approximate_Frechet_distance(c, query, 0.000001);
+    std::pair<double, double> res = CGAL::bounded_error_Frechet_distance(c, query, 0.000001);
     std::cout << "The Frechet distance between the polylines is between " <<  res.first << " and " << res.second << std::endl;
   }
   double distance = 16;

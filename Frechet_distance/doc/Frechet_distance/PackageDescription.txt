@@ -40,6 +40,6 @@ This package provides functions for computing the Fréchet distance of polylines
 - `CGAL::Frechet_distance_traits_d`
 
 \cgalCRPSection{Functions}
-- `CGAL::approximate_Frechet_distance()`
+- `CGAL::bounded_error_Frechet_distance()`
 - `CGAL::is_Frechet_distance_larger()`
 */

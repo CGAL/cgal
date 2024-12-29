@@ -164,10 +164,10 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  * the lower bound being less than `error_bound`.
  */
 template <class PointRange, class NamedParameters =  parameters::Default_named_parameters>
-std::pair<double,double> approximate_Frechet_distance(const PointRange& polyline1,
-                                                      const PointRange& polyline2,
-                                                      const double error_bound,
-                                                      const NamedParameters& np = parameters::default_values())
+std::pair<double,double> bounded_error_Frechet_distance(const PointRange& polyline1,
+                                                        const PointRange& polyline2,
+                                                        const double error_bound,
+                                                        const NamedParameters& np = parameters::default_values())
 {
     constexpr bool force_filtering =
       internal_np::Lookup_named_param_def<internal_np::force_filtering_t, NamedParameters, std::false_type>::type::value;
