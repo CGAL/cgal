@@ -1,6 +1,6 @@
 #include <CGAL/Frechet_distance.h>
 #include <CGAL/Frechet_distance_traits_2.h>
-#include <CGAL/Frechet_distance_near_neighbors_ds.h>
+#include <CGAL/Frechet_distance/Neighbor_search.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
@@ -131,7 +131,7 @@ static FrechetDistanceNearNeighborsDSQueries readFrechetDistanceNearNeighborsDSQ
                 std::stringstream ss(line);
                 ss >> query.id >> query.distance;
 
-                CGAL::Frechet_distance_::internal::CurveID result_id;
+                CGAL::Frechet_distance::internal::CurveID result_id;
                 while (ss >> result_id) {
                         query.expected_result.push_back(result_id);
                 }
@@ -207,7 +207,7 @@ static double testFrechetDistanceNearNeighborsDS()
                 readFrechetDistanceNearNeighborsDSQueries(query_directory + dataset +
                 ".txt");
 
-                CGAL::FrechetDistanceNearNeighborsDS<TestCurve, TestTraits> ds;
+                CGAL::Frechet_distance::Neighbor_search<TestCurve, TestTraits> ds;
                 ds.insert(curves);
 
                 for (auto const& query: queries) {

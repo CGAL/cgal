@@ -41,8 +41,8 @@ public:
       Bbox<Dimension, double> bb;
       for (int i=0;i<dimension; ++i)
       {
-        bb.min(i)=to_interval(p[i]).first;
-        bb.max(i)=to_interval(p[i]).second;
+        (bb.min)(i)=to_interval(p[i]).first;
+        (bb.max)(i)=to_interval(p[i]).second;
       }
 
       return bb;
