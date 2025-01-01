@@ -14,7 +14,7 @@ using Point = Traits::Point_d;
 using Curve = std::vector<Point>;
 using Curves = std::vector<Curve>;
 
-int main(int argc, char* argv[])
+int main()
 {
 
   Curves curves;
