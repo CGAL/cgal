@@ -128,6 +128,9 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
                      Interval_nt<false>>;
     Protect_FPU_rounding<filtered> p;
 
+    if(polyline1.empty() || polyline2.empty()){
+      return false;
+    }
     auto icurve1 = Frechet_distance::internal::toCurve<force_filtering>(polyline1, traits);
     auto icurve2 = Frechet_distance::internal::toCurve<force_filtering>(polyline2, traits);
 
@@ -185,6 +188,11 @@ std::pair<double,double> bounded_error_Frechet_distance(const PointRange& polyli
       std::is_same_v<typename decltype(Frechet_distance::internal::toCurve<force_filtering>(polyline1, traits))::IFT,
                      Interval_nt<false>>;
     Protect_FPU_rounding<filtered> p;
+
+
+    if(polyline1.empty() || polyline2.empty()){
+      return std::make_pair<double>(0,0);
+    }
 
     auto icurve1 = Frechet_distance::internal::toCurve<force_filtering>(polyline1, traits);
     auto icurve2 = Frechet_distance::internal::toCurve<force_filtering>(polyline2, traits);
