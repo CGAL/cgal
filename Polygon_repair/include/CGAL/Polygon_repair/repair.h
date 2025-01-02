@@ -874,7 +874,7 @@ intersect(const Multipolygon_with_holes_2<Kernel,Container>& p)
 
 
 /// \ingroup PkgPolygonRepairFunctions
-/// Computes the intersection of two polygonal domains
+/// computes the intersection of two polygonal domains
 /// \tparam Kernel parameter of the output polygon. Must be model of `ConstrainedDelaunayTriangulationTraits_2 `
 /// \tparam Container parameter of the input and output polygons
 /// \tparam PA must be `Polygon_2<Kernel, Container>`, or `Polygon_with_holes_2<Kernel, Container>`, or `Multipolygon_with_holes_2<Kernel, Container>`
