@@ -128,8 +128,7 @@ lexicographic order
 
 If the input is already valid, the method will return a valid output representing
 the same area. However, the output might be different in order to conform to the
-stricter conditions to generate deterministic output (see
-\ref SubsectionPolygonRepair_Output).
+stricter conditions to generate deterministic output.
 
 Also, it is worth noting that even the repair of a single polygon without holes
 but with self-intersections can result in a multipolygon with holes. This is why
