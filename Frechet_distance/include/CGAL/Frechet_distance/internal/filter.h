@@ -158,7 +158,7 @@ bool Filter<K>::bichromaticFarthestDistance()
     typename Curve::IFT squared_max_dist = 0;
     for (int i = 0; i < K::dimension; ++i) {
         auto d1 = CGAL::square(typename Curve::IFT((bbox1.max)(i)) - typename Curve::IFT((bbox2.min)(i)));
-        auto d2 = CGAL::square(typename Curve::IFT((bbox2.max(i))) - typename Curve::IFT((bbox1.min)(i)));
+        auto d2 = CGAL::square(typename Curve::IFT((bbox2.max)(i)) - typename Curve::IFT((bbox1.min)(i)));
         squared_max_dist += (CGAL::max)(d1, d2);
     }
 
