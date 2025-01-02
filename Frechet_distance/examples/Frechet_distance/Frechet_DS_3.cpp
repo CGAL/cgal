@@ -25,7 +25,6 @@ int main()
     CGAL::IO::read_linestring_WKT(in, curves.back());
   }
 
-  int N = curves.size();
   Curve query = curves.back();
   curves.pop_back();
 
