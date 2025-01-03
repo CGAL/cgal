@@ -10,6 +10,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3>                      Mesh;
 typedef boost::graph_traits<Mesh>::face_descriptor          face_descriptor;
+typedef boost::graph_traits<Mesh>::edge_descriptor          edge_descriptor;
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -23,6 +24,10 @@ int main(int argc, char* argv[])
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
+
+  std::pair<std::pair<edge_descriptor,double>, std::pair<edge_descriptor,double>> res = PMP::detect_sharp_edges(mesh);
+
+   std::cout << "Sharpest dihedral angles: " << res.first.second << "   " << res.second.second << std::endl;
 
   typedef boost::property_map<Mesh, CGAL::edge_is_feature_t>::type EIFMap;
   typedef boost::property_map<Mesh, CGAL::face_patch_id_t<int> >::type PIMap;

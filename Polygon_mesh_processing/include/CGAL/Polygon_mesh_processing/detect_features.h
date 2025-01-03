@@ -299,6 +299,87 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
 /*!
  * \ingroup PMP_detect_features_grp
  *
+ * \brief detects the edges with the smallest and largest dihedral angle in degrees.
+ *
+ * \tparam PolygonMesh a model of `HalfedgeListGraph`
+ * \tparam FT a number type. It is
+ * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
+ * or from the geometric traits class deduced from the point property map
+ * of `PolygonMesh`.
+ * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ *  as key type and `bool` as value type. It must be default constructible.
+ * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+ *
+ * \param pmesh the polygon mesh
+ * \param angle_in_deg the dihedral angle bound
+ * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
+ * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+ *
+ * \cgalNamedParamsBegin
+ *   \cgalParamNBegin{geom_traits}
+ *     \cgalParamDescription{an instance of a geometric traits class}
+ *     \cgalParamType{a class model of `Kernel`}
+ *     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+ *     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+ *   \cgalParamNEnd
+ * \cgalNamedParamsEnd
+ *
+ * \see `sharp_edges_segmentation()`
+ */
+template<typename PolygonMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#ifdef DOXYGEN_RUNNING
+std::pair<std::pair<edge_descriptor,FT>, std::pair<edge_descriptor,FT>>
+#else
+std::pair<
+  std::pair<typename boost::graph_traits<PolygonMesh>::edge_descriptor, typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type::FT>,
+  std::pair<typename boost::graph_traits<PolygonMesh>::edge_descriptor, typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type::FT>
+  >
+#endif
+detect_sharp_edges(const PolygonMesh& pmesh,
+                   const CGAL_NP_CLASS& np = parameters::default_values())
+{
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  // extract types from NPs
+  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type GT;
+  GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
+
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_NP_CLASS>::const_type VPM;
+  VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
+                             get_const_property_map(boost::vertex_point, pmesh));
+
+  typedef typename GT::FT FT;
+  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  edge_descriptor low, high;
+  FT lo(200), hi(-200);
+  for (edge_descriptor e : edges(pmesh)){
+    if(! is_border(e,pmesh)){
+      halfedge_descriptor h = halfedge(e,pmesh);
+      vertex_descriptor p = source(h,pmesh);
+      vertex_descriptor q = target(h,pmesh);
+      vertex_descriptor r = target(next(h,pmesh),pmesh);
+      vertex_descriptor s = target(next(opposite(h,pmesh),pmesh),pmesh);
+      FT da = approximate_dihedral_angle(get(vpm,p),get(vpm,q),get(vpm,r),get(vpm,s));
+      if(da < lo){
+         low = e;
+         lo = da;
+      }
+      if(da > hi){
+        high = e;
+        hi = da;
+      }
+    }
+  }
+  return std::make_pair(std::make_pair(low, lo),std::make_pair(high,hi));
+}
+
+/*!
+ * \ingroup PMP_detect_features_grp
+ *
  * collects the surface patches of the faces incident to each vertex of the input polygon mesh.
  *
  * \tparam PolygonMesh a model of `HalfedgeListGraph`
