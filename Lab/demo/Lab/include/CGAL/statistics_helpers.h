@@ -81,6 +81,14 @@ void angles(Mesh* poly, double& mini, double& maxi, double& ave)
   compute_angles(poly, Angles_test(), mini, maxi, ave);
 }
 
+template<typename Mesh>
+void dihedral_angles(Mesh* poly, double& minda, double& maxda)
+{
+  auto da = CGAL::Polygon_mesh_processing::detect_sharp_edges(*poly);
+  minda = da.first.second;
+  maxda = da.second.second;
+}
+
 template<typename Mesh, typename Face_set>
 void angles(Mesh* poly, const Face_set& faces, double& mini, double& maxi, double& ave)
 {
