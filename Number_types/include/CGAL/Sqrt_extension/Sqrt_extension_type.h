@@ -146,6 +146,20 @@ public:
       return *this;
     }
 
+    Sqrt_extension&
+    operator=(const NT& i)
+    {
+      *this = Sqrt_extension(i);
+      return *this;
+    }
+
+    Sqrt_extension&
+    operator=(CGAL_int(NT) i)
+    {
+      *this = Sqrt_extension(i);
+      return *this;
+    }
+
     //non-documented: used for Make_sqrt
     Sqrt_extension(const ROOT& root,bool)
           :a0_(NT(0)), a1_(NT(1)), root_(root), is_extended_(true) {}

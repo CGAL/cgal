@@ -71,6 +71,9 @@ static TestCurves readCurves(std::string const& curve_directory)
 
     // read filenames of curve files
     std::ifstream file(curve_directory + "dataset.txt");
+
+  std::cout << "Trying to read " << curve_directory  << "dataset.txt\n";
+
     assert(file);
 
     std::string line;
@@ -82,6 +85,7 @@ static TestCurves readCurves(std::string const& curve_directory)
     curves.reserve(curve_filenames.size());
     for (auto const& curve_filename : curve_filenames) {
         std::ifstream curve_file(curve_directory + curve_filename);
+        std::cout << "   " << curve_directory + curve_filename  << "\n";
         assert(curve_file);
 
         curves.emplace_back();
