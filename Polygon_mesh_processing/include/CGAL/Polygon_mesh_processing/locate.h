@@ -780,7 +780,7 @@ get_descriptor_from_location(const Edge_location<TriangleMesh, FT>& loc,
 
 /// \ingroup PMP_locate_grp
 ///
-/// \brief Given a location in a face, returns the geometric position described
+/// \brief returns, given a location in a face, the geometric position described
 ///        by these coordinates, as a point.
 ///
 /// \tparam FT must be a model of `FieldNumberType`
@@ -847,6 +847,83 @@ construct_point(const Face_location<TriangleMesh, FT>& loc,
 
   internal::Barycentric_point_constructor<Geom_traits, Point> bp_constructor;
   return bp_constructor(p0, loc.second[0], p1, loc.second[1], p2, loc.second[2], gt);
+}
+
+/// \ingroup PMP_locate_grp
+///
+/// \brief returns, given a location in an edge, the geometric position described
+///        by these coordinates, as a point.
+///
+/// \tparam FT must be a model of `FieldNumberType`
+/// \tparam TriangleMesh must be a model of `FaceGraph`
+/// \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
+///
+/// \param loc the location from which a point is constructed
+/// \param tm a triangulated surface mesh
+/// \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below
+///
+/// \cgalNamedParamsBegin
+///   \cgalParamNBegin{vertex_point_map}
+///     \cgalParamDescription{a property map associating points to the vertices of `tm`}
+///     \cgalParamType{a class model of `ReadablePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
+///                    as key type and `%Point_3` as value type}
+///     \cgalParamDefault{`boost::get(CGAL::vertex_point, tm)`}
+///   \cgalParamNEnd
+///
+///   \cgalParamNBegin{geom_traits}
+///     \cgalParamDescription{an instance of a geometric traits class}
+///     \cgalParamType{a class model of `Kernel`}
+///     \cgalParamDefault{a \cgal Kernel deduced from the point type, using `CGAL::Kernel_traits`}
+///     \cgalParamExtra{The geometric traits class must be compatible with the vertex point type.}
+///     \cgalParamExtra{If such traits class is provided, its type `FT` must be identical
+///                     to the template parameter `FT` of this function.}
+///   \cgalParamNEnd
+/// \cgalNamedParamsEnd
+///
+/// \pre `loc.first` is a face descriptor corresponding to a face of `tm`.
+///
+/// \returns a point whose type is the same as the value type of the vertex point property map
+///          provided by the user or via named parameters, or the internal point map of the mesh `tm`.
+///
+template <typename FT, typename TriangleMesh,
+          typename NamedParameters = parameters::Default_named_parameters>
+#ifdef DOXYGEN_RUNNING
+Point construct_point(
+    const Edge_location<TriangleMesh, FT> &loc,
+#else
+typename internal::Location_traits<TriangleMesh, NamedParameters>::Point
+construct_point(const Edge_location<TriangleMesh, FT> &loc,
+#endif
+    const TriangleMesh &tm,
+    const NamedParameters &np = parameters::default_values()) {
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
+      edge_descriptor;
+  typedef
+      typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
+
+  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
+      VertexPointMap;
+  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
+  typedef typename boost::property_traits<VertexPointMap>::reference
+      Point_reference;
+
+  using parameters::choose_parameter;
+  using parameters::get_parameter;
+
+  CGAL_precondition(CGAL::is_triangle_mesh(tm));
+
+  VertexPointMap vpm = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::vertex_point),
+      get_const_property_map(boost::vertex_point, tm));
+  Geom_traits gt = choose_parameter<Geom_traits>(
+      get_parameter(np, internal_np::geom_traits));
+
+  edge_descriptor ed = loc.first;
+  const Point_reference p0 = get(vpm, source(ed, tm));
+  const Point_reference p1 = get(vpm, target(ed, tm));
+
+  internal::Barycentric_point_constructor<Geom_traits, Point> bp_constructor;
+  return bp_constructor(p0, loc.second[0], p1, loc.second[1], gt);
 }
 
 /// \name Location Predicates

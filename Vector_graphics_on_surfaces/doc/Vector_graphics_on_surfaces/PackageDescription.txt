@@ -5,6 +5,9 @@
 /// \defgroup VGSAlgorithmClasses Algorithm Classes
 /// \ingroup PkgVGoS_Ref
 
+/// \defgroup VGSFunctions Functions
+/// \ingroup PkgVGoS_Ref
+
 /// \defgroup VGSTraitsClasses Traits Classes
 /// \ingroup PkgVGoS_Ref
 

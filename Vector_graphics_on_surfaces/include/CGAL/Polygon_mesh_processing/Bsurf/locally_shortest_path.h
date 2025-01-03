@@ -53,50 +53,15 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
 #endif
 );
 
-
+/*!
+ * \ingroup VGSMiscellaneous
+ * array containing the locations of the four control points of a Bézier segment on a triangle mesh
+ * `init_geodesic_dual_solver()`.
+ * \tparam FT floating point number type (float or double)
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ */
 template <class TriangleMesh, class FT>
 using Bezier_segment = std::array<Face_location<TriangleMesh, FT>, 4>;
-
-template <typename FT, typename TriangleMesh,
-          typename NamedParameters = parameters::Default_named_parameters>
-#ifdef DOXYGEN_RUNNING
-Point construct_point(
-    const Edge_location<TriangleMesh, FT> &loc,
-#else
-typename internal::Location_traits<TriangleMesh, NamedParameters>::Point
-construct_point(const Edge_location<TriangleMesh, FT> &loc,
-#endif
-    const TriangleMesh &tm,
-    const NamedParameters &np = parameters::default_values()) {
-  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor
-      edge_descriptor;
-  typedef
-      typename GetGeomTraits<TriangleMesh, NamedParameters>::type Geom_traits;
-
-  typedef typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
-      VertexPointMap;
-  typedef typename boost::property_traits<VertexPointMap>::value_type Point;
-  typedef typename boost::property_traits<VertexPointMap>::reference
-      Point_reference;
-
-  using parameters::choose_parameter;
-  using parameters::get_parameter;
-
-  CGAL_precondition(CGAL::is_triangle_mesh(tm));
-
-  VertexPointMap vpm = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::vertex_point),
-      get_const_property_map(boost::vertex_point, tm));
-  Geom_traits gt = choose_parameter<Geom_traits>(
-      get_parameter(np, internal_np::geom_traits));
-
-  edge_descriptor ed = loc.first;
-  const Point_reference p0 = get(vpm, source(ed, tm));
-  const Point_reference p1 = get(vpm, target(ed, tm));
-
-  internal::Barycentric_point_constructor<Geom_traits, Point> bp_constructor;
-  return bp_constructor(p0, loc.second[0], p1, loc.second[1], gt);
-}
 
 namespace internal {
 
@@ -2391,7 +2356,7 @@ struct Geodesic_circle_impl
                             Stop &&stop, Exit &&exit)
   {
     /*
-      This algortithm uses the heuristic Small Label Fisrt and Large Label Last
+      This algorithm uses the heuristic Small Label Fisrt and Large Label Last
       https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm
 
       Large Label Last (LLL): When extracting nodes from the queue, pick the
@@ -2488,7 +2453,7 @@ struct Geodesic_circle_impl
                                 Exit &&exit)
   {
     /*
-      This algortithm uses the heuristic Small Label Fisrt and Large Label Last
+      This algorithm uses the heuristic Small Label Fisrt and Large Label Last
       https://en.wikipedia.org/wiki/Shortest_Path_Faster_Algorithm
 
       Large Label Last (LLL): When extracting nodes from the queue, pick the
@@ -2828,7 +2793,15 @@ struct Geodesic_circle_impl
 
 
 } // namespace internal
+
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
+/*!
+ * \ingroup VGSMiscellaneous
+ * Geodesic solver class used to store pre-computed information of a given mesh for
+ * approximate geodesic compution. Those information are computed by the function
+ * `init_geodesic_dual_solver()`.
+ * \tparam FT floating point number type (float or double)
+ */
 template <class FT>
 struct Dual_geodesic_solver
 {
@@ -2839,6 +2812,18 @@ struct Dual_geodesic_solver
   std::vector<std::array<Edge, 3>> graph = {};
 };
 
+/*!
+ * \ingroup VGSMiscellaneous
+ * fills `solver` for a given mesh `tmesh`. It is the user responsability to
+ * call again this function if `tmesh` or the points of its vertices are modified.
+ * If `solver` was used in a previous call to this function, information will be ovewritten.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam FT floating point number type (float or double)
+ * \param `solver` the container for the pre-computed information
+ * \param `tmesh` triangle mesh to be considered for the precomputations
+ * \todo add named parameters
+ * \todo make sure solver.graph is cleared before filling it
+ */
 template <class FT, class TriangleMesh>
 void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleMesh& tmesh)
 {
@@ -2855,8 +2840,28 @@ void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleM
 }
 #endif
 
-// points can be duplicated in the path in case you hit a vertex of the mesh,
-// in order to get continuity of edge locations
+/*!
+ * \ingroup VGSFunctions
+ * computes an approximated geodesic shortest path between two locations on a
+ * triangle mesh. `src` and `tgt` must be on the same connected component.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam FT floating point number type (float or double)
+ * \tparam EdgeLocationRange a model of `BackInsertionSequence` whose value type `Edge_location<FT>`.
+ * \param src source of the path
+ * \param tgt target of the path
+ * \param tmesh input triangle mesh to compute the path on
+ * \param edge_locations contains the path as a sequence of edge locations.
+ *                       Two consecutives edges `e_k` and `e_kp1` stored in `edge_locations` are such that
+ *                       `face(halfedge(e_k, tmesh), tmesh) == face(opposite(halfedge(e_kp1, tmesh), tmesh), tmesh))`.
+ *                       In parcular, it means that if the path goes through a vertex of `tmesh`, several
+ *                       edge locations will be reported to maintain this property.
+ *                       Additionally, if `src` is in the interior of a face `f`, then the first edge location `e_0`
+ *                       of `edge_locations` is such that `f == face(opposite(halfedge(e_0, tmesh), tmesh), tmesh))`.
+ *                       Similarly, if `tgt` is in the interior of a face `f`, then the last edge location `e_n`
+ *                       of `edge_locations` is such that `f == face(halfedge(e_n, tmesh), tmesh)`.
+ * \todo add named parameters
+ * \todo should we have halfedge location instead?
+ */
 template <class FT, class TriangleMesh, class EdgeLocationRange>
 void locally_shortest_path(Face_location<TriangleMesh, FT> src,
                            Face_location<TriangleMesh, FT> tgt,
@@ -3087,8 +3092,20 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
 }
 
 
-//TODO: do we want to also have a way to return Bezier segments?
-//      the output is actually bezier segments subdivided.
+/*!
+ * \ingroup VGSFunctions
+ * computes a discretization of a Bézier segment defined by the location of four control points on `tmesh`.
+ * All control points must be on the same connected component. This functions applies several iterations of
+ * the de Casteljau algorithm, and geodesic shortest path are drawn between the control points.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam FT floating point number type (float or double)
+ * \param mesh input triangle mesh to compute the path on
+ * \param control_points control points of the Bézier segment
+ * \param num_subdiv the number of iterations of the subdivision algorithm
+ * \return descretization of the Bézier segment as face locations
+ * \todo add named parameters
+ * \todo do we want to also have a way to return Bezier segments? The output is actually bezier segments subdivided.
+ */
 template <class TriangleMesh, class FT>
 std::vector<Face_location<TriangleMesh, FT>>
 recursive_de_Casteljau(const TriangleMesh& mesh,
@@ -3149,6 +3166,11 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
   return final_result;
 }
 
+/*!
+ * \ingroup VGSMiscellaneous
+ *  computes the approximate geodesic distances of `center` to all the vertices of the mesh (only one connected component is expected)
+ * and put the distance in `distance_map`
+ */
 template <class FT, class TriangleMesh, class VertexDistanceMap>
 void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& center,
                                          VertexDistanceMap distance_map,
@@ -3185,7 +3207,23 @@ void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& 
   }
 }
 
-// TODO: center is put is output, shall we keep it like that?
+/*!
+ * \ingroup VGSFunctions
+ * computes a path on a triangle mesh that is computed by starting a walk on `tmesh`
+ * given a direction and a maximum distance. The distance will not be achieved is a border edge
+ * is reached before.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam FT floating point number type (float or double)
+ * \tparam num_subdiv the number of iterations of the subdivision algorithm
+ * \param tmesh input triangle mesh to compute the path on
+ * \param src the source of the path
+ * \param len the distance to walk along the straightest
+ * \param dir the initial direction of the walk, given as a 2D vector in the face of src, the halfedge of the face being the y-axis.
+ * \return the straightest path (not containing `src`)
+ * \todo add named parameters
+ * \todo do we want to also have a way to return Bezier segments? The output is actually bezier segments subdivided.
+ * \todo offer something better than a 2D vector for the direction
+ */
 template <class K, class TriangleMesh>
 std::vector<Face_location<TriangleMesh, typename K::FT>>
 straightest_geodesic(const Face_location<TriangleMesh, typename K::FT> &src,
