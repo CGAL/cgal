@@ -311,18 +311,16 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
  *
  * \brief detects the edges with the smallest and largest dihedral angle in degrees.
  *
- * \tparam PolygonMesh a model of `HalfedgeListGraph`
+ * \tparam TriangleMesh a model of `HalfedgeListGraph`
  * \tparam FT a number type. It is
  * either deduced from the `geom_traits` \ref bgl_namedparameters "Named Parameters" if provided,
  * or from the geometric traits class deduced from the point property map
- * of `PolygonMesh`.
- * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<PolygonMesh>::%edge_descriptor`
+ * of `TriangleMesh`.
+ * \tparam EdgeIsFeatureMap a model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%edge_descriptor`
  *  as key type and `bool` as value type. It must be default constructible.
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param pmesh the polygon mesh
- * \param angle_in_deg the dihedral angle bound
- * \param edge_is_feature_map the property map that will contain the sharp-or-not status of each edge of `pmesh`
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below.
  *        `GT` stands for the type of the object provided to the named parameter `geom_traits()`.
  *
@@ -331,11 +329,11 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
  *   \cgalParamNBegin{vertex_point_map}
  *     \cgalParamDescription{a property map associating points to the vertices of `pmesh`.}
  *     \cgalParamType{a class model of `ReadablePropertyMap` with
- *                    `boost::graph_traits<PolygonMesh>::%vertex_descriptor`
+ *                    `boost::graph_traits<TriangleMesh>::%vertex_descriptor`
  *                    as key type and `GT::Point_3` as value type.}
  *     \cgalParamDefault{`boost::get(CGAL::vertex_point, pmesh)`.}
  *     \cgalParamExtra{If this parameter is omitted, an internal property map for
- *                     `CGAL::vertex_point_t` must be available in `PolygonMesh`.}
+ *                     `CGAL::vertex_point_t` must be available in `TriangleMesh`.}
  *   \cgalParamNEnd
 
  *   \cgalParamNBegin{geom_traits}
@@ -348,34 +346,39 @@ void detect_sharp_edges(const PolygonMesh& pmesh,
  *
  * \see `sharp_edges_segmentation()`
  */
-template<typename PolygonMesh,
+#ifdef DOXYGEN_RUNNING
+template<typename TriangleMesh, typename FT,
          typename CGAL_NP_TEMPLATE_PARAMETERS>
+#else
+template<typename TriangleMesh,
+         typename CGAL_NP_TEMPLATE_PARAMETERS>
+#endif
 #ifdef DOXYGEN_RUNNING
 std::pair<std::pair<edge_descriptor,FT>, std::pair<edge_descriptor,FT>>
 #else
 std::pair<
-  std::pair<typename boost::graph_traits<PolygonMesh>::edge_descriptor, typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type::FT>,
-  std::pair<typename boost::graph_traits<PolygonMesh>::edge_descriptor, typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type::FT>
+  std::pair<typename boost::graph_traits<TriangleMesh>::edge_descriptor, typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT>,
+  std::pair<typename boost::graph_traits<TriangleMesh>::edge_descriptor, typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type::FT>
   >
 #endif
-detect_sharp_edges(const PolygonMesh& pmesh,
+detect_sharp_edges(const TriangleMesh& pmesh,
                    const CGAL_NP_CLASS& np = parameters::default_values())
 {
   using parameters::choose_parameter;
   using parameters::get_parameter;
 
   // extract types from NPs
-  typedef typename GetGeomTraits<PolygonMesh, CGAL_NP_CLASS>::type GT;
+  typedef typename GetGeomTraits<TriangleMesh, CGAL_NP_CLASS>::type GT;
   GT gt = choose_parameter<GT>(get_parameter(np, internal_np::geom_traits));
 
-  typedef typename GetVertexPointMap<PolygonMesh, CGAL_NP_CLASS>::const_type VPM;
+  typedef typename GetVertexPointMap<TriangleMesh, CGAL_NP_CLASS>::const_type VPM;
   VPM vpm = choose_parameter(get_parameter(np, internal_np::vertex_point),
                              get_const_property_map(boost::vertex_point, pmesh));
 
   typedef typename GT::FT FT;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   edge_descriptor low, high;
   FT lo(200), hi(-200);
   for (edge_descriptor e : edges(pmesh)){
