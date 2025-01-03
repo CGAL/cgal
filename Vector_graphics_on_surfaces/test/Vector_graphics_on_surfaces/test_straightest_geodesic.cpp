@@ -102,7 +102,6 @@ int main()
 //    ++runid;
   }
 
-
-
-  return 0;
+  //TODO: we still need to check that the output is correct (which is currently not the case at vertex)
+  return 1;
 }
