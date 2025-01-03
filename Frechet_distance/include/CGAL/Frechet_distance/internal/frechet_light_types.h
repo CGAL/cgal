@@ -122,27 +122,27 @@ struct QSimpleInterval {
 
     QSimpleInterval() : valid(false) {}
     QSimpleInterval(CPoint const& begin, CPoint const& end)
-        : valid(true), free(begin, end)
+        : valid(true), free_interval(begin, end)
     {
     }
 
     void setFreeInterval(CPoint const& begin, CPoint const& end)
     {
-        free = {begin, end};
+        free_interval = {begin, end};
         // valid = true;
     }
     void setFreeInterval(PointID begin, PointID end)
     {
-        free = {begin, 0, end, 0};
+        free_interval = {begin, 0, end, 0};
         // valid = true;
     }
     void invalidateFreeInterval()
     {
-        free.begin = CPoint{};
-        free.end = CPoint{};
+        free_interval.begin = CPoint{};
+        free_interval.end = CPoint{};
     }
 
-    CInterval const& getFreeInterval() { return free; }
+    CInterval const& getFreeInterval() { return free_interval; }
 
     void setLastValidPoint(PointID const& point)
     {
@@ -154,14 +154,14 @@ struct QSimpleInterval {
 
     void validate() { valid = true; }
     void invalidate() { valid = false; }
-    void clamp(CPoint const& min, CPoint const& max) { free.clamp(min, max); }
+    void clamp(CPoint const& min, CPoint const& max) { free_interval.clamp(min, max); }
 
-    bool is_empty() const { return free.is_empty(); }
+    bool is_empty() const { return free_interval.is_empty(); }
     bool is_valid() const { return valid; }
 
 private:
     bool valid;
-    CInterval free;
+    CInterval free_interval;
     PointID last_valid_point;
 };
 
