@@ -53,7 +53,7 @@ static void readCurve(std::ifstream& curve_file, TestCurve& curve)
     CGAL::set_ascii_mode(ss);
 
     TestPoint p;
-    auto ignore_count = std::numeric_limits<std::streamsize>::max();
+    auto ignore_count = (std::numeric_limits<std::streamsize>::max)();
     while (ss >> p) {
         ss.ignore(ignore_count, '\n');
 
