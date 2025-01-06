@@ -89,6 +89,8 @@ struct Orthtree_traits_base {
   using Adjacency = int;
   /// @}
 
+  //using Construct_point_d = Point_d(*)(std::initializer_list<FT> args);
+
   auto construct_point_d_object() const {
     return [](auto... Args) -> Point_d {
       std::initializer_list<FT> args_list{Args...};
@@ -115,7 +117,9 @@ struct Orthtree_traits_base<GeomTraits, 2> {
     UP
   };
 
-  auto construct_point_d_object() const {
+  using Construct_point_d = Point_d(*)(const FT&, const FT&);
+
+  Construct_point_d construct_point_d_object() const {
     return [](const FT& x, const FT& y) -> Point_d {
       return {x, y};
     };
@@ -153,7 +157,9 @@ struct Orthtree_traits_base<GeomTraits, 3> {
     RIGHT_TOP_FRONT
   };
 
-  auto construct_point_d_object() const {
+  using Construct_point_d = Point_d(*)(const FT&, const FT&, const FT&);
+
+  Construct_point_d construct_point_d_object() const {
     return [](const FT& x, const FT& y, const FT& z) -> Point_d {
       return {x, y, z};
     };
