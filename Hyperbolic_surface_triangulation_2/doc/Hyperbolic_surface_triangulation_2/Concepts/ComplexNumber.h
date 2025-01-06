@@ -40,7 +40,9 @@ public:
   ComplexNumber(const FT& real_part, const FT& imaginary_part);
 
   /*!
-    Constructor, sets the real part to <code> real_part </code> and the imaginary part to <code> imaginary_part </code>.
+    Constructor, sets the real part to <code> real_part </code> and the
+    imaginary part to <code> imaginary_part </code>. U and V must be
+    constructible from FT.
   */
     template<class U,class V>
       ComplexNumber(U&& real_part, V&& imaginary_part);
@@ -71,69 +73,69 @@ public:
 
   /// \name Operations
   /// @{
-  /*!
-    returns +z.
-  */
-  ComplexNumber operator+(const ComplexNumber& z) const;
+  /* /\*! */
+  /*   returns +z. */
+  /* *\/ */
+  /* //ComplexNumber operator+(const ComplexNumber& z) const; */
 
-  /*!
-     returns -z.
-  */
-  ComplexNumber operator-(const ComplexNumber& z) const;
+  /* /\*! */
+  /*    returns -z. */
+  /* *\/ */
+  /* //ComplexNumber operator-(const ComplexNumber& z) const; */
 
-  /*!
-    Unary complex addition.
-  */
-  ComplexNumber operator+=(const ComplexNumber& other) const;
+  /* /\*! */
+  /*   Unary complex addition. */
+  /* *\/ */
+  /* //ComplexNumber operator+=(const ComplexNumber& other) const; */
 
-  /*!
-    Unary complex substraction.
-  */
-  ComplexNumber operator-=(const ComplexNumber& other) const;
+  /* /\*! */
+  /*   Unary complex substraction. */
+  /* *\/ */
+  /* //ComplexNumber operator-=(const ComplexNumber& other) const; */
 
-  /*!
-    Unary complex multiplication.
-  */
-  ComplexNumber operator*=(const ComplexNumber& other) const;
+  /* /\*! */
+  /*   Unary complex multiplication. */
+  /* *\/ */
+  /* //ComplexNumber operator*=(const ComplexNumber& other) const; */
 
-  /*!
-    Unary complex division.
-  */
-  ComplexNumber operator/=(const ComplexNumber& other) const;
+  /* /\*! */
+  /*   Unary complex division. */
+  /* *\/ */
+  /* //ComplexNumber operator/=(const ComplexNumber& other) const; */
 
   /*!
     Copy operator.
   */
   ComplexNumber operator=(const ComplexNumber& other) const;
 
-  /*!
-    Equality test.
-  */
-  bool operator==(const ComplexNumber& z1, const ComplexNumber& z2);
-  /*!
-    Inequality test.
-  */
-  bool operator!=(const ComplexNumber& z1, const ComplexNumber& z2);
+  /* /\*! */
+ /*    Equality test. */
+ /*  *\/ */
+ /*  //bool operator==(const ComplexNumber& z1, const ComplexNumber& z2); */
+ /*  /\*! */
+ /*    Inequality test. */
+ /*  *\/ */
+ /*  // bool operator!=(const ComplexNumber& z1, const ComplexNumber& z2); */
 
-  /*!
-    Binary complex addition.
-  */
-  ComplexNumber operator+(const ComplexNumber& z1, const ComplexNumber& z2);
+ /*  /\*! */
+ /*    Binary complex addition. */
+ /*  *\/ */
+ /*  //ComplexNumber operator+(const ComplexNumber& z1, const ComplexNumber& z2); */
 
-  /*!
-    Binary complex substraction.
-  */
-  ComplexNumber operator-(const ComplexNumber& z1, const ComplexNumber& z2);
+ /*  /\*! */
+ /*    Binary complex substraction. */
+ /*  *\/ */
+ /*  //ComplexNumber operator-(const ComplexNumber& z1, const ComplexNumber& z2); */
 
- /*!
-    Binary complex multiplication.
-  */
-  ComplexNumber operator*(const ComplexNumber& z1, const ComplexNumber& z2);
+ /* /\*! */
+ /*    Binary complex multiplication. */
+ /*  *\/ */
+ /*  //ComplexNumber operator*(const ComplexNumber& z1, const ComplexNumber& z2); */
 
-  /*!
-    Binary complex division.
-  */
-  ComplexNumber operator/(const ComplexNumber& z1, const ComplexNumber& z2);
+ /*  /\*! */
+ /*    Binary complex division. */
+ /*  *\/ */
+ /*  //ComplexNumber operator/(const ComplexNumber& z1, const ComplexNumber& z2); */
 
   /*!
     writes the complex in a stream.

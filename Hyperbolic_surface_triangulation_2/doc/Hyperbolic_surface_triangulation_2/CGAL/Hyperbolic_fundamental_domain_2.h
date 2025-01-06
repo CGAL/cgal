@@ -3,13 +3,15 @@ namespace CGAL{
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-Represents a fundamental domain of a closed orientable hyperbolic surface.
+represents a fundamental domain of a closed orientable hyperbolic surface.
 The domain is given as a polygon \f$ P  \f$ represented by the list of its vertices in the Poincaré disk model,
 together with a pairing of the sides of \f$ P \f$.
 The \f$ n \f$-th side of \f$ P \f$ is the side between the \f$ n \f$-th and the \f$ (n+1) \f$-th vertex, where indices are modulo the number of vertices of \f$ P \f$.
 The side pairings are represented by a list of integers, such that if the \f$ n \f$-th integer of the list is \f$ m \f$, then the \f$ n \f$-th side is paired to the \f$ m \f$-th side.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
+\tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
+
+\sa `Hyperbolic_fundamental_domain_factory_2`
 */
 template<class Traits>
 class Hyperbolic_fundamental_domain_2 {
@@ -23,11 +25,6 @@ public:
   /// @}
   /// \name Creation
   /// @{
-  /*!
-    Default constructor
-  */
-  Hyperbolic_fundamental_domain_2();
-
   /*!
     Constructor from vertices and pairings ranges.
     @tparam PointRange a model of the concepts `RandomAccessContainer` whose `value_type` is `Point`.
@@ -44,21 +41,21 @@ public:
 
       \pre <code> is_valid() </code>
   */
-  int size() const;
+  std::size_t size() const;
 
   /*!
       returns the i-th vertex.
 
       \pre <code> is_valid() </code>
   */
-  const Point& vertex(int i) const;
+  const Point& vertex(std::size_t i) const;
 
   /*!
       returns the index of the side paired to the i-th side.
 
       \pre <code> is_valid() </code>
   */
-  int paired_side(int i) const;
+  std::size_t paired_side(std::size_t i) const;
 
   /*!
        returns the isometry that maps side \f$ \overline A \f$ to side \f$ A
@@ -66,7 +63,7 @@ public:
 
        \pre <code> is_valid() </code>
   */
-  Hyperbolic_isometry_2<Traits> side_pairing(int i) const;
+  Hyperbolic_isometry_2<Traits> side_pairing(std::size_t i) const;
   /// @}
 
   /// \name Input/Output
@@ -84,7 +81,7 @@ public:
   std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
 
   /*!
-      Reads the domain from a stream.
+      reads the domain from a stream.
 
       The format of the input must be the same as the format of the output of 'operator<<()'.
   */
@@ -94,9 +91,7 @@ public:
   /// @{
   /// \name Validity
   /*!
-      Validity test.
-
-      Checks that the number of vertices is even, that there are as many side pairings as vertices, and that the vertices all lie within the open unit disk.
+  checks that the number of vertices is even, that there are as many side pairings as vertices, and that the vertices all lie within the open unit disk.
   */
   bool is_valid() const;
   /// @}

@@ -17,7 +17,7 @@ public:
           `ComplexNumber`, over the field `HyperbolicSurfaceTraits_2::FT` for its real and
           imaginary parts.
   */
-  typedef unspecified_type                                   Complex;
+  typedef unspecified_type  Complex_number;
   /// @}
 };
 

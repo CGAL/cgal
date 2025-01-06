@@ -3,13 +3,13 @@ namespace CGAL{
 /*!
 \ingroup PkgHyperbolicSurfaceTriangulation2MainClasses
 
-Represents an isometry in the Poincaré disk model.
+represents an isometry in the Poincaré disk model.
 The isometry \f$ f \f$ is represented by a list \f$ (c_0, c_1, c_2, c_3) \f$ of complex numbers,
 so that \f$ f(z) = (c_0 z + c_1) / (c_2 z + c_3) \f$ holds on every complex \f$ z \f$ in the open unit disk.
 
 Facilities are offered to compose isometries, and apply an isometry to a point.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
+\tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
 */
 template<class Traits>
 class Hyperbolic_isometry_2{
