@@ -17,6 +17,7 @@ namespace CGAL {
 This package enables building and handling triangulations of closed orientable hyperbolic surfaces.
 Functionalities are offered such as the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the Poincaré disk model of the hyperbolic plane.
 A triangulation of a surface can be generated from a convex fundamental domain of the surface. A method is offered that generates such domains in genus two.
+For the case of the Bolza surface, which is the most symmetric surface of genus 2, we refer the user to the specific package \ref Periodic_4_hyperbolic_triangulation_2 "Periodic_4_hyperbolic_triangulation_2".
 
 
 \section Section_Hyperbolic_Surface_Triangulations_Background Hyperbolic Surfaces
