@@ -108,7 +108,7 @@ int main(int argc, char** argv)
     for (const std::array<K::Point_2, 4>& bezier  : bezier_control_points)
     {
       std::vector<std::pair<double, double>> polar_coords =
-        PMP::convert_polygon_to_polar_coordinates<K>(bezier, center_2);
+        PMP::convert_to_polar_coordinates<K>(bezier, center_2);
 
       directions.emplace_back();
       lengths.emplace_back();
@@ -318,7 +318,7 @@ int main(int argc, char** argv)
 
         // polar coordinates from the polyline center and convertion to lengths and directions
         std::vector<std::pair<double, double>> polar_coords =
-          PMP::convert_polygon_to_polar_coordinates<K>(polylines_2[pid], poly_center);
+          PMP::convert_to_polar_coordinates<K>(polylines_2[pid], poly_center);
 
         for (const std::pair<double, double>& polar_coord : polar_coords)
         {

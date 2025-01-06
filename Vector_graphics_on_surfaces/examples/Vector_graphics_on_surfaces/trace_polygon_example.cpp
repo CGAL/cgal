@@ -101,7 +101,7 @@ int main(int argc, char** argv)
   for (const std::vector<K::Point_2>& polygon : polygons)
   {
     std::vector<std::pair<double, double>> polar_coords =
-      PMP::convert_polygon_to_polar_coordinates<K>(polygon, center_2);
+      PMP::convert_to_polar_coordinates<K>(polygon, center_2);
     if (polygon.front()==polygon.back()) polar_coords.pop_back();
 
     std::vector<K::Vector_2> directions;

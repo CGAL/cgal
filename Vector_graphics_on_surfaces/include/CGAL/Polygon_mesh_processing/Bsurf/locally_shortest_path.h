@@ -3214,7 +3214,6 @@ void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& 
  * is reached before.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
- * \tparam num_subdiv the number of iterations of the subdivision algorithm
  * \param tmesh input triangle mesh to compute the path on
  * \param src the source of the path
  * \param len the distance to walk along the straightest
@@ -3240,22 +3239,31 @@ straightest_geodesic(const Face_location<TriangleMesh, typename K::FT> &src,
   return Impl::straightest_geodesic(src, tmesh, vpm, dir, len);
 }
 
-// we don't expect the last point to be duplicated here
-// TODO: rename the function, it's not a polygon necessarily
+
+/*!
+ * \ingroup VGSMiscellaneous
+ * converts the coordinates of a range of points into polar coordinates w.r.t. a given center
+ * \tparam K a model of `PolygonTraits_2`
+ * \tparam PointRange_2 a model of the concept `RandomAccessContainer` with `K::Point_2` as value type
+ * \param points the input points to convert.
+ * \param center the point of reference for the polar coordinates.
+ *               If omitted, then centroid of `polygon` will be used.
+ * \return the polar coordinates of the points as a pair (distance, angle)
+ */
 template <class K, class PointRange_2>
 std::vector<std::pair<typename K::FT, typename K::FT>>
-convert_polygon_to_polar_coordinates(const PointRange_2& polygon,
-                                     std::optional<typename K::Point_2> center = std::nullopt)
+convert_to_polar_coordinates(const PointRange_2& points,
+                             std::optional<typename K::Point_2> center = std::nullopt)
 {
   std::vector<std::pair<typename K::FT, typename K::FT>> result;
   // compute naively the center
   if (center==std::nullopt)
   {
-    Bbox_2 bb = bbox_2(polygon.begin(), polygon.end());
+    Bbox_2 bb = bbox_2(points.begin(), points.end());
     center = typename K::Point_2((bb.xmax()+bb.xmin())/2., (bb.ymax()+bb.ymin())/2);
   }
 
-  bool is_closed = polygon.front()==polygon.back();
+  bool is_closed = points.front()==points.back();
   std::size_t nbp=polygon.size();
   if (is_closed) --nbp;
   for (std::size_t i=0; i<nbp; ++i)
@@ -3271,8 +3279,25 @@ convert_polygon_to_polar_coordinates(const PointRange_2& polygon,
   return result;
 }
 
-//TODO: do we want to handle polylines?
-// href of center.first is the y axis in 2D
+
+
+/*!
+ * \ingroup VGSFunctions
+ * computes the face location of each vertex of a 2D polygon on `tmesh`.
+ * The vertices of the polygon are given as a pair of direction and distance w.r.t. a point corresponding to `center` on `tmesh`.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
+ * \param center the location on `tmesh` used as reference. The y-axis used for coordinates is `halfedge(center.first, tmesh)`.
+ * \param directions contains the direction one need to move from `center` to reach each vertex of the polygon.
+ * \param lengths the distance one need to move from `center` along the direction at the same position in `directions` to reach each vertex of the polygon.
+ * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \return a face location for each vertex of the polygon
+ * \todo add named parameters
+ * \todo polygon orientation is not handled in the function and should be done outside of the function for now
+ * \todo offer something better than a 2D vector for the direction
+ * \todo directly handle polyline?
+ * \todo why the first polygon vertex is duplicated by the function? (most probably for the example but it shouldn't be done here)
+ */
 template <class K, class TriangleMesh>
 std::vector<Face_location<TriangleMesh,typename K::FT>>
 trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
@@ -3319,7 +3344,23 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
   return result;
 }
 
-//TODO add groups of polygons for better rendering
+/*!
+ * \ingroup VGSFunctions
+ * computes for each vertex of each polygon in `polygons` a face locations on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
+ * This method computes the location of the center of the bounding box of each polygon on the mesh w.r.t. `center` and call `trace_geodesic_polygon()` with that center with
+ * appropriate directions and distances to have a consistant orientation for the polygons.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
+ * \param center the location on `tmesh` corresponding to the center of the 2D bounding box of the polygons.
+ * \param polygons 2D polygons
+ * \param scaling a scaling factor to scale the polygons on `tmesh` (considering geodesic distances on `tmesh`)
+ * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \return a face location for each vertex of each polygon
+ * \todo add named parameters
+ * \todo polygon orientation is not handled in the function and should be done outside of the function for now
+ * \todo for better rendering we can group polygons to have one center for the same group of polygon (useful for letters that are not simply connected)
+ * \todo what if boundary is reached
+ */
 template <class K, class TriangleMesh>
 std::vector<std::vector<Face_location<TriangleMesh,typename K::FT>>>
 trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &center,
@@ -3375,7 +3416,7 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
     }
 
     std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
-      convert_polygon_to_polar_coordinates<K>(polygons[i],
+      convert_to_polar_coordinates<K>(polygons[i],
                                               typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
                                                                   (polygon_bboxes[i].ymin()+polygon_bboxes[i].ymax())/2.));
     if (polygons[i].front()==polygons[i].back())
@@ -3399,9 +3440,27 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
   return result;
 }
 
-//TODO add groups of polygons for better rendering
-//TODO add a function dedicated to groups of polygons (like a sentence)
-//     that takes groups of polyons
+
+
+/*!
+ * \ingroup VGSFunctions
+ * computes for each vertex of each polygon in `polygons` a face locations on `tmesh`, `center` representing the center of the 2D bounding box of the polygons.
+ * This method starts by considering the segment splitting in two halves along the y-axis the bounding box of the polygons. 2D centers for each polygon are
+ * computed on this segment as the intersection with the line splitting the bounding box of the polygon in two halves along the x-axis.
+ * The splitting segment is then drawn on `tmesh` and the face location of the 2D centers is found.
+ * `trace_geodesic_polygon()` is then called for each polygon and center, with appropriate directions and distances to have a consistant orientation for the polygons.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
+ * \param center the location on `tmesh` corresponding to the center of the 2D bounding box of the polygons.
+ * \param polygons 2D polygons
+ * \param scaling a scaling factor to scale the polygons on `tmesh` (considering geodesic distances on `tmesh`)
+ * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \return a face location for each vertex of each polygon
+ * \todo add named parameters
+ * \todo polygon orientation is not handled in the function and should be done outside of the function for now
+ * \todo for better rendering we can group polygons to have one center for the same group of polygon (useful for letters that are not simply connected)
+ * \todo what if boundary is reached
+ */
 template <class K, class TriangleMesh>
 std::vector<std::vector<Face_location<TriangleMesh,typename K::FT>>>
 trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
@@ -3549,7 +3608,7 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
 
 
     std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
-      convert_polygon_to_polar_coordinates<K>(polygons[i],
+      convert_to_polar_coordinates<K>(polygons[i],
                                               typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
                                                                   (gbox.ymin()+gbox.ymax())/2.));
 
@@ -3572,9 +3631,21 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
   return result;
 }
 
-template <class K, class TriangleMesh>
-typename K::FT path_length(const std::vector<Face_location<TriangleMesh,typename K::FT>>& path,
-                           const TriangleMesh &tmesh)
+
+/*!
+ * \ingroup VGSMiscellaneous
+ * computes the length of a path on a triangle mesh.
+ * \tparam FT floating point number type (float or double)
+ * \tparam TriangleMesh a model of `FaceGraph`
+ * \param path a path described as a range of face locations, with the property that
+               for two consecutive face locations, there exist a face in `tmesh` containing the two corresponding points.
+ * \param tmesh the triangle mesh supporing the path
+ * \todo add named parameters
+ * \todo generic range
+ */
+template <class FT, class TriangleMesh>
+typename FT path_length(const std::vector<Face_location<TriangleMesh, FT>>& path,
+                        const TriangleMesh &tmesh)
 {
   std::size_t lpath = path.size();
   if(lpath<2)
@@ -3591,7 +3662,66 @@ typename K::FT path_length(const std::vector<Face_location<TriangleMesh,typename
   return len;
 }
 
-//TODO: factorise code
+/*!
+ * \ingroup VGSMiscellaneous
+ * computes the length of a path on a triangle mesh.
+ * \tparam FT floating point number type (float or double)
+ * \tparam TriangleMesh a model of `FaceGraph`
+ * \param src source of the path
+ * \param tgt target of the path
+ * \param path a path described as a range of edge locations, with the property that
+               for two consecutive edge locations, there exist a face in `tmesh` containing the two corresponding points.
+ * \param tmesh the triangle mesh supporing the path
+ * \todo add named parameters
+ * \todo generic range
+ */
+template <class K, class TriangleMesh>
+typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
+                          const Face_location<TriangleMesh, typename K::FT>& src,
+                          const Face_location<TriangleMesh, typename K::FT>& tgt,
+                          const TriangleMesh &tmesh)
+{
+  std::size_t lpath = path.size();
+  if(lpath==0)
+    return sqrt(squared_distance(construct_point(src,tmesh),construct_point(tgt,tmesh)));
+
+  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
+  VPM vpm = get(CGAL::vertex_point, tmesh);
+
+  typename K::FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
+
+  for (std::size_t i=0; i<lpath-1; ++i)
+    len += sqrt(squared_distance(construct_point(path[i],tmesh),construct_point(path[i+1],tmesh)));
+
+  len+=sqrt(squared_distance(construct_point(path.back(),tmesh),construct_point(tgt,tmesh)));
+
+  return len;
+}
+
+/*!
+ * \ingroup VGSFunctions
+ * computes for each vertex of each polygon in `polygons` a face locations on `tmesh` along the curve `supporting_curve`.
+ * This method starts by considering the segment splitting in two halves along the y-axis the bounding box of the polygons. 2D centers for each polygon are
+ * computed on this segment as the intersection with the line splitting the bounding box of the polygon in two halves along the x-axis.
+ * The splitting segment is then mapped onto `supporting_curve` by first scaling it using `scaling`, and using `padding` and `is_centered`.
+ * Face locations of the 2D center are found on `supporting_curve`.
+ * `trace_geodesic_polygon()` is then called for each polygon and center, with appropriate directions and distances to have a consistant orientation for the polygons.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
+ * \param supporting_curve a path on `tmesh` that will support the center of the bounding box of each polygon.
+ *                         For two consecutive face locations, there must exist a face in `tmesh` containing the two corresponding points.
+ * \param polygons 2D polygons
+ * \param scaling a scaling factor to scale the polygons on `tmesh` (considering geodesic distances on `tmesh`)
+ * \param padding padding applied at the beggining of supporting curve to start the drawing
+ * \param is_centered is `true`, `padding` is ignored and the bounding box of the polygon is centered on the supporting curve (in 1D)
+ * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \return a face location for each vertex of each polygon
+ * \todo add named parameters
+ * \todo polygon orientation is not handled in the function and should be done outside of the function for now
+ * \todo for better rendering we can group polygons to have one center for the same group of polygon (useful for letters that are not simply connected)
+ * \todo check padding is ignored if is_centered is used + update the doc if not
+ * \todo doc what happens if supporting curve is not long enough + boundary reached
+ */
 template <class K, class TriangleMesh>
 std::vector<std::vector<Face_location<TriangleMesh, typename K::FT>>>
 trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, typename K::FT>>& supporting_curve,
@@ -3656,7 +3786,7 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
       if (acc == targetd)
       {
         // note: if the supporting curve goes though supporting_curve[k], that vertex might be duplicated (if it's a path).
-        //       But it is not an issue for the code as the 0 lenght segments do not contribute to the distance and
+        //       But it is not an issue for the code as the 0 length segments do not contribute to the distance and
         //       points of loc_k and loc_k1 are expected to be always different.
 
         double theta=0;
@@ -3733,7 +3863,7 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
     std::tie(polygon_center, theta)=get_polygon_center(scaling * (xc-gbox.xmin())+pad);
 
     std::vector<std::pair<typename K::FT, typename K::FT>> polar_coords =
-      convert_polygon_to_polar_coordinates<K>(polygons[i],
+      convert_to_polar_coordinates<K>(polygons[i],
                                               typename K::Point_2((polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
                                                                   (gbox.ymin()+gbox.ymax())/2.));
     //already duplicated in trace_geodesic_polygon
@@ -3755,6 +3885,25 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
   return result;
 }
 
+/*!
+ * \ingroup VGSFunctions
+ * computes a path representing a bezier curve defined by four control points.
+ * Control points are defined by the endpoints of straightest geodesic curves starting from `center` along given directions and distances.
+ * The iterative de Casteljau subdivision algorithm is applied to create more control points that are then connected with locally shortest paths.
+ * The output path is such that for two consecutive face locations, there must exist a face in `tmesh` containing the two corresponding points.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
+ * \param center the location on `tmesh` where straightest geodesic for the placement of control points starts. The y-axis used is `halfedge(center.first, tmesh)`.
+ * \param directions contains the direction of the straightest geodesic for each control point
+ * \param lengths contains the length of the straightest geodesic for each control point
+ * \param num_subdiv the number of iterations of the de Casteljau subdivision algorithm
+ * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \return a face location for each vertex of each polygon
+ * \todo add named parameters
+ * \todo polygon orientation is not handled in the function and should be done outside of the function for now
+ * \todo for better rendering we can group polygons to have one center for the same group of polygon (useful for letters that are not simply connected)
+ * \todo what if boundary is reached
+ */
 template <class K, class TriangleMesh>
 std::vector< std::vector<Face_location<TriangleMesh, typename K::FT>> >
 trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
@@ -3833,6 +3982,30 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
   return result;
 }
 
+
+/*!
+ * \ingroup VGSFunctions
+ * computes a path representing a bezier polyline (a sequence of bezier curves having an identical control points,
+ * that is the fourth control point of the nth curve is the first control point of the (n+1)th curve).
+ * Control points are defined by the endpoints of straightest geodesic curves starting from `center` along given directions and distances.
+ * The iterative de Casteljau subdivision algorithm is applied to create more control points that are then connected with locally shortest paths.
+ * The output path is such that for two consecutive face locations, there must exist a face in `tmesh` containing the two corresponding points.
+ * The first portion of the curve is defined by the 4 first values in `directions` and `lengths`. The second portion is defined by the 4'th value
+ * and the next 3, and so on until the end is reached. If `is_closed` is true, then the first value will be used with the last three to define the last portion.
+ * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
+ * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
+ * \param center the location on `tmesh` where straightest geodesic for the placement of control points starts. The y-axis used is `halfedge(center.first, tmesh)`.
+ * \param directions contains the direction of the straightest geodesic for each control point
+ * \param lengths contains the length of the straightest geodesic for each control point
+ * \param num_subdiv the number of iterations of the de Casteljau subdivision algorithm
+ * \param is_closed if true [directions/lengths].front() will be used as additional last point, generating a closed path
+ * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \return a face location for each vertex of each polygon
+ * \todo add named parameters
+ * \todo polygon orientation is not handled in the function and should be done outside of the function for now
+ * \todo for better rendering we can group polygons to have one center for the same group of polygon (useful for letters that are not simply connected)
+ * \todo what if boundary is reached
+ */
 //TODO: make sure it is consistent with the rest to not duplicate the last point if closed
 template <class K, class TriangleMesh>
 std::vector<Face_location<TriangleMesh, typename K::FT>>
@@ -3932,30 +4105,28 @@ trace_polyline_of_bezier_curves(const Face_location<TriangleMesh, typename K::FT
 }
 
 
-template <class K, class TriangleMesh>
-typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
-                          const Face_location<TriangleMesh, typename K::FT>& src,
-                          const Face_location<TriangleMesh, typename K::FT>& tgt,
-                          const TriangleMesh &tmesh)
-{
-  std::size_t lpath = path.size();
-  if(lpath==0)
-    return sqrt(squared_distance(construct_point(src,tmesh),construct_point(tgt,tmesh)));
 
-  using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
-  VPM vpm = get(CGAL::vertex_point, tmesh);
-
-  typename K::FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
-
-  for (std::size_t i=0; i<lpath-1; ++i)
-    len += sqrt(squared_distance(construct_point(path[i],tmesh),construct_point(path[i+1],tmesh)));
-
-  len+=sqrt(squared_distance(construct_point(path.back(),tmesh),construct_point(tgt,tmesh)));
-
-  return len;
-}
-
-//TODO VNM should be optional as well as FNM
+/*!
+ * \ingroup VGSFunctions
+ * refines `tmesh` so that each path in `paths` corresponds to a set edges of `tmesh` after the call.
+ * Note that each path must be such that for two consecutive face locations, there exist a face in `tmesh` containing the two corresponding points.
+ * \tparam TriangleMesh a model of `MutableFaceGraph`
+ * \tparam K a model of `Kernel` with `K::FT` being a floating point number type (float or double)
+ * \tparam VNM a model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%vertex_descriptor` as key type and `Kernel::Vector_3` as value type.
+ * \tparam FNM a model of `ReadWritePropertyMap` with `boost::graph_traits<TriangleMesh>::%face_descriptor` as key type and `Kernel::Vector_3` as value type.
+ * \tparam OutputIterator an output iterator accepting `boost::graph_traits<TriangleMesh>::%halfedge_descriptor` to be put
+ * \param tmesh the triangle mesh to be refined
+ * \param paths a path described as a range of edge locations, with the property that
+ *              for two consecutive edge locations, there exist a face in `tmesh` containing the two corresponding points.
+ * \param vnm property map associating a normal to each vertex of `tmesh` that is updated by this function
+ * \param fnm property map associating a normal to each face of `tmesh` that is updated by this function
+ * \param out output iterator where created halfedges are put
+ * \todo add named parameters
+ * \todo vnm and fnm are optional
+ * \todo intersection between path or self-intersections are not handle. Should it be? If not what do we do?
+ * \todo out should contain edges, and also existing edges already part of a path
+ * \todo shall we also have the edges in the order of the input rather than all at once
+ */
 template <class K, class TriangleMesh, class VNM, class FNM, class OutputIterator>
 // std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>
 OutputIterator
@@ -4403,9 +4574,20 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
   return out;
 }
 
-// TODO: add to doc
-// create a polyline from a path on a mesh. It does eliminate duplicated elements in the path
-// that are here to make a continuous face transition when the path goes though a mesh vertex
+/*!
+ * \ingroup VGSMiscellaneous
+ * converts a path on a triangle mesh to the corresponding polyline of points.
+ * If `path` contains identical consecutive vertices, only one point will be put in `poly_out` for this vertex.
+ * \tparam FT floating point number type (float or double)
+ * \tparam TriangleMesh a model of `FaceGraph`
+ * \tparam OutputIterator an output iterator accepting points from `tmesh`
+ * \param path a path described as a range of face locations, with the property that
+               for two consecutive face locations, there exist a face in `tmesh` containing the two corresponding points.
+ * \param tmesh the triangle mesh supporing the path
+ * \param poly_out output iterator where points of the polyline are put.
+ * \todo add named parameters
+ * \todo generic range
+ */
 template<class TriangleMesh, class FT, class OutputIterator>
 OutputIterator
 convert_path_to_polyline(const std::vector<Face_location<TriangleMesh, FT>>& path,
@@ -4428,7 +4610,22 @@ convert_path_to_polyline(const std::vector<Face_location<TriangleMesh, FT>>& pat
   return poly_out;
 }
 
-// same as above but for edge locations
+/*!
+ * \ingroup VGSMiscellaneous
+ * converts a path on a triangle mesh to the corresponding polyline of points.
+ * If `path` contains identical consecutive vertices, only one point will be put in `poly_out` for this vertex.
+ * \tparam FT floating point number type (float or double)
+ * \tparam TriangleMesh a model of `FaceGraph`
+ * \tparam OutputIterator an output iterator accepting points from `tmesh`
+ * \param src source of the path
+ * \param tgt target of the path
+ * \param path a path described as a range of edge locations, with the property that
+               for two consecutive edge locations, there exist a edge in `tmesh` containing the two corresponding points.
+ * \param tmesh the triangle mesh supporing the path
+ * \param poly_out output iterator where points of the polyline are put.
+ * \todo add named parameters
+ * \todo generic range
+ */
 template<class TriangleMesh, class FT, class OutputIterator>
 OutputIterator
 convert_path_to_polyline(const Face_location<TriangleMesh, FT>& src,

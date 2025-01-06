@@ -77,7 +77,7 @@ get_supporting_curve(std::string svg_filename,
     CGAL_assertion(bezier[0]==prev);
     CGAL_assertion_code(prev=bezier[3];)
     std::vector<std::pair<double, double>> polar_coords =
-      PMP::convert_polygon_to_polar_coordinates<K>(bezier, center_2);
+      PMP::convert_to_polar_coordinates<K>(bezier, center_2);
 
     int start_id=directions.empty()?0:1;
 
