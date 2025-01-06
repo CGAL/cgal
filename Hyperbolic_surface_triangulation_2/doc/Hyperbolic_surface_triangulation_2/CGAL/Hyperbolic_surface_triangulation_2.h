@@ -43,13 +43,13 @@ public:
   */
   typedef Combinatorial_map<2, Attributes>                                 Combinatorial_map_with_cross_ratios;
   /*!
-      Combinatorial map dart handle type.
+      Combinatorial map dart descriptor type.
   */
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_handle                                     Dart_handle;
+  typedef typename Combinatorial_map_with_cross_ratios::Dart_descriptor                                     Dart_descriptor;
   /*!
-      Combinatorial map dart const handle type.
+      Combinatorial map dart const descriptor type.
   */
-  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_handle                               Dart_const_handle;
+  typedef typename Combinatorial_map_with_cross_ratios::Dart_const_descriptor                               Dart_const_descriptor;
   /*!
       Point type.
   */
@@ -59,7 +59,7 @@ public:
       stores a dart \f$ d \f$ of the combinatorial map, belonging to a triangle \f$ t \f$, and stores the three vertices of a lift of \f$ t \f$ in the hyperbolic plane.
   */
   struct Anchor{
-    typename Combinatorial_map_with_cross_ratios::Dart_handle dart;
+    typename Combinatorial_map_with_cross_ratios::Dart_descriptor dart;
     typename Traits::Hyperbolic_point_2 vertices[3];
   };
   /// @}
@@ -72,7 +72,11 @@ public:
   Hyperbolic_surface_triangulation_2() {};
 
   /*!
-      Constructor from a convex fundamental domain: triangulates the polygon of the domain, and identifies the paired sides of the domain.
+      Constructor from a convex fundamental domain: triangulates the polygon of
+      the domain. (The triangulation is defined by adding an internal edge
+      between domain.vertex(size-1) and the other vertices. The anchor has the
+      three vertices of indices size-1, 0 and 1 and the dart is the one between
+      the vertices of indices size-1 and 0.)
   */
   Hyperbolic_surface_triangulation_2(const Hyperbolic_fundamental_domain_2<Traits>& domain);
 
@@ -82,9 +86,9 @@ public:
   Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
 
   /*!
-      Constructor from a decorated combinatorial map and an anchor.
+      Constructor from a decorated combinatorial map and an_anchor.
   */
-  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap,  Anchor& anchor);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& an_anchor);
   /// @}
 
   /// \name Assignment
@@ -116,13 +120,13 @@ public:
 
       \pre <code> is_valid() && has_anchor() </code>
   */
-  Anchor& anchor();
-  /*!
-      constant version of the getter.
+  const Anchor& anchor();
+  /* /\*! */
+  /*     constant version of the getter. */
 
-      \pre <code> is_valid() && has_anchor() </code>
-  */
-  const Anchor& const_anchor();
+  /*     \pre <code> is_valid() && has_anchor() </code> */
+  /* *\/ */
+  /* const Anchor& const_anchor(); */
   /// @}
 
 
@@ -133,14 +137,14 @@ public:
 
       \pre <code> is_valid() </code>
   */
-  bool is_Delaunay_flippable(Dart_handle dart) const;
+  bool is_Delaunay_flippable(Dart_descriptor dart) const;
 
   /*!
       flips the edge supported by the dart.
 
       \pre <code> is_valid() </code>
   */
-  void flip(Dart_handle dart);
+  void flip(Dart_descriptor dart);
 
   /*!
       determines if the triangulation is a valid Delaunay triangulation.
@@ -165,7 +169,7 @@ public:
 
       \pre <code> is_valid() && has_anchor() </code>
   */
-  std::vector<std::tuple<Dart_const_handle, Point, Point, Point>> lift(bool center=true) const;
+  std::vector<std::tuple<Dart_const_descriptor, Point, Point, Point>> lift(bool center=true) const;
   /// @}
 
   /// \name Validity
@@ -173,7 +177,7 @@ public:
   /*!
       Validity test.
       Checks that the underlying combinatorial map \f$ M \f$ has no boundary and calls the is_valid method of \f$ M \f$.
-      If there is an anchor, then checks that the dart handle of the anchor does indeed point to a dart of \f$ M \f$, and checks that the three vertices of the anchor lie within the open unit disk.
+      If there is an anchor, then checks that the dart descriptor of the anchor does indeed point to a dart of \f$ M \f$, and checks that the three vertices of the anchor lie within the open unit disk.
   */
   bool is_valid() const;
   /// @}
