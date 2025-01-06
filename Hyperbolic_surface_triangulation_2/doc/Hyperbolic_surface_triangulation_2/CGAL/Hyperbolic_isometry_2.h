@@ -7,7 +7,7 @@ represents an isometry in the Poincaré disk model.
 The isometry \f$ f \f$ is represented by a list \f$ (c_0, c_1, c_2, c_3) \f$ of complex numbers,
 so that \f$ f(z) = (c_0 z + c_1) / (c_2 z + c_3) \f$ holds on every complex \f$ z \f$ in the open unit disk.
 
-Facilities are offered to compose isometries, and apply an isometry to a point.
+Functionalities are offered to compose isometries, and apply an isometry to a point.
 
 \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
 */
@@ -28,9 +28,13 @@ class Hyperbolic_isometry_2{
     /// \name Creation
     /// @{
     /*!
-      Default constructor.
+      Default constructor to the identity.
     */
     Hyperbolic_isometry_2();
+    /*!
+      Constructor from coefficients.
+    */
+    Hyperbolic_isometry_2(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3);
     /// @}
 
     /*!
@@ -39,17 +43,17 @@ class Hyperbolic_isometry_2{
     void set_to_identity();
 
     /*!
-      sets the coefficients of the isometry manually. \note  Be
-      careful when doing so: the implementation does not check that the
-      resulting Möbius transform fixes the unit circle.
+      sets the coefficients of the isometry.
+      \warning The implementation does not check that the
+      resulting transformation is an isometry.
 
     */
     void set_coefficients(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3);
 
     /*!
-      sets a particular coefficient of the isometry manually. \note  Be
-      careful when doing so: the implementation does not check that the
-      resulting Möbius transform fixes the unit circle.
+      sets a particular coefficient of the isometry.
+      \warning The implementation does not check that the
+      resulting transformation is an isometry.
 
     */
     void set_coefficient(int index, const Complex_number& coefficient);
@@ -68,6 +72,10 @@ class Hyperbolic_isometry_2{
       evaluates the isometry at the point.
     */
     Point evaluate(const Point& point) const;
+   /*!
+      evaluates the isometry at the point.
+    */
+    Point operator()(const Point& point) const;
 
     /// @{
     /*!

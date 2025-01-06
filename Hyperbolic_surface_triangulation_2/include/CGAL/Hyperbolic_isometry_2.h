@@ -32,10 +32,11 @@ public:
   typedef typename Traits::Hyperbolic_point_2              Point;
 
   Hyperbolic_isometry_2();
+  Hyperbolic_isometry_2(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3);
 
   void set_to_identity();
 
-  // Can be used to set the coefficients manually. Be careful when doing so : the implementation does not check that the resulting moebius transform fixes the unit circle.
+  // Can be used to set the coefficients manually. Warning : the implementation does not check that the resulting moebius transform fixes the unit circle.
   void set_coefficients(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3);
   void set_coefficient(int index, const Complex_number& coefficient);
 
@@ -44,6 +45,7 @@ public:
 
   // Evaluates the isometry at point
   Point evaluate(const Point& point) const;
+  Point operator()(const Point& point) const;
 
 private:
   Complex_number _coefficients[4];
@@ -76,6 +78,10 @@ Hyperbolic_isometry_2<Traits>::Hyperbolic_isometry_2(){
   set_to_identity();
 }
 
+template<class Traits>
+Hyperbolic_isometry_2<Traits>::Hyperbolic_isometry_2(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3){
+  set_coefficients(c0,c1,c2,c3);
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
@@ -117,6 +123,10 @@ typename Traits::Hyperbolic_point_2 Hyperbolic_isometry_2<Traits>::evaluate(cons
   return Point(result.real(), result.imag());
 }
 
+ template<class Traits>
+   typename Traits::Hyperbolic_point_2 Hyperbolic_isometry_2<Traits>::operator()(const Point& point) const{
+   return evaluate(point);
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
