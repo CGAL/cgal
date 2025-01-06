@@ -15,7 +15,7 @@
 #ifndef CGAL_HYPERBOLIC_ISOMETRY_2
 #define CGAL_HYPERBOLIC_ISOMETRY_2
 
-#include "Complex_without_sqrt.h"
+#include <CGAL/Complex_number.h>
 
 namespace CGAL {
 
@@ -28,7 +28,7 @@ class Hyperbolic_isometry_2{
 public:
   typedef Hyperbolic_isometry_2<Traits>                    Self;
   typedef typename Traits::FT                              FT;
-  typedef typename Traits::Complex                         ComplexNumber;
+  typedef typename Traits::Complex                         Complex_number;
   typedef typename Traits::Hyperbolic_point_2              Point;
 
   Hyperbolic_isometry_2();
@@ -36,17 +36,17 @@ public:
   void set_to_identity();
 
   // Can be used to set the coefficients manually. Be careful when doing so : the implementation does not check that the resulting moebius transform fixes the unit circle.
-  void set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3);
-  void set_coefficient(int index, const ComplexNumber& coefficient);
+  void set_coefficients(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3);
+  void set_coefficient(int index, const Complex_number& coefficient);
 
   // Returns the index-th coefficient
-  ComplexNumber get_coefficient(int index) const;
+  const Complex_number& get_coefficient(int index) const;
 
   // Evaluates the isometry at point
   Point evaluate(const Point& point) const;
 
 private:
-  ComplexNumber _coefficients[4];
+  Complex_number _coefficients[4];
 };
 
 //  returns the composition of two isometries.
@@ -80,14 +80,14 @@ Hyperbolic_isometry_2<Traits>::Hyperbolic_isometry_2(){
 
 template<class Traits>
 void Hyperbolic_isometry_2<Traits>::set_to_identity(){
-  set_coefficients(ComplexNumber(FT(1)),
-                   ComplexNumber(FT(0)),
-                   ComplexNumber(FT(0)),
-                   ComplexNumber(FT(1)));
+  set_coefficients(Complex_number(FT(1)),
+                   Complex_number(FT(0)),
+                   Complex_number(FT(0)),
+                   Complex_number(FT(1)));
 }
 
 template<class Traits>
-void Hyperbolic_isometry_2<Traits>::set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3){
+void Hyperbolic_isometry_2<Traits>::set_coefficients(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3){
   set_coefficient(0, c0);
   set_coefficient(1, c1);
   set_coefficient(2, c2);
@@ -95,14 +95,14 @@ void Hyperbolic_isometry_2<Traits>::set_coefficients(const ComplexNumber& c0, co
 }
 
 template<class Traits>
-void Hyperbolic_isometry_2<Traits>::set_coefficient(int index, const ComplexNumber& coefficient){
+void Hyperbolic_isometry_2<Traits>::set_coefficient(int index, const Complex_number& coefficient){
   _coefficients[index] = coefficient;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-typename Traits::Complex Hyperbolic_isometry_2<Traits>::get_coefficient(int index) const{
+const typename Traits::Complex& Hyperbolic_isometry_2<Traits>::get_coefficient(int index) const{
   return _coefficients[index];
 }
 
@@ -110,11 +110,11 @@ typename Traits::Complex Hyperbolic_isometry_2<Traits>::get_coefficient(int inde
 
 template<class Traits>
 typename Traits::Hyperbolic_point_2 Hyperbolic_isometry_2<Traits>::evaluate(const Point& point) const{
-  ComplexNumber z (point.x(), point.y());
-  ComplexNumber numerator_of_the_result = _coefficients[0] * z + _coefficients[1];
-  ComplexNumber denominator_of_the_result = _coefficients[2] * z + _coefficients[3];
-  ComplexNumber result = numerator_of_the_result / denominator_of_the_result;
-  return Point(result.real_part(), result.imaginary_part());
+  Complex_number z (point.x(), point.y());
+  Complex_number numerator_of_the_result = _coefficients[0] * z + _coefficients[1];
+  Complex_number denominator_of_the_result = _coefficients[2] * z + _coefficients[3];
+  Complex_number result = numerator_of_the_result / denominator_of_the_result;
+  return Point(result.real(), result.imag());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ Hyperbolic_isometry_2<Traits> hyperbolic_translation(const typename Traits::Hype
     z = - typename Traits::Complex(p.x(), p.y());
   }
   Hyperbolic_isometry_2<Traits> result;
-  result.set_coefficients(one, z, z.conjugate(), one);
+  result.set_coefficients(one, z, conj(z), one);
   return result;
 }
 

@@ -9,7 +9,7 @@ so that \f$ f(z) = (c_0 z + c_1) / (c_2 z + c_3) \f$ holds on every complex \f$ 
 
 Facilities are offered to compose isometries, and apply an isometry to a point.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 */
 template<class Traits>
 class Hyperbolic_isometry_2{
@@ -19,7 +19,7 @@ class Hyperbolic_isometry_2{
     /*!
     Complex number type.
     */
-    typedef typename Traits::Complex                         ComplexNumber;
+    typedef typename Traits::Complex                         Complex_number;
     /*!
     Point type.
     */
@@ -39,27 +39,27 @@ class Hyperbolic_isometry_2{
     void set_to_identity();
 
     /*!
-      can be used to set the coefficients of the isometry manually. \note  Be
-      careful when doing so : the implementation does not check that the
-      resulting Möbius transform fixes the unit circle. 
+      sets the coefficients of the isometry manually. \note  Be
+      careful when doing so: the implementation does not check that the
+      resulting Möbius transform fixes the unit circle.
 
     */
-    void set_coefficients(const ComplexNumber& c0, const ComplexNumber& c1, const ComplexNumber& c2, const ComplexNumber& c3);
+    void set_coefficients(const Complex_number& c0, const Complex_number& c1, const Complex_number& c2, const Complex_number& c3);
 
     /*!
-      can be used to set one coefficient of the isometry manually. \note  Be
-      careful when doing so : the implementation does not check that the
-      resulting Möbius transform fixes the unit circle. 
+      sets a particular coefficient of the isometry manually. \note  Be
+      careful when doing so: the implementation does not check that the
+      resulting Möbius transform fixes the unit circle.
 
     */
-    void set_coefficient(int index, const ComplexNumber& coefficient);
+    void set_coefficient(int index, const Complex_number& coefficient);
 
-    /// \name Access functions
+    /// \name Access Functions
     /// @{
     /*!
       returns the index-th coefficient.
     */
-    ComplexNumber get_coefficient(int index) const;
+    const Complex_number& get_coefficient(int index) const;
     /// @}
 
     /// \name Operations

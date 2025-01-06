@@ -21,13 +21,13 @@
 // UI generated header
 #include "ui_drawing_window_description.h"
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
 
-typedef CGAL::Simple_cartesian<CGAL::Gmpq>                                           Kernel;
+typedef CGAL::Simple_cartesian<CGAL::Exact_rational>                                           Kernel;
 typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
 typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
 typedef Traits::Hyperbolic_point_2                                            Point;
