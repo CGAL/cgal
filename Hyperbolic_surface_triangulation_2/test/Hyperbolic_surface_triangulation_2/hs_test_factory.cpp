@@ -1,20 +1,16 @@
-#include <iostream>
-
-#include <CGAL/Gmpq.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Complex_without_sqrt.h>
-#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 
-using namespace CGAL;
+#include <iostream>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
-typedef Cartesian<Gmpq>                                                 Kernel;
-typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
-typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
+typedef CGAL::Cartesian<CGAL::Exact_rational>                                                 Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                         Domain;
+typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
 
 typedef typename Traits::FT                                             FT;
 typedef typename Traits::Hyperbolic_point_2                             Point;
@@ -22,8 +18,8 @@ typedef typename Traits::Complex                                        Complex;
 
 
 int main() {
-  Factory factory (3459);
-  Domain domain = factory.generate_domain_g2();
+  Factory factory;
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(3459);
 
   std::vector<Point> vertices;
   Point z0 = Point(FT("4881/5000"),FT("0"));

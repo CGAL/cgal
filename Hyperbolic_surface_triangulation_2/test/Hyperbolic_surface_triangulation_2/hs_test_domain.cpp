@@ -1,18 +1,15 @@
-#include <iostream>
-
-#include <CGAL/Gmpq.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Complex_without_sqrt.h>
 #include <CGAL/Hyperbolic_fundamental_domain_2.h>
 
-using namespace CGAL;
+#include <iostream>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
-typedef Cartesian<Gmpq>                                                 Kernel;
-typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
+typedef CGAL::Cartesian<CGAL::Exact_rational>                                       Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                       Traits;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                         Domain;
 
 typedef typename Traits::FT                                             FT;
 typedef typename Traits::Hyperbolic_point_2                             Point;
@@ -43,19 +40,18 @@ int main() {
     pairings.push_back((k+4)%8);
   }
 
-  Domain domain = Domain(vertices.begin(),vertices.end(),pairings.begin(),pairings.end());
+  Domain domain = Domain(vertices, pairings);
   assert( domain.size()==8 );
   for (int k=0; k<8; k++){
     assert( domain.vertex(k)==vertices[k] );
     assert( domain.paired_side(k)==(k+4)%8 );
-
     assert( domain.side_pairing(k).evaluate(domain.vertex((k+4)%8))==domain.vertex((k+1)%8) );
     assert( domain.side_pairing(k).evaluate(domain.vertex((k+5)%8))==domain.vertex(k) );
   }
 
   assert( domain.is_valid() );
 
-  Domain domain_prime = Domain(vertices.begin(),vertices.end(),pairings.begin(),pairings.end());;
+  Domain domain_prime = Domain(vertices, pairings);
   assert( domain_prime.size()==8 );
   for (int k=0; k<8; k++){
     assert( domain_prime.vertex(k)==vertices[k]);

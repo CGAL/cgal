@@ -6,7 +6,7 @@ project(Hyperbolic_surface_triangulation_2_Tests)
 
 find_package(CGAL REQUIRED)
 
-set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "Debug")
 
 include_directories(../../include/)
 
@@ -16,5 +16,5 @@ file(
   RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 foreach(cppfile ${cppfiles})
-  create_single_source_cgal_program("${cppfile}" ../../include/)
+  create_single_source_cgal_program("${cppfile}")
 endforeach()

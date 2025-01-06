@@ -1,45 +1,29 @@
-// Copyright (c) 2024
-// INRIA Nancy (France), and Université Gustave Eiffel Marne-la-Vallee (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org)
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-// Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
-
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
-
 #include <time.h>
 
-using namespace CGAL;
-
-typedef Simple_cartesian<Gmpq>                                                 Kernel;
-typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
-typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
-typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
-typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
-
+typedef CGAL::Exact_rational                                         Rational;
+typedef CGAL::Simple_cartesian<Rational>                             Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>     ParentTraits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>              Traits;
+typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                Domain;
+typedef CGAL::Hyperbolic_fundamental_domain_factory_2<Traits>        Factory;
+typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>             Triangulation;
 
 int main(){
   // Generates the domain:
-  Factory factory = Factory(time(NULL));
-  Domain domain = factory.generate_domain_g2();
+  Factory factory = Factory();
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(time(NULL));
 
   // Triangulates the domain:
   Triangulation triangulation = Triangulation(domain);
 
   // Applies the Delaunay flip algorithm to the triangulation:
-  triangulation.make_delaunay();
+  triangulation.make_Delaunay();
 
   // Saves the triangulation:
   std::ofstream  output_file = std::ofstream ("OutputTriangulation.txt");

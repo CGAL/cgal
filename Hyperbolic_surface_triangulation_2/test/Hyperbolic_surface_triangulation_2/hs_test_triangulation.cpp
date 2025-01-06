@@ -1,20 +1,15 @@
+#include <CGAL/Hyperbolic_surface_traits_2.h>
+#include <CGAL/Hyperbolic_surface_triangulation_2.h>
+
 #include <iostream>
 #include <sstream>
-
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
-#include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Complex_without_sqrt.h>
-#include <CGAL/Hyperbolic_fundamental_domain_2.h>
-#include <CGAL/Hyperbolic_surface_triangulation_2.h>
-#include <CGAL/Hyperbolic_surface_traits_2.h>
 
-using namespace CGAL;
-
-typedef Cartesian<Gmpq>                                                 Kernel;
-typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
+typedef CGAL::Cartesian<CGAL::Exact_rational>                                                 Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
 typedef CGAL::Hyperbolic_fundamental_domain_2<Traits>                   Domain;
 typedef CGAL::Hyperbolic_surface_triangulation_2<Traits>                Triangulation;
 
@@ -38,7 +33,7 @@ Domain build_domain(){
     pairings.push_back((k+4)%8);
   }
 
-  return Domain(vertices.begin(),vertices.end(), pairings.begin(),pairings.end());
+  return Domain(vertices, pairings);
 }
 
 int main() {
@@ -63,9 +58,9 @@ int main() {
   input_not_centered = triangulation.lift(false);
   input_centered = triangulation.lift();
 
-  triangulation.make_delaunay();
+  triangulation.make_Delaunay();
 
-  assert( triangulation.is_delaunay() );
+  assert( triangulation.is_Delaunay() );
 
   std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,Point,Point,Point>> output_not_centered;
   std::vector<std::tuple<typename Triangulation::Combinatorial_map_with_cross_ratios::Dart_const_handle,Point,Point,Point>> output_centered;

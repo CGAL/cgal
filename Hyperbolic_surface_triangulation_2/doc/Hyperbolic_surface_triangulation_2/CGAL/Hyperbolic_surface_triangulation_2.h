@@ -5,9 +5,9 @@ namespace CGAL{
 
 
 This item defines attributes of edges that are
-`Complex_without_sqrt` reprensenting cross-ratios.
+`Complex_number` reprensenting cross-ratios.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 
 \cgalModels{GenericMapItems}
 */
@@ -15,7 +15,7 @@ template<class Traits>
 struct Combinatorial_map_with_cross_ratios_item{
     template <class CMap>
     struct Dart_wrapper{
-        typedef Cell_attribute<CMap, Complex_without_sqrt<typename Traits::FT>> Edge_attrib;
+        typedef Cell_attribute<CMap, Complex_number<typename Traits::FT>> Edge_attrib;
         typedef std::tuple<void,Edge_attrib,void>   Attributes;
     };
   };
@@ -29,9 +29,9 @@ Represents a triangulation of a closed orientable hyperbolic surface.
 Offers facilities such as the generation of the triangulation from a convex fundamental domain,
 the Delaunay flip algorithm, and the construction of a portion of the lift of the triangulation in the hyperbolic plane.
 
-\tparam Traits is the traits class and must be a model of `HyperbolicSurfacesTraits_2` (default model : `Hyperbolic_surface_traits_2`).
+\tparam Traits is the traits class and must be a model of `HyperbolicSurfaceTraits_2` (default model: `Hyperbolic_surface_traits_2`).
 
-\tparam Attributes must be a model of `GenericMapItems` (default model : `Combinatorial_map_with_cross_ratios_item<Traits>`).
+\tparam Attributes must be a model of `GenericMapItems` (default model: `Combinatorial_map_with_cross_ratios_item<Traits>`).
 */
 template<class Traits, class Attributes = Combinatorial_map_with_cross_ratios_item<Traits>>
 class Hyperbolic_surface_triangulation_2{
@@ -79,12 +79,12 @@ public:
   /*!
       Constructor from a decorated combinatorial map.
   */
-  Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
 
   /*!
       Constructor from a decorated combinatorial map and an anchor.
   */
-  Hyperbolic_surface_triangulation_2(const Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
+  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap,  Anchor& anchor);
   /// @}
 
   /// \name Assignment
@@ -95,7 +95,7 @@ public:
   Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2 other);
   /// @}
 
-  /// \name Access functions
+  /// \name Access Functions
   /// @{
   /*!
       returns the decorated combinatorial map.
@@ -117,16 +117,23 @@ public:
       \pre <code> is_valid() && has_anchor() </code>
   */
   Anchor& anchor();
+  /*!
+      constant version of the getter.
+
+      \pre <code> is_valid() && has_anchor() </code>
+  */
+  const Anchor& const_anchor();
   /// @}
 
-  /// \name Delaunay flip algorithm
+
+  /// \name Delaunay Flip Algorithm
   /// @{
   /*!
       tells if if the edge supported by the dart is Delaunay flippable.
 
       \pre <code> is_valid() </code>
   */
-  bool is_delaunay_flippable(Dart_handle dart) const;
+  bool is_Delaunay_flippable(Dart_handle dart) const;
 
   /*!
       flips the edge supported by the dart.
@@ -138,14 +145,14 @@ public:
   /*!
       determines if the triangulation is a valid Delaunay triangulation.
   */
-  bool is_delaunay() const;
+  bool is_Delaunay() const;
 
   /*!
       applies the Delaunay flip algorithm: flips Delaunay flippable edges until there is no such edge anymore.
 
       \pre <code> is_valid() </code>
   */
-  int make_delaunay();
+  int make_Delaunay();
   /// @}
 
   /// \name Lifting
@@ -171,7 +178,7 @@ public:
   bool is_valid() const;
   /// @}
 
-  /// \name Input/output
+  /// \name Input/Output
   /// @{
   /*!
       writes the triangulation in a stream.
@@ -190,10 +197,8 @@ public:
   /*!
       reads the triangulation from a stream.
       The format of the input should be the same as the format of the output of the '<<' operator.
-
-      \pre <code> is_valid() </code>
-  */
-  void operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits>& triangulation);
+ */
+  std::istream& operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits>& triangulation);
   /// @}
 };
 

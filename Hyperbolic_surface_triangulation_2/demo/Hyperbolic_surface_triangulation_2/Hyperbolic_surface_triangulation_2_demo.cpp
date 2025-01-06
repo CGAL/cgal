@@ -1,30 +1,17 @@
-// Copyright (c) 2024
-// INRIA Nancy (France), and Université Gustave Eiffel Marne-la-Vallee (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org)
-//
-// $URL$
-// $Id$
-// SPDX-License-Identifier: GPL-3.0-or-later OR LicenseRef-Commercial
-//
-// Author(s)     : Vincent Despré, Loïc Dubois, Monique Teillaud
-
 #include "window.h"
 
-#include <CGAL/Gmpq.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Hyperbolic_fundamental_domain_2.h>
 #include <CGAL/Hyperbolic_fundamental_domain_factory_2.h>
 #include <CGAL/Hyperbolic_surface_triangulation_2.h>
 
 using namespace CGAL;
 
-typedef Simple_cartesian<Gmpq>                                                 Kernel;
+typedef Simple_cartesian<Exact_rational>                                Kernel;
 typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
+typedef Hyperbolic_surface_traits_2<ParentTraits>                       Traits;
 typedef Hyperbolic_fundamental_domain_2<Traits>                         Domain;
 typedef Hyperbolic_fundamental_domain_factory_2<Traits>                 Factory;
 typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangulation;
@@ -35,10 +22,10 @@ typedef Hyperbolic_surface_triangulation_2<Traits>                      Triangul
 
 int main(int argc, char** argv){
   // 1. Generate the triangulation
-  Factory factory = Factory(time(NULL));
-  Domain domain = factory.generate_domain_g2();
+  Factory factory;
+  Domain domain = factory.make_hyperbolic_fundamental_domain_g2(time(NULL));
   Triangulation triangulation = Triangulation(domain);
-  triangulation.make_delaunay();
+  triangulation.make_Delaunay();
 
   // 2. Draw the triangulation
   QApplication app(argc, argv);

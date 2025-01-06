@@ -1,18 +1,15 @@
-#include <iostream>
-
-#include <CGAL/Gmpq.h>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 #include <CGAL/Hyperbolic_surface_traits_2.h>
-#include <CGAL/Complex_without_sqrt.h>
 #include <CGAL/Hyperbolic_isometry_2.h>
 
-using namespace CGAL;
+#include <iostream>
+#include <CGAL/Exact_rational.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Hyperbolic_Delaunay_triangulation_traits_2.h>
 
-typedef Cartesian<Gmpq>                                                 Kernel;
-typedef Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
-typedef Hyperbolic_surface_traits_2<ParentTraits>                      Traits;
-typedef Hyperbolic_isometry_2<Traits>                                   Isometry;
+typedef CGAL::Cartesian<CGAL::Exact_rational>                                       Kernel;
+typedef CGAL::Hyperbolic_Delaunay_triangulation_traits_2<Kernel>              ParentTraits;
+typedef CGAL::Hyperbolic_surface_traits_2<ParentTraits>                       Traits;
+typedef CGAL::Hyperbolic_isometry_2<Traits>                                   Isometry;
 
 typedef typename Traits::FT                                             FT;
 typedef typename Traits::Hyperbolic_point_2                             Point;
@@ -62,23 +59,23 @@ int main() {
 
   std::cout << "printing an isometry for test purposes : " << std::endl << h;
 
-  Isometry tau_1 = hyperbolic_translation<Traits>(point);
-  Isometry tau_1_prime = hyperbolic_translation<Traits>(Point (FT(-3,11),FT(1,73)), true);
-  Isometry tau_1_inv = hyperbolic_translation<Traits>(point, true);
+  Isometry tau_1 = CGAL::hyperbolic_translation<Traits>(point);
+  Isometry tau_1_prime = CGAL::hyperbolic_translation<Traits>(Point (FT(-3,11),FT(1,73)), true);
+  Isometry tau_1_inv = CGAL::hyperbolic_translation<Traits>(point, true);
   assert( tau_1.evaluate(image_point) == tau_1_prime.evaluate(image_point) );
   assert( (tau_1*tau_1_inv).evaluate(image_point) == image_point );
 
   Point p (FT(2,15),FT(0));
   Point q (FT(0),FT(17,93));
-  Isometry rotation = hyperbolic_rotation<Traits>(p, q);
-  Isometry rotation_prime = hyperbolic_rotation<Traits>(q, p, true);
-  Isometry rotation_inv = hyperbolic_rotation<Traits>(p, q, true);
+  Isometry rotation = CGAL::hyperbolic_rotation<Traits>(p, q);
+  Isometry rotation_prime = CGAL::hyperbolic_rotation<Traits>(q, p, true);
+  Isometry rotation_inv = CGAL::hyperbolic_rotation<Traits>(p, q, true);
   assert( rotation.evaluate(image_point) == rotation_prime.evaluate(image_point) );
   assert( (rotation*rotation_inv).evaluate(image_point) == image_point );
 
   Point p_imag = rotation.evaluate(p);
   Point q_imag = rotation.evaluate(q);
-  Isometry pairing = isometry_pairing_the_sides<Traits>(p, q, p_imag, q_imag);
+  Isometry pairing = CGAL::isometry_pairing_the_sides<Traits>(p, q, p_imag, q_imag);
   assert( pairing.evaluate(p) == p_imag );
   assert( pairing.evaluate(q) == q_imag );
 

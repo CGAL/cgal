@@ -15,8 +15,7 @@
 #ifndef CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 #define CGAL_HYPERBOLIC_FUNDAMENTAL_DOMAIN_2
 
-#include "Complex_without_sqrt.h"
-#include "Hyperbolic_isometry_2.h"
+#include <CGAL/Hyperbolic_isometry_2.h>
 
 #include <vector>
 #include <iostream>
@@ -38,18 +37,22 @@ public:
 
   Hyperbolic_fundamental_domain_2();
 
-  Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
-				  typename std::vector<Point>::iterator vlast,
-				  typename std::vector<int>::iterator pfirst,
-				  typename std::vector<int>::iterator plast);
-  
+  /* template<class PointRange, class PairingRange>  */
+  /*   Hyperbolic_fundamental_domain_2(PointRange vertices, */
+  /*                                   PairingRange pairings); */
+  template<class PointRange, class PairingRange>
+    Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings){
+      _vertices = std::vector<Point>(vertices.begin(), vertices.end());
+      _pairings = std::vector<int>(pairings.begin(), pairings.end());
+  }
+
   int size() const; // Returns the number of vertices (equivalently, the number of sides)
-  Point vertex(int index) const; // Returns the index-th vertex
+  const Point& vertex(int index) const; // Returns the index-th vertex
   int paired_side(int index) const; // Returns the index of the side paired to side A, where A is the index-th side
   Hyperbolic_isometry_2<Traits> side_pairing(int index) const;// Returns the isometry that maps side A to side B, where B is the index-th side, and A is the side paired to B
 
-  void from_stream(std::istream& s);
-  void to_stream(std::ostream& s) const;
+  std::istream& from_stream(std::istream& s);
+  std::ostream& to_stream(std::ostream& s) const;
 
   bool is_valid() const;
 
@@ -59,7 +62,7 @@ private:
 };
 
 template<class Traits> std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain);
-template<class Traits> void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
+template<class Traits> std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain);
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,14 +73,11 @@ template<class Traits> void operator>>(std::istream& s, Hyperbolic_fundamental_d
 template<class Traits>
   Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(){}
 
-template<class Traits>
-  Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(typename std::vector<Point>::iterator vfirst,
-					       typename std::vector<Point>::iterator vlast,
-					       typename std::vector<int>::iterator pfirst,
-					       typename std::vector<int>::iterator plast){
-  _vertices = std::vector<Point>(vfirst, vlast);
-  _pairings = std::vector<int>(pfirst, plast);
- }
+/* template<class Traits, class PointRange, class PairingRange>  */
+/*   Hyperbolic_fundamental_domain_2<Traits>::Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings){ */
+/*   _vertices = std::vector<Point>(vertices.begin(), vertices.end()); */
+/*   _pairings = std::vector<int>(pairings.begin(), pairings.end()); */
+/* } */
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -87,7 +87,7 @@ int Hyperbolic_fundamental_domain_2<Traits>::size() const{
 }
 
 template<class Traits>
-typename Hyperbolic_fundamental_domain_2<Traits>::Point Hyperbolic_fundamental_domain_2<Traits>::vertex(int index) const{
+const typename Hyperbolic_fundamental_domain_2<Traits>::Point& Hyperbolic_fundamental_domain_2<Traits>::vertex(int index) const{
   return _vertices[index];
 }
 
@@ -101,11 +101,11 @@ Hyperbolic_isometry_2<Traits> Hyperbolic_fundamental_domain_2<Traits>::side_pair
   int n = size();
   int paired_index = paired_side(index);
 
-  Point p1,p2,q1,q2;
-  q1 = vertex(index);
-  q2 = vertex((index+1)%n);
-  p2 = vertex(paired_index);
-  p1 = vertex((paired_index+1)%n);
+  //const Point& p1,p2,q1,q2;
+  const Point& q1 = vertex(index);
+  const Point& q2 = vertex((index+1)%n);
+  const Point& p2 = vertex(paired_index);
+  const Point& p1 = vertex((paired_index+1)%n);
 
   Hyperbolic_isometry_2<Traits> isom = isometry_pairing_the_sides<Traits>(p1,p2,q1,q2);
   return isom;
@@ -114,7 +114,7 @@ Hyperbolic_isometry_2<Traits> Hyperbolic_fundamental_domain_2<Traits>::side_pair
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
-void Hyperbolic_fundamental_domain_2<Traits>::to_stream(std::ostream& s) const{
+std::ostream& Hyperbolic_fundamental_domain_2<Traits>::to_stream(std::ostream& s) const{
   int n = size();
 
   s << std::to_string(n) << std::endl;
@@ -126,16 +126,20 @@ void Hyperbolic_fundamental_domain_2<Traits>::to_stream(std::ostream& s) const{
   for (int k=0; k<n; k++){
     s << vertex(k) << std::endl;
   }
+  return s;
 }
 
 template<class Traits>
-void Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream& s){
+std::istream& Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream& s){
   _vertices.clear();
   _pairings.clear();
 
   std::string line;
   s >> line;
   int size = std::stoi(line);
+  _vertices.reserve(size);
+  _pairings.reserve(size);
+
   for (int k=0; k<size; k++){
     s >> line;
     _pairings.push_back(std::stoi(line));
@@ -146,19 +150,19 @@ void Hyperbolic_fundamental_domain_2<Traits>::from_stream(std::istream& s){
     s >> p;
     _vertices.push_back(p);
   }
+  return s;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits>
 std::ostream& operator<<(std::ostream& s, const Hyperbolic_fundamental_domain_2<Traits>& domain){
-  domain.to_stream(s);
-  return s;
+  return domain.to_stream(s);
 }
 
 template<class Traits>
-void operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain){
-  domain.from_stream(s);
+std::istream& operator>>(std::istream& s, Hyperbolic_fundamental_domain_2<Traits>& domain){
+  return domain.from_stream(s);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -196,8 +200,8 @@ bool Hyperbolic_fundamental_domain_2<Traits>::is_valid()const{
 
   // Check that the vertices all lie within the open unit disk
   for (int k=0; k<n; k++){
-    if (_vertices[k].get_z().squared_modulus() >= typename Traits::FT(1)){
-      return false;
+    if (norm(Complex_number(_vertices[k].x(),_vertices[k].y())) >= typename Traits::FT(1)){
+   return false;
     }
   }
 
