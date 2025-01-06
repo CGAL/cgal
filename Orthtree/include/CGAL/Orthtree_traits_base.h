@@ -89,13 +89,16 @@ struct Orthtree_traits_base {
   using Adjacency = int;
   /// @}
 
-  //using Construct_point_d = Point_d(*)(std::initializer_list<FT> args);
+  struct Construct_point_d {
+    template <typename ...Args, typename T = std::common_type_t<Args...>>
+    typename Point_d operator()(Args ...args) {
+      std::initializer_list<T> args_list{ args... };
+      return Point_d{ static_cast<int>(args_list.size()), args_list.begin(), args_list.end() };
+    }
+  };
 
-  auto construct_point_d_object() const {
-    return [](auto... Args) -> Point_d {
-      std::initializer_list<FT> args_list{Args...};
-      return Point_d{static_cast<int>(args_list.size()), args_list.begin(), args_list.end()};
-    };
+  Construct_point_d construct_point_d_object() const {
+    return Construct_point_d();
   }
 };
 
