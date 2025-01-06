@@ -96,7 +96,7 @@ public:
   using Node_index = typename Base::Node_index;
   using Node_data_element = typename std::iterator_traits<typename PointRange::iterator>::value_type;
 
-  static_assert(std::is_same<typename std::iterator_traits<typename PointRange::iterator>::iterator_category, std::random_access_iterator_tag>::value);
+  static_assert(std::is_same_v<typename std::iterator_traits<typename PointRange::iterator>::iterator_category, std::random_access_iterator_tag>);
 
   Orthtree_traits_point(
     PointRange& points,
