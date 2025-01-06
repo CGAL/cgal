@@ -88,7 +88,7 @@ namespace internal
  * determines if the Frechet distance between two polylines is larger than a given distance bound.
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
- * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type.
+ * \tparam PointRange  a model of the concept `RandomAccessContainer` with `Traits::Point_d` as value type
  * \tparam NamedParameters a sequence of \ref bgl_namedparameters "Named Parameters"
  *
  * \param polyline1 the first polyline defined by a sequence of consecutive points
@@ -141,7 +141,7 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
 
 /**
  * \ingroup PkgFrechetDistanceFunctions
- * returns an estimate of the Fréchet distance between the two polylines that is at most `error_bound`.
+ * returns an estimate of the Fréchet distance between the two polylines that is at most `error_bound`
  * away from the actual Fréchet distance between the two polylines.
  *
  * \tparam Traits a model of `FrechetDistanceTraits`
@@ -150,7 +150,7 @@ bool is_Frechet_distance_larger(const PointRange& polyline1,
  *
  * \param polyline1 the first polyline defined by a sequence of consecutive points
  * \param polyline2 the second polyline defined by a sequence of consecutive points
- * \param error_bound a maximum bound by which the Fréchet distance estimate is allowed to deviate from the actual Fréchet distance.
+ * \param error_bound a maximum bound by which the Fréchet distance estimate is allowed to deviate from the actual Fréchet distance
  * \param np an optional sequence of \ref bgl_namedparameters "Named Parameters" among the ones listed below:
  *
  * \cgalNamedParamsBegin
