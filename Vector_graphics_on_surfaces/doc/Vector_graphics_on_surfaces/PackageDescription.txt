@@ -33,4 +33,36 @@
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
+
+\cgalClassifedRefPages
+
+\cgalCRPSection{Base Functions}
+- `CGAL::Vector_graphics_on_surfaces::locally_shortest_path()`
+- `CGAL::Vector_graphics_on_surfaces::recursive_de_Casteljau()`
+- `CGAL::Vector_graphics_on_surfaces::straightest_geodesic()`
+
+\cgalCRPSection{Higher Level Tracing Functions}
+- `CGAL::Vector_graphics_on_surfaces::trace_geodesic_polygon()`
+- `CGAL::Vector_graphics_on_surfaces::trace_geodesic_polygons()`
+- `CGAL::Vector_graphics_on_surfaces::trace_geodesic_label()`
+- `CGAL::Vector_graphics_on_surfaces::trace_geodesic_label_along_curve`
+- `CGAL::Vector_graphics_on_surfaces::trace_bezier_curves()`
+- `CGAL::Vector_graphics_on_surfaces::trace_polyline_of_bezier_curves()`
+
+\cgalCRPSection{Utilities}
+- `CGAL::Vector_graphics_on_surfaces::path_length()`
+- `CGAL::Vector_graphics_on_surfaces::convert_path_to_polyline()`
+- `CGAL::Vector_graphics_on_surfaces::convert_to_polar_coordinates`
+
+\cgalCRPSection{Miscellaneous}
+- `CGAL::Vector_graphics_on_surfaces::Bezier_segment`
+- `CGAL::Vector_graphics_on_surfaces::Dual_geodesic_solver`
+- `CGAL::Vector_graphics_on_surfaces::init_geodesic_dual_solver()`
+- `CGAL::Vector_graphics_on_surfaces::approximate_geodesic_distance_field()`
+- `CGAL::Vector_graphics_on_surfaces::refine_mesh_along_paths()`
+
+
+\todo tracing functions should probably be merged in only one or two functions, with parameters for the placement of centers + parallel transport, as well as an option for joining with locally shortest paths
+
+
 */
