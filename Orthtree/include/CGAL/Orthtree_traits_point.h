@@ -171,7 +171,7 @@ public:
   struct Distribute_node_contents {
     const PointMap m_point_map;
     Distribute_node_contents(const PointMap& point_map) : m_point_map(point_map) {}
-    typename void operator()(Node_index n, Tree& tree, const typename Self::Point_d& center) {
+    void operator()(Node_index n, Tree& tree, const typename Self::Point_d& center) {
       CGAL_precondition(!tree.is_leaf(n));
       reassign_points(tree, m_point_map, n, center, tree.data(n));
     };

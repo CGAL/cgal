@@ -91,7 +91,7 @@ struct Orthtree_traits_base {
 
   struct Construct_point_d {
     template <typename ...Args, typename T = std::common_type_t<Args...>>
-    typename Point_d operator()(Args ...args) {
+    Point_d operator()(Args ...args) {
       std::initializer_list<T> args_list{ args... };
       return Point_d{ static_cast<int>(args_list.size()), args_list.begin(), args_list.end() };
     }
