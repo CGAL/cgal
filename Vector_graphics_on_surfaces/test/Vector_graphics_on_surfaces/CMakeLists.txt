@@ -2,7 +2,7 @@
 # This is the CMake script for compiling a CGAL application.
 
 cmake_minimum_required(VERSION 3.12...3.29)
-project( Vector_Graphics_on_surfaces_Tests )
+project(Vector_graphics_on_surfaces_Tests)
 
 find_package(CGAL REQUIRED)
 find_package(Eigen3 REQUIRED)
