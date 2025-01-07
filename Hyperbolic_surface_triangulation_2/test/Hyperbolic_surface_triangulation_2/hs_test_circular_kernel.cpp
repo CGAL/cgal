@@ -27,9 +27,6 @@ int main() {
 
   assert( triangulation0.is_valid() );
 
-  Triangulation triangulation1 = Triangulation(triangulation0.combinatorial_map());
-  assert( ! triangulation1.has_anchor() );
-
   Triangulation triangulation (triangulation0);
   assert( triangulation.has_anchor() );
 

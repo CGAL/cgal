@@ -72,7 +72,7 @@ public:
 
   Hyperbolic_surface_triangulation_2() {};
   Hyperbolic_surface_triangulation_2(const Hyperbolic_fundamental_domain_2<Traits>& domain);
-  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
+// Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
   Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor);
 
   //Hyperbolic_surface_triangulation_2& operator=(Hyperbolic_surface_triangulation_2&& other);
@@ -81,7 +81,7 @@ public:
   Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
   Anchor& anchor();
-  const Anchor& anchor() const;
+  Anchor& anchor() const;
 
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
@@ -203,10 +203,10 @@ Hyperbolic_surface_triangulation_2<Traits,Attributes>::Hyperbolic_surface_triang
   _has_anchor = true;
 }
 
-template<class Traits, class Attributes>
-  Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap){
-  copy_from(cmap);
-}
+/* template<class Traits, class Attributes> */
+/*   Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap){ */
+/*   copy_from(cmap); */
+/* } */
 
 template<class Traits, class Attributes>
   Hyperbolic_surface_triangulation_2<Traits, Attributes>::Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& anchor){
@@ -245,7 +245,7 @@ Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor()  {
 }
 
 template<class Traits, class Attributes>
-const typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
 Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor() const {
   return _anchor;
 }
