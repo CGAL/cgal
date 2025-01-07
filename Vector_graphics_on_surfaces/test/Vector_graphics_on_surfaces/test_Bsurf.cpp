@@ -1,10 +1,10 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/Bsurf/locally_shortest_path.h>
+#include <CGAL/Vector_graphics_on_surfaces/locally_shortest_path.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
-
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -24,8 +24,8 @@ int main(int argc, char** argv)
     std::cerr << "Invalid input." << std::endl;
     return 1;
   }
-  PMP::Dual_geodesic_solver<double> solver;
-  CGAL::Polygon_mesh_processing::init_geodesic_dual_solver(solver, mesh);
+  VGoS::Dual_geodesic_solver<double> solver;
+  VGoS::init_geodesic_dual_solver(solver, mesh);
 
 
   std::size_t nb_hedges = halfedges(mesh).size();
@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 
         std::vector<Edge_location> edge_locations;
         auto src_bk=src, tgt_bk=tgt;
-        PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations, solver);
+        VGoS::locally_shortest_path<double>(src, tgt, mesh, edge_locations, solver);
         assert(get<Mesh::Vertex_index>(PMP::get_descriptor_from_location(src,mesh))==v1);
         assert(get<Mesh::Vertex_index>(PMP::get_descriptor_from_location(tgt,mesh))==v2);
 
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
         src=src_bk;
         tgt=tgt_bk;
         edge_locations.clear();
-        PMP::locally_shortest_path<double>(tgt, src, mesh, edge_locations, solver);
+        VGoS::locally_shortest_path<double>(tgt, src, mesh, edge_locations, solver);
         assert(get<Mesh::Vertex_index>(PMP::get_descriptor_from_location(src,mesh))==v1);
         assert(get<Mesh::Vertex_index>(PMP::get_descriptor_from_location(tgt,mesh))==v2);
 
@@ -168,7 +168,7 @@ int main(int argc, char** argv)
       // std::cout <<  "   " << PMP::construct_point(src, mesh) << " | " << PMP::construct_point(tgt, mesh) << "\n";
       std::vector<Edge_location> edge_locations;
       auto src_bk=src, tgt_bk=tgt;
-      PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations, solver);
+      VGoS::locally_shortest_path<double>(src, tgt, mesh, edge_locations, solver);
 
       out << edge_locations.size()+2;
       out << " " << PMP::construct_point(src, mesh);
@@ -190,7 +190,7 @@ int main(int argc, char** argv)
       src=src_bk;
       tgt=tgt_bk;
       edge_locations.clear();
-      PMP::locally_shortest_path<double>(tgt, src, mesh, edge_locations, solver);
+      VGoS::locally_shortest_path<double>(tgt, src, mesh, edge_locations, solver);
 
       out << edge_locations.size()+2;
       out << " " << PMP::construct_point(tgt, mesh);
@@ -249,7 +249,7 @@ int main(int argc, char** argv)
 
     std::vector<Edge_location> edge_locations;
     auto src_bk=src, tgt_bk=tgt;
-    PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations, solver);
+    VGoS::locally_shortest_path<double>(src, tgt, mesh, edge_locations, solver);
 
     out << edge_locations.size()+2;
     out << " " << PMP::construct_point(src, mesh);
@@ -266,7 +266,7 @@ int main(int argc, char** argv)
     src=src_bk;
     tgt=tgt_bk;
     edge_locations.clear();
-    PMP::locally_shortest_path<double>(tgt, src, mesh, edge_locations, solver);
+    VGoS::locally_shortest_path<double>(tgt, src, mesh, edge_locations, solver);
 
     out << edge_locations.size()+2;
     out << " " << PMP::construct_point(tgt, mesh);

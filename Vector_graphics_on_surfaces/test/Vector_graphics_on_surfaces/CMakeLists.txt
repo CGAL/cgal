@@ -11,3 +11,7 @@ include(CGAL_Eigen3_support)
 
 create_single_source_cgal_program( "test_straightest_geodesic.cpp" )
 target_link_libraries(test_straightest_geodesic PRIVATE CGAL::Eigen3_support)
+create_single_source_cgal_program("test_Bsurf.cpp")
+target_link_libraries(test_Bsurf PUBLIC CGAL::Eigen3_support)
+create_single_source_cgal_program("test_Bsurf_grid.cpp")
+target_link_libraries(test_Bsurf_grid PUBLIC CGAL::Eigen3_support)

@@ -1,12 +1,12 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_mesh_processing/Bsurf/locally_shortest_path.h>
+#include <CGAL/Vector_graphics_on_surfaces/locally_shortest_path.h>
 #include <CGAL/Polygon_mesh_processing/extrude.h>
 #include <CGAL/boost/graph/generators.h>
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
-
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -116,7 +116,7 @@ void test_vertex_pair(unsigned int vid1, unsigned int vid2, const Mesh& mesh)
 
   std::vector<Edge_location> edge_locations;
   auto src_bk=src, tgt_bk=tgt;
-  PMP::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
+  VGoS::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
   assert(get<Mesh::Vertex_index>(PMP::get_descriptor_from_location(src,mesh))==v1);
   assert(get<Mesh::Vertex_index>(PMP::get_descriptor_from_location(tgt,mesh))==v2);
 
@@ -135,7 +135,7 @@ void test_vertex_pair(unsigned int vid1, unsigned int vid2, const Mesh& mesh)
   src=src_bk;
   tgt=tgt_bk;
   edge_locations.clear();
-  PMP::locally_shortest_path<double>(tgt, src, mesh, edge_locations);
+  VGoS::locally_shortest_path<double>(tgt, src, mesh, edge_locations);
   assert(get<Mesh::Vertex_index>(PMP::get_descriptor_from_location(src,mesh))==v1);
   assert(get<Mesh::Vertex_index>(PMP::get_descriptor_from_location(tgt,mesh))==v2);
 
