@@ -3264,11 +3264,11 @@ convert_to_polar_coordinates(const PointRange_2& points,
   }
 
   bool is_closed = points.front()==points.back();
-  std::size_t nbp=polygon.size();
+  std::size_t nbp=points.size();
   if (is_closed) --nbp;
   for (std::size_t i=0; i<nbp; ++i)
   {
-    const typename K::Point_2& pt = polygon[i];
+    const typename K::Point_2& pt = points[i];
     typename K::FT d = approximate_sqrt(squared_distance(*center, pt));
     typename K::FT polar = std::atan2((pt.y()-center->y())/* /d */, (pt.x()-center->x())/* /d */);
     result.emplace_back(d, polar);
@@ -3644,8 +3644,8 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
  * \todo generic range
  */
 template <class FT, class TriangleMesh>
-typename FT path_length(const std::vector<Face_location<TriangleMesh, FT>>& path,
-                        const TriangleMesh &tmesh)
+FT path_length(const std::vector<Face_location<TriangleMesh, FT>>& path,
+               const TriangleMesh &tmesh)
 {
   std::size_t lpath = path.size();
   if(lpath<2)
@@ -3654,7 +3654,7 @@ typename FT path_length(const std::vector<Face_location<TriangleMesh, FT>>& path
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   VPM vpm = get(CGAL::vertex_point, tmesh);
 
-  typename K::FT len(0);
+  FT len(0);
 
   for (std::size_t i=0; i<lpath-1; ++i)
     len += sqrt(squared_distance(construct_point(path[i],tmesh),construct_point(path[i+1],tmesh)));
@@ -3675,11 +3675,11 @@ typename FT path_length(const std::vector<Face_location<TriangleMesh, FT>>& path
  * \todo add named parameters
  * \todo generic range
  */
-template <class K, class TriangleMesh>
-typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
-                          const Face_location<TriangleMesh, typename K::FT>& src,
-                          const Face_location<TriangleMesh, typename K::FT>& tgt,
-                          const TriangleMesh &tmesh)
+template <class FT, class TriangleMesh>
+FT path_length(const std::vector<Edge_location<TriangleMesh,FT>>& path,
+               const Face_location<TriangleMesh, FT>& src,
+               const Face_location<TriangleMesh, FT>& tgt,
+               const TriangleMesh &tmesh)
 {
   std::size_t lpath = path.size();
   if(lpath==0)
@@ -3688,7 +3688,7 @@ typename K::FT path_length(const std::vector<Edge_location<TriangleMesh,typename
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   VPM vpm = get(CGAL::vertex_point, tmesh);
 
-  typename K::FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
+  FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
 
   for (std::size_t i=0; i<lpath-1; ++i)
     len += sqrt(squared_distance(construct_point(path[i],tmesh),construct_point(path[i+1],tmesh)));
