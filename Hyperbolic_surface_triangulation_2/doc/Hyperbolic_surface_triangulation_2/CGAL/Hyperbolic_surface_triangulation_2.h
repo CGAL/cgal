@@ -82,11 +82,6 @@ public:
   Hyperbolic_surface_triangulation_2(const Hyperbolic_fundamental_domain_2<Traits>& domain);
 
   /*!
-      Constructor from a decorated combinatorial map.
-  */
-  Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
-
-  /*!
       Constructor from a decorated combinatorial map and an anchor.
   */
   Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& an_anchor);
@@ -104,8 +99,6 @@ public:
   /// @{
   /*!
       returns the decorated combinatorial map.
-
-      \pre <code> is_valid() </code>
   */
   Combinatorial_map_with_cross_ratios& combinatorial_map();
 
@@ -121,14 +114,7 @@ public:
 
       \pre <code> is_valid() && has_anchor() </code>
   */
-  Anchor& anchor();
-
-  /*!
-      returns the anchor.
-
-      \pre <code> is_valid() && has_anchor() </code>
-  */
-  const Anchor& anchor() const;
+  Anchor& anchor() const;
   /// @}
 
 
