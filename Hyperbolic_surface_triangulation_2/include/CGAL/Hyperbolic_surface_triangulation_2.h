@@ -80,8 +80,8 @@ public:
 
   Combinatorial_map_with_cross_ratios& combinatorial_map();
   bool has_anchor() const;
-  const Anchor& anchor();
-//  const Anchor& const_anchor();
+  Anchor& anchor();
+  const Anchor& anchor() const;
 
   void to_stream(std::ostream& s) const;
   void from_stream(std::istream& s);
@@ -122,7 +122,7 @@ protected:
   void copy_from(Combinatorial_map_with_cross_ratios& cmap, const Anchor& anchor);
 };
 
- template<class Traits, class Attributes> std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits, Attributes>& Hyperbolic_surface_triangulation_2);
+ template<class Traits, class Attributes> std::ostream& operator<<(std::ostream& s, const Hyperbolic_surface_triangulation_2<Traits, Attributes>& triangulation);
  template<class Traits, class Attributes> void operator>>(std::istream& s, Hyperbolic_surface_triangulation_2<Traits, Attributes>& triangulation);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -239,16 +239,16 @@ bool Hyperbolic_surface_triangulation_2<Traits, Attributes>::has_anchor() const 
 }
 
 template<class Traits, class Attributes>
-const typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
+typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
 Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor()  {
   return _anchor;
 }
 
-/*  template<class Traits, class Attributes> */
-/* const typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor& */
-/*    Hyperbolic_surface_triangulation_2<Traits, Attributes>::const_anchor(){ */
-/*  return _anchor; */
-/* } */
+template<class Traits, class Attributes>
+const typename Hyperbolic_surface_triangulation_2<Traits, Attributes>::Anchor&
+Hyperbolic_surface_triangulation_2<Traits, Attributes>::anchor() const {
+  return _anchor;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -604,7 +604,7 @@ void Hyperbolic_surface_triangulation_2<Traits, Attributes>::from_stream(std::is
 ////////////////////////////////////////////////////////////////////////////////
 
 template<class Traits, class Attributes>
-std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits, Attributes>& triangulation){
+std::ostream& operator<<(std::ostream& s, const Hyperbolic_surface_triangulation_2<Traits, Attributes>& triangulation){
   triangulation.to_stream(s);
   return s;
 }

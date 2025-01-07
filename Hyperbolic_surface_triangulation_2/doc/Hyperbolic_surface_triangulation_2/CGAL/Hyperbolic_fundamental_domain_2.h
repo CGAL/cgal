@@ -26,6 +26,11 @@ public:
   /// \name Creation
   /// @{
   /*!
+    Default constructor
+  */
+  Hyperbolic_fundamental_domain_2();
+
+  /*!
     Constructor from vertices and pairings ranges.
     @tparam PointRange a model of the concepts `RandomAccessContainer` whose `value_type` is `Point`.
     @tparam PairingRange a model of the concepts `RandomAccessContainer` whose `value_type` is `int`.

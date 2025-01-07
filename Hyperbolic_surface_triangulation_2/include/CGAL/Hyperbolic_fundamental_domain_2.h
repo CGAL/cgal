@@ -35,9 +35,7 @@ class Hyperbolic_fundamental_domain_2 {
 public:
   typedef typename Traits::Hyperbolic_point_2                    Point;
 
-  /* template<class PointRange, class PairingRange>  */
-  /*   Hyperbolic_fundamental_domain_2(PointRange vertices, */
-  /*                                   PairingRange pairings); */
+  Hyperbolic_fundamental_domain_2(){};
   template<class PointRange, class PairingRange>
     Hyperbolic_fundamental_domain_2(PointRange & vertices, PairingRange & pairings){
       _vertices = std::vector<Point>(vertices.begin(), vertices.end());

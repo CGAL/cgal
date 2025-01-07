@@ -31,7 +31,8 @@ the Delaunay flip algorithm, and the construction of a portion of the lift of th
 
 \tparam Traits must be a model of `HyperbolicSurfaceTraits_2`.
 
-\tparam Attributes must be a model of `GenericMapItems`.
+\tparam Attributes must be a model of `GenericMapItems` whose edges are
+decorated with complex numbers to represent cross ratios.
 */
 template<class Traits, class Attributes = Combinatorial_map_with_cross_ratios_item<Traits>>
 class Hyperbolic_surface_triangulation_2{
@@ -86,7 +87,7 @@ public:
   Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap);
 
   /*!
-      Constructor from a decorated combinatorial map and an_anchor.
+      Constructor from a decorated combinatorial map and an anchor.
   */
   Hyperbolic_surface_triangulation_2(Combinatorial_map_with_cross_ratios& cmap, Anchor& an_anchor);
   /// @}
@@ -109,7 +110,7 @@ public:
   Combinatorial_map_with_cross_ratios& combinatorial_map();
 
   /*!
-      tells if the triangulation has an anchor.
+      returns whether the triangulation has an anchor or not.
 
       \pre <code> is_valid() </code>
   */
@@ -120,20 +121,21 @@ public:
 
       \pre <code> is_valid() && has_anchor() </code>
   */
-  const Anchor& anchor();
-  /* /\*! */
-  /*     constant version of the getter. */
+  Anchor& anchor();
 
-  /*     \pre <code> is_valid() && has_anchor() </code> */
-  /* *\/ */
-  /* const Anchor& const_anchor(); */
+  /*!
+      returns the anchor.
+
+      \pre <code> is_valid() && has_anchor() </code>
+  */
+  const Anchor& anchor() const;
   /// @}
 
 
   /// \name Delaunay Flip Algorithm
   /// @{
   /*!
-      tells if if the edge supported by the dart is Delaunay flippable.
+      returns whether the edge supported by the dart is Delaunay flippable or not.
 
       \pre <code> is_valid() </code>
   */
@@ -152,7 +154,7 @@ public:
   bool is_Delaunay() const;
 
   /*!
-      applies the Delaunay flip algorithm: flips Delaunay flippable edges until there is no such edge anymore.
+      applies the Delaunay flip algorithm: flips Delaunay-flippable edges until there is no such edge anymore.
 
       \pre <code> is_valid() </code>
   */
@@ -165,7 +167,7 @@ public:
       lifts the triangulation in the hyperbolic plane.
       Returns, for every triangle \f$ t \f$ of the triangulation, one of the darts of \f$ t \f$ in the combinatorial map of the triangulation, together with a triple \f$ p,q,r \f$ of points in the hyperbolic plane.
       The points \f$ p,q,r \f$ are the vertices of a lift of \f$ t \f$ in the hyperbolic plane.
-      If the center parameter is set to true, then one of the lifted triangles admits the origin \f$ 0 \f$ as a vertex.
+      If the center parameter is set to true, then one of the vertices of the anchor is translated to the origin \f$ 0 \f$.
 
       \pre <code> is_valid() && has_anchor() </code>
   */
@@ -175,8 +177,7 @@ public:
   /// \name Validity
   /// @{
   /*!
-      Validity test.
-      Checks that the underlying combinatorial map \f$ M \f$ has no boundary and calls the is_valid method of \f$ M \f$.
+     Checks that the underlying combinatorial map \f$ M \f$ has no boundary and calls the is_valid method of \f$ M \f$.
       If there is an anchor, then checks that the dart descriptor of the anchor does indeed point to a dart of \f$ M \f$, and checks that the three vertices of the anchor lie within the open unit disk.
   */
   bool is_valid() const;
@@ -196,7 +197,7 @@ public:
 
       \pre <code> is_valid() </code>
   */
-  std::ostream& operator<<(std::ostream& s, Hyperbolic_surface_triangulation_2<Traits>& Hyperbolic_surface_triangulation_2);
+  std::ostream& operator<<(std::ostream& s, const Hyperbolic_surface_triangulation_2<Traits>& triangulation);
 
   /*!
       reads the triangulation from a stream.
