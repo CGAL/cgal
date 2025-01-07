@@ -13,6 +13,7 @@
 
 #endif
 
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -95,13 +96,13 @@ int main(int argc, char** argv)
 
   K::Point_3 center_pt = PMP::construct_point(center, mesh);
   std::cout << "center = " << center_pt << "\n";
-  PMP::Dual_geodesic_solver<double> solver;
-  PMP::init_geodesic_dual_solver(solver, mesh);
+  VGoS::Dual_geodesic_solver<double> solver;
+  VGoS::init_geodesic_dual_solver(solver, mesh);
 
   for (const std::vector<K::Point_2>& polygon : polygons)
   {
     std::vector<std::pair<double, double>> polar_coords =
-      PMP::convert_to_polar_coordinates<K>(polygon, center_2);
+      VGoS::convert_to_polar_coordinates<K>(polygon, center_2);
     if (polygon.front()==polygon.back()) polar_coords.pop_back();
 
     std::vector<K::Vector_2> directions;
@@ -116,10 +117,10 @@ int main(int argc, char** argv)
     }
 
     // last point is duplicated
-    std::vector<Face_location> out_polygon_path = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
+    std::vector<Face_location> out_polygon_path = VGoS::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
     std::vector<K::Point_3> poly;
     poly.reserve(out_polygon_path.size());
-    PMP::convert_path_to_polyline(out_polygon_path, mesh, std::back_inserter(poly));
+    VGoS::convert_path_to_polyline(out_polygon_path, mesh, std::back_inserter(poly));
 
     out << poly.size();
     for (auto p : poly)
@@ -133,7 +134,7 @@ int main(int argc, char** argv)
   out << std::setprecision(17);
 
   std::vector<std::vector<Face_location>> polygons_3
-    = PMP::trace_geodesic_polygons<K>(center, polygons, scaling, mesh, solver);
+    = VGoS::trace_geodesic_polygons<K>(center, polygons, scaling, mesh, solver);
 
   for (const auto& polygon : polygons_3)
   {
@@ -149,7 +150,7 @@ int main(int argc, char** argv)
   out << std::setprecision(17);
 
   polygons_3.clear();
-  polygons_3 = PMP::trace_geodesic_label<K>(center, polygons, scaling, mesh, solver);
+  polygons_3 = VGoS::trace_geodesic_label<K>(center, polygons, scaling, mesh, solver);
 
   for (const auto& polygon : polygons_3)
   {
@@ -166,7 +167,7 @@ int main(int argc, char** argv)
   using VNM = decltype(vnm);
 
   PMP::compute_normals(mesh, vnm, fnm);
-  PMP::refine_mesh_along_paths<K>(polygons_3, mesh, vnm, fnm, std::back_inserter(cst_hedges));
+  VGoS::refine_mesh_along_paths<K>(polygons_3, mesh, vnm, fnm, std::back_inserter(cst_hedges));
 
   std::ofstream("mesh_refined.off") << std::setprecision(17) << mesh;
 

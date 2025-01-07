@@ -16,11 +16,13 @@
 #include <CGAL/AABB_traits_3.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
-#include <CGAL/Polygon_mesh_processing/Bsurf/locally_shortest_path.h>
+#include <CGAL/Vector_graphics_on_surfaces/locally_shortest_path.h>
 
 #include <sstream>
 
 using namespace CGAL::Three;
+
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef Viewer_interface Vi;
@@ -222,7 +224,7 @@ struct Locally_shortest_path_item_priv{
   QCursor rotate_cursor;
   bool path_invalidated=true;
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-  PMP::Dual_geodesic_solver<double> geodesic_solver;
+  VGoS::Dual_geodesic_solver<double> geodesic_solver;
 #endif
 };
 
@@ -325,7 +327,7 @@ void Locally_shortest_path_item::drawPath() const
     d->locations[0] = PMP::locate_with_AABB_tree(src_pt, d->aabb_tree, mesh);
     d->locations[1] = PMP::locate_with_AABB_tree(tgt_pt, d->aabb_tree, mesh);
 
-    PMP::locally_shortest_path<double>(d->locations[0], d->locations[1], mesh, edge_locations, d->geodesic_solver);
+    VGoS::locally_shortest_path<double>(d->locations[0], d->locations[1], mesh, edge_locations, d->geodesic_solver);
     d->spath_item->polylines.back().clear();
     d->spath_item->polylines.back().push_back(src_pt);
     for (auto el : edge_locations)
@@ -348,13 +350,13 @@ void Locally_shortest_path_item::drawPath() const
     d->locations[2] = PMP::locate_with_AABB_tree(c3_pt, d->aabb_tree, mesh);
     d->locations[3] = PMP::locate_with_AABB_tree(c4_pt, d->aabb_tree, mesh);
 
-    PMP::Bezier_segment<Mesh, double> control_points=CGAL::make_array(d->locations[0],
-                                                                      d->locations[1],
-                                                                      d->locations[2],
-                                                                      d->locations[3]);
+    VGoS::Bezier_segment<Mesh, double> control_points=CGAL::make_array(d->locations[0],
+                                                                       d->locations[1],
+                                                                       d->locations[2],
+                                                                       d->locations[3]);
 
     std::vector<Face_location> face_locations =
-      PMP::recursive_de_Casteljau(mesh, control_points, 8, d->geodesic_solver);
+      VGoS::recursive_de_Casteljau(mesh, control_points, 8, d->geodesic_solver);
 
     // TODO: we should connect points with geodesics and not segments
     d->spath_item->polylines.back().clear();

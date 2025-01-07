@@ -4,7 +4,7 @@
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
-
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -65,12 +65,12 @@ int main(int argc, char** argv)
   std::cout << "tgt = " << PMP::construct_point(tgt, mesh) << "\n";
 
   std::vector<Edge_location> edge_locations;
-  CGAL::Polygon_mesh_processing::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
+  VGoS::locally_shortest_path<double>(src, tgt, mesh, edge_locations);
 
 
   std::vector<K::Point_3> poly;
   poly.reserve(edge_locations.size()+2);
-  PMP::convert_path_to_polyline(src, edge_locations, tgt, mesh, std::back_inserter(poly));
+  VGoS::convert_path_to_polyline(src, edge_locations, tgt, mesh, std::back_inserter(poly));
 
   std::ofstream out("locally_shortest_path.polylines.txt");
   out << poly.size();

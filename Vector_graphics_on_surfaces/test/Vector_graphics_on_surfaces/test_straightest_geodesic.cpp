@@ -7,6 +7,7 @@
 #include <iostream>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 
 using K = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Mesh = CGAL::Surface_mesh<K::Point_3>;
@@ -43,14 +44,14 @@ int main()
     {
       double theta = 2*CGAL_PI/8*n;
       K::Vector_2 dir(std::cos(theta), std::sin(theta));
-      std::vector<Face_location> path = PMP::straightest_geodesic<K>(src, dir, target_distance, mesh);
+      std::vector<Face_location> path = VGoS::straightest_geodesic<K>(src, dir, target_distance, mesh);
 
       //TODO: check the output is of correct length
 
 /*
       std::vector<K::Point_3> poly;
       poly.reserve(path.size());
-      PMP::convert_path_to_polyline(path, mesh, std::back_inserter(poly));
+      VGoS::convert_path_to_polyline(path, mesh, std::back_inserter(poly));
 
 
       out << path.size() << " ";
@@ -82,14 +83,14 @@ int main()
     {
       double theta = 2*CGAL_PI/16*n;
       K::Vector_2 dir(std::cos(theta), std::sin(theta));
-      std::vector<Face_location> path = PMP::straightest_geodesic<K>(src, dir, target_distance, mesh);
+      std::vector<Face_location> path = VGoS::straightest_geodesic<K>(src, dir, target_distance, mesh);
 
       //TODO: check the output is of correct length
 
 /*
       std::vector<K::Point_3> poly;
       poly.reserve(path.size());
-      PMP::convert_path_to_polyline(path, mesh, std::back_inserter(poly));
+      VGoS::convert_path_to_polyline(path, mesh, std::back_inserter(poly));
 
 
       out << path.size() << " ";

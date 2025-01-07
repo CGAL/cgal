@@ -4,7 +4,7 @@
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
-
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -42,7 +42,7 @@ int main(int argc, char** argv)
                 b(f2, CGAL::make_array(0.3,0.3,0.4)),
                 c(f3, CGAL::make_array(0.3,0.3,0.4)),
                 d(f4, CGAL::make_array(0.3,0.3,0.4));
-  PMP::Bezier_segment<Mesh, double> control_points=CGAL::make_array(a, b, c, d);
+  VGoS::Bezier_segment<Mesh, double> control_points=CGAL::make_array(a, b, c, d);
 
   std::cout << "Using the following control points:\n";
   std::cout << PMP::construct_point(a, mesh) << "\n";
@@ -51,7 +51,7 @@ int main(int argc, char** argv)
   std::cout << PMP::construct_point(d, mesh) << "\n";
 
   std::vector<Face_location> face_locations =
-    PMP::recursive_de_Casteljau(mesh, control_points, 8);
+    VGoS::recursive_de_Casteljau(mesh, control_points, 8);
 
 
   std::ofstream out("bezier.polylines.txt");

@@ -4,6 +4,7 @@
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -47,11 +48,11 @@ int main(int argc, char** argv)
 
   double target_distance = 0.5;
   K::Vector_2 dir(1,1);
-  std::vector<Face_location> path = PMP::straightest_geodesic<K>(src, dir, target_distance, mesh);
+  std::vector<Face_location> path = VGoS::straightest_geodesic<K>(src, dir, target_distance, mesh);
 
   std::vector<K::Point_3> poly;
   poly.reserve(path.size());
-  PMP::convert_path_to_polyline(path, mesh, std::back_inserter(poly));
+  VGoS::convert_path_to_polyline(path, mesh, std::back_inserter(poly));
 
   std::ofstream out("straightest_geodesic_path.polylines.txt");
   out << path.size() << " ";

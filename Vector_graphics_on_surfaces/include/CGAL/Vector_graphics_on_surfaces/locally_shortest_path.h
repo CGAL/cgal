@@ -36,7 +36,7 @@
 #endif
 
 namespace CGAL {
-namespace Polygon_mesh_processing {
+namespace Vector_graphics_on_surfaces {
 
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
 template <class FT>
@@ -44,8 +44,8 @@ struct Dual_geodesic_solver;
 #endif
 
 template <class FT, class TriangleMesh, class EdgeLocationRange>
-void locally_shortest_path(Face_location<TriangleMesh, FT> src,
-                           Face_location<TriangleMesh, FT> tgt,
+void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> src,
+                           CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> tgt,
                            const TriangleMesh &tmesh,
                            EdgeLocationRange &edge_locations
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
@@ -61,7 +61,7 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  */
 template <class TriangleMesh, class FT>
-using Bezier_segment = std::array<Face_location<TriangleMesh, FT>, 4>;
+using Bezier_segment = std::array<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>, 4>;
 
 namespace internal {
 
@@ -85,17 +85,18 @@ struct Locally_shortest_path_imp
   static
   void dump_path(const std::vector<halfedge_descriptor>& path,
                  const std::vector<FT>& lerps,
-                 const Face_location<TriangleMesh,FT>& src,
-                 const Face_location<TriangleMesh,FT>& tgt,
+                 const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh,FT>& src,
+                 const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh,FT>& tgt,
                  const TriangleMesh& mesh)
   {
+    namespace PMP = CGAL::Polygon_mesh_processing;
     static int i = -1;
     std::cout << "dump current path in path_"+std::to_string(i+1)+".polylines.txt\n";
     std::ofstream out("path_"+std::to_string(++i)+".polylines.txt");
-    out << path.size()+2 << " " << construct_point(src, mesh);
+    out << path.size()+2 << " " << PMP::construct_point(src, mesh);
     for(std::size_t i=0; i<path.size(); ++i)
-      out << " " << construct_point(Edge_location<TriangleMesh, FT>(path[i], make_array(lerps[i], 1.-lerps[i])), mesh);
-    out << " " << construct_point(tgt, mesh) << "\n";
+      out << " " << PMP::construct_point(PMP::Edge_location<TriangleMesh, FT>(path[i], make_array(lerps[i], 1.-lerps[i])), mesh);
+    out << " " << PMP::construct_point(tgt, mesh) << "\n";
   }
 #endif
 
@@ -144,7 +145,7 @@ struct Locally_shortest_path_imp
   init_source_triangle(halfedge_descriptor hopp,
                        const VertexPointMap &vpm,
                        const TriangleMesh &mesh,
-                       Face_location<TriangleMesh, FT> src)
+                       CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> src)
   {
     halfedge_descriptor h = opposite(hopp, mesh);
     std::array<vertex_descriptor, 3> triangle_vertices = make_array(
@@ -194,7 +195,7 @@ struct Locally_shortest_path_imp
   init_target_triangle(halfedge_descriptor h,
                        const std::array<Vector_2, 2>& flat_tid,
                        const VertexPointMap &vpm, const TriangleMesh &mesh,
-                       Face_location<TriangleMesh, FT> tgt)
+                       CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> tgt)
   {
     std::array<vertex_descriptor, 3> triangle_vertices = make_array(
         source(h, mesh), target(h, mesh), target(next(h, mesh), mesh));
@@ -335,8 +336,8 @@ struct Locally_shortest_path_imp
   static
   std::vector< std::array<Vector_2, 2>>
   unfold_strip(const std::vector<halfedge_descriptor>& initial_path,
-              const Face_location<TriangleMesh, FT>& src,
-              const Face_location<TriangleMesh, FT>& tgt,
+              const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& src,
+              const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& tgt,
               const VertexPointMap &vpm, const TriangleMesh &mesh)
   {
     std::size_t s=initial_path.size();
@@ -544,10 +545,12 @@ struct Locally_shortest_path_imp
   void straighten_path(std::vector< std::array<Vector_2, 2>>& portals,
                        std::vector<FT>& lerps,
                        std::vector<halfedge_descriptor>& path,
-                       Face_location<TriangleMesh, FT>& src,
-                       Face_location<TriangleMesh, FT>& tgt,
+                       CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& src,
+                       CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& tgt,
                        const VertexPointMap &vpm, const TriangleMesh &mesh, std::size_t index)
   {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
 #ifdef CGAL_DEBUG_BSURF
     dump_path(path, lerps, src, tgt, mesh);
 #endif
@@ -560,8 +563,8 @@ struct Locally_shortest_path_imp
     {
 #ifdef CGAL_DEBUG_BSURF
       std::cout << "Improving path " << path.size() << " hedges\n";
-      std::cout << "src = " << construct_point(src, mesh) << "\n";
-      std::cout << "tgt = " << construct_point(tgt, mesh) << "\n";
+      std::cout << "src = " << PMP::construct_point(src, mesh) << "\n";
+      std::cout << "tgt = " << PMP::construct_point(tgt, mesh) << "\n";
 #endif
 
       vertex_descriptor new_vertex=BGT::null_vertex();
@@ -955,11 +958,11 @@ struct Locally_shortest_path_imp
 
   }
 
-  Vector_3 parallel_transport_along_path(const std::vector<Edge_location<TriangleMesh, FT>>& edge_locations,
+  Vector_3 parallel_transport_along_path(const std::vector<CGAL::Polygon_mesh_processing::Edge_location<TriangleMesh, FT>>& edge_locations,
                                          const VertexPointMap &vpm,
                                          const TriangleMesh& mesh,
-                                         const Face_location<TriangleMesh, FT>& src,
-                                         const Face_location<TriangleMesh, FT>& tgt,
+                                         const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& src,
+                                         const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& tgt,
                                          const Vector_3& v)
   {
     if(edge_locations.size()==0)
@@ -1014,7 +1017,7 @@ struct Locally_shortest_path_imp
 
   static
   std::vector<Vector_3>
-  get_3D_basis_at_point(const Face_location<TriangleMesh, FT>& p,
+  get_3D_basis_at_point(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& p,
                         const TriangleMesh& mesh,
                         const VertexPointMap &vpm)
   {
@@ -1035,7 +1038,7 @@ struct Locally_shortest_path_imp
 
   static
   std::tuple<bool, int>
-  point_is_edge(const Face_location<TriangleMesh, FT>& p,
+  point_is_edge(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& p,
                 const FT& tol=1e-5)
   {
     auto bary=p.second;
@@ -1053,7 +1056,7 @@ struct Locally_shortest_path_imp
 //
   static
   std::tuple<bool,int>
-  point_is_vert(const Face_location<TriangleMesh, FT>& p,const FT& tol=1e-5)
+  point_is_vert(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& p,const FT& tol=1e-5)
   {
      auto bary=p.second;
      if (bary[0] > tol && bary[1] <= tol && bary[2] <= tol)
@@ -1238,12 +1241,14 @@ struct Locally_shortest_path_imp
 
   // dir is defined wrt the halfedge of start_loc.first that is used as y axis
   static
-  std::vector<Face_location<TriangleMesh, FT>>
-  straightest_geodesic(const Face_location<TriangleMesh, FT>& start_loc,
+  std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>>
+  straightest_geodesic(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& start_loc,
                        const TriangleMesh& mesh,
                        const VertexPointMap &vpm,
                        Vector_2 dir,const FT& len)
   {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
 #ifdef CGAL_DEBUG_BSURF
     {
       std::ofstream log("/tmp/log.txt");
@@ -1277,7 +1282,7 @@ struct Locally_shortest_path_imp
                               mesh.point(source(halfedge(start_loc.first, mesh), mesh)),
                               fn, theta);
 
-    std::cout << "direction " << construct_point(start_loc, mesh) << " " << construct_point(start_loc, mesh)+dir3 << "\n";
+    std::cout << "direction " << PMP::construct_point(start_loc, mesh) << " " << PMP::construct_point(start_loc, mesh)+dir3 << "\n";
 #endif
 
     auto get_vid_offset=[&mesh](const halfedge_descriptor& h_ref,const vertex_descriptor& vid)
@@ -1345,14 +1350,14 @@ struct Locally_shortest_path_imp
       return bary_edge_in_face;
     };
 
-    std::vector<Face_location<TriangleMesh, FT>> result;
+    std::vector<PMP::Face_location<TriangleMesh, FT>> result;
     FT accumulated=0.;
     face_descriptor curr_tid=start_loc.first;
     std::array<Vector_2, 3> curr_flat_tid=init_flat_triangle(halfedge(curr_tid,mesh),vpm,mesh);
     Vector_2 flat_p= start_loc.second[0]*curr_flat_tid[0]+start_loc.second[1]*curr_flat_tid[1]+start_loc.second[2]*curr_flat_tid[2];
-    Face_location<TriangleMesh, FT> curr_p=start_loc;
+    PMP::Face_location<TriangleMesh, FT> curr_p=start_loc;
 
-    descriptor_variant<TriangleMesh> var_des = get_descriptor_from_location(start_loc,mesh);
+    PMP::descriptor_variant<TriangleMesh> var_des = PMP::get_descriptor_from_location(start_loc,mesh);
     switch(var_des.index())
     {
       case 0:
@@ -1512,7 +1517,7 @@ struct Locally_shortest_path_imp
       break;
     }
 
-    Face_location<TriangleMesh, FT> prev_p;
+    PMP::Face_location<TriangleMesh, FT> prev_p;
     Vector_2 curr_dir=dir;
     halfedge_descriptor h_ref=halfedge(curr_tid,mesh);
     halfedge_descriptor h_curr=h_ref;
@@ -1521,7 +1526,7 @@ struct Locally_shortest_path_imp
 
     result.push_back(curr_p);
 #ifdef CGAL_DEBUG_BSURF
-  std::cout << "p= " << construct_point(curr_p,mesh) << ")\n";
+  std::cout << "p= " << PMP::construct_point(curr_p,mesh) << ")\n";
 #endif
 
     //TODO not sure why we need that
@@ -1548,7 +1553,7 @@ struct Locally_shortest_path_imp
 #endif
       CGAL_assertion(k!=-1);
       std::array<FT,3> new_bary=make_array(0.,0.,0.);
-      Face_location<TriangleMesh, FT> point_on_edge;
+      PMP::Face_location<TriangleMesh, FT> point_on_edge;
 
       new_bary[k] = 1 - t1;
       new_bary[(k + 1) % 3] = t1;
@@ -1569,7 +1574,7 @@ struct Locally_shortest_path_imp
         std::cout<< "kv "<< kv <<std::endl;
 #endif
         accumulated +=
-            sqrt(squared_distance(construct_point(curr_p,mesh), get(vpm,vid)));
+            sqrt(squared_distance(PMP::construct_point(curr_p,mesh), get(vpm,vid)));
 
         // stop if hitting the boundary
         bool border_reached = false;
@@ -1605,7 +1610,7 @@ struct Locally_shortest_path_imp
         curr_flat_tid=init_flat_triangle(h_ref,vpm,mesh);
         prev_p = curr_p;
 
-        curr_p=Face_location<TriangleMesh,FT>(curr_tid,tmp_bary);
+        curr_p=PMP::Face_location<TriangleMesh,FT>(curr_tid,tmp_bary);
         int k=get_vid_offset(h_ref,target(h_curr,mesh));
         flat_p=curr_flat_tid[k];
       }
@@ -1617,7 +1622,8 @@ struct Locally_shortest_path_imp
         if (is_border(h_curr, mesh))
         {
           result.push_back(point_on_edge);
-          accumulated += sqrt(squared_distance(construct_point(point_on_edge,mesh), construct_point(curr_p,mesh)));
+          accumulated += sqrt(squared_distance(PMP::construct_point(point_on_edge,mesh),
+                                               PMP::construct_point(curr_p,mesh)));
           prev_p=point_on_edge; //if accumulated > len we need to be in the common face
           break;
         }
@@ -1628,7 +1634,8 @@ struct Locally_shortest_path_imp
         prev_p = curr_p;
         curr_p.first=adj;
         curr_p.second= new_bary;
-        accumulated += sqrt(squared_distance(construct_point(curr_p,mesh), construct_point(prev_p,mesh)));
+        accumulated += sqrt(squared_distance(PMP::construct_point(curr_p,mesh),
+                                             PMP::construct_point(prev_p,mesh)));
         curr_tid = adj;
         h_ref=halfedge(curr_tid,mesh);
         //TODO curr_dir should be normalized everytime (to try to avoid numerical errors)
@@ -1649,7 +1656,7 @@ struct Locally_shortest_path_imp
       }
       result.push_back(curr_p);
 #ifdef CGAL_DEBUG_BSURF
-      std::cout << "  inter pt: " << construct_point(curr_p, mesh) << "\n";
+      std::cout << "  inter pt: " << PMP::construct_point(curr_p, mesh) << "\n";
 #endif
     }
 
@@ -1663,8 +1670,8 @@ struct Locally_shortest_path_imp
       return result;
     }
 
-    Point_3 prev_pos = construct_point(*std::next(result.rbegin()),mesh);
-    Point_3 last_pos = construct_point(result.back(),mesh);
+    Point_3 prev_pos = PMP::construct_point(*std::next(result.rbegin()),mesh);
+    Point_3 last_pos = PMP::construct_point(result.back(),mesh);
     double alpha = excess / sqrt((last_pos - prev_pos).squared_length());
     Point_3 pos = barycenter(prev_pos, alpha, last_pos, 1-alpha);
 #ifdef CGAL_DEBUG_BSURF
@@ -1814,12 +1821,14 @@ struct Locally_shortest_path_imp
   static
   void
   strip_path(const TriangleMesh& tmesh,
-             Face_location<TriangleMesh, FT>& src,
-             Face_location<TriangleMesh, FT>& tgt,
+             CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& src,
+             CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& tgt,
              std::vector<halfedge_descriptor>& initial_path)
   {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
     // retrieve the vertex id of a face location describing a vertex
-    auto is_vertex = [](const Face_location<TriangleMesh, FT>& fl)
+    auto is_vertex = [](const PMP::Face_location<TriangleMesh, FT>& fl)
     {
       if (fl.second[0]==0 && fl.second[1]==0)
         return 2;
@@ -1831,7 +1840,7 @@ struct Locally_shortest_path_imp
     };
 
     // retrieve the source vertex id of a face location describing a point on a halfedge
-    auto is_edge = [](const Face_location<TriangleMesh, FT>& fl)
+    auto is_edge = [](const PMP::Face_location<TriangleMesh, FT>& fl)
     {
       if (fl.second[0]==0 && fl.second[1]!=0 && fl.second[2]!=0)
         return 2;
@@ -1985,21 +1994,26 @@ struct Bezier_tracing_impl
   using Vector_3 = typename K::Vector_3;
   using FT = typename K::FT;
 
+  using Face_location = Polygon_mesh_processing::Face_location<TriangleMesh, FT>;
+  using Edge_location = Polygon_mesh_processing::Edge_location<TriangleMesh, FT>;
+
   template <class EdgeLocationRange>
   static
   std::vector<Point_3>
   get_positions(const EdgeLocationRange& edge_locations,
                 const TriangleMesh& mesh,
-                const Face_location<TriangleMesh, FT>& src,
-                const Face_location<TriangleMesh, FT>& tgt)
+                const Face_location& src,
+                const Face_location& tgt)
   {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
     std::vector<Point_3> result;
     result.reserve(edge_locations.size()+2);
-    result.push_back(construct_point(src,mesh));
+    result.push_back(PMP::construct_point(src,mesh));
     for(auto& e: edge_locations)
-        result.push_back(construct_point(e,mesh));
+        result.push_back(PMP::construct_point(e,mesh));
 
-    result.push_back(construct_point(tgt,mesh));
+    result.push_back(PMP::construct_point(tgt,mesh));
 //TODO: we must guarantee that result is sorted and unique (rounding issue?)
     return result;
   }
@@ -2009,8 +2023,8 @@ struct Bezier_tracing_impl
   std::vector<FT>
   path_parameters(const EdgeLocationRange& edge_locations,
                   const TriangleMesh& mesh,
-                  const Face_location<TriangleMesh, FT>& src,
-                  const Face_location<TriangleMesh, FT>& tgt)
+                  const Face_location& src,
+                  const Face_location& tgt)
   {
     std::vector<Point_3> pos=get_positions(edge_locations,mesh,src,tgt);
     FT L=0.;
@@ -2028,11 +2042,11 @@ struct Bezier_tracing_impl
 
   template <class EdgeLocationRange>
   static
-  Face_location<TriangleMesh, FT>
+  Face_location
   eval_point_on_geodesic(const EdgeLocationRange& edge_locations,
                          const TriangleMesh& mesh,
-                         const Face_location<TriangleMesh, FT>& src,
-                         const Face_location<TriangleMesh, FT>& tgt,
+                         const Face_location& src,
+                         const Face_location& tgt,
                          const std::vector<FT>& parameters,/// edge length parameterization of the path from src to tgt through edge_locations
                          const FT& t)
   {
@@ -2122,20 +2136,19 @@ struct Bezier_tracing_impl
   }
 
   static
-  Face_location<TriangleMesh, FT>
+  Face_location
   geodesic_lerp(const TriangleMesh &mesh,
-                const Face_location<TriangleMesh, FT>& src,
-                const Face_location<TriangleMesh, FT>& tgt,const FT& t
+                const Face_location& src,
+                const Face_location& tgt,const FT& t
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
                , const Dual_geodesic_solver<FT>& solver
 #endif
   )
   {
-    std::vector<Edge_location<TriangleMesh, FT>> edge_locations;
+    std::vector<Edge_location> edge_locations;
     locally_shortest_path<FT>(src,tgt,mesh, edge_locations, solver);
     std::vector<FT> parameters=path_parameters(edge_locations,mesh,src,tgt);
-    Face_location<TriangleMesh, FT> point =
-      eval_point_on_geodesic(edge_locations,mesh,src,tgt,parameters,t);
+    Face_location point = eval_point_on_geodesic(edge_locations,mesh,src,tgt,parameters,t);
     return point;
   }
 
@@ -2151,19 +2164,19 @@ struct Bezier_tracing_impl
   )
   {
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
-     Face_location<TriangleMesh, FT> Q0 = geodesic_lerp(mesh, polygon[0], polygon[1], t, solver);
-     Face_location<TriangleMesh, FT> Q1 = geodesic_lerp(mesh, polygon[1], polygon[2], t, solver);
-     Face_location<TriangleMesh, FT> Q2 = geodesic_lerp(mesh, polygon[2], polygon[3], t, solver);
-     Face_location<TriangleMesh, FT> R0 = geodesic_lerp(mesh, Q0, Q1, t, solver);
-     Face_location<TriangleMesh, FT> R1 = geodesic_lerp(mesh, Q1, Q2, t, solver);
-     Face_location<TriangleMesh, FT> S  = geodesic_lerp(mesh, R0, R1, t, solver);
+     Face_location Q0 = geodesic_lerp(mesh, polygon[0], polygon[1], t, solver);
+     Face_location Q1 = geodesic_lerp(mesh, polygon[1], polygon[2], t, solver);
+     Face_location Q2 = geodesic_lerp(mesh, polygon[2], polygon[3], t, solver);
+     Face_location R0 = geodesic_lerp(mesh, Q0, Q1, t, solver);
+     Face_location R1 = geodesic_lerp(mesh, Q1, Q2, t, solver);
+     Face_location S  = geodesic_lerp(mesh, R0, R1, t, solver);
 #else
-     Face_location<TriangleMesh, FT> Q0 = geodesic_lerp(mesh, polygon[0], polygon[1], t);
-     Face_location<TriangleMesh, FT> Q1 = geodesic_lerp(mesh, polygon[1], polygon[2], t);
-     Face_location<TriangleMesh, FT> Q2 = geodesic_lerp(mesh, polygon[2], polygon[3], t);
-     Face_location<TriangleMesh, FT> R0 = geodesic_lerp(mesh, Q0, Q1, t);
-     Face_location<TriangleMesh, FT> R1 = geodesic_lerp(mesh, Q1, Q2, t);
-     Face_location<TriangleMesh, FT> S  = geodesic_lerp(mesh, R0, R1, t);
+     Face_location Q0 = geodesic_lerp(mesh, polygon[0], polygon[1], t);
+     Face_location Q1 = geodesic_lerp(mesh, polygon[1], polygon[2], t);
+     Face_location Q2 = geodesic_lerp(mesh, polygon[2], polygon[3], t);
+     Face_location R0 = geodesic_lerp(mesh, Q0, Q1, t);
+     Face_location R1 = geodesic_lerp(mesh, Q1, Q2, t);
+     Face_location S  = geodesic_lerp(mesh, R0, R1, t);
 #endif
     return {{polygon[0], Q0, R0, S}, {S, R1, Q2, polygon[3]}};
   }
@@ -2185,6 +2198,9 @@ struct Geodesic_circle_impl
   using Vector_2 = typename K::Vector_2;
   using Vector_3 = typename K::Vector_3;
   using FT = typename K::FT;
+
+  using Face_location = Polygon_mesh_processing::Face_location<TriangleMesh, FT>;
+  using Edge_location = Polygon_mesh_processing::Edge_location<TriangleMesh, FT>;
 
   struct geodesic_solver {
     struct graph_edge {
@@ -2612,7 +2628,7 @@ struct Geodesic_circle_impl
   static
   Point_3 eval_position(const VertexPointMap &vpm,
                         const TriangleMesh &mesh,
-                        const Face_location<TriangleMesh, FT>& p)
+                        const Face_location& p)
   {
     halfedge_descriptor h=halfedge(p.first,mesh);
     return CGAL::barycenter(get(vpm, source(h,mesh)), p.second[0], get(vpm, target(h,mesh)), p.second[1], get(vpm, target(next(h,mesh),mesh)), p.second[2]);
@@ -2625,7 +2641,7 @@ struct Geodesic_circle_impl
   std::vector<std::pair<vertex_descriptor, double>>
   nodes_around_point(const VertexPointMap &vpm,
                     const TriangleMesh &mesh,
-                    const Face_location<TriangleMesh, FT>& p)
+                    const Face_location& p)
   {
     auto get_vid=[&mesh](const int k,const face_descriptor& tid)
     {
@@ -2677,7 +2693,7 @@ struct Geodesic_circle_impl
                              const VertexPointMap& vpm,
                              const VertexIndexMap& vim,
                              const TriangleMesh &mesh,
-                             const Face_location<TriangleMesh, FT>& p)
+                             const Face_location& p)
   {
     std::vector<std::pair<vertex_descriptor,double>> source_nodes=nodes_around_point(vpm,mesh,p);
 
@@ -2692,8 +2708,8 @@ struct Geodesic_circle_impl
                                     const VertexPointMap &vpm,
                                     const VertexIndexMap& vidmap,
                                     const TriangleMesh &mesh,
-                                    const Face_location<TriangleMesh, FT>& src,
-                                    const Face_location<TriangleMesh, FT>& tgt)
+                                    const Face_location& src,
+                                    const Face_location& tgt)
   {
     std::vector<std::pair<vertex_descriptor, double>>
     source_nodes = nodes_around_point(vpm,mesh,src);
@@ -2846,7 +2862,7 @@ void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleM
  * triangle mesh. `src` and `tgt` must be on the same connected component.
  * \tparam TriangleMesh a model of `FaceListGraph` and `EdgeListGraph`
  * \tparam FT floating point number type (float or double)
- * \tparam EdgeLocationRange a model of `BackInsertionSequence` whose value type `Edge_location<FT>`.
+ * \tparam EdgeLocationRange a model of `BackInsertionSequence` whose value type `CGAL::Polygon_mesh_processing::Edge_location<FT>`.
  * \param src source of the path
  * \param tgt target of the path
  * \param tmesh input triangle mesh to compute the path on
@@ -2859,12 +2875,13 @@ void init_geodesic_dual_solver(Dual_geodesic_solver<FT>& solver, const TriangleM
  *                       of `edge_locations` is such that `f == face(opposite(halfedge(e_0, tmesh), tmesh), tmesh))`.
  *                       Similarly, if `tgt` is in the interior of a face `f`, then the last edge location `e_n`
  *                       of `edge_locations` is such that `f == face(halfedge(e_n, tmesh), tmesh)`.
+ * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
  * \todo add named parameters
  * \todo should we have halfedge location instead?
  */
 template <class FT, class TriangleMesh, class EdgeLocationRange>
-void locally_shortest_path(Face_location<TriangleMesh, FT> src,
-                           Face_location<TriangleMesh, FT> tgt,
+void locally_shortest_path(CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> src,
+                           CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT> tgt,
                            const TriangleMesh &tmesh,
                            EdgeLocationRange &edge_locations
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
@@ -2872,6 +2889,8 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
 #endif
 )
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   typedef boost::graph_traits<TriangleMesh> BGT;
   typedef typename BGT::halfedge_descriptor halfedge_descriptor;
   typedef typename BGT::vertex_descriptor vertex_descriptor;
@@ -2880,8 +2899,8 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
   // start by checking if it is not a trivial path
   if (src.first == tgt.first) return;
 
-  auto variant_src = get_descriptor_from_location(src,tmesh);
-  auto variant_tgt = get_descriptor_from_location(tgt,tmesh);
+  auto variant_src = PMP::get_descriptor_from_location(src,tmesh);
+  auto variant_tgt = PMP::get_descriptor_from_location(tgt,tmesh);
 
   std::vector<face_descriptor> src_visible_face;
   if (const face_descriptor* f_ptr = std::get_if<face_descriptor>(&variant_src))
@@ -3069,7 +3088,7 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
     }
     std::cout << "  src=" << src.first << " ("<< src.second[0] << "," << src.second[1] << "," << src.second[2] << ")\n";
     std::cout << "  tgt=" << tgt.first << " ("<< tgt.second[0] << "," << tgt.second[1] << "," << tgt.second[2] << ")\n";
-    std::cout <<  "  Updated src/tgt " << construct_point(src, tmesh) << " | " << construct_point(tgt, tmesh) << "\n";
+    std::cout <<  "  Updated src/tgt " << PMP::construct_point(src, tmesh) << " | " << PMP::construct_point(tgt, tmesh) << "\n";
   }
 #endif
 
@@ -3102,12 +3121,13 @@ void locally_shortest_path(Face_location<TriangleMesh, FT> src,
  * \param mesh input triangle mesh to compute the path on
  * \param control_points control points of the Bézier segment
  * \param num_subdiv the number of iterations of the subdivision algorithm
+ * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
  * \return descretization of the Bézier segment as face locations
  * \todo add named parameters
  * \todo do we want to also have a way to return Bezier segments? The output is actually bezier segments subdivided.
  */
 template <class TriangleMesh, class FT>
-std::vector<Face_location<TriangleMesh, FT>>
+std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>>
 recursive_de_Casteljau(const TriangleMesh& mesh,
                        const Bezier_segment<TriangleMesh, FT>& control_points,
                        const int num_subdiv
@@ -3116,6 +3136,8 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
 #endif
                        )
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   //TODO replace with named parameter
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   using K =  typename Kernel_traits<typename boost::property_traits<VPM>::value_type>::type;
@@ -3148,7 +3170,7 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
     std::swap(segments, result);
   }
 
-  std::vector<Face_location<TriangleMesh, FT>> final_result;
+  std::vector<PMP::Face_location<TriangleMesh, FT>> final_result;
   final_result.reserve(result.size() * 3 + 1);
   final_result.push_back(std::move(result.front()[0]));
   for (Bezier_segment<TriangleMesh, FT>& bs : result)
@@ -3160,8 +3182,8 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
 #if 0
   // nasty trick to build the vector from a pair of iterators
   // using the fact that data in array and vector are contiguous
-  return {(Face_location<TriangleMesh, FT>*)segments.data(),
-          (Face_location<TriangleMesh, FT>*)segments.data() + segments.size() * 4};
+  return {(PMP::Face_location<TriangleMesh, FT>*)segments.data(),
+          (PMP::Face_location<TriangleMesh, FT>*)segments.data() + segments.size() * 4};
 #endif
   return final_result;
 }
@@ -3172,7 +3194,7 @@ recursive_de_Casteljau(const TriangleMesh& mesh,
  * and put the distance in `distance_map`
  */
 template <class FT, class TriangleMesh, class VertexDistanceMap>
-void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& center,
+void approximate_geodesic_distance_field(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& center,
                                          VertexDistanceMap distance_map,
                                          const TriangleMesh& tmesh)
 {
@@ -3224,8 +3246,8 @@ void approximate_geodesic_distance_field(const Face_location<TriangleMesh, FT>& 
  * \todo offer something better than a 2D vector for the direction
  */
 template <class K, class TriangleMesh>
-std::vector<Face_location<TriangleMesh, typename K::FT>>
-straightest_geodesic(const Face_location<TriangleMesh, typename K::FT> &src,
+std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>>
+straightest_geodesic(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &src,
                      const typename K::Vector_2& dir,
                      const typename K::FT len,
                      const TriangleMesh &tmesh)
@@ -3291,6 +3313,7 @@ convert_to_polar_coordinates(const PointRange_2& points,
  * \param directions contains the direction one need to move from `center` to reach each vertex of the polygon.
  * \param lengths the distance one need to move from `center` along the direction at the same position in `directions` to reach each vertex of the polygon.
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
  * \return a face location for each vertex of the polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3299,16 +3322,18 @@ convert_to_polar_coordinates(const PointRange_2& points,
  * \todo why the first polygon vertex is duplicated by the function? (most probably for the example but it shouldn't be done here)
  */
 template <class K, class TriangleMesh>
-std::vector<Face_location<TriangleMesh,typename K::FT>>
-trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
+std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh,typename K::FT>>
+trace_geodesic_polygon(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                        const std::vector<typename K::Vector_2>& directions,
                        const std::vector<typename K::FT>& lengths,
                        const TriangleMesh &tmesh,
                        const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   std::size_t n=directions.size();
-  std::vector<Face_location<TriangleMesh,typename K::FT>> result;
-  std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
+  std::vector<PMP::Face_location<TriangleMesh,typename K::FT>> result;
+  std::vector<PMP::Face_location<TriangleMesh, typename K::FT>> vertices(n);
 #ifdef CGAL_DEBUG_BSURF
   std::cout << "trace_geodesic_polygon\n";
 #endif
@@ -3316,10 +3341,10 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
   {
     vertices[i]= straightest_geodesic<K>(center,directions[i],lengths[i],tmesh).back();
 #ifdef CGAL_DEBUG_BSURF
-    std::cout << construct_point(vertices[i], tmesh) << "\n";
+    std::cout << PMP::construct_point(vertices[i], tmesh) << "\n";
 #endif
   }
-  std::vector<Edge_location<TriangleMesh,typename K::FT>> edge_locations;
+  std::vector<PMP::Edge_location<TriangleMesh,typename K::FT>> edge_locations;
 
   const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
   Dual_geodesic_solver<typename K::FT> local_solver;
@@ -3336,7 +3361,7 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
     result.push_back(vertices[i]);
     for(auto& el : edge_locations)
     {
-      result.push_back(to_face_location(el, tmesh));
+      result.push_back(PMP::to_face_location(el, tmesh));
     }
   }
   result.push_back(vertices[0]);
@@ -3355,6 +3380,7 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
  * \param polygons 2D polygons
  * \param scaling a scaling factor to scale the polygons on `tmesh` (considering geodesic distances on `tmesh`)
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3362,13 +3388,15 @@ trace_geodesic_polygon(const Face_location<TriangleMesh, typename K::FT> &center
  * \todo what if boundary is reached
  */
 template <class K, class TriangleMesh>
-std::vector<std::vector<Face_location<TriangleMesh,typename K::FT>>>
-trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &center,
+std::vector<std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh,typename K::FT>>>
+trace_geodesic_polygons(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                         const std::vector<std::vector<typename K::Point_2>>& polygons,
                         const typename K::FT scaling,
                         const TriangleMesh &tmesh,
                         const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   VPM vpm = get(CGAL::vertex_point, tmesh);
@@ -3392,19 +3420,19 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
     init_geodesic_dual_solver(local_solver, tmesh);
   }
 
-  std::vector<std::vector<Face_location<TriangleMesh,typename K::FT>>> result(polygons.size());
+  std::vector<std::vector<PMP::Face_location<TriangleMesh,typename K::FT>>> result(polygons.size());
   typename K::Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
 
   for(std::size_t i=0;i<polygons.size();++i)
   {
     typename K::Vector_2 dir( (-gbox.xmin()-gbox.xmax()+polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.,
                               (-gbox.ymin()-gbox.ymax()+polygon_bboxes[i].ymin()+polygon_bboxes[i].ymax())/2. );
-    std::vector< Face_location<TriangleMesh, typename K::FT> > spath =
+    std::vector< PMP::Face_location<TriangleMesh, typename K::FT> > spath =
       straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()),tmesh);
-    Face_location<TriangleMesh, typename K::FT> polygon_center = spath.back();
+    PMP::Face_location<TriangleMesh, typename K::FT> polygon_center = spath.back();
 
     // TODO: avoid using the shortest path and directly use the straightest!
-    std::vector<Edge_location<TriangleMesh, typename K::FT>> shortest_path;
+    std::vector<PMP::Edge_location<TriangleMesh, typename K::FT>> shortest_path;
       locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, *solver_ptr);
 
     // update direction
@@ -3455,6 +3483,7 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
  * \param polygons 2D polygons
  * \param scaling a scaling factor to scale the polygons on `tmesh` (considering geodesic distances on `tmesh`)
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3462,13 +3491,15 @@ trace_geodesic_polygons(const Face_location<TriangleMesh, typename K::FT> &cente
  * \todo what if boundary is reached
  */
 template <class K, class TriangleMesh>
-std::vector<std::vector<Face_location<TriangleMesh,typename K::FT>>>
-trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
+std::vector<std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh,typename K::FT>>>
+trace_geodesic_label(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                      const std::vector<std::vector<typename K::Point_2>>& polygons,
                      const typename K::FT scaling,
                      const TriangleMesh &tmesh,
                      const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   VPM vpm = get(CGAL::vertex_point, tmesh);
@@ -3493,7 +3524,7 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
     init_geodesic_dual_solver(local_solver, tmesh);
   }
 
-  std::vector<std::vector<Face_location<TriangleMesh,typename K::FT>>> result(polygons.size());
+  std::vector<std::vector<PMP::Face_location<TriangleMesh,typename K::FT>>> result(polygons.size());
   // Vector_2 initial_dir(1,0);// TODO: input parameter or 2D PCA of the centers?
 
   // 1D partition of the letters
@@ -3503,9 +3534,9 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
   Point_2 right_most(gbox.xmax(), c2.y());
   double len = (gbox.xmax()-gbox.xmin())/2.;
 
-  std::vector< Face_location<TriangleMesh, typename K::FT> > left_path =
+  std::vector< PMP::Face_location<TriangleMesh, typename K::FT> > left_path =
     straightest_geodesic<K>(center, left_most-c2, scaling * len, tmesh);
-  std::vector< Face_location<TriangleMesh, typename K::FT> > right_path =
+  std::vector< PMP::Face_location<TriangleMesh, typename K::FT> > right_path =
     straightest_geodesic<K>(center, right_most-c2, scaling * len, tmesh);
 
   CGAL_assertion(left_path.size() >=2);
@@ -3515,10 +3546,10 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
 
   for(std::size_t i=0;i<polygons.size();++i)
   {
-    Face_location<TriangleMesh, typename K::FT> polygon_center;
+    PMP::Face_location<TriangleMesh, typename K::FT> polygon_center;
     double xc = (polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.;
 
-    auto get_polygon_center = [&tmesh, &vpm](const std::vector<Face_location<TriangleMesh, typename K::FT>>& path,
+    auto get_polygon_center = [&tmesh, &vpm](const std::vector<PMP::Face_location<TriangleMesh, typename K::FT>>& path,
                                              double targetd)
     {
       // use left
@@ -3526,17 +3557,17 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
       std::size_t k=0;
       while(true)
       {
-        double len = std::sqrt(squared_distance(construct_point(path[k], tmesh),
-                                                construct_point(path[k+1], tmesh)));
+        double len = std::sqrt(squared_distance(PMP::construct_point(path[k], tmesh),
+                                                PMP::construct_point(path[k+1], tmesh)));
         acc+=len;
         if (acc == targetd)
         {
           // TODO: if you land here and path[k] is on an input vertex, it might be that loc_k==loc_k1
 
           double theta=0;
-          Face_location<TriangleMesh, typename K::FT> loc_k=path[k], loc_k1=path[k+1];
+          PMP::Face_location<TriangleMesh, typename K::FT> loc_k=path[k], loc_k1=path[k+1];
           CGAL_assertion_code(bool OK=)
-          locate_in_common_face(loc_k, loc_k1, tmesh);
+          PMP::locate_in_common_face(loc_k, loc_k1, tmesh);
           CGAL_assertion(OK);
           std::array<Vector_2,3> flat_triangle =
             Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
@@ -3553,12 +3584,12 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
         {
           double excess = acc-targetd;
 
-          Face_location<TriangleMesh, typename K::FT> loc_k=path[k], loc_k1=path[k+1];
+          PMP::Face_location<TriangleMesh, typename K::FT> loc_k=path[k], loc_k1=path[k+1];
           CGAL_assertion_code(bool OK=)
-          locate_in_common_face(loc_k, loc_k1, tmesh);
+          PMP::locate_in_common_face(loc_k, loc_k1, tmesh);
           CGAL_assertion(OK);
 
-          Face_location<TriangleMesh, typename K::FT> polygon_center;
+          PMP::Face_location<TriangleMesh, typename K::FT> polygon_center;
           polygon_center.first=loc_k.first;
           double alpha = excess/len;
 
@@ -3578,9 +3609,9 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
 
         if (++k==path.size()-1)
         {
-          Face_location<TriangleMesh, typename K::FT> loc_k=path[k-1], loc_k1=path[k];
+          PMP::Face_location<TriangleMesh, typename K::FT> loc_k=path[k-1], loc_k1=path[k];
           CGAL_assertion_code(bool OK=)
-          locate_in_common_face(loc_k, loc_k1, tmesh);
+          PMP::locate_in_common_face(loc_k, loc_k1, tmesh);
           CGAL_assertion(OK);
           std::array<Vector_2,3> flat_triangle =
             Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
@@ -3603,7 +3634,7 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
     else
       std::tie(polygon_center, theta)=get_polygon_center(right_path, scaling * (xc-c2.x()));
 
-    std::vector<Edge_location<TriangleMesh, typename K::FT>> shortest_path;
+    std::vector<PMP::Edge_location<TriangleMesh, typename K::FT>> shortest_path;
       locally_shortest_path<typename K::FT>(center, polygon_center, tmesh, shortest_path, *solver_ptr);
 
 
@@ -3644,9 +3675,11 @@ trace_geodesic_label(const Face_location<TriangleMesh, typename K::FT> &center,
  * \todo generic range
  */
 template <class FT, class TriangleMesh>
-FT path_length(const std::vector<Face_location<TriangleMesh, FT>>& path,
+FT path_length(const std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>>& path,
                const TriangleMesh &tmesh)
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   std::size_t lpath = path.size();
   if(lpath<2)
     return 0;
@@ -3657,7 +3690,8 @@ FT path_length(const std::vector<Face_location<TriangleMesh, FT>>& path,
   FT len(0);
 
   for (std::size_t i=0; i<lpath-1; ++i)
-    len += sqrt(squared_distance(construct_point(path[i],tmesh),construct_point(path[i+1],tmesh)));
+    len += sqrt(squared_distance(PMP::construct_point(path[i],tmesh),
+                                 PMP::construct_point(path[i+1],tmesh)));
 
   return len;
 }
@@ -3676,24 +3710,30 @@ FT path_length(const std::vector<Face_location<TriangleMesh, FT>>& path,
  * \todo generic range
  */
 template <class FT, class TriangleMesh>
-FT path_length(const std::vector<Edge_location<TriangleMesh,FT>>& path,
-               const Face_location<TriangleMesh, FT>& src,
-               const Face_location<TriangleMesh, FT>& tgt,
+FT path_length(const std::vector<CGAL::Polygon_mesh_processing::Edge_location<TriangleMesh,FT>>& path,
+               const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& src,
+               const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& tgt,
                const TriangleMesh &tmesh)
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   std::size_t lpath = path.size();
   if(lpath==0)
-    return sqrt(squared_distance(construct_point(src,tmesh),construct_point(tgt,tmesh)));
+    return sqrt(squared_distance(PMP::construct_point(src,tmesh),
+                                 PMP::construct_point(tgt,tmesh)));
 
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   VPM vpm = get(CGAL::vertex_point, tmesh);
 
-  FT len=sqrt(squared_distance(construct_point(src,tmesh),construct_point(path[0],tmesh)));
+  FT len=sqrt(squared_distance(PMP::construct_point(src,tmesh),
+                               PMP::construct_point(path[0],tmesh)));
 
   for (std::size_t i=0; i<lpath-1; ++i)
-    len += sqrt(squared_distance(construct_point(path[i],tmesh),construct_point(path[i+1],tmesh)));
+    len += sqrt(squared_distance(PMP::construct_point(path[i],tmesh),
+                                 PMP::construct_point(path[i+1],tmesh)));
 
-  len+=sqrt(squared_distance(construct_point(path.back(),tmesh),construct_point(tgt,tmesh)));
+  len+=sqrt(squared_distance(PMP::construct_point(path.back(),tmesh),
+                             PMP::construct_point(tgt,tmesh)));
 
   return len;
 }
@@ -3715,6 +3755,7 @@ FT path_length(const std::vector<Edge_location<TriangleMesh,FT>>& path,
  * \param padding padding applied at the beggining of supporting curve to start the drawing
  * \param is_centered is `true`, `padding` is ignored and the bounding box of the polygon is centered on the supporting curve (in 1D)
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3723,8 +3764,8 @@ FT path_length(const std::vector<Edge_location<TriangleMesh,FT>>& path,
  * \todo doc what happens if supporting curve is not long enough + boundary reached
  */
 template <class K, class TriangleMesh>
-std::vector<std::vector<Face_location<TriangleMesh, typename K::FT>>>
-trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, typename K::FT>>& supporting_curve,
+std::vector<std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>>>
+trace_geodesic_label_along_curve(const std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>>& supporting_curve,
                                  const std::vector<std::vector<typename K::Point_2>>& polygons,
                                  const typename K::FT scaling,
                                  const typename K::FT padding,
@@ -3732,12 +3773,14 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
                                  const TriangleMesh &tmesh,
                                  const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   using VPM = typename boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type;
   using Impl = internal::Locally_shortest_path_imp<K, TriangleMesh, VPM>;
   VPM vpm = get(CGAL::vertex_point, tmesh);
   using Point_2 = typename K::Point_2;
   using Vector_2 = typename K::Vector_2;
-  using Face_loc = Face_location<TriangleMesh, typename K::FT>;
+  using Face_loc = PMP::Face_location<TriangleMesh, typename K::FT>;
 
   std::vector<Bbox_2> polygon_bboxes;
   polygon_bboxes.reserve(polygons.size());
@@ -3767,8 +3810,8 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
 
   std::vector<typename K::FT> support_len(supporting_curve.size(),0);
   for (std::size_t i=0; i<supporting_curve.size()-1; ++i)
-    support_len[i+1]=support_len[i]+std::sqrt(squared_distance(construct_point(supporting_curve[i], tmesh),
-                                                               construct_point(supporting_curve[i+1], tmesh)));
+    support_len[i+1]=support_len[i]+std::sqrt(squared_distance(PMP::construct_point(supporting_curve[i], tmesh),
+                                                               PMP::construct_point(supporting_curve[i+1], tmesh)));
 
   CGAL_assertion( (support_len.back()>padding + scaling * (gbox.xmax()-gbox.xmin())) ||
                   (is_centered && (support_len.back()> scaling * (gbox.xmax()-gbox.xmin()))) );
@@ -3791,9 +3834,9 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
 
         double theta=0;
         //TODO: should pick k-1 if k==supporting_curve.size()-1
-        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
+        PMP::Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k], loc_k1=supporting_curve[k+1];
         CGAL_assertion_code(bool OK=)
-        locate_in_common_face(loc_k, loc_k1, tmesh);
+        PMP::locate_in_common_face(loc_k, loc_k1, tmesh);
         CGAL_assertion(OK);
         std::array<Vector_2,3> flat_triangle =
           Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
@@ -3810,12 +3853,12 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
       {
         double excess = acc-targetd;
 
-        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k-1], loc_k1=supporting_curve[k];
+        PMP::Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k-1], loc_k1=supporting_curve[k];
         CGAL_assertion_code(bool OK=)
-        locate_in_common_face(loc_k, loc_k1, tmesh);
+        PMP::locate_in_common_face(loc_k, loc_k1, tmesh);
         CGAL_assertion(OK);
 
-        Face_location<TriangleMesh, typename K::FT> polygon_center;
+        PMP::Face_location<TriangleMesh, typename K::FT> polygon_center;
         polygon_center.first=loc_k.first;
         double alpha = excess/(support_len[k]-support_len[k-1]);
 
@@ -3837,9 +3880,9 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
       {
         //TODO: shall we throw an exception instead or return false?
 
-        Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k-2], loc_k1=supporting_curve[k-1];
+        PMP::Face_location<TriangleMesh, typename K::FT> loc_k=supporting_curve[k-2], loc_k1=supporting_curve[k-1];
         CGAL_assertion_code(bool OK=)
-        locate_in_common_face(loc_k, loc_k1, tmesh);
+        PMP::locate_in_common_face(loc_k, loc_k1, tmesh);
         CGAL_assertion(OK);
         std::array<Vector_2,3> flat_triangle =
           Impl::init_flat_triangle(halfedge(loc_k.first,tmesh),vpm,tmesh);
@@ -3856,7 +3899,7 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
 
   for(std::size_t i=0;i<polygons.size();++i)
   {
-    Face_location<TriangleMesh, typename K::FT> polygon_center;
+    PMP::Face_location<TriangleMesh, typename K::FT> polygon_center;
     double xc = (polygon_bboxes[i].xmin()+polygon_bboxes[i].xmax())/2.;
 
     double theta;
@@ -3898,6 +3941,7 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
  * \param lengths contains the length of the straightest geodesic for each control point
  * \param num_subdiv the number of iterations of the de Casteljau subdivision algorithm
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -3905,8 +3949,8 @@ trace_geodesic_label_along_curve(const std::vector<Face_location<TriangleMesh, t
  * \todo what if boundary is reached
  */
 template <class K, class TriangleMesh>
-std::vector< std::vector<Face_location<TriangleMesh, typename K::FT>> >
-trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
+std::vector< std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>> >
+trace_bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                     const std::vector<std::array<typename K::Vector_2, 4>>& directions,
                     const std::vector<std::array<typename K::FT, 4>>& lengths,
                     const int num_subdiv,
@@ -3916,10 +3960,12 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
 #endif
 )
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   using FT = typename K::FT;
 
   std::size_t n=directions.size();
-  std::vector< std::vector<Face_location<TriangleMesh, typename K::FT>> > result(n);
+  std::vector< std::vector<PMP::Face_location<TriangleMesh, typename K::FT>> > result(n);
 
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
   const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
@@ -3946,13 +3992,13 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
     }
 
     #ifdef CGAL_DEBUG_BSURF
-      debug_ep << construct_point(control_loc[0], tmesh) << "\n";
-      debug_ep << construct_point(control_loc[3], tmesh) << "\n";
-      debug_cp << construct_point(control_loc[1], tmesh) << "\n";
-      debug_cp << construct_point(control_loc[2], tmesh) << "\n";
+      debug_ep << PMP::construct_point(control_loc[0], tmesh) << "\n";
+      debug_ep << PMP::construct_point(control_loc[3], tmesh) << "\n";
+      debug_cp << PMP::construct_point(control_loc[1], tmesh) << "\n";
+      debug_cp << PMP::construct_point(control_loc[2], tmesh) << "\n";
     #endif
 
-    std::vector<Face_location<TriangleMesh, FT>> bezier =
+    std::vector<PMP::Face_location<TriangleMesh, FT>> bezier =
       recursive_de_Casteljau(tmesh, control_loc, num_subdiv
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
                             , *solver_ptr
@@ -3963,17 +4009,17 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
     result[i].push_back(bezier[0]);
     for(std::size_t b=0; b<bezier.size()-1; ++b)
     {
-      const Face_location<TriangleMesh, FT>& loc = bezier[b];
-      const Face_location<TriangleMesh, FT>& loc1 = bezier[b+1];
+      const PMP::Face_location<TriangleMesh, FT>& loc = bezier[b];
+      const PMP::Face_location<TriangleMesh, FT>& loc1 = bezier[b+1];
 
       // connect the two face locations with shortest path is they are in different faces
       if (loc.first!=loc1.first)
       {
-        std::vector<Edge_location<TriangleMesh, FT>> edge_locations;
+        std::vector<PMP::Edge_location<TriangleMesh, FT>> edge_locations;
         locally_shortest_path<FT>(loc, loc1, tmesh, edge_locations, solver);
         result[i].reserve(result[i].size()+edge_locations.size());
-        for (const Edge_location<TriangleMesh, FT>& e : edge_locations)
-          result[i].push_back(to_face_location(e, tmesh));
+        for (const PMP::Edge_location<TriangleMesh, FT>& e : edge_locations)
+          result[i].push_back(PMP::to_face_location(e, tmesh));
       }
       result[i].push_back(loc1);
     }
@@ -4000,6 +4046,7 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
  * \param num_subdiv the number of iterations of the de Casteljau subdivision algorithm
  * \param is_closed if true [directions/lengths].front() will be used as additional last point, generating a closed path
  * \param tmesh input triangle mesh supporting the vertices of the output polygon
+ * \param `solver` container for the pre-computed information. If not initialized, it will initialized internally.
  * \return a face location for each vertex of each polygon
  * \todo add named parameters
  * \todo polygon orientation is not handled in the function and should be done outside of the function for now
@@ -4008,8 +4055,8 @@ trace_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
  */
 //TODO: make sure it is consistent with the rest to not duplicate the last point if closed
 template <class K, class TriangleMesh>
-std::vector<Face_location<TriangleMesh, typename K::FT>>
-trace_polyline_of_bezier_curves(const Face_location<TriangleMesh, typename K::FT> &center,
+std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>>
+trace_polyline_of_bezier_curves(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                                 const std::vector<typename K::Vector_2>& directions,
                                 const std::vector<typename K::FT>& lengths,
                                 bool is_closed, // use [directions/lengths].front as last control point?
@@ -4020,12 +4067,14 @@ trace_polyline_of_bezier_curves(const Face_location<TriangleMesh, typename K::FT
 #endif
 )
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   using FT = typename K::FT;
 
   std::size_t n = (directions.size() - (is_closed?0:1))/3;
   CGAL_assertion( n * 3 + (is_closed?0:1) == directions.size() );
 
-  std::vector<Face_location<TriangleMesh, typename K::FT>> result;
+  std::vector<PMP::Face_location<TriangleMesh, typename K::FT>> result;
 
   // n is the number of quadruple of control points
   // After num_subdiv steps, we have 2^num_subdiv * n quadruples of control points
@@ -4052,8 +4101,8 @@ trace_polyline_of_bezier_curves(const Face_location<TriangleMesh, typename K::FT
   debug_ep << std::setprecision(17);
 #endif
 
-  Face_location<TriangleMesh, FT> prev_loc = straightest_geodesic<K>(center,directions[0],lengths[0],tmesh).back(),
-                                  first_loc = prev_loc;
+  PMP::Face_location<TriangleMesh, FT> prev_loc = straightest_geodesic<K>(center,directions[0],lengths[0],tmesh).back(),
+                                       first_loc = prev_loc;
 
   for (std::size_t i=0; i<n; ++i)
   {
@@ -4069,13 +4118,13 @@ trace_polyline_of_bezier_curves(const Face_location<TriangleMesh, typename K::FT
     prev_loc=control_loc[3];
 
     #ifdef CGAL_DEBUG_BSURF
-      debug_ep << construct_point(control_loc[0], tmesh) << "\n";
-      debug_ep << construct_point(control_loc[3], tmesh) << "\n";
-      debug_cp << construct_point(control_loc[1], tmesh) << "\n";
-      debug_cp << construct_point(control_loc[2], tmesh) << "\n";
+      debug_ep << PMP::construct_point(control_loc[0], tmesh) << "\n";
+      debug_ep << PMP::construct_point(control_loc[3], tmesh) << "\n";
+      debug_cp << PMP::construct_point(control_loc[1], tmesh) << "\n";
+      debug_cp << PMP::construct_point(control_loc[2], tmesh) << "\n";
     #endif
 
-    std::vector<Face_location<TriangleMesh, FT>> bezier =
+    std::vector<PMP::Face_location<TriangleMesh, FT>> bezier =
       recursive_de_Casteljau(tmesh, control_loc, num_subdiv
 #ifndef CGAL_BSURF_USE_DIJKSTRA_SP
                             , *solver_ptr
@@ -4086,16 +4135,16 @@ trace_polyline_of_bezier_curves(const Face_location<TriangleMesh, typename K::FT
       result.push_back(bezier[0]);
     for(std::size_t b=0; b<bezier.size()-1; ++b)
     {
-      const Face_location<TriangleMesh, FT>& loc = bezier[b];
-      const Face_location<TriangleMesh, FT>& loc1 = bezier[b+1];
+      const PMP::Face_location<TriangleMesh, FT>& loc = bezier[b];
+      const PMP::Face_location<TriangleMesh, FT>& loc1 = bezier[b+1];
 
       // connect the two face locations with shortest path is they are in different faces
       if (loc.first!=loc1.first)
       {
-        std::vector<Edge_location<TriangleMesh, FT>> edge_locations;
+        std::vector<PMP::Edge_location<TriangleMesh, FT>> edge_locations;
         locally_shortest_path<FT>(loc, loc1, tmesh, edge_locations, solver);
-        for (const Edge_location<TriangleMesh, FT>& e : edge_locations)
-          result.push_back(to_face_location(e, tmesh));
+        for (const PMP::Edge_location<TriangleMesh, FT>& e : edge_locations)
+          result.push_back(PMP::to_face_location(e, tmesh));
       }
       result.push_back(loc1);
     }
@@ -4130,20 +4179,22 @@ trace_polyline_of_bezier_curves(const Face_location<TriangleMesh, typename K::FT
 template <class K, class TriangleMesh, class VNM, class FNM, class OutputIterator>
 // std::vector<typename boost::graph_traits<TriangleMesh>::vertex_descriptor>
 OutputIterator
-refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh, typename K::FT>>>& paths,
+refine_mesh_along_paths(const std::vector<std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>>>& paths,
                         TriangleMesh& tmesh,
                         VNM vnm,
                         FNM fnm,
                         OutputIterator out)
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   // TODO: nothing is done here to identify identical points
 
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
   using edge_descriptor = typename boost::graph_traits<TriangleMesh>::edge_descriptor;
   using halfedge_descriptor = typename boost::graph_traits<TriangleMesh>::halfedge_descriptor;
   using face_descriptor = typename boost::graph_traits<TriangleMesh>::face_descriptor;
-  using Face_loc = Face_location<TriangleMesh, typename K::FT>;
-  using dscrptr_vrnt = descriptor_variant<TriangleMesh>;
+  using Face_loc = PMP::Face_location<TriangleMesh, typename K::FT>;
+  using dscrptr_vrnt = PMP::descriptor_variant<TriangleMesh>;
   using Point_3 = typename K::Point_3;
   using EK = CGAL::Exact_predicates_exact_constructions_kernel;
 
@@ -4221,7 +4272,7 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
     }
     Face_loc copy1=loc1, copy2=loc2;
     CGAL_assertion_code(bool OK=)
-    locate_in_common_face(copy1, copy2, tmesh);
+    PMP::locate_in_common_face(copy1, copy2, tmesh);
     CGAL_assertion(OK);
     if (get(fid_map,copy1.first)==std::size_t(-1))
     {
@@ -4235,13 +4286,13 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
 
   for (const std::vector<Face_loc>& path : paths)
   {
-    bool closed = are_locations_identical(path.front(), path.back(), tmesh);
+    bool closed = PMP::are_locations_identical(path.front(), path.back(), tmesh);
     std::size_t nbp = path.size();
 
     if (closed)  nbp-=1;
 
     std::size_t prev_id=polyline_locations.size(), first_id=prev_id;
-    dscrptr_vrnt prev_var = get_descriptor_from_location(path.front(), tmesh),
+    dscrptr_vrnt prev_var = PMP::get_descriptor_from_location(path.front(), tmesh),
                  first_var = prev_var;
 
     polyline_locations.push_back( path.front() );
@@ -4251,7 +4302,7 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
     {
       std::size_t id=polyline_locations.size();
       polyline_locations.push_back(path[i]);
-      dscrptr_vrnt var = get_descriptor_from_location(path[i], tmesh);
+      dscrptr_vrnt var = PMP::get_descriptor_from_location(path[i], tmesh);
       register_point(var, id);
       register_segment(prev_var, var,
                        path[i-1], path[i],
@@ -4273,7 +4324,7 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
   {
     face_descriptor fd = faces_to_refine[fid];
     halfedge_descriptor hd = halfedge(fd, tmesh);
-    face_normals[fid]=compute_face_normal(fd, tmesh); // TODO: vpm + compute using EK
+    face_normals[fid]=PMP::compute_face_normal(fd, tmesh); // TODO: vpm + compute using EK
     face_input_vertices[fid] = make_array(target(hd, tmesh),
                                           target(next(hd, tmesh), tmesh),
                                           target(prev(hd, tmesh), tmesh));
@@ -4328,11 +4379,11 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
     for (std::size_t id : ids)
     {
       points_on_hedges[eid].emplace_back(
-        construct_point(polyline_locations[points_per_edge[eid][id]], tmesh),
+        PMP::construct_point(polyline_locations[points_per_edge[eid][id]], tmesh),
         points_per_edge[eid][id]);
 
       exact_points[points_per_edge[eid][id]] =
-        construct_point(polyline_locations[points_per_edge[eid][id]], tmesh,
+        PMP::construct_point(polyline_locations[points_per_edge[eid][id]], tmesh,
                         parameters::vertex_point_map(make_cartesian_converter_property_map<EK::Point_3>(tmesh.points())));
 
     }
@@ -4349,11 +4400,11 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
       vertex_descriptor vd = add_vertex(tmesh);
       put(vnm, vd, face_normal);
       put(vid_map, vd, vid);
-      tmesh.point(vd)=construct_point(polyline_locations[vid], tmesh);
+      tmesh.point(vd)=PMP::construct_point(polyline_locations[vid], tmesh);
 
       CGAL_assertion( polyline_vertices[vid]==boost::graph_traits<TriangleMesh>::null_vertex() );
       polyline_vertices[vid] = vd;
-      exact_points[vid] = construct_point(polyline_locations[vid], tmesh,
+      exact_points[vid] = PMP::construct_point(polyline_locations[vid], tmesh,
                             parameters::vertex_point_map(make_cartesian_converter_property_map<EK::Point_3>(tmesh.points())));
     }
   }
@@ -4590,22 +4641,24 @@ refine_mesh_along_paths(const std::vector<std::vector<Face_location<TriangleMesh
  */
 template<class TriangleMesh, class FT, class OutputIterator>
 OutputIterator
-convert_path_to_polyline(const std::vector<Face_location<TriangleMesh, FT>>& path,
+convert_path_to_polyline(const std::vector<CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>>& path,
                          const TriangleMesh& tmesh,
                          OutputIterator poly_out)
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
   vertex_descriptor vd = boost::graph_traits<TriangleMesh>::null_vertex();
-  for (const Face_location<TriangleMesh, FT>& loc : path)
+  for (const PMP::Face_location<TriangleMesh, FT>& loc : path)
   {
-    std::optional<vertex_descriptor> ov = vertex_descriptor_from_location(loc, tmesh);
+    std::optional<vertex_descriptor> ov = PMP::vertex_descriptor_from_location(loc, tmesh);
     if (ov.has_value())
     {
       if (vd==*ov) continue;
       vd=*ov;
     }
-    *poly_out++=construct_point(loc, tmesh);
+    *poly_out++=PMP::construct_point(loc, tmesh);
   }
   return poly_out;
 }
@@ -4628,35 +4681,37 @@ convert_path_to_polyline(const std::vector<Face_location<TriangleMesh, FT>>& pat
  */
 template<class TriangleMesh, class FT, class OutputIterator>
 OutputIterator
-convert_path_to_polyline(const Face_location<TriangleMesh, FT>& src,
-                         const std::vector<Edge_location<TriangleMesh, FT>>& path,
-                         const Face_location<TriangleMesh, FT>& tgt,
+convert_path_to_polyline(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& src,
+                         const std::vector<CGAL::Polygon_mesh_processing::Edge_location<TriangleMesh, FT>>& path,
+                         const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, FT>& tgt,
                          const TriangleMesh& tmesh,
                          OutputIterator poly_out)
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   using vertex_descriptor = typename boost::graph_traits<TriangleMesh>::vertex_descriptor;
 
-  *poly_out++=construct_point(src, tmesh);
+  *poly_out++=PMP::construct_point(src, tmesh);
   vertex_descriptor vd = boost::graph_traits<TriangleMesh>::null_vertex();
-  for (const Edge_location<TriangleMesh, FT>& loc : path)
+  for (const PMP::Edge_location<TriangleMesh, FT>& loc : path)
   {
-    std::optional<vertex_descriptor> ov = vertex_descriptor_from_location(loc, tmesh);
+    std::optional<vertex_descriptor> ov = PMP::vertex_descriptor_from_location(loc, tmesh);
     if (ov.has_value())
     {
       if (vd==*ov) continue;
       vd=*ov;
     }
-    *poly_out++=construct_point(loc, tmesh);
+    *poly_out++=PMP::construct_point(loc, tmesh);
   }
-  *poly_out++=construct_point(tgt, tmesh);
+  *poly_out++=PMP::construct_point(tgt, tmesh);
   return poly_out;
 }
 
 // template <class K, class TriangleMesh>
 // std::vector<typename K::Vector_2>
-// tangent_path_direction(const std::vector<Edge_location<TriangleMesh,typename K::FT>>& path,
-//                        const Face_location<TriangleMesh, typename K::FT>& src,
-//                        const Face_location<TriangleMesh, typename K::FT>& tgt,
+// tangent_path_direction(const std::vector<CGAL::Polygon_mesh_processing::Edge_location<TriangleMesh,typename K::FT>>& path,
+//                        const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>& src,
+//                        const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT>& tgt,
 //                        const TriangleMesh &tmesh,const bool initial=true)
 // {
 //   auto find = [](const std::array<typename K::FT,3> &vec, int x) {
@@ -4713,19 +4768,21 @@ convert_path_to_polyline(const Face_location<TriangleMesh, FT>& src,
 
 template <class K, class TriangleMesh>
 std::vector<typename K::Point_3>
-trace_agap_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
+trace_agap_polygon(const CGAL::Polygon_mesh_processing::Face_location<TriangleMesh, typename K::FT> &center,
                      const std::vector<typename K::Vector_2>& directions,
                      const std::vector<typename K::FT>& lengths,
                      const TriangleMesh &tmesh,
                      const Dual_geodesic_solver<typename K::FT>& solver = {})
 {
+  namespace PMP = CGAL::Polygon_mesh_processing;
+
   size_t n=directions.size();
   std::vector<typename K::Point_3> result;
-  std::vector<Face_location<TriangleMesh, typename K::FT>> vertices(n);
+  std::vector<PMP::Face_location<TriangleMesh, typename K::FT>> vertices(n);
   for(std::size_t i=0;i<n;++i)
     vertices[i]= straightest_geodesic<K>(center,directions[i],lengths[i],tmesh).back();
 
-  std::vector<Edge_location<TriangleMesh,typename K::FT>> edge_locations;
+  std::vector<PMP::Edge_location<TriangleMesh,typename K::FT>> edge_locations;
 
   const Dual_geodesic_solver<typename K::FT>* solver_ptr=&solver;
   Dual_geodesic_solver<typename K::FT> local_solver;
@@ -4739,19 +4796,19 @@ trace_agap_polygon(const Face_location<TriangleMesh, typename K::FT> &center,
   {
     edge_locations.clear();
     locally_shortest_path<typename K::FT>(vertices[i],vertices[(i+1)%n],tmesh, edge_locations, *solver_ptr);
-    result.push_back(construct_point(vertices[i],tmesh));
+    result.push_back(PMP::construct_point(vertices[i],tmesh));
     for(auto& el : edge_locations)
     {
-      result.push_back(construct_point(el, tmesh));
+      result.push_back(PMP::construct_point(el, tmesh));
     }
   }
-  result.push_back(construct_point(vertices[0],tmesh));
+  result.push_back(PMP::construct_point(vertices[0],tmesh));
 
   return result;
 
 }
 
-} // namespace Polygon_mesh_processing
+} // namespace Vector_graphics_on_surfaces
 } // namespace CGAL
 
 #endif

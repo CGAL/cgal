@@ -4,6 +4,7 @@
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -42,7 +43,7 @@ int main(int argc, char** argv)
   std::cout << "src = " << PMP::construct_point(src, mesh) << "\n";
 
   auto distance_map = mesh.add_property_map<Mesh::Vertex_index, double>("v:dstmap").first;
-  CGAL::Polygon_mesh_processing::approximate_geodesic_distance_field<double>(src, distance_map, mesh);
+  VGoS::approximate_geodesic_distance_field<double>(src, distance_map, mesh);
 
   std::ofstream out("circles.polylines.txt");
 

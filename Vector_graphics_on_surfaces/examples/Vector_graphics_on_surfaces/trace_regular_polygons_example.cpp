@@ -10,6 +10,7 @@
 
 #endif
 
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -54,16 +55,16 @@ int main(int argc, char** argv)
   std::ofstream out("geodesic_polygon.polylines.txt");
   out << std::setprecision(17);
 
-  PMP::Dual_geodesic_solver<double> solver;
-  PMP::init_geodesic_dual_solver(solver, mesh);
+  VGoS::Dual_geodesic_solver<double> solver;
+  VGoS::init_geodesic_dual_solver(solver, mesh);
   for (double len : lenghts)
   {
     std::vector<K::FT> lens(n_sides,len);
-    std::vector<Face_location> polygon_path = PMP::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
+    std::vector<Face_location> polygon_path = VGoS::trace_geodesic_polygon<K>(center,directions,lens,mesh, solver);
 
     std::vector<K::Point_3> poly;
     poly.reserve(polygon_path.size());
-    PMP::convert_path_to_polyline(polygon_path, mesh, std::back_inserter(poly));
+    VGoS::convert_path_to_polyline(polygon_path, mesh, std::back_inserter(poly));
 
     out << poly.size();
     for (auto p : poly)

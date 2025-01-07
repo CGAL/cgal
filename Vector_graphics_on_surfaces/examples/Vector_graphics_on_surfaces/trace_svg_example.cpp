@@ -13,6 +13,7 @@
 
 #include <nanosvg.h>
 
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -87,8 +88,8 @@ int main(int argc, char** argv)
 
   //TODO: do the scaling at read time!
 
-  PMP::Dual_geodesic_solver<double> solver;
-  PMP::init_geodesic_dual_solver(solver, mesh);
+  VGoS::Dual_geodesic_solver<double> solver;
+  VGoS::init_geodesic_dual_solver(solver, mesh);
 
   std::size_t nb_faces = faces(mesh).size();
   Mesh::Face_index f = *std::next(faces(mesh).begin(), (face_index)%nb_faces);
@@ -108,7 +109,7 @@ int main(int argc, char** argv)
     for (const std::array<K::Point_2, 4>& bezier  : bezier_control_points)
     {
       std::vector<std::pair<double, double>> polar_coords =
-        PMP::convert_to_polar_coordinates<K>(bezier, center_2);
+        VGoS::convert_to_polar_coordinates<K>(bezier, center_2);
 
       directions.emplace_back();
       lengths.emplace_back();
@@ -123,7 +124,7 @@ int main(int argc, char** argv)
     }
 
     std::vector< std::vector<Face_location> > res =
-      PMP::trace_bezier_curves<K>(center, directions, lengths, num_subdiv, mesh, solver);
+      VGoS::trace_bezier_curves<K>(center, directions, lengths, num_subdiv, mesh, solver);
 
     // write result
     std::ofstream out("svg_option1.polylines.txt");
@@ -132,7 +133,7 @@ int main(int argc, char** argv)
     {
       std::vector<K::Point_3> poly;
       poly.reserve(b.size());
-      PMP::convert_path_to_polyline(b, mesh, std::back_inserter(poly));
+      VGoS::convert_path_to_polyline(b, mesh, std::back_inserter(poly));
 
 
       out << poly.size();
@@ -282,17 +283,17 @@ int main(int argc, char** argv)
       // path from the general center to the polyline center
       K::Vector_2 dir(center_2, poly_center);
       std::vector<Face_location> path_2_center =
-        PMP::straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()), mesh);
+        VGoS::straightest_geodesic<K>(center, dir, scaling * std::sqrt(dir.squared_length()), mesh);
       Face_location poly_center_loc = path_2_center.back();
 
       // update initial angle from the global center to the polyline center
-      using Impl=PMP::internal::Locally_shortest_path_imp<K, Mesh, decltype(mesh.points())>;
+      using Impl=VGoS::internal::Locally_shortest_path_imp<K, Mesh, decltype(mesh.points())>;
       K::Vector_2 initial_dir(1,0);// TODO: this is arbitray and could be a user input or from PCA...
 
 
       // TODO: avoid using the shortest path and directly use the straightest!
       std::vector<Edge_location> shortest_path;
-        PMP::locally_shortest_path<K::FT>(center, poly_center_loc, mesh, shortest_path, solver);
+        VGoS::locally_shortest_path<K::FT>(center, poly_center_loc, mesh, shortest_path, solver);
 
       typename K::Vector_2 v = initial_dir;
       // TODO: the code uses the straightest path but since the code expects Edge_location,
@@ -318,7 +319,7 @@ int main(int argc, char** argv)
 
         // polar coordinates from the polyline center and convertion to lengths and directions
         std::vector<std::pair<double, double>> polar_coords =
-          PMP::convert_to_polar_coordinates<K>(polylines_2[pid], poly_center);
+          VGoS::convert_to_polar_coordinates<K>(polylines_2[pid], poly_center);
 
         for (const std::pair<double, double>& polar_coord : polar_coords)
         {
@@ -337,13 +338,13 @@ int main(int argc, char** argv)
 
 
         std::vector<Face_location> res =
-          PMP::trace_polyline_of_bezier_curves<K>(poly_center_loc, directions, lengths,
-                                                  is_closed, // use [directions/lengths].front as last control point?
-                                                  num_subdiv, mesh, solver);
+          VGoS::trace_polyline_of_bezier_curves<K>(poly_center_loc, directions, lengths,
+                                                   is_closed, // use [directions/lengths].front as last control point?
+                                                   num_subdiv, mesh, solver);
         // write result
         std::vector<K::Point_3> poly3;
         poly3.reserve(res.size());
-        PMP::convert_path_to_polyline(res, mesh, std::back_inserter(poly3));
+        VGoS::convert_path_to_polyline(res, mesh, std::back_inserter(poly3));
 
         out << poly3.size();
         for (const K::Point_3& p : poly3)
@@ -370,7 +371,7 @@ int main(int argc, char** argv)
       using VNM = decltype(vnm);
 
       PMP::compute_normals(mesh, vnm, fnm);
-      PMP::refine_mesh_along_paths<K>(polygons_3, mesh, vnm, fnm, std::back_inserter(cst_hedges));
+      VGoS::refine_mesh_along_paths<K>(polygons_3, mesh, vnm, fnm, std::back_inserter(cst_hedges));
 
       std::ofstream("mesh_refined.off") << std::setprecision(17) << mesh;
 

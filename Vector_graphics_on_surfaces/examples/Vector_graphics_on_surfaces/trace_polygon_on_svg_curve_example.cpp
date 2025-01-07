@@ -6,6 +6,7 @@
 
 #include <nanosvg.h>
 
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -16,7 +17,7 @@ typedef PMP::Edge_location<Mesh, double>                      Edge_location;
 std::vector<Face_location>
 get_supporting_curve(std::string svg_filename,
                      const Mesh& mesh,
-                     Face_location center, const PMP::Dual_geodesic_solver<double>& solver)
+                     Face_location center, const VGoS::Dual_geodesic_solver<double>& solver)
 {
   std::vector<Face_location> res;
 
@@ -77,7 +78,7 @@ get_supporting_curve(std::string svg_filename,
     CGAL_assertion(bezier[0]==prev);
     CGAL_assertion_code(prev=bezier[3];)
     std::vector<std::pair<double, double>> polar_coords =
-      PMP::convert_to_polar_coordinates<K>(bezier, center_2);
+      VGoS::convert_to_polar_coordinates<K>(bezier, center_2);
 
     int start_id=directions.empty()?0:1;
 
@@ -100,7 +101,7 @@ get_supporting_curve(std::string svg_filename,
 
   // trace bezier curves
   std::vector< std::vector<Face_location> > resi =
-    PMP::trace_bezier_curves<K>(center, directions, lengths, 6, mesh, solver);
+    VGoS::trace_bezier_curves<K>(center, directions, lengths, 6, mesh, solver);
 
   //TODO: here we assume that curves are parameterized in the same order and are consecutives
   for (const std::vector<Face_location>& r : resi)
@@ -180,8 +181,8 @@ int main(int argc, char** argv)
 
   K::Point_3 center_pt = PMP::construct_point(center, mesh);
   std::cout << "center = " << center_pt << "\n";
-  PMP::Dual_geodesic_solver<double> solver;
-  PMP::init_geodesic_dual_solver(solver, mesh);
+  VGoS::Dual_geodesic_solver<double> solver;
+  VGoS::init_geodesic_dual_solver(solver, mesh);
 
 
   // get supporting curve
@@ -193,7 +194,7 @@ int main(int argc, char** argv)
 
   std::vector<K::Point_3> support_poly;
   support_poly.reserve(supporting_curve.size());
-  PMP::convert_path_to_polyline(supporting_curve, mesh, std::back_inserter(support_poly));
+  VGoS::convert_path_to_polyline(supporting_curve, mesh, std::back_inserter(support_poly));
 
   support_out << std::setprecision(17) << support_poly.size();
   for (auto p : support_poly)
@@ -212,13 +213,13 @@ int main(int argc, char** argv)
   out << std::setprecision(17);
 
   std::vector<std::vector<Face_location>> polygons_3;
-  polygons_3 = PMP::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., true, mesh, solver);
+  polygons_3 = VGoS::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., true, mesh, solver);
 
   for (const auto& polygon_path : polygons_3)
   {
     std::vector<K::Point_3> poly;
     poly.reserve(polygon_path.size());
-    PMP::convert_path_to_polyline(polygon_path, mesh, std::back_inserter(poly));
+    VGoS::convert_path_to_polyline(polygon_path, mesh, std::back_inserter(poly));
 
     out << poly.size();
     for (auto p : poly)

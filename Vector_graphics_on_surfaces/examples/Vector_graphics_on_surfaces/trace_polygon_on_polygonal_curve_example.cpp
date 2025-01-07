@@ -4,6 +4,7 @@
 
 #include <CGAL/boost/graph/IO/polygon_mesh_io.h>
 
+namespace VGoS = CGAL::Vector_graphics_on_surfaces;
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
@@ -249,8 +250,8 @@ int main(int argc, char** argv)
 
   std::cout << "Total number of polygons (after copy): " << polygons.size() << "\n";
 
-  PMP::Dual_geodesic_solver<double> solver;
-  PMP::init_geodesic_dual_solver(solver, mesh);
+  VGoS::Dual_geodesic_solver<double> solver;
+  VGoS::init_geodesic_dual_solver(solver, mesh);
 
   // get supporting curve
   std::vector<Face_location> supporting_curve = get_supporting_curve(support_filename, mesh);
@@ -261,7 +262,7 @@ int main(int argc, char** argv)
 
   std::vector<K::Point_3> support_poly;
   support_poly.reserve(supporting_curve.size());
-  PMP::convert_path_to_polyline(supporting_curve, mesh, std::back_inserter(support_poly));
+  VGoS::convert_path_to_polyline(supporting_curve, mesh, std::back_inserter(support_poly));
 
   support_out << std::setprecision(17) << support_poly.size();
   for (auto p : support_poly)
@@ -279,13 +280,13 @@ int main(int argc, char** argv)
   out << std::setprecision(17);
 
   std::vector<std::vector<Face_location>> polygons_3;
-  polygons_3 = PMP::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., false, mesh, solver);
+  polygons_3 = VGoS::trace_geodesic_label_along_curve<K>(supporting_curve, polygons, scaling, 0., false, mesh, solver);
 
   for (const auto& polygon_path : polygons_3)
   {
     std::vector<K::Point_3> poly;
     poly.reserve(polygon_path.size());
-    PMP::convert_path_to_polyline(polygon_path, mesh, std::back_inserter(poly));
+    VGoS::convert_path_to_polyline(polygon_path, mesh, std::back_inserter(poly));
 
     out << poly.size();
     for (auto p : poly)
