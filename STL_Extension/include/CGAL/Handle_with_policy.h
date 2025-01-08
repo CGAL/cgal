@@ -597,7 +597,7 @@ public:
         typedef Reference_counted_hierarchy_with_union<Alloc> Type;
     };
 
-    // abbreviation to re-use its implementation below.
+    // abbreviation to reuse its implementation below.
     typedef Handle_policy_union U;
 
     /*! \brief unifies the representations of the two handles \a h and \a g.

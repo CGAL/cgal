@@ -714,7 +714,7 @@ private:
   {
     Vector_3 bmin, bmax;
 
-    Orientation ori;
+    Orientation ori = ON_ORIENTED_BOUNDARY; // to avoid maybe uninitialized warning
 
     for (unsigned int i = 0; i < prismindex.size(); i++){
       if (prismindex[i] == jump){
@@ -1749,7 +1749,7 @@ private:
           if (tti != CUT_FACE){
             continue;
           }
-          // now we know that there exists an intesection point
+          // now we know that there exists an intersection point
 
           std::optional<ePoint_3> op = intersection_point_for_polyhedral_envelope(eline,
                                                                                     halfspace[filtered_intersection[queue[i]]][intersect_face[queue[i]][j]].eplane);

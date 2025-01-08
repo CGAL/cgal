@@ -333,7 +333,7 @@ Prior to \cgal 3.6, this functionality was available through the
 
 In order to satisfy as many uses as possible, a design has been selected that
 allows to exchange different parts to meet the users' needs, while still
-re-using a maximum of the provided functionalities. We have already seen that
+reusing a maximum of the provided functionalities. We have already seen that
 the main triangulation classes are parameterized by a geometric traits class
 and a triangulation data structure (TDS), so that each of them can be
 interchanged with alternate implementations.

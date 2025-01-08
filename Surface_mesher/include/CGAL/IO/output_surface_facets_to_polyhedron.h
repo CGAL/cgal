@@ -14,6 +14,11 @@
 
 #include <CGAL/license/Surface_mesher.h>
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/IO/output_surface_facets_to_polyhedron.h>"
+#define CGAL_DEPRECATED_MESSAGE_DETAILS \
+  "The 3D Mesh Generation package (see https://doc.cgal.org/latest/Mesh_3/) should be used instead."
+#include <CGAL/Installation/internal/deprecation_warning.h>
+
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Polyhedron_3.h>

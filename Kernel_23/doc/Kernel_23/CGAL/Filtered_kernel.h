@@ -59,13 +59,11 @@ techniques from \cgalCite{cgal:mp-fcafg-05}.
 The geometric constructions are exactly those
 of the kernel `CK`, which means that they are not necessarily exact.
 
-\cgalHeading{Parameters}
-
-The first parameter, `CK`, is the "Construction Kernel", namely the kernel
+\tparam CK the "Construction Kernel", namely the kernel
 from which are taken the types of the geometric objects as well as the
 geometric constructions.
 
-The second parameter, `UseStaticFilters`, is a Boolean value which
+\tparam UseStaticFilters a Boolean value which
 activates or not an additional layer of semi-static filters. It defaults to
 `true` (activated), unless the `CGAL_NO_STATIC_FILTERS` macro is
 defined. This option is mostly for debugging and testing, there should be no
@@ -94,7 +92,7 @@ each predicate of the kernel traits interface. Additionally, faster static
 filters may be used for a few selected critical predicates.
 
 */
-template< typename CK >
+template< typename CK, bool UseStaticFilters >
 struct Filtered_kernel {
 
 /// \name Types

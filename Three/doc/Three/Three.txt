@@ -199,7 +199,7 @@ Once your code is written, you will need to link the item's library to your plug
 
     cgal_lab_plugin(basic_item_plugin Basic_item_plugin)
     #  links the library containing the scene_plane_item with the plugin
-    target_link_libraries(basic_item_plugin PUBLIC scene_basic_objects)
+    target_link_libraries(basic_item_plugin PRIVATE scene_basic_objects)
 
 \subsubsection exampleCreatingANewTypeItem Creating a new type of item
 
@@ -252,7 +252,7 @@ After that, we can set the uniform values and actually draw the content of the c
 If you created your item in a specific file and you need to use it outside your plugin (like in another plugin), it is recommended to put it in the demo's root directory, and you will have to define your item in the general CGAL_Lab's CMakeLists.txt by using the macro add_item :
 
     add_item(scene_trivial_item Scene_trivial_item.cpp)
-    target_link_libraries(scene_trivial_item PUBLIC scene_dependances_item)
+    target_link_libraries(scene_trivial_item PRIVATE scene_dependances_item)
 
 \subsection exampleUsingAGroupItem Using a Scene_group_item
 
@@ -328,7 +328,7 @@ Configure CMake as you desire and fetch the right Qt6 packages :
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 3.1...3.23)
+    cmake_minimum_required(VERSION 3.12...3.29)
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt6)
@@ -353,7 +353,7 @@ Finally, you can declare your plugin
 If you need targets from the CGAL_Lab, you will have to add the prefix 'Lab_' to the target's name, as the exported targets belong to the namespace Lab_
 
     cgal_lab_plugin(basic_item_plugin Basic_item_plugin)
-    target_link_libraries(basic_item_plugin PUBLIC Lab_scene_basic_objects)
+    target_link_libraries(basic_item_plugin PRIVATE Lab_scene_basic_objects)
 
 Notice that an external plugin will not be automatically loaded in the Lab. It must be built in its own project.
 
@@ -366,7 +366,7 @@ Notice that an external plugin will not be automatically loaded in the Lab. It m
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
     # Instruct CMake to run moc automatically when needed.
     set(CMAKE_AUTOMOC ON)
-    cmake_minimum_required(VERSION 3.1...3.23)
+    cmake_minimum_required(VERSION 3.12...3.29)
 
     #Find CGAL
     find_package(CGAL COMPONENTS Qt6)

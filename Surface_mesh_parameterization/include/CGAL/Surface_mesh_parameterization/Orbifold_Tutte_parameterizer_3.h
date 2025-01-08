@@ -715,7 +715,7 @@ private:
     // The other parts of M(i,j) and M(i,k) will be added when this function
     // is called from the neighboring faces of F_ijk that share the vertex i
 
-    // @fixme unefficient: lengths are computed (and inversed!) twice per edge
+    // @fixme inefficient: lengths are computed (and inversed!) twice per edge
 
     // Set w_i_base: - tan(alpha / 2)
     const Point_3& p = pk;

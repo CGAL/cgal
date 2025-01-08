@@ -37,13 +37,13 @@ namespace Intern{
 
 /*! \ingroup CGAL_Sqrt_extension
     \ingroup CGAL_Fraction_traits_spec
-    \brief Specialisation of CGAL::Fraction_traits for CGAL::Sqrt_extension.
+    \brief Specialization of CGAL::Fraction_traits for CGAL::Sqrt_extension.
  *
  *  Extensions provide suitable specializations of \c CGAL::Fraction_traits.
  *  They are decomposable iff their coefficient type is.
  *  The denominator \e d of an extension \e ext is a low common multiple
  *  (see \c CGAL::Fraction_traits::Common_factor for details) of the
- *  denominators of its coefficients.  The numerator is the extenion
+ *  denominators of its coefficients.  The numerator is the extension
  *  \e d*ext with a fraction-free coefficient type.
  *
  *  This works for nested Sqrt_extensions, too.

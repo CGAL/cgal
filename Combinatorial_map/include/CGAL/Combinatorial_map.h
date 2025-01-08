@@ -662,7 +662,7 @@ namespace CGAL {
     }
 
     /** Create a new dart and add it to the map.
-     * The marks of the darts are initialised with mmask_marks, i.e. the dart
+     * The marks of the darts are initialized with mmask_marks, i.e. the dart
      * is unmarked for all the marks.
      * @return a Dart_descriptor on the new dart.
      */
@@ -1780,7 +1780,6 @@ namespace CGAL {
     void basic_link_beta_for_involution(Dart_descriptor adart1, Dart_descriptor adart2,
                                         unsigned int i)
     {
-      CGAL_assertion( i>=2 && i<=dimension );
       CGAL_assertion( i>=2 && i<=dimension );
       dart_link_beta(adart1, adart2, i);
       dart_link_beta(adart2, adart1, i);
@@ -3708,6 +3707,9 @@ namespace CGAL {
       this->automatic_attributes_management = newval;
     }
 
+    void set_automatic_attributes_management_without_correction(bool newval)
+    { this->automatic_attributes_management = newval; }
+
     /** Create an half-edge.
      * @return a dart of the new half-edge.
      */
@@ -3716,7 +3718,7 @@ namespace CGAL {
 
     /** Create an edge.
      * if closed==true, the edge has no 2-free dart.
-     * (note that for CMap there is no differente between true and false, but
+     * (note that for CMap there is no difference between true and false, but
      *  this is not the case for GMap)
      * @return a dart of the new edge.
      */
@@ -3733,7 +3735,7 @@ namespace CGAL {
      * @param h0 the first vertex descriptor.
      * @param h1 the second vertex descriptor.
      * if closed==true, the edge has no 2-free dart.
-     * (note that for CMap there is no differente between true and false, but
+     * (note that for CMap there is no difference between true and false, but
      *  this is not the case for GMap)
      * @return the dart of the new edge incident to h0.
      */
@@ -4112,7 +4114,7 @@ namespace CGAL {
         }
         if (ah != null_descriptor)
         {
-          // We initialise the 0-atttrib to ah
+          // We initialize the 0-atttrib to ah
           internal::Set_i_attribute_of_dart_functor<Self, 0>::
             run(*this, d1, ah);
         }
